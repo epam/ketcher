@@ -1,0 +1,183 @@
+body
+{
+    margin: 0;
+}
+
+body > div:first-child
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    max-height: 720px;
+}
+
+a, img 
+{
+    border-color: #E0E0E0;
+    color: #E0E0E0;
+    border-width: 0;
+    vertical-align: middle;
+}
+
+table#ketcher_window
+{
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    table-layout: fixed;
+    background-color: #E0E0E0;
+    border-color: white;
+    border-style: outset;
+    border-width: thin;
+}
+
+/*
+table#ketcher_window > tr
+{
+    height: 32px;
+}
+*/
+
+#main_toolbar
+{
+    height: 40px;
+}
+
+.toolButton, .sideButton
+{
+    border-color: #E8E8E8;
+    border-width: thin;
+    border-style: solid;
+    background-color: #DADADA;
+    /*vertical-align: middle;*/
+}
+
+.toolButton
+{
+    width: 36px;
+}
+
+/*
+td.sideButton
+{
+    width: 32px;
+}
+*/
+
+.buttonHighlight
+{
+    border-color: white;
+}
+
+.buttonDisabled
+{
+    opacity: 0.25;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+    filter: alpha(opacity=25);
+}
+
+.toolDelimiter
+{
+    width: 16px;
+}
+
+.buttonPressed, .buttonSelected
+{
+    border-color: #606060;
+    border-style: inset;
+    background-color: white;
+}
+
+#client_area
+{
+    overflow: auto;
+    background-color: white;
+    border-color: #E0E0E0;
+    border-style: inset;
+    border-width: thin;
+    text-align: left;
+    width: 100%;
+    /*height: 100%;*/
+}
+
+#buffer_frame
+{
+    display: none;
+}
+
+#console
+{
+    height: 8em;
+    font-family: courier;
+    font-size: small;
+    color: #0A0A0A;
+    background-color: #F0F0F0;
+    border-color: #E0E0E0;
+    border-style: inset;
+    border-width: thin;
+    padding: 0.5em;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+input#input_label
+{
+    position: absolute;
+    z-index:  2;
+}
+
+div#window_cover
+{
+    position: absolute;
+    z-index:  3;
+    background-color: black;
+    left:     0;
+    top:      0;
+    opacity:    0.15;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=15)";
+    filter:     alpha(opacity=15);
+}
+
+.dialogWindow
+{
+    position: absolute;
+    z-index:  4;
+    background-color: #E0E0E0;
+    border-color: #F0F0F0;
+    border-style: outset;
+    border-width: thin;
+    padding: 4px;
+    text-align: center;
+}
+
+.dialogWindow > div > div:first-child
+{
+    background-color: #D0D0D0;
+}
+
+.fileDialog
+{
+    left:  10%;
+    top:   10%;
+}
+
+.chemicalText
+{
+    width: 320px;
+    height: 320px;
+    overflow:    auto;
+    white-space: nowrap;
+}
+
+.chemicalText_IE
+{
+    white-space: pre;
+}
+
+.propDialog
+{
+    left:   10%;
+    top:    10%;
+}

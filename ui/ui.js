@@ -511,6 +511,8 @@ ui.onKeyPress_Ketcher = function (event)
         {
             if (ui.modeType() == ui.MODE.PASTE)
                 ui.cancelPaste();
+            else if (ui.modeType() == ui.MODE.SIMPLE)
+                ui.updateSelection();
             ui.selectMode('select_simple');
         }
         return chem.preventDefault(event);
@@ -669,6 +671,8 @@ ui.onKeyUp = function (event)
             {
                 if (ui.modeType() == ui.MODE.PASTE)
                     ui.cancelPaste();
+                else if (ui.modeType() == ui.MODE.SIMPLE)
+                    ui.updateSelection();
                 ui.selectMode('select_simple');
             }
         } else if (this.hasClassName('dialogWindow'))
@@ -1689,15 +1693,10 @@ ui.onMouseMove_Canvas = function (event)
         if (ui.drag.atom_id != null || ui.drag.bond_id != null)
         {
             if (ui.drag.selection)
-            {
-                ui.selection.atoms.each(function (aid)
-                {
-                    ui.render.atomMoveRel(aid, delta);
-                });
-            } else if (ui.drag.atom_id != null)
-            {
+                ui.render.atomMoveRelMultiple(ui.selection.atoms, delta);
+            else if (ui.drag.atom_id != null)
                 ui.render.atomMoveRel(ui.drag.atom_id, delta);
-            } else if (ui.drag.bond_id != null)
+            else if (ui.drag.bond_id != null)
             {
                 var bond = ui.ctab.bonds.get(ui.drag.bond_id);
                 ui.render.atomMoveRel(bond.begin, delta);
@@ -1923,8 +1922,6 @@ ui.copy = function ()
         new_bond.end = mapping[new_bond.end];
         ui.clipboard.bonds.add(new chem.Molecule.Bond(new_bond));
     });
-    
-    ui.updateSelection();
 }
 
 ui.paste = function ()
@@ -1974,6 +1971,7 @@ ui.onClick_Copy = function ()
         return;
         
     ui.copy();
+    ui.updateSelection();
     ui.updateClipboardButtons();
 }
 

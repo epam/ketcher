@@ -266,11 +266,13 @@ ui.init = function ()
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
+    this.render.onAtomMouseMove = this.onMouseMove_Atom;
     this.render.onAtomMouseDown = this.onMouseDown_Atom;
     this.render.onAtomMouseOver = this.onMouseOver_Atom;
     this.render.onAtomMouseOut = this.onMouseOut_Atom;
     
     this.render.onBondClick = this.onClick_Bond;
+    this.render.onBondMouseMove = this.onMouseMove_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
     this.render.onBondMouseOver = this.onMouseOver_Bond;
     this.render.onBondMouseOut = this.onMouseOut_Bond;
@@ -1564,6 +1566,18 @@ ui.onMouseDown_Canvas = function (event)
     }
     
     ui.updateSelection();
+}
+
+ui.onMouseMove_Atom = function (event)
+{
+    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
+        ui.onMouseMove_Canvas(event); // TODO: fix this
+}
+
+ui.onMouseMove_Bond = function (event)
+{
+    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
+        ui.onMouseMove_Canvas(event); // TODO: fix this
 }
 
 ui.onMouseMove_Canvas = function (event)

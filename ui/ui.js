@@ -262,7 +262,7 @@ ui.init = function ()
     
     // Init renderer
     this.console.writeLine(" Renderer...");
-    this.render =  new rnd.Render(this.client_area, this.scale, {}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
+    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;

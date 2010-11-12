@@ -1011,11 +1011,27 @@ ui.removeSelected = function ()
 //
 // Scrolling
 //
+ui.scrollLeft = null;
+ui.scrollTop = null;
+
 ui.onScroll_ClientArea = function ()
 {
     if ($('input_label').visible())
         $('input_label').hide();
-    ui.endDrag();
+        
+    if (ui.scrollLeft != null && ui.isDrag())
+    {
+        var delta_x = ui.client_area.scrollLeft - ui.scrollLeft;
+        var delta_y = ui.client_area.scrollTop - ui.scrollTop;
+        
+        ui.drag.start_pos.x -= delta_x;
+        ui.drag.start_pos.y -= delta_y;
+        ui.drag.last_pos.x -= delta_x;
+        ui.drag.last_pos.y -= delta_y;
+    }
+
+    ui.scrollLeft = ui.client_area.scrollLeft;
+    ui.scrollTop = ui.client_area.scrollTop;
 }
 
 //
@@ -1332,6 +1348,7 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
 {
     if (oldOffset == null)
         return;
+        
     ui.client_area.scrollLeft += newOffset.x - oldOffset.x;
     ui.client_area.scrollTop += newOffset.y - oldOffset.y;
 }

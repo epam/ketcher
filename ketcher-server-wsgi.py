@@ -1,7 +1,7 @@
 import os
 import indigo
 
-indigo = indigo.Indigo("/var/www/scitouch/ketcher/lib")
+indigo = indigo.Indigo("/var/www/gga/ketcher/lib")
 
 from django.conf.urls.defaults import patterns, url
 from django.http import Http404, HttpResponse

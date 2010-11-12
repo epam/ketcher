@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2009-2010 SciTouch LLC
+ * Copyright (C) 2009-2010 GGA Software Services LLC
  * 
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
@@ -41,7 +41,7 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
-ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5};
+ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, PASTE: 6};
 
 ui.patterns =
 {
@@ -145,6 +145,9 @@ ui.init = function ()
     $('save').observe('click', ui.onClick_SaveFile);
     $('undo').observe('click', ui.onClick_Undo);
     $('redo').observe('click', ui.onClick_Redo);
+    $('cut').observe('click', ui.onClick_Cut);
+    $('copy').observe('click', ui.onClick_Copy);
+    $('paste').observe('click', ui.onClick_Paste);
     $('zoom_in').observe('click', ui.onClick_ZoomIn);
     $('zoom_out').observe('click', ui.onClick_ZoomOut);
     $('clean_up').observe('click', ui.onClick_CleanUp);
@@ -259,15 +262,17 @@ ui.init = function ()
     
     // Init renderer
     this.console.writeLine(" Renderer...");
-    this.render =  new rnd.Render(this.client_area, this.scale, {}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
+    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
+    this.render.onAtomMouseMove = this.onMouseMove_Atom;
     this.render.onAtomMouseDown = this.onMouseDown_Atom;
     this.render.onAtomMouseOver = this.onMouseOver_Atom;
     this.render.onAtomMouseOut = this.onMouseOut_Atom;
     
     this.render.onBondClick = this.onClick_Bond;
+    this.render.onBondMouseMove = this.onMouseMove_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
     this.render.onBondMouseOver = this.onMouseOver_Bond;
     this.render.onBondMouseOut = this.onMouseOut_Bond;
@@ -347,38 +352,52 @@ ui.parseMolfile = function (molfile)
 //
 ui.selectMode = function (mode)
 {
-    if ($(mode).hasClassName('buttonDisabled'))
-        return;
-    
-    if (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0)
+    if (mode != null)
     {
-        if (mode == 'select_erase')
-        {
-            ui.removeSelected();
+        if ($(mode).hasClassName('buttonDisabled'))
             return;
-        }
-        if (mode.startsWith('atom_'))
+        
+        if (ui.selected())
         {
-            ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs({label: ui.atomLabel(mode)}), true);
-            ui.render.update();
-            return;
+            if (mode == 'select_erase')
+            {
+                ui.removeSelected();
+                return;
+            }
+            if (mode.startsWith('atom_'))
+            {
+                ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs({label: ui.atomLabel(mode)}), true);
+                ui.render.update();
+                return;
+            }
+            if (mode.startsWith('bond_'))
+            {
+                ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode)), true);
+                ui.render.update();
+                return;
+            }
         }
-        if (mode.startsWith('bond_'))
-        {
-            ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode)), true);
-            ui.render.update();
-            return;
-        }
+        
+        if (ui.mode_button == null) // ui.MODE.PASTE
+            ui.cancelPaste();
     }
 
     if (this.mode_button != null && this.mode_button.id != mode)
         this.mode_button.removeClassName('buttonSelected');
-    this.mode_button = $(mode);
-    this.mode_button.addClassName('buttonSelected');
+        
+    if (mode == null)
+        this.mode_button = null;
+    else
+    {
+        this.mode_button = $(mode);
+        this.mode_button.addClassName('buttonSelected');
+    }
 }
 
 ui.modeType = function ()
 {
+    if (ui.mode_button == null)
+        return ui.MODE.PASTE;
     if (ui.mode_button.id == 'select_simple')
         return ui.MODE.SIMPLE;
     if (ui.mode_button.id == 'select_erase')
@@ -452,6 +471,13 @@ ui.onClick_NewFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.cancelPaste();
+        ui.selectMode('select_simple');
+    }
+    
     if (ui.ctab.atoms.count() != 0)
     {
         ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Molecule()));
@@ -474,7 +500,7 @@ ui.onKeyPress_Ketcher = function (event)
         if (event.keyCode == 27)
         {
             ui.endDrag();
-            if (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0)
+            if (ui.selected())
                 ui.updateSelection();
         }
         return chem.preventDefault(event);
@@ -484,11 +510,17 @@ ui.onKeyPress_Ketcher = function (event)
     {
     case 27: // Esc
         if (!Prototype.Browser.WebKit)
+        {
+            if (ui.modeType() == ui.MODE.PASTE)
+                ui.cancelPaste();
+            else if (ui.modeType() == ui.MODE.SIMPLE)
+                ui.updateSelection();
             ui.selectMode('select_simple');
+        }
         return chem.preventDefault(event);
     case 46: // Delete
         if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
-            if (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0)
+            if (ui.selected())
                 ui.removeSelected();
         return chem.preventDefault(event);
     }
@@ -504,7 +536,7 @@ ui.onKeyPress_Ketcher = function (event)
         ui.onClick_ZoomOut.call($('zoom_out'));
         return chem.preventDefault(event);
     case 8: // Back space
-        if (ui.is_osx && (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0))
+        if (ui.is_osx && ui.selected())
             ui.removeSelected();
         return chem.preventDefault(event);
     case 48: // 0
@@ -540,8 +572,13 @@ ui.onKeyPress_Ketcher = function (event)
             ui.selectMode('atom_any');
         return chem.preventDefault(event);
     case 99: // c
-        if (!event.altKey && !event.metaKey)
-            ui.selectMode('atom_c');
+        if (!event.altKey)
+        {
+            if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+                ui.onClick_Copy.call($('copy'));
+            else if (!event.metaKey)
+                ui.selectMode('atom_c');
+        }
         return chem.preventDefault(event);
     case 102: // f
         ui.selectMode('atom_f');
@@ -577,6 +614,14 @@ ui.onKeyPress_Ketcher = function (event)
         else
             ui.selectMode('atom_s');
         return chem.preventDefault(event);
+    case 118: // Ctrl+V
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Paste.call($('paste'));
+        return chem.preventDefault(event);
+    case 120: // Ctrl+X
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Cut.call($('cut'));
+        return chem.preventDefault(event);
     case 122: // Ctrl+Z or Ctrl+Shift+Z (in Safari)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
         {
@@ -598,6 +643,8 @@ ui.onKeyDown_IE = function (event)
     if (!Prototype.Browser.IE)
         return;
 
+    // Ctrl+A, Ctrl+C, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
+    //if ([65, 67, 78, 79, 83, 86, 88, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     // Ctrl+A, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
     if ([65, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
@@ -618,12 +665,18 @@ ui.onKeyUp = function (event)
         if (ui.isDrag())
         {
             ui.endDrag();
-            if (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0)
+            if (ui.selected())
                 ui.updateSelection();
         } else if (this == document)
         {
             if (!$('window_cover').visible())
+            {
+                if (ui.modeType() == ui.MODE.PASTE)
+                    ui.cancelPaste();
+                else if (ui.modeType() == ui.MODE.SIMPLE)
+                    ui.updateSelection();
                 ui.selectMode('select_simple');
+            }
         } else if (this.hasClassName('dialogWindow'))
             ui.hideDialog(this.id);
         else
@@ -644,12 +697,16 @@ ui.onKeyUp = function (event)
     switch (event.keyCode)
     {
     case 46: // Delete
-        if (!ui.isDrag() && (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0))
+        if (!ui.isDrag() && ui.selected())
             ui.removeSelected();
         return;
     case 65: // Ctrl+A
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.selectAll();
+        return;
+    case 67: // Ctrl+C
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Copy.call($('copy'));
         return;
     case 78: // Ctrl+N
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -662,6 +719,14 @@ ui.onKeyUp = function (event)
     case 83: // Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SaveFile.call($('save'));
+        return;
+    case 86: // Ctrl+V
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Paste.call($('paste'));
+        return;
+    case 88: // Ctrl+X
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Cut.call($('cut'));
         return;
     case 90: // Ctrl+Z
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -757,6 +822,11 @@ ui.onClick_OpenFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.cancelPaste();
+        ui.selectMode('select_simple');
+    }
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
     ui.onSelect_OpenFromInput();
@@ -870,6 +940,11 @@ ui.onClick_SaveFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.cancelPaste();
+        ui.selectMode('select_simple');
+    }
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
 }
@@ -949,6 +1024,12 @@ ui.onClick_CleanUp = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
         
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.cancelPaste();
+        ui.selectMode('select_simple');
+    }
+    
     var ss = new chem.SmilesSaver();
     
     try
@@ -998,14 +1079,6 @@ ui.page2canvas2 = function (pos)
             x: pos.pageX - offset.left,
             y: pos.pageY - offset.top
            };
-}
-
-ui.removeSelected = function ()
-{
-    ui.addUndoAction(ui.Action.fromFragmentDeletion());
-    ui.selection.atoms = [];
-    ui.selection.bonds = [];
-    ui.render.update();
 }
 
 //
@@ -1124,6 +1197,10 @@ ui.onClick_Atom = function (event, id)
             ui.addUndoAction(ui.Action.fromPatternOnAtom(id, ui.pattern()), true);
             ui.render.update();
             break;
+            
+        case ui.MODE.PASTE:
+            ui.onClick_Canvas(event); // TODO: fix this
+            break;
         }
     }, ui.DBLCLICK_INTERVAL);
 }
@@ -1134,8 +1211,9 @@ ui.onDblClick_Atom = function (event, id)
         return;
 
     ui.dbl_click = true;
-    
-    ui.showAtomProperties(id);
+
+    if (ui.modeType() != ui.MODE.PASTE)
+        ui.showAtomProperties(id);
 }
 
 ui.onClick_Bond = function (event, id)
@@ -1208,6 +1286,10 @@ ui.onClick_Bond = function (event, id)
         ui.addUndoAction(ui.Action.fromPatternOnElement(id, ui.pattern(), false), true);
         ui.render.update();
         break;
+        
+    case ui.MODE.PASTE:
+        ui.onClick_Canvas(event); // TODO: fix this
+        break;
     }
 }
 
@@ -1240,6 +1322,14 @@ ui.onClick_Canvas = function (event)
         
         ui.addUndoAction(ui.Action.fromPatternOnCanvas(pos, ui.pattern()));
         ui.render.update();
+        break;
+        
+    case ui.MODE.PASTE:
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds));
+        ui.render.update();
+        ui.pasted.atoms.clear();
+        ui.pasted.bonds.clear();
+        ui.selectMode('select_simple');
         break;
     }
 }
@@ -1379,6 +1469,7 @@ ui.endDrag = function ()
     ui.drag.action = null;
     
     ui.render.drawSelectionRectangle(null);
+    ui.updateClipboardButtons();
 }
 
 ui.isDrag = function ()
@@ -1407,19 +1498,34 @@ ui.updateSelection = function (atoms, bonds)
     ui.render.update();
 }
 
+ui.selected = function ()
+{
+    return ui.selection.atoms.length > 0; // bond is selected only if both atoms are
+}
+
 ui.selectAll = function ()
 {
     var alist = [], blist = [];
     
-    ui.ctab.atoms.each(function(aid, atom) {
+    ui.ctab.atoms.each(function(aid) {
         alist.push(aid);
     });
 
-    ui.ctab.bonds.each(function(bid, bond) {
+    ui.ctab.bonds.each(function(bid) {
         blist.push(bid);
     });
 
     ui.updateSelection(alist, blist);
+    ui.updateClipboardButtons();
+}
+
+ui.removeSelected = function ()
+{
+    ui.addUndoAction(ui.Action.fromFragmentDeletion());
+    ui.selection.atoms = [];
+    ui.selection.bonds = [];
+    ui.render.update();
+    ui.updateClipboardButtons();
 }
 
 ui.onMouseDown_Atom = function (event, aid)
@@ -1477,6 +1583,18 @@ ui.onMouseDown_Canvas = function (event)
     }
     
     ui.updateSelection();
+}
+
+ui.onMouseMove_Atom = function (event)
+{
+    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
+        ui.onMouseMove_Canvas(event); // TODO: fix this
+}
+
+ui.onMouseMove_Bond = function (event)
+{
+    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
+        ui.onMouseMove_Canvas(event); // TODO: fix this
 }
 
 ui.onMouseMove_Canvas = function (event)
@@ -1567,6 +1685,13 @@ ui.onMouseMove_Canvas = function (event)
             ui.drag.new_atom_id = action_ret[2];
         } else
             ui.render.atomMove(ui.drag.new_atom_id, v);
+    }  else if (mode == ui.MODE.PASTE)
+    {
+        var anchor_pos = ui.render.atomGetPos(ui.pasted.atoms[0]);
+        var cur_pos = ui.page2canvas(event);
+        var delta = {x: cur_pos.x - anchor_pos.x, y: cur_pos.y - anchor_pos.y};
+        
+        ui.render.atomMoveRelMultiple(ui.pasted.atoms, delta);
     } else
     {
         if (ui.drag.atom_id == null && ui.drag.bond_id == null)
@@ -1599,15 +1724,10 @@ ui.onMouseMove_Canvas = function (event)
         if (ui.drag.atom_id != null || ui.drag.bond_id != null)
         {
             if (ui.drag.selection)
-            {
-                ui.selection.atoms.each(function (aid)
-                {
-                    ui.render.atomMoveRel(aid, delta);
-                });
-            } else if (ui.drag.atom_id != null)
-            {
+                ui.render.atomMoveRelMultiple(ui.selection.atoms, delta);
+            else if (ui.drag.atom_id != null)
                 ui.render.atomMoveRel(ui.drag.atom_id, delta);
-            } else if (ui.drag.bond_id != null)
+            else if (ui.drag.bond_id != null)
             {
                 var bond = ui.ctab.bonds.get(ui.drag.bond_id);
                 ui.render.atomMoveRel(bond.begin, delta);
@@ -1623,7 +1743,7 @@ ui.onMouseMove_Canvas = function (event)
 ui.onMouseUp_Ketcher = function (event)
 {
     if (ui.modeType() == ui.MODE.ERASE)
-        if (ui.selection.atoms.length > 0 || ui.selection.bonds.length > 0)
+        if (ui.selected())
             ui.removeSelected();
     ui.endDrag();
     chem.stopEventPropagation(event);
@@ -1634,7 +1754,7 @@ ui.onMouseUp_Ketcher = function (event)
 //
 ui.onMouseOver_Atom = function (event, aid)
 {
-    if (!ui.isDrag())
+    if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.atomSetHighlight(aid, true);
     else if (ui.modeType() == ui.MODE.BOND && ui.drag.atom_id != null && ui.drag.atom_id != aid && ui.drag.new_atom_id != aid)
     {
@@ -1701,7 +1821,7 @@ ui.onMouseOut_Atom = function (event, aid)
 
 ui.onMouseOver_Bond = function (event, bid)
 {
-    if (!ui.isDrag())
+    if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.bondSetHighlight(bid, true);
 }
 
@@ -1781,6 +1901,119 @@ ui.onChange_AtomValence = function ()
 {
     if (!this.value.match(/^[0-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+}
+
+//
+// Clipboard actions 
+//
+
+ui.clipboard = null;
+ui.pasted = {atoms: [], bonds: []};
+
+ui.isClipboardEmpty = function ()
+{
+    return ui.clipboard == null;
+}
+
+ui.updateClipboardButtons = function ()
+{
+    if (ui.isClipboardEmpty())
+        $('paste').addClassName('buttonDisabled');
+    else
+        $('paste').removeClassName('buttonDisabled');
+
+    if (ui.selected())
+    {
+        $('copy').removeClassName('buttonDisabled');
+        $('cut').removeClassName('buttonDisabled');
+    } else
+    {
+        $('copy').addClassName('buttonDisabled');
+        $('cut').addClassName('buttonDisabled');
+    }
+}
+
+ui.copy = function ()
+{
+    ui.clipboard = new chem.Molecule();
+    
+    var mapping = {};
+    
+    ui.selection.atoms.each(function (id)
+    {
+        var new_atom = Object.clone(ui.ctab.atoms.get(id));
+        new_atom.pos = ui.render.atomGetPos(id);
+        mapping[id] = ui.clipboard.atoms.add(new chem.Molecule.Atom(new_atom));
+    });
+    
+    ui.selection.bonds.each(function (id)
+    {
+        var new_bond = Object.clone(ui.ctab.bonds.get(id));
+        new_bond.begin = mapping[new_bond.begin];
+        new_bond.end = mapping[new_bond.end];
+        ui.clipboard.bonds.add(new chem.Molecule.Bond(new_bond));
+    });
+}
+
+ui.paste = function ()
+{
+    var mapping = {};
+    
+    ui.clipboard.atoms.each(function (id, atom)
+    {
+        mapping[id] = ui.render.atomAdd(atom.pos, atom);
+        ui.pasted.atoms.push(mapping[id]);
+    });
+    
+    ui.clipboard.bonds.each(function (id, bond)
+    {
+        ui.pasted.bonds.push(ui.render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
+    });
+
+    ui.selectMode(null);
+}
+
+ui.cancelPaste = function ()
+{
+    ui.pasted.atoms.each(function (id)
+    {
+        ui.render.atomRemove(id);
+    });
+    
+    ui.pasted.atoms.clear();
+    ui.pasted.bonds.clear();
+    
+    if (ui.render != null)
+        ui.render.update();
+}
+
+ui.onClick_Cut = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+        
+    ui.copy();
+    ui.removeSelected();
+}
+
+ui.onClick_Copy = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+        
+    ui.copy();
+    ui.updateSelection();
+    ui.updateClipboardButtons();
+}
+
+ui.onClick_Paste = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+        
+    if (ui.modeType() == ui.MODE.PASTE)
+        ui.cancelPaste();
+    ui.paste();
 }
 
 //
@@ -2260,7 +2493,54 @@ ui.Action.fromBondDeletion = function (id)
     return action.perform();
 }
 
-ui.Action.fromFragmentDeletion = function (id)
+ui.Action.fromFragmentAddition = function (atoms, bonds)
+{
+    var action = new ui.Action();
+    
+    /*
+    atoms.each(function (aid)
+    {
+        ui.render.atomGetNeighbors(aid).each(function (nei)
+        {
+            if (ui.selection.bonds.indexOf(nei.bid) == -1)
+                ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
+        }, this);
+    }, this);
+    */
+    
+    // TODO: merge close atoms and bonds
+    
+    bonds.each(function (bid)
+    {
+        var idx = ui.bondMap.indexOf(bid);
+        
+        if (idx == -1)
+            idx = ui.bondMap.push(bid) - 1;
+            
+        action.addOperation(ui.Action.OPERATION.BOND_DEL,
+        {
+            id: idx
+        });
+    }, this);
+    
+
+    atoms.each(function (aid)
+    {
+        var idx = ui.atomMap.indexOf(aid);
+        
+        if (idx == -1)
+            idx = ui.atomMap.push(aid) - 1;
+            
+        action.addOperation(ui.Action.OPERATION.ATOM_DEL,
+        {
+            id: idx
+        });
+    }, this);
+    
+    return action;
+}
+
+ui.Action.fromFragmentDeletion = function ()
 {
     var action = new ui.Action();
     
@@ -2632,12 +2912,14 @@ ui.undo = function ()
 {
     ui.redoStack.push(ui.undoStack.pop().perform());
     ui.updateActionButtons();
+    ui.updateSelection();
 }
 
 ui.redo = function ()
 {
     ui.undoStack.push(ui.redoStack.pop().perform());
     ui.updateActionButtons();
+    ui.updateSelection();
 }
 
 ui.onClick_Undo = function ()
@@ -2646,7 +2928,6 @@ ui.onClick_Undo = function ()
         return;
         
     ui.undo();
-    ui.render.update();
 }
 
 ui.onClick_Redo = function ()
@@ -2655,5 +2936,4 @@ ui.onClick_Redo = function ()
         return;
         
     ui.redo();
-    ui.render.update();
 }

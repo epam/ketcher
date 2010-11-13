@@ -1534,6 +1534,9 @@ ui.removeSelected = function ()
 
 ui.onMouseDown_Atom = function (event, aid)
 {
+    if ($('input_label').visible())
+        $('input_label').hide();
+
     ui.mouse_moved = false;
     ui.drag.atom_id = aid;
     ui.drag.start_pos = {x: event.pageX, y: event.pageY};
@@ -1555,6 +1558,9 @@ ui.onMouseDown_Atom = function (event, aid)
 
 ui.onMouseDown_Bond = function (event, bid)
 {
+    if ($('input_label').visible())
+        $('input_label').hide();
+
     ui.mouse_moved = false;
     ui.drag.bond_id = bid;
     ui.drag.start_pos = {x: event.pageX, y: event.pageY};
@@ -1576,6 +1582,9 @@ ui.onMouseDown_Bond = function (event, bid)
 
 ui.onMouseDown_Canvas = function (event)
 {
+    if ($('input_label').visible())
+        $('input_label').hide();
+
     ui.mouse_moved = false;
 
     var pos = ui.page2canvas2(event);

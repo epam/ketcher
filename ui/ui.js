@@ -1224,6 +1224,7 @@ ui.onClick_Bond = function (event, id)
     switch (ui.modeType())
     {
     case ui.MODE.SIMPLE:
+    case ui.MODE.ATOM:
         /* // TODO: Add to selection
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
         {
@@ -1239,10 +1240,10 @@ ui.onClick_Bond = function (event, id)
 
         var bond_type = ui.render.bondGetAttr(id, 'type');
         
-        if (bond_type > 4)
+        if (bond_type >= 4)
             bond_type = 1;
         else
-            bond_type = (bond_type % 4) + 1;
+            bond_type = (bond_type % 3) + 1;
             
         ui.addUndoAction(ui.Action.fromBondAttrs(id, {type: bond_type}));
         ui.render.update();
@@ -1309,11 +1310,14 @@ ui.onClick_Canvas = function (event)
         
     case ui.MODE.BOND:
         var pos = ui.page2canvas(event);
+        var bond = ui.bondType();
         
         var v = new chem.Vec2(ui.scale / 2, 0);
-        v = v.rotate(-Math.PI / 6);
         
-        ui.addUndoAction(ui.Action.fromBondAddition(ui.bondType(), {label: 'C'}, {label: 'C'}, {x: pos.x - v.x, y: pos.y - v.y}, {x: pos.x + v.x, y: pos.y + v.y})[0]);
+        if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+            v = v.rotate(-Math.PI / 6);
+        
+        ui.addUndoAction(ui.Action.fromBondAddition(bond, {label: 'C'}, {label: 'C'}, {x: pos.x - v.x, y: pos.y - v.y}, {x: pos.x + v.x, y: pos.y + v.y})[0]);
         ui.render.update();
         break;
 

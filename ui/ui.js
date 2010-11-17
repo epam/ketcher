@@ -790,9 +790,9 @@ ui.onKeyPress_InputLabel = function (event)
             else
                 label = this.value[0].capitalize();
                 
-            var match;
+            var match = this.value.match(/[0-9]/i);
             
-            if (match = this.value.match(/[0-9]/i))
+            if (match != null)
                 charge = parseInt(match[0]);
             else
                 charge = 1;

@@ -404,6 +404,43 @@ chem.Molfile.splitonce = function (line, delim)
     return [line.slice(0,p),line.slice(p+1)];
 }
 
+chem.Molfile.splitSGroupDef = function (line)
+{
+	var split = [];
+	var braceBalance = 0;
+	for (var i = 0; i < line.length; ++i) {
+		var c = line.charAt(i);
+		if (c == '(') {
+			braceBalance++;
+		} else if (c == ')') {
+			braceBalance--;
+		} else if (c == ' ' && braceBalance == 0) {
+			split.push(line.slice(0, i));
+			line = line.slice(i+1).strip();
+			i = 0;
+		}
+	}
+	if (braceBalance != 0)
+		throw "Brace balance broken. S-group properies invalid!";
+	if (line.length > 0)
+		split.push(line.strip());
+	return split;
+}
+
+chem.Molfile.parseBracedNumberList = function (line)
+{
+	if (!line)
+		return null;
+	var list = [];
+	line = line.strip();
+	line = line.substr(1, line.length-2);
+	var split = line.split(" ");
+	for (var i = 1; i < split.length; ++i) { // skip the first element
+		list.push(split[i]-0);
+	}
+	return list;
+}
+
 chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 {
     var mf = chem.Molfile;
@@ -442,15 +479,77 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
         }
     }
 
-    if (ctabLines[shift++].strip() == "M  V30 BEGIN BOND")
+	// TODO: let sections follow in arbitrary order
+    if (ctabLines[shift++].strip() == "M  V30 BEGIN SGROUP")
     {
         while (shift < ctabLines.length) {
             line = mf.stripV30(ctabLines[shift++]).strip();
-            if (line.strip() == 'END BOND')
+            if (line.strip() == 'END SGROUP')
                 break;
             while (line[line.length-1] == '-')
                 line = (line + mf.stripV30(ctabLines[shift++])).strip();
-            ctab.bonds.add(mf.parseBondLineV3000(line));
+			console.log(line);
+			var split = mf.splitSGroupDef(line);
+			console.log(split);
+			var num = split[0] - 0;
+			var type = split[1];
+			var id = split[2] - 0;
+			var props = {};
+			for (var i = 3; i < split.length; ++i) {
+				var subsplit = split[i].split('=');
+				if (subsplit.length != 2)
+					throw "A record of form AAA=BBB or AAA=(...) expected, got '" + split + "'";
+				var name = subsplit[0];
+				if (!(name in props))
+					props[name] = [];
+				props[name].push(subsplit[1]);
+			}	
+			console.log(props);
+			var atoms = mf.parseBracedNumberList(props['ATOMS'][0]);
+			var patoms = mf.parseBracedNumberList(props['PATOMS'][0]); // TODO: make optional?
+			var xbonds = mf.parseBracedNumberList(props['XBONDS'][0]);
+//			var brkxyzStrs = props['BRKXYZ'];
+//			var brkxyz = [];
+//			for (var j = 0; j < brkxyzStrs.length; ++j)
+//				brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+			var mult = props['MULT'][0]-0;
+			var atomReductionMap = {};
+			var patomsMap = {};
+			for (var m = 0; m < patoms.length; ++m) {
+				patomsMap[patoms[m]-1] = patoms[m]-1;
+			}
+			console.log(atoms);
+			console.log(patoms);
+			for (var k = 1; k < mult; ++k) {
+				for (m = 0; m < patoms.length; ++m) {
+					ctab.atoms.get(atoms[k * patoms.length + m]-1).pos.y -= 3*k;
+					atomReductionMap[atoms[k * patoms.length + m]-1] = patoms[m]-1;
+				}
+			}
+			console.log(atomReductionMap);
+
+			var bondsToRemove = [];
+			ctab.bonds.each(function(bid, bond){
+				var beginIn = bond.begin in atomReductionMap;
+				var endIn = bond.end in atomReductionMap;
+				if (beginIn && endIn 
+					|| beginIn && bond.end in patomsMap
+					|| endIn && bond.begin in patomsMap) {
+					console.log([bond.begin, bond.end]);
+					bondsToRemove.push(bid);
+				} else if (beginIn) {
+					bond.begin = atomReductionMap[bond.begin];
+				} else if (endIn) {
+					bond.end = atomReductionMap[bond.end];
+				}
+			}, this);
+			console.log(bondsToRemove);
+			for (var b = 0; b < bondsToRemove.length; ++b) {
+				ctab.bonds.remove(bondsToRemove[b]);
+			}
+			for (var a in atomReductionMap) {
+				ctab.atoms.remove(a);
+			}
         }
     }
 

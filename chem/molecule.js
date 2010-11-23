@@ -18,6 +18,7 @@ chem.Molecule = function ()
 {
     this.atoms = new chem.Pool();
     this.bonds = new chem.Pool();
+    this.sgroups = new chem.Pool();
 }
 
 chem.Molecule.prototype.toLists = function ()
@@ -164,6 +165,7 @@ chem.Molecule.Atom = function (params)
     this.pos = params.pos || new chem.Vec2();
 
 	this.fragment = params.fragment;
+	this.sgroup = -1;
 
     // query
     this.ringBondCount = -1;

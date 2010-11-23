@@ -260,6 +260,7 @@ rnd.MolData.prototype.update = function (force)
     this.showBonds();
     this.clearMarks();
     this.drawReactionArrow();
+    this.drawSGroups();
 
     if (rnd.DEBUG)
 		this.checkFragmentConsistency();
@@ -283,6 +284,16 @@ rnd.MolData.prototype.drawReactionArrow = function ()
             this.rxnArrow.visel.add(this.rxnArrow.path, this.rxnArrow.path.getBBox());
         }
     }
+}
+
+rnd.MolData.prototype.drawSGroups = function ()
+{
+	this.molecule.sgroups.each(function (id, sgroup) {
+        var path = sgroup.data.draw(this);
+		// TODO: add the path to appropriate visel
+		// TODO: when to update sgroup?
+		// TODO: when to update reaction arrow?
+	}, this);
 }
 
 rnd.MolData.prototype.getGroupBB = function (type)

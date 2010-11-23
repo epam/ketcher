@@ -487,7 +487,8 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
             if (line.strip() == 'END SGROUP')
                 break;
             while (line[line.length-1] == '-')
-                line = (line + mf.stripV30(ctabLines[shift++])).strip();
+                line = (line.substr(0, line.length - 1) +
+					mf.stripV30(ctabLines[shift++])).strip();
 			console.log(line);
 			var split = mf.splitSGroupDef(line);
 			console.log(split);
@@ -504,29 +505,26 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 					props[name] = [];
 				props[name].push(subsplit[1]);
 			}	
-			console.log(props);
 			var atoms = mf.parseBracedNumberList(props['ATOMS'][0]);
 			var patoms = mf.parseBracedNumberList(props['PATOMS'][0]); // TODO: make optional?
 			var xbonds = mf.parseBracedNumberList(props['XBONDS'][0]);
-//			var brkxyzStrs = props['BRKXYZ'];
-//			var brkxyz = [];
-//			for (var j = 0; j < brkxyzStrs.length; ++j)
-//				brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+			var brkxyzStrs = props['BRKXYZ'];
+			var brkxyz = [];
+			for (var j = 0; j < brkxyzStrs.length; ++j)
+				brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+			console.log(brkxyz);
 			var mult = props['MULT'][0]-0;
 			var atomReductionMap = {};
 			var patomsMap = {};
 			for (var m = 0; m < patoms.length; ++m) {
 				patomsMap[patoms[m]-1] = patoms[m]-1;
 			}
-			console.log(atoms);
-			console.log(patoms);
 			for (var k = 1; k < mult; ++k) {
 				for (m = 0; m < patoms.length; ++m) {
 					ctab.atoms.get(atoms[k * patoms.length + m]-1).pos.y -= 3*k;
 					atomReductionMap[atoms[k * patoms.length + m]-1] = patoms[m]-1;
 				}
 			}
-			console.log(atomReductionMap);
 
 			var bondsToRemove = [];
 			ctab.bonds.each(function(bid, bond){
@@ -543,7 +541,6 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 					bond.end = atomReductionMap[bond.end];
 				}
 			}, this);
-			console.log(bondsToRemove);
 			for (var b = 0; b < bondsToRemove.length; ++b) {
 				ctab.bonds.remove(bondsToRemove[b]);
 			}

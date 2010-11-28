@@ -156,6 +156,9 @@ rnd.MolData.prototype.eachVisel = function (func, context) {
     }, this);
     if (this.rxnArrow != null)
         func.call(context, this.rxnArrow.visel);
+    this.molecule.sgroups.each(function(sid, sgroup){
+        func.call(context, sgroup.visel);
+    }, this);
 }
 
 rnd.MolData.prototype.translate = function (d) {
@@ -281,18 +284,23 @@ rnd.MolData.prototype.drawReactionArrow = function ()
             this.rxnArrow = {};
             this.rxnArrow.path = this.drawArrow(new chem.Vec2(centre.x - this.render.scale, centre.y), new chem.Vec2(centre.x + this.render.scale, centre.y));
             this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
-            this.rxnArrow.visel.add(this.rxnArrow.path, this.rxnArrow.path.getBBox());
+			// TODO: when to update reaction arrow?
+            this.rxnArrow.visel.add(this.rxnArrow.path, chem.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
         }
     }
 }
 
 rnd.MolData.prototype.drawSGroups = function ()
 {
+	var paper = this.render.paper;
 	this.molecule.sgroups.each(function (id, sgroup) {
+		for (var i = 0; i < sgroup.visel.paths.length; ++i) {
+			paper.remove(sgroup.visel.paths[i]);
+		}
+		sgroup.visel.clear();
         var path = sgroup.data.draw(this);
-		// TODO: add the path to appropriate visel
+		sgroup.visel.add(path, chem.Box2Abs.fromRelBox(path.getBBox()));
 		// TODO: when to update sgroup?
-		// TODO: when to update reaction arrow?
 	}, this);
 }
 

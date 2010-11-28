@@ -395,6 +395,7 @@ rnd.Render.prototype.initStyles = function ()
     this.styles.selectionStyle = {'fill':'#7f7', 'stroke':'none'};
     this.styles.selectionZoneStyle = {'fill':'#000', 'stroke':'none', 'opacity':0.0};
     this.styles.highlightStyle = {'stroke':'#0c0', 'stroke-width':0.8*settings.lineWidth};
+    this.styles.sgroupBracketStyle = {'stroke':'#000', 'stroke-width':0.5*settings.lineWidth};
     this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
 }
 

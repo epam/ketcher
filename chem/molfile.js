@@ -489,12 +489,10 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
             while (line[line.length-1] == '-')
                 line = (line.substr(0, line.length - 1) +
 					mf.stripV30(ctabLines[shift++])).strip();
-			console.log(line);
 			var split = mf.splitSGroupDef(line);
-			console.log(split);
 			var num = split[0] - 0;
 			var type = split[1];
-			var id = split[2] - 0;
+			var sgid = split[2] - 0;
 			var props = {};
 			for (var i = 3; i < split.length; ++i) {
 				var subsplit = split[i].split('=');
@@ -512,7 +510,6 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			var brkxyz = [];
 			for (var j = 0; j < brkxyzStrs.length; ++j)
 				brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
-			console.log(brkxyz);
 			var mult = props['MULT'][0]-0;
 			var atomReductionMap = {};
 			var patomsMap = {};
@@ -533,7 +530,6 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 				if (beginIn && endIn 
 					|| beginIn && bond.end in patomsMap
 					|| endIn && bond.begin in patomsMap) {
-					console.log([bond.begin, bond.end]);
 					bondsToRemove.push(bid);
 				} else if (beginIn) {
 					bond.begin = atomReductionMap[bond.begin];
@@ -547,6 +543,15 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			for (var a in atomReductionMap) {
 				ctab.atoms.remove(a);
 			}
+
+			var sg = new chem.SGroup('MUL', sgid);
+			sg.id = ctab.sgroups.add(sg);
+
+			for (var aid in patomsMap) {
+				sg.data.atoms.push(aid);
+				ctab.atoms.get(aid).sgroup = sg.id;
+			}			
+			sg.data.mul = mult;
         }
     }
 
@@ -665,7 +670,6 @@ chem.MolfileSaver.prototype.writeCTab2000Header = function ()
     this.writePaddedNumber(999, 3);
     this.writeCR(' V2000');
 }
-
 
 chem.MolfileSaver.prototype.writeCTab2000 = function ()
 {

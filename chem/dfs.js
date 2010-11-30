@@ -90,10 +90,8 @@ chem.Dfs.prototype.walk = function ()
       var v_idx = v_stack.pop();
       var parent_vertex = this.vertices[v_idx].parent_vertex;
 
-      {
-         var seq_elem = new chem.Dfs.SeqElem(v_idx, parent_vertex, this.vertices[v_idx].parent_edge);
-         this.v_seq.push(seq_elem)
-      }
+      var seq_elem = new chem.Dfs.SeqElem(v_idx, parent_vertex, this.vertices[v_idx].parent_edge);
+      this.v_seq.push(seq_elem)
    
       this.vertices[v_idx].dfs_state = 2;
 

@@ -12,15 +12,15 @@
 
 if (!window.chem || !chem.Vec2 || !chem.Pool)
 	throw new Error("Vec2, Pool should be defined first")
-chem.SGroup = function (type, id)
+chem.SGroup = function (type)
 {
 	if (!type || !(type in chem.SGroup.TYPES))
 		throw new Error("Invalid or unsupported s-group type");
-	if (typeof(id) != 'number' || id < 0)
-		throw new Error("Id should be a non-negative number");
+//	if (typeof(id) != 'number' || id < 0)
+//		throw new Error("Id should be a non-negative number");
 
 	this.type = type;
-	this.id = id;
+	this.id = -1;
 	this.data = new chem.SGroup.TYPES[type]();
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 }

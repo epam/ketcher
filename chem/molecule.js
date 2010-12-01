@@ -40,6 +40,31 @@ chem.Molecule.prototype.toLists = function ()
     return {'atoms': atomList, 'bonds': bondList};
 }
 
+chem.Molecule.prototype.clone = function ()
+{
+	var cp = new chem.Molecule();
+    var aidMap = {};
+    this.atoms.each(function(aid, atom) {
+		aidMap[aid] = cp.atoms.add(atom.clone());
+    });
+
+    var bidMap = {};
+    this.bonds.each(function(bid, bond) {
+        bidMap[bid] = cp.atoms.add(bond.clone(aidMap));
+    });
+
+    this.sgroups.each(function(sid, sg) {
+		sg = sg.clone(aidMap);
+		var id = cp.sgroups.add(sg);
+		sg.id = id;
+		for (var i = 0; i < sg.data.atoms; ++i) {
+			cp.atoms.get(sg.data.atoms[i]).sgroup = i;
+		}
+    });
+
+    return cp;
+}
+
 chem.Molecule.prototype.findBondId = function (begin, end)
 {
     var id = -1;
@@ -150,29 +175,39 @@ chem.Molecule.prototype.merge = function (mol)
 	}, this);
 }
 
+chem.ifDef = function (dst, src, prop, def)
+{
+	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+}
+
 chem.Molecule.Atom = function (params)
 {
     if (!params || !('label' in params))
         throw new Error("label must be specified!");
 
     this.label = params.label;
-    this.isotope = params.isotope || 0;
-    this.radical = params.radical || 0;
-    this.charge = params.charge || 0;
-    this.valence = params.valence || 0;
-    this.explicitValence = params.explicitValence || false;
-    this.implicitH = params.implicitH || 0;
-    this.pos = params.pos || new chem.Vec2();
+	chem.ifDef(this, params, 'isotope', 0);
+	chem.ifDef(this, params, 'radical', 0);
+	chem.ifDef(this, params, 'charge', 0);
+	chem.ifDef(this, params, 'valence', 0);
+	chem.ifDef(this, params, 'explicitValence', 0);
+	chem.ifDef(this, params, 'implicitH', 0);
+	chem.ifDef(this, params, 'pos', new chem.Vec2());
 
-	this.fragment = params.fragment;
-	this.sgroup = -1;
+	chem.ifDef(this, params, 'fragment', -1);
+	chem.ifDef(this, params, 'sgroup', -1);
 
     // query
-    this.ringBondCount = -1;
-    this.substitutionCount = -1;
-    this.unsaturatedAtom = -1;
+	chem.ifDef(this, params, 'ringBondCount', -1);
+	chem.ifDef(this, params, 'substitutionCount', -1);
+	chem.ifDef(this, params, 'unsaturatedAtom', -1);
 
-    this.atomList = params.atomList || null;
+	chem.ifDef(this, params, 'atomList', null);
+}
+
+chem.Molecule.Atom.prototype.clone = function ()
+{
+	return new chem.Atom(this);
 }
 
 chem.Molecule.Atom.prototype.isQuery =  function ()
@@ -218,9 +253,19 @@ chem.Molecule.Bond = function (params)
     this.begin = params.begin;
     this.end = params.end;
     this.type = params.type;
-    this.stereo = params.stereo || chem.Molecule.BOND.STEREO.NONE;
-    this.topology = params.topology || chem.Molecule.BOND.TOPOLOGY.EITHER;
-    this.reactingCenterStatus = !Object.isUndefined(params.reactingCenterStatus) ? params.reactingCenterStatus: 0; // TODO
+    chem.ifDef(this, params, 'stereo', chem.Molecule.BOND.STEREO.NONE);
+    chem.ifDef(this, params, 'topology', chem.Molecule.BOND.TOPOLOGY.EITHER);
+    chem.ifDef(this, params, 'reactingCenterStatus', 0);
+}
+
+chem.Molecule.Bond.clone = function (aidMap)
+{
+	var cp = new chem.Molecule.Bond(this);
+	if (aidMap) {
+		cp.begin = aidMap[cp.begin];
+		cp.end = aidMap[cp.end];
+	}
+	return cp;
 }
 
 chem.Molecule.Bond.prototype.findOtherEnd = function (i)
@@ -229,6 +274,5 @@ chem.Molecule.Bond.prototype.findOtherEnd = function (i)
         return this.end;
     if (i == this.end)
         return this.begin;
-    //return -1;
     throw new Error("bond end not found");
 }

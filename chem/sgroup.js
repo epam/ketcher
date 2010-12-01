@@ -25,12 +25,25 @@ chem.SGroup = function (type)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 }
 
+chem.SGroup.prototype.clone = function (aidMap, bidMap)
+{
+	var cp = new chem.SGroup(this.type);
+	this.id = -1;
+	cp.data.copy(this.data, aidMap, bidMap);
+}
+
 chem.SGroup.GroupMul = function () {
 	this.brackets = null;
 	this.mul = -1; // multiplication count
 	this.atoms = [];
-	this.leftBond = -1;
-	this.rightBond = -1;
+}
+
+chem.SGroup.GroupMul.prototype.copy = function (sg, aidMap, bidMap) {
+	this.brackets = sg.brackets;
+	this.mul = sg.mul; // multiplication count
+	this.atoms = [];
+	for (var i = 0; i < sg.atoms.length; ++i)
+		this.atoms.push(aidMap[sg.atoms[i]]);
 }
 
 chem.SGroup.GroupMul.prototype.draw = function (ctab) {
@@ -66,7 +79,3 @@ chem.SGroup.GroupMul.prototype.draw = function (ctab) {
 chem.SGroup.TYPES = {
 	MUL: chem.SGroup.GroupMul
 };
-
-//for (var type in chem.SGroup.TYPES) {
-//	chem.SGroup.TYPES[type].type = type;
-//}

@@ -668,10 +668,33 @@ chem.MolfileSaver = function (v3000)
         this.v3000 = false;
 }
 
+chem.MolfileSaver.prototype.prepareSGroups = function ()
+{
+	// TODO: clone molecule before changing
+	var mol = this.molecule;
+	var sgs = this.molecule.sgroups;
+	sgs.each(function(id, sg) {
+		if (sg.type == 'MUL') {
+			for (var j = 0; j < sg.mult - 1; ++j) {
+				for (var i = 0; i < sg.data.atoms.length; ++i) {
+					var aid = sg.data.atoms[i];
+					mol.atoms.
+
+					//console.log(aid);
+				}
+			}
+		}
+	});
+}
+
 chem.MolfileSaver.prototype.saveMolecule = function (molecule)
 {
+	console.log(molecule);
     this.molecule = molecule;
     this.molfile = '';
+
+	this.prepareSGroups();
+	return;
     
     this.writeHeader();
     

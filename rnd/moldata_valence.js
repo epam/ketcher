@@ -51,10 +51,11 @@ rnd.AtomData.prototype.calcValence = function (conn)
         return true;
 	}
     var elem = chem.Element.getElementByLabel(label);
-    if (elem == null)
-        throw new Error("Element \"" + label + "\" unknown");
+    if (elem == null) {
+		return true;
+	}
 
-    var groupno = chem.Element.elements.get(elem).group;
+	var groupno = chem.Element.elements.get(elem).group;
     var rad = chem.Molecule.radicalElectrons(atom.radical);
 
     this.valence = conn;

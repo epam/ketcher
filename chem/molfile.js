@@ -670,21 +670,23 @@ chem.MolfileSaver = function (v3000)
 
 chem.MolfileSaver.prototype.prepareSGroups = function ()
 {
-	// TODO: clone molecule before changing
-	var mol = this.molecule;
-	var sgs = this.molecule.sgroups;
+	var mol = this.molecule.clone();
+	var sgs = mol.sgroups;
 	sgs.each(function(id, sg) {
 		if (sg.type == 'MUL') {
 			for (var j = 0; j < sg.mult - 1; ++j) {
 				for (var i = 0; i < sg.data.atoms.length; ++i) {
 					var aid = sg.data.atoms[i];
-//					mol.atoms.
+					var atom = mol.atoms.get(aid);
 
 					//console.log(aid);
 				}
 			}
+		} else {
+			throw new Error("Can't save S-group, type not supported");
 		}
 	});
+	return mol;
 }
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule)
@@ -692,8 +694,8 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule)
 	this.molecule = molecule;
     this.molfile = '';
 
-	this.prepareSGroups();
-	return;
+	console("save");
+	molecule = this.prepareSGroups();
     
     this.writeHeader();
     

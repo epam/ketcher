@@ -52,7 +52,7 @@ chem.Molecule.prototype.clone = function ()
 
     var bidMap = {};
     this.bonds.each(function(bid, bond) {
-        bidMap[bid] = cp.atoms.add(bond.clone(aidMap));
+        bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
     });
 
     this.sgroups.each(function(sid, sg) {

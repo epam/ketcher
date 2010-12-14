@@ -387,8 +387,8 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end)
         ++shift;
     }
 	for (var sid in sGroups) {
-		console.log(sid);
-		console.log(sGroups[sid]);
+//		console.log(sid);
+//		console.log(sGroups[sid]);
 		mf.processGroup(ctab, sGroups[sid]);
 	}
     return props;
@@ -598,20 +598,20 @@ chem.Molfile.processGroup = function (ctab, data) /* chem.SGroup */
 	sg.id = ctab.sgroups.add(sg);
 	
 	var atomReductionMap = {};
-	console.log(data);
+//	console.log(data);
 	var patoms = data.patoms;
 	var patomsMap = {};
 	for (var m = 0; m < patoms.length; ++m) {
 		patomsMap[patoms[m]-1] = patoms[m]-1;
 	}
-	console.log(patomsMap);
+//	console.log(patomsMap);
 	for (var k = 1; k < data.mult; ++k) {
 		for (m = 0; m < patoms.length; ++m) {
 			ctab.atoms.get(data.atoms[k * patoms.length + m]-1).pos.y -= 3*k;
 			atomReductionMap[data.atoms[k * patoms.length + m]-1] = patoms[m]-1;
 		}
 	}
-	console.log(atomReductionMap);
+//	console.log(atomReductionMap);
 
 	var bondsToRemove = [];
 	ctab.bonds.each(function(bid, bond){
@@ -627,7 +627,7 @@ chem.Molfile.processGroup = function (ctab, data) /* chem.SGroup */
 			bond.end = atomReductionMap[bond.end];
 		}
 	}, this);
-	console.log(bondsToRemove);
+//	console.log(bondsToRemove);
 	for (var b = 0; b < bondsToRemove.length; ++b) {
 		ctab.bonds.remove(bondsToRemove[b]);
 	}
@@ -678,7 +678,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 			for (var j = 0; j < sg.mult - 1; ++j) {
 				for (var i = 0; i < sg.data.atoms.length; ++i) {
 					var aid = sg.data.atoms[i];
-					mol.atoms.
+//					mol.atoms.
 
 					//console.log(aid);
 				}
@@ -689,8 +689,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule)
 {
-	console.log(molecule);
-    this.molecule = molecule;
+	this.molecule = molecule;
     this.molfile = '';
 
 	this.prepareSGroups();

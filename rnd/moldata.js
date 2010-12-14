@@ -543,7 +543,9 @@ rnd.MolData.prototype.getAvgClosestAtomDistance = function ()
 rnd.MolData.prototype.coordProject = function()
 {
     this.atoms.each(function (aid, atom) {// project coordinates
-        this._atomSetPos(aid, new chem.Vec2(atom.a.pos.x, atom.a.pos.y));
+		console.log(aid);
+		console.log(atom.a.pos.toString());
+		this._atomSetPos(aid, new chem.Vec2(atom.a.pos.x, atom.a.pos.y));
     }, this);
 }
 

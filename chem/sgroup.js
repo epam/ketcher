@@ -30,6 +30,7 @@ chem.SGroup.prototype.clone = function (aidMap, bidMap)
 	var cp = new chem.SGroup(this.type);
 	this.id = -1;
 	cp.data.copy(this.data, aidMap, bidMap);
+	return cp;
 }
 
 chem.SGroup.GroupMul = function () {

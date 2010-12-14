@@ -47,6 +47,8 @@ chem.Molecule.prototype.clone = function ()
     this.atoms.each(function(aid, atom) {
 		aidMap[aid] = cp.atoms.add(atom.clone());
     });
+	console.log(aidMap);
+	console.log(cp.atoms.count());
 
     var bidMap = {};
     this.bonds.each(function(bid, bond) {
@@ -54,7 +56,9 @@ chem.Molecule.prototype.clone = function ()
     });
 
     this.sgroups.each(function(sid, sg) {
+		console.log(sg);
 		sg = sg.clone(aidMap);
+		console.log(sg);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.data.atoms; ++i) {
@@ -207,7 +211,7 @@ chem.Molecule.Atom = function (params)
 
 chem.Molecule.Atom.prototype.clone = function ()
 {
-	return new chem.Atom(this);
+	return new chem.Molecule.Atom(this);
 }
 
 chem.Molecule.Atom.prototype.isQuery =  function ()
@@ -258,7 +262,7 @@ chem.Molecule.Bond = function (params)
     chem.ifDef(this, params, 'reactingCenterStatus', 0);
 }
 
-chem.Molecule.Bond.clone = function (aidMap)
+chem.Molecule.Bond.prototype.clone = function (aidMap)
 {
 	var cp = new chem.Molecule.Bond(this);
 	if (aidMap) {

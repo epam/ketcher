@@ -670,7 +670,7 @@ chem.MolfileSaver = function (v3000)
 
 chem.MolfileSaver.prototype.prepareSGroups = function ()
 {
-	var mol = this.molecule.clone();
+	var mol = this.molecule;
 	var sgs = mol.sgroups;
 	sgs.each(function(id, sg) {
 		if (sg.type == 'MUL') {
@@ -678,8 +678,8 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 				for (var i = 0; i < sg.data.atoms.length; ++i) {
 					var aid = sg.data.atoms[i];
 					var atom = mol.atoms.get(aid);
-
-					//console.log(aid);
+					var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
+					mol.atoms.get(aid2).pos.y += 3;
 				}
 			}
 		} else {
@@ -691,11 +691,10 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule)
 {
-	this.molecule = molecule;
+	this.molecule = molecule.clone();
     this.molfile = '';
 
-	console("save");
-	molecule = this.prepareSGroups();
+	this.prepareSGroups();
     
     this.writeHeader();
     

@@ -47,8 +47,6 @@ chem.Molecule.prototype.clone = function ()
     this.atoms.each(function(aid, atom) {
 		aidMap[aid] = cp.atoms.add(atom.clone());
     });
-	console.log(aidMap);
-	console.log(cp.atoms.count());
 
     var bidMap = {};
     this.bonds.each(function(bid, bond) {
@@ -56,9 +54,7 @@ chem.Molecule.prototype.clone = function ()
     });
 
     this.sgroups.each(function(sid, sg) {
-		console.log(sg);
 		sg = sg.clone(aidMap);
-		console.log(sg);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.data.atoms; ++i) {

@@ -240,6 +240,13 @@ rnd.MolData.prototype.update = function (force)
         this.clearVisel(this.bonds.get(id).visel);
         this.structChanged |= this.bondsChanged[id] > 0;
     }
+	if (this.rxnArrow != null)
+        this.clearVisel(this.rxnArrow.visel);
+	// TODO: when to update sgroup?
+    this.molecule.sgroups.each(function(sid, sgroup){
+        this.clearVisel(sgroup.visel);
+    }, this);
+
 
     if (force) { // clear and recreate all half-bonds
         this.initHalfBonds();
@@ -264,6 +271,7 @@ rnd.MolData.prototype.update = function (force)
     this.clearMarks();
     this.drawReactionArrow();
     this.drawSGroups();
+	alert("wait");
 
     if (rnd.DEBUG)
 		this.checkFragmentConsistency();
@@ -294,13 +302,8 @@ rnd.MolData.prototype.drawSGroups = function ()
 {
 	var paper = this.render.paper;
 	this.molecule.sgroups.each(function (id, sgroup) {
-		for (var i = 0; i < sgroup.visel.paths.length; ++i) {
-			paper.remove(sgroup.visel.paths[i]);
-		}
-		sgroup.visel.clear();
         var path = sgroup.data.draw(this);
-		sgroup.visel.add(path, chem.Box2Abs.fromRelBox(path.getBBox()));
-		// TODO: when to update sgroup?
+		this.addSGroupPath('data', sgroup.visel, path);
 	}, this);
 }
 

@@ -683,6 +683,16 @@ rnd.MolData.layerMap = {
     'atom-selection' : 6
 }
 
+rnd.MolData.prototype.addSGroupPath = function (group, visel, path)
+{
+    var offset = this.render.offset;
+    if (offset != null)
+        path.translate(offset.x, offset.y);
+	var bb = chem.Box2Abs.fromRelBox(path.getBBox());
+    visel.add(path, bb);
+    this.insertInLayer(rnd.MolData.layerMap[group], path);
+}
+
 rnd.MolData.prototype.addAtomPath = function (group, aid, path, rbb)
 {
     var visel = this.atoms.get(aid).visel;

@@ -271,7 +271,6 @@ rnd.MolData.prototype.update = function (force)
     this.clearMarks();
     this.drawReactionArrow();
     this.drawSGroups();
-	alert("wait");
 
     if (rnd.DEBUG)
 		this.checkFragmentConsistency();

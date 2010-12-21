@@ -670,6 +670,7 @@ chem.MolfileSaver = function (v3000)
 
 chem.MolfileSaver.prototype.prepareSGroups = function ()
 {
+    /*
 	// TODO: clone molecule before changing
 	var mol = this.molecule;
 	var sgs = this.molecule.sgroups;
@@ -685,6 +686,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 			}
 		}
 	});
+    */
 }
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule)

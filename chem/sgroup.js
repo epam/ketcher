@@ -77,6 +77,78 @@ chem.SGroup.GroupMul.prototype.draw = function (ctab) {
 	return set;
 }
 
+chem.SGroup.GroupMul.prototype.prepareForSaving = function (mol) {
+	var i,j;
+	this.aset = {};
+	for (i = 0; i < this.atoms.length; ++i) {
+		this.aset[this.atoms[i]] = 1;
+	}
+	this.inBonds = [];
+	this.xBonds = [];
+
+	mol.bonds.each(function(bid, bond){
+		if (this.aset[bond.begin] && this.aset[bond.end])
+			this.inBonds.push(bid);
+		else if (this.aset[bond.begin] || this.aset[bond.end])
+			this.xBonds.push(bid);
+	}, this);
+	if (this.xBonds.length != 0 && this.xBonds.length != 2)
+		throw new Error("Unsupported cross-bonds number");
+
+	var xAtom1 = -1,
+		xAtom2 = -1;
+	var crossBond = null;
+	if (this.xBonds.length == 2) {
+		var bond1 = mol.bonds.get(this.xBonds[0]);
+		if (this.aset[bond1.begin]) {
+			xAtom1 = bond1.begin;
+		} else {
+			xAtom1 = bond1.end;
+		}
+		var bond2 = mol.bonds.get(this.xBonds[1]);
+		if (this.aset[bond2.begin]) {
+			xAtom2 = bond2.begin;
+		} else {
+			xAtom2 = bond2.end;
+		}
+		crossBond = bond2;
+	}
+
+	var amap = null;
+	var tailAtom = xAtom1;
+	for (j = 0; j < this.mul - 1; ++j) {
+		amap = {};
+		for (i = 0; i < this.atoms.length; ++i) {
+			var aid = this.atoms[i];
+			var atom = mol.atoms.get(aid);
+			var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
+			amap[aid] = aid2;
+			mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
+		}
+		for (i = 0; i < this.inBonds.length; ++i) {
+			var bond = mol.bonds.get(this.inBonds[i]);
+			var newBond = new chem.Molecule.Bond(bond);
+			newBond.begin = amap[newBond.begin];
+			newBond.end = amap[newBond.end];
+			mol.bonds.add(newBond);
+		}
+		if (crossBond != null) {
+			var newCrossBond = new chem.Molecule.Bond(crossBond);
+			newCrossBond.begin = tailAtom;
+			newCrossBond.end = amap[xAtom2];
+			mol.bonds.add(newCrossBond);
+			tailAtom = amap[xAtom1];
+		}
+	}
+	if (tailAtom >= 0) {
+		var xBond2 = mol.bonds.get(this.xBonds[0]);
+		if (xBond2.begin == xAtom1)
+			xBond2.begin = tailAtom;
+		else
+			xBond2.end = tailAtom;
+	}
+}
+
 chem.SGroup.TYPES = {
 	MUL: chem.SGroup.GroupMul
 };

@@ -672,80 +672,8 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 {
 	var mol = this.molecule;
 	var sgs = mol.sgroups;
-	var i, j;
 	sgs.each(function(id, sg) {
-		if (sg.type == 'MUL') {
-			sg.data.aset = {};
-			for (i = 0; i < sg.data.atoms.length; ++i) {
-				aset[sg.data.atoms[i]] = 1;
-			}
-			sg.data.inBonds = [];
-			sg.data.xBonds = [];
-
-			mol.bonds.each(function(bid, bond){
-				if (bond.begin in aset && bond.end in aset)
-					inBonds.push(bid);
-				else if (bond.begin in aset || bond.end in aset)
-					xBonds.push(bid);
-			});
-			if (xBonds.length != 0 && xBonds.length != 2)
-				throw new Error("Unsupported cross-bonds number");
-
-			var xAtom1 = -1,
-				xAtom2 = -1;
-			var crossBond = null;
-			if (xBonds.length == 2) {
-				var bond1 = mol.bonds.get(xBonds[0]);
-				if (bond1.begin in aset) {
-					xAtom1 = bond1.begin;
-				} else {
-					xAtom1 = bond1.end;
-				}
-				var bond2 = mol.bonds.get(xBonds[1]);
-				if (bond2.begin in aset) {
-					xAtom2 = bond2.begin;
-				} else {
-					xAtom2 = bond2.end;
-				}
-				crossBond = bond2;
-			}
-
-			var amap = null;
-			var tailAtom = xAtom1;
-			for (j = 0; j < sg.data.mul - 1; ++j) {
-				amap = {};
-				for (i = 0; i < sg.data.atoms.length; ++i) {
-					var aid = sg.data.atoms[i];
-					var atom = mol.atoms.get(aid);
-					var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
-					amap[aid] = aid2;
-					//mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
-				}
-				for (i = 0; i < inBonds.length; ++i) {
-					var bond = mol.bonds.get(inBonds[i]);
-					var newBond = new chem.Molecule.Bond(bond);
-					newBond.begin = amap[newBond.begin];
-					newBond.end = amap[newBond.end];
-					mol.bonds.add(newBond);
-				}
-				if (crossBond != null) {
-					var newCrossBond = new chem.Molecule.Bond(crossBond);
-					newCrossBond.begin = tailAtom;
-					newCrossBond.end = amap[xAtom2];
-					mol.bonds.add(newCrossBond);
-					tailAtom = amap[xAtom1];
-				}
-			}
-			if (tailAtom >= 0) {
-				var xBond2 = mol.bonds.get(xBonds[0]);
-				if (xBond2.begin == xAtom1)
-					xBond2.begin = tailAtom;
-				else
-					xBond2.end = tailAtom;
-			}
-		} else {
-			throw new Error("Can't save S-group, type not supported");
-		}
+		sg.data.prepareForSaving(mol);
 	});
 	return mol;
 }

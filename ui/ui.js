@@ -759,6 +759,7 @@ ui.onKeyPress_InputLabel = function (event)
         
         var label = '';
         var charge = 0;
+        var value_arr = this.value.toArray();
         
         if (this.value == '*') 
         {
@@ -770,9 +771,9 @@ ui.onKeyPress_InputLabel = function (event)
             if (this.value.length == 2)
                 charge = 1;
             else
-                charge = parseInt(this.value[1]);
+                charge = parseInt(value_arr[1]);
             
-            if (this.value[2] == '-')
+            if (value_arr[2] == '-')
                 charge *= -1;
         } else if (this.value.match(/^[A-Z]{1,2}$/i))
         {
@@ -782,13 +783,13 @@ ui.onKeyPress_InputLabel = function (event)
             if (this.value.match(/^[A-Z]{2}/i))
                 label = this.value.substr(0, 2).capitalize();
             else
-                label = this.value[0].capitalize();
+                label = value_arr[0].capitalize();
         } else if (this.value.match(/^[A-Z]{1,2}[1-9]?[+-]$/i))
         {
             if (this.value.match(/^[A-Z]{2}/i))
                 label = this.value.substr(0, 2).capitalize();
             else
-                label = this.value[0].capitalize();
+                label = value_arr[0].capitalize();
                 
             var match = this.value.match(/[0-9]/i);
             
@@ -797,7 +798,7 @@ ui.onKeyPress_InputLabel = function (event)
             else
                 charge = 1;
             
-            if (this.value[this.value.length - 1] == '-')
+            if (value_arr[this.value.length - 1] == '-')
                 charge *= -1;
         }
             

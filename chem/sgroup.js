@@ -77,19 +77,41 @@ chem.SGroup.GroupMul.prototype.draw = function (ctab) {
 	return set;
 }
 
+chem.SGroup.numberArrayToString = function (numbers, map) {
+	var str = chem.stringPadded(numbers.length, 3);
+	for (var i = 0; i < numbers.length; ++i) {
+		str += ' ' + chem.stringPadded(map[numbers[i]], 3);
+	}
+	return str;
+}
+
+chem.SGroup.GroupMul.prototype.saveToMolfile = function (id, mol, atomMap, bondMap) {
+	var idstr = chem.stringPadded(id, 3);
+
+	// TODO: check that multiple lines of atoms are read correctly
+	// TODO: split into multiple lines if too many
+	var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.atomSet), atomMap);
+	var spaLine = 'M  SPA ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.parentAtomSet), atomMap);
+	var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.xBonds, bondMap);
+	var smtLine = 'M  SMT ' + idstr + ' ' + this.mul;
+	return [salLine, sblLine, spaLine, smtLine].join('\n');
+}
+
 chem.SGroup.GroupMul.prototype.prepareForSaving = function (mol) {
 	var i,j;
-	this.aset = {};
+	this.parentAtomSet = {};
+	this.atomSet = {};
 	for (i = 0; i < this.atoms.length; ++i) {
-		this.aset[this.atoms[i]] = 1;
+		this.parentAtomSet[this.atoms[i]] = 1;
+		this.atomSet[this.atoms[i]] = 1;
 	}
 	this.inBonds = [];
 	this.xBonds = [];
 
 	mol.bonds.each(function(bid, bond){
-		if (this.aset[bond.begin] && this.aset[bond.end])
+		if (this.parentAtomSet[bond.begin] && this.parentAtomSet[bond.end])
 			this.inBonds.push(bid);
-		else if (this.aset[bond.begin] || this.aset[bond.end])
+		else if (this.parentAtomSet[bond.begin] || this.parentAtomSet[bond.end])
 			this.xBonds.push(bid);
 	}, this);
 	if (this.xBonds.length != 0 && this.xBonds.length != 2)
@@ -100,13 +122,13 @@ chem.SGroup.GroupMul.prototype.prepareForSaving = function (mol) {
 	var crossBond = null;
 	if (this.xBonds.length == 2) {
 		var bond1 = mol.bonds.get(this.xBonds[0]);
-		if (this.aset[bond1.begin]) {
+		if (this.parentAtomSet[bond1.begin]) {
 			xAtom1 = bond1.begin;
 		} else {
 			xAtom1 = bond1.end;
 		}
 		var bond2 = mol.bonds.get(this.xBonds[1]);
-		if (this.aset[bond2.begin]) {
+		if (this.parentAtomSet[bond2.begin]) {
 			xAtom2 = bond2.begin;
 		} else {
 			xAtom2 = bond2.end;
@@ -122,6 +144,7 @@ chem.SGroup.GroupMul.prototype.prepareForSaving = function (mol) {
 			var aid = this.atoms[i];
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
+			this.atomSet[aid2] = 1;
 			amap[aid] = aid2;
 			mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
 		}

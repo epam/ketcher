@@ -85,3 +85,23 @@ chem.getElementTextContent = function (element)
     else
         throw Error("Browser unrecognized");
 }
+
+chem.stringPadded = function (string, width, leftAligned) {
+	string += '';
+	var space = '';
+	while (string.length + space.length < width)
+		space += ' ';
+	if (leftAligned)
+		return string + space;
+	else
+		return space + string;
+}
+
+chem.idList = function (object) {
+	var list = [];
+	for (var aid in object) {
+		list.push(aid);
+	}
+	return list;
+}
+

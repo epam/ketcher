@@ -910,54 +910,56 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		}
     }
 
-	this.write('M  STY');
 	var sgmap = {}, cnt = 1;
 	this.molecule.sgroups.each(function (id) {
 		sgmap[id] = cnt++;
 	});
-	this.writePaddedNumber(cnt - 1, 3);
-	this.molecule.sgroups.each(function (id, sgroup) {
-		this.writeWhiteSpace(1);
-		this.writePaddedNumber(sgmap[id], 3);
-		this.writeWhiteSpace(1);
-		this.writePadded(sgroup.type, 3);
-	}, this);
-	this.writeCR();
-
-	// TODO: write subtype, M SST
-
-	this.write('M  SLB');
-	this.writePaddedNumber(cnt - 1, 3);
-	this.molecule.sgroups.each(function (id, sgroup) {
-		this.writeWhiteSpace(1);
-		this.writePaddedNumber(sgmap[id], 3);
-		this.writeWhiteSpace(1);
-		this.writePaddedNumber(sgmap[id], 3);
-	}, this);
-	this.writeCR();
-
-	// connectivity
-	var connectivity = '';
-	var connectivityCnt = 0;
-	this.molecule.sgroups.each(function (id, sgroup) {
-		if (sgroup.data.connectivity) {
-			connectivity += ' ';
-			connectivity += chem.stringPadded(sgmap[id].toString(), 3);
-			connectivity += ' ';
-			connectivity += chem.stringPadded(sgroup.data.connectivity, 3, true);
-			connectivityCnt++;
-		}
-	}, this);
-	if (connectivityCnt > 0) {
-		this.write('M  SCN');
-		this.writePaddedNumber(connectivityCnt.length, 3);
-		this.write(connectivity);
+	if (cnt > 1) {
+		this.write('M  STY');
+		this.writePaddedNumber(cnt - 1, 3);
+		this.molecule.sgroups.each(function (id, sgroup) {
+			this.writeWhiteSpace(1);
+			this.writePaddedNumber(sgmap[id], 3);
+			this.writeWhiteSpace(1);
+			this.writePadded(sgroup.type, 3);
+		}, this);
 		this.writeCR();
-	}
 
-	this.molecule.sgroups.each(function (id, sgroup) {
-		this.writeCR(sgroup.data.saveToMolfile(sgmap[id], this.molecule, this.mapping, this.bondMapping));
-	}, this);
+		// TODO: write subtype, M SST
+
+		this.write('M  SLB');
+		this.writePaddedNumber(cnt - 1, 3);
+		this.molecule.sgroups.each(function (id, sgroup) {
+			this.writeWhiteSpace(1);
+			this.writePaddedNumber(sgmap[id], 3);
+			this.writeWhiteSpace(1);
+			this.writePaddedNumber(sgmap[id], 3);
+		}, this);
+		this.writeCR();
+
+		// connectivity
+		var connectivity = '';
+		var connectivityCnt = 0;
+		this.molecule.sgroups.each(function (id, sgroup) {
+			if (sgroup.data.connectivity) {
+				connectivity += ' ';
+				connectivity += chem.stringPadded(sgmap[id].toString(), 3);
+				connectivity += ' ';
+				connectivity += chem.stringPadded(sgroup.data.connectivity, 3, true);
+				connectivityCnt++;
+			}
+		}, this);
+		if (connectivityCnt > 0) {
+			this.write('M  SCN');
+			this.writePaddedNumber(connectivityCnt.length, 3);
+			this.write(connectivity);
+			this.writeCR();
+		}
+
+		this.molecule.sgroups.each(function (id, sgroup) {
+			this.writeCR(sgroup.data.saveToMolfile(sgmap[id], this.molecule, this.mapping, this.bondMapping));
+		}, this);
+	}
 
     // TODO: write M  RAD
     // TODO: write M  APO

@@ -192,8 +192,10 @@ chem.Molecule.Atom = function (params)
 	chem.ifDef(this, params, 'valence', 0);
 	chem.ifDef(this, params, 'explicitValence', 0);
 	chem.ifDef(this, params, 'implicitH', 0);
-	chem.ifDef(this, params, 'pos', new chem.Vec2());
-	//this.pos = new chem.Vec2(params.pos);
+	if (!Object.isUndefined(params.pos))
+		this.pos = new chem.Vec2(params.pos);
+	else
+		this.pos = new chem.Vec2();
 
 	chem.ifDef(this, params, 'fragment', -1);
 	chem.ifDef(this, params, 'sgroup', -1);

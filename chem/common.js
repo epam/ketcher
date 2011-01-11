@@ -105,3 +105,10 @@ chem.idList = function (object) {
 	return list;
 }
 
+chem.mapArray = function (src, map) {
+	var dst = [];
+	for (var i = 0; i < src.length; ++i) {
+		dst.push(map[src[i]]);
+	}
+	return dst;
+}

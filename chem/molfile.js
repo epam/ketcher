@@ -667,7 +667,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function ()
 	var mol = this.molecule;
 	var sgs = mol.sgroups;
 	sgs.each(function(id, sg) {
-		sg.data.prepareForSaving(mol);
+		sg.prepareForSaving(mol);
 	});
 	return mol;
 }
@@ -957,7 +957,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		}
 
 		this.molecule.sgroups.each(function (id, sgroup) {
-			this.writeCR(sgroup.data.saveToMolfile(sgmap[id], this.molecule, this.mapping, this.bondMapping));
+			this.writeCR(sgroup.saveToMolfile(sgmap, this.mapping, this.bondMapping));
 		}, this);
 	}
 

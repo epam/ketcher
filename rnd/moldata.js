@@ -299,9 +299,8 @@ rnd.MolData.prototype.drawReactionArrow = function ()
 
 rnd.MolData.prototype.drawSGroups = function ()
 {
-	var paper = this.render.paper;
 	this.molecule.sgroups.each(function (id, sgroup) {
-        var path = sgroup.data.draw(this);
+        var path = sgroup.draw(this);
 		this.addSGroupPath('data', sgroup.visel, path);
 	}, this);
 }

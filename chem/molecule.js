@@ -54,7 +54,7 @@ chem.Molecule.prototype.clone = function ()
     });
 
     this.sgroups.each(function(sid, sg) {
-		sg = sg.clone(aidMap);
+		sg = chem.SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.data.atoms; ++i) {

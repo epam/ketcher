@@ -28,12 +28,11 @@ chem.SGroup = function (type)
 	this.label = -1;
 
 	this.data = {
-		'brackets': null,
 		'mul': -1, // multiplication count for MUL group
 		'atoms': [],
 		'patoms' : [],
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
-		'xbonds' : []
+		'bonds' : []
 	}
 }
 
@@ -45,11 +44,19 @@ chem.SGroup.numberArrayToString = function (numbers, map) {
 	return str;
 }
 
+chem.SGroup.addGroup = function (mol, sg)
+{
+	// add the group to the molecule
+	sg.id = mol.sgroups.add(sg);
+
+	// apply type-specific post-processing
+	sg.postLoad(mol);
+}
+
 chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 {
 	var cp = new chem.SGroup(sgroup.type);
 
-	cp.data.brackets = sgroup.data.brackets;
 	cp.data.mul = sgroup.data.mul;
 	cp.data.atoms = chem.mapArray(sgroup.data.atoms, aidMap);
 	cp.data.connectivity = sgroup.data.connectivity;
@@ -63,7 +70,6 @@ chem.SGroup.GroupMul = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		// TODO: delete the paths
 		var bb = null;
 		for (var i = 0; i < this.data.atoms.length; ++i) {
 			var aid = this.data.atoms[i];
@@ -175,8 +181,55 @@ chem.SGroup.GroupMul = {
 			else
 				xBond2.end = tailAtom;
 		}
+	},
+
+	postLoad: function (mol)
+	{
+		var atomReductionMap = {};
+		var patoms = this.data.patoms;
+		var patomsMap = chem.identityMap(patoms);
+		// mark repetitions for removal
+		for (var k = 1; k < this.data.mul; ++k) {
+			for (var m = 0; m < patoms.length; ++m) {
+				var raid = this.data.atoms[k * patoms.length + m];
+				mol.atoms.get(raid).pos.y -= 3*k; // for debugging purposes
+				atomReductionMap[raid] = patoms[m]; // "merge" atom in parent
+			}
+		}
+
+		var bondsToRemove = [];
+		mol.bonds.each(function(bid, bond){
+			var beginIn = bond.begin in atomReductionMap;
+			var endIn = bond.end in atomReductionMap;
+			// if both adjacent atoms of a bond are to be merged, remove it
+			if (beginIn && endIn
+				|| beginIn && bond.end in patomsMap
+				|| endIn && bond.begin in patomsMap) {
+				bondsToRemove.push(bid);
+			// if just one atom is merged, modify the bond accordingly
+			} else if (beginIn) {
+				bond.begin = atomReductionMap[bond.begin];
+			} else if (endIn) {
+				bond.end = atomReductionMap[bond.end];
+			}
+		}, this);
+
+		// apply removal lists
+		for (var b = 0; b < bondsToRemove.length; ++b) {
+			mol.bonds.remove(bondsToRemove[b]);
+		}
+		for (var a in atomReductionMap) {
+			mol.atoms.remove(a);
+		}
+		this.data.atoms = patoms;
+		this.data.patoms = null;
 	}
 }
+
+chem.SGroup.GroupSru = {
+}
+
 chem.SGroup.TYPES = {
-	MUL: chem.SGroup.GroupMul
+	'MUL': chem.SGroup.GroupMul,
+	'SRU': chem.SGroup.GroupSru
 };

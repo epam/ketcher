@@ -175,11 +175,6 @@ chem.Molecule.prototype.merge = function (mol)
 	}, this);
 }
 
-chem.ifDef = function (dst, src, prop, def)
-{
-	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
-}
-
 chem.Molecule.Atom = function (params)
 {
     if (!params || !('label' in params))

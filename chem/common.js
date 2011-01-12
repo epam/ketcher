@@ -112,3 +112,20 @@ chem.mapArray = function (src, map) {
 	}
 	return dst;
 }
+
+chem.apply = function (array, func) {
+	for (var i = 0; i < array.length; ++i)
+		array[i] = func(array[i]);
+}
+
+chem.ifDef = function (dst, src, prop, def)
+{
+	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+}
+
+chem.identityMap = function (array) {
+	var map = {};
+	for (var i = 0; i < array.length; ++i)
+		map[array[i]] = array[i];
+	return map;
+}

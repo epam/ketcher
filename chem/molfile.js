@@ -915,8 +915,8 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		}, this);
 		if (connectivityCnt > 0) {
 			this.write('M  SCN');
-			this.writePaddedNumber(connectivityCnt.length, 3);
-			this.write(connectivity);
+			this.writePaddedNumber(connectivityCnt, 3);
+			this.write(connectivity.toUpperCase());
 			this.writeCR();
 		}
 

@@ -86,7 +86,13 @@ chem.SGroup.GroupMul = {
 			var aid = this.data.atoms[i];
 			var atom = ctab.atoms.get(aid);
 			var bba = atom.visel.boundingBox;
-			bb = bb == null ? bba : chem.Box2Abs.union(bb, bba);
+			if (bba == null) {
+				var p = atom.ps;
+				bba = new chem.Box2Abs(p,p);
+				var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
+				bba = bba.extend(ext, ext);
+			}
+			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
 		}
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		bb = bb.extend(vext, vext);
@@ -241,8 +247,13 @@ chem.SGroup.GroupSru = {
 			var aid = this.data.atoms[i];
 			var atom = ctab.atoms.get(aid);
 			var bba = atom.visel.boundingBox;
-			if (bba != null)
-				bb = bb == null ? bba : chem.Box2Abs.union(bb, bba);
+			if (bba == null) {
+				var p = atom.ps;
+				bba = new chem.Box2Abs(p,p);
+				var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
+				bba = bba.extend(ext, ext);
+			}
+			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
 		}
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		bb = bb.extend(vext, vext);

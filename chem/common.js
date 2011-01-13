@@ -105,3 +105,27 @@ chem.idList = function (object) {
 	return list;
 }
 
+chem.mapArray = function (src, map) {
+	var dst = [];
+	for (var i = 0; i < src.length; ++i) {
+		dst.push(map[src[i]]);
+	}
+	return dst;
+}
+
+chem.apply = function (array, func) {
+	for (var i = 0; i < array.length; ++i)
+		array[i] = func(array[i]);
+}
+
+chem.ifDef = function (dst, src, prop, def)
+{
+	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+}
+
+chem.identityMap = function (array) {
+	var map = {};
+	for (var i = 0; i < array.length; ++i)
+		map[array[i]] = array[i];
+	return map;
+}

@@ -54,7 +54,7 @@ chem.Molecule.prototype.clone = function ()
     });
 
     this.sgroups.each(function(sid, sg) {
-		sg = sg.clone(aidMap);
+		sg = chem.SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.data.atoms; ++i) {
@@ -173,11 +173,6 @@ chem.Molecule.prototype.merge = function (mol)
 		params.end = aidMap[bond.end];
 		this.bonds.add(params);
 	}, this);
-}
-
-chem.ifDef = function (dst, src, prop, def)
-{
-	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 }
 
 chem.Molecule.Atom = function (params)

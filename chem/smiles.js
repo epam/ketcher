@@ -30,12 +30,15 @@ chem.SmilesSaver = function (render)
     this.ignore_errors = false;
 }
 
-chem.SmilesSaver._Atom = function ()
+chem.SmilesSaver._Atom = function (h_count)
 {
     this.neighbours = new Array();  // Array of integer pairs {a, b}
     this.aromatic = false;          // has only aromatic bonds
     this.chirality = 0;             // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
     this.branch_cnt = 0;            // runs from 0 to (branches - 1)
+    this.paren_written = false;
+    this.h_count = h_count;
+    this.parent = -1;
 };
 
 chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
@@ -49,15 +52,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     molecule.atoms.each(function (aid, atom)
     {
-        this.atoms[aid] = 
-        {
-            neighbours: new Array(),  // Array of integer pairs {a, b}
-            aromatic:   false,        // has only aromatic bonds
-            chirality:  0,            // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
-            branch_cnt: 0,            // runs from 0 to (branches - 1)
-            paren_written: false,
-            h_count:    atom.implicitH
-        };
+        this.atoms[aid] = new chem.SmilesSaver._Atom(atom.implicitH);
     }, this);
 
     // Detect atoms that have aromatic bonds and count neighbours
@@ -78,6 +73,51 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
     var walk = new chem.Dfs(molecule, this.atoms);
    
     walk.walk();
+    
+    this.atoms.each(function (atom)
+    {
+        atom.neighbours.clear();
+    }, this);
+
+    // fill up neighbor lists for the stereocenters calculation
+    for (i = 0; i < walk.v_seq.length; i++)
+    {
+        var seq_el = walk.v_seq[i];
+        var v_idx = seq_el.idx;
+        var e_idx = seq_el.parent_edge;
+        var v_prev_idx = seq_el.parent_vertex;
+        
+        if (e_idx >= 0)
+        {
+            var atom = this.atoms[v_idx];
+ 
+            var opening_cycles = walk.numOpeningCycles(e_idx);
+ 
+            for (j = 0; j < opening_cycles; j++)
+                this.atoms[v_prev_idx].neighbours.push({aid: -1, bid: -1});
+ 
+            if (walk.edgeClosingCycle(e_idx))
+            {
+                for (k = 0; k < atom.neighbours.length; k++)
+                {
+                    if (atom.neighbours[k].aid == -1)
+                    {
+                        atom.neighbours[k].aid = v_prev_idx;
+                        atom.neighbours[k].bid = e_idx;
+                        break;
+                    }
+                }
+                if (k == atom.neighbours.length)
+                    throw new Error("internal: can not put closing bond to its place");
+            }
+            else
+            {
+               atom.neighbours.push({aid: v_prev_idx, bid: e_idx});
+               atom.parent = v_prev_idx;
+            }
+            this.atoms[v_prev_idx].neighbours.push({aid: v_idx, bid: e_idx});
+        }
+    }
    
     // detect chiral configurations
     var stereocenters = new chem.Stereocenters(molecule, function (idx)
@@ -106,53 +146,33 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
         var pyramid_mapping = new Array(4);
         var counter = 0;
-        var used = new Array();
 
-        for (i = 0; i < walk.v_seq.length; i++)
-        {
-            var seq_el = walk.v_seq[i];
-            var v_idx = seq_el.idx;
-            var e_idx = seq_el.parent_edge;
-
-            if (e_idx >= 0 && walk.edgeClosingCycle(e_idx))
-                continue;
-
-            if (v_idx == atom_idx)
-            {
-                if (implicit_h_idx != -1)
-                    pyramid_mapping[counter++] = implicit_h_idx;
-
-                for (j = i + 1; j < walk.v_seq.length; j++)
+        var atom = this.atoms[atom_idx];
+  
+        if (atom.parent != -1)
+            for (k = 0; k < 4; k++)
+                if (sc.pyramid[k] == atom.parent)
                 {
-                    if (walk.v_seq[j].idx == atom_idx) // closure?
-                    {
-                        var idx = molecule.bonds.get(walk.v_seq[j].parent_edge).findOtherEnd(atom_idx);
-
-                        used[idx] = true;
-
-                        for (k = 0; k < 4; k++)
-                            if (sc.pyramid[k] == idx)
-                            {
-                                if (counter >= 4)
-                                    throw new Error("internal: pyramid overflow");
-
-                                pyramid_mapping[counter++] = k;
-                                break;
-                            }
-                     }
+                    pyramid_mapping[counter++] = k;
+                    break;
                 }
-            } else if (used[v_idx] != true)
-            {
-                used[v_idx] = true;
-                for (k = 0; k < 4; k++)
-                    if (sc.pyramid[k] == v_idx)
-                    {
-                        if (counter >= 4)
-                            throw new Error("internal: pyramid overflow");
-                        pyramid_mapping[counter++] = k;
-                        break;
-                    }
-            }
+
+        if (implicit_h_idx != -1)
+            pyramid_mapping[counter++] = implicit_h_idx;
+         
+        for (j = 0; j != atom.neighbours.length; j++)
+        {
+            if (atom.neighbours[j].aid == atom.parent)
+                continue;
+         
+            for (k = 0; k < 4; k++)
+                if (atom.neighbours[j].aid == sc.pyramid[k])
+                {
+                    if (counter >= 4)
+                        throw new Error("internal: pyramid overflow");
+                    pyramid_mapping[counter++] = k;
+                    break;
+             }
         }
 
         if (counter == 4)
@@ -164,12 +184,8 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             pyramid_mapping[2] = pyramid_mapping[3];
             pyramid_mapping[3] = counter;
         }
-        else
-        {
-            if (counter < 3 || this.atoms[atom_idx].h_count == 1)
+        else if (counter != 3)
                 throw new Error("cannot calculate chirality");
-            pyramid_mapping[3] = 3;
-        }
 
         if (chem.Stereocenters.isPyramidMappingRigid(pyramid_mapping))
             this.atoms[atom_idx].chirality = 1;

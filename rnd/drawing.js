@@ -346,6 +346,8 @@ rnd.MolData.prototype.pathAndRBoxTranslate = function (path, rbb, x, y) {
     rbb.y += y;
 }
 
+var markerColors = ['black', 'cyan', 'magenta', 'red', 'green', 'blue', 'green'];
+
 rnd.MolData.prototype.showLabels = function ()
 {
     var render = this.render;
@@ -356,6 +358,12 @@ rnd.MolData.prototype.showLabels = function ()
     for (var aid in this.atomsChanged) {
         var atom = this.atoms.get(aid);
 
+		var marker = paper
+				.circle(atom.ps.x, atom.ps.y, settings.fontsz * 0.5)
+				.attr('stroke', 'none')
+				.attr('fill', markerColors[atom.a.sgroup+1])
+				.attr('opacity', '0.5');
+		this.addAtomPath('data', aid, marker, marker.getBBox());
         var index = null;
         if (opt.showAtomIds) {
             index = {};

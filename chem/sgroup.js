@@ -51,6 +51,10 @@ chem.SGroup.addGroup = function (mol, sg)
 
 	// apply type-specific post-processing
 	sg.postLoad(mol);
+
+	// mark atoms in the group as belonging to it
+	for (var s = 0; s < sg.data.atoms.length; ++s)
+		mol.atoms.get(sg.data.atoms[s]).sgroup = sg.id;
 }
 
 chem.SGroup.clone = function (sgroup, aidMap, bidMap)

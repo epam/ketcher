@@ -34,6 +34,7 @@ rnd.entities = ['Atom', 'Bond', 'Canvas'];
 rnd.actions = [
     'atomSetAttr',
     'atomSetHighlight',
+    'atomSetSGroup',
     'atomAdd',
     'atomMove',
     'atomMoveRel',
@@ -263,11 +264,69 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
     return neiAtoms;
 }
 
+// returns an array of nested s-group id's, innermost first
+rnd.Render.prototype.atomGetSGroups = function (aid)
+{
+    var atom = this.ctab.atoms.get(aid);
+	return atom.a.sgroup < 0 ? [] : [atom.a.sgroup];
+}
+
+// creates an empty s-group of given type, e.g. "MUL" or "SRU",
+// returns group id
+rnd.Render.prototype.sGroupCreate = function (type)
+{
+    var sg = new chem.SGroup(type);
+	return chem.SGroup.addGroup(this.ctab.molecule, sg);
+}
+
+// receives group id
+rnd.Render.prototype.sGroupDelete = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	this.ctab.clearVisel(sg.visel);
+	console.log(sg.data.atoms);
+	for (var i = 0; i < sg.data.atoms.length; ++i) {
+		var aid = sg.data.atoms[i];
+		this.ctab.atoms.get(aid).a.sgroup = -1;
+		this.invalidateAtom(aid);
+	}
+	this.ctab.molecule.sgroups.remove(sgid);
+}
+
+// set group attributes, such as multiplication index for MUL group or HT/HH/EU connectivity for SRU
+rnd.Render.prototype.sGroupSetAttr = function (sgid, name, value)
+{
+	// TODO: fix update
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	sg.data[name] = value;
+}
+
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 {
+	// TODO: rewrite with special methods for each attribute?
     // TODO: allow multiple attributes at once?
     var atom = this.ctab.atoms.get(aid);
     atom.a[name] = value;
+    this.invalidateAtom(aid);
+}
+
+// -1 stands for "no s-group"
+rnd.Render.prototype._atomSetSGroup = function (aid, value)
+{
+    var atom = this.ctab.atoms.get(aid);
+	// remove from current s-group, if any
+	var sg = null;
+	if (atom.a.sgroup >= 0) {
+		sg = this.ctab.molecule.sgroups.get(atom.a.sgroup);
+		chem.SGroup.removeAtom(sg, aid);
+		atom.a.sgroup = -1;
+	}
+	// add to the new one
+	if (value >= 0) {
+		sg = this.ctab.molecule.sgroups.get(value);
+		chem.SGroup.addAtom(sg, aid);
+		atom.a.sgroup = value;
+	}
     this.invalidateAtom(aid);
 }
 

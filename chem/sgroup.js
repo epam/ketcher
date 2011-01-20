@@ -55,6 +55,8 @@ chem.SGroup.addGroup = function (mol, sg)
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.data.atoms.length; ++s)
 		mol.atoms.get(sg.data.atoms[s]).sgroup = sg.id;
+
+	return sg.id;
 }
 
 chem.SGroup.clone = function (sgroup, aidMap, bidMap)
@@ -65,6 +67,22 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	cp.data.atoms = chem.mapArray(sgroup.data.atoms, aidMap);
 	cp.data.connectivity = sgroup.data.connectivity;
 	return cp;
+}
+
+chem.SGroup.addAtom = function (sgroup, aid)
+{
+	sgroup.data.atoms.push(aid);
+}
+
+chem.SGroup.removeAtom = function (sgroup, aid)
+{
+	for (var i = 0; i < sgroup.data.atoms.length; ++i) {
+		if (sgroup.data.atoms[i] == aid) {
+			sgroup.data.atoms.splice(i, 1);
+			return;
+		}
+	}
+	throw new Error("The atom is not found in the given s-group");
 }
 
 chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {

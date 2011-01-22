@@ -124,21 +124,26 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	// function(event, id){};
 	this.onAtomClick = null;
 	this.onAtomDblClick = null;
-	this.onAtomMouseUp = null;
 	this.onAtomMouseDown = null;
 	this.onAtomMouseOver = null;
 	this.onAtomMouseMove = null;
 	this.onAtomMouseOut = null;
 	this.onBondClick = null;
 	this.onBondDblClick = null;
-	this.onBondMouseUp = null;
 	this.onBondMouseDown = null;
 	this.onBondMouseOver = null;
 	this.onBondMouseMove = null;
 	this.onBondMouseOut = null;
+
+	this.onSGroupClick = null;
+	this.onSGroupDblClick = null;
+	this.onSGroupMouseDown = null;
+	this.onSGroupMouseOver = null;
+	this.onSGroupMouseMove = null;
+	this.onSGroupMouseOut = null;
+
 	this.onCanvasClick = null;
 	this.onCanvasDblClick = null;
-	this.onCanvasMouseUp = null;
 	this.onCanvasMouseDown = null;
 	this.onCanvasMouseOver = null;
 	this.onCanvasMouseMove = null;
@@ -156,7 +161,8 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 		};
 		if (oldType == 'Canvas'
 			|| (oldType == 'Atom' && this.ctab.atoms.has(oldId))
-			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))) {
+			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))
+			|| (oldType == 'SGroup' && this.ctab.molecule.sgroups.has(oldId))) {
 			var nameOut = 'on' + oldType + 'MouseOut';
 			if (this[nameOut])
 				this[nameOut](event, oldId);
@@ -871,6 +877,29 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	return null;
 }
 
+rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
+	var closestSg = null;
+	minDist = minDist || this.maxMinDist;
+	minDist = Math.min(minDist, this.maxMinDist);
+	var lw = this.settings.lineWidth;
+	var vext = new chem.Vec2(lw*4, lw*6);
+	this.ctab.molecule.sgroups.each(function(sgid, sg){
+		var bb = sg.bracketBox.extend(vext, vext);
+		var inBox = bb.p0.y < pos.y && bb.p1.y > pos.y && bb.p0.x < pos.x && bb.p1.x > pos.x;
+		var xDist = Math.min(Math.abs(bb.p0.x - pos.x), Math.abs(bb.p1.x - pos.x));
+		if (inBox && (closestSg == null || xDist < minDist)) {
+			closestSg = sgid;
+			minDist = xDist;
+		}
+	}, this);
+	if (closestSg != null)
+		return {
+			'id':closestSg,
+			'dist':minDist
+		};
+	return null;
+}
+
 rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
 	if (atom != null)
@@ -886,6 +915,14 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 			'type':'Bond',
 			'id':bond.id,
 			'dist':bond.dist
+			};
+
+	var sg = this.findClosestSGroup(pos);
+	if (sg != null)
+		return {
+			'type':'SGroup',
+			'id':sg.id,
+			'dist':sg.dist
 			};
 
 	return {

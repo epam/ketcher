@@ -217,9 +217,9 @@ rnd.MolData.prototype.clearVisels = function () {
 rnd.MolData.prototype.update = function (force)
 {
 	force = force || !this.initialized;
-	var changed = !chem.isEmpty(this.atomsChanged) || !chem.isEmpty(this.bondsChanged);
-	if (!force && !changed)
-		return false; // nothing to update
+//	var changed = !chem.isEmpty(this.atomsChanged) || !chem.isEmpty(this.bondsChanged);
+//	if (!force && !changed)
+//		return false; // nothing to update
 
 	// check items to update
 	var id;

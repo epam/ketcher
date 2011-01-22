@@ -44,8 +44,9 @@ rnd.actions = [
 	'bondSetHighlight',
 	'bondAdd',
 	'bondFlip',
-	'bondRemove'
-	];
+	'bondRemove',
+	'sGroupSetHighlight'
+];
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 {
@@ -308,6 +309,13 @@ rnd.Render.prototype.sGroupSetAttr = function (sgid, name, value)
 	// TODO: fix update
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	sg.data[name] = value;
+}
+
+rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	sg.highlight = value;
+	this.ctab.showBracketHighlighting(sgid, sg, value);
 }
 
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
@@ -701,6 +709,7 @@ rnd.Render.prototype.testPolygon = function () {
 
 rnd.Render.prototype.processAction = function (action, args)
 {
+	// TODO: check if this is still necessary
 	var id = parseInt(args[0]);
 	if (action == 'atomRemove' && this.curItem.type == 'Atom'
 		&& this.curItem.id == id && this._onAtomMouseOut) {

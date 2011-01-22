@@ -217,8 +217,7 @@ rnd.MolData.prototype.clearVisels = function () {
 rnd.MolData.prototype.update = function (force)
 {
 	force = force || !this.initialized;
-	var changed = !chem.isEmpty(this.atomsChanged)
-	|| !chem.isEmpty(this.bondsChanged);
+	var changed = !chem.isEmpty(this.atomsChanged) || !chem.isEmpty(this.bondsChanged);
 	if (!force && !changed)
 		return false; // nothing to update
 
@@ -313,6 +312,8 @@ rnd.MolData.prototype.drawSGroups = function ()
 		this.addSGroupPath('data', sgroup.visel, path);
 		if (sgroup.selected)
 			this.showBracketSelection(id, sgroup, true);
+		if (sgroup.highlight)
+			this.showBracketHighlighting(id, sgroup, true);
 	}, this);
 }
 
@@ -515,7 +516,7 @@ rnd.MolData.prototype.getCoordBoundingBox = function ()
 			bb = {
 				min: atom.pp,
 				max: atom.pp
-				}
+			}
 		else {
 			bb.min = chem.Vec2.min(bb.min, atom.pp);
 			bb.max = chem.Vec2.max(bb.max, atom.pp);
@@ -525,7 +526,7 @@ rnd.MolData.prototype.getCoordBoundingBox = function ()
 		bb = {
 			min: new chem.Vec2(0, 0),
 			max: new chem.Vec2(1, 1)
-			};
+		};
 	return bb;
 }
 

@@ -381,6 +381,32 @@ rnd.MolData.prototype.showBracketSelection = function (sgid, sg, visible)
 	}
 }
 
+rnd.MolData.prototype.showBracketHighlighting = function (sgid, sg, visible)
+{
+	var exists = (sg.highlighting != null) && !sg.highlighting.removed;
+	if (visible) {
+		if (!exists) {
+			var render = this.render;
+			var styles = render.styles;
+			var settings = render.settings;
+			var paper = render.paper;
+			var bb = sg.bracketBox;
+			var lw = settings.lineWidth;
+			var vext = new chem.Vec2(lw * 4, lw * 6);
+			bb = bb.extend(vext, vext);
+			sg.highlighting = paper
+			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
+			.attr(styles.highlightStyle);
+			this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
+		}
+		sg.highlighting.show();
+	} else {
+		if (exists) {
+			sg.highlighting.hide();
+		}
+	}
+}
+
 rnd.MolData.prototype.pathAndRBoxTranslate = function (path, rbb, x, y) {
 	path.translate(x, y)
 	rbb.x += x;

@@ -26,6 +26,12 @@ chem.SGroup = function (type)
 		this[method] = impl[method];
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
+	this.bracketBox = null;
+
+	this.highlight = false;
+	this.highlighting = null;
+	this.selected = false;
+	this.selectionPlate = null;
 
 	this.data = {
 		'mul': -1, // multiplication count for MUL group
@@ -116,6 +122,7 @@ chem.SGroup.GroupMul = {
 			}
 			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
 		}
+		this.bracketBox = bb;
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		bb = bb.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -277,6 +284,7 @@ chem.SGroup.GroupSru = {
 			}
 			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
 		}
+		this.bracketBox = bb;
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		bb = bb.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);

@@ -356,6 +356,31 @@ rnd.MolData.prototype.showAtomSelection = function (aid, atom, visible)
 	}
 }
 
+rnd.MolData.prototype.showBracketSelection = function (sgid, sg, visible)
+{
+	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
+	if (visible) {
+		if (!exists) {
+			var render = this.render;
+			var styles = render.styles;
+			var settings = render.settings;
+			var paper = render.paper;
+			var bb = sg.bracketBox;
+			var lw = settings.lineWidth;
+			var vext = new chem.Vec2(lw * 4, lw * 6);
+			bb = bb.extend(vext, vext);
+			sg.selectionPlate = paper
+			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
+			.attr(styles.selectionStyle);
+			this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
+		}
+		sg.selectionPlate.show();
+	} else {
+		if (exists)
+			sg.selectionPlate.hide();
+	}
+}
+
 rnd.MolData.prototype.pathAndRBoxTranslate = function (path, rbb, x, y) {
 	path.translate(x, y)
 	rbb.x += x;
@@ -740,9 +765,7 @@ rnd.MolData.layerMap = {
 	'highlighting' : 1,
 	'warnings' : 2,
 	'data' : 3,
-	'indices' : 4,
-	'bond-selection' : 5,
-	'atom-selection' : 6
+	'indices' : 4
 }
 
 rnd.MolData.prototype.addSGroupPath = function (group, visel, path)

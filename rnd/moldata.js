@@ -311,6 +311,8 @@ rnd.MolData.prototype.drawSGroups = function ()
 	this.molecule.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this);
 		this.addSGroupPath('data', sgroup.visel, path);
+		if (sgroup.selected)
+			this.showBracketSelection(id, sgroup, true);
 	}, this);
 }
 

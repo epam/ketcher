@@ -11,19 +11,19 @@
  ***************************************************************************/
 
 if (!window.rnd)
-    rnd = {};
+	rnd = {};
 
 rnd.MouseEvent = function (params)
 {
-    this.pageX = params.pageX;
-    this.pageY = params.pageY;
-    if (Object.isUndefined(this.pageX) || Object.isUndefined(this.pageY))
-    { // TODO: fix this in IE
-        this.pageX = params.x;
-        this.pageY = params.y;
-    }
-    this.altKey = params.altKey;
-    this.shiftKey = params.shiftKey;
-    this.ctrlKey = params.ctrlKey;
-    this.metaKey = params.metaKey;
+	this.pageX = params.pageX;
+	this.pageY = params.pageY;
+	if (Object.isUndefined(this.pageX) || Object.isUndefined(this.pageY))
+	{ // TODO: fix this in IE
+		this.pageX = params.x;
+		this.pageY = params.y;
+	}
+	this.altKey = params.altKey;
+	this.shiftKey = params.shiftKey;
+	this.ctrlKey = params.ctrlKey;
+	this.metaKey = params.metaKey;
 }

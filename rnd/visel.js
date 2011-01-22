@@ -13,36 +13,36 @@
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
 if (!window.chem || !chem.Vec2 || !chem.Molecule || !window.rnd)
-    throw new Error("Vec2 and Molecule, should be defined first");
+	throw new Error("Vec2 and Molecule, should be defined first");
 
 rnd.Visel = function (type)
 {
-    this.type = type;
-    this.paths = [];
-    this.boxes = [];
-    this.boundingBox = null;
+	this.type = type;
+	this.paths = [];
+	this.boxes = [];
+	this.boundingBox = null;
 }
 
 rnd.Visel.TYPE = {
-    'ATOM' : 1,
-    'BOND' : 2,
-    'LOOP' : 3,
-    'ARROW' : 4,
-    'SGROUP' : 5
+	'ATOM' : 1,
+	'BOND' : 2,
+	'LOOP' : 3,
+	'ARROW' : 4,
+	'SGROUP' : 5
 }
 
 rnd.Visel.prototype.add = function (path, bb)
 {
-    this.paths.push(path);
-    if (bb != null) {
-        this.boxes.push(bb);
-        this.boundingBox = this.boundingBox == null ? bb : chem.Box2Abs.union(this.boundingBox, bb);
-    }
+	this.paths.push(path);
+	if (bb != null) {
+		this.boxes.push(bb);
+		this.boundingBox = this.boundingBox == null ? bb : chem.Box2Abs.union(this.boundingBox, bb);
+	}
 }
 
 rnd.Visel.prototype.clear = function ()
 {
-    this.paths = [];
-    this.boxes = [];
-    this.boundingBox = null;
+	this.paths = [];
+	this.boxes = [];
+	this.boundingBox = null;
 }

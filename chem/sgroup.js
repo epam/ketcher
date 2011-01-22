@@ -102,6 +102,25 @@ chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 	set.push(leftBracket, rightBracket);
 }
 
+chem.SGroup.getBBox = function (sg, ctab) {
+	var bb = null;
+	var render = ctab.render;
+	var settings = render.settings;
+	for (var i = 0; i < sg.data.atoms.length; ++i) {
+		var aid = sg.data.atoms[i];
+		var atom = ctab.atoms.get(aid);
+		var bba = atom.visel.boundingBox;
+		if (bba == null) {
+			var p = atom.ps;
+			bba = new chem.Box2Abs(p,p);
+			var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
+			bba = bba.extend(ext, ext);
+		}
+		bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
+	}
+	return bb;
+}
+
 chem.SGroup.GroupMul = {
 	draw: function (ctab) {
 		var render = ctab.render;
@@ -109,22 +128,9 @@ chem.SGroup.GroupMul = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		var bb = null;
-		for (var i = 0; i < this.data.atoms.length; ++i) {
-			var aid = this.data.atoms[i];
-			var atom = ctab.atoms.get(aid);
-			var bba = atom.visel.boundingBox;
-			if (bba == null) {
-				var p = atom.ps;
-				bba = new chem.Box2Abs(p,p);
-				var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
-				bba = bba.extend(ext, ext);
-			}
-			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
-		}
-		this.bracketBox = bb;
+		this.bracketBox = chem.SGroup.getBBox(this, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		bb = bb.extend(vext, vext);
+		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var multIndex = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.mul)
 			.attr({'font' : settings.font, 'font-size' : settings.fontszsub});
@@ -271,22 +277,9 @@ chem.SGroup.GroupSru = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		var bb = null;
-		for (var i = 0; i < this.data.atoms.length; ++i) {
-			var aid = this.data.atoms[i];
-			var atom = ctab.atoms.get(aid);
-			var bba = atom.visel.boundingBox;
-			if (bba == null) {
-				var p = atom.ps;
-				bba = new chem.Box2Abs(p,p);
-				var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
-				bba = bba.extend(ext, ext);
-			}
-			bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
-		}
-		this.bracketBox = bb;
+		this.bracketBox = chem.SGroup.getBBox(this, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		bb = bb.extend(vext, vext);
+		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var connectivityIndex = paper.text(bb.p1.x + settings.lineWidth * 1, bb.p0.y, this.data.connectivity)
 			.attr({'font' : settings.font, 'font-size' : settings.fontszsub});

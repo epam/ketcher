@@ -339,11 +339,10 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 	sGroups[sid].data[propName] = part;
 }
 
-chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end)
+chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups)
 {
 	var mf = chem.Molfile;
 	var props = new chem.Map();
-	var sGroups = {};
 	while (shift < end)
 	{
 		var line = ctabLines[shift];
@@ -410,9 +409,6 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end)
 		}
 		++shift;
 	}
-	for (var sid in sGroups) {
-		chem.SGroup.addGroup(ctab, sGroups[sid]);
-	}
 	return props;
 }
 
@@ -454,12 +450,17 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 	});
 
+	var sGroups = {};
 	var props = mf.parsePropertyLines(ctab, ctabLines, shift,
-		Math.min(ctabLines.length, shift + propertyLinesCount));
+		Math.min(ctabLines.length, shift + propertyLinesCount), sGroups);
 	props.each(function (propId, values) {
 		mf.applyAtomProp(ctab.atoms, values, propId);
 	});
-	
+
+	for (var sid in sGroups) {
+		chem.SGroup.addGroup(ctab, sGroups[sid]);
+	}
+
 	return ctab;
 }
 

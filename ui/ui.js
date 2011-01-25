@@ -281,6 +281,10 @@ ui.init = function ()
     this.render.onCanvasMouseMove = this.onMouseMove_Canvas;
     this.render.onCanvasMouseDown = this.onMouseDown_Canvas;
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
+
+    this.render.onSGroupDblClick = this.onDblClick_SGroup;
+    this.render.onSGroupMouseOver = this.onMouseOver_SGroup;
+    this.render.onSGroupMouseOut = this.onMouseOut_SGroup;
     
     this.render.setMolecule(this.ctab);
     this.render.update();
@@ -1295,6 +1299,11 @@ ui.onClick_Bond = function (event, id)
     }
 }
 
+ui.onDblClick_SGroup = function (event, sid)
+{
+    // TODO: SGroup properties
+}
+
 ui.onClick_Canvas = function (event)
 {
     if (ui.mouse_moved)
@@ -1842,6 +1851,17 @@ ui.onMouseOver_Bond = function (event, bid)
 ui.onMouseOut_Bond = function (event, bid)
 {
     ui.render.bondSetHighlight(bid, false);
+}
+
+ui.onMouseOver_SGroup = function (event, sid)
+{
+    if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
+        ui.render.sGroupSetHighlight(sid, true);
+}
+
+ui.onMouseOut_SGroup = function (event, sid)
+{
+    ui.render.sGroupSetHighlight(sid, false);
 }
 
 //

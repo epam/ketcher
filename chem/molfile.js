@@ -604,7 +604,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			}	
 			sg.data.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
 			sg.data.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1); // TODO: make optional?
-			sg.data.bonds = mf.parseBracedNumberList(props['XBONDS'][0], -1);
+			sg.data.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
 			var brkxyzStrs = props['BRKXYZ'];
 			sg.data.brkxyz = [];
 			for (var j = 0; j < brkxyzStrs.length; ++j)

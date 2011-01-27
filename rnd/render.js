@@ -317,6 +317,12 @@ rnd.Render.prototype.sGroupSetAttr = function (sgid, name, value)
 	sg.data[name] = value;
 }
 
+rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.data[name];
+}
+
 rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);

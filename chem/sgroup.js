@@ -352,8 +352,39 @@ chem.SGroup.GroupSup = {
 	}
 }
 
+chem.SGroup.GroupGen = {
+	draw: function (ctab) {
+		var render = ctab.render;
+		var settings = render.settings;
+		var styles = render.styles;
+		var paper = render.paper;
+		var set = paper.set();
+		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var bb = this.bracketBox.extend(vext, vext);
+		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
+		return set;
+	},
+
+	saveToMolfile: function (sgMap, atomMap, bondMap) {
+		var idstr = chem.stringPadded(sgMap[this.id], 3);
+
+		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
+		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
+		return [salLine, sblLine].join('\n');
+	},
+
+	prepareForSaving: function (mol) {
+		this.data.xBonds = this.data.bonds; // TODO: fix
+	},
+
+	postLoad: function (mol) {
+	}
+}
+
 chem.SGroup.TYPES = {
 	'MUL': chem.SGroup.GroupMul,
 	'SRU': chem.SGroup.GroupSru,
-	'SUP': chem.SGroup.GroupSup
+	'SUP': chem.SGroup.GroupSup,
+	'GEN': chem.SGroup.GroupGen
 };

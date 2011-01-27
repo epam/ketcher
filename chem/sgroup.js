@@ -38,7 +38,9 @@ chem.SGroup = function (type)
 		'atoms': [],
 		'patoms' : [],
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
-		'bonds' : []
+		'bonds' : [],
+		'name' : '',
+		'subscript' : ''
 	}
 }
 
@@ -229,6 +231,7 @@ chem.SGroup.GroupMul = {
 
 	postLoad: function (mol)
 	{
+		this.data.mul = this.data.subscript - 0;
 		var atomReductionMap = {};
 		var patoms = this.data.patoms;
 		var patomsMap = chem.identityMap(patoms);
@@ -310,7 +313,47 @@ chem.SGroup.GroupSru = {
 	}
 }
 
+chem.SGroup.GroupSup = {
+	draw: function (ctab) {
+		var render = ctab.render;
+		var settings = render.settings;
+		var styles = render.styles;
+		var paper = render.paper;
+		var set = paper.set();
+		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var bb = this.bracketBox.extend(vext, vext);
+		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
+		var name = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.name)
+			.attr({'font' : settings.font, 'font-size' : settings.fontszsub, 'font-style' : 'italic'});
+		var nameBox = name.getBBox();
+		name.translate(0.5 * nameBox.width, -0.3 * nameBox.height);
+		set.push(name);
+		return set;
+	},
+
+	saveToMolfile: function (sgMap, atomMap, bondMap) {
+		var idstr = chem.stringPadded(sgMap[this.id], 3);
+
+		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
+		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
+		var list = [salLine, sblLine];
+		if (this.data.name && this.data.name != '')
+			list.push('M  SMT ' + idstr + ' ' + this.data.name);
+		return list.join('\n');
+	},
+
+	prepareForSaving: function (mol) {
+		this.data.xBonds = this.data.bonds; // TODO: fix
+	},
+
+	postLoad: function (mol) {
+		this.data.name = (this.data.subscript || '').trim();
+	}
+}
+
 chem.SGroup.TYPES = {
 	'MUL': chem.SGroup.GroupMul,
-	'SRU': chem.SGroup.GroupSru
+	'SRU': chem.SGroup.GroupSru,
+	'SUP': chem.SGroup.GroupSup
 };

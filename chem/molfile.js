@@ -400,11 +400,7 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				mf.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
 			} else if (type == "SMT") {
 				var sid = mf.parseDecimalInt(propertyData.slice(0, 4))-1;
-				var subscript = propertyData.slice(4);
-				if (sGroups[sid].type == "MUL")
-					sGroups[sid].data.mul = mf.parseDecimalInt(subscript); // TODO: move to postProcess
-				else
-					sGroups[sid].data.subscript = subscript;
+				sGroups[sid].data.subscript = propertyData.slice(4).trim();
 			}
 		}
 		++shift;
@@ -609,7 +605,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			sg.data.brkxyz = [];
 			for (var j = 0; j < brkxyzStrs.length; ++j)
 				sg.data.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
-			sg.data.mul = props['MULT'][0]-0;
+			sg.data.subscript = props['MULT'][0]-0;
 			chem.SGroup.addGroup(ctab, sg);
 		}
 	}

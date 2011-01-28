@@ -255,6 +255,54 @@
                 </div>
             </div>
 
+            <div class="dialogWindow sgroupDialog" id="sgroup_properties" style="display:none;">
+                <div style="width:100%">
+                    <div>
+                        S-Group Properties
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <table style="text-align:left">
+                        <tr>
+                            <td>
+                                <label>Type:</label>
+                            </td>
+                            <td>
+                                <select id="sgroup_type">
+                                    <option value="GEN">Generic</option>
+                                    <option value="MUL">Multiple group</option>
+                                    <option value="SRU">SRU polymer</option>
+                                    <option value="SUP">Superatom</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Connection:</label>
+                            </td>
+                            <td>
+                                <select id="sgroup_connection">
+                                    <option value="ht">Head-to-tail</option>
+                                    <option value="hh">Head-to-head</option>
+                                    <option value="eu">Either unknown</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Label (subscript):</label>
+                            </td>
+                            <td>
+                                <input id="sgroup_label" type="text" maxlength="15" size="15" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="margin-top:0.5em">
+                        <input id="sgroup_prop_cancel" type="button" value="Cancel" />
+                        <input id="sgroup_prop_ok"type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
             <iframe name="buffer_frame" id="buffer_frame" src="about:blank" style="display:none">
             </iframe>
         </div>

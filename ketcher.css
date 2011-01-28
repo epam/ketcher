@@ -150,6 +150,8 @@ div#window_cover
     border-width: thin;
     padding: 4px;
     text-align: center;
+    left:  10%;
+    top:   10%;
 }
 
 .dialogWindow > div > div:first-child
@@ -159,8 +161,6 @@ div#window_cover
 
 .fileDialog
 {
-    left:  10%;
-    top:   10%;
 }
 
 .chemicalText
@@ -178,6 +178,4 @@ div#window_cover
 
 .propDialog
 {
-    left:   10%;
-    top:    10%;
 }

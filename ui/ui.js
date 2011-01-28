@@ -177,6 +177,18 @@ ui.init = function ()
         ui.applyAtomProperties();
     });
     
+    // S-group properties dialog events
+    $('sgroup_type').observe('change', ui.onChange_SGroupType);
+    $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
+    $('sgroup_prop_cancel').observe('click', function ()
+    {
+        ui.hideDialog('sgroup_properties');
+    });
+    $('sgroup_prop_ok').observe('click', function ()
+    {
+        ui.applySGroupProperties();
+    });
+    
     // Label input events
     $('input_label').observe('blur', function ()
     {
@@ -1301,7 +1313,7 @@ ui.onClick_Bond = function (event, id)
 
 ui.onDblClick_SGroup = function (event, sid)
 {
-    // TODO: SGroup properties
+    ui.showSGroupProperties(sid);
 }
 
 ui.onClick_Canvas = function (event)
@@ -1935,6 +1947,77 @@ ui.onChange_AtomValence = function ()
 {
     if (!this.value.match(/^[0-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+}
+
+//
+// S-Group properties
+//
+ui.showSGroupProperties = function (id)
+{
+    var type = ui.render.sGroupGetAttr(id, 'type');
+    
+    $('sgroup_properties').sgroup_id = id;
+    $('sgroup_type').value = type;
+    ui.onChange_SGroupType.call($('sgroup_type'));
+    
+    if (type == 'SRU')
+        $('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
+    else if (type == 'MUL')
+        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
+    else if (type == 'SUP')
+        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
+    
+    ui.showDialog('sgroup_properties');
+    $('sgroup_type').activate();
+}
+
+ui.applySGroupProperties = function ()
+{
+    ui.hideDialog('sgroup_properties');
+    
+    var id = $('sgroup_properties').sgroup_id;
+    
+    // TODO: Add undo action
+    /*
+    ui.addUndoAction(ui.Action.fromAtomAttrs(id, 
+    {
+        label: $('atom_label').value,
+        charge: parseInt($('atom_charge').value),
+        isotope: parseInt($('atom_isotope').value),
+        valence: parseInt($('atom_valence').value),
+        radical: parseInt($('atom_radical').value)
+    }), true);
+    */
+    
+    var type = $('sgroup_type').value;
+
+    ui.render.sGroupSetAttr(id, 'type', type);
+    
+    if (type == 'SRU')
+        ui.render.sGroupSetAttr(id, 'connectivity', $('sgroup_connection').value);
+    else if (type == 'MUL')
+        ui.render.sGroupGetAttr(id, 'mul', $('sgroup_label').value);
+    else if (type == 'SUP')
+        ui.render.sGroupGetAttr(id, 'name', $('sgroup_label').value);
+        
+    ui.render.update();
+}
+
+ui.onChange_SGroupLabel = function ()
+{
+    if ($('sgroup_type').value == 'MUL' && !this.value.match(/^[1-9][0-9]{0,2}$/))
+        this.value = '1';
+}
+
+ui.onChange_SGroupType = function ()
+{
+    var type = $('sgroup_type').value;
+
+    $('sgroup_label').disabled = (type != 'MUL') && (type != 'SUP');
+    $('sgroup_connection').disabled = (type != 'SRU');
+    
+    if (type == 'MUL' && !$('sgroup_label').value.match(/^[1-9][0-9]{0,2}$/))
+        $('sgroup_label').value = '1';
 }
 
 //

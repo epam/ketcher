@@ -45,7 +45,9 @@ rnd.actions = [
 	'bondAdd',
 	'bondFlip',
 	'bondRemove',
-	'sGroupSetHighlight'
+	'sGroupSetHighlight',
+	'sGroupSetAttr',
+	'sGroupSetType'
 ];
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
@@ -310,17 +312,30 @@ rnd.Render.prototype.sGroupDelete = function (sgid)
 }
 
 // set group attributes, such as multiplication index for MUL group or HT/HH/EU connectivity for SRU
-rnd.Render.prototype.sGroupSetAttr = function (sgid, name, value)
+rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
 {
 	// TODO: fix update
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	sg.data[name] = value;
 }
 
+rnd.Render.prototype._sGroupSetType = function (sgid, type)
+{
+	var mol = this.ctab.molecule;
+	var sg = mol.sgroups.get(sgid);
+	chem.SGroup.equip(sg, type);
+}
+
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.data[name];
+}
+
+rnd.Render.prototype.sGroupGetType = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.type;
 }
 
 rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)

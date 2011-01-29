@@ -21,9 +21,7 @@ chem.SGroup = function (type)
 
 	this.type = type;
 	this.id = -1;
-	var impl = chem.SGroup.TYPES[type];
-	for (var method in impl)
-		this[method] = impl[method];
+	chem.SGroup.equip(this, type);
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
 	this.bracketBox = null;
@@ -42,6 +40,12 @@ chem.SGroup = function (type)
 		'name' : '',
 		'subscript' : ''
 	}
+}
+
+chem.SGroup.equip = function (sgroup, type) {
+	var impl = chem.SGroup.TYPES[type];
+	for (var method in impl)
+		sgroup[method] = impl[method];
 }
 
 chem.SGroup.numberArrayToString = function (numbers, map) {
@@ -321,14 +325,23 @@ chem.SGroup.GroupSup = {
 		var paper = render.paper;
 		var set = paper.set();
 		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		console.log(this.bracketBox);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
-		var name = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.name)
-			.attr({'font' : settings.font, 'font-size' : settings.fontszsub, 'font-style' : 'italic'});
-		var nameBox = name.getBBox();
-		name.translate(0.5 * nameBox.width, -0.3 * nameBox.height);
-		set.push(name);
+		console.log(this.data.name);
+		if (this.data.name) {
+			var name = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.name)
+			.attr({
+				'font' : settings.font,
+				'font-size' : settings.fontszsub,
+				'font-style' : 'italic'
+			});
+			var nameBox = name.getBBox();
+			console.log(nameBox);
+			name.translate(0.5 * nameBox.width, -0.3 * nameBox.height);
+			set.push(name);
+		}
 		return set;
 	},
 

@@ -32,7 +32,7 @@ chem.SGroup = function (type)
 	this.selectionPlate = null;
 
 	this.data = {
-		'mul': -1, // multiplication count for MUL group
+		'mul': 1, // multiplication count for MUL group
 		'atoms': [],
 		'patoms' : [],
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
@@ -288,11 +288,19 @@ chem.SGroup.GroupSru = {
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
-		var connectivityIndex = paper.text(bb.p1.x + settings.lineWidth * 1, bb.p0.y, this.data.connectivity)
+		var connectivity = this.data.connectivity || 'eu';
+		var connectivityIndex = paper.text(bb.p1.x + settings.lineWidth * 1, bb.p0.y, connectivity)
 			.attr({'font' : settings.font, 'font-size' : settings.fontszsub});
 		var connectivityIndexBox = connectivityIndex.getBBox();
 		connectivityIndex.translate(0.5 * connectivityIndexBox.width, 0.3 * connectivityIndexBox.height);
 		set.push(connectivityIndex);
+		if (this.data.subscript) {
+			var subscript = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.subscript)
+				.attr({'font' : settings.font, 'font-size' : settings.fontszsub});
+			var subscriptBox = subscript.getBBox();
+			subscript.translate(0.5 * subscriptBox.width, -0.3 * subscriptBox.height);
+			set.push(subscript);
+		}
 		return set;
 	},
 

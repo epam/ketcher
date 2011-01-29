@@ -335,8 +335,7 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 			return v + shift;
 		});
 	}
-
-	sGroups[sid].data[propName] = part;
+	sGroups[sid].data[propName] = sGroups[sid].data[propName].concat(part);
 }
 
 chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups)

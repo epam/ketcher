@@ -417,6 +417,14 @@ rnd.MolData.prototype.setHydrogenPos = function () {
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
 
+		if (atom.neighbors.length == 0) {
+			var elem = chem.Element.getElementByLabel(atom.a.label);
+			if (elem != null) {
+				atom.hydrogenOnTheLeft = chem.Element.elements.get(elem).putHydrogenOnTheLeft;
+			}
+			console.log(atom.hydrogenOnTheLeft);
+			continue;
+		}
 		var yl = 1, yr = 1, nl = 0, nr = 0;
 		for (var i = 0; i < atom.neighbors.length; ++i) {
 			var d = this.halfBonds.get(atom.neighbors[i]).dir;

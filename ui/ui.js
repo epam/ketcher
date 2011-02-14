@@ -489,10 +489,9 @@ ui.onClick_NewFile = function ()
         return;
     
     if (ui.modeType() == ui.MODE.PASTE)
-    {
         ui.cancelPaste();
-        ui.selectMode('select_simple');
-    }
+
+    ui.selectMode('select_simple');
     
     if (ui.ctab.atoms.count() != 0)
     {

@@ -422,7 +422,6 @@ rnd.MolData.prototype.setHydrogenPos = function () {
 			if (elem != null) {
 				atom.hydrogenOnTheLeft = chem.Element.elements.get(elem).putHydrogenOnTheLeft;
 			}
-			console.log(atom.hydrogenOnTheLeft);
 			continue;
 		}
 		var yl = 1, yr = 1, nl = 0, nr = 0;

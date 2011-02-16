@@ -25,6 +25,8 @@ ui.SCALE_INCR = 20;
 
 ui.DBLCLICK_INTERVAL = 250;
 
+ui.HISTORY_LENGTH = 8;
+
 ui.DEBUG = false;
 
 ui.render = null;
@@ -1464,8 +1466,21 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
     if (oldOffset == null)
         return;
         
-    ui.client_area.scrollLeft += newOffset.x - oldOffset.x;
-    ui.client_area.scrollTop += newOffset.y - oldOffset.y;
+    var delta = new chem.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
+        
+    ui.client_area.scrollLeft += delta.x;
+    ui.client_area.scrollTop += delta.y;
+    
+    ui.undoStack.each(function (action)
+    {
+        action.operations.each(function (op)
+        {
+            if (op.type == ui.Action.OPERATION.ATOM_POS || op.type == ui.Action.OPERATION.ATOM_ADD)
+            {
+                op.params.pos.add_(delta);
+            }
+        }, this);
+    }, this);
 }
 
 //
@@ -2998,6 +3013,8 @@ ui.addUndoAction = function (action, check_dummy)
     {
         ui.undoStack.push(action);
         ui.redoStack.clear();
+        if (ui.undoStack.length > ui.HISTORY_LENGTH)
+            ui.undoStack.splice(0, 1);
         ui.updateActionButtons();
     }
 }

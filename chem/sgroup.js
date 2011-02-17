@@ -321,7 +321,7 @@ chem.SGroup.GroupSru = {
 	},
 
 	postLoad: function (mol) {
-		this.data.connectivity = (this.data.connectivity || 'EU').trim().toLowerCase();
+		this.data.connectivity = (this.data.connectivity || 'EU').strip().toLowerCase();
 	}
 }
 
@@ -366,7 +366,7 @@ chem.SGroup.GroupSup = {
 	},
 
 	postLoad: function (mol) {
-		this.data.name = (this.data.subscript || '').trim();
+		this.data.name = (this.data.subscript || '').strip();
 	}
 }
 

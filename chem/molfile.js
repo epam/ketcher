@@ -399,7 +399,7 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				mf.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
 			} else if (type == "SMT") {
 				var sid = mf.parseDecimalInt(propertyData.slice(0, 4))-1;
-				sGroups[sid].data.subscript = propertyData.slice(4).trim();
+				sGroups[sid].data.subscript = propertyData.slice(4).strip();
 			}
 		}
 		++shift;

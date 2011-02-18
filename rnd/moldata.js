@@ -93,6 +93,10 @@ rnd.MolData = function (molecule, render)
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
+	this.chiral = {
+		pos: null,
+		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
+	};
 
 	this.bondsChanged = {};
 	this.atomsChanged = {};
@@ -250,6 +254,8 @@ rnd.MolData.prototype.update = function (force)
 	}
 	if (this.rxnArrow != null)
 		this.clearVisel(this.rxnArrow.visel);
+	if (this.chiral.visel != null)
+		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
 	this.molecule.sgroups.each(function(sid, sgroup){
 		this.clearVisel(sgroup.visel);
@@ -279,6 +285,7 @@ rnd.MolData.prototype.update = function (force)
 	this.clearMarks();
 	this.drawReactionArrow();
 	this.drawSGroups();
+	this.drawChiralLabel();
 
 	if (rnd.DEBUG)
 		this.checkFragmentConsistency();
@@ -315,6 +322,21 @@ rnd.MolData.prototype.drawSGroups = function ()
 		if (sgroup.highlight)
 			this.showBracketHighlighting(id, sgroup, true);
 	}, this);
+}
+
+rnd.MolData.prototype.drawChiralLabel = function ()
+{
+	if (this.chiral.pos != null) {
+		var paper = this.render.paper;
+		var settings = this.render.settings;
+		this.chiral.path = paper.text(this.chiral.pos.x, this.chiral.pos.y, "Chiral")
+		.attr({
+			'font' : settings.font,
+			'font-size' : settings.fontsz,
+			'fill' : '#000'
+		});
+		this.addChiralPath('data', this.chiral.visel, this.chiral.path);
+	}
 }
 
 rnd.MolData.prototype.getGroupBB = function (type)

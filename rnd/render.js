@@ -321,9 +321,10 @@ rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
 
 rnd.Render.prototype._sGroupSetType = function (sgid, type)
 {
-	var mol = this.ctab.molecule;
-	var sg = mol.sgroups.get(sgid);
-	chem.SGroup.equip(sg, type);
+    var mol = this.ctab.molecule;
+    var sg = mol.sgroups.get(sgid);
+    sg.type = type;
+    chem.SGroup.equip(sg, type);
 }
 
 rnd.Render.prototype.chiralSetPos = function (pos)

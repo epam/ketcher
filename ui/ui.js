@@ -49,7 +49,7 @@ ui.patterns =
 {
     six1: [1, 2, 1, 2, 1, 2],
     six2: [1, 1, 1, 1, 1, 1],
-    sixa: [4, 4, 4, 4, 4, 4],
+    //sixa: [4, 4, 4, 4, 4, 4],
     five: [1, 1, 1, 1, 1]
 }
 
@@ -1968,7 +1968,7 @@ ui.onChange_AtomValence = function ()
 //
 ui.showSGroupProperties = function (id)
 {
-    var type = ui.render.sGroupGetAttr(id, 'type');
+    var type = ui.render.sGroupGetType(id);
     
     $('sgroup_properties').sgroup_id = id;
     $('sgroup_type').value = type;
@@ -2005,14 +2005,14 @@ ui.applySGroupProperties = function ()
     
     var type = $('sgroup_type').value;
 
-    ui.render.sGroupSetAttr(id, 'type', type);
+    ui.render.sGroupSetType(id, type);
     
     if (type == 'SRU')
         ui.render.sGroupSetAttr(id, 'connectivity', $('sgroup_connection').value);
     else if (type == 'MUL')
-        ui.render.sGroupGetAttr(id, 'mul', $('sgroup_label').value);
+        ui.render.sGroupSetAttr(id, 'mul', parseInt($('sgroup_label').value));
     else if (type == 'SUP')
-        ui.render.sGroupGetAttr(id, 'name', $('sgroup_label').value);
+        ui.render.sGroupSetAttr(id, 'name', $('sgroup_label').value);
         
     ui.render.update();
 }

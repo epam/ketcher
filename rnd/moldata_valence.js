@@ -58,16 +58,18 @@ rnd.AtomData.prototype.calcValence = function (conn)
 	var groupno = chem.Element.elements.get(elem).group;
 	var rad = chem.Molecule.radicalElectrons(atom.radical);
 
-	this.valence = conn;
-	this.a.implicitH = 0;
+	var valence = conn;
+	var hyd = 0;
+	var absCharge = Math.abs(charge);
 
 	if (groupno == 1)
 	{
-		if (label == 'H' || label == 'Li' || label == 'Na' || label == 'K' ||
+		if (label == 'H' ||
+			label == 'Li' || label == 'Na' || label == 'K' ||
 			label == 'Rb' || label == 'Cs' || label == 'Fr')
 			{
-			this.valence = 1;
-			this.a.implicitH = 1 - rad - conn - Math.abs(charge);
+			valence = 1;
+			hyd = 1 - rad - conn - absCharge;
 		}
 	}
 	else if (groupno == 3)
@@ -76,134 +78,138 @@ rnd.AtomData.prototype.calcValence = function (conn)
 		{
 			if (charge == -1)
 			{
-				if (rad + conn <= 4)
-				{
-					this.valence = 4;
-					this.a.implicitH = 4 - rad - conn;
-				}
+				valence = 4;
+				hyd = 4 - rad - conn;
 			}
-			else if (rad + conn + Math.abs(charge) <= 3)
+			else
 			{
-				this.valence = 3;
-				this.a.implicitH = 3 - rad - conn - Math.abs(charge);
+				valence = 3;
+				hyd = 3 - rad - conn - absCharge;
 			}
 		}
 		else if (label == 'Tl')
 		{
-			if (conn == 0 && rad == 0)
+			if (charge == -1)
 			{
-				if (rad + Math.abs(charge) <= 1)
+				if (rad + conn <= 2)
 				{
-					this.valence = 1;
-					this.a.implicitH = 1 - rad - Math.abs(charge);
+					valence = 2;
+					hyd = 2 - rad - conn;
 				}
 				else
 				{
-					this.valence = 3;
-					this.a.implicitH = 3 - Math.abs(charge);
+					valence = 4;
+					hyd = 4 - rad - conn;
+				}
+			}
+			else if (charge == -2)
+			{
+				if (rad + conn <= 3)
+				{
+					valence = 3;
+					hyd = 3 - rad - conn;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn;
+				}
+			}
+			else
+			{
+				if (rad + conn + absCharge <= 1)
+				{
+					valence = 1;
+					hyd = 1 - rad - conn - absCharge;
+				}
+				else
+				{
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
 				}
 			}
 		}
 	}
 	else if (groupno == 4)
 	{
-		if (label == 'C')
+		if (label == 'C' || label == 'Si' || label == 'Ge')
 		{
-			this.valence = 4;
-			this.a.implicitH = 4 - rad - conn - Math.abs(charge);
+			valence = 4;
+			hyd = 4 - rad - conn - absCharge;
 		}
-		else if (label == 'Si' || label == 'Sn' || label == 'Ge')
+		else if (label == 'Sn' || label == 'Pb')
 		{
-			if (conn + rad + Math.abs(charge) <= 4)
+			if (conn + rad + absCharge <= 2)
 			{
-				this.valence = 4;
-				this.a.implicitH = 4 - rad - conn - Math.abs(charge);
-			}
-		}
-		else if (label == 'Pb')
-		{
-			if (rad + conn + Math.abs(charge) <= 2)
-			{
-				this.valence = 2;
-				this.a.implicitH = 2 - rad - conn - Math.abs(charge);
+				valence = 2;
+				hyd = 2 - rad - conn - absCharge;
 			}
 			else
 			{
-				this.valence = 4;
-				this.a.implicitH = 4 - rad - conn - Math.abs(charge);
+				valence = 4;
+				hyd = 4 - rad - conn - absCharge;
 			}
 		}
 	}
 	else if (groupno == 5)
 	{
-		if (label == 'N')
+		if (label == 'N' || label == 'P')
 		{
 			if (charge == 1)
 			{
-				this.valence = 4;
-				this.a.implicitH = 4 - rad - conn;
+				valence = 4;
+				hyd = 4 - rad - conn;
 			}
 			else if (charge == 2)
 			{
-				this.valence = 3;
-				this.a.implicitH = 3 - rad - conn;
+				valence = 3;
+				hyd = 3 - rad - conn;
 			}
 			else
 			{
-				this.valence = 3;
-				this.a.implicitH = 3 - rad - conn - Math.abs(charge);
-			}
-		}
-		else if (label == 'P' || label == 'Sb' || label == 'Bi')
-		{
-			if (conn < 4)
-			{
-				if (charge == 1)
+				if (label == 'N' || rad + conn + absCharge <= 3)
 				{
-					this.valence = 4;
-					this.a.implicitH = 4 - rad - conn;
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
 				}
-				else if (charge == 2)
+				else // ELEM_P && rad + conn + absCharge > 3
 				{
-					this.valence = 3;
-					this.a.implicitH = 3 - rad - conn;
-				}
-				else if (rad + conn + Math.abs(charge) <= 3)
-				{
-					this.valence = 3;
-					this.a.implicitH = 3 - rad - conn - Math.abs(charge);
-				}
-			}
-			else
-			{
-				if (charge == 0 && conn + rad <= 5)
-				{
-					this.valence = 5;
-					this.a.implicitH = 5 - rad - conn;
+					valence = 5;
+					hyd = 5 - rad - conn - absCharge;
 				}
 			}
 		}
-		else if (label == 'As')
+		else if (label == 'Bi' || label == 'Sb' || label == 'As')
 		{
-			if (conn < 4)
+			if (charge == 1)
 			{
-				if (charge == 1)
+				if (rad + conn <= 2 && elem != ELEM_As)
 				{
-					this.valence = 4;
-					this.a.implicitH = 4 - rad - conn;
+					valence = 2;
+					hyd = 2 - rad - conn;
 				}
-				else if (rad + conn + Math.abs(charge) <= 3)
+				else
 				{
-					this.valence = 3;
-					this.a.implicitH = 3 - rad - conn - Math.abs(charge);
+					valence = 4;
+					hyd = 4 - rad - conn;
 				}
+			}
+			else if (charge == 2)
+			{
+				valence = 3;
+				hyd = 3 - rad - conn;
 			}
 			else
 			{
-				if (charge == 0 && conn + rad <= 5)
+				if (rad + conn <= 3)
 				{
-					this.valence = 5;
-					this.a.implicitH = 5 - rad - conn;
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn - absCharge;
 				}
 			}
 		}
@@ -214,52 +220,86 @@ rnd.AtomData.prototype.calcValence = function (conn)
 		{
 			if (charge >= 1)
 			{
-				this.valence = 3;
-				this.a.implicitH = 3 - rad - conn;
+				valence = 3;
+				hyd = 3 - rad - conn;
 			}
 			else
 			{
-				this.valence = 2;
-				this.a.implicitH = 2 - rad - conn - Math.abs(charge);
+				valence = 2;
+				hyd = 2 - rad - conn - absCharge;
 			}
 		}
-		else if (label == 'S'  || label == 'Se' ||
-			label == 'Po')
-			{
+		else if (label == 'S' || label == 'Se' || label == 'Po')
+		{
 			if (charge == 1)
 			{
 				if (conn <= 3)
 				{
-					this.valence = 3;
-					this.a.implicitH = 3 - rad - conn;
+					valence = 3;
+					hyd = 3 - rad - conn;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn;
 				}
 			}
 			else
 			{
-				if (conn + rad + Math.abs(charge) <= 2)
+				if (conn + rad + absCharge <= 2)
 				{
-					this.valence = 2;
-					this.a.implicitH = 2 - rad - conn - Math.abs(charge);
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
+				}
+				else if (conn + rad + absCharge <= 4)
+				// See examples in PubChem
+				// [S] : CID 16684216
+				// [Se]: CID 5242252
+				// [Po]: no example, just following ISIS/Draw logic here
+				{
+					valence = 4;
+					hyd = 4 - rad - conn - absCharge;
+				}
+				else
+				// See examples in PubChem
+				// [S] : CID 46937044
+				// [Se]: CID 59786
+				// [Po]: no example, just following ISIS/Draw logic here
+				{
+					valence = 6;
+					hyd = 6 - rad - conn - absCharge;
 				}
 			}
 		}
 		else if (label == 'Te')
 		{
-			if (charge <= 0)
+			if (charge == -1)
 			{
 				if (conn <= 2)
 				{
-					this.valence = 2;
-					this.a.implicitH = 2 - rad - conn - Math.abs(charge);
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
 				}
 			}
-			else
+			else if (charge == 0 || charge == 2)
 			{
-				if (conn <= 4)
+				if (conn <= 2)
 				{
-					this.valence = 4;
-					this.a.implicitH = 4 - rad - conn - Math.abs(charge);
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
 				}
+				else if (conn <= 4)
+				{
+					valence = 4;
+					hyd = 4 - rad - conn - absCharge;
+				}
+				else if (charge == 0 && conn <= 6)
+				{
+					valence = 6;
+					hyd = 6 - rad - conn - absCharge;
+				}
+				else
+					hyd = -1;
 			}
 		}
 	}
@@ -267,11 +307,8 @@ rnd.AtomData.prototype.calcValence = function (conn)
 	{
 		if (label == 'F')
 		{
-			if (rad + conn + Math.abs(charge) <= 1)
-			{
-				this.valence = 1;
-				this.a.implicitH = 1 - rad - conn - Math.abs(charge);
-			}
+			valence = 1;
+			hyd = 1 - rad - conn - absCharge;
 		}
 		else if (label == 'Cl' || label == 'Br' ||
 			label == 'I'  || label == 'At')
@@ -280,26 +317,39 @@ rnd.AtomData.prototype.calcValence = function (conn)
 			{
 				if (conn <= 2)
 				{
-					this.valence = 2;
-					this.a.implicitH = 2 - rad - conn;
+					valence = 2;
+					hyd = 2 - rad - conn;
 				}
+				else if (conn == 3 || conn == 5 || conn >= 7)
+					hyd = -1;
 			}
 			else if (charge == 0)
 			{
 				if (conn <= 1)
 				{
-					this.valence = 1;
-					this.a.implicitH = 1 - rad - conn;
+					valence = 1;
+					hyd = 1 - rad - conn;
 				}
-				else if (conn <= 3)
+				// While the halogens can have valence 3, they can not have
+				// hydrogens in that case.
+				else if (conn == 2 || conn == 4 || conn == 6)
 				{
-					this.valence = 3;
-					this.a.implicitH = 3 - rad - conn;
+					if (rad == 1)
+					{
+						valence = conn;
+						hyd = 0;
+					}
+					else
+						hyd = -1; // will throw an error in the end
 				}
+				else if (conn > 7)
+					hyd = -1; // will throw an error in the end
 			}
 		}
 	}
 
+	this.valence = valence;
+	this.a.implicitH = hyd;
 	if (this.a.implicitH < 0)
 	{
 		this.valence = conn;
@@ -338,30 +388,19 @@ rnd.AtomData.prototype.calcValenceMinusHyd = function (conn)
 	}
 	else if (groupno == 5)
 	{
-		if (label == 'N')
+		if (label == 'N' || label == 'P')
 		{
 			if (charge == 1)
 				return rad + conn;
 			if (charge == 2)
 				return rad + conn;
 		}
-		else if (label == 'P' || label == 'Sb' || label == 'Bi')
+		else if (label == 'Sb' || label == 'Bi' || label == 'As')
 		{
-			if (conn < 4)
-			{
-				if (charge == 1)
-					return rad + conn;
-				if (charge == 2)
-					return rad + conn;
-			}
-		}
-		else if (label == 'As')
-		{
-			if (conn < 4)
-			{
-				if (charge == 1)
-					return rad + conn;
-			}
+			if (charge == 1)
+				return rad + conn;
+			else if (charge == 2)
+				return rad + conn;
 		}
 	}
 	else if (groupno == 6)
@@ -371,9 +410,8 @@ rnd.AtomData.prototype.calcValenceMinusHyd = function (conn)
 			if (charge >= 1)
 				return rad + conn;
 		}
-		else if (label == 'S'  || label == 'Se' ||
-			label == 'Po')
-			{
+		else if (label == 'S'  || label == 'Se' || label == 'Po')
+		{
 			if (charge == 1)
 				return rad + conn;
 		}

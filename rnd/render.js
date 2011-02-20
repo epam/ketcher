@@ -77,7 +77,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.atomColoring = this.opt.atomColoring || 0;
 
 	this.scale = scale || 100;
-	this.maxMinDist = this.scale / 3;
+	this.selectionDistanceCoefficient = 1.0 / 3;
 	this.offset = new chem.Vec2();
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
@@ -865,8 +865,9 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 
 rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	var closestAtom = null;
-	minDist = minDist || this.maxMinDist;
-	minDist = Math.min(minDist, this.maxMinDist);
+	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	minDist = minDist || maxMinDist;
+	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
 		var dist = chem.Vec2.dist(pos, atom.ps);
 		if (dist < minDist) {
@@ -884,8 +885,9 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	var closestBond = null;
-	minDist = minDist || this.maxMinDist;
-	minDist = Math.min(minDist, this.maxMinDist);
+	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	minDist = minDist || maxMinDist;
+	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.bonds.each(function(bid, bond){
 		var hb = this.ctab.halfBonds.get(bond.hb1);
 		var d = hb.dir;
@@ -912,8 +914,9 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var closestSg = null;
-	minDist = minDist || this.maxMinDist;
-	minDist = Math.min(minDist, this.maxMinDist);
+	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	minDist = minDist || maxMinDist;
+	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
 	var vext = new chem.Vec2(lw*4, lw*6);
 	this.ctab.molecule.sgroups.each(function(sgid, sg){

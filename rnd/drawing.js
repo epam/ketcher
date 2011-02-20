@@ -449,6 +449,8 @@ rnd.MolData.prototype.showLabels = function ()
 		}
 		if (atom.selected)
 			this.showAtomSelection(aid, atom, true);
+		if (atom.highlight)
+			this.showAtomHighlighting(aid, atom, true);
 
 		if (atom.showLabel)
 		{
@@ -732,6 +734,8 @@ rnd.MolData.prototype.showBonds = function ()
 		this.addBondPath('data', bid, bond.path, bond.rbb);
 		if (bond.selected)
 			this.showBondSelection(bid, bond, true);
+		if (bond.highlight)
+			this.showBondHighlighting(bid, bond, true);
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null, irbb = null;
 		if (opt.showBondIds) {

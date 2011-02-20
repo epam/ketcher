@@ -1133,12 +1133,12 @@ ui.dbl_click = false;
 ui.onClick_Atom = function (event, id)
 {
     if (ui.mouse_moved)
-        return;
+        return true;
         
     if (event.altKey)
     {
         ui.showAtomProperties(id);
-        return;
+        return true;
     }
 
     ui.dbl_click = false;
@@ -1146,7 +1146,7 @@ ui.onClick_Atom = function (event, id)
     setTimeout(function ()
     {
         if (ui.dbl_click)
-            return;
+            return true;
             
         switch (ui.modeType())
         {
@@ -1221,23 +1221,25 @@ ui.onClick_Atom = function (event, id)
             break;
         }
     }, ui.DBLCLICK_INTERVAL);
+	return true;
 }
 
 ui.onDblClick_Atom = function (event, id)
 {
     if (event.altKey)
-        return;
+        return true;
 
     ui.dbl_click = true;
 
     if (ui.modeType() != ui.MODE.PASTE)
         ui.showAtomProperties(id);
+	return true;
 }
 
 ui.onClick_Bond = function (event, id)
 {
     if (ui.mouse_moved)
-        return;
+        return true;
     
     switch (ui.modeType())
     {
@@ -1310,11 +1312,13 @@ ui.onClick_Bond = function (event, id)
         ui.onClick_Canvas(event); // TODO: fix this
         break;
     }
+	return true;
 }
 
 ui.onDblClick_SGroup = function (event, sid)
 {
     ui.showSGroupProperties(sid);
+	return true;
 }
 
 ui.onClick_Canvas = function (event)
@@ -1590,6 +1594,7 @@ ui.onMouseDown_Atom = function (event, aid)
             ui.drag.action = ui.Action.fromSelectedAtomsPos();
         ui.drag.selection = true;
     }
+	return true;
 }
 
 ui.onMouseDown_Bond = function (event, bid)
@@ -1614,6 +1619,7 @@ ui.onMouseDown_Bond = function (event, bid)
             ui.drag.action = ui.Action.fromSelectedAtomsPos();
         ui.drag.selection = true;
     }
+	return true;
 }
 
 ui.onMouseDown_Canvas = function (event)
@@ -1638,12 +1644,14 @@ ui.onMouseMove_Atom = function (event)
 {
     if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
         ui.onMouseMove_Canvas(event); // TODO: fix this
+	return true;
 }
 
 ui.onMouseMove_Bond = function (event)
 {
     if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
         ui.onMouseMove_Canvas(event); // TODO: fix this
+	return true;
 }
 
 ui.onMouseMove_Canvas = function (event)
@@ -1813,7 +1821,7 @@ ui.onMouseOver_Atom = function (event, aid)
                 return true;
             return false;
         }, this)))
-            return;
+            return true;
             
         var begin = ui.drag.atom_id;
         var pos = null;
@@ -1850,7 +1858,8 @@ ui.onMouseOver_Atom = function (event, aid)
         ui.render.update();
         ui.drag.new_atom_id = -1; // after update() to avoid mousout
         ui.render.atomSetHighlight(aid, true);
-    } 
+    }
+	return true;
 }
 
 ui.onMouseOut_Atom = function (event, aid)
@@ -1866,28 +1875,33 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.action = ui.Action.fromAtomPos(ui.drag.atom_id);
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }
+	return true;
 }
 
 ui.onMouseOver_Bond = function (event, bid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.bondSetHighlight(bid, true);
+	return true;
 }
 
 ui.onMouseOut_Bond = function (event, bid)
 {
     ui.render.bondSetHighlight(bid, false);
+	return true;
 }
 
 ui.onMouseOver_SGroup = function (event, sid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.sGroupSetHighlight(sid, true);
+	return true;
 }
 
 ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.render.sGroupSetHighlight(sid, false);
+	return true;
 }
 
 //

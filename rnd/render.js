@@ -165,13 +165,9 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 			|| (oldType == 'Atom' && this.ctab.atoms.has(oldId))
 			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))
 			|| (oldType == 'SGroup' && this.ctab.molecule.sgroups.has(oldId))) {
-			var nameOut = 'on' + oldType + 'MouseOut';
-			if (this[nameOut])
-				this[nameOut](event, oldId);
+			this.callEventHandler(event, 'MouseOut', oldType, oldId);
 		}
-		var nameOver = 'on' + type + 'MouseOver';
-		if (this[nameOver])
-			this[nameOver](event, id);
+		this.callEventHandler(event, 'MouseOver', type, id);
 	}
 }
 
@@ -192,17 +188,26 @@ rnd.Render.prototype.client2Obj = function (clientPos) {
 	return new chem.Vec2(clientPos).sub(this.offset);
 }
 
+rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
+	var name = 'on' + type + eventName;
+	var handled = false;
+	if (this[name])
+		handled = this[name](event, id);
+	if (!handled && type != 'Canvas') {
+		var name1 = 'onCanvas' + eventName;
+		if (this[name1])
+			handled = this[name1](event);
+	}
+}
+
 chem.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	function(eventName) {
 		rnd.Render.prototype['_onCanvas' + eventName] = function(event){
 			this.checkCurrentItem(event);
-
-			var name = 'on' + this.curItem.type + eventName;
-			if (this[name])
-				this[name](event, this.curItem.id);
+			this.callEventHandler(event, eventName, this.curItem.type, this.curItem.id);
 		}
 	}
-	);
+);
 
 rnd.Render.prototype.setScale = function (scale)
 {

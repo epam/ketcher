@@ -280,13 +280,11 @@ ui.init = function ()
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
-    this.render.onAtomMouseMove = this.onMouseMove_Atom;
     this.render.onAtomMouseDown = this.onMouseDown_Atom;
     this.render.onAtomMouseOver = this.onMouseOver_Atom;
     this.render.onAtomMouseOut = this.onMouseOut_Atom;
     
     this.render.onBondClick = this.onClick_Bond;
-    this.render.onBondMouseMove = this.onMouseMove_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
     this.render.onBondMouseOver = this.onMouseOver_Bond;
     this.render.onBondMouseOut = this.onMouseOut_Bond;
@@ -1215,10 +1213,6 @@ ui.onClick_Atom = function (event, id)
             ui.addUndoAction(ui.Action.fromPatternOnAtom(id, ui.pattern()), true);
             ui.render.update();
             break;
-            
-        case ui.MODE.PASTE:
-            ui.onClick_Canvas(event); // TODO: fix this
-            break;
         }
     }, ui.DBLCLICK_INTERVAL);
 	return true;
@@ -1306,10 +1300,6 @@ ui.onClick_Bond = function (event, id)
     case ui.MODE.PATTERN:
         ui.addUndoAction(ui.Action.fromPatternOnElement(id, ui.pattern(), false), true);
         ui.render.update();
-        break;
-        
-    case ui.MODE.PASTE:
-        ui.onClick_Canvas(event); // TODO: fix this
         break;
     }
 	return true;
@@ -1577,6 +1567,9 @@ ui.onMouseDown_Atom = function (event, aid)
     if ($('input_label').visible())
         $('input_label').hide();
 
+    if (ui.modeType() == ui.MODE.PASTE)
+        return false;
+    
     ui.mouse_moved = false;
     ui.drag.atom_id = aid;
     ui.drag.start_pos = {x: event.pageX, y: event.pageY};
@@ -1602,6 +1595,9 @@ ui.onMouseDown_Bond = function (event, bid)
     if ($('input_label').visible())
         $('input_label').hide();
 
+    if (ui.modeType() == ui.MODE.PASTE)
+        return false;
+
     ui.mouse_moved = false;
     ui.drag.bond_id = bid;
     ui.drag.start_pos = {x: event.pageX, y: event.pageY};
@@ -1626,6 +1622,18 @@ ui.onMouseDown_Canvas = function (event)
 {
     if ($('input_label').visible())
         $('input_label').hide();
+    
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.mouse_moved = true; // to avoid further handling of the click
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds));
+        ui.render.update();
+        ui.pasted.atoms.clear();
+        ui.pasted.bonds.clear();
+        ui.selectMode('select_simple');
+
+        return;
+    }
 
     ui.mouse_moved = false;
 
@@ -1638,20 +1646,6 @@ ui.onMouseDown_Canvas = function (event)
     }
     
     ui.updateSelection();
-}
-
-ui.onMouseMove_Atom = function (event)
-{
-    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
-        ui.onMouseMove_Canvas(event); // TODO: fix this
-	return true;
-}
-
-ui.onMouseMove_Bond = function (event)
-{
-    if (ui.modeType() == ui.MODE.PASTE || ui.isDrag())
-        ui.onMouseMove_Canvas(event); // TODO: fix this
-	return true;
 }
 
 ui.onMouseMove_Canvas = function (event)

@@ -294,7 +294,9 @@ ui.init = function ()
     this.render.onCanvasMouseDown = this.onMouseDown_Canvas;
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
 
+    this.render.onSGroupClick = function () { return true; };
     this.render.onSGroupDblClick = this.onDblClick_SGroup;
+    this.render.onSGroupMouseDown = function () { return true; };
     this.render.onSGroupMouseOver = this.onMouseOver_SGroup;
     this.render.onSGroupMouseOut = this.onMouseOut_SGroup;
     
@@ -2012,16 +2014,16 @@ ui.applySGroupProperties = function ()
     */
     
     var type = $('sgroup_type').value;
+    var value;
 
-    ui.render.sGroupSetType(id, type);
-    
     if (type == 'SRU')
-        ui.render.sGroupSetAttr(id, 'connectivity', $('sgroup_connection').value);
+        value = $('sgroup_connection').value;
     else if (type == 'MUL')
-        ui.render.sGroupSetAttr(id, 'mul', parseInt($('sgroup_label').value));
-    else if (type == 'SUP')
-        ui.render.sGroupSetAttr(id, 'name', $('sgroup_label').value);
+        value = parseInt($('sgroup_label').value);
+    else // if (type == 'SUP')
+        value = $('sgroup_label').value;
         
+    ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, value), true);
     ui.render.update();
 }
 
@@ -2041,6 +2043,13 @@ ui.onChange_SGroupType = function ()
     if (type == 'MUL' && !$('sgroup_label').value.match(/^[1-9][0-9]{0,2}$/))
         $('sgroup_label').value = '1';
 }
+
+ui.sgroupAttrByType =
+{
+    MUL: 'mul',
+    SRU: 'connectivity',
+    SUP: 'name'
+};
 
 //
 // Clipboard actions 
@@ -2160,6 +2169,7 @@ ui.onClick_Paste = function ()
 //
 ui.atomMap = new Array();
 ui.bondMap = new Array();
+ui.sgroupMap = new Array();
 
 ui.Action = function ()
 {
@@ -2176,7 +2186,8 @@ ui.Action.OPERATION =
     BOND_ADD:    6,
     BOND_DEL:    7, 
     BOND_FLIP:   8, 
-    CANVAS_LOAD: 9
+    CANVAS_LOAD: 9,
+    SGROUP_ATTR: 10
 };
 
 ui.Action.prototype.addOperation = function (type, params)
@@ -2319,6 +2330,7 @@ ui.Action.prototype.perform = function ()
             {
                 op.params.atom_map = new Array();
                 op.params.bond_map = new Array();
+                op.params.sgroup_map = new Array();
                 
                 op.params.ctab.atoms.each(function (aid)
                 {
@@ -2329,19 +2341,44 @@ ui.Action.prototype.perform = function ()
                 {
                     op.params.bond_map.push(parseInt(bid));
                 }, this);
+
+                op.params.ctab.sgroups.each(function (sid)
+                {
+                    op.params.sgroup_map.push(parseInt(sid));
+                }, this);
             }
             
             op.inverted.params =
             {
                 ctab: ui.ctab,
                 atom_map: ui.atomMap,
-                bond_map: ui.bondMap
+                bond_map: ui.bondMap,
+                sgroup_map: ui.sgroupMap
             };
             
             ui.ctab = op.params.ctab;
             ui.render.setMolecule(ui.ctab);
             ui.atomMap = op.params.atom_map;
             ui.bondMap = op.params.bond_map;
+            ui.sgroupMap = op.params.sgroup_map;
+            break;
+            
+        case ui.Action.OPERATION.SGROUP_ATTR:
+            op.inverted.type = ui.Action.OPERATION.SGROUP_ATTR;
+            
+            var cur_type = ui.render.sGroupGetType(ui.sgroupMap[op.params.id]);
+            
+            op.inverted.params =
+            {
+                id: op.params.id,
+                type: cur_type,
+                attr_value: ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[cur_type])
+            };
+            
+            if (op.params.type != op.inverted.params.type)
+                ui.render.sGroupSetType(ui.sgroupMap[op.params.id], op.params.type);
+                
+            ui.render.sGroupSetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[op.params.type], op.params.attr_value);
             break;
             
         default:
@@ -2373,6 +2410,11 @@ ui.Action.prototype.isDummy = function ()
         case ui.Action.OPERATION.BOND_ATTR:
             if (ui.render.bondGetAttr(ui.bondMap[op.params.id], op.params.attr_name) == op.params.attr_value)
                 return false;
+            return true;
+        case ui.Action.OPERATION.SGROUP_ATTR:
+            if (ui.render.sGroupGetType(ui.sgroupMap[op.params.id]) == op.params.type)
+                if (ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[op.params.type]) == op.params.attr_value)
+                    return false;
             return true;
         }
         return true;
@@ -3007,6 +3049,21 @@ ui.Action.fromNewCanvas = function (ctab)
         ctab: ctab,
         atom_map: null,
         bond_map: null
+    });
+    
+    return action.perform();
+}
+
+ui.Action.fromSgroupAttrs = function (id, type, attr)
+{
+    var action = new ui.Action();
+    var id_map = ui.sgroupMap.indexOf(id);
+
+    action.addOperation(ui.Action.OPERATION.SGROUP_ATTR,
+    {
+        id: id_map,
+        type: type,
+        attr_value: attr
     });
     
     return action.perform();

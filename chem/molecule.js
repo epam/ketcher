@@ -19,6 +19,7 @@ chem.Molecule = function ()
 	this.atoms = new chem.Pool();
 	this.bonds = new chem.Pool();
 	this.sgroups = new chem.Pool();
+	this.isChiral = false;
 }
 
 chem.Molecule.prototype.toLists = function ()

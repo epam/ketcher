@@ -94,7 +94,8 @@ rnd.MolData = function (molecule, render)
 	this.layers = [];
 	this.initLayers();
 	this.chiral = {
-		pos: null,
+		p: null,
+		ps: null,
 		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
 	};
 
@@ -163,6 +164,8 @@ rnd.MolData.prototype.eachVisel = function (func, context) {
 	}, this);
 	if (this.rxnArrow != null)
 		func.call(context, this.rxnArrow.visel);
+	if (this.chiral.p != null)
+		func.call(context, this.chiral.visel);
 	this.molecule.sgroups.each(function(sid, sgroup){
 		func.call(context, sgroup.visel);
 	}, this);
@@ -326,10 +329,15 @@ rnd.MolData.prototype.drawSGroups = function ()
 
 rnd.MolData.prototype.drawChiralLabel = function ()
 {
-	if (this.chiral.pos != null) {
-		var paper = this.render.paper;
-		var settings = this.render.settings;
-		this.chiral.path = paper.text(this.chiral.pos.x, this.chiral.pos.y, "Chiral")
+	var render = this.render;
+	var paper = render.paper;
+	var settings = render.settings;
+	if (this.chiral.p != null) {
+		if (this.chiral.ps == null) {
+			this.chiral.ps = this.chiral.p.scaled(settings.scaleFactor);
+		}
+
+		this.chiral.path = paper.text(this.chiral.ps.x, this.chiral.ps.y, "Chiral")
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontsz,
@@ -618,6 +626,9 @@ rnd.MolData.prototype.coordProcess = function ()
 	if (avg < 1e-3)
 		avg = 1;
 	var scale = 1 / avg;
+
+	if (this.molecule.isChiral)
+		this.chiral.p = new chem.Vec2((bb.max.x - bb.min.x) * scale, -1);
 	this.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 }
 

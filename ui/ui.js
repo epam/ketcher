@@ -1337,8 +1337,12 @@ ui.onDblClick_SGroup = function (event, sid)
 {
     ui.dbl_click = true;
     
-    if (!ui.selected() && ui.modeType() != ui.MODE.ERASE)
+    if (ui.modeType() != ui.MODE.PASTE)
+    {
+        if (ui.selected())
+            ui.updateSelection();
         ui.showSGroupProperties(sid);
+    }
         
 	return true;
 }
@@ -1571,6 +1575,10 @@ ui.selected = function ()
 
 ui.selectAll = function ()
 {
+    var mode = ui.modeType();
+    if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
+        ui.selectMode('select_simple');
+
     var alist = [], blist = [];
     
     ui.ctab.atoms.each(function(aid) {
@@ -1922,7 +1930,7 @@ ui.onMouseOut_Bond = function (event, bid)
 
 ui.onMouseOver_SGroup = function (event, sid)
 {
-    if (!ui.isDrag() && !ui.selected() && ui.modeType() != ui.MODE.PASTE)
+    if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.sGroupSetHighlight(sid, true);
 	return true;
 }
@@ -3271,10 +3279,18 @@ ui.Action.fromSgroupDeletion = function (id)
 ui.Action.fromSgroupAddition = function (type, attr_value, atoms)
 {
     var action = new ui.Action();
+    var atoms_to_remove = new Array();
     var i;
     
     for (i = 0; i < atoms.length; i++)
+    {
+        if (action.removeAtomFromSgroupIfNeeded(atoms[i]))
+            atoms_to_remove.push(atoms[i]);
+
         atoms[i] = ui.atomMap.indexOf(atoms[i]);
+    }
+    
+    action.removeSgroupIfNeeded(atoms_to_remove);
     
     action.addOperation(ui.Action.OPERATION.SGROUP_ADD,
     {

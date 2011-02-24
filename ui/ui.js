@@ -2417,7 +2417,7 @@ ui.Action.prototype.perform = function ()
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATOM_DEL;
             op.inverted.params =
             {
-                id: op.params.id,
+                id: op.params.id
             };
             ui.render.atomSetSGroup(ui.atomMap[op.params.id],  ui.sgroupMap[op.params.sid]);
 

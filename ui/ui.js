@@ -2442,7 +2442,7 @@ ui.Action.prototype.perform = function ()
             
             op.params.atoms.each(function (aid)
             {
-                ui.render.atomSetSGroup(aid, id);
+                ui.render.atomSetSGroup(ui.atomMap[aid], id);
             }, this);
             
             if (op.inverted.params == null)

@@ -31,7 +31,6 @@ ui.DEBUG = false;
 
 ui.render = null;
 
-ui.console = null;
 ui.ctab = new chem.Molecule();
 
 ui.client_area = null;
@@ -98,11 +97,6 @@ ui.init = function ()
         this.selectMode('select_simple');
         return;
     }
-    
-    this.console = new ui.Log();
-    this.showConsole(ui.DEBUG);
-    
-    this.console.writeLine("Initializing UI...");
     
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
     
@@ -252,8 +246,6 @@ ui.init = function ()
                     
     if (this.standalone)
     {
-        this.console.writeLine(" Server not found. Working in a standalone mode.");
-
         $$('.serverRequired').each(function (el)
         {
             if (el.hasClassName('toolButton'))
@@ -269,13 +261,11 @@ ui.init = function ()
             $('upload_mol').action = ui.base_url + 'open';
             $('download_mol').action = ui.base_url + 'save';
         }
-        this.console.writeLine(" Server found.");
     }
         
     this.selectMode('select_simple');
     
     // Init renderer
-    this.console.writeLine(" Renderer...");
     this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
     
     this.render.onAtomClick = this.onClick_Atom;
@@ -304,16 +294,6 @@ ui.init = function ()
     this.render.update();
     
     this.initialized = true;
-    
-    this.console.writeLine("Done.");
-};
-
-ui.showConsole = function (show)
-{
-    if (show)
-        $('console_row').show();
-    else
-        $('console_row').hide();
 };
 
 ui.showDialog = function (name)
@@ -346,10 +326,7 @@ ui.onResize_Ketcher = function ()
 ui.updateMolecule = function (mol)
 {
     if (typeof(mol) == 'undefined' || mol == null)
-    {
-        this.console.writeLine('Molfile parsing failed');
         return;
-    }
     
     this.addUndoAction(this.Action.fromNewCanvas(mol));
     this.render.update();
@@ -869,7 +846,7 @@ ui.getFile = function ()
     return chem.getElementTextContent(frame_body);
 }
 
-ui.loadMolecule = function (mol_string)
+ui.loadMolecule = function (mol_string, force_layout)
 {
     var smiles = mol_string.strip();
     
@@ -879,12 +856,10 @@ ui.loadMolecule = function (mol_string)
         {
             if (smiles != '')
             {
-                //this.console.writeLine('SMILES is not supported in a standalone mode.');
                 alert('SMILES is not supported in a standalone mode.');
             }
             return;
         }
-        this.console.write('\nMaking layout...');
         var request = new Ajax.Request(ui.path + 'layout?smiles=' + encodeURIComponent(smiles),
                 {
                     method: 'get',
@@ -892,14 +867,20 @@ ui.loadMolecule = function (mol_string)
                     onComplete: function (res)
                     {
                         if (res.responseText.startsWith('Ok.'))
-                        {
-                            ui.console.write('Ok.');
                             ui.updateMolecule(ui.parseMolfile(res.responseText));
-                        } else
-                        {
-                            ui.console.writeLine('Failed. Response is:');
-                            ui.console.writeLine(res.responseText);
-                        }
+                    }
+                });
+    } else if (!ui.standalone && force_layout)
+    {
+        var request = new Ajax.Request(ui.path + 'layout',
+                {
+                    method: 'post',
+                    asynchronous : true,
+                    parameters: {moldata: mol_string},
+                    onComplete: function (res)
+                    {
+                        if (res.responseText.startsWith('Ok.'))
+                            ui.updateMolecule(ui.parseMolfile(res.responseText));
                     }
                 });
     } else {
@@ -912,11 +893,6 @@ ui.loadMoleculeFromFile = function ()
     var file = ui.getFile();
     if (file.startsWith('Ok.'))
         ui.loadMolecule(file.substr(file.indexOf('\n') + 1));
-    else
-    {
-        ui.console.writeLine("Can not open file:");
-        ui.console.writeLine(file);
-    }
 };
 
 ui.loadMoleculeFromInput = function ()
@@ -1055,14 +1031,14 @@ ui.onClick_CleanUp = function ()
         ui.selectMode('select_simple');
     }
     
-    var ss = new chem.SmilesSaver();
+    var ms = new chem.MolfileSaver();
     
     try
     {
-        ui.loadMolecule(ss.saveMolecule(ui.ctab, true));
+        ui.loadMolecule(ms.saveMolecule(ui.ctab), true);
     } catch (er)
     {
-        alert("SMILES: " + er.message);
+        alert("Molfile: " + er.message);
     }
 }
 

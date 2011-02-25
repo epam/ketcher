@@ -68,6 +68,18 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.wfile.write(rest)
       return
 
+    if self.path.endswith("layout"):
+      length = int(self.headers['content-length'])
+      self.globals = dict(cgi.parse_qsl(self.rfile.read(length)))
+      self.send_response(200)
+      self.send_header('Content-type', 'text/plain')
+      self.end_headers()
+      mol = indigo.loadMolecule(self.globals['moldata'])
+      mol.layout()
+      self.wfile.write("Ok.\n")
+      self.wfile.write(mol.molfile())
+      return
+
 HandlerClass = MyHandler #SimpleHTTPRequestHandler
 ServerClass  = BaseHTTPServer.HTTPServer
 Protocol     = "HTTP/1.0"

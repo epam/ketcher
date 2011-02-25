@@ -350,7 +350,7 @@ ui.updateMolecule = function (mol)
         this.console.writeLine('Molfile parsing failed');
         return;
     }
-    
+
     this.addUndoAction(this.Action.fromNewCanvas(mol));
     this.render.update();
 };
@@ -2395,7 +2395,8 @@ ui.Action.prototype.perform = function ()
                 bond_map: ui.bondMap,
                 sgroup_map: ui.sgroupMap
             };
-            
+
+            ui.render.ctab.clearVisels();
             ui.ctab = op.params.ctab;
             ui.render.setMolecule(ui.ctab);
             ui.atomMap = op.params.atom_map;

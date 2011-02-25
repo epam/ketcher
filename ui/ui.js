@@ -1910,13 +1910,34 @@ ui.onMouseOut_Bond = function (event, bid)
 ui.onMouseOver_SGroup = function (event, sid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
+    {
         ui.render.sGroupSetHighlight(sid, true);
+        
+        /*
+        var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
+        
+        atoms.each(function (id)
+        {
+            ui.render.atomSetHighlight(id, true);
+        }, this);
+        */
+    }
 	return true;
 }
 
 ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.render.sGroupSetHighlight(sid, false);
+
+    /*
+    var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
+    
+    atoms.each(function (id)
+    {
+        ui.render.atomSetHighlight(id, false);
+    }, this);
+    */
+
 	return true;
 }
 
@@ -1998,6 +2019,9 @@ ui.onChange_AtomValence = function ()
 //
 ui.showSGroupProperties = function (id)
 {
+    if ($('sgroup_properties').visible())
+        return;
+        
     var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
     
     $('sgroup_properties').sgroup_id = id;

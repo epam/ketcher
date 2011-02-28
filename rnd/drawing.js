@@ -336,6 +336,27 @@ rnd.MolData.prototype.showAtomHighlighting = function (aid, atom, visible)
 	}
 }
 
+rnd.MolData.prototype.showAtomSGroupHighlighting = function (aid, atom, visible)
+{
+	var exists = (atom.sGroupHighlighting != null) && !atom.sGroupHighlighting.removed;
+	if (visible) {
+		if (!exists) {
+			var render = this.render;
+			var styles = render.styles;
+			var paper = render.paper;
+			atom.sGroupHighlighting = paper
+			.circle(atom.ps.x, atom.ps.y, 0.7 * styles.atomSelectionPlateRadius)
+			.attr(styles.sGroupHighlightStyle);
+			this.addAtomPath('highlighting', aid, atom.sGroupHighlighting);
+		}
+		atom.sGroupHighlighting.show();
+	} else {
+		if (exists) {
+			atom.sGroupHighlighting.hide();
+		}
+	}
+}
+
 rnd.MolData.prototype.showAtomSelection = function (aid, atom, visible)
 {
 	var exists = (atom.selectionPlate != null) && !atom.selectionPlate.removed;
@@ -451,6 +472,8 @@ rnd.MolData.prototype.showLabels = function ()
 			this.showAtomSelection(aid, atom, true);
 		if (atom.highlight)
 			this.showAtomHighlighting(aid, atom, true);
+		if (atom.sGroupHighlight)
+			this.showAtomSGroupHighlighting(aid, atom, true);
 
 		if (atom.showLabel)
 		{

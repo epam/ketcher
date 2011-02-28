@@ -33,6 +33,8 @@ rnd.AtomData = function (/*chem.Atom*/atom)
 
 	this.highlight = false;
 	this.highlighting = null;
+	this.sGroupHighlight = false;
+	this.sGroupHighlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
 }

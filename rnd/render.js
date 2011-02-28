@@ -33,7 +33,6 @@ rnd.entities = ['Atom', 'Bond', 'Canvas'];
 
 rnd.actions = [
 	'atomSetAttr',
-	'atomSetHighlight',
 	'atomSetSGroup',
 	'atomAdd',
 	'atomMove',
@@ -41,7 +40,6 @@ rnd.actions = [
 	'atomMoveRelMultiple',
 	'atomRemove',
 	'bondSetAttr',
-	'bondSetHighlight',
 	'bondAdd',
 	'bondFlip',
 	'bondRemove',
@@ -386,11 +384,18 @@ rnd.Render.prototype._atomSetSGroup = function (aid, value)
 	this.invalidateAtom(aid);
 }
 
-rnd.Render.prototype._atomSetHighlight = function (aid, value)
+rnd.Render.prototype.atomSetHighlight = function (aid, value)
 {
 	var atom = this.ctab.atoms.get(aid);
 	atom.highlight = value;
 	this.ctab.showAtomHighlighting(aid, atom, value);
+}
+
+rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
+{
+	var atom = this.ctab.atoms.get(aid);
+	atom.sGroupHighlight = value;
+	this.ctab.showAtomSGroupHighlighting(aid, atom, value);
 }
 
 rnd.Render.prototype._atomAdd = function (pos, params)
@@ -443,7 +448,7 @@ rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 // update loops involving this bond
 }
 
-rnd.Render.prototype._bondSetHighlight = function (bid, value)
+rnd.Render.prototype.bondSetHighlight = function (bid, value)
 {
 	var bond = this.ctab.bonds.get(bid);
 	bond.highlight = value;
@@ -521,7 +526,11 @@ rnd.Render.prototype.initStyles = function ()
 	};
 	this.styles.highlightStyle = {
 		'stroke':'#0c0',
-		'stroke-width':0.8*settings.lineWidth
+		'stroke-width':0.6*settings.lineWidth
+		};
+	this.styles.sGroupHighlightStyle = {
+		'stroke':'#9900ff',
+		'stroke-width':0.6*settings.lineWidth
 		};
 	this.styles.sgroupBracketStyle = {
 		'stroke':'#000',

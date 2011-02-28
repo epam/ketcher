@@ -1913,14 +1913,12 @@ ui.onMouseOver_SGroup = function (event, sid)
     {
         ui.render.sGroupSetHighlight(sid, true);
         
-        /*
         var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
         
         atoms.each(function (id)
         {
-            ui.render.atomSetHighlight(id, true);
+            ui.render.atomSetSGroupHighlight(id, true);
         }, this);
-        */
     }
 	return true;
 }
@@ -1929,14 +1927,12 @@ ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.render.sGroupSetHighlight(sid, false);
 
-    /*
     var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
     
     atoms.each(function (id)
     {
-        ui.render.atomSetHighlight(id, false);
+        ui.render.atomSetSGroupHighlight(id, false);
     }, this);
-    */
 
 	return true;
 }
@@ -2081,6 +2077,8 @@ ui.onChange_SGroupType = function ()
     
     if (type == 'MUL' && !$('sgroup_label').value.match(/^[1-9][0-9]{0,2}$/))
         $('sgroup_label').value = '1';
+    else if (type == 'MUL')
+        $('sgroup_label').value = 'n';
 }
 
 ui.sgroupAttrByType =

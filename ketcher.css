@@ -140,6 +140,15 @@ div#window_cover
     filter:     alpha(opacity=15);
 }
 
+div#loading
+{
+    width:  100%;
+    height: 100%;
+    background-image:    url('loading.gif');
+    background-repeat:   no-repeat;
+    background-position: center center;
+}
+
 .dialogWindow
 {
     position: absolute;

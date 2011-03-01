@@ -335,7 +335,23 @@ ui.updateMolecule = function (mol)
         ui.updateSelection();
         
     this.addUndoAction(this.Action.fromNewCanvas(mol));
-    this.render.update();
+    //this.render.update();
+    
+    
+    ui.showDialog('loading');
+    setTimeout(function ()
+    {
+        try
+        {
+            ui.render.update()
+        } catch (er)
+        {
+            alert(er.message);
+        } finally
+        {
+            ui.hideDialog('loading');
+        }
+    }, 50);
 };
 
 ui.parseMolfile = function (molfile)

@@ -335,8 +335,6 @@ ui.updateMolecule = function (mol)
         ui.updateSelection();
         
     this.addUndoAction(this.Action.fromNewCanvas(mol));
-    //this.render.update();
-    
     
     ui.showDialog('loading');
     setTimeout(function ()

@@ -1361,10 +1361,11 @@ ui.onClick_Canvas = function (event)
         break;
         
     case ui.MODE.PASTE:
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds));
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups));
         ui.render.update();
         ui.pasted.atoms.clear();
         ui.pasted.bonds.clear();
+        ui.pasted.sgroups.clear();
         ui.selectMode('select_simple');
         break;
     }
@@ -1645,10 +1646,11 @@ ui.onMouseDown_Canvas = function (event)
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.mouse_moved = true; // to avoid further handling of the click
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds));
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups));
         ui.render.update();
         ui.pasted.atoms.clear();
         ui.pasted.bonds.clear();
+        ui.pasted.sgroups.clear();
         ui.selectMode('select_simple');
 
         return;
@@ -2094,7 +2096,7 @@ ui.sgroupAttrByType =
 //
 
 ui.clipboard = null;
-ui.pasted = {atoms: [], bonds: []};
+ui.pasted = {atoms: [], bonds: [], sgroups: []};
 
 ui.isClipboardEmpty = function ()
 {
@@ -2121,15 +2123,25 @@ ui.updateClipboardButtons = function ()
 
 ui.copy = function ()
 {
-    ui.clipboard = new chem.Molecule();
+    ui.clipboard = 
+    {
+        atoms: new Array(),
+        bonds: new Array(),
+        sgroups: new Array()
+    };
     
     var mapping = {};
-    
+    var sgroup_counts = {};
+
     ui.selection.atoms.each(function (id)
     {
         var new_atom = Object.clone(ui.ctab.atoms.get(id));
         new_atom.pos = ui.render.atomGetPos(id);
-        mapping[id] = ui.clipboard.atoms.add(new chem.Molecule.Atom(new_atom));
+        
+        if (new_atom.sgroup != -1)
+            new_atom.sgroup = -1;
+        
+        mapping[id] = ui.clipboard.atoms.push(new chem.Molecule.Atom(new_atom)) - 1;
     });
     
     ui.selection.bonds.each(function (id)
@@ -2137,30 +2149,91 @@ ui.copy = function ()
         var new_bond = Object.clone(ui.ctab.bonds.get(id));
         new_bond.begin = mapping[new_bond.begin];
         new_bond.end = mapping[new_bond.end];
-        ui.clipboard.bonds.add(new chem.Molecule.Bond(new_bond));
+        ui.clipboard.bonds.push(new chem.Molecule.Bond(new_bond));
+    });
+
+    // determine selected sgroups
+    ui.selection.atoms.each(function (id)
+    {
+        var sg = ui.render.atomGetSGroups(id);
+        
+        if (sg.length > 0)
+        {
+            if (sg[0] in sgroup_counts)
+                sgroup_counts[sg[0]]++;
+            else
+                sgroup_counts[sg[0]] = 1;
+        }
+    });
+    
+    ui.ctab.sgroups.each(function (sid, sg)
+    {
+        if ((sid in sgroup_counts) && (sgroup_counts[sid] == ui.render.sGroupGetAttr(sid, 'atoms').length))
+        {
+            var new_sgroup = 
+            {
+                type: ui.render.sGroupGetType(sid),
+                mul: ui.render.sGroupGetAttr(sid, 'mul'),
+                connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
+                name: ui.render.sGroupGetAttr(sid, 'name'),
+                atoms: ui.render.sGroupGetAttr(sid, 'atoms').clone()
+            }
+            
+            for (var i = 0; i < new_sgroup.atoms.length; i++)
+            {
+                new_sgroup.atoms[i] = mapping[new_sgroup.atoms[i]];
+            }
+            
+            ui.clipboard.sgroups.push(new_sgroup) - 1;
+        }
     });
 }
 
 ui.paste = function ()
 {
     var mapping = {};
+    var id, i;
     
-    ui.clipboard.atoms.each(function (id, atom)
+    for (id = 0; id < ui.clipboard.atoms.length; id++)
     {
+        var atom = ui.clipboard.atoms[id];
         mapping[id] = ui.render.atomAdd(atom.pos, atom);
         ui.pasted.atoms.push(mapping[id]);
-    });
+    }
     
-    ui.clipboard.bonds.each(function (id, bond)
+    for (id = 0; id < ui.clipboard.bonds.length; id++)
     {
+        var bond = ui.clipboard.bonds[id];
         ui.pasted.bonds.push(ui.render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
-    });
+    }
+    
+    ui.clipboard.sgroups.each(function (sgroup)
+    {
+        var sid = ui.render.sGroupCreate(sgroup.type);
+        
+        ui.render.sGroupSetAttr(sid, 'mul', sgroup.mul);
+        ui.render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
+        ui.render.sGroupSetAttr(sid, 'name', sgroup.name);
+        
+        sgroup.atoms.each(function(id)
+        {
+            ui.render.atomSetSGroup(mapping[id], sid);
+        }, this);    
+            
+        ui.pasted.sgroups.push(sid);
+    }, this);
 
     ui.selectMode(null);
+    ui.render.update();
 }
 
 ui.cancelPaste = function ()
 {
+    ui.pasted.sgroups.each(function (id)
+    {
+        ui.render.sGroupDelete(id);
+    });
+    
     ui.pasted.atoms.each(function (id)
     {
         ui.render.atomRemove(id);
@@ -2168,6 +2241,7 @@ ui.cancelPaste = function ()
     
     ui.pasted.atoms.clear();
     ui.pasted.bonds.clear();
+    ui.pasted.sgroups.clear();
     
     if (ui.render != null)
         ui.render.update();
@@ -2853,7 +2927,7 @@ ui.Action.fromBondDeletion = function (id)
     return action.perform();
 }
 
-ui.Action.fromFragmentAddition = function (atoms, bonds)
+ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
 {
     var action = new ui.Action();
     
@@ -2870,6 +2944,20 @@ ui.Action.fromFragmentAddition = function (atoms, bonds)
     
     // TODO: merge close atoms and bonds
     
+    sgroups.each(function (sid)
+    {
+        var idx = ui.sgroupMap.indexOf(sid);
+        
+        if (idx == -1)
+            idx = ui.sgroupMap.push(sid) - 1;
+            
+        action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
+        {
+            id: idx
+        });
+    }, this);
+    
+
     bonds.each(function (bid)
     {
         var idx = ui.bondMap.indexOf(bid);

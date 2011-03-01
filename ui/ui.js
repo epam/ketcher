@@ -331,6 +331,9 @@ ui.updateMolecule = function (mol)
         return;
     }
 
+    if (ui.selected())
+        ui.updateSelection();
+        
     this.addUndoAction(this.Action.fromNewCanvas(mol));
     this.render.update();
 };
@@ -1033,9 +1036,6 @@ ui.onClick_CleanUp = function ()
         ui.cancelPaste();
         ui.selectMode('select_simple');
     }
-    
-    if (ui.selected())
-        ui.updateSelection();
     
     var ms = new chem.MolfileSaver();
     

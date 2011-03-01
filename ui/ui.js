@@ -1034,6 +1034,9 @@ ui.onClick_CleanUp = function ()
         ui.selectMode('select_simple');
     }
     
+    if (ui.selected())
+        ui.updateSelection();
+    
     var ms = new chem.MolfileSaver();
     
     try
@@ -1201,6 +1204,11 @@ ui.onClick_Atom = function (event, id)
             ui.addUndoAction(ui.Action.fromPatternOnAtom(id, ui.pattern()), true);
             ui.render.update();
             break;
+
+        case ui.MODE.SGROUP:
+            ui.updateSelection([id], []);
+            ui.showSGroupProperties(null);
+            break;
         }
     }, ui.DBLCLICK_INTERVAL);
 	return true;
@@ -1289,6 +1297,13 @@ ui.onClick_Bond = function (event, id)
         ui.addUndoAction(ui.Action.fromPatternOnElement(id, ui.pattern(), false), true);
         ui.render.update();
         break;
+        
+    case ui.MODE.SGROUP:
+        var bond = ui.ctab.bonds.get(id);
+        
+        ui.updateSelection([bond.begin, bond.end], [id]);
+        ui.showSGroupProperties(null);
+        break;
     }
 	return true;
 }
@@ -1304,6 +1319,14 @@ ui.onClick_SGroup = function (event, sid)
             
         if (ui.modeType() == ui.MODE.ERASE)
         {
+            // remove highlighting
+            ui.render.sGroupSetHighlight(sid, false);
+            var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
+            atoms.each(function (id)
+            {
+                ui.render.atomSetSGroupHighlight(id, false);
+            }, this);
+
             ui.addUndoAction(ui.Action.fromSgroupDeletion(sid));
             ui.render.update();
         }
@@ -1815,10 +1838,10 @@ ui.onMouseMove_Canvas = function (event)
 ui.onMouseUp_Ketcher = function (event)
 {
     if (ui.modeType() == ui.MODE.ERASE)
-        if (ui.selected())
+        if (ui.selected() && ui.isDrag())
             ui.removeSelected();
     if (ui.modeType() == ui.MODE.SGROUP)
-        if (ui.selected())
+        if (ui.selected() && ui.isDrag())
             ui.showSGroupProperties(null);
     ui.endDrag();
     chem.stopEventPropagation(event);
@@ -2027,8 +2050,10 @@ ui.showSGroupProperties = function (id)
     ui.onChange_SGroupType.call($('sgroup_type'));
     
     if (type == 'SRU')
+    {
         $('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
-    else if (type == 'MUL')
+        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'subscript');
+    } else if (type == 'MUL')
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
     else if (type == 'SUP')
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
@@ -2044,22 +2069,30 @@ ui.applySGroupProperties = function ()
     var id = $('sgroup_properties').sgroup_id;
     
     var type = $('sgroup_type').value;
-    var value = '';
+    var attrs = 
+    {
+        mul: null,
+        connectivity: '',
+        name: '',
+        subscript: ''
+    };
 
     if (type == 'SRU')
-        value = $('sgroup_connection').value;
-    else if (type == 'MUL')
-        value = parseInt($('sgroup_label').value);
+    {
+        attrs.connectivity = $('sgroup_connection').value;
+        attrs.subscript = $('sgroup_label').value;
+    } else if (type == 'MUL')
+        attrs.mul = parseInt($('sgroup_label').value);
     else if (type == 'SUP')
-        value = $('sgroup_label').value;
+        attrs.name = $('sgroup_label').value;
 
     if (id == null)
     {
-        ui.addUndoAction(ui.Action.fromSgroupAddition(type, value, ui.selection.atoms));
+        ui.addUndoAction(ui.Action.fromSgroupAddition(type, attrs, ui.selection.atoms));
         ui.updateSelection();
     } else
     {
-        ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, value), true);
+        ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, attrs), true);
         ui.render.update();
     }
 }
@@ -2074,22 +2107,14 @@ ui.onChange_SGroupType = function ()
 {
     var type = $('sgroup_type').value;
 
-    $('sgroup_label').disabled = (type != 'MUL') && (type != 'SUP');
+    $('sgroup_label').disabled = (type != 'SRU') && (type != 'MUL') && (type != 'SUP');
     $('sgroup_connection').disabled = (type != 'SRU');
     
     if (type == 'MUL' && !$('sgroup_label').value.match(/^[1-9][0-9]{0,2}$/))
         $('sgroup_label').value = '1';
-    else if (type == 'MUL')
+    else if (type == 'SRU')
         $('sgroup_label').value = 'n';
 }
-
-ui.sgroupAttrByType =
-{
-    MUL: 'mul',
-    SRU: 'connectivity',
-    SUP: 'name',
-    GEN: ''
-};
 
 //
 // Clipboard actions 
@@ -2176,6 +2201,7 @@ ui.copy = function ()
                 mul: ui.render.sGroupGetAttr(sid, 'mul'),
                 connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
                 name: ui.render.sGroupGetAttr(sid, 'name'),
+                subscript: ui.render.sGroupGetAttr(sid, 'subscript'),
                 atoms: ui.render.sGroupGetAttr(sid, 'atoms').clone()
             }
             
@@ -2482,19 +2508,30 @@ ui.Action.prototype.perform = function ()
         case ui.Action.OPERATION.SGROUP_ATTR:
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATTR;
             
-            var cur_type = ui.render.sGroupGetType(ui.sgroupMap[op.params.id]);
+            var id = ui.sgroupMap[op.params.id];
+            var cur_type = ui.render.sGroupGetType(id);
             
             op.inverted.params =
             {
                 id: op.params.id,
                 type: cur_type,
-                attr_value: ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[cur_type])
+                attrs:
+                {
+                    mul: ui.render.sGroupGetAttr(id, 'mul'),
+                    connectivity: ui.render.sGroupGetAttr(id, 'connectivity'),
+                    name: ui.render.sGroupGetAttr(id, 'name'),
+                    subscript: ui.render.sGroupGetAttr(id, 'subscript')
+                }
             };
             
             if (op.params.type != op.inverted.params.type)
-                ui.render.sGroupSetType(ui.sgroupMap[op.params.id], op.params.type);
+                ui.render.sGroupSetType(id, op.params.type);
                 
-            ui.render.sGroupSetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[op.params.type], op.params.attr_value);
+            var attrs_hash = new Hash(op.params.attrs);
+            attrs_hash.each(function (attr)
+            {
+                ui.render.sGroupSetAttr(id, attr.key, attr.value);
+            }, this);
             break;
             
         case ui.Action.OPERATION.SGROUP_ATOM_ADD:
@@ -2522,7 +2559,11 @@ ui.Action.prototype.perform = function ()
             
             var id = ui.render.sGroupCreate(op.params.type);
             
-            ui.render.sGroupSetAttr(id, ui.sgroupAttrByType[op.params.type], op.params.attr_value);
+            var attrs_hash = new Hash(op.params.attrs);
+            attrs_hash.each(function (attr)
+            {
+                ui.render.sGroupSetAttr(id, attr.key, attr.value);
+            }, this);
             
             op.params.atoms.each(function (aid)
             {
@@ -2552,7 +2593,13 @@ ui.Action.prototype.perform = function ()
             op.inverted.params =
             {
                 type: type,
-                attr_value: ui.render.sGroupGetAttr(id, ui.sgroupAttrByType[type]),
+                attrs:
+                {
+                    mul: ui.render.sGroupGetAttr(id, 'mul'),
+                    connectivity: ui.render.sGroupGetAttr(id, 'connectivity'),
+                    name: ui.render.sGroupGetAttr(id, 'name'),
+                    subscript: ui.render.sGroupGetAttr(id, 'subscript')
+                },
                 atoms: atoms
             };
             ui.render.sGroupDelete(id);
@@ -2590,8 +2637,17 @@ ui.Action.prototype.isDummy = function ()
             return true;
         case ui.Action.OPERATION.SGROUP_ATTR:
             if (ui.render.sGroupGetType(ui.sgroupMap[op.params.id]) == op.params.type)
-                if (ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], ui.sgroupAttrByType[op.params.type]) == op.params.attr_value)
+            {
+                var attr_hash = new Hash(op.params.attrs);
+                
+                if (Object.isUndefined(attr_hash.detect(function (attr)
+                {
+                    if (ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], attr.key) == attr.value)
+                        return false;
+                    return true;
+                }, this)))
                     return false;
+            }
             return true;
         }
         return true;
@@ -3339,7 +3395,7 @@ ui.Action.fromNewCanvas = function (ctab)
     return action.perform();
 }
 
-ui.Action.fromSgroupAttrs = function (id, type, attr)
+ui.Action.fromSgroupAttrs = function (id, type, attrs)
 {
     var action = new ui.Action();
     var id_map = ui.sgroupMap.indexOf(id);
@@ -3348,7 +3404,7 @@ ui.Action.fromSgroupAttrs = function (id, type, attr)
     {
         id: id_map,
         type: type,
-        attr_value: attr
+        attrs: attrs
     });
     
     return action.perform();
@@ -3366,7 +3422,7 @@ ui.Action.fromSgroupDeletion = function (id)
     return action.perform();
 }
 
-ui.Action.fromSgroupAddition = function (type, attr_value, atoms)
+ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 {
     var action = new ui.Action();
     var atoms_to_remove = new Array();
@@ -3385,7 +3441,7 @@ ui.Action.fromSgroupAddition = function (type, attr_value, atoms)
     action.addOperation(ui.Action.OPERATION.SGROUP_ADD,
     {
         type: type,
-        attr_value: attr_value,
+        attrs: attrs,
         atoms: atoms
     });
 

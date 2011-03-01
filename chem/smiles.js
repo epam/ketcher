@@ -48,6 +48,9 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
     if (!Object.isUndefined(ignore_errors))
         this.ignore_errors = ignore_errors;
 
+    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
+        throw new Error("SMILES doesn't support s-groups");
+        
     this.atoms = new Array(molecule.atoms.count());
 
     molecule.atoms.each(function (aid, atom)
@@ -185,7 +188,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             pyramid_mapping[3] = counter;
         }
         else if (counter != 3)
-                throw new Error("cannot calculate chirality");
+            throw new Error("cannot calculate chirality");
 
         if (chem.Stereocenters.isPyramidMappingRigid(pyramid_mapping))
             this.atoms[atom_idx].chirality = 1;

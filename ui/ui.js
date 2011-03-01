@@ -2003,16 +2003,18 @@ ui.onChange_AtomLabel = function ()
     
     var element = chem.Element.getElementByLabel(this.value);
     
-    if (element == null && this.value != 'A')
+    if (element == null && this.value != 'A' && this.value != '*')
     {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
 
-        if (this.value != 'A')
+        if (this.value != 'A' && this.value != '*')
             element = chem.Element.getElementByLabel(this.value);
     }
     
     if (this.value == 'A')
         chem.setElementTextContent($('atom_number'), "any");
+    else if (this.value == '*')
+        chem.setElementTextContent($('atom_number'), "*");
     else
         chem.setElementTextContent($('atom_number'), element.toString());
 }

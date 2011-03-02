@@ -626,7 +626,7 @@ ui.onKeyPress_Ketcher = function (event)
         ui.selectMode('atom_p');
         return chem.preventDefault(event);
     case 114: // r
-        var rings = ['pattern_six1', 'pattern_six2', 'pattern_sixa', 'pattern_five'];
+        var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
         ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
         return chem.preventDefault(event);
     case 115: // s or Ctrl+S

@@ -85,6 +85,13 @@ ui.initButton = function (el)
     });
 };
 
+ui.onClick_SideButton = function (event)
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+    ui.selectMode(this.id);
+};
+
 ui.init = function ()
 {
     if (this.initialized)
@@ -117,6 +124,15 @@ ui.init = function ()
             });
         }
     }
+    
+    // OS X specific stuff
+    if (ui.is_osx)
+    {
+        $$('.toolButton > img, .sideButton').each(function (button)
+        {
+            button.title = button.title.replace("Ctrl", "Cmd");
+        }, this);
+    }
 
     // Document events
     document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -129,12 +145,7 @@ ui.init = function ()
     $$('.sideButton').each(function (el)
     {
         ui.initButton(el);
-        el.observe('click', function (event) 
-        {
-            if (this.hasClassName('buttonDisabled'))
-                return;
-            ui.selectMode(this.id);
-        });
+        el.observe('click', ui.onClick_SideButton);
     });
     $('new').observe('click', ui.onClick_NewFile);
     $('open').observe('click', ui.onClick_OpenFile);
@@ -604,11 +615,19 @@ ui.onKeyPress_Ketcher = function (event)
     case 102: // f
         ui.selectMode('atom_f');
         return chem.preventDefault(event);
+    case 103: // Ctrl+G
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_SideButton.call($('sgroup'));
+        return chem.preventDefault(event);
     case 104: // h
         ui.selectMode('atom_h');
         return chem.preventDefault(event);
     case 105: // i
         ui.selectMode('atom_i');
+        return chem.preventDefault(event);
+    case 108: // Ctrl+L
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_CleanUp.call($('clean_up'));
         return chem.preventDefault(event);
     case 110: // n or Ctrl+N
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -666,8 +685,8 @@ ui.onKeyDown_IE = function (event)
 
     // Ctrl+A, Ctrl+C, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
     //if ([65, 67, 78, 79, 83, 86, 88, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
-    // Ctrl+A, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
-    if ([65, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
+    // Ctrl+A, Ctrl+G, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
+    if ([65, 71, 76, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
         chem.stopEventPropagation(event);
         return chem.preventDefault(event);
@@ -728,6 +747,14 @@ ui.onKeyUp = function (event)
     case 67: // Ctrl+C
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Copy.call($('copy'));
+        return;
+    case 71: // Ctrl+G
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_SideButton.call($('sgroup'));
+        return;
+    case 76: // Ctrl+L
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_CleanUp.call($('clean_up'));
         return;
     case 78: // Ctrl+N
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))

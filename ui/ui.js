@@ -2121,6 +2121,10 @@ ui.onChange_SGroupType = function ()
         $('sgroup_label').value = '1';
     else if (type == 'SRU')
         $('sgroup_label').value = 'n';
+    else if (type == 'GEN')
+        $('sgroup_label').value = '';
+    else if (type == 'SUP')
+        $('sgroup_label').value = 'name';
 }
 
 //

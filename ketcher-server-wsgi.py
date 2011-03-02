@@ -11,10 +11,12 @@ def handle_knock(request):
 
 def handle_layout(request):
     if request.method == 'GET' and request.GET.has_key("smiles"):
-        smiles = request.GET["smiles"]
+        moldata = request.GET["smiles"]
+    elif request.method == 'POST' and request.POST.has_key("moldata"):
+        moldata = request.POST["moldata"]
     else:
         raise Http404
-    mol = indigo.loadMolecule(smiles)
+    mol = indigo.loadQueryMolecule(moldata)
     mol.layout()
     return HttpResponse(content="Ok.\n" + mol.molfile(), mimetype='text/plain')
 

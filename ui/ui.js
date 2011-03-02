@@ -1334,12 +1334,7 @@ ui.onClick_SGroup = function (event, sid)
         if (ui.modeType() == ui.MODE.ERASE)
         {
             // remove highlighting
-            ui.render.sGroupSetHighlight(sid, false);
-            var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
-            atoms.each(function (id)
-            {
-                ui.render.atomSetSGroupHighlight(id, false);
-            }, this);
+            ui.highlightSGroup(sid, false);
 
             ui.addUndoAction(ui.Action.fromSgroupDeletion(sid));
             ui.render.update();
@@ -1946,33 +1941,28 @@ ui.onMouseOut_Bond = function (event, bid)
 	return true;
 }
 
+ui.highlightSGroup = function (sid, highlight)
+{
+    ui.render.sGroupSetHighlight(sid, highlight);
+    
+    var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
+    
+    atoms.each(function (id)
+    {
+        ui.render.atomSetSGroupHighlight(id, highlight);
+    }, this);
+}
+
 ui.onMouseOver_SGroup = function (event, sid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
-    {
-        ui.render.sGroupSetHighlight(sid, true);
-        
-        var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
-        
-        atoms.each(function (id)
-        {
-            ui.render.atomSetSGroupHighlight(id, true);
-        }, this);
-    }
+        ui.highlightSGroup(sid, true);
 	return true;
 }
 
 ui.onMouseOut_SGroup = function (event, sid)
 {
-    ui.render.sGroupSetHighlight(sid, false);
-
-    var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
-    
-    atoms.each(function (id)
-    {
-        ui.render.atomSetSGroupHighlight(id, false);
-    }, this);
-
+    ui.highlightSGroup(sid, false);
 	return true;
 }
 
@@ -2618,6 +2608,8 @@ ui.Action.prototype.perform = function ()
                 },
                 atoms: atoms
             };
+            // remove highlighting
+            ui.highlightSGroup(id, false);
             ui.render.sGroupDelete(id);
             break;
             

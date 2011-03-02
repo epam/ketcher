@@ -317,8 +317,15 @@ chem.SGroup.GroupSru = {
 		return [salLine, sblLine].join('\n');
 	},
 
-	prepareForSaving: function (mol) { 
-		this.data.xBonds = this.data.bonds; // TODO: fix
+	prepareForSaving: function (mol) {
+		var xBonds = [];
+		mol.bonds.each(function(bid, bond){
+			var a1 = mol.atoms.get(bond.begin);
+			var a2 = mol.atoms.get(bond.end);
+			if ((a1.sgroup == this.id && a2.sgroup != this.id) || (a1.sgroup != this.id && a2.sgroup == this.id))
+				xBonds.push(bid);
+		},this);
+		this.data.xBonds = xBonds;
 	},
 
 	postLoad: function (mol) {

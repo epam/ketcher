@@ -1578,6 +1578,8 @@ ui.updateSelection = function (atoms, bonds)
     ui.selection.bonds = bonds;
     ui.render.setSelection(atoms, bonds);
     ui.render.update();
+    
+    ui.updateClipboardButtons();
 }
 
 ui.selected = function ()
@@ -1602,7 +1604,6 @@ ui.selectAll = function ()
     });
 
     ui.updateSelection(alist, blist);
-    ui.updateClipboardButtons();
 }
 
 ui.removeSelected = function ()
@@ -2295,7 +2296,6 @@ ui.onClick_Copy = function ()
         
     ui.copy();
     ui.updateSelection();
-    ui.updateClipboardButtons();
 }
 
 ui.onClick_Paste = function ()

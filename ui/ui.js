@@ -2003,8 +2003,10 @@ ui.showAtomProperties = function (id)
     $('atom_label').value = ui.render.atomGetAttr(id, 'label');
     ui.onChange_AtomLabel.call($('atom_label'));
     $('atom_charge').value = ui.render.atomGetAttr(id, 'charge');
-    $('atom_isotope').value = ui.render.atomGetAttr(id, 'isotope');
-    $('atom_valence').value = ui.render.atomGetAttr(id, 'valence');
+    var value = ui.render.atomGetAttr(id, 'isotope');
+    $('atom_isotope').value = (value == 0 ? '' : value);
+    value = ui.render.atomGetAttr(id, 'valence');
+    $('atom_valence').value = (value == 0 ? '' : value);
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
     
     ui.showDialog('atom_properties');
@@ -2021,8 +2023,8 @@ ui.applyAtomProperties = function ()
     {
         label: $('atom_label').value,
         charge: parseInt($('atom_charge').value),
-        isotope: parseInt($('atom_isotope').value),
-        valence: parseInt($('atom_valence').value),
+        isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
+        valence: $('atom_valence').value == '' ? 0 : parseInt($('atom_valence').value),
         radical: parseInt($('atom_radical').value)
     }), true);
         
@@ -2057,15 +2059,17 @@ ui.onChange_AtomCharge = function ()
 
 ui.onChange_AtomIsotope = function ()
 {
-    if (!this.value.match(/^[1-9][0-9]{0,2}$/))
+    if (this.value == chem.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
+        this.value = '';
+    else if (!this.value.match(/^[1-9][0-9]{0,2}$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');
-    else if (this.value == chem.getElementTextContent($('atom_number')))
-        this.value = '0';
 }
 
 ui.onChange_AtomValence = function ()
 {
-    if (!this.value.match(/^[0-9]$/))
+    if (this.value.strip() == '' || this.value == '0')
+        this.value = '';
+    else if (!this.value.match(/^[1-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
 }
 

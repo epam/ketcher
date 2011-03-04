@@ -279,7 +279,7 @@ chem.Molfile.parsePropertyLineAtomList = function (hdr, lst)
 	var mf = chem.Molfile;
 	var aid = mf.parseDecimalInt(hdr[1]) - 1;
 	var count = mf.parseDecimalInt(hdr[2]);
-	var notList = hdr[4].strip() != 'T';
+	var notList = hdr[4].strip() == 'T';
 	var ids = mf.labelsListToIds(lst.slice(0, count));
 	var ret = {};
 	ret[aid] = new chem.Molecule.AtomList({

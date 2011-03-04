@@ -118,9 +118,15 @@ chem.apply = function (array, func) {
 		array[i] = func(array[i]);
 }
 
+chem.clonePrimitiveOrArray = function (x) {
+	if (x == null)
+		return null;
+	return x.hasOwnProperty('length') ? chem.array(x) : x;
+}
+
 chem.ifDef = function (dst, src, prop, def)
 {
-	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+	dst[prop] = !Object.isUndefined(src[prop]) ? chem.clonePrimitiveOrArray(src[prop]) : def;
 }
 
 chem.identityMap = function (array) {

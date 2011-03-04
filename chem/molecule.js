@@ -38,6 +38,7 @@ chem.Molecule.prototype.toLists = function ()
 		b.end = aidMap[bond.end];
 		bondList.push(b);
 	});
+
 	return {
 		'atoms': atomList,
 		'bonds': bondList
@@ -65,6 +66,7 @@ chem.Molecule.prototype.clone = function ()
 			cp.atoms.get(sg.data.atoms[i]).sgroup = id;
 		}
 	});
+	cp.isChiral = this.isChiral;
 
 	return cp;
 }

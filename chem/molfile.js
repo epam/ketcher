@@ -818,55 +818,51 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		this.writeCR();
 	}, this);
     
-	var charge_list = new Array();
-	var isotope_list = new Array();
+    var charge_list = new Array();
+    var isotope_list = new Array();
+    var radical_list = new Array();
     
 	this.molecule.atoms.each(function (id, atom)
 	{
-		if (atom.charge != 0)
-			charge_list.push(id);
-		if (atom.isotope != 0)
-			isotope_list.push(id);
+        if (atom.charge != 0)
+            charge_list.push(id);
+        if (atom.isotope != 0)
+            isotope_list.push(id);
+        if (atom.radical != 0)
+            radical_list.push(id);
 	});
     
-	if (charge_list.length > 8)
-	{
-	// TODO: write in several blocks
-	} else if (charge_list.length > 0)
-{
-		this.write('M  CHG');
-		this.writePaddedNumber(charge_list.length, 3);
-        
-		charge_list.each(function (id)
-		{
-			this.writeWhiteSpace();
-			this.writePaddedNumber(this.mapping[id], 3);
-			this.writeWhiteSpace();
-			this.writePaddedNumber(this.molecule.atoms.get(id).charge, 3);
-		}, this);
+    writeAtomPropList = function (ids, prop_id, prop_name)
+    {
+        while (ids.length > 0)
+        {
+            var part = new Array();
+            
+            while (ids.length > 0 && part.length < 8)
+            {
+                part.push(ids[0]);
+                ids.splice(0, 1);
+            }
+            
+            this.write(prop_id);
+            this.writePaddedNumber(part.length, 3);
+            
+            part.each(function (id)
+            {
+                this.writeWhiteSpace();
+                this.writePaddedNumber(this.mapping[id], 3);
+                this.writeWhiteSpace();
+                this.writePaddedNumber(this.molecule.atoms.get(id)[prop_name], 3);
+            }, this);
 
-		this.writeCR();
-	}
+            this.writeCR();
+        }
+    } 
     
-	if (isotope_list.length > 8)
-	{
-	// TODO: write in several blocks
-	} else if (isotope_list.length > 0)
-{
-		this.write('M  ISO');
-		this.writePaddedNumber(isotope_list.length, 3);
-        
-		isotope_list.each(function (id)
-		{
-			this.writeWhiteSpace();
-			this.writePaddedNumber(this.mapping[id], 3);
-			this.writeWhiteSpace();
-			this.writePaddedNumber(this.molecule.atoms.get(id).isotope, 3);
-		}, this);
-
-		this.writeCR();
-	}
-
+    writeAtomPropList.call(this, charge_list, 'M  CHG', 'charge');
+    writeAtomPropList.call(this, isotope_list, 'M  ISO', 'isotope');
+    writeAtomPropList.call(this, radical_list, 'M  RAD', 'radical');
+    
 	if (atomList_list.length > 0)
 	{
 		for (var j = 0; j < atomList_list.length; ++j) {
@@ -938,7 +934,6 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		}, this);
 	}
 
-	// TODO: write M  RAD
 	// TODO: write M  APO
 	// TODO: write M  AAL
 	// TODO: write M  RGP

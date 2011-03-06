@@ -39,6 +39,7 @@ chem.SGroup = function (type)
 		'bonds' : [],
 		'name' : '',
 		'subscript' : ''
+		// etc.
 	}
 }
 
@@ -75,9 +76,13 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 {
 	var cp = new chem.SGroup(sgroup.type);
 
-	cp.data.mul = sgroup.data.mul;
+	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
+		cp.data[field] = sgroup.data[field];
+	}
 	cp.data.atoms = chem.mapArray(sgroup.data.atoms, aidMap);
-	cp.data.connectivity = sgroup.data.connectivity;
+	cp.data.patoms = null;
+	cp.data.bonds = null;
+	cp.data.xBonds = null;
 	return cp;
 }
 
@@ -127,6 +132,19 @@ chem.SGroup.getBBox = function (sg, ctab) {
 	return bb;
 }
 
+chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
+	var lines = [];
+	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
+		var rem = Math.min(ids.length - 15 * i, 15);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + chem.paddedInt(rem, 2);
+		for (var j = 0; j < rem; ++j) {
+			salLine += ' ' + chem.paddedInt(map[ids[i * 15 + j]], 3);
+		}
+		lines.push(salLine);
+	}
+	return lines;
+}
+
 chem.SGroup.GroupMul = {
 	draw: function (ctab) {
 		var render = ctab.render;
@@ -149,13 +167,13 @@ chem.SGroup.GroupMul = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		// TODO: check that multiple lines of atoms are read correctly
-		// TODO: split into multiple lines if too many
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.data.atomSet), atomMap);
-		var spaLine = 'M  SPA ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.data.parentAtomSet), atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
+		var lines = [];
+		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, chem.idList(this.data.atomSet), atomMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, chem.idList(this.data.parentAtomSet), atomMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.data.xBonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
-		return [salLine, sblLine, spaLine, smtLine].join('\n');
+		lines.push(smtLine);
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
@@ -308,13 +326,10 @@ chem.SGroup.GroupSru = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		// TODO: save to v3000 as well
-		// TODO: check that multiple lines of atoms are read correctly
-		// TODO: split into multiple lines if too many
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		//var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
-		return [salLine, sblLine].join('\n');
+		var lines = [];
+		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.data.atoms, atomMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.data.xBonds, bondMap));
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
@@ -361,12 +376,12 @@ chem.SGroup.GroupSup = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		var list = [salLine, sblLine];
+		var lines = [];
+		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.data.atoms, atomMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.data.xBonds, bondMap));
 		if (this.data.name && this.data.name != '')
-			list.push('M  SMT ' + idstr + ' ' + this.data.name);
-		return list.join('\n');
+			lines.push('M  SMT ' + idstr + ' ' + this.data.name);
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
@@ -395,9 +410,10 @@ chem.SGroup.GroupGen = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		return [salLine, sblLine].join('\n');
+		var lines = [];
+		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.data.atoms, atomMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.data.xBonds, bondMap));
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
@@ -408,9 +424,81 @@ chem.SGroup.GroupGen = {
 	}
 }
 
+chem.SGroup.GroupDat = {
+	draw: function (ctab) {
+		var render = ctab.render;
+		var settings = render.settings;
+		var paper = render.paper;
+		var set = paper.set();
+		this.data.pp = new chem.Vec2(this.data.p.x, -this.data.p.y);
+		this.data.ps = this.data.pp.scaled(settings.scaleFactor);
+		
+		var name = paper.text(this.data.ps.x, this.data.ps.y, this.data.fieldValue)
+		.attr({
+			'font' : settings.font,
+			'font-size' : settings.fontsz
+		});
+		set.push(name);
+		return set;
+	},
+
+	saveToMolfile: function (sgMap, atomMap, bondMap) {
+		var idstr = chem.stringPadded(sgMap[this.id], 3);
+
+		var data = this.data;
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, data.atoms, atomMap));
+		var sdtLine = 'M  SDT ' + idstr +
+			' ' + chem.stringPadded(data.fieldName, 30, true) +
+			chem.stringPadded(data.fieldType, 2) +
+			chem.stringPadded(data.units, 20, true) +
+			chem.stringPadded(data.query, 2) +
+			chem.stringPadded(data.queryOp, 3);
+		lines.push(sdtLine);
+		var sddLine = 'M  SDD ' + idstr +
+			' ' + chem.paddedFloat(data.p.x, 10, 4) + chem.paddedFloat(data.p.y, 10, 4) +
+			'    ' + // ' eee'
+			(data.attached ? 'A' : 'D') + // f
+			(data.absolute ? 'A' : 'R') + // g
+			(data.showUnits ? 'U' : ' ') + // h
+			'   ' + //  i
+			(data.nCharnCharsToDisplay >= 0 ? chem.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+			'  1   ' + // 'kkk ll '
+			chem.stringPadded(data.tagChar, 1) + // m
+			'  ' + chem.paddedInt(data.daspPos, 1) + // n
+			'  '; // oo
+		lines.push(sddLine);
+		var str = data.fieldValue;
+		var charsPerLine = 69;
+		while (str.length > charsPerLine) {
+			lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
+			str = str.slice(69);
+		}
+		lines.push('M  SED ' + idstr + ' ' + chem.stringPadded(str, charsPerLine, true));
+		return lines.join('\n');
+	},
+
+	prepareForSaving: function (mol) {
+		if (this.data.allAtoms) {
+			this.data.atoms = [];
+			mol.atoms.each(function(aid){
+				this.data.atoms.push(aid);
+			},this);
+		}
+	},
+
+	postLoad: function (mol) {
+		if (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO') {
+			this.data.atoms = [];
+			this.data.allAtoms = true;
+		}
+	}
+}
+
 chem.SGroup.TYPES = {
 	'MUL': chem.SGroup.GroupMul,
 	'SRU': chem.SGroup.GroupSru,
 	'SUP': chem.SGroup.GroupSup,
+	'DAT': chem.SGroup.GroupDat,
 	'GEN': chem.SGroup.GroupGen
 };

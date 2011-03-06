@@ -118,15 +118,14 @@ chem.apply = function (array, func) {
 		array[i] = func(array[i]);
 }
 
-chem.clonePrimitiveOrArray = function (x) {
-	if (x == null)
-		return null;
-	return x.hasOwnProperty('length') ? chem.array(x) : x;
-}
-
 chem.ifDef = function (dst, src, prop, def)
 {
-	dst[prop] = !Object.isUndefined(src[prop]) ? chem.clonePrimitiveOrArray(src[prop]) : def;
+	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+}
+
+chem.ifDefList = function (dst, src, prop, def)
+{
+	dst[prop] = !Object.isUndefined(src[prop]) && src[prop] != null ? chem.array(src[prop]) : def;
 }
 
 chem.identityMap = function (array) {
@@ -134,4 +133,30 @@ chem.identityMap = function (array) {
 	for (var i = 0; i < array.length; ++i)
 		map[array[i]] = array[i];
 	return map;
+}
+
+chem.stripRight = function (src) {
+	var i;
+	for (i = 0; i < src.length; ++i)
+		if (src[src.lenght - i - 1] != ' ')
+			break;
+	return src.slice(0, src.length - i);
+}
+
+chem.paddedFloat = function (number, width, precision)
+{
+	var numStr = number.toFixed(precision).replace(',', '.');
+	if (numStr.length > width)
+		throw new Error("number does not fit");
+	return chem.stringPadded(numStr, width);
+}
+
+chem.paddedInt = function (number, width)
+{
+	var numStr = number.toFixed(0);
+	if (numStr.length > width) {
+		debugger;
+		throw new Error("number does not fit");
+	}
+	return chem.stringPadded(numStr, width);
 }

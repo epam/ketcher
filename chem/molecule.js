@@ -206,7 +206,7 @@ chem.Molecule.Atom = function (params)
 	chem.ifDef(this, params, 'substitutionCount', -1);
 	chem.ifDef(this, params, 'unsaturatedAtom', -1);
 
-	chem.ifDef(this, params, 'atomList', null);
+	chem.ifDefList(this, params, 'atomList', null);
 }
 
 chem.Molecule.Atom.prototype.clone = function ()

@@ -338,6 +338,60 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 	sGroups[sid].data[propName] = sGroups[sid].data[propName].concat(part);
 }
 
+chem.Molfile.applyDataSGroupDesc = function (sGroups, propData) {
+	var mf = chem.Molfile;
+	var split = mf.partitionLine(propData, [4,31,2,20,2,3], false);
+	var id = mf.parseDecimalInt(split[0])-1;
+	var fieldName = split[1].strip();
+	var fieldType = split[2].strip();
+	var units = split[3].strip();
+	var query = split[4].strip();
+	var queryOp = split[5].strip();
+	var sGroup = sGroups[id];
+	sGroup.data.fieldType = fieldType;
+	sGroup.data.fieldName = fieldName;
+	sGroup.data.units = units;
+	sGroup.data.query = query;
+	sGroup.data.queryOp = queryOp;
+}
+
+chem.Molfile.applyDataSGroupInfo = function (sGroups, propData) {
+	var mf = chem.Molfile;
+	var split = mf.partitionLine(propData, [4/* sss*/,11/*x.x*/,10/*y.y*/,4/* eee*/,1/*f*/,1/*g*/,1/*h*/,3/* i */,3/*jjj*/,3/*kkk*/,3/*ll*/,2/*m*/,3/*n*/,2/*oo*/], false);
+	var id = mf.parseDecimalInt(split[0])-1;
+	var x = parseFloat(split[1]);
+	var y = parseFloat(split[2]);
+	var attached = split[4].strip() == 'A';
+	var absolute = split[5].strip() == 'A';
+	var showUnits = split[6].strip() == 'U';
+	var nCharsToDisplay = split[8].strip();
+	nCharsToDisplay = nCharsToDisplay == 'ALL' ? -1 : mf.parseDecimalInt(nCharsToDisplay);
+	var tagChar = split[11].strip();
+	var daspPos = mf.parseDecimalInt(split[12].strip());
+
+	var sGroup = sGroups[id];
+	sGroup.data.p = new chem.Vec2(x, y);
+	sGroup.data.attached = attached;
+	sGroup.data.absolute = absolute;
+	sGroup.data.showUnits = showUnits;
+	sGroup.data.nCharsToDisplay = nCharsToDisplay;
+	sGroup.data.tagChar = tagChar;
+	sGroup.data.daspPos = daspPos;
+}
+
+chem.Molfile.applyDataSGroupData = function (sGroups, propData, finalize) {
+	var mf = chem.Molfile;
+	var split = mf.partitionLine(propData, [5/* sss */,69/*ddd...dd*/], false);
+	var id = mf.parseDecimalInt(split[0])-1;
+	var data = split[1];
+
+	var sGroup = sGroups[id];
+	sGroup.data.fieldValue = sGroup.data.fieldValue || '';
+	sGroup.data.fieldValue += data;
+	if (finalize)
+		sGroup.data.fieldValue = chem.stripRight(sGroup.data.fieldValue);
+}
+
 chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups)
 {
 	var mf = chem.Molfile;
@@ -400,6 +454,14 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 			} else if (type == "SMT") {
 				var sid = mf.parseDecimalInt(propertyData.slice(0, 4))-1;
 				sGroups[sid].data.subscript = propertyData.slice(4).strip();
+			} else if (type == "SDT") {
+				mf.applyDataSGroupDesc(sGroups, propertyData);
+			} else if (type == "SDD") {
+				mf.applyDataSGroupInfo(sGroups, propertyData);
+			} else if (type == "SCD") {
+				mf.applyDataSGroupData(sGroups, propertyData, false);
+			} else if (type == "SED") {
+				mf.applyDataSGroupData(sGroups, propertyData, true);
 			}
 		}
 		++shift;
@@ -717,10 +779,7 @@ chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 
 chem.MolfileSaver.prototype.writePaddedFloat = function (number, width, precision)
 {
-	var str = number.toFixed(precision).replace(',', '.');
-    
-	this.writeWhiteSpace(width - str.length);
-	this.write(str);
+	this.write(chem.paddedFloat(number, width, precision));
 }
 
 chem.MolfileSaver.prototype.writeCTab2000Header = function ()

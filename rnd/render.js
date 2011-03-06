@@ -929,6 +929,8 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var lw = this.settings.lineWidth;
 	var vext = new chem.Vec2(lw*4, lw*6);
 	this.ctab.molecule.sgroups.each(function(sgid, sg){
+		if (!sg.bracketBox)
+			return;
 		var bb = sg.bracketBox.extend(vext, vext);
 		var inBox = bb.p0.y < pos.y && bb.p1.y > pos.y && bb.p0.x < pos.x && bb.p1.x > pos.x;
 		var xDist = Math.min(Math.abs(bb.p0.x - pos.x), Math.abs(bb.p1.x - pos.x));

@@ -34,7 +34,6 @@ chem.SGroup = function (type)
 	this.atoms = [];
 	this.patoms = [];
 	this.bonds = [];
-	this.xBonds = [];
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
@@ -82,7 +81,6 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
 	cp.patoms = null;
 	cp.bonds = null;
-	cp.xBonds = null;
 	return cp;
 }
 
@@ -170,7 +168,7 @@ chem.SGroup.GroupMul = {
 		var lines = [];
 		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, chem.idList(this.atomSet), atomMap)); // TODO: check atomSet
 		lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, chem.idList(this.parentAtomSet), atomMap));
-		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.xBonds, bondMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
 		return lines.join('\n');
@@ -185,28 +183,28 @@ chem.SGroup.GroupMul = {
 			this.atomSet[this.atoms[i]] = 1;
 		}
 		this.inBonds = [];
-		this.xBonds = [];
+		var xBonds = [];
 
 		mol.bonds.each(function(bid, bond){
 			if (this.parentAtomSet[bond.begin] && this.parentAtomSet[bond.end])
 				this.inBonds.push(bid);
 			else if (this.parentAtomSet[bond.begin] || this.parentAtomSet[bond.end])
-				this.xBonds.push(bid);
+				xBonds.push(bid);
 		}, this);
-		if (this.xBonds.length != 0 && this.xBonds.length != 2)
+		if (xBonds.length != 0 && xBonds.length != 2)
 			throw new Error("Unsupported cross-bonds number");
 
 		var xAtom1 = -1,
 			xAtom2 = -1;
 		var crossBond = null;
-		if (this.xBonds.length == 2) {
-			var bond1 = mol.bonds.get(this.xBonds[0]);
+		if (xBonds.length == 2) {
+			var bond1 = mol.bonds.get(xBonds[0]);
 			if (this.parentAtomSet[bond1.begin]) {
 				xAtom1 = bond1.begin;
 			} else {
 				xAtom1 = bond1.end;
 			}
-			var bond2 = mol.bonds.get(this.xBonds[1]);
+			var bond2 = mol.bonds.get(xBonds[1]);
 			if (this.parentAtomSet[bond2.begin]) {
 				xAtom2 = bond2.begin;
 			} else {
@@ -243,12 +241,13 @@ chem.SGroup.GroupMul = {
 			}
 		}
 		if (tailAtom >= 0) {
-			var xBond2 = mol.bonds.get(this.xBonds[0]);
+			var xBond2 = mol.bonds.get(xBonds[0]);
 			if (xBond2.begin == xAtom1)
 				xBond2.begin = tailAtom;
 			else
 				xBond2.end = tailAtom;
 		}
+		this.bonds = xBonds;
 	},
 
 	postLoad: function (mol)
@@ -328,7 +327,7 @@ chem.SGroup.GroupSru = {
 
 		var lines = [];
 		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.xBonds, bondMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		return lines.join('\n');
 	},
 
@@ -340,7 +339,7 @@ chem.SGroup.GroupSru = {
 			if ((a1.sgroup == this.id && a2.sgroup != this.id) || (a1.sgroup != this.id && a2.sgroup == this.id))
 				xBonds.push(bid);
 		},this);
-		this.xBonds = xBonds;
+		this.bonds = xBonds;
 	},
 
 	postLoad: function (mol) {
@@ -378,14 +377,13 @@ chem.SGroup.GroupSup = {
 
 		var lines = [];
 		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.xBonds, bondMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		if (this.data.name && this.data.name != '')
 			lines.push('M  SMT ' + idstr + ' ' + this.data.name);
 		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
-		this.xBonds = this.bonds; // TODO: fix
 	},
 
 	postLoad: function (mol) {
@@ -412,12 +410,11 @@ chem.SGroup.GroupGen = {
 
 		var lines = [];
 		lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.xBonds, bondMap));
+		lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
-		this.xBonds = this.bonds; // TODO: fix
 	},
 
 	postLoad: function (mol) {

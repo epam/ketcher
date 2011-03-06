@@ -62,8 +62,8 @@ chem.Molecule.prototype.clone = function ()
 		sg = chem.SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
-		for (var i = 0; i < sg.data.atoms.length; ++i) {
-			cp.atoms.get(sg.data.atoms[i]).sgroup = id;
+		for (var i = 0; i < sg.atoms.length; ++i) {
+			cp.atoms.get(sg.atoms[i]).sgroup = id;
 		}
 	});
 	cp.isChiral = this.isChiral;

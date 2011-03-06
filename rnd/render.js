@@ -306,8 +306,8 @@ rnd.Render.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	this.ctab.clearVisel(sg.visel);
-	for (var i = 0; i < sg.data.atoms.length; ++i) {
-		var aid = sg.data.atoms[i];
+	for (var i = 0; i < sg.atoms.length; ++i) {
+		var aid = sg.atoms[i];
 		this.ctab.atoms.get(aid).a.sgroup = -1;
 		this.invalidateAtom(aid);
 	}

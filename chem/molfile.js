@@ -335,7 +335,7 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 			return v + shift;
 		});
 	}
-	sGroups[sid].data[propName] = sGroups[sid].data[propName].concat(part);
+	sGroups[sid][propName] = sGroups[sid][propName].concat(part);
 }
 
 chem.Molfile.applyDataSGroupDesc = function (sGroups, propData) {
@@ -659,13 +659,13 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 					props[name] = [];
 				props[name].push(subsplit[1]);
 			}	
-			sg.data.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
-			sg.data.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1); // TODO: make optional?
-			sg.data.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
+			sg.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
+			sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1); // TODO: make optional?
+			sg.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
 			var brkxyzStrs = props['BRKXYZ'];
-			sg.data.brkxyz = [];
+			sg.brkxyz = [];
 			for (var j = 0; j < brkxyzStrs.length; ++j)
-				sg.data.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+				sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
 			sg.data.subscript = props['MULT'][0]-0;
 			chem.SGroup.addGroup(ctab, sg);
 		}

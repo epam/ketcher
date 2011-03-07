@@ -437,6 +437,7 @@ chem.SGroup.GroupDat = {
 		var box = name.getBBox();
 		name.translate(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
+		this.bracketBox = chem.Box2Abs.fromRelBox(name.getBBox());
 		return set;
 	},
 

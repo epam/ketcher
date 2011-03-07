@@ -955,28 +955,26 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
-	if (atom != null)
-		return {
-			'type':'Atom',
-			'id':atom.id,
-			'dist':atom.dist
-			};
-
 	var bond = this.findClosestBond(pos);
-	if (bond != null)
+	var sg = this.findClosestSGroup(pos);
+
+	if (atom != null) {
+		if (sg == null || atom.dist < sg.dist)
+			return {
+				'type':'Atom',
+				'id':atom.id,
+				'dist':atom.dist};
+	} else if (bond != null && (sg == null || bond.dist < sg.dist))
 		return {
 			'type':'Bond',
 			'id':bond.id,
-			'dist':bond.dist
-			};
+			'dist':bond.dist};
 
-	var sg = this.findClosestSGroup(pos);
 	if (sg != null)
 		return {
 			'type':'SGroup',
 			'id':sg.id,
-			'dist':sg.dist
-			};
+			'dist':sg.dist};
 
 	return {
 		'type':'Canvas',

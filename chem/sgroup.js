@@ -131,6 +131,8 @@ chem.SGroup.getBBox = function (sg, ctab) {
 }
 
 chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
+	if (!ids)
+		return [];
 	var lines = [];
 	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
 		var rem = Math.min(ids.length - 15 * i, 15);

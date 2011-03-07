@@ -342,6 +342,12 @@ rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 	return sg.data[name];
 }
 
+rnd.Render.prototype.sGroupGetAtoms = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.atoms;
+}
+
 rnd.Render.prototype.sGroupGetType = function (sgid)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);

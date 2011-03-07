@@ -616,6 +616,15 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 			.yComplement(height)
 			.scaled(scale));
 	}, this);
+
+	this.molecule.sgroups.each(function (sgid, sg) {
+		if (sg.p) {
+			sg.p = sg.p
+				.sub(min)
+				.yComplement(height)
+				.scaled(scale);
+		}
+	}, this);
 }
 
 rnd.MolData.prototype.coordProcess = function ()

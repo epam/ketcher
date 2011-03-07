@@ -427,14 +427,15 @@ chem.SGroup.GroupDat = {
 		var settings = render.settings;
 		var paper = render.paper;
 		var set = paper.set();
-		this.data.pp = new chem.Vec2(this.data.p.x, -this.data.p.y);
-		this.data.ps = this.data.pp.scaled(settings.scaleFactor);
+		this.ps = this.p.scaled(settings.scaleFactor);
 		
-		var name = paper.text(this.data.ps.x, this.data.ps.y, this.data.fieldValue)
+		var name = paper.text(this.ps.x, this.ps.y, this.data.fieldValue)
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontsz
 		});
+		var box = name.getBBox();
+		name.translate(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
 		return set;
 	},
@@ -453,7 +454,7 @@ chem.SGroup.GroupDat = {
 			chem.stringPadded(data.queryOp, 3);
 		lines.push(sdtLine);
 		var sddLine = 'M  SDD ' + idstr +
-			' ' + chem.paddedFloat(data.p.x, 10, 4) + chem.paddedFloat(data.p.y, 10, 4) +
+			' ' + chem.paddedFloat(p.x, 10, 4) + chem.paddedFloat(p.y, 10, 4) +
 			'    ' + // ' eee'
 			(data.attached ? 'A' : 'D') + // f
 			(data.absolute ? 'A' : 'R') + // g
@@ -485,7 +486,7 @@ chem.SGroup.GroupDat = {
 	},
 
 	postLoad: function (mol) {
-		if (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO') {
+		if (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' || this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' || this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE') {
 			this.atoms = [];
 			this.allAtoms = true;
 		}

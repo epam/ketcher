@@ -370,7 +370,7 @@ chem.Molfile.applyDataSGroupInfo = function (sGroups, propData) {
 	var daspPos = mf.parseDecimalInt(split[12].strip());
 
 	var sGroup = sGroups[id];
-	sGroup.data.p = new chem.Vec2(x, y);
+	sGroup.p = new chem.Vec2(x, y);
 	sGroup.data.attached = attached;
 	sGroup.data.absolute = absolute;
 	sGroup.data.showUnits = showUnits;

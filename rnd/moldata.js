@@ -613,7 +613,7 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 	this.atoms.each(function (aid, atom) {
 		this._atomSetPos(aid, atom.pp
 			.sub(min)
-			.yComplement(height)
+			.yComplement(0)
 			.scaled(scale));
 	}, this);
 
@@ -621,7 +621,7 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 		if (sg.p) {
 			sg.p = sg.p
 				.sub(min)
-				.yComplement(height)
+				.yComplement(0)
 				.scaled(scale);
 		}
 	}, this);

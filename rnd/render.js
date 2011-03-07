@@ -45,7 +45,8 @@ rnd.actions = [
 	'bondRemove',
 	'sGroupSetHighlight',
 	'sGroupSetAttr',
-	'sGroupSetType'
+	'sGroupSetType',
+	'sGroupSetPos' // data s-group label position
 ];
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
@@ -332,9 +333,18 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 
 rnd.Render.prototype.chiralSetPos = function (pos)
 {
-	//this.ctab.clearVisel(this.ctab.chiral.visel);
 	this.ctab.chiral.pos = (pos == null) ? null : new chem.Vec2(pos.x, pos.y);
 }
+
+rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	if (!sg.p)
+		return;
+	var p = this.coordViewToObj(new chem.Vec2(pos.x, pos.y));
+	sg.p = p;
+}
+
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {

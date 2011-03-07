@@ -792,24 +792,35 @@ rnd.MolData.prototype.showBonds = function ()
 	}
 }
 
+rnd.MolData.prototype.labelIsVisible = function (aid, atom)
+{
+	if (atom.neighbors.length < 2 ||
+		atom.a.label.toLowerCase() != "c" ||
+		(atom.badConn && this.render.opt.showValenceWarnings) ||
+		atom.a.isotope != 0 ||
+		atom.a.radical != 0 ||
+		atom.a.charge != 0 ||
+		atom.a.explcitValence)
+		return true;
+	if (!atom.showLabel && atom.neighbors.length == 2) {
+		var n1 = atom.neighbors[0];
+		var n2 = atom.neighbors[1];
+		var hb1 = this.halfBonds.get(n1);
+		var hb2 = this.halfBonds.get(n2);
+		var b1 = this.bonds.get(hb1.bid);
+		var b2 = this.bonds.get(hb2.bid);
+		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Molecule.BOND.STEREO.NONE && b2.b.stereo == chem.Molecule.BOND.STEREO.NONE)
+			if (Math.abs(chem.Vec2.cross(hb1.dir, hb2.dir)) < 0.05)
+				return true;
+	}
+	return false;
+}
+
 rnd.MolData.prototype.checkLabelsToShow = function ()
 {
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
-		if (atom.neighbors.length < 2 ||
-			atom.a.label.toLowerCase() != "c" ||
-			(atom.badConn && this.render.opt.showValenceWarnings) ||
-			atom.a.isotope != 0 ||
-			atom.a.radical != 0 ||
-			atom.a.charge != 0 ||
-			atom.a.explcitValence ||
-			(atom.neighbors.length == 2 &&
-				Math.abs(chem.Vec2.cross(
-					this.halfBonds.get(atom.neighbors[0]).dir,
-					this.halfBonds.get(atom.neighbors[1]).dir)) < 0.01))
-			atom.showLabel = true;
-		else
-			atom.showLabel = false;
+		atom.showLabel = this.labelIsVisible(aid, atom);
 	}
 }
 

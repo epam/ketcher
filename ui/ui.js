@@ -1973,7 +1973,7 @@ ui.highlightSGroup = function (sid, highlight)
 {
     ui.render.sGroupSetHighlight(sid, highlight);
     
-    var atoms = ui.render.sGroupGetAttr(sid, 'atoms');
+    var atoms = ui.render.sGroupGetAtoms(sid);
     
     atoms.each(function (id)
     {

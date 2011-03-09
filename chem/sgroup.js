@@ -31,12 +31,12 @@ chem.SGroup = function (type)
 	this.selected = false;
 	this.selectionPlate = null;
 
+	this.atoms = [];
+	this.patoms = [];
+	this.bonds = [];
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
-		'atoms': [],
-		'patoms' : [],
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
-		'bonds' : [],
 		'name' : '',
 		'subscript' : ''
 	}
@@ -65,8 +65,8 @@ chem.SGroup.addGroup = function (mol, sg)
 	sg.postLoad(mol);
 
 	// mark atoms in the group as belonging to it
-	for (var s = 0; s < sg.data.atoms.length; ++s)
-		mol.atoms.get(sg.data.atoms[s]).sgroup = sg.id;
+	for (var s = 0; s < sg.atoms.length; ++s)
+		mol.atoms.get(sg.atoms[s]).sgroup = sg.id;
 
 	return sg.id;
 }
@@ -75,22 +75,25 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 {
 	var cp = new chem.SGroup(sgroup.type);
 
-	cp.data.mul = sgroup.data.mul;
-	cp.data.atoms = chem.mapArray(sgroup.data.atoms, aidMap);
-	cp.data.connectivity = sgroup.data.connectivity;
+	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
+		cp.data[field] = sgroup.data[field];
+	}
+	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
+	cp.patoms = null;
+	cp.bonds = null;
 	return cp;
 }
 
 chem.SGroup.addAtom = function (sgroup, aid)
 {
-	sgroup.data.atoms.push(aid);
+	sgroup.atoms.push(aid);
 }
 
 chem.SGroup.removeAtom = function (sgroup, aid)
 {
-	for (var i = 0; i < sgroup.data.atoms.length; ++i) {
-		if (sgroup.data.atoms[i] == aid) {
-			sgroup.data.atoms.splice(i, 1);
+	for (var i = 0; i < sgroup.atoms.length; ++i) {
+		if (sgroup.atoms[i] == aid) {
+			sgroup.atoms.splice(i, 1);
 			return;
 		}
 	}
@@ -112,8 +115,8 @@ chem.SGroup.getBBox = function (sg, ctab) {
 	var bb = null;
 	var render = ctab.render;
 	var settings = render.settings;
-	for (var i = 0; i < sg.data.atoms.length; ++i) {
-		var aid = sg.data.atoms[i];
+	for (var i = 0; i < sg.atoms.length; ++i) {
+		var aid = sg.atoms[i];
 		var atom = ctab.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
@@ -125,6 +128,21 @@ chem.SGroup.getBBox = function (sg, ctab) {
 		bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
 	}
 	return bb;
+}
+
+chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
+	if (!ids)
+		return [];
+	var lines = [];
+	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
+		var rem = Math.min(ids.length - 15 * i, 15);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + chem.paddedInt(rem, 2);
+		for (var j = 0; j < rem; ++j) {
+			salLine += ' ' + chem.paddedInt(map[ids[i * 15 + j]], 3);
+		}
+		lines.push(salLine);
+	}
+	return lines;
 }
 
 chem.SGroup.GroupMul = {
@@ -149,47 +167,47 @@ chem.SGroup.GroupMul = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		// TODO: check that multiple lines of atoms are read correctly
-		// TODO: split into multiple lines if too many
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.data.atomSet), atomMap);
-		var spaLine = 'M  SPA ' + idstr + chem.SGroup.numberArrayToString(chem.idList(this.data.parentAtomSet), atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, chem.idList(this.atomSet), atomMap)); // TODO: check atomSet
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, chem.idList(this.parentAtomSet), atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
-		return [salLine, sblLine, spaLine, smtLine].join('\n');
+		lines.push(smtLine);
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
 		var i,j;
-		this.data.parentAtomSet = {};
-		this.data.atomSet = {};
-		for (i = 0; i < this.data.atoms.length; ++i) {
-			this.data.parentAtomSet[this.data.atoms[i]] = 1;
-			this.data.atomSet[this.data.atoms[i]] = 1;
+		this.parentAtomSet = {};
+		this.atomSet = {};
+		for (i = 0; i < this.atoms.length; ++i) {
+			this.parentAtomSet[this.atoms[i]] = 1;
+			this.atomSet[this.atoms[i]] = 1;
 		}
-		this.data.inBonds = [];
-		this.data.xBonds = [];
+		var inBonds = [];
+		var xBonds = [];
 
 		mol.bonds.each(function(bid, bond){
-			if (this.data.parentAtomSet[bond.begin] && this.data.parentAtomSet[bond.end])
-				this.data.inBonds.push(bid);
-			else if (this.data.parentAtomSet[bond.begin] || this.data.parentAtomSet[bond.end])
-				this.data.xBonds.push(bid);
+			if (this.parentAtomSet[bond.begin] && this.parentAtomSet[bond.end])
+				inBonds.push(bid);
+			else if (this.parentAtomSet[bond.begin] || this.parentAtomSet[bond.end])
+				xBonds.push(bid);
 		}, this);
-		if (this.data.xBonds.length != 0 && this.data.xBonds.length != 2)
+		if (xBonds.length != 0 && xBonds.length != 2)
 			throw new Error("Unsupported cross-bonds number");
 
 		var xAtom1 = -1,
 			xAtom2 = -1;
 		var crossBond = null;
-		if (this.data.xBonds.length == 2) {
-			var bond1 = mol.bonds.get(this.data.xBonds[0]);
-			if (this.data.parentAtomSet[bond1.begin]) {
+		if (xBonds.length == 2) {
+			var bond1 = mol.bonds.get(xBonds[0]);
+			if (this.parentAtomSet[bond1.begin]) {
 				xAtom1 = bond1.begin;
 			} else {
 				xAtom1 = bond1.end;
 			}
-			var bond2 = mol.bonds.get(this.data.xBonds[1]);
-			if (this.data.parentAtomSet[bond2.begin]) {
+			var bond2 = mol.bonds.get(xBonds[1]);
+			if (this.parentAtomSet[bond2.begin]) {
 				xAtom2 = bond2.begin;
 			} else {
 				xAtom2 = bond2.end;
@@ -201,16 +219,16 @@ chem.SGroup.GroupMul = {
 		var tailAtom = xAtom1;
 		for (j = 0; j < this.data.mul - 1; ++j) {
 			amap = {};
-			for (i = 0; i < this.data.atoms.length; ++i) {
-				var aid = this.data.atoms[i];
+			for (i = 0; i < this.atoms.length; ++i) {
+				var aid = this.atoms[i];
 				var atom = mol.atoms.get(aid);
 				var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
-				this.data.atomSet[aid2] = 1;
+				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;
 				mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
 			}
-			for (i = 0; i < this.data.inBonds.length; ++i) {
-				var bond = mol.bonds.get(this.data.inBonds[i]);
+			for (i = 0; i < inBonds.length; ++i) {
+				var bond = mol.bonds.get(inBonds[i]);
 				var newBond = new chem.Molecule.Bond(bond);
 				newBond.begin = amap[newBond.begin];
 				newBond.end = amap[newBond.end];
@@ -225,24 +243,25 @@ chem.SGroup.GroupMul = {
 			}
 		}
 		if (tailAtom >= 0) {
-			var xBond2 = mol.bonds.get(this.data.xBonds[0]);
+			var xBond2 = mol.bonds.get(xBonds[0]);
 			if (xBond2.begin == xAtom1)
 				xBond2.begin = tailAtom;
 			else
 				xBond2.end = tailAtom;
 		}
+		this.bonds = xBonds;
 	},
 
 	postLoad: function (mol)
 	{
 		this.data.mul = this.data.subscript - 0;
 		var atomReductionMap = {};
-		var patoms = this.data.patoms;
+		var patoms = this.patoms;
 		var patomsMap = chem.identityMap(patoms);
 		// mark repetitions for removal
 		for (var k = 1; k < this.data.mul; ++k) {
 			for (var m = 0; m < patoms.length; ++m) {
-				var raid = this.data.atoms[k * patoms.length + m];
+				var raid = this.atoms[k * patoms.length + m];
 				mol.atoms.get(raid).pos.y -= 3*k; // for debugging purposes
 				atomReductionMap[raid] = patoms[m]; // "merge" atom in parent
 			}
@@ -272,8 +291,8 @@ chem.SGroup.GroupMul = {
 		for (var a in atomReductionMap) {
 			mol.atoms.remove(a);
 		}
-		this.data.atoms = patoms;
-		this.data.patoms = null;
+		this.atoms = patoms;
+		this.patoms = null;
 	}
 }
 
@@ -308,13 +327,10 @@ chem.SGroup.GroupSru = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		// TODO: save to v3000 as well
-		// TODO: check that multiple lines of atoms are read correctly
-		// TODO: split into multiple lines if too many
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		//var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
-		return [salLine, sblLine].join('\n');
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
@@ -325,7 +341,7 @@ chem.SGroup.GroupSru = {
 			if ((a1.sgroup == this.id && a2.sgroup != this.id) || (a1.sgroup != this.id && a2.sgroup == this.id))
 				xBonds.push(bid);
 		},this);
-		this.data.xBonds = xBonds;
+		this.bonds = xBonds;
 	},
 
 	postLoad: function (mol) {
@@ -361,16 +377,15 @@ chem.SGroup.GroupSup = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		var list = [salLine, sblLine];
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		if (this.data.name && this.data.name != '')
-			list.push('M  SMT ' + idstr + ' ' + this.data.name);
-		return list.join('\n');
+			lines.push('M  SMT ' + idstr + ' ' + this.data.name);
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
-		this.data.xBonds = this.data.bonds; // TODO: fix
 	},
 
 	postLoad: function (mol) {
@@ -395,16 +410,89 @@ chem.SGroup.GroupGen = {
 	saveToMolfile: function (sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
-		var salLine = 'M  SAL ' + idstr + chem.SGroup.numberArrayToString(this.data.atoms, atomMap);
-		var sblLine = 'M  SBL ' + idstr + chem.SGroup.numberArrayToString(this.data.xBonds, bondMap);
-		return [salLine, sblLine].join('\n');
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
+		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {
-		this.data.xBonds = this.data.bonds; // TODO: fix
 	},
 
 	postLoad: function (mol) {
+	}
+}
+
+chem.SGroup.GroupDat = {
+	draw: function (ctab) {
+		var render = ctab.render;
+		var settings = render.settings;
+		var paper = render.paper;
+		var set = paper.set();
+		this.ps = this.p.scaled(settings.scaleFactor);
+		
+		var name = paper.text(this.ps.x, this.ps.y, this.data.fieldValue)
+		.attr({
+			'font' : settings.font,
+			'font-size' : settings.fontsz
+		});
+		var box = name.getBBox();
+		name.translate(0.5 * box.width, -0.5 * box.height);
+		set.push(name);
+		this.bracketBox = chem.Box2Abs.fromRelBox(name.getBBox());
+		return set;
+	},
+
+	saveToMolfile: function (sgMap, atomMap, bondMap) {
+		var idstr = chem.stringPadded(sgMap[this.id], 3);
+
+		var data = this.data;
+		var lines = [];
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
+		var sdtLine = 'M  SDT ' + idstr +
+			' ' + chem.stringPadded(data.fieldName, 30, true) +
+			chem.stringPadded(data.fieldType, 2) +
+			chem.stringPadded(data.units, 20, true) +
+			chem.stringPadded(data.query, 2) +
+			chem.stringPadded(data.queryOp, 3);
+		lines.push(sdtLine);
+		var sddLine = 'M  SDD ' + idstr +
+			' ' + chem.paddedFloat(p.x, 10, 4) + chem.paddedFloat(p.y, 10, 4) +
+			'    ' + // ' eee'
+			(data.attached ? 'A' : 'D') + // f
+			(data.absolute ? 'A' : 'R') + // g
+			(data.showUnits ? 'U' : ' ') + // h
+			'   ' + //  i
+			(data.nCharnCharsToDisplay >= 0 ? chem.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+			'  1   ' + // 'kkk ll '
+			chem.stringPadded(data.tagChar, 1) + // m
+			'  ' + chem.paddedInt(data.daspPos, 1) + // n
+			'  '; // oo
+		lines.push(sddLine);
+		var str = data.fieldValue;
+		var charsPerLine = 69;
+		while (str.length > charsPerLine) {
+			lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
+			str = str.slice(69);
+		}
+		lines.push('M  SED ' + idstr + ' ' + chem.stringPadded(str, charsPerLine, true));
+		return lines.join('\n');
+	},
+
+	prepareForSaving: function (mol) {
+		if (this.data.allAtoms) {
+			this.atoms = [];
+			mol.atoms.each(function(aid){
+				this.atoms.push(aid);
+			},this);
+		}
+	},
+
+	postLoad: function (mol) {
+		if (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' || this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' || this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE') {
+			this.atoms = [];
+			this.allAtoms = true;
+		}
 	}
 }
 
@@ -412,5 +500,6 @@ chem.SGroup.TYPES = {
 	'MUL': chem.SGroup.GroupMul,
 	'SRU': chem.SGroup.GroupSru,
 	'SUP': chem.SGroup.GroupSup,
+	'DAT': chem.SGroup.GroupDat,
 	'GEN': chem.SGroup.GroupGen
 };

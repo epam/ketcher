@@ -45,7 +45,8 @@ rnd.actions = [
 	'bondRemove',
 	'sGroupSetHighlight',
 	'sGroupSetAttr',
-	'sGroupSetType'
+	'sGroupSetType',
+	'sGroupSetPos' // data s-group label position
 ];
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
@@ -306,8 +307,8 @@ rnd.Render.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	this.ctab.clearVisel(sg.visel);
-	for (var i = 0; i < sg.data.atoms.length; ++i) {
-		var aid = sg.data.atoms[i];
+	for (var i = 0; i < sg.atoms.length; ++i) {
+		var aid = sg.atoms[i];
 		this.ctab.atoms.get(aid).a.sgroup = -1;
 		this.invalidateAtom(aid);
 	}
@@ -332,14 +333,29 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 
 rnd.Render.prototype.chiralSetPos = function (pos)
 {
-	//this.ctab.clearVisel(this.ctab.chiral.visel);
 	this.ctab.chiral.pos = (pos == null) ? null : new chem.Vec2(pos.x, pos.y);
 }
+
+rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	if (!sg.p)
+		return;
+	var p = this.coordViewToObj(new chem.Vec2(pos.x, pos.y));
+	sg.p = p;
+}
+
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.data[name];
+}
+
+rnd.Render.prototype.sGroupGetAtoms = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.atoms;
 }
 
 rnd.Render.prototype.sGroupGetType = function (sgid)
@@ -929,6 +945,8 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var lw = this.settings.lineWidth;
 	var vext = new chem.Vec2(lw*4, lw*6);
 	this.ctab.molecule.sgroups.each(function(sgid, sg){
+		if (!sg.bracketBox)
+			return;
 		var bb = sg.bracketBox.extend(vext, vext);
 		var inBox = bb.p0.y < pos.y && bb.p1.y > pos.y && bb.p0.x < pos.x && bb.p1.x > pos.x;
 		var xDist = Math.min(Math.abs(bb.p0.x - pos.x), Math.abs(bb.p1.x - pos.x));
@@ -947,28 +965,26 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
-	if (atom != null)
-		return {
-			'type':'Atom',
-			'id':atom.id,
-			'dist':atom.dist
-			};
-
 	var bond = this.findClosestBond(pos);
-	if (bond != null)
+	var sg = this.findClosestSGroup(pos);
+
+	if (atom != null) {
+		if (sg == null || atom.dist < sg.dist)
+			return {
+				'type':'Atom',
+				'id':atom.id,
+				'dist':atom.dist};
+	} else if (bond != null && (sg == null || bond.dist < sg.dist))
 		return {
 			'type':'Bond',
 			'id':bond.id,
-			'dist':bond.dist
-			};
+			'dist':bond.dist};
 
-	var sg = this.findClosestSGroup(pos);
 	if (sg != null)
 		return {
 			'type':'SGroup',
 			'id':sg.id,
-			'dist':sg.dist
-			};
+			'dist':sg.dist};
 
 	return {
 		'type':'Canvas',

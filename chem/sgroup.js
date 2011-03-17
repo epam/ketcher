@@ -34,6 +34,8 @@ chem.SGroup = function (type)
 	this.atoms = [];
 	this.patoms = [];
 	this.bonds = [];
+	this.xBonds = [];
+	this.neiAtoms = [];
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown

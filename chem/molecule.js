@@ -284,15 +284,20 @@ chem.Molecule.Bond.prototype.findOtherEnd = function (i)
 chem.Molecule.prototype.sGroupsRecalcCrossBonds = function () {
 	this.sgroups.each(function(sgid, sg){
 		sg.xBonds = [];
+		sg.neiAtoms = [];
 	},this);
 	this.bonds.each(function(bid, bond){
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
 		if (a1.sgroup != a2.sgroup) {
-			if (a1.sgroup >= 0)
+			if (a1.sgroup >= 0) {
 				this.sgroups.get(a1.sgroup).xBonds.push(bid);
-			if (a2.sgroup >= 0)
+				chem.arrayAddIfMissing(this.sgroups.get(a1.sgroup).neiAtoms, bond.end);
+			}
+			if (a2.sgroup >= 0) {
 				this.sgroups.get(a2.sgroup).xBonds.push(bid);
+				chem.arrayAddIfMissing(this.sgroups.get(a2.sgroup).neiAtoms, bond.begin);
+			}
 		}
 	},this);
 }

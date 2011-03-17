@@ -160,3 +160,12 @@ chem.paddedInt = function (number, width)
 	}
 	return chem.stringPadded(numStr, width);
 }
+
+chem.arrayAddIfMissing = function (array, item)
+{
+	for (var i = 0; i < array.length; ++i)
+		if (array[i] == item)
+			return false;
+	array.push(item);
+	return true;
+}

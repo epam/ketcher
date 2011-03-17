@@ -371,6 +371,23 @@ rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
 	this.ctab.showBracketHighlighting(sgid, sg, value);
 }
 
+rnd.Render.prototype.sGroupsFindCrossBonds = function ()
+{
+	this.ctab.molecule.sGroupsRecalcCrossBonds();
+}
+
+rnd.Render.prototype.sGroupGetCrossBonds = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.xBonds;
+}
+
+rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
+{
+	var sg = this.ctab.molecule.sgroups.get(sgid);
+	return sg.neiAtoms;
+}
+
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 {
 	// TODO: rewrite with special methods for each attribute?
@@ -378,6 +395,11 @@ rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 	var atom = this.ctab.atoms.get(aid);
 	atom.a[name] = value;
 	this.invalidateAtom(aid);
+}
+
+rnd.Render.prototype.atomIsPlainCarbon = function (aid)
+{
+	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 }
 
 // -1 stands for "no s-group"

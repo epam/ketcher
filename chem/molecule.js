@@ -224,6 +224,14 @@ chem.Molecule.Atom.prototype.pureHydrogen =  function ()
 	return this.label == 'H' && this.isotope == 0;
 }
 
+chem.Molecule.Atom.prototype.isPlainCarbon =  function ()
+{
+	return this.label == 'C' && this.isotope == 0 && this.isotope == 0 &&
+		this.radical == 0 && this.charge == 0 && this.explicitValence == 0 &&
+		this.ringBondCount == -1 && this.substitutionCount == -1 && this.unsaturatedAtom == -1 &&
+		!this.atomList;
+}
+
 chem.Molecule.AtomList = function (params)
 {
 	if (!params || !('notList' in params) || !('ids' in params))

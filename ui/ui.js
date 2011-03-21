@@ -2235,7 +2235,7 @@ ui.copy = function ()
     
     ui.ctab.sgroups.each(function (sid, sg)
     {
-        if ((sid in sgroup_counts) && (sgroup_counts[sid] == ui.render.sGroupGetAttr(sid, 'atoms').length))
+        if ((sid in sgroup_counts) && (sgroup_counts[sid] == ui.render.sGroupGetAtoms(sid).length))
         {
             var new_sgroup = 
             {
@@ -2244,7 +2244,7 @@ ui.copy = function ()
                 connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
                 name: ui.render.sGroupGetAttr(sid, 'name'),
                 subscript: ui.render.sGroupGetAttr(sid, 'subscript'),
-                atoms: ui.render.sGroupGetAttr(sid, 'atoms').clone()
+                atoms: ui.render.sGroupGetAtoms(sid).clone()
             }
             
             for (var i = 0; i < new_sgroup.atoms.length; i++)
@@ -2624,7 +2624,7 @@ ui.Action.prototype.perform = function ()
         case ui.Action.OPERATION.SGROUP_DEL:
             var id = ui.sgroupMap[op.params.id];
             var type = ui.render.sGroupGetType(id);
-            var atoms = ui.render.sGroupGetAttr(id, 'atoms').clone();
+            var atoms = ui.render.sGroupGetAtoms(id).clone();
             var i;
             
             for (i = 0; i < atoms.length; i++)
@@ -2871,7 +2871,17 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         
         pos = pos2;
         begin = ui.atomMap[begin];
+    } else if (ui.render.atomGetAttr(begin, 'label') == '*')
+    {
+        ui.render.atomSetAttr(begin, 'label', 'C')
+        action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+        {
+            id: ui.atomMap.indexOf(begin),
+            attr_name: 'label',
+            attr_value: '*'
+        });
     }
+
     
     if (!Object.isNumber(end))
     {
@@ -2882,6 +2892,15 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         });
 
         end = ui.atomMap[end];
+    } else if (ui.render.atomGetAttr(end, 'label') == '*')
+    {
+        ui.render.atomSetAttr(end, 'label', 'C')
+        action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+        {
+            id: ui.atomMap.indexOf(end),
+            attr_name: 'label',
+            attr_value: '*'
+        });
     }
     
     action.addOperation(ui.Action.OPERATION.BOND_DEL,
@@ -2940,7 +2959,7 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
             return true;
         }, this);
         
-        var sg_atoms = ui.render.sGroupGetAttr(sgroups[0], 'atoms');
+        var sg_atoms = ui.render.sGroupGetAtoms(sgroups[0]);
         
         if (sg_atoms.length == atoms_in_group.length)
         { // delete whole s-group
@@ -3184,6 +3203,9 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
     }, this);
     
     var attrs = new Hash(ui.ctab.atoms.get(src_id));
+    
+    if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
+        attrs.set('label', 'C');
     
     attrs.each(function (attr)
     {
@@ -3442,7 +3464,8 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
 {
     var action = new ui.Action();
     var id_map = ui.sgroupMap.indexOf(id);
-
+    var cur_type = ui.render.sGroupGetType(id);
+    
     action.addOperation(ui.Action.OPERATION.SGROUP_ATTR,
     {
         id: id_map,
@@ -3450,12 +3473,67 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
         attrs: attrs
     });
     
+    if ((cur_type == 'SRU' || type == 'SRU') && cur_type != type)
+    {   
+        ui.render.sGroupsFindCrossBonds();
+        var nei_atoms = ui.render.sGroupGetNeighborAtoms(id);
+        
+        if (cur_type == 'SRU')
+        {
+            nei_atoms.each(function (aid)
+            {
+                if (ui.render.atomGetAttr(aid, 'label') == '*')
+                {
+                    action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+                    {
+                        id: ui.atomMap.indexOf(aid),
+                        attr_name: 'label',
+                        attr_value: 'C'
+                    });
+                }
+            }, this);
+        } else
+        {
+            nei_atoms.each(function (aid)
+            {
+                if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid))
+                {
+                    action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+                    {
+                        id: ui.atomMap.indexOf(aid),
+                        attr_name: 'label',
+                        attr_value: '*'
+                    });
+                }
+            }, this);
+        }
+    }
+
     return action.perform();
 }
 
 ui.Action.fromSgroupDeletion = function (id)
 {
     var action = new ui.Action();
+    
+    if (ui.render.sGroupGetType(id) == 'SRU')
+    {
+        ui.render.sGroupsFindCrossBonds();
+        var nei_atoms = ui.render.sGroupGetNeighborAtoms(id);
+
+        nei_atoms.each(function (aid)
+        {
+            if (ui.render.atomGetAttr(aid, 'label') == '*')
+            {
+                action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+                {
+                    id: ui.atomMap.indexOf(aid),
+                    attr_name: 'label',
+                    attr_value: 'C'
+                });
+            }
+        }, this);
+    }
     
     action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
     {
@@ -3487,8 +3565,36 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
         attrs: attrs,
         atoms: atoms
     });
+    
+    action = action.perform();
+    
+    if (type == 'SRU')
+    {
+        var sid = ui.render.atomGetSGroups(atoms[0])[0];
+        
+        ui.render.sGroupsFindCrossBonds();
+        var nei_atoms = ui.render.sGroupGetNeighborAtoms(sid);
+        var asterisk_action = new ui.Action();
 
-    return action.perform();
+        nei_atoms.each(function (aid)
+        {
+            if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid))
+            {
+                asterisk_action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
+                {
+                    id: ui.atomMap.indexOf(aid),
+                    attr_name: 'label',
+                    attr_value: '*'
+                });
+            }
+        }, this);
+        
+        asterisk_action = asterisk_action.perform();
+        asterisk_action.mergeWith(action);
+        action = asterisk_action;
+    }
+    
+    return action;
 }
 
 ui.addUndoAction = function (action, check_dummy)

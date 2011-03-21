@@ -52,6 +52,8 @@ rnd.AtomData.prototype.calcValence = function (conn)
 	}
 	var elem = chem.Element.getElementByLabel(label);
 	if (elem == null) {
+		this.valence = -1;
+		this.a.implicitH = 0;
 		return true;
 	}
 

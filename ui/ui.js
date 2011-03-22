@@ -220,7 +220,6 @@ ui.init = function ()
     $('upload_mol').observe('submit', function ()
     {
         ui.hideDialog('open_file');
-        setTimeout(ui.loadMoleculeFromFile, 500);
     });
     $('upload_cancel').observe('click', function ()
     {
@@ -935,6 +934,7 @@ ui.loadMolecule = function (mol_string, force_layout)
     }
 };
 
+// Called from iframe's 'onload'
 ui.loadMoleculeFromFile = function ()
 {
     var file = ui.getFile();

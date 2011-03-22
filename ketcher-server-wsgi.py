@@ -39,7 +39,7 @@ def handle_save(request):
 def handle_open(request):
     filedata = request.FILES["filedata"]
     data = filedata.read()
-    resp = HttpResponse(content="Ok.\n" + data, mimetype="text/plain")
+    resp = HttpResponse(content="<html><body onload=\"parent.ui.loadMoleculeFromFile()\">Ok.\n" + data + "</body></html>", mimetype="text/html")
     return resp
 
 urlpatterns = patterns('',

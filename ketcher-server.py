@@ -44,10 +44,12 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       if self.path.endswith("open"):
         query = cgi.parse_multipart(self.rfile, pdict)
         self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'text/html')
         self.end_headers()
+        self.wfile.write("<html><body onload=\"parent.ui.loadMoleculeFromFile()\">");
         self.wfile.write("Ok.\n");
         self.wfile.write(query['filedata'][0]);
+        self.wfile.write("</body></html>");
         return
       if self.path.endswith("save"):
         query = cgi.parse_multipart(self.rfile, pdict)

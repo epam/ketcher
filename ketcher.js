@@ -14,8 +14,11 @@ ketcher = function () {
     this.render = null;
 };
 
+ketcher.version = "1.0b3";
+
 ketcher.init = function ()
 {
+    document.title += ' v' + ketcher.version;
     ui.init();
 };
 

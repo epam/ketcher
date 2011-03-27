@@ -426,6 +426,15 @@ chem.SGroup.GroupGen = {
 }
 
 chem.SGroup.GroupDat = {
+	showValue: function (paper, pos, sg, settings) {
+		var name = paper.text(pos.x, pos.y, sg.data.fieldValue)
+		.attr({
+			'font' : settings.font,
+			'font-size' : settings.fontsz
+		});
+		return name;
+	},
+
 	draw: function (ctab) {
 		var render = ctab.render;
 		var settings = render.settings;
@@ -433,25 +442,39 @@ chem.SGroup.GroupDat = {
 		var set = paper.set();
 		var absolute = this.data.absolute || this.allAtoms;
 		var atoms = this.allAtoms ? ctab.atoms.idList() : this.atoms;
+		var i;
 		if (!absolute) { // relative position
 			var c = new chem.Vec2(); // mass centre
-			for (var i = 0; i < atoms.length; ++i)
+			for (i = 0; i < atoms.length; ++i)
 				c = c.addScaled(ctab.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
 			this.ps = this.pr.scaled(settings.scaleFactor).add(c);
 		} else { // absolute position
 			this.ps = this.pa.scaled(settings.scaleFactor);
 		}
-		
-		var name = paper.text(this.ps.x, this.ps.y, this.data.fieldValue)
-		.attr({
-			'font' : settings.font,
-			'font-size' : settings.fontsz
-		});
-		var box = name.getBBox();
-		name.translate(0.5 * box.width, -0.5 * box.height);
-		set.push(name);
+		if (this.data.attached) {
+			this.selectionBoxes = [];
+			for (i = 0; i < atoms.length; ++i) {
+				var atom = ctab.atoms.get(atoms[i]);
+				var p = new chem.Vec2(atom.ps);
+				var bb = atom.visel.boundingBox;
+				if (bb != null) {
+					p.x = Math.max(p.x, bb.p1.x);
+				}
+				p.x += settings.lineWidth; // shift a bit to the right
+				var name_i = this.showValue(paper, p, this, settings);
+				var box_i = name_i.getBBox();
+				name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
+				set.push(name_i);
+				this.selectionBoxes.push(chem.Box2Abs.fromRelBox(name_i.getBBox()));
+			}
+		} else {
+			var name = this.showValue(paper, this.ps, this, settings);
+			var box = name.getBBox();
+			name.translate(0.5 * box.width, -0.5 * box.height);
+			set.push(name);
+			this.selectionBoxes = [chem.Box2Abs.fromRelBox(name.getBBox())];
+		}
 		this.bracketBox = chem.SGroup.getBBox(atoms, ctab);
-		this.selectionBox = chem.Box2Abs.fromRelBox(name.getBBox());
 		return set;
 	},
 

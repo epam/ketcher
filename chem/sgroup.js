@@ -113,12 +113,12 @@ chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 	set.push(leftBracket, rightBracket);
 }
 
-chem.SGroup.getBBox = function (sg, ctab) {
+chem.SGroup.getBBox = function (atoms, ctab) {
 	var bb = null;
 	var render = ctab.render;
 	var settings = render.settings;
-	for (var i = 0; i < sg.atoms.length; ++i) {
-		var aid = sg.atoms[i];
+	for (var i = 0; i < atoms.length; ++i) {
+		var aid = atoms[i];
 		var atom = ctab.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
@@ -154,7 +154,7 @@ chem.SGroup.GroupMul = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -305,7 +305,7 @@ chem.SGroup.GroupSru = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -358,7 +358,7 @@ chem.SGroup.GroupSup = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -402,7 +402,7 @@ chem.SGroup.GroupGen = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -429,9 +429,12 @@ chem.SGroup.GroupDat = {
 	draw: function (ctab) {
 		var render = ctab.render;
 		var settings = render.settings;
+		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
+		var absolute = this.data.absolute || this.allAtoms;
 		this.ps = this.p.scaled(settings.scaleFactor);
+
 		
 		var name = paper.text(this.ps.x, this.ps.y, this.data.fieldValue)
 		.attr({
@@ -441,7 +444,12 @@ chem.SGroup.GroupDat = {
 		var box = name.getBBox();
 		name.translate(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
-		this.bracketBox = chem.Box2Abs.fromRelBox(name.getBBox());
+		if (!this.allAtoms) {
+			this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
+		} else {
+			this.bracketBox = chem.SGroup.getBBox(ctab.atoms.idList(), ctab);
+		}
+		this.selectionBox = chem.Box2Abs.fromRelBox(name.getBBox());
 		return set;
 	},
 
@@ -482,7 +490,7 @@ chem.SGroup.GroupDat = {
 	},
 
 	prepareForSaving: function (mol) {
-		if (this.data.allAtoms) {
+		if (this.allAtoms) {
 			this.atoms = [];
 			mol.atoms.each(function(aid){
 				this.atoms.push(aid);
@@ -491,7 +499,11 @@ chem.SGroup.GroupDat = {
 	},
 
 	postLoad: function (mol) {
-		if (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' || this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' || this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE') {
+		var allAtomsInGroup = this.atoms.length == mol.atoms.count();
+		if (allAtomsInGroup &&
+			(	this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
+				this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||
+				this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE')) {
 			this.atoms = [];
 			this.allAtoms = true;
 		}

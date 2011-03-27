@@ -91,3 +91,7 @@ chem.Map.prototype.clear = function () {
 chem.Map.prototype.count = function () {
     return this._count;
 }
+
+chem.Map.prototype.idList = function () {
+    return chem.idList(this._obj);
+}

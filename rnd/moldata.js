@@ -619,8 +619,11 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 
 	this.molecule.sgroups.each(function (sgid, sg) {
 		if (sg.p) {
-			sg.p = sg.p
+			sg.pa = sg.p
 				.sub(min)
+				.yComplement(0)
+				.scaled(scale);
+			sg.pr = sg.p
 				.yComplement(0)
 				.scaled(scale);
 		}

@@ -429,12 +429,18 @@ chem.SGroup.GroupDat = {
 	draw: function (ctab) {
 		var render = ctab.render;
 		var settings = render.settings;
-		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
 		var absolute = this.data.absolute || this.allAtoms;
-		this.ps = this.p.scaled(settings.scaleFactor);
-
+		var atoms = this.allAtoms ? ctab.atoms.idList() : this.atoms;
+		if (!absolute) { // relative position
+			var c = new chem.Vec2(); // mass centre
+			for (var i = 0; i < atoms.length; ++i)
+				c = c.addScaled(ctab.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
+			this.ps = this.pr.scaled(settings.scaleFactor).add(c);
+		} else { // absolute position
+			this.ps = this.pa.scaled(settings.scaleFactor);
+		}
 		
 		var name = paper.text(this.ps.x, this.ps.y, this.data.fieldValue)
 		.attr({
@@ -444,11 +450,7 @@ chem.SGroup.GroupDat = {
 		var box = name.getBBox();
 		name.translate(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
-		if (!this.allAtoms) {
-			this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
-		} else {
-			this.bracketBox = chem.SGroup.getBBox(ctab.atoms.idList(), ctab);
-		}
+		this.bracketBox = chem.SGroup.getBBox(atoms, ctab);
 		this.selectionBox = chem.Box2Abs.fromRelBox(name.getBBox());
 		return set;
 	},

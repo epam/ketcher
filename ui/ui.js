@@ -2087,14 +2087,23 @@ ui.showSGroupProperties = function (id)
     $('sgroup_type').value = type;
     ui.onChange_SGroupType.call($('sgroup_type'));
     
-    if (type == 'SRU')
+    switch (type)
     {
+    case 'SRU':
         $('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'subscript');
-    } else if (type == 'MUL')
+        break;
+    case 'MUL':
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
-    else if (type == 'SUP')
+        break;
+    case 'SUP':
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
+        break;
+    case 'DAT':
+        $('sgroup_field_name').value =  ui.render.sGroupGetAttr(id, 'fieldName');
+        $('sgroup_field_value').value =  ui.render.sGroupGetAttr(id, 'fieldValue');
+        break;
+    }
     
     ui.showDialog('sgroup_properties');
     $('sgroup_type').activate();
@@ -2112,17 +2121,35 @@ ui.applySGroupProperties = function ()
         mul: null,
         connectivity: '',
         name: '',
-        subscript: ''
+        subscript: '',
+        fieldName: '',
+        fieldValue: ''
     };
 
-    if (type == 'SRU')
+    switch (type)
     {
+    case 'SRU':
         attrs.connectivity = $('sgroup_connection').value;
         attrs.subscript = $('sgroup_label').value;
-    } else if (type == 'MUL')
+        break;
+    case 'MUL':
         attrs.mul = parseInt($('sgroup_label').value);
-    else if (type == 'SUP')
+        break;
+    case 'SUP':
         attrs.name = $('sgroup_label').value;
+        break;
+    case 'DAT':
+        attrs.fieldName = $('sgroup_field_name').value.strip();
+        attrs.fieldValue = $('sgroup_field_value').value.strip();
+        
+        if (attrs.fieldName == '' || attrs.fieldValue == '')
+        {
+            alert("Please, specify data field name and value.");
+            ui.showDialog('sgroup_properties');
+            return;
+        }
+        break;
+    }
 
     if (id == null)
     {
@@ -2149,6 +2176,8 @@ ui.onChange_SGroupType = function ()
     {
         $$('.generalSGroup').each(function (el) { el.hide() });
         $$('.dataSGroup').each(function (el) { el.show() });
+        
+        $('sgroup_field_name').activate();
         
         return;
     }

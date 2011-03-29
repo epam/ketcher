@@ -514,8 +514,18 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 		mf.applyAtomProp(ctab.atoms, values, propId);
 	});
 
+	var atomMap = {};
 	for (var sid in sGroups) {
-		chem.SGroup.addGroup(ctab, sGroups[sid]);
+		chem.SGroup.addGroup(ctab, sGroups[sid], atomMap);
+	}
+	var emptyGroups = [];
+	for (var sid in sGroups) {
+		chem.SGroup.filter(ctab, sGroups[sid], atomMap);
+		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
+			emptyGroups.push(sid);
+	}
+	for (i = 0; i < emptyGroups.length; ++i) {
+		ctab.sgroups.remove(emptyGroups[i]);
 	}
 
 	return ctab;

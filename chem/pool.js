@@ -16,12 +16,12 @@ if (!window.chem || !chem.Map)
 chem.Pool = function ()
 {
     this._map = new chem.Map();
-    this._counter = 0;
+    this._nextId = 0;
 }
 
 chem.Pool.prototype.add = function (obj)
 {
-    var id = this._counter++;
+    var id = this._nextId++;
     this._map.set(id, obj);
     return id;
 }
@@ -43,6 +43,11 @@ chem.Pool.prototype.remove = function (id)
 chem.Pool.prototype.clear = function ()
 {
     this._map.clear();
+}
+
+chem.Pool.prototype.keys = function ()
+{
+	return this._map.keys();
 }
 
 chem.Pool.prototype.each = function (func, context)

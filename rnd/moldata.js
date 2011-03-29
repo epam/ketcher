@@ -226,9 +226,6 @@ rnd.MolData.prototype.clearVisels = function () {
 rnd.MolData.prototype.update = function (force)
 {
 	force = force || !this.initialized;
-//	var changed = !chem.isEmpty(this.atomsChanged) || !chem.isEmpty(this.bondsChanged);
-//	if (!force && !changed)
-//		return false; // nothing to update
 
 	// check items to update
 	var id;
@@ -619,13 +616,16 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 
 	this.molecule.sgroups.each(function (sgid, sg) {
 		if (sg.p) {
-			sg.pa = sg.p
+			if (sg.data.absolute) {
+				sg.pa = sg.p
 				.sub(min)
 				.yComplement(0)
 				.scaled(scale);
-			sg.pr = sg.p
+			} else {
+				sg.pa = sg.p
 				.yComplement(0)
 				.scaled(scale);
+			}
 		}
 	}, this);
 }

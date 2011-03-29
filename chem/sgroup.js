@@ -34,6 +34,8 @@ chem.SGroup = function (type)
 	this.bonds = [];
 	this.xBonds = [];
 	this.neiAtoms = [];
+	this.pa = new chem.Vec2();
+	this.p = new chem.Vec2();
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
@@ -493,7 +495,7 @@ chem.SGroup.GroupDat = {
 			var c = new chem.Vec2(); // mass centre
 			for (i = 0; i < atoms.length; ++i)
 				c = c.addScaled(ctab.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
-			this.ps = this.pr.scaled(settings.scaleFactor).add(c);
+			this.ps = this.pa.scaled(settings.scaleFactor).add(c);
 		} else { // absolute position
 			this.ps = this.pa.scaled(settings.scaleFactor);
 		}

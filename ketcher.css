@@ -185,6 +185,13 @@ div#loading
     white-space: pre;
 }
 
+.dataSGroupValue
+{
+    width: 320px;
+    height: 200px;
+    overflow:    auto;
+}
+
 .propDialog
 {
 }

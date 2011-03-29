@@ -2144,6 +2144,17 @@ ui.onChange_SGroupLabel = function ()
 ui.onChange_SGroupType = function ()
 {
     var type = $('sgroup_type').value;
+    
+    if (type == 'DAT')
+    {
+        $$('.generalSGroup').each(function (el) { el.hide() });
+        $$('.dataSGroup').each(function (el) { el.show() });
+        
+        return;
+    }
+
+    $$('.generalSGroup').each(function (el) { el.show() });
+    $$('.dataSGroup').each(function (el) { el.hide() });
 
     $('sgroup_label').disabled = (type != 'SRU') && (type != 'MUL') && (type != 'SUP');
     $('sgroup_connection').disabled = (type != 'SRU');

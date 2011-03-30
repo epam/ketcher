@@ -2238,7 +2238,6 @@ ui.copy = function ()
     };
     
     var mapping = {};
-    var sgroup_counts = {};
 
     ui.selection.atoms.each(function (id)
     {
@@ -2259,32 +2258,38 @@ ui.copy = function ()
         ui.clipboard.bonds.push(new chem.Molecule.Bond(new_bond));
     });
 
+    var sgroup_counts = new Hash();
+
     // determine selected sgroups
     ui.selection.atoms.each(function (id)
     {
         var sg = ui.render.atomGetSGroups(id);
         
-        if (sg.length > 0)
+        sg.each(function (sid)
         {
-            if (sg[0] in sgroup_counts)
-                sgroup_counts[sg[0]]++;
+            var n = sgroup_counts.get(sid);
+            if (Object.isUndefined(n))
+                n = 1;
             else
-                sgroup_counts[sg[0]] = 1;
-        }
-    });
+                n++;
+            sgroup_counts.set(sid, n);
+        }, this);
+    }, this);
     
-    ui.ctab.sgroups.each(function (sid, sg)
+    sgroup_counts.each(function (sg)
     {
-        if ((sid in sgroup_counts) && (sgroup_counts[sid] == ui.render.sGroupGetAtoms(sid).length))
+        if (sg.value == ui.render.sGroupGetAtoms(sg.key).length)
         {
             var new_sgroup = 
             {
-                type: ui.render.sGroupGetType(sid),
-                mul: ui.render.sGroupGetAttr(sid, 'mul'),
-                connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
-                name: ui.render.sGroupGetAttr(sid, 'name'),
-                subscript: ui.render.sGroupGetAttr(sid, 'subscript'),
-                atoms: ui.render.sGroupGetAtoms(sid).clone()
+                type: ui.render.sGroupGetType(sg.key),
+                mul: ui.render.sGroupGetAttr(sg.key, 'mul'),
+                connectivity: ui.render.sGroupGetAttr(sg.key, 'connectivity'),
+                name: ui.render.sGroupGetAttr(sg.key, 'name'),
+                subscript: ui.render.sGroupGetAttr(sg.key, 'subscript'),
+                fieldName: ui.render.sGroupGetAttr(sg.key, 'fieldName'),
+                fieldValue: ui.render.sGroupGetAttr(sg.key, 'fieldValue'),
+                atoms: ui.render.sGroupGetAtoms(sg.key).clone()
             }
             
             for (var i = 0; i < new_sgroup.atoms.length; i++)
@@ -2292,7 +2297,7 @@ ui.copy = function ()
                 new_sgroup.atoms[i] = mapping[new_sgroup.atoms[i]];
             }
             
-            ui.clipboard.sgroups.push(new_sgroup) - 1;
+            ui.clipboard.sgroups.push(new_sgroup);
         }
     });
 }

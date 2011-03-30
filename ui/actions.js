@@ -231,7 +231,9 @@ ui.Action.prototype.perform = function ()
                     mul: ui.render.sGroupGetAttr(id, 'mul'),
                     connectivity: ui.render.sGroupGetAttr(id, 'connectivity'),
                     name: ui.render.sGroupGetAttr(id, 'name'),
-                    subscript: ui.render.sGroupGetAttr(id, 'subscript')
+                    subscript: ui.render.sGroupGetAttr(id, 'subscript'),
+                    fieldName: ui.render.sGroupGetAttr(id, 'fieldName'),
+                    fieldValue: ui.render.sGroupGetAttr(id, 'fieldValue')
                 }
             };
             
@@ -249,10 +251,10 @@ ui.Action.prototype.perform = function ()
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATOM_DEL;
             op.inverted.params =
             {
-                id: op.params.id
+                id: op.params.id,
+                sid: op.params.sid
             };
-			ui.render.atomClearSGroups(ui.atomMap[op.params.id]);
-            ui.render.atomAddToSGroup(ui.atomMap[op.params.id],  ui.sgroupMap[op.params.sid]);
+            ui.render.atomAddToSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
 
             break;
             
@@ -261,10 +263,9 @@ ui.Action.prototype.perform = function ()
             op.inverted.params =
             {
                 id: op.params.id,
-                sid: ui.sgroupMap.indexOf(ui.render.atomGetSGroups(ui.atomMap[op.params.id])[0])
+                sid: op.params.sid
             };
-			ui.render.atomClearSGroups(ui.atomMap[op.params.id]);
-            ui.render.atomAddToSGroup(ui.atomMap[op.params.id], -1);
+            ui.render.atomRemoveFromSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
             break;
             
         case ui.Action.OPERATION.SGROUP_ADD:
@@ -280,7 +281,6 @@ ui.Action.prototype.perform = function ()
             
             op.params.atoms.each(function (aid)
             {
-				ui.render.atomClearSGroups(ui.atomMap[aid]);
                 ui.render.atomAddToSGroup(ui.atomMap[aid], id);
             }, this);
             
@@ -312,7 +312,9 @@ ui.Action.prototype.perform = function ()
                     mul: ui.render.sGroupGetAttr(id, 'mul'),
                     connectivity: ui.render.sGroupGetAttr(id, 'connectivity'),
                     name: ui.render.sGroupGetAttr(id, 'name'),
-                    subscript: ui.render.sGroupGetAttr(id, 'subscript')
+                    subscript: ui.render.sGroupGetAttr(id, 'subscript'),
+                    fieldName: ui.render.sGroupGetAttr(id, 'fieldName'),
+                    fieldValue: ui.render.sGroupGetAttr(id, 'fieldValue')
                 },
                 atoms: atoms
             };
@@ -593,10 +595,13 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
     
     if (sgroups.length > 0)
     {
-        this.addOperation(ui.Action.OPERATION.SGROUP_ATOM_DEL,
+        sgroups.each(function (sid)
         {
-            id: ui.atomMap.indexOf(id)
-        });
+            this.addOperation(ui.Action.OPERATION.SGROUP_ATOM_DEL,
+            {
+                id: ui.atomMap.indexOf(id)
+            });
+        }, this);
         
         return true;
     }
@@ -607,41 +612,35 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
 // Add action operations to remove whole s-group if needed
 ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
 {
-    var i;
-    
-    while (atoms.length > 0)
+    var sg_counts = new Hash();
+
+    atoms.each(function (id)
     {
-        var id = atoms[0];
         var sgroups = ui.render.atomGetSGroups(id);
         
-        atoms.splice(0, 1);
-
-        var atoms_in_group = new Array();
-        
-        atoms_in_group.push(id);
-        
-        atoms = atoms.findAll(function (aid)
+        sgroups.each(function (sid)
         {
-            var sg = ui.render.atomGetSGroups(aid);
-
-            if (sg.length > 0 && sg[0] == sgroups[0])
-            {
-                atoms_in_group.push(aid);
-                return false;
-            }
-            return true;
+            var n = sg_counts.get(sid);
+            if (Object.isUndefined(n))
+                n = 1;
+            else
+                n++;
+            sg_counts.set(sid, n);    
         }, this);
+    }, this);
+    
+    sg_counts.each(function (sg)
+    {
+        var sg_atoms = ui.render.sGroupGetAtoms(sg.key);
         
-        var sg_atoms = ui.render.sGroupGetAtoms(sgroups[0]);
-        
-        if (sg_atoms.length == atoms_in_group.length)
+        if (sg_atoms.length == sg.value)
         { // delete whole s-group
             this.addOperation(ui.Action.OPERATION.SGROUP_DEL,
             {
-                id: ui.sgroupMap.indexOf(sgroups[0])
+                id: ui.sgroupMap.indexOf(sg.key)
             });
         }
-    }
+    }, this);
 }
 
 ui.Action.fromAtomDeletion = function (id)
@@ -1219,18 +1218,10 @@ ui.Action.fromSgroupDeletion = function (id)
 ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 {
     var action = new ui.Action();
-    var atoms_to_remove = new Array();
     var i;
     
     for (i = 0; i < atoms.length; i++)
-    {
-        if (action.removeAtomFromSgroupIfNeeded(atoms[i]))
-            atoms_to_remove.push(atoms[i]);
-
         atoms[i] = ui.atomMap.indexOf(atoms[i]);
-    }
-    
-    action.removeSgroupIfNeeded(atoms_to_remove);
     
     action.addOperation(ui.Action.OPERATION.SGROUP_ADD,
     {
@@ -1243,7 +1234,7 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
     
     if (type == 'SRU')
     {
-        var sid = ui.render.atomGetSGroups(atoms[0])[0];
+        var sid = ui.sgroupMap[action.operations[0].params.id];
         
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(sid);

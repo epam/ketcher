@@ -2325,7 +2325,8 @@ ui.paste = function ()
         
         sgroup.atoms.each(function(id)
         {
-            ui.render.atomSetSGroup(mapping[id], sid);
+			ui.render.atomClearSGroups(mapping[id]);
+            ui.render.atomAddToSGroup(mapping[id], sid);
         }, this);    
             
         ui.pasted.sgroups.push(sid);

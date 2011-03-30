@@ -446,14 +446,14 @@ rnd.MolData.prototype.showLabels = function ()
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
 
-		if (rnd.DEBUG) {
-			var marker = paper
-			.circle(atom.ps.x, atom.ps.y, settings.fontsz * 0.5)
-			.attr('stroke', 'none')
-			.attr('fill', markerColors[atom.a.sgroup+1])
-			.attr('opacity', '0.5');
-			this.addAtomPath('data', aid, marker, marker.getBBox());
-		}
+//		if (rnd.DEBUG) {
+//			var marker = paper
+//			.circle(atom.ps.x, atom.ps.y, settings.fontsz * 0.5)
+//			.attr('stroke', 'none')
+//			.attr('fill', markerColors[atom.a.sgroup+1])
+//			.attr('opacity', '0.5');
+//			this.addAtomPath('data', aid, marker, marker.getBBox());
+//		}
 		var index = null;
 		if (opt.showAtomIds) {
 			index = {};

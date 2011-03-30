@@ -155,7 +155,6 @@ chem.paddedInt = function (number, width)
 {
 	var numStr = number.toFixed(0);
 	if (numStr.length > width) {
-		debugger;
 		throw new Error("number does not fit");
 	}
 	return chem.stringPadded(numStr, width);

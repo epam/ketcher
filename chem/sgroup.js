@@ -68,7 +68,7 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s)
-		mol.atoms.get(sg.atoms[s]).sgroup = sg.id;
+		chem.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	return sg.id;
 }
@@ -388,7 +388,8 @@ chem.SGroup.GroupSru = {
 		mol.bonds.each(function(bid, bond){
 			var a1 = mol.atoms.get(bond.begin);
 			var a2 = mol.atoms.get(bond.end);
-			if ((a1.sgroup == this.id && a2.sgroup != this.id) || (a1.sgroup != this.id && a2.sgroup == this.id))
+			if (chem.Set.contains(a1.sgs, this.id) && !chem.Set.contains(a2.sgs, this.id) ||
+					chem.Set.contains(a2.sgs, this.id) && !chem.Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
 		this.bonds = xBonds;

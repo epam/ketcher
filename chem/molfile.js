@@ -714,8 +714,8 @@ chem.MolfileSaver = function (v3000)
 chem.MolfileSaver.prototype.prepareSGroups = function ()
 {
 	var mol = this.molecule;
-	var sgs = mol.sgroups;
-	sgs.each(function(id, sg) {
+	var sgroups = mol.sgroups;
+	sgroups.each(function(id, sg) {
 		sg.prepareForSaving(mol);
 	});
 	return mol;

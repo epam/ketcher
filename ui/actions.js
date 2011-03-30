@@ -251,7 +251,8 @@ ui.Action.prototype.perform = function ()
             {
                 id: op.params.id
             };
-            ui.render.atomSetSGroup(ui.atomMap[op.params.id],  ui.sgroupMap[op.params.sid]);
+			ui.render.atomClearSGroups(ui.atomMap[op.params.id]);
+            ui.render.atomAddToSGroup(ui.atomMap[op.params.id],  ui.sgroupMap[op.params.sid]);
 
             break;
             
@@ -262,7 +263,8 @@ ui.Action.prototype.perform = function ()
                 id: op.params.id,
                 sid: ui.sgroupMap.indexOf(ui.render.atomGetSGroups(ui.atomMap[op.params.id])[0])
             };
-            ui.render.atomSetSGroup(ui.atomMap[op.params.id], -1);
+			ui.render.atomClearSGroups(ui.atomMap[op.params.id]);
+            ui.render.atomAddToSGroup(ui.atomMap[op.params.id], -1);
             break;
             
         case ui.Action.OPERATION.SGROUP_ADD:
@@ -278,7 +280,8 @@ ui.Action.prototype.perform = function ()
             
             op.params.atoms.each(function (aid)
             {
-                ui.render.atomSetSGroup(ui.atomMap[aid], id);
+				ui.render.atomClearSGroups(ui.atomMap[aid]);
+                ui.render.atomAddToSGroup(ui.atomMap[aid], id);
             }, this);
             
             if (op.inverted.params == null)

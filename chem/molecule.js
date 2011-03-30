@@ -63,7 +63,7 @@ chem.Molecule.prototype.clone = function ()
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.atoms.length; ++i) {
-			cp.atoms.get(sg.atoms[i]).sgroup = id;
+			chem.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 	});
 	cp.isChiral = this.isChiral;
@@ -199,7 +199,7 @@ chem.Molecule.Atom = function (params)
 		this.pos = new chem.Vec2();
 
 	chem.ifDef(this, params, 'fragment', -1);
-	chem.ifDef(this, params, 'sgroup', -1);
+	this.sgs = {};
 
 	// query
 	chem.ifDef(this, params, 'ringBondCount', -1);
@@ -297,15 +297,19 @@ chem.Molecule.prototype.sGroupsRecalcCrossBonds = function () {
 	this.bonds.each(function(bid, bond){
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
-		if (a1.sgroup != a2.sgroup) {
-			if (a1.sgroup >= 0) {
-				this.sgroups.get(a1.sgroup).xBonds.push(bid);
-				chem.arrayAddIfMissing(this.sgroups.get(a1.sgroup).neiAtoms, bond.end);
+		chem.Set.each(a1.sgs, function(sgid){
+			if (!chem.Set.contains(a2.sgs, sgid)) {
+				var sg = this.sgroups.get(sgid);
+				sg.xBonds.push(bid);
+				chem.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
-			if (a2.sgroup >= 0) {
-				this.sgroups.get(a2.sgroup).xBonds.push(bid);
-				chem.arrayAddIfMissing(this.sgroups.get(a2.sgroup).neiAtoms, bond.begin);
+		}, this);
+		chem.Set.each(a2.sgs, function(sgid){
+			if (!chem.Set.contains(a1.sgs, sgid)) {
+				var sg = this.sgroups.get(sgid);
+				sg.xBonds.push(bid);
+				chem.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
-		}
+		}, this);
 	},this);
 }

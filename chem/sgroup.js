@@ -35,8 +35,8 @@ chem.SGroup = function (type)
 	this.bonds = [];
 	this.xBonds = [];
 	this.neiAtoms = [];
-	this.pa = new chem.Vec2();
-	this.p = new chem.Vec2();
+	this.pa = null;
+	this.p = null;
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': null, // head-to-head, head-to-tail or either-unknown
@@ -493,12 +493,19 @@ chem.SGroup.GroupDat = {
 		var absolute = this.data.absolute || this.allAtoms;
 		var atoms = this.allAtoms ? ctab.atoms.idList() : this.atoms;
 		var i;
+		this.bracketBox = chem.SGroup.getBBox(atoms, ctab);
 		if (!absolute) { // relative position
 			var c = new chem.Vec2(); // mass centre
 			for (i = 0; i < atoms.length; ++i)
 				c = c.addScaled(ctab.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
+			if (this.pa == null) {
+				this.pa = this.bracketBox.p1.sub(c).scaled(1.0 / settings.scaleFactor).add(new chem.Vec2(1, 1));
+			}
 			this.ps = this.pa.scaled(settings.scaleFactor).add(c);
 		} else { // absolute position
+			if (this.pa == null) {
+				this.pa = this.bracketBox.p1.scaled(1.0 / settings.scaleFactor).add(new chem.Vec2(1, 1));
+			}
 			this.ps = this.pa.scaled(settings.scaleFactor);
 		}
 		if (this.data.attached) {
@@ -524,7 +531,6 @@ chem.SGroup.GroupDat = {
 			set.push(name);
 			this.selectionBoxes = [chem.Box2Abs.fromRelBox(name.getBBox())];
 		}
-		this.bracketBox = chem.SGroup.getBBox(atoms, ctab);
 		return set;
 	},
 

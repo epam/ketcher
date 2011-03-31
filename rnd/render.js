@@ -338,6 +338,8 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 	sg.selected = false;
 	sg.selectionPlate = null;
 	sg.selectionBoxes = null;
+	sg.p = null;
+	sg.pa = null;
 }
 
 rnd.Render.prototype.chiralSetPos = function (pos)

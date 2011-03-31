@@ -23,6 +23,7 @@ chem.SGroup = function (type)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
 	this.bracketBox = null;
+	this.selectionBoxes = null;
 
 	this.highlight = false;
 	this.highlighting = null;

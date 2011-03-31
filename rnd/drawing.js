@@ -377,6 +377,13 @@ rnd.MolData.prototype.showAtomSelection = function (aid, atom, visible)
 	}
 }
 
+rnd.MolData.prototype.removeBracketSelection = function (sgid, sg)
+{
+	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
+	if (exists)
+		sg.selectionPlate.remove();
+}
+
 rnd.MolData.prototype.showBracketSelection = function (sgid, sg, visible)
 {
 	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
@@ -400,6 +407,13 @@ rnd.MolData.prototype.showBracketSelection = function (sgid, sg, visible)
 		if (exists)
 			sg.selectionPlate.hide();
 	}
+}
+
+rnd.MolData.prototype.removeBracketHighlighting = function (sgid, sg)
+{
+	var exists = (sg.highlighting != null) && !sg.highlighting.removed;
+	if (exists)
+		sg.highlighting.remove();
 }
 
 rnd.MolData.prototype.showBracketHighlighting = function (sgid, sg, visible)

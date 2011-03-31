@@ -331,6 +331,13 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
     var sg = mol.sgroups.get(sgid);
     sg.type = type;
     chem.SGroup.equip(sg, type);
+	this.ctab.removeBracketHighlighting(sgid, sg);
+	this.ctab.removeBracketSelection(sgid, sg);
+	sg.highlight = false;
+	sg.highlighting = null;
+	sg.selected = false;
+	sg.selectionPlate = null;
+	sg.selectionBoxes = null;
 }
 
 rnd.Render.prototype.chiralSetPos = function (pos)

@@ -308,7 +308,7 @@ chem.Molecule.prototype.sGroupsRecalcCrossBonds = function () {
 			if (!chem.Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
-				chem.arrayAddIfMissing(sg.neiAtoms, bond.end);
+				chem.arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
 		}, this);
 	},this);

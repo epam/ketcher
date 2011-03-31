@@ -599,7 +599,8 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
         {
             this.addOperation(ui.Action.OPERATION.SGROUP_ATOM_DEL,
             {
-                id: ui.atomMap.indexOf(id)
+                id: ui.atomMap.indexOf(id),
+                sid: ui.sgroupMap.indexOf(sid)
             });
         }, this);
         
@@ -631,13 +632,14 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
     
     sg_counts.each(function (sg)
     {
-        var sg_atoms = ui.render.sGroupGetAtoms(sg.key);
+        var sid = parseInt(sg.key);
+        var sg_atoms = ui.render.sGroupGetAtoms(sid);
         
         if (sg_atoms.length == sg.value)
         { // delete whole s-group
             this.addOperation(ui.Action.OPERATION.SGROUP_DEL,
             {
-                id: ui.sgroupMap.indexOf(sg.key)
+                id: ui.sgroupMap.indexOf(sid)
             });
         }
     }, this);

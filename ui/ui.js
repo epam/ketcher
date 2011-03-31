@@ -2100,9 +2100,15 @@ ui.showSGroupProperties = function (id)
         $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
         break;
     case 'DAT':
-        $('sgroup_field_name').value =  ui.render.sGroupGetAttr(id, 'fieldName');
-        $('sgroup_field_value').value =  ui.render.sGroupGetAttr(id, 'fieldValue');
+        $('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
+        $('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
         break;
+    }
+    
+    if (type != 'DAT')
+    {
+        $('sgroup_field_name').value = '';
+        $('sgroup_field_value').value = '';
     }
     
     ui.showDialog('sgroup_properties');
@@ -2278,18 +2284,20 @@ ui.copy = function ()
     
     sgroup_counts.each(function (sg)
     {
-        if (sg.value == ui.render.sGroupGetAtoms(sg.key).length)
+        var sid = parseInt(sg.key);
+
+        if (sg.value == ui.render.sGroupGetAtoms(sid).length)
         {
             var new_sgroup = 
             {
-                type: ui.render.sGroupGetType(sg.key),
-                mul: ui.render.sGroupGetAttr(sg.key, 'mul'),
-                connectivity: ui.render.sGroupGetAttr(sg.key, 'connectivity'),
-                name: ui.render.sGroupGetAttr(sg.key, 'name'),
-                subscript: ui.render.sGroupGetAttr(sg.key, 'subscript'),
-                fieldName: ui.render.sGroupGetAttr(sg.key, 'fieldName'),
-                fieldValue: ui.render.sGroupGetAttr(sg.key, 'fieldValue'),
-                atoms: ui.render.sGroupGetAtoms(sg.key).clone()
+                type: ui.render.sGroupGetType(sid),
+                mul: ui.render.sGroupGetAttr(sid, 'mul'),
+                connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
+                name: ui.render.sGroupGetAttr(sid, 'name'),
+                subscript: ui.render.sGroupGetAttr(sid, 'subscript'),
+                fieldName: ui.render.sGroupGetAttr(sid, 'fieldName'),
+                fieldValue: ui.render.sGroupGetAttr(sid, 'fieldValue'),
+                atoms: ui.render.sGroupGetAtoms(sid).clone()
             }
             
             for (var i = 0; i < new_sgroup.atoms.length; i++)
@@ -2327,6 +2335,9 @@ ui.paste = function ()
         ui.render.sGroupSetAttr(sid, 'mul', sgroup.mul);
         ui.render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
         ui.render.sGroupSetAttr(sid, 'name', sgroup.name);
+        ui.render.sGroupSetAttr(sid, 'subscript', sgroup.subscript);
+        ui.render.sGroupSetAttr(sid, 'fieldName', sgroup.fieldName);
+        ui.render.sGroupSetAttr(sid, 'fieldValue', sgroup.fieldValue);
         
         sgroup.atoms.each(function(id)
         {

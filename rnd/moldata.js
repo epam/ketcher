@@ -642,7 +642,7 @@ rnd.MolData.prototype.coordProcess = function ()
 	var scale = 1 / avg;
 
 	if (this.molecule.isChiral)
-		this.chiral.p = new chem.Vec2((bb.max.x - bb.min.x) * scale, -1);
+		this.chiral.p = new chem.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
 	this.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 }
 

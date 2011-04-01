@@ -329,17 +329,13 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 {
     var mol = this.ctab.molecule;
     var sg = mol.sgroups.get(sgid);
-    sg.type = type;
-    chem.SGroup.equip(sg, type);
+	this.ctab.clearVisel(sg.visel);
 	this.ctab.removeBracketHighlighting(sgid, sg);
 	this.ctab.removeBracketSelection(sgid, sg);
-	sg.highlight = false;
-	sg.highlighting = null;
-	sg.selected = false;
-	sg.selectionPlate = null;
-	sg.selectionBoxes = null;
-	sg.p = null;
-	sg.pa = null;
+	var newSg = new chem.SGroup(type);
+	newSg.atoms = chem.SGroup.getAtoms(mol, sgid);
+	newSg.data = Object.clone(sg.data);
+	mol.sgroups.set(sgid, newSg);
 }
 
 rnd.Render.prototype.chiralSetPos = function (pos)
@@ -815,7 +811,6 @@ rnd.Render.prototype.testPolygon = function () {
 
 rnd.Render.prototype.processAction = function (action, args)
 {
-	// TODO: check if this is still necessary
 	var id = parseInt(args[0]);
 	if (action == 'atomRemove' && this.curItem.type == 'Atom'
 		&& this.curItem.id == id && this._onAtomMouseOut) {

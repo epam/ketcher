@@ -26,6 +26,11 @@ chem.Pool.prototype.add = function (obj)
     return id;
 }
 
+chem.Pool.prototype.set = function (id, obj)
+{
+    this._map.set(id, obj);
+}
+
 chem.Pool.prototype.get = function (id)
 {
     return this._map.get(id);

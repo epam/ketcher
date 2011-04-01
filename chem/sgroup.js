@@ -39,7 +39,7 @@ chem.SGroup = function (type)
 	this.p = null;
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
-		'connectivity': null, // head-to-head, head-to-tail or either-unknown
+		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
 		'name' : '',
 		'subscript' : ''
 	}
@@ -176,6 +176,17 @@ chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 	return lines;
 }
 
+chem.SGroup.getAtoms = function (mol, sgid) {
+	var sg = mol.sgroups.get(sgid);
+	if (!sg.allAtoms)
+		return sg.atoms;
+	var atoms = [];
+	mol.atoms.each(function(aid){
+		atoms.push(aid);
+	});
+	return atoms;
+}
+
 chem.SGroup.GroupMul = {
 	draw: function (ctab) {
 		var render = ctab.render;
@@ -191,7 +202,7 @@ chem.SGroup.GroupMul = {
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontszsub
-			});
+		});
 		var multIndexBox = multIndex.getBBox();
 		multIndex.translate(0.5 * multIndexBox.width, -0.3 * multIndexBox.height);
 		set.push(multIndex);
@@ -358,7 +369,7 @@ chem.SGroup.GroupSru = {
 			.attr({
 				'font' : settings.font,
 				'font-size' : settings.fontszsub
-				});
+			});
 			var connectivityIndexBox = connectivityIndex.getBBox();
 			connectivityIndex.translate(0.5 * connectivityIndexBox.width, 0.3 * connectivityIndexBox.height);
 			set.push(connectivityIndex);
@@ -368,7 +379,7 @@ chem.SGroup.GroupSru = {
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontszsub
-			});
+		});
 		var subscriptBox = subscript.getBBox();
 		subscript.translate(0.5 * subscriptBox.width, -0.3 * subscriptBox.height);
 		set.push(subscript);
@@ -390,7 +401,7 @@ chem.SGroup.GroupSru = {
 			var a1 = mol.atoms.get(bond.begin);
 			var a2 = mol.atoms.get(bond.end);
 			if (chem.Set.contains(a1.sgs, this.id) && !chem.Set.contains(a2.sgs, this.id) ||
-					chem.Set.contains(a2.sgs, this.id) && !chem.Set.contains(a1.sgs, this.id))
+				chem.Set.contains(a2.sgs, this.id) && !chem.Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
 		this.bonds = xBonds;
@@ -571,12 +582,7 @@ chem.SGroup.GroupDat = {
 	},
 
 	prepareForSaving: function (mol) {
-		if (this.allAtoms) {
-			this.atoms = [];
-			mol.atoms.each(function(aid){
-				this.atoms.push(aid);
-			},this);
-		}
+		this.atoms = chem.SGroup.getAtoms(mol, this.id);
 	},
 
 	postLoad: function (mol, atomMap) {

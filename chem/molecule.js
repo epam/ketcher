@@ -313,3 +313,25 @@ chem.Molecule.prototype.sGroupsRecalcCrossBonds = function () {
 		}, this);
 	},this);
 }
+
+chem.Molecule.prototype.getObjBBox = function ()
+{
+	var bb = null;
+	this.atoms.each(function (aid, atom) {
+		if (!bb)
+			bb = {
+				min: atom.pos,
+				max: atom.pos
+			}
+		else {
+			bb.min = chem.Vec2.min(bb.min, atom.pos);
+			bb.max = chem.Vec2.max(bb.max, atom.pos);
+		}
+	});
+	if (!bb)
+		bb = {
+			min: new chem.Vec2(0, 0),
+			max: new chem.Vec2(1, 1)
+		};
+	return new chem.Box2Abs(bb.min, bb.max);
+}

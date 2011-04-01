@@ -235,6 +235,7 @@ chem.Box2Abs.union = function(/*chem.Box2Abs*/b1, /*chem.Box2Abs*/b2)
 
 chem.Box2Abs.prototype.extend = function(/*chem.Vec2*/lp, /*chem.Vec2*/rb)
 {
+	rb = rb || lp;
     return new chem.Box2Abs(this.p0.sub(lp), this.p1.add(rb));
 }
 

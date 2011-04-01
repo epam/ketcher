@@ -999,7 +999,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		}
 
 		this.molecule.sgroups.each(function (id, sgroup) {
-			this.writeCR(sgroup.saveToMolfile(sgmap, this.mapping, this.bondMapping));
+			this.writeCR(sgroup.saveToMolfile(this.molecule, sgmap, this.mapping, this.bondMapping));
 		}, this);
 	}
 

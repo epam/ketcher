@@ -87,25 +87,24 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 	return sg.id;
 }
 
-chem.SGroup.bracketsToMolfile = function (sg, idstr) {
-		var bb = sg.bracketBox;
-		if (!bb)
-			return [];
+chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
+	var bb = mol.getObjBBox();
+	bb = bb.extend(new chem.Vec2(0.6, 0.6));
 
-		var coord = [
-			[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
-			[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
-		];
-		var lines = [];
-		for (var j = 0; j < coord.length; ++j) {
-			var line = 'M  SDI ' + idstr + ' ' + chem.paddedInt(4, 3);
-			for (var i = 0; i < coord[j].length; ++i) {
-				line += ' ' + chem.paddedFloat(coord[j][i], 7, 4);
-			}
-			lines.push(line);
+	var coord = [
+	[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
+	[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
+	];
+	var lines = [];
+	for (var j = 0; j < coord.length; ++j) {
+		var line = 'M  SDI ' + idstr + chem.paddedInt(4, 3);
+		for (var i = 0; i < coord[j].length; ++i) {
+			line += chem.paddedFloat(coord[j][i], 10, 4);
 		}
+		lines.push(line);
+	}
 
-		return lines;
+	return lines;
 }
 
 chem.SGroup.filterAtoms = function (atoms, map) {
@@ -246,7 +245,7 @@ chem.SGroup.GroupMul = {
 		return set;
 	},
 
-	saveToMolfile: function (sgMap, atomMap, bondMap) {
+	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
@@ -255,7 +254,7 @@ chem.SGroup.GroupMul = {
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
-		lines.concat(lines, chem.SGroup.bracketsToMolfile(this, idstr));
+		lines = lines.concat(chem.SGroup.bracketsToMolfile(mol, this, idstr));
 		return lines.join('\n');
 	},
 
@@ -424,12 +423,13 @@ chem.SGroup.GroupSru = {
 		return set;
 	},
 
-	saveToMolfile: function (sgMap, atomMap, bondMap) {
+	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
+		lines = lines.concat(chem.SGroup.bracketsToMolfile(mol, this, idstr));
 		return lines.join('\n');
 	},
 
@@ -475,7 +475,7 @@ chem.SGroup.GroupSup = {
 		return set;
 	},
 
-	saveToMolfile: function (sgMap, atomMap, bondMap) {
+	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
@@ -508,12 +508,13 @@ chem.SGroup.GroupGen = {
 		return set;
 	},
 
-	saveToMolfile: function (sgMap, atomMap, bondMap) {
+	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
+		lines = lines.concat(chem.SGroup.bracketsToMolfile(mol, this, idstr));
 		return lines.join('\n');
 	},
 
@@ -596,7 +597,7 @@ chem.SGroup.GroupDat = {
 		return set;
 	},
 
-	saveToMolfile: function (sgMap, atomMap, bondMap) {
+	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;

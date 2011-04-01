@@ -348,10 +348,8 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	if (!sg.p)
 		return;
-	var p = this.coordViewToObj(new chem.Vec2(pos.x, pos.y));
-	sg.p = p;
+	chem.SGroup.setPos(this.coordViewToObj(new chem.Vec2(pos.x, pos.y)));
 }
-
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {

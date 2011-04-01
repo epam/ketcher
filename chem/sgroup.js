@@ -35,13 +35,26 @@ chem.SGroup = function (type)
 	this.bonds = [];
 	this.xBonds = [];
 	this.neiAtoms = [];
-	this.pa = null;
 	this.p = null;
+	this.pr = null;
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
 		'name' : '',
-		'subscript' : ''
+		'subscript' : '',
+
+		// data s-group fields
+		'attached' : false,
+		'absolute' : true,
+		'showUnits' : false,
+		'nCharsToDisplay' : -1,
+		'tagChar' : '',
+		'daspPos' : 1,
+		'fieldType' : 'F',
+		'fieldName' : '',
+		'units' : '',
+		'query' : '',
+		'queryOp' : ''
 	}
 }
 
@@ -72,6 +85,27 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 		chem.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	return sg.id;
+}
+
+chem.SGroup.bracketsToMolfile = function (sg, idstr) {
+		var bb = sg.bracketBox;
+		if (!bb)
+			return [];
+
+		var coord = [
+			[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
+			[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
+		];
+		var lines = [];
+		for (var j = 0; j < coord.length; ++j) {
+			var line = 'M  SDI ' + idstr + ' ' + chem.paddedInt(4, 3);
+			for (var i = 0; i < coord[j].length; ++i) {
+				line += ' ' + chem.paddedFloat(coord[j][i], 7, 4);
+			}
+			lines.push(line);
+		}
+
+		return lines;
 }
 
 chem.SGroup.filterAtoms = function (atoms, map) {
@@ -110,6 +144,9 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 		cp.data[field] = sgroup.data[field];
 	}
 	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
+	cp.p = sgroup.p;
+	cp.pr = sgroup.pr;
+	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
 	cp.bonds = null;
 	return cp;
@@ -142,13 +179,13 @@ chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 	set.push(leftBracket, rightBracket);
 }
 
-chem.SGroup.getBBox = function (atoms, ctab) {
+chem.SGroup.getBBox = function (atoms, remol) {
 	var bb = null;
-	var render = ctab.render;
+	var render = remol.render;
 	var settings = render.settings;
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
-		var atom = ctab.atoms.get(aid);
+		var atom = remol.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
 			var p = atom.ps;
@@ -188,13 +225,13 @@ chem.SGroup.getAtoms = function (mol, sgid) {
 }
 
 chem.SGroup.GroupMul = {
-	draw: function (ctab) {
-		var render = ctab.render;
+	draw: function (remol) {
+		var render = remol.render;
 		var settings = render.settings;
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -218,6 +255,7 @@ chem.SGroup.GroupMul = {
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
+		lines.concat(lines, chem.SGroup.bracketsToMolfile(this, idstr));
 		return lines.join('\n');
 	},
 
@@ -353,13 +391,13 @@ chem.SGroup.GroupMul = {
 }
 
 chem.SGroup.GroupSru = {
-	draw: function (ctab) {
-		var render = ctab.render;
+	draw: function (remol) {
+		var render = remol.render;
 		var settings = render.settings;
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -413,13 +451,13 @@ chem.SGroup.GroupSru = {
 }
 
 chem.SGroup.GroupSup = {
-	draw: function (ctab) {
-		var render = ctab.render;
+	draw: function (remol) {
+		var render = remol.render;
 		var settings = render.settings;
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -457,13 +495,13 @@ chem.SGroup.GroupSup = {
 }
 
 chem.SGroup.GroupGen = {
-	draw: function (ctab) {
-		var render = ctab.render;
+	draw: function (remol) {
+		var render = remol.render;
 		var settings = render.settings;
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, ctab);
+		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
@@ -486,6 +524,23 @@ chem.SGroup.GroupGen = {
 	}
 }
 
+chem.SGroup.getMassCentre = function (remol, atoms) {
+	var c = new chem.Vec2(); // mass centre
+	for (var i = 0; i < atoms.length; ++i) {
+		c = c.addScaled(remol.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
+	}
+	return c;
+}
+
+chem.SGroup.setPos = function (remol, sgid, sg, pos) {
+	var render = remol.render;
+	var settings = render.settings;
+	sg.p = pos.scaled(1.0 / settings.scaleFactor);
+	var atoms = chem.SGroup.getAtoms(remol.molecule, sgid);
+	var c = chem.SGroup.getMassCentre(remol, atoms);
+	sg.pr = sg.p.sub(c.scaled(1.0 / settings.scaleFactor));
+}
+
 chem.SGroup.GroupDat = {
 	showValue: function (paper, pos, sg, settings) {
 		var name = paper.text(pos.x, pos.y, sg.data.fieldValue)
@@ -496,33 +551,29 @@ chem.SGroup.GroupDat = {
 		return name;
 	},
 
-	draw: function (ctab) {
-		var render = ctab.render;
+	draw: function (remol) {
+		var render = remol.render;
 		var settings = render.settings;
 		var paper = render.paper;
 		var set = paper.set();
 		var absolute = this.data.absolute || this.allAtoms;
-		var atoms = this.allAtoms ? ctab.atoms.idList() : this.atoms;
+		var atoms = this.allAtoms ? remol.atoms.idList() : this.atoms;
 		var i;
-		this.bracketBox = chem.SGroup.getBBox(atoms, ctab);
-		if (!absolute) { // relative position
-			var c = new chem.Vec2(); // mass centre
-			for (i = 0; i < atoms.length; ++i)
-				c = c.addScaled(ctab.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
-			if (this.pa == null) {
-				this.pa = this.bracketBox.p1.sub(c).scaled(1.0 / settings.scaleFactor).add(new chem.Vec2(1, 1));
-			}
-			this.ps = this.pa.scaled(settings.scaleFactor).add(c);
-		} else { // absolute position
-			if (this.pa == null) {
-				this.pa = this.bracketBox.p1.scaled(1.0 / settings.scaleFactor).add(new chem.Vec2(1, 1));
-			}
-			this.ps = this.pa.scaled(settings.scaleFactor);
+		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
+		if (this.p == null) {
+			chem.SGroup.setPos(remol, this.id, this, this.bracketBox.p1.add(new chem.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
+		
+		if (!absolute) { // relative position
+			this.ps = this.pr.scaled(settings.scaleFactor).add(chem.SGroup.getMassCentre(remol, atoms));
+		} else { // absolute position
+			this.ps = this.p.scaled(settings.scaleFactor);
+		}
+		
 		if (this.data.attached) {
 			this.selectionBoxes = [];
 			for (i = 0; i < atoms.length; ++i) {
-				var atom = ctab.atoms.get(atoms[i]);
+				var atom = remol.atoms.get(atoms[i]);
 				var p = new chem.Vec2(atom.ps);
 				var bb = atom.visel.boundingBox;
 				if (bb != null) {
@@ -549,6 +600,8 @@ chem.SGroup.GroupDat = {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;
+		var p = data.absolute ? this.p : this.pr;
+		p.y = -p.y;
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +

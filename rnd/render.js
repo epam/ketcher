@@ -333,7 +333,7 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 	this.ctab.removeBracketHighlighting(sgid, sg);
 	this.ctab.removeBracketSelection(sgid, sg);
 	var newSg = new chem.SGroup(type);
-	newSg.atoms = chem.SGroup.getAtoms(mol, sgid);
+	newSg.atoms = chem.SGroup.getAtoms(mol, sg);
 	newSg.data = Object.clone(sg.data);
 	mol.sgroups.set(sgid, newSg);
 }
@@ -348,7 +348,7 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	if (!sg.p)
 		return;
-	chem.SGroup.setPos(this.coordViewToObj(new chem.Vec2(pos.x, pos.y)));
+	chem.SGroup.setPos(this.ctab, sg, this.coordViewToObj(new chem.Vec2(pos.x, pos.y)));
 }
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
@@ -359,8 +359,9 @@ rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 
 rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {
-	var sg = this.ctab.molecule.sgroups.get(sgid);
-	return sg.atoms;
+    var mol = this.ctab.molecule;
+	var sg = mol.sgroups.get(sgid);
+	return chem.SGroup.getAtoms(mol, sg);
 }
 
 rnd.Render.prototype.sGroupGetType = function (sgid)

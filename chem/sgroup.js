@@ -212,8 +212,7 @@ chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 	return lines;
 }
 
-chem.SGroup.getAtoms = function (mol, sgid) {
-	var sg = mol.sgroups.get(sgid);
+chem.SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
@@ -533,11 +532,11 @@ chem.SGroup.getMassCentre = function (remol, atoms) {
 	return c;
 }
 
-chem.SGroup.setPos = function (remol, sgid, sg, pos) {
+chem.SGroup.setPos = function (remol, sg, pos) {
 	var render = remol.render;
 	var settings = render.settings;
 	sg.p = pos.scaled(1.0 / settings.scaleFactor);
-	var atoms = chem.SGroup.getAtoms(remol.molecule, sgid);
+	var atoms = chem.SGroup.getAtoms(remol.molecule, sg);
 	var c = chem.SGroup.getMassCentre(remol, atoms);
 	sg.pr = sg.p.sub(c.scaled(1.0 / settings.scaleFactor));
 }
@@ -562,7 +561,7 @@ chem.SGroup.GroupDat = {
 		var i;
 		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
 		if (this.p == null) {
-			chem.SGroup.setPos(remol, this.id, this, this.bracketBox.p1.add(new chem.Vec2(1, 1).scaled(settings.scaleFactor)));
+			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new chem.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
 		
 		if (!absolute) { // relative position
@@ -636,7 +635,7 @@ chem.SGroup.GroupDat = {
 	},
 
 	prepareForSaving: function (mol) {
-		this.atoms = chem.SGroup.getAtoms(mol, this.id);
+		this.atoms = chem.SGroup.getAtoms(mol, this);
 	},
 
 	postLoad: function (mol, atomMap) {

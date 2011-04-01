@@ -2080,6 +2080,62 @@ ui.showSGroupProperties = function (id)
 {
     if ($('sgroup_properties').visible())
         return;
+    
+    // check s-group overlappings
+    if (id == null)
+    {
+        var verified = {};
+        var atoms_hash = {};
+
+        ui.selection.atoms.each(function (id)
+        {
+            atoms_hash[id] = true;
+        }, this);
+        
+        if (!Object.isUndefined(ui.selection.atoms.detect(function (id)
+        {
+            var sgroups = ui.render.atomGetSGroups(id);
+            
+            if (!Object.isUndefined(sgroups.detect(function (sid)
+            {
+                if (sid in verified)
+                    return false;
+                
+                var sg_atoms = ui.render.sGroupGetAtoms(sid);
+                
+                if (sg_atoms.length < ui.selection.atoms.length)
+                {                    
+                    if (!Object.isUndefined(sg_atoms.detect(function (aid)
+                    {
+                        if (aid in atoms_hash)
+                            return false;
+                        return true;
+                    }, this)))
+                    {
+                        return true;
+                    }
+                } else if (!Object.isUndefined(ui.selection.atoms.detect(function (aid)
+                {
+                    if (sg_atoms.indexOf(aid) != -1)
+                        return false;
+                    return true;
+                }, this)))
+                {
+                    return true;
+                }
+                
+                return false;
+            }, this)))
+            {
+                return true;
+            }
+            return false;
+        }, this)))
+        {
+            alert("Partial S-group overlapping is not allowed.");
+            return;
+        }
+    }
         
     var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
     

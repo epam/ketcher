@@ -37,6 +37,7 @@ chem.SGroup = function (type)
 	this.neiAtoms = [];
 	this.p = null;
 	this.pr = null;
+	this.pa = null;
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
@@ -145,6 +146,7 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
 	cp.p = sgroup.p;
 	cp.pr = sgroup.pr;
+	cp.pa = sgroup.pa;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
 	cp.bonds = null;
@@ -535,10 +537,11 @@ chem.SGroup.getMassCentre = function (remol, atoms) {
 chem.SGroup.setPos = function (remol, sg, pos) {
 	var render = remol.render;
 	var settings = render.settings;
-	sg.p = pos.scaled(1.0 / settings.scaleFactor);
+	sg.pa = pos.scaled(1.0 / settings.scaleFactor);
 	var atoms = chem.SGroup.getAtoms(remol.molecule, sg);
 	var c = chem.SGroup.getMassCentre(remol, atoms);
-	sg.pr = sg.p.sub(c.scaled(1.0 / settings.scaleFactor));
+	sg.pr = sg.pa.sub(c.scaled(1.0 / settings.scaleFactor));
+	sg.p = (sg.data.absolute ? sg.pa : sg.pr).yComplement(0);
 }
 
 chem.SGroup.GroupDat = {
@@ -567,7 +570,7 @@ chem.SGroup.GroupDat = {
 		if (!absolute) { // relative position
 			this.ps = this.pr.scaled(settings.scaleFactor).add(chem.SGroup.getMassCentre(remol, atoms));
 		} else { // absolute position
-			this.ps = this.p.scaled(settings.scaleFactor);
+			this.ps = this.pa.scaled(settings.scaleFactor);
 		}
 		
 		if (this.data.attached) {
@@ -600,8 +603,7 @@ chem.SGroup.GroupDat = {
 		var idstr = chem.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;
-		var p = data.absolute ? this.p : this.pr;
-		p.y = -p.y;
+		var p = this.p;
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +

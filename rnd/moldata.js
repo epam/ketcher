@@ -619,8 +619,8 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 			sg.pr = sg.p
 			.yComplement(0)
 			.scaled(scale);
-			sg.p = sg.p
-			.sub(min)
+			sg.p = sg.p.sub(min);
+			sg.pa = sg.p
 			.yComplement(0)
 			.scaled(scale);
 		}

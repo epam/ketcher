@@ -334,6 +334,9 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 	this.ctab.removeBracketSelection(sgid, sg);
 	var newSg = new chem.SGroup(type);
 	newSg.atoms = chem.SGroup.getAtoms(mol, sg);
+	newSg.p = sg.p;
+	newSg.pa = sg.pa;
+	newSg.pr = sg.pr;
 	newSg.data = Object.clone(sg.data);
 	mol.sgroups.set(sgid, newSg);
 }

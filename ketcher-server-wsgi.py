@@ -1,4 +1,5 @@
 import os
+import base64
 import indigo
 
 indigo = indigo.Indigo("/var/www/gga/ketcher/lib")
@@ -39,7 +40,7 @@ def handle_save(request):
 def handle_open(request):
     filedata = request.FILES["filedata"]
     data = filedata.read()
-    resp = HttpResponse(content="<html><body onload=\"parent.ui.loadMoleculeFromFile()\">Ok.\n" + data + "</body></html>", mimetype="text/html")
+    resp = HttpResponse(content="<html><body onload=\"parent.ui.loadMoleculeFromFile()\" title=\"" + base64.b64encode("Ok.\n" + data) + "\"></body></html>", mimetype="text/html")
     return resp
 
 urlpatterns = patterns('',

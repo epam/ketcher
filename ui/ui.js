@@ -894,7 +894,7 @@ ui.getFile = function ()
     else // IE7
         frame_body = document.frames['buffer_frame'].document.body;
 
-    return chem.getElementTextContent(frame_body);
+    return Base64.decode(frame_body.title);
 }
 
 ui.loadMolecule = function (mol_string, force_layout)

@@ -1,6 +1,7 @@
 import os
 import cgi
 import sys
+import base64
 import BaseHTTPServer
 import SimpleHTTPServer
 from SimpleHTTPServer import *
@@ -46,10 +47,10 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        self.wfile.write("<html><body onload=\"parent.ui.loadMoleculeFromFile()\">");
-        self.wfile.write("Ok.\n");
-        self.wfile.write(query['filedata'][0]);
-        self.wfile.write("</body></html>");
+        self.wfile.write("<html><body onload=\"parent.ui.loadMoleculeFromFile()\" title=\"");
+        self.wfile.write(base64.b64encode("Ok.\n"));
+        self.wfile.write(base64.b64encode(query['filedata'][0]));
+        self.wfile.write("\"></body></html>");
         return
       if self.path.endswith("save"):
         query = cgi.parse_multipart(self.rfile, pdict)

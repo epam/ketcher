@@ -336,10 +336,7 @@ ui.onResize_Ketcher = function ()
 ui.updateMolecule = function (mol)
 {
     if (typeof(mol) == 'undefined' || mol == null)
-    {
-        this.console.writeLine('Molfile parsing failed');
         return;
-    }
 
     if (ui.selected())
         ui.updateSelection();
@@ -369,7 +366,15 @@ ui.parseMolfile = function (molfile)
     if (lines.length > 0 && lines[0] == 'Ok.')
         lines.shift();
     
-    return chem.Molfile.parseMolfile(lines);
+    try
+    {
+        var ctab = chem.Molfile.parseMolfile(lines);
+        return ctab;
+    } catch (er)
+    {
+        alert("Error loading molfile.");
+        return null;
+    }
 };
 
 //

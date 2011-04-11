@@ -379,6 +379,12 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
         return;
     }
 
+    if (atom.label == 'R' || atom.label == 'R#')
+    {
+        this.smiles += '[*]';
+        return;
+    }
+
     if (this.atom_atom_mapping != null)
         aam = atom_atom_mapping[idx];
 

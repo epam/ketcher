@@ -1015,7 +1015,7 @@ ui.onChange_FileFormat = function (event, update)
         try
         {
             saver = new chem.SmilesSaver();
-            output.smiles = saver.saveMolecule(ui.ctab);
+            output.smiles = saver.saveMolecule(ui.ctab, true);
         } catch (er)
         {
             output.smiles = er.message;
@@ -2259,10 +2259,11 @@ ui.onChange_SGroupType = function ()
         $('sgroup_label').value = '1';
     else if (type == 'SRU')
         $('sgroup_label').value = 'n';
-    else if (type == 'GEN')
+    else if (type == 'GEN' || type == 'SUP')
         $('sgroup_label').value = '';
-    else if (type == 'SUP')
-        $('sgroup_label').value = 'name';
+        
+    if (type != 'GEN')
+        $('sgroup_label').activate();
 }
 
 //

@@ -998,7 +998,7 @@ rnd.MolData.prototype.renderLoops = function ()
 			var hb = this.halfBonds.get(hbid);
 			var apos = this.atoms.get(hb.begin).ps;
 			var bpos = this.atoms.get(hb.end).ps;
-			var n = chem.Vec2.diff(bpos, apos).rotate(1, 0).normalized();
+			var n = chem.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
 			var dist = chem.Vec2.dot(chem.Vec2.diff(apos, loop.centre), n);
 			if (loop.radius < 0) {
 				loop.radius = dist;

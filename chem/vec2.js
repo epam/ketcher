@@ -162,10 +162,10 @@ chem.Vec2.prototype.rotate = function (angle)
     var si = Math.sin(angle);
     var co = Math.cos(angle);
     
-    return this.rotate(si, co);
+    return this.rotateSC(si, co);
 }
 
-chem.Vec2.prototype.rotate = function (si, co)
+chem.Vec2.prototype.rotateSC = function (si, co)
 {
     return new chem.Vec2(this.x * co - this.y * si, this.x * si + this.y * co);
 }

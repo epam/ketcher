@@ -174,8 +174,11 @@ rnd.MolData.prototype.drawBondTriple = function (hb1, hb2)
 	.attr(styles.lineattr);
 }
 
-rnd.MolData.prototype.drawBondAromatic = function (hb1, hb2, bond)
+rnd.MolData.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine)
 {
+	if (!drawDashLine) {
+		return this.drawBondSingle(hb1, hb2);
+	}
 	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = bond.doubleBondShift;
 	var settings = this.render.settings;
 	var paper = this.render.paper;
@@ -243,7 +246,7 @@ rnd.MolData.prototype.drawBond = function (bond, hb1, hb2)
 					path = this.drawBondSingleEither(hb1, hb2, bond);
 					break;
 				default:
-					path = this.drawBondSingle(hb1, hb2, bond);
+					path = this.drawBondSingle(hb1, hb2);
 					break;
 			}
 			break;
@@ -255,7 +258,7 @@ rnd.MolData.prototype.drawBond = function (bond, hb1, hb2)
 			path = this.drawBondTriple(hb1, hb2, bond);
 			break;
 		case chem.Molecule.BOND.TYPE.AROMATIC:
-			path = this.drawBondAromatic(hb1, hb2, bond);
+			path = this.drawBondAromatic(hb1, hb2, bond, hb1.loop < 0 && hb2.loop < 0);
 			break;
 		case chem.Molecule.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);
@@ -866,6 +869,16 @@ rnd.MolData.prototype.addChiralPath = function (group, visel, path)
 	this.insertInLayer(rnd.MolData.layerMap[group], path);
 }
 
+rnd.MolData.prototype.addLoopPath = function (group, visel, path)
+{
+	var offset = this.render.offset;
+	if (offset != null)
+		path.translate(offset.x, offset.y);
+	var bb = chem.Box2Abs.fromRelBox(path.getBBox());
+	visel.add(path, bb);
+	this.insertInLayer(rnd.MolData.layerMap[group], path);
+}
+
 rnd.MolData.prototype.addAtomPath = function (group, aid, path, rbb)
 {
 	var visel = this.atoms.get(aid).visel;
@@ -955,4 +968,52 @@ rnd.MolData.prototype.setDoubleBondShift = function ()
 			bond.doubleBondShift = 1;
 		}
 	}
+}
+
+rnd.MolData.prototype.updateLoops = function ()
+{
+	this.loops.each(function(lid, loop){
+		this.clearVisel(loop.visel);
+	}, this);
+	this.findLoops();
+}
+
+rnd.MolData.prototype.renderLoops = function ()
+{
+	var settings = this.render.settings;
+	var paper = this.render.paper;
+	this.loops.each(function(lid, loop){
+		loop.centre = new chem.Vec2();
+		loop.hbs.each(function(hbid){
+			var hb = this.halfBonds.get(hbid);
+			var bond = this.bonds.get(hb.bid);
+			var apos = this.atoms.get(hb.begin).ps;
+			if (bond.b.type != chem.Molecule.BOND.TYPE.AROMATIC)
+				loop.aromatic = false;
+			loop.centre.add_(apos);
+		}, this);
+		loop.centre = loop.centre.scaled(1.0 / loop.hbs.length);
+		loop.radius = -1;
+		loop.hbs.each(function(hbid){
+			var hb = this.halfBonds.get(hbid);
+			var apos = this.atoms.get(hb.begin).ps;
+			var bpos = this.atoms.get(hb.end).ps;
+			var n = chem.Vec2.diff(bpos, apos).rotate(1, 0).normalized();
+			var dist = chem.Vec2.dot(chem.Vec2.diff(apos, loop.centre), n);
+			if (loop.radius < 0) {
+				loop.radius = dist;
+			} else {
+				loop.radius = Math.min(loop.radius, dist);
+			}
+		}, this);
+		loop.radius *= 0.7;
+		if (loop.aromatic && loop.convex) {
+			var path = paper.circle(loop.centre.x, loop.centre.y, loop.radius)
+			.attr({
+				'stroke': '#000',
+				'stroke-width': settings.lineWidth
+			});
+			this.addLoopPath('data', loop.visel, path);
+		}
+	}, this);
 }

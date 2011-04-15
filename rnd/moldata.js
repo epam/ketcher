@@ -171,6 +171,9 @@ rnd.MolData.prototype.eachVisel = function (func, context) {
 	this.molecule.sgroups.each(function(sid, sgroup){
 		func.call(context, sgroup.visel);
 	}, this);
+	this.loops.each(function(lid, loop){
+		func.call(context, loop.visel);
+	}, this);
 }
 
 rnd.MolData.prototype.translate = function (d) {
@@ -276,14 +279,17 @@ rnd.MolData.prototype.update = function (force)
 	this.setHydrogenPos();
 	this.initialized = true;
 
-	if (force || this.structChanged)
-		this.findLoops();
 	this.scaleCoordinates();
+	var updLoops = force || this.structChanged;
+	if (updLoops)
+		this.updateLoops();
 	this.setDoubleBondShift();
 	this.checkLabelsToShow();
 	this.showLabels();
 	this.shiftBonds();
 	this.showBonds();
+	if (updLoops)
+		this.renderLoops();
 	this.clearMarks();
 	this.drawReactionArrow();
 	this.drawSGroups();
@@ -479,11 +485,14 @@ rnd.MolData.prototype.setImplicitHydrogen = function () {
 	}
 }
 
-rnd.Loop = function (/*Array of num*/hbs, /*MolData*/md)
+rnd.Loop = function (/*Array of num*/hbs, /*MolData*/md, /*bool*/convex)
 {
 	this.hbs = hbs; // set of half-bonds involved
-	this.aromatic = true;
 	this.dblBonds = 0; // number of double bonds in the loop
+	this.aromatic = true;
+	this.convex = convex || false;
+	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
+	
 	hbs.each(function(hb){
 		var bond = md.bonds.get(md.halfBonds.get(hb).bid);
 		if (bond.b.type != chem.Molecule.BOND.TYPE.AROMATIC)
@@ -516,24 +525,28 @@ rnd.MolData.prototype.findLoops = function ()
 				{
 				if (c > 0 && j == i) {
 					var totalAngle = 2 * Math.PI;
+					var convex = true;
 					for (k = 0; k < loop.length; ++k)
 					{
 						var hba = this.halfBonds.get(loop[k]);
 						var hbb = this.halfBonds.get(loop[(k + 1) % loop.length]);
+						var angle = Math.atan2(
+								chem.Vec2.cross(hba.dir, hbb.dir),
+								chem.Vec2.dot(hba.dir, hbb.dir));
+						if (angle > 0)
+							convex = false;
 						if (hbb.contra == loop[k]) // back and force one edge
 							totalAngle += Math.PI;
 						else
-							totalAngle += Math.atan2(
-								chem.Vec2.cross(hba.dir, hbb.dir),
-								chem.Vec2.dot(hba.dir, hbb.dir));
+							totalAngle += angle;
 					}
 					if (Math.abs(totalAngle) < Math.PI) // loop is internal
-						loopId = this.loops.add(new rnd.Loop(loop, this));
+						loopId = this.loops.add(new rnd.Loop(loop, this, convex));
 					else
 						loopId = -2;
 					loop.each(function(hbid){
 						this.halfBonds.get(hbid).loop = loopId;
-						this.markBond(this.halfBonds.get(hbid).bid, 0);
+						this.markBond(this.halfBonds.get(hbid).bid, 1);
 					}, this);
 					break;
 				} else {
@@ -782,10 +795,11 @@ rnd.MolData.prototype.bondRemove = function (bid)
 rnd.MolData.prototype.loopRemove = function (loopId)
 {
 	var loop = this.loops.get(loopId);
+	this.clearVisel(loop.visel);
 	for (var i = 0; i < loop.hbs.length; ++i) {
 		var hb = this.halfBonds.get(loop.hbs[i]);
 		hb.loop = -1;
-		this.markBond(hb.bid, 0);
+		this.markBond(hb.bid, 1);
 	}
 	this.loops.remove(loopId);
 }

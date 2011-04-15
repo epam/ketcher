@@ -258,7 +258,9 @@ rnd.MolData.prototype.drawBond = function (bond, hb1, hb2)
 			path = this.drawBondTriple(hb1, hb2, bond);
 			break;
 		case chem.Molecule.BOND.TYPE.AROMATIC:
-			path = this.drawBondAromatic(hb1, hb2, bond, hb1.loop < 0 && hb2.loop < 0);
+			var inAromaticLoop = (hb1.loop >= 0 && this.loops.get(hb1.loop).aromatic) ||
+				(hb2.loop >= 0 && this.loops.get(hb2.loop).aromatic);
+			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
 			break;
 		case chem.Molecule.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);
@@ -992,6 +994,18 @@ rnd.MolData.prototype.renderLoops = function ()
 				loop.aromatic = false;
 			loop.centre.add_(apos);
 		}, this);
+		loop.convex = true;
+		for (var k = 0; k < loop.hbs.length; ++k)
+		{
+			var hba = this.halfBonds.get(loop.hbs[k]);
+			var hbb = this.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+			var angle = Math.atan2(
+					chem.Vec2.cross(hba.dir, hbb.dir),
+					chem.Vec2.dot(hba.dir, hbb.dir));
+			if (angle > 0)
+				loop.convex = false;
+		}
+
 		loop.centre = loop.centre.scaled(1.0 / loop.hbs.length);
 		loop.radius = -1;
 		loop.hbs.each(function(hbid){
@@ -1007,13 +1021,40 @@ rnd.MolData.prototype.renderLoops = function ()
 			}
 		}, this);
 		loop.radius *= 0.7;
-		if (loop.aromatic && loop.convex) {
-			var path = paper.circle(loop.centre.x, loop.centre.y, loop.radius)
+		if (!loop.aromatic)
+			return;
+		var path = null;
+		if (loop.convex) {
+			path = paper.circle(loop.centre.x, loop.centre.y, loop.radius)
 			.attr({
 				'stroke': '#000',
 				'stroke-width': settings.lineWidth
 			});
-			this.addLoopPath('data', loop.visel, path);
+		} else {
+			var pathStr = ''
+			for (k = 0; k < loop.hbs.length; ++k)
+			{
+				hba = this.halfBonds.get(loop.hbs[k]);
+				hbb = this.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+				angle = Math.atan2(
+						chem.Vec2.cross(hba.dir, hbb.dir),
+						chem.Vec2.dot(hba.dir, hbb.dir));
+				var halfAngle = (Math.PI - angle) / 2;
+				var dir = hbb.dir.rotate(halfAngle);
+				var pi = this.atoms.get(hbb.begin).ps;
+				var offset = settings.bondSpace / Math.sin(halfAngle);
+				var qi = pi.addScaled(dir, -offset);
+				pathStr += (k == 0 ? 'M' : 'L');
+				pathStr += qi.x.toString() + ',' + qi.y.toString();
+			}
+			pathStr += 'Z';
+			path = paper.path(pathStr)
+			.attr({
+				'stroke': '#000',
+				'stroke-width': settings.lineWidth,
+				'stroke-dasharray':'- '
+			});
 		}
+		this.addLoopPath('data', loop.visel, path);
 	}, this);
 }

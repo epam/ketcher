@@ -257,11 +257,19 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 	}
 }
 
-rnd.Render.prototype.invalidateBond = function (bid)
+rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
 {
 	var bond = this.ctab.bonds.get(bid);
 	this.invalidateAtom(bond.b.begin, 0);
 	this.invalidateAtom(bond.b.end, 0);
+	if (invalidateLoops) {
+		var lid1 = this.ctab.halfBonds.get(bond.hb1).loop;
+		var lid2 = this.ctab.halfBonds.get(bond.hb2).loop;
+		if (lid1 >= 0)
+			this.ctab.loopRemove(lid1);
+		if (lid2 >= 0)
+			this.ctab.loopRemove(lid2);
+	}
 }
 
 rnd.Render.prototype.atomGetDegree = function (aid)
@@ -500,7 +508,7 @@ rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 {
 	var bond = this.ctab.bonds.get(bid);
 	bond.b[name] = value;
-	this.invalidateBond(bid);
+	this.invalidateBond(bid, name == 'type');
 // update loops involving this bond
 }
 

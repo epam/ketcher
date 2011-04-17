@@ -277,7 +277,7 @@ chem.SGroup.GroupMul = {
 				xBonds.push(bid);
 		}, this);
 		if (xBonds.length != 0 && xBonds.length != 2)
-			throw new Error("Unsupported cross-bonds number");
+			throw {'id':this.id, 'error-type':'cross-bond-number', 'message':"Unsupported cross-bonds number"};
 
 		var xAtom1 = -1,
 		xAtom2 = -1;

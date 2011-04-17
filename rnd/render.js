@@ -315,14 +315,12 @@ rnd.Render.prototype.sGroupCreate = function (type)
 // receives group id
 rnd.Render.prototype.sGroupDelete = function (sgid)
 {
-	var sg = this.ctab.molecule.sgroups.get(sgid);
-	this.ctab.clearVisel(sg.visel);
-	for (var i = 0; i < sg.atoms.length; ++i) {
-		var aid = sg.atoms[i];
-		chem.Set.remove(this.ctab.atoms.get(aid).a.sgs, sgid);
+	this.ctab.clearVisel(this.ctab.molecule.sgroups.get(sgid).visel);
+	var atoms = this.ctab.sGroupDelete(sgid);
+	for (var i = 0; i < atoms.length; ++i) {
+		var aid = atoms[i];
 		this.invalidateAtom(aid);
 	}
-	this.ctab.molecule.sgroups.remove(sgid);
 }
 
 // set group attributes, such as multiplication index for MUL group or HT/HH/EU connectivity for SRU

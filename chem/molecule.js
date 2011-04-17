@@ -335,3 +335,12 @@ chem.Molecule.prototype.getObjBBox = function ()
 		};
 	return new chem.Box2Abs(bb.min, bb.max);
 }
+
+chem.Molecule.prototype.sGroupDelete = function (sgid)
+{
+	var sg = this.sgroups.get(sgid);
+	for (var i = 0; i < sg.atoms.length; ++i) {
+		chem.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
+	}
+	this.sgroups.remove(sgid);
+}

@@ -711,22 +711,34 @@ chem.MolfileSaver = function (v3000)
 		this.v3000 = false;
 }
 
-chem.MolfileSaver.prototype.prepareSGroups = function ()
+chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 {
 	var mol = this.molecule;
 	var sgroups = mol.sgroups;
+	var toRemove = [];
 	sgroups.each(function(id, sg) {
-		sg.prepareForSaving(mol);
+		try {
+			sg.prepareForSaving(mol);
+		} catch (ex) {
+			if (skipErrors && typeof(ex.id) == 'number') {
+				toRemove.push(ex.id);
+			} else {
+				throw ex;
+			}
+		}
 	});
+	for (var i = 0; i < toRemove.length; ++i) {
+		mol.sGroupDelete(toRemove[i]);
+	}
 	return mol;
 }
 
-chem.MolfileSaver.prototype.saveMolecule = function (molecule)
+chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 {
 	this.molecule = molecule.clone();
 	this.molfile = '';
 
-	this.prepareSGroups();
+	this.prepareSGroups(skipSGroupErrors);
     
 	this.writeHeader();
     

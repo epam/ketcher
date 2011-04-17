@@ -899,3 +899,16 @@ rnd.MolData.prototype.checkFragmentConsistency = function ()
 	if (!valid)
 		throw "Fragment structure inconsistent";
 }
+
+rnd.MolData.prototype.sGroupDelete = function (sgid)
+{
+	var sg = this.molecule.sgroups.get(sgid);
+	var atoms = [];
+	for (var i = 0; i < sg.atoms.length; ++i) {
+		var aid = sg.atoms[i];
+		chem.Set.remove(this.atoms.get(aid).a.sgs, sgid);
+		atoms.push(aid);
+	}
+	this.molecule.sgroups.remove(sgid);
+	return atoms;
+}

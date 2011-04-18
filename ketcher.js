@@ -14,7 +14,7 @@ ketcher = function () {
     this.render = null;
 };
 
-ketcher.version = "1.0b4upd1";
+ketcher.version = "1.0b4";
 
 ketcher.init = function ()
 {
@@ -31,7 +31,7 @@ ketcher.getSmiles = function ()
 ketcher.getMolfile = function ()
 {
     var saver = new chem.MolfileSaver();
-    return saver.saveMolecule(ui.ctab);
+    return saver.saveMolecule(ui.ctab, true);
 }
 
 ketcher.setMolecule = function (mol_string)

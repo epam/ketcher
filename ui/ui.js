@@ -1010,7 +1010,7 @@ ui.onChange_FileFormat = function (event, update)
     if (update == true)
     {
         var saver = new chem.MolfileSaver();
-        output.molfile = saver.saveMolecule(ui.ctab);
+        output.molfile = saver.saveMolecule(ui.ctab, true);
         
         try
         {

@@ -150,6 +150,7 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
 	cp.bonds = null;
+	cp.allAtoms = sgroup.allAtoms;
 	return cp;
 }
 
@@ -560,7 +561,7 @@ chem.SGroup.GroupDat = {
 		var paper = render.paper;
 		var set = paper.set();
 		var absolute = this.data.absolute || this.allAtoms;
-		var atoms = this.allAtoms ? remol.atoms.idList() : this.atoms;
+		var atoms = chem.SGroup.getAtoms(remol, this);
 		var i;
 		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
 		if (this.p == null) {

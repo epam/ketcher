@@ -995,7 +995,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		var connectivity = '';
 		var connectivityCnt = 0;
 		this.molecule.sgroups.each(function (id, sgroup) {
-			if (sgroup.data.connectivity) {
+			if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
 				connectivity += ' ';
 				connectivity += chem.stringPadded(sgmap[id].toString(), 3);
 				connectivity += ' ';

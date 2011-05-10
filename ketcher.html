@@ -68,31 +68,31 @@
                     <td></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_any" src="png/anybond.png" alt="" title="Any Bond (0)" /></td>
+                    <td><img class="selectionButton" id="bond" selid="bond_single" src="png/single.png" alt="" title="Single Bond (1)" /></td>
                     <td><img class="sideButton" id="atom_any" src="png/anyatom.png" alt="" title="Any Atom (A)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_single" src="png/single.png" alt="" title="Single Bond (1)" /></td>
+                    <td><!--img class="sideButton" id="bond_single" src="png/single.png" alt="" title="Single Bond (1)" /--></td>
                     <td><img class="sideButton" id="atom_h" src="png/h.png" alt="" title="H Atom (H)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_up" src="png/up.png" alt="" title="Single Up Bond (1)" /></td>
+                    <td><!--img class="sideButton" id="bond_up" src="png/up.png" alt="" title="Single Up Bond (1)" /--></td>
                     <td><img class="sideButton" id="atom_c" src="png/c.png" alt="" title="C Atom (C)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_down" src="png/down.png" alt="" title="Single Down Bond (1)" /></td>
+                    <td><!--img class="sideButton" id="bond_down" src="png/down.png" alt="" title="Single Down Bond (1)" /--></td>
                     <td><img class="sideButton" id="atom_n" src="png/n.png" alt="" title="N Atom (N)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_double" src="png/double.png" alt="" title="Double Bond (2)" /></td>
+                    <td><!--img class="sideButton" id="bond_double" src="png/double.png" alt="" title="Double Bond (2)" /--></td>
                     <td><img class="sideButton" id="atom_o" src="png/o.png" alt="" title="O Atom (O)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_triple" src="png/triple.png" alt="" title="Triple Bond (3)" /></td>
+                    <td><!--img class="sideButton" id="bond_triple" src="png/triple.png" alt="" title="Triple Bond (3)" /--></td>
                     <td><img class="sideButton" id="atom_s" src="png/s.png" alt="" title="S Atom (S)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
-                    <td><img class="sideButton" id="bond_aromatic" src="png/aromatic.png" alt="" title="Aromatic Bond (4)" /></td>
+                    <td><!--img class="sideButton" id="bond_aromatic" src="png/aromatic.png" alt="" title="Aromatic Bond (4)" /--></td>
                     <td><img class="sideButton" id="atom_f" src="png/f.png" alt="" title="F Atom (F)" /></td>
                 </tr>
                 <tr align="center" style="height:34px">
@@ -122,6 +122,65 @@
                     <td colspan="19"></td>
                 </tr>
             </table>
+            
+            <div id="bond_selection" style="display:none">
+                <table>
+                    <tr class="selectionItem" id="bond_single" title="Single Bond (1)">
+                        <td><img src="png/single.png" alt="" /></td>
+                        <td>Single</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_double" title="Double Bond (2)">
+                        <td><img src="png/double.png" alt="" /></td>
+                        <td>Double</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_triple" title="Triple Bond (3)">
+                        <td><img src="png/triple.png" alt="" /></td>
+                        <td>Triple</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_aromatic" title="Aromatic Bond (4)">
+                        <td><img src="png/aromatic.png" alt="" /></td>
+                        <td>Aromatic</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="selectionDelimiter"></td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_up" title="Single Up Bond (1)">
+                        <td><img src="png/up.png" alt="" /></td>
+                        <td>Single Up</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_down" title="Single Down Bond (1)">
+                        <td><img src="png/down.png" alt="" /></td>
+                        <td>Single Down</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_updown" title="Single Up/Down Bond">
+                        <td><img src="png/updown.png" alt="" /></td>
+                        <td>Single Up/Down</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_cistrans" title="Double Cis/Trans Bond">
+                        <td><img src="png/cistrans.png" alt="" /></td>
+                        <td>Double Cis/Trans</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="selectionDelimiter"></td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_singledouble" title="Single/Double Bond">
+                        <td><img src="png/singledouble.png" alt="" /></td>
+                        <td>Single/Double</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_singlearomatic" title="Single/Aromatic Bond">
+                        <td><img src="png/singlearomatic.png" alt="" /></td>
+                        <td>Single/Aromatic</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_doublearomatic" title="Double/Aromatic Bond">
+                        <td><img src="png/doublearomatic.png" alt="" /></td>
+                        <td>Double/Aromatic</td>
+                    </tr>
+                    <tr class="selectionItem" id="bond_any" title="Any Bond (0)">
+                        <td><img src="png/anybond.png" alt="" /></td>
+                        <td>Any</td>
+                    </tr>
+                </table>
+            </div>
             
             <input id="input_label" type="text" maxlength="4" size="4" style="display:none;" />
             

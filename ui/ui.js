@@ -34,7 +34,7 @@ ui.render = null;
 ui.ctab = new chem.Molecule();
 
 ui.client_area = null;
-ui.mode_button = null;
+ui.mode_id = null;
 
 ui.undoStack = new Array();
 ui.redoStack = new Array();
@@ -92,6 +92,32 @@ ui.onClick_SideButton = function (event)
     ui.selectMode(this.id);
 };
 
+ui.onClick_SelectionButton = function (event)
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+    if (!this.hasClassName('buttonPressed'))
+    {
+        this.addClassName('buttonPressed');
+        ui.selectMode(this.getAttribute('selid'));
+    } else if ($('bond_selection').visible())
+        $('bond_selection').hide();
+    else
+        $('bond_selection').show();
+};
+
+ui.onClick_SelectionItem = function (event)
+{
+    ui.selectMode(this.id);
+    $('bond_selection').hide();
+    if (ui.mode_id == this.id)
+    {
+        $('bond').src = this.select('img')[0].src;
+        $('bond').title = this.title;
+        $('bond').setAttribute('selid', this.mode_id);
+    }
+};
+
 ui.init = function ()
 {
     if (this.initialized)
@@ -146,6 +172,24 @@ ui.init = function ()
     {
         ui.initButton(el);
         el.observe('click', ui.onClick_SideButton);
+    });
+    $$('.selectionButton').each(function (el)
+    {
+        //ui.initButton(el);
+        el.observe('click', ui.onClick_SelectionButton);
+    });
+    $$('.selectionItem').each(function (el)
+    {
+        //ui.initButton(el);
+        el.observe('click', ui.onClick_SelectionItem);
+        el.observe('mouseover', function (event) 
+        {
+            this.addClassName('highlightedItem');
+        });
+        el.observe('mouseout', function (event) 
+        {
+            this.removeClassName('highlightedItem');
+        });
     });
     $('new').observe('click', ui.onClick_NewFile);
     $('open').observe('click', ui.onClick_OpenFile);
@@ -413,37 +457,47 @@ ui.selectMode = function (mode)
             }
         }
         
-        if (ui.mode_button == null) // ui.MODE.PASTE
+        if (ui.mode_id == null) // ui.MODE.PASTE
             ui.cancelPaste();
     }
 
-    if (this.mode_button != null && this.mode_button.id != mode)
-        this.mode_button.removeClassName('buttonSelected');
+    if (this.mode_id != null && this.mode_id != mode)
+    {   
+        if (this.mode_id.startsWith('bond'))
+        {
+            if (!mode.startsWith('bond'))
+                $('bond').removeClassName('buttonSelected');
+        } else
+            $(this.mode_id).removeClassName('buttonSelected');
+    }
         
     if (mode == null)
-        this.mode_button = null;
+        this.mode_id = null;
     else
     {
-        this.mode_button = $(mode);
-        this.mode_button.addClassName('buttonSelected');
+        this.mode_id = mode;
+        if (this.mode_id.startsWith('bond'))
+            $('bond').addClassName('buttonSelected');
+        else
+            $(this.mode_id).addClassName('buttonSelected');
     }
 }
 
 ui.modeType = function ()
 {
-    if (ui.mode_button == null)
+    if (ui.mode_id == null)
         return ui.MODE.PASTE;
-    if (ui.mode_button.id == 'select_simple')
+    if (ui.mode_id == 'select_simple')
         return ui.MODE.SIMPLE;
-    if (ui.mode_button.id == 'select_erase')
+    if (ui.mode_id == 'select_erase')
         return ui.MODE.ERASE;
-    if (ui.mode_button.id.startsWith('atom_'))
+    if (ui.mode_id.startsWith('atom_'))
         return ui.MODE.ATOM;
-    if (ui.mode_button.id.startsWith('bond_'))
+    if (ui.mode_id.startsWith('bond_'))
         return ui.MODE.BOND;
-    if (ui.mode_button.id == 'sgroup')
+    if (ui.mode_id == 'sgroup')
         return ui.MODE.SGROUP;
-    if (ui.mode_button.id.startsWith('pattern_'))
+    if (ui.mode_id.startsWith('pattern_'))
         return ui.MODE.PATTERN;
 }
 
@@ -452,7 +506,7 @@ ui.bondType = function (mode)
     var type_str;
 
     if (Object.isUndefined(mode))
-        type_str = ui.mode_button.id.substr(5);
+        type_str = ui.mode_id.substr(5);
     else
         type_str = mode.substr(5);
         
@@ -486,7 +540,7 @@ ui.atomLabel = function (mode)
     var label;
     
     if (Object.isUndefined(mode))
-        label = ui.mode_button.id.substr(5);
+        label = ui.mode_id.substr(5);
     else
         label = mode.substr(5);
     
@@ -498,7 +552,7 @@ ui.atomLabel = function (mode)
 
 ui.pattern = function ()
 {
-    return ui.patterns[ui.mode_button.id.substr(8)];
+    return ui.patterns[ui.mode_id.substr(8)];
 }
 
 //
@@ -580,7 +634,7 @@ ui.onKeyPress_Ketcher = function (event)
         return chem.preventDefault(event);
     case 49: // 1
         var singles = ['bond_single', 'bond_up', 'bond_down'];
-        ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
+        ui.selectMode(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]);
         return chem.preventDefault(event);
     case 50: // 2
         ui.selectMode('bond_double');
@@ -650,7 +704,7 @@ ui.onKeyPress_Ketcher = function (event)
         return chem.preventDefault(event);
     case 114: // r
         var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
-        ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
+        ui.selectMode(rings[(rings.indexOf(ui.mode_id) + 1) % rings.length]);
         return chem.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))

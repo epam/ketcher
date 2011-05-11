@@ -59,6 +59,12 @@ ketcher.showMolfile = function (clientArea, molfileText, isRxn, autoScale)
     return this.render;
 }
 
+ketcher.showElemTable = function (clientArea)
+{
+    this.elemTable = new rnd.ElementTable(clientArea);
+    return this.elemTable;
+}
+
 /*
 ketcher.testShiftRayBox = function (clientArea)
 {

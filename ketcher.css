@@ -120,6 +120,11 @@ td.sideButton
     font-size:   0.9em;
 }
 
+.selectionItem
+{
+    cursor: default;
+}
+
 .selectionItem > td > img
 {
     /*
@@ -128,6 +133,7 @@ td.sideButton
     */
     height: 24px;
     width:  24px;
+    margin-right: 2px;
     /*vertical-align: middle;*/
 }
 

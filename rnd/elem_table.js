@@ -25,7 +25,8 @@ rnd.ElementTable = function (clientArea, opts)
 	this.viewSz = new chem.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
 	this.bb = new chem.Box2Abs(new chem.Vec2(), this.viewSz);
 	
-	this.onClick = opts.onClick || function(elemNum){ alert(elemNum); }
+	var table = this;
+	this.onClick = opts.onClick || function(elemNum){ table.setElementSelected(elemNum, !table.items[elemNum].selected); }
 
 	var paper = this.paper;
 	var elemHalfSz = new chem.Vec2(16, 16);
@@ -34,27 +35,40 @@ rnd.ElementTable = function (clientArea, opts)
 	var cornerRadius = 7;
 	var orig = elemSz.scaled(1.0);
 	
-	var fillColor = '#def';
-	var frameColor = '#9ad';
-	var frameThickness = '1pt';
-	var frameAttrs = {
-			'fill':fillColor,
-			'stroke':frameColor,
-			'stroke-width':frameThickness
+	this.fillColor = opts.fillColor || '#def';
+	this.fillColorSelected = opts.fillColorSelected || '#fcb';
+	this.frameColor = opts.frameColor || '#9ad';
+	this.frameThickness = opts.frameThickness || '1pt';
+	this.fontSize = opts.fontSize || 19;
+	this.fontType = opts.fontType || "Arial";
+
+
+	this.frameAttrs = {
+			'fill':this.fillColor,
+			'stroke':this.frameColor,
+			'stroke-width':this.frameThickness
 		};
-	var fontSize = 19;
-	var fontType = "Arial";
-	var fontAttrs = {
-			'font' : fontType,
-			'font-size' : fontSize
+	this.fontAttrs = {
+			'font' : this.fontType,
+			'font-size' : this.fontSize
 		};
-	
+	this.items = {};
+
 	chem.Element.elements.each(function(id, elem){
 		var centre = new chem.Vec2(orig.x + elem.xpos * elemSz.x + (elem.xpos - 1) * spacing.x, orig.y + elem.ypos * elemSz.y + (elem.ypos - 1) * spacing.y);
-		var box = this.paper.rect(centre.x - elemHalfSz.x, centre.y - elemHalfSz.y, elemSz.x, elemSz.y, cornerRadius).attr(frameAttrs);
-		var path = this.paper.text(centre.x, centre.y, elem.label).attr(fontAttrs).attr('fill', elem.color);
-		var table = this;
+		var box = this.paper.rect(centre.x - elemHalfSz.x, centre.y - elemHalfSz.y, elemSz.x, elemSz.y, cornerRadius).attr(this.frameAttrs);
+		var label = this.paper.text(centre.x, centre.y, elem.label).attr(this.fontAttrs).attr('fill', elem.color);
 		box.node.onclick = function () { table.onClick(id); };
-		path.node.onclick = function () { table.onClick(id); };
-	}, this);
+		label.node.onclick = function () { table.onClick(id); };
+		this.items[id] = {'box':box, 'label':label, 'selected':false};
+	}, this); 
+}
+
+rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
+	var item = this.items[id];
+	if (selected)
+		item.box.attr('fill',this.fillColorSelected);
+	else
+		item.box.attr('fill',this.fillColor);
+	item.selected = selected;
 }

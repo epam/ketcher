@@ -12,97 +12,49 @@
 
 if (!window.Prototype)
 	throw new Error("Prototype.js should be loaded first")
-if (!window.rnd || !rnd.MolData)
-	throw new Error("rnd.MolData should be defined prior to loading this file");
+if (!window.rnd)
+	throw new Error("rnd should be defined prior to loading this file");
 
-rnd.DEBUG = false;
-
-rnd.logcnt = 0;
-rnd.logmouse = false;
-rnd.hl = false;
-
-rnd.mouseEventNames = [
-	'Click',
-	'DblClick',
-	'MouseOver',
-	'MouseDown',
-	'MouseMove',
-	'MouseOut'
-	];
-rnd.entities = ['Atom', 'Bond', 'Canvas'];
-
-rnd.actions = [
-	'atomSetAttr',
-	'atomAddToSGroup',
-	'atomRemoveFromSGroup',
-	'atomClearSGroups',
-	'atomAdd',
-	'atomMove',
-	'atomMoveRel',
-	'atomMoveRelMultiple',
-	'atomRemove',
-	'bondSetAttr',
-	'bondAdd',
-	'bondFlip',
-	'bondRemove',
-	'sGroupSetHighlight',
-	'sGroupSetAttr',
-	'sGroupSetType',
-	'sGroupSetPos' // data s-group label position
-];
-
-rnd.ElementTable = function (clientArea)
+rnd.ElementTable = function (clientArea, opts)
 {
-
-	this.scale = 100;
+	opts = opts || {};
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
 	this.size = new chem.Vec2();
 	this.viewSz = new chem.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
 	this.bb = new chem.Box2Abs(new chem.Vec2(), this.viewSz);
-	this.curItem = {
-		'type':'Canvas',
-		'id':-1
-	};
-
-	var valueT = 0, valueL = 0;
-	var element = clientArea;
-	do {
-		valueT += element.offsetTop  || 0;
-		valueL += element.offsetLeft || 0;
-		element = element.offsetParent;
-	} while (element);
-
-	this.clientAreaPos = new chem.Vec2(valueL, valueT);
-
-//	// assign canvas events handlers
-//	rnd.mouseEventNames.each(function(eventName){
-//		clientArea.observe(eventName.toLowerCase(), function(event) {
-//			var name = '_onCanvas' + eventName;
-//			if (render[name])
-//				render[name](new rnd.MouseEvent(event));
-//			chem.stopEventPropagation(event);
-//			return chem.preventDefault(event);
-//		});
-//	}, this);
+	
+	this.onClick = opts.onClick || function(elemNum){ alert(elemNum); }
 
 	var paper = this.paper;
-	var elemWidth = 30, elemHeight = 30;
-	var orig = new chem.Vec2(elemWidth, elemHeight);
+	var elemHalfSz = new chem.Vec2(16, 16);
+	var elemSz = elemHalfSz.scaled(2);
+	var spacing = new chem.Vec2(3, 3);
+	var cornerRadius = 7;
+	var orig = elemSz.scaled(1.0);
+	
+	var fillColor = '#def';
+	var frameColor = '#9ad';
+	var frameThickness = '1pt';
+	var frameAttrs = {
+			'fill':fillColor,
+			'stroke':frameColor,
+			'stroke-width':frameThickness
+		};
+	var fontSize = 19;
+	var fontType = "Arial";
+	var fontAttrs = {
+			'font' : fontType,
+			'font-size' : fontSize
+		};
+	
 	chem.Element.elements.each(function(id, elem){
-		var path = this.paper.text(orig.x + elem.xpos * elemWidth, orig.y + elem.ypos * elemHeight, elem.label)
-		.attr({
-			'font' : "Arial",
-			'font-size' : 20,
-			'fill' : elem.color
-		});
-//		console.log(elem);
+		var centre = new chem.Vec2(orig.x + elem.xpos * elemSz.x + (elem.xpos - 1) * spacing.x, orig.y + elem.ypos * elemSz.y + (elem.ypos - 1) * spacing.y);
+		var box = this.paper.rect(centre.x - elemHalfSz.x, centre.y - elemHalfSz.y, elemSz.x, elemSz.y, cornerRadius).attr(frameAttrs);
+		var path = this.paper.text(centre.x, centre.y, elem.label).attr(fontAttrs).attr('fill', elem.color);
+		var table = this;
+		box.node.onclick = function () { table.onClick(id); };
+		path.node.onclick = function () { table.onClick(id); };
 	}, this);
-//	var path = this.paper.text(valueL, valueT, "TEST")
-//	.attr({
-//		'font' : "Arial",
-//		'font-size' : 20,
-//		'fill' : "#000"
-//	});
 }

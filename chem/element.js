@@ -23,6 +23,24 @@ chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos
     this.color = color || '#000000';
 	this.xpos = xpos || group;
 	this.ypos = ypos || period;
+	
+	var r = (("0x"+this.color.substring(1,3)) - 0)/255;
+	var g = (("0x"+this.color.substring(3,5)) - 0)/255;
+	var b = (("0x"+this.color.substring(5,7)) - 0)/255;
+	var luminance = 0.299*r + 0.587*g + 0.114*b;
+	if (luminance > 0.6) {
+		r *= 0.6 / luminance;
+		g *= 0.6 / luminance;
+		b *= 0.6 / luminance;
+	}
+	r = Math.ceil(Math.min(r * 255, 255)).toString(16);
+	g = Math.ceil(Math.min(g * 255, 255)).toString(16);
+	b = Math.ceil(Math.min(b * 255, 255)).toString(16);
+	r = r.length == 1 ? "0" + r : r;
+	g = g.length == 1 ? "0" + g : g;
+	b = b.length == 1 ? "0" + b : b;
+	this.color = "#" + r + g + b;
+
 }
 
 chem.Element.elements = new chem.Map({

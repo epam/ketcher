@@ -37,6 +37,8 @@ rnd.AtomData = function (/*chem.Atom*/atom)
 	this.sGroupHighlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
+	
+	this.component = -1;
 }
 
 rnd.BondData = function (/*chem.Bond*/bond)
@@ -101,6 +103,7 @@ rnd.MolData = function (molecule, render)
 		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
 	};
 
+	this.connectedComponents = new chem.Pool();
 	this.bondsChanged = {};
 	this.atomsChanged = {};
 	this.structChanged = false;
@@ -115,6 +118,34 @@ rnd.MolData = function (molecule, render)
 	}, this);
 
 	this.coordProcess();
+}
+
+rnd.MolData.prototype.assignConnectedComponents = function () {
+	this.atoms.each(function(aid,atom){
+		if (atom.component >= 0)
+			return;
+		var list = [aid];
+		var ids = {};
+		
+		while (list.length > 0) {
+			(function() {
+				var aid = list.pop();
+				var atom = this.atoms.get(aid);
+				for (var i = 0; i < atom.neighbors.length; ++i) {
+					var neiId = this.halfBonds.get(atom.neighbors[i]).end;
+					if (chem.Set.contains(ids, neiId))
+						return;
+					chem.Set.add(ids, neiId);
+					list.push(neiId);
+				}
+			}).apply(this);
+		}
+
+		var compId = this.connectedComponents.add(ids);
+		chem.Set.each(ids, function(aid) {
+			this.atoms.get(aid).component = compId;
+		}, this);
+	}, this);
 }
 
 rnd.MolData.prototype.initLayers = function () {
@@ -270,6 +301,7 @@ rnd.MolData.prototype.update = function (force)
 	if (force) { // clear and recreate all half-bonds
 		this.initHalfBonds();
 		this.initNeighbors();
+		this.assignConnectedComponents();
 	}
 
 	// only update half-bonds adjacent to atoms that have moved

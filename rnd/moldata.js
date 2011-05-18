@@ -118,33 +118,69 @@ rnd.MolData = function (molecule, render)
 	}, this);
 
 	this.coordProcess();
+	
+	this.tmpVisels = [];
+}
+
+rnd.MolData.prototype.printConnectedComponents = function () {
+	var strs = [];
+	this.connectedComponents.each(function(ccid, cc){
+		strs.push(' ' + ccid + ':[' + chem.Set.list(cc).toString() + ']');
+	}, this);
+}
+
+rnd.MolData.prototype.getConnectedComponent = function (aid) {
+	var list = [aid];
+	var ids = chem.Set.empty();
+
+	while (list.length > 0) {
+		(function() {
+			var aid = list.pop();
+			chem.Set.add(ids, aid);
+			var atom = this.atoms.get(aid);
+			for (var i = 0; i < atom.neighbors.length; ++i) {
+				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
+				if (chem.Set.contains(ids, neiId))
+					return;
+				list.push(neiId);
+			}
+		}).apply(this);
+	}
+	
+	return ids;
+}
+
+rnd.MolData.prototype.addConnectedComponent = function (ids) {
+	this.printConnectedComponents();
+	var compId = this.connectedComponents.add(ids);
+	chem.Set.each(ids, function(aid) {
+		this.atoms.get(aid).component = compId;
+	}, this);
+	this.printConnectedComponents();
+}
+
+rnd.MolData.prototype.removeConnectedComponent = function (ccid) {
+	chem.Set.each(this.connectedComponents.get(ccid), function(aid) {
+		this.atoms.get(aid).component = -1;
+	}, this);
+	this.printConnectedComponents();
+	return this.connectedComponents.remove(ccid);
+}
+
+rnd.MolData.prototype.connectedComponentMergeIn = function (ccid, set) {
+	chem.Set.each(set, function(aid) {
+		this.atoms.get(aid).component = ccid;
+	}, this);
+	chem.Set.mergeIn(this.connectedComponents.get(ccid), set);
+	this.printConnectedComponents();
 }
 
 rnd.MolData.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function(aid,atom){
 		if (atom.component >= 0)
 			return;
-		var list = [aid];
-		var ids = {};
-		
-		while (list.length > 0) {
-			(function() {
-				var aid = list.pop();
-				var atom = this.atoms.get(aid);
-				for (var i = 0; i < atom.neighbors.length; ++i) {
-					var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-					if (chem.Set.contains(ids, neiId))
-						return;
-					chem.Set.add(ids, neiId);
-					list.push(neiId);
-				}
-			}).apply(this);
-		}
-
-		var compId = this.connectedComponents.add(ids);
-		chem.Set.each(ids, function(aid) {
-			this.atoms.get(aid).component = compId;
-		}, this);
+		var ids = this.getConnectedComponent(aid);
+		this.addConnectedComponent(ids);
 	}, this);
 }
 
@@ -205,6 +241,8 @@ rnd.MolData.prototype.eachVisel = function (func, context) {
 	this.loops.each(function(lid, loop){
 		func.call(context, loop.visel);
 	}, this);
+	for (var i = 0; i < this.tmpVisels.length; ++i)
+		func.call(context, this.tmpVisels[i]);
 }
 
 rnd.MolData.prototype.translate = function (d) {
@@ -296,7 +334,9 @@ rnd.MolData.prototype.update = function (force)
 	this.molecule.sgroups.each(function(sid, sgroup){
 		this.clearVisel(sgroup.visel);
 	}, this);
-
+	for (var i = 0; i < this.tmpVisels.length; ++i)
+		this.clearVisel(this.tmpVisels[i]);
+	this.tmpVisels.clear();
 
 	if (force) { // clear and recreate all half-bonds
 		this.initHalfBonds();
@@ -326,6 +366,29 @@ rnd.MolData.prototype.update = function (force)
 	this.drawReactionArrow();
 	this.drawSGroups();
 	this.drawChiralLabel();
+	
+//	this.connectedComponents.each(function(ccid, cc){
+//		var min = null;
+//		var max = null;
+//		chem.Set.each(cc, function(aid){
+//			var p = this.atoms.get(aid).ps;
+//			if (min == null) {
+//				min = max = p;
+//			} else {
+//				min = min.min(p);
+//				max = max.max(p);
+//			}
+//		}, this);
+//		if (max == null || min == null)
+//			return;
+//		var sz = max.sub(min);
+//		var path = this.render.paper.rect(min.x, min.y, sz.x, sz.y)
+//		.attr({
+//			'fill':'#999',
+//			'stroke':null
+//		});
+//		this.addTmpPath('background', path);
+//	}, this);
 
 	if (rnd.DEBUG)
 		this.checkFragmentConsistency();
@@ -717,7 +780,9 @@ rnd.MolData.prototype.atomAdd = function (pos, params)
 	pp.fragment = chem.Molecule.fragments.add(pp.fragmentType || 0);
 	var aid = this.molecule.atoms.add(new chem.Molecule.Atom(pp));
 	var atom = this.molecule.atoms.get(aid);
-	this.atoms.set(aid, new rnd.AtomData(atom));
+	var atomData = new rnd.AtomData(atom);
+	atomData.component = this.connectedComponents.add(chem.Set.single(aid));
+	this.atoms.set(aid, atomData);
 	this._atomSetPos(aid, pos);
 	return aid;
 }
@@ -749,6 +814,12 @@ rnd.MolData.prototype.bondAdd = function (begin, end, params)
 	pp.end = end;
 	var atom1 = this.atoms.get(pp.begin);
 	var atom2 = this.atoms.get(pp.end);
+	if (atom1.component != atom2.component) {
+		var ccidMax = Math.max(atom1.component, atom2.component);
+		var ccidMin = Math.min(atom1.component, atom2.component);
+		var toMerge = this.removeConnectedComponent(ccidMax);
+		this.connectedComponentMergeIn(ccidMin, toMerge);
+	}
 	// TODO: fix
 	//	if (atom1.a.fragment != atom2.a.fragment) {
 	//		if (chem.Molecule.fragments.get(atom1.a.fragment) !=
@@ -785,6 +856,12 @@ rnd.MolData.prototype.bondFlip = function (bid)
 rnd.MolData.prototype.atomRemove = function (aid)
 {
 	var atom = this.atoms.get(aid);
+	var set = this.connectedComponents.get(atom.component);
+	chem.Set.remove(set, aid);
+	if (chem.Set.size(set) == 0) {
+		this.connectedComponents.remove(atom.component);
+	}
+	
 	// clone neighbors array, as it will be modified
 	var neiHb = Array.from(atom.neighbors);
 	neiHb.each(function(hbid){
@@ -811,6 +888,18 @@ rnd.MolData.prototype.bondRemove = function (bid)
 
 	var aid1 = bond.b.begin;
 	var aid2 = bond.b.end;
+
+	var ccid0 = this.atoms.get(aid1).component;
+	var cc0 = this.connectedComponents.get(ccid0);
+	var cc1 = this.getConnectedComponent(aid1);
+	var cc2 = this.getConnectedComponent(aid2);
+	if (!chem.Set.eq(cc0, cc1)) {
+		this.removeConnectedComponent(ccid0);
+		this.addConnectedComponent(cc1);
+		this.addConnectedComponent(cc2);
+	} else {
+		this.connectedComponentMergeIn(ccid0, cc1);
+	}
 	var fragment1 = {};
 	this.BFS(function(aid){
 		fragment1[aid] = 1;

@@ -844,11 +844,12 @@ rnd.MolData.prototype.checkLabelsToShow = function ()
 }
 
 rnd.MolData.layerMap = {
-	'selection-plate' : 0,
-	'highlighting' : 1,
-	'warnings' : 2,
-	'data' : 3,
-	'indices' : 4
+	'background' : 0,
+	'selection-plate' : 1,
+	'highlighting' : 2,
+	'warnings' : 3,
+	'data' : 4,
+	'indices' : 5
 }
 
 rnd.MolData.prototype.addSGroupPath = function (group, visel, path)
@@ -908,6 +909,18 @@ rnd.MolData.prototype.addBondPath = function (group, bid, path, rbb)
 	}
 	visel.add(path, bb);
 	this.viselsChanged[bid * 2 + 1] = visel; // code aid/bid to identify a visel
+	this.insertInLayer(rnd.MolData.layerMap[group], path);
+}
+
+rnd.MolData.prototype.addTmpPath = function (group, path)
+{
+	var visel = new rnd.Visel('TMP');
+	var offset = this.render.offset;
+	if (offset != null) {
+		path.translate(offset.x, offset.y);
+	}
+	visel.add(path);
+	this.tmpVisels.push(visel);
 	this.insertInLayer(rnd.MolData.layerMap[group], path);
 }
 

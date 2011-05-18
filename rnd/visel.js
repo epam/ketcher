@@ -29,7 +29,8 @@ rnd.Visel.TYPE = {
 	'LOOP' : 3,
 	'ARROW' : 4,
 	'SGROUP' : 5,
-	'CHIRAL' : 6
+	'CHIRAL' : 6,
+	'TMP' : 7
 }
 
 rnd.Visel.prototype.add = function (path, bb)

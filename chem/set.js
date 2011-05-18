@@ -14,6 +14,16 @@ if (!window.chem)
 	chem = {};
 
 chem.Set = {
+	empty: function() {
+		return {};
+	},
+
+	single: function(item) {
+		var set = {};
+		chem.Set.add(set, item);
+		return set;
+	},
+	
 	size: function(set) {
 		var cnt = 0;
 		for (var id in set) {
@@ -63,9 +73,17 @@ chem.Set = {
 	add: function(set, item) {
 		set[item] = item;
 	},
+
+	mergeIn: function(set, other) {
+		chem.Set.each(other, function(item){
+			chem.Set.add(set, item);
+		});
+	},
 	
 	remove: function(set, item) {
+		var v = set[item];
 		delete set[item];
+		return v;
 	},
 
 	clear: function(set) {

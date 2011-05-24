@@ -51,6 +51,8 @@ rnd.actions = [
 	'sGroupSetPos' // data s-group label position
 ];
 
+rnd.logMethod = function (method) { console.log("METHOD: " + method); }
+
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 {
 	clientArea = $(clientArea);
@@ -218,6 +220,7 @@ rnd.Render.prototype.setScale = function (scale)
 
 rnd.Render.prototype.setMolecule = function (ctab)
 {
+	rnd.logMethod("setMolecule");
 	this.paper.clear();
 	this.ctab = new rnd.MolData(ctab, this);
 	this.offset = null;
@@ -242,6 +245,7 @@ rnd.Render.prototype.vecViewToObj = function (v) {
 // molecule manipulation interface
 rnd.Render.prototype.atomGetAttr = function (aid, name)
 {
+	rnd.logMethod("atomGetAttr");
 	// TODO: check attribute names
 	return this.ctab.atoms.get(aid).a[name];
 }
@@ -274,6 +278,7 @@ rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
 
 rnd.Render.prototype.atomGetDegree = function (aid)
 {
+	rnd.logMethod("atomGetDegree");
 	return this.ctab.atoms.get(aid).neighbors.length;
 }
 
@@ -300,6 +305,7 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
 // returns an array of nested s-group id's, innermost first
 rnd.Render.prototype.atomGetSGroups = function (aid)
 {
+	rnd.logMethod("atomGetSGroups");
 	var atom = this.ctab.atoms.get(aid);
 	return chem.Set.list(atom.a.sgs);
 }
@@ -308,6 +314,7 @@ rnd.Render.prototype.atomGetSGroups = function (aid)
 // returns group id
 rnd.Render.prototype.sGroupCreate = function (type)
 {
+	rnd.logMethod("sGroupCreate");
 	var sg = new chem.SGroup(type);
 	return chem.SGroup.addGroup(this.ctab.molecule, sg);
 }
@@ -315,6 +322,7 @@ rnd.Render.prototype.sGroupCreate = function (type)
 // receives group id
 rnd.Render.prototype.sGroupDelete = function (sgid)
 {
+	rnd.logMethod("sGroupDelete");
 	this.ctab.clearVisel(this.ctab.molecule.sgroups.get(sgid).visel);
 	var atoms = this.ctab.sGroupDelete(sgid);
 	for (var i = 0; i < atoms.length; ++i) {
@@ -326,6 +334,7 @@ rnd.Render.prototype.sGroupDelete = function (sgid)
 // set group attributes, such as multiplication index for MUL group or HT/HH/EU connectivity for SRU
 rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
 {
+	rnd.logMethod("_sGroupSetAttr");
 	// TODO: fix update
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	sg.data[name] = value;
@@ -333,6 +342,7 @@ rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
 
 rnd.Render.prototype._sGroupSetType = function (sgid, type)
 {
+	rnd.logMethod("_sGroupSetType");
     var mol = this.ctab.molecule;
     var sg = mol.sgroups.get(sgid);
 	this.ctab.clearVisel(sg.visel);
@@ -349,11 +359,13 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 
 rnd.Render.prototype.chiralSetPos = function (pos)
 {
+	rnd.logMethod("chiralSetPos");
 	this.ctab.chiral.pos = (pos == null) ? null : new chem.Vec2(pos.x, pos.y);
 }
 
 rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 {
+	rnd.logMethod("_sGroupSetPos");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	if (!sg.p)
 		return;
@@ -362,12 +374,14 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {
+	rnd.logMethod("sGroupGetAttr");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.data[name];
 }
 
 rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {
+	rnd.logMethod("sGroupGetAtoms");
     var mol = this.ctab.molecule;
 	var sg = mol.sgroups.get(sgid);
 	return chem.SGroup.getAtoms(mol, sg);
@@ -375,12 +389,14 @@ rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 
 rnd.Render.prototype.sGroupGetType = function (sgid)
 {
+	rnd.logMethod("sGroupGetType");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.type;
 }
 
 rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
 {
+	rnd.logMethod("_sGroupSetHighlight");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	sg.highlight = value;
 	this.ctab.showBracketHighlighting(sgid, sg, value);
@@ -388,23 +404,27 @@ rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
 
 rnd.Render.prototype.sGroupsFindCrossBonds = function ()
 {
+	rnd.logMethod("sGroupsFindCrossBonds");
 	this.ctab.molecule.sGroupsRecalcCrossBonds();
 }
 
 rnd.Render.prototype.sGroupGetCrossBonds = function (sgid)
 {
+	rnd.logMethod("sGroupGetCrossBonds");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.xBonds;
 }
 
 rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 {
+	rnd.logMethod("sGroupGetNeighborAtoms");
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	return sg.neiAtoms;
 }
 
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 {
+	rnd.logMethod("_atomSetAttr");
 	// TODO: rewrite with special methods for each attribute?
 	// TODO: allow multiple attributes at once?
 	var atom = this.ctab.atoms.get(aid);
@@ -414,11 +434,13 @@ rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 
 rnd.Render.prototype.atomIsPlainCarbon = function (aid)
 {
+	rnd.logMethod("atomIsPlainCarbon");
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 }
 
 rnd.Render.prototype._atomAddToSGroup = function (aid, value)
 {
+	rnd.logMethod("_atomAddToSGroup");
 	var atom = this.ctab.atoms.get(aid);
 	var sg = this.ctab.molecule.sgroups.get(value);
 	chem.SGroup.addAtom(sg, aid);
@@ -428,6 +450,7 @@ rnd.Render.prototype._atomAddToSGroup = function (aid, value)
 
 rnd.Render.prototype._atomRemoveFromSGroup = function (aid, value)
 {
+	rnd.logMethod("_atomRemoveFromSGroup");
 	var atom = this.ctab.atoms.get(aid);
 	var sg = this.ctab.molecule.sgroups.get(value);
 	chem.SGroup.removeAtom(sg, aid);
@@ -437,6 +460,7 @@ rnd.Render.prototype._atomRemoveFromSGroup = function (aid, value)
 
 rnd.Render.prototype._atomClearSGroups = function (aid)
 {
+	rnd.logMethod("_atomClearSGroups");
 	var atom = this.ctab.atoms.get(aid);
 	chem.Set.each(atom.a.sgs, function(sgid){
 		var sg = this.ctab.molecule.sgroups.get(sgid);
@@ -448,6 +472,7 @@ rnd.Render.prototype._atomClearSGroups = function (aid)
 
 rnd.Render.prototype.atomSetHighlight = function (aid, value)
 {
+	rnd.logMethod("atomSetHighlight");
 	var atom = this.ctab.atoms.get(aid);
 	atom.highlight = value;
 	this.ctab.showAtomHighlighting(aid, atom, value);
@@ -455,6 +480,7 @@ rnd.Render.prototype.atomSetHighlight = function (aid, value)
 
 rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 {
+	rnd.logMethod("atomSetSGroupHighlight");
 	var atom = this.ctab.atoms.get(aid);
 	atom.sGroupHighlight = value;
 	this.ctab.showAtomSGroupHighlighting(aid, atom, value);
@@ -462,6 +488,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 
 rnd.Render.prototype._atomAdd = function (pos, params)
 {
+	rnd.logMethod("_atomAdd");
 	var aid = this.ctab.atomAdd(this.coordViewToObj(new chem.Vec2(pos.x, pos.y)), params);
 	this.ctab.markAtom(aid, 1);
 	return aid;
@@ -469,23 +496,27 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 
 rnd.Render.prototype._atomMove = function (aid, pos)
 {
+	rnd.logMethod("_atomMove");
 	this.ctab._atomSetPos(aid, this.coordViewToObj(new chem.Vec2(pos.x, pos.y)));
 	this.invalidateAtom(aid, 1);
 }
 
 rnd.Render.prototype.atomGetPos = function (aid)
 {
+	rnd.logMethod("atomGetPos");
 	return this.ctab.atoms.get(aid).pp.scaled(this.settings.scaleFactor)
 	.add(this.offset);
 }
 
 rnd.Render.prototype._atomMoveRel = function (aid, d)
 {    
+	rnd.logMethod("_atomMoveRel");
 	this.atomMove(aid, this.atomGetPos(aid).add(new chem.Vec2(d.x, d.y)));
 }
 
 rnd.Render.prototype._atomMoveRelMultiple = function (aidList, d)
 {
+	rnd.logMethod("_atomMoveRelMultiple");
 	for (var i = 0; i < aidList.length; ++i) {
 		var aid = aidList[i];
 		this.atomMove(aid, this.atomGetPos(aid).add(new chem.Vec2(d.x, d.y)));
@@ -494,16 +525,19 @@ rnd.Render.prototype._atomMoveRelMultiple = function (aidList, d)
 
 rnd.Render.prototype._atomRemove = function (aid)
 {
+	rnd.logMethod("_atomRemove");
 	this.ctab.atomRemove(aid);
 }
 
 rnd.Render.prototype.bondGetAttr = function (bid, name)
 {
+	rnd.logMethod("bondGetAttr");
 	return this.ctab.bonds.get(bid).b[name];
 }
 
 rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 {
+	rnd.logMethod("_bondSetAttr");
 	var bond = this.ctab.bonds.get(bid);
 	bond.b[name] = value;
 	this.invalidateBond(bid, name == 'type');
@@ -512,6 +546,7 @@ rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 
 rnd.Render.prototype.bondSetHighlight = function (bid, value)
 {
+	rnd.logMethod("bondSetHighlight");
 	var bond = this.ctab.bonds.get(bid);
 	bond.highlight = value;
 	this.ctab.showBondHighlighting(bid, bond, value);
@@ -519,6 +554,7 @@ rnd.Render.prototype.bondSetHighlight = function (bid, value)
 
 rnd.Render.prototype._bondAdd = function (begin, end, params)
 {
+	rnd.logMethod("_bondAdd");
 	this.invalidateAtom(begin, 1);
 	this.invalidateAtom(end, 1);
 	var bid = this.ctab.bondAdd(begin, end, params);
@@ -528,12 +564,14 @@ rnd.Render.prototype._bondAdd = function (begin, end, params)
 
 rnd.Render.prototype._bondRemove = function (bid)
 {
+	rnd.logMethod("_bondRemove");
 	this.invalidateBond(bid);
 	this.ctab.bondRemove(bid);
 }
 
 rnd.Render.prototype._bondFlip = function (bid)
 {
+	rnd.logMethod("_bondFlip");
 	var bond = this.ctab.bonds.get(bid);
 	this.invalidateAtom(bond.b.begin, 1);
 	this.invalidateAtom(bond.b.end, 1);
@@ -544,6 +582,7 @@ rnd.Render.prototype._bondFlip = function (bid)
 
 rnd.Render.prototype.setSelection = function (atomList, bondList)
 {
+	rnd.logMethod("setSelection");
 	this.ctab.atoms.each(function(aid, atom){
 		atom.selected = false;
 		this.ctab.showAtomSelection(aid, atom, false);
@@ -634,6 +673,7 @@ rnd.Render.prototype.getBoundingBox = function ()
 
 rnd.Render.prototype.setPaperSize = function (sz)
 {
+	rnd.logMethod("setPaperSize");
 	var oldSz = this.sz;
 	this.sz = sz;
 	this.paper.setSize(sz.x, sz.y);
@@ -643,6 +683,7 @@ rnd.Render.prototype.setPaperSize = function (sz)
 
 rnd.Render.prototype.setOffset = function (offset)
 {
+	rnd.logMethod("setOffset");
 	var oldOffset = this.offset;
 	this.offset = offset;
 	if (this.onCanvasOffsetChanged)
@@ -663,6 +704,7 @@ rnd.Render.prototype.getElementPos = function (obj)
 }
 
 rnd.Render.prototype.drawSelectionRectangle = function (r) {
+	rnd.logMethod("drawSelectionRectangle");
 	if (this.selectionRect)
 		this.selectionRect.remove();
 	this.selectionRect = null;
@@ -678,6 +720,7 @@ rnd.Render.prototype.drawSelectionRectangle = function (r) {
 }
 
 rnd.Render.prototype.getElementsInRectangle = function (rect) {
+	rnd.logMethod("getElementsInRectangle");
 	var bondList = new Array();
 	var atomList = new Array();
 	var x0 = rect.x0 - 0, x1 = rect.x1 - 0, y0 = rect.y0 - 0, y1 = rect.y1 - 0;
@@ -699,6 +742,7 @@ rnd.Render.prototype.getElementsInRectangle = function (rect) {
 }
 
 rnd.Render.prototype.drawSelectionPolygon = function (r) {
+	rnd.logMethod("drawSelectionPolygon");
 	if (this.selectionRect)
 		this.selectionRect.remove();
 	this.selectionRect = null;
@@ -747,6 +791,7 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 }
 
 rnd.Render.prototype.getElementsInPolygon = function (rr) {
+	rnd.logMethod("getElementsInPolygon");
 	var bondList = new Array();
 	var atomList = new Array();
 	var r = [];
@@ -846,6 +891,7 @@ rnd.Render.prototype.processAction = function (action, args)
 
 rnd.Render.prototype.update = function (force)
 {
+	rnd.logMethod("update");
 	this.muteMouseOutMouseOver = true;
 
 	if (!this.settings || this.dirty) {

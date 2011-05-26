@@ -419,8 +419,6 @@ rnd.MolData.prototype.update = function (force)
 //		this.addTmpPath('background', path);
 //	}, this);
 
-	if (rnd.DEBUG)
-		this.checkFragmentConsistency();
 	return true;
 }
 
@@ -479,16 +477,17 @@ rnd.MolData.prototype.drawChiralLabel = function ()
 rnd.MolData.prototype.getGroupBB = function (type)
 {
 	var min = null, max = null;
-	this.atoms.each(function(aid, atom){
-		if (chem.Molecule.fragments.get(atom.a.fragment) == type) {
-			if (min == null) {
-				min = max = atom.ps;
-			} else {
-				min = min.min(atom.ps);
-				max = max.max(atom.ps);
-			}
-		}
-	}, this);
+	// TODO: modify to use connected components
+//	this.atoms.each(function(aid, atom){
+//		if (chem.Molecule.fragments.get(atom.a.fragment) == type) {
+//			if (min == null) {
+//				min = max = atom.ps;
+//			} else {
+//				min = min.min(atom.ps);
+//				max = max.max(atom.ps);
+//			}
+//		}
+//	}, this);
 	return {
 		'min': min,
 		'max': max
@@ -806,7 +805,6 @@ rnd.MolData.prototype.atomAdd = function (pos, params)
 		for (var p in params)
 			pp[p] = params[p];
 	pp.label = pp.label || 'C';
-	pp.fragment = chem.Molecule.fragments.add(pp.fragmentType || 0);
 	var aid = this.molecule.atoms.add(new chem.Molecule.Atom(pp));
 	var atom = this.molecule.atoms.get(aid);
 	var atomData = new rnd.AtomData(atom);
@@ -893,18 +891,6 @@ rnd.MolData.prototype.bondRemove = function (bid)
 
 	var aid1 = bond.b.begin;
 	var aid2 = bond.b.end;
-
-	var fragment1 = {};
-	this.BFS(function(aid){
-		fragment1[aid] = 1;
-	}, aid1, this);
-	if (!(aid2 in fragment1)) { // there're two fragments now
-		var newFragment = chem.Molecule.fragments.add(
-			chem.Molecule.fragments.get(this.atoms.get(aid1).a.fragment));
-		for (var aid in fragment1) {
-			this.atoms.get(aid).a.fragment = newFragment;
-		}
-	}
 }
 
 rnd.MolData.prototype.loopRemove = function (loopId)
@@ -985,34 +971,6 @@ rnd.MolData.prototype.BFS = function (onAtom, orig, context) {
 			}
 		}
 	}
-}
-
-rnd.MolData.prototype.checkFragmentConsistency = function ()
-{
-	var valid = true;
-	this.bonds.each(function(bid, bond){ // adjacent atoms must belong to the same fragment
-		var f1 = this.atoms.get(bond.b.begin).a.fragment;
-		var f2 = this.atoms.get(bond.b.end).a.fragment;
-		if (f1 != f2)
-			valid = false;
-	}, this);
-
-	var fragmentAtoms = {};
-	this.atoms.each(function(aid, atom){ // fragment must be a connected component
-		var f = atom.a.fragment;
-		if (!(f in fragmentAtoms)) {
-			fragmentAtoms[f] = {};
-			this.BFS(function(aid){
-				fragmentAtoms[f][aid] = 1;
-			}, aid, this);
-		} else {
-			if (!(aid in fragmentAtoms[f]))
-				valid = false;
-		}
-	}, this);
-
-	if (!valid)
-		throw "Fragment structure inconsistent";
 }
 
 rnd.MolData.prototype.sGroupDelete = function (sgid)

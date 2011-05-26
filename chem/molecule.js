@@ -165,8 +165,6 @@ chem.Molecule.FRAGMENT = {
 	AGENT:3
 };
 
-chem.Molecule.fragments = new chem.Pool(); // maps fragment indices into their types
-
 chem.Molecule.prototype.merge = function (mol)
 {
 	var aidMap = {};
@@ -198,7 +196,6 @@ chem.Molecule.Atom = function (params)
 	else
 		this.pos = new chem.Vec2();
 
-	chem.ifDef(this, params, 'fragment', -1);
 	this.sgs = {};
 
 	// query

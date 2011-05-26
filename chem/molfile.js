@@ -1047,10 +1047,11 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Molecule */
 		var fragmentType = (j < nReactants ? chem.Molecule.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Molecule.FRAGMENT.PRODUCT :
 				chem.Molecule.FRAGMENT.AGENT));
-		var fragmentId = chem.Molecule.fragments.add(fragmentType);
-		mol.atoms.each(function(aid, atom){
-			atom.fragment = fragmentId;
-		}, this);
+		// TODO: use connected components
+//		var fragmentId = chem.Molecule.fragments.add(fragmentType);
+//		mol.atoms.each(function(aid, atom){
+//			atom.fragment = fragmentId;
+//		}, this);
 		ret.merge(mol);
 	}
 	return ret;

@@ -51,7 +51,8 @@ rnd.actions = [
 	'sGroupSetPos' // data s-group label position
 ];
 
-rnd.logMethod = function (method) { console.log("METHOD: " + method); }
+rnd.logMethod = function () { }
+//rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 {

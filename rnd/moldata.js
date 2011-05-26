@@ -122,14 +122,33 @@ rnd.MolData = function (molecule, render)
 	this.tmpVisels = [];
 }
 
+rnd.MolData.prototype.connectedComponentRemoveAtom = function (aid, atom) {
+	atom = atom || this.atoms.get(aid);
+	if (atom.component < 0)
+		return;
+	var cc = this.connectedComponents.get(atom.component);
+	chem.Set.remove(cc, aid);
+	if (chem.Set.size(cc) < 1)
+		this.connectedComponents.remove(atom.component);
+	atom.component = -1;
+}
+
 rnd.MolData.prototype.printConnectedComponents = function () {
 	var strs = [];
 	this.connectedComponents.each(function(ccid, cc){
-		strs.push(' ' + ccid + ':[' + chem.Set.list(cc).toString() + ']');
+		strs.push(' ' + ccid + ':[' + chem.Set.list(cc).toString() + '].' + chem.Set.size(cc).toString());
 	}, this);
+	console.log(strs.toString());
 }
 
-rnd.MolData.prototype.getConnectedComponent = function (aid) {
+rnd.MolData.prototype.clearConnectedComponents = function () {
+	this.connectedComponents.clear();
+	this.atoms.each(function(aid, atom) {
+		atom.component = -1;
+	});
+}
+
+rnd.MolData.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 	var list = [aid];
 	var ids = chem.Set.empty();
 
@@ -138,11 +157,14 @@ rnd.MolData.prototype.getConnectedComponent = function (aid) {
 			var aid = list.pop();
 			chem.Set.add(ids, aid);
 			var atom = this.atoms.get(aid);
+			if (atom.component >= 0) {
+				chem.Set.add(adjacentComponents, atom.component);
+				return;
+			}
 			for (var i = 0; i < atom.neighbors.length; ++i) {
 				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-				if (chem.Set.contains(ids, neiId))
-					return;
-				list.push(neiId);
+				if (!chem.Set.contains(ids, neiId))
+					list.push(neiId);
 			}
 		}).apply(this);
 	}
@@ -151,19 +173,17 @@ rnd.MolData.prototype.getConnectedComponent = function (aid) {
 }
 
 rnd.MolData.prototype.addConnectedComponent = function (ids) {
-	this.printConnectedComponents();
 	var compId = this.connectedComponents.add(ids);
 	chem.Set.each(ids, function(aid) {
 		this.atoms.get(aid).component = compId;
 	}, this);
-	this.printConnectedComponents();
+	return compId;
 }
 
 rnd.MolData.prototype.removeConnectedComponent = function (ccid) {
 	chem.Set.each(this.connectedComponents.get(ccid), function(aid) {
 		this.atoms.get(aid).component = -1;
 	}, this);
-	this.printConnectedComponents();
 	return this.connectedComponents.remove(ccid);
 }
 
@@ -172,15 +192,20 @@ rnd.MolData.prototype.connectedComponentMergeIn = function (ccid, set) {
 		this.atoms.get(aid).component = ccid;
 	}, this);
 	chem.Set.mergeIn(this.connectedComponents.get(ccid), set);
-	this.printConnectedComponents();
 }
 
 rnd.MolData.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function(aid,atom){
 		if (atom.component >= 0)
 			return;
-		var ids = this.getConnectedComponent(aid);
-		this.addConnectedComponent(ids);
+		var adjacentComponents = chem.Set.empty();
+		var ids = this.getConnectedComponent(aid, adjacentComponents);
+		var ccid0 = this.addConnectedComponent(ids);
+		chem.Set.each(adjacentComponents, function(ccid1){
+			var ids = this.connectedComponents.get(ccid1);
+			this.connectedComponentMergeIn(ccid0, ids);
+			this.connectedComponents.remove(ccid1);
+		}, this);			
 	}, this);
 }
 
@@ -317,6 +342,8 @@ rnd.MolData.prototype.update = function (force)
 			if (!this.bonds.has(id))
 				delete this.bondsChanged[id];
 	}
+	for (id in this.atomsChanged)
+		this.connectedComponentRemoveAtom(id);
 
 	for (id in this.atomsChanged) {
 		this.clearVisel(this.atoms.get(id).visel);
@@ -339,14 +366,16 @@ rnd.MolData.prototype.update = function (force)
 	this.tmpVisels.clear();
 
 	if (force) { // clear and recreate all half-bonds
+		this.clearConnectedComponents();
 		this.initHalfBonds();
 		this.initNeighbors();
-		this.assignConnectedComponents();
 	}
 
 	// only update half-bonds adjacent to atoms that have moved
 	this.updateHalfBonds();
 	this.sortNeighbors();
+	this.assignConnectedComponents();
+//	this.printConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();
 	this.initialized = true;
@@ -812,30 +841,6 @@ rnd.MolData.prototype.bondAdd = function (begin, end, params)
 	pp.type = pp.type || chem.Molecule.BOND.TYPE.SINGLE;
 	pp.begin = begin;
 	pp.end = end;
-	var atom1 = this.atoms.get(pp.begin);
-	var atom2 = this.atoms.get(pp.end);
-	if (atom1.component != atom2.component) {
-		var ccidMax = Math.max(atom1.component, atom2.component);
-		var ccidMin = Math.min(atom1.component, atom2.component);
-		var toMerge = this.removeConnectedComponent(ccidMax);
-		this.connectedComponentMergeIn(ccidMin, toMerge);
-	}
-	// TODO: fix
-	//	if (atom1.a.fragment != atom2.a.fragment) {
-	//		if (chem.Molecule.fragments.get(atom1.a.fragment) !=
-	//			chem.Molecule.fragments.get(atom2.a.fragment)) {
-	//			// have to choose one of the types
-	//			throw "not implemented";
-	//		}
-	//		// merge fragments
-	//		var fragmentAtoms = {};
-	//		this.BFS(function(aid){
-	//			fragmentAtoms[aid] = 1;
-	//		}, pp.begin, this);
-	//		for (var aid in fragmentAtoms) {
-	//			this.atoms.get(aid).a.fragment = atom2.a.fragment;
-	//		}
-	//	}
 	
 	var bid = this.molecule.bonds.add(new chem.Molecule.Bond(pp));
 	var bond = this.molecule.bonds.get(bid);
@@ -889,17 +894,6 @@ rnd.MolData.prototype.bondRemove = function (bid)
 	var aid1 = bond.b.begin;
 	var aid2 = bond.b.end;
 
-	var ccid0 = this.atoms.get(aid1).component;
-	var cc0 = this.connectedComponents.get(ccid0);
-	var cc1 = this.getConnectedComponent(aid1);
-	var cc2 = this.getConnectedComponent(aid2);
-	if (!chem.Set.eq(cc0, cc1)) {
-		this.removeConnectedComponent(ccid0);
-		this.addConnectedComponent(cc1);
-		this.addConnectedComponent(cc2);
-	} else {
-		this.connectedComponentMergeIn(ccid0, cc1);
-	}
 	var fragment1 = {};
 	this.BFS(function(aid){
 		fragment1[aid] = 1;

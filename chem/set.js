@@ -31,6 +31,7 @@ chem.Set = {
 				cnt++;
 			}
 		}
+		return cnt;
 	},
 
 	contains: function(set, v) {

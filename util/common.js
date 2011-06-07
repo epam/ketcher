@@ -20,13 +20,6 @@ Array.prototype.swap = function (i1, i2)
 	this[i2] = tmp;
 }
 
-// piece of browser detection code from prototype.js
-util.isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
-util.isIE = !!window.attachEvent && !util.isOpera;
-util.isWebKit = navigator.userAgent.indexOf('AppleWebKit/') > -1;
-util.isGecko = navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1;
-util.isMobileSafari = /Apple.*Mobile.*Safari/.test(navigator.userAgent);
-
 // "each" function for an array
 util.each = function (array, func, context) {
     for (var i = 0; i < array.length; ++i)

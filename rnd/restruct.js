@@ -20,7 +20,7 @@ if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 if (!window.rnd)
 	rnd = {};
 
-rnd.AtomData = function (/*chem.Atom*/atom)
+rnd.ReAtom = function (/*chem.Atom*/atom)
 {
 	this.a = atom;
 	this.pp = new util.Vec2();
@@ -41,7 +41,7 @@ rnd.AtomData = function (/*chem.Atom*/atom)
 	this.component = -1;
 }
 
-rnd.BondData = function (/*chem.Bond*/bond)
+rnd.ReBond = function (/*chem.Bond*/bond)
 {
 	this.b = bond;
 	this.hb1 = null; // half-bonds
@@ -110,11 +110,11 @@ rnd.ReStruct = function (molecule, render)
 	this.viselsChanged = {};
 
 	molecule.atoms.each(function(aid, atom){
-		this.atoms.set(aid, new rnd.AtomData(atom));
+		this.atoms.set(aid, new rnd.ReAtom(atom));
 	}, this);
 
 	molecule.bonds.each(function(bid, bond){
-		this.bonds.set(bid, new rnd.BondData(bond));
+		this.bonds.set(bid, new rnd.ReBond(bond));
 	}, this);
 
 	this.coordProcess();
@@ -807,7 +807,7 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	pp.label = pp.label || 'C';
 	var aid = this.molecule.atoms.add(new chem.Struct.Atom(pp));
 	var atom = this.molecule.atoms.get(aid);
-	var atomData = new rnd.AtomData(atom);
+	var atomData = new rnd.ReAtom(atom);
 	atomData.component = this.connectedComponents.add(util.Set.single(aid));
 	this.atoms.set(aid, atomData);
 	this._atomSetPos(aid, pos);
@@ -842,7 +842,7 @@ rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 	
 	var bid = this.molecule.bonds.add(new chem.Struct.Bond(pp));
 	var bond = this.molecule.bonds.get(bid);
-	this.bonds.set(bid, new rnd.BondData(bond));
+	this.bonds.set(bid, new rnd.ReBond(bond));
 	this.bondInitHalfBonds(bid);
 	this.atomAddNeighbor(this.bonds.get(bid).hb1);
 	this.atomAddNeighbor(this.bonds.get(bid).hb2);

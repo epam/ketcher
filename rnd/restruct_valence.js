@@ -44,7 +44,7 @@ rnd.ReStruct.prototype.calcConn = function (aid)
 	return conn;
 }
 
-rnd.AtomData.prototype.calcValence = function (conn)
+rnd.ReAtom.prototype.calcValence = function (conn)
 {
 	var atom = this.a;
 	var charge = atom.charge;
@@ -366,7 +366,7 @@ rnd.AtomData.prototype.calcValence = function (conn)
 	return true;
 }
 
-rnd.AtomData.prototype.calcValenceMinusHyd = function (conn)
+rnd.ReAtom.prototype.calcValenceMinusHyd = function (conn)
 {
 	var atom = this.a;
 	var charge = atom.charge;

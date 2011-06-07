@@ -526,10 +526,10 @@ ui.onClick_NewFile = function ()
 //
 ui.onKeyPress_Ketcher = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     
     if ($('window_cover').visible())
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
 
     if (ui.isDrag())
     {
@@ -539,7 +539,7 @@ ui.onKeyPress_Ketcher = function (event)
             if (ui.selected())
                 ui.updateSelection();
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 
     switch (event.keyCode)
@@ -553,12 +553,12 @@ ui.onKeyPress_Ketcher = function (event)
                 ui.updateSelection();
             ui.selectMode('select_simple');
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 46: // Delete
         if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
             if (ui.selected())
                 ui.removeSelected();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 
     switch (Prototype.Browser.IE ? event.keyCode : event.which)
@@ -566,47 +566,47 @@ ui.onKeyPress_Ketcher = function (event)
     case 43: // +
     case 61:
         ui.onClick_ZoomIn.call($('zoom_in'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 45: // -
     case 95:
         ui.onClick_ZoomOut.call($('zoom_out'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 8: // Back space
         if (ui.is_osx && ui.selected())
             ui.removeSelected();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 48: // 0
         ui.selectMode('bond_any');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 49: // 1
         var singles = ['bond_single', 'bond_up', 'bond_down'];
         ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 50: // 2
         ui.selectMode('bond_double');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 51: // 3
         ui.selectMode('bond_triple');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 52: // 4
         ui.selectMode('bond_aromatic');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 66: // Shift+B
         ui.selectMode('atom_br');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 67: // Shift+C
         ui.selectMode('atom_cl');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 90: // Ctrl+Shift+Z
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Redo.call($('redo'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 97: // a
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.selectAll();
         else
             ui.selectMode('atom_any');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 99: // c
         if (!event.altKey)
         {
@@ -615,57 +615,57 @@ ui.onKeyPress_Ketcher = function (event)
             else if (!event.metaKey)
                 ui.selectMode('atom_c');
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 102: // f
         ui.selectMode('atom_f');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 103: // Ctrl+G
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SideButton.call($('sgroup'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 104: // h
         ui.selectMode('atom_h');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 105: // i
         ui.selectMode('atom_i');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 108: // Ctrl+L
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_CleanUp.call($('clean_up'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 110: // n or Ctrl+N
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_NewFile.call($('new'));
         else
             ui.selectMode('atom_n');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 111: // o or Ctrl+O
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_OpenFile.call($('open'));
         else
             ui.selectMode('atom_o');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 112: // p
         ui.selectMode('atom_p');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 114: // r
         var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
         ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SaveFile.call($('save'));
         else
             ui.selectMode('atom_s');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 118: // Ctrl+V
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Paste.call($('paste'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 120: // Ctrl+X
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Cut.call($('cut'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 122: // Ctrl+Z or Ctrl+Shift+Z (in Safari)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
         {
@@ -674,10 +674,10 @@ ui.onKeyPress_Ketcher = function (event)
             else
                 ui.onClick_Undo.call($('undo'));
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 126: // ~
         ui.render.update(true);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -692,8 +692,8 @@ ui.onKeyDown_IE = function (event)
     // Ctrl+A, Ctrl+G, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
     if ([65, 71, 76, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
-        chem.stopEventPropagation(event);
-        return chem.preventDefault(event);
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -725,8 +725,8 @@ ui.onKeyUp = function (event)
             ui.hideDialog(this.id);
         else
             this.hide();
-        chem.stopEventPropagation(event);
-        return chem.preventDefault(event);
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
     }
 
     // The rest is for IE
@@ -736,7 +736,7 @@ ui.onKeyUp = function (event)
     if (this != document)
         return;
 
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     
     switch (event.keyCode)
     {
@@ -794,17 +794,17 @@ ui.onKeyUp = function (event)
 
 ui.onKeyPress_Dialog = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     if (event.keyCode == 27)
     {
         ui.hideDialog(this.id);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
 ui.onKeyPress_InputLabel = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     if (event.keyCode == 13)
     {
         this.hide();
@@ -859,12 +859,12 @@ ui.onKeyPress_InputLabel = function (event)
             ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
     if (event.keyCode == 27)
     {
         this.hide();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -1886,7 +1886,7 @@ ui.onMouseUp_Ketcher = function (event)
         if (ui.selected() && ui.isDrag())
             ui.showSGroupProperties(null);
     ui.endDrag();
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
 }
 
 //
@@ -2051,11 +2051,11 @@ ui.onChange_AtomLabel = function ()
     }
     
     if (this.value == 'A')
-        chem.setElementTextContent($('atom_number'), "any");
+        util.setElementTextContent($('atom_number'), "any");
     else if (this.value == '*')
-        chem.setElementTextContent($('atom_number'), "*");
+        util.setElementTextContent($('atom_number'), "*");
     else
-        chem.setElementTextContent($('atom_number'), element.toString());
+        util.setElementTextContent($('atom_number'), element.toString());
 }
 
 ui.onChange_AtomCharge = function ()
@@ -2064,7 +2064,7 @@ ui.onChange_AtomCharge = function ()
 
 ui.onChange_AtomIsotope = function ()
 {
-    if (this.value == chem.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
+    if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
         this.value = '';
     else if (!this.value.match(/^[1-9][0-9]{0,2}$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');

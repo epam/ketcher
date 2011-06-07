@@ -185,12 +185,12 @@ chem.Struct.Atom = function (params)
 		throw new Error("label must be specified!");
 
 	this.label = params.label;
-	chem.ifDef(this, params, 'isotope', 0);
-	chem.ifDef(this, params, 'radical', 0);
-	chem.ifDef(this, params, 'charge', 0);
-	chem.ifDef(this, params, 'valence', 0);
-	chem.ifDef(this, params, 'explicitValence', 0);
-	chem.ifDef(this, params, 'implicitH', 0);
+	util.ifDef(this, params, 'isotope', 0);
+	util.ifDef(this, params, 'radical', 0);
+	util.ifDef(this, params, 'charge', 0);
+	util.ifDef(this, params, 'valence', 0);
+	util.ifDef(this, params, 'explicitValence', 0);
+	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
 		this.pos = new util.Vec2(params.pos);
 	else
@@ -199,9 +199,9 @@ chem.Struct.Atom = function (params)
 	this.sgs = {};
 
 	// query
-	chem.ifDef(this, params, 'ringBondCount', -1);
-	chem.ifDef(this, params, 'substitutionCount', -1);
-	chem.ifDef(this, params, 'unsaturatedAtom', -1);
+	util.ifDef(this, params, 'ringBondCount', -1);
+	util.ifDef(this, params, 'substitutionCount', -1);
+	util.ifDef(this, params, 'unsaturatedAtom', -1);
 
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
 }
@@ -262,9 +262,9 @@ chem.Struct.Bond = function (params)
 	this.begin = params.begin;
 	this.end = params.end;
 	this.type = params.type;
-	chem.ifDef(this, params, 'stereo', chem.Struct.BOND.STEREO.NONE);
-	chem.ifDef(this, params, 'topology', chem.Struct.BOND.TOPOLOGY.EITHER);
-	chem.ifDef(this, params, 'reactingCenterStatus', 0);
+	util.ifDef(this, params, 'stereo', chem.Struct.BOND.STEREO.NONE);
+	util.ifDef(this, params, 'topology', chem.Struct.BOND.TOPOLOGY.EITHER);
+	util.ifDef(this, params, 'reactingCenterStatus', 0);
 }
 
 chem.Struct.Bond.prototype.clone = function (aidMap)
@@ -298,14 +298,14 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 			if (!util.Set.contains(a2.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
-				chem.arrayAddIfMissing(sg.neiAtoms, bond.end);
+				util.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
 		util.Set.each(a2.sgs, function(sgid){
 			if (!util.Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
-				chem.arrayAddIfMissing(sg.neiAtoms, bond.begin);
+				util.arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
 		}, this);
 	},this);

@@ -66,9 +66,9 @@ chem.SGroup.equip = function (sgroup, type) {
 }
 
 chem.SGroup.numberArrayToString = function (numbers, map) {
-	var str = chem.stringPadded(numbers.length, 3);
+	var str = util.stringPadded(numbers.length, 3);
 	for (var i = 0; i < numbers.length; ++i) {
-		str += ' ' + chem.stringPadded(map[numbers[i]], 3);
+		str += ' ' + util.stringPadded(map[numbers[i]], 3);
 	}
 	return str;
 }
@@ -98,9 +98,9 @@ chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	];
 	var lines = [];
 	for (var j = 0; j < coord.length; ++j) {
-		var line = 'M  SDI ' + idstr + chem.paddedInt(4, 3);
+		var line = 'M  SDI ' + idstr + util.paddedInt(4, 3);
 		for (var i = 0; i < coord[j].length; ++i) {
-			line += chem.paddedFloat(coord[j][i], 10, 4);
+			line += util.paddedFloat(coord[j][i], 10, 4);
 		}
 		lines.push(line);
 	}
@@ -143,7 +143,7 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
 	}
-	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
+	cp.atoms = util.mapArray(sgroup.atoms, aidMap);
 	cp.p = sgroup.p;
 	cp.pr = sgroup.pr;
 	cp.pa = sgroup.pa;
@@ -206,9 +206,9 @@ chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 	var lines = [];
 	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
 		var rem = Math.min(ids.length - 15 * i, 15);
-		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + chem.paddedInt(rem, 2);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + util.paddedInt(rem, 2);
 		for (var j = 0; j < rem; ++j) {
-			salLine += ' ' + chem.paddedInt(map[ids[i * 15 + j]], 3);
+			salLine += ' ' + util.paddedInt(map[ids[i * 15 + j]], 3);
 		}
 		lines.push(salLine);
 	}
@@ -248,11 +248,11 @@ chem.SGroup.GroupMul = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
-		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, chem.idList(this.atomSet), atomMap)); // TODO: check atomSet
-		lines = lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, chem.idList(this.parentAtomSet), atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, util.idList(this.atomSet), atomMap)); // TODO: check atomSet
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, util.idList(this.parentAtomSet), atomMap));
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
@@ -359,7 +359,7 @@ chem.SGroup.GroupMul = {
 		}
 		this.patoms = chem.SGroup.removeNegative(this.patoms);
 
-		var patomsMap = chem.identityMap(this.patoms);
+		var patomsMap = util.identityMap(this.patoms);
 
 		var bondsToRemove = [];
 		mol.bonds.each(function(bid, bond){
@@ -426,7 +426,7 @@ chem.SGroup.GroupSru = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -478,7 +478,7 @@ chem.SGroup.GroupSup = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -511,7 +511,7 @@ chem.SGroup.GroupGen = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -601,30 +601,30 @@ chem.SGroup.GroupDat = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;
 		var p = this.p;
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +
-		' ' + chem.stringPadded(data.fieldName, 30, true) +
-		chem.stringPadded(data.fieldType, 2) +
-		chem.stringPadded(data.units, 20, true) +
-		chem.stringPadded(data.query, 2) +
-		chem.stringPadded(data.queryOp, 3);
+		' ' + util.stringPadded(data.fieldName, 30, true) +
+		util.stringPadded(data.fieldType, 2) +
+		util.stringPadded(data.units, 20, true) +
+		util.stringPadded(data.query, 2) +
+		util.stringPadded(data.queryOp, 3);
 		lines.push(sdtLine);
 		var sddLine = 'M  SDD ' + idstr +
-		' ' + chem.paddedFloat(p.x, 10, 4) + chem.paddedFloat(p.y, 10, 4) +
+		' ' + util.paddedFloat(p.x, 10, 4) + util.paddedFloat(p.y, 10, 4) +
 		'    ' + // ' eee'
 		(data.attached ? 'A' : 'D') + // f
 		(data.absolute ? 'A' : 'R') + // g
 		(data.showUnits ? 'U' : ' ') + // h
 		'   ' + //  i
-		(data.nCharnCharsToDisplay >= 0 ? chem.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+		(data.nCharnCharsToDisplay >= 0 ? util.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
 		'  1   ' + // 'kkk ll '
-		chem.stringPadded(data.tagChar, 1) + // m
-		'  ' + chem.paddedInt(data.daspPos, 1) + // n
+		util.stringPadded(data.tagChar, 1) + // m
+		'  ' + util.paddedInt(data.daspPos, 1) + // n
 		'  '; // oo
 		lines.push(sddLine);
 		var str = data.fieldValue;
@@ -633,7 +633,7 @@ chem.SGroup.GroupDat = {
 			lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
 			str = str.slice(69);
 		}
-		lines.push('M  SED ' + idstr + ' ' + chem.stringPadded(str, charsPerLine, true));
+		lines.push('M  SED ' + idstr + ' ' + util.stringPadded(str, charsPerLine, true));
 		return lines.join('\n');
 	},
 

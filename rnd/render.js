@@ -117,8 +117,8 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 			var name = '_onCanvas' + eventName;
 			if (render[name])
 				render[name](new rnd.MouseEvent(event));
-			chem.stopEventPropagation(event);
-			return chem.preventDefault(event);
+			util.stopEventPropagation(event);
+			return util.preventDefault(event);
 		});
 	}, this);
 
@@ -204,7 +204,7 @@ rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
 	}
 }
 
-chem.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
+util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	function(eventName) {
 		rnd.Render.prototype['_onCanvas' + eventName] = function(event){
 			this.checkCurrentItem(event);
@@ -229,9 +229,9 @@ rnd.Render.prototype.setMolecule = function (ctab)
 	this.bb = null;
 }
 
-chem.each(rnd.actions, function(action){
+util.each(rnd.actions, function(action){
 	rnd.Render.prototype[action] = function () {
-		return this.processAction(action, chem.array(arguments));
+		return this.processAction(action, util.array(arguments));
 	}
 });
 

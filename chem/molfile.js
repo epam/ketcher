@@ -331,7 +331,7 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 	if (part.length != num)
 		throw new Error('File format invalid');
 	if (shift) {
-		chem.apply(part, function(v) {
+		util.apply(part, function(v) {
 			return v + shift;
 		});
 	}
@@ -389,7 +389,7 @@ chem.Molfile.applyDataSGroupData = function (sGroups, propData, finalize) {
 	sGroup.data.fieldValue = sGroup.data.fieldValue || '';
 	sGroup.data.fieldValue += data;
 	if (finalize)
-		sGroup.data.fieldValue = chem.stripRight(sGroup.data.fieldValue);
+		sGroup.data.fieldValue = util.stripRight(sGroup.data.fieldValue);
 }
 
 chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups)
@@ -801,7 +801,7 @@ chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 
 chem.MolfileSaver.prototype.writePaddedFloat = function (number, width, precision)
 {
-	this.write(chem.paddedFloat(number, width, precision));
+	this.write(util.paddedFloat(number, width, precision));
 }
 
 chem.MolfileSaver.prototype.writeCTab2000Header = function ()
@@ -997,9 +997,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		this.molecule.sgroups.each(function (id, sgroup) {
 			if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
 				connectivity += ' ';
-				connectivity += chem.stringPadded(sgmap[id].toString(), 3);
+				connectivity += util.stringPadded(sgmap[id].toString(), 3);
 				connectivity += ' ';
-				connectivity += chem.stringPadded(sgroup.data.connectivity, 3, true);
+				connectivity += util.stringPadded(sgroup.data.connectivity, 3, true);
 				connectivityCnt++;
 			}
 		}, this);

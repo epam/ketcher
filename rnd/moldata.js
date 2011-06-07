@@ -13,8 +13,8 @@
 // rnd.MolData constructor and utilities are defined here
 //
 // MolData is to store all the auxiliary information for
-//  chem.Molecule while rendering
-if (!window.chem || !chem.Vec2 || !chem.Molecule || !window.rnd || !rnd.Visel)
+//  chem.Struct while rendering
+if (!window.chem || !chem.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 	throw new Error("Vec2, Molecule and Visel should be defined first");
 
 if (!window.rnd)
@@ -93,7 +93,7 @@ rnd.MolData = function (molecule, render)
 	this.bonds = new chem.Map();
 	this.halfBonds = new chem.Map();
 	this.loops = new chem.Pool();
-	this.molecule = molecule || new Molecule();
+	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
@@ -425,8 +425,8 @@ rnd.MolData.prototype.update = function (force)
 rnd.MolData.prototype.drawReactionArrow = function ()
 {
 	if (this.render.rxnMode) {
-		var bbReact = this.getGroupBB(chem.Molecule.FRAGMENT.REACTANT);
-		var bbProd = this.getGroupBB(chem.Molecule.FRAGMENT.PRODUCT);
+		var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
+		var bbProd = this.getGroupBB(chem.Struct.FRAGMENT.PRODUCT);
 
 		var centre = new chem.Vec2(
 			(bbReact.max.x + bbProd.min.x) / 2,
@@ -479,7 +479,7 @@ rnd.MolData.prototype.getGroupBB = function (type)
 	var min = null, max = null;
 	// TODO: modify to use connected components
 //	this.atoms.each(function(aid, atom){
-//		if (chem.Molecule.fragments.get(atom.a.fragment) == type) {
+//		if (chem.Struct.fragments.get(atom.a.fragment) == type) {
 //			if (min == null) {
 //				min = max = atom.ps;
 //			} else {
@@ -618,9 +618,9 @@ rnd.Loop = function (/*Array of num*/hbs, /*MolData*/md, /*bool*/convex)
 	
 	hbs.each(function(hb){
 		var bond = md.bonds.get(md.halfBonds.get(hb).bid);
-		if (bond.b.type != chem.Molecule.BOND.TYPE.AROMATIC)
+		if (bond.b.type != chem.Struct.BOND.TYPE.AROMATIC)
 			this.aromatic = false;
-		if (bond.b.type == chem.Molecule.BOND.TYPE.DOUBLE)
+		if (bond.b.type == chem.Struct.BOND.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
 
@@ -805,7 +805,7 @@ rnd.MolData.prototype.atomAdd = function (pos, params)
 		for (var p in params)
 			pp[p] = params[p];
 	pp.label = pp.label || 'C';
-	var aid = this.molecule.atoms.add(new chem.Molecule.Atom(pp));
+	var aid = this.molecule.atoms.add(new chem.Struct.Atom(pp));
 	var atom = this.molecule.atoms.get(aid);
 	var atomData = new rnd.AtomData(atom);
 	atomData.component = this.connectedComponents.add(chem.Set.single(aid));
@@ -836,11 +836,11 @@ rnd.MolData.prototype.bondAdd = function (begin, end, params)
 		for (var p in params)
 			pp[p] = params[p];
 
-	pp.type = pp.type || chem.Molecule.BOND.TYPE.SINGLE;
+	pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
 	pp.begin = begin;
 	pp.end = end;
 	
-	var bid = this.molecule.bonds.add(new chem.Molecule.Bond(pp));
+	var bid = this.molecule.bonds.add(new chem.Struct.Bond(pp));
 	var bond = this.molecule.bonds.get(bid);
 	this.bonds.set(bid, new rnd.BondData(bond));
 	this.bondInitHalfBonds(bid);

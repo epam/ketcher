@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Molecule)
+if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
     
 chem.CisTrans = function (mol, neighbors_func, context)
@@ -115,7 +115,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
    
    var bond = this.molecule.bonds.get(bond_idx);
 
-   if (bond.type != chem.Molecule.BOND.TYPE.DOUBLE)
+   if (bond.type != chem.Struct.BOND.TYPE.DOUBLE)
       return false;
 
    var label1 = this.molecule.atoms.get(bond.begin).label;
@@ -149,7 +149,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
       if (nei.bid == bond_idx)
          continue;
       
-      if (this.molecule.bonds.get(nei.bid).type != chem.Molecule.BOND.TYPE.SINGLE)
+      if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
       if (substituents[0] == -1)
@@ -165,7 +165,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
       if (nei.bid == bond_idx)
          continue;
       
-      if (this.molecule.bonds.get(nei.bid).type != chem.Molecule.BOND.TYPE.SINGLE)
+      if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
       if (substituents[2] == -1)

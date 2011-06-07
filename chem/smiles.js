@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Molecule)
+if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
 
 chem.SmilesSaver = function (render)
@@ -61,7 +61,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
     // Detect atoms that have aromatic bonds and count neighbours
     molecule.bonds.each(function (bid, bond)
     {
-        if (bond.type == chem.Molecule.BOND.TYPE.AROMATIC)
+        if (bond.type == chem.Struct.BOND.TYPE.AROMATIC)
         {
            this.atoms[bond.begin].aromatic = true;
            this.atoms[bond.end].aromatic = true;
@@ -268,22 +268,22 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
             var dir = 0;
 
-            if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+            if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
                dir = this._calcBondDirection(molecule, e_idx, v_prev_idx);
 
             if ((dir == 1 && v_idx == bond.end) || (dir == 2 && v_idx == bond.begin))
                 this.smiles += '/';
             else if ((dir == 2 && v_idx == bond.end) || (dir == 1 && v_idx == bond.begin))
                 this.smiles += '\\';
-            else if (bond.type == chem.Molecule.BOND.TYPE.ANY)
+            else if (bond.type == chem.Struct.BOND.TYPE.ANY)
                 this.smiles += '~';
-            else if (bond.type == chem.Molecule.BOND.TYPE.DOUBLE)
+            else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
                 this.smiles += '=';
-            else if (bond.type == chem.Molecule.BOND.TYPE.TRIPLE)
+            else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE)
                 this.smiles += '#';
-            else if (bond.type == chem.Molecule.BOND.TYPE.AROMATIC /*&& (!this.atoms[bond.begin].aromatic || !this.atoms[bond.end].aromatic)*/)
+            else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC /*&& (!this.atoms[bond.begin].aromatic || !this.atoms[bond.end].aromatic)*/)
                 this.smiles += ':'; // TODO: Check if this : is needed
-            else if (bond.type == chem.Molecule.BOND.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
+            else if (bond.type == chem.Struct.BOND.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
                 this.smiles += '-';
             else
                 bond_written = false;
@@ -501,13 +501,13 @@ chem.SmilesSaver.prototype._markCisTrans = function (mol)
 
          nei_beg.each(function (nei)
          {
-            if (nei.bid != bid && mol.bonds.get(nei.bid).type == chem.Molecule.BOND.TYPE.SINGLE)
+            if (nei.bid != bid && mol.bonds.get(nei.bid).type == chem.Struct.BOND.TYPE.SINGLE)
                arom_fail_beg = false;
          }, this);
 
          nei_end.each(function (nei)
          {
-            if (nei.bid != bid && mol.bonds.get(nei.bid).type == chem.Molecule.BOND.TYPE.SINGLE)
+            if (nei.bid != bid && mol.bonds.get(nei.bid).type == chem.Struct.BOND.TYPE.SINGLE)
                arom_fail_end = false;
          }, this);
 
@@ -646,7 +646,7 @@ chem.SmilesSaver.prototype._calcBondDirection = function (mol, idx, vprev)
    if (this._dbonds[idx].ctbond_beg == -1 && this._dbonds[idx].ctbond_end == -1)
       return 0;
 
-   if (mol.bonds.get(idx).type != chem.Molecule.BOND.TYPE.SINGLE)
+   if (mol.bonds.get(idx).type != chem.Struct.BOND.TYPE.SINGLE)
       throw new Error("internal: directed bond type " + mol.bonds.get(idx).type);
 
    while (true)
@@ -699,9 +699,9 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
          this.comma = true;
       }
     
-      if (radical == chem.Molecule.ATOM.RADICAL.SINGLET)
+      if (radical == chem.Struct.ATOM.RADICAL.SINGLET)
          this.smiles += '^3:';
-      else if (radical == chem.Molecule.ATOM.RADICAL.DOUPLET)
+      else if (radical == chem.Struct.ATOM.RADICAL.DOUPLET)
          this.smiles += '^1:';
       else // RADICAL_TRIPLET
          this.smiles += '^4:';
@@ -718,7 +718,7 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
 }
 
 /*
-void SmilesSaver::_writeStereogroups (const Molecule &mol, const Array<_Atom> &atoms)
+void SmilesSaver::_writeStereogroups (const Struct &mol, const Array<_Atom> &atoms)
 {
    MoleculeStereocenters &stereocenters = mol.getStereocenters();
    int i, j;

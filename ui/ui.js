@@ -31,7 +31,7 @@ ui.DEBUG = false;
 
 ui.render = null;
 
-ui.ctab = new chem.Molecule();
+ui.ctab = new chem.Struct();
 
 ui.client_area = null;
 ui.mode_button = null;
@@ -96,7 +96,7 @@ ui.init = function ()
 {
     if (this.initialized)
     {
-        this.Action.fromNewCanvas(new chem.Molecule());
+        this.Action.fromNewCanvas(new chem.Struct());
         this.render.update();
         this.undoStack.clear();
         this.redoStack.clear();
@@ -459,25 +459,25 @@ ui.bondType = function (mode)
     switch (type_str)
     {
     case 'single':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'up':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.UP};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
     case 'down':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.DOWN};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
     case 'double':
-        return {type: 2, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'triple':
-        return {type: 3, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'aromatic':
-        return {type: 4, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 4, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'single_double':
-        return {type: 5, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 5, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'single_aromatic':
-        return {type: 6, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 6, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'double_aromatic':
-        return {type: 7, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 7, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'any':
-        return {type: 8, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
     }
 }
 
@@ -516,7 +516,7 @@ ui.onClick_NewFile = function ()
     
     if (ui.ctab.atoms.count() != 0)
     {
-        ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Molecule()));
+        ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
         ui.render.update();
     }
 }
@@ -1314,8 +1314,8 @@ ui.onClick_Bond = function (event, id)
         var attrs = ui.bondType();
         var bond = ui.ctab.bonds.get(id);
         
-        if (attrs.stereo != chem.Molecule.BOND.STEREO.NONE &&
-            bond.type == chem.Molecule.BOND.TYPE.SINGLE && attrs.type == chem.Molecule.BOND.TYPE.SINGLE &&
+        if (attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+            bond.type == chem.Struct.BOND.TYPE.SINGLE && attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
             bond.stereo == attrs.stereo)
         {
             ui.addUndoAction(ui.Action.fromBondFlipping(id));
@@ -1323,15 +1323,15 @@ ui.onClick_Bond = function (event, id)
         {
             if (bond.type == attrs.type)
             {
-                if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+                if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
                 {
-                    if (bond.stereo == chem.Molecule.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
+                    if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
                     {
-                        attrs.type = chem.Molecule.BOND.TYPE.DOUBLE;
+                        attrs.type = chem.Struct.BOND.TYPE.DOUBLE;
                     }
-                } else if (bond.type == chem.Molecule.BOND.TYPE.DOUBLE)
+                } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
                 {
-                    attrs.type = chem.Molecule.BOND.TYPE.TRIPLE;
+                    attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
                 }
             }
             ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs), true);
@@ -1410,7 +1410,7 @@ ui.onClick_Canvas = function (event)
         
         var v = new chem.Vec2(ui.scale / 2, 0);
         
-        if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+        if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
             v = v.rotate(-Math.PI / 6);
         
         ui.addUndoAction(ui.Action.fromBondAddition(bond, {label: 'C'}, {label: 'C'}, {x: pos.x - v.x, y: pos.y - v.y}, {x: pos.x + v.x, y: pos.y + v.y})[0]);
@@ -1742,7 +1742,7 @@ ui.onMouseMove_Canvas = function (event)
     
     if (mode == ui.MODE.BOND || mode == ui.MODE.ATOM)
     {
-        var type = {type: 1, stereo: chem.Molecule.BOND.STEREO.NONE};
+        var type = {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
         var label = 'C';
         
         if (mode == ui.MODE.BOND)
@@ -2315,7 +2315,7 @@ ui.copy = function ()
         if (new_atom.sgroup != -1)
             new_atom.sgroup = -1;
         
-        mapping[id] = ui.clipboard.atoms.push(new chem.Molecule.Atom(new_atom)) - 1;
+        mapping[id] = ui.clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
     });
     
     ui.selection.bonds.each(function (id)
@@ -2323,7 +2323,7 @@ ui.copy = function ()
         var new_bond = Object.clone(ui.ctab.bonds.get(id));
         new_bond.begin = mapping[new_bond.begin];
         new_bond.end = mapping[new_bond.end];
-        ui.clipboard.bonds.push(new chem.Molecule.Bond(new_bond));
+        ui.clipboard.bonds.push(new chem.Struct.Bond(new_bond));
     });
 
     var sgroup_counts = new Hash();

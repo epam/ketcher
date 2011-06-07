@@ -234,15 +234,15 @@ rnd.MolData.prototype.drawBond = function (bond, hb1, hb2)
 	var path = null;
 	switch (bond.b.type)
 	{
-		case chem.Molecule.BOND.TYPE.SINGLE:
+		case chem.Struct.BOND.TYPE.SINGLE:
 			switch (bond.b.stereo) {
-				case chem.Molecule.BOND.STEREO.UP:
+				case chem.Struct.BOND.STEREO.UP:
 					path = this.drawBondSingleUp(hb1, hb2, bond);
 					break;
-				case chem.Molecule.BOND.STEREO.DOWN:
+				case chem.Struct.BOND.STEREO.DOWN:
 					path = this.drawBondSingleDown(hb1, hb2, bond);
 					break;
-				case chem.Molecule.BOND.STEREO.EITHER:
+				case chem.Struct.BOND.STEREO.EITHER:
 					path = this.drawBondSingleEither(hb1, hb2, bond);
 					break;
 				default:
@@ -250,19 +250,19 @@ rnd.MolData.prototype.drawBond = function (bond, hb1, hb2)
 					break;
 			}
 			break;
-		case chem.Molecule.BOND.TYPE.DOUBLE:
+		case chem.Struct.BOND.TYPE.DOUBLE:
 			path = this.drawBondDouble(hb1, hb2, bond,
-				bond.b.stereo == chem.Molecule.BOND.STEREO.CIS_TRANS);
+				bond.b.stereo == chem.Struct.BOND.STEREO.CIS_TRANS);
 			break;
-		case chem.Molecule.BOND.TYPE.TRIPLE:
+		case chem.Struct.BOND.TYPE.TRIPLE:
 			path = this.drawBondTriple(hb1, hb2, bond);
 			break;
-		case chem.Molecule.BOND.TYPE.AROMATIC:
+		case chem.Struct.BOND.TYPE.AROMATIC:
 			var inAromaticLoop = (hb1.loop >= 0 && this.loops.get(hb1.loop).aromatic) ||
 				(hb2.loop >= 0 && this.loops.get(hb2.loop).aromatic);
 			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
 			break;
-		case chem.Molecule.BOND.TYPE.ANY:
+		case chem.Struct.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);
 			break;
 		default:
@@ -828,7 +828,7 @@ rnd.MolData.prototype.labelIsVisible = function (aid, atom)
 		var hb2 = this.halfBonds.get(n2);
 		var b1 = this.bonds.get(hb1.bid);
 		var b2 = this.bonds.get(hb2.bid);
-		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Molecule.BOND.STEREO.NONE && b2.b.stereo == chem.Molecule.BOND.STEREO.NONE)
+		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Struct.BOND.STEREO.NONE && b2.b.stereo == chem.Struct.BOND.STEREO.NONE)
 			if (Math.abs(chem.Vec2.cross(hb1.dir, hb2.dir)) < 0.05)
 				return true;
 	}
@@ -1003,7 +1003,7 @@ rnd.MolData.prototype.renderLoops = function ()
 			var hb = this.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
 			var apos = this.atoms.get(hb.begin).ps;
-			if (bond.b.type != chem.Molecule.BOND.TYPE.AROMATIC)
+			if (bond.b.type != chem.Struct.BOND.TYPE.AROMATIC)
 				loop.aromatic = false;
 			loop.centre.add_(apos);
 		}, this);

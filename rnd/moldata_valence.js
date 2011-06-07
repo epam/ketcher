@@ -22,16 +22,16 @@ rnd.MolData.prototype.calcConn = function (aid)
 		var hb = this.halfBonds.get(atom.neighbors[i]);
 		var bond = this.bonds.get(hb.bid);
 		switch (bond.b.type) {
-			case chem.Molecule.BOND.TYPE.SINGLE:
+			case chem.Struct.BOND.TYPE.SINGLE:
 				conn += 1;
 				break;
-			case chem.Molecule.BOND.TYPE.DOUBLE:
+			case chem.Struct.BOND.TYPE.DOUBLE:
 				conn += 2;
 				break;
-			case chem.Molecule.BOND.TYPE.TRIPLE:
+			case chem.Struct.BOND.TYPE.TRIPLE:
 				conn += 3;
 				break;
-			case chem.Molecule.BOND.TYPE.AROMATIC:
+			case chem.Struct.BOND.TYPE.AROMATIC:
 				conn += 1;
 				hasAromatic = true;
 				break;
@@ -62,7 +62,7 @@ rnd.AtomData.prototype.calcValence = function (conn)
 	}
 
 	var groupno = chem.Element.elements.get(elem).group;
-	var rad = chem.Molecule.radicalElectrons(atom.radical);
+	var rad = chem.Struct.radicalElectrons(atom.radical);
 
 	var valence = conn;
 	var hyd = 0;
@@ -381,7 +381,7 @@ rnd.AtomData.prototype.calcValenceMinusHyd = function (conn)
 	}
 
 	var groupno = chem.Element.elements.get(elem).group;
-	var rad = chem.Molecule.radicalElectrons(atom.radical);
+	var rad = chem.Struct.radicalElectrons(atom.radical);
 
 	if (groupno == 3)
 	{

@@ -1084,7 +1084,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
             });
         } else
         {
-            if (bond_type == chem.Molecule.BOND.TYPE.AROMATIC)
+            if (bond_type == chem.Struct.BOND.TYPE.AROMATIC)
             {
                 var nei = ui.render.atomGetNeighbors(begin);
                 

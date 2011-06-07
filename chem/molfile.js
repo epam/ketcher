@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Vec2 || !chem.Molecule)
+if (!window.chem || !chem.Vec2 || !chem.Struct)
 	throw new Error("Vec2 and Molecule should be defined first")
 
 chem.Molfile = function ()
@@ -59,32 +59,32 @@ chem.Molfile.parseMolfile = function (molfileLines, isRxn)
 chem.Molfile.fmtInfo = {
 	invRetMap: [null, "inv", "ret"],
 	bondTypeMap: {
-		1: chem.Molecule.BOND.TYPE.SINGLE,
-		2: chem.Molecule.BOND.TYPE.DOUBLE,
-		3: chem.Molecule.BOND.TYPE.TRIPLE,
-		4: chem.Molecule.BOND.TYPE.AROMATIC,
-		5: chem.Molecule.BOND.TYPE.SINGLE_OR_DOUBLE,
-		6: chem.Molecule.BOND.TYPE.SINGLE_OR_AROMATIC,
-		7: chem.Molecule.BOND.TYPE.DOUBLE_OR_AROMATIC,
-		8: chem.Molecule.BOND.TYPE.ANY
+		1: chem.Struct.BOND.TYPE.SINGLE,
+		2: chem.Struct.BOND.TYPE.DOUBLE,
+		3: chem.Struct.BOND.TYPE.TRIPLE,
+		4: chem.Struct.BOND.TYPE.AROMATIC,
+		5: chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE,
+		6: chem.Struct.BOND.TYPE.SINGLE_OR_AROMATIC,
+		7: chem.Struct.BOND.TYPE.DOUBLE_OR_AROMATIC,
+		8: chem.Struct.BOND.TYPE.ANY
 		},
 	bondStereoMap: {
-		0: chem.Molecule.BOND.STEREO.NONE,
-		1: chem.Molecule.BOND.STEREO.UP,
-		4: chem.Molecule.BOND.STEREO.EITHER,
-		6: chem.Molecule.BOND.STEREO.DOWN,
-		3: chem.Molecule.BOND.STEREO.CIS_TRANS
+		0: chem.Struct.BOND.STEREO.NONE,
+		1: chem.Struct.BOND.STEREO.UP,
+		4: chem.Struct.BOND.STEREO.EITHER,
+		6: chem.Struct.BOND.STEREO.DOWN,
+		3: chem.Struct.BOND.STEREO.CIS_TRANS
 		},
 	v30bondStereoMap: {
-		0: chem.Molecule.BOND.STEREO.NONE,
-		1: chem.Molecule.BOND.STEREO.UP,
-		2: chem.Molecule.BOND.STEREO.EITHER,
-		3: chem.Molecule.BOND.STEREO.DOWN
+		0: chem.Struct.BOND.STEREO.NONE,
+		1: chem.Struct.BOND.STEREO.UP,
+		2: chem.Struct.BOND.STEREO.EITHER,
+		3: chem.Struct.BOND.STEREO.DOWN
 		},
 	bondTopologyMap: {
-		0: chem.Molecule.BOND.TOPOLOGY.EITHER,
-		1: chem.Molecule.BOND.TOPOLOGY.RING,
-		2: chem.Molecule.BOND.TOPOLOGY.CHAIN
+		0: chem.Struct.BOND.TOPOLOGY.EITHER,
+		1: chem.Struct.BOND.TOPOLOGY.RING,
+		2: chem.Struct.BOND.TOPOLOGY.CHAIN
 		},
 	countsLinePartition: [3,3,3,3,3,3,3,3,3,3,3,6],
 	atomLinePartition: [10,10,10,1,3,2,3,3,3,3,3,3,3,3,3,3,3],
@@ -131,7 +131,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		exactChangeFlag: mf.parseDecimalInt(atomSplit[16]) != 0
 	};
 	params.explicitValence = typeof(params.valence) != 'undefined';
-	return new chem.Molecule.Atom(params);
+	return new chem.Struct.Atom(params);
 }
 
 chem.Molfile.stripV30 = function (line)
@@ -167,7 +167,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 			label = label.substr(1); // remove '['
 		}
 		atomListParams.ids = mf.labelsListToIds(label.split(","));
-		params['atomList'] = new chem.Molecule.AtomList(atomListParams);
+		params['atomList'] = new chem.Struct.AtomList(atomListParams);
 		params['label'] = 'L';
 	} else {
 		params['label'] = label;
@@ -181,7 +181,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 			params[mf.fmtInfo.v30atomPropMap[key]] = mf.parseDecimalInt(value);
 	}
 	params.explicitValence = typeof(params.valence) != 'undefined';
-	return new chem.Molecule.Atom(params);
+	return new chem.Struct.Atom(params);
 }
 
 chem.Molfile.parseBondLineV3000 = function (line)
@@ -208,7 +208,7 @@ chem.Molfile.parseBondLineV3000 = function (line)
 		else if (key == 'STBOX')
 			params.stereoCare = mf.parseDecimalInt(value);
 	}
-	return new chem.Molecule.Bond(params);
+	return new chem.Struct.Bond(params);
 }
 
 chem.Molfile.parseBondLine = function (bondLine)
@@ -225,7 +225,7 @@ chem.Molfile.parseBondLine = function (bondLine)
 		reactingCenterStatus: mf.parseDecimalInt(bondSplit[6])
 	};
         
-	return new chem.Molecule.Bond(params);
+	return new chem.Struct.Bond(params);
 }
 
 chem.Molfile.parseAtomListLine = function (/* string */atomListLine)
@@ -245,7 +245,7 @@ chem.Molfile.parseAtomListLine = function (/* string */atomListLine)
 
 	return {
 		"aid": number,
-		"atomList" : new chem.Molecule.AtomList({
+		"atomList" : new chem.Struct.AtomList({
 			"notList": notList,
 			"ids": list
 		})
@@ -282,7 +282,7 @@ chem.Molfile.parsePropertyLineAtomList = function (hdr, lst)
 	var notList = hdr[4].strip() == 'T';
 	var ids = mf.labelsListToIds(lst.slice(0, count));
 	var ret = {};
-	ret[aid] = new chem.Molecule.AtomList({
+	ret[aid] = new chem.Struct.AtomList({
 		"notList": notList,
 		"ids": ids
 	});
@@ -684,12 +684,12 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 	return ctab;
 }
 
-chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Molecule */
+chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 {
 	ctabLines = ctabLines.slice(3);
 	var i = 0;
 	var mf = chem.Molfile;
-	var ctab = new chem.Molecule();
+	var ctab = new chem.Struct();
 	var countsSplit = mf.partitionLine(ctabLines[0], mf.fmtInfo.countsLinePartition);
 	var version = countsSplit[11].strip();
 	if (version == 'V2000')
@@ -1023,7 +1023,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 	this.writeCR('M  END');
 }
 
-chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Molecule */
+chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 {
 	var mf = chem.Molfile;
 	ctabLines = ctabLines.slice(4);
@@ -1033,7 +1033,7 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Molecule */
 	nAgents = countsSplit[2]-0;
 	ctabLines = ctabLines.slice(2); // consume counts line and following $MOL
 
-	var ret = new chem.Molecule();
+	var ret = new chem.Struct();
 	var molLines = [];
 	var i0 = 0, i;
 	for (i = 0; i < ctabLines.length; ++i)
@@ -1044,11 +1044,11 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Molecule */
 	molLines.push(ctabLines.slice(i0));
 	for (var j = 0; j < molLines.length; ++j) {
 		var mol = chem.Molfile.parseCTab(molLines[j]);
-		var fragmentType = (j < nReactants ? chem.Molecule.FRAGMENT.REACTANT :
-			(j < nReactants + nProducts ? chem.Molecule.FRAGMENT.PRODUCT :
-				chem.Molecule.FRAGMENT.AGENT));
+		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
+			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
+				chem.Struct.FRAGMENT.AGENT));
 		// TODO: use connected components
-//		var fragmentId = chem.Molecule.fragments.add(fragmentType);
+//		var fragmentId = chem.Struct.fragments.add(fragmentType);
 //		mol.atoms.each(function(aid, atom){
 //			atom.fragment = fragmentId;
 //		}, this);

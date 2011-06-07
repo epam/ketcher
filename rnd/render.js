@@ -122,7 +122,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 	}, this);
 
-	this.ctab = new rnd.MolData(new chem.Molecule(), this);
+	this.ctab = new rnd.MolData(new chem.Struct(), this);
 	this.settings = null;
 	this.styles = null;
 	this.checkCurItem = true;

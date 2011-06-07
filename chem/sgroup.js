@@ -306,20 +306,20 @@ chem.SGroup.GroupMul = {
 			for (i = 0; i < this.atoms.length; ++i) {
 				var aid = this.atoms[i];
 				var atom = mol.atoms.get(aid);
-				var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
+				var aid2 = mol.atoms.add(new chem.Struct.Atom(atom));
 				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;
 				mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
 			}
 			for (i = 0; i < inBonds.length; ++i) {
 				var bond = mol.bonds.get(inBonds[i]);
-				var newBond = new chem.Molecule.Bond(bond);
+				var newBond = new chem.Struct.Bond(bond);
 				newBond.begin = amap[newBond.begin];
 				newBond.end = amap[newBond.end];
 				mol.bonds.add(newBond);
 			}
 			if (crossBond != null) {
-				var newCrossBond = new chem.Molecule.Bond(crossBond);
+				var newCrossBond = new chem.Struct.Bond(crossBond);
 				newCrossBond.begin = tailAtom;
 				newCrossBond.end = amap[xAtom2];
 				mol.bonds.add(newCrossBond);

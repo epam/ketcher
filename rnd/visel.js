@@ -12,7 +12,7 @@
 
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-if (!window.chem || !chem.Vec2 || !chem.Struct || !window.rnd)
+if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd)
 	throw new Error("Vec2 and Molecule, should be defined first");
 
 rnd.Visel = function (type)

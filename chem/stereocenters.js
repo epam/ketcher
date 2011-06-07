@@ -129,7 +129,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
          edge_idx: nei.bid,
          nei_idx: nei.aid,
          rank: nei.aid,
-         vec: chem.Vec2.diff(nei_atom.pos, atom.pos)
+         vec: util.Vec2.diff(nei_atom.pos, atom.pos)
       }
 
       if (nei_atom.pureHydrogen())
@@ -440,11 +440,11 @@ chem.Stereocenters._xyzzy = function (v1, v2, u)
 {
    var eps = 0.001;
 
-   var sine1 = chem.Vec2.cross(v1, v2);
-   var cosine1 = chem.Vec2.dot(v1, v2);
+   var sine1 = util.Vec2.cross(v1, v2);
+   var cosine1 = util.Vec2.dot(v1, v2);
 
-   var sine2 = chem.Vec2.cross(v1, u);
-   var cosine2 = chem.Vec2.dot(v1, u);
+   var sine2 = util.Vec2.cross(v1, u);
+   var cosine2 = util.Vec2.dot(v1, u);
 
    if (Math.abs(sine1) < eps)
    {

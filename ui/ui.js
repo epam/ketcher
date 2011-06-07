@@ -276,7 +276,7 @@ ui.init = function ()
     this.selectMode('select_simple');
     
     // Init renderer
-    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
+    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new util.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
@@ -1408,7 +1408,7 @@ ui.onClick_Canvas = function (event)
         var pos = ui.page2canvas(event);
         var bond = ui.bondType();
         
-        var v = new chem.Vec2(ui.scale / 2, 0);
+        var v = new util.Vec2(ui.scale / 2, 0);
         
         if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
             v = v.rotate(-Math.PI / 6);
@@ -1445,10 +1445,10 @@ ui.atomForNewBond = function (id)
     {
         var nei_pos = ui.render.atomGetPos(nei.aid);
         
-        if (chem.Vec2.dist(pos, nei_pos) < ui.scale * 0.1)
+        if (util.Vec2.dist(pos, nei_pos) < ui.scale * 0.1)
             return;
         
-        neighbours.push({id: nei.aid, v: chem.Vec2.diff(nei_pos, pos)});
+        neighbours.push({id: nei.aid, v: util.Vec2.diff(nei_pos, pos)});
     });
     
     neighbours.sort(function (nei1, nei2)
@@ -1463,7 +1463,7 @@ ui.atomForNewBond = function (id)
     
     for (i = 0; i < neighbours.length; i++)
     {
-        angle = chem.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
+        angle = util.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
         
         if (angle < 0)
             angle += 2 * Math.PI;
@@ -1472,7 +1472,7 @@ ui.atomForNewBond = function (id)
             max_i = i, max_angle = angle;
     }
     
-    var v = new chem.Vec2(ui.scale, 0);
+    var v = new util.Vec2(ui.scale, 0);
     
     if (neighbours.length > 0)
     {
@@ -1486,17 +1486,17 @@ ui.atomForNewBond = function (id)
             {
                 var nei_neighbours = new Array();
                 var nei_pos = ui.render.atomGetPos(nei.aid);
-                var nei_v = chem.Vec2.diff(pos, nei_pos);
+                var nei_v = util.Vec2.diff(pos, nei_pos);
                 var nei_angle = Math.atan2(nei_v.y, nei_v.x);
                 
                 ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei)
                 {
                     var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
                     
-                    if (nei_nei.bid == nei.bid || chem.Vec2.dist(nei_pos, nei_nei_pos) < ui.scale * 0.1)
+                    if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < ui.scale * 0.1)
                         return;
                         
-                    var v_diff = chem.Vec2.diff(nei_nei_pos, nei_pos);
+                    var v_diff = util.Vec2.diff(nei_nei_pos, nei_pos);
                     var ang = Math.atan2(v_diff.y, v_diff.x) - nei_angle;
                     
                     if (ang < 0)
@@ -1540,7 +1540,7 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
     if (oldOffset == null)
         return;
         
-    var delta = new chem.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
+    var delta = new util.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
         
     ui.client_area.scrollLeft += delta.x;
     ui.client_area.scrollTop += delta.y;
@@ -1765,14 +1765,14 @@ ui.onMouseMove_Canvas = function (event)
         else
             pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
         
-        if (chem.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
+        if (util.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
         {
             if (ui.drag.new_atom_id != null)
                 return;
             pos_cursor.x += 10, pos_cursor.y += 10; // Hack to avoid return
         }
             
-        var v = chem.Vec2.diff(pos_cursor, pos);
+        var v = util.Vec2.diff(pos_cursor, pos);
         
         var angle = Math.atan2(v.y, v.x);
         var sign = 1;
@@ -1791,7 +1791,7 @@ ui.onMouseMove_Canvas = function (event)
             
         angle *= sign;
         
-        v = new chem.Vec2(ui.scale, 0);
+        v = new util.Vec2(ui.scale, 0);
         v = v.rotate(angle);
         v.add_(pos);
             

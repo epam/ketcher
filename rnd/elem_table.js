@@ -21,17 +21,17 @@ rnd.ElementTable = function (clientArea, opts)
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
-	this.size = new chem.Vec2();
-	this.viewSz = new chem.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
-	this.bb = new chem.Box2Abs(new chem.Vec2(), this.viewSz);
+	this.size = new util.Vec2();
+	this.viewSz = new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
+	this.bb = new chem.Box2Abs(new util.Vec2(), this.viewSz);
 	
 	var table = this;
 	this.onClick = opts.onClick || function(elemNum){ table.setElementSelected(elemNum, !table.items[elemNum].selected); }
 
 	var paper = this.paper;
-	var elemHalfSz = new chem.Vec2(16, 16);
+	var elemHalfSz = new util.Vec2(16, 16);
 	var elemSz = elemHalfSz.scaled(2);
-	var spacing = new chem.Vec2(3, 3);
+	var spacing = new util.Vec2(3, 3);
 	var cornerRadius = 7;
 	var orig = elemSz.scaled(1.0);
 	
@@ -55,7 +55,7 @@ rnd.ElementTable = function (clientArea, opts)
 	this.items = {};
 
 	chem.Element.elements.each(function(id, elem){
-		var centre = new chem.Vec2(orig.x + elem.xpos * elemSz.x + (elem.xpos - 1) * spacing.x, orig.y + elem.ypos * elemSz.y + (elem.ypos - 1) * spacing.y);
+		var centre = new util.Vec2(orig.x + elem.xpos * elemSz.x + (elem.xpos - 1) * spacing.x, orig.y + elem.ypos * elemSz.y + (elem.ypos - 1) * spacing.y);
 		var box = this.paper.rect(centre.x - elemHalfSz.x, centre.y - elemHalfSz.y, elemSz.x, elemSz.y, cornerRadius).attr(this.frameAttrs);
 		var label = this.paper.text(centre.x, centre.y, elem.label).attr(this.fontAttrs).attr('fill', elem.color);
 		box.node.onclick = function () { table.onClick(id); };

@@ -14,7 +14,7 @@
 //
 // ReStruct is to store all the auxiliary information for
 //  chem.Struct while rendering
-if (!window.chem || !chem.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
+if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 	throw new Error("Vec2, Molecule and Visel should be defined first");
 
 if (!window.rnd)
@@ -23,8 +23,8 @@ if (!window.rnd)
 rnd.AtomData = function (/*chem.Atom*/atom)
 {
 	this.a = atom;
-	this.pp = new chem.Vec2();
-	this.ps = new chem.Vec2();
+	this.pp = new util.Vec2();
+	this.ps = new util.Vec2();
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.showLabel = false;
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.ATOM);
@@ -48,7 +48,7 @@ rnd.BondData = function (/*chem.Bond*/bond)
 	this.hb2 = null;
 	this.doubleBondShift = 0;
 	this.len = 0;
-	this.center = new chem.Vec2();
+	this.center = new util.Vec2();
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
@@ -71,10 +71,10 @@ rnd.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 	this.bid = bid - 0;
 
 	// rendering properties
-	this.dir = new chem.Vec2(); // direction
-	this.norm = new chem.Vec2(); // left normal
+	this.dir = new util.Vec2(); // direction
+	this.norm = new util.Vec2(); // left normal
 	this.ang = 0; // angle to (1,0), used for sorting the bonds
-	this.p = new chem.Vec2(); // corrected origin position
+	this.p = new util.Vec2(); // corrected origin position
 	this.loop = -1; // left loop id if the half-bond is in a loop, otherwise -1
 	this.contra = -1; // the half bond contrary to this one
 	this.next = -1; // the half-bond next ot this one in CCW order
@@ -428,13 +428,13 @@ rnd.ReStruct.prototype.drawReactionArrow = function ()
 		var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
 		var bbProd = this.getGroupBB(chem.Struct.FRAGMENT.PRODUCT);
 
-		var centre = new chem.Vec2(
+		var centre = new util.Vec2(
 			(bbReact.max.x + bbProd.min.x) / 2,
 			(Math.min(bbReact.min.y, bbProd.min.y) + Math.max(bbReact.max.y, bbProd.max.y)) / 2);
 
 		if (this.rxnArrow == null) {
 			this.rxnArrow = {};
-			this.rxnArrow.path = this.drawArrow(new chem.Vec2(centre.x - this.render.scale, centre.y), new chem.Vec2(centre.x + this.render.scale, centre.y));
+			this.rxnArrow.path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
 			this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
 			// TODO: when to update reaction arrow?
 			this.rxnArrow.visel.add(this.rxnArrow.path, chem.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
@@ -525,7 +525,7 @@ rnd.ReStruct.prototype.halfBondUpdate = function (hbid)
 	var hb = this.halfBonds.get(hbid);
 	var p1 = this.atoms.get(hb.begin).pp;
 	var p2 = this.atoms.get(hb.end).pp;
-	var d = chem.Vec2.diff(p2, p1).normalized();
+	var d = util.Vec2.diff(p2, p1).normalized();
 	hb.dir = d;
 	hb.norm = d.turnLeft();
 	hb.ang = hb.dir.oxAngle();
@@ -625,8 +625,8 @@ rnd.Loop = function (/*Array of num*/hbs, /*ReStruct*/md, /*bool*/convex)
 	}, this);
 
 	// rendering properties
-	this.centre = new chem.Vec2();
-	this.radius = new chem.Vec2();
+	this.centre = new util.Vec2();
+	this.radius = new util.Vec2();
 }
 
 rnd.ReStruct.prototype.findLoops = function ()
@@ -654,8 +654,8 @@ rnd.ReStruct.prototype.findLoops = function ()
 						var hba = this.halfBonds.get(loop[k]);
 						var hbb = this.halfBonds.get(loop[(k + 1) % loop.length]);
 						var angle = Math.atan2(
-								chem.Vec2.cross(hba.dir, hbb.dir),
-								chem.Vec2.dot(hba.dir, hbb.dir));
+								util.Vec2.cross(hba.dir, hbb.dir),
+								util.Vec2.dot(hba.dir, hbb.dir));
 						if (angle > 0)
 							convex = false;
 						if (hbb.contra == loop[k]) // back and force one edge
@@ -690,14 +690,14 @@ rnd.ReStruct.prototype.getCoordBoundingBox = function ()
 				max: atom.pp
 			}
 		else {
-			bb.min = chem.Vec2.min(bb.min, atom.pp);
-			bb.max = chem.Vec2.max(bb.max, atom.pp);
+			bb.min = util.Vec2.min(bb.min, atom.pp);
+			bb.max = util.Vec2.max(bb.max, atom.pp);
 		}
 	});
 	if (!bb)
 		bb = {
-			min: new chem.Vec2(0, 0),
-			max: new chem.Vec2(1, 1)
+			min: new util.Vec2(0, 0),
+			max: new util.Vec2(1, 1)
 		};
 	return bb;
 }
@@ -707,7 +707,7 @@ rnd.ReStruct.prototype.getAvgBondLength = function ()
 	var totalLength = 0;
 	var cnt = 0;
 	this.bonds.each(function(bid, bond){
-		totalLength += chem.Vec2.dist(
+		totalLength += util.Vec2.dist(
 			this.atoms.get(bond.b.begin).pp,
 			this.atoms.get(bond.b.end).pp);
 		cnt++;
@@ -724,7 +724,7 @@ rnd.ReStruct.prototype.getAvgClosestAtomDistance = function ()
 		for (j = 0; j < keys.length; ++j) {
 			if (j == k)
 				continue;
-			dist = chem.Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
+			dist = util.Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
 			if (minDist < 0 || minDist > dist)
 				minDist = dist;
 		}
@@ -737,7 +737,7 @@ rnd.ReStruct.prototype.getAvgClosestAtomDistance = function ()
 rnd.ReStruct.prototype.coordProject = function()
 {
 	this.atoms.each(function (aid, atom) {// project coordinates
-		this._atomSetPos(aid, new chem.Vec2(atom.a.pos.x, atom.a.pos.y));
+		this._atomSetPos(aid, new util.Vec2(atom.a.pos.x, atom.a.pos.y));
 	}, this);
 }
 
@@ -775,7 +775,7 @@ rnd.ReStruct.prototype.coordProcess = function ()
 	var scale = 1 / avg;
 
 	if (this.molecule.isChiral)
-		this.chiral.p = new chem.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
+		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
 	this.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 }
 
@@ -793,7 +793,7 @@ rnd.ReStruct.prototype._atomSetPos = function (aid, pp)
 	var settings = this.render.settings;
 	var atom = this.atoms.get(aid);
 	atom.pp = pp;
-	atom.a.pos = new chem.Vec2(pp.x, -pp.y);
+	atom.a.pos = new util.Vec2(pp.x, -pp.y);
 	if (settings)
 		atom.ps = atom.pp.scaled(settings.scaleFactor);
 }
@@ -928,8 +928,8 @@ rnd.ReStruct.prototype.halfBondSetAngle = function (hbid, left)
 {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
-	hbl.rightCos = hb.leftCos = chem.Vec2.dot(hbl.dir, hb.dir);
-	hbl.rightSin = hb.leftSin = chem.Vec2.cross(hbl.dir, hb.dir);
+	hbl.rightCos = hb.leftCos = util.Vec2.dot(hbl.dir, hb.dir);
+	hbl.rightSin = hb.leftSin = util.Vec2.cross(hbl.dir, hb.dir);
 	hb.leftNeighbor = left;
 	hbl.rightNeighbor = hbid;
 }

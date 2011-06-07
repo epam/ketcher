@@ -11,7 +11,7 @@
  ***************************************************************************/
 
 // chem.Struct constructor and utilities are defined here
-if (!window.chem || !chem.Vec2 || !chem.Pool)
+if (!window.chem || !util.Vec2 || !chem.Pool)
 	throw new Error("Vec2, Pool should be defined first")
 
 chem.Struct = function ()
@@ -192,9 +192,9 @@ chem.Struct.Atom = function (params)
 	chem.ifDef(this, params, 'explicitValence', 0);
 	chem.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
-		this.pos = new chem.Vec2(params.pos);
+		this.pos = new util.Vec2(params.pos);
 	else
-		this.pos = new chem.Vec2();
+		this.pos = new util.Vec2();
 
 	this.sgs = {};
 
@@ -321,14 +321,14 @@ chem.Struct.prototype.getObjBBox = function ()
 				max: atom.pos
 			}
 		else {
-			bb.min = chem.Vec2.min(bb.min, atom.pos);
-			bb.max = chem.Vec2.max(bb.max, atom.pos);
+			bb.min = util.Vec2.min(bb.min, atom.pos);
+			bb.max = util.Vec2.max(bb.max, atom.pos);
 		}
 	});
 	if (!bb)
 		bb = {
-			min: new chem.Vec2(0, 0),
-			max: new chem.Vec2(1, 1)
+			min: new util.Vec2(0, 0),
+			max: new util.Vec2(1, 1)
 		};
 	return new chem.Box2Abs(bb.min, bb.max);
 }

@@ -400,7 +400,7 @@ rnd.ReStruct.prototype.showBracketSelection = function (sgid, sg, visible)
 			var paper = render.paper;
 			var bb = sg.bracketBox;
 			var lw = settings.lineWidth;
-			var vext = new chem.Vec2(lw * 4, lw * 6);
+			var vext = new util.Vec2(lw * 4, lw * 6);
 			bb = bb.extend(vext, vext);
 			sg.selectionPlate = paper
 			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
@@ -432,7 +432,7 @@ rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
 			var paper = render.paper;
 			var bb = sg.bracketBox;
 			var lw = settings.lineWidth;
-			var vext = new chem.Vec2(lw * 4, lw * 6);
+			var vext = new util.Vec2(lw * 4, lw * 6);
 			bb = bb.extend(vext, vext);
 			sg.highlighting = paper
 			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
@@ -766,8 +766,8 @@ rnd.ReStruct.prototype.showBonds = function ()
 		p2 = this.atoms.get(bond.b.end).ps;
 		var hb1 = this.halfBonds.get(bond.hb1),
 		hb2 = this.halfBonds.get(bond.hb2);
-		bond.center = chem.Vec2.lc2(p1, 0.5, p2, 0.5);
-		bond.len = chem.Vec2.dist(p1, p2);
+		bond.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
+		bond.len = util.Vec2.dist(p1, p2);
 		bond.sb = settings.lineWidth * 5;
 		bond.sa = Math.max(bond.sb,  bond.len / 2 - settings.lineWidth * 2);
 		bond.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
@@ -781,28 +781,28 @@ rnd.ReStruct.prototype.showBonds = function ()
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null, irbb = null;
 		if (opt.showBondIds) {
-			var pb = chem.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			var pb = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
 			this.addBondPath('indices', bid, ipath, irbb);
-			var phb1 = chem.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
+			var phb1 = util.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.hb1.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
 			this.addBondPath('indices', bid, ipath, irbb);
-			var phb2 = chem.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb1.norm, bondIdxOff);
+			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.hb2.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
 			this.addBondPath('indices', bid, ipath, irbb);
 		} else if (opt.showLoopIds) {
-			var pl1 = chem.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
+			var pl1 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
 			this.addBondPath('indices', bid, ipath, irbb);
-			var pl2 = chem.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			var pl2 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
@@ -829,7 +829,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		var b1 = this.bonds.get(hb1.bid);
 		var b2 = this.bonds.get(hb2.bid);
 		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Struct.BOND.STEREO.NONE && b2.b.stereo == chem.Struct.BOND.STEREO.NONE)
-			if (Math.abs(chem.Vec2.cross(hb1.dir, hb2.dir)) < 0.05)
+			if (Math.abs(util.Vec2.cross(hb1.dir, hb2.dir)) < 0.05)
 				return true;
 	}
 	return false;
@@ -942,7 +942,7 @@ rnd.ReStruct.prototype.shiftBonds = function ()
 			var t = 0;
 			var visel = atom.visel;
 			for (var i = 0; i < visel.boxes.length; ++i)
-				t = Math.max(t, chem.Vec2.shiftRayBox(hb.p, hb.dir, visel.boxes[i]));
+				t = Math.max(t, util.Vec2.shiftRayBox(hb.p, hb.dir, visel.boxes[i]));
 			if (t > 0)
 				hb.p = hb.p.addScaled(hb.dir, t + 2 * settings.lineWidth);
 		}, this)
@@ -998,7 +998,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	this.loops.each(function(lid, loop){
-		loop.centre = new chem.Vec2();
+		loop.centre = new util.Vec2();
 		loop.hbs.each(function(hbid){
 			var hb = this.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
@@ -1013,8 +1013,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 			var hba = this.halfBonds.get(loop.hbs[k]);
 			var hbb = this.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 			var angle = Math.atan2(
-					chem.Vec2.cross(hba.dir, hbb.dir),
-					chem.Vec2.dot(hba.dir, hbb.dir));
+					util.Vec2.cross(hba.dir, hbb.dir),
+					util.Vec2.dot(hba.dir, hbb.dir));
 			if (angle > 0)
 				loop.convex = false;
 		}
@@ -1025,8 +1025,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 			var hb = this.halfBonds.get(hbid);
 			var apos = this.atoms.get(hb.begin).ps;
 			var bpos = this.atoms.get(hb.end).ps;
-			var n = chem.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-			var dist = chem.Vec2.dot(chem.Vec2.diff(apos, loop.centre), n);
+			var n = util.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
+			var dist = util.Vec2.dot(util.Vec2.diff(apos, loop.centre), n);
 			if (loop.radius < 0) {
 				loop.radius = dist;
 			} else {
@@ -1050,8 +1050,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				hba = this.halfBonds.get(loop.hbs[k]);
 				hbb = this.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 				angle = Math.atan2(
-						chem.Vec2.cross(hba.dir, hbb.dir),
-						chem.Vec2.dot(hba.dir, hbb.dir));
+						util.Vec2.cross(hba.dir, hbb.dir),
+						util.Vec2.dot(hba.dir, hbb.dir));
 				var halfAngle = (Math.PI - angle) / 2;
 				var dir = hbb.dir.rotate(halfAngle);
 				var pi = this.atoms.get(hbb.begin).ps;

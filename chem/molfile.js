@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Vec2 || !chem.Struct)
+if (!window.chem || !util.Vec2 || !chem.Struct)
 	throw new Error("Vec2 and Molecule should be defined first")
 
 chem.Molfile = function ()
@@ -111,7 +111,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 	var params =
 	{
 		// generic
-		pos: new chem.Vec2(parseFloat(atomSplit[0]), parseFloat(atomSplit[1])),
+		pos: new util.Vec2(parseFloat(atomSplit[0]), parseFloat(atomSplit[1])),
 		label: atomSplit[4].strip(),
 		valence: mf.fmtInfo.valenceMap[mf.parseDecimalInt(atomSplit[10])],
 
@@ -147,7 +147,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 	var split, subsplit, key, value, i;
 	split = mf.spaceparsplit(line);
 	var params = {
-		pos: new chem.Vec2(parseFloat(split[2]), parseFloat(split[3])),
+		pos: new util.Vec2(parseFloat(split[2]), parseFloat(split[3])),
 		aam: split[5].strip()
 	};
 	var label = split[1].strip();
@@ -370,7 +370,7 @@ chem.Molfile.applyDataSGroupInfo = function (sGroups, propData) {
 	var daspPos = mf.parseDecimalInt(split[12].strip());
 
 	var sGroup = sGroups[id];
-	sGroup.p = new chem.Vec2(x, y);
+	sGroup.p = new util.Vec2(x, y);
 	sGroup.data.attached = attached;
 	sGroup.data.absolute = absolute;
 	sGroup.data.showUnits = showUnits;

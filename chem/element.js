@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Vec2)
+if (!window.chem || !util.Vec2)
     throw new Error("Vec2 should be defined first")
 
 // element table and utilities

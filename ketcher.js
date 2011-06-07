@@ -78,12 +78,12 @@ ketcher.testShiftRayBox = function (clientArea)
 
     for (var i = 0; i < 3; ++i)
     {
-        var p = new chem.Vec2(Math.random() * 300, Math.random() * 300);
-        var d = new chem.Vec2(Math.random() * 300, Math.random() * 300);
+        var p = new util.Vec2(Math.random() * 300, Math.random() * 300);
+        var d = new util.Vec2(Math.random() * 300, Math.random() * 300);
         var p1 = p.add(d);
         c.circle(p.x, p.y, 4).attr({fill:'#0f0'});
         c.path("M{0},{1}L{2},{3}", p.x, p.y, p1.x, p1.y).attr({'stroke-width':'3','stroke':'#f00'});
-        var t = Math.max(0, chem.Vec2.shiftRayBox(p, d, b));
+        var t = Math.max(0, util.Vec2.shiftRayBox(p, d, b));
         var p0 = p.addScaled(d, t / d.length());
         c.path("M{0},{1}L{2},{3}", p0.x, p0.y, p1.x, p1.y).attr({'stroke-width':'1','stroke':'#000'});
     }

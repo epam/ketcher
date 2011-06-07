@@ -43,7 +43,7 @@ chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos
 
 }
 
-chem.Element.elements = new chem.Map({
+chem.Element.elements = new util.Map({
       1: new chem.Element( 'H', 1, 1, false, '#000000', 1, 1),
       2: new chem.Element('He', 1, 8, false, '#d9ffff', 1, 18),
       3: new chem.Element('Li', 2, 1, false, '#cc80ff', 2, 1),

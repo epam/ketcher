@@ -308,7 +308,7 @@ rnd.Render.prototype.atomGetSGroups = function (aid)
 {
 	rnd.logMethod("atomGetSGroups");
 	var atom = this.ctab.atoms.get(aid);
-	return chem.Set.list(atom.a.sgs);
+	return util.Set.list(atom.a.sgs);
 }
 
 // creates an empty s-group of given type, e.g. "MUL" or "SRU",
@@ -445,7 +445,7 @@ rnd.Render.prototype._atomAddToSGroup = function (aid, value)
 	var atom = this.ctab.atoms.get(aid);
 	var sg = this.ctab.molecule.sgroups.get(value);
 	chem.SGroup.addAtom(sg, aid);
-	chem.Set.add(atom.a.sgs, value);
+	util.Set.add(atom.a.sgs, value);
 	this.invalidateAtom(aid);
 }
 
@@ -455,7 +455,7 @@ rnd.Render.prototype._atomRemoveFromSGroup = function (aid, value)
 	var atom = this.ctab.atoms.get(aid);
 	var sg = this.ctab.molecule.sgroups.get(value);
 	chem.SGroup.removeAtom(sg, aid);
-	chem.Set.remove(atom.a.sgs, value);
+	util.Set.remove(atom.a.sgs, value);
 	this.invalidateAtom(aid);
 }
 
@@ -463,11 +463,11 @@ rnd.Render.prototype._atomClearSGroups = function (aid)
 {
 	rnd.logMethod("_atomClearSGroups");
 	var atom = this.ctab.atoms.get(aid);
-	chem.Set.each(atom.a.sgs, function(sgid){
+	util.Set.each(atom.a.sgs, function(sgid){
 		var sg = this.ctab.molecule.sgroups.get(sgid);
 		chem.SGroup.removeAtom(sg, aid);
 	}, this);
-	chem.Set.clear(atom.a.sgs);
+	util.Set.clear(atom.a.sgs);
 	this.invalidateAtom(aid);
 }
 

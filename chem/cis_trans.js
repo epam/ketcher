@@ -16,7 +16,7 @@ if (!window.chem || !chem.Struct)
 chem.CisTrans = function (mol, neighbors_func, context)
 {
     this.molecule = mol;
-    this.bonds = new chem.Map();
+    this.bonds = new util.Map();
     this.getNeighbors = neighbors_func;
     this.context = context;
 }

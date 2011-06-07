@@ -16,7 +16,7 @@ if (!window.chem || !chem.Struct)
 chem.Stereocenters = function (mol, neighbors_func, context)
 {
     this.molecule = mol;
-    this.atoms = new chem.Map();
+    this.atoms = new util.Map();
     this.getNeighbors = neighbors_func;
     this.context = context;
 }

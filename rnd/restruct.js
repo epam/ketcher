@@ -89,10 +89,10 @@ rnd.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 rnd.ReStruct = function (molecule, render)
 {
 	this.render = render;
-	this.atoms = new chem.Map();
-	this.bonds = new chem.Map();
-	this.halfBonds = new chem.Map();
-	this.loops = new chem.Pool();
+	this.atoms = new util.Map();
+	this.bonds = new util.Map();
+	this.halfBonds = new util.Map();
+	this.loops = new util.Pool();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -103,7 +103,7 @@ rnd.ReStruct = function (molecule, render)
 		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
 	};
 
-	this.connectedComponents = new chem.Pool();
+	this.connectedComponents = new util.Pool();
 	this.bondsChanged = {};
 	this.atomsChanged = {};
 	this.structChanged = false;
@@ -127,8 +127,8 @@ rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	if (atom.component < 0)
 		return;
 	var cc = this.connectedComponents.get(atom.component);
-	chem.Set.remove(cc, aid);
-	if (chem.Set.size(cc) < 1)
+	util.Set.remove(cc, aid);
+	if (util.Set.size(cc) < 1)
 		this.connectedComponents.remove(atom.component);
 	atom.component = -1;
 }
@@ -136,7 +136,7 @@ rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 rnd.ReStruct.prototype.printConnectedComponents = function () {
 	var strs = [];
 	this.connectedComponents.each(function(ccid, cc){
-		strs.push(' ' + ccid + ':[' + chem.Set.list(cc).toString() + '].' + chem.Set.size(cc).toString());
+		strs.push(' ' + ccid + ':[' + util.Set.list(cc).toString() + '].' + util.Set.size(cc).toString());
 	}, this);
 	console.log(strs.toString());
 }
@@ -150,20 +150,20 @@ rnd.ReStruct.prototype.clearConnectedComponents = function () {
 
 rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 	var list = [aid];
-	var ids = chem.Set.empty();
+	var ids = util.Set.empty();
 
 	while (list.length > 0) {
 		(function() {
 			var aid = list.pop();
-			chem.Set.add(ids, aid);
+			util.Set.add(ids, aid);
 			var atom = this.atoms.get(aid);
 			if (atom.component >= 0) {
-				chem.Set.add(adjacentComponents, atom.component);
+				util.Set.add(adjacentComponents, atom.component);
 				return;
 			}
 			for (var i = 0; i < atom.neighbors.length; ++i) {
 				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-				if (!chem.Set.contains(ids, neiId))
+				if (!util.Set.contains(ids, neiId))
 					list.push(neiId);
 			}
 		}).apply(this);
@@ -174,34 +174,34 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 
 rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 	var compId = this.connectedComponents.add(ids);
-	chem.Set.each(ids, function(aid) {
+	util.Set.each(ids, function(aid) {
 		this.atoms.get(aid).component = compId;
 	}, this);
 	return compId;
 }
 
 rnd.ReStruct.prototype.removeConnectedComponent = function (ccid) {
-	chem.Set.each(this.connectedComponents.get(ccid), function(aid) {
+	util.Set.each(this.connectedComponents.get(ccid), function(aid) {
 		this.atoms.get(aid).component = -1;
 	}, this);
 	return this.connectedComponents.remove(ccid);
 }
 
 rnd.ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
-	chem.Set.each(set, function(aid) {
+	util.Set.each(set, function(aid) {
 		this.atoms.get(aid).component = ccid;
 	}, this);
-	chem.Set.mergeIn(this.connectedComponents.get(ccid), set);
+	util.Set.mergeIn(this.connectedComponents.get(ccid), set);
 }
 
 rnd.ReStruct.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function(aid,atom){
 		if (atom.component >= 0)
 			return;
-		var adjacentComponents = chem.Set.empty();
+		var adjacentComponents = util.Set.empty();
 		var ids = this.getConnectedComponent(aid, adjacentComponents);
 		var ccid0 = this.addConnectedComponent(ids);
-		chem.Set.each(adjacentComponents, function(ccid1){
+		util.Set.each(adjacentComponents, function(ccid1){
 			var ids = this.connectedComponents.get(ccid1);
 			this.connectedComponentMergeIn(ccid0, ids);
 			this.connectedComponents.remove(ccid1);
@@ -399,7 +399,7 @@ rnd.ReStruct.prototype.update = function (force)
 //	this.connectedComponents.each(function(ccid, cc){
 //		var min = null;
 //		var max = null;
-//		chem.Set.each(cc, function(aid){
+//		util.Set.each(cc, function(aid){
 //			var p = this.atoms.get(aid).ps;
 //			if (min == null) {
 //				min = max = p;
@@ -808,7 +808,7 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	var aid = this.molecule.atoms.add(new chem.Struct.Atom(pp));
 	var atom = this.molecule.atoms.get(aid);
 	var atomData = new rnd.AtomData(atom);
-	atomData.component = this.connectedComponents.add(chem.Set.single(aid));
+	atomData.component = this.connectedComponents.add(util.Set.single(aid));
 	this.atoms.set(aid, atomData);
 	this._atomSetPos(aid, pos);
 	return aid;
@@ -860,8 +860,8 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 {
 	var atom = this.atoms.get(aid);
 	var set = this.connectedComponents.get(atom.component);
-	chem.Set.remove(set, aid);
-	if (chem.Set.size(set) == 0) {
+	util.Set.remove(set, aid);
+	if (util.Set.size(set) == 0) {
 		this.connectedComponents.remove(atom.component);
 	}
 	
@@ -979,7 +979,7 @@ rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 	var atoms = [];
 	for (var i = 0; i < sg.atoms.length; ++i) {
 		var aid = sg.atoms[i];
-		chem.Set.remove(this.atoms.get(aid).a.sgs, sgid);
+		util.Set.remove(this.atoms.get(aid).a.sgs, sgid);
 		atoms.push(aid);
 	}
 	this.molecule.sgroups.remove(sgid);

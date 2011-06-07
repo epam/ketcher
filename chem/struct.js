@@ -11,14 +11,14 @@
  ***************************************************************************/
 
 // chem.Struct constructor and utilities are defined here
-if (!window.chem || !util.Vec2 || !chem.Pool)
+if (!window.chem || !util.Vec2 || !util.Pool)
 	throw new Error("Vec2, Pool should be defined first")
 
 chem.Struct = function ()
 {
-	this.atoms = new chem.Pool();
-	this.bonds = new chem.Pool();
-	this.sgroups = new chem.Pool();
+	this.atoms = new util.Pool();
+	this.bonds = new util.Pool();
+	this.sgroups = new util.Pool();
 	this.isChiral = false;
 }
 
@@ -63,7 +63,7 @@ chem.Struct.prototype.clone = function ()
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (var i = 0; i < sg.atoms.length; ++i) {
-			chem.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
+			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 	});
 	cp.isChiral = this.isChiral;
@@ -294,15 +294,15 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	this.bonds.each(function(bid, bond){
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
-		chem.Set.each(a1.sgs, function(sgid){
-			if (!chem.Set.contains(a2.sgs, sgid)) {
+		util.Set.each(a1.sgs, function(sgid){
+			if (!util.Set.contains(a2.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				chem.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
-		chem.Set.each(a2.sgs, function(sgid){
-			if (!chem.Set.contains(a1.sgs, sgid)) {
+		util.Set.each(a2.sgs, function(sgid){
+			if (!util.Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				chem.arrayAddIfMissing(sg.neiAtoms, bond.begin);
@@ -337,7 +337,7 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.sgroups.get(sgid);
 	for (var i = 0; i < sg.atoms.length; ++i) {
-		chem.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
+		util.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
 	}
 	this.sgroups.remove(sgid);
 }

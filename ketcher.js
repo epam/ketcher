@@ -70,7 +70,7 @@ ketcher.testShiftRayBox = function (clientArea)
 {
     var bx = 50, by = 180, bw = 220, bh = 40;
 
-    var b = new chem.Box2Abs(bx, by, bx + bw, by + bh);
+    var b = new util.Box2Abs(bx, by, bx + bw, by + bh);
     var c = new Raphael(clientArea);
 
     c.rect(0, 0, 300, 300).attr({stroke:'#0f0'});

@@ -857,7 +857,7 @@ rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	var bb = chem.Box2Abs.fromRelBox(path.getBBox());
+	var bb = util.Box2Abs.fromRelBox(path.getBBox());
 	visel.add(path, bb);
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }
@@ -867,7 +867,7 @@ rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	var bb = chem.Box2Abs.fromRelBox(path.getBBox());
+	var bb = util.Box2Abs.fromRelBox(path.getBBox());
 	visel.add(path, bb);
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }
@@ -877,7 +877,7 @@ rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	var bb = chem.Box2Abs.fromRelBox(path.getBBox());
+	var bb = util.Box2Abs.fromRelBox(path.getBBox());
 	visel.add(path, bb);
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }
@@ -885,7 +885,7 @@ rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 rnd.ReStruct.prototype.addAtomPath = function (group, aid, path, rbb)
 {
 	var visel = this.atoms.get(aid).visel;
-	var bb = rbb ? chem.Box2Abs.fromRelBox(rbb) : null;
+	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
 	var offset = this.render.offset;
 	if (offset != null) {
 		if (bb != null)
@@ -900,7 +900,7 @@ rnd.ReStruct.prototype.addAtomPath = function (group, aid, path, rbb)
 rnd.ReStruct.prototype.addBondPath = function (group, bid, path, rbb)
 {
 	var visel = this.bonds.get(bid).visel;
-	var bb = rbb ? chem.Box2Abs.fromRelBox(rbb) : null;
+	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
 	var offset = this.render.offset;
 	if (offset != null) {
 		if (bb != null)

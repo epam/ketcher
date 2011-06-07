@@ -437,7 +437,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function ()
 			this.rxnArrow.path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
 			this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
 			// TODO: when to update reaction arrow?
-			this.rxnArrow.visel.add(this.rxnArrow.path, chem.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
+			this.rxnArrow.visel.add(this.rxnArrow.path, util.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
 		}
 	}
 }

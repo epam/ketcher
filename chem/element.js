@@ -10,8 +10,11 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !util.Vec2)
+if (!window.util || !util.Vec2)
     throw new Error("Vec2 should be defined first")
+
+if (!window.chem)
+    chem = {};
 
 // element table and utilities
 chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos, xpos)

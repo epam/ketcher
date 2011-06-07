@@ -191,11 +191,11 @@ chem.SGroup.getBBox = function (atoms, remol) {
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
 			var p = atom.ps;
-			bba = new chem.Box2Abs(p,p);
+			bba = new util.Box2Abs(p,p);
 			var ext = new util.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
 			bba = bba.extend(ext, ext);
 		}
-		bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
+		bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
 	}
 	return bb;
 }
@@ -588,14 +588,14 @@ chem.SGroup.GroupDat = {
 				var box_i = name_i.getBBox();
 				name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
 				set.push(name_i);
-				this.selectionBoxes.push(chem.Box2Abs.fromRelBox(name_i.getBBox()));
+				this.selectionBoxes.push(util.Box2Abs.fromRelBox(name_i.getBBox()));
 			}
 		} else {
 			var name = this.showValue(paper, this.ps, this, settings);
 			var box = name.getBBox();
 			name.translate(0.5 * box.width, -0.5 * box.height);
 			set.push(name);
-			this.selectionBoxes = [chem.Box2Abs.fromRelBox(name.getBBox())];
+			this.selectionBoxes = [util.Box2Abs.fromRelBox(name.getBBox())];
 		}
 		return set;
 	},

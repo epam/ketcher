@@ -23,7 +23,7 @@ rnd.ElementTable = function (clientArea, opts)
 	this.paper = new Raphael(clientArea);
 	this.size = new util.Vec2();
 	this.viewSz = new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
-	this.bb = new chem.Box2Abs(new util.Vec2(), this.viewSz);
+	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
 	
 	var table = this;
 	this.onClick = opts.onClick || function(elemNum){ table.setElementSelected(elemNum, !table.items[elemNum].selected); }

@@ -88,7 +88,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.paper = new Raphael(clientArea);
 	this.size = new util.Vec2();
 	this.viewSz = viewSz || new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
-	this.bb = new chem.Box2Abs(new util.Vec2(), this.viewSz);
+	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
 	this.curItem = {
 		'type':'Canvas',
 		'id':-1
@@ -665,10 +665,10 @@ rnd.Render.prototype.getBoundingBox = function ()
 	this.ctab.eachVisel(function(visel){
 		vbb = visel.boundingBox;
 		if (vbb)
-			bb = bb ? chem.Box2Abs.union(bb, vbb) : vbb.clone();
+			bb = bb ? util.Box2Abs.union(bb, vbb) : vbb.clone();
 	}, this);
 	if (!bb)
-		bb = new chem.Box2Abs(0, 0, 0, 0);
+		bb = new util.Box2Abs(0, 0, 0, 0);
 	return bb;
 }
 
@@ -923,7 +923,7 @@ rnd.Render.prototype.update = function (force)
 			var ext = util.Vec2.UNIT.scaled(sf);
 			bb = bb.extend(ext, ext);
 			if (this.bb)
-				this.bb = chem.Box2Abs.union(this.bb, bb);
+				this.bb = util.Box2Abs.union(this.bb, bb);
 			else
 			{
 				var d = this.viewSz.sub(bb.sz()).scaled(0.5).max(util.Vec2.ZERO);

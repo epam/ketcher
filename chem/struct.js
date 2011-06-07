@@ -330,7 +330,7 @@ chem.Struct.prototype.getObjBBox = function ()
 			min: new util.Vec2(0, 0),
 			max: new util.Vec2(1, 1)
 		};
-	return new chem.Box2Abs(bb.min, bb.max);
+	return new util.Box2Abs(bb.min, bb.max);
 }
 
 chem.Struct.prototype.sGroupDelete = function (sgid)

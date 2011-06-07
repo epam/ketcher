@@ -38,7 +38,7 @@ rnd.Visel.prototype.add = function (path, bb)
 	this.paths.push(path);
 	if (bb != null) {
 		this.boxes.push(bb);
-		this.boundingBox = this.boundingBox == null ? bb : chem.Box2Abs.union(this.boundingBox, bb);
+		this.boundingBox = this.boundingBox == null ? bb : util.Box2Abs.union(this.boundingBox, bb);
 	}
 }
 

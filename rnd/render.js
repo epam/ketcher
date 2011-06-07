@@ -12,7 +12,7 @@
 
 if (!window.Prototype)
 	throw new Error("Prototype.js should be loaded first")
-if (!window.rnd || !rnd.MolData)
+if (!window.rnd || !rnd.ReStruct)
 	throw new Error("rnd.MolData should be defined prior to loading this file");
 
 rnd.DEBUG = false;
@@ -122,7 +122,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 	}, this);
 
-	this.ctab = new rnd.MolData(new chem.Struct(), this);
+	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;
 	this.styles = null;
 	this.checkCurItem = true;
@@ -223,7 +223,7 @@ rnd.Render.prototype.setMolecule = function (ctab)
 {
 	rnd.logMethod("setMolecule");
 	this.paper.clear();
-	this.ctab = new rnd.MolData(ctab, this);
+	this.ctab = new rnd.ReStruct(ctab, this);
 	this.offset = null;
 	this.size = null;
 	this.bb = null;

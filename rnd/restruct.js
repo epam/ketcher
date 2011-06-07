@@ -10,9 +10,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-// rnd.MolData constructor and utilities are defined here
+// rnd.ReStruct constructor and utilities are defined here
 //
-// MolData is to store all the auxiliary information for
+// ReStruct is to store all the auxiliary information for
 //  chem.Struct while rendering
 if (!window.chem || !chem.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 	throw new Error("Vec2, Molecule and Visel should be defined first");
@@ -86,7 +86,7 @@ rnd.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 	this.rightNeighbor = 0;
 }
 
-rnd.MolData = function (molecule, render)
+rnd.ReStruct = function (molecule, render)
 {
 	this.render = render;
 	this.atoms = new chem.Map();
@@ -122,7 +122,7 @@ rnd.MolData = function (molecule, render)
 	this.tmpVisels = [];
 }
 
-rnd.MolData.prototype.connectedComponentRemoveAtom = function (aid, atom) {
+rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
 	if (atom.component < 0)
 		return;
@@ -133,7 +133,7 @@ rnd.MolData.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom.component = -1;
 }
 
-rnd.MolData.prototype.printConnectedComponents = function () {
+rnd.ReStruct.prototype.printConnectedComponents = function () {
 	var strs = [];
 	this.connectedComponents.each(function(ccid, cc){
 		strs.push(' ' + ccid + ':[' + chem.Set.list(cc).toString() + '].' + chem.Set.size(cc).toString());
@@ -141,14 +141,14 @@ rnd.MolData.prototype.printConnectedComponents = function () {
 	console.log(strs.toString());
 }
 
-rnd.MolData.prototype.clearConnectedComponents = function () {
+rnd.ReStruct.prototype.clearConnectedComponents = function () {
 	this.connectedComponents.clear();
 	this.atoms.each(function(aid, atom) {
 		atom.component = -1;
 	});
 }
 
-rnd.MolData.prototype.getConnectedComponent = function (aid, adjacentComponents) {
+rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 	var list = [aid];
 	var ids = chem.Set.empty();
 
@@ -172,7 +172,7 @@ rnd.MolData.prototype.getConnectedComponent = function (aid, adjacentComponents)
 	return ids;
 }
 
-rnd.MolData.prototype.addConnectedComponent = function (ids) {
+rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 	var compId = this.connectedComponents.add(ids);
 	chem.Set.each(ids, function(aid) {
 		this.atoms.get(aid).component = compId;
@@ -180,21 +180,21 @@ rnd.MolData.prototype.addConnectedComponent = function (ids) {
 	return compId;
 }
 
-rnd.MolData.prototype.removeConnectedComponent = function (ccid) {
+rnd.ReStruct.prototype.removeConnectedComponent = function (ccid) {
 	chem.Set.each(this.connectedComponents.get(ccid), function(aid) {
 		this.atoms.get(aid).component = -1;
 	}, this);
 	return this.connectedComponents.remove(ccid);
 }
 
-rnd.MolData.prototype.connectedComponentMergeIn = function (ccid, set) {
+rnd.ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
 	chem.Set.each(set, function(aid) {
 		this.atoms.get(aid).component = ccid;
 	}, this);
 	chem.Set.mergeIn(this.connectedComponents.get(ccid), set);
 }
 
-rnd.MolData.prototype.assignConnectedComponents = function () {
+rnd.ReStruct.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function(aid,atom){
 		if (atom.component >= 0)
 			return;
@@ -209,9 +209,9 @@ rnd.MolData.prototype.assignConnectedComponents = function () {
 	}, this);
 }
 
-rnd.MolData.prototype.initLayers = function () {
-	for (var group in rnd.MolData.layerMap)
-		this.layers[rnd.MolData.layerMap[group]] =
+rnd.ReStruct.prototype.initLayers = function () {
+	for (var group in rnd.ReStruct.layerMap)
+		this.layers[rnd.ReStruct.layerMap[group]] =
 		this.render.paper.rect(0, 0, 10, 10)
 		.attr({
 			'fill':'#000',
@@ -219,37 +219,37 @@ rnd.MolData.prototype.initLayers = function () {
 		}).toFront();
 }
 
-rnd.MolData.prototype.insertInLayer = function (lid, path) {
+rnd.ReStruct.prototype.insertInLayer = function (lid, path) {
 	path.insertBefore(this.layers[lid]);
 }
 
-rnd.MolData.prototype.clearMarks = function () {
+rnd.ReStruct.prototype.clearMarks = function () {
 	this.bondsChanged = {};
 	this.atomsChanged = {};
 	this.structChanged = false;
 }
 
-rnd.MolData.prototype.markBondRemoved = function () {
+rnd.ReStruct.prototype.markBondRemoved = function () {
 	this.structChanged = true;
 }
 
-rnd.MolData.prototype.markAtomRemoved = function () {
+rnd.ReStruct.prototype.markAtomRemoved = function () {
 	this.structChanged = true;
 }
 
-rnd.MolData.prototype.markBond = function (bid, mark) {
+rnd.ReStruct.prototype.markBond = function (bid, mark) {
 	this.bondsChanged[bid] = (bid in this.bondsChanged) ?
 	Math.max(mark, this.bondsChanged[bid]) : mark;
 	this.clearVisel(this.bonds.get(bid).visel);
 }
 
-rnd.MolData.prototype.markAtom = function (aid, mark) {
+rnd.ReStruct.prototype.markAtom = function (aid, mark) {
 	this.atomsChanged[aid] = (aid in this.atomsChanged) ?
 	Math.max(mark, this.atomsChanged[aid]) : mark;
 	this.clearVisel(this.atoms.get(aid).visel);
 }
 
-rnd.MolData.prototype.eachVisel = function (func, context) {
+rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	this.atoms.each(function(aid, atom){
 		func.call(context, atom.visel);
 	}, this);
@@ -270,20 +270,20 @@ rnd.MolData.prototype.eachVisel = function (func, context) {
 		func.call(context, this.tmpVisels[i]);
 }
 
-rnd.MolData.prototype.translate = function (d) {
+rnd.ReStruct.prototype.translate = function (d) {
 	this.eachVisel(function(visel){
 		this.translateVisel(visel, d);
 	}, this);
 }
 
-rnd.MolData.prototype.scale = function (s) {
+rnd.ReStruct.prototype.scale = function (s) {
 	// NOTE: bounding boxes are not valid after scaling
 	this.eachVisel(function(visel){
 		this.scaleVisel(visel, s);
 	}, this);
 }
 
-rnd.MolData.prototype.translateVisel = function (visel, d) {
+rnd.ReStruct.prototype.translateVisel = function (visel, d) {
 	var i;
 	for (i = 0; i < visel.paths.length; ++i)
 		visel.paths[i].translate(d.x, d.y);
@@ -293,7 +293,7 @@ rnd.MolData.prototype.translateVisel = function (visel, d) {
 		visel.boundingBox.translate(d);
 }
 
-rnd.MolData.prototype.scaleRPath = function (path, s) {
+rnd.ReStruct.prototype.scaleRPath = function (path, s) {
 	if (path.type == "set") { // TODO: rework scaling
 		for (var i = 0; i < path.length; ++i)
 			this.scaleRPath(path[i], s);
@@ -308,19 +308,19 @@ rnd.MolData.prototype.scaleRPath = function (path, s) {
 	}
 }
 
-rnd.MolData.prototype.scaleVisel = function (visel, s) {
+rnd.ReStruct.prototype.scaleVisel = function (visel, s) {
 	for (var i = 0; i < visel.paths.length; ++i)
 		this.scaleRPath(visel.paths[i], s);
 }
 
-rnd.MolData.prototype.clearVisels = function () {
+rnd.ReStruct.prototype.clearVisels = function () {
 	// TODO: check if we need this
 	this.eachVisel(function(visel){
 		this.clearVisel(visel);
 	}, this);
 }
 
-rnd.MolData.prototype.update = function (force)
+rnd.ReStruct.prototype.update = function (force)
 {
 	force = force || !this.initialized;
 
@@ -422,7 +422,7 @@ rnd.MolData.prototype.update = function (force)
 	return true;
 }
 
-rnd.MolData.prototype.drawReactionArrow = function ()
+rnd.ReStruct.prototype.drawReactionArrow = function ()
 {
 	if (this.render.rxnMode) {
 		var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
@@ -442,7 +442,7 @@ rnd.MolData.prototype.drawReactionArrow = function ()
 	}
 }
 
-rnd.MolData.prototype.drawSGroups = function ()
+rnd.ReStruct.prototype.drawSGroups = function ()
 {
 	this.molecule.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this);
@@ -454,7 +454,7 @@ rnd.MolData.prototype.drawSGroups = function ()
 	}, this);
 }
 
-rnd.MolData.prototype.drawChiralLabel = function ()
+rnd.ReStruct.prototype.drawChiralLabel = function ()
 {
 	var render = this.render;
 	var paper = render.paper;
@@ -474,7 +474,7 @@ rnd.MolData.prototype.drawChiralLabel = function ()
 	}
 }
 
-rnd.MolData.prototype.getGroupBB = function (type)
+rnd.ReStruct.prototype.getGroupBB = function (type)
 {
 	var min = null, max = null;
 	// TODO: modify to use connected components
@@ -494,7 +494,7 @@ rnd.MolData.prototype.getGroupBB = function (type)
 	};
 }
 
-rnd.MolData.prototype.initNeighbors = function ()
+rnd.ReStruct.prototype.initNeighbors = function ()
 {
 	this.atoms.each(function(aid, atom){
 		atom.neighbors = [];
@@ -507,7 +507,7 @@ rnd.MolData.prototype.initNeighbors = function ()
 	}, this);
 }
 
-rnd.MolData.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
+rnd.ReStruct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 {
 	bond = bond || this.bonds.get(bid);
 	bond.hb1 = 2 * bid;
@@ -520,7 +520,7 @@ rnd.MolData.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 	hb2.contra = bond.hb1;
 }
 
-rnd.MolData.prototype.halfBondUpdate = function (hbid)
+rnd.ReStruct.prototype.halfBondUpdate = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
 	var p1 = this.atoms.get(hb.begin).pp;
@@ -531,13 +531,13 @@ rnd.MolData.prototype.halfBondUpdate = function (hbid)
 	hb.ang = hb.dir.oxAngle();
 }
 
-rnd.MolData.prototype.initHalfBonds = function ()
+rnd.ReStruct.prototype.initHalfBonds = function ()
 {
 	this.halfBonds.clear();
 	this.bonds.each(this.bondInitHalfBonds, this);
 }
 
-rnd.MolData.prototype.updateHalfBonds = function () {
+rnd.ReStruct.prototype.updateHalfBonds = function () {
 	for (var aid in this.atomsChanged) {
 		if (this.atomsChanged[aid] < 1)
 			continue;
@@ -550,7 +550,7 @@ rnd.MolData.prototype.updateHalfBonds = function () {
 	}
 }
 
-rnd.MolData.prototype.sortNeighbors = function () {
+rnd.ReStruct.prototype.sortNeighbors = function () {
 	// sort neighbor halfbonds in CCW order
 	for (var aid in this.atomsChanged) {
 		if (this.atomsChanged[aid] < 1)
@@ -570,7 +570,7 @@ rnd.MolData.prototype.sortNeighbors = function () {
 	}
 }
 
-rnd.MolData.prototype.setHydrogenPos = function () {
+rnd.ReStruct.prototype.setHydrogenPos = function () {
 	// check where should the hydrogen be put on the left of the label
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
@@ -601,14 +601,14 @@ rnd.MolData.prototype.setHydrogenPos = function () {
 	}
 }
 
-rnd.MolData.prototype.setImplicitHydrogen = function () {
+rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 	// calculate implicit hydrogens
 	for (var aid in this.atomsChanged) {
 		this.calcImplicitHydrogen(aid);
 	}
 }
 
-rnd.Loop = function (/*Array of num*/hbs, /*MolData*/md, /*bool*/convex)
+rnd.Loop = function (/*Array of num*/hbs, /*ReStruct*/md, /*bool*/convex)
 {
 	this.hbs = hbs; // set of half-bonds involved
 	this.dblBonds = 0; // number of double bonds in the loop
@@ -629,7 +629,7 @@ rnd.Loop = function (/*Array of num*/hbs, /*MolData*/md, /*bool*/convex)
 	this.radius = new chem.Vec2();
 }
 
-rnd.MolData.prototype.findLoops = function ()
+rnd.ReStruct.prototype.findLoops = function ()
 {
 	// Starting from each half-bond not known to be in a loop yet,
 	//  follow the 'next' links until the initial half-bond is reached or
@@ -680,7 +680,7 @@ rnd.MolData.prototype.findLoops = function ()
 	}, this);
 }
 
-rnd.MolData.prototype.getCoordBoundingBox = function ()
+rnd.ReStruct.prototype.getCoordBoundingBox = function ()
 {
 	var bb = null;
 	this.atoms.each(function (aid, atom) {
@@ -702,7 +702,7 @@ rnd.MolData.prototype.getCoordBoundingBox = function ()
 	return bb;
 }
 
-rnd.MolData.prototype.getAvgBondLength = function ()
+rnd.ReStruct.prototype.getAvgBondLength = function ()
 {
 	var totalLength = 0;
 	var cnt = 0;
@@ -715,7 +715,7 @@ rnd.MolData.prototype.getAvgBondLength = function ()
 	return cnt > 0 ? totalLength / cnt : -1;
 }
 
-rnd.MolData.prototype.getAvgClosestAtomDistance = function ()
+rnd.ReStruct.prototype.getAvgClosestAtomDistance = function ()
 {
 	var totalDist = 0, minDist, dist = 0;
 	var keys = this.atoms.keys(), k, j;
@@ -734,14 +734,14 @@ rnd.MolData.prototype.getAvgClosestAtomDistance = function ()
 	return keys.length > 0 ? totalDist / keys.length : -1;
 }
 
-rnd.MolData.prototype.coordProject = function()
+rnd.ReStruct.prototype.coordProject = function()
 {
 	this.atoms.each(function (aid, atom) {// project coordinates
 		this._atomSetPos(aid, new chem.Vec2(atom.a.pos.x, atom.a.pos.y));
 	}, this);
 }
 
-rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
+rnd.ReStruct.prototype.coordShiftFlipScale = function(min, scale, height)
 {
 	this.atoms.each(function (aid, atom) {
 		this._atomSetPos(aid, atom.pp
@@ -763,7 +763,7 @@ rnd.MolData.prototype.coordShiftFlipScale = function(min, scale, height)
 	}, this);
 }
 
-rnd.MolData.prototype.coordProcess = function ()
+rnd.ReStruct.prototype.coordProcess = function ()
 {
 	this.coordProject();
 	var bb = this.getCoordBoundingBox();
@@ -779,7 +779,7 @@ rnd.MolData.prototype.coordProcess = function ()
 	this.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 }
 
-rnd.MolData.prototype.scaleCoordinates = function()
+rnd.ReStruct.prototype.scaleCoordinates = function()
 {
 	var settings = this.render.settings;
 	for (var aid in this.atomsChanged) {
@@ -788,7 +788,7 @@ rnd.MolData.prototype.scaleCoordinates = function()
 	}
 }
 
-rnd.MolData.prototype._atomSetPos = function (aid, pp)
+rnd.ReStruct.prototype._atomSetPos = function (aid, pp)
 {
 	var settings = this.render.settings;
 	var atom = this.atoms.get(aid);
@@ -798,7 +798,7 @@ rnd.MolData.prototype._atomSetPos = function (aid, pp)
 		atom.ps = atom.pp.scaled(settings.scaleFactor);
 }
 
-rnd.MolData.prototype.atomAdd = function (pos, params)
+rnd.ReStruct.prototype.atomAdd = function (pos, params)
 {
 	var pp = {};
 	if (params)
@@ -814,7 +814,7 @@ rnd.MolData.prototype.atomAdd = function (pos, params)
 	return aid;
 }
 
-rnd.MolData.prototype.checkBondExists = function (begin, end)
+rnd.ReStruct.prototype.checkBondExists = function (begin, end)
 {
 	var bondExists = false;
 	this.bonds.each(function(bid, bond){
@@ -825,7 +825,7 @@ rnd.MolData.prototype.checkBondExists = function (begin, end)
 	return bondExists;
 }
 
-rnd.MolData.prototype.bondAdd = function (begin, end, params)
+rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end)
 		throw new Error("Distinct atoms expected");
@@ -849,14 +849,14 @@ rnd.MolData.prototype.bondAdd = function (begin, end, params)
 	return bid;
 }
 
-rnd.MolData.prototype.bondFlip = function (bid)
+rnd.ReStruct.prototype.bondFlip = function (bid)
 {
 	var data = this.bonds.get(bid).b;
 	this.bondRemove(bid);
 	return this.bondAdd(data.end, data.begin, data);
 }
 
-rnd.MolData.prototype.atomRemove = function (aid)
+rnd.ReStruct.prototype.atomRemove = function (aid)
 {
 	var atom = this.atoms.get(aid);
 	var set = this.connectedComponents.get(atom.component);
@@ -877,7 +877,7 @@ rnd.MolData.prototype.atomRemove = function (aid)
 	this.molecule.atoms.remove(aid);
 }
 
-rnd.MolData.prototype.bondRemove = function (bid)
+rnd.ReStruct.prototype.bondRemove = function (bid)
 {
 	var bond = this.bonds.get(bid);
 	this.halfBondUnref(bond.hb1);
@@ -893,7 +893,7 @@ rnd.MolData.prototype.bondRemove = function (bid)
 	var aid2 = bond.b.end;
 }
 
-rnd.MolData.prototype.loopRemove = function (loopId)
+rnd.ReStruct.prototype.loopRemove = function (loopId)
 {
 	var loop = this.loops.get(loopId);
 	this.clearVisel(loop.visel);
@@ -905,7 +905,7 @@ rnd.MolData.prototype.loopRemove = function (loopId)
 	this.loops.remove(loopId);
 }
 
-rnd.MolData.prototype.halfBondUnref = function (hbid)
+rnd.ReStruct.prototype.halfBondUnref = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
@@ -919,12 +919,12 @@ rnd.MolData.prototype.halfBondUnref = function (hbid)
 	atom.neighbors.splice(pos, 1);
 }
 
-rnd.MolData.prototype.setHbNext = function (hbid, next)
+rnd.ReStruct.prototype.setHbNext = function (hbid, next)
 {
 	this.halfBonds.get(this.halfBonds.get(hbid).contra).next = next;
 }
 
-rnd.MolData.prototype.halfBondSetAngle = function (hbid, left)
+rnd.ReStruct.prototype.halfBondSetAngle = function (hbid, left)
 {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
@@ -934,7 +934,7 @@ rnd.MolData.prototype.halfBondSetAngle = function (hbid, left)
 	hbl.rightNeighbor = hbid;
 }
 
-rnd.MolData.prototype.atomAddNeighbor = function (hbid)
+rnd.ReStruct.prototype.atomAddNeighbor = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
@@ -952,7 +952,7 @@ rnd.MolData.prototype.atomAddNeighbor = function (hbid)
 	this.halfBondSetAngle(ir, hbid);
 }
 
-rnd.MolData.prototype.BFS = function (onAtom, orig, context) {
+rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 	orig = orig-0;
 	var queue = new Array();
 	var mask = {};
@@ -973,7 +973,7 @@ rnd.MolData.prototype.BFS = function (onAtom, orig, context) {
 	}
 }
 
-rnd.MolData.prototype.sGroupDelete = function (sgid)
+rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.molecule.sgroups.get(sgid);
 	var atoms = [];

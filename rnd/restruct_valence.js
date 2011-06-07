@@ -10,10 +10,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !window.rnd || !rnd.MolData)
+if (!window.chem || !window.rnd || !rnd.ReStruct)
 	throw new Error("Include MolData.js first");
 
-rnd.MolData.prototype.calcConn = function (aid)
+rnd.ReStruct.prototype.calcConn = function (aid)
 {
 	var conn = 0;
 	var atom = this.atoms.get(aid);
@@ -435,7 +435,7 @@ rnd.AtomData.prototype.calcValenceMinusHyd = function (conn)
 	return rad + conn + Math.abs(charge);
 }
 
-rnd.MolData.prototype.calcImplicitHydrogen = function (aid)
+rnd.ReStruct.prototype.calcImplicitHydrogen = function (aid)
 {
 	var conn = this.calcConn(aid);
 	var atom = this.atoms.get(aid);

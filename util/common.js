@@ -10,8 +10,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem)
-    chem = {};
+if (!window.util)
+    util = {};
 
 Array.prototype.swap = function (i1, i2)
 {
@@ -21,32 +21,32 @@ Array.prototype.swap = function (i1, i2)
 }
 
 // piece of browser detection code from prototype.js
-chem.isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
-chem.isIE = !!window.attachEvent && !chem.isOpera;
-chem.isWebKit = navigator.userAgent.indexOf('AppleWebKit/') > -1;
-chem.isGecko = navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1;
-chem.isMobileSafari = /Apple.*Mobile.*Safari/.test(navigator.userAgent);
+util.isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
+util.isIE = !!window.attachEvent && !util.isOpera;
+util.isWebKit = navigator.userAgent.indexOf('AppleWebKit/') > -1;
+util.isGecko = navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') === -1;
+util.isMobileSafari = /Apple.*Mobile.*Safari/.test(navigator.userAgent);
 
 // "each" function for an array
-chem.each = function (array, func, context) {
+util.each = function (array, func, context) {
     for (var i = 0; i < array.length; ++i)
         func.call(context, array[i], i)
 }
 
-chem.array = function (arrayLike) {
+util.array = function (arrayLike) {
     var a = [], i = arrayLike.length;
     while (--i >= 0)
         a[i] = arrayLike[i];
     return a;
 }
 
-chem.isEmpty = function (obj) {
+util.isEmpty = function (obj) {
     for (var v in obj)
         return false;
     return true;
 }
 
-chem.stopEventPropagation = function (event) {
+util.stopEventPropagation = function (event) {
     if ('stopPropagation' in event) // Mozilla, Opera, Safari
         event.stopPropagation();
     else if ('cancelBubble' in event) // IE
@@ -55,7 +55,7 @@ chem.stopEventPropagation = function (event) {
         throw Error("Browser unrecognized");
 }
 
-chem.preventDefault = function (event) {
+util.preventDefault = function (event) {
     if ('preventDefault' in event)
         event.preventDefault();
     if (Prototype.Browser.IE)
@@ -66,7 +66,7 @@ chem.preventDefault = function (event) {
     return false;
 }
 
-chem.setElementTextContent = function (element, text)
+util.setElementTextContent = function (element, text)
 {
     if ('textContent' in element) // Mozilla, Opera, Safari
         element.textContent = text;
@@ -76,7 +76,7 @@ chem.setElementTextContent = function (element, text)
         throw Error("Browser unrecognized");
 }
 
-chem.getElementTextContent = function (element)
+util.getElementTextContent = function (element)
 {
     if ('textContent' in element) // Mozilla, Opera, Safari
         return element.textContent;
@@ -86,7 +86,7 @@ chem.getElementTextContent = function (element)
         throw Error("Browser unrecognized");
 }
 
-chem.stringPadded = function (string, width, leftAligned) {
+util.stringPadded = function (string, width, leftAligned) {
 	string += '';
 	var space = '';
 	while (string.length + space.length < width)
@@ -97,7 +97,7 @@ chem.stringPadded = function (string, width, leftAligned) {
 		return space + string;
 }
 
-chem.idList = function (object) {
+util.idList = function (object) {
 	var list = [];
 	for (var aid in object) {
 		list.push(aid);
@@ -105,7 +105,7 @@ chem.idList = function (object) {
 	return list;
 }
 
-chem.mapArray = function (src, map) {
+util.mapArray = function (src, map) {
 	var dst = [];
 	for (var i = 0; i < src.length; ++i) {
 		dst.push(map[src[i]]);
@@ -113,29 +113,29 @@ chem.mapArray = function (src, map) {
 	return dst;
 }
 
-chem.apply = function (array, func) {
+util.apply = function (array, func) {
 	for (var i = 0; i < array.length; ++i)
 		array[i] = func(array[i]);
 }
 
-chem.ifDef = function (dst, src, prop, def)
+util.ifDef = function (dst, src, prop, def)
 {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 }
 
-chem.ifDefList = function (dst, src, prop, def)
+util.ifDefList = function (dst, src, prop, def)
 {
-	dst[prop] = !Object.isUndefined(src[prop]) && src[prop] != null ? chem.array(src[prop]) : def;
+	dst[prop] = !Object.isUndefined(src[prop]) && src[prop] != null ? util.array(src[prop]) : def;
 }
 
-chem.identityMap = function (array) {
+util.identityMap = function (array) {
 	var map = {};
 	for (var i = 0; i < array.length; ++i)
 		map[array[i]] = array[i];
 	return map;
 }
 
-chem.stripRight = function (src) {
+util.stripRight = function (src) {
 	var i;
 	for (i = 0; i < src.length; ++i)
 		if (src[src.lenght - i - 1] != ' ')
@@ -143,24 +143,24 @@ chem.stripRight = function (src) {
 	return src.slice(0, src.length - i);
 }
 
-chem.paddedFloat = function (number, width, precision)
+util.paddedFloat = function (number, width, precision)
 {
 	var numStr = number.toFixed(precision).replace(',', '.');
 	if (numStr.length > width)
 		throw new Error("number does not fit");
-	return chem.stringPadded(numStr, width);
+	return util.stringPadded(numStr, width);
 }
 
-chem.paddedInt = function (number, width)
+util.paddedInt = function (number, width)
 {
 	var numStr = number.toFixed(0);
 	if (numStr.length > width) {
 		throw new Error("number does not fit");
 	}
-	return chem.stringPadded(numStr, width);
+	return util.stringPadded(numStr, width);
 }
 
-chem.arrayAddIfMissing = function (array, item)
+util.arrayAddIfMissing = function (array, item)
 {
 	for (var i = 0; i < array.length; ++i)
 		if (array[i] == item)

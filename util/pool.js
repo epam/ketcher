@@ -10,62 +10,62 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Map)
+if (!window.util || !util.Map)
     throw new Error("Map should be defined first")
 
-chem.Pool = function ()
+util.Pool = function ()
 {
-    this._map = new chem.Map();
+    this._map = new util.Map();
     this._nextId = 0;
 }
 
-chem.Pool.prototype.add = function (obj)
+util.Pool.prototype.add = function (obj)
 {
     var id = this._nextId++;
     this._map.set(id, obj);
     return id;
 }
 
-chem.Pool.prototype.set = function (id, obj)
+util.Pool.prototype.set = function (id, obj)
 {
     this._map.set(id, obj);
 }
 
-chem.Pool.prototype.get = function (id)
+util.Pool.prototype.get = function (id)
 {
     return this._map.get(id);
 }
 
-chem.Pool.prototype.has = function (id) {
+util.Pool.prototype.has = function (id) {
     return this._map.has(id);
 }
 
-chem.Pool.prototype.remove = function (id)
+util.Pool.prototype.remove = function (id)
 {
     return this._map.unset(id);
 }
 
-chem.Pool.prototype.clear = function ()
+util.Pool.prototype.clear = function ()
 {
     this._map.clear();
 }
 
-chem.Pool.prototype.keys = function ()
+util.Pool.prototype.keys = function ()
 {
 	return this._map.keys();
 }
 
-chem.Pool.prototype.each = function (func, context)
+util.Pool.prototype.each = function (func, context)
 {
     this._map.each(func, context);
 }
 
-chem.Pool.prototype.find = function (func, context)
+util.Pool.prototype.find = function (func, context)
 {
     return this._map.find(func, context);
 }
 
-chem.Pool.prototype.count = function ()
+util.Pool.prototype.count = function ()
 {
     return this._map.count();
 }

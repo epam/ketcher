@@ -10,17 +10,17 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem)
-    chem = {};
+if (!window.util)
+    util = {};
 
-chem.Map = function (obj) {
+util.Map = function (obj) {
     if (typeof(obj) != 'undefined' && obj.constructor != Object)
         throw Error("Passed object is not an instance of 'Object'!");
     this._obj = obj || {};
     this._count = 0;
 }
 
-chem.Map.prototype.each = function(func, context) {
+util.Map.prototype.each = function(func, context) {
     for (var v in this._obj) {
         var v_int = parseInt(v);
         var value = this._obj[v];
@@ -31,7 +31,7 @@ chem.Map.prototype.each = function(func, context) {
     }
 }
 
-chem.Map.prototype.find = function(func, context) {
+util.Map.prototype.find = function(func, context) {
     for (var v in this._obj) {
         var v_int = parseInt(v);
         var value = this._obj[v];
@@ -43,7 +43,7 @@ chem.Map.prototype.find = function(func, context) {
     }
 }
 
-chem.Map.prototype.keys = function() {
+util.Map.prototype.keys = function() {
     var keys = []
     for (var v in this._obj) {
         keys.push(v);
@@ -51,7 +51,7 @@ chem.Map.prototype.keys = function() {
     return keys;
 }
 
-chem.Map.prototype.set = function (key, value) {
+util.Map.prototype.set = function (key, value) {
     this._count += (typeof(value) != 'undefined' ? 1 : 0)
         - (typeof(this._obj[key]) != 'undefined' ? 1 : 0);
     if (typeof(value) == 'undefined') {
@@ -63,35 +63,35 @@ chem.Map.prototype.set = function (key, value) {
     }
 }
 
-chem.Map.prototype.get = function (key) {
+util.Map.prototype.get = function (key) {
     if (this._obj[key] !== Object.prototype[key])
         return this._obj[key];
     return undefined;
 }
 
-chem.Map.prototype.has = function (key) {
+util.Map.prototype.has = function (key) {
     if (this._obj[key] !== Object.prototype[key])
         return true;
     return false;
 }
 
-chem.Map.prototype.unset = function (key) {
+util.Map.prototype.unset = function (key) {
     return this.set(key, undefined);
 }
 
-chem.Map.prototype.update = function (object) {
+util.Map.prototype.update = function (object) {
     for (var v in object)
         this.set(v, object[v]);
 }
 
-chem.Map.prototype.clear = function () {
+util.Map.prototype.clear = function () {
     this._obj = {};
 }
 
-chem.Map.prototype.count = function () {
+util.Map.prototype.count = function () {
     return this._count;
 }
 
-chem.Map.prototype.idList = function () {
-    return chem.idList(this._obj);
+util.Map.prototype.idList = function () {
+    return util.idList(this._obj);
 }

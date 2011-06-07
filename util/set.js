@@ -10,17 +10,17 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem)
-	chem = {};
+if (!window.util)
+	util = {};
 
-chem.Set = {
+util.Set = {
 	empty: function() {
 		return {};
 	},
 
 	single: function(item) {
 		var set = {};
-		chem.Set.add(set, item);
+		util.Set.add(set, item);
 		return set;
 	},
 	
@@ -50,7 +50,7 @@ chem.Set = {
 	},
 
 	eq: function(set1, set2) {
-		return chem.Set.subset(set1, set2) && chem.Set.subset(set2, set1);
+		return util.Set.subset(set1, set2) && util.Set.subset(set2, set1);
 	},
 
 	each: function(set, func, context) {
@@ -76,8 +76,8 @@ chem.Set = {
 	},
 
 	mergeIn: function(set, other) {
-		chem.Set.each(other, function(item){
-			chem.Set.add(set, item);
+		util.Set.each(other, function(item){
+			util.Set.add(set, item);
 		});
 	},
 	

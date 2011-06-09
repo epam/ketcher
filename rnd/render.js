@@ -498,7 +498,7 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 rnd.Render.prototype._atomMove = function (aid, pos)
 {
 	rnd.logMethod("_atomMove");
-	this.ctab._atomSetPos(aid, this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	this.ctab.molecule._atomSetPos(aid, this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
 	this.invalidateAtom(aid, 1);
 }
 
@@ -644,7 +644,7 @@ rnd.Render.prototype.initStyles = function ()
 rnd.Render.prototype.initSettings = function()
 {
 	var settings = this.settings = {};
-	settings.delta = this.ctab.getCoordBoundingBox();
+	settings.delta = this.ctab.molecule.getCoordBoundingBox();
 	settings.margin = 0.1;
 	settings.scaleFactor = this.scale;
 	settings.lineWidth = settings.scaleFactor / 20;
@@ -898,7 +898,7 @@ rnd.Render.prototype.update = function (force)
 	if (!this.settings || this.dirty) {
 		if (this.opt.autoScale)
 		{
-			var cbb = this.ctab.getCoordBoundingBox();
+			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
 			var sy = cbb.max.y - cbb.min.y > 0 ? this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
 			var sx = cbb.max.x - cbb.min.x > 0 ? this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
@@ -977,7 +977,7 @@ rnd.Render.prototype.testMoveRel = function () {
 }
 
 rnd.Render.prototype.checkBondExists = function (begin, end) {
-	return this.ctab.checkBondExists(begin, end);
+	return this.ctab.molecule.checkBondExists(begin, end);
 }
 
 rnd.Render.prototype.findClosestAtom = function (pos, minDist) {

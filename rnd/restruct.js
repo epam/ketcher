@@ -676,104 +676,21 @@ rnd.ReStruct.prototype.findLoops = function ()
 		}
 	}, this);
 }
-
-rnd.ReStruct.prototype.getCoordBoundingBox = function ()
-{
-	var bb = null;
-	this.atoms.each(function (aid, atom) {
-		if (!bb)
-			bb = {
-				min: atom.a.pp,
-				max: atom.a.pp
-			}
-		else {
-			bb.min = util.Vec2.min(bb.min, atom.a.pp);
-			bb.max = util.Vec2.max(bb.max, atom.a.pp);
-		}
-	});
-	if (!bb)
-		bb = {
-			min: new util.Vec2(0, 0),
-			max: new util.Vec2(1, 1)
-		};
-	return bb;
-}
-
-rnd.ReStruct.prototype.getAvgBondLength = function ()
-{
-	var totalLength = 0;
-	var cnt = 0;
-	this.bonds.each(function(bid, bond){
-		totalLength += util.Vec2.dist(
-			this.atoms.get(bond.b.begin).a.pp,
-			this.atoms.get(bond.b.end).a.pp);
-		cnt++;
-	}, this);
-	return cnt > 0 ? totalLength / cnt : -1;
-}
-
-rnd.ReStruct.prototype.getAvgClosestAtomDistance = function ()
-{
-	var totalDist = 0, minDist, dist = 0;
-	var keys = this.atoms.keys(), k, j;
-	for (k = 0; k < keys.length; ++k) {
-		minDist = -1;
-		for (j = 0; j < keys.length; ++j) {
-			if (j == k)
-				continue;
-			dist = util.Vec2.dist(this.atoms.get(keys[j]).a.pp, this.atoms.get(keys[k]).a.pp);
-			if (minDist < 0 || minDist > dist)
-				minDist = dist;
-		}
-		totalDist += minDist;
-	}
-
-	return keys.length > 0 ? totalDist / keys.length : -1;
-}
-
-rnd.ReStruct.prototype.coordProject = function()
-{
-	this.atoms.each(function (aid, atom) {// project coordinates
-		this._atomSetPos(aid, new util.Vec2(atom.a.pos.x, atom.a.pos.y));
-	}, this);
-}
-
-rnd.ReStruct.prototype.coordShiftFlipScale = function(min, scale, height)
-{
-	this.atoms.each(function (aid, atom) {
-		this._atomSetPos(aid, atom.a.pp
-			.sub(min)
-			.yComplement(0)
-			.scaled(scale));
-	}, this);
-
-	this.molecule.sgroups.each(function (sgid, sg) {
-		if (sg.p) {
-			sg.pr = sg.p
-			.yComplement(0)
-			.scaled(scale);
-			sg.p = sg.p.sub(min);
-			sg.pa = sg.p
-			.yComplement(0)
-			.scaled(scale);
-		}
-	}, this);
-}
-
+	
 rnd.ReStruct.prototype.coordProcess = function ()
 {
-	this.coordProject();
-	var bb = this.getCoordBoundingBox();
-	var avg = this.getAvgBondLength();
+	this.molecule.coordProject();
+	var bb = this.molecule.getCoordBoundingBox();
+	var avg = this.molecule.getAvgBondLength();
 	if (avg < 0)
-		avg = this.getAvgClosestAtomDistance();
+		avg = this.molecule.getAvgClosestAtomDistance();
 	if (avg < 1e-3)
 		avg = 1;
 	var scale = 1 / avg;
 
 	if (this.molecule.isChiral)
 		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
-	this.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
+	this.molecule.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 }
 
 rnd.ReStruct.prototype.scaleCoordinates = function()
@@ -783,16 +700,6 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 		var atom = this.atoms.get(aid);
 		atom.a.ps = atom.a.pp.scaled(settings.scaleFactor);
 	}
-}
-
-rnd.ReStruct.prototype._atomSetPos = function (aid, pp)
-{
-	var settings = this.render.settings;
-	var atom = this.atoms.get(aid);
-	atom.a.pp = pp;
-	atom.a.pos = new util.Vec2(pp.x, -pp.y);
-	if (settings)
-		atom.a.ps = atom.a.pp.scaled(settings.scaleFactor);
 }
 
 rnd.ReStruct.prototype.atomAdd = function (pos, params)
@@ -807,26 +714,15 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	var atomData = new rnd.ReAtom(atom);
 	atomData.component = this.connectedComponents.add(util.Set.single(aid));
 	this.atoms.set(aid, atomData);
-	this._atomSetPos(aid, pos);
+	this.molecule._atomSetPos(aid, pos);
 	return aid;
-}
-
-rnd.ReStruct.prototype.checkBondExists = function (begin, end)
-{
-	var bondExists = false;
-	this.bonds.each(function(bid, bond){
-		if ((bond.b.begin == begin && bond.b.end == end) ||
-			(bond.b.end == begin && bond.b.begin == end))
-			bondExists = true;
-	}, this);
-	return bondExists;
 }
 
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end)
 		throw new Error("Distinct atoms expected");
-	if (rnd.DEBUG && this.checkBondExists(begin, end))
+	if (rnd.DEBUG && this.molecule.checkBondExists(begin, end))
 		throw new Error("Bond already exists");
 	var pp = {};
 	if (params)

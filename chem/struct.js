@@ -344,3 +344,106 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 	}
 	this.sgroups.remove(sgid);
 }
+
+chem.Struct.prototype._atomSetPos = function (aid, pp, scaleFactor)
+{
+	var atom = this.atoms.get(aid);
+	atom.pp = pp;
+	atom.pos = new util.Vec2(pp.x, -pp.y);
+	if (scaleFactor)
+		atom.ps = atom.pp.scaled(scaleFactor);
+}
+
+chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
+{
+	this.atoms.each(function (aid, atom) {
+		this._atomSetPos(aid, atom.pp
+			.sub(min)
+			.yComplement(0)
+			.scaled(scale));
+	}, this);
+
+	this.sgroups.each(function (sgid, sg) {
+		if (sg.p) {
+			sg.pr = sg.p
+			.yComplement(0)
+			.scaled(scale);
+			sg.p = sg.p.sub(min);
+			sg.pa = sg.p
+			.yComplement(0)
+			.scaled(scale);
+		}
+	}, this);
+}
+
+chem.Struct.prototype.getCoordBoundingBox = function ()
+{
+	var bb = null;
+	this.atoms.each(function (aid, atom) {
+		if (!bb)
+			bb = {
+				min: atom.pp,
+				max: atom.pp
+			}
+		else {
+			bb.min = util.Vec2.min(bb.min, atom.pp);
+			bb.max = util.Vec2.max(bb.max, atom.pp);
+		}
+	});
+	if (!bb)
+		bb = {
+			min: new util.Vec2(0, 0),
+			max: new util.Vec2(1, 1)
+		};
+	return bb;
+}
+
+chem.Struct.prototype.getAvgBondLength = function ()
+{
+	var totalLength = 0;
+	var cnt = 0;
+	this.bonds.each(function(bid, bond){
+		totalLength += util.Vec2.dist(
+			this.atoms.get(bond.begin).pp,
+			this.atoms.get(bond.end).pp);
+		cnt++;
+	}, this);
+	return cnt > 0 ? totalLength / cnt : -1;
+}
+
+chem.Struct.prototype.getAvgClosestAtomDistance = function ()
+{
+	var totalDist = 0, minDist, dist = 0;
+	var keys = this.atoms.keys(), k, j;
+	for (k = 0; k < keys.length; ++k) {
+		minDist = -1;
+		for (j = 0; j < keys.length; ++j) {
+			if (j == k)
+				continue;
+			dist = util.Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
+			if (minDist < 0 || minDist > dist)
+				minDist = dist;
+		}
+		totalDist += minDist;
+	}
+
+	return keys.length > 0 ? totalDist / keys.length : -1;
+}
+
+chem.Struct.prototype.coordProject = function()
+{
+	this.atoms.each(function (aid, atom) {// project coordinates
+		this._atomSetPos(aid, new util.Vec2(atom.pos.x, atom.pos.y));
+	}, this);
+}
+
+chem.Struct.prototype.checkBondExists = function (begin, end)
+{
+	var bondExists = false;
+	this.bonds.each(function(bid, bond){
+		if ((bond.begin == begin && bond.end == end) ||
+			(bond.end == begin && bond.begin == end))
+			bondExists = true;
+	}, this);
+	return bondExists;
+}

@@ -119,6 +119,8 @@ util.Vec2.max = function (v1, v2)
 
 util.Vec2.min = function (v1, v2)
 {
+	if (!v1 || !v2)
+		debugger;
     return new util.Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y));
 }
 

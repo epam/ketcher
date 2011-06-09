@@ -23,9 +23,6 @@ if (!window.rnd)
 rnd.ReAtom = function (/*chem.Atom*/atom)
 {
 	this.a = atom;
-	this.pp = new util.Vec2();
-	this.ps = new util.Vec2();
-	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.showLabel = false;
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.ATOM);
 	this.hydrogenOnTheLeft = false;
@@ -161,8 +158,8 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 				util.Set.add(adjacentComponents, atom.component);
 				return;
 			}
-			for (var i = 0; i < atom.neighbors.length; ++i) {
-				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
+			for (var i = 0; i < atom.a.neighbors.length; ++i) {
+				var neiId = this.halfBonds.get(atom.a.neighbors[i]).end;
 				if (!util.Set.contains(ids, neiId))
 					list.push(neiId);
 			}
@@ -400,7 +397,7 @@ rnd.ReStruct.prototype.update = function (force)
 //		var min = null;
 //		var max = null;
 //		util.Set.each(cc, function(aid){
-//			var p = this.atoms.get(aid).ps;
+//			var p = this.atoms.get(aid).a.ps;
 //			if (min == null) {
 //				min = max = p;
 //			} else {
@@ -481,10 +478,10 @@ rnd.ReStruct.prototype.getGroupBB = function (type)
 //	this.atoms.each(function(aid, atom){
 //		if (chem.Struct.fragments.get(atom.a.fragment) == type) {
 //			if (min == null) {
-//				min = max = atom.ps;
+//				min = max = atom.a.ps;
 //			} else {
-//				min = min.min(atom.ps);
-//				max = max.max(atom.ps);
+//				min = min.min(atom.a.ps);
+//				max = max.max(atom.a.ps);
 //			}
 //		}
 //	}, this);
@@ -497,13 +494,13 @@ rnd.ReStruct.prototype.getGroupBB = function (type)
 rnd.ReStruct.prototype.initNeighbors = function ()
 {
 	this.atoms.each(function(aid, atom){
-		atom.neighbors = [];
+		atom.a.neighbors = [];
 	});
 	this.bonds.each(function(bid, bond){
 		var a1 = this.atoms.get(bond.b.begin);
 		var a2 = this.atoms.get(bond.b.end);
-		a1.neighbors.push(bond.hb1);
-		a2.neighbors.push(bond.hb2);
+		a1.a.neighbors.push(bond.hb1);
+		a2.a.neighbors.push(bond.hb2);
 	}, this);
 }
 
@@ -523,8 +520,8 @@ rnd.ReStruct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 rnd.ReStruct.prototype.halfBondUpdate = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
-	var p1 = this.atoms.get(hb.begin).pp;
-	var p2 = this.atoms.get(hb.end).pp;
+	var p1 = this.atoms.get(hb.begin).a.pp;
+	var p2 = this.atoms.get(hb.end).a.pp;
 	var d = util.Vec2.diff(p2, p1).normalized();
 	hb.dir = d;
 	hb.norm = d.turnLeft();
@@ -541,7 +538,7 @@ rnd.ReStruct.prototype.updateHalfBonds = function () {
 	for (var aid in this.atomsChanged) {
 		if (this.atomsChanged[aid] < 1)
 			continue;
-		var nei = this.atoms.get(aid).neighbors;
+		var nei = this.atoms.get(aid).a.neighbors;
 		for (var i = 0; i < nei.length; ++i) {
 			var hbid = nei[i];
 			this.halfBondUpdate(hbid);
@@ -556,17 +553,17 @@ rnd.ReStruct.prototype.sortNeighbors = function () {
 		if (this.atomsChanged[aid] < 1)
 			continue;
 		var atom = this.atoms.get(aid);
-		atom.neighbors = atom.neighbors.sortBy(function(nei){
+		atom.a.neighbors = atom.a.neighbors.sortBy(function(nei){
 			return this.halfBonds.get(nei).ang;
 		}, this);
 
 		var i;
-		for (i = 0; i < atom.neighbors.length; ++i)
-			this.halfBonds.get(this.halfBonds.get(atom.neighbors[i]).contra).next =
-			atom.neighbors[(i + 1) % atom.neighbors.length];
-		for (i = 0; i < atom.neighbors.length; ++i)
-			this.halfBondSetAngle(atom.neighbors[(i + 1) % atom.neighbors.length],
-				atom.neighbors[i]);
+		for (i = 0; i < atom.a.neighbors.length; ++i)
+			this.halfBonds.get(this.halfBonds.get(atom.a.neighbors[i]).contra).next =
+			atom.a.neighbors[(i + 1) % atom.a.neighbors.length];
+		for (i = 0; i < atom.a.neighbors.length; ++i)
+			this.halfBondSetAngle(atom.a.neighbors[(i + 1) % atom.a.neighbors.length],
+				atom.a.neighbors[i]);
 	}
 }
 
@@ -575,7 +572,7 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
 
-		if (atom.neighbors.length == 0) {
+		if (atom.a.neighbors.length == 0) {
 			var elem = chem.Element.getElementByLabel(atom.a.label);
 			if (elem != null) {
 				atom.hydrogenOnTheLeft = chem.Element.elements.get(elem).putHydrogenOnTheLeft;
@@ -583,8 +580,8 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 			continue;
 		}
 		var yl = 1, yr = 1, nl = 0, nr = 0;
-		for (var i = 0; i < atom.neighbors.length; ++i) {
-			var d = this.halfBonds.get(atom.neighbors[i]).dir;
+		for (var i = 0; i < atom.a.neighbors.length; ++i) {
+			var d = this.halfBonds.get(atom.a.neighbors[i]).dir;
 			var y = Math.abs(d.y);
 			if (d.x <= 0) {
 				yl = Math.min(yl, Math.abs(d.y));
@@ -686,12 +683,12 @@ rnd.ReStruct.prototype.getCoordBoundingBox = function ()
 	this.atoms.each(function (aid, atom) {
 		if (!bb)
 			bb = {
-				min: atom.pp,
-				max: atom.pp
+				min: atom.a.pp,
+				max: atom.a.pp
 			}
 		else {
-			bb.min = util.Vec2.min(bb.min, atom.pp);
-			bb.max = util.Vec2.max(bb.max, atom.pp);
+			bb.min = util.Vec2.min(bb.min, atom.a.pp);
+			bb.max = util.Vec2.max(bb.max, atom.a.pp);
 		}
 	});
 	if (!bb)
@@ -708,8 +705,8 @@ rnd.ReStruct.prototype.getAvgBondLength = function ()
 	var cnt = 0;
 	this.bonds.each(function(bid, bond){
 		totalLength += util.Vec2.dist(
-			this.atoms.get(bond.b.begin).pp,
-			this.atoms.get(bond.b.end).pp);
+			this.atoms.get(bond.b.begin).a.pp,
+			this.atoms.get(bond.b.end).a.pp);
 		cnt++;
 	}, this);
 	return cnt > 0 ? totalLength / cnt : -1;
@@ -724,7 +721,7 @@ rnd.ReStruct.prototype.getAvgClosestAtomDistance = function ()
 		for (j = 0; j < keys.length; ++j) {
 			if (j == k)
 				continue;
-			dist = util.Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
+			dist = util.Vec2.dist(this.atoms.get(keys[j]).a.pp, this.atoms.get(keys[k]).a.pp);
 			if (minDist < 0 || minDist > dist)
 				minDist = dist;
 		}
@@ -744,7 +741,7 @@ rnd.ReStruct.prototype.coordProject = function()
 rnd.ReStruct.prototype.coordShiftFlipScale = function(min, scale, height)
 {
 	this.atoms.each(function (aid, atom) {
-		this._atomSetPos(aid, atom.pp
+		this._atomSetPos(aid, atom.a.pp
 			.sub(min)
 			.yComplement(0)
 			.scaled(scale));
@@ -784,7 +781,7 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 	var settings = this.render.settings;
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
-		atom.ps = atom.pp.scaled(settings.scaleFactor);
+		atom.a.ps = atom.a.pp.scaled(settings.scaleFactor);
 	}
 }
 
@@ -792,10 +789,10 @@ rnd.ReStruct.prototype._atomSetPos = function (aid, pp)
 {
 	var settings = this.render.settings;
 	var atom = this.atoms.get(aid);
-	atom.pp = pp;
+	atom.a.pp = pp;
 	atom.a.pos = new util.Vec2(pp.x, -pp.y);
 	if (settings)
-		atom.ps = atom.pp.scaled(settings.scaleFactor);
+		atom.a.ps = atom.a.pp.scaled(settings.scaleFactor);
 }
 
 rnd.ReStruct.prototype.atomAdd = function (pos, params)
@@ -866,7 +863,7 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 	}
 	
 	// clone neighbors array, as it will be modified
-	var neiHb = Array.from(atom.neighbors);
+	var neiHb = Array.from(atom.a.neighbors);
 	neiHb.each(function(hbid){
 		var hb = this.halfBonds.get(hbid);
 		this.bondRemove(hb.bid);
@@ -912,11 +909,11 @@ rnd.ReStruct.prototype.halfBondUnref = function (hbid)
 	if (hb.loop >= 0)
 		this.loopRemove(hb.loop);
 
-	var pos = atom.neighbors.indexOf(hbid);
-	var prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;
-	var next = (pos + 1) % atom.neighbors.length;
-	this.setHbNext(atom.neighbors[prev], atom.neighbors[next]);
-	atom.neighbors.splice(pos, 1);
+	var pos = atom.a.neighbors.indexOf(hbid);
+	var prev = (pos + atom.a.neighbors.length - 1) % atom.a.neighbors.length;
+	var next = (pos + 1) % atom.a.neighbors.length;
+	this.setHbNext(atom.a.neighbors[prev], atom.a.neighbors[next]);
+	atom.a.neighbors.splice(pos, 1);
 }
 
 rnd.ReStruct.prototype.setHbNext = function (hbid, next)
@@ -939,13 +936,13 @@ rnd.ReStruct.prototype.atomAddNeighbor = function (hbid)
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
 	var i = 0;
-	for (i = 0; i < atom.neighbors.length; ++i)
-		if (this.halfBonds.get(atom.neighbors[i]).ang > hb.ang)
+	for (i = 0; i < atom.a.neighbors.length; ++i)
+		if (this.halfBonds.get(atom.a.neighbors[i]).ang > hb.ang)
 			break;
-	atom.neighbors.splice(i, 0, hbid);
-	var ir = atom.neighbors[(i + 1) % atom.neighbors.length];
-	var il = atom.neighbors[(i + atom.neighbors.length - 1)
-	% atom.neighbors.length];
+	atom.a.neighbors.splice(i, 0, hbid);
+	var ir = atom.a.neighbors[(i + 1) % atom.a.neighbors.length];
+	var il = atom.a.neighbors[(i + atom.a.neighbors.length - 1)
+	% atom.a.neighbors.length];
 	this.setHbNext(il, hbid);
 	this.setHbNext(hbid, ir);
 	this.halfBondSetAngle(hbid, il);
@@ -962,8 +959,8 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 		var aid = queue.shift();
 		onAtom.call(context, aid);
 		var atom = this.atoms.get(aid);
-		for (var i = 0; i < atom.neighbors.length; ++i) {
-			var nei = atom.neighbors[i];
+		for (var i = 0; i < atom.a.neighbors.length; ++i) {
+			var nei = atom.a.neighbors[i];
 			var hb = this.halfBonds.get(nei);
 			if (!mask[hb.end]) {
 				mask[hb.end] = 1;

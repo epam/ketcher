@@ -315,7 +315,7 @@ rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
 			var styles = render.styles;
 			var paper = render.paper;
 			atom.highlighting = paper
-			.circle(atom.ps.x, atom.ps.y, styles.atomSelectionPlateRadius)
+			.circle(atom.a.ps.x, atom.a.ps.y, styles.atomSelectionPlateRadius)
 			.attr(styles.highlightStyle);
 			if (rnd.DEBUG)
 				atom.highlighting.attr({
@@ -350,7 +350,7 @@ rnd.ReStruct.prototype.showAtomSGroupHighlighting = function (aid, atom, visible
 			var styles = render.styles;
 			var paper = render.paper;
 			atom.sGroupHighlighting = paper
-			.circle(atom.ps.x, atom.ps.y, 0.7 * styles.atomSelectionPlateRadius)
+			.circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
 			.attr(styles.sGroupHighlightStyle);
 			this.addAtomPath('highlighting', aid, atom.sGroupHighlighting);
 		}
@@ -371,7 +371,7 @@ rnd.ReStruct.prototype.showAtomSelection = function (aid, atom, visible)
 			var styles = render.styles;
 			var paper = render.paper;
 			atom.selectionPlate = paper
-			.circle(atom.ps.x, atom.ps.y, styles.atomSelectionPlateRadius)
+			.circle(atom.a.ps.x, atom.a.ps.y, styles.atomSelectionPlateRadius)
 			.attr(styles.selectionStyle);
 			this.addAtomPath('selection-plate', aid, atom.selectionPlate);
 		}
@@ -467,7 +467,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 
 //		if (rnd.DEBUG) {
 //			var marker = paper
-//			.circle(atom.ps.x, atom.ps.y, settings.fontsz * 0.5)
+//			.circle(atom.a.ps.x, atom.a.ps.y, settings.fontsz * 0.5)
 //			.attr('stroke', 'none')
 //			.attr('fill', markerColors[atom.a.sgroup+1])
 //			.attr('opacity', '0.5');
@@ -477,7 +477,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 		if (opt.showAtomIds) {
 			index = {};
 			index.text = aid.toString();
-			index.path = paper.text(atom.ps.x, atom.ps.y, index.text)
+			index.path = paper.text(atom.a.ps.x, atom.a.ps.y, index.text)
 			.attr({
 				'font' : settings.font,
 				'font-size' : settings.fontszsub,
@@ -510,7 +510,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 						color = chem.Element.elements.get(elem).color;
 				}
 			}
-			label.path = paper.text(atom.ps.x, atom.ps.y, label.text)
+			label.path = paper.text(atom.a.ps.x, atom.a.ps.y, label.text)
 			.attr({
 				'font' : settings.font,
 				'font-size' : settings.fontsz,
@@ -529,7 +529,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				hydroIndex = {};
 				hydroIndex.text = (implh+1).toString();
 				hydroIndex.path =
-				paper.text(atom.ps.x, atom.ps.y, hydroIndex.text)
+				paper.text(atom.a.ps.x, atom.a.ps.y, hydroIndex.text)
 				.attr({
 					'font' : settings.font,
 					'font-size' : settings.fontszsub,
@@ -556,7 +556,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				else
 					charge.text += "+";
 
-				charge.path = paper.text(atom.ps.x, atom.ps.y, charge.text)
+				charge.path = paper.text(atom.a.ps.x, atom.a.ps.y, charge.text)
 				.attr({
 					'font' : settings.font,
 					'font-size' : settings.fontszsub,
@@ -581,20 +581,20 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalBullet(atom.ps).translate(-hshift, 0),
-							this.radicalBullet(atom.ps).translate(hshift, 0));
+							this.radicalBullet(atom.a.ps).translate(-hshift, 0),
+							this.radicalBullet(atom.a.ps).translate(hshift, 0));
 						radical.path.attr('fill', color);
 						break;
 					case 2:
-						radical.path = this.radicalBullet(atom.ps)
+						radical.path = this.radicalBullet(atom.a.ps)
 						.attr('fill', color);
 						break;
 					case 3:
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalCap(atom.ps).translate(-hshift, 0),
-							this.radicalCap(atom.ps).translate(hshift, 0));
+							this.radicalCap(atom.a.ps).translate(-hshift, 0),
+							this.radicalCap(atom.a.ps).translate(hshift, 0));
 						radical.path.attr('stroke', color);
 						break;
 				}
@@ -611,7 +611,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			if (atom.a.isotope != 0)
 			{
 				isotope.text = atom.a.isotope.toString();
-				isotope.path = paper.text(atom.ps.x, atom.ps.y, isotope.text)
+				isotope.path = paper.text(atom.a.ps.x, atom.a.ps.y, isotope.text)
 				.attr({
 					'font' : settings.font,
 					'font-size' : settings.fontszsub,
@@ -628,7 +628,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			if (!isHydrogen && implh > 0)
 			{
 				hydrogen.text = 'H';
-				hydrogen.path = paper.text(atom.ps.x, atom.ps.y, hydrogen.text)
+				hydrogen.path = paper.text(atom.a.ps.x, atom.a.ps.y, hydrogen.text)
 				.attr({
 					'font' : settings.font,
 					'font-size' : settings.fontsz,
@@ -645,7 +645,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					hydroIndex = {};
 					hydroIndex.text = implh.toString();
 					hydroIndex.path =
-					paper.text(atom.ps.x, atom.ps.y, hydroIndex.text)
+					paper.text(atom.a.ps.x, atom.a.ps.y, hydroIndex.text)
 					.attr({
 						'font' : settings.font,
 						'font-size' : settings.fontszsub,
@@ -677,9 +677,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 			}
 			if (atom.badConn && opt.showValenceWarnings) {
 				var warning = {};
-				var y = atom.ps.y + label.rbb.height / 2 + delta;
+				var y = atom.a.ps.y + label.rbb.height / 2 + delta;
 				warning.path = paper.path("M{0},{1}L{2},{3}",
-					atom.ps.x + leftMargin, y, atom.ps.x + rightMargin, y)
+					atom.a.ps.x + leftMargin, y, atom.a.ps.x + rightMargin, y)
 				.attr(this.render.styles.lineattr)
 				.attr({
 					'stroke':'#F00'
@@ -762,8 +762,8 @@ rnd.ReStruct.prototype.showBonds = function ()
 	var opt = render.opt;
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
-		var p1 = this.atoms.get(bond.b.begin).ps,
-		p2 = this.atoms.get(bond.b.end).ps;
+		var p1 = this.atoms.get(bond.b.begin).a.ps,
+		p2 = this.atoms.get(bond.b.end).a.ps;
 		var hb1 = this.halfBonds.get(bond.hb1),
 		hb2 = this.halfBonds.get(bond.hb2);
 		bond.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
@@ -813,7 +813,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 
 rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
-	if (atom.neighbors.length < 2 ||
+	if (atom.a.neighbors.length < 2 ||
 		atom.a.label.toLowerCase() != "c" ||
 		(atom.badConn && this.render.opt.showValenceWarnings) ||
 		atom.a.isotope != 0 ||
@@ -821,9 +821,9 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.charge != 0 ||
 		atom.a.explcitValence)
 		return true;
-	if (!atom.showLabel && atom.neighbors.length == 2) {
-		var n1 = atom.neighbors[0];
-		var n2 = atom.neighbors[1];
+	if (!atom.showLabel && atom.a.neighbors.length == 2) {
+		var n1 = atom.a.neighbors[0];
+		var n2 = atom.a.neighbors[1];
 		var hb1 = this.halfBonds.get(n1);
 		var hb2 = this.halfBonds.get(n2);
 		var b1 = this.bonds.get(hb1.bid);
@@ -936,9 +936,9 @@ rnd.ReStruct.prototype.shiftBonds = function ()
 	var settings = this.render.settings;
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
-		atom.neighbors.each( function (hbid) {
+		atom.a.neighbors.each( function (hbid) {
 			var hb = this.halfBonds.get(hbid);
-			hb.p = atom.ps;
+			hb.p = atom.a.ps;
 			var t = 0;
 			var visel = atom.visel;
 			for (var i = 0; i < visel.boxes.length; ++i)
@@ -1002,7 +1002,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 		loop.hbs.each(function(hbid){
 			var hb = this.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
-			var apos = this.atoms.get(hb.begin).ps;
+			var apos = this.atoms.get(hb.begin).a.ps;
 			if (bond.b.type != chem.Struct.BOND.TYPE.AROMATIC)
 				loop.aromatic = false;
 			loop.centre.add_(apos);
@@ -1023,8 +1023,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 		loop.radius = -1;
 		loop.hbs.each(function(hbid){
 			var hb = this.halfBonds.get(hbid);
-			var apos = this.atoms.get(hb.begin).ps;
-			var bpos = this.atoms.get(hb.end).ps;
+			var apos = this.atoms.get(hb.begin).a.ps;
+			var bpos = this.atoms.get(hb.end).a.ps;
 			var n = util.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
 			var dist = util.Vec2.dot(util.Vec2.diff(apos, loop.centre), n);
 			if (loop.radius < 0) {
@@ -1054,7 +1054,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 						util.Vec2.dot(hba.dir, hbb.dir));
 				var halfAngle = (Math.PI - angle) / 2;
 				var dir = hbb.dir.rotate(halfAngle);
-				var pi = this.atoms.get(hbb.begin).ps;
+				var pi = this.atoms.get(hbb.begin).a.ps;
 				var offset = settings.bondSpace / Math.sin(halfAngle);
 				var qi = pi.addScaled(dir, -offset);
 				pathStr += (k == 0 ? 'M' : 'L');

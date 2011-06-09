@@ -195,6 +195,8 @@ chem.Struct.Atom = function (params)
 		this.pos = new util.Vec2(params.pos);
 	else
 		this.pos = new util.Vec2();
+	this.pp = new util.Vec2();
+	this.ps = new util.Vec2();
 
 	this.sgs = {};
 
@@ -204,6 +206,7 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'unsaturatedAtom', -1);
 
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
+	this.neighbors = []; // set of half-bonds having this atom as their origin
 }
 
 chem.Struct.Atom.prototype.clone = function ()

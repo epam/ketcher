@@ -255,8 +255,8 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 {
 	var atom = this.ctab.atoms.get(aid);
 	this.ctab.markAtom(aid, level ? 1 : 0);
-	for (var i = 0; i < atom.neighbors.length; ++i) {
-		var hb = this.ctab.halfBonds.get(atom.neighbors[i]);
+	for (var i = 0; i < atom.a.neighbors.length; ++i) {
+		var hb = this.ctab.halfBonds.get(atom.a.neighbors[i]);
 		this.ctab.markBond(hb.bid, 1);
 		this.ctab.markAtom(hb.end, 0);
 	}
@@ -280,7 +280,7 @@ rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
 rnd.Render.prototype.atomGetDegree = function (aid)
 {
 	rnd.logMethod("atomGetDegree");
-	return this.ctab.atoms.get(aid).neighbors.length;
+	return this.ctab.atoms.get(aid).a.neighbors.length;
 }
 
 rnd.Render.prototype.isBondInRing = function (bid) {
@@ -293,8 +293,8 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
 {
 	var atom = this.ctab.atoms.get(aid);
 	var neiAtoms = [];
-	for (var i = 0; i < atom.neighbors.length; ++i) {
-		var hb = this.ctab.halfBonds.get(atom.neighbors[i]);
+	for (var i = 0; i < atom.a.neighbors.length; ++i) {
+		var hb = this.ctab.halfBonds.get(atom.a.neighbors[i]);
 		neiAtoms.push({
 			'aid': hb.end - 0,
 			'bid': hb.bid - 0
@@ -505,7 +505,7 @@ rnd.Render.prototype._atomMove = function (aid, pos)
 rnd.Render.prototype.atomGetPos = function (aid)
 {
 	rnd.logMethod("atomGetPos");
-	return this.ctab.atoms.get(aid).pp.scaled(this.settings.scaleFactor)
+	return this.ctab.atoms.get(aid).a.pp.scaled(this.settings.scaleFactor)
 	.add(this.offset);
 }
 
@@ -730,13 +730,13 @@ rnd.Render.prototype.getElementsInRectangle = function (rect) {
 	y0 -= this.offset.y;
 	y1 -= this.offset.y;
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).ps, 0.5,
-			this.ctab.atoms.get(bond.b.end).ps, 0.5);
+		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
+			this.ctab.atoms.get(bond.b.end).a.ps, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
 	}, this);
 	this.ctab.atoms.each(function(aid, atom){
-		if (atom.ps.x > x0 && atom.ps.x < x1 && atom.ps.y > y0 && atom.ps.y < y1)
+		if (atom.a.ps.x > x0 && atom.a.ps.x < x1 && atom.a.ps.y > y0 && atom.a.ps.y < y1)
 			atomList.push(aid);
 	}, this);
 	return [atomList, bondList];
@@ -800,13 +800,13 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 		r[i] = new util.Vec2(rr[i].x, rr[i].y).sub(this.offset);
 	}
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).ps, 0.5,
-			this.ctab.atoms.get(bond.b.end).ps, 0.5);
+		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
+			this.ctab.atoms.get(bond.b.end).a.ps, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);
 	}, this);
 	this.ctab.atoms.each(function(aid, atom){
-		if (this.isPointInPolygon(r, atom.ps))
+		if (this.isPointInPolygon(r, atom.a.ps))
 			atomList.push(aid);
 	}, this);
 	return [atomList, bondList];
@@ -986,7 +986,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
-		var dist = util.Vec2.dist(pos, atom.ps);
+		var dist = util.Vec2.dist(pos, atom.a.ps);
 		if (dist < minDist) {
 			closestAtom = aid;
 			minDist = dist;
@@ -1009,8 +1009,8 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 		var hb = this.ctab.halfBonds.get(bond.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
-		var p1 = this.ctab.atoms.get(bond.b.begin).ps,
-		p2 = this.ctab.atoms.get(bond.b.end).ps;
+		var p1 = this.ctab.atoms.get(bond.b.begin).a.ps,
+		p2 = this.ctab.atoms.get(bond.b.end).a.ps;
 
 		var inStripe = util.Vec2.dot(pos.sub(p1),d) * util.Vec2.dot(pos.sub(p2),d) < 0;
 		if (inStripe) {

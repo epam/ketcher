@@ -19,6 +19,7 @@ chem.Struct = function ()
 	this.atoms = new util.Pool();
 	this.bonds = new util.Pool();
 	this.sgroups = new util.Pool();
+	this.halfBonds = new util.Map();
 	this.isChiral = false;
 }
 
@@ -268,6 +269,13 @@ chem.Struct.Bond = function (params)
 	util.ifDef(this, params, 'stereo', chem.Struct.BOND.STEREO.NONE);
 	util.ifDef(this, params, 'topology', chem.Struct.BOND.TOPOLOGY.EITHER);
 	util.ifDef(this, params, 'reactingCenterStatus', 0);
+	this.hb1 = null; // half-bonds
+	this.hb2 = null;
+	this.len = 0;
+	this.center = new util.Vec2();
+	this.sb = 0;
+	this.sa = 0;
+	this.angle = 0;
 }
 
 chem.Struct.Bond.prototype.clone = function (aidMap)
@@ -287,6 +295,131 @@ chem.Struct.Bond.prototype.findOtherEnd = function (i)
 	if (i == this.end)
 		return this.begin;
 	throw new Error("bond end not found");
+}
+
+chem.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
+{
+	if (arguments.length != 3)
+		throw new Error("Invalid parameter number!");
+
+	this.begin = begin - 0;
+	this.end = end - 0;
+	this.bid = bid - 0;
+
+	// rendering properties
+	this.dir = new util.Vec2(); // direction
+	this.norm = new util.Vec2(); // left normal
+	this.ang = 0; // angle to (1,0), used for sorting the bonds
+	this.p = new util.Vec2(); // corrected origin position
+	this.loop = -1; // left loop id if the half-bond is in a loop, otherwise -1
+	this.contra = -1; // the half bond contrary to this one
+	this.next = -1; // the half-bond next ot this one in CCW order
+	this.leftSin = 0;
+	this.leftCos = 0;
+	this.leftNeighbor = 0;
+	this.rightSin = 0;
+	this.rightCos = 0;
+	this.rightNeighbor = 0;
+}
+
+chem.Struct.prototype.initNeighbors = function ()
+{
+	this.atoms.each(function(aid, atom){
+		atom.neighbors = [];
+	});
+	this.bonds.each(function(bid, bond){
+		var a1 = this.atoms.get(bond.begin);
+		var a2 = this.atoms.get(bond.end);
+		a1.neighbors.push(bond.hb1);
+		a2.neighbors.push(bond.hb2);
+	}, this);
+}
+
+chem.Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
+{
+	bond = bond || this.bonds.get(bid);
+	bond.hb1 = 2 * bid;
+	bond.hb2 = 2 * bid + 1;
+	this.halfBonds.set(bond.hb1, new chem.HalfBond(bond.begin, bond.end, bid));
+	this.halfBonds.set(bond.hb2, new chem.HalfBond(bond.end, bond.begin, bid));
+	var hb1 = this.halfBonds.get(bond.hb1);
+	var hb2 = this.halfBonds.get(bond.hb2);
+	hb1.contra = bond.hb2;
+	hb2.contra = bond.hb1;
+}
+
+chem.Struct.prototype.halfBondUpdate = function (hbid)
+{
+	var hb = this.halfBonds.get(hbid);
+	var p1 = this.atoms.get(hb.begin).pp;
+	var p2 = this.atoms.get(hb.end).pp;
+	var d = util.Vec2.diff(p2, p1).normalized();
+	hb.dir = d;
+	hb.norm = d.turnLeft();
+	hb.ang = hb.dir.oxAngle();
+}
+
+chem.Struct.prototype.initHalfBonds = function ()
+{
+	this.halfBonds.clear();
+	this.bonds.each(this.bondInitHalfBonds, this);
+}
+
+chem.Struct.prototype.setHbNext = function (hbid, next)
+{
+	this.halfBonds.get(this.halfBonds.get(hbid).contra).next = next;
+}
+
+chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
+{
+	var hb = this.halfBonds.get(hbid);
+	var hbl = this.halfBonds.get(left);
+	hbl.rightCos = hb.leftCos = util.Vec2.dot(hbl.dir, hb.dir);
+	hbl.rightSin = hb.leftSin = util.Vec2.cross(hbl.dir, hb.dir);
+	hb.leftNeighbor = left;
+	hbl.rightNeighbor = hbid;
+}
+
+chem.Struct.prototype.atomAddNeighbor = function (hbid)
+{
+	var hb = this.halfBonds.get(hbid);
+	var atom = this.atoms.get(hb.begin);
+	var i = 0;
+	for (i = 0; i < atom.neighbors.length; ++i)
+		if (this.halfBonds.get(atom.neighbors[i]).ang > hb.ang)
+			break;
+	atom.neighbors.splice(i, 0, hbid);
+	var ir = atom.neighbors[(i + 1) % atom.neighbors.length];
+	var il = atom.neighbors[(i + atom.neighbors.length - 1)
+	% atom.neighbors.length];
+	this.setHbNext(il, hbid);
+	this.setHbNext(hbid, ir);
+	this.halfBondSetAngle(hbid, il);
+	this.halfBondSetAngle(ir, hbid);
+}
+
+chem.Struct.prototype.atomSortNeighbors = function (aid) {
+	var atom = this.atoms.get(aid);
+	atom.neighbors = atom.neighbors.sortBy(function(nei){
+		return this.halfBonds.get(nei).ang;
+	}, this);
+
+	var i;
+	for (i = 0; i < atom.neighbors.length; ++i)
+		this.halfBonds.get(this.halfBonds.get(atom.neighbors[i]).contra).next =
+		atom.neighbors[(i + 1) % atom.neighbors.length];
+	for (i = 0; i < atom.neighbors.length; ++i)
+		this.halfBondSetAngle(atom.neighbors[(i + 1) % atom.neighbors.length],
+			atom.neighbors[i]);
+}
+
+chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
+	var nei = this.atoms.get(aid).neighbors;
+	for (var i = 0; i < nei.length; ++i) {
+		var hbid = nei[i];
+		this.halfBondUpdate(hbid);
+		this.halfBondUpdate(this.halfBonds.get(hbid).contra);
+	}
 }
 
 chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {

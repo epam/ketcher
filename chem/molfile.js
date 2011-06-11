@@ -643,6 +643,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 
 	// TODO: let sections follow in arbitrary order
 	var sgroups = {};
+	var atomMap = {};
 	while (ctabLines[shift++].strip() == "M  V30 BEGIN SGROUP")
 	{
 		while (shift < ctabLines.length) {
@@ -677,7 +678,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			for (var j = 0; j < brkxyzStrs.length; ++j)
 				sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
 			sg.data.subscript = props['MULT'][0]-0;
-			chem.SGroup.addGroup(ctab, sg);
+			chem.SGroup.addGroup(ctab, sg, atomMap);
 		}
 	}
 

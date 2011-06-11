@@ -190,7 +190,7 @@ chem.SGroup.getBBox = function (atoms, remol) {
 		var atom = remol.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
-			var p = atom.ps;
+			var p = atom.a.ps;
 			bba = new util.Box2Abs(p,p);
 			var ext = new util.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
 			bba = bba.extend(ext, ext);
@@ -578,7 +578,7 @@ chem.SGroup.GroupDat = {
 			this.selectionBoxes = [];
 			for (i = 0; i < atoms.length; ++i) {
 				var atom = remol.atoms.get(atoms[i]);
-				var p = new util.Vec2(atom.ps);
+				var p = new util.Vec2(atom.a.ps);
 				var bb = atom.visel.boundingBox;
 				if (bb != null) {
 					p.x = Math.max(p.x, bb.p1.x);

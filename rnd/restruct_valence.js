@@ -19,7 +19,7 @@ rnd.ReStruct.prototype.calcConn = function (aid)
 	var atom = this.atoms.get(aid);
 	var hasAromatic = false;
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.halfBonds.get(atom.a.neighbors[i]);
+		var hb = this.molecule.halfBonds.get(atom.a.neighbors[i]);
 		var bond = this.bonds.get(hb.bid);
 		switch (bond.b.type) {
 			case chem.Struct.BOND.TYPE.SINGLE:

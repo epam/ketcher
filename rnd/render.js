@@ -256,7 +256,7 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 	var atom = this.ctab.atoms.get(aid);
 	this.ctab.markAtom(aid, level ? 1 : 0);
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.ctab.halfBonds.get(atom.a.neighbors[i]);
+		var hb = this.ctab.molecule.halfBonds.get(atom.a.neighbors[i]);
 		this.ctab.markBond(hb.bid, 1);
 		this.ctab.markAtom(hb.end, 0);
 	}
@@ -268,8 +268,8 @@ rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
 	this.invalidateAtom(bond.b.begin, 0);
 	this.invalidateAtom(bond.b.end, 0);
 	if (invalidateLoops) {
-		var lid1 = this.ctab.halfBonds.get(bond.hb1).loop;
-		var lid2 = this.ctab.halfBonds.get(bond.hb2).loop;
+		var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
+		var lid2 = this.ctab.molecule.halfBonds.get(bond.b.hb2).loop;
 		if (lid1 >= 0)
 			this.ctab.loopRemove(lid1);
 		if (lid2 >= 0)
@@ -285,8 +285,8 @@ rnd.Render.prototype.atomGetDegree = function (aid)
 
 rnd.Render.prototype.isBondInRing = function (bid) {
 	var bond = this.ctab.bonds.get(bid);
-	return this.ctab.halfBonds.get(bond.hb1).loop >= 0 ||
-	this.ctab.halfBonds.get(bond.hb2).loop >= 0;
+	return this.ctab.molecule.halfBonds.get(bond.b.hb1).loop >= 0 ||
+	this.ctab.molecule.halfBonds.get(bond.b.hb2).loop >= 0;
 }
 
 rnd.Render.prototype.atomGetNeighbors = function (aid)
@@ -294,7 +294,7 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
 	var atom = this.ctab.atoms.get(aid);
 	var neiAtoms = [];
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.ctab.halfBonds.get(atom.a.neighbors[i]);
+		var hb = this.ctab.molecule.halfBonds.get(atom.a.neighbors[i]);
 		neiAtoms.push({
 			'aid': hb.end - 0,
 			'bid': hb.bid - 0
@@ -1006,7 +1006,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.bonds.each(function(bid, bond){
-		var hb = this.ctab.halfBonds.get(bond.hb1);
+		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.ps,

@@ -258,8 +258,8 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			path = this.drawBondTriple(hb1, hb2, bond);
 			break;
 		case chem.Struct.BOND.TYPE.AROMATIC:
-			var inAromaticLoop = (hb1.loop >= 0 && this.loops.get(hb1.loop).aromatic) ||
-				(hb2.loop >= 0 && this.loops.get(hb2.loop).aromatic);
+			var inAromaticLoop = (hb1.loop >= 0 && this.molecule.loops.get(hb1.loop).aromatic) ||
+				(hb2.loop >= 0 && this.molecule.loops.get(hb2.loop).aromatic);
 			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
 			break;
 		case chem.Struct.BOND.TYPE.ANY:
@@ -965,17 +965,18 @@ rnd.ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {
 
 rnd.ReStruct.prototype.setDoubleBondShift = function ()
 {
+	var struct = this.molecule;
 	// double bonds in loops
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
 		var loop1, loop2;
-		loop1 = this.molecule.halfBonds.get(bond.b.hb1).loop;
-		loop2 = this.molecule.halfBonds.get(bond.b.hb2).loop;
+		loop1 = struct.halfBonds.get(bond.b.hb1).loop;
+		loop2 = struct.halfBonds.get(bond.b.hb2).loop;
 		if (loop1 >= 0 && loop2 >= 0) {
-			var d1 = this.loops.get(loop1).dblBonds;
-			var d2 = this.loops.get(loop2).dblBonds;
-			var n1 = this.loops.get(loop1).hbs.length;
-			var n2 = this.loops.get(loop2).hbs.length;
+			var d1 = struct.loops.get(loop1).dblBonds;
+			var d2 = struct.loops.get(loop2).dblBonds;
+			var n1 = struct.loops.get(loop1).hbs.length;
+			var n2 = struct.loops.get(loop2).hbs.length;
 			bond.doubleBondShift = this.selectDoubleBondShift(n1, n2, d1, d2);
 		} else if (loop1 >= 0) {
 			bond.doubleBondShift = -1;
@@ -987,8 +988,8 @@ rnd.ReStruct.prototype.setDoubleBondShift = function ()
 
 rnd.ReStruct.prototype.updateLoops = function ()
 {
-	this.loops.each(function(lid, loop){
-		this.clearVisel(loop.visel);
+	this.reloops.each(function(rlid, reloop){
+		this.clearVisel(reloop.visel);
 	}, this);
 	this.findLoops();
 }
@@ -997,18 +998,21 @@ rnd.ReStruct.prototype.renderLoops = function ()
 {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
-	this.loops.each(function(lid, loop){
-		loop.centre = new util.Vec2();
+	this.reloops.each(function(rlid, reloop){
+		var loop = reloop.loop;
+		reloop.centre = new util.Vec2();
+		if (!loop.hbs)
+			debugger;
 		loop.hbs.each(function(hbid){
 			var hb = this.molecule.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
 			var apos = this.atoms.get(hb.begin).a.ps;
 			if (bond.b.type != chem.Struct.BOND.TYPE.AROMATIC)
 				loop.aromatic = false;
-			loop.centre.add_(apos);
+			reloop.centre.add_(apos);
 		}, this);
 		loop.convex = true;
-		for (var k = 0; k < loop.hbs.length; ++k)
+		for (var k = 0; k < reloop.loop.hbs.length; ++k)
 		{
 			var hba = this.molecule.halfBonds.get(loop.hbs[k]);
 			var hbb = this.molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
@@ -1019,26 +1023,26 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				loop.convex = false;
 		}
 
-		loop.centre = loop.centre.scaled(1.0 / loop.hbs.length);
-		loop.radius = -1;
+		reloop.centre = reloop.centre.scaled(1.0 / loop.hbs.length);
+		reloop.radius = -1;
 		loop.hbs.each(function(hbid){
 			var hb = this.molecule.halfBonds.get(hbid);
 			var apos = this.atoms.get(hb.begin).a.ps;
 			var bpos = this.atoms.get(hb.end).a.ps;
 			var n = util.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-			var dist = util.Vec2.dot(util.Vec2.diff(apos, loop.centre), n);
-			if (loop.radius < 0) {
-				loop.radius = dist;
+			var dist = util.Vec2.dot(util.Vec2.diff(apos, reloop.centre), n);
+			if (reloop.radius < 0) {
+				reloop.radius = dist;
 			} else {
-				loop.radius = Math.min(loop.radius, dist);
+				reloop.radius = Math.min(reloop.radius, dist);
 			}
 		}, this);
-		loop.radius *= 0.7;
+		reloop.radius *= 0.7;
 		if (!loop.aromatic)
 			return;
 		var path = null;
 		if (loop.convex) {
-			path = paper.circle(loop.centre.x, loop.centre.y, loop.radius)
+			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
 			.attr({
 				'stroke': '#000',
 				'stroke-width': settings.lineWidth
@@ -1068,6 +1072,6 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				'stroke-dasharray':'- '
 			});
 		}
-		this.addLoopPath('data', loop.visel, path);
+		this.addLoopPath('data', reloop.visel, path);
 	}, this);
 }

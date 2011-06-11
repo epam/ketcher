@@ -56,7 +56,7 @@ rnd.ReStruct = function (molecule, render)
 	this.render = render;
 	this.atoms = new util.Map();
 	this.bonds = new util.Map();
-	this.loops = new util.Pool();
+	this.reloops = new util.Map();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -81,6 +81,10 @@ rnd.ReStruct = function (molecule, render)
 		this.bonds.set(bid, new rnd.ReBond(bond));
 	}, this);
 
+	molecule.loops.each(function(lid, loop){
+		this.reloops.set(lid, new rnd.ReLoop(loop));
+	}, this);
+	
 	this.coordProcess();
 	
 	this.tmpVisels = [];
@@ -227,8 +231,8 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	this.molecule.sgroups.each(function(sid, sgroup){
 		func.call(context, sgroup.visel);
 	}, this);
-	this.loops.each(function(lid, loop){
-		func.call(context, loop.visel);
+	this.reloops.each(function(rlid, reloop) {
+		func.call(context, reloop.visel);
 	}, this);
 	for (var i = 0; i < this.tmpVisels.length; ++i)
 		func.call(context, this.tmpVisels[i]);
@@ -513,29 +517,17 @@ rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 	}
 }
 
-rnd.Loop = function (/*Array of num*/hbs, /*ReStruct*/md, /*bool*/convex)
+rnd.ReLoop = function (loop)
 {
-	this.hbs = hbs; // set of half-bonds involved
-	this.dblBonds = 0; // number of double bonds in the loop
-	this.aromatic = true;
-	this.convex = convex || false;
+	this.loop = loop;
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
-	
-	hbs.each(function(hb){
-		var bond = md.bonds.get(md.molecule.halfBonds.get(hb).bid);
-		if (bond.b.type != chem.Struct.BOND.TYPE.AROMATIC)
-			this.aromatic = false;
-		if (bond.b.type == chem.Struct.BOND.TYPE.DOUBLE)
-			this.dblBonds++;
-	}, this);
-
-	// rendering properties
 	this.centre = new util.Vec2();
 	this.radius = new util.Vec2();
 }
 
 rnd.ReStruct.prototype.findLoops = function ()
 {
+	var struct = this.molecule;
 	// Starting from each half-bond not known to be in a loop yet,
 	//  follow the 'next' links until the initial half-bond is reached or
 	//  the length of the sequence exceeds the number of half-bonds available.
@@ -544,20 +536,20 @@ rnd.ReStruct.prototype.findLoops = function ()
 	//  or doesn't start at all. Thus this has linear complexity in the number
 	//  of bonds for planar graphs.
 	var i = 0, j, k, c, loop, loopId;
-	this.molecule.halfBonds.each(function (i, hb) {
+	struct.halfBonds.each(function (i, hb) {
 		if (hb.loop == -1)
 		{
 			for (j = i, c = 0, loop = [];
-				c <= this.molecule.halfBonds.count();
-				j = this.molecule.halfBonds.get(j).next, ++c)
+				c <= struct.halfBonds.count();
+				j = struct.halfBonds.get(j).next, ++c)
 				{
 				if (c > 0 && j == i) {
 					var totalAngle = 2 * Math.PI;
 					var convex = true;
 					for (k = 0; k < loop.length; ++k)
 					{
-						var hba = this.molecule.halfBonds.get(loop[k]);
-						var hbb = this.molecule.halfBonds.get(loop[(k + 1) % loop.length]);
+						var hba = struct.halfBonds.get(loop[k]);
+						var hbb = struct.halfBonds.get(loop[(k + 1) % loop.length]);
 						var angle = Math.atan2(
 								util.Vec2.cross(hba.dir, hbb.dir),
 								util.Vec2.dot(hba.dir, hbb.dir));
@@ -569,13 +561,15 @@ rnd.ReStruct.prototype.findLoops = function ()
 							totalAngle += angle;
 					}
 					if (Math.abs(totalAngle) < Math.PI) // loop is internal
-						loopId = this.loops.add(new rnd.Loop(loop, this, convex));
+						loopId = struct.loops.add(new chem.Loop(loop, struct, convex));
 					else
 						loopId = -2;
 					loop.each(function(hbid){
-						this.molecule.halfBonds.get(hbid).loop = loopId;
-						this.markBond(this.molecule.halfBonds.get(hbid).bid, 1);
+						struct.halfBonds.get(hbid).loop = loopId;
+						this.markBond(struct.halfBonds.get(hbid).bid, 1);
 					}, this);
+					if (loopId >= 0)
+						this.reloops.set(loopId, new rnd.ReLoop(struct.loops.get(loopId)));
 					break;
 				} else {
 					loop.push(j);
@@ -689,21 +683,19 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 	this.clearVisel(bond.visel);
 	this.bonds.unset(bid);
 	this.molecule.bonds.remove(bid);
-
-	var aid1 = bond.b.begin;
-	var aid2 = bond.b.end;
 }
 
 rnd.ReStruct.prototype.loopRemove = function (loopId)
 {
-	var loop = this.loops.get(loopId);
-	this.clearVisel(loop.visel);
-	for (var i = 0; i < loop.hbs.length; ++i) {
-		var hb = this.molecule.halfBonds.get(loop.hbs[i]);
+	var reloop = this.reloops.get(loopId);
+	this.clearVisel(reloop.visel);
+	for (var i = 0; i < reloop.loop.hbs.length; ++i) {
+		var hb = this.molecule.halfBonds.get(reloop.loop.hbs[i]);
 		hb.loop = -1;
 		this.markBond(hb.bid, 1);
 	}
-	this.loops.remove(loopId);
+	this.reloops.unset(loopId);
+	this.molecule.loops.remove(loopId);
 }
 
 rnd.ReStruct.prototype.halfBondUnref = function (hbid)

@@ -20,6 +20,7 @@ chem.Struct = function ()
 	this.bonds = new util.Pool();
 	this.sgroups = new util.Pool();
 	this.halfBonds = new util.Map();
+	this.loops = new util.Pool();
 	this.isChiral = false;
 }
 
@@ -579,4 +580,20 @@ chem.Struct.prototype.checkBondExists = function (begin, end)
 			bondExists = true;
 	}, this);
 	return bondExists;
+}
+
+chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
+{
+	this.hbs = hbs; // set of half-bonds involved
+	this.dblBonds = 0; // number of double bonds in the loop
+	this.aromatic = true;
+	this.convex = convex || false;
+	
+	hbs.each(function(hb){
+		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
+		if (bond.type != chem.Struct.BOND.TYPE.AROMATIC)
+			this.aromatic = false;
+		if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
+			this.dblBonds++;
+	}, this);
 }

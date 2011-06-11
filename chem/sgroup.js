@@ -530,7 +530,7 @@ chem.SGroup.GroupGen = {
 chem.SGroup.getMassCentre = function (remol, atoms) {
 	var c = new util.Vec2(); // mass centre
 	for (var i = 0; i < atoms.length; ++i) {
-		c = c.addScaled(remol.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
+		c = c.addScaled(remol.atoms.get(atoms[i]).a.ps, 1.0 / atoms.length);
 	}
 	return c;
 }

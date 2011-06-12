@@ -67,6 +67,7 @@ rnd.ReStruct = function (molecule, render)
 	};
 
 	this.connectedComponents = new util.Pool();
+	this.ccFragmentType = new util.Map();
 	this.bondsChanged = {};
 	this.atomsChanged = {};
 	this.structChanged = false;
@@ -97,6 +98,7 @@ rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	util.Set.remove(cc, aid);
 	if (util.Set.size(cc) < 1)
 		this.connectedComponents.remove(atom.component);
+		
 	atom.component = -1;
 }
 
@@ -141,9 +143,17 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 
 rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 	var compId = this.connectedComponents.add(ids);
+	var type = -1;
 	util.Set.each(ids, function(aid) {
-		this.atoms.get(aid).component = compId;
+		var atom = this.atoms.get(aid);
+		atom.component = compId;
+		if (atom.a.rxnFragmentType != -1) {
+			if (type != -1 && atom.a.rxnFragmentType != type)
+				throw new Error('reaction fragment type mismatch');
+			type = atom.a.rxnFragmentType;
+		}
 	}, this);
+	this.ccFragmentType.set(compId, type);
 	return compId;
 }
 
@@ -174,6 +184,21 @@ rnd.ReStruct.prototype.assignConnectedComponents = function () {
 			this.connectedComponents.remove(ccid1);
 		}, this);			
 	}, this);
+}
+
+rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
+	cc = cc || this.connectedComponents.get(ccid);	
+	bb = bb || {'min':null, 'max':null};
+	util.Set.each(cc, function(aid) {
+		var ps = this.atoms.get(aid).a.ps;
+		if (bb.min == null) {
+			bb.min = bb.max = ps;
+		} else {
+			bb.min = bb.min.min(ps);
+			bb.max = bb.max.max(ps);
+		}		
+	}, this);
+	return bb;
 }
 
 rnd.ReStruct.prototype.initLayers = function () {
@@ -443,22 +468,13 @@ rnd.ReStruct.prototype.drawChiralLabel = function ()
 
 rnd.ReStruct.prototype.getGroupBB = function (type)
 {
-	var min = null, max = null;
-	// TODO: modify to use connected components
-//	this.atoms.each(function(aid, atom){
-//		if (chem.Struct.fragments.get(atom.a.fragment) == type) {
-//			if (min == null) {
-//				min = max = atom.a.ps;
-//			} else {
-//				min = min.min(atom.a.ps);
-//				max = max.max(atom.a.ps);
-//			}
-//		}
-//	}, this);
-	return {
-		'min': min,
-		'max': max
-	};
+	var bb = {'min':null, 'max':null};
+	this.connectedComponents.each(function(ccid, cc) {
+		if (this.ccFragmentType.get(ccid) == type)
+			bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);			
+	}, this);
+	
+	return bb;
 }
 
 rnd.ReStruct.prototype.updateHalfBonds = function () {

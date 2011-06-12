@@ -22,6 +22,7 @@ chem.Struct = function ()
 	this.halfBonds = new util.Map();
 	this.loops = new util.Pool();
 	this.isChiral = false;
+	this.isReaction = false;
 }
 
 chem.Struct.prototype.toLists = function ()
@@ -206,6 +207,9 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'ringBondCount', -1);
 	util.ifDef(this, params, 'substitutionCount', -1);
 	util.ifDef(this, params, 'unsaturatedAtom', -1);
+
+	// reaction
+	util.ifDef(this, params, 'rxnFragmentType', -1);
 
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin

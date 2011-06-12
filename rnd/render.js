@@ -227,6 +227,8 @@ rnd.Render.prototype.setMolecule = function (ctab)
 	this.offset = null;
 	this.size = null;
 	this.bb = null;
+	this.rxnMode = ctab.isReaction;
+	console.log(this.rxnMode);
 }
 
 util.each(rnd.actions, function(action){

@@ -1037,23 +1037,24 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 	var ret = new chem.Struct();
 	var molLines = [];
 	var i0 = 0, i;
-	for (i = 0; i < ctabLines.length; ++i)
+	for (i = 0; i < ctabLines.length; ++i) {
 		if (ctabLines[i].substr(0, 4) == "$MOL") {
-			molLines.push(ctabLines.slice(i0, i));
+			if (i > i0)
+				molLines.push(ctabLines.slice(i0, i));
 			i0 = i + 1;
 		}
+	}
 	molLines.push(ctabLines.slice(i0));
 	for (var j = 0; j < molLines.length; ++j) {
 		var mol = chem.Molfile.parseCTab(molLines[j]);
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
 				chem.Struct.FRAGMENT.AGENT));
-		// TODO: use connected components
-//		var fragmentId = chem.Struct.fragments.add(fragmentType);
-//		mol.atoms.each(function(aid, atom){
-//			atom.fragment = fragmentId;
-//		}, this);
+		mol.atoms.each(function(aid, atom){
+			atom.rxnFragmentType = fragmentType;
+		});
 		ret.merge(mol);
 	}
+	ret.isReaction = true;
 	return ret;
 }

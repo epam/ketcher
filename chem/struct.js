@@ -209,6 +209,7 @@ chem.Struct.Atom = function (params)
 
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
+	this.badConn = false;
 }
 
 chem.Struct.Atom.prototype.clone = function ()

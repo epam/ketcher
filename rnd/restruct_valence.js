@@ -10,18 +10,18 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !window.rnd || !rnd.ReStruct)
+if (!window.chem || !chem.Struct)
 	throw new Error("Include MolData.js first");
 
-rnd.ReStruct.prototype.calcConn = function (aid)
+chem.Struct.prototype.calcConn = function (aid)
 {
 	var conn = 0;
 	var atom = this.atoms.get(aid);
 	var hasAromatic = false;
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.molecule.halfBonds.get(atom.a.neighbors[i]);
+	for (var i = 0; i < atom.neighbors.length; ++i) {
+		var hb = this.halfBonds.get(atom.neighbors[i]);
 		var bond = this.bonds.get(hb.bid);
-		switch (bond.b.type) {
+		switch (bond.type) {
 			case chem.Struct.BOND.TYPE.SINGLE:
 				conn += 1;
 				break;
@@ -44,20 +44,20 @@ rnd.ReStruct.prototype.calcConn = function (aid)
 	return conn;
 }
 
-rnd.ReAtom.prototype.calcValence = function (conn)
+chem.Struct.Atom.prototype.calcValence = function (conn)
 {
-	var atom = this.a;
+	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;
 	if (atom.isQuery()) {
 		this.valence = -1;
-		this.a.implicitH = -1;
+		this.implicitH = -1;
 		return true;
 	}
 	var elem = chem.Element.getElementByLabel(label);
 	if (elem == null) {
 		this.valence = -1;
-		this.a.implicitH = 0;
+		this.implicitH = 0;
 		return true;
 	}
 
@@ -355,20 +355,20 @@ rnd.ReAtom.prototype.calcValence = function (conn)
 	}
 
 	this.valence = valence;
-	this.a.implicitH = hyd;
-	if (this.a.implicitH < 0)
+	this.implicitH = hyd;
+	if (this.implicitH < 0)
 	{
 		this.valence = conn;
-		this.a.implicitH = 0;
+		this.implicitH = 0;
 		this.badConn = true;
 		return false;
 	}
 	return true;
 }
 
-rnd.ReAtom.prototype.calcValenceMinusHyd = function (conn)
+chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 {
-	var atom = this.a;
+	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;
 	var elem = chem.Element.getElementByLabel(label);
@@ -376,7 +376,7 @@ rnd.ReAtom.prototype.calcValenceMinusHyd = function (conn)
 		throw new Error("Element " + elem + " unknown");
 	if (elem < 0) { // query atom, skip
 		this.valence = -1;
-		this.a.implicitH = -1;
+		this.implicitH = -1;
 		return null;
 	}
 
@@ -435,18 +435,18 @@ rnd.ReAtom.prototype.calcValenceMinusHyd = function (conn)
 	return rad + conn + Math.abs(charge);
 }
 
-rnd.ReStruct.prototype.calcImplicitHydrogen = function (aid)
+chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 {
 	var conn = this.calcConn(aid);
 	var atom = this.atoms.get(aid);
 	if (conn < 0) {
-		atom.a.implicitH = -1;
+		atom.implicitH = -1;
 		return;
 	}
-	if (atom.a.explicitValence) {
-		atom.a.implicitH = atom.a.valence - atom.calcValenceMinusHyd(conn);
-		if (atom.a.implicitH < 0) {
-			atom.a.implicitH = -1;
+	if (atom.explicitValence) {
+		atom.implicitH = atom.valence - atom.calcValenceMinusHyd(conn);
+		if (atom.implicitH < 0) {
+			atom.implicitH = -1;
 			atom.badConn = true;
 		}
 	} else {

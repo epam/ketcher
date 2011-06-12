@@ -26,7 +26,6 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.showLabel = false;
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.ATOM);
 	this.hydrogenOnTheLeft = false;
-	this.badConn = false;
 
 	this.highlight = false;
 	this.highlighting = null;
@@ -513,7 +512,7 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 	// calculate implicit hydrogens
 	for (var aid in this.atomsChanged) {
-		this.calcImplicitHydrogen(aid);
+		this.molecule.calcImplicitHydrogen(aid);
 	}
 }
 

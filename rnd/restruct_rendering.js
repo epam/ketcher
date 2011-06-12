@@ -675,7 +675,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				if (hydroIndex != null)
 					this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
 			}
-			if (atom.badConn && opt.showValenceWarnings) {
+			if (atom.a.badConn && opt.showValenceWarnings) {
 				var warning = {};
 				var y = atom.a.ps.y + label.rbb.height / 2 + delta;
 				warning.path = paper.path("M{0},{1}L{2},{3}",
@@ -815,7 +815,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
 	if (atom.a.neighbors.length < 2 ||
 		atom.a.label.toLowerCase() != "c" ||
-		(atom.badConn && this.render.opt.showValenceWarnings) ||
+		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||

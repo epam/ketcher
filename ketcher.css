@@ -177,7 +177,7 @@ div#loading
     width: 320px;
     height: 320px;
     overflow:    auto;
-    white-space: nowrap;
+    white-space: pre;
 }
 
 .chemicalText_IE

@@ -544,33 +544,6 @@ rnd.ReStruct.prototype.showLabels = function ()
 				this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
 			}
 			
-			var charge = {};
-			if (atom.a.charge != 0)
-			{
-				charge.text = "";
-				var absCharge = Math.abs(atom.a.charge);
-				if (absCharge != 1)
-					charge.text = absCharge.toString();
-				if (atom.a.charge < 0)
-					charge.text += "\u2013";
-				else
-					charge.text += "+";
-
-				charge.path = paper.text(atom.a.ps.x, atom.a.ps.y, charge.text)
-				.attr({
-					'font' : settings.font,
-					'font-size' : settings.fontszsub,
-					'fill' : color
-				});
-				charge.rbb = charge.path.getBBox();
-				this.centerText(charge.path, charge.rbb);
-				this.pathAndRBoxTranslate(charge.path, charge.rbb,
-					rightMargin + 0.5 * charge.rbb.width + delta,
-					-0.3 * label.rbb.height);
-				rightMargin += charge.rbb.width + delta;
-				this.addAtomPath('data', aid, charge.path, charge.rbb);
-			}
-
 			var radical = {};
 			if (atom.a.radical != 0)
 			{
@@ -675,6 +648,34 @@ rnd.ReStruct.prototype.showLabels = function ()
 				if (hydroIndex != null)
 					this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
 			}
+			
+			var charge = {};
+			if (atom.a.charge != 0)
+			{
+				charge.text = "";
+				var absCharge = Math.abs(atom.a.charge);
+				if (absCharge != 1)
+					charge.text = absCharge.toString();
+				if (atom.a.charge < 0)
+					charge.text += "\u2013";
+				else
+					charge.text += "+";
+
+				charge.path = paper.text(atom.a.ps.x, atom.a.ps.y, charge.text)
+				.attr({
+					'font' : settings.font,
+					'font-size' : settings.fontszsub,
+					'fill' : color
+				});
+				charge.rbb = charge.path.getBBox();
+				this.centerText(charge.path, charge.rbb);
+				this.pathAndRBoxTranslate(charge.path, charge.rbb,
+					rightMargin + 0.5 * charge.rbb.width + delta,
+					-0.3 * label.rbb.height);
+				rightMargin += charge.rbb.width + delta;
+				this.addAtomPath('data', aid, charge.path, charge.rbb);
+			}
+			
 			if (atom.a.badConn && opt.showValenceWarnings) {
 				var warning = {};
 				var y = atom.a.ps.y + label.rbb.height / 2 + delta;

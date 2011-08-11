@@ -42,7 +42,7 @@ ketcher.setMolecule = function (mol_string)
     ui.loadMolecule(mol_string);
 }
 
-ketcher.showMolfile = function (clientArea, molfileText, isRxn, autoScale)
+ketcher.showMolfile = function (clientArea, molfileText, autoScale)
 {
     this.render = new rnd.Render(clientArea, 75, {
         'showSelectionRegions':false,
@@ -54,7 +54,7 @@ ketcher.showMolfile = function (clientArea, molfileText, isRxn, autoScale)
 		'autoScaleMargin':20
     });
     if (molfileText)
-        this.render.setMolecule(chem.Molfile.parseMolfile(molfileText.split('\n'), isRxn));
+        this.render.setMolecule(chem.Molfile.parseMolfile(molfileText.split('\n')));
     this.render.update();
     return this.render;
 }

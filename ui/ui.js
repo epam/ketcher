@@ -464,8 +464,12 @@ ui.bondType = function (mode)
         return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
     case 'down':
         return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
+    case 'up_or_down':
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER};
     case 'double':
         return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
+    case 'double_crossed':
+        return {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS};
     case 'triple':
         return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'aromatic':
@@ -579,11 +583,12 @@ ui.onKeyPress_Ketcher = function (event)
         ui.selectMode('bond_any');
         return util.preventDefault(event);
     case 49: // 1
-        var singles = ['bond_single', 'bond_up', 'bond_down'];
+        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_up_or_down'];
         ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
         return util.preventDefault(event);
     case 50: // 2
-        ui.selectMode('bond_double');
+		var doubles = ['bond_double', 'bond_double_crossed'];
+		ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
         return util.preventDefault(event);
     case 51: // 3
         ui.selectMode('bond_triple');

@@ -79,6 +79,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.autoScale = this.opt.autoScale || false;
 	this.opt.autoScaleMargin = this.opt.autoScaleMargin || 0;
 	this.opt.atomColoring = this.opt.atomColoring || 0;
+	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || 0;
 
 	this.scale = scale || 100;
 	this.selectionDistanceCoefficient = 1.0 / 3;

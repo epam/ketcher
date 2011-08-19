@@ -598,7 +598,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				leftMargin -= isotope.rbb.width + delta;
 				this.addAtomPath('data', aid, isotope.path, isotope.rbb);
 			}
-			if (!isHydrogen && implh > 0)
+			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen)
 			{
 				hydrogen.text = 'H';
 				hydrogen.path = paper.text(atom.a.ps.x, atom.a.ps.y, hydrogen.text)

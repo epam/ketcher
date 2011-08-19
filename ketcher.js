@@ -42,19 +42,25 @@ ketcher.setMolecule = function (mol_string)
     ui.loadMolecule(mol_string);
 }
 
-ketcher.showMolfile = function (clientArea, molfileText, autoScale)
+ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicitHydrogen)
 {
-    this.render = new rnd.Render(clientArea, 75, {
+	return ketcher.showMolfileOpts(clientArea, molfileText, 75, {
         'showSelectionRegions':false,
         'showBondIds':false,
         'showHalfBondIds':false,
         'showLoopIds':false,
         'showAtomIds':false,
 		'autoScale':autoScale||false,
-		'autoScaleMargin':20
+		'autoScaleMargin':20,
+		'hideImplicitHydrogen':hideImplicitHydrogen||false
     });
+}
+
+ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
+{
+    this.render = new rnd.Render(clientArea, bondLength, opts);
     if (molfileText)
-        this.render.setMolecule(chem.Molfile.parseMolfile(molfileText.split('\n')));
+        this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
 }

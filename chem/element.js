@@ -63,7 +63,7 @@ chem.Element.elements = new util.Map({
      14: new chem.Element('Si', 3, 4, false, '#f0c7a1', 3,14),
      15: new chem.Element( 'P', 3, 5, false, '#ff8000', 3,15),
      16: new chem.Element( 'S', 3, 6, true,  '#d9a61a', 3,16),
-     17: new chem.Element('Cl', 3, 7, true,  '#1ff01f', 3,17),
+     17: new chem.Element('Cl', 3, 7, true,  '#1fd01f', 3,17),
      18: new chem.Element('Ar', 3, 8, false, '#80d1e3', 3,18),
      19: new chem.Element( 'K', 4, 1, false, '#8f40d4', 4, 1),
      20: new chem.Element('Ca', 4, 2, false, '#3dff00', 4, 2),

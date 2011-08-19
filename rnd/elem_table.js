@@ -15,7 +15,7 @@ if (!window.Prototype)
 if (!window.rnd)
 	throw new Error("rnd should be defined prior to loading this file");
 
-rnd.ElementTable = function (clientArea, opts)
+rnd.ElementTable = function (clientArea, opts, element)
 {
 	opts = opts || {};
 	clientArea = $(clientArea);
@@ -26,14 +26,13 @@ rnd.ElementTable = function (clientArea, opts)
 	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
 	
 	var table = this;
-	this.onClick = opts.onClick || function(elemNum){ table.setElementSelected(elemNum, !table.items[elemNum].selected); }
+	this.onClick = opts.onClick || function(elemNum){table.setElementSelected(elemNum, !table.items[elemNum].selected);}
 
-	var paper = this.paper;
-	var elemHalfSz = new util.Vec2(16, 16);
-	var elemSz = elemHalfSz.scaled(2);
-	var spacing = new util.Vec2(3, 3);
-	var cornerRadius = 7;
-	var orig = elemSz.scaled(1.0);
+	this.elemHalfSz = new util.Vec2(16, 16);
+	this.elemSz = this.elemHalfSz.scaled(2);
+	this.spacing = new util.Vec2(3, 3);
+	this.cornerRadius = 7;
+	this.orig = this.elemSz.scaled(1.0);
 	
 	this.fillColor = opts.fillColor || '#def';
 	this.fillColorSelected = opts.fillColorSelected || '#fcb';
@@ -41,7 +40,6 @@ rnd.ElementTable = function (clientArea, opts)
 	this.frameThickness = opts.frameThickness || '1pt';
 	this.fontSize = opts.fontSize || 19;
 	this.fontType = opts.fontType || "Arial";
-
 
 	this.frameAttrs = {
 			'fill':this.fillColor,
@@ -53,15 +51,25 @@ rnd.ElementTable = function (clientArea, opts)
 			'font-size' : this.fontSize
 		};
 	this.items = {};
+}
 
+rnd.ElementTable.prototype.renderTable = function () {
+	var table = this;
 	chem.Element.elements.each(function(id, elem){
-		var centre = new util.Vec2(orig.x + elem.xpos * elemSz.x + (elem.xpos - 1) * spacing.x, orig.y + elem.ypos * elemSz.y + (elem.ypos - 1) * spacing.y);
-		var box = this.paper.rect(centre.x - elemHalfSz.x, centre.y - elemHalfSz.y, elemSz.x, elemSz.y, cornerRadius).attr(this.frameAttrs);
+		var centre = new util.Vec2(this.orig.x + elem.xpos * this.elemSz.x + (elem.xpos - 1) * this.spacing.x, this.orig.y + elem.ypos * this.elemSz.y + (elem.ypos - 1) * this.spacing.y);
+		var box = this.paper.rect(centre.x - this.elemHalfSz.x, centre.y - this.elemHalfSz.y, this.elemSz.x, this.elemSz.y, this.cornerRadius).attr(this.frameAttrs);
 		var label = this.paper.text(centre.x, centre.y, elem.label).attr(this.fontAttrs).attr('fill', elem.color);
-		box.node.onclick = function () { table.onClick(id); };
-		label.node.onclick = function () { table.onClick(id); };
+		box.node.onclick = function () {table.onClick(id);};
+		label.node.onclick = function () {table.onClick(id);};
 		this.items[id] = {'box':box, 'label':label, 'selected':false};
 	}, this); 
+	
+}
+
+rnd.ElementTable.prototype.renderSingle = function (element) {
+	var elemId = chem.Element.getElementByLabel(element);
+	var elem = chem.Element.elements.get(elemId);
+	this.items[element] = this.paper.text(this.viewSz.x / 2, this.viewSz.y / 2, element).attr(this.fontAttrs).attr('fill', elem ? elem.color : '#000');
 }
 
 rnd.ElementTable.prototype.setElementSelected = function (id, selected) {

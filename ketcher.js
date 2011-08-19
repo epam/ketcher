@@ -19,6 +19,39 @@ ketcher.version = "1.0b4";
 ketcher.init = function ()
 {
     document.title += ' v' + ketcher.version;
+	ketcher.button_areas = {};
+	var elemLabelOpts = {'fontSize':30};
+	ketcher.button_areas.atom_a = new rnd.ElementTable('atom_a', elemLabelOpts).renderSingle('A');
+	ketcher.button_areas.atom_h = new rnd.ElementTable('atom_h', elemLabelOpts).renderSingle('H');
+	ketcher.button_areas.atom_c = new rnd.ElementTable('atom_c', elemLabelOpts).renderSingle('C');
+	ketcher.button_areas.atom_n = new rnd.ElementTable('atom_n', elemLabelOpts).renderSingle('N');
+	ketcher.button_areas.atom_o = new rnd.ElementTable('atom_o', elemLabelOpts).renderSingle('O');
+	ketcher.button_areas.atom_s = new rnd.ElementTable('atom_s', elemLabelOpts).renderSingle('S');
+	ketcher.button_areas.atom_p = new rnd.ElementTable('atom_p', elemLabelOpts).renderSingle('P');
+	ketcher.button_areas.atom_f = new rnd.ElementTable('atom_f', elemLabelOpts).renderSingle('F');
+	ketcher.button_areas.atom_cl = new rnd.ElementTable('atom_cl', elemLabelOpts).renderSingle('Cl');
+	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
+	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
+
+	var charge_plus_molfile = ['', '  fun stuff 0123456789AB', '',
+		'  1  0  0  0  0  0            999 V2000',
+		'    0.4714    1.8562    0.0000 C   0  3  0  0  0  0  0  0  0  0  0  0',
+		'M  CHG  1   1   1',
+		'M  END'];
+
+	var charge_minus_molfile = ['', '  fun stuff 0123456789AB', '',
+		'  1  0  0  0  0  0            999 V2000',
+		'    0.4714    1.8562    0.0000 C   0  3  0  0  0  0  0  0  0  0  0  0',
+		'M  CHG  1   1  -1',
+		'M  END'];
+
+	var renderOpts = {
+		'autoScale':true,
+		'autoScaleMargin':2,
+		'hideImplicitHydrogen':true};
+
+	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', charge_plus_molfile, 75, renderOpts);
+	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', charge_minus_molfile, 75, renderOpts);
     ui.init();
 };
 

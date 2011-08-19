@@ -5,19 +5,19 @@ margin=2
 format=png
 
 # atoms
-indigo-depict - "*" $format/atom/anyatom.$format -query -w $size -h $size -margins $margin $margin
-indigo-depict - "[H]" $format/atom/h.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "C" $format/atom/c.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "N" $format/atom/n.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "O" $format/atom/o.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "S" $format/atom/s.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "F" $format/atom/f.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "P" $format/atom/p.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "Cl" $format/atom/cl.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "Br" $format/atom/br.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "I" $format/atom/i.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "[CH3+]" $format/action/charge_plus.$format -hydro off -w $size -h $size -margins $margin $margin
-indigo-depict - "[CH3-]" $format/action/charge_minus.$format -hydro off -w $size -h $size -margins $margin $margin
+indigo-depict - "*" $format/atom/anyatom.$format -query -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "[H]" $format/atom/h.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "C" $format/atom/c.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "N" $format/atom/n.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "O" $format/atom/o.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "S" $format/atom/s.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "F" $format/atom/f.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "P" $format/atom/p.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "Cl" $format/atom/cl.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "Br" $format/atom/br.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "I" $format/atom/i.$format -hydro off -w $size -h $size -margins $margin $margin -bond 75
+indigo-depict - "[CH3+]" $format/action/charge_plus.$format -hydro off -w $size -h $size -margins $margin $margin -bond 50
+indigo-depict - "[CH3-]" $format/action/charge_minus.$format -hydro off -w $size -h $size -margins $margin $margin -bond 50
 
 # bonds
 indigo-depict - "CC" $format/bond/single.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero

@@ -42,7 +42,7 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
-ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7};
+ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8};
 
 ui.patterns =
 {
@@ -439,6 +439,8 @@ ui.modeType = function ()
         return ui.MODE.ERASE;
     if (ui.mode_button.id.startsWith('atom_'))
         return ui.MODE.ATOM;
+    if (ui.mode_button.id.startsWith('charge_'))
+        return ui.MODE.CHARGE;
     if (ui.mode_button.id.startsWith('bond_'))
         return ui.MODE.BOND;
     if (ui.mode_button.id == 'sgroup')
@@ -595,6 +597,10 @@ ui.onKeyPress_Ketcher = function (event)
         return util.preventDefault(event);
     case 52: // 4
         ui.selectMode('bond_aromatic');
+        return util.preventDefault(event);
+    case 53: // 5
+        var charge = ['charge_plus', 'charge_minus'];
+        ui.selectMode(charge[(charge.indexOf(ui.mode_button.id) + 1) % charge.length]);
         return util.preventDefault(event);
     case 66: // Shift+B
         ui.selectMode('atom_br');
@@ -1242,6 +1248,12 @@ ui.onClick_Atom = function (event, id)
 
         case ui.MODE.ATOM:
             ui.addUndoAction(ui.Action.fromAtomAttrs(id, {label: ui.atomLabel()}), true);
+            ui.render.update();
+            break;
+
+        case ui.MODE.CHARGE:
+            var plus = (ui.mode_button.id == 'charge_plus');
+            ui.addUndoAction(ui.Action.fromAtomAttrs(id, {charge: ui.render.atomGetAttr(id, 'charge') - 0 + (plus ? 1 : -1)}), true);
             ui.render.update();
             break;
 

@@ -16,6 +16,8 @@ indigo-depict - "P" $format/atom/p.$format -hydro off -w $size -h $size -margins
 indigo-depict - "Cl" $format/atom/cl.$format -hydro off -w $size -h $size -margins $margin $margin
 indigo-depict - "Br" $format/atom/br.$format -hydro off -w $size -h $size -margins $margin $margin
 indigo-depict - "I" $format/atom/i.$format -hydro off -w $size -h $size -margins $margin $margin
+indigo-depict - "[CH3+]" $format/action/charge_plus.$format -hydro off -w $size -h $size -margins $margin $margin
+indigo-depict - "[CH3-]" $format/action/charge_minus.$format -hydro off -w $size -h $size -margins $margin $margin
 
 # bonds
 indigo-depict - "CC" $format/bond/single.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero

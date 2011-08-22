@@ -1951,7 +1951,6 @@ ui.onMouseOver_Atom = function (event, aid)
         if (ui.drag.action == null)
             throw new Error("action is null")
             
-        ui.drag.action.perform();
         ui.drag.action = ui.Action.fromAtomMerge(ui.drag.atom_id, aid);
         ui.drag.atom_id = ui.atomMap.indexOf(ui.drag.atom_id);
 

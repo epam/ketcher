@@ -216,6 +216,28 @@ chem.Struct.Atom = function (params)
 	this.badConn = false;
 }
 
+chem.Struct.Atom.getAttrHash = function(atom) {
+    var attrs = new Hash();
+	for (var attr in chem.Struct.Atom.attrlist) {
+		if (typeof(atom[attr]) != 'undefined') {
+			attrs.set(attr, atom[attr]);
+		}
+	}
+	return attrs;
+}
+
+chem.Struct.Atom.attrlist = {'label':0,
+	'isotope':0,
+	'radical':0,
+	'charge':0,
+	'valence':0,
+	'explicitValence':0,
+	'implicitH':0,
+	'ringBondCount':0,
+	'substitutionCount':0,
+	'unsaturatedAtom':0,
+	'atomList':0};
+
 chem.Struct.Atom.prototype.clone = function ()
 {
 	return new chem.Struct.Atom(this);

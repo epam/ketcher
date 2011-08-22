@@ -875,9 +875,9 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
             id: ui.bondMap.indexOf(nei.bid)
         });
     }, this);
-    
-    var attrs = new Hash(ui.ctab.atoms.get(src_id));
-    
+
+    var attrs = chem.Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
+
     if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
         attrs.set('label', 'C');
     

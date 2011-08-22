@@ -128,7 +128,7 @@ ui.init = function ()
     // OS X specific stuff
     if (ui.is_osx)
     {
-        $$('.toolButton > img, .sideButton').each(function (button)
+        $$('.toolButton, .toolButton > img, .sideButton').each(function (button)
         {
             button.title = button.title.replace("Ctrl", "Cmd");
         }, this);
@@ -142,7 +142,7 @@ ui.init = function ()
     
     // Button events
     $$('.toolButton').each(ui.initButton);
-    $$('.sideButton').each(function (el)
+    $$('.modeButton').each(function (el)
     {
         ui.initButton(el);
         el.observe('click', ui.onClick_SideButton);

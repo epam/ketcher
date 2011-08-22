@@ -54,7 +54,13 @@ table#ketcher_window > tr
     /*vertical-align: middle;*/
 }
 
-.toolButton
+.toolIcon
+{
+    width: 32px;
+    height: 36px;
+}
+
+.toolButtonCell
 {
     width: 36px;
 }

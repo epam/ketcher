@@ -20,8 +20,8 @@ ketcher.init = function ()
 {
     document.title += ' v' + ketcher.version;
 	ketcher.button_areas = {};
-	var elemLabelOpts = {'fontSize':30};
-	ketcher.button_areas.atom_a = new rnd.ElementTable('atom_a', elemLabelOpts).renderSingle('A');
+	var elemLabelOpts = {'fontSize':29};
+	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_any', elemLabelOpts).renderSingle('A');
 	ketcher.button_areas.atom_h = new rnd.ElementTable('atom_h', elemLabelOpts).renderSingle('H');
 	ketcher.button_areas.atom_c = new rnd.ElementTable('atom_c', elemLabelOpts).renderSingle('C');
 	ketcher.button_areas.atom_n = new rnd.ElementTable('atom_n', elemLabelOpts).renderSingle('N');
@@ -81,6 +81,102 @@ ketcher.init = function ()
 	ketcher.button_areas.bond_double_crossed = ketcher.showMolfileOpts('bond_double_crossed', bond_double_crossed, 20, renderOptsBond);
 	ketcher.button_areas.bond_triple = ketcher.showMolfileOpts('bond_triple', bond_triple, 20, renderOptsBond);
 	ketcher.button_areas.bond_aromatic = ketcher.showMolfileOpts('bond_aromatic', bond_aromatic, 20, renderOptsBond);
+
+	var renderOptsPattern = {
+		'autoScale':true,
+		'autoScaleMargin':2,
+		'hideImplicitHydrogen':true,
+		'hideTerminalLabels':true};
+
+	var clean_up = ['', '  -INDIGO-08221110472D', '',
+		'  9  9  0  0  0  0  0  0  0  0999 V2000',
+		'    2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -3.2000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  2  0  0  0  0',
+		'  2  4  1  0  0  0  0',
+		'  4  5  2  0  0  0  0',
+		'  5  6  1  0  0  0  0',
+		'  6  7  2  0  0  0  0',
+		'  7  8  1  0  0  0  0',
+		'  8  9  2  0  0  0  0',
+		'  9  4  1  0  0  0  0',
+		'M  END'];
+	
+	var hexa1 = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  2  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  2  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  6  2  0  0  0  0',
+		'  6  1  1  0  0  0  0',
+		'M  END'];
+	
+	var hexa2 = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  1  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  6  1  0  0  0  0',
+		'  6  1  1  0  0  0  0',
+		'M  END'];
+
+	var hexaa = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  4  0  0  0  0',
+		'  2  3  4  0  0  0  0',
+		'  3  4  4  0  0  0  0',
+		'  4  5  4  0  0  0  0',
+		'  5  6  4  0  0  0  0',
+		'  6  1  4  0  0  0  0',
+		'M  END'];
+
+	var penta = ['', '  -INDIGO-08221110472D', '',
+		'  5  5  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.0944   -1.5217    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.8000   -2.4621    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.4944   -1.5217    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  1  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  1  1  0  0  0  0',
+		'M  END'
+	];
+	
+	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', clean_up, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', hexa1, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', hexa2, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', penta, 20, renderOptsPattern);
 
     ui.init();
 };

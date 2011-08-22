@@ -850,8 +850,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		if (Object.isUndefined(atom.stereoCare))
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
-        
-		this.writePaddedNumber(atom.valence, 3);
+
+		if (atom.explicitValence)
+			this.writePaddedNumber(atom.valence, 3);
         
 		this.writePaddedNumber(0, 3);
 		this.writeWhiteSpace(6);

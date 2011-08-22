@@ -1033,6 +1033,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         
         v = v.negated();
     }
+	ui.render.update();
 
     var action = new ui.Action();
     var atom_ids = new Array(pattern.length);

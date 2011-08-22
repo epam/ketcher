@@ -47,6 +47,7 @@ table#ketcher_window > tr
 
 .toolButton, .sideButton
 {
+    cursor: pointer;
     border-color: #E8E8E8;
     border-width: thin;
     border-style: solid;

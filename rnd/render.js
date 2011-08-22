@@ -79,7 +79,8 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.autoScale = this.opt.autoScale || false;
 	this.opt.autoScaleMargin = this.opt.autoScaleMargin || 0;
 	this.opt.atomColoring = this.opt.atomColoring || 0;
-	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || 0;
+	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
+	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
 
 	this.scale = scale || 100;
 	this.selectionDistanceCoefficient = 1.0 / 3;
@@ -229,7 +230,6 @@ rnd.Render.prototype.setMolecule = function (ctab)
 	this.size = null;
 	this.bb = null;
 	this.rxnMode = ctab.isReaction;
-	console.log(this.rxnMode);
 }
 
 util.each(rnd.actions, function(action){

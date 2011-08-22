@@ -814,7 +814,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 
 rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
-	if (atom.a.neighbors.length < 2 ||
+	if ((atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
 		atom.a.label.toLowerCase() != "c" ||
 		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
 		atom.a.isotope != 0 ||
@@ -1002,8 +1002,6 @@ rnd.ReStruct.prototype.renderLoops = function ()
 	this.reloops.each(function(rlid, reloop){
 		var loop = reloop.loop;
 		reloop.centre = new util.Vec2();
-		if (!loop.hbs)
-			debugger;
 		loop.hbs.each(function(hbid){
 			var hb = this.molecule.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);

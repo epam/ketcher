@@ -35,7 +35,7 @@ ketcher.init = function ()
 
 	var charge_head = ['', '  fun stuff 0123456789AB', '',
 		'  1  0  0  0  0  0            999 V2000',
-		'    0.4714    1.8562    0.0000 C   0  3  0  0  0  0  0  0  0  0  0  0'];
+		'    0.4714    1.8562    0.0000 A   0  3  0  0  0  0  0  0  0  0  0  0'];
 	var charge_tail = ['M  END'];
 
 	var charge_plus_molfile = charge_head.concat(['M  CHG  1   1   1'], charge_tail);

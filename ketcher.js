@@ -20,7 +20,7 @@ ketcher.init = function ()
 {
     document.title += ' v' + ketcher.version;
 	ketcher.button_areas = {};
-	var elemLabelOpts = {'fontSize':29};
+	var elemLabelOpts = {'fontSize':25};
 	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_any', elemLabelOpts).renderSingle('A');
 	ketcher.button_areas.atom_h = new rnd.ElementTable('atom_h', elemLabelOpts).renderSingle('H');
 	ketcher.button_areas.atom_c = new rnd.ElementTable('atom_c', elemLabelOpts).renderSingle('C');

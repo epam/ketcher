@@ -1971,6 +1971,7 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.action.perform();
         ui.drag.atom_id = ui.atomMap[ui.drag.atom_id];
         ui.drag.new_atom_id = null;
+        ui.render.atomMove(ui.drag.atom_id, ui.page2canvas({'pageX':ui.drag.start_pos.x,'pageY':ui.drag.start_pos.y}));
         ui.drag.action = ui.Action.fromAtomPos(ui.drag.atom_id);
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }

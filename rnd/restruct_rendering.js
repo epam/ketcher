@@ -22,6 +22,15 @@ rnd.ReStruct.prototype.drawArrow = function (a, b)
 	.attr(styles.lineattr);
 }
 
+rnd.ReStruct.prototype.drawPlus = function (c)
+{
+	var s = this.render.scale/5;
+	var paper = this.render.paper;
+	var styles = this.render.styles;
+	return paper.path("M{0},{4}L{0},{5}M{2},{1}L{3},{1}", c.x, c.y, c.x - s, c.x + s, c.y - s, c.y + s)
+	.attr(styles.lineattr);
+}
+
 rnd.ReStruct.prototype.drawBondSingle = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p;

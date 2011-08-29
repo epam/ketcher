@@ -248,8 +248,9 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	this.bonds.each(function(bid, bond){
 		func.call(context, bond.visel);
 	}, this);
-	if (this.rxnArrow != null)
+	if (this.rxnArrow != null) {
 		func.call(context, this.rxnArrow.visel);
+	}
 	if (this.chiral.p != null)
 		func.call(context, this.chiral.visel);
 	this.molecule.sgroups.each(function(sid, sgroup){
@@ -306,7 +307,6 @@ rnd.ReStruct.prototype.scaleVisel = function (visel, s) {
 }
 
 rnd.ReStruct.prototype.clearVisels = function () {
-	// TODO: check if we need this
 	this.eachVisel(function(visel){
 		this.clearVisel(visel);
 	}, this);
@@ -345,8 +345,11 @@ rnd.ReStruct.prototype.update = function (force)
 		this.clearVisel(this.bonds.get(id).visel);
 		this.structChanged |= this.bondsChanged[id] > 0;
 	}
-	if (this.rxnArrow != null)
-		this.clearVisel(this.rxnArrow.visel);
+	if (this.structChanged) {
+		if (this.rxnArrow != null)
+			this.clearVisel(this.rxnArrow.visel);
+		this.rxnArrow = null;
+	}
 	if (this.chiral.visel != null)
 		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
@@ -384,7 +387,7 @@ rnd.ReStruct.prototype.update = function (force)
 	if (updLoops)
 		this.renderLoops();
 	this.clearMarks();
-	this.drawReactionArrow();
+	this.drawReactionSymbols();
 	this.drawSGroups();
 	this.drawChiralLabel();
 	
@@ -414,23 +417,54 @@ rnd.ReStruct.prototype.update = function (force)
 	return true;
 }
 
+rnd.ReStruct.prototype.drawReactionSymbols = function ()
+{
+	if (this.render.rxnMode && this.rxnArrow == null) {
+		this.drawReactionArrow();
+		this.drawReactionPlus(chem.Struct.FRAGMENT.REACTANT);
+		this.drawReactionPlus(chem.Struct.FRAGMENT.PRODUCT);
+		var offset = this.render.offset;
+		if (offset != null) {
+			this.translateVisel(this.rxnArrow.visel, offset);
+		}
+	}
+}
+
 rnd.ReStruct.prototype.drawReactionArrow = function ()
 {
-	if (this.render.rxnMode) {
-		var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
-		var bbProd = this.getGroupBB(chem.Struct.FRAGMENT.PRODUCT);
+	var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
+	var bbProd = this.getGroupBB(chem.Struct.FRAGMENT.PRODUCT);
 
-		var centre = new util.Vec2(
-			(bbReact.max.x + bbProd.min.x) / 2,
-			(Math.min(bbReact.min.y, bbProd.min.y) + Math.max(bbReact.max.y, bbProd.max.y)) / 2);
+	var centre = new util.Vec2(
+		(bbReact.max.x + bbProd.min.x) / 2,
+		(Math.min(bbReact.min.y, bbProd.min.y) + Math.max(bbReact.max.y, bbProd.max.y)) / 2);
 
-		if (this.rxnArrow == null) {
-			this.rxnArrow = {};
-			this.rxnArrow.path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
-			this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
-			// TODO: when to update reaction arrow?
-			this.rxnArrow.visel.add(this.rxnArrow.path, util.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
-		}
+	this.rxnArrow = {};
+	this.rxnArrow.path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
+	this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
+	// TODO: when to update reaction arrow?
+	this.rxnArrow.visel.add(this.rxnArrow.path, util.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
+}
+
+rnd.ReStruct.prototype.drawReactionPlus = function (type)
+{
+	var boxes = [];
+	this.eachCC(function(ccid, cc){
+		var bb = this.connectedComponentGetBoundingBox(ccid, cc);
+		bb.centre = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		boxes.push(bb);
+	}, type, this);
+
+	boxes.sort(function(bb1, bb2){
+		return bb1.centre.x - bb2.centre.x;
+	});
+
+	for (var i = 1; i < boxes.length; ++i) {
+		var bb0 = boxes[i - 1];
+		var bb1 = boxes[i];
+		var centre = new util.Vec2(0.5 * (bb0.max.x + bb1.min.x), 0.5 * (bb0.centre.y + bb1.centre.y));
+		var plusPath = this.drawPlus(centre);
+		this.rxnArrow.visel.add(plusPath, util.Box2Abs.fromRelBox(plusPath.getBBox()));
 	}
 }
 
@@ -466,14 +500,21 @@ rnd.ReStruct.prototype.drawChiralLabel = function ()
 	}
 }
 
+rnd.ReStruct.prototype.eachCC = function (func, type, context) {
+	this.connectedComponents.each(function(ccid, cc) {
+		if (!type || this.ccFragmentType.get(ccid) == type)
+			func.call(context || this, ccid, cc);
+	}, this);
+}
+
 rnd.ReStruct.prototype.getGroupBB = function (type)
 {
 	var bb = {'min':null, 'max':null};
-	this.connectedComponents.each(function(ccid, cc) {
-		if (this.ccFragmentType.get(ccid) == type)
-			bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);			
-	}, this);
 	
+	this.eachCC(function(ccid, cc) {
+		bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);
+	}, type, this);
+
 	return bb;
 }
 

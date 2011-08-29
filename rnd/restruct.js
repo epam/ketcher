@@ -118,7 +118,7 @@ rnd.ReStruct.prototype.clearConnectedComponents = function () {
 }
 
 rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
-	var list = [aid];
+	var list = (typeof(aid['length']) == 'number') ? util.array(aid) : [aid];
 	var ids = util.Set.empty();
 
 	while (list.length > 0) {
@@ -128,7 +128,6 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 			var atom = this.atoms.get(aid);
 			if (atom.component >= 0) {
 				util.Set.add(adjacentComponents, atom.component);
-				return;
 			}
 			for (var i = 0; i < atom.a.neighbors.length; ++i) {
 				var neiId = this.molecule.halfBonds.get(atom.a.neighbors[i]).end;
@@ -143,8 +142,11 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 
 rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 	var compId = this.connectedComponents.add(ids);
+	var adjacentComponents = util.Set.empty();
+	var atomIds = this.getConnectedComponent(util.Set.list(ids), adjacentComponents);
+	util.Set.remove(adjacentComponents, compId);
 	var type = -1;
-	util.Set.each(ids, function(aid) {
+	util.Set.each(atomIds, function(aid) {
 		var atom = this.atoms.get(aid);
 		atom.component = compId;
 		if (atom.a.rxnFragmentType != -1) {
@@ -153,6 +155,7 @@ rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 			type = atom.a.rxnFragmentType;
 		}
 	}, this);
+
 	this.ccFragmentType.set(compId, type);
 	return compId;
 }
@@ -177,12 +180,10 @@ rnd.ReStruct.prototype.assignConnectedComponents = function () {
 			return;
 		var adjacentComponents = util.Set.empty();
 		var ids = this.getConnectedComponent(aid, adjacentComponents);
-		var ccid0 = this.addConnectedComponent(ids);
-		util.Set.each(adjacentComponents, function(ccid1){
-			var ids = this.connectedComponents.get(ccid1);
-			this.connectedComponentMergeIn(ccid0, ids);
-			this.connectedComponents.remove(ccid1);
-		}, this);			
+		util.Set.each(adjacentComponents, function(ccid){
+			this.removeConnectedComponent(ccid);
+		}, this);
+		this.addConnectedComponent(ids);
 	}, this);
 }
 
@@ -370,7 +371,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.updateHalfBonds();
 	this.sortNeighbors();
 	this.assignConnectedComponents();
-//	this.printConnectedComponents();
+	this.printConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();
 	this.initialized = true;

@@ -1067,7 +1067,11 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				var halfAngle = (Math.PI - angle) / 2;
 				var dir = hbb.dir.rotate(halfAngle);
 				var pi = this.atoms.get(hbb.begin).a.ps;
-				var offset = settings.bondSpace / Math.sin(halfAngle);
+				var sin = Math.sin(halfAngle);
+				var minSin = 0.1;
+				if (Math.abs(sin) < minSin)
+					sin = sin * minSin / Math.abs(sin);
+				var offset = settings.bondSpace / sin;
 				var qi = pi.addScaled(dir, -offset);
 				pathStr += (k == 0 ? 'M' : 'L');
 				pathStr += qi.x.toString() + ',' + qi.y.toString();

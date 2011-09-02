@@ -178,6 +178,9 @@ ketcher.init = function ()
 	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', hexa2, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', penta, 20, renderOptsPattern);
 
+	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
+	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();
+
     ui.init();
 };
 

@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -23,6 +23,8 @@ chem.Struct = function ()
 	this.loops = new util.Pool();
 	this.isChiral = false;
 	this.isReaction = false;
+	this.rxnArrows = new util.Pool();
+	this.rxnPluses = new util.Pool();
 }
 
 chem.Struct.prototype.toLists = function ()
@@ -69,7 +71,14 @@ chem.Struct.prototype.clone = function ()
 			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 	});
+	this.rxnArrows = new util.Pool();
+	this.rxnPluses = new util.Pool();
 	cp.isChiral = this.isChiral;
+	cp.isReaction = this.isReaction;
+	this.rxnArrows.each(function(id, arrow) {
+		aidMap[aid] = cp.atoms.add(arrow.clone());
+	});
+
 
 	return cp;
 }
@@ -77,7 +86,7 @@ chem.Struct.prototype.clone = function ()
 chem.Struct.prototype.findBondId = function (begin, end)
 {
 	var id = -1;
-    
+
 	this.bonds.find(function (bid, bond)
 	{
 		if ((bond.begin == begin && bond.end == end) ||
@@ -88,7 +97,7 @@ chem.Struct.prototype.findBondId = function (begin, end)
 		}
 		return false;
 	}, this);
-    
+
 	return id;
 }
 
@@ -506,50 +515,76 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 	this.sgroups.remove(sgid);
 }
 
+chem.Struct.itemSetPos = function (item, pp, scaleFactor)
+{
+	item.pp = pp;
+	item.pos = new util.Vec2(pp.x, -pp.y);
+	if (scaleFactor)
+		item.ps = item.pp.scaled(scaleFactor);
+}
+
 chem.Struct.prototype._atomSetPos = function (aid, pp, scaleFactor)
 {
-	var atom = this.atoms.get(aid);
-	atom.pp = pp;
-	atom.pos = new util.Vec2(pp.x, -pp.y);
-	if (scaleFactor)
-		atom.ps = atom.pp.scaled(scaleFactor);
+	chem.Struct.itemSetPos(this.atoms.get(aid), pp, scaleFactor);
+}
+
+chem.Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
+{
+	chem.Struct.itemSetPos(this.rxnPluses.get(id), pp, scaleFactor);
+}
+
+chem.Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
+{
+	chem.Struct.itemSetPos(this.rxnArrows.get(id), pp, scaleFactor);
 }
 
 chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 {
+	var abscfs = function(pp) { return pp.sub(min).yComplement(0).scaled(scale); }
+	var relcfs = function(pp) { return pp.yComplement(0).scaled(scale); }
 	this.atoms.each(function (aid, atom) {
-		this._atomSetPos(aid, atom.pp
-			.sub(min)
-			.yComplement(0)
-			.scaled(scale));
+		this._atomSetPos(aid, abscfs(atom.pp));
 	}, this);
 
 	this.sgroups.each(function (sgid, sg) {
 		if (sg.p) {
-			sg.pr = sg.p
-			.yComplement(0)
-			.scaled(scale);
+			sg.pr = relcfs(sg.p);
 			sg.p = sg.p.sub(min);
-			sg.pa = sg.p
-			.yComplement(0)
-			.scaled(scale);
+			sg.pa = relcfs(sg.p);
 		}
+	}, this);
+
+	this.rxnPluses.each(function (id, item) {
+		this._rxnPlusSetPos(id, abscfs(item.pp));
+	}, this);
+	this.rxnArrows.each(function (id, item) {
+		this._rxnArrowSetPos(id, abscfs(item.pp));
 	}, this);
 }
 
 chem.Struct.prototype.getCoordBoundingBox = function ()
 {
 	var bb = null;
-	this.atoms.each(function (aid, atom) {
+	var extend = function(pp) {
 		if (!bb)
 			bb = {
-				min: atom.pp,
-				max: atom.pp
+				min: pp,
+				max: pp
 			}
 		else {
-			bb.min = util.Vec2.min(bb.min, atom.pp);
-			bb.max = util.Vec2.max(bb.max, atom.pp);
+			bb.min = util.Vec2.min(bb.min, pp);
+			bb.max = util.Vec2.max(bb.max, pp);
 		}
+	}
+
+	this.atoms.each(function (aid, atom) {
+		extend(atom.pp);
+	});
+	this.rxnPluses.each(function (id, item) {
+		extend(item.pp);
+	});
+	this.rxnArrows.each(function (id, item) {
+		extend(item.pp);
 	});
 	if (!bb)
 		bb = {
@@ -615,7 +650,7 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 	this.dblBonds = 0; // number of double bonds in the loop
 	this.aromatic = true;
 	this.convex = convex || false;
-	
+
 	hbs.each(function(hb){
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
 		if (bond.type != chem.Struct.BOND.TYPE.AROMATIC)
@@ -623,4 +658,30 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 		if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
+}
+
+chem.Struct.RxnPlus = function (params)
+{
+	params = params || {};
+	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
+	this.pp = new util.Vec2();
+	this.ps = new util.Vec2();
+}
+
+chem.Struct.RxnPlus.prototype.clone = function ()
+{
+	return new chem.Struct.RxnPlus(this);
+}
+
+chem.Struct.RxnArrow = function (params)
+{
+	params = params || {};
+	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
+	this.pp = new util.Vec2();
+	this.ps = new util.Vec2();
+}
+
+chem.Struct.RxnArrow.prototype.clone = function ()
+{
+	return new chem.Struct.RxnArrow(this);
 }

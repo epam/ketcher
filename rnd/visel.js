@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -28,9 +28,10 @@ rnd.Visel.TYPE = {
 	'BOND' : 2,
 	'LOOP' : 3,
 	'ARROW' : 4,
-	'SGROUP' : 5,
-	'CHIRAL' : 6,
-	'TMP' : 7
+	'PLUS' : 5,
+	'SGROUP' : 6,
+	'CHIRAL' : 7,
+	'TMP' : 8
 }
 
 rnd.Visel.prototype.add = function (path, bb)

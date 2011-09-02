@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -146,7 +146,7 @@ rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 				this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	
+
 	return paper.path(cis_trans ?
 		"M{0},{1}L{6},{7}M{4},{5}L{2},{3}" :
 		"M{0},{1}L{2},{3}M{4},{5}L{6},{7}",
@@ -552,7 +552,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				rightMargin += hydroIndex.rbb.width + delta;
 				this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
 			}
-			
+
 			var radical = {};
 			if (atom.a.radical != 0)
 			{
@@ -657,7 +657,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				if (hydroIndex != null)
 					this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
 			}
-			
+
 			var charge = {};
 			if (atom.a.charge != 0)
 			{
@@ -684,7 +684,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				rightMargin += charge.rbb.width + delta;
 				this.addAtomPath('data', aid, charge.path, charge.rbb);
 			}
-			
+
 			if (atom.a.badConn && opt.showValenceWarnings) {
 				var warning = {};
 				var y = atom.a.ps.y + label.rbb.height / 2 + delta;
@@ -942,7 +942,7 @@ rnd.ReStruct.prototype.clearVisel = function (visel)
 }
 
 rnd.ReStruct.prototype.shiftBonds = function ()
-{    
+{
 	var settings = this.render.settings;
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);

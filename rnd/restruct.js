@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -33,7 +33,7 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.sGroupHighlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
-	
+
 	this.component = -1;
 }
 
@@ -41,7 +41,7 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 {
 	this.b = bond;
 	this.doubleBondShift = 0;
-	
+
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.BOND);
 
 	this.highlight = false;
@@ -56,6 +56,8 @@ rnd.ReStruct = function (molecule, render)
 	this.atoms = new util.Map();
 	this.bonds = new util.Map();
 	this.reloops = new util.Map();
+	this.rxnPluses = new util.Map();
+	this.rxnArrows = new util.Map();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -68,8 +70,10 @@ rnd.ReStruct = function (molecule, render)
 
 	this.connectedComponents = new util.Pool();
 	this.ccFragmentType = new util.Map();
-	this.bondsChanged = {};
-	this.atomsChanged = {};
+
+	for (var map in rnd.ReStruct.maps) {
+		this[map+'Changed'] = {};
+	}
 	this.structChanged = false;
 	this.viselsChanged = {};
 
@@ -84,11 +88,26 @@ rnd.ReStruct = function (molecule, render)
 	molecule.loops.each(function(lid, loop){
 		this.reloops.set(lid, new rnd.ReLoop(loop));
 	}, this);
-	
+
+	molecule.rxnPluses.each(function(id, item){
+		this.rxnPluses.set(id, new rnd.ReRxnPlus(item));
+	}, this);
+
+	molecule.rxnArrows.each(function(id, item){
+		this.rxnArrows.set(id, new rnd.ReRxnArrow(item));
+	}, this);
+
 	this.coordProcess();
-	
+
 	this.tmpVisels = [];
 }
+
+rnd.ReStruct.maps = {
+	'atoms':     0,
+	'bonds':     1,
+	'rxnPluses': 2,
+	'rxnArrows': 3
+};
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
@@ -98,7 +117,7 @@ rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	util.Set.remove(cc, aid);
 	if (util.Set.size(cc) < 1)
 		this.connectedComponents.remove(atom.component);
-		
+
 	atom.component = -1;
 }
 
@@ -136,7 +155,7 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 			}
 		}).apply(this);
 	}
-	
+
 	return ids;
 }
 
@@ -188,7 +207,7 @@ rnd.ReStruct.prototype.assignConnectedComponents = function () {
 }
 
 rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
-	cc = cc || this.connectedComponents.get(ccid);	
+	cc = cc || this.connectedComponents.get(ccid);
 	bb = bb || {'min':null, 'max':null};
 	util.Set.each(cc, function(aid) {
 		var ps = this.atoms.get(aid).a.ps;
@@ -197,7 +216,7 @@ rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb
 		} else {
 			bb.min = bb.min.min(ps);
 			bb.max = bb.max.max(ps);
-		}		
+		}
 	}, this);
 	return bb;
 }
@@ -231,26 +250,26 @@ rnd.ReStruct.prototype.markAtomRemoved = function () {
 }
 
 rnd.ReStruct.prototype.markBond = function (bid, mark) {
-	this.bondsChanged[bid] = (bid in this.bondsChanged) ?
-	Math.max(mark, this.bondsChanged[bid]) : mark;
-	this.clearVisel(this.bonds.get(bid).visel);
+	this.markItem('bonds', bid, mark);
 }
 
 rnd.ReStruct.prototype.markAtom = function (aid, mark) {
-	this.atomsChanged[aid] = (aid in this.atomsChanged) ?
-	Math.max(mark, this.atomsChanged[aid]) : mark;
-	this.clearVisel(this.atoms.get(aid).visel);
+	this.markItem('atoms', aid, mark);
+}
+
+rnd.ReStruct.prototype.markItem = function (map, id, mark) {
+	var mapChanged = this[map+'Changed'];
+	mapChanged[id] = (id in mapChanged) ?
+	Math.max(mark, mapChanged[id]) : mark;
+	this.clearVisel(this[map].get(id).visel);
 }
 
 rnd.ReStruct.prototype.eachVisel = function (func, context) {
-	this.atoms.each(function(aid, atom){
-		func.call(context, atom.visel);
-	}, this);
-	this.bonds.each(function(bid, bond){
-		func.call(context, bond.visel);
-	}, this);
-	if (this.rxnArrow != null) {
-		func.call(context, this.rxnArrow.visel);
+
+	for (var map in rnd.ReStruct.maps) {
+		this[map].each(function(id, item){
+			func.call(context, item.visel);
+		}, this);
 	}
 	if (this.chiral.p != null)
 		func.call(context, this.chiral.visel);
@@ -320,37 +339,36 @@ rnd.ReStruct.prototype.update = function (force)
 	// check items to update
 	var id;
 	if (force) {
-		this.atoms.each(function(aid){
-			this.atomsChanged[aid] = 1;
-		}, this);
-		this.bonds.each(function(bid){
-			this.bondsChanged[bid] = 1;
-		}, this);
+		(function(){
+			for (var map in rnd.ReStruct.maps) {
+				this[map].each(function(id){
+					this[map+'Changed'][id] = 1;
+				}, this);
+			}
+		}).call(this);
 	} else {
 		// check if some of the items marked are already gone
-		for (id in this.atomsChanged)
-			if (!this.atoms.has(id))
-				delete this.atomsChanged[id];
-		for (id in this.bondsChanged)
-			if (!this.bonds.has(id))
-				delete this.bondsChanged[id];
+		(function(){
+			for (var map in rnd.ReStruct.maps) {
+				for (id in this[map+'Changed'])
+					if (!this[map].has(id))
+						delete this[map+'Changed'][id];
+			}
+		}).call(this);
 	}
 	for (id in this.atomsChanged)
 		this.connectedComponentRemoveAtom(id);
 
-	for (id in this.atomsChanged) {
-		this.clearVisel(this.atoms.get(id).visel);
-		this.structChanged |= this.atomsChanged[id] > 0;
-	}
-	for (id in this.bondsChanged) {
-		this.clearVisel(this.bonds.get(id).visel);
-		this.structChanged |= this.bondsChanged[id] > 0;
-	}
-	if (this.structChanged) {
-		if (this.rxnArrow != null)
-			this.clearVisel(this.rxnArrow.visel);
-		this.rxnArrow = null;
-	}
+	(function(){
+		for (var map in rnd.ReStruct.maps) {
+			var mapChanged = this[map+'Changed'];
+			for (id in mapChanged) {
+				this.clearVisel(this[map].get(id).visel);
+				this.structChanged |= mapChanged[id] > 0;
+			}
+		}
+	}).call(this);
+
 	if (this.chiral.visel != null)
 		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
@@ -371,7 +389,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.updateHalfBonds();
 	this.sortNeighbors();
 	this.assignConnectedComponents();
-	this.printConnectedComponents();
+//	this.printConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();
 	this.initialized = true;
@@ -391,7 +409,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.drawReactionSymbols();
 	this.drawSGroups();
 	this.drawChiralLabel();
-	
+
 //	this.connectedComponents.each(function(ccid, cc){
 //		var min = null;
 //		var max = null;
@@ -420,53 +438,38 @@ rnd.ReStruct.prototype.update = function (force)
 
 rnd.ReStruct.prototype.drawReactionSymbols = function ()
 {
-	if (this.render.rxnMode && this.rxnArrow == null) {
-		this.drawReactionArrow();
-		this.drawReactionPlus(chem.Struct.FRAGMENT.REACTANT);
-		this.drawReactionPlus(chem.Struct.FRAGMENT.PRODUCT);
-		var offset = this.render.offset;
-		if (offset != null) {
-			this.translateVisel(this.rxnArrow.visel, offset);
-		}
+	var item;
+	for (var id in this.rxnArrowsChanged) {
+		item = this.rxnArrows.get(id);
+		this.drawReactionArrow(item);
+	}
+	for (var id in this.rxnPlusesChanged) {
+		item = this.rxnPluses.get(id);
+		this.drawReactionPlus(item);
 	}
 }
 
-rnd.ReStruct.prototype.drawReactionArrow = function ()
-{
-	var bbReact = this.getGroupBB(chem.Struct.FRAGMENT.REACTANT);
-	var bbProd = this.getGroupBB(chem.Struct.FRAGMENT.PRODUCT);
-
-	var centre = new util.Vec2(
-		(bbReact.max.x + bbProd.min.x) / 2,
-		(Math.min(bbReact.min.y, bbProd.min.y) + Math.max(bbReact.max.y, bbProd.max.y)) / 2);
-
-	this.rxnArrow = {};
-	this.rxnArrow.path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
-	this.rxnArrow.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
-	// TODO: when to update reaction arrow?
-	this.rxnArrow.visel.add(this.rxnArrow.path, util.Box2Abs.fromRelBox(this.rxnArrow.path.getBBox()));
+rnd.ReStruct.prototype.offsetVisel = function (visel) {
+	var offset = this.render.offset;
+	if (offset != null) {
+		this.translateVisel(visel, offset);
+	}
 }
 
-rnd.ReStruct.prototype.drawReactionPlus = function (type)
+rnd.ReStruct.prototype.drawReactionArrow = function (item)
 {
-	var boxes = [];
-	this.eachCC(function(ccid, cc){
-		var bb = this.connectedComponentGetBoundingBox(ccid, cc);
-		bb.centre = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-		boxes.push(bb);
-	}, type, this);
+	var centre = item.item.ps;
+	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
+	this.offsetVisel(item.visel);
+}
 
-	boxes.sort(function(bb1, bb2){
-		return bb1.centre.x - bb2.centre.x;
-	});
-
-	for (var i = 1; i < boxes.length; ++i) {
-		var bb0 = boxes[i - 1];
-		var bb1 = boxes[i];
-		var centre = new util.Vec2(0.5 * (bb0.max.x + bb1.min.x), 0.5 * (bb0.centre.y + bb1.centre.y));
-		var plusPath = this.drawPlus(centre);
-		this.rxnArrow.visel.add(plusPath, util.Box2Abs.fromRelBox(plusPath.getBBox()));
-	}
+rnd.ReStruct.prototype.drawReactionPlus = function (item)
+{
+	var centre = item.item.ps;
+	var path = this.drawPlus(centre);
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
+	this.offsetVisel(item.visel);
 }
 
 rnd.ReStruct.prototype.drawSGroups = function ()
@@ -511,7 +514,7 @@ rnd.ReStruct.prototype.eachCC = function (func, type, context) {
 rnd.ReStruct.prototype.getGroupBB = function (type)
 {
 	var bb = {'min':null, 'max':null};
-	
+
 	this.eachCC(function(ccid, cc) {
 		bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);
 	}, type, this);
@@ -635,7 +638,7 @@ rnd.ReStruct.prototype.findLoops = function ()
 		}
 	}, this);
 }
-	
+
 rnd.ReStruct.prototype.coordProcess = function ()
 {
 	this.molecule.coordProject();
@@ -655,9 +658,17 @@ rnd.ReStruct.prototype.coordProcess = function ()
 rnd.ReStruct.prototype.scaleCoordinates = function()
 {
 	var settings = this.render.settings;
+	var scale = function (item) {
+		item.ps = item.pp.scaled(settings.scaleFactor);
+	};
 	for (var aid in this.atomsChanged) {
-		var atom = this.atoms.get(aid);
-		atom.a.ps = atom.a.pp.scaled(settings.scaleFactor);
+		scale(this.atoms.get(aid).a);
+	}
+	for (var id in this.rxnArrowsChanged) {
+		scale(this.rxnArrows.get(id).item);
+	}
+	for (var id in this.rxnPlusesChanged) {
+		scale(this.rxnPluses.get(id).item);
 	}
 }
 
@@ -677,6 +688,24 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	return aid;
 }
 
+rnd.ReStruct.prototype.rxnPlusAdd = function (pos)
+{
+	var id = this.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
+	var reItem = new rnd.ReRxnPlus(this.molecule.rxnPluses.get(id));
+	this.rxnPluses.set(id, reItem);
+	this.molecule._rxnPlusSetPos(id, pos);
+	return id;
+}
+
+rnd.ReStruct.prototype.rxnArrowAdd = function (pos)
+{
+	var id = this.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
+	var reItem = new rnd.ReRxnArrow(this.molecule.rxnArrows.get(id));
+	this.rxnArrows.set(id, reItem);
+	this.molecule._rxnArrowSetPos(id, pos);
+	return id;
+}
+
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end)
@@ -691,7 +720,7 @@ rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 	pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
 	pp.begin = begin;
 	pp.end = end;
-	
+
 	var bid = this.molecule.bonds.add(new chem.Struct.Bond(pp));
 	var bond = this.molecule.bonds.get(bid);
 	this.bonds.set(bid, new rnd.ReBond(bond));
@@ -716,7 +745,7 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 	if (util.Set.size(set) == 0) {
 		this.connectedComponents.remove(atom.component);
 	}
-	
+
 	// clone neighbors array, as it will be modified
 	var neiHb = Array.from(atom.a.neighbors);
 	neiHb.each(function(hbid){
@@ -801,4 +830,26 @@ rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 	}
 	this.molecule.sgroups.remove(sgid);
 	return atoms;
+}
+
+rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
+{
+	this.item = plus;
+	this.visel = new rnd.Visel(rnd.Visel.TYPE.PLUS);
+
+	this.highlight = false;
+	this.highlighting = null;
+	this.selected = false;
+	this.selectionPlate = null;
+}
+
+rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
+{
+	this.item = arrow;
+	this.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
+
+	this.highlight = false;
+	this.highlighting = null;
+	this.selected = false;
+	this.selectionPlate = null;
 }

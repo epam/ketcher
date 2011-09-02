@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -48,7 +48,9 @@ rnd.actions = [
 	'sGroupSetHighlight',
 	'sGroupSetAttr',
 	'sGroupSetType',
-	'sGroupSetPos' // data s-group label position
+	'sGroupSetPos', // data s-group label position
+	'rxnPlusAdd',
+	'rxnArrowAdd',
 ];
 
 rnd.logMethod = function () { }
@@ -498,6 +500,22 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 	return aid;
 }
 
+rnd.Render.prototype._rxnPlusAdd = function (pos)
+{
+	rnd.logMethod("_rxnPlusAdd");
+	var id = this.ctab.rxnPlusAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	this.ctab.markItem('rxnPluses', id, 1);
+	return id;
+}
+
+rnd.Render.prototype._rxnArrowAdd = function (pos)
+{
+	rnd.logMethod("_rxnArrowAdd");
+	var id = this.ctab.rxnArrowAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	this.ctab.markItem('rxnArrows', id, 1);
+	return id;
+}
+
 rnd.Render.prototype._atomMove = function (aid, pos)
 {
 	rnd.logMethod("_atomMove");
@@ -513,7 +531,7 @@ rnd.Render.prototype.atomGetPos = function (aid)
 }
 
 rnd.Render.prototype._atomMoveRel = function (aid, d)
-{    
+{
 	rnd.logMethod("_atomMoveRel");
 	this.atomMove(aid, this.atomGetPos(aid).add(new util.Vec2(d.x, d.y)));
 }
@@ -720,7 +738,7 @@ rnd.Render.prototype.drawSelectionRectangle = function (r) {
 			'stroke':'#000',
 			'stroke-width':'1px'
 		});
-	}	
+	}
 }
 
 rnd.Render.prototype.getElementsInRectangle = function (rect) {

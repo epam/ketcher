@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2011 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -33,30 +33,34 @@ ui.Action.OPERATION =
     ATOM_DEL:        4,
     BOND_ATTR:       5,
     BOND_ADD:        6,
-    BOND_DEL:        7, 
-    BOND_FLIP:       8, 
+    BOND_DEL:        7,
+    BOND_FLIP:       8,
     CANVAS_LOAD:     9,
     SGROUP_ATTR:     10,
     SGROUP_ADD:      11,
     SGROUP_DEL:      12,
     SGROUP_ATOM_ADD: 13,
-    SGROUP_ATOM_DEL: 14
+    SGROUP_ATOM_DEL: 14,
+    RXN_ARROW_DEL:   15,
+    RXN_ARROW_ADD:   16,
+    RXN_PLUS_DEL:    17,
+    RXN_PLUS_ADD:    18
 };
 
 ui.Action.prototype.addOperation = function (type, params)
 {
-    var op = 
+    var op =
     {
         type: type,
         params: params,
-        inverted: 
+        inverted:
         {
             type: null,
             params: null,
             inverted: null
         }
     };
-    
+
     op.inverted.inverted = op;
     this.operations.push(op);
     return op;
@@ -73,7 +77,7 @@ ui.Action.prototype.perform = function ()
     var action = new ui.Action();
     var prev_op = null;
     var idx = 0;
-    
+
     this.operations.each(function (op)
     {
         switch (op.type)
@@ -87,7 +91,7 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.atomMove(ui.atomMap[op.params.id], op.params.pos);
             break;
-            
+
         case ui.Action.OPERATION.ATOM_ATTR:
             op.inverted.type = ui.Action.OPERATION.ATOM_ATTR;
             op.inverted.params =
@@ -98,12 +102,12 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.atomSetAttr(ui.atomMap[op.params.id], op.params.attr_name, op.params.attr_value);
             break;
-            
+
         case ui.Action.OPERATION.ATOM_ADD:
             op.inverted.type = ui.Action.OPERATION.ATOM_DEL;
-            
+
             var id = ui.render.atomAdd(op.params.pos, op.params.atom);
-            
+
             if (op.inverted.params == null)
             {
                 op.inverted.params =
@@ -113,7 +117,7 @@ ui.Action.prototype.perform = function ()
             } else
                 ui.atomMap[op.inverted.params.id] = id;
             break;
-            
+
         case ui.Action.OPERATION.ATOM_DEL:
             op.inverted.type = ui.Action.OPERATION.ATOM_ADD;
             op.inverted.params =
@@ -123,7 +127,7 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.atomRemove(ui.atomMap[op.params.id]);
             break;
-            
+
         case ui.Action.OPERATION.BOND_ATTR:
             op.inverted.type = ui.Action.OPERATION.BOND_ATTR;
             op.inverted.params =
@@ -134,12 +138,12 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.bondSetAttr(ui.bondMap[op.params.id], op.params.attr_name, op.params.attr_value);
             break;
-            
+
         case ui.Action.OPERATION.BOND_ADD:
             op.inverted.type = ui.Action.OPERATION.BOND_DEL;
-            
+
             var id = ui.render.bondAdd(ui.atomMap[op.params.begin], ui.atomMap[op.params.end], op.params.bond);
-            
+
             if (op.inverted.params == null)
             {
                 op.inverted.params =
@@ -149,7 +153,7 @@ ui.Action.prototype.perform = function ()
             } else
                 ui.bondMap[op.inverted.params.id] = id;
             break;
-            
+
         case ui.Action.OPERATION.BOND_DEL:
             var bond = ui.ctab.bonds.get(ui.bondMap[op.params.id]);
             var begin = ui.atomMap.indexOf(bond.begin);
@@ -164,31 +168,31 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.bondRemove(ui.bondMap[op.params.id]);
             break;
-            
+
         case ui.Action.OPERATION.BOND_FLIP:
             op.inverted.type = ui.Action.OPERATION.BOND_FLIP;
             op.inverted.params =
             {
                 id: op.params.id
             };
-            
+
             ui.bondMap[op.params.id] = ui.render.bondFlip(ui.bondMap[op.params.id]);
             break;
-            
+
         case ui.Action.OPERATION.CANVAS_LOAD:
             op.inverted.type = ui.Action.OPERATION.CANVAS_LOAD;
-            
+
             if (op.params.atom_map == null)
             {
                 op.params.atom_map = new Array();
                 op.params.bond_map = new Array();
                 op.params.sgroup_map = new Array();
-                
+
                 op.params.ctab.atoms.each(function (aid)
                 {
                     op.params.atom_map.push(parseInt(aid));
                 }, this);
-                
+
                 op.params.ctab.bonds.each(function (bid)
                 {
                     op.params.bond_map.push(parseInt(bid));
@@ -199,7 +203,7 @@ ui.Action.prototype.perform = function ()
                     op.params.sgroup_map.push(parseInt(sid));
                 }, this);
             }
-            
+
             op.inverted.params =
             {
                 ctab: ui.ctab,
@@ -215,13 +219,13 @@ ui.Action.prototype.perform = function ()
             ui.bondMap = op.params.bond_map;
             ui.sgroupMap = op.params.sgroup_map;
             break;
-            
+
         case ui.Action.OPERATION.SGROUP_ATTR:
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATTR;
-            
+
             var id = ui.sgroupMap[op.params.id];
             var cur_type = ui.render.sGroupGetType(id);
-            
+
             op.inverted.params =
             {
                 id: op.params.id,
@@ -236,17 +240,17 @@ ui.Action.prototype.perform = function ()
                     fieldValue: ui.render.sGroupGetAttr(id, 'fieldValue')
                 }
             };
-            
+
             if (op.params.type != op.inverted.params.type)
                 ui.render.sGroupSetType(id, op.params.type);
-                
+
             var attrs_hash = new Hash(op.params.attrs);
             attrs_hash.each(function (attr)
             {
                 ui.render.sGroupSetAttr(id, attr.key, attr.value);
             }, this);
             break;
-            
+
         case ui.Action.OPERATION.SGROUP_ATOM_ADD:
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATOM_DEL;
             op.inverted.params =
@@ -257,7 +261,7 @@ ui.Action.prototype.perform = function ()
             ui.render.atomAddToSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
 
             break;
-            
+
         case ui.Action.OPERATION.SGROUP_ATOM_DEL:
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATOM_ADD;
             op.inverted.params =
@@ -267,23 +271,23 @@ ui.Action.prototype.perform = function ()
             };
             ui.render.atomRemoveFromSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
             break;
-            
+
         case ui.Action.OPERATION.SGROUP_ADD:
             op.inverted.type = ui.Action.OPERATION.SGROUP_DEL;
-            
+
             var id = ui.render.sGroupCreate(op.params.type);
-            
+
             var attrs_hash = new Hash(op.params.attrs);
             attrs_hash.each(function (attr)
             {
                 ui.render.sGroupSetAttr(id, attr.key, attr.value);
             }, this);
-            
+
             op.params.atoms.each(function (aid)
             {
                 ui.render.atomAddToSGroup(ui.atomMap[aid], id);
             }, this);
-            
+
             if (op.inverted.params == null)
             {
                 op.inverted.params =
@@ -293,13 +297,13 @@ ui.Action.prototype.perform = function ()
             } else
                 ui.sgroupMap[op.inverted.params.id] = id;
             break;
-            
+
         case ui.Action.OPERATION.SGROUP_DEL:
             var id = ui.sgroupMap[op.params.id];
             var type = ui.render.sGroupGetType(id);
             var atoms = ui.render.sGroupGetAtoms(id).clone();
             var i;
-            
+
             for (i = 0; i < atoms.length; i++)
                 atoms[i] = ui.atomMap.indexOf(atoms[i]);
 
@@ -322,16 +326,16 @@ ui.Action.prototype.perform = function ()
             ui.highlightSGroup(id, false);
             ui.render.sGroupDelete(id);
             break;
-            
+
         default:
             return;
         }
         action.operations.push(op.inverted);
         idx++;
     }, this);
-    
+
     action.operations.reverse();
-    
+
     return action;
 }
 
@@ -357,7 +361,7 @@ ui.Action.prototype.isDummy = function ()
             if (ui.render.sGroupGetType(ui.sgroupMap[op.params.id]) == op.params.type)
             {
                 var attr_hash = new Hash(op.params.attrs);
-                
+
                 if (Object.isUndefined(attr_hash.detect(function (attr)
                 {
                     if (ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], attr.key) == attr.value)
@@ -373,7 +377,7 @@ ui.Action.prototype.isDummy = function ()
     {
         return false;
     }
-    
+
     return true;
 }
 
@@ -386,10 +390,10 @@ ui.Action.fromAtomPos = function (id, pos)
         id: ui.atomMap.indexOf(id),
         pos: ui.render.atomGetPos(id)
     });
-    
+
     if (arguments.length > 1)
         ui.render.atomMove(id, pos);
-    
+
     return action;
 }
 
@@ -405,7 +409,7 @@ ui.Action.fromSelectedAtomsPos = function ()
             pos: ui.render.atomGetPos(id)
         });
     }, this);
-    
+
     return action;
 }
 
@@ -424,7 +428,7 @@ ui.Action.fromBondPos = function (id)
         id: ui.atomMap.indexOf(bond.end),
         pos: ui.render.atomGetPos(bond.end)
     });
-    
+
     return action;
 }
 
@@ -434,7 +438,7 @@ ui.Action.fromAtomAttrs = function (id, attrs)
     var id_map = ui.atomMap.indexOf(id);
 
     attrs = new Hash(attrs);
-    
+
     attrs.each(function (attr)
     {
         action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
@@ -445,16 +449,16 @@ ui.Action.fromAtomAttrs = function (id, attrs)
         });
         ui.render.atomSetAttr(id, attr.key, attr.value);
     }, this);
-    
+
     return action;
 }
 
 ui.Action.fromSelectedAtomsAttrs = function (attrs)
 {
     var action = new ui.Action();
-    
+
     attrs = new Hash(attrs);
-        
+
     ui.selection.atoms.each(function (id)
     {
         var id_map = ui.atomMap.indexOf(id);
@@ -470,7 +474,7 @@ ui.Action.fromSelectedAtomsAttrs = function (attrs)
             ui.render.atomSetAttr(id, attr.key, attr.value);
         }, this);
     }, this);
-    
+
     return action;
 }
 
@@ -521,12 +525,12 @@ ui.Action.fromSelectedBondsAttrs = function (attrs)
 ui.Action.fromAtomAddition = function (pos, atom)
 {
     var action = new ui.Action();
-    
+
     action.addOperation(ui.Action.OPERATION.ATOM_DEL,
     {
         id: ui.atomMap.push(ui.render.atomAdd(pos, atom)) - 1
     });
-    
+
     return action;
 }
 
@@ -535,7 +539,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
     var action = new ui.Action();
     var begin_op = null;
     var end_op = null;
-    
+
     if (!Object.isNumber(begin))
     {
         begin = ui.atomMap.push(ui.render.atomAdd(pos, begin)) - 1;
@@ -543,7 +547,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         {
             id: begin
         });
-        
+
         pos = pos2;
         begin = ui.atomMap[begin];
     } else if (ui.render.atomGetAttr(begin, 'label') == '*')
@@ -557,7 +561,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         });
     }
 
-    
+
     if (!Object.isNumber(end))
     {
         end = ui.atomMap.push(ui.render.atomAdd(pos, end)) - 1;
@@ -577,22 +581,44 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
             attr_value: '*'
         });
     }
-    
+
     action.addOperation(ui.Action.OPERATION.BOND_DEL,
     {
         id: ui.bondMap.push(ui.render.bondAdd(begin, end, bond)) - 1
     });
-    
+
     action.operations.reverse();
-    
+
     return [action, begin, end];
+}
+
+ui.Action.fromArrowAddition = function (pos)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
+		id: ui.render.rxnArrowAdd(pos)
+	});
+
+    return action;
+}
+
+ui.Action.fromPlusAddition = function (pos)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {
+		id: ui.render.rxnPlusAdd(pos)
+	});
+
+    return action;
 }
 
 // Add action operation to remove atom from s-group if needed
 ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
 {
     var sgroups = ui.render.atomGetSGroups(id);
-    
+
     if (sgroups.length > 0)
     {
         sgroups.each(function (sid)
@@ -603,10 +629,10 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
                 sid: ui.sgroupMap.indexOf(sid)
             });
         }, this);
-        
+
         return true;
     }
-    
+
     return false;
 }
 
@@ -618,7 +644,7 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
     atoms.each(function (id)
     {
         var sgroups = ui.render.atomGetSGroups(id);
-        
+
         sgroups.each(function (sid)
         {
             var n = sg_counts.get(sid);
@@ -626,15 +652,15 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
                 n = 1;
             else
                 n++;
-            sg_counts.set(sid, n);    
+            sg_counts.set(sid, n);
         }, this);
     }, this);
-    
+
     sg_counts.each(function (sg)
     {
         var sid = parseInt(sg.key);
         var sg_atoms = ui.render.sGroupGetAtoms(sid);
-        
+
         if (sg_atoms.length == sg.value)
         { // delete whole s-group
             this.addOperation(ui.Action.OPERATION.SGROUP_DEL,
@@ -649,7 +675,7 @@ ui.Action.fromAtomDeletion = function (id)
 {
     var action = new ui.Action();
     var atoms_to_remove = new Array();
-    
+
     ui.render.atomGetNeighbors(id).each(function (nei)
     {
         action.addOperation(ui.Action.OPERATION.BOND_DEL,
@@ -660,24 +686,24 @@ ui.Action.fromAtomDeletion = function (id)
         {
             if (action.removeAtomFromSgroupIfNeeded(nei.aid))
                 atoms_to_remove.push(nei.aid);
-            
+
             action.addOperation(ui.Action.OPERATION.ATOM_DEL,
             {
                 id: ui.atomMap.indexOf(nei.aid)
             });
         }
     }, this);
-    
+
     if (action.removeAtomFromSgroupIfNeeded(id))
         atoms_to_remove.push(id);
-        
+
     action.addOperation(ui.Action.OPERATION.ATOM_DEL,
     {
         id: ui.atomMap.indexOf(id)
     });
 
     action.removeSgroupIfNeeded(atoms_to_remove);
-    
+
     return action.perform();
 }
 
@@ -686,28 +712,28 @@ ui.Action.fromBondDeletion = function (id)
     var action = new ui.Action();
     var bond = ui.ctab.bonds.get(id);
     var atoms_to_remove = new Array();
-    
+
     action.addOperation(ui.Action.OPERATION.BOND_DEL,
     {
         id: ui.bondMap.indexOf(id)
     });
-    
+
     if (ui.render.atomGetDegree(bond.begin) == 1)
     {
         if (action.removeAtomFromSgroupIfNeeded(bond.begin))
             atoms_to_remove.push(bond.begin);
-            
+
         action.addOperation(ui.Action.OPERATION.ATOM_DEL,
         {
             id: ui.atomMap.indexOf(bond.begin)
         });
     }
-    
+
     if (ui.render.atomGetDegree(bond.end) == 1)
     {
         if (action.removeAtomFromSgroupIfNeeded(bond.end))
             atoms_to_remove.push(bond.end);
-            
+
         action.addOperation(ui.Action.OPERATION.ATOM_DEL,
         {
             id: ui.atomMap.indexOf(bond.end)
@@ -715,14 +741,14 @@ ui.Action.fromBondDeletion = function (id)
     }
 
     action.removeSgroupIfNeeded(atoms_to_remove);
-    
+
     return action.perform();
 }
 
 ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
 {
     var action = new ui.Action();
-    
+
     /*
     atoms.each(function (aid)
     {
@@ -733,50 +759,50 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
         }, this);
     }, this);
     */
-    
+
     // TODO: merge close atoms and bonds
-    
+
     sgroups.each(function (sid)
     {
         var idx = ui.sgroupMap.indexOf(sid);
-        
+
         if (idx == -1)
             idx = ui.sgroupMap.push(sid) - 1;
-            
+
         action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
         {
             id: idx
         });
     }, this);
-    
+
 
     bonds.each(function (bid)
     {
         var idx = ui.bondMap.indexOf(bid);
-        
+
         if (idx == -1)
             idx = ui.bondMap.push(bid) - 1;
-            
+
         action.addOperation(ui.Action.OPERATION.BOND_DEL,
         {
             id: idx
         });
     }, this);
-    
+
 
     atoms.each(function (aid)
     {
         var idx = ui.atomMap.indexOf(aid);
-        
+
         if (idx == -1)
             idx = ui.atomMap.push(aid) - 1;
-            
+
         action.addOperation(ui.Action.OPERATION.ATOM_DEL,
         {
             id: idx
         });
     }, this);
-    
+
     return action;
 }
 
@@ -784,7 +810,7 @@ ui.Action.fromFragmentDeletion = function ()
 {
     var action = new ui.Action();
     var atoms_to_remove = new Array();
-    
+
     ui.selection.atoms.each(function (aid)
     {
         ui.render.atomGetNeighbors(aid).each(function (nei)
@@ -793,21 +819,21 @@ ui.Action.fromFragmentDeletion = function ()
                 ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
         }, this);
     }, this);
-    
+
     ui.selection.bonds.each(function (bid)
     {
         action.addOperation(ui.Action.OPERATION.BOND_DEL,
         {
             id: ui.bondMap.indexOf(bid)
         });
-        
+
         var bond = ui.ctab.bonds.get(bid);
-        
+
         if (ui.selection.atoms.indexOf(bond.begin) == -1 && ui.render.atomGetDegree(bond.begin) == 1)
         {
             if (action.removeAtomFromSgroupIfNeeded(bond.begin))
                 atoms_to_remove.push(bond.begin);
-            
+
             action.addOperation(ui.Action.OPERATION.ATOM_DEL,
             {
                 id: ui.atomMap.indexOf(bond.begin)
@@ -817,20 +843,20 @@ ui.Action.fromFragmentDeletion = function ()
         {
             if (action.removeAtomFromSgroupIfNeeded(bond.end))
                 atoms_to_remove.push(bond.end);
-            
+
             action.addOperation(ui.Action.OPERATION.ATOM_DEL,
             {
                 id: ui.atomMap.indexOf(bond.end)
             });
         }
     }, this);
-    
+
 
     ui.selection.atoms.each(function (aid)
     {
         if (action.removeAtomFromSgroupIfNeeded(aid))
             atoms_to_remove.push(aid);
-            
+
         action.addOperation(ui.Action.OPERATION.ATOM_DEL,
         {
             id: ui.atomMap.indexOf(aid)
@@ -838,7 +864,7 @@ ui.Action.fromFragmentDeletion = function ()
     }, this);
 
     action.removeSgroupIfNeeded(atoms_to_remove);
-    
+
     return action.perform();
 }
 
@@ -846,17 +872,17 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
 {
     var action = new ui.Action();
     var dst_idx = ui.atomMap.indexOf(dst_id);
-    
+
     ui.render.atomGetNeighbors(src_id).each(function (nei)
     {
         var bond = ui.ctab.bonds.get(nei.bid);
         var begin, end;
-        
+
         if (bond.begin == nei.aid)
         {
             begin = ui.atomMap.indexOf(nei.aid);
             end = dst_idx;
-        } else 
+        } else
         {
             begin = dst_idx;
             end = ui.atomMap.indexOf(nei.aid);
@@ -880,7 +906,7 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
 
     if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
         attrs.set('label', 'C');
-    
+
     attrs.each(function (attr)
     {
         action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
@@ -907,12 +933,12 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
 ui.Action.fromBondFlipping = function (id)
 {
     var action = new ui.Action();
-    
+
     action.addOperation(ui.Action.OPERATION.BOND_FLIP,
     {
         id: ui.bondMap.indexOf(id)
     });
-    
+
     return action.perform();
 }
 
@@ -930,27 +956,27 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
         {
             id: ui.atomMap.push(ui.render.atomAdd(util.Vec2.sum(pos, v), {label: 'C'})) - 1
         });
-        
+
         v = v.rotate(angle);
     }, this);
-    
+
     var i = 0;
-    
+
     action.operations.each(function (op)
     {
         var begin = ui.atomMap[op.params.id];
         var end = ui.atomMap[action.operations[(i + 1) % pattern.length].params.id];
-        
+
         action.addOperation(ui.Action.OPERATION.BOND_DEL,
         {
             id: ui.bondMap.push(ui.render.bondAdd(begin, end, {type: pattern[i]})) - 1
         });
-        
+
         i++;
     }, this);
-    
+
     action.operations.reverse();
-    
+
     return action;
 }
 
@@ -960,14 +986,14 @@ ui.Action.fromPatternOnAtom = function (aid, pattern)
     {
         var atom = ui.atomForNewBond(aid);
         var action_res = ui.Action.fromBondAddition({type: 1}, aid, atom.atom, atom.pos);
-        
+
         var action = ui.Action.fromPatternOnElement(action_res[2], pattern, true);
-        
+
         action.mergeWith(action_res[0]);
-        
+
         return action;
     }
-    
+
     return ui.Action.fromPatternOnElement(aid, pattern, true);
 }
 
@@ -977,12 +1003,12 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
     var first_idx = 0; //pattern.indexOf(bond.type) + 1; // 0 if there's no
     var pos = null; // center pos
     var v = null; // rotating vector from center
-    
+
     if (on_atom)
     {
         var nei_id = ui.render.atomGetNeighbors(id)[0].aid;
         var atom_pos = ui.render.atomGetPos(id);
-        
+
         pos = util.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
         pos = pos.scaled(ui.scale / pos.length());
         v = pos.negated();
@@ -993,21 +1019,21 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var bond = ui.ctab.bonds.get(id);
         var begin_pos = ui.render.atomGetPos(bond.begin);
         var end_pos = ui.render.atomGetPos(bond.end);
-        
+
         var v = util.Vec2.diff(end_pos, begin_pos);
         var l = v.length() / (2 * Math.cos(angle));
-        
+
         v = v.scaled(l / v.length());
 
         var v_sym = v.rotate(-angle);
         v = v.rotate(angle);
-        
+
         var pos = util.Vec2.sum(begin_pos, v);
         var pos_sym = util.Vec2.sum(begin_pos, v_sym);
-        
+
         var cnt = 0, bcnt = 0;
         var cnt_sym = 0, bcnt_sym = 0;
-        
+
         // TODO: improve this enumeration
         ui.ctab.atoms.each(function (a_id)
         {
@@ -1021,41 +1047,41 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
                 bcnt_sym += ui.render.atomGetDegree(a_id);
             }
         });
-        
+
         angle = Math.PI - 2 * angle;
-        
+
         if (cnt > cnt_sym || (cnt == cnt_sym && bcnt > bcnt_sym))
         {
             pos = pos_sym;
             v = v_sym;
         } else
             angle = -angle;
-        
+
         v = v.negated();
     }
 	ui.render.update();
 
     var action = new ui.Action();
     var atom_ids = new Array(pattern.length);
-    
+
     if (!on_atom)
     {
         atom_ids[0] = bond.begin;
         atom_ids[pattern.length - 1] = bond.end;
     }
-    
+
     (on_atom ? pattern.length : pattern.length-1).times(function (idx)
     {
         if (idx > 0 || on_atom)
         {
             var new_pos = util.Vec2.sum(pos, v);
-            
+
             var a = ui.render.findClosestAtom(ui.render.client2Obj(new_pos), ui.scale * 0.1);
-            
+
             if (a == null)
             {
                 atom_ids[idx] = ui.render.atomAdd(new_pos, {label: 'C'});
-                
+
                 action.addOperation(ui.Action.OPERATION.ATOM_DEL,
                 {
                     id: ui.atomMap.push(atom_ids[idx]) - 1
@@ -1063,12 +1089,12 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
             } else
                 atom_ids[idx] = a.id;
         }
-        
+
         v = v.rotate(angle);
     }, this);
-    
+
     var i = 0;
-    
+
     pattern.length.times(function (idx)
     {
         var begin = atom_ids[idx];
@@ -1078,7 +1104,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         if (!ui.render.checkBondExists(begin, end))
         {
             var bond_id = ui.render.bondAdd(begin, end, {type: bond_type});
-            
+
             action.addOperation(ui.Action.OPERATION.BOND_DEL,
             {
                 id: ui.bondMap.push(bond_id) - 1
@@ -1088,13 +1114,13 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
             if (bond_type == chem.Struct.BOND.TYPE.AROMATIC)
             {
                 var nei = ui.render.atomGetNeighbors(begin);
-                
+
                 nei.find(function (n)
                 {
                     if (n.aid == end)
                     {
                         var src_type = ui.render.bondGetAttr(n.bid, 'type');
-                        
+
                         if (src_type != bond_type)
                         {
                             action.addOperation(ui.Action.OPERATION.BOND_ATTR,
@@ -1111,19 +1137,19 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
                 }, this);
             }
         }
-        
+
         i++;
     }, this);
-    
+
     action.operations.reverse();
-    
+
     return action;
 }
 
 ui.Action.fromNewCanvas = function (ctab)
 {
     var action = new ui.Action();
-    
+
     action.addOperation(ui.Action.OPERATION.CANVAS_LOAD,
     {
         ctab: ctab,
@@ -1131,7 +1157,7 @@ ui.Action.fromNewCanvas = function (ctab)
         bond_map:   null,
         sgroup_map: null
     });
-    
+
     return action.perform();
 }
 
@@ -1140,19 +1166,19 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
     var action = new ui.Action();
     var id_map = ui.sgroupMap.indexOf(id);
     var cur_type = ui.render.sGroupGetType(id);
-    
+
     action.addOperation(ui.Action.OPERATION.SGROUP_ATTR,
     {
         id: id_map,
         type: type,
         attrs: attrs
     });
-    
+
     if ((cur_type == 'SRU' || type == 'SRU') && cur_type != type)
-    {   
+    {
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(id);
-        
+
         if (cur_type == 'SRU')
         {
             nei_atoms.each(function (aid)
@@ -1190,7 +1216,7 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
 ui.Action.fromSgroupDeletion = function (id)
 {
     var action = new ui.Action();
-    
+
     if (ui.render.sGroupGetType(id) == 'SRU')
     {
         ui.render.sGroupsFindCrossBonds();
@@ -1209,7 +1235,7 @@ ui.Action.fromSgroupDeletion = function (id)
             }
         }, this);
     }
-    
+
     action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
     {
         id: ui.sgroupMap.indexOf(id)
@@ -1222,23 +1248,23 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 {
     var action = new ui.Action();
     var i;
-    
+
     for (i = 0; i < atoms.length; i++)
         atoms[i] = ui.atomMap.indexOf(atoms[i]);
-    
+
     action.addOperation(ui.Action.OPERATION.SGROUP_ADD,
     {
         type: type,
         attrs: attrs,
         atoms: atoms
     });
-    
+
     action = action.perform();
-    
+
     if (type == 'SRU')
     {
         var sid = ui.sgroupMap[action.operations[0].params.id];
-        
+
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(sid);
         var asterisk_action = new ui.Action();
@@ -1255,12 +1281,12 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
                 });
             }
         }, this);
-        
+
         asterisk_action = asterisk_action.perform();
         asterisk_action.mergeWith(action);
         action = asterisk_action;
     }
-    
+
     return action;
 }
 
@@ -1268,7 +1294,7 @@ ui.addUndoAction = function (action, check_dummy)
 {
     if (action == null)
         return;
-        
+
     if (check_dummy != true || !action.isDummy())
     {
         ui.undoStack.push(action);

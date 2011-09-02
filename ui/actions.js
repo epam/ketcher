@@ -327,6 +327,24 @@ ui.Action.prototype.perform = function ()
             ui.render.sGroupDelete(id);
             break;
 
+        case ui.Action.OPERATION.RXN_ARROW_DEL:
+            op.inverted.type = ui.Action.OPERATION.RXN_ARROW_ADD;
+            op.inverted.params =
+            {
+                pos: ui.render.rxnArrowGetPos(op.params.id)
+            };
+            ui.render.rxnArrowRemove(op.params.id);
+            break;
+
+        case ui.Action.OPERATION.RXN_PLUS_DEL:
+            op.inverted.type = ui.Action.OPERATION.RXN_PLUS_ADD;
+            op.inverted.params =
+            {
+                pos: ui.render.rxnPlusGetPos(op.params.id)
+            };
+            ui.render.rxnPlusRemove(op.params.id);
+            break;
+
         default:
             return;
         }

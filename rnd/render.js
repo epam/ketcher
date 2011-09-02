@@ -50,7 +50,13 @@ rnd.actions = [
 	'sGroupSetType',
 	'sGroupSetPos', // data s-group label position
 	'rxnPlusAdd',
+	'rxnPlusMove',
+	'rxnPlusMoveRel',
+	'rxnPlusRemove',
 	'rxnArrowAdd',
+	'rxnArrowMove',
+	'rxnArrowMoveRel',
+	'rxnArrowRemove',
 ];
 
 rnd.logMethod = function () { }
@@ -530,6 +536,20 @@ rnd.Render.prototype.atomGetPos = function (aid)
 	.add(this.offset);
 }
 
+rnd.Render.prototype.rxnArrowGetPos = function (id)
+{
+	rnd.logMethod("rxnArrowGetPos");
+	this.ctab.rxnArrows.get(id).item.pp.scaled(this.settings.scaleFactor)
+	.add(this.offset);
+}
+
+rnd.Render.prototype.rxnPlusGetPos = function (id)
+{
+	rnd.logMethod("rxnPlusGetPos");
+	this.ctab.rxnPluses.get(id).item.pp.scaled(this.settings.scaleFactor)
+	.add(this.offset);
+}
+
 rnd.Render.prototype._atomMoveRel = function (aid, d)
 {
 	rnd.logMethod("_atomMoveRel");
@@ -549,6 +569,18 @@ rnd.Render.prototype._atomRemove = function (aid)
 {
 	rnd.logMethod("_atomRemove");
 	this.ctab.atomRemove(aid);
+}
+
+rnd.Render.prototype._rxnPlusRemove = function (id)
+{
+	rnd.logMethod("_rxnPlusRemove");
+	this.ctab.rxnPlusRemove(id);
+}
+
+rnd.Render.prototype._rxnArrowRemove = function (id)
+{
+	rnd.logMethod("_rxnArrowRemove");
+	this.ctab.rxnArrowRemove(id);
 }
 
 rnd.Render.prototype.bondGetAttr = function (bid, name)

@@ -241,11 +241,7 @@ rnd.ReStruct.prototype.clearMarks = function () {
 	this.structChanged = false;
 }
 
-rnd.ReStruct.prototype.markBondRemoved = function () {
-	this.structChanged = true;
-}
-
-rnd.ReStruct.prototype.markAtomRemoved = function () {
+rnd.ReStruct.prototype.markItemRemoved = function () {
 	this.structChanged = true;
 }
 
@@ -706,6 +702,24 @@ rnd.ReStruct.prototype.rxnArrowAdd = function (pos)
 	return id;
 }
 
+rnd.ReStruct.prototype.rxnArrowRemove = function (id)
+{
+	var reitem = this.rxnArrows.get(id);
+	this.markItemRemoved();
+	this.clearVisel(reitem.visel);
+	this.rxnArrows.unset(id);
+	this.molecule.rxnArrows.remove(id);
+}
+
+rnd.ReStruct.prototype.rxnPlusRemove = function (id)
+{
+	var reitem = this.rxnPluses.get(id);
+	this.markItemRemoved();
+	this.clearVisel(reitem.visel);
+	this.rxnPluses.unset(id);
+	this.molecule.rxnPluses.remove(id);
+}
+
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end)
@@ -752,7 +766,7 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 		var hb = this.molecule.halfBonds.get(hbid);
 		this.bondRemove(hb.bid);
 	},this);
-	this.markAtomRemoved();
+	this.markItemRemoved();
 	this.clearVisel(atom.visel);
 	this.atoms.unset(aid);
 	this.molecule.atoms.remove(aid);
@@ -765,7 +779,7 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 	this.halfBondUnref(bond.b.hb2);
 	this.molecule.halfBonds.unset(bond.b.hb1);
 	this.molecule.halfBonds.unset(bond.b.hb2);
-	this.markBondRemoved();
+	this.markItemRemoved();
 	this.clearVisel(bond.visel);
 	this.bonds.unset(bid);
 	this.molecule.bonds.remove(bid);

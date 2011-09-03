@@ -634,28 +634,20 @@ rnd.Render.prototype._bondFlip = function (bid)
 	return newBid;
 }
 
-rnd.Render.prototype.setSelection = function (atomList, bondList)
+rnd.Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod("setSelection");
-	this.ctab.atoms.each(function(aid, atom){
-		atom.selected = false;
-		this.ctab.showAtomSelection(aid, atom, false);
-	}, this);
-	var i;
-	for (i = 0; i < atomList.length; ++i) {
-		var atom = this.ctab.atoms.get(atomList[i]);
-		atom.selected = true;
-		this.ctab.showAtomSelection(atomList[i], atom, true);
-	}
-
-	this.ctab.bonds.each(function(bid, bond){
-		bond.selected = false;
-		this.ctab.showBondSelection(bid, bond, false);
-	}, this);
-	for (i = 0; i < bondList.length; ++i) {
-		var bond = this.ctab.bonds.get(bondList[i]);
-		bond.selected = true;
-		this.ctab.showBondSelection(bondList[i], bond, true);
+	for (var map in rnd.ReStruct.maps) {
+		this.ctab[map].each(function(id, item){
+			item.selected = false;
+			this.ctab.showItemSelection(id, item, false);
+		}, this);
+		for (var i = 0; i < selection[map].length; ++i) {
+			var id = selection[map][i];
+			var item = this.ctab[map].get(id);
+			item.selected = true;
+			this.ctab.showItemSelection(id, item, true);
+		}
 	}
 }
 
@@ -792,7 +784,22 @@ rnd.Render.prototype.getElementsInRectangle = function (rect) {
 		if (atom.a.ps.x > x0 && atom.a.ps.x < x1 && atom.a.ps.y > y0 && atom.a.ps.y < y1)
 			atomList.push(aid);
 	}, this);
-	return [atomList, bondList];
+	var rxnArrowsList = new Array();
+	var rxnPlusesList = new Array();
+	this.ctab.rxnArrows.each(function(id, item){
+		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+			rxnArrowsList.push(id);
+	}, this);
+	this.ctab.rxnPluses.each(function(id, item){
+		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+			rxnPlusesList.push(id);
+	}, this);
+	return {
+		'atoms':atomList,
+		'bonds':bondList,
+		'rxnArrows':rxnArrowsList,
+		'rxnPluses':rxnPlusesList
+	};
 }
 
 rnd.Render.prototype.drawSelectionPolygon = function (r) {
@@ -1008,7 +1015,6 @@ rnd.Render.prototype.update = function (force)
 			this.ctab.translate(offset1);
 		}
 	}
-	this.ctab.viselsChanged = {};
 
 	this.muteMouseOutMouseOver = false;
 	if (this.checkCurItem) {
@@ -1148,4 +1154,17 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 		'type':'Canvas',
 		'id':-1
 	};
+}
+
+rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
+{
+	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
+	var offset = this.offset;
+	if (offset != null) {
+		if (bb != null)
+			bb.translate(offset);
+		path.translate(offset.x, offset.y);
+	}
+	visel.add(path, bb);
+	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }

@@ -44,9 +44,17 @@ util.Map.prototype.find = function(func, context) {
 }
 
 util.Map.prototype.keys = function() {
-    var keys = []
+    var keys = [];
     for (var v in this._obj) {
         keys.push(v);
+    }
+    return keys;
+}
+
+util.Map.prototype.ikeys = function() {
+    var keys = [];
+    for (var v in this._obj) {
+        keys.push(v - 0);
     }
     return keys;
 }

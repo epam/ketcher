@@ -296,7 +296,7 @@ ui.init = function ()
 
     this.render.onSGroupClick = this.onClick_SGroup;
     this.render.onSGroupDblClick = this.onDblClick_SGroup;
-    this.render.onSGroupMouseDown = function () { return true; };
+    this.render.onSGroupMouseDown = function () {return true;};
     this.render.onSGroupMouseOver = this.onMouseOver_SGroup;
     this.render.onSGroupMouseOut = this.onMouseOut_SGroup;
 
@@ -593,8 +593,8 @@ ui.onKeyPress_Ketcher = function (event)
         ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
         return util.preventDefault(event);
     case 50: // 2
-		var doubles = ['bond_double', 'bond_double_crossed'];
-		ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
+        var doubles = ['bond_double', 'bond_double_crossed'];
+        ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
         return util.preventDefault(event);
     case 51: // 3
         ui.selectMode('bond_triple');
@@ -989,7 +989,7 @@ ui.onChange_Input = function ()
 
     setTimeout(function ()
     {
-	if (el.value.strip().indexOf('\n') != -1)
+        if (el.value.strip().indexOf('\n') != -1)
         {
             if (el.style.wordWrap != 'normal')
                 el.style.wordWrap = 'normal';
@@ -1210,7 +1210,7 @@ ui.onClick_Atom = function (event, id)
                     ui.selection.atoms.splice(idx, 1);
                 else
                     ui.selection.atoms = ui.selection.atoms.concat(id);
-                ui.updateSelection(ui.selection.atoms, ui.selection.bonds);
+                ui.updateSelection({'atoms':ui.selection.atoms, 'bonds':ui.selection.bonds});
                 break;
             }
             */
@@ -1273,12 +1273,36 @@ ui.onClick_Atom = function (event, id)
             break;
 
         case ui.MODE.SGROUP:
-            ui.updateSelection([id], []);
+            ui.updateSelection({'atoms':[id]});
             ui.showSGroupProperties(null);
             break;
         }
     }, ui.DBLCLICK_INTERVAL);
-	return true;
+    return true;
+}
+
+ui.onClick_RxnArrow = function (event, id)
+{
+    if (ui.mouse_moved)
+        return true;
+
+    ui.dbl_click = false;
+
+    setTimeout(function ()
+    {
+        if (ui.dbl_click)
+            return true;
+
+        switch (ui.modeType())
+        {
+
+        case ui.MODE.ERASE:
+            ui.addUndoAction(ui.Action.fromArrowDeletion(id));
+            ui.render.update();
+            break;
+        }
+    }, ui.DBLCLICK_INTERVAL);
+    return true;
 }
 
 ui.onDblClick_Atom = function (event, id)
@@ -1290,7 +1314,7 @@ ui.onDblClick_Atom = function (event, id)
 
     if (ui.modeType() != ui.MODE.PASTE)
         ui.showAtomProperties(id);
-	return true;
+    return true;
 }
 
 ui.onClick_Bond = function (event, id)
@@ -1310,7 +1334,7 @@ ui.onClick_Bond = function (event, id)
                 ui.selection.bonds.splice(idx, 1);
             else
                 ui.selection.bonds = ui.selection.bonds.concat(id);
-            ui.updateSelection(ui.selection.atoms, ui.selection.bonds);
+            ui.updateSelection({'atoms':ui.selection.atoms, 'bonds':ui.selection.bonds});
             break;
         }
         */
@@ -1368,11 +1392,11 @@ ui.onClick_Bond = function (event, id)
     case ui.MODE.SGROUP:
         var bond = ui.ctab.bonds.get(id);
 
-        ui.updateSelection([bond.begin, bond.end], [id]);
+        ui.updateSelection({'atoms':[bond.begin, bond.end], 'bonds':[id]});
         ui.showSGroupProperties(null);
         break;
     }
-	return true;
+    return true;
 }
 
 ui.onClick_SGroup = function (event, sid)
@@ -1394,7 +1418,7 @@ ui.onClick_SGroup = function (event, sid)
         }
     }, ui.DBLCLICK_INTERVAL);
 
-	return true;
+    return true;
 }
 
 ui.onDblClick_SGroup = function (event, sid)
@@ -1408,7 +1432,7 @@ ui.onDblClick_SGroup = function (event, sid)
         ui.showSGroupProperties(sid);
     }
 
-	return true;
+    return true;
 }
 
 ui.onClick_Canvas = function (event)
@@ -1416,7 +1440,7 @@ ui.onClick_Canvas = function (event)
     if (ui.mouse_moved)
         return;
 
-	var pos = ui.page2canvas(event);
+    var pos = ui.page2canvas(event);
     switch (ui.modeType())
     {
     case ui.MODE.ATOM:
@@ -1442,15 +1466,15 @@ ui.onClick_Canvas = function (event)
         ui.render.update();
         break;
 
-	case ui.MODE.RXN_ARROW:
+    case ui.MODE.RXN_ARROW:
 
         ui.addUndoAction(ui.Action.fromArrowAddition(pos));
         ui.render.update();
         break;
 
-	case ui.MODE.RXN_PLUS:
+    case ui.MODE.RXN_PLUS:
 
-		ui.addUndoAction(ui.Action.fromPlusAddition(pos));
+        ui.addUndoAction(ui.Action.fromPlusAddition(pos));
         ui.render.update();
         break;
 
@@ -1621,24 +1645,26 @@ ui.isDrag = function ()
     return ui.drag.start_pos != null;
 }
 
-ui.updateSelection = function (atoms, bonds)
+ui.updateSelection = function (selection)
 {
-    if (Object.isUndefined(atoms))
-        atoms = [];
-    if (Object.isUndefined(bonds))
-        bonds = [];
+    selection = selection || {};
+    for (var map in rnd.ReStruct.maps) {
+        if (Object.isUndefined(selection[map]))
+            ui.selection[map] = [];
+        else
+            ui.selection[map] = selection[map];
+    }
 
-    bonds = bonds.filter(function (bid)
+    ui.selection.bonds = ui.selection.bonds.filter(function (bid)
     {
         var bond = ui.ctab.bonds.get(bid);
-        if (atoms.indexOf(bond.begin) != -1 && atoms.indexOf(bond.end) != -1)
+        if (ui.selection.atoms.indexOf(bond.begin) != -1 &&
+                ui.selection.atoms.indexOf(bond.end) != -1)
             return true;
         return false;
     });
 
-    ui.selection.atoms = atoms;
-    ui.selection.bonds = bonds;
-    ui.render.setSelection(atoms, bonds);
+    ui.render.setSelection(ui.selection);
     ui.render.update();
 
     ui.updateClipboardButtons();
@@ -1655,17 +1681,12 @@ ui.selectAll = function ()
     if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
         ui.selectMode('select_simple');
 
-    var alist = [], blist = [];
+    var selection = {};
+    for (var map in rnd.ReStruct.maps) {
+        selection[map] = ui.ctab[map].ikeys();
+    }
 
-    ui.ctab.atoms.each(function(aid) {
-        alist.push(aid);
-    });
-
-    ui.ctab.bonds.each(function(bid) {
-        blist.push(bid);
-    });
-
-    ui.updateSelection(alist, blist);
+    ui.updateSelection(selection);
 }
 
 ui.removeSelected = function ()
@@ -1702,7 +1723,7 @@ ui.onMouseDown_Atom = function (event, aid)
             ui.drag.action = ui.Action.fromSelectedAtomsPos();
         ui.drag.selection = true;
     }
-	return true;
+    return true;
 }
 
 ui.onMouseDown_Bond = function (event, bid)
@@ -1730,7 +1751,7 @@ ui.onMouseDown_Bond = function (event, bid)
             ui.drag.action = ui.Action.fromSelectedAtomsPos();
         ui.drag.selection = true;
     }
-	return true;
+    return true;
 }
 
 ui.onMouseDown_Canvas = function (event)
@@ -1852,7 +1873,7 @@ ui.onMouseMove_Canvas = function (event)
             ui.drag.new_atom_id = action_ret[2];
         } else
             ui.render.atomMove(ui.drag.new_atom_id, v);
-    }  else if (mode == ui.MODE.PASTE)
+    } else if (mode == ui.MODE.PASTE)
     {
         var anchor_pos = ui.render.atomGetPos(ui.pasted.atoms[0]);
         var cur_pos = ui.page2canvas(event);
@@ -1875,7 +1896,7 @@ ui.onMouseMove_Canvas = function (event)
                 };
                 ui.render.drawSelectionRectangle(rect);
                 var sel_list = ui.render.getElementsInRectangle(rect);
-                ui.updateSelection(sel_list[0], sel_list[1]);
+                ui.updateSelection(sel_list);
             }
             return;
         }
@@ -1971,7 +1992,7 @@ ui.onMouseOver_Atom = function (event, aid)
         ui.drag.new_atom_id = -1; // after update() to avoid mousout
         ui.render.atomSetHighlight(aid, true);
     }
-	return true;
+    return true;
 }
 
 ui.onMouseOut_Atom = function (event, aid)
@@ -1988,20 +2009,20 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.action = ui.Action.fromAtomPos(ui.drag.atom_id);
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }
-	return true;
+    return true;
 }
 
 ui.onMouseOver_Bond = function (event, bid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.bondSetHighlight(bid, true);
-	return true;
+    return true;
 }
 
 ui.onMouseOut_Bond = function (event, bid)
 {
     ui.render.bondSetHighlight(bid, false);
-	return true;
+    return true;
 }
 
 ui.highlightSGroup = function (sid, highlight)
@@ -2020,13 +2041,13 @@ ui.onMouseOver_SGroup = function (event, sid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.highlightSGroup(sid, true);
-	return true;
+    return true;
 }
 
 ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.highlightSGroup(sid, false);
-	return true;
+    return true;
 }
 
 //
@@ -2271,16 +2292,16 @@ ui.onChange_SGroupType = function ()
 
     if (type == 'DAT')
     {
-        $$('.generalSGroup').each(function (el) { el.hide() });
-        $$('.dataSGroup').each(function (el) { el.show() });
+        $$('.generalSGroup').each(function (el) {el.hide()});
+        $$('.dataSGroup').each(function (el) {el.show()});
 
         $('sgroup_field_name').activate();
 
         return;
     }
 
-    $$('.generalSGroup').each(function (el) { el.show() });
-    $$('.dataSGroup').each(function (el) { el.hide() });
+    $$('.generalSGroup').each(function (el) {el.show()});
+    $$('.dataSGroup').each(function (el) {el.hide()});
 
     $('sgroup_label').disabled = (type != 'SRU') && (type != 'MUL') && (type != 'SUP');
     $('sgroup_connection').disabled = (type != 'SRU');
@@ -2433,7 +2454,7 @@ ui.paste = function ()
 
         sgroup.atoms.each(function(id)
         {
-			ui.render.atomClearSGroups(mapping[id]);
+            ui.render.atomClearSGroups(mapping[id]);
             ui.render.atomAddToSGroup(mapping[id], sid);
         }, this);
 

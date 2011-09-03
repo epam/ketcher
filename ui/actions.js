@@ -621,6 +621,17 @@ ui.Action.fromArrowAddition = function (pos)
     return action;
 }
 
+ui.Action.fromArrowDeletion = function (id)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
+        'id': id
+    });
+
+    return action.perform();
+}
+
 ui.Action.fromPlusAddition = function (pos)
 {
     var action = new ui.Action();
@@ -630,6 +641,17 @@ ui.Action.fromPlusAddition = function (pos)
 	});
 
     return action;
+}
+
+ui.Action.fromPlusDeletion = function (id)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {
+        'id': id
+    });
+
+    return action.perform();
 }
 
 // Add action operation to remove atom from s-group if needed

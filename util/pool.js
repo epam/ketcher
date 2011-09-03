@@ -55,6 +55,11 @@ util.Pool.prototype.keys = function ()
 	return this._map.keys();
 }
 
+util.Pool.prototype.ikeys = function ()
+{
+	return this._map.ikeys();
+}
+
 util.Pool.prototype.each = function (func, context)
 {
     this._map.each(func, context);

@@ -37,6 +37,11 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.component = -1;
 }
 
+rnd.ReAtom.prototype.makeSelectionPlate = function (paper, styles) {
+	return paper.circle(this.a.ps.x, this.a.ps.y, styles.atomSelectionPlateRadius)
+	.attr(styles.selectionStyle);
+}
+
 rnd.ReBond = function (/*chem.Bond*/bond)
 {
 	this.b = bond;
@@ -48,6 +53,13 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 	this.highlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
+}
+
+rnd.ReBond.prototype.makeSelectionPlate = function (paper, styles) {
+	return paper
+	.ellipse(this.b.center.x, this.b.center.y, this.b.sa, this.b.sb)
+	.rotate(this.b.angle)
+	.attr(styles.selectionStyle);
 }
 
 rnd.ReStruct = function (molecule, render)
@@ -75,7 +87,7 @@ rnd.ReStruct = function (molecule, render)
 		this[map+'Changed'] = {};
 	}
 	this.structChanged = false;
-	this.viselsChanged = {};
+//	this.viselsChanged = {};
 
 	molecule.atoms.each(function(aid, atom){
 		this.atoms.set(aid, new rnd.ReAtom(atom));
@@ -437,35 +449,36 @@ rnd.ReStruct.prototype.drawReactionSymbols = function ()
 	var item;
 	for (var id in this.rxnArrowsChanged) {
 		item = this.rxnArrows.get(id);
-		this.drawReactionArrow(item);
+		this.drawReactionArrow(id, item);
 	}
 	for (var id in this.rxnPlusesChanged) {
 		item = this.rxnPluses.get(id);
-		this.drawReactionPlus(item);
+		this.drawReactionPlus(id, item);
 	}
 }
 
-rnd.ReStruct.prototype.offsetVisel = function (visel) {
-	var offset = this.render.offset;
-	if (offset != null) {
-		this.translateVisel(visel, offset);
-	}
-}
-
-rnd.ReStruct.prototype.drawReactionArrow = function (item)
+rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
 	var centre = item.item.ps;
 	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
+	var offset = this.render.offset;
+	if (offset != null)
+		path.translate(offset.x, offset.y);
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
-	this.offsetVisel(item.visel);
+	if (item.selected)
+		this.showItemSelection(id, item, true);
 }
 
-rnd.ReStruct.prototype.drawReactionPlus = function (item)
+rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
 	var centre = item.item.ps;
 	var path = this.drawPlus(centre);
+	var offset = this.render.offset;
+	if (offset != null)
+		path.translate(offset.x, offset.y);
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
-	this.offsetVisel(item.visel);
+	if (item.selected)
+		this.showItemSelection(id, item, true);
 }
 
 rnd.ReStruct.prototype.drawSGroups = function ()
@@ -857,6 +870,11 @@ rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 	this.selectionPlate = null;
 }
 
+rnd.ReRxnPlus.prototype.makeSelectionPlate = function (paper, styles) {
+	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
+	.attr(styles.selectionStyle);
+}
+
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
 	this.item = arrow;
@@ -866,4 +884,9 @@ rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 	this.highlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
+}
+
+rnd.ReRxnArrow.prototype.makeSelectionPlate = function (paper, styles) {
+	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
+	.attr(styles.selectionStyle);
 }

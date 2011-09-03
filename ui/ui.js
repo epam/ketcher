@@ -284,6 +284,18 @@ ui.init = function ()
     this.render.onAtomMouseOver = this.onMouseOver_Atom;
     this.render.onAtomMouseOut = this.onMouseOut_Atom;
 
+    this.render.onRxnArrowClick = this.onClick_RxnArrow;
+    this.render.onRxnArrowDblClick = this.onDblClick_RxnArrow;
+    this.render.onRxnArrowMouseDown = this.onMouseDown_RxnArrow;
+    this.render.onRxnArrowMouseOver = this.onMouseOver_RxnArrow;
+    this.render.onRxnArrowMouseOut = this.onMouseOut_RxnArrow;
+
+	this.render.onRxnPlusClick = this.onClick_RxnPlus;
+    this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
+    this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
+    this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
+    this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
+
     this.render.onBondClick = this.onClick_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
     this.render.onBondMouseOver = this.onMouseOver_Bond;
@@ -1305,6 +1317,30 @@ ui.onClick_RxnArrow = function (event, id)
     return true;
 }
 
+ui.onClick_RxnPlus = function (event, id)
+{
+    if (ui.mouse_moved)
+        return true;
+
+    ui.dbl_click = false;
+
+    setTimeout(function ()
+    {
+        if (ui.dbl_click)
+            return true;
+
+        switch (ui.modeType())
+        {
+
+        case ui.MODE.ERASE:
+            ui.addUndoAction(ui.Action.fromPlusDeletion(id));
+            ui.render.update();
+            break;
+        }
+    }, ui.DBLCLICK_INTERVAL);
+    return true;
+}
+
 ui.onDblClick_Atom = function (event, id)
 {
     if (event.altKey)
@@ -1626,6 +1662,8 @@ ui.endDrag = function ()
 
     ui.drag.atom_id = null;
     ui.drag.bond_id = null;
+    ui.drag.rxnArrow_id = null;
+    ui.drag.rxnPlus_id = null;
 
     ui.drag.selection = false;
 
@@ -1672,7 +1710,12 @@ ui.updateSelection = function (selection)
 
 ui.selected = function ()
 {
-    return ui.selection.atoms.length > 0; // bond is selected only if both atoms are
+	for (var map in rnd.ReStruct.maps) {
+		if (!Object.isUndefined(ui.selection[map]) && ui.selection[map].length > 0) {
+			return true;
+		}
+	}
+    return false;
 }
 
 ui.selectAll = function ()
@@ -1692,8 +1735,8 @@ ui.selectAll = function ()
 ui.removeSelected = function ()
 {
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
-    ui.selection.atoms = [];
-    ui.selection.bonds = [];
+	for (var map in rnd.ReStruct.maps)
+		ui.selection[map] = [];
     ui.render.update();
     ui.updateClipboardButtons();
 }
@@ -1721,6 +1764,34 @@ ui.onMouseDown_Atom = function (event, aid)
     {
         if (ui.modeType() == ui.MODE.SIMPLE)
             ui.drag.action = ui.Action.fromSelectedAtomsPos();
+        ui.drag.selection = true;
+    }
+    return true;
+}
+
+ui.onMouseDown_RxnArrow = function (event, id)
+{
+    if ($('input_label').visible())
+        $('input_label').hide();
+
+    if (ui.modeType() == ui.MODE.PASTE)
+        return false;
+
+    ui.mouse_moved = false;
+    ui.drag.rxnArrow_id = id;
+    ui.drag.start_pos = {x: event.pageX, y: event.pageY};
+    ui.drag.last_pos = {x: event.pageX, y: event.pageY};
+
+    if (ui.selection.rxnArrows.indexOf(id) == -1)
+    {
+        if (ui.modeType() == ui.MODE.SIMPLE)
+            ui.drag.action = ui.Action.fromRxnArrowPos(id);
+        ui.drag.selection = false;
+        ui.updateSelection();
+    } else
+    {
+        if (ui.modeType() == ui.MODE.SIMPLE)
+            ui.drag.action = ui.Action.fromSelectedRxnArrowPos();
         ui.drag.selection = true;
     }
     return true;
@@ -1879,10 +1950,10 @@ ui.onMouseMove_Canvas = function (event)
         var cur_pos = ui.page2canvas(event);
         var delta = {x: cur_pos.x - anchor_pos.x, y: cur_pos.y - anchor_pos.y};
 
-        ui.render.atomMoveRelMultiple(ui.pasted.atoms, delta);
+        ui.render.multipleMoveRel(ui.pasted, delta);
     } else
     {
-        if (ui.drag.atom_id == null && ui.drag.bond_id == null)
+        if (ui.drag.atom_id == null && ui.drag.bond_id == null && ui.drag.rxnArrow_id == null && ui.drag.rxnPlus_id == null)
         {
             if ((mode == ui.MODE.SIMPLE || mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP) && ui.drag.start_pos != null) // rectangle selection
             {
@@ -1909,10 +1980,10 @@ ui.onMouseMove_Canvas = function (event)
 
         var delta = {x: event.pageX - ui.drag.last_pos.x, y: event.pageY - ui.drag.last_pos.y};
 
-        if (ui.drag.atom_id != null || ui.drag.bond_id != null)
+        if (ui.drag.atom_id != null || ui.drag.bond_id != null || ui.drag.rxnArrow_id != null || ui.drag.rxnPlus_id != null)
         {
             if (ui.drag.selection)
-                ui.render.atomMoveRelMultiple(ui.selection.atoms, delta);
+                ui.render.multipleMoveRel(ui.selection, delta);
             else if (ui.drag.atom_id != null)
                 ui.render.atomMoveRel(ui.drag.atom_id, delta);
             else if (ui.drag.bond_id != null)
@@ -1920,7 +1991,11 @@ ui.onMouseMove_Canvas = function (event)
                 var bond = ui.ctab.bonds.get(ui.drag.bond_id);
                 ui.render.atomMoveRel(bond.begin, delta);
                 ui.render.atomMoveRel(bond.end, delta);
-            }
+            } else if (ui.drag.rxnArrow_id != null) {
+                ui.render.rxnArrowMoveRel(ui.drag.rxnArrow_id, delta);
+            } else if (ui.drag.rxnPlus_id != null) {
+                ui.render.rxnPlusMoveRel(ui.drag.rxnPlus_id, delta);
+			}
         }
 
         ui.drag.last_pos = {x: event.pageX, y: event.pageY};

@@ -523,25 +523,30 @@ chem.Struct.itemSetPos = function (item, pp, scaleFactor)
 		item.ps = item.pp.scaled(scaleFactor);
 }
 
-chem.Struct.prototype._atomSetPos = function (aid, pp, scaleFactor)
+chem.Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
 {
-	chem.Struct.itemSetPos(this.atoms.get(aid), pp, scaleFactor);
+	chem.Struct.itemSetPos(this[map].get(id), pp, scaleFactor);
+}
+
+chem.Struct.prototype._atomSetPos = function (id, pp, scaleFactor)
+{
+	this._itemSetPos('atoms', id, pp, scaleFactor);
 }
 
 chem.Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
 {
-	chem.Struct.itemSetPos(this.rxnPluses.get(id), pp, scaleFactor);
+	this._itemSetPos('rxnPluses', id, pp, scaleFactor);
 }
 
 chem.Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
 {
-	chem.Struct.itemSetPos(this.rxnArrows.get(id), pp, scaleFactor);
+	this._itemSetPos('rxnArrows', id, pp, scaleFactor);
 }
 
 chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 {
-	var abscfs = function(pp) { return pp.sub(min).yComplement(0).scaled(scale); }
-	var relcfs = function(pp) { return pp.yComplement(0).scaled(scale); }
+	var abscfs = function(pp) {return pp.sub(min).yComplement(0).scaled(scale);}
+	var relcfs = function(pp) {return pp.yComplement(0).scaled(scale);}
 	this.atoms.each(function (aid, atom) {
 		this._atomSetPos(aid, abscfs(atom.pp));
 	}, this);

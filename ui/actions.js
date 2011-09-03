@@ -43,8 +43,10 @@ ui.Action.OPERATION =
     SGROUP_ATOM_DEL: 14,
     RXN_ARROW_DEL:   15,
     RXN_ARROW_ADD:   16,
-    RXN_PLUS_DEL:    17,
-    RXN_PLUS_ADD:    18
+    RXN_ARROW_POS:   17,
+    RXN_PLUS_DEL:    18,
+    RXN_PLUS_ADD:    19,
+    RXN_PLUS_POS:    20
 };
 
 ui.Action.prototype.addOperation = function (type, params)
@@ -336,13 +338,47 @@ ui.Action.prototype.perform = function ()
             ui.render.rxnArrowRemove(op.params.id);
             break;
 
-        case ui.Action.OPERATION.RXN_PLUS_DEL:
+        case ui.Action.OPERATION.RXN_ARROW_ADD:
+            op.inverted.type = ui.Action.OPERATION.RXN_ARROW_DEL;
+
+            var id = ui.render.rxnArrowAdd(op.params.pos);
+			op.inverted.params = { id: id };
+			break;
+
+        case ui.Action.OPERATION.RXN_ARROW_POS:
+            op.inverted.type = ui.Action.OPERATION.RXN_ARROW_POS;
+            op.inverted.params =
+            {
+                id: op.params.id, // TODO: fix
+                pos: ui.render.rxnArrowGetPos(op.params.id)
+            };
+            ui.render.rxnArrowMove(op.params.id, op.params.pos);
+            break;
+
+		case ui.Action.OPERATION.RXN_PLUS_DEL:
             op.inverted.type = ui.Action.OPERATION.RXN_PLUS_ADD;
             op.inverted.params =
             {
                 pos: ui.render.rxnPlusGetPos(op.params.id)
             };
             ui.render.rxnPlusRemove(op.params.id);
+            break;
+
+        case ui.Action.OPERATION.RXN_PLUS_ADD:
+            op.inverted.type = ui.Action.OPERATION.RXN_PLUS_DEL;
+
+            var id = ui.render.rxnPlusAdd(op.params.pos);
+			op.inverted.params = { id: id };
+			break;
+
+        case ui.Action.OPERATION.RXN_PLUS_POS:
+            op.inverted.type = ui.Action.OPERATION.RXN_PLUS_POS;
+            op.inverted.params =
+            {
+                id: op.params.id, // TODO: fix
+                pos: ui.render.rxnPlusGetPos(op.params.id)
+            };
+            ui.render.rxnPlusMove(op.params.id, op.params.pos);
             break;
 
         default:
@@ -425,6 +461,70 @@ ui.Action.fromSelectedAtomsPos = function ()
         {
             id: ui.atomMap.indexOf(id),
             pos: ui.render.atomGetPos(id)
+        });
+    }, this);
+
+    return action;
+}
+
+ui.Action.fromRxnArrowPos = function (id, pos)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_ARROW_POS,
+    {
+        id: id,
+        pos: ui.render.rxnArrowGetPos(id)
+    });
+
+    if (arguments.length > 1)
+        ui.render.rxnArrowMove(id, pos);
+
+    return action;
+}
+
+ui.Action.fromSelectedRxnArrowPos = function ()
+{
+    var action = new ui.Action();
+
+    ui.selection.rxnArrows.each(function (id)
+    {
+        action.addOperation(ui.Action.OPERATION.RXN_ARROW_POS,
+        {
+			id: id,
+			pos: ui.render.rxnArrowGetPos(id)
+        });
+    }, this);
+
+    return action;
+}
+
+ui.Action.fromRxnPlusPos = function (id, pos)
+{
+    var action = new ui.Action();
+
+    action.addOperation(ui.Action.OPERATION.RXN_PLUS_POS,
+    {
+        id: id,
+        pos: ui.render.rxnPlusGetPos(id)
+    });
+
+    if (arguments.length > 1)
+        ui.render.rxnPlusMove(id, pos);
+
+    return action;
+}
+
+ui.Action.fromSelectedRxnPlusPos = function ()
+{
+    var action = new ui.Action();
+
+    ui.selection.rxnPluss.each(function (id)
+    {
+        action.addOperation(ui.Action.OPERATION.RXN_PLUS_POS,
+        {
+			id: id,
+			pos: ui.render.rxnPlusGetPos(id)
         });
     }, this);
 
@@ -904,6 +1004,14 @@ ui.Action.fromFragmentDeletion = function ()
     }, this);
 
     action.removeSgroupIfNeeded(atoms_to_remove);
+
+	ui.selection.rxnArrows.each(function (id) {
+		action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+	}, this);
+
+	ui.selection.rxnPluses.each(function (id) {
+		action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
+	}, this);
 
     return action.perform();
 }

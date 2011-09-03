@@ -267,7 +267,7 @@ rnd.ReStruct.prototype.markAtom = function (aid, mark) {
 
 rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 	var mapChanged = this[map+'Changed'];
-	mapChanged[id] = (id in mapChanged) ?
+	mapChanged[id] = (typeof(mapChanged[id]) != 'undefined') ?
 	Math.max(mark, mapChanged[id]) : mark;
 	this.clearVisel(this[map].get(id).visel);
 }
@@ -349,8 +349,9 @@ rnd.ReStruct.prototype.update = function (force)
 	if (force) {
 		(function(){
 			for (var map in rnd.ReStruct.maps) {
+				var mapChanged = this[map+'Changed'];
 				this[map].each(function(id){
-					this[map+'Changed'][id] = 1;
+					mapChanged[id] = 1;
 				}, this);
 			}
 		}).call(this);
@@ -358,9 +359,10 @@ rnd.ReStruct.prototype.update = function (force)
 		// check if some of the items marked are already gone
 		(function(){
 			for (var map in rnd.ReStruct.maps) {
-				for (id in this[map+'Changed'])
+				var mapChanged = this[map+'Changed'];
+				for (id in mapChanged)
 					if (!this[map].has(id))
-						delete this[map+'Changed'][id];
+						delete mapChanged[id];
 			}
 		}).call(this);
 	}

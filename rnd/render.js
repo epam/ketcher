@@ -466,6 +466,8 @@ rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 	// TODO: rewrite with special methods for each attribute?
 	// TODO: allow multiple attributes at once?
 	var atom = this.ctab.atoms.get(aid);
+	if (name == 'label' && value != null) // HACK
+		atom.a['atomList'] = null;
 	atom.a[name] = value;
 	this.invalidateAtom(aid);
 }

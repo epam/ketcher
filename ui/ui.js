@@ -145,7 +145,8 @@ ui.init = function ()
     $$('.modeButton').each(function (el)
     {
         ui.initButton(el);
-        el.observe('click', ui.onClick_SideButton);
+        if (el.identify() != 'atom_table')
+            el.observe('click', ui.onClick_SideButton);
     });
     $('new').observe('click', ui.onClick_NewFile);
     $('open').observe('click', ui.onClick_OpenFile);
@@ -158,7 +159,9 @@ ui.init = function ()
     $('zoom_in').observe('click', ui.onClick_ZoomIn);
     $('zoom_out').observe('click', ui.onClick_ZoomOut);
     $('clean_up').observe('click', ui.onClick_CleanUp);
-    $('elem_table_button').observe('click', ui.onClick_ElemTableButton);
+    $('atom_table').observe('click', ui.onClick_ElemTableButton);
+    $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
+    $('elem_table_not_list').observe('click', ui.onSelect_ElemTableNotList);
 
     // Client area events
     this.client_area = $('client_area');
@@ -210,10 +213,10 @@ ui.init = function ()
     {
         ui.hideDialog('elem_table');
     });
-    $('elem_table_ok').observe('click', function ()
+    $('elem_table_ok').observe('click', function (event)
     {
         ui.hideDialog('elem_table');
-//        ui.applyAtomProperties();
+        ui.onClick_SideButton.apply($('atom_table'), [event]);
     });
 
     // Load dialog events
@@ -420,7 +423,7 @@ ui.selectMode = function (mode)
             }
             if (mode.startsWith('atom_'))
             {
-                ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs({label: ui.atomLabel(mode)}), true);
+                ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs(ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
@@ -524,10 +527,12 @@ ui.atomLabel = function (mode)
     else
         label = mode.substr(5);
 
+    if (label == 'table')
+        return ui.elem_table_obj.getAtomProps();
     if (label == 'any')
-        return 'A';
+        return {'label':'A'};
     else
-        return label.capitalize();
+        return {'label':label.capitalize()};
 }
 
 ui.pattern = function ()
@@ -1275,7 +1280,7 @@ ui.onClick_Atom = function (event, id)
             break;
 
         case ui.MODE.ATOM:
-            ui.addUndoAction(ui.Action.fromAtomAttrs(id, {label: ui.atomLabel()}), true);
+            ui.addUndoAction(ui.Action.fromAtomAttrs(id, ui.atomLabel()), true);
             ui.render.update();
             break;
 
@@ -1493,7 +1498,7 @@ ui.onClick_Canvas = function (event)
     {
     case ui.MODE.ATOM:
 
-        ui.addUndoAction(ui.Action.fromAtomAddition(pos, {label: ui.atomLabel()}));
+        ui.addUndoAction(ui.Action.fromAtomAddition(pos, ui.atomLabel()));
         ui.render.update();
         break;
 
@@ -1877,7 +1882,7 @@ ui.onMouseMove_Canvas = function (event)
     if (mode == ui.MODE.BOND || mode == ui.MODE.ATOM)
     {
         var type = {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
-        var label = 'C';
+        var label = {'label':'C'};
 
         if (mode == ui.MODE.BOND)
             type = ui.bondType();
@@ -1944,12 +1949,12 @@ ui.onMouseMove_Canvas = function (event)
 
             if (begin == null)
             {
-                begin = {label: label};
+                begin = label;
                 pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
             } else
                 pos = v;
 
-            action_ret = ui.Action.fromBondAddition(type, begin, {label: label}, pos, v);
+            action_ret = ui.Action.fromBondAddition(type, begin, label, pos, v);
 
             ui.drag.action = action_ret[0];
             ui.drag.atom_id = action_ret[1];
@@ -2426,12 +2431,28 @@ ui.showElemTable = function (id)
         return;
 
     ui.showDialog('elem_table');
-    if (typeof(ketcher.elem_table_obj) == 'undefined') {
-        ketcher.elem_table_obj = new rnd.ElementTable('elem_table_area', {'fillColor':'#DADADA', 'frameColor':'#E8E8E8', 'fontSize':23, 'buttonHalfSize':18}, true);
-        ketcher.elem_table_area = ketcher.elem_table_obj.renderTable();
+    if (typeof(ui.elem_table_obj) == 'undefined') {
+        ui.elem_table_obj = new rnd.ElementTable('elem_table_area', {
+            'fillColor':'#DADADA',
+            'fillColorSelected':'#FFFFFF',
+            'frameColor':'#E8E8E8',
+            'fontSize':23,
+            'buttonHalfSize':18
+        }, true);
+        ui.elem_table_area = ui.elem_table_obj.renderTable();
     }
     $('elem_table_ok').focus();
 }
+
+
+ui.onSelect_ElemTableNotList = function ()
+{
+    try {
+        ui.elem_table_obj.updateAtomProps();
+    } catch(e) {
+        ErrorHandler.handleError(e);
+    }
+};
 
 //
 // Clipboard actions

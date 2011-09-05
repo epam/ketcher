@@ -76,7 +76,7 @@
                 </tr>
                 <tr class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="bond_single" title="Single Bond (1)"></div></td>
-                    <td><div class="sideButton" id="elem_table_button" title="Element table"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_table" title="Element table"></div></td>
                 </tr>
                 <tr class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="bond_double" title="Double Bond (2)"></div></td>
@@ -337,7 +337,11 @@
                         Element table
                     </div>
                     <div style="height:0.5em"></div>
-					<div id="elem_table_area"></div>
+                    <div id="elem_table_area"></div>
+                    <div align="left">
+                        <input type="radio" id="elem_table_list" name="atom_list">List</input> <br />
+                        <input type="radio" id="elem_table_not_list" name="atom_list">Not List</input>
+                    </div>
                     <div style="margin-top:0.5em">
                         <input id="elem_table_cancel" type="button" value="Cancel" />
                         <input id="elem_table_ok"type="button" value="OK" />

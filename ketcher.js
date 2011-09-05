@@ -32,7 +32,7 @@ ketcher.init = function ()
 	ketcher.button_areas.atom_cl = new rnd.ElementTable('atom_cl', elemLabelOpts).renderSingle('Cl');
 	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
 	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
-	ketcher.button_areas.elem_table_button = new rnd.ElementTable('elem_table_button', elemLabelOpts).renderSingle('...');
+	ketcher.button_areas.atom_table = new rnd.ElementTable('atom_table', elemLabelOpts).renderSingle('...');
 
 	var charge_head = ['', '  fun stuff 0123456789AB', '',
 		'  1  0  0  0  0  0            999 V2000',

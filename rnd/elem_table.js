@@ -63,17 +63,24 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 
 rnd.ElementTable.prototype.updateAtomProps = function () {
 	this.atomProps = {};
-	if (util.Set.size(this.selectedLabels) == 1)
+	if (util.Set.size(this.selectedLabels) == 0)
+		return;
+	var notList = !!$('elem_table_not_list').checked;
+	if (!notList && util.Set.size(this.selectedLabels) == 1) {
 		this.atomProps = {
 			'label': chem.Element.elements.get(util.Set.pick(this.selectedLabels)).label
 		};
-	else if (util.Set.size(this.selectedLabels) > 1)
+	} else {
+		var ids = util.Set.list(this.selectedLabels);
+		ids.sort(function(a, b){return a-b;});
 		this.atomProps = {
+			'label':'',
 			'atomList': new chem.Struct.AtomList({
-					'notList':false,
-					'ids':util.Set.list(this.selectedLabels)
+					'notList': notList,
+					'ids': ids
 			})
 		};
+	}
 }
 
 rnd.ElementTable.prototype.getAtomProps = function () {

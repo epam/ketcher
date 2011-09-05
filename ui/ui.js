@@ -158,6 +158,7 @@ ui.init = function ()
     $('zoom_in').observe('click', ui.onClick_ZoomIn);
     $('zoom_out').observe('click', ui.onClick_ZoomOut);
     $('clean_up').observe('click', ui.onClick_CleanUp);
+    $('elem_table_button').observe('click', ui.onClick_ElemTableButton);
 
     // Client area events
     this.client_area = $('client_area');
@@ -203,6 +204,17 @@ ui.init = function ()
     });
     $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
     $('input_label').observe('keyup', ui.onKeyUp);
+
+    // Element table
+    $('elem_table_cancel').observe('click', function ()
+    {
+        ui.hideDialog('elem_table');
+    });
+    $('elem_table_ok').observe('click', function ()
+    {
+        ui.hideDialog('elem_table');
+//        ui.applyAtomProperties();
+    });
 
     // Load dialog events
     $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
@@ -290,7 +302,7 @@ ui.init = function ()
     this.render.onRxnArrowMouseOver = this.onMouseOver_RxnArrow;
     this.render.onRxnArrowMouseOut = this.onMouseOut_RxnArrow;
 
-	this.render.onRxnPlusClick = this.onClick_RxnPlus;
+    this.render.onRxnPlusClick = this.onClick_RxnPlus;
     this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
     this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
     this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
@@ -1710,11 +1722,11 @@ ui.updateSelection = function (selection)
 
 ui.selected = function ()
 {
-	for (var map in rnd.ReStruct.maps) {
-		if (!Object.isUndefined(ui.selection[map]) && ui.selection[map].length > 0) {
-			return true;
-		}
-	}
+    for (var map in rnd.ReStruct.maps) {
+        if (!Object.isUndefined(ui.selection[map]) && ui.selection[map].length > 0) {
+            return true;
+        }
+    }
     return false;
 }
 
@@ -1735,8 +1747,8 @@ ui.selectAll = function ()
 ui.removeSelected = function ()
 {
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
-	for (var map in rnd.ReStruct.maps)
-		ui.selection[map] = [];
+    for (var map in rnd.ReStruct.maps)
+        ui.selection[map] = [];
     ui.render.update();
     ui.updateClipboardButtons();
 }
@@ -1995,7 +2007,7 @@ ui.onMouseMove_Canvas = function (event)
                 ui.render.rxnArrowMoveRel(ui.drag.rxnArrow_id, delta);
             } else if (ui.drag.rxnPlus_id != null) {
                 ui.render.rxnPlusMoveRel(ui.drag.rxnPlus_id, delta);
-			}
+            }
         }
 
         ui.drag.last_pos = {x: event.pageX, y: event.pageY};
@@ -2390,6 +2402,35 @@ ui.onChange_SGroupType = function ()
 
     if (type != 'GEN')
         $('sgroup_label').activate();
+}
+
+//
+// Element table
+//
+
+ui.onClick_ElemTableButton = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+    if (ui.modeType() == ui.MODE.PASTE)
+    {
+        ui.cancelPaste();
+        ui.selectMode('select_simple');
+    }
+    ui.showElemTable();
+}
+
+ui.showElemTable = function (id)
+{
+    if ($('elem_table').visible())
+        return;
+
+    ui.showDialog('elem_table');
+    if (typeof(ketcher.elem_table_obj) == 'undefined') {
+        ketcher.elem_table_obj = new rnd.ElementTable('elem_table_area', {'fillColor':'#DADADA', 'frameColor':'#E8E8E8', 'fontSize':23, 'buttonHalfSize':18}, true);
+        ketcher.elem_table_area = ketcher.elem_table_obj.renderTable();
+    }
+    $('elem_table_ok').focus();
 }
 
 //

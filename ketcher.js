@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -32,6 +32,7 @@ ketcher.init = function ()
 	ketcher.button_areas.atom_cl = new rnd.ElementTable('atom_cl', elemLabelOpts).renderSingle('Cl');
 	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
 	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
+	ketcher.button_areas.elem_table_button = new rnd.ElementTable('elem_table_button', elemLabelOpts).renderSingle('...');
 
 	var charge_head = ['', '  fun stuff 0123456789AB', '',
 		'  1  0  0  0  0  0            999 V2000',
@@ -109,7 +110,7 @@ ketcher.init = function ()
 		'  8  9  2  0  0  0  0',
 		'  9  4  1  0  0  0  0',
 		'M  END'];
-	
+
 	var hexa1 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -125,7 +126,7 @@ ketcher.init = function ()
 		'  5  6  2  0  0  0  0',
 		'  6  1  1  0  0  0  0',
 		'M  END'];
-	
+
 	var hexa2 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -172,7 +173,7 @@ ketcher.init = function ()
 		'  5  1  1  0  0  0  0',
 		'M  END'
 	];
-	
+
 	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', clean_up, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', hexa1, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', hexa2, 20, renderOptsPattern);
@@ -225,12 +226,6 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
         this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
-}
-
-ketcher.showElemTable = function (clientArea)
-{
-    this.elemTable = new rnd.ElementTable(clientArea);
-    return this.elemTable;
 }
 
 /*

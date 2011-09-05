@@ -34,7 +34,7 @@
     </head>
 
     <body onload="ketcher.init();">
-		
+
         <div>
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
@@ -69,61 +69,61 @@
                     <td colspan="15" rowspan="13"><div id="client_area"></div></td>
                     <td style="height:0px"></td>
                 </tr-->
-                <tr align="center" style="height:34px">
+                <tr class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="select_erase" src="png/action/edit-clear.png" alt="" title="Erase" /></td>
                     <td colspan="21" rowspan="15"><div id="client_area"></div></td>
                     <td></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_single" title="Single Bond (1)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_any" title="Any Atom (A)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_single" title="Single Bond (1)"></div></td>
+                    <td><div class="sideButton" id="elem_table_button" title="Element table"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_double" title="Double Bond (2)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_double" title="Double Bond (2)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_any" title="Any Atom (A)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_triple" title="Triple Bond (3)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_triple" title="Triple Bond (3)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_aromatic" title="Aromatic Bond (4)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_aromatic" title="Aromatic Bond (4)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_up" title="Single Up Bond (1)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_up" title="Single Up Bond (1)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_down" title="Single Down Bond (1)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_down" title="Single Down Bond (1)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_up_or_down" title="Single Up or Down Bond (1)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_up_or_down" title="Single Up or Down Bond (1)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_double_crossed" title="Crossed Double Bond (2)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_double_crossed" title="Crossed Double Bond (2)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="bond_any" title="Any Bond (0)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="bond_any" title="Any Bond (0)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="charge_plus" title="Charge Plus (5)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="charge_plus" title="Charge Plus (5)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)" style="width:32px;height:32px"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="rxn_arrow" title="Arrow Tool" style="width:32px;height:32px"></div></td>
-                    <td></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="rxn_arrow" title="Arrow Tool"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)"></div></td>
                 </tr>
-                <tr align="center" style="height:34px">
-                    <td><div class="sideButton modeButton" id="rxn_plus" title="Plus Tool" style="width:32px;height:32px"></div></td>
+                <tr class="sideButtonCell">
+                    <td><div class="sideButton modeButton" id="rxn_plus" title="Plus Tool"></div></td>
                     <td></td>
                 </tr>
                 <tr>
@@ -134,9 +134,9 @@
                     <td colspan="24"></td>
                 </tr>
             </table>
-            
+
             <input id="input_label" type="text" maxlength="4" size="4" style="display:none;" />
-            
+
             <div id="window_cover" style="display:none;"><div id="loading" style="display:none;"></div></div>
 
             <div class="dialogWindow fileDialog" id="open_file" style="display:none;">
@@ -327,6 +327,20 @@
                     <div style="margin-top:0.5em">
                         <input id="sgroup_prop_cancel" type="button" value="Cancel" />
                         <input id="sgroup_prop_ok"type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialogWindow elemTableDialog" id="elem_table" style="display:none;">
+                <div>
+                    <div>
+                        Element table
+                    </div>
+                    <div style="height:0.5em"></div>
+					<div id="elem_table_area"></div>
+                    <div style="margin-top:0.5em">
+                        <input id="elem_table_cancel" type="button" value="Cancel" />
+                        <input id="elem_table_ok"type="button" value="OK" />
                     </div>
                 </div>
             </div>

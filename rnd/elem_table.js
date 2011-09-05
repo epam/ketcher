@@ -57,6 +57,27 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 			'font-size' : this.fontSize
 		};
 	this.items = {};
+	this.selectedLabels = util.Set.empty();
+	this.atomProps = {};
+}
+
+rnd.ElementTable.prototype.updateAtomProps = function () {
+	this.atomProps = {};
+	if (util.Set.size(this.selectedLabels) == 1)
+		this.atomProps = {
+			'label': chem.Element.elements.get(util.Set.pick(this.selectedLabels)).label
+		};
+	else if (util.Set.size(this.selectedLabels) > 1)
+		this.atomProps = {
+			'atomList': new chem.Struct.AtomList({
+					'notList':false,
+					'ids':util.Set.list(this.selectedLabels)
+			})
+		};
+}
+
+rnd.ElementTable.prototype.getAtomProps = function () {
+	return this.atomProps;
 }
 
 rnd.ElementTable.prototype.renderTable = function () {
@@ -89,9 +110,13 @@ rnd.ElementTable.prototype.renderPlus = function () {
 
 rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
 	var item = this.items[id];
-	if (selected)
+	if (selected) {
+		util.Set.add(this.selectedLabels, id);
 		item.box.attr('fill',this.fillColorSelected);
-	else
+	} else {
+		util.Set.remove(this.selectedLabels, id);
 		item.box.attr('fill',this.fillColor);
+	}
 	item.selected = selected;
+	this.updateAtomProps();
 }

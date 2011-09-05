@@ -23,7 +23,7 @@ util.Set = {
 		util.Set.add(set, item);
 		return set;
 	},
-	
+
 	size: function(set) {
 		var cnt = 0;
 		for (var id in set) {
@@ -61,6 +61,14 @@ util.Set = {
 		}
 	},
 
+	pick: function(set) {
+		for (var v in set) {
+			if (set[v] !== Object.prototype[v]) {
+				return set[v];
+			}
+		}
+	},
+
 	list: function(set) {
 		var list = [];
 		for (var v in set) {
@@ -80,7 +88,7 @@ util.Set = {
 			util.Set.add(set, item);
 		});
 	},
-	
+
 	remove: function(set, item) {
 		var v = set[item];
 		delete set[item];

@@ -804,7 +804,8 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||
-		atom.a.explcitValence)
+		atom.a.explcitValence ||
+		atom.a.atomList != null)
 		return true;
 	if (!atom.showLabel && atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];

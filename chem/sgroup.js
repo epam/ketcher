@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Vec2 || !chem.Pool)
+if (!window.chem || !util.Vec2 || !util.Pool)
 	throw new Error("Vec2, Pool should be defined first")
 chem.SGroup = function (type)
 {
@@ -66,9 +66,9 @@ chem.SGroup.equip = function (sgroup, type) {
 }
 
 chem.SGroup.numberArrayToString = function (numbers, map) {
-	var str = chem.stringPadded(numbers.length, 3);
+	var str = util.stringPadded(numbers.length, 3);
 	for (var i = 0; i < numbers.length; ++i) {
-		str += ' ' + chem.stringPadded(map[numbers[i]], 3);
+		str += ' ' + util.stringPadded(map[numbers[i]], 3);
 	}
 	return str;
 }
@@ -83,14 +83,14 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s)
-		chem.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
+		util.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	return sg.id;
 }
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	var bb = mol.getObjBBox();
-	bb = bb.extend(new chem.Vec2(0.6, 0.6));
+	bb = bb.extend(new util.Vec2(0.6, 0.6));
 
 	var coord = [
 	[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
@@ -98,9 +98,9 @@ chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	];
 	var lines = [];
 	for (var j = 0; j < coord.length; ++j) {
-		var line = 'M  SDI ' + idstr + chem.paddedInt(4, 3);
+		var line = 'M  SDI ' + idstr + util.paddedInt(4, 3);
 		for (var i = 0; i < coord[j].length; ++i) {
-			line += chem.paddedFloat(coord[j][i], 10, 4);
+			line += util.paddedFloat(coord[j][i], 10, 4);
 		}
 		lines.push(line);
 	}
@@ -143,7 +143,7 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
 	}
-	cp.atoms = chem.mapArray(sgroup.atoms, aidMap);
+	cp.atoms = util.mapArray(sgroup.atoms, aidMap);
 	cp.p = sgroup.p;
 	cp.pr = sgroup.pr;
 	cp.pa = sgroup.pa;
@@ -190,12 +190,12 @@ chem.SGroup.getBBox = function (atoms, remol) {
 		var atom = remol.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
-			var p = atom.ps;
-			bba = new chem.Box2Abs(p,p);
-			var ext = new chem.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
+			var p = atom.a.ps;
+			bba = new util.Box2Abs(p,p);
+			var ext = new util.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
 			bba = bba.extend(ext, ext);
 		}
-		bb = (bb == null) ? bba : chem.Box2Abs.union(bb, bba);
+		bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
 	}
 	return bb;
 }
@@ -206,9 +206,9 @@ chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 	var lines = [];
 	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
 		var rem = Math.min(ids.length - 15 * i, 15);
-		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + chem.paddedInt(rem, 2);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + util.paddedInt(rem, 2);
 		for (var j = 0; j < rem; ++j) {
-			salLine += ' ' + chem.paddedInt(map[ids[i * 15 + j]], 3);
+			salLine += ' ' + util.paddedInt(map[ids[i * 15 + j]], 3);
 		}
 		lines.push(salLine);
 	}
@@ -233,7 +233,7 @@ chem.SGroup.GroupMul = {
 		var paper = render.paper;
 		var set = paper.set();
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var multIndex = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.mul)
@@ -248,11 +248,11 @@ chem.SGroup.GroupMul = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
-		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, chem.idList(this.atomSet), atomMap)); // TODO: check atomSet
-		lines = lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, chem.idList(this.parentAtomSet), atomMap));
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, util.idList(this.atomSet), atomMap)); // TODO: check atomSet
+		lines = lines.concat(chem.SGroup.makeAtomBondLines('SPA', idstr, util.idList(this.parentAtomSet), atomMap));
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
@@ -306,20 +306,20 @@ chem.SGroup.GroupMul = {
 			for (i = 0; i < this.atoms.length; ++i) {
 				var aid = this.atoms[i];
 				var atom = mol.atoms.get(aid);
-				var aid2 = mol.atoms.add(new chem.Molecule.Atom(atom));
+				var aid2 = mol.atoms.add(new chem.Struct.Atom(atom));
 				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;
 				mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
 			}
 			for (i = 0; i < inBonds.length; ++i) {
 				var bond = mol.bonds.get(inBonds[i]);
-				var newBond = new chem.Molecule.Bond(bond);
+				var newBond = new chem.Struct.Bond(bond);
 				newBond.begin = amap[newBond.begin];
 				newBond.end = amap[newBond.end];
 				mol.bonds.add(newBond);
 			}
 			if (crossBond != null) {
-				var newCrossBond = new chem.Molecule.Bond(crossBond);
+				var newCrossBond = new chem.Struct.Bond(crossBond);
 				newCrossBond.begin = tailAtom;
 				newCrossBond.end = amap[xAtom2];
 				mol.bonds.add(newCrossBond);
@@ -359,7 +359,7 @@ chem.SGroup.GroupMul = {
 		}
 		this.patoms = chem.SGroup.removeNegative(this.patoms);
 
-		var patomsMap = chem.identityMap(this.patoms);
+		var patomsMap = util.identityMap(this.patoms);
 
 		var bondsToRemove = [];
 		mol.bonds.each(function(bid, bond){
@@ -399,7 +399,7 @@ chem.SGroup.GroupSru = {
 		var paper = render.paper;
 		var set = paper.set();
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var connectivity = this.data.connectivity || 'eu';
@@ -426,7 +426,7 @@ chem.SGroup.GroupSru = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -440,8 +440,8 @@ chem.SGroup.GroupSru = {
 		mol.bonds.each(function(bid, bond){
 			var a1 = mol.atoms.get(bond.begin);
 			var a2 = mol.atoms.get(bond.end);
-			if (chem.Set.contains(a1.sgs, this.id) && !chem.Set.contains(a2.sgs, this.id) ||
-				chem.Set.contains(a2.sgs, this.id) && !chem.Set.contains(a1.sgs, this.id))
+			if (util.Set.contains(a1.sgs, this.id) && !util.Set.contains(a2.sgs, this.id) ||
+				util.Set.contains(a2.sgs, this.id) && !util.Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
 		this.bonds = xBonds;
@@ -460,7 +460,7 @@ chem.SGroup.GroupSup = {
 		var paper = render.paper;
 		var set = paper.set();
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		if (this.data.name) {
@@ -478,7 +478,7 @@ chem.SGroup.GroupSup = {
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -504,14 +504,14 @@ chem.SGroup.GroupGen = {
 		var paper = render.paper;
 		var set = paper.set();
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new chem.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
@@ -528,9 +528,9 @@ chem.SGroup.GroupGen = {
 }
 
 chem.SGroup.getMassCentre = function (remol, atoms) {
-	var c = new chem.Vec2(); // mass centre
+	var c = new util.Vec2(); // mass centre
 	for (var i = 0; i < atoms.length; ++i) {
-		c = c.addScaled(remol.atoms.get(atoms[i]).ps, 1.0 / atoms.length);
+		c = c.addScaled(remol.atoms.get(atoms[i]).a.ps, 1.0 / atoms.length);
 	}
 	return c;
 }
@@ -565,7 +565,7 @@ chem.SGroup.GroupDat = {
 		var i;
 		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
 		if (this.p == null) {
-			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new chem.Vec2(1, 1).scaled(settings.scaleFactor)));
+			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
 		
 		if (!absolute) { // relative position
@@ -578,7 +578,7 @@ chem.SGroup.GroupDat = {
 			this.selectionBoxes = [];
 			for (i = 0; i < atoms.length; ++i) {
 				var atom = remol.atoms.get(atoms[i]);
-				var p = new chem.Vec2(atom.ps);
+				var p = new util.Vec2(atom.a.ps);
 				var bb = atom.visel.boundingBox;
 				if (bb != null) {
 					p.x = Math.max(p.x, bb.p1.x);
@@ -588,43 +588,43 @@ chem.SGroup.GroupDat = {
 				var box_i = name_i.getBBox();
 				name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
 				set.push(name_i);
-				this.selectionBoxes.push(chem.Box2Abs.fromRelBox(name_i.getBBox()));
+				this.selectionBoxes.push(util.Box2Abs.fromRelBox(name_i.getBBox()));
 			}
 		} else {
 			var name = this.showValue(paper, this.ps, this, settings);
 			var box = name.getBBox();
 			name.translate(0.5 * box.width, -0.5 * box.height);
 			set.push(name);
-			this.selectionBoxes = [chem.Box2Abs.fromRelBox(name.getBBox())];
+			this.selectionBoxes = [util.Box2Abs.fromRelBox(name.getBBox())];
 		}
 		return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = chem.stringPadded(sgMap[this.id], 3);
+		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;
 		var p = this.p;
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +
-		' ' + chem.stringPadded(data.fieldName, 30, true) +
-		chem.stringPadded(data.fieldType, 2) +
-		chem.stringPadded(data.units, 20, true) +
-		chem.stringPadded(data.query, 2) +
-		chem.stringPadded(data.queryOp, 3);
+		' ' + util.stringPadded(data.fieldName, 30, true) +
+		util.stringPadded(data.fieldType, 2) +
+		util.stringPadded(data.units, 20, true) +
+		util.stringPadded(data.query, 2) +
+		util.stringPadded(data.queryOp, 3);
 		lines.push(sdtLine);
 		var sddLine = 'M  SDD ' + idstr +
-		' ' + chem.paddedFloat(p.x, 10, 4) + chem.paddedFloat(p.y, 10, 4) +
+		' ' + util.paddedFloat(p.x, 10, 4) + util.paddedFloat(p.y, 10, 4) +
 		'    ' + // ' eee'
 		(data.attached ? 'A' : 'D') + // f
 		(data.absolute ? 'A' : 'R') + // g
 		(data.showUnits ? 'U' : ' ') + // h
 		'   ' + //  i
-		(data.nCharnCharsToDisplay >= 0 ? chem.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+		(data.nCharnCharsToDisplay >= 0 ? util.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
 		'  1   ' + // 'kkk ll '
-		chem.stringPadded(data.tagChar, 1) + // m
-		'  ' + chem.paddedInt(data.daspPos, 1) + // n
+		util.stringPadded(data.tagChar, 1) + // m
+		'  ' + util.paddedInt(data.daspPos, 1) + // n
 		'  '; // oo
 		lines.push(sddLine);
 		var str = data.fieldValue;
@@ -633,7 +633,7 @@ chem.SGroup.GroupDat = {
 			lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
 			str = str.slice(69);
 		}
-		lines.push('M  SED ' + idstr + ' ' + chem.stringPadded(str, charsPerLine, true));
+		lines.push('M  SED ' + idstr + ' ' + util.stringPadded(str, charsPerLine, true));
 		return lines.join('\n');
 	},
 

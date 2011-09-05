@@ -31,7 +31,7 @@ ui.DEBUG = false;
 
 ui.render = null;
 
-ui.ctab = new chem.Molecule();
+ui.ctab = new chem.Struct();
 
 ui.client_area = null;
 ui.mode_id = null;
@@ -42,7 +42,7 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
-ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7};
+ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8};
 
 ui.patterns =
 {
@@ -122,7 +122,7 @@ ui.init = function ()
 {
     if (this.initialized)
     {
-        this.Action.fromNewCanvas(new chem.Molecule());
+        this.Action.fromNewCanvas(new chem.Struct());
         this.render.update();
         this.undoStack.clear();
         this.redoStack.clear();
@@ -154,7 +154,7 @@ ui.init = function ()
     // OS X specific stuff
     if (ui.is_osx)
     {
-        $$('.toolButton > img, .sideButton').each(function (button)
+        $$('.toolButton, .toolButton > img, .sideButton').each(function (button)
         {
             button.title = button.title.replace("Ctrl", "Cmd");
         }, this);
@@ -168,7 +168,7 @@ ui.init = function ()
     
     // Button events
     $$('.toolButton').each(ui.initButton);
-    $$('.sideButton').each(function (el)
+    $$('.modeButton').each(function (el)
     {
         ui.initButton(el);
         el.observe('click', ui.onClick_SideButton);
@@ -320,7 +320,7 @@ ui.init = function ()
     this.selectMode('select_simple');
     
     // Init renderer
-    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true}, new chem.Vec2(ui.client_area.clientWidth, ui.client_area.clientHeight - 4));
+    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true});
     
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
@@ -493,7 +493,9 @@ ui.modeType = function ()
         return ui.MODE.ERASE;
     if (ui.mode_id.startsWith('atom_'))
         return ui.MODE.ATOM;
-    if (ui.mode_id.startsWith('bond_'))
+    if (ui.mode_button.id.startsWith('charge_'))
+        return ui.MODE.CHARGE;
+    if (ui.mode_button.id.startsWith('bond_'))
         return ui.MODE.BOND;
     if (ui.mode_id == 'sgroup')
         return ui.MODE.SGROUP;
@@ -513,25 +515,29 @@ ui.bondType = function (mode)
     switch (type_str)
     {
     case 'single':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'up':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.UP};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
     case 'down':
-        return {type: 1, stereo: chem.Molecule.BOND.STEREO.DOWN};
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
+    case 'up_or_down':
+        return {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER};
     case 'double':
-        return {type: 2, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
+    case 'double_crossed':
+        return {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS};
     case 'triple':
-        return {type: 3, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'aromatic':
-        return {type: 4, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 4, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'single_double':
-        return {type: 5, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 5, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'single_aromatic':
-        return {type: 6, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 6, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'double_aromatic':
-        return {type: 7, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 7, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'any':
-        return {type: 8, stereo: chem.Molecule.BOND.STEREO.NONE};
+        return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
     }
 }
 
@@ -570,7 +576,7 @@ ui.onClick_NewFile = function ()
     
     if (ui.ctab.atoms.count() != 0)
     {
-        ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Molecule()));
+        ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
         ui.render.update();
     }
 }
@@ -580,10 +586,10 @@ ui.onClick_NewFile = function ()
 //
 ui.onKeyPress_Ketcher = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     
     if ($('window_cover').visible())
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
 
     if (ui.isDrag())
     {
@@ -593,7 +599,7 @@ ui.onKeyPress_Ketcher = function (event)
             if (ui.selected())
                 ui.updateSelection();
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 
     switch (event.keyCode)
@@ -607,12 +613,12 @@ ui.onKeyPress_Ketcher = function (event)
                 ui.updateSelection();
             ui.selectMode('select_simple');
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 46: // Delete
         if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
             if (ui.selected())
                 ui.removeSelected();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 
     switch (Prototype.Browser.IE ? event.keyCode : event.which)
@@ -620,47 +626,52 @@ ui.onKeyPress_Ketcher = function (event)
     case 43: // +
     case 61:
         ui.onClick_ZoomIn.call($('zoom_in'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 45: // -
     case 95:
         ui.onClick_ZoomOut.call($('zoom_out'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 8: // Back space
         if (ui.is_osx && ui.selected())
             ui.removeSelected();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 48: // 0
         ui.selectMode('bond_any');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 49: // 1
-        var singles = ['bond_single', 'bond_up', 'bond_down'];
-        ui.selectMode(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]);
-        return chem.preventDefault(event);
+        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_up_or_down'];
+        ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
+        return util.preventDefault(event);
     case 50: // 2
-        ui.selectMode('bond_double');
-        return chem.preventDefault(event);
+		var doubles = ['bond_double', 'bond_double_crossed'];
+		ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
+        return util.preventDefault(event);
     case 51: // 3
         ui.selectMode('bond_triple');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 52: // 4
         ui.selectMode('bond_aromatic');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
+    case 53: // 5
+        var charge = ['charge_plus', 'charge_minus'];
+        ui.selectMode(charge[(charge.indexOf(ui.mode_button.id) + 1) % charge.length]);
+        return util.preventDefault(event);
     case 66: // Shift+B
         ui.selectMode('atom_br');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 67: // Shift+C
         ui.selectMode('atom_cl');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 90: // Ctrl+Shift+Z
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Redo.call($('redo'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 97: // a
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.selectAll();
         else
             ui.selectMode('atom_any');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 99: // c
         if (!event.altKey)
         {
@@ -669,57 +680,57 @@ ui.onKeyPress_Ketcher = function (event)
             else if (!event.metaKey)
                 ui.selectMode('atom_c');
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 102: // f
         ui.selectMode('atom_f');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 103: // Ctrl+G
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SideButton.call($('sgroup'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 104: // h
         ui.selectMode('atom_h');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 105: // i
         ui.selectMode('atom_i');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 108: // Ctrl+L
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_CleanUp.call($('clean_up'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 110: // n or Ctrl+N
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_NewFile.call($('new'));
         else
             ui.selectMode('atom_n');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 111: // o or Ctrl+O
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_OpenFile.call($('open'));
         else
             ui.selectMode('atom_o');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 112: // p
         ui.selectMode('atom_p');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 114: // r
         var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
-        ui.selectMode(rings[(rings.indexOf(ui.mode_id) + 1) % rings.length]);
-        return chem.preventDefault(event);
+        ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
+        return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SaveFile.call($('save'));
         else
             ui.selectMode('atom_s');
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 118: // Ctrl+V
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Paste.call($('paste'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 120: // Ctrl+X
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Cut.call($('cut'));
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 122: // Ctrl+Z or Ctrl+Shift+Z (in Safari)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
         {
@@ -728,10 +739,10 @@ ui.onKeyPress_Ketcher = function (event)
             else
                 ui.onClick_Undo.call($('undo'));
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     case 126: // ~
         ui.render.update(true);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -746,8 +757,8 @@ ui.onKeyDown_IE = function (event)
     // Ctrl+A, Ctrl+G, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
     if ([65, 71, 76, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
-        chem.stopEventPropagation(event);
-        return chem.preventDefault(event);
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -779,8 +790,8 @@ ui.onKeyUp = function (event)
             ui.hideDialog(this.id);
         else
             this.hide();
-        chem.stopEventPropagation(event);
-        return chem.preventDefault(event);
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
     }
 
     // The rest is for IE
@@ -790,7 +801,7 @@ ui.onKeyUp = function (event)
     if (this != document)
         return;
 
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     
     switch (event.keyCode)
     {
@@ -848,17 +859,17 @@ ui.onKeyUp = function (event)
 
 ui.onKeyPress_Dialog = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     if (event.keyCode == 27)
     {
         ui.hideDialog(this.id);
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
 ui.onKeyPress_InputLabel = function (event) 
 {
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
     if (event.keyCode == 13)
     {
         this.hide();
@@ -913,12 +924,12 @@ ui.onKeyPress_InputLabel = function (event)
             ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
         }
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
     if (event.keyCode == 27)
     {
         this.hide();
-        return chem.preventDefault(event);
+        return util.preventDefault(event);
     }
 }
 
@@ -1294,6 +1305,12 @@ ui.onClick_Atom = function (event, id)
             ui.render.update();
             break;
 
+        case ui.MODE.CHARGE:
+            var plus = (ui.mode_button.id == 'charge_plus');
+            ui.addUndoAction(ui.Action.fromAtomAttrs(id, {charge: ui.render.atomGetAttr(id, 'charge') - 0 + (plus ? 1 : -1)}), true);
+            ui.render.update();
+            break;
+
         case ui.MODE.BOND:
             var atom = ui.atomForNewBond(id);
             ui.addUndoAction(ui.Action.fromBondAddition(ui.bondType(), id, atom.atom, atom.pos)[0]);
@@ -1368,8 +1385,8 @@ ui.onClick_Bond = function (event, id)
         var attrs = ui.bondType();
         var bond = ui.ctab.bonds.get(id);
         
-        if (attrs.stereo != chem.Molecule.BOND.STEREO.NONE &&
-            bond.type == chem.Molecule.BOND.TYPE.SINGLE && attrs.type == chem.Molecule.BOND.TYPE.SINGLE &&
+        if (attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+            bond.type == chem.Struct.BOND.TYPE.SINGLE && attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
             bond.stereo == attrs.stereo)
         {
             ui.addUndoAction(ui.Action.fromBondFlipping(id));
@@ -1377,15 +1394,15 @@ ui.onClick_Bond = function (event, id)
         {
             if (bond.type == attrs.type)
             {
-                if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+                if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
                 {
-                    if (bond.stereo == chem.Molecule.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
+                    if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
                     {
-                        attrs.type = chem.Molecule.BOND.TYPE.DOUBLE;
+                        attrs.type = chem.Struct.BOND.TYPE.DOUBLE;
                     }
-                } else if (bond.type == chem.Molecule.BOND.TYPE.DOUBLE)
+                } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
                 {
-                    attrs.type = chem.Molecule.BOND.TYPE.TRIPLE;
+                    attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
                 }
             }
             ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs), true);
@@ -1462,9 +1479,9 @@ ui.onClick_Canvas = function (event)
         var pos = ui.page2canvas(event);
         var bond = ui.bondType();
         
-        var v = new chem.Vec2(ui.scale / 2, 0);
+        var v = new util.Vec2(ui.scale / 2, 0);
         
-        if (bond.type == chem.Molecule.BOND.TYPE.SINGLE)
+        if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
             v = v.rotate(-Math.PI / 6);
         
         ui.addUndoAction(ui.Action.fromBondAddition(bond, {label: 'C'}, {label: 'C'}, {x: pos.x - v.x, y: pos.y - v.y}, {x: pos.x + v.x, y: pos.y + v.y})[0]);
@@ -1499,10 +1516,10 @@ ui.atomForNewBond = function (id)
     {
         var nei_pos = ui.render.atomGetPos(nei.aid);
         
-        if (chem.Vec2.dist(pos, nei_pos) < ui.scale * 0.1)
+        if (util.Vec2.dist(pos, nei_pos) < ui.scale * 0.1)
             return;
         
-        neighbours.push({id: nei.aid, v: chem.Vec2.diff(nei_pos, pos)});
+        neighbours.push({id: nei.aid, v: util.Vec2.diff(nei_pos, pos)});
     });
     
     neighbours.sort(function (nei1, nei2)
@@ -1517,7 +1534,7 @@ ui.atomForNewBond = function (id)
     
     for (i = 0; i < neighbours.length; i++)
     {
-        angle = chem.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
+        angle = util.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
         
         if (angle < 0)
             angle += 2 * Math.PI;
@@ -1526,7 +1543,7 @@ ui.atomForNewBond = function (id)
             max_i = i, max_angle = angle;
     }
     
-    var v = new chem.Vec2(ui.scale, 0);
+    var v = new util.Vec2(ui.scale, 0);
     
     if (neighbours.length > 0)
     {
@@ -1540,17 +1557,17 @@ ui.atomForNewBond = function (id)
             {
                 var nei_neighbours = new Array();
                 var nei_pos = ui.render.atomGetPos(nei.aid);
-                var nei_v = chem.Vec2.diff(pos, nei_pos);
+                var nei_v = util.Vec2.diff(pos, nei_pos);
                 var nei_angle = Math.atan2(nei_v.y, nei_v.x);
                 
                 ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei)
                 {
                     var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
                     
-                    if (nei_nei.bid == nei.bid || chem.Vec2.dist(nei_pos, nei_nei_pos) < ui.scale * 0.1)
+                    if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < ui.scale * 0.1)
                         return;
                         
-                    var v_diff = chem.Vec2.diff(nei_nei_pos, nei_pos);
+                    var v_diff = util.Vec2.diff(nei_nei_pos, nei_pos);
                     var ang = Math.atan2(v_diff.y, v_diff.x) - nei_angle;
                     
                     if (ang < 0)
@@ -1594,7 +1611,7 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
     if (oldOffset == null)
         return;
         
-    var delta = new chem.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
+    var delta = new util.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
         
     ui.client_area.scrollLeft += delta.x;
     ui.client_area.scrollTop += delta.y;
@@ -1796,7 +1813,7 @@ ui.onMouseMove_Canvas = function (event)
     
     if (mode == ui.MODE.BOND || mode == ui.MODE.ATOM)
     {
-        var type = {type: 1, stereo: chem.Molecule.BOND.STEREO.NONE};
+        var type = {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
         var label = 'C';
         
         if (mode == ui.MODE.BOND)
@@ -1819,14 +1836,14 @@ ui.onMouseMove_Canvas = function (event)
         else
             pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
         
-        if (chem.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
+        if (util.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
         {
             if (ui.drag.new_atom_id != null)
                 return;
             pos_cursor.x += 10, pos_cursor.y += 10; // Hack to avoid return
         }
             
-        var v = chem.Vec2.diff(pos_cursor, pos);
+        var v = util.Vec2.diff(pos_cursor, pos);
         
         var angle = Math.atan2(v.y, v.x);
         var sign = 1;
@@ -1845,7 +1862,7 @@ ui.onMouseMove_Canvas = function (event)
             
         angle *= sign;
         
-        v = new chem.Vec2(ui.scale, 0);
+        v = new util.Vec2(ui.scale, 0);
         v = v.rotate(angle);
         v.add_(pos);
             
@@ -1940,7 +1957,7 @@ ui.onMouseUp_Ketcher = function (event)
         if (ui.selected() && ui.isDrag())
             ui.showSGroupProperties(null);
     ui.endDrag();
-    chem.stopEventPropagation(event);
+    util.stopEventPropagation(event);
 }
 
 //
@@ -1988,7 +2005,6 @@ ui.onMouseOver_Atom = function (event, aid)
         if (ui.drag.action == null)
             throw new Error("action is null")
             
-        ui.drag.action.perform();
         ui.drag.action = ui.Action.fromAtomMerge(ui.drag.atom_id, aid);
         ui.drag.atom_id = ui.atomMap.indexOf(ui.drag.atom_id);
 
@@ -2009,6 +2025,7 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.action.perform();
         ui.drag.atom_id = ui.atomMap[ui.drag.atom_id];
         ui.drag.new_atom_id = null;
+        ui.render.atomMove(ui.drag.atom_id, ui.page2canvas({'pageX':ui.drag.start_pos.x,'pageY':ui.drag.start_pos.y}));
         ui.drag.action = ui.Action.fromAtomPos(ui.drag.atom_id);
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }
@@ -2105,11 +2122,11 @@ ui.onChange_AtomLabel = function ()
     }
     
     if (this.value == 'A')
-        chem.setElementTextContent($('atom_number'), "any");
+        util.setElementTextContent($('atom_number'), "any");
     else if (this.value == '*')
-        chem.setElementTextContent($('atom_number'), "*");
+        util.setElementTextContent($('atom_number'), "*");
     else
-        chem.setElementTextContent($('atom_number'), element.toString());
+        util.setElementTextContent($('atom_number'), element.toString());
 }
 
 ui.onChange_AtomCharge = function ()
@@ -2118,7 +2135,7 @@ ui.onChange_AtomCharge = function ()
 
 ui.onChange_AtomIsotope = function ()
 {
-    if (this.value == chem.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
+    if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
         this.value = '';
     else if (!this.value.match(/^[1-9][0-9]{0,2}$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');
@@ -2369,7 +2386,7 @@ ui.copy = function ()
         if (new_atom.sgroup != -1)
             new_atom.sgroup = -1;
         
-        mapping[id] = ui.clipboard.atoms.push(new chem.Molecule.Atom(new_atom)) - 1;
+        mapping[id] = ui.clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
     });
     
     ui.selection.bonds.each(function (id)
@@ -2377,7 +2394,7 @@ ui.copy = function ()
         var new_bond = Object.clone(ui.ctab.bonds.get(id));
         new_bond.begin = mapping[new_bond.begin];
         new_bond.end = mapping[new_bond.end];
-        ui.clipboard.bonds.push(new chem.Molecule.Bond(new_bond));
+        ui.clipboard.bonds.push(new chem.Struct.Bond(new_bond));
     });
 
     var sgroup_counts = new Hash();

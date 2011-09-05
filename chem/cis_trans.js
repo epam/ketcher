@@ -10,13 +10,13 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Molecule)
+if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
     
 chem.CisTrans = function (mol, neighbors_func, context)
 {
     this.molecule = mol;
-    this.bonds = new chem.Map();
+    this.bonds = new util.Map();
     this.getNeighbors = neighbors_func;
     this.context = context;
 }
@@ -45,22 +45,22 @@ chem.CisTrans.prototype.getSubstituents = function (idx)
 
 chem.CisTrans.prototype.sameside = function (beg, end, nei_beg, nei_end)
 {
-   var diff = chem.Vec2.diff(beg, end);
-   var norm = new chem.Vec2(-diff.y, diff.x);
+   var diff = util.Vec2.diff(beg, end);
+   var norm = new util.Vec2(-diff.y, diff.x);
 
    if (!norm.normalize())
       return 0;
 
-   var norm_beg = chem.Vec2.diff(nei_beg, beg);
-   var norm_end = chem.Vec2.diff(nei_end, end);
+   var norm_beg = util.Vec2.diff(nei_beg, beg);
+   var norm_end = util.Vec2.diff(nei_end, end);
 
    if (!norm_beg.normalize())
       return 0;
    if (!norm_end.normalize())
       return 0;
 
-   prod_beg = chem.Vec2.dot(norm_beg, norm);
-   prod_end = chem.Vec2.dot(norm_end, norm);
+   prod_beg = util.Vec2.dot(norm_beg, norm);
+   prod_end = util.Vec2.dot(norm_end, norm);
 
    if (Math.abs(prod_beg) < 0.001 || Math.abs(prod_end) < 0.001)
       return 0;
@@ -115,7 +115,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
    
    var bond = this.molecule.bonds.get(bond_idx);
 
-   if (bond.type != chem.Molecule.BOND.TYPE.DOUBLE)
+   if (bond.type != chem.Struct.BOND.TYPE.DOUBLE)
       return false;
 
    var label1 = this.molecule.atoms.get(bond.begin).label;
@@ -149,7 +149,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
       if (nei.bid == bond_idx)
          continue;
       
-      if (this.molecule.bonds.get(nei.bid).type != chem.Molecule.BOND.TYPE.SINGLE)
+      if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
       if (substituents[0] == -1)
@@ -165,7 +165,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
       if (nei.bid == bond_idx)
          continue;
       
-      if (this.molecule.bonds.get(nei.bid).type != chem.Molecule.BOND.TYPE.SINGLE)
+      if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
       if (substituents[2] == -1)

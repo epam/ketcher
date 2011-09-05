@@ -875,9 +875,9 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
             id: ui.bondMap.indexOf(nei.bid)
         });
     }, this);
-    
-    var attrs = new Hash(ui.ctab.atoms.get(src_id));
-    
+
+    var attrs = chem.Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
+
     if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
         attrs.set('label', 'C');
     
@@ -920,7 +920,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
 {
     var angle = 2 * Math.PI / pattern.length;
     var l = ui.scale / (2 * Math.sin(angle / 2));
-    var v = new chem.Vec2(0, -l);
+    var v = new util.Vec2(0, -l);
 
     var action = new ui.Action();
 
@@ -928,7 +928,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
     {
         action.addOperation(ui.Action.OPERATION.ATOM_DEL,
         {
-            id: ui.atomMap.push(ui.render.atomAdd(chem.Vec2.sum(pos, v), {label: 'C'})) - 1
+            id: ui.atomMap.push(ui.render.atomAdd(util.Vec2.sum(pos, v), {label: 'C'})) - 1
         });
         
         v = v.rotate(angle);
@@ -983,7 +983,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var nei_id = ui.render.atomGetNeighbors(id)[0].aid;
         var atom_pos = ui.render.atomGetPos(id);
         
-        pos = chem.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
+        pos = util.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
         pos = pos.scaled(ui.scale / pos.length());
         v = pos.negated();
         pos.add_(atom_pos);
@@ -994,7 +994,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var begin_pos = ui.render.atomGetPos(bond.begin);
         var end_pos = ui.render.atomGetPos(bond.end);
         
-        var v = chem.Vec2.diff(end_pos, begin_pos);
+        var v = util.Vec2.diff(end_pos, begin_pos);
         var l = v.length() / (2 * Math.cos(angle));
         
         v = v.scaled(l / v.length());
@@ -1002,8 +1002,8 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var v_sym = v.rotate(-angle);
         v = v.rotate(angle);
         
-        var pos = chem.Vec2.sum(begin_pos, v);
-        var pos_sym = chem.Vec2.sum(begin_pos, v_sym);
+        var pos = util.Vec2.sum(begin_pos, v);
+        var pos_sym = util.Vec2.sum(begin_pos, v_sym);
         
         var cnt = 0, bcnt = 0;
         var cnt_sym = 0, bcnt_sym = 0;
@@ -1011,11 +1011,11 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         // TODO: improve this enumeration
         ui.ctab.atoms.each(function (a_id)
         {
-            if (chem.Vec2.dist(pos, ui.render.atomGetPos(a_id)) < l * 1.1)
+            if (util.Vec2.dist(pos, ui.render.atomGetPos(a_id)) < l * 1.1)
             {
                 cnt++;
                 bcnt += ui.render.atomGetDegree(a_id);
-            } else if (chem.Vec2.dist(pos_sym, ui.render.atomGetPos(a_id)) < l * 1.1)
+            } else if (util.Vec2.dist(pos_sym, ui.render.atomGetPos(a_id)) < l * 1.1)
             {
                 cnt_sym++;
                 bcnt_sym += ui.render.atomGetDegree(a_id);
@@ -1033,6 +1033,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         
         v = v.negated();
     }
+	ui.render.update();
 
     var action = new ui.Action();
     var atom_ids = new Array(pattern.length);
@@ -1047,7 +1048,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
     {
         if (idx > 0 || on_atom)
         {
-            var new_pos = chem.Vec2.sum(pos, v);
+            var new_pos = util.Vec2.sum(pos, v);
             
             var a = ui.render.findClosestAtom(ui.render.client2Obj(new_pos), ui.scale * 0.1);
             
@@ -1084,7 +1085,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
             });
         } else
         {
-            if (bond_type == chem.Molecule.BOND.TYPE.AROMATIC)
+            if (bond_type == chem.Struct.BOND.TYPE.AROMATIC)
             {
                 var nei = ui.render.atomGetNeighbors(begin);
                 

@@ -12,7 +12,7 @@
 
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-if (!window.chem || !chem.Vec2 || !chem.Molecule || !window.rnd)
+if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd)
 	throw new Error("Vec2 and Molecule, should be defined first");
 
 rnd.Visel = function (type)
@@ -29,7 +29,8 @@ rnd.Visel.TYPE = {
 	'LOOP' : 3,
 	'ARROW' : 4,
 	'SGROUP' : 5,
-	'CHIRAL' : 6
+	'CHIRAL' : 6,
+	'TMP' : 7
 }
 
 rnd.Visel.prototype.add = function (path, bb)
@@ -37,7 +38,7 @@ rnd.Visel.prototype.add = function (path, bb)
 	this.paths.push(path);
 	if (bb != null) {
 		this.boxes.push(bb);
-		this.boundingBox = this.boundingBox == null ? bb : chem.Box2Abs.union(this.boundingBox, bb);
+		this.boundingBox = this.boundingBox == null ? bb : util.Box2Abs.union(this.boundingBox, bb);
 	}
 }
 

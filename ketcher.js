@@ -19,6 +19,165 @@ ketcher.version = "1.0b4";
 ketcher.init = function ()
 {
     document.title += ' v' + ketcher.version;
+	ketcher.button_areas = {};
+	var elemLabelOpts = {'fontSize':25};
+	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_any', elemLabelOpts).renderSingle('A');
+	ketcher.button_areas.atom_h = new rnd.ElementTable('atom_h', elemLabelOpts).renderSingle('H');
+	ketcher.button_areas.atom_c = new rnd.ElementTable('atom_c', elemLabelOpts).renderSingle('C');
+	ketcher.button_areas.atom_n = new rnd.ElementTable('atom_n', elemLabelOpts).renderSingle('N');
+	ketcher.button_areas.atom_o = new rnd.ElementTable('atom_o', elemLabelOpts).renderSingle('O');
+	ketcher.button_areas.atom_s = new rnd.ElementTable('atom_s', elemLabelOpts).renderSingle('S');
+	ketcher.button_areas.atom_p = new rnd.ElementTable('atom_p', elemLabelOpts).renderSingle('P');
+	ketcher.button_areas.atom_f = new rnd.ElementTable('atom_f', elemLabelOpts).renderSingle('F');
+	ketcher.button_areas.atom_cl = new rnd.ElementTable('atom_cl', elemLabelOpts).renderSingle('Cl');
+	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
+	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
+
+	var charge_head = ['', '  fun stuff 0123456789AB', '',
+		'  1  0  0  0  0  0            999 V2000',
+		'    0.4714    1.8562    0.0000 A   0  3  0  0  0  0  0  0  0  0  0  0'];
+	var charge_tail = ['M  END'];
+
+	var charge_plus_molfile = charge_head.concat(['M  CHG  1   1   1'], charge_tail);
+	var charge_minus_molfile = charge_head.concat(['M  CHG  1   1  -1'], charge_tail);
+
+	var renderOpts = {
+		'autoScale':true,
+		'autoScaleMargin':2,
+		'hideImplicitHydrogen':true,
+		'hideTerminalLabels':true};
+
+	var renderOptsBond = {
+		'autoScale':true,
+		'autoScaleMargin':4,
+		'hideImplicitHydrogen':true,
+		'hideTerminalLabels':true};
+
+	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', charge_plus_molfile, 75, renderOpts);
+	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', charge_minus_molfile, 75, renderOpts);
+
+	var bond_head = ['', '  Ketcher 08191119302D 1   1.00000     0.00000     0', '',
+		'  2  1  0     0  0            999 V2000',
+		'   -2.5000   -0.3000    0.0000 C   0  0  0  0  0  4  0        0  0  0',
+		'   -1.0000    0.3000    0.0000 C   0  0  0  0  0  4  0        0  0  0'];
+	var bond_tail = ['M  END'];
+
+	var bond_any = bond_head.concat(['  1  2  8  0     0  0'], bond_tail);
+	var bond_single = bond_head.concat(['  1  2  1  0     0  0'], bond_tail);
+	var bond_single_up = bond_head.concat(['  1  2  1  1     0  0'], bond_tail);
+	var bond_single_down = bond_head.concat(['  1  2  1  6     0  0'], bond_tail);
+	var bond_single_up_or_down = bond_head.concat(['  1  2  1  4     0  0'], bond_tail);
+	var bond_double  = bond_head.concat(['  1  2  2  0     0  0'], bond_tail);
+	var bond_double_crossed  = bond_head.concat(['  1  2  2  3     0  0'], bond_tail);
+	var bond_triple = bond_head.concat(['  1  2  3  0     0  0'], bond_tail);
+	var bond_aromatic = bond_head.concat(['  1  2  4  0     0  0'], bond_tail);
+
+	ketcher.button_areas.bond_any = ketcher.showMolfileOpts('bond_any', bond_any, 20, renderOptsBond);
+	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond_single', bond_single, 20, renderOptsBond);
+	ketcher.button_areas.bond_single_up = ketcher.showMolfileOpts('bond_up', bond_single_up, 20, renderOptsBond);
+	ketcher.button_areas.bond_single_down = ketcher.showMolfileOpts('bond_down', bond_single_down, 20, renderOptsBond);
+	ketcher.button_areas.bond_single_up_or_down = ketcher.showMolfileOpts('bond_up_or_down', bond_single_up_or_down, 20, renderOptsBond);
+	ketcher.button_areas.bond_double = ketcher.showMolfileOpts('bond_double', bond_double, 20, renderOptsBond);
+	ketcher.button_areas.bond_double_crossed = ketcher.showMolfileOpts('bond_double_crossed', bond_double_crossed, 20, renderOptsBond);
+	ketcher.button_areas.bond_triple = ketcher.showMolfileOpts('bond_triple', bond_triple, 20, renderOptsBond);
+	ketcher.button_areas.bond_aromatic = ketcher.showMolfileOpts('bond_aromatic', bond_aromatic, 20, renderOptsBond);
+
+	var renderOptsPattern = {
+		'autoScale':true,
+		'autoScaleMargin':2,
+		'hideImplicitHydrogen':true,
+		'hideTerminalLabels':true};
+
+	var clean_up = ['', '  -INDIGO-08221110472D', '',
+		'  9  9  0  0  0  0  0  0  0  0999 V2000',
+		'    2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -3.2000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  2  0  0  0  0',
+		'  2  4  1  0  0  0  0',
+		'  4  5  2  0  0  0  0',
+		'  5  6  1  0  0  0  0',
+		'  6  7  2  0  0  0  0',
+		'  7  8  1  0  0  0  0',
+		'  8  9  2  0  0  0  0',
+		'  9  4  1  0  0  0  0',
+		'M  END'];
+	
+	var hexa1 = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  2  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  2  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  6  2  0  0  0  0',
+		'  6  1  1  0  0  0  0',
+		'M  END'];
+	
+	var hexa2 = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  1  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  6  1  0  0  0  0',
+		'  6  1  1  0  0  0  0',
+		'M  END'];
+
+	var hexaa = ['', '  -INDIGO-08221110472D', '',
+		'  6  6  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  4  0  0  0  0',
+		'  2  3  4  0  0  0  0',
+		'  3  4  4  0  0  0  0',
+		'  4  5  4  0  0  0  0',
+		'  5  6  4  0  0  0  0',
+		'  6  1  4  0  0  0  0',
+		'M  END'];
+
+	var penta = ['', '  -INDIGO-08221110472D', '',
+		'  5  5  0  0  0  0  0  0  0  0999 V2000',
+		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    2.0944   -1.5217    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'    0.8000   -2.4621    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'   -0.4944   -1.5217    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+		'  1  2  1  0  0  0  0',
+		'  2  3  1  0  0  0  0',
+		'  3  4  1  0  0  0  0',
+		'  4  5  1  0  0  0  0',
+		'  5  1  1  0  0  0  0',
+		'M  END'
+	];
+	
+	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', clean_up, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', hexa1, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', hexa2, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', penta, 20, renderOptsPattern);
+
     ui.init();
 };
 
@@ -42,21 +201,33 @@ ketcher.setMolecule = function (mol_string)
     ui.loadMolecule(mol_string);
 }
 
-ketcher.showMolfile = function (clientArea, molfileText, isRxn, autoScale)
+ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicitHydrogen)
 {
-    this.render = new rnd.Render(clientArea, 75, {
+	return ketcher.showMolfileOpts(clientArea, molfileText, 75, {
         'showSelectionRegions':false,
         'showBondIds':false,
         'showHalfBondIds':false,
         'showLoopIds':false,
         'showAtomIds':false,
 		'autoScale':autoScale||false,
-		'autoScaleMargin':20
+		'autoScaleMargin':20,
+		'hideImplicitHydrogen':hideImplicitHydrogen||false
     });
+}
+
+ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
+{
+    this.render = new rnd.Render(clientArea, bondLength, opts);
     if (molfileText)
-        this.render.setMolecule(chem.Molfile.parseMolfile(molfileText.split('\n'), isRxn));
+        this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
+}
+
+ketcher.showElemTable = function (clientArea)
+{
+    this.elemTable = new rnd.ElementTable(clientArea);
+    return this.elemTable;
 }
 
 /*
@@ -64,7 +235,7 @@ ketcher.testShiftRayBox = function (clientArea)
 {
     var bx = 50, by = 180, bw = 220, bh = 40;
 
-    var b = new chem.Box2Abs(bx, by, bx + bw, by + bh);
+    var b = new util.Box2Abs(bx, by, bx + bw, by + bh);
     var c = new Raphael(clientArea);
 
     c.rect(0, 0, 300, 300).attr({stroke:'#0f0'});
@@ -72,12 +243,12 @@ ketcher.testShiftRayBox = function (clientArea)
 
     for (var i = 0; i < 3; ++i)
     {
-        var p = new chem.Vec2(Math.random() * 300, Math.random() * 300);
-        var d = new chem.Vec2(Math.random() * 300, Math.random() * 300);
+        var p = new util.Vec2(Math.random() * 300, Math.random() * 300);
+        var d = new util.Vec2(Math.random() * 300, Math.random() * 300);
         var p1 = p.add(d);
         c.circle(p.x, p.y, 4).attr({fill:'#0f0'});
         c.path("M{0},{1}L{2},{3}", p.x, p.y, p1.x, p1.y).attr({'stroke-width':'3','stroke':'#f00'});
-        var t = Math.max(0, chem.Vec2.shiftRayBox(p, d, b));
+        var t = Math.max(0, util.Vec2.shiftRayBox(p, d, b));
         var p0 = p.addScaled(d, t / d.length());
         c.path("M{0},{1}L{2},{3}", p0.x, p0.y, p1.x, p1.y).attr({'stroke-width':'1','stroke':'#000'});
     }

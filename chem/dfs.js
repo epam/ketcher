@@ -10,7 +10,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
-if (!window.chem || !chem.Molecule)
+if (!window.chem || !chem.Struct)
     throw new Error("Molecule should be defined first")
 
 chem.Dfs = function (mol, atom_data)

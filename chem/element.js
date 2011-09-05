@@ -16,6 +16,41 @@ if (!window.util || !util.Vec2)
 if (!window.chem)
     chem = {};
 
+function hexToRGB(hex) {
+	return {
+		'r': parseInt(hex.substring(1,3), 16),
+		'g': parseInt(hex.substring(3,5), 16),
+		'b': parseInt(hex.substring(5,7), 16)
+	};
+}
+
+function rgbCompToHex(c) {
+	c = c.toFixed();
+	c = Math.max(Math.min(c, 255),0);
+	var hex = c.toString(16);
+	if (hex.length < 2)
+		hex = '0' + hex;
+	return hex;
+}
+
+function rgbToHex(rgb) {
+	return '#' + 
+		rgbCompToHex(rgb.r) +
+		rgbCompToHex(rgb.g) +
+		rgbCompToHex(rgb.b);
+}
+
+function rgbRescale(rgb, maxNorm) {
+	var norm = 0.21 * rgb.r + 0.72 * rgb.g + 0.07 * rgb.b;
+	if (norm <= maxNorm)
+		return rgb;
+	return {
+		'r': (rgb.r * maxNorm / norm).toFixed()-0,
+		'g': (rgb.g * maxNorm / norm).toFixed()-0,
+		'b': (rgb.b * maxNorm / norm).toFixed()-0
+	}
+}
+
 // element table and utilities
 chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos, xpos)
 {
@@ -24,6 +59,7 @@ chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos
     this.group = group;
     this.putHydrogenOnTheLeft = putHydrogenOnTheLeft;
     this.color = color || '#000000';
+    this.labelColor = rgbToHex(rgbRescale(hexToRGB(this.color),150));
 	this.xpos = xpos || group;
 	this.ypos = ypos || period;
 	

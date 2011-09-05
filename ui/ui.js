@@ -106,7 +106,7 @@ ui.onClick_SelectionButton = function (event)
         $('bond_selection').show();
 };
 
-ui.onClick_SelectionItem = function (event)
+ui.onMouseDown_SelectionItem = function (event)
 {
     ui.selectMode(this.id);
     $('bond_selection').hide();
@@ -116,6 +116,7 @@ ui.onClick_SelectionItem = function (event)
         $('bond').title = this.title;
         $('bond').setAttribute('selid', this.mode_id);
     }
+    chem.stopEventPropagation(event);
 };
 
 ui.init = function ()
@@ -164,6 +165,7 @@ ui.init = function ()
     document.observe('keypress', ui.onKeyPress_Ketcher);
     document.observe('keydown', ui.onKeyDown_IE);
     document.observe('keyup', ui.onKeyUp);
+    document.observe('mousedown', ui.onMouseDown_Ketcher);
     document.observe('mouseup', ui.onMouseUp_Ketcher);
     
     // Button events
@@ -176,12 +178,16 @@ ui.init = function ()
     $$('.selectionButton').each(function (el)
     {
         //ui.initButton(el);
+        el.observe('mousedown', function (event)
+        {
+            chem.stopEventPropagation(event);
+        });
         el.observe('click', ui.onClick_SelectionButton);
     });
     $$('.selectionItem').each(function (el)
     {
         //ui.initButton(el);
-        el.observe('click', ui.onClick_SelectionItem);
+        el.observe('mousedown', ui.onMouseDown_SelectionItem);
         el.observe('mouseover', function (event) 
         {
             this.addClassName('highlightedItem');
@@ -1718,10 +1724,17 @@ ui.removeSelected = function ()
     ui.updateClipboardButtons();
 }
 
-ui.onMouseDown_Atom = function (event, aid)
+ui.hideBlurredControls = function ()
 {
     if ($('input_label').visible())
         $('input_label').hide();
+    if ($('bond_selection').visible())
+        $('bond_selection').hide();
+}
+
+ui.onMouseDown_Atom = function (event, aid)
+{
+    ui.hideBlurredControls();
 
     if (ui.modeType() == ui.MODE.PASTE)
         return false;
@@ -1748,8 +1761,7 @@ ui.onMouseDown_Atom = function (event, aid)
 
 ui.onMouseDown_Bond = function (event, bid)
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
+    ui.hideBlurredControls();
 
     if (ui.modeType() == ui.MODE.PASTE)
         return false;
@@ -1776,8 +1788,7 @@ ui.onMouseDown_Bond = function (event, bid)
 
 ui.onMouseDown_Canvas = function (event)
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
+    ui.hideBlurredControls();
     
     if (ui.modeType() == ui.MODE.PASTE)
     {
@@ -1946,6 +1957,12 @@ ui.onMouseMove_Canvas = function (event)
         ui.drag.last_pos = {x: event.pageX, y: event.pageY};
     }
     ui.render.update();
+}
+
+ui.onMouseDown_Ketcher = function (event)
+{   
+    ui.hideBlurredControls();
+    //chem.stopEventPropagation(event);
 }
 
 ui.onMouseUp_Ketcher = function (event)

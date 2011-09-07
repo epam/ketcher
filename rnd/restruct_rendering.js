@@ -154,6 +154,39 @@ rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 	.attr(styles.lineattr);
 }
 
+rnd.ReStruct.makeStroke = function (a, b) {
+	return 'M' + a.x.toString() + ',' + a.y.toString() +
+		'L' + b.x.toString() + ',' + b.y.toString() + '	';
+}
+
+rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2, bond)
+{
+	var a = hb1.p, b = hb2.p, n = hb1.norm, d = hb1.dir;
+	var settings = this.render.settings;
+	var paper = this.render.paper;
+	var styles = this.render.styles;
+	var bsp = settings.bondSpace / 2;
+
+	var nSect = (util.Vec2.dist(a, b) / (settings.bondSpace + settings.lineWidth)).toFixed()-0;
+	if (!(nSect & 1))
+		nSect += 1;
+	var path = '', pp = a;
+
+	for (var i = 1; i <= nSect; ++i) {
+		var pi = util.Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+		if (i & 1) {
+			path += rnd.ReStruct.makeStroke(pp, pi);
+		} else {
+			path += rnd.ReStruct.makeStroke(pp.addScaled(n, bsp), pi.addScaled(n, bsp));
+			path += rnd.ReStruct.makeStroke(pp.addScaled(n, -bsp), pi.addScaled(n, -bsp));
+		}
+		pp = pi;
+	}
+
+	return paper.path(path)
+	.attr(styles.lineattr);
+}
+
 rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
@@ -270,6 +303,9 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			var inAromaticLoop = (hb1.loop >= 0 && this.molecule.loops.get(hb1.loop).aromatic) ||
 				(hb2.loop >= 0 && this.molecule.loops.get(hb2.loop).aromatic);
 			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
+			break;
+		case chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE:
+			path = this.drawBondSingleOrDouble(hb1, hb2, bond);
 			break;
 		case chem.Struct.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);

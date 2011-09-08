@@ -429,7 +429,18 @@ ui.selectMode = function (mode)
             }
             if (mode.startsWith('bond_'))
             {
+                var attrs = ui.bondType(mode);
+                var bondsToFlip = [];
+                ui.selection.bonds.each(function (id) {
+                    if (ui.bondFlipRequired(ui.ctab.bonds.get(id), attrs))
+                        bondsToFlip.push(id);
+                }, this);
                 ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode)), true);
+                bondsToFlip.each(function (id) {
+                    ui.addUndoAction(ui.Action.fromBondFlipping(id));
+                }, this);
+
+
                 ui.render.update();
                 return;
             }
@@ -1370,6 +1381,14 @@ ui.onDblClick_Atom = function (event, id)
     return true;
 }
 
+ui.bondFlipRequired = function (bond, attrs) {
+    return bond.stereo == chem.Struct.BOND.STEREO.NONE &&
+    attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+    attrs.stereo == chem.Struct.BOND.TYPE.SINGLE &&
+    ui.ctab.atoms.get(bond.begin).neighbors.length <
+    ui.ctab.atoms.get(bond.end).neighbors.length;
+}
+
 ui.onClick_Bond = function (event, id)
 {
     if (ui.mouse_moved)
@@ -1419,6 +1438,7 @@ ui.onClick_Bond = function (event, id)
             ui.addUndoAction(ui.Action.fromBondFlipping(id));
         } else
         {
+            var flip = ui.bondFlipRequired(bond, attrs);
             if (bond.type == attrs.type)
             {
                 if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
@@ -1433,6 +1453,8 @@ ui.onClick_Bond = function (event, id)
                 }
             }
             ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs), true);
+            if (flip)
+                ui.addUndoAction(ui.Action.fromBondFlipping(id));
         }
         ui.render.update();
         break;

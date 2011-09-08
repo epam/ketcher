@@ -556,9 +556,9 @@ ui.modeType = function ()
         return ui.MODE.SGROUP;
     if (ui.mode_id.startsWith('pattern_'))
         return ui.MODE.PATTERN;
-    if (ui.mode_button.id == 'rxn_arrow')
+    if (ui.mode_id == 'rxn_arrow')
         return ui.MODE.RXN_ARROW;
-    if (ui.mode_button.id == 'rxn_plus')
+    if (ui.mode_id == 'rxn_plus')
         return ui.MODE.RXN_PLUS;
 }
 

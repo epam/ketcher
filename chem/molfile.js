@@ -168,7 +168,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 		}
 		atomListParams.ids = mf.labelsListToIds(label.split(","));
 		params['atomList'] = new chem.Struct.AtomList(atomListParams);
-		params['label'] = 'L';
+		params['label'] = '';
 	} else {
 		params['label'] = label;
 	}
@@ -505,6 +505,7 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 	var atomLists = atomListLines.map(mf.parseAtomListLine);
 	atomLists.each(function(pair){
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
+		ctab.atoms.get(pair.aid).label = '';
 	});
 
 	var sGroups = {};

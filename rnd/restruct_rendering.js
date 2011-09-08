@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -146,11 +146,44 @@ rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 				this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	
+
 	return paper.path(cis_trans ?
 		"M{0},{1}L{6},{7}M{4},{5}L{2},{3}" :
 		"M{0},{1}L{2},{3}M{4},{5}L{6},{7}",
 		a2.x, a2.y, b2.x, b2.y, a3.x, a3.y, b3.x, b3.y)
+	.attr(styles.lineattr);
+}
+
+rnd.ReStruct.makeStroke = function (a, b) {
+	return 'M' + a.x.toString() + ',' + a.y.toString() +
+		'L' + b.x.toString() + ',' + b.y.toString() + '	';
+}
+
+rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2, bond)
+{
+	var a = hb1.p, b = hb2.p, n = hb1.norm, d = hb1.dir;
+	var settings = this.render.settings;
+	var paper = this.render.paper;
+	var styles = this.render.styles;
+	var bsp = settings.bondSpace / 2;
+
+	var nSect = (util.Vec2.dist(a, b) / (settings.bondSpace + settings.lineWidth)).toFixed()-0;
+	if (!(nSect & 1))
+		nSect += 1;
+	var path = '', pp = a;
+
+	for (var i = 1; i <= nSect; ++i) {
+		var pi = util.Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+		if (i & 1) {
+			path += rnd.ReStruct.makeStroke(pp, pi);
+		} else {
+			path += rnd.ReStruct.makeStroke(pp.addScaled(n, bsp), pi.addScaled(n, bsp));
+			path += rnd.ReStruct.makeStroke(pp.addScaled(n, -bsp), pi.addScaled(n, -bsp));
+		}
+		pp = pi;
+	}
+
+	return paper.path(path)
 	.attr(styles.lineattr);
 }
 
@@ -188,10 +221,34 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 	if (!drawDashLine) {
 		return this.drawBondSingle(hb1, hb2);
 	}
-	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = bond.doubleBondShift;
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	(shift > 0 ? l1 : l2).attr({
+		'stroke-dasharray':'- '
+	});
+	return paper.set([l1,l2]);
+}
+
+rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
+{
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	(shift > 0 ? l1 : l2).attr({
+		'stroke-dasharray':'-.'
+	});
+	return paper.set([l1,l2]);
+}
+
+rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift)
+{
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
+	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var bsp = settings.bondSpace / 2;
 	var s1 = bsp, s2 = -bsp;
 	s1 += shift * bsp;
@@ -221,9 +278,18 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 		a2.x, a2.y, b2.x, b2.y).attr(styles.lineattr);
 	var l2 = paper.path("M{0},{1}L{2},{3}",
 		a3.x, a3.y, b3.x, b3.y).attr(styles.lineattr);
-	(shift > 0 ? l1 : l2).attr({
-		'stroke-dasharray':'- '
-	});
+	return [l1, l2];
+}
+
+
+rnd.ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
+{
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	l1.attr({'stroke-dasharray':'-.'});
+	l2.attr({'stroke-dasharray':'-.'});
 	return paper.set([l1,l2]);
 }
 
@@ -270,6 +336,15 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			var inAromaticLoop = (hb1.loop >= 0 && this.molecule.loops.get(hb1.loop).aromatic) ||
 				(hb2.loop >= 0 && this.molecule.loops.get(hb2.loop).aromatic);
 			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
+			break;
+		case chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE:
+			path = this.drawBondSingleOrDouble(hb1, hb2, bond);
+			break;
+		case chem.Struct.BOND.TYPE.SINGLE_OR_AROMATIC:
+			path = this.drawBondSingleOrAromatic(hb1, hb2, bond);
+			break;
+		case chem.Struct.BOND.TYPE.DOUBLE_OR_AROMATIC:
+			path = this.drawBondDoubleOrAromatic(hb1, hb2, bond);
 			break;
 		case chem.Struct.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);
@@ -330,7 +405,7 @@ rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
 				atom.highlighting.attr({
 					'fill':'#AAA'
 				});
-			this.addAtomPath('highlighting', aid, atom.highlighting);
+			render.addItemPath(atom.visel, 'highlighting', atom.highlighting);
 		}
 		if (rnd.DEBUG)
 			atom.highlighting.attr({
@@ -361,33 +436,13 @@ rnd.ReStruct.prototype.showAtomSGroupHighlighting = function (aid, atom, visible
 			atom.sGroupHighlighting = paper
 			.circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
 			.attr(styles.sGroupHighlightStyle);
-			this.addAtomPath('highlighting', aid, atom.sGroupHighlighting);
+			render.addItemPath(atom.visel, 'highlighting', atom.sGroupHighlighting);
 		}
 		atom.sGroupHighlighting.show();
 	} else {
 		if (exists) {
 			atom.sGroupHighlighting.hide();
 		}
-	}
-}
-
-rnd.ReStruct.prototype.showAtomSelection = function (aid, atom, visible)
-{
-	var exists = (atom.selectionPlate != null) && !atom.selectionPlate.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var paper = render.paper;
-			atom.selectionPlate = paper
-			.circle(atom.a.ps.x, atom.a.ps.y, styles.atomSelectionPlateRadius)
-			.attr(styles.selectionStyle);
-			this.addAtomPath('selection-plate', aid, atom.selectionPlate);
-		}
-		atom.selectionPlate.show();
-	} else {
-		if (exists)
-			atom.selectionPlate.hide();
 	}
 }
 
@@ -456,6 +511,24 @@ rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
 	}
 }
 
+rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
+{
+	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
+	if (visible) {
+		if (!exists) {
+			var render = this.render;
+			var styles = render.styles;
+			var paper = render.paper;
+			item.selectionPlate = item.makeSelectionPlate(paper, styles);
+			render.addItemPath(item.visel, 'selection-plate', item.selectionPlate);
+		}
+		item.selectionPlate.show();
+	} else {
+		if (exists)
+			item.selectionPlate.hide();
+	}
+}
+
 rnd.ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y) {
 	path.translate(x, y)
 	rbb.x += x;
@@ -480,7 +553,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 //			.attr('stroke', 'none')
 //			.attr('fill', markerColors[atom.a.sgroup+1])
 //			.attr('opacity', '0.5');
-//			this.addAtomPath('data', aid, marker, marker.getBBox());
+//			render.addItemPath(atom.visel, 'data', marker, marker.getBBox());
 //		}
 		var index = null;
 		if (opt.showAtomIds) {
@@ -494,10 +567,10 @@ rnd.ReStruct.prototype.showLabels = function ()
 			});
 			index.rbb = index.path.getBBox();
 			this.centerText(index.path, index.rbb);
-			this.addAtomPath('indices', aid, index.path, index.rbb);
+			render.addItemPath(atom.visel, 'indices', index.path, index.rbb);
 		}
 		if (atom.selected)
-			this.showAtomSelection(aid, atom, true);
+			this.showItemSelection(aid, atom, true);
 		if (atom.highlight)
 			this.showAtomHighlighting(aid, atom, true);
 		if (atom.sGroupHighlight)
@@ -527,7 +600,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			});
 			label.rbb = label.path.getBBox();
 			this.centerText(label.path, label.rbb);
-			this.addAtomPath('data', aid, label.path, label.rbb);
+			render.addItemPath(atom.visel, 'data', label.path, label.rbb);
 			rightMargin = label.rbb.width / 2;
 			leftMargin = -label.rbb.width / 2;
 			var implh = Math.floor(atom.a.implicitH);
@@ -550,9 +623,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * hydroIndex.rbb.width + delta,
 					0.2 * label.rbb.height);
 				rightMargin += hydroIndex.rbb.width + delta;
-				this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
+				render.addItemPath(atom.visel, 'data', hydroIndex.path, hydroIndex.rbb);
 			}
-			
+
 			var radical = {};
 			if (atom.a.radical != 0)
 			{
@@ -586,7 +659,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					vshift -= settings.lineWidth/2;
 				this.pathAndRBoxTranslate(radical.path, radical.rbb,
 					0, vshift);
-				this.addAtomPath('data', aid, radical.path, radical.rbb);
+				render.addItemPath(atom.visel, 'data', radical.path, radical.rbb);
 			}
 
 			var isotope = {};
@@ -605,7 +678,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					leftMargin - 0.5 * isotope.rbb.width - delta,
 					-0.3 * label.rbb.height);
 				leftMargin -= isotope.rbb.width + delta;
-				this.addAtomPath('data', aid, isotope.path, isotope.rbb);
+				render.addItemPath(atom.visel, 'data', isotope.path, isotope.rbb);
 			}
 			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen)
 			{
@@ -653,11 +726,11 @@ rnd.ReStruct.prototype.showLabels = function ()
 						leftMargin - 0.5 * hydrogen.rbb.width - delta, 0);
 					leftMargin -= hydrogen.rbb.width + delta;
 				}
-				this.addAtomPath('data', aid, hydrogen.path, hydrogen.rbb);
+				render.addItemPath(atom.visel, 'data', hydrogen.path, hydrogen.rbb);
 				if (hydroIndex != null)
-					this.addAtomPath('data', aid, hydroIndex.path, hydroIndex.rbb);
+					render.addItemPath(atom.visel, 'data', hydroIndex.path, hydroIndex.rbb);
 			}
-			
+
 			var charge = {};
 			if (atom.a.charge != 0)
 			{
@@ -682,9 +755,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * charge.rbb.width + delta,
 					-0.3 * label.rbb.height);
 				rightMargin += charge.rbb.width + delta;
-				this.addAtomPath('data', aid, charge.path, charge.rbb);
+				render.addItemPath(atom.visel, 'data', charge.path, charge.rbb);
 			}
-			
+
 			if (atom.a.badConn && opt.showValenceWarnings) {
 				var warning = {};
 				var y = atom.a.ps.y + label.rbb.height / 2 + delta;
@@ -695,7 +768,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'stroke':'#F00'
 				});
 				warning.rbb = warning.path.getBBox();
-				this.addAtomPath('warnings', aid, warning.path, warning.rbb);
+				render.addItemPath(atom.visel, 'warnings', warning.path, warning.rbb);
 			}
 			if (index)
 				this.pathAndRBoxTranslate(index.path, index.rbb,
@@ -721,7 +794,7 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 				bond.highlighting.attr({
 					'fill':'#AAA'
 				});
-			this.addBondPath('highlighting', bid, bond.highlighting);
+			render.addItemPath(bond.visel, 'highlighting', bond.highlighting);
 		}
 		if (rnd.DEBUG)
 			bond.highlighting.attr({
@@ -738,29 +811,6 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 			else
 				bond.highlighting.hide();
 		}
-	}
-}
-
-rnd.ReStruct.prototype.showBondSelection = function (bid, bond, visible)
-{
-	if (!this.bonds.has(bid))
-		return;
-	var exists = (bond.selectionPlate != null) && !bond.selectionPlate.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var paper = render.paper;
-			bond.selectionPlate = paper
-			.ellipse(bond.b.center.x, bond.b.center.y, bond.b.sa, bond.b.sb)
-			.rotate(bond.b.angle)
-			.attr(styles.selectionStyle);
-			this.addBondPath('selection-plate', bid, bond.selectionPlate);
-		}
-		bond.selectionPlate.show();
-	} else {
-		if (exists)
-			bond.selectionPlate.hide();
 	}
 }
 
@@ -783,9 +833,9 @@ rnd.ReStruct.prototype.showBonds = function ()
 		bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 		bond.path = this.drawBond(bond, hb1, hb2);
 		bond.rbb = bond.path.getBBox();
-		this.addBondPath('data', bid, bond.path, bond.rbb);
+		render.addItemPath(bond.visel, 'data', bond.path, bond.rbb);
 		if (bond.selected)
-			this.showBondSelection(bid, bond, true);
+			this.showItemSelection(bid, bond, true);
 		if (bond.highlight)
 			this.showBondHighlighting(bid, bond, true);
 		var bondIdxOff = settings.subFontSize * 0.6;
@@ -795,28 +845,28 @@ rnd.ReStruct.prototype.showBonds = function ()
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
-			this.addBondPath('indices', bid, ipath, irbb);
+			render.addItemPath(bond.visel, 'indices', ipath, irbb);
 			var phb1 = util.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
-			this.addBondPath('indices', bid, ipath, irbb);
+			render.addItemPath(bond.visel, 'indices', ipath, irbb);
 			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
-			this.addBondPath('indices', bid, ipath, irbb);
+			render.addItemPath(bond.visel, 'indices', ipath, irbb);
 		} else if (opt.showLoopIds) {
 			var pl1 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
-			this.addBondPath('indices', bid, ipath, irbb);
+			render.addItemPath(bond.visel, 'indices', ipath, irbb);
 			var pl2 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
 			irbb = ipath.getBBox();
 			this.centerText(ipath, irbb);
-			this.addBondPath('indices', bid, ipath, irbb);
+			render.addItemPath(bond.visel, 'indices', ipath, irbb);
 		}
 	}
 }
@@ -829,7 +879,8 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||
-		atom.a.explcitValence)
+		atom.a.explcitValence ||
+		atom.a.atomList != null)
 		return true;
 	if (!atom.showLabel && atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];
@@ -892,36 +943,6 @@ rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }
 
-rnd.ReStruct.prototype.addAtomPath = function (group, aid, path, rbb)
-{
-	var visel = this.atoms.get(aid).visel;
-	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
-	var offset = this.render.offset;
-	if (offset != null) {
-		if (bb != null)
-			bb.translate(offset);
-		path.translate(offset.x, offset.y);
-	}
-	visel.add(path, bb);
-	this.viselsChanged[aid * 2] = visel; // code aid/bid to identify a visel
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-}
-
-rnd.ReStruct.prototype.addBondPath = function (group, bid, path, rbb)
-{
-	var visel = this.bonds.get(bid).visel;
-	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
-	var offset = this.render.offset;
-	if (offset != null) {
-		if (bb != null)
-			bb.translate(offset);
-		path.translate(offset.x, offset.y);
-	}
-	visel.add(path, bb);
-	this.viselsChanged[bid * 2 + 1] = visel; // code aid/bid to identify a visel
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-}
-
 rnd.ReStruct.prototype.addTmpPath = function (group, path)
 {
 	var visel = new rnd.Visel('TMP');
@@ -942,7 +963,7 @@ rnd.ReStruct.prototype.clearVisel = function (visel)
 }
 
 rnd.ReStruct.prototype.shiftBonds = function ()
-{    
+{
 	var settings = this.render.settings;
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);

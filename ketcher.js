@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -33,6 +33,7 @@ ketcher.init = function ()
 	ketcher.button_areas.atom_cl = new rnd.ElementTable('atom_cl', elemLabelOpts).renderSingle('Cl');
 	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
 	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
+	ketcher.button_areas.atom_table = new rnd.ElementTable('atom_table', elemLabelOpts).renderSingle('...');
 
 	var charge_head = ['', '  fun stuff 0123456789AB', '',
 		'  1  0  0  0  0  0            999 V2000',
@@ -47,13 +48,15 @@ ketcher.init = function ()
 		'autoScale':true,
 		'autoScaleMargin':2,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	var renderOptsBond = {
 		'autoScale':true,
 		'autoScaleMargin':4,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', tmpl.charge_plus, 75, renderOpts);
 	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', tmpl.charge_minus, 75, renderOpts);
@@ -81,7 +84,8 @@ ketcher.init = function ()
 		'autoScale':true,
 		'autoScaleMargin':2,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	tmpl.clean_up = ['', '  -INDIGO-08221110472D', '',
 		'  9  9  0  0  0  0  0  0  0  0999 V2000',
@@ -173,6 +177,9 @@ ketcher.init = function ()
 	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', tmpl.hexa2, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', tmpl.penta, 20, renderOptsPattern);
 
+	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
+	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();
+
     ui.init();
 };
 
@@ -217,12 +224,6 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
         this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
-}
-
-ketcher.showElemTable = function (clientArea)
-{
-    this.elemTable = new rnd.ElementTable(clientArea);
-    return this.elemTable;
 }
 
 /*

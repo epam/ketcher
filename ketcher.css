@@ -12,7 +12,7 @@ body > div:first-child
     max-height: 720px;
 }
 
-a, img 
+a, img
 {
     border-color: #E0E0E0;
     color: #E0E0E0;
@@ -72,12 +72,17 @@ table#ketcher_window > tr
     width: 36px;
 }
 
-/*
-td.sideButton
+.sideButtonCell
+{
+    height: 36px;
+    align: center;
+}
+
+.sideButton
 {
     width: 32px;
+    height: 32px;
 }
-*/
 
 .buttonHighlight
 {
@@ -115,12 +120,17 @@ td.sideButton
     /*height: 100%;*/
 }
 
+#elem_table_area
+{
+    background-color:#E0E0E0;
+    border-style: none;
+}
+
 .dropdownList
 {
     position: absolute;
     z-index: 2;
     left: 6px;
-    top: 120px;
     background-color: #FAFAFA;
     border-style: outset;
     border-width: thin;
@@ -133,7 +143,7 @@ td.sideButton
     font-size:   0.9em;
 }
 
-#bond_list
+#bond_dropdown_list
 {
     top: 120px;
 }

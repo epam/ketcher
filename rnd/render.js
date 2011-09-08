@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -29,7 +29,7 @@ rnd.mouseEventNames = [
 	'MouseMove',
 	'MouseOut'
 	];
-rnd.entities = ['Atom', 'Bond', 'Canvas'];
+rnd.entities = ['Atom', 'RxnArrow', 'RxnPlus', 'Bond', 'Canvas'];
 
 rnd.actions = [
 	'atomSetAttr',
@@ -39,7 +39,7 @@ rnd.actions = [
 	'atomAdd',
 	'atomMove',
 	'atomMoveRel',
-	'atomMoveRelMultiple',
+	'multipleMoveRel',
 	'atomRemove',
 	'bondSetAttr',
 	'bondAdd',
@@ -48,7 +48,15 @@ rnd.actions = [
 	'sGroupSetHighlight',
 	'sGroupSetAttr',
 	'sGroupSetType',
-	'sGroupSetPos' // data s-group label position
+	'sGroupSetPos', // data s-group label position
+	'rxnPlusAdd',
+	'rxnPlusMove',
+	'rxnPlusMoveRel',
+	'rxnPlusRemove',
+	'rxnArrowAdd',
+	'rxnArrowMove',
+	'rxnArrowMoveRel',
+	'rxnArrowRemove',
 ];
 
 rnd.logMethod = function () { }
@@ -81,6 +89,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.atomColoring = this.opt.atomColoring || 0;
 	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
 	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
+	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
 
 	this.scale = scale || 100;
 	this.selectionDistanceCoefficient = 1.0 / 3;
@@ -113,16 +122,18 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
-	// assign canvas events handlers
-	rnd.mouseEventNames.each(function(eventName){
-		clientArea.observe(eventName.toLowerCase(), function(event) {
-			var name = '_onCanvas' + eventName;
-			if (render[name])
-				render[name](new rnd.MouseEvent(event));
-			util.stopEventPropagation(event);
-			return util.preventDefault(event);
-		});
-	}, this);
+	if (!this.opt.ignoreMouseEvents) {
+		// assign canvas events handlers
+		rnd.mouseEventNames.each(function(eventName){
+			clientArea.observe(eventName.toLowerCase(), function(event) {
+				var name = '_onCanvas' + eventName;
+				if (render[name])
+					render[name](new rnd.MouseEvent(event));
+				util.stopEventPropagation(event);
+				return util.preventDefault(event);
+			});
+		}, this);
+	}
 
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;
@@ -150,6 +161,20 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.onSGroupMouseMove = null;
 	this.onSGroupMouseOut = null;
 
+	this.onRxnArrowClick = null;
+	this.onRxnArrowDblClick = null;
+	this.onRxnArrowMouseDown = null;
+	this.onRxnArrowMouseOver = null;
+	this.onRxnArrowMouseMove = null;
+	this.onRxnArrowMouseOut = null;
+
+	this.onRxnPlusClick = null;
+	this.onRxnPlusDblClick = null;
+	this.onRxnPlusMouseDown = null;
+	this.onRxnPlusMouseOver = null;
+	this.onRxnPlusMouseMove = null;
+	this.onRxnPlusMouseOut = null;
+
 	this.onCanvasClick = null;
 	this.onCanvasDblClick = null;
 	this.onCanvasMouseDown = null;
@@ -169,6 +194,8 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 		};
 		if (oldType == 'Canvas'
 			|| (oldType == 'Atom' && this.ctab.atoms.has(oldId))
+			|| (oldType == 'RxnArrow' && this.ctab.rxnArrows.has(oldId))
+			|| (oldType == 'RxnPlus' && this.ctab.rxnPluses.has(oldId))
 			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))
 			|| (oldType == 'SGroup' && this.ctab.molecule.sgroups.has(oldId))) {
 			this.callEventHandler(event, 'MouseOut', oldType, oldId);
@@ -278,6 +305,16 @@ rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
 		if (lid2 >= 0)
 			this.ctab.loopRemove(lid2);
 	}
+}
+
+rnd.Render.prototype.invalidateItem = function (map, id, level)
+{
+	if (map == 'atoms')
+		this.invalidateAtom(id, level);
+	else if (map == 'bonds')
+		this.invalidateBond(id, level);
+	else
+		this.ctab.markItem(map, id, level);
 }
 
 rnd.Render.prototype.atomGetDegree = function (aid)
@@ -432,6 +469,8 @@ rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 	// TODO: rewrite with special methods for each attribute?
 	// TODO: allow multiple attributes at once?
 	var atom = this.ctab.atoms.get(aid);
+	if (name == 'label' && value != null) // HACK
+		atom.a['atomList'] = null;
 	atom.a[name] = value;
 	this.invalidateAtom(aid);
 }
@@ -498,32 +537,92 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 	return aid;
 }
 
-rnd.Render.prototype._atomMove = function (aid, pos)
+rnd.Render.prototype._rxnPlusAdd = function (pos)
 {
-	rnd.logMethod("_atomMove");
-	this.ctab.molecule._atomSetPos(aid, this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
-	this.invalidateAtom(aid, 1);
+	rnd.logMethod("_rxnPlusAdd");
+	var id = this.ctab.rxnPlusAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	this.invalidateItem('rxnPluses', id, 1);
+	return id;
 }
 
-rnd.Render.prototype.atomGetPos = function (aid)
+rnd.Render.prototype._rxnArrowAdd = function (pos)
 {
-	rnd.logMethod("atomGetPos");
-	return this.ctab.atoms.get(aid).a.pp.scaled(this.settings.scaleFactor)
+	rnd.logMethod("_rxnArrowAdd");
+	var id = this.ctab.rxnArrowAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	this.invalidateItem('rxnArrows', id, 1);
+	return id;
+}
+
+rnd.Render.prototype._itemMove = function (map, id, pos)
+{
+	this.ctab.molecule._itemSetPos(map, id, this.coordViewToObj(new util.Vec2(pos)));
+	this.invalidateItem(map, id, 1);
+}
+
+rnd.Render.prototype._itemMoveRel = function (map, id, d)
+{
+	this._itemMove(map, id, this.itemGetPos(map, id).add(d));
+}
+
+rnd.Render.prototype._atomMove = function (id, pos)
+{
+	rnd.logMethod("_atomMove");
+	this._itemMove('atoms', id, pos);
+}
+
+rnd.Render.prototype._rxnArrowMove = function (id, pos)
+{
+	rnd.logMethod("_rxnArrowMove");
+	this._itemMove('rxnArrows', id, pos);
+}
+
+rnd.Render.prototype._rxnArrowMoveRel = function (id, d)
+{
+	rnd.logMethod("_rxnArrowMoveRel");
+	this._itemMoveRel('rxnArrows', id, d);
+}
+
+rnd.Render.prototype.itemGetPos = function (map, id)
+{
+	return this.ctab.molecule[map].get(id).pp.scaled(this.settings.scaleFactor)
 	.add(this.offset);
 }
 
+rnd.Render.prototype.atomGetPos = function (id)
+{
+	rnd.logMethod("atomGetPos");
+	return this.itemGetPos('atoms', id);
+}
+
+rnd.Render.prototype.rxnArrowGetPos = function (id)
+{
+	rnd.logMethod("rxnArrowGetPos");
+	return this.itemGetPos('rxnArrows', id);
+}
+
+rnd.Render.prototype.rxnPlusGetPos = function (id)
+{
+	rnd.logMethod("rxnPlusGetPos");
+	return this.itemGetPos('rxnPluses', id);
+}
+
 rnd.Render.prototype._atomMoveRel = function (aid, d)
-{    
+{
 	rnd.logMethod("_atomMoveRel");
 	this.atomMove(aid, this.atomGetPos(aid).add(new util.Vec2(d.x, d.y)));
 }
 
-rnd.Render.prototype._atomMoveRelMultiple = function (aidList, d)
+rnd.Render.prototype._multipleMoveRel = function (lists, d)
 {
-	rnd.logMethod("_atomMoveRelMultiple");
-	for (var i = 0; i < aidList.length; ++i) {
-		var aid = aidList[i];
-		this.atomMove(aid, this.atomGetPos(aid).add(new util.Vec2(d.x, d.y)));
+	rnd.logMethod("_multipleMoveRel");
+	for (var map in {'atoms':0, 'rxnArrows':0, 'rxnPluses':0}) {
+		var list = lists[map];
+		if (list) {
+			for (var i = 0; i < list.length; ++i) {
+				var id = list[i];
+				this._itemMove(map, id, this.itemGetPos(map, id).add(new util.Vec2(d.x, d.y)));
+			}
+		}
 	}
 }
 
@@ -531,6 +630,18 @@ rnd.Render.prototype._atomRemove = function (aid)
 {
 	rnd.logMethod("_atomRemove");
 	this.ctab.atomRemove(aid);
+}
+
+rnd.Render.prototype._rxnPlusRemove = function (id)
+{
+	rnd.logMethod("_rxnPlusRemove");
+	this.ctab.rxnPlusRemove(id);
+}
+
+rnd.Render.prototype._rxnArrowRemove = function (id)
+{
+	rnd.logMethod("_rxnArrowRemove");
+	this.ctab.rxnArrowRemove(id);
 }
 
 rnd.Render.prototype.bondGetAttr = function (bid, name)
@@ -544,7 +655,7 @@ rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 	rnd.logMethod("_bondSetAttr");
 	var bond = this.ctab.bonds.get(bid);
 	bond.b[name] = value;
-	this.invalidateBond(bid, name == 'type');
+	this.invalidateBond(bid, name == 'type' ? 1 : 0);
 // update loops involving this bond
 }
 
@@ -584,28 +695,20 @@ rnd.Render.prototype._bondFlip = function (bid)
 	return newBid;
 }
 
-rnd.Render.prototype.setSelection = function (atomList, bondList)
+rnd.Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod("setSelection");
-	this.ctab.atoms.each(function(aid, atom){
-		atom.selected = false;
-		this.ctab.showAtomSelection(aid, atom, false);
-	}, this);
-	var i;
-	for (i = 0; i < atomList.length; ++i) {
-		var atom = this.ctab.atoms.get(atomList[i]);
-		atom.selected = true;
-		this.ctab.showAtomSelection(atomList[i], atom, true);
-	}
-
-	this.ctab.bonds.each(function(bid, bond){
-		bond.selected = false;
-		this.ctab.showBondSelection(bid, bond, false);
-	}, this);
-	for (i = 0; i < bondList.length; ++i) {
-		var bond = this.ctab.bonds.get(bondList[i]);
-		bond.selected = true;
-		this.ctab.showBondSelection(bondList[i], bond, true);
+	for (var map in rnd.ReStruct.maps) {
+		this.ctab[map].each(function(id, item){
+			item.selected = false;
+			this.ctab.showItemSelection(id, item, false);
+		}, this);
+		for (var i = 0; i < selection[map].length; ++i) {
+			var id = selection[map][i];
+			var item = this.ctab[map].get(id);
+			item.selected = true;
+			this.ctab.showItemSelection(id, item, true);
+		}
 	}
 }
 
@@ -720,7 +823,7 @@ rnd.Render.prototype.drawSelectionRectangle = function (r) {
 			'stroke':'#000',
 			'stroke-width':'1px'
 		});
-	}	
+	}
 }
 
 rnd.Render.prototype.getElementsInRectangle = function (rect) {
@@ -742,7 +845,22 @@ rnd.Render.prototype.getElementsInRectangle = function (rect) {
 		if (atom.a.ps.x > x0 && atom.a.ps.x < x1 && atom.a.ps.y > y0 && atom.a.ps.y < y1)
 			atomList.push(aid);
 	}, this);
-	return [atomList, bondList];
+	var rxnArrowsList = new Array();
+	var rxnPlusesList = new Array();
+	this.ctab.rxnArrows.each(function(id, item){
+		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+			rxnArrowsList.push(id);
+	}, this);
+	this.ctab.rxnPluses.each(function(id, item){
+		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+			rxnPlusesList.push(id);
+	}, this);
+	return {
+		'atoms':atomList,
+		'bonds':bondList,
+		'rxnArrows':rxnArrowsList,
+		'rxnPluses':rxnPlusesList
+	};
 }
 
 rnd.Render.prototype.drawSelectionPolygon = function (r) {
@@ -885,10 +1003,26 @@ rnd.Render.prototype.processAction = function (action, args)
 			},
 		this.curItem.id);
 	}
+	if (action == 'rxnArrowRemove' && this.curItem.type == 'RxnArrow'
+		&& this.curItem.id == id && this._onRxnArrowMouseOut) {
+		this._onRxnArrowMouseOut({
+			'pageX':this.pagePos.x,
+			'pageY':this.pagePos.y
+			},
+		this.curItem.id);
+	}
+	if (action == 'rxnPlusRemove' && this.curItem.type == 'RxnPlus'
+		&& this.curItem.id == id && this._onRxnPlusMouseOut) {
+		this.onRxnArrowMouseOut({
+			'pageX':this.pagePos.x,
+			'pageY':this.pagePos.y
+			},
+		this.curItem.id);
+	}
 	this.muteMouseOutMouseOver = true;
 	var ret = this['_' + action].apply(this, args);
 	this.muteMouseOutMouseOver = false;
-	if (action == 'atomAdd' || action == 'bondAdd')
+	if (action.endsWith('Add'))
 		this.checkCurItem = true;
 	return ret;
 }
@@ -958,7 +1092,6 @@ rnd.Render.prototype.update = function (force)
 			this.ctab.translate(offset1);
 		}
 	}
-	this.ctab.viselsChanged = {};
 
 	this.muteMouseOutMouseOver = false;
 	if (this.checkCurItem) {
@@ -1071,10 +1204,32 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	return null;
 }
 
+rnd.Render.prototype.findClosest = function (map, pos, minDist) {
+	var closestItem = null;
+	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	minDist = minDist || maxMinDist;
+	minDist = Math.min(minDist, maxMinDist);
+	this.ctab.molecule[map].each(function(id, item){
+		var dist = util.Vec2.dist(pos, item.ps);
+		if (dist < minDist) {
+			closestItem = id;
+			minDist = dist;
+		}
+	}, this);
+	if (closestItem != null)
+		return {
+			'id':closestItem,
+			'dist':minDist
+		};
+	return null;
+}
+
 rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
 	var bond = this.findClosestBond(pos);
 	var sg = this.findClosestSGroup(pos);
+	var arrow = this.findClosest('rxnArrows', pos);
+	var plus = this.findClosest('rxnPluses', pos);
 
 	if (atom != null) {
 		if (sg == null || atom.dist < sg.dist)
@@ -1094,8 +1249,33 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 			'id':sg.id,
 			'dist':sg.dist};
 
+	if (arrow != null)
+		return {
+			'type':'RxnArrow',
+			'id':arrow.id,
+			'dist':arrow.dist};
+
+	if (plus != null)
+		return {
+			'type':'RxnPlus',
+			'id':plus.id,
+			'dist':plus.dist};
+
 	return {
 		'type':'Canvas',
 		'id':-1
 	};
+}
+
+rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
+{
+	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
+	var offset = this.offset;
+	if (offset != null) {
+		if (bb != null)
+			bb.translate(offset);
+		path.translate(offset.x, offset.y);
+	}
+	visel.add(path, bb);
+	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);
 }

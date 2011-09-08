@@ -46,13 +46,15 @@ ketcher.init = function ()
 		'autoScale':true,
 		'autoScaleMargin':2,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	var renderOptsBond = {
 		'autoScale':true,
 		'autoScaleMargin':4,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', charge_plus_molfile, 75, renderOpts);
 	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', charge_minus_molfile, 75, renderOpts);
@@ -87,7 +89,8 @@ ketcher.init = function ()
 		'autoScale':true,
 		'autoScaleMargin':2,
 		'hideImplicitHydrogen':true,
-		'hideTerminalLabels':true};
+		'hideTerminalLabels':true,
+		'ignoreMouseEvents':true};
 
 	var clean_up = ['', '  -INDIGO-08221110472D', '',
 		'  9  9  0  0  0  0  0  0  0  0999 V2000',

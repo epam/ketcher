@@ -89,6 +89,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.atomColoring = this.opt.atomColoring || 0;
 	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
 	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
+	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
 
 	this.scale = scale || 100;
 	this.selectionDistanceCoefficient = 1.0 / 3;
@@ -121,16 +122,18 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
-	// assign canvas events handlers
-	rnd.mouseEventNames.each(function(eventName){
-		clientArea.observe(eventName.toLowerCase(), function(event) {
-			var name = '_onCanvas' + eventName;
-			if (render[name])
-				render[name](new rnd.MouseEvent(event));
-			util.stopEventPropagation(event);
-			return util.preventDefault(event);
-		});
-	}, this);
+	if (!this.opt.ignoreMouseEvents) {
+		// assign canvas events handlers
+		rnd.mouseEventNames.each(function(eventName){
+			clientArea.observe(eventName.toLowerCase(), function(event) {
+				var name = '_onCanvas' + eventName;
+				if (render[name])
+					render[name](new rnd.MouseEvent(event));
+				util.stopEventPropagation(event);
+				return util.preventDefault(event);
+			});
+		}, this);
+	}
 
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;

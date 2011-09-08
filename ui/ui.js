@@ -73,7 +73,7 @@ ui.initButton = function (el)
             return;
         this.addClassName('buttonHighlight');
         
-        var status = this.getAttribute('status');
+        var status = this.getAttribute('title');
         if (status != null)
             window.status = status;
     });
@@ -89,34 +89,33 @@ ui.onClick_SideButton = function (event)
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    ui.selectMode(this.id);
+    ui.selectMode(this.getAttribute('selid') || this.id);
 };
 
-ui.onClick_SelectionButton = function (event)
+ui.onClick_DropdownButton = function (event)
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (!this.hasClassName('buttonPressed'))
-    {
-        this.addClassName('buttonPressed');
-        ui.selectMode(this.getAttribute('selid'));
-    } else if ($('bond_selection').visible())
-        $('bond_selection').hide();
-    else
-        $('bond_selection').show();
+    ui.toggleDropdownList(this.id);
 };
 
-ui.onMouseDown_SelectionItem = function (event)
+ui.onMouseDown_DropdownListItem = function (event)
 {
     ui.selectMode(this.id);
-    $('bond_selection').hide();
+    var dropdown_mode_id = this.id.split('_')[0];
+    $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        $('bond').src = this.select('img')[0].src;
-        $('bond').title = this.title;
-        $('bond').setAttribute('selid', this.mode_id);
+        ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
+            'autoScale':true,
+            'autoScaleMargin':4,
+            'hideImplicitHydrogen':true,
+            'hideTerminalLabels':true
+        });
+        $(dropdown_mode_id).title = this.title;
+        $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
-    chem.stopEventPropagation(event);
+    //util.stopEventPropagation(event);
 };
 
 ui.init = function ()
@@ -175,19 +174,13 @@ ui.init = function ()
         ui.initButton(el);
         el.observe('click', ui.onClick_SideButton);
     });
-    $$('.selectionButton').each(function (el)
+    $$('.dropdownButton').each(function (el)
     {
-        //ui.initButton(el);
-        el.observe('mousedown', function (event)
-        {
-            chem.stopEventPropagation(event);
-        });
-        el.observe('click', ui.onClick_SelectionButton);
+        el.observe('click', ui.onClick_DropdownButton);
     });
-    $$('.selectionItem').each(function (el)
+    $$('.dropdownListItem').each(function (el)
     {
-        //ui.initButton(el);
-        el.observe('mousedown', ui.onMouseDown_SelectionItem);
+        el.observe('mousedown', ui.onMouseDown_DropdownListItem);
         el.observe('mouseover', function (event) 
         {
             this.addClassName('highlightedItem');
@@ -368,6 +361,35 @@ ui.hideDialog = function (name)
     $('window_cover').hide();
 }
 
+ui.toggleDropdownList = function (name)
+{
+    var list_id = name + '_list'; 
+    if ($(list_id).visible())
+        $(list_id).hide();
+    else
+    {
+        $(list_id).show();
+        if (!ui[list_id + '_was_shown'])
+        {
+            var renderOpts = {
+                'autoScale':true,
+                'autoScaleMargin':4,
+                'hideImplicitHydrogen':true,
+                'hideTerminalLabels':true
+            };
+            
+            $(list_id).select("tr").each(function (item)
+            {
+                if ($(item.id + '_preview'))
+                    ketcher.showMolfileOpts(item.id + '_preview', ketcher.templates[item.id], 20, renderOpts);
+            });
+            
+            ui[list_id + '_was_shown'] = true;
+        }
+    }
+}
+
+
 ui.onResize_Ketcher = function ()
 {
     $('window_cover').style.width = $('ketcher_window').getWidth().toString() + 'px';
@@ -499,9 +521,9 @@ ui.modeType = function ()
         return ui.MODE.ERASE;
     if (ui.mode_id.startsWith('atom_'))
         return ui.MODE.ATOM;
-    if (ui.mode_button.id.startsWith('charge_'))
+    if (ui.mode_id.startsWith('charge_'))
         return ui.MODE.CHARGE;
-    if (ui.mode_button.id.startsWith('bond_'))
+    if (ui.mode_id.startsWith('bond_'))
         return ui.MODE.BOND;
     if (ui.mode_id == 'sgroup')
         return ui.MODE.SGROUP;
@@ -526,21 +548,21 @@ ui.bondType = function (mode)
         return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
     case 'down':
         return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
-    case 'up_or_down':
+    case 'updown':
         return {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER};
     case 'double':
         return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'double_crossed':
+    case 'crossed':
         return {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS};
     case 'triple':
         return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'aromatic':
         return {type: 4, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'single_double':
+    case 'singledouble':
         return {type: 5, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'single_aromatic':
+    case 'singlearomatic':
         return {type: 6, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'double_aromatic':
+    case 'doublearomatic':
         return {type: 7, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'any':
         return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
@@ -642,25 +664,25 @@ ui.onKeyPress_Ketcher = function (event)
             ui.removeSelected();
         return util.preventDefault(event);
     case 48: // 0
-        ui.selectMode('bond_any');
+        ui.onMouseDown_DropdownListItem.call($('bond_any'));
         return util.preventDefault(event);
     case 49: // 1
-        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_up_or_down'];
-        ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
+        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];
+        ui.onMouseDown_DropdownListItem.call($(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]));
         return util.preventDefault(event);
     case 50: // 2
-		var doubles = ['bond_double', 'bond_double_crossed'];
-		ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
+		var doubles = ['bond_double', 'bond_crossed'];
+        ui.onMouseDown_DropdownListItem.call($(doubles[(doubles.indexOf(ui.mode_id) + 1) % doubles.length]));
         return util.preventDefault(event);
     case 51: // 3
-        ui.selectMode('bond_triple');
+        ui.onMouseDown_DropdownListItem.call($('bond_triple'));
         return util.preventDefault(event);
     case 52: // 4
-        ui.selectMode('bond_aromatic');
+        ui.onMouseDown_DropdownListItem.call($('bond_aromatic'));
         return util.preventDefault(event);
     case 53: // 5
         var charge = ['charge_plus', 'charge_minus'];
-        ui.selectMode(charge[(charge.indexOf(ui.mode_button.id) + 1) % charge.length]);
+        ui.selectMode(charge[(charge.indexOf(ui.mode_id) + 1) % charge.length]);
         return util.preventDefault(event);
     case 66: // Shift+B
         ui.selectMode('atom_br');
@@ -721,7 +743,7 @@ ui.onKeyPress_Ketcher = function (event)
         return util.preventDefault(event);
     case 114: // r
         var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
-        ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
+        ui.selectMode(rings[(rings.indexOf(ui.mode_id) + 1) % rings.length]);
         return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -1312,7 +1334,7 @@ ui.onClick_Atom = function (event, id)
             break;
 
         case ui.MODE.CHARGE:
-            var plus = (ui.mode_button.id == 'charge_plus');
+            var plus = (ui.mode_id == 'charge_plus');
             ui.addUndoAction(ui.Action.fromAtomAttrs(id, {charge: ui.render.atomGetAttr(id, 'charge') - 0 + (plus ? 1 : -1)}), true);
             ui.render.update();
             break;
@@ -1728,8 +1750,8 @@ ui.hideBlurredControls = function ()
 {
     if ($('input_label').visible())
         $('input_label').hide();
-    if ($('bond_selection').visible())
-        $('bond_selection').hide();
+    if ($('bond_dropdown_list').visible())
+        $('bond_dropdown_list').hide();
 }
 
 ui.onMouseDown_Atom = function (event, aid)
@@ -1962,7 +1984,7 @@ ui.onMouseMove_Canvas = function (event)
 ui.onMouseDown_Ketcher = function (event)
 {   
     ui.hideBlurredControls();
-    //chem.stopEventPropagation(event);
+    //util.stopEventPropagation(event);
 }
 
 ui.onMouseUp_Ketcher = function (event)

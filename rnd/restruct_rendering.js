@@ -221,10 +221,34 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 	if (!drawDashLine) {
 		return this.drawBondSingle(hb1, hb2);
 	}
-	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = bond.doubleBondShift;
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	(shift > 0 ? l1 : l2).attr({
+		'stroke-dasharray':'- '
+	});
+	return paper.set([l1,l2]);
+}
+
+rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
+{
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	(shift > 0 ? l1 : l2).attr({
+		'stroke-dasharray':'-.'
+	});
+	return paper.set([l1,l2]);
+}
+
+rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift)
+{
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
+	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var bsp = settings.bondSpace / 2;
 	var s1 = bsp, s2 = -bsp;
 	s1 += shift * bsp;
@@ -254,9 +278,18 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 		a2.x, a2.y, b2.x, b2.y).attr(styles.lineattr);
 	var l2 = paper.path("M{0},{1}L{2},{3}",
 		a3.x, a3.y, b3.x, b3.y).attr(styles.lineattr);
-	(shift > 0 ? l1 : l2).attr({
-		'stroke-dasharray':'- '
-	});
+	return [l1, l2];
+}
+
+
+rnd.ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
+{
+	var shift = bond.doubleBondShift;
+	var paper = this.render.paper;
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+	var l1 = paths[0], l2 = paths[1];
+	l1.attr({'stroke-dasharray':'-.'});
+	l2.attr({'stroke-dasharray':'-.'});
 	return paper.set([l1,l2]);
 }
 
@@ -306,6 +339,12 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			break;
 		case chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE:
 			path = this.drawBondSingleOrDouble(hb1, hb2, bond);
+			break;
+		case chem.Struct.BOND.TYPE.SINGLE_OR_AROMATIC:
+			path = this.drawBondSingleOrAromatic(hb1, hb2, bond);
+			break;
+		case chem.Struct.BOND.TYPE.DOUBLE_OR_AROMATIC:
+			path = this.drawBondDoubleOrAromatic(hb1, hb2, bond);
 			break;
 		case chem.Struct.BOND.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);

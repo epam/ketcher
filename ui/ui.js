@@ -110,7 +110,8 @@ ui.onMouseDown_DropdownListItem = function (event)
             'autoScale':true,
             'autoScaleMargin':4,
             'hideImplicitHydrogen':true,
-            'hideTerminalLabels':true
+            'hideTerminalLabels':true,
+            'ignoreMouseEvents':true
         });
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);

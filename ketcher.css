@@ -18,6 +18,12 @@ a, img
     color: #E0E0E0;
     border-width: 0;
     vertical-align: middle;
+    padding: 1px;
+}
+
+td
+{
+    padding: 0;
 }
 
 table#ketcher_window
@@ -108,7 +114,7 @@ table#ketcher_window > tr
     background-color: white;
     border-color: #E0E0E0;
     border-style: inset;
-    border-width: 2px;
+    border-width: 1px;
     text-align: left;
     width: 100%;
     /*height: 100%;*/
@@ -120,36 +126,68 @@ table#ketcher_window > tr
     border-style: none;
 }
 
+.dropdownList
+{
+    position: absolute;
+    z-index: 2;
+    left: 6px;
+    background-color: #FAFAFA;
+    border-style: outset;
+    border-width: thin;
+    border-color: white
+}
+
+.dropdownList > table
+{
+    font-family: arial;
+    font-size:   0.9em;
+}
+
+#bond_dropdown_list
+{
+    top: 120px;
+}
+
+.dropdownListItem
+{
+    cursor: default;
+}
+
+.dropdownListItem > td > div
+{
+    height: 24px;
+    width:  24px;
+    float:  left;
+    margin-right: 2px;
+    margin-top : -3px;
+}
+
+.dropdownListDelimiter
+{
+    background-color: #C0C0C0;
+    height: 2px;
+}
+
+.highlightedItem
+{
+    background-color: #C0C0C0;
+}
+
 #buffer_frame
 {
     display: none;
 }
 
-#console
-{
-    height: 8em;
-    font-family: courier;
-    font-size: small;
-    color: #0A0A0A;
-    background-color: #F0F0F0;
-    border-color: #E0E0E0;
-    border-style: inset;
-    border-width: thin;
-    padding: 0.5em;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
 input#input_label
 {
     position: absolute;
-    z-index:  2;
+    z-index:  3;
 }
 
 div#window_cover
 {
     position: absolute;
-    z-index:  3;
+    z-index:  4;
     background-color: black;
     left:     0;
     top:      0;
@@ -170,7 +208,7 @@ div#loading
 .dialogWindow
 {
     position: absolute;
-    z-index:  4;
+    z-index:  5;
     background-color: #E0E0E0;
     border-color: #F0F0F0;
     border-style: outset;

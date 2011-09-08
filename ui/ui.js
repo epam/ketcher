@@ -34,7 +34,7 @@ ui.render = null;
 ui.ctab = new chem.Struct();
 
 ui.client_area = null;
-ui.mode_button = null;
+ui.mode_id = null;
 
 ui.undoStack = new Array();
 ui.redoStack = new Array();
@@ -72,8 +72,8 @@ ui.initButton = function (el)
         if (this.hasClassName('buttonDisabled'))
             return;
         this.addClassName('buttonHighlight');
-
-        var status = this.getAttribute('status');
+        
+        var status = this.getAttribute('title');
         if (status != null)
             window.status = status;
     });
@@ -89,7 +89,33 @@ ui.onClick_SideButton = function (event)
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    ui.selectMode(this.getAttribute('selid') || this.id);
+};
+
+ui.onClick_DropdownButton = function (event)
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+    ui.toggleDropdownList(this.id);
+};
+
+ui.onMouseDown_DropdownListItem = function (event)
+{
     ui.selectMode(this.id);
+    var dropdown_mode_id = this.id.split('_')[0];
+    $(dropdown_mode_id + '_dropdown_list').hide();
+    if (ui.mode_id == this.id)
+    {
+        ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
+            'autoScale':true,
+            'autoScaleMargin':4,
+            'hideImplicitHydrogen':true,
+            'hideTerminalLabels':true
+        });
+        $(dropdown_mode_id).title = this.title;
+        $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
+    }
+    //util.stopEventPropagation(event);
 };
 
 ui.init = function ()
@@ -138,6 +164,7 @@ ui.init = function ()
     document.observe('keypress', ui.onKeyPress_Ketcher);
     document.observe('keydown', ui.onKeyDown_IE);
     document.observe('keyup', ui.onKeyUp);
+    document.observe('mousedown', ui.onMouseDown_Ketcher);
     document.observe('mouseup', ui.onMouseUp_Ketcher);
 
     // Button events
@@ -147,6 +174,22 @@ ui.init = function ()
         ui.initButton(el);
         if (el.identify() != 'atom_table')
             el.observe('click', ui.onClick_SideButton);
+    });
+    $$('.dropdownButton').each(function (el)
+    {
+        el.observe('click', ui.onClick_DropdownButton);
+    });
+    $$('.dropdownListItem').each(function (el)
+    {
+        el.observe('mousedown', ui.onMouseDown_DropdownListItem);
+        el.observe('mouseover', function (event) 
+        {
+            this.addClassName('highlightedItem');
+        });
+        el.observe('mouseout', function (event) 
+        {
+            this.removeClassName('highlightedItem');
+        });
     });
     $('new').observe('click', ui.onClick_NewFile);
     $('open').observe('click', ui.onClick_OpenFile);
@@ -345,6 +388,35 @@ ui.hideDialog = function (name)
     $('window_cover').hide();
 }
 
+ui.toggleDropdownList = function (name)
+{
+    var list_id = name + '_list'; 
+    if ($(list_id).visible())
+        $(list_id).hide();
+    else
+    {
+        $(list_id).show();
+        if (!ui[list_id + '_was_shown'])
+        {
+            var renderOpts = {
+                'autoScale':true,
+                'autoScaleMargin':4,
+                'hideImplicitHydrogen':true,
+                'hideTerminalLabels':true
+            };
+            
+            $(list_id).select("tr").each(function (item)
+            {
+                if ($(item.id + '_preview'))
+                    ketcher.showMolfileOpts(item.id + '_preview', ketcher.templates[item.id], 20, renderOpts);
+            });
+            
+            ui[list_id + '_was_shown'] = true;
+        }
+    }
+}
+
+
 ui.onResize_Ketcher = function ()
 {
     $('window_cover').style.width = $('ketcher_window').getWidth().toString() + 'px';
@@ -439,40 +511,50 @@ ui.selectMode = function (mode)
                 return;
             }
         }
-
-        if (ui.mode_button == null) // ui.MODE.PASTE
+        
+        if (ui.mode_id == null) // ui.MODE.PASTE
             ui.cancelPaste();
     }
 
-    if (this.mode_button != null && this.mode_button.id != mode)
-        this.mode_button.removeClassName('buttonSelected');
-
+    if (this.mode_id != null && this.mode_id != mode)
+    {   
+        if (this.mode_id.startsWith('bond'))
+        {
+            if (!mode.startsWith('bond'))
+                $('bond').removeClassName('buttonSelected');
+        } else
+            $(this.mode_id).removeClassName('buttonSelected');
+    }
+        
     if (mode == null)
-        this.mode_button = null;
+        this.mode_id = null;
     else
     {
-        this.mode_button = $(mode);
-        this.mode_button.addClassName('buttonSelected');
+        this.mode_id = mode;
+        if (this.mode_id.startsWith('bond'))
+            $('bond').addClassName('buttonSelected');
+        else
+            $(this.mode_id).addClassName('buttonSelected');
     }
 }
 
 ui.modeType = function ()
 {
-    if (ui.mode_button == null)
+    if (ui.mode_id == null)
         return ui.MODE.PASTE;
-    if (ui.mode_button.id == 'select_simple')
+    if (ui.mode_id == 'select_simple')
         return ui.MODE.SIMPLE;
-    if (ui.mode_button.id == 'select_erase')
+    if (ui.mode_id == 'select_erase')
         return ui.MODE.ERASE;
-    if (ui.mode_button.id.startsWith('atom_'))
+    if (ui.mode_id.startsWith('atom_'))
         return ui.MODE.ATOM;
-    if (ui.mode_button.id.startsWith('charge_'))
+    if (ui.mode_id.startsWith('charge_'))
         return ui.MODE.CHARGE;
-    if (ui.mode_button.id.startsWith('bond_'))
+    if (ui.mode_id.startsWith('bond_'))
         return ui.MODE.BOND;
-    if (ui.mode_button.id == 'sgroup')
+    if (ui.mode_id == 'sgroup')
         return ui.MODE.SGROUP;
-    if (ui.mode_button.id.startsWith('pattern_'))
+    if (ui.mode_id.startsWith('pattern_'))
         return ui.MODE.PATTERN;
     if (ui.mode_button.id == 'rxn_arrow')
         return ui.MODE.RXN_ARROW;
@@ -485,7 +567,7 @@ ui.bondType = function (mode)
     var type_str;
 
     if (Object.isUndefined(mode))
-        type_str = ui.mode_button.id.substr(5);
+        type_str = ui.mode_id.substr(5);
     else
         type_str = mode.substr(5);
 
@@ -497,21 +579,21 @@ ui.bondType = function (mode)
         return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
     case 'down':
         return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
-    case 'up_or_down':
+    case 'updown':
         return {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER};
     case 'double':
         return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'double_crossed':
+    case 'crossed':
         return {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS};
     case 'triple':
         return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'aromatic':
         return {type: 4, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'single_double':
+    case 'singledouble':
         return {type: 5, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'single_aromatic':
+    case 'singlearomatic':
         return {type: 6, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'double_aromatic':
+    case 'doublearomatic':
         return {type: 7, stereo: chem.Struct.BOND.STEREO.NONE};
     case 'any':
         return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
@@ -523,7 +605,7 @@ ui.atomLabel = function (mode)
     var label;
 
     if (Object.isUndefined(mode))
-        label = ui.mode_button.id.substr(5);
+        label = ui.mode_id.substr(5);
     else
         label = mode.substr(5);
 
@@ -537,7 +619,7 @@ ui.atomLabel = function (mode)
 
 ui.pattern = function ()
 {
-    return ui.patterns[ui.mode_button.id.substr(8)];
+    return ui.patterns[ui.mode_id.substr(8)];
 }
 
 //
@@ -615,25 +697,25 @@ ui.onKeyPress_Ketcher = function (event)
             ui.removeSelected();
         return util.preventDefault(event);
     case 48: // 0
-        ui.selectMode('bond_any');
+        ui.onMouseDown_DropdownListItem.call($('bond_any'));
         return util.preventDefault(event);
     case 49: // 1
-        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_up_or_down'];
-        ui.selectMode(singles[(singles.indexOf(ui.mode_button.id) + 1) % singles.length]);
+        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];
+        ui.onMouseDown_DropdownListItem.call($(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]));
         return util.preventDefault(event);
     case 50: // 2
-        var doubles = ['bond_double', 'bond_double_crossed'];
-        ui.selectMode(doubles[(doubles.indexOf(ui.mode_button.id) + 1) % doubles.length]);
+		var doubles = ['bond_double', 'bond_crossed'];
+        ui.onMouseDown_DropdownListItem.call($(doubles[(doubles.indexOf(ui.mode_id) + 1) % doubles.length]));
         return util.preventDefault(event);
     case 51: // 3
-        ui.selectMode('bond_triple');
+        ui.onMouseDown_DropdownListItem.call($('bond_triple'));
         return util.preventDefault(event);
     case 52: // 4
-        ui.selectMode('bond_aromatic');
+        ui.onMouseDown_DropdownListItem.call($('bond_aromatic'));
         return util.preventDefault(event);
     case 53: // 5
         var charge = ['charge_plus', 'charge_minus'];
-        ui.selectMode(charge[(charge.indexOf(ui.mode_button.id) + 1) % charge.length]);
+        ui.selectMode(charge[(charge.indexOf(ui.mode_id) + 1) % charge.length]);
         return util.preventDefault(event);
     case 66: // Shift+B
         ui.selectMode('atom_br');
@@ -694,7 +776,7 @@ ui.onKeyPress_Ketcher = function (event)
         return util.preventDefault(event);
     case 114: // r
         var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
-        ui.selectMode(rings[(rings.indexOf(ui.mode_button.id) + 1) % rings.length]);
+        ui.selectMode(rings[(rings.indexOf(ui.mode_id) + 1) % rings.length]);
         return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -1285,7 +1367,7 @@ ui.onClick_Atom = function (event, id)
             break;
 
         case ui.MODE.CHARGE:
-            var plus = (ui.mode_button.id == 'charge_plus');
+            var plus = (ui.mode_id == 'charge_plus');
             ui.addUndoAction(ui.Action.fromAtomAttrs(id, {charge: ui.render.atomGetAttr(id, 'charge') - 0 + (plus ? 1 : -1)}), true);
             ui.render.update();
             break;
@@ -1758,10 +1840,17 @@ ui.removeSelected = function ()
     ui.updateClipboardButtons();
 }
 
-ui.onMouseDown_Atom = function (event, aid)
+ui.hideBlurredControls = function ()
 {
     if ($('input_label').visible())
         $('input_label').hide();
+    if ($('bond_dropdown_list').visible())
+        $('bond_dropdown_list').hide();
+}
+
+ui.onMouseDown_Atom = function (event, aid)
+{
+    ui.hideBlurredControls();
 
     if (ui.modeType() == ui.MODE.PASTE)
         return false;
@@ -1816,8 +1905,7 @@ ui.onMouseDown_RxnArrow = function (event, id)
 
 ui.onMouseDown_Bond = function (event, bid)
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
+    ui.hideBlurredControls();
 
     if (ui.modeType() == ui.MODE.PASTE)
         return false;
@@ -1844,9 +1932,8 @@ ui.onMouseDown_Bond = function (event, bid)
 
 ui.onMouseDown_Canvas = function (event)
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
-
+    ui.hideBlurredControls();
+    
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.mouse_moved = true; // to avoid further handling of the click
@@ -2018,6 +2105,12 @@ ui.onMouseMove_Canvas = function (event)
         ui.drag.last_pos = {x: event.pageX, y: event.pageY};
     }
     ui.render.update();
+}
+
+ui.onMouseDown_Ketcher = function (event)
+{   
+    ui.hideBlurredControls();
+    //util.stopEventPropagation(event);
 }
 
 ui.onMouseUp_Ketcher = function (event)

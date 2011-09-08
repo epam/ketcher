@@ -23,12 +23,15 @@ indigo-depict - "[CH3-]" $format/action/charge_minus.$format -hydro off -w $size
 indigo-depict - "CC" $format/bond/single.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict mol/up.mol $format/bond/up.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict mol/down.mol $format/bond/down.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
-indigo-depict mol/up_or_down.mol $format/bond/up_or_down.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
+indigo-depict mol/updown.mol $format/bond/updown.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict - "C=C" $format/bond/double.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict - "C#C" $format/bond/triple.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict - "c:c" $format/bond/aromatic.$format -hydro off -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict - "c~c" $format/bond/anybond.$format -query -w $size -h $size -margins $margin $margin -label hetero
 indigo-depict mol/crossed.mol $format/bond/crossed.$format -query -w $size -h $size -margins $margin $margin -label hetero
+indigo-depict mol/singledouble.mol $format/bond/singledouble.$format -query -w $size -h $size -margins $margin $margin -label hetero
+indigo-depict mol/singlearomatic.mol $format/bond/singlearomatic.$format -query -w $size -h $size -margins $margin $margin -label hetero
+indigo-depict mol/doublearomatic.mol $format/bond/doublearomatic.$format -query -w $size -h $size -margins $margin $margin -label hetero
 
 # patterns
 indigo-depict - "C1=CC=CC=C1" $format/pattern/hexa1.$format -hydro off -w $size -h $size -margins $margin $margin
@@ -39,3 +42,4 @@ indigo-depict - "C1=CC2=C(C=C1)C=CC=C2" $format/pattern/naphthalene.$format -hyd
 
 # layout button
 indigo-depict - "[CH3]C(=O)C1=CC=CC=C1" $format/action/layout.$format -hydro on -w $size -h $size -margins $margin $margin
+

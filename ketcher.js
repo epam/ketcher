@@ -19,6 +19,7 @@ ketcher.version = "1.0b4";
 ketcher.init = function ()
 {
     document.title += ' v' + ketcher.version;
+    ketcher.templates = {};
 	ketcher.button_areas = {};
 	var elemLabelOpts = {'fontSize':25};
 	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_any', elemLabelOpts).renderSingle('A');
@@ -39,8 +40,9 @@ ketcher.init = function ()
 		'    0.4714    1.8562    0.0000 A   0  3  0  0  0  0  0  0  0  0  0  0'];
 	var charge_tail = ['M  END'];
 
-	var charge_plus_molfile = charge_head.concat(['M  CHG  1   1   1'], charge_tail);
-	var charge_minus_molfile = charge_head.concat(['M  CHG  1   1  -1'], charge_tail);
+    var tmpl = ketcher.templates;
+	tmpl.charge_plus = charge_head.concat(['M  CHG  1   1   1'], charge_tail);
+	tmpl.charge_minus = charge_head.concat(['M  CHG  1   1  -1'], charge_tail);
 
 	var renderOpts = {
 		'autoScale':true,
@@ -56,8 +58,8 @@ ketcher.init = function ()
 		'hideTerminalLabels':true,
 		'ignoreMouseEvents':true};
 
-	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', charge_plus_molfile, 75, renderOpts);
-	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', charge_minus_molfile, 75, renderOpts);
+	ketcher.button_areas.charge_plus = ketcher.showMolfileOpts('charge_plus', tmpl.charge_plus, 75, renderOpts);
+	ketcher.button_areas.charge_minus = ketcher.showMolfileOpts('charge_minus', tmpl.charge_minus, 75, renderOpts);
 
 	var bond_head = ['', '  Ketcher 08191119302D 1   1.00000     0.00000     0', '',
 		'  2  1  0     0  0            999 V2000',
@@ -65,25 +67,18 @@ ketcher.init = function ()
 		'   -1.0000    0.3000    0.0000 C   0  0  0  0  0  4  0        0  0  0'];
 	var bond_tail = ['M  END'];
 
-	var bond_any = bond_head.concat(['  1  2  8  0     0  0'], bond_tail);
-	var bond_single = bond_head.concat(['  1  2  1  0     0  0'], bond_tail);
-	var bond_single_up = bond_head.concat(['  1  2  1  1     0  0'], bond_tail);
-	var bond_single_down = bond_head.concat(['  1  2  1  6     0  0'], bond_tail);
-	var bond_single_up_or_down = bond_head.concat(['  1  2  1  4     0  0'], bond_tail);
-	var bond_double  = bond_head.concat(['  1  2  2  0     0  0'], bond_tail);
-	var bond_double_crossed  = bond_head.concat(['  1  2  2  3     0  0'], bond_tail);
-	var bond_triple = bond_head.concat(['  1  2  3  0     0  0'], bond_tail);
-	var bond_aromatic = bond_head.concat(['  1  2  4  0     0  0'], bond_tail);
+    // will use this templates in dropdown list
+	tmpl.bond_any = bond_head.concat(['  1  2  8  0     0  0'], bond_tail);
+	tmpl.bond_single = bond_head.concat(['  1  2  1  0     0  0'], bond_tail);
+	tmpl.bond_up = bond_head.concat(['  1  2  1  1     0  0'], bond_tail);
+	tmpl.bond_down = bond_head.concat(['  1  2  1  6     0  0'], bond_tail);
+	tmpl.bond_updown = bond_head.concat(['  1  2  1  4     0  0'], bond_tail);
+	tmpl.bond_double  = bond_head.concat(['  1  2  2  0     0  0'], bond_tail);
+	tmpl.bond_crossed  = bond_head.concat(['  1  2  2  3     0  0'], bond_tail);
+	tmpl.bond_triple = bond_head.concat(['  1  2  3  0     0  0'], bond_tail);
+	tmpl.bond_aromatic = bond_head.concat(['  1  2  4  0     0  0'], bond_tail);
 
-	ketcher.button_areas.bond_any = ketcher.showMolfileOpts('bond_any', bond_any, 20, renderOptsBond);
-	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond_single', bond_single, 20, renderOptsBond);
-	ketcher.button_areas.bond_single_up = ketcher.showMolfileOpts('bond_up', bond_single_up, 20, renderOptsBond);
-	ketcher.button_areas.bond_single_down = ketcher.showMolfileOpts('bond_down', bond_single_down, 20, renderOptsBond);
-	ketcher.button_areas.bond_single_up_or_down = ketcher.showMolfileOpts('bond_up_or_down', bond_single_up_or_down, 20, renderOptsBond);
-	ketcher.button_areas.bond_double = ketcher.showMolfileOpts('bond_double', bond_double, 20, renderOptsBond);
-	ketcher.button_areas.bond_double_crossed = ketcher.showMolfileOpts('bond_double_crossed', bond_double_crossed, 20, renderOptsBond);
-	ketcher.button_areas.bond_triple = ketcher.showMolfileOpts('bond_triple', bond_triple, 20, renderOptsBond);
-	ketcher.button_areas.bond_aromatic = ketcher.showMolfileOpts('bond_aromatic', bond_aromatic, 20, renderOptsBond);
+	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond', tmpl.bond_single, 20, renderOptsBond);
 
 	var renderOptsPattern = {
 		'autoScale':true,
@@ -92,7 +87,7 @@ ketcher.init = function ()
 		'hideTerminalLabels':true,
 		'ignoreMouseEvents':true};
 
-	var clean_up = ['', '  -INDIGO-08221110472D', '',
+	tmpl.clean_up = ['', '  -INDIGO-08221110472D', '',
 		'  9  9  0  0  0  0  0  0  0  0999 V2000',
 		'    2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
 		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -113,8 +108,8 @@ ketcher.init = function ()
 		'  8  9  2  0  0  0  0',
 		'  9  4  1  0  0  0  0',
 		'M  END'];
-
-	var hexa1 = ['', '  -INDIGO-08221110472D', '',
+	
+	tmpl.hexa1 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
 		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -129,8 +124,8 @@ ketcher.init = function ()
 		'  5  6  2  0  0  0  0',
 		'  6  1  1  0  0  0  0',
 		'M  END'];
-
-	var hexa2 = ['', '  -INDIGO-08221110472D', '',
+	
+	tmpl.hexa2 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
 		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -146,7 +141,7 @@ ketcher.init = function ()
 		'  6  1  1  0  0  0  0',
 		'M  END'];
 
-	var hexaa = ['', '  -INDIGO-08221110472D', '',
+	tmpl.hexaa = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
 		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -162,7 +157,7 @@ ketcher.init = function ()
 		'  6  1  4  0  0  0  0',
 		'M  END'];
 
-	var penta = ['', '  -INDIGO-08221110472D', '',
+	tmpl.penta = ['', '  -INDIGO-08221110472D', '',
 		'  5  5  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
 		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -176,11 +171,11 @@ ketcher.init = function ()
 		'  5  1  1  0  0  0  0',
 		'M  END'
 	];
-
-	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', clean_up, 20, renderOptsPattern);
-	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', hexa1, 20, renderOptsPattern);
-	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', hexa2, 20, renderOptsPattern);
-	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', penta, 20, renderOptsPattern);
+	
+	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', tmpl.clean_up, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', tmpl.hexa1, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', tmpl.hexa2, 20, renderOptsPattern);
+	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', tmpl.penta, 20, renderOptsPattern);
 
 	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
 	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();

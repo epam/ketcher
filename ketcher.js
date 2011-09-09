@@ -77,6 +77,9 @@ ketcher.init = function ()
 	tmpl.bond_crossed  = bond_head.concat(['  1  2  2  3     0  0'], bond_tail);
 	tmpl.bond_triple = bond_head.concat(['  1  2  3  0     0  0'], bond_tail);
 	tmpl.bond_aromatic = bond_head.concat(['  1  2  4  0     0  0'], bond_tail);
+	tmpl.bond_singledouble = bond_head.concat(['  1  2  5  0     0  0'], bond_tail);
+	tmpl.bond_singlearomatic = bond_head.concat(['  1  2  6  0     0  0'], bond_tail);
+	tmpl.bond_doublearomatic = bond_head.concat(['  1  2  7  0     0  0'], bond_tail);
 
 	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond', tmpl.bond_single, 20, renderOptsBond);
 

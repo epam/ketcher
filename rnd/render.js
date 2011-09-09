@@ -125,7 +125,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
 		rnd.mouseEventNames.each(function(eventName){
-			clientArea.observe(eventName.toLowerCase(), function(event) {
+			clientArea.observe(EventMap[eventName.toLowerCase()], function(event) {
 				var name = '_onCanvas' + eventName;
 				if (render[name])
 					render[name](new rnd.MouseEvent(event));

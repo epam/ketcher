@@ -13,6 +13,13 @@
 if (!window.util)
     util = {};
 
+EventMap = 
+{
+    mousemove: 'mousemove',
+    mousedown: 'mousedown',
+    mouseup  : 'mouseup'
+};
+
 Array.prototype.swap = function (i1, i2)
 {
 	var tmp = this[i1];

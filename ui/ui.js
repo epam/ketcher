@@ -57,13 +57,13 @@ ui.patterns =
 //
 ui.initButton = function (el)
 {
-    el.observe('mousedown', function (event)
+    el.observe(EventMap['mousedown'], function (event)
     {
         if (this.hasClassName('buttonDisabled'))
             return;
         this.addClassName('buttonPressed');
     });
-    el.observe('mouseup', function (event)
+    el.observe(EventMap['mouseup'], function (event)
     {
         this.removeClassName('buttonPressed');
     });
@@ -165,8 +165,8 @@ ui.init = function ()
     document.observe('keypress', ui.onKeyPress_Ketcher);
     document.observe('keydown', ui.onKeyDown_IE);
     document.observe('keyup', ui.onKeyUp);
-    document.observe('mousedown', ui.onMouseDown_Ketcher);
-    document.observe('mouseup', ui.onMouseUp_Ketcher);
+    document.observe(EventMap['mousedown'], ui.onMouseDown_Ketcher);
+    document.observe(EventMap['mouseup'], ui.onMouseUp_Ketcher);
 
     // Button events
     $$('.toolButton').each(ui.initButton);
@@ -182,7 +182,7 @@ ui.init = function ()
     });
     $$('.dropdownListItem').each(function (el)
     {
-        el.observe('mousedown', ui.onMouseDown_DropdownListItem);
+        el.observe(EventMap['mousedown'], ui.onMouseDown_DropdownListItem);
         el.observe('mouseover', function (event) 
         {
             this.addClassName('highlightedItem');

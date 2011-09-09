@@ -342,8 +342,8 @@ ui.Action.prototype.perform = function ()
             op.inverted.type = ui.Action.OPERATION.RXN_ARROW_DEL;
 
             var id = ui.render.rxnArrowAdd(op.params.pos);
-			op.inverted.params = { id: id };
-			break;
+            op.inverted.params = { id: id };
+            break;
 
         case ui.Action.OPERATION.RXN_ARROW_POS:
             op.inverted.type = ui.Action.OPERATION.RXN_ARROW_POS;
@@ -355,7 +355,7 @@ ui.Action.prototype.perform = function ()
             ui.render.rxnArrowMove(op.params.id, op.params.pos);
             break;
 
-		case ui.Action.OPERATION.RXN_PLUS_DEL:
+        case ui.Action.OPERATION.RXN_PLUS_DEL:
             op.inverted.type = ui.Action.OPERATION.RXN_PLUS_ADD;
             op.inverted.params =
             {
@@ -368,8 +368,8 @@ ui.Action.prototype.perform = function ()
             op.inverted.type = ui.Action.OPERATION.RXN_PLUS_DEL;
 
             var id = ui.render.rxnPlusAdd(op.params.pos);
-			op.inverted.params = { id: id };
-			break;
+            op.inverted.params = { id: id };
+            break;
 
         case ui.Action.OPERATION.RXN_PLUS_POS:
             op.inverted.type = ui.Action.OPERATION.RXN_PLUS_POS;
@@ -491,8 +491,8 @@ ui.Action.fromSelectedRxnArrowPos = function ()
     {
         action.addOperation(ui.Action.OPERATION.RXN_ARROW_POS,
         {
-			id: id,
-			pos: ui.render.rxnArrowGetPos(id)
+            id: id,
+            pos: ui.render.rxnArrowGetPos(id)
         });
     }, this);
 
@@ -523,8 +523,8 @@ ui.Action.fromSelectedRxnPlusPos = function ()
     {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_POS,
         {
-			id: id,
-			pos: ui.render.rxnPlusGetPos(id)
+            id: id,
+            pos: ui.render.rxnPlusGetPos(id)
         });
     }, this);
 
@@ -596,7 +596,7 @@ ui.Action.fromSelectedAtomsAttrs = function (attrs)
     return action;
 }
 
-ui.Action.fromBondAttrs = function (id, attrs)
+ui.Action.fromBondAttrs = function (id, attrs, flip)
 {
     var action = new ui.Action();
     var id_map = ui.bondMap.indexOf(id);
@@ -613,10 +613,17 @@ ui.Action.fromBondAttrs = function (id, attrs)
         });
         ui.render.bondSetAttr(id, attr.key, attr.value);
     }, this);
+    if (flip) {
+        action.addOperation(ui.Action.OPERATION.BOND_FLIP,
+        {
+            id: id_map
+        });
+        ui.render.bondFlip(id);
+    }
     return action;
 }
 
-ui.Action.fromSelectedBondsAttrs = function (attrs)
+ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 {
     var action = new ui.Action();
 
@@ -632,12 +639,20 @@ ui.Action.fromSelectedBondsAttrs = function (attrs)
             {
                 id: id_map,
                 attr_name: attr.key,
-                attr_value: ui.render.bondGetAttr(id, attr.key)
+                attr_value: attr.value
             });
-            ui.render.bondSetAttr(id, attr.key, attr.value);
         }, this);
     }, this);
-    return action;
+    if (flips)
+        flips.each(function (id)
+        {
+            var id_map = ui.bondMap.indexOf(id);
+            action.addOperation(ui.Action.OPERATION.BOND_FLIP,
+            {
+                id: id_map
+            });
+        }, this);
+    return action.perform();
 }
 
 ui.Action.fromAtomAddition = function (pos, atom)
@@ -715,8 +730,8 @@ ui.Action.fromArrowAddition = function (pos)
     var action = new ui.Action();
 
     action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
-		id: ui.render.rxnArrowAdd(pos)
-	});
+        id: ui.render.rxnArrowAdd(pos)
+    });
 
     return action;
 }
@@ -737,8 +752,8 @@ ui.Action.fromPlusAddition = function (pos)
     var action = new ui.Action();
 
     action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {
-		id: ui.render.rxnPlusAdd(pos)
-	});
+        id: ui.render.rxnPlusAdd(pos)
+    });
 
     return action;
 }
@@ -1005,13 +1020,13 @@ ui.Action.fromFragmentDeletion = function ()
 
     action.removeSgroupIfNeeded(atoms_to_remove);
 
-	ui.selection.rxnArrows.each(function (id) {
-		action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
-	}, this);
+    ui.selection.rxnArrows.each(function (id) {
+        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+    }, this);
 
-	ui.selection.rxnPluses.each(function (id) {
-		action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
-	}, this);
+    ui.selection.rxnPluses.each(function (id) {
+        action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
+    }, this);
 
     return action.perform();
 }
@@ -1207,7 +1222,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
 
         v = v.negated();
     }
-	ui.render.update();
+    ui.render.update();
 
     var action = new ui.Action();
     var atom_ids = new Array(pattern.length);

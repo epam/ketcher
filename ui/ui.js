@@ -72,7 +72,7 @@ ui.initButton = function (el)
         if (this.hasClassName('buttonDisabled'))
             return;
         this.addClassName('buttonHighlight');
-        
+
         var status = this.getAttribute('title');
         if (status != null)
             window.status = status;
@@ -183,11 +183,11 @@ ui.init = function ()
     $$('.dropdownListItem').each(function (el)
     {
         el.observe('mousedown', ui.onMouseDown_DropdownListItem);
-        el.observe('mouseover', function (event) 
+        el.observe('mouseover', function (event)
         {
             this.addClassName('highlightedItem');
         });
-        el.observe('mouseout', function (event) 
+        el.observe('mouseout', function (event)
         {
             this.removeClassName('highlightedItem');
         });
@@ -391,7 +391,7 @@ ui.hideDialog = function (name)
 
 ui.toggleDropdownList = function (name)
 {
-    var list_id = name + '_list'; 
+    var list_id = name + '_list';
     if ($(list_id).visible())
         $(list_id).hide();
     else
@@ -405,13 +405,13 @@ ui.toggleDropdownList = function (name)
                 'hideImplicitHydrogen':true,
                 'hideTerminalLabels':true
             };
-            
+
             $(list_id).select("tr").each(function (item)
             {
                 if ($(item.id + '_preview'))
                     ketcher.showMolfileOpts(item.id + '_preview', ketcher.templates[item.id], 20, renderOpts);
             });
-            
+
             ui[list_id + '_was_shown'] = true;
         }
     }
@@ -508,12 +508,7 @@ ui.selectMode = function (mode)
                     if (ui.bondFlipRequired(ui.ctab.bonds.get(id), attrs))
                         bondsToFlip.push(id);
                 }, this);
-                ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode)), true);
-                bondsToFlip.each(function (id) {
-                    ui.addUndoAction(ui.Action.fromBondFlipping(id));
-                }, this);
-
-
+                ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode), bondsToFlip), true);
                 ui.render.update();
                 return;
             }
@@ -523,13 +518,13 @@ ui.selectMode = function (mode)
                 return;
             }
         }
-        
+
         if (ui.mode_id == null) // ui.MODE.PASTE
             ui.cancelPaste();
     }
 
     if (this.mode_id != null && this.mode_id != mode)
-    {   
+    {
         if (this.mode_id.startsWith('bond'))
         {
             if (!mode.startsWith('bond'))
@@ -537,7 +532,7 @@ ui.selectMode = function (mode)
         } else
             $(this.mode_id).removeClassName('buttonSelected');
     }
-        
+
     if (mode == null)
         this.mode_id = null;
     else
@@ -716,7 +711,7 @@ ui.onKeyPress_Ketcher = function (event)
         ui.onMouseDown_DropdownListItem.call($(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]));
         return util.preventDefault(event);
     case 50: // 2
-		var doubles = ['bond_double', 'bond_crossed'];
+        var doubles = ['bond_double', 'bond_crossed'];
         ui.onMouseDown_DropdownListItem.call($(doubles[(doubles.indexOf(ui.mode_id) + 1) % doubles.length]));
         return util.preventDefault(event);
     case 51: // 3
@@ -1535,9 +1530,7 @@ ui.onClick_Bond = function (event, id)
                     attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
                 }
             }
-            ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs), true);
-            if (flip)
-                ui.addUndoAction(ui.Action.fromBondFlipping(id));
+            ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs, flip), true);
         }
         ui.render.update();
         break;
@@ -1956,7 +1949,7 @@ ui.onMouseDown_Bond = function (event, bid)
 ui.onMouseDown_Canvas = function (event)
 {
     ui.hideBlurredControls();
-    
+
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.mouse_moved = true; // to avoid further handling of the click
@@ -2131,7 +2124,7 @@ ui.onMouseMove_Canvas = function (event)
 }
 
 ui.onMouseDown_Ketcher = function (event)
-{   
+{
     ui.hideBlurredControls();
     //util.stopEventPropagation(event);
 }

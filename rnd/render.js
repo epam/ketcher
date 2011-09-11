@@ -125,12 +125,15 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
 		rnd.mouseEventNames.each(function(eventName){
-			clientArea.observe(EventMap[eventName.toLowerCase()] || eventName.toLowerCase(), function(event) {
+            var bindEventName = eventName.toLowerCase();
+            bindEventName = EventMap[bindEventName] || bindEventName;
+			clientArea.observe(bindEventName, function(event) {
 				var name = '_onCanvas' + eventName;
 				if (render[name])
 					render[name](new rnd.MouseEvent(event));
 				util.stopEventPropagation(event);
-				return util.preventDefault(event);
+                if (bindEventName != 'touchstart')
+                    return util.preventDefault(event);
 			});
 		}, this);
 	}

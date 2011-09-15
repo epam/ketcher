@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -19,7 +19,7 @@ chem.Molfile = function ()
 chem.Molfile.parseDecimalInt = function (str)
 {
 	var val = parseInt(str, 10);
-    
+
 	return isNaN(val) ? 0 : val;
 }
 
@@ -118,7 +118,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		// obsolete
 		massDifference: mf.parseDecimalInt(atomSplit[5]),
 		charge: mf.fmtInfo.chargeMap[mf.parseDecimalInt(atomSplit[6])],
-        
+
 		// query
 		implicitH: mf.fmtInfo.implicitHydrogenMap[mf.parseDecimalInt(atomSplit[8])],
 		stereoCare: mf.parseDecimalInt(atomSplit[9]) != 0,
@@ -224,7 +224,7 @@ chem.Molfile.parseBondLine = function (bondLine)
 		topology: mf.fmtInfo.bondTopologyMap[mf.parseDecimalInt(bondSplit[5])],
 		reactingCenterStatus: mf.parseDecimalInt(bondSplit[6])
 	};
-        
+
 	return new chem.Struct.Bond(params);
 }
 
@@ -629,7 +629,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 			line = (line + mf.stripV30(ctabLines[shift++])).strip();
 		ctab.atoms.add(mf.parseAtomLineV3000(line));
 	}
-    
+
 	if (ctabLines[shift++].strip() == "M  V30 BEGIN BOND")
 	{
 		while (shift < ctabLines.length) {
@@ -670,7 +670,7 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 				if (!(name in props))
 					props[name] = [];
 				props[name].push(subsplit[1]);
-			}	
+			}
 			sg.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
 			sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1); // TODO: make optional?
 			sg.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
@@ -706,11 +706,8 @@ chem.MolfileSaver = function (v3000)
 {
 	this.molecule = null;
 	this.molfile = null;
-    
-	if (arguments.length > 0)
-		this.v3000 = v3000;
-	else
-		this.v3000 = false;
+
+	this.v3000 = v3000 || false
 }
 
 chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
@@ -737,23 +734,74 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 {
-	this.molecule = molecule.clone();
+	this.reaction = molecule.rxnArrows.count() > 0;
+	if (molecule.rxnArrows.count() > 1)
+		throw new Error("Reaction may not contain more than one arrow");
 	this.molfile = '';
+	if (this.reaction) {
+		var ccs = molecule.findConnectedComponents();
+		var submols = [];
+		var barriers = [];
+		var arrowPos = null;
+		molecule.rxnArrows.each(function(id, item){ // there's just one arrow
+			arrowPos = item.pos.x;
+		});
+		molecule.rxnPluses.each(function(id, item){
+			barriers.push(item.pos.x);
+		});
+		barriers.push(arrowPos);
+		barriers.sort();
+		var components = [];
+
+		var i;
+		for (i = 0; i < ccs.length; ++i) {
+			var bb = molecule.getCoordBoundingBox(ccs[i]);
+			var c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+			var j = 0;
+			while (c.x > barriers[j])
+				++j;
+			components[j] = components[j] || {};
+			util.Set.mergeIn(components[j], ccs[i]);
+		}
+		var submolTexts = [];
+		var nReactants = 0;
+		for (i = 0; i < components.length; ++i) {
+			if (!components[i]) {
+				throw new Error("One or more components are empty");
+			}
+			bb = molecule.getCoordBoundingBox(components[i]);
+			c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+			if (c.x < arrowPos)
+				++nReactants;
+			var submol = molecule.clone(components[i], null, true);
+			submols.push(submol);
+			var saver = new chem.MolfileSaver(false);
+			submolTexts.push(saver.saveMolecule(submol));
+		}
+
+		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(nReactants, 3) + util.paddedInt(ccs.length-nReactants, 3) + util.paddedInt(0, 3) + "\n";
+		for (i = 0; i < components.length; ++i) {
+			this.molfile += "$MOL\n" + submolTexts[i];
+		}
+		return this.molfile;
+	}
+
+	this.molecule = molecule.clone();
 
 	this.prepareSGroups(skipSGroupErrors);
-    
+
 	this.writeHeader();
-    
+
 	// TODO: saving to V3000
 	this.writeCTab2000(molecule);
-        
+
 	return this.molfile;
 }
 
 chem.MolfileSaver.prototype.writeHeader = function ()
 {
 	var date = new Date();
-    
+
 	this.writeCR();
 	this.writeWhiteSpace(2);
 	this.write('Ketcher');
@@ -772,7 +820,7 @@ chem.MolfileSaver.prototype.writeCR = function (str)
 {
 	if (arguments.length == 0)
 		str = '';
-        
+
 	this.molfile += str + '\n';
 }
 
@@ -780,7 +828,7 @@ chem.MolfileSaver.prototype.writeWhiteSpace = function (length)
 {
 	if (arguments.length == 0)
 		length = 1;
-        
+
 	length.times(function ()
 	{
 		this.write(' ');
@@ -796,7 +844,7 @@ chem.MolfileSaver.prototype.writePadded = function (str, width)
 chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 {
 	var str = number.toString();
-    
+
 	this.writeWhiteSpace(width - str.length);
 	this.write(str);
 }
@@ -810,7 +858,7 @@ chem.MolfileSaver.prototype.writeCTab2000Header = function ()
 {
 	this.writePaddedNumber(this.molecule.atoms.count(), 3);
 	this.writePaddedNumber(this.molecule.bonds.count(), 3);
-    
+
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(3);
 	this.writePaddedNumber(this.molecule.isChiral ? 1 : 0, 3);
@@ -823,7 +871,7 @@ chem.MolfileSaver.prototype.writeCTab2000Header = function ()
 chem.MolfileSaver.prototype.writeCTab2000 = function ()
 {
 	this.writeCTab2000Header();
-    
+
 	this.mapping = {};
 	var i = 1;
 
@@ -834,7 +882,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		this.writePaddedFloat(atom.pos.y, 10, 4);
 		this.writePaddedFloat(0, 10, 4);
 		this.writeWhiteSpace();
-		
+
 		var label = atom.label;
 		if (atom.atomList != null) {
 			label = 'L';
@@ -854,24 +902,24 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 
 		if (atom.explicitValence)
 			this.writePaddedNumber(atom.valence, 3);
-        
+
 		this.writePaddedNumber(0, 3);
 		this.writeWhiteSpace(6);
 
 		if (Object.isUndefined(atom.aam))
 			atom.aam = 0;
 		this.writePaddedNumber(atom.aam, 3);
-        
+
 		if (Object.isUndefined(atom.invRet))
 			atom.invRet = 0;
 		this.writePaddedNumber(atom.invRet, 3);
-        
+
 		if (Object.isUndefined(atom.exactChangeFlag))
 			atom.exactChangeFlag = 0;
 		this.writePaddedNumber(atom.exactChangeFlag, 3);
 
 		this.writeCR();
-        
+
 		this.mapping[id] = i;
 		i++;
 	}, this);
@@ -901,11 +949,11 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 
 		this.writeCR();
 	}, this);
-    
+
     var charge_list = new Array();
     var isotope_list = new Array();
     var radical_list = new Array();
-    
+
 	this.molecule.atoms.each(function (id, atom)
 	{
         if (atom.charge != 0)
@@ -915,22 +963,22 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
         if (atom.radical != 0)
             radical_list.push(id);
 	});
-    
+
     writeAtomPropList = function (ids, prop_id, prop_name)
     {
         while (ids.length > 0)
         {
             var part = new Array();
-            
+
             while (ids.length > 0 && part.length < 8)
             {
                 part.push(ids[0]);
                 ids.splice(0, 1);
             }
-            
+
             this.write(prop_id);
             this.writePaddedNumber(part.length, 3);
-            
+
             part.each(function (id)
             {
                 this.writeWhiteSpace();
@@ -941,12 +989,12 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 
             this.writeCR();
         }
-    } 
-    
+    }
+
     writeAtomPropList.call(this, charge_list, 'M  CHG', 'charge');
     writeAtomPropList.call(this, isotope_list, 'M  ISO', 'isotope');
     writeAtomPropList.call(this, radical_list, 'M  RAD', 'radical');
-    
+
 	if (atomList_list.length > 0)
 	{
 		for (var j = 0; j < atomList_list.length; ++j) {

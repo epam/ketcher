@@ -61,12 +61,25 @@ util.Set = {
 		}
 	},
 
+	filter: function(set, func, context) {
+		var subset = {};
+		for (var v in set) {
+			if (set[v] !== Object.prototype[v]) {
+				if (func.call(context, set[v])) {
+					subset[set[v]] = set[v];
+				}
+			}
+		}
+		return subset;
+	},
+
 	pick: function(set) {
 		for (var v in set) {
 			if (set[v] !== Object.prototype[v]) {
 				return set[v];
 			}
 		}
+		return null;
 	},
 
 	list: function(set) {
@@ -97,5 +110,20 @@ util.Set = {
 
 	clear: function(set) {
 		set = {};
+	},
+
+	union: function(set1, set2) {
+		var set = {};
+		chem.Set.mergeIn(set, set1);
+		chem.Set.mergeIn(set, set2);
+		return set;
+	},
+
+	keySetInt: function(map) {
+		var set = {};
+		map.each(function(id){
+			set[id - 0] = id - 0;
+		});
+		return set;
 	}
 }

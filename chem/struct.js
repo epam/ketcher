@@ -50,36 +50,53 @@ chem.Struct.prototype.toLists = function ()
 	};
 }
 
-chem.Struct.prototype.clone = function ()
+chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 {
+	atomSet = atomSet || util.Set.keySetInt(this.atoms);
+	bondSet = bondSet || util.Set.keySetInt(this.bonds);
+	bondSet = util.Set.filter(bondSet, function(bid){
+		var bond = this.bonds.get(bid);
+		return util.Set.contains(atomSet, bond.begin) &&
+			util.Set.contains(atomSet, bond.end);
+	}, this);
+
 	var cp = new chem.Struct();
 	var aidMap = {};
 	this.atoms.each(function(aid, atom) {
-		aidMap[aid] = cp.atoms.add(atom.clone());
+		if (util.Set.contains(atomSet, aid))
+			aidMap[aid] = cp.atoms.add(atom.clone());
 	});
 
 	var bidMap = {};
 	this.bonds.each(function(bid, bond) {
-		bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
+		if (util.Set.contains(bondSet, bid))
+			bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
 	});
 
 	this.sgroups.each(function(sid, sg) {
+		var i;
+		for (i = 0; i < sg.atoms.length; ++i)
+			if (!util.Set.contains(atomSet, sg.atoms[i]))
+				return;
 		sg = chem.SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
-		for (var i = 0; i < sg.atoms.length; ++i) {
+		for (i = 0; i < sg.atoms.length; ++i) {
 			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 	});
 	this.rxnArrows = new util.Pool();
 	this.rxnPluses = new util.Pool();
 	cp.isChiral = this.isChiral;
-	cp.isReaction = this.isReaction;
-	this.rxnArrows.each(function(id, arrow) {
-		aidMap[aid] = cp.atoms.add(arrow.clone());
-	});
-
-
+	if (!dropRxnSymbols) {
+		cp.isReaction = this.isReaction;
+		this.rxnArrows.each(function(id, item) {
+			cp.rxnArrows.add(item.clone());
+		});
+		this.rxnPluses.each(function(id, item) {
+			cp.rxnPluses.add(item.clone());
+		});
+	}
 	return cp;
 }
 
@@ -567,7 +584,7 @@ chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 	}, this);
 }
 
-chem.Struct.prototype.getCoordBoundingBox = function ()
+chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 {
 	var bb = null;
 	var extend = function(pp) {
@@ -582,16 +599,21 @@ chem.Struct.prototype.getCoordBoundingBox = function ()
 		}
 	}
 
+	var global = typeof(atomSet) == 'undefined';
+
 	this.atoms.each(function (aid, atom) {
-		extend(atom.pp);
+		if (global || util.Set.contains(atomSet, aid))
+			extend(atom.pp);
 	});
-	this.rxnPluses.each(function (id, item) {
-		extend(item.pp);
-	});
-	this.rxnArrows.each(function (id, item) {
-		extend(item.pp);
-	});
-	if (!bb)
+	if (global) {
+		this.rxnPluses.each(function (id, item) {
+			extend(item.pp);
+		});
+		this.rxnArrows.each(function (id, item) {
+			extend(item.pp);
+		});
+	}
+	if (!bb && global)
 		bb = {
 			min: new util.Vec2(0, 0),
 			max: new util.Vec2(1, 1)
@@ -689,4 +711,40 @@ chem.Struct.RxnArrow = function (params)
 chem.Struct.RxnArrow.prototype.clone = function ()
 {
 	return new chem.Struct.RxnArrow(this);
+}
+
+chem.Struct.prototype.findConnectedComponent = function (aid) {
+	var ids = util.Set.empty();
+
+
+	return ids;
+}
+
+chem.Struct.prototype.findConnectedComponents = function () {
+	var map = {};
+	this.atoms.each(function(aid,atom){
+		map[aid] = -1;
+	}, this);
+	var components = [];
+	this.atoms.each(function(aid,atom){
+		if (map[aid] < 0) {
+			var list = [aid];
+			var ids = util.Set.empty();
+			while (list.length > 0) {
+				(function() {
+					var aid = list.pop();
+					map[aid] = 1;
+					util.Set.add(ids, aid);
+					var atom = this.atoms.get(aid);
+					for (var i = 0; i < atom.neighbors.length; ++i) {
+						var neiId = this.halfBonds.get(atom.neighbors[i]).end;
+						if (!util.Set.contains(ids, neiId))
+							list.push(neiId);
+					}
+				}).apply(this);
+			}
+			components.push(ids);
+		}
+	}, this);
+	return components;
 }

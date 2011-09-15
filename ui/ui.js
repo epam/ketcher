@@ -379,6 +379,8 @@ ui.init = function ()
 
 ui.showDialog = function (name)
 {
+    $('window_cover').style.width = $('ketcher_window').getWidth().toString() + 'px';
+    $('window_cover').style.height = $('ketcher_window').getHeight().toString() + 'px';
     $('window_cover').show();
     $(name).show();
 }
@@ -387,6 +389,8 @@ ui.hideDialog = function (name)
 {
     $(name).hide();
     $('window_cover').hide();
+    $('window_cover').style.width = '0px';
+    $('window_cover').style.height = '0px';
 }
 
 ui.toggleDropdownList = function (name)
@@ -420,9 +424,6 @@ ui.toggleDropdownList = function (name)
 
 ui.onResize_Ketcher = function ()
 {
-    $('window_cover').style.width = $('ketcher_window').getWidth().toString() + 'px';
-    $('window_cover').style.height = $('ketcher_window').getHeight().toString() + 'px';
-
     if (Prototype.Browser.IE)
         ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
 

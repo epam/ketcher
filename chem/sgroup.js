@@ -489,6 +489,17 @@ chem.SGroup.GroupSup = {
 	},
 
 	prepareForSaving: function (mol) {
+		// This code is also used for GroupSru and should be moved into a separate common method
+		// It seems that such code should be used for any sgroup by this this should be checked
+		var xBonds = [];
+		mol.bonds.each(function(bid, bond){
+			var a1 = mol.atoms.get(bond.begin);
+			var a2 = mol.atoms.get(bond.end);
+			if (util.Set.contains(a1.sgs, this.id) && !util.Set.contains(a2.sgs, this.id) ||
+				util.Set.contains(a2.sgs, this.id) && !util.Set.contains(a1.sgs, this.id))
+				xBonds.push(bid);
+		},this);
+		this.bonds = xBonds;
 	},
 
 	postLoad: function (mol, atomMap) {

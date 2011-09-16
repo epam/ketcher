@@ -53,8 +53,8 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 			'stroke-width':this.frameThickness
 		};
 	this.fontAttrs = {
-			'font' : this.fontType,
-			'font-size' : this.fontSize
+			'font-family': this.fontType,
+			'font-size': this.fontSize
 		};
 	this.items = {};
 	this.selectedLabels = util.Set.empty();

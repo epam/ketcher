@@ -116,7 +116,11 @@ ui.onMouseDown_DropdownListItem = function (event)
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
-    //util.stopEventPropagation(event);
+    if (event)
+    {
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
+    }
 };
 
 ui.init = function ()
@@ -426,8 +430,7 @@ ui.onResize_Ketcher = function ()
 {
     if (Prototype.Browser.IE)
         ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
-
-    //ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
+    
     ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
 }
 

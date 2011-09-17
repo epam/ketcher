@@ -129,7 +129,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
 				var name = '_onCanvas' + eventName;
-				if (event.touches && event.touches.length == 1 && render[name])
+				if ((!('touches' in event) || event.touches.length == 1) && render[name])
 					render[name](new rnd.MouseEvent(event));
 				util.stopEventPropagation(event);
                 //if (bindEventName != 'touchstart')

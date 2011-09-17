@@ -227,6 +227,12 @@ div#loading
 {
 }
 
+.elemTableDialog
+{
+    left:  5%;
+    top:   5%;
+}
+
 .chemicalText
 {
     width: 320px;

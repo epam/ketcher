@@ -129,10 +129,10 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
 				var name = '_onCanvas' + eventName;
-				if (render[name])
+				if (event.touches && event.touches.length == 1 && render[name])
 					render[name](new rnd.MouseEvent(event));
 				util.stopEventPropagation(event);
-                if (bindEventName != 'touchstart')
+                //if (bindEventName != 'touchstart')
                     return util.preventDefault(event);
 			});
 		}, this);

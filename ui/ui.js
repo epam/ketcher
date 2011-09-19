@@ -50,7 +50,7 @@ ui.patterns =
     six2: [1, 1, 1, 1, 1, 1],
     //sixa: [4, 4, 4, 4, 4, 4],
     five: [1, 1, 1, 1, 1]
-}
+};
 
 //
 // Init section
@@ -387,7 +387,7 @@ ui.showDialog = function (name)
     $('window_cover').style.height = $('ketcher_window').getHeight().toString() + 'px';
     $('window_cover').show();
     $(name).show();
-}
+};
 
 ui.hideDialog = function (name)
 {
@@ -395,7 +395,7 @@ ui.hideDialog = function (name)
     $('window_cover').hide();
     $('window_cover').style.width = '0px';
     $('window_cover').style.height = '0px';
-}
+};
 
 ui.toggleDropdownList = function (name)
 {
@@ -423,7 +423,7 @@ ui.toggleDropdownList = function (name)
             ui[list_id + '_was_shown'] = true;
         }
     }
-}
+};
 
 
 ui.onResize_Ketcher = function ()
@@ -432,7 +432,7 @@ ui.onResize_Ketcher = function ()
         ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
     
     ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
-}
+};
 
 //
 // Main section
@@ -547,7 +547,7 @@ ui.selectMode = function (mode)
         else
             $(this.mode_id).addClassName('buttonSelected');
     }
-}
+};
 
 ui.modeType = function ()
 {
@@ -571,7 +571,7 @@ ui.modeType = function ()
         return ui.MODE.RXN_ARROW;
     if (ui.mode_id == 'rxn_plus')
         return ui.MODE.RXN_PLUS;
-}
+};
 
 ui.bondType = function (mode)
 {
@@ -609,7 +609,7 @@ ui.bondType = function (mode)
     case 'any':
         return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
     }
-}
+};
 
 ui.atomLabel = function (mode)
 {
@@ -626,12 +626,12 @@ ui.atomLabel = function (mode)
         return {'label':'A'};
     else
         return {'label':label.capitalize()};
-}
+};
 
 ui.pattern = function ()
 {
     return ui.patterns[ui.mode_id.substr(8)];
-}
+};
 
 //
 // New document
@@ -651,7 +651,7 @@ ui.onClick_NewFile = function ()
         ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
         ui.render.update();
     }
-}
+};
 
 //
 // Hot keys
@@ -816,7 +816,7 @@ ui.onKeyPress_Ketcher = function (event)
         ui.render.update(true);
         return util.preventDefault(event);
     }
-}
+};
 
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
@@ -832,7 +832,7 @@ ui.onKeyDown_IE = function (event)
         util.stopEventPropagation(event);
         return util.preventDefault(event);
     }
-}
+};
 
 // Button handler specially for Safari and IE
 ui.onKeyUp = function (event)
@@ -927,7 +927,7 @@ ui.onKeyUp = function (event)
         }
         return;
     }
-}
+};
 
 ui.onKeyPress_Dialog = function (event)
 {
@@ -937,7 +937,7 @@ ui.onKeyPress_Dialog = function (event)
         ui.hideDialog(this.id);
         return util.preventDefault(event);
     }
-}
+};
 
 ui.onKeyPress_InputLabel = function (event)
 {
@@ -1003,7 +1003,7 @@ ui.onKeyPress_InputLabel = function (event)
         this.hide();
         return util.preventDefault(event);
     }
-}
+};
 
 //
 // Open file section
@@ -1020,7 +1020,7 @@ ui.onClick_OpenFile = function ()
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
     ui.onSelect_OpenFromInput();
-}
+};
 
 ui.getFile = function ()
 {
@@ -1032,7 +1032,7 @@ ui.getFile = function ()
         frame_body = document.frames['buffer_frame'].document.body;
 
     return Base64.decode(frame_body.title);
-}
+};
 
 ui.loadMolecule = function (mol_string, force_layout)
 {
@@ -1137,7 +1137,7 @@ ui.onClick_SaveFile = function ()
     }
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
-}
+};
 
 ui.onChange_FileFormat = function (event, update)
 {
@@ -1171,7 +1171,7 @@ ui.onChange_FileFormat = function (event, update)
 
     $('mol_data').value = el.value + '\n' + output.value;
     output.activate();
-}
+};
 
 //
 // Zoom section
@@ -1189,7 +1189,7 @@ ui.onClick_ZoomIn = function ()
 
     ui.render.setScale(ui.scale);
     ui.render.update();
-}
+};
 
 ui.onClick_ZoomOut = function ()
 {
@@ -1204,7 +1204,7 @@ ui.onClick_ZoomOut = function ()
 
     ui.render.setScale(ui.scale);
     ui.render.update();
-}
+};
 
 //
 // Automatic layout
@@ -1229,7 +1229,7 @@ ui.onClick_CleanUp = function ()
     {
         alert("Molfile: " + er.message);
     }
-}
+};
 
 //
 // Interactive section
@@ -1259,7 +1259,7 @@ ui.page2canvas = function (pos)
             x: pos.pageX - offset.left + ui.client_area.scrollLeft,
             y: pos.pageY - offset.top + ui.client_area.scrollTop
            };
-}
+};
 
 ui.page2canvas2 = function (pos)
 {
@@ -1269,7 +1269,7 @@ ui.page2canvas2 = function (pos)
             x: pos.pageX - offset.left,
             y: pos.pageY - offset.top
            };
-}
+};
 
 //
 // Scrolling
@@ -1295,7 +1295,7 @@ ui.onScroll_ClientArea = function ()
 
     ui.scrollLeft = ui.client_area.scrollLeft;
     ui.scrollTop = ui.client_area.scrollTop;
-}
+};
 
 //
 // Clicking
@@ -1401,7 +1401,7 @@ ui.onClick_Atom = function (event, id)
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
-}
+};
 
 ui.onClick_RxnArrow = function (event, id)
 {
@@ -1425,7 +1425,7 @@ ui.onClick_RxnArrow = function (event, id)
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
-}
+};
 
 ui.onClick_RxnPlus = function (event, id)
 {
@@ -1449,7 +1449,7 @@ ui.onClick_RxnPlus = function (event, id)
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
-}
+};
 
 ui.onDblClick_Atom = function (event, id)
 {
@@ -1461,7 +1461,7 @@ ui.onDblClick_Atom = function (event, id)
     if (ui.modeType() != ui.MODE.PASTE)
         ui.showAtomProperties(id);
     return true;
-}
+};
 
 ui.bondFlipRequired = function (bond, attrs) {
     return bond.stereo == chem.Struct.BOND.STEREO.NONE &&
@@ -1469,7 +1469,7 @@ ui.bondFlipRequired = function (bond, attrs) {
     attrs.stereo == chem.Struct.BOND.TYPE.SINGLE &&
     ui.ctab.atoms.get(bond.begin).neighbors.length <
     ui.ctab.atoms.get(bond.end).neighbors.length;
-}
+};
 
 ui.onClick_Bond = function (event, id)
 {
@@ -1552,7 +1552,7 @@ ui.onClick_Bond = function (event, id)
         break;
     }
     return true;
-}
+};
 
 ui.onClick_SGroup = function (event, sid)
 {
@@ -1574,7 +1574,7 @@ ui.onClick_SGroup = function (event, sid)
     }, ui.DBLCLICK_INTERVAL);
 
     return true;
-}
+};
 
 ui.onDblClick_SGroup = function (event, sid)
 {
@@ -1588,7 +1588,7 @@ ui.onDblClick_SGroup = function (event, sid)
     }
 
     return true;
-}
+};
 
 ui.onClick_Canvas = function (event)
 {
@@ -1642,7 +1642,7 @@ ui.onClick_Canvas = function (event)
         ui.selectMode('select_simple');
         break;
     }
-}
+};
 
 // Get new atom id/label and pos for bond being added to existing atom
 ui.atomForNewBond = function (id)
@@ -1739,7 +1739,7 @@ ui.atomForNewBond = function (id)
         a = a.id;
 
     return {atom: a, pos: v};
-}
+};
 
 //
 // Canvas size
@@ -1764,7 +1764,7 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
             }
         }, this);
     }, this);
-}
+};
 
 //
 // Dragging
@@ -1795,12 +1795,12 @@ ui.endDrag = function ()
 
     ui.render.drawSelectionRectangle(null);
     ui.updateClipboardButtons();
-}
+};
 
 ui.isDrag = function ()
 {
     return ui.drag.start_pos != null;
-}
+};
 
 ui.updateSelection = function (selection)
 {
@@ -1825,7 +1825,7 @@ ui.updateSelection = function (selection)
     ui.render.update();
 
     ui.updateClipboardButtons();
-}
+};
 
 ui.selected = function ()
 {
@@ -1835,7 +1835,7 @@ ui.selected = function ()
         }
     }
     return false;
-}
+};
 
 ui.selectAll = function ()
 {
@@ -1849,7 +1849,7 @@ ui.selectAll = function ()
     }
 
     ui.updateSelection(selection);
-}
+};
 
 ui.removeSelected = function ()
 {
@@ -1858,7 +1858,7 @@ ui.removeSelected = function ()
         ui.selection[map] = [];
     ui.render.update();
     ui.updateClipboardButtons();
-}
+};
 
 ui.hideBlurredControls = function ()
 {
@@ -1866,7 +1866,7 @@ ui.hideBlurredControls = function ()
         $('input_label').hide();
     if ($('bond_dropdown_list').visible())
         $('bond_dropdown_list').hide();
-}
+};
 
 ui.onMouseDown_Atom = function (event, aid)
 {
@@ -1893,7 +1893,7 @@ ui.onMouseDown_Atom = function (event, aid)
         ui.drag.selection = true;
     }
     return true;
-}
+};
 
 ui.onMouseDown_RxnArrow = function (event, id)
 {
@@ -1921,7 +1921,7 @@ ui.onMouseDown_RxnArrow = function (event, id)
         ui.drag.selection = true;
     }
     return true;
-}
+};
 
 ui.onMouseDown_Bond = function (event, bid)
 {
@@ -1948,7 +1948,7 @@ ui.onMouseDown_Bond = function (event, bid)
         ui.drag.selection = true;
     }
     return true;
-}
+};
 
 ui.onMouseDown_Canvas = function (event)
 {
@@ -1978,7 +1978,7 @@ ui.onMouseDown_Canvas = function (event)
     }
 
     ui.updateSelection();
-}
+};
 
 ui.onMouseMove_Canvas = function (event)
 {
@@ -2125,13 +2125,13 @@ ui.onMouseMove_Canvas = function (event)
         ui.drag.last_pos = {x: event.pageX, y: event.pageY};
     }
     ui.render.update();
-}
+};
 
 ui.onMouseDown_Ketcher = function (event)
 {
     ui.hideBlurredControls();
     //util.stopEventPropagation(event);
-}
+};
 
 ui.onMouseUp_Ketcher = function (event)
 {
@@ -2143,7 +2143,7 @@ ui.onMouseUp_Ketcher = function (event)
             ui.showSGroupProperties(null);
     ui.endDrag();
     util.stopEventPropagation(event);
-}
+};
 
 //
 // Hightlighting and joining
@@ -2198,7 +2198,7 @@ ui.onMouseOver_Atom = function (event, aid)
         ui.render.atomSetHighlight(aid, true);
     }
     return true;
-}
+};
 
 ui.onMouseOut_Atom = function (event, aid)
 {
@@ -2215,7 +2215,7 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }
     return true;
-}
+};
 
 ui.onMouseOver_Bond = function (event, bid)
 {
@@ -2228,7 +2228,7 @@ ui.onMouseOut_Bond = function (event, bid)
 {
     ui.render.bondSetHighlight(bid, false);
     return true;
-}
+};
 
 ui.highlightSGroup = function (sid, highlight)
 {
@@ -2240,20 +2240,20 @@ ui.highlightSGroup = function (sid, highlight)
     {
         ui.render.atomSetSGroupHighlight(id, highlight);
     }, this);
-}
+};
 
 ui.onMouseOver_SGroup = function (event, sid)
 {
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.highlightSGroup(sid, true);
     return true;
-}
+};
 
 ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.highlightSGroup(sid, false);
     return true;
-}
+};
 
 //
 // Atom properties dialog
@@ -2272,7 +2272,7 @@ ui.showAtomProperties = function (id)
 
     ui.showDialog('atom_properties');
     $('atom_label').activate();
-}
+};
 
 ui.applyAtomProperties = function ()
 {
@@ -2290,7 +2290,7 @@ ui.applyAtomProperties = function ()
     }), true);
 
     ui.render.update();
-}
+};
 
 ui.onChange_AtomLabel = function ()
 {
@@ -2312,11 +2312,11 @@ ui.onChange_AtomLabel = function ()
         util.setElementTextContent($('atom_number'), "*");
     else
         util.setElementTextContent($('atom_number'), element.toString());
-}
+};
 
 ui.onChange_AtomCharge = function ()
 {
-}
+};
 
 ui.onChange_AtomIsotope = function ()
 {
@@ -2324,7 +2324,7 @@ ui.onChange_AtomIsotope = function ()
         this.value = '';
     else if (!this.value.match(/^[1-9][0-9]{0,2}$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');
-}
+};
 
 ui.onChange_AtomValence = function ()
 {
@@ -2332,7 +2332,7 @@ ui.onChange_AtomValence = function ()
         this.value = '';
     else if (!this.value.match(/^[1-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
-}
+};
 
 //
 // S-Group properties
@@ -2430,7 +2430,7 @@ ui.showSGroupProperties = function (id)
 
     ui.showDialog('sgroup_properties');
     $('sgroup_type').activate();
-}
+};
 
 ui.applySGroupProperties = function ()
 {
@@ -2483,13 +2483,13 @@ ui.applySGroupProperties = function ()
         ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, attrs), true);
         ui.render.update();
     }
-}
+};
 
 ui.onChange_SGroupLabel = function ()
 {
     if ($('sgroup_type').value == 'MUL' && !this.value.match(/^[1-9][0-9]{0,2}$/))
         this.value = '1';
-}
+};
 
 ui.onChange_SGroupType = function ()
 {
@@ -2520,7 +2520,7 @@ ui.onChange_SGroupType = function ()
 
     if (type != 'GEN')
         $('sgroup_label').activate();
-}
+};
 
 //
 // Element table
@@ -2536,7 +2536,7 @@ ui.onClick_ElemTableButton = function ()
         ui.selectMode('select_simple');
     }
     ui.showElemTable();
-}
+};
 
 ui.showElemTable = function (id)
 {
@@ -2555,7 +2555,7 @@ ui.showElemTable = function (id)
         ui.elem_table_area = ui.elem_table_obj.renderTable();
     }
     $('elem_table_ok').focus();
-}
+};
 
 
 ui.onSelect_ElemTableNotList = function ()
@@ -2577,7 +2577,7 @@ ui.pasted = {atoms: [], bonds: [], sgroups: []};
 ui.isClipboardEmpty = function ()
 {
     return ui.clipboard == null;
-}
+};
 
 ui.updateClipboardButtons = function ()
 {
@@ -2595,7 +2595,7 @@ ui.updateClipboardButtons = function ()
         $('copy').addClassName('buttonDisabled');
         $('cut').addClassName('buttonDisabled');
     }
-}
+};
 
 ui.copy = function ()
 {
@@ -2671,7 +2671,7 @@ ui.copy = function ()
             ui.clipboard.sgroups.push(new_sgroup);
         }
     });
-}
+};
 
 ui.paste = function ()
 {
@@ -2713,7 +2713,7 @@ ui.paste = function ()
 
     ui.selectMode(null);
     ui.render.update();
-}
+};
 
 ui.cancelPaste = function ()
 {
@@ -2733,7 +2733,7 @@ ui.cancelPaste = function ()
 
     if (ui.render != null)
         ui.render.update();
-}
+};
 
 ui.onClick_Cut = function ()
 {
@@ -2742,7 +2742,7 @@ ui.onClick_Cut = function ()
 
     ui.copy();
     ui.removeSelected();
-}
+};
 
 ui.onClick_Copy = function ()
 {
@@ -2751,7 +2751,7 @@ ui.onClick_Copy = function ()
 
     ui.copy();
     ui.updateSelection();
-}
+};
 
 ui.onClick_Paste = function ()
 {
@@ -2761,7 +2761,7 @@ ui.onClick_Paste = function ()
     if (ui.modeType() == ui.MODE.PASTE)
         ui.cancelPaste();
     ui.paste();
-}
+};
 
 ui.onClick_Undo = function ()
 {
@@ -2769,7 +2769,7 @@ ui.onClick_Undo = function ()
         return;
 
     ui.undo();
-}
+};
 
 ui.onClick_Redo = function ()
 {
@@ -2777,4 +2777,4 @@ ui.onClick_Redo = function ()
         return;
 
     ui.redo();
-}
+};

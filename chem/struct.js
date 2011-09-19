@@ -418,6 +418,8 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 	hb.dir = d;
 	hb.norm = d.turnLeft();
 	hb.ang = hb.dir.oxAngle();
+	if (hb.loop < 0)
+		hb.loop = -1;
 }
 
 chem.Struct.prototype.initHalfBonds = function ()

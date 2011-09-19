@@ -288,10 +288,14 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 {
 	var atom = this.ctab.atoms.get(aid);
 	this.ctab.markAtom(aid, level ? 1 : 0);
+	var hbs = this.ctab.molecule.halfBonds;
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.ctab.molecule.halfBonds.get(atom.a.neighbors[i]);
-		this.ctab.markBond(hb.bid, 1);
-		this.ctab.markAtom(hb.end, 0);
+		var hbid = atom.a.neighbors[i];
+		if (hbs.has(hbid)) {
+			var hb = hbs.get(hbid);
+			this.ctab.markBond(hb.bid, 1);
+			this.ctab.markAtom(hb.end, 0);
+		}
 	}
 }
 
@@ -570,7 +574,20 @@ rnd.Render.prototype._itemMoveRel = function (map, id, d)
 rnd.Render.prototype._atomMove = function (id, pos)
 {
 	rnd.logMethod("_atomMove");
-	this._itemMove('atoms', id, pos);
+	var atom = this.ctab.atoms.get(id);
+	var hbs = this.ctab.molecule.halfBonds;
+	for (var i = 0; i < atom.a.neighbors.length; ++i) {
+		var hbid = atom.a.neighbors[i];
+		if (hbs.has(hbid)) {
+			var hb = hbs.get(hbid);
+			this.invalidateAtom(hb.end, 1);
+			if (hb.loop >= 0) {
+				this.ctab.loopRemove(hb.loop);
+			}
+		}
+	}
+	this.invalidateAtom(id, 1);
+	this.ctab.molecule._itemSetPos('atoms', id, this.coordViewToObj(new util.Vec2(pos)));
 }
 
 rnd.Render.prototype._rxnArrowMove = function (id, pos)

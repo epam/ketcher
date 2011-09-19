@@ -1060,6 +1060,16 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 			this.write(connectivity.toUpperCase());
 			this.writeCR();
 		}
+		
+		this.molecule.sgroups.each(function (id, sgroup) {
+			if (sgroup.type == 'SRU') {
+				this.write('M  SMT ');
+				this.writePaddedNumber(sgmap[id], 3);
+				this.writeWhiteSpace();
+				this.write(sgroup.data.subscript || 'n');
+				this.writeCR();
+			}
+		}, this);
 
 		this.molecule.sgroups.each(function (id, sgroup) {
 			this.writeCR(sgroup.saveToMolfile(this.molecule, sgmap, this.mapping, this.bondMapping));

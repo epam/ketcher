@@ -90,9 +90,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
 	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
 	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
+	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.5) - 0;
 
 	this.scale = scale || 100;
-	this.selectionDistanceCoefficient = 1.0 / 3;
 	this.offset = new util.Vec2();
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
@@ -1121,7 +1121,7 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 
 rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	var closestAtom = null;
-	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
@@ -1141,7 +1141,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	var closestBond = null;
-	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.bonds.each(function(bid, bond){
@@ -1170,7 +1170,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var closestSg = null;
-	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
@@ -1209,7 +1209,7 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 
 rnd.Render.prototype.findClosest = function (map, pos, minDist) {
 	var closestItem = null;
-	var maxMinDist = this.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.molecule[map].each(function(id, item){
@@ -1228,46 +1228,34 @@ rnd.Render.prototype.findClosest = function (map, pos, minDist) {
 }
 
 rnd.Render.prototype.findClosestItem = function (pos) {
+	var ret = null;
+	var updret = function(type, item) {
+		if (item != null && (ret == null || ret.dist > item.dist)) {
+			ret = {
+				'type':type,
+				'id':item.id,
+				'dist':item.dist
+			};
+		}	
+	};
+	
 	var atom = this.findClosestAtom(pos);
+	updret('Atom', atom);
 	var bond = this.findClosestBond(pos);
+	if (ret == null || ret.dist > 0.4 * this.scale) // hack
+		updret('Bond', bond);
 	var sg = this.findClosestSGroup(pos);
+	updret('SGroup', sg);
 	var arrow = this.findClosest('rxnArrows', pos);
+	updret('RxnArrow',arrow);
 	var plus = this.findClosest('rxnPluses', pos);
+	updret('RxnPlus',plus);
 
-	if (atom != null) {
-		if (sg == null || atom.dist < sg.dist)
-			return {
-				'type':'Atom',
-				'id':atom.id,
-				'dist':atom.dist};
-	} else if (bond != null && (sg == null || bond.dist < sg.dist))
-		return {
-			'type':'Bond',
-			'id':bond.id,
-			'dist':bond.dist};
-
-	if (sg != null)
-		return {
-			'type':'SGroup',
-			'id':sg.id,
-			'dist':sg.dist};
-
-	if (arrow != null)
-		return {
-			'type':'RxnArrow',
-			'id':arrow.id,
-			'dist':arrow.dist};
-
-	if (plus != null)
-		return {
-			'type':'RxnPlus',
-			'id':plus.id,
-			'dist':plus.dist};
-
-	return {
+	ret = ret || {
 		'type':'Canvas',
 		'id':-1
 	};
+	return ret;
 }
 
 rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)

@@ -27,6 +27,13 @@ chem.Struct = function ()
 	this.rxnPluses = new util.Pool();
 }
 
+chem.Struct.prototype.isEmpty = function ()
+{
+	return this.atoms.count() == 0 &&
+		this.rxnArrows.count() == 0 &&
+		this.rxnPluses.count() == 0;
+}
+
 chem.Struct.prototype.toLists = function ()
 {
 	var aidMap = {};

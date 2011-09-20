@@ -132,7 +132,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 				if ((!('touches' in event) || event.touches.length == 1) && render[name])
 					render[name](new rnd.MouseEvent(event));
 				util.stopEventPropagation(event);
-                if (bindEventName != 'touchstart')
+                if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
                     return util.preventDefault(event);
 			});
 		}, this);

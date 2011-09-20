@@ -15,7 +15,7 @@ if (!window.util)
     util = {};
 
 //util.assertDefined = function(v) { if (typeof(v) == 'undefined') debugger; }
-util.assertDefined = function() { }
+util.assertDefined = function() { };
 
 util.Vec2 = function (x, y)
 {
@@ -31,7 +31,7 @@ util.Vec2 = function (x, y)
 	} else {
 		throw "util.Vec2(): invalid arguments";
 	}
-}
+};
 
 util.Vec2.ZERO = new util.Vec2(0, 0);
 util.Vec2.UNIT = new util.Vec2(1, 1);
@@ -39,61 +39,61 @@ util.Vec2.UNIT = new util.Vec2(1, 1);
 util.Vec2.prototype.length = function ()
 {
     return Math.sqrt(this.x * this.x + this.y * this.y);
-}
+};
 
 util.Vec2.prototype.equals = function (v)
 {
 	util.assertDefined(v);
     return this.x == v.x && this.y == v.y;
-}
+};
 
 util.Vec2.prototype.add = function (v)
 {
 	util.assertDefined(v);
     return new util.Vec2(this.x + v.x, this.y + v.y);
-}
+};
 
 util.Vec2.prototype.add_ = function (v)
 {
 	util.assertDefined(v);
     this.x += v.x;
     this.y += v.y;
-}
+};
 
 util.Vec2.prototype.sub = function (v)
 {
 	util.assertDefined(v);
     return new util.Vec2(this.x - v.x, this.y - v.y);
-}
+};
 
 util.Vec2.prototype.scaled = function (s)
 {
 	util.assertDefined(s);
     return new util.Vec2(this.x * s, this.y * s);
-}
+};
 
 util.Vec2.prototype.negated = function ()
 {
     return new util.Vec2(-this.x, -this.y);
-}
+};
 
 util.Vec2.prototype.yComplement = function (y1)
 {
 	util.assertDefined(y1);
     return new util.Vec2(this.x, y1 - this.y);
-}
+};
 
 util.Vec2.prototype.addScaled = function (v, f)
 {
 	util.assertDefined(v);
 	util.assertDefined(f);
     return new util.Vec2(this.x + v.x * f, this.y + v.y * f);
-}
+};
 
 util.Vec2.prototype.normalized = function ()
 {
     return this.scaled(1 / this.length());
-}
+};
 
 util.Vec2.prototype.normalize = function ()
 {
@@ -106,81 +106,81 @@ util.Vec2.prototype.normalize = function ()
     this.y /= l;
     
     return true;
-}
+};
 
 util.Vec2.prototype.turnLeft = function ()
 {
     return new util.Vec2(-this.y, this.x);
-}
+};
 
 util.Vec2.prototype.toString = function ()
 {
     return "(" + this.x.toString() + "," + this.y.toString() + ")";
-}
+};
 
 util.Vec2.dist = function (a, b)
 {
 	util.assertDefined(a);
 	util.assertDefined(b);
     return util.Vec2.diff(a, b).length();
-}
+};
 
 util.Vec2.max = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return new util.Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
-}
+};
 
 util.Vec2.min = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return new util.Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y));
-}
+};
 
 util.Vec2.prototype.max = function (v)
 {
 	util.assertDefined(v);
     return new util.Vec2.max(this, v);
-}
+};
 
 util.Vec2.prototype.min = function (v)
 {
 	util.assertDefined(v);
     return new util.Vec2.min(this, v);
-}
+};
 
 util.Vec2.prototype.ceil = function ()
 {
     return new util.Vec2(Math.ceil(this.x), Math.ceil(this.y));
-}
+};
 
 util.Vec2.prototype.floor = function ()
 {
     return new util.Vec2(Math.floor(this.x), Math.floor(this.y));
-}
+};
 
 util.Vec2.sum = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return new util.Vec2(v1.x + v2.x, v1.y + v2.y);
-}
+};
 
 util.Vec2.dot = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return v1.x * v2.x + v1.y * v2.y;
-}
+};
 
 util.Vec2.cross = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return v1.x * v2.y - v1.y * v2.x;
-}
+};
 
 util.Vec2.prototype.rotate = function (angle)
 {
@@ -189,33 +189,33 @@ util.Vec2.prototype.rotate = function (angle)
     var co = Math.cos(angle);
     
     return this.rotateSC(si, co);
-}
+};
 
 util.Vec2.prototype.rotateSC = function (si, co)
 {
 	util.assertDefined(si);
 	util.assertDefined(co);
     return new util.Vec2(this.x * co - this.y * si, this.x * si + this.y * co);
-}
+};
 
 util.Vec2.angle = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return Math.atan2(util.Vec2.cross(v1, v2), util.Vec2.dot(v1, v2));
-}
+};
 
 util.Vec2.prototype.oxAngle = function ()
 {
     return Math.atan2(this.y, this.x);
-}
+};
 
 util.Vec2.diff = function (v1, v2)
 {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
     return new util.Vec2(v1.x - v2.x, v1.y - v2.y);
-}
+};
 
 // assume arguments v1, f1, v2, f2, v3, f3, etc.
 // where v[i] are vectors and f[i] are corresponding coefficients
@@ -225,7 +225,7 @@ util.Vec2.lc = function ()
     for (var i = 0; i < arguments.length / 2; ++i)
         v = v.addScaled(arguments[2 * i], arguments[2 * i + 1]);
     return v;
-}
+};
 
 util.Vec2.lc2 = function (v1, f1, v2, f2)
 {
@@ -234,7 +234,7 @@ util.Vec2.lc2 = function (v1, f1, v2, f2)
 	util.assertDefined(f1);
 	util.assertDefined(f2);
     return new util.Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2);
-}
+};
 
 util.Box2Abs = function ()
 {
@@ -256,50 +256,50 @@ util.Box2Abs = function ()
     }
     else
         new Error("util.Box2Abs constructor only accepts 4 numbers or 2 vectors or no arguments!");
-}
+};
 
 util.Box2Abs.fromRelBox = function (relBox)
 {
 	util.assertDefined(relBox);
     return new util.Box2Abs(relBox.x, relBox.y,
     relBox.x + relBox.width, relBox.y + relBox.height);
-}
+};
 
 util.Box2Abs.prototype.clone = function ()
 {
     return new util.Box2Abs(this.p0, this.p1);
-}
+};
 
 util.Box2Abs.union = function(/*util.Box2Abs*/b1, /*util.Box2Abs*/b2)
 {
 	util.assertDefined(b1);
 	util.assertDefined(b2);
 	return new util.Box2Abs(util.Vec2.min(b1.p0, b2.p0), util.Vec2.max(b1.p1, b2.p1));
-}
+};
 
 util.Box2Abs.prototype.extend = function(/*util.Vec2*/lp, /*util.Vec2*/rb)
 {
 	util.assertDefined(lp);
 	rb = rb || lp;
     return new util.Box2Abs(this.p0.sub(lp), this.p1.add(rb));
-}
+};
 
 util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)
 {
 	util.assertDefined(d);
     this.p0.add(d);
     this.p1.add(d);
-}
+};
 
 util.Box2Abs.prototype.sz = function()
 {
     return this.p1.sub(this.p0);
-}
+};
 
 util.Box2Abs.prototype.pos = function()
 {
     return this.p0;
-}
+};
 
 // find intersection of a ray and a box and
 //  return the shift magnitude to avoid it
@@ -336,4 +336,4 @@ util.Vec2.shiftRayBox =
     // simple proportion to calculate the shift
     return rd[id0] + Math.abs(rc[id0]) * (rd[id1] - rd[id0])
         / (Math.abs(rc[id0]) + Math.abs(rc[id1]));
-}
+};

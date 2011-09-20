@@ -11,7 +11,7 @@
  ***************************************************************************/
 
 if (!window.chem || !util.Vec2 || !util.Pool)
-	throw new Error("Vec2, Pool should be defined first")
+	throw new Error("Vec2, Pool should be defined first");
 chem.SGroup = function (type)
 {
 	if (!type || !(type in chem.SGroup.TYPES))
@@ -57,13 +57,13 @@ chem.SGroup = function (type)
 		'query' : '',
 		'queryOp' : ''
 	}
-}
+};
 
 chem.SGroup.equip = function (sgroup, type) {
 	var impl = chem.SGroup.TYPES[type];
 	for (var method in impl)
 		sgroup[method] = impl[method];
-}
+};
 
 chem.SGroup.numberArrayToString = function (numbers, map) {
 	var str = util.stringPadded(numbers.length, 3);
@@ -71,7 +71,7 @@ chem.SGroup.numberArrayToString = function (numbers, map) {
 		str += ' ' + util.stringPadded(map[numbers[i]], 3);
 	}
 	return str;
-}
+};
 
 chem.SGroup.addGroup = function (mol, sg, atomMap)
 {
@@ -86,7 +86,7 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 		util.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	return sg.id;
-}
+};
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	var bb = mol.getObjBBox();
@@ -106,7 +106,7 @@ chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	}
 
 	return lines;
-}
+};
 
 chem.SGroup.filterAtoms = function (atoms, map) {
 	var newAtoms = [];
@@ -121,7 +121,7 @@ chem.SGroup.filterAtoms = function (atoms, map) {
 		}
 	}
 	return newAtoms;
-}
+};
 
 chem.SGroup.removeNegative = function (atoms) {
 	var newAtoms = [];
@@ -129,12 +129,12 @@ chem.SGroup.removeNegative = function (atoms) {
 		if (atoms[j] >= 0)
 			newAtoms.push(atoms[j]);
 	return newAtoms;
-}
+};
 
 chem.SGroup.filter = function (mol, sg, atomMap)
 {
 	sg.atoms = chem.SGroup.removeNegative(chem.SGroup.filterAtoms(sg.atoms, atomMap));
-}
+};
 
 chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 {
@@ -152,12 +152,12 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 	cp.bonds = null;
 	cp.allAtoms = sgroup.allAtoms;
 	return cp;
-}
+};
 
 chem.SGroup.addAtom = function (sgroup, aid)
 {
 	sgroup.atoms.push(aid);
-}
+};
 
 chem.SGroup.removeAtom = function (sgroup, aid)
 {
@@ -168,7 +168,7 @@ chem.SGroup.removeAtom = function (sgroup, aid)
 		}
 	}
 	throw new Error("The atom is not found in the given s-group");
-}
+};
 
 chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 	var bracketWidth = Math.min(settings.lineWidth * 5, bb.sz().x * 0.3);
@@ -179,7 +179,7 @@ chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 		bb.p1.x, bb.p0.y, bb.p1.x - bracketWidth, bb.p1.y)
 	.attr(styles.sgroupBracketStyle);
 	set.push(leftBracket, rightBracket);
-}
+};
 
 chem.SGroup.getBBox = function (atoms, remol) {
 	var bb = null;
@@ -198,7 +198,7 @@ chem.SGroup.getBBox = function (atoms, remol) {
 		bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
 	}
 	return bb;
-}
+};
 
 chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 	if (!ids)
@@ -213,7 +213,7 @@ chem.SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
 		lines.push(salLine);
 	}
 	return lines;
-}
+};
 
 chem.SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
@@ -223,7 +223,7 @@ chem.SGroup.getAtoms = function (mol, sg) {
 		atoms.push(aid);
 	});
 	return atoms;
-}
+};
 
 chem.SGroup.GroupMul = {
 	draw: function (remol) {
@@ -389,7 +389,7 @@ chem.SGroup.GroupMul = {
 		this.atoms = this.patoms;
 		this.patoms = null;
 	}
-}
+};
 
 chem.SGroup.GroupSru = {
 	draw: function (remol) {
@@ -450,7 +450,7 @@ chem.SGroup.GroupSru = {
 	postLoad: function (mol, atomMap) {
 		this.data.connectivity = (this.data.connectivity || 'EU').strip().toLowerCase();
 	}
-}
+};
 
 chem.SGroup.GroupSup = {
 	draw: function (remol) {
@@ -505,7 +505,7 @@ chem.SGroup.GroupSup = {
 	postLoad: function (mol, atomMap) {
 		this.data.name = (this.data.subscript || '').strip();
 	}
-}
+};
 
 chem.SGroup.GroupGen = {
 	draw: function (remol) {
@@ -536,7 +536,7 @@ chem.SGroup.GroupGen = {
 
 	postLoad: function (mol, atomMap) {
 	}
-}
+};
 
 chem.SGroup.getMassCentre = function (remol, atoms) {
 	var c = new util.Vec2(); // mass centre
@@ -544,7 +544,7 @@ chem.SGroup.getMassCentre = function (remol, atoms) {
 		c = c.addScaled(remol.atoms.get(atoms[i]).a.ps, 1.0 / atoms.length);
 	}
 	return c;
-}
+};
 
 chem.SGroup.setPos = function (remol, sg, pos) {
 	var render = remol.render;
@@ -554,7 +554,7 @@ chem.SGroup.setPos = function (remol, sg, pos) {
 	var c = chem.SGroup.getMassCentre(remol, atoms);
 	sg.pr = sg.pa.sub(c.scaled(1.0 / settings.scaleFactor));
 	sg.p = (sg.data.absolute ? sg.pa : sg.pr).yComplement(0);
-}
+};
 
 chem.SGroup.GroupDat = {
 	showValue: function (paper, pos, sg, settings) {
@@ -662,7 +662,7 @@ chem.SGroup.GroupDat = {
 			this.allAtoms = true;
 		}
 	}
-}
+};
 
 chem.SGroup.TYPES = {
 	'MUL': chem.SGroup.GroupMul,

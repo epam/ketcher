@@ -26,4 +26,4 @@ rnd.MouseEvent = function (params)
 	this.shiftKey = params.shiftKey;
 	this.ctrlKey = params.ctrlKey;
 	this.metaKey = params.metaKey;
-}
+};

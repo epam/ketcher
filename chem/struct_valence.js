@@ -42,7 +42,7 @@ chem.Struct.prototype.calcConn = function (aid)
 	if (hasAromatic)
 		conn += 1;
 	return conn;
-}
+};
 
 chem.Struct.Atom.prototype.calcValence = function (conn)
 {
@@ -364,7 +364,7 @@ chem.Struct.Atom.prototype.calcValence = function (conn)
 		return false;
 	}
 	return true;
-}
+};
 
 chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 {
@@ -433,7 +433,7 @@ chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 	}
 
 	return rad + conn + Math.abs(charge);
-}
+};
 
 chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 {
@@ -453,4 +453,4 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 		atom.badConn = false;
 		atom.calcValence(conn);
 	}
-}
+};

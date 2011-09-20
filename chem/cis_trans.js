@@ -19,7 +19,7 @@ chem.CisTrans = function (mol, neighbors_func, context)
     this.bonds = new util.Map();
     this.getNeighbors = neighbors_func;
     this.context = context;
-}
+};
 
 chem.CisTrans.PARITY =
 {
@@ -31,17 +31,17 @@ chem.CisTrans.PARITY =
 chem.CisTrans.prototype.each = function (func, context)
 {
     this.bonds.each(func, context);
-}
+};
 
 chem.CisTrans.prototype.getParity = function (idx)
 {
     return this.bonds.get(idx).parity;
-}
+};
 
 chem.CisTrans.prototype.getSubstituents = function (idx)
 {
     return this.bonds.get(idx).substituents;
-}
+};
 
 chem.CisTrans.prototype.sameside = function (beg, end, nei_beg, nei_end)
 {
@@ -59,20 +59,20 @@ chem.CisTrans.prototype.sameside = function (beg, end, nei_beg, nei_end)
    if (!norm_end.normalize())
       return 0;
 
-   prod_beg = util.Vec2.dot(norm_beg, norm);
-   prod_end = util.Vec2.dot(norm_end, norm);
+   var prod_beg = util.Vec2.dot(norm_beg, norm);
+   var prod_end = util.Vec2.dot(norm_end, norm);
 
    if (Math.abs(prod_beg) < 0.001 || Math.abs(prod_end) < 0.001)
       return 0;
 
    return (prod_beg * prod_end > 0) ? 1 : -1;
-}
+};
 
 chem.CisTrans.prototype._sameside = function (i_beg, i_end, i_nei_beg, i_nei_end)
 {
    return this.sameside(this.molecule.atoms.get(i_beg).pos, this.molecule.atoms.get(i_end).pos,
       this.molecule.atoms.get(i_nei_beg).pos, this.molecule.atoms.get(i_nei_end).pos);
-}
+};
 
 chem.CisTrans.prototype._sortSubstituents = function (substituents)
 {
@@ -107,7 +107,7 @@ chem.CisTrans.prototype._sortSubstituents = function (substituents)
       substituents.swap(2, 3);
 
    return true;
-}
+};
 
 chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
 {
@@ -141,10 +141,11 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
    substituents[3] = -1;
 
    var i;
+   var nei;
    
    for (i = 0; i < nei_begin.length; i++)
    {
-      var nei = nei_begin[i]; 
+      nei = nei_begin[i];
       
       if (nei.bid == bond_idx)
          continue;
@@ -160,7 +161,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
 
    for (i = 0; i < nei_end.length; i++)
    {
-      var nei = nei_end[i]; 
+      nei = nei_end[i];
 
       if (nei.bid == bond_idx)
          continue;
@@ -180,7 +181,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
       return false;
 
    return true;
-}
+};
 
 chem.CisTrans.prototype.build = function (exclude_bonds)
 {
@@ -208,7 +209,7 @@ chem.CisTrans.prototype.build = function (exclude_bonds)
       else if (sign == -1)
          ct.parity = chem.CisTrans.PARITY.TRANS;
    }, this);
-}
+};
 
 
     

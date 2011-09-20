@@ -13,7 +13,7 @@
 if (!window.util)
     util = {};
 
-EventMap = 
+var EventMap =
 {
     mousemove: 'mousemove',
     mousedown: 'mousedown',
@@ -25,26 +25,26 @@ Array.prototype.swap = function (i1, i2)
 	var tmp = this[i1];
 	this[i1] = this[i2];
 	this[i2] = tmp;
-}
+};
 
 // "each" function for an array
 util.each = function (array, func, context) {
     for (var i = 0; i < array.length; ++i)
         func.call(context, array[i], i)
-}
+};
 
 util.array = function (arrayLike) {
     var a = [], i = arrayLike.length;
     while (--i >= 0)
         a[i] = arrayLike[i];
     return a;
-}
+};
 
 util.isEmpty = function (obj) {
     for (var v in obj)
         return false;
     return true;
-}
+};
 
 util.stopEventPropagation = function (event) {
     if ('stopPropagation' in event) // Mozilla, Opera, Safari
@@ -53,7 +53,7 @@ util.stopEventPropagation = function (event) {
         event.cancelBubble = true;
     else
         throw Error("Browser unrecognized");
-}
+};
 
 util.preventDefault = function (event) {
     if ('preventDefault' in event)
@@ -64,7 +64,7 @@ util.preventDefault = function (event) {
         event.keyCode = 0;
     }
     return false;
-}
+};
 
 util.setElementTextContent = function (element, text)
 {
@@ -74,7 +74,7 @@ util.setElementTextContent = function (element, text)
         element.innerText = text;
     else
         throw Error("Browser unrecognized");
-}
+};
 
 util.getElementTextContent = function (element)
 {
@@ -84,7 +84,7 @@ util.getElementTextContent = function (element)
         return element.innerText;
     else
         throw Error("Browser unrecognized");
-}
+};
 
 util.stringPadded = function (string, width, leftAligned) {
 	string += '';
@@ -95,7 +95,7 @@ util.stringPadded = function (string, width, leftAligned) {
 		return string + space;
 	else
 		return space + string;
-}
+};
 
 util.idList = function (object) {
 	var list = [];
@@ -103,7 +103,7 @@ util.idList = function (object) {
 		list.push(aid);
 	}
 	return list;
-}
+};
 
 util.mapArray = function (src, map) {
 	var dst = [];
@@ -111,29 +111,29 @@ util.mapArray = function (src, map) {
 		dst.push(map[src[i]]);
 	}
 	return dst;
-}
+};
 
 util.apply = function (array, func) {
 	for (var i = 0; i < array.length; ++i)
 		array[i] = func(array[i]);
-}
+};
 
 util.ifDef = function (dst, src, prop, def)
 {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
-}
+};
 
 util.ifDefList = function (dst, src, prop, def)
 {
 	dst[prop] = !Object.isUndefined(src[prop]) && src[prop] != null ? util.array(src[prop]) : def;
-}
+};
 
 util.identityMap = function (array) {
 	var map = {};
 	for (var i = 0; i < array.length; ++i)
 		map[array[i]] = array[i];
 	return map;
-}
+};
 
 util.stripRight = function (src) {
 	var i;
@@ -141,7 +141,7 @@ util.stripRight = function (src) {
 		if (src[src.lenght - i - 1] != ' ')
 			break;
 	return src.slice(0, src.length - i);
-}
+};
 
 util.paddedFloat = function (number, width, precision)
 {
@@ -149,7 +149,7 @@ util.paddedFloat = function (number, width, precision)
 	if (numStr.length > width)
 		throw new Error("number does not fit");
 	return util.stringPadded(numStr, width);
-}
+};
 
 util.paddedInt = function (number, width)
 {
@@ -158,7 +158,7 @@ util.paddedInt = function (number, width)
 		throw new Error("number does not fit");
 	}
 	return util.stringPadded(numStr, width);
-}
+};
 
 util.arrayAddIfMissing = function (array, item)
 {
@@ -167,4 +167,4 @@ util.arrayAddIfMissing = function (array, item)
 			return false;
 	array.push(item);
 	return true;
-}
+};

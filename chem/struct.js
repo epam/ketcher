@@ -12,7 +12,7 @@
 
 // chem.Struct constructor and utilities are defined here
 if (!window.chem || !util.Vec2 || !util.Pool)
-	throw new Error("Vec2, Pool should be defined first")
+	throw new Error("Vec2, Pool should be defined first");
 
 chem.Struct = function ()
 {
@@ -25,14 +25,14 @@ chem.Struct = function ()
 	this.isReaction = false;
 	this.rxnArrows = new util.Pool();
 	this.rxnPluses = new util.Pool();
-}
+};
 
 chem.Struct.prototype.isEmpty = function ()
 {
 	return this.atoms.count() == 0 &&
 		this.rxnArrows.count() == 0 &&
 		this.rxnPluses.count() == 0;
-}
+};
 
 chem.Struct.prototype.toLists = function ()
 {
@@ -55,7 +55,7 @@ chem.Struct.prototype.toLists = function ()
 		'atoms': atomList,
 		'bonds': bondList
 	};
-}
+};
 
 chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 {
@@ -105,7 +105,7 @@ chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 		});
 	}
 	return cp;
-}
+};
 
 chem.Struct.prototype.findBondId = function (begin, end)
 {
@@ -123,7 +123,7 @@ chem.Struct.prototype.findBondId = function (begin, end)
 	}, this);
 
 	return id;
-}
+};
 
 chem.Struct.prototype.merge = function (mol)
 {
@@ -137,7 +137,7 @@ chem.Struct.prototype.merge = function (mol)
 		params.end = aidMap[bond.end];
 		this.bonds.add(params);
 	}, this);
-}
+};
 
 chem.Struct.ATOM =
 {
@@ -161,7 +161,7 @@ chem.Struct.radicalElectrons = function(radical)
 		radical == chem.Struct.ATOM.RADICAL.TRIPLET)
 		return 2;
 	throw new Error("Unknown radical value");
-}
+};
 
 chem.Struct.BOND =
 {
@@ -213,7 +213,7 @@ chem.Struct.prototype.merge = function (mol)
 		params.end = aidMap[bond.end];
 		this.bonds.add(params);
 	}, this);
-}
+};
 
 chem.Struct.Atom = function (params)
 {
@@ -247,7 +247,7 @@ chem.Struct.Atom = function (params)
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
-}
+};
 
 chem.Struct.Atom.getAttrHash = function(atom) {
     var attrs = new Hash();
@@ -257,7 +257,7 @@ chem.Struct.Atom.getAttrHash = function(atom) {
 		}
 	}
 	return attrs;
-}
+};
 
 chem.Struct.Atom.attrlist = {'label':0,
 	'isotope':0,
@@ -274,17 +274,17 @@ chem.Struct.Atom.attrlist = {'label':0,
 chem.Struct.Atom.prototype.clone = function ()
 {
 	return new chem.Struct.Atom(this);
-}
+};
 
 chem.Struct.Atom.prototype.isQuery =  function ()
 {
 	return this.atomList != null || this.label == 'A';
-}
+};
 
 chem.Struct.Atom.prototype.pureHydrogen =  function ()
 {
 	return this.label == 'H' && this.isotope == 0;
-}
+};
 
 chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 {
@@ -292,7 +292,7 @@ chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 		this.radical == 0 && this.charge == 0 && this.explicitValence == 0 &&
 		this.ringBondCount == -1 && this.substitutionCount == -1 && this.unsaturatedAtom == -1 &&
 		!this.atomList;
-}
+};
 
 chem.Struct.AtomList = function (params)
 {
@@ -301,7 +301,7 @@ chem.Struct.AtomList = function (params)
 
 	this.notList = params.notList; /*boolean*/
 	this.ids = params.ids; /*Array of integers*/
-}
+};
 
 chem.Struct.AtomList.prototype.labelList = function ()
 {
@@ -309,7 +309,7 @@ chem.Struct.AtomList.prototype.labelList = function ()
 	for (var i = 0; i < this.ids.length; ++i)
 		labels.push(chem.Element.elements.get(this.ids[i]).label);
 	return labels;
-}
+};
 
 chem.Struct.AtomList.prototype.label = function ()
 {
@@ -317,7 +317,7 @@ chem.Struct.AtomList.prototype.label = function ()
 	if (this.notList)
 		label = "!" + label;
 	return label;
-}
+};
 
 chem.Struct.Bond = function (params)
 {
@@ -337,7 +337,7 @@ chem.Struct.Bond = function (params)
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
-}
+};
 
 chem.Struct.Bond.prototype.clone = function (aidMap)
 {
@@ -347,7 +347,7 @@ chem.Struct.Bond.prototype.clone = function (aidMap)
 		cp.end = aidMap[cp.end];
 	}
 	return cp;
-}
+};
 
 chem.Struct.Bond.prototype.findOtherEnd = function (i)
 {
@@ -356,7 +356,7 @@ chem.Struct.Bond.prototype.findOtherEnd = function (i)
 	if (i == this.end)
 		return this.begin;
 	throw new Error("bond end not found");
-}
+};
 
 chem.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 {
@@ -381,7 +381,7 @@ chem.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 	this.rightSin = 0;
 	this.rightCos = 0;
 	this.rightNeighbor = 0;
-}
+};
 
 chem.Struct.prototype.initNeighbors = function ()
 {
@@ -394,7 +394,7 @@ chem.Struct.prototype.initNeighbors = function ()
 		a1.neighbors.push(bond.hb1);
 		a2.neighbors.push(bond.hb2);
 	}, this);
-}
+};
 
 chem.Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 {
@@ -407,7 +407,7 @@ chem.Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 	var hb2 = this.halfBonds.get(bond.hb2);
 	hb1.contra = bond.hb2;
 	hb2.contra = bond.hb1;
-}
+};
 
 chem.Struct.prototype.halfBondUpdate = function (hbid)
 {
@@ -420,18 +420,18 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 	hb.ang = hb.dir.oxAngle();
 	if (hb.loop < 0)
 		hb.loop = -1;
-}
+};
 
 chem.Struct.prototype.initHalfBonds = function ()
 {
 	this.halfBonds.clear();
 	this.bonds.each(this.bondInitHalfBonds, this);
-}
+};
 
 chem.Struct.prototype.setHbNext = function (hbid, next)
 {
 	this.halfBonds.get(this.halfBonds.get(hbid).contra).next = next;
-}
+};
 
 chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
 {
@@ -441,7 +441,7 @@ chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
 	hbl.rightSin = hb.leftSin = util.Vec2.cross(hbl.dir, hb.dir);
 	hb.leftNeighbor = left;
 	hbl.rightNeighbor = hbid;
-}
+};
 
 chem.Struct.prototype.atomAddNeighbor = function (hbid)
 {
@@ -459,7 +459,7 @@ chem.Struct.prototype.atomAddNeighbor = function (hbid)
 	this.setHbNext(hbid, ir);
 	this.halfBondSetAngle(hbid, il);
 	this.halfBondSetAngle(ir, hbid);
-}
+};
 
 chem.Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
@@ -474,7 +474,7 @@ chem.Struct.prototype.atomSortNeighbors = function (aid) {
 	for (i = 0; i < atom.neighbors.length; ++i)
 		this.halfBondSetAngle(atom.neighbors[(i + 1) % atom.neighbors.length],
 			atom.neighbors[i]);
-}
+};
 
 chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 	var nei = this.atoms.get(aid).neighbors;
@@ -483,7 +483,7 @@ chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 		this.halfBondUpdate(hbid);
 		this.halfBondUpdate(this.halfBonds.get(hbid).contra);
 	}
-}
+};
 
 chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	this.sgroups.each(function(sgid, sg){
@@ -508,7 +508,7 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 			}
 		}, this);
 	},this);
-}
+};
 
 chem.Struct.prototype.getObjBBox = function ()
 {
@@ -518,7 +518,7 @@ chem.Struct.prototype.getObjBBox = function ()
 			bb = {
 				min: atom.pos,
 				max: atom.pos
-			}
+			};
 		else {
 			bb.min = util.Vec2.min(bb.min, atom.pos);
 			bb.max = util.Vec2.max(bb.max, atom.pos);
@@ -530,7 +530,7 @@ chem.Struct.prototype.getObjBBox = function ()
 			max: new util.Vec2(1, 1)
 		};
 	return new util.Box2Abs(bb.min, bb.max);
-}
+};
 
 chem.Struct.prototype.sGroupDelete = function (sgid)
 {
@@ -539,7 +539,7 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 		util.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
 	}
 	this.sgroups.remove(sgid);
-}
+};
 
 chem.Struct.itemSetPos = function (item, pp, scaleFactor)
 {
@@ -547,32 +547,32 @@ chem.Struct.itemSetPos = function (item, pp, scaleFactor)
 	item.pos = new util.Vec2(pp.x, -pp.y);
 	if (scaleFactor)
 		item.ps = item.pp.scaled(scaleFactor);
-}
+};
 
 chem.Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
 {
 	chem.Struct.itemSetPos(this[map].get(id), pp, scaleFactor);
-}
+};
 
 chem.Struct.prototype._atomSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('atoms', id, pp, scaleFactor);
-}
+};
 
 chem.Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('rxnPluses', id, pp, scaleFactor);
-}
+};
 
 chem.Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('rxnArrows', id, pp, scaleFactor);
-}
+};
 
 chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 {
-	var abscfs = function(pp) {return pp.sub(min).yComplement(0).scaled(scale);}
-	var relcfs = function(pp) {return pp.yComplement(0).scaled(scale);}
+	var abscfs = function(pp) {return pp.sub(min).yComplement(0).scaled(scale);};
+	var relcfs = function(pp) {return pp.yComplement(0).scaled(scale);};
 	this.atoms.each(function (aid, atom) {
 		this._atomSetPos(aid, abscfs(atom.pp));
 	}, this);
@@ -591,7 +591,7 @@ chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 	this.rxnArrows.each(function (id, item) {
 		this._rxnArrowSetPos(id, abscfs(item.pp));
 	}, this);
-}
+};
 
 chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 {
@@ -601,12 +601,12 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 			bb = {
 				min: pp,
 				max: pp
-			}
+			};
 		else {
 			bb.min = util.Vec2.min(bb.min, pp);
 			bb.max = util.Vec2.max(bb.max, pp);
 		}
-	}
+	};
 
 	var global = typeof(atomSet) == 'undefined';
 
@@ -628,7 +628,7 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 			max: new util.Vec2(1, 1)
 		};
 	return bb;
-}
+};
 
 chem.Struct.prototype.getAvgBondLength = function ()
 {
@@ -641,7 +641,7 @@ chem.Struct.prototype.getAvgBondLength = function ()
 		cnt++;
 	}, this);
 	return cnt > 0 ? totalLength / cnt : -1;
-}
+};
 
 chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 {
@@ -660,14 +660,14 @@ chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 	}
 
 	return keys.length > 0 ? totalDist / keys.length : -1;
-}
+};
 
 chem.Struct.prototype.coordProject = function()
 {
 	this.atoms.each(function (aid, atom) {// project coordinates
 		this._atomSetPos(aid, new util.Vec2(atom.pos.x, atom.pos.y));
 	}, this);
-}
+};
 
 chem.Struct.prototype.checkBondExists = function (begin, end)
 {
@@ -678,7 +678,7 @@ chem.Struct.prototype.checkBondExists = function (begin, end)
 			bondExists = true;
 	}, this);
 	return bondExists;
-}
+};
 
 chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 {
@@ -694,7 +694,7 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 		if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
-}
+};
 
 chem.Struct.RxnPlus = function (params)
 {
@@ -702,12 +702,12 @@ chem.Struct.RxnPlus = function (params)
 	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
 	this.pp = new util.Vec2();
 	this.ps = new util.Vec2();
-}
+};
 
 chem.Struct.RxnPlus.prototype.clone = function ()
 {
 	return new chem.Struct.RxnPlus(this);
-}
+};
 
 chem.Struct.RxnArrow = function (params)
 {
@@ -715,19 +715,19 @@ chem.Struct.RxnArrow = function (params)
 	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
 	this.pp = new util.Vec2();
 	this.ps = new util.Vec2();
-}
+};
 
 chem.Struct.RxnArrow.prototype.clone = function ()
 {
 	return new chem.Struct.RxnArrow(this);
-}
+};
 
 chem.Struct.prototype.findConnectedComponent = function (aid) {
 	var ids = util.Set.empty();
 
 
 	return ids;
-}
+};
 
 chem.Struct.prototype.findConnectedComponents = function () {
 	var map = {};
@@ -756,4 +756,4 @@ chem.Struct.prototype.findConnectedComponents = function () {
 		}
 	}, this);
 	return components;
-}
+};

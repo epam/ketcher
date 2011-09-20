@@ -126,4 +126,4 @@ util.Set = {
 		});
 		return set;
 	}
-}
+};

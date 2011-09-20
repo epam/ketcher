@@ -23,7 +23,7 @@ ui.sgroupMap = new Array();
 ui.Action = function ()
 {
     this.operations = new Array();
-}
+};
 
 ui.Action.OPERATION =
 {
@@ -66,18 +66,17 @@ ui.Action.prototype.addOperation = function (type, params)
     op.inverted.inverted = op;
     this.operations.push(op);
     return op;
-}
+};
 
 ui.Action.prototype.mergeWith = function (action)
 {
     this.operations = this.operations.concat(action.operations);
-}
+};
 
 // Perform action and return inverted one
 ui.Action.prototype.perform = function ()
 {
     var action = new ui.Action();
-    var prev_op = null;
     var idx = 0;
 
     this.operations.each(function (op)
@@ -391,26 +390,20 @@ ui.Action.prototype.perform = function ()
     action.operations.reverse();
 
     return action;
-}
+};
 
 ui.Action.prototype.isDummy = function ()
 {
-    if (this.operations.detect(function (op)
+    return this.operations.detect(function (op)
     {
         switch (op.type)
         {
         case ui.Action.OPERATION.ATOM_POS:
-            if (ui.render.atomGetPos(ui.atomMap[op.params.id]).equals(op.params.pos))
-                return false;
-            return true;
+            return !ui.render.atomGetPos(ui.atomMap[op.params.id]).equals(op.params.pos);
         case ui.Action.OPERATION.ATOM_ATTR:
-            if (ui.render.atomGetAttr(ui.atomMap[op.params.id], op.params.attr_name) == op.params.attr_value)
-                return false;
-            return true;
+            return ui.render.atomGetAttr(ui.atomMap[op.params.id], op.params.attr_name) != op.params.attr_value;
         case ui.Action.OPERATION.BOND_ATTR:
-            if (ui.render.bondGetAttr(ui.bondMap[op.params.id], op.params.attr_name) == op.params.attr_value)
-                return false;
-            return true;
+            return ui.render.bondGetAttr(ui.bondMap[op.params.id], op.params.attr_name) != op.params.attr_value;
         case ui.Action.OPERATION.SGROUP_ATTR:
             if (ui.render.sGroupGetType(ui.sgroupMap[op.params.id]) == op.params.type)
             {
@@ -418,22 +411,15 @@ ui.Action.prototype.isDummy = function ()
 
                 if (Object.isUndefined(attr_hash.detect(function (attr)
                 {
-                    if (ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], attr.key) == attr.value)
-                        return false;
-                    return true;
+                    return ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], attr.key) != attr.value;
                 }, this)))
                     return false;
             }
             return true;
         }
         return true;
-    }, this) != null)
-    {
-        return false;
-    }
-
-    return true;
-}
+    }, this) == null;
+};
 
 ui.Action.fromAtomPos = function (id, pos)
 {
@@ -449,7 +435,7 @@ ui.Action.fromAtomPos = function (id, pos)
         ui.render.atomMove(id, pos);
 
     return action;
-}
+};
 
 ui.Action.fromSelectedAtomsPos = function ()
 {
@@ -465,7 +451,7 @@ ui.Action.fromSelectedAtomsPos = function ()
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromRxnArrowPos = function (id, pos)
 {
@@ -481,7 +467,7 @@ ui.Action.fromRxnArrowPos = function (id, pos)
         ui.render.rxnArrowMove(id, pos);
 
     return action;
-}
+};
 
 ui.Action.fromSelectedRxnArrowPos = function ()
 {
@@ -497,7 +483,7 @@ ui.Action.fromSelectedRxnArrowPos = function ()
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromRxnPlusPos = function (id, pos)
 {
@@ -513,13 +499,13 @@ ui.Action.fromRxnPlusPos = function (id, pos)
         ui.render.rxnPlusMove(id, pos);
 
     return action;
-}
+};
 
 ui.Action.fromSelectedRxnPlusPos = function ()
 {
     var action = new ui.Action();
 
-    ui.selection.rxnPluss.each(function (id)
+    ui.selection.rxnPluses.each(function (id)
     {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_POS,
         {
@@ -529,7 +515,7 @@ ui.Action.fromSelectedRxnPlusPos = function ()
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromBondPos = function (id)
 {
@@ -548,7 +534,7 @@ ui.Action.fromBondPos = function (id)
     });
 
     return action;
-}
+};
 
 ui.Action.fromAtomAttrs = function (id, attrs)
 {
@@ -569,7 +555,7 @@ ui.Action.fromAtomAttrs = function (id, attrs)
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromSelectedAtomsAttrs = function (attrs)
 {
@@ -594,7 +580,7 @@ ui.Action.fromSelectedAtomsAttrs = function (attrs)
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromBondAttrs = function (id, attrs, flip)
 {
@@ -621,7 +607,7 @@ ui.Action.fromBondAttrs = function (id, attrs, flip)
         ui.render.bondFlip(id);
     }
     return action;
-}
+};
 
 ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 {
@@ -653,7 +639,7 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
             });
         }, this);
     return action.perform();
-}
+};
 
 ui.Action.fromAtomAddition = function (pos, atom)
 {
@@ -665,7 +651,7 @@ ui.Action.fromAtomAddition = function (pos, atom)
     });
 
     return action;
-}
+};
 
 ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 {
@@ -685,7 +671,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         begin = ui.atomMap[begin];
     } else if (ui.render.atomGetAttr(begin, 'label') == '*')
     {
-        ui.render.atomSetAttr(begin, 'label', 'C')
+        ui.render.atomSetAttr(begin, 'label', 'C');
         action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
         {
             id: ui.atomMap.indexOf(begin),
@@ -706,7 +692,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         end = ui.atomMap[end];
     } else if (ui.render.atomGetAttr(end, 'label') == '*')
     {
-        ui.render.atomSetAttr(end, 'label', 'C')
+        ui.render.atomSetAttr(end, 'label', 'C');
         action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
         {
             id: ui.atomMap.indexOf(end),
@@ -723,7 +709,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
     action.operations.reverse();
 
     return [action, begin, end];
-}
+};
 
 ui.Action.fromArrowAddition = function (pos)
 {
@@ -734,7 +720,7 @@ ui.Action.fromArrowAddition = function (pos)
     });
 
     return action;
-}
+};
 
 ui.Action.fromArrowDeletion = function (id)
 {
@@ -745,7 +731,7 @@ ui.Action.fromArrowDeletion = function (id)
     });
 
     return action.perform();
-}
+};
 
 ui.Action.fromPlusAddition = function (pos)
 {
@@ -756,7 +742,7 @@ ui.Action.fromPlusAddition = function (pos)
     });
 
     return action;
-}
+};
 
 ui.Action.fromPlusDeletion = function (id)
 {
@@ -767,7 +753,7 @@ ui.Action.fromPlusDeletion = function (id)
     });
 
     return action.perform();
-}
+};
 
 // Add action operation to remove atom from s-group if needed
 ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
@@ -789,7 +775,7 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
     }
 
     return false;
-}
+};
 
 // Add action operations to remove whole s-group if needed
 ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
@@ -824,7 +810,7 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
             });
         }
     }, this);
-}
+};
 
 ui.Action.fromAtomDeletion = function (id)
 {
@@ -860,7 +846,7 @@ ui.Action.fromAtomDeletion = function (id)
     action.removeSgroupIfNeeded(atoms_to_remove);
 
     return action.perform();
-}
+};
 
 ui.Action.fromBondDeletion = function (id)
 {
@@ -898,7 +884,7 @@ ui.Action.fromBondDeletion = function (id)
     action.removeSgroupIfNeeded(atoms_to_remove);
 
     return action.perform();
-}
+};
 
 ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
 {
@@ -959,7 +945,7 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromFragmentDeletion = function ()
 {
@@ -1029,7 +1015,7 @@ ui.Action.fromFragmentDeletion = function ()
     }, this);
 
     return action.perform();
-}
+};
 
 ui.Action.fromAtomMerge = function (src_id, dst_id)
 {
@@ -1091,7 +1077,7 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
         action.removeSgroupIfNeeded([src_id]);
 
     return action.perform();
-}
+};
 
 ui.Action.fromBondFlipping = function (id)
 {
@@ -1103,7 +1089,7 @@ ui.Action.fromBondFlipping = function (id)
     });
 
     return action.perform();
-}
+};
 
 ui.Action.fromPatternOnCanvas = function (pos, pattern)
 {
@@ -1141,7 +1127,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
     action.operations.reverse();
 
     return action;
-}
+};
 
 ui.Action.fromPatternOnAtom = function (aid, pattern)
 {
@@ -1158,7 +1144,7 @@ ui.Action.fromPatternOnAtom = function (aid, pattern)
     }
 
     return ui.Action.fromPatternOnElement(aid, pattern, true);
-}
+};
 
 ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
 {
@@ -1183,7 +1169,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var begin_pos = ui.render.atomGetPos(bond.begin);
         var end_pos = ui.render.atomGetPos(bond.end);
 
-        var v = util.Vec2.diff(end_pos, begin_pos);
+        v = util.Vec2.diff(end_pos, begin_pos);
         var l = v.length() / (2 * Math.cos(angle));
 
         v = v.scaled(l / v.length());
@@ -1191,7 +1177,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var v_sym = v.rotate(-angle);
         v = v.rotate(angle);
 
-        var pos = util.Vec2.sum(begin_pos, v);
+        pos = util.Vec2.sum(begin_pos, v);
         var pos_sym = util.Vec2.sum(begin_pos, v_sym);
 
         var cnt = 0, bcnt = 0;
@@ -1307,7 +1293,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
     action.operations.reverse();
 
     return action;
-}
+};
 
 ui.Action.fromNewCanvas = function (ctab)
 {
@@ -1322,7 +1308,7 @@ ui.Action.fromNewCanvas = function (ctab)
     });
 
     return action.perform();
-}
+};
 
 ui.Action.fromSgroupAttrs = function (id, type, attrs)
 {
@@ -1374,7 +1360,7 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
     }
 
     return action.perform();
-}
+};
 
 ui.Action.fromSgroupDeletion = function (id)
 {
@@ -1405,7 +1391,7 @@ ui.Action.fromSgroupDeletion = function (id)
     });
 
     return action.perform();
-}
+};
 
 ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 {
@@ -1451,7 +1437,7 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
     }
 
     return action;
-}
+};
 
 ui.addUndoAction = function (action, check_dummy)
 {
@@ -1466,7 +1452,7 @@ ui.addUndoAction = function (action, check_dummy)
             ui.undoStack.splice(0, 1);
         ui.updateActionButtons();
     }
-}
+};
 
 ui.removeDummyAction = function ()
 {
@@ -1475,7 +1461,7 @@ ui.removeDummyAction = function ()
         ui.undoStack.pop();
         ui.updateActionButtons();
     }
-}
+};
 
 ui.updateActionButtons = function ()
 {
@@ -1488,18 +1474,18 @@ ui.updateActionButtons = function ()
         $('redo').addClassName('buttonDisabled');
     else
         $('redo').removeClassName('buttonDisabled');
-}
+};
 
 ui.undo = function ()
 {
     ui.redoStack.push(ui.undoStack.pop().perform());
     ui.updateActionButtons();
     ui.updateSelection();
-}
+};
 
 ui.redo = function ()
 {
     ui.undoStack.push(ui.redoStack.pop().perform());
     ui.updateActionButtons();
     ui.updateSelection();
-}
+};

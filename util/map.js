@@ -18,7 +18,7 @@ util.Map = function (obj) {
         throw Error("Passed object is not an instance of 'Object'!");
     this._obj = obj || {};
     this._count = 0;
-}
+};
 
 util.Map.prototype.each = function(func, context) {
     for (var v in this._obj) {
@@ -29,7 +29,7 @@ util.Map.prototype.each = function(func, context) {
             v = v_int;
         func.call(context, v, value)
     }
-}
+};
 
 util.Map.prototype.find = function(func, context) {
     for (var v in this._obj) {
@@ -38,10 +38,10 @@ util.Map.prototype.find = function(func, context) {
         
         if (!isNaN(v_int))
             v = v_int;
-        if (func.call(context, v, value) == true)
+        if (func.call(context, v, value))
             return v;
     }
-}
+};
 
 util.Map.prototype.keys = function() {
     var keys = [];
@@ -49,7 +49,7 @@ util.Map.prototype.keys = function() {
         keys.push(v);
     }
     return keys;
-}
+};
 
 util.Map.prototype.ikeys = function() {
     var keys = [];
@@ -57,7 +57,7 @@ util.Map.prototype.ikeys = function() {
         keys.push(v - 0);
     }
     return keys;
-}
+};
 
 util.Map.prototype.set = function (key, value) {
     this._count += (typeof(value) != 'undefined' ? 1 : 0)
@@ -69,37 +69,35 @@ util.Map.prototype.set = function (key, value) {
     } else {
         return this._obj[key] = value;
     }
-}
+};
 
 util.Map.prototype.get = function (key) {
     if (this._obj[key] !== Object.prototype[key])
         return this._obj[key];
     return undefined;
-}
+};
 
 util.Map.prototype.has = function (key) {
-    if (this._obj[key] !== Object.prototype[key])
-        return true;
-    return false;
-}
+    return (this._obj[key] !== Object.prototype[key]);
+};
 
 util.Map.prototype.unset = function (key) {
     return this.set(key, undefined);
-}
+};
 
 util.Map.prototype.update = function (object) {
     for (var v in object)
         this.set(v, object[v]);
-}
+};
 
 util.Map.prototype.clear = function () {
     this._obj = {};
-}
+};
 
 util.Map.prototype.count = function () {
     return this._count;
-}
+};
 
 util.Map.prototype.idList = function () {
     return util.idList(this._obj);
-}
+};

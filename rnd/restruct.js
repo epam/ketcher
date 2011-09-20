@@ -35,12 +35,12 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.selectionPlate = null;
 
 	this.component = -1;
-}
+};
 
 rnd.ReAtom.prototype.makeSelectionPlate = function (paper, styles) {
 	return paper.circle(this.a.ps.x, this.a.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
-}
+};
 
 rnd.ReBond = function (/*chem.Bond*/bond)
 {
@@ -53,14 +53,14 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 	this.highlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
-}
+};
 
 rnd.ReBond.prototype.makeSelectionPlate = function (paper, styles) {
 	return paper
 	.ellipse(this.b.center.x, this.b.center.y, this.b.sa, this.b.sb)
 	.rotate(this.b.angle)
 	.attr(styles.selectionStyle);
-}
+};
 
 rnd.ReStruct = function (molecule, render)
 {
@@ -112,7 +112,7 @@ rnd.ReStruct = function (molecule, render)
 	this.coordProcess();
 
 	this.tmpVisels = [];
-}
+};
 
 rnd.ReStruct.maps = {
 	'atoms':     0,
@@ -131,7 +131,7 @@ rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 		this.connectedComponents.remove(atom.component);
 
 	atom.component = -1;
-}
+};
 
 rnd.ReStruct.prototype.printConnectedComponents = function () {
 	var strs = [];
@@ -139,14 +139,14 @@ rnd.ReStruct.prototype.printConnectedComponents = function () {
 		strs.push(' ' + ccid + ':[' + util.Set.list(cc).toString() + '].' + util.Set.size(cc).toString());
 	}, this);
 	console.log(strs.toString());
-}
+};
 
 rnd.ReStruct.prototype.clearConnectedComponents = function () {
 	this.connectedComponents.clear();
 	this.atoms.each(function(aid, atom) {
 		atom.component = -1;
 	});
-}
+};
 
 rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 	var list = (typeof(aid['length']) == 'number') ? util.array(aid) : [aid];
@@ -169,7 +169,7 @@ rnd.ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents
 	}
 
 	return ids;
-}
+};
 
 rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 	var compId = this.connectedComponents.add(ids);
@@ -189,21 +189,21 @@ rnd.ReStruct.prototype.addConnectedComponent = function (ids) {
 
 	this.ccFragmentType.set(compId, type);
 	return compId;
-}
+};
 
 rnd.ReStruct.prototype.removeConnectedComponent = function (ccid) {
 	util.Set.each(this.connectedComponents.get(ccid), function(aid) {
 		this.atoms.get(aid).component = -1;
 	}, this);
 	return this.connectedComponents.remove(ccid);
-}
+};
 
 rnd.ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
 	util.Set.each(set, function(aid) {
 		this.atoms.get(aid).component = ccid;
 	}, this);
 	util.Set.mergeIn(this.connectedComponents.get(ccid), set);
-}
+};
 
 rnd.ReStruct.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function(aid,atom){
@@ -216,7 +216,7 @@ rnd.ReStruct.prototype.assignConnectedComponents = function () {
 		}, this);
 		this.addConnectedComponent(ids);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 	cc = cc || this.connectedComponents.get(ccid);
@@ -231,7 +231,7 @@ rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb
 		}
 	}, this);
 	return bb;
-}
+};
 
 rnd.ReStruct.prototype.initLayers = function () {
 	for (var group in rnd.ReStruct.layerMap)
@@ -241,29 +241,29 @@ rnd.ReStruct.prototype.initLayers = function () {
 			'fill':'#000',
 			'opacity':'0.0'
 		}).toFront();
-}
+};
 
 rnd.ReStruct.prototype.insertInLayer = function (lid, path) {
 	path.insertBefore(this.layers[lid]);
-}
+};
 
 rnd.ReStruct.prototype.clearMarks = function () {
 	this.bondsChanged = {};
 	this.atomsChanged = {};
 	this.structChanged = false;
-}
+};
 
 rnd.ReStruct.prototype.markItemRemoved = function () {
 	this.structChanged = true;
-}
+};
 
 rnd.ReStruct.prototype.markBond = function (bid, mark) {
 	this.markItem('bonds', bid, mark);
-}
+};
 
 rnd.ReStruct.prototype.markAtom = function (aid, mark) {
 	this.markItem('atoms', aid, mark);
-}
+};
 
 rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 	var mapChanged = this[map+'Changed'];
@@ -271,7 +271,7 @@ rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 	Math.max(mark, mapChanged[id]) : mark;
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
-}
+};
 
 rnd.ReStruct.prototype.eachVisel = function (func, context) {
 
@@ -290,20 +290,20 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	}, this);
 	for (var i = 0; i < this.tmpVisels.length; ++i)
 		func.call(context, this.tmpVisels[i]);
-}
+};
 
 rnd.ReStruct.prototype.translate = function (d) {
 	this.eachVisel(function(visel){
 		this.translateVisel(visel, d);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.scale = function (s) {
 	// NOTE: bounding boxes are not valid after scaling
 	this.eachVisel(function(visel){
 		this.scaleVisel(visel, s);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.translateVisel = function (visel, d) {
 	var i;
@@ -313,7 +313,7 @@ rnd.ReStruct.prototype.translateVisel = function (visel, d) {
 		visel.boxes[i].translate(d);
 	if (visel.boundingBox != null)
 		visel.boundingBox.translate(d);
-}
+};
 
 rnd.ReStruct.prototype.scaleRPath = function (path, s) {
 	if (path.type == "set") { // TODO: rework scaling
@@ -328,18 +328,18 @@ rnd.ReStruct.prototype.scaleRPath = function (path, s) {
 		}
 		path.scale(s, s, 0, 0);
 	}
-}
+};
 
 rnd.ReStruct.prototype.scaleVisel = function (visel, s) {
 	for (var i = 0; i < visel.paths.length; ++i)
 		this.scaleRPath(visel.paths[i], s);
-}
+};
 
 rnd.ReStruct.prototype.clearVisels = function () {
 	this.eachVisel(function(visel){
 		this.clearVisel(visel);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.update = function (force)
 {
@@ -445,20 +445,21 @@ rnd.ReStruct.prototype.update = function (force)
 //	}, this);
 
 	return true;
-}
+};
 
 rnd.ReStruct.prototype.drawReactionSymbols = function ()
 {
 	var item;
-	for (var id in this.rxnArrowsChanged) {
+    var id;
+	for (id in this.rxnArrowsChanged) {
 		item = this.rxnArrows.get(id);
 		this.drawReactionArrow(id, item);
 	}
-	for (var id in this.rxnPlusesChanged) {
+	for (id in this.rxnPlusesChanged) {
 		item = this.rxnPluses.get(id);
 		this.drawReactionPlus(id, item);
 	}
-}
+};
 
 rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
@@ -470,7 +471,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	if (item.selected)
 		this.showItemSelection(id, item, true);
-}
+};
 
 rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
@@ -482,7 +483,7 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	if (item.selected)
 		this.showItemSelection(id, item, true);
-}
+};
 
 rnd.ReStruct.prototype.drawSGroups = function ()
 {
@@ -494,7 +495,7 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 		if (sgroup.highlight)
 			this.showBracketHighlighting(id, sgroup, true);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.drawChiralLabel = function ()
 {
@@ -514,14 +515,14 @@ rnd.ReStruct.prototype.drawChiralLabel = function ()
 		});
 		this.addChiralPath('data', this.chiral.visel, this.chiral.path);
 	}
-}
+};
 
 rnd.ReStruct.prototype.eachCC = function (func, type, context) {
 	this.connectedComponents.each(function(ccid, cc) {
 		if (!type || this.ccFragmentType.get(ccid) == type)
 			func.call(context || this, ccid, cc);
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.getGroupBB = function (type)
 {
@@ -532,7 +533,7 @@ rnd.ReStruct.prototype.getGroupBB = function (type)
 	}, type, this);
 
 	return bb;
-}
+};
 
 rnd.ReStruct.prototype.updateHalfBonds = function () {
 	for (var aid in this.atomsChanged) {
@@ -540,7 +541,7 @@ rnd.ReStruct.prototype.updateHalfBonds = function () {
 			continue;
 		this.molecule.atomUpdateHalfBonds(aid);
 	}
-}
+};
 
 rnd.ReStruct.prototype.sortNeighbors = function () {
 	// sort neighbor halfbonds in CCW order
@@ -549,7 +550,7 @@ rnd.ReStruct.prototype.sortNeighbors = function () {
 			continue;
 		this.molecule.atomSortNeighbors(aid);
 	}
-}
+};
 
 rnd.ReStruct.prototype.setHydrogenPos = function () {
 	// check where should the hydrogen be put on the left of the label
@@ -566,7 +567,6 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 		var yl = 1, yr = 1, nl = 0, nr = 0;
 		for (var i = 0; i < atom.a.neighbors.length; ++i) {
 			var d = this.molecule.halfBonds.get(atom.a.neighbors[i]).dir;
-			var y = Math.abs(d.y);
 			if (d.x <= 0) {
 				yl = Math.min(yl, Math.abs(d.y));
 				nl++;
@@ -580,14 +580,14 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 		else
 			atom.hydrogenOnTheLeft = nr > nl;
 	}
-}
+};
 
 rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 	// calculate implicit hydrogens
 	for (var aid in this.atomsChanged) {
 		this.molecule.calcImplicitHydrogen(aid);
 	}
-}
+};
 
 rnd.ReLoop = function (loop)
 {
@@ -595,7 +595,7 @@ rnd.ReLoop = function (loop)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
 	this.centre = new util.Vec2();
 	this.radius = new util.Vec2();
-}
+};
 
 rnd.ReStruct.prototype.findLoops = function ()
 {
@@ -607,7 +607,7 @@ rnd.ReStruct.prototype.findLoops = function ()
 	//  either an outer or an inner one - every iteration either yields a loop
 	//  or doesn't start at all. Thus this has linear complexity in the number
 	//  of bonds for planar graphs.
-	var i = 0, j, k, c, loop, loopId;
+	var j, k, c, loop, loopId;
 	struct.halfBonds.each(function (i, hb) {
 		if (hb.loop == -1)
 		{
@@ -649,7 +649,7 @@ rnd.ReStruct.prototype.findLoops = function ()
 			}
 		}
 	}, this);
-}
+};
 
 rnd.ReStruct.prototype.coordProcess = function ()
 {
@@ -665,7 +665,7 @@ rnd.ReStruct.prototype.coordProcess = function ()
 	if (this.molecule.isChiral)
 		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
 	this.molecule.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
-}
+};
 
 rnd.ReStruct.prototype.scaleCoordinates = function()
 {
@@ -673,16 +673,17 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 	var scale = function (item) {
 		item.ps = item.pp.scaled(settings.scaleFactor);
 	};
-	for (var aid in this.atomsChanged) {
-		scale(this.atoms.get(aid).a);
+    var id;
+	for (id in this.atomsChanged) {
+		scale(this.atoms.get(id).a);
 	}
-	for (var id in this.rxnArrowsChanged) {
+	for (id in this.rxnArrowsChanged) {
 		scale(this.rxnArrows.get(id).item);
 	}
-	for (var id in this.rxnPlusesChanged) {
+	for (id in this.rxnPlusesChanged) {
 		scale(this.rxnPluses.get(id).item);
 	}
-}
+};
 
 rnd.ReStruct.prototype.atomAdd = function (pos, params)
 {
@@ -698,7 +699,7 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	this.atoms.set(aid, atomData);
 	this.molecule._atomSetPos(aid, pos);
 	return aid;
-}
+};
 
 rnd.ReStruct.prototype.rxnPlusAdd = function (pos)
 {
@@ -707,7 +708,7 @@ rnd.ReStruct.prototype.rxnPlusAdd = function (pos)
 	this.rxnPluses.set(id, reItem);
 	this.molecule._rxnPlusSetPos(id, pos);
 	return id;
-}
+};
 
 rnd.ReStruct.prototype.rxnArrowAdd = function (pos)
 {
@@ -716,7 +717,7 @@ rnd.ReStruct.prototype.rxnArrowAdd = function (pos)
 	this.rxnArrows.set(id, reItem);
 	this.molecule._rxnArrowSetPos(id, pos);
 	return id;
-}
+};
 
 rnd.ReStruct.prototype.rxnArrowRemove = function (id)
 {
@@ -725,7 +726,7 @@ rnd.ReStruct.prototype.rxnArrowRemove = function (id)
 	this.clearVisel(reitem.visel);
 	this.rxnArrows.unset(id);
 	this.molecule.rxnArrows.remove(id);
-}
+};
 
 rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 {
@@ -734,7 +735,7 @@ rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 	this.clearVisel(reitem.visel);
 	this.rxnPluses.unset(id);
 	this.molecule.rxnPluses.remove(id);
-}
+};
 
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
@@ -758,14 +759,14 @@ rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb1);
 	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb2);
 	return bid;
-}
+};
 
 rnd.ReStruct.prototype.bondFlip = function (bid)
 {
 	var data = this.bonds.get(bid).b;
 	this.bondRemove(bid);
 	return this.bondAdd(data.end, data.begin, data);
-}
+};
 
 rnd.ReStruct.prototype.atomRemove = function (aid)
 {
@@ -786,7 +787,7 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 	this.clearVisel(atom.visel);
 	this.atoms.unset(aid);
 	this.molecule.atoms.remove(aid);
-}
+};
 
 rnd.ReStruct.prototype.bondRemove = function (bid)
 {
@@ -799,7 +800,7 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 	this.clearVisel(bond.visel);
 	this.bonds.unset(bid);
 	this.molecule.bonds.remove(bid);
-}
+};
 
 rnd.ReStruct.prototype.loopRemove = function (loopId)
 {
@@ -813,7 +814,7 @@ rnd.ReStruct.prototype.loopRemove = function (loopId)
 	}
 	this.reloops.unset(loopId);
 	this.molecule.loops.remove(loopId);
-}
+};
 
 rnd.ReStruct.prototype.halfBondUnref = function (hbid)
 {
@@ -827,7 +828,7 @@ rnd.ReStruct.prototype.halfBondUnref = function (hbid)
 	var next = (pos + 1) % atom.a.neighbors.length;
 	this.molecule.setHbNext(atom.a.neighbors[prev], atom.a.neighbors[next]);
 	atom.a.neighbors.splice(pos, 1);
-}
+};
 
 rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 	orig = orig-0;
@@ -848,7 +849,7 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 			}
 		}
 	}
-}
+};
 
 rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 {
@@ -861,7 +862,7 @@ rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 	}
 	this.molecule.sgroups.remove(sgid);
 	return atoms;
-}
+};
 
 rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 {
@@ -872,12 +873,12 @@ rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 	this.highlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
-}
+};
 
 rnd.ReRxnPlus.prototype.makeSelectionPlate = function (paper, styles) {
 	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
-}
+};
 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
@@ -888,9 +889,9 @@ rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 	this.highlighting = null;
 	this.selected = false;
 	this.selectionPlate = null;
-}
+};
 
 rnd.ReRxnArrow.prototype.makeSelectionPlate = function (paper, styles) {
 	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
-}
+};

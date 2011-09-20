@@ -11,15 +11,13 @@
  ***************************************************************************/
 
 if (!window.chem || !chem.Struct)
-    throw new Error("Molecule should be defined first")
+    throw new Error("Molecule should be defined first");
 
 chem.Dfs = function (mol, atom_data)
 {
     this.molecule = mol;
     this.atom_data = atom_data;
 
-    var i;
-    
     this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
     this.molecule.atoms.each(function (aid)
     {
@@ -33,7 +31,7 @@ chem.Dfs = function (mol, atom_data)
     }, this);
 
     this.v_seq = new Array();
-}
+};
 
 chem.Dfs.VertexDesc = function ()
 {
@@ -43,7 +41,7 @@ chem.Dfs.VertexDesc = function ()
     this.parent_vertex = 0;   // parent vertex in DFS tree
     this.parent_edge = 0;     // edge to parent vertex
     this.branches = 0;    // how many DFS branches go out from this vertex}
-}
+};
 
 chem.Dfs.EdgeDesc = function ()
 {
@@ -51,14 +49,14 @@ chem.Dfs.EdgeDesc = function ()
                              // (i) starting with this edge
                              // and (ii) ending in this edge's first vertex
     this.closing_cycle = 0;  // 1 if this edge closes a cycle
-}
+};
 
 chem.Dfs.SeqElem = function (v_idx, par_vertex, par_edge)
 {
     this.idx = v_idx;                // index of vertex in _graph
     this.parent_vertex = par_vertex; // parent vertex in DFS tree
     this.parent_edge = par_edge;     // edge to parent vertex
-}
+};
 
 chem.Dfs.prototype.walk = function ()
 {
@@ -91,11 +89,10 @@ chem.Dfs.prototype.walk = function ()
       var parent_vertex = this.vertices[v_idx].parent_vertex;
 
       var seq_elem = new chem.Dfs.SeqElem(v_idx, parent_vertex, this.vertices[v_idx].parent_edge);
-      this.v_seq.push(seq_elem)
+      this.v_seq.push(seq_elem);
    
       this.vertices[v_idx].dfs_state = 2;
 
-      var atom = this.molecule.atoms[v_idx];
       var atom_d = this.atom_data[v_idx];
 
       for (i = 0; i < atom_d.neighbours.length; i++)
@@ -125,7 +122,7 @@ chem.Dfs.prototype.walk = function ()
             this.edges[this.vertices[j].parent_edge].opening_cycles++;
             this.vertices[v_idx].branches++;
 
-            var seq_elem = new chem.Dfs.SeqElem(nei_idx, v_idx, edge_idx);
+            seq_elem = new chem.Dfs.SeqElem(nei_idx, v_idx, edge_idx);
             this.v_seq.push(seq_elem);
          }
          else
@@ -153,22 +150,22 @@ chem.Dfs.prototype.walk = function ()
          }
       }
    }
-}
+};
 
 chem.Dfs.prototype.edgeClosingCycle = function (e_idx)
 {
    return this.edges[e_idx].closing_cycle != 0;
-}
+};
 
 chem.Dfs.prototype.numBranches = function (v_idx)
 {
    return this.vertices[v_idx].branches;
-}
+};
 
 chem.Dfs.prototype.numOpeningCycles = function (e_idx)
 {
    return this.edges[e_idx].opening_cycles;
-}
+};
 
 chem.Dfs.prototype.toString = function ()
 {
@@ -176,4 +173,4 @@ chem.Dfs.prototype.toString = function ()
     this.v_seq.each(function (seq_elem) {str += seq_elem.idx + ' -> '});
     str += '*';
     return str;
-}
+};

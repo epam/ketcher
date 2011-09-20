@@ -21,7 +21,7 @@ rnd.Visel = function (type)
 	this.paths = [];
 	this.boxes = [];
 	this.boundingBox = null;
-}
+};
 
 rnd.Visel.TYPE = {
 	'ATOM' : 1,
@@ -32,7 +32,7 @@ rnd.Visel.TYPE = {
 	'SGROUP' : 6,
 	'CHIRAL' : 7,
 	'TMP' : 8
-}
+};
 
 rnd.Visel.prototype.add = function (path, bb)
 {
@@ -41,11 +41,11 @@ rnd.Visel.prototype.add = function (path, bb)
 		this.boxes.push(bb);
 		this.boundingBox = this.boundingBox == null ? bb : util.Box2Abs.union(this.boundingBox, bb);
 	}
-}
+};
 
 rnd.Visel.prototype.clear = function ()
 {
 	this.paths = [];
 	this.boxes = [];
 	this.boundingBox = null;
-}
+};

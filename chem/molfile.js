@@ -11,17 +11,17 @@
  ***************************************************************************/
 
 if (!window.chem || !util.Vec2 || !chem.Struct)
-	throw new Error("Vec2 and Molecule should be defined first")
+	throw new Error("Vec2 and Molecule should be defined first");
 
 chem.Molfile = function ()
-{}
+{};
 
 chem.Molfile.parseDecimalInt = function (str)
 {
 	var val = parseInt(str, 10);
 
 	return isNaN(val) ? 0 : val;
-}
+};
 
 chem.Molfile.partitionLine = function (/*string*/ str, /*array of int*/ parts, /*bool*/ withspace)
 {
@@ -34,7 +34,7 @@ chem.Molfile.partitionLine = function (/*string*/ str, /*array of int*/ parts, /
 		shift += parts[i];
 	}
 	return res;
-}
+};
 
 chem.Molfile.partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, /*bool*/ withspace)
 {
@@ -46,7 +46,7 @@ chem.Molfile.partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, 
 			shift++;
 	}
 	return res;
-}
+};
 
 chem.Molfile.parseMolfile = function (molfileLines)
 {
@@ -54,7 +54,7 @@ chem.Molfile.parseMolfile = function (molfileLines)
 		return chem.Molfile.parseRxn(molfileLines);
 	else
 		return chem.Molfile.parseCTab(molfileLines);
-}
+};
 
 chem.Molfile.fmtInfo = {
 	invRetMap: [null, "inv", "ret"],
@@ -102,7 +102,7 @@ chem.Molfile.fmtInfo = {
 		'VAL':'valence'
 	},
 	rxnItemsPartition: [3,3,3]
-}
+};
 
 chem.Molfile.parseAtomLine = function (atomLine)
 {
@@ -132,14 +132,14 @@ chem.Molfile.parseAtomLine = function (atomLine)
 	};
 	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);
-}
+};
 
 chem.Molfile.stripV30 = function (line)
 {
 	if (line.slice(0, 7) != 'M  V30 ')
 		throw Error("Prefix invalid");
 	return line.slice(7);
-}
+};
 
 chem.Molfile.parseAtomLineV3000 = function (line)
 {
@@ -182,7 +182,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 	}
 	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);
-}
+};
 
 chem.Molfile.parseBondLineV3000 = function (line)
 {
@@ -209,7 +209,7 @@ chem.Molfile.parseBondLineV3000 = function (line)
 			params.stereoCare = mf.parseDecimalInt(value);
 	}
 	return new chem.Struct.Bond(params);
-}
+};
 
 chem.Molfile.parseBondLine = function (bondLine)
 {
@@ -226,7 +226,7 @@ chem.Molfile.parseBondLine = function (bondLine)
 	};
 
 	return new chem.Struct.Bond(params);
-}
+};
 
 chem.Molfile.parseAtomListLine = function (/* string */atomListLine)
 {
@@ -250,7 +250,7 @@ chem.Molfile.parseAtomListLine = function (/* string */atomListLine)
 			"ids": list
 		})
 		};
-}
+};
 
 chem.Molfile.readKeyValuePairs = function (str, /* bool */ valueString)
 {
@@ -263,7 +263,7 @@ chem.Molfile.readKeyValuePairs = function (str, /* bool */ valueString)
 		valueString ? partition[2 * i + 2].strip() :
 		mf.parseDecimalInt(partition[2 * i + 2]);
 	return ret;
-}
+};
 
 chem.Molfile.labelsListToIds = function (labels)
 {
@@ -272,7 +272,7 @@ chem.Molfile.labelsListToIds = function (labels)
 		ids.push(chem.Element.getElementByLabel(labels[i].strip()));
 	}
 	return ids;
-}
+};
 
 chem.Molfile.parsePropertyLineAtomList = function (hdr, lst)
 {
@@ -287,7 +287,7 @@ chem.Molfile.parsePropertyLineAtomList = function (hdr, lst)
 		"ids": ids
 	});
 	return ret;
-}
+};
 
 chem.Molfile.initSGroup = function (sGroups, propData)
 {
@@ -301,7 +301,7 @@ chem.Molfile.initSGroup = function (sGroups, propData)
 		sg.number = key;
 		sGroups[key] = sg;
 	}
-}
+};
 
 chem.Molfile.applySGroupProp = function (sGroups, propName, propData, numeric)
 {
@@ -310,7 +310,7 @@ chem.Molfile.applySGroupProp = function (sGroups, propName, propData, numeric)
 	for (var key in kv) {
 		sGroups[key].data[propName] = kv[key];
 	}
-}
+};
 
 chem.Molfile.toIntArray = function (strArray)
 {
@@ -319,7 +319,7 @@ chem.Molfile.toIntArray = function (strArray)
 	for (var j = 0; j < strArray.length; ++j)
 		ret[j] = mf.parseDecimalInt(strArray[j]);
 	return ret;
-}
+};
 
 chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift)
 {
@@ -336,7 +336,7 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 		});
 	}
 	sGroups[sid][propName] = sGroups[sid][propName].concat(part);
-}
+};
 
 chem.Molfile.applyDataSGroupDesc = function (sGroups, propData) {
 	var mf = chem.Molfile;
@@ -353,7 +353,7 @@ chem.Molfile.applyDataSGroupDesc = function (sGroups, propData) {
 	sGroup.data.units = units;
 	sGroup.data.query = query;
 	sGroup.data.queryOp = queryOp;
-}
+};
 
 chem.Molfile.applyDataSGroupInfo = function (sGroups, propData) {
 	var mf = chem.Molfile;
@@ -377,7 +377,7 @@ chem.Molfile.applyDataSGroupInfo = function (sGroups, propData) {
 	sGroup.data.nCharsToDisplay = nCharsToDisplay;
 	sGroup.data.tagChar = tagChar;
 	sGroup.data.daspPos = daspPos;
-}
+};
 
 chem.Molfile.applyDataSGroupData = function (sGroups, propData, finalize) {
 	var mf = chem.Molfile;
@@ -390,7 +390,7 @@ chem.Molfile.applyDataSGroupData = function (sGroups, propData, finalize) {
 	sGroup.data.fieldValue += data;
 	if (finalize)
 		sGroup.data.fieldValue = util.stripRight(sGroup.data.fieldValue);
-}
+};
 
 chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups)
 {
@@ -467,14 +467,14 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 		++shift;
 	}
 	return props;
-}
+};
 
 chem.Molfile.applyAtomProp = function (atoms /* Pool */, values /* util.Map */, propId /* string */, clean /* boolean */)
 {
 	values.each(function(aid, propVal){
 		atoms.get(aid)[propId] = propVal;
 	});
-}
+};
 
 chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 {
@@ -516,11 +516,12 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 	});
 
 	var atomMap = {};
-	for (var sid in sGroups) {
+    var sid;
+	for (sid in sGroups) {
 		chem.SGroup.addGroup(ctab, sGroups[sid], atomMap);
 	}
 	var emptyGroups = [];
-	for (var sid in sGroups) {
+	for (sid in sGroups) {
 		chem.SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(sid);
@@ -530,7 +531,7 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 	}
 
 	return ctab;
-}
+};
 
 // split a line by spaces outside parentheses
 chem.Molfile.spaceparsplit = function (line)
@@ -558,13 +559,13 @@ chem.Molfile.spaceparsplit = function (line)
 		split.push(line.slice(i0 + 1, i));
 	i0 = i;
 	return split;
-}
+};
 
 chem.Molfile.splitonce = function (line, delim)
 {
 	var p = line.indexOf(delim);
 	return [line.slice(0,p),line.slice(p+1)];
-}
+};
 
 chem.Molfile.splitSGroupDef = function (line)
 {
@@ -587,7 +588,7 @@ chem.Molfile.splitSGroupDef = function (line)
 	if (line.length > 0)
 		split.push(line.strip());
 	return split;
-}
+};
 
 chem.Molfile.parseBracedNumberList = function (line, shift)
 {
@@ -602,7 +603,7 @@ chem.Molfile.parseBracedNumberList = function (line, shift)
 		list.push(split[i] - 0 + shift);
 	}
 	return list;
-}
+};
 
 chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 {
@@ -684,12 +685,11 @@ chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
 	}
 
 	return ctab;
-}
+};
 
 chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 {
 	ctabLines = ctabLines.slice(3);
-	var i = 0;
 	var mf = chem.Molfile;
 	var ctab = new chem.Struct();
 	var countsSplit = mf.partitionLine(ctabLines[0], mf.fmtInfo.countsLinePartition);
@@ -700,7 +700,7 @@ chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 		return this.parseCTabV3000(ctab, ctabLines, countsSplit);
 	else
 		throw Error("Molfile version unknown: " + version);
-}
+};
 
 chem.MolfileSaver = function (v3000)
 {
@@ -708,7 +708,7 @@ chem.MolfileSaver = function (v3000)
 	this.molfile = null;
 
 	this.v3000 = v3000 || false
-}
+};
 
 chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 {
@@ -730,7 +730,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 		mol.sGroupDelete(toRemove[i]);
 	}
 	return mol;
-}
+};
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 {
@@ -796,7 +796,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 	this.writeCTab2000(molecule);
 
 	return this.molfile;
-}
+};
 
 chem.MolfileSaver.prototype.writeHeader = function ()
 {
@@ -809,12 +809,12 @@ chem.MolfileSaver.prototype.writeHeader = function ()
 	this.writeCR((date.getMonth() + 1).toPaddedString(2) + date.getDate().toPaddedString(2) + (date.getFullYear() % 100).toPaddedString(2) +
 		date.getHours().toPaddedString(2) + date.getMinutes().toPaddedString(2) + '2D 1   1.00000     0.00000     0');
 	this.writeCR();
-}
+};
 
 chem.MolfileSaver.prototype.write = function (str)
 {
 	this.molfile += str;
-}
+};
 
 chem.MolfileSaver.prototype.writeCR = function (str)
 {
@@ -822,7 +822,7 @@ chem.MolfileSaver.prototype.writeCR = function (str)
 		str = '';
 
 	this.molfile += str + '\n';
-}
+};
 
 chem.MolfileSaver.prototype.writeWhiteSpace = function (length)
 {
@@ -833,13 +833,13 @@ chem.MolfileSaver.prototype.writeWhiteSpace = function (length)
 	{
 		this.write(' ');
 	}, this);
-}
+};
 
 chem.MolfileSaver.prototype.writePadded = function (str, width)
 {
 	this.write(str);
 	this.writeWhiteSpace(width - str.length);
-}
+};
 
 chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 {
@@ -847,12 +847,12 @@ chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 
 	this.writeWhiteSpace(width - str.length);
 	this.write(str);
-}
+};
 
 chem.MolfileSaver.prototype.writePaddedFloat = function (number, width, precision)
 {
 	this.write(util.paddedFloat(number, width, precision));
-}
+};
 
 chem.MolfileSaver.prototype.writeCTab2000Header = function ()
 {
@@ -866,7 +866,7 @@ chem.MolfileSaver.prototype.writeCTab2000Header = function ()
 	this.writeWhiteSpace(12);
 	this.writePaddedNumber(999, 3);
 	this.writeCR(' V2000');
-}
+};
 
 chem.MolfileSaver.prototype.writeCTab2000 = function ()
 {
@@ -964,7 +964,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
             radical_list.push(id);
 	});
 
-    writeAtomPropList = function (ids, prop_id, prop_name)
+    var writeAtomPropList = function (ids, prop_id, prop_name)
     {
         while (ids.length > 0)
         {
@@ -989,7 +989,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 
             this.writeCR();
         }
-    }
+    };
 
     writeAtomPropList.call(this, charge_list, 'M  CHG', 'charge');
     writeAtomPropList.call(this, isotope_list, 'M  ISO', 'isotope');
@@ -1082,7 +1082,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 	// TODO: write M  LOG
 
 	this.writeCR('M  END');
-}
+};
 
 chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 {
@@ -1117,4 +1117,4 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 	}
 	ret.isReaction = true;
 	return ret;
-}
+};

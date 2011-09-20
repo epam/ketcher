@@ -11,7 +11,7 @@
  ***************************************************************************/
 
 if (!window.Prototype)
-	throw new Error("Prototype.js should be loaded first")
+	throw new Error("Prototype.js should be loaded first");
 if (!window.rnd)
 	throw new Error("rnd should be defined prior to loading this file");
 
@@ -21,7 +21,7 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	var table = this;
-	this.onClick = opts.onClick || function(elemNum){table.setElementSelected(elemNum, !table.items[elemNum].selected);}
+	this.onClick = opts.onClick || function(elemNum){table.setElementSelected(elemNum, !table.items[elemNum].selected);};
 
 	var hsz = opts.buttonHalfSize || 16;
 	this.elemHalfSz = new util.Vec2(hsz, hsz);
@@ -59,7 +59,7 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 	this.items = {};
 	this.selectedLabels = util.Set.empty();
 	this.atomProps = {};
-}
+};
 
 rnd.ElementTable.prototype.updateAtomProps = function () {
 	this.atomProps = {};
@@ -81,11 +81,11 @@ rnd.ElementTable.prototype.updateAtomProps = function () {
 			})
 		};
 	}
-}
+};
 
 rnd.ElementTable.prototype.getAtomProps = function () {
 	return this.atomProps;
-}
+};
 
 rnd.ElementTable.prototype.renderTable = function () {
 	var table = this;
@@ -97,23 +97,23 @@ rnd.ElementTable.prototype.renderTable = function () {
 		label.node.onclick = function () {table.onClick(id);};
 		this.items[id] = {'box':box, 'label':label, 'selected':false};
 	}, this);
-}
+};
 
 rnd.ElementTable.prototype.renderSingle = function (element) {
 	var elemId = chem.Element.getElementByLabel(element);
 	var elem = chem.Element.elements.get(elemId);
 	this.items[element] = this.paper.text(this.viewSz.x / 2, this.viewSz.y / 2, element).attr(this.fontAttrs).attr('fill', elem ? elem.color : '#000');
-}
+};
 
 rnd.ElementTable.prototype.renderArrow = function () {
 	var margin = 4, hsz = 16, hext = 6, hw = 4;
 	this.items['arrow'] = this.paper.path("M{1},{3}L{2},{4}L{1},{5}M{0},{4}L{2},{4}", margin, 2 * hsz - hext - margin, 2 * hsz - margin, hsz - hw, hsz, hsz + hw).attr({'stroke': '#000','stroke-width': '2px'});
-}
+};
 
 rnd.ElementTable.prototype.renderPlus = function () {
 	var hsz = 16, hext = 9;
 	this.items['plus'] = this.paper.path("M{1},{0}L{1},{2}M{0},{1}L{2},{1}", hsz - hext, hsz, hsz + hext).attr({'stroke': '#000','stroke-width': '2px'});
-}
+};
 
 rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
 	var item = this.items[id];
@@ -126,4 +126,4 @@ rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
 	}
 	item.selected = selected;
 	this.updateAtomProps();
-}
+};

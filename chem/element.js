@@ -11,7 +11,7 @@
  ***************************************************************************/
 
 if (!window.util || !util.Vec2)
-    throw new Error("Vec2 should be defined first")
+    throw new Error("Vec2 should be defined first");
 
 if (!window.chem)
     chem = {};
@@ -80,7 +80,7 @@ chem.Element = function (label, period, group, putHydrogenOnTheLeft, color, ypos
 	b = b.length == 1 ? "0" + b : b;
 	this.color = "#" + r + g + b;
 
-}
+};
 
 chem.Element.elements = new util.Map({
       1: new chem.Element( 'H', 1, 1, false, '#000000', 1, 1),
@@ -202,4 +202,4 @@ chem.Element.getElementByLabel = function (label)
     if (!this.labelMap.hasOwnProperty(label))
         return null;
     return this.labelMap[label];
-}
+};

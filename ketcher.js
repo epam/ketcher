@@ -190,13 +190,13 @@ ketcher.getSmiles = function ()
 {
     var saver = new chem.SmilesSaver();
     return saver.saveMolecule(ui.ctab, true);
-}
+};
 
 ketcher.getMolfile = function ()
 {
     var saver = new chem.MolfileSaver();
     return saver.saveMolecule(ui.ctab, true);
-}
+};
 
 ketcher.setMolecule = function (mol_string)
 {
@@ -204,7 +204,7 @@ ketcher.setMolecule = function (mol_string)
         return;
 
     ui.loadMolecule(mol_string);
-}
+};
 
 ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicitHydrogen)
 {
@@ -218,7 +218,7 @@ ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicit
 		'autoScaleMargin':20,
 		'hideImplicitHydrogen':hideImplicitHydrogen||false
     });
-}
+};
 
 ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
 {
@@ -227,7 +227,7 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
         this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
-}
+};
 
 /*
 ketcher.testShiftRayBox = function (clientArea)

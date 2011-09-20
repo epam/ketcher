@@ -19,18 +19,18 @@ chem.Stereocenters = function (mol, neighbors_func, context)
     this.atoms = new util.Map();
     this.getNeighbors = neighbors_func;
     this.context = context;
-}
+};
 
 chem.Stereocenters.prototype.each = function (func, context)
 {
     this.atoms.each(func, context);
-}
+};
 
 chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, const int *atom_groups, const int *bond_orientations, */ignore_errors)
 {
    //_bond_directions.copy(bond_orientations, mol.edgeEnd());
 
-   this.molecule.atoms.each(function (aid, atom)
+   this.molecule.atoms.each(function (aid)
    {
       /*
       if (atom_types[atom_idx] == 0)
@@ -68,7 +68,7 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
       else
          this._buildOneCenter(aid/*, atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
    }, this);
-}
+};
 
 chem.Stereocenters.allowed_stereocenters =
 [
@@ -101,7 +101,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
        group: 0, // = group;
        type: 0, // = type;
        pyramid: new Array(4)
-   }
+   };
    
    var nei_idx = 0;
    var edge_ids = new Array(4);
@@ -130,7 +130,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
          nei_idx: nei.aid,
          rank: nei.aid,
          vec: util.Vec2.diff(nei_atom.pos, atom.pos)
-      }
+      };
 
       if (nei_atom.pureHydrogen())
       {
@@ -272,7 +272,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
       else
          last_atom_dir = (main_dir == chem.Struct.BOND.STEREO.UP ? chem.Struct.BOND.STEREO.DOWN : chem.Struct.BOND.STEREO.UP);
 
-      var sign = chem.Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
+      sign = chem.Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
 
       if ((last_atom_dir == chem.Struct.BOND.STEREO.UP && sign > 0) ||
           (last_atom_dir == chem.Struct.BOND.STEREO.DOWN && sign < 0))
@@ -326,7 +326,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
          if (n_up == 1 && n_down == 1)
             throw new Error("one bond up, one bond down -- indefinite case");
 
-         var main_dir = 0;
+         main_dir = 0;
 
          if (n_up == 2)
             last_atom_dir = chem.Struct.BOND.STEREO.DOWN;
@@ -334,13 +334,13 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
             last_atom_dir = chem.Struct.BOND.STEREO.UP;
          else
          {
-            var main1 = -1;
-            var side1 = -1;
-            var side2 = -1;
+            main1 = -1;
+            side1 = -1;
+            side2 = -1;
 
             for (nei_idx = 0; nei_idx < 3; nei_idx++)
             {
-               var dir = this._getBondStereo(atom_idx, edge_ids[nei_idx].edge_idx);
+               dir = this._getBondStereo(atom_idx, edge_ids[nei_idx].edge_idx);
 
                if (dir == chem.Struct.BOND.STEREO.UP || dir == chem.Struct.BOND.STEREO.DOWN)
                {
@@ -403,7 +403,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
             // all bonds belong to the same half-plane
             dir = -dir;
 
-         var sign = chem.Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
+         sign = chem.Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
 
          if (sign == dir)
          {
@@ -422,7 +422,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
    }
 
    this.atoms.set(atom_idx, stereocenter);
-}
+};
 
 chem.Stereocenters.prototype._getBondStereo = function (center_idx, edge_idx)
 {
@@ -432,7 +432,7 @@ chem.Stereocenters.prototype._getBondStereo = function (center_idx, edge_idx)
       return 0;
 
    return bond.stereo;
-}
+};
 
 // 1 -- in the smaller angle, 2 -- in the bigger angle,
 // 4 -- in the 'positive' straight angle, 8 -- in the 'negative' straight angle
@@ -461,7 +461,7 @@ chem.Stereocenters._xyzzy = function (v1, v2, u)
       return 2;
 
    return 1;
-}
+};
 
 chem.Stereocenters._sign = function (v1, v2, v3)
 {
@@ -474,7 +474,7 @@ chem.Stereocenters._sign = function (v1, v2, v3)
       return -1;
 
    throw new Error("degenerate triangle");
-}
+};
 
 chem.Stereocenters.isPyramidMappingRigid = function (mapping)
 {
@@ -495,4 +495,4 @@ chem.Stereocenters.isPyramidMappingRigid = function (mapping)
       arr.swap(1, 2), rigid = !rigid;
 
    return rigid;
-}
+};

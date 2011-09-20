@@ -28,7 +28,7 @@ chem.SmilesSaver = function (render)
         this._render = render;
         
     this.ignore_errors = false;
-}
+};
 
 chem.SmilesSaver._Atom = function (h_count)
 {
@@ -214,10 +214,10 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     for (i = 0; i < walk.v_seq.length; i++)
     {
-        var seq_el = walk.v_seq[i];
-        var v_idx = seq_el.idx;
-        var e_idx = seq_el.parent_edge;
-        var v_prev_idx = seq_el.parent_vertex;
+        seq_el = walk.v_seq[i];
+        v_idx = seq_el.idx;
+        e_idx = seq_el.parent_edge;
+        v_prev_idx = seq_el.parent_vertex;
         var write_atom = true;
 
         if (v_prev_idx >= 0)
@@ -226,7 +226,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
                 if (this.atoms[v_prev_idx].branch_cnt > 0 && this.atoms[v_prev_idx].paren_written)
                     this.smiles += ')';
 
-            var opening_cycles = walk.numOpeningCycles(e_idx);
+            opening_cycles = walk.numOpeningCycles(e_idx);
 
             for (j = 0; j < opening_cycles; j++)
             {
@@ -327,7 +327,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
       
    return this.smiles;
 
-}
+};
 
 chem.SmilesSaver.prototype._writeCycleNumber = function (n)
 {
@@ -339,7 +339,7 @@ chem.SmilesSaver.prototype._writeCycleNumber = function (n)
         this.smiles += '%%' + n;
     else 
         throw new Error("bad cycle number: " + n);
-}
+};
 
 chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
 {
@@ -385,7 +385,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
         return;
     }
 
-    if (this.atom_atom_mapping != null)
+    if (this.atom_atom_mapping)
         aam = atom_atom_mapping[idx];
 
     if (atom.label != 'C' && atom.label != 'P' &&
@@ -468,7 +468,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
       }
     }
     */
-}
+};
 
 chem.SmilesSaver.prototype._markCisTrans = function (mol)
 {
@@ -537,7 +537,7 @@ chem.SmilesSaver.prototype._markCisTrans = function (mol)
          }, this);
       }
    }, this);
-}
+};
 
 chem.SmilesSaver.prototype._updateSideBonds = function (mol, bond_idx)
 {
@@ -637,7 +637,7 @@ chem.SmilesSaver.prototype._updateSideBonds = function (mol, bond_idx)
    }
 
    return true;
-}
+};
 
 chem.SmilesSaver.prototype._calcBondDirection = function (mol, idx, vprev)
 {
@@ -674,7 +674,7 @@ chem.SmilesSaver.prototype._calcBondDirection = function (mol, idx, vprev)
    }
 
    return this._dbonds[idx].saved;
-}
+};
 
 chem.SmilesSaver.prototype._writeRadicals = function (mol)
 {
@@ -715,7 +715,7 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
             this.smiles += ',' + j;
          }
    }
-}
+};
 
 /*
 void SmilesSaver::_writeStereogroups (const Struct &mol, const Array<_Atom> &atoms)

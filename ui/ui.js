@@ -57,17 +57,17 @@ ui.patterns =
 //
 ui.initButton = function (el)
 {
-    el.observe(EventMap['mousedown'], function (event)
+    el.observe(EventMap['mousedown'], function ()
     {
         if (this.hasClassName('buttonDisabled'))
             return;
         this.addClassName('buttonPressed');
     });
-    el.observe(EventMap['mouseup'], function (event)
+    el.observe(EventMap['mouseup'], function ()
     {
         this.removeClassName('buttonPressed');
     });
-    el.observe('mouseover', function (event)
+    el.observe('mouseover', function ()
     {
         if (this.hasClassName('buttonDisabled'))
             return;
@@ -77,7 +77,7 @@ ui.initButton = function (el)
         if (status != null)
             window.status = status;
     });
-    el.observe('mouseout', function (event)
+    el.observe('mouseout', function ()
     {
         this.removeClassName('buttonPressed');
         this.removeClassName('buttonHighlight');
@@ -85,14 +85,14 @@ ui.initButton = function (el)
     });
 };
 
-ui.onClick_SideButton = function (event)
+ui.onClick_SideButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
     ui.selectMode(this.getAttribute('selid') || this.id);
 };
 
-ui.onClick_DropdownButton = function (event)
+ui.onClick_DropdownButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
@@ -187,11 +187,11 @@ ui.init = function ()
     $$('.dropdownListItem').each(function (el)
     {
         el.observe(EventMap['mousedown'], ui.onMouseDown_DropdownListItem);
-        el.observe('mouseover', function (event) 
+        el.observe('mouseover', function ()
         {
             this.addClassName('highlightedItem');
         });
-        el.observe('mouseout', function (event)
+        el.observe('mouseout', function ()
         {
             this.removeClassName('highlightedItem');
         });
@@ -306,16 +306,16 @@ ui.init = function ()
     ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
     ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
 
-    var request = new Ajax.Request(ui.path + 'knocknock',
-                    {
-                        method: 'get',
-                        asynchronous : false,
-                        onComplete: function (res)
-                        {
-                            if (res.responseText == 'You are welcome!')
-                                ui.standalone = false;
-                        }
-                    });
+    new Ajax.Request(ui.path + 'knocknock',
+    {
+        method: 'get',
+        asynchronous : false,
+        onComplete: function (res)
+        {
+            if (res.responseText == 'You are welcome!')
+                ui.standalone = false;
+        }
+    });
 
     if (this.standalone)
     {
@@ -348,16 +348,16 @@ ui.init = function ()
     this.render.onAtomMouseOut = this.onMouseOut_Atom;
 
     this.render.onRxnArrowClick = this.onClick_RxnArrow;
-    this.render.onRxnArrowDblClick = this.onDblClick_RxnArrow;
+    //this.render.onRxnArrowDblClick = this.onDblClick_RxnArrow;
     this.render.onRxnArrowMouseDown = this.onMouseDown_RxnArrow;
-    this.render.onRxnArrowMouseOver = this.onMouseOver_RxnArrow;
-    this.render.onRxnArrowMouseOut = this.onMouseOut_RxnArrow;
+    //this.render.onRxnArrowMouseOver = this.onMouseOver_RxnArrow;
+    //this.render.onRxnArrowMouseOut = this.onMouseOut_RxnArrow;
 
     this.render.onRxnPlusClick = this.onClick_RxnPlus;
-    this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
-    this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
-    this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
-    this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
+    //this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
+    //this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
+    //this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
+    //this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
 
     this.render.onBondClick = this.onClick_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
@@ -472,8 +472,7 @@ ui.parseMolfile = function (molfile)
 
     try
     {
-        var ctab = chem.Molfile.parseMolfile(lines);
-        return ctab;
+        return chem.Molfile.parseMolfile(lines);
     } catch (er)
     {
         alert("Error loading molfile.");
@@ -1048,29 +1047,29 @@ ui.loadMolecule = function (mol_string, force_layout)
             }
             return;
         }
-        var request = new Ajax.Request(ui.path + 'layout?smiles=' + encodeURIComponent(smiles),
-                {
-                    method: 'get',
-                    asynchronous : true,
-                    onComplete: function (res)
-                    {
-                        if (res.responseText.startsWith('Ok.'))
-                            ui.updateMolecule(ui.parseMolfile(res.responseText));
-                    }
-                });
+        new Ajax.Request(ui.path + 'layout?smiles=' + encodeURIComponent(smiles),
+        {
+            method: 'get',
+            asynchronous : true,
+            onComplete: function (res)
+            {
+                if (res.responseText.startsWith('Ok.'))
+                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+            }
+        });
     } else if (!ui.standalone && force_layout)
     {
-        var request = new Ajax.Request(ui.path + 'layout',
-                {
-                    method: 'post',
-                    asynchronous : true,
-                    parameters: {moldata: mol_string},
-                    onComplete: function (res)
-                    {
-                        if (res.responseText.startsWith('Ok.'))
-                            ui.updateMolecule(ui.parseMolfile(res.responseText));
-                    }
-                });
+        new Ajax.Request(ui.path + 'layout',
+        {
+            method: 'post',
+            asynchronous : true,
+            parameters: {moldata: mol_string},
+            onComplete: function (res)
+            {
+                if (res.responseText.startsWith('Ok.'))
+                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+            }
+        });
     } else {
         ui.updateMolecule(ui.parseMolfile(mol_string));
     }
@@ -1144,7 +1143,7 @@ ui.onChange_FileFormat = function (event, update)
     var output = $('output_mol');
     var el = $('file_format');
 
-    if (update == true)
+    if (update)
     {
         var saver = new chem.MolfileSaver();
         output.molfile = saver.saveMolecule(ui.ctab, true);
@@ -1724,7 +1723,7 @@ ui.atomForNewBond = function (id)
             }
         }
 
-        angle = (max_angle / 2) + Math.atan2(neighbours[max_i].v.y, neighbours[max_i].v.x)
+        angle = (max_angle / 2) + Math.atan2(neighbours[max_i].v.y, neighbours[max_i].v.x);
 
         v = v.rotate(angle);
     }
@@ -1815,10 +1814,7 @@ ui.updateSelection = function (selection)
     ui.selection.bonds = ui.selection.bonds.filter(function (bid)
     {
         var bond = ui.ctab.bonds.get(bid);
-        if (ui.selection.atoms.indexOf(bond.begin) != -1 &&
-                ui.selection.atoms.indexOf(bond.end) != -1)
-            return true;
-        return false;
+        return (ui.selection.atoms.indexOf(bond.begin) != -1 && ui.selection.atoms.indexOf(bond.end) != -1);
     });
 
     ui.render.setSelection(ui.selection);
@@ -2156,9 +2152,7 @@ ui.onMouseOver_Atom = function (event, aid)
     {
         if (!Object.isUndefined(ui.render.atomGetNeighbors(ui.drag.atom_id).detect(function (nei)
         {
-            if (nei.aid == aid)
-                return true;
-            return false;
+            return (nei.aid == aid);
         }, this)))
             return true;
 
@@ -2188,7 +2182,7 @@ ui.onMouseOver_Atom = function (event, aid)
         ui.drag.new_atom_id == null && !ui.drag.selection)
     {
         if (ui.drag.action == null)
-            throw new Error("action is null")
+            throw new Error("action is null");
 
         ui.drag.action = ui.Action.fromAtomMerge(ui.drag.atom_id, aid);
         ui.drag.atom_id = ui.atomMap.indexOf(ui.drag.atom_id);
@@ -2222,7 +2216,7 @@ ui.onMouseOver_Bond = function (event, bid)
     if (!ui.isDrag() && ui.modeType() != ui.MODE.PASTE)
         ui.render.bondSetHighlight(bid, true);
     return true;
-}
+};
 
 ui.onMouseOut_Bond = function (event, bid)
 {
@@ -2357,7 +2351,7 @@ ui.showSGroupProperties = function (id)
         {
             var sgroups = ui.render.atomGetSGroups(id);
 
-            if (!Object.isUndefined(sgroups.detect(function (sid)
+            return !Object.isUndefined(sgroups.detect(function (sid)
             {
                 if (sid in verified)
                     return false;
@@ -2368,29 +2362,21 @@ ui.showSGroupProperties = function (id)
                 {
                     if (!Object.isUndefined(sg_atoms.detect(function (aid)
                     {
-                        if (aid in atoms_hash)
-                            return false;
-                        return true;
+                        return !(aid in atoms_hash);
                     }, this)))
                     {
                         return true;
                     }
                 } else if (!Object.isUndefined(ui.selection.atoms.detect(function (aid)
                 {
-                    if (sg_atoms.indexOf(aid) != -1)
-                        return false;
-                    return true;
+                    return (sg_atoms.indexOf(aid) == -1);
                 }, this)))
                 {
                     return true;
                 }
 
                 return false;
-            }, this)))
-            {
-                return true;
-            }
-            return false;
+            }, this));
         }, this)))
         {
             alert("Partial S-group overlapping is not allowed.");
@@ -2538,7 +2524,7 @@ ui.onClick_ElemTableButton = function ()
     ui.showElemTable();
 };
 
-ui.showElemTable = function (id)
+ui.showElemTable = function ()
 {
     if ($('elem_table').visible())
         return;
@@ -2661,7 +2647,7 @@ ui.copy = function ()
                 fieldName: ui.render.sGroupGetAttr(sid, 'fieldName'),
                 fieldValue: ui.render.sGroupGetAttr(sid, 'fieldValue'),
                 atoms: ui.render.sGroupGetAtoms(sid).clone()
-            }
+            };
 
             for (var i = 0; i < new_sgroup.atoms.length; i++)
             {
@@ -2676,7 +2662,7 @@ ui.copy = function ()
 ui.paste = function ()
 {
     var mapping = {};
-    var id, i;
+    var id;
 
     for (id = 0; id < ui.clipboard.atoms.length; id++)
     {

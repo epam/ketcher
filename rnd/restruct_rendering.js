@@ -994,6 +994,21 @@ rnd.ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {
 	return 1;
 }
 
+rnd.ReStruct.prototype.selectDoubleBondShift_Chain = function (bond) {
+	var struct = this.molecule;
+	var hb1 = struct.halfBonds.get(bond.b.hb1);
+	var hb2 = struct.halfBonds.get(bond.b.hb2);
+	var nLeft = (hb1.leftSin > 0.3 ? 1 : 0) + (hb2.rightSin > 0.3 ? 1 : 0);
+	var nRight = (hb2.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0);
+	if (nLeft > nRight)
+		return -1;
+	if (nLeft < nRight)
+		return 1;
+	if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1)
+		return 1;
+	return 0;
+}
+
 rnd.ReStruct.prototype.setDoubleBondShift = function ()
 {
 	var struct = this.molecule;
@@ -1013,6 +1028,8 @@ rnd.ReStruct.prototype.setDoubleBondShift = function ()
 			bond.doubleBondShift = -1;
 		} else if (loop2 >= 0) {
 			bond.doubleBondShift = 1;
+		} else {
+			bond.doubleBondShift = this.selectDoubleBondShift_Chain(bond);
 		}
 	}
 }

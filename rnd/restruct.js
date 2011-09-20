@@ -269,7 +269,8 @@ rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 	var mapChanged = this[map+'Changed'];
 	mapChanged[id] = (typeof(mapChanged[id]) != 'undefined') ?
 	Math.max(mark, mapChanged[id]) : mark;
-	this.clearVisel(this[map].get(id).visel);
+	if (this[map].has(id))
+		this.clearVisel(this[map].get(id).visel);
 }
 
 rnd.ReStruct.prototype.eachVisel = function (func, context) {
@@ -808,6 +809,7 @@ rnd.ReStruct.prototype.loopRemove = function (loopId)
 		var hb = this.molecule.halfBonds.get(reloop.loop.hbs[i]);
 		hb.loop = -1;
 		this.markBond(hb.bid, 1);
+		this.markAtom(hb.begin, 1);
 	}
 	this.reloops.unset(loopId);
 	this.molecule.loops.remove(loopId);

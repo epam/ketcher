@@ -27,6 +27,13 @@ chem.Struct = function ()
 	this.rxnPluses = new util.Pool();
 }
 
+chem.Struct.prototype.isEmpty = function ()
+{
+	return this.atoms.count() == 0 &&
+		this.rxnArrows.count() == 0 &&
+		this.rxnPluses.count() == 0;
+}
+
 chem.Struct.prototype.toLists = function ()
 {
 	var aidMap = {};
@@ -411,6 +418,8 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 	hb.dir = d;
 	hb.norm = d.turnLeft();
 	hb.ang = hb.dir.oxAngle();
+	if (hb.loop < 0)
+		hb.loop = -1;
 }
 
 chem.Struct.prototype.initHalfBonds = function ()

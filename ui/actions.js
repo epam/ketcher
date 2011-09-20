@@ -604,7 +604,7 @@ ui.Action.fromBondAttrs = function (id, attrs, flip)
         {
             id: id_map
         });
-        ui.render.bondFlip(id);
+        ui.bondMap[id_map] = ui.render.bondFlip(id);
     }
     return action;
 };

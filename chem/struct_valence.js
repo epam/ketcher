@@ -189,7 +189,7 @@ chem.Struct.Atom.prototype.calcValence = function (conn)
 		{
 			if (charge == 1)
 			{
-				if (rad + conn <= 2 && elem != ELEM_As)
+				if (rad + conn <= 2 && label != 'As')
 				{
 					valence = 2;
 					hyd = 2 - rad - conn;
@@ -373,7 +373,7 @@ chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 	var label = atom.label;
 	var elem = chem.Element.getElementByLabel(label);
 	if (elem == null)
-		throw new Error("Element " + elem + " unknown");
+		throw new Error("Element " + label + " unknown");
 	if (elem < 0) { // query atom, skip
 		this.valence = -1;
 		this.implicitH = -1;

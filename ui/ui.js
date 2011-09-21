@@ -2539,6 +2539,7 @@ ui.showElemTable = function ()
             'buttonHalfSize':18
         }, true);
         ui.elem_table_area = ui.elem_table_obj.renderTable();
+        $('elem_table_single').checked = true;
     }
     $('elem_table_ok').focus();
 };

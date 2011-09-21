@@ -21,7 +21,13 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	var table = this;
-	this.onClick = opts.onClick || function(elemNum){table.setElementSelected(elemNum, !table.items[elemNum].selected);};
+	this.onClick = opts.onClick || function(elemNum){
+		if (this.mode == 'single')
+			table.setElementSingle(elemNum);
+		else
+			table.setElementSelected(elemNum, !table.items[elemNum].selected);
+		table.updateAtomProps();
+	};
 
 	var hsz = opts.buttonHalfSize || 16;
 	this.elemHalfSz = new util.Vec2(hsz, hsz);
@@ -29,6 +35,7 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 	this.spacing = new util.Vec2(3, 3);
 	this.cornerRadius = 0;
 	this.orig = this.elemSz.scaled(0);
+	this.mode = 'single';
 
 	if (isTable) {
 		this.size = new util.Vec2((this.elemSz.x + this.spacing.x) * 18 + this.spacing.x, (this.elemSz.y + this.spacing.y) *9 + this.spacing.y);
@@ -58,19 +65,20 @@ rnd.ElementTable = function (clientArea, opts, isTable)
 		};
 	this.items = {};
 	this.selectedLabels = util.Set.empty();
+	this.singleLabel = -1;
 	this.atomProps = {};
 };
 
 rnd.ElementTable.prototype.updateAtomProps = function () {
 	this.atomProps = {};
-	if (util.Set.size(this.selectedLabels) == 0)
-		return;
-	var notList = !!$('elem_table_not_list').checked;
-	if (!notList && util.Set.size(this.selectedLabels) == 1) {
-		this.atomProps = {
-			'label': chem.Element.elements.get(util.Set.pick(this.selectedLabels)).label
-		};
+	if (this.mode == 'single') {
+		if (this.singleLabel < 0)
+			return;
+		this.atomProps.label = chem.Element.elements.get(this.singleLabel).label;
 	} else {
+		if (util.Set.size(this.selectedLabels) == 0)
+			return;
+		var notList = this.mode == 'notlist';
 		var ids = util.Set.list(this.selectedLabels);
 		ids.sort(function(a, b){return a-b;});
 		this.atomProps = {
@@ -115,15 +123,42 @@ rnd.ElementTable.prototype.renderPlus = function () {
 	this.items['plus'] = this.paper.path("M{1},{0}L{1},{2}M{0},{1}L{2},{1}", hsz - hext, hsz, hsz + hext).attr({'stroke': '#000','stroke-width': '2px'});
 };
 
-rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
+rnd.ElementTable.prototype.markSelected = function (id, selected) {
 	var item = this.items[id];
 	if (selected) {
-		util.Set.add(this.selectedLabels, id);
 		item.box.attr('fill',this.fillColorSelected);
 	} else {
-		util.Set.remove(this.selectedLabels, id);
 		item.box.attr('fill',this.fillColor);
 	}
 	item.selected = selected;
-	this.updateAtomProps();
+}
+
+rnd.ElementTable.prototype.setElementSingle = function (id) {
+	if (this.singleLabel >= 0)
+		this.markSelected(this.singleLabel, false);
+	if (id >= 0)
+		this.markSelected(id, true);
+	this.singleLabel = id;
 };
+
+rnd.ElementTable.prototype.setElementSelected = function (id, selected) {
+	this.markSelected(id, selected);
+	if (selected) {
+		util.Set.add(this.selectedLabels, id);
+	} else {
+		util.Set.remove(this.selectedLabels, id);
+	}
+};
+
+rnd.ElementTable.prototype.setMode = function (mode) {
+	if (mode == 'single') {
+		util.Set.each(this.selectedLabels, function(id){
+			this.markSelected(id, false);
+		}, this);
+		this.selectedLabels = util.Set.empty();
+	} else {
+		this.setElementSingle(-1);
+	}
+	this.updateAtomProps();
+	this.mode = mode;
+}

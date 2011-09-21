@@ -990,7 +990,7 @@ ui.onKeyPress_InputLabel = function (event)
                 charge *= -1;
         }
 
-        if (label == 'A' || chem.Element.getElementByLabel(label) != null)
+        if (label == 'A' || label == 'R' || chem.Element.getElementByLabel(label) != null)
         {
             ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();

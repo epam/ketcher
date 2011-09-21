@@ -1463,9 +1463,9 @@ ui.onDblClick_Atom = function (event, id)
 };
 
 ui.bondFlipRequired = function (bond, attrs) {
-    return bond.stereo == chem.Struct.BOND.STEREO.NONE &&
+    return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
+    bond.stereo == chem.Struct.BOND.STEREO.NONE &&
     attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
-    attrs.stereo == chem.Struct.BOND.TYPE.SINGLE &&
     ui.ctab.atoms.get(bond.begin).neighbors.length <
     ui.ctab.atoms.get(bond.end).neighbors.length;
 };

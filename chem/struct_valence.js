@@ -443,6 +443,7 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 		atom.implicitH = -1;
 		return;
 	}
+	atom.badConn = false;
 	if (atom.explicitValence) {
 		atom.implicitH = atom.valence - atom.calcValenceMinusHyd(conn);
 		if (atom.implicitH < 0) {
@@ -450,7 +451,6 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 			atom.badConn = true;
 		}
 	} else {
-		atom.badConn = false;
 		atom.calcValence(conn);
 	}
 };

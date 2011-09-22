@@ -758,6 +758,39 @@ rnd.ReStruct.prototype.showLabels = function ()
 				rightMargin += charge.rbb.width + delta;
 				render.addItemPath(atom.visel, 'data', charge.path, charge.rbb);
 			}
+			
+			var valence = {};
+			var mapValence = {
+				0: '0',
+				1: 'I',
+				2: 'II',
+				3: 'III',
+				4: 'IV',
+				5: 'V',
+				6: 'VI',
+				7: 'VII',
+				8: 'VIII'
+			};
+			if (atom.a.explicitValence)
+			{
+				valence.text = mapValence[atom.a.valence];
+				if (!valence.text)
+					throw new Error("invalid valence");
+				valence.text = '(' + valence.text + ')';				
+				valence.path = paper.text(atom.a.ps.x, atom.a.ps.y, valence.text)
+				.attr({
+					'font' : settings.font,
+					'font-size' : settings.fontszsub,
+					'fill' : color
+				});
+				valence.rbb = valence.path.getBBox();
+				this.centerText(valence.path, valence.rbb);
+				this.pathAndRBoxTranslate(valence.path, valence.rbb,
+					rightMargin + 0.5 * valence.rbb.width + delta,
+					-0.3 * label.rbb.height);
+				rightMargin += valence.rbb.width + delta;
+				render.addItemPath(atom.visel, 'data', valence.path, valence.rbb);
+			}
 
 			if (atom.a.badConn && opt.showValenceWarnings) {
 				var warning = {};
@@ -880,7 +913,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||
-		atom.a.explcitValence ||
+		atom.a.explicitValence ||
 		atom.a.atomList != null)
 		return true;
 	if (!atom.showLabel && atom.a.neighbors.length == 2) {

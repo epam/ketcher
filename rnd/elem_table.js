@@ -162,3 +162,30 @@ rnd.ElementTable.prototype.setMode = function (mode) {
 	this.updateAtomProps();
 	this.mode = mode;
 }
+
+rnd.ElementTable.prototype.store = function () {
+	this.old = {
+		'selectedLabels' : util.Set.clone(this.selectedLabels),
+		'singleLabel': this.singleLabel,
+		'mode' : this.mode
+	};
+}
+
+rnd.ElementTable.prototype.restore = function () {
+	util.Set.each(this.selectedLabels, function(id){
+		this.markSelected(id, false);
+	}, this);
+	if (this.singleLabel >= 0)
+		this.markSelected(this.singleLabel, false);
+
+	this.setMode(this.old.mode);
+	if (this.old.mode == 'single') {
+		this.setElementSingle(this.old.singleLabel);
+	} else {
+		util.Set.each(this.old.selectedLabels, function(id){
+			this.markSelected(id, true);
+		}, this);
+		this.selectedLabels = util.Set.clone(this.old.selectedLabels);
+	}
+	this.updateAtomProps();
+}

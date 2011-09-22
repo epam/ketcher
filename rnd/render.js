@@ -516,7 +516,7 @@ rnd.Render.prototype._atomClearSGroups = function (aid)
 		var sg = this.ctab.molecule.sgroups.get(sgid);
 		chem.SGroup.removeAtom(sg, aid);
 	}, this);
-	util.Set.clear(atom.a.sgs);
+	atom.a.sgs = util.Set.empty();
 	this.invalidateAtom(aid);
 };
 

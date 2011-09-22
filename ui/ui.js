@@ -259,6 +259,7 @@ ui.init = function ()
     // Element table
     $('elem_table_cancel').observe('click', function ()
     {
+        ui.elem_table_obj.restore();
         ui.hideDialog('elem_table');
     });
     $('elem_table_ok').observe('click', function (event)
@@ -430,7 +431,7 @@ ui.onResize_Ketcher = function ()
 {
     if (Prototype.Browser.IE)
         ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
-    
+
     ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
 };
 
@@ -2541,6 +2542,7 @@ ui.showElemTable = function ()
         ui.elem_table_area = ui.elem_table_obj.renderTable();
         $('elem_table_single').checked = true;
     }
+    ui.elem_table_obj.store();
     $('elem_table_ok').focus();
 };
 

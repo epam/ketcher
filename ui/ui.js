@@ -2261,8 +2261,7 @@ ui.showAtomProperties = function (id)
     $('atom_charge').value = ui.render.atomGetAttr(id, 'charge');
     var value = ui.render.atomGetAttr(id, 'isotope');
     $('atom_isotope').value = (value == 0 ? '' : value);
-    value = ui.render.atomGetAttr(id, 'valence');
-    $('atom_valence').value = (value == 0 ? '' : value);
+    $('atom_valence').value = (!ui.render.atomGetAttr(id, 'explicitValence') ? '' : ui.render.atomGetAttr(id, 'valence'));
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
     ui.showDialog('atom_properties');
@@ -2280,6 +2279,7 @@ ui.applyAtomProperties = function ()
         label: $('atom_label').value,
         charge: parseInt($('atom_charge').value),
         isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
+        explicitValence: $('atom_valence').value != '',
         valence: $('atom_valence').value == '' ? 0 : parseInt($('atom_valence').value),
         radical: parseInt($('atom_radical').value)
     }), true);

@@ -122,6 +122,21 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
+    clientArea.observe('gesturestart', function(event) {
+        //event.preventDefault();
+        this.start_scale = ui.scale;
+        console.log("gesturestart");
+    });
+    clientArea.observe('gesturechange', function(event) {
+        //event.preventDefault();
+        ui.render.setScale(this.start_scale * event.scale);
+        ui.render.update();
+    });
+    clientArea.observe('gestureend', function(event) {
+        //event.preventDefault();
+        this.start_scale = null;
+    });
+
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
 		rnd.mouseEventNames.each(function(eventName){
@@ -604,6 +619,7 @@ rnd.Render.prototype._rxnArrowMoveRel = function (id, d)
 
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
+    //if (typeof(this.ctab.molecule[map].get(id))=='undefined') alert('got it');
 	return this.ctab.molecule[map].get(id).pp.scaled(this.settings.scaleFactor)
 	.add(this.offset);
 };

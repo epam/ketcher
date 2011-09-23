@@ -108,14 +108,9 @@ util.Set = {
 		return v;
 	},
 
-	clear: function(set) {
-		set = {};
-	},
-
-	union: function(set1, set2) {
+	clone: function(other) {
 		var set = {};
-		chem.Set.mergeIn(set, set1);
-		chem.Set.mergeIn(set, set2);
+		util.Set.mergeIn(set, other);
 		return set;
 	},
 

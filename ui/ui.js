@@ -259,6 +259,7 @@ ui.init = function ()
     // Element table
     $('elem_table_cancel').observe('click', function ()
     {
+        ui.elem_table_obj.restore();
         ui.hideDialog('elem_table');
     });
     $('elem_table_ok').observe('click', function (event)
@@ -430,7 +431,7 @@ ui.onResize_Ketcher = function ()
 {
     if (Prototype.Browser.IE)
         ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
-    
+
     ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
 };
 
@@ -990,7 +991,7 @@ ui.onKeyPress_InputLabel = function (event)
                 charge *= -1;
         }
 
-        if (label == 'A' || chem.Element.getElementByLabel(label) != null)
+        if (label == 'A' || label == 'R' || chem.Element.getElementByLabel(label) != null)
         {
             ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
@@ -1463,9 +1464,9 @@ ui.onDblClick_Atom = function (event, id)
 };
 
 ui.bondFlipRequired = function (bond, attrs) {
-    return bond.stereo == chem.Struct.BOND.STEREO.NONE &&
+    return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
+    bond.stereo == chem.Struct.BOND.STEREO.NONE &&
     attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
-    attrs.stereo == chem.Struct.BOND.TYPE.SINGLE &&
     ui.ctab.atoms.get(bond.begin).neighbors.length <
     ui.ctab.atoms.get(bond.end).neighbors.length;
 };
@@ -2260,8 +2261,7 @@ ui.showAtomProperties = function (id)
     $('atom_charge').value = ui.render.atomGetAttr(id, 'charge');
     var value = ui.render.atomGetAttr(id, 'isotope');
     $('atom_isotope').value = (value == 0 ? '' : value);
-    value = ui.render.atomGetAttr(id, 'valence');
-    $('atom_valence').value = (value == 0 ? '' : value);
+    $('atom_valence').value = (!ui.render.atomGetAttr(id, 'explicitValence') ? '' : ui.render.atomGetAttr(id, 'valence'));
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
     ui.showDialog('atom_properties');
@@ -2279,6 +2279,7 @@ ui.applyAtomProperties = function ()
         label: $('atom_label').value,
         charge: parseInt($('atom_charge').value),
         isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
+        explicitValence: $('atom_valence').value != '',
         valence: $('atom_valence').value == '' ? 0 : parseInt($('atom_valence').value),
         radical: parseInt($('atom_radical').value)
     }), true);
@@ -2539,7 +2540,9 @@ ui.showElemTable = function ()
             'buttonHalfSize':18
         }, true);
         ui.elem_table_area = ui.elem_table_obj.renderTable();
+        $('elem_table_single').checked = true;
     }
+    ui.elem_table_obj.store();
     $('elem_table_ok').focus();
 };
 

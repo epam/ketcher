@@ -2110,8 +2110,7 @@ ui.onMouseMove_Canvas = function (event)
             else if (ui.drag.bond_id != null)
             {
                 var bond = ui.ctab.bonds.get(ui.drag.bond_id);
-                ui.render.atomMoveRel(bond.begin, delta);
-                ui.render.atomMoveRel(bond.end, delta);
+				ui.render.multipleMoveRel({'atoms':[bond.begin, bond.end]}, delta);
             } else if (ui.drag.rxnArrow_id != null) {
                 ui.render.rxnArrowMoveRel(ui.drag.rxnArrow_id, delta);
             } else if (ui.drag.rxnPlus_id != null) {

@@ -758,7 +758,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				rightMargin += charge.rbb.width + delta;
 				render.addItemPath(atom.visel, 'data', charge.path, charge.rbb);
 			}
-			
+
 			var valence = {};
 			var mapValence = {
 				0: '0',
@@ -776,7 +776,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				valence.text = mapValence[atom.a.valence];
 				if (!valence.text)
 					throw new Error("invalid valence");
-				valence.text = '(' + valence.text + ')';				
+				valence.text = '(' + valence.text + ')';
 				valence.path = paper.text(atom.a.ps.x, atom.a.ps.y, valence.text)
 				.attr({
 					'font' : settings.font,

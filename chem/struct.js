@@ -574,7 +574,7 @@ chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 	var abscfs = function(pp) {return pp.sub(min).yComplement(0).scaled(scale);};
 	var relcfs = function(pp) {return pp.yComplement(0).scaled(scale);};
 	this.atoms.each(function (aid, atom) {
-		this._atomSetPos(aid, abscfs(atom.pp));
+		this._atomSetPos(aid, abscfs(atom.pp), scale);
 	}, this);
 
 	this.sgroups.each(function (sgid, sg) {

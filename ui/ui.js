@@ -42,7 +42,7 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
-ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10};
+ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
 
 ui.patterns =
 {
@@ -571,6 +571,8 @@ ui.modeType = function ()
         return ui.MODE.RXN_ARROW;
     if (ui.mode_id == 'rxn_plus')
         return ui.MODE.RXN_PLUS;
+    if (ui.mode_id == 'chain')
+        return ui.MODE.CHAIN;
 };
 
 ui.bondType = function (mode)
@@ -2065,6 +2067,73 @@ ui.onMouseMove_Canvas = function (event)
             ui.drag.new_atom_id = action_ret[2];
         } else
             ui.render.atomMove(ui.drag.new_atom_id, v);
+    } else if (mode == ui.MODE.CHAIN)
+    {
+        if (ui.drag.start_pos == null)
+            return;
+
+        if (ui.drag.new_atom_id == -1) // Connect existent atom
+            return;
+
+        var pos_cursor = ui.page2canvas(event);
+        var pos = null;
+
+        if (ui.drag.atom_id != null)
+            pos = ui.render.atomGetPos(ui.drag.atom_id);
+        else
+            pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+
+        if (util.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
+        {
+            if (ui.drag.new_atom_id != null)
+                return;
+            pos_cursor.x += 10, pos_cursor.y += 10; // Hack to avoid return
+        }
+
+        var v = util.Vec2.diff(pos_cursor, pos);
+
+        var angle = Math.atan2(v.y, v.x);
+        var sign = 1;
+
+        if (angle < 0)
+            sign = -1;
+
+        angle = Math.abs(angle);
+
+        var floor = Math.floor(angle / (Math.PI / 12)) * (Math.PI / 12);
+
+        if (angle - floor < Math.PI / 24)
+            angle = floor;
+        else
+            angle = floor + (Math.PI / 12);
+
+        angle *= sign;
+
+        var step = ui.scale; // hack, steps should be shorter
+        var nSect = Math.ceil(v.length() / step);
+        v = v.rotate(angle);
+        v.add_(pos);
+
+        var action_ret = null;
+        var begin = ui.drag.atom_id;
+
+        if (ui.drag.action != null)
+        {
+            ui.drag.action.perform();
+
+            if (begin != null && Object.isUndefined(ui.ctab.atoms.get(begin)))
+                begin = null;
+        }
+
+        if (begin == null) {
+            begin = label;
+            pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+        }
+
+        action_ret = ui.Action.fromChain(pos, angle, nSect, -1);
+
+        ui.drag.action = action_ret;
+
     } else if (mode == ui.MODE.PASTE)
     {
         var anchor_pos = ui.render.atomGetPos(ui.pasted.atoms[0]);
@@ -2110,7 +2179,7 @@ ui.onMouseMove_Canvas = function (event)
             else if (ui.drag.bond_id != null)
             {
                 var bond = ui.ctab.bonds.get(ui.drag.bond_id);
-				ui.render.multipleMoveRel({'atoms':[bond.begin, bond.end]}, delta);
+                ui.render.multipleMoveRel({'atoms':[bond.begin, bond.end]}, delta);
             } else if (ui.drag.rxnArrow_id != null) {
                 ui.render.rxnArrowMoveRel(ui.drag.rxnArrow_id, delta);
             } else if (ui.drag.rxnPlus_id != null) {

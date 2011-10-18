@@ -111,7 +111,7 @@ ketcher.init = function ()
 		'  8  9  2  0  0  0  0',
 		'  9  4  1  0  0  0  0',
 		'M  END'];
-	
+
 	tmpl.hexa1 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -127,7 +127,7 @@ ketcher.init = function ()
 		'  5  6  2  0  0  0  0',
 		'  6  1  1  0  0  0  0',
 		'M  END'];
-	
+
 	tmpl.hexa2 = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -174,11 +174,24 @@ ketcher.init = function ()
 		'  5  1  1  0  0  0  0',
 		'M  END'
 	];
-	
+
+	tmpl.chain = ['', '  Ketcher 10181123552D 1   1.00000     0.00000     0', '',
+		'  4  3  0     0  0            999 V2000',
+		'   -5.8000   -0.6500    0.0000 C   0  0  0  0  0  0        0  0  0',
+		'   -4.9340   -1.1500    0.0000 C   0  0  0  0  0  0        0  0  0',
+		'   -4.0679   -0.6500    0.0000 C   0  0  0  0  0  0        0  0  0',
+		'   -3.2019   -1.1500    0.0000 C   0  0  0  0  0  0        0  0  0',
+		'  1  2  1  0     0  0',
+		'  2  3  1  0     0  0',
+		'  3  4  1  0     0  0',
+		'M  END'
+	];
+
 	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', tmpl.clean_up, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_six1 = ketcher.showMolfileOpts('pattern_six1', tmpl.hexa1, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_six2 = ketcher.showMolfileOpts('pattern_six2', tmpl.hexa2, 20, renderOptsPattern);
 	ketcher.button_areas.pattern_five = ketcher.showMolfileOpts('pattern_five', tmpl.penta, 20, renderOptsPattern);
+	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
 
 	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
 	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();

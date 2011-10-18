@@ -2130,7 +2130,7 @@ ui.onMouseMove_Canvas = function (event)
             pos = ui.page2canvas({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
         }
 
-        action_ret = ui.Action.fromChain(pos, angle, nSect, -1);
+        action_ret = ui.Action.fromChain(pos, angle, nSect);
 
         ui.drag.action = action_ret;
 

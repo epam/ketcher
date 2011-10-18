@@ -1129,7 +1129,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
     return action;
 };
 
-ui.Action.fromChain = function (p0, v, nSect, aid)
+ui.Action.fromChain = function (p0, v, nSect)
 {
     var angle = Math.PI / 6;
     var dx = ui.scale * Math.cos(angle), dy = ui.scale * Math.sin(angle);
@@ -1150,16 +1150,29 @@ ui.Action.fromChain = function (p0, v, nSect, aid)
     nSect.times(function (i)
     {
         var pos = new util.Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
-        var id1 = ui.render.atomAdd(pos, {label: 'C'});
-        action.addOperation(ui.Action.OPERATION.ATOM_DEL,
+
+        var a = ui.render.findClosestAtom(ui.render.client2Obj(pos), ui.scale * 0.1);
+
+        var id1 = -1;
+        if (a == null)
         {
-            id: ui.atomMap.push(id1) - 1
-        });
-        var bid = ui.render.bondAdd(id0, id1, {});
-        action.addOperation(ui.Action.OPERATION.BOND_DEL,
+            id1 = ui.render.atomAdd(pos, {label: 'C'});
+            action.addOperation(ui.Action.OPERATION.ATOM_DEL,
+            {
+                id: ui.atomMap.push(id1) - 1
+            });
+        } else {
+            id1 = a.id;
+        }
+
+        if (!ui.render.checkBondExists(id0, id1))
         {
-            id: ui.bondMap.push(bid) - 1
-        });
+            var bid = ui.render.bondAdd(id0, id1, {});
+            action.addOperation(ui.Action.OPERATION.BOND_DEL,
+            {
+                id: ui.bondMap.push(bid) - 1
+            });
+        }
         id0 = id1;
     }, this);
 

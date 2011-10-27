@@ -2676,7 +2676,7 @@ ui.copy = function ()
 
     ui.selection.atoms.each(function (id)
     {
-        var new_atom = Object.clone(ui.ctab.atoms.get(id));
+        var new_atom = new chem.Struct.Atom(ui.ctab.atoms.get(id));
         new_atom.pos = ui.render.atomGetPos(id);
 
         if (new_atom.sgroup != -1)
@@ -2687,7 +2687,7 @@ ui.copy = function ()
 
     ui.selection.bonds.each(function (id)
     {
-        var new_bond = Object.clone(ui.ctab.bonds.get(id));
+        var new_bond = new chem.Struct.Bond(ui.ctab.bonds.get(id));
         new_bond.begin = mapping[new_bond.begin];
         new_bond.end = mapping[new_bond.end];
         ui.clipboard.bonds.push(new chem.Struct.Bond(new_bond));
@@ -2740,14 +2740,14 @@ ui.copy = function ()
 
     ui.selection.rxnArrows.each(function (id)
     {
-        var arrow = Object.clone(ui.ctab.rxnArrows.get(id));
+        var arrow = new chem.Struct.RxnArrow(ui.ctab.rxnArrows.get(id));
         arrow.pos = ui.render.rxnArrowGetPos(id);
         ui.clipboard.rxnArrows.push(arrow);
     });
 
     ui.selection.rxnPluses.each(function (id)
     {
-        var plus = Object.clone(ui.ctab.rxnPluses.get(id));
+        var plus = new chem.Struct.RxnPlus(ui.ctab.rxnPluses.get(id));
         plus.pos = ui.render.rxnPlusGetPos(id);
         ui.clipboard.rxnPluses.push(plus);
     });

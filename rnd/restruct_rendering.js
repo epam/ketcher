@@ -519,7 +519,7 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 			var render = this.render;
 			var styles = render.styles;
 			var paper = render.paper;
-			item.selectionPlate = item.makeSelectionPlate(paper, styles);
+			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
 			render.addItemPath(item.visel, 'selection-plate', item.selectionPlate);
 		}
 		item.selectionPlate.show();
@@ -848,6 +848,17 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 	}
 };
 
+rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
+	var p1 = this.atoms.get(bond.b.begin).a.ps,
+	p2 = this.atoms.get(bond.b.end).a.ps;
+	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
+	bond.b.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
+	bond.b.len = util.Vec2.dist(p1, p2);
+	bond.b.sb = settings.lineWidth * 5;
+	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
+	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
+}
+
 rnd.ReStruct.prototype.showBonds = function ()
 {
 	var render = this.render;
@@ -856,15 +867,9 @@ rnd.ReStruct.prototype.showBonds = function ()
 	var opt = render.opt;
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
-		var p1 = this.atoms.get(bond.b.begin).a.ps,
-		p2 = this.atoms.get(bond.b.end).a.ps;
 		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
 		hb2 = this.molecule.halfBonds.get(bond.b.hb2);
-		bond.b.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
-		bond.b.len = util.Vec2.dist(p1, p2);
-		bond.b.sb = settings.lineWidth * 5;
-		bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
-		bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
+		this.bondRecalc(settings, bond);
 		bond.path = this.drawBond(bond, hb1, hb2);
 		bond.rbb = bond.path.getBBox();
 		render.addItemPath(bond.visel, 'data', bond.path, bond.rbb);

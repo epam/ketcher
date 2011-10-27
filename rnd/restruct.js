@@ -37,7 +37,7 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.component = -1;
 };
 
-rnd.ReAtom.prototype.makeSelectionPlate = function (paper, styles) {
+rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return paper.circle(this.a.ps.x, this.a.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };
@@ -55,7 +55,8 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 	this.selectionPlate = null;
 };
 
-rnd.ReBond.prototype.makeSelectionPlate = function (paper, styles) {
+rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
+	restruct.bondRecalc(restruct.render.settings, this);
 	return paper
 	.ellipse(this.b.center.x, this.b.center.y, this.b.sa, this.b.sb)
 	.rotate(this.b.angle)
@@ -875,7 +876,7 @@ rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 	this.selectionPlate = null;
 };
 
-rnd.ReRxnPlus.prototype.makeSelectionPlate = function (paper, styles) {
+rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };
@@ -891,7 +892,7 @@ rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 	this.selectionPlate = null;
 };
 
-rnd.ReRxnArrow.prototype.makeSelectionPlate = function (paper, styles) {
+rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };

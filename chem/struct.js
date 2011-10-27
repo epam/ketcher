@@ -586,10 +586,10 @@ chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
 	}, this);
 
 	this.rxnPluses.each(function (id, item) {
-		this._rxnPlusSetPos(id, abscfs(item.pp));
+		this._rxnPlusSetPos(id, abscfs(item.pp), scale);
 	}, this);
 	this.rxnArrows.each(function (id, item) {
-		this._rxnArrowSetPos(id, abscfs(item.pp));
+		this._rxnArrowSetPos(id, abscfs(item.pp), scale);
 	}, this);
 };
 
@@ -623,6 +623,32 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 		});
 	}
 	if (!bb && global)
+		bb = {
+			min: new util.Vec2(0, 0),
+			max: new util.Vec2(1, 1)
+		};
+	return bb;
+};
+
+chem.Struct.prototype.getCoordBoundingBoxObj = function ()
+{
+	var bb = null;
+	var extend = function(pp) {
+		if (!bb)
+			bb = {
+				min: pp,
+				max: pp
+			};
+		else {
+			bb.min = util.Vec2.min(bb.min, pp);
+			bb.max = util.Vec2.max(bb.max, pp);
+		}
+	};
+
+	this.atoms.each(function (aid, atom) {
+		extend(atom.pos);
+	});
+	if (!bb)
 		bb = {
 			min: new util.Vec2(0, 0),
 			max: new util.Vec2(1, 1)
@@ -665,7 +691,13 @@ chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 chem.Struct.prototype.coordProject = function()
 {
 	this.atoms.each(function (aid, atom) {// project coordinates
-		this._atomSetPos(aid, new util.Vec2(atom.pos.x, atom.pos.y));
+		this._atomSetPos(aid, new util.Vec2(atom.pos));
+	}, this);
+	this.rxnPluses.each(function (id, item) {
+		this._rxnPlusSetPos(id, new util.Vec2(item.pos));
+	}, this);
+	this.rxnArrows.each(function (id, item) {
+		this._rxnArrowSetPos(id, new util.Vec2(item.pos));
 	}, this);
 };
 

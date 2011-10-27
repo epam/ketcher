@@ -1060,7 +1060,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 			this.write(connectivity.toUpperCase());
 			this.writeCR();
 		}
-		
+
 		this.molecule.sgroups.each(function (id, sgroup) {
 			if (sgroup.type == 'SRU') {
 				this.write('M  SMT ');
@@ -1105,16 +1105,74 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		}
 	}
 	molLines.push(ctabLines.slice(i0));
+	var bbReact = [],
+		bbAgent = [],
+		bbProd = [];
 	for (var j = 0; j < molLines.length; ++j) {
 		var mol = chem.Molfile.parseCTab(molLines[j]);
+		var bb = mol.getCoordBoundingBoxObj();
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
 				chem.Struct.FRAGMENT.AGENT));
+		if (fragmentType == chem.Struct.FRAGMENT.REACTANT)
+			bbReact.push(bb);
+		else if (fragmentType == chem.Struct.FRAGMENT.AGENT)
+			bbAgent.push(bb);
+		else if (fragmentType == chem.Struct.FRAGMENT.PRODUCT)
+			bbProd.push(bb);
+
 		mol.atoms.each(function(aid, atom){
 			atom.rxnFragmentType = fragmentType;
 		});
 		ret.merge(mol);
 	}
+
+	var bb1, bb2, x, y, bbReactAll = {}, bbProdAll = {};
+	for (j = 0; j <	bbReact.length - 1; ++j) {
+		bb1 = bbReact[j];
+		bb2 = bbReact[j+1];
+
+		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
+		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
+
+		console.log(x.toString() + " " + y.toString());
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
+	}
+	for (j = 0; j <	bbReact.length; ++j) {
+		if (j == 0) {
+			bbReactAll.max = new util.Vec2(bbReact[j].max);
+			bbReactAll.min = new util.Vec2(bbReact[j].min);
+		} else {
+			bbReactAll.max = util.Vec2.max(bbReactAll.max, bbReact[j].max);
+			bbReactAll.min = util.Vec2.min(bbReactAll.min, bbReact[j].min);
+		}
+	}
+	for (j = 0; j <	bbProd.length - 1; ++j) {
+		bb1 = bbProd[j];
+		bb2 = bbProd[j+1];
+
+		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
+		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
+
+		console.log(x.toString() + " " + y.toString());
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
+	}
+	for (j = 0; j <	bbProd.length; ++j) {
+		if (j == 0) {
+			bbProdAll.max = new util.Vec2(bbProd[j].max);
+			bbProdAll.min = new util.Vec2(bbProd[j].min);
+		} else {
+			bbProdAll.max = util.Vec2.max(bbProdAll.max, bbProd[j].max);
+			bbProdAll.min = util.Vec2.min(bbProdAll.min, bbProd[j].min);
+		}
+	}
+	bb1 = bbReactAll;
+	bb2 = bbProdAll;
+	x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
+	y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
+
+	console.log(x.toString() + " " + y.toString());
+	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pos':new util.Vec2(x, y)}));
 	ret.isReaction = true;
 	return ret;
 };

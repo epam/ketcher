@@ -559,18 +559,18 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 	return aid;
 };
 
-rnd.Render.prototype._rxnPlusAdd = function (pos)
+rnd.Render.prototype._rxnPlusAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnPlusAdd");
-	var id = this.ctab.rxnPlusAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	var id = this.ctab.rxnPlusAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)), params);
 	this.invalidateItem('rxnPluses', id, 1);
 	return id;
 };
 
-rnd.Render.prototype._rxnArrowAdd = function (pos)
+rnd.Render.prototype._rxnArrowAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnArrowAdd");
-	var id = this.ctab.rxnArrowAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	var id = this.ctab.rxnArrowAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)), params);
 	this.invalidateItem('rxnArrows', id, 1);
 	return id;
 };

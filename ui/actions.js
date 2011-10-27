@@ -886,7 +886,7 @@ ui.Action.fromBondDeletion = function (id)
     return action.perform();
 };
 
-ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
+ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxnPluses)
 {
     var action = new ui.Action();
 
@@ -942,6 +942,14 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups)
         {
             id: idx
         });
+    }, this);
+
+    ui.selection.rxnArrows.each(function (id) {
+        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+    }, this);
+
+    ui.selection.rxnPluses.each(function (id) {
+        action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
     }, this);
 
     return action;

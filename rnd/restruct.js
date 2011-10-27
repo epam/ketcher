@@ -701,7 +701,7 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	return aid;
 };
 
-rnd.ReStruct.prototype.rxnPlusAdd = function (pos)
+rnd.ReStruct.prototype.rxnPlusAdd = function (pos, params)
 {
 	var id = this.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
 	var reItem = new rnd.ReRxnPlus(this.molecule.rxnPluses.get(id));
@@ -710,7 +710,7 @@ rnd.ReStruct.prototype.rxnPlusAdd = function (pos)
 	return id;
 };
 
-rnd.ReStruct.prototype.rxnArrowAdd = function (pos)
+rnd.ReStruct.prototype.rxnArrowAdd = function (pos, params)
 {
 	var id = this.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
 	var reItem = new rnd.ReRxnArrow(this.molecule.rxnArrows.get(id));

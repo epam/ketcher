@@ -1250,7 +1250,9 @@ ui.drag =
 ui.selection =
 {
     atoms: [],
-    bonds: []
+    bonds: [],
+    rxnArrows: [],
+    rxnPluses: []
 };
 
 ui.page2canvas = function (pos)
@@ -1636,11 +1638,13 @@ ui.onClick_Canvas = function (event)
         break;
 
     case ui.MODE.PASTE:
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups));
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
         ui.render.update();
         ui.pasted.atoms.clear();
         ui.pasted.bonds.clear();
         ui.pasted.sgroups.clear();
+        ui.pasted.rxnArrows.clear();
+        ui.pasted.rxnPluses.clear();
         ui.selectMode('select_simple');
         break;
     }
@@ -1956,11 +1960,13 @@ ui.onMouseDown_Canvas = function (event)
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.mouse_moved = true; // to avoid further handling of the click
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups));
+        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
         ui.render.update();
         ui.pasted.atoms.clear();
         ui.pasted.bonds.clear();
         ui.pasted.sgroups.clear();
+        ui.pasted.rxnArrows.clear();
+        ui.pasted.rxnPluses.clear();
         ui.selectMode('select_simple');
 
         return;
@@ -2136,11 +2142,11 @@ ui.onMouseMove_Canvas = function (event)
 
     } else if (mode == ui.MODE.PASTE)
     {
-        var anchor_pos = ui.render.atomGetPos(ui.pasted.atoms[0]);
-        var cur_pos = ui.page2canvas(event);
-        var delta = {x: cur_pos.x - anchor_pos.x, y: cur_pos.y - anchor_pos.y};
+        var cur_pos = new util.Vec2(ui.page2canvas(event));
+        var delta = util.Vec2.diff(cur_pos, ui.pastedAnchorPos);
 
         ui.render.multipleMoveRel(ui.pasted, delta);
+        ui.pastedAnchorPos = new util.Vec2(cur_pos);
     } else
     {
         if (ui.drag.atom_id == null && ui.drag.bond_id == null && ui.drag.rxnArrow_id == null && ui.drag.rxnPlus_id == null)
@@ -2629,7 +2635,8 @@ ui.onSelect_ElemTableNotList = function ()
 //
 
 ui.clipboard = null;
-ui.pasted = {atoms: [], bonds: [], sgroups: []};
+ui.pasted = {atoms: [], bonds: [], sgroups: [], rxnArrows: [], rxnPluses: []}; // ids
+ui.pastedAnchorPos = null;
 
 ui.isClipboardEmpty = function ()
 {
@@ -2660,7 +2667,9 @@ ui.copy = function ()
     {
         atoms: new Array(),
         bonds: new Array(),
-        sgroups: new Array()
+        sgroups: new Array(),
+        rxnArrows: new Array(),
+        rxnPluses: new Array()
     };
 
     var mapping = {};
@@ -2728,6 +2737,21 @@ ui.copy = function ()
             ui.clipboard.sgroups.push(new_sgroup);
         }
     });
+
+    ui.selection.rxnArrows.each(function (id)
+    {
+        var arrow = Object.clone(ui.ctab.rxnArrows.get(id));
+        arrow.pos = ui.render.rxnArrowGetPos(id);
+        ui.clipboard.rxnArrows.push(arrow);
+    });
+
+    ui.selection.rxnPluses.each(function (id)
+    {
+        var plus = Object.clone(ui.ctab.rxnPluses.get(id));
+        plus.pos = ui.render.rxnPlusGetPos(id);
+        ui.clipboard.rxnPluses.push(plus);
+    });
+
 };
 
 ui.paste = function ()
@@ -2767,6 +2791,25 @@ ui.paste = function ()
 
         ui.pasted.sgroups.push(sid);
     }, this);
+
+    for (id = 0; id < ui.clipboard.rxnArrows.length; id++) {
+        var arrow = ui.clipboard.rxnArrows[id];
+        ui.pasted.rxnArrows.push(ui.render.rxnArrowAdd(arrow.pos, arrow));
+    }
+
+    for (id = 0; id < ui.clipboard.rxnPluses.length; id++) {
+        var plus = ui.clipboard.rxnPluses[id];
+        ui.pasted.rxnPluses.push(ui.render.rxnPlusAdd(plus.pos, plus));
+    }
+
+    ui.pastedAnchorPos = null;
+    if (ui.pasted.atoms.length) {
+        ui.pastedAnchorPos = ui.render.atomGetPos(ui.pasted.atoms[0]);
+    } else if (ui.pasted.rxnArrows.length) {
+        ui.pastedAnchorPos = ui.render.rxnArrowGetPos(ui.pasted.rxnArrows[0]);
+    } else if (ui.pasted.rxnPluses.length) {
+        ui.pastedAnchorPos = ui.render.rxnPlusGetPos(ui.pasted.rxnPluses[0]);
+    }
 
     ui.selectMode(null);
     ui.render.update();

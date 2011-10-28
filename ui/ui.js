@@ -356,7 +356,7 @@ ui.init = function ()
 
     this.render.onRxnPlusClick = this.onClick_RxnPlus;
     //this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
-    //this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
+    this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
     //this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
     //this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
 
@@ -1921,6 +1921,34 @@ ui.onMouseDown_RxnArrow = function (event, id)
     {
         if (ui.modeType() == ui.MODE.SIMPLE)
             ui.drag.action = ui.Action.fromSelectedRxnArrowPos();
+        ui.drag.selection = true;
+    }
+    return true;
+};
+
+ui.onMouseDown_RxnPlus = function (event, id)
+{
+    if ($('input_label').visible())
+        $('input_label').hide();
+
+    if (ui.modeType() == ui.MODE.PASTE)
+        return false;
+
+    ui.mouse_moved = false;
+    ui.drag.rxnPlus_id = id;
+    ui.drag.start_pos = {x: event.pageX, y: event.pageY};
+    ui.drag.last_pos = {x: event.pageX, y: event.pageY};
+
+    if (ui.selection.rxnPluses.indexOf(id) == -1)
+    {
+        if (ui.modeType() == ui.MODE.SIMPLE)
+            ui.drag.action = ui.Action.fromRxnPlusPos(id);
+        ui.drag.selection = false;
+        ui.updateSelection();
+    } else
+    {
+        if (ui.modeType() == ui.MODE.SIMPLE)
+            ui.drag.action = ui.Action.fromSelectedRxnPlusPos();
         ui.drag.selection = true;
     }
     return true;

@@ -617,6 +617,12 @@ rnd.Render.prototype._rxnArrowMoveRel = function (id, d)
 	this._itemMoveRel('rxnArrows', id, d);
 };
 
+rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
+{
+	rnd.logMethod("_rxnPlusMoveRel");
+	this._itemMoveRel('rxnPluses', id, d);
+};
+
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
     //if (typeof(this.ctab.molecule[map].get(id))=='undefined') alert('got it');

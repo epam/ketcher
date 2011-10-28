@@ -820,6 +820,7 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 			var render = this.render;
 			var styles = render.styles;
 			var paper = render.paper;
+			this.bondRecalc(render.settings, bond);
 			bond.highlighting = paper
 			.ellipse(bond.b.center.x, bond.b.center.y, bond.b.sa, bond.b.sb)
 			.rotate(bond.b.angle)

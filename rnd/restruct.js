@@ -805,6 +805,8 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 
 rnd.ReStruct.prototype.loopRemove = function (loopId)
 {
+	if (!this.reloops.has(loopId))
+		return;
 	var reloop = this.reloops.get(loopId);
 	this.clearVisel(reloop.visel);
 	for (var i = 0; i < reloop.loop.hbs.length; ++i) {

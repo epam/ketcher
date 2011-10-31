@@ -686,6 +686,9 @@ rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 	}, this);
 	util.Set.each(bidSetCross, function(bid){
 		this.invalidateBond(bid, true);
+		var bond = this.ctab.bonds.get(bid).b;
+		this.invalidateAtom(bond.begin, 1);
+		this.invalidateAtom(bond.end, 1);
 	}, this);
 	for (var i = 0; i < atoms.length; ++i) {
 		this.itemMoveRelAsIs('atoms', atoms[i], d);

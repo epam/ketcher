@@ -1124,7 +1124,7 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		mol.atoms.each(function(aid, atom){
 			atom.rxnFragmentType = fragmentType;
 		});
-		ret.merge(mol);
+		mol.mergeInto(ret);
 	}
 
 	var bb1, bb2, x, y, bbReactAll = null, bbProdAll = null;

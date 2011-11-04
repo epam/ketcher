@@ -1127,7 +1127,7 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		ret.merge(mol);
 	}
 
-	var bb1, bb2, x, y, bbReactAll = {}, bbProdAll = {};
+	var bb1, bb2, x, y, bbReactAll = null, bbProdAll = null;
 	for (j = 0; j <	bbReact.length - 1; ++j) {
 		bb1 = bbReact[j];
 		bb2 = bbReact[j+1];
@@ -1140,6 +1140,7 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
+			bbReactAll = {}
 			bbReactAll.max = new util.Vec2(bbReact[j].max);
 			bbReactAll.min = new util.Vec2(bbReact[j].min);
 		} else {
@@ -1154,11 +1155,11 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		console.log(x.toString() + " " + y.toString());
 		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
+			bbProdAll = {}
 			bbProdAll.max = new util.Vec2(bbProd[j].max);
 			bbProdAll.min = new util.Vec2(bbProd[j].min);
 		} else {
@@ -1168,11 +1169,18 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 	}
 	bb1 = bbReactAll;
 	bb2 = bbProdAll;
-	x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
-	y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
+	if (!bb1 && !bb2)
+		throw new Error("reaction must contain at least one product or reactant");
+	var v1 = bb1 ? new util.Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
+	var v2 = bb2 ? new util.Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
+	var defaultOffset = 3;
+	if (!v1)
+		v1 = new util.Vec2(v2.x - defaultOffset, v2.y);
+	if (!v2)
+		v2 = new util.Vec2(v1.x + defaultOffset, v1.y);
+	var v = util.Vec2.lc2(v1, 0.5, v2, 0.5);
 
-	console.log(x.toString() + " " + y.toString());
-	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pos':new util.Vec2(x, y)}));
+	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pos':v}));
 	ret.isReaction = true;
 	return ret;
 };

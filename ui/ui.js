@@ -2450,9 +2450,9 @@ ui.onChange_AtomIsotope = function ()
 
 ui.onChange_AtomValence = function ()
 {
-    if (this.value.strip() == '' || this.value == '0')
+    if (this.value.strip() == '')
         this.value = '';
-    else if (!this.value.match(/^[1-9]$/))
+    else if (!this.value.match(/^[0-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
 };
 

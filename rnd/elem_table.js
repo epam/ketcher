@@ -159,8 +159,8 @@ rnd.ElementTable.prototype.setMode = function (mode) {
 	} else {
 		this.setElementSingle(-1);
 	}
-	this.updateAtomProps();
 	this.mode = mode;
+	this.updateAtomProps();
 }
 
 rnd.ElementTable.prototype.store = function () {

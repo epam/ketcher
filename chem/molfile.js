@@ -767,7 +767,8 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 		var nReactants = 0;
 		for (i = 0; i < components.length; ++i) {
 			if (!components[i]) {
-				throw new Error("One or more components are empty");
+				submolTexts.push("");
+				continue;
 			}
 			bb = molecule.getCoordBoundingBox(components[i]);
 			c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
@@ -781,7 +782,9 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 
 		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(nReactants, 3) + util.paddedInt(ccs.length-nReactants, 3) + util.paddedInt(0, 3) + "\n";
 		for (i = 0; i < components.length; ++i) {
-			this.molfile += "$MOL\n" + submolTexts[i];
+			if (components[i]) {
+				this.molfile += "$MOL\n" + submolTexts[i];
+			}
 		}
 		return this.molfile;
 	}

@@ -18,10 +18,12 @@ ui.standalone = true;
 ui.path = '/';
 ui.base_url = '';
 
+// this only serves as a unit of length
+// for zooming, use ui.zoom* below
 ui.scale = 40;
-ui.SCALE_MIN  = 20;
-ui.SCALE_MAX  = 120;
-ui.SCALE_INCR = 20;
+
+ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
+ui.zoomIdx = 1;
 
 ui.DBLCLICK_INTERVAL = 300;
 
@@ -1181,15 +1183,13 @@ ui.onClick_ZoomIn = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    ui.scale += ui.SCALE_INCR;
+    ui.zoomIdx++;
 
-    if (ui.scale >= ui.SCALE_MAX)
+    if (ui.zoomIdx >= ui.zoomValues.length - 1)
         this.addClassName('buttonDisabled');
     $('zoom_out').removeClassName('buttonDisabled');
 
-	ui.render.setZoom(ui.scale / 40);
-//    ui.render.setScale(ui.scale);
-//    ui.render.update();
+    ui.setZoom();
 };
 
 ui.onClick_ZoomOut = function ()
@@ -1197,16 +1197,20 @@ ui.onClick_ZoomOut = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    ui.scale -= ui.SCALE_INCR;
+    ui.zoomIdx--;
 
-    if (ui.scale <= ui.SCALE_MIN)
+    if (ui.zoomIdx <= 0)
         this.addClassName('buttonDisabled');
     $('zoom_in').removeClassName('buttonDisabled');
 
-	ui.render.setZoom(ui.scale / 40);
-//    ui.render.setScale(ui.scale);
-//    ui.render.update();
+    ui.setZoom();
 };
+
+ui.setZoom = function () {
+    if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
+        throw new Error ("Zoom index out of range");
+    ui.render.setZoom(ui.zoomValues[ui.zoomIdx]);
+}
 
 //
 // Automatic layout
@@ -2469,16 +2473,16 @@ ui.onChange_AtomValence = function ()
 ui.showBondProperties = function (id)
 {
     $('bond_properties').bond_id = id;
-    
+
     var type = ui.render.bondGetAttr(id, 'type');
     var stereo = ui.render.bondGetAttr(id, 'stereo');
-    
+
     for (var bond in ui.bondTypeMap)
     {
         if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo)
             break;
     }
-    
+
     $('bond_type').value = bond;
     $('bond_topology').value = ui.render.bondGetAttr(id, 'topology') || 0;
     $('bond_center').value = ui.render.bondGetAttr(id, 'reactingCenterStatus') || 0;

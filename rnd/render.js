@@ -228,9 +228,11 @@ rnd.Render.prototype.checkCurrentItem = function (event) {
 		this.pagePos = new util.Vec2(event.pageX, event.pageY);
 		var clientPos = null;
 		if ('ui' in window && 'page2canvas' in ui)
-			clientPos = new util.Vec2(ui.page2canvas(event));
+			clientPos = new util.Vec2(ui.page2canvas2(event));
 		else
 			clientPos = this.pagePos.sub(this.clientAreaPos);
+		clientPos = clientPos.scaled(1/this.zoom);
+		clientPos = clientPos.add(ui.scrollPos().scaled(1/this.zoom));
 		var item = this.findClosestItem(this.client2Obj(clientPos));
 		this.setCurrentItem(item.type, item.id, event);
 	}
@@ -1224,7 +1226,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	var closestAtom = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
 	minDist = minDist || maxMinDist;
-	minDist = Math.min(minDist, maxMinDist);
+	minDist	= Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
 		var dist = util.Vec2.dist(pos, atom.a.ps);
 		if (dist < minDist) {
@@ -1378,5 +1380,5 @@ rnd.Render.prototype.setZoom = function (zoom) {
 }
 
 rnd.Render.prototype.setViewBox = function () {
-	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x / this.zoom + ' ' + this.sz.y / this.zoom);
+	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
 }

@@ -1275,6 +1275,11 @@ ui.page2canvas2 = function (pos)
            };
 };
 
+ui.scrollPos = function ()
+{
+    return new util.Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
+}
+
 //
 // Scrolling
 //

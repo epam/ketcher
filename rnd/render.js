@@ -64,7 +64,7 @@ rnd.logMethod = function () { };
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 {
-	clientArea = $(clientArea);
+	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
 	this.paper.rect(0, 0, 100, 100).attr({
@@ -94,7 +94,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.scale = scale || 100;
 	this.offset = new util.Vec2();
-	clientArea = $(clientArea);
+	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
 	this.size = new util.Vec2();
@@ -110,6 +110,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.selectionRect = null;
 	this.rxnArrow = null;
 	this.rxnMode = false;
+	this.zoom = 1.0;
 
 	var render = this;
 	var valueT = 0, valueL = 0;
@@ -262,6 +263,7 @@ util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 
 rnd.Render.prototype.setScale = function (scale)
 {
+	throw new Error("this method is obsolete, please use setZoom instead");
 	this.scale = scale;
 	this.dirty = true;
 };
@@ -873,12 +875,19 @@ rnd.Render.prototype.getBoundingBox = function ()
 	return bb;
 };
 
+rnd.Render.prototype._setPaperSize = function (sz)
+{
+	var z = this.zoom;
+	this.paper.setSize(sz.x * z, sz.y * z);
+	this.setViewBox();
+}
+
 rnd.Render.prototype.setPaperSize = function (sz)
 {
 	rnd.logMethod("setPaperSize");
 	var oldSz = this.sz;
 	this.sz = sz;
-	this.paper.setSize(sz.x, sz.y);
+	this._setPaperSize(sz);
 	if (this.onCanvasSizeChanged)
 		this.onCanvasSizeChanged(sz, oldSz);
 };
@@ -1362,3 +1371,12 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 	visel.add(path, bb);
 	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
+
+rnd.Render.prototype.setZoom = function (zoom) {
+	this.zoom = zoom;
+	this._setPaperSize(this.sz);
+}
+
+rnd.Render.prototype.setViewBox = function () {
+	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x / this.zoom + ' ' + this.sz.y / this.zoom);
+}

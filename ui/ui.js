@@ -1187,8 +1187,9 @@ ui.onClick_ZoomIn = function ()
         this.addClassName('buttonDisabled');
     $('zoom_out').removeClassName('buttonDisabled');
 
-    ui.render.setScale(ui.scale);
-    ui.render.update();
+	ui.render.setZoom(ui.scale / 40);
+//    ui.render.setScale(ui.scale);
+//    ui.render.update();
 };
 
 ui.onClick_ZoomOut = function ()
@@ -1202,8 +1203,9 @@ ui.onClick_ZoomOut = function ()
         this.addClassName('buttonDisabled');
     $('zoom_in').removeClassName('buttonDisabled');
 
-    ui.render.setScale(ui.scale);
-    ui.render.update();
+	ui.render.setZoom(ui.scale / 40);
+//    ui.render.setScale(ui.scale);
+//    ui.render.update();
 };
 
 //

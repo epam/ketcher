@@ -124,13 +124,14 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
     clientArea.observe('gesturestart', function(event) {
-        //event.preventDefault();
-        this.start_scale = ui.scale;
+        event.preventDefault();
+        this.start_scale = ui.render.zoom;
         console.log("gesturestart");
     });
     clientArea.observe('gesturechange', function(event) {
-        //event.preventDefault();
-        ui.render.setScale(this.start_scale * event.scale);
+        event.preventDefault();
+        //ui.render.setScale(this.start_scale * event.scale);
+        ui.render.setZoom(this.start_scale * event.scale)
         ui.render.update();
     });
     clientArea.observe('gestureend', function(event) {

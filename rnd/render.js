@@ -137,6 +137,18 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
         this.start_scale = null;
     });
 
+    // rbalabanov: here is teptorary fix for "drag issue" on iPad
+    //BEGIN
+    if ('hiddenPaths' in rnd.ReStruct.prototype) {
+        clientArea.observe('touchend', function(event) {
+            console.log('touchend');
+            if (event.touches.length == 0) {
+                while (rnd.ReStruct.prototype.hiddenPaths.length > 0) rnd.ReStruct.prototype.hiddenPaths.pop().remove();
+            }
+        });
+    }
+    //END
+
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
 		rnd.mouseEventNames.each(function(eventName){

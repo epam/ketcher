@@ -45,7 +45,7 @@ chem.Struct.prototype.toLists = function ()
 
 	var bondList = [];
 	this.bonds.each(function(bid, bond) {
-		var b = Object.clone(bond);
+		var b = new chem.Struct.Bond(bond);
 		b.begin = aidMap[bond.begin];
 		b.end = aidMap[bond.end];
 		bondList.push(b);
@@ -59,6 +59,12 @@ chem.Struct.prototype.toLists = function ()
 
 chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 {
+	var cp = new chem.Struct();
+	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols);
+}
+
+chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols)
+{
 	atomSet = atomSet || util.Set.keySetInt(this.atoms);
 	bondSet = bondSet || util.Set.keySetInt(this.bonds);
 	bondSet = util.Set.filter(bondSet, function(bid){
@@ -67,7 +73,6 @@ chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 			util.Set.contains(atomSet, bond.end);
 	}, this);
 
-	var cp = new chem.Struct();
 	var aidMap = {};
 	this.atoms.each(function(aid, atom) {
 		if (util.Set.contains(atomSet, aid))
@@ -92,8 +97,6 @@ chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 	});
-	this.rxnArrows = new util.Pool();
-	this.rxnPluses = new util.Pool();
 	cp.isChiral = this.isChiral;
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;
@@ -123,20 +126,6 @@ chem.Struct.prototype.findBondId = function (begin, end)
 	}, this);
 
 	return id;
-};
-
-chem.Struct.prototype.merge = function (mol)
-{
-	var aidMap = {};
-	mol.atoms.each(function(aid, atom){
-		aidMap[aid] = this.atoms.add(atom);
-	}, this);
-	mol.bonds.each(function(bid, bond){
-		var params = new chem.Struct.Bond(bond);
-		params.begin = aidMap[bond.begin];
-		params.end = aidMap[bond.end];
-		this.bonds.add(params);
-	}, this);
 };
 
 chem.Struct.ATOM =
@@ -199,20 +188,6 @@ chem.Struct.FRAGMENT = {
 	REACTANT:1,
 	PRODUCT:2,
 	AGENT:3
-};
-
-chem.Struct.prototype.merge = function (mol)
-{
-	var aidMap = {};
-	mol.atoms.each(function(aid, atom){
-		aidMap[aid] = this.atoms.add(atom);
-	}, this);
-	mol.bonds.each(function(bid, bond){
-		var params = new chem.Struct.Bond(bond);
-		params.begin = aidMap[bond.begin];
-		params.end = aidMap[bond.end];
-		this.bonds.add(params);
-	}, this);
 };
 
 chem.Struct.Atom = function (params)

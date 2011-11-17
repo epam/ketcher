@@ -235,6 +235,14 @@ ui.init = function ()
     {
         ui.applyAtomProperties();
     });
+    $('bond_prop_cancel').observe('click', function ()
+    {
+        ui.hideDialog('bond_properties');
+    });
+    $('bond_prop_ok').observe('click', function ()
+    {
+        ui.applyBondProperties();
+    });
 
     // S-group properties dialog events
     $('sgroup_type').observe('change', ui.onChange_SGroupType);
@@ -361,6 +369,7 @@ ui.init = function ()
     //this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
 
     this.render.onBondClick = this.onClick_Bond;
+    this.render.onBondDblClick = this.onDblClick_Bond;
     this.render.onBondMouseDown = this.onMouseDown_Bond;
     this.render.onBondMouseOver = this.onMouseOver_Bond;
     this.render.onBondMouseOut = this.onMouseOut_Bond;
@@ -575,6 +584,21 @@ ui.modeType = function ()
         return ui.MODE.CHAIN;
 };
 
+ui.bondTypeMap = {
+    'single'   : {type: 1, stereo: chem.Struct.BOND.STEREO.NONE},
+    'up'       : {type: 1, stereo: chem.Struct.BOND.STEREO.UP},
+    'down'     : {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN},
+    'updown'   : {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER},
+    'double'   : {type: 2, stereo: chem.Struct.BOND.STEREO.NONE},
+    'crossed'  : {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS},
+    'triple'   : {type: 3, stereo: chem.Struct.BOND.STEREO.NONE},
+    'aromatic' : {type: 4, stereo: chem.Struct.BOND.STEREO.NONE},
+    'singledouble'   : {type: 5, stereo: chem.Struct.BOND.STEREO.NONE},
+    'singlearomatic' : {type: 6, stereo: chem.Struct.BOND.STEREO.NONE},
+    'doublearomatic' : {type: 7, stereo: chem.Struct.BOND.STEREO.NONE},
+    'any'      :  {type: 8, stereo: chem.Struct.BOND.STEREO.NONE}
+};
+
 ui.bondType = function (mode)
 {
     var type_str;
@@ -584,33 +608,7 @@ ui.bondType = function (mode)
     else
         type_str = mode.substr(5);
 
-    switch (type_str)
-    {
-    case 'single':
-        return {type: 1, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'up':
-        return {type: 1, stereo: chem.Struct.BOND.STEREO.UP};
-    case 'down':
-        return {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN};
-    case 'updown':
-        return {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER};
-    case 'double':
-        return {type: 2, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'crossed':
-        return {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS};
-    case 'triple':
-        return {type: 3, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'aromatic':
-        return {type: 4, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'singledouble':
-        return {type: 5, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'singlearomatic':
-        return {type: 6, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'doublearomatic':
-        return {type: 7, stereo: chem.Struct.BOND.STEREO.NONE};
-    case 'any':
-        return {type: 8, stereo: chem.Struct.BOND.STEREO.NONE};
-    }
+    return ui.bondTypeMap[type_str];
 };
 
 ui.atomLabel = function (mode)
@@ -1480,83 +1478,110 @@ ui.onClick_Bond = function (event, id)
     if (ui.mouse_moved)
         return true;
 
-    switch (ui.modeType())
+    if (event.altKey)
     {
-    case ui.MODE.SIMPLE:
-    case ui.MODE.ATOM:
-        /* // TODO: Add to selection
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+        ui.showBondProperties(id);
+        return true;
+    }
+
+    ui.dbl_click = false;
+
+    setTimeout(function ()
+    {
+        if (ui.dbl_click)
+            return true;
+
+        switch (ui.modeType())
         {
-            var idx = ui.selection.bonds.indexOf(id);
-            if (idx != -1)
-                ui.selection.bonds.splice(idx, 1);
+        case ui.MODE.SIMPLE:
+        case ui.MODE.ATOM:
+            /* // TODO: Add to selection
+            if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            {
+                var idx = ui.selection.bonds.indexOf(id);
+                if (idx != -1)
+                    ui.selection.bonds.splice(idx, 1);
+                else
+                    ui.selection.bonds = ui.selection.bonds.concat(id);
+                ui.updateSelection({'atoms':ui.selection.atoms, 'bonds':ui.selection.bonds});
+                break;
+            }
+            */
+
+            var bond_type = ui.render.bondGetAttr(id, 'type');
+
+            if (bond_type >= 4)
+                bond_type = 1;
             else
-                ui.selection.bonds = ui.selection.bonds.concat(id);
-            ui.updateSelection({'atoms':ui.selection.atoms, 'bonds':ui.selection.bonds});
+                bond_type = (bond_type % 3) + 1;
+
+            ui.addUndoAction(ui.Action.fromBondAttrs(id, {type: bond_type}));
+            ui.render.update();
+            break;
+
+        case ui.MODE.ERASE:
+            ui.addUndoAction(ui.Action.fromBondDeletion(id));
+            ui.render.update();
+            break;
+
+        case ui.MODE.BOND:
+            var attrs = ui.bondType();
+            var bond = ui.ctab.bonds.get(id);
+
+            if (attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+                bond.type == chem.Struct.BOND.TYPE.SINGLE && attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
+                bond.stereo == attrs.stereo)
+            {
+                ui.addUndoAction(ui.Action.fromBondFlipping(id));
+            } else
+            {
+                var flip = ui.bondFlipRequired(bond, attrs);
+                if (bond.type == attrs.type)
+                {
+                    if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
+                    {
+                        if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
+                        {
+                            attrs.type = chem.Struct.BOND.TYPE.DOUBLE;
+                        }
+                    } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
+                    {
+                        attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
+                    }
+                }
+                ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs, flip), true);
+            }
+            ui.render.update();
+            break;
+
+        case ui.MODE.PATTERN:
+            ui.addUndoAction(ui.Action.fromPatternOnElement(id, ui.pattern(), false), true);
+            ui.render.update();
+            break;
+
+        case ui.MODE.SGROUP:
+            var bond = ui.ctab.bonds.get(id);
+
+            ui.updateSelection({'atoms':[bond.begin, bond.end], 'bonds':[id]});
+            ui.showSGroupProperties(null);
             break;
         }
-        */
-
-        var bond_type = ui.render.bondGetAttr(id, 'type');
-
-        if (bond_type >= 4)
-            bond_type = 1;
-        else
-            bond_type = (bond_type % 3) + 1;
-
-        ui.addUndoAction(ui.Action.fromBondAttrs(id, {type: bond_type}));
-        ui.render.update();
-        break;
-
-    case ui.MODE.ERASE:
-        ui.addUndoAction(ui.Action.fromBondDeletion(id));
-        ui.render.update();
-        break;
-
-    case ui.MODE.BOND:
-        var attrs = ui.bondType();
-        var bond = ui.ctab.bonds.get(id);
-
-        if (attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
-            bond.type == chem.Struct.BOND.TYPE.SINGLE && attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
-            bond.stereo == attrs.stereo)
-        {
-            ui.addUndoAction(ui.Action.fromBondFlipping(id));
-        } else
-        {
-            var flip = ui.bondFlipRequired(bond, attrs);
-            if (bond.type == attrs.type)
-            {
-                if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
-                {
-                    if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == attrs.stereo)
-                    {
-                        attrs.type = chem.Struct.BOND.TYPE.DOUBLE;
-                    }
-                } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
-                {
-                    attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
-                }
-            }
-            ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs, flip), true);
-        }
-        ui.render.update();
-        break;
-
-    case ui.MODE.PATTERN:
-        ui.addUndoAction(ui.Action.fromPatternOnElement(id, ui.pattern(), false), true);
-        ui.render.update();
-        break;
-
-    case ui.MODE.SGROUP:
-        var bond = ui.ctab.bonds.get(id);
-
-        ui.updateSelection({'atoms':[bond.begin, bond.end], 'bonds':[id]});
-        ui.showSGroupProperties(null);
-        break;
-    }
+    }, ui.DBLCLICK_INTERVAL);
     return true;
 };
+
+ui.onDblClick_Bond = function (event, id)
+{
+    if (event.altKey)
+        return true;
+
+    ui.dbl_click = true;
+
+    if (ui.modeType() != ui.MODE.PASTE)
+        ui.showBondProperties(id);
+    return true;
+};
+
 
 ui.onClick_SGroup = function (event, sid)
 {
@@ -2425,10 +2450,51 @@ ui.onChange_AtomIsotope = function ()
 
 ui.onChange_AtomValence = function ()
 {
-    if (this.value.strip() == '' || this.value == '0')
+    if (this.value.strip() == '')
         this.value = '';
-    else if (!this.value.match(/^[1-9]$/))
+    else if (!this.value.match(/^[0-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+};
+
+//
+// Bond properties dialog
+//
+ui.showBondProperties = function (id)
+{
+    $('bond_properties').bond_id = id;
+    
+    var type = ui.render.bondGetAttr(id, 'type');
+    var stereo = ui.render.bondGetAttr(id, 'stereo');
+    
+    for (var bond in ui.bondTypeMap)
+    {
+        if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo)
+            break;
+    }
+    
+    $('bond_type').value = bond;
+    $('bond_topology').value = ui.render.bondGetAttr(id, 'topology') || 0;
+    $('bond_center').value = ui.render.bondGetAttr(id, 'reactingCenterStatus') || 0;
+
+    ui.showDialog('bond_properties');
+    $('bond_type').activate();
+};
+
+ui.applyBondProperties = function ()
+{
+    ui.hideDialog('bond_properties');
+
+    var id = $('bond_properties').bond_id;
+
+    ui.addUndoAction(ui.Action.fromBondAttrs(id,
+        Object.extend(ui.bondTypeMap[$('bond_type').value],
+        {
+            topology: parseInt($('bond_topology').value),
+            reactingCenterStatus: parseInt($('bond_center').value)
+        })
+    ), true);
+
+    ui.render.update();
 };
 
 //

@@ -317,6 +317,73 @@
                 </div>
             </div>
 
+            <div class="dialogWindow propDialog" id="bond_properties" style="display:none;">
+                <div style="width:100%">
+                    <div>
+                        Bond Properties
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <table style="text-align:left">
+                        <tr>
+                            <td>
+                                <label>Type:</label>
+                            </td>
+                            <td>
+                                <select id="bond_type">
+                                    <option value="single">Single</option>
+                                    <option value="up">Single Up</option>
+                                    <option value="down">Single Down</option>
+                                    <option value="updown">Single Up/Down</option>
+                                    <option value="double">Double</option>
+                                    <option value="crossed">Double Cis/Trans</option>
+                                    <option value="triple">Triple</option>
+                                    <option value="aromatic">Aromatic</option>
+                                    <option value="any">Any</option>
+                                    <option value="singledouble">Single/Double</option>
+                                    <option value="singlearomatic">Single/Aromatic</option>
+                                    <option value="doublearomatic">Double/Aromatic</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Topology:</label>
+                            </td>
+                            <td>
+                                <select id="bond_topology">
+                                    <option value="0">Either</option>
+                                    <option value="1">Ring</option>
+                                    <option value="2">Chain</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Reacting Center:</label>
+                            </td>
+                            <td>
+                                <select id="bond_center">
+                                    <option value="0">Unmarked</option>
+                                    <option value="-1">Not center</option>
+                                    <option value="1">Center</option>
+                                    <option value="2">No change</option>
+                                    <option value="4">Made/broken</option>
+                                    <option value="8">Order changes</option>
+                                    <option value="12">Made/broken and changes</option>
+                                    <!--option value="5">Order changes</option>
+                                    <option value="9">Order changes</option>
+                                    <option value="13">Order changes</option-->
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="margin-top:0.5em">
+                        <input id="bond_prop_cancel" type="button" value="Cancel" />
+                        <input id="bond_prop_ok" type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
             <div class="dialogWindow sgroupDialog" id="sgroup_properties" style="display:none;">
                 <div style="width:100%">
                     <div>
@@ -392,9 +459,18 @@
                     <div style="height:0.5em"></div>
                     <div id="elem_table_area"></div>
                     <div align="left">
-                        <input type="radio" id="elem_table_single" name="atom_list" onchange="ui.elem_table_obj.setMode('single')">Single</input> <br />
-                        <input type="radio" id="elem_table_list" name="atom_list" onchange="ui.elem_table_obj.setMode('list')">List</input> <br />
-                        <input type="radio" id="elem_table_not_list" name="atom_list" onchange="ui.elem_table_obj.setMode('notlist')">Not List</input>
+                        <input type="radio" id="elem_table_single" name="atom_list"
+                               onchange="if (!Prototype.Browser.IE) ui.elem_table_obj.setMode('single')"
+                               onclick="if (Prototype.Browser.IE) ui.elem_table_obj.setMode('single')"
+                               >Single</input> <br />
+                        <input type="radio" id="elem_table_list" name="atom_list"
+                               onchange="if (!Prototype.Browser.IE) ui.elem_table_obj.setMode('list')"
+                               onclick="if (Prototype.Browser.IE) ui.elem_table_obj.setMode('list')"
+                               >List</input> <br />
+                        <input type="radio" id="elem_table_not_list" name="atom_list"
+                               onchange="if (!Prototype.Browser.IE) ui.elem_table_obj.setMode('notlist')"
+                               onclick="if (Prototype.Browser.IE) ui.elem_table_obj.setMode('notlist')"
+                               >Not List</input>
                     </div>
                     <div style="margin-top:0.5em">
                         <input id="elem_table_cancel" type="button" value="Cancel" />

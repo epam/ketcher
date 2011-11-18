@@ -1159,7 +1159,7 @@ ui.Action.fromChain = function (p0, v, nSect)
     {
         var pos = new util.Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-        var a = ui.render.findClosestAtom(ui.render.client2Obj(pos), ui.scale * 0.1);
+        var a = ui.render.findClosestAtom(pos, ui.scale * 0.1);
 
         var id1 = -1;
         if (a == null)
@@ -1285,7 +1285,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         {
             var new_pos = util.Vec2.sum(pos, v);
 
-            var a = ui.render.findClosestAtom(ui.render.client2Obj(new_pos), ui.scale * 0.1);
+            var a = ui.render.findClosestAtom(new_pos, ui.scale * 0.1);
 
             if (a == null)
             {

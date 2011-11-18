@@ -1185,7 +1185,7 @@ rnd.Render.prototype.update = function (force)
 
 			var sz = util.Vec2.max(bb.sz().floor(), this.viewSz);
 			var offset = bb.p0.negated().ceil();
-			if (!this.sz || sz.sub(this.sz).length() > 0)
+			if (!this.sz || sz.x > this.sz.x || sz.y > this.sz.y)
 				this.setPaperSize(sz);
 
 			var oldOffset = this.offset || new util.Vec2();
@@ -1392,7 +1392,16 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 
 rnd.Render.prototype.setZoom = function (zoom) {
 	this.zoom = zoom;
-	this._setPaperSize(this.sz);
+
+	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
+	// for the moment we don't shrink the canvas back once it's scaled up again
+	if (this.sz.x * zoom < this.viewSz.x || this.sz.y * zoom < this.viewSz.y) {
+		this.sz.x = Math.max(this.sz.x, this.viewSz.x / zoom);
+		this.sz.y = Math.max(this.sz.y, this.viewSz.y / zoom);
+		this.setPaperSize(this.sz);
+	} else {
+		this._setPaperSize(this.sz);
+	}
 }
 
 rnd.Render.prototype.setViewBox = function () {

@@ -24,7 +24,7 @@ ui.scale = 40;
 
 ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
 ui.zoomIdx = 1;
-ui.zoom = function () {return ui.zoomValues[ui.zoomIdx];}
+ui.zoom = 1.0;
 
 ui.DBLCLICK_INTERVAL = 300;
 
@@ -1189,8 +1189,9 @@ ui.onClick_ZoomIn = function ()
     if (ui.zoomIdx >= ui.zoomValues.length - 1)
         this.addClassName('buttonDisabled');
     $('zoom_out').removeClassName('buttonDisabled');
-
-    ui.setZoom();
+    if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
+        throw new Error ("Zoom index out of range");
+    ui.setZoomRegular(ui.zoomValues[ui.zoomIdx]);
 };
 
 ui.onClick_ZoomOut = function ()
@@ -1203,14 +1204,52 @@ ui.onClick_ZoomOut = function ()
     if (ui.zoomIdx <= 0)
         this.addClassName('buttonDisabled');
     $('zoom_in').removeClassName('buttonDisabled');
-
-    ui.setZoom();
-};
-
-ui.setZoom = function () {
     if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
-    ui.render.setZoom(ui.zoom());
+    ui.setZoomRegular(ui.zoomValues[ui.zoomIdx]);
+};
+
+ui.setZoomRegular = function (zoom) {
+    ui.zoom = zoom;
+    ui.render.setZoom(ui.zoom);
+}
+
+// get the size of the view window in pixels
+ui.getViewSz = function () {
+    return new util.Vec2(ui.render.viewSz);
+}
+
+// c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
+// "scaled" coordinates are the ones returned by atomGetPos() or when applying page2scaled() to a point in page coordinates
+// "scaled" coordinates are the object coordinates after a certain fixed transformation; they are independent of zooming or scrolling
+ui.setZoomCentered = function (zoom, c) {
+    if (!c)
+        throw new Error("Center point not specified");
+    ui.setZoomRegular(zoom);
+    var oldVp = ui.render.viewSz.scaled(0.5);
+    var newVp = ui.render.scaled2view(c);
+    ui.setScrollOffsetRel(newVp.x - oldVp.x, newVp.y - oldVp.y);
+}
+
+// s is a point in scaled coordinates, whose position in screen coordinates should remain the same after zooming
+ui.setZoomStaticPoint = function (zoom, s) {
+    if (!s)
+        throw new Error("Center point not specified");
+    var oldVp = ui.render.scaled2view(s);
+    ui.setZoomRegular(zoom);
+    var newVp = ui.render.scaled2view(s);
+    ui.setScrollOffsetRel(newVp.x - oldVp.x, newVp.y - oldVp.y);
+}
+
+ui.setScrollOffset = function (x, y) {
+    ui.client_area.scrollLeft = x;
+    ui.client_area.scrollTop = y;
+    ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
+    ui.scrollTop = ui.client_area.scrollTop;
+}
+
+ui.setScrollOffsetRel = function (dx, dy) {
+    ui.setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
 }
 
 //
@@ -2238,7 +2277,7 @@ ui.onMouseMove_Canvas = function (event)
         if (mode == ui.MODE.SIMPLE && ui.drag.new_atom_id == -1) // Merging two atoms
             return;
 
-		var delta = ui.page2scaled(event).sub(ui.page2scaled({pageX: ui.drag.last_pos.x, pageY: ui.drag.last_pos.y}));
+        var delta = ui.page2scaled(event).sub(ui.page2scaled({pageX: ui.drag.last_pos.x, pageY: ui.drag.last_pos.y}));
 
         if (ui.drag.atom_id != null || ui.drag.bond_id != null || ui.drag.rxnArrow_id != null || ui.drag.rxnPlus_id != null)
         {

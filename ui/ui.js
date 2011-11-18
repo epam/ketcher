@@ -2782,7 +2782,7 @@ ui.copy = function ()
     ui.selection.atoms.each(function (id)
     {
         var new_atom = new chem.Struct.Atom(ui.ctab.atoms.get(id));
-        new_atom.pos = ui.render.atomGetPos(id);
+        new_atom.pos = ui.render.atomGetPos(id, true);
 
         if (new_atom.sgroup != -1)
             new_atom.sgroup = -1;
@@ -2867,7 +2867,7 @@ ui.paste = function ()
     for (id = 0; id < ui.clipboard.atoms.length; id++)
     {
         var atom = ui.clipboard.atoms[id];
-        mapping[id] = ui.render.atomAdd(atom.pos, atom);
+        mapping[id] = ui.render.atomAdd(ui.render.scaled2view(atom.pos), atom);
         ui.pasted.atoms.push(mapping[id]);
     }
 

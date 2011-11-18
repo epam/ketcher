@@ -635,31 +635,32 @@ rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
 	this._itemMoveRel('rxnPluses', id, d);
 };
 
-rnd.Render.prototype.itemGetPos = function (map, id)
+rnd.Render.prototype.itemGetPos = function (map, id, scaled)
 {
     //if (typeof(this.ctab.molecule[map].get(id))=='undefined') alert('got it');
 	var p = this.ctab.molecule[map].get(id).pp;
 	p = p.scaled(this.settings.scaleFactor);
-	p = this.scaled2view(p, false);
+	if (!scaled)
+		p = this.scaled2view(p, false);
 	return p;
 };
 
-rnd.Render.prototype.atomGetPos = function (id)
+rnd.Render.prototype.atomGetPos = function (id, scaled)
 {
 	rnd.logMethod("atomGetPos");
-	return this.itemGetPos('atoms', id);
+	return this.itemGetPos('atoms', id, scaled);
 };
 
-rnd.Render.prototype.rxnArrowGetPos = function (id)
+rnd.Render.prototype.rxnArrowGetPos = function (id, scaled)
 {
 	rnd.logMethod("rxnArrowGetPos");
-	return this.itemGetPos('rxnArrows', id);
+	return this.itemGetPos('rxnArrows', id, scaled);
 };
 
-rnd.Render.prototype.rxnPlusGetPos = function (id)
+rnd.Render.prototype.rxnPlusGetPos = function (id, scaled)
 {
 	rnd.logMethod("rxnPlusGetPos");
-	return this.itemGetPos('rxnPluses', id);
+	return this.itemGetPos('rxnPluses', id, scaled);
 };
 
 rnd.Render.prototype._atomMoveRel = function (aid, d)

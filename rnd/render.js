@@ -137,7 +137,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
         this.start_scale = null;
     });
 
-    // rbalabanov: here is teptorary fix for "drag issue" on iPad
+    // rbalabanov: here is temporary fix for "drag issue" on iPad
     //BEGIN
     if ('hiddenPaths' in rnd.ReStruct.prototype) {
         clientArea.observe('touchend', function(event) {

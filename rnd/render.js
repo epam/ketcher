@@ -684,32 +684,15 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 	return {'inner': bidSetInner, 'cross': bidSetCross};
 }
 
-rnd.Render.prototype.bondMoveRelAsIs = function (bid, d) {
-	this.ctab.translateVisel(this.ctab.bonds.get(bid).visel, d);
-}
-
 rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 {
-	var adjacentBonds = this.getAdjacentBonds(atoms);
-	var bidSetInner = adjacentBonds.inner;
-	var bidSetCross = adjacentBonds.cross;
-	util.Set.each(bidSetInner, function(bid){
-		this.bondMoveRelAsIs(bid, d);
-	}, this);
-	util.Set.each(bidSetCross, function(bid){
-		this.invalidateBond(bid, true);
-		var bond = this.ctab.bonds.get(bid).b;
-		this.invalidateAtom(bond.begin, 1);
-		this.invalidateAtom(bond.end, 1);
-	}, this);
-	for (var i = 0; i < atoms.length; ++i) {
-		this.itemMoveRelAsIs('atoms', atoms[i], d);
+	for (var i = 0; i < atoms.length; ++i) { // TMP
+		this.itemMoveRel('atoms', atoms[i], d);
 	}
 }
 
-rnd.Render.prototype.itemMoveRelAsIs = function (map, id, d) {
-	var item = this.ctab[map].get(id);
-	this.ctab.translateVisel(item.visel, d);
+rnd.Render.prototype.itemMoveRel = function (map, id, d) {
+	this.invalidateItem(map, id, 1);
 	this.ctab.molecule._itemSetPos(map, id,
 		this.coordViewToObj(this.itemGetPos(map, id).add(d)), this.settings.scaleFactor);
 }
@@ -727,7 +710,7 @@ rnd.Render.prototype._multipleMoveRel = function (lists, d)
 		var list = lists[map];
 		if (list) {
 			for (var k = 0; k < list.length; ++k) {
-				this.itemMoveRelAsIs(map, list[k], d);
+				this.itemMoveRel(map, list[k], d);
 			}
 		}
 	}

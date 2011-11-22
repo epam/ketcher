@@ -1186,7 +1186,7 @@ rnd.Render.prototype.update = function (force)
 
 			var oldOffset = this.offset || new util.Vec2();
 			var delta = offset.sub(oldOffset);
-			if (!this.offset || delta.length() > 0) {
+			if (!this.offset || delta.x > 0 || delta.y > 0) {
 				this.setOffset(offset);
 				this.ctab.translate(delta);
 				this.bb.translate(delta);
@@ -1373,16 +1373,46 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 
 rnd.Render.prototype.setZoom = function (zoom) {
 	this.zoom = zoom;
+	this._setPaperSize(this.sz);
+}
 
-	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
-	// for the moment we don't shrink the canvas back once it's scaled up again
-	if (this.sz.x * zoom < this.viewSz.x || this.sz.y * zoom < this.viewSz.y) {
-		this.sz.x = Math.max(this.sz.x, this.viewSz.x / zoom);
-		this.sz.y = Math.max(this.sz.y, this.viewSz.y / zoom);
-		this.setPaperSize(this.sz);
-	} else {
-		this._setPaperSize(this.sz);
+rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
+	var ex = 0, ey = 0, dx = 0, dy = 0;
+	x0 = x0-0;
+	x1 = x1-0;
+	y0 = y0-0;
+	y1 = y1-0;
+
+	if (x0 < 0) {
+		ex += -x0;
+		dx += -x0;
 	}
+	if (y0 < 0) {
+		ey += -y0;
+		dy += -y0;
+	}
+
+	var szx = this.sz.x * this.zoom, szy = this.sz.y * this.zoom;
+	if (szx < x1) {
+		ex += x1 - szx;
+	}
+	if (szy < y1) {
+		ey += y1 - szy;
+	}
+
+	var d = new util.Vec2(dx, dy).scaled(1 / this.zoom);
+	if (ey > 0 || ex > 0) {
+		var e = new util.Vec2(ex, ey).scaled(1 / this.zoom);
+		var sz = this.sz.add(e);
+
+		this.setPaperSize(sz);
+		if (d.x > 0 || d.y > 0) {
+			this.setOffset(this.offset.add(d));
+			this.ctab.translate(d);
+			this.bb.translate(d);
+		}
+	}
+	return d;
 }
 
 rnd.Render.prototype.setViewBox = function () {

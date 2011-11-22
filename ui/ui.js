@@ -1191,7 +1191,8 @@ ui.onClick_ZoomIn = function ()
     $('zoom_out').removeClassName('buttonDisabled');
     if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
-    ui.setZoomRegular(ui.zoomValues[ui.zoomIdx]);
+    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2scaled(ui.render.viewSz.scaled(0.5)));
+    ui.render.update();
 };
 
 ui.onClick_ZoomOut = function ()
@@ -1206,12 +1207,15 @@ ui.onClick_ZoomOut = function ()
     $('zoom_in').removeClassName('buttonDisabled');
     if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
-    ui.setZoomRegular(ui.zoomValues[ui.zoomIdx]);
+    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2scaled(ui.render.viewSz.scaled(0.5)));
+    ui.render.update();
 };
 
 ui.setZoomRegular = function (zoom) {
     ui.zoom = zoom;
     ui.render.setZoom(ui.zoom);
+    // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
+    // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
 }
 
 // get the size of the view window in pixels
@@ -1220,18 +1224,17 @@ ui.getViewSz = function () {
 }
 
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
-// "scaled" coordinates are the ones returned by atomGetPos() or when applying page2scaled() to a point in page coordinates
-// "scaled" coordinates are the object coordinates after a certain fixed transformation; they are independent of zooming or scrolling
 ui.setZoomCentered = function (zoom, c) {
     if (!c)
         throw new Error("Center point not specified");
     ui.setZoomRegular(zoom);
-    var oldVp = ui.render.viewSz.scaled(0.5);
-    var newVp = ui.render.scaled2view(c);
-    ui.setScrollOffsetRel(newVp.x - oldVp.x, newVp.y - oldVp.y);
+    var sp = c.add(ui.render.offset).scaled(ui.render.zoom).sub(ui.render.viewSz.scaled(0.5));
+    ui.setScrollOffset(sp.x, sp.y);
 }
 
 // s is a point in scaled coordinates, whose position in screen coordinates should remain the same after zooming
+// "scaled" coordinates are the ones returned by atomGetPos() or when applying page2scaled() to a point in page coordinates
+// "scaled" coordinates are the object coordinates after a certain fixed transformation; they are independent of zooming or scrolling
 ui.setZoomStaticPoint = function (zoom, s) {
     if (!s)
         throw new Error("Center point not specified");
@@ -1242,6 +1245,9 @@ ui.setZoomStaticPoint = function (zoom, s) {
 }
 
 ui.setScrollOffset = function (x, y) {
+    var cx = ui.client_area.clientWidth;
+    var cy = ui.client_area.clientHeight;
+    var d = ui.render.extendCanvas(x, y, cx + x, cy + y);
     ui.client_area.scrollLeft = x;
     ui.client_area.scrollTop = y;
     ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems

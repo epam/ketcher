@@ -646,7 +646,7 @@ ui.onClick_NewFile = function ()
 
     ui.selectMode('select_simple');
 
-    if (!ui.ctab.isEmpty())
+    if (!ui.ctab.isBlank())
     {
         ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
         ui.render.update();

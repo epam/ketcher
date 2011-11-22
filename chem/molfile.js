@@ -764,7 +764,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 			util.Set.mergeIn(components[j], ccs[i]);
 		}
 		var submolTexts = [];
-		var nReactants = 0;
+		var nReactants = 0, nProducts = 0;
 		for (i = 0; i < components.length; ++i) {
 			if (!components[i]) {
 				submolTexts.push("");
@@ -774,13 +774,15 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 			c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
 			if (c.x < arrowPos)
 				++nReactants;
+			else
+				++nProducts;
 			var submol = molecule.clone(components[i], null, true);
 			submols.push(submol);
 			var saver = new chem.MolfileSaver(false);
 			submolTexts.push(saver.saveMolecule(submol));
 		}
 
-		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(nReactants, 3) + util.paddedInt(ccs.length-nReactants, 3) + util.paddedInt(0, 3) + "\n";
+		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(nReactants, 3) + util.paddedInt(nProducts, 3) + util.paddedInt(0, 3) + "\n";
 		for (i = 0; i < components.length; ++i) {
 			if (components[i]) {
 				this.molfile += "$MOL\n" + submolTexts[i];

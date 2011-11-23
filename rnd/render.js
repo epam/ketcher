@@ -302,14 +302,6 @@ util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	}
 );
 
-/** @deprecated please use setZoom instead */
-rnd.Render.prototype.setScale = function (scale)
-{
-	throw new Error("this method is obsolete, please use setZoom instead");
-	this.scale = scale;
-	this.dirty = true;
-};
-
 rnd.Render.prototype.setMolecule = function (ctab)
 {
 	rnd.logMethod("setMolecule");

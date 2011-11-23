@@ -123,21 +123,44 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
+    // rbalabanov: two-fingers scrolling & zooming for iPad
+    // TODO should be moved to touch.js module, re-factoring needed
+    //BEGIN
+    clientArea.observe('touchstart', function(event) {
+        if (event.touches.length == 2) {
+            this._tui = this._tui || {};
+            this._tui.dx = 0;
+            this._tui.dy = 0;
+            this._tui.cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
+            this._tui.cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
+        }
+    });
+    clientArea.observe('touchmove', function(event) {
+        if ('_tui' in this && event.touches.length == 2) {
+            var cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
+            var cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
+            this._tui.dx = cx - (this._tui.cx || cx);
+            this._tui.dy = cy - (this._tui.cy || cy);
+            this._tui.cx = cx;
+            this._tui.cy = cy;
+        }
+    });
     clientArea.observe('gesturestart', function(event) {
+        this._tui = this._tui || {};
+        this._tui.scale0 = ui.render.zoom;
         event.preventDefault();
-        this.start_scale = ui.render.zoom;
-        console.log("gesturestart");
     });
     clientArea.observe('gesturechange', function(event) {
-        event.preventDefault();
-        //ui.render.setScale(this.start_scale * event.scale);
-        ui.render.setZoom(this.start_scale * event.scale)
+        ui.setScrollOffsetRel(-this._tui.dx, -this._tui.dy);
+        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2scaled({ pageX: this._tui.cx, pageY: this._tui.cy }));
         ui.render.update();
+        event.preventDefault();
     });
     clientArea.observe('gestureend', function(event) {
-        //event.preventDefault();
-        this.start_scale = null;
+        delete this._tui;
+        event.preventDefault();
     });
+    //END
 
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
@@ -228,13 +251,13 @@ rnd.Render.prototype.view2scaled = function (p, isRelative) {
 	p = p.scaled(1/this.zoom);
 	p = isRelative ? p : p.add(ui.scrollPos().scaled(1/this.zoom)).sub(this.offset);
 	return p;
-}
+};
 
 rnd.Render.prototype.scaled2view = function (p, isRelative) {
 	p = isRelative ? p : p.add(this.offset).sub(ui.scrollPos().scaled(1/this.zoom));
 	p = p.scaled(this.zoom);
 	return p;
-}
+};
 
 rnd.Render.prototype.scaled2obj = function (v) {
 	return v.scaled(1 / this.settings.scaleFactor);
@@ -279,6 +302,7 @@ util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	}
 );
 
+/** @deprecated please use setZoom instead */
 rnd.Render.prototype.setScale = function (scale)
 {
 	throw new Error("this method is obsolete, please use setZoom instead");
@@ -682,11 +706,11 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 		}
 	}
 	return {'inner': bidSetInner, 'cross': bidSetCross};
-}
+};
 
 rnd.Render.prototype.bondMoveRelAsIs = function (bid, d) {
 	this.ctab.translateVisel(this.ctab.bonds.get(bid).visel, d);
-}
+};
 
 rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 {
@@ -705,14 +729,14 @@ rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 	for (var i = 0; i < atoms.length; ++i) {
 		this.itemMoveRelAsIs('atoms', atoms[i], d);
 	}
-}
+};
 
 rnd.Render.prototype.itemMoveRelAsIs = function (map, id, d) {
 	var item = this.ctab[map].get(id);
 	this.ctab.translateVisel(item.visel, d);
 	this.ctab.molecule._itemSetPos(map, id,
 		this.scaled2obj(this.itemGetPos(map, id).add(d)), this.settings.scaleFactor);
-}
+};
 
 rnd.Render.prototype._multipleMoveRel = function (lists, d)
 {
@@ -890,7 +914,7 @@ rnd.Render.prototype._setPaperSize = function (sz)
 	var z = this.zoom;
 	this.paper.setSize(sz.x * z, sz.y * z);
 	this.setViewBox();
-}
+};
 
 rnd.Render.prototype.setPaperSize = function (sz)
 {
@@ -1374,7 +1398,7 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 rnd.Render.prototype.setZoom = function (zoom) {
 	this.zoom = zoom;
 	this._setPaperSize(this.sz);
-}
+};
 
 rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 	var ex = 0, ey = 0, dx = 0, dy = 0;
@@ -1413,8 +1437,8 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 		}
 	}
 	return d;
-}
+};
 
 rnd.Render.prototype.setViewBox = function () {
 	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
-}
+};

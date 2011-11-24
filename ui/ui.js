@@ -466,6 +466,7 @@ ui.updateMolecule = function (mol)
         try
         {
             ui.render.update()
+            ui.setZoomCentered(null, ui.render.getStructCenter());
         } catch (er)
         {
             alert(er.message);
@@ -1227,7 +1228,9 @@ ui.getViewSz = function () {
 ui.setZoomCentered = function (zoom, c) {
     if (!c)
         throw new Error("Center point not specified");
-    ui.setZoomRegular(zoom);
+    if (zoom) {
+        ui.setZoomRegular(zoom);
+    }
     var sp = c.add(ui.render.offset).scaled(ui.render.zoom).sub(ui.render.viewSz.scaled(0.5));
     ui.setScrollOffset(sp.x, sp.y);
 }
@@ -1304,16 +1307,6 @@ ui.selection =
     rxnArrows: [],
     rxnPluses: []
 };
-
-//ui.page2canvas = function (pos)
-//{
-//    var offset = ui.client_area.cumulativeOffset();
-//
-//    return {
-//            x: pos.pageX - offset.left + ui.client_area.scrollLeft,
-//            y: pos.pageY - offset.top + ui.client_area.scrollTop
-//           };
-//};
 
 ui.page2canvas2 = function (pos)
 {

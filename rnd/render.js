@@ -901,6 +901,12 @@ rnd.Render.prototype.getBoundingBox = function ()
 	return bb;
 };
 
+rnd.Render.prototype.getStructCenter = function ()
+{
+	var bb = this.getBoundingBox();
+	return util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+};
+
 rnd.Render.prototype._setPaperSize = function (sz)
 {
 	var z = this.zoom;

@@ -258,6 +258,10 @@ util.Box2Abs = function ()
         new Error("util.Box2Abs constructor only accepts 4 numbers or 2 vectors or no arguments!");
 };
 
+util.Box2Abs.prototype.toString = function () {
+	return this.p0.toString() + " " + this.p1.toString();
+	
+}
 util.Box2Abs.fromRelBox = function (relBox)
 {
 	util.assertDefined(relBox);
@@ -282,6 +286,12 @@ util.Box2Abs.prototype.extend = function(/*util.Vec2*/lp, /*util.Vec2*/rb)
 	util.assertDefined(lp);
 	rb = rb || lp;
     return new util.Box2Abs(this.p0.sub(lp), this.p1.add(rb));
+};
+
+util.Box2Abs.prototype.include = function(/*util.Vec2*/p)
+{
+	util.assertDefined(p);
+    return new util.Box2Abs(this.p0.min(p), this.p1.max(p));
 };
 
 util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)

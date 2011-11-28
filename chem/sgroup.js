@@ -89,12 +89,12 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 };
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
-	var bb = mol.getObjBBox();
-	bb = bb.extend(new util.Vec2(0.6, 0.6));
+	var bb = chem.SGroup.getObjBBox(sg.atoms, mol);
+	bb = bb.extend(new util.Vec2(0.4, 0.4));
 
 	var coord = [
-	[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
-	[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
+		[bb.p0.x, bb.p1.y, bb.p0.x, bb.p0.y],
+		[bb.p1.x, bb.p0.y, bb.p1.x, bb.p1.y]
 	];
 	var lines = [];
 	for (var j = 0; j < coord.length; ++j) {
@@ -179,6 +179,22 @@ chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
 		bb.p1.x, bb.p0.y, bb.p1.x - bracketWidth, bb.p1.y)
 	.attr(styles.sgroupBracketStyle);
 	set.push(leftBracket, rightBracket);
+};
+
+chem.SGroup.getObjBBox = function (atoms, mol)
+{
+	if (atoms.length == 0)
+		throw new Error("Atom list is empty");
+	
+	var a0 = mol.atoms.get(atoms[0]).pos;
+	var bb = new util.Box2Abs(a0, a0);
+	for (var i = 1; i < atoms.length; ++i) {
+		var aid = atoms[i];
+		var atom = mol.atoms.get(aid);
+		var p = atom.pos;
+		bb = bb.include(p);
+	}
+	return bb;
 };
 
 chem.SGroup.getBBox = function (atoms, remol) {

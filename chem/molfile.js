@@ -750,7 +750,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 			barriers.push(item.pos.x);
 		});
 		barriers.push(arrowPos);
-		barriers.sort();
+		barriers.sort(function(a,b) { return a - b; });
 		var components = [];
 
 		var i;
@@ -1140,7 +1140,6 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		console.log(x.toString() + " " + y.toString());
 		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {

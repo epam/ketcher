@@ -415,6 +415,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.showLabels();
 	this.shiftBonds();
 	this.showBonds();
+	this.verifyLoops();
 	if (updLoops)
 		this.renderLoops();
 	this.clearMarks();
@@ -809,14 +810,43 @@ rnd.ReStruct.prototype.loopRemove = function (loopId)
 		return;
 	var reloop = this.reloops.get(loopId);
 	this.clearVisel(reloop.visel);
+	var bondlist = [];
 	for (var i = 0; i < reloop.loop.hbs.length; ++i) {
-		var hb = this.molecule.halfBonds.get(reloop.loop.hbs[i]);
+		var hbid = reloop.loop.hbs[i];
+		if (!this.molecule.halfBonds.has(hbid))
+			continue;
+		var hb = this.molecule.halfBonds.get(hbid);
 		hb.loop = -1;
 		this.markBond(hb.bid, 1);
 		this.markAtom(hb.begin, 1);
+		bondlist.push(hb.bid);
 	}
 	this.reloops.unset(loopId);
 	this.molecule.loops.remove(loopId);
+};
+
+rnd.ReStruct.prototype.loopIsValid = function (rlid, reloop) {
+	var loop = reloop.loop;
+	var bad = false;
+	loop.hbs.each(function(hbid){
+		if (!this.molecule.halfBonds.has(hbid)) {
+			bad = true;
+		}
+	}, this);
+	return !bad;
+}
+
+rnd.ReStruct.prototype.verifyLoops = function ()
+{
+	var toRemove = [];
+	this.reloops.each(function(rlid, reloop){
+		if (!this.loopIsValid(rlid, reloop)) {
+			toRemove.push(rlid);
+		}
+	}, this);
+	for (var i = 0; i < toRemove.length; ++i) {
+		this.loopRemove(toRemove[i]);
+	}
 };
 
 rnd.ReStruct.prototype.halfBondUnref = function (hbid)

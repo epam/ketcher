@@ -732,6 +732,52 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 	return mol;
 };
 
+chem.MolfileSaver.getComponents = function (molecule) {
+	var ccs = molecule.findConnectedComponents();
+	var submols = [];
+	var barriers = [];
+	var arrowPos = null;
+	molecule.rxnArrows.each(function(id, item){ // there's just one arrow
+		arrowPos = item.pos.x;
+	});
+	molecule.rxnPluses.each(function(id, item){
+		barriers.push(item.pos.x);
+	});
+	barriers.push(arrowPos);
+	barriers.sort(function(a,b) {return a - b;});
+	var components = [];
+
+	var i;
+	for (i = 0; i < ccs.length; ++i) {
+		var bb = molecule.getCoordBoundingBox(ccs[i]);
+		var c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		var j = 0;
+		while (c.x > barriers[j])
+			++j;
+		components[j] = components[j] || {};
+		util.Set.mergeIn(components[j], ccs[i]);
+	}
+	var submolTexts = [];
+	var reactants = [], products = [];
+	for (i = 0; i < components.length; ++i) {
+		if (!components[i]) {
+			submolTexts.push("");
+			continue;
+		}
+		bb = molecule.getCoordBoundingBox(components[i]);
+		c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		if (c.x < arrowPos)
+			reactants.push(components[i]);
+		else
+			products.push(components[i]);
+	}
+
+	return {
+		'reactants':reactants,
+		'products':products
+	};
+}
+
 chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 {
 	this.reaction = molecule.rxnArrows.count() > 0;
@@ -739,54 +785,15 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 		throw new Error("Reaction may not contain more than one arrow");
 	this.molfile = '';
 	if (this.reaction) {
-		var ccs = molecule.findConnectedComponents();
-		var submols = [];
-		var barriers = [];
-		var arrowPos = null;
-		molecule.rxnArrows.each(function(id, item){ // there's just one arrow
-			arrowPos = item.pos.x;
-		});
-		molecule.rxnPluses.each(function(id, item){
-			barriers.push(item.pos.x);
-		});
-		barriers.push(arrowPos);
-		barriers.sort(function(a,b) { return a - b; });
-		var components = [];
+		var components = chem.MolfileSaver.getComponents(molecule);
 
-		var i;
-		for (i = 0; i < ccs.length; ++i) {
-			var bb = molecule.getCoordBoundingBox(ccs[i]);
-			var c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-			var j = 0;
-			while (c.x > barriers[j])
-				++j;
-			components[j] = components[j] || {};
-			util.Set.mergeIn(components[j], ccs[i]);
-		}
-		var submolTexts = [];
-		var nReactants = 0, nProducts = 0;
-		for (i = 0; i < components.length; ++i) {
-			if (!components[i]) {
-				submolTexts.push("");
-				continue;
-			}
-			bb = molecule.getCoordBoundingBox(components[i]);
-			c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-			if (c.x < arrowPos)
-				++nReactants;
-			else
-				++nProducts;
-			var submol = molecule.clone(components[i], null, true);
-			submols.push(submol);
+		var reactants = components.reactants, products = components.products, all = reactants.concat(products);
+		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(reactants.length, 3) + util.paddedInt(products.length, 3) + util.paddedInt(0, 3) + "\n";
+		for (var i = 0; i < all.length; ++i) {
 			var saver = new chem.MolfileSaver(false);
-			submolTexts.push(saver.saveMolecule(submol));
-		}
-
-		this.molfile = "$RXN\n\n\n\n" + util.paddedInt(nReactants, 3) + util.paddedInt(nProducts, 3) + util.paddedInt(0, 3) + "\n";
-		for (i = 0; i < components.length; ++i) {
-			if (components[i]) {
-				this.molfile += "$MOL\n" + submolTexts[i];
-			}
+			var submol = molecule.clone(all[i], null, true);
+			var molfile = saver.saveMolecule(submol);
+			this.molfile += "$MOL\n" + molfile;
 		}
 		return this.molfile;
 	}

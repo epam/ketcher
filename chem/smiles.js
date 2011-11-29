@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -18,7 +18,7 @@ chem.SmilesSaver = function (render)
     this.smiles = '';
     this._written_atoms = new Array();
     this._written_components = 0;
-    
+
     if (Object.isUndefined(render))
     {
         if (Object.isUndefined(ui.render))
@@ -26,7 +26,7 @@ chem.SmilesSaver = function (render)
         this._render = ui.render;
     } else
         this._render = render;
-        
+
     this.ignore_errors = false;
 };
 
@@ -44,13 +44,13 @@ chem.SmilesSaver._Atom = function (h_count)
 chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 {
     var i, j, k;
-    
+
     if (!Object.isUndefined(ignore_errors))
         this.ignore_errors = ignore_errors;
 
     if (molecule.sgroups.count() > 0 && !this.ignore_errors)
         throw new Error("SMILES doesn't support s-groups");
-        
+
     this.atoms = new Array(molecule.atoms.count());
 
     molecule.atoms.each(function (aid, atom)
@@ -69,14 +69,17 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         this.atoms[bond.begin].neighbours.push({aid: bond.end, bid: bid});
         this.atoms[bond.end].neighbours.push({aid: bond.begin, bid: bid});
     }, this);
-   
+
     this._touched_cistransbonds = 0;
     this._markCisTrans(molecule);
 
-    var walk = new chem.Dfs(molecule, this.atoms);
-   
+    var components = chem.MolfileSaver.getComponents(molecule);
+    var componentsAll = components.reactants.concat(components.products);
+
+    var walk = new chem.Dfs(molecule, this.atoms, componentsAll, components.reactants.length);
+
     walk.walk();
-    
+
     this.atoms.each(function (atom)
     {
         atom.neighbours.clear();
@@ -89,16 +92,16 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         var v_idx = seq_el.idx;
         var e_idx = seq_el.parent_edge;
         var v_prev_idx = seq_el.parent_vertex;
-        
+
         if (e_idx >= 0)
         {
             var atom = this.atoms[v_idx];
- 
+
             var opening_cycles = walk.numOpeningCycles(e_idx);
- 
+
             for (j = 0; j < opening_cycles; j++)
                 this.atoms[v_prev_idx].neighbours.push({aid: -1, bid: -1});
- 
+
             if (walk.edgeClosingCycle(e_idx))
             {
                 for (k = 0; k < atom.neighbours.length; k++)
@@ -121,7 +124,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             this.atoms[v_prev_idx].neighbours.push({aid: v_idx, bid: e_idx});
         }
     }
-   
+
     // detect chiral configurations
     var stereocenters = new chem.Stereocenters(molecule, function (idx)
     {
@@ -151,7 +154,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         var counter = 0;
 
         var atom = this.atoms[atom_idx];
-  
+
         if (atom.parent != -1)
             for (k = 0; k < 4; k++)
                 if (sc.pyramid[k] == atom.parent)
@@ -162,12 +165,12 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
         if (implicit_h_idx != -1)
             pyramid_mapping[counter++] = implicit_h_idx;
-         
+
         for (j = 0; j != atom.neighbours.length; j++)
         {
             if (atom.neighbours[j].aid == atom.parent)
                 continue;
-         
+
             for (k = 0; k < 4; k++)
                 if (atom.neighbours[j].aid == sc.pyramid[k])
                 {
@@ -196,12 +199,6 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             this.atoms[atom_idx].chirality = 2;
     }, this);
 
-    walk.v_seq.each(function (seq_el)
-    {
-        if (seq_el.parent_edge == -1 || !walk.edgeClosingCycle(seq_el.parent_edge))
-            this._written_atoms.push(seq_el.idx);
-    }, this);
-
     // write the SMILES itself
 
     // cycle_numbers[i] == -1 means that the number is available
@@ -212,6 +209,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     var first_component = true;
 
+    var nReactants = 1;
     for (i = 0; i < walk.v_seq.length; i++)
     {
         seq_el = walk.v_seq[i];
@@ -256,7 +254,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
                             this.atoms[v_prev_idx].paren_written = true;
                         }
                     }
- 
+
                 this.atoms[v_prev_idx].branch_cnt++;
 
                 if (this.atoms[v_prev_idx].branch_cnt > branches)
@@ -306,17 +304,20 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         }
         else
         {
+            console.log(walk.nComponentsInReactants);
             if (!first_component)
-                this.smiles += '.';
+                this.smiles += (this._written_components == walk.nComponentsInReactants) ? '>>' : '.';
             first_component = false;
             this._written_components++;
         }
-        if (write_atom)
+        if (write_atom) {
             this._writeAtom(molecule, v_idx, this.atoms[v_idx].aromatic, this.atoms[v_idx].chirality);
+            this._written_atoms.push(seq_el.idx);
+        }
     }
 
     this.comma = false;
-    
+
     //this._writeStereogroups(mol, atoms);
     this._writeRadicals(molecule);
     //this._writePseudoAtoms(mol);
@@ -324,7 +325,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     if (this.comma)
         this.smiles += '|';
-      
+
    return this.smiles;
 
 };
@@ -337,7 +338,7 @@ chem.SmilesSaver.prototype._writeCycleNumber = function (n)
         this.smiles += '%' + n;
     else if (n >= 100 && n < 1000)
         this.smiles += '%%' + n;
-    else 
+    else
         throw new Error("bad cycle number: " + n);
 };
 
@@ -349,7 +350,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
     var hydro = -1;
     var aam = 0;
 
-    /* 
+    /*
     if (mol.haveQueryAtoms())
     {
       query_atom = &mol.getQueryAtom(idx);
@@ -362,7 +363,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
 
             if (rg.size() != 1)
                throw Error("rgroup count %d", rg.size());
-            
+
             _output.printf("[&%d]", rg[0] + 1);
          }
          else
@@ -492,7 +493,7 @@ chem.SmilesSaver.prototype._markCisTrans = function (mol)
    this.cis_trans.each(function (bid, ct)
    {
       var bond = mol.bonds.get(bid);
-      
+
       if (ct.parity != 0 && !this._render.isBondInRing(bid))
       {
          var nei_beg = this.atoms[bond.begin].neighbours;
@@ -698,7 +699,7 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
          this.smiles += ' |';
          this.comma = true;
       }
-    
+
       if (radical == chem.Struct.ATOM.RADICAL.SINGLET)
          this.smiles += '^3:';
       else if (radical == chem.Struct.ATOM.RADICAL.DOUPLET)
@@ -707,7 +708,7 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
          this.smiles += '^4:';
 
       this.smiles += i;
-      
+
       for (j = i + 1; j < this._written_atoms.length; j++)
          if (mol.atoms.get(this._written_atoms[j]).radical == radical)
          {
@@ -745,7 +746,7 @@ void SmilesSaver::_writeStereogroups (const Struct &mol, const Array<_Atom> &ato
 
    int and_group_idx = 1;
    int or_group_idx = 1;
-   
+
    QS_DEF(Array<int>, marked);
 
    marked.clear_resize(_written_atoms.size());
@@ -794,7 +795,7 @@ void SmilesSaver::_writeStereogroups (const Struct &mol, const Array<_Atom> &ato
       else if (type == MoleculeStereocenters::ATOM_AND)
       {
          int group = stereocenters.getGroup(_written_atoms[i]);
-         
+
          _output.printf("&%d:%d", and_group_idx++, i);
          for (j = i + 1; j < _written_atoms.size(); j++)
             if (stereocenters.getType(_written_atoms[j]) == MoleculeStereocenters::ATOM_AND &&

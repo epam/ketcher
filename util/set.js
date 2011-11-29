@@ -128,5 +128,16 @@ util.Set = {
 			set[id - 0] = id - 0;
 		});
 		return set;
+	},
+
+	find: function(set, func, context) {
+		for (var v in set) {
+			if (set[v] !== Object.prototype[v]) {
+				if (func.call(context, set[v])) {
+					return v;
+				}
+			}
+		}
+		return null;
 	}
 };

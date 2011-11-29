@@ -2462,16 +2462,16 @@ ui.onChange_AtomValence = function ()
 ui.showBondProperties = function (id)
 {
     $('bond_properties').bond_id = id;
-    
+
     var type = ui.render.bondGetAttr(id, 'type');
     var stereo = ui.render.bondGetAttr(id, 'stereo');
-    
+
     for (var bond in ui.bondTypeMap)
     {
         if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo)
             break;
     }
-    
+
     $('bond_type').value = bond;
     $('bond_topology').value = ui.render.bondGetAttr(id, 'topology') || 0;
     $('bond_center').value = ui.render.bondGetAttr(id, 'reactingCenterStatus') || 0;

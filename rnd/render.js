@@ -92,7 +92,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
 	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.5) - 0;
 
+        this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
+        this.baseScale = this.scale;
 	this.offset = new util.Vec2();
 	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
@@ -1443,6 +1445,15 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 	return d;
 };
 
+rnd.Render.prototype.setScale = function () {
+    this.scale = this.baseScale * this.zoom;
+    this.settings = null;
+    this.update(true);
+}
+
 rnd.Render.prototype.setViewBox = function () {
+    if (!this.useOldZoom)
 	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
+    else
+        this.setScale();
 };

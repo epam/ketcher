@@ -18,10 +18,6 @@ ui.standalone = true;
 ui.path = '/';
 ui.base_url = '';
 
-// this only serves as a unit of length
-// for zooming, use ui.zoom* below
-ui.scale = 40;
-
 ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
 ui.zoomIdx = 1;
 ui.zoom = 1.0;
@@ -351,7 +347,7 @@ ui.init = function ()
     this.selectMode('select_simple');
 
     // Init renderer
-    this.render =  new rnd.Render(this.client_area, this.scale, {atomColoring: true});
+    this.render =  new rnd.Render(this.client_area, 40, {atomColoring: true});
 
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
@@ -1315,9 +1311,9 @@ ui.page2canvas2 = function (pos)
     return new util.Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
 };
 
-ui.page2scaled = function (pagePos)
+ui.page2obj = function (pagePos)
 {
-    return ui.render.view2scaled(ui.page2canvas2(pagePos));
+    return ui.render.view2obj(ui.page2canvas2(pagePos));
 };
 
 ui.scrollPos = function ()
@@ -1394,15 +1390,15 @@ ui.onClick_Atom = function (event, id)
             var input_el = $('input_label');
 
             var offset_client = ui.client_area.cumulativeOffset();
-            var atom_pos = ui.render.scaled2view(ui.render.atomGetPos(id));
+            var atom_pos = ui.render.obj2view(ui.render.atomGetPos(id));
             var offset_atom =
             {
                 left: offset_client.left + atom_pos.x,
                 top: offset_client.top + atom_pos.y
             };
 
-            var offset = Math.ceil(ui.render.settings.labelFontSize * ui.scale / 100);
-            var d = Math.ceil(4 * ui.scale / 100);
+            var offset = 6 * ui.zoom;
+            var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
 
             if (offset > 16)
                 offset = 16;
@@ -1676,7 +1672,7 @@ ui.onClick_Canvas = function (event)
     if (ui.mouse_moved)
         return;
 
-    var pos = ui.page2scaled(event);
+    var pos = ui.page2obj(event);
     switch (ui.modeType())
     {
     case ui.MODE.ATOM:
@@ -1687,7 +1683,7 @@ ui.onClick_Canvas = function (event)
 
     case ui.MODE.BOND:
         var bond = ui.bondType();
-        var v = new util.Vec2(ui.scale / 2, 0);
+        var v = new util.Vec2(1.0 / 2, 0);
 
         if (bond.type == chem.Struct.BOND.TYPE.SINGLE)
             v = v.rotate(-Math.PI / 6);
@@ -1737,7 +1733,7 @@ ui.atomForNewBond = function (id)
     {
         var nei_pos = ui.render.atomGetPos(nei.aid);
 
-        if (util.Vec2.dist(pos, nei_pos) < ui.scale * 0.1)
+        if (util.Vec2.dist(pos, nei_pos) < 0.1)
             return;
 
         neighbours.push({id: nei.aid, v: util.Vec2.diff(nei_pos, pos)});
@@ -1764,7 +1760,7 @@ ui.atomForNewBond = function (id)
             max_i = i, max_angle = angle;
     }
 
-    var v = new util.Vec2(ui.scale, 0);
+    var v = new util.Vec2(1, 0);
 
     if (neighbours.length > 0)
     {
@@ -1785,7 +1781,7 @@ ui.atomForNewBond = function (id)
                 {
                     var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
 
-                    if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < ui.scale * 0.1)
+                    if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < 0.1)
                         return;
 
                     var v_diff = util.Vec2.diff(nei_nei_pos, nei_pos);
@@ -1814,7 +1810,7 @@ ui.atomForNewBond = function (id)
 
     v.add_(pos);
 
-    var a = ui.render.findClosestAtom(v, ui.scale * 0.1);
+    var a = ui.render.findClosestAtom(v, 0.1);
 
     if (a == null)
         a = {label: 'C'};
@@ -2079,7 +2075,7 @@ ui.onMouseDown_Canvas = function (event)
 
     ui.mouse_moved = false;
 
-    var pos = ui.page2scaled(event);
+    var pos = ui.page2obj(event);
 
     if (pos.x < ui.client_area.clientWidth && pos.y < ui.client_area.clientHeight)
     {
@@ -2113,15 +2109,15 @@ ui.onMouseMove_Canvas = function (event)
         if (mode == ui.MODE.BOND && ui.drag.new_atom_id == -1) // Connect existent atom
             return;
 
-        var pos_cursor = ui.page2scaled(event);
+        var pos_cursor = ui.page2obj(event);
         var pos = null;
 
         if (ui.drag.atom_id != null)
             pos = ui.render.atomGetPos(ui.drag.atom_id);
         else
-            pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+            pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
 
-        if (util.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
+        if (util.Vec2.dist(pos, pos_cursor) < 0.01)
         {
             if (ui.drag.new_atom_id != null)
                 return;
@@ -2147,7 +2143,7 @@ ui.onMouseMove_Canvas = function (event)
 
         angle *= sign;
 
-        v = new util.Vec2(ui.scale, 0);
+        v = new util.Vec2(1, 0);
         v = v.rotate(angle);
         v.add_(pos);
 
@@ -2167,7 +2163,7 @@ ui.onMouseMove_Canvas = function (event)
             if (begin == null)
             {
                 begin = label;
-                pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+                pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
             } else
                 pos = v;
 
@@ -2187,15 +2183,15 @@ ui.onMouseMove_Canvas = function (event)
         if (ui.drag.new_atom_id == -1) // Connect existent atom
             return;
 
-        var pos_cursor = ui.page2scaled(event);
+        var pos_cursor = ui.page2obj(event);
         var pos = null;
 
         if (ui.drag.atom_id != null)
             pos = ui.render.atomGetPos(ui.drag.atom_id);
         else
-            pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+            pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
 
-        if (util.Vec2.dist(pos, pos_cursor) < 0.01 * ui.scale)
+        if (util.Vec2.dist(pos, pos_cursor) < 0.01)
         {
             if (ui.drag.new_atom_id != null)
                 return;
@@ -2221,7 +2217,7 @@ ui.onMouseMove_Canvas = function (event)
 
         angle *= sign;
 
-        var step = ui.scale; // hack, steps should be shorter
+        var step = 1; // hack, steps should be shorter
         var nSect = Math.ceil(v.length() / step);
         v = v.rotate(angle);
         v.add_(pos);
@@ -2239,7 +2235,7 @@ ui.onMouseMove_Canvas = function (event)
 
         if (begin == null) {
             begin = label;
-            pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+            pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
         }
 
         action_ret = ui.Action.fromChain(pos, angle, nSect);
@@ -2248,7 +2244,7 @@ ui.onMouseMove_Canvas = function (event)
 
     } else if (mode == ui.MODE.PASTE)
     {
-        var cur_pos = new util.Vec2(ui.page2scaled(event));
+        var cur_pos = new util.Vec2(ui.page2obj(event));
         var delta = util.Vec2.diff(cur_pos, ui.pastedAnchorPos);
 
         ui.render.multipleMoveRel(ui.pasted, delta);
@@ -2259,8 +2255,8 @@ ui.onMouseMove_Canvas = function (event)
         {
             if ((mode == ui.MODE.SIMPLE || mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP) && ui.drag.start_pos != null) // rectangle selection
             {
-                var start_pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY:ui.drag.start_pos.y});
-                var cur_pos = ui.page2scaled(event);
+                var start_pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY:ui.drag.start_pos.y});
+                var cur_pos = ui.page2obj(event);
                 var p0 = new util.Vec2(Math.min(start_pos.x, cur_pos.x), Math.min(start_pos.y, cur_pos.y));
                 var p1 = new util.Vec2(Math.max(start_pos.x, cur_pos.x), Math.max(start_pos.y, cur_pos.y));
                 ui.render.drawSelectionRectangle(p0,p1);
@@ -2276,7 +2272,7 @@ ui.onMouseMove_Canvas = function (event)
         if (mode == ui.MODE.SIMPLE && ui.drag.new_atom_id == -1) // Merging two atoms
             return;
 
-        var delta = ui.page2scaled(event).sub(ui.page2scaled({pageX: ui.drag.last_pos.x, pageY: ui.drag.last_pos.y}));
+        var delta = ui.page2obj(event).sub(ui.page2obj({pageX: ui.drag.last_pos.x, pageY: ui.drag.last_pos.y}));
 
         if (ui.drag.atom_id != null || ui.drag.bond_id != null || ui.drag.rxnArrow_id != null || ui.drag.rxnPlus_id != null)
         {
@@ -2343,7 +2339,7 @@ ui.onMouseOver_Atom = function (event, aid)
             if (Object.isUndefined(ui.ctab.atoms.get(begin)))
             {
                 begin = {label: 'C'};
-                pos = ui.page2scaled({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
+                pos = ui.page2obj({pageX: ui.drag.start_pos.x, pageY: ui.drag.start_pos.y});
             }
         }
 
@@ -2381,7 +2377,7 @@ ui.onMouseOut_Atom = function (event, aid)
         ui.drag.action.perform();
         ui.drag.atom_id = ui.atomMap[ui.drag.atom_id];
         ui.drag.new_atom_id = null;
-        ui.render.atomMove(ui.drag.atom_id, ui.page2scaled({'pageX':ui.drag.start_pos.x,'pageY':ui.drag.start_pos.y}));
+        ui.render.atomMove(ui.drag.atom_id, ui.page2obj({'pageX':ui.drag.start_pos.x,'pageY':ui.drag.start_pos.y}));
         ui.drag.action = ui.Action.fromAtomPos(ui.drag.atom_id);
         ui.drag.last_pos = Object.clone(ui.drag.start_pos);
     }

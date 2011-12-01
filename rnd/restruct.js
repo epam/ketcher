@@ -741,8 +741,10 @@ rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
-	if (begin == end)
+	if (begin == end) {
+		debugger;		
 		throw new Error("Distinct atoms expected");
+	}
 	if (rnd.DEBUG && this.molecule.checkBondExists(begin, end))
 		throw new Error("Bond already exists");
 	var pp = {};

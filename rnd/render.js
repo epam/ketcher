@@ -152,7 +152,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     });
     clientArea.observe('gesturechange', function(event) {
         ui.setScrollOffsetRel(-this._tui.dx, -this._tui.dy);
-        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2scaled({ pageX: this._tui.cx, pageY: this._tui.cy }));
+        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2scaled({pageX: this._tui.cx, pageY: this._tui.cy}));
         ui.render.update();
         event.preventDefault();
     });
@@ -263,17 +263,24 @@ rnd.Render.prototype.scaled2obj = function (v) {
 	return v.scaled(1 / this.settings.scaleFactor);
 };
 
+rnd.Render.prototype.obj2scaled = function (v) {
+	return v.scaled(this.settings.scaleFactor);
+};
+
 rnd.Render.prototype.view2obj = function (v, isRelative) {
 	return this.scaled2obj(this.view2scaled(v, isRelative));
 };
 
+rnd.Render.prototype.obj2view = function (v, isRelative) {
+	return this.scaled2view(this.obj2scaled(v, isRelative));
+};
 
 rnd.Render.prototype.checkCurrentItem = function (event) {
 	if (this.offset) {
 		this.pagePos = new util.Vec2(event.pageX, event.pageY);
 		var clientPos = null;
-		if ('ui' in window && 'page2scaled' in ui)
-			clientPos = new util.Vec2(ui.page2scaled(event));
+		if ('ui' in window && 'page2obj' in ui) // TODO: the render shouldn't be aware of the page coordinates
+			clientPos = new util.Vec2(ui.page2obj(event));
 		else
 			clientPos = this.pagePos.sub(this.clientAreaPos);
 		var item = this.findClosestItem(clientPos);
@@ -460,7 +467,7 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	if (!sg.p)
 		return;
-	chem.SGroup.setPos(this.ctab, sg, this.scaled2obj(new util.Vec2(pos), false));
+	chem.SGroup.setPos(this.ctab, sg, new util.Vec2(pos), false);
 };
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
@@ -582,7 +589,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 rnd.Render.prototype._atomAdd = function (pos, params)
 {
 	rnd.logMethod("_atomAdd");
-	var aid = this.ctab.atomAdd(this.scaled2obj(new util.Vec2(pos)), params);
+	var aid = this.ctab.atomAdd(new util.Vec2(pos), params);
 	this.ctab.markAtom(aid, 1);
 	return aid;
 };
@@ -590,7 +597,7 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 rnd.Render.prototype._rxnPlusAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnPlusAdd");
-	var id = this.ctab.rxnPlusAdd(this.scaled2obj(new util.Vec2(pos)), params);
+	var id = this.ctab.rxnPlusAdd(new util.Vec2(pos), params);
 	this.invalidateItem('rxnPluses', id, 1);
 	return id;
 };
@@ -598,14 +605,14 @@ rnd.Render.prototype._rxnPlusAdd = function (pos, params)
 rnd.Render.prototype._rxnArrowAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnArrowAdd");
-	var id = this.ctab.rxnArrowAdd(this.scaled2obj(new util.Vec2(pos)), params);
+	var id = this.ctab.rxnArrowAdd(new util.Vec2(pos), params);
 	this.invalidateItem('rxnArrows', id, 1);
 	return id;
 };
 
 rnd.Render.prototype._itemMove = function (map, id, pos)
 {
-	this.ctab.molecule._itemSetPos(map, id, this.scaled2obj(new util.Vec2(pos)));
+	this.ctab.molecule._itemSetPos(map, id, new util.Vec2(pos));
 	this.invalidateItem(map, id, 1);
 };
 
@@ -630,7 +637,7 @@ rnd.Render.prototype._atomMove = function (id, pos)
 		}
 	}
 	this.invalidateAtom(id, 1);
-	this.ctab.molecule._itemSetPos('atoms', id, this.scaled2obj(new util.Vec2(pos)));
+	this.ctab.molecule._itemSetPos('atoms', id, new util.Vec2(pos));
 };
 
 rnd.Render.prototype._rxnArrowMove = function (id, pos)
@@ -654,7 +661,6 @@ rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
 	var p = this.ctab.molecule[map].get(id).pp;
-	p = p.scaled(this.settings.scaleFactor);
 	return p;
 };
 
@@ -701,7 +707,7 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 };
 
 rnd.Render.prototype.bondMoveRelAsIs = function (bid, d) {
-	this.ctab.translateVisel(this.ctab.bonds.get(bid).visel, d);
+	this.ctab.translateVisel(this.ctab.bonds.get(bid).visel, this.obj2scaled(d));
 };
 
 rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
@@ -725,9 +731,9 @@ rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 
 rnd.Render.prototype.itemMoveRelAsIs = function (map, id, d) {
 	var item = this.ctab[map].get(id);
-	this.ctab.translateVisel(item.visel, d);
+	this.ctab.translateVisel(item.visel, this.obj2scaled(d));
 	this.ctab.molecule._itemSetPos(map, id,
-		this.scaled2obj(this.itemGetPos(map, id).add(d)), this.settings.scaleFactor);
+		this.itemGetPos(map, id).add(d), this.settings.scaleFactor);
 };
 
 rnd.Render.prototype._multipleMoveRel = function (lists, d)
@@ -952,8 +958,8 @@ rnd.Render.prototype.drawSelectionRectangle = function (p0,p1) {
 		this.selectionRect.remove();
 	this.selectionRect = null;
 	if (p0) {
-		p0 = p0.add(this.offset);
-		p1 = p1.add(this.offset);
+		p0 = this.obj2scaled(p0).add(this.offset);
+		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y).
 		attr({
 			'stroke':'#000',
@@ -969,23 +975,23 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 
 	var x0 = p0.x, x1 = p1.x, y0 = p0.y, y1 = p1.y;
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
-			this.ctab.atoms.get(bond.b.end).a.ps, 0.5);
+		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
+			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
 	}, this);
-	this.ctab.atoms.each(function(aid, atom){
-		if (atom.a.ps.x > x0 && atom.a.ps.x < x1 && atom.a.ps.y > y0 && atom.a.ps.y < y1)
+	this.ctab.atoms.each(function(aid, atom) {
+		if (atom.a.pp.x > x0 && atom.a.pp.x < x1 && atom.a.pp.y > y0 && atom.a.pp.y < y1)
 			atomList.push(aid);
 	}, this);
 	var rxnArrowsList = new Array();
 	var rxnPlusesList = new Array();
 	this.ctab.rxnArrows.each(function(id, item){
-		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	}, this);
 	this.ctab.rxnPluses.each(function(id, item){
-		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
 	return {
@@ -1243,11 +1249,11 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 
 rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	var closestAtom = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist	= Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
-		var dist = util.Vec2.dist(pos, atom.a.ps);
+		var dist = util.Vec2.dist(pos, atom.a.pp);
 		if (dist < minDist) {
 			closestAtom = aid;
 			minDist = dist;
@@ -1263,15 +1269,15 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	var closestBond = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.bonds.each(function(bid, bond){
 		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
-		var p1 = this.ctab.atoms.get(bond.b.begin).a.ps,
-		p2 = this.ctab.atoms.get(bond.b.end).a.ps;
+		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
+		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 
 		var inStripe = util.Vec2.dot(pos.sub(p1),d) * util.Vec2.dot(pos.sub(p2),d) < 0;
 		if (inStripe) {
@@ -1292,7 +1298,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var closestSg = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
@@ -1331,11 +1337,11 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 
 rnd.Render.prototype.findClosest = function (map, pos, minDist) {
 	var closestItem = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.molecule[map].each(function(id, item){
-		var dist = util.Vec2.dist(pos, item.ps);
+		var dist = util.Vec2.dist(pos, item.pp);
 		if (dist < minDist) {
 			closestItem = id;
 			minDist = dist;
@@ -1364,7 +1370,7 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
 	updret('Atom', atom);
 	var bond = this.findClosestBond(pos);
-	if (ret == null || ret.dist > 0.4 * this.scale) // hack
+	if (ret == null || ret.dist > 0.4) // hack
 		updret('Bond', bond);
 	var sg = this.findClosestSGroup(pos);
 	updret('SGroup', sg);

@@ -1138,7 +1138,6 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		console.log(x.toString() + " " + y.toString());
 		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {

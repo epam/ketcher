@@ -1102,7 +1102,7 @@ ui.Action.fromBondFlipping = function (id)
 ui.Action.fromPatternOnCanvas = function (pos, pattern)
 {
     var angle = 2 * Math.PI / pattern.length;
-    var l = ui.scale / (2 * Math.sin(angle / 2));
+    var l = 1.0 / (2 * Math.sin(angle / 2));
     var v = new util.Vec2(0, -l);
 
     var action = new ui.Action();
@@ -1140,7 +1140,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
 ui.Action.fromChain = function (p0, v, nSect)
 {
     var angle = Math.PI / 6;
-    var dx = ui.scale * Math.cos(angle), dy = ui.scale * Math.sin(angle);
+    var dx = Math.cos(angle), dy = Math.sin(angle);
 
     var action = new ui.Action();
 
@@ -1159,7 +1159,7 @@ ui.Action.fromChain = function (p0, v, nSect)
     {
         var pos = new util.Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-        var a = ui.render.findClosestAtom(pos, ui.scale * 0.1);
+        var a = ui.render.findClosestAtom(pos, 0.1);
 
         var id1 = -1;
         if (a == null)
@@ -1219,7 +1219,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var atom_pos = ui.render.atomGetPos(id);
 
         pos = util.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
-        pos = pos.scaled(ui.scale / pos.length());
+        pos = pos.scaled(1.0 / pos.length());
         v = pos.negated();
         pos.add_(atom_pos);
         angle = Math.PI - 2 * angle;
@@ -1285,7 +1285,7 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         {
             var new_pos = util.Vec2.sum(pos, v);
 
-            var a = ui.render.findClosestAtom(new_pos, ui.scale * 0.1);
+            var a = ui.render.findClosestAtom(new_pos, 0.1);
 
             if (a == null)
             {

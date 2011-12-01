@@ -92,9 +92,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
 	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.5) - 0;
 
-        this.useOldZoom = Prototype.Browser.IE;
+	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
-        this.baseScale = this.scale;
+	this.baseScale = this.scale;
 	this.offset = new util.Vec2();
 	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
@@ -250,14 +250,16 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 };
 
 rnd.Render.prototype.view2scaled = function (p, isRelative) {
-	p = p.scaled(1/this.zoom);
+	if (!this.useOldZoom)
+		p = p.scaled(1/this.zoom);
 	p = isRelative ? p : p.add(ui.scrollPos().scaled(1/this.zoom)).sub(this.offset);
 	return p;
 };
 
 rnd.Render.prototype.scaled2view = function (p, isRelative) {
 	p = isRelative ? p : p.add(this.offset).sub(ui.scrollPos().scaled(1/this.zoom));
-	p = p.scaled(this.zoom);
+	if (!this.useOldZoom)
+		p = p.scaled(this.zoom);
 	return p;
 };
 
@@ -919,7 +921,7 @@ rnd.Render.prototype._setPaperSize = function (sz)
 {
 	var z = this.zoom;
 	this.paper.setSize(sz.x * z, sz.y * z);
-	this.setViewBox();
+	this.setViewBox(z);
 };
 
 rnd.Render.prototype.setPaperSize = function (sz)
@@ -960,8 +962,10 @@ rnd.Render.prototype.drawSelectionRectangle = function (p0,p1) {
 		this.selectionRect.remove();
 	this.selectionRect = null;
 	if (p0) {
-		p0 = this.obj2scaled(p0).add(this.offset);
-		p1 = this.obj2scaled(p1).add(this.offset);
+		p0 = this.obj2scaled(p0);
+		p1 = this.obj2scaled(p1);
+		p0 = p0.add(this.offset);
+		p1 = p1.add(this.offset);
 		this.selectionRect = this.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y).
 		attr({
 			'stroke':'#000',
@@ -1445,15 +1449,17 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 	return d;
 };
 
-rnd.Render.prototype.setScale = function () {
-    this.scale = this.baseScale * this.zoom;
-    this.settings = null;
-    this.update(true);
+rnd.Render.prototype.setScale = function (z) {
+	if (this.offset)
+		this.offset = this.offset.scaled(1/z).scaled(this.zoom);
+	this.scale = this.baseScale * this.zoom;
+	this.settings = null;
+	this.update(true);
 }
 
-rnd.Render.prototype.setViewBox = function () {
-    if (!this.useOldZoom)
-	this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
-    else
-        this.setScale();
+rnd.Render.prototype.setViewBox = function (z) {
+	if (!this.useOldZoom)
+		this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
+	else
+		this.setScale(z);
 };

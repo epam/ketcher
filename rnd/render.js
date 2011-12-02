@@ -64,7 +64,7 @@ rnd.logMethod = function () { };
 
 rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 {
-	clientArea = $(clientArea);
+	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
 	this.paper.rect(0, 0, 100, 100).attr({
@@ -92,9 +92,11 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
 	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.5) - 0;
 
+	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
+	this.baseScale = this.scale;
 	this.offset = new util.Vec2();
-	clientArea = $(clientArea);
+	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.paper = new Raphael(clientArea);
 	this.size = new util.Vec2();
@@ -110,6 +112,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.selectionRect = null;
 	this.rxnArrow = null;
 	this.rxnMode = false;
+	this.zoom = 1.0;
 
 	var render = this;
 	var valueT = 0, valueL = 0;
@@ -122,20 +125,44 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
+    // rbalabanov: two-fingers scrolling & zooming for iPad
+    // TODO should be moved to touch.js module, re-factoring needed
+    //BEGIN
+    clientArea.observe('touchstart', function(event) {
+        if (event.touches.length == 2) {
+            this._tui = this._tui || {};
+            this._tui.dx = 0;
+            this._tui.dy = 0;
+            this._tui.cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
+            this._tui.cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
+        }
+    });
+    clientArea.observe('touchmove', function(event) {
+        if ('_tui' in this && event.touches.length == 2) {
+            var cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
+            var cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
+            this._tui.dx = cx - (this._tui.cx || cx);
+            this._tui.dy = cy - (this._tui.cy || cy);
+            this._tui.cx = cx;
+            this._tui.cy = cy;
+        }
+    });
     clientArea.observe('gesturestart', function(event) {
-        //event.preventDefault();
-        this.start_scale = ui.scale;
-        console.log("gesturestart");
+        this._tui = this._tui || {};
+        this._tui.scale0 = ui.render.zoom;
+        event.preventDefault();
     });
     clientArea.observe('gesturechange', function(event) {
-        //event.preventDefault();
-        ui.render.setScale(this.start_scale * event.scale);
+        ui.setScrollOffsetRel(-this._tui.dx, -this._tui.dy);
+        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2scaled({pageX: this._tui.cx, pageY: this._tui.cy}));
         ui.render.update();
+        event.preventDefault();
     });
     clientArea.observe('gestureend', function(event) {
-        //event.preventDefault();
-        this.start_scale = null;
+        delete this._tui;
+        event.preventDefault();
     });
+    //END
 
     // rbalabanov: here is temporary fix for "drag issue" on iPad
     //BEGIN
@@ -234,21 +261,47 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 	}
 };
 
+rnd.Render.prototype.view2scaled = function (p, isRelative) {
+	if (!this.useOldZoom)
+		p = p.scaled(1/this.zoom);
+	p = isRelative ? p : p.add(ui.scrollPos().scaled(1/this.zoom)).sub(this.offset);
+	return p;
+};
+
+rnd.Render.prototype.scaled2view = function (p, isRelative) {
+	p = isRelative ? p : p.add(this.offset).sub(ui.scrollPos().scaled(1/this.zoom));
+	if (!this.useOldZoom)
+		p = p.scaled(this.zoom);
+	return p;
+};
+
+rnd.Render.prototype.scaled2obj = function (v) {
+	return v.scaled(1 / this.settings.scaleFactor);
+};
+
+rnd.Render.prototype.obj2scaled = function (v) {
+	return v.scaled(this.settings.scaleFactor);
+};
+
+rnd.Render.prototype.view2obj = function (v, isRelative) {
+	return this.scaled2obj(this.view2scaled(v, isRelative));
+};
+
+rnd.Render.prototype.obj2view = function (v, isRelative) {
+	return this.scaled2view(this.obj2scaled(v, isRelative));
+};
+
 rnd.Render.prototype.checkCurrentItem = function (event) {
 	if (this.offset) {
 		this.pagePos = new util.Vec2(event.pageX, event.pageY);
 		var clientPos = null;
-		if ('ui' in window && 'page2canvas' in ui)
-			clientPos = new util.Vec2(ui.page2canvas(event));
+		if ('ui' in window && 'page2obj' in ui) // TODO: the render shouldn't be aware of the page coordinates
+			clientPos = new util.Vec2(ui.page2obj(event));
 		else
 			clientPos = this.pagePos.sub(this.clientAreaPos);
-		var item = this.findClosestItem(this.client2Obj(clientPos));
+		var item = this.findClosestItem(clientPos);
 		this.setCurrentItem(item.type, item.id, event);
 	}
-};
-
-rnd.Render.prototype.client2Obj = function (clientPos) {
-	return new util.Vec2(clientPos).sub(this.offset);
 };
 
 rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
@@ -272,12 +325,6 @@ util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	}
 );
 
-rnd.Render.prototype.setScale = function (scale)
-{
-	this.scale = scale;
-	this.dirty = true;
-};
-
 rnd.Render.prototype.setMolecule = function (ctab)
 {
 	rnd.logMethod("setMolecule");
@@ -294,14 +341,6 @@ util.each(rnd.actions, function(action){
 		return this.processAction(action, util.array(arguments));
 	}
 });
-
-rnd.Render.prototype.coordViewToObj = function (v) {
-	return v.sub(this.offset).scaled(1 / this.settings.scaleFactor);
-};
-
-rnd.Render.prototype.vecViewToObj = function (v) {
-	return v.scaled(1 / this.settings.scaleFactor);
-};
 
 // molecule manipulation interface
 rnd.Render.prototype.atomGetAttr = function (aid, name)
@@ -435,7 +474,7 @@ rnd.Render.prototype._sGroupSetType = function (sgid, type)
 rnd.Render.prototype.chiralSetPos = function (pos)
 {
 	rnd.logMethod("chiralSetPos");
-	this.ctab.chiral.pos = (pos == null) ? null : new util.Vec2(pos.x, pos.y);
+	this.ctab.chiral.pos = (pos == null) ? null : new util.Vec2(pos);
 };
 
 rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
@@ -444,7 +483,7 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 	var sg = this.ctab.molecule.sgroups.get(sgid);
 	if (!sg.p)
 		return;
-	chem.SGroup.setPos(this.ctab, sg, this.coordViewToObj(new util.Vec2(pos.x, pos.y)));
+	chem.SGroup.setPos(this.ctab, sg, new util.Vec2(pos), false);
 };
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
@@ -566,7 +605,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 rnd.Render.prototype._atomAdd = function (pos, params)
 {
 	rnd.logMethod("_atomAdd");
-	var aid = this.ctab.atomAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)), params);
+	var aid = this.ctab.atomAdd(new util.Vec2(pos), params);
 	this.ctab.markAtom(aid, 1);
 	return aid;
 };
@@ -574,7 +613,7 @@ rnd.Render.prototype._atomAdd = function (pos, params)
 rnd.Render.prototype._rxnPlusAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnPlusAdd");
-	var id = this.ctab.rxnPlusAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)), params);
+	var id = this.ctab.rxnPlusAdd(new util.Vec2(pos), params);
 	this.invalidateItem('rxnPluses', id, 1);
 	return id;
 };
@@ -582,14 +621,14 @@ rnd.Render.prototype._rxnPlusAdd = function (pos, params)
 rnd.Render.prototype._rxnArrowAdd = function (pos, params)
 {
 	rnd.logMethod("_rxnArrowAdd");
-	var id = this.ctab.rxnArrowAdd(this.coordViewToObj(new util.Vec2(pos.x, pos.y)), params);
+	var id = this.ctab.rxnArrowAdd(new util.Vec2(pos), params);
 	this.invalidateItem('rxnArrows', id, 1);
 	return id;
 };
 
 rnd.Render.prototype._itemMove = function (map, id, pos)
 {
-	this.ctab.molecule._itemSetPos(map, id, this.coordViewToObj(new util.Vec2(pos)));
+	this.ctab.molecule._itemSetPos(map, id, new util.Vec2(pos));
 	this.invalidateItem(map, id, 1);
 };
 
@@ -614,7 +653,7 @@ rnd.Render.prototype._atomMove = function (id, pos)
 		}
 	}
 	this.invalidateAtom(id, 1);
-	this.ctab.molecule._itemSetPos('atoms', id, this.coordViewToObj(new util.Vec2(pos)));
+	this.ctab.molecule._itemSetPos('atoms', id, new util.Vec2(pos));
 };
 
 rnd.Render.prototype._rxnArrowMove = function (id, pos)
@@ -637,9 +676,8 @@ rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
 
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
-    //if (typeof(this.ctab.molecule[map].get(id))=='undefined') alert('got it');
-	return this.ctab.molecule[map].get(id).pp.scaled(this.settings.scaleFactor)
-	.add(this.offset);
+	var p = this.ctab.molecule[map].get(id).pp;
+	return p;
 };
 
 rnd.Render.prototype.atomGetPos = function (id)
@@ -682,20 +720,20 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 		}
 	}
 	return {'inner': bidSetInner, 'cross': bidSetCross};
-}
+};
 
 rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 {
 	for (var i = 0; i < atoms.length; ++i) { // TMP
 		this.itemMoveRel('atoms', atoms[i], d);
 	}
-}
+};
 
 rnd.Render.prototype.itemMoveRel = function (map, id, d) {
 	this.invalidateItem(map, id, 1);
 	this.ctab.molecule._itemSetPos(map, id,
-		this.coordViewToObj(this.itemGetPos(map, id).add(d)), this.settings.scaleFactor);
-}
+		this.itemGetPos(map, id).add(d), this.settings.scaleFactor);
+};
 
 rnd.Render.prototype._multipleMoveRel = function (lists, d)
 {
@@ -868,12 +906,25 @@ rnd.Render.prototype.getBoundingBox = function ()
 	return bb;
 };
 
+rnd.Render.prototype.getStructCenter = function ()
+{
+	var bb = this.getBoundingBox();
+	return util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+};
+
+rnd.Render.prototype._setPaperSize = function (sz)
+{
+	var z = this.zoom;
+	this.paper.setSize(sz.x * z, sz.y * z);
+	this.setViewBox(z);
+};
+
 rnd.Render.prototype.setPaperSize = function (sz)
 {
 	rnd.logMethod("setPaperSize");
 	var oldSz = this.sz;
 	this.sz = sz;
-	this.paper.setSize(sz.x, sz.y);
+	this._setPaperSize(sz);
 	if (this.onCanvasSizeChanged)
 		this.onCanvasSizeChanged(sz, oldSz);
 };
@@ -900,15 +951,17 @@ rnd.Render.prototype.getElementPos = function (obj)
 	return new util.Vec2(curleft,curtop);
 };
 
-rnd.Render.prototype.drawSelectionRectangle = function (r) {
+rnd.Render.prototype.drawSelectionRectangle = function (p0,p1) {
 	rnd.logMethod("drawSelectionRectangle");
 	if (this.selectionRect)
 		this.selectionRect.remove();
 	this.selectionRect = null;
-	if (r) {
-		if (!('x0' in r && 'x1' in r && 'y0' in r && 'y1' in r)) // DBG
-			throw "Rectangle format invalid";
-		this.selectionRect = this.paper.rect(r.x0, r.y0, r.x1 - r.x0, r.y1 - r.y0).
+	if (p0) {
+		p0 = this.obj2scaled(p0);
+		p1 = this.obj2scaled(p1);
+		p0 = p0.add(this.offset);
+		p1 = p1.add(this.offset);
+		this.selectionRect = this.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y).
 		attr({
 			'stroke':'#000',
 			'stroke-width':'1px'
@@ -916,33 +969,30 @@ rnd.Render.prototype.drawSelectionRectangle = function (r) {
 	}
 };
 
-rnd.Render.prototype.getElementsInRectangle = function (rect) {
+rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 	rnd.logMethod("getElementsInRectangle");
 	var bondList = new Array();
 	var atomList = new Array();
-	var x0 = rect.x0 - 0, x1 = rect.x1 - 0, y0 = rect.y0 - 0, y1 = rect.y1 - 0;
-	x0 -= this.offset.x;
-	x1 -= this.offset.x;
-	y0 -= this.offset.y;
-	y1 -= this.offset.y;
+
+	var x0 = p0.x, x1 = p1.x, y0 = p0.y, y1 = p1.y;
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
-			this.ctab.atoms.get(bond.b.end).a.ps, 0.5);
+		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
+			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
 	}, this);
-	this.ctab.atoms.each(function(aid, atom){
-		if (atom.a.ps.x > x0 && atom.a.ps.x < x1 && atom.a.ps.y > y0 && atom.a.ps.y < y1)
+	this.ctab.atoms.each(function(aid, atom) {
+		if (atom.a.pp.x > x0 && atom.a.pp.x < x1 && atom.a.pp.y > y0 && atom.a.pp.y < y1)
 			atomList.push(aid);
 	}, this);
 	var rxnArrowsList = new Array();
 	var rxnPlusesList = new Array();
 	this.ctab.rxnArrows.each(function(id, item){
-		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	}, this);
 	this.ctab.rxnPluses.each(function(id, item){
-		if (item.item.ps.x > x0 && item.item.ps.x < x1 && item.item.ps.y > y0 && item.item.ps.y < y1)
+		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
 	return {
@@ -1160,12 +1210,12 @@ rnd.Render.prototype.update = function (force)
 
 			var sz = util.Vec2.max(bb.sz().floor(), this.viewSz);
 			var offset = bb.p0.negated().ceil();
-			if (!this.sz || sz.sub(this.sz).length() > 0)
+			if (!this.sz || sz.x > this.sz.x || sz.y > this.sz.y)
 				this.setPaperSize(sz);
 
 			var oldOffset = this.offset || new util.Vec2();
 			var delta = offset.sub(oldOffset);
-			if (!this.offset || delta.length() > 0) {
+			if (!this.offset || delta.x > 0 || delta.y > 0) {
 				this.setOffset(offset);
 				this.ctab.translate(delta);
 				this.bb.translate(delta);
@@ -1194,25 +1244,17 @@ rnd.Render.prototype.update = function (force)
 	}
 };
 
-rnd.Render.prototype.testMoveRel = function () {
-	this.atomMoveRel(31, {
-		'x':0,
-		'y':0
-	});
-	this.update();
-};
-
 rnd.Render.prototype.checkBondExists = function (begin, end) {
 	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
 rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 	var closestAtom = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
-	minDist = Math.min(minDist, maxMinDist);
+	minDist	= Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
-		var dist = util.Vec2.dist(pos, atom.a.ps);
+		var dist = util.Vec2.dist(pos, atom.a.pp);
 		if (dist < minDist) {
 			closestAtom = aid;
 			minDist = dist;
@@ -1228,15 +1270,15 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	var closestBond = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.bonds.each(function(bid, bond){
 		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
-		var p1 = this.ctab.atoms.get(bond.b.begin).a.ps,
-		p2 = this.ctab.atoms.get(bond.b.end).a.ps;
+		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
+		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 
 		var inStripe = util.Vec2.dot(pos.sub(p1),d) * util.Vec2.dot(pos.sub(p2),d) < 0;
 		if (inStripe) {
@@ -1257,7 +1299,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 
 rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	var closestSg = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
@@ -1296,11 +1338,11 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 
 rnd.Render.prototype.findClosest = function (map, pos, minDist) {
 	var closestItem = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient * this.scale;
+	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	this.ctab.molecule[map].each(function(id, item){
-		var dist = util.Vec2.dist(pos, item.ps);
+		var dist = util.Vec2.dist(pos, item.pp);
 		if (dist < minDist) {
 			closestItem = id;
 			minDist = dist;
@@ -1329,7 +1371,7 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 	var atom = this.findClosestAtom(pos);
 	updret('Atom', atom);
 	var bond = this.findClosestBond(pos);
-	if (ret == null || ret.dist > 0.4 * this.scale) // hack
+	if (ret == null || ret.dist > 0.4) // hack
 		updret('Bond', bond);
 	var sg = this.findClosestSGroup(pos);
 	updret('SGroup', sg);
@@ -1356,4 +1398,63 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 	}
 	visel.add(path, bb);
 	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);
+};
+
+rnd.Render.prototype.setZoom = function (zoom) {
+	this.zoom = zoom;
+	this._setPaperSize(this.sz);
+};
+
+rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
+	var ex = 0, ey = 0, dx = 0, dy = 0;
+	x0 = x0-0;
+	x1 = x1-0;
+	y0 = y0-0;
+	y1 = y1-0;
+
+	if (x0 < 0) {
+		ex += -x0;
+		dx += -x0;
+	}
+	if (y0 < 0) {
+		ey += -y0;
+		dy += -y0;
+	}
+
+	var szx = this.sz.x * this.zoom, szy = this.sz.y * this.zoom;
+	if (szx < x1) {
+		ex += x1 - szx;
+	}
+	if (szy < y1) {
+		ey += y1 - szy;
+	}
+
+	var d = new util.Vec2(dx, dy).scaled(1 / this.zoom);
+	if (ey > 0 || ex > 0) {
+		var e = new util.Vec2(ex, ey).scaled(1 / this.zoom);
+		var sz = this.sz.add(e);
+
+		this.setPaperSize(sz);
+		if (d.x > 0 || d.y > 0) {
+			this.setOffset(this.offset.add(d));
+			this.ctab.translate(d);
+			this.bb.translate(d);
+		}
+	}
+	return d;
+};
+
+rnd.Render.prototype.setScale = function (z) {
+	if (this.offset)
+		this.offset = this.offset.scaled(1/z).scaled(this.zoom);
+	this.scale = this.baseScale * this.zoom;
+	this.settings = null;
+	this.update(true);
+}
+
+rnd.Render.prototype.setViewBox = function (z) {
+	if (!this.useOldZoom)
+		this.paper.canvas.setAttribute("viewBox",'0 0 ' + this.sz.x + ' ' + this.sz.y);
+	else
+		this.setScale(z);
 };

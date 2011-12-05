@@ -209,7 +209,6 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     var first_component = true;
 
-    var nReactants = 1;
     for (i = 0; i < walk.v_seq.length; i++)
     {
         seq_el = walk.v_seq[i];
@@ -304,7 +303,6 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         }
         else
         {
-            console.log(walk.nComponentsInReactants);
             if (!first_component)
                 this.smiles += (this._written_components == walk.nComponentsInReactants) ? '>>' : '.';
             first_component = false;

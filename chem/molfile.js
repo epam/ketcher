@@ -743,7 +743,8 @@ chem.MolfileSaver.getComponents = function (molecule) {
 	molecule.rxnPluses.each(function(id, item){
 		barriers.push(item.pos.x);
 	});
-	barriers.push(arrowPos);
+	if (arrowPos != null)
+		barriers.push(arrowPos);
 	barriers.sort(function(a,b) {return a - b;});
 	var components = [];
 

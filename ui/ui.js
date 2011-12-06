@@ -41,6 +41,8 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
+ui.cursorPos = {pageX: 0, pageY: 0};
+
 ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
 
 ui.patterns =
@@ -528,6 +530,26 @@ ui.selectMode = function (mode)
             if (mode == 'sgroup')
             {
                 ui.showSGroupProperties(null);
+                return;
+            }
+        } else if (mode.startsWith('atom_')) 
+        {
+            var closest = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
+            
+            if (closest)
+            {
+                ui.addUndoAction(ui.Action.fromAtomAttrs(closest.id, ui.atomLabel(mode)), true);
+                ui.render.update();
+                return;
+            }
+        } else if (mode.startsWith('bond_')) 
+        {
+            var closest = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
+            
+            if (closest)
+            {
+                ui.addUndoAction(ui.Action.fromBondAttrs(closest.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+                ui.render.update();
                 return;
             }
         }
@@ -2091,6 +2113,9 @@ ui.onMouseMove_Canvas = function (event)
     ui.mouse_moved = true;
 
     var mode = ui.modeType();
+    
+    ui.cursorPos.pageX = event.pageX;
+    ui.cursorPos.pageY = event.pageY;
 
     if (mode == ui.MODE.BOND || mode == ui.MODE.ATOM)
     {

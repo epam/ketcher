@@ -2455,8 +2455,9 @@ ui.showAtomProperties = function (id)
     $('atom_properties').atom_id = id;
     $('atom_label').value = ui.render.atomGetAttr(id, 'label');
     ui.onChange_AtomLabel.call($('atom_label'));
-    $('atom_charge').value = ui.render.atomGetAttr(id, 'charge');
-    var value = ui.render.atomGetAttr(id, 'isotope');
+    var value = ui.render.atomGetAttr(id, 'charge');
+    $('atom_charge').value = (value == 0 ? '' : value);
+    value = ui.render.atomGetAttr(id, 'isotope');
     $('atom_isotope').value = (value == 0 ? '' : value);
     $('atom_valence').value = (!ui.render.atomGetAttr(id, 'explicitValence') ? '' : ui.render.atomGetAttr(id, 'valence'));
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
@@ -2474,10 +2475,10 @@ ui.applyAtomProperties = function ()
     ui.addUndoAction(ui.Action.fromAtomAttrs(id,
     {
         label: $('atom_label').value,
-        charge: parseInt($('atom_charge').value),
+        charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value),
         isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
         explicitValence: $('atom_valence').value != '',
-        valence: $('atom_valence').value == '' ? 0 : parseInt($('atom_valence').value),
+        valence: $('atom_valence').value == '' ? ui.render.atomGetAttr(id, 'valence') : parseInt($('atom_valence').value),
         radical: parseInt($('atom_radical').value)
     }), true);
 
@@ -2508,6 +2509,10 @@ ui.onChange_AtomLabel = function ()
 
 ui.onChange_AtomCharge = function ()
 {
+    if (this.value.strip() == '' || this.value == '0')
+        this.value = '';
+    else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/))
+        this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'charge');
 };
 
 ui.onChange_AtomIsotope = function ()
@@ -2520,10 +2525,12 @@ ui.onChange_AtomIsotope = function ()
 
 ui.onChange_AtomValence = function ()
 {
+    /*
     if (this.value.strip() == '')
         this.value = '';
     else if (!this.value.match(/^[0-9]$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+    */
 };
 
 //

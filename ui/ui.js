@@ -18,6 +18,8 @@ ui.standalone = true;
 ui.path = '/';
 ui.base_url = '';
 
+ui.scale = 40;
+
 ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
 ui.zoomIdx = 1;
 ui.zoom = 1.0;
@@ -349,7 +351,7 @@ ui.init = function ()
     this.selectMode('select_simple');
 
     // Init renderer
-    this.render =  new rnd.Render(this.client_area, 40, {atomColoring: true});
+    this.render =  new rnd.Render(this.client_area, ui.scale, {atomColoring: true});
 
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;

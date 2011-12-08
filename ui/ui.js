@@ -109,13 +109,19 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
-            'autoScale':true,
-            'autoScaleMargin':4,
-            'hideImplicitHydrogen':true,
-            'hideTerminalLabels':true,
-            'ignoreMouseEvents':true
-        });
+        if ($(dropdown_mode_id).getAttribute('src'))
+        {
+            $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src'));
+        } else 
+        {
+            ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
+                'autoScale':true,
+                'autoScaleMargin':4,
+                'hideImplicitHydrogen':true,
+                'hideTerminalLabels':true,
+                'ignoreMouseEvents':true
+            });
+        }
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
@@ -126,6 +132,8 @@ ui.onMouseDown_DropdownListItem = function (event)
     }
 };
 
+ui.defaultSelector = 'selector_lasso';
+
 ui.init = function ()
 {
     if (this.initialized)
@@ -135,7 +143,7 @@ ui.init = function ()
         this.undoStack.clear();
         this.redoStack.clear();
         this.updateActionButtons();
-        this.selectMode('select_simple');
+        this.selectMode(ui.defaultSelector);
         return;
     }
 
@@ -348,10 +356,11 @@ ui.init = function ()
         }
     }
 
-    this.selectMode('select_simple');
-
     // Init renderer
     this.render =  new rnd.Render(this.client_area, ui.scale, {atomColoring: true});
+    this.editor = new rnd.Editor(this.render);
+
+    this.selectMode('selector_lasso');
 
     this.render.onAtomClick = this.onClick_Atom;
     this.render.onAtomDblClick = this.onDblClick_Atom;
@@ -418,7 +427,7 @@ ui.toggleDropdownList = function (name)
     else
     {
         $(list_id).show();
-        if (!ui[list_id + '_was_shown'])
+        if ($(list_id).hasClassName('renderFirst'))
         {
             var renderOpts = {
                 'autoScale':true,
@@ -433,7 +442,7 @@ ui.toggleDropdownList = function (name)
                     ketcher.showMolfileOpts(item.id + '_preview', ketcher.templates[item.id], 20, renderOpts);
             });
 
-            ui[list_id + '_was_shown'] = true;
+            $(list_id).removeClassName('renderFirst');
         }
     }
 };
@@ -562,21 +571,31 @@ ui.selectMode = function (mode)
 
     if (this.mode_id != null && this.mode_id != mode)
     {
-        if (this.mode_id.startsWith('bond'))
+        var button_id = this.mode_id.split('_')[0];
+        var state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
+     
+        if (state_button)
         {
-            if (!mode.startsWith('bond'))
-                $('bond').removeClassName('buttonSelected');
+            if (mode && !mode.startsWith(button_id))
+                $(button_id).removeClassName('buttonSelected');
         } else
             $(this.mode_id).removeClassName('buttonSelected');
     }
 
-    if (mode == null)
+    if (mode == null) {
         this.mode_id = null;
+        delete this.render.current_tool;
+    }
     else
     {
+        this.render.current_tool = this.editor.toolFor(mode);
         this.mode_id = mode;
-        if (this.mode_id.startsWith('bond'))
-            $('bond').addClassName('buttonSelected');
+
+        button_id = this.mode_id.split('_')[0];
+        state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
+
+        if (state_button)
+            $(button_id).addClassName('buttonSelected');
         else
             $(this.mode_id).addClassName('buttonSelected');
     }
@@ -668,7 +687,7 @@ ui.onClick_NewFile = function ()
     if (ui.modeType() == ui.MODE.PASTE)
         ui.cancelPaste();
 
-    ui.selectMode('select_simple');
+    ui.selectMode(ui.defaultSelector);
 
     if (!ui.ctab.isBlank())
     {
@@ -698,6 +717,16 @@ ui.onKeyPress_Ketcher = function (event)
         return util.preventDefault(event);
     }
 
+    //rbalabanov: here we try to handle event using current editor tool
+    //BEGIN
+    if (ui && ui.render.current_tool) {
+        if (ui.render.current_tool.processEvent('OnKeyPress', event)) {
+            util.preventDefault(event);
+            return;
+        }
+    }
+    //END
+
     switch (event.keyCode)
     {
     case 27: // Esc
@@ -707,7 +736,7 @@ ui.onKeyPress_Ketcher = function (event)
                 ui.cancelPaste();
             else if (ui.modeType() == ui.MODE.SIMPLE)
                 ui.updateSelection();
-            ui.selectMode('select_simple');
+            ui.selectMode(ui.defaultSelector);
         }
         return util.preventDefault(event);
     case 46: // Delete
@@ -880,7 +909,7 @@ ui.onKeyUp = function (event)
                     ui.cancelPaste();
                 else if (ui.modeType() == ui.MODE.SIMPLE)
                     ui.updateSelection();
-                ui.selectMode('select_simple');
+                ui.selectMode(ui.defaultSelector);
             }
         } else if (this.hasClassName('dialogWindow'))
             ui.hideDialog(this.id);
@@ -1039,7 +1068,7 @@ ui.onClick_OpenFile = function ()
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.cancelPaste();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
     }
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
@@ -1157,7 +1186,7 @@ ui.onClick_SaveFile = function ()
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.cancelPaste();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
     }
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
@@ -1255,16 +1284,18 @@ ui.setZoomCentered = function (zoom, c) {
     ui.setScrollOffset(sp.x, sp.y);
 }
 
-// s is a point in scaled coordinates, whose position in screen coordinates should remain the same after zooming
-// "scaled" coordinates are the ones returned by atomGetPos() or when applying page2scaled() to a point in page coordinates
-// "scaled" coordinates are the object coordinates after a certain fixed transformation; they are independent of zooming or scrolling
-ui.setZoomStaticPoint = function (zoom, s) {
-    if (!s)
-        throw new Error("Center point not specified");
-    var oldVp = ui.render.scaled2view(s);
+// set the reference point for the "static point" zoom (in object coordinates)
+ui.setZoomStaticPointInit = function (s) {
+    ui.zspObj = new util.Vec2(s);
+}
+
+// vp is the point where the reference point should now be (in view coordinates)
+ui.setZoomStaticPoint = function (zoom, vp) {
     ui.setZoomRegular(zoom);
-    var newVp = ui.render.scaled2view(s);
-    ui.setScrollOffsetRel(newVp.x - oldVp.x, newVp.y - oldVp.y);
+    ui.setScrollOffset(0, 0);
+    var avp = ui.render.obj2view(ui.zspObj);
+    var so = avp.sub(vp);
+    ui.setScrollOffset(so.x, so.y);
 }
 
 ui.setScrollOffset = function (x, y) {
@@ -1292,7 +1323,7 @@ ui.onClick_CleanUp = function ()
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.cancelPaste();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
     }
 
     var ms = new chem.MolfileSaver();
@@ -1371,6 +1402,37 @@ ui.onScroll_ClientArea = function ()
     ui.scrollTop = ui.client_area.scrollTop;
 };
 
+ui.showLabelEditor = function(id) {
+    var input_el = $('input_label');
+
+    var offset_client = ui.client_area.cumulativeOffset();
+    var atom_pos = ui.render.obj2view(ui.render.atomGetPos(id));
+    var offset_atom =
+    {
+        left: offset_client.left + atom_pos.x,
+        top: offset_client.top + atom_pos.y
+    };
+
+    var offset = 6 * ui.zoom;
+    var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
+
+    if (offset > 16)
+        offset = 16;
+
+    input_el.atom_id = id;
+    input_el.value = ui.render.atomGetAttr(id, 'label');
+    input_el.style.fontSize = (offset * 2).toString() + 'px';
+
+    input_el.show();
+
+    var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
+
+    input_el.style.left = (offset_atom.left - offset_parent.left - offset - d).toString() + 'px';
+    input_el.style.top = (offset_atom.top - offset_parent.top - offset - d).toString() + 'px';
+
+    input_el.activate();
+};
+
 //
 // Clicking
 //
@@ -1411,34 +1473,7 @@ ui.onClick_Atom = function (event, id)
             }
             */
 
-            var input_el = $('input_label');
-
-            var offset_client = ui.client_area.cumulativeOffset();
-            var atom_pos = ui.render.obj2view(ui.render.atomGetPos(id));
-            var offset_atom =
-            {
-                left: offset_client.left + atom_pos.x,
-                top: offset_client.top + atom_pos.y
-            };
-
-            var offset = 6 * ui.zoom;
-            var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
-
-            if (offset > 16)
-                offset = 16;
-
-            input_el.atom_id = id;
-            input_el.value = ui.render.atomGetAttr(id, 'label');
-            input_el.style.fontSize = (offset * 2).toString() + 'px';
-
-            input_el.show();
-
-            var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
-
-            input_el.style.left = (offset_atom.left - offset_parent.left - offset - d).toString() + 'px';
-            input_el.style.top = (offset_atom.top - offset_parent.top - offset - d).toString() + 'px';
-
-            input_el.activate();
+            ui.showLabelEditor(id);
             break;
 
         case ui.MODE.ERASE:
@@ -1742,7 +1777,7 @@ ui.onClick_Canvas = function (event)
         ui.pasted.sgroups.clear();
         ui.pasted.rxnArrows.clear();
         ui.pasted.rxnPluses.clear();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
         break;
     }
 };
@@ -1856,17 +1891,6 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
 
     ui.client_area.scrollLeft += delta.x;
     ui.client_area.scrollTop += delta.y;
-
-    ui.undoStack.each(function (action)
-    {
-        action.operations.each(function (op)
-        {
-            if (op.type == ui.Action.OPERATION.ATOM_POS || op.type == ui.Action.OPERATION.ATOM_ADD)
-            {
-                op.params.pos.add_(delta);
-            }
-        }, this);
-    }, this);
 };
 
 //
@@ -1905,7 +1929,7 @@ ui.isDrag = function ()
     return ui.drag.start_pos != null;
 };
 
-ui.updateSelection = function (selection)
+ui.updateSelection = function (selection, nodraw)
 {
     selection = selection || {};
     for (var map in rnd.ReStruct.maps) {
@@ -1921,8 +1945,10 @@ ui.updateSelection = function (selection)
         return (ui.selection.atoms.indexOf(bond.begin) != -1 && ui.selection.atoms.indexOf(bond.end) != -1);
     });
 
-    ui.render.setSelection(ui.selection);
-    ui.render.update();
+    if (!nodraw) {
+        ui.render.setSelection(ui.selection);
+        ui.render.update();
+    }
 
     ui.updateClipboardButtons();
 };
@@ -1941,7 +1967,7 @@ ui.selectAll = function ()
 {
     var mode = ui.modeType();
     if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
 
     var selection = {};
     for (var map in rnd.ReStruct.maps) {
@@ -1966,6 +1992,8 @@ ui.hideBlurredControls = function ()
         $('input_label').hide();
     if ($('bond_dropdown_list').visible())
         $('bond_dropdown_list').hide();
+    if ($('selector_dropdown_list').visible())
+        $('selector_dropdown_list').hide();
 };
 
 ui.onMouseDown_Atom = function (event, aid)
@@ -2092,7 +2120,7 @@ ui.onMouseDown_Canvas = function (event)
         ui.pasted.sgroups.clear();
         ui.pasted.rxnArrows.clear();
         ui.pasted.rxnPluses.clear();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
 
         return;
     }
@@ -2303,6 +2331,7 @@ ui.onMouseMove_Canvas = function (event)
 
         if (ui.drag.atom_id != null || ui.drag.bond_id != null || ui.drag.rxnArrow_id != null || ui.drag.rxnPlus_id != null)
         {
+            // TODO to be handled by SelectTool
             if (ui.drag.selection)
                 ui.render.multipleMoveRel(ui.selection, delta);
             else if (ui.drag.atom_id != null)
@@ -2426,7 +2455,7 @@ ui.onMouseOut_Bond = function (event, bid)
 
 ui.highlightSGroup = function (sid, highlight)
 {
-    ui.render.sGroupSetHighlight(sid, highlight);
+    ui.render._sGroupSetHighlight(sid, highlight);
 
     var atoms = ui.render.sGroupGetAtoms(sid);
 
@@ -2767,7 +2796,7 @@ ui.onClick_ElemTableButton = function ()
     if (ui.modeType() == ui.MODE.PASTE)
     {
         ui.cancelPaste();
-        ui.selectMode('select_simple');
+        ui.selectMode(ui.defaultSelector);
     }
     ui.showElemTable();
 };

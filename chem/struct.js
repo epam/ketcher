@@ -31,7 +31,7 @@ chem.Struct.prototype.isBlank = function ()
 {
 	return this.atoms.count() == 0 &&
 		this.rxnArrows.count() == 0 &&
-		this.rxnPluses.count() == 0 && 
+		this.rxnPluses.count() == 0 &&
 		!this.isChiral;
 };
 

@@ -71,6 +71,7 @@ ui.Action.prototype.addOperation = function (type, params)
 ui.Action.prototype.mergeWith = function (action)
 {
     this.operations = this.operations.concat(action.operations);
+    return this; //rbalabanov: let it be possible to chain actions in code easier
 };
 
 // Perform action and return inverted one
@@ -437,18 +438,24 @@ ui.Action.fromAtomPos = function (id, pos)
     return action;
 };
 
-ui.Action.fromSelectedAtomsPos = function ()
+ui.Action.fromSelectedAtomsPos = function(selection)
 {
+    selection = selection || ui.selection;
+
     var action = new ui.Action();
 
-    ui.selection.atoms.each(function (id)
-    {
-        action.addOperation(ui.Action.OPERATION.ATOM_POS,
-        {
-            id: ui.atomMap.indexOf(id),
-            pos: ui.render.atomGetPos(id)
-        });
-    }, this);
+    selection.atoms.each(
+        function(id) {
+            action.addOperation(
+                ui.Action.OPERATION.ATOM_POS,
+                {
+                    id: ui.atomMap.indexOf(id),
+                    pos: ui.render.atomGetPos(id)
+                }
+            );
+        },
+        this
+    );
 
     return action;
 };
@@ -955,21 +962,23 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
     return action;
 };
 
-ui.Action.fromFragmentDeletion = function ()
+ui.Action.fromFragmentDeletion = function(selection)
 {
+    selection = selection || ui.selection;
+        
     var action = new ui.Action();
     var atoms_to_remove = new Array();
 
-    ui.selection.atoms.each(function (aid)
+    selection.atoms.each(function (aid)
     {
         ui.render.atomGetNeighbors(aid).each(function (nei)
         {
-            if (ui.selection.bonds.indexOf(nei.bid) == -1)
-                ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
+            if (selection.bonds.indexOf(nei.bid) == -1)
+                selection.bonds = selection.bonds.concat([nei.bid]);
         }, this);
     }, this);
 
-    ui.selection.bonds.each(function (bid)
+    selection.bonds.each(function (bid)
     {
         action.addOperation(ui.Action.OPERATION.BOND_DEL,
         {
@@ -978,7 +987,7 @@ ui.Action.fromFragmentDeletion = function ()
 
         var bond = ui.ctab.bonds.get(bid);
 
-        if (ui.selection.atoms.indexOf(bond.begin) == -1 && ui.render.atomGetDegree(bond.begin) == 1)
+        if (selection.atoms.indexOf(bond.begin) == -1 && ui.render.atomGetDegree(bond.begin) == 1)
         {
             if (action.removeAtomFromSgroupIfNeeded(bond.begin))
                 atoms_to_remove.push(bond.begin);
@@ -988,7 +997,7 @@ ui.Action.fromFragmentDeletion = function ()
                 id: ui.atomMap.indexOf(bond.begin)
             });
         }
-        if (ui.selection.atoms.indexOf(bond.end) == -1 && ui.render.atomGetDegree(bond.end) == 1)
+        if (selection.atoms.indexOf(bond.end) == -1 && ui.render.atomGetDegree(bond.end) == 1)
         {
             if (action.removeAtomFromSgroupIfNeeded(bond.end))
                 atoms_to_remove.push(bond.end);
@@ -1001,7 +1010,7 @@ ui.Action.fromFragmentDeletion = function ()
     }, this);
 
 
-    ui.selection.atoms.each(function (aid)
+    selection.atoms.each(function (aid)
     {
         if (action.removeAtomFromSgroupIfNeeded(aid))
             atoms_to_remove.push(aid);
@@ -1014,11 +1023,11 @@ ui.Action.fromFragmentDeletion = function ()
 
     action.removeSgroupIfNeeded(atoms_to_remove);
 
-    ui.selection.rxnArrows.each(function (id) {
+    selection.rxnArrows.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
     }, this);
 
-    ui.selection.rxnPluses.each(function (id) {
+    selection.rxnPluses.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
     }, this);
 

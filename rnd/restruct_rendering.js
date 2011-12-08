@@ -390,9 +390,15 @@ rnd.ReStruct.prototype.centerText = function (path, rbb)
 	}
 };
 
+// TODO to be removed
+/** @deprecated please use ReAtom.setHighlight instead */
 rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
 {
 	var exists = (atom.highlighting != null) && !atom.highlighting.removed;
+    // rbalabanov: here is temporary fix for "drag issue" on iPad
+    //BEGIN
+    exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(atom.highlighting) < 0);
+    //END
 	if (visible) {
 		if (!exists) {
 			var render = this.render;
@@ -514,6 +520,10 @@ rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
 rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 {
 	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
+    // rbalabanov: here is temporary fix for "drag issue" on iPad
+    //BEGIN
+    exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(item.selectionPlate) < 0);
+    //END
 	if (visible) {
 		if (!exists) {
 			var render = this.render;
@@ -812,9 +822,15 @@ rnd.ReStruct.prototype.showLabels = function ()
 	}
 };
 
+// TODO to be removed
+/** @deprecated please use ReBond.setHighlight instead */
 rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 {
 	var exists = (bond.highlighting != null) && !bond.highlighting.removed;
+    // rbalabanov: here is temporary fix for "drag issue" on iPad
+    //BEGIN
+    exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(bond.highlighting) < 0);
+    //END
 	if (visible) {
 		if (!exists) {
 			var render = this.render;

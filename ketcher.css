@@ -147,6 +147,11 @@ table#ketcher_window > tr
     top: 120px;
 }
 
+#selector_dropdown_list
+{
+    top: 43px;
+}
+
 .dropdownListItem
 {
     cursor: default;

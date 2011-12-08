@@ -20,21 +20,67 @@ if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 if (!window.rnd)
 	rnd = {};
 
+rnd.ReObject = function()  // TODO ??? should it be in ReStruct namespace
+{
+};
+
+rnd.ReObject.prototype.init = function(viselType)
+{
+    this.visel = new rnd.Visel(viselType);
+
+    this.highlight = false;
+    this.highlighting = null;
+    this.selected = false;
+    this.selectionPlate = null;
+};
+
+rnd.ReObject.prototype.drawHighlight = function(render) {
+    console.log('ReObject.drawHighlight is not overridden');
+};
+
+rnd.ReObject.prototype.setHighlight = function(highLight, render) { // TODO render should be field
+    if (highLight) {
+        var noredraw = this.highlighting && !this.highlighting.removed;
+        // rbalabanov: here is temporary fix for "drag issue" on iPad
+        //BEGIN
+        noredraw = noredraw && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
+        //END
+        if (noredraw) {
+            this.highlighting.show();
+        }
+        else this.highlighting = this.drawHighlight(render);
+    } else {
+        if (this.highlighting) this.highlighting.hide();
+    }
+    this.highlight = highLight;
+};
+
+rnd.ReObject.prototype.makeSelectionPlate = function(render) {
+    console.log('ReObject.makeSelectionPlate is not overridden');
+};
+
 rnd.ReAtom = function (/*chem.Atom*/atom)
 {
-	this.a = atom;
+    this.init(rnd.Visel.TYPE.ATOM);
+
+	this.a = atom; // TODO rename a to item
 	this.showLabel = false;
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.ATOM);
+
 	this.hydrogenOnTheLeft = false;
 
-	this.highlight = false;
-	this.highlighting = null;
 	this.sGroupHighlight = false;
 	this.sGroupHighlighting = null;
-	this.selected = false;
-	this.selectionPlate = null;
 
 	this.component = -1;
+};
+rnd.ReAtom.prototype = new rnd.ReObject();
+
+rnd.ReAtom.prototype.drawHighlight = function(render) {
+    var ret = render.paper.circle(
+        this.a.ps.x, this.a.ps.y, render.styles.atomSelectionPlateRadius
+    ).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
 };
 
 rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
@@ -44,15 +90,21 @@ rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 
 rnd.ReBond = function (/*chem.Bond*/bond)
 {
-	this.b = bond;
+    this.init(rnd.Visel.TYPE.BOND);
+
+	this.b = bond; // TODO rename b to item
 	this.doubleBondShift = 0;
+};
+rnd.ReBond.prototype = new rnd.ReObject();
 
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.BOND);
-
-	this.highlight = false;
-	this.highlighting = null;
-	this.selected = false;
-	this.selectionPlate = null;
+rnd.ReBond.prototype.drawHighlight = function(render)
+{
+    render.ctab.bondRecalc(render.settings, this);
+    var ret = render.paper.ellipse(
+        this.b.center.x, this.b.center.y, this.b.sa, this.b.sb
+    ).rotate(this.b.angle).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
 };
 
 rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
@@ -901,13 +953,18 @@ rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 
 rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 {
-	this.item = plus;
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.PLUS);
+    this.init(rnd.Visel.TYPE.PLUS);
 
-	this.highlight = false;
-	this.highlighting = null;
-	this.selected = false;
-	this.selectionPlate = null;
+	this.item = plus;
+};
+rnd.ReRxnPlus.prototype = new rnd.ReObject();
+
+rnd.ReRxnPlus.prototype.drawHighlight = function(render) {
+    var ret = render.paper.circle(
+        this.item.ps.x, this.item.ps.y, render.styles.atomSelectionPlateRadius
+    ).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
 };
 
 rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) {
@@ -917,13 +974,18 @@ rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) 
 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
-	this.item = arrow;
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.ARROW);
+    this.init(rnd.Visel.TYPE.ARROW);
 
-	this.highlight = false;
-	this.highlighting = null;
-	this.selected = false;
-	this.selectionPlate = null;
+	this.item = arrow;
+};
+rnd.ReRxnArrow.prototype = new rnd.ReObject();
+
+rnd.ReRxnArrow.prototype.drawHighlight = function(render) {
+    var ret = render.paper.circle(
+        this.item.ps.x, this.item.ps.y, render.styles.atomSelectionPlateRadius
+    ).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
 };
 
 rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {

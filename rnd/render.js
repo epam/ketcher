@@ -131,20 +131,19 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     clientArea.observe('touchstart', function(event) {
         if (event.touches.length == 2) {
             this._tui = this._tui || {};
-            this._tui.dx = 0;
-            this._tui.dy = 0;
-            this._tui.cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
-            this._tui.cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
+            this._tui.center = {
+                pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
+                pageY : (event.touches[0].pageY + event.touches[1].pageY) / 2
+            };
+            ui.setZoomStaticPointInit(ui.page2obj(this._tui.center));
         }
     });
     clientArea.observe('touchmove', function(event) {
         if ('_tui' in this && event.touches.length == 2) {
-            var cx = (event.touches[0].screenX + event.touches[1].screenX) / 2;
-            var cy = (event.touches[0].screenY + event.touches[1].screenY) / 2;
-            this._tui.dx = cx - (this._tui.cx || cx);
-            this._tui.dy = cy - (this._tui.cy || cy);
-            this._tui.cx = cx;
-            this._tui.cy = cy;
+            this._tui.center = {
+                pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
+                pageY : (event.touches[0].pageY + event.touches[1].pageY) / 2
+            };
         }
     });
     clientArea.observe('gesturestart', function(event) {
@@ -153,8 +152,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
         event.preventDefault();
     });
     clientArea.observe('gesturechange', function(event) {
-        ui.setScrollOffsetRel(-this._tui.dx, -this._tui.dy);
-        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2scaled({pageX: this._tui.cx, pageY: this._tui.cy}));
+        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2canvas2(this._tui.center));
         ui.render.update();
         event.preventDefault();
     });
@@ -168,12 +166,23 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     //BEGIN
     if ('hiddenPaths' in rnd.ReStruct.prototype) {
         clientArea.observe('touchend', function(event) {
-            console.log('touchend');
             if (event.touches.length == 0) {
                 while (rnd.ReStruct.prototype.hiddenPaths.length > 0) rnd.ReStruct.prototype.hiddenPaths.pop().remove();
             }
         });
     }
+    //END
+
+    //rbalabanov: temporary
+    //BEGIN
+    clientArea.observe('mouseup', function(event) {
+        ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', event);
+    });
+    clientArea.observe('touchend', function(event) {
+        if (event.touches.length == 0) {
+            ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', new rnd.MouseEvent(event));
+        }
+    });
     //END
 
 	if (!this.opt.ignoreMouseEvents) {
@@ -182,8 +191,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             var bindEventName = eventName.toLowerCase();
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
-				var name = '_onCanvas' + eventName;
-				if ((!('touches' in event) || event.touches.length == 1) && render[name])
+                var ntHandled = ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
+                var name = '_onCanvas' + eventName;
+				if (!(ui.render.current_tool) && (!('touches' in event) || event.touches.length == 1) && render[name])
 					render[name](new rnd.MouseEvent(event));
 				util.stopEventPropagation(event);
                 if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
@@ -243,6 +253,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 };
 
 rnd.Render.prototype.setCurrentItem = function (type, id, event) {
+    if (this.current_tool) return;
 	var oldType = this.curItem.type, oldId = this.curItem.id;
 	if (type != oldType || id != oldId) {
 		this.curItem = {
@@ -292,6 +303,7 @@ rnd.Render.prototype.obj2view = function (v, isRelative) {
 };
 
 rnd.Render.prototype.checkCurrentItem = function (event) {
+    if (this.current_tool) return;
 	if (this.offset) {
 		this.pagePos = new util.Vec2(event.pageX, event.pageY);
 		var clientPos = null;
@@ -304,7 +316,29 @@ rnd.Render.prototype.checkCurrentItem = function (event) {
 	}
 };
 
+rnd.Render.prototype.findItem = function(event, maps, skip) {
+    var ci = this.findClosestItem(
+        'ui' in window && 'page2obj' in ui
+            ? new util.Vec2(ui.page2obj(event))
+            : new util.Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
+        maps,
+        skip
+    );
+    //rbalabanov: let it be this way at the moment
+    if (ci.type == 'Atom') ci.map = 'atoms';
+    else if (ci.type == 'Bond') ci.map = 'bonds';
+    else if (ci.type == 'SGroup') ci.map = 'sgroups';
+    else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
+    else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
+    return ci;
+};
+
+rnd.Render.prototype.client2Obj = function (clientPos) {
+	return new util.Vec2(clientPos).sub(this.offset);
+};
+
 rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
+    if (this.current_tool) return;
 	var name = 'on' + type + eventName;
 	var handled = false;
 	if (this[name])
@@ -586,6 +620,8 @@ rnd.Render.prototype._atomClearSGroups = function (aid)
 	this.invalidateAtom(aid);
 };
 
+// TODO to be removed
+/** @deprecated please use ReAtom.setHighlight instead */
 rnd.Render.prototype.atomSetHighlight = function (aid, value)
 {
 	rnd.logMethod("atomSetHighlight");
@@ -600,6 +636,21 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 	var atom = this.ctab.atoms.get(aid);
 	atom.sGroupHighlight = value;
 	this.ctab.showAtomSGroupHighlighting(aid, atom, value);
+};
+
+rnd.Render.prototype.highlightObject = function(obj, visible) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses'].indexOf(obj.map) > -1) {
+        this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
+    } else if (obj.map == 'atoms') {
+        //this.atomSetHighlight(obj.id, visible);
+    } else if (obj.map == 'bonds') {
+        //this.bondSetHighlight(obj.id, visible);
+    } else if (obj.map == 'sgroups') {
+        ui.highlightSGroup(obj.id, visible);
+    } else {
+        return false;
+    }
+    return true;
 };
 
 rnd.Render.prototype._atomAdd = function (pos, params)
@@ -787,6 +838,8 @@ rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 // update loops involving this bond
 };
 
+// TODO to be removed
+/** @deprecated please use ReBond.setHighlight instead */
 rnd.Render.prototype.bondSetHighlight = function (bid, value)
 {
 	rnd.logMethod("bondSetHighlight");
@@ -951,21 +1004,18 @@ rnd.Render.prototype.getElementPos = function (obj)
 	return new util.Vec2(curleft,curtop);
 };
 
-rnd.Render.prototype.drawSelectionRectangle = function (p0,p1) {
+rnd.Render.prototype.drawSelectionRectangle = function (p0, p1) {
 	rnd.logMethod("drawSelectionRectangle");
-	if (this.selectionRect)
+	if (this.selectionRect) {
 		this.selectionRect.remove();
-	this.selectionRect = null;
-	if (p0) {
-		p0 = this.obj2scaled(p0);
-		p1 = this.obj2scaled(p1);
-		p0 = p0.add(this.offset);
-		p1 = p1.add(this.offset);
-		this.selectionRect = this.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y).
-		attr({
-			'stroke':'#000',
-			'stroke-width':'1px'
-		});
+	    this.selectionRect = null;
+    }
+	if (p0 && p1) {
+		p0 = this.obj2scaled(p0).add(this.offset);
+		p1 = this.obj2scaled(p1).add(this.offset);
+		this.selectionRect = this.paper.rect(
+            Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)
+        ).attr({ 'stroke':'gray', 'stroke-width':'1px' });
 	}
 };
 
@@ -974,7 +1024,7 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 	var bondList = new Array();
 	var atomList = new Array();
 
-	var x0 = p0.x, x1 = p1.x, y0 = p0.y, y1 = p1.y;
+	var x0 = Math.min(p0.x, p1.x), x1 = Math.max(p0.x, p1.x), y0 = Math.min(p0.y, p1.y), y1 = Math.max(p0.y, p1.y);
 	this.ctab.bonds.each(function (bid, bond){
 		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
@@ -1005,21 +1055,18 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 
 rnd.Render.prototype.drawSelectionPolygon = function (r) {
 	rnd.logMethod("drawSelectionPolygon");
-	if (this.selectionRect)
+	if (this.selectionRect) {
 		this.selectionRect.remove();
-	this.selectionRect = null;
-	if (r) {
-		var v = r[r.length - 1];
-		var pstr = "M"+v.x.toString()+","+v.y.toString();
+	    this.selectionRect = null;
+    }
+	if (r && r.length > 1) {
+		var v = this.obj2scaled(r[r.length - 1]).add(this.offset);
+		var pstr = "M" + v.x.toString() + "," + v.y.toString();
 		for (var i = 0; i < r.length; ++i) {
-			v = r[i];
-			pstr += "L"+v.x.toString()+","+v.y.toString();
+			v = this.obj2scaled(r[i]).add(this.offset);
+			pstr += "L" + v.x.toString() + "," + v.y.toString();
 		}
-		this.selectionRect = this.paper.path(pstr).
-		attr({
-			'stroke':'#000',
-			'stroke-width':'1px'
-		});
+		this.selectionRect = this.paper.path(pstr).attr({ 'stroke':'gray', 'stroke-width':'1px' });
 	}
 };
 
@@ -1058,31 +1105,39 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 	var atomList = new Array();
 	var r = [];
 	for (var i = 0; i < rr.length; ++i) {
-		r[i] = new util.Vec2(rr[i].x, rr[i].y).sub(this.offset);
+		r[i] = new util.Vec2(rr[i].x, rr[i].y);
 	}
 	this.ctab.bonds.each(function (bid, bond){
 		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
-			this.ctab.atoms.get(bond.b.end).a.ps, 0.5);
+			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);
 	}, this);
 	this.ctab.atoms.each(function(aid, atom){
-		if (this.isPointInPolygon(r, atom.a.ps))
+		if (this.isPointInPolygon(r, atom.a.pp))
 			atomList.push(aid);
 	}, this);
-	return [atomList, bondList];
+	var rxnArrowsList = new Array();
+	var rxnPlusesList = new Array();
+	this.ctab.rxnArrows.each(function(id, item){
+		if (this.isPointInPolygon(r, item.item.pp))
+			rxnArrowsList.push(id);
+	}, this);
+	this.ctab.rxnPluses.each(function(id, item){
+		if (this.isPointInPolygon(r, item.item.pp))
+			rxnPlusesList.push(id);
+	}, this);
+
+	return {
+		'atoms':atomList,
+		'bonds':bondList,
+		'rxnArrows':rxnArrowsList,
+		'rxnPluses':rxnPlusesList
+	};
 };
 
-rnd.Render.prototype.testPolygon = function () {
-	var rr = [];
-	var zz = 100;
-	//	rr = [
-	//		{x:10,y:10},
-	//		{x:90,y:10},
-	//		{x:30,y:80},
-	//		{x:90,y:60}
-	//	];
-	rr = [
+rnd.Render.prototype.testPolygon = function (rr) {
+	rr = rr || [
 	{
 		x:50,
 		y:10
@@ -1108,9 +1163,13 @@ rnd.Render.prototype.testPolygon = function () {
 		y:80
 	}
 	];
-	//	for (var j = 0; j < 4; ++j) {
-	//		rr.push({'x':Math.random() * zz, 'y':Math.random() * zz}) ;
-	//	}
+	if (rr.length < 3)
+		return;
+	var min = rr[0], max = rr[0];
+	for (var j = 1; j < rr.length; ++j) {
+		min = util.Vec2.min(min, rr[j]);
+		max = util.Vec2.max(max, rr[j]);
+	}
 	this.drawSelectionPolygon(rr);
 	for (var k = 0; k < 1000; ++k) {
 		var p = new util.Vec2(Math.random() * zz, Math.random() * zz);
@@ -1248,17 +1307,19 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
-rnd.Render.prototype.findClosestAtom = function (pos, minDist) {
+rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) {
 	var closestAtom = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist	= Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function(aid, atom){
-		var dist = util.Vec2.dist(pos, atom.a.pp);
-		if (dist < minDist) {
-			closestAtom = aid;
-			minDist = dist;
-		}
+        if (aid != skip) {
+            var dist = util.Vec2.dist(pos, atom.a.pp);
+            if (dist < minDist) {
+                closestAtom = aid;
+                minDist = dist;
+            }
+        }
 	}, this);
 	if (closestAtom != null)
 		return {
@@ -1356,7 +1417,7 @@ rnd.Render.prototype.findClosest = function (map, pos, minDist) {
 	return null;
 };
 
-rnd.Render.prototype.findClosestItem = function (pos) {
+rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;
 	var updret = function(type, item) {
 		if (item != null && (ret == null || ret.dist > item.dist)) {
@@ -1368,17 +1429,30 @@ rnd.Render.prototype.findClosestItem = function (pos) {
 		}
 	};
 
-	var atom = this.findClosestAtom(pos);
-	updret('Atom', atom);
-	var bond = this.findClosestBond(pos);
-	if (ret == null || ret.dist > 0.4) // hack
-		updret('Bond', bond);
-	var sg = this.findClosestSGroup(pos);
-	updret('SGroup', sg);
-	var arrow = this.findClosest('rxnArrows', pos);
-	updret('RxnArrow',arrow);
-	var plus = this.findClosest('rxnPluses', pos);
-	updret('RxnPlus',plus);
+    // TODO make it "map-independent", each object should be able to "report" its distance to point (something like ReAtom.dist(point))
+    if (!maps || maps.indexOf('atoms') >= 0) {
+        var atom = this.findClosestAtom(
+            pos, undefined, !Object.isUndefined(skip) && skip.map == 'atoms' ? skip.id : undefined
+        );
+        updret('Atom', atom);
+    }
+    if (!maps || maps.indexOf('bonds') >= 0) {
+        var bond = this.findClosestBond(pos);
+        if (ret == null || ret.dist > 0.4 * this.scale) // hack
+            updret('Bond', bond);
+    }
+    if (!maps || maps.indexOf('sgroups') >= 0) {
+        var sg = this.findClosestSGroup(pos);
+        updret('SGroup', sg);
+    }
+    if (!maps || maps.indexOf('rxnArrows') >= 0) {
+        var arrow = this.findClosest('rxnArrows', pos);
+        updret('RxnArrow',arrow);
+    }
+    if (!maps || maps.indexOf('rxnPluses') >= 0) {
+        var plus = this.findClosest('rxnPluses', pos);
+        updret('RxnPlus',plus);
+    }
 
 	ret = ret || {
 		'type':'Canvas',

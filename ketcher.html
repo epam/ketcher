@@ -27,6 +27,7 @@
         <script type="text/javascript" src="rnd/restruct.js"></script>
         <script type="text/javascript" src="rnd/restruct_rendering.js"></script>
         <script type="text/javascript" src="rnd/render.js"></script>
+        <script type="text/javascript" src="rnd/editor.js"></script>
         <script type="text/javascript" src="rnd/elem_table.js"></script>
         <script type="text/javascript" src="ui/ui.js"></script>
         <script type="text/javascript" src="ui/actions.js"></script>
@@ -38,8 +39,8 @@
         <div>
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
-                    <td style="width:36px"><img class="sideButton modeButton" id="select_simple" src="png/action/arrow.png" alt="" title="Element Selection (Esc)" /></td>
-                    <td style="width:12px"></td>
+                    <td style="width:36px"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="png/action/lasso.png" alt="" title="Element Selection (Esc)" /></td>
+                    <td style="width:12px" class="dropdownButton" id="selector_dropdown" title="Selector Tool Type"><img src="png/dropdown.png" alt="" /></td>
                     <td class="toolDelimiter"></td>
                     <!--td style="width:36px"><object type="image/svg+xml" width="28" height="28" data="svg/document-new28x28.svg"></object></td-->
                     <td class="toolButtonCell toolButton" id="new"><img src="png/action/document-new.png" alt="" title="New (Ctrl+N)" /></td>
@@ -67,7 +68,7 @@
                     <td><div class="sideButton modeButton" id="atom_table" title="Periodic table"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="bond" selid="bond_single" title="Single Bond (1)"></div></td>
+                    <td><div class="sideButton modeButton stateButton" id="bond" selid="bond_single" title="Single Bond (1)"></div></td>
                     <td class="dropdownButton" id="bond_dropdown" title="Select Bond Type"><img src="png/dropdown.png" alt="" /></td>
                     <td><div class="sideButton modeButton" id="atom_any" title="Any Atom (A)"></div></td>
                 </tr>
@@ -127,7 +128,24 @@
                 </tr>
             </table>
 
-            <div class="dropdownList" id="bond_dropdown_list" style="display:none">
+            <div class="dropdownList" id="selector_dropdown_list" style="display:none">
+                <table>
+					
+                    <tr class="dropdownListItem" id="selector_lasso" title="Lasso selection tool">
+                        <td><div id="select_lasso_todo"><img src="png/action/lasso.png" alt="" style="width:24px;height:24px;" /></div>Lasso selection tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="selector_square" title="Rectangle selection tool">
+                        <td><div id="select_square_todo"><img src="png/action/rectangle.png" alt="" style="width:24px;height:24px;" /></div>Rectangle selection tool</td>
+                    </tr>
+<!--
+                    <tr class="dropdownListItem" id="selector_structure" title="Structure selection tool">
+                        <td><div id="select_structure_todo"></div>Structure selection tool</td>
+                    </tr>
+-->
+                </table>
+            </div>
+
+            <div class="dropdownList renderFirst" id="bond_dropdown_list" style="display:none">
                 <table>
 					
                     <tr class="dropdownListItem" id="bond_single" title="Single Bond (1)">

@@ -93,8 +93,8 @@ chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	bb = bb.extend(new util.Vec2(0.4, 0.4));
 
 	var coord = [
-		[bb.p0.x, bb.p1.y, bb.p0.x, bb.p0.y],
-		[bb.p1.x, bb.p0.y, bb.p1.x, bb.p1.y]
+		[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
+		[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
 	];
 	var lines = [];
 	for (var j = 0; j < coord.length; ++j) {
@@ -325,7 +325,6 @@ chem.SGroup.GroupMul = {
 				var aid2 = mol.atoms.add(new chem.Struct.Atom(atom));
 				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;
-				mol.atoms.get(aid2).pos.y -= 0.8 * (j+1);
 			}
 			for (i = 0; i < inBonds.length; ++i) {
 				var bond = mol.bonds.get(inBonds[i]);

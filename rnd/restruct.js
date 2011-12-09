@@ -710,7 +710,9 @@ rnd.ReStruct.prototype.coordProcess = function ()
 	this.molecule.coordProject();
 	var bb = this.molecule.getCoordBoundingBox();
 	var avg = this.molecule.getAvgBondLength();
-	if (avg < 0)
+	if (avg < 0 && !this.molecule.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between 
+		// the atoms in different components are generally larger than those between atoms of a single component 
+		// (KETCHER-341)
 		avg = this.molecule.getAvgClosestAtomDistance();
 	if (avg < 1e-3)
 		avg = 1;

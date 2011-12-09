@@ -476,8 +476,9 @@ chem.Molfile.applyAtomProp = function (atoms /* Pool */, values /* util.Map */, 
 	});
 };
 
-chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
+chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 {
+	var ctab = new chem.Struct();
 	var i;
 	var mf = chem.Molfile;
 	var atomCount = mf.parseDecimalInt(countsSplit[0]);
@@ -487,7 +488,7 @@ chem.Molfile.parseCTabV2000 = function (ctab, ctabLines, countsSplit)
 	var stextLinesCount = mf.parseDecimalInt(countsSplit[5]);
 	var propertyLinesCount = mf.parseDecimalInt(countsSplit[10]);
 
-	var shift = 1;
+	var shift = 0;
 	var atomLines = ctabLines.slice(shift, shift + atomCount);
 	shift += atomCount;
 	var bondLines = ctabLines.slice(shift, shift + bondCount);
@@ -605,12 +606,12 @@ chem.Molfile.parseBracedNumberList = function (line, shift)
 	return list;
 };
 
-chem.Molfile.parseCTabV3000 = function (ctab, ctabLines, countsSplit)
+chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 {
+	var ctab = new chem.Struct();
 	var mf = chem.Molfile;
-	ctab.isChiral = mf.parseDecimalInt(countsSplit[4]) != 0;
 
-	var shift = 1;
+	var shift = 0;
 	if (ctabLines[shift++].strip() != "M  V30 BEGIN CTAB")
 		throw Error("CTAB V3000 invalid");
 	if (ctabLines[shift].slice(0, 13) != "M  V30 COUNTS")
@@ -691,13 +692,13 @@ chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 {
 	ctabLines = ctabLines.slice(3);
 	var mf = chem.Molfile;
-	var ctab = new chem.Struct();
 	var countsSplit = mf.partitionLine(ctabLines[0], mf.fmtInfo.countsLinePartition);
 	var version = countsSplit[11].strip();
+	ctabLines = ctabLines.slice(1);
 	if (version == 'V2000')
-		return this.parseCTabV2000(ctab, ctabLines, countsSplit);
+		return this.parseCTabV2000(ctabLines, countsSplit);
 	else if (version == 'V3000')
-		return this.parseCTabV3000(ctab, ctabLines, countsSplit);
+		return this.parseCTabV3000(ctabLines, countsSplit);
 	else
 		throw Error("Molfile version unknown: " + version);
 };
@@ -1100,6 +1101,16 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 {
 	var mf = chem.Molfile;
+	var split = ctabLines[0].split(' ');
+	if (split.length > 1 && split[1] == 'V3000')
+		return mf.parseRxn3000(ctabLines);
+	else
+		return mf.parseRxn2000(ctabLines);
+}
+
+chem.Molfile.parseRxn2000 = function (/* string[] */ ctabLines) /* chem.Struct */
+{
+	var mf = chem.Molfile;
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = mf.partitionLine(ctabLines[0], mf.fmtInfo.rxnItemsPartition);
 	var nReactants = countsSplit[0]-0,
@@ -1118,11 +1129,56 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		}
 	}
 	molLines.push(ctabLines.slice(i0));
+	var mols = [];
+	for (var j = 0; j < molLines.length; ++j) {
+		var mol = chem.Molfile.parseCTab(molLines[j]);
+		mols.push(mol);	
+	}
+	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
+};
+
+chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct */
+{
+	var mf = chem.Molfile;
+	ctabLines = ctabLines.slice(4);
+	var countsSplit = ctabLines[0].split(' ').slice(4);
+	var nReactants = countsSplit[0]-0,
+	nProducts = countsSplit[1]-0,
+	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
+
+	var molLines = [];
+	var i0 = 0, i;
+	for (i = 0; i < ctabLines.length; ++i) {
+		var line = ctabLines[i].strip();
+		if (line == "M  V30 END REACTANT" || line == "M  V30 END PRODUCT") {
+			if (i > i0)
+				molLines.push(ctabLines.slice(i0, i));
+			i0 = i + 1;
+		} else if (line == "M  V30 BEGIN REACTANT" || line == "M  V30 BEGIN PRODUCT") { 
+			// TODO [MK] check if there's anything in between the end of the last component and the beginning of this one?
+			// TODO [MK] match begin and end labels?
+			// TODO [MK] also check that the labeling of components matches the counts?
+			i0 = i + 1;
+		}
+	}
+	var mols = [];
+	for (var j = 0; j < molLines.length; ++j) {
+		var mol = chem.Molfile.parseCTabV3000(molLines[j], countsSplit);
+		mols.push(mol);
+	}
+	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
+}
+
+chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.Struct */
+{
+	var mf = chem.Molfile;
+	
+	var ret = new chem.Struct();
 	var bbReact = [],
 		bbAgent = [],
 		bbProd = [];
-	for (var j = 0; j < molLines.length; ++j) {
-		var mol = chem.Molfile.parseCTab(molLines[j]);
+	for (var j = 0; j < mols.length; ++j) {
+		var mol = mols[j];
 		var bb = mol.getCoordBoundingBoxObj();
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :

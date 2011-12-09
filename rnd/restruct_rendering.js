@@ -611,6 +611,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 			});
 			label.rbb = label.path.getBBox();
 			this.centerText(label.path, label.rbb);
+			if (atom.a.atomList != null)
+				this.pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
 			render.addItemPath(atom.visel, 'data', label.path, label.rbb);
 			rightMargin = label.rbb.width / 2;
 			leftMargin = -label.rbb.width / 2;

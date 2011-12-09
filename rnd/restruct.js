@@ -629,7 +629,7 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 				nr++;
 			}
 		}
-		if (yl < 0.5 || yr < 0.5)
+		if (yl < 0.51 || yr < 0.51)
 			atom.hydrogenOnTheLeft = yr < yl;
 		else
 			atom.hydrogenOnTheLeft = nr > nl;

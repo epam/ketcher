@@ -109,11 +109,9 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        if ($(dropdown_mode_id).getAttribute('src'))
-        {
+        if ($(dropdown_mode_id).getAttribute('src')) {
             $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src'));
-        } else 
-        {
+        } else {
             ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
                 'autoScale':true,
                 'autoScaleMargin':4,
@@ -513,21 +511,17 @@ ui.selectMode = function (mode)
         if ($(mode).hasClassName('buttonDisabled'))
             return;
 
-        if (ui.selected())
-        {
-            if (mode == 'select_erase')
-            {
+        if (ui.selected()) {
+            if (mode == 'select_erase') {
                 ui.removeSelected();
                 return;
             }
-            if (mode.startsWith('atom_'))
-            {
+            if (mode.startsWith('atom_')) {
                 ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs(ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
-            if (mode.startsWith('bond_'))
-            {
+            if (mode.startsWith('bond_')) {
                 var attrs = ui.bondType(mode);
                 var bondsToFlip = [];
                 ui.selection.bonds.each(function (id) {
@@ -538,28 +532,21 @@ ui.selectMode = function (mode)
                 ui.render.update();
                 return;
             }
-            if (mode == 'sgroup')
-            {
+            if (mode == 'sgroup') {
                 ui.showSGroupProperties(null);
                 return;
             }
-        } else if (mode.startsWith('atom_')) 
-        {
-            var closest = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
-            
-            if (closest)
-            {
-                ui.addUndoAction(ui.Action.fromAtomAttrs(closest.id, ui.atomLabel(mode)), true);
+        } else if (mode.startsWith('atom_')) {
+            var cAtom = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
+            if (cAtom) {
+                ui.addUndoAction(ui.Action.fromAtomAttrs(cAtom.id, ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
-        } else if (mode.startsWith('bond_')) 
-        {
-            var closest = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
-            
-            if (closest)
-            {
-                ui.addUndoAction(ui.Action.fromBondAttrs(closest.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+        } else if (mode.startsWith('bond_')) {
+            var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
+            if (cBond) {
+                ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
                 ui.render.update();
                 return;
             }
@@ -569,13 +556,11 @@ ui.selectMode = function (mode)
             ui.cancelPaste();
     }
 
-    if (this.mode_id != null && this.mode_id != mode)
-    {
+    if (this.mode_id != null && this.mode_id != mode) {
         var button_id = this.mode_id.split('_')[0];
         var state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
      
-        if (state_button)
-        {
+        if (state_button) {
             if (mode && !mode.startsWith(button_id))
                 $(button_id).removeClassName('buttonSelected');
         } else
@@ -585,9 +570,7 @@ ui.selectMode = function (mode)
     if (mode == null) {
         this.mode_id = null;
         delete this.render.current_tool;
-    }
-    else
-    {
+    } else {
         this.render.current_tool = this.editor.toolFor(mode);
         this.mode_id = mode;
 
@@ -838,15 +821,21 @@ ui.onKeyPress_Ketcher = function (event)
     case 112: // p
         ui.selectMode('atom_p');
         return util.preventDefault(event);
-    case 114: // r
-        var rings = ['pattern_six1', 'pattern_six2', 'pattern_five'];
-        ui.selectMode(rings[(rings.indexOf(ui.mode_id) + 1) % rings.length]);
-        return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SaveFile.call($('save'));
         else
             ui.selectMode('atom_s');
+        return util.preventDefault(event);
+    case 116: // t
+        if (ui.mode_id.startsWith('template_')) {
+            var templates = rnd.Editor.TemplateTool.prototype.templates;
+            ui.onMouseDown_DropdownListItem.apply(
+                { id : 'template_' + (parseInt(ui.mode_id.split('_')[1]) + 1) % templates.length }
+            );
+        } else {
+            ui.onMouseDown_DropdownListItem.apply({ id : $('template').getAttribute('selid') });
+        }
         return util.preventDefault(event);
     case 118: // Ctrl+V
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
@@ -1988,12 +1977,11 @@ ui.removeSelected = function ()
 
 ui.hideBlurredControls = function ()
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
-    if ($('bond_dropdown_list').visible())
-        $('bond_dropdown_list').hide();
-    if ($('selector_dropdown_list').visible())
-        $('selector_dropdown_list').hide();
+    var ret = false;
+    ['input_label', 'selector_dropdown_list', 'bond_dropdown_list', 'template_dropdown_list'].each(
+        function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
+    );
+    return ret;
 };
 
 ui.onMouseDown_Atom = function (event, aid)

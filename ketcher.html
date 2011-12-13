@@ -78,42 +78,42 @@
                     <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="pattern_six1" title="Benzene (R)"></div></td>
-                    <td></td>
+                    <td><div class="sideButton modeButton stateButton" id="template" selid="template_0" title="Benzene (T)"></div></td>
+                    <td class="dropdownButton" id="template_dropdown" title="Benzene"><img src="png/dropdown.png" alt="" /></td>
                     <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)"></div></td>
-                </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="pattern_six2" title="Cyclohexane (R)"></div></td>
-                    <td></td>
-                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
-                </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="pattern_five" title="Cyclopentane (R)"></div></td>
-                    <td></td>
-                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_plus" title="Charge Plus (5)"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="rxn_arrow" title="Arrow Tool"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="rxn_plus" title="Plus Tool"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="sgroup" src="png/action/sgroup.png" alt="" title="S-Group (Ctrl+G)" /></td>
+                    <td></td>
+                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
+                </tr>
+                <tr align="center" class="sideButtonCell">
+                    <td></td>
+                    <td></td>
+                    <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
+                </tr>
+                <tr align="center" class="sideButtonCell">
+                    <td></td>
                     <td></td>
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
@@ -147,7 +147,6 @@
 
             <div class="dropdownList renderFirst" id="bond_dropdown_list" style="display:none">
                 <table>
-					
                     <tr class="dropdownListItem" id="bond_single" title="Single Bond (1)">
                         <td><div id="bond_single_preview"></div>Single</td>
                     </tr>
@@ -160,7 +159,6 @@
                     <tr>
                         <td class="dropdownListDelimiter"></td>
                     </tr>
-                    
 					<tr class="dropdownListItem" id="bond_up" title="Single Up Bond (1)">
                         <td><div id="bond_up_preview"></div>Single Up</td>
                     </tr>
@@ -176,7 +174,6 @@
                     <tr>
                         <td class="dropdownListDelimiter"></td>
                     </tr>
-                    
                     <tr class="dropdownListItem" id="bond_any" title="Any Bond (0)">
                         <td><div id="bond_any_preview"></div>Any</td>
                     </tr>
@@ -191,6 +188,35 @@
                     </tr>
                     <tr class="dropdownListItem" id="bond_doublearomatic" title="Double/Aromatic Bond">
                         <td><div id="bond_doublearomatic_preview"></div>Double/Aromatic</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="dropdownList renderFirst" id="template_dropdown_list" style="display:none">
+                <table>
+                    <tr class="dropdownListItem" id="template_0" title="Benzene (T)">
+                        <td><div id="template_0_preview"></div>Benzene</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_1" title="Cyclopentadiene (T)">
+                        <td><div id="template_1_preview"></div>Cyclopentadiene</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_2" title="Cyclohexane (T)">
+                        <td><div id="template_2_preview"></div>Cyclohexane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_3" title="Cyclopentane (T)">
+                        <td><div id="template_3_preview"></div>Cyclopentane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_4" title="Cyclopropane (T)">
+                        <td><div id="template_4_preview"></div>Cyclopropane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_5" title="Cyclobutane (T)">
+                        <td><div id="template_5_preview"></div>Cyclobutane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_6" title="Cycloheptane (T)">
+                        <td><div id="template_6_preview"></div>Cycloheptane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="template_7" title="Cyclooctane (T)">
+                        <td><div id="template_7_preview"></div>Cyclooctane</td>
                     </tr>
                 </table>
             </div>

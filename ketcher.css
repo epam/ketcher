@@ -142,14 +142,19 @@ table#ketcher_window > tr
     font-size:   0.9em;
 }
 
+#selector_dropdown_list
+{
+    top: 43px;
+}
+
 #bond_dropdown_list
 {
     top: 120px;
 }
 
-#selector_dropdown_list
+#template_dropdown_list
 {
-    top: 43px;
+    top: 196px;
 }
 
 .dropdownListItem

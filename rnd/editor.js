@@ -32,6 +32,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.LassoTool(this, 1);
     } else if (tool == 'select_erase') {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
+    } else if (tool.startsWith('template_')) {
+        return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
     }
     return null;
 };
@@ -113,10 +115,7 @@ rnd.Editor.EditorTool.prototype.processEvent = function(name, event) {
     } else if ('lastEvent' in this.OnMouseDown0) {
         // here we finish previous MouseDown and MouseMoves with simulated MouseUp
         // before gesture (canvas zoom, scroll, rotate) started
-        if (this.OnMouseUp0(event)) {
-            delete this.OnMouseDown0.lastEvent;
-            return true;
-        }
+        return this.OnMouseUp0(event);
     }
 };
 rnd.Editor.EditorTool.prototype.OnMouseOver = function() {};
@@ -128,7 +127,10 @@ rnd.Editor.EditorTool.prototype.OnDblClick = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseOut = function() {};
 rnd.Editor.EditorTool.prototype.OnKeyPress = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseDown0 = function(event) {
+    if (this.editor.ui.hideBlurredControls()) return true; // TODO review
+
     this.OnMouseDown0.lastEvent = event;
+    this.OnMouseMove0.lastEvent = event;
 
     if ('OnMouseDown' in this) return this.OnMouseDown(event);
 };
@@ -147,7 +149,11 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
         event.pageY = this.OnMouseMove0.lastEvent.pageY;
     }
 
-    if ('OnMouseUp' in this) return this.OnMouseUp(event);
+    try {
+        if ('OnMouseUp' in this) return this.OnMouseUp(event);
+    } finally {
+        delete this.OnMouseDown0.lastEvent;
+    }
 };
 rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
     if (!event.ctrlKey && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
@@ -202,7 +208,6 @@ rnd.Editor.LassoTool = function(editor, mode) {
 };
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
-    this.editor.ui.hideBlurredControls(); // TODO probably it's better to implement it in base class
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var ci = this.editor.render.findItem(event);
     if (!ci || ci.type == 'Canvas') {
@@ -346,7 +351,6 @@ rnd.Editor.EraserTool = function(editor, mode) {
 };
 rnd.Editor.EraserTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.EraserTool.prototype.OnMouseDown = function(event) {
-    this.editor.ui.hideBlurredControls(); // TODO probably it's better to implement it in base class
     var ci = this.editor.render.findItem(event);
     if (!ci || ci.type == 'Canvas') {
         this._lassoHelper.begin(event);
@@ -393,6 +397,48 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
             this.editor.ui.updateClipboardButtons(); // TODO review
             this.editor.ui.render.setSelection()
         }
+    }
+};
+
+
+rnd.Editor.TemplateTool = function(editor, template) {
+    this.editor = editor;
+    this.template = template;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.TemplateTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.TemplateTool.prototype.templates = [
+    [1, 2, 1, 2, 1, 2],
+    [1, 2, 1, 2, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1]
+];
+// TODO implement rotation around fusing atom / flipping over fusing bond
+rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event));
+};
+rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
+    var ci = this.editor.render.findItem(event);
+    if (!ci || ci.type == 'Canvas') {
+        this.editor.ui.addUndoAction(ui.Action.fromPatternOnCanvas(
+            this.editor.ui.page2obj(event), this.templates[this.template])
+        );
+        this.editor.ui.render.update();
+    } else if (ci.map == 'atoms') {
+        this.editor.ui.addUndoAction(ui.Action.fromPatternOnAtom(
+            ci.id, this.templates[this.template]), true
+        );
+        this.editor.ui.render.update();
+    } else if (ci.map == 'bonds') {
+        this.editor.ui.addUndoAction(ui.Action.fromPatternOnElement(
+            ci.id, this.templates[this.template], false), true
+        );
+        this.editor.ui.render.update();
     }
 };
 

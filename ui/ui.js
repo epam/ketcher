@@ -1230,7 +1230,7 @@ ui.onClick_ZoomIn = function ()
     $('zoom_out').removeClassName('buttonDisabled');
     if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
-    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2scaled(ui.render.viewSz.scaled(0.5)));
+    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2obj(ui.render.viewSz.scaled(0.5)));
     ui.render.update();
 };
 
@@ -1246,7 +1246,7 @@ ui.onClick_ZoomOut = function ()
     $('zoom_in').removeClassName('buttonDisabled');
     if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
-    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2scaled(ui.render.viewSz.scaled(0.5)));
+    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2obj(ui.render.viewSz.scaled(0.5)));
     ui.render.update();
 };
 
@@ -1269,7 +1269,8 @@ ui.setZoomCentered = function (zoom, c) {
     if (zoom) {
         ui.setZoomRegular(zoom);
     }
-	var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
+    ui.setScrollOffset(0, 0);
+    var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
     ui.setScrollOffset(sp.x, sp.y);
 }
 

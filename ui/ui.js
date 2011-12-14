@@ -1269,7 +1269,7 @@ ui.setZoomCentered = function (zoom, c) {
     if (zoom) {
         ui.setZoomRegular(zoom);
     }
-    var sp = c.add(ui.render.offset).scaled(ui.render.zoom).sub(ui.render.viewSz.scaled(0.5));
+	var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
     ui.setScrollOffset(sp.x, sp.y);
 }
 

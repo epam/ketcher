@@ -962,7 +962,7 @@ rnd.Render.prototype.getBoundingBox = function ()
 rnd.Render.prototype.getStructCenter = function ()
 {
 	var bb = this.getBoundingBox();
-	return util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+	return this.scaled2obj(util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5));
 };
 
 rnd.Render.prototype._setPaperSize = function (sz)

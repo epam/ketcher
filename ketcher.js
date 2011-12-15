@@ -90,28 +90,6 @@ ketcher.init = function ()
 		'hideTerminalLabels':true,
 		'ignoreMouseEvents':true};
 
-	tmpl.clean_up = ['', '  -INDIGO-08221110472D', '',
-		'  9  9  0  0  0  0  0  0  0  0999 V2000',
-		'    2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -3.2000   -0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -2.4000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -0.8000    1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'  1  2  1  0  0  0  0',
-		'  2  3  2  0  0  0  0',
-		'  2  4  1  0  0  0  0',
-		'  4  5  2  0  0  0  0',
-		'  5  6  1  0  0  0  0',
-		'  6  7  2  0  0  0  0',
-		'  7  8  1  0  0  0  0',
-		'  8  9  2  0  0  0  0',
-		'  9  4  1  0  0  0  0',
-		'M  END'];
-
 	tmpl.hexaa = ['', '  -INDIGO-08221110472D', '',
 		'  6  6  0  0  0  0  0  0  0  0999 V2000',
 		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
@@ -261,7 +239,6 @@ ketcher.init = function ()
         'M  END'
     ];
 
-	ketcher.button_areas.clean_up = ketcher.showMolfileOpts('clean_up', tmpl.clean_up, 20, renderOptsPattern);
 	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
     ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 20, renderOptsPattern);
 

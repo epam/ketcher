@@ -125,6 +125,12 @@ table#ketcher_window > tr
     border-style: none;
 }
 
+#rgroup_table_area
+{
+    background-color:#E0E0E0;
+    border-style: none;
+}
+
 .dropdownList
 {
     position: absolute;

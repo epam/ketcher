@@ -595,6 +595,12 @@ rnd.ReStruct.prototype.showLabels = function ()
 			var color = '#000000';
 			if (atom.a.atomList != null) {
 				label.text = atom.a.atomList.label();
+            } else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
+                label.text = '';
+                for (var rgi = 0; rgi < 32; rgi++) {
+                    if (atom.a.rglabel & (1 << rgi)) label.text += ('R' + (rgi + 1).toString());
+                }
+                if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
 			} else {
 				label.text = atom.a.label;
 				if (opt.atomColoring) {
@@ -938,7 +944,8 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||
 		atom.a.explicitValence ||
-		atom.a.atomList != null)
+		atom.a.atomList != null ||
+        atom.a.rglabel != null)
 		return true;
 	if (!atom.showLabel && atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];

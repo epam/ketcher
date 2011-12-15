@@ -201,6 +201,7 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'radical', 0);
 	util.ifDef(this, params, 'charge', 0);
 	util.ifDef(this, params, 'valence', 0);
+    util.ifDef(this, params, 'rglabel', null);
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
@@ -245,7 +246,9 @@ chem.Struct.Atom.attrlist = {'label':0,
 	'ringBondCount':0,
 	'substitutionCount':0,
 	'unsaturatedAtom':0,
-	'atomList':0};
+	'atomList':null,
+    'rglabel':null
+};
 
 chem.Struct.Atom.prototype.clone = function ()
 {

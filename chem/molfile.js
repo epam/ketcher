@@ -265,6 +265,20 @@ chem.Molfile.readKeyValuePairs = function (str, /* bool */ valueString)
 	return ret;
 };
 
+chem.Molfile.readKeyMultiValuePairs = function (str, /* bool */ valueString)
+{
+	var mf = chem.Molfile;
+	var ret = [];
+	var partition = mf.partitionLineFixed(str, 3, true);
+	var count = mf.parseDecimalInt(partition[0]);
+	for (var i = 0; i < count; ++i)
+        ret.push([
+            mf.parseDecimalInt(partition[2 * i + 1]) - 1,
+            valueString ? partition[2 * i + 2].strip() : mf.parseDecimalInt(partition[2 * i + 2])
+        ]);
+	return ret;
+};
+
 chem.Molfile.labelsListToIds = function (labels)
 {
 	var ids = [];
@@ -430,7 +444,16 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 					props.set('unsaturatedAtom', new util.Map());
 				props.get('unsaturatedAtom').update(mf.readKeyValuePairs(propertyData));
 			// else if (type == "LIN") // link atom
-			} else if (type == "ALS") { // atom list
+			} else if (type == "RGP") { // rgroup atom
+                if (!props.get('rglabel'))
+                    props.set('rglabel', new util.Map());
+                var rglabels = props.get('rglabel');
+                var a2rs = mf.readKeyMultiValuePairs(propertyData);
+                for (var a2ri = 0; a2ri < a2rs.length; a2ri++) {
+                    var a2r = a2rs[a2ri];
+                    rglabels.set(a2r[0], (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1)));
+                }
+            } else if (type == "ALS") { // atom list
 				if (!props.get('atomList'))
 					props.set('atomList', new util.Map());
 				props.get('atomList').update(
@@ -967,47 +990,54 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     var charge_list = new Array();
     var isotope_list = new Array();
     var radical_list = new Array();
+    var rglabel_list = new Array();
 
 	this.molecule.atoms.each(function (id, atom)
 	{
         if (atom.charge != 0)
-            charge_list.push(id);
+            charge_list.push([id, atom.charge]);
         if (atom.isotope != 0)
-            isotope_list.push(id);
+            isotope_list.push([id, atom.isotope]);
         if (atom.radical != 0)
-            radical_list.push(id);
+            radical_list.push([id, atom.radical]);
+        if (atom.rglabel != null && atom.label == 'R#') { // TODO need to force rglabel=null when label is not 'R#'
+            for (var rgi = 0; rgi < 32; rgi++) {
+                if (atom.rglabel & (1 << rgi)) rglabel_list.push([id, rgi + 1]);
+            }
+        }
 	});
 
-    var writeAtomPropList = function (ids, prop_id, prop_name)
+    var writeAtomPropList = function (prop_id, values)
     {
-        while (ids.length > 0)
+        while (values.length > 0)
         {
             var part = new Array();
 
-            while (ids.length > 0 && part.length < 8)
+            while (values.length > 0 && part.length < 8)
             {
-                part.push(ids[0]);
-                ids.splice(0, 1);
+                part.push(values[0]);
+                values.splice(0, 1);
             }
 
             this.write(prop_id);
             this.writePaddedNumber(part.length, 3);
 
-            part.each(function (id)
+            part.each(function (value)
             {
                 this.writeWhiteSpace();
-                this.writePaddedNumber(this.mapping[id], 3);
+                this.writePaddedNumber(this.mapping[value[0]], 3);
                 this.writeWhiteSpace();
-                this.writePaddedNumber(this.molecule.atoms.get(id)[prop_name], 3);
+                this.writePaddedNumber(value[1], 3);
             }, this);
 
             this.writeCR();
         }
     };
 
-    writeAtomPropList.call(this, charge_list, 'M  CHG', 'charge');
-    writeAtomPropList.call(this, isotope_list, 'M  ISO', 'isotope');
-    writeAtomPropList.call(this, radical_list, 'M  RAD', 'radical');
+    writeAtomPropList.call(this, 'M  CHG', charge_list);
+    writeAtomPropList.call(this, 'M  ISO', isotope_list);
+    writeAtomPropList.call(this, 'M  RAD', radical_list);
+    writeAtomPropList.call(this, 'M  RGP', rglabel_list);
 
 	if (atomList_list.length > 0)
 	{

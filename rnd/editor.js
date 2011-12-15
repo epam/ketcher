@@ -34,6 +34,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
+    } else if (tool == 'rgroup') {
+        return new rnd.Editor.RGroupTool(this);
     }
     return null;
 };
@@ -157,6 +159,9 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
 };
 rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
     if (!event.ctrlKey && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
+        if (114 == (Prototype.Browser.IE ? event.keyCode : event.which)) { // 'r'
+            return rnd.Editor.RGroupTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
+        }
         var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
         if (ci) {
             var labels = {
@@ -172,7 +177,8 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
                             this.editor.ui.Action.fromAtomAddition(
                                 this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
                                 ci.label
-                            )
+                            ),
+                            true
                         );
                     }
                     this.editor.ui.render.update();
@@ -425,20 +431,76 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
     var ci = this.editor.render.findItem(event);
     if (!ci || ci.type == 'Canvas') {
-        this.editor.ui.addUndoAction(ui.Action.fromPatternOnCanvas(
-            this.editor.ui.page2obj(event), this.templates[this.template])
+        this.editor.ui.addUndoAction(
+            this.editor.ui.Action.fromPatternOnCanvas(this.editor.ui.page2obj(event), this.templates[this.template]),
+            true
         );
         this.editor.ui.render.update();
     } else if (ci.map == 'atoms') {
-        this.editor.ui.addUndoAction(ui.Action.fromPatternOnAtom(
-            ci.id, this.templates[this.template]), true
+        this.editor.ui.addUndoAction(
+            this.editor.ui.Action.fromPatternOnAtom(ci.id, this.templates[this.template]),
+            true
         );
         this.editor.ui.render.update();
     } else if (ci.map == 'bonds') {
-        this.editor.ui.addUndoAction(ui.Action.fromPatternOnElement(
-            ci.id, this.templates[this.template], false), true
+        this.editor.ui.addUndoAction(
+            this.editor.ui.Action.fromPatternOnElement(ci.id, this.templates[this.template], false),
+            true
         );
         this.editor.ui.render.update();
+    }
+};
+
+
+rnd.Editor.RGroupTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.RGroupTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.RGroupTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+};
+rnd.Editor.RGroupTool.prototype.OnMouseUp = function(event) {
+    var ci = this.editor.render.findItem(event, ['atoms']);
+    if (!ci || ci.type == 'Canvas') {
+        this._hoverHelper.hover(null);
+        this.editor.ui.showRGroupTable({
+            onOk : function(rgNew) {
+                if (rgNew) {
+                    this.editor.ui.addUndoAction(
+                        this.editor.ui.Action.fromAtomAddition(
+                            this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
+                            { label : 'R#', rglabel : rgNew}
+                        ),
+                        true
+                    );
+                    this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
+    } else if (ci && ci.map == 'atoms') {
+        this._hoverHelper.hover(null);
+        var lbOld = this.editor.render.ctab.molecule.atoms.get(ci.id).label;
+        var rgOld = this.editor.render.ctab.molecule.atoms.get(ci.id).rglabel;
+        this.editor.ui.showRGroupTable({
+            selection : rgOld,
+            onOk : function(rgNew) {
+                if (rgOld != rgNew || lbOld != 'R#') {
+                    var newProps = Object.clone(chem.Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
+                    if (rgNew) {
+                        newProps.label = 'R#';
+                        newProps.rglabel = rgNew;
+                    } else {
+                        newProps.label = 'C';
+                    }
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, newProps), true);
+                    this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
     }
 };
 

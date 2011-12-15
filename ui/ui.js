@@ -770,6 +770,9 @@ ui.onKeyPress_Ketcher = function (event)
     case 67: // Shift+C
         ui.selectMode('atom_cl');
         return util.preventDefault(event);
+    case 82: // Shift+R
+        ui.selectMode('rgroup');
+        return util.preventDefault(event);
     case 90: // Ctrl+Shift+Z
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Redo.call($('redo'));
@@ -2811,6 +2814,35 @@ ui.showElemTable = function ()
     $('elem_table_ok').focus();
 };
 
+
+ui.showRGroupTable = function(params)
+{
+    if (!$('rgroup_table').visible()) {
+        params = params || {};
+        ui.showDialog('rgroup_table');
+        if (typeof(ui.rgroup_table_obj) == 'undefined') {
+            ui.rgroup_table_obj = new rnd.RGroupTable('rgroup_table_area', {
+                'fillColor':'#DADADA',
+                'fillColorSelected':'#FFFFFF',
+                'frameColor':'#E8E8E8',
+                'fontSize':18,
+                'buttonHalfSize':18
+            }, true);
+        }
+        ui.rgroup_table_obj.setSelection(params.selection || 0);
+        var _onOk = new Event.Handler('rgroup_table_ok', 'click', undefined, function() {
+            ui.hideDialog('rgroup_table');
+            if ('onOk' in params) params['onOk'](ui.rgroup_table_obj.selection);
+            _onOk.stop();
+        }).start();
+        var _onCancel = new Event.Handler('rgroup_table_cancel', 'click', undefined, function() {
+            ui.hideDialog('rgroup_table');
+            if ('onCancel' in params) params['onCancel']();
+            _onCancel.stop();
+        }).start();
+        $('rgroup_table_ok').focus();
+    }
+};
 
 ui.onSelect_ElemTableNotList = function ()
 {

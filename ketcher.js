@@ -268,6 +268,13 @@ ketcher.init = function ()
 	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
 	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();
 
+    tmpl.rgroup = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
+        '  1  0  0     0  0            999 V2000',
+        '    0.0000    0.0000    0.0000 R#  0  0  0  0  0  0        0  0  0',
+        'M  END'
+    ];
+    ketcher.button_areas.rgroup = ketcher.showMolfileOpts('rgroup', tmpl.rgroup, 75, renderOpts);
+
     ui.init();
 };
 

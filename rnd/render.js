@@ -161,6 +161,10 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
         event.preventDefault();
     });
     //END
+	
+	clientArea.observe('onresize', function(event) {
+        render.onResize();
+    });
 
     // rbalabanov: here is temporary fix for "drag issue" on iPad
     //BEGIN
@@ -964,6 +968,16 @@ rnd.Render.prototype.getStructCenter = function ()
 	var bb = this.getBoundingBox();
 	return this.scaled2obj(util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5));
 };
+
+rnd.Render.prototype.onResize = function ()
+{
+	this.setViewSize(new util.Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
+}
+
+rnd.Render.prototype.setViewSize = function (viewSz)
+{
+     this.viewSz = new util.Vec2(viewSz);
+}
 
 rnd.Render.prototype._setPaperSize = function (sz)
 {

@@ -472,6 +472,7 @@ ui.updateMolecule = function (mol)
     {
         try
         {
+            ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
             ui.render.update()
             ui.setZoomCentered(null, ui.render.getStructCenter());
         } catch (er)

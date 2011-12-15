@@ -220,6 +220,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
         this._lassoHelper.begin(event);
     } else if (['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'].indexOf(ci.map) > -1) {
         this._hoverHelper.hover(null);
+        if ('onShowLoupe' in this.editor.render) this.editor.render.onShowLoupe(true);
         if (!this.editor._selectionHelper.isSelected(ci)) {
             this.editor._selectionHelper.setSelection(ci, event.shiftKey);
         }

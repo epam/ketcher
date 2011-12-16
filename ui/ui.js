@@ -1631,7 +1631,7 @@ ui.onClick_Bond = function (event, id)
             break;
 
         case ui.MODE.BOND:
-            var attrs = ui.bondType();
+            var attrs = Object.clone(ui.bondType());
             var bond = ui.ctab.bonds.get(id);
 
             if (attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
@@ -1653,6 +1653,9 @@ ui.onClick_Bond = function (event, id)
                     } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
                     {
                         attrs.type = chem.Struct.BOND.TYPE.TRIPLE;
+                    } else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE)
+                    {
+                        attrs.type = chem.Struct.BOND.TYPE.SINGLE;
                     }
                 }
                 ui.addUndoAction(ui.Action.fromBondAttrs(id, attrs, flip), true);

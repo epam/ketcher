@@ -430,6 +430,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(this.editor.render.findItem(event));
 };
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
+    this._hoverHelper.hover(null);
     var ci = this.editor.render.findItem(event);
     if (!ci || ci.type == 'Canvas') {
         this.editor.ui.addUndoAction(

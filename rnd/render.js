@@ -90,7 +90,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
 	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
 	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
-	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.5) - 0;
+	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.4) - 0;
 
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;

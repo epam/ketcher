@@ -1255,6 +1255,11 @@ ui.onClick_ZoomOut = function ()
 };
 
 ui.setZoomRegular = function (zoom) {
+    //mr: prevdent unbounded zooming
+    //begin
+    if (zoom < 0.1 || zoom > 10)
+        return;
+    //end
     ui.zoom = zoom;
     ui.render.setZoom(ui.zoom);
     // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window

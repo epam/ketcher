@@ -17,23 +17,51 @@ def handle_layout(request):
         moldata = request.POST["moldata"]
     else:
         raise Http404
-    mol = indigo.loadQueryMolecule(moldata)
-    mol.layout()
-    return HttpResponse(content="Ok.\n" + mol.molfile(), mimetype='text/plain')
+    if '>>' in moldata or moldata.startswith('$RXN'):
+      rxn = indigo.loadQueryReaction(moldata)
+      rxn.layout()
+      return HttpResponse(content="Ok.\n" + rxn.rxnfile(), mimetype='text/plain')
+    else:
+      mol = indigo.loadQueryMolecule(moldata)
+      mol.layout()
+      return HttpResponse(content="Ok.\n" + mol.molfile(), mimetype='text/plain')
+
+def handle_automap(request):
+    mode = 'discard'
+    if request.method == 'GET' and request.GET.has_key("smiles"):
+        rnxdata = request.GET["smiles"]
+        if request.GET.has_key("mode"):
+          mode = request.GET["mode"]
+    elif request.method == 'POST' and request.POST.has_key("moldata"):
+        rnxdata = request.POST["moldata"]
+        if request.POST.has_key("mode"):
+          mode = request.POST["mode"]
+    else:
+        raise Http404
+    rxn = indigo.loadQueryReaction(rnxdata)
+    if not rnxdata.startswith('$RXN'):
+      rxn.layout()
+    rxn.automap(mode)
+    return HttpResponse(content="Ok.\n" + rxn.rxnfile(), mimetype='text/plain')
 
 def handle_save(request):
     filedata = request.POST['filedata']
     lines = filedata.splitlines()
-    first = lines[0]
+    first = lines[0].strip()
     rest = "\n".join(lines[1:])
 
     mimet = 'text/plain'
     if first == "smi":
         mimet = 'chemical/x-daylight-smiles'
-    if first == "mol":
-        mimet = 'chemical/x-mdl-molfile'
+    elif first == "mol":
+        if rest.startswith('$RXN'):
+          first = "rxn"
+          mimet = 'chemical/x-mdl-rxnfile'
+        else:
+          mimet = 'chemical/x-mdl-molfile'
         
     resp = HttpResponse(content=rest, mimetype=mimet)
+    resp['Content-Length'] = len(rest)
     resp['Content-Disposition'] = 'attachment; filename=ketcher.' + first
     return resp
 

@@ -31,10 +31,17 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.send_response(200)
       self.send_header('Content-type', 'text/plain')
       self.end_headers()
-      mol = indigo.loadQueryMolecule(self.globals['smiles'])
-      mol.layout()
-      self.wfile.write("Ok.\n")
-      self.wfile.write(mol.molfile())
+	  smiles = self.globals['smiles']
+	  if '>>' in smiles:
+      	rxn = indigo.loadQueryReaction(smiles)
+      	rxn.layout()
+      	self.wfile.write("Ok.\n")
+      	self.wfile.write(rxn.rxnfile())
+	  else:
+      	mol = indigo.loadQueryMolecule(smiles)
+      	mol.layout()
+      	self.wfile.write("Ok.\n")
+      	self.wfile.write(mol.molfile())
       return
 
     SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
@@ -77,10 +84,17 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       self.send_response(200)
       self.send_header('Content-type', 'text/plain')
       self.end_headers()
-      mol = indigo.loadQueryMolecule(self.globals['moldata'])
-      mol.layout()
-      self.wfile.write("Ok.\n")
-      self.wfile.write(mol.molfile())
+	  moldata = self.globals['moldata']
+      if '>>' in moldata or moldata.startswith('$RXN'):
+	    rxn = indigo.loadQueryReaction(moldata)
+      	rxn.layout()
+      	self.wfile.write("Ok.\n")
+      	self.wfile.write(rxn.rxnfile())
+	  else:
+        mol = indigo.loadQueryMolecule(moldata)
+      	mol.layout()
+      	self.wfile.write("Ok.\n")
+      	self.wfile.write(mol.molfile())
       return
 
 HandlerClass = MyHandler #SimpleHTTPRequestHandler

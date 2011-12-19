@@ -1176,22 +1176,27 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 	nProducts = countsSplit[1]-0,
 	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
 
-	var molLines = [];
 	var i0 = 0, i;
+	var molLinesReactants = [], molLinesProducts = [], current;
 	for (i = 0; i < ctabLines.length; ++i) {
 		var line = ctabLines[i].strip();
-		if (line == "M  V30 END REACTANT" || line == "M  V30 END PRODUCT") {
+		if (line == "M  V30 BEGIN PRODUCT") {
+			current = molLinesProducts;
+		} else if (line == "M  V30 BEGIN REACTANT") {
+			current = molLinesReactants;
+		} else if (line == "M  V30 END CTAB") {
 			if (i > i0)
-				molLines.push(ctabLines.slice(i0, i));
+				current.push(ctabLines.slice(i0, i+1));
 			i0 = i + 1;
-		} else if (line == "M  V30 BEGIN REACTANT" || line == "M  V30 BEGIN PRODUCT") { 
+		} else if (line == "M  V30 BEGIN CTAB") { 
 			// TODO [MK] check if there's anything in between the end of the last component and the beginning of this one?
 			// TODO [MK] match begin and end labels?
 			// TODO [MK] also check that the labeling of components matches the counts?
-			i0 = i + 1;
+			i0 = i;
 		}
 	}
 	var mols = [];
+	var molLines = molLinesReactants.concat(molLinesProducts);
 	for (var j = 0; j < molLines.length; ++j) {
 		var mol = chem.Molfile.parseCTabV3000(molLines[j], countsSplit);
 		mols.push(mol);

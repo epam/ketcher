@@ -94,22 +94,22 @@
                     <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="rxn_arrow" title="Arrow Tool"></div></td>
-                    <td></td>
+                    <td><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="png/action/reaction-arrow.png" alt="" title="Reaction Mapping Tool" /></td>
+                    <td class="dropdownButton" id="reaction_dropdown" title="Reation Mapping Mode"><img src="png/dropdown.png" alt="" /></td>
                     <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
-                </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="rxn_plus" title="Plus Tool"></div></td>
-                    <td></td>
-                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="sgroup" src="png/action/sgroup.png" alt="" title="S-Group (Ctrl+G)" /></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="rgroup" title="R-Group Tool (Shift+R)"></div></td>
+                    <td></td>
+                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
+                </tr>
+                <tr align="center" class="sideButtonCell">
+                    <td></td>
                     <td></td>
                     <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
@@ -218,6 +218,26 @@
                     </tr>
                     <tr class="dropdownListItem" id="template_7" title="Cyclooctane (T)">
                         <td><div id="template_7_preview"></div>Cyclooctane</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="dropdownList" id="reaction_dropdown_list" style="display:none">
+                <table>
+                    <tr class="dropdownListItem" id="reaction_arrow" title="Reaction Arraow Tool">
+                        <td><div id="reaction_arrow_todo"><img src="png/action/reaction-arrow.png" alt="" style="width:24px;height:24px;" /></div>Reaction Arrow Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="reaction_plus" title="Reaction Plus Tool">
+                        <td><div id="reaction_plus_todo"><img src="png/action/reaction-plus.png" alt="" style="width:24px;height:24px;" /></div>Reaction Plus Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="reaction_automap" title="Reaction Mapping Tool">
+                        <td><div id="reaction_automap_todo"><img src="png/action/reaction-automap.png" alt="" style="width:24px;height:24px;" /></div>Reaction Auto-Mapping</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="reaction_map" title="Reaction Mapping Tool">
+                        <td><div id="reaction_map_todo"><img src="png/action/reaction-map.png" alt="" style="width:24px;height:24px;" /></div>Reaction Mapping Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="reaction_unmap" title="Reaction Unmappping Tool">
+                        <td><div id="reaction_unmap_todo"><img src="png/action/reaction-unmap.png" alt="" style="width:24px;height:24px;" /></div>Reaction Unmapping Tool</td>
                     </tr>
                 </table>
             </div>
@@ -484,6 +504,34 @@
                     <div style="margin-top:0.5em">
                         <input id="sgroup_prop_cancel" type="button" value="Cancel" />
                         <input id="sgroup_prop_ok" type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialogWindow automapDialog" id="automap_properties" style="display:none;">
+                <div style="width:100%">
+                    <div>
+                        Reaction Auto-Mapping Parameter
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <table style="text-align:left">
+                        <tr>
+                            <td>
+                                <label>Mode:</label>
+                            </td>
+                            <td>
+                                <select id="automap_mode">
+                                    <option value="discard">Discard</option>
+                                    <option value="keep">Keep</option>
+                                    <option value="alter">Alter</option>
+                                    <option value="clear">Clear</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="margin-top:0.5em">
+                        <input id="automap_cancel" type="button" value="Cancel" />
+                        <input id="automap_ok" type="button" value="OK" />
                     </div>
                 </div>
             </div>

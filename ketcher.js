@@ -90,22 +90,6 @@ ketcher.init = function ()
 		'hideTerminalLabels':true,
 		'ignoreMouseEvents':true};
 
-	tmpl.hexaa = ['', '  -INDIGO-08221110472D', '',
-		'  6  6  0  0  0  0  0  0  0  0999 V2000',
-		'    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    1.6000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    2.4000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    1.6000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'    0.0000   -2.7713    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'   -0.8000   -1.3856    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
-		'  1  2  4  0  0  0  0',
-		'  2  3  4  0  0  0  0',
-		'  3  4  4  0  0  0  0',
-		'  4  5  4  0  0  0  0',
-		'  5  6  4  0  0  0  0',
-		'  6  1  4  0  0  0  0',
-		'M  END'];
-
 	tmpl.chain = ['', '  Ketcher 10181123552D 1   1.00000     0.00000     0', '',
 		'  4  3  0     0  0            999 V2000',
 		'   -5.8000   -0.6500    0.0000 C   0  0  0  0  0  0        0  0  0',
@@ -241,9 +225,6 @@ ketcher.init = function ()
 
 	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
     ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 20, renderOptsPattern);
-
-	ketcher.button_areas.rxn_arrow = new rnd.ElementTable('rxn_arrow', elemLabelOpts).renderArrow();
-	ketcher.button_areas.rxn_plus = new rnd.ElementTable('rxn_plus', elemLabelOpts).renderPlus();
 
     tmpl.rgroup = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
         '  1  0  0     0  0            999 V2000',

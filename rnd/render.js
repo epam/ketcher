@@ -1018,6 +1018,21 @@ rnd.Render.prototype.getElementPos = function (obj)
 	return new util.Vec2(curleft,curtop);
 };
 
+rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
+	rnd.logMethod("drawSelectionLine");
+	if (this.selectionRect) {
+		this.selectionRect.remove();
+	    this.selectionRect = null;
+    }
+	if (p0 && p1) {
+		p0 = this.obj2scaled(p0).add(this.offset);
+		p1 = this.obj2scaled(p1).add(this.offset);
+		this.selectionRect = this.paper.path(
+            'M' + p0.x.toString() + ',' + p0.y.toString() + 'L' + p1.x.toString() + ',' + p1.y.toString()
+        ).attr({ 'stroke':'gray', 'stroke-width':'1px' });
+	}
+};
+
 rnd.Render.prototype.drawSelectionRectangle = function (p0, p1) {
 	rnd.logMethod("drawSelectionRectangle");
 	if (this.selectionRect) {

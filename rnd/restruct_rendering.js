@@ -304,6 +304,115 @@ rnd.ReStruct.prototype.drawBondAny = function (hb1, hb2)
 	});
 };
 
+rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
+{
+	var a = hb1.p, b = hb2.p;
+	var c = b.add(a).scaled(0.5);
+	var d = b.sub(a).normalized();
+	var n = d.rotateSC(1, 0);
+
+	var paper = this.render.paper;
+	var styles = this.render.styles;
+	var settings = this.render.settings;
+
+	var p = [];
+
+	var lw = settings.lineWidth, bs = settings.bondSpace/2;
+	var alongIntRc = lw, // half interval along for CENTER
+		alongIntMadeBroken = 2 * lw, // half interval between along for MADE_OR_BROKEN
+		alongSz = 1.5 * bs, // half size along for CENTER
+		acrossInt = 1.5 * bs, // half interval across for CENTER
+		acrossSz = 3.0 * bs, // half size across for all
+		tiltTan = 0.2; // tangent of the tilt angle
+
+	switch (bond.b.reactingCenterStatus)
+	{
+	case chem.Struct.BOND.REACTING_CENTER.NOT_CENTER: // X
+		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
+		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
+		break;
+	case chem.Struct.BOND.REACTING_CENTER.CENTER:  // #
+		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
+		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, -alongIntRc));
+		p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
+		p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
+		p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
+		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
+		break;
+//	case chem.Struct.BOND.REACTING_CENTER.UNCHANGED:  // o
+//		//draw a circle
+//		break;
+	case chem.Struct.BOND.REACTING_CENTER.MADE_OR_BROKEN:
+		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
+		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+		break;
+	case chem.Struct.BOND.REACTING_CENTER.ORDER_CHANGED:
+		p.push(c.addScaled(n, acrossSz));
+		p.push(c.addScaled(n, -acrossSz));
+		break;
+	case chem.Struct.BOND.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
+		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
+		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
+		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+		p.push(c.addScaled(n, acrossSz));
+		p.push(c.addScaled(n, -acrossSz));
+		break;
+	default:
+		return null;
+	}
+
+	var pathdesc = "";
+	for (var i = 0; i < p.length / 2; ++i)
+		pathdesc += "M" + p[2 * i].x + "," + p[2 * i].y + "L" + p[2 * i + 1].x + "," + p[2 * i + 1].y;
+	return paper.path(pathdesc).attr(styles.lineattr);
+}
+
+rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
+{
+	var topologyMark = null;
+
+	if (bond.b.topology == chem.Struct.BOND.TOPOLOGY.RING)
+		topologyMark = "rng";
+	else if (bond.b.topology == chem.Struct.BOND.TOPOLOGY.CHAIN)
+		topologyMark = "chn";
+	else
+		return null;
+
+	var paper = this.render.paper;
+	var settings = this.render.settings;
+
+	var a = hb1.p, b = hb2.p;
+	var c = b.add(a).scaled(0.5);
+	var d = b.sub(a).normalized();
+	var n = d.rotateSC(1, 0);
+	var fixed = settings.lineWidth;
+	if (bond.doubleBondShift > 0)
+		n = n.scaled(-bond.doubleBondShift);
+	else if (bond.doubleBondShift == 0)
+		fixed += settings.bondSpace / 2;
+
+	var s = new util.Vec2(2, 1).scaled(settings.bondSpace);
+	if (bond.b.type == chem.Struct.BOND.TYPE.TRIPLE)
+		fixed += settings.bondSpace;
+	var p = c.add(new util.Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
+	var path = paper.text(p.x, p.y, topologyMark)
+		.attr({
+			'font' : settings.font,
+			'font-size' : settings.fontszsub,
+			'fill' : '#000'
+		});
+	var rbb = path.getBBox();
+	this.centerText(path, rbb);
+	return path;
+}
+
 rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 {
 	var path = null;
@@ -879,6 +988,45 @@ rnd.ReStruct.prototype.showLabels = function ()
 					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
 					0.3 * label.rbb.height);
 		}
+        if (atom.a.aam - 0 > 0) {
+            var aamPath = paper.text(atom.a.ps.x, atom.a.ps.y, '.' + atom.a.aam + '.')
+                .attr({
+                    'font' : settings.font,
+                    'font-size' : settings.fontszsub,
+                    'fill' : 'gray'
+                });
+			var aamBox = aamPath.getBBox();
+			this.centerText(aamPath, aamBox);
+
+			var angles = [];
+			atom.a.neighbors.each( function (hbid) {
+				var hb = this.molecule.halfBonds.get(hbid);
+				angles.push(hb.ang);
+			}, this);
+			angles = angles.sort(function(a,b){return a-b;});
+			var da = [];
+			for (var i = 0; i < angles.length - 1; ++i) {
+				da.push(angles[(i + 1) % angles.length] - angles[i]);
+			}
+			da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+			var daMax = 0;
+			var ang = 0;
+			for (i = 0; i < angles.length; ++i) {
+				if (da[i] > daMax) {
+					daMax = da[i];
+					ang = angles[i] + da[i]/2;
+				}
+			}
+			var dir = new util.Vec2(Math.cos(ang), Math.sin(ang));
+
+			var visel = atom.visel;
+			var t = 3;
+			for (i = 0; i < visel.boxes.length; ++i)
+				t = Math.max(t, util.Vec2.shiftRayBox(atom.a.ps, dir, visel.boxes[i]));
+			dir = dir.scaled(10 + t);
+			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
+			render.addItemPath(atom.visel, 'data', aamPath, null);
+        }
 	}
 };
 
@@ -950,6 +1098,18 @@ rnd.ReStruct.prototype.showBonds = function ()
 		bond.path = this.drawBond(bond, hb1, hb2);
 		bond.rbb = bond.path.getBBox();
 		render.addItemPath(bond.visel, 'data', bond.path, bond.rbb);
+		var reactingCenter = {};
+		reactingCenter.path = this.drawReactingCenter(bond, hb1, hb2);
+		if (reactingCenter.path) {
+			reactingCenter.rbb = reactingCenter.path.getBBox();
+			render.addItemPath(bond.visel, 'data', reactingCenter.path, reactingCenter.rbb);
+		}
+		var topology = {};
+		topology.path = this.drawTopologyMark(bond, hb1, hb2);
+		if (topology.path) {
+			topology.rbb = topology.path.getBBox();
+			render.addItemPath(bond.visel, 'data', topology.path, topology.rbb);
+		}
 		if (bond.selected)
 			this.showItemSelection(bid, bond, true);
 		if (bond.highlight)

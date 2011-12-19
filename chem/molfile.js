@@ -553,7 +553,6 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 	for (i = 0; i < emptyGroups.length; ++i) {
 		ctab.sgroups.remove(emptyGroups[i]);
 	}
-
 	return ctab;
 };
 
@@ -942,7 +941,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 			this.writePaddedNumber(atom.valence == 0 ? 15 : atom.valence, 3);
 
 		this.writePaddedNumber(0, 3);
-		this.writeWhiteSpace(6);
+        this.writePaddedNumber(0, 3);
+        this.writePaddedNumber(0, 3);
+        this.writePaddedNumber(0, 3);
 
 		if (Object.isUndefined(atom.aam))
 			atom.aam = 0;

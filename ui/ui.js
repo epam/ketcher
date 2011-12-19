@@ -507,6 +507,36 @@ ui.parseMolfile = function (molfile)
 //
 ui.selectMode = function (mode)
 {
+    if (mode == 'reaction_automap') {
+        ui.showAutomapProperties({
+            onOk: function(mode) {
+                var moldata = new chem.MolfileSaver().saveMolecule(ui.ctab/*.clone()*/, true);
+                new Ajax.Request(ui.path + 'automap',
+                {
+                    method: 'post',
+                    asynchronous : true,
+                    parameters : { moldata : moldata, mode : mode },
+                    onComplete: function (res)
+                    {
+                        if (res.responseText.startsWith('Ok.')) {
+/*
+                            var aam = ui.parseMolfile(res.responseText);
+                            var action = new ui.Action();
+                            for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
+                                action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
+                            }
+                            ui.addUndoAction(action, true);
+*/
+                            ui.updateMolecule(ui.parseMolfile(res.responseText));
+                            ui.render.update();
+                        }
+                    }
+                });
+            }
+        });
+        return;
+    }
+
     if (mode != null)
     {
         if ($(mode).hasClassName('buttonDisabled'))
@@ -1991,7 +2021,13 @@ ui.removeSelected = function ()
 ui.hideBlurredControls = function ()
 {
     var ret = false;
-    ['input_label', 'selector_dropdown_list', 'bond_dropdown_list', 'template_dropdown_list'].each(
+    [
+        'input_label',
+        'selector_dropdown_list',
+        'bond_dropdown_list',
+        'template_dropdown_list',
+        'reaction_dropdown_list'
+    ].each(
         function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
     );
     return ret;
@@ -2784,6 +2820,28 @@ ui.onChange_SGroupType = function ()
 
     if (type != 'GEN')
         $('sgroup_label').activate();
+};
+
+//
+// Reaction auto-mapping
+//
+
+ui.showAutomapProperties = function(params)
+{
+    ui.showDialog('automap_properties');
+
+    var _onOk = new Event.Handler('automap_ok', 'click', undefined, function() {
+        if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
+        ui.hideDialog('automap_properties');
+        _onOk.stop();
+    }).start();
+    var _onCancel = new Event.Handler('automap_cancel', 'click', undefined, function() {
+        ui.hideDialog('automap_properties');
+        if (params && 'onCancel' in params) params['onCancel']();
+        _onCancel.stop();
+    }).start();
+
+    $('automap_mode').activate();
 };
 
 //

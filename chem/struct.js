@@ -181,6 +181,17 @@ chem.Struct.BOND =
 		EITHER: 0,
 		RING: 1,
 		CHAIN: 2
+	},
+
+	REACTING_CENTER:
+	{
+	   NOT_CENTER: -1,
+	   UNMARKED: 0,
+	   CENTER: 1,
+	   UNCHANGED: 2,
+	   MADE_OR_BROKEN: 4,
+	   ORDER_CHANGED: 8,
+	   MADE_OR_BROKEN_AND_CHANGED: 12
 	}
 };
 
@@ -202,6 +213,7 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'charge', 0);
 	util.ifDef(this, params, 'valence', 0);
     util.ifDef(this, params, 'rglabel', null);
+    util.ifDef(this, params, 'aam', 0);
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
@@ -249,7 +261,8 @@ chem.Struct.Atom.attrlist = {'label':0,
 	'unsaturatedAtom':0,
 	'hCount':0,
 	'atomList':null,
-    'rglabel':null
+    'rglabel':null,
+    'aam':0
 };
 
 chem.Struct.Atom.prototype.clone = function ()

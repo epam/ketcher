@@ -163,6 +163,11 @@ table#ketcher_window > tr
     top: 196px;
 }
 
+#reaction_dropdown_list
+{
+    top: 310px;
+}
+
 .dropdownListItem
 {
     cursor: default;

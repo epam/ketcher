@@ -238,8 +238,12 @@ util.Vec2.lc2 = function (v1, f1, v2, f2)
 
 util.Box2Abs = function ()
 {
-    if (arguments.length == 2 &&
-        arguments[0] instanceof util.Vec2 && arguments[1] instanceof util.Vec2)
+    if (arguments.length == 1 && 'min' in arguments[0] && 'max' in arguments[0])
+    {
+        this.p0 = arguments[0].min;
+        this.p1 = arguments[0].max;
+    }
+    if (arguments.length == 2 && arguments[0] instanceof util.Vec2 && arguments[1] instanceof util.Vec2)
     {
         this.p0 = arguments[0];
         this.p1 = arguments[1];

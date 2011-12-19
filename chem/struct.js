@@ -214,9 +214,10 @@ chem.Struct.Atom = function (params)
 	this.sgs = {};
 
 	// query
-	util.ifDef(this, params, 'ringBondCount', -1);
-	util.ifDef(this, params, 'substitutionCount', -1);
-	util.ifDef(this, params, 'unsaturatedAtom', -1);
+	util.ifDef(this, params, 'ringBondCount', 0);
+	util.ifDef(this, params, 'substitutionCount', 0);
+	util.ifDef(this, params, 'unsaturatedAtom', 0);
+	util.ifDef(this, params, 'hCount', 0);
 
 	// reaction
 	util.ifDef(this, params, 'rxnFragmentType', -1);
@@ -246,6 +247,7 @@ chem.Struct.Atom.attrlist = {'label':0,
 	'ringBondCount':0,
 	'substitutionCount':0,
 	'unsaturatedAtom':0,
+	'hCount':0,
 	'atomList':null,
     'rglabel':null
 };
@@ -269,7 +271,7 @@ chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 {
 	return this.label == 'C' && this.isotope == 0 && this.isotope == 0 &&
 		this.radical == 0 && this.charge == 0 && this.explicitValence == 0 &&
-		this.ringBondCount == -1 && this.substitutionCount == -1 && this.unsaturatedAtom == -1 &&
+		this.ringBondCount == 0 && this.substitutionCount == 0 && this.unsaturatedAtom == 0 && this.hCount == 0 &&
 		!this.atomList;
 };
 

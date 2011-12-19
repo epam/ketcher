@@ -120,7 +120,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		charge: mf.fmtInfo.chargeMap[mf.parseDecimalInt(atomSplit[6])],
 
 		// query
-		implicitH: mf.fmtInfo.implicitHydrogenMap[mf.parseDecimalInt(atomSplit[8])],
+		hCount: mf.parseDecimalInt(mf.parseDecimalInt(atomSplit[8])),
 		stereoCare: mf.parseDecimalInt(atomSplit[9]) != 0,
 
 		// reaction
@@ -930,8 +930,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		// TODO: hydrogen count
-		this.writePaddedNumber(0, 3);
+		if (Object.isUndefined(atom.hCount))
+			atom.hCount = 0;
+		this.writePaddedNumber(atom.hCount, 3);
 
 		if (Object.isUndefined(atom.stereoCare))
 			atom.stereoCare = 0;

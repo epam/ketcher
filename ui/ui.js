@@ -1067,7 +1067,7 @@ ui.onKeyPress_InputLabel = function (event)
                 charge *= -1;
         }
 
-        if (label == 'A' || label == 'R' || chem.Element.getElementByLabel(label) != null)
+        if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null)
         {
             ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
@@ -2559,7 +2559,7 @@ ui.onChange_AtomLabel = function ()
 
     var element = chem.Element.getElementByLabel(this.value);
 
-    if (element == null && this.value != 'A' && this.value != '*')
+    if (element == null && this.value != 'A' && this.value != '*' && this.value != 'Q' && this.value != 'X' && this.value != 'R')
     {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
 
@@ -2567,10 +2567,10 @@ ui.onChange_AtomLabel = function ()
             element = chem.Element.getElementByLabel(this.value);
     }
 
-    if (this.value == 'A')
+    if (this.value == 'A' || this.value == '*')
         util.setElementTextContent($('atom_number'), "any");
-    else if (this.value == '*')
-        util.setElementTextContent($('atom_number'), "*");
+    else if (!element)
+        util.setElementTextContent($('atom_number'), "");
     else
         util.setElementTextContent($('atom_number'), element.toString());
 };

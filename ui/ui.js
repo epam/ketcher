@@ -2645,14 +2645,12 @@ ui.applyBondProperties = function ()
     ui.hideDialog('bond_properties');
 
     var id = $('bond_properties').bond_id;
-
-    ui.addUndoAction(ui.Action.fromBondAttrs(id,
-        Object.extend(ui.bondTypeMap[$('bond_type').value],
-        {
-            topology: parseInt($('bond_topology').value),
-            reactingCenterStatus: parseInt($('bond_center').value)
-        })
-    ), true);
+    var bond = Object.clone(ui.bondTypeMap[$('bond_type').value]);
+    
+    bond.topology = parseInt($('bond_topology').value);
+    bond.reactingCenterStatus = parseInt($('bond_center').value);
+    
+    ui.addUndoAction(ui.Action.fromBondAttrs(id, bond), true);
 
     ui.render.update();
 };

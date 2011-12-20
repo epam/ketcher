@@ -937,10 +937,8 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
 
-		if (atom.explicitValence)
-			this.writePaddedNumber(atom.valence == 0 ? 15 : atom.valence, 3);
+		this.writePaddedNumber(!atom.explicitValence ? 0 : (atom.valence == 0 ? 15 : atom.valence), 3);
 
-		this.writePaddedNumber(0, 3);
         this.writePaddedNumber(0, 3);
         this.writePaddedNumber(0, 3);
         this.writePaddedNumber(0, 3);

@@ -988,8 +988,31 @@ rnd.ReStruct.prototype.showLabels = function ()
 					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
 					0.3 * label.rbb.height);
 		}
-        if (atom.a.aam - 0 > 0) {
-            var aamPath = paper.text(atom.a.ps.x, atom.a.ps.y, '.' + atom.a.aam + '.')
+		
+		var aamText = "";
+		if (atom.a.aam > 0) {
+			aamText += atom.a.aam;
+		}
+		if (atom.a.invRet > 0) {
+			if (aamText.length > 0)
+				aamText += ",";
+			if (atom.a.invRet == 1)
+				aamText += 'Inv';
+			else if (atom.a.invRet == 2)
+				aamText += 'Ret';
+			else
+				throw new Error('Invalid value for the invert/retain flag');
+		}
+		if (atom.a.exactChangeFlag > 0) {
+			if (aamText.length > 0)
+				aamText += ",";
+			if (atom.a.exactChangeFlag == 1)
+				aamText += 'ext';
+			else
+				throw new Error('Invalid value for the exact change flag');
+		}
+        if (aamText.length > 0) {
+            var aamPath = paper.text(atom.a.ps.x, atom.a.ps.y, '.' + aamText + '.')
                 .attr({
                     'font' : settings.font,
                     'font-size' : settings.fontszsub,

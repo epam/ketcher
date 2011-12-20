@@ -57,7 +57,6 @@ chem.Molfile.parseMolfile = function (molfileLines)
 };
 
 chem.Molfile.fmtInfo = {
-	invRetMap: [null, "inv", "ret"],
 	bondTypeMap: {
 		1: chem.Struct.BOND.TYPE.SINGLE,
 		2: chem.Struct.BOND.TYPE.DOUBLE,
@@ -125,7 +124,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 
 		// reaction
 		aam: mf.parseDecimalInt(atomSplit[14]),
-		invRet: mf.fmtInfo.invRetMap[mf.parseDecimalInt(atomSplit[15])],
+		invRet: mf.parseDecimalInt(atomSplit[15]),
 
 		// reaction query
 		exactChangeFlag: mf.parseDecimalInt(atomSplit[16]) != 0

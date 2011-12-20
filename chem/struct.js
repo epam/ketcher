@@ -213,7 +213,6 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'charge', 0);
 	util.ifDef(this, params, 'valence', 0);
     util.ifDef(this, params, 'rglabel', null);
-    util.ifDef(this, params, 'aam', 0);
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
@@ -232,6 +231,9 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'hCount', 0);
 
 	// reaction
+    util.ifDef(this, params, 'aam', 0);
+	util.ifDef(this, params, 'invRet', 0);
+	util.ifDef(this, params, 'exactChangeFlag', 0);
 	util.ifDef(this, params, 'rxnFragmentType', -1);
 
 	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;

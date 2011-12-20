@@ -993,6 +993,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     var isotope_list = new Array();
     var radical_list = new Array();
     var rglabel_list = new Array();
+    var rbcount_list = new Array();
+    var unsaturated_list = new Array();
+    var substcount_list = new Array();
 
 	this.molecule.atoms.each(function (id, atom)
 	{
@@ -1007,6 +1010,12 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
                 if (atom.rglabel & (1 << rgi)) rglabel_list.push([id, rgi + 1]);
             }
         }
+        if (atom.ringBondCount != 0)
+            rbcount_list.push([id, atom.ringBondCount]);
+        if (atom.substitutionCount != 0)
+            substcount_list.push([id, atom.substitutionCount]);
+        if (atom.unsaturatedAtom != 0)
+            unsaturated_list.push([id, atom.unsaturatedAtom]);
 	});
 
     var writeAtomPropList = function (prop_id, values)
@@ -1040,6 +1049,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     writeAtomPropList.call(this, 'M  ISO', isotope_list);
     writeAtomPropList.call(this, 'M  RAD', radical_list);
     writeAtomPropList.call(this, 'M  RGP', rglabel_list);
+    writeAtomPropList.call(this, 'M  RBC', rbcount_list);
+    writeAtomPropList.call(this, 'M  SUB', substcount_list);
+    writeAtomPropList.call(this, 'M  UNS', unsaturated_list);
 
 	if (atomList_list.length > 0)
 	{

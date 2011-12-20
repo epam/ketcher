@@ -315,11 +315,18 @@
                             <td>
                                 <input id="atom_label" type="text" maxlength="2" size="3" />
                             </td>
+                            <td rowspan="5" style="width:5px">
+                            </td>
                             <td>
                                 <label>Number:</label>
                             </td>
                             <td>
-                                <label id="atom_number"></label>
+                                <input id="atom_number" type="text" readonly="readonly" maxlength="3" size="3" />
+                            </td>
+                            <td rowspan="5" style="width:10px">
+                            </td>
+                            <td colspan="2" style="background-color: #D7D7D7">
+                                Query specific
                             </td>
                         </tr>
                         <tr>
@@ -330,19 +337,11 @@
                                 <input id="atom_charge" type="text" maxlength="3" size="3" />
                             </td>
                             <td>
-                                <label>Isotope:</label>
-                            </td>
-                            <td>
-                                <input id="atom_isotope" type="text" maxlength="3" size="3" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
                                 <label>Valency:</label>
                             </td>
                             <td>
-                                <select id="atom_valence">
-                                    <option value="">Off</option>
+                                <select id="atom_valence" style="width:100%">
+                                    <option value=""></option>
                                     <option value="0">0</option>
                                     <option value="1">I</option>
                                     <option value="2">II</option>
@@ -355,6 +354,28 @@
                                 </select>
                             </td>
                             <td>
+                                <label>Ring bond count:</label>
+                            </td>
+                            <td>
+                                <select id="atom_ringcount" style="width:100%">
+                                    <option value="0"></option>
+                                    <option value="-2">As drawn</option>
+                                    <option value="-1">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Isotope:</label>
+                            </td>
+                            <td>
+                                <input id="atom_isotope" type="text" maxlength="3" size="3" />
+                            </td>
+                            <td>
                                 <label>Radical:</label>
                             </td>
                             <td>
@@ -363,6 +384,70 @@
                                     <option value="2">Monoradical</option>
                                     <option value="1">Diradical (singlet)</option>
                                     <option value="3">Diradical (triplet)</option>
+                                </select>
+                            </td>
+                            <td>
+                                <label>H count:</label>
+                            </td>
+                            <td>
+                                <select id="atom_hcount" style="width:100%">
+                                    <option value="0"></option>
+                                    <option value="1">0</option>
+                                    <option value="2">1</option>
+                                    <option value="3">2</option>
+                                    <option value="4">3</option>
+                                    <option value="5">4</option>
+                                </select>
+                            </td>
+                        </tr>
+						<tr>
+							<td colspan="5" style="background-color: #D7D7D7">
+								Reaction flags
+							</td>
+                            <td>
+                                <label>Substitution count:</label>
+                            </td>
+                            <td>
+                                <select id="atom_substitution" style="width:100%">
+                                    <option value="0"></option>
+                                    <option value="-2">As drawn</option>
+                                    <option value="-1">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                </select>
+                            </td>
+						</tr>
+						<tr>
+                            <td>
+                                <label>Inversion:</label>
+                            </td>
+                            <td>
+                                <select id="atom_inversion">
+                                    <option value="0"></option>
+                                    <option value="1">Inverts</option>
+                                    <option value="2">Retains</option>
+                                </select>
+                            </td>
+                            <td>
+                                <label>Exact:</label>
+                            </td>
+                            <td>
+                                <select id="atom_exactchange" style="width:100%">
+                                    <option value="0"></option>
+                                    <option value="1">Exact change</option>
+                                </select>
+                            </td>
+                            <td>
+                                <label>Unsaturation:</label>
+                            </td>
+                            <td>
+                                <select id="atom_unsaturation">
+                                    <option value="0"></option>
+                                    <option value="1">Unsaturated</option>
                                 </select>
                             </td>
                         </tr>
@@ -386,7 +471,7 @@
                                 <label>Type:</label>
                             </td>
                             <td>
-                                <select id="bond_type">
+                                <select id="bond_type" style="width:100%">
                                     <option value="single">Single</option>
                                     <option value="up">Single Up</option>
                                     <option value="down">Single Down</option>
@@ -407,7 +492,7 @@
                                 <label>Topology:</label>
                             </td>
                             <td>
-                                <select id="bond_topology">
+                                <select id="bond_topology" style="width:100%">
                                     <option value="0">Either</option>
                                     <option value="1">Ring</option>
                                     <option value="2">Chain</option>

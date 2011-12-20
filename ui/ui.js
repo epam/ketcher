@@ -2530,6 +2530,13 @@ ui.showAtomProperties = function (id)
     $('atom_valence').value = (!ui.render.atomGetAttr(id, 'explicitValence') ? '' : ui.render.atomGetAttr(id, 'valence'));
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
+    $('atom_inversion').value = ui.render.atomGetAttr(id, 'invRet');
+    $('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag');
+    $('atom_ringcount').value = ui.render.atomGetAttr(id, 'ringBondCount');
+    $('atom_substitution').value = ui.render.atomGetAttr(id, 'substitutionCount');
+    $('atom_unsaturation').value = ui.render.atomGetAttr(id, 'unsaturatedAtom');
+    $('atom_hcount').value = ui.render.atomGetAttr(id, 'hCount');
+
     ui.showDialog('atom_properties');
     $('atom_label').activate();
 };
@@ -2547,7 +2554,15 @@ ui.applyAtomProperties = function ()
         isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
         explicitValence: $('atom_valence').value != '',
         valence: $('atom_valence').value == '' ? ui.render.atomGetAttr(id, 'valence') : parseInt($('atom_valence').value),
-        radical: parseInt($('atom_radical').value)
+        radical: parseInt($('atom_radical').value),
+        // reaction flags
+        invRet: parseInt($('atom_inversion').value),
+        exactChangeFlag: parseInt($('atom_exactchange').value),
+        // query flags
+    	ringBondCount: parseInt($('atom_ringcount').value),
+    	substitutionCount: parseInt($('atom_substitution').value), 
+    	unsaturatedAtom: parseInt($('atom_unsaturation').value),
+    	hCount: parseInt($('atom_hcount').value)
     }), true);
 
     ui.render.update();
@@ -2568,11 +2583,11 @@ ui.onChange_AtomLabel = function ()
     }
 
     if (this.value == 'A' || this.value == '*')
-        util.setElementTextContent($('atom_number'), "any");
+        $('atom_number').value = "any";
     else if (!element)
-        util.setElementTextContent($('atom_number'), "");
+        $('atom_number').value = "";
     else
-        util.setElementTextContent($('atom_number'), element.toString());
+        $('atom_number').value = element.toString();
 };
 
 ui.onChange_AtomCharge = function ()

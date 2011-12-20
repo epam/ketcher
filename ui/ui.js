@@ -528,7 +528,9 @@ ui.selectMode = function (mode)
                             ui.addUndoAction(action, true);
 */
                             ui.updateMolecule(ui.parseMolfile(res.responseText));
+/*
                             ui.render.update();
+*/
                         }
                     }
                 });

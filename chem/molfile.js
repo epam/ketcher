@@ -1249,7 +1249,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		bb1 = bbReact[j];
 		bb2 = bbReact[j+1];
 
-		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
+		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
 		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
@@ -1268,7 +1268,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		bb1 = bbProd[j];
 		bb2 = bbProd[j+1];
 
-		x = (bb1.max.x + bb1.min.x + bb2.min.x + bb2.max.x) / 4;
+		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
 		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));

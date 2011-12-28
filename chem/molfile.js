@@ -646,18 +646,19 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 	var line;
 	while (shift < ctabLines.length) {
 		line = mf.stripV30(ctabLines[shift++]).strip();
-		if (line.strip() == 'END ATOM')
+		if (line == 'END ATOM')
 			break;
 		while (line[line.length-1] == '-')
 			line = (line + mf.stripV30(ctabLines[shift++])).strip();
 		ctab.atoms.add(mf.parseAtomLineV3000(line));
 	}
 
-	if (ctabLines[shift++].strip() == "M  V30 BEGIN BOND")
+	if (ctabLines[shift].strip() == "M  V30 BEGIN BOND")
 	{
+		shift++;
 		while (shift < ctabLines.length) {
 			line = mf.stripV30(ctabLines[shift++]).strip();
-			if (line.strip() == 'END BOND')
+			if (line == 'END BOND')
 				break;
 			while (line[line.length-1] == '-')
 				line = (line + mf.stripV30(ctabLines[shift++])).strip();
@@ -668,8 +669,9 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 	// TODO: let sections follow in arbitrary order
 	var sgroups = {};
 	var atomMap = {};
-	while (ctabLines[shift++].strip() == "M  V30 BEGIN SGROUP")
+	while (ctabLines[shift].strip() == "M  V30 BEGIN SGROUP")
 	{
+		shift++;
 		while (shift < ctabLines.length) {
 			line = mf.stripV30(ctabLines[shift++]).strip();
 			if (line.strip() == 'END SGROUP')

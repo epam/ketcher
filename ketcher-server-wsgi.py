@@ -74,5 +74,7 @@ def handle_open(request):
 urlpatterns = patterns('',
     url(r'^knocknock$', handle_knock),
     url(r'^layout$', handle_layout),
+    url(r'^automap$', handle_automap),
     url(r'^save$', handle_save),
     url(r'^open$', handle_open))
+    

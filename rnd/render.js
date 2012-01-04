@@ -1105,25 +1105,35 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 	var v0 = util.Vec2.diff(r[r.length - 1], p);
 	var n0 = util.Vec2.dot(n, v0);
 	var d0 = util.Vec2.dot(d, v0);
+	var w0 = null;
 	var counter = 0;
 	var eps = 1e-5;
+	var flag1 = false, flag0 = false;
 
 	for (var i = 0; i < r.length; ++i) {
 		var v1 = util.Vec2.diff(r[i], p);
+		var w1 = util.Vec2.diff(v1, v0);
 		var n1 = util.Vec2.dot(n, v1);
 		var d1 = util.Vec2.dot(d, v1);
-		if (n1 * n0 < eps)
+		flag1 = false;
+		if (n1 * n0 < 0)
 		{
 			if (d1 * d0 > -eps) {
 				if (d0 > -eps)
-					counter++;
+					flag1 = true;
 			} else if ((Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 > 0) {
-				counter++;
+				flag1 = true;
 			}
 		}
+		if (flag1 && flag0 && util.Vec2.dot(w1, n) * util.Vec2(w0, n) >= 0)
+			flag1 = false;
+		if (flag1)
+			counter++;
 		v0 = v1;
 		n0 = n1;
 		d0 = d1;
+		w0 = w1;
+		flag0 = flag1;
 	}
 	return (counter % 2) != 0;
 };

@@ -779,9 +779,23 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 
 rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 {
-	for (var i = 0; i < atoms.length; ++i) { // TMP
-		this.itemMoveRel('atoms', atoms[i], d);
-	}
+	var atomSet = util.Set.fromList(atoms);
+	var hbs = this.ctab.molecule.halfBonds;
+	for (var i = 0; i < atoms.length; ++i) {
+		 var aid = atoms[i];
+		 var atom = this.ctab.atoms.get(aid);
+		 var bordering = false;
+		 for (var j = 0; j < atom.a.neighbors.length; ++j) {
+			  var hbid = atom.a.neighbors[j];
+			  if (!hbs.has(hbid) || !util.Set.contains(atomSet, hbs.get(hbid).end)) {
+				   bordering = true;
+			  }
+		 }
+		 if (!bordering)
+			  this.itemMoveRel('atoms', aid, d);
+		 else
+			  this.atomMove(aid, this.ctab.atoms.get(aid).a.pp.add(d));
+	 }	
 };
 
 rnd.Render.prototype.itemMoveRel = function (map, id, d) {

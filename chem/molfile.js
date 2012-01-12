@@ -1144,7 +1144,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 {
 	var mf = chem.Molfile;
-	var split = ctabLines[0].split(' ');
+	var split = ctabLines[0].strip().split(' ');
 	if (split.length > 1 && split[1] == 'V3000')
 		return mf.parseRxn3000(ctabLines);
 	else

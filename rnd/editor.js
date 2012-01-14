@@ -150,7 +150,7 @@ rnd.Editor.EditorTool.prototype.OnMouseMove0 = function(event) {
     if ('OnMouseMove' in this) return this.OnMouseMove(event);
 };
 rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
-    // here we surpress event we got when second touch released in guesture
+    // here we suppress event we got when second touch released in guesture
     if (!('lastEvent' in this.OnMouseDown0)) return true;
 
     if ('lastEvent' in this.OnMouseMove0) {
@@ -547,7 +547,7 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseMove = function(event) {
 };
 rnd.Editor.ReactionArrowTool.prototype.OnMouseUp = function(event) {
     if ('dragCtx' in this) {
-        this.editor.ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsiquent undo/redo fails
+        this.editor.ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
         this.editor.render.update();
         delete this.dragCtx;
     } else {
@@ -588,7 +588,7 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseMove = function(event) {
 };
 rnd.Editor.ReactionPlusTool.prototype.OnMouseUp = function(event) {
     if ('dragCtx' in this) {
-        this.editor.ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsiquent undo/redo fails
+        this.editor.ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
         this.editor.render.update();
         delete this.dragCtx;
     } else {

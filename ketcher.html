@@ -32,6 +32,7 @@
         <script type="text/javascript" src="rnd/rgroup_table.js"></script>
         <script type="text/javascript" src="ui/ui.js"></script>
         <script type="text/javascript" src="ui/actions.js"></script>
+        <script type="text/javascript" src="reaxys/reaxys.js"></script>
         <script type="text/javascript" src="ketcher.js"></script>
     </head>
 
@@ -66,55 +67,45 @@
                     <td><img class="sideButton modeButton" id="select_erase" src="png/action/edit-clear.png" alt="" title="Erase" /></td>
                     <td></td>
                     <td colspan="16" rowspan="13"><div id="client_area"></div></td>
-                    <td><div class="sideButton modeButton" id="atom_table" title="Periodic table"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton stateButton" id="bond" selid="bond_single" title="Single Bond (1)"></div></td>
                     <td class="dropdownButton" id="bond_dropdown" title="Select Bond Type"><img src="png/dropdown.png" alt="" /></td>
-                    <td><div class="sideButton modeButton" id="atom_any" title="Any Atom (A)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="chain" title="Chain Tool"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton stateButton" id="template" selid="template_0" title="Benzene (T)"></div></td>
                     <td class="dropdownButton" id="template_dropdown" title="Benzene"><img src="png/dropdown.png" alt="" /></td>
-                    <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_plus" title="Charge Plus (5)"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="png/action/reaction-arrow.png" alt="" title="Reaction Mapping Tool" /></td>
                     <td class="dropdownButton" id="reaction_dropdown" title="Reation Mapping Mode"><img src="png/dropdown.png" alt="" /></td>
-                    <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="sgroup" src="png/action/sgroup.png" alt="" title="S-Group (Ctrl+G)" /></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
-                </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="rgroup" title="R-Group Tool (Shift+R)"></div></td>
-                    <td></td>
-                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
-                </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td></td>
+                    <td><div class="sideButton modeButton" id="rgroup" title="R-Group Tool (Shift+R)"></div></td>
                     <td></td>
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
@@ -122,6 +113,16 @@
                     <td></td>
                     <td></td>
                     <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)"></div></td>
+                </tr>
+                <tr align="center" class="sideButtonCell">
+                    <td></td>
+                    <td></td>
+                    <td><div class="sideButton modeButton" id="atom_table" title="Periodic table"></div></td>
+                </tr>
+                <tr align="center" class="sideButtonCell">
+                    <td></td>
+                    <td></td>
+                    <td><div class="sideButton modeButton" id="atom_reagenerics" title="Reaxys Generics"></div></td>
                 </tr>
                 <tr>
                     <td></td>
@@ -659,6 +660,20 @@
                     <div style="margin-top:0.5em">
                         <input id="rgroup_table_cancel" type="button" value="Cancel" />
                         <input id="rgroup_table_ok" type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialogWindow reagenericsTableDialog" id="reagenerics_table" style="display:none;">
+                <div>
+                    <div>
+                        Reaxys Generics
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <div id="reagenerics_table_area"></div>
+                    <div style="margin-top:0.5em">
+                        <input id="reagenerics_table_cancel" type="button" value="Cancel" />
+                        <input id="reagenerics_table_ok" type="button" value="OK" />
                     </div>
                 </div>
             </div>

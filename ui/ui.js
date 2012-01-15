@@ -186,8 +186,8 @@ ui.init = function ()
     $$('.modeButton').each(function (el)
     {
         ui.initButton(el);
-        if (el.identify() != 'atom_table')
-            el.observe('click', ui.onClick_SideButton);
+        if (el.identify() != 'atom_table' && el.identify() != 'atom_reagenerics')
+            el.observe('click', ui.onClick_SideButton); // TODO need some other way, in general tools should be pluggable
     });
     $$('.dropdownButton').each(function (el)
     {
@@ -219,6 +219,7 @@ ui.init = function ()
     $('atom_table').observe('click', ui.onClick_ElemTableButton);
     $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
     $('elem_table_not_list').observe('click', ui.onSelect_ElemTableNotList);
+    $('atom_reagenerics').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
 
     // Client area events
     this.client_area = $('client_area');
@@ -681,6 +682,8 @@ ui.atomLabel = function (mode)
 
     if (label == 'table')
         return ui.elem_table_obj.getAtomProps();
+    if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
+        return ui.reagenerics_table_obj.getAtomProps();
     if (label == 'any')
         return {'label':'A'};
     else

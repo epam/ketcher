@@ -22,7 +22,6 @@ ketcher.init = function ()
     ketcher.templates = {};
 	ketcher.button_areas = {};
 	var elemLabelOpts = {'fontSize':25};
-	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_any', elemLabelOpts).renderSingle('A');
 	ketcher.button_areas.atom_h = new rnd.ElementTable('atom_h', elemLabelOpts).renderSingle('H');
 	ketcher.button_areas.atom_c = new rnd.ElementTable('atom_c', elemLabelOpts).renderSingle('C');
 	ketcher.button_areas.atom_n = new rnd.ElementTable('atom_n', elemLabelOpts).renderSingle('N');
@@ -34,6 +33,7 @@ ketcher.init = function ()
 	ketcher.button_areas.atom_br = new rnd.ElementTable('atom_br', elemLabelOpts).renderSingle('Br');
 	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
 	ketcher.button_areas.atom_table = new rnd.ElementTable('atom_table', elemLabelOpts).renderSingle('...');
+	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_reagenerics', {'fontSize':9}).renderSingle('Generic\nGroups');
 
 	var charge_head = ['', '  fun stuff 0123456789AB', '',
 		'  1  0  0  0  0  0            999 V2000',

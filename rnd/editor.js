@@ -32,6 +32,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.LassoTool(this, 1);
     } else if (tool == 'select_erase') {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
+    } else if (tool.startsWith('atom_')) {
+        return new rnd.Editor.AtomTool(this, ui.atomLabel(tool)); // TODO should not refer ui directly, re-factoring needed
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
     } else if (tool == 'reaction_arrow') {
@@ -197,6 +199,16 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
         }
     }
     if ('OnKeyPress' in this) return this.OnKeyPress(event);
+};
+rnd.Editor.EditorTool.prototype._calcNewAtomPos = function(pos0, pos1) {
+    var v = util.Vec2.diff(pos1, pos0);
+    var angle = Math.atan2(v.y, v.x);
+    var sign = angle < 0 ? - 1 : 1;
+    var floor = Math.floor(Math.abs(angle) / (Math.PI / 12)) * (Math.PI / 12);
+    angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
+    v = new util.Vec2(1, 0).rotate(angle);
+    v.add_(pos0);
+    return v;
 };
 
 
@@ -413,6 +425,69 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
             this.editor.ui.updateClipboardButtons(); // TODO review
             this.editor.ui.render.setSelection()
         }
+    }
+};
+
+
+rnd.Editor.AtomTool = function(editor, atomProps) {
+    this.editor = editor;
+    this.atomProps = atomProps;
+    this.bondProps = { type : 1, stereo : chem.Struct.BOND.STEREO.NONE };
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.AtomTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.AtomTool.prototype.OnMouseDown = function(event) {
+    this._hoverHelper.hover(null);
+    var ci = this.editor.render.findItem(event, ['atoms']);
+    if (!ci || ci.type == 'Canvas') {
+        this.dragCtx = {
+            xy0 : this.editor.ui.page2obj(event)
+        };
+    } else if (ci.map == 'atoms') {
+        this.dragCtx = {
+            item : ci,
+            xy0 : this.editor.ui.page2obj(event)
+        };
+    }
+};
+rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
+    if ('dragCtx' in this && 'item' in this.dragCtx) {
+        var _DC_ = this.dragCtx;
+        var newAtomPos = this._calcNewAtomPos(
+            _R_.atomGetPos(_DC_.item.id), _E_.ui.page2obj(event)
+        );
+        if ('newAtom' in _DC_) {
+            this.render.atomMove(_DC_.newAID, newAtomPos);
+        } else {
+            if ('action' in _DC_) {
+                _DC_.action.perform();
+            }
+            var action_ret = _E_.ui.Action.fromBondAddition(
+                this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
+            );
+            _DC_.action = action_ret[0];
+            _DC_.newAID = action_ret[2];
+        }
+        _R_.update();
+    } else {
+        this._hoverHelper.hover(_R_.findItem(event, ['atoms']));
+    }
+};
+rnd.Editor.AtomTool.prototype.OnMouseUp = function(event) {
+    if ('dragCtx' in this) {
+        var _UI_ = this.editor.ui, _DC_ = this.dragCtx;
+        _UI_.addUndoAction(
+            'action' in _DC_
+                ? _DC_.action
+                : 'item' in _DC_
+                    ? _UI_.Action.fromAtomAttrs(_DC_.item.id, this.atomProps)
+                    : _UI_.Action.fromAtomAddition(_UI_.page2obj(event), this.atomProps),
+            true
+        );
+        this.editor.render.update();
+        delete this.dragCtx;
     }
 };
 

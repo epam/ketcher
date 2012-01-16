@@ -415,7 +415,7 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
         if (line.charAt(0) == 'A') {
             if (!props.get('label'))
                 props.set('label', new util.Map());
-            props.get('label').set(mf.parseDecimalInt(line.slice(3, 6)), ctabLines[++shift]);
+            props.get('label').set(mf.parseDecimalInt(line.slice(3, 6))-1, ctabLines[++shift]);
         } else if (line.charAt(0) == 'M') {
 			var type = line.slice(3, 6);
 			var propertyData = line.slice(6);
@@ -928,7 +928,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		if (atom.atomList != null) {
 			label = 'L';
 			atomList_list.push(id);
-		} else if (chem.Element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*'].indexOf(label) == -1) {
+		} else if (chem.Element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) {
             label = 'C';
             atomLabel_list.push(id);
         }
@@ -996,7 +996,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 	}, this);
 
     while (atomLabel_list.length > 0) {
-        this.write('A  '); this.writePaddedNumber(atomLabel_list[0], 3); this.writeCR();
+        this.write('A  '); this.writePaddedNumber(atomLabel_list[0] + 1, 3); this.writeCR();
         this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
         atomLabel_list.splice(0, 1);
     }

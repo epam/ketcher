@@ -412,8 +412,11 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 	while (shift < end)
 	{
 		var line = ctabLines[shift];
-		if (line.charAt(0) == 'M')
-		{
+        if (line.charAt(0) == 'A') {
+            if (!props.get('label'))
+                props.set('label', new util.Map());
+            props.get('label').set(mf.parseDecimalInt(line.slice(3, 6)), ctabLines[++shift]);
+        } else if (line.charAt(0) == 'M') {
 			var type = line.slice(3, 6);
 			var propertyData = line.slice(6);
 			if (type == "END") {
@@ -426,11 +429,11 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				if (!props.get('radical'))
 					props.set('radical', new util.Map());
 				props.get('radical').update(mf.readKeyValuePairs(propertyData));
-			}else if (type == "ISO") {
+			} else if (type == "ISO") {
 				if (!props.get('isotope'))
 					props.set('isotope', new util.Map());
 				props.get('isotope').update(mf.readKeyValuePairs(propertyData));
-			}else if (type == "RBC") {
+			} else if (type == "RBC") {
 				if (!props.get('ringBondCount'))
 					props.set('ringBondCount', new util.Map());
 				props.get('ringBondCount').update(mf.readKeyValuePairs(propertyData));
@@ -913,6 +916,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 	var i = 1;
 
 	var atomList_list = [];
+    var atomLabel_list = [];
 	this.molecule.atoms.each(function (id, atom)
 	{
 		this.writePaddedFloat(atom.pos.x, 10, 4);
@@ -924,7 +928,10 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 		if (atom.atomList != null) {
 			label = 'L';
 			atomList_list.push(id);
-		}
+		} else if (chem.Element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*'].indexOf(label) == -1) {
+            label = 'C';
+            atomLabel_list.push(id);
+        }
 		this.writePadded(label, 3);
 		this.writePaddedNumber(0, 2);
 		this.writePaddedNumber(0, 3);
@@ -987,6 +994,12 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 
 		this.writeCR();
 	}, this);
+
+    while (atomLabel_list.length > 0) {
+        this.write('A  '); this.writePaddedNumber(atomLabel_list[0], 3); this.writeCR();
+        this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
+        atomLabel_list.splice(0, 1);
+    }
 
     var charge_list = new Array();
     var isotope_list = new Array();

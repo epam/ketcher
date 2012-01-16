@@ -954,11 +954,11 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
         });
     }, this);
 
-    ui.selection.rxnArrows.each(function (id) {
-    action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+    rxnArrows.each(function (id) {
+        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
     }, this);
 
-    ui.selection.rxnPluses.each(function (id) {
+    rxnPluses.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
     }, this);
 

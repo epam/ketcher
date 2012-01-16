@@ -883,7 +883,7 @@ chem.MolfileSaver.prototype.writePadded = function (str, width)
 
 chem.MolfileSaver.prototype.writePaddedNumber = function (number, width)
 {
-	var str = number.toString();
+	var str = (number - 0).toString();
 
 	this.writeWhiteSpace(width - str.length);
 	this.write(str);

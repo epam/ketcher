@@ -340,9 +340,10 @@ ui.Action.prototype.perform = function ()
 
         case ui.Action.OPERATION.RXN_ARROW_ADD:
             op.inverted.type = ui.Action.OPERATION.RXN_ARROW_DEL;
-
-            var id = ui.render.rxnArrowAdd(op.params.pos);
-            op.inverted.params = { id: id };
+            if (ui.ctab.rxnArrows.count() < 1) {
+                var id = ui.render.rxnArrowAdd(op.params.pos);
+                op.inverted.params = { id: id };
+            }
             break;
 
         case ui.Action.OPERATION.RXN_ARROW_POS:
@@ -722,9 +723,11 @@ ui.Action.fromArrowAddition = function (pos)
 {
     var action = new ui.Action();
 
-    action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
-        id: ui.render.rxnArrowAdd(pos)
-    });
+    if (ui.ctab.rxnArrows.count() < 1) {
+        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
+            id: ui.render.rxnArrowAdd(pos)
+        });
+    }
 
     return action;
 };
@@ -951,11 +954,11 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
         });
     }, this);
 
-    ui.selection.rxnArrows.each(function (id) {
+    rxnArrows.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
     }, this);
 
-    ui.selection.rxnPluses.each(function (id) {
+    rxnPluses.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
     }, this);
 

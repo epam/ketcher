@@ -2564,10 +2564,10 @@ ui.applyAtomProperties = function ()
         invRet: parseInt($('atom_inversion').value),
         exactChangeFlag: parseInt($('atom_exactchange').value),
         // query flags
-    	ringBondCount: parseInt($('atom_ringcount').value),
-    	substitutionCount: parseInt($('atom_substitution').value), 
-    	unsaturatedAtom: parseInt($('atom_unsaturation').value),
-    	hCount: parseInt($('atom_hcount').value)
+        ringBondCount: parseInt($('atom_ringcount').value),
+        substitutionCount: parseInt($('atom_substitution').value), 
+        unsaturatedAtom: parseInt($('atom_unsaturation').value),
+        hCount: parseInt($('atom_hcount').value)
     }), true);
 
     ui.render.update();
@@ -3102,7 +3102,9 @@ ui.paste = function ()
 
     for (id = 0; id < ui.clipboard.rxnArrows.length; id++) {
         var arrow = ui.clipboard.rxnArrows[id];
-        ui.pasted.rxnArrows.push(ui.render.rxnArrowAdd(arrow.pos, arrow));
+        if (ui.ctab.rxnArrows.count() < 1) {
+            ui.pasted.rxnArrows.push(ui.render.rxnArrowAdd(arrow.pos, arrow));
+        }
     }
 
     for (id = 0; id < ui.clipboard.rxnPluses.length; id++) {

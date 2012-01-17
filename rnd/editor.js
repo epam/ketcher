@@ -423,7 +423,7 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
             for (var map2 in rnd.ReStruct.maps) ui.selection[map2] = []; // TODO to be deleted when ui.selection eliminated
             this.editor.ui.render.update();
             this.editor.ui.updateClipboardButtons(); // TODO review
-            this.editor.ui.render.setSelection()
+            this.editor._selectionHelper.setSelection();
         }
     }
 };

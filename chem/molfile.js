@@ -700,13 +700,18 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 				props[name].push(subsplit[1]);
 			}
 			sg.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
-			sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1); // TODO: make optional?
+			if (props['PATOMS'])
+				sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1);
 			sg.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
 			var brkxyzStrs = props['BRKXYZ'];
 			sg.brkxyz = [];
-			for (var j = 0; j < brkxyzStrs.length; ++j)
-				sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
-			sg.data.subscript = props['MULT'][0]-0;
+			if (brkxyzStrs) {
+				for (var j = 0; j < brkxyzStrs.length; ++j)
+					sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+			}
+			if (props['MULT']) {
+				sg.data.subscript = props['MULT'][0]-0;
+			}
 			chem.SGroup.addGroup(ctab, sg, atomMap);
 		}
 	}

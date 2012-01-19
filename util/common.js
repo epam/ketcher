@@ -143,6 +143,12 @@ util.stripRight = function (src) {
 	return src.slice(0, src.length - i);
 };
 
+util.stripQuotes = function (str) {
+       if (str[0] == '"' && str[str.length - 1] == '"')
+               return str.substr(1,str.length-2);
+       return str;
+}
+
 util.paddedFloat = function (number, width, precision)
 {
 	var numStr = number.toFixed(precision).replace(',', '.');

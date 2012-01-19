@@ -1173,6 +1173,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
 	if ((atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
+		atom.a.label == null ||
 		atom.a.label.toLowerCase() != "c" ||
 		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
 		atom.a.isotope != 0 ||

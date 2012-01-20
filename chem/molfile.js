@@ -176,8 +176,16 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 		subsplit = mf.splitonce(split[i], '=');
 		key = subsplit[0];
 		value = subsplit[1];
-		if (key in mf.fmtInfo.v30atomPropMap)
-			params[mf.fmtInfo.v30atomPropMap[key]] = mf.parseDecimalInt(value);
+		if (key in mf.fmtInfo.v30atomPropMap) {
+			var ival = mf.parseDecimalInt(value);
+			if (key == 'VAL') {
+				if (ival == 0)
+					continue;
+				if (ival == -1)
+					ival = 0;
+			}
+			params[mf.fmtInfo.v30atomPropMap[key]] = ival;
+		}
 	}
 	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);

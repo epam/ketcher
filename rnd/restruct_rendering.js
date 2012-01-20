@@ -954,7 +954,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			{
 				valence.text = mapValence[atom.a.valence];
 				if (!valence.text)
-					throw new Error("invalid valence");
+					throw new Error("invalid valence " + atom.a.valence.toString());
 				valence.text = '(' + valence.text + ')';
 				valence.path = paper.text(atom.a.ps.x, atom.a.ps.y, valence.text)
 				.attr({

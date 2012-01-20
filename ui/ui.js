@@ -567,7 +567,8 @@ ui.selectMode = function (mode)
                 return;
             }
             if (mode == 'sgroup') {
-                ui.showSGroupProperties(null);
+				if (ui.selectedAtom())
+					ui.showSGroupProperties(null);
                 return;
             }
         } else if (mode.startsWith('atom_')) {
@@ -2000,6 +2001,11 @@ ui.selected = function ()
     return false;
 };
 
+ui.selectedAtom = function ()
+{
+	return !Object.isUndefined(ui.selection.atoms) && ui.selection.atoms.length > 0;
+};
+
 ui.selectAll = function ()
 {
     var mode = ui.modeType();
@@ -2406,7 +2412,7 @@ ui.onMouseUp_Ketcher = function (event)
         if (ui.selected() && ui.isDrag())
             ui.removeSelected();
     if (ui.modeType() == ui.MODE.SGROUP)
-        if (ui.selected() && ui.isDrag())
+        if (ui.selectedAtom() && ui.isDrag())
             ui.showSGroupProperties(null);
     ui.endDrag();
     util.stopEventPropagation(event);

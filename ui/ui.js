@@ -20,8 +20,8 @@ ui.base_url = '';
 
 ui.scale = 40;
 
-ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
-ui.zoomIdx = 1;
+ui.zoomValues = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+ui.zoomIdx = ui.zoomValues.indexOf(1.0);
 ui.zoom = 1.0;
 
 ui.DBLCLICK_INTERVAL = 300;

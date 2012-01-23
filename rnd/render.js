@@ -1417,11 +1417,13 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
-	this.ctab.molecule.sgroups.each(function(sgid, sg){
+    this.ctab.molecule.sgroups.each(function(sgid, sg){
+        var d = sg.bracketDir, n = d.rotateSC(1, 0);
+        var pg = new util.Vec2(util.Vec2.dot(pos, d), util.Vec2.dot(pos, n));
         for (var i = 0; i < sg.areas.length; ++i) {
             var box = sg.areas[i];
-            var inBox = box.p0.y < pos.y && box.p1.y > pos.y && box.p0.x < pos.x && box.p1.x > pos.x;
-            var xDist = Math.min(Math.abs(box.p0.x - pos.x), Math.abs(box.p1.x - pos.x));
+            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
+            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
             if (inBox && (closestSg == null || xDist < minDist)) {
                 closestSg = sgid;
                 minDist = xDist;

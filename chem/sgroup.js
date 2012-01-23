@@ -23,6 +23,7 @@ chem.SGroup = function (type)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
 	this.bracketBox = null;
+    this.bracketDir = new util.Vec2(1,0);
     this.areas = [];
 	this.selectionBoxes = null;
 
@@ -171,15 +172,82 @@ chem.SGroup.removeAtom = function (sgroup, aid)
 	throw new Error("The atom is not found in the given s-group");
 };
 
-chem.SGroup.drawBrackets = function (set, paper, settings, styles, bb) {
-	var bracketWidth = Math.min(settings.lineWidth * 5, bb.sz().x * 0.3);
-	var leftBracket = paper.path("M{2},{1}L{0},{1}L{0},{3}L{2},{3}",
-		bb.p0.x, bb.p0.y, bb.p0.x + bracketWidth, bb.p1.y)
-	.attr(styles.sgroupBracketStyle);
-	var rightBracket = paper.path("M{2},{1}L{0},{1}L{0},{3}L{2},{3}",
-		bb.p1.x, bb.p0.y, bb.p1.x - bracketWidth, bb.p1.y)
-	.attr(styles.sgroupBracketStyle);
-	set.push(leftBracket, rightBracket);
+chem.SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
+    mol.bonds.each(function(bid, bond){
+        if (parentAtomSet[bond.begin] && parentAtomSet[bond.end]) {
+            if (inBonds != null)
+                inBonds.push(bid);
+        } else if (parentAtomSet[bond.begin] || parentAtomSet[bond.end]) {
+            if (xBonds != null)
+                xBonds.push(bid);
+        }
+    }, this);
+}
+
+chem.SGroup.bracketPos = function (sg, remol, xbonds) {
+    var atoms = sg.atoms;
+    if (xbonds.length != 2) {
+        sg.bracketDir = new util.Vec2(1, 0);
+    } else {
+        var b1 = remol.bonds.get(xbonds[0]), b2 = remol.bonds.get(xbonds[1]);
+        var p1 = b1.b.center, p2 = b2.b.center;
+        sg.bracketDir = util.Vec2.diff(p2, p1).normalized();
+    }
+    var d = sg.bracketDir;
+    var n = d.rotateSC(1, 0);
+
+    var bb = null;
+    var render = remol.render;
+    var settings = render.settings;
+    for (var i = 0; i < atoms.length; ++i) {
+        var aid = atoms[i];
+        var atom = remol.atoms.get(aid);
+        var bba = atom.visel.boundingBox;
+        if (bba == null) {
+            var p = new util.Vec2(util.Vec2.dot(atom.a.pp, d), util.Vec2.dot(atom.a.pp, n));
+            bba = new util.Box2Abs(p,p);
+            var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+            bba = bba.extend(ext, ext);
+        } else {
+            bba = bba.transform(render.scaled2obj, render);
+        }
+        bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
+    }
+    var vext = new util.Vec2(0.05 * 2, 0.05 * 4);
+    if (bb != null)
+        bb = bb.extend(vext, vext);
+
+    sg.bracketBox = bb;
+};
+
+chem.SGroup.drawBrackets = function (set, render, paper, settings, styles, bb, d, n) {
+    var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
+    var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+    var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+    var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+    var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+    var a02 = a0.addScaled(d, bracketWidth);
+    var a12 = a1.addScaled(d, bracketWidth);
+    var b02 = b0.addScaled(d, -bracketWidth);
+    var b12 = b1.addScaled(d, -bracketWidth);
+
+    a0 = render.obj2scaled(a0);
+    a1 = render.obj2scaled(a1);
+    b0 = render.obj2scaled(b0);
+    b1 = render.obj2scaled(b1);
+    a02 = render.obj2scaled(a02);
+    a12 = render.obj2scaled(a12);
+    b02 = render.obj2scaled(b02);
+    b12 = render.obj2scaled(b12);
+
+    var leftBracket = paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}",
+        a02.x, a02.y, a0.x, a0.y, a1.x, a1.y, a12.x, a12.y)
+        .attr(styles.sgroupBracketStyle);
+
+    var rightBracket = paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}",
+        b02.x, b02.y, b0.x, b0.y, b1.x, b1.y, b12.x, b12.y)
+        .attr(styles.sgroupBracketStyle);
+    set.push(leftBracket, rightBracket);
 };
 
 chem.SGroup.getObjBBox = function (atoms, mol)
@@ -207,9 +275,9 @@ chem.SGroup.getBBox = function (atoms, remol) {
 		var atom = remol.atoms.get(aid);
 		var bba = atom.visel.boundingBox;
 		if (bba == null) {
-			var p = atom.a.ps;
+			var p = atom.a.pp;
 			bba = new util.Box2Abs(p,p);
-			var ext = new util.Vec2(settings.lineWidth * 3, settings.lineWidth * 3);
+			var ext = new util.Vec2(0.15, 0.15);
 			bba = bba.extend(ext, ext);
 		}
 		bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
@@ -249,12 +317,18 @@ chem.SGroup.GroupMul = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		var bb = this.bracketBox.extend(vext, vext);
-        this.areas = [bb.transform(render.scaled2obj, render)];
-		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
-		var multIndex = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.mul)
+        var inBonds = [], xBonds = [];
+        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
+        chem.SGroup.bracketPos(this, remol, xBonds);
+        var bb = this.bracketBox;
+        var d = this.bracketDir, n = d.rotateSC(1, 0);
+        this.areas = [bb];
+		chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
+        var idxOffset = 0.25;
+        var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
+            n, d.x < 0 ? bb.p0.y : bb.p1.y);
+        idxPos = render.obj2scaled(idxPos);
+        var multIndex = paper.text(idxPos.x, idxPos.y, this.data.mul)
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontszsub
@@ -280,12 +354,8 @@ chem.SGroup.GroupMul = {
 
 	prepareForSaving: function (mol) {
 		var i,j;
-		this.parentAtomSet = {};
-		this.atomSet = {};
-		for (i = 0; i < this.atoms.length; ++i) {
-			this.parentAtomSet[this.atoms[i]] = 1;
-			this.atomSet[this.atoms[i]] = 1;
-		}
+		this.atomSet = util.Set.fromList(this.atoms);
+        this.parentAtomSet = util.Set.clone(this.atomSet);
 		var inBonds = [];
 		var xBonds = [];
 
@@ -415,30 +485,35 @@ chem.SGroup.GroupSru = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		var bb = this.bracketBox.extend(vext, vext);
-        this.areas = [bb.transform(render.scaled2obj, render)];
-		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
+        var inBonds = [], xBonds = [];
+        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
+        chem.SGroup.bracketPos(this, remol, xBonds);
+        var bb = this.bracketBox;
+        var d = this.bracketDir, n = d.rotateSC(1, 0);
+        this.areas = [bb];
+        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
 		var connectivity = this.data.connectivity || 'eu';
+        var idxOffset = 0.25;
 		if (connectivity != 'ht') {
-			var connectivityIndex = paper.text(bb.p1.x + settings.lineWidth * 1, bb.p0.y, connectivity)
+            var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
+                n, d.x < 0 ? bb.p0.y : bb.p1.y);
+            idxPos = render.obj2scaled(idxPos);
+			var connectivityIndex = paper.text(idxPos.x, idxPos.y, connectivity)
 			.attr({
 				'font' : settings.font,
 				'font-size' : settings.fontszsub
 			});
-			var connectivityIndexBox = connectivityIndex.getBBox();
-			connectivityIndex.translate(0.5 * connectivityIndexBox.width, 0.3 * connectivityIndexBox.height);
 			set.push(connectivityIndex);
 		}
 		this.data.subscript = this.data.subscript || 'n';
-		var subscript = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.subscript)
+        idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
+            n, d.x >= 0 ? bb.p0.y : bb.p1.y);
+        idxPos = render.obj2scaled(idxPos);
+		var subscript = paper.text(idxPos.x, idxPos.y, this.data.subscript)
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontszsub
 		});
-		var subscriptBox = subscript.getBBox();
-		subscript.translate(0.5 * subscriptBox.width, -0.3 * subscriptBox.height);
 		set.push(subscript);
 		return set;
 	},
@@ -477,20 +552,26 @@ chem.SGroup.GroupSup = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		var bb = this.bracketBox.extend(vext, vext);
-        this.areas = [bb.transform(render.scaled2obj, render)];
-		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
+        var inBonds = [], xBonds = [];
+        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
+        chem.SGroup.bracketPos(this, remol, xBonds);
+        var bb = this.bracketBox;
+        var d = this.bracketDir, n = d.rotateSC(1, 0);
+        this.areas = [bb];
+        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
 		if (this.data.name) {
-			var name = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.name)
+            var idxOffset = 0.25;
+            var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
+                n, d.x < 0 ? bb.p0.y : bb.p1.y);
+            idxPos = render.obj2scaled(idxPos);
+			var name = paper.text(idxPos.x, idxPos.y, this.data.name)
 			.attr({
 				'font' : settings.font,
 				'font-size' : settings.fontszsub,
 				'font-style' : 'italic'
 			});
 			var nameBox = name.getBBox();
-			name.translate(0.5 * nameBox.width, -0.3 * nameBox.height);
+			name.translate(0.5 * nameBox.width * d.x, 0);
 			set.push(name);
 		}
 		return set;
@@ -533,11 +614,13 @@ chem.SGroup.GroupGen = {
 		var styles = render.styles;
 		var paper = render.paper;
 		var set = paper.set();
-		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
-		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-		var bb = this.bracketBox.extend(vext, vext);
-        this.areas = [bb.transform(render.scaled2obj, render)];
-		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
+        var inBonds = [], xBonds = [];
+        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
+        chem.SGroup.bracketPos(this, remol, xBonds);
+        var bb = this.bracketBox;
+        var d = this.bracketDir, n = d.rotateSC(1, 0);
+        this.areas = [bb];
+        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
 		return set;
 	},
 
@@ -594,13 +677,14 @@ chem.SGroup.GroupDat = {
 		var absolute = this.data.absolute || this.allAtoms;
 		var atoms = chem.SGroup.getAtoms(remol, this);
 		var i;
-		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
-        var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
-        this.areas = [this.bracketBox.extend(vext).transform(render.scaled2obj, render)];
+        var inBonds = [], xBonds = [];
+        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
+        chem.SGroup.bracketPos(this, remol, xBonds);
+        this.areas = [this.bracketBox];
 		if (this.p == null) {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
-		
+
 		if (!absolute) { // relative position
 			this.ps = this.pr.scaled(settings.scaleFactor).add(chem.SGroup.getMassCentre(remol, atoms));
 		} else { // absolute position

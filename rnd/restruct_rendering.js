@@ -570,27 +570,33 @@ rnd.ReStruct.prototype.removeBracketSelection = function (sgid, sg)
 
 rnd.ReStruct.prototype.showBracketSelection = function (sgid, sg, visible)
 {
-	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var settings = render.settings;
-			var paper = render.paper;
-			var bb = sg.bracketBox;
-			var lw = settings.lineWidth;
-			var vext = new util.Vec2(lw * 4, lw * 6);
-			bb = bb.extend(vext, vext);
-			sg.selectionPlate = paper
-			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
-			.attr(styles.selectionStyle);
-			this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
-		}
-		sg.selectionPlate.show();
-	} else {
-		if (exists)
-			sg.selectionPlate.hide();
-	}
+    var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
+    if (visible) {
+        if (!exists) {
+            var render = this.render;
+            var styles = render.styles;
+            var settings = render.settings;
+            var paper = render.paper;
+            var bb = sg.bracketBox;
+            var lw = settings.lineWidth;
+            var vext = new util.Vec2(lw * 4, lw * 6);
+            bb = bb.extend(vext, vext);
+            var d = sg.bracketDir, n = d.rotateSC(1,0);
+            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+
+            sg.selectionPlate = paper
+                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}C", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+                .attr(styles.selectionStyle);
+            this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
+        }
+        sg.selectionPlate.show();
+    } else {
+        if (exists)
+            sg.selectionPlate.hide();
+    }
 };
 
 rnd.ReStruct.prototype.removeBracketHighlighting = function (sgid, sg)
@@ -602,28 +608,34 @@ rnd.ReStruct.prototype.removeBracketHighlighting = function (sgid, sg)
 
 rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
 {
-	var exists = (sg.highlighting != null) && !sg.highlighting.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var settings = render.settings;
-			var paper = render.paper;
-			var bb = sg.bracketBox;
-			var lw = settings.lineWidth;
-			var vext = new util.Vec2(lw * 4, lw * 6);
-			bb = bb.extend(vext, vext);
-			sg.highlighting = paper
-			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
-			.attr(styles.highlightStyle);
-			this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
-		}
-		sg.highlighting.show();
-	} else {
-		if (exists) {
-			sg.highlighting.hide();
-		}
-	}
+    var exists = (sg.highlighting != null) && !sg.highlighting.removed;
+    if (visible) {
+        if (!exists) {
+            var render = this.render;
+            var styles = render.styles;
+            var settings = render.settings;
+            var paper = render.paper;
+            var bb = sg.bracketBox.transform(render.obj2scaled, render);
+            var lw = settings.lineWidth;
+            var vext = new util.Vec2(lw * 4, lw * 6);
+            bb = bb.extend(vext, vext);
+            var d = sg.bracketDir, n = d.rotateSC(1,0);
+            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+
+            sg.highlighting = paper
+                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+                .attr(styles.highlightStyle);
+            this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
+        }
+        sg.highlighting.show();
+    } else {
+        if (exists) {
+            sg.highlighting.hide();
+        }
+    }
 };
 
 rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)

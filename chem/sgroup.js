@@ -23,6 +23,7 @@ chem.SGroup = function (type)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
 	this.bracketBox = null;
+    this.areas = [];
 	this.selectionBoxes = null;
 
 	this.highlight = false;
@@ -251,6 +252,7 @@ chem.SGroup.GroupMul = {
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
+        this.areas = [bb.transform(render.scaled2obj, render)];
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var multIndex = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.mul)
 		.attr({
@@ -416,6 +418,7 @@ chem.SGroup.GroupSru = {
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
+        this.areas = [bb.transform(render.scaled2obj, render)];
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		var connectivity = this.data.connectivity || 'eu';
 		if (connectivity != 'ht') {
@@ -477,6 +480,7 @@ chem.SGroup.GroupSup = {
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
+        this.areas = [bb.transform(render.scaled2obj, render)];
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		if (this.data.name) {
 			var name = paper.text(bb.p1.x + settings.lineWidth * 2, bb.p1.y, this.data.name)
@@ -532,6 +536,7 @@ chem.SGroup.GroupGen = {
 		this.bracketBox = chem.SGroup.getBBox(this.atoms, remol);
 		var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
 		var bb = this.bracketBox.extend(vext, vext);
+        this.areas = [bb.transform(render.scaled2obj, render)];
 		chem.SGroup.drawBrackets(set, paper, settings, styles, bb);
 		return set;
 	},
@@ -590,6 +595,8 @@ chem.SGroup.GroupDat = {
 		var atoms = chem.SGroup.getAtoms(remol, this);
 		var i;
 		this.bracketBox = chem.SGroup.getBBox(atoms, remol);
+        var vext = new util.Vec2(settings.lineWidth * 2, settings.lineWidth * 4);
+        this.areas = [this.bracketBox.extend(vext).transform(render.scaled2obj, render)];
 		if (this.p == null) {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
@@ -614,14 +621,19 @@ chem.SGroup.GroupDat = {
 				var box_i = name_i.getBBox();
 				name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
 				set.push(name_i);
-				this.selectionBoxes.push(util.Box2Abs.fromRelBox(name_i.getBBox()));
+                var sbox = util.Box2Abs.fromRelBox(name_i.getBBox());
+				this.selectionBoxes.push(sbox);
+                this.areas.push(sbox.transform(render.scaled2obj, render));
+
 			}
 		} else {
 			var name = this.showValue(paper, this.ps, this, settings);
 			var box = name.getBBox();
 			name.translate(0.5 * box.width, -0.5 * box.height);
 			set.push(name);
-			this.selectionBoxes = [util.Box2Abs.fromRelBox(name.getBBox())];
+            var sbox = util.Box2Abs.fromRelBox(name.getBBox());
+			this.selectionBoxes = [sbox];
+            this.areas.push(sbox.transform(render.scaled2obj, render));
 		}
 		return set;
 	},

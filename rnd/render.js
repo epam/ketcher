@@ -1417,30 +1417,16 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
-	var vext = new util.Vec2(lw*4, lw*6);
 	this.ctab.molecule.sgroups.each(function(sgid, sg){
-		if (sg.selectionBoxes != null) {
-			for (var i = 0; i < sg.selectionBoxes.length; ++i) {
-				var bbi = sg.selectionBoxes[i];
-				var inBoxi = bbi.p0.y < pos.y && bbi.p1.y > pos.y && bbi.p0.x < pos.x && bbi.p1.x > pos.x;
-				var xDisti = util.Vec2.dist(pos, util.Vec2.lc2(bbi.p0, 0.5, bbi.p1, 0.5));
-				if (inBoxi && (closestSg == null || xDisti < minDist)) {
-					closestSg = sgid;
-					minDist = xDisti;
-				}
-			}
-		} else {
-			var box = sg.bracketBox;
-			if (!box)
-				return;
-			var bb = box.extend(vext, vext);
-			var inBox = bb.p0.y < pos.y && bb.p1.y > pos.y && bb.p0.x < pos.x && bb.p1.x > pos.x;
-			var xDist = Math.min(Math.abs(bb.p0.x - pos.x), Math.abs(bb.p1.x - pos.x));
-			if (inBox && (closestSg == null || xDist < minDist)) {
-				closestSg = sgid;
-				minDist = xDist;
-			}
-		}
+        for (var i = 0; i < sg.areas.length; ++i) {
+            var box = sg.areas[i];
+            var inBox = box.p0.y < pos.y && box.p1.y > pos.y && box.p0.x < pos.x && box.p1.x > pos.x;
+            var xDist = Math.min(Math.abs(box.p0.x - pos.x), Math.abs(box.p1.x - pos.x));
+            if (inBox && (closestSg == null || xDist < minDist)) {
+                closestSg = sgid;
+                minDist = xDist;
+            }
+        }
 	}, this);
 	if (closestSg != null)
 		return {

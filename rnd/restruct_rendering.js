@@ -701,58 +701,6 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(index.path, index.rbb);
 			render.addItemPath(atom.visel, 'indices', index.path, index.rbb);
 		}
-		var queryAttrsText = "";
-		if (atom.a.ringBondCount != 0) {
-			if (atom.a.ringBondCount > 0) 
-				queryAttrsText += "rb" + atom.a.ringBondCount.toString();
-			else if (atom.a.ringBondCount == -1)
-				queryAttrsText += "rb0";
-			else if (atom.a.ringBondCount == -2)
-				queryAttrsText += "rb*";
-			else
-				throw new Error("Ring bond count invalid");
-		}
-		if (atom.a.substitutionCount != 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-			
-			if (atom.a.substitutionCount > 0) 
-				queryAttrsText += "s" + atom.a.substitutionCount.toString();
-			else if (atom.a.substitutionCount == -1)
-				queryAttrsText += "s0";
-			else if (atom.a.substitutionCount == -2)
-				queryAttrsText += "s*";
-			else
-				throw new Error("Substitution count invalid");
-		}
-		if (atom.a.unsaturatedAtom > 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-
-			if (atom.a.unsaturatedAtom == 1)
-				queryAttrsText += "u";
-			else
-				throw new Error("Unsaturated atom invalid value");
-		}
-		if (atom.a.hCount > 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-
-			queryAttrsText += "H" + (atom.a.hCount - 1).toString();
-		}
-
-		if (queryAttrsText.length > 0) {
-			var queryAttrsPath = paper.text(atom.a.ps.x, atom.a.ps.y, queryAttrsText)
-			.attr({
-				'font' : settings.font,
-				'font-size' : settings.fontszsub,
-				'fill' : '#000'
-			});
-			var queryAttrsRbb = queryAttrsPath.getBBox();
-			this.centerText(queryAttrsPath, queryAttrsRbb);
-			this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
-			render.addItemPath(atom.visel, 'indices', queryAttrsPath, queryAttrsRbb);
-		}
 		if (atom.selected)
 			this.showItemSelection(aid, atom, true);
 		if (atom.highlight)
@@ -760,12 +708,12 @@ rnd.ReStruct.prototype.showLabels = function ()
 		if (atom.sGroupHighlight)
 			this.showAtomSGroupHighlighting(aid, atom, true);
 
+        var color = '#000000';
 		if (atom.showLabel)
 		{
 			var rightMargin = 0, leftMargin = 0;
 			// label
 			var label = {};
-			var color = '#000000';
 			if (atom.a.atomList != null) {
 				label.text = atom.a.atomList.label();
             } else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
@@ -1015,6 +963,60 @@ rnd.ReStruct.prototype.showLabels = function ()
 			else
 				throw new Error('Invalid value for the invert/retain flag');
 		}
+        
+        var queryAttrsText = "";
+        if (atom.a.ringBondCount != 0) {
+            if (atom.a.ringBondCount > 0)
+                queryAttrsText += "rb" + atom.a.ringBondCount.toString();
+            else if (atom.a.ringBondCount == -1)
+                queryAttrsText += "rb0";
+            else if (atom.a.ringBondCount == -2)
+                queryAttrsText += "rb*";
+            else
+                throw new Error("Ring bond count invalid");
+        }
+        if (atom.a.substitutionCount != 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            if (atom.a.substitutionCount > 0)
+                queryAttrsText += "s" + atom.a.substitutionCount.toString();
+            else if (atom.a.substitutionCount == -1)
+                queryAttrsText += "s0";
+            else if (atom.a.substitutionCount == -2)
+                queryAttrsText += "s*";
+            else
+                throw new Error("Substitution count invalid");
+        }
+        if (atom.a.unsaturatedAtom > 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            if (atom.a.unsaturatedAtom == 1)
+                queryAttrsText += "u";
+            else
+                throw new Error("Unsaturated atom invalid value");
+        }
+        if (atom.a.hCount > 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            queryAttrsText += "H" + (atom.a.hCount - 1).toString();
+        }
+
+        if (queryAttrsText.length > 0) {
+            var queryAttrsPath = paper.text(atom.a.ps.x, atom.a.ps.y, queryAttrsText)
+                .attr({
+                    'font' : settings.font,
+                    'font-size' : settings.fontszsub,
+                    'fill' : color
+                });
+            var queryAttrsRbb = queryAttrsPath.getBBox();
+            this.centerText(queryAttrsPath, queryAttrsRbb);
+            this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
+            render.addItemPath(atom.visel, 'indices', queryAttrsPath, queryAttrsRbb);
+        }
+
 		if (atom.a.exactChangeFlag > 0) {
 			if (aamText.length > 0)
 				aamText += ",";
@@ -1028,7 +1030,7 @@ rnd.ReStruct.prototype.showLabels = function ()
                 .attr({
                     'font' : settings.font,
                     'font-size' : settings.fontszsub,
-                    'fill' : 'gray'
+                    'fill' : color
                 });
 			var aamBox = aamPath.getBBox();
 			this.centerText(aamPath, aamBox);

@@ -48,12 +48,12 @@ chem.Molfile.partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, 
 	return res;
 };
 
-chem.Molfile.parseMolfile = function (molfileLines)
+chem.Molfile.parseCTFile = function (molfileLines)
 {
 	if (molfileLines[0].search("\\$RXN") == 0)
 		return chem.Molfile.parseRxn(molfileLines);
 	else
-		return chem.Molfile.parseCTab(molfileLines);
+		return chem.Molfile.parseMol(molfileLines);
 };
 
 chem.Molfile.fmtInfo = {
@@ -770,9 +770,17 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 	return ctab;
 };
 
+chem.Molfile.parseMol = function (/* string */ ctabLines) /* chem.Struct */
+{
+    if (ctabLines[0].search("\\$MDL") == 0) {
+        return this.parseRg2000(ctabLines);
+    }
+	ctabLines = ctabLines.slice(3);
+    return this.parseCTab(ctabLines);
+};
+
 chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 {
-	ctabLines = ctabLines.slice(3);
 	var mf = chem.Molfile;
 	var countsSplit = mf.partitionLine(ctabLines[0], mf.fmtInfo.countsLinePartition);
 	var version = countsSplit[11].strip();
@@ -1052,7 +1060,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
 	}, this);
 
     while (atomLabel_list.length > 0) {
-        this.write('A  '); this.writePaddedNumber(atomLabel_list[0] + 1, 3); this.writeCR();
+        this.write('A  ');this.writePaddedNumber(atomLabel_list[0] + 1, 3);this.writeCR();
         this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
         atomLabel_list.splice(0, 1);
     }
@@ -1243,7 +1251,7 @@ chem.Molfile.parseRxn2000 = function (/* string[] */ ctabLines) /* chem.Struct *
 	molLines.push(ctabLines.slice(i0));
 	var mols = [];
 	for (var j = 0; j < molLines.length; ++j) {
-		var mol = chem.Molfile.parseCTab(molLines[j]);
+		var mol = chem.Molfile.parseMol(molLines[j]);
 		mols.push(mol);
 	}
 	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
@@ -1369,3 +1377,109 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	ret.isReaction = true;
 	return ret;
 };
+
+chem.Molfile.rgMerge = function (core, frag) /* chem.Struct */
+{
+	var ret = new chem.Struct();
+
+    core.mergeInto(ret);
+    for (var id in frag) {
+        for (var j = 0; j < frag[id].length; ++j) {
+            frag[id][j].mergeInto(ret);
+        }
+    }
+	return ret;
+};
+
+chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
+{
+	var mf = chem.Molfile;
+	ctabLines = ctabLines.slice(7);
+    if (ctabLines[0].strip() != '$CTAB')
+        throw new Error('RGFile format invalid');
+    var i = 1;
+    while (ctabLines[i][0] != '$')
+        ++i;
+    if (ctabLines[i].strip() != '$END CTAB')
+        throw new Error('RGFile format invalid');
+    var coreLines = ctabLines.slice(1, i);
+	ctabLines = ctabLines.slice(i+1);
+    var fragmentLines = {};
+    while (true) {
+        var line = ctabLines[0].strip();
+        if (line == '$END MOL') {
+            ctabLines = ctabLines.slice(1);
+            break;
+        }
+        if (line != '$RGP')
+            throw new Error('RGFile format invalid');
+        var id = ctabLines[1].strip()-0;
+        fragmentLines[id] = [];
+        ctabLines = ctabLines.slice(2);
+        while (true) {
+            line = ctabLines[0].strip();
+            if (line == '$END RGP') {
+                ctabLines = ctabLines.slice(1);
+                break;
+            }
+            i = 1;
+            if (line != '$CTAB')
+                throw new Error('RGFile format invalid');
+            while (ctabLines[i][0] != '$') {
+                ++i;
+            }
+            if (ctabLines[i].strip() != '$END CTAB')
+                throw new Error('RGFile format invalid');
+            var lines = ctabLines.slice(1,i);
+            fragmentLines[id].push(lines);
+            ctabLines = ctabLines.slice(i+1);
+        }
+    }
+
+
+    var core = chem.Molfile.parseCTab(coreLines), frag = {};
+    for (var id in fragmentLines) {
+        frag[id] = [];
+        for (var j = 0; j < fragmentLines[id].length; ++j) {
+            frag[id].push(chem.Molfile.parseCTab(fragmentLines[id][j]));
+        }
+    }
+	return mf.rgMerge(core, frag);
+};
+
+chem.Molfile.parseRg3000 = function (/* string[] */ ctabLines) /* chem.Struct */
+{
+	var mf = chem.Molfile;
+	ctabLines = ctabLines.slice(4);
+	var countsSplit = ctabLines[0].split(' ').slice(4);
+	var nReactants = countsSplit[0]-0,
+	nProducts = countsSplit[1]-0,
+	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
+
+	var i0 = 0, i;
+	var molLinesReactants = [], molLinesProducts = [], current;
+	for (i = 0; i < ctabLines.length; ++i) {
+		var line = ctabLines[i].strip();
+		if (line == "M  V30 BEGIN PRODUCT") {
+			current = molLinesProducts;
+		} else if (line == "M  V30 BEGIN REACTANT") {
+			current = molLinesReactants;
+		} else if (line == "M  V30 END CTAB") {
+			if (i > i0)
+				current.push(ctabLines.slice(i0, i+1));
+			i0 = i + 1;
+		} else if (line == "M  V30 BEGIN CTAB") {
+			// TODO [MK] check if there's anything in between the end of the last component and the beginning of this one?
+			// TODO [MK] match begin and end labels?
+			// TODO [MK] also check that the labeling of components matches the counts?
+			i0 = i;
+		}
+	}
+	var mols = [];
+	var molLines = molLinesReactants.concat(molLinesProducts);
+	for (var j = 0; j < molLines.length; ++j) {
+		var mol = chem.Molfile.parseCTabV3000(molLines[j], countsSplit);
+		mols.push(mol);
+	}
+	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
+}

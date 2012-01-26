@@ -486,7 +486,7 @@ ui.updateMolecule = function (mol)
     }, 50);
 };
 
-ui.parseMolfile = function (molfile)
+ui.parseCTFile = function (molfile)
 {
     var lines = molfile.split('\n');
 
@@ -495,7 +495,7 @@ ui.parseMolfile = function (molfile)
 
     try
     {
-        return chem.Molfile.parseMolfile(lines);
+        return chem.Molfile.parseCTFile(lines);
     } catch (er)
     {
         alert("Error loading molfile.");
@@ -521,14 +521,14 @@ ui.selectMode = function (mode)
                     {
                         if (res.responseText.startsWith('Ok.')) {
 /*
-                            var aam = ui.parseMolfile(res.responseText);
+                            var aam = ui.parseCTFile(res.responseText);
                             var action = new ui.Action();
                             for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
                                 action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
                             }
                             ui.addUndoAction(action, true);
 */
-                            ui.updateMolecule(ui.parseMolfile(res.responseText));
+                            ui.updateMolecule(ui.parseCTFile(res.responseText));
 /*
                             ui.render.update();
 */
@@ -1137,7 +1137,7 @@ ui.loadMolecule = function (mol_string, force_layout)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+                    ui.updateMolecule(ui.parseCTFile(res.responseText));
             }
         });
     } else if (!ui.standalone && force_layout)
@@ -1150,11 +1150,11 @@ ui.loadMolecule = function (mol_string, force_layout)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+                    ui.updateMolecule(ui.parseCTFile(res.responseText));
             }
         });
     } else {
-        ui.updateMolecule(ui.parseMolfile(mol_string));
+        ui.updateMolecule(ui.parseCTFile(mol_string));
     }
 };
 

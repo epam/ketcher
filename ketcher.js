@@ -274,7 +274,7 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
 {
     this.render = new rnd.Render(clientArea, bondLength, opts);
     if (molfileText)
-        this.render.setMolecule(chem.Molfile.parseMolfile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
+        this.render.setMolecule(chem.Molfile.parseCTFile(typeof(molfileText)=='string' ? molfileText.split('\n') : molfileText));
     this.render.update();
     return this.render;
 };

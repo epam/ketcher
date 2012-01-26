@@ -665,7 +665,7 @@ chem.Molfile.parseBracedNumberList = function (line, shift)
 	return list;
 };
 
-chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
+chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
 {
 	var ctab = new chem.Struct();
 	var mf = chem.Molfile;
@@ -728,7 +728,7 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 			for (var i = 3; i < split.length; ++i) {
 				var subsplit = split[i].split('=');
 				if (subsplit.length != 2) {
-					throw "A record of form AAA=BBB or AAA=(...) expected, got '" + subsplit + "'";
+					throw "A record of form AAA=BBB or AAA=(...) expected, got '" + split[i] + "'";
 				}
 				var name = subsplit[0];
 				if (!(name in props))
@@ -767,6 +767,41 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, countsSplit)
 		}
 	}
 
+	if (ctabLines[shift++].strip() != "M  V30 END CTAB")
+		throw Error("CTAB V3000 invalid");
+    if (!norgroups) {
+        var rfrags = {};
+        while (shift < ctabLines.length && ctabLines[shift].search("M  V30 BEGIN RGROUP") == 0)
+        {
+            var id = ctabLines[shift++].split(' ').pop();
+            rfrags[id] = [];
+            while (true) {
+                line = ctabLines[shift].strip();
+                if (line.search("M  V30 RLOGIC") == 0) {
+                    shift++;
+                    continue; // TODO: load r-logic
+                }
+                if (line != "M  V30 BEGIN CTAB")
+                    throw Error("CTAB V3000 invalid");
+                for (i = 0; i < ctabLines.length; ++i)
+                    if (ctabLines[shift+i].strip() == "M  V30 END CTAB")
+                        break;
+                var lines = ctabLines.slice(shift, shift+i+1);
+                var rfrag = this.parseCTabV3000(lines, true);
+                rfrags[id].push(rfrag);
+                shift = shift + i + 1;
+                if (ctabLines[shift].strip() == "M  V30 END RGROUP") {
+                    shift++;
+                    break;
+                }
+            }
+        }
+
+        for (id in rfrags)
+            for (i = 0; i < rfrags[id].length; ++i)
+                rfrags[id][i].mergeInto(ctab);
+    }
+
 	return ctab;
 };
 
@@ -788,7 +823,7 @@ chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 	if (version == 'V2000')
 		return this.parseCTabV2000(ctabLines, countsSplit);
 	else if (version == 'V3000')
-		return this.parseCTabV3000(ctabLines, countsSplit);
+		return this.parseCTabV3000(ctabLines, true); // TODO: remove the norgroups flag to load the fragments
 	else
 		throw Error("Molfile version unknown: " + version);
 };
@@ -1438,10 +1473,12 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
 
 
     var core = chem.Molfile.parseCTab(coreLines), frag = {};
-    for (var id in fragmentLines) {
-        frag[id] = [];
-        for (var j = 0; j < fragmentLines[id].length; ++j) {
-            frag[id].push(chem.Molfile.parseCTab(fragmentLines[id][j]));
+    if (false) { // TODO: don't load the fragments yet
+        for (var id in fragmentLines) {
+            frag[id] = [];
+            for (var j = 0; j < fragmentLines[id].length; ++j) {
+                frag[id].push(chem.Molfile.parseCTab(fragmentLines[id][j]));
+            }
         }
     }
 	return mf.rgMerge(core, frag);

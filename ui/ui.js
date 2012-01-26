@@ -498,7 +498,7 @@ ui.parseCTFile = function (molfile)
         return chem.Molfile.parseCTFile(lines);
     } catch (er)
     {
-        alert("Error loading molfile.");
+        alert("Error loading molfile.\n"+er.toString());
         return null;
     }
 };

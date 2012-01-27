@@ -16,6 +16,8 @@ if (!window.chem || !util.Vec2 || !chem.Struct)
 chem.Molfile = function ()
 {};
 
+chem.Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
+
 chem.Molfile.parseDecimalInt = function (str)
 {
 	var val = parseInt(str, 10);
@@ -836,7 +838,7 @@ chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
 	if (version == 'V2000')
 		return this.parseCTabV2000(ctabLines, countsSplit);
 	else if (version == 'V3000')
-		return this.parseCTabV3000(ctabLines, true); // TODO: remove the norgroups flag to load the fragments
+		return this.parseCTabV3000(ctabLines, !chem.Molfile.loadRGroupFragments);
 	else
 		throw Error("Molfile version unknown: " + version);
 };
@@ -1117,6 +1119,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     var isotope_list = new Array();
     var radical_list = new Array();
     var rglabel_list = new Array();
+    var aplabel_list = new Array();
     var rbcount_list = new Array();
     var unsaturated_list = new Array();
     var substcount_list = new Array();
@@ -1134,6 +1137,8 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
                 if (atom.rglabel & (1 << rgi)) rglabel_list.push([id, rgi + 1]);
             }
         }
+        if (atom.attpnt != null)
+            aplabel_list.push([id, atom.attpnt]);
         if (atom.ringBondCount != 0)
             rbcount_list.push([id, atom.ringBondCount]);
         if (atom.substitutionCount != 0)
@@ -1173,6 +1178,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     writeAtomPropList.call(this, 'M  ISO', isotope_list);
     writeAtomPropList.call(this, 'M  RAD', radical_list);
     writeAtomPropList.call(this, 'M  RGP', rglabel_list);
+    writeAtomPropList.call(this, 'M  APO', aplabel_list);
     writeAtomPropList.call(this, 'M  RBC', rbcount_list);
     writeAtomPropList.call(this, 'M  SUB', substcount_list);
     writeAtomPropList.call(this, 'M  UNS', unsaturated_list);
@@ -1486,7 +1492,7 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
 
 
     var core = chem.Molfile.parseCTab(coreLines), frag = {};
-    if (false) { // TODO: don't load the fragments yet
+    if (chem.Molfile.loadRGroupFragments) {
         for (var id in fragmentLines) {
             frag[id] = [];
             for (var j = 0; j < fragmentLines[id].length; ++j) {

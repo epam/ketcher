@@ -212,7 +212,8 @@ chem.Struct.Atom = function (params)
 	util.ifDef(this, params, 'radical', 0);
 	util.ifDef(this, params, 'charge', 0);
 	util.ifDef(this, params, 'valence', 0);
-    util.ifDef(this, params, 'rglabel', null);
+    util.ifDef(this, params, 'rglabel', null); // r-group index mask, i-th bit stands for i-th r-site
+    util.ifDef(this, params, 'attpnt', null); // attachment point
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))

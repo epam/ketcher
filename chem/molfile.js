@@ -187,7 +187,13 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 			params[mf.fmtInfo.v30atomPropMap[key]] = ival;
 		} else if (key == 'RGROUPS') {
             value = value.strip().substr(1, value.length-2);
-            params.rglabel = 1 << (value.split(' ')[1]-1);
+            var rgrsplit = value.split(' ').slice(1);
+            params.rglabel = 0;
+            for (var j = 0; j < rgrsplit.length; ++j) {
+                params.rglabel |= 1 << (rgrsplit[j]-1);
+            }
+        } else if (key == 'ATTCHPT') {
+            params.attpnt = value.strip()-0;
         }
 	}
 	params.explicitValence = typeof(params.valence) != 'undefined';
@@ -488,6 +494,10 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
                     var a2r = a2rs[a2ri];
                     rglabels.set(a2r[0], (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1)));
                 }
+            } else if (type == "APO") {
+                if (!props.get('attpnt'))
+                    props.set('attpnt', new util.Map());
+                props.get('attpnt').update(mf.readKeyValuePairs(propertyData));
             } else if (type == "ALS") { // atom list
 				if (!props.get('atomList'))
 					props.set('atomList', new util.Map());

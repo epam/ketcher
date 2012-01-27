@@ -185,7 +185,10 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 					ival = 0;
 			}
 			params[mf.fmtInfo.v30atomPropMap[key]] = ival;
-		}
+		} else if (key == 'RGROUPS') {
+            value = value.strip().substr(1, value.length-2);
+            params.rglabel = 1 << (value.split(' ')[1]-1);
+        }
 	}
 	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);

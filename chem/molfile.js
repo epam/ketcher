@@ -691,93 +691,102 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
 	ctab.isChiral = (mf.parseDecimalInt(vals[4]) == 1);
 	shift++;
 
-	if (ctabLines[shift++].strip() != "M  V30 BEGIN ATOM")
-		throw Error("CTAB V3000 invalid");
-	var line;
-	while (shift < ctabLines.length) {
-		line = mf.stripV30(ctabLines[shift++]).strip();
-		if (line == 'END ATOM')
-			break;
-		while (line[line.length-1] == '-')
-			line = (line + mf.stripV30(ctabLines[shift++])).strip();
-		ctab.atoms.add(mf.parseAtomLineV3000(line));
-	}
+	if (ctabLines[shift].strip() == "M  V30 BEGIN ATOM") {
+        shift++;
+        var line;
+        while (shift < ctabLines.length) {
+            line = mf.stripV30(ctabLines[shift++]).strip();
+            if (line == 'END ATOM')
+                break;
+            while (line[line.length-1] == '-')
+                line = (line + mf.stripV30(ctabLines[shift++])).strip();
+            ctab.atoms.add(mf.parseAtomLineV3000(line));
+        }
 
-	if (ctabLines[shift].strip() == "M  V30 BEGIN BOND")
-	{
-		shift++;
-		while (shift < ctabLines.length) {
-			line = mf.stripV30(ctabLines[shift++]).strip();
-			if (line == 'END BOND')
-				break;
-			while (line[line.length-1] == '-')
-				line = (line + mf.stripV30(ctabLines[shift++])).strip();
-			ctab.bonds.add(mf.parseBondLineV3000(line));
-		}
-	}
+        if (ctabLines[shift].strip() == "M  V30 BEGIN BOND")
+        {
+            shift++;
+            while (shift < ctabLines.length) {
+                line = mf.stripV30(ctabLines[shift++]).strip();
+                if (line == 'END BOND')
+                    break;
+                while (line[line.length-1] == '-')
+                    line = (line + mf.stripV30(ctabLines[shift++])).strip();
+                ctab.bonds.add(mf.parseBondLineV3000(line));
+            }
+        }
 
-	// TODO: let sections follow in arbitrary order
-	var sgroups = {};
-	var atomMap = {};
-	while (ctabLines[shift].strip() == "M  V30 BEGIN SGROUP")
-	{
-		shift++;
-		while (shift < ctabLines.length) {
-			line = mf.stripV30(ctabLines[shift++]).strip();
-			if (line.strip() == 'END SGROUP')
-				break;
-			while (line[line.length-1] == '-')
-				line = (line.substr(0, line.length - 1) +
-					mf.stripV30(ctabLines[shift++])).strip();
-			var split = mf.splitSGroupDef(line);
-			var type = split[1];
-			var sg = new chem.SGroup(type);
-			sg.number = split[0] - 0;
-			sg.type = type;
-			sg.label = split[2] - 0;
-			sgroups[sg.number] = sg;
-			var props = {};
-			for (var i = 3; i < split.length; ++i) {
-				var subsplit = split[i].split('=');
-				if (subsplit.length != 2) {
-					throw "A record of form AAA=BBB or AAA=(...) expected, got '" + split[i] + "'";
-				}
-				var name = subsplit[0];
-				if (!(name in props))
-					props[name] = [];
-				props[name].push(subsplit[1]);
-			}
-			sg.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
-			if (props['PATOMS'])
-				sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1);
-			sg.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
-			var brkxyzStrs = props['BRKXYZ'];
-			sg.brkxyz = [];
-			if (brkxyzStrs) {
-				for (var j = 0; j < brkxyzStrs.length; ++j)
-					sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
-			}
-			if (props['MULT']) {
-				sg.data.subscript = props['MULT'][0]-0;
-			}
-			if (props['FIELDDISP']) {
-				mf.applyDataSGroupInfo(sg, util.stripQuotes(props['FIELDDISP'][0]));
-			}
-			if (props['FIELDDATA']) {
-				mf.applyDataSGroupData(sg, props['FIELDDATA'][0]);
-			}
-			if (props['FIELDNAME']) {
-				mf.applyDataSGroupName(sg, props['FIELDNAME'][0]);
-			}
-			if (props['QUERYTYPE']) {
-				mf.applyDataSGroupQuery(sg, props['QUERYTYPE'][0]);
-			}
-			if (props['QUERYOP']) {
-				mf.applyDataSGroupQueryOp(sg, props['QUERYOP'][0]);
-			}
-			chem.SGroup.addGroup(ctab, sg, atomMap);
-		}
-	}
+        while (ctabLines[shift].strip() == "M  V30 BEGIN COLLECTION") // TODO: read collection information
+        {
+            shift++;
+            while (ctabLines[shift].strip() != "M  V30 END COLLECTION")
+                shift++;
+            shift++;
+        }
+
+        // TODO: let sections follow in arbitrary order
+        var sgroups = {};
+        var atomMap = {};
+        while (ctabLines[shift].strip() == "M  V30 BEGIN SGROUP")
+        {
+            shift++;
+            while (shift < ctabLines.length) {
+                line = mf.stripV30(ctabLines[shift++]).strip();
+                if (line.strip() == 'END SGROUP')
+                    break;
+                while (line[line.length-1] == '-')
+                    line = (line.substr(0, line.length - 1) +
+                        mf.stripV30(ctabLines[shift++])).strip();
+                var split = mf.splitSGroupDef(line);
+                var type = split[1];
+                var sg = new chem.SGroup(type);
+                sg.number = split[0] - 0;
+                sg.type = type;
+                sg.label = split[2] - 0;
+                sgroups[sg.number] = sg;
+                var props = {};
+                for (var i = 3; i < split.length; ++i) {
+                    var subsplit = split[i].split('=');
+                    if (subsplit.length != 2) {
+                        throw "A record of form AAA=BBB or AAA=(...) expected, got '" + split[i] + "'";
+                    }
+                    var name = subsplit[0];
+                    if (!(name in props))
+                        props[name] = [];
+                    props[name].push(subsplit[1]);
+                }
+                sg.atoms = mf.parseBracedNumberList(props['ATOMS'][0], -1);
+                if (props['PATOMS'])
+                    sg.patoms = mf.parseBracedNumberList(props['PATOMS'][0], -1);
+                sg.bonds = props['BONDS'] ? mf.parseBracedNumberList(props['BONDS'][0], -1) : [];
+                var brkxyzStrs = props['BRKXYZ'];
+                sg.brkxyz = [];
+                if (brkxyzStrs) {
+                    for (var j = 0; j < brkxyzStrs.length; ++j)
+                        sg.brkxyz.push(mf.parseBracedNumberList(brkxyzStrs[j]));
+                }
+                if (props['MULT']) {
+                    sg.data.subscript = props['MULT'][0]-0;
+                }
+                if (props['FIELDDISP']) {
+                    mf.applyDataSGroupInfo(sg, util.stripQuotes(props['FIELDDISP'][0]));
+                }
+                if (props['FIELDDATA']) {
+                    mf.applyDataSGroupData(sg, props['FIELDDATA'][0]);
+                }
+                if (props['FIELDNAME']) {
+                    mf.applyDataSGroupName(sg, props['FIELDNAME'][0]);
+                }
+                if (props['QUERYTYPE']) {
+                    mf.applyDataSGroupQuery(sg, props['QUERYTYPE'][0]);
+                }
+                if (props['QUERYOP']) {
+                    mf.applyDataSGroupQueryOp(sg, props['QUERYOP'][0]);
+                }
+                chem.SGroup.addGroup(ctab, sg, atomMap);
+            }
+        }
+    }
 
 	if (ctabLines[shift++].strip() != "M  V30 END CTAB")
 		throw Error("CTAB V3000 invalid");
@@ -1312,7 +1321,7 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 {
 	var mf = chem.Molfile;
 	ctabLines = ctabLines.slice(4);
-	var countsSplit = ctabLines[0].split(' ').slice(4);
+	var countsSplit = ctabLines[0].split(/\s+/g).slice(3);
 	var nReactants = countsSplit[0]-0,
 	nProducts = countsSplit[1]-0,
 	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
@@ -1356,6 +1365,9 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	for (var j = 0; j < mols.length; ++j) {
 		var mol = mols[j];
 		var bb = mol.getCoordBoundingBoxObj();
+        if (!bb)
+            continue;
+
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
 				chem.Struct.FRAGMENT.AGENT));

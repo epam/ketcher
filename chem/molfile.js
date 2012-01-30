@@ -372,15 +372,15 @@ chem.Molfile.applySGroupArrayProp = function (sGroups, propName, propData, shift
 
 chem.Molfile.applyDataSGroupName = function (sg, name) {
 	sg.data.fieldName = name;
-}
+};
 
 chem.Molfile.applyDataSGroupQuery = function (sg, query) {
 	sg.data.query = query;
-}
+};
 
 chem.Molfile.applyDataSGroupQueryOp = function (sg, queryOp) {
 	sg.data.queryOp = queryOp;
-}
+};
 
 chem.Molfile.applyDataSGroupDesc = function (sGroups, propData) {
 	var mf = chem.Molfile;
@@ -430,10 +430,7 @@ chem.Molfile.applyDataSGroupInfoLine = function (sGroups, propData) {
 };
 
 chem.Molfile.applyDataSGroupData = function (sg, data, finalize) {
-	var mf = chem.Molfile;
-
-	sg.data.fieldValue = sg.data.fieldValue || '';
-	sg.data.fieldValue += data;
+	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize)
 		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
 };
@@ -918,7 +915,7 @@ chem.MolfileSaver.getComponents = function (molecule) {
 		'reactants':reactants,
 		'products':products
 	};
-}
+};
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 {
@@ -1280,7 +1277,7 @@ chem.Molfile.parseRxn = function (/* string[] */ ctabLines) /* chem.Struct */
 		return mf.parseRxn3000(ctabLines);
 	else
 		return mf.parseRxn2000(ctabLines);
-}
+};
 
 chem.Molfile.parseRxn2000 = function (/* string[] */ ctabLines) /* chem.Struct */
 {
@@ -1346,7 +1343,7 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 		mols.push(mol);
 	}
 	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
-}
+};
 
 chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.Struct */
 {
@@ -1387,7 +1384,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
-			bbReactAll = {}
+			bbReactAll = {};
 			bbReactAll.max = new util.Vec2(bbReact[j].max);
 			bbReactAll.min = new util.Vec2(bbReact[j].min);
 		} else {
@@ -1406,7 +1403,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
-			bbProdAll = {}
+			bbProdAll = {};
 			bbProdAll.max = new util.Vec2(bbProd[j].max);
 			bbProdAll.min = new util.Vec2(bbProd[j].min);
 		} else {
@@ -1538,4 +1535,4 @@ chem.Molfile.parseRg3000 = function (/* string[] */ ctabLines) /* chem.Struct */
 		mols.push(mol);
 	}
 	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
-}
+};

@@ -252,7 +252,8 @@ chem.Struct.Atom.getAttrHash = function(atom) {
 	return attrs;
 };
 
-chem.Struct.Atom.attrlist = {'label':0,
+chem.Struct.Atom.attrlist = {
+    'label':0,
 	'isotope':0,
 	'radical':0,
 	'charge':0,
@@ -265,6 +266,7 @@ chem.Struct.Atom.attrlist = {'label':0,
 	'hCount':0,
 	'atomList':null,
     'rglabel':null,
+    'attpnt':null,
     'aam':0
 };
 

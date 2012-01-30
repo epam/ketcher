@@ -949,6 +949,20 @@ rnd.ReStruct.prototype.showLabels = function ()
 					0.3 * label.rbb.height);
 		}
 		
+/*
+        // TODO attachment points rendering
+        if (atom.a.attpnt) {
+            if (atom.a.attpnt & 2) {
+                var ap2path = paper.circle(atom.a.ps.x, atom.a.ps.y, 10).attr('fill', 'green');
+                render.addItemPath(atom.visel, 'data', ap2path, ap2path.getBBox());
+            }
+            if (atom.a.attpnt & 1) {
+                var ap1path = paper.circle(atom.a.ps.x, atom.a.ps.y, 5).attr('fill', 'red');
+                render.addItemPath(atom.visel, 'data', ap1path, ap1path.getBBox());
+            }
+        }
+*/
+
 		var aamText = "";
 		if (atom.a.aam > 0) {
 			aamText += atom.a.aam;

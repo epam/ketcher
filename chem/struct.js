@@ -645,11 +645,6 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	this.atoms.each(function (aid, atom) {
 		extend(atom.pos);
 	});
-	if (!bb)
-		bb = {
-			min: new util.Vec2(0, 0),
-			max: new util.Vec2(1, 1)
-		};
 	return bb;
 };
 

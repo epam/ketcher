@@ -1359,6 +1359,9 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	for (var j = 0; j < mols.length; ++j) {
 		var mol = mols[j];
 		var bb = mol.getCoordBoundingBoxObj();
+        if (!bb)
+            continue;
+
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
 				chem.Struct.FRAGMENT.AGENT));

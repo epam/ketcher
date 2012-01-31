@@ -226,6 +226,8 @@ ketcher.init = function ()
 	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
     ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 20, renderOptsPattern);
 
+    // TODO code cleanup
+/*
     tmpl.rgroup_label = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
         '  1  0  0     0  0            999 V2000',
         '    0.0000    0.0000    0.0000 R#  0  0  0  0  0  0        0  0  0',
@@ -238,6 +240,7 @@ ketcher.init = function ()
         'M  END'
     ];
     ketcher.button_areas.rgroup_label = ketcher.showMolfileOpts('rgroup', tmpl.rgroup_label, 75, renderOpts);
+*/
 
     ui.init();
 };

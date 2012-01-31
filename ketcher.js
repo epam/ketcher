@@ -226,12 +226,18 @@ ketcher.init = function ()
 	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
     ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 20, renderOptsPattern);
 
-    tmpl.rgroup = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
+    tmpl.rgroup_label = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
         '  1  0  0     0  0            999 V2000',
         '    0.0000    0.0000    0.0000 R#  0  0  0  0  0  0        0  0  0',
         'M  END'
     ];
-    ketcher.button_areas.rgroup = ketcher.showMolfileOpts('rgroup', tmpl.rgroup, 75, renderOpts);
+    tmpl.rgroup_attpoints = ['', '  Ketcher 12131120282D 1   1.00000     0.00000     0', '',
+        '  1  0  0  0  0  0  0  0  0  0999 V2000',
+        '    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0',
+        'M  APO  1   1   1',
+        'M  END'
+    ];
+    ketcher.button_areas.rgroup_label = ketcher.showMolfileOpts('rgroup', tmpl.rgroup_label, 75, renderOpts);
 
     ui.init();
 };

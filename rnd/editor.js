@@ -44,8 +44,10 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.ReactionMapTool(this);
     } else if (tool == 'reaction_unmap') {
         return new rnd.Editor.ReactionUnmapTool(this);
-    } else if (tool == 'rgroup') {
+    } else if (tool == 'rgroup_label') {
         return new rnd.Editor.RGroupTool(this);
+    } else if (tool == 'rgroup_attpoints') {
+        return new rnd.Editor.APointTool(this);
     }
     return null;
 };
@@ -582,6 +584,34 @@ rnd.Editor.RGroupTool.prototype.OnMouseUp = function(event) {
                         newProps.label = 'C';
                     }
                     this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, newProps), true);
+                    this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
+    }
+};
+
+
+rnd.Editor.APointTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.APointTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.APointTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+};
+rnd.Editor.APointTool.prototype.OnMouseUp = function(event) {
+    var ci = this.editor.render.findItem(event, ['atoms']);
+    if (ci && ci.map == 'atoms') {
+        this._hoverHelper.hover(null);
+        var apOld = this.editor.render.ctab.molecule.atoms.get(ci.id).attpnt;
+        this.editor.ui.showAtomAttachmentPoints({
+            selection : apOld,
+            onOk : function(apNew) {
+                if (apOld != apNew) {
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, { attpnt : apNew }), true);
                     this.editor.ui.render.update();
                 }
             }.bind(this)

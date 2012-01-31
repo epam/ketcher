@@ -474,7 +474,7 @@ ui.updateMolecule = function (mol)
         try
         {
             ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
-            ui.render.update()
+            ui.render.update();
             ui.setZoomCentered(null, ui.render.getStructCenter());
         } catch (er)
         {
@@ -1300,12 +1300,12 @@ ui.setZoomRegular = function (zoom) {
     ui.render.setZoom(ui.zoom);
     // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
     // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-}
+};
 
 // get the size of the view window in pixels
 ui.getViewSz = function () {
     return new util.Vec2(ui.render.viewSz);
-}
+};
 
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
 ui.setZoomCentered = function (zoom, c) {
@@ -1317,12 +1317,12 @@ ui.setZoomCentered = function (zoom, c) {
     ui.setScrollOffset(0, 0);
     var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
     ui.setScrollOffset(sp.x, sp.y);
-}
+};
 
 // set the reference point for the "static point" zoom (in object coordinates)
 ui.setZoomStaticPointInit = function (s) {
     ui.zspObj = new util.Vec2(s);
-}
+};
 
 // vp is the point where the reference point should now be (in view coordinates)
 ui.setZoomStaticPoint = function (zoom, vp) {
@@ -1331,7 +1331,7 @@ ui.setZoomStaticPoint = function (zoom, vp) {
     var avp = ui.render.obj2view(ui.zspObj);
     var so = avp.sub(vp);
     ui.setScrollOffset(so.x, so.y);
-}
+};
 
 ui.setScrollOffset = function (x, y) {
     var cx = ui.client_area.clientWidth;
@@ -1341,11 +1341,11 @@ ui.setScrollOffset = function (x, y) {
     ui.client_area.scrollTop = y;
     ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
     ui.scrollTop = ui.client_area.scrollTop;
-}
+};
 
 ui.setScrollOffsetRel = function (dx, dy) {
     ui.setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
-}
+};
 
 //
 // Automatic layout
@@ -1409,7 +1409,7 @@ ui.page2obj = function (pagePos)
 ui.scrollPos = function ()
 {
     return new util.Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
-}
+};
 
 //
 // Scrolling
@@ -2037,7 +2037,8 @@ ui.hideBlurredControls = function ()
         'selector_dropdown_list',
         'bond_dropdown_list',
         'template_dropdown_list',
-        'reaction_dropdown_list'
+        'reaction_dropdown_list',
+        'rgroup_dropdown_list'
     ].each(
         function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
     );
@@ -2524,6 +2525,27 @@ ui.onMouseOut_SGroup = function (event, sid)
 {
     ui.highlightSGroup(sid, false);
     return true;
+};
+
+//
+// Atom attachment points dialog
+//
+ui.showAtomAttachmentPoints = function(params)
+{
+    $('atom_ap1').checked = ((params.selection || 0) & 1) > 0;
+    $('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
+    ui.showDialog('atom_attpoints');
+    var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function() {
+        ui.hideDialog('atom_attpoints');
+        if ('onOk' in params) params['onOk'](($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
+        _onOk.stop();
+    }).start();
+    var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function() {
+        ui.hideDialog('atom_attpoints');
+        if ('onCancel' in params) params['onCancel']();
+        _onCancel.stop();
+    }).start();
+    $('atom_attpoints_ok').focus();
 };
 
 //

@@ -190,6 +190,7 @@ rnd.ReaGenericsTable.prototype.setSelection = function(selection) {
     for (var i = 0; i < this.items.length; i++) {
         this.items[i].box.attr('fill', this.items[i].text == selection ? this.fillColorSelected : this.fillColor);
     }
+    $('reagenerics_table_ok').disabled = (!selection || selection == '');
 };
 
 

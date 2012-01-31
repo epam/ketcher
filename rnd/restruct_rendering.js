@@ -673,6 +673,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 {
 	var render = this.render;
 	var settings = render.settings;
+    var styles = render.styles;
 	var opt = render.opt;
 	var paper = render.paper;
 	var delta = 0.5 * settings.lineWidth;
@@ -948,20 +949,50 @@ rnd.ReStruct.prototype.showLabels = function ()
 					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
 					0.3 * label.rbb.height);
 		}
-		
-/*
-        // TODO attachment points rendering
+
+        var lsb = this.bisectLargestSector(atom);
+
         if (atom.a.attpnt) {
-            if (atom.a.attpnt & 2) {
-                var ap2path = paper.circle(atom.a.ps.x, atom.a.ps.y, 10).attr('fill', 'green');
-                render.addItemPath(atom.visel, 'data', ap2path, ap2path.getBBox());
-            }
-            if (atom.a.attpnt & 1) {
-                var ap1path = paper.circle(atom.a.ps.x, atom.a.ps.y, 5).attr('fill', 'red');
-                render.addItemPath(atom.visel, 'data', ap1path, ap1path.getBBox());
+            var i, j;
+            for (i = 0, c = 0; i < 4; ++i) {
+                var attpntText = "";
+                if (atom.a.attpnt & (1 << i)) {
+                    if (attpntText.length > 0)
+                        attpntText += ' ';
+                    attpntText += '∗';
+                    for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j) {
+                        attpntText += "'";
+                    }
+                    var pos0 = new util.Vec2(atom.a.ps);
+                    var pos1 = atom.a.ps.addScaled(lsb, 0.7 * settings.scaleFactor);
+
+                    var attpntPath1 = paper.text(pos1.x, pos1.y, attpntText)
+                        .attr({
+                            'font' : settings.font,
+                            'font-size' : settings.fontsz,
+                            'fill' : color
+                        });
+                    var attpntRbb = attpntPath1.getBBox();
+                    this.centerText(attpntPath1, attpntRbb);
+
+                    var lsbn = lsb.negated();
+                    pos1 = pos1.addScaled(lsbn, util.Vec2.shiftRayBox(pos1, lsbn, util.Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth/2);
+                    pos0 = this.shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
+                    var n = lsb.rotateSC(1, 0);
+                    var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+                    var arrowRight = pos1.addScaled(n, -0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+                    var attpntPath = paper.set();
+                    attpntPath.push(
+                        attpntPath1,
+                        paper.path("M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}", pos0.x, pos0.y, pos1.x, pos1.y, arrowLeft.x, arrowLeft.y, arrowRight.x, arrowRight.y)
+                            .attr(styles.lineattr).attr({'stroke-width': settings.lineWidth/2})
+                    );
+                    render.addItemPath(atom.visel, 'indices', attpntPath, attpntRbb);
+                    lsb = lsb.rotate(Math.PI/6);
+                }
             }
         }
-*/
+
 
 		var aamText = "";
 		if (atom.a.aam > 0) {
@@ -1049,26 +1080,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			var aamBox = aamPath.getBBox();
 			this.centerText(aamPath, aamBox);
 
-			var angles = [];
-			atom.a.neighbors.each( function (hbid) {
-				var hb = this.molecule.halfBonds.get(hbid);
-				angles.push(hb.ang);
-			}, this);
-			angles = angles.sort(function(a,b){return a-b;});
-			var da = [];
-			for (var i = 0; i < angles.length - 1; ++i) {
-				da.push(angles[(i + 1) % angles.length] - angles[i]);
-			}
-			da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-			var daMax = 0;
-			var ang = 0;
-			for (i = 0; i < angles.length; ++i) {
-				if (da[i] > daMax) {
-					daMax = da[i];
-					ang = angles[i] + da[i]/2;
-				}
-			}
-			var dir = new util.Vec2(Math.cos(ang), Math.sin(ang));
+            var dir = this.bisectLargestSector(atom);
 
 			var visel = atom.visel;
 			var t = 3;
@@ -1080,6 +1092,41 @@ rnd.ReStruct.prototype.showLabels = function ()
         }
 	}
 };
+
+rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
+    var t = 0;
+    var visel = atom.visel;
+    for (var k = 0; k < visel.boxes.length; ++k)
+        t = Math.max(t, util.Vec2.shiftRayBox(pos0, dir, visel.boxes[k]));
+    if (t > 0)
+        pos0 = pos0.addScaled(dir, t + margin);
+    return pos0;
+}
+
+rnd.ReStruct.prototype.bisectLargestSector = function (atom)
+{
+    var angles = [];
+    atom.a.neighbors.each( function (hbid) {
+        var hb = this.molecule.halfBonds.get(hbid);
+        angles.push(hb.ang);
+    }, this);
+    angles = angles.sort(function(a,b){return a-b;});
+    var da = [];
+    for (var i = 0; i < angles.length - 1; ++i) {
+        da.push(angles[(i + 1) % angles.length] - angles[i]);
+    }
+    da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    var daMax = 0;
+    var ang = -Math.PI/2;
+    for (i = 0; i < angles.length; ++i) {
+        if (da[i] > daMax) {
+            daMax = da[i];
+            ang = angles[i] + da[i]/2;
+        }
+    }
+    return new util.Vec2(Math.cos(ang), Math.sin(ang));
+}
+
 
 // TODO to be removed
 /** @deprecated please use ReBond.setHighlight instead */
@@ -1298,13 +1345,7 @@ rnd.ReStruct.prototype.shiftBonds = function ()
 		var atom = this.atoms.get(aid);
 		atom.a.neighbors.each( function (hbid) {
 			var hb = this.molecule.halfBonds.get(hbid);
-			hb.p = atom.a.ps;
-			var t = 0;
-			var visel = atom.visel;
-			for (var i = 0; i < visel.boxes.length; ++i)
-				t = Math.max(t, util.Vec2.shiftRayBox(hb.p, hb.dir, visel.boxes[i]));
-			if (t > 0)
-				hb.p = hb.p.addScaled(hb.dir, t + 2 * settings.lineWidth);
+            hb.p = this.shiftBondEnd(atom, atom.a.ps, hb.dir, 2 * settings.lineWidth);
 		}, this)
 	}
 };

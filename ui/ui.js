@@ -905,6 +905,15 @@ ui.onKeyPress_Ketcher = function (event)
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
 {
+    // RB: KETCHER-329 Ctrl+A hot key selects whole Google Chrome browser
+    // BEGIN
+    // TODO the fix is temporary, need to review keyboard events handling in general
+    if (Prototype.Browser.WebKit && event.ctrlKey && event.which == 65) {
+        ui.selectAll();
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
+    }
+    // END
     if (!Prototype.Browser.IE)
         return;
 
@@ -2024,7 +2033,7 @@ ui.selectAll = function ()
     ui.updateSelection(selection);
 */
     if (!ui.ctab.isBlank()) {
-        $('selector').click();
+        ui.selectMode($('selector').getAttribute('selid'));
         ui.editor.selectAll();
     }
 };

@@ -602,6 +602,8 @@ ui.selectMode = function (mode)
             $(this.mode_id).removeClassName('buttonSelected');
     }
 
+    this.editor.deselectAll();
+
     if (mode == null) {
         this.mode_id = null;
         delete this.render.current_tool;
@@ -2008,6 +2010,8 @@ ui.selectedAtom = function ()
 
 ui.selectAll = function ()
 {
+    // TODO cleanup
+/*
     var mode = ui.modeType();
     if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
         ui.selectMode(ui.defaultSelector);
@@ -2018,6 +2022,11 @@ ui.selectAll = function ()
     }
 
     ui.updateSelection(selection);
+*/
+    if (!ui.ctab.isBlank()) {
+        $('selector').click();
+        ui.editor.selectAll();
+    }
 };
 
 ui.removeSelected = function ()

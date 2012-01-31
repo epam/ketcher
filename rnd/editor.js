@@ -23,6 +23,13 @@ rnd.Editor = function(render)
 
     this._selectionHelper = new rnd.Editor.SelectionHelper(this);
 };
+rnd.Editor.prototype.selectAll = function() {
+    var selection = {}; for (var map in rnd.ReStruct.maps) selection[map] = ui.ctab[map].ikeys();
+    this._selectionHelper.setSelection(selection);
+};
+rnd.Editor.prototype.deselectAll = function() {
+    this._selectionHelper.setSelection();
+};
 rnd.Editor.prototype.toolFor = function(tool) {
     if (tool == 'select_simple') {
         return new rnd.Editor.LassoTool(this);

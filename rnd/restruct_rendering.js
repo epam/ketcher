@@ -952,6 +952,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 
         var lsb = this.bisectLargestSector(atom);
 
+        var asterisk = Prototype.Browser.IE ? '*' : '∗';
         if (atom.a.attpnt) {
             var i, j;
             for (i = 0, c = 0; i < 4; ++i) {
@@ -959,7 +960,7 @@ rnd.ReStruct.prototype.showLabels = function ()
                 if (atom.a.attpnt & (1 << i)) {
                     if (attpntText.length > 0)
                         attpntText += ' ';
-                    attpntText += '∗';
+                    attpntText += asterisk;
                     for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j) {
                         attpntText += "'";
                     }

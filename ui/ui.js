@@ -2582,7 +2582,7 @@ ui.showAtomProperties = function (id)
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
     $('atom_inversion').value = ui.render.atomGetAttr(id, 'invRet');
-    $('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag');
+    $('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag') ? 1 : 0;
     $('atom_ringcount').value = ui.render.atomGetAttr(id, 'ringBondCount');
     $('atom_substitution').value = ui.render.atomGetAttr(id, 'substitutionCount');
     $('atom_unsaturation').value = ui.render.atomGetAttr(id, 'unsaturatedAtom');
@@ -2608,7 +2608,7 @@ ui.applyAtomProperties = function ()
         radical: parseInt($('atom_radical').value),
         // reaction flags
         invRet: parseInt($('atom_inversion').value),
-        exactChangeFlag: parseInt($('atom_exactchange').value),
+        exactChangeFlag: parseInt($('atom_exactchange').value) ? true : false,
         // query flags
         ringBondCount: parseInt($('atom_ringcount').value),
         substitutionCount: parseInt($('atom_substitution').value), 

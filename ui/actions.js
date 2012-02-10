@@ -18,13 +18,13 @@ if (typeof(ui) == 'undefined')
 //
 ui.atomMap = new Array();
 ui.atomMap.indexOf = function(x) { // TODO [RB] temporary
-    var ret = Array.indexOf.call(this, x);
+    var ret = [].indexOf.call(this, x);
     if (ret < 0) ret = this.push(x) - 1;
     return ret;
 };
 ui.bondMap = new Array();
 ui.bondMap.indexOf = function(x) { // TODO [RB] temporary
-    var ret = Array.indexOf.call(this, x);
+    var ret = [].indexOf.call(this, x);
     if (ret < 0) ret = this.push(x) - 1;
     return ret;
 };

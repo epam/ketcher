@@ -783,7 +783,7 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 	}
 };
 
-/** @deprecated old architecture */
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.atomAdd = function (pos, params)
 {
 	var pp = {};
@@ -842,7 +842,7 @@ rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 	this.molecule.rxnPluses.remove(id);
 };
 
-/** @deprecated old architecture */
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end) {

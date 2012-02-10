@@ -35,11 +35,13 @@ ui.Action = function ()
 ui.Action.OPERATION =
 {
     ATOM_POS:        1,
+    /** @deprecated Please use action.addOp(new ui.Action.OpAtomAttr(...)) instead */
     ATOM_ATTR:       2,
     /** @deprecated Please use action.addOp(new ui.Action.OpAtomAdd(...)) instead */
     ATOM_ADD:        3,
      /** @deprecated Please use action.addOp(new ui.Action.OpAtomDelete(...)) instead */
     ATOM_DEL:        4,
+    /** @deprecated Please use action.addOp(new ui.Action.OpBondAttr(...)) instead */
     BOND_ATTR:       5,
     /** @deprecated Please use action.addOp(new ui.Action.OpBondAdd(...)) instead */
     BOND_ADD:        6,
@@ -419,8 +421,8 @@ ui.Action.prototype.perform = function ()
 
 ui.Action.prototype.isDummy = function ()
 {
-    return this.operations.detect(function (op)
-    {
+    return this.operations.detect(function(op) {
+        if ('isDummy' in op) return op.isDummy(ui.editor); // TODO [RB] the condition is always true for ui.Action.Op* operations
         switch (op.type)
         {
         case ui.Action.OPERATION.ATOM_POS:
@@ -570,19 +572,9 @@ ui.Action.fromBondPos = function (id)
 ui.Action.fromAtomAttrs = function (id, attrs)
 {
     var action = new ui.Action();
-    var id_map = ui.atomMap.indexOf(id);
-
     attrs = new Hash(attrs);
-
-    attrs.each(function (attr)
-    {
-        action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-        {
-            id: id_map,
-            attr_name: attr.key,
-            attr_value: ui.render.atomGetAttr(id, attr.key)
-        });
-        ui.render.atomSetAttr(id, attr.key, attr.value);
+    attrs.each(function (attr) {
+        action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value).perform(ui.editor));
     }, this);
 
     return action;
@@ -591,22 +583,10 @@ ui.Action.fromAtomAttrs = function (id, attrs)
 ui.Action.fromSelectedAtomsAttrs = function (attrs)
 {
     var action = new ui.Action();
-
     attrs = new Hash(attrs);
-
-    ui.selection.atoms.each(function (id)
-    {
-        var id_map = ui.atomMap.indexOf(id);
-
-        attrs.each(function (attr)
-        {
-            action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-            {
-                id: id_map,
-                attr_name: attr.key,
-                attr_value: ui.render.atomGetAttr(id, attr.key)
-            });
-            ui.render.atomSetAttr(id, attr.key, attr.value);
+    ui.selection.atoms.each(function(id) {
+        attrs.each(function(attr) {
+            action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value).perform(ui.editor));
         }, this);
     }, this);
 
@@ -619,16 +599,8 @@ ui.Action.fromBondAttrs = function (id, attrs, flip)
     var id_map = ui.bondMap.indexOf(id);
 
     attrs = new Hash(attrs);
-
-    attrs.each(function (attr)
-    {
-        action.addOperation(ui.Action.OPERATION.BOND_ATTR,
-        {
-            id: id_map,
-            attr_name: attr.key,
-            attr_value: ui.render.bondGetAttr(id, attr.key)
-        });
-        ui.render.bondSetAttr(id, attr.key, attr.value);
+    attrs.each(function(attr) {
+        action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value).perform(ui.editor));
     }, this);
     if (flip) {
         action.addOperation(ui.Action.OPERATION.BOND_FLIP,
@@ -646,18 +618,9 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 
     attrs = new Hash(attrs);
 
-    ui.selection.bonds.each(function (id)
-    {
-        var id_map = ui.bondMap.indexOf(id);
-
-        attrs.each(function (attr)
-        {
-            action.addOperation(ui.Action.OPERATION.BOND_ATTR,
-            {
-                id: id_map,
-                attr_name: attr.key,
-                attr_value: attr.value
-            });
+    ui.selection.bonds.each(function(id) {
+        attrs.each(function(attr) {
+            action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value));
         }, this);
     }, this);
     if (flips)
@@ -701,11 +664,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
                 }
                 ui.render.ctab.molecule.atoms.each(function(aid, atom) {
                     if (atom.fragment == frid2) {
-                        ui.render.atomSetAttr(aid, 'fragment', frid);
-                        action.addOperation(
-                            ui.Action.OPERATION.ATOM_ATTR,
-                            { id: ui.atomMap.indexOf(aid), attr_name: 'fragment', attr_value: frid2 }
-                        );
+                        action.addOp(new ui.Action.OpAtomAttr(aid, 'fragment', frid).perform(ui.editor));
                     }
                 });
                 action.addOp(new ui.Action.OpFragmentDelete(frid2).perform(ui.editor));
@@ -724,11 +683,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
     }
     else {
         if (ui.render.atomGetAttr(begin, 'label') == '*') {
-            ui.render.atomSetAttr(begin, 'label', 'C');
-            action.addOperation(
-                ui.Action.OPERATION.ATOM_ATTR,
-                { id: ui.atomMap.indexOf(begin), attr_name: 'label', attr_value: '*' }
-            );
+            action.addOp(new ui.Action.OpAtomAttr(begin, 'label', 'C').perform(ui.editor));
         }
     }
 
@@ -739,11 +694,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
     }
     else {
         if (ui.render.atomGetAttr(end, 'label') == '*') {
-            ui.render.atomSetAttr(end, 'label', 'C');
-            action.addOperation(
-                ui.Action.OPERATION.ATOM_ATTR,
-                { id: ui.atomMap.indexOf(end), attr_name: 'label', attr_value: '*' }
-            );
+            action.addOp(new ui.Action.OpAtomAttr(end, 'label', 'C').perform(ui.editor));
         }
     }
 
@@ -931,13 +882,7 @@ ui.Action.__fromFragmentSplit = function(frid) { // TODO [RB] the thing is too t
         if (atom.fragment == frid) {
             var newfrid = action.addOp(new ui.Action.OpFragmentAdd().perform(ui.editor)).frid;
             var processAtom = function(aid1) {
-                action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-                {
-                    id: ui.atomMap.indexOf(aid1),
-                    attr_name: 'fragment',
-                    attr_value: frid
-                });
-                ui.render.atomSetAttr(aid1, 'fragment', newfrid);
+                action.addOp(new ui.Action.OpAtomAttr(aid1, 'fragment', newfrid).perform(ui.editor));
                 ui.render.atomGetNeighbors(aid1).each(function(nei) {
                     if (ui.ctab.atoms.get(nei.aid).fragment == frid) {
                         processAtom(nei.aid);
@@ -1111,12 +1056,7 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
         attrs.set('label', 'C');
 
     attrs.each(function(attr) {
-        action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-        {
-            id: ui.atomMap.indexOf(dst_id),
-            attr_name: attr.key,
-            attr_value: attr.value
-        });
+        action.addOp(new ui.Action.OpAtomAttr(dst_id, attr.key, attr.value));
     }, this);
 
     var sg_changed = action.removeAtomFromSgroupIfNeeded(src_id);
@@ -1411,37 +1351,20 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
         attrs: attrs
     });
 
-    if ((cur_type == 'SRU' || type == 'SRU') && cur_type != type)
-    {
+    if ((cur_type == 'SRU' || type == 'SRU') && cur_type != type) {
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(id);
 
-        if (cur_type == 'SRU')
-        {
-            nei_atoms.each(function (aid)
-            {
-                if (ui.render.atomGetAttr(aid, 'label') == '*')
-                {
-                    action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-                    {
-                        id: ui.atomMap.indexOf(aid),
-                        attr_name: 'label',
-                        attr_value: 'C'
-                    });
+        if (cur_type == 'SRU') {
+            nei_atoms.each(function(aid) {
+                if (ui.render.atomGetAttr(aid, 'label') == '*') {
+                    action.addOp(new ui.Action.OpAtomAttr(aid, 'label', 'C'));
                 }
             }, this);
-        } else
-        {
-            nei_atoms.each(function (aid)
-            {
-                if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid))
-                {
-                    action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-                    {
-                        id: ui.atomMap.indexOf(aid),
-                        attr_name: 'label',
-                        attr_value: '*'
-                    });
+        } else {
+            nei_atoms.each(function (aid) {
+                if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid)) {
+                    action.addOp(new ui.Action.OpAtomAttr(aid, 'label', '*'));
                 }
             }, this);
         }
@@ -1454,21 +1377,13 @@ ui.Action.fromSgroupDeletion = function (id)
 {
     var action = new ui.Action();
 
-    if (ui.render.sGroupGetType(id) == 'SRU')
-    {
+    if (ui.render.sGroupGetType(id) == 'SRU') {
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(id);
 
-        nei_atoms.each(function (aid)
-        {
-            if (ui.render.atomGetAttr(aid, 'label') == '*')
-            {
-                action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-                {
-                    id: ui.atomMap.indexOf(aid),
-                    attr_name: 'label',
-                    attr_value: 'C'
-                });
+        nei_atoms.each(function(aid) {
+            if (ui.render.atomGetAttr(aid, 'label') == '*') {
+                action.addOp(new ui.Action.OpAtomAttr(aid, 'label', 'C'));
             }
         }, this);
     }
@@ -1498,24 +1413,16 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 
     action = action.perform();
 
-    if (type == 'SRU')
-    {
+    if (type == 'SRU') {
         var sid = ui.sgroupMap[action.operations[0].params.id];
 
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(sid);
         var asterisk_action = new ui.Action();
 
-        nei_atoms.each(function (aid)
-        {
-            if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid))
-            {
-                asterisk_action.addOperation(ui.Action.OPERATION.ATOM_ATTR,
-                {
-                    id: ui.atomMap.indexOf(aid),
-                    attr_name: 'label',
-                    attr_value: '*'
-                });
+        nei_atoms.each(function(aid) {
+            if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid)) {
+                asterisk_action.addOp(new ui.Action.OpAtomAttr(aid, 'label', 'C'));
             }
         }, this);
 
@@ -1590,11 +1497,14 @@ ui.Action.OpBase.prototype._execute = function() { throw new Error('Operation._e
 ui.Action.OpBase.prototype._invert = function() { throw new Error('Operation._invert() is not implemented');};
 ui.Action.OpBase.prototype.perform = function(editor) {
     this._execute(editor);
-    if (!('_inverted' in this)) {
-        this._inverted = this._invert();
-        this._inverted._inverted = this;
+    if (!('__inverted' in this)) {
+        this.__inverted = this._invert();
+        this.__inverted.__inverted = this;
     }
-    return this._inverted;
+    return this.__inverted;
+};
+ui.Action.OpBase.prototype.isDummy = function(editor) {
+    return '_isDummy' in this ? this['_isDummy'](editor) : false;
 };
 
 ui.Action.OpAtomAdd = function(atom, pos) {
@@ -1634,6 +1544,31 @@ ui.Action.OpAtomDelete = function(aid) {
     };
 };
 ui.Action.OpAtomDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpAtomAttr = function(aid, attribute, value) {
+    this.data = { aid : aid, attribute : attribute, value : value };
+    this.data2 = null;
+    this._execute = function(editor) {
+        var atom = editor.render.ctab.molecule.atoms.get(this.data.aid);
+        if (!this.data2) {
+            this.data2 = { aid : this.data.aid, attribute : this.data.attribute, value : atom[this.data.attribute] };
+        }
+
+        if (this.data.attribute == 'label' && this.data.value != null) // HACK TODO review
+            atom['atomList'] = null;
+
+        atom[this.data.attribute] = this.data.value;
+
+        editor.render.invalidateAtom(this.data.aid);
+    };
+    this._isDummy = function(editor) {
+        return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] != this.data.value;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpAtomAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+    };
+};
+ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
 
 ui.Action.OpBondAdd = function(begin, end, bond) {
     this.data = { bid : null, bond : bond, begin : begin, end : end };
@@ -1688,6 +1623,27 @@ ui.Action.OpBondDelete = function(bid) {
 };
 ui.Action.OpBondDelete.prototype = new ui.Action.OpBase();
 
+ui.Action.OpBondAttr = function(bid, attribute, value) {
+    this.data = { bid : bid, attribute : attribute, value : value };
+    this.data2 = null;
+    this._execute = function(editor) {
+        var bond = editor.render.ctab.molecule.bonds.get(this.data.bid);
+        if (!this.data2) {
+            this.data2 = { bid : this.data.bid, attribute : this.data.attribute, value : bond[this.data.attribute] };
+        }
+
+        bond[this.data.attribute] = this.data.value;
+
+        editor.render.invalidateBond(this.data.bid, this.data.attribute == 'type' ? 1 : 0);
+    };
+    this._isDummy = function(editor) {
+        return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] != this.data.value;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpBondAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+    };
+};
+ui.Action.OpBondAttr.prototype = new ui.Action.OpBase();
 
 ui.Action.OpFragmentAdd = function(frid) {
     this.frid = Object.isUndefined(frid) ? null : frid;

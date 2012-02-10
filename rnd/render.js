@@ -581,6 +581,7 @@ rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 	return sg.neiAtoms;
 };
 
+/** @deprecated [RB] ui.Action.OpAtomAttr to be used instead */
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 {
 	rnd.logMethod("_atomSetAttr");
@@ -738,8 +739,7 @@ rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
 
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
-	var p = this.ctab.molecule[map].get(id).pp;
-	return p;
+    return this.ctab.molecule[map].get(id).pp;
 };
 
 rnd.Render.prototype.atomGetPos = function (id)
@@ -854,11 +854,11 @@ rnd.Render.prototype.bondGetAttr = function (bid, name)
 	return this.ctab.bonds.get(bid).b[name];
 };
 
+/** @deprecated [RB] ui.Action.OpBondAttr to be used instead */
 rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 {
 	rnd.logMethod("_bondSetAttr");
-	var bond = this.ctab.bonds.get(bid);
-	bond.b[name] = value;
+    this.ctab.bonds.get(bid).b[name] = value;
 	this.invalidateBond(bid, name == 'type' ? 1 : 0);
 // update loops involving this bond
 };
@@ -995,12 +995,12 @@ rnd.Render.prototype.getStructCenter = function ()
 rnd.Render.prototype.onResize = function ()
 {
 	this.setViewSize(new util.Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
-}
+};
 
 rnd.Render.prototype.setViewSize = function (viewSz)
 {
      this.viewSz = new util.Vec2(viewSz);
-}
+};
 
 rnd.Render.prototype._setPaperSize = function (sz)
 {
@@ -1579,7 +1579,7 @@ rnd.Render.prototype.setScale = function (z) {
 	this.scale = this.baseScale * this.zoom;
 	this.settings = null;
 	this.update(true);
-}
+};
 
 rnd.Render.prototype.setViewBox = function (z) {
 	if (!this.useOldZoom)

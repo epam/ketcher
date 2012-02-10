@@ -788,6 +788,12 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
                 if (props['MULT']) {
                     sg.data.subscript = props['MULT'][0]-0;
                 }
+                if (props['LABEL']) {
+                    sg.data.subscript = props['LABEL'][0].strip();
+                }
+                if (props['CONNECT']) {
+                    sg.data.connectivity = props['CONNECT'][0].toLowerCase();
+                }
                 if (props['FIELDDISP']) {
                     mf.applyDataSGroupInfo(sg, util.stripQuotes(props['FIELDDISP'][0]));
                 }

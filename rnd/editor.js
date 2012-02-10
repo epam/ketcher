@@ -43,6 +43,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.AtomTool(this, ui.atomLabel(tool)); // TODO should not refer ui directly, re-factoring needed
     } else if (tool.startsWith('bond_')) {
         return new rnd.Editor.BondTool(this, ui.bondType(tool)); // TODO should not refer ui directly, re-factoring needed
+    } else if (tool == 'chain') {
+        return new rnd.Editor.ChainTool(this);
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
     } else if (tool == 'reaction_arrow') {
@@ -213,13 +215,16 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
     }
     if ('OnKeyPress' in this) return this.OnKeyPress(event);
 };
-rnd.Editor.EditorTool.prototype._calcNewAtomPos = function(pos0, pos1) {
+rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
     var v = util.Vec2.diff(pos1, pos0);
     var angle = Math.atan2(v.y, v.x);
     var sign = angle < 0 ? - 1 : 1;
     var floor = Math.floor(Math.abs(angle) / (Math.PI / 12)) * (Math.PI / 12);
     angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
-    v = new util.Vec2(1, 0).rotate(angle);
+    return angle;
+};
+rnd.Editor.EditorTool.prototype._calcNewAtomPos = function(pos0, pos1) {
+    var v = new util.Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
     v.add_(pos0);
     return v;
 };
@@ -608,6 +613,50 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
             }
         }
         this.editor.render.update();
+        delete this.dragCtx;
+    }
+    return true;
+};
+
+
+rnd.Editor.ChainTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.ChainTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.ChainTool.prototype.OnMouseDown = function(event) {
+    this._hoverHelper.hover(null);
+    this.dragCtx = {
+        xy0 : this.editor.ui.page2obj(event),
+        item : this.editor.render.findItem(event, ['atoms'])
+    };
+    if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
+    return true;
+};
+rnd.Editor.ChainTool.prototype.OnMouseMove = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
+    if ('dragCtx' in this) {
+        var _DC_ = this.dragCtx;
+        if ('action' in _DC_) _DC_.action.perform();
+        var pos0 = 'item' in _DC_ ? _R_.atomGetPos(_DC_.item.id) : _DC_.xy0;
+        var pos1 = _E_.ui.page2obj(event);
+        _DC_.action = _E_.ui.Action.fromChain(
+            pos0,
+            this._calcAngle(pos0, pos1),
+            Math.ceil(util.Vec2.diff(pos1, pos0).length())
+        );
+        _R_.update();
+        return true;
+    }
+    this._hoverHelper.hover(_R_.findItem(event, ['atoms']));
+    return true;
+};
+rnd.Editor.ChainTool.prototype.OnMouseUp = function() {
+    if ('dragCtx' in this) {
+        if ('action' in this.dragCtx) {
+            this.editor.ui.addUndoAction(this.dragCtx.action);
+        }
         delete this.dragCtx;
     }
     return true;

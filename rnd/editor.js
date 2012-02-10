@@ -34,6 +34,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
     } else if (tool.startsWith('atom_')) {
         return new rnd.Editor.AtomTool(this, ui.atomLabel(tool)); // TODO should not refer ui directly, re-factoring needed
+    } else if (tool.startsWith('bond_')) {
+        return new rnd.Editor.BondTool(this, ui.bondType(tool)); // TODO should not refer ui directly, re-factoring needed
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
     } else if (tool == 'reaction_arrow') {
@@ -458,8 +460,8 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
         var newAtomPos = this._calcNewAtomPos(
             _R_.atomGetPos(_DC_.item.id), _E_.ui.page2obj(event)
         );
-        if ('newAtom' in _DC_) {
-            this.render.atomMove(_DC_.newAID, newAtomPos);
+        if ('aid2' in _DC_) {
+            _R_.atomMove(_DC_.aid2, newAtomPos);
         } else {
             if ('action' in _DC_) {
                 _DC_.action.perform();
@@ -468,7 +470,7 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
                 this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
             );
             _DC_.action = action_ret[0];
-            _DC_.newAID = action_ret[2];
+            _DC_.aid2 = action_ret[2];
         }
         _R_.update();
     } else {
@@ -489,6 +491,115 @@ rnd.Editor.AtomTool.prototype.OnMouseUp = function(event) {
         this.editor.render.update();
         delete this.dragCtx;
     }
+};
+
+
+rnd.Editor.BondTool = function(editor, bondProps) {
+    this.editor = editor;
+    this.atomProps = { label : 'C' };
+    this.bondProps = bondProps;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.BondTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.BondTool.prototype.OnMouseDown = function(event) {
+    this._hoverHelper.hover(null);
+    this.dragCtx = {
+        xy0 : this.editor.ui.page2obj(event),
+        item : this.editor.render.findItem(event, ['atoms', 'bonds'])
+    };
+    if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
+    return true;
+};
+rnd.Editor.BondTool.prototype.OnMouseMove = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
+    if ('dragCtx' in this) {
+        var _DC_ = this.dragCtx;
+        if (!('item' in _DC_) || _DC_.item.map == 'atoms') {
+            if ('action' in _DC_) _DC_.action.perform();
+            var i1, i2, p1, p2;
+            if (('item' in _DC_ && _DC_.item.map == 'atoms')) {
+                i1 = _DC_.item.id;
+                i2 = _R_.findItem(event, ['atoms'], _DC_.item);
+            } else {
+                i1 = this.atomProps;
+                p1 = _DC_.xy0;
+                i2 = _R_.findItem(event, ['atoms']);
+            }
+            if (i2 && i2.map == 'atoms') {
+                i2 = i2.id;
+            } else {
+                i2 = this.atomProps;
+                if (p1) {
+                    p2 = this._calcNewAtomPos(p1, _E_.ui.page2obj(event))
+                } else {
+                    p1 = this._calcNewAtomPos(_R_.atomGetPos(i1), _E_.ui.page2obj(event));
+                }
+            }
+            _DC_.action = _E_.ui.Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
+            _R_.update();
+            return true;
+        }
+    }
+    this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
+    return true;
+};
+rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
+    if ('dragCtx' in this) {
+        var _UI_ = this.editor.ui, _DC_ = this.dragCtx;
+        if ('action' in _DC_) {
+            _UI_.addUndoAction(_DC_.action);
+        } else if (!('item' in _DC_)) {
+            var xy = this.editor.ui.page2obj(event);
+            var v = new util.Vec2(1.0 / 2, 0).rotate(
+                this.bondProps.type == chem.Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
+            );
+            _UI_.addUndoAction(
+                _UI_.Action.fromBondAddition(
+                    this.bondProps,
+                    { label : 'C' },
+                    { label : 'C' },
+                    { x : xy.x - v.x, y : xy.y - v.y},
+                    { x : xy.x + v.x, y : xy.y + v.y}
+                )[0]
+            );
+        } else if (_DC_.item.map == 'atoms') {
+            var atom = _UI_.atomForNewBond(_DC_.item.id);
+            _UI_.addUndoAction(
+                _UI_.Action.fromBondAddition(this.bondProps, _DC_.item.id, atom.atom, atom.pos)[0]
+            );
+        } else if (_DC_.item.map == 'bonds') {
+            var bondProps = Object.clone(this.bondProps);
+            var bond = _UI_.ctab.bonds.get(_DC_.item.id);
+
+            if (bondProps.stereo != chem.Struct.BOND.STEREO.NONE
+                && bond.type == chem.Struct.BOND.TYPE.SINGLE
+                && bondProps.type == chem.Struct.BOND.TYPE.SINGLE
+                && bond.stereo == bondProps.stereo)
+            {
+                _UI_.addUndoAction(_UI_.Action.fromBondFlipping(_DC_.item.id));
+            } else {
+                if (bond.type == bondProps.type) {
+                    if (bond.type == chem.Struct.BOND.TYPE.SINGLE) {
+                        if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
+                            bondProps.type = chem.Struct.BOND.TYPE.DOUBLE;
+                        }
+                    } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
+                        bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
+                    } else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE) {
+                        bondProps.type = chem.Struct.BOND.TYPE.SINGLE;
+                    }
+                }
+                _UI_.addUndoAction(
+                    _UI_.Action.fromBondAttrs(_DC_.item.id, bondProps, _UI_.bondFlipRequired(bond, bondProps)),
+                    true
+                );
+            }
+        }
+        this.editor.render.update();
+        delete this.dragCtx;
+    }
+    return true;
 };
 
 

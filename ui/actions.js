@@ -16,18 +16,15 @@ if (typeof(ui) == 'undefined')
 //
 // Undo/redo actions
 //
-ui.atomMap = new Array();
-ui.atomMap.indexOf = function(x) { // TODO [RB] temporary
-    var ret = [].indexOf.call(this, x);
-    if (ret < 0) ret = this.push(x) - 1;
-    return ret;
+ui.__fixMap = function(map) { // TODO [RB] temporary
+    map.indexOf = function(x) {
+        var ret = [].indexOf.call(this, x);
+        if (ret < 0) ret = this.push(x) - 1;
+        return ret;
+    };
 };
-ui.bondMap = new Array();
-ui.bondMap.indexOf = function(x) { // TODO [RB] temporary
-    var ret = [].indexOf.call(this, x);
-    if (ret < 0) ret = this.push(x) - 1;
-    return ret;
-};
+ui.atomMap = new Array(); ui.__fixMap(ui.atomMap);
+ui.bondMap = new Array(); ui.__fixMap(ui.bondMap);
 ui.sgroupMap = new Array();
 
 ui.Action = function ()
@@ -212,8 +209,8 @@ ui.Action.prototype.perform = function ()
 
             if (op.params.atom_map == null)
             {
-                op.params.atom_map = new Array();
-                op.params.bond_map = new Array();
+                op.params.atom_map = new Array(); ui.__fixMap(op.params.atom_map);
+                op.params.bond_map = new Array(); ui.__fixMap(op.params.bond_map);
                 op.params.sgroup_map = new Array();
 
                 op.params.ctab.atoms.each(function (aid)
@@ -1608,6 +1605,7 @@ ui.Action.OpAtomAdd = function(atom, pos) {
         pp.label = pp.label || 'C';
         if (!Object.isNumber(this.data.aid)) {
             this.data.aid = _RS_.molecule.atoms.add(new chem.Struct.Atom(pp));
+            ui.atomMap.indexOf(this.data.aid); // TODO [RB] temporary kludge
         } else {
             _RS_.molecule.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
         }
@@ -1656,6 +1654,7 @@ ui.Action.OpBondAdd = function(begin, end, bond) {
 
         if (!Object.isNumber(this.data.bid)) {
             this.data.bid = _RS_.molecule.bonds.add(new chem.Struct.Bond(pp));
+            ui.bondMap.indexOf(this.data.bid); // TODO [RB] temporary kludge
         } else {
             _RS_.molecule.bonds.set(this.data.bid, new chem.Struct.Bond(pp));
         }

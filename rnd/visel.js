@@ -31,7 +31,9 @@ rnd.Visel.TYPE = {
 	'PLUS' : 5,
 	'SGROUP' : 6,
 	'CHIRAL' : 7,
-	'TMP' : 8
+	'TMP' : 8,
+    'FRAGMENT' : 9,
+    'RGROUP' : 10
 };
 
 rnd.Visel.prototype.add = function (path, bb)

@@ -340,6 +340,7 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
     else if (ci.type == 'SGroup') ci.map = 'sgroups';
     else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
     else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
+    else if (ci.type == 'Fragment') ci.map = 'frags';
     return ci;
 };
 
@@ -391,7 +392,7 @@ rnd.Render.prototype.atomGetAttr = function (aid, name)
 {
 	rnd.logMethod("atomGetAttr");
 	// TODO: check attribute names
-	return this.ctab.atoms.get(aid).a[name];
+	return this.ctab.molecule.atoms.get(aid)[name];
 };
 
 rnd.Render.prototype.invalidateAtom = function (aid, level)
@@ -649,7 +650,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags'].indexOf(obj.map) > -1) {
         this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
     } else if (obj.map == 'atoms') {
         //this.atomSetHighlight(obj.id, visible);
@@ -946,7 +947,7 @@ rnd.Render.prototype.initStyles = function ()
 		'stroke-width':0.6*settings.lineWidth
 		};
 	this.styles.sgroupBracketStyle = {
-		'stroke':'#000',
+		'stroke':'darkgray',
 		'stroke-width':0.5*settings.lineWidth
 		};
 	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
@@ -968,6 +969,8 @@ rnd.Render.prototype.initSettings = function()
 	settings.font = '30px "Arial"';
 	settings.fontsz = this.settings.labelFontSize;
 	settings.fontszsub = this.settings.subFontSize;
+	settings.fontRLabel = this.settings.labelFontSize * 1.2;
+	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
 rnd.Render.prototype.getBoundingBox = function ()
@@ -1366,7 +1369,7 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
-rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) {
+rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)
 	var closestAtom = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1388,7 +1391,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) {
 	return null;
 };
 
-rnd.Render.prototype.findClosestBond = function (pos, minDist) {
+rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
 	var closestBond = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1417,7 +1420,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	return null;
 };
 
-rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
+rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO should be a member of ReSGroup (see ReFrag)
 	var closestSg = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
 	minDist = minDist || maxMinDist;
@@ -1444,7 +1447,7 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	return null;
 };
 
-rnd.Render.prototype.findClosest = function (map, pos, minDist) {
+rnd.Render.prototype.findClosest = function (map, pos, minDist) { // TODO should be a member of ReObject (see ReFrag)
 	var closestItem = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1500,6 +1503,10 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
         var plus = this.findClosest('rxnPluses', pos);
         updret('RxnPlus',plus);
     }
+    if (!maps || maps.indexOf('frags') >= 0) {
+        var frag = rnd.ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
+        updret('Fragment', frag);
+    }
 
 	ret = ret || {
 		'type':'Canvas',
@@ -1510,6 +1517,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 
 rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 {
+    if (!path) return; // [RB] thats ok for some hidden objects (fragment)
 	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
 	var offset = this.offset;
 	if (offset != null) {

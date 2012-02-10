@@ -74,3 +74,7 @@ util.Pool.prototype.count = function ()
 {
     return this._map.count();
 };
+
+util.Pool.prototype.keyOf = function(value) {
+    return this._map.keyOf(value);
+};

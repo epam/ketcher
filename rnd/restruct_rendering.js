@@ -372,7 +372,7 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 	for (var i = 0; i < p.length / 2; ++i)
 		pathdesc += "M" + p[2 * i].x + "," + p[2 * i].y + "L" + p[2 * i + 1].x + "," + p[2 * i + 1].y;
 	return paper.path(pathdesc).attr(styles.lineattr);
-}
+};
 
 rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 {
@@ -411,7 +411,7 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 	var rbb = path.getBBox();
 	this.centerText(path, rbb);
 	return path;
-}
+};
 
 rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 {
@@ -653,10 +653,10 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
 			render.addItemPath(item.visel, 'selection-plate', item.selectionPlate);
 		}
-		item.selectionPlate.show();
+		if (item.selectionPlate) item.selectionPlate.show(); // TODO [RB] review
 	} else {
 		if (exists)
-			item.selectionPlate.hide();
+			if (item.selectionPlate) item.selectionPlate.hide(); // TODO [RB] review
 	}
 };
 
@@ -1102,7 +1102,7 @@ rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
     if (t > 0)
         pos0 = pos0.addScaled(dir, t + margin);
     return pos0;
-}
+};
 
 rnd.ReStruct.prototype.bisectLargestSector = function (atom)
 {
@@ -1126,7 +1126,7 @@ rnd.ReStruct.prototype.bisectLargestSector = function (atom)
         }
     }
     return new util.Vec2(Math.cos(ang), Math.sin(ang));
-}
+};
 
 
 // TODO to be removed
@@ -1181,7 +1181,7 @@ rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 	bond.b.sb = settings.lineWidth * 5;
 	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
-}
+};
 
 rnd.ReStruct.prototype.showBonds = function ()
 {
@@ -1290,6 +1290,16 @@ rnd.ReStruct.layerMap = {
 	'indices' : 5
 };
 
+rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path) {
+    var offset = this.render.offset;
+    if (offset != null)
+        path.translate(offset.x, offset.y);
+    var bb = util.Box2Abs.fromRelBox(path.getBBox());
+    visel.add(path, bb);
+    this.insertInLayer(rnd.ReStruct.layerMap[group], path);
+};
+
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1300,6 +1310,7 @@ rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1310,6 +1321,7 @@ rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1320,6 +1332,7 @@ rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addTmpPath = function (group, path)
 {
 	var visel = new rnd.Visel('TMP');

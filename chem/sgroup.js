@@ -221,6 +221,8 @@ chem.SGroup.bracketPos = function (sg, remol, xbonds) {
 };
 
 chem.SGroup.drawBrackets = function (set, render, paper, settings, styles, bb, d, n) {
+    d = d || new util.Vec2(1, 0);
+    n = n || new util.Vec2(0, 1);
     var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
     var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
     var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);

@@ -2960,6 +2960,7 @@ ui.showRGroupTable = function(params)
                 'buttonHalfSize':18
             }, true);
         }
+        ui.rgroup_table_obj.setMode(params.mode || 'multiple');
         ui.rgroup_table_obj.setSelection(params.selection || 0);
         var _onOk = new Event.Handler('rgroup_table_ok', 'click', undefined, function() {
             ui.hideDialog('rgroup_table');

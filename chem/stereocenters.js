@@ -57,13 +57,13 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
 
       if (ignore_errors)
       {
-         try
-         {
+//         try
+//         {
             this._buildOneCenter(aid/*, atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
-         }
-         catch (er)
-         {
-         }
+//         }
+//         catch (er)
+//         {
+//         }
       }
       else
          this._buildOneCenter(aid/*, atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);

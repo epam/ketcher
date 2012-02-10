@@ -920,7 +920,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 };
 
 chem.MolfileSaver.getComponents = function (molecule) {
-	var ccs = molecule.findConnectedComponents();
+	var ccs = molecule.findConnectedComponents(true);
 	var submols = [];
 	var barriers = [];
 	var arrowPos = null;

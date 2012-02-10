@@ -20,8 +20,8 @@ ui.base_url = '';
 
 ui.scale = 40;
 
-ui.zoomValues = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0];
-ui.zoomIdx = 1;
+ui.zoomValues = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
+ui.zoomIdx = ui.zoomValues.indexOf(1.0);
 ui.zoom = 1.0;
 
 ui.DBLCLICK_INTERVAL = 300;
@@ -474,7 +474,7 @@ ui.updateMolecule = function (mol)
         try
         {
             ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
-            ui.render.update()
+            ui.render.update();
             ui.setZoomCentered(null, ui.render.getStructCenter());
         } catch (er)
         {
@@ -486,7 +486,7 @@ ui.updateMolecule = function (mol)
     }, 50);
 };
 
-ui.parseMolfile = function (molfile)
+ui.parseCTFile = function (molfile)
 {
     var lines = molfile.split('\n');
 
@@ -495,10 +495,10 @@ ui.parseMolfile = function (molfile)
 
     try
     {
-        return chem.Molfile.parseMolfile(lines);
+        return chem.Molfile.parseCTFile(lines);
     } catch (er)
     {
-        alert("Error loading molfile.");
+        alert("Error loading molfile.\n"+er.toString());
         return null;
     }
 };
@@ -521,14 +521,14 @@ ui.selectMode = function (mode)
                     {
                         if (res.responseText.startsWith('Ok.')) {
 /*
-                            var aam = ui.parseMolfile(res.responseText);
+                            var aam = ui.parseCTFile(res.responseText);
                             var action = new ui.Action();
                             for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
                                 action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
                             }
                             ui.addUndoAction(action, true);
 */
-                            ui.updateMolecule(ui.parseMolfile(res.responseText));
+                            ui.updateMolecule(ui.parseCTFile(res.responseText));
 /*
                             ui.render.update();
 */
@@ -567,7 +567,8 @@ ui.selectMode = function (mode)
                 return;
             }
             if (mode == 'sgroup') {
-                ui.showSGroupProperties(null);
+				if (ui.selectedAtom())
+					ui.showSGroupProperties(null);
                 return;
             }
         } else if (mode.startsWith('atom_')) {
@@ -600,6 +601,8 @@ ui.selectMode = function (mode)
         } else
             $(this.mode_id).removeClassName('buttonSelected');
     }
+
+    this.editor.deselectAll();
 
     if (mode == null) {
         this.mode_id = null;
@@ -902,6 +905,15 @@ ui.onKeyPress_Ketcher = function (event)
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
 {
+    // RB: KETCHER-329 Ctrl+A hot key selects whole Google Chrome browser
+    // BEGIN
+    // TODO the fix is temporary, need to review keyboard events handling in general
+    if (Prototype.Browser.WebKit && event.ctrlKey && event.which == 65) {
+        ui.selectAll();
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
+    }
+    // END
     if (!Prototype.Browser.IE)
         return;
 
@@ -1136,7 +1148,7 @@ ui.loadMolecule = function (mol_string, force_layout)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+                    ui.updateMolecule(ui.parseCTFile(res.responseText));
             }
         });
     } else if (!ui.standalone && force_layout)
@@ -1149,11 +1161,11 @@ ui.loadMolecule = function (mol_string, force_layout)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseMolfile(res.responseText));
+                    ui.updateMolecule(ui.parseCTFile(res.responseText));
             }
         });
     } else {
-        ui.updateMolecule(ui.parseMolfile(mol_string));
+        ui.updateMolecule(ui.parseCTFile(mol_string));
     }
 };
 
@@ -1299,12 +1311,12 @@ ui.setZoomRegular = function (zoom) {
     ui.render.setZoom(ui.zoom);
     // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
     // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-}
+};
 
 // get the size of the view window in pixels
 ui.getViewSz = function () {
     return new util.Vec2(ui.render.viewSz);
-}
+};
 
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
 ui.setZoomCentered = function (zoom, c) {
@@ -1316,12 +1328,12 @@ ui.setZoomCentered = function (zoom, c) {
     ui.setScrollOffset(0, 0);
     var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
     ui.setScrollOffset(sp.x, sp.y);
-}
+};
 
 // set the reference point for the "static point" zoom (in object coordinates)
 ui.setZoomStaticPointInit = function (s) {
     ui.zspObj = new util.Vec2(s);
-}
+};
 
 // vp is the point where the reference point should now be (in view coordinates)
 ui.setZoomStaticPoint = function (zoom, vp) {
@@ -1330,7 +1342,7 @@ ui.setZoomStaticPoint = function (zoom, vp) {
     var avp = ui.render.obj2view(ui.zspObj);
     var so = avp.sub(vp);
     ui.setScrollOffset(so.x, so.y);
-}
+};
 
 ui.setScrollOffset = function (x, y) {
     var cx = ui.client_area.clientWidth;
@@ -1340,11 +1352,11 @@ ui.setScrollOffset = function (x, y) {
     ui.client_area.scrollTop = y;
     ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
     ui.scrollTop = ui.client_area.scrollTop;
-}
+};
 
 ui.setScrollOffsetRel = function (dx, dy) {
     ui.setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
-}
+};
 
 //
 // Automatic layout
@@ -1408,7 +1420,7 @@ ui.page2obj = function (pagePos)
 ui.scrollPos = function ()
 {
     return new util.Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
-}
+};
 
 //
 // Scrolling
@@ -2000,8 +2012,15 @@ ui.selected = function ()
     return false;
 };
 
+ui.selectedAtom = function ()
+{
+	return !Object.isUndefined(ui.selection.atoms) && ui.selection.atoms.length > 0;
+};
+
 ui.selectAll = function ()
 {
+    // TODO cleanup
+/*
     var mode = ui.modeType();
     if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
         ui.selectMode(ui.defaultSelector);
@@ -2012,6 +2031,11 @@ ui.selectAll = function ()
     }
 
     ui.updateSelection(selection);
+*/
+    if (!ui.ctab.isBlank()) {
+        ui.selectMode($('selector').getAttribute('selid'));
+        ui.editor.selectAll();
+    }
 };
 
 ui.removeSelected = function ()
@@ -2031,7 +2055,8 @@ ui.hideBlurredControls = function ()
         'selector_dropdown_list',
         'bond_dropdown_list',
         'template_dropdown_list',
-        'reaction_dropdown_list'
+        'reaction_dropdown_list',
+        'rgroup_dropdown_list'
     ].each(
         function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
     );
@@ -2406,7 +2431,7 @@ ui.onMouseUp_Ketcher = function (event)
         if (ui.selected() && ui.isDrag())
             ui.removeSelected();
     if (ui.modeType() == ui.MODE.SGROUP)
-        if (ui.selected() && ui.isDrag())
+        if (ui.selectedAtom() && ui.isDrag())
             ui.showSGroupProperties(null);
     ui.endDrag();
     util.stopEventPropagation(event);
@@ -2521,6 +2546,27 @@ ui.onMouseOut_SGroup = function (event, sid)
 };
 
 //
+// Atom attachment points dialog
+//
+ui.showAtomAttachmentPoints = function(params)
+{
+    $('atom_ap1').checked = ((params.selection || 0) & 1) > 0;
+    $('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
+    ui.showDialog('atom_attpoints');
+    var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function() {
+        ui.hideDialog('atom_attpoints');
+        if ('onOk' in params) params['onOk'](($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
+        _onOk.stop();
+    }).start();
+    var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function() {
+        ui.hideDialog('atom_attpoints');
+        if ('onCancel' in params) params['onCancel']();
+        _onCancel.stop();
+    }).start();
+    $('atom_attpoints_ok').focus();
+};
+
+//
 // Atom properties dialog
 //
 ui.showAtomProperties = function (id)
@@ -2536,7 +2582,7 @@ ui.showAtomProperties = function (id)
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
     $('atom_inversion').value = ui.render.atomGetAttr(id, 'invRet');
-    $('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag');
+    $('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag') ? 1 : 0;
     $('atom_ringcount').value = ui.render.atomGetAttr(id, 'ringBondCount');
     $('atom_substitution').value = ui.render.atomGetAttr(id, 'substitutionCount');
     $('atom_unsaturation').value = ui.render.atomGetAttr(id, 'unsaturatedAtom');
@@ -2562,7 +2608,7 @@ ui.applyAtomProperties = function ()
         radical: parseInt($('atom_radical').value),
         // reaction flags
         invRet: parseInt($('atom_inversion').value),
-        exactChangeFlag: parseInt($('atom_exactchange').value),
+        exactChangeFlag: parseInt($('atom_exactchange').value) ? true : false,
         // query flags
         ringBondCount: parseInt($('atom_ringcount').value),
         substitutionCount: parseInt($('atom_substitution').value), 
@@ -2914,6 +2960,7 @@ ui.showRGroupTable = function(params)
                 'buttonHalfSize':18
             }, true);
         }
+        ui.rgroup_table_obj.setMode(params.mode || 'multiple');
         ui.rgroup_table_obj.setSelection(params.selection || 0);
         var _onOk = new Event.Handler('rgroup_table_ok', 'click', undefined, function() {
             ui.hideDialog('rgroup_table');
@@ -3070,6 +3117,7 @@ ui.paste = function ()
     for (id = 0; id < ui.clipboard.atoms.length; id++)
     {
         var atom = ui.clipboard.atoms[id];
+        atom.fragment = -1;
         mapping[id] = ui.render.atomAdd(atom.pos, atom);
         ui.pasted.atoms.push(mapping[id]);
     }

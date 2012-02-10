@@ -35,6 +35,7 @@ rnd.ReaGenericsTable = function (clientArea, opts) {
 	this.frameThickness = opts.frameThickness || '1pt';
 	this.fontSize = opts.fontSize || 18;
 	this.fontType = opts.fontType || "Arial";
+	this.atomProps = null;
 
 	this.frameAttrs = {
         'fill':this.fillColor,
@@ -189,6 +190,7 @@ rnd.ReaGenericsTable.prototype.setSelection = function(selection) {
     for (var i = 0; i < this.items.length; i++) {
         this.items[i].box.attr('fill', this.items[i].text == selection ? this.fillColorSelected : this.fillColor);
     }
+    $('reagenerics_table_ok').disabled = (!selection || selection == '');
 };
 
 
@@ -205,8 +207,11 @@ ui.showReaGenericsTable = function(params) {
                 'buttonHalfSize':18
             }, true);
         }
-        ui.reagenerics_table_obj.setSelection(params.selection || 0);
+        if (params.selection)
+            ui.reagenerics_table_obj.setSelection(params.selection);
         var _onOk = new Event.Handler('reagenerics_table_ok', 'click', undefined, function() {
+            if (ui.reagenerics_table_obj.atomProps == null)
+                return;
             ui.hideDialog('reagenerics_table');
             if ('onOk' in params) params['onOk'](ui.reagenerics_table_obj.selection);
             _onOk.stop();

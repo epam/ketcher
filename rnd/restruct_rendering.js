@@ -372,7 +372,7 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 	for (var i = 0; i < p.length / 2; ++i)
 		pathdesc += "M" + p[2 * i].x + "," + p[2 * i].y + "L" + p[2 * i + 1].x + "," + p[2 * i + 1].y;
 	return paper.path(pathdesc).attr(styles.lineattr);
-}
+};
 
 rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 {
@@ -411,7 +411,7 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 	var rbb = path.getBBox();
 	this.centerText(path, rbb);
 	return path;
-}
+};
 
 rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 {
@@ -570,27 +570,33 @@ rnd.ReStruct.prototype.removeBracketSelection = function (sgid, sg)
 
 rnd.ReStruct.prototype.showBracketSelection = function (sgid, sg, visible)
 {
-	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var settings = render.settings;
-			var paper = render.paper;
-			var bb = sg.bracketBox;
-			var lw = settings.lineWidth;
-			var vext = new util.Vec2(lw * 4, lw * 6);
-			bb = bb.extend(vext, vext);
-			sg.selectionPlate = paper
-			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
-			.attr(styles.selectionStyle);
-			this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
-		}
-		sg.selectionPlate.show();
-	} else {
-		if (exists)
-			sg.selectionPlate.hide();
-	}
+    var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
+    if (visible) {
+        if (!exists) {
+            var render = this.render;
+            var styles = render.styles;
+            var settings = render.settings;
+            var paper = render.paper;
+            var bb = sg.bracketBox;
+            var lw = settings.lineWidth;
+            var vext = new util.Vec2(lw * 4, lw * 6);
+            bb = bb.extend(vext, vext);
+            var d = sg.bracketDir, n = d.rotateSC(1,0);
+            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+
+            sg.selectionPlate = paper
+                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}C", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+                .attr(styles.selectionStyle);
+            this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
+        }
+        sg.selectionPlate.show();
+    } else {
+        if (exists)
+            sg.selectionPlate.hide();
+    }
 };
 
 rnd.ReStruct.prototype.removeBracketHighlighting = function (sgid, sg)
@@ -602,28 +608,34 @@ rnd.ReStruct.prototype.removeBracketHighlighting = function (sgid, sg)
 
 rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
 {
-	var exists = (sg.highlighting != null) && !sg.highlighting.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var settings = render.settings;
-			var paper = render.paper;
-			var bb = sg.bracketBox;
-			var lw = settings.lineWidth;
-			var vext = new util.Vec2(lw * 4, lw * 6);
-			bb = bb.extend(vext, vext);
-			sg.highlighting = paper
-			.rect(bb.p0.x, bb.p0.y, bb.p1.x - bb.p0.x, bb.p1.y - bb.p0.y, lw * 2)
-			.attr(styles.highlightStyle);
-			this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
-		}
-		sg.highlighting.show();
-	} else {
-		if (exists) {
-			sg.highlighting.hide();
-		}
-	}
+    var exists = (sg.highlighting != null) && !sg.highlighting.removed;
+    if (visible) {
+        if (!exists) {
+            var render = this.render;
+            var styles = render.styles;
+            var settings = render.settings;
+            var paper = render.paper;
+            var bb = sg.bracketBox.transform(render.obj2scaled, render);
+            var lw = settings.lineWidth;
+            var vext = new util.Vec2(lw * 4, lw * 6);
+            bb = bb.extend(vext, vext);
+            var d = sg.bracketDir, n = d.rotateSC(1,0);
+            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+
+            sg.highlighting = paper
+                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+                .attr(styles.highlightStyle);
+            this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
+        }
+        sg.highlighting.show();
+    } else {
+        if (exists) {
+            sg.highlighting.hide();
+        }
+    }
 };
 
 rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
@@ -641,10 +653,10 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
 			render.addItemPath(item.visel, 'selection-plate', item.selectionPlate);
 		}
-		item.selectionPlate.show();
+		if (item.selectionPlate) item.selectionPlate.show(); // TODO [RB] review
 	} else {
 		if (exists)
-			item.selectionPlate.hide();
+			if (item.selectionPlate) item.selectionPlate.hide(); // TODO [RB] review
 	}
 };
 
@@ -661,6 +673,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 {
 	var render = this.render;
 	var settings = render.settings;
+    var styles = render.styles;
 	var opt = render.opt;
 	var paper = render.paper;
 	var delta = 0.5 * settings.lineWidth;
@@ -689,58 +702,6 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(index.path, index.rbb);
 			render.addItemPath(atom.visel, 'indices', index.path, index.rbb);
 		}
-		var queryAttrsText = "";
-		if (atom.a.ringBondCount != 0) {
-			if (atom.a.ringBondCount > 0) 
-				queryAttrsText += "rb" + atom.a.ringBondCount.toString();
-			else if (atom.a.ringBondCount == -1)
-				queryAttrsText += "rb0";
-			else if (atom.a.ringBondCount == -2)
-				queryAttrsText += "rb*";
-			else
-				throw new Error("Ring bond count invalid");
-		}
-		if (atom.a.substitutionCount != 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-			
-			if (atom.a.substitutionCount > 0) 
-				queryAttrsText += "s" + atom.a.substitutionCount.toString();
-			else if (atom.a.substitutionCount == -1)
-				queryAttrsText += "s0";
-			else if (atom.a.substitutionCount == -2)
-				queryAttrsText += "s*";
-			else
-				throw new Error("Substitution count invalid");
-		}
-		if (atom.a.unsaturatedAtom > 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-
-			if (atom.a.unsaturatedAtom == 1)
-				queryAttrsText += "u";
-			else
-				throw new Error("Unsaturated atom invalid value");
-		}
-		if (atom.a.hCount > 0) {
-			if (queryAttrsText.length > 0)
-				queryAttrsText += ",";
-
-			queryAttrsText += "H" + (atom.a.hCount - 1).toString();
-		}
-
-		if (queryAttrsText.length > 0) {
-			var queryAttrsPath = paper.text(atom.a.ps.x, atom.a.ps.y, queryAttrsText)
-			.attr({
-				'font' : settings.font,
-				'font-size' : settings.fontszsub,
-				'fill' : '#000'
-			});
-			var queryAttrsRbb = queryAttrsPath.getBBox();
-			this.centerText(queryAttrsPath, queryAttrsRbb);
-			this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
-			render.addItemPath(atom.visel, 'indices', queryAttrsPath, queryAttrsRbb);
-		}
 		if (atom.selected)
 			this.showItemSelection(aid, atom, true);
 		if (atom.highlight)
@@ -748,12 +709,12 @@ rnd.ReStruct.prototype.showLabels = function ()
 		if (atom.sGroupHighlight)
 			this.showAtomSGroupHighlighting(aid, atom, true);
 
+        var color = '#000000';
 		if (atom.showLabel)
 		{
 			var rightMargin = 0, leftMargin = 0;
 			// label
 			var label = {};
-			var color = '#000000';
 			if (atom.a.atomList != null) {
 				label.text = atom.a.atomList.label();
             } else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
@@ -954,7 +915,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			{
 				valence.text = mapValence[atom.a.valence];
 				if (!valence.text)
-					throw new Error("invalid valence");
+					throw new Error("invalid valence " + atom.a.valence.toString());
 				valence.text = '(' + valence.text + ')';
 				valence.path = paper.text(atom.a.ps.x, atom.a.ps.y, valence.text)
 				.attr({
@@ -988,7 +949,52 @@ rnd.ReStruct.prototype.showLabels = function ()
 					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
 					0.3 * label.rbb.height);
 		}
-		
+
+        var lsb = this.bisectLargestSector(atom);
+
+        var asterisk = Prototype.Browser.IE ? '*' : '∗';
+        if (atom.a.attpnt) {
+            var i, j;
+            for (i = 0, c = 0; i < 4; ++i) {
+                var attpntText = "";
+                if (atom.a.attpnt & (1 << i)) {
+                    if (attpntText.length > 0)
+                        attpntText += ' ';
+                    attpntText += asterisk;
+                    for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j) {
+                        attpntText += "'";
+                    }
+                    var pos0 = new util.Vec2(atom.a.ps);
+                    var pos1 = atom.a.ps.addScaled(lsb, 0.7 * settings.scaleFactor);
+
+                    var attpntPath1 = paper.text(pos1.x, pos1.y, attpntText)
+                        .attr({
+                            'font' : settings.font,
+                            'font-size' : settings.fontsz,
+                            'fill' : color
+                        });
+                    var attpntRbb = attpntPath1.getBBox();
+                    this.centerText(attpntPath1, attpntRbb);
+
+                    var lsbn = lsb.negated();
+                    pos1 = pos1.addScaled(lsbn, util.Vec2.shiftRayBox(pos1, lsbn, util.Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth/2);
+                    pos0 = this.shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
+                    var n = lsb.rotateSC(1, 0);
+                    var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+                    var arrowRight = pos1.addScaled(n, -0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+                    var attpntPath = paper.set();
+                    attpntPath.push(
+                        attpntPath1,
+                        paper.path("M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}", pos0.x, pos0.y, pos1.x, pos1.y, arrowLeft.x, arrowLeft.y, arrowRight.x, arrowRight.y)
+                            .attr(styles.lineattr).attr({'stroke-width': settings.lineWidth/2})
+                    );
+                    render.addItemPath(atom.visel, 'indices', attpntPath, attpntRbb);
+                    lsb = lsb.rotate(Math.PI/6);
+                }
+            }
+        }
+
+
 		var aamText = "";
 		if (atom.a.aam > 0) {
 			aamText += atom.a.aam;
@@ -1003,6 +1009,60 @@ rnd.ReStruct.prototype.showLabels = function ()
 			else
 				throw new Error('Invalid value for the invert/retain flag');
 		}
+        
+        var queryAttrsText = "";
+        if (atom.a.ringBondCount != 0) {
+            if (atom.a.ringBondCount > 0)
+                queryAttrsText += "rb" + atom.a.ringBondCount.toString();
+            else if (atom.a.ringBondCount == -1)
+                queryAttrsText += "rb0";
+            else if (atom.a.ringBondCount == -2)
+                queryAttrsText += "rb*";
+            else
+                throw new Error("Ring bond count invalid");
+        }
+        if (atom.a.substitutionCount != 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            if (atom.a.substitutionCount > 0)
+                queryAttrsText += "s" + atom.a.substitutionCount.toString();
+            else if (atom.a.substitutionCount == -1)
+                queryAttrsText += "s0";
+            else if (atom.a.substitutionCount == -2)
+                queryAttrsText += "s*";
+            else
+                throw new Error("Substitution count invalid");
+        }
+        if (atom.a.unsaturatedAtom > 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            if (atom.a.unsaturatedAtom == 1)
+                queryAttrsText += "u";
+            else
+                throw new Error("Unsaturated atom invalid value");
+        }
+        if (atom.a.hCount > 0) {
+            if (queryAttrsText.length > 0)
+                queryAttrsText += ",";
+
+            queryAttrsText += "H" + (atom.a.hCount - 1).toString();
+        }
+
+        if (queryAttrsText.length > 0) {
+            var queryAttrsPath = paper.text(atom.a.ps.x, atom.a.ps.y, queryAttrsText)
+                .attr({
+                    'font' : settings.font,
+                    'font-size' : settings.fontszsub,
+                    'fill' : color
+                });
+            var queryAttrsRbb = queryAttrsPath.getBBox();
+            this.centerText(queryAttrsPath, queryAttrsRbb);
+            this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
+            render.addItemPath(atom.visel, 'indices', queryAttrsPath, queryAttrsRbb);
+        }
+
 		if (atom.a.exactChangeFlag > 0) {
 			if (aamText.length > 0)
 				aamText += ",";
@@ -1016,31 +1076,12 @@ rnd.ReStruct.prototype.showLabels = function ()
                 .attr({
                     'font' : settings.font,
                     'font-size' : settings.fontszsub,
-                    'fill' : 'gray'
+                    'fill' : color
                 });
 			var aamBox = aamPath.getBBox();
 			this.centerText(aamPath, aamBox);
 
-			var angles = [];
-			atom.a.neighbors.each( function (hbid) {
-				var hb = this.molecule.halfBonds.get(hbid);
-				angles.push(hb.ang);
-			}, this);
-			angles = angles.sort(function(a,b){return a-b;});
-			var da = [];
-			for (var i = 0; i < angles.length - 1; ++i) {
-				da.push(angles[(i + 1) % angles.length] - angles[i]);
-			}
-			da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-			var daMax = 0;
-			var ang = 0;
-			for (i = 0; i < angles.length; ++i) {
-				if (da[i] > daMax) {
-					daMax = da[i];
-					ang = angles[i] + da[i]/2;
-				}
-			}
-			var dir = new util.Vec2(Math.cos(ang), Math.sin(ang));
+            var dir = this.bisectLargestSector(atom);
 
 			var visel = atom.visel;
 			var t = 3;
@@ -1052,6 +1093,41 @@ rnd.ReStruct.prototype.showLabels = function ()
         }
 	}
 };
+
+rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
+    var t = 0;
+    var visel = atom.visel;
+    for (var k = 0; k < visel.boxes.length; ++k)
+        t = Math.max(t, util.Vec2.shiftRayBox(pos0, dir, visel.boxes[k]));
+    if (t > 0)
+        pos0 = pos0.addScaled(dir, t + margin);
+    return pos0;
+};
+
+rnd.ReStruct.prototype.bisectLargestSector = function (atom)
+{
+    var angles = [];
+    atom.a.neighbors.each( function (hbid) {
+        var hb = this.molecule.halfBonds.get(hbid);
+        angles.push(hb.ang);
+    }, this);
+    angles = angles.sort(function(a,b){return a-b;});
+    var da = [];
+    for (var i = 0; i < angles.length - 1; ++i) {
+        da.push(angles[(i + 1) % angles.length] - angles[i]);
+    }
+    da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    var daMax = 0;
+    var ang = -Math.PI/2;
+    for (i = 0; i < angles.length; ++i) {
+        if (da[i] > daMax) {
+            daMax = da[i];
+            ang = angles[i] + da[i]/2;
+        }
+    }
+    return new util.Vec2(Math.cos(ang), Math.sin(ang));
+};
+
 
 // TODO to be removed
 /** @deprecated please use ReBond.setHighlight instead */
@@ -1105,7 +1181,7 @@ rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 	bond.b.sb = settings.lineWidth * 5;
 	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
-}
+};
 
 rnd.ReStruct.prototype.showBonds = function ()
 {
@@ -1173,6 +1249,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
 	if ((atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
+		atom.a.label == null ||
 		atom.a.label.toLowerCase() != "c" ||
 		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
 		atom.a.isotope != 0 ||
@@ -1213,6 +1290,16 @@ rnd.ReStruct.layerMap = {
 	'indices' : 5
 };
 
+rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path) {
+    var offset = this.render.offset;
+    if (offset != null)
+        path.translate(offset.x, offset.y);
+    var bb = util.Box2Abs.fromRelBox(path.getBBox());
+    visel.add(path, bb);
+    this.insertInLayer(rnd.ReStruct.layerMap[group], path);
+};
+
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1223,6 +1310,7 @@ rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1233,6 +1321,7 @@ rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 {
 	var offset = this.render.offset;
@@ -1243,6 +1332,7 @@ rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
 	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
+/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
 rnd.ReStruct.prototype.addTmpPath = function (group, path)
 {
 	var visel = new rnd.Visel('TMP');
@@ -1269,13 +1359,7 @@ rnd.ReStruct.prototype.shiftBonds = function ()
 		var atom = this.atoms.get(aid);
 		atom.a.neighbors.each( function (hbid) {
 			var hb = this.molecule.halfBonds.get(hbid);
-			hb.p = atom.a.ps;
-			var t = 0;
-			var visel = atom.visel;
-			for (var i = 0; i < visel.boxes.length; ++i)
-				t = Math.max(t, util.Vec2.shiftRayBox(hb.p, hb.dir, visel.boxes[i]));
-			if (t > 0)
-				hb.p = hb.p.addScaled(hb.dir, t + 2 * settings.lineWidth);
+            hb.p = this.shiftBondEnd(atom, atom.a.ps, hb.dir, 2 * settings.lineWidth);
 		}, this)
 	}
 };

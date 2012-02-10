@@ -195,11 +195,17 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             var bindEventName = eventName.toLowerCase();
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
+                var co = clientArea.cumulativeOffset();
+                co = new util.Vec2(co[0], co[1]);
+                var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
+                var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
+                if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) // ignore events on the hidden part of the canvas
+                    return util.preventDefault(event);
                 var ntHandled = ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
                 var name = '_onCanvas' + eventName;
-				if (!(ui.render.current_tool) && (!('touches' in event) || event.touches.length == 1) && render[name])
-					render[name](new rnd.MouseEvent(event));
-				util.stopEventPropagation(event);
+                if (!(ui.render.current_tool) && (!('touches' in event) || event.touches.length == 1) && render[name])
+                    render[name](new rnd.MouseEvent(event));
+                util.stopEventPropagation(event);
                 if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
                     return util.preventDefault(event);
 			});
@@ -334,6 +340,7 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
     else if (ci.type == 'SGroup') ci.map = 'sgroups';
     else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
     else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
+    else if (ci.type == 'Fragment') ci.map = 'frags';
     return ci;
 };
 
@@ -385,7 +392,7 @@ rnd.Render.prototype.atomGetAttr = function (aid, name)
 {
 	rnd.logMethod("atomGetAttr");
 	// TODO: check attribute names
-	return this.ctab.atoms.get(aid).a[name];
+	return this.ctab.molecule.atoms.get(aid)[name];
 };
 
 rnd.Render.prototype.invalidateAtom = function (aid, level)
@@ -574,6 +581,7 @@ rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 	return sg.neiAtoms;
 };
 
+/** @deprecated [RB] ui.Action.OpAtomAttr to be used instead */
 rnd.Render.prototype._atomSetAttr = function (aid, name, value)
 {
 	rnd.logMethod("_atomSetAttr");
@@ -643,7 +651,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags'].indexOf(obj.map) > -1) {
         this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
     } else if (obj.map == 'atoms') {
         //this.atomSetHighlight(obj.id, visible);
@@ -731,8 +739,7 @@ rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
 
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
-	var p = this.ctab.molecule[map].get(id).pp;
-	return p;
+    return this.ctab.molecule[map].get(id).pp;
 };
 
 rnd.Render.prototype.atomGetPos = function (id)
@@ -847,11 +854,11 @@ rnd.Render.prototype.bondGetAttr = function (bid, name)
 	return this.ctab.bonds.get(bid).b[name];
 };
 
+/** @deprecated [RB] ui.Action.OpBondAttr to be used instead */
 rnd.Render.prototype._bondSetAttr = function (bid, name, value)
 {
 	rnd.logMethod("_bondSetAttr");
-	var bond = this.ctab.bonds.get(bid);
-	bond.b[name] = value;
+    this.ctab.bonds.get(bid).b[name] = value;
 	this.invalidateBond(bid, name == 'type' ? 1 : 0);
 // update loops involving this bond
 };
@@ -940,7 +947,7 @@ rnd.Render.prototype.initStyles = function ()
 		'stroke-width':0.6*settings.lineWidth
 		};
 	this.styles.sgroupBracketStyle = {
-		'stroke':'#000',
+		'stroke':'darkgray',
 		'stroke-width':0.5*settings.lineWidth
 		};
 	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
@@ -962,6 +969,8 @@ rnd.Render.prototype.initSettings = function()
 	settings.font = '30px "Arial"';
 	settings.fontsz = this.settings.labelFontSize;
 	settings.fontszsub = this.settings.subFontSize;
+	settings.fontRLabel = this.settings.labelFontSize * 1.2;
+	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
 rnd.Render.prototype.getBoundingBox = function ()
@@ -986,12 +995,12 @@ rnd.Render.prototype.getStructCenter = function ()
 rnd.Render.prototype.onResize = function ()
 {
 	this.setViewSize(new util.Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
-}
+};
 
 rnd.Render.prototype.setViewSize = function (viewSz)
 {
      this.viewSz = new util.Vec2(viewSz);
-}
+};
 
 rnd.Render.prototype._setPaperSize = function (sz)
 {
@@ -1360,7 +1369,7 @@ rnd.Render.prototype.checkBondExists = function (begin, end) {
 	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
-rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) {
+rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)
 	var closestAtom = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1382,7 +1391,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) {
 	return null;
 };
 
-rnd.Render.prototype.findClosestBond = function (pos, minDist) {
+rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
 	var closestBond = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1411,36 +1420,24 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) {
 	return null;
 };
 
-rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
+rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO should be a member of ReSGroup (see ReFrag)
 	var closestSg = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var lw = this.settings.lineWidth;
-	var vext = new util.Vec2(lw*4, lw*6);
-	this.ctab.molecule.sgroups.each(function(sgid, sg){
-		if (sg.selectionBoxes != null) {
-			for (var i = 0; i < sg.selectionBoxes.length; ++i) {
-				var bbi = sg.selectionBoxes[i];
-				var inBoxi = bbi.p0.y < pos.y && bbi.p1.y > pos.y && bbi.p0.x < pos.x && bbi.p1.x > pos.x;
-				var xDisti = util.Vec2.dist(pos, util.Vec2.lc2(bbi.p0, 0.5, bbi.p1, 0.5));
-				if (inBoxi && (closestSg == null || xDisti < minDist)) {
-					closestSg = sgid;
-					minDist = xDisti;
-				}
-			}
-		} else {
-			var box = sg.bracketBox;
-			if (!box)
-				return;
-			var bb = box.extend(vext, vext);
-			var inBox = bb.p0.y < pos.y && bb.p1.y > pos.y && bb.p0.x < pos.x && bb.p1.x > pos.x;
-			var xDist = Math.min(Math.abs(bb.p0.x - pos.x), Math.abs(bb.p1.x - pos.x));
-			if (inBox && (closestSg == null || xDist < minDist)) {
-				closestSg = sgid;
-				minDist = xDist;
-			}
-		}
+    this.ctab.molecule.sgroups.each(function(sgid, sg){
+        var d = sg.bracketDir, n = d.rotateSC(1, 0);
+        var pg = new util.Vec2(util.Vec2.dot(pos, d), util.Vec2.dot(pos, n));
+        for (var i = 0; i < sg.areas.length; ++i) {
+            var box = sg.areas[i];
+            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
+            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
+            if (inBox && (closestSg == null || xDist < minDist)) {
+                closestSg = sgid;
+                minDist = xDist;
+            }
+        }
 	}, this);
 	if (closestSg != null)
 		return {
@@ -1450,7 +1447,7 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) {
 	return null;
 };
 
-rnd.Render.prototype.findClosest = function (map, pos, minDist) {
+rnd.Render.prototype.findClosest = function (map, pos, minDist) { // TODO should be a member of ReObject (see ReFrag)
 	var closestItem = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -1506,6 +1503,10 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
         var plus = this.findClosest('rxnPluses', pos);
         updret('RxnPlus',plus);
     }
+    if (!maps || maps.indexOf('frags') >= 0) {
+        var frag = rnd.ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
+        updret('Fragment', frag);
+    }
 
 	ret = ret || {
 		'type':'Canvas',
@@ -1516,6 +1517,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 
 rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 {
+    if (!path) return; // [RB] thats ok for some hidden objects (fragment)
 	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
 	var offset = this.offset;
 	if (offset != null) {
@@ -1577,7 +1579,7 @@ rnd.Render.prototype.setScale = function (z) {
 	this.scale = this.baseScale * this.zoom;
 	this.settings = null;
 	this.update(true);
-}
+};
 
 rnd.Render.prototype.setViewBox = function (z) {
 	if (!this.useOldZoom)

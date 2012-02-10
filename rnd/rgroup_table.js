@@ -21,7 +21,10 @@ rnd.RGroupTable = function (clientArea, opts, isTable)
 	clientArea = $(clientArea);
 	clientArea.innerHTML = "";
 	this.onClick = opts.onClick || function(rgi){
-        this.setSelection(this.mode == 'single' ? 1 << rgi : (this.selection ^ (1 << rgi)) & 0xFFFFFFFF);
+        this.setSelection(this.mode == 'single'
+            ? this.selection == (1 << rgi) ? 0 : (1 << rgi)
+            : (this.selection ^ (1 << rgi)) & 0xFFFFFFFF
+        );
 	};
 
 	var hsz = opts.buttonHalfSize || 16;
@@ -85,6 +88,10 @@ rnd.RGroupTable = function (clientArea, opts, isTable)
             this.items[rgi] = { box : box, label : label };
         }).apply(this, [rgi]);
     }
+};
+
+rnd.RGroupTable.prototype.setMode = function(mode) {
+    this.mode = mode;
 };
 
 rnd.RGroupTable.prototype.setSelection = function(selection) {

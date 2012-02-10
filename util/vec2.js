@@ -115,7 +115,7 @@ util.Vec2.prototype.turnLeft = function ()
 
 util.Vec2.prototype.toString = function ()
 {
-    return "(" + this.x.toString() + "," + this.y.toString() + ")";
+    return "(" + this.x.toFixed(2) + "," + this.y.toFixed(2) + ")";
 };
 
 util.Vec2.dist = function (a, b)
@@ -304,6 +304,11 @@ util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)
     this.p0.add(d);
     this.p1.add(d);
 };
+
+util.Box2Abs.prototype.transform = function(/*function(Vec2):Vec2*/f, context)
+{
+    return new util.Box2Abs(f.call(context, this.p0),f.call(context, this.p1));
+}
 
 util.Box2Abs.prototype.sz = function()
 {

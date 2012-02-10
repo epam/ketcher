@@ -101,3 +101,7 @@ util.Map.prototype.count = function () {
 util.Map.prototype.idList = function () {
     return util.idList(this._obj);
 };
+
+util.Map.prototype.keyOf = function(value) {
+    for (var key in this._obj) if (this._obj[key] == value) return key;
+};

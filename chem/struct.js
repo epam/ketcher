@@ -25,6 +25,8 @@ chem.Struct = function ()
 	this.isReaction = false;
 	this.rxnArrows = new util.Pool();
 	this.rxnPluses = new util.Pool();
+    this.frags = new util.Pool();
+    this.rgroups = new util.Map();
 };
 
 chem.Struct.prototype.isBlank = function ()
@@ -62,6 +64,33 @@ chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
 {
 	var cp = new chem.Struct();
 	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols);
+};
+
+chem.Struct.prototype.getScaffold = function () {
+    var atomSet = util.Set.empty();
+    this.atoms.each(function(aid){
+        util.Set.add(atomSet, aid);
+    }, this);
+    this.rgroups.each(function(rgid, rg){
+        rg.frags.each(function(fnum, fid) {
+            this.atoms.each(function(aid, atom){
+                if (atom.fragment == fid) {
+                    util.Set.remove(atomSet, aid);
+                }
+            }, this);
+        }, this);
+    }, this);
+	return this.clone(atomSet);
+};
+
+chem.Struct.prototype.getFragment = function (fid) {
+    var atomSet = util.Set.empty();
+    this.atoms.each(function(aid, atom){
+        if (atom.fragment == fid) {
+            util.Set.add(atomSet, aid);
+        }
+    }, this);
+	return this.clone(atomSet);
 }
 
 chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols)
@@ -70,14 +99,43 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
 	bondSet = bondSet || util.Set.keySetInt(this.bonds);
 	bondSet = util.Set.filter(bondSet, function(bid){
 		var bond = this.bonds.get(bid);
-		return util.Set.contains(atomSet, bond.begin) &&
-			util.Set.contains(atomSet, bond.end);
+		return util.Set.contains(atomSet, bond.begin) && util.Set.contains(atomSet, bond.end);
 	}, this);
+
+    var fidMask = {};
+	this.atoms.each(function(aid, atom) {
+        if (util.Set.contains(atomSet, aid))
+            fidMask[atom.fragment] = 1;
+	});
+    var fidMap = {};
+    this.frags.each(function(fid, frag) {
+        if (fidMask[fid])
+            fidMap[fid] = cp.frags.add(frag.clone());
+    });
+
+    this.rgroups.each(function(rgid, rgroup) {
+        var keepGroup = false;
+        rgroup.frags.each(function(fnum, fid) {
+            if (fidMask[fid])
+                keepGroup = true;
+        });
+        if (!keepGroup)
+            return;
+        var rg = cp.rgroups.get(rgid);
+        if (rg) {
+            rgroup.frags.each(function(fnum, fid) {
+                if (fidMask[fid])
+                    rg.frags.add(fidMap[fid]);
+            });
+        } else {
+            cp.rgroups.set(rgid, rgroup.clone(fidMap));
+        }
+    });
 
 	var aidMap = {};
 	this.atoms.each(function(aid, atom) {
 		if (util.Set.contains(atomSet, aid))
-			aidMap[aid] = cp.atoms.add(atom.clone());
+			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
 	var bidMap = {};
@@ -208,11 +266,15 @@ chem.Struct.Atom = function (params)
 		throw new Error("label must be specified!");
 
 	this.label = params.label;
+    if (!Object.isUndefined(params.fragment))
+        this.fragment = params.fragment;
+
 	util.ifDef(this, params, 'isotope', 0);
 	util.ifDef(this, params, 'radical', 0);
 	util.ifDef(this, params, 'charge', 0);
 	util.ifDef(this, params, 'valence', 0);
-    util.ifDef(this, params, 'rglabel', null);
+    util.ifDef(this, params, 'rglabel', null); // r-group index mask, i-th bit stands for i-th r-site
+    util.ifDef(this, params, 'attpnt', null); // attachment point
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
 	if (!Object.isUndefined(params.pos))
@@ -251,7 +313,8 @@ chem.Struct.Atom.getAttrHash = function(atom) {
 	return attrs;
 };
 
-chem.Struct.Atom.attrlist = {'label':0,
+chem.Struct.Atom.attrlist = {
+    'label':0,
 	'isotope':0,
 	'radical':0,
 	'charge':0,
@@ -264,12 +327,17 @@ chem.Struct.Atom.attrlist = {'label':0,
 	'hCount':0,
 	'atomList':null,
     'rglabel':null,
+    'attpnt':null,
     'aam':0
 };
 
-chem.Struct.Atom.prototype.clone = function ()
+chem.Struct.Atom.prototype.clone = function(fidMap)
 {
-	return new chem.Struct.Atom(this);
+    var ret = new chem.Struct.Atom(this);
+    if (fidMap && this.fragment in fidMap) {
+        ret.fragment = fidMap[this.fragment];
+    }
+    return ret;
 };
 
 chem.Struct.Atom.prototype.isQuery =  function ()
@@ -644,11 +712,6 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	this.atoms.each(function (aid, atom) {
 		extend(atom.pos);
 	});
-	if (!bb)
-		bb = {
-			min: new util.Vec2(0, 0),
-			max: new util.Vec2(1, 1)
-		};
 	return bb;
 };
 
@@ -751,37 +814,85 @@ chem.Struct.RxnArrow.prototype.clone = function ()
 };
 
 chem.Struct.prototype.findConnectedComponent = function (aid) {
-	var ids = util.Set.empty();
-
-
-	return ids;
+    var map = {};
+    var list = [aid];
+    var ids = util.Set.empty();
+    while (list.length > 0) {
+        (function() {
+            var aid = list.pop();
+            map[aid] = 1;
+            util.Set.add(ids, aid);
+            var atom = this.atoms.get(aid);
+            for (var i = 0; i < atom.neighbors.length; ++i) {
+                var neiId = this.halfBonds.get(atom.neighbors[i]).end;
+                if (!util.Set.contains(ids, neiId))
+                    list.push(neiId);
+            }
+        }).apply(this);
+    }
+    return ids;
 };
 
-chem.Struct.prototype.findConnectedComponents = function () {
+chem.Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 	var map = {};
 	this.atoms.each(function(aid,atom){
 		map[aid] = -1;
 	}, this);
 	var components = [];
 	this.atoms.each(function(aid,atom){
-		if (map[aid] < 0) {
-			var list = [aid];
-			var ids = util.Set.empty();
-			while (list.length > 0) {
-				(function() {
-					var aid = list.pop();
-					map[aid] = 1;
-					util.Set.add(ids, aid);
-					var atom = this.atoms.get(aid);
-					for (var i = 0; i < atom.neighbors.length; ++i) {
-						var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-						if (!util.Set.contains(ids, neiId))
-							list.push(neiId);
-					}
-				}).apply(this);
-			}
-			components.push(ids);
+		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
+            var component = this.findConnectedComponent(aid);
+			components.push(component);
+            util.Set.each(component, function(aid){
+                map[aid] = 1;
+            }, this);
 		}
 	}, this);
 	return components;
+};
+
+chem.Struct.prototype.markFragment = function (ids) {
+    var fid = this.frags.add(new chem.Struct.Fragment());
+    util.Set.each(ids, function(aid){
+        this.atoms.get(aid).fragment = fid;
+    }, this);
+};
+
+chem.Struct.prototype.markFragmentByAtomId = function (aid) {
+    this.markFragment(this.findConnectedComponent(aid));
+};
+
+chem.Struct.prototype.markFragments = function () {
+    var components = this.findConnectedComponents();
+    for (var i = 0; i < components.length; ++i) {
+        this.markFragment(components[i]);
+    }
+};
+
+chem.Struct.Fragment = function() {
+};
+chem.Struct.Fragment.prototype.clone = function() {
+    return Object.clone(this);
+};
+
+chem.Struct.RGroup = function(logic) {
+    logic = logic || {};
+    this.frags = new util.Pool();
+    this.resth = logic.resth || false;
+    this.range = logic.range || '';
+    this.ifthen = logic.ifthen || 0;
+};
+chem.Struct.RGroup.findRGroupByFragment = function(rgroups, frid) {
+    var ret;
+    rgroups.each(function(rgid, rgroup) {
+        if (!Object.isUndefined(rgroup.frags.keyOf(frid))) ret = rgid;
+    });
+    return ret;
+};
+chem.Struct.RGroup.prototype.clone = function(fidMap) {
+    var ret = new chem.Struct.RGroup(this);
+    this.frags.each(function(fnum, fid) {
+        ret.frags.add(fidMap ? fidMap[fid] : fid);
+    });
+    return ret;
 };

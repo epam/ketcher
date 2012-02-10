@@ -23,6 +23,13 @@ rnd.Editor = function(render)
 
     this._selectionHelper = new rnd.Editor.SelectionHelper(this);
 };
+rnd.Editor.prototype.selectAll = function() {
+    var selection = {}; for (var map in rnd.ReStruct.maps) selection[map] = ui.ctab[map].ikeys();
+    this._selectionHelper.setSelection(selection);
+};
+rnd.Editor.prototype.deselectAll = function() {
+    this._selectionHelper.setSelection();
+};
 rnd.Editor.prototype.toolFor = function(tool) {
     if (tool == 'select_simple') {
         return new rnd.Editor.LassoTool(this);
@@ -46,8 +53,12 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.ReactionMapTool(this);
     } else if (tool == 'reaction_unmap') {
         return new rnd.Editor.ReactionUnmapTool(this);
-    } else if (tool == 'rgroup') {
-        return new rnd.Editor.RGroupTool(this);
+    } else if (tool == 'rgroup_label') {
+        return new rnd.Editor.RGroupAtomTool(this);
+    } else if (tool == 'rgroup_fragment') {
+        return new rnd.Editor.RGroupFragmentTool(this);
+    } else if (tool == 'rgroup_attpoints') {
+        return new rnd.Editor.APointTool(this);
     }
     return null;
 };
@@ -173,7 +184,7 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
 rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
     if (!event.ctrlKey && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
         if (114 == (Prototype.Browser.IE ? event.keyCode : event.which)) { // 'r'
-            return rnd.Editor.RGroupTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
+            return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
         }
         var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
         if (ci) {
@@ -649,16 +660,16 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
 };
 
 
-rnd.Editor.RGroupTool = function(editor) {
+rnd.Editor.RGroupAtomTool = function(editor) {
     this.editor = editor;
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.RGroupTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.RGroupTool.prototype.OnMouseMove = function(event) {
+rnd.Editor.RGroupAtomTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.RGroupAtomTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
-rnd.Editor.RGroupTool.prototype.OnMouseUp = function(event) {
+rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
     var ci = this.editor.render.findItem(event, ['atoms']);
     if (!ci || ci.type == 'Canvas') {
         this._hoverHelper.hover(null);
@@ -693,6 +704,66 @@ rnd.Editor.RGroupTool.prototype.OnMouseUp = function(event) {
                         newProps.label = 'C';
                     }
                     this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, newProps), true);
+                    this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
+    }
+};
+
+
+rnd.Editor.RGroupFragmentTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.RGroupFragmentTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.RGroupFragmentTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['frags']));
+};
+rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
+    var ci = this.editor.render.findItem(event, ['frags']);
+    if (ci && ci.map == 'frags') {
+        this._hoverHelper.hover(null);
+        var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
+        this.editor.ui.showRGroupTable({
+            mode : 'single',
+            selection : rgOld ? 1 << (rgOld - 1) : 0,
+            onOk : function(rgNew) {
+                for (var i = 0; i < 32; i++) if (rgNew & (1 << i)) { rgNew = i + 1; break; }
+                if (rgOld != rgNew) {
+                    this.editor.ui.addUndoAction(
+                        this.editor.ui.Action.fromRGroupFragment(rgNew, ci.id),
+                        true
+                    );
+                    this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
+    }
+};
+
+rnd.Editor.APointTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.APointTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.APointTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+};
+rnd.Editor.APointTool.prototype.OnMouseUp = function(event) {
+    var ci = this.editor.render.findItem(event, ['atoms']);
+    if (ci && ci.map == 'atoms') {
+        this._hoverHelper.hover(null);
+        var apOld = this.editor.render.ctab.molecule.atoms.get(ci.id).attpnt;
+        this.editor.ui.showAtomAttachmentPoints({
+            selection : apOld,
+            onOk : function(apNew) {
+                if (apOld != apNew) {
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, { attpnt : apNew }), true);
                     this.editor.ui.render.update();
                 }
             }.bind(this)

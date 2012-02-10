@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <title>Ketcher</title>
         <link rel="stylesheet" type="text/css" href="ketcher.css" />
         <script type="text/javascript" src="prototype-min.js"></script>
@@ -41,7 +42,7 @@
         <div>
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
-                    <td style="width:36px"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="png/action/lasso.png" alt="" title="Element Selection (Esc)" /></td>
+                    <td style="width:36px"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="png/action/lasso.png" alt="" title="Select Tool (Esc)" /></td>
                     <td style="width:12px" class="dropdownButton" id="selector_dropdown" title="Selector Tool Type"><img src="png/dropdown.png" alt="" /></td>
                     <td class="toolDelimiter"></td>
                     <!--td style="width:36px"><object type="image/svg+xml" width="28" height="28" data="svg/document-new28x28.svg"></object></td-->
@@ -92,12 +93,12 @@
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)"></div></td>
                     <td></td>
-                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
+                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="png/action/reaction-arrow.png" alt="" title="Reaction Mapping Tool" /></td>
-                    <td class="dropdownButton" id="reaction_dropdown" title="Reation Mapping Mode"><img src="png/dropdown.png" alt="" /></td>
-                    <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
+                    <td class="dropdownButton" id="reaction_dropdown" title="Reaction Mapping Mode"><img src="png/dropdown.png" alt="" /></td>
+                    <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="sgroup" src="png/action/sgroup.png" alt="" title="S-Group (Ctrl+G)" /></td>
@@ -105,8 +106,8 @@
                     <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton" id="rgroup" title="R-Group Tool (Shift+R)"></div></td>
-                    <td></td>
+                    <td><img class="sideButton modeButton stateButton" id="rgroup" selid="rgroup_label" src="png/action/rgroup-label.png" alt="" title="R-Group Tool (Shift+R)" /></td>
+                    <td class="dropdownButton" id="rgroup_dropdown" title="R-Group Tool Mode"><img src="png/dropdown.png" alt="" /></td>
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
@@ -133,10 +134,10 @@
             <div class="dropdownList" id="selector_dropdown_list" style="display:none">
                 <table>
 					
-                    <tr class="dropdownListItem" id="selector_lasso" title="Lasso selection tool">
+                    <tr class="dropdownListItem" id="selector_lasso" title="Lasso Selection Tool">
                         <td><div id="select_lasso_todo"><img src="png/action/lasso.png" alt="" style="width:24px;height:24px;" /></div>Lasso selection tool</td>
                     </tr>
-                    <tr class="dropdownListItem" id="selector_square" title="Rectangle selection tool">
+                    <tr class="dropdownListItem" id="selector_square" title="Rectangle Selection Tool">
                         <td><div id="select_square_todo"><img src="png/action/rectangle.png" alt="" style="width:24px;height:24px;" /></div>Rectangle selection tool</td>
                     </tr>
 <!--
@@ -225,7 +226,7 @@
 
             <div class="dropdownList" id="reaction_dropdown_list" style="display:none">
                 <table>
-                    <tr class="dropdownListItem" id="reaction_arrow" title="Reaction Arraow Tool">
+                    <tr class="dropdownListItem" id="reaction_arrow" title="Reaction Arrow Tool">
                         <td><div id="reaction_arrow_todo"><img src="png/action/reaction-arrow.png" alt="" style="width:24px;height:24px;" /></div>Reaction Arrow Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="reaction_plus" title="Reaction Plus Tool">
@@ -239,6 +240,20 @@
                     </tr>
                     <tr class="dropdownListItem" id="reaction_unmap" title="Reaction Unmappping Tool">
                         <td><div id="reaction_unmap_todo"><img src="png/action/reaction-unmap.png" alt="" style="width:24px;height:24px;" /></div>Reaction Unmapping Tool</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="dropdownList" id="rgroup_dropdown_list" style="display:none">
+                <table>
+                    <tr class="dropdownListItem" id="rgroup_label" title="R-Group Label Tool (Shift+R)">
+                        <td><div id="rgroup_label_todo"><img src="png/action/rgroup-label.png" alt="" style="width:24px;height:24px;" /></div>R-Group Label Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="rgroup_fragment" title="R-Group Fragment Tool (Shift+R)">
+                        <td><div id="rgroup_fragment_todo"><img src="png/action/rgroup-fragment.png" alt="" style="width:24px;height:24px;" /></div>R-Group Fragment Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="rgroup_attpoints" title="Attachment Point Tool (Shift+R)">
+                        <td><div id="rgroup_attpoints_todo"><img src="png/action/rgroup-attpoints.png" alt="" style="width:24px;height:24px;" /></div>Attachment Point Tool</td>
                     </tr>
                 </table>
             </div>
@@ -362,7 +377,6 @@
                                     <option value="0"></option>
                                     <option value="-2">As drawn</option>
                                     <option value="-1">0</option>
-                                    <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
                                     <option value="4">4</option>
@@ -456,6 +470,37 @@
                     <div style="margin-top:0.5em">
                         <input id="atom_prop_cancel" type="button" value="Cancel" />
                         <input id="atom_prop_ok" type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialogWindow propDialog" id="atom_attpoints" style="display:none;">
+                <div style="width:100%">
+                    <div>
+                        Attachment Points
+                    </div>
+                    <table style="text-align:left">
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="atom_ap1">
+                            </td>
+                            <td>
+                                Primary attachment point
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="atom_ap2">
+                            </td>
+                            <td>
+                                Secondary attachment point
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="height:0.5em"></div>
+                    <div style="margin-top:0.5em">
+                        <input id="atom_attpoints_cancel" type="button" value="Cancel" />
+                        <input id="atom_attpoints_ok" type="button" value="OK" />
                     </div>
                 </div>
             </div>
@@ -673,7 +718,7 @@
                     <div id="reagenerics_table_area"></div>
                     <div style="margin-top:0.5em">
                         <input id="reagenerics_table_cancel" type="button" value="Cancel" />
-                        <input id="reagenerics_table_ok" type="button" value="OK" />
+                        <input id="reagenerics_table_ok" type="button" value="OK" disabled />
                     </div>
                 </div>
             </div>

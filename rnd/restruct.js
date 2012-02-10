@@ -123,6 +123,8 @@ rnd.ReStruct = function (molecule, render)
 	this.reloops = new util.Map();
 	this.rxnPluses = new util.Map();
 	this.rxnArrows = new util.Map();
+    this.frags = new util.Map();
+    this.rgroups = new util.Map();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -162,6 +164,14 @@ rnd.ReStruct = function (molecule, render)
 		this.rxnArrows.set(id, new rnd.ReRxnArrow(item));
 	}, this);
 
+    molecule.frags.each(function(id, item) {
+        this.frags.set(id, new rnd.ReFrag(item));
+    }, this);
+
+    molecule.rgroups.each(function(id, item) {
+        this.rgroups.set(id, new rnd.ReRGroup(item));
+    }, this);
+
 	this.coordProcess();
 
 	this.tmpVisels = [];
@@ -171,7 +181,9 @@ rnd.ReStruct.maps = {
 	'atoms':     0,
 	'bonds':     1,
 	'rxnPluses': 2,
-	'rxnArrows': 3
+	'rxnArrows': 3,
+    'frags':     4,
+    'rgroups':   5
 };
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
@@ -443,6 +455,14 @@ rnd.ReStruct.prototype.update = function (force)
 		this.clearVisel(this.tmpVisels[i]);
 	this.tmpVisels.clear();
 
+    // TODO [RB] need to implement update-on-demand for fragments and r-groups
+    this.frags.each(function(frid, frag) {
+        this.clearVisel(frag.visel);
+    }, this);
+    this.rgroups.each(function(rgid, rgroup) {
+        this.clearVisel(rgroup.visel);
+    }, this);
+
 	if (force) { // clear and recreate all half-bonds
 		this.clearConnectedComponents();
 		this.molecule.initHalfBonds();
@@ -473,6 +493,8 @@ rnd.ReStruct.prototype.update = function (force)
 	this.clearMarks();
 	this.drawReactionSymbols();
 	this.drawSGroups();
+    this.drawFragments();
+    this.drawRGroups();
 	this.drawChiralLabel();
 
 //	this.connectedComponents.each(function(ccid, cc){
@@ -549,6 +571,26 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 		if (sgroup.highlight)
 			this.showBracketHighlighting(id, sgroup, true);
 	}, this);
+};
+
+rnd.ReStruct.prototype.drawFragments = function() {
+    this.frags.each(function(id, frag) {
+        var path = frag.draw(this.render, id);
+        if (path) this.addReObjectPath('data', frag.visel, path);
+        // TODO fragment selection & highlighting
+    }, this);
+};
+
+rnd.ReStruct.prototype.drawRGroups = function() {
+    this.rgroups.each(function(id, rgroup) {
+        var drawing = rgroup.draw(this.render);
+        for (var group in drawing) {
+            while (drawing[group].length > 0) {
+                this.addReObjectPath(group, rgroup.visel, drawing[group].shift());
+            }
+        }
+        // TODO rgroup selection & highlighting
+    }, this);
 };
 
 rnd.ReStruct.prototype.drawChiralLabel = function ()
@@ -741,6 +783,7 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 	}
 };
 
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.atomAdd = function (pos, params)
 {
 	var pp = {};
@@ -749,12 +792,18 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 			pp[p] = params[p];
 	pp.label = pp.label || 'C';
 	var aid = this.molecule.atoms.add(new chem.Struct.Atom(pp));
-	var atom = this.molecule.atoms.get(aid);
-	var atomData = new rnd.ReAtom(atom);
+    var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
 	atomData.component = this.connectedComponents.add(util.Set.single(aid));
 	this.atoms.set(aid, atomData);
 	this.molecule._atomSetPos(aid, pos);
 	return aid;
+};
+
+rnd.ReStruct.prototype.notifyAtomAdded = function(aid) {
+    var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
+    atomData.component = this.connectedComponents.add(util.Set.single(aid));
+    this.atoms.set(aid, atomData);
+    this.markAtom(aid, 1);
 };
 
 rnd.ReStruct.prototype.rxnPlusAdd = function (pos, params)
@@ -793,6 +842,7 @@ rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 	this.molecule.rxnPluses.remove(id);
 };
 
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end) {
@@ -811,12 +861,21 @@ rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 	pp.end = end;
 
 	var bid = this.molecule.bonds.add(new chem.Struct.Bond(pp));
-	var bond = this.molecule.bonds.get(bid);
-	this.bonds.set(bid, new rnd.ReBond(bond));
+    this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
 	this.molecule.bondInitHalfBonds(bid);
 	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb1);
 	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb2);
 	return bid;
+};
+
+rnd.ReStruct.prototype.notifyBondAdded = function(bid) {
+    this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
+
+    this.molecule.bondInitHalfBonds(bid);
+    this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb1); // TODO investigate: ReStruct modifies Struct (why???)
+    this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb2);
+
+    this.markBond(bid, 1);
 };
 
 rnd.ReStruct.prototype.bondFlip = function (bid)
@@ -826,6 +885,7 @@ rnd.ReStruct.prototype.bondFlip = function (bid)
 	return this.bondAdd(data.end, data.begin, data);
 };
 
+/** @deprecated old architecture */
 rnd.ReStruct.prototype.atomRemove = function (aid)
 {
 	var atom = this.atoms.get(aid);
@@ -847,6 +907,24 @@ rnd.ReStruct.prototype.atomRemove = function (aid)
 	this.molecule.atoms.remove(aid);
 };
 
+rnd.ReStruct.prototype.notifyAtomRemoved = function (aid) {
+    var atom = this.atoms.get(aid);
+    var set = this.connectedComponents.get(atom.component);
+    util.Set.remove(set, aid);
+    if (util.Set.size(set) == 0) {
+        this.connectedComponents.remove(atom.component);
+    }
+
+	// clone neighbors array, as it will be modified
+    Array.from(atom.a.neighbors).each(function(hbid) {
+        this.bondRemove(this.molecule.halfBonds.get(hbid).bid);
+	}, this);
+	this.markItemRemoved();
+	this.clearVisel(atom.visel);
+	this.atoms.unset(aid);
+};
+
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.bondRemove = function (bid)
 {
 	var bond = this.bonds.get(bid);
@@ -858,6 +936,17 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 	this.clearVisel(bond.visel);
 	this.bonds.unset(bid);
 	this.molecule.bonds.remove(bid);
+};
+
+rnd.ReStruct.prototype.notifyBondRemoved = function(bid) {
+    var bond = this.bonds.get(bid);
+    this.halfBondUnref(bond.b.hb1);
+    this.halfBondUnref(bond.b.hb2);
+    this.molecule.halfBonds.unset(bond.b.hb1); // TODO investigate: ReStruct modifies Struct (why???)
+    this.molecule.halfBonds.unset(bond.b.hb2);
+    this.markItemRemoved();
+    this.clearVisel(bond.visel);
+    this.bonds.unset(bid);
 };
 
 rnd.ReStruct.prototype.loopRemove = function (loopId)
@@ -993,4 +1082,156 @@ rnd.ReRxnArrow.prototype.drawHighlight = function(render) {
 rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
+};
+
+
+rnd.ReFrag = function(/*chem.Struct.Fragment*/frag) {
+    this.init(rnd.Visel.TYPE.FRAGMENT);
+
+    this.item = frag;
+};
+rnd.ReFrag.prototype = new rnd.ReObject();
+
+rnd.ReFrag.findClosest = function(render, p, skip, minDist) {
+    minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
+    var ret;
+    render.ctab.frags.each(function(fid, frag) {
+        if (fid != skip) {
+            var bb = frag.calcBBox(render, fid); // TODO any faster way to obtain bb?
+            if (bb.p0.y < p.y && bb.p1.y > p.y && bb.p0.x < p.x && bb.p1.x > p.x) {
+                var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
+                if (!ret || xDist < minDist) {
+                    minDist = xDist;
+                    ret = { 'id' : fid, 'minDist' : minDist };
+                }
+            }
+        }
+    });
+    return ret;
+};
+
+rnd.ReFrag.prototype.calcBBox = function(render, fid) { // TODO need to review parameter list
+    var ret;
+    render.ctab.atoms.each(function(aid, atom) {
+        if (atom.a.fragment == fid) {
+            // TODO ReObject.calcBBox to be used instead
+            var bba = atom.visel.boundingBox;
+            if (!bba) {
+                bba = new util.Box2Abs(atom.a.pp, atom.a.pp);
+                var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+                bba = bba.extend(ext, ext);
+            } else {
+                bba = bba.transform(render.scaled2obj, render);
+            }
+            ret = (ret ? util.Box2Abs.union(ret, bba) : bba);
+        }
+    }, this);
+    return ret;
+};
+
+rnd.ReFrag.prototype._draw = function(render, fid, attrs) { // TODO need to review parameter list
+    var bb = this.calcBBox(render, fid);
+    if (bb) {
+        var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
+        var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+        return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
+    } else {
+        // TODO abnormal situation, empty fragments must be destroyed by tools
+    }
+};
+
+rnd.ReFrag.prototype.draw = function(render, fid) { // TODO need to review parameter list
+    return this._draw(render, fid, { 'stroke' : 'lightgray' });
+};
+
+rnd.ReFrag.prototype.drawHighlight = function(render) { // TODO need to review parameter list
+    var fid = render.ctab.frags.keyOf(this);
+    if (!Object.isUndefined(fid)) {
+        var ret = this._draw(render, fid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
+        render.addItemPath(this.visel, 'highlighting', ret);
+        return ret;
+    } else {
+        // TODO abnormal situation, fragment does not belong to the render
+    }
+};
+
+rnd.ReRGroup = function(/*chem.Struct.RGroup*/rgroup) {
+    this.init(rnd.Visel.TYPE.RGROUP);
+
+    this.item = rgroup;
+};
+rnd.ReRGroup.prototype = new rnd.ReObject();
+
+rnd.ReRGroup.prototype.calcBBox = function(render) {
+    var ret;
+    this.item.frags.each(function(fnum, fid) {
+        var bbf = render.ctab.frags.get(fid).calcBBox(render, fid);
+        if (bbf) {
+            ret = (ret ? util.Box2Abs.union(ret, bbf) : bbf);
+        }
+    });
+    var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+    ret = ret.extend(ext, ext);
+    return ret;
+};
+
+rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review parameter list
+    var bb = this.calcBBox(render);
+    var settings = render.settings;
+    if (bb) {
+        var ret = { 'data' : [] };
+        var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
+        var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+        var brackets = render.paper.set();
+        chem.SGroup.drawBrackets(brackets, render, render.paper, settings, render.styles, bb);
+        ret.data.push(brackets);
+        var key = render.ctab.rgroups.keyOf(this);
+        var label = render.paper.text(p0.x, (p0.y + p1.y)/2, 'R' + key + '=')
+            .attr({
+				'font' : settings.font,
+				'font-size' : settings.fontRLabel,
+				'fill' : 'black'
+			});
+        var labelBox = label.getBBox();
+        label.translate(-labelBox.width/2-settings.lineWidth, 0);
+        var logicStyle = {
+				'font' : settings.font,
+				'font-size' : settings.fontRLogic,
+				'fill' : 'black'
+			};
+
+        var logic = [];
+        // TODO [RB] temporary solution, need to review
+        //BEGIN
+/*
+        if (this.item.range.length > 0)
+            logic.push(this.item.range);
+        if (this.item.resth)
+            logic.push("RestH");
+        if (this.item.ifthen > 0)
+            logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
+*/
+        logic.push(
+            (this.item.ifthen > 0 ? 'IF ' : '')
+            + 'R' + key.toString()
+            + (this.item.range.length > 0 ? this.item.range : '>0')
+            + (this.item.resth ? ' (RestH)' : '')
+            + (this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
+        );
+        //END
+        var shift = labelBox.height/2 + settings.lineWidth/2;
+        for (var i = 0; i < logic.length; ++i) {
+            var logicPath = render.paper.text(p0.x, (p0.y + p1.y)/2, logic[i]).attr(logicStyle);
+            var logicBox = logicPath.getBBox();
+            shift += logicBox.height/2;
+            logicPath.translate(-logicBox.width/2-6*settings.lineWidth, shift);
+            shift += logicBox.height/2 + settings.lineWidth/2;
+            ret.data.push(logicPath);
+        }
+        ret.data.push(label);
+        return ret;
+    } else {
+        // TODO abnormal situation, empty fragments must be destroyed by tools
+        return {};
+    }
 };

@@ -895,8 +895,10 @@ ui.Action.__fromFragmentSplit = function(frid) { // TODO [RB] the thing is too t
             }
         }
     });
-    action.mergeWith(ui.Action.fromRGroupFragment(0, frid));
-    action.addOp(new ui.Action.OpFragmentDelete(frid).perform(ui.editor));
+    if (frid != -1) {
+        action.mergeWith(ui.Action.fromRGroupFragment(0, frid));
+        action.addOp(new ui.Action.OpFragmentDelete(frid).perform(ui.editor));
+    }
     return action;
 };
 
@@ -947,6 +949,8 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
     rxnPluses.each(function (id) {
         action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
     }, this);
+
+    action.mergeWith(new ui.Action.__fromFragmentSplit(-1));
 
     return action;
 };

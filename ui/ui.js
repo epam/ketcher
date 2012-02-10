@@ -3117,6 +3117,7 @@ ui.paste = function ()
     for (id = 0; id < ui.clipboard.atoms.length; id++)
     {
         var atom = ui.clipboard.atoms[id];
+        atom.fragment = -1;
         mapping[id] = ui.render.atomAdd(atom.pos, atom);
         ui.pasted.atoms.push(mapping[id]);
     }

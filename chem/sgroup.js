@@ -498,7 +498,7 @@ chem.SGroup.GroupSru = {
         var idxOffset = 0.25;
 		if (connectivity != 'ht') {
             var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
-                n, d.x < 0 ? bb.p0.y : bb.p1.y);
+                n, d.x >= 0 ? bb.p0.y : bb.p1.y);
             idxPos = render.obj2scaled(idxPos);
 			var connectivityIndex = paper.text(idxPos.x, idxPos.y, connectivity)
 			.attr({
@@ -509,7 +509,7 @@ chem.SGroup.GroupSru = {
 		}
 		this.data.subscript = this.data.subscript || 'n';
         idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
-            n, d.x >= 0 ? bb.p0.y : bb.p1.y);
+            n, d.x < 0 ? bb.p0.y : bb.p1.y);
         idxPos = render.obj2scaled(idxPos);
 		var subscript = paper.text(idxPos.x, idxPos.y, this.data.subscript)
 		.attr({

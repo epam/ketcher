@@ -47,6 +47,10 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.ChainTool(this);
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
+    } else if (tool == 'charge_plus') {
+        return new rnd.Editor.ChargeTool(this, 1);
+    } else if (tool == 'charge_minus') {
+        return new rnd.Editor.ChargeTool(this, -1);
     } else if (tool == 'reaction_arrow') {
         return new rnd.Editor.ReactionArrowTool(this);
     } else if (tool == 'reaction_plus') {
@@ -706,6 +710,31 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
         );
         this.editor.ui.render.update();
     }
+};
+
+
+rnd.Editor.ChargeTool = function(editor, charge) { // TODO [RB] should be "pluggable"
+    this.editor = editor;
+    this.charge = charge;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+};
+rnd.Editor.ChargeTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.ChargeTool.prototype.OnMouseMove = function(event) {
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+    return true;
+};
+rnd.Editor.ChargeTool.prototype.OnMouseUp = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
+    var ci = _R_.findItem(event, ['atoms']);
+    if (ci && ci.map == 'atoms') {
+        this._hoverHelper.hover(null);
+        _E_.ui.addUndoAction(
+            _E_.ui.Action.fromAtomAttrs(ci.id, { charge : _R_.ctab.molecule.atoms.get(ci.id).charge + this.charge })
+        );
+        _R_.update();
+    }
+    return true;
 };
 
 

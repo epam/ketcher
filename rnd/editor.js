@@ -686,11 +686,11 @@ rnd.Editor.TemplateTool.prototype.templates = [
 ];
 // TODO implement rotation around fusing atom / flipping over fusing bond
 rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
-    this._hoverHelper.hover(this.editor.render.findItem(event));
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms', 'bonds']));
 };
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
     this._hoverHelper.hover(null);
-    var ci = this.editor.render.findItem(event);
+    var ci = this.editor.render.findItem(event, ['atoms', 'bonds']);
     if (!ci || ci.type == 'Canvas') {
         this.editor.ui.addUndoAction(
             this.editor.ui.Action.fromPatternOnCanvas(this.editor.ui.page2obj(event), this.templates[this.template]),

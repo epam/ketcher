@@ -2963,14 +2963,16 @@ ui.showRGroupTable = function(params)
         ui.rgroup_table_obj.setMode(params.mode || 'multiple');
         ui.rgroup_table_obj.setSelection(params.selection || 0);
         var _onOk = new Event.Handler('rgroup_table_ok', 'click', undefined, function() {
+            _onOk.stop();
+            _onCancel.stop();
             ui.hideDialog('rgroup_table');
             if ('onOk' in params) params['onOk'](ui.rgroup_table_obj.selection);
-            _onOk.stop();
         }).start();
         var _onCancel = new Event.Handler('rgroup_table_cancel', 'click', undefined, function() {
+            _onOk.stop();
+            _onCancel.stop();
             ui.hideDialog('rgroup_table');
             if ('onCancel' in params) params['onCancel']();
-            _onCancel.stop();
         }).start();
         $('rgroup_table_ok').focus();
     }

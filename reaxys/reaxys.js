@@ -221,7 +221,7 @@ ui.showReaGenericsTable = function(params) {
             if ('onCancel' in params) params['onCancel']();
             _onCancel.stop();
         }).start();
-        $('reagenerics_table_ok').focus();
+        $($('reagenerics_table_ok').disabled ? 'reagenerics_table_cancel' : 'reagenerics_table_ok').focus();
     }
 };
 

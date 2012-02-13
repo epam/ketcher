@@ -885,7 +885,7 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseUp = function(event) {
         this.editor.ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
         this.editor.render.update();
         delete this.dragCtx;
-    } else {
+    } else if (this.editor.render.ctab.molecule.rxnArrows.count() < 1) {
         this.editor.ui.addUndoAction(this.editor.ui.Action.fromArrowAddition(this.editor.ui.page2obj(event)));
         this.editor.render.update();
     }

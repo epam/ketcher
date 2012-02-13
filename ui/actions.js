@@ -54,10 +54,14 @@ ui.Action.OPERATION =
     SGROUP_DEL:      12,
     SGROUP_ATOM_ADD: 13,
     SGROUP_ATOM_DEL: 14,
+    /** @deprecated Please use action.addOp(new ui.Action.OpRxnArrowDelete(...)) instead */
     RXN_ARROW_DEL:   15,
+    /** @deprecated Please use action.addOp(new ui.Action.OpRxnArrowAdd(...)) instead */
     RXN_ARROW_ADD:   16,
     RXN_ARROW_POS:   17,
+    /** @deprecated Please use action.addOp(new ui.Action.OpRxnPlusDelete(...)) instead */
     RXN_PLUS_DEL:    18,
+    /** @deprecated Please use action.addOp(new ui.Action.OpRxnPlusAdd(...)) instead */
     RXN_PLUS_ADD:    19,
     RXN_PLUS_POS:    20
 };
@@ -708,46 +712,30 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 ui.Action.fromArrowAddition = function (pos)
 {
     var action = new ui.Action();
-
     if (ui.ctab.rxnArrows.count() < 1) {
-        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
-            id: ui.render.rxnArrowAdd(pos)
-        });
+        action.addOp(new ui.Action.OpRxnArrowAdd(pos).perform(ui.editor));
     }
-
     return action;
 };
 
 ui.Action.fromArrowDeletion = function (id)
 {
     var action = new ui.Action();
-
-    action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {
-        'id': id
-    });
-
+    action.addOp(new ui.Action.OpRxnArrowDelete(id));
     return action.perform();
 };
 
 ui.Action.fromPlusAddition = function (pos)
 {
     var action = new ui.Action();
-
-    action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {
-        id: ui.render.rxnPlusAdd(pos)
-    });
-
+    action.addOp(new ui.Action.OpRxnPlusAdd(pos).perform(ui.editor));
     return action;
 };
 
 ui.Action.fromPlusDeletion = function (id)
 {
     var action = new ui.Action();
-
-    action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {
-        'id': id
-    });
-
+    action.addOp(new ui.Action.OpRxnPlusDelete(id));
     return action.perform();
 };
 
@@ -943,11 +931,11 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
     }, this);
 
     rxnArrows.each(function (id) {
-        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+        action.addOp(new ui.Action.OpRxnArrowDelete(id));
     }, this);
 
     rxnPluses.each(function (id) {
-        action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
+        action.addOp(new ui.Action.OpRxnPlusDelete(id));
     }, this);
 
     action.mergeWith(new ui.Action.__fromFragmentSplit(-1));
@@ -1016,11 +1004,11 @@ ui.Action.fromFragmentDeletion = function(selection)
     action.removeSgroupIfNeeded(atoms_to_remove);
 
     selection.rxnArrows.each(function (id) {
-        action.addOperation(ui.Action.OPERATION.RXN_ARROW_DEL, {id: id});
+        action.addOp(new ui.Action.OpRxnArrowDelete(id));
     }, this);
 
     selection.rxnPluses.each(function (id) {
-        action.addOperation(ui.Action.OPERATION.RXN_PLUS_DEL, {id: id});
+        action.addOp(new ui.Action.OpRxnPlusDelete(id));
     }, this);
 
     action = action.perform();
@@ -1717,3 +1705,74 @@ ui.Action.OpRGroupFragment = function(rgid, frid) {
 };
 ui.Action.OpRGroupFragment.prototype = new ui.Action.OpBase();
 
+ui.Action.OpRxnArrowAdd = function(pos) {
+    this.data = { arid : null, pos : pos };
+    this._execute = function(editor) {
+        var _RS_ = editor.render.ctab;
+        if (!Object.isNumber(this.data.arid)) {
+            this.data.arid = _RS_.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
+        } else {
+            _RS_.molecule.rxnArrows.set(this.data.arid, new chem.Struct.RxnArrow());
+        }
+        _RS_.notifyRxnArrowAdded(this.data.arid);
+        _RS_.molecule._rxnArrowSetPos(this.data.arid, new util.Vec2(this.data.pos));
+
+        editor.render.invalidateItem('rxnArrows', this.data.arid, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnArrowDelete(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpRxnArrowAdd.prototype = new ui.Action.OpBase();
+
+ui.Action.OpRxnArrowDelete = function(arid) {
+    this.data = { arid : arid, pos : null };
+    this._execute = function(editor) {
+        var _RS_ = editor.render.ctab;
+        if (!this.data.pos) {
+            this.data.pos = editor.render.rxnArrowGetPos(this.data.arid);
+        }
+        _RS_.notifyRxnArrowRemoved(this.data.arid);
+        _RS_.molecule.rxnArrows.remove(this.data.arid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnArrowAdd(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpRxnArrowDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpRxnPlusAdd = function(pos) {
+    this.data = { plid : null, pos : pos };
+    this._execute = function(editor) {
+        var _RS_ = editor.render.ctab;
+        if (!Object.isNumber(this.data.plid)) {
+            this.data.plid = _RS_.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
+        } else {
+            _RS_.molecule.rxnPluses.set(this.data.plid, new chem.Struct.RxnPlus());
+        }
+        _RS_.notifyRxnPlusAdded(this.data.plid);
+        _RS_.molecule._rxnPlusSetPos(this.data.plid, new util.Vec2(this.data.pos));
+
+        editor.render.invalidateItem('rxnPluses', this.data.plid, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnPlusDelete(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpRxnPlusAdd.prototype = new ui.Action.OpBase();
+
+ui.Action.OpRxnPlusDelete = function(plid) {
+    this.data = { plid : plid, pos : null };
+    this._execute = function(editor) {
+        var _RS_ = editor.render.ctab;
+        if (!this.data.pos) {
+            this.data.pos = editor.render.rxnArrowGetPos(this.data.plid);
+        }
+        _RS_.notifyRxnPlusRemoved(this.data.plid);
+        _RS_.molecule.rxnPluses.remove(this.data.plid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnPlusAdd(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();

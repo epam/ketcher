@@ -806,6 +806,7 @@ rnd.ReStruct.prototype.notifyAtomAdded = function(aid) {
     this.markAtom(aid, 1);
 };
 
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.rxnPlusAdd = function (pos, params)
 {
 	var id = this.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
@@ -815,6 +816,11 @@ rnd.ReStruct.prototype.rxnPlusAdd = function (pos, params)
 	return id;
 };
 
+rnd.ReStruct.prototype.notifyRxnPlusAdded = function(plid) {
+    this.rxnPluses.set(plid, new rnd.ReRxnPlus(this.molecule.rxnPluses.get(plid)));
+};
+
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.rxnArrowAdd = function (pos, params)
 {
 	var id = this.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
@@ -824,6 +830,11 @@ rnd.ReStruct.prototype.rxnArrowAdd = function (pos, params)
 	return id;
 };
 
+rnd.ReStruct.prototype.notifyRxnArrowAdded = function(arid) {
+    this.rxnArrows.set(arid, new rnd.ReRxnArrow(this.molecule.rxnArrows.get(arid)));
+};
+
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.rxnArrowRemove = function (id)
 {
 	var reitem = this.rxnArrows.get(id);
@@ -833,6 +844,13 @@ rnd.ReStruct.prototype.rxnArrowRemove = function (id)
 	this.molecule.rxnArrows.remove(id);
 };
 
+rnd.ReStruct.prototype.notifyRxnArrowRemoved = function(arid) {
+    this.markItemRemoved();
+    this.clearVisel(this.rxnArrows.get(arid).visel);
+    this.rxnArrows.unset(arid);
+};
+
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 {
 	var reitem = this.rxnPluses.get(id);
@@ -840,6 +858,12 @@ rnd.ReStruct.prototype.rxnPlusRemove = function (id)
 	this.clearVisel(reitem.visel);
 	this.rxnPluses.unset(id);
 	this.molecule.rxnPluses.remove(id);
+};
+
+rnd.ReStruct.prototype.notifyRxnPlusRemoved = function(plid) {
+    this.markItemRemoved();
+    this.clearVisel(this.rxnPluses.get(plid).visel);
+    this.rxnPluses.unset(plid);
 };
 
 /** @deprecated [RB] old architecture */

@@ -427,7 +427,7 @@ ui.Action.prototype.perform = function ()
 ui.Action.prototype.isDummy = function ()
 {
     return this.operations.detect(function(op) {
-        if ('isDummy' in op) return op.isDummy(ui.editor); // TODO [RB] the condition is always true for ui.Action.Op* operations
+        if ('isDummy' in op) return !op.isDummy(ui.editor); // TODO [RB] the condition is always true for ui.Action.Op* operations
         switch (op.type)
         {
         case ui.Action.OPERATION.ATOM_POS:
@@ -577,25 +577,21 @@ ui.Action.fromBondPos = function (id)
 ui.Action.fromAtomAttrs = function (id, attrs)
 {
     var action = new ui.Action();
-    attrs = new Hash(attrs);
-    attrs.each(function (attr) {
-        action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value).perform(ui.editor));
+    new Hash(attrs).each(function (attr) {
+        action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
     }, this);
-
-    return action;
+    return action.perform();
 };
 
 ui.Action.fromSelectedAtomsAttrs = function (attrs)
 {
     var action = new ui.Action();
-    attrs = new Hash(attrs);
-    ui.selection.atoms.each(function(id) {
-        attrs.each(function(attr) {
-            action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value).perform(ui.editor));
-        }, this);
+    new Hash(attrs).each(function(attr) {
+        ui.selection.atoms.each(function(id) {
+            action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
+        }, this)
     }, this);
-
-    return action;
+    return action.perform();
 };
 
 ui.Action.fromBondAttrs = function (id, attrs, flip)
@@ -631,6 +627,7 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 
 ui.Action.fromAtomAddition = function (pos, atom)
 {
+    atom = Object.clone(atom);
     var action = new ui.Action();
     atom.fragment = action.addOp(new ui.Action.OpFragmentAdd().perform(ui.editor)).frid;
     action.addOp(new ui.Action.OpAtomAdd(atom, pos).perform(ui.editor));
@@ -1545,7 +1542,7 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
         editor.render.invalidateAtom(this.data.aid);
     };
     this._isDummy = function(editor) {
-        return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] != this.data.value;
+        return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
     };
     this._invert = function() {
         var ret = new ui.Action.OpAtomAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
@@ -1637,7 +1634,7 @@ ui.Action.OpBondAttr = function(bid, attribute, value) {
         editor.render.invalidateBond(this.data.bid, this.data.attribute == 'type' ? 1 : 0);
     };
     this._isDummy = function(editor) {
-        return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] != this.data.value;
+        return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
     };
     this._invert = function() {
         var ret = new ui.Action.OpBondAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;

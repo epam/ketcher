@@ -894,11 +894,6 @@ rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 
 rnd.ReStruct.prototype.notifyBondAdded = function(bid) {
     this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
-
-    this.molecule.bondInitHalfBonds(bid);
-    this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb1); // TODO investigate: ReStruct modifies Struct (why???)
-    this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb2);
-
     this.markBond(bid, 1);
 };
 
@@ -938,14 +933,9 @@ rnd.ReStruct.prototype.notifyAtomRemoved = function (aid) {
     if (util.Set.size(set) == 0) {
         this.connectedComponents.remove(atom.component);
     }
-
-	// clone neighbors array, as it will be modified
-    Array.from(atom.a.neighbors).each(function(hbid) {
-        this.bondRemove(this.molecule.halfBonds.get(hbid).bid);
-	}, this);
-	this.markItemRemoved();
 	this.clearVisel(atom.visel);
 	this.atoms.unset(aid);
+    this.markItemRemoved();
 };
 
 /** @deprecated [RB] old architecture */
@@ -964,13 +954,14 @@ rnd.ReStruct.prototype.bondRemove = function (bid)
 
 rnd.ReStruct.prototype.notifyBondRemoved = function(bid) {
     var bond = this.bonds.get(bid);
-    this.halfBondUnref(bond.b.hb1);
-    this.halfBondUnref(bond.b.hb2);
-    this.molecule.halfBonds.unset(bond.b.hb1); // TODO investigate: ReStruct modifies Struct (why???)
-    this.molecule.halfBonds.unset(bond.b.hb2);
-    this.markItemRemoved();
+    [bond.b.hb1, bond.b.hb2].each(function(hbid) {
+        var hb = this.molecule.halfBonds.get(hbid);
+        if (hb.loop >= 0)
+            this.loopRemove(hb.loop);
+    }, this);
     this.clearVisel(bond.visel);
     this.bonds.unset(bid);
+    this.markItemRemoved();
 };
 
 rnd.ReStruct.prototype.loopRemove = function (loopId)
@@ -1018,6 +1009,7 @@ rnd.ReStruct.prototype.verifyLoops = function ()
 	}
 };
 
+/** @deprecated [RB] old architecture */
 rnd.ReStruct.prototype.halfBondUnref = function (hbid)
 {
 	var hb = this.molecule.halfBonds.get(hbid);

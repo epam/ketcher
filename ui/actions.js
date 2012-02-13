@@ -1502,17 +1502,17 @@ ui.Action.OpBase.prototype.isDummy = function(editor) {
 ui.Action.OpAtomAdd = function(atom, pos) {
     this.data = { aid : null, atom : atom, pos : pos };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var pp = {}; if (this.data.atom) for (var p in this.data.atom) pp[p] = this.data.atom[p];
         pp.label = pp.label || 'C';
         if (!Object.isNumber(this.data.aid)) {
-            this.data.aid = _RS_.molecule.atoms.add(new chem.Struct.Atom(pp));
+            this.data.aid = DS.atoms.add(new chem.Struct.Atom(pp));
             ui.atomMap.indexOf(this.data.aid); // TODO [RB] temporary kludge
         } else {
-            _RS_.molecule.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
+            DS.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
         }
-        _RS_.notifyAtomAdded(this.data.aid);
-        _RS_.molecule._atomSetPos(this.data.aid, new util.Vec2(this.data.pos));
+        RS.notifyAtomAdded(this.data.aid);
+        DS._atomSetPos(this.data.aid, new util.Vec2(this.data.pos));
     };
     this._invert = function() {
         var ret = new ui.Action.OpAtomDelete(); ret.data = this.data; return ret;
@@ -1523,13 +1523,13 @@ ui.Action.OpAtomAdd.prototype = new ui.Action.OpBase();
 ui.Action.OpAtomDelete = function(aid) {
     this.data = { aid : aid, atom : null, pos : null };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!this.data.atom) {
-            this.data.atom = _RS_.molecule.atoms.get(this.data.aid);
-            this.data.pos = editor.render.atomGetPos(this.data.aid);
+            this.data.atom = DS.atoms.get(this.data.aid);
+            this.data.pos = R.atomGetPos(this.data.aid);
         }
-        _RS_.notifyAtomRemoved(this.data.aid);
-        _RS_.molecule.atoms.remove(this.data.aid);
+        RS.notifyAtomRemoved(this.data.aid);
+        DS.atoms.remove(this.data.aid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpAtomAdd(); ret.data = this.data; return ret;
@@ -1565,14 +1565,14 @@ ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
 ui.Action.OpBondAdd = function(begin, end, bond) {
     this.data = { bid : null, bond : bond, begin : begin, end : end };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (this.data.begin == this.data.end)
             throw new Error("Distinct atoms expected");
         if (rnd.DEBUG && this.molecule.checkBondExists(this.data.begin, this.data.end))
             throw new Error("Bond already exists");
 
-        editor.render.invalidateAtom(this.data.begin, 1);
-        editor.render.invalidateAtom(this.data.end, 1);
+        R.invalidateAtom(this.data.begin, 1);
+        R.invalidateAtom(this.data.end, 1);
 
         var pp = {}; if (this.data.bond) for (var p in this.data.bond) pp[p] = this.data.bond[p];
         pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
@@ -1580,13 +1580,16 @@ ui.Action.OpBondAdd = function(begin, end, bond) {
         pp.end = this.data.end;
 
         if (!Object.isNumber(this.data.bid)) {
-            this.data.bid = _RS_.molecule.bonds.add(new chem.Struct.Bond(pp));
+            this.data.bid = DS.bonds.add(new chem.Struct.Bond(pp));
             ui.bondMap.indexOf(this.data.bid); // TODO [RB] temporary kludge
         } else {
-            _RS_.molecule.bonds.set(this.data.bid, new chem.Struct.Bond(pp));
+            DS.bonds.set(this.data.bid, new chem.Struct.Bond(pp));
         }
+        DS.bondInitHalfBonds(this.data.bid);
+        DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);
+        DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb2);
 
-        _RS_.notifyBondAdded(this.data.bid);
+        RS.notifyBondAdded(this.data.bid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpBondDelete(); ret.data = this.data; return ret;
@@ -1597,17 +1600,31 @@ ui.Action.OpBondAdd.prototype = new ui.Action.OpBase();
 ui.Action.OpBondDelete = function(bid) {
     this.data = { bid : bid, bond : null, begin : null, end : null };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!this.data.bond) {
-            this.data.bond = _RS_.molecule.bonds.get(this.data.bid);
+            this.data.bond = DS.bonds.get(this.data.bid);
             this.data.begin = this.data.bond.begin;
             this.data.end = this.data.bond.end;
         }
 
-        editor.render.invalidateBond(this.data.bid);
+        R.invalidateBond(this.data.bid);
 
-        _RS_.notifyBondRemoved(this.data.bid);
-        _RS_.molecule.bonds.remove(this.data.bid);
+        RS.notifyBondRemoved(this.data.bid);
+
+        var bond = DS.bonds.get(this.data.bid);
+        [bond.hb1, bond.hb2].each(function(hbid) {
+            var hb = DS.halfBonds.get(hbid);
+            var atom = DS.atoms.get(hb.begin);
+            var pos = atom.neighbors.indexOf(hbid);
+            var prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;
+            var next = (pos + 1) % atom.neighbors.length;
+            DS.setHbNext(atom.neighbors[prev], atom.neighbors[next]);
+            atom.neighbors.splice(pos, 1);
+        }, this);
+        DS.halfBonds.unset(bond.hb1);
+        DS.halfBonds.unset(bond.hb2);
+
+        DS.bonds.remove(this.data.bid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpBondAdd(); ret.data = this.data; return ret;
@@ -1640,13 +1657,14 @@ ui.Action.OpBondAttr.prototype = new ui.Action.OpBase();
 ui.Action.OpFragmentAdd = function(frid) {
     this.frid = Object.isUndefined(frid) ? null : frid;
     this._execute = function(editor) {
+        var RS = editor.render.ctab, DS = RS.molecule;
         var frag = new chem.Struct.Fragment();
         if (this.frid == null) {
-            this.frid = editor.render.ctab.molecule.frags.add(frag);
+            this.frid = DS.frags.add(frag);
         } else {
-            editor.render.ctab.molecule.frags.set(this.frid, frag);
+            DS.frags.set(this.frid, frag);
         }
-        editor.render.ctab.frags.set(this.frid, new rnd.ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+        RS.frags.set(this.frid, new rnd.ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
     };
     this._invert = function() {
         return new ui.Action.OpFragmentDelete(this.frid);
@@ -1657,9 +1675,10 @@ ui.Action.OpFragmentAdd.prototype = new ui.Action.OpBase();
 ui.Action.OpFragmentDelete = function(frid) {
     this.frid = frid;
     this._execute = function(editor) {
-        editor.render.invalidateItem('frags', this.frid, 1);
-        editor.render.ctab.frags.unset(this.frid);
-        editor.render.ctab.molecule.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        R.invalidateItem('frags', this.frid, 1);
+        RS.frags.unset(this.frid);
+        DS.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
     };
     this._invert = function() {
         return new ui.Action.OpFragmentAdd(this.frid);
@@ -1672,29 +1691,29 @@ ui.Action.OpRGroupFragment = function(rgid, frid) {
     this.rgid_old = null;
     this.frid = frid;
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
-        this.rgid_old = this.rgid_old || chem.Struct.RGroup.findRGroupByFragment(_RS_.molecule.rgroups, this.frid);
+        var RS = editor.render.ctab, DS = RS.molecule;
+        this.rgid_old = this.rgid_old || chem.Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
 
-        var rgOld = (this.rgid_old ? _RS_.molecule.rgroups.get(this.rgid_old) : null);
+        var rgOld = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
         if (rgOld) {
             rgOld.frags.remove(rgOld.frags.keyOf(this.frid));
-            _RS_.clearVisel(_RS_.rgroups.get(this.rgid_old).visel);
+            RS.clearVisel(RS.rgroups.get(this.rgid_old).visel);
             if (rgOld.frags.count() == 0) {
-                _RS_.rgroups.unset(this.rgid_old);
-                _RS_.molecule.rgroups.unset(this.rgid_old);
-                _RS_.markItemRemoved();
+                RS.rgroups.unset(this.rgid_old);
+                DS.rgroups.unset(this.rgid_old);
+                RS.markItemRemoved();
             } else {
-                _RS_.markItem('rgroups', this.rgid_old, 1);
+                RS.markItem('rgroups', this.rgid_old, 1);
             }
         }
         if (this.rgid_new) {
-            var rgNew = _RS_.molecule.rgroups.get(this.rgid_new);
+            var rgNew = DS.rgroups.get(this.rgid_new);
             if (!rgNew) {
                 rgNew = new chem.Struct.RGroup();
-                _RS_.molecule.rgroups.set(this.rgid_new, rgNew);
-                _RS_.rgroups.set(this.rgid_new, new rnd.ReRGroup(rgNew));
+                DS.rgroups.set(this.rgid_new, rgNew);
+                RS.rgroups.set(this.rgid_new, new rnd.ReRGroup(rgNew));
             } else {
-                _RS_.markItem('rgroups', this.rgid_new, 1);
+                RS.markItem('rgroups', this.rgid_new, 1);
             }
             rgNew.frags.add(this.frid);
         }
@@ -1708,16 +1727,16 @@ ui.Action.OpRGroupFragment.prototype = new ui.Action.OpBase();
 ui.Action.OpRxnArrowAdd = function(pos) {
     this.data = { arid : null, pos : pos };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!Object.isNumber(this.data.arid)) {
-            this.data.arid = _RS_.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
+            this.data.arid = DS.rxnArrows.add(new chem.Struct.RxnArrow());
         } else {
-            _RS_.molecule.rxnArrows.set(this.data.arid, new chem.Struct.RxnArrow());
+            DS.rxnArrows.set(this.data.arid, new chem.Struct.RxnArrow());
         }
-        _RS_.notifyRxnArrowAdded(this.data.arid);
-        _RS_.molecule._rxnArrowSetPos(this.data.arid, new util.Vec2(this.data.pos));
+        RS.notifyRxnArrowAdded(this.data.arid);
+        DS._rxnArrowSetPos(this.data.arid, new util.Vec2(this.data.pos));
 
-        editor.render.invalidateItem('rxnArrows', this.data.arid, 1);
+        R.invalidateItem('rxnArrows', this.data.arid, 1);
     };
     this._invert = function() {
         var ret = new ui.Action.OpRxnArrowDelete(); ret.data = this.data; return ret;
@@ -1728,12 +1747,12 @@ ui.Action.OpRxnArrowAdd.prototype = new ui.Action.OpBase();
 ui.Action.OpRxnArrowDelete = function(arid) {
     this.data = { arid : arid, pos : null };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!this.data.pos) {
-            this.data.pos = editor.render.rxnArrowGetPos(this.data.arid);
+            this.data.pos = R.rxnArrowGetPos(this.data.arid);
         }
-        _RS_.notifyRxnArrowRemoved(this.data.arid);
-        _RS_.molecule.rxnArrows.remove(this.data.arid);
+        RS.notifyRxnArrowRemoved(this.data.arid);
+        DS.rxnArrows.remove(this.data.arid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpRxnArrowAdd(); ret.data = this.data; return ret;
@@ -1744,16 +1763,16 @@ ui.Action.OpRxnArrowDelete.prototype = new ui.Action.OpBase();
 ui.Action.OpRxnPlusAdd = function(pos) {
     this.data = { plid : null, pos : pos };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!Object.isNumber(this.data.plid)) {
-            this.data.plid = _RS_.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
+            this.data.plid = DS.rxnPluses.add(new chem.Struct.RxnPlus());
         } else {
-            _RS_.molecule.rxnPluses.set(this.data.plid, new chem.Struct.RxnPlus());
+            DS.rxnPluses.set(this.data.plid, new chem.Struct.RxnPlus());
         }
-        _RS_.notifyRxnPlusAdded(this.data.plid);
-        _RS_.molecule._rxnPlusSetPos(this.data.plid, new util.Vec2(this.data.pos));
+        RS.notifyRxnPlusAdded(this.data.plid);
+        DS._rxnPlusSetPos(this.data.plid, new util.Vec2(this.data.pos));
 
-        editor.render.invalidateItem('rxnPluses', this.data.plid, 1);
+        R.invalidateItem('rxnPluses', this.data.plid, 1);
     };
     this._invert = function() {
         var ret = new ui.Action.OpRxnPlusDelete(); ret.data = this.data; return ret;
@@ -1764,12 +1783,12 @@ ui.Action.OpRxnPlusAdd.prototype = new ui.Action.OpBase();
 ui.Action.OpRxnPlusDelete = function(plid) {
     this.data = { plid : plid, pos : null };
     this._execute = function(editor) {
-        var _RS_ = editor.render.ctab;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!this.data.pos) {
-            this.data.pos = editor.render.rxnArrowGetPos(this.data.plid);
+            this.data.pos = R.rxnArrowGetPos(this.data.plid);
         }
-        _RS_.notifyRxnPlusRemoved(this.data.plid);
-        _RS_.molecule.rxnPluses.remove(this.data.plid);
+        RS.notifyRxnPlusRemoved(this.data.plid);
+        DS.rxnPluses.remove(this.data.plid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpRxnPlusAdd(); ret.data = this.data; return ret;

@@ -47,6 +47,7 @@ ui.Action.OPERATION =
     BOND_ADD:        6,
     /** @deprecated Please use action.addOp(new ui.Action.OpBondDelete(...)) instead */
     BOND_DEL:        7,
+    /** @deprecated Please use action.mergeWith(ui.Action.toBondFlipping(...)) instead */
     BOND_FLIP:       8,
     CANVAS_LOAD:     9,
     SGROUP_ATTR:     10,
@@ -600,20 +601,14 @@ ui.Action.fromSelectedAtomsAttrs = function (attrs)
 ui.Action.fromBondAttrs = function (id, attrs, flip)
 {
     var action = new ui.Action();
-    var id_map = ui.bondMap.indexOf(id);
 
-    attrs = new Hash(attrs);
-    attrs.each(function(attr) {
-        action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value).perform(ui.editor));
+    new Hash(attrs).each(function(attr) {
+        action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value));
     }, this);
     if (flip) {
-        action.addOperation(ui.Action.OPERATION.BOND_FLIP,
-        {
-            id: id_map
-        });
-        ui.bondMap[id_map] = ui.render.bondFlip(id);
+        action.mergeWith(ui.Action.toBondFlipping(id));
     }
-    return action;
+    return action.perform();
 };
 
 ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
@@ -628,13 +623,8 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
         }, this);
     }, this);
     if (flips)
-        flips.each(function (id)
-        {
-            var id_map = ui.bondMap.indexOf(id);
-            action.addOperation(ui.Action.OPERATION.BOND_FLIP,
-            {
-                id: id_map
-            });
+        flips.each(function (id) {
+            action.mergeWith(ui.Action.toBondFlipping(id));
         }, this);
     return action.perform();
 };
@@ -1061,16 +1051,17 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
     return action.perform();
 };
 
-ui.Action.fromBondFlipping = function (id)
+ui.Action.toBondFlipping = function (id)
 {
+    var bond = ui.ctab.bonds.get(id);
+
     var action = new ui.Action();
-
-    action.addOperation(ui.Action.OPERATION.BOND_FLIP,
-    {
-        id: ui.bondMap.indexOf(id)
-    });
-
-    return action.perform();
+    action.addOp(new ui.Action.OpBondDelete(id));
+    action.addOp(new ui.Action.OpBondAdd(bond.end, bond.begin, bond)).data.bid = id;
+    return action;
+};
+ui.Action.fromBondFlipping = function(bid) {
+    return ui.Action.toBondFlipping(bid).perform();
 };
 
 ui.Action.fromPatternOnCanvas = function (pos, pattern)

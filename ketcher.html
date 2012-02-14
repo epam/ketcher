@@ -282,7 +282,7 @@
                         </form>
                     </div>
                     <div style="margin:4px;" id="open_from_input">
-                        <textarea class="chemicalText" id="input_mol"></textarea>
+                        <textarea class="chemicalText" id="input_mol" wrap="off"></textarea>
                         <div style="margin-top:0.5em;text-align:center">
                             <input id="read_cancel" type="button" value="Cancel" />
                             <input id="read_ok" type="submit" value="OK" />
@@ -307,7 +307,7 @@
                         </select>
                     </div>
                     <div style="margin:4px;">
-                        <textarea class="chemicalText" id="output_mol" readonly></textarea>
+                        <textarea class="chemicalText" id="output_mol" wrap="off" readonly></textarea>
                         <form  id="download_mol" style="margin-top:0.5em;text-align:center" action="save" enctype="multipart/form-data" target="_self" method="post">
                             <input type="hidden" id="mol_data" name="filedata" />
                             <input type="submit" class="serverRequired" value="Save..." />

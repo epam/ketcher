@@ -817,60 +817,67 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
 	if (ctabLines[shift++].strip() != "M  V30 END CTAB")
 		throw Error("CTAB V3000 invalid");
     if (!norgroups) {
-        var rfrags = {};
-        var rLogic = {};
-        while (shift < ctabLines.length && ctabLines[shift].search("M  V30 BEGIN RGROUP") == 0)
-        {
-            var id = ctabLines[shift++].split(' ').pop();
-            rfrags[id] = [];
-            rLogic[id] = {};
-            while (true) {
-                line = ctabLines[shift].strip();
-                if (line.search("M  V30 RLOGIC") == 0) {
-                    line = line.slice(13);
-                    var rlsplit = line.strip().split(/\s+/g);
-                    var iii = mf.parseDecimalInt(rlsplit[0]);
-                    var hhh = mf.parseDecimalInt(rlsplit[1]);
-                    var ooo = rlsplit.slice(2).join(" ");
-                    var logic = {};
-                    if (iii > 0)
-                        logic.ifthen = iii;
-                    logic.resth = hhh == 1;
-                    logic.range = ooo;
-                    rLogic[id] = logic;
-                    shift++;
-                    continue;
-                }
-                if (line != "M  V30 BEGIN CTAB")
-                    throw Error("CTAB V3000 invalid");
-                for (i = 0; i < ctabLines.length; ++i)
-                    if (ctabLines[shift+i].strip() == "M  V30 END CTAB")
-                        break;
-                var lines = ctabLines.slice(shift, shift+i+1);
-                var rfrag = this.parseCTabV3000(lines, true);
-                rfrags[id].push(rfrag);
-                shift = shift + i + 1;
-                if (ctabLines[shift].strip() == "M  V30 END RGROUP") {
-                    shift++;
-                    break;
-                }
-            }
-        }
-
-        for (var rgid in rfrags) {
-            for (var j = 0; j < rfrags[rgid].length; ++j) {
-                var rg = rfrags[rgid][j];
-                rg.rgroups.set(rgid, new chem.Struct.RGroup(rLogic[rgid]));
-                var frid = rg.frags.add(new chem.Struct.Fragment());
-                rg.rgroups.get(rgid).frags.add(frid);
-                rg.atoms.each(function(aid, atom) { atom.fragment = frid; });
-                rg.mergeInto(ctab);
-            }
-        }
+        mf.readRGroups3000(ctab, ctabLines.slice(shift));
     }
 
 	return ctab;
 };
+
+chem.Molfile.readRGroups3000 = function (ctab, /* string */ ctabLines) /* chem.Struct */
+{
+    var rfrags = {};
+    var rLogic = {};
+    var shift = 0;
+    var mf = chem.Molfile;
+    while (shift < ctabLines.length && ctabLines[shift].search("M  V30 BEGIN RGROUP") == 0)
+    {
+        var id = ctabLines[shift++].split(' ').pop();
+        rfrags[id] = [];
+        rLogic[id] = {};
+        while (true) {
+            var line = ctabLines[shift].strip();
+            if (line.search("M  V30 RLOGIC") == 0) {
+                line = line.slice(13);
+                var rlsplit = line.strip().split(/\s+/g);
+                var iii = mf.parseDecimalInt(rlsplit[0]);
+                var hhh = mf.parseDecimalInt(rlsplit[1]);
+                var ooo = rlsplit.slice(2).join(" ");
+                var logic = {};
+                if (iii > 0)
+                    logic.ifthen = iii;
+                logic.resth = hhh == 1;
+                logic.range = ooo;
+                rLogic[id] = logic;
+                shift++;
+                continue;
+            }
+            if (line != "M  V30 BEGIN CTAB")
+                throw Error("CTAB V3000 invalid");
+            for (var i = 0; i < ctabLines.length; ++i)
+                if (ctabLines[shift+i].strip() == "M  V30 END CTAB")
+                    break;
+            var lines = ctabLines.slice(shift, shift+i+1);
+            var rfrag = this.parseCTabV3000(lines, true);
+            rfrags[id].push(rfrag);
+            shift = shift + i + 1;
+            if (ctabLines[shift].strip() == "M  V30 END RGROUP") {
+                shift++;
+                break;
+            }
+        }
+    }
+
+    for (var rgid in rfrags) {
+        for (var j = 0; j < rfrags[rgid].length; ++j) {
+            var rg = rfrags[rgid][j];
+            rg.rgroups.set(rgid, new chem.Struct.RGroup(rLogic[rgid]));
+            var frid = rg.frags.add(new chem.Struct.Fragment());
+            rg.rgroups.get(rgid).frags.add(frid);
+            rg.atoms.each(function(aid, atom) { atom.fragment = frid; });
+            rg.mergeInto(ctab);
+        }
+    }
+}
 
 chem.Molfile.parseMol = function (/* string */ ctabLines) /* chem.Struct */
 {
@@ -1409,24 +1416,58 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 	nProducts = countsSplit[1]-0,
 	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
 
-	var i0 = 0, i;
-	var molLinesReactants = [], molLinesProducts = [], current;
-	for (i = 0; i < ctabLines.length; ++i) {
+    var assert = function (condition) {
+        if (!condition)
+            throw new Error("CTab format invalid");
+    }
+
+    var findCtabEnd = function (i) {
+        for (var j = i; j < ctabLines.length; ++j) {
+            if (ctabLines[j].strip() == "M  V30 END CTAB")
+                return j;
+        }
+        assert(false);
+    }
+
+    var findRGroupEnd = function (i) {
+        for (var j = i; j < ctabLines.length; ++j)
+            if (ctabLines[j].strip() == "M  V30 END RGROUP")
+                return j;
+        assert(false);
+    }
+
+	var molLinesReactants = [], molLinesProducts = [], current = null, rGroups = [];
+	for (var i = 0; i < ctabLines.length; ++i) {
 		var line = ctabLines[i].strip();
-		if (line == "M  V30 BEGIN PRODUCT") {
+
+        if (line.startsWith("M  V30 COUNTS")) {
+            // do nothing
+        } else if (line == "M  END") {
+            break; // stop reading
+        } else if (line == "M  V30 BEGIN PRODUCT") {
+            assert(current == null);
 			current = molLinesProducts;
+        } else if (line == "M  V30 END PRODUCT") {
+            assert(current === molLinesProducts);
+            current = null;
 		} else if (line == "M  V30 BEGIN REACTANT") {
+            assert(current == null);
 			current = molLinesReactants;
-		} else if (line == "M  V30 END CTAB") {
-			if (i > i0)
-				current.push(ctabLines.slice(i0, i+1));
-			i0 = i + 1;
+        } else if (line == "M  V30 END REACTANT") {
+            assert(current === molLinesReactants);
+            current = null;
+        } else if (line.startsWith("M  V30 BEGIN RGROUP")) {
+            assert(current == null);
+            var j = findRGroupEnd(i);
+            rGroups.push(ctabLines.slice(i,j+1));
+            i = j;
 		} else if (line == "M  V30 BEGIN CTAB") {
-			// TODO [MK] check if there's anything in between the end of the last component and the beginning of this one?
-			// TODO [MK] match begin and end labels?
-			// TODO [MK] also check that the labeling of components matches the counts?
-			i0 = i;
-		}
+            var j = findCtabEnd(i);
+            current.push(ctabLines.slice(i,j+1));
+            i = j;
+		} else {
+            throw new Error("line unrecognized: " + line);
+        }
 	}
 	var mols = [];
 	var molLines = molLinesReactants.concat(molLinesProducts);
@@ -1434,7 +1475,17 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 		var mol = chem.Molfile.parseCTabV3000(molLines[j], countsSplit);
 		mols.push(mol);
 	}
-	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
+	var ctab = mf.rxnMerge(mols, nReactants, nProducts, nAgents);
+
+    mf.readRGroups3000(ctab, function (array) {
+        var res = [];
+        for (var k = 0; k < array.length; ++k) {
+            res = res.concat(array[k]);
+        }
+        return res;
+    }(rGroups));
+
+    return ctab;
 };
 
 chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.Struct */
@@ -1596,41 +1647,4 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
         }
     }
 	return mf.rgMerge(core, frag);
-};
-
-chem.Molfile.parseRg3000 = function (/* string[] */ ctabLines) /* chem.Struct */
-{
-	var mf = chem.Molfile;
-	ctabLines = ctabLines.slice(4);
-	var countsSplit = ctabLines[0].split(' ').slice(4);
-	var nReactants = countsSplit[0]-0,
-	nProducts = countsSplit[1]-0,
-	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
-
-	var i0 = 0, i;
-	var molLinesReactants = [], molLinesProducts = [], current;
-	for (i = 0; i < ctabLines.length; ++i) {
-		var line = ctabLines[i].strip();
-		if (line == "M  V30 BEGIN PRODUCT") {
-			current = molLinesProducts;
-		} else if (line == "M  V30 BEGIN REACTANT") {
-			current = molLinesReactants;
-		} else if (line == "M  V30 END CTAB") {
-			if (i > i0)
-				current.push(ctabLines.slice(i0, i+1));
-			i0 = i + 1;
-		} else if (line == "M  V30 BEGIN CTAB") {
-			// TODO [MK] check if there's anything in between the end of the last component and the beginning of this one?
-			// TODO [MK] match begin and end labels?
-			// TODO [MK] also check that the labeling of components matches the counts?
-			i0 = i;
-		}
-	}
-	var mols = [];
-	var molLines = molLinesReactants.concat(molLinesProducts);
-	for (var j = 0; j < molLines.length; ++j) {
-		var mol = chem.Molfile.parseCTabV3000(molLines[j], countsSplit);
-		mols.push(mol);
-	}
-	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
 };

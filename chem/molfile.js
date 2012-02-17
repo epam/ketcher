@@ -987,13 +987,15 @@ chem.MolfileSaver.prototype.getCTab = function (molecule)
     return this.molfile;
 }
 
-chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
+chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups)
 {
 	this.reaction = molecule.rxnArrows.count() > 0;
 	if (molecule.rxnArrows.count() > 1)
 		throw new Error("Reaction may not contain more than one arrow");
 	this.molfile = '';
 	if (this.reaction) {
+        if (molecule.rgroups.count() > 0)
+            alert("Reactions with r-groups are not supported at the moment. R-fragments will be discarded in saving");
 		var components = chem.MolfileSaver.getComponents(molecule);
 
 		var reactants = components.reactants, products = components.products, all = reactants.concat(products);
@@ -1001,31 +1003,34 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors)
 		for (var i = 0; i < all.length; ++i) {
 			var saver = new chem.MolfileSaver(false);
 			var submol = molecule.clone(all[i], null, true);
-			var molfile = saver.saveMolecule(submol);
+			var molfile = saver.saveMolecule(submol, false, true);
 			this.molfile += "$MOL\n" + molfile;
 		}
 		return this.molfile;
 	}
 
     if (molecule.rgroups.count() > 0) {
-        this.molfile = "$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n";
+        if (norgroups) {
+            molecule = molecule.getScaffold();
+        } else {
+            var scaffold = new chem.MolfileSaver(false).getCTab(molecule.getScaffold());
+            this.molfile = "$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n";
+            this.molfile += "$CTAB\n" + scaffold + "$END CTAB\n";
 
-        var scaffold = new chem.MolfileSaver(false).getCTab(molecule.getScaffold());
-        this.molfile += "$CTAB\n" + scaffold + "$END CTAB\n";
-
-        molecule.rgroups.each(function(rgid, rg){
-            this.molfile += "$RGP\n";
-            this.writePaddedNumber(rgid, 3);
-            this.molfile += "\n";
-            rg.frags.each(function(fnum, fid) {
-                var group = new chem.MolfileSaver(false).getCTab(molecule.getFragment(fid));
-                this.molfile += "$CTAB\n" + group + "$END CTAB\n";
+            molecule.rgroups.each(function(rgid, rg){
+                this.molfile += "$RGP\n";
+                this.writePaddedNumber(rgid, 3);
+                this.molfile += "\n";
+                rg.frags.each(function(fnum, fid) {
+                    var group = new chem.MolfileSaver(false).getCTab(molecule.getFragment(fid));
+                    this.molfile += "$CTAB\n" + group + "$END CTAB\n";
+                }, this);
+                this.molfile += "$END RGP\n";
             }, this);
-            this.molfile += "$END RGP\n";
-        }, this);
-        this.molfile += "$END MOL\n";
+            this.molfile += "$END MOL\n";
 
-        return this.molfile;
+            return this.molfile;
+        }
     }
 
 	this.molecule = molecule.clone();

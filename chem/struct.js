@@ -266,8 +266,7 @@ chem.Struct.Atom = function (params)
 		throw new Error("label must be specified!");
 
 	this.label = params.label;
-    if (!Object.isUndefined(params.fragment))
-        this.fragment = params.fragment;
+        this.fragment = !Object.isUndefined(params.fragment) ? params.fragment : -1;
 
 	util.ifDef(this, params, 'isotope', 0);
 	util.ifDef(this, params, 'radical', 0);

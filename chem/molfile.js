@@ -766,7 +766,7 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
                 sgroups[sg.number] = sg;
                 var props = {};
                 for (var i = 3; i < split.length; ++i) {
-                    var subsplit = split[i].split('=');
+                    var subsplit = mf.splitonce(split[i],'=');
                     if (subsplit.length != 2) {
                         throw "A record of form AAA=BBB or AAA=(...) expected, got '" + split[i] + "'";
                     }

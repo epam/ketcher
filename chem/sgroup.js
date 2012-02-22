@@ -85,7 +85,8 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s)
-		util.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
+            if (mol.atoms.has(sg.atoms[s]))
+                util.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	return sg.id;
 };

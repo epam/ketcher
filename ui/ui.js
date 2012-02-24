@@ -218,7 +218,7 @@ ui.init = function ()
     $('clean_up').observe('click', ui.onClick_CleanUp);
     $('atom_table').observe('click', ui.onClick_ElemTableButton);
     $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
-    $('elem_table_not_list').observe('click', ui.onSelect_ElemTableNotList);
+    $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
     $('atom_reagenerics').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
 
     // Client area events

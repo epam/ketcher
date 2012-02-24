@@ -187,5 +187,6 @@ rnd.ElementTable.prototype.restore = function () {
 		}, this);
 		this.selectedLabels = util.Set.clone(this.old.selectedLabels);
 	}
+        $('elem_table_'+this.old.mode).checked=true;
 	this.updateAtomProps();
 }

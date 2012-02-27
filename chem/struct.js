@@ -93,7 +93,7 @@ chem.Struct.prototype.getFragment = function (fid) {
 	return this.clone(atomSet);
 }
 
-chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols)
+chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups)
 {
 	atomSet = atomSet || util.Set.keySetInt(this.atoms);
 	bondSet = bondSet || util.Set.keySetInt(this.bonds);
@@ -114,13 +114,15 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
     });
 
     this.rgroups.each(function(rgid, rgroup) {
-        var keepGroup = false;
-        rgroup.frags.each(function(fnum, fid) {
-            if (fidMask[fid])
-                keepGroup = true;
-        });
-        if (!keepGroup)
-            return;
+        var keepGroup = keepAllRGroups;
+        if (!keepGroup) {
+            rgroup.frags.each(function(fnum, fid) {
+                if (fidMask[fid])
+                    keepGroup = true;
+            });
+            if (!keepGroup)
+                return;
+        }
         var rg = cp.rgroups.get(rgid);
         if (rg) {
             rgroup.frags.each(function(fnum, fid) {

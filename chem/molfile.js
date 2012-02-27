@@ -614,9 +614,9 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 	for (i = 0; i < emptyGroups.length; ++i) {
 		ctab.sgroups.remove(emptyGroups[i]);
 	}
-    for (var rgid in rLogic) {
-        ctab.rgroups.set(rgid, new chem.Struct.RGroup(rLogic[rgid]));
-    }
+        for (var rgid in rLogic) {
+            ctab.rgroups.set(rgid, new chem.Struct.RGroup(rLogic[rgid]));
+        }
 	return ctab;
 };
 
@@ -1584,7 +1584,7 @@ chem.Molfile.rgMerge = function (scaffold, rgroups) /* chem.Struct */
 {
 	var ret = new chem.Struct();
 
-    scaffold.mergeInto(ret);
+    scaffold.mergeInto(ret, null, null, false, true);
     for (var rgid in rgroups) {
         for (var j = 0; j < rgroups[rgid].length; ++j) {
             var ctab = rgroups[rgid][j];

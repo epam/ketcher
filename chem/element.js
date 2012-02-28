@@ -182,10 +182,20 @@ chem.Element.elements = new util.Map({
      97: new chem.Element('Bk', 7, 3, false, '#8a4fe3', 9,11),
      98: new chem.Element('Cf', 7, 3, false, '#a136d4', 9,12),
      99: new chem.Element('Es', 7, 3, false, '#b31fd4', 9,13),
+    // TODO need to fix colors for the elements below
     100: new chem.Element('Fm', 7, 3, false, '#000000', 9,14),
     101: new chem.Element('Md', 7, 3, false, '#000000', 9,15),
     102: new chem.Element('No', 7, 3, false, '#000000', 9,16),
-    103: new chem.Element('Lr', 7, 3, false, '#000000', 9,17)
+    103: new chem.Element('Lr', 7, 3, false, '#000000', 9,17),
+    104: new chem.Element('Rf', 7, 4, false, '#4dc2ff', 7, 4),
+    105: new chem.Element('Db', 7, 5, false, '#4da6ff', 7, 5),
+    106: new chem.Element('Sg', 7, 6, false, '#2194d6', 7, 6),
+    107: new chem.Element('Bh', 7, 7, false, '#267dab', 7, 7),
+    108: new chem.Element('Hs', 7, 8, false, '#266696', 7, 8),
+    109: new chem.Element('Mt', 7, 8, false, '#175487', 7, 9),
+    110: new chem.Element('Ds', 7, 8, false, '#d1d1e0', 7,10),
+    111: new chem.Element('Rg', 7, 1, false, '#ffd124', 7,11),
+    112: new chem.Element('Cn', 7, 2, false, '#b8b8d1', 7,12)
 });
 
 chem.Element.labelMap = null;

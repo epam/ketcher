@@ -301,14 +301,21 @@ util.Box2Abs.prototype.include = function(/*util.Vec2*/p)
 util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)
 {
 	util.assertDefined(d);
+    // TODO [RB] ??? it does nothing... need to investigate and remove dead code that "uses" it
+    // for now new implementation added
+    // BEGIN
+    /*
     this.p0.add(d);
     this.p1.add(d);
+    */
+    return new util.Box2Abs(this.p0.add(d), this.p1.add(d));
+    // END
 };
 
 util.Box2Abs.prototype.transform = function(/*function(Vec2):Vec2*/f, context)
 {
-    return new util.Box2Abs(f.call(context, this.p0),f.call(context, this.p1));
-}
+    return new util.Box2Abs(f.call(context, this.p0), f.call(context, this.p1));
+};
 
 util.Box2Abs.prototype.sz = function()
 {

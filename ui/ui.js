@@ -2895,14 +2895,16 @@ ui.showAutomapProperties = function(params)
     ui.showDialog('automap_properties');
 
     var _onOk = new Event.Handler('automap_ok', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
         if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
         ui.hideDialog('automap_properties');
-        _onOk.stop();
     }).start();
     var _onCancel = new Event.Handler('automap_cancel', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
         ui.hideDialog('automap_properties');
         if (params && 'onCancel' in params) params['onCancel']();
-        _onCancel.stop();
     }).start();
 
     $('automap_mode').activate();
@@ -2976,6 +2978,39 @@ ui.showRGroupTable = function(params)
         }).start();
         $('rgroup_table_ok').focus();
     }
+};
+
+ui.showRLogicTable = function(params)
+{
+    params = params || {};
+    params.rlogic = params.rlogic || {};
+    $('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
+    $('rlogic_resth').value = params.rlogic.resth || '0';
+    $('rlogic_if').innerHTML = '<option value="0">Always</option>';
+    for (var r = 1; r <= 32; r++) if (r != params.rgid && 0 != (params.rgmask & (1 << (r - 1)))) {
+        $('rlogic_if').innerHTML += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
+    }
+    $('rlogic_if').value = params.rlogic.ifthen;
+    ui.showDialog('rlogic_table');
+
+    var _onOk = new Event.Handler('rlogic_ok', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
+        ui.hideDialog('rlogic_table');
+        if (params && 'onOk' in params) params['onOk']({
+            'occurrence' : $('rlogic_occurrence').value,
+            'resth' : $('rlogic_resth').value == '1',
+            'ifthen' : parseInt($('rlogic_if').value)
+        });
+    }).start();
+    var _onCancel = new Event.Handler('rlogic_cancel', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
+        ui.hideDialog('rlogic_table');
+        if (params && 'onCancel' in params) params['onCancel']();
+    }).start();
+
+    $('rlogic_occurrence').activate();
 };
 
 ui.onSelect_ElemTableNotList = function ()

@@ -709,6 +709,40 @@
                 </div>
             </div>
 
+            <div class="dialogWindow rlogicTableDialog" id="rlogic_table" style="display:none;">
+                <div style="width:100%">
+                    <div>
+                        R-Group Logic
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <table style="text-align:left">
+                        <tr>
+                            <td>
+                                <label for="rlogic_occurrence">Occurrence:</label>
+                                <input id="rlogic_occurrence" type="text" maxlength="50" size="10" />
+                            </td>
+                            <td>
+                                <label for="rlogic_resth">RestH:</label>
+                                <select id="rlogic_resth">
+                                    <option value="0">Off</option>
+                                    <option value="1">On</option>
+                                </select>
+                            </td>
+                            <td>
+                                <label for="rlogic_if">Condition:</label>
+                                <select id="rlogic_if">
+                                    <option value="0">Always</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="margin-top:0.5em">
+                        <input id="rlogic_cancel" type="button" value="Cancel" />
+                        <input id="rlogic_ok" type="button" value="OK" />
+                    </div>
+                </div>
+            </div>
+
             <div class="dialogWindow reagenericsTableDialog" id="reagenerics_table" style="display:none;">
                 <div>
                     <div>

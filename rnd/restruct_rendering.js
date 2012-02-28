@@ -590,7 +590,7 @@ rnd.ReStruct.prototype.showBracketSelection = function (sgid, sg, visible)
             sg.selectionPlate = paper
                 .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}C", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
                 .attr(styles.selectionStyle);
-            this.addSGroupPath('selection-plate', sg.visel, sg.selectionPlate);
+            this.addReObjectPath('selection-plate', sg.visel, sg.selectionPlate);
         }
         sg.selectionPlate.show();
     } else {
@@ -628,7 +628,7 @@ rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
             sg.highlighting = paper
                 .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
                 .attr(styles.highlightStyle);
-            this.addSGroupPath('highlighting', sg.visel, sg.highlighting);
+            this.addReObjectPath('highlighting', sg.visel, sg.highlighting);
         }
         sg.highlighting.show();
     } else {
@@ -1292,44 +1292,11 @@ rnd.ReStruct.layerMap = {
 
 rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path) {
     var offset = this.render.offset;
+    var bb = util.Box2Abs.fromRelBox(path.getBBox());
     if (offset != null)
         path.translate(offset.x, offset.y);
-    var bb = util.Box2Abs.fromRelBox(path.getBBox());
     visel.add(path, bb);
     this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-};
-
-/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
-rnd.ReStruct.prototype.addSGroupPath = function (group, visel, path)
-{
-	var offset = this.render.offset;
-	if (offset != null)
-		path.translate(offset.x, offset.y);
-	var bb = util.Box2Abs.fromRelBox(path.getBBox());
-	visel.add(path, bb);
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-};
-
-/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
-rnd.ReStruct.prototype.addChiralPath = function (group, visel, path)
-{
-	var offset = this.render.offset;
-	if (offset != null)
-		path.translate(offset.x, offset.y);
-	var bb = util.Box2Abs.fromRelBox(path.getBBox());
-	visel.add(path, bb);
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-};
-
-/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
-rnd.ReStruct.prototype.addLoopPath = function (group, visel, path)
-{
-	var offset = this.render.offset;
-	if (offset != null)
-		path.translate(offset.x, offset.y);
-	var bb = util.Box2Abs.fromRelBox(path.getBBox());
-	visel.add(path, bb);
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
 /**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
@@ -1506,6 +1473,6 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				'stroke-dasharray':'- '
 			});
 		}
-		this.addLoopPath('data', reloop.visel, path);
+		this.addReObjectPath('data', reloop.visel, path);
 	}, this);
 };

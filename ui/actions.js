@@ -1414,6 +1414,14 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
     return action;
 };
 
+ui.Action.fromRGroupAttrs = function(id, attrs) {
+    var action = new ui.Action();
+    new Hash(attrs).each(function(attr) {
+        action.addOp(new ui.Action.OpRGroupAttr(id, attr.key, attr.value));
+    }, this);
+    return action.perform();
+};
+
 ui.Action.fromRGroupFragment = function(rgidNew, frid) {
     var action = new ui.Action();
     action.addOp(new ui.Action.OpRGroupFragment(rgidNew, frid));
@@ -1673,6 +1681,28 @@ ui.Action.OpFragmentDelete = function(frid) {
     };
 };
 ui.Action.OpFragmentDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpRGroupAttr = function(rgid, attribute, value) {
+    this.data = { rgid : rgid, attribute : attribute, value : value };
+    this.data2 = null;
+    this._execute = function(editor) {
+        var rgp = editor.render.ctab.molecule.rgroups.get(this.data.rgid);
+        if (!this.data2) {
+            this.data2 = { rgid : this.data.rgid, attribute : this.data.attribute, value : rgp[this.data.attribute] };
+        }
+
+        rgp[this.data.attribute] = this.data.value;
+
+        editor.render.invalidateItem('rgroups', this.data.rgid);
+    };
+    this._isDummy = function(editor) {
+        return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRGroupAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+    };
+};
+ui.Action.OpRGroupAttr.prototype = new ui.Action.OpBase();
 
 ui.Action.OpRGroupFragment = function(rgid, frid) {
     this.rgid_new = rgid;

@@ -341,6 +341,7 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
     else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
     else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
     else if (ci.type == 'Fragment') ci.map = 'frags';
+    else if (ci.type == 'RGroup') ci.map = 'rgroups';
     return ci;
 };
 
@@ -651,7 +652,7 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups'].indexOf(obj.map) > -1) {
         this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
     } else if (obj.map == 'atoms') {
         //this.atomSetHighlight(obj.id, visible);
@@ -1506,6 +1507,10 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
     if (!maps || maps.indexOf('frags') >= 0) {
         var frag = rnd.ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
         updret('Fragment', frag);
+    }
+    if (!maps || maps.indexOf('rgroups') >= 0) {
+        var rgroup = rnd.ReRGroup.findClosest(this, pos);
+        updret('RGroup', rgroup);
     }
 
 	ret = ret || {

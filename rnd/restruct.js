@@ -22,6 +22,7 @@ if (!window.rnd)
 
 rnd.ReObject = function()  // TODO ??? should it be in ReStruct namespace
 {
+    this.__ext = new util.Vec2(0.05 * 3, 0.05 * 3);
 };
 
 rnd.ReObject.prototype.init = function(viselType)
@@ -32,6 +33,13 @@ rnd.ReObject.prototype.init = function(viselType)
     this.highlighting = null;
     this.selected = false;
     this.selectionPlate = null;
+};
+
+rnd.ReObject.prototype.calcVBox = function(render) {
+    if (this.visel.boundingBox) {
+        return this.visel.boundingBox
+            .transform(render.scaled2obj, render);
+    }
 };
 
 rnd.ReObject.prototype.drawHighlight = function(render) {
@@ -125,7 +133,7 @@ rnd.ReStruct = function (molecule, render)
 	this.rxnArrows = new util.Map();
     this.frags = new util.Map();
     this.rgroups = new util.Map();
-	this.molecule = molecule || new Struct();
+	this.molecule = molecule || new chem.Struct();
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
@@ -565,7 +573,7 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 {
 	this.molecule.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this);
-		this.addSGroupPath('data', sgroup.visel, path);
+		this.addReObjectPath('data', sgroup.visel, path);
 		if (sgroup.selected)
 			this.showBracketSelection(id, sgroup, true);
 		if (sgroup.highlight)
@@ -609,7 +617,7 @@ rnd.ReStruct.prototype.drawChiralLabel = function ()
 			'font-size' : settings.fontsz,
 			'fill' : '#000'
 		});
-		this.addChiralPath('data', this.chiral.visel, this.chiral.path);
+		this.addReObjectPath('data', this.chiral.visel, this.chiral.path);
 	}
 };
 
@@ -994,7 +1002,7 @@ rnd.ReStruct.prototype.loopIsValid = function (rlid, reloop) {
 		}
 	}, this);
 	return !bad;
-}
+};
 
 rnd.ReStruct.prototype.verifyLoops = function ()
 {
@@ -1157,7 +1165,7 @@ rnd.ReFrag.prototype._draw = function(render, fid, attrs) { // TODO need to revi
 };
 
 rnd.ReFrag.prototype.draw = function(render, fid) { // TODO need to review parameter list
-    return this._draw(render, fid, { 'stroke' : 'lightgray' });
+    return null;//this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
 };
 
 rnd.ReFrag.prototype.drawHighlight = function(render) { // TODO need to review parameter list
@@ -1178,6 +1186,24 @@ rnd.ReRGroup = function(/*chem.Struct.RGroup*/rgroup) {
 };
 rnd.ReRGroup.prototype = new rnd.ReObject();
 
+rnd.ReRGroup.findClosest = function(render, p, skip, minDist) {
+    minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
+    var ret;
+    render.ctab.rgroups.each(function(rgid, rgroup) {
+        if (rgid != skip) {
+            var bb = rgroup.calcVBox(render);
+            if (bb.p0.y < p.y && bb.p1.y > p.y && bb.p0.x < p.x && bb.p1.x > p.x) {
+                var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
+                if (!ret || xDist < minDist) {
+                    minDist = xDist;
+                    ret = { 'id' : rgid, 'minDist' : minDist };
+                }
+            }
+        }
+    });
+    return ret;
+};
+
 rnd.ReRGroup.prototype.calcBBox = function(render) {
     var ret;
     this.item.frags.each(function(fnum, fid) {
@@ -1186,8 +1212,7 @@ rnd.ReRGroup.prototype.calcBBox = function(render) {
             ret = (ret ? util.Box2Abs.union(ret, bbf) : bbf);
         }
     });
-    var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
-    ret = ret.extend(ext, ext);
+    ret = ret.extend(this.__ext, this.__ext);
     return ret;
 };
 
@@ -1230,7 +1255,11 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
         logic.push(
             (this.item.ifthen > 0 ? 'IF ' : '')
             + 'R' + key.toString()
-            + (this.item.range.length > 0 ? this.item.range : '>0')
+            + (this.item.range.length > 0
+                ? this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=')
+                    ? this.item.range
+                    : '=' + this.item.range
+                : '>0')
             + (this.item.resth ? ' (RestH)' : '')
             + (this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
         );
@@ -1249,5 +1278,25 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
     } else {
         // TODO abnormal situation, empty fragments must be destroyed by tools
         return {};
+    }
+};
+
+rnd.ReRGroup.prototype._draw = function(render, rgid, attrs) { // TODO need to review parameter list
+    var bb = this.calcVBox(render).extend(this.__ext, this.__ext);
+    if (bb) {
+        var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
+        var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+        return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
+    }
+};
+
+rnd.ReRGroup.prototype.drawHighlight = function(render) { // TODO need to review parameter list
+    var rgid = render.ctab.rgroups.keyOf(this);
+    if (!Object.isUndefined(rgid)) {
+        var ret = this._draw(render, rgid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
+        render.addItemPath(this.visel, 'highlighting', ret);
+        return ret;
+    } else {
+        // TODO abnormal situation, fragment does not belong to the render
     }
 };

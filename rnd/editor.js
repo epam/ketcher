@@ -313,7 +313,9 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         //ui.updateSelection(this._lassoHelper.addPoint(event));
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
-        this._hoverHelper.hover(this.editor.render.findItem(event));
+        this._hoverHelper.hover(
+            this.editor.render.findItem(event, ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
+        );
     }
     return true;
 };
@@ -798,10 +800,10 @@ rnd.Editor.RGroupFragmentTool = function(editor) {
 };
 rnd.Editor.RGroupFragmentTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.RGroupFragmentTool.prototype.OnMouseMove = function(event) {
-    this._hoverHelper.hover(this.editor.render.findItem(event, ['frags']));
+    this._hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
 };
 rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
-    var ci = this.editor.render.findItem(event, ['frags']);
+    var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
     if (ci && ci.map == 'frags') {
         this._hoverHelper.hover(null);
         var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
@@ -816,6 +818,32 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
                         true
                     );
                     this.editor.ui.render.update();
+                }
+            }.bind(this)
+        });
+        return true;
+    }
+    else if (ci && ci.map == 'rgroups') {
+        this._hoverHelper.hover(null);
+        var rg = this.editor.render.ctab.molecule.rgroups.get(ci.id);
+        var rgmask = 0; this.editor.render.ctab.molecule.rgroups.each(function(rgid) { rgmask |= (1 << (rgid - 1)); });
+        var oldLogic = {
+            occurrence : rg.range,
+            resth : rg.resth,
+            ifthen : rg.ifthen
+        };
+        this.editor.ui.showRLogicTable({
+            rgid : ci.id,
+            rlogic : oldLogic,
+            rgmask : rgmask,
+            onOk : function(newLogic) {
+                var props = {};
+                if (oldLogic.occurrence != newLogic.occurrence) props.range = newLogic.occurrence;
+                if (oldLogic.resth != newLogic.resth) props.resth = newLogic.resth;
+                if (oldLogic.ifthen != newLogic.ifthen) props.ifthen = newLogic.ifthen;
+                if ('range' in props || 'resth' in props || 'ifthen' in props) {
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromRGroupAttrs(ci.id, props));
+                    this.editor.render.update();
                 }
             }.bind(this)
         });

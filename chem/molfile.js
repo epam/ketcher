@@ -979,11 +979,11 @@ chem.MolfileSaver.getComponents = function (molecule) {
 	};
 };
 
-chem.MolfileSaver.prototype.getCTab = function (molecule)
+chem.MolfileSaver.prototype.getCTab = function (molecule, rgroups)
 {
 	this.molecule = molecule.clone();
 	this.molfile = '';
-    this.writeCTab2000(molecule);
+    this.writeCTab2000(rgroups);
     return this.molfile;
 }
 
@@ -1013,7 +1013,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors,
         if (norgroups) {
             molecule = molecule.getScaffold();
         } else {
-            var scaffold = new chem.MolfileSaver(false).getCTab(molecule.getScaffold());
+            var scaffold = new chem.MolfileSaver(false).getCTab(molecule.getScaffold(), molecule.rgroups);
             this.molfile = "$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n";
             this.molfile += "$CTAB\n" + scaffold + "$END CTAB\n";
 
@@ -1040,7 +1040,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors,
 	this.writeHeader();
 
 	// TODO: saving to V3000
-	this.writeCTab2000(molecule);
+	this.writeCTab2000();
 
 	return this.molfile;
 };
@@ -1115,7 +1115,7 @@ chem.MolfileSaver.prototype.writeCTab2000Header = function ()
 	this.writeCR(' V2000');
 };
 
-chem.MolfileSaver.prototype.writeCTab2000 = function ()
+chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
 {
 	this.writeCTab2000Header();
 
@@ -1241,11 +1241,13 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
             unsaturated_list.push([id, atom.unsaturatedAtom]);
 	});
 
-	this.molecule.rgroups.each(function (rgid, rg) {
-        if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-            rglogic_list.push('  1 ' + util.paddedInt(rgid, 3) + ' ' + util.paddedInt(rg.ifthen, 3) + ' ' + rg.range);
-        }
-    });
+    if (rgroups)
+        rgroups.each(function (rgid, rg) {
+            if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
+                var line = '  1 ' + util.paddedInt(rgid, 3) + ' ' + util.paddedInt(rg.ifthen, 3) + ' ' + util.paddedInt(rg.resth ? 1 : 0, 3) + ' ' + rg.range;
+                rglogic_list.push(line);
+            }
+        });
 
     var writeAtomPropList = function (prop_id, values)
     {
@@ -1278,7 +1280,9 @@ chem.MolfileSaver.prototype.writeCTab2000 = function ()
     writeAtomPropList.call(this, 'M  ISO', isotope_list);
     writeAtomPropList.call(this, 'M  RAD', radical_list);
     writeAtomPropList.call(this, 'M  RGP', rglabel_list);
-    writeAtomPropList.call(this, 'M  LOG', rglogic_list);
+    for (var j = 0; j < rglogic_list.length; ++j) {
+        this.write('M  LOG' + rglogic_list[j] + '\n');
+    }
     writeAtomPropList.call(this, 'M  APO', aplabel_list);
     writeAtomPropList.call(this, 'M  RBC', rbcount_list);
     writeAtomPropList.call(this, 'M  SUB', substcount_list);

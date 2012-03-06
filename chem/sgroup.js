@@ -175,10 +175,10 @@ chem.SGroup.removeAtom = function (sgroup, aid)
 
 chem.SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
     mol.bonds.each(function(bid, bond){
-        if (parentAtomSet[bond.begin] && parentAtomSet[bond.end]) {
+        if (util.Set.contains(parentAtomSet, bond.begin) && util.Set.contains(parentAtomSet, bond.end)) {
             if (inBonds != null)
                 inBonds.push(bid);
-        } else if (parentAtomSet[bond.begin] || parentAtomSet[bond.end]) {
+        } else if (util.Set.contains(parentAtomSet, bond.begin) || util.Set.contains(parentAtomSet, bond.end)) {
             if (xBonds != null)
                 xBonds.push(bid);
         }

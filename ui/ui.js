@@ -257,14 +257,6 @@ ui.init = function ()
     // S-group properties dialog events
     $('sgroup_type').observe('change', ui.onChange_SGroupType);
     $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
-    $('sgroup_prop_cancel').observe('click', function ()
-    {
-        ui.hideDialog('sgroup_properties');
-    });
-    $('sgroup_prop_ok').observe('click', function ()
-    {
-        ui.applySGroupProperties();
-    });
 
     // Label input events
     $('input_label').observe('blur', function ()
@@ -2669,8 +2661,11 @@ ui.applyBondProperties = function ()
 //
 // S-Group properties
 //
-ui.showSGroupProperties = function (id)
+ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
 {
+    if (!tool) {
+        throw new Error("Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.");
+    }
     if ($('sgroup_properties').visible())
         return;
 
@@ -2680,12 +2675,12 @@ ui.showSGroupProperties = function (id)
         var verified = {};
         var atoms_hash = {};
 
-        ui.selection.atoms.each(function (id)
+        selection.atoms.each(function (id)
         {
             atoms_hash[id] = true;
         }, this);
 
-        if (!Object.isUndefined(ui.selection.atoms.detect(function (id)
+        if (!Object.isUndefined(selection.atoms.detect(function (id)
         {
             var sgroups = ui.render.atomGetSGroups(id);
 
@@ -2696,7 +2691,7 @@ ui.showSGroupProperties = function (id)
 
                 var sg_atoms = ui.render.sGroupGetAtoms(sid);
 
-                if (sg_atoms.length < ui.selection.atoms.length)
+                if (sg_atoms.length < selection.atoms.length)
                 {
                     if (!Object.isUndefined(sg_atoms.detect(function (aid)
                     {
@@ -2705,7 +2700,7 @@ ui.showSGroupProperties = function (id)
                     {
                         return true;
                     }
-                } else if (!Object.isUndefined(ui.selection.atoms.detect(function (aid)
+                } else if (!Object.isUndefined(selection.atoms.detect(function (aid)
                 {
                     return (sg_atoms.indexOf(aid) == -1);
                 }, this)))
@@ -2751,62 +2746,71 @@ ui.showSGroupProperties = function (id)
         $('sgroup_field_name').value = '';
         $('sgroup_field_value').value = '';
     }
+    
+    var onClickCancel = function ()
+    {
+        ui.hideDialog('sgroup_properties');
+        resetListeners();
+        onCancel.call(tool);
+    }
+    
+    var onClickOk = function ()
+    {
+        ui.hideDialog('sgroup_properties');
+        resetListeners();
+
+        var id = $('sgroup_properties').sgroup_id;
+
+        var type = $('sgroup_type').value;
+        var attrs =
+        {
+            mul: null,
+            connectivity: '',
+            name: '',
+            subscript: '',
+            fieldName: '',
+            fieldValue: ''
+        };
+
+        switch (type)
+        {
+        case 'SRU':
+            attrs.connectivity = $('sgroup_connection').value;
+            attrs.subscript = $('sgroup_label').value;
+            break;
+        case 'MUL':
+            attrs.mul = parseInt($('sgroup_label').value);
+            break;
+        case 'SUP':
+            attrs.name = $('sgroup_label').value;
+            break;
+        case 'DAT':
+            attrs.fieldName = $('sgroup_field_name').value.strip();
+            attrs.fieldValue = $('sgroup_field_value').value.strip();
+
+            if (attrs.fieldName == '' || attrs.fieldValue == '')
+            {
+                alert("Please, specify data field name and value.");
+                ui.showDialog('sgroup_properties');
+                return;
+            }
+            break;
+        }
+        
+        onOk.call(tool, id, type, attrs);
+    };
+    
+    var resetListeners = function () {
+        $('sgroup_prop_cancel').stopObserving('click', onClickCancel);
+        $('sgroup_prop_ok').stopObserving('click', onClickOk);
+    }
+    
+    $('sgroup_prop_cancel').observe('click', onClickCancel);    
+    $('sgroup_prop_ok').observe('click', onClickOk);
 
     ui.showDialog('sgroup_properties');
+    ui.sGroupDlgSelection = selection;
     $('sgroup_type').activate();
-};
-
-ui.applySGroupProperties = function ()
-{
-    ui.hideDialog('sgroup_properties');
-
-    var id = $('sgroup_properties').sgroup_id;
-
-    var type = $('sgroup_type').value;
-    var attrs =
-    {
-        mul: null,
-        connectivity: '',
-        name: '',
-        subscript: '',
-        fieldName: '',
-        fieldValue: ''
-    };
-
-    switch (type)
-    {
-    case 'SRU':
-        attrs.connectivity = $('sgroup_connection').value;
-        attrs.subscript = $('sgroup_label').value;
-        break;
-    case 'MUL':
-        attrs.mul = parseInt($('sgroup_label').value);
-        break;
-    case 'SUP':
-        attrs.name = $('sgroup_label').value;
-        break;
-    case 'DAT':
-        attrs.fieldName = $('sgroup_field_name').value.strip();
-        attrs.fieldValue = $('sgroup_field_value').value.strip();
-
-        if (attrs.fieldName == '' || attrs.fieldValue == '')
-        {
-            alert("Please, specify data field name and value.");
-            ui.showDialog('sgroup_properties');
-            return;
-        }
-        break;
-    }
-
-    if (id == null)
-    {
-        ui.addUndoAction(ui.Action.fromSgroupAddition(type, attrs, ui.selection.atoms));
-        ui.updateSelection();
-    } else
-    {
-        ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, attrs), true);
-        ui.render.update();
-    }
 };
 
 ui.onChange_SGroupLabel = function ()

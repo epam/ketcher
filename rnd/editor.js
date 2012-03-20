@@ -36,6 +36,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.AtomTool(this, ui.atomLabel(tool)); // TODO should not refer ui directly, re-factoring needed
     } else if (tool.startsWith('template_')) {
         return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
+    } else if (tool == 'sgroup') {
+        return new rnd.Editor.SGroupTool(this);
     } else if (tool == 'reaction_arrow') {
         return new rnd.Editor.ReactionArrowTool(this);
     } else if (tool == 'reaction_plus') {
@@ -232,6 +234,7 @@ rnd.Editor.LassoTool = function(editor, mode) {
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
+    this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
 };
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
@@ -324,7 +327,7 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
     } else if (ci.map == 'bonds') {
         this.editor.ui.showBondProperties(ci.id);
     } else if (ci.map == 'sgroups') {
-        this.editor.ui.showSGroupProperties(ci.id);
+        this._sGroupHelper.showPropertiesDialog(ci.id);
     }
     return true;
 };
@@ -795,3 +798,83 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function(event) {
     }
     this._hoverHelper.hover(null);
 };
+
+rnd.Editor.SGroupTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+    this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
+    this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
+};
+rnd.Editor.SGroupTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.SGroupTool.prototype.OnMouseDown = function(event) {
+    var ci = this.editor.render.findItem(event);
+    if (!ci || ci.type == 'Canvas') {
+        this._lassoHelper.begin(event);
+    }
+};
+rnd.Editor.SGroupTool.prototype.OnMouseMove = function(event) {
+    if (this._lassoHelper.running()) {
+        this.editor._selectionHelper.setSelection(
+            this._lassoHelper.addPoint(event)
+            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
+        );
+    } else {
+        this._hoverHelper.hover(this.editor.render.findItem(event));
+    }
+};
+
+rnd.Editor.SGroupTool.SGroupHelper = function(editor) {
+    this.editor = editor;
+    this.selection = null;
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function(id, selection) {
+    this.selection = selection;
+    this.editor.ui.showSGroupProperties(id, this, this.selection, this.OnPropertiesDialogOk, this.OnPropertiesDialogCancel);
+}
+
+rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
+    var id = null;
+    var selection = null;
+    if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+        selection = this._lassoHelper.end(event);
+    } else {
+        var ci = this.editor.render.findItem(event);
+        if (ci && ci.type != 'Canvas') {
+            this._hoverHelper.hover(null);
+            if (ci.map == 'atoms') {
+                selection = {'atoms': [ci.id]};
+            } else if (ci.map == 'bonds') {
+                var bond = this.editor.render.ctab.bonds.get(ci.id);
+                selection = {'atoms': [bond.b.begin, bond.b.end]};
+            } else if (ci.map == 'sgroups') {
+                id = ci.id;
+            } else {
+                return;
+            }
+        }
+    }
+    this._sGroupHelper.showPropertiesDialog(id, selection);
+};
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
+    this.editor.ui.updateSelection();
+    for (var map1 in rnd.ReStruct.maps) ui.selection[map1] = []; // TODO to be deleted when ui.selection eliminated
+    this.editor.ui.updateClipboardButtons(); // TODO review
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id, type, attrs) {
+    if (id == null)
+    {
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, attrs, this.selection.atoms));
+    } else
+    {
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, type, attrs), true);
+    }
+    this.postClose();
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function() {
+    this.postClose();
+}

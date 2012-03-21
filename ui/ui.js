@@ -2339,6 +2339,7 @@ ui.onMouseMove_Canvas = function (event)
 
     } else if (mode == ui.MODE.PASTE)
     {
+        throw new Error("Deprecated");
         var cur_pos = new util.Vec2(ui.page2obj(event));
         var delta = util.Vec2.diff(cur_pos, ui.pastedAnchorPos);
 
@@ -3074,6 +3075,7 @@ ui.copy = function ()
 
 ui.paste = function ()
 {
+    throw new Error("Deprecated");
     var mapping = {};
     var id;
 
@@ -3131,7 +3133,7 @@ ui.paste = function ()
         ui.pastedAnchorPos = ui.render.rxnPlusGetPos(ui.pasted.rxnPluses[0]);
     }
 
-    ui.selectMode(null);
+    ui.selectMode('paste');
     ui.render.update();
 };
 
@@ -3178,9 +3180,7 @@ ui.onClick_Paste = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-        ui.cancelPaste();
-    ui.paste();
+    ui.selectMode('paste');
 };
 
 ui.onClick_Undo = function ()

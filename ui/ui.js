@@ -558,11 +558,6 @@ ui.selectMode = function (mode)
                 ui.render.update();
                 return;
             }
-            if (mode == 'sgroup') {
-				if (ui.selectedAtom())
-					ui.showSGroupProperties(null);
-                return;
-            }
         } else if (mode.startsWith('atom_')) {
             var cAtom = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
             if (cAtom) {
@@ -578,9 +573,6 @@ ui.selectMode = function (mode)
                 return;
             }
         }
-
-        if (ui.mode_id == null) // ui.MODE.PASTE
-            ui.cancelPaste();
     }
 
     if (this.mode_id != null && this.mode_id != mode) {
@@ -594,6 +586,9 @@ ui.selectMode = function (mode)
             $(this.mode_id).removeClassName('buttonSelected');
     }
 
+    if (this.render.current_tool)
+        this.render.current_tool.OnCancel();
+        
     if (mode == null) {
         this.mode_id = null;
         delete this.render.current_tool;
@@ -696,9 +691,6 @@ ui.onClick_NewFile = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-        ui.cancelPaste();
-
     ui.selectMode(ui.defaultSelector);
 
     if (!ui.ctab.isBlank())
@@ -744,9 +736,7 @@ ui.onKeyPress_Ketcher = function (event)
     case 27: // Esc
         if (!Prototype.Browser.WebKit)
         {
-            if (ui.modeType() == ui.MODE.PASTE)
-                ui.cancelPaste();
-            else if (ui.modeType() == ui.MODE.SIMPLE)
+            if (ui.modeType() == ui.MODE.SIMPLE)
                 ui.updateSelection();
             ui.selectMode(ui.defaultSelector);
         }
@@ -926,9 +916,7 @@ ui.onKeyUp = function (event)
         {
             if (!$('window_cover').visible())
             {
-                if (ui.modeType() == ui.MODE.PASTE)
-                    ui.cancelPaste();
-                else if (ui.modeType() == ui.MODE.SIMPLE)
+                if (ui.modeType() == ui.MODE.SIMPLE)
                     ui.updateSelection();
                 ui.selectMode(ui.defaultSelector);
             }
@@ -1086,11 +1074,6 @@ ui.onClick_OpenFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
     ui.onSelect_OpenFromInput();
@@ -1204,11 +1187,6 @@ ui.onClick_SaveFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
 };
@@ -1347,11 +1325,6 @@ ui.onClick_CleanUp = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
 
     var ms = new chem.MolfileSaver();
 
@@ -1529,11 +1502,6 @@ ui.onClick_Atom = function (event, id)
             ui.addUndoAction(ui.Action.fromPatternOnAtom(id, ui.pattern()), true);
             ui.render.update();
             break;
-
-        case ui.MODE.SGROUP:
-            ui.updateSelection({'atoms':[id]});
-            ui.showSGroupProperties(null);
-            break;
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
@@ -1696,12 +1664,6 @@ ui.onClick_Bond = function (event, id)
             ui.render.update();
             break;
 
-        case ui.MODE.SGROUP:
-            var bond = ui.ctab.bonds.get(id);
-
-            ui.updateSelection({'atoms':[bond.begin, bond.end], 'bonds':[id]});
-            ui.showSGroupProperties(null);
-            break;
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
@@ -1745,13 +1707,6 @@ ui.onClick_SGroup = function (event, sid)
 ui.onDblClick_SGroup = function (event, sid)
 {
     ui.dbl_click = true;
-
-    if (ui.modeType() != ui.MODE.PASTE)
-    {
-        if (ui.selected())
-            ui.updateSelection();
-        ui.showSGroupProperties(sid);
-    }
 
     return true;
 };
@@ -1797,17 +1752,6 @@ ui.onClick_Canvas = function (event)
 
         ui.addUndoAction(ui.Action.fromPlusAddition(pos));
         ui.render.update();
-        break;
-
-    case ui.MODE.PASTE:
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
-        ui.render.update();
-        ui.pasted.atoms.clear();
-        ui.pasted.bonds.clear();
-        ui.pasted.sgroups.clear();
-        ui.pasted.rxnArrows.clear();
-        ui.pasted.rxnPluses.clear();
-        ui.selectMode(ui.defaultSelector);
         break;
     }
 };
@@ -2150,21 +2094,6 @@ ui.onMouseDown_Canvas = function (event)
 {
     ui.hideBlurredControls();
 
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.mouse_moved = true; // to avoid further handling of the click
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
-        ui.render.update();
-        ui.pasted.atoms.clear();
-        ui.pasted.bonds.clear();
-        ui.pasted.sgroups.clear();
-        ui.pasted.rxnArrows.clear();
-        ui.pasted.rxnPluses.clear();
-        ui.selectMode(ui.defaultSelector);
-
-        return;
-    }
-
     ui.mouse_moved = false;
 
     var pos = ui.page2obj(event);
@@ -2337,14 +2266,6 @@ ui.onMouseMove_Canvas = function (event)
 
         ui.drag.action = action_ret;
 
-    } else if (mode == ui.MODE.PASTE)
-    {
-        throw new Error("Deprecated");
-        var cur_pos = new util.Vec2(ui.page2obj(event));
-        var delta = util.Vec2.diff(cur_pos, ui.pastedAnchorPos);
-
-        ui.render.multipleMoveRel(ui.pasted, delta);
-        ui.pastedAnchorPos = new util.Vec2(cur_pos);
     } else
     {
         if (ui.drag.atom_id == null && ui.drag.bond_id == null && ui.drag.rxnArrow_id == null && ui.drag.rxnPlus_id == null)
@@ -2404,9 +2325,6 @@ ui.onMouseUp_Ketcher = function (event)
     if (ui.modeType() == ui.MODE.ERASE)
         if (ui.selected() && ui.isDrag())
             ui.removeSelected();
-    if (ui.modeType() == ui.MODE.SGROUP)
-        if (ui.selectedAtom() && ui.isDrag())
-            ui.showSGroupProperties(null);
     ui.endDrag();
     util.stopEventPropagation(event);
 };
@@ -2670,54 +2588,6 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     if ($('sgroup_properties').visible())
         return;
 
-    // check s-group overlappings
-    if (id == null)
-    {
-        var verified = {};
-        var atoms_hash = {};
-
-        selection.atoms.each(function (id)
-        {
-            atoms_hash[id] = true;
-        }, this);
-
-        if (!Object.isUndefined(selection.atoms.detect(function (id)
-        {
-            var sgroups = ui.render.atomGetSGroups(id);
-
-            return !Object.isUndefined(sgroups.detect(function (sid)
-            {
-                if (sid in verified)
-                    return false;
-
-                var sg_atoms = ui.render.sGroupGetAtoms(sid);
-
-                if (sg_atoms.length < selection.atoms.length)
-                {
-                    if (!Object.isUndefined(sg_atoms.detect(function (aid)
-                    {
-                        return !(aid in atoms_hash);
-                    }, this)))
-                    {
-                        return true;
-                    }
-                } else if (!Object.isUndefined(selection.atoms.detect(function (aid)
-                {
-                    return (sg_atoms.indexOf(aid) == -1);
-                }, this)))
-                {
-                    return true;
-                }
-
-                return false;
-            }, this));
-        }, this)))
-        {
-            alert("Partial S-group overlapping is not allowed.");
-            return;
-        }
-    }
-
     var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
 
     $('sgroup_properties').sgroup_id = id;
@@ -2881,11 +2751,6 @@ ui.onClick_ElemTableButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showElemTable();
 };
 
@@ -2954,8 +2819,6 @@ ui.onSelect_ElemTableNotList = function ()
 //
 
 ui.clipboard = null;
-ui.pasted = {atoms: [], bonds: [], sgroups: [], rxnArrows: [], rxnPluses: []}; // ids
-ui.pastedAnchorPos = null;
 
 ui.isClipboardEmpty = function ()
 {
@@ -3071,90 +2934,6 @@ ui.copy = function ()
         ui.clipboard.rxnPluses.push(plus);
     });
 
-};
-
-ui.paste = function ()
-{
-    throw new Error("Deprecated");
-    var mapping = {};
-    var id;
-
-    for (id = 0; id < ui.clipboard.atoms.length; id++)
-    {
-        var atom = ui.clipboard.atoms[id];
-        mapping[id] = ui.render.atomAdd(atom.pos, atom);
-        ui.pasted.atoms.push(mapping[id]);
-    }
-
-    for (id = 0; id < ui.clipboard.bonds.length; id++)
-    {
-        var bond = ui.clipboard.bonds[id];
-        ui.pasted.bonds.push(ui.render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
-    }
-
-    ui.clipboard.sgroups.each(function (sgroup)
-    {
-        var sid = ui.render.sGroupCreate(sgroup.type);
-
-        ui.render.sGroupSetAttr(sid, 'mul', sgroup.mul);
-        ui.render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
-        ui.render.sGroupSetAttr(sid, 'name', sgroup.name);
-        ui.render.sGroupSetAttr(sid, 'subscript', sgroup.subscript);
-        ui.render.sGroupSetAttr(sid, 'fieldName', sgroup.fieldName);
-        ui.render.sGroupSetAttr(sid, 'fieldValue', sgroup.fieldValue);
-
-        sgroup.atoms.each(function(id)
-        {
-            ui.render.atomClearSGroups(mapping[id]);
-            ui.render.atomAddToSGroup(mapping[id], sid);
-        }, this);
-
-        ui.pasted.sgroups.push(sid);
-    }, this);
-
-    for (id = 0; id < ui.clipboard.rxnArrows.length; id++) {
-        var arrow = ui.clipboard.rxnArrows[id];
-        if (ui.ctab.rxnArrows.count() < 1) {
-            ui.pasted.rxnArrows.push(ui.render.rxnArrowAdd(arrow.pos, arrow));
-        }
-    }
-
-    for (id = 0; id < ui.clipboard.rxnPluses.length; id++) {
-        var plus = ui.clipboard.rxnPluses[id];
-        ui.pasted.rxnPluses.push(ui.render.rxnPlusAdd(plus.pos, plus));
-    }
-
-    ui.pastedAnchorPos = null;
-    if (ui.pasted.atoms.length) {
-        ui.pastedAnchorPos = ui.render.atomGetPos(ui.pasted.atoms[0]);
-    } else if (ui.pasted.rxnArrows.length) {
-        ui.pastedAnchorPos = ui.render.rxnArrowGetPos(ui.pasted.rxnArrows[0]);
-    } else if (ui.pasted.rxnPluses.length) {
-        ui.pastedAnchorPos = ui.render.rxnPlusGetPos(ui.pasted.rxnPluses[0]);
-    }
-
-    ui.selectMode('paste');
-    ui.render.update();
-};
-
-ui.cancelPaste = function ()
-{
-    ui.pasted.sgroups.each(function (id)
-    {
-        ui.render.sGroupDelete(id);
-    });
-
-    ui.pasted.atoms.each(function (id)
-    {
-        ui.render.atomRemove(id);
-    });
-
-    ui.pasted.atoms.clear();
-    ui.pasted.bonds.clear();
-    ui.pasted.sgroups.clear();
-
-    if (ui.render != null)
-        ui.render.update();
 };
 
 ui.onClick_Cut = function ()

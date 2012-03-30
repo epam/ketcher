@@ -1074,40 +1074,77 @@ rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 };
 rnd.ReRxnPlus.prototype = new rnd.ReObject();
 
+rnd.ReRxnPlus.findClosest = function (render, p) {
+    var minDist;
+    var ret;
+    
+    render.ctab.rxnPluses.each(function(id, plus) {
+        var pos = plus.item.pp;
+        var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
+        if (dist < 0.5 && (!ret || dist < minDist)) {
+            minDist = dist;
+            ret = {'id' : id, 'minDist' : minDist};
+        }
+    });
+    return ret;
+}
+
+rnd.ReRxnPlus.prototype.highlightPath = function(render) {
+    var p = this.item.ps;
+    var s = render.settings.scaleFactor;
+    return render.paper.rect(p.x - s/4, p.y - s/4, s/2, s/2, s/8);
+}
+
 rnd.ReRxnPlus.prototype.drawHighlight = function(render) {
-    var ret = render.paper.circle(
-        this.item.ps.x, this.item.ps.y, render.styles.atomSelectionPlateRadius
-    ).attr(render.styles.highlightStyle);
+    var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
     render.addItemPath(this.visel, 'highlighting', ret);
     return ret;
 };
 
-rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
-	.attr(styles.selectionStyle);
+rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
     this.init(rnd.Visel.TYPE.ARROW);
-
-	this.item = arrow;
+    
+    this.item = arrow;
 };
 rnd.ReRxnArrow.prototype = new rnd.ReObject();
 
+rnd.ReRxnArrow.findClosest = function(render, p) {
+    var minDist;
+    var ret;
+    
+    render.ctab.rxnArrows.each(function(id, arrow) {
+        var pos = arrow.item.pp;
+        if (Math.abs(p.x - pos.x) < 1.0) {
+            var dist = Math.abs(p.y - pos.y);
+            if (dist < 0.3 && (!ret || dist < minDist)) {
+                minDist = dist;
+                ret = {'id' : id, 'minDist' : minDist};
+            }
+        }
+    });
+    return ret;
+};
+
+rnd.ReRxnArrow.prototype.highlightPath = function(render) {
+    var p = this.item.ps;
+    var s = render.settings.scaleFactor;
+    return render.paper.rect(p.x - s, p.y - s/4, 2*s, s/2, s/8);
+}
+
 rnd.ReRxnArrow.prototype.drawHighlight = function(render) {
-    var ret = render.paper.circle(
-        this.item.ps.x, this.item.ps.y, render.styles.atomSelectionPlateRadius
-    ).attr(render.styles.highlightStyle);
+    var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
     render.addItemPath(this.visel, 'highlighting', ret);
     return ret;
 };
 
 rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return paper.circle(this.item.ps.x, this.item.ps.y, styles.atomSelectionPlateRadius)
-	.attr(styles.selectionStyle);
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
-
 
 rnd.ReFrag = function(/*chem.Struct.Fragment*/frag) {
     this.init(rnd.Visel.TYPE.FRAGMENT);

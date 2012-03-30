@@ -1803,7 +1803,7 @@ ui.Action.OpRxnPlusDelete = function(plid) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         if (!this.data.pos) {
-            this.data.pos = R.rxnArrowGetPos(this.data.plid);
+            this.data.pos = R.rxnPlusGetPos(this.data.plid);
         }
         RS.notifyRxnPlusRemoved(this.data.plid);
         DS.rxnPluses.remove(this.data.plid);

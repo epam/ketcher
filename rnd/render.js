@@ -1442,26 +1442,6 @@ rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO shoul
 	return null;
 };
 
-rnd.Render.prototype.findClosest = function (map, pos, minDist) { // TODO should be a member of ReObject (see ReFrag)
-	var closestItem = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient;
-	minDist = minDist || maxMinDist;
-	minDist = Math.min(minDist, maxMinDist);
-	this.ctab.molecule[map].each(function(id, item){
-		var dist = util.Vec2.dist(pos, item.pp);
-		if (dist < minDist) {
-			closestItem = id;
-			minDist = dist;
-		}
-	}, this);
-	if (closestItem != null)
-		return {
-			'id':closestItem,
-			'dist':minDist
-		};
-	return null;
-};
-
 rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;
 	var updret = function(type, item) {
@@ -1491,11 +1471,11 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
         updret('SGroup', sg);
     }
     if (!maps || maps.indexOf('rxnArrows') >= 0) {
-        var arrow = this.findClosest('rxnArrows', pos);
+        var arrow = rnd.ReRxnArrow.findClosest(this, pos);
         updret('RxnArrow',arrow);
     }
     if (!maps || maps.indexOf('rxnPluses') >= 0) {
-        var plus = this.findClosest('rxnPluses', pos);
+        var plus = rnd.ReRxnPlus.findClosest(this, pos);
         updret('RxnPlus',plus);
     }
     if (!maps || maps.indexOf('frags') >= 0) {

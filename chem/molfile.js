@@ -873,7 +873,7 @@ chem.Molfile.readRGroups3000 = function (ctab, /* string */ ctabLines) /* chem.S
             rg.rgroups.set(rgid, new chem.Struct.RGroup(rLogic[rgid]));
             var frid = rg.frags.add(new chem.Struct.Fragment());
             rg.rgroups.get(rgid).frags.add(frid);
-            rg.atoms.each(function(aid, atom) { atom.fragment = frid; });
+            rg.atoms.each(function(aid, atom) {atom.fragment = frid;});
             rg.mergeInto(ctab);
         }
     }
@@ -1505,7 +1505,11 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	var bbReact = [],
 		bbAgent = [],
 		bbProd = [];
-	for (var j = 0; j < mols.length; ++j) {
+	var molReact = [],
+		molAgent = [],
+		molProd = [];
+    var j;
+	for (j = 0; j < mols.length; ++j) {
 		var mol = mols[j];
 		var bb = mol.getCoordBoundingBoxObj();
         if (!bb)
@@ -1514,20 +1518,49 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
 			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
 				chem.Struct.FRAGMENT.AGENT));
-		if (fragmentType == chem.Struct.FRAGMENT.REACTANT)
+		if (fragmentType == chem.Struct.FRAGMENT.REACTANT) {
 			bbReact.push(bb);
-		else if (fragmentType == chem.Struct.FRAGMENT.AGENT)
+            molReact.push(mol);
+        } else if (fragmentType == chem.Struct.FRAGMENT.AGENT) {
 			bbAgent.push(bb);
-		else if (fragmentType == chem.Struct.FRAGMENT.PRODUCT)
+            molAgent.push(mol);
+        } else if (fragmentType == chem.Struct.FRAGMENT.PRODUCT) {
 			bbProd.push(bb);
+            molProd.push(mol);
+        }
 
 		mol.atoms.each(function(aid, atom){
 			atom.rxnFragmentType = fragmentType;
 		});
-		mol.mergeInto(ret);
 	}
 
-	var bb1, bb2, x, y, bbReactAll = null, bbProdAll = null;
+    // reaction fragment layout
+	var xorig = 0;
+    var shiftMol = function(ret, mol, bb, xorig, over) {
+        var d = new util.Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
+        mol.atoms.each(function(aid, atom){
+            atom.pos.add_(d);
+        });
+        bb.min = bb.min.add(d);
+        bb.max = bb.max.add(d);
+		mol.mergeInto(ret);
+        return bb.max.x - bb.min.x;
+    };
+ 
+    for (j = 0; j < molReact.length; ++j) {
+        xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+    }
+    xorig += 2.0;
+    for (j = 0; j < molAgent.length; ++j) {
+        xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+    }
+    xorig += 2.0;
+
+    for (j = 0; j < molProd.length; ++j) {
+        xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+    }
+
+    var bb1, bb2, x, y, bbReactAll = null, bbProdAll = null;
 	for (j = 0; j <	bbReact.length - 1; ++j) {
 		bb1 = bbReact[j];
 		bb2 = bbReact[j+1];
@@ -1595,7 +1628,7 @@ chem.Molfile.rgMerge = function (scaffold, rgroups) /* chem.Struct */
             ctab.rgroups.set(rgid, new chem.Struct.RGroup());
             var frid = ctab.frags.add(new chem.Struct.Fragment());
             ctab.rgroups.get(rgid).frags.add(frid);
-            ctab.atoms.each(function(aid, atom) { atom.fragment = frid; });
+            ctab.atoms.each(function(aid, atom) {atom.fragment = frid;});
             ctab.mergeInto(ret);
         }
     }
@@ -1609,7 +1642,7 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
 	ctabLines = ctabLines.slice(7);
     if (ctabLines[0].strip() != '$CTAB')
         throw new Error('RGFile format invalid');
-    var i = 1; while (ctabLines[i][0] != '$') i++;
+    var i = 1;while (ctabLines[i][0] != '$') i++;
     if (ctabLines[i].strip() != '$END CTAB')
         throw new Error('RGFile format invalid');
     var coreLines = ctabLines.slice(1, i);
@@ -1638,7 +1671,7 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
             }
             if (line != '$CTAB')
                 throw new Error('RGFile format invalid');
-            i = 1; while (ctabLines[i][0] != '$') i++;
+            i = 1;while (ctabLines[i][0] != '$') i++;
             if (ctabLines[i].strip() != '$END CTAB')
                 throw new Error('RGFile format invalid');
             fragmentLines[rgid].push(ctabLines.slice(1, i));

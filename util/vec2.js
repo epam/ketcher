@@ -14,7 +14,7 @@
 if (!window.util)
     util = {};
 
-//util.assertDefined = function(v) { if (typeof(v) == 'undefined') debugger; }
+//util.assertDefined = function(v) { if (typeof(v) == 'undefined' || v == null) debugger; }
 util.assertDefined = function() { };
 
 util.Vec2 = function (x, y)

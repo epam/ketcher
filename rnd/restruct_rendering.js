@@ -909,7 +909,13 @@ rnd.ReStruct.prototype.showLabels = function ()
 				5: 'V',
 				6: 'VI',
 				7: 'VII',
-				8: 'VIII'
+				8: 'VIII',
+				9: 'IX',
+				10: 'X',
+				11: 'XI',
+				12: 'XII',
+				13: 'XIII',
+				14: 'XIV'
 			};
 			if (atom.a.explicitValence)
 			{

@@ -43,6 +43,19 @@ util.Map.prototype.find = function(func, context) {
     }
 };
 
+util.Map.prototype.findAll = function(func, context) {
+    var vv = [];
+    for (var v in this._obj) {
+        var v_int = parseInt(v);
+        var value = this._obj[v];
+        if (!isNaN(v_int))
+            v = v_int;
+        if (func.call(context, v, value))
+            vv.push(v);
+    }
+    return vv;
+};
+
 util.Map.prototype.keys = function() {
     var keys = [];
     for (var v in this._obj) {

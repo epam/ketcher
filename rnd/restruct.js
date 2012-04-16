@@ -443,6 +443,18 @@ rnd.ReStruct.prototype.update = function (force)
 	for (id in this.atomsChanged)
 		this.connectedComponentRemoveAtom(id);
 
+    // clean up empty fragments
+    // TODO: fragment removal should be triggered by the action responsible for the fragment contents removal and form an operation of its own
+    var emptyFrags = this.frags.findAll(function(fid, frag) {
+        return !frag.calcBBox(this.render, fid);
+    }, this);
+    for (var j = 0; j < emptyFrags.length; ++j) {
+        var fid = emptyFrags[j];
+        this.clearVisel(this.frags.get(fid).visel);
+        this.frags.unset(fid);
+        this.molecule.frags.remove(fid);
+    }
+
 	(function(){
 		for (var map in rnd.ReStruct.maps) {
 			var mapChanged = this[map+'Changed'];

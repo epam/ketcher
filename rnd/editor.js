@@ -51,6 +51,10 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.ChargeTool(this, 1);
     } else if (tool == 'charge_minus') {
         return new rnd.Editor.ChargeTool(this, -1);
+    } else if (tool == 'sgroup') {
+        return new rnd.Editor.SGroupTool(this);
+    } else if (tool == 'paste') {
+        return new rnd.Editor.PasteTool(this);
     } else if (tool == 'reaction_arrow') {
         return new rnd.Editor.ReactionArrowTool(this);
     } else if (tool == 'reaction_plus') {
@@ -157,6 +161,7 @@ rnd.Editor.EditorTool.prototype.OnClick = function() {};
 rnd.Editor.EditorTool.prototype.OnDblClick = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseOut = function() {};
 rnd.Editor.EditorTool.prototype.OnKeyPress = function() {};
+rnd.Editor.EditorTool.prototype.OnCancel = function() {}; // called when we abandon the tool
 rnd.Editor.EditorTool.prototype.OnMouseDown0 = function(event) {
     if (this.editor.ui.hideBlurredControls()) return true; // TODO review
 
@@ -254,6 +259,7 @@ rnd.Editor.LassoTool = function(editor, mode) {
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
+    this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
 };
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
@@ -348,7 +354,7 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
     } else if (ci.map == 'bonds') {
         this.editor.ui.showBondProperties(ci.id);
     } else if (ci.map == 'sgroups') {
-        this.editor.ui.showSGroupProperties(ci.id);
+        this._sGroupHelper.showPropertiesDialog(ci.id);
     }
     return true;
 };
@@ -1083,3 +1089,258 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function(event) {
     }
     this._hoverHelper.hover(null);
 };
+
+rnd.Editor.SGroupTool = function(editor) {
+    this.editor = editor;
+
+    this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+    this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
+    this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
+
+    var selection = this.editor.ui.selection;
+    if (selection.atoms && selection.atoms.length > 0) {
+        // if the selection contrain atoms, create an s-group out of those
+        this._sGroupHelper.showPropertiesDialog(null, selection);
+    } else {
+        // otherwise, clear selection
+        this.editor.ui.updateSelection();
+    }
+};
+rnd.Editor.SGroupTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.SGroupTool.prototype.OnMouseDown = function(event) {
+    var ci = this.editor.render.findItem(event);
+    if (!ci || ci.type == 'Canvas') {
+        this._lassoHelper.begin(event);
+    }
+};
+rnd.Editor.SGroupTool.prototype.OnMouseMove = function(event) {
+    if (this._lassoHelper.running()) {
+        this.editor._selectionHelper.setSelection(
+            this._lassoHelper.addPoint(event)
+            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
+        );
+    } else {
+        this._hoverHelper.hover(this.editor.render.findItem(event));
+    }
+};
+
+rnd.Editor.SGroupTool.SGroupHelper = function(editor) {
+    this.editor = editor;
+    this.selection = null;
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function(id, selection) {
+    this.selection = selection;
+
+    var render = this.editor.render;
+    // check s-group overlappings
+    if (id == null)
+    {
+        var verified = {};
+        var atoms_hash = {};
+
+        selection.atoms.each(function (id)
+        {
+            atoms_hash[id] = true;
+        }, this);
+
+        if (!Object.isUndefined(selection.atoms.detect(function (id)
+        {
+            var sgroups = render.atomGetSGroups(id);
+
+            return !Object.isUndefined(sgroups.detect(function (sid)
+            {
+                if (sid in verified)
+                    return false;
+
+                var sg_atoms = render.sGroupGetAtoms(sid);
+
+                if (sg_atoms.length < selection.atoms.length)
+                {
+                    if (!Object.isUndefined(sg_atoms.detect(function (aid)
+                    {
+                        return !(aid in atoms_hash);
+                    }, this)))
+                    {
+                        return true;
+                    }
+                } else if (!Object.isUndefined(selection.atoms.detect(function (aid)
+                {
+                    return (sg_atoms.indexOf(aid) == -1);
+                }, this)))
+                {
+                    return true;
+                }
+
+                return false;
+            }, this));
+        }, this)))
+        {
+            alert("Partial S-group overlapping is not allowed.");
+            return;
+        }
+    }
+
+    this.editor.ui.showSGroupProperties(id, this, this.selection, this.OnPropertiesDialogOk, this.OnPropertiesDialogCancel);
+}
+
+rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
+    var id = null; // id of an existing group, if we're editing one
+    var selection = null; // atoms to include in a newly created group
+    if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+        selection = this._lassoHelper.end(event);
+    } else {
+        var ci = this.editor.render.findItem(event);
+        if (!ci || ci.type == 'Canvas')
+            return;
+        this._hoverHelper.hover(null);
+
+        if (ci.map == 'atoms') {
+            // if we click the SGroup tool on a single atom or bond, make a group out of those
+            selection = {'atoms': [ci.id]};
+        } else if (ci.map == 'bonds') {
+            var bond = this.editor.render.ctab.bonds.get(ci.id);
+            selection = {'atoms': [bond.b.begin, bond.b.end]};
+        } else if (ci.map == 'sgroups') {
+            id = ci.id;
+        } else {
+            return;
+        }
+    }
+    if (selection.atoms && selection.atoms.length > 0)
+        this._sGroupHelper.showPropertiesDialog(id, selection);
+};
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
+    this.editor.ui.updateClipboardButtons(); // TODO review
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id, type, attrs) {
+    if (id == null)
+    {
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, attrs, this.selection.atoms));
+    } else
+    {
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, type, attrs), true);
+    }
+    this.postClose();
+}
+
+rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function() {
+    this.postClose();
+}
+
+rnd.Editor.PasteTool = function(editor) {
+    this.editor = editor;
+
+    var mapping = {};
+    var id;
+
+    this.editor.ui.updateSelection(null, true); // clear selection, but don't redraw
+
+    var clipboard = this.editor.ui.clipboard;
+    var render = this.editor.render;
+    var ctab = render.ctab;
+    this.pasted = {atoms: [], bonds: [], sgroups: [], rxnArrows: [], rxnPluses: []};
+
+    // TODO: should the clipboard be a part of the UI?..
+    for (id = 0; id < clipboard.atoms.length; id++)
+    {
+        var atom = clipboard.atoms[id];
+        mapping[id] = render.atomAdd(atom.pos, atom);
+        this.pasted.atoms.push(mapping[id]);
+    }
+
+    for (id = 0; id < clipboard.bonds.length; id++)
+    {
+        var bond = clipboard.bonds[id];
+        this.pasted.bonds.push(render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
+    }
+
+    clipboard.sgroups.each(function (sgroup)
+    {
+        var sid = render.sGroupCreate(sgroup.type);
+
+        render.sGroupSetAttr(sid, 'mul', sgroup.mul);
+        render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
+        render.sGroupSetAttr(sid, 'name', sgroup.name);
+        render.sGroupSetAttr(sid, 'subscript', sgroup.subscript);
+        render.sGroupSetAttr(sid, 'fieldName', sgroup.fieldName);
+        render.sGroupSetAttr(sid, 'fieldValue', sgroup.fieldValue);
+
+        sgroup.atoms.each(function(id)
+        {
+            render.atomClearSGroups(mapping[id]);
+            render.atomAddToSGroup(mapping[id], sid);
+        }, this);
+
+        this.pasted.sgroups.push(sid);
+    }, this);
+
+    for (id = 0; id < clipboard.rxnArrows.length; id++) {
+        var arrow = clipboard.rxnArrows[id];
+        if (ctab.rxnArrows.count() < 1) {
+            this.pasted.rxnArrows.push(render.rxnArrowAdd(arrow.pos, arrow));
+        }
+    }
+
+    for (id = 0; id < clipboard.rxnPluses.length; id++) {
+        var plus = clipboard.rxnPluses[id];
+        this.pasted.rxnPluses.push(render.rxnPlusAdd(plus.pos, plus));
+    }
+
+    this.pastedAnchorPos = null;
+    if (this.pasted.atoms.length) {
+        this.pastedAnchorPos = render.atomGetPos(this.pasted.atoms[0]);
+    } else if (this.pasted.rxnArrows.length) {
+        this.pastedAnchorPos = render.rxnArrowGetPos(this.pasted.rxnArrows[0]);
+    } else if (this.pasted.rxnPluses.length) {
+        this.pastedAnchorPos = render.rxnPlusGetPos(this.pasted.rxnPluses[0]);
+    }
+
+    render.update();
+};
+
+rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.PasteTool.prototype.OnMouseDown = function(event) {
+
+};
+
+rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
+    var cur_pos = this.editor.ui.page2obj(event);
+    var delta = util.Vec2.diff(cur_pos, this.pastedAnchorPos);
+
+    this.editor.render.multipleMoveRel(this.pasted, delta);
+    this.pastedAnchorPos = new util.Vec2(cur_pos);
+
+    this.editor.render.update();
+};
+
+rnd.Editor.PasteTool.prototype.OnMouseUp = function(event) {
+    // TODO: do we have to move the structure here?
+    this.editor.ui.addUndoAction(this.editor.ui.Action.fromFragmentAddition(this.pasted.atoms, this.pasted.bonds, this.pasted.sgroups, this.pasted.rxnArrows, this.pasted.rxnPluses));
+    var render = this.editor.render;
+    render.update();
+    this.pasted = null;
+    this.editor.ui.selectMode(this.editor.ui.defaultSelector);
+};
+
+rnd.Editor.PasteTool.prototype.OnCancel = function() {
+    var render = this.editor.render;
+    if (this.pasted) {
+        this.pasted.sgroups.each(function (id)
+        {
+            render.sGroupDelete(id);
+        });
+
+        this.pasted.atoms.each(function (id)
+        {
+            render.atomRemove(id);
+        });
+        this.pasted = null;
+    }
+
+    if (render != null) // TODO: why?
+        render.update();
+};
+

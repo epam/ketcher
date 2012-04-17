@@ -257,14 +257,6 @@ ui.init = function ()
     // S-group properties dialog events
     $('sgroup_type').observe('change', ui.onChange_SGroupType);
     $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
-    $('sgroup_prop_cancel').observe('click', function ()
-    {
-        ui.hideDialog('sgroup_properties');
-    });
-    $('sgroup_prop_ok').observe('click', function ()
-    {
-        ui.applySGroupProperties();
-    });
 
     // Label input events
     $('input_label').observe('blur', function ()
@@ -566,11 +558,6 @@ ui.selectMode = function (mode)
                 ui.render.update();
                 return;
             }
-            if (mode == 'sgroup') {
-				if (ui.selectedAtom())
-					ui.showSGroupProperties(null);
-                return;
-            }
         } else if (mode.startsWith('atom_')) {
             var cAtom = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
             if (cAtom) {
@@ -586,15 +573,12 @@ ui.selectMode = function (mode)
                 return;
             }
         }
-
-        if (ui.mode_id == null) // ui.MODE.PASTE
-            ui.cancelPaste();
     }
 
     if (this.mode_id != null && this.mode_id != mode) {
         var button_id = this.mode_id.split('_')[0];
         var state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
-     
+
         if (state_button) {
             if (mode && !mode.startsWith(button_id))
                 $(button_id).removeClassName('buttonSelected');
@@ -603,6 +587,9 @@ ui.selectMode = function (mode)
     }
 
     this.editor.deselectAll();
+
+    if (this.render.current_tool)
+        this.render.current_tool.OnCancel();
 
     if (mode == null) {
         this.mode_id = null;
@@ -706,9 +693,6 @@ ui.onClick_NewFile = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-        ui.cancelPaste();
-
     ui.selectMode(ui.defaultSelector);
 
     if (!ui.ctab.isBlank())
@@ -754,9 +738,7 @@ ui.onKeyPress_Ketcher = function (event)
     case 27: // Esc
         if (!Prototype.Browser.WebKit)
         {
-            if (ui.modeType() == ui.MODE.PASTE)
-                ui.cancelPaste();
-            else if (ui.modeType() == ui.MODE.SIMPLE)
+            if (ui.modeType() == ui.MODE.SIMPLE)
                 ui.updateSelection();
             ui.selectMode(ui.defaultSelector);
         }
@@ -945,9 +927,7 @@ ui.onKeyUp = function (event)
         {
             if (!$('window_cover').visible())
             {
-                if (ui.modeType() == ui.MODE.PASTE)
-                    ui.cancelPaste();
-                else if (ui.modeType() == ui.MODE.SIMPLE)
+                if (ui.modeType() == ui.MODE.SIMPLE)
                     ui.updateSelection();
                 ui.selectMode(ui.defaultSelector);
             }
@@ -1105,11 +1085,6 @@ ui.onClick_OpenFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
     ui.onSelect_OpenFromInput();
@@ -1223,11 +1198,6 @@ ui.onClick_SaveFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
 };
@@ -1366,11 +1336,6 @@ ui.onClick_CleanUp = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
 
     var ms = new chem.MolfileSaver();
 
@@ -1548,11 +1513,6 @@ ui.onClick_Atom = function (event, id)
             ui.addUndoAction(ui.Action.fromPatternOnAtom(id, ui.pattern()), true);
             ui.render.update();
             break;
-
-        case ui.MODE.SGROUP:
-            ui.updateSelection({'atoms':[id]});
-            ui.showSGroupProperties(null);
-            break;
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
@@ -1715,12 +1675,6 @@ ui.onClick_Bond = function (event, id)
             ui.render.update();
             break;
 
-        case ui.MODE.SGROUP:
-            var bond = ui.ctab.bonds.get(id);
-
-            ui.updateSelection({'atoms':[bond.begin, bond.end], 'bonds':[id]});
-            ui.showSGroupProperties(null);
-            break;
         }
     }, ui.DBLCLICK_INTERVAL);
     return true;
@@ -1764,13 +1718,6 @@ ui.onClick_SGroup = function (event, sid)
 ui.onDblClick_SGroup = function (event, sid)
 {
     ui.dbl_click = true;
-
-    if (ui.modeType() != ui.MODE.PASTE)
-    {
-        if (ui.selected())
-            ui.updateSelection();
-        ui.showSGroupProperties(sid);
-    }
 
     return true;
 };
@@ -1816,17 +1763,6 @@ ui.onClick_Canvas = function (event)
 
         ui.addUndoAction(ui.Action.fromPlusAddition(pos));
         ui.render.update();
-        break;
-
-    case ui.MODE.PASTE:
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
-        ui.render.update();
-        ui.pasted.atoms.clear();
-        ui.pasted.bonds.clear();
-        ui.pasted.sgroups.clear();
-        ui.pasted.rxnArrows.clear();
-        ui.pasted.rxnPluses.clear();
-        ui.selectMode(ui.defaultSelector);
         break;
     }
 };
@@ -2177,21 +2113,6 @@ ui.onMouseDown_Canvas = function (event)
 {
     ui.hideBlurredControls();
 
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.mouse_moved = true; // to avoid further handling of the click
-        ui.addUndoAction(ui.Action.fromFragmentAddition(ui.pasted.atoms, ui.pasted.bonds, ui.pasted.sgroups, ui.pasted.rxnArrows, ui.pasted.rxnPluses));
-        ui.render.update();
-        ui.pasted.atoms.clear();
-        ui.pasted.bonds.clear();
-        ui.pasted.sgroups.clear();
-        ui.pasted.rxnArrows.clear();
-        ui.pasted.rxnPluses.clear();
-        ui.selectMode(ui.defaultSelector);
-
-        return;
-    }
-
     ui.mouse_moved = false;
 
     var pos = ui.page2obj(event);
@@ -2210,7 +2131,7 @@ ui.onMouseMove_Canvas = function (event)
     ui.mouse_moved = true;
 
     var mode = ui.modeType();
-    
+
     ui.cursorPos.pageX = event.pageX;
     ui.cursorPos.pageY = event.pageY;
 
@@ -2364,13 +2285,6 @@ ui.onMouseMove_Canvas = function (event)
 
         ui.drag.action = action_ret;
 
-    } else if (mode == ui.MODE.PASTE)
-    {
-        var cur_pos = new util.Vec2(ui.page2obj(event));
-        var delta = util.Vec2.diff(cur_pos, ui.pastedAnchorPos);
-
-        ui.render.multipleMoveRel(ui.pasted, delta);
-        ui.pastedAnchorPos = new util.Vec2(cur_pos);
     } else
     {
         if (ui.drag.atom_id == null && ui.drag.bond_id == null && ui.drag.rxnArrow_id == null && ui.drag.rxnPlus_id == null)
@@ -2430,9 +2344,6 @@ ui.onMouseUp_Ketcher = function (event)
     if (ui.modeType() == ui.MODE.ERASE)
         if (ui.selected() && ui.isDrag())
             ui.removeSelected();
-    if (ui.modeType() == ui.MODE.SGROUP)
-        if (ui.selectedAtom() && ui.isDrag())
-            ui.showSGroupProperties(null);
     ui.endDrag();
     util.stopEventPropagation(event);
 };
@@ -2611,7 +2522,7 @@ ui.applyAtomProperties = function ()
         exactChangeFlag: parseInt($('atom_exactchange').value) ? true : false,
         // query flags
         ringBondCount: parseInt($('atom_ringcount').value),
-        substitutionCount: parseInt($('atom_substitution').value), 
+        substitutionCount: parseInt($('atom_substitution').value),
         unsaturatedAtom: parseInt($('atom_unsaturation').value),
         hCount: parseInt($('atom_hcount').value)
     }), true);
@@ -2697,10 +2608,10 @@ ui.applyBondProperties = function ()
 
     var id = $('bond_properties').bond_id;
     var bond = Object.clone(ui.bondTypeMap[$('bond_type').value]);
-    
+
     bond.topology = parseInt($('bond_topology').value);
     bond.reactingCenterStatus = parseInt($('bond_center').value);
-    
+
     ui.addUndoAction(ui.Action.fromBondAttrs(id, bond), true);
 
     ui.render.update();
@@ -2709,58 +2620,13 @@ ui.applyBondProperties = function ()
 //
 // S-Group properties
 //
-ui.showSGroupProperties = function (id)
+ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
 {
+    if (!tool) {
+        throw new Error("Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.");
+    }
     if ($('sgroup_properties').visible())
         return;
-
-    // check s-group overlappings
-    if (id == null)
-    {
-        var verified = {};
-        var atoms_hash = {};
-
-        ui.selection.atoms.each(function (id)
-        {
-            atoms_hash[id] = true;
-        }, this);
-
-        if (!Object.isUndefined(ui.selection.atoms.detect(function (id)
-        {
-            var sgroups = ui.render.atomGetSGroups(id);
-
-            return !Object.isUndefined(sgroups.detect(function (sid)
-            {
-                if (sid in verified)
-                    return false;
-
-                var sg_atoms = ui.render.sGroupGetAtoms(sid);
-
-                if (sg_atoms.length < ui.selection.atoms.length)
-                {
-                    if (!Object.isUndefined(sg_atoms.detect(function (aid)
-                    {
-                        return !(aid in atoms_hash);
-                    }, this)))
-                    {
-                        return true;
-                    }
-                } else if (!Object.isUndefined(ui.selection.atoms.detect(function (aid)
-                {
-                    return (sg_atoms.indexOf(aid) == -1);
-                }, this)))
-                {
-                    return true;
-                }
-
-                return false;
-            }, this));
-        }, this)))
-        {
-            alert("Partial S-group overlapping is not allowed.");
-            return;
-        }
-    }
 
     var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
 
@@ -2792,61 +2658,70 @@ ui.showSGroupProperties = function (id)
         $('sgroup_field_value').value = '';
     }
 
-    ui.showDialog('sgroup_properties');
-    $('sgroup_type').activate();
-};
-
-ui.applySGroupProperties = function ()
-{
-    ui.hideDialog('sgroup_properties');
-
-    var id = $('sgroup_properties').sgroup_id;
-
-    var type = $('sgroup_type').value;
-    var attrs =
+    var onClickCancel = function ()
     {
-        mul: null,
-        connectivity: '',
-        name: '',
-        subscript: '',
-        fieldName: '',
-        fieldValue: ''
+        ui.hideDialog('sgroup_properties');
+        resetListeners();
+        onCancel.call(tool);
+    }
+
+    var onClickOk = function ()
+    {
+        ui.hideDialog('sgroup_properties');
+        resetListeners();
+
+        var id = $('sgroup_properties').sgroup_id;
+
+        var type = $('sgroup_type').value;
+        var attrs =
+        {
+            mul: null,
+            connectivity: '',
+            name: '',
+            subscript: '',
+            fieldName: '',
+            fieldValue: ''
+        };
+
+        switch (type)
+        {
+        case 'SRU':
+            attrs.connectivity = $('sgroup_connection').value;
+            attrs.subscript = $('sgroup_label').value;
+            break;
+        case 'MUL':
+            attrs.mul = parseInt($('sgroup_label').value);
+            break;
+        case 'SUP':
+            attrs.name = $('sgroup_label').value;
+            break;
+        case 'DAT':
+            attrs.fieldName = $('sgroup_field_name').value.strip();
+            attrs.fieldValue = $('sgroup_field_value').value.strip();
+
+            if (attrs.fieldName == '' || attrs.fieldValue == '')
+            {
+                alert("Please, specify data field name and value.");
+                ui.showDialog('sgroup_properties');
+                return;
+            }
+            break;
+        }
+
+        onOk.call(tool, id, type, attrs);
     };
 
-    switch (type)
-    {
-    case 'SRU':
-        attrs.connectivity = $('sgroup_connection').value;
-        attrs.subscript = $('sgroup_label').value;
-        break;
-    case 'MUL':
-        attrs.mul = parseInt($('sgroup_label').value);
-        break;
-    case 'SUP':
-        attrs.name = $('sgroup_label').value;
-        break;
-    case 'DAT':
-        attrs.fieldName = $('sgroup_field_name').value.strip();
-        attrs.fieldValue = $('sgroup_field_value').value.strip();
-
-        if (attrs.fieldName == '' || attrs.fieldValue == '')
-        {
-            alert("Please, specify data field name and value.");
-            ui.showDialog('sgroup_properties');
-            return;
-        }
-        break;
+    var resetListeners = function () {
+        $('sgroup_prop_cancel').stopObserving('click', onClickCancel);
+        $('sgroup_prop_ok').stopObserving('click', onClickOk);
     }
 
-    if (id == null)
-    {
-        ui.addUndoAction(ui.Action.fromSgroupAddition(type, attrs, ui.selection.atoms));
-        ui.updateSelection();
-    } else
-    {
-        ui.addUndoAction(ui.Action.fromSgroupAttrs(id, type, attrs), true);
-        ui.render.update();
-    }
+    $('sgroup_prop_cancel').observe('click', onClickCancel);
+    $('sgroup_prop_ok').observe('click', onClickOk);
+
+    ui.showDialog('sgroup_properties');
+    ui.sGroupDlgSelection = selection;
+    $('sgroup_type').activate();
 };
 
 ui.onChange_SGroupLabel = function ()
@@ -2918,11 +2793,6 @@ ui.onClick_ElemTableButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE)
-    {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showElemTable();
 };
 
@@ -3027,8 +2897,6 @@ ui.onSelect_ElemTableNotList = function ()
 //
 
 ui.clipboard = null;
-ui.pasted = {atoms: [], bonds: [], sgroups: [], rxnArrows: [], rxnPluses: []}; // ids
-ui.pastedAnchorPos = null;
 
 ui.isClipboardEmpty = function ()
 {
@@ -3253,9 +3121,7 @@ ui.onClick_Paste = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    if (ui.modeType() == ui.MODE.PASTE)
-        ui.cancelPaste();
-    ui.paste();
+    ui.selectMode('paste');
 };
 
 ui.onClick_Undo = function ()

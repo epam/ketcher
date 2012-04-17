@@ -230,10 +230,6 @@ ui.onClick_ReaGenericsTableButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (ui.modeType() == ui.MODE.PASTE) {
-        ui.cancelPaste();
-        ui.selectMode(ui.defaultSelector);
-    }
     ui.showReaGenericsTable({
         onOk : function() {
             ui.selectMode('atom_reagenerics');

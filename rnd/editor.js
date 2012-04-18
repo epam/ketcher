@@ -1207,12 +1207,15 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
             return;
         }
     }
-    if (selection.atoms && selection.atoms.length > 0)
+    // TODO: handle click on an existing group?
+    if (selection && selection.atoms && selection.atoms.length > 0)
         this._sGroupHelper.showPropertiesDialog(id, selection);
 };
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
+    this.editor.ui.updateSelection();
     this.editor.ui.updateClipboardButtons(); // TODO review
+    this.editor.render.update();
 }
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id, type, attrs) {

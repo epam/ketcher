@@ -1015,7 +1015,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			else
 				throw new Error('Invalid value for the invert/retain flag');
 		}
-        
+
         var queryAttrsText = "";
         if (atom.a.ringBondCount != 0) {
             if (atom.a.ringBondCount > 0)

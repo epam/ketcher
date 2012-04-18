@@ -133,6 +133,7 @@ rnd.ReStruct = function (molecule, render)
 	this.rxnArrows = new util.Map();
     this.frags = new util.Map();
     this.rgroups = new util.Map();
+    this.sgroups = new util.Map();
 	this.molecule = molecule || new chem.Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -178,6 +179,10 @@ rnd.ReStruct = function (molecule, render)
 
     molecule.rgroups.each(function(id, item) {
         this.rgroups.set(id, new rnd.ReRGroup(item));
+    }, this);
+
+    molecule.sgroups.each(function(id, item) {
+        this.sgroups.set(id, new rnd.ReSGroup(item));
     }, this);
 
 	this.coordProcess();
@@ -355,9 +360,9 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	}
 	if (this.chiral.p != null)
 		func.call(context, this.chiral.visel);
-	this.molecule.sgroups.each(function(sid, sgroup){
-		func.call(context, sgroup.visel);
-	}, this);
+//	this.sgroups.each(function(sid, sgroup){
+//		func.call(context, sgroup.visel);
+//	}, this);
 	this.reloops.each(function(rlid, reloop) {
 		func.call(context, reloop.visel);
 	}, this);
@@ -468,7 +473,7 @@ rnd.ReStruct.prototype.update = function (force)
 	if (this.chiral.visel != null)
 		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
-	this.molecule.sgroups.each(function(sid, sgroup){
+	this.sgroups.each(function(sid, sgroup){
 		this.clearVisel(sgroup.visel);
 	}, this);
 	for (var i = 0; i < this.tmpVisels.length; ++i)
@@ -583,8 +588,8 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 
 rnd.ReStruct.prototype.drawSGroups = function ()
 {
-	this.molecule.sgroups.each(function (id, sgroup) {
-		var path = sgroup.draw(this);
+	this.sgroups.each(function (id, sgroup) {
+		var path = sgroup.draw(this.render);
 		this.addReObjectPath('data', sgroup.visel, path);
 		if (sgroup.selected)
 			this.showBracketSelection(id, sgroup, true);
@@ -772,8 +777,8 @@ rnd.ReStruct.prototype.coordProcess = function ()
 	this.molecule.coordProject();
 	var bb = this.molecule.getCoordBoundingBox();
 	var avg = this.molecule.getAvgBondLength();
-	if (avg < 0 && !this.molecule.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between 
-		// the atoms in different components are generally larger than those between atoms of a single component 
+	if (avg < 0 && !this.molecule.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
+		// the atoms in different components are generally larger than those between atoms of a single component
 		// (KETCHER-341)
 		avg = this.molecule.getAvgClosestAtomDistance();
 	if (avg < 1e-3)
@@ -890,7 +895,7 @@ rnd.ReStruct.prototype.notifyRxnPlusRemoved = function(plid) {
 rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
 {
 	if (begin == end) {
-		debugger;		
+		debugger;
 		throw new Error("Distinct atoms expected");
 	}
 	if (rnd.DEBUG && this.molecule.checkBondExists(begin, end))
@@ -1067,13 +1072,14 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 
 rnd.ReStruct.prototype.sGroupDelete = function (sgid)
 {
-	var sg = this.molecule.sgroups.get(sgid);
+	var sg = this.sgroups.get(sgid).item;
 	var atoms = [];
 	for (var i = 0; i < sg.atoms.length; ++i) {
 		var aid = sg.atoms[i];
 		util.Set.remove(this.atoms.get(aid).a.sgs, sgid);
 		atoms.push(aid);
 	}
+	this.sgroups.unset(sgid);
 	this.molecule.sgroups.remove(sgid);
 	return atoms;
 };
@@ -1089,7 +1095,7 @@ rnd.ReRxnPlus.prototype = new rnd.ReObject();
 rnd.ReRxnPlus.findClosest = function (render, p) {
     var minDist;
     var ret;
-    
+
     render.ctab.rxnPluses.each(function(id, plus) {
         var pos = plus.item.pp;
         var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
@@ -1120,7 +1126,7 @@ rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
     this.init(rnd.Visel.TYPE.ARROW);
-    
+
     this.item = arrow;
 };
 rnd.ReRxnArrow.prototype = new rnd.ReObject();
@@ -1128,7 +1134,7 @@ rnd.ReRxnArrow.prototype = new rnd.ReObject();
 rnd.ReRxnArrow.findClosest = function(render, p) {
     var minDist;
     var ret;
-    
+
     render.ctab.rxnArrows.each(function(id, arrow) {
         var pos = arrow.item.pp;
         if (Math.abs(p.x - pos.x) < 1.0) {
@@ -1348,4 +1354,77 @@ rnd.ReRGroup.prototype.drawHighlight = function(render) { // TODO need to review
     } else {
         // TODO abnormal situation, fragment does not belong to the render
     }
+};
+
+rnd.ReSGroup = function(sgroup) {
+    this.init(rnd.Visel.TYPE.SGROUP);
+
+    this.item = sgroup;
+};
+rnd.ReSGroup.prototype = new rnd.ReObject();
+
+rnd.ReSGroup.findClosest = function(render, p) {
+	var ret = null;
+	var minDist = render.opt.selectionDistanceCoefficient;
+    render.ctab.molecule.sgroups.each(function(sgid, sg){
+        var d = sg.bracketDir, n = d.rotateSC(1, 0);
+        var pg = new util.Vec2(util.Vec2.dot(p, d), util.Vec2.dot(p, n));
+        for (var i = 0; i < sg.areas.length; ++i) {
+            var box = sg.areas[i];
+            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
+            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
+            if (inBox && (ret == null || xDist < minDist)) {
+                ret = sgid;
+                minDist = xDist;
+            }
+        }
+	}, this);
+	if (ret != null)
+		return {
+			'id':ret,
+			'dist':minDist
+		};
+	return null;
+};
+
+rnd.ReSGroup.prototype.draw = function(render) { // TODO need to review parameter list
+    return this.item.draw(render.ctab);
+};
+
+rnd.ReSGroup.prototype.drawHighlight = function(render) {
+    var styles = render.styles;
+    var settings = render.settings;
+    var paper = render.paper;
+    var sg = this.item;
+    var bb = sg.bracketBox.transform(render.obj2scaled, render);
+    var lw = settings.lineWidth;
+    var vext = new util.Vec2(lw * 4, lw * 6);
+    bb = bb.extend(vext, vext);
+    var d = sg.bracketDir, n = d.rotateSC(1,0);
+    var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+    var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+    var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+    var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+
+    var set = paper.set();
+    sg.highlighting = paper
+        .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+        .attr(styles.highlightStyle);
+    set.push(sg.highlighting);
+    render.ctab.addReObjectPath('highlighting', sg.visel, sg.highlighting);
+
+
+    var atoms = chem.SGroup.getAtoms(render.ctab.molecule, sg);
+
+    atoms.each(function (id)
+    {
+        var atom = render.ctab.atoms.get(id);
+        atom.sGroupHighlighting = paper
+        .circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
+        .attr(styles.sGroupHighlightStyle);
+//        render.addItemPath(atom.visel, 'highlighting', atom.sGroupHighlighting);
+        set.push(atom.sGroupHighlighting);
+        render.ctab.addReObjectPath('highlighting', sg.visel, atom.sGroupHighlighting);
+    }, this);
+    return set;
 };

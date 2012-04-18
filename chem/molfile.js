@@ -1290,7 +1290,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
 
 	if (atomList_list.length > 0)
 	{
-		for (var j = 0; j < atomList_list.length; ++j) {
+		for (j = 0; j < atomList_list.length; ++j) {
 			var aid = atomList_list[j];
 			var atomList = this.molecule.atoms.get(aid).atomList;
 			this.write('M  ALS');

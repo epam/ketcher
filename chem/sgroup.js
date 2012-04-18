@@ -257,7 +257,7 @@ chem.SGroup.getObjBBox = function (atoms, mol)
 {
 	if (atoms.length == 0)
 		throw new Error("Atom list is empty");
-	
+
 	var a0 = mol.atoms.get(atoms[0]).pos;
 	var bb = new util.Box2Abs(a0, a0);
 	for (var i = 1; i < atoms.length; ++i) {
@@ -693,7 +693,7 @@ chem.SGroup.GroupDat = {
 		} else { // absolute position
 			this.ps = this.pa.scaled(settings.scaleFactor);
 		}
-		
+
 		if (this.data.attached) {
 			this.selectionBoxes = [];
 			for (i = 0; i < atoms.length; ++i) {

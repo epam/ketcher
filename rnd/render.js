@@ -161,7 +161,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
         event.preventDefault();
     });
     //END
-	
+
 	clientArea.observe('onresize', function(event) {
         render.onResize();
     });
@@ -269,7 +269,7 @@ rnd.Render.prototype.setCurrentItem = function (type, id, event) {
 			|| (oldType == 'RxnArrow' && this.ctab.rxnArrows.has(oldId))
 			|| (oldType == 'RxnPlus' && this.ctab.rxnPluses.has(oldId))
 			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))
-			|| (oldType == 'SGroup' && this.ctab.molecule.sgroups.has(oldId))) {
+			|| (oldType == 'SGroup' && this.ctab.sgroups.has(oldId))) {
 			this.callEventHandler(event, 'MouseOut', oldType, oldId);
 		}
 		this.callEventHandler(event, 'MouseOver', type, id);
@@ -470,14 +470,16 @@ rnd.Render.prototype.sGroupCreate = function (type)
 {
 	rnd.logMethod("sGroupCreate");
 	var sg = new chem.SGroup(type);
-	return chem.SGroup.addGroup(this.ctab.molecule, sg);
+	var sgid = chem.SGroup.addGroup(this.ctab.molecule, sg);
+    this.ctab.sgroups.set(sgid, new rnd.ReSGroup(this.ctab.molecule.sgroups.get(sgid)));
+    return sgid;
 };
 
 // receives group id
 rnd.Render.prototype.sGroupDelete = function (sgid)
 {
 	rnd.logMethod("sGroupDelete");
-	this.ctab.clearVisel(this.ctab.molecule.sgroups.get(sgid).visel);
+	this.ctab.clearVisel(this.ctab.sgroups.get(sgid).visel);
 	var atoms = this.ctab.sGroupDelete(sgid);
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
@@ -490,25 +492,28 @@ rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
 {
 	rnd.logMethod("_sGroupSetAttr");
 	// TODO: fix update
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	sg.data[name] = value;
 };
 
 rnd.Render.prototype._sGroupSetType = function (sgid, type)
 {
 	rnd.logMethod("_sGroupSetType");
-    var mol = this.ctab.molecule;
-    var sg = mol.sgroups.get(sgid);
-	this.ctab.clearVisel(sg.visel);
-	this.ctab.removeBracketHighlighting(sgid, sg);
-	this.ctab.removeBracketSelection(sgid, sg);
+    var ctab = this.ctab;
+    var reSg = ctab.sgroups.get(sgid);
+	this.ctab.clearVisel(reSg.visel);
+    reSg.setHighlight(false, this);
+    var sg = reSg.item;
+//	this.ctab.removeBracketHighlighting(sgid, sg);
+//	this.ctab.removeBracketSelection(sgid, sg);
 	var newSg = new chem.SGroup(type);
-	newSg.atoms = chem.SGroup.getAtoms(mol, sg);
+	newSg.atoms = chem.SGroup.getAtoms(ctab, sg);
 	newSg.p = sg.p;
 	newSg.pa = sg.pa;
 	newSg.pr = sg.pr;
 	newSg.data = Object.clone(sg.data);
-	mol.sgroups.set(sgid, newSg);
+    ctab.molecule.sgroups.set(sgid, newSg);
+	ctab.sgroups.set(sgid, new rnd.ReSGroup(newSg));
 };
 
 rnd.Render.prototype.chiralSetPos = function (pos)
@@ -520,7 +525,7 @@ rnd.Render.prototype.chiralSetPos = function (pos)
 rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 {
 	rnd.logMethod("_sGroupSetPos");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	if (!sg.p)
 		return;
 	chem.SGroup.setPos(this.ctab, sg, new util.Vec2(pos), false);
@@ -529,31 +534,30 @@ rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {
 	rnd.logMethod("sGroupGetAttr");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.data[name];
 };
 
 rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {
 	rnd.logMethod("sGroupGetAtoms");
-    var mol = this.ctab.molecule;
-	var sg = mol.sgroups.get(sgid);
-	return chem.SGroup.getAtoms(mol, sg);
+	var sg = this.ctab.sgroups.get(sgid).item;
+	return chem.SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
 rnd.Render.prototype.sGroupGetType = function (sgid)
 {
 	rnd.logMethod("sGroupGetType");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.type;
 };
 
 rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
 {
 	rnd.logMethod("_sGroupSetHighlight");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	sg.highlight = value;
-	this.ctab.showBracketHighlighting(sgid, sg, value);
+	this.ctab.showBracketHighlighting(sgid, sg, value); // TODO: refactor
 };
 
 rnd.Render.prototype.sGroupsFindCrossBonds = function ()
@@ -565,14 +569,14 @@ rnd.Render.prototype.sGroupsFindCrossBonds = function ()
 rnd.Render.prototype.sGroupGetCrossBonds = function (sgid)
 {
 	rnd.logMethod("sGroupGetCrossBonds");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.xBonds;
 };
 
 rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 {
 	rnd.logMethod("sGroupGetNeighborAtoms");
-	var sg = this.ctab.molecule.sgroups.get(sgid);
+	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.neiAtoms;
 };
 
@@ -599,7 +603,7 @@ rnd.Render.prototype._atomAddToSGroup = function (aid, value)
 {
 	rnd.logMethod("_atomAddToSGroup");
 	var atom = this.ctab.atoms.get(aid);
-	var sg = this.ctab.molecule.sgroups.get(value);
+	var sg = this.ctab.sgroups.get(value).item;
 	chem.SGroup.addAtom(sg, aid);
 	util.Set.add(atom.a.sgs, value);
 	this.invalidateAtom(aid);
@@ -609,7 +613,7 @@ rnd.Render.prototype._atomRemoveFromSGroup = function (aid, value)
 {
 	rnd.logMethod("_atomRemoveFromSGroup");
 	var atom = this.ctab.atoms.get(aid);
-	var sg = this.ctab.molecule.sgroups.get(value);
+	var sg = this.ctab.sgroups.get(value).item;
 	chem.SGroup.removeAtom(sg, aid);
 	util.Set.remove(atom.a.sgs, value);
 	this.invalidateAtom(aid);
@@ -620,7 +624,7 @@ rnd.Render.prototype._atomClearSGroups = function (aid)
 	rnd.logMethod("_atomClearSGroups");
 	var atom = this.ctab.atoms.get(aid);
 	util.Set.each(atom.a.sgs, function(sgid){
-		var sg = this.ctab.molecule.sgroups.get(sgid);
+		var sg = this.ctab.sgroups.get(sgid).item;
 		chem.SGroup.removeAtom(sg, aid);
 	}, this);
 	atom.a.sgs = util.Set.empty();
@@ -646,14 +650,8 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups', 'sgroups'].indexOf(obj.map) > -1) {
         this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
-    } else if (obj.map == 'atoms') {
-        //this.atomSetHighlight(obj.id, visible);
-    } else if (obj.map == 'bonds') {
-        //this.bondSetHighlight(obj.id, visible);
-    } else if (obj.map == 'sgroups') {
-        ui.highlightSGroup(obj.id, visible);
     } else {
         return false;
     }
@@ -797,7 +795,7 @@ rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
 			  this.itemMoveRel('atoms', aid, d);
 		 else
 			  this.atomMove(aid, this.ctab.atoms.get(aid).a.pp.add(d));
-	 }	
+	 }
 };
 
 rnd.Render.prototype.itemMoveRel = function (map, id, d) {
@@ -1047,7 +1045,7 @@ rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.path(
             'M' + p0.x.toString() + ',' + p0.y.toString() + 'L' + p1.x.toString() + ',' + p1.y.toString()
-        ).attr({ 'stroke':'gray', 'stroke-width':'1px' });
+        ).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}
 };
 
@@ -1062,7 +1060,7 @@ rnd.Render.prototype.drawSelectionRectangle = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.rect(
             Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)
-        ).attr({ 'stroke':'gray', 'stroke-width':'1px' });
+        ).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}
 };
 
@@ -1113,7 +1111,7 @@ rnd.Render.prototype.drawSelectionPolygon = function (r) {
 			v = this.obj2scaled(r[i]).add(this.offset);
 			pstr += "L" + v.x.toString() + "," + v.y.toString();
 		}
-		this.selectionRect = this.paper.path(pstr).attr({ 'stroke':'gray', 'stroke-width':'1px' });
+		this.selectionRect = this.paper.path(pstr).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}
 };
 
@@ -1415,32 +1413,32 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 	return null;
 };
 
-rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO should be a member of ReSGroup (see ReFrag)
-	var closestSg = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
-	minDist = minDist || maxMinDist;
-	minDist = Math.min(minDist, maxMinDist);
-	var lw = this.settings.lineWidth;
-    this.ctab.molecule.sgroups.each(function(sgid, sg){
-        var d = sg.bracketDir, n = d.rotateSC(1, 0);
-        var pg = new util.Vec2(util.Vec2.dot(pos, d), util.Vec2.dot(pos, n));
-        for (var i = 0; i < sg.areas.length; ++i) {
-            var box = sg.areas[i];
-            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
-            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
-            if (inBox && (closestSg == null || xDist < minDist)) {
-                closestSg = sgid;
-                minDist = xDist;
-            }
-        }
-	}, this);
-	if (closestSg != null)
-		return {
-			'id':closestSg,
-			'dist':minDist
-		};
-	return null;
-};
+//rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO should be a member of ReSGroup (see ReFrag)
+//	var closestSg = null;
+//	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
+//	minDist = minDist || maxMinDist;
+//	minDist = Math.min(minDist, maxMinDist);
+//	var lw = this.settings.lineWidth;
+//    this.ctab.molecule.sgroups.each(function(sgid, sg){
+//        var d = sg.bracketDir, n = d.rotateSC(1, 0);
+//        var pg = new util.Vec2(util.Vec2.dot(pos, d), util.Vec2.dot(pos, n));
+//        for (var i = 0; i < sg.areas.length; ++i) {
+//            var box = sg.areas[i];
+//            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
+//            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
+//            if (inBox && (closestSg == null || xDist < minDist)) {
+//                closestSg = sgid;
+//                minDist = xDist;
+//            }
+//        }
+//	}, this);
+//	if (closestSg != null)
+//		return {
+//			'id':closestSg,
+//			'dist':minDist
+//		};
+//	return null;
+//};
 
 rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;
@@ -1467,7 +1465,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
             updret('Bond', bond);
     }
     if (!maps || maps.indexOf('sgroups') >= 0) {
-        var sg = this.findClosestSGroup(pos);
+        var sg = rnd.ReSGroup.findClosest(this, pos);
         updret('SGroup', sg);
     }
     if (!maps || maps.indexOf('rxnArrows') >= 0) {

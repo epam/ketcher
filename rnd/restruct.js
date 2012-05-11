@@ -1189,6 +1189,27 @@ rnd.ReFrag.findClosest = function(render, p, skip, minDist) {
     return ret;
 };
 
+rnd.ReFrag.prototype.fragGetAtoms = function(render, fid) {
+    var ret = [];
+    render.ctab.atoms.each(function(aid, atom) {
+        if (atom.a.fragment == fid) {
+            ret.push(aid);
+        }
+    }, this);
+    return ret;
+};
+
+rnd.ReFrag.prototype.fragGetBonds = function(render, fid) {
+    var ret = [];
+    render.ctab.bonds.each(function(bid, bond) {
+        if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid && 
+            render.ctab.atoms.get(bond.b.end).a.fragment == fid) {
+            ret.push(bid);
+        }
+    }, this);
+    return ret;
+};
+
 rnd.ReFrag.prototype.calcBBox = function(render, fid) { // TODO need to review parameter list
     var ret;
     render.ctab.atoms.each(function(aid, atom) {

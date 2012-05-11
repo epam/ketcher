@@ -37,6 +37,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.LassoTool(this, 0);
     } else if (tool == 'selector_square') {
         return new rnd.Editor.LassoTool(this, 1);
+    } else if (tool == 'selector_structure') {
+        return new rnd.Editor.LassoTool(this, 2);
     } else if (tool == 'select_erase') {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
     } else if (tool.startsWith('atom_')) {
@@ -264,34 +266,38 @@ rnd.Editor.LassoTool = function(editor, mode) {
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
-    var ci = this.editor.render.findItem(event);
-    if (!ci || ci.type == 'Canvas') {
-        this._lassoHelper.begin(event);
-    } else if (['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'].indexOf(ci.map) > -1) {
-        this._hoverHelper.hover(null);
-        if ('onShowLoupe' in this.editor.render) this.editor.render.onShowLoupe(true);
-        if (!this.editor._selectionHelper.isSelected(ci)) {
-            this.editor._selectionHelper.setSelection(ci, event.shiftKey);
-        }
-        this.dragCtx = {
-            item : ci,
-            xy0 : this.editor.ui.page2obj(event),
-            action : this.editor.ui.Action.fromSelectedAtomsPos(this.editor._selectionHelper.selection)
-        };
-        if (ci.map == 'atoms') {
-            var self = this;
-            this.dragCtx.timeout = setTimeout(
-                function() {
-                    delete self.dragCtx;
-                    self.editor._selectionHelper.setSelection(null);
-                    self.editor.ui.showLabelEditor(ci.id);
-                },
-                750
-            );
-            this.dragCtx.stopTapping = function() {
-                if ('timeout' in self.dragCtx) {
-                    clearTimeout(self.dragCtx.timeout);
-                    delete self.dragCtx.timeout;
+    if (this._lassoHelper.mode == 2) {
+        this.frag = this.editor.render.findItem(event, ['frags']);
+    } else {
+        var ci = this.editor.render.findItem(event);
+        if (!ci || ci.type == 'Canvas') {
+            this._lassoHelper.begin(event);
+        } else if (['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'].indexOf(ci.map) > -1) {
+            this._hoverHelper.hover(null);
+            if ('onShowLoupe' in this.editor.render) this.editor.render.onShowLoupe(true);
+            if (!this.editor._selectionHelper.isSelected(ci)) {
+                this.editor._selectionHelper.setSelection(ci, event.shiftKey);
+            }
+            this.dragCtx = {
+                item : ci,
+                xy0 : this.editor.ui.page2obj(event),
+                action : this.editor.ui.Action.fromSelectedAtomsPos(this.editor._selectionHelper.selection)
+            };
+            if (ci.map == 'atoms') {
+                var self = this;
+                this.dragCtx.timeout = setTimeout(
+                    function() {
+                        delete self.dragCtx;
+                        self.editor._selectionHelper.setSelection(null);
+                        self.editor.ui.showLabelEditor(ci.id);
+                    },
+                    750
+                );
+                this.dragCtx.stopTapping = function() {
+                    if ('timeout' in self.dragCtx) {
+                        clearTimeout(self.dragCtx.timeout);
+                        delete self.dragCtx.timeout;
+                    }
                 }
             }
         }
@@ -320,13 +326,24 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
+            this.editor.render.findItem(event, this._lassoHelper.mode == 2 ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
         );
     }
     return true;
 };
 rnd.Editor.LassoTool.prototype.OnMouseUp = function(event) {
-    if ('dragCtx' in this) {
+    var render = this.editor.render;
+    var ctab = render.ctab;
+    if (this._lassoHelper.mode == 2) {
+        if (this.frag && this.frag.type == 'Fragment') {
+            var fid = this.frag.id;
+            var frag = ctab.frags.get(fid);
+            var atoms = frag.fragGetAtoms(render, fid);
+            this.editor._selectionHelper.setSelection({'atoms':atoms}, event.shiftKey);
+        } else {
+            this.editor._selectionHelper.setSelection({}, event.shiftKey);
+        }
+    } else if ('dragCtx' in this) {
         if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
         if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
             // TODO add bond-to-bond fusing
@@ -369,6 +386,10 @@ rnd.Editor.LassoTool.LassoHelper.prototype.getSelection = function() {
         return this.editor.ui.render.getElementsInPolygon(this.points);
     } else if (this.mode == 1) {
         return this.editor.ui.render.getElementsInRectangle(this.points[0], this.points[1]);
+    } else if (this.mode == 2) {
+        return null;
+    } else {
+        throw new Error("Selector mode unknown");
     }
 };
 rnd.Editor.LassoTool.LassoHelper.prototype.begin = function(event) {

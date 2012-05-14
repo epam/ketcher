@@ -1202,7 +1202,7 @@ rnd.ReFrag.prototype.fragGetAtoms = function(render, fid) {
 rnd.ReFrag.prototype.fragGetBonds = function(render, fid) {
     var ret = [];
     render.ctab.bonds.each(function(bid, bond) {
-        if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid && 
+        if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid &&
             render.ctab.atoms.get(bond.b.end).a.fragment == fid) {
             ret.push(bid);
         }

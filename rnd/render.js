@@ -651,7 +651,10 @@ rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
     if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups', 'sgroups'].indexOf(obj.map) > -1) {
-        this.ctab[obj.map].get(obj.id).setHighlight(visible, this);
+        var item = this.ctab[obj.map].get(obj.id);
+        if (item == null)
+            return true; // TODO: fix, attempt to highlight a deleted item
+        item.setHighlight(visible, this);
     } else {
         return false;
     }

@@ -43,8 +43,6 @@ ui.redoStack = new Array();
 ui.is_osx = false;
 ui.initialized = false;
 
-ui.cursorPos = {pageX: 0, pageY: 0};
-
 ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
 
 ui.patterns =
@@ -92,7 +90,10 @@ ui.onClick_SideButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    ui.selectMode(this.getAttribute('selid') || this.id);
+    if (this.hasClassName('buttonSelected'))
+        ui.toggleDropdownList(this.id + '_dropdown');
+    else
+        ui.selectMode(this.getAttribute('selid') || this.id);
 };
 
 ui.onClick_DropdownButton = function ()
@@ -542,37 +543,22 @@ ui.selectMode = function (mode)
                 ui.removeSelected();
                 return;
             }
+            // BK: TODO: add this ability to mass-change atom labels to the keyboard handler 
             if (mode.startsWith('atom_')) {
                 ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs(ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
-            if (mode.startsWith('bond_')) {
-                var attrs = ui.bondType(mode);
-                var bondsToFlip = [];
-                ui.selection.bonds.each(function (id) {
-                    if (ui.bondFlipRequired(ui.ctab.bonds.get(id), attrs))
-                        bondsToFlip.push(id);
-                }, this);
-                ui.addUndoAction(ui.Action.fromSelectedBondsAttrs(ui.bondType(mode), bondsToFlip), true);
-                ui.render.update();
-                return;
-            }
-        } else if (mode.startsWith('atom_')) {
-            var cAtom = ui.render.findClosestAtom(ui.page2obj(ui.cursorPos));
-            if (cAtom) {
-                ui.addUndoAction(ui.Action.fromAtomAttrs(cAtom.id, ui.atomLabel(mode)), true);
-                ui.render.update();
-                return;
-            }
-        } else if (mode.startsWith('bond_')) {
+        } 
+        /* BK: TODO: add this ability to change the bond under cursor to the editor tool
+        else if (mode.startsWith('bond_')) {
             var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
             if (cBond) {
                 ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
                 ui.render.update();
                 return;
             }
-        }
+        } */
     }
 
     if (this.mode_id != null && this.mode_id != mode) {

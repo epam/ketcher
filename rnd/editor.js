@@ -37,6 +37,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.LassoTool(this, 0);
     } else if (tool == 'selector_square') {
         return new rnd.Editor.LassoTool(this, 1);
+    } else if (tool == 'selector_fragment') {
+        return new rnd.Editor.LassoTool(this, 1, true);
     } else if (tool == 'select_erase') {
         return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
     } else if (tool.startsWith('atom_')) {
@@ -256,11 +258,11 @@ rnd.Editor.EditorTool.HoverHelper.prototype.hover = function(ci) {
 };
 
 
-rnd.Editor.LassoTool = function(editor, mode) {
+rnd.Editor.LassoTool = function(editor, mode, fragment) {
     this.editor = editor;
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
-    this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
+    this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor, fragment);
     this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
 };
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
@@ -268,10 +270,12 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var render = this.editor.render;
     var ctab = render.ctab;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
-    var ci = this.editor.render.findItem(event, event.ctrlKey ? ['frags'] : null);
+    var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
+    var ci = this.editor.render.findItem(event, selectFragment ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses']);
     if (!ci || ci.type == 'Canvas') {
-        this._lassoHelper.begin(event);
-    } else if (['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses', 'frags'].indexOf(ci.map) > -1) {
+        if (!this._lassoHelper.fragment)
+            this._lassoHelper.begin(event);
+    } else {
         this._hoverHelper.hover(null);
         if ('onShowLoupe' in this.editor.render)
             this.editor.render.onShowLoupe(true);
@@ -328,7 +332,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, event.ctrlKey ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses', 'frags'])
+            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
         );
     }
     return true;
@@ -351,6 +355,8 @@ rnd.Editor.LassoTool.prototype.OnMouseUp = function(event) {
     } else {
         if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
             this.editor._selectionHelper.setSelection(this._lassoHelper.end(event), event.shiftKey);
+        } else if (this._lassoHelper.fragment) {
+            this.editor._selectionHelper.setSelection();
         }
     }
     return true;
@@ -368,8 +374,9 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
 };
 
 
-rnd.Editor.LassoTool.LassoHelper = function(mode, editor) {
+rnd.Editor.LassoTool.LassoHelper = function(mode, editor, fragment) {
     this.mode = mode;
+    this.fragment = fragment;
     this.editor = editor;
 };
 rnd.Editor.LassoTool.LassoHelper.prototype.getSelection = function() {

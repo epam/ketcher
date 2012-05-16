@@ -81,6 +81,7 @@ table#ketcher_window > tr
 {
     width: 32px;
     height: 32px;
+    padding: 1px;
 }
 
 .buttonHighlight
@@ -135,6 +136,14 @@ table#ketcher_window > tr
 {
     background-color:#E0E0E0;
     border-style: none;
+}
+
+.dropdownButton
+{
+    cursor: pointer;
+    position: absolute;
+    left: 28px;
+    top: 28px;
 }
 
 .dropdownList

@@ -42,8 +42,7 @@
         <div>
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
-                    <td style="width:36px"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="png/action/lasso.png" alt="" title="Select Tool (Esc)" /></td>
-                    <td style="width:12px" class="dropdownButton" id="selector_dropdown" title="Selector Tool Type"><img src="png/dropdown.png" alt="" /></td>
+                    <td style="width:36px"><div style="position:relative"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="png/action/lasso.png" alt="" title="Select Tool (Esc)" /><img class="dropdownButton" id="selector_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td class="toolDelimiter"></td>
                     <!--td style="width:36px"><object type="image/svg+xml" width="28" height="28" data="svg/document-new28x28.svg"></object></td-->
                     <td class="toolButtonCell toolButton" id="new"><img src="png/action/document-new.png" alt="" title="New (Ctrl+N)" /></td>
@@ -66,68 +65,52 @@
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="select_erase" src="png/action/edit-clear.png" alt="" title="Erase" /></td>
-                    <td></td>
                     <td colspan="16" rowspan="13"><div id="client_area"></div></td>
                     <td><div class="sideButton modeButton" id="atom_h" title="H Atom (H)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton stateButton" id="bond" selid="bond_single" title="Single Bond (1)"></div></td>
-                    <td class="dropdownButton" id="bond_dropdown" title="Select Bond Type"><img src="png/dropdown.png" alt="" /></td>
+                    <td><div style="position:relative"><div class="sideButton modeButton stateButton" id="bond" selid="bond_single" title="Single Bond (1)"></div><img class="dropdownButton" id="bond_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_c" title="C Atom (C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="chain" title="Chain Tool"></div></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_n" title="N Atom (N)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div class="sideButton modeButton stateButton" id="template" selid="template_0" title="Benzene (T)"></div></td>
-                    <td class="dropdownButton" id="template_dropdown" title="Benzene"><img src="png/dropdown.png" alt="" /></td>
+                    <td><div style="position:relative"><div class="sideButton modeButton stateButton" id="template" selid="template_0" title="Benzene (T)"></div><img class="dropdownButton" id="template_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_o" title="O Atom (O)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_plus" title="Charge Plus (5)"></div></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_s" title="S Atom (S)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><div class="sideButton modeButton" id="charge_minus" title="Charge Minus (5)"></div></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="png/action/reaction-arrow.png" alt="" title="Reaction Mapping Tool" /></td>
-                    <td class="dropdownButton" id="reaction_dropdown" title="Reaction Mapping Mode"><img src="png/dropdown.png" alt="" /></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="png/action/reaction-arrow.png" alt="" title="Reaction Mapping Tool" /><img class="dropdownButton" id="reaction_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="sgroup" src="png/action/sgroup.png" alt="" title="S-Group (Ctrl+G)" /></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><img class="sideButton modeButton stateButton" id="rgroup" selid="rgroup_label" src="png/action/rgroup-label.png" alt="" title="R-Group Tool (Shift+R)" /></td>
-                    <td class="dropdownButton" id="rgroup_dropdown" title="R-Group Tool Mode"><img src="png/dropdown.png" alt="" /></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="rgroup" selid="rgroup_label" src="png/action/rgroup-label.png" alt="" title="R-Group Tool (Shift+R)" /><img class="dropdownButton" id="rgroup_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td></td>
                     <td></td>
                     <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_table" title="Periodic table"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td></td>
-                    <td></td>
                     <td><div class="sideButton modeButton" id="atom_reagenerics" title="Reaxys Generics"></div></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
                 </tr>
             </table>
 
@@ -160,7 +143,7 @@
                     <tr>
                         <td class="dropdownListDelimiter"></td>
                     </tr>
-					<tr class="dropdownListItem" id="bond_up" title="Single Up Bond (1)">
+                    <tr class="dropdownListItem" id="bond_up" title="Single Up Bond (1)">
                         <td><div id="bond_up_preview"></div>Single Up</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_down" title="Single Down Bond (1)">
@@ -178,7 +161,7 @@
                     <tr class="dropdownListItem" id="bond_any" title="Any Bond (0)">
                         <td><div id="bond_any_preview"></div>Any</td>
                     </tr>
-					<tr class="dropdownListItem" id="bond_aromatic" title="Aromatic Bond (4)">
+                    <tr class="dropdownListItem" id="bond_aromatic" title="Aromatic Bond (4)">
                         <td><div id="bond_aromatic_preview"></div>Aromatic</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_singledouble" title="Single/Double Bond">
@@ -413,10 +396,10 @@
                                 </select>
                             </td>
                         </tr>
-						<tr>
-							<td colspan="5" style="background-color: #D7D7D7">
-								Reaction flags
-							</td>
+                        <tr>
+                            <td colspan="5" style="background-color: #D7D7D7">
+                                Reaction flags
+                            </td>
                             <td>
                                 <label>Substitution count:</label>
                             </td>
@@ -433,8 +416,8 @@
                                     <option value="6">6</option>
                                 </select>
                             </td>
-						</tr>
-						<tr>
+                        </tr>
+                        <tr>
                             <td>
                                 <label>Inversion:</label>
                             </td>

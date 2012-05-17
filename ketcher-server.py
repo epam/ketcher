@@ -7,6 +7,7 @@ import SimpleHTTPServer
 from SimpleHTTPServer import *
 from BaseHTTPServer import *
 import indigo
+import traceback
 
 port = 8080
 indigo = indigo.Indigo()
@@ -24,9 +25,9 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
           self.path.split('?', 1)
     else:
       self.query_string = ''
-      
+
     self.globals = dict(cgi.parse_qsl(self.query_string))
-      
+
     if self.path.endswith("layout"):
       self.send_response(200)
       self.send_header('Content-type', 'text/plain')
@@ -62,7 +63,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       return
 
     SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-    
+
   def do_POST(self):
     ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
     if ctype == 'multipart/form-data':
@@ -118,6 +119,40 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         mol.layout()
         self.wfile.write("Ok.\n")
         self.wfile.write(mol.molfile())
+      return
+
+    if self.path.endswith("aromatize"):
+      dearomatize=self.path.endswith("dearomatize")
+      length = int(self.headers['content-length'])
+      self.globals = dict(cgi.parse_qsl(self.rfile.read(length)))
+      self.send_response(200)
+      self.send_header('Content-type', 'text/plain')
+      self.end_headers()
+      moldata = self.globals['moldata']
+      responce=""
+      try:
+        if moldata.startswith('$RXN'):
+          rxn = indigo.loadReaction(moldata)
+          if dearomatize:
+            print 'dearomatize'
+            rxn.dearomatize()
+          else:
+            print 'aromatize'
+            rxn.aromatize()
+          responce += "Ok.\n"
+          responce += rxn.rxnfile()
+        else:
+          mol = indigo.loadMolecule(moldata)
+          if dearomatize:
+            mol.dearomatize()
+          else:
+            mol.aromatize()
+          responce += "Ok.\n"
+          responce += mol.molfile()
+      except:
+        responce += "Error.\n"
+        responce += '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
+      self.wfile.write(responce)
       return
 
     if self.path.endswith("automap"):

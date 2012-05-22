@@ -1144,7 +1144,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseMove = function(event) {
 rnd.Editor.SGroupTool.SGroupHelper = function(editor) {
     this.editor = editor;
     this.selection = null;
-}
+};
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function(id, selection) {
     this.selection = selection;
@@ -1199,7 +1199,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function(id,
     }
 
     this.editor.ui.showSGroupProperties(id, this, this.selection, this.OnPropertiesDialogOk, this.OnPropertiesDialogCancel);
-}
+};
 
 rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
     var id = null; // id of an existing group, if we're editing one
@@ -1233,7 +1233,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
     this.editor.ui.updateSelection();
     this.editor.ui.updateClipboardButtons(); // TODO review
     this.editor.render.update();
-}
+};
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id, type, attrs) {
     if (id == null)
@@ -1244,11 +1244,11 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id,
         this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, type, attrs), true);
     }
     this.postClose();
-}
+};
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function() {
     this.postClose();
-}
+};
 
 rnd.Editor.PasteTool = function(editor) {
     this.editor = editor;

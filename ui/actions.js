@@ -1100,7 +1100,7 @@ ui.Action.fromPatternOnCanvas = function (pos, pattern)
     return action;
 };
 
-ui.Action.fromChain = function (p0, v, nSect)
+ui.Action.fromChain = function (p0, v, nSect, atom_id)
 {
     var angle = Math.PI / 6;
     var dx = Math.cos(angle), dy = Math.sin(angle);
@@ -1108,15 +1108,15 @@ ui.Action.fromChain = function (p0, v, nSect)
     var action = new ui.Action();
 
     var frid;
-    if (ui.drag.atom_id != null) {
-        frid = ui.render.atomGetAttr(ui.drag.atom_id, 'fragment');
+    if (atom_id != null) {
+        frid = ui.render.atomGetAttr(atom_id, 'fragment');
     } else {
         frid = action.addOp(new ui.Action.OpFragmentAdd().perform(ui.editor)).frid;
     }
 
     var id0 = -1;
-    if (ui.drag.atom_id != null) {
-        id0 = ui.drag.atom_id;
+    if (atom_id != null) {
+        id0 = atom_id;
     } else {
         id0 = action.addOp(new ui.Action.OpAtomAdd({ label: 'C', fragment : frid }, p0).perform(ui.editor)).data.aid;
     }

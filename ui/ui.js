@@ -217,6 +217,8 @@ ui.init = function ()
     $('zoom_in').observe('click', ui.onClick_ZoomIn);
     $('zoom_out').observe('click', ui.onClick_ZoomOut);
     $('clean_up').observe('click', ui.onClick_CleanUp);
+    $('aromatize').observe('click', ui.onClick_Aromatize);
+    $('dearomatize').observe('click', ui.onClick_Dearomatize);
     $('atom_table').observe('click', ui.onClick_ElemTableButton);
     $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
     $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
@@ -1097,6 +1099,31 @@ ui.loadMolecule = function (mol_string, force_layout)
     }
 };
 
+ui.dearomatizeMolecule = function (mol_string, aromatize)
+{
+    if (!ui.standalone)
+    {
+        new Ajax.Request(ui.path + (aromatize ? 'aromatize' : 'dearomatize'),
+        {
+            method: 'post',
+            asynchronous : true,
+            parameters: {moldata: mol_string},
+            onComplete: function (res)
+            {
+                if (res.responseText.startsWith('Ok.')) {
+                    ui.updateMolecule(ui.parseCTFile(res.responseText));
+                } else if (res.responseText.startsWith('Error.')) {
+                    alert(res.responseText);
+                } else {
+                    throw new Error('Something went wrong' + res.responseText);
+                }
+            }
+        });
+    } else {
+        throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
+    }
+};
+
 // Called from iframe's 'onload'
 ui.loadMoleculeFromFile = function ()
 {
@@ -1295,6 +1322,38 @@ ui.onClick_CleanUp = function ()
     try
     {
         ui.loadMolecule(ms.saveMolecule(ui.ctab), true);
+    } catch (er)
+    {
+        alert("Molfile: " + er.message);
+    }
+};
+
+ui.onClick_Aromatize = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+
+    var ms = new chem.MolfileSaver();
+
+    try
+    {
+        ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), true);
+    } catch (er)
+    {
+        alert("Molfile: " + er.message);
+    }
+};
+
+ui.onClick_Dearomatize = function ()
+{
+    if (this.hasClassName('buttonDisabled'))
+        return;
+
+    var ms = new chem.MolfileSaver();
+
+    try
+    {
+        ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), false);
     } catch (er)
     {
         alert("Molfile: " + er.message);

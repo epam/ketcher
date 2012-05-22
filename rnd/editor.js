@@ -673,7 +673,8 @@ rnd.Editor.ChainTool.prototype.OnMouseMove = function(event) {
         _DC_.action = _E_.ui.Action.fromChain(
             pos0,
             this._calcAngle(pos0, pos1),
-            Math.ceil(util.Vec2.diff(pos1, pos0).length())
+            Math.ceil(util.Vec2.diff(pos1, pos0).length()),
+            'item' in _DC_ ? _DC_.item.id : null
         );
         _R_.update();
         return true;

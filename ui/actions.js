@@ -355,7 +355,10 @@ ui.Action.prototype.perform = function ()
                 atoms: atoms
             };
             // remove highlighting
-            ui.highlightSGroup(id, false);
+            // RB: this call seems to be obsolete // TODO Misha K. review, pls
+            //BEGIN
+            //ui.highlightSGroup(id, false);
+            //END
             ui.render.sGroupDelete(id);
             break;
 
@@ -1426,6 +1429,50 @@ ui.Action.fromRGroupFragment = function(rgidNew, frid) {
     var action = new ui.Action();
     action.addOp(new ui.Action.OpRGroupFragment(rgidNew, frid));
     return action.perform();
+};
+
+ui.Action.fromPaste = function(objects, offset) {
+    offset = offset || new util.Vec2();
+    var action = new ui.Action(), amap = {}, fmap = {};
+    // atoms
+    for (var aid = 0; aid < objects.atoms.length; aid++) {
+        var atom = Object.clone(objects.atoms[aid]);
+        if (!(atom.fragment in fmap)) {
+            fmap[atom.fragment] = action.addOp(new ui.Action.OpFragmentAdd().perform(ui.editor)).frid;
+        }
+        atom.fragment = fmap[atom.fragment];
+        amap[aid] = action.addOp(new ui.Action.OpAtomAdd(atom, atom.pos.add(offset)).perform(ui.editor)).data.aid;
+    }
+    //bonds
+    for (var bid = 0; bid < objects.bonds.length; bid++) {
+        var bond = Object.clone(objects.bonds[bid]);
+        action.addOp(new ui.Action.OpBondAdd(amap[bond.begin], amap[bond.end], bond).perform(ui.editor));
+    }
+    //sgroups
+    for (var sgid = 0; sgid < objects.sgroups.length; sgid++) {
+        var sgroup = Object.clone(objects.sgroups[sgid]), sgatoms = [];
+        for (var sgaid = 0; sgaid < sgroup.atoms.length; sgaid++) {
+            sgatoms.push(amap[sgroup.atoms[sgaid]]);
+        }
+        var sgaction = ui.Action.fromSgroupAddition(sgroup.type, sgroup, sgatoms);
+        //action.mergeWith(sgaction);
+        for (var iop = sgaction.operations.length - 1; iop >= 0; iop--) {
+            action.addOp(sgaction.operations[iop]);
+        }
+    }
+    //reaction arrows
+    if (ui.editor.render.ctab.rxnArrows.count() < 1) {
+        for (var raid = 0; raid < objects.rxnArrows.length; raid++) {
+            action.addOp(new ui.Action.OpRxnArrowAdd(objects.rxnArrows[raid].pos.add(offset)).perform(ui.editor));
+        }
+    }
+    //reaction pluses
+    for (var rpid = 0; rpid < objects.rxnPluses.length; rpid++) {
+        action.addOp(new ui.Action.OpRxnPlusAdd(objects.rxnPluses[rpid].pos.add(offset)).perform(ui.editor));
+    }
+    //thats all
+    action.operations.reverse();
+    return action;
 };
 
 ui.addUndoAction = function (action, check_dummy)

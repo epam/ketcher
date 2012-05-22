@@ -1252,115 +1252,34 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function
 
 rnd.Editor.PasteTool = function(editor) {
     this.editor = editor;
-
-    var mapping = {};
-    var id;
-
-    this.editor.ui.updateSelection(null, true); // clear selection, but don't redraw
-
-    var clipboard = this.editor.ui.clipboard;
-    var render = this.editor.render;
-    var ctab = render.ctab;
-    this.pasted = {atoms: [], bonds: [], sgroups: [], rxnArrows: [], rxnPluses: []};
-
-    // TODO: should the clipboard be a part of the UI?..
-    for (id = 0; id < clipboard.atoms.length; id++)
-    {
-        var atom = clipboard.atoms[id];
-        mapping[id] = render.atomAdd(atom.pos, atom);
-        this.pasted.atoms.push(mapping[id]);
-    }
-
-    for (id = 0; id < clipboard.bonds.length; id++)
-    {
-        var bond = clipboard.bonds[id];
-        this.pasted.bonds.push(render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
-    }
-
-    clipboard.sgroups.each(function (sgroup)
-    {
-        var sid = render.sGroupCreate(sgroup.type);
-
-        render.sGroupSetAttr(sid, 'mul', sgroup.mul);
-        render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
-        render.sGroupSetAttr(sid, 'name', sgroup.name);
-        render.sGroupSetAttr(sid, 'subscript', sgroup.subscript);
-        render.sGroupSetAttr(sid, 'fieldName', sgroup.fieldName);
-        render.sGroupSetAttr(sid, 'fieldValue', sgroup.fieldValue);
-
-        sgroup.atoms.each(function(id)
-        {
-            render.atomClearSGroups(mapping[id]);
-            render.atomAddToSGroup(mapping[id], sid);
-        }, this);
-
-        this.pasted.sgroups.push(sid);
-    }, this);
-
-    for (id = 0; id < clipboard.rxnArrows.length; id++) {
-        var arrow = clipboard.rxnArrows[id];
-        if (ctab.rxnArrows.count() < 1) {
-            this.pasted.rxnArrows.push(render.rxnArrowAdd(arrow.pos, arrow));
-        }
-    }
-
-    for (id = 0; id < clipboard.rxnPluses.length; id++) {
-        var plus = clipboard.rxnPluses[id];
-        this.pasted.rxnPluses.push(render.rxnPlusAdd(plus.pos, plus));
-    }
-
-    this.pastedAnchorPos = null;
-    if (this.pasted.atoms.length) {
-        this.pastedAnchorPos = render.atomGetPos(this.pasted.atoms[0]);
-    } else if (this.pasted.rxnArrows.length) {
-        this.pastedAnchorPos = render.rxnArrowGetPos(this.pasted.rxnArrows[0]);
-    } else if (this.pasted.rxnPluses.length) {
-        this.pastedAnchorPos = render.rxnPlusGetPos(this.pasted.rxnPluses[0]);
-    }
-
-    render.update();
-};
-
-rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.PasteTool.prototype.OnMouseDown = function(event) {
-
-};
-
-rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
-    var cur_pos = this.editor.ui.page2obj(event);
-    var delta = util.Vec2.diff(cur_pos, this.pastedAnchorPos);
-
-    this.editor.render.multipleMoveRel(this.pasted, delta);
-    this.pastedAnchorPos = new util.Vec2(cur_pos);
-
+    this.action = this.editor.ui.Action.fromPaste(
+        this.editor.ui.clipboard,
+        'lastEvent' in this.OnMouseMove0
+            ? util.Vec2.diff(
+                this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
+                this.editor.ui.clipboard.getAnchorPosition())
+            : undefined
+    );
     this.editor.render.update();
 };
-
+rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
+rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
+    this.action.perform(this.editor);
+    this.action = this.editor.ui.Action.fromPaste(
+        this.editor.ui.clipboard,
+        util.Vec2.diff(this.editor.ui.page2obj(event), this.editor.ui.clipboard.getAnchorPosition())
+    );
+    this.editor.render.update();
+};
 rnd.Editor.PasteTool.prototype.OnMouseUp = function(event) {
-    // TODO: do we have to move the structure here?
-    this.editor.ui.addUndoAction(this.editor.ui.Action.fromFragmentAddition(this.pasted.atoms, this.pasted.bonds, this.pasted.sgroups, this.pasted.rxnArrows, this.pasted.rxnPluses));
-    var render = this.editor.render;
-    render.update();
-    this.pasted = null;
+    this.editor.ui.addUndoAction(this.action);
+    delete this.action;
     this.editor.ui.selectMode(this.editor.ui.defaultSelector);
 };
-
 rnd.Editor.PasteTool.prototype.OnCancel = function() {
-    var render = this.editor.render;
-    if (this.pasted) {
-        this.pasted.sgroups.each(function (id)
-        {
-            render.sGroupDelete(id);
-        });
-
-        this.pasted.atoms.each(function (id)
-        {
-            render.atomRemove(id);
-        });
-        this.pasted = null;
+    if ('action' in this) {
+        this.action.perform(this.editor);
+        this.editor.ui.selectMode(this.editor.ui.defaultSelector);
     }
-
-    if (render != null) // TODO: why?
-        render.update();
 };
 

@@ -2048,7 +2048,18 @@ ui.copy = function ()
         bonds: new Array(),
         sgroups: new Array(),
         rxnArrows: new Array(),
-        rxnPluses: new Array()
+        rxnPluses: new Array(),
+        // RB: let it be here for the moment
+        // TODO: "clipboard" support to be moved to editor module
+        getAnchorPosition: function() {
+            if (this.atoms.length) {
+                return this.atoms[0].pos;
+            } else if (this.rxnArrows.length) {
+                return ui.editor.render.rxnArrowGetPos(this..rxnArrows[0]);
+            } else if (this.rxnPluses.length) {
+                return ui.editor.render.rxnPlusGetPos(this.rxnPluses[0]);
+            }
+        }
     };
 
     var mapping = {};

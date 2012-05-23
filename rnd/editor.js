@@ -195,7 +195,7 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
     }
 };
 rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
-    if (!event.ctrlKey && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
+    if (!((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
         if (114 == (Prototype.Browser.IE ? event.keyCode : event.which)) { // 'r'
             return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
         }
@@ -225,6 +225,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
         }
     }
     if ('OnKeyPress' in this) return this.OnKeyPress(event);
+    return false;
 };
 rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
     var v = util.Vec2.diff(pos1, pos0);

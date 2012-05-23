@@ -58,11 +58,14 @@ ui.patterns =
 //
 ui.initButton = function (el)
 {
-    el.observe(EventMap['mousedown'], function ()
+    el.observe(EventMap['mousedown'], function (event)
     {
         if (this.hasClassName('buttonDisabled'))
             return;
         this.addClassName('buttonPressed');
+        // manually toggle off all active dropdowns
+        ui.hideBlurredControls();
+        util.stopEventPropagation(event);
     });
     el.observe(EventMap['mouseup'], function ()
     {
@@ -704,8 +707,7 @@ ui.onKeyPress_Ketcher = function (event)
     //BEGIN
     if (ui && ui.render.current_tool) {
         if (ui.render.current_tool.processEvent('OnKeyPress', event)) {
-            util.preventDefault(event);
-            return;
+            return util.preventDefault(event);
         }
     }
     //END
@@ -850,7 +852,7 @@ ui.onKeyDown_IE = function (event)
     // RB: KETCHER-329 Ctrl+A hot key selects whole Google Chrome browser
     // BEGIN
     // TODO the fix is temporary, need to review keyboard events handling in general
-    if (Prototype.Browser.WebKit && event.ctrlKey && event.which == 65) {
+    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && event.which == 65) {
         ui.selectAll();
         util.stopEventPropagation(event);
         return util.preventDefault(event);
@@ -2114,7 +2116,7 @@ ui.copy = function ()
             if (this.atoms.length) {
                 return this.atoms[0].pos;
             } else if (this.rxnArrows.length) {
-                return ui.editor.render.rxnArrowGetPos(this..rxnArrows[0]);
+                return ui.editor.render.rxnArrowGetPos(this.rxnArrows[0]);
             } else if (this.rxnPluses.length) {
                 return ui.editor.render.rxnPlusGetPos(this.rxnPluses[0]);
             }

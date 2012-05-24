@@ -566,10 +566,10 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
 	var centre = item.item.ps;
 	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	if (item.selected)
 		this.showItemSelection(id, item, true);
 };
@@ -578,10 +578,10 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
 	var centre = item.item.ps;
 	var path = this.drawPlus(centre);
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	if (item.selected)
 		this.showItemSelection(id, item, true);
 };

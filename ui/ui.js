@@ -851,6 +851,12 @@ ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 83, 86, 88, 90];
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
 {
+    if (Prototype.Browser.Gecko && event.which == 46)
+    {
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
+    }
+        
     if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && ui.ctrlShortcuts.indexOf(event.which) != -1)
     {
         // don't handle the shrtcuts in the regular fashion, e.g. saving the page, opening a document, etc.
@@ -889,6 +895,14 @@ ui.onKeyUp = function (event)
             ui.hideDialog(this.id);
         else
             this.hide();
+        util.stopEventPropagation(event);
+        return util.preventDefault(event);
+    }
+    
+    if (event.keyCode == 46)
+    {
+        if (ui.selected())
+            ui.removeSelected();
         util.stopEventPropagation(event);
         return util.preventDefault(event);
     }

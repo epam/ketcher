@@ -548,13 +548,13 @@ ui.selectMode = function (mode)
                 ui.removeSelected();
                 return;
             }
-            // BK: TODO: add this ability to mass-change atom labels to the keyboard handler 
+            // BK: TODO: add this ability to mass-change atom labels to the keyboard handler
             if (mode.startsWith('atom_')) {
                 ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs(ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
-        } 
+        }
         /* BK: TODO: add this ability to change the bond under cursor to the editor tool
         else if (mode.startsWith('bond_')) {
             var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
@@ -846,25 +846,25 @@ ui.onKeyPress_Ketcher = function (event)
     }
 };
 
+ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 83, 86, 88, 90];
+
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
 {
-    // RB: KETCHER-329 Ctrl+A hot key selects whole Google Chrome browser
-    // BEGIN
-    // TODO the fix is temporary, need to review keyboard events handling in general
-    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && event.which == 65) {
-        ui.selectAll();
+    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && ui.ctrlShortcuts.indexOf(event.which) != -1)
+    {
+        // don't handle the shrtcuts in the regular fashion, e.g. saving the page, opening a document, etc.
         util.stopEventPropagation(event);
         return util.preventDefault(event);
     }
-    // END
-    if (!Prototype.Browser.IE)
+
+   if (!Prototype.Browser.IE)
         return;
 
     // Ctrl+A, Ctrl+C, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
     //if ([65, 67, 78, 79, 83, 86, 88, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
     // Ctrl+A, Ctrl+G, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
-    if ([65, 71, 76, 78, 79, 83, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
+    if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
         util.stopEventPropagation(event);
         return util.preventDefault(event);
@@ -874,11 +874,8 @@ ui.onKeyDown_IE = function (event)
 // Button handler specially for Safari and IE
 ui.onKeyUp = function (event)
 {
-    if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
-        return;
-
     // Esc
-    if (Prototype.Browser.WebKit && event.keyCode == 27)
+    if (event.keyCode == 27)
     {
         if (this == document)
         {
@@ -896,8 +893,12 @@ ui.onKeyUp = function (event)
         return util.preventDefault(event);
     }
 
-    // The rest is for IE
-    if (event.keyCode != 46 && Prototype.Browser.WebKit)
+    if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
+        return;
+
+    if (!(Prototype.Browser.WebKit &&
+        ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) &&
+        ui.ctrlShortcuts.indexOf(event.which) != -1) && (event.keyCode != 46 && Prototype.Browser.WebKit))
         return;
 
     if (this != document)

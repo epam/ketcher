@@ -272,7 +272,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var ctab = render.ctab;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-    var ci = this.editor.render.findItem(event, selectFragment ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses']);
+    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses']);
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
             this._lassoHelper.begin(event);
@@ -333,7 +333,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
+            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
         );
     }
     return true;

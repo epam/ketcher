@@ -360,9 +360,9 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	}
 	if (this.chiral.p != null)
 		func.call(context, this.chiral.visel);
-//	this.sgroups.each(function(sid, sgroup){
-//		func.call(context, sgroup.visel);
-//	}, this);
+	this.sgroups.each(function(sid, sgroup){
+		func.call(context, sgroup.visel);
+	}, this);
 	this.reloops.each(function(rlid, reloop) {
 		func.call(context, reloop.visel);
 	}, this);

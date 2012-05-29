@@ -31,9 +31,7 @@ rnd.Editor.prototype.deselectAll = function() {
     this._selectionHelper.setSelection();
 };
 rnd.Editor.prototype.toolFor = function(tool) {
-    if (tool == 'select_simple') {
-        return new rnd.Editor.LassoTool(this);
-    } else if (tool == 'selector_lasso') {
+    if (tool == 'selector_lasso') {
         return new rnd.Editor.LassoTool(this, 0);
     } else if (tool == 'selector_square') {
         return new rnd.Editor.LassoTool(this, 1);
@@ -1273,7 +1271,7 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
     );
     this.editor.render.update();
 };
-rnd.Editor.PasteTool.prototype.OnMouseUp = function(event) {
+rnd.Editor.PasteTool.prototype.OnMouseUp = function() {
     this.editor.ui.addUndoAction(this.action);
     delete this.action;
     this.editor.ui.selectMode(this.editor.ui.defaultSelector);

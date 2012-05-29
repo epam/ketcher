@@ -1001,11 +1001,10 @@ ui.onKeyPress_InputLabel = function (event)
         var charge = 0;
         var value_arr = this.value.toArray();
 
-        if (this.value == '*')
-        {
+        if (this.value == '*') {
             label = 'A';
-        } else if (this.value.match(/^[*][1-9]?[+-]$/i))
-        {
+        }
+        else if (this.value.match(/^[*][1-9]?[+-]$/i)) {
             label = 'A';
 
             if (this.value.length == 2)
@@ -1015,17 +1014,17 @@ ui.onKeyPress_InputLabel = function (event)
 
             if (value_arr[2] == '-')
                 charge *= -1;
-        } else if (this.value.match(/^[A-Z]{1,2}$/i))
-        {
+        }
+        else if (this.value.match(/^[A-Z]{1,2}$/i)) {
             label = this.value.capitalize();
-        } else if (this.value.match(/^[A-Z]{1,2}[0][+-]?$/i))
-        {
+        }
+        else if (this.value.match(/^[A-Z]{1,2}[0][+-]?$/i)) {
             if (this.value.match(/^[A-Z]{2}/i))
                 label = this.value.substr(0, 2).capitalize();
             else
                 label = value_arr[0].capitalize();
-        } else if (this.value.match(/^[A-Z]{1,2}[1-9]?[+-]$/i))
-        {
+        }
+        else if (this.value.match(/^[A-Z]{1,2}[1-9]?[+-]$/i)) {
             if (this.value.match(/^[A-Z]{2}/i))
                 label = this.value.substr(0, 2).capitalize();
             else
@@ -2350,4 +2349,27 @@ ui.onClick_Redo = function ()
         return;
 
     ui.redo();
+};
+
+ui.showLabelEditor = function(aid)
+{
+    // TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (ui.onKeyPress_InputLabel, onBlur, etc)
+    var input_el = $('input_label');
+
+    var offset = Math.min(6 * ui.zoom, 16);
+
+    input_el.atom_id = aid;
+    input_el.value = ui.render.atomGetAttr(aid, 'label');
+    input_el.style.fontSize = (offset * 2).toString() + 'px';
+
+    input_el.show();
+
+    var atom_pos = ui.render.obj2view(ui.render.atomGetPos(aid));
+    var offset_client = ui.client_area.cumulativeOffset();
+    var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
+    var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
+    input_el.style.left = (atom_pos.x + offset_client.left - offset_parent.left - offset - d).toString() + 'px';
+    input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d).toString() + 'px';
+
+    input_el.activate();
 };

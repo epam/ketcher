@@ -21,6 +21,7 @@ rnd.logcnt = 0;
 rnd.logmouse = false;
 rnd.hl = false;
 
+/** @deprecated */
 rnd.mouseEventNames = [
 	'Click',
 	'DblClick',
@@ -29,8 +30,11 @@ rnd.mouseEventNames = [
 	'MouseMove',
 	'MouseOut'
 	];
+
+/** @deprecated */
 rnd.entities = ['Atom', 'RxnArrow', 'RxnPlus', 'Bond', 'Canvas'];
 
+/** @deprecated */
 rnd.actions = [
 	'atomSetAttr',
 	'atomAddToSGroup',
@@ -102,11 +106,14 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.size = new util.Vec2();
 	this.viewSz = viewSz || new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
 	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
+    /** @deprecated */
 	this.curItem = {
 		'type':'Canvas',
 		'id':-1
 	};
+    /** @deprecated */
 	this.pagePos = new util.Vec2();
+    /** @deprecated */
 	this.muteMouseOutMouseOver = false;
 	this.dirty = true;
 	this.selectionRect = null;
@@ -209,53 +216,20 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;
 	this.styles = null;
+    /** @deprecated */
 	this.checkCurItem = true;
 
-	// function(event, id){};
-	this.onAtomClick = null;
-	this.onAtomDblClick = null;
-	this.onAtomMouseDown = null;
-	this.onAtomMouseOver = null;
-	this.onAtomMouseMove = null;
-	this.onAtomMouseOut = null;
-	this.onBondClick = null;
-	this.onBondDblClick = null;
-	this.onBondMouseDown = null;
-	this.onBondMouseOver = null;
-	this.onBondMouseMove = null;
-	this.onBondMouseOut = null;
-
-	this.onSGroupClick = null;
-	this.onSGroupDblClick = null;
-	this.onSGroupMouseDown = null;
-	this.onSGroupMouseOver = null;
-	this.onSGroupMouseMove = null;
-	this.onSGroupMouseOut = null;
-
-	this.onRxnArrowClick = null;
-	this.onRxnArrowDblClick = null;
-	this.onRxnArrowMouseDown = null;
-	this.onRxnArrowMouseOver = null;
-	this.onRxnArrowMouseMove = null;
-	this.onRxnArrowMouseOut = null;
-
-	this.onRxnPlusClick = null;
-	this.onRxnPlusDblClick = null;
-	this.onRxnPlusMouseDown = null;
-	this.onRxnPlusMouseOver = null;
-	this.onRxnPlusMouseMove = null;
-	this.onRxnPlusMouseOut = null;
-
-	this.onCanvasClick = null;
-	this.onCanvasDblClick = null;
-	this.onCanvasMouseDown = null;
-	this.onCanvasMouseOver = null;
-	this.onCanvasMouseMove = null;
-	this.onCanvasMouseOut = null;
 	this.onCanvasOffsetChanged = null; //function(newOffset, oldOffset){};
 	this.onCanvasSizeChanged = null; //function(newSize, oldSize){};
 };
 
+/**
+ *
+ * @param type
+ * @param id
+ * @param event
+ * @deprecated
+ */
 rnd.Render.prototype.setCurrentItem = function (type, id, event) {
     if (this.current_tool) return;
 	var oldType = this.curItem.type, oldId = this.curItem.id;
@@ -306,6 +280,11 @@ rnd.Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
 };
 
+/**
+ *
+ * @param event
+ * @deprecated
+ */
 rnd.Render.prototype.checkCurrentItem = function (event) {
     if (this.current_tool) return;
 	if (this.offset) {
@@ -343,6 +322,14 @@ rnd.Render.prototype.client2Obj = function (clientPos) {
 	return new util.Vec2(clientPos).sub(this.offset);
 };
 
+/**
+ *
+ * @param event
+ * @param eventName
+ * @param type
+ * @param id
+ * @deprecated
+ */
 rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
     if (this.current_tool) return;
 	var name = 'on' + type + eventName;
@@ -1241,6 +1228,12 @@ rnd.Render.prototype.testPolygon = function (rr) {
 	this.drawSelectionPolygon(rr);
 };
 
+/**
+ *
+ * @param action
+ * @param args
+ * @deprecated
+ */
 rnd.Render.prototype.processAction = function (action, args)
 {
 	var id = parseInt(args[0]);
@@ -1350,6 +1343,7 @@ rnd.Render.prototype.update = function (force)
 		}
 	}
 
+    /** @deprecated */
 	this.muteMouseOutMouseOver = false;
 	if (this.checkCurItem) {
 		this.checkCurItem = false;

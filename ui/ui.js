@@ -45,14 +45,6 @@ ui.initialized = false;
 
 ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
 
-ui.patterns =
-{
-    six1: [1, 2, 1, 2, 1, 2],
-    six2: [1, 1, 1, 1, 1, 1],
-    //sixa: [4, 4, 4, 4, 4, 4],
-    five: [1, 1, 1, 1, 1]
-};
-
 //
 // Init section
 //
@@ -359,40 +351,7 @@ ui.init = function ()
 
     this.selectMode('selector_lasso');
 
-    this.render.onAtomClick = this.onClick_Atom;
-    this.render.onAtomDblClick = this.onDblClick_Atom;
-    this.render.onAtomMouseDown = this.onMouseDown_Atom;
-    this.render.onAtomMouseOver = this.onMouseOver_Atom;
-    this.render.onAtomMouseOut = this.onMouseOut_Atom;
-
-    this.render.onRxnArrowClick = this.onClick_RxnArrow;
-    //this.render.onRxnArrowDblClick = this.onDblClick_RxnArrow;
-    this.render.onRxnArrowMouseDown = this.onMouseDown_RxnArrow;
-    //this.render.onRxnArrowMouseOver = this.onMouseOver_RxnArrow;
-    //this.render.onRxnArrowMouseOut = this.onMouseOut_RxnArrow;
-
-    this.render.onRxnPlusClick = this.onClick_RxnPlus;
-    //this.render.onRxnPlusDblClick = this.onDblClick_RxnPlus;
-    this.render.onRxnPlusMouseDown = this.onMouseDown_RxnPlus;
-    //this.render.onRxnPlusMouseOver = this.onMouseOver_RxnPlus;
-    //this.render.onRxnPlusMouseOut = this.onMouseOut_RxnPlus;
-
-    this.render.onBondClick = this.onClick_Bond;
-    this.render.onBondDblClick = this.onDblClick_Bond;
-    this.render.onBondMouseDown = this.onMouseDown_Bond;
-    this.render.onBondMouseOver = this.onMouseOver_Bond;
-    this.render.onBondMouseOut = this.onMouseOut_Bond;
-
-    this.render.onCanvasClick = this.onClick_Canvas;
-    this.render.onCanvasMouseMove = this.onMouseMove_Canvas;
-    this.render.onCanvasMouseDown = this.onMouseDown_Canvas;
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
-
-    this.render.onSGroupClick = this.onClick_SGroup;
-    this.render.onSGroupDblClick = this.onDblClick_SGroup;
-    this.render.onSGroupMouseDown = function () {return true;};
-    this.render.onSGroupMouseOver = this.onMouseOver_SGroup;
-    this.render.onSGroupMouseOut = this.onMouseOut_SGroup;
 
     this.render.setMolecule(this.ctab);
     this.render.update();
@@ -599,32 +558,6 @@ ui.selectMode = function (mode)
     }
 };
 
-ui.modeType = function ()
-{
-    if (ui.mode_id == null)
-        return ui.MODE.PASTE;
-    if (ui.mode_id == 'select_simple')
-        return ui.MODE.SIMPLE;
-    if (ui.mode_id == 'select_erase')
-        return ui.MODE.ERASE;
-    if (ui.mode_id.startsWith('atom_'))
-        return ui.MODE.ATOM;
-    if (ui.mode_id.startsWith('charge_'))
-        return ui.MODE.CHARGE;
-    if (ui.mode_id.startsWith('bond_'))
-        return ui.MODE.BOND;
-    if (ui.mode_id == 'sgroup')
-        return ui.MODE.SGROUP;
-    if (ui.mode_id.startsWith('pattern_'))
-        return ui.MODE.PATTERN;
-    if (ui.mode_id == 'rxn_arrow')
-        return ui.MODE.RXN_ARROW;
-    if (ui.mode_id == 'rxn_plus')
-        return ui.MODE.RXN_PLUS;
-    if (ui.mode_id == 'chain')
-        return ui.MODE.CHAIN;
-};
-
 ui.bondTypeMap = {
     'single'   : {type: 1, stereo: chem.Struct.BOND.STEREO.NONE},
     'up'       : {type: 1, stereo: chem.Struct.BOND.STEREO.UP},
@@ -669,11 +602,6 @@ ui.atomLabel = function (mode)
         return {'label':'A'};
     else
         return {'label':label.capitalize()};
-};
-
-ui.pattern = function ()
-{
-    return ui.patterns[ui.mode_id.substr(8)];
 };
 
 //
@@ -890,8 +818,6 @@ ui.onKeyUp = function (event)
         {
             if (!$('window_cover').visible())
             {
-                if (ui.modeType() == ui.MODE.SIMPLE)
-                    ui.updateSelection();
                 ui.selectMode(ui.defaultSelector);
             }
         } else if (this.hasClassName('dialogWindow'))
@@ -1319,7 +1245,7 @@ ui.setZoomStaticPoint = function (zoom, vp) {
 ui.setScrollOffset = function (x, y) {
     var cx = ui.client_area.clientWidth;
     var cy = ui.client_area.clientHeight;
-    var d = ui.render.extendCanvas(x, y, cx + x, cy + y);
+    ui.render.extendCanvas(x, y, cx + x, cy + y);
     ui.client_area.scrollLeft = x;
     ui.client_area.scrollTop = y;
     ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
@@ -1385,17 +1311,6 @@ ui.onClick_Dearomatize = function ()
 //
 // Interactive section
 //
-ui.mouse_moved = false;
-ui.drag =
-{
-    atom_id:   null,
-    bond_id:   null,
-    selection: false,
-    start_pos: null,
-    last_pos:  null,
-    new_atom_id: null,
-    action:  null
-};
 ui.selection =
 {
     atoms: [],
@@ -1863,7 +1778,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
         ui.hideDialog('sgroup_properties');
         resetListeners();
         onCancel.call(tool);
-    }
+    };
 
     var onClickOk = function ()
     {
@@ -1914,7 +1829,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     var resetListeners = function () {
         $('sgroup_prop_cancel').stopObserving('click', onClickCancel);
         $('sgroup_prop_ok').stopObserving('click', onClickOk);
-    }
+    };
 
     $('sgroup_prop_cancel').observe('click', onClickCancel);
     $('sgroup_prop_ok').observe('click', onClickOk);
@@ -2223,90 +2138,6 @@ ui.copy = function ()
         ui.clipboard.rxnPluses.push(plus);
     });
 
-};
-
-ui.paste = function ()
-{
-    var mapping = {};
-    var id;
-
-    for (id = 0; id < ui.clipboard.atoms.length; id++)
-    {
-        var atom = ui.clipboard.atoms[id];
-        atom.fragment = -1;
-        mapping[id] = ui.render.atomAdd(atom.pos, atom);
-        ui.pasted.atoms.push(mapping[id]);
-    }
-
-    for (id = 0; id < ui.clipboard.bonds.length; id++)
-    {
-        var bond = ui.clipboard.bonds[id];
-        ui.pasted.bonds.push(ui.render.bondAdd(mapping[bond.begin], mapping[bond.end], bond));
-    }
-
-    ui.clipboard.sgroups.each(function (sgroup)
-    {
-        var sid = ui.render.sGroupCreate(sgroup.type);
-
-        ui.render.sGroupSetAttr(sid, 'mul', sgroup.mul);
-        ui.render.sGroupSetAttr(sid, 'connectivity', sgroup.connectivity);
-        ui.render.sGroupSetAttr(sid, 'name', sgroup.name);
-        ui.render.sGroupSetAttr(sid, 'subscript', sgroup.subscript);
-        ui.render.sGroupSetAttr(sid, 'fieldName', sgroup.fieldName);
-        ui.render.sGroupSetAttr(sid, 'fieldValue', sgroup.fieldValue);
-
-        sgroup.atoms.each(function(id)
-        {
-            ui.render.atomClearSGroups(mapping[id]);
-            ui.render.atomAddToSGroup(mapping[id], sid);
-        }, this);
-
-        ui.pasted.sgroups.push(sid);
-    }, this);
-
-    for (id = 0; id < ui.clipboard.rxnArrows.length; id++) {
-        var arrow = ui.clipboard.rxnArrows[id];
-        if (ui.ctab.rxnArrows.count() < 1) {
-            ui.pasted.rxnArrows.push(ui.render.rxnArrowAdd(arrow.pos, arrow));
-        }
-    }
-
-    for (id = 0; id < ui.clipboard.rxnPluses.length; id++) {
-        var plus = ui.clipboard.rxnPluses[id];
-        ui.pasted.rxnPluses.push(ui.render.rxnPlusAdd(plus.pos, plus));
-    }
-
-    ui.pastedAnchorPos = null;
-    if (ui.pasted.atoms.length) {
-        ui.pastedAnchorPos = ui.render.atomGetPos(ui.pasted.atoms[0]);
-    } else if (ui.pasted.rxnArrows.length) {
-        ui.pastedAnchorPos = ui.render.rxnArrowGetPos(ui.pasted.rxnArrows[0]);
-    } else if (ui.pasted.rxnPluses.length) {
-        ui.pastedAnchorPos = ui.render.rxnPlusGetPos(ui.pasted.rxnPluses[0]);
-    }
-
-    ui.selectMode(null);
-    ui.render.update();
-};
-
-ui.cancelPaste = function ()
-{
-    ui.pasted.sgroups.each(function (id)
-    {
-        ui.render.sGroupDelete(id);
-    });
-
-    ui.pasted.atoms.each(function (id)
-    {
-        ui.render.atomRemove(id);
-    });
-
-    ui.pasted.atoms.clear();
-    ui.pasted.bonds.clear();
-    ui.pasted.sgroups.clear();
-
-    if (ui.render != null)
-        ui.render.update();
 };
 
 ui.onClick_Cut = function ()

@@ -953,10 +953,7 @@ ui.Action.fromFragmentDeletion = function(selection)
 
     selection.bonds.each(function (bid)
     {
-        action.addOperation(ui.Action.OPERATION.BOND_DEL, // [RB] !!
-        {
-            id: ui.bondMap.indexOf(bid)
-        });
+        action.addOp(new ui.Action.OpBondDelete(bid));
 
         var bond = ui.ctab.bonds.get(bid);
 

@@ -82,7 +82,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         filedata = query['filedata'][0]
         lines = filedata.splitlines()
         first = lines[0].strip()
-        rest = "\n".join(lines[1:])
+        rest = "\r\n".join(lines[1:])
 
         self.send_response(200)
         if first == "smi":

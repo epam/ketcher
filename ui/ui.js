@@ -85,10 +85,12 @@ ui.onClick_SideButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-    if (this.hasClassName('buttonSelected'))
+    if (this.hasClassName('stateButton') && this.hasClassName('buttonSelected'))
+    {
         ui.toggleDropdownList(this.id + '_dropdown');
-    else
+    } else {
         ui.selectMode(this.getAttribute('selid') || this.id);
+    }
 };
 
 ui.onClick_DropdownButton = function ()

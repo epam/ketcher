@@ -285,7 +285,7 @@ chem.Struct.Atom = function (params)
 	this.pp = new util.Vec2();
 	this.ps = new util.Vec2();
 
-	this.sgs = {};
+	this.sgs = (params && params['sgs']) ? params['sgs'] : {};
 
 	// query
 	util.ifDef(this, params, 'ringBondCount', 0);

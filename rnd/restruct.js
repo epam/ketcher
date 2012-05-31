@@ -822,11 +822,19 @@ rnd.ReStruct.prototype.atomAdd = function (pos, params)
 	return aid;
 };
 
+rnd.ReStruct.prototype._atomApplySgs = function (aid, sgs) {
+    util.Set.each(sgs, function(id) {
+        chem.SGroup.addAtom(this.sgroups.get(id).item, aid);
+    }, this);
+}
+
 rnd.ReStruct.prototype.notifyAtomAdded = function(aid) {
     var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
     atomData.component = this.connectedComponents.add(util.Set.single(aid));
     this.atoms.set(aid, atomData);
     this.markAtom(aid, 1);
+    if (atomData.a.sgs)
+        this._atomApplySgs(aid, atomData.a.sgs);
 };
 
 /** @deprecated [RB] old architecture */

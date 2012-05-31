@@ -1225,7 +1225,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
         }
     }
     // TODO: handle click on an existing group?
-    if (selection && selection.atoms && selection.atoms.length > 0)
+    if (id != null || (selection && selection.atoms && selection.atoms.length > 0))
         this._sGroupHelper.showPropertiesDialog(id, selection);
 };
 

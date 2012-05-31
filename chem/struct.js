@@ -701,8 +701,8 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	var extend = function(pp) {
 		if (!bb)
 			bb = {
-				min: pp,
-				max: pp
+				min: new util.Vec2(pp),
+				max: new util.Vec2(pp)
 			};
 		else {
 			bb.min = util.Vec2.min(bb.min, pp);

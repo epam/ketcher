@@ -1541,9 +1541,9 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
         mol.atoms.each(function(aid, atom){
             atom.pos.add_(d);
         });
-        bb.min = bb.min.add(d);
-        bb.max = bb.max.add(d);
-		mol.mergeInto(ret);
+        bb.min.add_(d);
+        bb.max.add_(d);
+        mol.mergeInto(ret);
         return bb.max.x - bb.min.x;
     };
  

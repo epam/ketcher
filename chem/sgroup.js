@@ -20,7 +20,6 @@ chem.SGroup = function (type)
 	this.type = type;
 	this.id = -1;
 	chem.SGroup.equip(this, type);
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.SGROUP);
 	this.label = -1;
 	this.bracketBox = null;
     this.bracketDir = new util.Vec2(1,0);

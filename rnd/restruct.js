@@ -474,7 +474,9 @@ rnd.ReStruct.prototype.update = function (force)
 		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
 	this.sgroups.each(function(sid, sgroup){
-		this.clearVisel(sgroup.visel);
+            this.clearVisel(sgroup.visel);
+            sgroup.highlighting = null;
+            sgroup.selectionPlate = null;                
 	}, this);
 	for (var i = 0; i < this.tmpVisels.length; ++i)
 		this.clearVisel(this.tmpVisels[i]);
@@ -1428,8 +1430,7 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
         .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
         .attr(styles.highlightStyle);
     set.push(sg.highlighting);
-    render.ctab.addReObjectPath('highlighting', sg.visel, sg.highlighting);
-
+    render.ctab.addReObjectPath('highlighting', this.visel, sg.highlighting);
 
     var atoms = chem.SGroup.getAtoms(render.ctab.molecule, sg);
 
@@ -1439,9 +1440,8 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
         atom.sGroupHighlighting = paper
         .circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
         .attr(styles.sGroupHighlightStyle);
-//        render.addItemPath(atom.visel, 'highlighting', atom.sGroupHighlighting);
         set.push(atom.sGroupHighlighting);
-        render.ctab.addReObjectPath('highlighting', sg.visel, atom.sGroupHighlighting);
+        render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);
     }, this);
     return set;
 };

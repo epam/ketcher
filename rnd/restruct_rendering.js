@@ -1221,7 +1221,7 @@ rnd.ReStruct.prototype.addTmpPath = function (group, path)
 rnd.ReStruct.prototype.clearVisel = function (visel)
 {
 	for (var i = 0; i < visel.paths.length; ++i)
-		visel.paths[i].remove();
+            visel.paths[i].remove();
 	visel.clear();
 };
 

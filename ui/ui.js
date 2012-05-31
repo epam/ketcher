@@ -828,7 +828,7 @@ ui.onKeyUp = function (event)
     // Esc
     if (event.keyCode == 27)
     {
-        if (this == document)
+        if (this == document || !this.visible())
         {
             if (!$('window_cover').visible())
             {

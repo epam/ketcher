@@ -445,7 +445,7 @@ ui.updateMolecule = function (mol)
     }, 50);
 };
 
-ui.parseCTFile = function (molfile)
+ui.parseCTFile = function (molfile, check_empty_line)
 {
     var lines = molfile.split('\n');
 
@@ -454,7 +454,19 @@ ui.parseCTFile = function (molfile)
 
     try
     {
-        return chem.Molfile.parseCTFile(lines);
+        try {
+            return chem.Molfile.parseCTFile(lines);
+        } catch (ex) {
+            if (check_empty_line) { 
+                // check whether there's an extra empty line on top
+                // this often happens when molfile text is pasted into the dialog window
+                try {
+                    return chem.Molfile.parseCTFile(lines.slice(1));
+                } catch (ex1) {
+                }
+            }
+            throw ex;
+        }
     } catch (er)
     {
         alert("Error loading molfile.\n"+er.toString());
@@ -1007,7 +1019,7 @@ ui.getFile = function ()
     return Base64.decode(frame_body.title);
 };
 
-ui.loadMolecule = function (mol_string, force_layout)
+ui.loadMolecule = function (mol_string, force_layout, check_empty_line)
 {
     var smiles = mol_string.strip();
 
@@ -1045,7 +1057,7 @@ ui.loadMolecule = function (mol_string, force_layout)
             }
         });
     } else {
-        ui.updateMolecule(ui.parseCTFile(mol_string));
+        ui.updateMolecule(ui.parseCTFile(mol_string, check_empty_line));
     }
 };
 
@@ -1085,7 +1097,7 @@ ui.loadMoleculeFromFile = function ()
 ui.loadMoleculeFromInput = function ()
 {
     ui.hideDialog('open_file');
-    ui.loadMolecule($('input_mol').value);
+    ui.loadMolecule($('input_mol').value, false, true);
 };
 
 ui.onSelect_OpenFromInput = function ()

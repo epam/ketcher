@@ -539,14 +539,6 @@ rnd.Render.prototype.sGroupGetType = function (sgid)
 	return sg.type;
 };
 
-rnd.Render.prototype._sGroupSetHighlight = function (sgid, value)
-{
-	rnd.logMethod("_sGroupSetHighlight");
-	var sg = this.ctab.sgroups.get(sgid).item;
-	sg.highlight = value;
-	this.ctab.showBracketHighlighting(sgid, sg, value); // TODO: refactor
-};
-
 rnd.Render.prototype.sGroupsFindCrossBonds = function ()
 {
 	rnd.logMethod("sGroupsFindCrossBonds");
@@ -626,14 +618,6 @@ rnd.Render.prototype.atomSetHighlight = function (aid, value)
 	var atom = this.ctab.atoms.get(aid);
 	atom.highlight = value;
 	this.ctab.showAtomHighlighting(aid, atom, value);
-};
-
-rnd.Render.prototype.atomSetSGroupHighlight = function (aid, value)
-{
-	rnd.logMethod("atomSetSGroupHighlight");
-	var atom = this.ctab.atoms.get(aid);
-	atom.sGroupHighlight = value;
-	this.ctab.showAtomSGroupHighlighting(aid, atom, value);
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {

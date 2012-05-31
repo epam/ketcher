@@ -540,104 +540,6 @@ rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
 	}
 };
 
-rnd.ReStruct.prototype.showAtomSGroupHighlighting = function (aid, atom, visible)
-{
-	var exists = (atom.sGroupHighlighting != null) && !atom.sGroupHighlighting.removed;
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var paper = render.paper;
-			atom.sGroupHighlighting = paper
-			.circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
-			.attr(styles.sGroupHighlightStyle);
-			render.addItemPath(atom.visel, 'highlighting', atom.sGroupHighlighting);
-		}
-		atom.sGroupHighlighting.show();
-	} else {
-		if (exists) {
-			atom.sGroupHighlighting.hide();
-		}
-	}
-};
-
-rnd.ReStruct.prototype.removeBracketSelection = function (sgid, sg)
-{
-	var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
-	if (exists)
-		sg.selectionPlate.remove();
-};
-
-rnd.ReStruct.prototype.showBracketSelection = function (sgid, sg, visible)
-{
-    var exists = (sg.selectionPlate != null) && !sg.selectionPlate.removed;
-    if (visible) {
-        if (!exists) {
-            var render = this.render;
-            var styles = render.styles;
-            var settings = render.settings;
-            var paper = render.paper;
-            var bb = sg.bracketBox;
-            var lw = settings.lineWidth;
-            var vext = new util.Vec2(lw * 4, lw * 6);
-            bb = bb.extend(vext, vext);
-            var d = sg.bracketDir, n = d.rotateSC(1,0);
-            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
-            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
-            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
-            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
-
-            sg.selectionPlate = paper
-                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}C", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
-                .attr(styles.selectionStyle);
-            this.addReObjectPath('selection-plate', sg.visel, sg.selectionPlate);
-        }
-        sg.selectionPlate.show();
-    } else {
-        if (exists)
-            sg.selectionPlate.hide();
-    }
-};
-
-rnd.ReStruct.prototype.removeBracketHighlighting = function (sgid, sg)
-{
-	var exists = (sg.highlighting != null) && !sg.highlighting.removed;
-	if (exists)
-		sg.highlighting.remove();
-};
-
-rnd.ReStruct.prototype.showBracketHighlighting = function (sgid, sg, visible)
-{
-    var exists = (sg.highlighting != null) && !sg.highlighting.removed;
-    if (visible) {
-        if (!exists) {
-            var render = this.render;
-            var styles = render.styles;
-            var settings = render.settings;
-            var paper = render.paper;
-            var bb = sg.bracketBox.transform(render.obj2scaled, render);
-            var lw = settings.lineWidth;
-            var vext = new util.Vec2(lw * 4, lw * 6);
-            bb = bb.extend(vext, vext);
-            var d = sg.bracketDir, n = d.rotateSC(1,0);
-            var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
-            var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
-            var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
-            var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
-
-            sg.highlighting = paper
-                .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
-                .attr(styles.highlightStyle);
-            this.addReObjectPath('highlighting', sg.visel, sg.highlighting);
-        }
-        sg.highlighting.show();
-    } else {
-        if (exists) {
-            sg.highlighting.hide();
-        }
-    }
-};
-
 rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 {
 	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
@@ -706,8 +608,6 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.showItemSelection(aid, atom, true);
 		if (atom.highlight)
 			this.showAtomHighlighting(aid, atom, true);
-		if (atom.sGroupHighlight)
-			this.showAtomSGroupHighlighting(aid, atom, true);
 
         var color = '#000000';
 		if (atom.showLabel)

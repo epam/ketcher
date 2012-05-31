@@ -591,10 +591,6 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 	this.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this.render);
 		this.addReObjectPath('data', sgroup.visel, path);
-		if (sgroup.selected)
-			this.showBracketSelection(id, sgroup, true);
-		if (sgroup.highlight)
-			this.showBracketHighlighting(id, sgroup, true);
 	}, this);
 };
 

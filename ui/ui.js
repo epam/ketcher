@@ -458,12 +458,16 @@ ui.parseCTFile = function (molfile, check_empty_line)
             return chem.Molfile.parseCTFile(lines);
         } catch (ex) {
             if (check_empty_line) { 
+                try {
                 // check whether there's an extra empty line on top
                 // this often happens when molfile text is pasted into the dialog window
-                try {
                     return chem.Molfile.parseCTFile(lines.slice(1));
-                } catch (ex1) {
-                }
+                } catch (ex1) {}
+                try {
+                // check for a missing first line
+                // this sometimes happens when pasting
+                    return chem.Molfile.parseCTFile([''].concat(lines));
+                } catch (ex2) {}
             }
             throw ex;
         }

@@ -23,9 +23,8 @@ ui.__fixMap = function(map) { // TODO [RB] temporary
         return ret;
     };
 };
-ui.atomMap = new Array(); ui.__fixMap(ui.atomMap);
-ui.bondMap = new Array(); ui.__fixMap(ui.bondMap);
-ui.sgroupMap = new Array();
+ui.atomMap = new Array();ui.__fixMap(ui.atomMap);
+ui.bondMap = new Array();ui.__fixMap(ui.bondMap);
 
 ui.Action = function ()
 {
@@ -216,8 +215,10 @@ ui.Action.prototype.perform = function ()
 
             if (op.params.atom_map == null)
             {
-                op.params.atom_map = new Array(); ui.__fixMap(op.params.atom_map);
-                op.params.bond_map = new Array(); ui.__fixMap(op.params.bond_map);
+                op.params.atom_map = new Array();
+                ui.__fixMap(op.params.atom_map);
+                op.params.bond_map = new Array();
+                ui.__fixMap(op.params.bond_map);
                 op.params.sgroup_map = new Array();
 
                 op.params.ctab.atoms.each(function (aid)
@@ -241,7 +242,6 @@ ui.Action.prototype.perform = function ()
                 ctab: ui.ctab,
                 atom_map: ui.atomMap,
                 bond_map: ui.bondMap,
-                sgroup_map: ui.sgroupMap
             };
 
             ui.render.ctab.clearVisels();
@@ -249,13 +249,12 @@ ui.Action.prototype.perform = function ()
             ui.render.setMolecule(ui.ctab);
             ui.atomMap = op.params.atom_map;
             ui.bondMap = op.params.bond_map;
-            ui.sgroupMap = op.params.sgroup_map;
             break;
 
         case ui.Action.OPERATION.SGROUP_ATTR:
             op.inverted.type = ui.Action.OPERATION.SGROUP_ATTR;
 
-            var id = ui.sgroupMap[op.params.id];
+            var id = op.params.id;
             var cur_type = ui.render.sGroupGetType(id);
 
             op.inverted.params =
@@ -290,7 +289,7 @@ ui.Action.prototype.perform = function ()
                 id: op.params.id,
                 sid: op.params.sid
             };
-            ui.render.atomAddToSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
+            ui.render.atomAddToSGroup(ui.atomMap[op.params.id], op.params.sid);
 
             break;
 
@@ -301,7 +300,7 @@ ui.Action.prototype.perform = function ()
                 id: op.params.id,
                 sid: op.params.sid
             };
-            ui.render.atomRemoveFromSGroup(ui.atomMap[op.params.id], ui.sgroupMap[op.params.sid]);
+            ui.render.atomRemoveFromSGroup(ui.atomMap[op.params.id], op.params.sid);
             break;
 
         case ui.Action.OPERATION.SGROUP_ADD:
@@ -324,14 +323,14 @@ ui.Action.prototype.perform = function ()
             {
                 op.inverted.params =
                 {
-                    id: ui.sgroupMap.push(id) - 1
+                    id: id
                 };
             } else
-                ui.sgroupMap[op.inverted.params.id] = id;
+                op.inverted.params.id = id;
             break;
 
         case ui.Action.OPERATION.SGROUP_DEL:
-            var id = ui.sgroupMap[op.params.id];
+            var id = op.params.id;
             var type = ui.render.sGroupGetType(id);
             var atoms = ui.render.sGroupGetAtoms(id).clone();
             var i;
@@ -440,13 +439,13 @@ ui.Action.prototype.isDummy = function ()
         case ui.Action.OPERATION.BOND_ATTR:
             return ui.render.bondGetAttr(ui.bondMap[op.params.id], op.params.attr_name) != op.params.attr_value;
         case ui.Action.OPERATION.SGROUP_ATTR:
-            if (ui.render.sGroupGetType(ui.sgroupMap[op.params.id]) == op.params.type)
+            if (ui.render.sGroupGetType(op.params.id) == op.params.type)
             {
                 var attr_hash = new Hash(op.params.attrs);
 
                 if (Object.isUndefined(attr_hash.detect(function (attr)
                 {
-                    return ui.render.sGroupGetAttr(ui.sgroupMap[op.params.id], attr.key) != attr.value;
+                    return ui.render.sGroupGetAttr(op.params.id, attr.key) != attr.value;
                 }, this)))
                     return false;
             }
@@ -741,7 +740,7 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
             this.addOperation(ui.Action.OPERATION.SGROUP_ATOM_DEL,
             {
                 id: ui.atomMap.indexOf(id),
-                sid: ui.sgroupMap.indexOf(sid)
+                sid: sid
             });
         }, this);
 
@@ -778,10 +777,7 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
 
         if (sg_atoms.length == sg.value)
         { // delete whole s-group
-            this.addOperation(ui.Action.OPERATION.SGROUP_DEL,
-            {
-                id: ui.sgroupMap.indexOf(sid)
-            });
+            this.addOp(new ui.Action.OpSGroupDelete(sid));
         }
     }, this);
 };
@@ -899,15 +895,7 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
 
     sgroups.each(function (sid)
     {
-        var idx = ui.sgroupMap.indexOf(sid);
-
-        if (idx == -1)
-            idx = ui.sgroupMap.push(sid) - 1;
-
-        action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
-        {
-            id: idx
-        });
+        action.addOp(new ui.Action.OpSGroupDelete(sid));
     }, this);
 
 
@@ -959,7 +947,9 @@ ui.Action.fromFragmentDeletion = function(selection)
 
         if (selection.atoms.indexOf(bond.begin) == -1 && ui.render.atomGetDegree(bond.begin) == 1)
         {
-            var frid1 = ui.ctab.atoms.get(bond.begin).fragment; if (frids.indexOf(frid1) < 0) frids.push(frid1);
+            var frid1 = ui.ctab.atoms.get(bond.begin).fragment; 
+            if (frids.indexOf(frid1) < 0) 
+                frids.push(frid1);
 
             if (action.removeAtomFromSgroupIfNeeded(bond.begin))
                 atoms_to_remove.push(bond.begin);
@@ -968,7 +958,9 @@ ui.Action.fromFragmentDeletion = function(selection)
         }
         if (selection.atoms.indexOf(bond.end) == -1 && ui.render.atomGetDegree(bond.end) == 1)
         {
-            var frid2 = ui.ctab.atoms.get(bond.end).fragment; if (frids.indexOf(frid2) < 0) frids.push(frid2);
+            var frid2 = ui.ctab.atoms.get(bond.end).fragment;
+            if (frids.indexOf(frid2) < 0) 
+                frids.push(frid2);
 
             if (action.removeAtomFromSgroupIfNeeded(bond.end))
                 atoms_to_remove.push(bond.end);
@@ -980,7 +972,9 @@ ui.Action.fromFragmentDeletion = function(selection)
 
     selection.atoms.each(function (aid)
     {
-        var frid3 = ui.ctab.atoms.get(aid).fragment; if (frids.indexOf(frid3) < 0) frids.push(frid3);
+        var frid3 = ui.ctab.atoms.get(aid).fragment; 
+        if (frids.indexOf(frid3) < 0) 
+            frids.push(frid3);
 
         if (action.removeAtomFromSgroupIfNeeded(aid))
             atoms_to_remove.push(aid);
@@ -1321,7 +1315,7 @@ ui.Action.fromNewCanvas = function (ctab)
 ui.Action.fromSgroupAttrs = function (id, type, attrs)
 {
     var action = new ui.Action();
-    var id_map = ui.sgroupMap.indexOf(id);
+    var id_map = id;
     var cur_type = ui.render.sGroupGetType(id);
 
     action.addOperation(ui.Action.OPERATION.SGROUP_ATTR,
@@ -1356,6 +1350,9 @@ ui.Action.fromSgroupAttrs = function (id, type, attrs)
 ui.Action.fromSgroupDeletion = function (id)
 {
     var action = new ui.Action();
+    var R = ui.render;
+    var RS = R.ctab;
+    var DS = RS.molecule;
 
     if (ui.render.sGroupGetType(id) == 'SRU') {
         ui.render.sGroupsFindCrossBonds();
@@ -1367,11 +1364,12 @@ ui.Action.fromSgroupDeletion = function (id)
             }
         }, this);
     }
-
-    action.addOperation(ui.Action.OPERATION.SGROUP_DEL,
-    {
-        id: ui.sgroupMap.indexOf(id)
-    });
+    
+    var atoms = chem.SGroup.getAtoms(DS, DS.sgroups.get(id));
+    for (var i = 0; i < atoms.length; ++i) {
+        action.addOp(new ui.Action.OpSGroupAtomRemove(id, atoms[i]));
+    }
+    action.addOp(new ui.Action.OpSGroupDelete(id));
 
     return action.perform();
 };
@@ -1383,18 +1381,17 @@ ui.Action.fromSgroupAddition = function (type, attrs, atoms)
 
     for (i = 0; i < atoms.length; i++)
         atoms[i] = ui.atomMap.indexOf(atoms[i]);
-
-    action.addOperation(ui.Action.OPERATION.SGROUP_ADD,
-    {
-        type: type,
-        attrs: attrs,
-        atoms: atoms
-    });
+    
+    var sgid = ui.render.ctab.molecule.sgroups.newId();
+    
+    action.addOp(new ui.Action.OpSGroupCreate(sgid, type));
+    for (i = 0; i < atoms.length; i++)
+        action.addOp(new ui.Action.OpSGroupAtomAdd(sgid, atoms[i]));
 
     action = action.perform();
 
     if (type == 'SRU') {
-        var sid = ui.sgroupMap[action.operations[0].params.id];
+        var sid = action.operations[0].params.id;
 
         ui.render.sGroupsFindCrossBonds();
         var nei_atoms = ui.render.sGroupGetNeighborAtoms(sid);
@@ -1543,7 +1540,10 @@ ui.Action.OpAtomAdd = function(atom, pos) {
     this.data = { aid : null, atom : atom, pos : pos };
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
-        var pp = {}; if (this.data.atom) for (var p in this.data.atom) pp[p] = this.data.atom[p];
+        var pp = {}; 
+        if (this.data.atom) 
+            for (var p in this.data.atom) 
+                pp[p] = this.data.atom[p];
         pp.label = pp.label || 'C';
         if (!Object.isNumber(this.data.aid)) {
             this.data.aid = DS.atoms.add(new chem.Struct.Atom(pp));
@@ -1555,7 +1555,9 @@ ui.Action.OpAtomAdd = function(atom, pos) {
         DS._atomSetPos(this.data.aid, new util.Vec2(this.data.pos));
     };
     this._invert = function() {
-        var ret = new ui.Action.OpAtomDelete(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpAtomDelete(); 
+        ret.data = this.data; 
+        return ret;
     };
 };
 ui.Action.OpAtomAdd.prototype = new ui.Action.OpBase();
@@ -1572,7 +1574,9 @@ ui.Action.OpAtomDelete = function(aid) {
         DS.atoms.remove(this.data.aid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpAtomAdd(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpAtomAdd();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpAtomDelete.prototype = new ui.Action.OpBase();
@@ -1597,7 +1601,9 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
         return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
     };
     this._invert = function() {
-        var ret = new ui.Action.OpAtomAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+        var ret = new ui.Action.OpAtomAttr();
+        ret.data = this.data2;
+        ret.data2 = this.data;return ret;
     };
 };
 ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
@@ -1615,7 +1621,9 @@ ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
         R.invalidateAtom(aid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpAtomDelete(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpSGroupAtomRemove();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpSGroupAtomAdd.prototype = new ui.Action.OpBase();
@@ -1633,10 +1641,50 @@ ui.Action.OpSGroupAtomRemove = function(sgid, aid) {
         R.invalidateAtom(aid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpSGroupAtomAdd(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpSGroupAtomAdd();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpSGroupAtomRemove.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupCreate = function(sgid, type) {
+    this.data = {'sgid' : sgid, 'type' : type};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        var sg = new chem.SGroup(type);
+        DS.sgroups.set(sgid, sg);
+        RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
+        this.data.sgid = sgid;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupDelete();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpSGroupCreate.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupDelete = function(sgid) {
+    this.data = {'sgid' : sgid};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        var sgid = this.data.sgid;
+        var sg = RS.sgroups.get(sgid);
+        this.data.type = sg.item.type;
+	RS.clearVisel(sg.visel);
+        if (sg.item.atoms.length != 0)
+            throw new Error("S-Group not empty!");
+        RS.sgroups.unset(sgid);
+	DS.sgroups.remove(sgid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupCreate();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpSGroupDelete.prototype = new ui.Action.OpBase();
 
 ui.Action.OpBondAdd = function(begin, end, bond) {
     this.data = { bid : null, bond : bond, begin : begin, end : end };
@@ -1650,7 +1698,10 @@ ui.Action.OpBondAdd = function(begin, end, bond) {
         R.invalidateAtom(this.data.begin, 1);
         R.invalidateAtom(this.data.end, 1);
 
-        var pp = {}; if (this.data.bond) for (var p in this.data.bond) pp[p] = this.data.bond[p];
+        var pp = {};
+        if (this.data.bond) 
+            for (var p in this.data.bond) 
+                pp[p] = this.data.bond[p];
         pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
         pp.begin = this.data.begin;
         pp.end = this.data.end;
@@ -1668,7 +1719,9 @@ ui.Action.OpBondAdd = function(begin, end, bond) {
         RS.notifyBondAdded(this.data.bid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpBondDelete(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpBondDelete();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpBondAdd.prototype = new ui.Action.OpBase();
@@ -1703,7 +1756,9 @@ ui.Action.OpBondDelete = function(bid) {
         DS.bonds.remove(this.data.bid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpBondAdd(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpBondAdd();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpBondDelete.prototype = new ui.Action.OpBase();
@@ -1725,7 +1780,10 @@ ui.Action.OpBondAttr = function(bid, attribute, value) {
         return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
     };
     this._invert = function() {
-        var ret = new ui.Action.OpBondAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+        var ret = new ui.Action.OpBondAttr();
+        ret.data = this.data2;
+        ret.data2 = this.data;
+        return ret;
     };
 };
 ui.Action.OpBondAttr.prototype = new ui.Action.OpBase();
@@ -1779,7 +1837,10 @@ ui.Action.OpRGroupAttr = function(rgid, attribute, value) {
         return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
     };
     this._invert = function() {
-        var ret = new ui.Action.OpRGroupAttr(); ret.data = this.data2; ret.data2 = this.data; return ret;
+        var ret = new ui.Action.OpRGroupAttr();
+        ret.data = this.data2;
+        ret.data2 = this.data;
+        return ret;
     };
 };
 ui.Action.OpRGroupAttr.prototype = new ui.Action.OpBase();
@@ -1837,7 +1898,9 @@ ui.Action.OpRxnArrowAdd = function(pos) {
         R.invalidateItem('rxnArrows', this.data.arid, 1);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpRxnArrowDelete(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpRxnArrowDelete(); 
+        ret.data = this.data; 
+        return ret;
     };
 };
 ui.Action.OpRxnArrowAdd.prototype = new ui.Action.OpBase();
@@ -1853,7 +1916,9 @@ ui.Action.OpRxnArrowDelete = function(arid) {
         DS.rxnArrows.remove(this.data.arid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpRxnArrowAdd(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpRxnArrowAdd();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpRxnArrowDelete.prototype = new ui.Action.OpBase();
@@ -1873,7 +1938,9 @@ ui.Action.OpRxnPlusAdd = function(pos) {
         R.invalidateItem('rxnPluses', this.data.plid, 1);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpRxnPlusDelete(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpRxnPlusDelete();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpRxnPlusAdd.prototype = new ui.Action.OpBase();
@@ -1889,7 +1956,9 @@ ui.Action.OpRxnPlusDelete = function(plid) {
         DS.rxnPluses.remove(this.data.plid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpRxnPlusAdd(); ret.data = this.data; return ret;
+        var ret = new ui.Action.OpRxnPlusAdd();
+        ret.data = this.data;
+        return ret;
     };
 };
 ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();

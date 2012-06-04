@@ -19,6 +19,11 @@ util.Pool = function ()
     this._nextId = 0;
 };
 
+util.Pool.prototype.newId = function ()
+{
+    return this._nextId++;
+};
+
 util.Pool.prototype.add = function (obj)
 {
     var id = this._nextId++;

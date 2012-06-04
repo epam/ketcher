@@ -443,7 +443,7 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
 	return neiAtoms;
 };
 
-// returns an array of nested s-group id's, innermost first
+// returns an array of s-group id's
 rnd.Render.prototype.atomGetSGroups = function (aid)
 {
 	rnd.logMethod("atomGetSGroups");
@@ -453,16 +453,18 @@ rnd.Render.prototype.atomGetSGroups = function (aid)
 
 // creates an empty s-group of given type, e.g. "MUL" or "SRU",
 // returns group id
+// deprecated
 rnd.Render.prototype.sGroupCreate = function (type)
 {
-	rnd.logMethod("sGroupCreate");
-	var sg = new chem.SGroup(type);
-	var sgid = chem.SGroup.addGroup(this.ctab.molecule, sg);
+    rnd.logMethod("sGroupCreate");
+    var sg = new chem.SGroup(type);
+    var sgid = chem.SGroup.addGroup(this.ctab.molecule, sg);
     this.ctab.sgroups.set(sgid, new rnd.ReSGroup(this.ctab.molecule.sgroups.get(sgid)));
     return sgid;
 };
 
 // receives group id
+// deprecated
 rnd.Render.prototype.sGroupDelete = function (sgid)
 {
 	rnd.logMethod("sGroupDelete");
@@ -578,25 +580,6 @@ rnd.Render.prototype.atomIsPlainCarbon = function (aid)
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 };
 
-rnd.Render.prototype._atomAddToSGroup = function (aid, value)
-{
-	rnd.logMethod("_atomAddToSGroup");
-	var atom = this.ctab.atoms.get(aid);
-	var sg = this.ctab.sgroups.get(value).item;
-	chem.SGroup.addAtom(sg, aid);
-	util.Set.add(atom.a.sgs, value);
-	this.invalidateAtom(aid);
-};
-
-rnd.Render.prototype._atomRemoveFromSGroup = function (aid, value)
-{
-	rnd.logMethod("_atomRemoveFromSGroup");
-	var atom = this.ctab.atoms.get(aid);
-	var sg = this.ctab.sgroups.get(value).item;
-	chem.SGroup.removeAtom(sg, aid);
-	util.Set.remove(atom.a.sgs, value);
-	this.invalidateAtom(aid);
-};
 
 rnd.Render.prototype._atomClearSGroups = function (aid)
 {

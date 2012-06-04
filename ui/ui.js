@@ -1472,7 +1472,7 @@ ui.atomForNewBond = function (id)
     var a = ui.render.findClosestAtom(v, 0.1);
 
     if (a == null)
-        a = {label: 'C', sgs: ui.render.atomGetAttr(id, 'sgs')};
+        a = {label: 'C'};
     else
         a = a.id;
 

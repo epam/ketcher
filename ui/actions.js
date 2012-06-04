@@ -1602,6 +1602,42 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
 };
 ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
 
+ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
+    this.data = { 'aid' : aid, 'sgid' : sgid };
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        var aid = this.data.aid;
+        var sgid = this.data.sgid;
+	var atom = DS.atoms.get(aid);
+	var sg = DS.sgroups.get(sgid);
+	chem.SGroup.addAtom(sg, aid);
+	util.Set.add(atom.sgs, sgid);
+        R.invalidateAtom(aid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpAtomDelete(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpSGroupAtomAdd.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupAtomRemove = function(sgid, aid) {
+    this.data = { 'aid' : aid, 'sgid' : sgid };
+    this._execute = function(editor) {
+        var aid = this.data.aid;
+        var sgid = this.data.sgid;
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+	var atom = DS.atoms.get(aid);
+	var sg = DS.sgroups.get(sgid);
+	chem.SGroup.removeAtom(sg, aid);
+	util.Set.remove(atom.sgs, sgid);
+        R.invalidateAtom(aid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupAtomAdd(); ret.data = this.data; return ret;
+    };
+};
+ui.Action.OpSGroupAtomRemove.prototype = new ui.Action.OpBase();
+
 ui.Action.OpBondAdd = function(begin, end, bond) {
     this.data = { bid : null, bond : bond, begin : begin, end : end };
     this._execute = function(editor) {

@@ -60,6 +60,16 @@ chem.SGroup = function (type)
 	}
 };
 
+chem.SGroup.prototype.setAttr = function (attr, value) {
+    var oldValue = this.data[attr];
+    this.data[attr] = value;
+    return oldValue;
+};
+
+chem.SGroup.prototype.checkAttr = function (attr, value) {
+    return this.data[attr] == value;
+};
+
 chem.SGroup.equip = function (sgroup, type) {
 	var impl = chem.SGroup.TYPES[type];
 	for (var method in impl)
@@ -325,7 +335,7 @@ chem.SGroup.GroupMul = {
         var bb = this.bracketBox;
         var d = this.bracketDir, n = d.rotateSC(1, 0);
         this.areas = [bb];
-		chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
+	chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
         var idxOffset = 0.25;
         var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
             n, d.x < 0 ? bb.p0.y : bb.p1.y);

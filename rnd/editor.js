@@ -24,7 +24,9 @@ rnd.Editor = function(render)
     this._selectionHelper = new rnd.Editor.SelectionHelper(this);
 };
 rnd.Editor.prototype.selectAll = function() {
-    var selection = {}; for (var map in rnd.ReStruct.maps) selection[map] = ui.ctab[map].ikeys();
+    var selection = {};
+    for (var map in rnd.ReStruct.maps)
+        selection[map] = ui.ctab[map].ikeys();
     this._selectionHelper.setSelection(selection);
 };
 rnd.Editor.prototype.deselectAll = function() {
@@ -145,7 +147,10 @@ rnd.Editor.EditorTool = function(editor) {
 };
 rnd.Editor.EditorTool.prototype.processEvent = function(name, event) {
     if (!('touches' in event) || event.touches.length == 1) {
-        if (name + '0' in this) return this[name + '0'](event); else if (name in this) return this[name](event);
+        if (name + '0' in this) 
+            return this[name + '0'](event); 
+        else if (name in this) 
+            return this[name](event);
         console.log('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
     } else if ('lastEvent' in this.OnMouseDown0) {
         // here we finish previous MouseDown and MouseMoves with simulated MouseUp
@@ -834,7 +839,11 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
             mode : 'single',
             selection : rgOld ? 1 << (rgOld - 1) : 0,
             onOk : function(rgNew) {
-                for (var i = 0; i < 32; i++) if (rgNew & (1 << i)) { rgNew = i + 1; break; }
+                for (var i = 0; i < 32; i++) 
+                    if (rgNew & (1 << i)) { 
+                        rgNew = i + 1; 
+                        break; 
+                    }
                 if (rgOld != rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromRGroupFragment(rgNew, ci.id),
@@ -1236,13 +1245,13 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
 };
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id, type, attrs) {
-    if (id == null)
-    {
-        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, attrs, this.selection.atoms));
-    } else
-    {
-        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, type, attrs), true);
+    if (id == null) {
+        id = ui.render.ctab.molecule.sgroups.newId();
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, this.selection.atoms, id));
+    } else {
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupType(id, type), true);
     }
+    this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, attrs), true);
     this.postClose();
 };
 

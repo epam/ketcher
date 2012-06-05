@@ -1314,14 +1314,7 @@ ui.Action.fromNewCanvas = function (ctab)
 {
     var action = new ui.Action();
 
-    action.addOperation(ui.Action.OPERATION.CANVAS_LOAD,
-    {
-        ctab: ctab,
-        atom_map:   null,
-        bond_map:   null,
-        sgroup_map: null
-    });
-
+    action.addOp(new ui.Action.OpCanvasLoad(ctab));
     return action.perform();
 };
 
@@ -1996,3 +1989,41 @@ ui.Action.OpRxnPlusDelete = function(plid) {
     };
 };
 ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpCanvasLoad = function(ctab, atom_map, bond_map) {
+    this.data = {ctab : ctab, atom_map : atom_map, bond_map : bond_map};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        if (this.data.ctab == null) {
+            this.data.atom_map = new Array();
+            ui.__fixMap(this.data.atom_map);
+            this.data.bond_map = new Array();
+            ui.__fixMap(this.data.bond_map);
+            this.data.sgroup_map = new Array();
+
+            this.data.ctab.atoms.each(function (aid) {
+                this.data.atom_map.push(parseInt(aid));
+            }, this);
+
+            this.data.ctab.bonds.each(function (bid) {
+                this.data.bond_map.push(parseInt(bid));
+            }, this);
+
+            this.data.ctab.sgroups.each(function (sid) {
+                this.data.sgroup_map.push(parseInt(sid));
+            }, this);
+        }
+
+        R.ctab.clearVisels();
+        ui.ctab = this.data.ctab;
+        R.setMolecule(ui.ctab);
+        ui.atomMap = this.data.atom_map;
+        ui.bondMap = this.data.bond_map;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpCanvasLoad();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpCanvasLoad.prototype = new ui.Action.OpBase();

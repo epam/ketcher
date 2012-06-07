@@ -425,6 +425,7 @@ rnd.Editor.LassoTool.LassoHelper.prototype.end = function() {
 rnd.Editor.EraserTool = function(editor, mode) {
     this.editor = editor;
 
+    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
@@ -442,7 +443,7 @@ rnd.Editor.EraserTool.prototype.OnMouseMove = function(event) {
             // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
         );
     } else {
-        this._hoverHelper.hover(this.editor.render.findItem(event));
+        this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
     }
 };
 rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
@@ -452,7 +453,7 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
         this.editor.ui.render.update();
         this.editor.ui.updateClipboardButtons(); // TODO review
     } else {
-        var ci = this.editor.render.findItem(event);
+        var ci = this.editor.render.findItem(event, this.maps);
         if (ci && ci.type != 'Canvas') {
             this._hoverHelper.hover(null);
             if (ci.map == 'atoms') {
@@ -460,7 +461,6 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
             } else if (ci.map == 'bonds') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromBondDeletion(ci.id));
             } else if (ci.map == 'sgroups') {
-                this.editor.ui.highlightSGroup(ci.id, false); // TODO
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupDeletion(ci.id));
             } else if (ci.map == 'rxnArrows') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromArrowDeletion(ci.id));
@@ -1119,6 +1119,7 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function(event) {
 rnd.Editor.SGroupTool = function(editor) {
     this.editor = editor;
 
+    this.maps = ['atoms', 'bonds', 'sgroups'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
     this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
@@ -1146,7 +1147,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseMove = function(event) {
             // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
         );
     } else {
-        this._hoverHelper.hover(this.editor.render.findItem(event));
+        this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
     }
 };
 
@@ -1216,7 +1217,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
     if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
         selection = this._lassoHelper.end(event);
     } else {
-        var ci = this.editor.render.findItem(event);
+        var ci = this.editor.render.findItem(event, this.maps);
         if (!ci || ci.type == 'Canvas')
             return;
         this._hoverHelper.hover(null);

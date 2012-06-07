@@ -2069,9 +2069,9 @@ ui.copy = function ()
             if (this.atoms.length) {
                 return this.atoms[0].pos;
             } else if (this.rxnArrows.length) {
-                return ui.editor.render.rxnArrowGetPos(this.rxnArrows[0]);
+                return this.rxnArrows[0].pos;
             } else if (this.rxnPluses.length) {
-                return ui.editor.render.rxnPlusGetPos(this.rxnPluses[0]);
+                return this.rxnPluses[0].pos;
             }
         }
     };

@@ -806,73 +806,19 @@ rnd.ReStruct.prototype.scaleCoordinates = function()
 	}
 };
 
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.atomAdd = function (pos, params)
-{
-	var pp = {};
-	if (params)
-		for (var p in params)
-			pp[p] = params[p];
-	pp.label = pp.label || 'C';
-	var aid = this.molecule.atoms.add(new chem.Struct.Atom(pp));
-    var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
-	atomData.component = this.connectedComponents.add(util.Set.single(aid));
-	this.atoms.set(aid, atomData);
-	this.molecule._atomSetPos(aid, pos);
-	return aid;
-};
-
-rnd.ReStruct.prototype._atomApplySgs = function (aid, sgs) {
-    util.Set.each(sgs, function(id) {
-        chem.SGroup.addAtom(this.sgroups.get(id).item, aid);
-    }, this);
-}
-
 rnd.ReStruct.prototype.notifyAtomAdded = function(aid) {
     var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
     atomData.component = this.connectedComponents.add(util.Set.single(aid));
     this.atoms.set(aid, atomData);
     this.markAtom(aid, 1);
-    if (atomData.a.sgs)
-        this._atomApplySgs(aid, atomData.a.sgs);
-};
-
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.rxnPlusAdd = function (pos, params)
-{
-	var id = this.molecule.rxnPluses.add(new chem.Struct.RxnPlus());
-	var reItem = new rnd.ReRxnPlus(this.molecule.rxnPluses.get(id));
-	this.rxnPluses.set(id, reItem);
-	this.molecule._rxnPlusSetPos(id, pos);
-	return id;
 };
 
 rnd.ReStruct.prototype.notifyRxnPlusAdded = function(plid) {
     this.rxnPluses.set(plid, new rnd.ReRxnPlus(this.molecule.rxnPluses.get(plid)));
 };
 
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.rxnArrowAdd = function (pos, params)
-{
-	var id = this.molecule.rxnArrows.add(new chem.Struct.RxnArrow());
-	var reItem = new rnd.ReRxnArrow(this.molecule.rxnArrows.get(id));
-	this.rxnArrows.set(id, reItem);
-	this.molecule._rxnArrowSetPos(id, pos);
-	return id;
-};
-
 rnd.ReStruct.prototype.notifyRxnArrowAdded = function(arid) {
     this.rxnArrows.set(arid, new rnd.ReRxnArrow(this.molecule.rxnArrows.get(arid)));
-};
-
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.rxnArrowRemove = function (id)
-{
-	var reitem = this.rxnArrows.get(id);
-	this.markItemRemoved();
-	this.clearVisel(reitem.visel);
-	this.rxnArrows.unset(id);
-	this.molecule.rxnArrows.remove(id);
 };
 
 rnd.ReStruct.prototype.notifyRxnArrowRemoved = function(arid) {
@@ -881,80 +827,15 @@ rnd.ReStruct.prototype.notifyRxnArrowRemoved = function(arid) {
     this.rxnArrows.unset(arid);
 };
 
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.rxnPlusRemove = function (id)
-{
-	var reitem = this.rxnPluses.get(id);
-	this.markItemRemoved();
-	this.clearVisel(reitem.visel);
-	this.rxnPluses.unset(id);
-	this.molecule.rxnPluses.remove(id);
-};
-
 rnd.ReStruct.prototype.notifyRxnPlusRemoved = function(plid) {
     this.markItemRemoved();
     this.clearVisel(this.rxnPluses.get(plid).visel);
     this.rxnPluses.unset(plid);
 };
 
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.bondAdd = function (begin, end, params)
-{
-	if (begin == end) {
-		debugger;
-		throw new Error("Distinct atoms expected");
-	}
-	if (rnd.DEBUG && this.molecule.checkBondExists(begin, end))
-		throw new Error("Bond already exists");
-	var pp = {};
-	if (params)
-		for (var p in params)
-			pp[p] = params[p];
-
-	pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
-	pp.begin = begin;
-	pp.end = end;
-
-	var bid = this.molecule.bonds.add(new chem.Struct.Bond(pp));
-    this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
-	this.molecule.bondInitHalfBonds(bid);
-	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb1);
-	this.molecule.atomAddNeighbor(this.bonds.get(bid).b.hb2);
-	return bid;
-};
-
 rnd.ReStruct.prototype.notifyBondAdded = function(bid) {
     this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
     this.markBond(bid, 1);
-};
-
-rnd.ReStruct.prototype.bondFlip = function (bid)
-{
-	var data = this.bonds.get(bid).b;
-	this.bondRemove(bid);
-	return this.bondAdd(data.end, data.begin, data);
-};
-
-/** @deprecated old architecture */
-rnd.ReStruct.prototype.atomRemove = function (aid)
-{
-	var atom = this.atoms.get(aid);
-	var set = this.connectedComponents.get(atom.component);
-	util.Set.remove(set, aid);
-	if (util.Set.size(set) == 0) {
-		this.connectedComponents.remove(atom.component);
-	}
-
-	// clone neighbors array, as it will be modified
-	var neiHb = Array.from(atom.a.neighbors);
-	neiHb.each(function(hbid){
-		var hb = this.molecule.halfBonds.get(hbid);
-		this.bondRemove(hb.bid);
-	},this);
-	this.markItemRemoved();
-	this.clearVisel(atom.visel);
-	this.atoms.unset(aid);
-	this.molecule.atoms.remove(aid);
 };
 
 rnd.ReStruct.prototype.notifyAtomRemoved = function (aid) {
@@ -967,20 +848,6 @@ rnd.ReStruct.prototype.notifyAtomRemoved = function (aid) {
 	this.clearVisel(atom.visel);
 	this.atoms.unset(aid);
     this.markItemRemoved();
-};
-
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.bondRemove = function (bid)
-{
-	var bond = this.bonds.get(bid);
-	this.halfBondUnref(bond.b.hb1);
-	this.halfBondUnref(bond.b.hb2);
-	this.molecule.halfBonds.unset(bond.b.hb1);
-	this.molecule.halfBonds.unset(bond.b.hb2);
-	this.markItemRemoved();
-	this.clearVisel(bond.visel);
-	this.bonds.unset(bid);
-	this.molecule.bonds.remove(bid);
 };
 
 rnd.ReStruct.prototype.notifyBondRemoved = function(bid) {
@@ -1040,21 +907,6 @@ rnd.ReStruct.prototype.verifyLoops = function ()
 	}
 };
 
-/** @deprecated [RB] old architecture */
-rnd.ReStruct.prototype.halfBondUnref = function (hbid)
-{
-	var hb = this.molecule.halfBonds.get(hbid);
-	var atom = this.atoms.get(hb.begin);
-	if (hb.loop >= 0)
-		this.loopRemove(hb.loop);
-
-	var pos = atom.a.neighbors.indexOf(hbid);
-	var prev = (pos + atom.a.neighbors.length - 1) % atom.a.neighbors.length;
-	var next = (pos + 1) % atom.a.neighbors.length;
-	this.molecule.setHbNext(atom.a.neighbors[prev], atom.a.neighbors[next]);
-	atom.a.neighbors.splice(pos, 1);
-};
-
 rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 	orig = orig-0;
 	var queue = new Array();
@@ -1074,20 +926,6 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 			}
 		}
 	}
-};
-
-rnd.ReStruct.prototype.sGroupDelete = function (sgid)
-{
-	var sg = this.sgroups.get(sgid).item;
-	var atoms = [];
-	for (var i = 0; i < sg.atoms.length; ++i) {
-		var aid = sg.atoms[i];
-		util.Set.remove(this.atoms.get(aid).a.sgs, sgid);
-		atoms.push(aid);
-	}
-	this.sgroups.unset(sgid);
-	this.molecule.sgroups.remove(sgid);
-	return atoms;
 };
 
 rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)

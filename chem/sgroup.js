@@ -60,12 +60,22 @@ chem.SGroup = function (type)
 	}
 };
 
+// TODO: these methods should be overridden
+//      and should only accept valid attributes for each S-group type.
+//      The attributes should be accessed via these methods only and not directly through this.data.
+// stub
+chem.SGroup.prototype.getAttr = function (attr) {
+    return this.data[attr];
+};
+
+// stub
 chem.SGroup.prototype.setAttr = function (attr, value) {
     var oldValue = this.data[attr];
     this.data[attr] = value;
     return oldValue;
 };
 
+// stub
 chem.SGroup.prototype.checkAttr = function (attr, value) {
     return this.data[attr] == value;
 };

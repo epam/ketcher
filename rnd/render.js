@@ -36,31 +36,7 @@ rnd.entities = ['Atom', 'RxnArrow', 'RxnPlus', 'Bond', 'Canvas'];
 
 /** @deprecated */
 rnd.actions = [
-	'atomSetAttr',
-	'atomAddToSGroup',
-	'atomRemoveFromSGroup',
-	'atomClearSGroups',
-	'atomAdd',
-	'atomMove',
-	'atomMoveRel',
-	'multipleMoveRel',
-	'atomRemove',
-	'bondSetAttr',
-	'bondAdd',
-	'bondFlip',
-	'bondRemove',
-	'sGroupSetHighlight',
-	'sGroupSetAttr',
-	'sGroupSetType',
-	'sGroupSetPos', // data s-group label position
-	'rxnPlusAdd',
-	'rxnPlusMove',
-	'rxnPlusMoveRel',
-	'rxnPlusRemove',
-	'rxnArrowAdd',
-	'rxnArrowMove',
-	'rxnArrowMoveRel',
-	'rxnArrowRemove'
+	'atomMove', // TODO: eliminate
 ];
 
 rnd.logMethod = function () { };
@@ -451,82 +427,13 @@ rnd.Render.prototype.atomGetSGroups = function (aid)
 	return util.Set.list(atom.a.sgs);
 };
 
-// creates an empty s-group of given type, e.g. "MUL" or "SRU",
-// returns group id
-// deprecated
-rnd.Render.prototype.sGroupCreate = function (type)
-{
-    rnd.logMethod("sGroupCreate");
-    var sg = new chem.SGroup(type);
-    var sgid = chem.SGroup.addGroup(this.ctab.molecule, sg);
-    this.ctab.sgroups.set(sgid, new rnd.ReSGroup(this.ctab.molecule.sgroups.get(sgid)));
-    return sgid;
-};
-
-// receives group id
-// deprecated
-rnd.Render.prototype.sGroupDelete = function (sgid)
-{
-	rnd.logMethod("sGroupDelete");
-	this.ctab.clearVisel(this.ctab.sgroups.get(sgid).visel);
-	var atoms = this.ctab.sGroupDelete(sgid);
-	for (var i = 0; i < atoms.length; ++i) {
-		var aid = atoms[i];
-		this.invalidateAtom(aid);
-	}
-};
-
-// set group attributes, such as multiplication index for MUL group or HT/HH/EU connectivity for SRU
-rnd.Render.prototype._sGroupSetAttr = function (sgid, name, value)
-{
-	rnd.logMethod("_sGroupSetAttr");
-	// TODO: fix update
-	var sg = this.ctab.sgroups.get(sgid).item;
-	sg.data[name] = value;
-};
-
-rnd.Render.prototype._sGroupSetType = function (sgid, type)
-{
-	rnd.logMethod("_sGroupSetType");
-    var ctab = this.ctab;
-    var reSg = ctab.sgroups.get(sgid);
-	this.ctab.clearVisel(reSg.visel);
-    reSg.setHighlight(false, this);
-    var sg = reSg.item;
-//	this.ctab.removeBracketHighlighting(sgid, sg);
-//	this.ctab.removeBracketSelection(sgid, sg);
-	var newSg = new chem.SGroup(type);
-	newSg.atoms = chem.SGroup.getAtoms(ctab, sg);
-	newSg.p = sg.p;
-	newSg.pa = sg.pa;
-	newSg.pr = sg.pr;
-	newSg.data = Object.clone(sg.data);
-    ctab.molecule.sgroups.set(sgid, newSg);
-	ctab.sgroups.set(sgid, new rnd.ReSGroup(newSg));
-};
-
-rnd.Render.prototype.chiralSetPos = function (pos)
-{
-	rnd.logMethod("chiralSetPos");
-	this.ctab.chiral.pos = (pos == null) ? null : new util.Vec2(pos);
-};
-
-rnd.Render.prototype._sGroupSetPos = function (sgid, pos)
-{
-	rnd.logMethod("_sGroupSetPos");
-	var sg = this.ctab.sgroups.get(sgid).item;
-	if (!sg.p)
-		return;
-	chem.SGroup.setPos(this.ctab, sg, new util.Vec2(pos), false);
-};
-
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 {
 	rnd.logMethod("sGroupGetAttr");
-	var sg = this.ctab.sgroups.get(sgid).item;
-	return sg.data[name];
+	return this.ctab.sgroups.get(sgid).item.getAttr(name);
 };
 
+// TODO: move to SGroup
 rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {
 	rnd.logMethod("sGroupGetAtoms");
@@ -547,13 +454,7 @@ rnd.Render.prototype.sGroupsFindCrossBonds = function ()
 	this.ctab.molecule.sGroupsRecalcCrossBonds();
 };
 
-rnd.Render.prototype.sGroupGetCrossBonds = function (sgid)
-{
-	rnd.logMethod("sGroupGetCrossBonds");
-	var sg = this.ctab.sgroups.get(sgid).item;
-	return sg.xBonds;
-};
-
+// TODO: move to ReStruct
 rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 {
 	rnd.logMethod("sGroupGetNeighborAtoms");
@@ -561,46 +462,11 @@ rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 	return sg.neiAtoms;
 };
 
-/** @deprecated [RB] ui.Action.OpAtomAttr to be used instead */
-rnd.Render.prototype._atomSetAttr = function (aid, name, value)
-{
-	rnd.logMethod("_atomSetAttr");
-	// TODO: rewrite with special methods for each attribute?
-	// TODO: allow multiple attributes at once?
-	var atom = this.ctab.atoms.get(aid);
-	if (name == 'label' && value != null) // HACK
-		atom.a['atomList'] = null;
-	atom.a[name] = value;
-	this.invalidateAtom(aid);
-};
-
+// TODO: move to ReStruct
 rnd.Render.prototype.atomIsPlainCarbon = function (aid)
 {
 	rnd.logMethod("atomIsPlainCarbon");
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
-};
-
-
-rnd.Render.prototype._atomClearSGroups = function (aid)
-{
-	rnd.logMethod("_atomClearSGroups");
-	var atom = this.ctab.atoms.get(aid);
-	util.Set.each(atom.a.sgs, function(sgid){
-		var sg = this.ctab.sgroups.get(sgid).item;
-		chem.SGroup.removeAtom(sg, aid);
-	}, this);
-	atom.a.sgs = util.Set.empty();
-	this.invalidateAtom(aid);
-};
-
-// TODO to be removed
-/** @deprecated please use ReAtom.setHighlight instead */
-rnd.Render.prototype.atomSetHighlight = function (aid, value)
-{
-	rnd.logMethod("atomSetHighlight");
-	var atom = this.ctab.atoms.get(aid);
-	atom.highlight = value;
-	this.ctab.showAtomHighlighting(aid, atom, value);
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
@@ -613,30 +479,6 @@ rnd.Render.prototype.highlightObject = function(obj, visible) {
         return false;
     }
     return true;
-};
-
-rnd.Render.prototype._atomAdd = function (pos, params)
-{
-	rnd.logMethod("_atomAdd");
-	var aid = this.ctab.atomAdd(new util.Vec2(pos), params);
-	this.ctab.markAtom(aid, 1);
-	return aid;
-};
-
-rnd.Render.prototype._rxnPlusAdd = function (pos, params)
-{
-	rnd.logMethod("_rxnPlusAdd");
-	var id = this.ctab.rxnPlusAdd(new util.Vec2(pos), params);
-	this.invalidateItem('rxnPluses', id, 1);
-	return id;
-};
-
-rnd.Render.prototype._rxnArrowAdd = function (pos, params)
-{
-	rnd.logMethod("_rxnArrowAdd");
-	var id = this.ctab.rxnArrowAdd(new util.Vec2(pos), params);
-	this.invalidateItem('rxnArrows', id, 1);
-	return id;
 };
 
 rnd.Render.prototype._itemMove = function (map, id, pos)
@@ -669,24 +511,6 @@ rnd.Render.prototype._atomMove = function (id, pos)
 	this.ctab.molecule._itemSetPos('atoms', id, new util.Vec2(pos));
 };
 
-rnd.Render.prototype._rxnArrowMove = function (id, pos)
-{
-	rnd.logMethod("_rxnArrowMove");
-	this._itemMove('rxnArrows', id, pos);
-};
-
-rnd.Render.prototype._rxnArrowMoveRel = function (id, d)
-{
-	rnd.logMethod("_rxnArrowMoveRel");
-	this._itemMoveRel('rxnArrows', id, d);
-};
-
-rnd.Render.prototype._rxnPlusMoveRel = function (id, d)
-{
-	rnd.logMethod("_rxnPlusMoveRel");
-	this._itemMoveRel('rxnPluses', id, d);
-};
-
 rnd.Render.prototype.itemGetPos = function (map, id)
 {
     return this.ctab.molecule[map].get(id).pp;
@@ -708,12 +532,6 @@ rnd.Render.prototype.rxnPlusGetPos = function (id)
 {
 	rnd.logMethod("rxnPlusGetPos");
 	return this.itemGetPos('rxnPluses', id);
-};
-
-rnd.Render.prototype._atomMoveRel = function (aid, d)
-{
-	rnd.logMethod("_atomMoveRel");
-	this.atomsMultipleMoveRel([aid], new util.Vec2(d));
 };
 
 rnd.Render.prototype.getAdjacentBonds = function (atoms) {
@@ -780,75 +598,10 @@ rnd.Render.prototype._multipleMoveRel = function (lists, d)
 	}
 };
 
-rnd.Render.prototype._atomRemove = function (aid)
-{
-	rnd.logMethod("_atomRemove");
-	this.ctab.atomRemove(aid);
-};
-
-rnd.Render.prototype._rxnPlusRemove = function (id)
-{
-	rnd.logMethod("_rxnPlusRemove");
-	this.ctab.rxnPlusRemove(id);
-};
-
-rnd.Render.prototype._rxnArrowRemove = function (id)
-{
-	rnd.logMethod("_rxnArrowRemove");
-	this.ctab.rxnArrowRemove(id);
-};
-
 rnd.Render.prototype.bondGetAttr = function (bid, name)
 {
 	rnd.logMethod("bondGetAttr");
 	return this.ctab.bonds.get(bid).b[name];
-};
-
-/** @deprecated [RB] ui.Action.OpBondAttr to be used instead */
-rnd.Render.prototype._bondSetAttr = function (bid, name, value)
-{
-	rnd.logMethod("_bondSetAttr");
-    this.ctab.bonds.get(bid).b[name] = value;
-	this.invalidateBond(bid, name == 'type' ? 1 : 0);
-// update loops involving this bond
-};
-
-// TODO to be removed
-/** @deprecated please use ReBond.setHighlight instead */
-rnd.Render.prototype.bondSetHighlight = function (bid, value)
-{
-	rnd.logMethod("bondSetHighlight");
-	var bond = this.ctab.bonds.get(bid);
-	bond.highlight = value;
-	this.ctab.showBondHighlighting(bid, bond, value);
-};
-
-rnd.Render.prototype._bondAdd = function (begin, end, params)
-{
-	rnd.logMethod("_bondAdd");
-	this.invalidateAtom(begin, 1);
-	this.invalidateAtom(end, 1);
-	var bid = this.ctab.bondAdd(begin, end, params);
-	this.ctab.markBond(bid, 1);
-	return bid;
-};
-
-rnd.Render.prototype._bondRemove = function (bid)
-{
-	rnd.logMethod("_bondRemove");
-	this.invalidateBond(bid);
-	this.ctab.bondRemove(bid);
-};
-
-rnd.Render.prototype._bondFlip = function (bid)
-{
-	rnd.logMethod("_bondFlip");
-	var bond = this.ctab.bonds.get(bid);
-	this.invalidateAtom(bond.b.begin, 1);
-	this.invalidateAtom(bond.b.end, 1);
-	var newBid = this.ctab.bondFlip(bid);
-	this.ctab.markBond(newBid, 1);
-	return newBid;
 };
 
 rnd.Render.prototype.setSelection = function (selection)
@@ -1376,33 +1129,6 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 		};
 	return null;
 };
-
-//rnd.Render.prototype.findClosestSGroup = function (pos, minDist) { // TODO should be a member of ReSGroup (see ReFrag)
-//	var closestSg = null;
-//	var maxMinDist = this.opt.selectionDistanceCoefficient; // TODO: ???
-//	minDist = minDist || maxMinDist;
-//	minDist = Math.min(minDist, maxMinDist);
-//	var lw = this.settings.lineWidth;
-//    this.ctab.molecule.sgroups.each(function(sgid, sg){
-//        var d = sg.bracketDir, n = d.rotateSC(1, 0);
-//        var pg = new util.Vec2(util.Vec2.dot(pos, d), util.Vec2.dot(pos, n));
-//        for (var i = 0; i < sg.areas.length; ++i) {
-//            var box = sg.areas[i];
-//            var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
-//            var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
-//            if (inBox && (closestSg == null || xDist < minDist)) {
-//                closestSg = sgid;
-//                minDist = xDist;
-//            }
-//        }
-//	}, this);
-//	if (closestSg != null)
-//		return {
-//			'id':closestSg,
-//			'dist':minDist
-//		};
-//	return null;
-//};
 
 rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;

@@ -856,6 +856,8 @@ ui.Action.fromSgroupAddition = function (type, atoms, sgid)
     for (i = 0; i < atoms.length; i++)
         atoms[i] = ui.atomMap.indexOf(atoms[i]);
 
+    // TODO: shoud the id be generated when OpSGroupCreate is executed?
+    //      if yes, how to pass it to the following operations?
     sgid = sgid-0 === sgid ? sgid : ui.render.ctab.molecule.sgroups.newId();
 
     action.addOp(new ui.Action.OpSGroupCreate(sgid, type));
@@ -921,11 +923,13 @@ ui.Action.fromPaste = function(objects, offset) {
             sgatoms.push(amap[sgroup.atoms[sgaid]]);
         }
         var newsgid = ui.render.ctab.molecule.sgroups.newId();
-        var sgaction = ui.Action.fromSgroupAddition(sgroup.type, sgatoms, newsgid).mergeWith(ui.Action.fromSgroupAttrs(newsgid, sgroup));
-        //action.mergeWith(sgaction);
+        var sgaction = ui.Action.fromSgroupAddition(sgroup.type, sgatoms, newsgid);
         for (var iop = sgaction.operations.length - 1; iop >= 0; iop--) {
             action.addOp(sgaction.operations[iop]);
         }
+
+        // should be reversed too, but here the order does not matter
+        action.mergeWith(ui.Action.fromSgroupAttrs(newsgid, sgroup));
     }
     //reaction arrows
     if (ui.editor.render.ctab.rxnArrows.count() < 1) {

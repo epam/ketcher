@@ -184,7 +184,13 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 
     if (!Object.isNumber(end)) {
         end.fragment = frid;
+        // TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
         end = action.addOp(new ui.Action.OpAtomAdd(end, pos).perform(ui.editor)).data.aid;
+        if (Object.isNumber(begin)) {
+            ui.render.atomGetSGroups(begin).each(function (sid) {
+                action.addOp(new ui.Action.OpSGroupAtomAdd(sid, end).perform(ui.editor));
+            }, this);
+        }
     }
     else {
         if (ui.render.atomGetAttr(end, 'label') == '*') {

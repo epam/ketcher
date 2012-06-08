@@ -1498,7 +1498,7 @@ ui.Action.OpCanvasLoad = function(ctab, atom_map, bond_map) {
     this.data = {ctab : ctab, atom_map : atom_map, bond_map : bond_map};
     this._execute = function(editor) {
         var R = editor.render;
-        if (this.data.ctab == null) {
+        if (this.data.ctab.isBlank()) {
             this.data.atom_map = new Array();
             ui.__fixMap(this.data.atom_map);
             this.data.bond_map = new Array();

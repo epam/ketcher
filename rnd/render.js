@@ -608,6 +608,9 @@ rnd.Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod("setSelection");
 	for (var map in rnd.ReStruct.maps) {
+            if (map == 'frags' || map == 'rgroups')
+                continue;
+
 		this.ctab[map].each(function(id, item){
 			item.selected = false;
 			this.ctab.showItemSelection(id, item, false);

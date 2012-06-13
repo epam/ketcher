@@ -431,7 +431,7 @@ rnd.Editor.EraserTool = function(editor, mode) {
 };
 rnd.Editor.EraserTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.EraserTool.prototype.OnMouseDown = function(event) {
-    var ci = this.editor.render.findItem(event);
+    var ci = this.editor.render.findItem(event, this.maps);
     if (!ci || ci.type == 'Canvas') {
         this._lassoHelper.begin(event);
     }
@@ -1135,7 +1135,7 @@ rnd.Editor.SGroupTool = function(editor) {
 };
 rnd.Editor.SGroupTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.SGroupTool.prototype.OnMouseDown = function(event) {
-    var ci = this.editor.render.findItem(event);
+    var ci = this.editor.render.findItem(event, this.maps);
     if (!ci || ci.type == 'Canvas') {
         this._lassoHelper.begin(event);
     }

@@ -16,16 +16,6 @@ if (typeof(ui) == 'undefined')
 //
 // Undo/redo actions
 //
-ui.__fixMap = function(map) { // TODO [RB] temporary
-    map.indexOf = function(x) {
-        var ret = [].indexOf.call(this, x);
-        if (ret < 0) ret = this.push(x) - 1;
-        return ret;
-    };
-};
-ui.atomMap = new Array();ui.__fixMap(ui.atomMap);
-ui.bondMap = new Array();ui.__fixMap(ui.bondMap);
-
 ui.Action = function ()
 {
     this.operations = new Array();
@@ -71,7 +61,7 @@ ui.Action.fromSelectedAtomsPos = function(selection)
     var action = new ui.Action();
 
     selection.atoms.each(function(id) {
-        action.addOp(new ui.Action.OpAtomPos(ui.atomMap.indexOf(id), ui.render.atomGetPos(id)));
+        action.addOp(new ui.Action.OpAtomPos(id, ui.render.atomGetPos(id)));
     }, this);
 
     return action;
@@ -244,7 +234,7 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
     {
         sgroups.each(function (sid)
         {
-            this.addOp(new ui.Action.OpSGroupAtomRemove(sid, ui.atomMap.indexOf(id)));
+            this.addOp(new ui.Action.OpSGroupAtomRemove(sid, id));
         }, this);
 
         return true;
@@ -859,9 +849,6 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
     var action = new ui.Action();
     var i;
 
-    for (i = 0; i < atoms.length; i++)
-        atoms[i] = ui.atomMap.indexOf(atoms[i]);
-
     // TODO: shoud the id be generated when OpSGroupCreate is executed?
     //      if yes, how to pass it to the following operations?
     sgid = sgid-0 === sgid ? sgid : ui.render.ctab.molecule.sgroups.newId();
@@ -1035,7 +1022,6 @@ ui.Action.OpAtomAdd = function(atom, pos) {
         pp.label = pp.label || 'C';
         if (!Object.isNumber(this.data.aid)) {
             this.data.aid = DS.atoms.add(new chem.Struct.Atom(pp));
-            ui.atomMap.indexOf(this.data.aid); // TODO [RB] temporary kludge
         } else {
             DS.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
         }
@@ -1099,8 +1085,8 @@ ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
 ui.Action.OpAtomPos = function(aid, pos) {
     this.data = { aid : aid, pos : pos};
     this._execute = function(editor) {
-        var oldPos = ui.render.atomGetPos(ui.atomMap[this.data.aid]);
-        ui.render.atomMove(ui.atomMap[this.data.id], this.data.pos);
+        var oldPos = ui.render.atomGetPos(this.data.aid);
+        ui.render.atomMove(this.data.aid, this.data.pos);
         this.data.pos = oldPos;
         editor.render.invalidateAtom(this.data.aid);
     };
@@ -1239,7 +1225,6 @@ ui.Action.OpBondAdd = function(begin, end, bond) {
 
         if (!Object.isNumber(this.data.bid)) {
             this.data.bid = DS.bonds.add(new chem.Struct.Bond(pp));
-            ui.bondMap.indexOf(this.data.bid); // TODO [RB] temporary kludge
         } else {
             DS.bonds.set(this.data.bid, new chem.Struct.Bond(pp));
         }
@@ -1494,36 +1479,16 @@ ui.Action.OpRxnPlusDelete = function(plid) {
 };
 ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();
 
-ui.Action.OpCanvasLoad = function(ctab, atom_map, bond_map) {
-    this.data = {ctab : ctab, atom_map : atom_map, bond_map : bond_map};
+ui.Action.OpCanvasLoad = function(ctab) {
+    this.data = {ctab : ctab};
     this._execute = function(editor) {
         var R = editor.render;
-        if (this.data.ctab.isBlank()) {
-            this.data.atom_map = new Array();
-            ui.__fixMap(this.data.atom_map);
-            this.data.bond_map = new Array();
-            ui.__fixMap(this.data.bond_map);
-            this.data.sgroup_map = new Array();
-
-            this.data.ctab.atoms.each(function (aid) {
-                this.data.atom_map.push(parseInt(aid));
-            }, this);
-
-            this.data.ctab.bonds.each(function (bid) {
-                this.data.bond_map.push(parseInt(bid));
-            }, this);
-
-            this.data.ctab.sgroups.each(function (sid) {
-                this.data.sgroup_map.push(parseInt(sid));
-            }, this);
-        }
 
         R.ctab.clearVisels();
         ui.ctab = this.data.ctab;
         R.setMolecule(ui.ctab);
-        ui.atomMap = this.data.atom_map;
-        ui.bondMap = this.data.bond_map;
     };
+    
     this._invert = function() {
         var ret = new ui.Action.OpCanvasLoad();
         ret.data = this.data;

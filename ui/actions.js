@@ -1485,7 +1485,9 @@ ui.Action.OpCanvasLoad = function(ctab) {
         var R = editor.render;
 
         R.ctab.clearVisels();
+        var oldCtab = ui.ctab;
         ui.ctab = this.data.ctab;
+        this.data.ctab = oldCtab;
         R.setMolecule(ui.ctab);
     };
     

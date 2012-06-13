@@ -854,7 +854,7 @@ ui.Action.fromSgroupDeletion = function (id)
     return action.perform();
 };
 
-ui.Action.fromSgroupAddition = function (type, atoms, sgid)
+ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
 {
     var action = new ui.Action();
     var i;
@@ -888,7 +888,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, sgid)
         action = asterisk_action;
     }
 
-    return action;
+    return ui.Action.fromSgroupAttrs(sgid, attrs).mergeWith(action);
 };
 
 ui.Action.fromRGroupAttrs = function(id, attrs) {

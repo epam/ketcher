@@ -433,6 +433,12 @@ rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
 	return this.ctab.sgroups.get(sgid).item.getAttr(name);
 };
 
+rnd.Render.prototype.sGroupGetAttrs = function (sgid)
+{
+	rnd.logMethod("sGroupGetAttrs");
+	return this.ctab.sgroups.get(sgid).item.getAttrs();
+};
+
 // TODO: move to SGroup
 rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {

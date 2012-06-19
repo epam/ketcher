@@ -2083,7 +2083,7 @@ ui.copy = function ()
         var new_atom = new chem.Struct.Atom(ui.ctab.atoms.get(id));
         new_atom.pos = ui.render.atomGetPos(id);
 
-        if (new_atom.sgroup != -1)
+        if (new_atom.sgroup != -1) // TODO: fix, the sgroup attribute is obsolete
             new_atom.sgroup = -1;
 
         mapping[id] = ui.clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
@@ -2121,24 +2121,19 @@ ui.copy = function ()
 
         if (sg.value == ui.render.sGroupGetAtoms(sid).length)
         {
-            var new_sgroup =
+            var sgroup_info =
             {
                 type: ui.render.sGroupGetType(sid),
-                mul: ui.render.sGroupGetAttr(sid, 'mul'),
-                connectivity: ui.render.sGroupGetAttr(sid, 'connectivity'),
-                name: ui.render.sGroupGetAttr(sid, 'name'),
-                subscript: ui.render.sGroupGetAttr(sid, 'subscript'),
-                fieldName: ui.render.sGroupGetAttr(sid, 'fieldName'),
-                fieldValue: ui.render.sGroupGetAttr(sid, 'fieldValue'),
-                atoms: ui.render.sGroupGetAtoms(sid).clone()
+                attrs: ui.render.sGroupGetAttrs(sid),
+                atoms: util.array(ui.render.sGroupGetAtoms(sid))
             };
 
-            for (var i = 0; i < new_sgroup.atoms.length; i++)
+            for (var i = 0; i < sgroup_info.atoms.length; i++)
             {
-                new_sgroup.atoms[i] = mapping[new_sgroup.atoms[i]];
+                sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
             }
 
-            ui.clipboard.sgroups.push(new_sgroup);
+            ui.clipboard.sgroups.push(sgroup_info);
         }
     });
 

@@ -68,6 +68,14 @@ chem.SGroup.prototype.getAttr = function (attr) {
     return this.data[attr];
 };
 
+// TODO: should be group-specific
+chem.SGroup.prototype.getAttrs = function () {
+    var attrs = {};
+    for (var attr in this.data)
+        attrs[attr] = this.data[attr];
+    return attrs;
+};
+
 // stub
 chem.SGroup.prototype.setAttr = function (attr, value) {
     var oldValue = this.data[attr];

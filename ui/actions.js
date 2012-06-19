@@ -796,7 +796,8 @@ ui.Action.fromSgroupType = function (id, type)
     var cur_type = R.sGroupGetType(id);
     if (type && type != cur_type) {
         var atoms = util.array(R.sGroupGetAtoms(id));
-        return ui.Action.fromSgroupDeletion(id).mergeWith(ui.Action.fromSgroupAddition(type, atoms, id));
+        var attrs = R.sGroupGetAttrs(id);
+        return ui.Action.fromSgroupDeletion(id).mergeWith(ui.Action.fromSgroupAddition(type, atoms, attrs, id));
     }
     return new ui.Action();
 };
@@ -911,18 +912,17 @@ ui.Action.fromPaste = function(objects, offset) {
     }
     //sgroups
     for (var sgid = 0; sgid < objects.sgroups.length; sgid++) {
-        var sgroup = Object.clone(objects.sgroups[sgid]), sgatoms = [];
-        for (var sgaid = 0; sgaid < sgroup.atoms.length; sgaid++) {
-            sgatoms.push(amap[sgroup.atoms[sgaid]]);
+        var sgroup_info = objects.sgroups[sgid];
+        var atoms = sgroup_info.atoms;
+        var sgatoms = [];
+        for (var sgaid = 0; sgaid < atoms.length; sgaid++) {
+            sgatoms.push(amap[atoms[sgaid]]);
         }
         var newsgid = ui.render.ctab.molecule.sgroups.newId();
-        var sgaction = ui.Action.fromSgroupAddition(sgroup.type, sgatoms, newsgid);
+        var sgaction = ui.Action.fromSgroupAddition(sgroup_info.type, sgatoms, sgroup_info.attrs, newsgid);
         for (var iop = sgaction.operations.length - 1; iop >= 0; iop--) {
             action.addOp(sgaction.operations[iop]);
         }
-
-        // should be reversed too, but here the order does not matter
-        action.mergeWith(ui.Action.fromSgroupAttrs(newsgid, sgroup));
     }
     //reaction arrows
     if (ui.editor.render.ctab.rxnArrows.count() < 1) {

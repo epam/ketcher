@@ -123,7 +123,7 @@ rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	.attr(styles.selectionStyle);
 };
 
-rnd.ReStruct = function (molecule, render)
+rnd.ReStruct = function (molecule, render, norescale)
 {
 	this.render = render;
 	this.atoms = new util.Map();
@@ -185,7 +185,7 @@ rnd.ReStruct = function (molecule, render)
         this.sgroups.set(id, new rnd.ReSGroup(item));
     }, this);
 
-	this.coordProcess();
+	this.coordProcess(norescale);
 
 	this.tmpVisels = [];
 };
@@ -770,19 +770,22 @@ rnd.ReStruct.prototype.findLoops = function ()
 	}, this);
 };
 
-rnd.ReStruct.prototype.coordProcess = function ()
+rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
 	this.molecule.coordProject();
 	var bb = this.molecule.getCoordBoundingBox();
-	var avg = this.molecule.getAvgBondLength();
-	if (avg < 0 && !this.molecule.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
-		// the atoms in different components are generally larger than those between atoms of a single component
-		// (KETCHER-341)
-		avg = this.molecule.getAvgClosestAtomDistance();
-	if (avg < 1e-3)
-		avg = 1;
-	var scale = 1 / avg;
-
+        if (norescale) {
+            scale = 1;
+        } else {
+            var avg = this.molecule.getAvgBondLength();
+            if (avg < 0 && !this.molecule.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
+                    // the atoms in different components are generally larger than those between atoms of a single component
+                    // (KETCHER-341)
+                    avg = this.molecule.getAvgClosestAtomDistance();
+            if (avg < 1e-3)
+                    avg = 1;
+            var scale = 1 / avg;
+        }
 	if (this.molecule.isChiral)
 		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
 	this.molecule.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);

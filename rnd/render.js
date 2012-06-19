@@ -328,11 +328,11 @@ util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
 	}
 );
 
-rnd.Render.prototype.setMolecule = function (ctab)
+rnd.Render.prototype.setMolecule = function (ctab, norescale)
 {
 	rnd.logMethod("setMolecule");
 	this.paper.clear();
-	this.ctab = new rnd.ReStruct(ctab, this);
+	this.ctab = new rnd.ReStruct(ctab, this, norescale);
 	this.offset = null;
 	this.size = null;
 	this.bb = null;

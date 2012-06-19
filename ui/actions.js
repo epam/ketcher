@@ -1480,7 +1480,7 @@ ui.Action.OpRxnPlusDelete = function(plid) {
 ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();
 
 ui.Action.OpCanvasLoad = function(ctab) {
-    this.data = {ctab : ctab};
+    this.data = {ctab : ctab, norescale : false};
     this._execute = function(editor) {
         var R = editor.render;
 
@@ -1488,12 +1488,13 @@ ui.Action.OpCanvasLoad = function(ctab) {
         var oldCtab = ui.ctab;
         ui.ctab = this.data.ctab;
         this.data.ctab = oldCtab;
-        R.setMolecule(ui.ctab);
+        R.setMolecule(ui.ctab, this.data.norescale);
     };
     
     this._invert = function() {
         var ret = new ui.Action.OpCanvasLoad();
         ret.data = this.data;
+        ret.data.norescale = !ret.data.norescale;
         return ret;
     };
 };

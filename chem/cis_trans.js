@@ -70,8 +70,8 @@ chem.CisTrans.prototype.sameside = function (beg, end, nei_beg, nei_end)
 
 chem.CisTrans.prototype._sameside = function (i_beg, i_end, i_nei_beg, i_nei_end)
 {
-   return this.sameside(this.molecule.atoms.get(i_beg).pos, this.molecule.atoms.get(i_end).pos,
-      this.molecule.atoms.get(i_nei_beg).pos, this.molecule.atoms.get(i_nei_end).pos);
+   return this.sameside(this.molecule.atoms.get(i_beg).pp, this.molecule.atoms.get(i_end).pp,
+      this.molecule.atoms.get(i_nei_beg).pp, this.molecule.atoms.get(i_nei_end).pp);
 };
 
 chem.CisTrans.prototype._sortSubstituents = function (substituents)

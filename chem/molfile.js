@@ -117,7 +117,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 	var params =
 	{
 		// generic
-		pos: new util.Vec2(parseFloat(atomSplit[0]), parseFloat(atomSplit[1])),
+		pp: new util.Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1])),
 		label: atomSplit[4].strip(),
 		valence: mf.fmtInfo.valenceMap[mf.parseDecimalInt(atomSplit[10])],
 
@@ -153,7 +153,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 	var split, subsplit, key, value, i;
 	split = mf.spaceparsplit(line);
 	var params = {
-		pos: new util.Vec2(parseFloat(split[2]), parseFloat(split[3])),
+		pp: new util.Vec2(parseFloat(split[2]), -parseFloat(split[3])),
 		aam: split[5].strip()
 	};
 	var label = split[1].strip();
@@ -418,7 +418,7 @@ chem.Molfile.applyDataSGroupInfo = function (sg, propData) {
 	var tagChar = split[10].strip();
 	var daspPos = mf.parseDecimalInt(split[11].strip());
 
-	sg.p = new util.Vec2(x, y);
+	sg.pp = new util.Vec2(x, -y);
 	sg.data.attached = attached;
 	sg.data.absolute = absolute;
 	sg.data.showUnits = showUnits;
@@ -952,10 +952,10 @@ chem.MolfileSaver.getComponents = function (molecule) {
 	var barriers = [];
 	var arrowPos = null;
 	molecule.rxnArrows.each(function(id, item){ // there's just one arrow
-		arrowPos = item.pos.x;
+		arrowPos = item.pp.x;
 	});
 	molecule.rxnPluses.each(function(id, item){
-		barriers.push(item.pos.x);
+		barriers.push(item.pp.x);
 	});
 	if (arrowPos != null)
 		barriers.push(arrowPos);
@@ -1140,8 +1140,8 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
     var atomLabel_list = [];
 	this.molecule.atoms.each(function (id, atom)
 	{
-		this.writePaddedFloat(atom.pos.x, 10, 4);
-		this.writePaddedFloat(atom.pos.y, 10, 4);
+		this.writePaddedFloat(atom.pp.x, 10, 4);
+		this.writePaddedFloat(-atom.pp.y, 10, 4);
 		this.writePaddedFloat(0, 10, 4);
 		this.writeWhiteSpace();
 
@@ -1553,7 +1553,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
     var shiftMol = function(ret, mol, bb, xorig, over) {
         var d = new util.Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
         mol.atoms.each(function(aid, atom){
-            atom.pos.add_(d);
+            atom.pp.add_(d);
         });
         bb.min.add_(d);
         bb.max.add_(d);
@@ -1582,7 +1582,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new util.Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
@@ -1601,7 +1601,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pos':new util.Vec2(x, y)}));
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new util.Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
@@ -1626,7 +1626,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		v2 = new util.Vec2(v1.x + defaultOffset, v1.y);
 	var v = util.Vec2.lc2(v1, 0.5, v2, 0.5);
 
-	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pos':v}));
+	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pp':v}));
 	ret.isReaction = true;
 	return ret;
 };

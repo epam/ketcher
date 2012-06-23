@@ -278,11 +278,10 @@ chem.Struct.Atom = function (params)
     util.ifDef(this, params, 'attpnt', null); // attachment point
 	util.ifDef(this, params, 'explicitValence', 0);
 	util.ifDef(this, params, 'implicitH', 0);
-	if (!Object.isUndefined(params.pos))
-		this.pos = new util.Vec2(params.pos);
+	if (!Object.isUndefined(params.pp))
+		this.pp = new util.Vec2(params.pp);
 	else
-		this.pos = new util.Vec2();
-	this.pp = new util.Vec2();
+		this.pp = new util.Vec2();
 	this.ps = new util.Vec2();
 
 	this.sgs = (params && params['sgs']) ? params['sgs'] : {};
@@ -575,28 +574,6 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	},this);
 };
 
-chem.Struct.prototype.getObjBBox = function ()
-{
-	var bb = null;
-	this.atoms.each(function (aid, atom) {
-		if (!bb)
-			bb = {
-				min: atom.pos,
-				max: atom.pos
-			};
-		else {
-			bb.min = util.Vec2.min(bb.min, atom.pos);
-			bb.max = util.Vec2.max(bb.max, atom.pos);
-		}
-	});
-	if (!bb)
-		bb = {
-			min: new util.Vec2(0, 0),
-			max: new util.Vec2(1, 1)
-		};
-	return new util.Box2Abs(bb.min, bb.max);
-};
-
 chem.Struct.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.sgroups.get(sgid);
@@ -609,7 +586,6 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 chem.Struct.itemSetPos = function (item, pp, scaleFactor)
 {
 	item.pp = pp;
-	item.pos = new util.Vec2(pp.x, -pp.y);
 	if (scaleFactor)
 		item.ps = item.pp.scaled(scaleFactor);
 };
@@ -632,30 +608,6 @@ chem.Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
 chem.Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('rxnArrows', id, pp, scaleFactor);
-};
-
-chem.Struct.prototype.coordShiftFlipScale = function(min, scale)
-{
-	var abscfs = function(pp) {return pp.sub(min).yComplement(0).scaled(scale);};
-	var relcfs = function(pp) {return pp.yComplement(0).scaled(scale);};
-	this.atoms.each(function (aid, atom) {
-		this._atomSetPos(aid, abscfs(atom.pp), scale);
-	}, this);
-
-	this.sgroups.each(function (sgid, sg) {
-		if (sg.p) {
-			sg.pr = relcfs(sg.p);
-			sg.p = sg.p.sub(min);
-			sg.pa = relcfs(sg.p);
-		}
-	}, this);
-
-	this.rxnPluses.each(function (id, item) {
-		this._rxnPlusSetPos(id, abscfs(item.pp), scale);
-	}, this);
-	this.rxnArrows.each(function (id, item) {
-		this._rxnArrowSetPos(id, abscfs(item.pp), scale);
-	}, this);
 };
 
 chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
@@ -711,7 +663,7 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	};
 
 	this.atoms.each(function (aid, atom) {
-		extend(atom.pos);
+		extend(atom.pp);
 	});
 	return bb;
 };
@@ -748,19 +700,6 @@ chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 	return keys.length > 0 ? totalDist / keys.length : -1;
 };
 
-chem.Struct.prototype.coordProject = function()
-{
-	this.atoms.each(function (aid, atom) {// project coordinates
-		this._atomSetPos(aid, new util.Vec2(atom.pos));
-	}, this);
-	this.rxnPluses.each(function (id, item) {
-		this._rxnPlusSetPos(id, new util.Vec2(item.pos));
-	}, this);
-	this.rxnArrows.each(function (id, item) {
-		this._rxnArrowSetPos(id, new util.Vec2(item.pos));
-	}, this);
-};
-
 chem.Struct.prototype.checkBondExists = function (begin, end)
 {
 	var bondExists = false;
@@ -791,8 +730,7 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 chem.Struct.RxnPlus = function (params)
 {
 	params = params || {};
-	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
-	this.pp = new util.Vec2();
+	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
 	this.ps = new util.Vec2();
 };
 
@@ -804,8 +742,7 @@ chem.Struct.RxnPlus.prototype.clone = function ()
 chem.Struct.RxnArrow = function (params)
 {
 	params = params || {};
-	this.pos = params.pos ? new util.Vec2(params.pos) : new util.Vec2();
-	this.pp = new util.Vec2();
+	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
 	this.ps = new util.Vec2();
 };
 

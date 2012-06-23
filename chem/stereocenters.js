@@ -129,7 +129,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
          edge_idx: nei.bid,
          nei_idx: nei.aid,
          rank: nei.aid,
-         vec: util.Vec2.diff(nei_atom.pos, atom.pos)
+         vec: util.Vec2.diff(nei_atom.pp, atom.pp)
       };
 
       if (nei_atom.pureHydrogen())

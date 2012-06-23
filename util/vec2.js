@@ -1,11 +1,11 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
@@ -79,7 +79,7 @@ util.Vec2.prototype.negated = function ()
 
 util.Vec2.prototype.yComplement = function (y1)
 {
-	util.assertDefined(y1);
+    y1 = y1 || 0;
     return new util.Vec2(this.x, y1 - this.y);
 };
 
@@ -98,13 +98,13 @@ util.Vec2.prototype.normalized = function ()
 util.Vec2.prototype.normalize = function ()
 {
     var l = this.length();
-    
+
     if (l < 0.000001)
         return false;
-        
+
     this.x /= l;
     this.y /= l;
-    
+
     return true;
 };
 
@@ -187,7 +187,7 @@ util.Vec2.prototype.rotate = function (angle)
 	util.assertDefined(angle);
     var si = Math.sin(angle);
     var co = Math.cos(angle);
-    
+
     return this.rotateSC(si, co);
 };
 
@@ -264,7 +264,7 @@ util.Box2Abs = function ()
 
 util.Box2Abs.prototype.toString = function () {
 	return this.p0.toString() + " " + this.p1.toString();
-	
+
 }
 util.Box2Abs.fromRelBox = function (relBox)
 {
@@ -344,7 +344,7 @@ util.Vec2.shiftRayBox =
     var rd = r.map(function(v){return util.Vec2.dot(v, d)}); // dot prods
 
     // find foremost points on the right and on the left of the ray
-    var pid = -1, nid = -1; 
+    var pid = -1, nid = -1;
     for (var i = 0; i < 4; ++i)
         if (rc[i] > 0)  {if (pid < 0 || rd[pid] < rd[i]) pid = i;}
         else            {if (nid < 0 || rd[nid] < rd[i]) nid = i;}

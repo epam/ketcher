@@ -36,9 +36,7 @@ chem.SGroup = function (type)
 	this.bonds = [];
 	this.xBonds = [];
 	this.neiAtoms = [];
-	this.p = null;
-	this.pr = null;
-	this.pa = null;
+	this.pp = null;
 	this.data = {
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
@@ -120,6 +118,8 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	var bb = chem.SGroup.getObjBBox(sg.atoms, mol);
+        bb.p0 = bb.p0.yComplement();
+        bb.p1 = bb.p1.yComplement();
 	bb = bb.extend(new util.Vec2(0.4, 0.4));
 
 	var coord = [
@@ -174,9 +174,7 @@ chem.SGroup.clone = function (sgroup, aidMap, bidMap)
 		cp.data[field] = sgroup.data[field];
 	}
 	cp.atoms = util.mapArray(sgroup.atoms, aidMap);
-	cp.p = sgroup.p;
-	cp.pr = sgroup.pr;
-	cp.pa = sgroup.pa;
+	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
 	cp.bonds = null;
@@ -285,12 +283,12 @@ chem.SGroup.getObjBBox = function (atoms, mol)
 	if (atoms.length == 0)
 		throw new Error("Atom list is empty");
 
-	var a0 = mol.atoms.get(atoms[0]).pos;
+	var a0 = mol.atoms.get(atoms[0]).pp;
 	var bb = new util.Box2Abs(a0, a0);
 	for (var i = 1; i < atoms.length; ++i) {
 		var aid = atoms[i];
 		var atom = mol.atoms.get(aid);
-		var p = atom.pos;
+		var p = atom.pp;
 		bb = bb.include(p);
 	}
 	return bb;
@@ -470,7 +468,7 @@ chem.SGroup.GroupMul = {
 				if (this.patoms[m] < 0) {
 					throw new Error("parent atom missing");
 				}
-				mol.atoms.get(raid).pos.y -= 3*k; // for debugging purposes
+//				mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
 				atomReductionMap[raid] = this.patoms[m]; // "merge" atom in parent
 			}
 		}
@@ -682,11 +680,7 @@ chem.SGroup.getMassCentre = function (remol, atoms) {
 chem.SGroup.setPos = function (remol, sg, pos) {
 	var render = remol.render;
 	var settings = render.settings;
-	sg.pa = pos.scaled(1.0 / settings.scaleFactor);
-	var atoms = chem.SGroup.getAtoms(remol.molecule, sg);
-	var c = chem.SGroup.getMassCentre(remol, atoms);
-	sg.pr = sg.pa.sub(c.scaled(1.0 / settings.scaleFactor));
-	sg.p = (sg.data.absolute ? sg.pa : sg.pr).yComplement(0);
+	sg.pp = pos.scaled(1.0 / settings.scaleFactor);
 };
 
 chem.SGroup.GroupDat = {
@@ -711,14 +705,13 @@ chem.SGroup.GroupDat = {
         chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
         chem.SGroup.bracketPos(this, remol, xBonds);
         this.areas = [this.bracketBox];
-		if (this.p == null) {
+		if (this.pp == null) {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
-
+//                debugger;
+                this.ps = this.pp.scaled(settings.scaleFactor);
 		if (!absolute) { // relative position
-			this.ps = this.pr.scaled(settings.scaleFactor).add(chem.SGroup.getMassCentre(remol, atoms));
-		} else { // absolute position
-			this.ps = this.pa.scaled(settings.scaleFactor);
+			this.ps = this.ps.add(chem.SGroup.getMassCentre(remol, atoms));
 		}
 
 		if (this.data.attached) {
@@ -756,7 +749,7 @@ chem.SGroup.GroupDat = {
 		var idstr = util.stringPadded(sgMap[this.id], 3);
 
 		var data = this.data;
-		var p = this.p;
+		var pp = this.pp;
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +
@@ -767,7 +760,7 @@ chem.SGroup.GroupDat = {
 		util.stringPadded(data.queryOp, 3);
 		lines.push(sdtLine);
 		var sddLine = 'M  SDD ' + idstr +
-		' ' + util.paddedFloat(p.x, 10, 4) + util.paddedFloat(p.y, 10, 4) +
+		' ' + util.paddedFloat(pp.x, 10, 4) + util.paddedFloat(-pp.y, 10, 4) +
 		'    ' + // ' eee'
 		(data.attached ? 'A' : 'D') + // f
 		(data.absolute ? 'A' : 'R') + // g

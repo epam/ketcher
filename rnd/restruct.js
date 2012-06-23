@@ -7,7 +7,7 @@
  * the packaging of this file.
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOS  E.
  ***************************************************************************/
 
 // rnd.ReStruct constructor and utilities are defined here
@@ -476,7 +476,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.sgroups.each(function(sid, sgroup){
             this.clearVisel(sgroup.visel);
             sgroup.highlighting = null;
-            sgroup.selectionPlate = null;                
+            sgroup.selectionPlate = null;
 	}, this);
 	for (var i = 0; i < this.tmpVisels.length; ++i)
 		this.clearVisel(this.tmpVisels[i]);
@@ -772,7 +772,6 @@ rnd.ReStruct.prototype.findLoops = function ()
 
 rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
-	this.molecule.coordProject();
 	var bb = this.molecule.getCoordBoundingBox();
         if (norescale) {
             scale = 1;
@@ -788,7 +787,6 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
         }
 	if (this.molecule.isChiral)
 		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
-	this.molecule.coordShiftFlipScale(bb.min, scale, bb.max.y - bb.min.y);
 };
 
 rnd.ReStruct.prototype.scaleCoordinates = function()

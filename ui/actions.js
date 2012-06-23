@@ -67,6 +67,38 @@ ui.Action.fromSelectedAtomsPos = function(selection)
     return action;
 };
 
+ui.Action.fromSelectedAtomsMove = function(selection, d)
+{
+    selection = selection || ui.selection;
+
+    var action = new ui.Action();
+
+    selection.atoms.each(function(id) {
+        action.addOp(new ui.Action.OpAtomMove(id, d));
+    }, this);
+
+    return action;
+};
+
+ui.Action.fromMultipleMove = function (lists, d)
+{
+    d = new util.Vec2(d);
+
+    var action = new ui.Action();
+    var i;
+    lists.atoms = lists.atoms || [];
+    for (i = 0; i < lists.atoms.length; ++i)
+        action.addOp(new ui.Action.OpAtomMove(lists.atoms[i], d));
+
+    for (i = 0; i < lists.rxnArrows.length; ++i)
+        action.addOp(new ui.Action.OpRxnArrowMove(lists.rxnArrows[i], d));
+
+    for (i = 0; i < lists.rxnPluses.length; ++i)
+        action.addOp(new ui.Action.OpRxnPlusMove(lists.rxnPluses[i], d));
+
+    return action.perform();
+};
+
 ui.Action.fromAtomAttrs = function (id, attrs)
 {
     var action = new ui.Action();
@@ -1090,9 +1122,6 @@ ui.Action.OpAtomPos = function(aid, pos) {
         this.data.pos = oldPos;
         editor.render.invalidateAtom(this.data.aid);
     };
-    this._isDummy = function(editor) {
-        return false;
-    };
     this._invert = function() {
         var ret = new ui.Action.OpAtomPos();
         ret.data = this.data;
@@ -1100,6 +1129,21 @@ ui.Action.OpAtomPos = function(aid, pos) {
     };
 };
 ui.Action.OpAtomPos.prototype = new ui.Action.OpBase();
+
+ui.Action.OpAtomMove = function(aid, d) {
+    this.data = {aid : aid, d : d};
+    this._execute = function(editor) {
+        ui.ctab.atoms.get(this.data.aid).pp.add_(this.data.d);
+        this.data.d = this.data.d.negated();
+        editor.render.invalidateAtom(this.data.aid, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpAtomMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpAtomMove.prototype = new ui.Action.OpBase();
 
 ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
     this.type = 'OpSGroupAtomAdd';
@@ -1439,6 +1483,21 @@ ui.Action.OpRxnArrowDelete = function(arid) {
 };
 ui.Action.OpRxnArrowDelete.prototype = new ui.Action.OpBase();
 
+ui.Action.OpRxnArrowMove = function(id, d) {
+    this.data = {id : id, d : d};
+    this._execute = function(editor) {
+        ui.ctab.rxnArrows.get(this.data.id).pp.add_(this.data.d);
+        this.data.d = this.data.d.negated();
+        editor.render.invalidateItem('rxnArrows', this.data.id, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnArrowMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpRxnArrowMove.prototype = new ui.Action.OpBase();
+
 ui.Action.OpRxnPlusAdd = function(pos) {
     this.data = { plid : null, pos : pos };
     this._execute = function(editor) {
@@ -1479,6 +1538,21 @@ ui.Action.OpRxnPlusDelete = function(plid) {
 };
 ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();
 
+ui.Action.OpRxnPlusMove = function(id, d) {
+    this.data = {id : id, d : d};
+    this._execute = function(editor) {
+        ui.ctab.rxnPluses.get(this.data.id).pp.add_(this.data.d);
+        this.data.d = this.data.d.negated();
+        editor.render.invalidateItem('rxnPluses', this.data.id, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpRxnPlusMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpRxnPlusMove.prototype = new ui.Action.OpBase();
+
 ui.Action.OpCanvasLoad = function(ctab) {
     this.data = {ctab : ctab, norescale : false};
     this._execute = function(editor) {
@@ -1490,7 +1564,7 @@ ui.Action.OpCanvasLoad = function(ctab) {
         this.data.ctab = oldCtab;
         R.setMolecule(ui.ctab, this.data.norescale);
     };
-    
+
     this._invert = function() {
         var ret = new ui.Action.OpCanvasLoad();
         ret.data = this.data;

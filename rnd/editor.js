@@ -261,7 +261,6 @@ rnd.Editor.EditorTool.HoverHelper.prototype.hover = function(ci) {
     }
 };
 
-
 rnd.Editor.LassoTool = function(editor, mode, fragment) {
     this.editor = editor;
 
@@ -292,8 +291,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
         }
         this.dragCtx = {
             item : ci,
-            xy0 : this.editor.ui.page2obj(event),
-            action : this.editor.ui.Action.fromSelectedAtomsPos(this.editor._selectionHelper.selection)
+            xy0 : this.editor.ui.page2obj(event)
         };
         if (ci.map == 'atoms') {
             var self = this;
@@ -319,10 +317,11 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
         if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
         // moving selected objects
-        this.editor.render._multipleMoveRel(
+        if (this.dragCtx.action)
+            this.dragCtx.action.perform();
+        this.dragCtx.action = ui.Action.fromMultipleMove(
             this.editor._selectionHelper.selection,
-            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0)
-        );
+            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
         // finding & highlighting object to stick to
         if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
             // TODO add bond-to-bond fusing
@@ -330,8 +329,6 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
             this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
         }
         this.editor.render.update();
-
-        this.dragCtx.xy0 = this.editor.ui.page2obj(event);
     } else if (this._lassoHelper.running()) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {

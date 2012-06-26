@@ -54,19 +54,6 @@ ui.Action.prototype.isDummy = function ()
     }, this) == null;
 };
 
-ui.Action.fromSelectedAtomsPos = function(selection)
-{
-    selection = selection || ui.selection;
-
-    var action = new ui.Action();
-
-    selection.atoms.each(function(id) {
-        action.addOp(new ui.Action.OpAtomPos(id, ui.render.atomGetPos(id)));
-    }, this);
-
-    return action;
-};
-
 ui.Action.fromSelectedAtomsMove = function(selection, d)
 {
     selection = selection || ui.selection;
@@ -1113,22 +1100,6 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
     };
 };
 ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
-
-ui.Action.OpAtomPos = function(aid, pos) {
-    this.data = { aid : aid, pos : pos};
-    this._execute = function(editor) {
-        var oldPos = ui.render.atomGetPos(this.data.aid);
-        ui.render.atomMove(this.data.aid, this.data.pos);
-        this.data.pos = oldPos;
-        editor.render.invalidateAtom(this.data.aid);
-    };
-    this._invert = function() {
-        var ret = new ui.Action.OpAtomPos();
-        ret.data = this.data;
-        return ret;
-    };
-};
-ui.Action.OpAtomPos.prototype = new ui.Action.OpBase();
 
 ui.Action.OpAtomMove = function(aid, d) {
     this.data = {aid : aid, d : d};

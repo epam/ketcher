@@ -920,19 +920,16 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseDown = function(event) {
         this._hoverHelper.hover(null);
         this.editor._selectionHelper.setSelection(ci);
         this.dragCtx = {
-            action : this.editor.ui.Action.fromSelectedRxnArrowPos(),
             xy0 : this.editor.ui.page2obj(event)
         };
     }
 };
 rnd.Editor.ReactionArrowTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
-        this.editor.render._multipleMoveRel(
-            this.editor._selectionHelper.selection,
-            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0)
-        );
+        if (this.dragCtx.action)
+            this.dragCtx.action.perform();
+        this.dragCtx.action = fromMultipleMove(this.editor._selectionHelper.selection, this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
         this.editor.ui.render.update();
-        this.dragCtx.xy0 = this.editor.ui.page2obj(event);
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnArrows']));
     }
@@ -961,19 +958,16 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseDown = function(event) {
         this._hoverHelper.hover(null);
         this.editor._selectionHelper.setSelection(ci);
         this.dragCtx = {
-            action : this.editor.ui.Action.fromSelectedRxnPlusPos(),
             xy0 : this.editor.ui.page2obj(event)
         };
     }
 };
 rnd.Editor.ReactionPlusTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
-        this.editor.render._multipleMoveRel(
-            this.editor._selectionHelper.selection,
-            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0)
-        );
+        if (this.dragCtx.action)
+            this.dragCtx.action.perform();
+        this.dragCtx.action = fromMultipleMove(this.editor._selectionHelper.selection, this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
         this.editor.ui.render.update();
-        this.dragCtx.xy0 = this.editor.ui.page2obj(event);
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnPluses']));
     }

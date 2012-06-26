@@ -487,17 +487,6 @@ rnd.Render.prototype.highlightObject = function(obj, visible) {
     return true;
 };
 
-rnd.Render.prototype._itemMove = function (map, id, pos)
-{
-	this.ctab.molecule._itemSetPos(map, id, new util.Vec2(pos));
-	this.invalidateItem(map, id, 1);
-};
-
-rnd.Render.prototype._itemMoveRel = function (map, id, d)
-{
-	this._itemMove(map, id, this.itemGetPos(map, id).add(d));
-};
-
 rnd.Render.prototype._atomMove = function (id, pos)
 {
 	rnd.logMethod("_atomMove");
@@ -556,52 +545,6 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 		}
 	}
 	return {'inner': bidSetInner, 'cross': bidSetCross};
-};
-
-rnd.Render.prototype.atomsMultipleMoveRel = function (atoms, d)
-{
-	var atomSet = util.Set.fromList(atoms);
-	var hbs = this.ctab.molecule.halfBonds;
-	for (var i = 0; i < atoms.length; ++i) {
-		 var aid = atoms[i];
-		 var atom = this.ctab.atoms.get(aid);
-		 var bordering = false;
-		 for (var j = 0; j < atom.a.neighbors.length; ++j) {
-			  var hbid = atom.a.neighbors[j];
-			  if (!hbs.has(hbid) || !util.Set.contains(atomSet, hbs.get(hbid).end)) {
-				   bordering = true;
-			  }
-		 }
-		 if (!bordering)
-			  this.itemMoveRel('atoms', aid, d);
-		 else
-			  this.atomMove(aid, this.ctab.atoms.get(aid).a.pp.add(d));
-	 }
-};
-
-rnd.Render.prototype.itemMoveRel = function (map, id, d) {
-	this.invalidateItem(map, id, 1);
-	this.ctab.molecule._itemSetPos(map, id,
-		this.itemGetPos(map, id).add(d), this.settings.scaleFactor);
-};
-
-rnd.Render.prototype._multipleMoveRel = function (lists, d)
-{
-	rnd.logMethod("_multipleMoveRel");
-	d = new util.Vec2(d.x, d.y);
-
-	if (lists.atoms.length > 0) {
-		this.atomsMultipleMoveRel(lists.atoms, d);
-	}
-
-	for (var map in {'rxnArrows':0, 'rxnPluses':0}) {
-		var list = lists[map];
-		if (list) {
-			for (var k = 0; k < list.length; ++k) {
-				this.itemMoveRel(map, list[k], d);
-			}
-		}
-	}
 };
 
 rnd.Render.prototype.bondGetAttr = function (bid, name)

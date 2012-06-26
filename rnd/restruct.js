@@ -84,15 +84,17 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 rnd.ReAtom.prototype = new rnd.ReObject();
 
 rnd.ReAtom.prototype.drawHighlight = function(render) {
+    var ps = render.ps(this.a.pp);
     var ret = render.paper.circle(
-        this.a.ps.x, this.a.ps.y, render.styles.atomSelectionPlateRadius
+        ps.x, ps.y, render.styles.atomSelectionPlateRadius
     ).attr(render.styles.highlightStyle);
     render.addItemPath(this.visel, 'highlighting', ret);
     return ret;
 };
 
 rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return paper.circle(this.a.ps.x, this.a.ps.y, styles.atomSelectionPlateRadius)
+    var ps = restruct.render.ps(this.a.pp);
+	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };
 
@@ -140,7 +142,6 @@ rnd.ReStruct = function (molecule, render, norescale)
 	this.initLayers();
 	this.chiral = {
 		p: null,
-		ps: null,
 		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
 	};
 
@@ -300,7 +301,7 @@ rnd.ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb
 	cc = cc || this.connectedComponents.get(ccid);
 	bb = bb || {'min':null, 'max':null};
 	util.Set.each(cc, function(aid) {
-		var ps = this.atoms.get(aid).a.ps;
+		var ps = this.render.ps(this.atoms.get(aid).a.pp);
 		if (bb.min == null) {
 			bb.min = bb.max = ps;
 		} else {
@@ -523,30 +524,6 @@ rnd.ReStruct.prototype.update = function (force)
     this.drawFragments();
     this.drawRGroups();
 	this.drawChiralLabel();
-
-//	this.connectedComponents.each(function(ccid, cc){
-//		var min = null;
-//		var max = null;
-//		util.Set.each(cc, function(aid){
-//			var p = this.atoms.get(aid).a.ps;
-//			if (min == null) {
-//				min = max = p;
-//			} else {
-//				min = min.min(p);
-//				max = max.max(p);
-//			}
-//		}, this);
-//		if (max == null || min == null)
-//			return;
-//		var sz = max.sub(min);
-//		var path = this.render.paper.rect(min.x, min.y, sz.x, sz.y)
-//		.attr({
-//			'fill':'#999',
-//			'stroke':null
-//		});
-//		this.addTmpPath('background', path);
-//	}, this);
-
 	return true;
 };
 
@@ -566,7 +543,7 @@ rnd.ReStruct.prototype.drawReactionSymbols = function ()
 
 rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
-	var centre = item.item.ps;
+	var centre = this.render.ps(item.item.pp);
 	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	var offset = this.render.offset;
@@ -578,7 +555,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 
 rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
-	var centre = item.item.ps;
+	var centre = this.render.ps(item.item.pp);
 	var path = this.drawPlus(centre);
 	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
 	var offset = this.render.offset;
@@ -622,11 +599,8 @@ rnd.ReStruct.prototype.drawChiralLabel = function ()
 	var paper = render.paper;
 	var settings = render.settings;
 	if (this.chiral.p != null) {
-		if (this.chiral.ps == null) {
-			this.chiral.ps = this.chiral.p.scaled(settings.scaleFactor);
-		}
-
-		this.chiral.path = paper.text(this.chiral.ps.x, this.chiral.ps.y, "Chiral")
+                var ps = this.render.ps(this.chiral.p);
+		this.chiral.path = paper.text(ps.x, ps.y, "Chiral")
 		.attr({
 			'font' : settings.font,
 			'font-size' : settings.fontsz,
@@ -791,11 +765,12 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
 
 rnd.ReStruct.prototype.scaleCoordinates = function()
 {
-	var settings = this.render.settings;
+    var render = this.render;
+	var settings = render.settings;
 	var scale = function (item) {
-		item.ps = item.pp.scaled(settings.scaleFactor);
+		item.ps = render.ps(item.pp);
 	};
-    var id;
+        var id;
 	for (id in this.atomsChanged) {
 		scale(this.atoms.get(id).a);
 	}
@@ -953,7 +928,7 @@ rnd.ReRxnPlus.findClosest = function (render, p) {
 }
 
 rnd.ReRxnPlus.prototype.highlightPath = function(render) {
-    var p = this.item.ps;
+    var p = render.ps(this.item.pp);
     var s = render.settings.scaleFactor;
     return render.paper.rect(p.x - s/4, p.y - s/4, s/2, s/2, s/8);
 }
@@ -994,7 +969,7 @@ rnd.ReRxnArrow.findClosest = function(render, p) {
 };
 
 rnd.ReRxnArrow.prototype.highlightPath = function(render) {
-    var p = this.item.ps;
+    var p = render.ps(this.item.pp);
     var s = render.settings.scaleFactor;
     return render.paper.rect(p.x - s, p.y - s/4, 2*s, s/2, s/8);
 }
@@ -1284,8 +1259,9 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
     atoms.each(function (id)
     {
         var atom = render.ctab.atoms.get(id);
+        var ps = render.ps(atom.a.pp);
         atom.sGroupHighlighting = paper
-        .circle(atom.a.ps.x, atom.a.ps.y, 0.7 * styles.atomSelectionPlateRadius)
+        .circle(ps.x, ps.y, 0.7 * styles.atomSelectionPlateRadius)
         .attr(styles.sGroupHighlightStyle);
         set.push(atom.sGroupHighlighting);
         render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);

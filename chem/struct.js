@@ -282,7 +282,6 @@ chem.Struct.Atom = function (params)
 		this.pp = new util.Vec2(params.pp);
 	else
 		this.pp = new util.Vec2();
-	this.ps = new util.Vec2();
 
 	this.sgs = (params && params['sgs']) ? params['sgs'] : {};
 
@@ -583,11 +582,9 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 	this.sgroups.remove(sgid);
 };
 
-chem.Struct.itemSetPos = function (item, pp, scaleFactor)
+chem.Struct.itemSetPos = function (item, pp) // TODO: remove
 {
 	item.pp = pp;
-	if (scaleFactor)
-		item.ps = item.pp.scaled(scaleFactor);
 };
 
 chem.Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
@@ -731,7 +728,6 @@ chem.Struct.RxnPlus = function (params)
 {
 	params = params || {};
 	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
-	this.ps = new util.Vec2();
 };
 
 chem.Struct.RxnPlus.prototype.clone = function ()
@@ -743,7 +739,6 @@ chem.Struct.RxnArrow = function (params)
 {
 	params = params || {};
 	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
-	this.ps = new util.Vec2();
 };
 
 chem.Struct.RxnArrow.prototype.clone = function ()

@@ -817,10 +817,10 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
         // TODO: let sections follow in arbitrary order
         var sgroups = {};
         var atomMap = {};
-  
+
         while (ctabLines[shift].strip() != "M  V30 END CTAB") {
             if (ctabLines[shift].strip() == "M  V30 BEGIN COLLECTION") {
-                 // TODO: read collection information 
+                 // TODO: read collection information
                 shift = mf.v3000parseCollection(ctab, ctabLines, shift);
             } else if (ctabLines[shift].strip() == "M  V30 BEGIN SGROUP") {
                 shift = mf.v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift);
@@ -1560,7 +1560,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
         mol.mergeInto(ret);
         return bb.max.x - bb.min.x;
     };
- 
+
     for (j = 0; j < molReact.length; ++j) {
         xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
     }

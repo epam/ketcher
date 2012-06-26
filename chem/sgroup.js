@@ -672,7 +672,7 @@ chem.SGroup.GroupGen = {
 chem.SGroup.getMassCentre = function (remol, atoms) {
 	var c = new util.Vec2(); // mass centre
 	for (var i = 0; i < atoms.length; ++i) {
-		c = c.addScaled(remol.atoms.get(atoms[i]).a.ps, 1.0 / atoms.length);
+		c = c.addScaled(remol.render.ps(remol.atoms.get(atoms[i]).a.pp), 1.0 / atoms.length);
 	}
 	return c;
 };
@@ -709,40 +709,39 @@ chem.SGroup.GroupDat = {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
 //                debugger;
-                this.ps = this.pp.scaled(settings.scaleFactor);
+                var ps = this.pp.scaled(settings.scaleFactor);
 		if (!absolute) { // relative position
-			this.ps = this.ps.add(chem.SGroup.getMassCentre(remol, atoms));
+			ps.add_(chem.SGroup.getMassCentre(remol, atoms));
 		}
 
-		if (this.data.attached) {
-			this.selectionBoxes = [];
-			for (i = 0; i < atoms.length; ++i) {
-				var atom = remol.atoms.get(atoms[i]);
-				var p = new util.Vec2(atom.a.ps);
-				var bb = atom.visel.boundingBox;
-				if (bb != null) {
-					p.x = Math.max(p.x, bb.p1.x);
-				}
-				p.x += settings.lineWidth; // shift a bit to the right
-				var name_i = this.showValue(paper, p, this, settings);
-				var box_i = name_i.getBBox();
-				name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
-				set.push(name_i);
+        if (this.data.attached) {
+            this.selectionBoxes = [];
+            for (i = 0; i < atoms.length; ++i) {
+                var atom = remol.atoms.get(atoms[i]);
+                var p = render.ps(atom.a.pp);
+                var bb = atom.visel.boundingBox;
+                if (bb != null) {
+                    p.x = Math.max(p.x, bb.p1.x);
+                }
+                p.x += settings.lineWidth; // shift a bit to the right
+                var name_i = this.showValue(paper, p, this, settings);
+                var box_i = name_i.getBBox();
+                name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
+                set.push(name_i);
                 var sbox = util.Box2Abs.fromRelBox(name_i.getBBox());
-				this.selectionBoxes.push(sbox);
+                this.selectionBoxes.push(sbox);
                 this.areas.push(sbox.transform(render.scaled2obj, render));
-
-			}
-		} else {
-			var name = this.showValue(paper, this.ps, this, settings);
-			var box = name.getBBox();
-			name.translate(0.5 * box.width, -0.5 * box.height);
-			set.push(name);
+            }
+        } else {
+            var name = this.showValue(paper, ps, this, settings);
+            var box = name.getBBox();
+            name.translate(0.5 * box.width, -0.5 * box.height);
+            set.push(name);
             var sbox = util.Box2Abs.fromRelBox(name.getBBox());
-			this.selectionBoxes = [sbox];
+            this.selectionBoxes = [sbox];
             this.areas.push(sbox.transform(render.scaled2obj, render));
-		}
-		return set;
+        }
+        return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {

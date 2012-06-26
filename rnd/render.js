@@ -873,6 +873,10 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 	return (counter % 2) != 0;
 };
 
+rnd.Render.prototype.ps = function (pp) {
+    return pp.scaled(this.settings.scaleFactor);
+}
+
 rnd.Render.prototype.getElementsInPolygon = function (rr) {
 	rnd.logMethod("getElementsInPolygon");
 	var bondList = new Array();
@@ -882,7 +886,7 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 		r[i] = new util.Vec2(rr[i].x, rr[i].y);
 	}
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.ps, 0.5,
+		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);

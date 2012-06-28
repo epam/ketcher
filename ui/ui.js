@@ -457,7 +457,7 @@ ui.parseCTFile = function (molfile, check_empty_line)
         try {
             return chem.Molfile.parseCTFile(lines);
         } catch (ex) {
-            if (check_empty_line) { 
+            if (check_empty_line) {
                 try {
                 // check whether there's an extra empty line on top
                 // this often happens when molfile text is pasted into the dialog window
@@ -2067,11 +2067,11 @@ ui.copy = function ()
         // TODO: "clipboard" support to be moved to editor module
         getAnchorPosition: function() {
             if (this.atoms.length) {
-                return this.atoms[0].pos;
+                return this.atoms[0].pp;
             } else if (this.rxnArrows.length) {
-                return this.rxnArrows[0].pos;
+                return this.rxnArrows[0].pp;
             } else if (this.rxnPluses.length) {
-                return this.rxnPluses[0].pos;
+                return this.rxnPluses[0].pp;
             }
         }
     };
@@ -2151,6 +2151,25 @@ ui.copy = function ()
         ui.clipboard.rxnPluses.push(plus);
     });
 
+    // r-groups
+    var atomFragments = {};
+    var fragments = util.Set.empty();
+    ui.selection.atoms.each(function (id) {
+        var atom = ui.ctab.atoms.get(id);
+        var frag = atom.fragment;
+        atomFragments[id] = frag;
+        util.Set.add(fragments, frag);
+    });
+
+    ui.clipboard.rgmap = {};
+    util.Set.each(fragments, function(frid){
+        var atoms = chem.Struct.Fragment.getAtoms(ui.ctab, frid);
+        for (var i = 0; i < atoms.length; ++i)
+            if (!util.Set.contains(atomFragments, atoms[i]))
+                return;
+        var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
+        ui.clipboard.rgmap[frid] = rgid;
+    }, this);
 };
 
 ui.onClick_Cut = function ()

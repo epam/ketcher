@@ -808,6 +808,15 @@ chem.Struct.Fragment.prototype.clone = function() {
     return Object.clone(this);
 };
 
+chem.Struct.Fragment.getAtoms = function (struct, frid) {
+    var atoms = [];
+    struct.atoms.each(function(aid, atom) {
+        if (atom.fragment == frid)
+            atoms.push(aid);
+    }, this);
+    return atoms;
+}
+
 chem.Struct.RGroup = function(logic) {
     logic = logic || {};
     this.frags = new util.Pool();

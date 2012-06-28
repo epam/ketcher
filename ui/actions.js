@@ -922,8 +922,14 @@ ui.Action.fromPaste = function(objects, offset) {
             fmap[atom.fragment] = action.addOp(new ui.Action.OpFragmentAdd().perform(ui.editor)).frid;
         }
         atom.fragment = fmap[atom.fragment];
-        amap[aid] = action.addOp(new ui.Action.OpAtomAdd(atom, atom.pos.add(offset)).perform(ui.editor)).data.aid;
+        amap[aid] = action.addOp(new ui.Action.OpAtomAdd(atom, atom.pp.add(offset)).perform(ui.editor)).data.aid;
     }
+
+    // assign fragments to r-groups
+    for (var frid in ui.clipboard.rgmap) {
+        action.addOp(new ui.Action.OpRGroupFragment(ui.clipboard.rgmap[frid], fmap[frid]).perform(ui.editor));
+    }
+
     //bonds
     for (var bid = 0; bid < objects.bonds.length; bid++) {
         var bond = Object.clone(objects.bonds[bid]);
@@ -946,12 +952,12 @@ ui.Action.fromPaste = function(objects, offset) {
     //reaction arrows
     if (ui.editor.render.ctab.rxnArrows.count() < 1) {
         for (var raid = 0; raid < objects.rxnArrows.length; raid++) {
-            action.addOp(new ui.Action.OpRxnArrowAdd(objects.rxnArrows[raid].pos.add(offset)).perform(ui.editor));
+            action.addOp(new ui.Action.OpRxnArrowAdd(objects.rxnArrows[raid].pp.add(offset)).perform(ui.editor));
         }
     }
     //reaction pluses
     for (var rpid = 0; rpid < objects.rxnPluses.length; rpid++) {
-        action.addOp(new ui.Action.OpRxnPlusAdd(objects.rxnPluses[rpid].pos.add(offset)).perform(ui.editor));
+        action.addOp(new ui.Action.OpRxnPlusAdd(objects.rxnPluses[rpid].pp.add(offset)).perform(ui.editor));
     }
     //thats all
     action.operations.reverse();

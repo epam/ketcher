@@ -151,6 +151,11 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
           responce += mol.molfile()
       except:
         responce += "Error.\n"
+        message = sys.exc_info()[1].value;
+        if message.startswith("molfile loader:") and message.endswith("queries"): # hack to avoid user confusion
+          responce += "Molecules and reactions containing query features cannot be aromatized or dearomatized.\n"
+        else:
+          responce += message+"\n";
         responce += '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
       self.wfile.write(responce)
       return

@@ -1079,7 +1079,7 @@ ui.dearomatizeMolecule = function (mol_string, aromatize)
                 if (res.responseText.startsWith('Ok.')) {
                     ui.updateMolecule(ui.parseCTFile(res.responseText));
                 } else if (res.responseText.startsWith('Error.')) {
-                    alert(res.responseText);
+                    alert(res.responseText.split('\n')[1]);
                 } else {
                     throw new Error('Something went wrong' + res.responseText);
                 }

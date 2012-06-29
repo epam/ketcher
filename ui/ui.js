@@ -1801,8 +1801,6 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     var onClickOk = function ()
     {
         ui.hideDialog('sgroup_properties');
-        resetListeners();
-
         var id = $('sgroup_properties').sgroup_id;
 
         var type = $('sgroup_type').value;
@@ -1841,6 +1839,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
             break;
         }
 
+        resetListeners();
         onOk.call(tool, id, type, attrs);
     };
 

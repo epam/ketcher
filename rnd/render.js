@@ -34,11 +34,6 @@ rnd.mouseEventNames = [
 /** @deprecated */
 rnd.entities = ['Atom', 'RxnArrow', 'RxnPlus', 'Bond', 'Canvas'];
 
-/** @deprecated */
-rnd.actions = [
-	'atomMove', // TODO: eliminate
-];
-
 rnd.logMethod = function () { };
 //rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
@@ -346,12 +341,6 @@ rnd.Render.prototype.setMolecule = function (ctab, norescale)
 	this.rxnMode = ctab.isReaction;
 };
 
-util.each(rnd.actions, function(action){
-	rnd.Render.prototype[action] = function () {
-		return this.processAction(action, util.array(arguments));
-	}
-});
-
 // molecule manipulation interface
 rnd.Render.prototype.atomGetAttr = function (aid, name)
 {
@@ -492,25 +481,6 @@ rnd.Render.prototype.highlightObject = function(obj, visible) {
         return false;
     }
     return true;
-};
-
-rnd.Render.prototype._atomMove = function (id, pos)
-{
-	rnd.logMethod("_atomMove");
-	var atom = this.ctab.atoms.get(id);
-	var hbs = this.ctab.molecule.halfBonds;
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hbid = atom.a.neighbors[i];
-		if (hbs.has(hbid)) {
-			var hb = hbs.get(hbid);
-			this.invalidateAtom(hb.end, 1);
-			if (hb.loop >= 0) {
-				this.ctab.loopRemove(hb.loop);
-			}
-		}
-	}
-	this.invalidateAtom(id, 1);
-	this.ctab.molecule._itemSetPos('atoms', id, new util.Vec2(pos));
 };
 
 rnd.Render.prototype.itemGetPos = function (map, id)

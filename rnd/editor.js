@@ -506,18 +506,14 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
         var newAtomPos = this._calcNewAtomPos(
             _R_.atomGetPos(_DC_.item.id), _E_.ui.page2obj(event)
         );
-        if ('aid2' in _DC_) {
-            _R_.atomMove(_DC_.aid2, newAtomPos);
-        } else {
-            if ('action' in _DC_) {
-                _DC_.action.perform();
-            }
-            var action_ret = _E_.ui.Action.fromBondAddition(
-                this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
-            );
-            _DC_.action = action_ret[0];
-            _DC_.aid2 = action_ret[2];
+        if ('action' in _DC_) {
+            _DC_.action.perform();
         }
+        var action_ret = _E_.ui.Action.fromBondAddition(
+            this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
+        );
+        _DC_.action = action_ret[0];
+        _DC_.aid2 = action_ret[2];
         _R_.update();
     } else {
         this._hoverHelper.hover(_R_.findItem(event, ['atoms']));

@@ -178,6 +178,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             var bindEventName = eventName.toLowerCase();
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
+                var co = clientArea.cumulativeOffset();
+                co = new util.Vec2(co[0], co[1]);
+                var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
+                var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
+                if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) // ignore events on the hidden part of the canvas
+                    return util.preventDefault(event);
+
                 var ntHandled = ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
                 var name = '_onCanvas' + eventName;
 				if (!(ui.render.current_tool) && (!('touches' in event) || event.touches.length == 1) && render[name])

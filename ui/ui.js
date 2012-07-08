@@ -1008,6 +1008,7 @@ ui.onClick_OpenFile = function ()
         return;
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
+    $('radio_open_reset').checked = true;
     ui.onSelect_OpenFromInput();
 };
 
@@ -1023,9 +1024,13 @@ ui.getFile = function ()
     return Base64.decode(frame_body.title);
 };
 
-ui.loadMolecule = function (mol_string, force_layout, check_empty_line)
+ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
 {
     var smiles = mol_string.strip();
+    var updateFunc = paste ? function (struct) {
+        ui.copy(struct);
+        ui.updateSelection();
+    } : ui.updateMolecule;
 
     if (smiles.indexOf('\n') == -1)
     {
@@ -1044,7 +1049,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseCTFile(res.responseText));
+                    updateFunc.call(ui, ui.parseCTFile(res.responseText));
             }
         });
     } else if (!ui.standalone && force_layout)
@@ -1057,11 +1062,11 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.'))
-                    ui.updateMolecule(ui.parseCTFile(res.responseText));
+                    updateFunc.call(ui, ui.parseCTFile(res.responseText));
             }
         });
     } else {
-        ui.updateMolecule(ui.parseCTFile(mol_string, check_empty_line));
+        updateFunc.call(ui, ui.parseCTFile(mol_string, check_empty_line));
     }
 };
 
@@ -1095,13 +1100,13 @@ ui.loadMoleculeFromFile = function ()
 {
     var file = ui.getFile();
     if (file.startsWith('Ok.'))
-        ui.loadMolecule(file.substr(file.indexOf('\n') + 1));
+        ui.loadMolecule(file.substr(file.indexOf('\n') + 1), false, false, $('radio_open_copy').checked);
 };
 
 ui.loadMoleculeFromInput = function ()
 {
     ui.hideDialog('open_file');
-    ui.loadMolecule($('input_mol').value, false, true);
+    ui.loadMolecule($('input_mol').value, false, true, $('radio_open_copy').checked);
 };
 
 ui.onSelect_OpenFromInput = function ()
@@ -2053,8 +2058,12 @@ ui.updateClipboardButtons = function ()
     }
 };
 
-ui.copy = function ()
+ui.copy = function (struct, selection)
 {
+    if (!struct) {
+        struct = ui.ctab;
+        selection = ui.selection;
+    }
     ui.clipboard =
     {
         atoms: new Array(),
@@ -2066,7 +2075,7 @@ ui.copy = function ()
         // TODO: "clipboard" support to be moved to editor module
         getAnchorPosition: function() {
             if (this.atoms.length) {
-                return this.atoms[0].pp;
+                return this.atoms[0].pp; // TODO: check
             } else if (this.rxnArrows.length) {
                 return this.rxnArrows[0].pp;
             } else if (this.rxnPluses.length) {
@@ -2075,33 +2084,41 @@ ui.copy = function ()
         }
     };
 
+    ui.structToClipboard(ui.clipboard, struct, selection);
+};
+
+ui.structToClipboard = function (clipboard, struct, selection)
+    {
+    selection = selection || {
+        atoms: struct.atoms.keys(),
+        bonds: struct.bonds.keys(),
+        rxnArrows: struct.rxnArrows.keys(),
+        rxnPluses: struct.rxnPluses.keys()
+    };
+
     var mapping = {};
 
-    ui.selection.atoms.each(function (id)
+    selection.atoms.each(function (id)
     {
-        var new_atom = new chem.Struct.Atom(ui.ctab.atoms.get(id));
-        new_atom.pos = ui.render.atomGetPos(id);
-
-        if (new_atom.sgroup != -1) // TODO: fix, the sgroup attribute is obsolete
-            new_atom.sgroup = -1;
-
-        mapping[id] = ui.clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
+        var new_atom = new chem.Struct.Atom(struct.atoms.get(id));
+        new_atom.pos = new_atom.pp;
+        mapping[id] = clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
     });
 
-    ui.selection.bonds.each(function (id)
+    selection.bonds.each(function (id)
     {
-        var new_bond = new chem.Struct.Bond(ui.ctab.bonds.get(id));
+        var new_bond = new chem.Struct.Bond(struct.bonds.get(id));
         new_bond.begin = mapping[new_bond.begin];
         new_bond.end = mapping[new_bond.end];
-        ui.clipboard.bonds.push(new chem.Struct.Bond(new_bond));
+        clipboard.bonds.push(new chem.Struct.Bond(new_bond));
     });
 
     var sgroup_counts = new Hash();
 
     // determine selected sgroups
-    ui.selection.atoms.each(function (id)
+    selection.atoms.each(function (id)
     {
-        var sg = ui.render.atomGetSGroups(id);
+        var sg = util.Set.list(struct.atoms.get(id).sgs);
 
         sg.each(function (sid)
         {
@@ -2118,13 +2135,15 @@ ui.copy = function ()
     {
         var sid = parseInt(sg.key);
 
-        if (sg.value == ui.render.sGroupGetAtoms(sid).length)
+        var sgroup = struct.sgroups.get(sid);
+        var sgAtoms = chem.SGroup.getAtoms(struct, sgroup);
+        if (sg.value == sgAtoms.length)
         {
             var sgroup_info =
             {
-                type: ui.render.sGroupGetType(sid),
-                attrs: ui.render.sGroupGetAttrs(sid),
-                atoms: util.array(ui.render.sGroupGetAtoms(sid))
+                type: sgroup.type,
+                attrs: sgroup.getAttrs(),
+                atoms: util.array(sgAtoms)
             };
 
             for (var i = 0; i < sgroup_info.atoms.length; i++)
@@ -2132,42 +2151,42 @@ ui.copy = function ()
                 sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
             }
 
-            ui.clipboard.sgroups.push(sgroup_info);
+            clipboard.sgroups.push(sgroup_info);
         }
     });
 
-    ui.selection.rxnArrows.each(function (id)
+    selection.rxnArrows.each(function (id)
     {
-        var arrow = new chem.Struct.RxnArrow(ui.ctab.rxnArrows.get(id));
-        arrow.pos = ui.render.rxnArrowGetPos(id);
-        ui.clipboard.rxnArrows.push(arrow);
+        var arrow = new chem.Struct.RxnArrow(struct.rxnArrows.get(id));
+        arrow.pos = arrow.pp;
+        clipboard.rxnArrows.push(arrow);
     });
 
-    ui.selection.rxnPluses.each(function (id)
+    selection.rxnPluses.each(function (id)
     {
-        var plus = new chem.Struct.RxnPlus(ui.ctab.rxnPluses.get(id));
-        plus.pos = ui.render.rxnPlusGetPos(id);
-        ui.clipboard.rxnPluses.push(plus);
+        var plus = new chem.Struct.RxnPlus(struct.rxnPluses.get(id));
+        plus.pos = plus.pp;
+        clipboard.rxnPluses.push(plus);
     });
 
     // r-groups
     var atomFragments = {};
     var fragments = util.Set.empty();
-    ui.selection.atoms.each(function (id) {
-        var atom = ui.ctab.atoms.get(id);
+    selection.atoms.each(function (id) {
+        var atom = struct.atoms.get(id);
         var frag = atom.fragment;
         atomFragments[id] = frag;
         util.Set.add(fragments, frag);
     });
 
-    ui.clipboard.rgmap = {};
+    clipboard.rgmap = {};
     util.Set.each(fragments, function(frid){
-        var atoms = chem.Struct.Fragment.getAtoms(ui.ctab, frid);
+        var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
         for (var i = 0; i < atoms.length; ++i)
             if (!util.Set.contains(atomFragments, atoms[i]))
                 return;
         var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
-        ui.clipboard.rgmap[frid] = rgid;
+        clipboard.rgmap[frid] = rgid;
     }, this);
 };
 

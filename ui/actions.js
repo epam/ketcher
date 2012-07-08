@@ -855,13 +855,20 @@ ui.Action.fromSgroupDeletion = function (id)
         }, this);
     }
 
-    var atoms = chem.SGroup.getAtoms(DS, DS.sgroups.get(id));
+    var sg = DS.sgroups.get(id);
+    var atoms = chem.SGroup.getAtoms(DS, sg);
+    var attrs = sg.getAttrs();
     for (var i = 0; i < atoms.length; ++i) {
         action.addOp(new ui.Action.OpSGroupAtomRemove(id, atoms[i]));
     }
     action.addOp(new ui.Action.OpSGroupDelete(id));
 
-    return action.perform();
+    action = action.perform();
+
+    new Hash(attrs).each(function (attr) { // store the attribute assignment
+        action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
+    }, this);
+    return action;
 };
 
 ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
@@ -1189,7 +1196,8 @@ ui.Action.OpSGroupCreate = function(sgid, type) {
     this.data = {'sgid' : sgid, 'type' : type};
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
-        var sg = new chem.SGroup(type);
+        var sg = new chem.SGroup(this.data.type);
+        var sgid = this.data.sgid;
         DS.sgroups.set(sgid, sg);
         RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
         this.data.sgid = sgid;

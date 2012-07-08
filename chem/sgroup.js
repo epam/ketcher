@@ -388,9 +388,9 @@ chem.SGroup.GroupMul = {
 		var xBonds = [];
 
 		mol.bonds.each(function(bid, bond){
-			if (this.parentAtomSet[bond.begin] && this.parentAtomSet[bond.end])
+			if (util.Set.contains(this.parentAtomSet, bond.begin) && util.Set.contains(this.parentAtomSet, bond.end))
 				inBonds.push(bid);
-			else if (this.parentAtomSet[bond.begin] || this.parentAtomSet[bond.end])
+			else if (util.Set.contains(this.parentAtomSet, bond.begin) || util.Set.contains(this.parentAtomSet,bond.end))
 				xBonds.push(bid);
 		}, this);
 		if (xBonds.length != 0 && xBonds.length != 2)
@@ -401,13 +401,13 @@ chem.SGroup.GroupMul = {
 		var crossBond = null;
 		if (xBonds.length == 2) {
 			var bond1 = mol.bonds.get(xBonds[0]);
-			if (this.parentAtomSet[bond1.begin]) {
+			if (util.Set.contains(this.parentAtomSet, bond1.begin)) {
 				xAtom1 = bond1.begin;
 			} else {
 				xAtom1 = bond1.end;
 			}
 			var bond2 = mol.bonds.get(xBonds[1]);
-			if (this.parentAtomSet[bond2.begin]) {
+			if (util.Set.contains(this.parentAtomSet, bond2.begin)) {
 				xAtom2 = bond2.begin;
 			} else {
 				xAtom2 = bond2.end;

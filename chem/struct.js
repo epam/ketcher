@@ -283,7 +283,10 @@ chem.Struct.Atom = function (params)
 	else
 		this.pp = new util.Vec2();
 
-	this.sgs = (params && params['sgs']) ? params['sgs'] : {};
+        // sgs should only be set when an atom is added to an s-group by an appropriate method,
+        //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
+        // TODO: make a consistency check on atom/s-group assignments
+	this.sgs = {};
 
 	// query
 	util.ifDef(this, params, 'ringBondCount', 0);

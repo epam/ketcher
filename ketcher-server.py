@@ -12,6 +12,9 @@ import traceback
 port = 8080
 indigo = indigo.Indigo()
 
+if len(sys.argv) > 1:
+	port = int(sys.argv[1])
+
 class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def do_GET(self):
     if self.path.endswith("knocknock"):

@@ -251,6 +251,9 @@
                         Open File
                     </div>
                     <div style="height:0.5em"></div>
+                    <div class="serverRequired" style="font-size:small" align="right">
+                        <input type="checkbox" id="checkbox_open_copy" name="open_mode">Load to Clipboard</input>
+                    </div>
                     <div class="serverRequired" style="font-size:small">
                         <input type="radio" id="radio_open_from_input" name="input_source" checked>Input</input>
                         <input type="radio" id="radio_open_from_file" name="input_source">File</input>
@@ -266,10 +269,6 @@
                     </div>
                     <div style="margin:4px;" id="open_from_input">
                         <textarea class="chemicalText" id="input_mol" wrap="off"></textarea>
-                        <div class="serverRequired" style="font-size:small">
-                            <input type="radio" id="radio_open_reset" name="open_mode" checked="true">To Canvas</input>
-                            <input type="radio" id="radio_open_copy" name="open_mode">To Clipboard</input>
-                        </div>
                         <div style="margin-top:0.5em;text-align:center">
                             <input id="read_cancel" type="button" value="Cancel" />
                             <input id="read_ok" type="submit" value="OK" />

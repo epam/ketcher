@@ -1008,7 +1008,7 @@ ui.onClick_OpenFile = function ()
         return;
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
-    $('radio_open_reset').checked = true;
+    $('checkbox_open_copy').checked = false;
     ui.onSelect_OpenFromInput();
 };
 
@@ -1030,6 +1030,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
     var updateFunc = paste ? function (struct) {
         ui.copy(struct);
         ui.updateSelection();
+        ui.selectMode('paste');
     } : ui.updateMolecule;
 
     if (smiles.indexOf('\n') == -1)
@@ -1100,13 +1101,13 @@ ui.loadMoleculeFromFile = function ()
 {
     var file = ui.getFile();
     if (file.startsWith('Ok.'))
-        ui.loadMolecule(file.substr(file.indexOf('\n') + 1), false, false, $('radio_open_copy').checked);
+        ui.loadMolecule(file.substr(file.indexOf('\n') + 1), false, false, $('checkbox_open_copy').checked);
 };
 
 ui.loadMoleculeFromInput = function ()
 {
     ui.hideDialog('open_file');
-    ui.loadMolecule($('input_mol').value, false, true, $('radio_open_copy').checked);
+    ui.loadMolecule($('input_mol').value, false, true, $('checkbox_open_copy').checked);
 };
 
 ui.onSelect_OpenFromInput = function ()

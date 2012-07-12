@@ -251,12 +251,12 @@
                         Open File
                     </div>
                     <div style="height:0.5em"></div>
-                    <div class="serverRequired" style="font-size:small" align="right">
-                        <input type="checkbox" id="checkbox_open_copy" name="open_mode">Load to Clipboard</input>
-                    </div>
                     <div class="serverRequired" style="font-size:small">
                         <input type="radio" id="radio_open_from_input" name="input_source" checked>Input</input>
                         <input type="radio" id="radio_open_from_file" name="input_source">File</input>
+                    </div>
+                    <div class="serverRequired" style="font-size:small" align="left">
+                        <input type="checkbox" id="checkbox_open_copy" name="open_mode">Load as a fragment and copy to the Clipboard</input>
                     </div>
                     <div class="serverRequired" id="open_from_file">
                         <form id="upload_mol" style="margin-top:4px" action="open" enctype="multipart/form-data" target="buffer_frame" method="post">

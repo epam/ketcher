@@ -265,6 +265,14 @@ ketcher.setMolecule = function (mol_string)
     ui.loadMolecule(mol_string);
 };
 
+ketcher.addFragment = function (mol_string)
+{
+    if (!Object.isString(mol_string))
+        return;
+
+    ui.loadMolecule(mol_string, undefined, undefined, true);
+};
+
 ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicitHydrogen)
 {
 	return ketcher.showMolfileOpts(clientArea, molfileText, 75, {

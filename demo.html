@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <script type="text/javascript" src="prototype-min.js"></script>
+    <script type="text/javascript" src="ketcher.js"></script>
+    <script type="text/javascript">
+		function getKetcher()
+		{
+			var frame = null;
+			
+			if ('frames' in window && 'ketcherFrame' in window.frames)
+				frame = window.frames['ketcherFrame'];
+			else
+				return null;
+				
+			if ('window' in frame)
+				return frame.window.ketcher;
+		}
+		
+		function getSmiles()
+		{
+			var ketcher = getKetcher();
+			
+			if (ketcher)
+				$('textarea').value = ketcher.getSmiles();
+		}
+
+		function getMolfile()
+		{
+			var ketcher = getKetcher();
+			
+			if (ketcher)
+				$('textarea').value = ketcher.getMolfile();
+		}
+
+		var row = 1;
+		
+		function render()
+		{
+			var molfile = $('textarea').value;
+			
+			var smiles = molfile.strip();
+			
+			if (smiles == '' || smiles.indexOf('\n') == -1)
+			{
+				alert("Please, input Molfile");
+				return;
+			}
+			
+			var renderOpts = {
+				'autoScale':true,
+				'debug':true,
+				'autoScaleMargin':20,
+				'ignoreMouseEvents':true
+			};
+			
+			var newRow = new Element('tr');
+			
+			newRow.update('<td id="row' + row + '" style="width:100%;height:100px;padding:0px;"></td>');
+			$('table').insert(newRow);
+			
+			var ketcher = getKetcher();
+			
+			rowObject = $('row' + row);
+			//alert(rowObject['clientWidth']);
+			//rowObject.innerHTML = "asdasdf";
+			if (ketcher.showMolfileOpts(rowObject, molfile, 20, renderOpts))
+				row++;
+		}
+		
+		function loadStructure ()
+		{
+			var ketcher = getKetcher();
+			ketcher.setMolecule($('textarea').value);
+		}
+		
+		function loadFragment ()
+		{
+			var ketcher = getKetcher();
+			ketcher.addFragment($('textarea').value);
+		}
+		
+		function loadMol ()
+		{
+			initialMolecule = 
+			[
+				"",
+				"  Ketcher 02151213522D 1   1.00000     0.00000     0",
+				"",
+				"  6  6  0     0  0            999 V2000",
+				"   -1.1750    1.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"   -0.3090    1.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"   -0.3090    0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"   -1.1750   -0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"   -2.0410    0.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"   -2.0410    1.2500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0",
+				"  1  2  1  0     0  0",
+				"  2  3  2  0     0  0",
+				"  3  4  1  0     0  0",
+				"  4  5  2  0     0  0",
+				"  5  6  1  0     0  0",
+				"  6  1  2  0     0  0",
+				"M  END"
+			].join("\n");
+			var ketcher = getKetcher();
+			ketcher.setMolecule(initialMolecule);
+		}
+		
+	</script>
+    <title>Ketcher demo</title>
+</head>
+
+<body>
+    <div style="width:100%;height:100%;">
+		<div style="position:absolute;left:50%;width:800px;margin-left:-400px;padding:0px">
+			<h1>Ketcher example</h1>
+			<iframe onload="loadMol()" id="ketcherFrame" name="ketcherFrame" style="width:100%;height:530px;border-style:none" src="ketcher.html" scrolling="no"></iframe>
+			<div>
+				<h1>Ketcher interaction example</h1>
+				<textarea id="textarea" wrap="off" style="width:40%;height:300px;float:left;border-style:solid;border-width:thin;border-color:black;overflow:auto;"></textarea>
+				<div style="width:40%;height:300px;float:right;border-style:solid;border-width:thin;border-color:black;overflow:auto;">
+					<table id="table" style="width:100%">
+					</table>
+				</div>
+				<input type="button" style="margin:10px" value="Get SMILES" onclick="getSmiles()"></input><br/>
+				<input type="button" style="margin:10px" value="Get Molfile" onclick="getMolfile()"></input><br/>
+				<input type="button" style="margin:10px" value="Render Row" onclick="render()"></input>-><br/>
+				<input type="button" style="margin:10px" value="Load structure" onclick="loadStructure()"></input><br/>
+				<input type="button" style="margin:10px" value="Load fragment" onclick="loadFragment()"></input><br/>
+			</div>
+		</div>
+    </div>
+</body>
+</html>

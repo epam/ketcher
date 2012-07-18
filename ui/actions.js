@@ -1546,14 +1546,14 @@ ui.Action.OpCanvasLoad = function(ctab) {
         R.ctab.clearVisels();
         var oldCtab = ui.ctab;
         ui.ctab = this.data.ctab;
-        this.data.ctab = oldCtab;
         R.setMolecule(ui.ctab, this.data.norescale);
+        this.data.ctab = oldCtab;
+        this.data.norescale = true;
     };
 
     this._invert = function() {
         var ret = new ui.Action.OpCanvasLoad();
         ret.data = this.data;
-        ret.data.norescale = !ret.data.norescale;
         return ret;
     };
 };

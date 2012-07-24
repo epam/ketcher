@@ -428,10 +428,12 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
            throw new Error(atom.implicitH + " implicit H near stereocenter");
     }
 
-    if (hydro > 1 || hydro == 0)
-        this.smiles += 'H' + hydro;
-    else if (hydro == 1)
-        this.smiles += 'H';
+    if (atom.label != 'H') {
+        if (hydro > 1 || (hydro == 0 && !need_brackets))
+            this.smiles += 'H' + hydro;
+        else if (hydro == 1)
+            this.smiles += 'H';
+    }
 
     if (atom.charge > 1)
         this.smiles += '+' + atom.charge;

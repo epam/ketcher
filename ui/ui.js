@@ -184,6 +184,9 @@ ui.init = function ()
             mouseup  : 'touchend'
         };
         
+        // to enable copy to clipboard on iOS
+        $('output_mol').removeAttribute('readonly');
+        
         // rbalabanov: here is temporary fix for "drag issue" on iPad
         //BEGIN
         rnd.ReStruct.prototype.hiddenPaths = [];

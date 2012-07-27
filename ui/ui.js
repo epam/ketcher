@@ -41,6 +41,7 @@ ui.undoStack = new Array();
 ui.redoStack = new Array();
 
 ui.is_osx = false;
+ui.is_touch = false;
 ui.initialized = false;
 
 ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
@@ -144,6 +145,7 @@ ui.init = function ()
     }
 
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
+    this.is_touch = 'ontouchstart' in document;
 
     // IE specific styles
     if (Prototype.Browser.IE)
@@ -170,6 +172,31 @@ ui.init = function ()
         {
             button.title = button.title.replace("Ctrl", "Cmd");
         }, this);
+    }
+    
+    // Touch device stuff
+    if (ui.is_touch)
+    {
+        EventMap =
+        {
+            mousemove: 'touchmove',
+            mousedown: 'touchstart',
+            mouseup  : 'touchend'
+        };
+        
+        // rbalabanov: here is temporary fix for "drag issue" on iPad
+        //BEGIN
+        rnd.ReStruct.prototype.hiddenPaths = [];
+        
+        rnd.ReStruct.prototype.clearVisel = function (visel)
+        {
+            for (var i = 0; i < visel.paths.length; ++i) {
+                visel.paths[i].hide();
+                this.hiddenPaths.push(visel.paths[i]);
+            }
+            visel.clear();
+        };
+        //END
     }
 
     // Document events

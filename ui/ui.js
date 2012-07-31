@@ -1396,13 +1396,15 @@ ui.scrollPos = function ()
 ui.scrollLeft = null;
 ui.scrollTop = null;
 
-ui.onScroll_ClientArea = function ()
+ui.onScroll_ClientArea = function(event)
 {
     if ($('input_label').visible())
         $('input_label').hide();
 
     ui.scrollLeft = ui.client_area.scrollLeft;
     ui.scrollTop = ui.client_area.scrollTop;
+
+    util.stopEventPropagation(event);
 };
 
 //

@@ -1010,6 +1010,9 @@ ui.updateActionButtons = function ()
 
 ui.undo = function ()
 {
+    if (this.render.current_tool)
+        this.render.current_tool.OnCancel();
+
     ui.redoStack.push(ui.undoStack.pop().perform());
     ui.updateActionButtons();
     ui.updateSelection();
@@ -1017,6 +1020,9 @@ ui.undo = function ()
 
 ui.redo = function ()
 {
+    if (this.render.current_tool)
+        this.render.current_tool.OnCancel();
+
     ui.undoStack.push(ui.redoStack.pop().perform());
     ui.updateActionButtons();
     ui.updateSelection();

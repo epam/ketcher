@@ -373,6 +373,15 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
     }
     return true;
 };
+rnd.Editor.LassoTool.prototype.OnCancel = function() {
+    if ('dragCtx' in this) {
+        if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
+        this.editor.ui.addUndoAction(this.dragCtx.action, true);
+        this.editor.render.update();
+        delete this.dragCtx;
+    }
+    this.editor._selectionHelper.setSelection();
+};
 
 
 rnd.Editor.LassoTool.LassoHelper = function(mode, editor, fragment) {

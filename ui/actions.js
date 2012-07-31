@@ -146,6 +146,21 @@ ui.Action.fromAtomAddition = function (pos, atom)
     return action;
 };
 
+ui.Action.mergeFragments = function (action, frid, frid2) {
+    if (frid2 != frid && Object.isNumber(frid2)) {
+        var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
+        if (!Object.isUndefined(rgid)) {
+            action.mergeWith(ui.Action.fromRGroupFragment(null, frid2));
+        }
+        ui.render.ctab.molecule.atoms.each(function(aid, atom) {
+            if (atom.fragment == frid2) {
+                action.addOp(new ui.Action.OpAtomAttr(aid, 'fragment', frid).perform(ui.editor));
+            }
+        });
+        action.addOp(new ui.Action.OpFragmentDelete(frid2).perform(ui.editor));
+    }
+}
+
 ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 {
     var action = new ui.Action();
@@ -160,18 +175,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         frid = ui.render.atomGetAttr(begin, 'fragment');
         if (Object.isNumber(end)) {
             var frid2 = ui.render.atomGetAttr(end, 'fragment');
-            if (frid2 != frid && Object.isNumber(frid2)) {
-                var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
-                if (!Object.isUndefined(rgid)) {
-                    action.mergeWith(ui.Action.fromRGroupFragment(null, frid2));
-                }
-                ui.render.ctab.molecule.atoms.each(function(aid, atom) {
-                    if (atom.fragment == frid2) {
-                        action.addOp(new ui.Action.OpAtomAttr(aid, 'fragment', frid).perform(ui.editor));
-                    }
-                });
-                action.addOp(new ui.Action.OpFragmentDelete(frid2).perform(ui.editor));
-            }
+            ui.Action.mergeFragments(action, frid, frid2);
         }
     }
     if (frid == null) {
@@ -642,6 +646,8 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
         if (!ui.render.checkBondExists(id0, id1))
         {
             action.addOp(new ui.Action.OpBondAdd(id0, id1, {}).perform(ui.editor));
+            var frid2 = ui.render.atomGetAttr(id1, 'fragment');
+            ui.Action.mergeFragments(action, frid, frid2);
         }
         id0 = id1;
     }, this);

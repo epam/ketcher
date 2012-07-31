@@ -933,7 +933,10 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
         if (this.dragCtx.action)
             this.dragCtx.action.perform();
-        this.dragCtx.action = fromMultipleMove(this.editor._selectionHelper.selection, this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
+        this.dragCtx.action = ui.Action.fromMultipleMove(
+            this.editor._selectionHelper.selection,
+            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0)
+        );
         this.editor.ui.render.update();
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnArrows']));
@@ -971,7 +974,10 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
         if (this.dragCtx.action)
             this.dragCtx.action.perform();
-        this.dragCtx.action = fromMultipleMove(this.editor._selectionHelper.selection, this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
+        this.dragCtx.action = ui.Action.fromMultipleMove(
+            this.editor._selectionHelper.selection,
+            this.editor.ui.page2obj(event).sub(this.dragCtx.xy0)
+        );
         this.editor.ui.render.update();
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnPluses']));

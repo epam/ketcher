@@ -105,7 +105,12 @@ chem.Molfile.fmtInfo = {
 		'CHG':'charge',
 		'RAD':'radical',
 		'MASS':'isotope',
-		'VAL':'valence'
+		'VAL':'valence',
+        'HCOUNT':'hCount',
+        'INVRET':'invRet',
+        'SUBST':'substitutionCount',
+        'UNSAT':'unsaturatedAtom',
+        'RBCNT':'ringBondCount'
 	},
 	rxnItemsPartition: [3,3,3]
 };
@@ -704,7 +709,7 @@ chem.Molfile.v3000parseCollection = function (ctab, ctabLines, shift)
         shift++;
     shift++;
     return shift;
-}
+};
 
 chem.Molfile.v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 {
@@ -773,7 +778,7 @@ chem.Molfile.v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shi
         chem.SGroup.addGroup(ctab, sg, atomMap);
     }
     throw new Error("S-group declaration incomplete.");
-}
+};
 
 chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
 {
@@ -797,7 +802,7 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
             if (line == 'END ATOM')
                 break;
             while (line[line.length-1] == '-')
-                line = (line + mf.stripV30(ctabLines[shift++])).strip();
+                line = (line.substring(0, line.length - 1) + mf.stripV30(ctabLines[shift++])).strip();
             ctab.atoms.add(mf.parseAtomLineV3000(line));
         }
 
@@ -808,8 +813,8 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
                 line = mf.stripV30(ctabLines[shift++]).strip();
                 if (line == 'END BOND')
                     break;
-                while (line[line.length-1] == '-')
-                    line = (line + mf.stripV30(ctabLines[shift++])).strip();
+                while (line[line.length - 1] == '-')
+                    line = (line.substring(0, line.length - 1) + mf.stripV30(ctabLines[shift++])).strip();
                 ctab.bonds.add(mf.parseBondLineV3000(line));
             }
         }
@@ -891,7 +896,7 @@ chem.Molfile.readRGroups3000 = function (ctab, /* string */ ctabLines) /* chem.S
             rg.mergeInto(ctab);
         }
     }
-}
+};
 
 chem.Molfile.parseMol = function (/* string */ ctabLines) /* chem.Struct */
 {
@@ -999,7 +1004,7 @@ chem.MolfileSaver.prototype.getCTab = function (molecule, rgroups)
 	this.molfile = '';
     this.writeCTab2000(rgroups);
     return this.molfile;
-}
+};
 
 chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups)
 {
@@ -1442,7 +1447,7 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
     var assert = function (condition) {
         if (!condition)
             throw new Error("CTab format invalid");
-    }
+    };
 
     var findCtabEnd = function (i) {
         for (var j = i; j < ctabLines.length; ++j) {
@@ -1450,14 +1455,14 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
                 return j;
         }
         assert(false);
-    }
+    };
 
     var findRGroupEnd = function (i) {
         for (var j = i; j < ctabLines.length; ++j)
             if (ctabLines[j].strip() == "M  V30 END RGROUP")
                 return j;
         assert(false);
-    }
+    };
 
 	var molLinesReactants = [], molLinesProducts = [], current = null, rGroups = [];
 	for (var i = 0; i < ctabLines.length; ++i) {

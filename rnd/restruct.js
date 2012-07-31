@@ -763,6 +763,12 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
         this.atoms.each(function(raid, ratom){
             ratom.a.pp = ratom.a.pp.scaled(scale);
         }, this);
+        this.rxnPluses.each(function(rid, ritem){
+            ritem.item.pp = ritem.item.pp.scaled(scale);
+        }, this);
+        this.rxnArrows.each(function(rid, ritem){
+            ritem.item.pp = ritem.item.pp.scaled(scale);
+        }, this);
     }
 	if (this.molecule.isChiral)
 		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);

@@ -346,6 +346,7 @@ rnd.Editor.LassoTool.prototype.OnMouseUp = function(event) {
             var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
             if (ci.map == this.dragCtx.item.map) {
                 this._hoverHelper.hover(null);
+                this.editor._selectionHelper.setSelection();
                 this.dragCtx.action = this.dragCtx.action
                     ? this.editor.ui.Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action)
                     : this.editor.ui.Action.fromAtomMerge(this.dragCtx.item.id, ci.id);

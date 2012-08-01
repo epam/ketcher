@@ -519,9 +519,17 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
         if ('action' in _DC_) {
             _DC_.action.perform();
         }
+        // TODO [RB] kludge fix for KETCHER-560. need to review
+        //BEGIN
+        /*
         var action_ret = _E_.ui.Action.fromBondAddition(
             this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
         );
+        */
+        var action_ret = _E_.ui.Action.fromBondAddition(
+            this.bondProps, _DC_.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
+        );
+        //END
         _DC_.action = action_ret[0];
         _DC_.aid2 = action_ret[2];
         _R_.update();

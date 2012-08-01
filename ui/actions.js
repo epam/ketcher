@@ -159,7 +159,7 @@ ui.Action.mergeFragments = function (action, frid, frid2) {
         });
         action.addOp(new ui.Action.OpFragmentDelete(frid2).perform(ui.editor));
     }
-}
+};
 
 ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 {
@@ -517,7 +517,14 @@ ui.Action.fromFragmentDeletion = function(selection)
 
 ui.Action.fromAtomMerge = function (src_id, dst_id)
 {
+    var fragAction = new ui.Action();
+    var src_frid = ui.render.atomGetAttr(src_id, 'fragment'), dst_frid = ui.render.atomGetAttr(dst_id, 'fragment');
+    if (src_frid != dst_frid) {
+        ui.Action.mergeFragments(fragAction, src_frid, dst_frid);
+    }
+
     var action = new ui.Action();
+
     ui.render.atomGetNeighbors(src_id).each(function (nei)
     {
         var bond = ui.ctab.bonds.get(nei.bid);
@@ -532,9 +539,7 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
         }
         if (dst_id != bond.begin && dst_id != bond.end && ui.ctab.findBondId(begin, end) == -1) // TODO: improve this
         {
-            //TODO [RB] the trick to merge fragments, will find more stright way later
-            //action.addOp(new ui.Action.OpBondAdd(begin, end, bond));
-            action.mergeWith(ui.Action.fromBondAddition(bond, begin, end)[0].perform());
+            action.addOp(new ui.Action.OpBondAdd(begin, end, bond));
         }
         action.addOp(new ui.Action.OpBondDelete(nei.bid));
     }, this);
@@ -555,7 +560,7 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
     if (sg_changed)
         action.removeSgroupIfNeeded([src_id]);
 
-    return action.perform();
+    return action.perform().mergeWith(fragAction);
 };
 
 ui.Action.toBondFlipping = function (id)
@@ -733,7 +738,6 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
 
         v = v.negated();
     }
-    ui.render.update();
 
     var action = new ui.Action();
     var atom_ids = new Array(pattern.length);
@@ -1191,9 +1195,8 @@ ui.Action.OpSGroupAttr = function(sgid, attr, value) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sgid = this.data.sgid;
-	var sg = DS.sgroups.get(sgid);
-        var oldValue = sg.setAttr(this.data.attr, this.data.value);
-        this.data.value = oldValue;
+	    var sg = DS.sgroups.get(sgid);
+        this.data.value = sg.setAttr(this.data.attr, this.data.value);
     };
     this._invert = function() {
         var ret = new ui.Action.OpSGroupAttr();

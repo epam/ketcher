@@ -692,8 +692,8 @@ ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
         var atom_pos = ui.render.atomGetPos(id);
 
         pos = util.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
-        //pos = pos.scaled(0.5 / Math.cos(angle));
         pos.normalize();
+        pos = pos.scaled(0.5 / Math.cos(angle));
         v = pos.negated();
         pos.add_(atom_pos);
         angle = Math.PI - 2 * angle;

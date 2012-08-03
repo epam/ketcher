@@ -1262,7 +1262,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id,
         id = ui.render.ctab.molecule.sgroups.newId();
         this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, this.selection.atoms, attrs, id), true);
     } else {
-        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupType(id, type).mergeWith(this.editor.ui.Action.fromSgroupAttrs(id, attrs)), true);
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, attrs).mergeWith(this.editor.ui.Action.fromSgroupType(id, type)), true);
     }
     this.postClose();
 };

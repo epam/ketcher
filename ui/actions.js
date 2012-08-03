@@ -832,7 +832,9 @@ ui.Action.fromSgroupType = function (id, type)
     if (type && type != cur_type) {
         var atoms = util.array(R.sGroupGetAtoms(id));
         var attrs = R.sGroupGetAttrs(id);
-        return ui.Action.fromSgroupDeletion(id).mergeWith(ui.Action.fromSgroupAddition(type, atoms, attrs, id));
+        var actionDeletion = ui.Action.fromSgroupDeletion(id); // [MK] order of execution is important, first delete then recreate
+        var actionAddition = ui.Action.fromSgroupAddition(type, atoms, attrs, id);
+        return actionAddition.mergeWith(actionDeletion); // the actions are already performed and reversed, so we merge them backwards
     }
     return new ui.Action();
 };

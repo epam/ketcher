@@ -269,6 +269,9 @@ ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
 // Add action operations to remove whole s-group if needed
 ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
 {
+    var R = ui.render;
+    var RS = R.ctab;
+    var DS = RS.molecule;
     var sg_counts = new Hash();
 
     atoms.each(function (id)
@@ -293,6 +296,8 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
 
         if (sg_atoms.length == sg.value)
         { // delete whole s-group
+            var sgroup = DS.sgroups.get(sid);
+            this.mergeWith(ui.Action.sGroupAttributeAction(sid, sgroup.getAttrs()));
             this.addOp(new ui.Action.OpSGroupDelete(sid));
         }
     }, this);
@@ -848,6 +853,17 @@ ui.Action.fromSgroupAttrs = function (id, attrs)
     return action.perform();
 };
 
+ui.Action.sGroupAttributeAction = function (id, attrs)
+{
+    var action = new ui.Action();
+
+    new Hash(attrs).each(function (attr) { // store the attribute assignment
+        action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
+    }, this);
+
+    return action;
+}
+
 ui.Action.fromSgroupDeletion = function (id)
 {
     var action = new ui.Action();
@@ -876,9 +892,8 @@ ui.Action.fromSgroupDeletion = function (id)
 
     action = action.perform();
 
-    new Hash(attrs).each(function (attr) { // store the attribute assignment
-        action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
-    }, this);
+    action.mergeWith(ui.Action.sGroupAttributeAction(id, attrs));
+
     return action;
 };
 

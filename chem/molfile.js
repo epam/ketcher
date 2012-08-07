@@ -945,6 +945,9 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 			}
 		}
 	});
+        if (toRemove.length > 0) {
+            alert("WARNING: " + toRemove.length.toString() + " invalid S-groups were detected. They will be omitted." );
+        }
 	for (var i = 0; i < toRemove.length; ++i) {
 		mol.sGroupDelete(toRemove[i]);
 	}

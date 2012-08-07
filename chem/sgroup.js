@@ -118,13 +118,12 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	var bb = chem.SGroup.getObjBBox(sg.atoms, mol);
+	bb = bb.extend(new util.Vec2(0.4, 0.4));
         bb.p0 = bb.p0.yComplement();
         bb.p1 = bb.p1.yComplement();
-	bb = bb.extend(new util.Vec2(0.4, 0.4));
-
 	var coord = [
-		[bb.p0.x, bb.p0.y, bb.p0.x, bb.p1.y],
-		[bb.p1.x, bb.p1.y, bb.p1.x, bb.p0.y]
+		[bb.p0.x, bb.p1.y, bb.p0.x, bb.p0.y],
+		[bb.p1.x, bb.p0.y, bb.p1.x, bb.p1.y]
 	];
 	var lines = [];
 	for (var j = 0; j < coord.length; ++j) {

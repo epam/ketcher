@@ -1565,6 +1565,10 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
         mol.atoms.each(function(aid, atom){
             atom.pp.add_(d);
         });
+        mol.sgroups.each(function(id, item){
+            if (item.pp)
+                item.pp.add_(d);
+        });
         bb.min.add_(d);
         bb.max.add_(d);
         mol.mergeInto(ret);

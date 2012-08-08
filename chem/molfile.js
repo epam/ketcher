@@ -834,6 +834,8 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
             }
         }
     }
+    if (ctabLines[shift++].strip() != "M  V30 END CTAB")
+        throw Error("CTAB V3000 invalid");
 
     if (!norgroups) {
         mf.readRGroups3000(ctab, ctabLines.slice(shift));

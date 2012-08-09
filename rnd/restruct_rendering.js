@@ -569,8 +569,12 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 rnd.ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y)
 {
 	path.translate(x, y);
-	rbb.x += x;
-	rbb.y += y;
+    rbb = {
+        x: rbb.x + x,
+        y : rbb.y + y,
+        width: rbb.width,
+        height: rbb.height
+        };
 };
 
 var markerColors = ['black', 'cyan', 'magenta', 'red', 'green', 'blue', 'green'];

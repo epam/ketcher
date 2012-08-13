@@ -274,7 +274,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var ctab = render.ctab;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses']);
+    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses']);
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
             this._lassoHelper.begin(event);
@@ -333,7 +333,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'rxnArrows', 'rxnPluses'])
+            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses'])
         );
     }
     return true;
@@ -372,6 +372,8 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
         this.editor.ui.showBondProperties(ci.id);
     } else if (ci.map == 'sgroups') {
         this._sGroupHelper.showPropertiesDialog(ci.id);
+//    } else if (ci.map == 'sgroupData') {
+//        this._sGroupHelper.showPropertiesDialog(ci.sgid);
     }
     return true;
 };
@@ -433,7 +435,7 @@ rnd.Editor.LassoTool.LassoHelper.prototype.end = function() {
 rnd.Editor.EraserTool = function(editor, mode) {
     this.editor = editor;
 
-    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups'];
+    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups', 'sgroupData'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
@@ -468,7 +470,7 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomDeletion(ci.id));
             } else if (ci.map == 'bonds') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromBondDeletion(ci.id));
-            } else if (ci.map == 'sgroups') {
+            } else if (ci.map == 'sgroups' || ci.map == 'sgroupData') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupDeletion(ci.id));
             } else if (ci.map == 'rxnArrows') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromArrowDeletion(ci.id));
@@ -1131,7 +1133,7 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function(event) {
 rnd.Editor.SGroupTool = function(editor) {
     this.editor = editor;
 
-    this.maps = ['atoms', 'bonds', 'sgroups'];
+    this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
     this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);

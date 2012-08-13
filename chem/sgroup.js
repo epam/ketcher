@@ -24,7 +24,6 @@ chem.SGroup = function (type)
 	this.bracketBox = null;
     this.bracketDir = new util.Vec2(1,0);
     this.areas = [];
-	this.selectionBoxes = null;
 
 	this.highlight = false;
 	this.highlighting = null;
@@ -707,15 +706,13 @@ chem.SGroup.GroupDat = {
 		if (this.pp == null) {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
 		}
-//                debugger;
-                var ps = this.pp.scaled(settings.scaleFactor);
+        var ps = this.pp.scaled(settings.scaleFactor);
 		if (!absolute) { // relative position
 			ps.add_(chem.SGroup.getMassCentre(remol, atoms));
 		}
 
         if (this.data.attached) {
-            this.selectionBoxes = [];
-            for (i = 0; i < atoms.length; ++i) {
+                for (i = 0; i < atoms.length; ++i) {
                 var atom = remol.atoms.get(atoms[i]);
                 var p = render.ps(atom.a.pp);
                 var bb = atom.visel.boundingBox;
@@ -728,7 +725,6 @@ chem.SGroup.GroupDat = {
                 name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
                 set.push(name_i);
                 var sbox = util.Box2Abs.fromRelBox(name_i.getBBox());
-                this.selectionBoxes.push(sbox);
                 this.areas.push(sbox.transform(render.scaled2obj, render));
             }
         } else {
@@ -737,8 +733,9 @@ chem.SGroup.GroupDat = {
             name.translate(0.5 * box.width, -0.5 * box.height);
             set.push(name);
             var sbox = util.Box2Abs.fromRelBox(name.getBBox());
-            this.selectionBoxes = [sbox];
-            this.areas.push(sbox.transform(render.scaled2obj, render));
+            this.dataArea = sbox.transform(render.scaled2obj, render);
+            if (!remol.sgroupData.has(this.id))
+                remol.sgroupData.set(this.id, new rnd.ReDataSGroupData(this));
         }
         return set;
 	},

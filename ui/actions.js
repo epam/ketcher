@@ -73,15 +73,21 @@ ui.Action.fromMultipleMove = function (lists, d)
 
     var action = new ui.Action();
     var i;
-    lists.atoms = lists.atoms || [];
-    for (i = 0; i < lists.atoms.length; ++i)
-        action.addOp(new ui.Action.OpAtomMove(lists.atoms[i], d));
+    if (lists.atoms)
+        for (i = 0; i < lists.atoms.length; ++i)
+            action.addOp(new ui.Action.OpAtomMove(lists.atoms[i], d));
 
-    for (i = 0; i < lists.rxnArrows.length; ++i)
-        action.addOp(new ui.Action.OpRxnArrowMove(lists.rxnArrows[i], d));
+    if (lists.rxnArrows)
+        for (i = 0; i < lists.rxnArrows.length; ++i)
+            action.addOp(new ui.Action.OpRxnArrowMove(lists.rxnArrows[i], d));
 
-    for (i = 0; i < lists.rxnPluses.length; ++i)
-        action.addOp(new ui.Action.OpRxnPlusMove(lists.rxnPluses[i], d));
+    if (lists.rxnPluses)
+        for (i = 0; i < lists.rxnPluses.length; ++i)
+            action.addOp(new ui.Action.OpRxnPlusMove(lists.rxnPluses[i], d));
+
+    if (lists.sgroupData)
+        for (i = 0; i < lists.sgroupData.length; ++i)
+            action.addOp(new ui.Action.OpSGroupDataMove(lists.sgroupData[i], d));
 
     return action.perform();
 };
@@ -451,6 +457,13 @@ ui.Action.fromFragmentDeletion = function(selection)
 
     var frids = [];
 
+    var actionRemoveDataSGroups = new ui.Action();
+    if (selection.sgroupData) {
+        selection.sgroupData.each(function (id) {
+            actionRemoveDataSGroups.mergeWith(ui.Action.fromSgroupDeletion(id));
+        }, this);
+    }
+
     selection.atoms.each(function (aid)
     {
         ui.render.atomGetNeighbors(aid).each(function (nei)
@@ -516,6 +529,8 @@ ui.Action.fromFragmentDeletion = function(selection)
     action = action.perform();
 
     while (frids.length > 0) action.mergeWith(new ui.Action.__fromFragmentSplit(frids.pop()));
+
+    action.mergeWith(actionRemoveDataSGroups);
 
     return action;
 };
@@ -1231,6 +1246,7 @@ ui.Action.OpSGroupCreate = function(sgid, type) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sg = new chem.SGroup(this.data.type);
         var sgid = this.data.sgid;
+        sg.id = sgid;
         DS.sgroups.set(sgid, sg);
         RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
         this.data.sgid = sgid;
@@ -1251,11 +1267,16 @@ ui.Action.OpSGroupDelete = function(sgid) {
         var sgid = this.data.sgid;
         var sg = RS.sgroups.get(sgid);
         this.data.type = sg.item.type;
-	RS.clearVisel(sg.visel);
+        if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
+            RS.clearVisel(RS.sgroupData.get(sgid).visel);
+            RS.sgroupData.unset(sgid);
+        }
+
+        RS.clearVisel(sg.visel);
         if (sg.item.atoms.length != 0)
             throw new Error("S-Group not empty!");
         RS.sgroups.unset(sgid);
-	DS.sgroups.remove(sgid);
+        DS.sgroups.remove(sgid);
     };
     this._invert = function() {
         var ret = new ui.Action.OpSGroupCreate();
@@ -1570,6 +1591,21 @@ ui.Action.OpRxnPlusMove = function(id, d) {
     };
 };
 ui.Action.OpRxnPlusMove.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupDataMove = function(id, d) {
+    this.data = {id : id, d : d};
+    this._execute = function(editor) {
+        ui.ctab.sgroups.get(this.data.id).pp.add_(this.data.d);
+        this.data.d = this.data.d.negated();
+        editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupDataMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpSGroupDataMove.prototype = new ui.Action.OpBase();
 
 ui.Action.OpCanvasLoad = function(ctab) {
     this.data = {ctab : ctab, norescale : false};

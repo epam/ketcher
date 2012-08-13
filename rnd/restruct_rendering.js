@@ -605,8 +605,6 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(index.path, index.rbb);
 			render.addItemPath(atom.visel, 'indices', index.path, index.rbb);
 		}
-		if (atom.selected)
-			this.showItemSelection(aid, atom, true);
 		if (atom.highlight)
 			this.showAtomHighlighting(aid, atom, true);
 
@@ -1118,8 +1116,6 @@ rnd.ReStruct.prototype.showBonds = function ()
 			topology.rbb = topology.path.getBBox();
 			render.addItemPath(bond.visel, 'data', topology.path, topology.rbb);
 		}
-		if (bond.selected)
-			this.showItemSelection(bid, bond, true);
 		if (bond.highlight)
 			this.showBondHighlighting(bid, bond, true);
 		var bondIdxOff = settings.subFontSize * 0.6;

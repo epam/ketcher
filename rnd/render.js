@@ -292,6 +292,7 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
     if (ci.type == 'Atom') ci.map = 'atoms';
     else if (ci.type == 'Bond') ci.map = 'bonds';
     else if (ci.type == 'SGroup') ci.map = 'sgroups';
+    else if (ci.type == 'DataSGroupData') ci.map = 'sgroupData';
     else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
     else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
     else if (ci.type == 'Fragment') ci.map = 'frags';
@@ -475,7 +476,7 @@ rnd.Render.prototype.atomIsPlainCarbon = function (aid)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups', 'sgroups'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(obj.map) > -1) {
         var item = this.ctab[obj.map].get(obj.id);
         if (item == null)
             return true; // TODO: fix, attempt to highlight a deleted item
@@ -540,16 +541,12 @@ rnd.Render.prototype.setSelection = function (selection)
             if (map == 'frags' || map == 'rgroups')
                 continue;
 
+        var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
 		this.ctab[map].each(function(id, item){
-			item.selected = false;
-			this.ctab.showItemSelection(id, item, false);
+            var selected = set ? set[id] === id : item.selected;
+			item.selected = selected;
+			this.ctab.showItemSelection(id, item, selected);
 		}, this);
-		for (var i = 0; i < selection[map].length; ++i) {
-			var id = selection[map][i];
-			var item = this.ctab[map].get(id);
-			item.selected = true;
-			this.ctab.showItemSelection(id, item, true);
-		}
 	}
 };
 
@@ -732,11 +729,17 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
+	var sgroupDataList = new Array();
+	this.ctab.sgroupData.each(function(id, item){
+		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
+			sgroupDataList.push(id);
+	}, this);
 	return {
 		'atoms':atomList,
 		'bonds':bondList,
 		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList
+		'rxnPluses':rxnPlusesList,
+		'sgroupData':sgroupDataList
 	};
 };
 
@@ -828,12 +831,18 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	}, this);
+	var sgroupDataList = new Array();
+	this.ctab.sgroupData.each(function(id, item){
+		if (this.isPointInPolygon(r, item.sgroup.pp))
+			sgroupDataList.push(id);
+	}, this);
 
 	return {
 		'atoms':atomList,
 		'bonds':bondList,
 		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList
+		'rxnPluses':rxnPlusesList,
+		'sgroupData':sgroupDataList
 	};
 };
 
@@ -955,6 +964,7 @@ rnd.Render.prototype.update = function (force)
 
 	var start = (new Date).getTime();
 	var changes = this.ctab.update(force);
+    this.setSelection(null); // [MK] redraw the selection bits where necessary
 	var time = (new Date).getTime() - start;
 	if (force && $('log'))
 		$('log').innerHTML = time.toString() + '\n';
@@ -1093,6 +1103,10 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
     if (!maps || maps.indexOf('sgroups') >= 0) {
         var sg = rnd.ReSGroup.findClosest(this, pos);
         updret('SGroup', sg);
+    }
+    if (!maps || maps.indexOf('sgroupData') >= 0) {
+        var sgd = rnd.ReDataSGroupData.findClosest(this, pos);
+        updret('DataSGroupData', sgd);
     }
     if (!maps || maps.indexOf('rxnArrows') >= 0) {
         var arrow = rnd.ReRxnArrow.findClosest(this, pos);

@@ -33,7 +33,8 @@ rnd.Visel.TYPE = {
 	'CHIRAL' : 7,
 	'TMP' : 8,
     'FRAGMENT' : 9,
-    'RGROUP' : 10
+    'RGROUP' : 10,
+    'CHIRAL_FLAG' : 11
 };
 
 rnd.Visel.prototype.add = function (path, bb)

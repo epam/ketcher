@@ -136,6 +136,7 @@ rnd.ReStruct = function (molecule, render, norescale)
     this.frags = new util.Map();
     this.rgroups = new util.Map();
     this.sgroups = new util.Map();
+    this.sgroupData = new util.Map();
 	this.molecule = molecule || new chem.Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -184,6 +185,9 @@ rnd.ReStruct = function (molecule, render, norescale)
 
     molecule.sgroups.each(function(id, item) {
         this.sgroups.set(id, new rnd.ReSGroup(item));
+        if (item.type == 'DAT') {
+            this.sgroupData.set(id, new rnd.ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
+        }
     }, this);
 
 	this.coordProcess(norescale);
@@ -197,7 +201,8 @@ rnd.ReStruct.maps = {
 	'rxnPluses': 2,
 	'rxnArrows': 3,
     'frags':     4,
-    'rgroups':   5
+    'rgroups':   5,
+    'sgroupData':6
 };
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
@@ -549,8 +554,6 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	if (item.selected)
-		this.showItemSelection(id, item, true);
 };
 
 rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
@@ -561,8 +564,6 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
-	if (item.selected)
-		this.showItemSelection(id, item, true);
 };
 
 rnd.ReStruct.prototype.drawSGroups = function ()
@@ -1281,4 +1282,48 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
         render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);
     }, this);
     return set;
+};
+
+rnd.ReDataSGroupData = function (sgroup)
+{
+    this.init(rnd.Visel.TYPE.SGROUP_DATA);
+
+	this.sgroup = sgroup;
+};
+
+rnd.ReDataSGroupData.prototype = new rnd.ReObject();
+
+rnd.ReDataSGroupData.findClosest = function (render, p) {
+    var minDist;
+    var ret;
+
+    render.ctab.sgroupData.each(function(id, item) {
+        if (item.sgroup.type != 'DAT')
+            throw new Error("Data group expected");
+        var box = item.sgroup.dataArea;
+        var inBox = box.p0.y < p.y && box.p1.y > p.y && box.p0.x < p.x && box.p1.x > p.x;
+        var xDist = Math.min(Math.abs(box.p0.x - p.x), Math.abs(box.p1.x - p.x));
+        if (inBox && (ret == null || xDist < minDist)) {
+            ret = {'id' : id, 'minDist' : minDist};
+            minDist = xDist;
+        }
+    });
+	return ret;
+}
+
+rnd.ReDataSGroupData.prototype.highlightPath = function(render) {
+    var box = this.sgroup.dataArea;
+    var p0 = render.obj2scaled(box.p0);
+    var sz = render.obj2scaled(box.p1).sub(p0);
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
+}
+
+rnd.ReDataSGroupData.prototype.drawHighlight = function(render) {
+    var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
+};
+
+rnd.ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };

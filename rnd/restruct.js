@@ -550,7 +550,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
-	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBoxK()));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
@@ -560,7 +560,7 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawPlus(centre);
-	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBox()));
+	item.visel.add(path, util.Box2Abs.fromRelBox(path.getBBoxK()));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translate(offset.x, offset.y);
@@ -1144,7 +1144,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
 				'font-size' : settings.fontRLabel,
 				'fill' : 'black'
 			});
-        var labelBox = label.getBBox();
+        var labelBox = label.getBBoxK();
         label.translate(-labelBox.width/2-settings.lineWidth, 0);
         var logicStyle = {
 				'font' : settings.font,
@@ -1178,7 +1178,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
         var shift = labelBox.height/2 + settings.lineWidth/2;
         for (var i = 0; i < logic.length; ++i) {
             var logicPath = render.paper.text(p0.x, (p0.y + p1.y)/2, logic[i]).attr(logicStyle);
-            var logicBox = logicPath.getBBox();
+            var logicBox = logicPath.getBBoxK();
             shift += logicBox.height/2;
             logicPath.translate(-logicBox.width/2-6*settings.lineWidth, shift);
             shift += logicBox.height/2 + settings.lineWidth/2;

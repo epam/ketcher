@@ -359,7 +359,7 @@ chem.SGroup.GroupMul = {
 			'font' : settings.font,
 			'font-size' : settings.fontszsub
 		});
-		var multIndexBox = multIndex.getBBoxK();
+		var multIndexBox = rnd.relBox(multIndex.getBBox());
 		multIndex.translate(0.5 * multIndexBox.width, -0.3 * multIndexBox.height);
 		set.push(multIndex);
 		return set;
@@ -596,7 +596,7 @@ chem.SGroup.GroupSup = {
 				'font-size' : settings.fontszsub,
 				'font-style' : 'italic'
 			});
-			var nameBox = name.getBBoxK();
+			var nameBox = rnd.relBox(name.getBBox());
 			name.translate(0.5 * nameBox.width * d.x, 0);
 			set.push(name);
 		}
@@ -721,18 +721,18 @@ chem.SGroup.GroupDat = {
                 }
                 p.x += settings.lineWidth; // shift a bit to the right
                 var name_i = this.showValue(paper, p, this, settings);
-                var box_i = name_i.getBBoxK();
+                var box_i = rnd.relBox(name_i.getBBox());
                 name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
                 set.push(name_i);
-                var sbox = util.Box2Abs.fromRelBox(name_i.getBBoxK());
+                var sbox = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
                 this.areas.push(sbox.transform(render.scaled2obj, render));
             }
         } else {
             var name = this.showValue(paper, ps, this, settings);
-            var box = name.getBBoxK();
+            var box = rnd.relBox(name.getBBox());
             name.translate(0.5 * box.width, -0.5 * box.height);
             set.push(name);
-            var sbox = util.Box2Abs.fromRelBox(name.getBBoxK());
+            var sbox = util.Box2Abs.fromRelBox(rnd.relBox(name.getBBox()));
             this.dataArea = sbox.transform(render.scaled2obj, render);
             if (!remol.sgroupData.has(this.id))
                 remol.sgroupData.set(this.id, new rnd.ReDataSGroupData(this));

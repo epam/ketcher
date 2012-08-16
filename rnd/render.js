@@ -480,7 +480,17 @@ rnd.Render.prototype.highlightObject = function(obj, visible) {
         var item = this.ctab[obj.map].get(obj.id);
         if (item == null)
             return true; // TODO: fix, attempt to highlight a deleted item
-        item.setHighlight(visible, this);
+        if ((obj.map == 'sgroups' && item.item.type == 'DAT') || obj.map == 'sgroupData') {
+            // set highlight for both the group and the data item
+            var item1 = this.ctab.sgroups.get(obj.id);
+            var item2 = this.ctab.sgroupData.get(obj.id);
+            if (item1 == null || item2 == null)
+                return true;
+            item1.setHighlight(visible, this);
+            item2.setHighlight(visible, this);
+        } else {
+            item.setHighlight(visible, this);
+        }
     } else {
         return false;
     }

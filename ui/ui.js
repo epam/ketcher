@@ -1820,6 +1820,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     case 'DAT':
         $('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
         $('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
+        (ui.render.sGroupGetAttr(id, 'absolute') ? $('sgroup_pos_absolute') : $('sgroup_pos_relative')).checked = true;
         break;
     }
 
@@ -1867,6 +1868,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
         case 'DAT':
             attrs.fieldName = $('sgroup_field_name').value.strip();
             attrs.fieldValue = $('sgroup_field_value').value.strip();
+            attrs.absolute = $('sgroup_pos_absolute').checked;
 
             if (attrs.fieldName == '' || attrs.fieldValue == '')
             {

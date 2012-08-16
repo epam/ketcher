@@ -1110,13 +1110,13 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
         if (ret == null || ret.dist > 0.4 * this.scale) // hack
             updret('Bond', bond);
     }
-    if (!maps || maps.indexOf('sgroups') >= 0) {
-        var sg = rnd.ReSGroup.findClosest(this, pos);
-        updret('SGroup', sg);
-    }
     if (!maps || maps.indexOf('sgroupData') >= 0) {
         var sgd = rnd.ReDataSGroupData.findClosest(this, pos);
         updret('DataSGroupData', sgd);
+    }
+    if (!maps || maps.indexOf('sgroups') >= 0) {
+        var sg = rnd.ReSGroup.findClosest(this, pos);
+        updret('SGroup', sg);
     }
     if (!maps || maps.indexOf('rxnArrows') >= 0) {
         var arrow = rnd.ReRxnArrow.findClosest(this, pos);

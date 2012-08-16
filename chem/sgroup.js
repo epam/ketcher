@@ -667,18 +667,16 @@ chem.SGroup.GroupGen = {
 	}
 };
 
-chem.SGroup.getMassCentre = function (remol, atoms) {
+chem.SGroup.getMassCentre = function (mol, atoms) {
 	var c = new util.Vec2(); // mass centre
 	for (var i = 0; i < atoms.length; ++i) {
-		c = c.addScaled(remol.render.ps(remol.atoms.get(atoms[i]).a.pp), 1.0 / atoms.length);
+		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
 	}
 	return c;
 };
 
 chem.SGroup.setPos = function (remol, sg, pos) {
-	var render = remol.render;
-	var settings = render.settings;
-	sg.pp = pos.scaled(1.0 / settings.scaleFactor);
+	sg.pp = pos;
 };
 
 chem.SGroup.GroupDat = {
@@ -704,12 +702,9 @@ chem.SGroup.GroupDat = {
         chem.SGroup.bracketPos(this, remol, xBonds);
         this.areas = [this.bracketBox];
 		if (this.pp == null) {
-			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(1, 1).scaled(settings.scaleFactor)));
+			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
 		}
         var ps = this.pp.scaled(settings.scaleFactor);
-		if (!absolute) { // relative position
-			ps.add_(chem.SGroup.getMassCentre(remol, atoms));
-		}
 
         if (this.data.attached) {
                 for (i = 0; i < atoms.length; ++i) {
@@ -724,8 +719,8 @@ chem.SGroup.GroupDat = {
                 var box_i = rnd.relBox(name_i.getBBox());
                 name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
                 set.push(name_i);
-                var sbox = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
-                this.areas.push(sbox.transform(render.scaled2obj, render));
+                var sbox_i = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
+                this.areas.push(sbox_i.transform(render.scaled2obj, render));
             }
         } else {
             var name = this.showValue(paper, ps, this, settings);
@@ -745,6 +740,8 @@ chem.SGroup.GroupDat = {
 
 		var data = this.data;
 		var pp = this.pp;
+        if (!data.absolute)
+            pp = pp.sub(chem.SGroup.getMassCentre(mol, this.atoms));
 		var lines = [];
 		lines = lines.concat(chem.SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
 		var sdtLine = 'M  SDT ' + idstr +
@@ -783,6 +780,8 @@ chem.SGroup.GroupDat = {
 
 	postLoad: function (mol, atomMap) {
 		var allAtomsInGroup = this.atoms.length == mol.atoms.count();
+        if (!this.data.absolute)
+            this.pp = this.pp.add(chem.SGroup.getMassCentre(mol, this.atoms));
 		if (allAtomsInGroup &&
 			(	this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
 				this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||

@@ -31,9 +31,6 @@ rnd.mouseEventNames = [
 	'MouseOut'
 	];
 
-/** @deprecated */
-rnd.entities = ['Atom', 'RxnArrow', 'RxnPlus', 'Bond', 'Canvas'];
-
 rnd.logMethod = function () { };
 //rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
@@ -297,6 +294,7 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
     else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
     else if (ci.type == 'Fragment') ci.map = 'frags';
     else if (ci.type == 'RGroup') ci.map = 'rgroups';
+    else if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';
     return ci;
 };
 
@@ -476,7 +474,7 @@ rnd.Render.prototype.atomIsPlainCarbon = function (aid)
 };
 
 rnd.Render.prototype.highlightObject = function(obj, visible) {
-    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(obj.map) > -1) {
+    if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(obj.map) > -1) {
         var item = this.ctab[obj.map].get(obj.id);
         if (item == null)
             return true; // TODO: fix, attempt to highlight a deleted item
@@ -739,6 +737,11 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
+	var chiralFlagList = new Array();
+	this.ctab.chiralFlags.each(function(id, item){
+		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
+			chiralFlagList.push(id);
+	}, this);
 	var sgroupDataList = new Array();
 	this.ctab.sgroupData.each(function(id, item){
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
@@ -749,6 +752,7 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 		'bonds':bondList,
 		'rxnArrows':rxnArrowsList,
 		'rxnPluses':rxnPlusesList,
+		'chiralFlags':chiralFlagList,
 		'sgroupData':sgroupDataList
 	};
 };
@@ -841,6 +845,11 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	}, this);
+	var chiralFlagList = new Array();
+	this.ctab.chiralFlags.each(function(id, item){
+		if (this.isPointInPolygon(r, item.pp))
+			chiralFlagList.push(id);
+	}, this);
 	var sgroupDataList = new Array();
 	this.ctab.sgroupData.each(function(id, item){
 		if (this.isPointInPolygon(r, item.sgroup.pp))
@@ -852,6 +861,7 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 		'bonds':bondList,
 		'rxnArrows':rxnArrowsList,
 		'rxnPluses':rxnPlusesList,
+		'chiralFlags':chiralFlagList,
 		'sgroupData':sgroupDataList
 	};
 };
@@ -1109,6 +1119,10 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
         var bond = this.findClosestBond(pos);
         if (ret == null || ret.dist > 0.4 * this.scale) // hack
             updret('Bond', bond);
+    }
+    if (!maps || maps.indexOf('chiralFlags') >= 0) {
+        var flag = rnd.ReChiralFlag.findClosest(this, pos);
+        updret('ChiralFlag', flag); // [MK] TODO: replace this with map name, 'ChiralFlag' -> 'chiralFlags', to avoid the extra mapping "if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';"
     }
     if (!maps || maps.indexOf('sgroupData') >= 0) {
         var sgd = rnd.ReDataSGroupData.findClosest(this, pos);

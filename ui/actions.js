@@ -88,6 +88,10 @@ ui.Action.fromMultipleMove = function (lists, d)
     if (lists.sgroupData)
         for (i = 0; i < lists.sgroupData.length; ++i)
             action.addOp(new ui.Action.OpSGroupDataMove(lists.sgroupData[i], d));
+    
+    if (lists.chiralFlags)
+        for (i = 0; i < lists.chiralFlags.length; ++i)
+            action.addOp(new ui.Action.OpChiralFlagMove(d));
 
     return action.perform();
 };
@@ -237,6 +241,22 @@ ui.Action.fromArrowDeletion = function (id)
 {
     var action = new ui.Action();
     action.addOp(new ui.Action.OpRxnArrowDelete(id));
+    return action.perform();
+};
+
+ui.Action.fromChiralFlagAddition = function (pos)
+{
+    var action = new ui.Action();
+    if (ui.render.ctab.chiralFlags.count() < 1) {
+        action.addOp(new ui.Action.OpChiralFlagAdd(pos).perform(ui.editor));
+    }
+    return action;
+};
+
+ui.Action.fromChiralFlagDeletion = function ()
+{
+    var action = new ui.Action();
+    action.addOp(new ui.Action.OpChiralFlagDelete());
     return action.perform();
 };
 
@@ -526,6 +546,10 @@ ui.Action.fromFragmentDeletion = function(selection)
         action.addOp(new ui.Action.OpRxnPlusDelete(id));
     }, this);
 
+    selection.chiralFlags.each(function (id) {
+        action.addOp(new ui.Action.OpChiralFlagDelete(id));
+    }, this);
+    
     action = action.perform();
 
     while (frids.length > 0) action.mergeWith(new ui.Action.__fromFragmentSplit(frids.pop()));
@@ -1627,3 +1651,56 @@ ui.Action.OpCanvasLoad = function(ctab) {
     };
 };
 ui.Action.OpCanvasLoad.prototype = new ui.Action.OpBase();
+
+ui.Action.OpChiralFlagAdd = function(pos) {
+    this.data = {pos : pos};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        if (RS.chiralFlags.count() > 0)
+            throw new Error("Cannot add more than one Chiral flag");
+        RS.chiralFlags.set(0, new rnd.ReChiralFlag(pos));
+        DS.isChiral = true;
+        R.invalidateItem('chiralFlags', 0, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpChiralFlagDelete();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpChiralFlagAdd.prototype = new ui.Action.OpBase();
+
+ui.Action.OpChiralFlagDelete = function() {
+    this.data = {pos : null};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        if (RS.chiralFlags.count() < 1)
+            throw new Error("Cannot remove chiral flag");
+        RS.clearVisel(RS.chiralFlags.get(0).visel);
+        this.data.pos = RS.chiralFlags.get(0).pp;
+        RS.chiralFlags.unset(0);
+        DS.isChiral = false;
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpChiralFlagAdd(this.data.pos);
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpChiralFlagDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpChiralFlagMove = function(d) {
+    this.data = {d : d};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab;
+        RS.chiralFlags.get(0).pp.add_(this.data.d);
+        this.data.d = this.data.d.negated();
+        R.invalidateItem('chiralFlags', 0, 1);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpChiralFlagMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpChiralFlagMove.prototype = new ui.Action.OpBase();

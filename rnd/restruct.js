@@ -137,14 +137,11 @@ rnd.ReStruct = function (molecule, render, norescale)
     this.rgroups = new util.Map();
     this.sgroups = new util.Map();
     this.sgroupData = new util.Map();
+    this.chiralFlags = new util.Map();
 	this.molecule = molecule || new chem.Struct();
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
-	this.chiral = {
-		p: null,
-		visel: new rnd.Visel(rnd.Visel.TYPE.CHIRAL)
-	};
 
 	this.connectedComponents = new util.Pool();
 	this.ccFragmentType = new util.Map();
@@ -153,7 +150,6 @@ rnd.ReStruct = function (molecule, render, norescale)
 		this[map+'Changed'] = {};
 	}
 	this.structChanged = false;
-//	this.viselsChanged = {};
 
 	molecule.atoms.each(function(aid, atom){
 		this.atoms.set(aid, new rnd.ReAtom(atom));
@@ -189,6 +185,12 @@ rnd.ReStruct = function (molecule, render, norescale)
             this.sgroupData.set(id, new rnd.ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
         }
     }, this);
+    
+    if (molecule.isChiral) {
+        var bb = molecule.getCoordBoundingBox();
+        this.chiralFlags.set(0,new rnd.ReChiralFlag(new util.Vec2(bb.max.x, bb.min.y - 1)));
+    }
+        
 
 	this.coordProcess(norescale);
 
@@ -196,13 +198,14 @@ rnd.ReStruct = function (molecule, render, norescale)
 };
 
 rnd.ReStruct.maps = {
-	'atoms':     0,
-	'bonds':     1,
-	'rxnPluses': 2,
-	'rxnArrows': 3,
-    'frags':     4,
-    'rgroups':   5,
-    'sgroupData':6
+    'atoms':       0,
+    'bonds':       1,
+    'rxnPluses':   2,
+    'rxnArrows':   3,
+    'frags':       4,
+    'rgroups':     5,
+    'sgroupData':  6,
+    'chiralFlags': 7
 };
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
@@ -364,8 +367,6 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 			func.call(context, item.visel);
 		}, this);
 	}
-	if (this.chiral.p != null)
-		func.call(context, this.chiral.visel);
 	this.sgroups.each(function(sid, sgroup){
 		func.call(context, sgroup.visel);
 	}, this);
@@ -476,8 +477,6 @@ rnd.ReStruct.prototype.update = function (force)
 		}
 	}).call(this);
 
-	if (this.chiral.visel != null)
-		this.clearVisel(this.chiral.visel);
 	// TODO: when to update sgroup?
 	this.sgroups.each(function(sid, sgroup){
             this.clearVisel(sgroup.visel);
@@ -528,7 +527,10 @@ rnd.ReStruct.prototype.update = function (force)
 	this.drawSGroups();
     this.drawFragments();
     this.drawRGroups();
-	this.drawChiralLabel();
+        this.chiralFlags.each(function(id, item) {
+            if (this.chiralFlagsChanged[id] > 0)
+                item.draw(this.render);
+        }, this);
 	return true;
 };
 
@@ -592,23 +594,6 @@ rnd.ReStruct.prototype.drawRGroups = function() {
         }
         // TODO rgroup selection & highlighting
     }, this);
-};
-
-rnd.ReStruct.prototype.drawChiralLabel = function ()
-{
-	var render = this.render;
-	var paper = render.paper;
-	var settings = render.settings;
-	if (this.chiral.p != null) {
-                var ps = this.render.ps(this.chiral.p);
-		this.chiral.path = paper.text(ps.x, ps.y, "Chiral")
-		.attr({
-			'font' : settings.font,
-			'font-size' : settings.fontsz,
-			'fill' : '#000'
-		});
-		this.addReObjectPath('data', this.chiral.visel, this.chiral.path);
-	}
 };
 
 rnd.ReStruct.prototype.eachCC = function (func, type, context) {
@@ -747,7 +732,6 @@ rnd.ReStruct.prototype.findLoops = function ()
 
 rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
-	var bb = this.molecule.getCoordBoundingBox();
         if (norescale) {
             scale = 1;
         } else {
@@ -774,11 +758,9 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
             item.item.pp = item.item.pp ? item.item.pp.scaled(scale) : null;
         }, this);
     }
-	if (this.molecule.isChiral)
-		this.chiral.p = new util.Vec2((bb.max.x - bb.min.x) * scale, -(bb.max.y - bb.min.y) * scale - 1);
 };
 
-rnd.ReStruct.prototype.scaleCoordinates = function()
+rnd.ReStruct.prototype.scaleCoordinates = function() // TODO: check if we need that and why
 {
     var render = this.render;
 	var settings = render.settings;
@@ -1326,4 +1308,60 @@ rnd.ReDataSGroupData.prototype.drawHighlight = function(render) {
 
 rnd.ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
     return this.highlightPath(restruct.render).attr(styles.selectionStyle);
+};
+
+rnd.ReChiralFlag = function (pos)
+{
+    this.init(rnd.Visel.TYPE.CHIRAL_FLAG);
+    
+    this.pp = pos;
+};
+rnd.ReChiralFlag.prototype = new rnd.ReObject();
+
+rnd.ReChiralFlag.findClosest = function(render, p) {
+    var minDist;
+    var ret;
+
+    // there is only one chiral flag, but we treat it as a "map" for convenience
+    render.ctab.chiralFlags.each(function(id, item) {
+        var pos = item.pp;
+        if (Math.abs(p.x - pos.x) < 1.0) {
+            var dist = Math.abs(p.y - pos.y);
+            if (dist < 0.3 && (!ret || dist < minDist)) {
+                minDist = dist;
+                ret = {'id' : id, 'minDist' : minDist};
+            }
+        }
+    });
+    return ret;
+};
+
+rnd.ReChiralFlag.prototype.highlightPath = function(render) {
+    var box = util.Box2Abs.fromRelBox(this.path.getBBox());
+    var sz = box.p1.sub(box.p0);
+    var p0 = box.p0.sub(render.offset);
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
+}
+
+rnd.ReChiralFlag.prototype.drawHighlight = function(render) {
+    var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
+    render.addItemPath(this.visel, 'highlighting', ret);
+    return ret;
+};
+
+rnd.ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, styles) {
+    return this.highlightPath(restruct.render).attr(styles.selectionStyle);
+};
+
+rnd.ReChiralFlag.prototype.draw = function(render) {
+    var paper = render.paper;
+    var settings = render.settings;
+    var ps = render.ps(this.pp);
+    this.path = paper.text(ps.x, ps.y, "Chiral")
+    .attr({
+            'font' : settings.font,
+            'font-size' : settings.fontsz,
+            'fill' : '#000'
+    });
+    render.addItemPath(this.visel, 'data', this.path);
 };

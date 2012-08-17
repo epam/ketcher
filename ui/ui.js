@@ -1370,7 +1370,8 @@ ui.selection =
     atoms: [],
     bonds: [],
     rxnArrows: [],
-    rxnPluses: []
+    rxnPluses: [],
+    chiralFlags: []
 };
 
 ui.page2canvas2 = function (pos)
@@ -2106,6 +2107,7 @@ ui.copy = function (struct, selection)
         sgroups: new Array(),
         rxnArrows: new Array(),
         rxnPluses: new Array(),
+        chiralFlags: new Array(),
         // RB: let it be here for the moment
         // TODO: "clipboard" support to be moved to editor module
         getAnchorPosition: function() {
@@ -2115,6 +2117,8 @@ ui.copy = function (struct, selection)
                 return this.rxnArrows[0].pp;
             } else if (this.rxnPluses.length) {
                 return this.rxnPluses[0].pp;
+            } else if (this.chiralFlags.length) {
+                return this.chiralFlags[0].pp;
             }
         }
     };

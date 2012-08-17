@@ -274,7 +274,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var ctab = render.ctab;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses']);
+    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags']);
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
             this._lassoHelper.begin(event);
@@ -333,7 +333,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses'])
+            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags'])
         );
     }
     return true;
@@ -435,7 +435,7 @@ rnd.Editor.LassoTool.LassoHelper.prototype.end = function() {
 rnd.Editor.EraserTool = function(editor, mode) {
     this.editor = editor;
 
-    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups', 'sgroupData'];
+    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups', 'sgroupData', 'chiralFlags'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
@@ -476,6 +476,8 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromArrowDeletion(ci.id));
             } else if (ci.map == 'rxnPluses') {
                 this.editor.ui.addUndoAction(this.editor.ui.Action.fromPlusDeletion(ci.id));
+            } else if (ci.map == 'chiralFlags') {
+                this.editor.ui.addUndoAction(this.editor.ui.Action.fromChiralFlagDeletion());
             } else {
                 // TODO re-factoring needed - should be "map-independent"
                 console.log('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');

@@ -24,17 +24,16 @@ rnd.Visel = function (type)
 };
 
 rnd.Visel.TYPE = {
-	'ATOM' : 1,
-	'BOND' : 2,
-	'LOOP' : 3,
-	'ARROW' : 4,
-	'PLUS' : 5,
-	'SGROUP' : 6,
-	'CHIRAL' : 7,
-	'TMP' : 8,
-    'FRAGMENT' : 9,
-    'RGROUP' : 10,
-    'CHIRAL_FLAG' : 11
+    'ATOM' : 1,
+    'BOND' : 2,
+    'LOOP' : 3,
+    'ARROW' : 4,
+    'PLUS' : 5,
+    'SGROUP' : 6,
+    'TMP' : 7, // [MK] TODO: do we still need it?
+    'FRAGMENT' : 8,
+    'RGROUP' : 9,
+    'CHIRAL_FLAG' : 10
 };
 
 rnd.Visel.prototype.add = function (path, bb)

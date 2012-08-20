@@ -1821,7 +1821,9 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     case 'DAT':
         $('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
         $('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
-        (ui.render.sGroupGetAttr(id, 'absolute') ? $('sgroup_pos_absolute') : $('sgroup_pos_relative')).checked = true;
+        var isAttached = ui.render.sGroupGetAttr(id, 'attached');
+        var isAbsolute = ui.render.sGroupGetAttr(id, 'absolute');
+        (isAttached ? $('sgroup_pos_attached') : (isAbsolute ? $('sgroup_pos_absolute') : $('sgroup_pos_relative'))).checked = true;
         break;
     }
 
@@ -1870,6 +1872,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
             attrs.fieldName = $('sgroup_field_name').value.strip();
             attrs.fieldValue = $('sgroup_field_value').value.strip();
             attrs.absolute = $('sgroup_pos_absolute').checked;
+            attrs.attached = $('sgroup_pos_attached').checked;
 
             if (attrs.fieldName == '' || attrs.fieldValue == '')
             {

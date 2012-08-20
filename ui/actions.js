@@ -1252,7 +1252,12 @@ ui.Action.OpSGroupAttr = function(sgid, attr, value) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sgid = this.data.sgid;
-	    var sg = DS.sgroups.get(sgid);
+	var sg = DS.sgroups.get(sgid);
+        if (sg.type == 'DAT' && RS.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
+            RS.clearVisel(RS.sgroupData.get(sgid).visel);
+            RS.sgroupData.unset(sgid);
+        }
+
         this.data.value = sg.setAttr(this.data.attr, this.data.value);
     };
     this._invert = function() {

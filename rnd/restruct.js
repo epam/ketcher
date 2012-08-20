@@ -918,7 +918,7 @@ rnd.ReRxnPlus.findClosest = function (render, p) {
         var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
         if (dist < 0.5 && (!ret || dist < minDist)) {
             minDist = dist;
-            ret = {'id' : id, 'minDist' : minDist};
+            ret = {'id' : id, 'dist' : minDist};
         }
     });
     return ret;
@@ -958,7 +958,7 @@ rnd.ReRxnArrow.findClosest = function(render, p) {
             var dist = Math.abs(p.y - pos.y);
             if (dist < 0.3 && (!ret || dist < minDist)) {
                 minDist = dist;
-                ret = {'id' : id, 'minDist' : minDist};
+                ret = {'id' : id, 'dist' : minDist};
             }
         }
     });
@@ -998,7 +998,7 @@ rnd.ReFrag.findClosest = function(render, p, skip, minDist) {
                 var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
                 if (!ret || xDist < minDist) {
                     minDist = xDist;
-                    ret = { 'id' : fid, 'minDist' : minDist };
+                    ret = { 'id' : fid, 'dist' : minDist };
                 }
             }
         }
@@ -1089,7 +1089,7 @@ rnd.ReRGroup.findClosest = function(render, p, skip, minDist) {
                 var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
                 if (!ret || xDist < minDist) {
                     minDist = xDist;
-                    ret = { 'id' : rgid, 'minDist' : minDist };
+                    ret = { 'id' : rgid, 'dist' : minDist };
                 }
             }
         }
@@ -1276,8 +1276,8 @@ rnd.ReDataSGroupData = function (sgroup)
 rnd.ReDataSGroupData.prototype = new rnd.ReObject();
 
 rnd.ReDataSGroupData.findClosest = function (render, p) {
-    var minDist;
-    var ret;
+    var minDist = null;
+    var ret = null;
 
     render.ctab.sgroupData.each(function(id, item) {
         if (item.sgroup.type != 'DAT')
@@ -1286,11 +1286,11 @@ rnd.ReDataSGroupData.findClosest = function (render, p) {
         var inBox = box.p0.y < p.y && box.p1.y > p.y && box.p0.x < p.x && box.p1.x > p.x;
         var xDist = Math.min(Math.abs(box.p0.x - p.x), Math.abs(box.p1.x - p.x));
         if (inBox && (ret == null || xDist < minDist)) {
-            ret = {'id' : id, 'minDist' : minDist};
+            ret = {'id' : id, 'dist' : xDist};
             minDist = xDist;
         }
     });
-	return ret;
+    return ret;
 }
 
 rnd.ReDataSGroupData.prototype.highlightPath = function(render) {
@@ -1329,7 +1329,7 @@ rnd.ReChiralFlag.findClosest = function(render, p) {
             var dist = Math.abs(p.y - pos.y);
             if (dist < 0.3 && (!ret || dist < minDist)) {
                 minDist = dist;
-                ret = {'id' : id, 'minDist' : minDist};
+                ret = {'id' : id, 'dist' : minDist};
             }
         }
     });

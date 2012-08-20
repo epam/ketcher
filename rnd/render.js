@@ -482,10 +482,10 @@ rnd.Render.prototype.highlightObject = function(obj, visible) {
             // set highlight for both the group and the data item
             var item1 = this.ctab.sgroups.get(obj.id);
             var item2 = this.ctab.sgroupData.get(obj.id);
-            if (item1 == null || item2 == null)
-                return true;
-            item1.setHighlight(visible, this);
-            item2.setHighlight(visible, this);
+            if (item1 != null)
+                item1.setHighlight(visible, this);
+            if (item2 != null)
+                item2.setHighlight(visible, this);
         } else {
             item.setHighlight(visible, this);
         }

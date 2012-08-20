@@ -181,7 +181,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 
     molecule.sgroups.each(function(id, item) {
         this.sgroups.set(id, new rnd.ReSGroup(item));
-        if (item.type == 'DAT') {
+        if (item.type == 'DAT' && !item.data.attached) {
             this.sgroupData.set(id, new rnd.ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
         }
     }, this);

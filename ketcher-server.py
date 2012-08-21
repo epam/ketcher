@@ -11,6 +11,7 @@ import traceback
 
 port = 8080
 indigo = indigo.Indigo()
+indigo.setOption("ignore-stereochemistry-errors", "true")
 
 if len(sys.argv) > 1:
 	port = int(sys.argv[1])

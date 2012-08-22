@@ -1532,30 +1532,43 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	var molReact = [],
 		molAgent = [],
 		molProd = [];
-    var j;
+        var j;
+        var bondLengthData = {cnt:0,totalLength:0};
 	for (j = 0; j < mols.length; ++j) {
-		var mol = mols[j];
-		var bb = mol.getCoordBoundingBoxObj();
-        if (!bb)
-            continue;
-
-		var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
-			(j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
-				chem.Struct.FRAGMENT.AGENT));
-		if (fragmentType == chem.Struct.FRAGMENT.REACTANT) {
-			bbReact.push(bb);
-            molReact.push(mol);
-        } else if (fragmentType == chem.Struct.FRAGMENT.AGENT) {
-			bbAgent.push(bb);
-            molAgent.push(mol);
-        } else if (fragmentType == chem.Struct.FRAGMENT.PRODUCT) {
-			bbProd.push(bb);
-            molProd.push(mol);
+            var mol = mols[j];
+            var bondLengthDataMol = mol.getBondLengthData();
+            bondLengthData.cnt += bondLengthDataMol.cnt;
+            bondLengthData.totalLength += bondLengthDataMol.totalLength;
         }
+        var avgBondLength = 1/(bondLengthData.cnt == 0 ? 1 : bondLengthData.totalLength / bondLengthData.cnt);
+	for (j = 0; j < mols.length; ++j) {
+            mol = mols[j];
+            mol.scale(avgBondLength);
+        }
+        
+	for (j = 0; j < mols.length; ++j) {
+            mol = mols[j];
+            var bb = mol.getCoordBoundingBoxObj();
+            if (!bb)
+                continue;
 
-		mol.atoms.each(function(aid, atom){
-			atom.rxnFragmentType = fragmentType;
-		});
+            var fragmentType = (j < nReactants ? chem.Struct.FRAGMENT.REACTANT :
+                    (j < nReactants + nProducts ? chem.Struct.FRAGMENT.PRODUCT :
+                            chem.Struct.FRAGMENT.AGENT));
+            if (fragmentType == chem.Struct.FRAGMENT.REACTANT) {
+                bbReact.push(bb);
+                molReact.push(mol);
+            } else if (fragmentType == chem.Struct.FRAGMENT.AGENT) {
+                bbAgent.push(bb);
+                molAgent.push(mol);
+            } else if (fragmentType == chem.Struct.FRAGMENT.PRODUCT) {
+                bbProd.push(bb);
+                molProd.push(mol);
+            }
+
+            mol.atoms.each(function(aid, atom){
+                atom.rxnFragmentType = fragmentType;
+            });
 	}
 
     // reaction fragment layout

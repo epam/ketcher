@@ -668,6 +668,19 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	return bb;
 };
 
+chem.Struct.prototype.getBondLengthData = function ()
+{
+	var totalLength = 0;
+	var cnt = 0;
+	this.bonds.each(function(bid, bond){
+		totalLength += util.Vec2.dist(
+			this.atoms.get(bond.begin).pp,
+			this.atoms.get(bond.end).pp);
+		cnt++;
+	}, this);
+	return {cnt:cnt, totalLength:totalLength};
+};
+
 chem.Struct.prototype.getAvgBondLength = function ()
 {
 	var totalLength = 0;
@@ -841,3 +854,22 @@ chem.Struct.RGroup.prototype.clone = function(fidMap) {
     });
     return ret;
 };
+
+chem.Struct.prototype.scale = function (scale)
+{
+    if (scale != 1) {
+        this.atoms.each(function(aid, atom){
+            atom.pp = atom.pp.scaled(scale);
+        }, this);
+        this.rxnPluses.each(function(id, item){
+            item.pp = item.pp.scaled(scale);
+        }, this);
+        this.rxnArrows.each(function(id, item){
+            item.pp = item.pp.scaled(scale);
+        }, this);
+        this.sgroups.each(function(id, item){
+            item.pp = item.pp ? item.pp.scaled(scale) : null;
+        }, this);
+    }
+};
+

@@ -744,20 +744,7 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
                     avg = 1;
             var scale = 1 / avg;
         }
-    if (scale != 1) {
-        this.atoms.each(function(raid, ratom){
-            ratom.a.pp = ratom.a.pp.scaled(scale);
-        }, this);
-        this.rxnPluses.each(function(rid, ritem){
-            ritem.item.pp = ritem.item.pp.scaled(scale);
-        }, this);
-        this.rxnArrows.each(function(rid, ritem){
-            ritem.item.pp = ritem.item.pp.scaled(scale);
-        }, this);
-        this.sgroups.each(function(id, item){
-            item.item.pp = item.item.pp ? item.item.pp.scaled(scale) : null;
-        }, this);
-    }
+    this.molecule.scale(scale);
 };
 
 rnd.ReStruct.prototype.scaleCoordinates = function() // TODO: check if we need that and why

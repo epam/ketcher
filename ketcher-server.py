@@ -67,7 +67,35 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       return
 
     SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-
+    
+  def aromatize(self, moldata, dearomatize, is_query):
+        responce=""
+        if moldata.startswith('$RXN'):
+          if is_query:
+            rxn = indigo.loadQueryReaction(moldata)
+          else:
+            rxn = indigo.loadReaction(moldata)
+          if dearomatize:
+            print 'dearomatize'
+            rxn.dearomatize()
+          else:
+            print 'aromatize'
+            rxn.aromatize()
+          responce += "Ok.\n"
+          responce += rxn.rxnfile()
+        else:
+          if is_query:
+            mol = indigo.loadQueryMolecule(moldata)
+          else:
+            mol = indigo.loadMolecule(moldata)
+          if dearomatize:
+            mol.dearomatize()
+          else:
+            mol.aromatize()
+          responce += "Ok.\n"
+          responce += mol.molfile()
+        return responce
+    
   def do_POST(self):
     ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
     if ctype == 'multipart/form-data':
@@ -135,32 +163,28 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       moldata = self.globals['moldata']
       responce=""
       try:
-        if moldata.startswith('$RXN'):
-          rxn = indigo.loadReaction(moldata)
-          if dearomatize:
-            print 'dearomatize'
-            rxn.dearomatize()
-          else:
-            print 'aromatize'
-            rxn.aromatize()
-          responce += "Ok.\n"
-          responce += rxn.rxnfile()
-        else:
-          mol = indigo.loadMolecule(moldata)
-          if dearomatize:
-            mol.dearomatize()
-          else:
-            mol.aromatize()
-          responce += "Ok.\n"
-          responce += mol.molfile()
+        responce = self.aromatize(moldata, dearomatize, False)
       except:
         responce += "Error.\n"
-        message = sys.exc_info()[1].value;
-        if message.startswith("molfile loader:") and message.endswith("queries"): # hack to avoid user confusion
-          responce += "Molecules and reactions containing query features cannot be aromatized or dearomatized.\n"
+        message = str(sys.exc_info()[1])
+        fixed = False
+        if message.startswith("\"molfile loader:") and message.endswith("queries\""): # hack to avoid user confusion
+          if not dearomatize:
+              responce = ""
+              try:
+                print "Try to load as query"
+                responce = self.aromatize(moldata, dearomatize, True)
+                print "Done"
+                fixed = True
+              except:
+                responce = "Error.\n"
+                responce += str(sys.exc_info()[1])
+          else:
+            responce += "Molecules and reactions containing query features cannot be dearomatized yet.\n" 
         else:
           responce += message+"\n";
-        responce += '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
+        if not fixed:
+            responce += '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
       self.wfile.write(responce)
       return
 

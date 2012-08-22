@@ -2236,7 +2236,7 @@ ui.structToClipboard = function (clipboard, struct, selection)
         for (var i = 0; i < atoms.length; ++i)
             if (!util.Set.contains(atomFragments, atoms[i]))
                 return;
-        var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
+        var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
         clipboard.rgmap[frid] = rgid;
     }, this);
 };

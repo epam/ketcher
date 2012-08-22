@@ -25,8 +25,9 @@ rnd.Editor = function(render)
 };
 rnd.Editor.prototype.selectAll = function() {
     var selection = {};
-    for (var map in rnd.ReStruct.maps)
-        selection[map] = ui.ctab[map].ikeys();
+    for (var map in rnd.ReStruct.maps) {
+        selection[map] = ui.render.ctab[map].ikeys();
+    }
     this._selectionHelper.setSelection(selection);
 };
 rnd.Editor.prototype.deselectAll = function() {

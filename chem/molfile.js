@@ -441,8 +441,11 @@ chem.Molfile.applyDataSGroupInfoLine = function (sGroups, propData) {
 
 chem.Molfile.applyDataSGroupData = function (sg, data, finalize) {
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
-	if (finalize)
+	if (finalize) {
 		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
+                if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
+                    sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
+        }
 };
 
 chem.Molfile.applyDataSGroupDataLine = function (sGroups, propData, finalize) {
@@ -764,7 +767,7 @@ chem.Molfile.v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shi
             mf.applyDataSGroupInfo(sg, util.stripQuotes(props['FIELDDISP'][0]));
         }
         if (props['FIELDDATA']) {
-            mf.applyDataSGroupData(sg, props['FIELDDATA'][0]);
+            mf.applyDataSGroupData(sg, props['FIELDDATA'][0], true);
         }
         if (props['FIELDNAME']) {
             mf.applyDataSGroupName(sg, props['FIELDNAME'][0]);

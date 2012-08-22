@@ -1058,6 +1058,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
 {
     var smiles = mol_string.strip();
     var updateFunc = paste ? function (struct) {
+        struct.rescale(); 
         ui.copy(struct);
         ui.updateSelection();
         ui.selectMode('paste');

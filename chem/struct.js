@@ -683,15 +683,8 @@ chem.Struct.prototype.getBondLengthData = function ()
 
 chem.Struct.prototype.getAvgBondLength = function ()
 {
-	var totalLength = 0;
-	var cnt = 0;
-	this.bonds.each(function(bid, bond){
-		totalLength += util.Vec2.dist(
-			this.atoms.get(bond.begin).pp,
-			this.atoms.get(bond.end).pp);
-		cnt++;
-	}, this);
-	return cnt > 0 ? totalLength / cnt : -1;
+    var bld = this.getBondLengthData();
+    return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
 };
 
 chem.Struct.prototype.getAvgClosestAtomDistance = function ()
@@ -873,3 +866,15 @@ chem.Struct.prototype.scale = function (scale)
     }
 };
 
+chem.Struct.prototype.rescale = function ()
+{
+    var avg = this.getAvgBondLength();
+    if (avg < 0 && !this.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
+        // the atoms in different components are generally larger than those between atoms of a single component
+        // (KETCHER-341)
+        avg = this.getAvgClosestAtomDistance();
+    if (avg < 1e-3)
+        avg = 1;
+    var scale = 1 / avg;
+    this.scale(scale);
+};

@@ -32,39 +32,46 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     self.globals = dict(cgi.parse_qsl(self.query_string))
 
-    if self.path.endswith("layout"):
-      self.send_response(200)
-      self.send_header('Content-type', 'text/plain')
-      self.end_headers()
-      smiles = self.globals['smiles']
-      if '>>' in smiles or smiles.startswith('$RXN'):
-        rxn = indigo.loadQueryReaction(smiles)
-        rxn.layout()
-        self.wfile.write("Ok.\n")
-        self.wfile.write(rxn.rxnfile())
-      else:
-        mol = indigo.loadQueryMolecule(smiles)
-        mol.layout()
-        self.wfile.write("Ok.\n")
-        self.wfile.write(mol.molfile())
-      return
+    try:
+        if self.path.endswith("layout"):
+          self.send_response(200)
+          self.send_header('Content-type', 'text/plain')
+          self.end_headers()
+          smiles = self.globals['smiles']
+          if '>>' in smiles or smiles.startswith('$RXN'):
+            rxn = indigo.loadQueryReaction(smiles)
+            rxn.layout()
+            self.wfile.write("Ok.\n")
+            self.wfile.write(rxn.rxnfile())
+          else:
+            mol = indigo.loadQueryMolecule(smiles)
+            mol.layout()
+            self.wfile.write("Ok.\n")
+            self.wfile.write(mol.molfile())
+          return
 
-    if self.path.endswith("automap"):
-      self.send_response(200)
-      self.send_header('Content-type', 'text/plain')
-      self.end_headers()
-      smiles = self.globals['smiles']
-      if 'mode' in self.globals:
-        mode = self.globals['mode']
-      else:
-        mode = 'discard'
-      rxn = indigo.loadQueryReaction(smiles)
-      if not smiles.startswith('$RXN'):
-        rxn.layout()
-      rxn.automap(mode)
-      self.wfile.write("Ok.\n")
-      self.wfile.write(rxn.rxnfile())
-      return
+        if self.path.endswith("automap"):
+          self.send_response(200)
+          self.send_header('Content-type', 'text/plain')
+          self.end_headers()
+          smiles = self.globals['smiles']
+          if 'mode' in self.globals:
+            mode = self.globals['mode']
+          else:
+            mode = 'discard'
+          rxn = indigo.loadQueryReaction(smiles)
+          if not smiles.startswith('$RXN'):
+            rxn.layout()
+          rxn.automap(mode)
+          self.wfile.write("Ok.\n")
+          self.wfile.write(rxn.rxnfile())
+          return
+    except:
+        responce = "Error.\n"
+        message = str(sys.exc_info()[1])
+        responce += message+"\n";
+        self.wfile.write(responce)
+        return
 
     SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
     

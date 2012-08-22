@@ -1082,6 +1082,10 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
             {
                 if (res.responseText.startsWith('Ok.'))
                     updateFunc.call(ui, ui.parseCTFile(res.responseText));
+                else if (res.responseText.startsWith('Error.'))
+                    alert(res.responseText.split('\n')[1]);
+                else
+                    throw new Error('Something went wrong' + res.responseText);
             }
         });
     } else if (!ui.standalone && force_layout)
@@ -1095,6 +1099,10 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
             {
                 if (res.responseText.startsWith('Ok.'))
                     updateFunc.call(ui, ui.parseCTFile(res.responseText));
+                else if (res.responseText.startsWith('Error.'))
+                    alert(res.responseText.split('\n')[1]);
+                else
+                    throw new Error('Something went wrong' + res.responseText);
             }
         });
     } else {

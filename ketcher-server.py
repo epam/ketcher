@@ -32,6 +32,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     self.globals = dict(cgi.parse_qsl(self.query_string))
 
+    error_in_load = True
     try:
         if self.path.endswith("layout"):
           self.send_response(200)
@@ -40,11 +41,13 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
           smiles = self.globals['smiles']
           if '>>' in smiles or smiles.startswith('$RXN'):
             rxn = indigo.loadQueryReaction(smiles)
+            error_in_load = False
             rxn.layout()
             self.wfile.write("Ok.\n")
             self.wfile.write(rxn.rxnfile())
           else:
             mol = indigo.loadQueryMolecule(smiles)
+            error_in_load = False
             mol.layout()
             self.wfile.write("Ok.\n")
             self.wfile.write(mol.molfile())
@@ -60,6 +63,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
           else:
             mode = 'discard'
           rxn = indigo.loadQueryReaction(smiles)
+          error_in_load = False
           if not smiles.startswith('$RXN'):
             rxn.layout()
           rxn.automap(mode)
@@ -68,6 +72,8 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
           return
     except:
         responce = "Error.\n"
+        if error_in_load:
+            responce += "Cannot load the specified structure: "
         message = str(sys.exc_info()[1])
         responce += message+"\n";
         self.wfile.write(responce)

@@ -2120,6 +2120,8 @@ ui.copy = function (struct, selection)
         rxnArrows: new Array(),
         rxnPluses: new Array(),
         chiralFlags: new Array(),
+        rgmap: {},
+        rgroups: {},
         // RB: let it be here for the moment
         // TODO: "clipboard" support to be moved to editor module
         getAnchorPosition: function() {
@@ -2230,7 +2232,7 @@ ui.structToClipboard = function (clipboard, struct, selection)
         util.Set.add(fragments, frag);
     });
 
-    clipboard.rgmap = {};
+    var rgids = util.Set.empty();
     util.Set.each(fragments, function(frid){
         var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
         for (var i = 0; i < atoms.length; ++i)
@@ -2238,6 +2240,11 @@ ui.structToClipboard = function (clipboard, struct, selection)
                 return;
         var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
         clipboard.rgmap[frid] = rgid;
+        util.Set.add(rgids, rgid);
+    }, this);
+    
+    util.Set.each(rgids, function(id){
+        clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
     }, this);
 };
 

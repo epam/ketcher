@@ -833,6 +833,15 @@ chem.Struct.RGroup = function(logic) {
     this.range = logic.range || '';
     this.ifthen = logic.ifthen || 0;
 };
+
+chem.Struct.RGroup.prototype.getAttrs = function() {
+    return {
+        resth: this.resth,
+        range: this.range,
+        ifthen: this.ifthen
+    };
+};
+
 chem.Struct.RGroup.findRGroupByFragment = function(rgroups, frid) {
     var ret;
     rgroups.each(function(rgid, rgroup) {

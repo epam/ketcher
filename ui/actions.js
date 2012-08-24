@@ -999,9 +999,20 @@ ui.Action.fromPaste = function(objects, offset) {
         amap[aid] = action.addOp(new ui.Action.OpAtomAdd(atom, atom.pp.add(offset)).perform(ui.editor)).data.aid;
     }
 
+    var rgnew = [];
+    for (var rgid in ui.clipboard.rgroups) {
+        if (!ui.ctab.rgroups.has(rgid)) {
+            rgnew.push(rgid);
+        }
+    }
+    
     // assign fragments to r-groups
     for (var frid in ui.clipboard.rgmap) {
         action.addOp(new ui.Action.OpRGroupFragment(ui.clipboard.rgmap[frid], fmap[frid]).perform(ui.editor));
+    }
+    
+    for (var i = 0; i < rgnew.length; ++i) {
+        action.mergeWith(ui.Action.fromRGroupAttrs(rgnew[i], ui.clipboard.rgroups[rgnew[i]]));
     }
 
     //bonds

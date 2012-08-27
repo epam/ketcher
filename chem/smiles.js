@@ -33,7 +33,8 @@ chem.SmilesSaver = function (render)
 chem.SmilesSaver._Atom = function (h_count)
 {
     this.neighbours = new Array();  // Array of integer pairs {a, b}
-    this.aromatic = false;          // has only aromatic bonds
+    this.aromatic = false;          // has aromatic bond
+    this.lowercase = false;         // aromatic and has to be written lowercase
     this.chirality = 0;             // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
     this.branch_cnt = 0;            // runs from 0 to (branches - 1)
     this.paren_written = false;
@@ -58,13 +59,22 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         this.atoms[aid] = new chem.SmilesSaver._Atom(atom.implicitH);
     }, this);
 
+     // From the SMILES specification:
+     // Please note that only atoms on the following list 
+     // can be considered aromatic: C, N, O, P, S, As, Se, and * (wildcard).
+     var allowed_lowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As'];
+
     // Detect atoms that have aromatic bonds and count neighbours
     molecule.bonds.each(function (bid, bond)
     {
         if (bond.type == chem.Struct.BOND.TYPE.AROMATIC)
         {
            this.atoms[bond.begin].aromatic = true;
+           if (allowed_lowercase.indexOf(molecule.atoms.get(bond.begin).label) != -1)
+               this.atoms[bond.begin].lowercase = true;
            this.atoms[bond.end].aromatic = true;
+           if (allowed_lowercase.indexOf(molecule.atoms.get(bond.end).label) != -1)
+               this.atoms[bond.end].lowercase = true;
         }
         this.atoms[bond.begin].neighbours.push({aid: bond.end, bid: bid});
         this.atoms[bond.end].neighbours.push({aid: bond.begin, bid: bid});
@@ -278,7 +288,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
                 this.smiles += '=';
             else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE)
                 this.smiles += '#';
-            else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC /*&& (!this.atoms[bond.begin].aromatic || !this.atoms[bond.end].aromatic)*/)
+            else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC && (!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase))
                 this.smiles += ':'; // TODO: Check if this : is needed
             else if (bond.type == chem.Struct.BOND.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
                 this.smiles += '-';
@@ -309,7 +319,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             this._written_components++;
         }
         if (write_atom) {
-            this._writeAtom(molecule, v_idx, this.atoms[v_idx].aromatic, this.atoms[v_idx].chirality);
+            this._writeAtom(molecule, v_idx, this.atoms[v_idx].aromatic, this.atoms[v_idx].lowercase, this.atoms[v_idx].chirality);
             this._written_atoms.push(seq_el.idx);
         }
     }
@@ -340,7 +350,7 @@ chem.SmilesSaver.prototype._writeCycleNumber = function (n)
         throw new Error("bad cycle number: " + n);
 };
 
-chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
+chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality)
 {
     var atom = mol.atoms.get(idx);
     var i;
@@ -412,7 +422,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, chirality)
     if (atom.isotope > 0)
         this.smiles += atom.isotope;
 
-    if (aromatic)
+    if (lowercase)
         this.smiles += atom.label.toLowerCase();
     else
         this.smiles += atom.label;

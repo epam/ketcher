@@ -103,7 +103,7 @@
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="transform" selid="transform_rotate" src="png/action/transform-rotate.png" alt="" title="Rotate Tool" /><img class="dropdownButton" id="transform_dropdown" src="png/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
@@ -237,6 +237,20 @@
                     </tr>
                     <tr class="dropdownListItem" id="rgroup_attpoints" title="Attachment Point Tool (Shift+R)">
                         <td><div id="rgroup_attpoints_todo"><img src="png/action/rgroup-attpoints.png" alt="" style="width:24px;height:24px;" /></div>Attachment Point Tool</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="dropdownList" id="transform_dropdown_list" style="display:none">
+                <table>
+                    <tr class="dropdownListItem" id="transform_rotate" title="Rotate Tool">
+                        <td><div id="transform_rotate_todo"><img src="png/action/transform-rotate.png" alt="" style="width:24px;height:24px;" /></div>Rotate Tool</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="transform_flip_h" title="Horizontal Flip">
+                        <td><div id="transform_flip_h_todo"><img src="png/action/transform-flip-h.png" alt="" style="width:24px;height:24px;" /></div>Horizontal Flip</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="transform_flip_v" title="Vertical Flip">
+                        <td><div id="transform_flip_v_todo"><img src="png/action/transform-flip-v.png" alt="" style="width:24px;height:24px;" /></div>Vertical Flip</td>
                     </tr>
                 </table>
             </div>

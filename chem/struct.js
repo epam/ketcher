@@ -83,14 +83,18 @@ chem.Struct.prototype.getScaffold = function () {
 	return this.clone(atomSet);
 };
 
-chem.Struct.prototype.getFragment = function (fid) {
+chem.Struct.prototype.getFragmentIds = function (fid) {
     var atomSet = util.Set.empty();
     this.atoms.each(function(aid, atom){
         if (atom.fragment == fid) {
             util.Set.add(atomSet, aid);
         }
     }, this);
-	return this.clone(atomSet);
+	return atomSet;
+}
+
+chem.Struct.prototype.getFragment = function (fid) {
+	return this.clone(this.getFragmentIds(fid));
 }
 
 chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups)

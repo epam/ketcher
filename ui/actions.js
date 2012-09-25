@@ -1049,6 +1049,121 @@ ui.Action.fromPaste = function(objects, offset) {
     return action;
 };
 
+ui.Action.fromFlip = function(flip) {
+    var objects = ui.selection;
+    var render = ui.render;
+    var ctab = render.ctab;
+    var molecule = ctab.molecule;
+    
+    var action = new ui.Action();
+    var i;
+    var fids = {};
+    
+    if (objects.atoms) {
+        for (i = 0; i < objects.atoms.length; i++) {
+            var aid = objects.atoms[i];
+            var atom = molecule.atoms.get(aid);
+            if (!(atom.fragment in fids)) {
+                fids[atom.fragment] = [aid]; 
+            } else {
+                fids[atom.fragment].push(aid);
+            }
+        }
+        
+        fids = new Hash(fids);
+        
+        if (fids.detect(function (frag) {
+            var fragment1 = molecule.getFragmentIds(frag[0]);
+            var fragment2 = util.Set.fromList(frag[1]);
+            
+            if (!util.Set.eq(fragment1, fragment2)) {
+                return true;
+            }
+            
+            return false;
+        })) {
+            return action; // empty action
+        }
+        
+        fids.each(function (frag) {
+            var fragment = util.Set.fromList(frag[1]);
+            var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
+            var bbox = molecule.getCoordBoundingBox(fragment);
+            
+            util.Set.each(fragment, function(aid) {
+                var atom = molecule.atoms.get(aid);
+                var d = new util.Vec2();
+                
+                if (flip == 'horizontal') {
+                    d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
+                } else { // 'vertical'
+                    d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
+                }
+                
+                action.addOp(new ui.Action.OpAtomMove(aid, d));
+            });
+        });
+    }
+
+    return action.perform();
+};
+
+ui.Action.fromRotate = function(pos, angle) {
+    var objects = ui.selection;
+    var render = ui.render;
+    var ctab = render.ctab;
+    var molecule = ctab.molecule;
+    
+    var action = new ui.Action();
+    var i;
+    var fids = {};
+    
+    function rotateDelta(v)
+    {
+        var v1 = v.sub(pos);
+        v1 = v1.rotate(angle);
+        v1.add_(pos);
+        return v1.sub(v);
+    }
+    
+    if (objects.atoms) {
+        objects.atoms.each(function (aid) {
+            var atom = molecule.atoms.get(aid);
+            action.addOp(new ui.Action.OpAtomMove(aid, rotateDelta(atom.pp)));
+        });
+    }
+    
+    if (objects.rxnArrows) {
+        objects.rxnArrows.each(function (aid) {
+            var arrow = molecule.rxnArrows.get(aid);
+            action.addOp(new ui.Action.OpRxnArrowMove(aid, rotateDelta(arrow.pp)));
+        });
+    }
+    
+    if (objects.rxnPluses) {
+        objects.rxnPluses.each(function (pid) {
+            var plus = molecule.rxnPluses.get(pid);
+            action.addOp(new ui.Action.OpRxnPlusMove(pid, rotateDelta(plus.pp)));
+        });
+    }
+    
+    if (objects.sgroupData) {
+        objects.sgroupData.each(function (did) {
+            var data = molecule.sgroups.get(did);
+            action.addOp(new ui.Action.OpSGroupDataMove(did, rotateDelta(data.pp)));
+        });
+    }
+    
+    if (objects.chiralFlags) {
+        objects.chiralFlags.each(function (fid) {
+            var flag = molecule.chiralFlags.get(fid);
+            action.addOp(new ui.Action.OpChiralFlagMove(fid, rotateDelta(flag.pp)));
+        });
+    }
+
+    return action.perform();
+};
+
 ui.addUndoAction = function (action, check_dummy)
 {
     if (action == null)

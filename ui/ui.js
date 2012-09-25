@@ -571,6 +571,15 @@ ui.selectMode = function (mode)
                 return;
             }
         } */
+        if (mode.startsWith('transform_flip_')) {
+            if (mode.endsWith('h')) {
+                ui.addUndoAction(ui.Action.fromFlip('horizontal'), true);
+            } else {
+                ui.addUndoAction(ui.Action.fromFlip('vertical'), true);
+            }
+            ui.render.update();
+            return;
+        }
     }
 
     if (this.mode_id != null && this.mode_id != mode) {
@@ -1619,7 +1628,8 @@ ui.hideBlurredControls = function ()
         'bond_dropdown_list',
         'template_dropdown_list',
         'reaction_dropdown_list',
-        'rgroup_dropdown_list'
+        'rgroup_dropdown_list',
+        'transform_dropdown_list'
     ].each(
         function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
     );

@@ -72,6 +72,8 @@ rnd.Editor.prototype.toolFor = function(tool) {
         return new rnd.Editor.RGroupFragmentTool(this);
     } else if (tool == 'rgroup_attpoints') {
         return new rnd.Editor.APointTool(this);
+    } else if (tool.startsWith('transform_rotate')) {
+        return new rnd.Editor.RotateTool(this);
     }
     return null;
 };
@@ -1307,5 +1309,83 @@ rnd.Editor.PasteTool.prototype.OnCancel = function() {
         this.action.perform(this.editor);
         delete this.action;
     }
+};
+
+rnd.Editor.RotateTool = function(editor) {
+    this.editor = editor;
+    this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
+
+    var selection = this.editor._selectionHelper.selection;
+    if (!selection.atoms || !selection.atoms.length) {
+        // otherwise, clear selection
+        this.editor._selectionHelper.setSelection(null);
+    }
+};
+rnd.Editor.RotateTool.prototype = new rnd.Editor.EditorTool();
+
+rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
+    
+    var selection = this.editor._selectionHelper.selection;
+    if (selection.atoms && selection.atoms.length) {
+        var molecule = this.editor.render.ctab.molecule;
+        var xy0 = new util.Vec2();
+        var selection = this.editor._selectionHelper.selection;
+        
+        if (!selection.atoms || !selection.atoms.length) {
+            return true;
+        }
+        
+        selection.atoms.each(function (aid) {
+            xy0.add_(molecule.atoms.get(aid).pp);
+        });
+        
+        this.dragCtx = {
+            xy0 : xy0.scaled(1 / selection.atoms.length),
+            angle1 : this._calcAngle(xy0, this.editor.ui.page2obj(event))
+            //xy1 : this.editor.ui.page2obj(event)
+        };
+    } else {
+        var ci = this.editor.render.findItem(event);
+        if (!ci || ci.type == 'Canvas') {
+            this._lassoHelper.begin(event);
+        }
+    }
+    return true;
+};
+rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
+    if (this._lassoHelper.running()) {
+        this.editor._selectionHelper.setSelection(
+            this._lassoHelper.addPoint(event)
+            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
+        );
+    } else if ('dragCtx' in this) {
+        var _E_ = this.editor, _R_ = _E_.render;
+        var _DC_ = this.dragCtx;
+        
+        if ('action' in _DC_) _DC_.action.perform();
+        
+        var pos = _E_.ui.page2obj(event);
+        var angle2 = this._calcAngle(_DC_.xy0, pos)
+        _DC_.action = _E_.ui.Action.fromRotate(
+            _DC_.xy0,
+            angle2 - _DC_.angle1
+        );
+        _R_.update();
+    }
+    return true;
+};
+
+rnd.Editor.RotateTool.prototype.OnMouseUp = function(event) {
+    var id = null; // id of an existing group, if we're editing one
+    var selection = null; // atoms to include in a newly created group
+    if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+        selection = this._lassoHelper.end(event);
+    } else if ('dragCtx' in this) {
+        if ('action' in this.dragCtx) {
+            this.editor.ui.addUndoAction(this.dragCtx.action);
+        }
+        delete this.dragCtx;
+    }
+    return true;
 };
 

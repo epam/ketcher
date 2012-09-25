@@ -1528,7 +1528,9 @@ ui.Action.OpBondAttr = function(bid, attribute, value) {
 
         bond[this.data.attribute] = this.data.value;
 
-        editor.render.invalidateBond(this.data.bid, this.data.attribute == 'type' ? 1 : 0);
+        editor.render.invalidateBond(this.data.bid);
+        if (this.data.attribute == 'type')
+            editor.render.invalidateLoop(this.data.bid);
     };
     this._isDummy = function(editor) {
         return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;

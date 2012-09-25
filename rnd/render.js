@@ -362,33 +362,41 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 			var hb = hbs.get(hbid);
 			this.ctab.markBond(hb.bid, 1);
 			this.ctab.markAtom(hb.end, 0);
+            if (level)
+                this.invalidateLoop(hb.bid);
 		}
 	}
 };
 
-rnd.Render.prototype.invalidateBond = function (bid, invalidateLoops)
+rnd.Render.prototype.invalidateLoop = function (bid)
+{
+	var bond = this.ctab.bonds.get(bid);
+    var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
+    var lid2 = this.ctab.molecule.halfBonds.get(bond.b.hb2).loop;
+    if (lid1 >= 0)
+        this.ctab.loopRemove(lid1);
+    if (lid2 >= 0)
+        this.ctab.loopRemove(lid2);
+};
+
+rnd.Render.prototype.invalidateBond = function (bid)
 {
 	var bond = this.ctab.bonds.get(bid);
 	this.invalidateAtom(bond.b.begin, 0);
 	this.invalidateAtom(bond.b.end, 0);
-	if (invalidateLoops) {
-		var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
-		var lid2 = this.ctab.molecule.halfBonds.get(bond.b.hb2).loop;
-		if (lid1 >= 0)
-			this.ctab.loopRemove(lid1);
-		if (lid2 >= 0)
-			this.ctab.loopRemove(lid2);
-	}
 };
 
 rnd.Render.prototype.invalidateItem = function (map, id, level)
 {
-	if (map == 'atoms')
+	if (map == 'atoms') {
 		this.invalidateAtom(id, level);
-	else if (map == 'bonds')
-		this.invalidateBond(id, level);
-	else
+    } else if (map == 'bonds') {
+		this.invalidateBond(id);
+        if (level > 0)
+            this.invalidateLoop(id);
+    } else {
 		this.ctab.markItem(map, id, level);
+    }
 };
 
 rnd.Render.prototype.atomGetDegree = function (aid)

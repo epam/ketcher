@@ -593,7 +593,8 @@ ui.selectMode = function (mode)
             $(this.mode_id).removeClassName('buttonSelected');
     }
 
-    this.editor.deselectAll();
+    if (mode != 'transform_rotate')
+        this.editor.deselectAll();
 
     if (this.render.current_tool)
         this.render.current_tool.OnCancel();

@@ -387,7 +387,8 @@ rnd.Editor.LassoTool.prototype.OnCancel = function() {
         this.editor.render.update();
         delete this.dragCtx;
     }
-    this.editor._selectionHelper.setSelection();
+    // BK: when switching to Rotate Tool selection must persist
+    //this.editor._selectionHelper.setSelection();
 };
 
 

@@ -1340,10 +1340,11 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
             xy0.add_(molecule.atoms.get(aid).pp);
         });
         
+        xy0 = xy0.scaled(1 / selection.atoms.length);
+        
         this.dragCtx = {
-            xy0 : xy0.scaled(1 / selection.atoms.length),
+            xy0 : xy0,
             angle1 : this._calcAngle(xy0, this.editor.ui.page2obj(event))
-            //xy1 : this.editor.ui.page2obj(event)
         };
     } else {
         var ci = this.editor.render.findItem(event);

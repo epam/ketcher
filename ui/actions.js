@@ -73,9 +73,30 @@ ui.Action.fromMultipleMove = function (lists, d)
 
     var action = new ui.Action();
     var i;
-    if (lists.atoms)
-        for (i = 0; i < lists.atoms.length; ++i)
-            action.addOp(new ui.Action.OpAtomMove(lists.atoms[i], d));
+
+    var R = ui.render;
+    var RS = R.ctab;
+    var bondlist = [];
+    var atomsToInvalidate = util.Set.empty();
+    
+    if (lists.atoms) {
+        var atomSet = util.Set.fromList(lists.atoms);
+        RS.bonds.each(function(bid, bond){
+            if (util.Set.contains(atomSet, bond.b.begin) && util.Set.contains(atomSet, bond.b.end))
+                bondlist.push(bid);
+            else if (util.Set.contains(atomSet, bond.b.begin))
+                util.Set.add(atomsToInvalidate, bond.b.begin);
+            else if (util.Set.contains(atomSet, bond.b.end))
+                util.Set.add(atomsToInvalidate, bond.b.end);
+        }, this);
+        for (i = 0; i < bondlist.length; ++i) {
+            action.addOp(new ui.Action.OpBondMove(bondlist[i], d));
+        }
+        for (i = 0; i < lists.atoms.length; ++i) {
+            var aid = lists.atoms[i];
+            action.addOp(new ui.Action.OpAtomMove(aid, d, !util.Set.contains(atomsToInvalidate, aid)));
+        }
+    }    
 
     if (lists.rxnArrows)
         for (i = 0; i < lists.rxnArrows.length; ++i)
@@ -1198,12 +1219,19 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
 };
 ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
 
-ui.Action.OpAtomMove = function(aid, d) {
-    this.data = {aid : aid, d : d};
+ui.Action.OpAtomMove = function(aid, d, noinvalidate) {
+    this.data = {aid : aid, d : d, noinvalidate : noinvalidate};
     this._execute = function(editor) {
-        ui.ctab.atoms.get(this.data.aid).pp.add_(this.data.d);
-        this.data.d = this.data.d.negated();
-        editor.render.invalidateAtom(this.data.aid, 1);
+        var R = editor.render;
+        var RS = R.ctab;
+        var DS = RS.molecule;
+        var aid = this.data.aid;
+        var d = this.data.d;
+        DS.atoms.get(aid).pp.add_(d);
+        RS.atoms.get(aid).visel.translate(R.ps(d));
+        this.data.d = d.negated();
+        if (!this.data.noinvalidate)
+            R.invalidateAtom(aid, 1);
     };
     this._invert = function() {
         var ret = new ui.Action.OpAtomMove();
@@ -1212,6 +1240,22 @@ ui.Action.OpAtomMove = function(aid, d) {
     };
 };
 ui.Action.OpAtomMove.prototype = new ui.Action.OpBase();
+
+ui.Action.OpBondMove = function(bid, d) {
+    this.data = {bid : bid, d : d};
+    this._execute = function(editor) {
+        var R = editor.render;
+        var RS = R.ctab;
+        RS.bonds.get(this.data.bid).visel.translate(R.ps(this.data.d));
+        this.data.d = this.data.d.negated();
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpBondMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpBondMove.prototype = new ui.Action.OpBase();
 
 ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
     this.type = 'OpSGroupAtomAdd';

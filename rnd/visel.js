@@ -51,3 +51,22 @@ rnd.Visel.prototype.clear = function ()
 	this.boxes = [];
 	this.boundingBox = null;
 };
+
+rnd.Visel.prototype.translate = function (x, y)
+{
+    if (arguments.length == 1) {
+        y = x.y;
+        x = x.x;
+    } else if (arguments.length != 2) {
+        throw new Error("One vector or two scalar arguments expected");
+    }
+    for (var i = 0; i < this.paths.length; ++i)
+        this.paths[i].translate(x, y);
+    for (var j = 0; j < this.boxes.length; ++j) {
+        var box = this.boxes[j];
+        box.x += x;
+        box.y += y;
+    }
+    if (this.boundingBox != null)
+        this.boundingBox.translate(x, y);
+};

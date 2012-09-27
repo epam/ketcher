@@ -116,10 +116,12 @@ util.Set = {
 
 	fromList: function(list) {
 		var set = {};
-		for (var i = 0; i < list.length; ++i) {
-			set[list[i]-0] = list[i]-0;
-		}
-		return set;
+        if (list) {
+            for (var i = 0; i < list.length; ++i) {
+                set[list[i]-0] = list[i]-0;
+            }
+        }
+        return set;
 	},
 
 	keySetInt: function(map) {

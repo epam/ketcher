@@ -1022,10 +1022,10 @@ rnd.Render.prototype.update = function (force)
 			var csz = this.viewSz.sub(marg.scaled(2));
 			if (csz.x < 1 || csz.y < 1)
 				throw new Error("View box too small for the given margin");
-			var rescale = Math.min(csz.x / sz1.x, csz.y / sz1.y);
-			this.ctab.scale(rescale);
-			var offset1 = csz.sub(sz1.scaled(rescale)).scaled(0.5).add(marg).sub(bb.pos().scaled(rescale));
-			this.ctab.translate(offset1);
+            var rescale = Math.min(csz.x / sz1.x, csz.y / sz1.y);
+            this.ctab.translate(csz.sub(sz1.scaled(rescale)).scaled(0.5));
+            this.ctab.scale(rescale);
+            this.ctab.translate(bb.pos().negated().add(marg));
 		}
 	}
 

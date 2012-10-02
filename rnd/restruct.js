@@ -110,18 +110,15 @@ rnd.ReBond.prototype = new rnd.ReObject();
 rnd.ReBond.prototype.drawHighlight = function(render)
 {
     render.ctab.bondRecalc(render.settings, this);
-    var ret = render.paper.ellipse(
-        this.b.center.x, this.b.center.y, this.b.sa, this.b.sb
-    ).rotate(this.b.angle).attr(render.styles.highlightStyle);
+    var ret = render.paper.circle(this.b.center.x, this.b.center.y, 0.8 * render.styles.atomSelectionPlateRadius)
+        .attr(render.styles.highlightStyle);
     render.addItemPath(this.visel, 'highlighting', ret);
     return ret;
 };
 
 rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	restruct.bondRecalc(restruct.render.settings, this);
-	return paper
-	.ellipse(this.b.center.x, this.b.center.y, this.b.sa, this.b.sb)
-	.rotate(this.b.angle)
+	return paper.circle(this.b.center.x, this.b.center.y, 0.8 * styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };
 

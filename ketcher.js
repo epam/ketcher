@@ -81,7 +81,7 @@ ketcher.init = function ()
 	tmpl.bond_singlearomatic = bond_head.concat(['  1  2  6  0     0  0'], bond_tail);
 	tmpl.bond_doublearomatic = bond_head.concat(['  1  2  7  0     0  0'], bond_tail);
 
-	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond', tmpl.bond_single, 20, renderOptsBond);
+	ketcher.button_areas.bond_single = ketcher.showMolfileOpts('bond', tmpl.bond_single, 15, renderOptsBond);
 
 	var renderOptsPattern = {
 		'autoScale':true,
@@ -223,8 +223,8 @@ ketcher.init = function ()
         'M  END'
     ];
 
-	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 20, renderOptsPattern);
-    ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 20, renderOptsPattern);
+	ketcher.button_areas.chain = ketcher.showMolfileOpts('chain', tmpl.chain, 15, renderOptsPattern);
+    ketcher.button_areas.template_0 = ketcher.showMolfileOpts('template', tmpl.template_0, 15, renderOptsPattern);
 
     // TODO code cleanup
 /*
@@ -282,7 +282,7 @@ ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicit
         'showLoopIds':false,
         'showAtomIds':false,
 		'autoScale':autoScale||false,
-		'autoScaleMargin':20,
+		'autoScaleMargin':4,
 		'hideImplicitHydrogen':hideImplicitHydrogen||false
     });
 };

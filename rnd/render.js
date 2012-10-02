@@ -972,9 +972,9 @@ rnd.Render.prototype.update = function (force)
 		{
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
-			var sy = cbb.max.y - cbb.min.y > 0 ? this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
-			var sx = cbb.max.x - cbb.min.x > 0 ? this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
-			this.scale = Math.max(sy, sx);
+			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8*this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
+			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8*this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
+			this.scale = Math.min(sy, sx);
 		}
 		this.initSettings();
 		this.initStyles();
@@ -1018,14 +1018,14 @@ rnd.Render.prototype.update = function (force)
 			}
 		} else {
 			var sz1 = bb.sz();
-			var marg = new util.Vec2(this.opt.autoScaleMargin, this.opt.autoScaleMargin);
-			var csz = this.viewSz.sub(marg.scaled(2));
-			if (csz.x < 1 || csz.y < 1)
+			var marg = this.opt.autoScaleMargin;
+            var mv = new util.Vec2(marg, marg);
+			var csz = this.viewSz;
+			if (csz.x < 2*marg+1 || csz.y < 2*marg+1)
 				throw new Error("View box too small for the given margin");
-            var rescale = Math.min(csz.x / sz1.x, csz.y / sz1.y);
-            this.ctab.translate(csz.sub(sz1.scaled(rescale)).scaled(0.5));
-            this.ctab.scale(rescale);
-            this.ctab.translate(bb.pos().negated().add(marg));
+            var rescale = Math.max(sz1.x/(csz.x-2*marg), sz1.y/(csz.y-2*marg));
+            var sz2 = sz1.add(mv.scaled(2*rescale));
+            this.paper.setViewBox(bb.pos().x-marg*rescale-(csz.x*rescale-sz2.x)/2, bb.pos().y-marg*rescale-(csz.y*rescale-sz2.y)/2, csz.x*rescale, csz.y*rescale);
 		}
 	}
 

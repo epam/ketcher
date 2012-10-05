@@ -613,8 +613,6 @@ rnd.ReStruct.prototype.getGroupBB = function (type)
 
 rnd.ReStruct.prototype.updateHalfBonds = function () {
 	for (var aid in this.atomsChanged) {
-		if (this.atomsChanged[aid] < 1)
-			continue;
 		this.molecule.atomUpdateHalfBonds(aid);
 	}
 };

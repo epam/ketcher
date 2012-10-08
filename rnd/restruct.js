@@ -182,12 +182,12 @@ rnd.ReStruct = function (molecule, render, norescale)
             this.sgroupData.set(id, new rnd.ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
         }
     }, this);
-    
+
     if (molecule.isChiral) {
         var bb = molecule.getCoordBoundingBox();
         this.chiralFlags.set(0,new rnd.ReChiralFlag(new util.Vec2(bb.max.x, bb.min.y - 1)));
     }
-        
+
 
 	this.coordProcess(norescale);
 
@@ -332,8 +332,9 @@ rnd.ReStruct.prototype.insertInLayer = function (lid, path) {
 };
 
 rnd.ReStruct.prototype.clearMarks = function () {
-	this.bondsChanged = {};
-	this.atomsChanged = {};
+	for (var map in rnd.ReStruct.maps) {
+        this[map+'Changed'] = {};
+	}
 	this.structChanged = false;
 };
 
@@ -507,19 +508,16 @@ rnd.ReStruct.prototype.update = function (force)
 	this.setHydrogenPos();
 	this.initialized = true;
 
-	this.scaleCoordinates();
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
 	this.setDoubleBondShift();
 	this.checkLabelsToShow();
 	this.showLabels();
-	this.shiftBonds();
 	this.showBonds();
 	this.verifyLoops();
 	if (updLoops)
 		this.renderLoops();
-	this.clearMarks();
 	this.drawReactionSymbols();
 	this.drawSGroups();
     this.drawFragments();
@@ -528,6 +526,7 @@ rnd.ReStruct.prototype.update = function (force)
             if (this.chiralFlagsChanged[id] > 0)
                 item.draw(this.render);
         }, this);
+	this.clearMarks();
 	return true;
 };
 
@@ -730,25 +729,6 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
     if (!norescale) {
         this.molecule.rescale();
     }
-};
-
-rnd.ReStruct.prototype.scaleCoordinates = function() // TODO: check if we need that and why
-{
-    var render = this.render;
-	var settings = render.settings;
-	var scale = function (item) {
-		item.ps = render.ps(item.pp);
-	};
-        var id;
-	for (id in this.atomsChanged) {
-		scale(this.atoms.get(id).a);
-	}
-	for (id in this.rxnArrowsChanged) {
-		scale(this.rxnArrows.get(id).item);
-	}
-	for (id in this.rxnPlusesChanged) {
-		scale(this.rxnPluses.get(id).item);
-	}
 };
 
 rnd.ReStruct.prototype.notifyAtomAdded = function(aid) {
@@ -1285,7 +1265,7 @@ rnd.ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, s
 rnd.ReChiralFlag = function (pos)
 {
     this.init(rnd.Visel.TYPE.CHIRAL_FLAG);
-    
+
     this.pp = pos;
 };
 rnd.ReChiralFlag.prototype = new rnd.ReObject();

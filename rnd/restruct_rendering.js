@@ -15,9 +15,9 @@ if (!window.rnd || !rnd.ReStruct)
 
 rnd.relBox = function (box) {
     return {
-        x: box.x, 
-        y: box.y, 
-        width: box.width, 
+        x: box.x,
+        y: box.y,
+        width: box.width,
         height: box.height
     };
 }
@@ -1085,9 +1085,14 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 
     var render = this.render;
-        var p1 = render.ps(this.atoms.get(bond.b.begin).a.pp);
-        var p2 = render.ps(this.atoms.get(bond.b.end).a.pp);
+    var atom1 = this.atoms.get(bond.b.begin);
+    var atom2 = this.atoms.get(bond.b.end);
+    var p1 = render.ps(atom1.a.pp);
+    var p2 = render.ps(atom2.a.pp);
 	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
+	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
+    hb1.p = this.shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
+    hb2.p = this.shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
 	bond.b.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
 	bond.b.len = util.Vec2.dist(p1, p2);
 	bond.b.sb = settings.lineWidth * 5;
@@ -1227,20 +1232,6 @@ rnd.ReStruct.prototype.clearVisel = function (visel)
 	for (var i = 0; i < visel.paths.length; ++i)
             visel.paths[i].remove();
 	visel.clear();
-};
-
-rnd.ReStruct.prototype.shiftBonds = function ()
-{
-    var render = this.render;
-	var settings = render.settings;
-	for (var aid in this.atomsChanged) {
-		var atom = this.atoms.get(aid);
-		atom.a.neighbors.each( function (hbid) {
-			var hb = this.molecule.halfBonds.get(hbid);
-                        var ps = render.ps(atom.a.pp);
-                        hb.p = this.shiftBondEnd(atom, ps, hb.dir, 2 * settings.lineWidth);
-		}, this);
-	}
 };
 
 rnd.ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {

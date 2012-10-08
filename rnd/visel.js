@@ -62,11 +62,8 @@ rnd.Visel.prototype.translate = function (x, y)
     }
     for (var i = 0; i < this.paths.length; ++i)
         this.paths[i].translate(x, y);
-    for (var j = 0; j < this.boxes.length; ++j) {
-        var box = this.boxes[j];
-        box.x += x;
-        box.y += y;
-    }
+    for (var j = 0; j < this.boxes.length; ++j)
+        this.boxes[j] = this.boxes[j].translate(new util.Vec2(x, y));
     if (this.boundingBox != null)
         this.boundingBox.translate(x, y);
 };

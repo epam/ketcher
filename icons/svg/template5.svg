@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32pt" height="32pt" viewBox="0 0 32 32" version="1.1">
+<g id="surface5">
+<path style="fill:none;stroke-width:0.05;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 0.0000488278 -0.025 L 0.0000488278 1.025 " transform="matrix(26.666668,0,0,26.666668,2.666667,2.666667)"/>
+<path style="fill:none;stroke-width:0.05;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M -0.025 0.0000488278 L 1.025 0.0000488278 " transform="matrix(26.666668,0,0,26.666668,2.666667,2.666667)"/>
+<path style="fill:none;stroke-width:0.05;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 0.999951 -0.025 L 0.999951 1.025 " transform="matrix(26.666668,0,0,26.666668,2.666667,2.666667)"/>
+<path style="fill:none;stroke-width:0.05;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 1.025 0.999951 L -0.025 0.999951 " transform="matrix(26.666668,0,0,26.666668,2.666667,2.666667)"/>
+</g>
+</svg>

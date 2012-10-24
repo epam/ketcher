@@ -577,7 +577,7 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 
 rnd.ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y)
 {
-	path.translate(x, y);
+	path.translateAbs(x, y);
         rbb.x += x;
         rbb.y += y;
 };
@@ -681,8 +681,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalBullet(ps).translate(-hshift, 0),
-							this.radicalBullet(ps).translate(hshift, 0));
+							this.radicalBullet(ps).translateAbs(-hshift, 0),
+							this.radicalBullet(ps).translateAbs(hshift, 0));
 						radical.path.attr('fill', color);
 						break;
 					case 2:
@@ -693,8 +693,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalCap(ps).translate(-hshift, 0),
-							this.radicalCap(ps).translate(hshift, 0));
+							this.radicalCap(ps).translateAbs(-hshift, 0),
+							this.radicalCap(ps).translateAbs(hshift, 0));
 						radical.path.attr('stroke', color);
 						break;
 				}
@@ -1209,7 +1209,7 @@ rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path) {
     var offset = this.render.offset;
     var bb = util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox()));
     if (offset != null)
-        path.translate(offset.x, offset.y);
+        path.translateAbs(offset.x, offset.y);
     visel.add(path, bb);
     this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
@@ -1220,7 +1220,7 @@ rnd.ReStruct.prototype.addTmpPath = function (group, path)
 	var visel = new rnd.Visel('TMP');
 	var offset = this.render.offset;
 	if (offset != null) {
-		path.translate(offset.x, offset.y);
+		path.translateAbs(offset.x, offset.y);
 	}
 	visel.add(path);
 	this.tmpVisels.push(visel);

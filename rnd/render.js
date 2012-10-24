@@ -1164,7 +1164,7 @@ rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
 	if (offset != null) {
 		if (bb != null)
 			bb.translate(offset);
-		path.translate(offset.x, offset.y);
+		path.translateAbs(offset.x, offset.y);
 	}
 	visel.add(path, bb);
 	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);

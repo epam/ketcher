@@ -20,6 +20,13 @@ if (!window.chem || !util.Vec2 || !chem.Struct || !window.rnd || !rnd.Visel)
 if (!window.rnd)
 	rnd = {};
 
+Raphael.el.translateAbs = function(x,y) {
+    this.delta = this.delta || new util.Vec2();
+    this.delta.x += x-0;
+    this.delta.y += y-0;
+    this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
+};
+
 rnd.ReObject = function()  // TODO ??? should it be in ReStruct namespace
 {
     this.__ext = new util.Vec2(0.05 * 3, 0.05 * 3);
@@ -388,14 +395,10 @@ rnd.ReStruct.prototype.scale = function (s) {
 	}, this);
 };
 
+// TODO: eliminate
 rnd.ReStruct.prototype.translateVisel = function (visel, d) {
 	var i;
-	for (i = 0; i < visel.paths.length; ++i)
-		visel.paths[i].translate(d.x, d.y);
-	for (i = 0; i < visel.boxes.length; ++i)
-		visel.boxes[i].translate(d);
-	if (visel.boundingBox != null)
-		visel.boundingBox.translate(d);
+    visel.translate(d);
 };
 
 rnd.ReStruct.prototype.scaleRPath = function (path, s) {
@@ -551,7 +554,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 	item.visel.add(path, util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
-		path.translate(offset.x, offset.y);
+		path.translateAbs(offset.x, offset.y);
 };
 
 rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
@@ -561,7 +564,7 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 	item.visel.add(path, util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
-		path.translate(offset.x, offset.y);
+		path.translateAbs(offset.x, offset.y);
 };
 
 rnd.ReStruct.prototype.drawSGroups = function ()
@@ -1079,7 +1082,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
 				'fill' : 'black'
 			});
         var labelBox = rnd.relBox(label.getBBox());
-        label.translate(-labelBox.width/2-settings.lineWidth, 0);
+        label.translateAbs(-labelBox.width/2-settings.lineWidth, 0);
         var logicStyle = {
 				'font' : settings.font,
 				'font-size' : settings.fontRLogic,
@@ -1114,7 +1117,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
             var logicPath = render.paper.text(p0.x, (p0.y + p1.y)/2, logic[i]).attr(logicStyle);
             var logicBox = rnd.relBox(logicPath.getBBox());
             shift += logicBox.height/2;
-            logicPath.translate(-logicBox.width/2-6*settings.lineWidth, shift);
+            logicPath.translateAbs(-logicBox.width/2-6*settings.lineWidth, shift);
             shift += logicBox.height/2 + settings.lineWidth/2;
             ret.data.push(logicPath);
         }

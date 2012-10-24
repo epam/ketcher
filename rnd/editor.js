@@ -1405,3 +1405,14 @@ rnd.Editor.RotateTool.prototype.OnMouseUp = function(event) {
     return true;
 };
 
+rnd.Editor.RotateTool.prototype.OnCancel = function() {
+    if ('dragCtx' in this) {
+        if ('action' in this.dragCtx) {
+            this.editor.ui.addUndoAction(this.dragCtx.action, true);
+            $('toolText').update('');
+        }
+        delete this.dragCtx;
+    }
+    this.editor._selectionHelper.setSelection();
+};
+

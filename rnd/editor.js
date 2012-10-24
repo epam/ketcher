@@ -1395,7 +1395,7 @@ rnd.Editor.RotateTool.prototype.OnMouseUp = function(event) {
         selection = this._lassoHelper.end(event);
     } else if ('dragCtx' in this) {
         if ('action' in this.dragCtx) {
-            this.editor.ui.addUndoAction(this.dragCtx.action);
+            this.editor.ui.addUndoAction(this.dragCtx.action, true);
             $('toolText').update('');
         } else {
             this.editor._selectionHelper.setSelection();

@@ -1335,6 +1335,9 @@ ui.Action.OpAtomMove = function(aid, d) {
         this.data.d = this.data.d.negated();
         editor.render.invalidateAtom(this.data.aid, 1);
     };
+    this._isDummy = function(editor) {
+        return this.data.d.x == 0 && this.data.d.y == 0;
+    };
     this._invert = function() {
         var ret = new ui.Action.OpAtomMove();
         ret.data = this.data;

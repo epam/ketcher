@@ -1103,6 +1103,21 @@ ui.Action.fromFlip = function(flip) {
                 action.addOp(new ui.Action.OpAtomMove(aid, d));
             });
         });
+    
+        if (objects.bonds) {
+            for (i = 0; i < objects.bonds.length; i++) {
+                var bid = objects.bonds[i];
+                var bond = molecule.bonds.get(bid);
+                
+                if (bond.type == chem.Struct.BOND.TYPE.SINGLE) {
+                    if (bond.stereo == chem.Struct.BOND.STEREO.UP) {
+                        action.addOp(new ui.Action.OpBondAttr(bid, 'stereo', chem.Struct.BOND.STEREO.DOWN));
+                    } else if (bond.stereo == chem.Struct.BOND.STEREO.DOWN) {
+                        action.addOp(new ui.Action.OpBondAttr(bid, 'stereo', chem.Struct.BOND.STEREO.UP));
+                    }
+                }
+            }
+        }
     }
 
     return action.perform();

@@ -1385,6 +1385,8 @@ rnd.Editor.RotateTool.prototype.OnMouseUp = function(event) {
     } else if ('dragCtx' in this) {
         if ('action' in this.dragCtx) {
             this.editor.ui.addUndoAction(this.dragCtx.action);
+        } else {
+            this.editor._selectionHelper.setSelection();
         }
         delete this.dragCtx;
     }

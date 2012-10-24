@@ -793,6 +793,10 @@ ui.onKeyPress_Ketcher = function (event)
     case 112: // p
         ui.selectMode('atom_p');
         return util.preventDefault(event);
+    case 114: // Ctrl+R
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.selectMode('transform_rotate');
+        return util.preventDefault(event);
     case 115: // s or Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_SaveFile.call($('save'));
@@ -832,7 +836,8 @@ ui.onKeyPress_Ketcher = function (event)
     }
 };
 
-ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 83, 86, 88, 90];
+// Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
+ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 82, 83, 86, 88, 90];
 
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
@@ -856,9 +861,7 @@ ui.onKeyDown_IE = function (event)
    if (!Prototype.Browser.IE)
         return;
 
-    // Ctrl+A, Ctrl+C, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
-    //if ([65, 67, 78, 79, 83, 86, 88, 90].indexOf(event.keyCode) != -1 && event.ctrlKey)
-    // Ctrl+A, Ctrl+G, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+S, Ctrl+Z
+    // Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
     if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
         util.stopEventPropagation(event);
@@ -939,6 +942,10 @@ ui.onKeyUp = function (event)
     case 79: // Ctrl+O
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_OpenFile.call($('open'));
+        return;
+    case 82: // Ctrl+R
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.selectMode('transform_rotate');
         return;
     case 83: // Ctrl+S
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))

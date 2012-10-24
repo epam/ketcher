@@ -1372,6 +1372,17 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
             _DC_.xy0,
             angle2 - _DC_.angle1
         );
+        
+        var degrees = Math.round((angle2 - _DC_.angle1) / Math.PI * 180);
+        
+        if (degrees > 180) {
+            degrees -= 360;
+        } else if (degrees <= -180) {
+            degrees += 360;
+        }
+        
+        $('toolText').update(degrees + 'º');
+        
         _R_.update();
     }
     return true;
@@ -1385,6 +1396,7 @@ rnd.Editor.RotateTool.prototype.OnMouseUp = function(event) {
     } else if ('dragCtx' in this) {
         if ('action' in this.dragCtx) {
             this.editor.ui.addUndoAction(this.dragCtx.action);
+            $('toolText').update('');
         } else {
             this.editor._selectionHelper.setSelection();
         }

@@ -360,7 +360,7 @@ chem.SGroup.GroupMul = {
 			'font-size' : settings.fontszsub
 		});
 		var multIndexBox = rnd.relBox(multIndex.getBBox());
-		multIndex.translate(0.5 * multIndexBox.width, -0.3 * multIndexBox.height);
+		multIndex.translateAbs(0.5 * multIndexBox.width, -0.3 * multIndexBox.height);
 		set.push(multIndex);
 		return set;
 	},
@@ -597,7 +597,7 @@ chem.SGroup.GroupSup = {
 				'font-style' : 'italic'
 			});
 			var nameBox = rnd.relBox(name.getBBox());
-			name.translate(0.5 * nameBox.width * d.x, 0);
+			name.translateAbs(0.5 * nameBox.width * d.x, 0);
 			set.push(name);
 		}
 		return set;
@@ -717,7 +717,7 @@ chem.SGroup.GroupDat = {
                 p.x += settings.lineWidth; // shift a bit to the right
                 var name_i = this.showValue(paper, p, this, settings);
                 var box_i = rnd.relBox(name_i.getBBox());
-                name_i.translate(0.5 * box_i.width, -0.3 * box_i.height);
+                name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
                 set.push(name_i);
                 var sbox_i = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
                 this.areas.push(sbox_i.transform(render.scaled2obj, render));
@@ -725,7 +725,7 @@ chem.SGroup.GroupDat = {
         } else {
             var name = this.showValue(paper, ps, this, settings);
             var box = rnd.relBox(name.getBBox());
-            name.translate(0.5 * box.width, -0.5 * box.height);
+            name.translateAbs(0.5 * box.width, -0.5 * box.height);
             set.push(name);
             var sbox = util.Box2Abs.fromRelBox(rnd.relBox(name.getBBox()));
             this.dataArea = sbox.transform(render.scaled2obj, render);

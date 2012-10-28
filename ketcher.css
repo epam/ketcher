@@ -61,6 +61,20 @@ table#ketcher_window > tr
     /*vertical-align: middle;*/
 }
 
+.modeButton
+{
+}
+
+.stateButton
+{
+}
+
+.dropdownIcon
+{
+    width: 24px;
+    height: 24px;
+}
+
 .toolIcon
 {
     width: 32px;

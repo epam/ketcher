@@ -108,17 +108,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        if ($(dropdown_mode_id).getAttribute('src')) {
-            $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src'));
-        } else {
-            ketcher.showMolfileOpts(dropdown_mode_id, ketcher.templates[ui.mode_id], 20, {
-                'autoScale':true,
-                'autoScaleMargin':4,
-                'hideImplicitHydrogen':true,
-                'hideTerminalLabels':true,
-                'ignoreMouseEvents':true
-            });
-        }
+        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src'));
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
@@ -413,26 +403,7 @@ ui.toggleDropdownList = function (name)
     if ($(list_id).visible())
         $(list_id).hide();
     else
-    {
         $(list_id).show();
-        if ($(list_id).hasClassName('renderFirst'))
-        {
-            var renderOpts = {
-                'autoScale':true,
-                'autoScaleMargin':4,
-                'hideImplicitHydrogen':true,
-                'hideTerminalLabels':true
-            };
-
-            $(list_id).select("tr").each(function (item)
-            {
-                if ($(item.id + '_preview'))
-                    ketcher.showMolfileOpts(item.id + '_preview', ketcher.templates[item.id], 20, renderOpts);
-            });
-
-            $(list_id).removeClassName('renderFirst');
-        }
-    }
 };
 
 
@@ -804,14 +775,8 @@ ui.onKeyPress_Ketcher = function (event)
             ui.selectMode('atom_s');
         return util.preventDefault(event);
     case 116: // t
-        if (ui.mode_id.startsWith('template_')) {
-            var templates = rnd.Editor.TemplateTool.prototype.templates;
-            ui.onMouseDown_DropdownListItem.apply(
-                { id : 'template_' + (parseInt(ui.mode_id.split('_')[1]) + 1) % templates.length }
-            );
-        } else {
-            ui.onMouseDown_DropdownListItem.apply({ id : $('template').getAttribute('selid') });
-        }
+        var templates = ['template_0', 'template_1', 'template_2', 'template_3', 'template_4', 'template_5', 'template_6', 'template_7'];
+        ui.onMouseDown_DropdownListItem.call($(templates[(templates.indexOf(ui.mode_id) + 1) % templates.length]));
         return util.preventDefault(event);
     case 118: // Ctrl+V
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))

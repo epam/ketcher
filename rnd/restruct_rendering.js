@@ -1174,7 +1174,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.atomList != null ||
         atom.a.rglabel != null)
 		return true;
-	if (!atom.showLabel && atom.a.neighbors.length == 2) {
+	if (atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];
 		var n2 = atom.a.neighbors[1];
 		var hb1 = this.molecule.halfBonds.get(n1);
@@ -1182,7 +1182,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		var b1 = this.bonds.get(hb1.bid);
 		var b2 = this.bonds.get(hb2.bid);
 		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Struct.BOND.STEREO.NONE && b2.b.stereo == chem.Struct.BOND.STEREO.NONE)
-			if (Math.abs(util.Vec2.cross(hb1.dir, hb2.dir)) < 0.05)
+			if (Math.abs(util.Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
 				return true;
 	}
 	return false;

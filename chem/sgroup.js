@@ -700,7 +700,7 @@ chem.SGroup.GroupDat = {
         var inBonds = [], xBonds = [];
         chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
         chem.SGroup.bracketPos(this, remol, xBonds);
-        this.areas = [this.bracketBox];
+        this.areas = this.bracketBox ? [this.bracketBox] : [];
 		if (this.pp == null) {
 			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
 		}
@@ -720,7 +720,8 @@ chem.SGroup.GroupDat = {
                 name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
                 set.push(name_i);
                 var sbox_i = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
-                this.areas.push(sbox_i.transform(render.scaled2obj, render));
+                sbox_i = sbox_i.transform(render.scaled2obj, render);
+                this.areas.push(sbox_i);
             }
         } else {
             var name = this.showValue(paper, ps, this, settings);

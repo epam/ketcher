@@ -27,6 +27,12 @@ Raphael.el.translateAbs = function(x,y) {
     this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
 };
 
+Raphael.st.translateAbs = function () {
+    this.forEach(function (el) {
+        el.translateAbs();
+    });
+};
+
 rnd.ReObject = function()  // TODO ??? should it be in ReStruct namespace
 {
     this.__ext = new util.Vec2(0.05 * 3, 0.05 * 3);

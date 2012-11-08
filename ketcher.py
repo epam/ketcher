@@ -11,8 +11,10 @@ from wsgiref.headers import Headers
 from base64 import b64encode
 
 import indigo
+import indigo_inchi
 from indigo import IndigoException
 indigo = indigo.Indigo()
+indigo_inchi = indigo_inchi.IndigoInchi(indigo)
 indigo.setOption("ignore-stereochemistry-errors", "true")
 
 class application(object):
@@ -68,6 +70,11 @@ class application(object):
                 rxn.layout()
                 return ["Ok.\n",
                         rxn.rxnfile()]
+            elif moldata.startswith('InChI'):
+                mol = indigo_inchi.loadMolecule(moldata)
+                mol.layout()
+                return ["Ok.\n",
+                        mol.molfile()]
             else:
                 mol = indigo.loadQueryMolecule(moldata)
                 mol.layout()
@@ -134,6 +141,19 @@ class application(object):
         return ["Ok.\n",
                 md.rxnfile() if is_rxn else md.molfile()]
 
+    def on_getinchi(self):
+        print "on_getinchi"
+        try:
+            md, is_rxn = self.load_moldata()
+        except:
+            return self.error_response()
+            
+        try:
+            inchi = indigo_inchi.getInchi(md)
+        except:
+            return self.error_response()
+            
+        return ["Ok.\n", inchi]
 
     def on_dearomatize(self):
         try:

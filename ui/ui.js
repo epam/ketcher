@@ -1149,15 +1149,13 @@ ui.onSelect_OpenFromFile = function ()
 ui.onChange_Input = function ()
 {
     var el = this;
-
-    setTimeout(function ()
-    {
-        if (el.value.strip().indexOf('\n') != -1)
-        {
+    setTimeout(function() {
+        if (el.value.strip().startsWith('InChI=') && ui.standalone) {
+            alert('InChI are not supported in the standalone mode');
+        } else if (el.value.strip().indexOf('\n') != -1) {
             if (el.style.wordWrap != 'normal')
                 el.style.wordWrap = 'normal';
-        } else
-        {
+        } else {
             if (el.style.wordWrap != 'break-word')
                 el.style.wordWrap = 'break-word';
         }
@@ -1171,6 +1169,7 @@ ui.onClick_SaveFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    $('file_format_inchi').disabled = ui.standalone;
     ui.showDialog('save_file');
     ui.onChange_FileFormat(null, true);
 };
@@ -1180,28 +1179,45 @@ ui.onChange_FileFormat = function (event, update)
     var output = $('output_mol');
     var el = $('file_format');
 
-    if (update)
-    {
-        var saver = new chem.MolfileSaver();
-        output.molfile = saver.saveMolecule(ui.ctab, true);
+    if (update) {
+        output.molfile = new chem.MolfileSaver().saveMolecule(ui.ctab, true);
 
-        try
-        {
-            saver = new chem.SmilesSaver();
-            output.smiles = saver.saveMolecule(ui.ctab, true);
-        } catch (er)
-        {
+        try {
+            output.smiles = new chem.SmilesSaver().saveMolecule(ui.ctab, true);
+        } catch (er) {
             output.smiles = er.message;
+        }
+
+        if (ui.standalone) {
+            output.inchi = 'InChI are not supported in the standalone mode.';
+        } else if (ui.ctab.atoms.count() == 0) {
+            output.inchi = '';
+        } else {
+            new Ajax.Request(ui.path + 'getinchi', {
+                method: 'post',
+                asynchronous : false,
+                parameters: {moldata: output.molfile},
+                onComplete: function (res) {
+                    if (res.responseText.startsWith('Ok.')) {
+                        output.inchi = res.responseText.split('\n')[1];
+                    } else if (res.responseText.startsWith('Error.')) {
+                        output.inchi = 'ERROR: ' + res.responseText.split('\n')[1];
+                    } else {
+                        output.inchi = 'Something went wrong: ' + res.responseText;
+                    }
+                }
+            });
         }
     }
 
-    if (el.value == 'mol')
-    {
+    if (el.value == 'mol') {
         output.value = output.molfile;
         output.style.wordWrap = 'normal';
-    } else // if (el.value == 'smi')
-    {
+    } else if (el.value == 'smi') {
         output.value = output.smiles;
+        output.style.wordWrap = 'break-word';
+    } else {
+        output.value = output.inchi;
         output.style.wordWrap = 'break-word';
     }
 

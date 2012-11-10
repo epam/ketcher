@@ -1164,20 +1164,6 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	return ret;
 };
 
-rnd.Render.prototype.addItemPath = function (visel, group, path, rbb)
-{
-    if (!path) return; // [RB] thats ok for some hidden objects (fragment)
-	var bb = rbb ? util.Box2Abs.fromRelBox(rbb) : null;
-	var offset = this.offset;
-	if (offset != null) {
-		if (bb != null)
-			bb.translate(offset);
-		path.translateAbs(offset.x, offset.y);
-	}
-	visel.add(path, bb);
-	this.ctab.insertInLayer(rnd.ReStruct.layerMap[group], path);
-};
-
 rnd.Render.prototype.setZoom = function (zoom) {
 	this.zoom = zoom;
 	this._setPaperSize(this.sz);

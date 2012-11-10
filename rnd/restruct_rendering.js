@@ -533,7 +533,7 @@ rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
 				atom.highlighting.attr({
 					'fill':'#AAA'
 				});
-			render.addItemPath(atom.visel, 'highlighting', atom.highlighting);
+			this.addReObjectPath('highlighting', atom.visel, atom.highlighting);
 		}
 		if (rnd.DEBUG)
 			atom.highlighting.attr({
@@ -566,7 +566,7 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 			var styles = render.styles;
 			var paper = render.paper;
 			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
-			render.addItemPath(item.visel, 'selection-plate', item.selectionPlate);
+			this.addReObjectPath('selection-plate', item.visel, item.selectionPlate);
 		}
 		if (item.selectionPlate) item.selectionPlate.show(); // TODO [RB] review
 	} else {
@@ -608,12 +608,12 @@ rnd.ReStruct.prototype.showLabels = function ()
 			});
 			index.rbb = rnd.relBox(index.path.getBBox());
 			this.centerText(index.path, index.rbb);
-			render.addItemPath(atom.visel, 'indices', index.path, index.rbb);
+			this.addReObjectPath('indices', atom.visel, index.path, ps);
 		}
 		if (atom.highlight)
 			this.showAtomHighlighting(aid, atom, true);
 
-        var color = '#000000';
+                var color = '#000000';
 		if (atom.showLabel)
 		{
 			var rightMargin = 0, leftMargin = 0;
@@ -645,7 +645,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(label.path, label.rbb);
 			if (atom.a.atomList != null)
 				this.pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
-			render.addItemPath(atom.visel, 'data', label.path, label.rbb);
+			this.addReObjectPath('data', atom.visel, label.path, ps);
 			rightMargin = label.rbb.width / 2;
 			leftMargin = -label.rbb.width / 2;
 			var implh = Math.floor(atom.a.implicitH);
@@ -668,7 +668,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * hydroIndex.rbb.width + delta,
 					0.2 * label.rbb.height);
 				rightMargin += hydroIndex.rbb.width + delta;
-				render.addItemPath(atom.visel, 'data', hydroIndex.path, hydroIndex.rbb);
+				this.addReObjectPath('data',atom.visel, hydroIndex.path, ps);
 			}
 
 			var radical = {};
@@ -704,7 +704,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					vshift -= settings.lineWidth/2;
 				this.pathAndRBoxTranslate(radical.path, radical.rbb,
 					0, vshift);
-				render.addItemPath(atom.visel, 'data', radical.path, radical.rbb);
+				this.addReObjectPath('data', atom.visel, radical.path, ps);
 			}
 
 			var isotope = {};
@@ -723,7 +723,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					leftMargin - 0.5 * isotope.rbb.width - delta,
 					-0.3 * label.rbb.height);
 				leftMargin -= isotope.rbb.width + delta;
-				render.addItemPath(atom.visel, 'data', isotope.path, isotope.rbb);
+				this.addReObjectPath('data', atom.visel, isotope.path, ps);
 			}
 			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen)
 			{
@@ -771,9 +771,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 						leftMargin - 0.5 * hydrogen.rbb.width - delta, 0);
 					leftMargin -= hydrogen.rbb.width + delta;
 				}
-				render.addItemPath(atom.visel, 'data', hydrogen.path, hydrogen.rbb);
+				this.addReObjectPath('data', atom.visel, hydrogen.path, ps);
 				if (hydroIndex != null)
-					render.addItemPath(atom.visel, 'data', hydroIndex.path, hydroIndex.rbb);
+					this.addReObjectPath('data', atom.visel, hydroIndex.path, ps);
 			}
 
 			var charge = {};
@@ -800,7 +800,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * charge.rbb.width + delta,
 					-0.3 * label.rbb.height);
 				rightMargin += charge.rbb.width + delta;
-				render.addItemPath(atom.visel, 'data', charge.path, charge.rbb);
+				this.addReObjectPath('data', atom.visel, charge.path, ps);
 			}
 
 			var valence = {};
@@ -839,7 +839,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * valence.rbb.width + delta,
 					-0.3 * label.rbb.height);
 				rightMargin += valence.rbb.width + delta;
-				render.addItemPath(atom.visel, 'data', valence.path, valence.rbb);
+				this.addReObjectPath('data', atom.visel, valence.path, ps);
 			}
 
 			if (atom.a.badConn && opt.showValenceWarnings) {
@@ -852,7 +852,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'stroke':'#F00'
 				});
 				warning.rbb = rnd.relBox(warning.path.getBBox());
-				render.addItemPath(atom.visel, 'warnings', warning.path, warning.rbb);
+				this.addReObjectPath('warnings', atom.visel, warning.path, ps);
 			}
 			if (index)
 				this.pathAndRBoxTranslate(index.path, index.rbb,
@@ -898,7 +898,7 @@ rnd.ReStruct.prototype.showLabels = function ()
                         paper.path("M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}", pos0.x, pos0.y, pos1.x, pos1.y, arrowLeft.x, arrowLeft.y, arrowRight.x, arrowRight.y)
                             .attr(styles.lineattr).attr({'stroke-width': settings.lineWidth/2})
                     );
-                    render.addItemPath(atom.visel, 'indices', attpntPath, attpntRbb);
+                    this.addReObjectPath('indices', atom.visel, attpntPath, ps);
                     lsb = lsb.rotate(Math.PI/6);
                 }
             }
@@ -970,7 +970,7 @@ rnd.ReStruct.prototype.showLabels = function ()
             var queryAttrsRbb = rnd.relBox(queryAttrsPath.getBBox());
             this.centerText(queryAttrsPath, queryAttrsRbb);
             this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
-            render.addItemPath(atom.visel, 'indices', queryAttrsPath, queryAttrsRbb);
+            this.addReObjectPath('indices', atom.visel, queryAttrsPath, ps);
         }
 
 		if (atom.a.exactChangeFlag > 0) {
@@ -999,7 +999,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.boxes[i]));
 			dir = dir.scaled(10 + t);
 			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
-			render.addItemPath(atom.visel, 'data', aamPath, null);
+			this.addReObjectPath('data', atom.visel, aamPath, ps);
         }
 	}
 };
@@ -1007,8 +1007,10 @@ rnd.ReStruct.prototype.showLabels = function ()
 rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
     var t = 0;
     var visel = atom.visel;
-    for (var k = 0; k < visel.boxes.length; ++k)
-        t = Math.max(t, util.Vec2.shiftRayBox(pos0, dir, visel.boxes[k]));
+    for (var k = 0; k < visel.exts.length; ++k) {
+        var box = visel.exts[k].translate(pos0);
+        t = Math.max(t, util.Vec2.shiftRayBox(pos0, dir, box));
+    }
     if (t > 0)
         pos0 = pos0.addScaled(dir, t + margin);
     return pos0;
@@ -1062,7 +1064,7 @@ rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
 				bond.highlighting.attr({
 					'fill':'#AAA'
 				});
-			render.addItemPath(bond.visel, 'highlighting', bond.highlighting);
+			this.addReObjectPath('highlighting', bond.visel, bond.highlighting);
 		}
 		if (rnd.DEBUG)
 			bond.highlighting.attr({
@@ -1113,18 +1115,18 @@ rnd.ReStruct.prototype.showBonds = function ()
 		this.bondRecalc(settings, bond);
 		bond.path = this.drawBond(bond, hb1, hb2);
 		bond.rbb = rnd.relBox(bond.path.getBBox());
-		render.addItemPath(bond.visel, 'data', bond.path, bond.rbb);
+		this.addReObjectPath('data', bond.visel, bond.path);
 		var reactingCenter = {};
 		reactingCenter.path = this.drawReactingCenter(bond, hb1, hb2);
 		if (reactingCenter.path) {
 			reactingCenter.rbb = rnd.relBox(reactingCenter.path.getBBox());
-			render.addItemPath(bond.visel, 'data', reactingCenter.path, reactingCenter.rbb);
+			this.addReObjectPath('data', bond.visel, reactingCenter.path);
 		}
 		var topology = {};
 		topology.path = this.drawTopologyMark(bond, hb1, hb2);
 		if (topology.path) {
 			topology.rbb = rnd.relBox(topology.path.getBBox());
-			render.addItemPath(bond.visel, 'data', topology.path, topology.rbb);
+			this.addReObjectPath('data', bond.visel, topology.path);
 		}
 		if (bond.highlight)
 			this.showBondHighlighting(bid, bond, true);
@@ -1135,28 +1137,28 @@ rnd.ReStruct.prototype.showBonds = function ()
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
-			render.addItemPath(bond.visel, 'indices', ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
 			var phb1 = util.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
-			render.addItemPath(bond.visel, 'indices', ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
 			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
-			render.addItemPath(bond.visel, 'indices', ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
 		} else if (opt.showLoopIds) {
 			var pl1 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
-			render.addItemPath(bond.visel, 'indices', ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
 			var pl2 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
-			render.addItemPath(bond.visel, 'indices', ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 	}
 };
@@ -1205,12 +1207,17 @@ rnd.ReStruct.layerMap = {
 	'indices' : 5
 };
 
-rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path) {
+rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path, pos) {
+    if (!path)
+        return;
     var offset = this.render.offset;
     var bb = util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox()));
-    if (offset != null)
+    var ext = pos && bb ? bb.translate(pos.negated()) : null;
+    if (offset != null) {
         path.translateAbs(offset.x, offset.y);
-    visel.add(path, bb);
+        bb = bb ? bb.translate(offset) : null;
+    }
+    visel.add(path, bb, ext);
     this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 

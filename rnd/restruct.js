@@ -101,7 +101,7 @@ rnd.ReAtom.prototype.drawHighlight = function(render) {
     var ret = render.paper.circle(
         ps.x, ps.y, render.styles.atomSelectionPlateRadius
     ).attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -125,7 +125,7 @@ rnd.ReBond.prototype.drawHighlight = function(render)
     render.ctab.bondRecalc(render.settings, this);
     var ret = render.paper.circle(this.b.center.x, this.b.center.y, 0.8 * render.styles.atomSelectionPlateRadius)
         .attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -893,7 +893,7 @@ rnd.ReRxnPlus.prototype.highlightPath = function(render) {
 
 rnd.ReRxnPlus.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -934,7 +934,7 @@ rnd.ReRxnArrow.prototype.highlightPath = function(render) {
 
 rnd.ReRxnArrow.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -1026,7 +1026,7 @@ rnd.ReFrag.prototype.drawHighlight = function(render) { // TODO need to review p
     var fid = render.ctab.frags.keyOf(this);
     if (!Object.isUndefined(fid)) {
         var ret = this._draw(render, fid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
-        render.addItemPath(this.visel, 'highlighting', ret);
+        render.ctab.addReObjectPath('highlighting', this.visel, ret);
         return ret;
     } else {
         // TODO abnormal situation, fragment does not belong to the render
@@ -1148,7 +1148,7 @@ rnd.ReRGroup.prototype.drawHighlight = function(render) { // TODO need to review
     var rgid = render.ctab.rgroups.keyOf(this);
     if (!Object.isUndefined(rgid)) {
         var ret = this._draw(render, rgid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
-        render.addItemPath(this.visel, 'highlighting', ret);
+        render.ctab.addReObjectPath('highlighting', this.visel, ret);
         return ret;
     } else {
         // TODO abnormal situation, fragment does not belong to the render
@@ -1263,7 +1263,7 @@ rnd.ReDataSGroupData.prototype.highlightPath = function(render) {
 
 rnd.ReDataSGroupData.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -1306,7 +1306,7 @@ rnd.ReChiralFlag.prototype.highlightPath = function(render) {
 
 rnd.ReChiralFlag.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-    render.addItemPath(this.visel, 'highlighting', ret);
+    render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
 };
 
@@ -1324,5 +1324,5 @@ rnd.ReChiralFlag.prototype.draw = function(render) {
             'font-size' : settings.fontsz,
             'fill' : '#000'
     });
-    render.addItemPath(this.visel, 'data', this.path);
+    render.ctab.addReObjectPath('data', this.visel, this.path);
 };

@@ -36,19 +36,23 @@ rnd.Visel.TYPE = {
     'CHIRAL_FLAG' : 10
 };
 
-rnd.Visel.prototype.add = function (path, bb)
+rnd.Visel.prototype.add = function (path, bb, ext)
 {
 	this.paths.push(path);
-	if (bb != null) {
+	if (bb) {
 		this.boxes.push(bb);
 		this.boundingBox = this.boundingBox == null ? bb : util.Box2Abs.union(this.boundingBox, bb);
 	}
+    if (ext) {
+        this.exts.push(ext);
+    }
 };
 
 rnd.Visel.prototype.clear = function ()
 {
 	this.paths = [];
 	this.boxes = [];
+	this.exts = [];
 	this.boundingBox = null;
 };
 

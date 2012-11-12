@@ -26,7 +26,7 @@ ui.zoom = 1.0;
 
 ui.DBLCLICK_INTERVAL = 300;
 
-ui.HISTORY_LENGTH = 8;
+ui.HISTORY_LENGTH = 32;
 
 ui.DEBUG = false;
 

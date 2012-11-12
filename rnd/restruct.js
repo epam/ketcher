@@ -27,9 +27,9 @@ Raphael.el.translateAbs = function(x,y) {
     this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
 };
 
-Raphael.st.translateAbs = function () {
+Raphael.st.translateAbs = function (x,y) {
     this.forEach(function (el) {
-        el.translateAbs();
+        el.translateAbs(x,y);
     });
 };
 

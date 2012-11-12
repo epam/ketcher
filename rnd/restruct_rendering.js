@@ -681,8 +681,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalBullet(ps).translateAbs(-hshift, 0),
-							this.radicalBullet(ps).translateAbs(hshift, 0));
+							this.radicalBullet(ps.add(new util.Vec2(-hshift, 0))),
+							this.radicalBullet(ps.add(new util.Vec2(hshift, 0))));
 						radical.path.attr('fill', color);
 						break;
 					case 2:
@@ -693,8 +693,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-							this.radicalCap(ps).translateAbs(-hshift, 0),
-							this.radicalCap(ps).translateAbs(hshift, 0));
+							this.radicalCap(ps.add(new util.Vec2(-hshift, 0))),
+							this.radicalCap(ps.add(new util.Vec2(hshift, 0))));
 						radical.path.attr('stroke', color);
 						break;
 				}

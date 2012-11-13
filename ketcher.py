@@ -111,13 +111,13 @@ class application(object):
     def on_save(self):
         if self.is_form_request():
             type, data = self.fields.getfirst('filedata').split('\n', 1)
+            type = type.strip()
             if type == 'smi':
                 self.headers.add_header('Content-Type', 'chemical/x-daylight-smiles')
             elif type == 'mol':
-                if rest.startswith('$RXN'):
+                if data.startswith('$RXN'):
                     type = 'rxn'
-                self.headers.add_header('Content-Type',
-                                        'chemical/x-mdl-%sfile' % type)
+                self.headers.add_header('Content-Type', 'chemical/x-mdl-%sfile' % type)
 
             self.headers.add_header('Content-Length', str(len(data)))
             self.headers.add_header('Content-Disposition', 'attachment', filename='ketcher.%s' % type)
@@ -142,7 +142,6 @@ class application(object):
                 md.rxnfile() if is_rxn else md.molfile()]
 
     def on_getinchi(self):
-        print "on_getinchi"
         try:
             md, is_rxn = self.load_moldata()
         except:

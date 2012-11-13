@@ -793,6 +793,10 @@ ui.onKeyPress_Ketcher = function (event)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Cut.call($('cut'));
         return util.preventDefault(event);
+    case 121: // Ctrl+Y
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
+            ui.onClick_Redo.call($('redo'));
+        return util.preventDefault(event);
     case 122: // Ctrl+Z or Ctrl+Shift+Z (in Safari)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
         {
@@ -808,8 +812,8 @@ ui.onKeyPress_Ketcher = function (event)
     }
 };
 
-// Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
-ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 82, 83, 86, 88, 90];
+// Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y, Ctrl+Z
+ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 82, 83, 86, 88, 89, 90];
 
 // Button handler specially for IE to prevent default actions
 ui.onKeyDown_IE = function (event)
@@ -833,7 +837,7 @@ ui.onKeyDown_IE = function (event)
    if (!Prototype.Browser.IE)
         return;
 
-    // Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Z
+    // Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y, Ctrl+Z
     if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey)
     {
         util.stopEventPropagation(event);
@@ -931,9 +935,12 @@ ui.onKeyUp = function (event)
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
             ui.onClick_Cut.call($('cut'));
         return;
-    case 90: // Ctrl+Z
+    case 89: // Ctrl+Y
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-        {
+            ui.onClick_Redo.call($('redo'));
+        return;
+    case 90: // Ctrl+Z
+        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) {
             if (event.shiftKey)
                 ui.onClick_Redo.call($('redo'));
             else

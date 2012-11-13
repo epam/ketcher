@@ -91,11 +91,11 @@ chem.Struct.prototype.getFragmentIds = function (fid) {
         }
     }, this);
 	return atomSet;
-}
+};
 
 chem.Struct.prototype.getFragment = function (fid) {
 	return this.clone(this.getFragmentIds(fid));
-}
+};
 
 chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups)
 {
@@ -358,10 +358,9 @@ chem.Struct.Atom.prototype.pureHydrogen =  function ()
 
 chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 {
-	return this.label == 'C' && this.isotope == 0 && this.isotope == 0 &&
-		this.radical == 0 && this.charge == 0 && this.explicitValence == 0 &&
-		this.ringBondCount == 0 && this.substitutionCount == 0 && this.unsaturatedAtom == 0 && this.hCount == 0 &&
-		!this.atomList;
+	return this.label == 'C' && this.isotope == 0 && this.radical == 0 && this.charge == 0
+        && this.explicitValence == 0 && this.ringBondCount == 0 && this.substitutionCount == 0
+        && this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
 };
 
 chem.Struct.AtomList = function (params)

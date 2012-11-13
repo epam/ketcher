@@ -905,7 +905,7 @@ ui.Action.sGroupAttributeAction = function (id, attrs)
     }, this);
 
     return action;
-}
+};
 
 ui.Action.fromSgroupDeletion = function (id)
 {
@@ -957,12 +957,10 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
 
     if (type == 'SRU') {
         ui.render.sGroupsFindCrossBonds();
-        var nei_atoms = ui.render.sGroupGetNeighborAtoms(sgid);
         var asterisk_action = new ui.Action();
-
-        nei_atoms.each(function(aid) {
+        ui.render.sGroupGetNeighborAtoms(sgid).each(function(aid) {
             if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid)) {
-                asterisk_action.addOp(new ui.Action.OpAtomAttr(aid, 'label', 'C'));
+                asterisk_action.addOp(new ui.Action.OpAtomAttr(aid, 'label', '*'));
             }
         }, this);
 
@@ -1074,22 +1072,15 @@ ui.Action.fromFlip = function(flip) {
         
         fids = new Hash(fids);
         
-        if (fids.detect(function (frag) {
-            var fragment1 = molecule.getFragmentIds(frag[0]);
-            var fragment2 = util.Set.fromList(frag[1]);
-            
-            if (!util.Set.eq(fragment1, fragment2)) {
-                return true;
-            }
-            
-            return false;
+        if (fids.detect(function(frag) {
+            return !util.Set.eq(molecule.getFragmentIds(frag[0]), util.Set.fromList(frag[1]));
         })) {
             return action; // empty action
         }
         
         fids.each(function (frag) {
             var fragment = util.Set.fromList(frag[1]);
-            var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
+            //var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
             var bbox = molecule.getCoordBoundingBox(fragment);
             
             util.Set.each(fragment, function(aid) {

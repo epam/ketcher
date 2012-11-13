@@ -1645,14 +1645,16 @@ ui.showAtomAttachmentPoints = function(params)
     $('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
     ui.showDialog('atom_attpoints');
     var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
         ui.hideDialog('atom_attpoints');
         if ('onOk' in params) params['onOk'](($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
-        _onOk.stop();
     }).start();
     var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function() {
+        _onOk.stop();
+        _onCancel.stop();
         ui.hideDialog('atom_attpoints');
         if ('onCancel' in params) params['onCancel']();
-        _onCancel.stop();
     }).start();
     $('atom_attpoints_ok').focus();
 };

@@ -214,7 +214,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
                 if (labels[label] == (Prototype.Browser.IE ? event.keyCode : event.which)) {
                     ci.label = { label : label };
                     if (ci.map == 'atoms') {
-                        this.editor.ui.addUndoAction(ui.Action.fromAtomAttrs(ci.id, ci.label));
+                        this.editor.ui.addUndoAction(ui.Action.fromAtomsAttrs(ci.id, ci.label));
                     } else if (ci.id == -1) {
                         this.editor.ui.addUndoAction(
                             this.editor.ui.Action.fromAtomAddition(
@@ -553,7 +553,7 @@ rnd.Editor.AtomTool.prototype.OnMouseUp = function(event) {
             'action' in _DC_
                 ? _DC_.action
                 : 'item' in _DC_
-                    ? _UI_.Action.fromAtomAttrs(_DC_.item.id, this.atomProps)
+                    ? _UI_.Action.fromAtomsAttrs(_DC_.item.id, this.atomProps)
                     : _UI_.Action.fromAtomAddition(_UI_.page2obj(event), this.atomProps),
             true
         );
@@ -780,7 +780,7 @@ rnd.Editor.ChargeTool.prototype.OnMouseUp = function(event) {
     if (ci && ci.map == 'atoms') {
         this._hoverHelper.hover(null);
         _E_.ui.addUndoAction(
-            _E_.ui.Action.fromAtomAttrs(ci.id, { charge : _R_.ctab.molecule.atoms.get(ci.id).charge + this.charge })
+            _E_.ui.Action.fromAtomsAttrs(ci.id, { charge : _R_.ctab.molecule.atoms.get(ci.id).charge + this.charge })
         );
         _R_.update();
     }
@@ -831,7 +831,7 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
                     } else {
                         newProps.label = 'C';
                     }
-                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, newProps), true);
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, newProps), true);
                     this.editor.ui.render.update();
                 }
             }.bind(this)
@@ -921,7 +921,7 @@ rnd.Editor.APointTool.prototype.OnMouseUp = function(event) {
             selection : apOld,
             onOk : function(apNew) {
                 if (apOld != apNew) {
-                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomAttrs(ci.id, { attpnt : apNew }), true);
+                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, { attpnt : apNew }), true);
                     this.editor.ui.render.update();
                 }
             }.bind(this)
@@ -1062,18 +1062,18 @@ rnd.Editor.ReactionMapTool.prototype.OnMouseUp = function(event) {
                     atoms.each(
                         function(aid, atom) {
                             if (aid != this.dragCtx.item.id && (aam1 && atom.aam == aam1 || aam2 && atom.aam == aam2)) {
-                                action.mergeWith(this.editor.ui.Action.fromAtomAttrs(aid, { aam : 0 }));
+                                action.mergeWith(this.editor.ui.Action.fromAtomsAttrs(aid, { aam : 0 }));
                             }
                         },
                         this
                     );
                 }
                 if (aam1) {
-                    action.mergeWith(this.editor.ui.Action.fromAtomAttrs(ci.id, { aam : aam1 }));
+                    action.mergeWith(this.editor.ui.Action.fromAtomsAttrs(ci.id, { aam : aam1 }));
                 } else {
                     var aam = 0; atoms.each(function(aid, atom) { aam = Math.max(aam, atom.aam || 0); });
-                    action.mergeWith(this.editor.ui.Action.fromAtomAttrs(this.dragCtx.item.id, { aam : aam + 1 }));
-                    action.mergeWith(this.editor.ui.Action.fromAtomAttrs(ci.id, { aam : aam + 1 }));
+                    action.mergeWith(this.editor.ui.Action.fromAtomsAttrs(this.dragCtx.item.id, { aam : aam + 1 }));
+                    action.mergeWith(this.editor.ui.Action.fromAtomsAttrs(ci.id, { aam : aam + 1 }));
                 }
                 this.editor.ui.addUndoAction(action, true);
                 rnd.update();
@@ -1125,7 +1125,7 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function(event) {
         atoms.each(
             function(aid, atom) {
                 if (atom.aam == aam) {
-                    action.mergeWith(this.editor.ui.Action.fromAtomAttrs(aid, { aam : 0 }));
+                    action.mergeWith(this.editor.ui.Action.fromAtomsAttrs(aid, { aam : 0 }));
                 }
             },
             this

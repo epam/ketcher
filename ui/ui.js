@@ -528,7 +528,7 @@ ui.selectMode = function (mode)
             }
             // BK: TODO: add this ability to mass-change atom labels to the keyboard handler
             if (mode.startsWith('atom_')) {
-                ui.addUndoAction(ui.Action.fromSelectedAtomsAttrs(ui.atomLabel(mode)), true);
+                ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.selection.atoms, ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
@@ -999,7 +999,7 @@ ui.onKeyPress_InputLabel = function (event)
 
         if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null)
         {
-            ui.addUndoAction(ui.Action.fromAtomAttrs(this.atom_id, {label: label, charge: charge}), true);
+            ui.addUndoAction(ui.Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
         }
         return util.preventDefault(event);
@@ -1689,7 +1689,7 @@ ui.applyAtomProperties = function ()
 
     var id = $('atom_properties').atom_id;
 
-    ui.addUndoAction(ui.Action.fromAtomAttrs(id,
+    ui.addUndoAction(ui.Action.fromAtomsAttrs(id,
     {
         label: $('atom_label').value,
         charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value),

@@ -104,22 +104,16 @@ ui.Action.fromMultipleMove = function (lists, d)
     return action.perform();
 };
 
-ui.Action.fromAtomAttrs = function (id, attrs)
-{
-    var action = new ui.Action();
-    new Hash(attrs).each(function (attr) {
-        action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
-    }, this);
-    return action.perform();
-};
-
-ui.Action.fromSelectedAtomsAttrs = function (attrs)
+ui.Action.fromAtomsAttrs = function(ids, attrs)
 {
     var action = new ui.Action();
     new Hash(attrs).each(function(attr) {
-        ui.selection.atoms.each(function(id) {
+        (typeof(ids) == 'array' ? ids : [ids]).each(function(id) {
+            if (attr.key == 'label' && attr.value != null) {
+                action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
+            }
             action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
-        }, this)
+        }, this);
     }, this);
     return action.perform();
 };
@@ -1317,12 +1311,7 @@ ui.Action.OpAtomAttr = function(aid, attribute, value) {
         if (!this.data2) {
             this.data2 = { aid : this.data.aid, attribute : this.data.attribute, value : atom[this.data.attribute] };
         }
-
-        if (this.data.attribute == 'label' && this.data.value != null) // HACK TODO review
-            atom['atomList'] = null;
-
         atom[this.data.attribute] = this.data.value;
-
         editor.render.invalidateAtom(this.data.aid);
     };
     this._isDummy = function(editor) {

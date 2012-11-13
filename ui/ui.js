@@ -1609,8 +1609,7 @@ ui.selectAll = function ()
 ui.removeSelected = function ()
 {
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
-    for (var map in rnd.ReStruct.maps)
-        ui.selection[map] = [];
+    ui.editor._selectionHelper.setSelection();
     ui.render.update();
     ui.updateClipboardButtons();
 };

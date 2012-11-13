@@ -713,6 +713,9 @@ rnd.Editor.ChainTool.prototype.OnMouseUp = function() {
     }
     return true;
 };
+rnd.Editor.ChainTool.prototype.OnCancel = function() {
+    this.OnMouseUp();
+};
 
 
 rnd.Editor.TemplateTool = function(editor, template) {

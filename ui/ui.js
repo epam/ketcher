@@ -1332,15 +1332,11 @@ ui.onClick_CleanUp = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-
-    var ms = new chem.MolfileSaver();
-
-    try
-    {
-        ui.loadMolecule(ms.saveMolecule(ui.ctab), true);
-    } catch (er)
-    {
-        alert("Molfile: " + er.message);
+    ui.editor.deselectAll();
+    try {
+        ui.loadMolecule(new chem.MolfileSaver().saveMolecule(ui.ctab), true);
+    } catch (er) {
+        alert("Molfile: " + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
     }
 };
 
@@ -1609,7 +1605,7 @@ ui.selectAll = function ()
 ui.removeSelected = function ()
 {
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
-    ui.editor._selectionHelper.setSelection();
+    ui.editor.deselectAll();
     ui.render.update();
     ui.updateClipboardButtons();
 };

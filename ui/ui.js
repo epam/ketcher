@@ -119,7 +119,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     }
 };
 
-ui.defaultSelector = 'selector_lasso';
+ui.defaultSelector = 'selector_last';
 
 ui.init = function ()
 {
@@ -484,6 +484,13 @@ ui.parseCTFile = function (molfile, check_empty_line)
 //
 ui.selectMode = function (mode)
 {
+    if (mode.startsWith('selector_')) {
+        if (mode == 'selector_last') {
+            mode = this.selector_last || 'selector_lasso';
+        } else {
+            this.selector_last = mode;
+        }
+    }
     if (mode == 'reaction_automap') {
         ui.showAutomapProperties({
             onOk: function(mode) {

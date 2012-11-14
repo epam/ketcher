@@ -2059,14 +2059,17 @@ ui.showRLogicTable = function(params)
     ui.showDialog('rlogic_table');
 
     var _onOk = new Event.Handler('rlogic_ok', 'click', undefined, function() {
-        _onOk.stop();
-        _onCancel.stop();
-        ui.hideDialog('rlogic_table');
-        if (params && 'onOk' in params) params['onOk']({
-            'occurrence' : $('rlogic_occurrence').value,
+        var result = {
+            'occurrence' : $('rlogic_occurrence').value
+                .replace(/\s*/g, '').replace(/,+/g, ',').replace(/^,/, '').replace(/,$/, ''),
             'resth' : $('rlogic_resth').value == '1',
             'ifthen' : parseInt($('rlogic_if').value)
-        });
+        };
+        if (!params || !('onOk' in params) || params['onOk'](result)) {
+            _onOk.stop();
+            _onCancel.stop();
+            ui.hideDialog('rlogic_table');
+        }
     }).start();
     var _onCancel = new Event.Handler('rlogic_cancel', 'click', undefined, function() {
         _onOk.stop();

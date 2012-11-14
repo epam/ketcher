@@ -891,13 +891,23 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
             rgmask : rgmask,
             onOk : function(newLogic) {
                 var props = {};
-                if (oldLogic.occurrence != newLogic.occurrence) props.range = newLogic.occurrence;
+                if (oldLogic.occurrence != newLogic.occurrence) {
+                    var isValid = newLogic.occurrence.split(',').all(function(s){
+                        return s.match(/^[>,<,=]?[0-9]+$/g) || s.match(/^[0-9]+\-[0-9]+$/g);
+                    });
+                    if (!isValid) {
+                        alert('Bad occurrence value');
+                        return false;
+                    }
+                    props.range = newLogic.occurrence;
+                }
                 if (oldLogic.resth != newLogic.resth) props.resth = newLogic.resth;
                 if (oldLogic.ifthen != newLogic.ifthen) props.ifthen = newLogic.ifthen;
                 if ('range' in props || 'resth' in props || 'ifthen' in props) {
                     this.editor.ui.addUndoAction(this.editor.ui.Action.fromRGroupAttrs(ci.id, props));
                     this.editor.render.update();
                 }
+                return true;
             }.bind(this)
         });
         return true;

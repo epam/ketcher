@@ -201,10 +201,7 @@ rnd.ReStruct = function (molecule, render, norescale)
         this.chiralFlags.set(0,new rnd.ReChiralFlag(new util.Vec2(bb.max.x, bb.min.y - 1)));
     }
 
-
-	this.coordProcess(norescale);
-
-	this.tmpVisels = [];
+    this.coordProcess(norescale);
 };
 
 rnd.ReStruct.maps = {
@@ -384,13 +381,11 @@ rnd.ReStruct.prototype.eachVisel = function (func, context) {
 	this.reloops.each(function(rlid, reloop) {
 		func.call(context, reloop.visel);
 	}, this);
-	for (var i = 0; i < this.tmpVisels.length; ++i)
-		func.call(context, this.tmpVisels[i]);
 };
 
 rnd.ReStruct.prototype.translate = function (d) {
 	this.eachVisel(function(visel){
-		this.translateVisel(visel, d);
+            visel.translate(d);
 	}, this);
 };
 
@@ -399,12 +394,6 @@ rnd.ReStruct.prototype.scale = function (s) {
 	this.eachVisel(function(visel){
 		this.scaleVisel(visel, s);
 	}, this);
-};
-
-// TODO: eliminate
-rnd.ReStruct.prototype.translateVisel = function (visel, d) {
-	var i;
-    visel.translate(d);
 };
 
 rnd.ReStruct.prototype.scaleRPath = function (path, s) {
@@ -490,9 +479,6 @@ rnd.ReStruct.prototype.update = function (force)
             sgroup.highlighting = null;
             sgroup.selectionPlate = null;
 	}, this);
-	for (var i = 0; i < this.tmpVisels.length; ++i)
-		this.clearVisel(this.tmpVisels[i]);
-	this.tmpVisels.clear();
 
     // TODO [RB] need to implement update-on-demand for fragments and r-groups
     this.frags.each(function(frid, frag) {
@@ -577,14 +563,14 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 {
 	this.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this.render);
-		this.addReObjectPath('data', sgroup.visel, path);
+		this.addReObjectPath('data', sgroup.visel, path, null, true);
 	}, this);
 };
 
 rnd.ReStruct.prototype.drawFragments = function() {
     this.frags.each(function(id, frag) {
         var path = frag.draw(this.render, id);
-        if (path) this.addReObjectPath('data', frag.visel, path);
+        if (path) this.addReObjectPath('data', frag.visel, path, null, true);
         // TODO fragment selection & highlighting
     }, this);
 };
@@ -594,7 +580,7 @@ rnd.ReStruct.prototype.drawRGroups = function() {
         var drawing = rgroup.draw(this.render);
         for (var group in drawing) {
             while (drawing[group].length > 0) {
-                this.addReObjectPath(group, rgroup.visel, drawing[group].shift());
+                this.addReObjectPath(group, rgroup.visel, drawing[group].shift(), null, true);
             }
         }
         // TODO rgroup selection & highlighting
@@ -999,7 +985,7 @@ rnd.ReFrag.prototype.calcBBox = function(render, fid) { // TODO need to review p
                 var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
                 bba = bba.extend(ext, ext);
             } else {
-                bba = bba.transform(render.scaled2obj, render);
+                bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
             }
             ret = (ret ? util.Box2Abs.union(ret, bba) : bba);
         }
@@ -1324,5 +1310,5 @@ rnd.ReChiralFlag.prototype.draw = function(render) {
             'font-size' : settings.fontsz,
             'fill' : '#000'
     });
-    render.ctab.addReObjectPath('data', this.visel, this.path);
+    render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
 };

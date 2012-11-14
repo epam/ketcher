@@ -637,6 +637,8 @@ rnd.Render.prototype.getBoundingBox = function ()
 rnd.Render.prototype.getStructCenter = function ()
 {
 	var bb = this.getBoundingBox();
+        if (this.offset)
+            bb = bb.translate(this.offset.negated());
 	return this.scaled2obj(util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5));
 };
 

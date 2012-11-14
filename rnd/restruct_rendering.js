@@ -645,7 +645,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(label.path, label.rbb);
 			if (atom.a.atomList != null)
 				this.pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
-			this.addReObjectPath('data', atom.visel, label.path, ps);
+			this.addReObjectPath('data', atom.visel, label.path, ps, true);
 			rightMargin = label.rbb.width / 2;
 			leftMargin = -label.rbb.width / 2;
 			var implh = Math.floor(atom.a.implicitH);
@@ -668,7 +668,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * hydroIndex.rbb.width + delta,
 					0.2 * label.rbb.height);
 				rightMargin += hydroIndex.rbb.width + delta;
-				this.addReObjectPath('data',atom.visel, hydroIndex.path, ps);
+				this.addReObjectPath('data',atom.visel, hydroIndex.path, ps, true);
 			}
 
 			var radical = {};
@@ -704,7 +704,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					vshift -= settings.lineWidth/2;
 				this.pathAndRBoxTranslate(radical.path, radical.rbb,
 					0, vshift);
-				this.addReObjectPath('data', atom.visel, radical.path, ps);
+				this.addReObjectPath('data', atom.visel, radical.path, ps, true);
 			}
 
 			var isotope = {};
@@ -723,7 +723,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					leftMargin - 0.5 * isotope.rbb.width - delta,
 					-0.3 * label.rbb.height);
 				leftMargin -= isotope.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, isotope.path, ps);
+				this.addReObjectPath('data', atom.visel, isotope.path, ps, true);
 			}
 			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen)
 			{
@@ -771,9 +771,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 						leftMargin - 0.5 * hydrogen.rbb.width - delta, 0);
 					leftMargin -= hydrogen.rbb.width + delta;
 				}
-				this.addReObjectPath('data', atom.visel, hydrogen.path, ps);
+				this.addReObjectPath('data', atom.visel, hydrogen.path, ps, true);
 				if (hydroIndex != null)
-					this.addReObjectPath('data', atom.visel, hydroIndex.path, ps);
+					this.addReObjectPath('data', atom.visel, hydroIndex.path, ps, true);
 			}
 
 			var charge = {};
@@ -800,7 +800,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * charge.rbb.width + delta,
 					-0.3 * label.rbb.height);
 				rightMargin += charge.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, charge.path, ps);
+				this.addReObjectPath('data', atom.visel, charge.path, ps, true);
 			}
 
 			var valence = {};
@@ -839,7 +839,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					rightMargin + 0.5 * valence.rbb.width + delta,
 					-0.3 * label.rbb.height);
 				rightMargin += valence.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, valence.path, ps);
+				this.addReObjectPath('data', atom.visel, valence.path, ps, true);
 			}
 
 			if (atom.a.badConn && opt.showValenceWarnings) {
@@ -852,7 +852,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'stroke':'#F00'
 				});
 				warning.rbb = rnd.relBox(warning.path.getBBox());
-				this.addReObjectPath('warnings', atom.visel, warning.path, ps);
+				this.addReObjectPath('warnings', atom.visel, warning.path, ps, true);
 			}
 			if (index)
 				this.pathAndRBoxTranslate(index.path, index.rbb,
@@ -999,7 +999,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.boxes[i]));
 			dir = dir.scaled(10 + t);
 			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
-			this.addReObjectPath('data', atom.visel, aamPath, ps);
+			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
         }
 	}
 };
@@ -1115,18 +1115,18 @@ rnd.ReStruct.prototype.showBonds = function ()
 		this.bondRecalc(settings, bond);
 		bond.path = this.drawBond(bond, hb1, hb2);
 		bond.rbb = rnd.relBox(bond.path.getBBox());
-		this.addReObjectPath('data', bond.visel, bond.path);
+		this.addReObjectPath('data', bond.visel, bond.path, null, true);
 		var reactingCenter = {};
 		reactingCenter.path = this.drawReactingCenter(bond, hb1, hb2);
 		if (reactingCenter.path) {
 			reactingCenter.rbb = rnd.relBox(reactingCenter.path.getBBox());
-			this.addReObjectPath('data', bond.visel, reactingCenter.path);
+			this.addReObjectPath('data', bond.visel, reactingCenter.path, null, true);
 		}
 		var topology = {};
 		topology.path = this.drawTopologyMark(bond, hb1, hb2);
 		if (topology.path) {
 			topology.rbb = rnd.relBox(topology.path.getBBox());
-			this.addReObjectPath('data', bond.visel, topology.path);
+			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
 		if (bond.highlight)
 			this.showBondHighlighting(bid, bond, true);
@@ -1207,31 +1207,18 @@ rnd.ReStruct.layerMap = {
 	'indices' : 5
 };
 
-rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path, pos) {
+rnd.ReStruct.prototype.addReObjectPath = function(group, visel, path, pos, visible) {
     if (!path)
         return;
     var offset = this.render.offset;
-    var bb = util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox()));
+    var bb = visible ? util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())) : null;
     var ext = pos && bb ? bb.translate(pos.negated()) : null;
-    if (offset != null) {
+    if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
         bb = bb ? bb.translate(offset) : null;
     }
     visel.add(path, bb, ext);
     this.insertInLayer(rnd.ReStruct.layerMap[group], path);
-};
-
-/**  @deprecated please use #rnd.ReStruct.addReObjectPath instead */ // TODO code cleanup
-rnd.ReStruct.prototype.addTmpPath = function (group, path)
-{
-	var visel = new rnd.Visel('TMP');
-	var offset = this.render.offset;
-	if (offset != null) {
-		path.translateAbs(offset.x, offset.y);
-	}
-	visel.add(path);
-	this.tmpVisels.push(visel);
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
 };
 
 rnd.ReStruct.prototype.clearVisel = function (visel)
@@ -1385,6 +1372,6 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				'stroke-dasharray':'- '
 			});
 		}
-		this.addReObjectPath('data', reloop.visel, path);
+		this.addReObjectPath('data', reloop.visel, path, null, true);
 	}, this);
 };

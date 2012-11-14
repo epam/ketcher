@@ -819,8 +819,9 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
         return true;
     } else if (ci && ci.map == 'atoms') {
         this._hoverHelper.hover(null);
-        var lbOld = this.editor.render.ctab.molecule.atoms.get(ci.id).label;
-        var rgOld = this.editor.render.ctab.molecule.atoms.get(ci.id).rglabel;
+        var atom = this.editor.render.ctab.molecule.atoms.get(ci.id);
+        var lbOld = atom.label;
+        var rgOld = atom.rglabel;
         this.editor.ui.showRGroupTable({
             selection : rgOld,
             onOk : function(rgNew) {
@@ -829,8 +830,10 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
                     if (rgNew) {
                         newProps.label = 'R#';
                         newProps.rglabel = rgNew;
+                        newProps.aam = atom.aam;
                     } else {
                         newProps.label = 'C';
+                        newProps.aam = atom.aam;
                     }
                     this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, newProps), true);
                     this.editor.ui.render.update();

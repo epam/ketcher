@@ -775,13 +775,18 @@ rnd.Editor.ChargeTool = function(editor, charge) { // TODO [RB] should be "plugg
 };
 rnd.Editor.ChargeTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.ChargeTool.prototype.OnMouseMove = function(event) {
-    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+    var ci = this.editor.render.findItem(event, ['atoms']);
+    if (ci && ci.map == 'atoms' && chem.Element.getElementByLabel(this.editor.ui.ctab.atoms.get(ci.id).label) != null) {
+        this._hoverHelper.hover(ci);
+    } else {
+        this._hoverHelper.hover(null);
+    }
     return true;
 };
 rnd.Editor.ChargeTool.prototype.OnMouseUp = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     var ci = _R_.findItem(event, ['atoms']);
-    if (ci && ci.map == 'atoms') {
+    if (ci && ci.map == 'atoms' && chem.Element.getElementByLabel(this.editor.ui.ctab.atoms.get(ci.id).label) != null) {
         this._hoverHelper.hover(null);
         _E_.ui.addUndoAction(
             _E_.ui.Action.fromAtomsAttrs(ci.id, { charge : _R_.ctab.molecule.atoms.get(ci.id).charge + this.charge })

@@ -1632,19 +1632,20 @@ ui.Action.OpRGroupAttr = function(rgid, attribute, value) {
 };
 ui.Action.OpRGroupAttr.prototype = new ui.Action.OpBase();
 
-ui.Action.OpRGroupFragment = function(rgid, frid) {
+ui.Action.OpRGroupFragment = function(rgid, frid, rg) {
     this.rgid_new = rgid;
+    this.rg_new = rg;
     this.rgid_old = null;
+    this.rg_old = null;
     this.frid = frid;
     this._execute = function(editor) {
         var RS = editor.render.ctab, DS = RS.molecule;
         this.rgid_old = this.rgid_old || chem.Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
-
-        var rgOld = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
-        if (rgOld) {
-            rgOld.frags.remove(rgOld.frags.keyOf(this.frid));
+        this.rg_old = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
+        if (this.rg_old) {
+            this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
             RS.clearVisel(RS.rgroups.get(this.rgid_old).visel);
-            if (rgOld.frags.count() == 0) {
+            if (this.rg_old.frags.count() == 0) {
                 RS.rgroups.unset(this.rgid_old);
                 DS.rgroups.unset(this.rgid_old);
                 RS.markItemRemoved();
@@ -1655,7 +1656,7 @@ ui.Action.OpRGroupFragment = function(rgid, frid) {
         if (this.rgid_new) {
             var rgNew = DS.rgroups.get(this.rgid_new);
             if (!rgNew) {
-                rgNew = new chem.Struct.RGroup();
+                rgNew = this.rg_new || new chem.Struct.RGroup();
                 DS.rgroups.set(this.rgid_new, rgNew);
                 RS.rgroups.set(this.rgid_new, new rnd.ReRGroup(rgNew));
             } else {
@@ -1665,7 +1666,7 @@ ui.Action.OpRGroupFragment = function(rgid, frid) {
         }
     };
     this._invert = function() {
-        return new ui.Action.OpRGroupFragment(this.rgid_old, this.frid);
+        return new ui.Action.OpRGroupFragment(this.rgid_old, this.frid, this.rg_old);
     };
 };
 ui.Action.OpRGroupFragment.prototype = new ui.Action.OpBase();

@@ -370,10 +370,13 @@ rnd.Editor.LassoTool.prototype.OnMouseUp = function(event) {
 rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
     var ci = this.editor.render.findItem(event);
     if (ci.map == 'atoms') {
+        this.editor._selectionHelper.setSelection(ci);
         this.editor.ui.showAtomProperties(ci.id);
     } else if (ci.map == 'bonds') {
+        this.editor._selectionHelper.setSelection(ci);
         this.editor.ui.showBondProperties(ci.id);
     } else if (ci.map == 'sgroups') {
+        this.editor._selectionHelper.setSelection(ci);
         this._sGroupHelper.showPropertiesDialog(ci.id);
 //    } else if (ci.map == 'sgroupData') {
 //        this._sGroupHelper.showPropertiesDialog(ci.sgid);

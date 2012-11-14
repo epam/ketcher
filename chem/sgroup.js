@@ -233,7 +233,15 @@ chem.SGroup.bracketPos = function (sg, remol, xbonds) {
             var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
             bba = bba.extend(ext, ext);
         } else {
-            bba = bba.transform(render.scaled2obj, render);
+            bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
+            util.each([bba.p0.x, bba.p1.x], function(x) {
+                util.each([bba.p0.y, bba.p1.y], function(y) {
+                    var v = new util.Vec2(x, y);
+                    var p = new util.Vec2(util.Vec2.dot(v, d), util.Vec2.dot(v, n));
+                    bba = bba.include(p);
+                }, this);
+            }, this);
+            var yy = [bba.p0.y, bba.p1.y];
         }
         bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
     }
@@ -288,25 +296,6 @@ chem.SGroup.getObjBBox = function (atoms, mol)
 		var atom = mol.atoms.get(aid);
 		var p = atom.pp;
 		bb = bb.include(p);
-	}
-	return bb;
-};
-
-chem.SGroup.getBBox = function (atoms, remol) {
-	var bb = null;
-	var render = remol.render;
-	var settings = render.settings;
-	for (var i = 0; i < atoms.length; ++i) {
-		var aid = atoms[i];
-		var atom = remol.atoms.get(aid);
-		var bba = atom.visel.boundingBox;
-		if (bba == null) {
-			var p = atom.a.pp;
-			bba = new util.Box2Abs(p,p);
-			var ext = new util.Vec2(0.15, 0.15);
-			bba = bba.extend(ext, ext);
-		}
-		bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
 	}
 	return bb;
 };

@@ -995,8 +995,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 
 			var visel = atom.visel;
 			var t = 3;
-			for (i = 0; i < visel.boxes.length; ++i)
-				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.boxes[i]));
+			for (i = 0; i < visel.exts.length; ++i)
+				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
 			dir = dir.scaled(10 + t);
 			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
 			this.addReObjectPath('data', atom.visel, aamPath, ps, true);

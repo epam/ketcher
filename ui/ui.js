@@ -375,6 +375,7 @@ ui.init = function ()
 
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
 
+    ui.setScrollOffset(0, 0);
     this.render.setMolecule(this.ctab);
     this.render.update();
 

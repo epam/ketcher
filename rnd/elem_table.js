@@ -82,7 +82,7 @@ rnd.ElementTable.prototype.updateAtomProps = function () {
 		var ids = util.Set.list(this.selectedLabels);
 		ids.sort(function(a, b){return a-b;});
 		this.atomProps = {
-			'label':'',
+			'label':'L#',
 			'atomList': new chem.Struct.AtomList({
 					'notList': notList,
 					'ids': ids

@@ -1026,6 +1026,14 @@ rnd.ReRGroup = function(/*chem.Struct.RGroup*/rgroup) {
 };
 rnd.ReRGroup.prototype = new rnd.ReObject();
 
+rnd.ReRGroup.prototype.getAtoms = function(render) {
+    var ret = [];
+    this.item.frags.each(function(fnum, fid) {
+        ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render, fid));
+    });            
+    return ret;
+};
+
 rnd.ReRGroup.findClosest = function(render, p, skip, minDist) {
     minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
     var ret;

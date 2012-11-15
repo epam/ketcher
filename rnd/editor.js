@@ -139,6 +139,15 @@ rnd.Editor.SelectionHelper.prototype.setSelection = function(selection, add) {
     ui.updateClipboardButtons(); // TODO notify ui about selection
 };
 rnd.Editor.SelectionHelper.prototype.isSelected = function(item) {
+    var render = this.editor.render;
+    var ctab = render.ctab;
+    if (item.map == 'frags' || item.map == 'rgroups') {
+        var atoms = item.map == 'frags' ? 
+            ctab.frags.get(item.id).fragGetAtoms(render, item.id) : 
+            ctab.rgroups.get(item.id).getAtoms(render);
+        return !Object.isUndefined(this.selection['atoms']) 
+            && util.Set.subset(util.Set.fromList(atoms), util.Set.fromList(this.selection['atoms']));
+    }
     return 'selection' in this
         && !Object.isUndefined(this.selection[item.map])
         && this.selection[item.map].indexOf(item.id) > -1;
@@ -285,19 +294,17 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
         this._hoverHelper.hover(null);
         if ('onShowLoupe' in this.editor.render)
             this.editor.render.onShowLoupe(true);
-        if (ci.map == 'frags') {
-            var frag = ctab.frags.get(ci.id);
-            var atoms = frag.fragGetAtoms(render, ci.id);
-            this.editor._selectionHelper.setSelection({'atoms':atoms}, event.shiftKey);
-        } else if (ci.map == 'rgroups') {
-            var rgroup = ctab.rgroups.get(ci.id);
-            var atoms1 = [];
-            rgroup.item.frags.each(function(fnum, fid) {
-                atoms1 = atoms1.concat(ctab.frags.get(fid).fragGetAtoms(render, fid));
-            });            
-            this.editor._selectionHelper.setSelection({'atoms':atoms1}, event.shiftKey);
-        } else if (!this.editor._selectionHelper.isSelected(ci)) {
-            this.editor._selectionHelper.setSelection(ci, event.shiftKey);
+        if (!this.editor._selectionHelper.isSelected(ci)) {
+            if (ci.map == 'frags') {
+                var frag = ctab.frags.get(ci.id);
+                var atoms = frag.fragGetAtoms(render, ci.id);
+                this.editor._selectionHelper.setSelection({'atoms':atoms}, event.shiftKey);
+            } else if (ci.map == 'rgroups') {
+                var rgroup = ctab.rgroups.get(ci.id);
+                this.editor._selectionHelper.setSelection({'atoms':rgroup.getAtoms(render)}, event.shiftKey);
+            } else {
+                this.editor._selectionHelper.setSelection(ci, event.shiftKey);
+            }
         }
         this.dragCtx = {
             item : ci,

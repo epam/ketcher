@@ -2051,7 +2051,7 @@ ui.showRLogicTable = function(params)
     params = params || {};
     params.rlogic = params.rlogic || {};
     $('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
-    $('rlogic_resth').value = params.rlogic.resth || '0';
+    $('rlogic_resth').value = params.rlogic.resth ? '1' : '0';
     var ifOptHtml = '<option value="0">Always</option>';
     for (var r = 1; r <= 32; r++) if (r != params.rgid && 0 != (params.rgmask & (1 << (r - 1)))) {
         ifOptHtml += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';

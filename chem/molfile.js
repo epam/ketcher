@@ -1686,7 +1686,7 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
 	ctabLines = ctabLines.slice(7);
     if (ctabLines[0].strip() != '$CTAB')
         throw new Error('RGFile format invalid');
-    var i = 1;while (ctabLines[i][0] != '$') i++;
+    var i = 1; while (ctabLines[i].charAt(0) != '$') i++;
     if (ctabLines[i].strip() != '$END CTAB')
         throw new Error('RGFile format invalid');
     var coreLines = ctabLines.slice(1, i);
@@ -1715,7 +1715,7 @@ chem.Molfile.parseRg2000 = function (/* string[] */ ctabLines) /* chem.Struct */
             }
             if (line != '$CTAB')
                 throw new Error('RGFile format invalid');
-            i = 1;while (ctabLines[i][0] != '$') i++;
+            i = 1; while (ctabLines[i].charAt(0) != '$') i++;
             if (ctabLines[i].strip() != '$END CTAB')
                 throw new Error('RGFile format invalid');
             fragmentLines[rgid].push(ctabLines.slice(1, i));

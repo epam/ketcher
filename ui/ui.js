@@ -719,7 +719,8 @@ ui.onKeyPress_Ketcher = function (event)
         ui.selectMode('atom_cl');
         return util.preventDefault(event);
     case 82: // Shift+R
-        ui.selectMode('rgroup');
+        var rgtools = ['rgroup_label', 'rgroup_fragment', 'rgroup_attpoints'];
+        ui.onMouseDown_DropdownListItem.call($(rgtools[(rgtools.indexOf(ui.mode_id) + 1) % rgtools.length]));
         return util.preventDefault(event);
     case 90: // Ctrl+Shift+Z
         if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))

@@ -2052,10 +2052,11 @@ ui.showRLogicTable = function(params)
     params.rlogic = params.rlogic || {};
     $('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
     $('rlogic_resth').value = params.rlogic.resth || '0';
-    $('rlogic_if').innerHTML = '<option value="0">Always</option>';
+    var ifOptHtml = '<option value="0">Always</option>';
     for (var r = 1; r <= 32; r++) if (r != params.rgid && 0 != (params.rgmask & (1 << (r - 1)))) {
-        $('rlogic_if').innerHTML += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
+        ifOptHtml += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
     }
+    $('rlogic_if').outerHTML = '<select id="rlogic_if">' + ifOptHtml + '</select>'; // [RB] thats tricky because IE8 fails to set innerHTML
     $('rlogic_if').value = params.rlogic.ifthen;
     ui.showDialog('rlogic_table');
 

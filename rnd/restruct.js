@@ -51,7 +51,7 @@ rnd.ReObject.prototype.init = function(viselType)
 rnd.ReObject.prototype.calcVBox = function(render) {
     if (this.visel.boundingBox) {
         return this.visel.boundingBox
-            .transform(render.scaled2obj, render);
+            .translate(render.offset.negated()).transform(render.scaled2obj, render);
     }
 };
 
@@ -1061,8 +1061,8 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
     var settings = render.settings;
     if (bb) {
         var ret = { 'data' : [] };
-        var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
-        var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+        var p0 = render.obj2scaled(bb.p0);
+        var p1 = render.obj2scaled(bb.p1);
         var brackets = render.paper.set();
         chem.SGroup.drawBrackets(brackets, render, render.paper, settings, render.styles, bb);
         ret.data.push(brackets);
@@ -1124,8 +1124,8 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
 rnd.ReRGroup.prototype._draw = function(render, rgid, attrs) { // TODO need to review parameter list
     var bb = this.calcVBox(render).extend(this.__ext, this.__ext);
     if (bb) {
-        var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
-        var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+        var p0 = render.obj2scaled(bb.p0);
+        var p1 = render.obj2scaled(bb.p1);
         return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
     }
 };

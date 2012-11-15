@@ -277,7 +277,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var ctab = render.ctab;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags']);
+    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags']);
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
             this._lassoHelper.begin(event);
@@ -289,6 +289,13 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
             var frag = ctab.frags.get(ci.id);
             var atoms = frag.fragGetAtoms(render, ci.id);
             this.editor._selectionHelper.setSelection({'atoms':atoms}, event.shiftKey);
+        } else if (ci.map == 'rgroups') {
+            var rgroup = ctab.rgroups.get(ci.id);
+            var atoms1 = [];
+            rgroup.item.frags.each(function(fnum, fid) {
+                atoms1 = atoms1.concat(ctab.frags.get(fid).fragGetAtoms(render, fid));
+            });            
+            this.editor._selectionHelper.setSelection({'atoms':atoms1}, event.shiftKey);
         } else if (!this.editor._selectionHelper.isSelected(ci)) {
             this.editor._selectionHelper.setSelection(ci, event.shiftKey);
         }
@@ -336,7 +343,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags'])
+            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags'])
         );
     }
     return true;

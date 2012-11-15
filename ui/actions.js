@@ -108,7 +108,7 @@ ui.Action.fromAtomsAttrs = function(ids, attrs)
 {
     var action = new ui.Action();
     new Hash(attrs).each(function(attr) {
-        (typeof(ids) == 'array' ? ids : [ids]).each(function(id) {
+        (typeof(ids) == 'number' ? [ids] : ids).each(function(id) {
             if (attr.key == 'label' && attr.value != null) {
                 action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
             }

@@ -83,21 +83,24 @@ class application(object):
         self.notsupported()
 
     def on_automap(self):
-        moldata = None
-        if self.method == 'GET' and 'smiles' in self.fields:
-            moldata = self.fields.getfirst('smiles')
-        elif self.is_form_request() and 'moldata' in self.fields:
-            moldata = self.fields.getfirst('moldata')
+        try:
+            moldata = None
+            if self.method == 'GET' and 'smiles' in self.fields:
+                moldata = self.fields.getfirst('smiles')
+            elif self.is_form_request() and 'moldata' in self.fields:
+                moldata = self.fields.getfirst('moldata')
 
-        if moldata:
-            mode = self.fields.getfirst('mode', 'discard')
-            rxn = indigo.loadQueryReaction(moldata)
-            if not moldata.startswith('$RXN'):
-                rxn.layout()
-            rxn.automap(mode)
-            return ["Ok.\n",
-                    rxn.rxnfile()]
-        self.notsupported()
+            if moldata:
+                mode = self.fields.getfirst('mode', 'discard')
+                rxn = indigo.loadQueryReaction(moldata)
+                if not moldata.startswith('$RXN'):
+                    rxn.layout()
+                rxn.automap(mode)
+                return ["Ok.\n",
+                        rxn.rxnfile()]
+            self.notsupported()
+        except:
+            return self.error_response()
 
     def on_open(self):
         if self.is_form_request():
@@ -160,9 +163,12 @@ class application(object):
         except:
             return self.error_response("Molecules and reactions containing query features cannot be dearomatized yet.")
 
-        md.dearomatize()
-        return ["Ok.\n",
-                md.rxnfile() if is_rxn else md.molfile()]
+        try:
+            md.dearomatize()
+            return ["Ok.\n",
+                    md.rxnfile() if is_rxn else md.molfile()]
+        except:
+            return self.error_response()
 
 
     class HttpException(Exception): pass
@@ -184,9 +190,13 @@ class application(object):
         return md, is_rxn
 
     def error_response(self, message=None):
-        return ["Error.\n",
+        msg = ["Error.\n",
                 message or str(sys.exc_info()[1]), '\n',
                 '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))]
+        for m in msg:
+            sys.stdout.write(m)
+        sys.stdout.write("\n")
+        return msg
 
     def notsupported(self):
         raise self.HttpException('405 Method Not Allowed',

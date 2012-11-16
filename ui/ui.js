@@ -517,6 +517,10 @@ ui.selectMode = function (mode)
                             ui.render.update();
 */
                         }
+                        else if (res.responseText.startsWith('Error.'))
+                            alert(res.responseText.split('\n')[1]);
+                        else
+                            throw new Error('Something went wrong' + res.responseText);
                     }
                 });
             }
@@ -1587,7 +1591,7 @@ ui.selected = function ()
 
 ui.selectedAtom = function ()
 {
-	return !Object.isUndefined(ui.selection.atoms) && ui.selection.atoms.length > 0;
+    return !Object.isUndefined(ui.selection.atoms) && ui.selection.atoms.length > 0;
 };
 
 ui.selectAll = function ()

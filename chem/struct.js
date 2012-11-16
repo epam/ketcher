@@ -388,6 +388,11 @@ chem.Struct.AtomList.prototype.label = function ()
 	return label;
 };
 
+chem.Struct.AtomList.prototype.equals = function (x)
+{
+    return this.notList == x.notList && (this.ids || []).sort().toString() == (x.ids || []).sort().toString();
+};
+
 chem.Struct.Bond = function (params)
 {
 	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))

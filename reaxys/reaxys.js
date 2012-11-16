@@ -210,16 +210,15 @@ ui.showReaGenericsTable = function(params) {
         if (params.selection)
             ui.reagenerics_table_obj.setSelection(params.selection);
         var _onOk = new Event.Handler('reagenerics_table_ok', 'click', undefined, function() {
-            if (ui.reagenerics_table_obj.atomProps == null)
-                return;
-            ui.hideDialog('reagenerics_table');
-            if ('onOk' in params) params['onOk'](ui.reagenerics_table_obj.selection);
-            _onOk.stop();
+            if (!params || !('onOk' in params) || params['onOk'](ui.reagenerics_table_obj.getAtomProps())) {
+                _onOk.stop(); _onCancel.stop();
+                ui.hideDialog('reagenerics_table');
+            }
         }).start();
         var _onCancel = new Event.Handler('reagenerics_table_cancel', 'click', undefined, function() {
+            _onOk.stop(); _onCancel.stop();
             ui.hideDialog('reagenerics_table');
-            if ('onCancel' in params) params['onCancel']();
-            _onCancel.stop();
+            if (params && 'onCancel' in params) params['onCancel']();
         }).start();
         $($('reagenerics_table_ok').disabled ? 'reagenerics_table_cancel' : 'reagenerics_table_ok').focus();
     }
@@ -233,6 +232,7 @@ ui.onClick_ReaGenericsTableButton = function ()
     ui.showReaGenericsTable({
         onOk : function() {
             ui.selectMode('atom_reagenerics');
+            return true;
         }
     });
 };

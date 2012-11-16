@@ -131,7 +131,7 @@ rnd.ElementTable.prototype.markSelected = function (id, selected) {
 		item.box.attr('fill',this.fillColor);
 	}
 	item.selected = selected;
-}
+};
 
 rnd.ElementTable.prototype.setElementSingle = function (id) {
 	if (this.singleLabel >= 0)
@@ -161,7 +161,7 @@ rnd.ElementTable.prototype.setMode = function (mode) {
 	}
 	this.mode = mode;
 	this.updateAtomProps();
-}
+};
 
 rnd.ElementTable.prototype.store = function () {
 	this.old = {
@@ -169,7 +169,7 @@ rnd.ElementTable.prototype.store = function () {
 		'singleLabel': this.singleLabel,
 		'mode' : this.mode
 	};
-}
+};
 
 rnd.ElementTable.prototype.restore = function () {
 	util.Set.each(this.selectedLabels, function(id){
@@ -189,4 +189,23 @@ rnd.ElementTable.prototype.restore = function () {
 	}
         $('elem_table_'+this.old.mode).checked=true;
 	this.updateAtomProps();
-}
+};
+
+rnd.ElementTable.prototype.setSelection = function(selection) {
+    if (selection) {
+        util.Set.each(this.selectedLabels, function(id){
+            this.setElementSelected(id, false);
+        }, this);
+        this.setElementSingle(-1);
+        if (selection.label == 'L#') {
+            $(selection.atomList && selection.atomList.notList ? 'elem_table_notlist' : 'elem_table_list').click();
+            (selection.atomList.ids || []).each(function(id) {
+                this.setElementSelected(id, true);
+            }, this);
+        } else {
+            $('elem_table_single').click();
+            this.setElementSingle(chem.Element.getElementByLabel(selection.label) || -1);
+        }
+        this.updateAtomProps();
+    }
+};

@@ -179,7 +179,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 		}
 		atomListParams.ids = mf.labelsListToIds(label.split(","));
 		params['atomList'] = new chem.Struct.AtomList(atomListParams);
-		params['label'] = '';
+		params['label'] = 'L#';
 	} else {
 		params['label'] = label;
 	}
@@ -525,10 +525,14 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
             } else if (type == "ALS") { // atom list
 				if (!props.get('atomList'))
 					props.set('atomList', new util.Map());
-				props.get('atomList').update(
-					mf.parsePropertyLineAtomList(
-						mf.partitionLine(propertyData, [1,3,3,1,1,1]),
-						mf.partitionLineFixed(propertyData.slice(10), 4, false)));
+                var list = mf.parsePropertyLineAtomList(
+                    mf.partitionLine(propertyData, [1,3,3,1,1,1]),
+                    mf.partitionLineFixed(propertyData.slice(10), 4, false));
+                props.get('atomList').update(
+					list);
+                if (!props.get('label'))
+                    props.set('label', new util.Map());
+                for (var aid in list) props.get('label').set(aid, 'L#');
 			} else if (type == "STY") { // introduce s-group
 				mf.initSGroup(sGroups, propertyData);
 			} else if (type == "SST") {
@@ -598,7 +602,7 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 	var atomLists = atomListLines.map(mf.parseAtomListLine);
 	atomLists.each(function(pair){
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
-		ctab.atoms.get(pair.aid).label = '';
+		ctab.atoms.get(pair.aid).label = 'L#';
 	});
 
 	var sGroups = {}, rLogic = {};

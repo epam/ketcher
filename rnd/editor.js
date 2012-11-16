@@ -385,7 +385,35 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
     var ci = this.editor.render.findItem(event);
     if (ci.map == 'atoms') {
         this.editor._selectionHelper.setSelection(ci);
-        this.editor.ui.showAtomProperties(ci.id);
+        // TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
+        var atom = this.editor.ui.ctab.atoms.get(ci.id);
+        if (atom.label == 'R#') {
+            rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, event);
+        } else if (atom.label == 'L#') {
+            ui.showElemTable({
+                selection: atom,
+                onOk: function(attrs) {
+                    if (atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)) {
+                        this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, attrs));
+                        this.editor.ui.render.update();
+                    }
+                    return true;
+                }.bind(this)
+            });
+        } else if ((chem.Element.getElementByLabel(atom.label) || 121) < 120) {
+            this.editor.ui.showAtomProperties(ci.id);
+        } else {
+            ui.showReaGenericsTable({
+                selection: atom.label,
+                onOk: function(attrs) {
+                    if (atom.label != attrs.label) {
+                        this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, attrs));
+                        this.editor.ui.render.update();
+                    }
+                    return true;
+                }.bind(this)
+            });
+        }
     } else if (ci.map == 'bonds') {
         this.editor._selectionHelper.setSelection(ci);
         this.editor.ui.showBondProperties(ci.id);

@@ -701,7 +701,7 @@ rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
 		p0 = this.obj2scaled(p0).add(this.offset);
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.path(
-            'M' + p0.x.toString() + ',' + p0.y.toString() + 'L' + p1.x.toString() + ',' + p1.y.toString()
+            rnd.ReStruct.makeStroke(p0, p1)
         ).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}
 };
@@ -775,10 +775,10 @@ rnd.Render.prototype.drawSelectionPolygon = function (r) {
     }
 	if (r && r.length > 1) {
 		var v = this.obj2scaled(r[r.length - 1]).add(this.offset);
-		var pstr = "M" + v.x.toString() + "," + v.y.toString();
+		var pstr = "M" + tfx(v.x) + "," + tfx(v.y);
 		for (var i = 0; i < r.length; ++i) {
 			v = this.obj2scaled(r[i]).add(this.offset);
-			pstr += "L" + v.x.toString() + "," + v.y.toString();
+			pstr += "L" + tfx(v.x) + "," + tfx(v.y);
 		}
 		this.selectionRect = this.paper.path(pstr).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}

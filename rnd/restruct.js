@@ -1201,7 +1201,7 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
 
     var set = paper.set();
     sg.highlighting = paper
-        .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", a0.x, a0.y, a1.x, a1.y, b1.x, b1.y, b0.x, b0.y)
+        .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", tfx(a0.x), tfx(a0.y), tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(b0.x), tfx(b0.y))
         .attr(styles.highlightStyle);
     set.push(sg.highlighting);
     render.ctab.addReObjectPath('highlighting', this.visel, sg.highlighting);

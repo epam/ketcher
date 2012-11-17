@@ -13,6 +13,10 @@
 if (!window.rnd || !rnd.ReStruct)
 	throw new Error("MolData should be defined first");
 
+function tfx(v) {
+	return (v-0).toFixed(4);
+}
+
 rnd.relBox = function (box) {
     return {
         x: box.x,
@@ -27,7 +31,7 @@ rnd.ReStruct.prototype.drawArrow = function (a, b)
 	var width = 5, length = 7;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path("M{0},{1}L{2},{3}L{4},{5}M{2},{3}L{4},{6}", a.x, a.y, b.x, b.y, b.x - length, b.y - width, b.y + width)
+	return paper.path("M{0},{1}L{2},{3}L{4},{5}M{2},{3}L{4},{6}", tfx(a.x), tfx(a.y), tfx(b.x), tfx(b.y), tfx(b.x - length), tfx(b.y - width), tfx(b.y + width))
 	.attr(styles.lineattr);
 };
 
@@ -36,7 +40,7 @@ rnd.ReStruct.prototype.drawPlus = function (c)
 	var s = this.render.scale/5;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path("M{0},{4}L{0},{5}M{2},{1}L{3},{1}", c.x, c.y, c.x - s, c.x + s, c.y - s, c.y + s)
+	return paper.path("M{0},{4}L{0},{5}M{2},{1}L{3},{1}", tfx(c.x), tfx(c.y), tfx(c.x - s), tfx(c.x + s), tfx(c.y - s), tfx(c.y + s))
 	.attr(styles.lineattr);
 };
 
@@ -45,7 +49,7 @@ rnd.ReStruct.prototype.drawBondSingle = function (hb1, hb2)
 	var a = hb1.p, b = hb2.p;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path("M{0},{1}L{2},{3}", a.x, a.y, b.x, b.y)
+	return paper.path(rnd.ReStruct.makeStroke(a, b))
 	.attr(styles.lineattr);
 };
 
@@ -59,7 +63,7 @@ rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2)
 	var b2 = b.addScaled(n, bsp);
 	var b3 = b.addScaled(n, -bsp);
 	return paper.path("M{0},{1}L{2},{3}L{4},{5},L{0},{1}",
-		a.x, a.y, b2.x, b2.y, b3.x, b3.y)
+		tfx(a.x), tfx(a.y), tfx(b2.x), tfx(b2.y), tfx(b3.x), tfx(b3.y))
 	.attr(styles.lineattr).attr({
 		'fill':'#000'
 	});
@@ -85,7 +89,7 @@ rnd.ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
 		r = a.addScaled(d, step * i);
 		p = r.addScaled(n, bsp * i / (nlines - 1));
 		q = r.addScaled(n, -bsp * i / (nlines - 1));
-		path += 'M' + p.x + ',' + p.y + 'L' + q.x + ',' + q.y;
+		path += rnd.ReStruct.makeStroke(p, q);
 	}
 	return paper.path(path)
     .attr(styles.lineattr);
@@ -106,11 +110,11 @@ rnd.ReStruct.prototype.drawBondSingleEither = function (hb1, hb2)
 		(settings.lineWidth + interval)) + 1;
 	var step = len / (nlines - 1);
 
-	var path = 'M' + a.x + ',' + a.y, r = a;
+	var path = 'M' + tfx(a.x) + ',' + tfx(a.y), r = a;
 	for (var i = 0; i < nlines; ++i) {
 		r = a.addScaled(d, step * i).addScaled(n,
 			((i & 1) ? -1 : +1) * bsp * i / (nlines - 1));
-		path += 'L' + r.x + ',' + r.y;
+		path += 'L' + tfx(r.x) + ',' + tfx(r.y);
 	}
 	return paper.path(path)
 	.attr(styles.lineattr);
@@ -159,13 +163,13 @@ rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 	return paper.path(cis_trans ?
 		"M{0},{1}L{6},{7}M{4},{5}L{2},{3}" :
 		"M{0},{1}L{2},{3}M{4},{5}L{6},{7}",
-		a2.x, a2.y, b2.x, b2.y, a3.x, a3.y, b3.x, b3.y)
+		tfx(a2.x), tfx(a2.y), tfx(b2.x), tfx(b2.y), tfx(a3.x), tfx(a3.y), tfx(b3.x), tfx(b3.y))
 	.attr(styles.lineattr);
 };
 
 rnd.ReStruct.makeStroke = function (a, b) {
-	return 'M' + a.x.toString() + ',' + a.y.toString() +
-		'L' + b.x.toString() + ',' + b.y.toString() + '	';
+	return 'M' + tfx(a.x) + ',' + tfx(a.y) +
+		'L' + tfx(b.x) + ',' + tfx(b.y) + '	';
 };
 
 rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
@@ -222,8 +226,7 @@ rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 	if (shiftB)
 		b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 			this.getBondLineShift(hb2.rightCos, hb2.rightSin));
-	return paper.path("M{0},{1}L{2},{3}M{4},{5}L{6},{7}M{8},{9}L{10},{11}",
-		a.x, a.y, b.x, b.y, a2.x, a2.y, b2.x, b2.y, a3.x, a3.y, b3.x, b3.y)
+	return paper.path(rnd.ReStruct.makeStroke(a,b) + rnd.ReStruct.makeStroke(a2,b2) + rnd.ReStruct.makeStroke(a3,b3))
 	.attr(styles.lineattr);
 };
 
@@ -285,10 +288,8 @@ rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift)
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 				this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	var l1 = paper.path("M{0},{1}L{2},{3}",
-		a2.x, a2.y, b2.x, b2.y).attr(styles.lineattr);
-	var l2 = paper.path("M{0},{1}L{2},{3}",
-		a3.x, a3.y, b3.x, b3.y).attr(styles.lineattr);
+	var l1 = paper.path(rnd.ReStruct.makeStroke(a2,b2)).attr(styles.lineattr);
+	var l2 = paper.path(rnd.ReStruct.makeStroke(a3,b3)).attr(styles.lineattr);
 	return [l1, l2];
 };
 
@@ -309,7 +310,7 @@ rnd.ReStruct.prototype.drawBondAny = function (hb1, hb2)
 	var a = hb1.p, b = hb2.p;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path("M{0},{1}L{2},{3}", a.x, a.y, b.x, b.y)
+	return paper.path(rnd.ReStruct.makeStroke(a,b))
 	.attr(styles.lineattr).attr({
 		'stroke-dasharray':'- '
 	});
@@ -381,7 +382,7 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 
 	var pathdesc = "";
 	for (var i = 0; i < p.length / 2; ++i)
-		pathdesc += "M" + p[2 * i].x + "," + p[2 * i].y + "L" + p[2 * i + 1].x + "," + p[2 * i + 1].y;
+		pathdesc += rnd.ReStruct.makeStroke(p[2 * i], p[2 * i + 1]);
 	return paper.path(pathdesc).attr(styles.lineattr);
 };
 
@@ -483,7 +484,7 @@ rnd.ReStruct.prototype.radicalCap = function (p)
 	var s = settings.lineWidth * 0.9;
 	var dw = s, dh = 2 * s;
 	return paper.path("M{0},{1}L{2},{3}L{4},{5}",
-		p.x - dw, p.y + dh, p.x, p.y, p.x + dw, p.y + dh)
+		tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
 	.attr({
 		'stroke': '#000',
 		'stroke-width': settings.lineWidth * 0.7,
@@ -846,7 +847,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				var warning = {};
 				var y = ps.y + label.rbb.height / 2 + delta;
 				warning.path = paper.path("M{0},{1}L{2},{3}",
-					ps.x + leftMargin, y, ps.x + rightMargin, y)
+					tfx(ps.x + leftMargin), tfx(y), tfx(ps.x + rightMargin), tfx(y))
 				.attr(this.render.styles.lineattr)
 				.attr({
 					'stroke':'#F00'
@@ -895,7 +896,7 @@ rnd.ReStruct.prototype.showLabels = function ()
                     var attpntPath = paper.set();
                     attpntPath.push(
                         attpntPath1,
-                        paper.path("M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}", pos0.x, pos0.y, pos1.x, pos1.y, arrowLeft.x, arrowLeft.y, arrowRight.x, arrowRight.y)
+                        paper.path("M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}", tfx(pos0.x), tfx(pos0.y), tfx(pos1.x), tfx(pos1.y), tfx(arrowLeft.x), tfx(arrowLeft.y), tfx(arrowRight.x), tfx(arrowRight.y))
                             .attr(styles.lineattr).attr({'stroke-width': settings.lineWidth/2})
                     );
                     this.addReObjectPath('indices', atom.visel, attpntPath, ps);
@@ -1362,7 +1363,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				var offset = settings.bondSpace / sin;
 				var qi = pi.addScaled(dir, -offset);
 				pathStr += (k == 0 ? 'M' : 'L');
-				pathStr += qi.x.toString() + ',' + qi.y.toString();
+				pathStr += tfx(qi.x) + ',' + tfx(qi.y);
 			}
 			pathStr += 'Z';
 			path = paper.path(pathStr)

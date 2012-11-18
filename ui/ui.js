@@ -108,7 +108,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src'));
+        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src').replace('.24.','.'));
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }

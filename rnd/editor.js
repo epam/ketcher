@@ -765,7 +765,22 @@ rnd.Editor.ChainTool.prototype.OnCancel = function() {
 
 rnd.Editor.TemplateTool = function(editor, template) {
     this.editor = editor;
-    this.template = template;
+    this.template = rnd.templates[template];
+    
+    // load template molfile in advance
+    if (!this.template.fragment) {
+        var lines = this.template.molfile.split('\n');
+        var frag = chem.Molfile.parseCTFile(lines);
+        
+        var xy0 = new util.Vec2();
+    
+        frag.atoms.each(function (aid, atom) {
+            xy0.add_(atom.pp);
+        });
+    
+        this.template.fragment = frag;
+        this.template.xy0 = xy0.scaled(1 / frag.atoms.count());
+    }
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -780,11 +795,56 @@ rnd.Editor.TemplateTool.prototype.templates = [
     [1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1]
 ];
+rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
+    this._hoverHelper.hover(null);
+    this.dragCtx = {
+        xy0 : this.editor.ui.page2obj(event),
+        item : this.editor.render.findItem(event, ['atoms']) //, 'bonds'])
+    };
+    var ci = this.dragCtx.item;
+    if (!ci || ci.type == 'Canvas') {
+        delete this.dragCtx.item;
+        this.dragCtx.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
+    } else if (ci.map == 'atoms') {
+        this.dragCtx.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, 0, this.template);
+    } else if (ci.map == 'bonds') {
+        this.dragCtx.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
+    }
+    _R_.update();
+    return true;
+};
 // TODO implement rotation around fusing atom / flipping over fusing bond
 rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
-    this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms', 'bonds']));
+    var _E_ = this.editor, _R_ = _E_.render;
+    if ('dragCtx' in this) {
+        var _DC_ = this.dragCtx;
+        var ci = _DC_.item; 
+        if ('action' in _DC_) _DC_.action.perform();
+        var pos0 = _DC_.xy0;
+        var pos1 = _E_.ui.page2obj(event);
+        if (!ci || ci.type == 'Canvas') {
+            _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(
+                pos0,
+                this._calcAngle(pos0, pos1),
+                this.template
+            );
+        } else if (ci.map == 'atoms') {
+            pos0 = _R_.atomGetPos(_DC_.item.id);
+            this.dragCtx.action = _E_.ui.Action.fromTemplateOnAtom(
+                ci.id, 
+                this._calcAngle(pos0, pos1),
+                this.template
+            );
+        } 
+        _R_.update();
+        return true;
+    }
+    this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
+    return true;
 };
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
+    /*
     this._hoverHelper.hover(null);
     var ci = this.editor.render.findItem(event, ['atoms', 'bonds']);
     if (!ci || ci.type == 'Canvas') {
@@ -806,8 +866,18 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
         );
         this.editor.ui.render.update();
     }
+    */
+    if ('dragCtx' in this) {
+        if ('action' in this.dragCtx) {
+            this.editor.ui.addUndoAction(this.dragCtx.action);
+        }
+        delete this.dragCtx;
+        //this.editor.ui.render.update();
+    }
 };
-
+rnd.Editor.TemplateTool.prototype.OnCancel = function() {
+    this.OnMouseUp();
+};
 
 rnd.Editor.ChargeTool = function(editor, charge) { // TODO [RB] should be "pluggable"
     this.editor = editor;

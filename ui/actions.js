@@ -622,38 +622,94 @@ ui.Action.fromBondFlipping = function(bid) {
     return ui.Action.toBondFlipping(bid).perform();
 };
 
-ui.Action.fromPatternOnCanvas = function (pos, pattern)
+ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
 {
-    var angle = 2 * Math.PI / pattern.length;
-    var l = 1.0 / (2 * Math.sin(angle / 2));
-    var v = new util.Vec2(0, -l);
-
     var action = new ui.Action();
+    var frag = template.fragment;
 
     var fragAction = new ui.Action.OpFragmentAdd().perform(ui.editor);
-
-    pattern.each(function() {
+    
+    var map = {};
+    
+    // Only template atom label matters for now
+    frag.atoms.each(function (aid, atom) {
+        var op;
+        
         action.addOp(
-            new ui.Action.OpAtomAdd(
-                { label: 'C', fragment: fragAction.frid },
-                util.Vec2.sum(pos, v)
+            op = new ui.Action.OpAtomAdd(
+                { label: atom.label, fragment: fragAction.frid },
+                util.Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)
             ).perform(ui.editor)
         );
-        v = v.rotate(angle);
-    }, this);
 
-    for (var i = 0, n = action.operations.length; i < n; i++) {
+        map[aid] = op.data.aid;
+    });
+
+    // Only template bond type label matters for now
+    frag.bonds.each(function (bid, bond) {
         action.addOp(
             new ui.Action.OpBondAdd(
-                action.operations[i].data.aid,
-                action.operations[(i + 1) % pattern.length].data.aid,
-                { type: pattern[i] }
+                map[bond.begin], 
+                map[bond.end], 
+                { type: bond.type }
             ).perform(ui.editor)
         );
-    }
+    });
 
     action.operations.reverse();
     action.addOp(fragAction);
+
+    return action;
+};
+
+ui.Action.fromTemplateOnAtom = function (aid, angle, template)
+{
+    var action = new ui.Action();
+    var frag = template.fragment;
+    var R = ui.render;
+    var RS = R.ctab;
+    var atom = RS.atoms.get(aid);
+
+    var frid = R.atomGetAttr(aid, 'fragment');
+    
+    var map = {};
+    var xy0 = frag.atoms.get(template.aid).pp;
+    
+    // Only template atom label matters for now
+    frag.atoms.each(function (id, a) {
+        var op;
+        
+        if (id == template.aid) {
+            action.addOp(
+                op = new ui.Action.OpAtomAttr(
+                    aid,
+                    'label',
+                    a.label
+                ).perform(ui.editor)
+            );
+        } else {
+            action.addOp(
+                op = new ui.Action.OpAtomAdd(
+                    { label: atom.label, fragment: frid },
+                    util.Vec2.diff(a.pp, xy0).rotate(angle).add(atom.a.pp)
+                ).perform(ui.editor)
+            );
+        }
+        map[id] = op.data.aid;
+    });
+
+    // Only template bond type label matters for now
+    frag.bonds.each(function (bid, bond) {
+        action.addOp(
+            new ui.Action.OpBondAdd(
+                map[bond.begin], 
+                map[bond.end], 
+                { type: bond.type }
+            ).perform(ui.editor)
+        );
+    });
+
+    action.operations.reverse();
 
     return action;
 };

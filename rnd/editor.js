@@ -785,16 +785,50 @@ rnd.Editor.TemplateTool = function(editor, template) {
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
 rnd.Editor.TemplateTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.TemplateTool.prototype.templates = [
-    [1, 2, 1, 2, 1, 2],
-    [1, 2, 1, 2, 1],
-    [1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1]
-];
+rnd.Editor.TemplateTool.prototype._calcInitialAngleOnAtom = function(aid) {
+    var _E_ = this.editor, _R_ = _E_.render, _RS_ = _R_.ctab, molecule = _RS_.molecule;
+    var atom = molecule.atoms.get(aid);
+    var frid = _R_.atomGetAttr(aid, 'fragment');
+    var fr_ids = molecule.getFragmentIds(frid);
+    var self = this;
+    
+    function calcEnergy (angle) {
+        var energy = 0;
+        var frag = self.template.fragment;
+        var xy0 = frag.atoms.get(self.template.aid).pp;
+        
+        frag.atoms.each(function (id1, a) {
+            
+            if (id1 == self.template.aid) {
+                return;
+            }
+            
+            var pos = util.Vec2.diff(a.pp, xy0).rotate(angle).add(atom.pp);
+            
+            util.Set.each(fr_ids, function (id2) {
+                var d = util.Vec2.dist(molecule.atoms.get(id2).pp, pos);
+                if (d < 0.000001) d = 0.000001;
+                energy += 1 / (d * d);
+            });
+        });
+        
+        return energy;
+    }
+    
+    var incr = Math.PI / 12;
+    var min_angle = 0, min_energy = calcEnergy(0);
+    
+    for (var angle = incr; angle < 2 * Math.PI; angle += incr) {
+        var energy = calcEnergy(angle);
+        
+        if (energy < min_energy) {
+            min_energy = energy;
+            min_angle = angle;
+        }
+    }
+    
+    return min_angle;
+};
 rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     this._hoverHelper.hover(null);
@@ -802,41 +836,67 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         xy0 : this.editor.ui.page2obj(event),
         item : this.editor.render.findItem(event, ['atoms']) //, 'bonds'])
     };
-    var ci = this.dragCtx.item;
+    var _DC_ = this.dragCtx;
+    var ci = _DC_.item;
     if (!ci || ci.type == 'Canvas') {
-        delete this.dragCtx.item;
-        this.dragCtx.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
+        delete _DC_.item;
+        _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
     } else if (ci.map == 'atoms') {
-        this.dragCtx.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, 0, this.template);
+        _DC_.angle0 = this._calcInitialAngleOnAtom(ci.id);
+        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, _DC_.angle0, 0, false, this.template);
     } else if (ci.map == 'bonds') {
-        this.dragCtx.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
+        _DC_.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
     }
     _R_.update();
     return true;
 };
-// TODO implement rotation around fusing atom / flipping over fusing bond
 rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     if ('dragCtx' in this) {
         var _DC_ = this.dragCtx;
         var ci = _DC_.item; 
-        if ('action' in _DC_) _DC_.action.perform();
-        var pos0 = _DC_.xy0;
+        var pos0;
         var pos1 = _E_.ui.page2obj(event);
+        var angle, extra_bond;
+        
+        // calc initial pos and is extra bond needed
+        if (!ci || ci.type == 'Canvas') {
+            pos0 = _DC_.xy0;
+        } else if (ci.map == 'atoms') {
+            pos0 = _R_.atomGetPos(_DC_.item.id);
+            extra_bond = util.Vec2.dist(pos0, pos1) > 1;
+        }
+        angle = this._calcAngle(pos0, pos1);
+        var degrees = Math.round(180 / Math.PI * angle);
+        // check if anything changed since last time
+        if ('angle' in _DC_ && _DC_.angle == degrees) {
+            if ('extra_bond' in _DC_) {
+                if (_DC_.extra_bond == extra_bond)
+                    return true;
+            } else {
+                return true;
+            }
+        }
+        // undo previous action
+        if ('action' in _DC_) _DC_.action.perform();
+        // create new action
+        _DC_.angle = degrees;
         if (!ci || ci.type == 'Canvas') {
             _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(
                 pos0,
-                this._calcAngle(pos0, pos1),
+                angle,
                 this.template
             );
         } else if (ci.map == 'atoms') {
-            pos0 = _R_.atomGetPos(_DC_.item.id);
-            this.dragCtx.action = _E_.ui.Action.fromTemplateOnAtom(
-                ci.id, 
-                this._calcAngle(pos0, pos1),
+            _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
+                ci.id,
+                _DC_.angle0, 
+                angle,
+                extra_bond,
                 this.template
             );
-        } 
+            _DC_.extra_bond = extra_bond;
+        }
         _R_.update();
         return true;
     }
@@ -844,35 +904,11 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
     return true;
 };
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
-    /*
-    this._hoverHelper.hover(null);
-    var ci = this.editor.render.findItem(event, ['atoms', 'bonds']);
-    if (!ci || ci.type == 'Canvas') {
-        this.editor.ui.addUndoAction(
-            this.editor.ui.Action.fromPatternOnCanvas(this.editor.ui.page2obj(event), this.templates[this.template]),
-            true
-        );
-        this.editor.ui.render.update();
-    } else if (ci.map == 'atoms') {
-        this.editor.ui.addUndoAction(
-            this.editor.ui.Action.fromPatternOnAtom(ci.id, this.templates[this.template]),
-            true
-        );
-        this.editor.ui.render.update();
-    } else if (ci.map == 'bonds') {
-        this.editor.ui.addUndoAction(
-            this.editor.ui.Action.fromPatternOnElement(ci.id, this.templates[this.template], false),
-            true
-        );
-        this.editor.ui.render.update();
-    }
-    */
     if ('dragCtx' in this) {
         if ('action' in this.dragCtx) {
             this.editor.ui.addUndoAction(this.dragCtx.action);
         }
         delete this.dragCtx;
-        //this.editor.ui.render.update();
     }
 };
 rnd.Editor.TemplateTool.prototype.OnCancel = function() {
@@ -1498,22 +1534,25 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
         var _E_ = this.editor, _R_ = _E_.render;
         var _DC_ = this.dragCtx;
         
-        if ('action' in _DC_) _DC_.action.perform();
-        
         var pos = _E_.ui.page2obj(event);
-        var angle2 = this._calcAngle(_DC_.xy0, pos)
-        _DC_.action = _E_.ui.Action.fromRotate(
-            _DC_.xy0,
-            angle2 - _DC_.angle1
-        );
-        
-        var degrees = Math.round((angle2 - _DC_.angle1) / Math.PI * 180);
+        var angle = this._calcAngle(_DC_.xy0, pos) - _DC_.angle1;
+
+        var degrees = Math.round(angle / Math.PI * 180);
         
         if (degrees > 180) {
             degrees -= 360;
         } else if (degrees <= -180) {
             degrees += 360;
         }
+        
+        if ('angle' in _DC_ && _DC_.angle == degrees) return true;
+        if ('action' in _DC_) _DC_.action.perform();
+        
+        _DC_.angle = degrees;
+        _DC_.action = _E_.ui.Action.fromRotate(
+            _DC_.xy0,
+            angle
+        );
         
         $('toolText').update(degrees + 'º');
         

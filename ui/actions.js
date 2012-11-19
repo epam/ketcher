@@ -662,23 +662,45 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     return action;
 };
 
-ui.Action.fromTemplateOnAtom = function (aid, angle, template)
+ui.Action.fromTemplateOnAtom = function (aid, angle0, angle, extra_bond, template)
 {
     var action = new ui.Action();
     var frag = template.fragment;
     var R = ui.render;
     var RS = R.ctab;
-    var atom = RS.atoms.get(aid);
+    var molecule = RS.molecule;
+    var atom = molecule.atoms.get(aid);
 
     var frid = R.atomGetAttr(aid, 'fragment');
     
     var map = {};
     var xy0 = frag.atoms.get(template.aid).pp;
     
-    // Only template atom label matters for now
-    frag.atoms.each(function (id, a) {
+    if (extra_bond) {
         var op;
         
+        action.addOp(
+            op = new ui.Action.OpAtomAdd(
+                { label: 'C', fragment: frid },
+                (new util.Vec2(1, 0)).rotate(angle).add(atom.pp)
+            ).perform(ui.editor)
+        );
+        
+        action.addOp(
+            new ui.Action.OpBondAdd(
+                aid, 
+                op.data.aid, 
+                { type: 1 }
+            ).perform(ui.editor)
+        );
+        
+        aid = op.data.aid;
+        var atom0 = atom;
+        atom = molecule.atoms.get(aid);
+    }
+    
+    // Only template atom label matters for now
+    frag.atoms.each(function (id, a) {
         if (id == template.aid) {
             action.addOp(
                 op = new ui.Action.OpAtomAttr(
@@ -688,10 +710,17 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, template)
                 ).perform(ui.editor)
             );
         } else {
+            var v; 
+            if (extra_bond) {
+                v = util.Vec2.diff(a.pp, xy0).rotate(angle0).add(atom.pp);
+                //v = v.sub(atom0.pp).rotate(angle).add(atom0.pp);
+            } else {
+                v = util.Vec2.diff(a.pp, xy0).rotate(angle0 + angle).add(atom.pp);
+            }
             action.addOp(
                 op = new ui.Action.OpAtomAdd(
                     { label: atom.label, fragment: frid },
-                    util.Vec2.diff(a.pp, xy0).rotate(angle).add(atom.a.pp)
+                    v
                 ).perform(ui.editor)
             );
         }
@@ -762,24 +791,6 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
     action.operations.reverse();
 
     return action;
-};
-
-ui.Action.fromPatternOnAtom = function (aid, pattern)
-{
-    if (ui.render.atomGetDegree(aid) != 1)
-    {
-        var atom = ui.atomForNewBond(aid);
-        atom.fragment = ui.render.atomGetAttr(aid, 'fragment');
-        var action_res = ui.Action.fromBondAddition({type: 1}, aid, atom.atom, atom.pos);
-
-        var action = ui.Action.fromPatternOnElement(action_res[2], pattern, true);
-
-        action.mergeWith(action_res[0]);
-
-        return action;
-    }
-
-    return ui.Action.fromPatternOnElement(aid, pattern, true);
 };
 
 ui.Action.fromPatternOnElement = function (id, pattern, on_atom)

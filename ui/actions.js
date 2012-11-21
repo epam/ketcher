@@ -662,7 +662,7 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     return action;
 };
 
-ui.Action.fromTemplateOnAtom = function (aid, angle0, angle, extra_bond, template)
+ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, template)
 {
     var action = new ui.Action();
     var frag = template.fragment;
@@ -709,6 +709,8 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0, angle, extra_bond, templat
         var atom0 = atom;
         atom = molecule.atoms.get(aid);
     }
+    
+    var angle0 = angle0_cb(aid);
     
     // Only template atom label matters for now
     frag.atoms.each(function (id, a) {

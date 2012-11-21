@@ -843,7 +843,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
     } else if (ci.map == 'atoms') {
         _DC_.angle0 = this._calcInitialAngleOnAtom(ci.id);
-        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, _DC_.angle0, 0, false, this.template);
+        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, function () {return _DC_.angle0}, 0, false, this.template);
     } else if (ci.map == 'bonds') {
         _DC_.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
     }
@@ -858,6 +858,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         var pos0;
         var pos1 = _E_.ui.page2obj(event);
         var angle, extra_bond;
+        var self = this;
         
         _DC_.mouse_moved = true;
         
@@ -892,7 +893,12 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         } else if (ci.map == 'atoms') {
             _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                 ci.id,
-                _DC_.angle0, 
+                function (id) {
+                    if (id == ci.id) {
+                        return _DC_.angle0;
+                    }
+                    return self._calcInitialAngleOnAtom(id);
+                },
                 angle,
                 extra_bond,
                 this.template
@@ -918,7 +924,9 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
                 
                 _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                     ci.id,
-                    _DC_.angle0, 
+                    function () {
+                        return _DC_.angle0;
+                    },
                     null,
                     true,
                     this.template

@@ -677,24 +677,35 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0, angle, extra_bond, templat
     var xy0 = frag.atoms.get(template.aid).pp;
     
     if (extra_bond) {
-        var op;
+        // create extra bond after click on atom
+        if (angle == null)
+        {
+            var middle_atom = ui.atomForNewBond(aid);
+            var action_res = ui.Action.fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
+            action = action_res[0];
+            action.operations.reverse();
+            aid = action_res[2];
+        } else {
+            var op;
         
-        action.addOp(
-            op = new ui.Action.OpAtomAdd(
-                { label: 'C', fragment: frid },
-                (new util.Vec2(1, 0)).rotate(angle).add(atom.pp)
-            ).perform(ui.editor)
-        );
+            action.addOp(
+                op = new ui.Action.OpAtomAdd(
+                    { label: 'C', fragment: frid },
+                    (new util.Vec2(1, 0)).rotate(angle).add(atom.pp)
+                ).perform(ui.editor)
+            );
         
-        action.addOp(
-            new ui.Action.OpBondAdd(
-                aid, 
-                op.data.aid, 
-                { type: 1 }
-            ).perform(ui.editor)
-        );
+            action.addOp(
+                new ui.Action.OpBondAdd(
+                    aid, 
+                    op.data.aid, 
+                    { type: 1 }
+                ).perform(ui.editor)
+            );
         
-        aid = op.data.aid;
+            aid = op.data.aid;
+        }
+        
         var atom0 = atom;
         atom = molecule.atoms.get(aid);
     }

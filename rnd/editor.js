@@ -859,6 +859,8 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         var pos1 = _E_.ui.page2obj(event);
         var angle, extra_bond;
         
+        _DC_.mouse_moved = true;
+        
         // calc initial pos and is extra bond needed
         if (!ci || ci.type == 'Canvas') {
             pos0 = _DC_.xy0;
@@ -904,7 +906,28 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
     return true;
 };
 rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
+    var _E_ = this.editor, _R_ = _E_.render;
     if ('dragCtx' in this) {
+        var _DC_ = this.dragCtx;
+        var ci = _DC_.item; 
+        
+        if (!_DC_.mouse_moved && ci && ci.map == 'atoms') {
+            if (_R_.atomGetDegree(ci.id) > 1) {
+                // undo previous action
+                if ('action' in _DC_) _DC_.action.perform();
+                
+                _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
+                    ci.id,
+                    _DC_.angle0, 
+                    null,
+                    true,
+                    this.template
+                );
+                
+                _R_.update();
+            }
+        }
+        
         if ('action' in this.dragCtx) {
             this.editor.ui.addUndoAction(this.dragCtx.action);
         }

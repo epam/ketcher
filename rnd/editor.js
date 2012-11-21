@@ -833,8 +833,8 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     this._hoverHelper.hover(null);
     this.dragCtx = {
-        xy0 : this.editor.ui.page2obj(event),
-        item : this.editor.render.findItem(event, ['atoms']) //, 'bonds'])
+        xy0 : _E_.ui.page2obj(event),
+        item : _R_.findItem(event, ['atoms']) //, 'bonds'])
     };
     var _DC_ = this.dragCtx;
     var ci = _DC_.item;
@@ -843,6 +843,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
     } else if (ci.map == 'atoms') {
         _DC_.angle0 = this._calcInitialAngleOnAtom(ci.id);
+        _DC_.degree = _R_.atomGetDegree(ci.id); 
         _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, function () {return _DC_.angle0}, 0, false, this.template);
     } else if (ci.map == 'bonds') {
         _DC_.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
@@ -918,7 +919,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
         var ci = _DC_.item; 
         
         if (!_DC_.mouse_moved && ci && ci.map == 'atoms') {
-            if (_R_.atomGetDegree(ci.id) > 1) {
+            if (_DC_.degree > 1) {
                 // undo previous action
                 if ('action' in _DC_) _DC_.action.perform();
                 

@@ -707,11 +707,11 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
                         if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
                             bondProps.type = chem.Struct.BOND.TYPE.DOUBLE;
                         }
-                    } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
-                        bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
-                    } else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE) {
-                        bondProps.type = chem.Struct.BOND.TYPE.SINGLE;
                     }
+                } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
+                    bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
+                } else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE) {
+                    bondProps.type = chem.Struct.BOND.TYPE.SINGLE;
                 }
                 _UI_.addUndoAction(
                     _UI_.Action.fromBondAttrs(_DC_.item.id, bondProps, _UI_.bondFlipRequired(bond, bondProps)),

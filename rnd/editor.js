@@ -709,9 +709,9 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
                         }
                     }
                 } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
-                    bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
-                } else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE) {
-                    bondProps.type = chem.Struct.BOND.TYPE.SINGLE;
+                    if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
+                        bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
+                    }
                 }
                 _UI_.addUndoAction(
                     _UI_.Action.fromBondAttrs(_DC_.item.id, bondProps, _UI_.bondFlipRequired(bond, bondProps)),

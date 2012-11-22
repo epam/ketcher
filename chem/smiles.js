@@ -394,8 +394,12 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
         return;
     }
 
-    if (this.atom_atom_mapping)
-        aam = atom_atom_mapping[idx];
+    //KETCHER-598 (Ketcher does not save AAM into reaction SMILES)
+    //BEGIN
+//    if (this.atom_atom_mapping)
+//        aam = atom_atom_mapping[idx];
+    aam = atom.aam;
+    //END
 
     if (atom.label != 'C' && atom.label != 'P' &&
        atom.label != 'N' && atom.label != 'S' &&

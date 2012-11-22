@@ -1427,24 +1427,15 @@ chem.Molfile.parseRxn2000 = function (/* string[] */ ctabLines) /* chem.Struct *
 	var nReactants = countsSplit[0]-0,
 	nProducts = countsSplit[1]-0,
 	nAgents = countsSplit[2]-0;
-	ctabLines = ctabLines.slice(2); // consume counts line and following $MOL
+	ctabLines = ctabLines.slice(1); // consume counts line
 
-	var ret = new chem.Struct();
-	var molLines = [];
-	var i0 = 0, i;
-	for (i = 0; i < ctabLines.length; ++i) {
-		if (ctabLines[i].substr(0, 4) == "$MOL") {
-			if (i > i0)
-				molLines.push(ctabLines.slice(i0, i));
-			i0 = i + 1;
-		}
-	}
-	molLines.push(ctabLines.slice(i0));
-	var mols = [];
-	for (var j = 0; j < molLines.length; ++j) {
-		var mol = chem.Molfile.parseMol(molLines[j]);
-		mols.push(mol);
-	}
+    var mols = [];
+    while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) == "$MOL") {
+        ctabLines = ctabLines.slice(1);
+        var n = 0; while (n < ctabLines.length && ctabLines[n].substr(0, 4) != "$MOL") n++;
+        mols.push(chem.Molfile.parseMol(ctabLines.slice(0, n)));
+        ctabLines = ctabLines.slice(n);
+    }
 	return mf.rxnMerge(mols, nReactants, nProducts, nAgents);
 };
 
@@ -1650,18 +1641,18 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	}
 	bb1 = bbReactAll;
 	bb2 = bbProdAll;
-	if (!bb1 && !bb2)
-		throw new Error("reaction must contain at least one product or reactant");
-	var v1 = bb1 ? new util.Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
-	var v2 = bb2 ? new util.Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
-	var defaultOffset = 3;
-	if (!v1)
-		v1 = new util.Vec2(v2.x - defaultOffset, v2.y);
-	if (!v2)
-		v2 = new util.Vec2(v1.x + defaultOffset, v1.y);
-	var v = util.Vec2.lc2(v1, 0.5, v2, 0.5);
-
-	ret.rxnArrows.add(new chem.Struct.RxnArrow({'pp':v}));
+	if (!bb1 && !bb2) {
+        ret.rxnArrows.add(new chem.Struct.RxnArrow({'pp':new util.Vec2(0, 0)}));
+    } else {
+        var v1 = bb1 ? new util.Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
+        var v2 = bb2 ? new util.Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
+        var defaultOffset = 3;
+        if (!v1)
+            v1 = new util.Vec2(v2.x - defaultOffset, v2.y);
+        if (!v2)
+            v2 = new util.Vec2(v1.x + defaultOffset, v1.y);
+        ret.rxnArrows.add(new chem.Struct.RxnArrow({ 'pp' : util.Vec2.lc2(v1, 0.5, v2, 0.5 ) }));
+    }
 	ret.isReaction = true;
 	return ret;
 };

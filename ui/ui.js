@@ -1673,6 +1673,8 @@ ui.onChange_AtomCharge = function ()
 {
     if (this.value.strip() == '' || this.value == '0')
         this.value = '';
+    else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/))
+        this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
     else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/))
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'charge');
 };

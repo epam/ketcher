@@ -2089,7 +2089,12 @@ ui.copy = function (struct, selection)
         // TODO: "clipboard" support to be moved to editor module
         getAnchorPosition: function() {
             if (this.atoms.length) {
-                return this.atoms[0].pp; // TODO: check
+                var xmin = 1e50, ymin = xmin, xmax = -xmin, ymax = -ymin;
+                for (var i = 0; i < this.atoms.length; i++) {
+                    xmin = Math.min(xmin, this.atoms[i].pp.x); ymin = Math.min(ymin, this.atoms[i].pp.y);
+                    xmax = Math.max(xmax, this.atoms[i].pp.x); ymax = Math.max(ymax, this.atoms[i].pp.y);
+                }
+                return new util.Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
             } else if (this.rxnArrows.length) {
                 return this.rxnArrows[0].pp;
             } else if (this.rxnPluses.length) {

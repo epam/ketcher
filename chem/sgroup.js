@@ -754,13 +754,14 @@ chem.SGroup.GroupDat = {
 		'  ' + util.paddedInt(data.daspPos, 1) + // n
 		'  '; // oo
 		lines.push(sddLine);
-		var str = data.fieldValue;
-		var charsPerLine = 69;
-		while (str.length > charsPerLine) {
-			lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
-			str = str.slice(69);
-		}
-		lines.push('M  SED ' + idstr + ' ' + util.stringPadded(str, charsPerLine, true));
+        data.fieldValue.replace(/[\r\n|\n|\r]*$/, '').split(/\r\n|\n|\r/).each(function(str) {
+            var charsPerLine = 69;
+            while (str.length > charsPerLine) {
+                lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
+                str = str.slice(69);
+            }
+            lines.push('M  SED ' + idstr + ' ' + util.stringPadded(str, charsPerLine, true));
+        }, this);
 		return lines.join('\n');
 	},
 

@@ -443,9 +443,10 @@ chem.Molfile.applyDataSGroupData = function (sg, data, finalize) {
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
 		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
-                if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
-                    sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
-        }
+        if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
+            sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
+        sg.data.fieldValue += '\n';
+    }
 };
 
 chem.Molfile.applyDataSGroupDataLine = function (sGroups, propData, finalize) {

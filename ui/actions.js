@@ -137,7 +137,7 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 
     attrs = new Hash(attrs);
 
-    ui.selection.bonds.each(function(id) {
+    ui.editor.getSelection().bonds.each(function(id) {
         attrs.each(function(attr) {
             action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value));
         }, this);
@@ -472,7 +472,7 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
 
 ui.Action.fromFragmentDeletion = function(selection)
 {
-    selection = selection || ui.selection;
+    selection = selection || ui.editor.getSelection();
 
     var action = new ui.Action();
     var atoms_to_remove = new Array();
@@ -1129,8 +1129,7 @@ ui.Action.fromPaste = function(objects, offset) {
     return action;
 };
 
-ui.Action.fromFlip = function(flip) {
-    var objects = ui.selection;
+ui.Action.fromFlip = function(objects, flip) {
     var render = ui.render;
     var ctab = render.ctab;
     var molecule = ctab.molecule;
@@ -1196,8 +1195,7 @@ ui.Action.fromFlip = function(flip) {
     return action.perform();
 };
 
-ui.Action.fromRotate = function(pos, angle) {
-    var objects = ui.selection;
+ui.Action.fromRotate = function(objects, pos, angle) {
     var render = ui.render;
     var ctab = render.ctab;
     var molecule = ctab.molecule;
@@ -1296,8 +1294,8 @@ ui.undo = function ()
 
     ui.editor.deselectAll();
     ui.redoStack.push(ui.undoStack.pop().perform());
+    ui.render.update();
     ui.updateActionButtons();
-    ui.updateSelection();
 };
 
 ui.redo = function ()
@@ -1307,8 +1305,8 @@ ui.redo = function ()
 
     ui.editor.deselectAll();
     ui.undoStack.push(ui.redoStack.pop().perform());
+    ui.render.update();
     ui.updateActionButtons();
-    ui.updateSelection();
 };
 
 

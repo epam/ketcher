@@ -33,6 +33,51 @@ rnd.Editor.prototype.selectAll = function() {
 rnd.Editor.prototype.deselectAll = function() {
     this._selectionHelper.setSelection();
 };
+rnd.Editor.prototype.hasSelection = function() {
+    if ('selection' in this._selectionHelper)
+        for (var map in this._selectionHelper.selection)
+            if (this._selectionHelper.selection[map].length > 0) return true;
+    return false;
+};
+rnd.Editor.prototype.getSelection = function(explicit) {
+    var selection = {};
+    if ('selection' in this._selectionHelper) {
+        for (var map in this._selectionHelper.selection) {
+            selection[map] = this._selectionHelper.selection[map].slice(0);
+        }
+    }
+    if (explicit) {
+        var struct = this.render.ctab.molecule;
+        // "auto-select" the atoms for the bonds in selection
+        if ('bonds' in selection) {
+            selection.bonds.each(
+                function(bid) {
+                    var bond = struct.bonds.get(bid);
+                    selection.atoms = selection.atoms || [];
+                    if (selection.atoms.indexOf(bond.begin) < 0) selection.atoms.push(bond.begin);
+                    if (selection.atoms.indexOf(bond.end) < 0) selection.atoms.push(bond.end);
+                },
+                this
+            );
+        }
+        // "auto-select" the bonds with both atoms selected
+        if ('atoms' in selection && 'bonds' in selection) {
+            struct.bonds.each(
+                function(bid) {
+                    if (!('bonds' in selection) || selection.bonds.indexOf(bid) < 0) {
+                        var bond = struct.bonds.get(bid);
+                        if (selection.atoms.indexOf(bond.begin) >= 0 && selection.atoms.indexOf(bond.end) >= 0) {
+                            selection.bonds = selection.bonds || [];
+                            selection.bonds.push(bid);
+                        }
+                    }
+                },
+                this
+            );
+        }
+    }
+    return selection;
+};
 rnd.Editor.prototype.toolFor = function(tool) {
     if (tool == 'selector_lasso') {
         return new rnd.Editor.LassoTool(this, 0);
@@ -101,41 +146,9 @@ rnd.Editor.SelectionHelper.prototype.setSelection = function(selection, add) {
             }
         }
     }
-    // "auto-select" the atoms for the bonds in selection
-    if (!Object.isUndefined(this.selection.bonds)) {
-        this.selection.bonds.each(
-            function(bid) {
-                var bond = this.editor.render.ctab.molecule.bonds.get(bid);
-                selection.atoms = selection.atoms || [];
-                if (this.selection.atoms.indexOf(bond.begin) < 0) {
-                    this.selection.atoms.push(bond.begin);
-                }
-                if (this.selection.atoms.indexOf(bond.end) < 0) {
-                    this.selection.atoms.push(bond.end);
-                }
-            },
-            this
-        );
-    }
-    // "auto-select" the bonds with both atoms selected
-    if ('atoms' in this.selection) {
-        this.editor.render.ctab.molecule.bonds.each(
-            function(bid) {
-                if (!('bonds' in this.selection) || this.selection.bonds.indexOf(bid) < 0) {
-                    var bond = this.editor.render.ctab.molecule.bonds.get(bid);
-                    if (this.selection.atoms.indexOf(bond.begin) >= 0 && this.selection.atoms.indexOf(bond.end) >= 0) {
-                        this.selection.bonds = this.selection.bonds || [];
-                        this.selection.bonds.push(bid);
-                    }
-                }
-            },
-            this
-        );
-    }
     this.editor.render.setSelection(this.selection);
     this.editor.render.update();
 
-    ui.updateSelection(this.selection, true); // TODO to be removed (used temporary until no new Undo/Redo tools implemented)
     ui.updateClipboardButtons(); // TODO notify ui about selection
 };
 rnd.Editor.SelectionHelper.prototype.isSelected = function(item) {
@@ -297,8 +310,10 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
         if (!this.editor._selectionHelper.isSelected(ci)) {
             if (ci.map == 'frags') {
                 var frag = ctab.frags.get(ci.id);
-                var atoms = frag.fragGetAtoms(render, ci.id);
-                this.editor._selectionHelper.setSelection({'atoms':atoms}, event.shiftKey);
+                this.editor._selectionHelper.setSelection(
+                    { 'atoms' : frag.fragGetAtoms(render, ci.id), 'bonds' : frag.fragGetBonds(render, ci.id) },
+                    event.shiftKey
+                );
             } else if (ci.map == 'rgroups') {
                 var rgroup = ctab.rgroups.get(ci.id);
                 this.editor._selectionHelper.setSelection({'atoms':rgroup.getAtoms(render)}, event.shiftKey);
@@ -497,7 +512,6 @@ rnd.Editor.EraserTool.prototype.OnMouseMove = function(event) {
     if (this._lassoHelper.running()) {
         this.editor._selectionHelper.setSelection(
             this._lassoHelper.addPoint(event)
-            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
         );
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
@@ -506,9 +520,8 @@ rnd.Editor.EraserTool.prototype.OnMouseMove = function(event) {
 rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
     if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
         this.editor.ui.addUndoAction(this.editor.ui.Action.fromFragmentDeletion(this._lassoHelper.end(event)));
-        for (var map1 in rnd.ReStruct.maps) ui.selection[map1] = []; // TODO to be deleted when ui.selection eliminated
+        this.editor.deselectAll();
         this.editor.ui.render.update();
-        this.editor.ui.updateClipboardButtons(); // TODO review
     } else {
         var ci = this.editor.render.findItem(event, this.maps);
         if (ci && ci.type != 'Canvas') {
@@ -530,10 +543,8 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function(event) {
                 console.log('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');
                 return;
             }
-            for (var map2 in rnd.ReStruct.maps) ui.selection[map2] = []; // TODO to be deleted when ui.selection eliminated
+            this.editor.deselectAll();
             this.editor.ui.render.update();
-            this.editor.ui.updateClipboardButtons(); // TODO review
-            this.editor._selectionHelper.setSelection();
         }
     }
 };
@@ -1346,13 +1357,13 @@ rnd.Editor.SGroupTool = function(editor) {
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
     this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
 
-    var selection = this.editor.ui.selection;
+    var selection = this.editor.getSelection();
     if (selection.atoms && selection.atoms.length > 0) {
-        // if the selection contrain atoms, create an s-group out of those
+        // if the selection contains atoms, create an s-group out of those
         this._sGroupHelper.showPropertiesDialog(null, selection);
     } else {
         // otherwise, clear selection
-        this.editor.ui.updateSelection();
+        this.editor.deselectAll();
     }
 };
 rnd.Editor.SGroupTool.prototype = new rnd.Editor.EditorTool();
@@ -1366,7 +1377,6 @@ rnd.Editor.SGroupTool.prototype.OnMouseMove = function(event) {
     if (this._lassoHelper.running()) {
         this.editor._selectionHelper.setSelection(
             this._lassoHelper.addPoint(event)
-            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
         );
     } else {
         this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
@@ -1462,8 +1472,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function(event) {
 };
 
 rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function() {
-    this.editor.ui.updateSelection();
-    this.editor.ui.updateClipboardButtons(); // TODO review
+    this.editor.deselectAll();
     this.editor.render.update();
 };
 
@@ -1560,7 +1569,6 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
     if (this._lassoHelper.running()) {
         this.editor._selectionHelper.setSelection(
             this._lassoHelper.addPoint(event)
-            // TODO add "no-auto-atoms-selection" option (see selection left on canvas after erasing)
         );
     } else if ('dragCtx' in this) {
         var _E_ = this.editor, _R_ = _E_.render;
@@ -1582,6 +1590,7 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
         
         _DC_.angle = degrees;
         _DC_.action = _E_.ui.Action.fromRotate(
+            this.editor.getSelection(),
             _DC_.xy0,
             angle
         );

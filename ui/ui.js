@@ -44,8 +44,6 @@ ui.is_osx = false;
 ui.is_touch = false;
 ui.initialized = false;
 
-ui.MODE = {SIMPLE: 1, ERASE: 2, ATOM: 3, BOND: 4, PATTERN: 5, SGROUP: 6, PASTE: 7, CHARGE: 8, RXN_ARROW: 9, RXN_PLUS: 10, CHAIN: 11};
-
 //
 // Init section
 //
@@ -412,8 +410,7 @@ ui.updateMolecule = function (mol)
     if (typeof(mol) == 'undefined' || mol == null)
         return;
 
-    if (ui.selected())
-        ui.updateSelection();
+    ui.editor.deselectAll();
 
     this.addUndoAction(this.Action.fromNewCanvas(mol));
 
@@ -521,14 +518,14 @@ ui.selectMode = function (mode)
         if ($(mode).hasClassName('buttonDisabled'))
             return;
 
-        if (ui.selected()) {
+        if (ui.editor.hasSelection()) {
             if (mode == 'select_erase') {
                 ui.removeSelected();
                 return;
             }
             // BK: TODO: add this ability to mass-change atom labels to the keyboard handler
             if (mode.startsWith('atom_')) {
-                ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.selection.atoms, ui.atomLabel(mode)), true);
+                ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
             }
@@ -544,9 +541,9 @@ ui.selectMode = function (mode)
         } */
         if (mode.startsWith('transform_flip_')) {
             if (mode.endsWith('h')) {
-                ui.addUndoAction(ui.Action.fromFlip('horizontal'), true);
+                ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(), 'horizontal'), true);
             } else {
-                ui.addUndoAction(ui.Action.fromFlip('vertical'), true);
+                ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(), 'vertical'), true);
             }
             ui.render.update();
             return;
@@ -680,7 +677,7 @@ ui.onKeyPress_Ketcher = function (event)
         ui.onClick_ZoomOut.call($('zoom_out'));
         return util.preventDefault(event);
     case 8: // Back space
-        if (ui.is_osx && ui.selected())
+        if (ui.is_osx && ui.editor.hasSelection())
             ui.removeSelected();
         return util.preventDefault(event);
     case 48: // 0
@@ -864,7 +861,7 @@ ui.onKeyUp = function (event)
 
     if (event.keyCode == 46)
     {
-        if (ui.selected())
+        if (ui.editor.hasSelection())
             ui.removeSelected();
         util.stopEventPropagation(event);
         return util.preventDefault(event);
@@ -886,7 +883,7 @@ ui.onKeyUp = function (event)
     switch (event.keyCode)
     {
     case 46: // Delete
-        if (ui.selected())
+        if (ui.editor.hasSelection())
             ui.removeSelected();
         return;
     case 65: // Ctrl+A
@@ -1050,7 +1047,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
     var updateFunc = paste ? function (struct) {
         struct.rescale(); 
         ui.copy(struct);
-        ui.updateSelection();
+        ui.deselectAll();
         ui.selectMode('paste');
     } : ui.updateMolecule;
 
@@ -1373,18 +1370,6 @@ ui.onClick_Dearomatize = function ()
     }
 };
 
-//
-// Interactive section
-//
-ui.selection =
-{
-    atoms: [],
-    bonds: [],
-    rxnArrows: [],
-    rxnPluses: [],
-    chiralFlags: []
-};
-
 ui.page2canvas2 = function (pos)
 {
     var offset = ui.client_area.cumulativeOffset();
@@ -1543,60 +1528,8 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
     ui.client_area.scrollTop += delta.y;
 };
 
-ui.updateSelection = function (selection, nodraw)
-{
-    selection = selection || {};
-    for (var map in rnd.ReStruct.maps) {
-        if (Object.isUndefined(selection[map]))
-            ui.selection[map] = [];
-        else
-            ui.selection[map] = selection[map];
-    }
-
-    ui.selection.bonds = ui.selection.bonds.filter(function (bid)
-    {
-        var bond = ui.ctab.bonds.get(bid);
-        return (ui.selection.atoms.indexOf(bond.begin) != -1 && ui.selection.atoms.indexOf(bond.end) != -1);
-    });
-
-    if (!nodraw) {
-        ui.render.setSelection(ui.selection);
-        ui.render.update();
-    }
-
-    ui.updateClipboardButtons();
-};
-
-ui.selected = function ()
-{
-    for (var map in rnd.ReStruct.maps) {
-        if (!Object.isUndefined(ui.selection[map]) && ui.selection[map].length > 0) {
-            return true;
-        }
-    }
-    return false;
-};
-
-ui.selectedAtom = function ()
-{
-    return !Object.isUndefined(ui.selection.atoms) && ui.selection.atoms.length > 0;
-};
-
 ui.selectAll = function ()
 {
-    // TODO cleanup
-/*
-    var mode = ui.modeType();
-    if (mode == ui.MODE.ERASE || mode == ui.MODE.SGROUP)
-        ui.selectMode(ui.defaultSelector);
-
-    var selection = {};
-    for (var map in rnd.ReStruct.maps) {
-        selection[map] = ui.ctab[map].ikeys();
-    }
-
-    ui.updateSelection(selection);
-*/
     if (!ui.ctab.isBlank()) {
         ui.selectMode($('selector').getAttribute('selid'));
         ui.editor.selectAll();
@@ -1608,7 +1541,6 @@ ui.removeSelected = function ()
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
     ui.editor.deselectAll();
     ui.render.update();
-    ui.updateClipboardButtons();
 };
 
 ui.hideBlurredControls = function ()
@@ -2124,7 +2056,7 @@ ui.updateClipboardButtons = function ()
     else
         $('paste').removeClassName('buttonDisabled');
 
-    if (ui.selected())
+    if (ui.editor.hasSelection())
     {
         $('copy').removeClassName('buttonDisabled');
         $('cut').removeClassName('buttonDisabled');
@@ -2139,7 +2071,7 @@ ui.copy = function (struct, selection)
 {
     if (!struct) {
         struct = ui.ctab;
-        selection = ui.selection;
+        selection = ui.editor.getSelection(true);
     }
     ui.clipboard =
     {
@@ -2292,7 +2224,7 @@ ui.onClick_Copy = function ()
         return;
 
     ui.copy();
-    ui.updateSelection();
+    ui.editor.deselectAll();
 };
 
 ui.onClick_Paste = function ()

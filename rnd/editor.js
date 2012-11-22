@@ -1547,15 +1547,55 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
             return true;
         }
         
-        selection.atoms.each(function (aid) {
-            xy0.add_(molecule.atoms.get(aid).pp);
-        });
+        var rot_id = null, rot_all = false;
         
-        xy0 = xy0.scaled(1 / selection.atoms.length);
+        selection.atoms.each(function (aid) {
+            var atom = molecule.atoms.get(aid);
+            
+            xy0.add_(atom.pp);
+            
+            if (rot_all) {
+                return;
+            }
+
+            atom.neighbors.find(function (nei) {
+                var hb = molecule.halfBonds.get(nei);
+            
+                if (selection.atoms.indexOf(hb.end) == -1) {
+                    if (hb.loop >= 0) {
+                        var nei_atom = molecule.atoms.get(aid);
+                        if (!Object.isUndefined(nei_atom.neighbors.find(function (nei_nei) {
+                            var nei_hb = molecule.halfBonds.get(nei_nei);
+                            if (nei_hb.loop >= 0 && selection.atoms.indexOf(nei_hb.end) != -1) {
+                                return true;
+                            }
+                            return false;
+                        }))) {
+                            rot_all = true;
+                            return true;
+                        }
+                    }
+                    if (rot_id == null) {
+                        rot_id = aid;
+                    } else if (rot_id != aid) {
+                        rot_all = true;
+                        return true;
+                    }
+                }
+                return false;
+            });
+        });
+
+        if (!rot_all && rot_id != null) {
+            xy0 = molecule.atoms.get(rot_id).pp;
+        } else {
+            xy0 = xy0.scaled(1 / selection.atoms.length);
+        }
         
         this.dragCtx = {
             xy0 : xy0,
-            angle1 : this._calcAngle(xy0, this.editor.ui.page2obj(event))
+            angle1 : this._calcAngle(xy0, this.editor.ui.page2obj(event)),
+            all : rot_all
         };
     } else {
         var ci = this.editor.render.findItem(event);
@@ -1590,7 +1630,7 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
         
         _DC_.angle = degrees;
         _DC_.action = _E_.ui.Action.fromRotate(
-            this.editor.getSelection(),
+            _DC_.all ? _R_.ctab.molecule : this.editor.getSelection(),
             _DC_.xy0,
             angle
         );

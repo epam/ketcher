@@ -80,6 +80,89 @@ ui.initButton = function (el)
     });
 };
 
+ui.initTemplates = function ()
+{
+    function parseSdf(sdf) {
+        var items = sdf.split('$$$$\n');
+        var parsed = [];
+        
+        items.each(function (item) {
+            var end_idx = item.indexOf('M  END');
+            
+            if (end_idx == -1) {
+                return;
+            }
+            
+            var iparsed = {};
+            
+            iparsed.molfile = item.substring(0, end_idx + 6);
+            iparsed.name = item.substring(0, item.indexOf('\n')).strip();
+            
+            item = item.substr(end_idx + 7);
+            
+            var entries = item.split('\n\n');
+            
+            entries.each(function (entry) {
+                if (!entry.startsWith('> <')) {
+                    return;
+                }
+                var lines = entry.split('\n');
+                var field = lines[0].substring(3, lines[0].lastIndexOf('>')).strip();
+                
+                iparsed[field] = parseInt(lines[1]) || lines[1].strip();
+            });
+            
+            parsed.push(iparsed);
+        });
+        
+        return parsed;
+    }
+    
+    // Init templates
+    new Ajax.Request(ui.path + 'templates.sdf',
+    {
+        method: 'get',
+        requestHeaders: {Accept: 'application/octet-stream'},
+        asynchronous : false,
+        onComplete: function (res)
+        {
+            try {
+                var sdf_items = parseSdf(res.responseText);
+            } catch (er) {
+                return;
+            }
+            
+            if (sdf_items.length == 0) {
+                return;
+            }
+            
+            rnd.templates = [];
+
+            var tbody = $('template_dropdown_list').select('table > tbody')[0];
+            tbody.update();
+            
+            var idx = 0;
+            sdf_items.each(function (item) {
+                var tmpl = {
+                    name: (item.name || ('template ' + (idx+1))).capitalize(),
+                    molfile: item.molfile,
+                    aid: item.atomid || 0,
+                    bid: item.bondid || 0
+                };
+                
+                rnd.templates.push(tmpl);
+                
+                // todo: render buttons
+                tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +
+                        '<td><div id="template_' + idx + '_preview"><img class="dropdownIcon" src="icons/png/template/template' + idx + '.24.png" alt="" /></div>' +
+                        tmpl.name + '</td></tr>');
+
+                idx++;
+            });
+        }
+    });
+};
+
 ui.onClick_SideButton = function ()
 {
     if (this.hasClassName('buttonDisabled'))
@@ -134,6 +217,9 @@ ui.init = function ()
 
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
     this.is_touch = 'ontouchstart' in document;
+    
+    ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
+    ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
 
     // IE specific styles
     if (Prototype.Browser.IE)
@@ -189,6 +275,8 @@ ui.init = function ()
         };
         //END
     }
+    
+    ui.initTemplates();
 
     // Document events
     document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -320,9 +408,6 @@ ui.init = function ()
         $('ketcher_window').observe('resize', ui.onResize_Ketcher);
     }
 
-    ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
-    ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
-
     new Ajax.Request(ui.path + 'knocknock',
     {
         method: 'get',
@@ -352,7 +437,7 @@ ui.init = function ()
             $('download_mol').action = ui.base_url + 'save';
         }
     }
-
+    
     // Init renderer
     this.render =  new rnd.Render(this.client_area, ui.scale, {atomColoring: true});
     this.editor = new rnd.Editor(this.render);

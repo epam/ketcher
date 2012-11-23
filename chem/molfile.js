@@ -913,8 +913,9 @@ chem.Molfile.parseMol = function (/* string */ ctabLines) /* chem.Struct */
     if (ctabLines[0].search("\\$MDL") == 0) {
         return this.parseRg2000(ctabLines);
     }
-	ctabLines = ctabLines.slice(3);
-    return this.parseCTab(ctabLines);
+    var struct = this.parseCTab(ctabLines.slice(3));
+    struct.name = ctabLines[0].strip();
+    return struct;
 };
 
 chem.Molfile.parseCTab = function (/* string */ ctabLines) /* chem.Struct */
@@ -1081,7 +1082,7 @@ chem.MolfileSaver.prototype.writeHeader = function ()
 {
 	var date = new Date();
 
-	this.writeCR();
+	this.writeCR(); // TODO: write structure name
 	this.writeWhiteSpace(2);
 	this.write('Ketcher');
 	this.writeWhiteSpace();

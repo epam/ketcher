@@ -212,20 +212,6 @@ rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 	var b2 = b.addScaled(n, settings.bondSpace);
 	var a3 = a.addScaled(n, -settings.bondSpace);
 	var b3 = b.addScaled(n, -settings.bondSpace);
-	var shiftA = !this.atoms.get(hb1.begin).showLabel;
-	var shiftB = !this.atoms.get(hb2.begin).showLabel;
-	if (shiftA)
-		a2 = a2.addScaled(hb1.dir, settings.bondSpace *
-			this.getBondLineShift(hb1.rightCos, hb1.rightSin));
-	if (shiftB)
-		b2 = b2.addScaled(hb1.dir, -settings.bondSpace *
-			this.getBondLineShift(hb2.leftCos, hb2.leftSin));
-	if (shiftA)
-		a3 = a3.addScaled(hb1.dir, settings.bondSpace *
-			this.getBondLineShift(hb1.leftCos, hb1.leftSin));
-	if (shiftB)
-		b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
-			this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	return paper.path(rnd.ReStruct.makeStroke(a,b) + rnd.ReStruct.makeStroke(a2,b2) + rnd.ReStruct.makeStroke(a3,b3))
 	.attr(styles.lineattr);
 };

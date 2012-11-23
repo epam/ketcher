@@ -27,6 +27,7 @@ chem.Struct = function ()
 	this.rxnPluses = new util.Pool();
     this.frags = new util.Pool();
     this.rgroups = new util.Map();
+    this.name = '';
 };
 
 chem.Struct.prototype.isBlank = function ()

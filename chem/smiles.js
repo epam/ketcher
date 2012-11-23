@@ -49,8 +49,24 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
     if (!Object.isUndefined(ignore_errors))
         this.ignore_errors = ignore_errors;
 
-    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
-        throw new Error("SMILES doesn't support s-groups");
+    //[RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
+    //TODO the fix is temporary, still need to implement error handling/reporting
+    //BEGIN
+//    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
+//        throw new Error("SMILES doesn't support s-groups");
+    molecule = molecule.clone();
+    molecule.sgroups.each(function(sgid, sg) {
+        if (sg.type == 'MUL') {
+            try {
+                sg.prepareForSaving(molecule);
+            } catch(ex) {
+                throw { message : 'ERROR: Bad s-group. ' + ex.message };
+            }
+        } else if(!this.ignore_errors) {
+            throw new Error("SMILES doesn't support s-groups");
+        }
+    }, this);
+    //END
 
     this.atoms = new Array(molecule.atoms.count());
 

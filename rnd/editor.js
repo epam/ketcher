@@ -227,27 +227,40 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
         if (114 == (Prototype.Browser.IE ? event.keyCode : event.which)) { // 'r'
             return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
         }
-        var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
-        if (ci) {
-            var labels = {
-                Br : 66, Cl : 67, A: 97, C: 99, F : 102, H : 104, I : 105, N : 110, O : 111, P : 112, S : 115
-            };
-            for (var label in labels) {
-                if (labels[label] == (Prototype.Browser.IE ? event.keyCode : event.which)) {
-                    ci.label = { label : label };
-                    if (ci.map == 'atoms') {
-                        this.editor.ui.addUndoAction(ui.Action.fromAtomsAttrs(ci.id, ci.label));
-                    } else if (ci.id == -1) {
-                        this.editor.ui.addUndoAction(
-                            this.editor.ui.Action.fromAtomAddition(
-                                this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
-                                ci.label
-                            ),
-                            true
-                        );
-                    }
+        var labels = {
+            Br : 66, Cl : 67, A: 97, C: 99, F : 102, H : 104, I : 105, N : 110, O : 111, P : 112, S : 115
+        };
+        for (var label in labels) {
+            if (labels[label] == (Prototype.Browser.IE ? event.keyCode : event.which)) {
+                var selection = this.editor.getSelection();
+                if (selection && 'atoms' in selection && selection.atoms.length > 0) {
+                    this.editor.ui.addUndoAction(
+                        this.editor.ui.Action.fromAtomsAttrs(selection.atoms, { label : label }),
+                        true
+                    );
                     this.editor.ui.render.update();
                     return true;
+                } else {
+                    var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
+                    if (ci) {
+                        ci.label = { label : label };
+                        if (ci.map == 'atoms') {
+                            this.editor.ui.addUndoAction(
+                                ui.Action.fromAtomsAttrs(ci.id, ci.label),
+                                true
+                            );
+                        } else if (ci.id == -1) {
+                            this.editor.ui.addUndoAction(
+                                this.editor.ui.Action.fromAtomAddition(
+                                    this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
+                                    ci.label
+                                ),
+                                true
+                            );
+                        }
+                        this.editor.ui.render.update();
+                        return true;
+                    }
                 }
             }
         }

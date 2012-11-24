@@ -625,7 +625,7 @@ ui.Action.fromBondFlipping = function(bid) {
 ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
 {
     var action = new ui.Action();
-    var frag = template.fragment;
+    var frag = template.molecule;
 
     var fragAction = new ui.Action.OpFragmentAdd().perform(ui.editor);
     
@@ -665,7 +665,7 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
 ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, template)
 {
     var action = new ui.Action();
-    var frag = template.fragment;
+    var frag = template.molecule;
     var R = ui.render;
     var RS = R.ctab;
     var molecule = RS.molecule;

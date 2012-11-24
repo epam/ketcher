@@ -792,7 +792,7 @@ rnd.Editor.TemplateTool = function(editor, template) {
     this.template = rnd.templates[template];
     
     // load template molfile in advance
-    if (!this.template.fragment) {
+    if (!this.template.molecule) {
         var lines = this.template.molfile.split('\n');
         var frag = chem.Molfile.parseCTFile(lines);
         
@@ -802,7 +802,7 @@ rnd.Editor.TemplateTool = function(editor, template) {
             xy0.add_(atom.pp);
         });
     
-        this.template.fragment = frag;
+        this.template.molecule = frag;
         this.template.xy0 = xy0.scaled(1 / frag.atoms.count());
     }
 
@@ -818,7 +818,7 @@ rnd.Editor.TemplateTool.prototype._calcInitialAngleOnAtom = function(aid) {
     
     function calcEnergy (angle) {
         var energy = 0;
-        var frag = self.template.fragment;
+        var frag = self.template.molecule;
         var xy0 = frag.atoms.get(self.template.aid).pp;
         
         frag.atoms.each(function (id1, a) {

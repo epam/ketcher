@@ -325,6 +325,15 @@ chem.SGroup.getAtoms = function (mol, sg) {
 	return atoms;
 };
 
+chem.SGroup.getBonds = function (mol, sg) {
+    var atoms = chem.SGroup.getAtoms(mol, sg);
+	var bonds = [];
+	mol.bonds.each(function(bid, bond){
+		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) bonds.push(bid);
+	});
+	return bonds;
+};
+
 chem.SGroup.GroupMul = {
 	draw: function (remol) {
 		var render = remol.render;

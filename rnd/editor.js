@@ -309,10 +309,15 @@ rnd.Editor.LassoTool = function(editor, mode, fragment) {
 rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var render = this.editor.render;
-    var ctab = render.ctab;
+    var ctab = render.ctab, mol = ctab.molecule;
     this._hoverHelper.hover(null); // TODO review hovering for touch devices
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-    var ci = this.editor.render.findItem(event, selectFragment ? ['frags', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags']);
+    var ci = this.editor.render.findItem(
+        event,
+        selectFragment
+            ? ['frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+            : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+    );
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
             this._lassoHelper.begin(event);
@@ -327,9 +332,18 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
                     { 'atoms' : frag.fragGetAtoms(render, ci.id), 'bonds' : frag.fragGetBonds(render, ci.id) },
                     event.shiftKey
                 );
+            } else if (ci.map == 'sgroups') {
+                var sgroup = ctab.sgroups.get(ci.id).item;
+                this.editor._selectionHelper.setSelection(
+                    { 'atoms' : chem.SGroup.getAtoms(mol, sgroup), 'bonds' : chem.SGroup.getBonds(mol, sgroup) },
+                    event.shiftKey
+                );
             } else if (ci.map == 'rgroups') {
                 var rgroup = ctab.rgroups.get(ci.id);
-                this.editor._selectionHelper.setSelection({'atoms':rgroup.getAtoms(render)}, event.shiftKey);
+                this.editor._selectionHelper.setSelection(
+                    { 'atoms' : rgroup.getAtoms(render), 'bonds' : rgroup.getBonds(render) },
+                    event.shiftKey
+                );
             } else {
                 this.editor._selectionHelper.setSelection(ci, event.shiftKey);
             }
@@ -378,7 +392,12 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
     } else {
         this._hoverHelper.hover(
-            this.editor.render.findItem(event, (this._lassoHelper.fragment || event.ctrlKey) ? ['frags', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rxnArrows', 'rxnPluses', 'chiralFlags'])
+            this.editor.render.findItem(
+                event,
+                (this._lassoHelper.fragment || event.ctrlKey)
+                    ? ['frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+                    : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+            )
         );
     }
     return true;

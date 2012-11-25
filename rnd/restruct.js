@@ -61,7 +61,14 @@ rnd.ReObject.prototype.drawHighlight = function(render) {
 
 rnd.ReObject.prototype.setHighlight = function(highLight, render) { // TODO render should be field
     if (highLight) {
-        var noredraw = this.highlighting && !this.highlighting.removed;
+        var noredraw = 'highlighting' in this && this.highlighting != null;// && !this.highlighting.removed;
+        if (noredraw) {
+            if (this.highlighting.type == 'set') {
+                noredraw = !this.highlighting[0].removed;
+            } else {
+                noredraw = !this.highlighting.removed;
+            }
+        }
         // rbalabanov: here is temporary fix for "drag issue" on iPad
         //BEGIN
         noredraw = noredraw && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
@@ -69,7 +76,11 @@ rnd.ReObject.prototype.setHighlight = function(highLight, render) { // TODO rend
         if (noredraw) {
             this.highlighting.show();
         }
-        else this.highlighting = this.drawHighlight(render);
+        else {
+            render.paper.setStart();
+            this.drawHighlight(render);
+            this.highlighting = render.paper.setFinish();
+        }
     } else {
         if (this.highlighting) this.highlighting.hide();
     }
@@ -869,13 +880,13 @@ rnd.ReRxnPlus.findClosest = function (render, p) {
         }
     });
     return ret;
-}
+};
 
 rnd.ReRxnPlus.prototype.highlightPath = function(render) {
     var p = render.ps(this.item.pp);
     var s = render.settings.scaleFactor;
     return render.paper.rect(p.x - s/4, p.y - s/4, s/2, s/2, s/8);
-}
+};
 
 rnd.ReRxnPlus.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
@@ -916,7 +927,7 @@ rnd.ReRxnArrow.prototype.highlightPath = function(render) {
     var p = render.ps(this.item.pp);
     var s = render.settings.scaleFactor;
     return render.paper.rect(p.x - s, p.y - s/4, 2*s, s/2, s/8);
-}
+};
 
 rnd.ReRxnArrow.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
@@ -1004,16 +1015,22 @@ rnd.ReFrag.prototype._draw = function(render, fid, attrs) { // TODO need to revi
     }
 };
 
-rnd.ReFrag.prototype.draw = function(render, fid) { // TODO need to review parameter list
+rnd.ReFrag.prototype.draw = function(render) {
     return null;//this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
 };
 
-rnd.ReFrag.prototype.drawHighlight = function(render) { // TODO need to review parameter list
+rnd.ReFrag.prototype.drawHighlight = function(render) {
     var fid = render.ctab.frags.keyOf(this);
     if (!Object.isUndefined(fid)) {
-        var ret = this._draw(render, fid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
-        render.ctab.addReObjectPath('highlighting', this.visel, ret);
-        return ret;
+//        var ret = this._draw(render, fid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
+//        render.ctab.addReObjectPath('highlighting', this.visel, ret);
+//        return ret;
+        render.ctab.atoms.each(function(aid, atom) {
+            if (atom.a.fragment == fid) atom.drawHighlight(render);
+        }, this);
+        render.ctab.bonds.each(function(bid, bond) {
+            if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid) bond.drawHighlight(render);
+        }, this);
     } else {
         // TODO abnormal situation, fragment does not belong to the render
     }
@@ -1031,6 +1048,14 @@ rnd.ReRGroup.prototype.getAtoms = function(render) {
     this.item.frags.each(function(fnum, fid) {
         ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render, fid));
     });            
+    return ret;
+};
+
+rnd.ReRGroup.prototype.getBonds = function(render) {
+    var ret = [];
+    this.item.frags.each(function(fnum, fid) {
+        ret = ret.concat(render.ctab.frags.get(fid).fragGetBonds(render, fid));
+    });
     return ret;
 };
 
@@ -1138,11 +1163,19 @@ rnd.ReRGroup.prototype._draw = function(render, rgid, attrs) { // TODO need to r
     }
 };
 
-rnd.ReRGroup.prototype.drawHighlight = function(render) { // TODO need to review parameter list
+rnd.ReRGroup.prototype.drawHighlight = function(render) {
     var rgid = render.ctab.rgroups.keyOf(this);
     if (!Object.isUndefined(rgid)) {
         var ret = this._draw(render, rgid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
         render.ctab.addReObjectPath('highlighting', this.visel, ret);
+/*
+        this.getAtoms(render).each(function(aid) {
+            render.ctab.atoms.get(aid).drawHighlight(render);
+        }, this);
+*/
+        this.item.frags.each(function(fnum, fid) {
+            render.ctab.frags.get(fid).drawHighlight(render);
+        }, this);
         return ret;
     } else {
         // TODO abnormal situation, fragment does not belong to the render
@@ -1206,19 +1239,25 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
     set.push(sg.highlighting);
     render.ctab.addReObjectPath('highlighting', this.visel, sg.highlighting);
 
-    var atoms = chem.SGroup.getAtoms(render.ctab.molecule, sg);
-
-    atoms.each(function (id)
-    {
-        var atom = render.ctab.atoms.get(id);
-        var ps = render.ps(atom.a.pp);
-        atom.sGroupHighlighting = paper
-        .circle(ps.x, ps.y, 0.7 * styles.atomSelectionPlateRadius)
-        .attr(styles.sGroupHighlightStyle);
-        set.push(atom.sGroupHighlighting);
-        render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);
+//    var atoms = chem.SGroup.getAtoms(render.ctab.molecule, sg);
+//
+//    atoms.each(function (id)
+//    {
+//        var atom = render.ctab.atoms.get(id);
+//        var ps = render.ps(atom.a.pp);
+//        atom.sGroupHighlighting = paper
+//        .circle(ps.x, ps.y, 0.7 * styles.atomSelectionPlateRadius)
+//        .attr(styles.sGroupHighlightStyle);
+//        set.push(atom.sGroupHighlighting);
+//        render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);
+//    }, this);
+//    return set;
+    chem.SGroup.getAtoms(render.ctab.molecule, sg).each(function(aid) {
+        render.ctab.atoms.get(aid).drawHighlight(render);
     }, this);
-    return set;
+    chem.SGroup.getBonds(render.ctab.molecule, sg).each(function(bid) {
+        render.ctab.bonds.get(bid).drawHighlight(render);
+    }, this);
 };
 
 rnd.ReDataSGroupData = function (sgroup)
@@ -1246,14 +1285,14 @@ rnd.ReDataSGroupData.findClosest = function (render, p) {
         }
     });
     return ret;
-}
+};
 
 rnd.ReDataSGroupData.prototype.highlightPath = function(render) {
     var box = this.sgroup.dataArea;
     var p0 = render.obj2scaled(box.p0);
     var sz = render.obj2scaled(box.p1).sub(p0);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
-}
+};
 
 rnd.ReDataSGroupData.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
@@ -1296,7 +1335,7 @@ rnd.ReChiralFlag.prototype.highlightPath = function(render) {
     var sz = box.p1.sub(box.p0);
     var p0 = box.p0.sub(render.offset);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
-}
+};
 
 rnd.ReChiralFlag.prototype.drawHighlight = function(render) {
     var ret = this.highlightPath(render).attr(render.styles.highlightStyle);

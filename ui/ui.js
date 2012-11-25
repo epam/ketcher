@@ -146,16 +146,23 @@ ui.initTemplates = function ()
                 var tmpl = {
                     name: (item.name || ('template ' + (idx+1))).capitalize(),
                     molfile: item.molfile,
-                    aid: item.atomid || 0,
-                    bid: item.bondid || 0
+                    aid: (item.atomid || 1) - 1,
+                    bid: (item.bondid || 1) - 1
                 };
                 
                 rnd.templates.push(tmpl);
                 
-                // todo: render buttons
-                tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +
-                        '<td><div id="template_' + idx + '_preview"><img class="dropdownIcon" src="icons/png/template/template' + idx + '.24.png" alt="" /></div>' +
-                        tmpl.name + '</td></tr>');
+                if (item.icon) {
+                    tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +
+                            '<td><div id="template_' + idx + '_preview"><img class="dropdownIcon" src="' + item.icon + '" alt="" /></div>' +
+                            tmpl.name + '</td></tr>');
+                } else {
+                    // load template molfile on demand
+                    var lines = tmpl.molfile.split('\n');
+                    tmpl.molecule = chem.Molfile.parseCTFile(lines);
+                    
+                    // todo: render button from tmpl.molecule
+                }
 
                 idx++;
             });

@@ -21,6 +21,9 @@ M  END
 > <bondid>
 1
 
+> <icon>
+icons/png/template/template0.24.png
+
 $$$$
 cyclopentadiene
   Ketcher 12101117232D 1   1.00000     0.00000     0
@@ -42,6 +45,9 @@ M  END
 
 > <bondid>
 1
+
+> <icon>
+icons/png/template/template1.24.png
 
 $$$$
 cyclohexane
@@ -67,6 +73,9 @@ M  END
 > <bondid>
 1
 
+> <icon>
+icons/png/template/template2.24.png
+
 $$$$
 cyclopentane
   Ketcher 12101120492D 1   1.00000     0.00000     0
@@ -89,6 +98,9 @@ M  END
 > <bondid>
 1
 
+> <icon>
+icons/png/template/template3.24.png
+
 $$$$
 cyclopropane
   Ketcher 12101118272D 1   1.00000     0.00000     0
@@ -106,6 +118,9 @@ M  END
 
 > <bondid>
 1
+
+> <icon>
+icons/png/template/template4.24.png
 
 $$$$
 cyclobutane
@@ -126,6 +141,9 @@ M  END
 
 > <bondid>
 1
+
+> <icon>
+icons/png/template/template5.24.png
 
 $$$$
 cycloheptane
@@ -152,6 +170,9 @@ M  END
 
 > <bondid>
 1
+
+> <icon>
+icons/png/template/template6.24.png
 
 $$$$
 cyclooctane
@@ -180,5 +201,8 @@ M  END
 
 > <bondid>
 1
+
+> <icon>
+icons/png/template/template7.24.png
 
 $$$$

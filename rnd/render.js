@@ -100,6 +100,14 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
+    // [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
+    // here we prevent that freaking "accelerators menu" on IE8
+    //BEGIN
+    clientArea.observe('selectstart', function(event) {
+        util.stopEventPropagation(event); return util.preventDefault(event);
+    });
+    //END
+
     // rbalabanov: two-fingers scrolling & zooming for iPad
     // TODO should be moved to touch.js module, re-factoring needed
     //BEGIN

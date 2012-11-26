@@ -877,7 +877,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     this._hoverHelper.hover(null);
     this.dragCtx = {
         xy0 : _E_.ui.page2obj(event),
-        item : _R_.findItem(event, ['atoms']) //, 'bonds'])
+        item : _R_.findItem(event, ['atoms', 'bonds'])
     };
     var _DC_ = this.dragCtx;
     var ci = _DC_.item;
@@ -889,7 +889,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         _DC_.degree = _R_.atomGetDegree(ci.id); 
         _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, function () {return _DC_.angle0}, 0, false, this.template);
     } else if (ci.map == 'bonds') {
-        _DC_.action = _E_.ui.Action.fromTemplateOnElement(ci.id, this.template, false);
+        _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle);
     }
     _R_.update();
     return true;
@@ -912,7 +912,10 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         } else if (ci.map == 'atoms') {
             pos0 = _R_.atomGetPos(_DC_.item.id);
             extra_bond = util.Vec2.dist(pos0, pos1) > 1;
+        } else if (ci.map == 'bonds') {
+            return true;
         }
+        
         angle = this._calcAngle(pos0, pos1);
         var degrees = Math.round(180 / Math.PI * angle);
         // check if anything changed since last time

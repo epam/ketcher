@@ -732,7 +732,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, temp
             }
             action.addOp(
                 op = new ui.Action.OpAtomAdd(
-                    { label: atom.label, fragment: frid },
+                    { label: a.label, fragment: frid },
                     v
                 ).perform(ui.editor)
             );
@@ -755,6 +755,106 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, temp
 
     return action;
 };
+
+ui.Action.fromTemplateOnBond = function (bid, template, calcAngle)
+{
+    var action = new ui.Action();
+    var frag = template.molecule;
+    var R = ui.render;
+    var RS = R.ctab;
+    var molecule = RS.molecule;
+    
+    var bond = molecule.bonds.get(bid);
+    var begin = molecule.atoms.get(bond.begin);
+    var end = molecule.atoms.get(bond.end);
+
+    var fr_bond = frag.bonds.get(template.bid);
+    var fr_begin;
+    var fr_end;
+
+    var frid = R.atomGetAttr(bond.begin, 'fragment');
+    
+    var flip = true;
+    var map = {};
+    
+    if (flip) {
+        fr_begin = frag.atoms.get(fr_bond.end);
+        fr_end = frag.atoms.get(fr_bond.begin);
+        map[fr_bond.end] = bond.begin;
+        map[fr_bond.begin] = bond.end;
+    } else {
+        fr_begin = frag.atoms.get(fr_bond.begin);
+        fr_end = frag.atoms.get(fr_bond.end);
+        map[fr_bond.begin] = bond.begin;
+        map[fr_bond.end] = bond.end;
+    }
+    
+    // calc angle
+    var angle = calcAngle(begin.pp, end.pp) - calcAngle(fr_begin.pp, fr_end.pp);
+    var scale = util.Vec2.dist(begin.pp, end.pp) / util.Vec2.dist(fr_begin.pp, fr_end.pp);
+    
+    var xy0 = fr_begin.pp;
+    
+    frag.atoms.each(function (id, a) {
+        if (id == fr_bond.begin || id == fr_bond.end) {
+            action.addOp(
+                op = new ui.Action.OpAtomAttr(
+                    map[id],
+                    'label',
+                    a.label
+                ).perform(ui.editor)
+            );
+            return;
+        }
+
+        var v; 
+        
+        v = util.Vec2.diff(a.pp, fr_begin.pp).rotate(angle).scaled(scale).add(begin.pp);
+
+        var merge_a = R.findClosestAtom(v, 0.1);
+
+        if (merge_a == null) {
+            action.addOp(
+                op = new ui.Action.OpAtomAdd(
+                    { label: a.label, fragment: frid },
+                    v
+                ).perform(ui.editor)
+            );
+
+            map[id] = op.data.aid;
+        } else {
+            // TODO [BK] change label?
+            // TODO [RB] need to merge fragments?
+            map[id] = merge_a.id;
+        }
+    });
+
+    // Only template bond type label matters for now
+    frag.bonds.each(function (id, bond) {
+        if (id != template.bid) {
+            action.addOp(
+                new ui.Action.OpBondAdd(
+                    map[bond.begin], 
+                    map[bond.end], 
+                    { type: bond.type }
+                ).perform(ui.editor)
+            );
+        } else {
+            // TODO [BK] check if not aromatic
+            action.addOp(
+                new ui.Action.OpBondAttr(
+                    bid,
+                    'type',
+                    fr_bond.type
+                ).perform(ui.editor)
+            );
+        }
+    });
+    
+    action.operations.reverse();
+
+    return action;
+}
 
 ui.Action.fromChain = function (p0, v, nSect, atom_id)
 {
@@ -799,138 +899,6 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
             ui.Action.mergeFragments(action, frid, frid2);
         }
         id0 = id1;
-    }, this);
-
-    action.operations.reverse();
-
-    return action;
-};
-
-ui.Action.fromPatternOnElement = function (id, pattern, on_atom)
-{
-    var angle = (pattern.length - 2) * Math.PI / (2 * pattern.length);
-    var first_idx = 0; //pattern.indexOf(bond.type) + 1; // 0 if there's no
-    var pos = null; // center pos
-    var v = null; // rotating vector from center
-
-    if (on_atom) {
-        var nei_id = ui.render.atomGetNeighbors(id)[0].aid;
-        var atom_pos = ui.render.atomGetPos(id);
-
-        pos = util.Vec2.diff(atom_pos, ui.render.atomGetPos(nei_id));
-        pos.normalize();
-        pos = pos.scaled(0.5 / Math.cos(angle));
-        v = pos.negated();
-        pos.add_(atom_pos);
-        angle = Math.PI - 2 * angle;
-    }
-    else {
-        var bond = ui.ctab.bonds.get(id);
-        var begin_pos = ui.render.atomGetPos(bond.begin);
-        var end_pos = ui.render.atomGetPos(bond.end);
-
-        v = util.Vec2.diff(end_pos, begin_pos);
-        var l = v.length() / (2 * Math.cos(angle));
-
-        v = v.scaled(l / v.length());
-
-        var v_sym = v.rotate(-angle);
-        v = v.rotate(angle);
-
-        pos = util.Vec2.sum(begin_pos, v);
-        var pos_sym = util.Vec2.sum(begin_pos, v_sym);
-
-        var cnt = 0, bcnt = 0;
-        var cnt_sym = 0, bcnt_sym = 0;
-
-        // TODO: improve this enumeration
-        ui.ctab.atoms.each(function (a_id) {
-            if (util.Vec2.dist(pos, ui.render.atomGetPos(a_id)) < l * 1.1) {
-                cnt++;
-                bcnt += ui.render.atomGetDegree(a_id);
-            }
-            else if (util.Vec2.dist(pos_sym, ui.render.atomGetPos(a_id)) < l * 1.1) {
-                cnt_sym++;
-                bcnt_sym += ui.render.atomGetDegree(a_id);
-            }
-        });
-
-        angle = Math.PI - 2 * angle;
-
-        if (cnt > cnt_sym || (cnt == cnt_sym && bcnt > bcnt_sym)) {
-            pos = pos_sym;
-            v = v_sym;
-        }
-        else angle = -angle;
-
-        v = v.negated();
-    }
-
-    var action = new ui.Action();
-    var atom_ids = new Array(pattern.length);
-
-    if (!on_atom) {
-        atom_ids[0] = bond.begin;
-        atom_ids[pattern.length - 1] = bond.end;
-    }
-
-    var frid = ui.render.ctab.molecule.atoms.get(on_atom ? id : ui.render.ctab.molecule.bonds.get(id).begin).fragment;
-
-    (pattern.length - (on_atom ? 0 : 1)).times(function(idx) {
-        if (idx > 0 || on_atom) {
-            var new_pos = util.Vec2.sum(pos, v);
-
-            var a = ui.render.findClosestAtom(new_pos, 0.1);
-
-            if (a == null) {
-                atom_ids[idx] = action.addOp(
-                    new ui.Action.OpAtomAdd({ label: 'C', fragment : frid }, new_pos).perform(ui.editor)
-                ).data.aid;
-            }
-            else {
-                // TODO [RB] need to merge fragments?
-                atom_ids[idx] = a.id;
-            }
-        }
-
-        v = v.rotate(angle);
-    }, this);
-
-    var i = 0;
-
-    pattern.length.times(function(idx) {
-        var begin = atom_ids[idx];
-        var end = atom_ids[(idx + 1) % pattern.length];
-        var bond_type = pattern[(first_idx + idx) % pattern.length];
-
-        if (!ui.render.checkBondExists(begin, end)) {
-            action.addOp(new ui.Action.OpBondAdd(begin, end, { type: bond_type }).perform(ui.editor));
-        }
-        else {
-            if (bond_type == chem.Struct.BOND.TYPE.AROMATIC) {
-                var nei = ui.render.atomGetNeighbors(begin);
-
-                nei.find(function(n) {
-                    if (n.aid == end) {
-                        var src_type = ui.render.bondGetAttr(n.bid, 'type');
-
-                        if (src_type != bond_type) {
-/*
-                            action.addOperation(
-                                ui.Action.OPERATION.BOND_ATTR,
-                                { id: ui.bondMap.indexOf(n.bid), attr_name: 'type', attr_value: src_type }
-                            );
-                            ui.render.bondSetAttr(n.bid, 'type', bond_type);
-*/
-                        }
-                        return true;
-                    }
-                    return false;
-                }, this);
-            }
-        }
-
-        i++;
     }, this);
 
     action.operations.reverse();

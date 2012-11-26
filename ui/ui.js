@@ -1139,7 +1139,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
     var updateFunc = paste ? function (struct) {
         struct.rescale(); 
         ui.copy(struct);
-        ui.deselectAll();
+        ui.editor.deselectAll();
         ui.selectMode('paste');
     } : ui.updateMolecule;
 

@@ -872,6 +872,16 @@ rnd.Editor.TemplateTool.prototype._calcInitialAngleOnAtom = function(aid) {
     
     return min_angle;
 };
+rnd.Editor.TemplateTool.prototype._getSign = function(molecule, bond, v) {
+    var begin = molecule.atoms.get(bond.begin).pp;
+    var end = molecule.atoms.get(bond.end).pp;
+
+    var sign = util.Vec2.cross(util.Vec2.diff(begin, end), util.Vec2.diff(v, end));
+    
+    if (sign > 0) return 1;
+    if (sign < 0) return -1;
+    return 0;
+};
 rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     this._hoverHelper.hover(null);
@@ -889,7 +899,53 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         _DC_.degree = _R_.atomGetDegree(ci.id); 
         _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, function () {return _DC_.angle0}, 0, false, this.template);
     } else if (ci.map == 'bonds') {
-        _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle);
+        // calculate fragment center
+        var molecule = _R_.ctab.molecule;
+        var xy0 = new util.Vec2();
+        var bond = molecule.bonds.get(ci.id);
+        var frid = _R_.atomGetAttr(bond.begin, 'fragment');
+        var fr_ids = molecule.getFragmentIds(frid);
+        var count = 0;
+        
+        var loop = molecule.halfBonds.get(bond.hb1).loop;
+        
+        if (loop < 0) {
+            loop = molecule.halfBonds.get(bond.hb2).loop;
+        }
+        
+        if (loop >= 0) {
+            var loop_hbs = molecule.loops.get(loop).hbs;
+            loop_hbs.each(function (hb) {
+                xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp);
+                count++;
+            });
+        } else {
+            util.Set.each(fr_ids, function (id) {
+                xy0.add_(molecule.atoms.get(id).pp);
+                count++;
+            });
+        }
+        
+        _DC_.v0 = xy0.scaled(1 / count);
+        
+        var sign = this._getSign(molecule, bond, _DC_.v0);
+        
+        if (!this.template.v0) {
+            xy0 = new util.Vec2();
+            molecule = this.template.molecule;
+            molecule.atoms.each(function (id, a) {
+                xy0.add_(a.pp);
+            });
+            this.template.v0 = xy0.scaled(1 / molecule.atoms.count());
+
+            var bond = molecule.bonds.get(this.template.bid);
+            this.template.sign = this._getSign(molecule, bond, this.template.v0);
+        }
+        
+        // calculate default template flip
+        _DC_.sign1 = sign;
+        _DC_.sign2 = this.template.sign;
+        _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
     }
     _R_.update();
     return true;
@@ -910,9 +966,25 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         if (!ci || ci.type == 'Canvas') {
             pos0 = _DC_.xy0;
         } else if (ci.map == 'atoms') {
-            pos0 = _R_.atomGetPos(_DC_.item.id);
+            pos0 = _R_.atomGetPos(ci.id);
             extra_bond = util.Vec2.dist(pos0, pos1) > 1;
         } else if (ci.map == 'bonds') {
+            var molecule = _R_.ctab.molecule;
+            var bond = molecule.bonds.get(ci.id);
+            var sign = this._getSign(molecule, bond, pos1);
+            
+            if (_DC_.sign1 * this.template.sign > 0) {
+                sign = -sign;
+            }
+            
+            if (sign != _DC_.sign2) {
+                // undo previous action
+                if ('action' in _DC_) _DC_.action.perform();
+                _DC_.sign2 = sign;
+                _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
+                _R_.update();
+            }
+            
             return true;
         }
         

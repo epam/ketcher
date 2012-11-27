@@ -756,7 +756,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, temp
     return action;
 };
 
-ui.Action.fromTemplateOnBond = function (bid, template, calcAngle)
+ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 {
     var action = new ui.Action();
     var frag = template.molecule;
@@ -774,7 +774,6 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle)
 
     var frid = R.atomGetAttr(bond.begin, 'fragment');
     
-    var flip = true;
     var map = {};
     
     if (flip) {

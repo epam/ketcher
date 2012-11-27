@@ -821,57 +821,17 @@ rnd.Editor.TemplateTool = function(editor, template) {
             xy0.add_(atom.pp);
         });
     
-        this.template.molecule = frag;
-        this.template.xy0 = xy0.scaled(1 / frag.atoms.count());
+        this.template.molecule = frag; // preloaded struct
+        this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
+        this.template.angle0 = this._calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
+        
+        var bond = frag.bonds.get(this.template.bid);
+        this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
     }
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
 rnd.Editor.TemplateTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.TemplateTool.prototype._calcInitialAngleOnAtom = function(aid) {
-    var _E_ = this.editor, _R_ = _E_.render, _RS_ = _R_.ctab, molecule = _RS_.molecule;
-    var atom = molecule.atoms.get(aid);
-    var frid = _R_.atomGetAttr(aid, 'fragment');
-    var fr_ids = molecule.getFragmentIds(frid);
-    var self = this;
-    
-    function calcEnergy (angle) {
-        var energy = 0;
-        var frag = self.template.molecule;
-        var xy0 = frag.atoms.get(self.template.aid).pp;
-        
-        frag.atoms.each(function (id1, a) {
-            
-            if (id1 == self.template.aid) {
-                return;
-            }
-            
-            var pos = util.Vec2.diff(a.pp, xy0).rotate(angle).add(atom.pp);
-            
-            util.Set.each(fr_ids, function (id2) {
-                var d = util.Vec2.dist(molecule.atoms.get(id2).pp, pos);
-                if (d < 0.000001) d = 0.000001;
-                energy += 1 / (d * d);
-            });
-        });
-        
-        return energy;
-    }
-    
-    var incr = Math.PI / 12;
-    var min_angle = 0, min_energy = calcEnergy(0);
-    
-    for (var angle = incr; angle < 2 * Math.PI; angle += incr) {
-        var energy = calcEnergy(angle);
-        
-        if (energy < min_energy) {
-            min_energy = energy;
-            min_angle = angle;
-        }
-    }
-    
-    return min_angle;
-};
 rnd.Editor.TemplateTool.prototype._getSign = function(molecule, bond, v) {
     var begin = molecule.atoms.get(bond.begin).pp;
     var end = molecule.atoms.get(bond.end).pp;
@@ -895,9 +855,8 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         delete _DC_.item;
         _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
     } else if (ci.map == 'atoms') {
-        _DC_.angle0 = this._calcInitialAngleOnAtom(ci.id);
         _DC_.degree = _R_.atomGetDegree(ci.id); 
-        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, function () {return _DC_.angle0}, 0, false, this.template);
+        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, null, false, this.template, this._calcAngle);
     } else if (ci.map == 'bonds') {
         // calculate fragment center
         var molecule = _R_.ctab.molecule;
@@ -929,18 +888,6 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         _DC_.v0 = xy0.scaled(1 / count);
         
         var sign = this._getSign(molecule, bond, _DC_.v0);
-        
-        if (!this.template.v0) {
-            xy0 = new util.Vec2();
-            molecule = this.template.molecule;
-            molecule.atoms.each(function (id, a) {
-                xy0.add_(a.pp);
-            });
-            this.template.v0 = xy0.scaled(1 / molecule.atoms.count());
-
-            var bond = molecule.bonds.get(this.template.bid);
-            this.template.sign = this._getSign(molecule, bond, this.template.v0);
-        }
         
         // calculate default template flip
         _DC_.sign1 = sign;
@@ -1012,15 +959,10 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
         } else if (ci.map == 'atoms') {
             _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                 ci.id,
-                function (id) {
-                    if (id == ci.id) {
-                        return _DC_.angle0;
-                    }
-                    return self._calcInitialAngleOnAtom(id);
-                },
                 angle,
                 extra_bond,
-                this.template
+                this.template,
+                this._calcAngle
             );
             _DC_.extra_bond = extra_bond;
         }
@@ -1043,12 +985,10 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
                 
                 _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                     ci.id,
-                    function () {
-                        return _DC_.angle0;
-                    },
                     null,
                     true,
-                    this.template
+                    this.template,
+                    this._calcAngle
                 );
                 
                 _R_.update();

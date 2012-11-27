@@ -662,7 +662,7 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     return action;
 };
 
-ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, template)
+ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcAngle)
 {
     var action = new ui.Action();
     var frag = template.molecule;
@@ -708,9 +708,14 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, temp
         
         var atom0 = atom;
         atom = molecule.atoms.get(aid);
+        var delta = calcAngle(atom0.pp, atom.pp) - template.angle0;
+    } else {
+        if (angle == null) {
+            middle_atom = ui.atomForNewBond(aid);
+            angle = calcAngle(atom.pp, middle_atom.pos);
+        }
+        delta = angle - template.angle0;
     }
-    
-    var angle0 = angle0_cb(aid);
     
     // Only template atom label matters for now
     frag.atoms.each(function (id, a) {
@@ -724,12 +729,9 @@ ui.Action.fromTemplateOnAtom = function (aid, angle0_cb, angle, extra_bond, temp
             );
         } else {
             var v; 
-            if (extra_bond) {
-                v = util.Vec2.diff(a.pp, xy0).rotate(angle0).add(atom.pp);
-                //v = v.sub(atom0.pp).rotate(angle).add(atom0.pp);
-            } else {
-                v = util.Vec2.diff(a.pp, xy0).rotate(angle0 + angle).add(atom.pp);
-            }
+
+            v = util.Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
+
             action.addOp(
                 op = new ui.Action.OpAtomAdd(
                     { label: a.label, fragment: frid },

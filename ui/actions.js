@@ -833,23 +833,31 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     // Only template bond type label matters for now
     frag.bonds.each(function (id, bond) {
         if (id != template.bid) {
-            action.addOp(
-                new ui.Action.OpBondAdd(
-                    map[bond.begin], 
-                    map[bond.end], 
-                    { type: bond.type }
-                ).perform(ui.editor)
-            );
-        } else {
-            // TODO [BK] check if not aromatic
-            action.addOp(
-                new ui.Action.OpBondAttr(
-                    bid,
-                    'type',
-                    fr_bond.type
-                ).perform(ui.editor)
-            );
+            var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
+            
+            if (exist_id == -1) {
+                action.addOp(
+                    new ui.Action.OpBondAdd(
+                        map[bond.begin], 
+                        map[bond.end], 
+                        { type: bond.type }
+                    ).perform(ui.editor)
+                );
+                return;
+            }
+            
+            id = exist_id;
+            bond = molecule.bonds.get(id);
         }
+        
+        // TODO [BK] check if not aromatic
+        action.addOp(
+            new ui.Action.OpBondAttr(
+                bid,
+                'type',
+                fr_bond.type
+            ).perform(ui.editor)
+        );
     });
     
     action.operations.reverse();

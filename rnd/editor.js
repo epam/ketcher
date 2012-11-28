@@ -853,10 +853,8 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     var ci = _DC_.item;
     if (!ci || ci.type == 'Canvas') {
         delete _DC_.item;
-        _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(this.editor.ui.page2obj(event), 0, this.template);
     } else if (ci.map == 'atoms') {
         _DC_.degree = _R_.atomGetDegree(ci.id); 
-        _DC_.action = _E_.ui.Action.fromTemplateOnAtom(ci.id, null, false, this.template, this._calcAngle);
     } else if (ci.map == 'bonds') {
         // calculate fragment center
         var molecule = _R_.ctab.molecule;
@@ -892,9 +890,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         // calculate default template flip
         _DC_.sign1 = sign;
         _DC_.sign2 = this.template.sign;
-        _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
     }
-    _R_.update();
     return true;
 };
 rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
@@ -924,7 +920,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
                 sign = -sign;
             }
             
-            if (sign != _DC_.sign2) {
+            if (sign != _DC_.sign2 || !_DC_.action) {
                 // undo previous action
                 if ('action' in _DC_) _DC_.action.perform();
                 _DC_.sign2 = sign;
@@ -978,19 +974,24 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
         var _DC_ = this.dragCtx;
         var ci = _DC_.item; 
         
-        if (!_DC_.mouse_moved && ci && ci.map == 'atoms') {
-            if (_DC_.degree > 1) {
-                // undo previous action
-                if ('action' in _DC_) _DC_.action.perform();
-                
-                _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
-                    ci.id,
-                    null,
-                    true,
-                    this.template,
-                    this._calcAngle
-                );
-                
+        if (!_DC_.action) {
+            if (!ci || ci.type == 'Canvas') {
+                _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(_DC_.xy0, 0, this.template);
+            } else if (ci.map == 'atoms') {
+                if (_DC_.degree > 1) {
+                    _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
+                        ci.id,
+                        null,
+                        true,
+                        this.template,
+                        this._calcAngle
+                    );
+                }
+            } else if (ci.map == 'bonds') {
+                _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
+            }
+            
+            if ('action' in _DC_) {
                 _R_.update();
             }
         }

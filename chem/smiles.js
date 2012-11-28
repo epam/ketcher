@@ -304,8 +304,9 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
                 this.smiles += '=';
             else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE)
                 this.smiles += '#';
-            else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC && (!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase))
-                this.smiles += ':'; // TODO: Check if this : is needed
+            else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC &&
+                (!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase || !this._render.isBondInRing(e_idx)))
+                    this.smiles += ':'; // TODO: Check if this : is needed
             else if (bond.type == chem.Struct.BOND.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
                 this.smiles += '-';
             else

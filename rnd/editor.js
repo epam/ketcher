@@ -739,10 +739,10 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
                         if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
                             bondProps.type = chem.Struct.BOND.TYPE.DOUBLE;
                         }
-                    }
-                } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
-                    if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
-                        bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
+                    } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
+                        if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
+                            bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
+                        }
                     }
                 }
                 _UI_.addUndoAction(

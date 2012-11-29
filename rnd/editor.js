@@ -853,8 +853,6 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
     var ci = _DC_.item;
     if (!ci || ci.type == 'Canvas') {
         delete _DC_.item;
-    } else if (ci.map == 'atoms') {
-        _DC_.degree = _R_.atomGetDegree(ci.id); 
     } else if (ci.map == 'bonds') {
         // calculate fragment center
         var molecule = _R_.ctab.molecule;
@@ -888,7 +886,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         var sign = this._getSign(molecule, bond, _DC_.v0);
         
         // calculate default template flip
-        _DC_.sign1 = sign;
+        _DC_.sign1 = sign || 1;
         _DC_.sign2 = this.template.sign;
     }
     return true;
@@ -978,11 +976,34 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
             if (!ci || ci.type == 'Canvas') {
                 _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(_DC_.xy0, 0, this.template);
             } else if (ci.map == 'atoms') {
-                if (_DC_.degree > 1) {
+                var degree = _R_.atomGetDegree(ci.id);
+                
+                if (degree > 1) { // common case
                     _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                         ci.id,
                         null,
                         true,
+                        this.template,
+                        this._calcAngle
+                    );
+                } else if (degree == 1) { // on chain end
+                    var molecule = _R_.ctab.molecule;
+                    var nei_id = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
+                    var atom = molecule.atoms.get(ci.id);
+                    var nei = molecule.atoms.get(nei_id);
+                    
+                    _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
+                        ci.id,
+                        this._calcAngle(nei.pp, atom.pp),
+                        false,
+                        this.template,
+                        this._calcAngle
+                    );
+                } else { // on single atom
+                    _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
+                        ci.id,
+                        0,
+                        false,
                         this.template,
                         this._calcAngle
                     );
@@ -991,9 +1012,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
                 _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
             }
             
-            if ('action' in _DC_) {
-                _R_.update();
-            }
+            _R_.update();
         }
         
         if ('action' in this.dragCtx) {

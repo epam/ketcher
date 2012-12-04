@@ -676,6 +676,27 @@ rnd.ReLoop = function (loop)
 	this.radius = new util.Vec2();
 };
 
+rnd.ReStruct.prototype.loopHasSelfIntersections = function (hbs)
+{
+    for (var i = 0; i < hbs.length; ++i) {
+        var hbi = this.molecule.halfBonds.get(hbs[i]);
+        var ai = this.atoms.get(hbi.begin).a.pp;
+        var bi = this.atoms.get(hbi.end).a.pp;
+        var set = util.Set.fromList([hbi.begin, hbi.end]);
+        for (var j = i + 2; j < hbs.length; ++j) {
+            var hbj = this.molecule.halfBonds.get(hbs[j]);
+            if (util.Set.contains(set, hbj.begin) || util.Set.contains(set, hbj.end))
+                continue; // skip edges sharing an atom
+            var aj = this.atoms.get(hbj.begin).a.pp;
+            var bj = this.atoms.get(hbj.end).a.pp;
+            if (util.Vec2.segmentIntersection(ai, bi, aj, bj)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 rnd.ReStruct.prototype.findLoops = function ()
 {
 	var struct = this.molecule;
@@ -706,21 +727,23 @@ rnd.ReStruct.prototype.findLoops = function ()
 								util.Vec2.dot(hba.dir, hbb.dir));
 						if (angle > 0)
 							convex = false;
-						if (hbb.contra == loop[k]) // back and force one edge
+						if (hbb.contra == loop[k]) // back and forth along the same edge
 							totalAngle += Math.PI;
 						else
 							totalAngle += angle;
 					}
-					if (Math.abs(totalAngle) < Math.PI) // loop is internal
-						loopId = struct.loops.add(new chem.Loop(loop, struct, convex));
-					else
+					if (Math.abs(totalAngle) < Math.PI && !this.loopHasSelfIntersections(loop)) { // loop is internal
+                                            loopId = struct.loops.add(new chem.Loop(loop, struct, convex));
+                                        } else {
 						loopId = -2;
+                                        }
 					loop.each(function(hbid){
 						struct.halfBonds.get(hbid).loop = loopId;
 						this.markBond(struct.halfBonds.get(hbid).bid, 1);
 					}, this);
-					if (loopId >= 0)
+					if (loopId >= 0) {
 						this.reloops.set(loopId, new rnd.ReLoop(struct.loops.get(loopId)));
+                                        }
 					break;
 				} else {
 					loop.push(j);
@@ -815,10 +838,11 @@ rnd.ReStruct.prototype.loopRemove = function (loopId)
 };
 
 rnd.ReStruct.prototype.loopIsValid = function (rlid, reloop) {
+        var halfBonds = this.molecule.halfBonds;
 	var loop = reloop.loop;
 	var bad = false;
 	loop.hbs.each(function(hbid){
-		if (!this.molecule.halfBonds.has(hbid)) {
+		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid) {
 			bad = true;
 		}
 	}, this);

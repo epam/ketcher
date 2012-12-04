@@ -88,6 +88,34 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
     return this.render;
 };
 
+ketcher.testSegment = function (clientArea)
+{
+    var sz = 600;
+    var bx = 50, by = 50, bw = sz, bh = sz;
+
+    var b = new util.Box2Abs(bx, by, bx + bw, by + bh);
+    var c = new Raphael(clientArea);
+
+    var list = [];
+    for (var i = 0; i < 100000; ++i) {
+        var a = new util.Vec2(Math.random() * sz + 50, Math.random() * sz + 50);
+        var b = new util.Vec2(Math.random() * sz + 50, Math.random() * sz + 50);
+        var add = true;
+        for (var j = 0; j < list.length; ++j) {
+            if (util.Vec2.segmentIntersection(a, b, list[j][0], list[j][1])) {
+                add = false;
+                break;
+            }
+        }
+        if (add)
+            list.push([a,b]);
+    }
+    c.rect(50, 50, sz, sz).attr({stroke:'#0f0'});
+    for (var j = 0; j < list.length; ++j) {
+        c.path("M{0},{1}L{2},{3}",list[j][0].x,list[j][0].y,list[j][1].x,list[j][1].y).attr({'stroke-width':1, stroke:'#000'});
+    }
+}
+
 /*
 ketcher.testShiftRayBox = function (clientArea)
 {

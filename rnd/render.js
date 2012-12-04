@@ -390,6 +390,7 @@ rnd.Render.prototype.invalidateLoop = function (bid)
 rnd.Render.prototype.invalidateBond = function (bid)
 {
 	var bond = this.ctab.bonds.get(bid);
+        this.invalidateLoop(bid);
 	this.invalidateAtom(bond.b.begin, 0);
 	this.invalidateAtom(bond.b.end, 0);
 };

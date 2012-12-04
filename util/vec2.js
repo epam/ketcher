@@ -36,6 +36,14 @@ util.Vec2 = function (x, y)
 util.Vec2.ZERO = new util.Vec2(0, 0);
 util.Vec2.UNIT = new util.Vec2(1, 1);
 
+util.Vec2.segmentIntersection = function (a, b, c, d) {
+    var dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
+    var dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
+    var da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
+    var db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
+    return dc * dd <= 0 && da * db <= 0;
+}
+
 util.Vec2.prototype.length = function ()
 {
     return Math.sqrt(this.x * this.x + this.y * this.y);

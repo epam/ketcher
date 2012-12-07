@@ -333,6 +333,8 @@ chem.Struct.Atom.attrlist = {
 	'unsaturatedAtom':0,
 	'hCount':0,
 	'atomList':null,
+    'invRet':0,
+    'exactChangeFlag':0,
     'rglabel':null,
     'attpnt':null,
     'aam':0

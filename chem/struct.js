@@ -351,7 +351,7 @@ chem.Struct.Atom.prototype.clone = function(fidMap)
 
 chem.Struct.Atom.prototype.isQuery =  function ()
 {
-	return this.atomList != null || this.label == 'A';
+	return this.atomList != null || this.label == 'A' || this.attpnt || this.hCount;
 };
 
 chem.Struct.Atom.prototype.pureHydrogen =  function ()

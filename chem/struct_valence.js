@@ -50,13 +50,11 @@ chem.Struct.Atom.prototype.calcValence = function (conn)
 	var charge = atom.charge;
 	var label = atom.label;
 	if (atom.isQuery()) {
-		this.valence = -1;
-		this.implicitH = -1;
+		this.implicitH = 0;
 		return true;
 	}
 	var elem = chem.Element.getElementByLabel(label);
 	if (elem == null) {
-		this.valence = -1;
 		this.implicitH = 0;
 		return true;
 	}
@@ -375,8 +373,7 @@ chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 	if (elem == null)
 		throw new Error("Element " + label + " unknown");
 	if (elem < 0) { // query atom, skip
-		this.valence = -1;
-		this.implicitH = -1;
+		this.implicitH = 0;
 		return null;
 	}
 
@@ -439,18 +436,18 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 {
 	var conn = this.calcConn(aid);
 	var atom = this.atoms.get(aid);
-	if (conn < 0) {
-		atom.implicitH = -1;
+	atom.badConn = false;
+	if (conn < 0 || atom.isQuery()) {
+		atom.implicitH = 0;
 		return;
 	}
-	atom.badConn = false;
 	if (atom.explicitValence) {
 		var elem = chem.Element.getElementByLabel(atom.label);
 		atom.implicitH = 0;
 		if (elem != null) {
 			atom.implicitH = atom.valence - atom.calcValenceMinusHyd(conn);
 			if (atom.implicitH < 0) {
-				atom.implicitH = -1;
+				atom.implicitH = 0;
 				atom.badConn = true;
 			}
 		}

@@ -997,7 +997,7 @@ ui.Action.fromSgroupDeletion = function (id)
     return action;
 };
 
-ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
+ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
 {
     var action = new ui.Action();
     var i;
@@ -1006,7 +1006,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
     //      if yes, how to pass it to the following operations?
     sgid = sgid-0 === sgid ? sgid : ui.render.ctab.molecule.sgroups.newId();
 
-    action.addOp(new ui.Action.OpSGroupCreate(sgid, type));
+    action.addOp(new ui.Action.OpSGroupCreate(sgid, type, pp));
     for (i = 0; i < atoms.length; i++)
         action.addOp(new ui.Action.OpSGroupAtomAdd(sgid, atoms[i]));
 
@@ -1025,7 +1025,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid)
         asterisk_action.mergeWith(action);
         action = asterisk_action;
     }
-
+    
     return ui.Action.fromSgroupAttrs(sgid, attrs).mergeWith(action);
 };
 
@@ -1086,7 +1086,7 @@ ui.Action.fromPaste = function(objects, offset) {
             sgatoms.push(amap[atoms[sgaid]]);
         }
         var newsgid = ui.render.ctab.molecule.sgroups.newId();
-        var sgaction = ui.Action.fromSgroupAddition(sgroup_info.type, sgatoms, sgroup_info.attrs, newsgid);
+        var sgaction = ui.Action.fromSgroupAddition(sgroup_info.type, sgatoms, sgroup_info.attrs, newsgid, sgroup_info.pp ? sgroup_info.pp.add(offset) : null);
         for (var iop = sgaction.operations.length - 1; iop >= 0; iop--) {
             action.addOp(sgaction.operations[iop]);
         }
@@ -1480,15 +1480,18 @@ ui.Action.OpSGroupAttr = function(sgid, attr, value) {
 };
 ui.Action.OpSGroupAttr.prototype = new ui.Action.OpBase();
 
-ui.Action.OpSGroupCreate = function(sgid, type) {
+ui.Action.OpSGroupCreate = function(sgid, type, pp) {
     this.type = 'OpSGroupCreate';
-    this.data = {'sgid' : sgid, 'type' : type};
+    this.data = {'sgid' : sgid, 'type' : type, 'pp': pp};
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sg = new chem.SGroup(this.data.type);
         var sgid = this.data.sgid;
         sg.id = sgid;
         DS.sgroups.set(sgid, sg);
+        if (this.data.pp) {
+            DS.sgroups.get(sgid).pp = new util.Vec2(this.data.pp);
+        }
         RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
         this.data.sgid = sgid;
     };
@@ -1508,6 +1511,7 @@ ui.Action.OpSGroupDelete = function(sgid) {
         var sgid = this.data.sgid;
         var sg = RS.sgroups.get(sgid);
         this.data.type = sg.item.type;
+        this.data.pp = sg.item.pp;
         if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
             RS.clearVisel(RS.sgroupData.get(sgid).visel);
             RS.sgroupData.unset(sgid);

@@ -692,7 +692,6 @@ chem.SGroup.GroupDat = {
 		var settings = render.settings;
 		var paper = render.paper;
 		var set = paper.set();
-		var absolute = this.data.absolute || this.allAtoms;
 		var atoms = chem.SGroup.getAtoms(remol, this);
 		var i;
         var inBonds = [], xBonds = [];

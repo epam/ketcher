@@ -2256,7 +2256,8 @@ ui.structToClipboard = function (clipboard, struct, selection)
             {
                 type: sgroup.type,
                 attrs: sgroup.getAttrs(),
-                atoms: util.array(sgAtoms)
+                atoms: util.array(sgAtoms),
+                pp: sgroup.pp
             };
 
             for (var i = 0; i < sgroup_info.atoms.length; i++)

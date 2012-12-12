@@ -63,14 +63,25 @@ ui.Action.fromMultipleMove = function (lists, d)
 
     var R = ui.render;
     var RS = R.ctab;
+    var DS = RS.molecule;
     var bondlist = [];
+    var loops = util.Set.empty();
     var atomsToInvalidate = util.Set.empty();
     
     if (lists.atoms) {
         var atomSet = util.Set.fromList(lists.atoms);
         RS.bonds.each(function(bid, bond){
-            if (util.Set.contains(atomSet, bond.b.begin) && util.Set.contains(atomSet, bond.b.end))
+            
+            if (util.Set.contains(atomSet, bond.b.begin) && util.Set.contains(atomSet, bond.b.end)) {
                 bondlist.push(bid);
+                // add all adjacent loops
+                // those that are not completely inside the structure will get redrawn anyway
+                util.each(['hb1','hb2'], function(hb){
+                    var loop = DS.halfBonds.get(bond.b[hb]).loop;
+                    if (loop >= 0)
+                        util.Set.add(loops, loop);
+                }, this); 
+            }
             else if (util.Set.contains(atomSet, bond.b.begin))
                 util.Set.add(atomsToInvalidate, bond.b.begin);
             else if (util.Set.contains(atomSet, bond.b.end))
@@ -79,6 +90,9 @@ ui.Action.fromMultipleMove = function (lists, d)
         for (i = 0; i < bondlist.length; ++i) {
             action.addOp(new ui.Action.OpBondMove(bondlist[i], d));
         }
+        util.Set.each(loops, function(loopId){
+            action.addOp(new ui.Action.OpLoopMove(loopId, d));
+        }, this);
         for (i = 0; i < lists.atoms.length; ++i) {
             var aid = lists.atoms[i];
             action.addOp(new ui.Action.OpAtomMove(aid, d, !util.Set.contains(atomsToInvalidate, aid)));
@@ -1413,6 +1427,22 @@ ui.Action.OpBondMove = function(bid, d) {
     };
 };
 ui.Action.OpBondMove.prototype = new ui.Action.OpBase();
+
+ui.Action.OpLoopMove = function(id, d) {
+    this.data = {id : id, d : d};
+    this._execute = function(editor) {
+        var R = editor.render;
+        var RS = R.ctab;
+        RS.reloops.get(this.data.id).visel.translate(R.ps(this.data.d));
+        this.data.d = this.data.d.negated();
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpLoopMove();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpLoopMove.prototype = new ui.Action.OpBase();
 
 ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
     this.type = 'OpSGroupAtomAdd';

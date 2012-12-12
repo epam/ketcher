@@ -514,6 +514,7 @@ rnd.ReStruct.prototype.update = function (force)
 	this.setHydrogenPos();
 	this.initialized = true;
 
+	this.verifyLoops();
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
@@ -521,7 +522,6 @@ rnd.ReStruct.prototype.update = function (force)
 	this.checkLabelsToShow();
 	this.showLabels();
 	this.showBonds();
-	this.verifyLoops();
 	if (updLoops)
 		this.renderLoops();
 	this.drawReactionSymbols();

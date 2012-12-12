@@ -1898,14 +1898,24 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
         switch (type)
         {
         case 'SRU':
-            attrs.connectivity = $('sgroup_connection').value;
-            attrs.subscript = $('sgroup_label').value;
+            attrs.connectivity = $('sgroup_connection').value.strip();
+            attrs.subscript = $('sgroup_label').value.strip();
+            if (attrs.subscript.length != 1 || !attrs.subscript.match(/^[a-zA-Z]$/)) {
+                alert(attrs.subscript.length ? "SRU subscript should consist of a single letter." : "Please provide an SRU subscript.");
+                ui.showDialog('sgroup_properties');
+                return;
+            }
             break;
         case 'MUL':
             attrs.mul = parseInt($('sgroup_label').value);
             break;
         case 'SUP':
-            attrs.name = $('sgroup_label').value;
+            attrs.name = $('sgroup_label').value.strip();
+            if (!attrs.name) {
+                alert("Please provide a name for the superatom.");
+                ui.showDialog('sgroup_properties');
+                return;
+            }
             break;
         case 'DAT':
             attrs.fieldName = $('sgroup_field_name').value.strip();
@@ -1913,8 +1923,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
             attrs.absolute = $('sgroup_pos_absolute').checked;
             attrs.attached = $('sgroup_pos_attached').checked;
 
-            if (attrs.fieldName == '' || attrs.fieldValue == '')
-            {
+            if (attrs.fieldName == '' || attrs.fieldValue == '') {
                 alert("Please, specify data field name and value.");
                 ui.showDialog('sgroup_properties');
                 return;

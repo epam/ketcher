@@ -91,7 +91,8 @@ ui.Action.fromMultipleMove = function (lists, d)
             action.addOp(new ui.Action.OpBondMove(bondlist[i], d));
         }
         util.Set.each(loops, function(loopId){
-            action.addOp(new ui.Action.OpLoopMove(loopId, d));
+            if (RS.reloops.get(loopId) && RS.reloops.get(loopId).visel) // hack
+                action.addOp(new ui.Action.OpLoopMove(loopId, d));
         }, this);
         for (i = 0; i < lists.atoms.length; ++i) {
             var aid = lists.atoms[i];
@@ -1433,7 +1434,10 @@ ui.Action.OpLoopMove = function(id, d) {
     this._execute = function(editor) {
         var R = editor.render;
         var RS = R.ctab;
-        RS.reloops.get(this.data.id).visel.translate(R.ps(this.data.d));
+        // not sure if there should be an action to move a loop in the first place
+        // but we have to somehow move the aromatic ring, which is associated with the loop, rather than with any of the bonds
+        if (RS.reloops.get(this.data.id) && RS.reloops.get(this.data.id).visel)
+            RS.reloops.get(this.data.id).visel.translate(R.ps(this.data.d));
         this.data.d = this.data.d.negated();
     };
     this._invert = function() {

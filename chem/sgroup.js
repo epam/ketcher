@@ -561,6 +561,8 @@ chem.SGroup.GroupSru = {
 				util.Set.contains(a2.sgs, this.id) && !util.Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
+		if (xBonds.length != 0 && xBonds.length != 2)
+			throw {'id':this.id, 'error-type':'cross-bond-number', 'message':"Unsupported cross-bonds number"};
 		this.bonds = xBonds;
 	},
 

@@ -136,11 +136,7 @@ util.identityMap = function (array) {
 };
 
 util.stripRight = function (src) {
-	var i;
-	for (i = 0; i < src.length; ++i)
-		if (src[src.lenght - i - 1] != ' ')
-			break;
-	return src.slice(0, src.length - i);
+        return src.replace(/\s*$/,'');
 };
 
 util.stripQuotes = function (str) {

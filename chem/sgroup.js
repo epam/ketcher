@@ -210,7 +210,7 @@ chem.SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 
 chem.SGroup.bracketPos = function (sg, remol, xbonds) {
     var atoms = sg.atoms;
-    if (xbonds.length != 2) {
+    if (!xbonds || xbonds.length != 2) {
         sg.bracketDir = new util.Vec2(1, 0);
     } else {
         var b1 = remol.bonds.get(xbonds[0]), b2 = remol.bonds.get(xbonds[1]);
@@ -222,28 +222,27 @@ chem.SGroup.bracketPos = function (sg, remol, xbonds) {
 
     var bb = null;
     var render = remol.render;
-    var settings = render.settings;
     for (var i = 0; i < atoms.length; ++i) {
         var aid = atoms[i];
         var atom = remol.atoms.get(aid);
         var bba = atom.visel.boundingBox;
+        var pos = new util.Vec2(atom.a.pp);
         if (bba == null) {
-            var p = new util.Vec2(util.Vec2.dot(atom.a.pp, d), util.Vec2.dot(atom.a.pp, n));
-            bba = new util.Box2Abs(p,p);
+            bba = new util.Box2Abs(pos,pos);
             var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
             bba = bba.extend(ext, ext);
         } else {
             bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
-            util.each([bba.p0.x, bba.p1.x], function(x) {
-                util.each([bba.p0.y, bba.p1.y], function(y) {
-                    var v = new util.Vec2(x, y);
-                    var p = new util.Vec2(util.Vec2.dot(v, d), util.Vec2.dot(v, n));
-                    bba = bba.include(p);
-                }, this);
-            }, this);
-            var yy = [bba.p0.y, bba.p1.y];
         }
-        bb = (bb == null) ? bba : util.Box2Abs.union(bb, bba);
+        var bbb = null;
+        util.each([bba.p0.x, bba.p1.x], function(x) {
+            util.each([bba.p0.y, bba.p1.y], function(y) {
+                var v = new util.Vec2(x, y);
+                var p = new util.Vec2(util.Vec2.dot(v, d), util.Vec2.dot(v, n));
+                bbb = bbb == null ? new util.Box2Abs(p,p) : bbb.include(p);
+            }, this);
+        }, this);
+        bb = (bb == null) ? bbb : util.Box2Abs.union(bb, bbb);
     }
     var vext = new util.Vec2(0.05 * 2, 0.05 * 4);
     if (bb != null)
@@ -254,7 +253,7 @@ chem.SGroup.bracketPos = function (sg, remol, xbonds) {
 
 chem.SGroup.drawBrackets = function (set, render, paper, settings, styles, bb, d, n) {
     d = d || new util.Vec2(1, 0);
-    n = n || new util.Vec2(0, 1);
+    n = n || d.rotateSC(1, 0);
     var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
     var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
     var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
@@ -349,7 +348,8 @@ chem.SGroup.GroupMul = {
         this.areas = [bb];
 	chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
         var idxOffset = 0.25;
-        var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
+        // TODO: fix, the bracket box is in the (d,n) coordinate system!
+        var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset, 
             n, d.x < 0 ? bb.p0.y : bb.p1.y);
         idxPos = render.obj2scaled(idxPos);
         var multIndex = paper.text(idxPos.x, idxPos.y, this.data.mul)
@@ -696,13 +696,13 @@ chem.SGroup.GroupDat = {
 		var set = paper.set();
 		var atoms = chem.SGroup.getAtoms(remol, this);
 		var i;
-        var inBonds = [], xBonds = [];
-        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
-        chem.SGroup.bracketPos(this, remol, xBonds);
+        chem.SGroup.bracketPos(this, remol);
         this.areas = this.bracketBox ? [this.bracketBox] : [];
-		if (this.pp == null) {
-			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
-		}
+        if (this.pp == null) {
+            // NB: we did not pass xbonds parameter to the backetPos method above, 
+            //  so the result will be in the regular coordinate system
+            chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
+        }
         var ps = this.pp.scaled(settings.scaleFactor);
 
         if (this.data.attached) {

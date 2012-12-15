@@ -2159,7 +2159,7 @@ ui.updateClipboardButtons = function ()
     else
         $('paste').removeClassName('buttonDisabled');
 
-    if (ui.editor.hasSelection())
+    if (ui.editor.hasSelection(true))
     {
         $('copy').removeClassName('buttonDisabled');
         $('cut').removeClassName('buttonDisabled');
@@ -2176,6 +2176,11 @@ ui.copy = function (struct, selection)
         struct = ui.ctab;
         selection = ui.editor.getSelection(true);
     }
+
+    // these will be copied automatically along with the
+    //  corresponding s-groups
+    selection.sgroupData.clear();
+
     ui.clipboard =
     {
         atoms: new Array(),
@@ -2202,11 +2207,14 @@ ui.copy = function (struct, selection)
                 return this.rxnPluses[0].pp;
             } else if (this.chiralFlags.length) {
                 return this.chiralFlags[0].pp;
+            } else {
+                return null;
             }
         }
     };
 
     ui.structToClipboard(ui.clipboard, struct, selection);
+    return !!ui.clipboard.getAnchorPosition();
 };
 
 ui.structToClipboard = function (clipboard, struct, selection)
@@ -2323,7 +2331,8 @@ ui.onClick_Cut = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    ui.copy();
+    if (!ui.copy())
+        return;
     ui.removeSelected();
 };
 
@@ -2332,7 +2341,8 @@ ui.onClick_Copy = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    ui.copy();
+    if (!ui.copy())
+        return;
     ui.editor.deselectAll();
 };
 
@@ -2340,7 +2350,6 @@ ui.onClick_Paste = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-
     ui.selectMode('paste');
 };
 

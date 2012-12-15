@@ -33,10 +33,12 @@ rnd.Editor.prototype.selectAll = function() {
 rnd.Editor.prototype.deselectAll = function() {
     this._selectionHelper.setSelection();
 };
-rnd.Editor.prototype.hasSelection = function() {
+rnd.Editor.prototype.hasSelection = function(copyable) {
     if ('selection' in this._selectionHelper)
         for (var map in this._selectionHelper.selection)
-            if (this._selectionHelper.selection[map].length > 0) return true;
+            if (this._selectionHelper.selection[map].length > 0)
+                if (!copyable || map !== 'sgroupData')
+                    return true;
     return false;
 };
 rnd.Editor.prototype.getSelection = function(explicit) {

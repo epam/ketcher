@@ -907,88 +907,81 @@ rnd.ReStruct.prototype.showLabels = function ()
 				throw new Error('Invalid value for the invert/retain flag');
 		}
 
-        var queryAttrsText = "";
-        if (atom.a.ringBondCount != 0) {
-            if (atom.a.ringBondCount > 0)
-                queryAttrsText += "rb" + atom.a.ringBondCount.toString();
-            else if (atom.a.ringBondCount == -1)
-                queryAttrsText += "rb0";
-            else if (atom.a.ringBondCount == -2)
-                queryAttrsText += "rb*";
-            else
-                throw new Error("Ring bond count invalid");
-        }
-        if (atom.a.substitutionCount != 0) {
-            if (queryAttrsText.length > 0)
-                queryAttrsText += ",";
+            var queryAttrsText = "";
+            if (atom.a.ringBondCount != 0) {
+                if (atom.a.ringBondCount > 0)
+                    queryAttrsText += "rb" + atom.a.ringBondCount.toString();
+                else if (atom.a.ringBondCount == -1)
+                    queryAttrsText += "rb0";
+                else if (atom.a.ringBondCount == -2)
+                    queryAttrsText += "rb*";
+                else
+                    throw new Error("Ring bond count invalid");
+            }
+            if (atom.a.substitutionCount != 0) {
+                if (queryAttrsText.length > 0)
+                    queryAttrsText += ",";
 
-            if (atom.a.substitutionCount > 0)
-                queryAttrsText += "s" + atom.a.substitutionCount.toString();
-            else if (atom.a.substitutionCount == -1)
-                queryAttrsText += "s0";
-            else if (atom.a.substitutionCount == -2)
-                queryAttrsText += "s*";
-            else
-                throw new Error("Substitution count invalid");
-        }
-        if (atom.a.unsaturatedAtom > 0) {
-            if (queryAttrsText.length > 0)
-                queryAttrsText += ",";
+                if (atom.a.substitutionCount > 0)
+                    queryAttrsText += "s" + atom.a.substitutionCount.toString();
+                else if (atom.a.substitutionCount == -1)
+                    queryAttrsText += "s0";
+                else if (atom.a.substitutionCount == -2)
+                    queryAttrsText += "s*";
+                else
+                    throw new Error("Substitution count invalid");
+            }
+            if (atom.a.unsaturatedAtom > 0) {
+                if (queryAttrsText.length > 0)
+                    queryAttrsText += ",";
 
-            if (atom.a.unsaturatedAtom == 1)
-                queryAttrsText += "u";
-            else
-                throw new Error("Unsaturated atom invalid value");
-        }
-        if (atom.a.hCount > 0) {
-            if (queryAttrsText.length > 0)
-                queryAttrsText += ",";
+                if (atom.a.unsaturatedAtom == 1)
+                    queryAttrsText += "u";
+                else
+                    throw new Error("Unsaturated atom invalid value");
+            }
+            if (atom.a.hCount > 0) {
+                if (queryAttrsText.length > 0)
+                    queryAttrsText += ",";
 
-            queryAttrsText += "H" + (atom.a.hCount - 1).toString();
-        }
+                queryAttrsText += "H" + (atom.a.hCount - 1).toString();
+            }
 
-        if (queryAttrsText.length > 0) {
-            var queryAttrsPath = paper.text(ps.x, ps.y, queryAttrsText)
+
+            if (atom.a.exactChangeFlag > 0) {
+                if (aamText.length > 0)
+                    aamText += ",";
+                if (atom.a.exactChangeFlag == 1)
+                    aamText += 'ext';
+                else
+                    throw new Error('Invalid value for the exact change flag');
+            }
+        
+            // this includes both aam flags, if any, and query features, if any
+            // we render them together to avoid possible collisions
+            aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
+            if (aamText.length > 0) {
+                var aamPath = paper.text(ps.x, ps.y, aamText)
                 .attr({
                     'font' : settings.font,
                     'font-size' : settings.fontszsub,
                     'fill' : color
                 });
-            var queryAttrsRbb = rnd.relBox(queryAttrsPath.getBBox());
-            this.centerText(queryAttrsPath, queryAttrsRbb);
-            this.pathAndRBoxTranslate(queryAttrsPath, queryAttrsRbb, 0, settings.scaleFactor / 3);
-            this.addReObjectPath('indices', atom.visel, queryAttrsPath, ps);
+                var aamBox = rnd.relBox(aamPath.getBBox());
+                this.centerText(aamPath, aamBox);
+                var dir = this.bisectLargestSector(atom);
+                var visel = atom.visel;
+                var t = 3;
+                // estimate the shift to clear the atom label
+                for (i = 0; i < visel.exts.length; ++i)
+                    t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+                // estimate the shift backwards to account for the size of the aam/query text box itself
+                t += util.Vec2.shiftRayBox(ps, dir.negated(), util.Box2Abs.fromRelBox(aamBox))
+                dir = dir.scaled(8 + t);
+                this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
+                this.addReObjectPath('data', atom.visel, aamPath, ps, true);
+            }
         }
-
-		if (atom.a.exactChangeFlag > 0) {
-			if (aamText.length > 0)
-				aamText += ",";
-			if (atom.a.exactChangeFlag == 1)
-				aamText += 'ext';
-			else
-				throw new Error('Invalid value for the exact change flag');
-		}
-        if (aamText.length > 0) {
-            var aamPath = paper.text(ps.x, ps.y, '.' + aamText + '.')
-                .attr({
-                    'font' : settings.font,
-                    'font-size' : settings.fontszsub,
-                    'fill' : color
-                });
-			var aamBox = rnd.relBox(aamPath.getBBox());
-			this.centerText(aamPath, aamBox);
-
-            var dir = this.bisectLargestSector(atom);
-
-			var visel = atom.visel;
-			var t = 3;
-			for (i = 0; i < visel.exts.length; ++i)
-				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
-			dir = dir.scaled(10 + t);
-			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
-			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
-        }
-	}
 };
 
 rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){

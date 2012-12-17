@@ -13,19 +13,11 @@
 if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
 
-chem.SmilesSaver = function (render)
+chem.SmilesSaver = function ()
 {
     this.smiles = '';
     this._written_atoms = new Array();
     this._written_components = 0;
-
-    if (Object.isUndefined(render))
-    {
-        if (Object.isUndefined(ui.render))
-            throw new Error ("Render object is undefined");
-        this._render = ui.render;
-    } else
-        this._render = render;
 
     this.ignore_errors = false;
 };
@@ -41,6 +33,46 @@ chem.SmilesSaver._Atom = function (h_count)
     this.h_count = h_count;
     this.parent = -1;
 };
+
+chem.SmilesSaver.notInLoop = function(atoms) {
+    var cnt = 0;
+    var pre = {};
+    var low = {};
+    var notInLoop = {};
+
+    for (var v = 0; v < atoms.length; ++v) {
+        low[v] = pre[v] = -1;
+    }
+        
+    var dfs = function(u, v) {
+        pre[v] = cnt++;
+        low[v] = pre[v];
+        var atomV = atoms[v];
+        for (var i = 0; i < atomV.neighbours.length; ++i) {
+            var w = atomV.neighbours[i].aid;
+            if (pre[w] < 0) {
+                dfs(v, w);
+                low[v] = Math.min(low[v], low[w]);
+                if (low[w] === pre[w])
+                    notInLoop[atomV.neighbours[i].bid] = 1;
+            } else if (w != u) {
+                low[v] = Math.min(low[v], pre[w]);
+            }
+        }
+    }
+
+    for (v = 0; v < atoms.length; v++)
+        if (atoms[v] && pre[v] < 0)
+               dfs(v, v);
+
+    return notInLoop;
+};
+
+chem.SmilesSaver.prototype.isBondInRing = function (bid) {
+    if (typeof(this.notInLoop) === 'undefined' || this.notInLoop === null)
+        throw new Error("Init this.notInLoop prior to calling this method");
+    return !this.notInLoop[bid];
+}
 
 chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 {
@@ -96,6 +128,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         this.atoms[bond.end].neighbours.push({aid: bond.begin, bid: bid});
     }, this);
 
+    this.notInLoop = chem.SmilesSaver.notInLoop(this.atoms);
     this._touched_cistransbonds = 0;
     this._markCisTrans(molecule);
 
@@ -305,7 +338,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             else if (bond.type == chem.Struct.BOND.TYPE.TRIPLE)
                 this.smiles += '#';
             else if (bond.type == chem.Struct.BOND.TYPE.AROMATIC &&
-                (!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase || !this._render.isBondInRing(e_idx)))
+                (!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase || !this.isBondInRing(e_idx)))
                     this.smiles += ':'; // TODO: Check if this : is needed
             else if (bond.type == chem.Struct.BOND.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
                 this.smiles += '-';
@@ -525,7 +558,7 @@ chem.SmilesSaver.prototype._markCisTrans = function (mol)
    {
       var bond = mol.bonds.get(bid);
 
-      if (ct.parity != 0 && !this._render.isBondInRing(bid))
+      if (ct.parity != 0 && !this.isBondInRing(bid))
       {
          var nei_beg = this.atoms[bond.begin].neighbours;
          var nei_end = this.atoms[bond.end].neighbours;
@@ -686,7 +719,7 @@ chem.SmilesSaver.prototype._calcBondDirection = function (mol, idx, vprev)
       ntouched = 0;
       this.cis_trans.each(function (bid, ct)
       {
-         if (ct.parity != 0 && !this._render.isBondInRing(bid))
+         if (ct.parity != 0 && !this.isBondInRing(bid))
          {
             if (this._updateSideBonds(mol, bid))
                ntouched++;

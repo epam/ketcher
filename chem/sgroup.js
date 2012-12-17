@@ -251,36 +251,99 @@ chem.SGroup.bracketPos = function (sg, remol, xbonds) {
     sg.bracketBox = bb;
 };
 
-chem.SGroup.drawBrackets = function (set, render, paper, settings, styles, bb, d, n) {
-    d = d || new util.Vec2(1, 0);
-    n = n || d.rotateSC(1, 0);
-    var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
-    var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
-    var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
-    var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
-    var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
-    var a02 = a0.addScaled(d, bracketWidth);
-    var a12 = a1.addScaled(d, bracketWidth);
-    var b02 = b0.addScaled(d, -bracketWidth);
-    var b12 = b1.addScaled(d, -bracketWidth);
+chem.SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) {
+    var brackets = chem.SGroup.getBracketParameters(render.ctab, xbonds, atomSet, bb, d, n);
+    var ir = -1;
+    for (var i = 0; i < brackets.length; ++i) {
+       var bracket = brackets[i];
+       var path = chem.SGroup.drawBracket(render, render.paper, render.styles, bracket.d, bracket.n, bracket.c, bracket.w, bracket.h);
+       set.push(path);
+       if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
+           ir = i;
+    }
+    var bracketR = brackets[ir];
+    var renderIndex = function(text, shift) {
+        var indexPos = render.ps(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
+        var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
+        .attr({
+            'font' : render.settings.font,
+            'font-size' : render.settings.fontszsub
+        });
+        if (indexAttribute)
+            indexPath.attr(indexAttribute);
+        var indexBox = util.Box2Abs.fromRelBox(rnd.relBox(indexPath.getBBox()));
+        var t = Math.max(util.Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
+        indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
+        set.push(indexPath);
+    }
+    if (lowerIndexText) {
+        renderIndex(lowerIndexText, 0.5);
+    }
+    if (upperIndexText) {
+        renderIndex(upperIndexText, -0.5);
+    }
+};
+
+chem.SGroup.drawBracket = function (render, paper, styles, d, n, c, bracketWidth, bracketHeight) {
+    bracketWidth = bracketWidth || 0.25;
+    bracketHeight = bracketHeight || 1.0;
+    var a0 = c.addScaled(n, -0.5*bracketHeight);
+    var a1 = c.addScaled(n, 0.5*bracketHeight);
+    var b0 = a0.addScaled(d, -bracketWidth);
+    var b1 = a1.addScaled(d, -bracketWidth);
 
     a0 = render.obj2scaled(a0);
     a1 = render.obj2scaled(a1);
     b0 = render.obj2scaled(b0);
     b1 = render.obj2scaled(b1);
-    a02 = render.obj2scaled(a02);
-    a12 = render.obj2scaled(a12);
-    b02 = render.obj2scaled(b02);
-    b12 = render.obj2scaled(b12);
 
-    var leftBracket = paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}",
-        a02.x, a02.y, a0.x, a0.y, a1.x, a1.y, a12.x, a12.y)
+    return paper.path("M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}",
+        b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
         .attr(styles.sgroupBracketStyle);
+}
 
-    var rightBracket = paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}",
-        b02.x, b02.y, b0.x, b0.y, b1.x, b1.y, b12.x, b12.y)
-        .attr(styles.sgroupBracketStyle);
-    set.push(leftBracket, rightBracket);
+chem.SGroup.getBracketParameters = function (remol, xbonds, atomSet, bb, d, n) {
+    var bracketParams = function(c, d, w, h) {
+        this.c = c;
+        this.d = d;
+        this.n = d.rotateSC(1,0);
+        this.w = w;
+        this.h = h;        
+    }
+    var brackets = [];
+    if (xbonds.length < 2) {
+        (function () {
+            d = d || new util.Vec2(1, 0);
+            n = n || d.rotateSC(1, 0);
+            var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
+            var cl = util.Vec2.lc2(d, bb.p0.x, n, 0.5*(bb.p0.y+bb.p1.y));
+            var cr = util.Vec2.lc2(d, bb.p1.x, n, 0.5*(bb.p0.y+bb.p1.y));
+            var bracketHeight = bb.sz().y;    
+
+            brackets.push(new bracketParams(cl, d.negated(), bracketWidth, bracketHeight), new bracketParams(cr, d, bracketWidth, bracketHeight));
+        })();
+    } else if (xbonds.length == 2) {
+        (function () {
+            var b1 = remol.bonds.get(xbonds[0]), b2 = remol.bonds.get(xbonds[1]);
+            var cl = b1.b.center, cr = b2.b.center;
+            var d = util.Vec2.diff(cr, cl).normalized();
+
+            var bracketWidth = 0.25, bracketHeight = 1.5;
+            brackets.push(new bracketParams(cl, d.negated(), bracketWidth, bracketHeight), new bracketParams(cr, d, bracketWidth, bracketHeight));
+        })();
+
+    } else {
+        (function () {
+            for (var i = 0; i < xbonds.length; ++i) {
+                var b = remol.bonds.get(xbonds[i]).b;
+                var hb = remol.molecule.halfBonds.get(util.Set.contains(atomSet, b.begin) ? b.hb1 : b.hb2);
+                var c = b.center;
+                var d = hb.dir;
+                brackets.push(new bracketParams(c, d, 0.2, 1.0));
+            }
+        })();
+    }
+    return brackets;
 };
 
 chem.SGroup.getObjBBox = function (atoms, mol)
@@ -335,32 +398,17 @@ chem.SGroup.getBonds = function (mol, sg) {
 
 chem.SGroup.GroupMul = {
 	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var styles = render.styles;
-		var paper = render.paper;
-		var set = paper.set();
-        var inBonds = [], xBonds = [];
-        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
-        chem.SGroup.bracketPos(this, remol, xBonds);
-        var bb = this.bracketBox;
-        var d = this.bracketDir, n = d.rotateSC(1, 0);
-        this.areas = [bb];
-	chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
-        var idxOffset = 0.25;
-        // TODO: fix, the bracket box is in the (d,n) coordinate system!
-        var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset, 
-            n, d.x < 0 ? bb.p0.y : bb.p1.y);
-        idxPos = render.obj2scaled(idxPos);
-        var multIndex = paper.text(idxPos.x, idxPos.y, this.data.mul)
-		.attr({
-			'font' : settings.font,
-			'font-size' : settings.fontszsub
-		});
-		var multIndexBox = rnd.relBox(multIndex.getBBox());
-		multIndex.translateAbs(0.5 * multIndexBox.width, -0.3 * multIndexBox.height);
-		set.push(multIndex);
-		return set;
+            var render = remol.render;
+            var set = render.paper.set();
+            var inBonds = [], xBonds = [];
+            var atomSet = util.Set.fromList(this.atoms);
+            chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+            chem.SGroup.bracketPos(this, remol, xBonds);
+            var bb = this.bracketBox;
+            var d = this.bracketDir, n = d.rotateSC(1, 0);
+            this.areas = [bb];
+            chem.SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, this.data.mul);
+            return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
@@ -504,42 +552,21 @@ chem.SGroup.GroupMul = {
 
 chem.SGroup.GroupSru = {
 	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var styles = render.styles;
-		var paper = render.paper;
-		var set = paper.set();
-        var inBonds = [], xBonds = [];
-        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
-        chem.SGroup.bracketPos(this, remol, xBonds);
-        var bb = this.bracketBox;
-        var d = this.bracketDir, n = d.rotateSC(1, 0);
-        this.areas = [bb];
-        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
-		var connectivity = this.data.connectivity || 'eu';
-        var idxOffset = 0.25;
-		if (connectivity != 'ht') {
-            var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
-                n, d.x >= 0 ? bb.p0.y : bb.p1.y);
-            idxPos = render.obj2scaled(idxPos);
-			var connectivityIndex = paper.text(idxPos.x, idxPos.y, connectivity)
-			.attr({
-				'font' : settings.font,
-				'font-size' : settings.fontszsub
-			});
-			set.push(connectivityIndex);
-		}
-		this.data.subscript = this.data.subscript || 'n';
-        idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
-            n, d.x < 0 ? bb.p0.y : bb.p1.y);
-        idxPos = render.obj2scaled(idxPos);
-		var subscript = paper.text(idxPos.x, idxPos.y, this.data.subscript)
-		.attr({
-			'font' : settings.font,
-			'font-size' : settings.fontszsub
-		});
-		set.push(subscript);
-		return set;
+            var render = remol.render;
+            var set = render.paper.set();
+            var inBonds = [], xBonds = [];
+            var atomSet = util.Set.fromList(this.atoms);
+            chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+            chem.SGroup.bracketPos(this, remol, xBonds);
+            var bb = this.bracketBox;
+            var d = this.bracketDir, n = d.rotateSC(1, 0);
+            this.areas = [bb];
+            var connectivity = this.data.connectivity || 'eu';
+            if (connectivity == 'ht')
+                connectivity = '';
+            var subscript = this.data.subscript || 'n';
+            chem.SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, subscript, connectivity);
+            return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
@@ -573,34 +600,19 @@ chem.SGroup.GroupSru = {
 
 chem.SGroup.GroupSup = {
 	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var styles = render.styles;
-		var paper = render.paper;
-		var set = paper.set();
-        var inBonds = [], xBonds = [];
-        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
-        chem.SGroup.bracketPos(this, remol, xBonds);
-        var bb = this.bracketBox;
-        var d = this.bracketDir, n = d.rotateSC(1, 0);
-        this.areas = [bb];
-        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
-		if (this.data.name) {
-            var idxOffset = 0.25;
-            var idxPos = util.Vec2.lc(d, d.x < 0 ? bb.p0.x - idxOffset : bb.p1.x + idxOffset,
-                n, d.x < 0 ? bb.p0.y : bb.p1.y);
-            idxPos = render.obj2scaled(idxPos);
-			var name = paper.text(idxPos.x, idxPos.y, this.data.name)
-			.attr({
-				'font' : settings.font,
-				'font-size' : settings.fontszsub,
-				'font-style' : 'italic'
-			});
-			var nameBox = rnd.relBox(name.getBBox());
-			name.translateAbs(0.5 * nameBox.width * d.x, 0);
-			set.push(name);
-		}
-		return set;
+            var render = remol.render;
+            var set = render.paper.set();
+            var inBonds = [], xBonds = [];
+            var atomSet = util.Set.fromList(this.atoms);
+            chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+            chem.SGroup.bracketPos(this, remol, xBonds);
+            var bb = this.bracketBox;
+            var d = this.bracketDir, n = d.rotateSC(1, 0);
+            this.areas = [bb];
+            chem.SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, this.data.name, null, {
+                'font-style' : 'italic'
+            });
+            return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
@@ -634,20 +646,21 @@ chem.SGroup.GroupSup = {
 };
 
 chem.SGroup.GroupGen = {
-	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var styles = render.styles;
-		var paper = render.paper;
-		var set = paper.set();
-        var inBonds = [], xBonds = [];
-        chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, util.Set.fromList(this.atoms));
-        chem.SGroup.bracketPos(this, remol, xBonds);
-        var bb = this.bracketBox;
-        var d = this.bracketDir, n = d.rotateSC(1, 0);
-        this.areas = [bb];
-        chem.SGroup.drawBrackets(set, render, paper, settings, styles, bb, d, n);
-		return set;
+        draw: function (remol) {
+            var render = remol.render;
+            var settings = render.settings;
+            var styles = render.styles;
+            var paper = render.paper;
+            var set = paper.set();
+            var inBonds = [], xBonds = [];
+            var atomSet = util.Set.fromList(this.atoms);
+            chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+            chem.SGroup.bracketPos(this, remol, xBonds);
+            var bb = this.bracketBox;
+            var d = this.bracketDir, n = d.rotateSC(1, 0);
+            this.areas = [bb];
+            chem.SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n);
+            return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {

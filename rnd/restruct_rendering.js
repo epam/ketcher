@@ -1020,50 +1020,6 @@ rnd.ReStruct.prototype.bisectLargestSector = function (atom)
     return new util.Vec2(Math.cos(ang), Math.sin(ang));
 };
 
-
-// TODO to be removed
-/** @deprecated please use ReBond.setHighlight instead */
-rnd.ReStruct.prototype.showBondHighlighting = function (bid, bond, visible)
-{
-	var exists = (bond.highlighting != null) && !bond.highlighting.removed;
-    // rbalabanov: here is temporary fix for "drag issue" on iPad
-    //BEGIN
-    exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(bond.highlighting) < 0);
-    //END
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var paper = render.paper;
-			this.bondRecalc(render.settings, bond);
-			bond.highlighting = paper
-			.ellipse(bond.b.center.x, bond.b.center.y, bond.b.sa, bond.b.sb)
-			.rotate(bond.b.angle)
-			.attr(styles.highlightStyle);
-			if (rnd.DEBUG)
-				bond.highlighting.attr({
-					'fill':'#AAA'
-				});
-			this.addReObjectPath('highlighting', bond.visel, bond.highlighting);
-		}
-		if (rnd.DEBUG)
-			bond.highlighting.attr({
-				'stroke':'#0c0'
-			});
-		else
-			bond.highlighting.show();
-	} else {
-		if (exists) {
-			if (rnd.DEBUG)
-				bond.highlighting.attr({
-					'stroke':'none'
-				});
-			else
-				bond.highlighting.hide();
-		}
-	}
-};
-
 rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 
     var render = this.render;
@@ -1071,15 +1027,15 @@ rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
     var atom2 = this.atoms.get(bond.b.end);
     var p1 = render.ps(atom1.a.pp);
     var p2 = render.ps(atom2.a.pp);
-	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
-	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
+    var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
+    var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
     hb1.p = this.shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
     hb2.p = this.shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
-	bond.b.center = util.Vec2.lc2(p1, 0.5, p2, 0.5);
-	bond.b.len = util.Vec2.dist(p1, p2);
-	bond.b.sb = settings.lineWidth * 5;
-	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
-	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
+    bond.b.center = util.Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
+    bond.b.len = util.Vec2.dist(p1, p2);
+    bond.b.sb = settings.lineWidth * 5;
+    bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
+    bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };
 
 rnd.ReStruct.prototype.showBonds = function ()
@@ -1108,8 +1064,8 @@ rnd.ReStruct.prototype.showBonds = function ()
 			topology.rbb = rnd.relBox(topology.path.getBBox());
 			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
-		if (bond.highlight)
-			this.showBondHighlighting(bid, bond, true);
+//		if (bond.highlight)
+//			this.showBondHighlighting(bid, bond, true);
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null, irbb = null;
 		if (opt.showBondIds) {

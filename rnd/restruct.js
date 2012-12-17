@@ -134,7 +134,8 @@ rnd.ReBond.prototype = new rnd.ReObject();
 rnd.ReBond.prototype.drawHighlight = function(render)
 {
     render.ctab.bondRecalc(render.settings, this);
-    var ret = render.paper.circle(this.b.center.x, this.b.center.y, 0.8 * render.styles.atomSelectionPlateRadius)
+    var c = render.ps(this.b.center);
+    var ret = render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
         .attr(render.styles.highlightStyle);
     render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
@@ -142,7 +143,8 @@ rnd.ReBond.prototype.drawHighlight = function(render)
 
 rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	restruct.bondRecalc(restruct.render.settings, this);
-	return paper.circle(this.b.center.x, this.b.center.y, 0.8 * styles.atomSelectionPlateRadius)
+        var c = restruct.render.ps(this.b.center);
+	return paper.circle(c.x, c.y, 0.8 * styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
 };
 
@@ -1113,6 +1115,16 @@ rnd.ReRGroup.prototype.calcBBox = function(render) {
     return ret;
 };
 
+rnd.ReRGroup.drawBrackets = function (set, render, bb, d, n) {
+    d = d || new util.Vec2(1, 0);
+    var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
+    var height = bb.p1.y - bb.p0.y;
+    var cy = 0.5 * (bb.p1.y + bb.p0.y);
+    var leftBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d.negated(), d.negated().rotateSC(1, 0), new util.Vec2(bb.p0.x, cy), bracketWidth, height);
+    var rightBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d, d.rotateSC(1, 0), new util.Vec2(bb.p1.x, cy), bracketWidth, height);
+    set.push(leftBracket, rightBracket);
+};
+
 rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review parameter list
     var bb = this.calcBBox(render);
     var settings = render.settings;
@@ -1121,7 +1133,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
         var p0 = render.obj2scaled(bb.p0);
         var p1 = render.obj2scaled(bb.p1);
         var brackets = render.paper.set();
-        chem.SGroup.drawBrackets(brackets, render, render.paper, settings, render.styles, bb);
+        rnd.ReRGroup.drawBrackets(brackets, render, bb);
         ret.data.push(brackets);
         var key = render.ctab.rgroups.keyOf(this);
         var label = render.paper.text(p0.x, (p0.y + p1.y)/2, 'R' + key + '=')

@@ -381,7 +381,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         if (this.dragCtx.action)
             this.dragCtx.action.perform();
         this.dragCtx.action = ui.Action.fromMultipleMove(
-            this.editor._selectionHelper.selection,
+            this.editor.getSelection(true),
             this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));
         // finding & highlighting object to stick to
         if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {

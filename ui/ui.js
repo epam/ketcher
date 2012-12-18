@@ -158,8 +158,7 @@ ui.initTemplates = function ()
                             tmpl.name + '</td></tr>');
                 } else {
                     // load template molfile on demand
-                    var lines = tmpl.molfile.split('\n');
-                    tmpl.molecule = chem.Molfile.parseCTFile(lines);
+                    tmpl.molecule = chem.Molfile.parseCTFile(tmpl.molfile.split('\n'));
                     
                     // todo: render button from tmpl.molecule
                 }
@@ -247,8 +246,7 @@ ui.init = function ()
     }
 
     // OS X specific stuff
-    if (ui.is_osx)
-    {
+    if (ui.is_osx) {
         $$('.toolButton, .toolButton > img, .sideButton').each(function (button)
         {
             button.title = button.title.replace("Ctrl", "Cmd");
@@ -256,8 +254,7 @@ ui.init = function ()
     }
     
     // Touch device stuff
-    if (ui.is_touch)
-    {
+    if (ui.is_touch) {
         EventMap =
         {
             mousemove: 'touchmove',
@@ -272,8 +269,7 @@ ui.init = function ()
         //BEGIN
         rnd.ReStruct.prototype.hiddenPaths = [];
         
-        rnd.ReStruct.prototype.clearVisel = function (visel)
-        {
+        rnd.ReStruct.prototype.clearVisel = function (visel) {
             for (var i = 0; i < visel.paths.length; ++i) {
                 visel.paths[i].hide();
                 this.hiddenPaths.push(visel.paths[i]);
@@ -409,14 +405,12 @@ ui.init = function ()
     });
 
     ui.onResize_Ketcher();
-    if (Prototype.Browser.IE)
-    {
+    if (Prototype.Browser.IE) {
         ui.client_area.absolutize(); // Needed for clipping and scrollbars in IE
         $('ketcher_window').observe('resize', ui.onResize_Ketcher);
     }
 
-    new Ajax.Request(ui.path + 'knocknock',
-    {
+    new Ajax.Request(ui.path + 'knocknock', {
         method: 'get',
         asynchronous : false,
         onComplete: function (res)
@@ -426,20 +420,16 @@ ui.init = function ()
         }
     });
 
-    if (this.standalone)
-    {
-        $$('.serverRequired').each(function (el)
-        {
+    if (this.standalone) {
+        $$('.serverRequired').each(function(el) {
             if (el.hasClassName('toolButton'))
                 el.addClassName('buttonDisabled');
             else
                 el.hide();
         });
         document.title += ' (standalone)';
-    } else
-    {
-        if (ui.path != '/')
-        {
+    } else {
+        if (ui.path != '/') {
             $('upload_mol').action = ui.base_url + 'open';
             $('download_mol').action = ui.base_url + 'save';
         }
@@ -531,8 +521,7 @@ ui.parseCTFile = function (molfile, check_empty_line)
     if (lines.length > 0 && lines[0] == 'Ok.')
         lines.shift();
 
-    try
-    {
+    try {
         try {
             return chem.Molfile.parseCTFile(lines);
         } catch (ex) {
@@ -550,8 +539,7 @@ ui.parseCTFile = function (molfile, check_empty_line)
             }
             throw ex;
         }
-    } catch (er)
-    {
+    } catch (er) {
         alert("Error loading molfile.\n"+er.toString());
         return null;
     }
@@ -605,8 +593,7 @@ ui.selectMode = function (mode)
         return;
     }
 
-    if (mode != null)
-    {
+    if (mode != null) {
         if ($(mode).hasClassName('buttonDisabled'))
             return;
 
@@ -732,8 +719,7 @@ ui.onClick_NewFile = function ()
 
     ui.selectMode(ui.defaultSelector);
 
-    if (!ui.ctab.isBlank())
-    {
+    if (!ui.ctab.isBlank()) {
         ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
         ui.render.update();
     }
@@ -904,14 +890,12 @@ ui.onKeyDown_IE = function (event)
     if ($('window_cover').visible())
         return true;
 
-    if (Prototype.Browser.Gecko && event.which == 46)
-    {
+    if (Prototype.Browser.Gecko && event.which == 46) {
         util.stopEventPropagation(event);
         return util.preventDefault(event);
     }
 
-    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && ui.ctrlShortcuts.indexOf(event.which) != -1)
-    {
+    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && ui.ctrlShortcuts.indexOf(event.which) != -1) {
         // don't handle the shrtcuts in the regular fashion, e.g. saving the page, opening a document, etc.
         util.stopEventPropagation(event);
         return util.preventDefault(event);
@@ -921,8 +905,7 @@ ui.onKeyDown_IE = function (event)
         return;
 
     // Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y, Ctrl+Z
-    if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey)
-    {
+    if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey) {
         util.stopEventPropagation(event);
         return util.preventDefault(event);
     }
@@ -932,12 +915,9 @@ ui.onKeyDown_IE = function (event)
 ui.onKeyUp = function (event)
 {
     // Esc
-    if (event.keyCode == 27)
-    {
-        if (this == document || !this.visible())
-        {
-            if (!$('window_cover').visible())
-            {
+    if (event.keyCode == 27) {
+        if (this == document || !this.visible()) {
+            if (!$('window_cover').visible()) {
                 ui.selectMode(ui.defaultSelector);
             }
         } else if (this.hasClassName('dialogWindow'))
@@ -951,8 +931,7 @@ ui.onKeyUp = function (event)
     if ($('window_cover').visible())
         return true;
 
-    if (event.keyCode == 46)
-    {
+    if (event.keyCode == 46) {
         if (ui.editor.hasSelection())
             ui.removeSelected();
         util.stopEventPropagation(event);
@@ -972,8 +951,7 @@ ui.onKeyUp = function (event)
 
     util.stopEventPropagation(event);
 
-    switch (event.keyCode)
-    {
+    switch (event.keyCode) {
     case 46: // Delete
         if (ui.editor.hasSelection())
             ui.removeSelected();
@@ -1036,8 +1014,7 @@ ui.onKeyUp = function (event)
 ui.onKeyPress_Dialog = function (event)
 {
     util.stopEventPropagation(event);
-    if (event.keyCode == 27)
-    {
+    if (event.keyCode == 27) {
         ui.hideDialog(this.id);
         return util.preventDefault(event);
     }
@@ -1046,8 +1023,7 @@ ui.onKeyPress_Dialog = function (event)
 ui.onKeyPress_InputLabel = function (event)
 {
     util.stopEventPropagation(event);
-    if (event.keyCode == 13)
-    {
+    if (event.keyCode == 13) {
         this.hide();
 
         var label = '';
@@ -1094,15 +1070,13 @@ ui.onKeyPress_InputLabel = function (event)
                 charge *= -1;
         }
 
-        if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null)
-        {
+        if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null) {
             ui.addUndoAction(ui.Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
             ui.render.update();
         }
         return util.preventDefault(event);
     }
-    if (event.keyCode == 27)
-    {
+    if (event.keyCode == 27) {
         this.hide();
         return util.preventDefault(event);
     }
@@ -1143,12 +1117,9 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
         ui.selectMode('paste');
     } : ui.updateMolecule;
 
-    if (smiles.indexOf('\n') == -1)
-    {
-        if (ui.standalone)
-        {
-            if (smiles != '')
-            {
+    if (smiles.indexOf('\n') == -1) {
+        if (ui.standalone) {
+            if (smiles != '') {
                 alert('SMILES is not supported in a standalone mode.');
             }
             return;
@@ -1167,8 +1138,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
                     throw new Error('Something went wrong' + res.responseText);
             }
         });
-    } else if (!ui.standalone && force_layout)
-    {
+    } else if (!ui.standalone && force_layout) {
         new Ajax.Request(ui.path + 'layout',
         {
             method: 'post',
@@ -1191,8 +1161,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
 
 ui.dearomatizeMolecule = function (mol_string, aromatize)
 {
-    if (!ui.standalone)
-    {
+    if (!ui.standalone) {
         new Ajax.Request(ui.path + (aromatize ? 'aromatize' : 'dearomatize'),
         {
             method: 'post',
@@ -1437,11 +1406,9 @@ ui.onClick_Aromatize = function ()
 
     var ms = new chem.MolfileSaver();
 
-    try
-    {
+    try {
         ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), true);
-    } catch (er)
-    {
+    } catch (er) {
         alert("Molfile: " + er.message);
     }
 };
@@ -1453,11 +1420,9 @@ ui.onClick_Dearomatize = function ()
 
     var ms = new chem.MolfileSaver();
 
-    try
-    {
+    try {
         ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), false);
-    } catch (er)
-    {
+    } catch (er) {
         alert("Molfile: " + er.message);
     }
 };
@@ -1535,8 +1500,7 @@ ui.atomForNewBond = function (id)
 
     // TODO: impove layout: tree, ...
 
-    for (i = 0; i < neighbours.length; i++)
-    {
+    for (i = 0; i < neighbours.length; i++) {
         angle = util.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
 
         if (angle < 0)
@@ -1548,23 +1512,19 @@ ui.atomForNewBond = function (id)
 
     var v = new util.Vec2(1, 0);
 
-    if (neighbours.length > 0)
-    {
-        if (neighbours.length == 1)
-        {
+    if (neighbours.length > 0) {
+        if (neighbours.length == 1) {
             max_angle = -(4 * Math.PI / 3);
 
             // zig-zag
             var nei = ui.render.atomGetNeighbors(id)[0];
-            if (ui.render.atomGetDegree(nei.aid) > 1)
-            {
+            if (ui.render.atomGetDegree(nei.aid) > 1) {
                 var nei_neighbours = new Array();
                 var nei_pos = ui.render.atomGetPos(nei.aid);
                 var nei_v = util.Vec2.diff(pos, nei_pos);
                 var nei_angle = Math.atan2(nei_v.y, nei_v.x);
 
-                ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei)
-                {
+                ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei) {
                     var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
 
                     if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < 0.1)
@@ -1578,8 +1538,7 @@ ui.atomForNewBond = function (id)
 
                     nei_neighbours.push(ang);
                 });
-                nei_neighbours.sort(function (nei1, nei2)
-                {
+                nei_neighbours.sort(function (nei1, nei2) {
                     return nei1 - nei2;
                 });
 
@@ -1745,8 +1704,7 @@ ui.onChange_AtomLabel = function ()
 
     var element = chem.Element.getElementByLabel(this.value);
 
-    if (element == null && this.value != 'A' && this.value != '*' && this.value != 'Q' && this.value != 'X' && this.value != 'R')
-    {
+    if (element == null && this.value != 'A' && this.value != '*' && this.value != 'Q' && this.value != 'X' && this.value != 'R') {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
 
         if (this.value != 'A' && this.value != '*')
@@ -1799,8 +1757,7 @@ ui.showBondProperties = function (id)
     var type = ui.render.bondGetAttr(id, 'type');
     var stereo = ui.render.bondGetAttr(id, 'stereo');
 
-    for (var bond in ui.bondTypeMap)
-    {
+    for (var bond in ui.bondTypeMap) {
         if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo)
             break;
     }
@@ -1958,8 +1915,7 @@ ui.onChange_SGroupType = function ()
 {
     var type = $('sgroup_type').value;
 
-    if (type == 'DAT')
-    {
+    if (type == 'DAT') {
         $$('.generalSGroup').each(function (el) {el.hide()});
         $$('.dataSGroup').each(function (el) {el.show()});
 
@@ -2159,12 +2115,10 @@ ui.updateClipboardButtons = function ()
     else
         $('paste').removeClassName('buttonDisabled');
 
-    if (ui.editor.hasSelection(true))
-    {
+    if (ui.editor.hasSelection(true)) {
         $('copy').removeClassName('buttonDisabled');
         $('cut').removeClassName('buttonDisabled');
-    } else
-    {
+    } else {
         $('copy').addClassName('buttonDisabled');
         $('cut').addClassName('buttonDisabled');
     }
@@ -2218,7 +2172,7 @@ ui.copy = function (struct, selection)
 };
 
 ui.structToClipboard = function (clipboard, struct, selection)
-    {
+{
     selection = selection || {
         atoms: struct.atoms.keys(),
         bonds: struct.bonds.keys(),

@@ -21,16 +21,6 @@ rnd.logcnt = 0;
 rnd.logmouse = false;
 rnd.hl = false;
 
-/** @deprecated */
-rnd.mouseEventNames = [
-	'Click',
-	'DblClick',
-	'MouseOver',
-	'MouseDown',
-	'MouseMove',
-	'MouseOut'
-	];
-
 rnd.logMethod = function () { };
 //rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
@@ -74,15 +64,6 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.size = new util.Vec2();
 	this.viewSz = viewSz || new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
 	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
-    /** @deprecated */
-	this.curItem = {
-		'type':'Canvas',
-		'id':-1
-	};
-    /** @deprecated */
-	this.pagePos = new util.Vec2();
-    /** @deprecated */
-	this.muteMouseOutMouseOver = false;
 	this.dirty = true;
 	this.selectionRect = null;
 	this.rxnArrow = null;
@@ -174,7 +155,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
-		rnd.mouseEventNames.each(function(eventName){
+		[ 'Click', 'DblClick', 'MouseOver', 'MouseDown', 'MouseMove', 'MouseOut'].each(function(eventName){
             var bindEventName = eventName.toLowerCase();
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
@@ -188,10 +169,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
                         return util.preventDefault(event);
                 }
 
-                var ntHandled = ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
-                var name = '_onCanvas' + eventName;
-				if (!(ui.render.current_tool) && (!('touches' in event) || event.touches.length == 1) && render[name])
-					render[name](new rnd.MouseEvent(event));
+                ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
 				util.stopEventPropagation(event);
                 if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
                     return util.preventDefault(event);
@@ -202,38 +180,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;
 	this.styles = null;
-    /** @deprecated */
-	this.checkCurItem = true;
 
 	this.onCanvasOffsetChanged = null; //function(newOffset, oldOffset){};
 	this.onCanvasSizeChanged = null; //function(newSize, oldSize){};
-};
-
-/**
- *
- * @param type
- * @param id
- * @param event
- * @deprecated
- */
-rnd.Render.prototype.setCurrentItem = function (type, id, event) {
-    if (this.current_tool) return;
-	var oldType = this.curItem.type, oldId = this.curItem.id;
-	if (type != oldType || id != oldId) {
-		this.curItem = {
-			'type':type,
-			'id':id
-		};
-		if (oldType == 'Canvas'
-			|| (oldType == 'Atom' && this.ctab.atoms.has(oldId))
-			|| (oldType == 'RxnArrow' && this.ctab.rxnArrows.has(oldId))
-			|| (oldType == 'RxnPlus' && this.ctab.rxnPluses.has(oldId))
-			|| (oldType == 'Bond' && this.ctab.bonds.has(oldId))
-			|| (oldType == 'SGroup' && this.ctab.sgroups.has(oldId))) {
-			this.callEventHandler(event, 'MouseOut', oldType, oldId);
-		}
-		this.callEventHandler(event, 'MouseOver', type, id);
-	}
 };
 
 rnd.Render.prototype.view2scaled = function (p, isRelative) {
@@ -266,25 +215,6 @@ rnd.Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
 };
 
-/**
- *
- * @param event
- * @deprecated
- */
-rnd.Render.prototype.checkCurrentItem = function (event) {
-    if (this.current_tool) return;
-	if (this.offset) {
-		this.pagePos = new util.Vec2(event.pageX, event.pageY);
-		var clientPos = null;
-		if ('ui' in window && 'page2obj' in ui) // TODO: the render shouldn't be aware of the page coordinates
-			clientPos = new util.Vec2(ui.page2obj(event));
-		else
-			clientPos = this.pagePos.sub(this.clientAreaPos);
-		var item = this.findClosestItem(clientPos);
-		this.setCurrentItem(item.type, item.id, event);
-	}
-};
-
 rnd.Render.prototype.findItem = function(event, maps, skip) {
     var ci = this.findClosestItem(
         'ui' in window && 'page2obj' in ui
@@ -309,36 +239,6 @@ rnd.Render.prototype.findItem = function(event, maps, skip) {
 rnd.Render.prototype.client2Obj = function (clientPos) {
 	return new util.Vec2(clientPos).sub(this.offset);
 };
-
-/**
- *
- * @param event
- * @param eventName
- * @param type
- * @param id
- * @deprecated
- */
-rnd.Render.prototype.callEventHandler = function (event, eventName, type, id) {
-    if (this.current_tool) return;
-	var name = 'on' + type + eventName;
-	var handled = false;
-	if (this[name])
-		handled = this[name](event, id);
-	if (!handled && type != 'Canvas') {
-		var name1 = 'onCanvas' + eventName;
-		if (this[name1])
-			handled = this[name1](event);
-	}
-};
-
-util.each(['MouseMove','MouseDown','MouseUp','Click','DblClick'],
-	function(eventName) {
-		rnd.Render.prototype['_onCanvas' + eventName] = function(event){
-			this.checkCurrentItem(event);
-			this.callEventHandler(event, eventName, this.curItem.type, this.curItem.id);
-		}
-	}
-);
 
 rnd.Render.prototype.setMolecule = function (ctab, norescale)
 {
@@ -683,8 +583,7 @@ rnd.Render.prototype.setOffset = function (offset)
 	rnd.logMethod("setOffset");
 	var oldOffset = this.offset;
 	this.offset = offset;
-	if (this.onCanvasOffsetChanged)
-		this.onCanvasOffsetChanged(offset, oldOffset);
+	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(offset, oldOffset);
 };
 
 rnd.Render.prototype.getElementPos = function (obj)
@@ -834,7 +733,7 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 
 rnd.Render.prototype.ps = function (pp) {
     return pp.scaled(this.settings.scaleFactor);
-}
+};
 
 rnd.Render.prototype.getElementsInPolygon = function (rr) {
 	rnd.logMethod("getElementsInPolygon");
@@ -932,59 +831,9 @@ rnd.Render.prototype.testPolygon = function (rr) {
 	this.drawSelectionPolygon(rr);
 };
 
-/**
- *
- * @param action
- * @param args
- * @deprecated
- */
-rnd.Render.prototype.processAction = function (action, args)
-{
-	var id = parseInt(args[0]);
-	if (action == 'atomRemove' && this.curItem.type == 'Atom'
-		&& this.curItem.id == id && this._onAtomMouseOut) {
-		this._onAtomMouseOut({
-			'pageX':this.pagePos.x,
-			'pageY':this.pagePos.y
-			},
-		this.curItem.id);
-	}
-	if (action == 'bondRemove' && this.curItem.type == 'Bond'
-		&& this.curItem.id == id && this._onBondMouseOut) {
-		this._onBondMouseOut({
-			'pageX':this.pagePos.x,
-			'pageY':this.pagePos.y
-			},
-		this.curItem.id);
-	}
-	if (action == 'rxnArrowRemove' && this.curItem.type == 'RxnArrow'
-		&& this.curItem.id == id && this._onRxnArrowMouseOut) {
-		this._onRxnArrowMouseOut({
-			'pageX':this.pagePos.x,
-			'pageY':this.pagePos.y
-			},
-		this.curItem.id);
-	}
-	if (action == 'rxnPlusRemove' && this.curItem.type == 'RxnPlus'
-		&& this.curItem.id == id && this._onRxnPlusMouseOut) {
-		this.onRxnArrowMouseOut({
-			'pageX':this.pagePos.x,
-			'pageY':this.pagePos.y
-			},
-		this.curItem.id);
-	}
-	this.muteMouseOutMouseOver = true;
-	var ret = this['_' + action].apply(this, args);
-	this.muteMouseOutMouseOver = false;
-	if (action.endsWith('Add'))
-		this.checkCurItem = true;
-	return ret;
-};
-
 rnd.Render.prototype.update = function (force)
 {
 	rnd.logMethod("update");
-	this.muteMouseOutMouseOver = true;
 
 	if (!this.settings || this.dirty) {
 		if (this.opt.autoScale)
@@ -1046,17 +895,6 @@ rnd.Render.prototype.update = function (force)
             var sz2 = sz1.add(mv.scaled(2*rescale));
             this.paper.setViewBox(bb.pos().x-marg*rescale-(csz.x*rescale-sz2.x)/2, bb.pos().y-marg*rescale-(csz.y*rescale-sz2.y)/2, csz.x*rescale, csz.y*rescale);
 		}
-	}
-
-    /** @deprecated */
-	this.muteMouseOutMouseOver = false;
-	if (this.checkCurItem) {
-		this.checkCurItem = false;
-		var event = new rnd.MouseEvent({
-			'pageX':this.pagePos.x,
-			'pageY':this.pagePos.y
-			});
-		this.checkCurrentItem(event);
 	}
 };
 

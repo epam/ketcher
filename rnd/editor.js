@@ -422,7 +422,7 @@ rnd.Editor.LassoTool.prototype.OnMouseUp = function(event) {
         delete this.dragCtx;
     } else {
         if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-            this.editor._selectionHelper.setSelection(this._lassoHelper.end(event), event.shiftKey);
+            this.editor._selectionHelper.setSelection(this._lassoHelper.end(), event.shiftKey);
         } else if (this._lassoHelper.fragment) {
             this.editor._selectionHelper.setSelection();
         }
@@ -479,6 +479,8 @@ rnd.Editor.LassoTool.prototype.OnCancel = function() {
         this.editor.ui.addUndoAction(this.dragCtx.action, true);
         this.editor.render.update();
         delete this.dragCtx;
+    } else if (this._lassoHelper.running()) {
+        this.editor._selectionHelper.setSelection(this._lassoHelper.end());
     }
 };
 

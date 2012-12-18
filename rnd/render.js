@@ -162,8 +162,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
                     co = new util.Vec2(co[0], co[1]);
                     var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
                     var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
-                    if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) // ignore events on the hidden part of the canvas
+                    if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
+                        if (eventName == "MouseMove") {
+                            // [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+                            ui.render.current_tool.processEvent('OnMouseLeave', event);
+                        }
                         return util.preventDefault(event);
+                    }
                 }
 
                 ui.render.current_tool.processEvent('On' + eventName, event);

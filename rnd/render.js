@@ -143,9 +143,6 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
     //rbalabanov: temporary
     //BEGIN
-    clientArea.observe('mouseup', function(event) {
-        ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', event);
-    });
     clientArea.observe('touchend', function(event) {
         if (event.touches.length == 0) {
             ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', new rnd.MouseEvent(event));
@@ -155,11 +152,11 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	if (!this.opt.ignoreMouseEvents) {
 		// assign canvas events handlers
-		[ 'Click', 'DblClick', 'MouseOver', 'MouseDown', 'MouseMove', 'MouseOut'].each(function(eventName){
+		['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function(eventName){
             var bindEventName = eventName.toLowerCase();
             bindEventName = EventMap[bindEventName] || bindEventName;
 			clientArea.observe(bindEventName, function(event) {
-                if (!ui || !ui.is_touch) {
+                if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
                     // TODO: karulin: fix this on touch devices if needed
                     var co = clientArea.cumulativeOffset();
                     co = new util.Vec2(co[0], co[1]);
@@ -169,7 +166,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
                         return util.preventDefault(event);
                 }
 
-                ui.render.current_tool && ui.render.current_tool.processEvent('On' + eventName, event);
+                ui.render.current_tool.processEvent('On' + eventName, event);
 				util.stopEventPropagation(event);
                 if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
                     return util.preventDefault(event);

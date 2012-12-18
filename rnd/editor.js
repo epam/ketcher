@@ -185,13 +185,12 @@ rnd.Editor.EditorTool.prototype.processEvent = function(name, event) {
         return this.OnMouseUp0(event);
     }
 };
-rnd.Editor.EditorTool.prototype.OnMouseOver = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseDown = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseMove = function() {};
 rnd.Editor.EditorTool.prototype.OnMouseUp = function() {};
 rnd.Editor.EditorTool.prototype.OnClick = function() {};
 rnd.Editor.EditorTool.prototype.OnDblClick = function() {};
-rnd.Editor.EditorTool.prototype.OnMouseOut = function() {};
+rnd.Editor.EditorTool.prototype.OnMouseLeave = function() { this.OnCancel();};
 rnd.Editor.EditorTool.prototype.OnKeyPress = function() {};
 rnd.Editor.EditorTool.prototype.OnCancel = function() {}; // called when we abandon the tool
 rnd.Editor.EditorTool.prototype.OnMouseDown0 = function(event) {

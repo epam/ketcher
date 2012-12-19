@@ -416,6 +416,18 @@ chem.Struct.Bond = function (params)
 	this.angle = 0;
 };
 
+chem.Struct.Bond.prototype.getCenter = function (struct) {
+    var p1 = struct.atoms.get(this.begin).pp;
+    var p2 = struct.atoms.get(this.end).pp;
+    return util.Vec2.lc2(p1, 0.5, p2, 0.5);
+}
+
+chem.Struct.Bond.prototype.getDir = function (struct) {
+    var p1 = struct.atoms.get(this.begin).pp;
+    var p2 = struct.atoms.get(this.end).pp;
+    return p2.sub(p1).normalized();
+}
+
 chem.Struct.Bond.prototype.clone = function (aidMap)
 {
 	var cp = new chem.Struct.Bond(this);

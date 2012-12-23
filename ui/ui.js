@@ -1111,8 +1111,11 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
 {
     var smiles = mol_string.strip();
     var updateFunc = paste ? function (struct) {
-        struct.rescale(); 
-        ui.copy(struct);
+        struct.rescale();
+        if (!ui.copy(struct)) {
+            alert("Not a valid structure to paste");
+            return;
+        }
         ui.editor.deselectAll();
         ui.selectMode('paste');
     } : ui.updateMolecule;
@@ -2109,7 +2112,9 @@ ui.copy = function (struct, selection)
 
     // these will be copied automatically along with the
     //  corresponding s-groups
-    selection.sgroupData.clear();
+    if (selection && selection.sgroupData) {
+        selection.sgroupData.clear();
+    }
 
     ui.clipboard =
     {

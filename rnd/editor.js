@@ -482,6 +482,7 @@ rnd.Editor.LassoTool.prototype.OnCancel = function() {
     } else if (this._lassoHelper.running()) {
         this.editor._selectionHelper.setSelection(this._lassoHelper.end());
     }
+    this._hoverHelper.hover(null);
 };
 
 

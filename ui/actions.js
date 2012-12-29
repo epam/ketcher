@@ -898,34 +898,20 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
     if (atom_id != null) {
         id0 = atom_id;
     } else {
-        id0 = action.addOp(new ui.Action.OpAtomAdd({ label: 'C', fragment : frid }, p0).perform(ui.editor)).data.aid;
+        id0 = action.addOp(new ui.Action.OpAtomAdd({label: 'C', fragment: frid}, p0).perform(ui.editor)).data.aid;
     }
 
-    nSect.times(function (i)
-    {
+    action.operations.reverse();
+
+    nSect.times(function(i) {
         var pos = new util.Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
         var a = ui.render.findClosestAtom(pos, 0.1);
 
-        var id1 = -1;
-        if (a == null)
-        {
-            id1 = action.addOp(new ui.Action.OpAtomAdd({ label: 'C', fragment : frid }, pos).perform(ui.editor)).data.aid;
-        } else {
-            //TODO [RB] need to merge fragments: is there a way to reuse fromBondAddition (which performs it) instead of using code below???
-            id1 = a.id;
-        }
-
-        if (!ui.render.checkBondExists(id0, id1))
-        {
-            action.addOp(new ui.Action.OpBondAdd(id0, id1, {}).perform(ui.editor));
-            var frid2 = ui.render.atomGetAttr(id1, 'fragment');
-            ui.Action.mergeFragments(action, frid, frid2);
-        }
-        id0 = id1;
+        var ret = ui.Action.fromBondAddition({}, id0, a ? a.id : {}, pos);
+        action = ret[0].mergeWith(action);
+        id0 = ret[2];
     }, this);
-
-    action.operations.reverse();
 
     return action;
 };

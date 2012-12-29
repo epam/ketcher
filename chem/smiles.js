@@ -59,7 +59,7 @@ chem.SmilesSaver.notInLoop = function(atoms) {
                 low[v] = Math.min(low[v], pre[w]);
             }
         }
-    }
+    };
 
     for (v = 0; v < atoms.length; v++)
         if (atoms[v] && pre[v] < 0)
@@ -72,7 +72,7 @@ chem.SmilesSaver.prototype.isBondInRing = function (bid) {
     if (typeof(this.notInLoop) === 'undefined' || this.notInLoop === null)
         throw new Error("Init this.notInLoop prior to calling this method");
     return !this.notInLoop[bid];
-}
+};
 
 chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 {
@@ -92,10 +92,10 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
             try {
                 sg.prepareForSaving(molecule);
             } catch(ex) {
-                throw { message : 'ERROR: Bad s-group. ' + ex.message };
+                throw { message : 'Bad s-group (' + ex.message + ')' };
             }
         } else if(!this.ignore_errors) {
-            throw new Error("SMILES doesn't support s-groups");
+            throw new Error("SMILES data format doesn't support s-groups");
         }
     }, this);
     //END

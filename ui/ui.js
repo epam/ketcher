@@ -1235,59 +1235,35 @@ ui.onClick_SaveFile = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    $('file_format').value = 'mol';
     $('file_format_inchi').disabled = ui.standalone;
     ui.showDialog('save_file');
-    ui.onChange_FileFormat(null, true);
+    ui.onChange_FileFormat(null);
 };
 
-ui.onChange_FileFormat = function (event, update)
+ui.onChange_FileFormat = function (event)
 {
+    var format = $('file_format').value;
     var output = $('output_mol');
-    var el = $('file_format');
-
-    if (update) {
-        output.molfile = new chem.MolfileSaver().saveMolecule(ui.ctab, true);
-
-        try {
-            output.smiles = new chem.SmilesSaver().saveMolecule(ui.ctab, true);
-        } catch (er) {
-            output.smiles = er.message;
-        }
-
-        if (ui.standalone) {
-            output.inchi = 'InChI are not supported in the standalone mode.';
-        } else if (ui.ctab.atoms.count() == 0) {
-            output.inchi = '';
+    try {
+        if (format == 'mol') {
+            output.value = new chem.MolfileSaver().saveMolecule(ui.ctab);
+            output.style.wordWrap = 'normal';
+        } else if (format == 'smi') {
+            output.value = new chem.SmilesSaver().saveMolecule(ui.ctab);
+            output.style.wordWrap = 'break-word';
+        } else if (format == 'inchi') {
+            output.value = new chem.InChiSaver().saveMolecule(ui.ctab);
+            output.style.wordWrap = 'break-word';
         } else {
-            new Ajax.Request(ui.path + 'getinchi', {
-                method: 'post',
-                asynchronous : false,
-                parameters: {moldata: output.molfile},
-                onComplete: function (res) {
-                    if (res.responseText.startsWith('Ok.')) {
-                        output.inchi = res.responseText.split('\n')[1];
-                    } else if (res.responseText.startsWith('Error.')) {
-                        output.inchi = 'ERROR: ' + res.responseText.split('\n')[1];
-                    } else {
-                        output.inchi = 'Something went wrong: ' + res.responseText;
-                    }
-                }
-            });
+            //noinspection ExceptionCaughtLocallyJS
+            throw { message : 'Unsupported data format' };
         }
+    } catch (er) {
+        output.value = '';
+        alert('ERROR: ' + er.message);
     }
-
-    if (el.value == 'mol') {
-        output.value = output.molfile;
-        output.style.wordWrap = 'normal';
-    } else if (el.value == 'smi') {
-        output.value = output.smiles;
-        output.style.wordWrap = 'break-word';
-    } else {
-        output.value = output.inchi;
-        output.style.wordWrap = 'break-word';
-    }
-
-    $('mol_data').value = el.value + '\n' + output.value;
+    $('mol_data').value = format + '\n' + output.value;
     output.activate();
 };
 

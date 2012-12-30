@@ -421,7 +421,6 @@ chem.SGroup.GroupMul = {
 		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
 		lines.push(smtLine);
 		lines = lines.concat(chem.SGroup.bracketsToMolfile(mol, this, idstr));
-                console.log(lines.join('\n'));
 		return lines.join('\n');
 	},
 

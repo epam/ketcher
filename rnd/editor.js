@@ -316,7 +316,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var ci = this.editor.render.findItem(
         event,
         selectFragment
-            ? ['frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+            ? ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
             : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
     );
     if (!ci || ci.type == 'Canvas') {
@@ -396,7 +396,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
             this.editor.render.findItem(
                 event,
                 (this._lassoHelper.fragment || event.ctrlKey)
-                    ? ['frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+                    ? ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
                     : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
             )
         );

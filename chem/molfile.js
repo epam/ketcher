@@ -224,17 +224,20 @@ chem.Molfile.parseBondLineV3000 = function (line)
 	};
 	split.splice(0, 4);
 	for (i = 0; i < split.length; ++i) {
-		subsplit = mf.splitonce(split[i], '=');
-		key = subsplit[0];
-		value = subsplit[1];
-		if (key == 'CFG')
-			params.stereo = mf.fmtInfo.v30bondStereoMap[mf.parseDecimalInt(value)];
-		else if (key == 'TOPO')
-			params.topology = mf.fmtInfo.bondTopologyMap[mf.parseDecimalInt(value)];
-		else if (key == 'RXCTR')
-			params.reactingCenterStatus = mf.parseDecimalInt(value);
-		else if (key == 'STBOX')
-			params.stereoCare = mf.parseDecimalInt(value);
+            subsplit = mf.splitonce(split[i], '=');
+            key = subsplit[0];
+            value = subsplit[1];
+            if (key == 'CFG') {
+                params.stereo = mf.fmtInfo.v30bondStereoMap[mf.parseDecimalInt(value)];
+                if (params.type == chem.Struct.BOND.TYPE.DOUBLE && params.stereo == chem.Struct.BOND.STEREO.EITHER)
+                    params.stereo = chem.Struct.BOND.STEREO.CIS_TRANS;
+            } else if (key == 'TOPO') {
+                params.topology = mf.fmtInfo.bondTopologyMap[mf.parseDecimalInt(value)];
+            } else if (key == 'RXCTR') {
+                params.reactingCenterStatus = mf.parseDecimalInt(value);
+            } else if (key == 'STBOX') {
+                params.stereoCare = mf.parseDecimalInt(value);
+            }
 	}
 	return new chem.Struct.Bond(params);
 };

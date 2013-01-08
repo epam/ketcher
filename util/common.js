@@ -113,6 +113,14 @@ util.mapArray = function (src, map) {
 	return dst;
 };
 
+util.map = function (src, func, context) {
+	var dst = [];
+	for (var i = 0; i < src.length; ++i) {
+		dst.push(func.call(context, src[i]));
+	}
+	return dst;
+};
+
 util.apply = function (array, func) {
 	for (var i = 0; i < array.length; ++i)
 		array[i] = func(array[i]);

@@ -216,6 +216,26 @@ rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 	.attr(styles.lineattr);
 };
 
+rnd.dashedPath = function (p0, p1, dash) {
+    var t0 = 0;
+    var t1 = util.Vec2.dist(p0, p1);
+    var d = util.Vec2.diff(p1, p0).normalized();
+    var black = true;
+    var path = "";
+    var i = 0;
+
+    while (t0 < t1) {
+        var len = dash[i % dash.length];
+        var t2 = t0 + Math.min(len, t1 - t0);
+        if (black)
+            path += "M " + p0.addScaled(d, t0).coordStr() + " L " + p0.addScaled(d, t2).coordStr();
+        t0 += len;
+        black = !black;
+        i++;
+    }
+    return path;
+}
+
 rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine)
 {
 	if (!drawDashLine) {
@@ -231,19 +251,24 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 	return paper.set([l1,l2]);
 };
 
+rnd.dashdotPattern = [0.125,0.125,0,0.125];
+
 rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 {
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
-	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+        var scale = this.render.settings.scaleFactor;
+        var dash = util.map(rnd.dashdotPattern, function(v){ return v * scale; });
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, shift > 0 ? 1 : 2, dash);
 	var l1 = paths[0], l2 = paths[1];
-	(shift > 0 ? l1 : l2).attr({
-		'stroke-dasharray':'-.'
-	});
+// dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
+//	(shift > 0 ? l1 : l2).attr({
+//		'stroke-dasharray':'-.'
+//	});
 	return paper.set([l1,l2]);
 };
 
-rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift)
+rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask, dash)
 {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
@@ -274,8 +299,8 @@ rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift)
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 				this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	var l1 = paper.path(rnd.ReStruct.makeStroke(a2,b2)).attr(styles.lineattr);
-	var l2 = paper.path(rnd.ReStruct.makeStroke(a3,b3)).attr(styles.lineattr);
+	var l1 = paper.path(dash && (mask & 1) ? rnd.dashedPath(a2, b2, dash) : rnd.ReStruct.makeStroke(a2, b2)).attr(styles.lineattr);
+	var l2 = paper.path(dash && (mask & 2) ? rnd.dashedPath(a3, b3, dash) : rnd.ReStruct.makeStroke(a3, b3)).attr(styles.lineattr);
 	return [l1, l2];
 };
 
@@ -284,10 +309,13 @@ rnd.ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
 {
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
-	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift);
+        var scale = this.render.settings.scaleFactor;
+        var dash = util.map(rnd.dashdotPattern, function(v){ return v * scale; });
+	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, 3, dash);
 	var l1 = paths[0], l2 = paths[1];
-	l1.attr({'stroke-dasharray':'-.'});
-	l2.attr({'stroke-dasharray':'-.'});
+// dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
+//	l1.attr({'stroke-dasharray':'-.'});
+//	l2.attr({'stroke-dasharray':'-.'});
 	return paper.set([l1,l2]);
 };
 

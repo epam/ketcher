@@ -121,6 +121,11 @@ util.Vec2.prototype.turnLeft = function ()
     return new util.Vec2(-this.y, this.x);
 };
 
+util.Vec2.prototype.coordStr = function ()
+{
+    return this.x.toString() + " , " + this.y.toString();
+};
+
 util.Vec2.prototype.toString = function ()
 {
     return "(" + this.x.toFixed(2) + "," + this.y.toFixed(2) + ")";

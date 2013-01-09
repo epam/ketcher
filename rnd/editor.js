@@ -533,7 +533,7 @@ rnd.Editor.LassoTool.LassoHelper.prototype.end = function() {
 rnd.Editor.EraserTool = function(editor, mode) {
     this.editor = editor;
 
-    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'rgroups', 'sgroups', 'sgroupData', 'chiralFlags'];
+    this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
     this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
 };

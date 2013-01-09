@@ -1612,7 +1612,6 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
     if (selection.atoms && selection.atoms.length) {
         var molecule = this.editor.render.ctab.molecule;
         var xy0 = new util.Vec2();
-        var selection = this.editor._selectionHelper.selection;
         
         if (!selection.atoms || !selection.atoms.length) {
             return true;
@@ -1669,10 +1668,7 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
             all : rot_all
         };
     } else {
-        var ci = this.editor.render.findItem(event);
-        if (!ci || ci.type == 'Canvas') {
-            this._lassoHelper.begin(event);
-        }
+        this._lassoHelper.begin(event);
     }
     return true;
 };

@@ -2178,48 +2178,23 @@ ui.structToClipboard = function (clipboard, struct, selection)
         clipboard.bonds.push(new chem.Struct.Bond(new_bond));
     });
 
-    var sgroup_counts = new Hash();
+    var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
 
-    // determine selected sgroups
-    selection.atoms.each(function (id)
-    {
-        var sg = util.Set.list(struct.atoms.get(id).sgs);
-
-        sg.each(function (sid)
-        {
-            var n = sgroup_counts.get(sid);
-            if (Object.isUndefined(n))
-                n = 1;
-            else
-                n++;
-            sgroup_counts.set(sid, n);
-        }, this);
-    }, this);
-
-    sgroup_counts.each(function (sg)
-    {
-        var sid = parseInt(sg.key);
-
+    util.each(sgroup_list, function (sid){
         var sgroup = struct.sgroups.get(sid);
         var sgAtoms = chem.SGroup.getAtoms(struct, sgroup);
-        if (sg.value == sgAtoms.length)
-        {
-            var sgroup_info =
-            {
-                type: sgroup.type,
-                attrs: sgroup.getAttrs(),
-                atoms: util.array(sgAtoms),
-                pp: sgroup.pp
-            };
+        var sgroup_info = {
+            type: sgroup.type,
+            attrs: sgroup.getAttrs(),
+            atoms: util.array(sgAtoms),
+            pp: sgroup.pp
+        };
 
-            for (var i = 0; i < sgroup_info.atoms.length; i++)
-            {
-                sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
-            }
+        for (var i = 0; i < sgroup_info.atoms.length; i++)
+            sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
 
-            clipboard.sgroups.push(sgroup_info);
-        }
-    });
+        clipboard.sgroups.push(sgroup_info);
+    }, this);
 
     selection.rxnArrows.each(function (id)
     {

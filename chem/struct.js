@@ -30,6 +30,35 @@ chem.Struct = function ()
     this.name = '';
 };
 
+// returns a list of id's of s-groups, which contain only atoms in the given list
+chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
+    var sgroup_counts = new Hash();
+
+    util.each(atoms, function(aid) {
+        var sg = util.Set.list(this.atoms.get(aid).sgs);
+
+        sg.each(function (sid) {
+            var n = sgroup_counts.get(sid);
+            if (Object.isUndefined(n))
+                n = 1;
+            else
+                n++;
+            sgroup_counts.set(sid, n);
+        }, this);
+    }, this);
+    
+    var sgroup_list = [];
+    sgroup_counts.each(function (sg)
+    {
+        var sid = parseInt(sg.key);
+        var sgroup = this.sgroups.get(sid);
+        var sgAtoms = chem.SGroup.getAtoms(this, sgroup);
+        if (sg.value == sgAtoms.length)
+            sgroup_list.push(sid);
+    }, this);
+    return sgroup_list;
+}
+
 chem.Struct.prototype.isBlank = function ()
 {
 	return this.atoms.count() == 0 &&

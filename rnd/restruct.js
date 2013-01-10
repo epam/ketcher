@@ -1065,6 +1065,7 @@ rnd.ReFrag.prototype.drawHighlight = function(render) {
 rnd.ReRGroup = function(/*chem.Struct.RGroup*/rgroup) {
     this.init(rnd.Visel.TYPE.RGROUP);
 
+    this.labelBox = null;
     this.item = rgroup;
 };
 rnd.ReRGroup.prototype = new rnd.ReObject();
@@ -1090,12 +1091,13 @@ rnd.ReRGroup.findClosest = function(render, p, skip, minDist) {
     var ret;
     render.ctab.rgroups.each(function(rgid, rgroup) {
         if (rgid != skip) {
-            var bb = rgroup.calcVBox(render);
-            if (bb.p0.y < p.y && bb.p1.y > p.y && bb.p0.x < p.x && bb.p1.x > p.x) {
-                var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
-                if (!ret || xDist < minDist) {
-                    minDist = xDist;
-                    ret = { 'id' : rgid, 'dist' : minDist };
+            if (rgroup.labelBox) { // should be true at this stage, as the label is visible
+                if (rgroup.labelBox.contains(p, 0.5)) { // inside the box or within 0.5 units from the edge
+                    var dist = util.Vec2.dist(rgroup.labelBox.centre(), p);
+                    if (!ret || dist < minDist) {
+                        minDist = dist;
+                        ret = { 'id' : rgid, 'dist' : minDist };
+                    }
                 }
             }
         }
@@ -1136,6 +1138,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
         rnd.ReRGroup.drawBrackets(brackets, render, bb);
         ret.data.push(brackets);
         var key = render.ctab.rgroups.keyOf(this);
+        var labelSet = render.paper.set();
         var label = render.paper.text(p0.x, (p0.y + p1.y)/2, 'R' + key + '=')
             .attr({
 				'font' : settings.font,
@@ -1144,6 +1147,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
 			});
         var labelBox = rnd.relBox(label.getBBox());
         label.translateAbs(-labelBox.width/2-settings.lineWidth, 0);
+        labelSet.push(label);
         var logicStyle = {
 				'font' : settings.font,
 				'font-size' : settings.fontRLogic,
@@ -1181,8 +1185,10 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
             logicPath.translateAbs(-logicBox.width/2-6*settings.lineWidth, shift);
             shift += logicBox.height/2 + settings.lineWidth/2;
             ret.data.push(logicPath);
+            labelSet.push(logicPath);
         }
         ret.data.push(label);
+        this.labelBox = util.Box2Abs.fromRelBox(labelSet.getBBox()).transform(render.scaled2obj, render);
         return ret;
     } else {
         // TODO abnormal situation, empty fragments must be destroyed by tools

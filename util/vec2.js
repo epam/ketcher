@@ -311,6 +311,13 @@ util.Box2Abs.prototype.include = function(/*util.Vec2*/p)
     return new util.Box2Abs(this.p0.min(p), this.p1.max(p));
 };
 
+util.Box2Abs.prototype.contains = function(/*util.Vec2*/p, /*float*/ext)
+{
+    ext = (ext || 0) - 0;
+    util.assertDefined(p);
+    return p.x >= this.p0.x - ext && p.x <= this.p1.x + ext && p.y >= this.p0.y - ext && p.y <= this.p1.y + ext;
+};
+
 util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)
 {
     util.assertDefined(d);
@@ -325,6 +332,11 @@ util.Box2Abs.prototype.transform = function(/*function(Vec2):Vec2*/f, context)
 util.Box2Abs.prototype.sz = function()
 {
     return this.p1.sub(this.p0);
+};
+
+util.Box2Abs.prototype.centre = function()
+{
+    return util.Vec2.lc2(this.p0, 0.5, this.p1, 0.5);
 };
 
 util.Box2Abs.prototype.pos = function()

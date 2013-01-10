@@ -251,7 +251,7 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 	return paper.set([l1,l2]);
 };
 
-rnd.dashdotPattern = [0.125,0.125,0,0.125];
+rnd.dashdotPattern = [0.125,0.125,0.005,0.125];
 
 rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 {

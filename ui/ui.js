@@ -222,7 +222,7 @@ ui.init = function ()
     }
 
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
-    this.is_touch = 'ontouchstart' in document;
+    this.is_touch = 'ontouchstart' in document && document.ontouchstart != null;
     
     ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
     ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);

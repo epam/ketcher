@@ -40,11 +40,11 @@ class application(object):
         try:
             status = '200 OK'
             self.response = route()
-        except IndigoException as e:
+        except IndigoException, e:
             self.response = self.error_response(str(e))
             if 'indigoLoad' in self.response[-1]:      # error on load
                 self.response[1] = "Cannot load the specified structure: %s " % str(e)
-        except self.HttpException as (status, message):
+        except self.HttpException, (status, message):
             self.response = [message]
 
         self.headers.setdefault('Content-Type', 'text/plain')
@@ -248,6 +248,6 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except ValueError:
         usage()
-    except (socket.error, socket.gaierror, socket.herror) as (n, str):
+    except (socket.error, socket.gaierror, socket.herror), (n, str):
         print "Server error.", str
         usage()

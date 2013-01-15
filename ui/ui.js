@@ -83,41 +83,41 @@ ui.initButton = function (el)
 ui.initTemplates = function ()
 {
     function parseSdf(sdf) {
-        var items = sdf.split('$$$$\n');
+        var items = sdf.split(/^[$][$][$][$]$/m);
         var parsed = [];
-        
+
         items.each(function (item) {
+            item = item.strip();
             var end_idx = item.indexOf('M  END');
-            
+
             if (end_idx == -1) {
                 return;
             }
-            
+
             var iparsed = {};
-            
+
             iparsed.molfile = item.substring(0, end_idx + 6);
             iparsed.name = item.substring(0, item.indexOf('\n')).strip();
-            
-            item = item.substr(end_idx + 7);
-            
-            var entries = item.split('\n\n');
-            
+            item = item.substr(end_idx + 7).strip();
+
+            var entries = item.split(/^$/m);
+
             entries.each(function (entry) {
+                entry = entry.strip();
                 if (!entry.startsWith('> <')) {
                     return;
                 }
                 var lines = entry.split('\n');
-                var field = lines[0].substring(3, lines[0].lastIndexOf('>')).strip();
-                
-                iparsed[field] = parseInt(lines[1]) || lines[1].strip();
+                var field = lines[0].strip().substring(3, lines[0].lastIndexOf('>')).strip();
+
+                iparsed[field] = parseInt(lines[1].strip()) || lines[1].strip();
             });
-            
             parsed.push(iparsed);
         });
-        
+
         return parsed;
     }
-    
+
     // Init templates
     new Ajax.Request(ui.path + 'templates.sdf',
     {
@@ -131,16 +131,16 @@ ui.initTemplates = function ()
             } catch (er) {
                 return;
             }
-            
+
             if (sdf_items.length == 0) {
                 return;
             }
-            
+
             rnd.templates = [];
 
             var tbody = $('template_dropdown_list').select('table > tbody')[0];
             tbody.update();
-            
+
             var idx = 0;
             sdf_items.each(function (item) {
                 var tmpl = {
@@ -149,9 +149,9 @@ ui.initTemplates = function ()
                     aid: (item.atomid || 1) - 1,
                     bid: (item.bondid || 1) - 1
                 };
-                
+
                 rnd.templates.push(tmpl);
-                
+
                 if (item.icon) {
                     tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +
                             '<td><div id="template_' + idx + '_preview"><img class="dropdownIcon" src="' + item.icon + '" alt="" /></div>' +
@@ -159,7 +159,7 @@ ui.initTemplates = function ()
                 } else {
                     // load template molfile on demand
                     tmpl.molecule = chem.Molfile.parseCTFile(tmpl.molfile.split('\n'));
-                    
+
                     // todo: render button from tmpl.molecule
                 }
 
@@ -223,7 +223,7 @@ ui.init = function ()
 
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
     this.is_touch = 'ontouchstart' in document && document.ontouchstart != null;
-    
+
     ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
     ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
 
@@ -252,7 +252,7 @@ ui.init = function ()
             button.title = button.title.replace("Ctrl", "Cmd");
         }, this);
     }
-    
+
     // Touch device stuff
     if (ui.is_touch) {
         EventMap =
@@ -261,14 +261,14 @@ ui.init = function ()
             mousedown: 'touchstart',
             mouseup  : 'touchend'
         };
-        
+
         // to enable copy to clipboard on iOS
         $('output_mol').removeAttribute('readonly');
-        
+
         // rbalabanov: here is temporary fix for "drag issue" on iPad
         //BEGIN
         rnd.ReStruct.prototype.hiddenPaths = [];
-        
+
         rnd.ReStruct.prototype.clearVisel = function (visel) {
             for (var i = 0; i < visel.paths.length; ++i) {
                 visel.paths[i].hide();
@@ -278,7 +278,7 @@ ui.init = function ()
         };
         //END
     }
-    
+
     ui.initTemplates();
 
     // Document events
@@ -434,7 +434,7 @@ ui.init = function ()
             $('download_mol').action = ui.base_url + 'save';
         }
     }
-    
+
     // Init renderer
     this.render =  new rnd.Render(this.client_area, ui.scale, {atomColoring: true});
     this.editor = new rnd.Editor(this.render);
@@ -2230,7 +2230,7 @@ ui.structToClipboard = function (clipboard, struct, selection)
         clipboard.rgmap[frid] = rgid;
         util.Set.add(rgids, rgid);
     }, this);
-    
+
     util.Set.each(rgids, function(id){
         clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
     }, this);

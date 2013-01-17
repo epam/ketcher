@@ -208,8 +208,10 @@ ui.onMouseDown_DropdownListItem = function (event)
 
 ui.defaultSelector = 'selector_last';
 
-ui.init = function ()
+ui.init = function (parameters)
 {
+    parameters = parameters || {};
+    this.actionComplete = parameters.actionComplete || function(){};
     if (this.initialized)
     {
         this.Action.fromNewCanvas(new chem.Struct());

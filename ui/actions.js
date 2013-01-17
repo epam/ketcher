@@ -1240,6 +1240,7 @@ ui.addUndoAction = function (action, check_dummy)
         if (ui.undoStack.length > ui.HISTORY_LENGTH)
             ui.undoStack.splice(0, 1);
         ui.updateActionButtons();
+        ui.actionComplete();
     }
 };
 
@@ -1274,6 +1275,7 @@ ui.undo = function ()
     ui.redoStack.push(ui.undoStack.pop().perform());
     ui.render.update();
     ui.updateActionButtons();
+    ui.actionComplete();
 };
 
 ui.redo = function ()
@@ -1285,6 +1287,7 @@ ui.redo = function ()
     ui.undoStack.push(ui.redoStack.pop().perform());
     ui.render.update();
     ui.updateActionButtons();
+    ui.actionComplete();
 };
 
 

@@ -377,8 +377,10 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
         if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
         // moving selected objects
-        if (this.dragCtx.action)
+        if (this.dragCtx.action) {
             this.dragCtx.action.perform();
+            this.editor.render.update(); // redraw the elements in unshifted position, lest the have different offset
+        }
         this.dragCtx.action = ui.Action.fromMultipleMove(
             this.editor.getSelection(true),
             this.editor.ui.page2obj(event).sub(this.dragCtx.xy0));

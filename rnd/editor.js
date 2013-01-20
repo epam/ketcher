@@ -236,7 +236,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
                 var selection = this.editor.getSelection();
                 if (selection && 'atoms' in selection && selection.atoms.length > 0) {
                     this.editor.ui.addUndoAction(
-                        this.editor.ui.Action.fromAtomsAttrs(selection.atoms, { label : label }),
+                        this.editor.ui.Action.fromAtomsAttrs(selection.atoms, { label : label }, true),
                         true
                     );
                     this.editor.ui.render.update();
@@ -247,7 +247,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
                         ci.label = { label : label };
                         if (ci.map == 'atoms') {
                             this.editor.ui.addUndoAction(
-                                ui.Action.fromAtomsAttrs(ci.id, ci.label),
+                                ui.Action.fromAtomsAttrs(ci.id, ci.label, true),
                                 true
                             );
                         } else if (ci.id == -1) {
@@ -645,7 +645,7 @@ rnd.Editor.AtomTool.prototype.OnMouseUp = function(event) {
             'action' in _DC_
                 ? _DC_.action
                 : 'item' in _DC_
-                    ? _UI_.Action.fromAtomsAttrs(_DC_.item.id, this.atomProps)
+                    ? _UI_.Action.fromAtomsAttrs(_DC_.item.id, this.atomProps, true)
                     : _UI_.Action.fromAtomAddition(_UI_.page2obj(event), this.atomProps),
             true
         );

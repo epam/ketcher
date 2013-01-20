@@ -296,77 +296,83 @@ chem.Struct.FRAGMENT = {
 	AGENT:3
 };
 
-chem.Struct.Atom = function (params)
-{
-	if (!params || !('label' in params))
-		throw new Error("label must be specified!");
+chem.Struct.Atom = function (params) {
+    var def = chem.Struct.Atom.attrGetDefault;
+    if (!params || !('label' in params))
+        throw new Error("label must be specified!");
 
-	this.label = params.label;
-        this.fragment = !Object.isUndefined(params.fragment) ? params.fragment : -1;
+    this.label = params.label;
+    this.fragment = !Object.isUndefined(params.fragment) ? params.fragment : -1;
 
-	util.ifDef(this, params, 'isotope', 0);
-	util.ifDef(this, params, 'radical', 0);
-	util.ifDef(this, params, 'charge', 0);
-	util.ifDef(this, params, 'valence', 0);
-    util.ifDef(this, params, 'rglabel', null); // r-group index mask, i-th bit stands for i-th r-site
-    util.ifDef(this, params, 'attpnt', null); // attachment point
-	util.ifDef(this, params, 'explicitValence', 0);
-	util.ifDef(this, params, 'implicitH', 0);
-	if (!Object.isUndefined(params.pp))
-		this.pp = new util.Vec2(params.pp);
-	else
-		this.pp = new util.Vec2();
+    util.ifDef(this, params, 'isotope', def('isotope'));
+    util.ifDef(this, params, 'radical', def('isotope'));
+    util.ifDef(this, params, 'charge', def('charge'));
+    util.ifDef(this, params, 'valence', def('valence'));
+    util.ifDef(this, params, 'rglabel', def('rglabel')); // r-group index mask, i-th bit stands for i-th r-site
+    util.ifDef(this, params, 'attpnt', def('attpnt')); // attachment point
+    util.ifDef(this, params, 'explicitValence', def('explicitValence'));
+    util.ifDef(this, params, 'implicitH', def('implicitH'));
+    if (!Object.isUndefined(params.pp))
+        this.pp = new util.Vec2(params.pp);
+    else
+        this.pp = new util.Vec2();
 
-        // sgs should only be set when an atom is added to an s-group by an appropriate method,
-        //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
-        // TODO: make a consistency check on atom/s-group assignments
-	this.sgs = {};
+    // sgs should only be set when an atom is added to an s-group by an appropriate method,
+    //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
+    // TODO: make a consistency check on atom/s-group assignments
+    this.sgs = {};
 
-	// query
-	util.ifDef(this, params, 'ringBondCount', 0);
-	util.ifDef(this, params, 'substitutionCount', 0);
-	util.ifDef(this, params, 'unsaturatedAtom', 0);
-	util.ifDef(this, params, 'hCount', 0);
+    // query
+    util.ifDef(this, params, 'ringBondCount', def('ringBondCount'));
+    util.ifDef(this, params, 'substitutionCount', def('substitutionCount'));
+    util.ifDef(this, params, 'unsaturatedAtom', def('unsaturatedAtom'));
+    util.ifDef(this, params, 'hCount', def('hCount'));
 
-	// reaction
-    util.ifDef(this, params, 'aam', 0);
-	util.ifDef(this, params, 'invRet', 0);
-	util.ifDef(this, params, 'exactChangeFlag', 0);
-	util.ifDef(this, params, 'rxnFragmentType', -1);
+    // reaction
+    util.ifDef(this, params, 'aam', def('aam'));
+    util.ifDef(this, params, 'invRet', def('invRet'));
+    util.ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
+    util.ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
-	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
-	this.neighbors = []; // set of half-bonds having this atom as their origin
-	this.badConn = false;
+    this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
+    this.neighbors = []; // set of half-bonds having this atom as their origin
+    this.badConn = false;
 };
 
 chem.Struct.Atom.getAttrHash = function(atom) {
     var attrs = new Hash();
-	for (var attr in chem.Struct.Atom.attrlist) {
-		if (typeof(atom[attr]) != 'undefined') {
-			attrs.set(attr, atom[attr]);
-		}
-	}
-	return attrs;
+    for (var attr in chem.Struct.Atom.attrlist) {
+        if (typeof(atom[attr]) != 'undefined') {
+            attrs.set(attr, atom[attr]);
+        }
+    }
+    return attrs;
 };
 
+chem.Struct.Atom.attrGetDefault = function(attr) {
+    if (attr in chem.Struct.Atom.attrlist)
+        return chem.Struct.Atom.attrlist[attr];
+    throw new Error("Attribute unknown");
+}
+
 chem.Struct.Atom.attrlist = {
-    'label':0,
-	'isotope':0,
-	'radical':0,
-	'charge':0,
-	'valence':0,
-	'explicitValence':0,
-	'implicitH':0,
-	'ringBondCount':0,
-	'substitutionCount':0,
-	'unsaturatedAtom':0,
-	'hCount':0,
-	'atomList':null,
-    'invRet':0,
-    'exactChangeFlag':0,
-    'rglabel':null,
-    'attpnt':null,
-    'aam':0
+    'label': 0,
+    'isotope': 0,
+    'radical': 0,
+    'charge': 0,
+    'valence': 0,
+    'explicitValence': 0,
+    'implicitH': 0,
+    'ringBondCount': 0,
+    'substitutionCount': 0,
+    'unsaturatedAtom': 0,
+    'hCount': 0,
+    'atomList': null,
+    'invRet': 0,
+    'exactChangeFlag': 0,
+    'rglabel': null,
+    'attpnt': null,
+    'aam': 0
 };
 
 chem.Struct.Atom.prototype.clone = function(fidMap)

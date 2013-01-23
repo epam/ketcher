@@ -49,6 +49,18 @@ util.Set = {
 		return true;
 	},
 
+        intersection: function(set1, set2) {
+		var set = {};
+		for (var id in set1) {
+			if (set1[id] !== Object.prototype[id]) {
+				if (set2[id] === set1[id]) {
+                                    util.Set.add(set, id);
+				}
+			}
+		}
+		return set;
+	},
+
 	eq: function(set1, set2) {
 		return util.Set.subset(set1, set2) && util.Set.subset(set2, set1);
 	},

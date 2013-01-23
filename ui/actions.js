@@ -682,6 +682,14 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     return action;
 };
 
+ui.Action.atomAddToSGroups = function (sgroups, aid) {
+    var action = new ui.Action();
+    util.each(sgroups, function(sid){
+        action.addOp(new ui.Action.OpSGroupAtomAdd(sid, aid).perform(ui.editor));
+    }, this);
+    return action;
+}
+
 ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcAngle)
 {
     var action = new ui.Action();
@@ -690,12 +698,15 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
     var RS = R.ctab;
     var molecule = RS.molecule;
     var atom = molecule.atoms.get(aid);
+    var aid0 = aid; // the atom that was clicked on
+    var aid1 = null; // the atom on the other end of the extra bond, if any
+    var sgroups = ui.render.atomGetSGroups(aid);
 
     var frid = R.atomGetAttr(aid, 'fragment');
     
     var map = {};
     var xy0 = frag.atoms.get(template.aid).pp;
-    
+
     if (extra_bond) {
         // create extra bond after click on atom
         if (angle == null)
@@ -704,7 +715,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
             var action_res = ui.Action.fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
             action = action_res[0];
             action.operations.reverse();
-            aid = action_res[2];
+            aid1 = aid = action_res[2];
         } else {
             var op;
         
@@ -723,7 +734,8 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
                 ).perform(ui.editor)
             );
         
-            aid = op.data.aid;
+            aid1 = aid = op.data.aid;
+            action.mergeWith(ui.Action.atomAddToSGroups(sgroups, aid));
         }
         
         var atom0 = atom;
@@ -760,6 +772,8 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
             );
         }
         map[id] = op.data.aid;
+        if (map[id]-0 !== aid0-0 && map[id]-0 !== aid1-0)
+            action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
     });
 
     // Only template bond type label matters for now
@@ -789,6 +803,9 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     var bond = molecule.bonds.get(bid);
     var begin = molecule.atoms.get(bond.begin);
     var end = molecule.atoms.get(bond.end);
+    var sgroups = util.Set.list(util.Set.intersection(
+            util.Set.fromList(ui.render.atomGetSGroups(bond.begin)),
+            util.Set.fromList(ui.render.atomGetSGroups(bond.end))));
 
     var fr_bond = frag.bonds.get(template.bid);
     var fr_begin;
@@ -843,6 +860,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
             );
 
             map[id] = op.data.aid;
+            action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
         } else {
             // TODO [BK] change label?
             // TODO [RB] need to merge fragments?
@@ -1451,6 +1469,8 @@ ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
         var sgid = this.data.sgid;
 	var atom = DS.atoms.get(aid);
 	var sg = DS.sgroups.get(sgid);
+        if (sg.atoms.indexOf(aid) >= 0)
+            throw new Error("The same atom cannot be added to an S-group more than once");
 	chem.SGroup.addAtom(sg, aid);
         if (!atom)
             throw new Error("OpSGroupAtomAdd: Atom " + aid + " not found");

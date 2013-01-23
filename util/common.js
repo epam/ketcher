@@ -113,6 +113,14 @@ util.mapArray = function (src, map) {
 	return dst;
 };
 
+util.arrayMax = function (array) {
+    return Math.max.apply( Math, array );
+}
+
+util.arrayMin = function (array) {
+    return Math.min.apply( Math, array );
+}
+
 util.map = function (src, func, context) {
 	var dst = [];
 	for (var i = 0; i < src.length; ++i) {

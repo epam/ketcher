@@ -735,7 +735,11 @@ rnd.ReStruct.prototype.findLoops = function ()
 							totalAngle += angle;
 					}
 					if (Math.abs(totalAngle) < Math.PI && !this.loopHasSelfIntersections(loop)) { // loop is internal
-                                            loopId = struct.loops.add(new chem.Loop(loop, struct, convex));
+                                            // use lowest half-bond id in the loop as the loop id
+                                            // this ensures that the loop gets the same id if it is discarded and then recreated,
+                                            // which in turn is required to enable redrawing while dragging, as actions store item id's
+                                            loopId = util.arrayMin(loop);
+                                            struct.loops.set(loopId, new chem.Loop(loop, struct, convex));
                                         } else {
 						loopId = -2;
                                         }

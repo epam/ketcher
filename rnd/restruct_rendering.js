@@ -1058,17 +1058,20 @@ rnd.ReStruct.prototype.showBonds = function ()
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
+                }
+		if (opt.showHalfBondIds) {
 			var phb1 = util.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
-			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb1.norm, bondIdxOff);
+			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
-		} else if (opt.showLoopIds) {
+                }
+		if (opt.showLoopIds && !opt.showBondIds) {
 			var pl1 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = rnd.relBox(ipath.getBBox());

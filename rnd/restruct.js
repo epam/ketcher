@@ -100,20 +100,22 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 
 	this.hydrogenOnTheLeft = false;
 
-	this.sGroupHighlight = false;
-	this.sGroupHighlighting = null;
-
 	this.component = -1;
 };
 rnd.ReAtom.prototype = new rnd.ReObject();
 
 rnd.ReAtom.prototype.drawHighlight = function(render) {
-    var ps = render.ps(this.a.pp);
-    var ret = render.paper.circle(
-        ps.x, ps.y, render.styles.atomSelectionPlateRadius
-    ).attr(render.styles.highlightStyle);
+    var ret = this.makeHighlightPlate(render);
     render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
+};
+
+rnd.ReAtom.prototype.makeHighlightPlate = function(render) {
+    var paper = render.paper;
+    var styles = render.styles;
+    var ps = render.ps(this.a.pp);
+    return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
+            .attr(styles.highlightStyle);
 };
 
 rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
@@ -131,14 +133,17 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 };
 rnd.ReBond.prototype = new rnd.ReObject();
 
-rnd.ReBond.prototype.drawHighlight = function(render)
-{
-    render.ctab.bondRecalc(render.settings, this);
-    var c = render.ps(this.b.center);
-    var ret = render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
-        .attr(render.styles.highlightStyle);
+rnd.ReBond.prototype.drawHighlight = function(render) {
+    var ret = this.makeHighlightPlate(render);
     render.ctab.addReObjectPath('highlighting', this.visel, ret);
     return ret;
+};
+
+rnd.ReBond.prototype.makeHighlightPlate = function(render) {
+    render.ctab.bondRecalc(render.settings, this);
+    var c = render.ps(this.b.center);
+    return render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
+            .attr(render.styles.highlightStyle);
 };
 
 rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
@@ -577,6 +582,7 @@ rnd.ReStruct.prototype.drawSGroups = function ()
 	this.sgroups.each(function (id, sgroup) {
 		var path = sgroup.draw(this.render);
 		this.addReObjectPath('data', sgroup.visel, path, null, true);
+                sgroup.setHighlight(sgroup.highlight, this.render); // TODO: fix this
 	}, this);
 };
 
@@ -1283,27 +1289,14 @@ rnd.ReSGroup.prototype.drawHighlight = function(render) {
         .path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}", tfx(a0.x), tfx(a0.y), tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(b0.x), tfx(b0.y))
         .attr(styles.highlightStyle);
     set.push(sg.highlighting);
-    render.ctab.addReObjectPath('highlighting', this.visel, sg.highlighting);
 
-//    var atoms = chem.SGroup.getAtoms(render.ctab.molecule, sg);
-//
-//    atoms.each(function (id)
-//    {
-//        var atom = render.ctab.atoms.get(id);
-//        var ps = render.ps(atom.a.pp);
-//        atom.sGroupHighlighting = paper
-//        .circle(ps.x, ps.y, 0.7 * styles.atomSelectionPlateRadius)
-//        .attr(styles.sGroupHighlightStyle);
-//        set.push(atom.sGroupHighlighting);
-//        render.ctab.addReObjectPath('highlighting', this.visel, atom.sGroupHighlighting);
-//    }, this);
-//    return set;
     chem.SGroup.getAtoms(render.ctab.molecule, sg).each(function(aid) {
-        render.ctab.atoms.get(aid).drawHighlight(render);
+        set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
     }, this);
     chem.SGroup.getBonds(render.ctab.molecule, sg).each(function(bid) {
-        render.ctab.bonds.get(bid).drawHighlight(render);
+        set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
     }, this);
+    render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
 
 rnd.ReDataSGroupData = function (sgroup)

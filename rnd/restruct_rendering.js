@@ -526,48 +526,6 @@ rnd.ReStruct.prototype.centerText = function (path, rbb)
 	}
 };
 
-// TODO to be removed
-/** @deprecated please use ReAtom.setHighlight instead */
-rnd.ReStruct.prototype.showAtomHighlighting = function (aid, atom, visible)
-{
-	var exists = (atom.highlighting != null) && !atom.highlighting.removed;
-    // rbalabanov: here is temporary fix for "drag issue" on iPad
-    //BEGIN
-    exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(atom.highlighting) < 0);
-    //END
-	if (visible) {
-		if (!exists) {
-			var render = this.render;
-			var styles = render.styles;
-			var paper = render.paper;
-                        var ps = render.ps(atom.a.pp);
-			atom.highlighting = paper
-			.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-			.attr(styles.highlightStyle);
-			if (rnd.DEBUG)
-				atom.highlighting.attr({
-					'fill':'#AAA'
-				});
-			this.addReObjectPath('highlighting', atom.visel, atom.highlighting);
-		}
-		if (rnd.DEBUG)
-			atom.highlighting.attr({
-				'stroke':'#0c0'
-			});
-		else
-			atom.highlighting.show();
-	} else {
-		if (exists) {
-			if (rnd.DEBUG)
-				atom.highlighting.attr({
-					'stroke':'none'
-				});
-			else
-				atom.highlighting.hide();
-		}
-	}
-};
-
 rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 {
 	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
@@ -625,8 +583,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			this.centerText(index.path, index.rbb);
 			this.addReObjectPath('indices', atom.visel, index.path, ps);
 		}
-		if (atom.highlight)
-			this.showAtomHighlighting(aid, atom, true);
+                atom.setHighlight(atom.highlight, render);
 
                 var color = '#000000';
 		if (atom.showLabel)
@@ -1092,8 +1049,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 			topology.rbb = rnd.relBox(topology.path.getBBox());
 			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
-//		if (bond.highlight)
-//			this.showBondHighlighting(bid, bond, true);
+                bond.setHighlight(bond.highlight, render);
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null, irbb = null;
 		if (opt.showBondIds) {

@@ -67,11 +67,11 @@ ui.Action.fromMultipleMove = function (lists, d)
     var bondlist = [];
     var loops = util.Set.empty();
     var atomsToInvalidate = util.Set.empty();
-    
+
     if (lists.atoms) {
         var atomSet = util.Set.fromList(lists.atoms);
         RS.bonds.each(function(bid, bond){
-            
+
             if (util.Set.contains(atomSet, bond.b.begin) && util.Set.contains(atomSet, bond.b.end)) {
                 bondlist.push(bid);
                 // add all adjacent loops
@@ -80,7 +80,7 @@ ui.Action.fromMultipleMove = function (lists, d)
                     var loop = DS.halfBonds.get(bond.b[hb]).loop;
                     if (loop >= 0)
                         util.Set.add(loops, loop);
-                }, this); 
+                }, this);
             }
             else if (util.Set.contains(atomSet, bond.b.begin))
                 util.Set.add(atomsToInvalidate, bond.b.begin);
@@ -98,7 +98,7 @@ ui.Action.fromMultipleMove = function (lists, d)
             var aid = lists.atoms[i];
             action.addOp(new ui.Action.OpAtomMove(aid, d, !util.Set.contains(atomsToInvalidate, aid)));
         }
-    }    
+    }
 
     if (lists.rxnArrows)
         for (i = 0; i < lists.rxnArrows.length; ++i)
@@ -111,7 +111,7 @@ ui.Action.fromMultipleMove = function (lists, d)
     if (lists.sgroupData)
         for (i = 0; i < lists.sgroupData.length; ++i)
             action.addOp(new ui.Action.OpSGroupDataMove(lists.sgroupData[i], d));
-    
+
     if (lists.chiralFlags)
         for (i = 0; i < lists.chiralFlags.length; ++i)
             action.addOp(new ui.Action.OpChiralFlagMove(d));
@@ -571,7 +571,7 @@ ui.Action.fromFragmentDeletion = function(selection)
     selection.chiralFlags.each(function (id) {
         action.addOp(new ui.Action.OpChiralFlagDelete(id));
     }, this);
-    
+
     action = action.perform();
 
     while (frids.length > 0) action.mergeWith(new ui.Action.__fromFragmentSplit(frids.pop()));
@@ -648,13 +648,13 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     var frag = template.molecule;
 
     var fragAction = new ui.Action.OpFragmentAdd().perform(ui.editor);
-    
+
     var map = {};
-    
+
     // Only template atom label matters for now
     frag.atoms.each(function (aid, atom) {
         var op;
-        
+
         action.addOp(
             op = new ui.Action.OpAtomAdd(
                 { label: atom.label, fragment: fragAction.frid },
@@ -669,8 +669,8 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     frag.bonds.each(function (bid, bond) {
         action.addOp(
             new ui.Action.OpBondAdd(
-                map[bond.begin], 
-                map[bond.end], 
+                map[bond.begin],
+                map[bond.end],
                 { type: bond.type }
             ).perform(ui.editor)
         );
@@ -703,7 +703,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
     var sgroups = ui.render.atomGetSGroups(aid);
 
     var frid = R.atomGetAttr(aid, 'fragment');
-    
+
     var map = {};
     var xy0 = frag.atoms.get(template.aid).pp;
 
@@ -718,26 +718,26 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
             aid1 = aid = action_res[2];
         } else {
             var op;
-        
+
             action.addOp(
                 op = new ui.Action.OpAtomAdd(
                     { label: 'C', fragment: frid },
                     (new util.Vec2(1, 0)).rotate(angle).add(atom.pp)
                 ).perform(ui.editor)
             );
-        
+
             action.addOp(
                 new ui.Action.OpBondAdd(
-                    aid, 
-                    op.data.aid, 
+                    aid,
+                    op.data.aid,
                     { type: 1 }
                 ).perform(ui.editor)
             );
-        
+
             aid1 = aid = op.data.aid;
             action.mergeWith(ui.Action.atomAddToSGroups(sgroups, aid));
         }
-        
+
         var atom0 = atom;
         atom = molecule.atoms.get(aid);
         var delta = calcAngle(atom0.pp, atom.pp) - template.angle0;
@@ -748,7 +748,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
         }
         delta = angle - template.angle0;
     }
-    
+
     // Only template atom label matters for now
     frag.atoms.each(function (id, a) {
         if (id == template.aid) {
@@ -760,7 +760,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
                 ).perform(ui.editor)
             );
         } else {
-            var v; 
+            var v;
 
             v = util.Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
@@ -780,8 +780,8 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
     frag.bonds.each(function (bid, bond) {
         action.addOp(
             new ui.Action.OpBondAdd(
-                map[bond.begin], 
-                map[bond.end], 
+                map[bond.begin],
+                map[bond.end],
                 { type: bond.type }
             ).perform(ui.editor)
         );
@@ -799,7 +799,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     var R = ui.render;
     var RS = R.ctab;
     var molecule = RS.molecule;
-    
+
     var bond = molecule.bonds.get(bid);
     var begin = molecule.atoms.get(bond.begin);
     var end = molecule.atoms.get(bond.end);
@@ -812,9 +812,9 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     var fr_end;
 
     var frid = R.atomGetAttr(bond.begin, 'fragment');
-    
+
     var map = {};
-    
+
     if (flip) {
         fr_begin = frag.atoms.get(fr_bond.end);
         fr_end = frag.atoms.get(fr_bond.begin);
@@ -826,13 +826,13 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
         map[fr_bond.begin] = bond.begin;
         map[fr_bond.end] = bond.end;
     }
-    
+
     // calc angle
     var angle = calcAngle(begin.pp, end.pp) - calcAngle(fr_begin.pp, fr_end.pp);
     var scale = util.Vec2.dist(begin.pp, end.pp) / util.Vec2.dist(fr_begin.pp, fr_end.pp);
-    
+
     var xy0 = fr_begin.pp;
-    
+
     frag.atoms.each(function (id, a) {
         if (id == fr_bond.begin || id == fr_bond.end) {
             action.addOp(
@@ -845,8 +845,8 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
             return;
         }
 
-        var v; 
-        
+        var v;
+
         v = util.Vec2.diff(a.pp, fr_begin.pp).rotate(angle).scaled(scale).add(begin.pp);
 
         var merge_a = R.findClosestAtom(v, 0.1);
@@ -872,22 +872,22 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     frag.bonds.each(function (id, bond) {
         if (id != template.bid) {
             var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
-            
+
             if (exist_id == -1) {
                 action.addOp(
                     new ui.Action.OpBondAdd(
-                        map[bond.begin], 
-                        map[bond.end], 
+                        map[bond.begin],
+                        map[bond.end],
                         { type: bond.type }
                     ).perform(ui.editor)
                 );
                 return;
             }
-            
+
             id = exist_id;
             bond = molecule.bonds.get(id);
         }
-        
+
         // TODO [BK] check if not aromatic
         action.addOp(
             new ui.Action.OpBondAttr(
@@ -897,7 +897,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
             ).perform(ui.editor)
         );
     });
-    
+
     action.operations.reverse();
 
     return action;
@@ -969,9 +969,7 @@ ui.Action.fromSgroupAttrs = function (id, attrs)
     var sg = RS.sgroups.get(id).item;
 
     new Hash(attrs).each(function (attr) {
-        if (!sg.checkAttr(attr.key, attr.value)) {
             action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
-        }
     }, this);
 
     return action.perform();
@@ -1049,7 +1047,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
         asterisk_action.mergeWith(action);
         action = asterisk_action;
     }
-    
+
     return ui.Action.fromSgroupAttrs(sgid, attrs).mergeWith(action);
 };
 
@@ -1086,12 +1084,12 @@ ui.Action.fromPaste = function(objects, offset) {
             rgnew.push(rgid);
         }
     }
-    
+
     // assign fragments to r-groups
     for (var frid in ui.clipboard.rgmap) {
         action.addOp(new ui.Action.OpRGroupFragment(ui.clipboard.rgmap[frid], fmap[frid]).perform(ui.editor));
     }
-    
+
     for (var i = 0; i < rgnew.length; ++i) {
         action.mergeWith(ui.Action.fromRGroupAttrs(rgnew[i], ui.clipboard.rgroups[rgnew[i]]));
     }
@@ -1134,54 +1132,54 @@ ui.Action.fromFlip = function(objects, flip) {
     var render = ui.render;
     var ctab = render.ctab;
     var molecule = ctab.molecule;
-    
+
     var action = new ui.Action();
     var i;
     var fids = {};
-    
+
     if (objects.atoms) {
         for (i = 0; i < objects.atoms.length; i++) {
             var aid = objects.atoms[i];
             var atom = molecule.atoms.get(aid);
             if (!(atom.fragment in fids)) {
-                fids[atom.fragment] = [aid]; 
+                fids[atom.fragment] = [aid];
             } else {
                 fids[atom.fragment].push(aid);
             }
         }
-        
+
         fids = new Hash(fids);
-        
+
         if (fids.detect(function(frag) {
             return !util.Set.eq(molecule.getFragmentIds(frag[0]), util.Set.fromList(frag[1]));
         })) {
             return action; // empty action
         }
-        
+
         fids.each(function (frag) {
             var fragment = util.Set.fromList(frag[1]);
             //var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
             var bbox = molecule.getCoordBoundingBox(fragment);
-            
+
             util.Set.each(fragment, function(aid) {
                 var atom = molecule.atoms.get(aid);
                 var d = new util.Vec2();
-                
+
                 if (flip == 'horizontal') {
                     d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
                 } else { // 'vertical'
                     d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
                 }
-                
+
                 action.addOp(new ui.Action.OpAtomMove(aid, d));
             });
         });
-    
+
         if (objects.bonds) {
             for (i = 0; i < objects.bonds.length; i++) {
                 var bid = objects.bonds[i];
                 var bond = molecule.bonds.get(bid);
-                
+
                 if (bond.type == chem.Struct.BOND.TYPE.SINGLE) {
                     if (bond.stereo == chem.Struct.BOND.STEREO.UP) {
                         action.addOp(new ui.Action.OpBondAttr(bid, 'stereo', chem.Struct.BOND.STEREO.DOWN));
@@ -1200,11 +1198,11 @@ ui.Action.fromRotate = function(objects, pos, angle) {
     var render = ui.render;
     var ctab = render.ctab;
     var molecule = ctab.molecule;
-    
+
     var action = new ui.Action();
     var i;
     var fids = {};
-    
+
     function rotateDelta(v)
     {
         var v1 = v.sub(pos);
@@ -1212,35 +1210,35 @@ ui.Action.fromRotate = function(objects, pos, angle) {
         v1.add_(pos);
         return v1.sub(v);
     }
-    
+
     if (objects.atoms) {
         objects.atoms.each(function (aid) {
             var atom = molecule.atoms.get(aid);
             action.addOp(new ui.Action.OpAtomMove(aid, rotateDelta(atom.pp)));
         });
     }
-    
+
     if (objects.rxnArrows) {
         objects.rxnArrows.each(function (aid) {
             var arrow = molecule.rxnArrows.get(aid);
             action.addOp(new ui.Action.OpRxnArrowMove(aid, rotateDelta(arrow.pp)));
         });
     }
-    
+
     if (objects.rxnPluses) {
         objects.rxnPluses.each(function (pid) {
             var plus = molecule.rxnPluses.get(pid);
             action.addOp(new ui.Action.OpRxnPlusMove(pid, rotateDelta(plus.pp)));
         });
     }
-    
+
     if (objects.sgroupData) {
         objects.sgroupData.each(function (did) {
             var data = molecule.sgroups.get(did);
             action.addOp(new ui.Action.OpSGroupDataMove(did, rotateDelta(data.pp)));
         });
     }
-    
+
     if (objects.chiralFlags) {
         objects.chiralFlags.each(function (fid) {
             var flag = molecule.chiralFlags.get(fid);

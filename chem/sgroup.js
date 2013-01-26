@@ -40,7 +40,7 @@ chem.SGroup = function (type)
 		'mul': 1, // multiplication count for MUL group
 		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
 		'name' : '',
-		'subscript' : '',
+		'subscript' : 'n',
 
 		// data s-group fields
 		'attached' : false,
@@ -51,6 +51,7 @@ chem.SGroup = function (type)
 		'daspPos' : 1,
 		'fieldType' : 'F',
 		'fieldName' : '',
+		'fieldValue' : '',
 		'units' : '',
 		'query' : '',
 		'queryOp' : ''
@@ -309,7 +310,7 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) {
         this.d = d;
         this.n = d.rotateSC(1,0);
         this.w = w;
-        this.h = h;        
+        this.h = h;
     }
     var brackets = [];
     if (xbonds.length < 2) {
@@ -319,7 +320,7 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) {
             var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
             var cl = util.Vec2.lc2(d, bb.p0.x, n, 0.5*(bb.p0.y+bb.p1.y));
             var cr = util.Vec2.lc2(d, bb.p1.x, n, 0.5*(bb.p0.y+bb.p1.y));
-            var bracketHeight = bb.sz().y;    
+            var bracketHeight = bb.sz().y;
 
             brackets.push(new bracketParams(cl, d.negated(), bracketWidth, bracketHeight), new bracketParams(cr, d, bracketWidth, bracketHeight));
         })();
@@ -439,8 +440,8 @@ chem.SGroup.GroupMul = {
             }, this);
             if (xBonds.length != 0 && xBonds.length != 2)
                 throw {
-                    'id':this.id, 
-                    'error-type':'cross-bond-number', 
+                    'id':this.id,
+                    'error-type':'cross-bond-number',
                     'message':"Unsupported cross-bonds number"
                 };
 
@@ -660,6 +661,7 @@ chem.SGroup.GroupSup = {
 
 	postLoad: function (mol, atomMap) {
 		this.data.name = (this.data.subscript || '').strip();
+                this.data.subscript = '';
 	}
 };
 
@@ -730,7 +732,7 @@ chem.SGroup.GroupDat = {
         chem.SGroup.bracketPos(this, render, remol.molecule);
         this.areas = this.bracketBox ? [this.bracketBox] : [];
         if (this.pp == null) {
-            // NB: we did not pass xbonds parameter to the backetPos method above, 
+            // NB: we did not pass xbonds parameter to the backetPos method above,
             //  so the result will be in the regular coordinate system
             chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
         }

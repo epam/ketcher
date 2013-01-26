@@ -157,10 +157,10 @@ rnd.Editor.SelectionHelper.prototype.isSelected = function(item) {
     var render = this.editor.render;
     var ctab = render.ctab;
     if (item.map == 'frags' || item.map == 'rgroups') {
-        var atoms = item.map == 'frags' ? 
-            ctab.frags.get(item.id).fragGetAtoms(render, item.id) : 
+        var atoms = item.map == 'frags' ?
+            ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
             ctab.rgroups.get(item.id).getAtoms(render);
-        return !Object.isUndefined(this.selection['atoms']) 
+        return !Object.isUndefined(this.selection['atoms'])
             && util.Set.subset(util.Set.fromList(atoms), util.Set.fromList(this.selection['atoms']));
     }
     return 'selection' in this
@@ -174,9 +174,9 @@ rnd.Editor.EditorTool = function(editor) {
 };
 rnd.Editor.EditorTool.prototype.processEvent = function(name, event) {
     if (!('touches' in event) || event.touches.length == 1) {
-        if (name + '0' in this) 
-            return this[name + '0'](event); 
-        else if (name in this) 
+        if (name + '0' in this)
+            return this[name + '0'](event);
+        else if (name in this)
             return this[name](event);
         console.log('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
     } else if ('lastEvent' in this.OnMouseDown0) {
@@ -815,22 +815,22 @@ rnd.Editor.ChainTool.prototype.OnCancel = function() {
 rnd.Editor.TemplateTool = function(editor, template) {
     this.editor = editor;
     this.template = rnd.templates[template];
-    
+
     // load template molfile in advance
     if (!this.template.molecule) {
         var lines = this.template.molfile.split('\n');
         var frag = chem.Molfile.parseCTFile(lines);
-        
+
         var xy0 = new util.Vec2();
-    
+
         frag.atoms.each(function (aid, atom) {
             xy0.add_(atom.pp);
         });
-    
+
         this.template.molecule = frag; // preloaded struct
         this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
         this.template.angle0 = this._calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
-        
+
         var bond = frag.bonds.get(this.template.bid);
         this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
     }
@@ -843,7 +843,7 @@ rnd.Editor.TemplateTool.prototype._getSign = function(molecule, bond, v) {
     var end = molecule.atoms.get(bond.end).pp;
 
     var sign = util.Vec2.cross(util.Vec2.diff(begin, end), util.Vec2.diff(v, end));
-    
+
     if (sign > 0) return 1;
     if (sign < 0) return -1;
     return 0;
@@ -867,13 +867,13 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
         var frid = _R_.atomGetAttr(bond.begin, 'fragment');
         var fr_ids = molecule.getFragmentIds(frid);
         var count = 0;
-        
+
         var loop = molecule.halfBonds.get(bond.hb1).loop;
-        
+
         if (loop < 0) {
             loop = molecule.halfBonds.get(bond.hb2).loop;
         }
-        
+
         if (loop >= 0) {
             var loop_hbs = molecule.loops.get(loop).hbs;
             loop_hbs.each(function (hb) {
@@ -886,11 +886,11 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function(event) {
                 count++;
             });
         }
-        
+
         _DC_.v0 = xy0.scaled(1 / count);
-        
+
         var sign = this._getSign(molecule, bond, _DC_.v0);
-        
+
         // calculate default template flip
         _DC_.sign1 = sign || 1;
         _DC_.sign2 = this.template.sign;
@@ -901,14 +901,14 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     if ('dragCtx' in this) {
         var _DC_ = this.dragCtx;
-        var ci = _DC_.item; 
+        var ci = _DC_.item;
         var pos0;
         var pos1 = _E_.ui.page2obj(event);
         var angle, extra_bond;
         var self = this;
-        
+
         _DC_.mouse_moved = true;
-        
+
         // calc initial pos and is extra bond needed
         if (!ci || ci.type == 'Canvas') {
             pos0 = _DC_.xy0;
@@ -919,11 +919,11 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
             var molecule = _R_.ctab.molecule;
             var bond = molecule.bonds.get(ci.id);
             var sign = this._getSign(molecule, bond, pos1);
-            
+
             if (_DC_.sign1 * this.template.sign > 0) {
                 sign = -sign;
             }
-            
+
             if (sign != _DC_.sign2 || !_DC_.action) {
                 // undo previous action
                 if ('action' in _DC_) _DC_.action.perform();
@@ -931,10 +931,10 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function(event) {
                 _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
                 _R_.update();
             }
-            
+
             return true;
         }
-        
+
         angle = this._calcAngle(pos0, pos1);
         var degrees = Math.round(180 / Math.PI * angle);
         // check if anything changed since last time
@@ -976,14 +976,14 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     if ('dragCtx' in this) {
         var _DC_ = this.dragCtx;
-        var ci = _DC_.item; 
-        
+        var ci = _DC_.item;
+
         if (!_DC_.action) {
             if (!ci || ci.type == 'Canvas') {
                 _DC_.action = _E_.ui.Action.fromTemplateOnCanvas(_DC_.xy0, 0, this.template);
             } else if (ci.map == 'atoms') {
                 var degree = _R_.atomGetDegree(ci.id);
-                
+
                 if (degree > 1) { // common case
                     _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                         ci.id,
@@ -997,7 +997,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
                     var nei_id = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
                     var atom = molecule.atoms.get(ci.id);
                     var nei = molecule.atoms.get(nei_id);
-                    
+
                     _DC_.action = _E_.ui.Action.fromTemplateOnAtom(
                         ci.id,
                         this._calcAngle(nei.pp, atom.pp),
@@ -1017,10 +1017,10 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
             } else if (ci.map == 'bonds') {
                 _DC_.action = _E_.ui.Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
             }
-            
+
             _R_.update();
         }
-        
+
         if ('action' in this.dragCtx) {
             this.editor.ui.addUndoAction(this.dragCtx.action);
         }
@@ -1135,10 +1135,10 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
             mode : 'single',
             selection : rgOld ? 1 << (rgOld - 1) : 0,
             onOk : function(rgNew) {
-                for (var i = 0; i < 32; i++) 
-                    if (rgNew & (1 << i)) { 
-                        rgNew = i + 1; 
-                        break; 
+                for (var i = 0; i < 32; i++)
+                    if (rgNew & (1 << i)) {
+                        rgNew = i + 1;
+                        break;
                     }
                 if (rgOld != rgNew) {
                     this.editor.ui.addUndoAction(
@@ -1554,7 +1554,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function(id,
         id = ui.render.ctab.molecule.sgroups.newId();
         this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAddition(type, this.selection.atoms, attrs, id), true);
     } else {
-        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupAttrs(id, attrs).mergeWith(this.editor.ui.Action.fromSgroupType(id, type)), true);
+        this.editor.ui.addUndoAction(this.editor.ui.Action.fromSgroupType(id, type).mergeWith(this.editor.ui.Action.fromSgroupAttrs(id, attrs)), true);
     }
     this.postClose();
 };
@@ -1609,30 +1609,30 @@ rnd.Editor.RotateTool = function(editor) {
 rnd.Editor.RotateTool.prototype = new rnd.Editor.EditorTool();
 
 rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
-    
+
     var selection = this.editor._selectionHelper.selection;
     if (selection.atoms && selection.atoms.length) {
         var molecule = this.editor.render.ctab.molecule;
         var xy0 = new util.Vec2();
-        
+
         if (!selection.atoms || !selection.atoms.length) {
             return true;
         }
-        
+
         var rot_id = null, rot_all = false;
-        
+
         selection.atoms.each(function (aid) {
             var atom = molecule.atoms.get(aid);
-            
+
             xy0.add_(atom.pp);
-            
+
             if (rot_all) {
                 return;
             }
 
             atom.neighbors.find(function (nei) {
                 var hb = molecule.halfBonds.get(nei);
-            
+
                 if (selection.atoms.indexOf(hb.end) == -1) {
                     if (hb.loop >= 0) {
                         var nei_atom = molecule.atoms.get(aid);
@@ -1663,7 +1663,7 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
         } else {
             xy0 = xy0.scaled(1 / selection.atoms.length);
         }
-        
+
         this.dragCtx = {
             xy0 : xy0,
             angle1 : this._calcAngle(xy0, this.editor.ui.page2obj(event)),
@@ -1682,30 +1682,30 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function(event) {
     } else if ('dragCtx' in this) {
         var _E_ = this.editor, _R_ = _E_.render;
         var _DC_ = this.dragCtx;
-        
+
         var pos = _E_.ui.page2obj(event);
         var angle = this._calcAngle(_DC_.xy0, pos) - _DC_.angle1;
 
         var degrees = Math.round(angle / Math.PI * 180);
-        
+
         if (degrees > 180) {
             degrees -= 360;
         } else if (degrees <= -180) {
             degrees += 360;
         }
-        
+
         if ('angle' in _DC_ && _DC_.angle == degrees) return true;
         if ('action' in _DC_) _DC_.action.perform();
-        
+
         _DC_.angle = degrees;
         _DC_.action = _E_.ui.Action.fromRotate(
             _DC_.all ? _R_.ctab.molecule : this.editor.getSelection(),
             _DC_.xy0,
             angle
         );
-        
+
         $('toolText').update(degrees + 'º');
-        
+
         _R_.update();
     }
     return true;

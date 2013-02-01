@@ -1577,7 +1577,9 @@ rnd.Editor.PasteTool = function(editor) {
 };
 rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
-    this.action.perform(this.editor);
+    if ('action' in this) {
+        this.action.perform(this.editor);
+    }
     this.action = this.editor.ui.Action.fromPaste(
         this.editor.ui.clipboard,
         util.Vec2.diff(this.editor.ui.page2obj(event), this.editor.ui.clipboard.getAnchorPosition())
@@ -1638,10 +1640,7 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
                         var nei_atom = molecule.atoms.get(aid);
                         if (!Object.isUndefined(nei_atom.neighbors.find(function (nei_nei) {
                             var nei_hb = molecule.halfBonds.get(nei_nei);
-                            if (nei_hb.loop >= 0 && selection.atoms.indexOf(nei_hb.end) != -1) {
-                                return true;
-                            }
-                            return false;
+                            return nei_hb.loop >= 0 && selection.atoms.indexOf(nei_hb.end) != -1;
                         }))) {
                             rot_all = true;
                             return true;

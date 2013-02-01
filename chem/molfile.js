@@ -1031,7 +1031,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors,
 	this.molfile = '';
 	if (this.reaction) {
         if (molecule.rgroups.count() > 0)
-            alert("Reactions with r-groups are not supported at the moment. R-fragments will be discarded in saving");
+            throw new Error("Unable to save the structure - reactions with r-groups are not supported at the moment");
 		var components = chem.MolfileSaver.getComponents(molecule);
 
 		var reactants = components.reactants, products = components.products, all = reactants.concat(products);

@@ -1266,6 +1266,7 @@ ui.onChange_FileFormat = function (event)
         }
     } catch (er) {
         output.value = '';
+        ui.hideDialog('save_file');
         alert('ERROR: ' + er.message);
     }
     $('mol_data').value = format + '\n' + output.value;
@@ -1376,7 +1377,7 @@ ui.onClick_CleanUp = function ()
     try {
         ui.loadMolecule(new chem.MolfileSaver().saveMolecule(ui.ctab), true);
     } catch (er) {
-        alert("Molfile: " + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
+        alert("ERROR: " + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
     }
 };
 

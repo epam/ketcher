@@ -122,18 +122,17 @@ ui.Action.fromMultipleMove = function (lists, d)
 ui.Action.fromAtomsAttrs = function(ids, attrs, reset)
 {
     var action = new ui.Action();
-    new Hash(attrs).each(function(attr) {
         (typeof(ids) == 'number' ? [ids] : ids).each(function(id) {
             if (reset) {
                 for (var key in chem.Struct.Atom.attrlist) {
                     action.addOp(new ui.Action.OpAtomAttr(id, key, chem.Struct.Atom.attrGetDefault(key)));
                 }
-            }
-            if (attr.key == 'label' && attr.value != null) {
+            } else if ('label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList']) {
                 action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
             }
-            action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
-        }, this);
+            new Hash(attrs).each(function(attr) {
+                action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
+            }, this);
     }, this);
     return action.perform();
 };

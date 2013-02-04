@@ -356,7 +356,7 @@ chem.Struct.Atom.attrGetDefault = function(attr) {
 }
 
 chem.Struct.Atom.attrlist = {
-    'label': 0,
+    'label': null,
     'isotope': 0,
     'radical': 0,
     'charge': 0,

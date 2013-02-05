@@ -23,20 +23,15 @@ chem.InChiSaver.prototype.saveMolecule = function(molecule) {
     } else if (molecule.atoms.count() > 0) {
         molecule = molecule.clone();
         molecule.sgroups.each(function(sgid, sg) {
-            if (sg.type == 'MUL') {
-                try {
-                    sg.prepareForSaving(molecule);
-                } catch(ex) {
-                    throw { message : 'Bad s-group (' + ex.message + ')' };
-                }
-            } else {
+            if (sg.type != 'MUL') {
                 throw { message : "InChi data format doesn't support s-groups" };
             }
         }, this);
+        var moldata = new chem.MolfileSaver().saveMolecule(molecule);
         new Ajax.Request(ui.path + 'getinchi', {
             method: 'post',
             asynchronous : false,
-            parameters: { moldata: new chem.MolfileSaver().saveMolecule(molecule) },
+            parameters: { moldata: moldata },
             onComplete: function (res) {
                 if (res.responseText.startsWith('Ok.')) {
                     ret = res.responseText.split('\n')[1];

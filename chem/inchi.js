@@ -17,7 +17,7 @@ chem.InChiSaver = function() {
 };
 
 chem.InChiSaver.prototype.saveMolecule = function(molecule) {
-    var ret = '';
+    var ret = '', err = null;
     if (ui.standalone) {
         throw { message : 'InChI is not supported in the standalone mode' };
     } else if (molecule.atoms.count() > 0) {
@@ -36,12 +36,12 @@ chem.InChiSaver.prototype.saveMolecule = function(molecule) {
                 if (res.responseText.startsWith('Ok.')) {
                     ret = res.responseText.split('\n')[1];
                 } else if (res.responseText.startsWith('Error.')) {
-                    throw { message : res.responseText.split('\n')[1] };
+                    err = { message : res.responseText.split('\n')[1] };
                 } else {
-                    throw { message : 'Unexpected server message (' + res.responseText + ')' };
+                    err = { message : 'Unexpected server message (' + res.responseText + ')' };
                 }
             }
         });
     }
-    return ret;
+    if (err) throw err; else return ret;
 };

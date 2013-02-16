@@ -35,6 +35,7 @@ ketcher.init = function (parameters)
 	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_reagenerics', {'fontSize':9}).renderSingle('Generic\nGroups');
 
     ui.init(parameters);
+    $("ketcher_version").innerHTML = "Version " + ketcher.version;
 };
 
 ketcher.getSmiles = function ()

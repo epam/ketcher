@@ -316,3 +316,22 @@ div#loading
 .propDialog
 {
 }
+
+.aboutDialog
+{
+    position: absolute;
+    z-index:  5;
+    background-color: #FFFFFF;
+    border-color: #F0F0F0;
+    border-style: inset;
+    border-width: normal;
+    padding: 4px;
+    text-align: center;
+    left:  300px;
+    top:   100px;
+}
+
+.aboutDialog > div > div:first-child
+{
+    background-color: #D0D0D0;
+}

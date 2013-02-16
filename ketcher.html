@@ -67,7 +67,7 @@
                     <td id="toolText" style="width:32px"></td>
                     <td class="toolDelimiter"></td>
                     <td style="width:1px" rowspan="14"></td>
-                    <td style="width:36px;padding:0 2px 0 0;"><a href="http://www.ggasoftware.com/" target="_blank"><img src="icons/png/main/logo.png" alt="" title="GGA Software Services" /></a></td>
+                    <td style="width:36px;padding:0 2px 0 0;"><a href="#" onclick="ui.showDialog('about_dialog')"><img src="icons/png/main/logo.png" alt="" title="GGA Software Services" /></a></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
                     <td><img class="sideButton modeButton" id="select_erase" src="icons/png/main/edit-clear.png" alt="" title="Erase" /></td>
@@ -284,7 +284,7 @@
 
             <input id="input_label" type="text" maxlength="4" size="4" style="display:none;" />
 
-            <div id="window_cover" style="width:0;height:0;display:none;"><div id="loading" style="display:none;"></div></div>
+            <div id="window_cover" style="width:0;height:0;"><div id="loading" ></div></div>
 
             <div class="dialogWindow fileDialog" id="open_file" style="display:none;">
                 <div style="width:100%">
@@ -788,6 +788,27 @@
                     <div style="margin-top:0.5em">
                         <input id="reagenerics_table_cancel" type="button" value="Cancel" />
                         <input id="reagenerics_table_ok" type="button" value="OK" disabled />
+                    </div>
+                </div>
+            </div>
+
+            <div class="aboutDialog" id="about_dialog" style="display:none;">
+                <div>
+                    <div>
+                        About
+                    </div>
+                    <div style="height:0.5em"></div>
+                    <div>
+                        <a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank"><img src="icons/logo_small01.jpg"></img></a>
+                    </div>
+                    <div style="text-align: left" id="ketcher_version">
+                        Version 1.0
+                    </div>
+                    <div style="text-align: right">
+                        <a href="http://ggasoftware.com/opensource/ketcher#feedback" target="_blank" style="color:#0000CC">Feedback</a>
+                    </div>
+                    <div style="margin:4px;">
+                        <button onclick="ui.hideDialog('about_dialog')">Close</button>
                     </div>
                 </div>
             </div>

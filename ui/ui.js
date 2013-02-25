@@ -406,6 +406,22 @@ ui.init = function (parameters)
         ui.hideDialog('save_file');
     });
 
+
+    var zoom_list = $('zoom_list');
+    while (zoom_list.options.length > 0) {
+        zoom_list.options.remove(0);
+    }
+    for (var z = 0; z < ui.zoomValues.length; ++z) {
+        var opt = document.createElement('option');
+	opt.text = (100*ui.zoomValues[z]).toFixed(0) + '%';
+	opt.value = z;
+	zoom_list.options.add(opt);
+    }
+    zoom_list.selectedIndex = ui.zoomIdx;
+    zoom_list.observe('change', function(){
+        ui.zoomSet(zoom_list.value-0);	
+    });
+
     ui.onResize_Ketcher();
     if (Prototype.Browser.IE) {
         ui.client_area.absolutize(); // Needed for clipping and scrollbars in IE
@@ -1280,33 +1296,35 @@ ui.onClick_ZoomIn = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-
-    ui.zoomIdx++;
-
-    if (ui.zoomIdx >= ui.zoomValues.length - 1)
-        this.addClassName('buttonDisabled');
-    $('zoom_out').removeClassName('buttonDisabled');
-    if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
-        throw new Error ("Zoom index out of range");
-    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2obj(ui.render.viewSz.scaled(0.5)));
-    ui.render.update();
+    ui.zoomSet(ui.zoomIdx + 1);
 };
 
 ui.onClick_ZoomOut = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
+    ui.zoomSet(ui.zoomIdx - 1);
+};
 
-    ui.zoomIdx--;
-
-    if (ui.zoomIdx <= 0)
-        this.addClassName('buttonDisabled');
-    $('zoom_in').removeClassName('buttonDisabled');
-    if (ui.zoomIdx < 0 || ui.zoomIdx >= ui.zoomValues.length)
+ui.zoomSet = function (idx)
+{
+    if (idx < 0 || idx >= ui.zoomValues.length)
         throw new Error ("Zoom index out of range");
+
+    if (idx >= ui.zoomValues.length - 1)
+        $('zoom_in').addClassName('buttonDisabled');
+    else
+        $('zoom_in').removeClassName('buttonDisabled');
+    if (idx <= 0)
+        $('zoom_out').addClassName('buttonDisabled');
+    else
+        $('zoom_out').removeClassName('buttonDisabled');
+    ui.zoomIdx = idx;
     ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2obj(ui.render.viewSz.scaled(0.5)));
+    zoom_list.selectedIndex = ui.zoomIdx;
     ui.render.update();
 };
+
 
 ui.setZoomRegular = function (zoom) {
     //mr: prevdent unbounded zooming

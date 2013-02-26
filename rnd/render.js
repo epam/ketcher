@@ -865,13 +865,9 @@ rnd.Render.prototype.update = function (force)
 		if (!this.opt.autoScale) {
 			var ext = util.Vec2.UNIT.scaled(sf);
 			bb = bb.extend(ext, ext);
-			if (this.bb)
-				this.bb = util.Box2Abs.union(this.bb, bb);
-			else
-			{
-				var d = this.viewSz.sub(bb.sz()).scaled(0.5).max(util.Vec2.ZERO);
-				this.bb = bb.extend(d, d);
-			}
+			if (!this.bb)
+                            this.bb = new util.Box2Abs(util.Vec2.ZERO, this.viewSz);
+                        this.bb = util.Box2Abs.union(this.bb, bb);
 			bb = this.bb.clone();
 
 			var sz = util.Vec2.max(bb.sz().floor(), this.viewSz);

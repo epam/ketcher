@@ -150,34 +150,34 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     });
     //END
 
-	if (!this.opt.ignoreMouseEvents) {
-		// assign canvas events handlers
-		['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function(eventName){
-            var bindEventName = eventName.toLowerCase();
-            bindEventName = EventMap[bindEventName] || bindEventName;
-			clientArea.observe(bindEventName, function(event) {
-                if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
-                    // TODO: karulin: fix this on touch devices if needed
-                    var co = clientArea.cumulativeOffset();
-                    co = new util.Vec2(co[0], co[1]);
-                    var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
-                    var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
-                    if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
-                        if (eventName == "MouseMove") {
-                            // [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-                            ui.render.current_tool.processEvent('OnMouseLeave', event);
+        if (!this.opt.ignoreMouseEvents) {
+            // assign canvas events handlers
+            ['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function(eventName){
+                var bindEventName = eventName.toLowerCase();
+                bindEventName = EventMap[bindEventName] || bindEventName;
+                clientArea.observe(bindEventName, function(event) {
+                    if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
+                        // TODO: karulin: fix this on touch devices if needed
+                        var co = clientArea.cumulativeOffset();
+                        co = new util.Vec2(co[0], co[1]);
+                        var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
+                        var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
+                        if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
+                            if (eventName == "MouseMove") {
+                                // [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+                                ui.render.current_tool.processEvent('OnMouseLeave', event);
+                            }
+                            return util.preventDefault(event);
                         }
-                        return util.preventDefault(event);
                     }
-                }
 
-                ui.render.current_tool.processEvent('On' + eventName, event);
-				util.stopEventPropagation(event);
-                if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
-                    return util.preventDefault(event);
-			});
-		}, this);
-	}
+                    ui.render.current_tool.processEvent('On' + eventName, event);
+                    util.stopEventPropagation(event);
+                    if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
+                        return util.preventDefault(event);
+                });
+            }, this);
+        }
 
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;
@@ -188,10 +188,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 };
 
 rnd.Render.prototype.view2scaled = function (p, isRelative) {
-	if (!this.useOldZoom)
-		p = p.scaled(1/this.zoom);
-	p = isRelative ? p : p.add(ui.scrollPos().scaled(1/this.zoom)).sub(this.offset);
-	return p;
+    var scroll = ui.scrollPos();
+    if (!this.useOldZoom) {
+        p = p.scaled(1/this.zoom);
+        scroll = scroll.scaled(1/this.zoom);
+    }
+    p = isRelative ? p : p.add(scroll).sub(this.offset);
+    return p;
 };
 
 rnd.Render.prototype.scaled2view = function (p, isRelative) {

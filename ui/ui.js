@@ -1919,8 +1919,6 @@ ui.onChange_SGroupType = function ()
         $$('.generalSGroup').each(function (el) {el.hide()});
         $$('.dataSGroup').each(function (el) {el.show()});
 
-        $('sgroup_field_name').activate();
-
         return;
     }
 
@@ -1936,9 +1934,6 @@ ui.onChange_SGroupType = function ()
         $('sgroup_label').value = 'n';
     else if (type == 'GEN' || type == 'SUP')
         $('sgroup_label').value = '';
-
-    if (type != 'GEN')
-        $('sgroup_label').activate();
 };
 
 //

@@ -535,22 +535,22 @@ rnd.Render.prototype.initSettings = function()
 	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
-rnd.Render.prototype.getBoundingBox = function ()
+rnd.Render.prototype.getBoundingBox = function (selection)
 {
 	var bb = null, vbb;
 	this.ctab.eachVisel(function(visel){
 		vbb = visel.boundingBox;
 		if (vbb)
 			bb = bb ? util.Box2Abs.union(bb, vbb) : vbb.clone();
-	}, this);
+	}, this, selection);
 	if (!bb)
 		bb = new util.Box2Abs(0, 0, 0, 0);
 	return bb;
 };
 
-rnd.Render.prototype.getStructCenter = function ()
+rnd.Render.prototype.getStructCenter = function (selection)
 {
-	var bb = this.getBoundingBox();
+	var bb = this.getBoundingBox(selection);
         if (this.offset)
             bb = bb.translate(this.offset.negated());
 	return this.scaled2obj(util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5));

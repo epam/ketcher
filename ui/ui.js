@@ -1320,7 +1320,7 @@ ui.zoomSet = function (idx)
     else
         $('zoom_out').removeClassName('buttonDisabled');
     ui.zoomIdx = idx;
-    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.view2obj(ui.render.viewSz.scaled(0.5)));
+    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.getStructCenter(ui.editor.getSelection()));
     zoom_list.selectedIndex = ui.zoomIdx;
     ui.render.update();
 };

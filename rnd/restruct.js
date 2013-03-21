@@ -233,6 +233,10 @@ rnd.ReStruct.maps = {
     'chiralFlags': 7
 };
 
+rnd.ReStruct.mapsExt = rnd.ReStruct.maps;
+rnd.ReStruct.mapsExt['sgroups'] = 8;
+rnd.ReStruct.mapsExt['reloops'] = 9; 
+
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
 	if (atom.component < 0)
@@ -386,19 +390,13 @@ rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 		this.clearVisel(this[map].get(id).visel);
 };
 
-rnd.ReStruct.prototype.eachVisel = function (func, context) {
+rnd.ReStruct.prototype.eachVisel = function (func, context, selection) {
 
-	for (var map in rnd.ReStruct.maps) {
-		this[map].each(function(id, item){
-			func.call(context, item.visel);
+	for (var map in rnd.ReStruct.mapsExt) {
+		(selection != null ? (selection[map] || []) : this[map]).each(function(id){
+			func.call(context, this[map].get(id).visel);
 		}, this);
 	}
-	this.sgroups.each(function(sid, sgroup){
-		func.call(context, sgroup.visel);
-	}, this);
-	this.reloops.each(function(rlid, reloop) {
-		func.call(context, reloop.visel);
-	}, this);
 };
 
 rnd.ReStruct.prototype.translate = function (d) {

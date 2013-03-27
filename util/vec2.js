@@ -249,6 +249,11 @@ util.Vec2.lc2 = function (v1, f1, v2, f2)
     return new util.Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2);
 };
 
+util.Vec2.centre = function (v1, v2)
+{
+    return new util.Vec2.lc2(v1, 0.5, v2, 0.5);
+}
+
 util.Box2Abs = function ()
 {
     if (arguments.length == 1 && 'min' in arguments[0] && 'max' in arguments[0])
@@ -336,7 +341,7 @@ util.Box2Abs.prototype.sz = function()
 
 util.Box2Abs.prototype.centre = function()
 {
-    return util.Vec2.lc2(this.p0, 0.5, this.p1, 0.5);
+    return util.Vec2.centre(this.p0, this.p1);
 };
 
 util.Box2Abs.prototype.pos = function()

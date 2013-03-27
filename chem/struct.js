@@ -28,6 +28,7 @@ chem.Struct = function ()
     this.frags = new util.Pool();
     this.rgroups = new util.Map();
     this.name = '';
+    this.sGroupForest = new chem.SGroupForest(this);
 };
 
 // returns a list of id's of s-groups, which contain only atoms in the given list
@@ -191,6 +192,7 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
 		for (i = 0; i < sg.atoms.length; ++i) {
 			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
+                cp.sGroupForest.insert(sg.id);
 	});
 	cp.isChiral = this.isChiral;
 	if (!dropRxnSymbols) {
@@ -640,6 +642,7 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 	for (var i = 0; i < sg.atoms.length; ++i) {
 		util.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
 	}
+        this.sGroupForest.remove(sgid);
 	this.sgroups.remove(sgid);
 };
 

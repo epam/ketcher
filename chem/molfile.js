@@ -622,12 +622,13 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 		chem.SGroup.addGroup(ctab, sGroups[sid], atomMap);
 	}
 	var emptyGroups = [];
-	for (sid in sGroups) {
+	for (sid in sGroups) { // TODO: why do we need that?
 		chem.SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
+                ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.remove(emptyGroups[i]);
 	}
         for (var rgid in rLogic) {
@@ -952,6 +953,8 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
+            if (ui.forwardExceptions)
+                throw ex;
 			if (skipErrors && typeof(ex.id) == 'number') {
 				toRemove.push(ex.id);
 			} else {
@@ -1345,53 +1348,65 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
 	}
 
 	var sgmap = {}, cnt = 1, sgmapback = {};
-        this.molecule.sgroups.each(function (id) {
-            sgmapback[cnt] = id;
-            sgmap[id] = cnt++;
-        });
-        for (var q = 1; q < cnt; ++q) { // each group on its own
-            var id = sgmapback[q];
-            var sgroup = this.molecule.sgroups.get(id);
-            this.write('M  STY');
-            this.writePaddedNumber(1, 3);
-            this.writeWhiteSpace(1);
-            this.writePaddedNumber(q, 3);
-            this.writeWhiteSpace(1);
-            this.writePadded(sgroup.type, 3);
-            this.writeCR();
+	var sgorder = this.molecule.sGroupForest.getSGroupsBFS();
+	util.each(sgorder, function (id) {
+		sgmapback[cnt] = id;
+		sgmap[id] = cnt++;
+	}, this);
+	for (var q = 1; q < cnt; ++q) { // each group on its own
+		var id = sgmapback[q];
+		var sgroup = this.molecule.sgroups.get(id);
+		this.write('M  STY');
+		this.writePaddedNumber(1, 3);
+		this.writeWhiteSpace(1);
+		this.writePaddedNumber(q, 3);
+		this.writeWhiteSpace(1);
+		this.writePadded(sgroup.type, 3);
+		this.writeCR();
 
-            // TODO: write subtype, M SST
+		// TODO: write subtype, M SST
 
-            this.write('M  SLB');
-            this.writePaddedNumber(1, 3);
-            this.writeWhiteSpace(1);
-            this.writePaddedNumber(q, 3);
-            this.writeWhiteSpace(1);
-            this.writePaddedNumber(q, 3);
-            this.writeCR();
+		this.write('M  SLB');
+		this.writePaddedNumber(1, 3);
+		this.writeWhiteSpace(1);
+		this.writePaddedNumber(q, 3);
+		this.writeWhiteSpace(1);
+		this.writePaddedNumber(q, 3);
+		this.writeCR();
 
-            // connectivity
-            if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
-                var connectivity = '';
-                connectivity += ' ';
-                connectivity += util.stringPadded(q.toString(), 3);
-                connectivity += ' ';
-                connectivity += util.stringPadded(sgroup.data.connectivity, 3, true);
-                this.write('M  SCN');
-                this.writePaddedNumber(1, 3);
-                this.write(connectivity.toUpperCase());
-                this.writeCR();
-            }
+		var parentid = this.molecule.sGroupForest.parent.get(id);
+		if (parentid >= 0) {
+			this.write('M  SPL');
+			this.writePaddedNumber(1, 3);
+			this.writeWhiteSpace(1);
+			this.writePaddedNumber(q, 3);
+			this.writeWhiteSpace(1);
+			this.writePaddedNumber(sgmap[parentid], 3);
+			this.writeCR();
+		}
 
-            if (sgroup.type == 'SRU') {
-                this.write('M  SMT ');
-                this.writePaddedNumber(q, 3);
-                this.writeWhiteSpace();
-                this.write(sgroup.data.subscript || 'n');
-                this.writeCR();
-            }
+		// connectivity
+		if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
+			var connectivity = '';
+			connectivity += ' ';
+			connectivity += util.stringPadded(q.toString(), 3);
+			connectivity += ' ';
+			connectivity += util.stringPadded(sgroup.data.connectivity, 3, true);
+			this.write('M  SCN');
+			this.writePaddedNumber(1, 3);
+			this.write(connectivity.toUpperCase());
+			this.writeCR();
+		}
 
-            this.writeCR(sgroup.saveToMolfile(this.molecule, sgmap, this.mapping, this.bondMapping));
+		if (sgroup.type == 'SRU') {
+			this.write('M  SMT ');
+			this.writePaddedNumber(q, 3);
+			this.writeWhiteSpace();
+			this.write(sgroup.data.subscript || 'n');
+			this.writeCR();
+		}
+
+		this.writeCR(sgroup.saveToMolfile(this.molecule, sgmap, this.mapping, this.bondMapping));
 	}
 
 	// TODO: write M  APO
@@ -1442,8 +1457,7 @@ chem.Molfile.parseRxn3000 = function (/* string[] */ ctabLines) /* chem.Struct *
 	nAgents = countsSplit.length > 2 ? countsSplit[2]-0 : 0;
 
     var assert = function (condition) {
-        if (!condition)
-            throw new Error("CTab format invalid");
+        util.assert(condition, "CTab format invalid");
     };
 
     var findCtabEnd = function (i) {

@@ -14,6 +14,7 @@ if (typeof(ui) == 'undefined')
     ui = function () {};
 
 ui.standalone = true;
+ui.forwardExceptions = false;
 
 ui.path = '/';
 ui.base_url = '';
@@ -129,6 +130,8 @@ ui.initTemplates = function ()
             try {
                 var sdf_items = parseSdf(res.responseText);
             } catch (er) {
+                if (ui.forwardExceptions)
+                    throw er;
                 return;
             }
 
@@ -524,6 +527,8 @@ ui.updateMolecule = function (mol)
             ui.setZoomCentered(null, ui.render.getStructCenter());
         } catch (er)
         {
+            if (ui.forwardExceptions)
+                throw er;
             alert(er.message);
         } finally
         {
@@ -543,21 +548,31 @@ ui.parseCTFile = function (molfile, check_empty_line)
         try {
             return chem.Molfile.parseCTFile(lines);
         } catch (ex) {
+            if (ui.forwardExceptions)
+                throw ex;
             if (check_empty_line) {
                 try {
                 // check whether there's an extra empty line on top
                 // this often happens when molfile text is pasted into the dialog window
                     return chem.Molfile.parseCTFile(lines.slice(1));
-                } catch (ex1) {}
+                } catch (ex1) {
+                    if (ui.forwardExceptions)
+                        throw ex1;
+                }
                 try {
                 // check for a missing first line
                 // this sometimes happens when pasting
                     return chem.Molfile.parseCTFile([''].concat(lines));
-                } catch (ex2) {}
+                } catch (ex2) {
+                    if (ui.forwardExceptions)
+                        throw ex2;
+                }
             }
             throw ex;
         }
     } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
         alert("Error loading molfile.\n"+er.toString());
         return null;
     }
@@ -1281,6 +1296,8 @@ ui.onChange_FileFormat = function (event)
             throw { message : 'Unsupported data format' };
         }
     } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
         output.value = '';
         ui.hideDialog('save_file');
         alert('ERROR: ' + er.message);
@@ -1395,6 +1412,8 @@ ui.onClick_CleanUp = function ()
     try {
         ui.loadMolecule(new chem.MolfileSaver().saveMolecule(ui.ctab), true);
     } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
         alert("ERROR: " + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
     }
 };
@@ -1409,6 +1428,8 @@ ui.onClick_Aromatize = function ()
     try {
         ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), true);
     } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
         alert("Molfile: " + er.message);
     }
 };
@@ -1423,6 +1444,8 @@ ui.onClick_Dearomatize = function ()
     try {
         ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), false);
     } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
         alert("Molfile: " + er.message);
     }
 };
@@ -2088,6 +2111,8 @@ ui.onSelect_ElemTableNotList = function ()
     try {
         ui.elem_table_obj.updateAtomProps();
     } catch(e) {
+        if (ui.forwardExceptions)
+            throw e;
         ErrorHandler.handleError(e);
     }
 };

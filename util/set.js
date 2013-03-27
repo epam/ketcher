@@ -38,10 +38,10 @@ util.Set = {
 		return typeof(set[v]) != "undefined" && set[v] !== Object.prototype[v];
 	},
 
-	subset: function(set1, set2) {
-		for (var id in set1) {
-			if (set1[id] !== Object.prototype[id]) {
-				if (set2[id] !== set1[id]) {
+	subset: function(subset, superset) {
+		for (var id in subset) {
+			if (subset[id] !== Object.prototype[id]) {
+				if (superset[id] !== subset[id]) {
 					return false;
 				}
 			}
@@ -59,6 +59,17 @@ util.Set = {
 			}
 		}
 		return set;
+        },
+                
+        disjoint: function(set1, set2) {
+		for (var id in set1) {
+			if (set1[id] !== Object.prototype[id]) {
+				if (set2[id] === set1[id]) {
+                                    return false;
+				}
+			}
+		}
+		return true;
 	},
 
 	eq: function(set1, set2) {

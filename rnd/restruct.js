@@ -235,7 +235,7 @@ rnd.ReStruct.maps = {
 
 rnd.ReStruct.mapsExt = rnd.ReStruct.maps;
 rnd.ReStruct.mapsExt['sgroups'] = 8;
-rnd.ReStruct.mapsExt['reloops'] = 9; 
+rnd.ReStruct.mapsExt['reloops'] = 9;
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
@@ -577,10 +577,11 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 
 rnd.ReStruct.prototype.drawSGroups = function ()
 {
-	this.sgroups.each(function (id, sgroup) {
+	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function(id) {
+		var sgroup = this.sgroups.get(id);
 		var path = sgroup.draw(this.render);
 		this.addReObjectPath('data', sgroup.visel, path, null, true);
-                sgroup.setHighlight(sgroup.highlight, this.render); // TODO: fix this
+		sgroup.setHighlight(sgroup.highlight, this.render); // TODO: fix this
 	}, this);
 };
 
@@ -1129,7 +1130,7 @@ rnd.ReRGroup.prototype.getAtoms = function(render) {
     var ret = [];
     this.item.frags.each(function(fnum, fid) {
         ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render, fid));
-    });            
+    });
     return ret;
 };
 

@@ -1006,6 +1006,7 @@ ui.Action.fromSgroupDeletion = function (id)
     var sg = DS.sgroups.get(id);
     var atoms = chem.SGroup.getAtoms(DS, sg);
     var attrs = sg.getAttrs();
+    action.addOp(new ui.Action.OpSGroupRemoveFromHierarchy(id));
     for (var i = 0; i < atoms.length; ++i) {
         action.addOp(new ui.Action.OpSGroupAtomRemove(id, atoms[i]));
     }
@@ -1030,6 +1031,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
     action.addOp(new ui.Action.OpSGroupCreate(sgid, type, pp));
     for (i = 0; i < atoms.length; i++)
         action.addOp(new ui.Action.OpSGroupAtomAdd(sgid, atoms[i]));
+    action.addOp(new ui.Action.OpSGroupAddToHierarchy(sgid));
 
     action = action.perform();
 
@@ -1575,6 +1577,52 @@ ui.Action.OpSGroupDelete = function(sgid) {
     };
 };
 ui.Action.OpSGroupDelete.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupAddToHierarchy = function(sgid) {
+    this.type = 'OpSGroupAddToHierarchy';
+    this.data = {'sgid' : sgid};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        var sgid = this.data.sgid;
+        var sg = RS.sgroups.get(sgid);
+        this.data.type = sg.item.type;
+        this.data.pp = sg.item.pp;
+        if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
+            RS.clearVisel(RS.sgroupData.get(sgid).visel);
+        }
+        RS.clearVisel(sg.visel);
+        DS.sGroupForest.insert(sgid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupAddToHierarchy();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpSGroupAddToHierarchy.prototype = new ui.Action.OpBase();
+
+ui.Action.OpSGroupRemoveFromHierarchy = function(sgid) {
+    this.type = 'OpSGroupRemoveFromHierarchy';
+    this.data = {'sgid' : sgid};
+    this._execute = function(editor) {
+        var R = editor.render, RS = R.ctab, DS = RS.molecule;
+        var sgid = this.data.sgid;
+        var sg = RS.sgroups.get(sgid);
+        this.data.type = sg.item.type;
+        this.data.pp = sg.item.pp;
+        if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
+            RS.clearVisel(RS.sgroupData.get(sgid).visel);
+        }
+        RS.clearVisel(sg.visel);
+        DS.sGroupForest.remove(sgid);
+    };
+    this._invert = function() {
+        var ret = new ui.Action.OpSGroupRemoveFromHierarchy();
+        ret.data = this.data;
+        return ret;
+    };
+};
+ui.Action.OpSGroupRemoveFromHierarchy.prototype = new ui.Action.OpBase();
 
 ui.Action.OpBondAdd = function(begin, end, bond) {
     this.data = { bid : null, bond : bond, begin : begin, end : end };

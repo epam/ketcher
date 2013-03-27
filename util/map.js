@@ -14,7 +14,7 @@ if (!window.util)
     util = {};
 
 util.Map = function (obj) {
-    if (typeof(obj) != 'undefined' && obj.constructor != Object)
+    if (typeof(obj) !== 'undefined' && obj.constructor !== Object)
         throw Error("Passed object is not an instance of 'Object'!");
     this._obj = obj || {};
     this._count = 0;
@@ -73,9 +73,9 @@ util.Map.prototype.ikeys = function() {
 };
 
 util.Map.prototype.set = function (key, value) {
-    this._count += (typeof(value) != 'undefined' ? 1 : 0)
-        - (typeof(this._obj[key]) != 'undefined' ? 1 : 0);
-    if (typeof(value) == 'undefined') {
+    this._count += (typeof(value) !== 'undefined' ? 1 : 0)
+        - (typeof(this._obj[key]) !== 'undefined' ? 1 : 0);
+    if (typeof(value) === 'undefined') {
         var val = this._obj[key];
         delete this._obj[key];
         return val;
@@ -116,5 +116,5 @@ util.Map.prototype.idList = function () {
 };
 
 util.Map.prototype.keyOf = function(value) {
-    for (var key in this._obj) if (this._obj[key] == value) return key;
+    for (var key in this._obj) if (this._obj[key] === value) return key;
 };

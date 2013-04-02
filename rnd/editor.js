@@ -1754,6 +1754,8 @@ rnd.Editor.RotateTool.prototype.OnCancel = function() {
         }
         delete this.dragCtx;
     }
-    this.editor._selectionHelper.setSelection();
+
+    // don't reset the selection when leaving the canvas, see KETCHER-632
+    // this.editor._selectionHelper.setSelection();
 };
 

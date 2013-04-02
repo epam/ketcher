@@ -38,6 +38,14 @@ util.find = function (array, func, context) {
     return -1;
 };
 
+util.findAll = function (array, func, context) {
+    var ret = [];
+    for (var i = 0; i < array.length; ++i)
+        if (func.call(context, array[i], i))
+            ret.push(array[i]);
+    return ret;
+};
+
 util.array = function (arrayLike) {
     var a = [], i = arrayLike.length;
     while (--i >= 0)

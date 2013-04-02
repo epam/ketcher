@@ -1,18 +1,18 @@
 /****************************************************************************
  * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
+ *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free
  * Software Foundation and appearing in the file LICENSE.GPL included in
  * the packaging of this file.
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  ***************************************************************************/
 
 if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
-    
+
 chem.Stereocenters = function (mol, neighbors_func, context)
 {
     this.molecule = mol;
@@ -28,21 +28,72 @@ chem.Stereocenters.prototype.each = function (func, context)
 
 chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, const int *atom_groups, const int *bond_orientations, */ignore_errors)
 {
-   //_bond_directions.copy(bond_orientations, mol.edgeEnd());
+   var atoms = this.molecule.atoms;
+   var bonds = this.molecule.bonds;
 
-   this.molecule.atoms.each(function (aid)
+   // this is a set of atoms that are likely to belong to allene structures and
+   //  therefore should not be considered as potential stereocenters in the code below,
+   //  as allenes cannot be encoded in the SMILES notation
+   var alleneMask = util.Set.empty();
+   atoms.each(function (aid, atom) {
+        var nei_list = this.getNeighbors.call(this.context, aid);
+        if (nei_list.length != 2)
+            return false;
+        var nei1 = nei_list[0];
+        var nei2 = nei_list[1];
+        // check atom labels
+        if (util.find([aid, nei1.aid, nei2.aid], function(aid) {
+            return ['C', 'Si'].indexOf(atoms.get(aid).label) < 0;
+        }, this) >= 0)
+            return false;
+
+        // check adjacent bond types
+        if (util.find([nei1.bid, nei2.bid], function(bid) {
+            return bonds.get(bid).type != chem.Struct.BOND.TYPE.DOUBLE;
+        }, this) >= 0)
+            return false;
+
+        // get the other neighbors of the two adjacent atoms except for the central atom
+        var nei1nei = util.findAll(this.getNeighbors.call(this.context, nei1.aid), function(nei) {
+            return nei.aid != aid;
+        }, this);
+        var nei2nei = util.findAll(this.getNeighbors.call(this.context, nei2.aid), function(nei) {
+            return nei.aid != aid;
+        }, this);
+        if (nei1nei.length < 1 || nei1nei.length > 2 || nei2nei.length < 1 || nei2nei.length > 2)
+            return false;
+
+        if (util.find(nei1nei.concat(nei2nei), function(nei) {
+            return bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE;
+        }, this) >= 0)
+            return false;
+
+        if (util.find(nei1nei.concat(nei2nei), function(nei) {
+            return bonds.get(nei.bid).stereo == chem.Struct.BOND.STEREO.EITHER;
+        }, this) >= 0)
+            return false;
+        util.Set.add(alleneMask, nei1.aid);
+        util.Set.add(alleneMask, nei2.aid);
+   }, this);
+
+   if (util.Set.size(alleneMask) > 0)
+       alert("This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.");
+
+   atoms.each(function (aid)
    {
+        if (util.Set.contains(alleneMask, aid))
+            return;
       /*
       if (atom_types[atom_idx] == 0)
          continue;
          */
       var nei_list = this.getNeighbors.call(this.context, aid);
       var stereocenter = false;
-      
+
       nei_list.find(function (nei)
       {
          var bond = this.molecule.bonds.get(nei.bid);
-         
+
          if (bond.type == chem.Struct.BOND.TYPE.SINGLE && bond.begin == aid)
             if (bond.stereo == chem.Struct.BOND.STEREO.UP || bond.stereo == chem.Struct.BOND.STEREO.DOWN)
             {
@@ -51,7 +102,7 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
             }
          return false;
       }, this);
-      
+
       if (!stereocenter)
          return;
 
@@ -102,7 +153,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
        type: 0, // = type;
        pyramid: new Array(4)
    };
-   
+
    var nei_idx = 0;
    var edge_ids = new Array(4);
 

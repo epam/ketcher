@@ -403,6 +403,12 @@ chem.Struct.Atom.prototype.isPlainCarbon =  function ()
         && this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
 };
 
+chem.Struct.Atom.prototype.isPseudo =  function ()
+{
+    // TODO: handle reaxys generics separately
+	return !this.atomList && !this.rglabel && !chem.Element.getElementByLabel(this.label);
+};
+
 chem.Struct.AtomList = function (params)
 {
 	if (!params || !('notList' in params) || !('ids' in params))

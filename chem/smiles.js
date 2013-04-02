@@ -467,6 +467,9 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
     if (atom.atomList) {
         label = atom.atomList.label();
         need_brackets = false; // atom list label already has brackets
+    } else if (atom.isPseudo()) {
+        label = '*';
+        need_brackets = true;
     } else if (chirality || atom.charge != 0 || atom.isotope > 0 || hydro >= 0 || aam > 0) {
         need_brackets = true;
     }

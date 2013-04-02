@@ -463,8 +463,13 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
        (aromatic && atom.label == 'C' && this.atoms[idx].neighbours.length < 3 && this.atoms[idx].h_count == 0))
         hydro = this.atoms[idx].h_count;
 
-    if (chirality || atom.charge != 0 || atom.isotope > 0 || hydro >= 0 || aam > 0)
+    var label = atom.label;
+    if (atom.atomList) {
+        label = atom.atomList.label();
+        need_brackets = false; // atom list label already has brackets
+    } else if (chirality || atom.charge != 0 || atom.isotope > 0 || hydro >= 0 || aam > 0) {
         need_brackets = true;
+    }
 
     if (need_brackets)
     {
@@ -477,9 +482,9 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
         this.smiles += atom.isotope;
 
     if (lowercase)
-        this.smiles += atom.label.toLowerCase();
+        this.smiles += label.toLowerCase();
     else
-        this.smiles += atom.label;
+        this.smiles += label;
 
     if (chirality > 0)
     {

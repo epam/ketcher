@@ -199,6 +199,7 @@ util.isNull = function (variable) {
 };
 
 util.arrayRemoveByValue = function(array, item) {
+    util.assert(!util.isUndefined(array) && !util.isNull(array), "array must be defined");
     var idx = array.indexOf(item);
     var cnt = 0;
     while (idx >= 0) {

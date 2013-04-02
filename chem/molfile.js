@@ -628,7 +628,7 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 			emptyGroups.push(sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
-                ctab.sGroupForest.remove(emptyGroups[i]);
+        ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.remove(emptyGroups[i]);
 	}
         for (var rgid in rLogic) {

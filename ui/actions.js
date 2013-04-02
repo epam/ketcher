@@ -345,6 +345,7 @@ ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
         { // delete whole s-group
             var sgroup = DS.sgroups.get(sid);
             this.mergeWith(ui.Action.sGroupAttributeAction(sid, sgroup.getAttrs()));
+            this.addOp(new ui.Action.OpSGroupRemoveFromHierarchy(sid));
             this.addOp(new ui.Action.OpSGroupDelete(sid));
         }
     }, this);
@@ -463,6 +464,7 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
 
     sgroups.each(function (sid)
     {
+        action.addOp(new ui.Action.OpSGroupRemoveFromHierarchy(sid));
         action.addOp(new ui.Action.OpSGroupDelete(sid));
     }, this);
 
@@ -1584,17 +1586,12 @@ ui.Action.OpSGroupAddToHierarchy = function(sgid) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sgid = this.data.sgid;
-        var sg = RS.sgroups.get(sgid);
-        this.data.type = sg.item.type;
-        this.data.pp = sg.item.pp;
-        if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
-            RS.clearVisel(RS.sgroupData.get(sgid).visel);
-        }
-        RS.clearVisel(sg.visel);
-        DS.sGroupForest.insert(sgid);
+        var relations = DS.sGroupForest.insert(sgid, this.data.parent, this.data.children);
+        this.data.parent = relations.parent;
+        this.data.children = relations.children;
     };
     this._invert = function() {
-        var ret = new ui.Action.OpSGroupAddToHierarchy();
+        var ret = new ui.Action.OpSGroupRemoveFromHierarchy();
         ret.data = this.data;
         return ret;
     };
@@ -1607,17 +1604,12 @@ ui.Action.OpSGroupRemoveFromHierarchy = function(sgid) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sgid = this.data.sgid;
-        var sg = RS.sgroups.get(sgid);
-        this.data.type = sg.item.type;
-        this.data.pp = sg.item.pp;
-        if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
-            RS.clearVisel(RS.sgroupData.get(sgid).visel);
-        }
-        RS.clearVisel(sg.visel);
+        this.data.parent = DS.sGroupForest.parent.get(sgid);
+        this.data.children = DS.sGroupForest.children.get(sgid);
         DS.sGroupForest.remove(sgid);
     };
     this._invert = function() {
-        var ret = new ui.Action.OpSGroupRemoveFromHierarchy();
+        var ret = new ui.Action.OpSGroupAddToHierarchy();
         ret.data = this.data;
         return ret;
     };

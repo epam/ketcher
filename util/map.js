@@ -31,6 +31,14 @@ util.Map.prototype.each = function(func, context) {
     }
 };
 
+util.Map.prototype.map = function(func, context) {
+    var ret = new util.Map();
+    this.each(function(v, value){
+        ret.set(v, func.call(context, v, value));
+    }, this);
+    return ret;
+};
+
 util.Map.prototype.find = function(func, context) {
     for (var v in this._obj) {
         var v_int = parseInt(v);

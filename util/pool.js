@@ -70,6 +70,11 @@ util.Pool.prototype.each = function (func, context)
     this._map.each(func, context);
 };
 
+util.Pool.prototype.map = function (func, context)
+{
+    return this._map.map(func, context);
+};
+
 util.Pool.prototype.find = function (func, context)
 {
     return this._map.find(func, context);

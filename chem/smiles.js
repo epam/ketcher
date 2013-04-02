@@ -34,44 +34,11 @@ chem.SmilesSaver._Atom = function (h_count)
     this.parent = -1;
 };
 
-chem.SmilesSaver.notInLoop = function(atoms) {
-    var cnt = 0;
-    var pre = {};
-    var low = {};
-    var notInLoop = {};
-
-    for (var v = 0; v < atoms.length; ++v) {
-        low[v] = pre[v] = -1;
-    }
-        
-    var dfs = function(u, v) {
-        pre[v] = cnt++;
-        low[v] = pre[v];
-        var atomV = atoms[v];
-        for (var i = 0; i < atomV.neighbours.length; ++i) {
-            var w = atomV.neighbours[i].aid;
-            if (pre[w] < 0) {
-                dfs(v, w);
-                low[v] = Math.min(low[v], low[w]);
-                if (low[w] === pre[w])
-                    notInLoop[atomV.neighbours[i].bid] = 1;
-            } else if (w != u) {
-                low[v] = Math.min(low[v], pre[w]);
-            }
-        }
-    };
-
-    for (v = 0; v < atoms.length; v++)
-        if (atoms[v] && pre[v] < 0)
-               dfs(v, v);
-
-    return notInLoop;
-};
-
+// NB: only loops of length up to 6 are included here 
 chem.SmilesSaver.prototype.isBondInRing = function (bid) {
-    if (typeof(this.notInLoop) === 'undefined' || this.notInLoop === null)
-        throw new Error("Init this.notInLoop prior to calling this method");
-    return !this.notInLoop[bid];
+    if (util.isUndefined(this.inLoop) || util.isNull(this.inLoop))
+        throw new Error("Init this.inLoop prior to calling this method");
+    return this.inLoop[bid];
 };
 
 chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
@@ -128,7 +95,22 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         this.atoms[bond.end].neighbours.push({aid: bond.begin, bid: bid});
     }, this);
 
-    this.notInLoop = chem.SmilesSaver.notInLoop(this.atoms);
+    this.inLoop = (function() {
+        molecule.prepareLoopStructure();
+        var bondsInLoops = util.Set.empty();
+        molecule.loops.each(function(lid, loop) {
+            if (loop.hbs.length <= 6)
+                util.Set.mergeIn(bondsInLoops, util.Set.fromList(util.map(loop.hbs, function(hbid) {
+                    return molecule.halfBonds.get(hbid).bid;
+                }, this)));
+        }, this);
+        var inLoop = {};
+        util.Set.each(bondsInLoops, function(bid) {
+            inLoop[bid] = 1;
+        }, this);
+        return inLoop;
+    })();
+    
     this._touched_cistransbonds = 0;
     this._markCisTrans(molecule);
 

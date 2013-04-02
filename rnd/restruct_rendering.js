@@ -1209,7 +1209,13 @@ rnd.ReStruct.prototype.updateLoops = function ()
 	this.reloops.each(function(rlid, reloop){
 		this.clearVisel(reloop.visel);
 	}, this);
-	this.findLoops();
+	var ret = this.molecule.findLoops();
+    util.each(ret.bondsToMark, function(bid) {
+        this.markBond(bid, 1);
+    }, this);
+    util.each(ret.newLoops, function(loopId) {
+        this.reloops.set(loopId, new rnd.ReLoop(this.loops.get(loopId)));
+    }, this);
 };
 
 rnd.ReStruct.prototype.renderLoops = function ()

@@ -511,10 +511,9 @@ rnd.ReStruct.prototype.update = function (force)
 	}
 
 	// only update half-bonds adjacent to atoms that have moved
-	this.updateHalfBonds();
-	this.sortNeighbors();
+    this.molecule.updateHalfBonds(new util.Map(this.atomsChanged).findAll(function(aid, status){ return status >= 0; }, this));
+    this.molecule.sortNeighbors(new util.Map(this.atomsChanged).findAll(function(aid, status){ return status >= 1; }, this));
 	this.assignConnectedComponents();
-//	this.printConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();
 	this.initialized = true;
@@ -623,21 +622,6 @@ rnd.ReStruct.prototype.getGroupBB = function (type)
 	return bb;
 };
 
-rnd.ReStruct.prototype.updateHalfBonds = function () {
-	for (var aid in this.atomsChanged) {
-		this.molecule.atomUpdateHalfBonds(aid);
-	}
-};
-
-rnd.ReStruct.prototype.sortNeighbors = function () {
-	// sort neighbor halfbonds in CCW order
-	for (var aid in this.atomsChanged) {
-		if (this.atomsChanged[aid] < 1)
-			continue;
-		this.molecule.atomSortNeighbors(aid);
-	}
-};
-
 rnd.ReStruct.prototype.setHydrogenPos = function () {
 	// check where should the hydrogen be put on the left of the label
 	for (var aid in this.atomsChanged) {
@@ -681,134 +665,6 @@ rnd.ReLoop = function (loop)
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
 	this.centre = new util.Vec2();
 	this.radius = new util.Vec2();
-};
-
-rnd.ReStruct.prototype.loopHasSelfIntersections = function (hbs)
-{
-    for (var i = 0; i < hbs.length; ++i) {
-        var hbi = this.molecule.halfBonds.get(hbs[i]);
-        var ai = this.atoms.get(hbi.begin).a.pp;
-        var bi = this.atoms.get(hbi.end).a.pp;
-        var set = util.Set.fromList([hbi.begin, hbi.end]);
-        for (var j = i + 2; j < hbs.length; ++j) {
-            var hbj = this.molecule.halfBonds.get(hbs[j]);
-            if (util.Set.contains(set, hbj.begin) || util.Set.contains(set, hbj.end))
-                continue; // skip edges sharing an atom
-            var aj = this.atoms.get(hbj.begin).a.pp;
-            var bj = this.atoms.get(hbj.end).a.pp;
-            if (util.Vec2.segmentIntersection(ai, bi, aj, bj)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// partition a cycle into simple cycles
-// TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
-rnd.ReStruct.partitionLoop = function (struct, loop) {
-    var subloops = [];
-    var continueFlag = true;
-    search: while (continueFlag) {
-        var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-        for (var l = 0; l < loop.length; ++l) {
-            var hbid = loop[l];
-            var aid1 = struct.halfBonds.get(hbid).begin;
-            var aid2 = struct.halfBonds.get(hbid).end;
-            if (aid2 in atomToHalfBond) { // subloop found
-                var s = atomToHalfBond[aid2]; // where the subloop begins
-                var subloop = loop.slice(s, l + 1);
-                subloops.push(subloop);
-                if (l < loop.length) // remove half-bonds corresponding to the subloop
-                    loop.splice(s, l - s + 1);
-                continue search;
-            }
-            atomToHalfBond[aid1] = l;
-        }
-        continueFlag = false; // we're done, no more subloops found
-        subloops.push(loop);
-    }
-    return subloops;
-}
-
-rnd.ReStruct.halfBondAngle = function (struct, hbid1, hbid2) {
-        var hba = struct.halfBonds.get(hbid1);
-        var hbb = struct.halfBonds.get(hbid2);
-        return Math.atan2(
-            util.Vec2.cross(hba.dir, hbb.dir),
-            util.Vec2.dot(hba.dir, hbb.dir));
-}
-
-rnd.ReStruct.loopIsConvex = function (struct, loop) {
-    for (var k = 0; k < loop.length; ++k) {
-        var angle = rnd.ReStruct.halfBondAngle(struct, loop[k], loop[(k + 1) % loop.length]);
-        if (angle > 0)
-            return false;
-    }
-    return true;
-}
-
-// check whether a loop is on the inner or outer side of the polygon
-//  by measuring the total angle between bonds
-rnd.ReStruct.loopIsInner = function (struct, loop) {
-    var totalAngle = 2 * Math.PI;
-    for (var k = 0; k < loop.length; ++k) {
-        var hbida = loop[k];
-        var hbidb = loop[(k + 1) % loop.length];
-        var hbb = struct.halfBonds.get(hbidb);
-        var angle = rnd.ReStruct.halfBondAngle(struct, hbida, hbidb);
-        if (hbb.contra == loop[k]) // back and forth along the same edge
-            totalAngle += Math.PI;
-        else
-            totalAngle += angle;
-    }
-    return Math.abs(totalAngle) < Math.PI;
-}
-
-
-rnd.ReStruct.prototype.findLoops = function ()
-{
-    var struct = this.molecule;
-    // Starting from each half-bond not known to be in a loop yet,
-    //  follow the 'next' links until the initial half-bond is reached or
-    //  the length of the sequence exceeds the number of half-bonds available.
-    // In a planar graph, as long as every bond is a part of some "loop" -
-    //  either an outer or an inner one - every iteration either yields a loop
-    //  or doesn't start at all. Thus this has linear complexity in the number
-    //  of bonds for planar graphs.
-    var j, k, c, loop, loopId;
-    struct.halfBonds.each(function (i, hb) {
-        if (hb.loop == -1) {
-            for (j = i, c = 0, loop = [];
-                c <= struct.halfBonds.count();
-                j = struct.halfBonds.get(j).next, ++c) {
-                if (c > 0 && j == i) { // loop found
-                    var subloops = rnd.ReStruct.partitionLoop(struct, loop);
-                    util.each(subloops, function(loop) {
-                        if (rnd.ReStruct.loopIsInner(struct, loop) && !this.loopHasSelfIntersections(loop)) { // loop is internal
-                            // use lowest half-bond id in the loop as the loop id
-                            // this ensures that the loop gets the same id if it is discarded and then recreated,
-                            // which in turn is required to enable redrawing while dragging, as actions store item id's
-                            loopId = util.arrayMin(loop);
-                            struct.loops.set(loopId, new chem.Loop(loop, struct, rnd.ReStruct.loopIsConvex(struct, loop)));
-                        } else {
-                            loopId = -2;
-                        }
-                        loop.each(function(hbid){
-                            struct.halfBonds.get(hbid).loop = loopId;
-                            this.markBond(struct.halfBonds.get(hbid).bid, 1);
-                        }, this);
-                        if (loopId >= 0) {
-                            this.reloops.set(loopId, new rnd.ReLoop(struct.loops.get(loopId)));
-                        }
-                    }, this);
-                    break;
-                } else {
-                    loop.push(j);
-                }
-            }
-        }
-    }, this);
 };
 
 rnd.ReStruct.prototype.coordProcess = function (norescale)
@@ -896,7 +752,7 @@ rnd.ReStruct.prototype.loopRemove = function (loopId)
 };
 
 rnd.ReStruct.prototype.loopIsValid = function (rlid, reloop) {
-        var halfBonds = this.molecule.halfBonds;
+    var halfBonds = this.molecule.halfBonds;
 	var loop = reloop.loop;
 	var bad = false;
 	loop.hbs.each(function(hbid){

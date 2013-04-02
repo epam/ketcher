@@ -608,6 +608,12 @@ chem.Struct.prototype.atomSortNeighbors = function (aid) {
 			atom.neighbors[i]);
 };
 
+chem.Struct.prototype.sortNeighbors = function (list) {
+    util.each(list, function(aid) {
+        this.atomSortNeighbors(aid);
+    }, this);
+};
+
 chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 	var nei = this.atoms.get(aid).neighbors;
 	for (var i = 0; i < nei.length; ++i) {
@@ -615,6 +621,12 @@ chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 		this.halfBondUpdate(hbid);
 		this.halfBondUpdate(this.halfBonds.get(hbid).contra);
 	}
+};
+
+chem.Struct.prototype.updateHalfBonds = function (list) {
+    util.each(list, function(aid) {
+        this.atomUpdateHalfBonds(aid);
+    }, this);
 };
 
 chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
@@ -954,3 +966,146 @@ chem.Struct.prototype.rescale = function ()
     var scale = 1 / avg;
     this.scale(scale);
 };
+
+chem.Struct.prototype.loopHasSelfIntersections = function (hbs)
+{
+    for (var i = 0; i < hbs.length; ++i) {
+        var hbi = this.halfBonds.get(hbs[i]);
+        var ai = this.atoms.get(hbi.begin).pp;
+        var bi = this.atoms.get(hbi.end).pp;
+        var set = util.Set.fromList([hbi.begin, hbi.end]);
+        for (var j = i + 2; j < hbs.length; ++j) {
+            var hbj = this.halfBonds.get(hbs[j]);
+            if (util.Set.contains(set, hbj.begin) || util.Set.contains(set, hbj.end))
+                continue; // skip edges sharing an atom
+            var aj = this.atoms.get(hbj.begin).pp;
+            var bj = this.atoms.get(hbj.end).pp;
+            if (util.Vec2.segmentIntersection(ai, bi, aj, bj)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// partition a cycle into simple cycles
+// TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
+chem.Struct.prototype.partitionLoop = function (loop) {
+    var subloops = [];
+    var continueFlag = true;
+    search: while (continueFlag) {
+        var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+        for (var l = 0; l < loop.length; ++l) {
+            var hbid = loop[l];
+            var aid1 = this.halfBonds.get(hbid).begin;
+            var aid2 = this.halfBonds.get(hbid).end;
+            if (aid2 in atomToHalfBond) { // subloop found
+                var s = atomToHalfBond[aid2]; // where the subloop begins
+                var subloop = loop.slice(s, l + 1);
+                subloops.push(subloop);
+                if (l < loop.length) // remove half-bonds corresponding to the subloop
+                    loop.splice(s, l - s + 1);
+                continue search;
+            }
+            atomToHalfBond[aid1] = l;
+        }
+        continueFlag = false; // we're done, no more subloops found
+        subloops.push(loop);
+    }
+    return subloops;
+}
+
+chem.Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
+        var hba = this.halfBonds.get(hbid1);
+        var hbb = this.halfBonds.get(hbid2);
+        return Math.atan2(
+            util.Vec2.cross(hba.dir, hbb.dir),
+            util.Vec2.dot(hba.dir, hbb.dir));
+}
+
+chem.Struct.prototype.loopIsConvex = function (loop) {
+    for (var k = 0; k < loop.length; ++k) {
+        var angle = this.halfBondAngle(loop[k], loop[(k + 1) % loop.length]);
+        if (angle > 0)
+            return false;
+    }
+    return true;
+}
+
+// check whether a loop is on the inner or outer side of the polygon
+//  by measuring the total angle between bonds
+chem.Struct.prototype.loopIsInner = function (loop) {
+    var totalAngle = 2 * Math.PI;
+    for (var k = 0; k < loop.length; ++k) {
+        var hbida = loop[k];
+        var hbidb = loop[(k + 1) % loop.length];
+        var hbb = this.halfBonds.get(hbidb);
+        var angle = this.halfBondAngle(hbida, hbidb);
+        if (hbb.contra == loop[k]) // back and forth along the same edge
+            totalAngle += Math.PI;
+        else
+            totalAngle += angle;
+    }
+    return Math.abs(totalAngle) < Math.PI;
+}
+
+chem.Struct.prototype.findLoops = function ()
+{
+    var newLoops = [];
+    var bondsToMark = util.Set.empty();
+    
+    // Starting from each half-bond not known to be in a loop yet,
+    //  follow the 'next' links until the initial half-bond is reached or
+    //  the length of the sequence exceeds the number of half-bonds available.
+    // In a planar graph, as long as every bond is a part of some "loop" -
+    //  either an outer or an inner one - every iteration either yields a loop
+    //  or doesn't start at all. Thus this has linear complexity in the number
+    //  of bonds for planar graphs.
+    var j, k, c, loop, loopId;
+    this.halfBonds.each(function (i, hb) {
+        if (hb.loop == -1) {
+            for (j = i, c = 0, loop = [];
+                c <= this.halfBonds.count();
+                j = this.halfBonds.get(j).next, ++c) {
+                if (c > 0 && j == i) { // loop found
+                    var subloops = this.partitionLoop(loop);
+                    util.each(subloops, function(loop) {
+                        if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) { // loop is internal
+                            // use lowest half-bond id in the loop as the loop id
+                            // this ensures that the loop gets the same id if it is discarded and then recreated,
+                            // which in turn is required to enable redrawing while dragging, as actions store item id's
+                            loopId = util.arrayMin(loop);
+                            this.loops.set(loopId, new chem.Loop(loop, this, this.loopIsConvex(loop)));
+                        } else {
+                            loopId = -2;
+                        }
+                        loop.each(function(hbid){
+                            this.halfBonds.get(hbid).loop = loopId;
+                            util.Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
+                        }, this);
+                        if (loopId >= 0) {
+                            newLoops.push();
+                        }
+                    }, this);
+                    break;
+                } else {
+                    loop.push(j);
+                }
+            }
+        }
+    }, this);
+    return {
+        newLoops: newLoops, 
+        bondsToMark: util.Set.list(bondsToMark)
+    };
+};
+
+// NB: this updates the structure without modifying the corresponding ReStruct.
+//  To be applied to standalone structures only.
+chem.Struct.prototype.prepareLoopStructure = function () {
+    this.initHalfBonds();
+    this.initNeighbors();
+    this.updateHalfBonds(this.atoms.keys());
+    this.sortNeighbors(this.atoms.keys());
+    this.findLoops();
+}

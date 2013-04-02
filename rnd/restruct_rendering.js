@@ -1214,7 +1214,7 @@ rnd.ReStruct.prototype.updateLoops = function ()
         this.markBond(bid, 1);
     }, this);
     util.each(ret.newLoops, function(loopId) {
-        this.reloops.set(loopId, new rnd.ReLoop(this.loops.get(loopId)));
+        this.reloops.set(loopId, new rnd.ReLoop(this.molecule.loops.get(loopId)));
     }, this);
 };
 

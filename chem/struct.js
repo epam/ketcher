@@ -1084,7 +1084,7 @@ chem.Struct.prototype.findLoops = function ()
                             util.Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
                         }, this);
                         if (loopId >= 0) {
-                            newLoops.push();
+                            newLoops.push(loopId);
                         }
                     }, this);
                     break;

@@ -242,11 +242,11 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
         }
     }
 
-    action.addOp(new ui.Action.OpBondAdd(begin, end, bond).perform(ui.editor));
+    var bid = action.addOp(new ui.Action.OpBondAdd(begin, end, bond).perform(ui.editor)).data.bid;
 
     action.operations.reverse();
 
-    return [action, begin, end];
+    return [action, begin, end, bid];
 };
 
 ui.Action.fromArrowAddition = function (pos)

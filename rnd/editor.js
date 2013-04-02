@@ -659,6 +659,16 @@ rnd.Editor.BondTool = function(editor, bondProps) {
     this.editor = editor;
     this.atomProps = { label : 'C' };
     this.bondProps = bondProps;
+    this.plainBondTypes = [
+        chem.Struct.BOND.TYPE.SINGLE,
+        chem.Struct.BOND.TYPE.DOUBLE,
+        chem.Struct.BOND.TYPE.TRIPLE];
+    
+    // if we click several times in a row on a plain single/double/triple bond, the type is changed in a cyclic fashion
+    // the field below store the id of the bond which was clicked/created last
+    // this field is reset by a timeout function, see this.setTypeLoopTimeout
+    this.typeLoopBondId = -1;
+    this.typeLoopTimeout = null;
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -705,6 +715,19 @@ rnd.Editor.BondTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
     return true;
 };
+
+rnd.Editor.BondTool.prototype.setTypeLoopTimeout = function(bondId) {
+    var self = this;
+    this.typeLoopTimeout = setTimeout(
+        function() {
+            self.typeLoopBondId = -1;
+            self.typeLoopTimeout = null;
+        },
+        750
+    );
+    self.typeLoopBondId = bondId;
+}
+
 rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
     if ('dragCtx' in this) {
         var _UI_ = this.editor.ui, _DC_ = this.dragCtx;
@@ -715,23 +738,22 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
             var v = new util.Vec2(1.0 / 2, 0).rotate(
                 this.bondProps.type == chem.Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
             );
-            _UI_.addUndoAction(
-                _UI_.Action.fromBondAddition(
-                    this.bondProps,
-                    { label : 'C' },
-                    { label : 'C' },
-                    { x : xy.x - v.x, y : xy.y - v.y},
-                    { x : xy.x + v.x, y : xy.y + v.y}
-                )[0]
+            var bondAddition = _UI_.Action.fromBondAddition(
+                this.bondProps,
+                { label : 'C' },
+                { label : 'C' },
+                { x : xy.x - v.x, y : xy.y - v.y},
+                { x : xy.x + v.x, y : xy.y + v.y}
             );
+            _UI_.addUndoAction(bondAddition[0]);
+            this.setTypeLoopTimeout(bondAddition[3]);
         } else if (_DC_.item.map == 'atoms') {
             var atom = _UI_.atomForNewBond(_DC_.item.id);
-            _UI_.addUndoAction(
-                _UI_.Action.fromBondAddition(this.bondProps, _DC_.item.id, atom.atom, atom.pos)[0]
-            );
+            _UI_.addUndoAction(_UI_.Action.fromBondAddition(this.bondProps, _DC_.item.id, atom.atom, atom.pos)[0]);
         } else if (_DC_.item.map == 'bonds') {
             var bondProps = Object.clone(this.bondProps);
             var bond = _UI_.ctab.bonds.get(_DC_.item.id);
+            var bondId = _DC_.item.id;
 
             if (bondProps.stereo != chem.Struct.BOND.STEREO.NONE
                 && bond.type == chem.Struct.BOND.TYPE.SINGLE
@@ -740,16 +762,13 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
             {
                 _UI_.addUndoAction(_UI_.Action.fromBondFlipping(_DC_.item.id));
             } else {
-                if (bond.type == bondProps.type) {
-                    if (bond.type == chem.Struct.BOND.TYPE.SINGLE) {
-                        if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
-                            bondProps.type = chem.Struct.BOND.TYPE.DOUBLE;
-                        }
-                    } else if (bond.type == chem.Struct.BOND.TYPE.DOUBLE) {
-                        if (bond.stereo == chem.Struct.BOND.STEREO.NONE && bond.stereo == bondProps.stereo) {
-                            bondProps.type = chem.Struct.BOND.TYPE.TRIPLE;
-                        }
+                if (bond.stereo === chem.Struct.BOND.STEREO.NONE && bondProps.stereo === chem.Struct.BOND.STEREO.NONE) {
+                    if (!util.isNull(this.typeLoopTimeout))
+                        clearTimeout(this.typeLoopTimeout);
+                    if (this.typeLoopBondId == bondId) {
+                        bondProps.type = this.plainBondTypes[(this.plainBondTypes.indexOf(bond.type) + 1) % this.plainBondTypes.length];
                     }
+                    this.setTypeLoopTimeout(bondId);
                 }
                 _UI_.addUndoAction(
                     _UI_.Action.fromBondAttrs(_DC_.item.id, bondProps, _UI_.bondFlipRequired(bond, bondProps)),

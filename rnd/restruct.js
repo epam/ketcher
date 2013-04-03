@@ -48,11 +48,14 @@ rnd.ReObject.prototype.init = function(viselType)
     this.selectionPlate = null;
 };
 
-rnd.ReObject.prototype.calcVBox = function(render) {
-    if (this.visel.boundingBox) {
-        return this.visel.boundingBox
-            .translate(render.offset.negated()).transform(render.scaled2obj, render);
-    }
+// returns the bounding box of a ReObject in the object coordinates
+rnd.ReObject.prototype.getVBoxObj = function(render) {
+    var vbox = this.visel.boundingBox;
+    if (util.isNull(vbox))
+        return null;
+    if (render.offset)
+        vbox = vbox.translate(render.offset.negated());
+    return vbox.transform(render.scaled2obj, render);
 };
 
 rnd.ReObject.prototype.drawHighlight = function(render) {
@@ -103,6 +106,12 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.component = -1;
 };
 rnd.ReAtom.prototype = new rnd.ReObject();
+
+rnd.ReAtom.prototype.getVBoxObj = function(render) {
+    if (this.visel.boundingBox)
+        return rnd.ReObject.prototype.getVBoxObj.call(this, render);
+    return new util.Box2Abs(this.a.pp, this.a.pp);
+};
 
 rnd.ReAtom.prototype.drawHighlight = function(render) {
     var ret = this.makeHighlightPlate(render);
@@ -390,14 +399,45 @@ rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 		this.clearVisel(this[map].get(id).visel);
 };
 
-rnd.ReStruct.prototype.eachVisel = function (func, context, selection) {
-
-	for (var map in rnd.ReStruct.mapsExt) {
-		(selection != null ? (selection[map] || []) : this[map]).each(function(id){
-			func.call(context, this[map].get(id).visel);
-		}, this);
-	}
+rnd.ReStruct.prototype.eachVisel = function (func, context) {
+    for (var map in rnd.ReStruct.mapsExt) {
+        this[map].each(function(id, item) {
+            func.call(context, item.visel);
+        }, this);
+    }
 };
+
+rnd.ReStruct.prototype.getVBoxObj = function (selection)
+{
+    selection = selection || {};
+    if (this.selectionIsEmpty(selection)) {
+        for (var map in rnd.ReStruct.mapsExt) {
+            selection[map] = this[map].keys();
+        }
+    }
+    var vbox = null;
+    for (var map in rnd.ReStruct.mapsExt) {
+        if (selection[map]) {
+            util.each(selection[map], function(id) {
+                var box = this[map].get(id).getVBoxObj(this.render);
+                if (box)
+                    vbox = vbox ? util.Box2Abs.union(vbox, box) : box.clone();
+            }, this);
+        }
+    }
+	vbox = vbox || new util.Box2Abs(0, 0, 0, 0);
+	return vbox;
+};
+
+rnd.ReStruct.prototype.selectionIsEmpty = function (selection) {
+    util.assert(!util.isUndefined(selection), "'selection' is not defined");
+    if (util.isNull(selection))
+        return true;
+	for (var map in rnd.ReStruct.mapsExt)
+		if (selection[map] && selection[map].length > 0)
+            return false;
+    return true;
+}
 
 rnd.ReStruct.prototype.translate = function (d) {
 	this.eachVisel(function(visel){
@@ -666,6 +706,7 @@ rnd.ReLoop = function (loop)
 	this.centre = new util.Vec2();
 	this.radius = new util.Vec2();
 };
+rnd.ReLoop.prototype = new rnd.ReObject();
 
 rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
@@ -1109,7 +1150,7 @@ rnd.ReRGroup.prototype.draw = function(render) { // TODO need to review paramete
 };
 
 rnd.ReRGroup.prototype._draw = function(render, rgid, attrs) { // TODO need to review parameter list
-    var bb = this.calcVBox(render).extend(this.__ext, this.__ext);
+    var bb = this.getVBoxObj(render).extend(this.__ext, this.__ext);
     if (bb) {
         var p0 = render.obj2scaled(bb.p0);
         var p1 = render.obj2scaled(bb.p1);

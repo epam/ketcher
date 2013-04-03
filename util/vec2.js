@@ -14,8 +14,9 @@
 if (!window.util)
     util = {};
 
-//util.assertDefined = function(v) { if (typeof(v) == 'undefined' || v == null) debugger; }
-util.assertDefined = function() { };
+util.assertDefined = function(v) {
+    util.assert(!util.isNullOrUndefined(v));
+};
 
 util.Vec2 = function (x, y)
 {
@@ -331,6 +332,7 @@ util.Box2Abs.prototype.translate = function(/*util.Vec2*/d)
 
 util.Box2Abs.prototype.transform = function(/*function(Vec2):Vec2*/f, context)
 {
+    util.assert(!util.isNullOrUndefined(f));
     return new util.Box2Abs(f.call(context, this.p0), f.call(context, this.p1));
 };
 

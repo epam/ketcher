@@ -535,25 +535,10 @@ rnd.Render.prototype.initSettings = function()
 	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
-rnd.Render.prototype.getBoundingBox = function (selection)
-{
-	var bb = null, vbb;
-	this.ctab.eachVisel(function(visel){
-		vbb = visel.boundingBox;
-		if (vbb)
-			bb = bb ? util.Box2Abs.union(bb, vbb) : vbb.clone();
-	}, this, selection);
-	if (!bb)
-		bb = new util.Box2Abs(0, 0, 0, 0);
-	return bb;
-};
-
 rnd.Render.prototype.getStructCenter = function (selection)
 {
-	var bb = this.getBoundingBox(selection);
-        if (this.offset)
-            bb = bb.translate(this.offset.negated());
-	return this.scaled2obj(util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5));
+	var bb = this.ctab.getVBoxObj(selection);
+	return util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 };
 
 rnd.Render.prototype.onResize = function ()
@@ -863,7 +848,7 @@ rnd.Render.prototype.update = function (force)
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
 		var sf = this.settings.scaleFactor;
-		var bb = this.getBoundingBox();
+		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new util.Vec2());
 
 		if (!this.opt.autoScale) {
 			var ext = util.Vec2.UNIT.scaled(sf);

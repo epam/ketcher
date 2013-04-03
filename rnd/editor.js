@@ -664,6 +664,13 @@ rnd.Editor.BondTool = function(editor, bondProps) {
         chem.Struct.BOND.TYPE.DOUBLE,
         chem.Struct.BOND.TYPE.TRIPLE];
     
+    this.queryBondTypes = [
+        chem.Struct.BOND.TYPE.ANY,
+		chem.Struct.BOND.TYPE.AROMATIC,
+		chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE,
+		chem.Struct.BOND.TYPE.SINGLE_OR_AROMATIC,
+		chem.Struct.BOND.TYPE.DOUBLE_OR_AROMATIC];
+    
     // if we click several times in a row on a plain single/double/triple bond, the type is changed in a cyclic fashion
     // the field below store the id of the bond which was clicked/created last
     // this field is reset by a timeout function, see this.setTypeLoopTimeout
@@ -763,12 +770,15 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
                 _UI_.addUndoAction(_UI_.Action.fromBondFlipping(_DC_.item.id));
             } else {
                 if (bond.stereo === chem.Struct.BOND.STEREO.NONE && bondProps.stereo === chem.Struct.BOND.STEREO.NONE) {
-                    if (!util.isNull(this.typeLoopTimeout))
-                        clearTimeout(this.typeLoopTimeout);
-                    if (this.typeLoopBondId == bondId) {
-                        bondProps.type = this.plainBondTypes[(this.plainBondTypes.indexOf(bond.type) + 1) % this.plainBondTypes.length];
+                    var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : (this.queryBondTypes.indexOf(bondProps.type) >= 0 ? this.queryBondTypes : null);
+                    if (loop) {
+                        if (!util.isNull(this.typeLoopTimeout))
+                            clearTimeout(this.typeLoopTimeout);
+                        if (this.typeLoopBondId == bondId) {
+                            bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
+                        }
+                        this.setTypeLoopTimeout(bondId);
                     }
-                    this.setTypeLoopTimeout(bondId);
                 }
                 _UI_.addUndoAction(
                     _UI_.Action.fromBondAttrs(_DC_.item.id, bondProps, _UI_.bondFlipRequired(bond, bondProps)),

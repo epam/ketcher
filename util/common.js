@@ -27,6 +27,7 @@ Array.prototype.swap = function (i1, i2) {
 
 // "each" function for an array
 util.each = function (array, func, context) {
+    util.assert(!util.isNullOrUndefined(array), "array must be defined");
     for (var i = 0; i < array.length; ++i)
         func.call(context, array[i], i);
 };
@@ -204,6 +205,10 @@ util.isUndefined = function (variable) {
 
 util.isNull = function (variable) {
     return variable === null;
+};
+
+util.isNullOrUndefined = function (v) {
+    return util.isUndefined(v) || util.isNull(v);
 };
 
 util.arrayRemoveByValue = function(array, item) {

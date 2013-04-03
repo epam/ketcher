@@ -124,7 +124,7 @@ chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
     chem.SGroup.bracketPos(sg, null, mol, xBonds);
     var bb = sg.bracketBox;
     var d = sg.bracketDir, n = d.rotateSC(1, 0);
-    var brackets = chem.SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, null);
+    var brackets = chem.SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
     var lines = [];
     for (var i = 0; i < brackets.length; ++i) {
         var bracket = brackets[i];

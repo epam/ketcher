@@ -161,6 +161,10 @@ util.identityMap = function (array) {
 	return map;
 };
 
+util.strip = function(src) {
+    return src.replace(/\s*$/, '').replace(/^\s*/, '');
+};
+
 util.stripRight = function (src) {
         return src.replace(/\s*$/,'');
 };

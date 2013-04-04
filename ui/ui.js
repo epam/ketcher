@@ -1229,6 +1229,10 @@ ui.loadMoleculeFromFile = function ()
 
 ui.loadMoleculeFromInput = function ()
 {
+    if (!util.strip($('input_mol').value)) {
+        alert("The inpus field is empty. Please enter a structure in SMILES or MOLFile/RXNFile format.");
+        return;
+    }
     ui.hideDialog('open_file');
     ui.loadMolecule($('input_mol').value, false, true, $('checkbox_open_copy').checked);
 };

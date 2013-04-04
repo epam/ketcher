@@ -1140,18 +1140,26 @@ ui.getFile = function ()
     return Base64.decode(frame_body.title);
 };
 
-ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
+ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow)
 {
     var smiles = mol_string.strip();
-    var updateFunc = paste ? function (struct) {
-        struct.rescale();
-        if (!ui.copy(struct)) {
-            alert("Not a valid structure to paste");
-            return;
+    var updateFunc = function(struct) {
+        if (discardRxnArrow)
+            struct.rxnArrows.clear();
+        if (paste) {
+            (function(struct) {
+                struct.rescale();
+                if (!ui.copy(struct)) {
+                    alert("Not a valid structure to paste");
+                    return;
+                }
+                ui.editor.deselectAll();
+                ui.selectMode('paste');
+            }).call(this, struct);
+        } else {
+            ui.updateMolecule.call(this, struct);
         }
-        ui.editor.deselectAll();
-        ui.selectMode('paste');
-    } : ui.updateMolecule;
+    }
 
     if (smiles.indexOf('\n') == -1) {
         if (ui.standalone) {
@@ -1195,8 +1203,12 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste)
     }
 };
 
-ui.dearomatizeMolecule = function (mol_string, aromatize)
+ui.dearomatizeMolecule = function (mol, aromatize)
 {
+    mol = mol.clone();
+    var implicitReaction = mol.addRxnArrowIfNecessary();
+    var mol_string = new chem.MolfileSaver().saveMolecule(mol);
+
     if (!ui.standalone) {
         new Ajax.Request(ui.path + (aromatize ? 'aromatize' : 'dearomatize'),
         {
@@ -1206,7 +1218,10 @@ ui.dearomatizeMolecule = function (mol_string, aromatize)
             onComplete: function (res)
             {
                 if (res.responseText.startsWith('Ok.')) {
-                    ui.updateMolecule(ui.parseCTFile(res.responseText));
+                    var resmol = ui.parseCTFile(res.responseText);
+                    if (implicitReaction)
+                        resmol.rxnArrows.clear();
+                    ui.updateMolecule(resmol);
                 } else if (res.responseText.startsWith('Error.')) {
                     alert(res.responseText.split('\n')[1]);
                 } else {
@@ -1414,7 +1429,9 @@ ui.onClick_CleanUp = function ()
 
     ui.editor.deselectAll();
     try {
-        ui.loadMolecule(new chem.MolfileSaver().saveMolecule(ui.ctab), true);
+        var mol = ui.ctab.clone();
+        var implicitReaction = mol.addRxnArrowIfNecessary();
+        ui.loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction);
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
@@ -1427,10 +1444,8 @@ ui.onClick_Aromatize = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    var ms = new chem.MolfileSaver();
-
     try {
-        ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), true);
+        ui.dearomatizeMolecule(ui.ctab, true);
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
@@ -1443,10 +1458,8 @@ ui.onClick_Dearomatize = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
-    var ms = new chem.MolfileSaver();
-
     try {
-        ui.dearomatizeMolecule(ms.saveMolecule(ui.ctab), false);
+        ui.dearomatizeMolecule(ui.ctab, false);
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;

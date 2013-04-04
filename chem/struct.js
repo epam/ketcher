@@ -31,6 +31,25 @@ chem.Struct = function ()
     this.sGroupForest = new chem.SGroupForest(this);
 };
 
+chem.Struct.prototype.hasRxnProps = function () {
+    return this.atoms.find(function(aid, atom) {
+        return atom.hasRxnProps();
+    }, this) || this.bonds.find(function(bid, bond) {
+        return bond.hasRxnProps();
+    }, this);
+}
+
+chem.Struct.prototype.hasRxnArrow = function () {
+    return this.rxnArrows.count() > 0;
+}
+
+chem.Struct.prototype.addRxnArrowIfNecessary = function () {
+    var implicitReaction = !this.hasRxnArrow() && this.hasRxnProps();
+    if (implicitReaction)
+        this.rxnArrows.add(new chem.Struct.RxnArrow());
+    return implicitReaction;
+}
+
 // returns a list of id's of s-groups, which contain only atoms in the given list
 chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
     var sgroup_counts = new Hash();
@@ -409,6 +428,11 @@ chem.Struct.Atom.prototype.isPseudo =  function ()
 	return !this.atomList && !this.rglabel && !chem.Element.getElementByLabel(this.label);
 };
 
+chem.Struct.Atom.prototype.hasRxnProps =  function ()
+{
+    return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.rglabel) || !util.isNull(this.attpnt) || this.aam);
+};
+
 chem.Struct.AtomList = function (params)
 {
 	if (!params || !('notList' in params) || !('ids' in params))
@@ -457,6 +481,11 @@ chem.Struct.Bond = function (params)
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
+};
+
+chem.Struct.Bond.prototype.hasRxnProps =  function ()
+{
+    return !!this.reactingCenterStatus;
 };
 
 chem.Struct.Bond.prototype.getCenter = function (struct) {
@@ -855,6 +884,15 @@ chem.Struct.prototype.findConnectedComponent = function (aid) {
 };
 
 chem.Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
+    // NB: this is a hack
+    // TODO: need to maintain half-bond and neighbor structure permanently
+    if (!this.halfBonds.count()) { 
+        this.initHalfBonds();
+        this.initNeighbors();
+        this.updateHalfBonds(this.atoms.keys());
+        this.sortNeighbors(this.atoms.keys());
+    }
+    
 	var map = {};
 	this.atoms.each(function(aid,atom){
 		map[aid] = -1;

@@ -113,6 +113,7 @@ util.Map.prototype.update = function (object) {
 
 util.Map.prototype.clear = function () {
     this._obj = {};
+    this._count = 0;
 };
 
 util.Map.prototype.count = function () {

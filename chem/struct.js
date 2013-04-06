@@ -34,9 +34,9 @@ chem.Struct = function ()
 chem.Struct.prototype.hasRxnProps = function () {
     return this.atoms.find(function(aid, atom) {
         return atom.hasRxnProps();
-    }, this) || this.bonds.find(function(bid, bond) {
+    }, this) >= 0 || this.bonds.find(function(bid, bond) {
         return bond.hasRxnProps();
-    }, this);
+    }, this) >= 0;
 }
 
 chem.Struct.prototype.hasRxnArrow = function () {

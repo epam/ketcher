@@ -106,6 +106,7 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 	this.component = -1;
 };
 rnd.ReAtom.prototype = new rnd.ReObject();
+rnd.ReAtom.isSelectable = function() { return true; }
 
 rnd.ReAtom.prototype.getVBoxObj = function(render) {
     if (this.visel.boundingBox)
@@ -141,6 +142,7 @@ rnd.ReBond = function (/*chem.Bond*/bond)
 	this.doubleBondShift = 0;
 };
 rnd.ReBond.prototype = new rnd.ReObject();
+rnd.ReBond.isSelectable = function() { return true; }
 
 rnd.ReBond.prototype.drawHighlight = function(render) {
     var ret = this.makeHighlightPlate(render);
@@ -230,21 +232,6 @@ rnd.ReStruct = function (molecule, render, norescale)
 
     this.coordProcess(norescale);
 };
-
-rnd.ReStruct.maps = {
-    'atoms':       0,
-    'bonds':       1,
-    'rxnPluses':   2,
-    'rxnArrows':   3,
-    'frags':       4,
-    'rgroups':     5,
-    'sgroupData':  6,
-    'chiralFlags': 7
-};
-
-rnd.ReStruct.mapsExt = rnd.ReStruct.maps;
-rnd.ReStruct.mapsExt['sgroups'] = 8;
-rnd.ReStruct.mapsExt['reloops'] = 9;
 
 rnd.ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
@@ -400,7 +387,7 @@ rnd.ReStruct.prototype.markItem = function (map, id, mark) {
 };
 
 rnd.ReStruct.prototype.eachVisel = function (func, context) {
-    for (var map in rnd.ReStruct.mapsExt) {
+    for (var map in rnd.ReStruct.maps) {
         this[map].each(function(id, item) {
             func.call(context, item.visel);
         }, this);
@@ -411,12 +398,12 @@ rnd.ReStruct.prototype.getVBoxObj = function (selection)
 {
     selection = selection || {};
     if (this.selectionIsEmpty(selection)) {
-        for (var map in rnd.ReStruct.mapsExt) {
+        for (var map in rnd.ReStruct.maps) {
             selection[map] = this[map].keys();
         }
     }
     var vbox = null;
-    for (var map in rnd.ReStruct.mapsExt) {
+    for (var map in rnd.ReStruct.maps) {
         if (selection[map]) {
             util.each(selection[map], function(id) {
                 var box = this[map].get(id).getVBoxObj(this.render);
@@ -433,7 +420,7 @@ rnd.ReStruct.prototype.selectionIsEmpty = function (selection) {
     util.assert(!util.isUndefined(selection), "'selection' is not defined");
     if (util.isNull(selection))
         return true;
-	for (var map in rnd.ReStruct.mapsExt)
+	for (var map in rnd.ReStruct.maps)
 		if (selection[map] && selection[map].length > 0)
             return false;
     return true;
@@ -707,6 +694,7 @@ rnd.ReLoop = function (loop)
 	this.radius = new util.Vec2();
 };
 rnd.ReLoop.prototype = new rnd.ReObject();
+rnd.ReLoop.isSelectable = function() { return false; }
 
 rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
@@ -845,6 +833,7 @@ rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 	this.item = plus;
 };
 rnd.ReRxnPlus.prototype = new rnd.ReObject();
+rnd.ReRxnPlus.isSelectable = function() { return true; }
 
 rnd.ReRxnPlus.findClosest = function (render, p) {
     var minDist;
@@ -884,6 +873,7 @@ rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
     this.item = arrow;
 };
 rnd.ReRxnArrow.prototype = new rnd.ReObject();
+rnd.ReRxnArrow.isSelectable = function() { return true; }
 
 rnd.ReRxnArrow.findClosest = function(render, p) {
     var minDist;
@@ -924,6 +914,7 @@ rnd.ReFrag = function(/*chem.Struct.Fragment*/frag) {
     this.item = frag;
 };
 rnd.ReFrag.prototype = new rnd.ReObject();
+rnd.ReFrag.isSelectable = function() { return false; }
 
 rnd.ReFrag.findClosest = function(render, p, skip, minDist) {
     minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
@@ -1022,6 +1013,7 @@ rnd.ReRGroup = function(/*chem.Struct.RGroup*/rgroup) {
     this.item = rgroup;
 };
 rnd.ReRGroup.prototype = new rnd.ReObject();
+rnd.ReRGroup.isSelectable = function() { return false; }
 
 rnd.ReRGroup.prototype.getAtoms = function(render) {
     var ret = [];
@@ -1183,6 +1175,8 @@ rnd.ReSGroup = function(sgroup) {
     this.item = sgroup;
 };
 rnd.ReSGroup.prototype = new rnd.ReObject();
+rnd.ReSGroup.isSelectable = function() { return false; }
+
 
 rnd.ReSGroup.findClosest = function(render, p) {
 	var ret = null;
@@ -1250,6 +1244,7 @@ rnd.ReDataSGroupData = function (sgroup)
 };
 
 rnd.ReDataSGroupData.prototype = new rnd.ReObject();
+rnd.ReDataSGroupData.isSelectable = function() { return true; }
 
 rnd.ReDataSGroupData.findClosest = function (render, p) {
     var minDist = null;
@@ -1293,6 +1288,7 @@ rnd.ReChiralFlag = function (pos)
     this.pp = pos;
 };
 rnd.ReChiralFlag.prototype = new rnd.ReObject();
+rnd.ReChiralFlag.isSelectable = function() { return true; }
 
 rnd.ReChiralFlag.findClosest = function(render, p) {
     var minDist;
@@ -1340,4 +1336,17 @@ rnd.ReChiralFlag.prototype.draw = function(render) {
             'fill' : '#000'
     });
     render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
+};
+
+rnd.ReStruct.maps = {
+    'atoms':       rnd.ReAtom,
+    'bonds':       rnd.ReBond,
+    'rxnPluses':   rnd.ReRxnPlus,
+    'rxnArrows':   rnd.ReRxnArrow,
+    'frags':       rnd.ReFrag,
+    'rgroups':     rnd.ReRGroup,
+    'sgroupData':  rnd.ReDataSGroupData,
+    'chiralFlags': rnd.ReChiralFlag,
+    'sgroups':     rnd.ReSGroup,
+    'reloops':     rnd.ReLoop
 };

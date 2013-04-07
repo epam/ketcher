@@ -468,9 +468,8 @@ rnd.Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod("setSelection");
 	for (var map in rnd.ReStruct.maps) {
-            if (map == 'frags' || map == 'rgroups')
-                continue;
-
+        if (!rnd.ReStruct.maps[map].isSelectable())
+            continue;
         var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
 		this.ctab[map].each(function(id, item){
             var selected = set ? set[id] === id : item.selected;

@@ -18,30 +18,35 @@ chem.InChiSaver = function() {
 
 chem.InChiSaver.prototype.saveMolecule = function(molecule) {
     var ret = '', err = null;
-    if (ui.standalone) {
-        throw { message : 'InChI is not supported in the standalone mode' };
-    } else if (molecule.atoms.count() > 0) {
-        molecule = molecule.clone();
-        molecule.sgroups.each(function(sgid, sg) {
-            if (sg.type != 'MUL') {
-                throw { message : "InChi data format doesn't support s-groups" };
+    if (ui.standalone)
+        throw {message: 'InChI is not supported in the standalone mode'};
+    if (molecule.rgroups.count() !== 0)
+        alert("R-group fragments are not supported and will be discarded");
+    molecule = molecule.getScaffold();
+    if (molecule.atoms.count() === 0)
+        return ret;
+    molecule = molecule.clone();
+    molecule.sgroups.each(function(sgid, sg) {
+        if (sg.type !== 'MUL') {
+            throw {message: "InChi data format doesn't support s-groups"};
+        }
+    }, this);
+    var moldata = new chem.MolfileSaver().saveMolecule(molecule);
+    new Ajax.Request(ui.path + 'getinchi', {
+        method: 'post',
+        asynchronous: false,
+        parameters: {moldata: moldata},
+        onComplete: function(res) {
+            if (res.responseText.startsWith('Ok.')) {
+                ret = res.responseText.split('\n')[1];
+            } else if (res.responseText.startsWith('Error.')) {
+                err = {message: res.responseText.split('\n')[1]};
+            } else {
+                err = {message: 'Unexpected server message (' + res.responseText + ')'};
             }
-        }, this);
-        var moldata = new chem.MolfileSaver().saveMolecule(molecule);
-        new Ajax.Request(ui.path + 'getinchi', {
-            method: 'post',
-            asynchronous : false,
-            parameters: { moldata: moldata },
-            onComplete: function (res) {
-                if (res.responseText.startsWith('Ok.')) {
-                    ret = res.responseText.split('\n')[1];
-                } else if (res.responseText.startsWith('Error.')) {
-                    err = { message : res.responseText.split('\n')[1] };
-                } else {
-                    err = { message : 'Unexpected server message (' + res.responseText + ')' };
-                }
-            }
-        });
-    }
-    if (err) throw err; else return ret;
+        }
+    });
+    if (err)
+        throw err;
+    return ret;
 };

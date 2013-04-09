@@ -663,23 +663,11 @@ rnd.Editor.BondTool = function(editor, bondProps) {
         chem.Struct.BOND.TYPE.SINGLE,
         chem.Struct.BOND.TYPE.DOUBLE,
         chem.Struct.BOND.TYPE.TRIPLE];
-    
-    this.queryBondTypes = [
-        chem.Struct.BOND.TYPE.ANY,
-		chem.Struct.BOND.TYPE.AROMATIC,
-		chem.Struct.BOND.TYPE.SINGLE_OR_DOUBLE,
-		chem.Struct.BOND.TYPE.SINGLE_OR_AROMATIC,
-		chem.Struct.BOND.TYPE.DOUBLE_OR_AROMATIC];
-    
-    // if we click several times in a row on a plain single/double/triple bond, the type is changed in a cyclic fashion
-    // the field below store the id of the bond which was clicked/created last
-    // this field is reset by a timeout function, see this.setTypeLoopTimeout
-    this.typeLoopBondId = -1;
-    this.typeLoopTimeout = null;
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
 rnd.Editor.BondTool.prototype = new rnd.Editor.EditorTool();
+
 rnd.Editor.BondTool.prototype.OnMouseDown = function(event) {
     this._hoverHelper.hover(null);
     this.dragCtx = {
@@ -689,6 +677,7 @@ rnd.Editor.BondTool.prototype.OnMouseDown = function(event) {
     if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
     return true;
 };
+
 rnd.Editor.BondTool.prototype.OnMouseMove = function(event) {
     var _E_ = this.editor, _R_ = _E_.render;
     if ('dragCtx' in this) {
@@ -723,18 +712,6 @@ rnd.Editor.BondTool.prototype.OnMouseMove = function(event) {
     return true;
 };
 
-rnd.Editor.BondTool.prototype.setTypeLoopTimeout = function(bondId) {
-    var self = this;
-    this.typeLoopTimeout = setTimeout(
-        function() {
-            self.typeLoopBondId = -1;
-            self.typeLoopTimeout = null;
-        },
-        750
-    );
-    self.typeLoopBondId = bondId;
-}
-
 rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
     if ('dragCtx' in this) {
         var _UI_ = this.editor.ui, _DC_ = this.dragCtx;
@@ -753,14 +730,12 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
                 { x : xy.x + v.x, y : xy.y + v.y}
             );
             _UI_.addUndoAction(bondAddition[0]);
-            this.setTypeLoopTimeout(bondAddition[3]);
         } else if (_DC_.item.map == 'atoms') {
             var atom = _UI_.atomForNewBond(_DC_.item.id);
             _UI_.addUndoAction(_UI_.Action.fromBondAddition(this.bondProps, _DC_.item.id, atom.atom, atom.pos)[0]);
         } else if (_DC_.item.map == 'bonds') {
             var bondProps = Object.clone(this.bondProps);
             var bond = _UI_.ctab.bonds.get(_DC_.item.id);
-            var bondId = _DC_.item.id;
 
             if (bondProps.stereo != chem.Struct.BOND.STEREO.NONE
                 && bond.type == chem.Struct.BOND.TYPE.SINGLE
@@ -769,15 +744,12 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
             {
                 _UI_.addUndoAction(_UI_.Action.fromBondFlipping(_DC_.item.id));
             } else {
-                if (bond.stereo === chem.Struct.BOND.STEREO.NONE && bondProps.stereo === chem.Struct.BOND.STEREO.NONE) {
-                    var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : (this.queryBondTypes.indexOf(bondProps.type) >= 0 ? this.queryBondTypes : null);
+                if (bondProps.type === chem.Struct.BOND.TYPE.SINGLE
+                        && bond.stereo === chem.Struct.BOND.STEREO.NONE
+                        && bondProps.stereo === chem.Struct.BOND.STEREO.NONE) {
+                    var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
                     if (loop) {
-                        if (!util.isNull(this.typeLoopTimeout))
-                            clearTimeout(this.typeLoopTimeout);
-                        if (this.typeLoopBondId == bondId) {
-                            bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-                        }
-                        this.setTypeLoopTimeout(bondId);
+                        bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
                     }
                 }
                 _UI_.addUndoAction(
@@ -791,7 +763,6 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
     }
     return true;
 };
-
 
 rnd.Editor.ChainTool = function(editor) {
     this.editor = editor;

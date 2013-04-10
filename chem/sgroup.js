@@ -499,9 +499,6 @@ chem.SGroup.GroupMul = {
                     var aid2 = mol.atoms.add(new chem.Struct.Atom(atom));
                     newAtoms.push(aid2);
                     this.atomSet[aid2] = 1;
-                    util.Set.each(mol.atoms.get(aid).sgs, function(sgid){
-                        util.Set.add(mol.atoms.get(aid2).sgs, sgid);
-                    }, this);
                     amap[aid] = aid2;
                 }, this);
                 util.each(inBonds, function(bid) {
@@ -519,12 +516,10 @@ chem.SGroup.GroupMul = {
                     tailAtom = amap[xAtom1];
                 }
             }
+            
             util.each(newAtoms, function(aid) {
-                var atom = mol.atoms.get(aid);
-                util.Set.each(atom.sgs, function(sid) {
-                    var sgroup = mol.sgroups.get(sid);
-                    if (sgroup.atoms.indexOf(aid) < 0)
-                        chem.SGroup.addAtom(sgroup, aid);
+                util.each(mol.sGroupForest.getPathToRoot(this.id).reverse(), function(sgid) {
+                    mol.atomAddToSGroup(sgid, aid);
                 }, this);
             }, this);
             if (tailAtom >= 0) {

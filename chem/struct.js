@@ -1147,3 +1147,9 @@ chem.Struct.prototype.prepareLoopStructure = function () {
     this.sortNeighbors(this.atoms.keys());
     this.findLoops();
 }
+
+chem.Struct.prototype.atomAddToSGroup = function (sgid, aid) {
+    // TODO: [MK] make sure the addition does not break the hierarchy?
+    chem.SGroup.addAtom(this.sgroups.get(sgid), aid);
+    util.Set.add(this.atoms.get(aid).sgs, sgid);
+}

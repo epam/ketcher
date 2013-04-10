@@ -949,7 +949,9 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 	var mol = this.molecule;
 	var sgroups = mol.sgroups;
 	var toRemove = [];
-	sgroups.each(function(id, sg) {
+    
+	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function(id) {
+		var sg = mol.sgroups.get(id);
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
@@ -961,7 +963,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 				throw ex;
 			}
 		}
-	});
+	}, this);
     if (toRemove.length > 0) {
         alert("WARNING: " + toRemove.length.toString() + " invalid S-groups were detected. They will be omitted." );
     }

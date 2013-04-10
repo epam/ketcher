@@ -1468,14 +1468,13 @@ ui.Action.OpSGroupAtomAdd = function(sgid, aid) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var aid = this.data.aid;
         var sgid = this.data.sgid;
-	var atom = DS.atoms.get(aid);
-	var sg = DS.sgroups.get(sgid);
+        var atom = DS.atoms.get(aid);
+        var sg = DS.sgroups.get(sgid);
         if (sg.atoms.indexOf(aid) >= 0)
             throw new Error("The same atom cannot be added to an S-group more than once");
-	chem.SGroup.addAtom(sg, aid);
         if (!atom)
             throw new Error("OpSGroupAtomAdd: Atom " + aid + " not found");
-	util.Set.add(atom.sgs, sgid);
+        DS.atomAddToSGroup(sgid, aid);
         R.invalidateAtom(aid);
     };
     this._invert = function() {

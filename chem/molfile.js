@@ -348,12 +348,13 @@ chem.Molfile.initSGroup = function (sGroups, propData)
 	}
 };
 
-chem.Molfile.applySGroupProp = function (sGroups, propName, propData, numeric)
+chem.Molfile.applySGroupProp = function (sGroups, propName, propData, numeric, core)
 {
 	var mf = chem.Molfile;
 	var kv = mf.readKeyValuePairs(propData, !(numeric));
 	for (var key in kv) {
-		sGroups[key].data[propName] = kv[key];
+        // "core" properties are stored directly in an sgroup, not in sgroup.data
+        (core ? sGroups[key] : sGroups[key].data) [propName] = kv[key];
 	}
 };
 
@@ -543,6 +544,8 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				mf.applySGroupProp(sGroups, 'subtype', propertyData);
 			} else if (type == "SLB") {
 				mf.applySGroupProp(sGroups, 'label', propertyData, true);
+			} else if (type == "SPL") {
+				mf.applySGroupProp(sGroups, 'parent', propertyData, true, true);
 			} else if (type == "SCN") {
 				mf.applySGroupProp(sGroups, 'connectivity', propertyData);
 			} else if (type == "SAL") {
@@ -618,6 +621,18 @@ chem.Molfile.parseCTabV2000 = function (ctabLines, countsSplit)
 
 	var atomMap = {};
     var sid;
+	for (sid in sGroups) {
+        var sg = sGroups[sid];
+        if (sg.type === 'DAT' && sg.atoms.length === 0) {
+            var parent = sGroups[sid].parent;
+            if (parent >= 0) {
+                var psg = sGroups[parent - 1];
+                if (psg.type === 'GEN') {
+                    sg.atoms = util.array(psg.atoms);
+                }
+            }
+        }
+	}
 	for (sid in sGroups) {
 		chem.SGroup.addGroup(ctab, sGroups[sid], atomMap);
 	}

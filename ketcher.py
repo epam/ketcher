@@ -225,9 +225,13 @@ class application(object):
                (self.content_type.startswith('application/x-www-form-urlencoded')
                 or self.content_type.startswith('multipart/form-data'))
 
+
+from wsgiref import simple_server
+class PatientServer(simple_server.WSGIServer):
+    request_queue_size = 200
+
 if __name__ == '__main__':
     import socket
-    from wsgiref.simple_server import make_server
 
     def parse_args():
         arg = sys.argv[1] if len(sys.argv) > 1 else ''
@@ -243,7 +247,7 @@ if __name__ == '__main__':
     application.static_serve = True     # allow to serve static
     try:                                # in standalone python-server mode
         address, port = parse_args()
-        httpd = make_server(address, port, application)
+        httpd = simple_server.make_server(address, port, application, server_class=PatientServer)
         print "Serving on %s:%d..." % (address, port)
         httpd.serve_forever()
     except ValueError:

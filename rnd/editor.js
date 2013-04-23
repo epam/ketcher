@@ -353,7 +353,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
             item : ci,
             xy0 : this.editor.ui.page2obj(event)
         };
-        if (ci.map == 'atoms') {
+        if (ci.map == 'atoms' && !self.editor.ui.is_touch) {
             var self = this;
             this.dragCtx.timeout = setTimeout(
                 function() {

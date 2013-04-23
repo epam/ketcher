@@ -45,6 +45,16 @@ ui.is_osx = false;
 ui.is_touch = false;
 ui.initialized = false;
 
+//console.log = function(msg)
+//{
+//    new Ajax.Request(ui.path + 'log', {
+//        method: 'post',
+//        asynchronous: false,
+//        parameters: {message: msg}
+//    });
+//};
+
+
 //
 // Init section
 //
@@ -771,6 +781,7 @@ ui.onKeyPress_Ketcher = function (event)
     //rbalabanov: here we try to handle event using current editor tool
     //BEGIN
     if (ui && ui.render.current_tool) {
+        ui.render.resetLongTapTimeout(true);
         if (ui.render.current_tool.processEvent('OnKeyPress', event)) {
             return util.preventDefault(event);
         }

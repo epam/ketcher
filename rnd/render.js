@@ -92,17 +92,44 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     // rbalabanov: two-fingers scrolling & zooming for iPad
     // TODO should be moved to touch.js module, re-factoring needed
     //BEGIN
+    var self = this;
+    self.longTapFlag = false;
+    self.longTapTimeout = null;
+    self.longTapTouchstart = null;
+    
+    self.setLongTapTimeout = function(event) {
+        self.longTapFlag = false;
+        self.longTapTouchstart = event;
+        self.longTapTimeout = setTimeout(function() {
+            self.longTapFlag = true;
+            self.longTapTimeout = null;
+        }, 500);
+    };
+
+    self.resetLongTapTimeout = function(resetFlag) {
+        clearTimeout(self.longTapTimeout);
+        self.longTapTimeout = null;
+        if (resetFlag) {
+            self.longTapTouchstart = null;
+            self.longTapFlag = false;
+        }
+    };
+    
     clientArea.observe('touchstart', function(event) {
+        self.resetLongTapTimeout(true);
         if (event.touches.length == 2) {
             this._tui = this._tui || {};
             this._tui.center = {
-                pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
-                pageY : (event.touches[0].pageY + event.touches[1].pageY) / 2
+                pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
+                pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
             };
             ui.setZoomStaticPointInit(ui.page2obj(this._tui.center));
+        } else if (event.touches.length == 1) {
+            self.setLongTapTimeout(event);
         }
     });
     clientArea.observe('touchmove', function(event) {
+        self.resetLongTapTimeout(true);
         if ('_tui' in this && event.touches.length == 2) {
             this._tui.center = {
                 pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
@@ -144,8 +171,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     //rbalabanov: temporary
     //BEGIN
     clientArea.observe('touchend', function(event) {
-        if (event.touches.length == 0) {
-            ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', new rnd.MouseEvent(event));
+        self.resetLongTapTimeout(false);
+        if (self.longTapFlag) {
+            ui.render.current_tool && ui.render.current_tool.processEvent('OnDblClick', self.longTapTouchstart);
+            self.resetLongTapTimeout(true);
+            return util.preventDefault(event);
+        } else if (event.touches.length == 0) {
+            ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', event);
         }
     });
     //END

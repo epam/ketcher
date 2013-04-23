@@ -57,6 +57,11 @@ class application(object):
     def on_knocknock(self):
         return ["You are welcome!"]
 
+    def on_log(self):
+        message = self.fields.getfirst('message')
+        print 'CLIENT LOG: ' + message
+        return ["Ok.\n"]
+
     def on_layout(self):
         moldata = None
         if self.method == 'GET' and 'smiles' in self.fields:

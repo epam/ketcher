@@ -576,8 +576,8 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 	var p1 = this.atoms.get(hb.begin).pp;
 	var p2 = this.atoms.get(hb.end).pp;
 	var d = util.Vec2.diff(p2, p1).normalized();
-	hb.dir = d;
-	hb.norm = d.turnLeft();
+	hb.dir = util.Vec2.dist(p2, p1) > 1e-4 ? d : new util.Vec2(1, 0);
+	hb.norm = hb.dir.turnLeft();
 	hb.ang = hb.dir.oxAngle();
 	if (hb.loop < 0)
 		hb.loop = -1;

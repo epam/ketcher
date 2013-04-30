@@ -430,7 +430,7 @@ chem.Struct.Atom.prototype.isPseudo =  function ()
 
 chem.Struct.Atom.prototype.hasRxnProps =  function ()
 {
-    return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.rglabel) || !util.isNull(this.attpnt) || this.aam);
+    return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.attpnt) || this.aam);
 };
 
 chem.Struct.AtomList = function (params)

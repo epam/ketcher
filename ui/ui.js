@@ -294,6 +294,21 @@ ui.init = function (parameters)
         //END
     }
 
+    if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
+        new Ajax.Request(ui.path + 'knocknock', {
+            method: 'get',
+            asynchronous : false,
+            onComplete: function (res)
+            {
+                if (res.responseText == 'You are welcome!')
+                    ui.standalone = false;
+            }
+        });
+    }
+
+    if (!this.standalone)
+    	this.initTemplates();
+
     // Document events
     document.observe('keypress', ui.onKeyPress_Ketcher);
     document.observe('keydown', ui.onKeyDown_IE);
@@ -438,21 +453,6 @@ ui.init = function (parameters)
         ui.client_area.absolutize(); // Needed for clipping and scrollbars in IE
         $('ketcher_window').observe('resize', ui.onResize_Ketcher);
     }
-
-    if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
-        new Ajax.Request(ui.path + 'knocknock', {
-            method: 'get',
-            asynchronous : false,
-            onComplete: function (res)
-            {
-                if (res.responseText == 'You are welcome!')
-                    ui.standalone = false;
-            }
-        });
-    }
-
-    if (!this.standalone)
-    	this.initTemplates();
 
     if (this.standalone) {
         $$('.serverRequired').each(function(el) {

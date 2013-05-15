@@ -37,10 +37,6 @@ ketcher.init = function (parameters)
     $("ketcher_version").innerHTML = "Version " + ketcher.version;
 };
 
-window.onload=function(){
-    ketcher.init();
-}
-
 ketcher.getSmiles = function ()
 {
     var saver = new chem.SmilesSaver();

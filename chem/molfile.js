@@ -1300,7 +1300,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
     if (rgroups)
         rgroups.each(function (rgid, rg) {
             if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-                var line = '  1 ' + util.paddedInt(rgid, 3) + ' ' + util.paddedInt(rg.ifthen, 3) + ' ' + util.paddedInt(rg.resth ? 1 : 0, 3) + ' ' + rg.range;
+                var line = '  1 ' + util.paddedInt(rgid, 3) + ' ' + util.paddedInt(rg.ifthen, 3) + ' ' + util.paddedInt(rg.resth ? 1 : 0, 3) + '   ' + rg.range;
                 rglogic_list.push(line);
             }
         });

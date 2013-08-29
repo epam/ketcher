@@ -37,22 +37,31 @@ rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
 	this.update = function(){};
 };
 
+rnd.RenderOptions = function (opt)
+{
+	opt = opt || {};
+
+	// flags for debugging
+	this.showSelectionRegions = opt.showSelectionRegions || false;
+	this.showAtomIds = opt.showAtomIds || false;
+	this.showBondIds = opt.showBondIds || false;
+	this.showHalfBondIds = opt.showHalfBondIds || false;
+	this.showLoopIds = opt.showLoopIds || false;
+
+	// rendering customization flags
+	this.showValenceWarnings = !Object.isUndefined(opt.showValenceWarnings) ? opt.showValenceWarnings : true;
+	this.autoScale = opt.autoScale || false; // scale structure to fit into the given view box, used in view mode
+	this.autoScaleMargin = opt.autoScaleMargin || 0;
+	this.atomColoring = opt.atomColoring || 0;
+	this.hideImplicitHydrogen = opt.hideImplicitHydrogen || false;
+	this.hideTerminalLabels = opt.hideTerminalLabels || false;
+	this.ignoreMouseEvents = opt.ignoreMouseEvents || false; // for view mode
+	this.selectionDistanceCoefficient = (opt.selectionDistanceCoefficient || 0.4) - 0;
+}
+
 rnd.Render = function (clientArea, scale, opt, viewSz)
 {
-	this.opt = opt || {};
-	this.opt.showSelectionRegions = this.opt.showSelectionRegions || false;
-	this.opt.showAtomIds = this.opt.showAtomIds || false;
-	this.opt.showBondIds = this.opt.showBondIds || false;
-	this.opt.showHalfBondIds = this.opt.showHalfBondIds || false;
-	this.opt.showLoopIds = this.opt.showLoopIds || false;
-	this.opt.showValenceWarnings = !Object.isUndefined(this.opt.showValenceWarnings) ? this.opt.showValenceWarnings : true;
-	this.opt.autoScale = this.opt.autoScale || false;
-	this.opt.autoScaleMargin = this.opt.autoScaleMargin || 0;
-	this.opt.atomColoring = this.opt.atomColoring || 0;
-	this.opt.hideImplicitHydrogen = this.opt.hideImplicitHydrogen || false;
-	this.opt.hideTerminalLabels = this.opt.hideTerminalLabels || false;
-	this.opt.ignoreMouseEvents = this.opt.ignoreMouseEvents || false;
-	this.opt.selectionDistanceCoefficient = (this.opt.selectionDistanceCoefficient || 0.4) - 0;
+	this.opt = new rnd.RenderOptions(opt);
 
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;

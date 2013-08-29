@@ -16,7 +16,7 @@ ketcher = function () {
 
 ketcher.version = "1.0b5";
 
-ketcher.init = function (parameters)
+ketcher.init = function (parameters, opt)
 {    
     document.title += ' v' + ketcher.version;
 	ketcher.button_areas = {};
@@ -33,8 +33,8 @@ ketcher.init = function (parameters)
 	ketcher.button_areas.atom_i = new rnd.ElementTable('atom_i', elemLabelOpts).renderSingle('I');
 	ketcher.button_areas.atom_table = new rnd.ElementTable('atom_table', elemLabelOpts).renderSingle('...');
 	ketcher.button_areas.atom_any = new rnd.ElementTable('atom_reagenerics', {'fontSize':9}).renderSingle('Generic\nGroups');
-    ui.init(parameters);
-    $("ketcher_version").innerHTML = "Version " + ketcher.version;
+	ui.init(parameters, opt);
+	$("ketcher_version").innerHTML = "Version " + ketcher.version;
 };
 
 ketcher.getSmiles = function ()

@@ -221,8 +221,9 @@ ui.onMouseDown_DropdownListItem = function (event)
 
 ui.defaultSelector = 'selector_last';
 
-ui.init = function (parameters)
+ui.init = function (parameters, opts)
 {
+    opts = new rnd.RenderOptions(opts);
     parameters = parameters || {};
     this.actionComplete = parameters.actionComplete || function(){};
     if (this.initialized)
@@ -470,7 +471,8 @@ ui.init = function (parameters)
     }
 
     // Init renderer
-    this.render =  new rnd.Render(this.client_area, ui.scale, {atomColoring: true});
+    opts.atomColoring = true;
+    this.render =  new rnd.Render(this.client_area, ui.scale, opts);
     this.editor = new rnd.Editor(this.render);
 
     this.selectMode('selector_lasso');

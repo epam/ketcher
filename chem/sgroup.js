@@ -492,6 +492,7 @@ chem.SGroup.GroupMul = {
             var tailAtom = xAtom1;
 
             var newAtoms = [];
+            this.atoms.sort();
             for (j = 0; j < this.data.mul - 1; ++j) {
                 amap = {};
                 util.each(this.atoms, function(aid) {

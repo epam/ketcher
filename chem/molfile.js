@@ -747,7 +747,7 @@ chem.Molfile.v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shi
         line = mf.stripV30(ctabLines[shift++]).strip();
         if (line.strip() == 'END SGROUP')
             return shift;
-        while (line[line.length-1] == '-')
+        while (line.charAt(line.length-1) == '-')
             line = (line.substr(0, line.length - 1) +
                 mf.stripV30(ctabLines[shift++])).strip();
         var split = mf.splitSGroupDef(line);
@@ -828,7 +828,7 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
             line = mf.stripV30(ctabLines[shift++]).strip();
             if (line == 'END ATOM')
                 break;
-            while (line[line.length-1] == '-')
+            while (line.charAt(line.length-1) == '-')
                 line = (line.substring(0, line.length - 1) + mf.stripV30(ctabLines[shift++])).strip();
             ctab.atoms.add(mf.parseAtomLineV3000(line));
         }
@@ -840,7 +840,7 @@ chem.Molfile.parseCTabV3000 = function (ctabLines, norgroups)
                 line = mf.stripV30(ctabLines[shift++]).strip();
                 if (line == 'END BOND')
                     break;
-                while (line[line.length - 1] == '-')
+                while (line.charAt(line.length-1) == '-')
                     line = (line.substring(0, line.length - 1) + mf.stripV30(ctabLines[shift++])).strip();
                 ctab.bonds.add(mf.parseBondLineV3000(line));
             }

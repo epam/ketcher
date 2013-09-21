@@ -172,17 +172,17 @@ rnd.Editor.SelectionHelper.prototype.isSelected = function(item) {
 rnd.Editor.EditorTool = function(editor) {
     this.editor = editor;
 };
-rnd.Editor.EditorTool.prototype.processEvent = function(name, event) {
+rnd.Editor.EditorTool.prototype.processEvent = function(name, event, action) {
     if (!('touches' in event) || event.touches.length == 1) {
         if (name + '0' in this)
-            return this[name + '0'](event);
+            return this[name + '0'](event, action);
         else if (name in this)
-            return this[name](event);
+            return this[name](event, action);
         console.log('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
     } else if ('lastEvent' in this.OnMouseDown0) {
         // here we finish previous MouseDown and MouseMoves with simulated MouseUp
         // before gesture (canvas zoom, scroll, rotate) started
-        return this.OnMouseUp0(event);
+        return this.OnMouseUp0(event, action);
     }
 };
 rnd.Editor.EditorTool.prototype.OnMouseDown = function() {};
@@ -223,52 +223,56 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function(event) {
         delete this.OnMouseDown0.lastEvent;
     }
 };
-rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event) {
-    if (!((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && !event.altKey && ('lastEvent' in this.OnMouseMove0)) {
-        if (114 == (Prototype.Browser.IE ? event.keyCode : event.which)) { // 'r'
-            return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, this.OnMouseMove0.lastEvent);
-        }
-        var labels = {
-            Br : 66, Cl : 67, A: 97, C: 99, F : 102, H : 104, I : 105, N : 110, O : 111, P : 112, S : 115
-        };
-        for (var label in labels) {
-            if (labels[label] == (Prototype.Browser.IE ? event.keyCode : event.which)) {
-                var selection = this.editor.getSelection();
-                if (selection && 'atoms' in selection && selection.atoms.length > 0) {
+
+rnd.Editor.EditorTool.atom_label_map = {
+    atom_tool_any: 'A',
+    atom_tool_h: 'H',
+    atom_tool_c: 'C',
+    atom_tool_n: 'N',
+    atom_tool_o: 'O',
+    atom_tool_s: 'S',
+    atom_tool_p: 'P',
+    atom_tool_f: 'F',
+    atom_tool_br: 'Br',
+    atom_tool_cl: 'Cl',
+    atom_tool_i: 'I'
+};
+
+rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event, action) {
+    if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
+        return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
+        this.OnMouseMove0.lastEvent);
+    } else if (action in rnd.Editor.EditorTool.atom_label_map) {
+        var label = rnd.Editor.EditorTool.atom_label_map[action];
+        var selection = this.editor.getSelection();
+        if (selection && 'atoms' in selection && selection.atoms.length > 0) {
+            this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(
+                    selection.atoms, {label: label}, true), true);
+            this.editor.ui.render.update();
+            return true;
+        } else {
+            var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
+            if (ci) {
+                ci.label = {label: label};
+                if (ci.map === 'atoms') {
+                    this.editor.ui.addUndoAction(ui.Action.fromAtomsAttrs(
+                            ci.id, ci.label, true), true);
+                } else if (ci.id == -1) {
                     this.editor.ui.addUndoAction(
-                        this.editor.ui.Action.fromAtomsAttrs(selection.atoms, { label : label }, true),
-                        true
-                    );
-                    this.editor.ui.render.update();
-                    return true;
-                } else {
-                    var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
-                    if (ci) {
-                        ci.label = { label : label };
-                        if (ci.map == 'atoms') {
-                            this.editor.ui.addUndoAction(
-                                ui.Action.fromAtomsAttrs(ci.id, ci.label, true),
-                                true
-                            );
-                        } else if (ci.id == -1) {
-                            this.editor.ui.addUndoAction(
-                                this.editor.ui.Action.fromAtomAddition(
-                                    this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
-                                    ci.label
-                                ),
-                                true
-                            );
-                        }
-                        this.editor.ui.render.update();
-                        return true;
-                    }
+                            this.editor.ui.Action.fromAtomAddition(
+                            this.editor.ui.page2obj(
+                            this.OnMouseMove0.lastEvent), ci.label), true);
                 }
+                this.editor.ui.render.update();
+                return true;
             }
         }
     }
-    if ('OnKeyPress' in this) return this.OnKeyPress(event);
+    if ('OnKeyPress' in this)
+        return this.OnKeyPress(event);
     return false;
 };
+
 rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
     var v = util.Vec2.diff(pos1, pos0);
     var angle = Math.atan2(v.y, v.x);

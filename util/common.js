@@ -32,6 +32,12 @@ util.each = function (array, func, context) {
         func.call(context, array[i], i);
 };
 
+util.map_each = function (map, func, context) {
+    util.assert(!util.isNullOrUndefined(map), "map must be defined");
+    for (var key in map)
+        func.call(context, key, map[key]);
+};
+
 util.find = function (array, func, context) {
     for (var i = 0; i < array.length; ++i)
         if (func.call(context, array[i], i))
@@ -226,3 +232,7 @@ util.arrayRemoveByValue = function(array, item) {
     }
     return cnt;
 };
+
+util.listNextRotate = function(list, value) {
+    return list[(list.indexOf(value) + 1) % list.length];
+}

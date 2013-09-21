@@ -311,9 +311,10 @@ ui.init = function (parameters, opts)
     	this.initTemplates();
 
     // Document events
-    document.observe('keypress', ui.onKeyPress_Ketcher);
-    document.observe('keydown', ui.onKeyDown_IE);
-    document.observe('keyup', ui.onKeyUp);
+    //document.observe('keypress', ui.onKeyPress_Ketcher);
+    //document.observe('keydown', ui.onKeyDown_IE);
+    //document.observe('keyup', ui.onKeyUp);
+    ui.setKeyboardShortcuts();
     document.observe(EventMap['mousedown'], ui.onMouseDown_Ketcher);
     document.observe(EventMap['mouseup'], ui.onMouseUp_Ketcher);
 
@@ -367,7 +368,7 @@ ui.init = function (parameters, opts)
     $$('.dialogWindow').each(function (el)
     {
         el.observe('keypress', ui.onKeyPress_Dialog);
-        el.observe('keyup', ui.onKeyUp);
+        el.observe('keyup', ui.onKeyPress_Dialog);
     });
 
     // Atom properties dialog events
@@ -402,7 +403,7 @@ ui.init = function (parameters, opts)
         this.hide();
     });
     $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
-    $('input_label').observe('keyup', ui.onKeyUp);
+    $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
 
     // Load dialog events
     $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
@@ -446,7 +447,7 @@ ui.init = function (parameters, opts)
     }
     zoom_list.selectedIndex = ui.zoomIdx;
     zoom_list.observe('change', function(){
-        ui.zoomSet(zoom_list.value-0);	
+        ui.zoomSet(zoom_list.value-0);
     });
 
     ui.onResize_Ketcher();
@@ -773,297 +774,156 @@ ui.onClick_NewFile = function ()
     }
 };
 
-//
-// Hot keys
-//
-ui.onKeyPress_Ketcher = function (event)
-{
-    util.stopEventPropagation(event);
+ui.onKeyPress_Pre = function (action, event, handler, doNotStopIfCoverIsVisible) {
+    util.stopEventPropagation(event); // TODO: still need this?
 
-    if ($('window_cover').visible())
-        return util.preventDefault(event);
+    if ($('window_cover').visible() && !doNotStopIfCoverIsVisible)
+        return false;
 
     //rbalabanov: here we try to handle event using current editor tool
     //BEGIN
     if (ui && ui.render.current_tool) {
         ui.render.resetLongTapTimeout(true);
-        if (ui.render.current_tool.processEvent('OnKeyPress', event)) {
-            return util.preventDefault(event);
-        }
+        if (ui.render.current_tool.processEvent('OnKeyPress', event, action))
+            return false;
     }
     //END
 
-    switch (Prototype.Browser.IE ? event.keyCode : event.which)
-    {
-    case 43: // +
-    case 61:
-        ui.onClick_ZoomIn.call($('zoom_in'));
-        return util.preventDefault(event);
-    case 45: // -
-    case 95:
-        ui.onClick_ZoomOut.call($('zoom_out'));
-        return util.preventDefault(event);
-    case 8: // Back space
-        if (ui.is_osx && ui.editor.hasSelection())
-            ui.removeSelected();
-        return util.preventDefault(event);
-    case 48: // 0
-        ui.onMouseDown_DropdownListItem.call($('bond_any'));
-        return util.preventDefault(event);
-    case 49: // 1
-        var singles = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];
-        ui.onMouseDown_DropdownListItem.call($(singles[(singles.indexOf(ui.mode_id) + 1) % singles.length]));
-        return util.preventDefault(event);
-    case 50: // 2
-        var doubles = ['bond_double', 'bond_crossed'];
-        ui.onMouseDown_DropdownListItem.call($(doubles[(doubles.indexOf(ui.mode_id) + 1) % doubles.length]));
-        return util.preventDefault(event);
-    case 51: // 3
-        ui.onMouseDown_DropdownListItem.call($('bond_triple'));
-        return util.preventDefault(event);
-    case 52: // 4
-        ui.onMouseDown_DropdownListItem.call($('bond_aromatic'));
-        return util.preventDefault(event);
-    case 53: // 5
-        var charge = ['charge_plus', 'charge_minus'];
-        ui.selectMode(charge[(charge.indexOf(ui.mode_id) + 1) % charge.length]);
-        return util.preventDefault(event);
-    case 66: // Shift+B
-        ui.selectMode('atom_br');
-        return util.preventDefault(event);
-    case 67: // Shift+C
-        ui.selectMode('atom_cl');
-        return util.preventDefault(event);
-    case 82: // Shift+R
-        var rgtools = ['rgroup_label', 'rgroup_fragment', 'rgroup_attpoints'];
-        ui.onMouseDown_DropdownListItem.call($(rgtools[(rgtools.indexOf(ui.mode_id) + 1) % rgtools.length]));
-        return util.preventDefault(event);
-    case 90: // Ctrl+Shift+Z
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Redo.call($('redo'));
-        return util.preventDefault(event);
-    case 97: // a
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.selectAll();
-        else
-            ui.selectMode('atom_any');
-        return util.preventDefault(event);
-    case 99: // c
-        if (!event.altKey)
-        {
-            if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-                ui.onClick_Copy.call($('copy'));
-            else if (!event.metaKey)
-                ui.selectMode('atom_c');
-        }
-        return util.preventDefault(event);
-    case 102: // f
-        ui.selectMode('atom_f');
-        return util.preventDefault(event);
-    case 103: // Ctrl+G
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_SideButton.call($('sgroup'));
-        return util.preventDefault(event);
-    case 104: // h
-        ui.selectMode('atom_h');
-        return util.preventDefault(event);
-    case 105: // i
-        ui.selectMode('atom_i');
-        return util.preventDefault(event);
-    case 108: // Ctrl+L
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_CleanUp.call($('clean_up'));
-        return util.preventDefault(event);
-    case 110: // n or Ctrl+N
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_NewFile.call($('new'));
-        else
-            ui.selectMode('atom_n');
-        return util.preventDefault(event);
-    case 111: // o or Ctrl+O
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_OpenFile.call($('open'));
-        else
-            ui.selectMode('atom_o');
-        return util.preventDefault(event);
-    case 112: // p
-        ui.selectMode('atom_p');
-        return util.preventDefault(event);
-    case 114: // Ctrl+R
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.selectMode('transform_rotate');
-        return util.preventDefault(event);
-    case 115: // s or Ctrl+S
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_SaveFile.call($('save'));
-        else
-            ui.selectMode('atom_s');
-        return util.preventDefault(event);
-    case 116: // t
-        var templates = ['template_0', 'template_1', 'template_2', 'template_3', 'template_4', 'template_5', 'template_6', 'template_7'];
-        ui.onMouseDown_DropdownListItem.call($(templates[(templates.indexOf(ui.mode_id) + 1) % templates.length]));
-        return util.preventDefault(event);
-    case 118: // Ctrl+V
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Paste.call($('paste'));
-        return util.preventDefault(event);
-    case 120: // Ctrl+X
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Cut.call($('cut'));
-        return util.preventDefault(event);
-    case 121: // Ctrl+Y
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Redo.call($('redo'));
-        return util.preventDefault(event);
-    case 122: // Ctrl+Z or Ctrl+Shift+Z (in Safari)
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-        {
-            if (event.shiftKey)
-                ui.onClick_Redo.call($('redo'));
-            else
-                ui.onClick_Undo.call($('undo'));
-        }
-        return util.preventDefault(event);
-    case 126: // ~
-        ui.render.update(true);
-        return util.preventDefault(event);
-    }
+    return true;
+}
+
+ui.keyboardShortcuts_OSX = {
+    remove_selected: 'backspace',
+}
+
+ui.keyboardShortcuts_nonOSX = {
+    remove_selected: 'delete',
+}
+
+ui.setKeyboardShortcuts = function() {
+    var setShortcuts = function(action, shortcuts) {
+        if (!(action in ui.keyboardActions))
+            throw new Error("Keyboard action not defined for action \"" +  action + "\"");
+        if (ui.is_osx)
+            shortcuts = shortcuts.replace(/ctrl/g, '⌘');
+        key.apply(this, [shortcuts, ui.keyboardCallbackProxy(action, function(action, event, handler) {
+                if (!ui.onKeyPress_Pre(action, event, handler, ui.doNotStopIfCoverIsVisible[action]))
+                    return false;
+                var ret = ui.keyboardActions[action].call(this, event, handler);
+                if (!ret)
+                    util.preventDefault(event);
+                return ret;
+            })]);
+    };
+    util.map_each(ui.keyboardShortcuts, setShortcuts);
+    util.map_each((ui.is_osx ? ui.keyboardShortcuts_OSX : ui.keyboardShortcuts_nonOSX), setShortcuts);
 };
 
-// Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y, Ctrl+Z
-ui.ctrlShortcuts = [65, 67, 71, 76, 78, 79, 82, 83, 86, 88, 89, 90];
+ui.keyboardShortcuts = {
+    copy: 'ctrl+C',
+    cut: 'ctrl+X',
+    paste: 'ctrl+V',
+    zoom_in: '=, shift+=',
+    zoom_out: '-',
+    undo: 'ctrl+Z',
+    redo: 'ctrl+shift+Z,ctrl+Y',
+    bond_tool_any: '0',
+    bond_tool_single: '1',
+    bond_tool_double: '2',
+    bond_tool_triple: '3',
+    bond_tool_aromatic: '4',
+    select_charge_tool: '5',
+    atom_tool_any: 'A',
+    atom_tool_h: 'H',
+    atom_tool_c: 'C',
+    atom_tool_n: 'N',
+    atom_tool_o: 'O',
+    atom_tool_s: 'S',
+    atom_tool_p: 'P',
+    atom_tool_f: 'F',
+    atom_tool_br: 'shift+B',
+    atom_tool_cl: 'shift+C',
+    atom_tool_i: 'I',
+    rgroup_tool_label: 'R',
+    rgroup_tool_select: 'shift+R',
+    select_all: 'ctrl+A',
+    sgroup_tool: 'ctrl+G',
+    cleanup_tool: 'ctrl+L',
+    new_document: 'ctrl+N',
+    open_document: 'ctrl+O',
+    save_document: 'ctrl+S',
+    rotate_tool: 'ctrl+R',
+    template_tool: 'T',
+    escape: 'escape',
 
-// Button handler specially for IE to prevent default actions
-ui.onKeyDown_IE = function (event)
-{
-    if ($('window_cover').visible())
-        return true;
-
-    if (Prototype.Browser.Gecko && event.which == 46) {
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
-
-    if (Prototype.Browser.WebKit && ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) && ui.ctrlShortcuts.indexOf(event.which) != -1) {
-        // don't handle the shrtcuts in the regular fashion, e.g. saving the page, opening a document, etc.
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
-
-   if (!Prototype.Browser.IE)
-        return;
-
-    // Ctrl+A, Ctrl+C, Ctrl+L, Ctrl+N, Ctrl+O, Ctrl+R, Ctrl+S, Ctrl+V, Ctrl+X, Ctrl+Y, Ctrl+Z
-    if (ui.ctrlShortcuts.indexOf(event.keyCode) != -1 && event.ctrlKey) {
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
+    force_update: 'ctrl+alt+shift+R',
 };
 
-// Button handler specially for Safari and IE
-ui.onKeyUp = function (event)
-{
-    // Esc
-    if (event.keyCode == 27) {
-        if (this == document || !this.visible()) {
-            if (!$('window_cover').visible()) {
-                ui.selectMode(ui.defaultSelector);
-            }
-        } else if (this.hasClassName('dialogWindow'))
-            ui.hideDialog(this.id);
-        else
-            this.hide();
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
+ui.bond_tool_single_bonds = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];
+ui.bond_tool_double_bonds = ['bond_double', 'bond_crossed'];
+ui.charge_tool_modes = ['charge_plus', 'charge_minus'];
+ui.rgroup_tool_modes = ['rgroup_label', 'rgroup_fragment', 'rgroup_attpoints'];
+ui.template_tool_modes = ['template_0', 'template_1', 'template_2', 'template_3', 'template_4', 'template_5', 'template_6', 'template_7'];
 
-    if ($('window_cover').visible())
-        return true;
+ui.keyboardActions = {
+    // sample: function(event, handler) { do_sample(); },
+    zoom_in: function() { ui.onClick_ZoomIn.call($('zoom_in')); },
+    zoom_out: function() { ui.onClick_ZoomOut.call($('zoom_out')); },
+    copy: function() { ui.onClick_Copy.call($('copy')); },
+    cut: function() { ui.onClick_Cut.call($('cut')); },
+    paste: function() { ui.onClick_Paste.call($('paste')); },
+    undo: function() { ui.onClick_Undo.call($('undo')); },
+    redo: function() { ui.onClick_Redo.call($('redo')); },
+    remove_selected: function() { if (ui.editor.hasSelection()) ui.removeSelected(); },
+    bond_tool_any: function() { ui.onMouseDown_DropdownListItem.call($('bond_any')); },
+    bond_tool_single: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.bond_tool_single_bonds, ui.mode_id))); },
+    bond_tool_double: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.bond_tool_double_bonds, ui.mode_id))); },
+    bond_tool_triple: function() { ui.onMouseDown_DropdownListItem.call($('bond_triple')); },
+    bond_tool_aromatic: function() { ui.onMouseDown_DropdownListItem.call($('bond_aromatic')); },
+    select_charge_tool: function() { ui.selectMode(util.listNextRotate(ui.charge_tool_modes, ui.mode_id)); },
+    atom_tool_any: function() { ui.selectMode('atom_any'); },
+    atom_tool_h: function() { ui.selectMode('atom_h'); },
+    atom_tool_c: function() { ui.selectMode('atom_c'); },
+    atom_tool_n: function() { ui.selectMode('atom_n'); },
+    atom_tool_o: function() { ui.selectMode('atom_o'); },
+    atom_tool_s: function() { ui.selectMode('atom_s'); },
+    atom_tool_p: function() { ui.selectMode('atom_p'); },
+    atom_tool_f: function() { ui.selectMode('atom_f'); },
+    atom_tool_br: function() { ui.selectMode('atom_br'); },
+    atom_tool_cl: function() { ui.selectMode('atom_cl'); },
+    atom_tool_i: function() { ui.selectMode('atom_i'); },
+    rgroup_tool_label: function() { /* do nothing here, this may be handled inside the tool */ },
+    rgroup_tool_select: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.rgroup_tool_modes, ui.mode_id))); },
+    select_all: function() { ui.selectAll(); },
+    sgroup_tool: function() { ui.onClick_SideButton.call($('sgroup')); },
+    cleanup_tool: function() { ui.onClick_CleanUp.call($('clean_up')); },
+    new_document: function() { ui.onClick_NewFile.call($('new')); },
+    open_document: function() { ui.onClick_OpenFile.call($('open')); },
+    save_document: function() { ui.onClick_SaveFile.call($('save')); },
+    rotate_tool: function() { ui.selectMode('transform_rotate'); },
+    template_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.template_tool_modes, ui.mode_id))); },
+    escape: function(event) { if (!$('window_cover').visible()) ui.selectMode(ui.defaultSelector); },
 
-    if (event.keyCode == 46) {
-        if (ui.editor.hasSelection())
-            ui.removeSelected();
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
-
-    if (!Prototype.Browser.WebKit && !Prototype.Browser.IE)
-        return;
-
-    if (!(Prototype.Browser.WebKit &&
-        ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) &&
-        ui.ctrlShortcuts.indexOf(event.which) != -1) && (event.keyCode != 46 && Prototype.Browser.WebKit))
-        return;
-
-    if (this != document)
-        return;
-
-    util.stopEventPropagation(event);
-
-    switch (event.keyCode) {
-    case 46: // Delete
-        if (ui.editor.hasSelection())
-            ui.removeSelected();
-        return;
-    case 65: // Ctrl+A
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.selectAll();
-        return;
-    case 67: // Ctrl+C
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Copy.call($('copy'));
-        return;
-    case 71: // Ctrl+G
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_SideButton.call($('sgroup'));
-        return;
-    case 76: // Ctrl+L
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_CleanUp.call($('clean_up'));
-        return;
-    case 78: // Ctrl+N
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_NewFile.call($('new'));
-        return;
-    case 79: // Ctrl+O
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_OpenFile.call($('open'));
-        return;
-    case 82: // Ctrl+R
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.selectMode('transform_rotate');
-        return;
-    case 83: // Ctrl+S
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_SaveFile.call($('save'));
-        return;
-    case 86: // Ctrl+V
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Paste.call($('paste'));
-        return;
-    case 88: // Ctrl+X
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Cut.call($('cut'));
-        return;
-    case 89: // Ctrl+Y
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx))
-            ui.onClick_Redo.call($('redo'));
-        return;
-    case 90: // Ctrl+Z
-        if ((event.metaKey && ui.is_osx) || (event.ctrlKey && !ui.is_osx)) {
-            if (event.shiftKey)
-                ui.onClick_Redo.call($('redo'));
-            else
-                ui.onClick_Undo.call($('undo'));
-        }
-        return;
-    }
+    // for dev purposes
+    force_update: function() { ui.render.update(true); }
 };
+
+// create a proxy handler to bind "action" parameter for use in the actual handler
+ui.keyboardCallbackProxy = function(action, method){
+    var action_ = action;
+    return (function(event, handler){
+        return method.call(this, action_, event, handler);
+    });
+};
+
+ui.doNotStopIfCoverIsVisible = {
+    escape:true
+}
 
 ui.onKeyPress_Dialog = function (event)
 {
     util.stopEventPropagation(event);
-    if (event.keyCode == 27) {
+    if (event.keyCode === 27) {
         ui.hideDialog(this.id);
         return util.preventDefault(event);
     }
@@ -1130,6 +990,15 @@ ui.onKeyPress_InputLabel = function (event)
         return util.preventDefault(event);
     }
 };
+
+ui.onKeyUp_InputLabel = function (event)
+{
+    util.stopEventPropagation(event);
+    if (event.keyCode == 27) {
+        this.hide();
+        return util.preventDefault(event);
+    }
+}
 
 //
 // Open file section

@@ -450,7 +450,8 @@ chem.SGroup.GroupMul = {
     },
 
     prepareForSaving: function (mol) {
-            var i,j;
+            var j;
+            this.atoms.sort();
             this.atomSet = util.Set.fromList(this.atoms);
             this.parentAtomSet = util.Set.clone(this.atomSet);
             var inBonds = [];
@@ -492,7 +493,6 @@ chem.SGroup.GroupMul = {
             var tailAtom = xAtom1;
 
             var newAtoms = [];
-            this.atoms.sort();
             for (j = 0; j < this.data.mul - 1; ++j) {
                 amap = {};
                 util.each(this.atoms, function(aid) {

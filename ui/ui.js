@@ -793,11 +793,11 @@ ui.onKeyPress_Pre = function (action, event, handler, doNotStopIfCoverIsVisible)
 }
 
 ui.keyboardShortcuts_OSX = {
-    remove_selected: 'backspace',
+    remove_selected: 'backspace'
 }
 
 ui.keyboardShortcuts_nonOSX = {
-    remove_selected: 'delete',
+    remove_selected: 'delete'
 }
 
 ui.setKeyboardShortcuts = function() {
@@ -856,7 +856,7 @@ ui.keyboardShortcuts = {
     template_tool: 'T',
     escape: 'escape',
 
-    force_update: 'ctrl+alt+shift+R',
+    force_update: 'ctrl+alt+shift+R'
 };
 
 ui.bond_tool_single_bonds = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];

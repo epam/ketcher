@@ -465,6 +465,45 @@ rnd.ReStruct.prototype.clearVisels = function () {
 	}, this);
 };
 
+rnd.ReStruct.prototype.findIncomingStereoUpBond = function(atom, bid0, includeBoldStereoBond) {
+    return util.find(atom.neighbors, function(hbid) {
+	var hb = this.molecule.halfBonds.get(hbid);
+	var bid = hb.bid;
+	if (bid === bid0)
+	    return false;
+	var neibond = this.bonds.get(bid);
+	if (neibond.b.type !== chem.Struct.BOND.TYPE.SINGLE ||
+		neibond.b.stereo !== chem.Struct.BOND.STEREO.UP)
+	    return false;
+	return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
+    }, this);
+}
+
+rnd.ReStruct.prototype.checkStereoBold = function(bid0, bond) {
+    var halfbonds = util.map([bond.b.begin, bond.b.end], function(aid) {
+	var atom = this.molecule.atoms.get(aid);
+	var pos =  this.findIncomingStereoUpBond(atom, bid0, true);
+	return pos < 0 ? -1 : atom.neighbors[pos];
+    }, this);
+    util.assert(halfbonds.length === 2);
+    bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
+};
+
+rnd.ReStruct.prototype.findIncomingUpBonds = function(bid0, bond) {
+    var halfbonds = util.map([bond.b.begin, bond.b.end], function(aid) {
+	var atom = this.molecule.atoms.get(aid);
+	var pos =  this.findIncomingStereoUpBond(atom, bid0, true);
+	return pos < 0 ? -1 : atom.neighbors[pos];
+    }, this);
+    util.assert(halfbonds.length === 2);
+    bond.neihbid1 = this.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
+    bond.neihbid2 = this.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
+};
+
+rnd.ReStruct.prototype.checkStereoBoldBonds = function() {
+    this.bonds.each(this.checkStereoBold, this);
+};
+
 rnd.ReStruct.prototype.update = function (force)
 {
 	force = force || !this.initialized;
@@ -551,6 +590,7 @@ rnd.ReStruct.prototype.update = function (force)
 		this.updateLoops();
 	this.setDoubleBondShift();
 	this.checkLabelsToShow();
+	this.checkStereoBoldBonds();
 	this.showLabels();
 	this.showBonds();
 	if (updLoops)

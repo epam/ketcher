@@ -53,7 +53,7 @@ rnd.ReStruct.prototype.drawBondSingle = function (hb1, hb2)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2)
+rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2, bond)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var settings = this.render.settings;
@@ -62,10 +62,62 @@ rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2)
 	var bsp = settings.bondSpace;
 	var b2 = b.addScaled(n, bsp);
 	var b3 = b.addScaled(n, -bsp);
-	return paper.path("M{0},{1}L{2},{3}L{4},{5},L{0},{1}",
+	if (bond.neihbid2 >= 0) { // if the end is shared with another up-bond heading this way
+	    var coords = this.stereoUpBondGetCoordinates(hb2, bond.neihbid2);
+	    b2 = coords[0];
+	    b3 = coords[1];
+	}
+	return paper.path("M{0},{1}L{2},{3}L{4},{5}Z",
 		tfx(a.x), tfx(a.y), tfx(b2.x), tfx(b2.y), tfx(b3.x), tfx(b3.y))
 	.attr(styles.lineattr).attr({
 		'fill':'#000'
+	});
+};
+
+rnd.ReStruct.prototype.drawVec = function (a, dir, color, len) {
+    var settings = this.render.settings;
+    var paper = this.render.paper;
+    var styles = this.render.styles;
+    var bsp = settings.bondSpace;
+    var b = a.addScaled(dir, len || 3*bsp);
+    return paper.path("M{0},{1}L{2},{3}",
+	    tfx(a.x), tfx(a.y), tfx(b.x), tfx(b.y))
+	    .attr(styles.lineattr).attr({
+	'stroke':(color || '#0F0')
+    });
+};
+
+rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function(hb, neihbid)
+{
+    var bsp = this.render.settings.bondSpace;
+    var neihb = this.molecule.halfBonds.get(neihbid);
+    var cos = util.Vec2.dot(hb.dir, neihb.dir);
+    var sin = util.Vec2.cross(hb.dir, neihb.dir);
+    var cosHalf = Math.sqrt(0.5 * (1 - cos));
+    var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
+
+    var denom_add = 0.2;
+    var scale = 1.2;
+    var a1 = hb.p.addScaled(biss, scale * bsp / (cosHalf + denom_add));
+    var a2 = hb.p.addScaled(biss.negated(), scale * bsp / (cosHalf + denom_add));
+    return sin > 0 ? [a1, a2] : [a2, a1];
+};
+
+rnd.ReStruct.prototype.drawBondSingleStereoBold = function(hb1, hb2, bond)
+{
+    var paper = this.render.paper;
+    var styles = this.render.styles;
+    var coords1 = this.stereoUpBondGetCoordinates(hb1, bond.neihbid1);
+    var coords2 = this.stereoUpBondGetCoordinates(hb2, bond.neihbid2);
+    var a1 = coords1[0];
+    var a2 = coords1[1];
+    var a3 = coords2[0];
+    var a4 = coords2[1];
+    return paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z",
+		tfx(a1.x), tfx(a1.y), tfx(a2.x), tfx(a2.y), tfx(a3.x), tfx(a3.y), tfx(a4.x), tfx(a4.y))
+		.attr(styles.lineattr).attr({
+	    'stroke': '#000',
+	    'fill' : '#000'
 	});
 };
 
@@ -448,6 +500,10 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 		case chem.Struct.BOND.TYPE.SINGLE:
 			switch (bond.b.stereo) {
 				case chem.Struct.BOND.STEREO.UP:
+		    this.findIncomingUpBonds(hb1.bid, bond);
+		    if (bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+			path = this.drawBondSingleStereoBold(hb1, hb2, bond);
+		    else
 					path = this.drawBondSingleUp(hb1, hb2, bond);
 					break;
 				case chem.Struct.BOND.STEREO.DOWN:

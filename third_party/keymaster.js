@@ -24,6 +24,7 @@
       del: 46, 'delete': 46,
       home: 36, end: 35,
       pageup: 33, pagedown: 34,
+      plus: 107, equals: 61, minus: 173, // this is to catch "+", "=" and "-" keys under firefox
       ',': 188, '.': 190, '/': 191,
       '`': 192, '-': 189, '=': 187,
       ';': 186, '\'': 222,

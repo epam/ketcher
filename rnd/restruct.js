@@ -472,17 +472,18 @@ rnd.ReStruct.prototype.findIncomingStereoUpBond = function(atom, bid0, includeBo
 	if (bid === bid0)
 	    return false;
 	var neibond = this.bonds.get(bid);
-	if (neibond.b.type !== chem.Struct.BOND.TYPE.SINGLE ||
-		neibond.b.stereo !== chem.Struct.BOND.STEREO.UP)
-	    return false;
-	return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
+	if (neibond.b.type === chem.Struct.BOND.TYPE.SINGLE && neibond.b.stereo === chem.Struct.BOND.STEREO.UP)
+	    return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
+	if (neibond.b.type === chem.Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === chem.Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo) 
+	    return true;
+	return false;
     }, this);
 }
 
 rnd.ReStruct.prototype.checkStereoBold = function(bid0, bond) {
     var halfbonds = util.map([bond.b.begin, bond.b.end], function(aid) {
 	var atom = this.molecule.atoms.get(aid);
-	var pos =  this.findIncomingStereoUpBond(atom, bid0, true);
+	var pos =  this.findIncomingStereoUpBond(atom, bid0, false);
 	return pos < 0 ? -1 : atom.neighbors[pos];
     }, this);
     util.assert(halfbonds.length === 2);

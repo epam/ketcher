@@ -97,15 +97,16 @@ rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function(hb, neihbid)
     var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
 
     var denom_add = 0.2;
-    var scale = 1.2;
+    var scale = 1.0;
     var a1 = hb.p.addScaled(biss, scale * bsp / (cosHalf + denom_add));
     var a2 = hb.p.addScaled(biss.negated(), scale * bsp / (cosHalf + denom_add));
     return sin > 0 ? [a1, a2] : [a2, a1];
 };
 
-rnd.ReStruct.prototype.drawBondSingleStereoBold = function(hb1, hb2, bond)
+rnd.ReStruct.prototype.drawBondSingleStereoBold = function(hb1, hb2, bond, isDouble)
 {
     var paper = this.render.paper;
+    var settings = this.render.settings;
     var styles = this.render.styles;
     var coords1 = this.stereoUpBondGetCoordinates(hb1, bond.neihbid1);
     var coords2 = this.stereoUpBondGetCoordinates(hb2, bond.neihbid2);
@@ -113,12 +114,38 @@ rnd.ReStruct.prototype.drawBondSingleStereoBold = function(hb1, hb2, bond)
     var a2 = coords1[1];
     var a3 = coords2[0];
     var a4 = coords2[1];
-    return paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z",
-		tfx(a1.x), tfx(a1.y), tfx(a2.x), tfx(a2.y), tfx(a3.x), tfx(a3.y), tfx(a4.x), tfx(a4.y))
-		.attr(styles.lineattr).attr({
-	    'stroke': '#000',
-	    'fill' : '#000'
-	});
+    var pathMain = paper.path("M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z",
+	    tfx(a1.x), tfx(a1.y), tfx(a2.x), tfx(a2.y), tfx(a3.x), tfx(a3.y), tfx(a4.x), tfx(a4.y))
+	    .attr(styles.lineattr).attr({
+	'stroke': '#000',
+	'fill': '#000'
+    });
+    if (isDouble) {
+	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = bond.doubleBondShift;
+	var bsp = 1.9 * settings.bondSpace;
+	if (bond.doubleBondShift > 0) {
+	    var b1 = a.addScaled(n, bsp * bond.doubleBondShift);
+	    var b2 = b.addScaled(n, bsp * bond.doubleBondShift);
+	}
+	var shiftA = !this.atoms.get(hb1.begin).showLabel;
+	var shiftB = !this.atoms.get(hb2.begin).showLabel;
+	if (shift > 0) {
+	    if (shiftA)
+		b1 = b1.addScaled(hb1.dir, bsp * this.getBondLineShift(hb1.rightCos, hb1.rightSin));
+	    if (shiftB)
+		b2 = b2.addScaled(hb1.dir, -bsp * this.getBondLineShift(hb2.leftCos, hb2.leftSin));
+	} else if (shift < 0) {
+	    if (shiftA)
+		b1 = b1.addScaled(hb1.dir, bsp * this.getBondLineShift(hb1.leftCos, hb1.leftSin));
+	    if (shiftB)
+		b2 = b2.addScaled(hb1.dir, -bsp * this.getBondLineShift(hb2.rightCos, hb2.rightSin));
+	}
+
+	return paper.set([pathMain, paper.path(
+		    "M{0},{1}L{2},{3}", tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
+		    .attr(styles.lineattr)]);
+    }
+    return pathMain;
 };
 
 rnd.ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
@@ -501,7 +528,7 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			switch (bond.b.stereo) {
 				case chem.Struct.BOND.STEREO.UP:
 		    this.findIncomingUpBonds(hb1.bid, bond);
-		    if (bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+		    if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 			path = this.drawBondSingleStereoBold(hb1, hb2, bond);
 		    else
 					path = this.drawBondSingleUp(hb1, hb2, bond);
@@ -518,8 +545,13 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 			}
 			break;
 		case chem.Struct.BOND.TYPE.DOUBLE:
+		    this.findIncomingUpBonds(hb1.bid, bond);
+	    if (bond.b.stereo === chem.Struct.BOND.STEREO.NONE && bond.boldStereo
+		    && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+			path = this.drawBondSingleStereoBold(hb1, hb2, bond, true);
+		    else
 			path = this.drawBondDouble(hb1, hb2, bond,
-				bond.b.stereo == chem.Struct.BOND.STEREO.CIS_TRANS);
+			bond.b.stereo === chem.Struct.BOND.STEREO.CIS_TRANS);
 			break;
 		case chem.Struct.BOND.TYPE.TRIPLE:
 			path = this.drawBondTriple(hb1, hb2, bond);

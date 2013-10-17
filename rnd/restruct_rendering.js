@@ -14,7 +14,7 @@ if (!window.rnd || !rnd.ReStruct)
 	throw new Error("MolData should be defined first");
 
 function tfx(v) {
-	return (v-0).toFixed(4);
+	return (v-0).toFixed(8);
 }
 
 rnd.relBox = function (box) {

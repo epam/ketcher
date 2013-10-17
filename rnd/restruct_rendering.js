@@ -59,7 +59,7 @@ rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2, bond)
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	var bsp = settings.bondSpace;
+	var bsp = 0.7 * settings.bondSpace;
 	var b2 = b.addScaled(n, bsp);
 	var b3 = b.addScaled(n, -bsp);
 	if (bond.neihbid2 >= 0) { // if the end is shared with another up-bond heading this way
@@ -96,8 +96,8 @@ rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function(hb, neihbid)
     var cosHalf = Math.sqrt(0.5 * (1 - cos));
     var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
 
-    var denom_add = 0.2;
-    var scale = 1.0;
+    var denom_add = 0.3;
+    var scale = 0.7;
     var a1 = hb.p.addScaled(biss, scale * bsp / (cosHalf + denom_add));
     var a2 = hb.p.addScaled(biss.negated(), scale * bsp / (cosHalf + denom_add));
     return sin > 0 ? [a1, a2] : [a2, a1];
@@ -122,11 +122,9 @@ rnd.ReStruct.prototype.drawBondSingleStereoBold = function(hb1, hb2, bond, isDou
     });
     if (isDouble) {
 	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = bond.doubleBondShift;
-	var bsp = 1.9 * settings.bondSpace;
-	if (bond.doubleBondShift > 0) {
-	    var b1 = a.addScaled(n, bsp * bond.doubleBondShift);
-	    var b2 = b.addScaled(n, bsp * bond.doubleBondShift);
-	}
+	var bsp = 1.5 * settings.bondSpace;
+	var b1 = a.addScaled(n, bsp * shift);
+	var b2 = b.addScaled(n, bsp * shift);
 	var shiftA = !this.atoms.get(hb1.begin).showLabel;
 	var shiftB = !this.atoms.get(hb2.begin).showLabel;
 	if (shift > 0) {
@@ -154,20 +152,20 @@ rnd.ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	var bsp = settings.bondSpace;
+	var bsp = 0.7 *settings.bondSpace;
 	var d = b.sub(a);
-	var len = d.length();
+	var len = d.length()+0.2;
 	d = d.normalized();
 	var interval = 1.2 * settings.lineWidth;
-	var nlines = Math.floor((len - settings.lineWidth) /
-		(settings.lineWidth + interval)) + 1;
+	var nlines = Math.max(Math.floor((len - settings.lineWidth) /
+		(settings.lineWidth + interval)),0) + 2;
 	var step = len / (nlines - 1);
 
 	var path = "", p, q, r = a;
 	for (var i = 0; i < nlines; ++i) {
 		r = a.addScaled(d, step * i);
-		p = r.addScaled(n, bsp * i / (nlines - 1));
-		q = r.addScaled(n, -bsp * i / (nlines - 1));
+		p = r.addScaled(n, bsp * (i+0.5) / (nlines - 0.5));
+		q = r.addScaled(n, -bsp * (i+0.5) / (nlines - 0.5));
 		path += rnd.ReStruct.makeStroke(p, q);
 	}
 	return paper.path(path)
@@ -180,19 +178,19 @@ rnd.ReStruct.prototype.drawBondSingleEither = function (hb1, hb2)
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	var bsp = settings.bondSpace;
+	var bsp = 0.7 * settings.bondSpace;
 	var d = b.sub(a);
 	var len = d.length();
 	d = d.normalized();
 	var interval = 0.6 * settings.lineWidth;
-	var nlines = Math.floor((len - settings.lineWidth) /
-		(settings.lineWidth + interval)) + 1;
-	var step = len / (nlines - 1);
+	var nlines = Math.max(Math.floor((len - settings.lineWidth) /
+		(settings.lineWidth + interval)),0) + 2;
+	var step = len / (nlines - 0.5);
 
 	var path = 'M' + tfx(a.x) + ',' + tfx(a.y), r = a;
 	for (var i = 0; i < nlines; ++i) {
-		r = a.addScaled(d, step * i).addScaled(n,
-			((i & 1) ? -1 : +1) * bsp * i / (nlines - 1));
+		r = a.addScaled(d, step * (i + 0.5)).addScaled(n,
+			((i & 1) ? -1 : +1) * bsp * (i + 0.5) / (nlines - 0.5));
 		path += 'L' + tfx(r.x) + ',' + tfx(r.y);
 	}
 	return paper.path(path)

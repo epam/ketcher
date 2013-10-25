@@ -150,7 +150,7 @@ ui.initTemplates = function ()
             }
 
             rnd.templates = [];
-
+	    ui.template_tool_modes.clear();
             var tbody = $('template_dropdown_list').select('table > tbody')[0];
             tbody.update();
 
@@ -164,6 +164,7 @@ ui.initTemplates = function ()
                 };
 
                 rnd.templates.push(tmpl);
+		ui.template_tool_modes.push('template_' + idx);
 
                 if (item.icon) {
                     tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +

@@ -666,13 +666,12 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
         map[aid] = op.data.aid;
     });
 
-    // Only template bond type label matters for now
     frag.bonds.each(function (bid, bond) {
         action.addOp(
             new ui.Action.OpBondAdd(
                 map[bond.begin],
                 map[bond.end],
-                { type: bond.type }
+                bond
             ).perform(ui.editor)
         );
     });
@@ -777,13 +776,12 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
             action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
     });
 
-    // Only template bond type label matters for now
     frag.bonds.each(function (bid, bond) {
         action.addOp(
             new ui.Action.OpBondAdd(
                 map[bond.begin],
                 map[bond.end],
-                { type: bond.type }
+                bond
             ).perform(ui.editor)
         );
     });
@@ -869,7 +867,6 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
         }
     });
 
-    // Only template bond type label matters for now
     frag.bonds.each(function (id, bond) {
         if (id != template.bid) {
             var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
@@ -879,7 +876,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
                     new ui.Action.OpBondAdd(
                         map[bond.begin],
                         map[bond.end],
-                        { type: bond.type }
+                        bond
                     ).perform(ui.editor)
                 );
                 return;

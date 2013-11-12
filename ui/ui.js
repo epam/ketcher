@@ -98,6 +98,7 @@ ui.initTemplates = function ()
         var parsed = [];
 
         items.each(function (item) {
+            item = item.replace(/\r/g, '');
             item = item.strip();
             var end_idx = item.indexOf('M  END');
 

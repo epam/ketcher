@@ -10,12 +10,18 @@ from wsgiref.headers import Headers
 
 from base64 import b64encode
 
-import indigo
-import indigo_inchi
-from indigo import IndigoException
-indigo = indigo.Indigo()
-indigo_inchi = indigo_inchi.IndigoInchi(indigo)
-indigo.setOption("ignore-stereochemistry-errors", "true")
+
+try:
+    import indigo
+    import indigo_inchi
+    from indigo import IndigoException
+    indigo = indigo.Indigo()
+    indigo_inchi = indigo_inchi.IndigoInchi(indigo)
+    indigo.setOption("ignore-stereochemistry-errors", "true")
+    has_indigo = True
+except:
+    print("Indigo is not found. Server-side functionality will not be available")
+    has_indigo = False
 
 class application(object):
     # don't serve static by default
@@ -55,7 +61,10 @@ class application(object):
             yield chunk
 
     def on_knocknock(self):
-        return ["You are welcome!"]
+        if has_indigo:
+            return ["You are welcome!"]
+        else:
+            return ["Standalone version"]
 
     def on_log(self):
         message = self.fields.getfirst('message')

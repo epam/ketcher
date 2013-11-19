@@ -105,7 +105,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     self.longTapFlag = false;
     self.longTapTimeout = null;
     self.longTapTouchstart = null;
-    
+
     self.setLongTapTimeout = function(event) {
         self.longTapFlag = false;
         self.longTapTouchstart = event;
@@ -123,7 +123,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             self.longTapFlag = false;
         }
     };
-    
+
     clientArea.observe('touchstart', function(event) {
         self.resetLongTapTimeout(true);
         if (event.touches.length == 2) {
@@ -952,9 +952,21 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO s
 
 rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
 	var closestBond = null;
+	var closestBondCenter = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
+	var minCDist = minDist;
+	this.ctab.bonds.each(function(bid, bond){
+		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
+		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
+		var mid = util.Vec2.lc2(p1, 0.5, p2, 0.5);
+		var cdist = util.Vec2.dist(pos, mid);
+		if (cdist < minCDist) {
+		    minCDist = cdist;
+		    closestBondCenter = bid;
+		}
+	}, this);
 	this.ctab.bonds.each(function(bid, bond){
 		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
@@ -971,18 +983,20 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 			}
 		}
 	}, this);
-	if (closestBond != null)
+	if (closestBond !== null || closestBondCenter !== null)
 		return {
-			'id':closestBond,
-			'dist':minDist
+			'id': closestBond,
+			'dist': minDist,
+			'cid': closestBondCenter,
+			'cdist': minCDist
 		};
 	return null;
 };
 
 rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;
-	var updret = function(type, item) {
-		if (item != null && (ret == null || ret.dist > item.dist)) {
+	var updret = function(type, item, force) {
+		if (item != null && (ret == null || ret.dist > item.dist || force)) {
 			ret = {
 				'type':type,
 				'id':item.id,
@@ -1000,8 +1014,12 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
     }
     if (!maps || maps.indexOf('bonds') >= 0) {
         var bond = this.findClosestBond(pos);
-        if (ret == null || ret.dist > 0.4 * this.scale) // hack
-            updret('Bond', bond);
+	if (bond) {
+	    if (bond.cid !== null)
+		updret('Bond', {'id': bond.cid, 'dist': bond.cdist});
+	    if (ret == null || ret.dist > 0.4 * this.scale) // hack
+		updret('Bond', bond);
+	}
     }
     if (!maps || maps.indexOf('chiralFlags') >= 0) {
         var flag = rnd.ReChiralFlag.findClosest(this, pos);

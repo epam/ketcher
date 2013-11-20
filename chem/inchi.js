@@ -32,7 +32,7 @@ chem.InChiSaver.prototype.saveMolecule = function(molecule) {
         }
     }, this);
     var moldata = new chem.MolfileSaver().saveMolecule(molecule);
-    new Ajax.Request(ui.path + 'getinchi', {
+    new Ajax.Request(ui.api_path + 'getinchi', {
         method: 'post',
         asynchronous: false,
         parameters: {moldata: moldata},

@@ -16,7 +16,7 @@ if (typeof(ui) == 'undefined')
 ui.standalone = true;
 ui.forwardExceptions = false;
 
-ui.path = '/';
+ui.api_path = '/';
 ui.base_url = '';
 
 ui.scale = 40;
@@ -47,7 +47,7 @@ ui.initialized = false;
 
 //console.log = function(msg)
 //{
-//    new Ajax.Request(ui.path + 'log', {
+//    new Ajax.Request(ui.api_path + 'log', {
 //        method: 'post',
 //        asynchronous: false,
 //        parameters: {message: msg}
@@ -131,7 +131,7 @@ ui.initTemplates = function ()
     }
 
     // Init templates
-    new Ajax.Request(ui.path + 'templates.sdf',
+    new Ajax.Request(ui.base_url + 'templates.sdf',
     {
         method: 'get',
         requestHeaders: {Accept: 'application/octet-stream'},
@@ -242,7 +242,7 @@ ui.init = function (parameters, opts)
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
     this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
 
-    ui.path = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
+    ui.api_path = parameters.ketcher_api_url || document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
     ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
 
     // IE specific styles
@@ -298,7 +298,7 @@ ui.init = function (parameters, opts)
     }
 
     if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
-        new Ajax.Request(ui.path + 'knocknock', {
+        new Ajax.Request(ui.api_path + 'knocknock', {
             method: 'get',
             asynchronous : false,
             onComplete: function (res)
@@ -468,10 +468,8 @@ ui.init = function (parameters, opts)
         });
         document.title += ' (standalone)';
     } else {
-        if (ui.path != '/') {
-            $('upload_mol').action = ui.base_url + 'open';
-            $('download_mol').action = ui.base_url + 'save';
-        }
+            $('upload_mol').action = ui.api_path + 'open';
+            $('download_mol').action = ui.api_path + 'save';
     }
 
     // Init renderer
@@ -613,7 +611,7 @@ ui.selectMode = function (mode)
         ui.showAutomapProperties({
             onOk: function(mode) {
                 var moldata = new chem.MolfileSaver().saveMolecule(ui.ctab/*.clone()*/, true);
-                new Ajax.Request(ui.path + 'automap',
+                new Ajax.Request(ui.api_path + 'automap',
                 {
                     method: 'post',
                     asynchronous : true,
@@ -1056,7 +1054,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
             }
             return;
         }
-        new Ajax.Request(ui.path + 'layout?smiles=' + encodeURIComponent(smiles),
+        new Ajax.Request(ui.api_path + 'layout?smiles=' + encodeURIComponent(smiles),
         {
             method: 'get',
             asynchronous : true,
@@ -1071,7 +1069,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
             }
         });
     } else if (!ui.standalone && force_layout) {
-        new Ajax.Request(ui.path + 'layout',
+        new Ajax.Request(ui.api_path + 'layout',
         {
             method: 'post',
             asynchronous : true,
@@ -1098,7 +1096,7 @@ ui.dearomatizeMolecule = function (mol, aromatize)
     var mol_string = new chem.MolfileSaver().saveMolecule(mol);
 
     if (!ui.standalone) {
-        new Ajax.Request(ui.path + (aromatize ? 'aromatize' : 'dearomatize'),
+        new Ajax.Request(ui.api_path + (aromatize ? 'aromatize' : 'dearomatize'),
         {
             method: 'post',
             asynchronous : true,

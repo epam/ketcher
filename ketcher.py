@@ -43,13 +43,18 @@ class application(object):
             route = self.serve_static if self.method == 'GET' and self.static_serve else \
                     self.notsupported
 
+        status = '200 OK'
         try:
-            status = '200 OK'
-            self.response = route()
-        except IndigoException, e:
-            self.response = self.error_response(str(e))
-            if 'indigoLoad' in self.response[-1]:      # error on load
-                self.response[1] = "Cannot load the specified structure: %s " % str(e)
+            if has_indigo:
+                try:
+                    self.response = route()
+                except IndigoException, e:
+                    self.response = self.error_response(str(e))
+                    if 'indigoLoad' in self.response[-1]:      # error on load
+                        self.response[1] = "Cannot load the specified structure: %s " % str(e)
+            else:
+                self.response = route()
+
         except self.HttpException, (status, message):
             self.response = [message]
 
@@ -163,12 +168,12 @@ class application(object):
             md, is_rxn = self.load_moldata()
         except:
             return self.error_response()
-            
+
         try:
             inchi = indigo_inchi.getInchi(md)
         except:
             return self.error_response()
-            
+
         return ["Ok.\n", inchi]
 
     def on_dearomatize(self):

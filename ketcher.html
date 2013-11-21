@@ -61,7 +61,7 @@
         <div>
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
-                    <td style="width:36px"><div style="position:relative"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="icons/png/selection/lasso.png" alt="" title="Lasso Selection Tool (Esc)" /><img class="dropdownButton" id="selector_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
+                    <td style="width:36px"><div style="position:relative"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="icons/png/selection/lasso.sidebar.png" alt="" title="Lasso Selection Tool (Esc)" /><img class="dropdownButton" id="selector_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
                     <td class="toolDelimiter"></td>
                     <!--td style="width:36px"><object type="image/svg+xml" width="28" height="28" data="svg/document-new28x28.svg"></object></td-->
                     <td class="toolButtonCell toolButton" id="new"><img src="icons/png/main/document-new.png" alt="" title="Clear Canvas (Ctrl+N)" /></td>
@@ -95,7 +95,7 @@
                 <tr align="center" class="sideButtonCell">
                     <td>
                         <div style="position:relative">
-                            <img class="sideButton modeButton stateButton" id="bond" selid="bond_single" src="icons/png/bond/bond_single.png" alt="" title="Single Bond (1)" />
+                            <img class="sideButton modeButton stateButton" id="bond" selid="bond_single" src="icons/png/bond/bond_single.sidebar.png" alt="" title="Single Bond (1)" />
                             <img class="dropdownButton" id="bond_dropdown" src="icons/png/main/dropdown.png" alt="" />
                         </div>
                     </td>
@@ -113,7 +113,7 @@
                 <tr align="center" class="sideButtonCell">
                     <td>
                         <div style="position:relative">
-                            <img class="sideButton modeButton stateButton" id="template" selid="template_0" src="icons/png/template/template0.png" alt="" title="Benzene (T)" />
+                            <img class="sideButton modeButton stateButton" id="template" selid="template_0" src="icons/png/template/template0.sidebar.png" alt="" title="Benzene (T)" />
                             <img class="dropdownButton" id="template_dropdown" src="icons/png/main/dropdown.png" alt="" />
                         </div>
                     </td>
@@ -136,7 +136,7 @@
                     <td><div class="sideButton modeButton" id="atom_p" title="P Atom (P)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="icons/png/reaction/reaction-arrow.png" alt="" title="Reaction Arrow Tool" /><img class="dropdownButton" id="reaction_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="reaction" selid="reaction_arrow" src="icons/png/reaction/reaction-arrow.sidebar.png" alt="" title="Reaction Arrow Tool" /><img class="dropdownButton" id="reaction_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_f" title="F Atom (F)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
@@ -144,15 +144,20 @@
                     <td><div class="sideButton modeButton" id="atom_cl" title="Cl Atom (Shift+C)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="rgroup" selid="rgroup_label" src="icons/png/rgroup/rgroup-label.png" alt="" title="R-Group Tool (Shift+R)" /><img class="dropdownButton" id="rgroup_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="rgroup" selid="rgroup_label" src="icons/png/rgroup/rgroup-label.sidebar.png" alt="" title="R-Group Tool (Shift+R)" /><img class="dropdownButton" id="rgroup_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_br" title="Br Atom (Shift+B)"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
-                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="transform" selid="transform_rotate" src="icons/png/transform/transform-rotate.png" alt="" title="Rotate Tool" /><img class="dropdownButton" id="transform_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
+                    <td><div style="position:relative"><img class="sideButton modeButton stateButton" id="transform" selid="transform_rotate" src="icons/png/transform/transform-rotate.sidebar.png" alt="" title="Rotate Tool" /><img class="dropdownButton" id="transform_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
                     <td><div class="sideButton modeButton" id="atom_i" title="I Atom (I)"></div></td>
                 </tr>
-                <tr align="center" class="sideButtonCell">
-                    <td></td>
+                <tr align="center" class="sideButtonCell serverRequired">
+                    <td>
+                        <div style="position:relative">
+                            <img class="sideButton modeButton stateButton" id="customtemplate" selid="customtemplate_0" src="icons/png/customtemplate/customtemplate0.sidebar.png" alt="" title="Benzene (T)" />
+                            <img class="dropdownButton" id="customtemplate_dropdown" src="icons/png/main/dropdown.png" alt="" />
+                        </div>
+                    </td>
                     <td><div class="sideButton modeButton" id="atom_table" title="Periodic table"></div></td>
                 </tr>
                 <tr align="center" class="sideButtonCell">
@@ -169,13 +174,13 @@
                 <table>
 
                     <tr class="dropdownListItem" id="selector_lasso" title="Lasso Selection Tool (Esc)">
-                        <td><div id="select_lasso_todo"><img class="dropdownIcon" src="icons/png/selection/lasso.24.png" alt="" /></div>Lasso Selection Tool</td>
+                        <td><div id="select_lasso_todo"><img class="dropdownIcon" src="icons/png/selection/lasso.dropdown.png" alt="" /></div>Lasso Selection Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="selector_square" title="Rectangle Selection Tool (Esc)">
-                        <td><div id="select_square_todo"><img class="dropdownIcon" src="icons/png/selection/rectangle.24.png" alt="" /></div>Rectangle Selection Tool</td>
+                        <td><div id="select_square_todo"><img class="dropdownIcon" src="icons/png/selection/rectangle.dropdown.png" alt="" /></div>Rectangle Selection Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="selector_fragment" title="Fragment Selection Tool (Esc)">
-                        <td><div id="select_fragment"><img class="dropdownIcon" src="icons/png/selection/structure.24.png" alt="" /></div>Fragment Selection Tool</td>
+                        <td><div id="select_fragment"><img class="dropdownIcon" src="icons/png/selection/structure.dropdown.png" alt="" /></div>Fragment Selection Tool</td>
                     </tr>
                 </table>
             </div>
@@ -183,46 +188,46 @@
             <div class="dropdownList renderFirst" id="bond_dropdown_list" style="display:none">
                 <table>
                     <tr class="dropdownListItem" id="bond_single" title="Single Bond (1)">
-                        <td><div id="bond_single_preview"><img class="dropdownIcon" src="icons/png/bond/bond_single.24.png" alt="" /></div>Single</td>
+                        <td><div id="bond_single_preview"><img class="dropdownIcon" src="icons/png/bond/bond_single.dropdown.png" alt="" /></div>Single</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_double" title="Double Bond (2)">
-                        <td><div id="bond_double_preview"><img class="dropdownIcon" src="icons/png/bond/bond_double.24.png" alt="" /></div>Double</td>
+                        <td><div id="bond_double_preview"><img class="dropdownIcon" src="icons/png/bond/bond_double.dropdown.png" alt="" /></div>Double</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_triple" title="Triple Bond (3)">
-                        <td><div id="bond_triple_preview"><img class="dropdownIcon" src="icons/png/bond/bond_triple.24.png" alt="" /></div>Triple</td>
+                        <td><div id="bond_triple_preview"><img class="dropdownIcon" src="icons/png/bond/bond_triple.dropdown.png" alt="" /></div>Triple</td>
                     </tr>
                     <tr>
                         <td class="dropdownListDelimiter"></td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_up" title="Single Up Bond (1)">
-                        <td><div id="bond_up_preview"><img class="dropdownIcon" src="icons/png/bond/bond_up.24.png" alt="" /></div>Single Up</td>
+                        <td><div id="bond_up_preview"><img class="dropdownIcon" src="icons/png/bond/bond_up.dropdown.png" alt="" /></div>Single Up</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_down" title="Single Down Bond (1)">
-                        <td><div id="bond_down_preview"><img class="dropdownIcon" src="icons/png/bond/bond_down.24.png" alt="" /></div>Single Down</td>
+                        <td><div id="bond_down_preview"><img class="dropdownIcon" src="icons/png/bond/bond_down.dropdown.png" alt="" /></div>Single Down</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_updown" title="Single Up/Down Bond (1)">
-                        <td><div id="bond_updown_preview"><img class="dropdownIcon" src="icons/png/bond/bond_updown.24.png" alt="" /></div>Single Up/Down</td>
+                        <td><div id="bond_updown_preview"><img class="dropdownIcon" src="icons/png/bond/bond_updown.dropdown.png" alt="" /></div>Single Up/Down</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_crossed" title="Double Cis/Trans Bond (2)">
-                        <td><div id="bond_crossed_preview"><img class="dropdownIcon" src="icons/png/bond/bond_crossed.24.png" alt="" /></div>Double Cis/Trans</td>
+                        <td><div id="bond_crossed_preview"><img class="dropdownIcon" src="icons/png/bond/bond_crossed.dropdown.png" alt="" /></div>Double Cis/Trans</td>
                     </tr>
                     <tr>
                         <td class="dropdownListDelimiter"></td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_any" title="Any Bond (0)">
-                        <td><div id="bond_any_preview"><img class="dropdownIcon" src="icons/png/bond/bond_any.24.png" alt="" /></div>Any</td>
+                        <td><div id="bond_any_preview"><img class="dropdownIcon" src="icons/png/bond/bond_any.dropdown.png" alt="" /></div>Any</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_aromatic" title="Aromatic Bond (4)">
-                        <td><div id="bond_aromatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_aromatic.24.png" alt="" /></div>Aromatic</td>
+                        <td><div id="bond_aromatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_aromatic.dropdown.png" alt="" /></div>Aromatic</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_singledouble" title="Single/Double Bond">
-                        <td><div id="bond_singledouble_preview"><img class="dropdownIcon" src="icons/png/bond/bond_singledouble.24.png" alt="" /></div>Single/Double</td>
+                        <td><div id="bond_singledouble_preview"><img class="dropdownIcon" src="icons/png/bond/bond_singledouble.dropdown.png" alt="" /></div>Single/Double</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_singlearomatic" title="Single/Aromatic Bond">
-                        <td><div id="bond_singlearomatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_singlearomatic.24.png" alt="" /></div>Single/Aromatic</td>
+                        <td><div id="bond_singlearomatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_singlearomatic.dropdown.png" alt="" /></div>Single/Aromatic</td>
                     </tr>
                     <tr class="dropdownListItem" id="bond_doublearomatic" title="Double/Aromatic Bond">
-                        <td><div id="bond_doublearomatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_doublearomatic.24.png" alt="" /></div>Double/Aromatic</td>
+                        <td><div id="bond_doublearomatic_preview"><img class="dropdownIcon" src="icons/png/bond/bond_doublearomatic.dropdown.png" alt="" /></div>Double/Aromatic</td>
                     </tr>
                 </table>
             </div>
@@ -230,28 +235,56 @@
             <div class="dropdownList renderFirst" id="template_dropdown_list" style="display:none">
                 <table>
                     <tr class="dropdownListItem" id="template_0" title="Benzene (T)">
-                        <td><div id="template_0_preview"><img class="dropdownIcon" src="icons/png/template/template0.24.png" alt="" /></div>Benzene</td>
+                        <td><div id="template_0_preview"><img class="dropdownIcon" src="icons/png/template/template0.dropdown.png" alt="" /></div>Benzene</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_1" title="Cyclopentadiene (T)">
-                        <td><div id="template_1_preview"><img class="dropdownIcon" src="icons/png/template/template1.24.png" alt="" /></div>Cyclopentadiene</td>
+                        <td><div id="template_1_preview"><img class="dropdownIcon" src="icons/png/template/template1.dropdown.png" alt="" /></div>Cyclopentadiene</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_2" title="Cyclohexane (T)">
-                        <td><div id="template_2_preview"><img class="dropdownIcon" src="icons/png/template/template2.24.png" alt="" /></div>Cyclohexane</td>
+                        <td><div id="template_2_preview"><img class="dropdownIcon" src="icons/png/template/template2.dropdown.png" alt="" /></div>Cyclohexane</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_3" title="Cyclopentane (T)">
-                        <td><div id="template_3_preview"><img class="dropdownIcon" src="icons/png/template/template3.24.png" alt="" /></div>Cyclopentane</td>
+                        <td><div id="template_3_preview"><img class="dropdownIcon" src="icons/png/template/template3.dropdown.png" alt="" /></div>Cyclopentane</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_4" title="Cyclopropane (T)">
-                        <td><div id="template_4_preview"><img class="dropdownIcon" src="icons/png/template/template4.24.png" alt="" /></div>Cyclopropane</td>
+                        <td><div id="template_4_preview"><img class="dropdownIcon" src="icons/png/template/template4.dropdown.png" alt="" /></div>Cyclopropane</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_5" title="Cyclobutane (T)">
-                        <td><div id="template_5_preview"><img class="dropdownIcon" src="icons/png/template/template5.24.png" alt="" /></div>Cyclobutane</td>
+                        <td><div id="template_5_preview"><img class="dropdownIcon" src="icons/png/template/template5.dropdown.png" alt="" /></div>Cyclobutane</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_6" title="Cycloheptane (T)">
-                        <td><div id="template_6_preview"><img class="dropdownIcon" src="icons/png/template/template6.24.png" alt="" /></div>Cycloheptane</td>
+                        <td><div id="template_6_preview"><img class="dropdownIcon" src="icons/png/template/template6.dropdown.png" alt="" /></div>Cycloheptane</td>
                     </tr>
                     <tr class="dropdownListItem" id="template_7" title="Cyclooctane (T)">
-                        <td><div id="template_7_preview"><img class="dropdownIcon" src="icons/png/template/template7.24.png" alt="" /></div>Cyclooctane</td>
+                        <td><div id="template_7_preview"><img class="dropdownIcon" src="icons/png/template/template7.dropdown.png" alt="" /></div>Cyclooctane</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="dropdownList renderFirst" id="customtemplate_dropdown_list" style="display:none">
+                <table>
+                    <tr class="dropdownListItem" id="customtemplate_0" title="Benzene (T)">
+                        <td><div id="customtemplate_0_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate0.dropdown.png" alt="" /></div>Benzene</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_1" title="Cyclopentadiene (T)">
+                        <td><div id="customtemplate_1_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate1.dropdown.png" alt="" /></div>Cyclopentadiene</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_2" title="Cyclohexane (T)">
+                        <td><div id="customtemplate_2_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate2.dropdown.png" alt="" /></div>Cyclohexane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_3" title="Cyclopentane (T)">
+                        <td><div id="customtemplate_3_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate3.dropdown.png" alt="" /></div>Cyclopentane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_4" title="Cyclopropane (T)">
+                        <td><div id="customtemplate_4_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate4.dropdown.png" alt="" /></div>Cyclopropane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_5" title="Cyclobutane (T)">
+                        <td><div id="customtemplate_5_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate5.dropdown.png" alt="" /></div>Cyclobutane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_6" title="Cycloheptane (T)">
+                        <td><div id="customtemplate_6_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate6.dropdown.png" alt="" /></div>Cycloheptane</td>
+                    </tr>
+                    <tr class="dropdownListItem" id="customtemplate_7" title="Cyclooctane (T)">
+                        <td><div id="customtemplate_7_preview"><img class="dropdownIcon" src="icons/png/customtemplate/customtemplate7.dropdown.png" alt="" /></div>Cyclooctane</td>
                     </tr>
                 </table>
             </div>
@@ -259,19 +292,19 @@
             <div class="dropdownList" id="reaction_dropdown_list" style="display:none">
                 <table>
                     <tr class="dropdownListItem" id="reaction_arrow" title="Reaction Arrow Tool">
-                        <td><div id="reaction_arrow_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-arrow.24.png" alt="" /></div>Reaction Arrow Tool</td>
+                        <td><div id="reaction_arrow_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-arrow.dropdown.png" alt="" /></div>Reaction Arrow Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="reaction_plus" title="Reaction Plus Tool">
-                        <td><div id="reaction_plus_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-plus.24.png" alt="" /></div>Reaction Plus Tool</td>
+                        <td><div id="reaction_plus_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-plus.dropdown.png" alt="" /></div>Reaction Plus Tool</td>
                     </tr>
                     <tr class="dropdownListItem serverRequired" id="reaction_automap" title="Reaction Auto-Mapping Tool">
-                        <td><div id="reaction_automap_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-automap.24.png" alt="" /></div>Reaction Auto-Mapping</td>
+                        <td><div id="reaction_automap_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-automap.dropdown.png" alt="" /></div>Reaction Auto-Mapping</td>
                     </tr>
                     <tr class="dropdownListItem" id="reaction_map" title="Reaction Mapping Tool">
-                        <td><div id="reaction_map_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-map.24.png" alt="" /></div>Reaction Mapping Tool</td>
+                        <td><div id="reaction_map_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-map.dropdown.png" alt="" /></div>Reaction Mapping Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="reaction_unmap" title="Reaction Unmappping Tool">
-                        <td><div id="reaction_unmap_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-unmap.24.png" alt="" /></div>Reaction Unmapping Tool</td>
+                        <td><div id="reaction_unmap_todo"><img class="dropdownIcon" src="icons/png/reaction/reaction-unmap.dropdown.png" alt="" /></div>Reaction Unmapping Tool</td>
                     </tr>
                 </table>
             </div>
@@ -279,13 +312,13 @@
             <div class="dropdownList" id="rgroup_dropdown_list" style="display:none">
                 <table>
                     <tr class="dropdownListItem" id="rgroup_label" title="R-Group Label Tool (Shift+R)">
-                        <td><div id="rgroup_label_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-label.24.png" alt="" /></div>R-Group Label Tool</td>
+                        <td><div id="rgroup_label_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-label.dropdown.png" alt="" /></div>R-Group Label Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="rgroup_fragment" title="R-Group Fragment Tool (Shift+R)">
-                        <td><div id="rgroup_fragment_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-fragment.24.png" alt="" /></div>R-Group Fragment Tool</td>
+                        <td><div id="rgroup_fragment_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-fragment.dropdown.png" alt="" /></div>R-Group Fragment Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="rgroup_attpoints" title="Attachment Point Tool (Shift+R)">
-                        <td><div id="rgroup_attpoints_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-attpoints.24.png" alt="" /></div>Attachment Point Tool</td>
+                        <td><div id="rgroup_attpoints_todo"><img class="dropdownIcon" src="icons/png/rgroup/rgroup-attpoints.dropdown.png" alt="" /></div>Attachment Point Tool</td>
                     </tr>
                 </table>
             </div>
@@ -293,13 +326,13 @@
             <div class="dropdownList" id="transform_dropdown_list" style="display:none">
                 <table>
                     <tr class="dropdownListItem" id="transform_rotate" title="Rotate Tool">
-                        <td><div id="transform_rotate_todo"><img class="dropdownIcon" src="icons/png/transform/transform-rotate.24.png" alt="" /></div>Rotate Tool</td>
+                        <td><div id="transform_rotate_todo"><img class="dropdownIcon" src="icons/png/transform/transform-rotate.dropdown.png" alt="" /></div>Rotate Tool</td>
                     </tr>
                     <tr class="dropdownListItem" id="transform_flip_h" title="Horizontal Flip">
-                        <td><div id="transform_flip_h_todo"><img class="dropdownIcon" src="icons/png/transform/transform-flip-h.24.png" alt="" /></div>Horizontal Flip</td>
+                        <td><div id="transform_flip_h_todo"><img class="dropdownIcon" src="icons/png/transform/transform-flip-h.dropdown.png" alt="" /></div>Horizontal Flip</td>
                     </tr>
                     <tr class="dropdownListItem" id="transform_flip_v" title="Vertical Flip">
-                        <td><div id="transform_flip_v_todo"><img class="dropdownIcon" src="icons/png/transform/transform-flip-v.24.png" alt="" /></div>Vertical Flip</td>
+                        <td><div id="transform_flip_v_todo"><img class="dropdownIcon" src="icons/png/transform/transform-flip-v.dropdown.png" alt="" /></div>Vertical Flip</td>
                     </tr>
                 </table>
             </div>

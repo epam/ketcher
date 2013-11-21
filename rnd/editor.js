@@ -96,7 +96,9 @@ rnd.Editor.prototype.toolFor = function(tool) {
     } else if (tool == 'chain') {
         return new rnd.Editor.ChainTool(this);
     } else if (tool.startsWith('template_')) {
-        return new rnd.Editor.TemplateTool(this, parseInt(tool.split('_')[1]));
+        return new rnd.Editor.TemplateTool(this, rnd.templates[parseInt(tool.split('_')[1])]);
+    } else if (tool.startsWith('customtemplate_')) {
+        return new rnd.Editor.TemplateTool(this, rnd.customtemplates[parseInt(tool.split('_')[1])]);
     } else if (tool == 'charge_plus') {
         return new rnd.Editor.ChargeTool(this, 1);
     } else if (tool == 'charge_minus') {
@@ -818,7 +820,7 @@ rnd.Editor.ChainTool.prototype.OnCancel = function() {
 
 rnd.Editor.TemplateTool = function(editor, template) {
     this.editor = editor;
-    this.template = rnd.templates[template];
+    this.template = template;
 
     // load template molfile in advance
     if (!this.template.molecule) {

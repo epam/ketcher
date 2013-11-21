@@ -75,6 +75,11 @@ table#ketcher_window > tr
     height: 24px;
 }
 
+.dropdownIconTemplate
+{
+    height: 48px;
+}
+
 .toolIcon
 {
     width: 32px;
@@ -192,6 +197,12 @@ table#ketcher_window > tr
     top: 196px;
 }
 
+#customtemplate_dropdown_list
+{
+    top: 48px;
+    left: 45px;
+}
+
 #reaction_dropdown_list
 {
     top: 310px;
@@ -212,10 +223,13 @@ table#ketcher_window > tr
     cursor: default;
 }
 
+.dropdownListItemTemplate
+{
+    cursor: default;
+}
+
 .dropdownListItem > td > div
 {
-    height: 24px;
-    width:  24px;
     float:  left;
     margin-right: 2px;
     margin-top : -3px;

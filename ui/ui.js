@@ -150,34 +150,27 @@ ui.initTemplates = function ()
                 return;
             }
 
-            rnd.templates = [];
-	    ui.template_tool_modes.clear();
-            var tbody = $('template_dropdown_list').select('table > tbody')[0];
+            rnd.customtemplates = [];
+	    ui.customtemplate_tool_modes.clear();
+            var tbody = $('customtemplate_dropdown_list').select('table > tbody')[0];
             tbody.update();
 
             var idx = 0;
             sdf_items.each(function (item) {
                 var tmpl = {
-                    name: (item.name || ('template ' + (idx+1))).capitalize(),
+                    name: (item.name || ('customtemplate ' + (idx+1))).capitalize(),
                     molfile: item.molfile,
                     aid: (item.atomid || 1) - 1,
                     bid: (item.bondid || 1) - 1
                 };
 
-                rnd.templates.push(tmpl);
-		ui.template_tool_modes.push('template_' + idx);
+                rnd.customtemplates.push(tmpl);
+                ui.customtemplate_tool_modes.push('customtemplate_' + idx);
 
-                if (item.icon) {
-                    tbody.insert('<tr class="dropdownListItem" id="template_' + idx + '" title="' + tmpl.name + ' (T)">' +
-                            '<td><div id="template_' + idx + '_preview"><img class="dropdownIcon" src="' + item.icon + '" alt="" /></div>' +
-                            tmpl.name + '</td></tr>');
-                } else {
-                    // load template molfile on demand
-                    tmpl.molecule = chem.Molfile.parseCTFile(tmpl.molfile.split('\n'));
-
-                    // todo: render button from tmpl.molecule
-                }
-
+                tbody.insert('<tr class="dropdownListItem" id="customtemplate_' + idx +
+                        '" title="' + tmpl.name + ' (T)">' + '<td><div id="customtemplate_' + idx +
+                        '_preview" style="float:right"><img style="align:right" class="dropdownIconTemplate" src="icons/png/customtemplate/customtemplate' +
+                        idx + '.dropdown.png" alt="" /></div></td><td>' + tmpl.name + '</td></tr>');
                 idx++;
             });
         }
@@ -210,7 +203,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src').replace('.24.','.'));
+        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src').replace('.dropdown.','.sidebar.'));
         $(dropdown_mode_id).title = this.title;
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
@@ -865,6 +858,7 @@ ui.bond_tool_double_bonds = ['bond_double', 'bond_crossed'];
 ui.charge_tool_modes = ['charge_plus', 'charge_minus'];
 ui.rgroup_tool_modes = ['rgroup_label', 'rgroup_fragment', 'rgroup_attpoints'];
 ui.template_tool_modes = ['template_0', 'template_1', 'template_2', 'template_3', 'template_4', 'template_5', 'template_6', 'template_7'];
+ui.customtemplate_tool_modes = [];
 
 ui.keyboardActions = {
     // sample: function(event, handler) { do_sample(); },
@@ -903,6 +897,7 @@ ui.keyboardActions = {
     save_document: function() { ui.onClick_SaveFile.call($('save')); },
     rotate_tool: function() { ui.selectMode('transform_rotate'); },
     template_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.template_tool_modes, ui.mode_id))); },
+    customtemplate_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.customtemplate_tool_modes, ui.mode_id))); },
     escape: function(event) { if (!$('window_cover').visible()) ui.selectMode(ui.defaultSelector); },
 
     // for dev purposes
@@ -1528,6 +1523,7 @@ ui.hideBlurredControls = function ()
         'selector_dropdown_list',
         'bond_dropdown_list',
         'template_dropdown_list',
+        'customtemplate_dropdown_list',
         'reaction_dropdown_list',
         'rgroup_dropdown_list',
         'transform_dropdown_list'

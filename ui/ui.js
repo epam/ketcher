@@ -236,7 +236,7 @@ ui.init = function (parameters, opts)
     this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
 
     ui.api_path = parameters.ketcher_api_url || document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
-    ui.base_url = document.location.href.substring(0, document.location.href.lastIndexOf('/') + 1);
+    ui.base_url = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
 
     // IE specific styles
     if (Prototype.Browser.IE)

@@ -18,6 +18,7 @@ try:
     indigo = indigo.Indigo()
     indigo_inchi = indigo_inchi.IndigoInchi(indigo)
     indigo.setOption("ignore-stereochemistry-errors", "true")
+
     has_indigo = True
 except:
     print("Indigo is not found. Server-side functionality will not be available")
@@ -48,14 +49,14 @@ class application(object):
             if has_indigo:
                 try:
                     self.response = route()
-                except IndigoException, e:
+                except (IndigoException, e):
                     self.response = self.error_response(str(e))
                     if 'indigoLoad' in self.response[-1]:      # error on load
                         self.response[1] = "Cannot load the specified structure: %s " % str(e)
             else:
                 self.response = route()
 
-        except self.HttpException, (status, message):
+        except (self.HttpException, (status, message)):
             self.response = [message]
 
         self.headers.setdefault('Content-Type', 'text/plain')
@@ -73,7 +74,7 @@ class application(object):
 
     def on_log(self):
         message = self.fields.getfirst('message')
-        print 'CLIENT LOG: ' + message
+        print( 'CLIENT LOG: ' + message)
         return ["Ok.\n"]
 
     def on_layout(self):
@@ -261,16 +262,16 @@ if __name__ == '__main__':
         progname = sys.argv[0]
         if not progname.startswith('./'):
             progname = 'python ' + progname
-        print "USAGE:\n   %s [port|address:port]\n" % progname
+        print( "USAGE:\n   %s [port|address:port]\n" % progname)
 
     application.static_serve = True     # allow to serve static
     try:                                # in standalone python-server mode
         address, port = parse_args()
         httpd = simple_server.make_server(address, port, application, server_class=PatientServer)
-        print "Serving on %s:%d..." % (address, port)
+        print("Serving on %s:%d..." % (address, port))
         httpd.serve_forever()
     except ValueError:
         usage()
-    except (socket.error, socket.gaierror, socket.herror), (n, str):
-        print "Server error.", str
+    except ((socket.error, socket.gaierror, socket.herror), (n, str)):
+        print("Server error." + str)
         usage()

@@ -50,6 +50,9 @@
                 if (pair.length == 2)
                     param_hash[pair[0]] = unescape(pair[1]);
             }
+	    if (param_hash.ketcher_maximize) {
+		$('ketcher_div').removeClassName('ketcherDivMaxSize');
+	    }
             // Initialize ketcher
             ketcher.init({ketcher_api_url: param_hash.ketcher_api_url});
 		};
@@ -58,7 +61,7 @@
 
     <body>
 
-        <div>
+        <div id="ketcher_div" class="ketcherDivMaxSize">
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">
                     <td style="width:36px"><div style="position:relative"><img class="sideButton modeButton stateButton" id="selector" selid="selector_lasso" src="icons/png/selection/lasso.sidebar.png" alt="" title="Lasso Selection Tool (Esc)" /><img class="dropdownButton" id="selector_dropdown" src="icons/png/main/dropdown.png" alt="" /></div></td>
@@ -76,7 +79,7 @@
                     <td class="toolDelimiter"></td>
                     <td class="toolButtonCell toolButton" id="zoom_in"><img src="icons/png/main/view-zoom-in.png" alt="" title="Zoom In (+)" /></td>
                     <td class="toolButtonCell toolButton" id="zoom_out"><img src="icons/png/main/view-zoom-out.png" alt="" title="Zoom Out (-)" /></td>
-                    <td id="zoom_list_cell" style="width:100%"><select id="zoom_list"></select></td>
+                    <td id="zoom_list_cell" style="width:95px"><select id="zoom_list"></select></td>
                     <td class="toolDelimiter"></td>
                     <td class="toolButtonCell toolButton serverRequired" id="clean_up"><img title="Clean Up (Ctrl+L)" alt="" src="icons/png/main/layout.png" /></td>
                     <td class="toolButtonCell toolButton serverRequired" id="aromatize"><img title="Aromatize" alt="" src="icons/png/main/arom.png" /></td>

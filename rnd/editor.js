@@ -1029,7 +1029,8 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function(event) {
         }
 
         if ('action' in this.dragCtx) {
-            this.editor.ui.addUndoAction(this.dragCtx.action);
+            if (!this.dragCtx.action.isDummy())
+                this.editor.ui.addUndoAction(this.dragCtx.action);
         }
         delete this.dragCtx;
     }

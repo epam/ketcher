@@ -879,11 +879,11 @@ rnd.ReStruct.prototype.showLabels = function ()
 				13: 'XIII',
 				14: 'XIV'
 			};
-			if (atom.a.explicitValence)
+			if (atom.a.explicitValence >= 0)
 			{
-				valence.text = mapValence[atom.a.valence];
+				valence.text = mapValence[atom.a.explicitValence];
 				if (!valence.text)
-					throw new Error("invalid valence " + atom.a.valence.toString());
+					throw new Error("invalid valence " + atom.a.explicitValence.toString());
 				valence.text = '(' + valence.text + ')';
 				valence.path = paper.text(ps.x, ps.y, valence.text)
 				.attr({
@@ -1181,7 +1181,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
 		atom.a.charge != 0 ||
-		atom.a.explicitValence ||
+		atom.a.explicitValence >= 0 ||
 		atom.a.atomList != null ||
         atom.a.rglabel != null)
 		return true;

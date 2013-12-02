@@ -441,11 +441,11 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 		atom.implicitH = 0;
 		return;
 	}
-	if (atom.explicitValence) {
+	if (atom.explicitValence >= 0) {
 		var elem = chem.Element.getElementByLabel(atom.label);
 		atom.implicitH = 0;
 		if (elem != null) {
-			atom.implicitH = atom.valence - atom.calcValenceMinusHyd(conn);
+			atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);
 			if (atom.implicitH < 0) {
 				atom.implicitH = 0;
 				atom.badConn = true;

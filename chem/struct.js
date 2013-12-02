@@ -66,7 +66,7 @@ chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
             sgroup_counts.set(sid, n);
         }, this);
     }, this);
-    
+
     var sgroup_list = [];
     sgroup_counts.each(function (sg)
     {
@@ -326,13 +326,14 @@ chem.Struct.Atom = function (params) {
     this.fragment = !Object.isUndefined(params.fragment) ? params.fragment : -1;
 
     util.ifDef(this, params, 'isotope', def('isotope'));
-    util.ifDef(this, params, 'radical', def('isotope'));
+    util.ifDef(this, params, 'radical', def('radical'));
     util.ifDef(this, params, 'charge', def('charge'));
-    util.ifDef(this, params, 'valence', def('valence'));
     util.ifDef(this, params, 'rglabel', def('rglabel')); // r-group index mask, i-th bit stands for i-th r-site
     util.ifDef(this, params, 'attpnt', def('attpnt')); // attachment point
     util.ifDef(this, params, 'explicitValence', def('explicitValence'));
-    util.ifDef(this, params, 'implicitH', def('implicitH'));
+
+    this.valence = 0;
+    this.implicitH = 0; // implicitH is not an attribute
     if (!Object.isUndefined(params.pp))
         this.pp = new util.Vec2(params.pp);
     else
@@ -377,13 +378,11 @@ chem.Struct.Atom.attrGetDefault = function(attr) {
 }
 
 chem.Struct.Atom.attrlist = {
-    'label': null,
+    'label': 'C',
     'isotope': 0,
     'radical': 0,
     'charge': 0,
-    'valence': 0,
-    'explicitValence': 0,
-    'implicitH': 0,
+    'explicitValence': -1,
     'ringBondCount': 0,
     'substitutionCount': 0,
     'unsaturatedAtom': 0,
@@ -418,7 +417,7 @@ chem.Struct.Atom.prototype.pureHydrogen =  function ()
 chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 {
 	return this.label == 'C' && this.isotope == 0 && this.radical == 0 && this.charge == 0
-        && this.explicitValence == 0 && this.ringBondCount == 0 && this.substitutionCount == 0
+        && this.explicitValence < 0 && this.ringBondCount == 0 && this.substitutionCount == 0
         && this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
 };
 
@@ -482,6 +481,29 @@ chem.Struct.Bond = function (params)
 	this.sa = 0;
 	this.angle = 0;
 };
+
+chem.Struct.Bond.attrlist = {
+    'type' : chem.Struct.BOND.TYPE.SINGLE,
+    'stereo' : chem.Struct.BOND.STEREO.NONE,
+    'topology' : chem.Struct.BOND.TOPOLOGY.EITHER,
+    'reactingCenterStatus' : 0
+};
+
+chem.Struct.Bond.getAttrHash = function(bond) {
+    var attrs = new Hash();
+    for (var attr in chem.Struct.Bond.attrlist) {
+        if (typeof(bond[attr]) !== 'undefined') {
+            attrs.set(attr, bond[attr]);
+        }
+    }
+    return attrs;
+};
+
+chem.Struct.Bond.attrGetDefault = function(attr) {
+    if (attr in chem.Struct.Bond.attrlist)
+        return chem.Struct.Bond.attrlist[attr];
+    throw new Error("Attribute unknown");
+}
 
 chem.Struct.Bond.prototype.hasRxnProps =  function ()
 {
@@ -886,13 +908,13 @@ chem.Struct.prototype.findConnectedComponent = function (aid) {
 chem.Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
     // NB: this is a hack
     // TODO: need to maintain half-bond and neighbor structure permanently
-    if (!this.halfBonds.count()) { 
+    if (!this.halfBonds.count()) {
         this.initHalfBonds();
         this.initNeighbors();
         this.updateHalfBonds(this.atoms.keys());
         this.sortNeighbors(this.atoms.keys());
     }
-    
+
 	var map = {};
 	this.atoms.each(function(aid,atom){
 		map[aid] = -1;
@@ -1091,7 +1113,7 @@ chem.Struct.prototype.findLoops = function ()
 {
     var newLoops = [];
     var bondsToMark = util.Set.empty();
-    
+
     // Starting from each half-bond not known to be in a loop yet,
     //  follow the 'next' links until the initial half-bond is reached or
     //  the length of the sequence exceeds the number of half-bonds available.
@@ -1133,7 +1155,7 @@ chem.Struct.prototype.findLoops = function ()
         }
     }, this);
     return {
-        newLoops: newLoops, 
+        newLoops: newLoops,
         bondsToMark: util.Set.list(bondsToMark)
     };
 };

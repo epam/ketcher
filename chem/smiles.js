@@ -440,7 +440,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
        atom.label != 'B' && atom.label != 'I')
         need_brackets = true;
 
-    if (atom.explicitValence || atom.radical != 0 || chirality > 0 ||
+    if (atom.explicitValence >= 0 || atom.radical != 0 || chirality > 0 ||
        (aromatic && atom.label != 'C' && atom.label != 'O') ||
        (aromatic && atom.label == 'C' && this.atoms[idx].neighbours.length < 3 && this.atoms[idx].h_count == 0))
         hydro = this.atoms[idx].h_count;

@@ -22,7 +22,8 @@ ui.Action = function ()
 };
 
 ui.Action.prototype.addOp = function(op) {
-    this.operations.push(op);
+    if (!op.isDummy(ui.editor))
+	this.operations.push(op);
     return op;
 };
 
@@ -122,31 +123,40 @@ ui.Action.fromMultipleMove = function (lists, d)
 ui.Action.fromAtomsAttrs = function(ids, attrs, reset)
 {
     var action = new ui.Action();
-        (typeof(ids) == 'number' ? [ids] : ids).each(function(id) {
-            if (reset) {
-                for (var key in chem.Struct.Atom.attrlist) {
-                    action.addOp(new ui.Action.OpAtomAttr(id, key, chem.Struct.Atom.attrGetDefault(key)));
-                }
-            } else if ('label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList']) {
-                action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
-            }
-            new Hash(attrs).each(function(attr) {
-                action.addOp(new ui.Action.OpAtomAttr(id, attr.key, attr.value));
-            }, this);
+    (typeof(ids) == 'number' ? [ids] : ids).each(function(id) {
+	for (var key in chem.Struct.Atom.attrlist) {
+	    var value;
+	    if (key in attrs)
+		value = attrs[key];
+	    else if (reset)
+		value = chem.Struct.Atom.attrGetDefault(key);
+	    else 
+		continue;
+	    action.addOp(new ui.Action.OpAtomAttr(id, key, value));
+	}
+	if (!reset && 'label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList']) {
+            action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
+        }
     }, this);
     return action.perform();
 };
 
-ui.Action.fromBondAttrs = function (id, attrs, flip)
+ui.Action.fromBondAttrs = function (id, attrs, flip, reset)
 {
     var action = new ui.Action();
 
-    new Hash(attrs).each(function(attr) {
-        action.addOp(new ui.Action.OpBondAttr(id, attr.key, attr.value));
-    }, this);
-    if (flip) {
-        action.mergeWith(ui.Action.toBondFlipping(id));
+    for (var key in chem.Struct.Bond.attrlist) {
+	var value;
+	if (key in attrs)
+	    value = attrs[key];
+	else if (reset)
+	    value = chem.Struct.Bond.attrGetDefault(key);
+	else
+	    continue;
+	action.addOp(new ui.Action.OpBondAttr(id, key, value));
     }
+    if (flip)
+        action.mergeWith(ui.Action.toBondFlipping(id));
     return action.perform();
 };
 
@@ -655,10 +665,12 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
     // Only template atom label matters for now
     frag.atoms.each(function (aid, atom) {
         var op;
+        var attrs = chem.Struct.Atom.getAttrHash(atom).toObject();
+        attrs.fragment = fragAction.frid;
 
         action.addOp(
             op = new ui.Action.OpAtomAdd(
-                { label: atom.label, fragment: fragAction.frid },
+                attrs,
                 util.Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)
             ).perform(ui.editor)
         );
@@ -749,16 +761,12 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
         delta = angle - template.angle0;
     }
 
-    // Only template atom label matters for now
     frag.atoms.each(function (id, a) {
+	var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
+	attrs.fragment = frid;
         if (id == template.aid) {
-            action.addOp(
-                op = new ui.Action.OpAtomAttr(
-                    aid,
-                    'label',
-                    a.label
-                ).perform(ui.editor)
-            );
+            action.mergeWith(ui.Action.fromAtomsAttrs(aid, attrs, true));
+            map[id] = aid;
         } else {
             var v;
 
@@ -766,12 +774,12 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 
             action.addOp(
                 op = new ui.Action.OpAtomAdd(
-                    { label: a.label, fragment: frid },
+                    attrs,
                     v
                 ).perform(ui.editor)
             );
+            map[id] = op.data.aid;
         }
-        map[id] = op.data.aid;
         if (map[id]-0 !== aid0-0 && map[id]-0 !== aid1-0)
             action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
     });
@@ -833,14 +841,10 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     var xy0 = fr_begin.pp;
 
     frag.atoms.each(function (id, a) {
+        var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
+        attrs.fragment = frid;
         if (id == fr_bond.begin || id == fr_bond.end) {
-            action.addOp(
-                op = new ui.Action.OpAtomAttr(
-                    map[id],
-                    'label',
-                    a.label
-                ).perform(ui.editor)
-            );
+            action.mergeWith(ui.Action.fromAtomsAttrs(map[id], attrs, true));
             return;
         }
 
@@ -851,9 +855,10 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
         var merge_a = R.findClosestAtom(v, 0.1);
 
         if (merge_a == null) {
-            action.addOp(
+	    var op;
+	    action.addOp(
                 op = new ui.Action.OpAtomAdd(
-                    { label: a.label, fragment: frid },
+                    attrs,
                     v
                 ).perform(ui.editor)
             );
@@ -861,39 +866,24 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
             map[id] = op.data.aid;
             action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
         } else {
-            // TODO [BK] change label?
-            // TODO [RB] need to merge fragments?
             map[id] = merge_a.id;
+            action.mergeWith(ui.Action.fromAtomsAttrs(map[id], attrs, true));
+            // TODO [RB] need to merge fragments?
         }
     });
 
-    frag.bonds.each(function (id, bond) {
-        if (id != template.bid) {
-            var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
-
-            if (exist_id == -1) {
-                action.addOp(
-                    new ui.Action.OpBondAdd(
-                        map[bond.begin],
-                        map[bond.end],
-                        bond
-                    ).perform(ui.editor)
-                );
-                return;
-            }
-
-            id = exist_id;
-            bond = molecule.bonds.get(id);
-        }
-
-        // TODO [BK] check if not aromatic
-        action.addOp(
-            new ui.Action.OpBondAttr(
-                bid,
-                'type',
-                fr_bond.type
-            ).perform(ui.editor)
-        );
+    frag.bonds.each(function(id, bond) {
+	var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
+	if (exist_id == -1) {
+	    action.addOp(
+		    new ui.Action.OpBondAdd(
+		    map[bond.begin],
+		    map[bond.end],
+		    bond
+		    ).perform(ui.editor));
+	} else {
+	    action.mergeWith(ui.Action.fromBondAttrs(exist_id, fr_bond, false, true));
+	}
     });
 
     action.operations.reverse();

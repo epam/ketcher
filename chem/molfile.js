@@ -105,7 +105,7 @@ chem.Molfile.fmtInfo = {
 		'CHG':'charge',
 		'RAD':'radical',
 		'MASS':'isotope',
-		'VAL':'valence',
+		'VAL':'explicitValence',
         'HCOUNT':'hCount',
         'INVRET':'invRet',
         'SUBST':'substitutionCount',
@@ -124,7 +124,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		// generic
 		pp: new util.Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1])),
 		label: atomSplit[4].strip(),
-		valence: mf.fmtInfo.valenceMap[mf.parseDecimalInt(atomSplit[10])],
+		explicitValence: mf.fmtInfo.valenceMap[mf.parseDecimalInt(atomSplit[10])],
 
 		// obsolete
 		massDifference: mf.parseDecimalInt(atomSplit[5]),
@@ -141,7 +141,6 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		// reaction query
 		exactChangeFlag: mf.parseDecimalInt(atomSplit[16]) != 0
 	};
-	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);
 };
 
@@ -208,7 +207,6 @@ chem.Molfile.parseAtomLineV3000 = function (line)
             params.attpnt = value.strip()-0;
         }
 	}
-	params.explicitValence = typeof(params.valence) != 'undefined';
 	return new chem.Struct.Atom(params);
 };
 
@@ -1208,7 +1206,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
 
-		this.writePaddedNumber(!atom.explicitValence ? 0 : (atom.valence == 0 ? 15 : atom.valence), 3);
+		this.writePaddedNumber(!atom.explicitValence < 0 ? 0 : (atom.explicitValence == 0 ? 15 : atom.explicitValence), 3);
 
         this.writePaddedNumber(0, 3);
         this.writePaddedNumber(0, 3);

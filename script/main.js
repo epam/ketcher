@@ -17,7 +17,7 @@ ketcher = function () {
 ketcher.version = "1.1-beta";
 
 ketcher.init = function (parameters, opt)
-{    
+{
     document.title += ' v' + ketcher.version;
 	ketcher.button_areas = {};
 	var elemLabelOpts = {'fontSize':25};
@@ -115,6 +115,27 @@ ketcher.testSegment = function (clientArea)
         c.path("M{0},{1}L{2},{3}",list[j][0].x,list[j][0].y,list[j][1].x,list[j][1].y).attr({'stroke-width':1, stroke:'#000'});
     }
 }
+
+// TODO: replace window.onload with something like <https://github.com/ded/domready>
+// to start early
+window.onload = function() {
+	// Parse URL parameters
+	var param_string = document.location.search;
+	if (param_string.length > 0)
+		param_string = param_string.substring(1);
+	var param_list = param_string.split(/&/g);
+	var param_hash = {};
+	for (var i = 0; i < param_list.length; ++i) {
+		var pair = param_list[i].split('=');
+		if (pair.length == 2)
+			param_hash[pair[0]] = unescape(pair[1]);
+	}
+	if (param_hash.ketcher_maximize) {
+		$('ketcher_div').removeClassName('ketcherDivMaxSize');
+	}
+	// Initialize ketcher
+	ketcher.init({ketcher_api_url: param_hash.ketcher_api_url});
+};
 
 /*
 ketcher.testShiftRayBox = function (clientArea)

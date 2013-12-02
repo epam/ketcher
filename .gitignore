@@ -1,0 +1,11 @@
+/node_modules
+/extra
+/ketcher.js
+/*.zip
+
+# dont want to hardcode the short living 'prototype.js' here
+/*.js
+!/Gruntfile.js
+
+*.pyc
+.tern-port

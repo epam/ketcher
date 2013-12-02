@@ -1,65 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
         <title>Ketcher</title>
         <link rel="stylesheet" type="text/css" href="ketcher.css" />
         <script type="text/javascript" src="prototype-min.js"></script>
         <script type="text/javascript" src="raphael.js"></script>
-        <script type="text/javascript" src="base64.js"></script>
-        <script type="text/javascript" src="third_party/keymaster.js"></script>
-        <script type="text/javascript" src="util/common.js"></script>
-        <script type="text/javascript" src="util/vec2.js"></script>
-        <script type="text/javascript" src="util/set.js"></script>
-        <script type="text/javascript" src="util/map.js"></script>
-        <script type="text/javascript" src="util/pool.js"></script>
-        <script type="text/javascript" src="chem/element.js"></script>
-        <script type="text/javascript" src="chem/struct.js"></script>
-        <script type="text/javascript" src="chem/molfile.js"></script>
-        <script type="text/javascript" src="chem/sgroup.js"></script>
-        <script type="text/javascript" src="chem/struct_valence.js"></script>
-        <script type="text/javascript" src="chem/dfs.js"></script>
-        <script type="text/javascript" src="chem/cis_trans.js"></script>
-        <script type="text/javascript" src="chem/stereocenters.js"></script>
-        <script type="text/javascript" src="chem/smiles.js"></script>
-        <script type="text/javascript" src="chem/inchi.js"></script>
-        <script type="text/javascript" src="rnd/visel.js"></script>
-        <script type="text/javascript" src="rnd/restruct.js"></script>
-        <script type="text/javascript" src="rnd/restruct_rendering.js"></script>
-        <script type="text/javascript" src="rnd/render.js"></script>
-        <script type="text/javascript" src="rnd/templates.js"></script>
-        <script type="text/javascript" src="rnd/editor.js"></script>
-        <script type="text/javascript" src="rnd/elem_table.js"></script>
-        <script type="text/javascript" src="rnd/rgroup_table.js"></script>
-        <script type="text/javascript" src="ui/ui.js"></script>
-        <script type="text/javascript" src="ui/actions.js"></script>
-        <script type="text/javascript" src="reaxys/reaxys.js"></script>
-        <script type="text/javascript" src="ketcher.js"></script>
-        <script type="text/javascript">
-		window.onload=function() {
-            // Parse URL parameters
-            var param_string = document.location.search;
-            if (param_string.length > 0)
-                param_string = param_string.substring(1);
-            var param_list = param_string.split(/&/g);
-            var param_hash = {};
-            for (var i = 0; i < param_list.length; ++i) {
-                var pair = param_list[i].split('=', 2);
-                param_hash[pair[0]] = pair.length != 2 || unescape(pair[1]);
-            }
-	    if (param_hash.ketcher_maximize) {
-		$('ketcher_div').removeClassName('ketcherDivMaxSize');
-	    }
-            // Initialize ketcher
-            ketcher.init({ketcher_api_url: param_hash.ketcher_api_url});
-		};
-	</script>
+		<script type="text/javascript" src="ketcher.js"></script>
     </head>
 
     <body>
-
         <div id="ketcher_div" class="ketcherDivMaxSize">
             <table id="ketcher_window">
                 <tr align="center" id="main_toolbar">

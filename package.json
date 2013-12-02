@@ -1,0 +1,44 @@
+{
+  "name": "ketcher",
+  "title": "Ketcher",
+  "version": "2.0.0-alfa0",
+  "description": "Web-based molecule sketcher",
+  "main": "ketcher.js",
+  "homepage": "http://ggasoftware.com/opensource/ketcher",
+  "author": {
+    "name": "GGA Software Services LCC",
+    "url": "http://ggasoftware.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggasoftware/ketcher.git"
+  },
+  "keywords": [
+    "molecule",
+    "sketcher",
+    "chemistry"
+  ],
+  "license": {
+    "type": "GNU AGPLv3",
+    "url": "https://raw.github.com/ggasoftware/ketcher/master/LICENSE.GPL"
+  },
+  "bugs": {
+    "url": "https://github.com/ggasoftware/ketcher/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-watch": "~0.5.2",
+    "load-grunt-tasks": "~0.1.0",
+    "grunt-contrib-compress": "~0.5.3"
+  },
+  "scripts": {
+    "build": "npm install && grunt",
+    "test": "echo \"Error: no test yet exists\" && exit 1"
+  }
+}

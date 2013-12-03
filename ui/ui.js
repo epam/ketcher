@@ -608,7 +608,13 @@ ui.selectMode = function (mode)
     if (mode == 'reaction_automap') {
         ui.showAutomapProperties({
             onOk: function(mode) {
-                var moldata = new chem.MolfileSaver().saveMolecule(ui.ctab/*.clone()*/, true);
+		var mol = ui.ctab;
+		var implicitReaction = mol.addRxnArrowIfNecessary();
+		if (mol.rxnArrows.count() == 0) {
+		    alert("Auto-Mapping can only be applied to reactions");
+		    return;
+		}
+		var moldata = new chem.MolfileSaver().saveMolecule(mol, true);
                 new Ajax.Request(ui.api_path + 'automap',
                 {
                     method: 'post',
@@ -617,6 +623,10 @@ ui.selectMode = function (mode)
                     onComplete: function (res)
                     {
                         if (res.responseText.startsWith('Ok.')) {
+			    var resmol = ui.parseCTFile(res.responseText);
+			    if (implicitReaction) {
+				resmol.rxnArrows.clear();
+			    }
 /*
                             var aam = ui.parseCTFile(res.responseText);
                             var action = new ui.Action();
@@ -625,7 +635,7 @@ ui.selectMode = function (mode)
                             }
                             ui.addUndoAction(action, true);
 */
-                            ui.updateMolecule(ui.parseCTFile(res.responseText));
+                            ui.updateMolecule(resmol);
 /*
                             ui.render.update();
 */

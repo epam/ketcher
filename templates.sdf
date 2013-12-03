@@ -27,10 +27,10 @@ Guanine
   8 11  1  0  0  0  0
 M  END
 > <atomid>
-11
+1
 
 > <bondid>
-2
+1
 
 > <icon>
 icons/png/template/template8.png
@@ -63,10 +63,10 @@ Adenine
   8  9  1  0  0  0  0
 M  END
 > <atomid>
-10
+1
 
 > <bondid>
-5
+1
 
 > <icon>
 icons/png/template/template9.png
@@ -94,10 +94,10 @@ Uracil
   6  7  1  0  0  0  0
 M  END
 > <atomid>
-5
+1
 
 > <bondid>
-5
+1
 
 > <icon>
 icons/png/template/template10.png
@@ -125,10 +125,10 @@ Cytosine
   6  7  1  0  0  0  0
 M  END
 > <atomid>
-8
+1
 
 > <bondid>
-5
+1
 
 > <icon>
 icons/png/template/template11.png
@@ -171,7 +171,7 @@ M  END
 1
 
 > <bondid>
-1
+2
 
 > <icon>
 icons/png/template/template12.png
@@ -231,10 +231,10 @@ Adenosine Monophosphate
  20 23  1  0  0  0  0
 M  END
 > <atomid>
-1
+23
 
 > <bondid>
-1
+25
 
 > <icon>
 icons/png/template/template13.png
@@ -302,10 +302,10 @@ Adenosine diphosphate
  24 27  1  0  0  0  0
 M  END
 > <atomid>
-1
+27
 
 > <bondid>
-1
+29
 
 > <icon>
 icons/png/template/template14.png
@@ -381,10 +381,10 @@ Adenosine triphosphate
  28 31  1  0  0  0  0
 M  END
 > <atomid>
-1
+31
 
 > <bondid>
-1
+33
 
 > <icon>
 icons/png/template/template15.png

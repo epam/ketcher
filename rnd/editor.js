@@ -826,6 +826,7 @@ rnd.Editor.TemplateTool = function(editor, template) {
     if (!this.template.molecule) {
         var lines = this.template.molfile.split('\n');
         var frag = chem.Molfile.parseCTFile(lines);
+        frag.rescale();
 
         var xy0 = new util.Vec2();
 

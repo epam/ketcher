@@ -173,6 +173,7 @@ ui.initTemplates = function ()
                         idx + '.dropdown.png" alt="" /></div></td><td>' + tmpl.name + '</td></tr>');
                 idx++;
             });
+            ui.DropdownListSetIconAndTitle($('customtemplate'), $('customtemplate_0'));
         }
     });
 };
@@ -196,6 +197,11 @@ ui.onClick_DropdownButton = function ()
     ui.toggleDropdownList(this.id);
 };
 
+ui.DropdownListSetIconAndTitle = function(dropdown, selected) {
+    dropdown.setAttribute('src', selected.select('img')[0].getAttribute('src').replace('.dropdown.','.sidebar.'));
+    dropdown.title = selected.title;
+}
+
 ui.onMouseDown_DropdownListItem = function (event)
 {
     ui.selectMode(this.id);
@@ -203,8 +209,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     $(dropdown_mode_id + '_dropdown_list').hide();
     if (ui.mode_id == this.id)
     {
-        $(dropdown_mode_id).setAttribute('src', this.select('img')[0].getAttribute('src').replace('.dropdown.','.sidebar.'));
-        $(dropdown_mode_id).title = this.title;
+        ui.DropdownListSetIconAndTitle($(dropdown_mode_id), this);
         $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
     }
     if (event)
@@ -848,6 +853,7 @@ ui.keyboardShortcuts = {
     save_document: 'ctrl+S',
     rotate_tool: 'ctrl+R',
     template_tool: 'T',
+    customtemplate_tool: 'shift+T',
     escape: 'escape',
 
     force_update: 'ctrl+alt+shift+R'

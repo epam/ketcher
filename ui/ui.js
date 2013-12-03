@@ -903,7 +903,7 @@ ui.keyboardActions = {
     save_document: function() { ui.onClick_SaveFile.call($('save')); },
     rotate_tool: function() { ui.selectMode('transform_rotate'); },
     template_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.template_tool_modes, ui.mode_id))); },
-    customtemplate_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.customtemplate_tool_modes, ui.mode_id))); },
+    customtemplate_tool: function() { if (ui.customtemplate_tool_modes.length < 1) return; ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.customtemplate_tool_modes, ui.mode_id))); },
     escape: function(event) { if (!$('window_cover').visible()) ui.selectMode(ui.defaultSelector); },
 
     // for dev purposes

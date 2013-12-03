@@ -168,7 +168,7 @@ ui.initTemplates = function ()
                 ui.customtemplate_tool_modes.push('customtemplate_' + idx);
 
                 tbody.insert('<tr class="dropdownListItem" id="customtemplate_' + idx +
-                        '" title="' + tmpl.name + ' (T)">' + '<td><div id="customtemplate_' + idx +
+                        '" title="' + tmpl.name + ' (Shift+T)">' + '<td><div id="customtemplate_' + idx +
                         '_preview" style="float:right"><img style="align:right" class="dropdownIconTemplate" src="icons/png/customtemplate/customtemplate' +
                         idx + '.dropdown.png" alt="" /></div></td><td>' + tmpl.name + '</td></tr>');
                 idx++;

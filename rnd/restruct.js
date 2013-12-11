@@ -474,7 +474,7 @@ rnd.ReStruct.prototype.findIncomingStereoUpBond = function(atom, bid0, includeBo
 	var neibond = this.bonds.get(bid);
 	if (neibond.b.type === chem.Struct.BOND.TYPE.SINGLE && neibond.b.stereo === chem.Struct.BOND.STEREO.UP)
 	    return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
-	if (neibond.b.type === chem.Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === chem.Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo) 
+	if (neibond.b.type === chem.Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === chem.Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
 	    return true;
 	return false;
     }, this);
@@ -1031,16 +1031,20 @@ rnd.ReFrag.prototype.draw = function(render) {
 };
 
 rnd.ReFrag.prototype.drawHighlight = function(render) {
+    // Do nothing. This method shouldn't actually be called.
+}
+
+rnd.ReFrag.prototype.setHighlight = function(highLight, render) {
     var fid = render.ctab.frags.keyOf(this);
     if (!Object.isUndefined(fid)) {
-//        var ret = this._draw(render, fid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
-//        render.ctab.addReObjectPath('highlighting', this.visel, ret);
-//        return ret;
         render.ctab.atoms.each(function(aid, atom) {
-            if (atom.a.fragment == fid) atom.drawHighlight(render);
+            if (atom.a.fragment == fid) {
+		atom.setHighlight(highLight, render);
+	    }
         }, this);
         render.ctab.bonds.each(function(bid, bond) {
-            if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid) bond.drawHighlight(render);
+            if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid)
+		bond.setHighlight(highLight, render);
         }, this);
     } else {
         // TODO abnormal situation, fragment does not belong to the render

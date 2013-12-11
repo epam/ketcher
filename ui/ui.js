@@ -842,6 +842,7 @@ ui.keyboardShortcuts = {
     bond_tool_triple: '3',
     bond_tool_aromatic: '4',
     select_charge_tool: '5',
+    selector: '`',
     atom_tool_any: 'A',
     atom_tool_h: 'H',
     atom_tool_c: 'C',
@@ -869,6 +870,7 @@ ui.keyboardShortcuts = {
     force_update: 'ctrl+alt+shift+R'
 };
 
+ui.selector_tool_modes = ['selector_lasso', 'selector_square', 'selector_fragment'];
 ui.bond_tool_single_bonds = ['bond_single', 'bond_up', 'bond_down', 'bond_updown'];
 ui.bond_tool_double_bonds = ['bond_double', 'bond_crossed'];
 ui.charge_tool_modes = ['charge_plus', 'charge_minus'];
@@ -915,6 +917,7 @@ ui.keyboardActions = {
     template_tool: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.template_tool_modes, ui.mode_id))); },
     customtemplate_tool: function() { if (ui.customtemplate_tool_modes.length < 1) return; ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.customtemplate_tool_modes, ui.mode_id))); },
     escape: function(event) { if (!$('window_cover').visible()) ui.selectMode(ui.defaultSelector); },
+    selector: function() { ui.onMouseDown_DropdownListItem.call($(util.listNextRotate(ui.selector_tool_modes, ui.mode_id))); },
 
     // for dev purposes
     force_update: function() { ui.render.update(true); }

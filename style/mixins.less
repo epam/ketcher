@@ -1,0 +1,36 @@
+@import 'lesshat';
+
+.text-hide(transparent) {
+	font: ~"0/0" a;
+	color: transparent;
+	text-shadow: none;
+	background-color: transparent;
+	border: 0;
+}
+
+.text-hide(indent) {
+	@approximate_em_value: 12px / 1em;
+	@wider_than_any_screen: -9999em;
+	text-indent: @wider_than_any_screen * @approximate_em_value;
+	overflow: hidden;
+	text-align: left;
+}
+
+.text-hide() {
+	.text-hide(indent);
+}
+
+.min-height(@value) {
+	min-height: @value;
+	height: auto !important;
+	height: 100%;
+}
+
+.inline-block() {
+	*display: inline;
+	display: -moz-inline-box;
+	-moz-box-orient: vertical;
+	display: inline-block;
+	vertical-align: middle;
+	*vertical-align: auto;
+}

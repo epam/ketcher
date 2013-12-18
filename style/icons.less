@@ -1,0 +1,151 @@
+@font-face {
+  font-family: 'ketcher';
+  src: url('@{static-path}/ketcher.eot');
+  src: url('@{static-path}/ketcher.eot#iefix') format('embedded-opentype'),
+       url('@{static-path}/ketcher.woff') format('woff'),
+       url('@{static-path}/ketcher.ttf') format('truetype'),
+       url('@{static-path}/ketcher.svg#ketcher') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'ketcher';
+    src: url('@{static-path}/ketcher.svg#ketcher') format('svg');
+  }
+}
+*/
+
+////////// Icon codes //////////
+
+@icon-arrange: '\e001'; // ''
+#arrange:before { content: @icon-arrange }
+@icon-nopic: '\e002'; // ''
+#nopic:before { content: @icon-nopic }
+@icon-strip: '\e003'; // ''
+#strip:before { content: @icon-strip }
+@icon-test: '\e004'; // ''
+#test:before { content: @icon-test }
+@icon-arom: '\e005'; // ''
+#arom:before { content: @icon-arom }
+@icon-bond-any: '\e006'; // ''
+#bond-any:before { content: @icon-bond-any }
+@icon-bond-aromatic: '\e007'; // ''
+#bond-aromatic:before { content: @icon-bond-aromatic }
+@icon-bond-crossed: '\e008'; // ''
+#bond-crossed:before { content: @icon-bond-crossed }
+@icon-bond-double: '\e009'; // ''
+#bond-double:before { content: @icon-bond-double }
+@icon-bond-doublearomatic: '\e00a'; // ''
+#bond-doublearomatic:before { content: @icon-bond-doublearomatic }
+@icon-bond-down: '\e00b'; // ''
+#bond-down:before { content: @icon-bond-down }
+@icon-bond-single: '\e00c'; // ''
+#bond-single:before { content: @icon-bond-single }
+@icon-bond-singlearomatic: '\e00d'; // ''
+#bond-singlearomatic:before { content: @icon-bond-singlearomatic }
+@icon-bond-singledouble: '\e00e'; // ''
+#bond-singledouble:before { content: @icon-bond-singledouble }
+@icon-bond-triple: '\e00f'; // ''
+#bond-triple:before { content: @icon-bond-triple }
+@icon-bond-up: '\e010'; // ''
+#bond-up:before { content: @icon-bond-up }
+@icon-bond-updown: '\e011'; // ''
+#bond-updown:before { content: @icon-bond-updown }
+@icon-chain: '\e012'; // ''
+#chain:before { content: @icon-chain }
+@icon-charge-minus: '\e013'; // ''
+#charge-minus:before { content: @icon-charge-minus }
+@icon-charge-plus: '\e014'; // ''
+#charge-plus:before { content: @icon-charge-plus }
+@icon-cleanup: '\e015'; // ''
+#cleanup:before { content: @icon-cleanup }
+@icon-copy: '\e016'; // ''
+#copy:before { content: @icon-copy }
+@icon-cut: '\e017'; // ''
+#cut:before { content: @icon-cut }
+@icon-dearom: '\e018'; // ''
+#dearom:before { content: @icon-dearom }
+@icon-dropdown: '\e019'; // ''
+#dropdown:before { content: @icon-dropdown }
+@icon-erase: '\e01a'; // ''
+#erase:before { content: @icon-erase }
+@icon-generic-groups: '\e01b'; // ''
+#generic-groups:before { content: @icon-generic-groups }
+@icon-info: '\e01c'; // ''
+#info:before { content: @icon-info }
+@icon-logo: '\e01d'; // ''
+#logo:before { content: @icon-logo }
+@icon-new: '\e01e'; // ''
+#new:before { content: @icon-new }
+@icon-open: '\e01f'; // ''
+#open:before { content: @icon-open }
+@icon-paste: '\e020'; // ''
+#paste:before { content: @icon-paste }
+@icon-period-table: '\e021'; // ''
+#period-table:before { content: @icon-period-table }
+@icon-reaction-arrow: '\e022'; // ''
+#reaction-arrow:before { content: @icon-reaction-arrow }
+@icon-reaction-automap: '\e023'; // ''
+#reaction-automap:before { content: @icon-reaction-automap }
+@icon-reaction-map: '\e024'; // ''
+#reaction-map:before { content: @icon-reaction-map }
+@icon-reaction-plus: '\e025'; // ''
+#reaction-plus:before { content: @icon-reaction-plus }
+@icon-reaction-unmap: '\e026'; // ''
+#reaction-unmap:before { content: @icon-reaction-unmap }
+@icon-redo: '\e027'; // ''
+#redo:before { content: @icon-redo }
+@icon-rgroup-attpoints: '\e028'; // ''
+#rgroup-attpoints:before { content: @icon-rgroup-attpoints }
+@icon-rgroup-fragment: '\e029'; // ''
+#rgroup-fragment:before { content: @icon-rgroup-fragment }
+@icon-rgroup-label-A: '\e02a'; // ''
+#rgroup-label-A:before { content: @icon-rgroup-label-A }
+@icon-rgroup-label-B: '\e02b'; // ''
+#rgroup-label-B:before { content: @icon-rgroup-label-B }
+@icon-save: '\e02c'; // ''
+#save:before { content: @icon-save }
+@icon-select-fragment: '\e02d'; // ''
+#select-fragment:before { content: @icon-select-fragment }
+@icon-select-lasso: '\e02e'; // ''
+#select-lasso:before { content: @icon-select-lasso }
+@icon-select-rectangle: '\e02f'; // ''
+#select-rectangle:before { content: @icon-select-rectangle }
+@icon-settings: '\e030'; // ''
+#settings:before { content: @icon-settings }
+@icon-sgroup: '\e031'; // ''
+#sgroup:before { content: @icon-sgroup }
+@icon-template-0: '\e032'; // ''
+#template-0:before { content: @icon-template-0 }
+@icon-template-1: '\e033'; // ''
+#template-1:before { content: @icon-template-1 }
+@icon-template-2: '\e034'; // ''
+#template-2:before { content: @icon-template-2 }
+@icon-template-3: '\e035'; // ''
+#template-3:before { content: @icon-template-3 }
+@icon-template-4: '\e036'; // ''
+#template-4:before { content: @icon-template-4 }
+@icon-template-5: '\e037'; // ''
+#template-5:before { content: @icon-template-5 }
+@icon-template-6: '\e038'; // ''
+#template-6:before { content: @icon-template-6 }
+@icon-template-7: '\e039'; // ''
+#template-7:before { content: @icon-template-7 }
+@icon-template-custom: '\e002'; // ''
+#template-custom:before { content: @icon-template-custom }
+@icon-transform-flip-h: '\e03a'; // ''
+#transform-flip-h:before { content: @icon-transform-flip-h }
+@icon-transform-flip-v: '\e03b'; // ''
+#transform-flip-v:before { content: @icon-transform-flip-v }
+@icon-transform-rotate: '\e03c'; // ''
+#transform-rotate:before { content: @icon-transform-rotate }
+@icon-undo: '\e03d'; // ''
+#undo:before { content: @icon-undo }
+@icon-zoom-in: '\e03e'; // ''
+#zoom-in:before { content: @icon-zoom-in }
+@icon-zoom-out: '\e03f'; // ''
+#zoom-out:before { content: @icon-zoom-out }

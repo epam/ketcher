@@ -219,7 +219,7 @@ ui.onMouseDown_DropdownListItem = function (event)
     }
 };
 
-ui.defaultSelector = 'selector_last';
+ui.defaultSelector = 'select-last';
 
 ui.init = function (parameters, opts)
 {
@@ -342,6 +342,7 @@ ui.init = function (parameters, opts)
             this.removeClassName('highlightedItem');
         });
     });
+
     $('new').observe('click', ui.onClick_NewFile);
     $('open').observe('click', ui.onClick_OpenFile);
     $('save').observe('click', ui.onClick_SaveFile);
@@ -350,18 +351,18 @@ ui.init = function (parameters, opts)
     $('cut').observe('click', ui.onClick_Cut);
     $('copy').observe('click', ui.onClick_Copy);
     $('paste').observe('click', ui.onClick_Paste);
-    $('zoom_in').observe('click', ui.onClick_ZoomIn);
-    $('zoom_out').observe('click', ui.onClick_ZoomOut);
-    $('clean_up').observe('click', ui.onClick_CleanUp);
-    $('aromatize').observe('click', ui.onClick_Aromatize);
-    $('dearomatize').observe('click', ui.onClick_Dearomatize);
-    $('atom_table').observe('click', ui.onClick_ElemTableButton);
-    $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
-    $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
-    $('atom_reagenerics').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
+    $('zoom-in').observe('click', ui.onClick_ZoomIn);
+    $('zoom-out').observe('click', ui.onClick_ZoomOut);
+    $('cleanup').observe('click', ui.onClick_CleanUp);
+    $('arom').observe('click', ui.onClick_Aromatize);
+    $('dearom').observe('click', ui.onClick_Dearomatize);
+    $('period-table').observe('click', ui.onClick_ElemTableButton);
+    // $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
+    // $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
+    $('generic-groups').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
 
     // Client area events
-    this.client_area = $('client_area');
+    this.client_area = $('ketcher');
     this.client_area.observe('scroll', ui.onScroll_ClientArea);
 
     // Dialog events
@@ -371,71 +372,72 @@ ui.init = function (parameters, opts)
         el.observe('keyup', ui.onKeyPress_Dialog);
     });
 
+	// ! DROP ME
     // Atom properties dialog events
-    $('atom_label').observe('change', ui.onChange_AtomLabel);
-    $('atom_charge').observe('change', ui.onChange_AtomCharge);
-    $('atom_isotope').observe('change', ui.onChange_AtomIsotope);
-    $('atom_valence').observe('change', ui.onChange_AtomValence);
-    $('atom_prop_cancel').observe('click', function ()
-    {
-        ui.hideDialog('atom_properties');
-    });
-    $('atom_prop_ok').observe('click', function ()
-    {
-        ui.applyAtomProperties();
-    });
-    $('bond_prop_cancel').observe('click', function ()
-    {
-        ui.hideDialog('bond_properties');
-    });
-    $('bond_prop_ok').observe('click', function ()
-    {
-        ui.applyBondProperties();
-    });
+    // $('atom_label').observe('change', ui.onChange_AtomLabel);
+    // $('atom_charge').observe('change', ui.onChange_AtomCharge);
+    // $('atom_isotope').observe('change', ui.onChange_AtomIsotope);
+    // $('atom_valence').observe('change', ui.onChange_AtomValence);
+    // $('atom_prop_cancel').observe('click', function ()
+    // {
+    //     ui.hideDialog('atom_properties');
+    // });
+    // $('atom_prop_ok').observe('click', function ()
+    // {
+    //     ui.applyAtomProperties();
+    // });
+    // $('bond_prop_cancel').observe('click', function ()
+    // {
+    //     ui.hideDialog('bond_properties');
+    // });
+    // $('bond_prop_ok').observe('click', function ()
+    // {
+    //     ui.applyBondProperties();
+    // });
 
-    // S-group properties dialog events
-    $('sgroup_type').observe('change', ui.onChange_SGroupType);
-    $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
+    // // S-group properties dialog events
+    // $('sgroup_type').observe('change', ui.onChange_SGroupType);
+    // $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
 
-    // Label input events
-    $('input_label').observe('blur', function ()
-    {
-        this.hide();
-    });
-    $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
-    $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
+    // // Label input events
+    // $('input_label').observe('blur', function ()
+    // {
+    //     this.hide();
+    // });
+    // $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
+    // $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
 
-    // Load dialog events
-    $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
-    $('radio_open_from_file').observe('click', ui.onSelect_OpenFromFile);
-    $('input_mol').observe('keyup', ui.onChange_Input);
-    $('input_mol').observe('click', ui.onChange_Input);
-    $('read_cancel').observe('click', function ()
-    {
-        ui.hideDialog('open_file');
-    });
-    $('read_ok').observe('click', function ()
-    {
-        ui.loadMoleculeFromInput();
-    });
-    $('upload_mol').observe('submit', function ()
-    {
-        ui.hideDialog('open_file');
-    });
-    $('upload_cancel').observe('click', function ()
-    {
-        ui.hideDialog('open_file');
-    });
+    // // Load dialog events
+    // $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
+    // $('radio_open_from_file').observe('click', ui.onSelect_OpenFromFile);
+    // $('input_mol').observe('keyup', ui.onChange_Input);
+    // $('input_mol').observe('click', ui.onChange_Input);
+    // $('read_cancel').observe('click', function ()
+    // {
+    //     ui.hideDialog('open_file');
+    // });
+    // $('read_ok').observe('click', function ()
+    // {
+    //     ui.loadMoleculeFromInput();
+    // });
+    // $('upload_mol').observe('submit', function ()
+    // {
+    //     ui.hideDialog('open_file');
+    // });
+    // $('upload_cancel').observe('click', function ()
+    // {
+    //     ui.hideDialog('open_file');
+    // });
 
-    // Save dialog events
-    $('file_format').observe('change', ui.onChange_FileFormat);
-    $('save_ok').observe('click', function ()
-    {
-        ui.hideDialog('save_file');
-    });
+    // // Save dialog events
+    // $('file_format').observe('change', ui.onChange_FileFormat);
+    // $('save_ok').observe('click', function ()
+    // {
+    //     ui.hideDialog('save_file');
+    // });
 
 
-    var zoom_list = $('zoom_list');
+    var zoom_list = $('zoom-list');
     while (zoom_list.options.length > 0) {
         zoom_list.options.remove(0);
     }
@@ -466,8 +468,9 @@ ui.init = function (parameters, opts)
         });
         document.title += ' (standalone)';
     } else {
-            $('upload_mol').action = ui.api_path + 'open';
-            $('download_mol').action = ui.api_path + 'save';
+		// ! DROP ME
+            //$('upload_mol').action = ui.api_path + 'open';
+            //$('download_mol').action = ui.api_path + 'save';
     }
 
     // Init renderer
@@ -475,7 +478,7 @@ ui.init = function (parameters, opts)
     this.render =  new rnd.Render(this.client_area, ui.scale, opts);
     this.editor = new rnd.Editor(this.render);
 
-    this.selectMode('selector_lasso');
+    this.selectMode('select-lasso');
 
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
 
@@ -515,9 +518,10 @@ ui.toggleDropdownList = function (name)
 ui.onResize_Ketcher = function ()
 {
     if (Prototype.Browser.IE)
-        ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
+    //     ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
 
-    ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
+    // ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
+	console.log('resize');
 };
 
 //
@@ -596,16 +600,64 @@ ui.parseCTFile = function (molfile, check_empty_line)
 //
 // Mode functions
 //
+// moved from 'rnd.Editor.prototype' as it concerns UI level only
+// TODO: rewrite declaratively
+// ! DROP ME atomLabel, bondType, template-parseInt
+ui.editorToolFor = function(mode) {
+    if (mode == 'select-lasso') {
+        return new rnd.Editor.LassoTool(this.editor, 0);
+    } else if (mode == 'select-rectangle') {
+        return new rnd.Editor.LassoTool(this.editor, 1);
+    } else if (mode == 'select-fragment') {
+        return new rnd.Editor.LassoTool(this.editor, 1, true);
+    } else if (mode == 'erase') {
+        return new rnd.Editor.EraserTool(this.editor, 1); // TODO last selector mode is better
+    } else if (mode.startsWith('atom-')) {
+        return new rnd.Editor.AtomTool(this.editor, ui.atomLabel(mode));
+    } else if (mode.startsWith('bond-')) {
+        return new rnd.Editor.BondTool(this.editor, ui.bondType(mode));
+    } else if (mode == 'chain') {
+        return new rnd.Editor.ChainTool(this.editor);
+    } else if (mode.startsWith('template')) {
+        return new rnd.Editor.TemplateTool(this.editor, rnd.templates[parseInt(mode.split('_')[1])]);
+    } else if (mode.startsWith('customtemplate_')) {
+        return new rnd.Editor.TemplateTool(this.editor, rnd.customtemplates[parseInt(mode.split('_')[1])]);
+    } else if (mode == 'charge-plus') {
+        return new rnd.Editor.ChargeTool(this.editor, 1);
+    } else if (mode == 'charge-minus') {
+        return new rnd.Editor.ChargeTool(this.editor, -1);
+    } else if (mode == 'sgroup') {
+        return new rnd.Editor.SGroupTool(this.editor);
+    } else if (mode == 'paste') {
+        return new rnd.Editor.PasteTool(this.editor);
+    } else if (mode == 'reaction-arrow') {
+        return new rnd.Editor.ReactionArrowTool(this.editor);
+    } else if (mode == 'reaction-plus') {
+        return new rnd.Editor.ReactionPlusTool(this.editor);
+    } else if (mode == 'reaction-map') {
+        return new rnd.Editor.ReactionMapTool(this.editor);
+    } else if (mode == 'reaction-unmap') {
+        return new rnd.Editor.ReactionUnmapTool(this.editor);
+    } else if (mode == 'rgroup-label') {
+        return new rnd.Editor.RGroupAtomTool(this.editor);
+    } else if (mode == 'rgroup-fragment') {
+        return new rnd.Editor.RGroupFragmentTool(this.editor);
+    } else if (mode == 'rgroup-attpoints') {
+        return new rnd.Editor.APointTool(this.editor);
+    } else if (mode.startsWith('transform-rotate')) {
+        return new rnd.Editor.RotateTool(this.editor);
+    }
+    return null;
+};
+
 ui.selectMode = function (mode)
 {
-    if (mode.startsWith('selector_')) {
-        if (mode == 'selector_last') {
-            mode = this.selector_last || 'selector_lasso';
-        } else {
-            this.selector_last = mode;
-        }
-    }
-    if (mode == 'reaction_automap') {
+	if (mode == 'select-last')
+        mode = this.selector_last || 'select-lasso';
+	if (mode.startsWith('select-'))
+		this.selector_last = mode;
+
+    if (mode == 'reaction-automap') {
         ui.showAutomapProperties({
             onOk: function(mode) {
 		var mol = ui.ctab;
@@ -656,12 +708,12 @@ ui.selectMode = function (mode)
             return;
 
         if (ui.editor.hasSelection()) {
-            if (mode == 'select_erase') {
+            if (mode == 'select-erase') {
                 ui.removeSelected();
                 return;
             }
             // BK: TODO: add this ability to mass-change atom labels to the keyboard handler
-            if (mode.startsWith('atom_')) {
+            if (mode.startsWith('atom-')) {
                 ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, ui.atomLabel(mode)), true);
                 ui.render.update();
                 return;
@@ -676,7 +728,7 @@ ui.selectMode = function (mode)
                 return;
             }
         } */
-        if (mode.startsWith('transform_flip_')) {
+        if (mode.startsWith('transform-flip-')) {
             if (mode.endsWith('h')) {
                 ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(), 'horizontal'), true);
             } else {
@@ -698,7 +750,7 @@ ui.selectMode = function (mode)
             $(this.mode_id).removeClassName('buttonSelected');
     }
 
-    if (mode != 'transform_rotate')
+    if (mode != 'transform-rotate')
         this.editor.deselectAll();
 
     if (this.render.current_tool)
@@ -708,7 +760,7 @@ ui.selectMode = function (mode)
         this.mode_id = null;
         delete this.render.current_tool;
     } else {
-        this.render.current_tool = this.editor.toolFor(mode);
+        this.render.current_tool = this.editorToolFor(mode);
         this.mode_id = mode;
 
         button_id = this.mode_id.split('_')[0];
@@ -1566,18 +1618,19 @@ ui.removeSelected = function ()
 ui.hideBlurredControls = function ()
 {
     var ret = false;
-    [
-        'input_label',
-        'selector_dropdown_list',
-        'bond_dropdown_list',
-        'template_dropdown_list',
-        'customtemplate_dropdown_list',
-        'reaction_dropdown_list',
-        'rgroup_dropdown_list',
-        'transform_dropdown_list'
-    ].each(
-        function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
-    );
+	// ! DROP ME
+    // [
+    //     'input_label',
+    //     'selector_dropdown_list',
+    //     'bond_dropdown_list',
+    //     'template_dropdown_list',
+    //     'customtemplate_dropdown_list',
+    //     'reaction_dropdown_list',
+    //     'rgroup_dropdown_list',
+    //     'transform_dropdown_list'
+    // ].each(
+    //     function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
+    // );
     return ret;
 };
 

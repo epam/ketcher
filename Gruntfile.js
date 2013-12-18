@@ -7,16 +7,16 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		options: {
 			banner: grunt.file.read('script/banner.js'),
-			semver: '<%= pkg.name %>-<%= pkg.version %>',
-
-			libs: ['prototype-min.js', 'raphael.js'],
-			src: ['script/**',
+			src: ['script/**', 'style/**', 'icons/**',
 				  'Gruntfile.js', 'package.json',
 				  '.jshintrc', '.editorconfig'],
-			build: ['<%= concat.default.dest %>'],
+			libs: ['prototype-min.js', 'raphael.js'],
+			build: ['<%= concat.default.dest %>',
+				    '<%= less.default.dest %>',
+				    '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
 					  'ketcher.html', 'demo.html', 'templates.sdf',
-					  'ketcher.css', 'loading.gif', 'icons/**']
+					  'loading.gif']
 		},
 
 		concat: {
@@ -26,7 +26,8 @@ module.exports = function(grunt) {
 					banner: '<%= options.banner %>',
 					stripBanners: true
 				},
-				src: ['script/vendor/base64.js',
+				src: ['script/vendor/html5shiv.js',
+					  'script/vendor/base64.js',
 					  'script/vendor/keymaster.js',
 
 					  'script/util/*.js',
@@ -64,6 +65,48 @@ module.exports = function(grunt) {
 			}
 		},
 
+		less: {
+			default: {
+				options: {
+					cleancss: true
+				},
+				src: 'style/main.less',
+				dest: '<%= pkg.name %>.css'
+			},
+			dev: {
+				files: ['<%= less.default %>']
+			}
+		},
+
+		// TODO: path grunt-fontforge
+		svgicons2svgfont: {
+			options: {
+				font: '<%= pkg.name %>'
+			},
+			default: {
+				src: 'icons/*.svg',
+				dest: '.'
+			}
+		},
+		svg2ttf: {
+			default: {
+				src: '<%= pkg.name %>.svg',
+				dest: '.'
+			}
+		},
+		ttf2eot: {
+			default: {
+				src: '<%= pkg.name %>.ttf',
+				dest: '.'
+			}
+		},
+		ttf2woff: {
+			default: {
+				src: '<%= pkg.name %>.ttf',
+				dest: '.'
+			}
+		},
+
 		copy: {
 			libs: {
 				expand: true,
@@ -91,7 +134,7 @@ module.exports = function(grunt) {
 			},
 			build: {
 				options: {
-					archive: '<%= options.semver %>.zip'
+					archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
 				},
 				src: ['<%= options.build %>', '<%= options.libs %>',
 					  '<%= options.distrib %>'],
@@ -99,7 +142,7 @@ module.exports = function(grunt) {
 			},
 			build_with_sources: {
 				options: {
-					archive: '<%= options.semver %>-src.zip'
+					archive: '<%= pkg.name %>-<%= pkg.version %>-src.zip'
 				},
 				src: ['<%= compress.build.src %>', '<%= options.src %>'],
 				dest: '<%= pkg.name %>'
@@ -108,7 +151,7 @@ module.exports = function(grunt) {
 
 		clean: {
 			all: ['<%= options.libs %>', '<%= options.build %>',
-				  '<%= options.semver %>*.zip']
+				  '<%= pkg.name %>*.zip']
 		},
 
 		watch: {
@@ -119,18 +162,26 @@ module.exports = function(grunt) {
 				files: 'script/**/*.js',
 				tasks: 'concat'
 			},
+			css: {
+				files: 'style/**/*.less',
+				tasks: 'less:dev'
+			},
 			livereload: {
 				options: {
+					atBegin: false,
 					livereload: true
 				},
-				files: '<%= options.build %>'
+				files: ['<%= options.build %>']
 			}
 		}
 	});
 
 	require('load-grunt-tasks')(grunt);
 
-	grunt.registerTask('default', ['clean', 'uglify', 'copy:libs',
-								   'compress']);
-	grunt.registerTask('dev', ['clean', 'concat', 'copy:libs']);
+	grunt.registerTask('font', ['svgicons2svgfont',
+								'svg2ttf', 'ttf2eot', 'ttf2woff']);
+	grunt.registerTask('default', ['clean', 'uglify', 'less:default',
+								   'font', 'copy:libs', 'compress']);
+	grunt.registerTask('dev', ['clean', 'concat', 'less:dev',
+							   'font', 'copy:libs']);
 };

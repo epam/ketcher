@@ -1,0 +1,116 @@
+@import 'params';
+@import 'reset';
+@import 'icons';
+@import 'mixins';
+
+html {
+	height: 100%;
+	width: 100%;
+	background-color: white;
+}
+
+body {
+	.min-height(100%);
+	position: relative;
+}
+
+@icon-size: 32px;
+@icon-padding: 4px;
+@app-gap: 3px;
+@toolbar-gap: 5px;
+@toolbar-size: @icon-size + 2 * @icon-padding; // + border?
+@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+
+main {
+	position: absolute;
+	top: @canvas-padding;
+	left: @canvas-padding;
+	right: @canvas-padding;
+	bottom: @canvas-padding;
+	border: #ccc 1px solid;
+	.border-radius(5px);
+	overflow: auto;
+
+	// svg {
+	// 	display: block;
+	// }
+}
+
+#mainmenu {
+	position: absolute;
+	top: @app-gap;
+	left: @canvas-padding;
+	right: @canvas-padding;
+	height: @toolbar-size;
+}
+
+#toolbox {
+	position: absolute;
+	left: @app-gap;
+	top: @canvas-padding;
+	bottom: @canvas-padding;
+	width: @toolbar-size;
+
+	menu {
+		height: @toolbar-size;
+		width: @toolbar-size;
+		overflow: hidden;
+	}
+}
+
+#template {
+	position: absolute;
+	bottom: @app-gap;
+	left: @canvas-padding;
+	right: @canvas-padding;
+	height: @toolbar-size;
+}
+
+#elements {
+	position: absolute;
+	right: @app-gap;
+	top: @canvas-padding;
+	bottom: @canvas-padding;
+	width: @toolbar-size;
+}
+
+#meta {
+	position: absolute;
+	right: 0;
+}
+
+#period-table {
+	position: absolute;
+	bottom: 0;
+}
+
+[role='toolbar'] {
+	li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		.inline-block;
+	}
+
+	menu {
+		.inline-block;
+		margin: 0;
+		padding: 0;
+	}
+
+	button {
+		margin: 0;
+		width: @toolbar-size;
+		height: @toolbar-size;
+		background: white;
+		//border: 0;
+		overflow: hidden;
+		display: block;
+		color: #555;
+		&:before {
+			font-size: @icon-size;
+			padding: @icon-padding;
+			font-family: 'ketcher';
+		}
+	}
+}

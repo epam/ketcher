@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000px"
+   height="1000px"
+   viewBox="0 0 1000 1000"
+   version="1.1"
+   id="svg3700"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="bond_singledouble.svg">
+  <metadata
+     id="metadata3721">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3719" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="985"
+     id="namedview3717"
+     showgrid="false"
+     inkscape:zoom="0.236"
+     inkscape:cx="-36.016949"
+     inkscape:cy="502.11864"
+     inkscape:window-x="-2"
+     inkscape:window-y="16"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3700" />
+  <path
+     sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccc"
+     inkscape:connector-curvature="0"
+     d="m 407.50181,572.41513 -17.15373,-33.0935 209.11717,-109.4672 17.15373,33.04073 z M 765.83004,386.20479 748.67631,353.16406 957.84627,243.64409 975,276.7376 z M 42.100958,763.21739 25.000008,730.12389 234.11718,620.6567 251.27091,653.69742 z M 679.74471,691.11895 662.59098,658.02544 871.76093,548.55825 888.91466,581.59897 z M 326.06117,877.32929 308.90744,844.23578 518.02461,734.71581 535.17834,767.75654 z M 486.62009,265.2314 469.46636,232.1379 678.58353,122.67071 l 17.15373,33.04072 z m -358.38101,190.80227 -17.15374,-33.04073 209.11718,-109.51997 17.15373,33.04072 z"
+     style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     id="path3715" />
+</svg>

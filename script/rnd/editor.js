@@ -80,53 +80,6 @@ rnd.Editor.prototype.getSelection = function(explicit) {
     }
     return selection;
 };
-rnd.Editor.prototype.toolFor = function(tool) {
-    if (tool == 'selector_lasso') {
-        return new rnd.Editor.LassoTool(this, 0);
-    } else if (tool == 'selector_square') {
-        return new rnd.Editor.LassoTool(this, 1);
-    } else if (tool == 'selector_fragment') {
-        return new rnd.Editor.LassoTool(this, 1, true);
-    } else if (tool == 'select_erase') {
-        return new rnd.Editor.EraserTool(this, 1); // TODO last selector mode is better
-    } else if (tool.startsWith('atom_')) {
-        return new rnd.Editor.AtomTool(this, ui.atomLabel(tool)); // TODO should not refer ui directly, re-factoring needed
-    } else if (tool.startsWith('bond_')) {
-        return new rnd.Editor.BondTool(this, ui.bondType(tool)); // TODO should not refer ui directly, re-factoring needed
-    } else if (tool == 'chain') {
-        return new rnd.Editor.ChainTool(this);
-    } else if (tool.startsWith('template_')) {
-        return new rnd.Editor.TemplateTool(this, rnd.templates[parseInt(tool.split('_')[1])]);
-    } else if (tool.startsWith('customtemplate_')) {
-        return new rnd.Editor.TemplateTool(this, rnd.customtemplates[parseInt(tool.split('_')[1])]);
-    } else if (tool == 'charge_plus') {
-        return new rnd.Editor.ChargeTool(this, 1);
-    } else if (tool == 'charge_minus') {
-        return new rnd.Editor.ChargeTool(this, -1);
-    } else if (tool == 'sgroup') {
-        return new rnd.Editor.SGroupTool(this);
-    } else if (tool == 'paste') {
-        return new rnd.Editor.PasteTool(this);
-    } else if (tool == 'reaction_arrow') {
-        return new rnd.Editor.ReactionArrowTool(this);
-    } else if (tool == 'reaction_plus') {
-        return new rnd.Editor.ReactionPlusTool(this);
-    } else if (tool == 'reaction_map') {
-        return new rnd.Editor.ReactionMapTool(this);
-    } else if (tool == 'reaction_unmap') {
-        return new rnd.Editor.ReactionUnmapTool(this);
-    } else if (tool == 'rgroup_label') {
-        return new rnd.Editor.RGroupAtomTool(this);
-    } else if (tool == 'rgroup_fragment') {
-        return new rnd.Editor.RGroupFragmentTool(this);
-    } else if (tool == 'rgroup_attpoints') {
-        return new rnd.Editor.APointTool(this);
-    } else if (tool.startsWith('transform_rotate')) {
-        return new rnd.Editor.RotateTool(this);
-    }
-    return null;
-};
-
 
 rnd.Editor.SelectionHelper = function(editor) {
     this.editor = editor;
@@ -1755,4 +1708,3 @@ rnd.Editor.RotateTool.prototype.OnCancel = function() {
     // don't reset the selection when leaving the canvas, see KETCHER-632
     // this.editor._selectionHelper.setSelection();
 };
-

@@ -1,6 +1,8 @@
 /node_modules
 /extra
-/ketcher.js
+/ketcher.*
+/!ketcher.html
+/!ketcher.py
 /*.zip
 
 # dont want to hardcode the short living 'prototype.js' here

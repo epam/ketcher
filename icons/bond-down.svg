@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1000px"
+   height="1000px"
+   viewBox="0 0 1000 1000"
+   version="1.1"
+   id="svg3483"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="bond_down.svg">
+  <metadata
+     id="metadata3508">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3506" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="985"
+     id="namedview3504"
+     showgrid="false"
+     inkscape:zoom="0.236"
+     inkscape:cx="-36.016949"
+     inkscape:cy="502.11864"
+     inkscape:window-x="-2"
+     inkscape:window-y="16"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3483" />
+  <path
+     sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccc"
+     inkscape:connector-curvature="0"
+     d="M 935.1657,651.47986 599.14704,136.37837 638.98135,110.39833 975,625.49322 z M 823.74444,681.96584 526.55071,226.22657 566.29265,200.20694 863.48638,655.84066 z M 712.32317,712.35286 453.8884,316.03517 493.66993,290.08812 752.11131,686.40581 z M 600.86234,742.6607 381.14693,405.67226 420.94165,379.65263 640.65706,716.5883 z M 489.50045,773.00814 308.47142,495.3951 348.26614,469.3227 529.2424,746.98851 z M 378.13857,803.35557 235.8487,585.01239 l 39.74194,-25.96685 142.2371,218.2904 z M 266.7635,833.61724 163.18638,674.76161 l 39.74855,-25.91407 103.5771,158.85563 z m -111.50703,30.43319 -64.864339,-99.4868 39.794719,-26.01962 64.86434,99.43402 z M 51.16478,889.60166 25.000011,849.44408 64.801335,823.51682 90.966087,863.6678 z"
+     style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     id="path3502" />
+</svg>

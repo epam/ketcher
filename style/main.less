@@ -2,6 +2,7 @@
 @import 'reset';
 @import 'icons';
 @import 'mixins';
+@import 'elements';
 
 html {
 	height: 100%;
@@ -14,12 +15,13 @@ body {
 	position: relative;
 }
 
-@icon-size: 32px;
+@icon-size: 26px;
 @icon-padding: 4px;
 @app-gap: 3px;
 @toolbar-gap: 5px;
 @toolbar-size: @icon-size + 2 * @icon-padding; // + border?
 @canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+@active-color: #66afe9;
 
 main {
 	position: absolute;
@@ -27,7 +29,7 @@ main {
 	left: @canvas-padding;
 	right: @canvas-padding;
 	bottom: @canvas-padding;
-	border: #ccc 1px solid;
+	border: #ccc 1px solid;		// ? base radius
 	.border-radius(5px);
 	overflow: auto;
 
@@ -42,6 +44,14 @@ main {
 	left: @canvas-padding;
 	right: @canvas-padding;
 	height: @toolbar-size;
+
+	menu {
+		padding: 0 20px 0 15px;
+		border-right: 1px solid #ccc;
+		&:first-child {
+			padding-left: 0;
+		}
+	}
 }
 
 #toolbox {
@@ -77,6 +87,8 @@ main {
 #meta {
 	position: absolute;
 	right: 0;
+	padding: 0 !important;
+	border: 0 !important;
 }
 
 #period-table {
@@ -99,18 +111,85 @@ main {
 	}
 
 	button {
+		.control;
 		margin: 0;
 		width: @toolbar-size;
 		height: @toolbar-size;
-		background: white;
-		//border: 0;
+		//line-height: @toolbar-size;
+		text-align: center;
+
+		border: 0;
 		overflow: hidden;
 		display: block;
-		color: #555;
+		font: ~"0/0" a;
+		//.text-hide(transparent);
+
 		&:before {
+			display: inline-block;
+			vertical-align: middle;
 			font-size: @icon-size;
 			padding: @icon-padding;
 			font-family: 'ketcher';
 		}
 	}
+}
+
+
+select {
+	//.inline-block;
+	display: block;
+	//width: 100%;
+	height: 34px;
+	padding: 5px 2px 5px 4px;
+	font-size: 14px;
+	line-height: 20 / 14;
+
+	border: 1px solid #ccc;
+	.box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+	//.transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+	.control;
+}
+
+.hover-scale() {
+	.transition(transform, 0.1s, ease-out);
+	&:hover {
+		.scale(1.1);
+	}
+}
+
+.control() {
+	// selected
+	//background: #333;
+	//color: white;
+
+	color: #433;
+	//color: #555;
+	background-color: white; // ? war
+	//border: 1px solid #ccc;
+	.border-radius(4px);
+
+	&:hover {
+		.box-shadow(0 0 4px 3px rgba(0, 0, 0, .1)); // ie?
+	}
+	&:focus {
+		@color: @active-color;
+		border-color: @color;
+		outline: 0;
+		.box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @{color}");
+	}
+}
+
+#atom button {
+	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+	font-size: 19px;
+}
+
+#template button:hover, #atom button:hover {
+	// just for example
+	text-shadow: 1px 1px 3px @active-color;
+}
+
+#mainmenu button {
+	// just for example too
+	.hover-scale;
 }

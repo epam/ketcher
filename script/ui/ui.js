@@ -62,7 +62,7 @@ ui.initButton = function (el)
 {
     el.observe(EventMap['mousedown'], function (event)
     {
-        if (this.hasClassName('buttonDisabled'))
+        if (this.hasAttribute('disabled'))
             return;
         this.addClassName('buttonPressed');
         // manually toggle off all active dropdowns
@@ -75,11 +75,13 @@ ui.initButton = function (el)
     });
     el.observe('mouseover', function ()
     {
-        if (this.hasClassName('buttonDisabled'))
+        if (this.hasAttribute('disabled'))
             return;
         this.addClassName('buttonHighlight');
 
-        var status = this.getAttribute('title');
+		//! TITLE ME
+        // var status = this.getAttribute('title');
+		var status = this.innerHTML;
         if (status != null)
             window.status = status;
     });
@@ -180,9 +182,10 @@ ui.initTemplates = function ()
 
 ui.onClick_SideButton = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
-    if (this.hasClassName('stateButton') && this.hasClassName('buttonSelected'))
+
+    if (this.hasClassName('stateButton') && this.hasClassName('selected'))
     {
         ui.toggleDropdownList(this.id + '_dropdown');
     } else {
@@ -192,7 +195,7 @@ ui.onClick_SideButton = function ()
 
 ui.onClick_DropdownButton = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.toggleDropdownList(this.id);
 };
@@ -232,7 +235,7 @@ ui.init = function (parameters, opts)
         this.render.update();
         this.undoStack.clear();
         this.redoStack.clear();
-        this.updateActionButtons();
+        this.updateHistoryButtons();
         this.selectMode(ui.defaultSelector);
         return;
     }
@@ -263,9 +266,9 @@ ui.init = function (parameters, opts)
 
     // OS X specific stuff
     if (ui.is_osx) {
-        $$('.toolButton, .toolButton > img, .sideButton').each(function (button)
-        {
-            button.title = button.title.replace("Ctrl", "Cmd");
+        buttons.each(function (button) {
+			if (button.title)
+				button.title = button.title.replace("Ctrl", "Cmd");
         }, this);
     }
 
@@ -319,17 +322,20 @@ ui.init = function (parameters, opts)
     document.observe(EventMap['mouseup'], ui.onMouseUp_Ketcher);
 
     // Button events
-    $$('.toolButton').each(ui.initButton);
-    $$('.modeButton').each(function (el)
+	var buttons = $$('[role=toolbar] button');
+
+    buttons.each(function (el)
     {
         ui.initButton(el);
-        if (el.identify() != 'atom_table' && el.identify() != 'atom_reagenerics')
-            el.observe('click', ui.onClick_SideButton); // TODO need some other way, in general tools should be pluggable
+        if (!ui.isToolButton(el))
+            el.observe('click', ui.onClick_SideButton);
     });
+
     $$('.dropdownButton').each(function (el)
     {
         el.observe('click', ui.onClick_DropdownButton);
     });
+
     $$('.dropdownListItem').each(function (el)
     {
         el.observe(EventMap['mousedown'], ui.onMouseDown_DropdownListItem);
@@ -361,6 +367,10 @@ ui.init = function (parameters, opts)
     // $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
     $('generic-groups').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
 
+	// Disable undo-redo
+	// $('undo').setAttribute('disabled', true);
+	// $('redo').setAttribute('disabled', true);
+
     // Client area events
     this.client_area = $('ketcher');
     this.client_area.observe('scroll', ui.onScroll_ClientArea);
@@ -372,7 +382,7 @@ ui.init = function (parameters, opts)
         el.observe('keyup', ui.onKeyPress_Dialog);
     });
 
-	// ! DROP ME
+	// ! DIALOG ME
     // Atom properties dialog events
     // $('atom_label').observe('change', ui.onChange_AtomLabel);
     // $('atom_charge').observe('change', ui.onChange_AtomCharge);
@@ -461,16 +471,16 @@ ui.init = function (parameters, opts)
 
     if (this.standalone) {
         $$('.serverRequired').each(function(el) {
-            if (el.hasClassName('toolButton'))
-                el.addClassName('buttonDisabled');
+            if (ui.isToolButton(el)) // .hasClassName('toolButton')
+                el.setAttribute('disabled', true);
             else
                 el.hide();
         });
         document.title += ' (standalone)';
     } else {
-		// ! DROP ME
-            //$('upload_mol').action = ui.api_path + 'open';
-            //$('download_mol').action = ui.api_path + 'save';
+		// ! DIALOG ME
+        //$('upload_mol').action = ui.api_path + 'open';
+        //$('download_mol').action = ui.api_path + 'save';
     }
 
     // Init renderer
@@ -487,6 +497,25 @@ ui.init = function (parameters, opts)
     this.render.update();
 
     this.initialized = true;
+};
+
+
+ui.isToolButton = function (el) {
+	return !!el.up('#mainmenu') || el.identify() == 'period-table' ||
+		el.identify() == 'generic-groups';
+};
+
+ui.updateHistoryButtons = function ()
+{
+    if (ui.undoStack.length == 0)
+        $('undo').setAttribute('disabled', true);
+    else
+        $('undo').removeAttribute('disabled');
+
+    if (ui.redoStack.length == 0)
+        $('redo').setAttribute('disabled', true);
+    else
+        $('redo').removeAttribute('disabled');
 };
 
 ui.showDialog = function (name)
@@ -602,7 +631,6 @@ ui.parseCTFile = function (molfile, check_empty_line)
 //
 // moved from 'rnd.Editor.prototype' as it concerns UI level only
 // TODO: rewrite declaratively
-// ! DROP ME atomLabel, bondType, template-parseInt
 ui.editorToolFor = function(mode) {
     if (mode == 'select-lasso') {
         return new rnd.Editor.LassoTool(this.editor, 0);
@@ -619,9 +647,9 @@ ui.editorToolFor = function(mode) {
     } else if (mode == 'chain') {
         return new rnd.Editor.ChainTool(this.editor);
     } else if (mode.startsWith('template')) {
-        return new rnd.Editor.TemplateTool(this.editor, rnd.templates[parseInt(mode.split('_')[1])]);
-    } else if (mode.startsWith('customtemplate_')) {
-        return new rnd.Editor.TemplateTool(this.editor, rnd.customtemplates[parseInt(mode.split('_')[1])]);
+        return new rnd.Editor.TemplateTool(this.editor, rnd.templates[parseInt(mode.split('-')[1])]);
+    } else if (mode.startsWith('customtemplate')) {
+        return new rnd.Editor.TemplateTool(this.editor, rnd.customtemplates[parseInt(mode.split('-')[1])]);
     } else if (mode == 'charge-plus') {
         return new rnd.Editor.ChargeTool(this.editor, 1);
     } else if (mode == 'charge-minus') {
@@ -704,7 +732,7 @@ ui.selectMode = function (mode)
     }
 
     if (mode != null) {
-        if ($(mode).hasClassName('buttonDisabled'))
+        if ($(mode).hasAttribute('disabled'))
             return;
 
         if (ui.editor.hasSelection()) {
@@ -740,14 +768,14 @@ ui.selectMode = function (mode)
     }
 
     if (this.mode_id != null && this.mode_id != mode) {
-        var button_id = this.mode_id.split('_')[0];
+        var button_id = this.mode_id.split('-')[0];
         var state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
 
         if (state_button) {
             if (mode && !mode.startsWith(button_id))
-                $(button_id).removeClassName('buttonSelected');
+                $(button_id).removeClassName('selected');
         } else
-            $(this.mode_id).removeClassName('buttonSelected');
+            $(this.mode_id).removeClassName('selected');
     }
 
     if (mode != 'transform-rotate')
@@ -763,13 +791,13 @@ ui.selectMode = function (mode)
         this.render.current_tool = this.editorToolFor(mode);
         this.mode_id = mode;
 
-        button_id = this.mode_id.split('_')[0];
+        button_id = this.mode_id.split('-')[0];
         state_button = ($(button_id) && $(button_id).hasClassName('stateButton')) || false;
 
         if (state_button)
-            $(button_id).addClassName('buttonSelected');
+            $(button_id).addClassName('selected');
         else
-            $(this.mode_id).addClassName('buttonSelected');
+            $(this.mode_id).addClassName('selected');
     }
 };
 
@@ -824,7 +852,7 @@ ui.atomLabel = function (mode)
 //
 ui.onClick_NewFile = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     ui.selectMode(ui.defaultSelector);
@@ -884,8 +912,8 @@ ui.keyboardShortcuts = {
     copy: 'ctrl+C',
     cut: 'ctrl+X',
     paste: 'ctrl+V',
-    zoom_in: '=, shift+=, plus, shift+plus, equals, shift+equals',
-    zoom_out: '-, minus',
+    'zoom-in': '=, shift+=, plus, shift+plus, equals, shift+equals',
+    'zoom-out': '-, minus',
     undo: 'ctrl+Z',
     redo: 'ctrl+shift+Z,ctrl+Y',
     bond_tool_any: '0',
@@ -932,8 +960,8 @@ ui.customtemplate_tool_modes = [];
 
 ui.keyboardActions = {
     // sample: function(event, handler) { do_sample(); },
-    zoom_in: function() { ui.onClick_ZoomIn.call($('zoom_in')); },
-    zoom_out: function() { ui.onClick_ZoomOut.call($('zoom_out')); },
+    'zoom-in': function() { ui.onClick_ZoomIn.call($('zoom-in')); },
+    'zoom-out': function() { ui.onClick_ZoomOut.call($('zoom-out')); },
     copy: function() { ui.onClick_Copy.call($('copy')); },
     cut: function() { ui.onClick_Cut.call($('cut')); },
     paste: function() { ui.onClick_Paste.call($('paste')); },
@@ -1072,7 +1100,7 @@ ui.onKeyUp_InputLabel = function (event)
 //
 ui.onClick_OpenFile = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.showDialog('open_file');
     $('radio_open_from_input').checked = true;
@@ -1240,7 +1268,7 @@ ui.onChange_Input = function ()
 //
 ui.onClick_SaveFile = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     $('file_format').value = 'mol';
     $('file_format_inchi').disabled = ui.standalone;
@@ -1282,14 +1310,14 @@ ui.onChange_FileFormat = function (event)
 //
 ui.onClick_ZoomIn = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.zoomSet(ui.zoomIdx + 1);
 };
 
 ui.onClick_ZoomOut = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.zoomSet(ui.zoomIdx - 1);
 };
@@ -1300,16 +1328,16 @@ ui.zoomSet = function (idx)
         throw new Error ("Zoom index out of range");
 
     if (idx >= ui.zoomValues.length - 1)
-        $('zoom_in').addClassName('buttonDisabled');
+        $('zoom-in').setAttribute('disabled', true);
     else
-        $('zoom_in').removeClassName('buttonDisabled');
+        $('zoom-in').removeAttribute('disabled');
     if (idx <= 0)
-        $('zoom_out').addClassName('buttonDisabled');
+        $('zoom-out').setAttribute('disabled', true);
     else
-        $('zoom_out').removeClassName('buttonDisabled');
+        $('zoom-out').removeAttribute('disabled');
     ui.zoomIdx = idx;
     ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.getStructCenter(ui.editor.getSelection()));
-    zoom_list.selectedIndex = ui.zoomIdx;
+    $('zoom-list').selectedIndex = ui.zoomIdx;
     ui.render.update();
 };
 
@@ -1376,7 +1404,7 @@ ui.setScrollOffsetRel = function (dx, dy) {
 //
 ui.onClick_CleanUp = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     var atoms = util.array(ui.editor.getSelection(true).atoms);
     var selective = atoms.length > 0;
@@ -1422,7 +1450,7 @@ ui.onClick_CleanUp = function ()
 
 ui.onClick_Aromatize = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     try {
@@ -1436,7 +1464,7 @@ ui.onClick_Aromatize = function ()
 
 ui.onClick_Dearomatize = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     try {
@@ -1473,8 +1501,9 @@ ui.scrollTop = null;
 
 ui.onScroll_ClientArea = function(event)
 {
-    if ($('input_label').visible())
-        $('input_label').hide();
+	// ! DIALOG ME
+    // if ($('input_label').visible())
+    //      $('input_label').hide();
 
     ui.scrollLeft = ui.client_area.scrollLeft;
     ui.scrollTop = ui.client_area.scrollTop;
@@ -1989,7 +2018,7 @@ ui.showAutomapProperties = function(params)
 
 ui.onClick_ElemTableButton = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.showElemTable({
         onOk: function() {
@@ -2131,16 +2160,16 @@ ui.isClipboardEmpty = function ()
 ui.updateClipboardButtons = function ()
 {
     if (ui.isClipboardEmpty())
-        $('paste').addClassName('buttonDisabled');
+        $('paste').setAttribute('disabled', true);
     else
-        $('paste').removeClassName('buttonDisabled');
+        $('paste').removeAttribute('disabled');
 
     if (ui.editor.hasSelection(true)) {
-        $('copy').removeClassName('buttonDisabled');
-        $('cut').removeClassName('buttonDisabled');
+        $('copy').removeAttribute('disabled');
+        $('cut').removeAttribute('disabled');
     } else {
-        $('copy').addClassName('buttonDisabled');
-        $('cut').addClassName('buttonDisabled');
+        $('copy').setAttribute('disabled', true);
+        $('cut').setAttribute('disabled', true);
     }
 };
 
@@ -2279,7 +2308,7 @@ ui.structToClipboard = function (clipboard, struct, selection)
 
 ui.onClick_Cut = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     if (!ui.copy())
@@ -2289,7 +2318,7 @@ ui.onClick_Cut = function ()
 
 ui.onClick_Copy = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     if (!ui.copy())
@@ -2299,14 +2328,14 @@ ui.onClick_Copy = function ()
 
 ui.onClick_Paste = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
     ui.selectMode('paste');
 };
 
 ui.onClick_Undo = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     ui.undo();
@@ -2314,7 +2343,7 @@ ui.onClick_Undo = function ()
 
 ui.onClick_Redo = function ()
 {
-    if (this.hasClassName('buttonDisabled'))
+    if (this.hasAttribute('disabled'))
         return;
 
     ui.redo();

@@ -96,6 +96,12 @@ main {
 	bottom: 0;
 }
 
+#elements, #toolbox {
+	li {
+		margin-bottom: 4px;  // ? TODO: shadow-solution
+	}
+}
+
 [role='toolbar'] {
 	li {
 		list-style: none;
@@ -131,6 +137,10 @@ main {
 			padding: @icon-padding;
 			font-family: 'ketcher';
 		}
+
+		&[disabled] {
+			color: #baa;		// ? color-disabled
+		}
 	}
 }
 
@@ -152,15 +162,29 @@ select {
 
 .hover-scale() {
 	.transition(transform, 0.1s, ease-out);
-	&:hover {
-		.scale(1.1);
+	&:not([disabled]):hover {
+		.scale(1.2);
 	}
 }
 
+.hover-shadow() {
+	&:not([disabled]):hover {
+		.box-shadow(0 0 4px 3px rgba(0, 0, 0, .1)); // ie?
+	}
+}
+
+.active-shadow() {
+	@color: @active-color;
+	border-color: @color;
+	outline: 0;
+	.box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @{color}");
+}
+
 .control() {
-	// selected
-	//background: #333;
-	//color: white;
+	&.selected {
+		background: #333;
+		color: white;
+	}
 
 	color: #433;
 	//color: #555;
@@ -168,20 +192,21 @@ select {
 	//border: 1px solid #ccc;
 	.border-radius(4px);
 
-	&:hover {
-		.box-shadow(0 0 4px 3px rgba(0, 0, 0, .1)); // ie?
-	}
+	.hover-shadow;
+
 	&:focus {
-		@color: @active-color;
-		border-color: @color;
-		outline: 0;
-		.box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @{color}");
+		.active-shadow;
 	}
 }
 
 #atom button {
 	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
 	font-size: 19px;
+	&.selected {
+		.border-radius(15px);
+		.active-shadow;
+		background: inherit;
+	}
 }
 
 #template button:hover, #atom button:hover {

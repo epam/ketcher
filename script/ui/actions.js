@@ -130,7 +130,7 @@ ui.Action.fromAtomsAttrs = function(ids, attrs, reset)
 		value = attrs[key];
 	    else if (reset)
 		value = chem.Struct.Atom.attrGetDefault(key);
-	    else 
+	    else
 		continue;
 	    action.addOp(new ui.Action.OpAtomAttr(id, key, value));
 	}
@@ -1250,7 +1250,7 @@ ui.addUndoAction = function (action, check_dummy)
         ui.redoStack.clear();
         if (ui.undoStack.length > ui.HISTORY_LENGTH)
             ui.undoStack.splice(0, 1);
-        ui.updateActionButtons();
+        ui.updateHistoryButtons();
         ui.actionComplete();
     }
 };
@@ -1260,21 +1260,8 @@ ui.removeDummyAction = function ()
     if (ui.undoStack.length != 0 && ui.undoStack.last().isDummy())
     {
         ui.undoStack.pop();
-        ui.updateActionButtons();
+        ui.updateHistoryButtons();
     }
-};
-
-ui.updateActionButtons = function ()
-{
-    if (ui.undoStack.length == 0)
-        $('undo').addClassName('buttonDisabled');
-    else
-        $('undo').removeClassName('buttonDisabled');
-
-    if (ui.redoStack.length == 0)
-        $('redo').addClassName('buttonDisabled');
-    else
-        $('redo').removeClassName('buttonDisabled');
 };
 
 ui.undo = function ()
@@ -1285,7 +1272,7 @@ ui.undo = function ()
     ui.editor.deselectAll();
     ui.redoStack.push(ui.undoStack.pop().perform());
     ui.render.update();
-    ui.updateActionButtons();
+    ui.updateHistoryButtons();
     ui.actionComplete();
 };
 
@@ -1297,7 +1284,7 @@ ui.redo = function ()
     ui.editor.deselectAll();
     ui.undoStack.push(ui.redoStack.pop().perform());
     ui.render.update();
-    ui.updateActionButtons();
+    ui.updateHistoryButtons();
     ui.actionComplete();
 };
 

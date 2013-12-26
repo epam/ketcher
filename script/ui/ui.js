@@ -79,7 +79,7 @@ ui.initButton = function (el)
             return;
         this.addClassName('buttonHighlight');
 
-		//! TITLE ME
+		//! TITLE ME, toolText
         // var status = this.getAttribute('title');
 		var status = this.innerHTML;
         if (status != null)
@@ -180,6 +180,16 @@ ui.initTemplates = function ()
     });
 };
 
+ui.initDialogs = function () {
+	new Ajax.Request(ui.base_url + 'dialogs.tmpl', {
+		method: 'GET',
+		asynchronous : false,
+		onComplete: function (res) {
+			ui.ketcher_window.insert(res.responseText);
+		}
+	});
+};
+
 ui.onClick_SideButton = function ()
 {
     if (this.hasAttribute('disabled'))
@@ -226,6 +236,11 @@ ui.defaultSelector = 'select-last';
 
 ui.init = function (parameters, opts)
 {
+	this.buttons = $$('[role=toolbar] button');
+	this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
+	this.client_area = $('ketcher');
+	console.log(ui.ketcher_window, ui.client_area);
+
     opts = new rnd.RenderOptions(opts);
     parameters = parameters || {};
     this.actionComplete = parameters.actionComplete || function(){};
@@ -310,8 +325,10 @@ ui.init = function (parameters, opts)
         });
     }
 
-    if (!this.standalone)
+    if (!this.standalone) {
     	this.initTemplates();
+		this.initDialogs();
+	}
 
     // Document events
     //document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -322,9 +339,7 @@ ui.init = function (parameters, opts)
     document.observe(EventMap['mouseup'], ui.onMouseUp_Ketcher);
 
     // Button events
-	var buttons = $$('[role=toolbar] button');
-
-    buttons.each(function (el)
+    ui.buttons.each(function (el)
     {
         ui.initButton(el);
         if (!ui.isToolButton(el))
@@ -366,13 +381,15 @@ ui.init = function (parameters, opts)
     // $('elem_table_list').observe('click', ui.onSelect_ElemTableNotList);
     // $('elem_table_notlist').observe('click', ui.onSelect_ElemTableNotList);
     $('generic-groups').observe('click', ui.onClick_ReaGenericsTableButton); // TODO need some other way, in general tools should be pluggable
+	$('info').observe('click', function (el) {
+		ui.showDialog('about_dialog');
+	});
 
-	// Disable undo-redo
-	// $('undo').setAttribute('disabled', true);
+	// Disable undo
+	$('undo').setAttribute('disabled', true);
 	// $('redo').setAttribute('disabled', true);
 
     // Client area events
-    this.client_area = $('ketcher');
     this.client_area.observe('scroll', ui.onScroll_ClientArea);
 
     // Dialog events
@@ -384,67 +401,67 @@ ui.init = function (parameters, opts)
 
 	// ! DIALOG ME
     // Atom properties dialog events
-    // $('atom_label').observe('change', ui.onChange_AtomLabel);
-    // $('atom_charge').observe('change', ui.onChange_AtomCharge);
-    // $('atom_isotope').observe('change', ui.onChange_AtomIsotope);
-    // $('atom_valence').observe('change', ui.onChange_AtomValence);
-    // $('atom_prop_cancel').observe('click', function ()
-    // {
-    //     ui.hideDialog('atom_properties');
-    // });
-    // $('atom_prop_ok').observe('click', function ()
-    // {
-    //     ui.applyAtomProperties();
-    // });
-    // $('bond_prop_cancel').observe('click', function ()
-    // {
-    //     ui.hideDialog('bond_properties');
-    // });
-    // $('bond_prop_ok').observe('click', function ()
-    // {
-    //     ui.applyBondProperties();
-    // });
+    $('atom_label').observe('change', ui.onChange_AtomLabel);
+    $('atom_charge').observe('change', ui.onChange_AtomCharge);
+    $('atom_isotope').observe('change', ui.onChange_AtomIsotope);
+    $('atom_valence').observe('change', ui.onChange_AtomValence);
+    $('atom_prop_cancel').observe('click', function ()
+    {
+        ui.hideDialog('atom_properties');
+    });
+    $('atom_prop_ok').observe('click', function ()
+    {
+        ui.applyAtomProperties();
+    });
+    $('bond_prop_cancel').observe('click', function ()
+    {
+        ui.hideDialog('bond_properties');
+    });
+    $('bond_prop_ok').observe('click', function ()
+    {
+        ui.applyBondProperties();
+    });
 
-    // // S-group properties dialog events
-    // $('sgroup_type').observe('change', ui.onChange_SGroupType);
-    // $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
+    // S-group properties dialog events
+    $('sgroup_type').observe('change', ui.onChange_SGroupType);
+    $('sgroup_label').observe('change', ui.onChange_SGroupLabel);
 
-    // // Label input events
-    // $('input_label').observe('blur', function ()
-    // {
-    //     this.hide();
-    // });
-    // $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
-    // $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
+    // Label input events
+    $('input_label').observe('blur', function ()
+    {
+        this.hide();
+    });
+    $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
+    $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
 
-    // // Load dialog events
-    // $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
-    // $('radio_open_from_file').observe('click', ui.onSelect_OpenFromFile);
-    // $('input_mol').observe('keyup', ui.onChange_Input);
-    // $('input_mol').observe('click', ui.onChange_Input);
-    // $('read_cancel').observe('click', function ()
-    // {
-    //     ui.hideDialog('open_file');
-    // });
-    // $('read_ok').observe('click', function ()
-    // {
-    //     ui.loadMoleculeFromInput();
-    // });
-    // $('upload_mol').observe('submit', function ()
-    // {
-    //     ui.hideDialog('open_file');
-    // });
-    // $('upload_cancel').observe('click', function ()
-    // {
-    //     ui.hideDialog('open_file');
-    // });
+    // Load dialog events
+    $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
+    $('radio_open_from_file').observe('click', ui.onSelect_OpenFromFile);
+    $('input_mol').observe('keyup', ui.onChange_Input);
+    $('input_mol').observe('click', ui.onChange_Input);
+    $('read_cancel').observe('click', function ()
+    {
+        ui.hideDialog('open_file');
+    });
+    $('read_ok').observe('click', function ()
+    {
+        ui.loadMoleculeFromInput();
+    });
+    $('upload_mol').observe('submit', function ()
+    {
+        ui.hideDialog('open_file');
+    });
+    $('upload_cancel').observe('click', function ()
+    {
+        ui.hideDialog('open_file');
+    });
 
-    // // Save dialog events
-    // $('file_format').observe('change', ui.onChange_FileFormat);
-    // $('save_ok').observe('click', function ()
-    // {
-    //     ui.hideDialog('save_file');
-    // });
+    // Save dialog events
+    $('file_format').observe('change', ui.onChange_FileFormat);
+    $('save_ok').observe('click', function ()
+    {
+        ui.hideDialog('save_file');
+    });
 
 
     var zoom_list = $('zoom-list');
@@ -466,7 +483,7 @@ ui.init = function (parameters, opts)
     ui.onResize_Ketcher();
     if (Prototype.Browser.IE) {
         ui.client_area.absolutize(); // Needed for clipping and scrollbars in IE
-        $('ketcher_window').observe('resize', ui.onResize_Ketcher);
+        ui.ketcher_window.observe('resize', ui.onResize_Ketcher);
     }
 
     if (this.standalone) {
@@ -478,9 +495,8 @@ ui.init = function (parameters, opts)
         });
         document.title += ' (standalone)';
     } else {
-		// ! DIALOG ME
-        //$('upload_mol').action = ui.api_path + 'open';
-        //$('download_mol').action = ui.api_path + 'save';
+        $('upload_mol').action = ui.api_path + 'open';
+        $('download_mol').action = ui.api_path + 'save';
     }
 
     // Init renderer
@@ -520,8 +536,8 @@ ui.updateHistoryButtons = function ()
 
 ui.showDialog = function (name)
 {
-    $('window_cover').style.width = $('ketcher_window').getWidth().toString() + 'px';
-    $('window_cover').style.height = $('ketcher_window').getHeight().toString() + 'px';
+    $('window_cover').style.width = ui.ketcher_window.getWidth().toString() + 'px';
+    $('window_cover').style.height = ui.ketcher_window.getHeight().toString() + 'px';
     $('window_cover').show();
     $(name).show();
 };

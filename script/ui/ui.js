@@ -239,7 +239,6 @@ ui.init = function (parameters, opts)
 	this.buttons = $$('[role=toolbar] button');
 	this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
 	this.client_area = $('ketcher');
-	console.log(ui.ketcher_window, ui.client_area);
 
     opts = new rnd.RenderOptions(opts);
     parameters = parameters || {};

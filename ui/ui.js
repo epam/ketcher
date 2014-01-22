@@ -1040,7 +1040,7 @@ ui.getFile = function ()
     return Base64.decode(frame_body.title);
 };
 
-ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow)
+ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
 {
     var smiles = mol_string.strip();
     var updateFunc = function(struct) {
@@ -1083,7 +1083,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
             }
         });
     } else if (!ui.standalone && force_layout) {
-        new Ajax.Request(ui.api_path + 'layout',
+        new Ajax.Request(ui.api_path + 'layout' + (selective_layout ? '?selective' : ''),
         {
             method: 'post',
             asynchronous : true,
@@ -1327,11 +1327,24 @@ ui.onClick_CleanUp = function ()
     if (this.hasClassName('buttonDisabled'))
         return;
 
+    var atoms = util.array(ui.editor.getSelection().atoms);
+    var selective = atoms.length > 0;
     ui.editor.deselectAll();
     try {
         var mol = ui.ctab.clone();
+        if (selective) {
+            util.each(atoms, function(aid){
+                var dsg = new chem.SGroup('DAT');
+                var dsgid = mol.sgroups.add(dsg);
+                dsg.id = dsgid;
+                dsg.pp = new util.Vec2();
+                dsg.data.fieldName = '_ketcher_selective_layout'
+                dsg.data.fieldValue = '1'
+                mol.atomAddToSGroup(dsgid, aid);
+            }, this);
+        }
         var implicitReaction = mol.addRxnArrowIfNecessary();
-        ui.loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction);
+        ui.loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction, selective);
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;

@@ -49,14 +49,14 @@ class application(object):
             if has_indigo:
                 try:
                     self.response = route()
-                except (IndigoException, e):
+                except IndigoException as e:
                     self.response = self.error_response(str(e))
                     if 'indigoLoad' in self.response[-1]:      # error on load
                         self.response[1] = "Cannot load the specified structure: %s " % str(e)
             else:
                 self.response = route()
 
-        except (self.HttpException, (status, message)):
+        except self.HttpException as (status, message):
             self.response = [message]
 
         self.headers.setdefault('Content-Type', 'text/plain')
@@ -77,17 +77,29 @@ class application(object):
         print( 'CLIENT LOG: ' + message)
         return ["Ok.\n"]
 
+    def selective_layout(self, mol):
+        dsgs = [dsg for dsg in mol.iterateDataSGroups() if dsg.description() == '_ketcher_selective_layout' and dsg.data() == '1']
+        atoms = sorted([atom.index() for dsg in dsgs for atom in dsg.iterateAtoms()])
+        for dsg in dsgs:
+            dsg.remove()
+        mol.getSubmolecule(atoms).layout()
+        return mol
+
     def on_layout(self):
         moldata = None
         if self.method == 'GET' and 'smiles' in self.fields:
             moldata = self.fields.getfirst('smiles')
         elif self.is_form_request() and 'moldata' in self.fields:
             moldata = self.fields.getfirst('moldata')
-
+        selective = 'selective' in self.fields
         if moldata:
             if '>>' in moldata or moldata.startswith('$RXN'):
                 rxn = indigo.loadQueryReaction(moldata)
-                rxn.layout()
+                if selective:
+                    for mol in rxn.iterateMolecules():
+                        self.selective_layout(mol)
+                else:
+                    rxn.layout()
                 return ["Ok.\n",
                         rxn.rxnfile()]
             elif moldata.startswith('InChI'):
@@ -97,7 +109,13 @@ class application(object):
                         mol.molfile()]
             else:
                 mol = indigo.loadQueryMolecule(moldata)
-                mol.layout()
+                if selective:
+                    for rg in mol.iterateRGroups():
+                        for frag in rg.iterateRGroupFragments():
+                            self.selective_layout(frag)
+                    self.selective_layout(mol)
+                else:
+                    mol.layout()
                 return ["Ok.\n",
                         mol.molfile()]
         self.notsupported()
@@ -272,6 +290,6 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except ValueError:
         usage()
-    except ((socket.error, socket.gaierror, socket.herror), (n, str)):
+    except (socket.error, socket.gaierror, socket.herror) as (n, str):
         print("Server error." + str)
         usage()

@@ -110,10 +110,10 @@ chem.Struct.prototype.toLists = function ()
 	};
 };
 
-chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols)
+chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap)
 {
 	var cp = new chem.Struct();
-	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols);
+	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols, false, aidMap);
 };
 
 chem.Struct.prototype.getScaffold = function () {
@@ -147,7 +147,7 @@ chem.Struct.prototype.getFragment = function (fid) {
 	return this.clone(this.getFragmentIds(fid));
 };
 
-chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups)
+chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap)
 {
 	atomSet = atomSet || util.Set.keySetInt(this.atoms);
 	bondSet = bondSet || util.Set.keySetInt(this.bonds);
@@ -188,7 +188,8 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
         }
     });
 
-	var aidMap = {};
+    if (typeof aidMap === 'undefined' || aidMap === null)
+        aidMap = {};
 	this.atoms.each(function(aid, atom) {
 		if (util.Set.contains(atomSet, aid))
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));

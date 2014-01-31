@@ -1331,9 +1331,11 @@ ui.onClick_CleanUp = function ()
     var selective = atoms.length > 0;
     ui.editor.deselectAll();
     try {
-        var mol = ui.ctab.clone();
+        var aidMap = {};
+        var mol = ui.ctab.clone(null, null, false, aidMap);
         if (selective) {
             util.each(atoms, function(aid){
+                aid = aidMap[aid];
                 var dsg = new chem.SGroup('DAT');
                 var dsgid = mol.sgroups.add(dsg);
                 dsg.id = dsgid;

@@ -1326,9 +1326,23 @@ ui.onClick_CleanUp = function ()
 {
     if (this.hasClassName('buttonDisabled'))
         return;
-
-    var atoms = util.array(ui.editor.getSelection().atoms);
+    var atoms = util.array(ui.editor.getSelection(true).atoms);
     var selective = atoms.length > 0;
+    if (selective) {
+        var atomSet = util.Set.fromList(atoms);
+        atomSetExtended = util.Set.empty();
+        ui.ctab.loops.each(function(lid, loop) {
+            // if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
+            if (util.find(loop.hbs, function(hbid) {
+                return util.Set.contains(atomSet, ui.ctab.halfBonds.get(hbid).begin);
+            }) >= 0)
+                util.each(loop.hbs, function(hbid) {
+                    util.Set.add(atomSetExtended, ui.ctab.halfBonds.get(hbid).begin);
+                }, this);
+        }, this);
+        util.Set.mergeIn(atomSetExtended, atomSet);
+        atoms = util.Set.list(atomSetExtended);
+    }
     ui.editor.deselectAll();
     try {
         var aidMap = {};

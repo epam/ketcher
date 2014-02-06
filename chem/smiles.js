@@ -110,7 +110,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         }, this);
         return inLoop;
     })();
-    
+
     this._touched_cistransbonds = 0;
     this._markCisTrans(molecule);
 
@@ -166,79 +166,83 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
         }
     }
 
-    // detect chiral configurations
-    var stereocenters = new chem.Stereocenters(molecule, function (idx)
-    {
-       return this.atoms[idx].neighbours;
-    }, this);
-    stereocenters.buildFromBonds(this.ignore_errors);
+    try {
+        // detect chiral configurations
+        var stereocenters = new chem.Stereocenters(molecule, function (idx)
+        {
+           return this.atoms[idx].neighbours;
+        }, this);
+        stereocenters.buildFromBonds(this.ignore_errors);
 
-    stereocenters.each (function (atom_idx, sc)
-    {
-        //if (sc.type < MoleculeStereocenters::ATOM_AND)
-        //    continue;
+        stereocenters.each (function (atom_idx, sc)
+        {
+            //if (sc.type < MoleculeStereocenters::ATOM_AND)
+            //    continue;
 
-        var implicit_h_idx = -1;
+            var implicit_h_idx = -1;
 
-        if (sc.pyramid[3] == -1)
-            implicit_h_idx = 3;
-            /*
-        else for (j = 0; j < 4; j++)
-            if (ignored_vertices[pyramid[j]])
-            {
-                implicit_h_idx = j;
-                break;
-            }
-            */
-
-        var pyramid_mapping = new Array(4);
-        var counter = 0;
-
-        var atom = this.atoms[atom_idx];
-
-        if (atom.parent != -1)
-            for (k = 0; k < 4; k++)
-                if (sc.pyramid[k] == atom.parent)
+            if (sc.pyramid[3] == -1)
+                implicit_h_idx = 3;
+                /*
+            else for (j = 0; j < 4; j++)
+                if (ignored_vertices[pyramid[j]])
                 {
-                    pyramid_mapping[counter++] = k;
+                    implicit_h_idx = j;
                     break;
                 }
+                */
 
-        if (implicit_h_idx != -1)
-            pyramid_mapping[counter++] = implicit_h_idx;
+            var pyramid_mapping = new Array(4);
+            var counter = 0;
 
-        for (j = 0; j != atom.neighbours.length; j++)
-        {
-            if (atom.neighbours[j].aid == atom.parent)
-                continue;
+            var atom = this.atoms[atom_idx];
 
-            for (k = 0; k < 4; k++)
-                if (atom.neighbours[j].aid == sc.pyramid[k])
-                {
-                    if (counter >= 4)
-                        throw new Error("internal: pyramid overflow");
-                    pyramid_mapping[counter++] = k;
-                    break;
-             }
-        }
+            if (atom.parent != -1)
+                for (k = 0; k < 4; k++)
+                    if (sc.pyramid[k] == atom.parent)
+                    {
+                        pyramid_mapping[counter++] = k;
+                        break;
+                    }
 
-        if (counter == 4)
-        {
-            // move the 'from' atom to the end
-            counter = pyramid_mapping[0];
-            pyramid_mapping[0] = pyramid_mapping[1];
-            pyramid_mapping[1] = pyramid_mapping[2];
-            pyramid_mapping[2] = pyramid_mapping[3];
-            pyramid_mapping[3] = counter;
-        }
-        else if (counter != 3)
-            throw new Error("cannot calculate chirality");
+            if (implicit_h_idx != -1)
+                pyramid_mapping[counter++] = implicit_h_idx;
 
-        if (chem.Stereocenters.isPyramidMappingRigid(pyramid_mapping))
-            this.atoms[atom_idx].chirality = 1;
-        else
-            this.atoms[atom_idx].chirality = 2;
-    }, this);
+            for (j = 0; j != atom.neighbours.length; j++)
+            {
+                if (atom.neighbours[j].aid == atom.parent)
+                    continue;
+
+                for (k = 0; k < 4; k++)
+                    if (atom.neighbours[j].aid == sc.pyramid[k])
+                    {
+                        if (counter >= 4)
+                            throw new Error("internal: pyramid overflow");
+                        pyramid_mapping[counter++] = k;
+                        break;
+                 }
+            }
+
+            if (counter == 4)
+            {
+                // move the 'from' atom to the end
+                counter = pyramid_mapping[0];
+                pyramid_mapping[0] = pyramid_mapping[1];
+                pyramid_mapping[1] = pyramid_mapping[2];
+                pyramid_mapping[2] = pyramid_mapping[3];
+                pyramid_mapping[3] = counter;
+            }
+            else if (counter != 3)
+                throw new Error("cannot calculate chirality");
+
+            if (chem.Stereocenters.isPyramidMappingRigid(pyramid_mapping))
+                this.atoms[atom_idx].chirality = 1;
+            else
+                this.atoms[atom_idx].chirality = 2;
+        }, this);
+    } catch (ex) {
+        alert("Warning: " + ex.message);
+    }
 
     // write the SMILES itself
 

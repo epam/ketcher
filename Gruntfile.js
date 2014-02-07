@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 				    '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
 					  'ketcher.html', 'demo.html', 'templates.sdf',
-					  'loading.gif']
+					  'loading.gif', 'logo.jpg']
 		},
 
 		concat: {
@@ -78,33 +78,13 @@ module.exports = function(grunt) {
 			}
 		},
 
-		// TODO: path grunt-fontforge
-		svgicons2svgfont: {
+		fontello: {
 			options: {
-				font: '<%= pkg.name %>'
+				config  : 'icons/config.json',
+				fonts   : '.',
+				styles  : '.tmp'
 			},
-			default: {
-				src: 'icons/*.svg',
-				dest: '.'
-			}
-		},
-		svg2ttf: {
-			default: {
-				src: '<%= pkg.name %>.svg',
-				dest: '.'
-			}
-		},
-		ttf2eot: {
-			default: {
-				src: '<%= pkg.name %>.ttf',
-				dest: '.'
-			}
-		},
-		ttf2woff: {
-			default: {
-				src: '<%= pkg.name %>.ttf',
-				dest: '.'
-			}
+			default: {}
 		},
 
 		copy: {
@@ -151,7 +131,8 @@ module.exports = function(grunt) {
 
 		clean: {
 			all: ['<%= options.libs %>', '<%= options.build %>',
-				  '<%= pkg.name %>*.zip']
+				  '<%= pkg.name %>*.zip'],
+			tmp: '.tmp/**'
 		},
 
 		watch: {
@@ -179,10 +160,12 @@ module.exports = function(grunt) {
 
 	require('load-grunt-tasks')(grunt);
 
-	grunt.registerTask('font', ['svgicons2svgfont',
-								'svg2ttf', 'ttf2eot', 'ttf2woff']);
-	grunt.registerTask('default', ['clean', 'uglify', 'less:default',
-								   'font', 'copy:libs', 'compress']);
-	grunt.registerTask('dev', ['clean', 'concat', 'less:dev',
-							   'font', 'copy:libs']);
+	grunt.registerTask('font', ['fontello', 'clean:tmp']);
+
+	// clean:tmp in the end as workaround rimraf bug
+	grunt.registerTask('default', ['clean', 'less:default', 'fontello',
+								   'uglify', 'copy:libs', 'compress',
+								   'clean:tmp']);
+	grunt.registerTask('dev', ['clean', 'less:dev', 'fontello', 'concat',
+							   'copy:libs', 'clean:tmp']);
 };

@@ -34,3 +34,19 @@
 	vertical-align: middle;
 	*vertical-align: auto;
 }
+
+.monochrome-icons(@names, @i: 1) when (@i <= length(@names)) {
+	@item: extract(@names, @i);
+	@icon: 'icon-@{item}';
+	#@{item}:before { content: @@icon; }
+	.monochrome-icons(@names, (@i + 1));
+}
+
+.twocolor-icons(@names, @i: 1) when (@i <= length(@names)) {
+	@item: extract(@names, @i);
+	@icon-A: 'icon-@{item}-A';
+	@icon-B: 'icon-@{item}-B';
+	#@{item}:before { content: @@icon-A; }
+	#@{item}:after { content: @@icon-B; }
+	.twocolor-icons(@names, (@i + 1));
+}

@@ -699,17 +699,25 @@ rnd.Editor.BondTool.prototype.OnMouseMove = function(event) {
                 p1 = _DC_.xy0;
                 i2 = _R_.findItem(event, ['atoms']);
             }
+            var dist = Number.MAX_VALUE;
             if (i2 && i2.map == 'atoms') {
                 i2 = i2.id;
             } else {
                 i2 = this.atomProps;
+                var xy1 = _E_.ui.page2obj(event);
+                dist = util.Vec2.dist(_DC_.xy0, xy1);
                 if (p1) {
-                    p2 = this._calcNewAtomPos(p1, _E_.ui.page2obj(event))
+                    p2 = this._calcNewAtomPos(p1, xy1);
                 } else {
-                    p1 = this._calcNewAtomPos(_R_.atomGetPos(i1), _E_.ui.page2obj(event));
+                    p1 = this._calcNewAtomPos(_R_.atomGetPos(i1), xy1);
                 }
             }
-            _DC_.action = _E_.ui.Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
+            // don't rotate the bond if the distance between the start and end point is too small
+            if (dist > 0.3) {
+                _DC_.action = _E_.ui.Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
+            } else {
+                delete _DC_.action;
+            }
             _R_.update();
             return true;
         }

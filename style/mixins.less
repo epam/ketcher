@@ -35,6 +35,57 @@
 	*vertical-align: auto;
 }
 
+// Effects
+
+.scale-highlight() {
+	.transition(transform, 0.1s, ease-out);
+	.scale(1.2);
+}
+
+.shadow-highlight(@color: @active-color, inset) {
+	.box-shadow(0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset;);
+}
+
+.shadow-highlight(@color: @active-color) {
+	.box-shadow(0 0 3px 4px fade(@color, 12%));
+}
+
+.circle-highlight(@color: @active-color, @inset: '') {
+	.border-radius((@icon-size + @icon-padding) / 2);
+	.box-shadow(~'0 0 4px @{color} @{inset}');
+}
+
+.symbol-highlight(@color: @active-color) {
+	color: @active-color;
+	text-shadow: 1px 1px 3px @color;
+}
+
+.symbol-invert() {
+	background: #333;
+	text-shadow: 0px 1px 10px white, 0px -1px 10px white;
+}
+
+.invert-highlight() {
+	background: #333;
+	color: white;
+}
+
+////////////
+
+.control() {
+	color: @main-color;
+	background-color: white;
+	background-image: none;
+	.border-radius(4px);
+
+	&[disabled] {
+		color: @disabled-color;
+	}
+	&:active {
+		outline: 0;
+	}
+}
+
 .monochrome-icons(@names, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
 	@icon: 'icon-@{item}';
@@ -49,4 +100,13 @@
 	#@{item}:before { content: @@icon-A; }
 	#@{item}:after { content: @@icon-B; }
 	.twocolor-icons(@names, (@i + 1));
+}
+
+.sketching-atom-icons(@names, @i: 1) when (@i <= length(@names)) {
+	@item: extract(@names, @i);
+	@color: 'atom-sketching-@{item}-color';
+	button.@{item} {
+		color: @@color;
+	}
+	.sketching-atom-icons(@names, (@i + 1));
 }

@@ -60,7 +60,7 @@
 	text-shadow: 1px 1px 3px @color;
 }
 
-.symbol-invert() {
+.symbol-invert-highlight() {
 	background: #333;
 	text-shadow: 0px 1px 10px white, 0px -1px 10px white;
 }
@@ -81,25 +81,31 @@
 	&[disabled] {
 		color: @disabled-color;
 	}
-	&:active {
+	&:active, &:focus {
 		outline: 0;
 	}
 }
 
-.monochrome-icons(@names, @i: 1) when (@i <= length(@names)) {
-	@item: extract(@names, @i);
-	@icon: 'icon-@{item}';
-	#@{item}:before { content: @@icon; }
-	.monochrome-icons(@names, (@i + 1));
+////////////
+
+.colorize(@color) when not (@color = inherit) {
+	color: @color;
 }
 
-.twocolor-icons(@names, @i: 1) when (@i <= length(@names)) {
+.monochrome-icons(@names, @color: inherit, @i: 1) when (@i <= length(@names)) {
+	@item: extract(@names, @i);
+	@icon: 'icon-@{item}';
+	#@{item}:before { content: @@icon; .colorize(@color); }
+	.monochrome-icons(@names, @color, (@i + 1));
+}
+
+.twocolor-icons(@names, @color-A: inherit, @color-B: inherit, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
 	@icon-A: 'icon-@{item}-A';
 	@icon-B: 'icon-@{item}-B';
-	#@{item}:before { content: @@icon-A; }
-	#@{item}:after { content: @@icon-B; }
-	.twocolor-icons(@names, (@i + 1));
+	#@{item}:before { content: @@icon-A; .colorize(@color-A); }
+	#@{item}:after { content: @@icon-B; .colorize(@color-B); }
+	.twocolor-icons(@names, @color-A, @color-B, (@i + 1));
 }
 
 .sketching-atom-icons(@names, @i: 1) when (@i <= length(@names)) {

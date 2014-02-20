@@ -88,6 +88,35 @@
 
 ////////////
 
+.flow(@direction) {
+	.to-flow-index(top) { @flow-index: 0; }
+	.to-flow-index(right) { @flow-index: 1; }
+	.to-flow-index(bottom) { @flow-index: 2; }
+	.to-flow-index(left) { @flow-index: 3; }
+	@flow-directions: top right bottom left;
+	@flow-dimensions: width height;
+	.to-flow-index(@direction);
+
+	@main-start: extract(@flow-directions, mod(@flow-index, 4) + 1);
+	@main-end: extract(@flow-directions, mod((@flow-index + 2), 4) + 1);
+	@main-dim: extract(@flow-dimensions, mod((@flow-index + 1), 2) + 1);
+
+	@cross-start: extract(@flow-directions, mod((@flow-index + 3), 4) + 1);
+	@cross-end: extract(@flow-directions, mod((@flow-index + 1), 4) + 1);
+	@cross-dim: extract(@flow-dimensions, mod(@flow-index, 2) + 1);
+}
+
+.toolbar-pos(@direction) {
+	.flow(@direction);
+	position: absolute;
+	@{main-start}: @app-gap;
+	@{cross-start}: @canvas-padding;
+	@{cross-end}: @canvas-padding;
+	@{main-dim}: @toolbar-size;
+}
+
+////////////
+
 .colorize(@color) when not (@color = inherit) {
 	color: @color;
 }

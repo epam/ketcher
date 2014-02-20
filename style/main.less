@@ -29,13 +29,12 @@ main {
 	// }
 }
 
-#mainmenu {
-	position: absolute;
-	top: @app-gap;
-	left: @canvas-padding;
-	right: @canvas-padding;
-	height: @toolbar-size;
+#mainmenu { .toolbar-pos(top); }
+#elements { .toolbar-pos(right); }
+#template { .toolbar-pos(bottom); }
+#toolbox { .toolbar-pos(left); }
 
+#mainmenu {
 	menu {
 		padding: 0 20px 0 15px;
 		border-right: 1px solid @border-color;
@@ -46,33 +45,11 @@ main {
 }
 
 #toolbox {
-	position: absolute;
-	left: @app-gap;
-	top: @canvas-padding;
-	bottom: @canvas-padding;
-	width: @toolbar-size;
-
 	menu {
 		height: @toolbar-size;
 		width: @toolbar-size;
 		overflow: hidden;
 	}
-}
-
-#template {
-	position: absolute;
-	bottom: @app-gap;
-	left: @canvas-padding;
-	right: @canvas-padding;
-	height: @toolbar-size;
-}
-
-#elements {
-	position: absolute;
-	right: @app-gap;
-	top: @canvas-padding;
-	bottom: @canvas-padding;
-	width: @toolbar-size;
 }
 
 #meta {
@@ -94,42 +71,38 @@ main {
 }
 
 [role='toolbar'] {
-	li {
+	li, menu {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		.inline-block;
 	}
 
-	menu {
-		.inline-block;
-		margin: 0;
-		padding: 0;
-	}
-
 	button {
 		.control;
 		margin: 0;
+		border: 0;
+		padding: 0;
 		width: @toolbar-size;
 		height: @toolbar-size;
 		//line-height: @toolbar-size;
 		text-align: center;
 
-		border: 0;
 		overflow: hidden;
 		display: block;
 		font: ~"0/0" a;
 		//.text-hide(transparent);
 
-		&:before {
+		&:before, &:after {
 			display: inline-block;
 			vertical-align: middle;
 			font-size: @icon-size;
 			padding: @icon-padding;
 			font-family: 'ketcher';
 		}
-		&:active {
-			padding: inherit;
+		&:after {
+			position: absolute;
+			left: 0;
 		}
 	}
 }
@@ -212,7 +185,7 @@ select, #toolbox button {
 				  template-6 template-7 template-custom transform-flip-h
 				  transform-flip-v transform-rotate undo zoom-in zoom-out);
 
-.twocolor-icons(rgroup-label);
+.twocolor-icons(rgroup-label, #739FC6);
 
 .sketching-atom-icons(h-like n-like o-like s-like p-like f-like cl-like
 					  br-like i-like);

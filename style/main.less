@@ -123,52 +123,27 @@ select {
 	line-height: 20 / 14;
 
 	border: 1px solid @border-color;
+	&:hover, &:focus {
+		.shadow-highlight(black);
+	}
 	//.transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
 }
 
 // NOTE: we don't process &:focus state as it does not work
 //       well with &.selected (requires additional JS)
 
-#elements button {
-	&:hover {
-		outline: 1px dotted @active-color;
-	}
-}
-
-#atom button {
-	&:hover {
-		outline: 0;
-		.circle-highlight;
-	}
-	&.selected, &:active {
-		.circle-highlight(@inset: inset);
-	}
-}
-
-#template button {
-	&:hover, &.selected {
-		.symbol-highlight;
-	}
-}
-
-#mainmenu button {
-	&:not([disabled]) {
-		&:hover {
+button {
+	&:enabled {					// TODO: more past proof selectors
+		&:hover:not(:active) {
 			.shadow-highlight(black);
 			.scale-highlight;
 		}
 		&:active {
-			.shadow-highlight(black, inset);
+			//.shadow-highlight(black, inset);
 		}
-	}
-}
-
-select, #toolbox button {
-	&:hover {
-		.shadow-highlight(black);
-	}
-	&.selected {
-		.invert-highlight;
+		&.selected {
+			.invert-highlight;
+		}
 	}
 }
 

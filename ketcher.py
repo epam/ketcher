@@ -276,7 +276,7 @@ if __name__ == '__main__':
     except ValueError:
         usage()
     except OSError as e:
-        print(e)
+        print('Server error: {0}'.format(e))
         usage()
     except (socket.error, socket.gaierror, socket.herror) as e:
         print("Server error: %s" % e[1])

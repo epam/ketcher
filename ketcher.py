@@ -275,8 +275,11 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except ValueError:
         usage()
-    except (socket.error, socket.gaierror, socket.herror, OSError) as e:
-        print("Server error: %s" % e.args[1])
+    except OSError as e:
+        print(e)
+        usage()
+    except (socket.error, socket.gaierror, socket.herror) as e:
+        print("Server error: %s" % e[1])
         usage()
     except KeyboardInterrupt:
         pass

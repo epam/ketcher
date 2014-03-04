@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 				    '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
 					  'ketcher.html', 'demo.html', 'templates.sdf',
-					  'loading.gif', 'logo.jpg']
+					  'loading.gif', 'logo.jpg', 'dialogs.tmpl']
 		},
 
 		concat: {

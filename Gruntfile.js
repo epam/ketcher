@@ -68,7 +68,8 @@ module.exports = function(grunt) {
 		less: {
 			default: {
 				options: {
-					cleancss: true
+					cleancss: true,
+					report: 'min'
 				},
 				src: 'style/main.less',
 				dest: '<%= pkg.name %>.css'

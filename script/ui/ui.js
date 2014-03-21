@@ -58,40 +58,6 @@ ui.initialized = false;
 //
 // Init section
 //
-ui.initButton = function (el)
-{
-    el.observe(EventMap['mousedown'], function (event)
-    {
-        if (this.hasAttribute('disabled'))
-            return;
-        this.addClassName('buttonPressed');
-        // manually toggle off all active dropdowns
-        ui.hideBlurredControls();
-        util.stopEventPropagation(event);
-    });
-    el.observe(EventMap['mouseup'], function ()
-    {
-        this.removeClassName('buttonPressed');
-    });
-    el.observe('mouseover', function ()
-    {
-        if (this.hasAttribute('disabled'))
-            return;
-        this.addClassName('buttonHighlight');
-
-		//! TITLE ME, toolText
-        // var status = this.getAttribute('title');
-		var status = this.innerHTML;
-        if (status != null)
-            window.status = status;
-    });
-    el.observe('mouseout', function ()
-    {
-        this.removeClassName('buttonPressed');
-        this.removeClassName('buttonHighlight');
-        window.status = '';
-    });
-};
 
 ui.initTemplates = function ()
 {
@@ -181,55 +147,13 @@ ui.initTemplates = function ()
 };
 
 ui.initDialogs = function () {
-	new Ajax.Request(ui.base_url + 'dialogs.tmpl', {
-		method: 'GET',
-		asynchronous : false,
-		onComplete: function (res) {
-			ui.ketcher_window.insert(res.responseText);
-		}
-	});
-};
-
-ui.onClick_SideButton = function ()
-{
-    if (this.hasAttribute('disabled'))
-        return;
-
-    if (this.hasClassName('stateButton') && this.hasClassName('selected'))
-    {
-        ui.toggleDropdownList(this.id + '_dropdown');
-    } else {
-        ui.selectMode(this.getAttribute('selid') || this.id);
-    }
-};
-
-ui.onClick_DropdownButton = function ()
-{
-    if (this.hasAttribute('disabled'))
-        return;
-    ui.toggleDropdownList(this.id);
-};
-
-ui.DropdownListSetIconAndTitle = function(dropdown, selected) {
-    dropdown.setAttribute('src', selected.select('img')[0].getAttribute('src').replace('.dropdown.','.sidebar.'));
-    dropdown.title = selected.title;
-}
-
-ui.onMouseDown_DropdownListItem = function (event)
-{
-    ui.selectMode(this.id);
-    var dropdown_mode_id = this.id.split('_')[0];
-    $(dropdown_mode_id + '_dropdown_list').hide();
-    if (ui.mode_id == this.id)
-    {
-        ui.DropdownListSetIconAndTitle($(dropdown_mode_id), this);
-        $(dropdown_mode_id).setAttribute('selid', ui.mode_id);
-    }
-    if (event)
-    {
-        util.stopEventPropagation(event);
-        return util.preventDefault(event);
-    }
+    new Ajax.Request(ui.base_url + 'dialogs.tmpl', {
+        method: 'GET',
+        asynchronous : false,
+        onComplete: function (res) {
+            ui.ketcher_window.insert(res.responseText);
+        }
+    });
 };
 
 ui.defaultSelector = 'select-last';
@@ -260,31 +184,13 @@ ui.init = function (parameters, opts)
     ui.api_path = parameters.ketcher_api_url || document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
     ui.base_url = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
 
-    // IE specific styles
-    if (Prototype.Browser.IE)
-    {
-        $$('.chemicalText').each(function (el)
-        {
-            el.addClassName('chemicalText_IE');
-        });
-
-        // IE6
-        if (navigator.userAgent.indexOf('MSIE 6.0') != -1)
-        {
-            $$('.dialogWindow').each(function (dlg)
-            {
-                dlg.style.width = "300px";
-            });
-        }
-    }
-
     // OS X specific stuff
-    if (ui.is_osx) {
-        buttons.each(function (button) {
-			if (button.title)
-				button.title = button.title.replace("Ctrl", "Cmd");
-        }, this);
-    }
+    // if (ui.is_osx) {
+    //     this.buttons.each(function (button) {
+	// 		if (button.title)
+	// 			button.title = button.title.replace("Ctrl", "Cmd");
+    //     }, this);
+    // }
 
     // Touch device stuff
     if (ui.is_touch) {
@@ -334,8 +240,6 @@ ui.init = function (parameters, opts)
     //document.observe('keydown', ui.onKeyDown_IE);
     //document.observe('keyup', ui.onKeyUp);
     ui.setKeyboardShortcuts();
-    document.observe(EventMap['mousedown'], ui.onMouseDown_Ketcher);
-    document.observe(EventMap['mouseup'], ui.onMouseUp_Ketcher);
 
     // Button events
     ui.buttons.each(function (el)
@@ -345,21 +249,16 @@ ui.init = function (parameters, opts)
             el.observe('click', ui.onClick_SideButton);
     });
 
-    $$('.dropdownButton').each(function (el)
-    {
-        el.observe('click', ui.onClick_DropdownButton);
-    });
+    $$('li').each(function(el) {
+        el.observe('click', function(event) {
+	        if (ui.hideBlurredControls())
+		        event.stop();
 
-    $$('.dropdownListItem').each(function (el)
-    {
-        el.observe(EventMap['mousedown'], ui.onMouseDown_DropdownListItem);
-        el.observe('mouseover', function ()
-        {
-            this.addClassName('highlightedItem');
-        });
-        el.observe('mouseout', function ()
-        {
-            this.removeClassName('highlightedItem');
+            if (this.getStyle('overflow') == 'hidden') {
+                this.addClassName('opened');
+	            ui.dropdown_opened = this;
+	            event.stop();
+            }
         });
     });
 
@@ -398,7 +297,6 @@ ui.init = function (parameters, opts)
         el.observe('keyup', ui.onKeyPress_Dialog);
     });
 
-	// ! DIALOG ME
     // Atom properties dialog events
     $('atom_label').observe('change', ui.onChange_AtomLabel);
     $('atom_charge').observe('change', ui.onChange_AtomCharge);
@@ -514,10 +412,49 @@ ui.init = function (parameters, opts)
     this.initialized = true;
 };
 
+ui.hideBlurredControls = function () {
+	if (!this.dropdown_opened)
+		return false;
+
+	this.dropdown_opened.removeClassName('opened');
+	var sel = this.dropdown_opened.select('li.selected');
+	if (sel.length == 1) {
+		//var index = sel[0].previousSiblings().size();
+		var menu = sel[0].parentNode,
+		    margin = parseFloat(menu.getStyle('margin-top'));
+		menu.setStyle({'margin-top':
+		               (-sel[0].offsetTop + margin) + 'px'});
+	}
+
+	this.dropdown_opened = null;
+	return true;
+};
 
 ui.isToolButton = function (el) {
 	return !!el.up('#mainmenu') || el.identify() == 'period-table' ||
 		el.identify() == 'generic-groups';
+};
+
+ui.initButton = function (el)
+{
+    el.observe('mouseover', function ()
+    {
+        if (this.hasAttribute('disabled'))
+            return;
+
+        //! TITLE ME, toolText
+        // var status = this.getAttribute('title');
+        var status = this.innerHTML;
+        if (status != null)
+            window.status = status;
+    });
+};
+
+ui.onClick_SideButton = function ()
+{
+    if (this.hasAttribute('disabled'))
+        return;
+	ui.selectMode(this.id);
 };
 
 ui.updateHistoryButtons = function ()
@@ -549,23 +486,12 @@ ui.hideDialog = function (name)
     $('window_cover').style.height = '0px';
 };
 
-ui.toggleDropdownList = function (name)
-{
-    var list_id = name + '_list';
-    if ($(list_id).visible())
-        $(list_id).hide();
-    else
-        $(list_id).show();
-};
-
-
 ui.onResize_Ketcher = function ()
 {
-    if (Prototype.Browser.IE)
+    //if (Prototype.Browser.IE)
     //     ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
 
     // ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
-	console.log('resize');
 };
 
 //
@@ -789,8 +715,11 @@ ui.selectMode = function (mode)
         if (state_button) {
             if (mode && !mode.startsWith(button_id))
                 $(button_id).removeClassName('selected');
-        } else
-            $(this.mode_id).removeClassName('selected');
+        } else {
+	        $(this.mode_id).removeClassName('selected');
+	        $(this.mode_id).parentNode.removeClassName('selected');
+        }
+
     }
 
     if (mode != 'transform-rotate')
@@ -811,8 +740,10 @@ ui.selectMode = function (mode)
 
         if (state_button)
             $(button_id).addClassName('selected');
-        else
-            $(this.mode_id).addClassName('selected');
+        else {
+	        $(this.mode_id).addClassName('selected');
+	        $(this.mode_id).parentNode.addClassName('selected');
+        }
     }
 };
 
@@ -1657,36 +1588,6 @@ ui.removeSelected = function ()
     ui.addUndoAction(ui.Action.fromFragmentDeletion());
     ui.editor.deselectAll();
     ui.render.update();
-};
-
-ui.hideBlurredControls = function ()
-{
-    var ret = false;
-	// ! DROP ME
-    // [
-    //     'input_label',
-    //     'selector_dropdown_list',
-    //     'bond_dropdown_list',
-    //     'template_dropdown_list',
-    //     'customtemplate_dropdown_list',
-    //     'reaction_dropdown_list',
-    //     'rgroup_dropdown_list',
-    //     'transform_dropdown_list'
-    // ].each(
-    //     function(el) { el = $(el); if (el.visible()) { el.hide(); ret = true; }}
-    // );
-    return ret;
-};
-
-ui.onMouseDown_Ketcher = function (event)
-{
-    ui.hideBlurredControls();
-    //util.stopEventPropagation(event);
-};
-
-ui.onMouseUp_Ketcher = function (event)
-{
-    util.stopEventPropagation(event);
 };
 
 //

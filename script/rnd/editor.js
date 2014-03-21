@@ -149,7 +149,7 @@ rnd.Editor.EditorTool.prototype.OnMouseLeave = function() { this.OnCancel();};
 rnd.Editor.EditorTool.prototype.OnKeyPress = function() {};
 rnd.Editor.EditorTool.prototype.OnCancel = function() {}; // called when we abandon the tool
 rnd.Editor.EditorTool.prototype.OnMouseDown0 = function(event) {
-    if (this.editor.ui.hideBlurredControls()) return true; // TODO review
+    if (this.editor.ui.hideBlurredControls()) return true; // TODO review (don't stop propagation to handle dropdown closing)
 
     this.OnMouseDown0.lastEvent = event;
     this.OnMouseMove0.lastEvent = event;

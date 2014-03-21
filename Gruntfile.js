@@ -153,8 +153,7 @@ module.exports = function(grunt) {
 					atBegin: false,
 					livereload: true
 				},
-				files: '<%= less.default.dest %>' // replace to '<%= options.build %>'
-				                                  // after fixing grunt-watch bug: bit.ly/19UuJB3
+				files: '<%= options.build %>'
 			}
 		}
 	});

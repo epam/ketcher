@@ -20,19 +20,9 @@
 	.text-hide(indent);
 }
 
-.min-height(@value) {
-	min-height: @value;
-	height: auto !important;
-	height: 100%;
-}
-
-.inline-block() {
-	*display: inline;
-	display: -moz-inline-box;
-	-moz-box-orient: vertical;
-	display: inline-block;
-	vertical-align: middle;
-	*vertical-align: auto;
+.remove-inline-spacing() {
+	font-size: 0.00001px;
+	-webkit-text-size-adjust: none;
 }
 
 // Effects
@@ -42,11 +32,16 @@
 	.scale(1.25);
 }
 
-.shadow-highlight(@color: @active-color, inset) {
-	.box-shadow(0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset;);
+.scale-highlight(none) {
+	.transition(transform, 0.2s, ease-out);
+	.scale(1);
 }
 
-.shadow-highlight(@color: @active-color) {
+.shadow-highlight(@color: @active-color, inset) {
+	.box-shadow(0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset);
+}
+
+.shadow-highlight(@color: @active-color) when (iscolor(@color)) {
 	.box-shadow(inset 0 0 1px 1px fade(@color, 12%));
 }
 
@@ -66,16 +61,15 @@
 }
 
 .invert-highlight() {
-	background: #333;
+	background: #444;
 	color: white;
 }
 
 ////////////
 
 .control() {
-	color: @main-color;
-	background-color: white;
-	background-image: none;
+	//background-color: white;
+	//background-image: none;
 	.border-radius(4px);
 
 	&[disabled] {
@@ -89,21 +83,27 @@
 ////////////
 
 .flow(@direction) {
-	.to-flow-index(top) { @flow-index: 0; }
-	.to-flow-index(right) { @flow-index: 1; }
-	.to-flow-index(bottom) { @flow-index: 2; }
-	.to-flow-index(left) { @flow-index: 3; }
-	@flow-directions: top right bottom left;
-	@flow-dimensions: width height;
-	.to-flow-index(@direction);
+	.to-index(top) { @index: 0; }
+	.to-index(right) { @index: 1; }
+	.to-index(bottom) { @index: 2; }
+	.to-index(left) { @index: 3; }
+	@directions: top right bottom left;
+	@dimensions: width height;
+	@rising: right bottom;
+	@losing: left top;
+	.to-index(@direction);
 
-	@main-start: extract(@flow-directions, mod(@flow-index, 4) + 1);
-	@main-end: extract(@flow-directions, mod((@flow-index + 2), 4) + 1);
-	@main-dim: extract(@flow-dimensions, mod((@flow-index + 1), 2) + 1);
+	@main-start: extract(@directions, mod(@index, 4) + 1);
+	@main-end: extract(@directions, mod((@index + 2), 4) + 1);
+	@main-dim: extract(@dimensions, mod((@index + 1), 2) + 1);
+	@main-rise: extract(@rising, mod(@index + 1, 2) + 1);
+	@main-lose: extract(@losing, mod(@index + 1, 2) + 1);
 
-	@cross-start: extract(@flow-directions, mod((@flow-index + 3), 4) + 1);
-	@cross-end: extract(@flow-directions, mod((@flow-index + 1), 4) + 1);
-	@cross-dim: extract(@flow-dimensions, mod(@flow-index, 2) + 1);
+	@cross-start: extract(@directions, mod((@index + 3), 4) + 1);
+	@cross-end: extract(@directions, mod((@index + 1), 4) + 1);
+	@cross-dim: extract(@dimensions, mod(@index, 2) + 1);
+	@cross-rise: extract(@rising, mod(@index, 2) + 1);
+	@cross-lose: extract(@losing, mod(@index, 2) + 1);
 }
 
 .toolbar-pos(@direction) {
@@ -113,6 +113,15 @@
 	@{cross-start}: @canvas-padding;
 	@{cross-end}: @canvas-padding;
 	@{main-dim}: @toolbar-size;
+
+	&>menu {
+		@{cross-dim}: 100%;
+	}
+	li {
+		//position: relative;
+		//margin-@{cross-lose}: @button-gap;
+		//background: light-gray;
+	}
 }
 
 ////////////

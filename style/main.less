@@ -7,12 +7,22 @@
 html {
 	height: 100%;
 	width: 100%;
-	background-color: white;
+
 }
 
 body {
-	.min-height(100%);
+	min-height: 100%;
 	position: relative;
+	font-family: FreeSans, Arimo, "Droid Sans", Helvetica,
+                 "Helvetica Neue", Arial, sans-serif;
+	background-color: white;
+	color: @main-color;
+}
+
+li, menu {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
 
 main {
@@ -35,7 +45,8 @@ main {
 #toolbox { .toolbar-pos(left); }
 
 #mainmenu {
-	menu {
+	// li[id]
+	&>menu>li {
 		padding: 0 20px 0 15px;
 		border-right: 1px solid @border-color;
 		&:first-child {
@@ -44,60 +55,39 @@ main {
 	}
 }
 
-#toolbox {
-	menu {
-		height: @toolbar-size;
-		width: @toolbar-size;
-		overflow: hidden;
-	}
-}
-
 #meta {
 	position: absolute;
 	right: 0;
 	padding: 0 !important;
 	border: 0 !important;
+	margin: 0 !important;
 }
 
 #period-table {
 	position: absolute;
 	bottom: 0;
-}
-
-#elements, #toolbox {
-	li {
-		margin-bottom: 4px;  // ? TODO: shadow-solution
-	}
+	left: 0;
 }
 
 [role='toolbar'] {
-	li, menu {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		.inline-block;
+	menu {
+		.remove-inline-spacing;
+	}
+
+	li {
+		display: inline-block;
+		vertical-align: top;
 	}
 
 	button {
-		.control;
-		margin: 0;
 		border: 0;
 		padding: 0;
-		width: @toolbar-size;
-		height: @toolbar-size;
-		//line-height: @toolbar-size;
-		text-align: center;
-
-		overflow: hidden;
-		display: block;
-		font: ~"0/0" a;
-		//.text-hide(transparent);
+		position: relative;
+		background: inherit;
 
 		&:before, &:after {
 			display: inline-block;
 			vertical-align: middle;
-			font-size: @icon-size;
-			padding: @icon-padding;
 			font-family: 'ketcher';
 		}
 		&:after {
@@ -105,20 +95,117 @@ main {
 			left: 0;
 		}
 	}
+
+	button {
+		.control;
+		display: block;
+		width: @button-size;
+		height: @button-size;
+		margin: @button-grow;
+		//line-height: @toolbar-size;
+		//text-align: center;
+		//overflow: hidden;
+		//font: ~"0/0" a;
+		//.text-hide(transparent);
+
+		&:before, &:after {
+			font-size: @icon-size;
+			//padding: @icon-padding;
+		}
+	}
+}
+
+.collapse() {
+	height: @toolbar-size;
+	width: @toolbar-size;
+	overflow: hidden;
+	position: relative;
+
+	&:before {
+		font-size: 7px;
+		width: 7px;
+		height: 7px;
+		display: block;
+		font-family: 'ketcher';
+		content: @icon-dropdown;
+		position: absolute;
+		z-index: 10;
+		right: 0;
+		bottom: 0;
+	}
+	&:hover:before {
+	 	//.scale-highlight;
+		color: @active-color;
+	}
+
+	&.opened {
+		overflow: visible;
+		li {
+			display: block;
+			&:empty {
+				border-top: 1px @border-color solid;
+				margin: 3px 0;
+			}
+		}
+
+		button {
+			display: block;
+			margin: 1px 0;
+			padding: 4px;
+			color: inherit;
+			width: 100%;
+			height: 24px;
+			font-size: 15px;
+			//line-height: 18px;
+			text-align: left;
+			&:before, &:after {
+				padding-right: 5px;
+				font-size: 18px;
+				//padding: @icon-padding;
+			}
+			&:hover,&.selected {
+				.scale-highlight(none);
+				.box-shadow(none);
+				.invert-highlight;
+				//color: darken(@main-color, 5%);
+				//.shadow-highlight(none);
+			}
+		}
+
+		menu {
+			position: absolute;
+			z-index: 20;
+			left: @toolbar-size + 7px;
+			margin: 0 !important;
+			width: 220px;
+			height: auto;
+			padding: 2px;
+
+			background: white;
+			border: 1px solid @border-color;
+			.border-radius(5px);
+			.box-shadow(0 6px 12px rgba(0,0,0,.175));
+		}
+	}
+}
+
+#select, #bond, #reaction, #rgroup {
+	.collapse;
 }
 
 #atom button {
-	font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
 	font-size: 19px;
 }
 
 select {
 	.control;
-	//.inline-block;
-	display: block;
+	display: inline-block;
+	vertical-align: middle;
+	//display: block;
 
 	height: 34px;
 	padding: 5px 2px 5px 4px;
+	margin: 2px;
 	font-size: 14px;
 	line-height: 20 / 14;
 
@@ -161,6 +248,7 @@ button {
 				  transform-flip-v transform-rotate undo zoom-in zoom-out);
 
 .twocolor-icons(rgroup-label, #739FC6);
+
 
 .sketching-atom-icons(h-like n-like o-like s-like p-like f-like cl-like
 					  br-like i-like);

@@ -45,22 +45,18 @@ main {
 #toolbox { .toolbar-pos(left); }
 
 #mainmenu {
-	// li[id]
-	&>menu>li {
-		padding: 0 20px 0 15px;
-		border-right: 1px solid @border-color;
-		&:first-child {
-			padding-left: 0;
-		}
+	menu {
+		.separators(top, 15px, 20px);
 	}
 }
 
 #meta {
 	position: absolute;
 	right: 0;
-	padding: 0 !important;
-	border: 0 !important;
-	margin: 0 !important;
+	li&>menu {
+		border: 0;
+		padding: 0;
+	}
 }
 
 #period-table {
@@ -142,10 +138,6 @@ main {
 		overflow: visible;
 		li {
 			display: block;
-			&:empty {
-				border-top: 1px @border-color solid;
-				margin: 3px 0;
-			}
 		}
 
 		button {
@@ -163,7 +155,7 @@ main {
 				font-size: 18px;
 				//padding: @icon-padding;
 			}
-			&:hover,&.selected {
+			&:hover, &.selected {
 				.scale-highlight(none);
 				.box-shadow(none);
 				.invert-highlight;
@@ -172,12 +164,13 @@ main {
 			}
 		}
 
-		menu {
+		&>menu {
+			.separators(left, 3px);
 			position: absolute;
 			z-index: 20;
 			left: @toolbar-size + 7px;
 			margin: 0 !important;
-			width: 220px;
+			width: 240px;
 			height: auto;
 			padding: 2px;
 

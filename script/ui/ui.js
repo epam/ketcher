@@ -336,7 +336,7 @@ ui.hideBlurredControls = function () {
     var sel = this.dropdown_opened.select('li.selected');
     if (sel.length == 1) {
         //var index = sel[0].previousSiblings().size();
-        var menu = sel[0].parentNode,
+        var menu = this.dropdown_opened.children[0],
             margin = parseFloat(menu.getStyle('margin-top'));
         menu.setStyle({'margin-top':
                        (-sel[0].offsetTop + margin) + 'px'});

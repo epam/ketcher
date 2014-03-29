@@ -117,10 +117,18 @@
 	&>menu {
 		@{cross-dim}: 100%;
 	}
-	li {
-		//position: relative;
-		//margin-@{cross-lose}: @button-gap;
-		//background: light-gray;
+}
+
+.separators(@direction, @lose-pad, @rise-pad: @lose-pad) {
+	.flow(@direction);
+	menu {
+		padding-@{cross-rise}: @rise-pad;
+		padding-@{cross-lose}: @lose-pad;
+		border-@{cross-lose}: 1px solid @border-color;
+	}
+	li:first-child menu {
+		border: none;
+		padding-@{cross-lose}: 0;
 	}
 }
 

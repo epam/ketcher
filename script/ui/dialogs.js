@@ -1,5 +1,5 @@
-ui.initDialogs = function () {
-    new Ajax.Request(ui.base_url + 'dialogs.tmpl', {
+ui.initDialogs = function (base_url) {
+    new Ajax.Request(base_url + 'dialogs.tmpl', {
         method: 'GET',
         asynchronous : false,
         onComplete: function (res) {

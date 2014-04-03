@@ -16,9 +16,6 @@ if (typeof(ui) == 'undefined')
 ui.standalone = true;
 ui.forwardExceptions = false;
 
-ui.api_path = '/';
-ui.base_url = '';
-
 ui.scale = 40;
 
 ui.zoomValues = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2.0, 2.5, 3.0, 3.5, 4.0];
@@ -41,25 +38,16 @@ ui.mode_id = null;
 ui.undoStack = new Array();
 ui.redoStack = new Array();
 
-ui.is_osx = false;
-ui.is_touch = false;
+// ui.is_osx = false;
+// ui.is_touch = false;
 ui.initialized = false;
-
-//console.log = function(msg)
-//{
-//    new Ajax.Request(ui.api_path + 'log', {
-//        method: 'post',
-//        asynchronous: false,
-//        parameters: {message: msg}
-//    });
-//};
 
 
 //
 // Init section
 //
 
-ui.initTemplates = function ()
+ui.initTemplates = function (base_url)
 {
     function parseSdf(sdf) {
         var items = sdf.split(/^[$][$][$][$]$/m);
@@ -99,7 +87,7 @@ ui.initTemplates = function ()
     }
 
     // Init templates
-    new Ajax.Request(ui.base_url + 'templates.sdf',
+    new Ajax.Request(base_url + 'templates.sdf',
     {
         method: 'get',
         requestHeaders: {Accept: 'application/octet-stream'},
@@ -154,8 +142,14 @@ ui.init = function (parameters, opts)
     this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
     this.client_area = $('ketcher');
 
-    opts = new rnd.RenderOptions(opts);
-    parameters = parameters || {};
+	opts = new rnd.RenderOptions(opts);
+
+	parameters = Object.extend({
+		api_path: '/',
+		static_path: ''
+	}, parameters);
+	this.api_path = parameters.api_path; // move to api-side
+
     this.actionComplete = parameters.actionComplete || function(){};
     if (this.initialized)
     {
@@ -169,10 +163,7 @@ ui.init = function (parameters, opts)
     }
 
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
-    this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
-
-    ui.api_path = parameters.ketcher_api_url || document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
-    ui.base_url = document.location.pathname.substring(0, document.location.pathname.lastIndexOf('/') + 1);
+    //this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
 
     // OS X specific stuff
     // if (ui.is_osx) {
@@ -183,30 +174,30 @@ ui.init = function (parameters, opts)
     // }
 
     // Touch device stuff
-    if (ui.is_touch) {
-        EventMap =
-        {
-            mousemove: 'touchmove',
-            mousedown: 'touchstart',
-            mouseup  : 'touchend'
-        };
+    // if (ui.is_touch) {
+    //     EventMap =
+    //     {
+    //         mousemove: 'touchmove',
+    //         mousedown: 'touchstart',
+    //         mouseup  : 'touchend'
+    //     };
 
-        // to enable copy to clipboard on iOS
-        $('output_mol').removeAttribute('readonly');
+    //     // to enable copy to clipboard on iOS
+    //     $('output_mol').removeAttribute('readonly');
 
-        // rbalabanov: here is temporary fix for "drag issue" on iPad
-        //BEGIN
-        rnd.ReStruct.prototype.hiddenPaths = [];
+    //     // rbalabanov: here is temporary fix for "drag issue" on iPad
+    //     //BEGIN
+    //     rnd.ReStruct.prototype.hiddenPaths = [];
 
-        rnd.ReStruct.prototype.clearVisel = function (visel) {
-            for (var i = 0; i < visel.paths.length; ++i) {
-                visel.paths[i].hide();
-                this.hiddenPaths.push(visel.paths[i]);
-            }
-            visel.clear();
-        };
-        //END
-    }
+    //     rnd.ReStruct.prototype.clearVisel = function (visel) {
+    //         for (var i = 0; i < visel.paths.length; ++i) {
+    //             visel.paths[i].hide();
+    //             this.hiddenPaths.push(visel.paths[i]);
+    //         }
+    //         visel.clear();
+    //     };
+    //     //END
+    // }
 
     if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
         new Ajax.Request(ui.api_path + 'knocknock', {
@@ -221,8 +212,8 @@ ui.init = function (parameters, opts)
     }
 
     if (!this.standalone) {
-        this.initTemplates();
-        this.initDialogs();
+        this.initTemplates(parameters.static_path);
+        this.initDialogs(parameters.static_path);
     }
 
     // Document events

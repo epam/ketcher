@@ -145,7 +145,7 @@ ui.init = function (parameters, opts)
 	opts = new rnd.RenderOptions(opts);
 
 	parameters = Object.extend({
-		api_path: '/',
+		api_path: '',
 		static_path: ''
 	}, parameters);
 	this.api_path = parameters.api_path; // move to api-side

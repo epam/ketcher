@@ -57,7 +57,7 @@ rnd.RenderOptions = function (opt)
 	this.hideTerminalLabels = opt.hideTerminalLabels || false;
 	this.ignoreMouseEvents = opt.ignoreMouseEvents || false; // for view mode
 	this.selectionDistanceCoefficient = (opt.selectionDistanceCoefficient || 0.4) - 0;
-}
+};
 
 rnd.Render = function (clientArea, scale, opt, viewSz)
 {
@@ -90,14 +90,6 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.clientAreaPos = new util.Vec2(valueL, valueT);
 
-    // [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
-    // here we prevent that freaking "accelerators menu" on IE8
-    //BEGIN
-    clientArea.observe('selectstart', function(event) {
-        util.stopEventPropagation(event); return util.preventDefault(event);
-    });
-    //END
-
     // rbalabanov: two-fingers scrolling & zooming for iPad
     // TODO should be moved to touch.js module, re-factoring needed
     //BEGIN
@@ -123,48 +115,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
             self.longTapFlag = false;
         }
     };
-
-    clientArea.observe('touchstart', function(event) {
-        self.resetLongTapTimeout(true);
-        if (event.touches.length == 2) {
-            this._tui = this._tui || {};
-            this._tui.center = {
-                pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
-                pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
-            };
-            ui.setZoomStaticPointInit(ui.page2obj(this._tui.center));
-        } else if (event.touches.length == 1) {
-            self.setLongTapTimeout(event);
-        }
-    });
-    clientArea.observe('touchmove', function(event) {
-        self.resetLongTapTimeout(true);
-        if ('_tui' in this && event.touches.length == 2) {
-            this._tui.center = {
-                pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
-                pageY : (event.touches[0].pageY + event.touches[1].pageY) / 2
-            };
-        }
-    });
-    clientArea.observe('gesturestart', function(event) {
-        this._tui = this._tui || {};
-        this._tui.scale0 = ui.render.zoom;
-        event.preventDefault();
-    });
-    clientArea.observe('gesturechange', function(event) {
-        ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2canvas2(this._tui.center));
-        ui.render.update();
-        event.preventDefault();
-    });
-    clientArea.observe('gestureend', function(event) {
-        delete this._tui;
-        event.preventDefault();
-    });
-    //END
-
-	clientArea.observe('onresize', function(event) {
-        render.onResize();
-    });
+	//END
 
     // rbalabanov: here is temporary fix for "drag issue" on iPad
     //BEGIN
@@ -177,48 +128,85 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
     }
     //END
 
-    //rbalabanov: temporary
-    //BEGIN
-    clientArea.observe('touchend', function(event) {
-        self.resetLongTapTimeout(false);
-        if (self.longTapFlag) {
-            ui.render.current_tool && ui.render.current_tool.processEvent('OnDblClick', self.longTapTouchstart);
-            self.resetLongTapTimeout(true);
-            return util.preventDefault(event);
-        } else if (event.touches.length == 0) {
-            ui.render.current_tool && ui.render.current_tool.processEvent('OnMouseUp', event);
-        }
-    });
-    //END
+	if (!this.opt.ignoreMouseEvents) {
+		// [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
+		// here we prevent that freaking "accelerators menu" on IE8
+		//BEGIN
+		clientArea.observe('selectstart', function(event) {
+			util.stopEventPropagation(event);
+			return util.preventDefault(event);
+		});
+		//END
 
-        if (!this.opt.ignoreMouseEvents) {
-            // assign canvas events handlers
-            ['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function(eventName){
-                var bindEventName = eventName.toLowerCase();
-                bindEventName = EventMap[bindEventName] || bindEventName;
-                clientArea.observe(bindEventName, function(event) {
-                    if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
-                        // TODO: karulin: fix this on touch devices if needed
-                        var co = clientArea.cumulativeOffset();
-                        co = new util.Vec2(co[0], co[1]);
-                        var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
-                        var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
-                        if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
-                            if (eventName == "MouseMove") {
-                                // [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-                                ui.render.current_tool.processEvent('OnMouseLeave', event);
-                            }
-                            return util.preventDefault(event);
-                        }
-                    }
+		clientArea.observe('touchstart', function(event) {
+			self.resetLongTapTimeout(true);
+			if (event.touches.length == 2) {
+				this._tui = this._tui || {};
+				this._tui.center = {
+					pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
+					pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
+				};
+				ui.setZoomStaticPointInit(ui.page2obj(this._tui.center));
+			} else if (event.touches.length == 1) {
+				self.setLongTapTimeout(event);
+			}
+		});
+		clientArea.observe('touchmove', function(event) {
+			self.resetLongTapTimeout(true);
+			if ('_tui' in this && event.touches.length == 2) {
+				this._tui.center = {
+					pageX : (event.touches[0].pageX + event.touches[1].pageX) / 2,
+					pageY : (event.touches[0].pageY + event.touches[1].pageY) / 2
+				};
+			}
+		});
+		clientArea.observe('gesturestart', function(event) {
+			this._tui = this._tui || {};
+			this._tui.scale0 = ui.render.zoom;
+			event.preventDefault();
+		});
+		clientArea.observe('gesturechange', function(event) {
+			ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2canvas2(this._tui.center));
+			ui.render.update();
+			event.preventDefault();
+		});
+		clientArea.observe('gestureend', function(event) {
+			delete this._tui;
+			event.preventDefault();
+		});
+		//END
 
-                    ui.render.current_tool.processEvent('On' + eventName, event);
-                    util.stopEventPropagation(event);
-                    if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
-                        return util.preventDefault(event);
-                });
-            }, this);
-        }
+		clientArea.observe('onresize', function(event) {
+			render.onResize();
+		});
+
+		// assign canvas events handlers
+		['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function(eventName){
+			var bindEventName = eventName.toLowerCase();
+			bindEventName = EventMap[bindEventName] || bindEventName;
+			clientArea.observe(bindEventName, function(event) {
+				if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
+					// TODO: karulin: fix this on touch devices if needed
+					var co = clientArea.cumulativeOffset();
+					co = new util.Vec2(co[0], co[1]);
+					var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
+					var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
+					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
+						if (eventName == "MouseMove") {
+							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+							ui.render.current_tool.processEvent('OnMouseLeave', event);
+						}
+						return util.preventDefault(event);
+					}
+				}
+
+				ui.render.current_tool.processEvent('On' + eventName, event);
+				util.stopEventPropagation(event);
+				if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
+					return util.preventDefault(event);
+			});
+		}, this);
+	}
 
 	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
 	this.settings = null;

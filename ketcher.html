@@ -46,9 +46,8 @@
             var param_list = param_string.split(/&/g);
             var param_hash = {};
             for (var i = 0; i < param_list.length; ++i) {
-                var pair = param_list[i].split('=');
-                if (pair.length == 2)
-                    param_hash[pair[0]] = unescape(pair[1]);
+                var pair = param_list[i].split('=', 2);
+                param_hash[pair[0]] = pair.length != 2 || unescape(pair[1]);
             }
 	    if (param_hash.ketcher_maximize) {
 		$('ketcher_div').removeClassName('ketcherDivMaxSize');

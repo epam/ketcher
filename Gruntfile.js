@@ -8,15 +8,21 @@ module.exports = function(grunt) {
 		options: {
 			banner: grunt.file.read('script/banner.js'),
 			src: ['script/**', 'style/**', 'icons/**',
-				  'Gruntfile.js', 'package.json',
+			      'template/**', 'Gruntfile.js', 'package.json',
 				  '.jshintrc', '.editorconfig'],
 			libs: ['prototype-min.js', 'raphael.js'],
 			build: ['<%= concat.default.dest %>',
-				    '<%= less.default.dest %>',
+			        '<%= less.default.dest %>',
+			        '<%= assemble.main.dest %>',
 				    '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
-					  'ketcher.html', 'demo.html', 'templates.sdf',
-					  'loading.gif', 'logo.jpg', 'dialogs.tmpl']
+			          'demo.html', 'templates.sdf', 'logo.jpg',
+			          'loading.gif'],
+
+			// build options
+			// is there a way to automate?
+			'no-reaction': grunt.option('no-reaction'),
+			'no-group': grunt.option('no-group')
 		},
 
 		concat: {
@@ -76,6 +82,21 @@ module.exports = function(grunt) {
 			},
 			dev: {
 				files: ['<%= less.default %>']
+			}
+		},
+
+		assemble: {
+			main: {
+				options: {
+					partials: ['template/menu/*',
+					           'template/dialogs/*'],
+					pkg: '<%= pkg %>',       // extend by options, may be?
+					options: '<%= options %>',
+					postprocess: require('pretty')
+				},
+
+				src: 'template/main.hbs',
+				dest: 'ketcher.html'
 			}
 		},
 
@@ -148,6 +169,10 @@ module.exports = function(grunt) {
 				files: 'style/**/*.less',
 				tasks: 'less:dev'
 			},
+			html: {
+				files: 'template/**',
+				tasks: 'assemble'
+			},
 			livereload: {
 				options: {
 					atBegin: false,
@@ -159,13 +184,15 @@ module.exports = function(grunt) {
 	});
 
 	require('load-grunt-tasks')(grunt);
+	// waiting for assemble 0.5.0
+	grunt.loadNpmTasks('assemble');
 
 	grunt.registerTask('font', ['fontello', 'clean:tmp']);
 
 	// clean:tmp in the end as workaround rimraf bug
 	grunt.registerTask('default', ['clean', 'less:default', 'fontello',
-								   'uglify', 'copy:libs', 'compress',
-								   'clean:tmp']);
+	                               'uglify', 'assemble', 'copy:libs',
+	                               'compress', 'clean:tmp']);
 	grunt.registerTask('dev', ['clean', 'less:dev', 'fontello', 'concat',
-							   'copy:libs', 'clean:tmp']);
+	                           'assemble', 'copy:libs', 'clean:tmp']);
 };

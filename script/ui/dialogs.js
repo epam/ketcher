@@ -1,12 +1,4 @@
-ui.initDialogs = function (base_url) {
-    new Ajax.Request(base_url + 'dialogs.tmpl', {
-        method: 'GET',
-        asynchronous : false,
-        onComplete: function (res) {
-            ui.ketcher_window.insert(res.responseText);
-        }
-    });
-
+ui.initDialogs = function () {
     // Dialog events
     $$('.dialogWindow').each(function (el)
     {

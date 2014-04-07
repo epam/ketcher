@@ -213,7 +213,7 @@ ui.init = function (parameters, opts)
 
     if (!this.standalone) {
         this.initTemplates(parameters.static_path);
-        this.initDialogs(parameters.static_path);
+        this.initDialogs();
     }
 
     // Document events

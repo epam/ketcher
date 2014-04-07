@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>Ketcher v{{pkg.version}}</title>
+	<link rel="stylesheet" href="{{pkg.name}}.css" />
+	{{#each options.libs}}
+	  <script src="{{.}}"></script>
+	{{/each}}
+	<script src="{{pkg.name}}.js"></script>
+  </head>
+
+  {{#with options}}
+	<body role="applicaion">
+	  <main id="ketcher"></main>
+	  <menu role="toolbar">
+		{{>mainmenu}}
+		{{>toolbox}}
+		{{>template}}
+		{{>elements}}
+	  </menu>
+	  {{>crap}}
+	</body>
+  {{/with}}
+</html>

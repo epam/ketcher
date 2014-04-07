@@ -323,7 +323,17 @@ ui.hideBlurredControls = function () {
     if (!this.dropdown_opened)
         return false;
 
-    this.dropdown_opened.removeClassName('opened');
+	this.dropdown_opened.removeClassName('opened');
+
+	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
+	// repaint bug: http://bit.ly/1iiSMgy
+	// needs investigation, performance
+	this.client_area.style.visibility = 'hidden';
+	setTimeout(function () {
+		ui.client_area.style.visibility = 'visible';
+	}, 0);
+	// END
+
     var sel = this.dropdown_opened.select('li.selected');
     if (sel.length == 1) {
         //var index = sel[0].previousSiblings().size();

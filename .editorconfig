@@ -5,10 +5,24 @@
 root = true
 
 [*]
-
-indent_style = tab
-indent_size = 4
+indent_style = space
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+[**.js]
+indent_style = tab
+indent_size = 4
+
+[style/**]
+indent_style = tab
+indent_size = 4
+
+[template/**]
+indent_style = tab
+indent_size = 2
+
+[**.py]
+indent_style = space
+indent_size = 4

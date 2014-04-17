@@ -1,75 +1,75 @@
 <li id="toolbox">
-  <menu>
-	<li id="select">
-	  <menu>
-		<li><button id="select-lasso" accesskey="Esc">Lasso Selection</button></li>
-		<li><button id="select-rectangle" accesskey="Esc">Rectangle Selection</button></li>
-		<li><button id="select-fragment" accesskey="Esc">Fragment Selection</button></li>
-	  </menu>
-	</li>
-	<li><button id="erase">Erase</button></li>
-	<li id="bond">
-	  <menu>
-		<li>
-		  <menu>
-			<li><button id="bond-single" accesskey="1">Single Bond</button></li>
-			<li><button id="bond-double" accesskey="2">Double Bond</button></li>
-			<li><button id="bond-triple" accesskey="3">Triple Bond</button></li>
-		  </menu>
+	<menu>
+		<li id="select">
+			<menu>
+				<li><button id="select-lasso" accesskey="Esc">Lasso Selection</button></li>
+				<li><button id="select-rectangle" accesskey="Esc">Rectangle Selection</button></li>
+				<li><button id="select-fragment" accesskey="Esc">Fragment Selection</button></li>
+			</menu>
 		</li>
-		<li>
-		  <menu>
-			<li><button id="bond-up" accesskey="1">Single Up Bond</button></li>
-			<li><button id="bond-down" accesskey="1">Single Down Bond</button></li>
-			<li><button id="bond-updown" accesskey="1">Single Up/Down Bond</button></li>
-			<li><button id="bond-crossed" accesskey="2">Double Cis/Trans Bond</button></li>
-		  </menu>
+		<li><button id="erase">Erase</button></li>
+		<li id="bond">
+			<menu>
+				<li>
+					<menu>
+						<li><button id="bond-single" accesskey="1">Single Bond</button></li>
+						<li><button id="bond-double" accesskey="2">Double Bond</button></li>
+						<li><button id="bond-triple" accesskey="3">Triple Bond</button></li>
+					</menu>
+				</li>
+				<li>
+					<menu>
+						<li><button id="bond-up" accesskey="1">Single Up Bond</button></li>
+						<li><button id="bond-down" accesskey="1">Single Down Bond</button></li>
+						<li><button id="bond-updown" accesskey="1">Single Up/Down Bond</button></li>
+						<li><button id="bond-crossed" accesskey="2">Double Cis/Trans Bond</button></li>
+					</menu>
+				</li>
+				<li>
+					<menu>
+						<li><button id="bond-any" accesskey="0">Any Bond</button></li>
+						<li><button id="bond-aromatic" accesskey="4">Aromatic Bond</button></li>
+						<li><button id="bond-singledouble">Single/Double Bond</button></li>
+						<li><button id="bond-singlearomatic">Single/Aromatic Bond</button></li>
+						<li><button id="bond-doublearomatic">Double/Aromatic Bond</button></li>
+					</menu>
+				</li>
+			</menu>
 		</li>
-		<li>
-		  <menu>
-			<li><button id="bond-any" accesskey="0">Any Bond</button></li>
-			<li><button id="bond-aromatic" accesskey="4">Aromatic Bond</button></li>
-			<li><button id="bond-singledouble">Single/Double Bond</button></li>
-			<li><button id="bond-singlearomatic">Single/Aromatic Bond</button></li>
-			<li><button id="bond-doublearomatic">Double/Aromatic Bond</button></li>
-		  </menu>
+		<li><button id="chain">Chain</button></li>
+		<li id="charge">
+			<menu>
+				<li><button id="charge-plus" accesskey="5">Charge Plus</button></li>
+				<li><button id="charge-minus" accesskey="5">Charge Minus</button></li>
+			</menu>
 		</li>
-	  </menu>
-	</li>
-	<li><button id="chain">Chain</button></li>
-	<li id="charge">
-	  <menu>
-		<li><button id="charge-plus" accesskey="5">Charge Plus</button></li>
-		<li><button id="charge-minus" accesskey="5">Charge Minus</button></li>
-	  </menu>
-	</li>
-	<li id="transform">
-	  <menu>
-		<li><button id="transform-rotate">Rotate Tool</button></li>
-		<li><button id="transform-flip-h">Horizontal Flip</button></li>
-		<li><button id="transform-flip-v">Vertical Flip"</button></li>
-	  </menu>
-	</li>
-    {{#unless no-reaction}}
-	  <li id="reaction">
-	    <menu>
-		  <li><button id="reaction-arrow">Reaction Arrow Tool</button></li>
-		  <li><button id="reaction-plus">Reaction Plus Tool</button></li>
-		  <li><button id="reaction-automap">Reaction Auto-Mapping Tool</button></li>
-		  <li><button id="reaction-map">Reaction Mapping Tool</button></li>
-		  <li><button id="reaction-unmap">Reaction Unmappping Tool</button></li>
-	    </menu>
-	  </li>
-    {{/unless}}
-    {{#unless no-group}}
-	  <li><button id="sgroup" accesskey="Ctrl+G">S-Group</button></li>
-	  <li id="rgroup">
-	    <menu>
-		  <li><button id="rgroup-label" accesskey="Shift+R">R-Group Label Tool</button></li>
-		  <li><button id="rgroup-fragment" accesskey="Shift+R">R-Group Fragment Tool</button></li>
-		  <li><button id="rgroup-attpoints" accesskey="Shift+R">Attachment Point Tool</button></li>
-	    </menu>
-	  </li>
-    {{/unless}}
-  </menu>
+		<li id="transform">
+			<menu>
+				<li><button id="transform-rotate">Rotate Tool</button></li>
+				<li><button id="transform-flip-h">Horizontal Flip</button></li>
+				<li><button id="transform-flip-v">Vertical Flip"</button></li>
+			</menu>
+		</li>
+		{{#unless no-reaction}}
+			<li id="reaction">
+				<menu>
+					<li><button id="reaction-arrow">Reaction Arrow Tool</button></li>
+					<li><button id="reaction-plus">Reaction Plus Tool</button></li>
+					<li><button id="reaction-automap">Reaction Auto-Mapping Tool</button></li>
+					<li><button id="reaction-map">Reaction Mapping Tool</button></li>
+					<li><button id="reaction-unmap">Reaction Unmappping Tool</button></li>
+				</menu>
+			</li>
+		{{/unless}}
+		{{#unless no-group}}
+			<li><button id="sgroup" accesskey="Ctrl+G">S-Group</button></li>
+			<li id="rgroup">
+				<menu>
+					<li><button id="rgroup-label" accesskey="Shift+R">R-Group Label Tool</button></li>
+					<li><button id="rgroup-fragment" accesskey="Shift+R">R-Group Fragment Tool</button></li>
+					<li><button id="rgroup-attpoints" accesskey="Shift+R">Attachment Point Tool</button></li>
+				</menu>
+			</li>
+		{{/unless}}
+	</menu>
 </li>

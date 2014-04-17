@@ -9,12 +9,12 @@ module.exports = function(grunt) {
 			banner: grunt.file.read('script/banner.js'),
 			src: ['script/**', 'style/**', 'icons/**',
 			      'template/**', 'Gruntfile.js', 'package.json',
-				  '.jshintrc', '.editorconfig'],
+			      '.jshintrc', '.editorconfig'],
 			libs: ['prototype-min.js', 'raphael.js'],
 			build: ['<%= concat.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.main.dest %>',
-				    '<%= pkg.name %>.{svg,ttf,eot,woff}'],
+			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
 			          'demo.html', 'templates.sdf', 'logo.jpg',
 			          'loading.gif'],
@@ -33,24 +33,24 @@ module.exports = function(grunt) {
 					stripBanners: true
 				},
 				src: ['script/vendor/html5shiv.js',
-					  'script/vendor/base64.js',
-					  'script/vendor/keymaster.js',
+				      'script/vendor/base64.js',
+				      'script/vendor/keymaster.js',
 
-					  'script/util/*.js',
+				      'script/util/*.js',
 
-					  'script/chem/element.js',
-					  'script/chem/struct.js',
-					  'script/chem/*.js',
+				      'script/chem/element.js',
+				      'script/chem/struct.js',
+				      'script/chem/*.js',
 
-					  'script/rnd/visel.js',
-					  'script/rnd/restruct.js',
-					  'script/rnd/*.js',
+				      'script/rnd/visel.js',
+				      'script/rnd/restruct.js',
+				      'script/rnd/*.js',
 
-					  'script/ui/*.js',
-					  'script/reaxys/*.js',
+				      'script/ui/*.js',
+				      'script/reaxys/*.js',
 
-					  'script/main.js'
-					 ],
+				      'script/main.js'
+				     ],
 				dest: '<%= pkg.name %>.js'
 			}
 		},
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 				report: 'min',
 				compress: {
 					global_defs: {
-					    DEBUG: false
+						DEBUG: false
 					},
 					dead_code: true
 				}
@@ -139,7 +139,7 @@ module.exports = function(grunt) {
 					archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
 				},
 				src: ['<%= options.build %>', '<%= options.libs %>',
-					  '<%= options.distrib %>'],
+				      '<%= options.distrib %>'],
 				dest: '<%= pkg.name %>'
 			},
 			build_with_sources: {

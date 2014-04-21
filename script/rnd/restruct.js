@@ -555,6 +555,8 @@ rnd.ReStruct.prototype.update = function (force)
 			}
 		}
 	}).call(this);
+    if (this.structChanged)
+        util.each(this.render.structChangeHandlers, function(handler){handler.call();});
 
 	// TODO: when to update sgroup?
 	this.sgroups.each(function(sid, sgroup){

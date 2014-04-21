@@ -78,6 +78,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.rxnArrow = null;
 	this.rxnMode = false;
 	this.zoom = 1.0;
+	this.structChangeHandlers = [];
 
 	var render = this;
 	var valueT = 0, valueL = 0;
@@ -214,6 +215,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	this.onCanvasOffsetChanged = null; //function(newOffset, oldOffset){};
 	this.onCanvasSizeChanged = null; //function(newSize, oldSize){};
+};
+
+rnd.Render.prototype.addStructChangeHandler = function (handler)
+{
+    if (handler in this.structChangeHandlers)
+        throw new Error("handler already present");
+    this.structChangeHandlers.push(handler);
 };
 
 rnd.Render.prototype.view2scaled = function (p, isRelative) {

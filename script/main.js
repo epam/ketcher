@@ -68,6 +68,12 @@ ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts)
     return this.render;
 };
 
+ketcher.onStructChange = function (handler)
+{
+    util.assert(handler);
+    ui.render.addStructChangeHandler(handler);
+};
+
 ketcher.testSegment = function (clientArea)
 {
     var sz = 600;

@@ -100,6 +100,7 @@
 		 });
 
 		 ketcher.setMolecule(initialMolecule);
+		 ketcher.onStructChange(function(){source.val(ketcher.getMolfile());});
 	   });
 	 });
 	</script>

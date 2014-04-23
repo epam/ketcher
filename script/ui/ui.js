@@ -294,7 +294,7 @@ ui.init = function (parameters, opts)
     // }
 
     if (this.standalone) {
-        $$('.serverRequired').each(function(el) {
+	    $$('#cleanup', '#arom', '#dearom', '#reaction-automap').each(function(el) {
             if (ui.isToolButton(el)) // .hasClassName('toolButton')
                 el.setAttribute('disabled', true);
             else

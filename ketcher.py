@@ -45,7 +45,7 @@ class application(object):
 
     def __iter__(self):
         for chunk in self.response:
-            yield chunk if sys.version_info[0] < 3 or \
+            yield chunk if sys.version_info.major < 3 or \
                            not hasattr(chunk, 'encode') else chunk.encode()
 
     def notsupported(self):
@@ -275,11 +275,8 @@ if __name__ == '__main__':
         httpd.serve_forever()
     except ValueError:
         usage()
-    except OSError as e:
-        print('Server error: {0}'.format(e))
-        usage()
-    except (socket.error, socket.gaierror, socket.herror) as e:
-        print("Server error: %s" % e[1])
+    except (socket.error, socket.gaierror, socket.herror, OSError) as e:
+        print("Server error: %s" % e.args[1])
         usage()
     except KeyboardInterrupt:
         pass

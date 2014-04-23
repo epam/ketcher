@@ -1,8 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys
-import traceback
-from os import path
+from os import path, getcwd
 from mimetypes import guess_type
 from cgi import FieldStorage
 from wsgiref.util import FileWrapper
@@ -10,24 +10,14 @@ from wsgiref.headers import Headers
 
 from base64 import b64encode
 
-
-try:
-    import indigo
-    import indigo_inchi
-    from indigo import IndigoException
-    indigo = indigo.Indigo()
-    indigo_inchi = indigo_inchi.IndigoInchi(indigo)
-    indigo.setOption("ignore-stereochemistry-errors", "true")
-
-    has_indigo = True
-except:
-    print("Indigo is not found. Server-side functionality will not be available")
-    has_indigo = False
-
 class application(object):
     # don't serve static by default
     static_serve = False
     static_alias = { '' : 'ketcher.html' }
+    static_root = None
+
+    indigo = None
+    indigo_inchi = None
 
     def __init__(self, environ, start_response):
         self.path = environ['PATH_INFO'].strip('/')
@@ -35,56 +25,54 @@ class application(object):
         self.content_type = environ.get('CONTENT_TYPE', '')
         self.fields = FieldStorage(fp=environ['wsgi.input'],
                                    environ=environ, keep_blank_values=True)
-
         self.FileWrapper = environ.get('wsgi.file_wrapper', FileWrapper)
         self.headers = Headers([])
 
         route = getattr(self, 'on_' + self.path, None)
         if route is None:
-            route = self.serve_static if self.method == 'GET' and self.static_serve else \
-                    self.notsupported
+            route = self.serve_static if self.method == 'GET' and \
+                                         self.static_serve else self.notsupported
 
-        status = '200 OK'
+        status = "200 OK"
         try:
-            if has_indigo:
-                try:
-                    self.response = route()
-                except IndigoException as e:
-                    self.response = self.error_response(str(e))
-                    if 'indigoLoad' in self.response[-1]:      # error on load
-                        self.response[1] = "Cannot load the specified structure: %s " % str(e)
-            else:
-                self.response = route()
-
-        except self.HttpException as (status, message):
-            self.response = [message]
+            self.response = route()
+        except self.HttpException as e:
+            status = e.args[0]
+            self.response = [e.args[1]]
 
         self.headers.setdefault('Content-Type', 'text/plain')
         start_response(status, self.headers.items())
 
     def __iter__(self):
         for chunk in self.response:
-            yield chunk
+            yield chunk if sys.version_info.major < 3 or \
+                           not hasattr(chunk, 'encode') else chunk.encode()
 
+    def notsupported(self):
+        raise self.HttpException("405 Method Not Allowed",
+                                 "Request not supported")
+
+    def indigo_required(method):
+        def wrapper(self, **args):
+            if not self.indigo:
+                raise self.HttpException("501 Not Implemented",
+                                         "Indigo libraries are not found")
+            try:
+                return method(self, **args)
+            except indigo.IndigoException as e:
+                message = str(sys.exc_info()[1])
+                if 'indigoLoad' in message:    # error on load
+                    message = "Cannot load the specified " + \
+                              "structure: %s " % str(e)
+                raise self.HttpException("400 Bad Request",
+                                         message)
+        return wrapper
+
+    @indigo_required
     def on_knocknock(self):
-        if has_indigo:
-            return ["You are welcome!"]
-        else:
-            return ["Standalone version"]
+        return ["You are welcome!"]
 
-    def on_log(self):
-        message = self.fields.getfirst('message')
-        print( 'CLIENT LOG: ' + message)
-        return ["Ok.\n"]
-
-    def selective_layout(self, mol):
-        dsgs = [dsg for dsg in mol.iterateDataSGroups() if dsg.description() == '_ketcher_selective_layout' and dsg.data() == '1']
-        atoms = sorted([atom.index() for dsg in dsgs for atom in dsg.iterateAtoms()])
-        for dsg in dsgs:
-            dsg.remove()
-        mol.getSubmolecule(atoms).layout()
-        return mol
-
+    @indigo_required
     def on_layout(self):
         moldata = None
         if self.method == 'GET' and 'smiles' in self.fields:
@@ -94,7 +82,7 @@ class application(object):
         selective = 'selective' in self.fields
         if moldata:
             if '>>' in moldata or moldata.startswith('$RXN'):
-                rxn = indigo.loadQueryReaction(moldata)
+                rxn = self.indigo.loadQueryReaction(moldata)
                 if selective:
                     for mol in rxn.iterateMolecules():
                         self.selective_layout(mol)
@@ -103,12 +91,12 @@ class application(object):
                 return ["Ok.\n",
                         rxn.rxnfile()]
             elif moldata.startswith('InChI'):
-                mol = indigo_inchi.loadMolecule(moldata)
+                mol = self.indigo_inchi.loadMolecule(moldata)
                 mol.layout()
                 return ["Ok.\n",
                         mol.molfile()]
             else:
-                mol = indigo.loadQueryMolecule(moldata)
+                mol = self.indigo.loadQueryMolecule(moldata)
                 if selective:
                     for rg in mol.iterateRGroups():
                         for frag in rg.iterateRGroupFragments():
@@ -120,25 +108,57 @@ class application(object):
                         mol.molfile()]
         self.notsupported()
 
+    @indigo_required
     def on_automap(self):
-        try:
-            moldata = None
-            if self.method == 'GET' and 'smiles' in self.fields:
-                moldata = self.fields.getfirst('smiles')
-            elif self.is_form_request() and 'moldata' in self.fields:
-                moldata = self.fields.getfirst('moldata')
+        moldata = None
+        if self.method == 'GET' and 'smiles' in self.fields:
+            moldata = self.fields.getfirst('smiles')
+        elif self.is_form_request() and 'moldata' in self.fields:
+            moldata = self.fields.getfirst('moldata')
 
-            if moldata:
-                mode = self.fields.getfirst('mode', 'discard')
-                rxn = indigo.loadQueryReaction(moldata)
-                if not moldata.startswith('$RXN'):
-                    rxn.layout()
-                rxn.automap(mode)
-                return ["Ok.\n",
-                        rxn.rxnfile()]
-            self.notsupported()
+        if moldata:
+            mode = self.fields.getfirst('mode', 'discard')
+            rxn = self.indigo.loadQueryReaction(moldata)
+            if not moldata.startswith('$RXN'):
+                rxn.layout()
+            rxn.automap(mode)
+            return ["Ok.\n",
+                    rxn.rxnfile()]
+        self.notsupported()
+
+    @indigo_required
+    def on_aromatize(self):
+        try:
+            md, is_rxn = self.load_moldata()
         except:
-            return self.error_response()
+            message = str(sys.exc_info()[1])
+            if message.startswith("\"molfile loader:") and \
+               message.endswith("queries\""): # hack to avoid user confusion
+                md, is_rxn = self.load_moldata(True)
+            else:
+                raise
+        md.aromatize()
+        return ["Ok.\n",
+                md.rxnfile() if is_rxn else md.molfile()]
+
+    @indigo_required
+    def on_getinchi(self):
+        md, is_rxn = self.load_moldata()
+        inchi = self.indigo_inchi.getInchi(md)
+        return ["Ok.\n", inchi]
+
+    @indigo_required
+    def on_dearomatize(self):
+        try:
+            md, is_rxn = self.load_moldata()
+        except:                 # TODO: test for query features presence
+            raise self.HttpException("400 Bad Request",
+                                     "Molecules and reactions " + \
+                                     "containing query features " + \
+                                     "cannot be dearomatized yet.")
+        md.dearomatize()
+        return ["Ok.\n",
+                md.rxnfile() if is_rxn else md.molfile()]
 
     def on_open(self):
         if self.is_form_request():
@@ -154,122 +174,83 @@ class application(object):
             type, data = self.fields.getfirst('filedata').split('\n', 1)
             type = type.strip()
             if type == 'smi':
-                self.headers.add_header('Content-Type', 'chemical/x-daylight-smiles')
+                self.headers.add_header('Content-Type',
+                                        'chemical/x-daylight-smiles')
             elif type == 'mol':
                 if data.startswith('$RXN'):
                     type = 'rxn'
-                self.headers.add_header('Content-Type', 'chemical/x-mdl-%sfile' % type)
+                self.headers.add_header('Content-Type',
+                                        'chemical/x-mdl-%sfile' % type)
 
             self.headers.add_header('Content-Length', str(len(data)))
-            self.headers.add_header('Content-Disposition', 'attachment', filename='ketcher.%s' % type)
+            self.headers.add_header('Content-Disposition', 'attachment',
+                                    filename='ketcher.%s' % type)
             return [data]
         self.notsupported()
 
-    def on_aromatize(self):
-        try:
-            md, is_rxn = self.load_moldata()
-        except:
-            message = str(sys.exc_info()[1])
-            if message.startswith("\"molfile loader:") and message.endswith("queries\""): # hack to avoid user confusion
-                try:
-                    md, is_rxn = self.load_moldata(True)
-                except:
-                    return self.error_response()
-
-            else:
-                return self.error_response()
-        md.aromatize()
-        return ["Ok.\n",
-                md.rxnfile() if is_rxn else md.molfile()]
-
-    def on_getinchi(self):
-        try:
-            md, is_rxn = self.load_moldata()
-        except:
-            return self.error_response()
-
-        try:
-            inchi = indigo_inchi.getInchi(md)
-        except:
-            return self.error_response()
-
-        return ["Ok.\n", inchi]
-
-    def on_dearomatize(self):
-        try:
-            md, is_rxn = self.load_moldata()
-        except:
-            return self.error_response("Molecules and reactions containing query features cannot be dearomatized yet.")
-
-        try:
-            md.dearomatize()
-            return ["Ok.\n",
-                    md.rxnfile() if is_rxn else md.molfile()]
-        except:
-            return self.error_response()
-
-
     class HttpException(Exception): pass
-
     def load_moldata(self, is_query=False):
         moldata = self.fields.getfirst('moldata')
         if moldata.startswith('$RXN'):
             if is_query:
-                md = indigo.loadQueryReaction(moldata)
+                md = self.indigo.loadQueryReaction(moldata)
             else:
-                md = indigo.loadReaction(moldata)
+                md = self.indigo.loadReaction(moldata)
             is_rxn = True
         else:
             if is_query:
-                md = indigo.loadQueryMolecule(moldata)
+                md = self.indigo.loadQueryMolecule(moldata)
             else:
-                md = indigo.loadMolecule(moldata)
+                md = self.indigo.loadMolecule(moldata)
             is_rxn = False
         return md, is_rxn
 
-    def error_response(self, message=None):
-        msg = ["Error.\n",
-                message or str(sys.exc_info()[1]), '\n',
-                '\n'.join(traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))]
-        for m in msg:
-            sys.stdout.write(m)
-        sys.stdout.write("\n")
-        return msg
-
-    def notsupported(self):
-        raise self.HttpException('405 Method Not Allowed',
-                                 'Request not supported')
+    def selective_layout(self, mol):
+        dsgs = [dsg for dsg in mol.iterateDataSGroups() \
+                if dsg.description() == '_ketcher_selective_layout' and \
+                dsg.data() == '1']
+        atoms = sorted([atom.index() for dsg in dsgs \
+                        for atom in dsg.iterateAtoms()])
+        for dsg in dsgs:
+            dsg.remove()
+        mol.getSubmolecule(atoms).layout()
+        return mol
 
     def serve_static(self):
-        root = path.abspath(path.dirname(__file__))
+        root = self.static_root or getcwd()
         fpath = self.static_alias.get(self.path, self.path)
         fpath = path.abspath(path.join(root, fpath))
 
         if not fpath.startswith(root + path.sep) or not path.isfile(fpath) \
            or fpath == path.abspath(__file__):
-            raise self.HttpException('404 Not Found',
-                                     'Requested file isn\'t accessible')
+            raise self.HttpException("404 Not Found",
+                                     "Requested file isn't accessible")
 
         self.headers['Content-Type'] = guess_type(fpath)[0] or 'text/plain'
         try:
             fd = open(fpath, 'rb')
             return self.FileWrapper(fd) if self.method == 'GET' else ['']
         except (IOError, OSError):
-            raise self.HttpException('402 Payment Required',  # or 403, hmm..
-                                     'Must get more money for overtime')
+            raise self.HttpException("402 Payment Required",  # or 403, hmm..
+                                     "Must get more money for overtime")
 
     def is_form_request(self):
         return self.method == 'POST' and \
                (self.content_type.startswith('application/x-www-form-urlencoded')
                 or self.content_type.startswith('multipart/form-data'))
 
-
-from wsgiref import simple_server
-class PatientServer(simple_server.WSGIServer):
-    request_queue_size = 200
+try:
+    import indigo
+    import indigo_inchi
+    application.indigo = indigo.Indigo()
+    application.indigo_inchi = indigo_inchi.IndigoInchi(application.indigo)
+    application.indigo.setOption('ignore-stereochemistry-errors', 'true')
+except:
+    pass
 
 if __name__ == '__main__':
     import socket
+    from wsgiref.simple_server import make_server
 
     def parse_args():
         arg = sys.argv[1] if len(sys.argv) > 1 else ''
@@ -282,14 +263,20 @@ if __name__ == '__main__':
             progname = 'python ' + progname
         print( "USAGE:\n   %s [port|address:port]\n" % progname)
 
+    if not application.indigo:
+        print("WARNING: Indigo is not found. Server-side functionality " + \
+              "will not be available")
+
     application.static_serve = True     # allow to serve static
     try:                                # in standalone python-server mode
         address, port = parse_args()
-        httpd = simple_server.make_server(address, port, application, server_class=PatientServer)
+        httpd = make_server(address, port, application)
         print("Serving on %s:%d..." % (address, port))
         httpd.serve_forever()
     except ValueError:
         usage()
-    except (socket.error, socket.gaierror, socket.herror) as (n, str):
-        print("Server error." + str)
+    except (socket.error, socket.gaierror, socket.herror, OSError) as e:
+        print("Server error: %s" % e.args[1])
         usage()
+    except KeyboardInterrupt:
+        pass

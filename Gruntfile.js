@@ -13,11 +13,11 @@ module.exports = function(grunt) {
 			libs: ['prototype-min.js', 'raphael.js'],
 			build: ['<%= concat.default.dest %>',
 			        '<%= less.default.dest %>',
-			        '<%= assemble.main.dest %>',
+			        '<%= assemble.default.dest %>',
 			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
-			distrib: ['LICENSE.GPL', 'favicon.ico', 'ketcher.py',
-			          'demo.html', 'templates.sdf', 'logo.jpg',
-			          'loading.gif'],
+			distrib: ['LICENSE.GPL', 'favicon.ico', 'logo.jpg',
+			          'loading.gif', 'demo.html', 'templates.sdf'],
+			server: 'server/python/ketcher.py',
 
 			// build options
 			// is there a way to automate?
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
 		},
 
 		assemble: {
-			main: {
+			default: {
 				options: {
 					partials: ['template/menu/*',
 					           'template/dialogs/*'],
@@ -138,15 +138,27 @@ module.exports = function(grunt) {
 				options: {
 					archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
 				},
-				src: ['<%= options.build %>', '<%= options.libs %>',
-				      '<%= options.distrib %>'],
-				dest: '<%= pkg.name %>'
+				files: [
+					{
+						src: ['<%= options.build %>', '<%= options.libs %>',
+						      '<%= options.distrib %>'],
+						dest: '<%= pkg.name %>'
+					},
+					{
+						flatten: true,
+						expand: true,
+						src: '<%= options.server %>',
+						dest: '<%= pkg.name %>'
+					}
+				]
 			},
 			build_with_sources: {
 				options: {
 					archive: '<%= pkg.name %>-<%= pkg.version %>-src.zip'
 				},
-				src: ['<%= compress.build.src %>', '<%= options.src %>'],
+				// TODO: add server parts to source
+				src: ['<%= options.build %>', '<%= options.libs %>',
+				      '<%= options.distrib %>', '<%= options.src %>'],
 				dest: '<%= pkg.name %>'
 			}
 		},

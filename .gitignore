@@ -1,10 +1,8 @@
 /node_modules
 /extra
 /ketcher.*
-!/ketcher.py
 /*.zip
 
-# dont want to hardcode the short living 'prototype.js' here
 /*.js
 !/Gruntfile.js
 

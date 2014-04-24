@@ -1,0 +1,20 @@
+# This is example of Apache virtualhost configuration running Ketcher
+# server.
+#
+# The WSGI-application (`ketcher.py`) and ketcher's static expected to lie
+# in `/path/to/ketcher` folder, the extracted indigo libraries supposed to
+# be located in `/path/to/indigo-libs`.  Herewith Ketcher will be available
+# at `http://<yourip>/example/ketcher.html`.
+#
+# This configuration assumes properly installed Apache's `mod_wsgi` module.
+# You could read further about WSGI module setup and fine-tuning at its
+# project page <http://code.google.com/p/modwsgi/wiki/WhereToGetHelp?tm=6>.
+
+<VirtualHost *:80>
+    WSGIDaemonProcess ketcher python-path=/path/to/indigo-libs
+    WSGIProcessGroup ketcher
+    WSGIScriptAlias /example /path/to/ketcher/ketcher.py
+    AliasMatch ^/example/(.+\.(js|css|html|ico|ttf|svg|eot|woff))$ /path/to/ketcher/$1
+    # Legacy. TODO: remove as disappears
+    AliasMatch ^/example/(.+\.(gif|jpg|sdf))$ /path/to/ketcher/$1
+</VirtualHost>

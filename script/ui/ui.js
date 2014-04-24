@@ -206,15 +206,14 @@ ui.init = function (parameters, opts)
             onComplete: function (res)
             {
                 if (res.responseText == 'You are welcome!')
-                    ui.standalone = false;
+	                ui.standalone = false;
             }
         });
     }
 
-    if (!this.standalone) {
+	this.initDialogs();
+    if (!this.standalone)
         this.initTemplates(parameters.static_path);
-        this.initDialogs();
-    }
 
     // Document events
     //document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -293,14 +292,12 @@ ui.init = function (parameters, opts)
     //     ui.ketcher_window.observe('resize', ui.onResize_Ketcher);
     // }
 
-    if (this.standalone) {
-	    $$('#cleanup', '#arom', '#dearom', '#reaction-automap').each(function(el) {
-            if (ui.isToolButton(el)) // .hasClassName('toolButton')
-                el.setAttribute('disabled', true);
-            else
-                el.hide();
-        });
-        document.title += ' (standalone)';
+	if (this.standalone) {
+		$$('#cleanup', '#arom', '#dearom',
+		   '#reaction-automap').each(function(el) {
+			   el.setAttribute('disabled', true);
+		   });
+		document.title += ' (standalone)';
     }
 
     // Init renderer
@@ -324,6 +321,13 @@ ui.hideBlurredControls = function () {
         return false;
 
 	this.dropdown_opened.removeClassName('opened');
+    var sel = this.dropdown_opened.select('li.selected');
+    if (sel.length == 1) {
+        //var index = sel[0].previousSiblings().size();
+        var menu = this.dropdown_opened.children[0],
+            margin = parseFloat(menu.style.marginTop) || 0;
+	    menu.style.marginTop = (-sel[0].offsetTop + margin) + 'px';
+    }
 
 	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
 	// repaint bug: http://bit.ly/1iiSMgy
@@ -333,16 +337,6 @@ ui.hideBlurredControls = function () {
 		ui.client_area.style.visibility = 'visible';
 	}, 0);
 	// END
-
-    var sel = this.dropdown_opened.select('li.selected');
-    if (sel.length == 1) {
-        //var index = sel[0].previousSiblings().size();
-        var menu = this.dropdown_opened.children[0],
-            margin = parseFloat(menu.getStyle('margin-top'));
-        menu.setStyle({'margin-top':
-                       (-sel[0].offsetTop + margin) + 'px'});
-    }
-
     this.dropdown_opened = null;
     return true;
 };

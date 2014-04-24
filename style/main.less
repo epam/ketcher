@@ -146,7 +146,6 @@ main {
 			display: block;
 			margin: 1px 0;
 			padding: 4px;
-			color: inherit;
 			width: 100%;
 			height: 24px;
 			font-size: 15px;
@@ -163,6 +162,9 @@ main {
 				.invert-highlight;
 				//color: darken(@main-color, 5%);
 				//.shadow-highlight(none);
+			}
+			&[disabled] {
+				.invert-highlight(none);
 			}
 		}
 

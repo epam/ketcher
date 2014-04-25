@@ -39,7 +39,8 @@
     "grunt-fontello": "~0.1.2",
     "load-grunt-tasks": "~0.4.0",
     "assemble": "^0.4.37",
-    "pretty": "^0.1.2"
+    "pretty": "^0.1.2",
+    "grunt-gitinfo": "^0.1.4"
   },
   "scripts": {
     "build": "npm install && grunt",

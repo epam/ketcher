@@ -92,6 +92,7 @@ module.exports = function(grunt) {
 					           'template/dialogs/*'],
 					pkg: '<%= pkg %>',       // extend by options, may be?
 					options: '<%= options %>',
+					git: '<%= gitinfo.local.branch.current %>',
 					postprocess: require('pretty')
 				},
 
@@ -169,6 +170,13 @@ module.exports = function(grunt) {
 			tmp: '.tmp/**'
 		},
 
+		gitinfo: {
+			commands: {
+				'local.branch.current.lastCommitNumber': ['rev-list',
+				                                          '--count', 'HEAD']
+			}
+		},
+
 		watch: {
 			options: {
 				atBegin: true
@@ -183,7 +191,7 @@ module.exports = function(grunt) {
 			},
 			html: {
 				files: 'template/**',
-				tasks: 'assemble'
+				tasks: ['gitinfo', 'assemble']
 			},
 			livereload: {
 				options: {
@@ -202,9 +210,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('font', ['fontello', 'clean:tmp']);
 
 	// clean:tmp in the end as workaround rimraf bug
-	grunt.registerTask('default', ['clean', 'less:default', 'fontello',
-	                               'uglify', 'assemble', 'copy:libs',
-	                               'compress', 'clean:tmp']);
-	grunt.registerTask('dev', ['clean', 'less:dev', 'fontello', 'concat',
-	                           'assemble', 'copy:libs', 'clean:tmp']);
+	grunt.registerTask('default', ['gitinfo', 'clean', 'less:default',
+	                               'fontello', 'uglify', 'assemble',
+	                               'copy:libs', 'compress', 'clean:tmp']);
+	grunt.registerTask('dev', ['gitinfo', 'clean', 'less:dev', 'fontello',
+	                           'concat', 'assemble', 'copy:libs', 'clean:tmp']);
 };

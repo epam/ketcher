@@ -4,7 +4,11 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-		<title>Ketcher v{{pkg.version}}</title>
+		<title>Ketcher v{{pkg.version}}
+			{{#if git}}
+				{{#unless git.tag}}(build: {{git.lastCommitNumber}}){{/unless}}
+			{{/if}}
+		</title>
 		<link rel="stylesheet" href="{{pkg.name}}.css" />
 		{{#each options.libs}}
 			<script src="{{.}}"></script>

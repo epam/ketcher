@@ -604,12 +604,11 @@ rnd.Render.prototype.setPaperSize = function (sz)
 		this.onCanvasSizeChanged(sz, oldSz);
 };
 
-rnd.Render.prototype.setOffset = function (offset)
+rnd.Render.prototype.setOffset = function (newoffset)
 {
 	rnd.logMethod("setOffset");
-	var oldOffset = this.offset;
-	this.offset = offset;
-	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(offset, oldOffset);
+	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(newoffset, this.offset);
+	this.offset = newoffset;
 };
 
 rnd.Render.prototype.getElementPos = function (obj)
@@ -888,23 +887,22 @@ rnd.Render.prototype.update = function (force)
 
 		if (!this.opt.autoScale) {
 			var ext = util.Vec2.UNIT.scaled(sf);
-			bb = bb.extend(ext, ext);
-			if (!this.bb)
-                            this.bb = new util.Box2Abs(util.Vec2.ZERO, this.viewSz);
-                        this.bb = util.Box2Abs.union(this.bb, bb);
-			bb = this.bb.clone();
+			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
+			var vb = new util.Box2Abs(ui.scrollPos(), this.viewSz.scaled(1/ui.zoom).sub(util.Vec2.UNIT.scaled(20)));
+			cb = util.Box2Abs.union(vb, eb);
+			if (!this.oldCb)
+				this.oldCb = new util.Box2Abs();
 
-			var sz = util.Vec2.max(bb.sz().floor(), this.viewSz);
-			var offset = bb.p0.negated().ceil();
-			if (!this.sz || sz.x > this.sz.x || sz.y > this.sz.y)
+			var sz = cb.sz().floor();
+			var delta = this.oldCb.p0.sub(cb.p0).ceil();
+			this.oldBb = bb;
+			if (!this.sz || sz.x != this.sz.x || sz.y != this.sz.y)
 				this.setPaperSize(sz);
 
-			var oldOffset = this.offset || new util.Vec2();
-			var delta = offset.sub(oldOffset);
-			if (!this.offset || delta.x > 0 || delta.y > 0) {
-				this.setOffset(offset);
+			this.offset = this.offset || new util.Vec2();
+			if (delta.x != 0 || delta.y != 0) {
+				this.setOffset(this.offset.add(delta));
 				this.ctab.translate(delta);
-				this.bb.translate(delta);
 			}
 		} else {
 			var sz1 = bb.sz();
@@ -1089,9 +1087,8 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 
 		this.setPaperSize(sz);
 		if (d.x > 0 || d.y > 0) {
-			this.setOffset(this.offset.add(d));
 			this.ctab.translate(d);
-			this.bb.translate(d);
+			this.setOffset(this.offset.add(d));
 		}
 	}
 	return d;

@@ -43,19 +43,17 @@ main {
 #template { .toolbar-pos(bottom); }
 #toolbox { .toolbar-pos(left); }
 
-#mainmenu {
-	menu {
-		.separators(top, 15px, 20px);
-	}
+#document, #edit, #zoom {
+	.separator(top, 15px);
+}
+
+#charge, #transform {
+	.separator(left, 7px);
 }
 
 #meta {
 	position: absolute;
 	right: 0;
-	li&>menu {
-		border: 0;
-		padding: 0;
-	}
 }
 
 #period-table {
@@ -119,7 +117,7 @@ main {
 	overflow: hidden;
 	position: relative;
 
-	&:before {
+	&:after {
 		font-size: 7px;
 		width: 7px;
 		height: 7px;
@@ -131,7 +129,7 @@ main {
 		right: 0;
 		bottom: 0;
 	}
-	&:hover:before {
+	&:hover:after {
 		//.scale-highlight;
 		color: @active-color;
 	}

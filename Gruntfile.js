@@ -47,7 +47,6 @@ module.exports = function(grunt) {
 				      'script/rnd/*.js',
 
 				      'script/ui/*.js',
-				      'script/reaxys/*.js',
 
 				      'script/main.js'
 				     ],

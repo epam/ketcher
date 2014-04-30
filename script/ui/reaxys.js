@@ -223,17 +223,3 @@ ui.showReaGenericsTable = function(params) {
         $($('reagenerics_table_ok').disabled ? 'reagenerics_table_cancel' : 'reagenerics_table_ok').focus();
     }
 };
-
-
-ui.onClick_ReaGenericsTableButton = function ()
-{
-    if (this.hasClassName('buttonDisabled'))
-        return;
-    ui.showReaGenericsTable({
-        onOk : function() {
-            ui.selectMode('atom_reagenerics');
-            return true;
-        }
-    });
-};
-

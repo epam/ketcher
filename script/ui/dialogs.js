@@ -416,22 +416,6 @@ ui.showAutomapProperties = function(params)
 // Element table
 //
 
-ui.onClick_ElemTableButton = function ()
-{
-    if (this.hasAttribute('disabled'))
-        return;
-    ui.showElemTable({
-        onOk: function() {
-            ui.onClick_SideButton.apply($('atom_table'));
-            return true;
-        },
-        onCancel: function() {
-            ui.elem_table_obj.restore();
-        }
-    });
-};
-
-
 ui.showElemTable = function(params)
 {
     if (!$('elem_table').visible()) {

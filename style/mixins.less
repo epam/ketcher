@@ -33,7 +33,6 @@
 }
 
 .scale-highlight(none) {
-	.transition(transform, 0.2s, ease-out);
 	.scale(1);
 }
 
@@ -120,6 +119,15 @@
 
 	&>menu {
 		@{cross-dim}: 100%;
+	}
+}
+
+.separator(@direction, @lose-pad, @rise-pad: @lose-pad) {
+	.flow(@direction);
+	& + li {
+		margin-@{cross-lose}: @lose-pad;
+		border-@{cross-lose}: 1px solid @border-color;
+		padding-@{cross-lose}: @rise-pad;
 	}
 }
 

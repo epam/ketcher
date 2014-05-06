@@ -1558,7 +1558,7 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function(event) {
 rnd.Editor.PasteTool.prototype.OnMouseUp = function() {
     this.editor.ui.addUndoAction(this.action);
     delete this.action;
-    this.editor.ui.selectMode(this.editor.ui.defaultSelector);
+    this.editor.ui.selectAction(null);
 };
 rnd.Editor.PasteTool.prototype.OnCancel = function() {
     if ('action' in this) {

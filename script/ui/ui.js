@@ -33,7 +33,6 @@ ui.render = null;
 ui.ctab = new chem.Struct();
 
 ui.client_area = null;
-ui.mode_id = null;
 
 ui.undoStack = new Array();
 ui.redoStack = new Array();
@@ -182,7 +181,7 @@ ui.init = function (parameters, opts)
     //document.observe('keypress', ui.onKeyPress_Ketcher);
     //document.observe('keydown', ui.onKeyDown_IE);
     //document.observe('keyup', ui.onKeyUp);
-    ui.setKeyboardShortcuts();
+    //ui.setKeyboardShortcuts();
 
     // Button events
     ui.buttons.each(function (el) {
@@ -193,7 +192,7 @@ ui.init = function (parameters, opts)
 	    el.observe('click', function(event) {
 		    if (event.target.tagName == 'BUTTON' &&
 		        event.target.parentNode == this)
-			    ui.selectAction(event.target);
+			    ui.selectAction(el);
 
             if (ui.hideBlurredControls())
                 event.stop();
@@ -211,7 +210,7 @@ ui.init = function (parameters, opts)
     // Client area events
     this.client_area.observe('scroll', ui.onScroll_ClientArea);
 
-    var zoom_list = $('zoom-list');
+	var zoom_list = ui.subEl('zoom-list');
     while (zoom_list.options.length > 0) {
         zoom_list.options.remove(0);
     }
@@ -232,7 +231,7 @@ ui.init = function (parameters, opts)
 	if (this.standalone) {
 		$$('#cleanup', '#arom', '#dearom',
 		   '#reaction-automap').each(function(el) {
-			   el.setAttribute('disabled', true);
+			   ui.subEl(el).setAttribute('disabled', true);
 		   });
 		document.title += ' (standalone)';
     }
@@ -258,10 +257,10 @@ ui.hideBlurredControls = function () {
         return false;
 
 	this.dropdown_opened.removeClassName('opened');
-    var sel = this.dropdown_opened.select('li.selected');
+    var sel = this.dropdown_opened.select('.selected');
     if (sel.length == 1) {
         //var index = sel[0].previousSiblings().size();
-        var menu = this.dropdown_opened.children[0],
+	    var menu = ui.subEl(this.dropdown_opened),
             margin = parseFloat(menu.style.marginTop) || 0;
 	    menu.style.marginTop = (-sel[0].offsetTop + margin) + 'px';
     }
@@ -279,11 +278,6 @@ ui.hideBlurredControls = function () {
     return true;
 };
 
-ui.isToolButton = function (el) {
-    return !!el.up('#mainmenu') || el.identify() == 'period-table' ||
-        el.identify() == 'generic-groups';
-};
-
 ui.initButton = function (el)
 {
     el.observe('mouseover', function ()
@@ -299,39 +293,38 @@ ui.initButton = function (el)
     });
 };
 
+ui.subEl = function (id) {
+	return $(id).children[0];
+};
+
+// TODO: split to selection by id (atom) and selection by element
 ui.selectAction = function (query) {
+	// TODO: last_selected -> prevtool_id
 	query = query || ui.last_selected;
 	var id = query.id || query,
-	    el = query.id ? query : $(query); //.children[0],
+	    el = $(query);
 
-	if (!el.hasAttribute('disabled')) {
-		var action = ui.actionMap[id];
-		if (action) {
-			action(el);
-		}
-		else {
-			console.assert(!ui.isToolButton(el),
-			               "What's a lonely button!!");
-			var tool = ui.mapTool(id),
-			    oldel = $$('button.selected')[0];
-			console.assert(!ui.last_selected || oldel,
-			               "No last mode selected!");
+	// TODO: refactor !el - case when there are no such id
+	if (!el || !ui.subEl(el).hasAttribute('disabled')) {
+		var action = ui.actionMap[id],
+		    tool = action ? action() : ui.mapTool(id);
+		if (tool) {
+			var oldel = $$('.selected')[0];
+			//console.assert(!ui.last_selected || oldel,
+			//               "No last mode selected!");
 
-			if (tool && el != oldel) {
+			if (el != oldel) {
 				if (ui.render.current_tool)
 					ui.render.current_tool.OnCancel();
 				ui.render.current_tool = tool;
 
-				if (id.startsWith('select-'))
+				if (id.startsWith && id.startsWith('select-'))
+					// hack to ensure id is string (not element as in atom case)
 					ui.last_selected = id;
-
-				el.addClassName('selected');
-				el.parentNode.addClassName('selected');
-
-				if (oldel) {
+				if (el)
+					el.addClassName('selected');
+				if (oldel)
 					oldel.removeClassName('selected');
-					oldel.parentNode.removeClassName('selected');
-				}
 			}
 		}
 	}
@@ -340,42 +333,42 @@ ui.selectAction = function (query) {
 ui.updateHistoryButtons = function ()
 {
     if (ui.undoStack.length == 0)
-        $('undo').setAttribute('disabled', true);
+        ui.subEl('undo').setAttribute('disabled', true);
     else
-        $('undo').removeAttribute('disabled');
+        ui.subEl('undo').removeAttribute('disabled');
 
     if (ui.redoStack.length == 0)
-        $('redo').setAttribute('disabled', true);
+        ui.subEl('redo').setAttribute('disabled', true);
     else
-        $('redo').removeAttribute('disabled');
+        ui.subEl('redo').removeAttribute('disabled');
 };
 
 ui.updateClipboardButtons = function ()
 {
     if (ui.isClipboardEmpty())
-        $('paste').setAttribute('disabled', true);
+        ui.subEl('paste').setAttribute('disabled', true);
     else
-        $('paste').removeAttribute('disabled');
+        ui.subEl('paste').removeAttribute('disabled');
 
     if (ui.editor.hasSelection(true)) {
-        $('copy').removeAttribute('disabled');
-        $('cut').removeAttribute('disabled');
+        ui.subEl('copy').removeAttribute('disabled');
+        ui.subEl('cut').removeAttribute('disabled');
     } else {
-        $('copy').setAttribute('disabled', true);
-        $('cut').setAttribute('disabled', true);
+        ui.subEl('copy').setAttribute('disabled', true);
+        ui.subEl('cut').setAttribute('disabled', true);
     }
 };
 
 ui.updateZoomButtons = function (idx) {
 	if (idx >= ui.zoomValues.length - 1)
-		$('zoom-in').setAttribute('disabled', true);
+		ui.subEl('zoom-in').setAttribute('disabled', true);
 	else
-		$('zoom-in').removeAttribute('disabled');
+		ui.subEl('zoom-in').removeAttribute('disabled');
 
 	if (idx <= 0)
-		$('zoom-out').setAttribute('disabled', true);
+		ui.subEl('zoom-out').setAttribute('disabled', true);
 	else
-		$('zoom-out').removeAttribute('disabled');
+		ui.subEl('zoom-out').removeAttribute('disabled');
 };
 
 ui.showDialog = function (name)
@@ -714,7 +707,7 @@ ui.zoomSet = function (idx)
 	ui.updateZoomButtons(idx);
     ui.zoomIdx = idx;
     ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.getStructCenter(ui.editor.getSelection()));
-    $('zoom-list').selectedIndex = ui.zoomIdx;
+    ui.subEl('zoom-list').selectedIndex = ui.zoomIdx;
     ui.render.update();
 };
 
@@ -1059,6 +1052,30 @@ ui.removeSelected = function ()
     ui.render.update();
 };
 
+ui.undo = function ()
+{
+    if (ui.render.current_tool)
+        ui.render.current_tool.OnCancel();
+
+    ui.editor.deselectAll();
+    ui.redoStack.push(ui.undoStack.pop().perform());
+    ui.render.update();
+    ui.updateHistoryButtons();
+    ui.actionComplete();
+};
+
+ui.redo = function ()
+{
+    if (ui.render.current_tool)
+        ui.render.current_tool.OnCancel();
+
+    ui.editor.deselectAll();
+    ui.undoStack.push(ui.redoStack.pop().perform());
+    ui.render.update();
+    ui.updateHistoryButtons();
+    ui.actionComplete();
+};
+
 //
 // Clipboard actions
 //
@@ -1207,7 +1224,7 @@ ui.onClick_ElemTableButton = function ()
 {
     ui.showElemTable({
 	    onOk: function() {
-		    ui.selectAction('atom_table');
+		    ui.selectAction('atom-table');
             return true;
         },
         onCancel: function() {
@@ -1220,7 +1237,7 @@ ui.onClick_ReaGenericsTableButton = function ()
 {
     ui.showReaGenericsTable({
         onOk : function() {
-            ui.selectAction('atom_reagenerics');
+            ui.selectAction('atom-reagenerics');
             return true;
         }
     });
@@ -1242,25 +1259,15 @@ ui.onClick_Copy = function ()
 
 ui.onClick_Paste = function ()
 {
-    ui.selectAction('paste');
-};
-
-ui.onClick_Undo = function ()
-{
-    ui.undo();
-};
-
-ui.onClick_Redo = function ()
-{
-    ui.redo();
+	return new rnd.Editor.PasteTool(ui.editor);
 };
 
 ui.actionMap = {
 	'new': ui.onClick_NewFile,
 	'open': ui.onClick_OpenFile,
 	'save': ui.onClick_SaveFile,
-	'undo': ui.onClick_Undo,
-	'redo': ui.onClick_Redo,
+	'undo': ui.undo,
+	'redo': ui.redo,
 	'cut': ui.onClick_Cut,
 	'copy': ui.onClick_Copy,
 	'paste': ui.onClick_Paste,
@@ -1270,48 +1277,50 @@ ui.actionMap = {
 	'arom': ui.onClick_Aromatize,
 	'dearom': ui.onClick_Dearomatize,
 	'period-table': ui.onClick_ElemTableButton,
-	'generic-groups': ui.onClick_ReaGenericsTableButton, // TODO need some other way, in general tools should be pluggable
+	'generic-groups': ui.onClick_ReaGenericsTableButton,
 	'info': function (el) {
 		ui.showDialog('about_dialog');
 	},
 	'reaction-automap': ui.onClick_Automap
 };
 
-
-// TODO: rewrite declaratively
+// TODO: rewrite declaratively, merge to actionMap
 ui.mapTool = function(id) {
-    if (id != null) {     // special cases
-        if (ui.editor.hasSelection()) {
-            if (id == 'erase') {
-                ui.removeSelected();
-                return null;
-            }
+
+	console.assert(id, "The null tool");
+
+	// special cases
+	if (ui.editor.hasSelection()) {
+		if (id == 'erase') {
+			ui.removeSelected();
+			return null;
+		}
             // BK: TODO: add this ability to mass-change atom labels to the keyboard handler
-            if (id.startsWith('atom-')) {
-                ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, ui.atomLabel(id)), true);
-                ui.render.update();
-                return null;
-            }
-        }
-        /* BK: TODO: add this ability to change the bond under cursor to the editor tool
-        else if (mode.startsWith('bond_')) {
-            var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
-            if (cBond) {
-                ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
-                ui.render.update();
-                return;
-            }
-        } */
-        if (id.startsWith('transform-flip-')) {
-            if (id.endsWith('h')) {
-                ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(), 'horizontal'), true);
-            } else {
-                ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(), 'vertical'), true);
-            }
-            ui.render.update();
-            return null;
-        }
-    }
+		if (ui.atomLabel(id)) {
+			ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, ui.atomLabel(id)), true);
+			ui.render.update();
+			return null;
+		}
+
+		if (id.startsWith('transform-flip')) {
+			ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(),
+			                                    id.endsWith('h') ? 'horizontal':
+			                                    'vertical'),
+			                 true);
+			ui.render.update();
+			return null;
+		}
+
+		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
+		 else if (mode.startsWith('bond_')) {
+		 var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
+		 if (cBond) {
+		 ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+		 ui.render.update();
+		 return;
+		 }
+		 } */
+	}
 
     if (id != 'transform-rotate')
         ui.editor.deselectAll();
@@ -1324,7 +1333,7 @@ ui.mapTool = function(id) {
         return new rnd.Editor.LassoTool(this.editor, 1, true);
     } else if (id == 'erase') {
         return new rnd.Editor.EraserTool(this.editor, 1); // TODO last selector mode is better
-    } else if (id.startsWith('atom-')) {
+    } else if (ui.atomLabel(id)) {
         return new rnd.Editor.AtomTool(this.editor, ui.atomLabel(id));
     } else if (id.startsWith('bond-')) {
         return new rnd.Editor.BondTool(this.editor, ui.bondType(id));
@@ -1340,8 +1349,6 @@ ui.mapTool = function(id) {
         return new rnd.Editor.ChargeTool(this.editor, -1);
     } else if (id == 'sgroup') {
         return new rnd.Editor.SGroupTool(this.editor);
-    } else if (id == 'paste') {
-        return new rnd.Editor.PasteTool(this.editor);
     } else if (id == 'reaction-arrow') {
         return new rnd.Editor.ReactionArrowTool(this.editor);
     } else if (id == 'reaction-plus') {
@@ -1379,31 +1386,27 @@ ui.bondTypeMap = {
 
 ui.bondType = function (mode)
 {
-    var type_str;
-
-    if (Object.isUndefined(mode))
-        type_str = ui.mode_id.substr(5);
-    else
-        type_str = mode.substr(5);
-
+	var type_str = mode.substr(5);
     return ui.bondTypeMap[type_str];
 };
 
-ui.atomLabel = function (mode)
-{
-    var label;
+// temporary hack as mode passed to mapTool is
+// actually li element
+ui.atomLabel = function (mode) {
+	var label;
+	if (!mode.up || !mode.up('#atom')) {
+		label = mode.substr(5);
 
-    if (Object.isUndefined(mode))
-        label = ui.mode_id.substr(5);
-    else
-        label = mode.substr(5);
+		if (label == 'table')
+			return ui.elem_table_obj.getAtomProps();
+		if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
+			return ui.reagenerics_table_obj.getAtomProps();
+		// how can we go here?
+		// if (label == 'any')
+		// 	return {'label':'A'};
+		return null;
+	}
 
-    if (label == 'table')
-        return ui.elem_table_obj.getAtomProps();
-    if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
-        return ui.reagenerics_table_obj.getAtomProps();
-    if (label == 'any')
-        return {'label':'A'};
-    else
-        return {'label':label.capitalize()};
+	label = ui.subEl(mode).innerHTML;
+	return {'label': label.capitalize()};
 };

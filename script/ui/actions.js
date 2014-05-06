@@ -1264,31 +1264,6 @@ ui.removeDummyAction = function ()
     }
 };
 
-ui.undo = function ()
-{
-    if (this.render.current_tool)
-        this.render.current_tool.OnCancel();
-
-    ui.editor.deselectAll();
-    ui.redoStack.push(ui.undoStack.pop().perform());
-    ui.render.update();
-    ui.updateHistoryButtons();
-    ui.actionComplete();
-};
-
-ui.redo = function ()
-{
-    if (this.render.current_tool)
-        this.render.current_tool.OnCancel();
-
-    ui.editor.deselectAll();
-    ui.undoStack.push(ui.redoStack.pop().perform());
-    ui.render.update();
-    ui.updateHistoryButtons();
-    ui.actionComplete();
-};
-
-
 ui.Action.OpBase = function() {};
 ui.Action.OpBase.prototype.type = 'OpBase';
 ui.Action.OpBase.prototype._execute = function() {

@@ -154,16 +154,16 @@ main {
 				font-size: 18px;
 				//padding: @icon-padding;
 			}
-			&:hover, &.selected {
-				.scale-highlight(none);
-				.box-shadow(none);
-				.invert-highlight;
-				//color: darken(@main-color, 5%);
-				//.shadow-highlight(none);
-			}
 			&[disabled] {
 				.invert-highlight(none);
 			}
+		}
+		button:hover, .selected button {
+			.scale-highlight(none);
+			.box-shadow(none);
+			.invert-highlight;
+			//color: darken(@main-color, 5%);
+			//.shadow-highlight(none);
 		}
 
 		&>menu {
@@ -223,7 +223,7 @@ button {
 		&:active {
 			//.shadow-highlight(black, inset);
 		}
-		&.selected {
+		.selected & {
 			.invert-highlight;
 		}
 	}

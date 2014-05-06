@@ -153,7 +153,7 @@
 .monochrome-icons(@names, @color: inherit, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
 	@icon: 'icon-@{item}';
-	#@{item}:before { content: @@icon; .colorize(@color); }
+	#@{item} button:before { content: @@icon; .colorize(@color); }
 	.monochrome-icons(@names, @color, (@i + 1));
 }
 
@@ -161,8 +161,8 @@
 	@item: extract(@names, @i);
 	@icon-A: 'icon-@{item}-A';
 	@icon-B: 'icon-@{item}-B';
-	#@{item}:before { content: @@icon-A; .colorize(@color-A); }
-	#@{item}:after { content: @@icon-B; .colorize(@color-B); }
+	#@{item} button:before { content: @@icon-A; .colorize(@color-A); }
+	#@{item} button:after { content: @@icon-B; .colorize(@color-B); }
 	.twocolor-icons(@names, @color-A, @color-B, (@i + 1));
 }
 

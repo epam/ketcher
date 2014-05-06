@@ -719,7 +719,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
                     return;
                 }
                 ui.editor.deselectAll();
-                ui.selectMode('paste');
+                ui.selectAction('paste');
             }).call(this, struct);
         } else {
             ui.updateMolecule.call(this, struct);

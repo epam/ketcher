@@ -16,11 +16,7 @@ if (typeof(ui) == 'undefined')
 ui.standalone = true;
 ui.forwardExceptions = false;
 
-ui.scale = 40;
-
-ui.zoomValues = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2.0, 2.5, 3.0, 3.5, 4.0];
-ui.zoomIdx = ui.zoomValues.indexOf(1.0);
-ui.zoom = 1.0;
+ui.SCALE = 40;
 
 ui.DBLCLICK_INTERVAL = 300;
 
@@ -138,8 +134,6 @@ ui.init = function (parameters, opts)
     this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
     this.client_area = $('ketcher');
 
-	opts = new rnd.RenderOptions(opts);
-
 	parameters = Object.extend({
 		api_path: '',
 		static_path: ''
@@ -175,7 +169,15 @@ ui.init = function (parameters, opts)
 
 	this.initDialogs();
     if (!this.standalone)
-        this.initTemplates(parameters.static_path);
+	    this.initTemplates(parameters.static_path);
+
+	if (this.standalone) {
+		$$('#cleanup', '#arom', '#dearom',
+		   '#reaction-automap').each(function(el) {
+			   ui.subEl(el).setAttribute('disabled', true);
+		   });
+		document.title += ' (standalone)';
+    }
 
     // Document events
     //document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -184,8 +186,17 @@ ui.init = function (parameters, opts)
     //ui.setKeyboardShortcuts();
 
     // Button events
-    ui.buttons.each(function (el) {
-        ui.initButton(el);
+	ui.buttons.each(function (el) {
+		el.observe('mouseover', function () {
+			if (this.hasAttribute('disabled'))
+				return;
+
+			//! TITLE ME, toolText
+			// var status = this.getAttribute('title');
+			var status = this.innerHTML;
+			if (status != null)
+				window.status = status;
+		});
     });
 
     $$('li').each(function(el) {
@@ -204,50 +215,30 @@ ui.init = function (parameters, opts)
             }
         });
     });
+	ui.zoomSelect = ui.subEl('zoom-list');
+	ui.zoom = parseFloat(ui.zoomSelect.options[ui.zoomSelect.selectedIndex].innerHTML) / 100;
+	// TODO: remove this^ shit (used in rnd.Render guts)
+	ui.zoomSelect.observe('change', function () {
+		ui.updateZoom();
+		//this.blur();
+	});
+	this.client_area.observe('scroll', ui.onScroll_ClientArea);
 
 	ui.updateHistoryButtons();
 
-    // Client area events
-    this.client_area.observe('scroll', ui.onScroll_ClientArea);
-
-	var zoom_list = ui.subEl('zoom-list');
-    while (zoom_list.options.length > 0) {
-        zoom_list.options.remove(0);
-    }
-    for (var z = 0; z < ui.zoomValues.length; ++z) {
-        var opt = document.createElement('option');
-        opt.text = (100*ui.zoomValues[z]).toFixed(0) + '%';
-        opt.value = z;
-        zoom_list.options.add(opt);
-    }
-    zoom_list.selectedIndex = ui.zoomIdx;
-    zoom_list.observe('change', function(){
-        ui.zoomSet(zoom_list.value - 0);
-        zoom_list.blur();
-    });
-
-    ui.onResize_Ketcher();
-
-	if (this.standalone) {
-		$$('#cleanup', '#arom', '#dearom',
-		   '#reaction-automap').each(function(el) {
-			   ui.subEl(el).setAttribute('disabled', true);
-		   });
-		document.title += ' (standalone)';
-    }
-
-    // Init renderer
+	// Init renderer
+	opts = new rnd.RenderOptions(opts);
     opts.atomColoring = true;
-    this.render =  new rnd.Render(this.client_area, ui.scale, opts);
+	this.render =  new rnd.Render(this.client_area, ui.SCALE, opts);
     this.editor = new rnd.Editor(this.render);
-
-    this.selectAction('select-lasso');
 
     this.render.onCanvasOffsetChanged = this.onOffsetChanged;
 
-    ui.setScrollOffset(0, 0);
-    this.render.setMolecule(this.ctab);
-    this.render.update();
+	this.selectAction('select-lasso');
+	ui.setScrollOffset(0, 0);
+
+	this.render.setMolecule(this.ctab);
+	this.render.update();
 
     this.initialized = true;
 };
@@ -276,21 +267,6 @@ ui.hideBlurredControls = function () {
 	// END
     this.dropdown_opened = null;
     return true;
-};
-
-ui.initButton = function (el)
-{
-    el.observe('mouseover', function ()
-    {
-        if (this.hasAttribute('disabled'))
-            return;
-
-        //! TITLE ME, toolText
-        // var status = this.getAttribute('title');
-        var status = this.innerHTML;
-        if (status != null)
-            window.status = status;
-    });
 };
 
 ui.subEl = function (id) {
@@ -359,18 +335,6 @@ ui.updateClipboardButtons = function ()
     }
 };
 
-ui.updateZoomButtons = function (idx) {
-	if (idx >= ui.zoomValues.length - 1)
-		ui.subEl('zoom-in').setAttribute('disabled', true);
-	else
-		ui.subEl('zoom-in').removeAttribute('disabled');
-
-	if (idx <= 0)
-		ui.subEl('zoom-out').setAttribute('disabled', true);
-	else
-		ui.subEl('zoom-out').removeAttribute('disabled');
-};
-
 ui.showDialog = function (name)
 {
     $('window_cover').style.width = ui.ketcher_window.getWidth().toString() + 'px';
@@ -385,14 +349,6 @@ ui.hideDialog = function (name)
     $('window_cover').hide();
     $('window_cover').style.width = '0px';
     $('window_cover').style.height = '0px';
-};
-
-ui.onResize_Ketcher = function ()
-{
-    //if (Prototype.Browser.IE)
-    //     ui.client_area.style.width = (Element.getWidth(ui.client_area.parentNode) - 2).toString() + 'px';
-
-    // ui.client_area.style.height = (Element.getHeight(ui.client_area.parentNode) - 2).toString() + 'px';
 };
 
 //
@@ -689,28 +645,36 @@ ui.onClick_SaveFile = function ()
 //
 // Zoom section
 //
-ui.onClick_ZoomIn = function ()
-{
-    ui.zoomSet(ui.zoomIdx + 1);
+ui.onClick_ZoomIn = function () {
+	ui.zoomSelect.selectedIndex++;
+	ui.updateZoom();
 };
 
-ui.onClick_ZoomOut = function ()
-{
-    ui.zoomSet(ui.zoomIdx - 1);
+ui.onClick_ZoomOut = function () {
+	ui.zoomSelect.selectedIndex--;
+	ui.updateZoom();
 };
 
-ui.zoomSet = function (idx)
-{
-    if (idx < 0 || idx >= ui.zoomValues.length)
-        throw new Error ("Zoom index out of range");
+ui.updateZoom = function () {
+	var i = ui.zoomSelect.selectedIndex,
+	    len = ui.zoomSelect.length;
+	console.assert(0 <= i && i < len, "Zoom out of range");
 
-	ui.updateZoomButtons(idx);
-    ui.zoomIdx = idx;
-    ui.setZoomCentered(ui.zoomValues[ui.zoomIdx], ui.render.getStructCenter(ui.editor.getSelection()));
-    ui.subEl('zoom-list').selectedIndex = ui.zoomIdx;
-    ui.render.update();
+	if (i == len - 1)
+		ui.subEl('zoom-in').setAttribute('disabled', true);
+	else
+		ui.subEl('zoom-in').removeAttribute('disabled');
+	if (i == 0)
+		ui.subEl('zoom-out').setAttribute('disabled', true);
+	else
+		ui.subEl('zoom-out').removeAttribute('disabled');
+
+	var value = parseFloat(ui.zoomSelect.options[i].innerHTML) / 100;
+	ui.setZoomCentered(value,
+	                   ui.render.getStructCenter(ui.editor.getSelection()));
+	ui.zoom = value;
+	ui.render.update();
 };
-
 
 ui.setZoomRegular = function (zoom) {
     //mr: prevdent unbounded zooming

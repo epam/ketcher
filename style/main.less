@@ -44,11 +44,11 @@ main {
 #toolbox { .toolbar-pos(left); }
 
 #document, #edit, #zoom {
-	.separator(top, 15px);
+	.separate-item(horizontal, 15px);
 }
 
-#charge, #transform {
-	.separator(left, 7px);
+#erase, #chain, #charge, #transform, #period-table {
+	.separate-item(vertical, 10px);
 }
 
 #meta {
@@ -112,10 +112,10 @@ main {
 }
 
 .collapse() {
+	position: relative;
+	overflow: hidden;
 	height: @toolbar-size;
 	width: @toolbar-size;
-	overflow: hidden;
-	position: relative;
 
 	&:after {
 		font-size: 7px;
@@ -167,7 +167,7 @@ main {
 		}
 
 		&>menu {
-			.separators(left, 3px);
+			.separate-menu(vertical, 3px);
 			position: absolute;
 			z-index: 20;
 			left: @toolbar-size + 7px;

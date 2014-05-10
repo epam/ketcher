@@ -21,6 +21,7 @@
 }
 
 .remove-inline-spacing() {
+	// vanish horizontal spacing between inline blocks
 	font-size: 0.00001px;
 	-webkit-text-size-adjust: none;
 }
@@ -85,32 +86,44 @@
 
 ////////////
 
-.flow(@direction) {
+.orientation(horizontal) {
+	@main-rise: right;
+	@main-lose: left;
+	@main-dim: width;
+	@cross-rise: bottom;
+	@cross-lose: top;
+	@cross-dim: height;
+}
+
+.orientation(vertical) {
+	@main-rise: bottom;
+	@main-lose: top;
+	@main-dim: height;
+	@cross-rise: right;
+	@cross-lose: left;
+	@cross-dim: width;
+}
+
+.direction(@direction) {
 	.to-index(top) { @index: 0; }
 	.to-index(right) { @index: 1; }
 	.to-index(bottom) { @index: 2; }
 	.to-index(left) { @index: 3; }
 	@directions: top right bottom left;
-	@dimensions: width height;
-	@rising: right bottom;
-	@losing: left top;
 	.to-index(@direction);
 
 	@main-start: extract(@directions, mod(@index, 4) + 1);
 	@main-end: extract(@directions, mod((@index + 2), 4) + 1);
-	@main-dim: extract(@dimensions, mod((@index + 1), 2) + 1);
-	@main-rise: extract(@rising, mod(@index + 1, 2) + 1);
-	@main-lose: extract(@losing, mod(@index + 1, 2) + 1);
 
 	@cross-start: extract(@directions, mod((@index + 3), 4) + 1);
 	@cross-end: extract(@directions, mod((@index + 1), 4) + 1);
-	@cross-dim: extract(@dimensions, mod(@index, 2) + 1);
-	@cross-rise: extract(@rising, mod(@index, 2) + 1);
-	@cross-lose: extract(@losing, mod(@index, 2) + 1);
+
+	@orientation: extract(horizontal vertical, mod(@index + 1, 2) + 1);
+	.orientation(@orientation);
 }
 
 .toolbar-pos(@direction) {
-	.flow(@direction);
+	.direction(@direction);
 	position: absolute;
 	@{main-start}: @app-gap;
 	@{cross-start}: @canvas-padding;
@@ -122,25 +135,23 @@
 	}
 }
 
-.separator(@direction, @lose-pad, @rise-pad: @lose-pad) {
-	.flow(@direction);
+.separator(@orientation, @lose-pad, @rise-pad) {
+	.orientation(@orientation);
+	margin-@{main-lose}: @lose-pad;
+	border-@{main-lose}: 1px solid @border-color;
+	padding-@{main-lose}: @rise-pad - 1px; // substract 1px to assert
+	                                       // width = lose-pad + rise-pad
+}
+
+.separate-item(@orientation, @lose-pad, @rise-pad: @lose-pad) {
 	& + li {
-		margin-@{cross-lose}: @lose-pad;
-		border-@{cross-lose}: 1px solid @border-color;
-		padding-@{cross-lose}: @rise-pad;
+		.separator(@orientation, @lose-pad, @rise-pad);
 	}
 }
 
-.separators(@direction, @lose-pad, @rise-pad: @lose-pad) {
-	.flow(@direction);
-	menu {
-		padding-@{cross-rise}: @rise-pad;
-		padding-@{cross-lose}: @lose-pad;
-		border-@{cross-lose}: 1px solid @border-color;
-	}
-	li:first-child menu {
-		border: none;
-		padding-@{cross-lose}: 0;
+.separate-menu(@orientation, @lose-pad, @rise-pad: @lose-pad) {
+	li + li>menu {
+		.separator(@orientation, @lose-pad, @rise-pad);
 	}
 }
 

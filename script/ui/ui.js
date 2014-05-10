@@ -208,7 +208,7 @@ ui.init = function (parameters, opts)
             if (ui.hideBlurredControls())
                 event.stop();
 
-            if (this.getStyle('overflow') == 'hidden') {
+		    if (this.getStyle('overflow') == 'hidden') {
                 this.addClassName('opened');
                 ui.dropdown_opened = this;
                 event.stop();
@@ -243,6 +243,10 @@ ui.init = function (parameters, opts)
     this.initialized = true;
 };
 
+ui.subEl = function (id) {
+	return $(id).children[0];
+};
+
 ui.hideBlurredControls = function () {
     if (!this.dropdown_opened)
         return false;
@@ -251,9 +255,8 @@ ui.hideBlurredControls = function () {
     var sel = this.dropdown_opened.select('.selected');
     if (sel.length == 1) {
         //var index = sel[0].previousSiblings().size();
-	    var menu = ui.subEl(this.dropdown_opened),
-            margin = parseFloat(menu.style.marginTop) || 0;
-	    menu.style.marginTop = (-sel[0].offsetTop + margin) + 'px';
+	    var menu = ui.subEl(this.dropdown_opened);
+	    menu.style.marginTop = (-sel[0].offsetTop + menu.offsetTop) + 'px';
     }
 
 	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
@@ -267,10 +270,6 @@ ui.hideBlurredControls = function () {
 	// END
     this.dropdown_opened = null;
     return true;
-};
-
-ui.subEl = function (id) {
-	return $(id).children[0];
 };
 
 // TODO: split to selection by id (atom) and selection by element

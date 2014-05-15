@@ -1,25 +1,61 @@
-@font-face {
-	font-family: 'ketcher';
-	src: url('@{static-path}/ketcher.eot');
-	src: url('@{static-path}/ketcher.eot#iefix') format('embedded-opentype'),
-	     url('@{static-path}/ketcher.woff') format('woff'),
-	     url('@{static-path}/ketcher.ttf') format('truetype'),
-	     url('@{static-path}/ketcher.svg#ketcher') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
-/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
-/*
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-	@font-face {
-		font-family: 'ketcher';
-		src: url('@{static-path}/ketcher.svg#ketcher') format('svg');
-	}
-}
-*/
+@static-path: '.';
 
-////////// Icon codes //////////
+@main-color: #333;
+@active-color: #1a7090;
+@border-color: #ccc;
+@disabled-color: #baa;
+
+// breakpoints for popular resolutions
+// are copied from bootstrap and unused yet;)
+// See: http://getbootstrap.com/css/#grid-media-queries
+@common-screen-tiny: 480px;
+@common-screen-small: 768px;
+@common-screen-medium: 992px;
+@common-screen-large: 1200px;
+
+#large-dim() {
+	@icon-size: 26px;
+	@button-size: 32px;
+	@button-grow: 4px;  // additional padding button may grow
+
+	@atom-size: 19px;
+	@select-size: 14px;
+
+	@app-gap: 7px - @button-grow;
+	@toolbar-gap: 6px - @button-grow;
+
+	@toolbar-size: @button-size + 2 * @button-grow; // + border?
+	@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+}
+
+#small-dim() {
+	@icon-size: 20px;
+	@button-size: 24px;
+	@button-grow: 4px;
+
+	@atom-size: 16px;
+	@select-size: 11px;
+
+	@app-gap: 7px - @button-grow;
+	@toolbar-gap: 6px - @button-grow;
+
+	@toolbar-size: @button-size + 2 * @button-grow;
+	@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
+}
+
+// Standard (for sketching applications) atom colors
+
+@atom-sketching-h-like-color: #000;
+@atom-sketching-n-like-color: #304ff7;
+@atom-sketching-o-like-color: #ff0d0d;
+@atom-sketching-s-like-color: #c99a19;
+@atom-sketching-p-like-color: #ff8000;
+@atom-sketching-f-like-color: #78bc42;
+@atom-sketching-cl-like-color: #1fd01f;
+@atom-sketching-br-like-color: #a62929;
+@atom-sketching-i-like-color: #940094;
+
+// Icon codes
 
 @icon-arrange: '\e800'; // ''
 @icon-nopic: '\e801'; // ''

@@ -1,77 +1,194 @@
 @import 'lesshat';
 
-.text-hide(transparent) {
-	font: ~"0/0" a;
-	color: transparent;
-	text-shadow: none;
-	background-color: transparent;
+// Workaround less issue:
+// https://github.com/less/less.js/issues/2004
+
+.set-size(inherit) {
+}
+.set-size(small) {
+	#small-dim;
+}
+.set-size(large) {
+	#large-dim;
+}
+
+/////////////////////
+
+.canvas(@dim: inherit) {
+	position: absolute;
+	border: @border-color 1px solid;
+	.border-radius(5px);
+	overflow: auto;
+	.canvas-size(@dim);
+	// svg {
+	//		display: block;
+	// }
+}
+
+.canvas-size(@dim: inherit) {
+	.set-size(@dim);
+	top: @canvas-padding;
+	left: @canvas-padding;
+	right: @canvas-padding;
+	bottom: @canvas-padding;
+}
+
+/////////////////////
+
+.toolbar(@dir, @dim: inherit) {
+	.orientation(@dir);
+	position: absolute;
+	@{dir}: @app-gap;
+	.toolbar-size(@dir, @dim);
+	&>menu {
+		@{main-dim}: 100%;
+	}
+}
+
+.toolbar-size(@dir, @dim: inherit) {
+	.orientation(@dir);
+	.set-size(@dim);
+	@{main-lose}: @canvas-padding;
+	@{main-rise}: @canvas-padding;
+	@{cross-dim}: @toolbar-size;
+}
+
+.toolbar-pos(@icon-count, @separator-count: 0, @loose-pad: 0,
+             @rise-pad: @loose-pad, @dim: inherit) {
+	.set-size(@dim);
+	@offset: @icon-count * @toolbar-size +
+            (@loose-pad + @rise-pad) * @separator-count;
+}
+
+/////////////////////
+
+.toolbutton(@dim: inherit) {
+	.control();
+	display: block;
 	border: 0;
-}
-
-.text-hide(indent) {
-	@approximate_em_value: 12px / 1em;
-	@wider_than_any_screen: -9999em;
-	text-indent: @wider_than_any_screen * @approximate_em_value;
-	overflow: hidden;
-	text-align: left;
-}
-
-.text-hide() {
-	.text-hide(indent);
-}
-
-.remove-inline-spacing() {
-	// vanish horizontal spacing between inline blocks
-	font-size: 0.00001px;
-	-webkit-text-size-adjust: none;
-}
-
-// Effects
-
-.scale-highlight() {
-	.transition(transform, 0.2s, ease-out);
-	.scale(1.25);
-}
-
-.scale-highlight(none) {
-	.scale(1);
-}
-
-.shadow-highlight(@color: @active-color, inset) {
-	.box-shadow(0px -1px 6px fade(@color, 5%) inset, 0px 1px 3px @color inset);
-}
-
-.shadow-highlight(@color: @active-color) when (iscolor(@color)) {
-	.box-shadow(inset 0 0 1px 1px fade(@color, 12%));
-}
-
-.circle-highlight(@color: @active-color, @inset: '') {
-	.border-radius((@icon-size + @icon-padding) / 2);
-	.box-shadow(~'0 0 4px @{color} @{inset}');
-}
-
-.symbol-highlight(@color: @active-color) {
-	color: @active-color;
-	text-shadow: 1px 1px 3px @color;
-}
-
-.symbol-invert-highlight() {
-	background: #333;
-	text-shadow: 0px 1px 10px white, 0px -1px 10px white;
-}
-
-.invert-highlight() {
-	background: #444;
-	color: white;
-}
-
-.invert-highlight(none) {
+	padding: 0;
+	position: relative;
 	background: inherit;
-	color: @disabled-color;	// hint for menus
+	background-color: white;
+	//background-image: none;
+
+	//text-align: center;
+	//overflow: hidden;
+	//font: ~"0/0" a;
+	//.text-hide(transparent);
+
+	&:before, &:after {
+		display: inline-block;
+		vertical-align: middle;
+		font-family: 'ketcher';
+	}
+	&:after {
+		position: absolute;
+		left: 0;
+	}
+
+	.toolbutton-size(@dim);
 }
 
+.toolbutton-size(@dim: inherit) {
+	.set-size(@dim);
+	width: @button-size;
+	height: @button-size;
+	margin: @button-grow;
+	//line-height: @toolbar-size;
 
-////////////
+	&:before, &:after {
+		font-size: @icon-size;
+		//padding: @icon-padding;
+	}
+}
+
+////////////////////
+
+.collapsed(@dim: inherit) {
+	position: relative;
+	overflow: hidden;
+	.collapsed-size(@dim);
+	.collapsed-icon;
+}
+
+.collapsed-size(@dim: inherit) {
+	.set-size(@dim);
+	height: @toolbar-size;
+	width: @toolbar-size;
+}
+
+.collapsed-icon() {
+	&:after {
+		font-size: 7px;
+		width: 7px;
+		height: 7px;
+		display: block;
+		font-family: 'ketcher';
+		content: @icon-dropdown;
+		position: absolute;
+		z-index: 10;
+		right: 0;
+		bottom: 0;
+	}
+	&:hover:after {
+		//.scale-highlight;
+		color: @active-color;
+	}
+}
+
+/////////////////////
+
+.expanded() {
+	overflow: visible !important; // find a better way to
+	                              // outprecedence id
+
+	&>menu {
+		margin: 0 !important;
+		position: absolute;
+		z-index: 20;
+		left: @toolbar-size + 7px;
+		width: 240px;
+		height: auto;
+		padding: 2px;
+		.separate-menu(vertical, 3px);
+
+		background: white;
+		border: 1px solid @border-color;
+		.border-radius(5px);
+		.box-shadow(0 6px 12px rgba(0,0,0,.175));
+	}
+}
+
+.expanded-menu() {
+	li {
+		display: block;
+	}
+	button {
+		display: block;
+		margin: 1px 0;
+		padding: 4px;
+		width: 100%;
+		height: 24px;
+		font-size: 15px;
+		//line-height: 18px;
+		text-align: left;
+		&:before, &:after {
+			padding-right: 5px;
+			font-size: 18px;
+			//padding: @icon-padding;
+		}
+		&[disabled] {                    // TODO: general button highlight
+			.highlight-invert(disabled); // refactor
+		}
+	}
+	button:hover, .selected button {
+		&:extend(button:active);
+		.highlight-invert;
+	}
+}
+
+/////////////////////
 
 .control() {
 	.border-radius(4px);
@@ -84,56 +201,7 @@
 	}
 }
 
-////////////
-
-.orientation(horizontal) {
-	@main-rise: right;
-	@main-lose: left;
-	@main-dim: width;
-	@cross-rise: bottom;
-	@cross-lose: top;
-	@cross-dim: height;
-}
-
-.orientation(vertical) {
-	@main-rise: bottom;
-	@main-lose: top;
-	@main-dim: height;
-	@cross-rise: right;
-	@cross-lose: left;
-	@cross-dim: width;
-}
-
-.direction(@direction) {
-	.to-index(top) { @index: 0; }
-	.to-index(right) { @index: 1; }
-	.to-index(bottom) { @index: 2; }
-	.to-index(left) { @index: 3; }
-	@directions: top right bottom left;
-	.to-index(@direction);
-
-	@main-start: extract(@directions, mod(@index, 4) + 1);
-	@main-end: extract(@directions, mod((@index + 2), 4) + 1);
-
-	@cross-start: extract(@directions, mod((@index + 3), 4) + 1);
-	@cross-end: extract(@directions, mod((@index + 1), 4) + 1);
-
-	@orientation: extract(horizontal vertical, mod(@index + 1, 2) + 1);
-	.orientation(@orientation);
-}
-
-.toolbar-pos(@direction) {
-	.direction(@direction);
-	position: absolute;
-	@{main-start}: @app-gap;
-	@{cross-start}: @canvas-padding;
-	@{cross-end}: @canvas-padding;
-	@{main-dim}: @toolbar-size;
-
-	&>menu {
-		@{cross-dim}: 100%;
-	}
-}
+/////////////////////
 
 .separator(@orientation, @lose-pad, @rise-pad) {
 	.orientation(@orientation);
@@ -155,9 +223,60 @@
 	}
 }
 
-////////////
+/////////////////////
+// Highlight effects
 
-.colorize(@color) when not (@color = inherit) {
+.highlight-scale() {
+	.transition(transform, 0.2s, ease-out);
+	.scale(1.25);
+}
+
+.highlight-scale(none) {
+	.scale(1);
+}
+
+.highlight-shadow(inset, @color: @active-color) {
+	.box-shadow(0px -1px 6px fade(@color, 5%) inset,
+	            0px 1px 3px @color inset);
+}
+
+.highlight-shadow(@color: @active-color) when (iscolor(@color)) {
+	.box-shadow(inset 0 0 1px 1px fade(@color, 12%));
+}
+
+.highlight-shadow(none) {
+	.box-shadow(none);
+}
+
+.highlight-circle(@color: @active-color, @inset: '') {
+	.border-radius((@icon-size + @icon-padding) / 2);
+	.box-shadow(~'0 0 4px @{color} @{inset}');
+}
+
+.highlight-symbol(@color: @active-color) {
+	color: @active-color;
+	text-shadow: 1px 1px 3px @color;
+}
+
+.highlight-symbol-invert() {
+	background: #333;
+	text-shadow: 0px 1px 10px white, 0px -1px 10px white;
+}
+
+.highlight-invert() {
+	background: #444;
+	color: white;
+}
+
+.highlight-invert(disabled) {
+	background: inherit;
+	color: @disabled-color;      // hint for menus
+}
+
+//////////////////////////
+// Icon content & coloring
+
+.colorize(@color) when not (@color = inherit)  {
 	color: @color;
 }
 
@@ -180,8 +299,85 @@
 .sketching-atom-icons(@names, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
 	@color: 'atom-sketching-@{item}-color';
-	button.@{item} {
+	.@{item} {
 		color: @@color;
 	}
 	.sketching-atom-icons(@names, (@i + 1));
+}
+
+////////////////////////////////////////////
+// Little bit jankie directions unification
+
+.orientation(horizontal) {
+	@main-rise: right;
+	@main-lose: left;
+	@main-dim: width;
+	@cross-rise: bottom;
+	@cross-lose: top;
+	@cross-dim: height;
+}
+
+.orientation(vertical) {
+	@main-rise: bottom;
+	@main-lose: top;
+	@main-dim: height;
+	@cross-rise: right;
+	@cross-lose: left;
+	@cross-dim: width;
+}
+
+.orientation(@dir) when (@dir = top), (@dir = bottom)  {
+	.orientation(horizontal);
+}
+
+.orientation(@dir) when (@dir = left), (@dir = right)  {
+	.orientation(vertical);
+}
+
+.direction(@dir) {
+	.to-index(top) { @index: 0; }
+	.to-index(right) { @index: 1; }
+	.to-index(bottom) { @index: 2; }
+	.to-index(left) { @index: 3; }
+	@directions: top right bottom left;
+	@orientations: horizontal vertical;
+	.to-index(@dir);
+
+	@main-start: extract(@directions, mod(@index, 4) + 1);
+	@main-end: extract(@directions, mod((@index + 2), 4) + 1);
+
+	@cross-start: extract(@directions, mod((@index + 3), 4) + 1);
+	@cross-end: extract(@directions, mod((@index + 1), 4) + 1);
+
+	@main-orient: extract(@orientations, mod(@index + 1, 2));
+	@cross-orient: extract(@orientations, mod(@index + 1, 2) + 1);
+}
+
+/////////////////////
+// Basic mixins
+
+.text-hide(transparent) {
+	font: ~"0/0" a;
+	color: transparent;
+	text-shadow: none;
+	background-color: transparent;
+	border: 0;
+}
+
+.text-hide(indent) {
+	@approximate-em-value: 12px / 1em;
+	@wider-than-any-screen: -9999em;
+	text-indent: @wider-than-any-screen * @approximate-em-value;
+	overflow: hidden;
+	text-align: left;
+}
+
+.text-hide() {
+	.text-hide(indent);
+}
+
+.remove-inline-spacing() {
+	// vanish horizontal spacing between inline blocks
+	font-size: 0.00001px;
+	-webkit-text-size-adjust: none;
 }

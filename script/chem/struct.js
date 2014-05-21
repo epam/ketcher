@@ -661,9 +661,11 @@ chem.Struct.prototype.atomSortNeighbors = function (aid) {
 };
 
 chem.Struct.prototype.sortNeighbors = function (list) {
-    util.each(list, function(aid) {
-        this.atomSortNeighbors(aid);
-    }, this);
+    var f = function(aid) { this.atomSortNeighbors(aid); };
+    if (util.isNullOrUndefined(list))
+        this.atoms.each(f, this);
+    else
+        util.each(list, f, this);
 };
 
 chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
@@ -676,9 +678,11 @@ chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 };
 
 chem.Struct.prototype.updateHalfBonds = function (list) {
-    util.each(list, function(aid) {
-        this.atomUpdateHalfBonds(aid);
-    }, this);
+    var f = function(aid) { this.atomUpdateHalfBonds(aid); };
+    if (util.isNullOrUndefined(list))
+        this.atoms.each(f, this);
+    else
+        util.each(list, f, this);
 };
 
 chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {

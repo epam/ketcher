@@ -455,3 +455,11 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 		atom.calcValence(conn);
 	}
 };
+
+chem.Struct.prototype.setImplicitHydrogen = function (list) {
+    var f = function(aid) { this.calcImplicitHydrogen(aid); };
+    if (util.isNullOrUndefined(list))
+        this.atoms.each(f, this);
+    else
+        util.each(list, f, this);
+};

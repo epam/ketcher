@@ -54,6 +54,10 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 //    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
 //        throw new Error("SMILES doesn't support s-groups");
     molecule = molecule.clone();
+    molecule.initHalfBonds();
+    molecule.initNeighbors();
+    molecule.sortNeighbors();
+    molecule.setImplicitHydrogen();
     molecule.sgroups.each(function(sgid, sg) {
         if (sg.type == 'MUL') {
             try {

@@ -723,10 +723,8 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 };
 
 rnd.ReStruct.prototype.setImplicitHydrogen = function () {
-	// calculate implicit hydrogens
-	for (var aid in this.atomsChanged) {
-		this.molecule.calcImplicitHydrogen(aid);
-	}
+    // calculate implicit hydrogens for atoms that have been modified
+    this.molecule.setImplicitHydrogen(util.idList(this.atomsChanged));
 };
 
 rnd.ReLoop = function (loop)

@@ -25,7 +25,7 @@
 	// }
 }
 
-.canvas-size(@dim: inherit) {
+.canvas-size(@dim) {
 	.set-size(@dim);
 	top: @canvas-padding;
 	left: @canvas-padding;
@@ -45,7 +45,7 @@
 	}
 }
 
-.toolbar-size(@dir, @dim: inherit) {
+.toolbar-size(@dir, @dim) {
 	.orientation(@dir);
 	.set-size(@dim);
 	@{main-lose}: @canvas-padding;
@@ -90,7 +90,7 @@
 	.toolbutton-size(@dim);
 }
 
-.toolbutton-size(@dim: inherit) {
+.toolbutton-size(@dim) {
 	.set-size(@dim);
 	width: @button-size;
 	height: @button-size;
@@ -105,17 +105,35 @@
 
 ////////////////////
 
-.collapsed(@dim: inherit) {
+.collapsed(@dim: inherit) when not (@dim = none) {
 	position: relative;
 	overflow: hidden;
 	.collapsed-size(@dim);
 	.collapsed-icon;
 }
 
-.collapsed-size(@dim: inherit) {
+.collapsed(none) {
+	position: static;
+	overflow: visible;
+	height: auto;
+	width: auto;
+	// &> menu {
+	// 	margin: 0 !important;  // TODO: fix me in js
+	// }
+	.collapsed-icon(none);
+}
+
+.collapsed-size(@dim) {
 	.set-size(@dim);
 	height: @toolbar-size;
-	width: @toolbar-size;
+	width: 100%;//@toolbar-size;
+}
+
+.collapsed-ifnot(@classname, @dim: inherit) {
+	.collapsed(@dim);
+	&.@{classname} {
+		overflow: visible;
+	}
 }
 
 .collapsed-icon() {
@@ -137,19 +155,27 @@
 	}
 }
 
+.collapsed-icon(none) {
+	&:after {
+		content: none;
+	}
+}
+
 /////////////////////
 
-.expanded() {
-	overflow: visible !important; // find a better way to
-	                              // outprecedence id
-
+.expanded(@dim: inherit) {
+	.set-size(@dim);
 	&>menu {
 		margin: 0 !important;
 		position: absolute;
+		left: @toolbar-size + @menu-pad;
 		z-index: 20;
-		left: @toolbar-size + 7px;
-		width: 240px;
-		height: auto;
+
+		//display: table-cell;
+		white-space: nowrap;
+		//width: auto;
+		//height: @toolbar-size;
+
 		padding: 2px;
 		.separate-menu(vertical, 3px);
 
@@ -160,22 +186,31 @@
 	}
 }
 
-.expanded-menu() {
+.expanded-size(@dim) {
+	&>menu {
+		.set-size(@dim);
+		left: @toolbar-size + @menu-pad;
+	}
+}
+
+.expanded-menu(@dim: inherit) {
+	.set-size(@dim);
 	li {
 		display: block;
 	}
 	button {
 		display: block;
-		margin: 1px 0;
-		padding: 4px;
 		width: 100%;
-		height: 24px;
-		font-size: 15px;
+		margin: 1px 0;
+		padding: 0.3em 1.5em 0.3em 0.3em;
+		height: 1.7em;
+
+		font-size: @menu-font-size;
 		//line-height: 18px;
 		text-align: left;
 		&:before, &:after {
-			padding-right: 5px;
-			font-size: 18px;
+			padding-right: 0.4em;
+			font-size: @menu-icon-size;
 			//padding: @icon-padding;
 		}
 		&[disabled] {                    // TODO: general button highlight
@@ -183,8 +218,20 @@
 		}
 	}
 	button:hover, .selected button {
-		&:extend(button:active);
+		//&:extend(button:active); not extended while in media
+		.highlight-scale(none);
+		.highlight-shadow(none);
 		.highlight-invert;
+	}
+}
+
+.expanded-menu-size(@dim) {
+	.set-size(@dim);
+	button {
+		font-size: @menu-font-size;
+		&:before, &:after {
+			font-size: @menu-icon-size;
+		}
 	}
 }
 

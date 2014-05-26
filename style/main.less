@@ -58,6 +58,7 @@ main {
 }
 
 [role='toolbar'] {
+	.user-select(none);
 	menu {
 		.remove-inline-spacing;
 	}
@@ -70,13 +71,8 @@ main {
 	}
 }
 
-#select, #bond, #reaction {
-	.collapsed;
-}
-
 li.opened {
 	.expanded;
-	.expanded-menu;
 }
 
 #atom button {
@@ -126,20 +122,68 @@ button {
 //////////////////////////
 // Adjust to custom sizes
 
-@media (max-height: 750px) {
-	#transform {
-		.collapsed;
+#select, #bond-common, #bond-stereo, #bond-query, #reaction {
+	.collapsed-ifnot(opened);
+}
+
+@media (max-width: 850px) {
+	#bond-common, #bond-stereo, #bond-query {
+		.collapsed-size(small);
+	}
+}
+
+@media (max-height: 850px) {
+	#rgroup {
+		.collapsed-ifnot(opened);
+	}
+	@media  (max-width: 850px) { // better way not to dublicate?
+		#rgroup {                // inherit 100%, small? overflow-x?
+			.collapsed-size(small);
+		}
 	}
 }
 
 @media (max-height: 800px) {
-	#rgroup {
-		.collapsed;
+	#transform {
+		.collapsed-ifnot(opened);
+	}
+	@media  (max-width: 850px) {
+		#transform {
+			.collapsed-size(small);
+		}
 	}
 }
 
-#document, #edit, #zoom {
-	.separate-item(horizontal, 15px);
+@media (max-height: 700px) {
+	li.opened {
+		.expanded-menu;
+	}
+	#bond-common, #bond-stereo, #bond-query {
+		.collapsed(none);
+	}
+	#bond {
+		.collapsed-ifnot(opened);
+	}
+	@media (max-width: 850px) {
+		li.opened {
+			.expanded-menu-size(small);
+		}
+		#bond {
+			.collapsed-size(small);
+		}
+	}
+}
+
+@media (max-height: 600px) {
+	#rgroup, #transform, #bond {
+		.collapsed-size(small);
+	}
+}
+
+@media (min-width: 650px) {
+	#document, #edit, #zoom {
+		.separate-item(horizontal, 15px);
+	}
 }
 
 @media (min-height: 800px) {
@@ -154,7 +198,7 @@ button {
 	}
 }
 
-@media (max-height: 700px), (max-width: 850px) {
+@media (max-height: 600px), (max-width: 850px) {
 	.set-size(small);
 
 	main {
@@ -171,8 +215,12 @@ button {
 		.toolbutton-size(small);
 	}
 
-	#select, #bond, #reaction, #transform, #rgroup {
+	#select, #reaction {
 		.collapsed-size(small);
+	}
+
+	li.opened {
+		.expanded-size(small);
 	}
 
 	#atom button {
@@ -181,14 +229,21 @@ button {
 	select {
 		font-size: @select-size;
 	}
+}
+
+@media (max-width: 720px) {
 	#meta {
 		display: none;
 	}
+	#mainmenu {
+		right: 0;
+	}
 	body {
-		min-width: 650px;
+		min-width: 520px;
 		//min-height: 450px;
 	}
 }
+
 
 .monochrome-icons(arom bond-any bond-aromatic bond-crossed bond-double
                   bond-doublearomatic bond-down bond-single

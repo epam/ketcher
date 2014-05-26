@@ -202,13 +202,15 @@ ui.init = function (parameters, opts)
     $$('li').each(function(el) {
 	    el.observe('click', function(event) {
 		    if (event.target.tagName == 'BUTTON' &&
-		        event.target.parentNode == this)
-			    ui.selectAction(el);
+		        event.target.parentNode == this) {
+			    if (!this.hasClassName('selected'))
+				    event.stop();
+			    ui.selectAction(this);
+		    }
 
             if (ui.hideBlurredControls())
                 event.stop();
-
-		    if (this.getStyle('overflow') == 'hidden') {
+		    else if (this.getStyle('overflow') == 'hidden') {
                 this.addClassName('opened');
                 ui.dropdown_opened = this;
                 event.stop();

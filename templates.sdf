@@ -32,9 +32,6 @@ M  END
 > <bondid>
 1
 
-> <icon>
-icons/png/template/template8.png
-
 $$$$
 Adenine
   MDL-Draw02180816162D
@@ -68,9 +65,6 @@ M  END
 > <bondid>
 1
 
-> <icon>
-icons/png/template/template9.png
-
 $$$$
 Uracil
   MDL-Draw02180816162D
@@ -98,9 +92,6 @@ M  END
 
 > <bondid>
 1
-
-> <icon>
-icons/png/template/template10.png
 
 $$$$
 Cytosine
@@ -130,12 +121,9 @@ M  END
 > <bondid>
 1
 
-> <icon>
-icons/png/template/template11.png
-
 $$$$
 Ribose
-  Mrv0541 10031317592D          
+  Mrv0541 10031317592D
 
  14 14  0  0  0  0            999 V2000
     3.6483   -1.5101    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -172,9 +160,6 @@ M  END
 
 > <bondid>
 2
-
-> <icon>
-icons/png/template/template12.png
 
 $$$$
 Adenosine Monophosphate
@@ -235,9 +220,6 @@ M  END
 
 > <bondid>
 25
-
-> <icon>
-icons/png/template/template13.png
 
 $$$$
 Adenosine diphosphate
@@ -306,9 +288,6 @@ M  END
 
 > <bondid>
 29
-
-> <icon>
-icons/png/template/template14.png
 
 $$$$
 Adenosine triphosphate
@@ -385,8 +364,5 @@ M  END
 
 > <bondid>
 33
-
-> <icon>
-icons/png/template/template15.png
 
 $$$$

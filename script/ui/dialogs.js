@@ -1,3 +1,113 @@
+ui.initTemplates = function (base_url)
+{
+    function parseSdf(sdf) {
+        var items = sdf.split(/^[$][$][$][$]$/m);
+        var parsed = [];
+
+        items.each(function (item) {
+            item = item.replace(/\r/g, '');
+            item = item.strip();
+            var end_idx = item.indexOf('M  END');
+
+            if (end_idx == -1) {
+                return;
+            }
+
+            var iparsed = {};
+
+            iparsed.molfile = item.substring(0, end_idx + 6);
+            iparsed.name = item.substring(0, item.indexOf('\n')).strip();
+            item = item.substr(end_idx + 7).strip();
+
+            var entries = item.split(/^$/m);
+
+            entries.each(function (entry) {
+                entry = entry.strip();
+                if (!entry.startsWith('> <')) {
+                    return;
+                }
+                var lines = entry.split('\n');
+                var field = lines[0].strip().substring(3, lines[0].lastIndexOf('>')).strip();
+
+                iparsed[field] = parseInt(lines[1].strip()) || lines[1].strip();
+            });
+            parsed.push(iparsed);
+        });
+
+        return parsed;
+    }
+
+    // Init templates
+    new Ajax.Request(base_url + 'templates.sdf',
+    {
+        method: 'get',
+        requestHeaders: {Accept: 'application/octet-stream'},
+        asynchronous : false,
+        onComplete: function (res)
+        {
+            try {
+                var sdf_items = parseSdf(res.responseText);
+            } catch (er) {
+                if (ui.forwardExceptions)
+                    throw er;
+                return;
+            }
+
+	        rnd.customtemplates = [];
+	        var i = 0;
+            sdf_items.each(function (item) {
+	            rnd.customtemplates.push({
+		            name: (item.name || ('customtemplate ' + (++i))).capitalize(),
+                    molfile: item.molfile,
+                    aid: (item.atomid || 1) - 1,
+                    bid: (item.bondid || 1) - 1
+	            });
+            });
+        }
+    });
+};
+
+ui.parseCTFile = function (molfile, check_empty_line)
+{
+    var lines = molfile.split('\n');
+
+    if (lines.length > 0 && lines[0] == 'Ok.')
+        lines.shift();
+
+    try {
+        try {
+            return chem.Molfile.parseCTFile(lines);
+        } catch (ex) {
+            if (ui.forwardExceptions)
+                throw ex;
+            if (check_empty_line) {
+                try {
+                // check whether there's an extra empty line on top
+                // this often happens when molfile text is pasted into the dialog window
+                    return chem.Molfile.parseCTFile(lines.slice(1));
+                } catch (ex1) {
+                    if (ui.forwardExceptions)
+                        throw ex1;
+                }
+                try {
+                // check for a missing first line
+                // this sometimes happens when pasting
+                    return chem.Molfile.parseCTFile([''].concat(lines));
+                } catch (ex2) {
+                    if (ui.forwardExceptions)
+                        throw ex2;
+                }
+            }
+            throw ex;
+        }
+    } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
+        alert("Error loading molfile.\n"+er.toString());
+        return null;
+    }
+};
+
 ui.initDialogs = function () {
     // Dialog events
     $$('.dialogWindow').each(function (el)
@@ -784,4 +894,85 @@ ui.loadMoleculeFromInput = function ()
     }
     ui.hideDialog('open_file');
     ui.loadMolecule($('input_mol').value, false, true, $('checkbox_open_copy').checked);
+};
+
+ui.showTemplateCustom = function(params) {
+
+	function asyncEach(list, process, callback, timeGap, startTimeGap) {
+		var i = 0,
+		    n = list.length;
+		function iterate() {
+			if (i < n) {
+				process(list[i], i++);
+				setTimeout(iterate, timeGap);
+			}
+			else
+				callback();
+		}
+		setTimeout(iterate, startTimeGap || timeGap);
+	}
+
+	var dialog = ui.showDialog('custom_templates'),
+	    ul = dialog.select('ul')[0],
+	    selectedEl = dialog.select('.selected')[0],
+	    selectedIndex = selectedEl && selectedEl.previousSiblings().size();
+
+	if (ul.children.length === 0) {		// first time
+		ui.showDialog('loading');
+		dialog.style.visibility = 'hidden';
+		//performance.mark('mark_start_all_tc');
+		asyncEach(rnd.customtemplates, function(value, index) {
+			//performance.mark('mark_start_tc');
+			var li =  new Element('li');
+			li.title = value.name;
+			ul.insert({ bottom: li });
+
+			var render = new rnd.Render(li, 20, { 'autoScale': true,
+			                                      'autoScaleMargin': 0,
+			                                      //'debug': true,
+			                                      'ignoreMouseEvents': true
+			                                    });
+			// performance.mark('mark_end_tc');
+			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
+			// performance.mark('mark_start_tc');
+			render.setMolecule(chem.Molfile.parseCTFile(value.molfile.split('\n')));
+			render.update();
+
+			li.observe('click', function () {
+				if (selectedIndex != index) {
+					if (selectedIndex === undefined)
+						dialog.select('[disabled]')[0].removeAttribute('disabled');
+					else
+						li.parentNode.children[selectedIndex].removeClassName('selected');
+					li.addClassName('selected');
+					selectedIndex = index;
+				}
+				else
+					close('OK');
+			});
+			// performance.mark('mark_end_tc');
+			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
+		}, function () {
+			$('loading').hide();
+			dialog.style.visibility = 'visible';
+			// performance.mark('mark_end_all_tc');
+			// performance.measure('measure_all_tc', 'mark_start_all_tc', 'mark_end_all_tc');
+			// var ms = window.performance.getEntriesByType('measure');
+			// console.table(ms, ['startTime', 'name', 'duration']);
+		}, 30);
+	}
+
+	function close(mode) {
+		var key = 'on' + (mode.capitalize() || 'Cancel');
+		_handler.stop();
+		if (params && key in params)
+			//params[key].apply(window, [].slice.call(arguments, 1));
+			params[key](rnd.customtemplates[selectedIndex]);
+		ui.hideDialog('custom_templates');
+	}
+
+	var _handler = new Event.Handler(dialog, 'click', 'input',
+	                                 function(ev, el) {
+		                                 close(el.value);
+	                                 }).start();
 };

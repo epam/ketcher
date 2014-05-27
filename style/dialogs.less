@@ -1,24 +1,27 @@
 // Hearty greetings from good old Ketcher
 
-input#input_label
+#input_label
 {
     position: absolute;
-    z-index:  3;
+    z-index:  30;
 }
 
-div#window_cover
+#window_cover
 {
     position: absolute;
-    z-index:  4;
+    z-index:  40;
     background-color: black;
     left:     0;
     top:      0;
+	bottom: 0;
+	right: 0;
+
     opacity:    0.15;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=15)";
     filter:     alpha(opacity=15);
 }
 
-div#loading
+#loading
 {
     width:  100%;
     height: 100%;
@@ -29,8 +32,11 @@ div#loading
 
 .dialogWindow
 {
+	&> div > div:first-child, header {
+		background-color: #D0D0D0;
+	}
     position: absolute;
-    z-index:  5;
+    z-index:  50;
     background-color: #E0E0E0;
     border-color: #F0F0F0;
     border-style: outset;
@@ -39,11 +45,6 @@ div#loading
     text-align: center;
     left:  10%;
     top:   10%;
-}
-
-.dialogWindow > div > div:first-child
-{
-    background-color: #D0D0D0;
 }
 
 .fileDialog
@@ -83,7 +84,7 @@ div#loading
 .aboutDialog
 {
     position: absolute;
-    z-index:  5;
+    z-index:  50;
     background-color: #FFFFFF;
     border-color: #F0F0F0;
     border-style: inset;
@@ -97,4 +98,50 @@ div#loading
 .aboutDialog > div > div:first-child
 {
     background-color: #D0D0D0;
+}
+
+#custom_templates {
+    top:   100px;
+	display: inline-block;
+	vertical-align: center;
+
+	position: relative;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		width: 350px;
+		height: 250px;
+		background: white;
+		overflow: auto;
+	}
+	li {
+		padding: 10px 0;
+		overflow: hidden;
+		height: 100px;
+		width: 100%;
+		position: relative;
+
+		& + li {
+			padding-top: 10px;
+			border-top: 1px solid @border-color;
+		}
+		&:before {
+			position: absolute;
+			left: 10px;
+			top: 5px;
+			font-size: 10px;
+			color: darken(@border-color, 30%);
+			content: attr(title);
+		}
+		&.selected, &:hover {
+			background: lighten(@border-color, 15%);
+		}
+	}
+	footer {
+		//bottom: 0;
+		//width: 100%;
+		margin-top: 0.5em;
+		//position: absolute;
+	}
 }

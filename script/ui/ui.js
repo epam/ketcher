@@ -40,94 +40,6 @@ ui.initialized = false;
 //
 // Init section
 //
-
-ui.initTemplates = function (base_url)
-{
-    function parseSdf(sdf) {
-        var items = sdf.split(/^[$][$][$][$]$/m);
-        var parsed = [];
-
-        items.each(function (item) {
-            item = item.replace(/\r/g, '');
-            item = item.strip();
-            var end_idx = item.indexOf('M  END');
-
-            if (end_idx == -1) {
-                return;
-            }
-
-            var iparsed = {};
-
-            iparsed.molfile = item.substring(0, end_idx + 6);
-            iparsed.name = item.substring(0, item.indexOf('\n')).strip();
-            item = item.substr(end_idx + 7).strip();
-
-            var entries = item.split(/^$/m);
-
-            entries.each(function (entry) {
-                entry = entry.strip();
-                if (!entry.startsWith('> <')) {
-                    return;
-                }
-                var lines = entry.split('\n');
-                var field = lines[0].strip().substring(3, lines[0].lastIndexOf('>')).strip();
-
-                iparsed[field] = parseInt(lines[1].strip()) || lines[1].strip();
-            });
-            parsed.push(iparsed);
-        });
-
-        return parsed;
-    }
-
-    // Init templates
-    new Ajax.Request(base_url + 'templates.sdf',
-    {
-        method: 'get',
-        requestHeaders: {Accept: 'application/octet-stream'},
-        asynchronous : false,
-        onComplete: function (res)
-        {
-            try {
-                var sdf_items = parseSdf(res.responseText);
-            } catch (er) {
-                if (ui.forwardExceptions)
-                    throw er;
-                return;
-            }
-
-            if (sdf_items.length == 0) {
-                return;
-            }
-
-            rnd.customtemplates = [];
-            ui.customtemplate_tool_modes.clear();
-            var tbody = $('customtemplate_dropdown_list').select('table > tbody')[0];
-            tbody.update();
-
-            var idx = 0;
-            sdf_items.each(function (item) {
-                var tmpl = {
-                    name: (item.name || ('customtemplate ' + (idx+1))).capitalize(),
-                    molfile: item.molfile,
-                    aid: (item.atomid || 1) - 1,
-                    bid: (item.bondid || 1) - 1
-                };
-
-                rnd.customtemplates.push(tmpl);
-                ui.customtemplate_tool_modes.push('customtemplate_' + idx);
-
-                tbody.insert('<tr class="dropdownListItem" id="customtemplate_' + idx +
-                        '" title="' + tmpl.name + ' (Shift+T)">' + '<td><div id="customtemplate_' + idx +
-                        '_preview" style="float:right"><img style="align:right" class="dropdownIconTemplate" src="icons/png/customtemplate/customtemplate' +
-                        idx + '.dropdown.png" alt="" /></div></td><td>' + tmpl.name + '</td></tr>');
-                idx++;
-            });
-            ui.DropdownListSetIconAndTitle($('customtemplate'), $('customtemplate_0'));
-        }
-    });
-};
-
 ui.init = function (parameters, opts)
 {
     this.buttons = $$('[role=toolbar] button');
@@ -242,7 +154,7 @@ ui.init = function (parameters, opts)
 	this.render.setMolecule(this.ctab);
 	this.render.update();
 
-    this.initialized = true;
+	this.initialized = true;
 };
 
 ui.subEl = function (id) {
@@ -338,18 +250,16 @@ ui.updateClipboardButtons = function ()
 
 ui.showDialog = function (name)
 {
-    $('window_cover').style.width = ui.ketcher_window.getWidth().toString() + 'px';
-    $('window_cover').style.height = ui.ketcher_window.getHeight().toString() + 'px';
-    $('window_cover').show();
-    $(name).show();
+	$('window_cover').show();
+	var dialog = $(name);
+	dialog.show();
+	return dialog;
 };
 
 ui.hideDialog = function (name)
 {
     $(name).hide();
     $('window_cover').hide();
-    $('window_cover').style.width = '0px';
-    $('window_cover').style.height = '0px';
 };
 
 //
@@ -382,47 +292,6 @@ ui.updateMolecule = function (mol)
             ui.hideDialog('loading');
         }
     }, 50);
-};
-
-ui.parseCTFile = function (molfile, check_empty_line)
-{
-    var lines = molfile.split('\n');
-
-    if (lines.length > 0 && lines[0] == 'Ok.')
-        lines.shift();
-
-    try {
-        try {
-            return chem.Molfile.parseCTFile(lines);
-        } catch (ex) {
-            if (ui.forwardExceptions)
-                throw ex;
-            if (check_empty_line) {
-                try {
-                // check whether there's an extra empty line on top
-                // this often happens when molfile text is pasted into the dialog window
-                    return chem.Molfile.parseCTFile(lines.slice(1));
-                } catch (ex1) {
-                    if (ui.forwardExceptions)
-                        throw ex1;
-                }
-                try {
-                // check for a missing first line
-                // this sometimes happens when pasting
-                    return chem.Molfile.parseCTFile([''].concat(lines));
-                } catch (ex2) {
-                    if (ui.forwardExceptions)
-                        throw ex2;
-                }
-            }
-            throw ex;
-        }
-    } catch (er) {
-        if (ui.forwardExceptions)
-            throw er;
-        alert("Error loading molfile.\n"+er.toString());
-        return null;
-    }
 };
 
 //
@@ -1208,6 +1077,18 @@ ui.onClick_ReaGenericsTableButton = function ()
     });
 };
 
+// TODO: remove this crap (quick hack to pass parametr to selectAction)
+ui.current_template_custom = null;
+ui.onClick_TemplateCustom = function() {
+   ui.showTemplateCustom({
+	   onOk : function(tmpl) {
+		   ui.current_template_custom = tmpl;
+		   ui.selectAction('template-custom-select');
+		   return true;
+	   }
+    });
+};
+
 ui.onClick_Cut = function ()
 {
     if (!ui.copy())
@@ -1243,6 +1124,7 @@ ui.actionMap = {
 	'dearom': ui.onClick_Dearomatize,
 	'period-table': ui.onClick_ElemTableButton,
 	'generic-groups': ui.onClick_ReaGenericsTableButton,
+	'template-custom': ui.onClick_TemplateCustom,
 	'info': function (el) {
 		ui.showDialog('about_dialog');
 	},
@@ -1303,11 +1185,11 @@ ui.mapTool = function(id) {
     } else if (id.startsWith('bond-')) {
         return new rnd.Editor.BondTool(this.editor, ui.bondType(id));
     } else if (id == 'chain') {
-        return new rnd.Editor.ChainTool(this.editor);
+	    return new rnd.Editor.ChainTool(this.editor);
+    } else if (id.startsWith('template-custom')) {
+	    return new rnd.Editor.TemplateTool(this.editor, ui.current_template_custom);
     } else if (id.startsWith('template')) {
         return new rnd.Editor.TemplateTool(this.editor, rnd.templates[parseInt(id.split('-')[1])]);
-    } else if (id.startsWith('customtemplate')) {
-        return new rnd.Editor.TemplateTool(this.editor, rnd.customtemplates[parseInt(id.split('-')[1])]);
     } else if (id == 'charge-plus') {
         return new rnd.Editor.ChargeTool(this.editor, 1);
     } else if (id == 'charge-minus') {

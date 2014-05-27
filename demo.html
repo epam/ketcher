@@ -90,17 +90,18 @@
 		     alert("Please, input Molfile");
 		   else
 			 ketcher.showMolfileOpts($('<li>').appendTo(show)[0],
-									 molfile,
-									 20, {
-			                           'autoScale': true,
-									   'autoScaleMargin': 20,
-									   'debug': true,
-									   'ignoreMouseEvents': true,
-								     });
+									             molfile,
+									             20, { 'autoScale': true,
+				                             'autoScaleMargin': 20,
+				                             'debug': true,
+				                             'ignoreMouseEvents': true
+			                               });
 		 });
 
 		 ketcher.setMolecule(initialMolecule);
-		 ketcher.onStructChange(function(){source.val(ketcher.getMolfile());});
+		 ketcher.onStructChange(function() {
+       source.val(ketcher.getMolfile());
+     });
 	   });
 	 });
 	</script>

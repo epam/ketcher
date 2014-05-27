@@ -97,7 +97,7 @@ module.exports = function(grunt) {
 				},
 
 				src: 'template/main.hbs',
-				dest: 'ketcher.html'
+				dest: '<%= pkg.name %>.html'
 			}
 		},
 
@@ -107,7 +107,14 @@ module.exports = function(grunt) {
 				fonts   : '.',
 				styles  : '.tmp'
 			},
-			default: {}
+			default: {},
+			'svg-fix': {
+				options: {
+					config  : 'icons/config-svg-fix.json',
+					fonts   : '.tmp',
+					styles  : '.tmp'
+				}
+			}
 		},
 
 		copy: {
@@ -115,6 +122,12 @@ module.exports = function(grunt) {
 				expand: true,
 				cwd: 'script/vendor',
 				src: ['<%= options.libs %>'],
+				dest: '.'
+			},
+			'svg-fix': {
+				expand: true,
+				cwd: '.tmp',
+				src: ['<%= pkg.name %>.{svg,ttf}'],
 				dest: '.'
 			}
 		},
@@ -212,7 +225,7 @@ module.exports = function(grunt) {
 	// clean:tmp in the end as workaround rimraf bug
 	grunt.registerTask('default', ['gitinfo', 'clean', 'less:default',
 	                               'fontello', 'uglify', 'assemble',
-	                               'copy:libs', 'compress', 'clean:tmp']);
+	                               'copy', 'compress', 'clean:tmp']);
 	grunt.registerTask('dev', ['gitinfo', 'clean', 'less:dev', 'fontello',
-	                           'concat', 'assemble', 'copy:libs', 'clean:tmp']);
+	                           'concat', 'assemble', 'copy', 'clean:tmp']);
 };

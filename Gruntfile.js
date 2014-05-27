@@ -22,7 +22,8 @@ module.exports = function(grunt) {
 			// build options
 			// is there a way to automate?
 			'no-reaction': grunt.option('no-reaction'),
-			'no-group': grunt.option('no-group')
+			'no-group': grunt.option('no-group'),
+			'no-generic': grunt.option('no-generic')
 		},
 
 		concat: {

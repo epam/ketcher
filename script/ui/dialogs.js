@@ -919,7 +919,7 @@ ui.showTemplateCustom = function(params) {
 
 	if (ul.children.length === 0) {		// first time
 		ui.showDialog('loading');
-		dialog.style.visibility = 'hidden';
+		dialog.addClassName('loading');
 		//performance.mark('mark_start_all_tc');
 		asyncEach(rnd.customtemplates, function(value, index) {
 			//performance.mark('mark_start_tc');
@@ -927,7 +927,7 @@ ui.showTemplateCustom = function(params) {
 			li.title = value.name;
 			ul.insert({ bottom: li });
 
-			var render = new rnd.Render(li, 20, { 'autoScale': true,
+			var render = new rnd.Render(li, 30, { 'autoScale': true,
 			                                      'autoScaleMargin': 0,
 			                                      //'debug': true,
 			                                      'ignoreMouseEvents': true
@@ -954,7 +954,7 @@ ui.showTemplateCustom = function(params) {
 			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
 		}, function () {
 			$('loading').hide();
-			dialog.style.visibility = 'visible';
+			dialog.removeClassName('loading');
 			// performance.mark('mark_end_all_tc');
 			// performance.measure('measure_all_tc', 'mark_start_all_tc', 'mark_end_all_tc');
 			// var ms = window.performance.getEntriesByType('measure');

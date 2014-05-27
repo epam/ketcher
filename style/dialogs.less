@@ -118,7 +118,7 @@
 	li {
 		padding: 10px 0;
 		overflow: hidden;
-		height: 100px;
+		height: 120px;
 		width: 100%;
 		position: relative;
 
@@ -138,6 +138,14 @@
 			background: lighten(@border-color, 15%);
 		}
 	}
+
+	&.loading {
+		visibility: hidden;
+		li {              // workaround padding in
+			height: 95px; // autoScale width bug
+		}
+	}
+
 	footer {
 		//bottom: 0;
 		//width: 100%;

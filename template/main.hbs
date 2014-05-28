@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html>
+	{{#with options}}
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 		<title>Ketcher v{{pkg.version}}
-			{{#if git}}
-				{{#unless git.tag}}(build: {{git.lastCommitNumber}}){{/unless}}
-			{{/if}}
+		       {{#unless git.tag}}(rev: {{git.rev}}){{/unless}}
 		</title>
 		<link rel="stylesheet" href="{{pkg.name}}.css" />
-		{{#each options.libs}}
+		{{#each libs}}
 			<script src="{{.}}"></script>
 		{{/each}}
 		<script src="{{pkg.name}}.js"></script>
 	</head>
 
-	{{#with options}}
-		<body role="applicaion">
-			<main id="ketcher"></main>
-			<menu role="toolbar">
-				{{>mainmenu}}
-				{{>toolbox}}
-				{{>template}}
-				{{>elements}}
-			</menu>
-			{{>templates}}
-			{{>crap}}
-		</body>
+	<body role="applicaion">
+		<main id="ketcher"></main>
+		<menu role="toolbar">
+			{{>mainmenu}}
+			{{>toolbox}}
+			{{>template}}
+			{{>elements}}
+		</menu>
+		{{>templates}}
+		{{>crap}}
+	</body>
 	{{/with}}
 </html>

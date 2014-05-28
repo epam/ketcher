@@ -19,11 +19,17 @@ module.exports = function(grunt) {
 			          'loading.gif', 'demo.html', 'templates.sdf'],
 			server: 'server/python/ketcher.py',
 
+			pkg: '<%= pkg %>',
+			git: {
+				tag: '<%= gitinfo.local.branch.current.tag %>',
+				rev: '<%= gitinfo.local.branch.current.lastCommitNumber %>'
+			},
+
 			// build options
 			// is there a way to automate?
-			'no-reaction': grunt.option('no-reaction'),
-			'no-group': grunt.option('no-group'),
-			'no-generic': grunt.option('no-generic')
+			'no-reactions': grunt.option('no-reactions'),
+			'no-groups': grunt.option('no-groups'),
+			'no-generics': grunt.option('no-generics')
 		},
 
 		concat: {
@@ -90,9 +96,7 @@ module.exports = function(grunt) {
 				options: {
 					partials: ['template/menu/*',
 					           'template/dialogs/*'],
-					pkg: '<%= pkg %>',       // extend by options, may be?
 					options: '<%= options %>',
-					git: '<%= gitinfo.local.branch.current %>',
 					postprocess: require('pretty')
 				},
 
@@ -146,11 +150,15 @@ module.exports = function(grunt) {
 
 		compress: {
 			options: {
+				basename: '<%= pkg.name %>-' +
+					      '<%= gitinfo.local && options.git.tag || ' +
+					          'gitinfo.local && "rev:" + options.git.rev || ' +
+					          'pkg.version %>',
 				level: 9
 			},
 			build: {
 				options: {
-					archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
+					archive: '<%= compress.options.basename %>.zip'
 				},
 				files: [
 					{
@@ -168,7 +176,7 @@ module.exports = function(grunt) {
 			},
 			build_with_sources: {
 				options: {
-					archive: '<%= pkg.name %>-<%= pkg.version %>-src.zip'
+					archive: '<%= compress.options.basename %>-src.zip'
 				},
 				// TODO: add server parts to source
 				src: ['<%= options.build %>', '<%= options.libs %>',
@@ -228,4 +236,6 @@ module.exports = function(grunt) {
 	                               'copy', 'compress', 'clean:tmp']);
 	grunt.registerTask('dev', ['gitinfo', 'clean', 'less:dev', 'fontello',
 	                           'concat', 'assemble', 'copy', 'clean:tmp']);
+
+	grunt.registerTask('test', ['gitinfo', 'compress']);
 };

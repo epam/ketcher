@@ -940,8 +940,10 @@ ui.showTemplateCustom = function(params) {
 
 			li.observe('click', function () {
 				if (selectedIndex != index) {
-					if (selectedIndex === undefined)
-						dialog.select('[disabled]')[0].removeAttribute('disabled');
+					if (selectedIndex === undefined) {
+						var button = dialog.select('[disabled]')[0];
+						button && button.removeAttribute('disabled');
+					}
 					else
 						li.parentNode.children[selectedIndex].removeClassName('selected');
 					li.addClassName('selected');

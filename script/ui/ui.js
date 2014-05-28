@@ -42,8 +42,8 @@ ui.initialized = false;
 //
 ui.init = function (parameters, opts)
 {
-    this.buttons = $$('[role=toolbar] button');
-    this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
+	this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
+	this.toolbar = this.ketcher_window.select('[role=toolbar]')[0];
     this.client_area = $('ketcher');
 
 	parameters = Object.extend({
@@ -98,7 +98,7 @@ ui.init = function (parameters, opts)
     //ui.setKeyboardShortcuts();
 
     // Button events
-	ui.buttons.each(function (el) {
+	ui.toolbar.select('button').each(function (el) {
 		el.observe('mouseover', function () {
 			if (this.hasAttribute('disabled'))
 				return;
@@ -111,7 +111,7 @@ ui.init = function (parameters, opts)
 		});
     });
 
-    $$('li').each(function(el) {
+    ui.toolbar.select('li').each(function(el) {
 	    el.observe('click', function(event) {
 		    if (event.target.tagName == 'BUTTON' &&
 		        event.target.parentNode == this) {
@@ -198,7 +198,7 @@ ui.selectAction = function (query) {
 		var action = ui.actionMap[id],
 		    tool = action ? action() : ui.mapTool(id);
 		if (tool) {
-			var oldel = $$('.selected')[0];
+			var oldel = ui.toolbar.select('.selected')[0];
 			//console.assert(!ui.last_selected || oldel,
 			//               "No last mode selected!");
 

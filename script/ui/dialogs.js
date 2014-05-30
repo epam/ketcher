@@ -917,7 +917,7 @@ ui.showTemplateCustom = function(params) {
 	    selectedEl = dialog.select('.selected')[0],
 	    selectedIndex = selectedEl && selectedEl.previousSiblings().size();
 
-	if (ul.children.length === 0) {		// first time
+	if (ul.children.length === 0 && rnd.customtemplates) {		// first time
 		ui.showDialog('loading');
 		dialog.addClassName('loading');
 		//performance.mark('mark_start_all_tc');
@@ -930,7 +930,8 @@ ui.showTemplateCustom = function(params) {
 			var render = new rnd.Render(li, 30, { 'autoScale': true,
 			                                      'autoScaleMargin': 0,
 			                                      //'debug': true,
-			                                      'ignoreMouseEvents': true
+			                                      'ignoreMouseEvents': true,
+							      'hideChiralFlag': true,
 			                                    });
 			// performance.mark('mark_end_tc');
 			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');

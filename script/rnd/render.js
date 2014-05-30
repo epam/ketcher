@@ -47,6 +47,7 @@ rnd.RenderOptions = function (opt)
 	this.showBondIds = opt.showBondIds || false;
 	this.showHalfBondIds = opt.showHalfBondIds || false;
 	this.showLoopIds = opt.showLoopIds || false;
+	this.hideChiralFlag = opt.hideChiralFlag || false;
 
 	// rendering customization flags
 	this.showValenceWarnings = !Object.isUndefined(opt.showValenceWarnings) ? opt.showValenceWarnings : true;

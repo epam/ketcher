@@ -225,7 +225,7 @@ rnd.ReStruct = function (molecule, render, norescale)
         }
     }, this);
 
-    if (molecule.isChiral) {
+    if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
         var bb = molecule.getCoordBoundingBox();
         this.chiralFlags.set(0,new rnd.ReChiralFlag(new util.Vec2(bb.max.x, bb.min.y - 1)));
     }

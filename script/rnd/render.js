@@ -53,6 +53,7 @@ rnd.RenderOptions = function (opt)
 	this.showValenceWarnings = !Object.isUndefined(opt.showValenceWarnings) ? opt.showValenceWarnings : true;
 	this.autoScale = opt.autoScale || false; // scale structure to fit into the given view box, used in view mode
 	this.autoScaleMargin = opt.autoScaleMargin || 0;
+	this.maxBondLength = opt.maxBondLength || 0; // 0 stands for "not specified"
 	this.atomColoring = opt.atomColoring || 0;
 	this.hideImplicitHydrogen = opt.hideImplicitHydrogen || false;
 	this.hideTerminalLabels = opt.hideTerminalLabels || false;
@@ -862,13 +863,14 @@ rnd.Render.prototype.update = function (force)
 	rnd.logMethod("update");
 
 	if (!this.settings || this.dirty) {
-		if (this.opt.autoScale)
-		{
+		if (this.opt.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
 			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8*this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
 			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8*this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
 			this.scale = Math.min(sy, sx);
+			if (this.opt.maxBondLength > 0 && this.scale > this.opt.maxBondLength)
+				this.scale = this.opt.maxBondLength;
 		}
 		this.initSettings();
 		this.initStyles();
@@ -913,6 +915,8 @@ rnd.Render.prototype.update = function (force)
 			if (csz.x < 2*marg+1 || csz.y < 2*marg+1)
 				throw new Error("View box too small for the given margin");
             var rescale = Math.max(sz1.x/(csz.x-2*marg), sz1.y/(csz.y-2*marg));
+            if (this.opt.maxBondLength/rescale > 1.0)
+		rescale = 1.0;
             var sz2 = sz1.add(mv.scaled(2*rescale));
             this.paper.setViewBox(bb.pos().x-marg*rescale-(csz.x*rescale-sz2.x)/2, bb.pos().y-marg*rescale-(csz.y*rescale-sz2.y)/2, csz.x*rescale, csz.y*rescale);
 		}

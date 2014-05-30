@@ -932,6 +932,7 @@ ui.showTemplateCustom = function(params) {
 			                                      //'debug': true,
 			                                      'ignoreMouseEvents': true,
 							      'hideChiralFlag': true,
+							      //'maxBondLength': 20,
 			                                    });
 			// performance.mark('mark_end_tc');
 			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');

@@ -85,7 +85,7 @@ ui.init = function (parameters, opts)
 
 	if (this.standalone) {
 		$$('#cleanup', '#arom', '#dearom',
-		   '#reaction-automap').each(function(el) {
+		   '#reaction-automap', '#template-custom').each(function(el) {
 			   ui.subEl(el).setAttribute('disabled', true);
 		   });
 		document.title += ' (standalone)';
@@ -99,7 +99,7 @@ ui.init = function (parameters, opts)
 
     // Button events
 	ui.toolbar.select('button').each(function (el) {
-		el.observe('mouseover', function () {
+		el.on('mouseover', function () {
 			if (this.hasAttribute('disabled'))
 				return;
 
@@ -112,7 +112,7 @@ ui.init = function (parameters, opts)
     });
 
     ui.toolbar.select('li').each(function(el) {
-	    el.observe('click', function(event) {
+	    el.on('click', function(event) {
 		    if (event.target.tagName == 'BUTTON' &&
 		        event.target.parentNode == this) {
 			    if (!this.hasClassName('selected'))
@@ -132,11 +132,11 @@ ui.init = function (parameters, opts)
 	ui.zoomSelect = ui.subEl('zoom-list');
 	ui.zoom = parseFloat(ui.zoomSelect.options[ui.zoomSelect.selectedIndex].innerHTML) / 100;
 	// TODO: remove this^ shit (used in rnd.Render guts)
-	ui.zoomSelect.observe('change', function () {
+	ui.zoomSelect.on('change', function () {
 		ui.updateZoom();
 		//this.blur();
 	});
-	this.client_area.observe('scroll', ui.onScroll_ClientArea);
+	this.client_area.on('scroll', ui.onScroll_ClientArea);
 
 	ui.updateHistoryButtons();
 
@@ -202,7 +202,8 @@ ui.selectAction = function (query) {
 			//console.assert(!ui.last_selected || oldel,
 			//               "No last mode selected!");
 
-			if (el != oldel) {
+			if (el != oldel || !el) { // tool canceling needed when dialog opens
+				                      // if el.selected not changed
 				if (ui.render.current_tool)
 					ui.render.current_tool.OnCancel();
 				ui.render.current_tool = tool;

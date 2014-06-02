@@ -927,12 +927,12 @@ ui.showTemplateCustom = function(params) {
 			li.title = value.name;
 			ul.insert({ bottom: li });
 
-			var render = new rnd.Render(li, 30, { 'autoScale': true,
+			var render = new rnd.Render(li, 0, { 'autoScale': true,
 			                                      'autoScaleMargin': 0,
 			                                      //'debug': true,
 			                                      'ignoreMouseEvents': true,
-							      'hideChiralFlag': true,
-							      //'maxBondLength': 20,
+			                                      'hideChiralFlag': true,
+			                                      'maxBondLength': 30
 			                                    });
 			// performance.mark('mark_end_tc');
 			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
@@ -940,7 +940,7 @@ ui.showTemplateCustom = function(params) {
 			render.setMolecule(chem.Molfile.parseCTFile(value.molfile.split('\n')));
 			render.update();
 
-			li.observe('click', function () {
+			li.on('click', function () {
 				if (selectedIndex != index) {
 					if (selectedIndex === undefined) {
 						var button = dialog.select('[disabled]')[0];
@@ -959,6 +959,9 @@ ui.showTemplateCustom = function(params) {
 		}, function () {
 			$('loading').hide();
 			dialog.removeClassName('loading');
+			dialog.on('click', 'input', function(event, element) {
+				close(element.value);
+			});
 			// performance.mark('mark_end_all_tc');
 			// performance.measure('measure_all_tc', 'mark_start_all_tc', 'mark_end_all_tc');
 			// var ms = window.performance.getEntriesByType('measure');
@@ -968,15 +971,9 @@ ui.showTemplateCustom = function(params) {
 
 	function close(mode) {
 		var key = 'on' + (mode.capitalize() || 'Cancel');
-		_handler.stop();
 		if (params && key in params)
 			//params[key].apply(window, [].slice.call(arguments, 1));
 			params[key](rnd.customtemplates[selectedIndex]);
 		ui.hideDialog('custom_templates');
 	}
-
-	var _handler = new Event.Handler(dialog, 'click', 'input',
-	                                 function(ev, el) {
-		                                 close(el.value);
-	                                 }).start();
 };

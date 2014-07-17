@@ -112,14 +112,14 @@ module.exports = function(grunt) {
 			options: {
 				config  : 'icons/config.json',
 				fonts   : '.',
-				styles  : '.tmp'
+				styles  : false
 			},
 			default: {},
 			'svg-fix': {
 				options: {
 					config  : 'icons/config-svg-fix.json',
 					fonts   : '.tmp',
-					styles  : '.tmp'
+					styles  : false
 				}
 			}
 		},
@@ -192,13 +192,6 @@ module.exports = function(grunt) {
 			all: ['<%= options.libs %>', '<%= options.build %>',
 				  '<%= pkg.name %>*.zip'],
 			tmp: '.tmp/**'
-		},
-
-		gitinfo: {
-			commands: {
-				'local.branch.current.lastCommitNumber': ['rev-list',
-				                                          '--count', 'HEAD']
-			}
 		},
 
 		watch: {

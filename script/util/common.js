@@ -248,3 +248,19 @@ util.extend = function(dest, src) {
 util.isObject = function(obj) {
 	return obj === Object(obj);
 };
+
+util.eachAsync = function(list, process, timeGap, startTimeGap) {
+	return new Promise(function (resolve, _) {
+		var i = 0,
+		    n = list.length;
+		function iterate() {
+			if (i < n) {
+				process(list[i], i++);
+				setTimeout(iterate, timeGap);
+			}
+			else
+				resolve();
+		}
+		setTimeout(iterate, startTimeGap || timeGap);
+	});
+};

@@ -51,6 +51,7 @@ ui.init = function (parameters, opts)
 		static_path: ''
 	}, parameters);
 	this.api_path = parameters.api_path; // move to api-side
+	this.static_path = parameters.static_path;
 
     this.actionComplete = parameters.actionComplete || function(){};
     if (this.initialized)
@@ -70,7 +71,6 @@ ui.init = function (parameters, opts)
 	if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check if this is nesessary
 		ui.server.knocknock().then(function (res) {
-			ui.initTemplates(parameters.static_path);
 			ui.standalone = false;
 		}, function (val) {
 			document.title += ' (standalone)';
@@ -1062,13 +1062,52 @@ ui.onClick_ReaGenericsTableButton = function ()
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
 ui.current_template_custom = null;
 ui.onClick_TemplateCustom = function() {
-   ui.showTemplateCustom({
+	ui.showTemplateCustom(ui.static_path,{
 	   onOk : function(tmpl) {
 		   ui.current_template_custom = tmpl;
 		   ui.selectAction('template-custom-select');
 		   return true;
 	   }
     });
+};
+
+// TODO: refactor this
+// try to reconstruct molfile string instead parsing multiple times
+ui.parseCTFile = function (molfile, check_empty_line) {
+    var lines = molfile.split('\n');
+
+    try {
+        try {
+            return chem.Molfile.parseCTFile(lines);
+        } catch (ex) {
+            if (ui.forwardExceptions)
+                throw ex;
+            if (check_empty_line) {
+                try {
+                // check whether there's an extra empty line on top
+                // this often happens when molfile text is pasted into the dialog window
+                    return chem.Molfile.parseCTFile(lines.slice(1));
+                } catch (ex1) {
+                    if (ui.forwardExceptions)
+                        throw ex1;
+                }
+                try {
+                // check for a missing first line
+                // this sometimes happens when pasting
+                    return chem.Molfile.parseCTFile([''].concat(lines));
+                } catch (ex2) {
+                    if (ui.forwardExceptions)
+                        throw ex2;
+                }
+            }
+            throw ex;
+        }
+    } catch (er) {
+        if (ui.forwardExceptions)
+            throw er;
+        alert("Error loading molfile.\n"+er.toString());
+        return null;
+    }
 };
 
 ui.onClick_Cut = function ()

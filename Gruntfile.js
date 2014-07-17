@@ -232,6 +232,4 @@ module.exports = function(grunt) {
 	                               'copy', 'compress', 'clean:tmp']);
 	grunt.registerTask('dev', ['gitinfo', 'clean', 'less:dev', 'fontello',
 	                           'concat', 'assemble', 'copy', 'clean:tmp']);
-
-	grunt.registerTask('test', ['gitinfo', 'compress']);
 };

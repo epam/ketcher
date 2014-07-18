@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 				      'script/rnd/restruct.js',
 				      'script/rnd/*.js',
 
-				      'script/ui/*.js',
+				      'script/ui/**/*.js',
 
 				      'script/main.js'
 				     ],
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
 			default: {
 				options: {
 					partials: ['template/menu/*',
-					           'template/dialogs/*'],
+					           'template/dialog/*'],
 					options: '<%= options %>',
 					postprocess: require('pretty')
 				},

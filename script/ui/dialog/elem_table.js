@@ -209,3 +209,52 @@ rnd.ElementTable.prototype.setSelection = function(selection) {
         this.updateAtomProps();
     }
 };
+
+
+//
+// Element table
+//
+
+ui.showElemTable = function(params)
+{
+    if (!$('elem_table').visible()) {
+        params = params || {};
+        ui.showDialog('elem_table');
+        if (typeof(ui.elem_table_obj) == 'undefined') {
+            ui.elem_table_obj = new rnd.ElementTable('elem_table_area', {
+                'fillColor':'#DADADA',
+                'fillColorSelected':'#FFFFFF',
+                'frameColor':'#E8E8E8',
+                'fontSize':23,
+                'buttonHalfSize':18
+            }, true);
+            ui.elem_table_area = ui.elem_table_obj.renderTable();
+            $('elem_table_single').checked = true;
+        }
+        ui.elem_table_obj.store();
+        ui.elem_table_obj.setSelection(params.selection);
+        var _onOk = new Event.Handler('elem_table_ok', 'click', undefined, function() {
+            if (!params || !('onOk' in params) || params['onOk'](ui.elem_table_obj.getAtomProps())) {
+                _onOk.stop(); _onCancel.stop();
+                ui.hideDialog('elem_table');
+            }
+        }).start();
+        var _onCancel = new Event.Handler('elem_table_cancel', 'click', undefined, function() {
+            _onOk.stop(); _onCancel.stop();
+            ui.hideDialog('elem_table');
+            if (params && 'onCancel' in params) params['onCancel']();
+        }).start();
+        $('elem_table_ok').focus();
+    }
+};
+
+ui.onSelect_ElemTableNotList = function ()
+{
+    try {
+        ui.elem_table_obj.updateAtomProps();
+    } catch(e) {
+        if (ui.forwardExceptions)
+            throw e;
+        ErrorHandler.handleError(e);
+    }
+};

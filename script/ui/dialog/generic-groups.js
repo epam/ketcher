@@ -1,7 +1,3 @@
-if (!window.Prototype)
-	throw new Error("Prototype.js should be loaded first");
-if (!window.rnd)
-	throw new Error("rnd should be defined prior to loading this file");
 if (!window.ui)
 	throw new Error("ui should be defined prior to loading this file");
 
@@ -192,7 +188,6 @@ rnd.ReaGenericsTable.prototype.setSelection = function(selection) {
     }
     $('reagenerics_table_ok').disabled = (!selection || selection == '');
 };
-
 
 ui.showReaGenericsTable = function(params) {
     if (!$('reagenerics_table').visible()) {

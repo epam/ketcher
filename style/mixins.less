@@ -403,6 +403,19 @@
 /////////////////////
 // Basic mixins
 
+.background-opacity(@color, @opacity) {
+	@rgba-color: rgba(red(@color), green(@color), blue(@color), @opacity);
+	background-color: @rgba-color;
+
+	background: none\9; // Hack for IE8
+	filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')", argb(@rgba-color), argb(@rgba-color)));
+	//zoom: 1;
+	&:not([ie9]) {
+		// Do not apply to IE9 as it supports rgba
+		filter: progid:DXImageTransform.Microsoft.gradient(enabled='false');
+	}
+}
+
 .text-hide(transparent) {
 	font: ~"0/0" a;
 	color: transparent;

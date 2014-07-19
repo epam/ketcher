@@ -23,19 +23,22 @@
 			{{>template}}
 			{{>elements}}
 		</menu>
-		{{>about}}
-		{{>atom}}
-		{{>attpoints}}
-		{{>automap}}
-		{{>bond}}
-		{{>generic-groups}}
-		{{>open}}
-		{{>period-table}}
-		{{>rgroup}}
-		{{>rlogic}}
-		{{>save}}
-		{{>sgroup}}
-		{{>templates}}
+		<div class="overlay" style="display:none">
+			<div id="loading" style="display:none"></div>
+			{{>about}}
+			{{>atom}}
+			{{>attpoints}}
+			{{>automap}}
+			{{>bond}}
+			{{>generic-groups}}
+			{{>open}}
+			{{>period-table}}
+			{{>rgroup}}
+			{{>rlogic}}
+			{{>save}}
+			{{>sgroup}}
+			{{>templates}}
+		</div>
 		{{>crap}}
 	</body>
 	{{/with}}

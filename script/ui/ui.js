@@ -238,7 +238,7 @@ ui.updateClipboardButtons = function ()
 
 ui.showDialog = function (name)
 {
-	$('window_cover').show();
+	$$('.overlay')[0].show();
 	var dialog = $(name);
 	dialog.show();
 	return dialog;
@@ -247,7 +247,7 @@ ui.showDialog = function (name)
 ui.hideDialog = function (name)
 {
     $(name).hide();
-    $('window_cover').hide();
+	$$('.overlay')[0].hide();
 };
 
 ui.echo = function (message) {

@@ -1,114 +1,52 @@
-// Hearty greetings from good old Ketcher
-
 @import "mixins";
 
-#input_label
-{
-    position: absolute;
-    z-index:  30;
+#input_label {
+	position: absolute;
+	z-index:  30;
 }
 
-#window_cover
-{
-    position: absolute;
-    z-index:  40;
-    background-color: black;
-    left:     0;
-    top:      0;
-	bottom: 0;
-	right: 0;
-
-    opacity:    0.15;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=15)";
-    filter:     alpha(opacity=15);
+#loading {
+	width: 100%;
+	height: 100%;
+	background: url('loading.gif') no-repeat 50% 50%;
+	//.opacity(0.2);
 }
 
-#loading
-{
-    width:  100%;
-    height: 100%;
-    background-image:    url('loading.gif');
-    background-repeat:   no-repeat;
-    background-position: center center;
-}
+/////////////////////
 
-.dialogWindow
-{
+.dialogWindow {
 	&> div > div:first-child, header {
 		background-color: #D0D0D0;
 	}
-    position: absolute;
-    z-index:  50;
-    background-color: #E0E0E0;
-    border-color: #F0F0F0;
-    border-style: outset;
-    border-width: thin;
-    padding: 4px;
-    text-align: center;
-    left:  10%;
-    top:   10%;
+	z-index:  50;
+	background-color: #E0E0E0;
+	border-color: #F0F0F0;
+	border-style: outset;
+	border-width: thin;
+	padding: 4px;
+	text-align: center;
 }
 
-.fileDialog
-{
+.aboutDialog {
+	background-color: #FFFFFF;
 }
 
-.elemTableDialog
-{
-    left:  5%;
-    top:   5%;
+.chemicalText {
+	width: 320px;
+	height: 320px;
+	overflow: auto;
+	white-space: pre;
 }
 
-.chemicalText
-{
-    width: 320px;
-    height: 320px;
-    overflow:    auto;
-    white-space: pre;
+.dataSGroupValue {
+	width: 320px;
+	height: 200px;
+	overflow: auto;
 }
 
-.chemicalText_IE
-{
-    white-space: pre;
-}
-
-.dataSGroupValue
-{
-    width: 320px;
-    height: 200px;
-    overflow:    auto;
-}
-
-.propDialog
-{
-}
-
-.aboutDialog
-{
-    position: absolute;
-    z-index:  50;
-    background-color: #FFFFFF;
-    border-color: #F0F0F0;
-    border-style: inset;
-    border-width: normal;
-    padding: 4px;
-    text-align: center;
-    left:  300px;
-    top:   100px;
-}
-
-.aboutDialog > div > div:first-child
-{
-    background-color: #D0D0D0;
-}
+/////////////////////
 
 #custom_templates {
-    top:   100px;
-	display: inline-block;
-	vertical-align: center;
-
-	position: relative;
-
 	ul {
 		margin: 0;
 		padding: 0;
@@ -142,7 +80,7 @@
 
 	&.loading {
 		visibility: hidden;
-		li {              // workaround padding in
+		li {			  // workaround padding in
 			height: 95px; // autoScale width bug
 		}
 	}
@@ -150,6 +88,32 @@
 	footer {
 		margin-top: 0.5em;
 	}
+}
+
+.overlay {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 40;
+
+	text-align: center;
+	&:after {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+
+	form[role=dialog], .dialogWindow {
+		display: inline-block;
+		position: relative;
+		vertical-align: middle;
+		//text-align: left;
+	}
+
+	.background-opacity(#272727, 0.3);
 }
 
 form[role=dialog] {

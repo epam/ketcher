@@ -83,10 +83,10 @@ ui.showTemplateCustom = function(base_url, params) {
 	    ul = dialog.select('ul')[0];
 
 	if (ul.children.length === 0) { // first time
-		ui.showDialog('loading');
+		$('loading').style.display = '';
 		dialog.addClassName('loading');
 		var loading = ui.initTemplateCustom(ul, base_url).then(function () {
-			$('loading').hide();
+			$('loading').style.display = 'none';
 			dialog.removeClassName('loading');
 		});
 

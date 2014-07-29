@@ -240,13 +240,15 @@ ui.showDialog = function (name)
 {
 	$$('.overlay')[0].show();
 	var dialog = $(name);
-	dialog.show();
+	// dialog.show();
+	dialog.style.display = '';
 	return dialog;
 };
 
 ui.hideDialog = function (name)
 {
-    $(name).hide();
+	// $(name).hide();
+	$(name).style.display = 'none';
 	$$('.overlay')[0].hide();
 };
 

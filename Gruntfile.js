@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 			        '<%= assemble.default.dest %>',
 			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE.GPL', 'favicon.ico', 'logo.jpg',
-			          'loading.gif', 'demo.html', 'templates.sdf'],
+			          'demo.html', 'templates.sdf'],
 			server: 'server/python/ketcher.py',
 
 			pkg: '<%= pkg %>',

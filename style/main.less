@@ -5,20 +5,6 @@
 @import 'mixins';
 @import 'dialogs';
 
-html {
-	height: 100%;
-	width: 100%;
-}
-
-body {
-	min-height: 100%;
-	position: relative;
-	font-family: FreeSans, Arimo, "Droid Sans", Helvetica,
-	             "Helvetica Neue", Arial, sans-serif;
-	background-color: white;
-	color: @main-color;
-}
-
 li, menu {	// move to reset
 	list-style: none;
 	margin: 0;
@@ -29,6 +15,20 @@ li, menu {	// move to reset
 // Basic layout
 
 .set-size(large);
+
+html {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	min-height: 100%;
+	position: relative;
+	font: @base-size FreeSans, Arimo, "Droid Sans", Helvetica,
+	                 "Helvetica Neue", Arial, sans-serif;
+	background-color: white;
+	color: @main-color;
+}
 
 main {
 	.canvas;
@@ -70,6 +70,9 @@ main {
 	button {
 		.toolbutton;
 	}
+	.selected button {
+		.highlight-invert;
+	}
 }
 
 li.opened {
@@ -81,43 +84,9 @@ li.opened {
 }
 
 select {
-	.control;
-	display: inline-block;
-	//display: block;
-	vertical-align: middle;
-
-	font-size: @select-size;
-	line-height: 20 / 14;
-	height: 2.4em;
-	padding: 0.35em 0.15em 0.35em 0.3em;
-	margin: 2px;
-
-	border: 1px solid @border-color;
-	&:hover, &:focus {
-		.highlight-shadow(black);
-	}
-	//.transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
-}
-
-button {
-	// NOTE: we don't process &:focus state as it does not work
-    // well with &.selected (requires additional JS)
-
-	&:hover {  // &:hover:not(:active)
-		.highlight-scale;
-		.highlight-shadow(black);
-	}
-	&:active {
-		.highlight-scale(none);
-		.highlight-shadow(none);
-		//.shadow-highlight(black, inset);
-	}
-	.selected & {
-		.highlight-invert;
-	}
-	&[disabled] {
-		&:extend(button:active);
-	}
+	// reset select size after inline-block
+	// space removing inside toolbar
+	font-size: @base-size;
 }
 
 //////////////////////////
@@ -202,6 +171,9 @@ button {
 @media (max-height: 600px), (max-width: 850px) {
 	.set-size(small);
 
+	body, select {
+		font-size: @base-size;
+	}
 	main {
 		.canvas-size(small);
 	}
@@ -226,9 +198,6 @@ button {
 
 	#atom button {
 		font-size: @atom-size;
-	}
-	select {
-		font-size: @select-size;
 	}
 }
 

@@ -63,7 +63,7 @@
 /////////////////////
 
 .toolbutton(@dim: inherit) {
-	.control();
+	.control;
 	display: block;
 	border: 0;
 	padding: 0;
@@ -86,7 +86,15 @@
 		position: absolute;
 		left: 0;
 	}
-
+	&:hover {  // &:hover:not(:active)
+		.highlight-scale;
+		.highlight-shadow(black);
+	}
+	&:active, &[disabled] {
+		.highlight-scale(none);
+		.highlight-shadow(none);
+		//.shadow-highlight(black, inset);
+	}
 	.toolbutton-size(@dim);
 }
 
@@ -232,19 +240,6 @@
 		&:before, &:after {
 			font-size: @menu-icon-size;
 		}
-	}
-}
-
-/////////////////////
-
-.control() {
-	.border-radius(4px);
-
-	&[disabled] {
-		color: @disabled-color;
-	}
-	&:active, &:focus {
-		outline: 0;
 	}
 }
 

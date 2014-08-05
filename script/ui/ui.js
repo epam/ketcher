@@ -79,6 +79,11 @@ ui.init = function (parameters, opts)
 			   '#reaction-automap', '#template-custom').each(function(el) {
 				   ui.subEl(el).setAttribute('disabled', true);
 			   });
+		}).then(function () {
+			// TODO: move it out there as server incapsulates
+			// standalone
+			if (parameters.mol)
+				ui.loadMolecule(parameters.mol);
 		});
     }
 

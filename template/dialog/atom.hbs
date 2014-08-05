@@ -1,156 +1,101 @@
-<div class="dialogWindow propDialog" id="atom_properties" style="display:none;">
-	<div style="width:100%">
-		<div>
-			Atom Properties
-		</div>
-		<div style="height:0.5em"></div>
-		<table style="text-align:left">
-			<tr>
-				<td>
-					<label>Label:</label>
-				</td>
-				<td>
-					<input id="atom_label" type="text" maxlength="2" size="3" />
-				</td>
-				<td rowspan="5" style="width:5px">
-				</td>
-				<td>
-					<label>Number:</label>
-				</td>
-				<td>
-					<input id="atom_number" type="text" readonly="readonly" maxlength="3" size="3" />
-				</td>
-				<td rowspan="5" style="width:10px">
-				</td>
-				<td colspan="2" style="background-color: #D7D7D7">
-					Query specific
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label>Charge:</label>
-				</td>
-				<td>
-					<input id="atom_charge" type="text" maxlength="3" size="3" />
-				</td>
-				<td>
-					<label>Valency:</label>
-				</td>
-				<td>
-					<select id="atom_valence" style="width:100%">
-						<option value=""></option>
-						<option value="0">0</option>
-						<option value="1">I</option>
-						<option value="2">II</option>
-						<option value="3">III</option>
-						<option value="4">IV</option>
-						<option value="5">V</option>
-						<option value="6">VI</option>
-						<option value="7">VII</option>
-						<option value="8">VIII</option>
-					</select>
-				</td>
-				<td>
-					<label>Ring bond count:</label>
-				</td>
-				<td>
-					<select id="atom_ringcount" style="width:100%">
-						<option value="0"></option>
-						<option value="-2">As drawn</option>
-						<option value="-1">0</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label>Isotope:</label>
-				</td>
-				<td>
-					<input id="atom_isotope" type="text" maxlength="3" size="3" />
-				</td>
-				<td>
-					<label>Radical:</label>
-				</td>
-				<td>
-					<select id="atom_radical">
-						<option value="0"></option>
-						<option value="2">Monoradical</option>
-						<option value="1">Diradical (singlet)</option>
-						<option value="3">Diradical (triplet)</option>
-					</select>
-				</td>
-				<td>
-					<label>H count:</label>
-				</td>
-				<td>
-					<select id="atom_hcount" style="width:100%">
-						<option value="0"></option>
-						<option value="1">0</option>
-						<option value="2">1</option>
-						<option value="3">2</option>
-						<option value="4">3</option>
-						<option value="5">4</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="5" style="background-color: #D7D7D7">
-					Reaction flags
-				</td>
-				<td>
-					<label>Substitution count:</label>
-				</td>
-				<td>
-					<select id="atom_substitution" style="width:100%">
-						<option value="0"></option>
-						<option value="-2">As drawn</option>
-						<option value="-1">0</option>
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-						<option value="6">6</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<label>Inversion:</label>
-				</td>
-				<td>
-					<select id="atom_inversion">
-						<option value="0"></option>
-						<option value="1">Inverts</option>
-						<option value="2">Retains</option>
-					</select>
-				</td>
-				<td>
-					<label>Exact:</label>
-				</td>
-				<td>
-					<select id="atom_exactchange" style="width:100%">
-						<option value="0"></option>
-						<option value="1">Exact change</option>
-					</select>
-				</td>
-				<td>
-					<label>Unsaturation:</label>
-				</td>
-				<td>
-					<select id="atom_unsaturation">
-						<option value="0"></option>
-						<option value="1">Unsaturated</option>
-					</select>
-				</td>
-			</tr>
-		</table>
-		<div style="margin-top:0.5em">
-			<input id="atom_prop_cancel" type="button" value="Cancel" />
-			<input id="atom_prop_ok" type="button" value="OK" />
-		</div>
-	</div>
-</div>
+<form role="dialog" id="atom_properties" style="display:none;">
+	<header>Atom Properties</header>
+	<fieldset class="main">
+		<label>Label:
+			<input id="atom_label" type="text" maxlength="2"/>
+		</label>
+		<label>Number:
+			<input id="atom_number" type="text" readonly="readonly" maxlength="3"/>
+		</label>
+		<label>Charge:
+			<input id="atom_charge" type="text" maxlength="3" />
+		</label>
+		<label>Valency:
+			<select id="atom_valence">
+				<option value=""></option>
+				<option value="0">0</option>
+				<option value="1">I</option>
+				<option value="2">II</option>
+				<option value="3">III</option>
+				<option value="4">IV</option>
+				<option value="5">V</option>
+				<option value="6">VI</option>
+				<option value="7">VII</option>
+				<option value="8">VIII</option>
+			</select>
+		</label>
+		<label>Isotope:
+			<input id="atom_isotope" type="text" maxlength="3"/>
+		</label>
+		<label>Radical:
+			<select id="atom_radical">
+				<option value="0"></option>
+				<option value="2">Monoradical</option>
+				<option value="1">Diradical (singlet)</option>
+				<option value="3">Diradical (triplet)</option>
+			</select>
+		</label>
+	</fieldset>
+	<fieldset class="query">
+		<legend>Query specific</legend>
+		<label>Ring bond count:
+			<select id="atom_ringcount">
+				<option value="0"></option>
+				<option value="-2">As drawn</option>
+				<option value="-1">0</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+			</select>
+		</label>
+		<label>H count:
+			<select id="atom_hcount">
+				<option value="0"></option>
+				<option value="1">0</option>
+				<option value="2">1</option>
+				<option value="3">2</option>
+				<option value="4">3</option>
+				<option value="5">4</option>
+			</select>
+		</label>
+		<label>Substitution count:
+			<select id="atom_substitution">
+				<option value="0"></option>
+				<option value="-2">As drawn</option>
+				<option value="-1">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+			</select>
+		</label>
+		<label>Unsaturation:
+			<select id="atom_unsaturation">
+				<option value="0"></option>
+				<option value="1">Unsaturated</option>
+			</select>
+		</label>
+	</fieldset>
+	<fieldset class="reaction">
+		<legend>Reaction flags</legend>
+		<label>Inversion:
+			<select id="atom_inversion">
+				<option value="0"></option>
+				<option value="1">Inverts</option>
+				<option value="2">Retains</option>
+			</select>
+		</label>
+		<label>Exact:
+			<select id="atom_exactchange">
+				<option value="0"></option>
+				<option value="1">Exact change</option>
+			</select>
+		</label>
+	</fieldset>
+	<footer>
+		<input id="atom_prop_cancel" type="button" value="Cancel" />
+		<input id="atom_prop_ok" type="button" value="OK" />
+	</footer>
+</form>

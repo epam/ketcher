@@ -1,33 +1,28 @@
-<div class="dialogWindow aboutDialog" id="about_dialog" style="display:none;">
-	<div>
-		<div>
-			About
-		</div>
-		<div style="height:0.5em"></div>
-		<div>
-			<a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank"><img src="logo.jpg"></img></a>
-		</div>
-		<table style="width:100%" cellspacing="5">
-			<tr>
-				<td style="float:left" rowspan="2"><a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank" style="color:#0000CC">Ketcher</a></td>
-				<td style="float:right" id="ketcher_version">{{pkg.version}} {{#unless git.tag}}<em>(rev: {{git.rev}})</em>{{/unless}}</td>
-			</tr>
-			<tr>
- 			<td style="float:right; font-size: 9px; padding: 0 3px 5px" colspan=2>
-				{{#if build-number}}
-				<strong style="margin-right: 0.5em">build</strong> #{{build-number}} at <time style="font-style: italic">{{build-date}}</time>
-				{{/if}}
-			</td>
-			</tr>
-			<tr style="border-bottom: 10px solid transparent; font-size: 11px">
-				<td style="float:left"><a href="http://ggasoftware.com" target="_blank" style="color:#0000CC">GGA Software Services</a></td>
-				<td style="float:right"><a href="http://ggasoftware.com/opensource/ketcher#feedback" target="_blank" style="color:#0000CC">Feedback</a></td>
-			</tr>
-			{{#if build-number}}
-			{{/if}}
-		</table>
-		<div style="margin:4px;">
-			<input type="button" onclick="ui.hideDialog('about_dialog')" value="Close">
-		</div>
-	</div>
-</div>
+<form role="dialog" id="about_dialog" style="display:none;">
+	<header>About</header>
+	<a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank">
+		<img src="logo.jpg"/>
+	</a>
+	<dl>
+		<dt>
+			<a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank">Ketcher</a>
+		</dt>
+		<dd>
+			version <var>{{pkg.version}}</var> {{#unless git.tag}}(rev: <var>{{git.rev}}</var>)</em>{{/unless}}
+		</dd>
+		{{#if build-number}}
+		<dd>
+			build #<var>{{build-number}}</var> at <time>{{build-date}}</time>
+		</dd>
+		{{/if}}
+		<dt>
+			<a href="http://ggasoftware.com" target="_blank">GGA Software Services</a>
+		</dt>
+		<dd>
+			<a href="http://ggasoftware.com/opensource/ketcher#feedback" target="_blank">Feedback</a>
+		</dd>
+	</dl>
+	<footer>
+		<input type="button" onclick="ui.hideDialog('about_dialog')" value="OK">
+	</footer>
+</form>

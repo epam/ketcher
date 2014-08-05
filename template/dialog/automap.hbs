@@ -1,29 +1,17 @@
 {{#unless no-reactions}}
-<div class="dialogWindow automapDialog" id="automap_properties" style="display:none;">
-	<div style="width:100%">
-		<div>
-			Reaction Auto-Mapping Parameter
-		</div>
-		<div style="height:0.5em"></div>
-		<table style="text-align:left">
-			<tr>
-				<td>
-					<label>Mode:</label>
-				</td>
-				<td>
-					<select id="automap_mode">
-						<option value="discard">Discard</option>
-						<option value="keep">Keep</option>
-						<option value="alter">Alter</option>
-						<option value="clear">Clear</option>
-					</select>
-				</td>
-			</tr>
-		</table>
-		<div style="margin-top:0.5em">
+	<form role="dialog" id="automap_properties" style="display:none;">
+		<header>Reaction Auto-Mapping</header>
+		<label>Mode:
+			<select id="automap_mode">
+				<option value="discard">Discard</option>
+				<option value="keep">Keep</option>
+				<option value="alter">Alter</option>
+				<option value="clear">Clear</option>
+			</select>
+		</label>
+		<footer>
 			<input id="automap_cancel" type="button" value="Cancel" />
 			<input id="automap_ok" type="button" value="OK" />
-		</div>
-	</div>
-</div>
+		</footer>
+	</form>
 {{/unless}}

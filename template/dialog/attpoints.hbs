@@ -1,30 +1,15 @@
-<div class="dialogWindow propDialog" id="atom_attpoints" style="display:none;">
-	<div style="width:100%">
-		<div>
-			Attachment Points
-		</div>
-		<table style="text-align:left">
-			<tr>
-				<td>
-					<input type="checkbox" id="atom_ap1">
-				</td>
-				<td>
-					Primary attachment point
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<input type="checkbox" id="atom_ap2">
-				</td>
-				<td>
-					Secondary attachment point
-				</td>
-			</tr>
-		</table>
-		<div style="height:0.5em"></div>
-		<div style="margin-top:0.5em">
-			<input id="atom_attpoints_cancel" type="button" value="Cancel" />
-			<input id="atom_attpoints_ok" type="button" value="OK" />
-		</div>
-	</div>
-</div>
+<form role="dialog" id="atom_attpoints" style="display:none;">
+	<header>Attachment Points</header>
+	<label>
+		<input type="checkbox" id="atom_ap1">
+		Primary attachment point
+	</label>
+	<label>
+		<input type="checkbox" id="atom_ap2">
+		Secondary attachment point
+	</label>
+	<footer>
+		<input id="atom_attpoints_cancel" type="button" value="Cancel" />
+		<input id="atom_attpoints_ok" type="button" value="OK" />
+	</footer>
+</form>

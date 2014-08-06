@@ -2,13 +2,13 @@
 <html>
 	{{#with options}}
 	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 		<title>Ketcher v{{pkg.version}}
 		       {{#unless git.tag}}(rev: {{git.rev}}){{/unless}}
 		</title>
-		<link rel="stylesheet" href="{{pkg.name}}.css" />
+		<link rel="stylesheet" href="{{pkg.name}}.css">
 		{{#each libs}}
 			<script src="{{.}}"></script>
 		{{/each}}

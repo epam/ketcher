@@ -1,10 +1,5 @@
 @import "mixins";
 
-#input_label {
-	position: absolute;
-	z-index:  30;
-}
-
 #loading {
 	position: absolute;
 	margin: auto;
@@ -19,6 +14,11 @@
 }
 
 /////////////////////
+
+#input_label {
+	position: absolute;
+	z-index:  30;
+}
 
 .dialogWindow {
 	&> div > div:first-child, header {
@@ -64,7 +64,8 @@
 		vertical-align: middle;
 	}
 
-	.background-opacity(#272727, 0.3);
+	background-image: data-uri('overlay.svg');
+	.background-opacity(#555, 0.3);
 }
 
 form[role=dialog] {

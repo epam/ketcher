@@ -1,75 +1,50 @@
 {{#unless no-groups}}
-<div class="dialogWindow sgroupDialog" id="sgroup_properties" style="display:none;">
-	<div style="width:100%">
-		<div>
-			S-Group Properties
-		</div>
-		<div style="height:0.5em"></div>
-		<table style="text-align:left">
-			<tr>
-				<td>
-					<label>Type:</label>
-				</td>
-				<td>
-					<select id="sgroup_type">
-						<option value="GEN">Generic</option>
-						<option value="MUL">Multiple group</option>
-						<option value="SRU">SRU polymer</option>
-						<option value="SUP">Superatom</option>
-						<option value="DAT">Data</option>
-					</select>
-				</td>
-			</tr>
-			<tr class="generalSGroup">
-				<td>
-					<label>Connection:</label>
-				</td>
-				<td>
-					<select id="sgroup_connection">
-						<option value="ht">Head-to-tail</option>
-						<option value="hh">Head-to-head</option>
-						<option value="eu">Either unknown</option>
-					</select>
-				</td>
-			</tr>
-			<tr class="generalSGroup">
-				<td>
-					<label>Label (subscript):</label>
-				</td>
-				<td>
-					<input id="sgroup_label" type="text" maxlength="15" size="15" />
-				</td>
-			</tr>
-			<tr class="dataSGroup">
-				<td>
-					<label>Field name:</label>
-				</td>
-				<td>
-					<input id="sgroup_field_name" type="text" maxlength="30" size="30" />
-				</td>
-			</tr>
-			<tr class="dataSGroup">
-				<td>
-					<label>Field value:</label>
-				</td>
-			</tr>
-			<tr class="dataSGroup">
-				<td colspan="2">
-					<textarea class="dataSGroupValue" id="sgroup_field_value"></textarea>
-				</td>
-			</tr>
-			<tr class="dataSGroup">
-				<td colspan="2">
-					<input type="radio" id="sgroup_pos_absolute" name="data_field_pos" checked>Absolute</input>
-					<input type="radio" id="sgroup_pos_relative" name="data_field_pos">Relative</input>
-					<input type="radio" id="sgroup_pos_attached" name="data_field_pos">Attached</input>
-				</td>
-			</tr>
-		</table>
-		<div style="margin-top:0.5em">
+	<form role="dialog" id="sgroup_properties" style="display:none;">
+		<header>S-Group Properties</header>
+		<label>Type:
+			<select id="sgroup_type">
+				<option value="GEN">Generic</option>
+				<option value="MUL">Multiple group</option>
+				<option value="SRU">SRU polymer</option>
+				<option value="SUP">Superatom</option>
+				<option value="DAT">Data</option>
+			</select>
+		</label>
+		<fieldset class="base">
+			<label>Connection:
+				<select id="sgroup_connection">
+					<option value="ht">Head-to-tail</option>
+					<option value="hh">Head-to-head</option>
+					<option value="eu">Either unknown</option>
+				</select>
+			</label>
+			<label>Label (subscript):
+				<input id="sgroup_label" type="text" maxlength="15" />
+			</label>
+		</fieldset>
+		<fieldset class="data">
+			<label>Field name:
+				<input id="sgroup_field_name" type="text" maxlength="30" />
+			</label>
+			<label>Field value:
+				<textarea id="sgroup_field_value"></textarea>
+			</label>
+			<label class="pos">
+				<input type="radio" id="sgroup_pos_absolute" name="data_field_pos" checked />
+				Absolute
+			</label>
+			<label class="pos">
+				<input type="radio" id="sgroup_pos_relative" name="data_field_pos"/>
+				Relative
+			</label>
+			<label class="pos">
+				<input type="radio" id="sgroup_pos_attached" name="data_field_pos">
+				Attached
+			</label>
+		</fieldset>
+		<footer>
 			<input id="sgroup_prop_cancel" type="button" value="Cancel" />
 			<input id="sgroup_prop_ok" type="button" value="OK" />
-		</div>
-	</div>
-</div>
+		</footer>
+	</form>
 {{/unless}}

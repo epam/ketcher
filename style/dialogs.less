@@ -40,12 +40,6 @@
 	white-space: pre;
 }
 
-.dataSGroupValue {
-	width: 320px;
-	height: 200px;
-	overflow: auto;
-}
-
 /////////////////////
 
 .overlay {
@@ -202,16 +196,18 @@ input[type=checkbox] {
 	margin: 0 0.3em;
 	margin-top: 1px \9; // IE8-9
 	line-height: normal;
+	// TODO: style focus, active, etc
 }
 
 fieldset {
 	border: 1px solid @border-color;
 	padding: 0.3em;
+	margin: 0;
 	.border-radius(4px);
 
 	&.hidden {
 		border-color: transparent;
-		margin-top: 0.9em + 0.3em;
+		margin-top: 0.9em + 2 * 0.3em;
 	}
 }
 
@@ -311,6 +307,34 @@ legend {
 		input {
 			width: 7em;
 		}
+	}
+}
+
+#sgroup_properties {
+	label {
+		display: block;
+		text-align: right;
+		&.pos {
+			margin: 0.3em 0 0;
+			display: inline-block;
+		}
+	}
+	fieldset {
+		border: 0;
+		padding: 0;
+	}
+	.data label {
+		text-align: left;
+	}
+	.data textarea {
+		display: block;
+		width: 20em;
+		height: 15em;
+		overflow: auto;
+	}
+	.data input[type=text] {
+		width: 20em;
+		display: block;
 	}
 }
 

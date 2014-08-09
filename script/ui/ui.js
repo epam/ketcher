@@ -241,20 +241,61 @@ ui.updateClipboardButtons = function ()
     }
 };
 
-ui.showDialog = function (name)
-{
-	$$('.overlay')[0].show();
+ui.transitionEndEvent = function () {
+	var el = document.createElement('transitionTest'),
+	    transEndEventNames = {
+		    'WebkitTransition' : 'webkitTransitionEnd',
+		    'MozTransition'    : 'transitionend',
+		    'OTransition'      : 'oTransitionEnd otransitionend',
+		    'transition'       : 'transitionend'
+	    },
+	    name;
+	for (name in transEndEventNames)
+		if (el.style[name] !== undefined)
+			return transEndEventNames[name];
+	return false;
+};
+
+ui.animateToggle = function(el, callback) {
+	ui.ketcher_window.addClassName('animate');
+	var transitionEnd = ui.transitionEndEvent(),
+	    animateStop = function(cb) {
+		    setTimeout(function () {
+			    cb && cb();
+			    ui.ketcher_window.removeClassName('animate');
+		    }, 0);
+	    };
+
+	if (!callback || !transitionEnd) {
+		animateStop(callback);
+		callback || el();
+	}
+	else {
+		var fireOne = function() {
+			animateStop(callback);
+			el.removeEventListener(transitionEnd, fireOne, false);
+		};
+		el.addEventListener(transitionEnd, fireOne, false);
+	}
+};
+
+ui.showDialog = function (name) {
 	var dialog = $(name);
-	// dialog.show();
-	dialog.style.display = '';
+	ui.animateToggle(function () {
+		$$('.overlay')[0].show();
+		// dialog.show();
+		dialog.style.display = '';
+	});
 	return dialog;
 };
 
-ui.hideDialog = function (name)
-{
-	// $(name).hide();
-	$(name).style.display = 'none';
-	$$('.overlay')[0].hide();
+ui.hideDialog = function (name) {
+	var cover = $$('.overlay')[0];
+	ui.animateToggle(cover, function () {
+		// $(name).hide();
+		$(name).style.display = 'none';
+		cover.hide();
+	});
 };
 
 ui.echo = function (message) {
@@ -275,8 +316,8 @@ ui.updateMolecule = function (mol)
     this.addUndoAction(this.Action.fromNewCanvas(mol));
 
     ui.showDialog('loading');
-    setTimeout(function ()
-    {
+    // setTimeout(function ()
+    // {
         try
         {
             ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
@@ -291,7 +332,7 @@ ui.updateMolecule = function (mol)
         {
             ui.hideDialog('loading');
         }
-    }, 50);
+//    }, 50);
 };
 
 //

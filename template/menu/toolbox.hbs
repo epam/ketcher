@@ -61,8 +61,10 @@
 				</menu>
 			</li>
 		{{/unless}}
-		{{#unless no-groups}}
+		{{#unless no-sgroup}}
 			<li id="sgroup"><button accesskey="Ctrl+G">S-Group</button></li>
+		{{/unless}}
+		{{#unless no-rgroup}}
 			<li id="rgroup">
 				<menu>
 					<li id="rgroup-label"><button accesskey="Shift+R">R-Group Label Tool</button></li>
@@ -71,5 +73,8 @@
 				</menu>
 			</li>
 		{{/unless}}
+		{{#if rgroup-label-only}}
+			<li id="rgroup-label"><button accesskey="Shift+R">R-Group Label Tool</button></li>
+		{{/if}}
 	</menu>
 </li>

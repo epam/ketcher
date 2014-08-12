@@ -27,9 +27,11 @@ module.exports = function(grunt) {
 
 			// build options
 			// is there a way to automate?
+			'no-generics': grunt.option('no-generics'),
 			'no-reactions': grunt.option('no-reactions'),
-			'no-groups': grunt.option('no-groups'),
-			'no-generics': grunt.option('no-generics')
+			'no-sgroup': grunt.option('no-sgroup'),
+			'no-rgroup': grunt.option('no-rgroup') || grunt.option('rgroup-label-only'),
+			'rgroup-label-only': grunt.option('rgroup-label-only')
 		},
 
 		concat: {

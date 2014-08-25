@@ -926,15 +926,30 @@ ui.structToClipboard = function (clipboard, struct, selection)
     }, this);
 };
 
+ui.current_elemtable_props = null;
 ui.onClick_ElemTableButton = function ()
 {
     ui.showElemTable({
-	    onOk: function() {
+	    onOk: function(res) {
+		    var props;
+		    if (res.mode == 'single')
+			    props = {
+				    label: chem.Element.elements.get(res.ids[0]).label
+			    };
+		    else
+			    props = {
+				    label: 'L#',
+				    atomList: new chem.Struct.AtomList({
+					    notList: res.mode == 'not-list',
+					    ids: res.ids
+				    })
+			    };
+		    ui.current_elemtable_props = props;
 		    ui.selectAction('atom-table');
             return true;
         },
         onCancel: function() {
-            ui.elem_table_obj.restore();
+            //ui.elem_table_obj.restore();
         }
     });
 };
@@ -1155,8 +1170,9 @@ ui.atomLabel = function (mode) {
 	if (!mode.up || !mode.up('#atom')) {
 		label = mode.substr(5);
 
-		if (label == 'table')
-			return ui.elem_table_obj.getAtomProps();
+		if (label == 'table') {
+			return ui.current_elemtable_props;
+		}
 		if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
 			return ui.reagenerics_table_obj.getAtomProps();
 		// how can we go here?

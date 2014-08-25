@@ -55,7 +55,7 @@
 	.background-opacity(#777, 0.2);
 
 
-	.transition(background-color 0.3s);
+	.transition(background-color 0.25s);
 	//.transition(opacity 0.3s);
 	//opacity: 1;
 	.animate & {
@@ -222,7 +222,7 @@ fieldset {
 	margin: 0;
 	.border-radius(4px);
 
-	&.hidden {
+	&.-hidden {
 		border-color: transparent;
 		margin-top: 0.9em + 2 * 0.3em;
 	}
@@ -292,7 +292,7 @@ legend {
 	}
 	.main {
 		float: left;
-		&:extend(fieldset.hidden);
+		&:extend(fieldset.-hidden);
 		input {
 			width: 8em;
 		}
@@ -368,7 +368,7 @@ legend {
 		font-style: italic;
 	}
 	a {
-		// ASK DESIGNER: style generic links
+		// ASK DESIGNER: to style generic links
 	}
 
 	@line-height: 1.4em;
@@ -384,5 +384,118 @@ legend {
 	}
 	dt+dd {
 		margin: -@line-height 0 0;
+	}
+}
+
+#elem-table {
+	td, th {
+		padding: 0;
+		margin: 0;
+		text-align: center;
+		vertical-align: middle;
+	}
+	th, td.ref {
+		.opacity(0.6);
+		font-weight: normal;
+		font-size: 0.8em;
+		padding: 0.3em 0.8em;
+	}
+	tr.ref {
+		border-top: 1em solid transparent;
+		&:last-of-type {   // little tricky, I know;)
+			border: none;
+		}
+		th {
+			vertical-align: top;
+			text-align: right;
+		}
+	}
+
+	button, div {
+		font-size: 1.3em;
+		width: 1.7em;
+		height: 1.7em;
+		line-height: 1.7;
+		vertical-align: middle;
+		padding: 0.2em 0.2em 0.1em 0.1em;
+		margin: 1px;
+		border: 0;
+		display: block;
+		.border-radius(4px);
+		position: relative;
+
+		&:after {
+			position: absolute;
+			.opacity(0.6);
+			top: 0.3em;
+			right: 0.3em;
+			font-size: 0.5em;
+			line-height: 1;
+			vertical-align: top;
+			content: attr(data-number);
+		}
+		cursor: pointer;
+		&:not(:hover) {
+			color: inherit;
+		}
+		&:hover {
+			.highlight-scale;
+			.highlight-shadow(black);
+
+			background: #fff !important;
+		}
+		&:active {
+			.highlight-scale(none);
+			.highlight-shadow(none);
+		}
+		&.selected.selected {
+			.highlight-invert;
+		}
+
+		&:hover, &.selected {
+			&:after {
+				visibility: hidden;
+			}
+		}
+	}
+
+	fieldset {
+		border: 0;
+		padding: 0.5em;
+		margin: 1em 0 0 1.5em;
+	}
+
+	.diatomic {
+		background: @atom-periodic-diatomic;
+	}
+	.noble.gas {
+		background: @atom-periodic-noble-gas;
+	}
+	.alkali.metal {
+		background: @atom-periodic-alkali-metal;
+	}
+	.alkaline-earth.metal {
+		background: @atom-periodic-alkaline-earth-metal;
+	}
+	.metalloid {
+		background: @atom-periodic-metalloid;
+	}
+	.polyatomic {
+		background: @atom-periodic-polyatomic;
+	}
+	.post-transition.metal {
+		background: @atom-periodic-post-transition-metal;
+	}
+	.transition.metal {
+		background: @atom-periodic-transition-metal;
+	}
+	.lanthanide {
+		background: @atom-periodic-lanthanide;
+	}
+	.actinide {
+		background: @atom-periodic-actinide;
+	}
+	.unknown-properties {
+		background: @atom-periodic-unknown-properties;
 	}
 }

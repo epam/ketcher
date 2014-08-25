@@ -338,13 +338,13 @@
 	.twocolor-icons(@names, @color-A, @color-B, (@i + 1));
 }
 
-.sketching-atom-icons(@names, @i: 1) when (@i <= length(@names)) {
+.atom-sketching(@names, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
-	@color: 'atom-sketching-@{item}-color';
-	.@{item} {
+	@color: 'atom-@{item}-sketching-color';
+	.atom-@{item} {
 		color: @@color;
 	}
-	.sketching-atom-icons(@names, (@i + 1));
+	.atom-sketching(@names, (@i + 1));
 }
 
 ////////////////////////////////////////////

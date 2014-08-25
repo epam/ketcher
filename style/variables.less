@@ -53,7 +53,136 @@
 	@canvas-padding: @toolbar-size + @toolbar-gap + @app-gap;
 }
 
+// Periodic table coloring
+
+@atom-periodic-diatomic: #e7ff8f;
+@atom-periodic-noble-gas: #c0ffff;
+@atom-periodic-alkali-metal: #ff6666;
+@atom-periodic-alkaline-earth-metal: #ffdead;
+@atom-periodic-metalloid: #cccc99;
+@atom-periodic-polyatomic: #a1ffc3;
+@atom-periodic-post-transition-metal: #cccccc;
+@atom-periodic-transition-metal: #ffc0c0;
+@atom-periodic-lanthanide: #ffbfff;
+@atom-periodic-actinide: #ff99cc;
+@atom-periodic-unknown-properties: #e8e8e8;
+
 // Standard (for sketching applications) atom colors
+
+@atom-h-sketching-color: #000;     //#000000
+@atom-c-sketching-color: #000;
+@atom-he-sketching-color: #89a1a1;     //#849b9b
+@atom-li-sketching-color: #bd77ed;     //#c87efa
+@atom-be-sketching-color: #8fbc00;     //#82ab00
+@atom-b-sketching-color: #c18989;     //#c38a8a
+@atom-n-sketching-color: #304ff7;
+@atom-o-sketching-color: #ff0d0d;
+@atom-f-sketching-color: #78bc42;     //#6dab3c
+@atom-ne-sketching-color: #80a2af;     //#7b9ca8
+@atom-na-sketching-color: #ab5cf2;
+@atom-mg-sketching-color: #6fcd00;     //#61b400
+@atom-al-sketching-color: #a99393;     //#a79191
+@atom-si-sketching-color: #b29478;     //#b09276
+@atom-p-sketching-color: #ff8000;
+@atom-s-sketching-color: #c99a19;     //#c39517
+@atom-cl-sketching-color: #1fd01f;     //#1dc51d
+@atom-ar-sketching-color: #69acba;     //#63a2b0
+@atom-k-sketching-color: #8f40d4;
+@atom-ca-sketching-color: #38e900;     //#2fc300
+@atom-sc-sketching-color: #999999;     //#969696
+@atom-ti-sketching-color: #979a9e;     //#94969a
+@atom-v-sketching-color: #99999e;     //#96969a
+@atom-cr-sketching-color: #8a99c7;     //#8796c3
+@atom-mn-sketching-color: #9c7ac7;
+@atom-fe-sketching-color: #e06633;
+@atom-co-sketching-color: #d37e8e;     //#db8293
+@atom-ni-sketching-color: #4ece4e;     //#45b645
+@atom-cu-sketching-color: #c78033;
+@atom-zn-sketching-color: #7d80b0;
+@atom-ga-sketching-color: #bc8b8b;     //#bd8c8c
+@atom-ge-sketching-color: #668f8f;
+@atom-as-sketching-color: #b87ddd;     //#bd80e3
+@atom-se-sketching-color: #e59100;     //#e28f00
+@atom-br-sketching-color: #a62929;
+@atom-kr-sketching-color: #59b1c9;     //#53a6bc
+@atom-rb-sketching-color: #702eb0;
+@atom-sr-sketching-color: #00ff00;     //#00d000
+@atom-y-sketching-color: #66afaf;     //#5fa4a4
+@atom-zr-sketching-color: #71abab;     //#6ba2a2
+@atom-nb-sketching-color: #67aeb4;     //#61a4a9
+@atom-mo-sketching-color: #54b5b5;     //#4ea9a9
+@atom-tc-sketching-color: #3b9e9e;
+@atom-ru-sketching-color: #248f8f;
+@atom-rh-sketching-color: #0a7d8c;
+@atom-pd-sketching-color: #006985;
+@atom-ag-sketching-color: #9a9a9a;     //#969696
+@atom-cd-sketching-color: #b29764;     //#ae9462
+@atom-in-sketching-color: #a67573;
+@atom-sn-sketching-color: #668080;
+@atom-sb-sketching-color: #9e63b5;
+@atom-te-sketching-color: #d47a00;
+@atom-i-sketching-color: #940094;
+@atom-xe-sketching-color: #429eb0;
+@atom-cs-sketching-color: #57178f;
+@atom-ba-sketching-color: #00c900;
+@atom-la-sketching-color: #5caed1;     //#57a4c5
+@atom-ce-sketching-color: #9d9d7b;     //#989877
+@atom-pr-sketching-color: #8ca581;     //#869d7b
+@atom-nd-sketching-color: #84a984;     //#7da07d
+@atom-pm-sketching-color: #71b18a;     //#69a581
+@atom-sm-sketching-color: #66b68e;     //#5ea883
+@atom-eu-sketching-color: #4ac298;     //#43b089
+@atom-gd-sketching-color: #37cb9e;     //#31b48d
+@atom-tb-sketching-color: #28d1a4;     //#23b890
+@atom-dy-sketching-color: #1bd7a8;     //#17bb92
+@atom-ho-sketching-color: #00e98f;     //#00c578
+@atom-er-sketching-color: #00e675;     //#00c765
+@atom-tm-sketching-color: #00d452;     //#00c94e
+@atom-yb-sketching-color: #00bf38;
+@atom-lu-sketching-color: #00ab24;
+@atom-hf-sketching-color: #47b3ec;     //#42a8dc
+@atom-ta-sketching-color: #4da6ff;     //#4ba2f9
+@atom-w-sketching-color: #2194d6;
+@atom-re-sketching-color: #267dab;
+@atom-os-sketching-color: #266696;
+@atom-ir-sketching-color: #175487;
+@atom-pt-sketching-color: #9898a3;     //#9595a0
+@atom-au-sketching-color: #c19e1c;     //#b9981a
+@atom-hg-sketching-color: #9797ac;     //#9595a9
+@atom-tl-sketching-color: #a6544d;
+@atom-pb-sketching-color: #575961;
+@atom-bi-sketching-color: #9e4fb5;
+@atom-po-sketching-color: #ab5c00;
+@atom-at-sketching-color: #754f45;
+@atom-rn-sketching-color: #428296;
+@atom-fr-sketching-color: #420066;
+@atom-ra-sketching-color: #007d00;
+@atom-ac-sketching-color: #6aa2ec;     //#669ce4
+@atom-th-sketching-color: #00baff;     //#00b8fc
+@atom-pa-sketching-color: #00a1ff;
+@atom-u-sketching-color: #008fff;
+@atom-np-sketching-color: #0080ff;
+@atom-pu-sketching-color: #006bff;
+@atom-am-sketching-color: #545cf2;
+@atom-cm-sketching-color: #785ce3;
+@atom-bk-sketching-color: #8a4fe3;
+@atom-cf-sketching-color: #a136d4;
+@atom-es-sketching-color: #b31fd4;
+
+// Need to fix colors for the elements below (c)
+@atom-fm-sketching-color: #000;
+@atom-md-sketching-color: #000;
+@atom-no-sketching-color: #000;
+@atom-lr-sketching-color: #000;
+@atom-rf-sketching-color: #47b3ec;
+@atom-db-sketching-color: #4da6ff;
+@atom-sg-sketching-color: #2194d6;
+@atom-bh-sketching-color: #267dab;
+@atom-hs-sketching-color: #266696;
+@atom-mt-sketching-color: #175487;
+@atom-ds-sketching-color: #9898a3;
+@atom-rg-sketching-color: #c19e1c;
+@atom-cn-sketching-color: #9797ac;
 
 @atom-sketching-h-like-color: #000;
 @atom-sketching-n-like-color: #304ff7;

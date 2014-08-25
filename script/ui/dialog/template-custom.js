@@ -40,10 +40,10 @@ ui.fetchTemplateCustom = function(base_url) {
 		//headers: {Accept: 'application/octet-stream'}
 		var items = ui.parseTemplateCustom(xhr.responseText);
 
-		rnd.customtemplates = [];
+		var templates = [];
 		var i = 0;
 		items.each(function (item) {
-			rnd.customtemplates.push({
+			templates.push({
 				name: (item.name || ('customtemplate ' + (++i))).capitalize(),
 				molfile: item.molfile,
 				aid: (item.atomid || 1) - 1,
@@ -51,13 +51,15 @@ ui.fetchTemplateCustom = function(base_url) {
 			});
 		});
 
-		return rnd.customtemplates;
+		return templates;
 	});
 };
 
+var custom_templates;
 ui.initTemplateCustom = function(el, base_url) {
-		return ui.fetchTemplateCustom(base_url).then(function (templates) {
-			return util.eachAsync(templates, function(tmpl, _) {
+	return ui.fetchTemplateCustom(base_url).then(function (templates) {
+		custom_templates = templates;
+		return util.eachAsync(templates, function(tmpl, _) {
 				var li =  new Element('li');
 				li.title = tmpl.name;
 				el.insert({ bottom: li });
@@ -111,11 +113,11 @@ ui.showTemplateCustom = function(base_url, params) {
 				if (mode == 'OK') {
 					console.assert(selectedLi, 'No element selected');
 					var ind = selectedLi.previousSiblings().size();
-					res = rnd.customtemplates[ind];
+					res = custom_templates[ind];
 				}
+				ui.hideDialog('custom_templates');
 				if (params && key in params)
 					params[key](res);
-				ui.hideDialog('custom_templates');
 			});
 		});
 	}

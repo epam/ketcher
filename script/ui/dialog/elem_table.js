@@ -2,8 +2,6 @@
 // Element table
 //
 
-// th.ref ~ td { margin: ** }
-
 ui.showElemTable = function(params) {
 	var dialog = ui.showDialog('elem-table'),
 	    singleRadio = dialog.select('input[value=single]')[0],
@@ -11,18 +9,18 @@ ui.showElemTable = function(params) {
 	    mode = 'single',
 	    handlers = [];
 
-	function removeSelected() {
+	function clearSelected() {
 		dialog.select('.selected').each(function (el) {
 			el.removeClassName('selected');
 		});
 	}
 
 	function getSelected() {
-		var nums = [];
+		var values = [];
 		dialog.select('.selected').each(function (el) {
-			nums.push(el.getAttribute('data-number'));
+			values.push(el.getAttribute('value'));
 		});
-		return nums;
+		return values;
 	}
 
 	handlers[0] = dialog.on('click', 'input[type=button]', function(_, button) {
@@ -34,28 +32,32 @@ ui.showElemTable = function(params) {
 		if (params && key in params)
 			params[key]({
 				mode: mode,
-				ids: getSelected()
+				values: getSelected()
 			});
 	});
 
 	handlers[1] = dialog.on('click', 'input[type=radio]', function(_, radio) {
 		if (radio.value != mode) {
 			if (radio.value == 'single') {
-				removeSelected();
+				clearSelected();
 				okButton.disabled = true;
 			}
 			mode = radio.value;
 		}
 	});
-	handlers[2] = dialog.on('click', 'div', function(event, button) {
-		if (mode == 'single')
-			removeSelected();
+	handlers[2] = dialog.on('click', 'button', function(event, button) {
+		if (mode == 'single') {
+			if (button.hasClassName('selected'))
+				okButton.click();
+			else
+				clearSelected();
+		}
 		button.toggleClassName('selected');
 		okButton.disabled = dialog.select('.selected').length == 0;
 		event.stop();
 	});
 
-	removeSelected();
+	clearSelected();
 	okButton.disabled = true;
 	singleRadio.checked = true;
 };

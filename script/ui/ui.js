@@ -934,14 +934,14 @@ ui.onClick_ElemTableButton = function ()
 		    var props;
 		    if (res.mode == 'single')
 			    props = {
-				    label: chem.Element.elements.get(res.ids[0]).label
+				    label: chem.Element.elements.get(res.values[0]).label
 			    };
 		    else
 			    props = {
 				    label: 'L#',
 				    atomList: new chem.Struct.AtomList({
 					    notList: res.mode == 'not-list',
-					    ids: res.ids
+					    ids: res.values
 				    })
 			    };
 		    ui.current_elemtable_props = props;
@@ -1174,6 +1174,7 @@ ui.atomLabel = function (mode) {
 			return ui.current_elemtable_props;
 		}
 		if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
+
 			return ui.reagenerics_table_obj.getAtomProps();
 		// how can we go here?
 		// if (label == 'any')

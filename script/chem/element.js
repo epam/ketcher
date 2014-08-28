@@ -135,8 +135,13 @@ chem.Element.elements = new util.Map({
 	109: new chem.Element('Mt', 7, 8, false, '#175487'),
 	110: new chem.Element('Ds', 7, 8, false, '#d1d1e0'),
 	111: new chem.Element('Rg', 7, 1, false, '#ffd124'),
-	112: new chem.Element('Cn', 7, 2, false, '#b8b8d1')
-	// TODO not all elements present
+	112: new chem.Element('Cn', 7, 2, false, '#b8b8d1'),
+	113: new chem.Element('Uut', 7, 3, false),
+	114: new chem.Element('Fl', 7, 4, false),
+	115: new chem.Element('Uup', 7, 5, false),
+	116: new chem.Element('Lv', 7, 6, false),
+	117: new chem.Element('Uus', 7, 7, false),
+	118: new chem.Element('Uuo', 7, 8, false)
 });
 
 chem.Element.labelMap = null;

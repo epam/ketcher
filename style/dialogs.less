@@ -400,28 +400,24 @@ legend {
 		font-size: 0.8em;
 		padding: 0.3em 0.8em;
 	}
-	tr.ref {
-		border-top: 1em solid transparent;
-		&:last-of-type {   // little tricky, I know;)
-			border: none;
-		}
-		th {
-			vertical-align: top;
-			text-align: right;
-		}
+	th.ref {
+		vertical-align: top;
+		text-align: right;
+	}
+	tr:nth-of-type(8) {
+		border-bottom: 1em solid transparent;
 	}
 
-	button, div {
+	button {
 		font-size: 1.3em;
-		width: 1.7em;
-		height: 1.7em;
-		line-height: 1.7;
+		width: 2em;
+		height: 2em;
+		line-height: 2;
 		vertical-align: middle;
-		padding: 0.2em 0.2em 0.1em 0.1em;
+		padding: 0.15em;
 		margin: 1px;
 		border: 0;
 		display: block;
-		.border-radius(4px);
 		position: relative;
 
 		&:after {
@@ -432,30 +428,28 @@ legend {
 			font-size: 0.5em;
 			line-height: 1;
 			vertical-align: top;
-			content: attr(data-number);
+			content: attr(value);
 		}
-		cursor: pointer;
+		&:hover, &.selected {
+			&:after {
+				visibility: hidden;
+			}
+		}
 		&:not(:hover) {
 			color: inherit;
 		}
 		&:hover {
 			.highlight-scale;
 			.highlight-shadow(black);
-
-			background: #fff !important;
+			z-index: 60;
+			background: #fff;
 		}
 		&:active {
 			.highlight-scale(none);
 			.highlight-shadow(none);
 		}
-		&.selected.selected {
+		&.selected {
 			.highlight-invert;
-		}
-
-		&:hover, &.selected {
-			&:after {
-				visibility: hidden;
-			}
 		}
 	}
 
@@ -468,13 +462,13 @@ legend {
 	.diatomic {
 		background: @atom-periodic-diatomic;
 	}
-	.noble.gas {
+	.noble {
 		background: @atom-periodic-noble-gas;
 	}
-	.alkali.metal {
+	.alkali {
 		background: @atom-periodic-alkali-metal;
 	}
-	.alkaline-earth.metal {
+	.alkaline-earth {
 		background: @atom-periodic-alkaline-earth-metal;
 	}
 	.metalloid {
@@ -483,10 +477,10 @@ legend {
 	.polyatomic {
 		background: @atom-periodic-polyatomic;
 	}
-	.post-transition.metal {
+	.post-transition {
 		background: @atom-periodic-post-transition-metal;
 	}
-	.transition.metal {
+	.transition {
 		background: @atom-periodic-transition-metal;
 	}
 	.lanthanide {
@@ -497,5 +491,14 @@ legend {
 	}
 	.unknown-properties {
 		background: @atom-periodic-unknown-properties;
+	}
+	.metal:after {
+		color: #006;
+	}
+	.gas:after {
+		color: #c00;
+	}
+	.liquid:after {
+		color: #0a0;
 	}
 }

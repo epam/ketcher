@@ -109,6 +109,30 @@ class application(object):
         self.notsupported()
 
     @indigo_required
+    def on_smiles(self):
+        moldata = self.fields.getfirst('moldata')
+        if moldata:
+            if '>>' in moldata or moldata.startswith('$RXN'):
+                rxn = self.indigo.loadQueryReaction(moldata)
+                return ["Ok.\n",
+                        rxn.smiles()]
+            elif moldata.startswith('InChI'):
+                mol = self.indigo_inchi.loadMolecule(moldata)
+                return ["Ok.\n",
+                        mol.smiles()]
+            else:
+                mol = self.indigo.loadQueryMolecule(moldata)
+                return ["Ok.\n",
+                        mol.smiles()]
+        self.notsupported()
+
+    @indigo_required
+    def on_getinchi(self):
+        md, is_rxn = self.load_moldata()
+        inchi = self.indigo_inchi.getInchi(md)
+        return ["Ok.\n", inchi]
+
+    @indigo_required
     def on_automap(self):
         moldata = None
         if self.method == 'GET' and 'smiles' in self.fields:
@@ -140,12 +164,6 @@ class application(object):
         md.aromatize()
         return ["Ok.\n",
                 md.rxnfile() if is_rxn else md.molfile()]
-
-    @indigo_required
-    def on_getinchi(self):
-        md, is_rxn = self.load_moldata()
-        inchi = self.indigo_inchi.getInchi(md)
-        return ["Ok.\n", inchi]
 
     @indigo_required
     def on_dearomatize(self):

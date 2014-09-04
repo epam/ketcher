@@ -49,6 +49,7 @@ ui.server = (function(window) {
 		automap: apiRequest.bind(this, 'POST', 'automap'),
 		layout_smiles: apiRequest.bind(this, 'GET', 'layout'),
 		layout: apiRequest.bind(this, 'POST', 'layout'),
+		smiles: apiRequest.bind(this, 'POST', 'smiles'),
 		knocknock: function () {
 			return util.ajax(ui.api_path + 'knocknock').then(function (xhr) {
 				if (xhr.responseText != 'You are welcome!')

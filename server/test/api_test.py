@@ -12,7 +12,7 @@ indigo.setOption('ignore-stereochemistry-errors', 'true')
 
 base_url = "http://localhost:8080/"
 
-def make_request(request, data, use_post):
+def make_request(request, data, use_post=True):
     global base_url
     data = urllib.urlencode(data) if data is not None else None
     if use_post:
@@ -27,7 +27,7 @@ class TestKetcherServerApi(unittest.TestCase):
         r = make_request("knocknock", None, False)
         self.assertEquals(200, r.code)
         self.assertEquals("You are welcome!", r.read().strip())
-       
+
     def test_layout(self):
         inp = "CCC>>CCN"
         r = make_request("layout", (("smiles", inp),), False)
@@ -37,10 +37,19 @@ class TestKetcherServerApi(unittest.TestCase):
         self.assertEquals(rxnfile[:4], "$RXN")
         smiles = indigo.loadQueryReaction(rxnfile).smiles()
         self.assertEquals(inp, smiles)
-    
+
+    def test_smiles(self):
+        inp = "O=C1NC%91=NC2NC=NC=21.[*:1]%91 |$;;;;;;;;;;_R1$|"
+        molfile = indigo.loadMolecule(inp).molfile()
+        r = make_request("smiles", (("moldata", molfile),))
+        self.assertEquals(200, r.code)
+        status, smiles = r.read().split('\n',1)
+        self.assertEquals(status, "Ok.")
+        self.assertEquals(inp, indigo.loadMolecule(smiles).canonicalSmiles())
+
     def test_aromatize(self):
         inp = "N1=C(O)C2NC=NC=2N(CCC)C1=O"
-        r = make_request("aromatize", (("moldata", inp),), True)
+        r = make_request("aromatize", (("moldata", inp),))
         self.assertEquals(200, r.code)
         status, molfile = r.read().split('\n',1)
         self.assertEquals(status, "Ok.")
@@ -49,7 +58,7 @@ class TestKetcherServerApi(unittest.TestCase):
 
     def test_dearomatize(self):
         inp = "CCCN1C(=O)N=C(O)c2[nH]c[n]c12"
-        r = make_request("dearomatize", (("moldata", inp),), True)
+        r = make_request("dearomatize", (("moldata", inp),))
         self.assertEquals(200, r.code)
         status, molfile = r.read().split('\n',1)
         self.assertEquals(status, "Ok.")
@@ -58,7 +67,7 @@ class TestKetcherServerApi(unittest.TestCase):
 
     def test_getinchi(self):
         inp = "CCCN1C(=O)N=C(O)c2[nH]c[n]c12"
-        r = make_request("getinchi", (("moldata", inp),), True)
+        r = make_request("getinchi", (("moldata", inp),))
         self.assertEquals(200, r.code)
         status, inchi = r.read().split('\n',1)
         self.assertEquals(status, "Ok.")
@@ -67,15 +76,16 @@ class TestKetcherServerApi(unittest.TestCase):
     def test_open(self):
         filedata = "test string 123123"
         #filedata = indigo.loadQueryMolecule(inp).molfile()
-        r = make_request("open", (("filedata", filedata),), True)
+        r = make_request("open", (("filedata", filedata),))
         self.assertEquals(200, r.code)
         responce = r.read().split('\n',1)
         self.assertEquals(responce, ['<html><body onload="parent.ui.loadMoleculeFromFile()" title="T2suCg==dGVzdCBzdHJpbmcgMTIzMTIz"></body></html>'])
 
     def test_save(self):
         filetype, filedata = "smi", "CCCN1C(=O)N=C(O)c2[nH]c[n]c12"
-        r = make_request("save", (("filedata", filetype + "\n" + filedata),), True)
+        r = make_request("save", (("filedata", filetype + "\n" + filedata),))
         self.assertEquals(200, r.code)
+        # TODO: assert header
         self.assertEquals(filedata, r.read())
 
     def test_automap(self):

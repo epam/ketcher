@@ -649,18 +649,47 @@ ui.onChange_Input = function ()
     }, 200);
 };
 
+ui.convertMolecule = function (molecule, format) {
+	return new Promise(function (resolve, reject) {
+		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
+		console.log(moldata);
+		if (format == 'mol') {
+			resolve(moldata);
+		}
+		else if (format == 'smi') {
+			resolve(!ui.standalone ? ui.server.smiles({ moldata: moldata }):
+			                         new chem.SmilesSaver().saveMolecule(molecule));
+		}
+		else if (format == 'inchi') {
+			if (ui.standalone)
+				throw Error('InChI is not supported in the standalone mode');
+
+			if (molecule.rgroups.count() !== 0)
+				ui.echo('R-group fragments are not supported and will be discarded');
+			molecule = molecule.getScaffold();
+			if (molecule.atoms.count() === 0)
+				resolve('');
+			else {
+				molecule = molecule.clone();
+				molecule.sgroups.each(function(sgid, sg) {
+					if (sg.type !== 'MUL')
+						throw Error('InChi data format doesn\'t support s-groups');
+				}, this);
+
+				resolve(ui.server.inchi({ moldata: moldata }));
+			}
+		}
+	});
+};
+
 ui.onChange_FileFormat = function (event)
 {
 	var format = $('file_format').value,
-	    output = $('output_mol'),
-	    saverClassMap = { 'mol': chem.MolfileSaver,
-	                 'smi': chem.SmilesSaver,
-	                 'inchi': chem.InChiSaver
-	               },
-	    saverClass = saverClassMap[format];
+	    output = $('output_mol');
 
+	console.log('hello');
 	// TODO: disable form controls; spinner?
-	Promise.resolve(new saverClass().saveMolecule(ui.ctab)).then(function (res) {
+	ui.convertMolecule(ui.ctab, format).then(function (res) {
 		output.value = res;
 		output.style.wordWrap = (format == 'mol') ? 'normal' : 'break-word';
 		$('mol_data').value = format + '\n' + output.value;
@@ -668,7 +697,7 @@ ui.onChange_FileFormat = function (event)
 	}, function (err) {
         output.value = '';		// we really need this?
         ui.hideDialog('save_file');
-		ui.echo('ERROR: ' + er.message);
+		ui.echo('ERROR: ' + err.message);
 		//if (ui.forwardExceptions)
         //    throw er;
 	});

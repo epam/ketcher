@@ -67,29 +67,22 @@ ui.init = function (parameters, opts)
     this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
     //this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
 
-    if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
-        new Ajax.Request(ui.api_path + 'knocknock', {
-            method: 'get',
-            asynchronous : false,
-            onComplete: function (res)
-            {
-                if (res.responseText == 'You are welcome!')
-	                ui.standalone = false;
-            }
-        });
+	if (['http:','https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
+		// TODO: check if this is nesessary
+		ui.server.knocknock().then(function (res) {
+			ui.initTemplates(parameters.static_path);
+			ui.standalone = false;
+		}, function (val) {
+			document.title += ' (standalone)';
+			// probably must be disabled by default
+			$$('#cleanup', '#arom', '#dearom',
+			   '#reaction-automap', '#template-custom').each(function(el) {
+				   ui.subEl(el).setAttribute('disabled', true);
+			   });
+		});
     }
 
 	this.initDialogs();
-    if (!this.standalone)
-	    this.initTemplates(parameters.static_path);
-
-	if (this.standalone) {
-		$$('#cleanup', '#arom', '#dearom',
-		   '#reaction-automap', '#template-custom').each(function(el) {
-			   ui.subEl(el).setAttribute('disabled', true);
-		   });
-		document.title += ' (standalone)';
-    }
 
     // Document events
     //document.observe('keypress', ui.onKeyPress_Ketcher);
@@ -261,6 +254,11 @@ ui.hideDialog = function (name)
 {
     $(name).hide();
     $('window_cover').hide();
+};
+
+ui.echo = function (message) {
+	// TODO: make special area for messages
+	alert(message);
 };
 
 //
@@ -477,26 +475,15 @@ ui.dearomatizeMolecule = function (mol, aromatize)
     var implicitReaction = mol.addRxnArrowIfNecessary();
     var mol_string = new chem.MolfileSaver().saveMolecule(mol);
 
-    if (!ui.standalone) {
-        new Ajax.Request(ui.api_path + (aromatize ? 'aromatize' : 'dearomatize'),
-        {
-            method: 'post',
-            asynchronous : true,
-            parameters: {moldata: mol_string},
-            onComplete: function (res)
-            {
-                if (res.responseText.startsWith('Ok.')) {
-                    var resmol = ui.parseCTFile(res.responseText);
-                    if (implicitReaction)
-                        resmol.rxnArrows.clear();
-                    ui.updateMolecule(resmol);
-                } else if (res.responseText.startsWith('Error.')) {
-                    alert(res.responseText.split('\n')[1]);
-                } else {
-                    throw new Error('Something went wrong' + res.responseText);
-                }
-            }
-        });
+	if (!ui.standalone) {
+		var method = aromatize ? 'aromatize' : 'dearomatize',
+		    request = ui.server[method]({moldata: mol_string});
+		request.then(function (data) {
+			var resmol = ui.parseCTFile(data);
+			if (implicitReaction)
+				resmol.rxnArrows.clear();
+			ui.updateMolecule(resmol);
+		}, ui.echo);
     } else {
         throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
     }
@@ -682,40 +669,34 @@ ui.onClick_Automap = function () {
 			var mol = ui.ctab;
 			var implicitReaction = mol.addRxnArrowIfNecessary();
 			if (mol.rxnArrows.count() == 0) {
-				alert("Auto-Mapping can only be applied to reactions");
+				ui.echo('Auto-Mapping can only be applied to reactions');
 				return;
 			}
-			var moldata = new chem.MolfileSaver().saveMolecule(mol, true);
-			new Ajax.Request(ui.api_path + 'automap', {
-				method: 'post',
-				asynchronous : true,
-				parameters : { moldata : moldata, mode : mode },
-				onComplete: function (res)
-				{
-					if (res.responseText.startsWith('Ok.')) {
-						var resmol = ui.parseCTFile(res.responseText);
-						if (implicitReaction) {
-							resmol.rxnArrows.clear();
-						}
-						/*
-						 var aam = ui.parseCTFile(res.responseText);
-						 var action = new ui.Action();
-						 for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
-						 action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
-						 }
-						 ui.addUndoAction(action, true);
-						 */
-						ui.updateMolecule(resmol);
-						/*
-						 ui.render.update();
-						 */
-					}
-					else if (res.responseText.startsWith('Error.'))
-						alert(res.responseText.split('\n')[1]);
-					else
-						throw new Error('Something went wrong' + res.responseText);
+			var moldata = new chem.MolfileSaver().saveMolecule(mol, true),
+			    request = ui.server.automap({
+				    moldata : moldata,
+				    mode : mode
+			    });
+
+			request.then(function (res) {
+				var mol = ui.parseCTFile(res);
+				if (implicitReaction) {
+					mol.rxnArrows.clear();
 				}
-			});
+				/*
+				 var aam = ui.parseCTFile(res.responseText);
+				 var action = new ui.Action();
+				 for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
+				 action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
+				 }
+				 ui.addUndoAction(action, true);
+				 */
+				ui.updateMolecule(mol);
+				/*
+				 ui.render.update();
+				 */
+
+			}, ui.echo);
 		}
 	});
 };

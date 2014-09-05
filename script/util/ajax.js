@@ -10,6 +10,11 @@ util.ajax = (function(window) {
 			if (xhr.readyState == 4)
 				callback(xhr);
 		};
+		var headers = options.headers || {};
+		for (var k in headers) {
+			if (headers.hasOwnProperty(k))
+				xhr.setRequestHeader(k, headers[k]);
+		}
 		if (typeof options.config == 'function') {
 			var maybeXhr = options.config(xhr, options);
 			if (maybeXhr !== undefined)
@@ -24,12 +29,33 @@ util.ajax = (function(window) {
 		return xhr;
 	}
 
-	function request(options) {
+	function queryString(obj) {
+		var str = [];
+		for(var prop in obj) {
+			if (obj.hasOwnProperty(prop)) // don't handle nested objects
+				str.push(encodeURIComponent(prop) + '=' +
+				         encodeURIComponent(obj[prop]));
+		}
+		return str.join('&');
+	}
+
+	function request(opts) {
+		var options = util.extend({
+			method: 'GET',
+			headers: {},
+			timeout: 6000
+		}, util.isObject(opts) ? opts : { url: opts });
+		if (util.isObject(options.data)) {
+			options.data = JSON.stringify(options.data);
+			options.headers['Content-Type'] = 'application/json; charset=utf-8';
+		}
+		if (options.params) {
+			options.url = options.url + (options.url.indexOf("?") < 0 ? "?" : "&") + queryString(options.params);
+		}
 		return new Promise(function (resolve, reject) {
-			// TODO: query parametrs, parametrize urls
 			ajax(options, function(xhr) {
 				var complete = (xhr.status >= 200 && xhr.status < 300) ? resolve : reject;
-				complete(xhr.responseText, xhr);
+				complete(xhr);
 			});
 		});
 	}

@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 					banner: '<%= options.banner %>',
 					stripBanners: true
 				},
-				src: ['script/vendor/es5-shim.js',
+				src: [//'script/vendor/es5-shim.js',
 				      'script/vendor/html5shiv.js',
 				      'script/vendor/base64.js',
 				      'script/vendor/keymaster.js',

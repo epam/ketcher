@@ -37,42 +37,33 @@ ui.initTemplates = function (base_url)
         return parsed;
     }
 
-    // Init templates
-    new Ajax.Request(base_url + 'templates.sdf',
-    {
-        method: 'get',
-        requestHeaders: {Accept: 'application/octet-stream'},
-        asynchronous : false,
-        onComplete: function (res)
-        {
-            try {
-                var sdf_items = parseSdf(res.responseText);
-            } catch (er) {
-                if (ui.forwardExceptions)
-                    throw er;
-                return;
-            }
+	// Fetch templates
+	util.ajax(base_url + 'templates.sdf').then(function (xhr) {
+		//requestHeaders: {Accept: 'application/octet-stream'},
+		try {
+			var sdf_items = parseSdf(xhr.responseText);
+		} catch (er) {
+			if (ui.forwardExceptions)
+				throw er;
+			return;
+		}
 
-	        rnd.customtemplates = [];
-	        var i = 0;
-            sdf_items.each(function (item) {
-	            rnd.customtemplates.push({
-		            name: (item.name || ('customtemplate ' + (++i))).capitalize(),
-                    molfile: item.molfile,
-                    aid: (item.atomid || 1) - 1,
-                    bid: (item.bondid || 1) - 1
-	            });
-            });
-        }
-    });
+		rnd.customtemplates = [];
+		var i = 0;
+		sdf_items.each(function (item) {
+			rnd.customtemplates.push({
+				name: (item.name || ('customtemplate ' + (++i))).capitalize(),
+				molfile: item.molfile,
+				aid: (item.atomid || 1) - 1,
+				bid: (item.bondid || 1) - 1
+			});
+		});
+	});
 };
 
 ui.parseCTFile = function (molfile, check_empty_line)
 {
     var lines = molfile.split('\n');
-
-    if (lines.length > 0 && lines[0] == 'Ok.')
-        lines.shift();
 
     try {
         try {
@@ -761,31 +752,27 @@ ui.onChange_Input = function ()
 
 ui.onChange_FileFormat = function (event)
 {
-    var format = $('file_format').value;
-    var output = $('output_mol');
-    try {
-        if (format == 'mol') {
-            output.value = new chem.MolfileSaver().saveMolecule(ui.ctab);
-            output.style.wordWrap = 'normal';
-        } else if (format == 'smi') {
-            output.value = new chem.SmilesSaver().saveMolecule(ui.ctab);
-            output.style.wordWrap = 'break-word';
-        } else if (format == 'inchi') {
-            output.value = new chem.InChiSaver().saveMolecule(ui.ctab);
-            output.style.wordWrap = 'break-word';
-        } else {
-            //noinspection ExceptionCaughtLocallyJS
-            throw { message : 'Unsupported data format' };
-        }
-    } catch (er) {
-        if (ui.forwardExceptions)
-            throw er;
-        output.value = '';
+	var format = $('file_format').value,
+	    output = $('output_mol'),
+	    saverClassMap = { 'mol': chem.MolfileSaver,
+	                 'smi': chem.SmilesSaver,
+	                 'inchi': chem.InChiSaver
+	               },
+	    saverClass = saverClassMap[format];
+
+	// TODO: disable form controls; spinner?
+	Promise.resolve(new saverClass().saveMolecule(ui.ctab)).then(function (res) {
+		output.value = res;
+		output.style.wordWrap = (format == 'mol') ? 'normal' : 'break-word';
+		$('mol_data').value = format + '\n' + output.value;
+		output.activate();
+	}, function (err) {
+        output.value = '';		// we really need this?
         ui.hideDialog('save_file');
-        alert('ERROR: ' + er.message);
-    }
-    $('mol_data').value = format + '\n' + output.value;
-    output.activate();
+		ui.echo('ERROR: ' + er.message);
+		//if (ui.forwardExceptions)
+        //    throw er;
+	});
 };
 
 ui.onSelect_OpenFromInput = function ()
@@ -815,9 +802,9 @@ ui.getFile = function ()
     return Base64.decode(frame_body.title);
 };
 
+// TODO: refactor me
 ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
 {
-    var smiles = mol_string.strip();
     var updateFunc = function(struct) {
         if (discardRxnArrow)
             struct.rxnArrows.clear();
@@ -836,43 +823,24 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
         }
     }
 
+	var smiles = mol_string.strip();
     if (smiles.indexOf('\n') == -1) {
         if (ui.standalone) {
             if (smiles != '') {
-                alert('SMILES is not supported in a standalone mode.');
+                ui.echo('SMILES is not supported in a standalone mode.');
             }
             return;
         }
-        new Ajax.Request(ui.api_path + 'layout?smiles=' + encodeURIComponent(smiles),
-        {
-            method: 'get',
-            asynchronous : true,
-            onComplete: function (res)
-            {
-                if (res.responseText.startsWith('Ok.'))
-                    updateFunc.call(ui, ui.parseCTFile(res.responseText));
-                else if (res.responseText.startsWith('Error.'))
-                    alert(res.responseText.split('\n')[1]);
-                else
-                    throw new Error('Something went wrong' + res.responseText);
-            }
-        });
+	    var request = ui.server.layout_smiles(null, {smiles: smiles});
+	    request.then(function (res) {
+		    updateFunc.call(ui, ui.parseCTFile(res));
+	    });
     } else if (!ui.standalone && force_layout) {
-        new Ajax.Request(ui.api_path + 'layout' + (selective_layout ? '?selective' : ''),
-        {
-            method: 'post',
-            asynchronous : true,
-            parameters: {moldata: mol_string},
-            onComplete: function (res)
-            {
-                if (res.responseText.startsWith('Ok.'))
-                    updateFunc.call(ui, ui.parseCTFile(res.responseText));
-                else if (res.responseText.startsWith('Error.'))
-                    alert(res.responseText.split('\n')[1]);
-                else
-                    throw new Error('Something went wrong' + res.responseText);
-            }
-        });
+	    var req = ui.server.layout({moldata: mol_string},
+	                               selective_layout ? {'selective': 1} : null);
+	    req.then(function (res) {
+		    updateFunc.call(ui, ui.parseCTFile(res));
+	    });
     } else {
         updateFunc.call(ui, ui.parseCTFile(mol_string, check_empty_line));
     }
@@ -917,12 +885,10 @@ ui.showTemplateCustom = function(params) {
 	    selectedEl = dialog.select('.selected')[0],
 	    selectedIndex = selectedEl && selectedEl.previousSiblings().size();
 
-	if (ul.children.length === 0 && rnd.customtemplates) {		// first time
+	if (ul.children.length === 0 && rnd.customtemplates) { // first time
 		ui.showDialog('loading');
 		dialog.addClassName('loading');
-		//performance.mark('mark_start_all_tc');
 		asyncEach(rnd.customtemplates, function(value, index) {
-			//performance.mark('mark_start_tc');
 			var li =  new Element('li');
 			li.title = value.name;
 			ul.insert({ bottom: li });
@@ -934,9 +900,6 @@ ui.showTemplateCustom = function(params) {
 			                                      'hideChiralFlag': true,
 			                                      'maxBondLength': 30
 			                                    });
-			// performance.mark('mark_end_tc');
-			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
-			// performance.mark('mark_start_tc');
 			render.setMolecule(chem.Molfile.parseCTFile(value.molfile.split('\n')));
 			render.update();
 
@@ -954,25 +917,18 @@ ui.showTemplateCustom = function(params) {
 				else
 					close('OK');
 			});
-			// performance.mark('mark_end_tc');
-			// performance.measure('measure_tc_' + val.name, 'mark_start_tc', 'mark_end_tc');
 		}, function () {
 			$('loading').hide();
 			dialog.removeClassName('loading');
 			dialog.on('click', 'input', function(event, element) {
 				close(element.value);
 			});
-			// performance.mark('mark_end_all_tc');
-			// performance.measure('measure_all_tc', 'mark_start_all_tc', 'mark_end_all_tc');
-			// var ms = window.performance.getEntriesByType('measure');
-			// console.table(ms, ['startTime', 'name', 'duration']);
 		}, 30);
 	}
 
 	function close(mode) {
 		var key = 'on' + (mode.capitalize() || 'Cancel');
 		if (params && key in params)
-			//params[key].apply(window, [].slice.call(arguments, 1));
 			params[key](rnd.customtemplates[selectedIndex]);
 		ui.hideDialog('custom_templates');
 	}

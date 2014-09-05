@@ -652,7 +652,6 @@ ui.onChange_Input = function ()
 ui.convertMolecule = function (molecule, format) {
 	return new Promise(function (resolve, reject) {
 		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
-		console.log(moldata);
 		if (format == 'mol') {
 			resolve(moldata);
 		}
@@ -687,7 +686,6 @@ ui.onChange_FileFormat = function (event)
 	var format = $('file_format').value,
 	    output = $('output_mol');
 
-	console.log('hello');
 	// TODO: disable form controls; spinner?
 	ui.convertMolecule(ui.ctab, format).then(function (res) {
 		output.value = res;

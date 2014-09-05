@@ -4,12 +4,8 @@ if (!window.util)
 util.ajax = (function(window) {
 	function ajax(options, callback) {
 		var xhr = new XMLHttpRequest();
-		xhr.open(options.method, options.url, true,
+		xhr.open(options.method, options.url, !!callback,
 		         options.user, options.password);
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 4)
-				callback(xhr);
-		};
 		var headers = options.headers || {};
 		for (var k in headers) {
 			if (headers.hasOwnProperty(k))
@@ -25,8 +21,17 @@ util.ajax = (function(window) {
 				xhr.status = -1;
 				xhr.abort();
 			}, options.timeout);
+		if (callback)
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4)
+					callback(xhr);
+			};
 		xhr.send(options.data);
 		return xhr;
+	}
+
+	function successful(xhr) {
+		return xhr.status >= 200 && xhr.status < 300;
 	}
 
 	function queryString(obj) {
@@ -52,12 +57,19 @@ util.ajax = (function(window) {
 		if (options.params) {
 			options.url = options.url + (options.url.indexOf("?") < 0 ? "?" : "&") + queryString(options.params);
 		}
-		return new Promise(function (resolve, reject) {
-			ajax(options, function(xhr) {
-				var complete = (xhr.status >= 200 && xhr.status < 300) ? resolve : reject;
-				complete(xhr);
+
+		if (!options.sync)
+			return new Promise(function (resolve, reject) {
+				ajax(options, function(xhr) {
+					var complete =  successful(xhr) ? resolve : reject;
+					complete(xhr);
+				});
 			});
-		});
+
+		var xhr = ajax(options);
+		if (!successful(xhr))
+			throw xhr;
+		return xhr;
 	}
 
 	return request;

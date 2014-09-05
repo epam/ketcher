@@ -17,10 +17,12 @@ ketcher = function () {
 // TODO: generate on build time
 ketcher.version = "2.0.0-alfa0";
 
-ketcher.getSmiles = function ()
-{
-    var saver = new chem.SmilesSaver();
-    return saver.saveMolecule(ui.ctab, true);
+ketcher.getSmiles = function () {
+	var saver = ui.standalone ? new chem.SmilesSaver() : new chem.MolfileSaver(),
+	    mol = saver.saveMolecule(ui.ctab, true);
+	return ui.standalone ? mol : ui.server.smiles.sync({
+		moldata: mol
+	});
 };
 
 ketcher.getMolfile = function ()

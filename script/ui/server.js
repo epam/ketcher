@@ -25,31 +25,42 @@ ui.server = (function(window) {
 		    value = data.substring(data.indexOf('\n') + 1);
 		if (data.startsWith('Ok.'))
 			return value;
-		throw Error(data.startsWith('Error.') ? value :
-		            'Something went wrong (' + data + ')');
+		throw Error('Unknown server error: ' + data);
 	}
-	function apiRequest(method, url, data, params) {
-		// TODO: move api_path to server constructor
-		var opts = {
-			method: method,
-			url: ui.api_path + url,
-			params: params,
-			data: data && formEncode(data),
-			headers: data && {
-				'Content-Type': 'application/x-www-form-urlencoded'
-			}
+	function apiRequest(method, url) {
+		function options(data, params, sync) {
+			return {
+				method: method,
+				url: ui.api_path + url,
+				sync: sync,
+				params: params,
+				data: data && formEncode(data),
+				headers: data && {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			};
+		}
+
+		var res = function(data, params) {
+			return util.ajax(options(data, params)).then(apiHandle);
 		};
-		return util.ajax(opts).then(apiHandle);
+		res.sync = function(data, params) {
+			// TODO: handle errors
+			return apiHandle(util.ajax(options(data, params, true)));
+		};
+		// TODO: provide res.url
+		// res.url = url;
+		return res;
 	}
 
 	return {
-		inchi: apiRequest.bind(this, 'POST', 'getinchi'),
-		aromatize: apiRequest.bind(this, 'POST', 'aromatize'),
-		dearomatize: apiRequest.bind(this, 'POST', 'dearomatize'),
-		automap: apiRequest.bind(this, 'POST', 'automap'),
-		layout_smiles: apiRequest.bind(this, 'GET', 'layout'),
-		layout: apiRequest.bind(this, 'POST', 'layout'),
-		smiles: apiRequest.bind(this, 'POST', 'smiles'),
+		inchi: apiRequest('POST', 'getinchi'),
+		aromatize: apiRequest('POST', 'aromatize'),
+		dearomatize: apiRequest('POST', 'dearomatize'),
+		automap: apiRequest('POST', 'automap'),
+		layout_smiles: apiRequest('GET', 'layout'),
+		layout: apiRequest('POST', 'layout'),
+		smiles: apiRequest('POST', 'smiles'),
 		knocknock: function () {
 			return util.ajax(ui.api_path + 'knocknock').then(function (xhr) {
 				if (xhr.responseText != 'You are welcome!')

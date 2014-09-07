@@ -27,6 +27,10 @@ module.exports = function(grunt) {
 
 			// build options
 			// is there a way to automate?
+			'build-number': grunt.option('build-number'),
+			'build-date': grunt.option('build-date') ||
+			              grunt.option('build-number') && grunt.template.today('yyyy-mm-dd HH-MM-ss'),
+
 			'no-generics': grunt.option('no-generics'),
 			'no-reactions': grunt.option('no-reactions'),
 			'no-sgroup': grunt.option('no-sgroup'),

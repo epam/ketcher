@@ -9,16 +9,25 @@
 		</div>
 		<table style="width:100%" cellspacing="5">
 			<tr>
-				<td style="float:left"><a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank" style="color:#0000CC">Ketcher</a></td>
-				<td style="float:right" id="ketcher_version">Version 1.0</td>
+				<td style="float:left" rowspan="2"><a href="http://ggasoftware.com/opensource/ketcher#overview" target="_blank" style="color:#0000CC">Ketcher</a></td>
+				<td style="float:right" id="ketcher_version">{{pkg.version}} {{#unless git.tag}}<em>(rev: {{git.rev}})</em>{{/unless}}</td>
 			</tr>
 			<tr>
+ 			<td style="float:right; font-size: 9px; padding: 0 3px 5px" colspan=2>
+				{{#if build-number}}
+				<strong style="margin-right: 0.5em">build</strong> #{{build-number}} at <time style="font-style: italic">{{build-date}}</time>
+				{{/if}}
+			</td>
+			</tr>
+			<tr style="border-bottom: 10px solid transparent; font-size: 11px">
 				<td style="float:left"><a href="http://ggasoftware.com" target="_blank" style="color:#0000CC">GGA Software Services</a></td>
 				<td style="float:right"><a href="http://ggasoftware.com/opensource/ketcher#feedback" target="_blank" style="color:#0000CC">Feedback</a></td>
 			</tr>
+			{{#if build-number}}
+			{{/if}}
 		</table>
 		<div style="margin:4px;">
-			<button onclick="ui.hideDialog('about_dialog')">Close</button>
+			<input type="button" onclick="ui.hideDialog('about_dialog')" value="Close">
 		</div>
 	</div>
 </div>

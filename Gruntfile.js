@@ -158,8 +158,8 @@ module.exports = function(grunt) {
 			options: {
 				basename: '<%= pkg.name %>-' +
 					      '<%= gitinfo.local && options.git.tag || ' +
-					          'gitinfo.local && "rev:" + options.git.rev || ' +
-					          'pkg.version %>',
+					      'gitinfo.local && "rev:" + options.git.rev || ' +
+					      'pkg.version %>',
 				level: 9
 			},
 			build: {
@@ -187,7 +187,8 @@ module.exports = function(grunt) {
 				// TODO: add server parts to source
 				src: ['<%= options.build %>', '<%= options.libs %>',
 				      '<%= options.distrib %>', '<%= options.src %>'],
-				dest: '<%= pkg.name %>'
+				dest: '<%= pkg.name %>',
+				filter: 'isFile'
 			}
 		},
 

@@ -158,7 +158,7 @@ module.exports = function(grunt) {
 			options: {
 				basename: '<%= pkg.name %>-' +
 					      '<%= gitinfo.local && options.git.tag || ' +
-					      'gitinfo.local && "rev:" + options.git.rev || ' +
+					      'gitinfo.local && "rev-" + options.git.rev || ' +
 					      'pkg.version %>',
 				level: 9
 			},

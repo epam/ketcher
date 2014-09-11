@@ -362,7 +362,6 @@ legend {
 	var {
 		font-style: normal;
 		font-weight: bold;
-		padding-right: 0.3em;
 	}
 	time {
 		font-style: italic;
@@ -384,6 +383,46 @@ legend {
 	}
 	dt+dd {
 		margin: -@line-height 0 0;
+	}
+}
+
+#rgroup-table {
+	ul {
+		width: 25em;
+		padding: 0.5em 0.5em 1em;
+	}
+	li {
+		display: inline-block;
+		margin: 0.2em 0;
+	}
+	button {
+		font-size: 1.3em;
+		width: 2.2em;
+		height: 2em;
+		line-height: 2;
+		vertical-align: middle;
+		padding: 0.15em;
+		border: 0;
+		background: inherit;
+		&:first-letter {
+			font-weight: 600;
+			color: lighten(@main-color, 20%);
+		}
+		&:hover {
+			.highlight-scale;
+			.highlight-shadow(black);
+		}
+		&:active {
+			.highlight-scale(none);
+			.highlight-shadow(none);
+		}
+		&.selected {
+			.highlight-invert;
+			&:first-letter {
+				color: darken(white, 30%);
+			}
+		}
+
 	}
 }
 

@@ -1040,11 +1040,27 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
 rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
+	function sel2Values(rg) {
+		var res = [];
+		for (var rgi = 0; rgi < 32; rgi++)
+			if (rg & (1 << rgi))
+				res.push(rgi + 1 + ''); // push the string
+		return res;
+	}
+	function values2Sel(vals) {
+		var res = 0;
+		vals.values.forEach(function (rgi) {
+			res |= (1 << (rgi - 1));
+		});
+		return res;
+	}
     var ci = this.editor.render.findItem(event, ['atoms']);
     if (!ci || ci.type == 'Canvas') {
         this._hoverHelper.hover(null);
-        this.editor.ui.showRGroupTable({
-            onOk : function(rgNew) {
+	    this.editor.ui.showRGroupTable({
+		    mode : 'multiple',
+	        onOk : function(rgNew) {
+		        rgNew = values2Sel(rgNew);
                 if (rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromAtomAddition(
@@ -1063,9 +1079,11 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
         var atom = this.editor.render.ctab.molecule.atoms.get(ci.id);
         var lbOld = atom.label;
         var rgOld = atom.rglabel;
-        this.editor.ui.showRGroupTable({
-            selection : rgOld,
-            onOk : function(rgNew) {
+	    this.editor.ui.showRGroupTable({
+		    mode: 'multiple',
+		    values : sel2Values(rgOld),
+	        onOk : function(rgNew) {
+		        rgNew = values2Sel(rgNew);
                 if (rgOld != rgNew || lbOld != 'R#') {
                     var newProps = Object.clone(chem.Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
                     if (rgNew) {
@@ -1091,24 +1109,22 @@ rnd.Editor.RGroupFragmentTool = function(editor) {
 
     this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
+
 rnd.Editor.RGroupFragmentTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.RGroupFragmentTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
 };
+
 rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
     var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
     if (ci && ci.map == 'frags') {
         this._hoverHelper.hover(null);
-        var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
+	    var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
         this.editor.ui.showRGroupTable({
-            mode : 'single',
-            selection : rgOld ? 1 << (rgOld - 1) : 0,
-            onOk : function(rgNew) {
-                for (var i = 0; i < 32; i++)
-                    if (rgNew & (1 << i)) {
-                        rgNew = i + 1;
-                        break;
-                    }
+	        values : rgOld && [rgOld + ''], // assert string
+	        onOk : function(rgNew) {
+		        console.assert(rgNew.values.length <= 1, 'Too much elements');
+		        rgNew = rgNew.values.length ? rgNew.values[0] - 0 : 0;
                 if (rgOld != rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromRGroupFragment(rgNew, ci.id),

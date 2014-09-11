@@ -237,6 +237,9 @@ util.listNextRotate = function(list, value) {
     return list[(list.indexOf(value) + 1) % list.length];
 };
 
+
+// similar to Object.assgin
+// http://www.2ality.com/2014/01/object-assign.html
 util.extend = function(dest, src) {
 	for (var prop in src) {
 		if (src.hasOwnProperty(prop))

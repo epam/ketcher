@@ -258,38 +258,6 @@ ui.showAutomapProperties = function(params)
     $('automap_mode').activate();
 };
 
-ui.showRGroupTable = function(params)
-{
-    if (!$('rgroup_table').visible()) {
-        params = params || {};
-        ui.showDialog('rgroup_table');
-        if (typeof(ui.rgroup_table_obj) == 'undefined') {
-            ui.rgroup_table_obj = new rnd.RGroupTable('rgroup_table_area', {
-                'fillColor':'#DADADA',
-                'fillColorSelected':'#FFFFFF',
-                'frameColor':'#E8E8E8',
-                'fontSize':18,
-                'buttonHalfSize':18
-            }, true);
-        }
-        ui.rgroup_table_obj.setMode(params.mode || 'multiple');
-        ui.rgroup_table_obj.setSelection(params.selection || 0);
-        var _onOk = new Event.Handler('rgroup_table_ok', 'click', undefined, function() {
-            _onOk.stop();
-            _onCancel.stop();
-            ui.hideDialog('rgroup_table');
-            if ('onOk' in params) params['onOk'](ui.rgroup_table_obj.selection);
-        }).start();
-        var _onCancel = new Event.Handler('rgroup_table_cancel', 'click', undefined, function() {
-            _onOk.stop();
-            _onCancel.stop();
-            ui.hideDialog('rgroup_table');
-            if ('onCancel' in params) params['onCancel']();
-        }).start();
-        $('rgroup_table_ok').focus();
-    }
-};
-
 ui.showRLogicTable = function(params)
 {
     params = params || {};

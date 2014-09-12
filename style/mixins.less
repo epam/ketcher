@@ -315,6 +315,28 @@
 	color: @disabled-color;      // hint for menus
 }
 
+/////////////////////
+// Highlight effects
+
+.transition-twirl(@time: 0.3s) {
+	.transform(rotateX(0));
+	.transition(transform @time);
+	.animate & {
+		.transform-style(preserve-3d);
+		.transform(perspective(350px) rotateX(-70deg));
+	}
+}
+
+.transition-zoom(@time: 0.3s) {
+	opacity: 1;
+	.scale(1);
+	.transition(transform @time, opacity @time;);
+	.animate & {
+		opacity: .2;
+		.scale(.5);
+	}
+}
+
 //////////////////////////
 // Icon content & coloring
 

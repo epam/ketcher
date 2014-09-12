@@ -74,13 +74,7 @@
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
-
-		.transform(rotateX(0));
-		.transition(transform 0.3s);
-		.animate & {
-			.transform-style(preserve-3d);
-			.transform(perspective(350px) rotateX(-70deg));
-		}
+		.transition-zoom;
 	}
 }
 

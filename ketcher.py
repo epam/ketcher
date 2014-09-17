@@ -45,7 +45,7 @@ class application(object):
 
     def __iter__(self):
         for chunk in self.response:
-            yield chunk if sys.version_info.major < 3 or \
+            yield chunk if sys.version_info[0] < 3 or \
                            not hasattr(chunk, 'encode') else chunk.encode()
 
     def notsupported(self):

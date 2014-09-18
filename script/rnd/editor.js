@@ -413,10 +413,11 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
             this.editor.ui.showAtomProperties(ci.id);
         } else {
             ui.showReaGenericsTable({
-                selection: atom.label,
-                onOk: function(attrs) {
-                    if (atom.label != attrs.label) {
-                        this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, attrs));
+	            values: [atom.label],
+	            onOk: function(res) {
+		            var label = res.values[0];
+                    if (atom.label != label) {
+	                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, {label: label}));
                         this.editor.ui.render.update();
                     }
                     return true;
@@ -1043,14 +1044,17 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
 	function sel2Values(rg) {
 		var res = [];
 		for (var rgi = 0; rgi < 32; rgi++)
-			if (rg & (1 << rgi))
-				res.push(rgi + 1 + ''); // push the string
+			if (rg & (1 << rgi)) {
+				var val = 'R' + (rgi + 1);
+				res.push(val); // push the string
+			}
 		return res;
 	}
 	function values2Sel(vals) {
 		var res = 0;
-		vals.values.forEach(function (rgi) {
-			res |= (1 << (rgi - 1));
+		vals.values.forEach(function (val) {
+			var rgi = val.substr(1) - 1;
+			res |= 1 << rgi;
 		});
 		return res;
 	}
@@ -1121,10 +1125,10 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
         this._hoverHelper.hover(null);
 	    var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
         this.editor.ui.showRGroupTable({
-	        values : rgOld && [rgOld + ''], // assert string
+	        values : rgOld && ['R' + rgOld],
 	        onOk : function(rgNew) {
 		        console.assert(rgNew.values.length <= 1, 'Too much elements');
-		        rgNew = rgNew.values.length ? rgNew.values[0] - 0 : 0;
+		        rgNew = rgNew.values.length ? rgNew.values[0].substr(1) - 0 : 0;
                 if (rgOld != rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromRGroupFragment(rgNew, ci.id),

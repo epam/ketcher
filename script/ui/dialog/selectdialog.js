@@ -7,6 +7,11 @@ ui.showRGroupTable = function(params) {
 	ui.selectDialog('rgroup-table', params);
 };
 
+ui.showReaGenericsTable = function(params) {
+	params.required = true;
+	ui.selectDialog('generics-table', params);
+};
+
 ui.selectDialog = function(name, params) {
 	var dialog = ui.showDialog(name),
 	    okButton = dialog.select('input[value=OK]')[0],
@@ -19,7 +24,8 @@ ui.selectDialog = function(name, params) {
 		});
 		if (values)
 			dialog.select('button').each(function (button) {
-				if (values.indexOf(button.value) >= 0)
+				var value = button.value || button.textContent || button.innerText;
+				if (values.indexOf(value) >= 0)
 					button.addClassName('selected');
 			});
 		else if (params.required)
@@ -28,8 +34,9 @@ ui.selectDialog = function(name, params) {
 
 	function getSelected() {
 		var values = [];
-		dialog.select('.selected').each(function (el) {
-			values.push(el.getAttribute('value'));
+		dialog.select('.selected').each(function (button) {
+			var value = button.value || button.textContent || button.innerText;
+			values.push(value);
 		});
 		return values;
 	}

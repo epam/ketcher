@@ -292,8 +292,8 @@ legend {
 		}
 	}
 	.query, .reaction {
-		margin-left: 17.5em;
-		display: block;
+		float:right;
+		clear: right;
 		width: 16em;
 	}
 }
@@ -382,7 +382,7 @@ legend {
 
 #rgroup-table {
 	ul {
-		width: 25em;
+		width: 26em;
 		padding: 0.5em 0.5em 1em;
 	}
 	li {
@@ -391,12 +391,11 @@ legend {
 	}
 	button {
 		font-size: 1.3em;
-		width: 2.2em;
+		width: 2.3em;
 		height: 2em;
-		line-height: 2;
+		line-height: 1;
 		vertical-align: middle;
 		padding: 0.15em;
-		border: 0;
 		background: inherit;
 		&:first-letter {
 			font-weight: 600;
@@ -416,7 +415,6 @@ legend {
 				color: darken(white, 30%);
 			}
 		}
-
 	}
 }
 
@@ -533,5 +531,63 @@ legend {
 	}
 	.liquid:after {
 		color: #0a0;
+	}
+}
+
+#generics-table {
+	.atom>fieldset, .acyclic, .cyclic {
+		display: inline-block;
+		vertical-align: top;
+		&+fieldset {
+			margin-left: 0.3em;
+		}
+	}
+	.cyclic>fieldset, .carbo, .hetero  {
+		float: left;
+	}
+	.carbo {
+		clear: both;
+	}
+	.hetero {
+		margin-left: 0.3em;
+	}
+	.cyclic>fieldset:first-of-type {
+		margin: 0 0.3em 0 0.8em; // smells like a hack
+	}
+	fieldset {
+		text-align: center;
+	}
+	.not, .atom>fieldset, .carbo>fieldset, .hetero>fieldset {
+		position: relative;
+		border: 0;
+		padding: 0 0 1em;
+		legend {
+			font-size: 0.7em;
+			bottom: 0.1em;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			position: absolute;
+		}
+    }
+	button {
+		font-size: 1.1em;
+		height: 2em;
+		width: 2.5em;
+		line-height: 1;
+		vertical-align: middle;
+		padding: 0.15em;
+		background: inherit;
+		&:hover {
+			.highlight-scale;
+			.highlight-shadow(black);
+		}
+		&:active {
+			.highlight-scale(none);
+			.highlight-shadow(none);
+		}
+		&.selected {
+			.highlight-invert;
+		}
 	}
 }

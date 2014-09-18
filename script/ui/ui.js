@@ -954,10 +954,12 @@ ui.onClick_ElemTableButton = function ()
     });
 };
 
+ui.current_reagenerics = null;
 ui.onClick_ReaGenericsTableButton = function ()
 {
     ui.showReaGenericsTable({
-        onOk : function() {
+	    onOk : function(res) {
+		    ui.current_reagenerics = {label: res.values[0]};
             ui.selectAction('atom-reagenerics');
             return true;
         }
@@ -1173,9 +1175,8 @@ ui.atomLabel = function (mode) {
 		if (label == 'table') {
 			return ui.current_elemtable_props;
 		}
-		if (label == 'reagenerics') // TODO need some other way, in general tools should be pluggable
-
-			return ui.reagenerics_table_obj.getAtomProps();
+		if (label == 'reagenerics')
+			return ui.current_reagenerics;
 		// how can we go here?
 		// if (label == 'any')
 		// 	return {'label':'A'};

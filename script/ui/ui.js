@@ -348,16 +348,20 @@ ui.onClick_NewFile = function ()
     }
 };
 
-//
-// Open file section
-//
 ui.onClick_OpenFile = function ()
 {
-    ui.showDialog('open_file');
-    $('radio_open_from_input').checked = true;
-    $('checkbox_open_copy').checked = false;
-    ui.onSelect_OpenFromInput();
+	ui.openDialog({
+		onOk: function (res) {
+			ui.loadMolecule(res.value, false, true, res.fragment);
+		}
+	});
 };
+
+ui.onClick_SaveFile = function ()
+{
+	ui.saveDialog({molecule: ui.ctab});
+};
+
 
 ui.dearomatizeMolecule = function (mol, aromatize)
 {
@@ -377,17 +381,6 @@ ui.dearomatizeMolecule = function (mol, aromatize)
     } else {
         throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
     }
-};
-
-//
-// Save file section
-//
-ui.onClick_SaveFile = function ()
-{
-    $('file_format').value = 'mol';
-    $('file_format_inchi').disabled = ui.standalone;
-    ui.showDialog('save_file');
-    ui.onChange_FileFormat(null);
 };
 
 //
@@ -589,6 +582,50 @@ ui.onClick_Automap = function () {
 			}, ui.echo);
 		}
 	});
+};
+
+// TODO: refactor me
+ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
+{
+    var updateFunc = function(struct) {
+        if (discardRxnArrow)
+            struct.rxnArrows.clear();
+        if (paste) {
+            (function(struct) {
+                struct.rescale();
+                if (!ui.copy(struct)) {
+                    alert("Not a valid structure to paste");
+                    return;
+                }
+                ui.editor.deselectAll();
+                ui.selectAction('paste');
+            }).call(this, struct);
+        } else {
+            ui.updateMolecule.call(this, struct);
+        }
+    }
+
+	var smiles = mol_string.strip();
+    if (smiles.indexOf('\n') == -1) {
+        if (ui.standalone) {
+            if (smiles != '') {
+                ui.echo('SMILES is not supported in a standalone mode.');
+            }
+            return;
+        }
+	    var request = ui.server.layout_smiles(null, {smiles: smiles});
+	    request.then(function (res) {
+		    updateFunc.call(ui, ui.parseCTFile(res));
+	    });
+    } else if (!ui.standalone && force_layout) {
+	    var req = ui.server.layout({moldata: mol_string},
+	                               selective_layout ? {'selective': 1} : null);
+	    req.then(function (res) {
+		    updateFunc.call(ui, ui.parseCTFile(res));
+	    });
+    } else {
+        updateFunc.call(ui, ui.parseCTFile(mol_string, check_empty_line));
+    }
 };
 
 ui.page2canvas2 = function (pos)

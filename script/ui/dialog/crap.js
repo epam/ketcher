@@ -1,10 +1,11 @@
 ui.initDialogs = function () {
-    // Dialog events
-    $$('.dialogWindow').each(function (el)
+	// Label input events
+    $('input_label').observe('blur', function ()
     {
-        el.observe('keypress', ui.onKeyPress_Dialog);
-        el.observe('keyup', ui.onKeyPress_Dialog);
+        this.hide();
     });
+    $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
+    $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
 
     // Atom properties dialog events
     $('atom_label').observe('change', ui.onChange_AtomLabel);
@@ -27,48 +28,6 @@ ui.initDialogs = function () {
     {
         ui.applyBondProperties();
     });
-
-    // Label input events
-    $('input_label').observe('blur', function ()
-    {
-        this.hide();
-    });
-    $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
-    $('input_label').observe('keyup', ui.onKeyUp_InputLabel);
-
-    // Load dialog events
-    $('radio_open_from_input').observe('click', ui.onSelect_OpenFromInput);
-    $('radio_open_from_file').observe('click', ui.onSelect_OpenFromFile);
-    $('input_mol').observe('keyup', ui.onChange_Input);
-    $('input_mol').observe('click', ui.onChange_Input);
-    $('read_cancel').observe('click', function ()
-    {
-        ui.hideDialog('open_file');
-    });
-    $('read_ok').observe('click', function ()
-    {
-        ui.loadMoleculeFromInput();
-    });
-    $('upload_mol').observe('submit', function ()
-    {
-        ui.hideDialog('open_file');
-    });
-    $('upload_cancel').observe('click', function ()
-    {
-        ui.hideDialog('open_file');
-    });
-
-    // Save dialog events
-    $('file_format').observe('change', ui.onChange_FileFormat);
-    $('save_ok').observe('click', function ()
-    {
-        ui.hideDialog('save_file');
-    });
-
-    if (!ui.standalone) {
-        $('upload_mol').action = ui.api_path + 'open';
-        $('download_mol').action = ui.api_path + 'save';
-    }
 };
 
 //
@@ -396,161 +355,4 @@ ui.showLabelEditor = function(aid)
     input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d).toString() + 'px';
 
     input_el.activate();
-};
-
-ui.onChange_Input = function ()
-{
-    var el = this;
-    setTimeout(function() {
-        if (el.value.strip().startsWith('InChI=') && ui.standalone) {
-            alert('InChI are not supported in the standalone mode');
-        } else if (el.value.strip().indexOf('\n') != -1) {
-            if (el.style.wordWrap != 'normal')
-                el.style.wordWrap = 'normal';
-        } else {
-            if (el.style.wordWrap != 'break-word')
-                el.style.wordWrap = 'break-word';
-        }
-    }, 200);
-};
-
-ui.convertMolecule = function (molecule, format) {
-	return new Promise(function (resolve, reject) {
-		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
-		if (format == 'mol') {
-			resolve(moldata);
-		}
-		else if (format == 'smi') {
-			resolve(!ui.standalone ? ui.server.smiles({ moldata: moldata }):
-			                         new chem.SmilesSaver().saveMolecule(molecule));
-		}
-		else if (format == 'inchi') {
-			if (ui.standalone)
-				throw Error('InChI is not supported in the standalone mode');
-
-			if (molecule.rgroups.count() !== 0)
-				ui.echo('R-group fragments are not supported and will be discarded');
-			molecule = molecule.getScaffold();
-			if (molecule.atoms.count() === 0)
-				resolve('');
-			else {
-				molecule = molecule.clone();
-				molecule.sgroups.each(function(sgid, sg) {
-					if (sg.type !== 'MUL')
-						throw Error('InChi data format doesn\'t support s-groups');
-				}, this);
-
-				resolve(ui.server.inchi({ moldata: moldata }));
-			}
-		}
-	});
-};
-
-ui.onChange_FileFormat = function (event)
-{
-	var format = $('file_format').value,
-	    output = $('output_mol');
-
-	// TODO: disable form controls; spinner?
-	ui.convertMolecule(ui.ctab, format).then(function (res) {
-		output.value = res;
-		output.style.wordWrap = (format == 'mol') ? 'normal' : 'break-word';
-		$('mol_data').value = format + '\n' + output.value;
-		output.activate();
-	}, function (err) {
-        output.value = '';		// we really need this?
-        ui.hideDialog('save_file');
-		ui.echo('ERROR: ' + err.message);
-		//if (ui.forwardExceptions)
-        //    throw er;
-	});
-};
-
-ui.onSelect_OpenFromInput = function ()
-{
-    $('open_from_input').show();
-    $('open_from_file').hide();
-    ui.onChange_Input.call($('input_mol'));
-    $('input_mol').activate();
-};
-
-ui.onSelect_OpenFromFile = function ()
-{
-    $('open_from_file').show();
-    $('open_from_input').hide();
-    $('molfile_path').focus();
-};
-
-ui.getFile = function ()
-{
-    var frame_body;
-
-    if ('contentDocument' in $('buffer_frame'))
-        frame_body = $('buffer_frame').contentDocument.body;
-    else // IE7
-        frame_body = document.frames['buffer_frame'].document.body;
-
-    return Base64.decode(frame_body.title);
-};
-
-// TODO: refactor me
-ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
-{
-    var updateFunc = function(struct) {
-        if (discardRxnArrow)
-            struct.rxnArrows.clear();
-        if (paste) {
-            (function(struct) {
-                struct.rescale();
-                if (!ui.copy(struct)) {
-                    alert("Not a valid structure to paste");
-                    return;
-                }
-                ui.editor.deselectAll();
-                ui.selectAction('paste');
-            }).call(this, struct);
-        } else {
-            ui.updateMolecule.call(this, struct);
-        }
-    }
-
-	var smiles = mol_string.strip();
-    if (smiles.indexOf('\n') == -1) {
-        if (ui.standalone) {
-            if (smiles != '') {
-                ui.echo('SMILES is not supported in a standalone mode.');
-            }
-            return;
-        }
-	    var request = ui.server.layout_smiles(null, {smiles: smiles});
-	    request.then(function (res) {
-		    updateFunc.call(ui, ui.parseCTFile(res));
-	    });
-    } else if (!ui.standalone && force_layout) {
-	    var req = ui.server.layout({moldata: mol_string},
-	                               selective_layout ? {'selective': 1} : null);
-	    req.then(function (res) {
-		    updateFunc.call(ui, ui.parseCTFile(res));
-	    });
-    } else {
-        updateFunc.call(ui, ui.parseCTFile(mol_string, check_empty_line));
-    }
-};
-
-// Called from iframe's 'onload'
-ui.loadMoleculeFromFile = function ()
-{
-    var file = ui.getFile();
-    if (file.startsWith('Ok.'))
-        ui.loadMolecule(file.substr(file.indexOf('\n') + 1), false, false, $('checkbox_open_copy').checked);
-};
-
-ui.loadMoleculeFromInput = function ()
-{
-    if (!util.strip($('input_mol').value)) {
-        alert("The inpus field is empty. Please enter a structure in SMILES or MOLFile/RXNFile format.");
-        return;
-    }
-    ui.hideDialog('open_file');
-    ui.loadMolecule($('input_mol').value, false, true, $('checkbox_open_copy').checked);
 };

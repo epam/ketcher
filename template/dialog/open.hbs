@@ -1,31 +1,16 @@
-<div class="dialogWindow fileDialog" id="open_file" style="display:none;">
-	<div style="width:100%">
-		<div>
-			Open File
-		</div>
-		<div style="height:0.5em"></div>
-		<div class="serverRequired" style="font-size:small">
-			<input type="radio" id="radio_open_from_input" name="input_source" checked>Input</input>
-			<input type="radio" id="radio_open_from_file" name="input_source">File</input>
-		</div>
-		<div class="serverRequired" style="font-size:small" align="left">
-			<input type="checkbox" id="checkbox_open_copy" name="open_mode">Load as a fragment and copy to the Clipboard</input>
-		</div>
-		<div class="serverRequired" id="open_from_file">
-			<form id="upload_mol" style="margin-top:4px" action="open" enctype="multipart/form-data" target="buffer_frame" method="post">
-				<input type="file" name="filedata" id="molfile_path">
-				<div style="margin-top:0.5em;text-align:center">
-					<input id="upload_cancel" type="button" value="Cancel">
-					<input type="submit" value="OK">
-				</div>
-			</form>
-		</div>
-		<div style="margin:4px;" id="open_from_input">
-			<textarea class="chemicalText" id="input_mol" wrap="off"></textarea>
-			<div style="margin-top:0.5em;text-align:center">
-				<input id="read_cancel" type="button" value="Cancel">
-				<input id="read_ok" type="submit" value="OK">
-			</div>
-		</div>
-	</div>
-</div>
+<form role="dialog" id="open-file" style="display:none;">
+	<header>Open Structure</header>
+	<textarea></textarea>
+	<label>
+		<input type="checkbox" name="fragment">
+		Load as a fragment and copy to the Clipboard
+	</label>
+	<footer>
+		<label class="open">
+			Open From File…
+			<input accept="chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-daylight-smiles,chemical/x-inchi,.mol,.rxn,.smi,.smiles,.inchi" type="file">
+		</label>
+		<input type="button" value="Cancel">
+		<input type="button" value="OK">
+	</footer>
+</form>

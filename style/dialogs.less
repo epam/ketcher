@@ -20,26 +20,6 @@
 	z-index:  30;
 }
 
-.dialogWindow {
-	&> div > div:first-child, header {
-		background-color: #D0D0D0;
-	}
-	z-index:  50;
-	background-color: #E0E0E0;
-	border-color: #F0F0F0;
-	border-style: outset;
-	border-width: thin;
-	padding: 4px;
-	text-align: center;
-}
-
-.chemicalText {
-	width: 320px;
-	height: 320px;
-	overflow: auto;
-	white-space: pre;
-}
-
 /////////////////////
 
 .overlay {
@@ -70,7 +50,7 @@
 		vertical-align: middle;
 	}
 
-	form[role=dialog], .dialogWindow {
+	form[role=dialog] {
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
@@ -93,7 +73,7 @@ form[role=dialog] {
 	}
 	header, footer {
 		margin: 0;
-		padding: 0.2em;
+		padding: 0.2em 0.6em;
 		background-color: #f5f5f5;
 	}
 	header {
@@ -101,13 +81,11 @@ form[role=dialog] {
 		font-weight: 600;
 		line-height: 1.3;
 		border-bottom: 1px solid #ddd;
-		padding-left: 0.6em;
 	}
 	footer {
 		clear: both;
 		border-top: 1px solid #ddd;
 		text-align: right;
-		padding-right: 0.6em;
 	}
 }
 
@@ -155,7 +133,7 @@ input[type=reset], input[type=button] {
 		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
 	}
 
-	&[disabled], fieldset[disabled] & {
+	&.disabled, &[disabled], fieldset[disabled] & {
 		background-image: none;
 		cursor: not-allowed;
 		.opacity(.5);
@@ -589,5 +567,52 @@ legend {
 		&.selected {
 			.highlight-invert;
 		}
+	}
+}
+
+#open-file {
+	// constrain dialog resizebility
+	// max-width: 50%;
+	// max-height: 70%;
+	label {
+		display: block;
+	}
+	textarea {
+		width: 23em;
+		height: 20em;
+		overflow: auto;
+		white-space: pre;
+		//make it resizable
+		resize: both;
+	}
+	.open {
+		&:extend(button all);
+		float: left;
+	}
+	input[type=file] {
+		// hide
+		left: -9999px;
+		position: absolute;
+	}
+}
+
+#save-file {
+	label {
+		display: block;
+		text-align: right;
+	}
+	select {
+		width: 16em;
+	}
+	textarea {
+		width: 23em;
+		height: 20em;
+		overflow: auto;
+		white-space: pre;
+		resize: both;
+	}
+	.save {
+		&:extend(button all);
+		float: left;
 	}
 }

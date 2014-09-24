@@ -61,6 +61,7 @@ ui.server = (function(window) {
 		layout_smiles: apiRequest('GET', 'layout'),
 		layout: apiRequest('POST', 'layout'),
 		smiles: apiRequest('POST', 'smiles'),
+		save: apiRequest('POST', 'save'),
 		knocknock: function () {
 			return util.ajax(ui.api_path + 'knocknock').then(function (xhr) {
 				if (xhr.responseText != 'You are welcome!')

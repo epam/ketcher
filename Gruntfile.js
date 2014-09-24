@@ -48,6 +48,7 @@ module.exports = function(grunt) {
 				src: [//'script/vendor/es5-shim.js',
 				      'script/vendor/html5shiv.js',
 				      'script/vendor/base64.js',
+				      'script/vendor/FileSaver.js',
 
 				      'script/util/*.js',
 

@@ -4,14 +4,14 @@
   "version": "2.0.0-alfa0",
   "description": "Web-based molecule sketcher",
   "main": "ketcher.js",
-  "homepage": "http://ggasoftware.com/opensource/ketcher",
+  "homepage": "http://lifescience.opensource.epam.com/ketcher",
   "author": {
-    "name": "GGA Software Services LCC",
-    "url": "http://ggasoftware.com"
+    "name": "EPAM Life Sciences",
+    "url": "http://lifescience.opensource.epam.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ggasoftware/ketcher.git"
+    "url": "https://github.com/epam/ketcher.git"
   },
   "keywords": [
     "molecule",
@@ -20,10 +20,10 @@
   ],
   "license": {
     "type": "GNU AGPLv3",
-    "url": "https://raw.github.com/ggasoftware/ketcher/master/LICENSE.GPL"
+    "url": "https://raw.github.com/epam/ketcher/master/LICENSE"
   },
   "bugs": {
-    "url": "https://github.com/ggasoftware/ketcher/issues"
+    "url": "https://github.com/epam/ketcher/issues"
   },
   "dependencies": {},
   "devDependencies": {

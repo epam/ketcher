@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
 			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
-			distrib: ['LICENSE.GPL', 'favicon.ico', 'logo.jpg',
+			distrib: ['LICENSE', 'favicon.ico', 'logo.jpg',
 			          'demo.html', 'templates.sdf'],
 			server: 'server/python/ketcher.py',
 

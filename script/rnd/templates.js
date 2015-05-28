@@ -1,22 +1,10 @@
-/****************************************************************************
- * Copyright (C) 2009-2012 GGA Software Services LLC
- *
- * This file may be distributed and/or modified under the terms of the
- * GNU Affero General Public License version 3 as published by the Free
- * Software Foundation and appearing in the file LICENSE.GPL included in
- * the packaging of this file.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- ***************************************************************************/
-
 if (!window.rnd)
     throw new Error("rnd should be defined prior to loading this file");
 
 rnd.templates = [
     {
         name: "benzene",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -39,7 +27,7 @@ rnd.templates = [
     },
     {
         name: "cyclopentadiene",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -60,7 +48,7 @@ rnd.templates = [
     },
     {
         name: "cyclohexane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -83,7 +71,7 @@ rnd.templates = [
     },
     {
         name: "cyclopentane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -104,7 +92,7 @@ rnd.templates = [
     },
     {
         name: "cyclopropane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -121,7 +109,7 @@ rnd.templates = [
     },
     {
         name: "cyclobutane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -140,7 +128,7 @@ rnd.templates = [
     },
     {
         name: "cycloheptane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +
@@ -165,7 +153,7 @@ rnd.templates = [
     },
     {
         name: "cyclooctane",
-        molfile: 
+        molfile:
             "\n" +
             "  Ketcher 11161218352D 1   1.00000     0.00000     0\n" +
             "\n" +

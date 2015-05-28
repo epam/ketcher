@@ -1,18 +1,6 @@
-/****************************************************************************
- * Copyright (C) 2009-2010 GGA Software Services LLC
- * 
- * This file may be distributed and/or modified under the terms of the
- * GNU Affero General Public License version 3 as published by the Free
- * Software Foundation and appearing in the file LICENSE.GPL included in
- * the packaging of this file.
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- ***************************************************************************/
-
 if (!window.chem || !chem.Struct)
     throw new Error("Vec2 and Molecule should be defined first");
-    
+
 chem.CisTrans = function (mol, neighbors_func, context)
 {
     this.molecule = mol;
@@ -112,7 +100,7 @@ chem.CisTrans.prototype._sortSubstituents = function (substituents)
 chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
 {
    // it must be [C,N,Si]=[C,N,Si] bond
-   
+
    var bond = this.molecule.bonds.get(bond_idx);
 
    if (bond.type != chem.Struct.BOND.TYPE.DOUBLE)
@@ -142,14 +130,14 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
 
    var i;
    var nei;
-   
+
    for (i = 0; i < nei_begin.length; i++)
    {
       nei = nei_begin[i];
-      
+
       if (nei.bid == bond_idx)
          continue;
-      
+
       if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
@@ -165,7 +153,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bond_idx, substituents)
 
       if (nei.bid == bond_idx)
          continue;
-      
+
       if (this.molecule.bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE)
          return false;
 
@@ -187,8 +175,8 @@ chem.CisTrans.prototype.build = function (exclude_bonds)
 {
    this.molecule.bonds.each(function (bid, bond)
    {
-      var ct = this.bonds.set(bid, 
-      { 
+      var ct = this.bonds.set(bid,
+      {
          parity: 0,
          substituents: new Array(4)
       });
@@ -212,4 +200,4 @@ chem.CisTrans.prototype.build = function (exclude_bonds)
 };
 
 
-    
+

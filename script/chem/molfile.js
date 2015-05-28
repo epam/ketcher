@@ -1,15 +1,3 @@
-/****************************************************************************
- * Copyright (C) 2009-2010 GGA Software Services LLC
- *
- * This file may be distributed and/or modified under the terms of the
- * GNU Affero General Public License version 3 as published by the Free
- * Software Foundation and appearing in the file LICENSE.GPL included in
- * the packaging of this file.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- ***************************************************************************/
-
 if (!window.chem || !util.Vec2 || !chem.Struct)
 	throw new Error("Vec2 and Molecule should be defined first");
 
@@ -962,7 +950,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 	var mol = this.molecule;
 	var sgroups = mol.sgroups;
 	var toRemove = [];
-    
+
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function(id) {
 		var sg = mol.sgroups.get(id);
 		try {
@@ -1566,7 +1554,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
             mol = mols[j];
             mol.scale(avgBondLength);
         }
-        
+
 	for (j = 0; j < mols.length; ++j) {
             mol = mols[j];
             var bb = mol.getCoordBoundingBoxObj();

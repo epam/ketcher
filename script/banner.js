@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2009-<%= grunt.template.today("yyyy") %> GGA Software Services LLC
+ * Copyright (C) 2009-<%= grunt.template.today("yyyy") %>. EPAM Systems.
  *
  * This file may be distributed and/or modified under the terms of the
  * GNU Affero General Public License version 3 as published by the Free

@@ -467,8 +467,6 @@ ui.setScrollOffsetRel = function (dx, dy) {
 //
 ui.onClick_CleanUp = function ()
 {
-    if (this.hasAttribute('disabled'))
-        return;
     var atoms = util.array(ui.editor.getSelection(true).atoms);
     var selective = atoms.length > 0;
     if (selective) {

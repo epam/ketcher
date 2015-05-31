@@ -3,7 +3,7 @@ ketcher = function () {
 };
 
 // TODO: generate on build time
-ketcher.version = "2.0.0-alfa0";
+ketcher.version = "2.0.0-alpha.1";
 
 ketcher.getSmiles = function () {
 	var saver = ui.standalone ? new chem.SmilesSaver() : new chem.MolfileSaver(),

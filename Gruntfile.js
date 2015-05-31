@@ -20,10 +20,6 @@ module.exports = function(grunt) {
 			server: 'server/python/ketcher.py',
 
 			pkg: '<%= pkg %>',
-			git: {
-				tag: '<%= gitinfo.local.branch.current.tag %>',
-				rev: '<%= gitinfo.local.branch.current.lastCommitNumber %>'
-			},
 
 			// build options
 			// is there a way to automate?
@@ -157,15 +153,11 @@ module.exports = function(grunt) {
 
 		compress: {
 			options: {
-				basename: '<%= pkg.name %>-' +
-					      '<%= gitinfo.local && options.git.tag || ' +
-					      'gitinfo.local && "rev-" + options.git.rev || ' +
-					      'pkg.version %>',
 				level: 9
 			},
 			build: {
 				options: {
-					archive: '<%= compress.options.basename %>.zip'
+					archive: '<%= pkg.name %>-<%= pkg.version %>.zip'
 				},
 				files: [
 					{
@@ -183,7 +175,7 @@ module.exports = function(grunt) {
 			},
 			build_with_sources: {
 				options: {
-					archive: '<%= compress.options.basename %>-src.zip'
+					archive: '<%= pkg.name %>-<%= pkg.version %>-src.zip'
 				},
 				// TODO: add server parts to source
 				src: ['<%= options.build %>', '<%= options.libs %>',
@@ -199,6 +191,17 @@ module.exports = function(grunt) {
 			tmp: '.tmp/**'
 		},
 
+    shell: {
+      rev: {
+        command: 'git rev-list <%= pkg.version %>..HEAD --count',
+        options: {
+          stdout: false,
+          stderr: false,
+          callback: patchVersionRev
+        }
+      }
+    },
+
 		watch: {
 			options: {
 				atBegin: true
@@ -213,7 +216,7 @@ module.exports = function(grunt) {
 			},
 			html: {
 				files: 'template/**',
-				tasks: ['gitinfo', 'assemble']
+				tasks: ['shell:rev', 'assemble']
 			},
 			livereload: {
 				options: {
@@ -225,6 +228,14 @@ module.exports = function(grunt) {
 		}
 	});
 
+  function patchVersionRev (err, stdout, _, cb) {
+    if (err && err.code != 127)  // not "command not found", so git is here
+      grunt.log.error('Couldn\'t fetch revision. Please git tag the package version.');
+    else if (!err && stdout > 0)
+      grunt.config('pkg.version', grunt.config('pkg.version') + ('+r' + stdout).trim());
+    cb();
+  }
+
 	require('load-grunt-tasks')(grunt);
 	// waiting for assemble 0.5.0
 	grunt.loadNpmTasks('assemble');
@@ -232,9 +243,9 @@ module.exports = function(grunt) {
 	grunt.registerTask('font', ['fontello', 'clean:tmp']);
 
 	// clean:tmp in the end as workaround rimraf bug
-	grunt.registerTask('default', ['gitinfo', 'clean', 'less:default',
+	grunt.registerTask('default', ['shell:rev', 'clean', 'less:default',
 	                               'fontello', 'uglify', 'assemble',
 	                               'copy', 'compress', 'clean:tmp']);
-	grunt.registerTask('dev', ['gitinfo', 'clean', 'less:dev', 'fontello',
+	grunt.registerTask('dev', ['shell:rev', 'clean', 'less:dev', 'fontello',
 	                           'concat', 'assemble', 'copy', 'clean:tmp']);
 };

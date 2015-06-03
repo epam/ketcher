@@ -3,6 +3,8 @@
 /ketcher.*
 /*.zip
 
+.idea/
+
 /*.js
 !/Gruntfile.js
 

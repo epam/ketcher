@@ -10,3 +10,6 @@
 
 *.pyc
 .tern-port
+
+#Browserify compiled js
+dist/

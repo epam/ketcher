@@ -37,6 +37,9 @@ module.exports = function (grunt) {
 
         browserify: {
             options: {
+                browserifyOptions: {
+                    debug: true
+                },
                 transform: [
                     [
                         'browserify-replace',
@@ -50,7 +53,7 @@ module.exports = function (grunt) {
             },
             dev: {
                 files: {
-                    'dist/kercher.dev.js': ['src/main.js']
+                    'dist/kercher.dev.js': ['src/app.js']
                 }
             }
         },

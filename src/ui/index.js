@@ -1,6 +1,5 @@
 /*global require, global:false*/
 
-require('../vendor/prototype-min');
 require('./actions');
 require('./keys');
 require('./server');

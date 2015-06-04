@@ -1,7 +1,16 @@
+/*global require, global, chem:false*/
+
+require('../ui');
+require('../../chem');
+require('../../util');
+
+var ui = global.ui = global.ui || function () {};
+var chem = global.chem;
+var util = global.util;
+
 ui.initDialogs = function () {
-	// Label input events
-    $('input_label').observe('blur', function ()
-    {
+    // Label input events
+    $('input_label').observe('blur', function () {
         this.hide();
     });
     $('input_label').observe('keypress', ui.onKeyPress_InputLabel);
@@ -12,20 +21,16 @@ ui.initDialogs = function () {
     $('atom_charge').observe('change', ui.onChange_AtomCharge);
     $('atom_isotope').observe('change', ui.onChange_AtomIsotope);
     $('atom_valence').observe('change', ui.onChange_AtomValence);
-    $('atom_prop_cancel').observe('click', function ()
-    {
+    $('atom_prop_cancel').observe('click', function () {
         ui.hideDialog('atom_properties');
     });
-    $('atom_prop_ok').observe('click', function ()
-    {
+    $('atom_prop_ok').observe('click', function () {
         ui.applyAtomProperties();
     });
-    $('bond_prop_cancel').observe('click', function ()
-    {
+    $('bond_prop_cancel').observe('click', function () {
         ui.hideDialog('bond_properties');
     });
-    $('bond_prop_ok').observe('click', function ()
-    {
+    $('bond_prop_ok').observe('click', function () {
         ui.applyBondProperties();
     });
 };
@@ -33,22 +38,25 @@ ui.initDialogs = function () {
 //
 // Atom attachment points dialog
 //
-ui.showAtomAttachmentPoints = function(params)
-{
+ui.showAtomAttachmentPoints = function (params) {
     $('atom_ap1').checked = ((params.selection || 0) & 1) > 0;
     $('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
     ui.showDialog('atom_attpoints');
-    var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function() {
+    var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function () {
         _onOk.stop();
         _onCancel.stop();
         ui.hideDialog('atom_attpoints');
-        if ('onOk' in params) params['onOk'](($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
+        if ('onOk' in params) {
+            params.onOk(($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
+        }
     }).start();
-    var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function() {
+    var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function () {
         _onOk.stop();
         _onCancel.stop();
         ui.hideDialog('atom_attpoints');
-        if ('onCancel' in params) params['onCancel']();
+        if ('onCancel' in params) {
+            params.onCancel();
+        }
     }).start();
     $('atom_attpoints_ok').focus();
 };
@@ -56,8 +64,7 @@ ui.showAtomAttachmentPoints = function(params)
 //
 // Atom properties dialog
 //
-ui.showAtomProperties = function (id)
-{
+ui.showAtomProperties = function (id) {
     $('atom_properties').atom_id = id;
     $('atom_label').value = ui.render.atomGetAttr(id, 'label');
     ui.onChange_AtomLabel.call($('atom_label'));
@@ -66,7 +73,7 @@ ui.showAtomProperties = function (id)
     value = ui.render.atomGetAttr(id, 'isotope') - 0;
     $('atom_isotope').value = (value == 0 ? '' : value);
     value = ui.render.atomGetAttr(id, 'explicitValence') - 0;
-    $('atom_valence').value =  value < 0 ? '' : value;
+    $('atom_valence').value = value < 0 ? '' : value;
     $('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
 
     $('atom_inversion').value = ui.render.atomGetAttr(id, 'invRet');
@@ -80,94 +87,98 @@ ui.showAtomProperties = function (id)
     $('atom_label').activate();
 };
 
-ui.applyAtomProperties = function ()
-{
+ui.applyAtomProperties = function () {
     ui.hideDialog('atom_properties');
 
     var id = $('atom_properties').atom_id;
 
     ui.addUndoAction(ui.Action.fromAtomsAttrs(id,
-    {
-        label: $('atom_label').value,
-        charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value),
-        isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value),
-        explicitValence: $('atom_valence').value == '' ? -1 : parseInt($('atom_valence').value),
-        radical: parseInt($('atom_radical').value),
-        // reaction flags
-        invRet: parseInt($('atom_inversion').value),
-        exactChangeFlag: parseInt($('atom_exactchange').value) ? true : false,
-        // query flags
-        ringBondCount: parseInt($('atom_ringcount').value),
-        substitutionCount: parseInt($('atom_substitution').value),
-        unsaturatedAtom: parseInt($('atom_unsaturation').value),
-        hCount: parseInt($('atom_hcount').value)
-    }), true);
+        {
+            label: $('atom_label').value,
+            charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value, 10),
+            isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value, 10),
+            explicitValence: $('atom_valence').value == '' ? -1 : parseInt($('atom_valence').value, 10),
+            radical: parseInt($('atom_radical').value, 10),
+            // reaction flags
+            invRet: parseInt($('atom_inversion').value, 10),
+            exactChangeFlag: parseInt($('atom_exactchange').value, 10) ? true : false,
+            // query flags
+            ringBondCount: parseInt($('atom_ringcount').value, 10),
+            substitutionCount: parseInt($('atom_substitution').value, 10),
+            unsaturatedAtom: parseInt($('atom_unsaturation').value, 10),
+            hCount: parseInt($('atom_hcount').value, 10)
+        }), true);
 
     ui.render.update();
 };
 
-ui.onChange_AtomLabel = function ()
-{
+ui.onChange_AtomLabel = function () {
     this.value = this.value.strip().capitalize();
 
     var element = chem.Element.getElementByLabel(this.value);
 
-    if (element == null && this.value != 'A' && this.value != '*' && this.value != 'Q' && this.value != 'X' && this.value != 'R') {
+    if (
+        element == null && this.value !== 'A' &&
+        this.value !== '*' && this.value !== 'Q' && this.value !== 'X' &&
+        this.value !== 'R'
+    ) {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
 
-        if (this.value != 'A' && this.value != '*')
+        if (this.value !== 'A' && this.value !== '*') {
             element = chem.Element.getElementByLabel(this.value);
+        }
     }
 
-    if (this.value == 'A' || this.value == '*')
-        $('atom_number').value = "any";
-    else if (!element)
-        $('atom_number').value = "";
-    else
+    if (this.value == 'A' || this.value == '*') {
+        $('atom_number').value = 'any';
+    } else if (!element) {
+        $('atom_number').value = '';
+    } else {
         $('atom_number').value = element.toString();
+    }
 };
 
-ui.onChange_AtomCharge = function ()
-{
-    if (this.value.strip() == '' || this.value == '0')
+ui.onChange_AtomCharge = function () {
+    if (this.value.strip() === '' || this.value == '0') {
         this.value = '';
-    else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/))
+    } else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
         this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
-    else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/))
+    } else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/)) {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'charge');
+    }
 };
 
-ui.onChange_AtomIsotope = function ()
-{
-    if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0')
+ui.onChange_AtomIsotope = function () {
+    if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0') {
         this.value = '';
-    else if (!this.value.match(/^[1-9][0-9]{0,2}$/))
+    } else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
         this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');
+    }
 };
 
-ui.onChange_AtomValence = function ()
-{
+ui.onChange_AtomValence = function () {
     /*
-    if (this.value.strip() == '')
-        this.value = '';
-    else if (!this.value.match(/^[0-9]$/))
-        this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
-    */
+     if (this.value.strip() == '')
+     this.value = '';
+     else if (!this.value.match(/^[0-9]$/))
+     this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+     */
 };
 
 //
 // Bond properties dialog
 //
-ui.showBondProperties = function (id)
-{
+ui.showBondProperties = function (id) {
+    var bond;
     $('bond_properties').bond_id = id;
 
     var type = ui.render.bondGetAttr(id, 'type');
     var stereo = ui.render.bondGetAttr(id, 'stereo');
 
-    for (var bond in ui.bondTypeMap) {
-        if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo)
+    for (bond in ui.bondTypeMap) {
+        if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo) {
             break;
+        }
     }
 
     $('bond_type').value = bond;
@@ -178,15 +189,14 @@ ui.showBondProperties = function (id)
     $('bond_type').activate();
 };
 
-ui.applyBondProperties = function ()
-{
+ui.applyBondProperties = function () {
     ui.hideDialog('bond_properties');
 
     var id = $('bond_properties').bond_id;
     var bond = Object.clone(ui.bondTypeMap[$('bond_type').value]);
 
-    bond.topology = parseInt($('bond_topology').value);
-    bond.reactingCenterStatus = parseInt($('bond_center').value);
+    bond.topology = parseInt($('bond_topology').value, 10);
+    bond.reactingCenterStatus = parseInt($('bond_center').value, 10);
 
     ui.addUndoAction(ui.Action.fromBondAttrs(id, bond), true);
 
@@ -197,17 +207,19 @@ ui.applyBondProperties = function ()
 // Reaction auto-mapping
 //
 
-ui.showAutomapProperties = function(params)
-{
+ui.showAutomapProperties = function (params) {
     ui.showDialog('automap_properties');
+    var _onOk;
+    var _onCancel;
 
-    var _onOk = new Event.Handler('automap_ok', 'click', undefined, function() {
+    _onOk = new Event.Handler('automap_ok', 'click', undefined, function () {
         _onOk.stop();
         _onCancel.stop();
         if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
         ui.hideDialog('automap_properties');
     }).start();
-    var _onCancel = new Event.Handler('automap_cancel', 'click', undefined, function() {
+
+    _onCancel = new Event.Handler('automap_cancel', 'click', undefined, function() {
         _onOk.stop();
         _onCancel.stop();
         ui.hideDialog('automap_properties');
@@ -217,28 +229,29 @@ ui.showAutomapProperties = function(params)
     $('automap_mode').activate();
 };
 
-ui.showRLogicTable = function(params)
-{
-    params = params || {};
+ui.showRLogicTable = function (args) {
+    var params = args || {};
     params.rlogic = params.rlogic || {};
     $('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
     $('rlogic_resth').value = params.rlogic.resth ? '1' : '0';
     var ifOptHtml = '<option value="0">Always</option>';
-    for (var r = 1; r <= 32; r++) if (r != params.rgid && 0 != (params.rgmask & (1 << (r - 1)))) {
-        ifOptHtml += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
+    for (var r = 1; r <= 32; r++) {
+        if (r != params.rgid && (params.rgmask & (1 << (r - 1))) != 0) {
+            ifOptHtml += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
+        }
     }
     $('rlogic_if').outerHTML = '<select id="rlogic_if">' + ifOptHtml + '</select>'; // [RB] thats tricky because IE8 fails to set innerHTML
     $('rlogic_if').value = params.rlogic.ifthen;
     ui.showDialog('rlogic_table');
 
-    var _onOk = new Event.Handler('rlogic_ok', 'click', undefined, function() {
+    var _onOk = new Event.Handler('rlogic_ok', 'click', undefined, function () {
         var result = {
-            'occurrence' : $('rlogic_occurrence').value
+            'occurrence': $('rlogic_occurrence').value
                 .replace(/\s*/g, '').replace(/,+/g, ',').replace(/^,/, '').replace(/,$/, ''),
-            'resth' : $('rlogic_resth').value == '1',
-            'ifthen' : parseInt($('rlogic_if').value)
+            'resth': $('rlogic_resth').value == '1',
+            'ifthen': parseInt($('rlogic_if').value, 10)
         };
-        if (!params || !('onOk' in params) || params['onOk'](result)) {
+        if (!params || !('onOk' in params) || params.onOk(result)) {
             _onOk.stop();
             _onCancel.stop();
             ui.hideDialog('rlogic_table');

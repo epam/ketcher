@@ -1,12 +1,19 @@
 // TODO: exclude from no-groups build
+/*global require, global*/
 
-ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
-{
+/* eslint-disable */
+
+require('../ui');
+
+var ui = global.ui = global.ui || function () {};
+
+ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel) {
     if (!tool) {
-        throw new Error("Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.");
+        throw new Error('Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.');
     }
-    if ($('sgroup_properties').visible())
+    if ($('sgroup_properties').visible()) {
         return;
+    }
 
     var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
 
@@ -14,25 +21,26 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel)
     $('sgroup_type').value = type;
     ui.onChange_SGroupType.call($('sgroup_type'));
 
-    switch (type)
-    {
-    case 'SRU':
-        $('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
-        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'subscript');
-        break;
-    case 'MUL':
-        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
-        break;
-    case 'SUP':
-        $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
-        break;
-    case 'DAT':
-        $('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
-        $('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
-        var isAttached = ui.render.sGroupGetAttr(id, 'attached');
-        var isAbsolute = ui.render.sGroupGetAttr(id, 'absolute');
-        (isAttached ? $('sgroup_pos_attached') : (isAbsolute ? $('sgroup_pos_absolute') : $('sgroup_pos_relative'))).checked = true;
-        break;
+    switch (type) {
+        case 'SRU':
+            $('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
+            $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'subscript');
+            break;
+        case 'MUL':
+            $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
+            break;
+        case 'SUP':
+            $('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
+            break;
+        case 'DAT':
+            $('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
+            $('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
+            var isAttached = ui.render.sGroupGetAttr(id, 'attached');
+            var isAbsolute = ui.render.sGroupGetAttr(id, 'absolute');
+            (isAttached ? $('sgroup_pos_attached') : (isAbsolute ? $('sgroup_pos_absolute') : $('sgroup_pos_relative'))).checked = true;
+            break;
+        default:
+            break;
     }
 
     if (type != 'DAT')

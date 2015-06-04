@@ -4,7 +4,7 @@
 
 require('../chem');
 
-var ui = global.ui = global.ui || {};
+var ui = global.ui = global.ui || function () {};
 var chem = global.chem;
 
 ui.standalone = true;

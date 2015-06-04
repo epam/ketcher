@@ -1,6 +1,7 @@
 /* jshint node: true */
+/* eslint-disable */
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
 
     grunt.initConfig({
@@ -35,8 +36,22 @@ module.exports = function(grunt) {
         },
 
         browserify: {
+            options: {
+                transform: [
+                    [
+                        'browserify-replace',
+                        {
+                            replace: [
+                                {from: /__TIME_CREATED__/, to: (new Date()).toString()}
+                            ]
+                        }
+                    ]
+                ]
+            },
             dev: {
-
+                files: {
+                    'dist/kercher.dev.js': ['src/main.js']
+                }
             }
         },
 
@@ -47,7 +62,7 @@ module.exports = function(grunt) {
                     banner: '<%= options.banner %>',
                     stripBanners: true
                 },
-                src: [//'script/vendor/es5-shim.js',
+                src: [// 'script/vendor/es5-shim.js',
                     'script/vendor/html5shiv.js',
                     'script/vendor/base64.js',
                     'script/vendor/FileSaver.js',
@@ -147,10 +162,16 @@ module.exports = function(grunt) {
 
         jshint: {
             options: {
-                jshintrc: '.jshintrc'
+                jshintrc: 'jshintrc'
             },
             src: {
                 src: ['script/**/*.js', '!script/vendor/*.js']
+            },
+            commonjs: {
+                options: {
+                    jshintrc: 'src/.jshintrc'
+                },
+                src: ['src/**/*.js', '!script/vendor/*.js']
             },
             grunt: {
                 src: 'Gruntfile.js'
@@ -211,6 +232,10 @@ module.exports = function(grunt) {
         watch: {
             options: {
                 atBegin: true
+            },
+            commonjs: {
+                files: 'src/**/*.js',
+                tasks: 'browserify:dev'
             },
             js: {
                 files: 'script/**/*.js',

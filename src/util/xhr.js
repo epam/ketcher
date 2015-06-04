@@ -1,6 +1,5 @@
 /*global ActiveXObject, global:false, util:false*/
 
-
 /*eslint-disable*/
 
 if (global.XMLHttpRequest === undefined) {

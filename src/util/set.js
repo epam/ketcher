@@ -1,7 +1,5 @@
 /*global require, global:false, util:false*/
 
-require('./common');
-
 var util = global.util = global.util || {}; // jshint ignore:line
 
 util.Set = {

@@ -1,6 +1,13 @@
 /*global require, global:false, util:false*/
 
+require('./ajax');
+require('./common');
+require('./map');
+require('./pool');
 require('./promise');
+require('./set');
+require('./vec2');
+require('./xhr');
 
 var util = global.util = global.util || {}; // jshint ignore:line
 

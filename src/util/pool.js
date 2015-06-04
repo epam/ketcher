@@ -1,7 +1,5 @@
 /*global require, global:false, util:false*/
 
-require('./map');
-
 var util = global.util = global.util || {}; // jshint ignore:line
 
 util.Pool = function () {

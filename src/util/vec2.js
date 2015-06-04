@@ -2,8 +2,6 @@
 
 /*eslint-disable */
 
-require('./common');
-
 var util = global.util = global.util || {}; // jshint ignore:line
 
 util.assertDefined = function(v) {

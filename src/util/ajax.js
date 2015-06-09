@@ -1,6 +1,6 @@
 /*global require, global:false, util:false*/
 
-require('./promise');
+require('../promise');
 
 var Promise = global.Promise;
 var util = global.util = global.util || {}; // jshint ignore:line

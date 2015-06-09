@@ -8,5 +8,6 @@ require('./sgroup');
 require('./smiles');
 require('./stereocenters');
 require('./struct');
+require('./struct_valence');
 
 global.chem = global.chem || {};

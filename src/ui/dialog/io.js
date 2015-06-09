@@ -1,26 +1,26 @@
-/*global require, global, chem:false*/
+/*global require, global, ui:false*/
 
 /*eslint-disable*/
 
 require('../ui');
+require('../../promise');
 require('../../chem');
 require('../../util');
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
-var util = global.util;
 var Promise = global.Promise;
 
 ui.openDialog = function(params) {
-    var dialog = ui.showDialog('open-file'),
-        okButton = dialog.select('input[value=OK]')[0],
-        textInput = dialog.select('textarea')[0],
-        fileInput = dialog.select('input[type=file]')[0],
-        fragmentInput = dialog.select('input[name=fragment]')[0],
-        readFile,
-        handlers = [];
+    var dialog = ui.showDialog('open-file');
+    var okButton = dialog.select('input[value=OK]')[0];
+    var textInput = dialog.select('textarea')[0];
+    var fileInput = dialog.select('input[type=file]')[0];
+    var fragmentInput = dialog.select('input[name=fragment]')[0];
+    var readFile;
+    var handlers = [];
 
-    handlers[0] = dialog.on('click', 'input[type=button]', function(_, button) {
+    handlers[0] = dialog.on('click', 'input[type=button]', function (_, button) {
         handlers.forEach(function (h) { h.stop(); });
         ui.hideDialog('open-file');
 
@@ -34,7 +34,7 @@ ui.openDialog = function(params) {
         }
     });
 
-    handlers[1] = fileInput.on('change', function(_, input) {
+    handlers[1] = fileInput.on('change', function (_, input) {
         console.assert(readFile, 'No valid file opener');
         if (input.files.length) {
             dialog.select('input').each(function (el) {
@@ -96,7 +96,7 @@ ui.fileOpener = function() {
 
         if (global.ActiveXObject) {
             try {
-                var fso = new ActiveXObject("Scripting.FileSystemObject");
+                var fso = new global.ActiveXObject('Scripting.FileSystemObject');
                 return resolve(function (file) {
                     return Promise.resolve(throughFileSystemObject(fso, file));
                 });

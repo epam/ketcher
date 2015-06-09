@@ -78,7 +78,7 @@ ui.selectDialog = function (name, params) {
 
         button.toggleClassName('selected');
         if (params.required) {
-            okButton.disabled = dialog.select('.selected').length == 0;
+            okButton.disabled = dialog.select('.selected').length === 0;
         }
         event.stop();
     });

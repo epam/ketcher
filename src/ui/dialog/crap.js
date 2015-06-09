@@ -1,10 +1,10 @@
-/*global require, global, chem:false*/
+/*global require, global, ui:false*/
 
 require('../ui');
 require('../../chem');
 require('../../util');
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
 var util = global.util;
 

@@ -5,9 +5,9 @@
 require('../tfx');
 require('../eventmap');
 require('../util');
+require('./restruct');
 require('../ui');
 require('../chem');
-require('./restruct');
 require('./restruct_rendering');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line

@@ -1,10 +1,10 @@
 /*global require, global:false*/
 
+require('./visel');
+require('./restruct');
 require('./editor');
 require('./render');
-require('./restruct');
 require('./restruct_rendering');
 require('./templates');
-require('./visel');
 
 global.rnd = global.rnd || {};

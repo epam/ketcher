@@ -53,14 +53,13 @@ module.exports = function (grunt) {
             },
             dev: {
                 files: {
-                    'dist/kercher.dev.js': ['src/app.js']
+                    'dist/kercher.dev.js': ['src/main.js']
                 }
             }
         },
 
         concat: {
             default: {  // and the only yet
-
                 options: {
                     banner: '<%= options.banner %>',
                     stripBanners: true

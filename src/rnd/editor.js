@@ -4,18 +4,13 @@
 
 require('../util');
 require('../chem');
-require('../ui');
 require('./restruct');
+require('../ui');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 var util = global.util; // jshint ignore:line
 var ui = global.ui; // jshint ignore:line
-
-if (!window.Prototype)
-    throw new Error("Prototype.js should be loaded first");
-if (!window.rnd || !rnd.ReStruct)
-    throw new Error("rnd.MolData should be defined prior to loading this file");
 
 // TODO re-factoring needed: client_area parameter is excessive, should be available in render
 rnd.Editor = function(render)

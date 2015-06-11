@@ -2,13 +2,11 @@
 
 /*eslint-disable*/
 
-require('../rnd');
 require('../util');
 require('./element');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 var util = global.util; // jshint ignore:line
-var rnd = global.rnd; // jshint ignore:line
 
 chem.Molfile = function () {};
 

@@ -1,4 +1,4 @@
-/*global require, global*/
+/*global require, global, ui:false*/
 
 /*eslint-disable*/
 
@@ -6,7 +6,7 @@ require('../chem');
 require('../util');
 require('../rnd');
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
 var util = global.util;
 var rnd = global.rnd;

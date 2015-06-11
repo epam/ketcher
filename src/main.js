@@ -1,13 +1,14 @@
 /*global require,exports,global:false*/
 
-var ui;
-var util;
-
-require('./ui/ui');
 require('./util');
+require('./chem');
+require('./rnd');
+require('./ui');
 
-ui = global.ui;
-util = global.util;
+var ui = global.ui;
+var util = global.util;
+var chem = global.chem;
+var rnd = global.rnd;
 
 var ketcher = function () {
     this.render = null;

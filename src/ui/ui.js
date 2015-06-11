@@ -1,11 +1,15 @@
-/*global require,exports, global, $$*/
+/*global require, alert, global, $$, ui:false*/
 
 /*eslint-disable*/
 
 require('../chem');
+require('../rnd');
+require('../util');
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
+var util = global.util;
+var rnd = global.rnd;
 
 ui.standalone = true;
 ui.forwardExceptions = false;
@@ -408,7 +412,7 @@ ui.onClick_ZoomOut = function () {
 ui.updateZoom = function () {
     var i = ui.zoomSelect.selectedIndex,
         len = ui.zoomSelect.length;
-    console.assert(0 <= i && i < len, "Zoom out of range");
+    console.assert(0 <= i && i < len, 'Zoom out of range');
 
     if (i == len - 1)
         ui.subEl('zoom-in').setAttribute('disabled', true);
@@ -446,7 +450,7 @@ ui.getViewSz = function () {
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
 ui.setZoomCentered = function (zoom, c) {
     if (!c)
-        throw new Error("Center point not specified");
+        throw new Error('Center point not specified');
     if (zoom) {
         ui.setZoomRegular(zoom);
     }
@@ -526,7 +530,7 @@ ui.onClick_CleanUp = function ()
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
-        alert("ERROR: " + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
+        alert('ERROR: ' + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
     }
 };
 
@@ -537,7 +541,7 @@ ui.onClick_Aromatize = function ()
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
-        alert("Molfile: " + er.message);
+        alert('Molfile: ' + er.message);
     }
 };
 
@@ -548,7 +552,7 @@ ui.onClick_Dearomatize = function ()
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
-        alert("Molfile: " + er.message);
+        alert('Molfile: ' + er.message);
     }
 };
 
@@ -601,7 +605,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
             (function(struct) {
                 struct.rescale();
                 if (!ui.copy(struct)) {
-                    alert("Not a valid structure to paste");
+                    alert('Not a valid structure to paste');
                     return;
                 }
                 ui.editor.deselectAll();
@@ -610,7 +614,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
         } else {
             ui.updateMolecule.call(this, struct);
         }
-    }
+    };
 
     var smiles = mol_string.strip();
     if (smiles.indexOf('\n') == -1) {
@@ -686,7 +690,7 @@ ui.bondFlipRequired = function (bond, attrs) {
 // Get new atom id/label and pos for bond being added to existing atom
 ui.atomForNewBond = function (id)
 {
-    var neighbours = new Array();
+    var neighbours = [];
     var pos = ui.render.atomGetPos(id);
 
     ui.render.atomGetNeighbors(id).each(function (nei)
@@ -728,7 +732,7 @@ ui.atomForNewBond = function (id)
             // zig-zag
             var nei = ui.render.atomGetNeighbors(id)[0];
             if (ui.render.atomGetDegree(nei.aid) > 1) {
-                var nei_neighbours = new Array();
+                var nei_neighbours = [];
                 var nei_pos = ui.render.atomGetPos(nei.aid);
                 var nei_v = util.Vec2.diff(pos, nei_pos);
                 var nei_angle = Math.atan2(nei_v.y, nei_v.x);
@@ -852,12 +856,12 @@ ui.copy = function (struct, selection)
 
     ui.clipboard =
     {
-        atoms: new Array(),
-        bonds: new Array(),
-        sgroups: new Array(),
-        rxnArrows: new Array(),
-        rxnPluses: new Array(),
-        chiralFlags: new Array(),
+        atoms: [],
+        bonds: [],
+        sgroups: [],
+        rxnArrows: [],
+        rxnPluses: [],
+        chiralFlags: [],
         rgmap: {},
         rgroups: {},
         // RB: let it be here for the moment
@@ -1056,7 +1060,7 @@ ui.parseCTFile = function (molfile, check_empty_line) {
     } catch (er) {
         if (ui.forwardExceptions)
             throw er;
-        alert("Error loading molfile.\n"+er.toString());
+        alert('Error loading molfile.\n'+er.toString());
         return null;
     }
 };
@@ -1106,7 +1110,7 @@ ui.actionMap = {
 // TODO: rewrite declaratively, merge to actionMap
 ui.mapTool = function(id) {
 
-    console.assert(id, "The null tool");
+    console.assert(id, 'The null tool');
 
     // special cases
     if (ui.editor.hasSelection()) {

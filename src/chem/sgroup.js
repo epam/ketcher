@@ -4,7 +4,7 @@
 
 require('../util');
 require('./element');
-require('../rnd');
+require('../rnd/restruct_rendering'); //don't require whole rnd module
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 var util = global.util; // jshint ignore:line
@@ -284,7 +284,7 @@ chem.SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n,
         var t = Math.max(util.Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
         indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
         set.push(indexPath);
-    }
+    };
     if (lowerIndexText) {
         renderIndex(lowerIndexText, 0.5);
     }
@@ -309,7 +309,7 @@ chem.SGroup.drawBracket = function (render, paper, styles, d, n, c, bracketWidth
     return paper.path("M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}",
         b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
         .attr(styles.sgroupBracketStyle);
-}
+};
 
 chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) {
     var bracketParams = function(c, d, w, h) {
@@ -318,7 +318,7 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, ren
         this.n = d.rotateSC(1,0);
         this.w = w;
         this.h = h;
-    }
+    };
     var brackets = [];
     if (xbonds.length < 2) {
         (function () {

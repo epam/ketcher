@@ -949,7 +949,7 @@ rnd.ReFrag = function(/*chem.Struct.Fragment*/frag) {
     this.item = frag;
 };
 rnd.ReFrag.prototype = new rnd.ReObject();
-rnd.ReFrag.isSelectable = function() { return false; }
+rnd.ReFrag.isSelectable = function() { return false; };
 
 rnd.ReFrag.findClosest = function(render, p, skip, minDist) {
     minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);

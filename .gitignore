@@ -3,8 +3,13 @@
 /ketcher.*
 /*.zip
 
+.idea/
+
 /*.js
 !/Gruntfile.js
 
 *.pyc
 .tern-port
+
+#Browserify compiled js
+dist/

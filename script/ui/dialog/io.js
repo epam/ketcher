@@ -6,9 +6,10 @@ require('../ui');
 require('../../chem');
 require('../../util');
 
+// var base64 = require('base64-js');
+
 var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
-var Promise = global.Promise;
 
 ui.openDialog = function(params) {
     var dialog = ui.showDialog('open-file');

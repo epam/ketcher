@@ -1,5 +1,7 @@
 /*global require,exports,global:false*/
 
+var Raphael = require('./raphael-ext.js');
+
 require('./util');
 require('./chem');
 require('./rnd');

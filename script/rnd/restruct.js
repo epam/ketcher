@@ -15,19 +15,6 @@ var chem = global.chem;
 var util = global.util;
 var tfx = util.tfx;
 
-Raphael.el.translateAbs = function(x,y) {
-    this.delta = this.delta || new util.Vec2();
-    this.delta.x += x-0;
-    this.delta.y += y-0;
-    this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
-};
-
-Raphael.st.translateAbs = function (x,y) {
-    this.forEach(function (el) {
-        el.translateAbs(x,y);
-    });
-};
-
 rnd.ReObject = function()  // TODO ??? should it be in ReStruct namespace
 {
     this.__ext = new util.Vec2(0.05 * 3, 0.05 * 3);

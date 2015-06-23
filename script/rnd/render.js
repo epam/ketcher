@@ -1,6 +1,8 @@
-/*global require, global:false, chem:false, util:false, Raphael:false*/
+/*global require, global:false, chem:false, util:false*/
 
 /*eslint-disable*/
+
+var Raphael = require('../raphael-ext.js');
 
 require('../util');
 require('./restruct');

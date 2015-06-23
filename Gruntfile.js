@@ -218,7 +218,7 @@ module.exports = function (grunt) {
 					atBegin: false,
 					livereload: true
 				},
-				files: '<%= options.build %>'
+				files: 'dist/**'
 			}
 		}
 	});

@@ -1,17 +1,27 @@
-if (typeof(ui) == 'undefined')
-    ui = function () {};
+/*global require, global, ui:false*/
+
+/*eslint-disable*/
+
+require('../chem');
+require('../util');
+require('../rnd');
+
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
+var chem = global.chem;
+var util = global.util;
+var rnd = global.rnd;
 
 //
 // Undo/redo actions
 //
 ui.Action = function ()
 {
-    this.operations = new Array();
+    this.operations = [];
 };
 
 ui.Action.prototype.addOp = function(op) {
     if (!op.isDummy(ui.editor))
-	this.operations.push(op);
+        this.operations.push(op);
     return op;
 };
 
@@ -39,8 +49,8 @@ ui.Action.prototype.perform = function ()
 ui.Action.prototype.isDummy = function ()
 {
     return this.operations.detect(function(op) {
-        return !op.isDummy(ui.editor); // TODO [RB] the condition is always true for ui.Action.Op* operations
-    }, this) == null;
+            return !op.isDummy(ui.editor); // TODO [RB] the condition is always true for ui.Action.Op* operations
+        }, this) == null;
 };
 
 ui.Action.fromMultipleMove = function (lists, d)
@@ -112,17 +122,17 @@ ui.Action.fromAtomsAttrs = function(ids, attrs, reset)
 {
     var action = new ui.Action();
     (typeof(ids) == 'number' ? [ids] : ids).each(function(id) {
-	for (var key in chem.Struct.Atom.attrlist) {
-	    var value;
-	    if (key in attrs)
-		value = attrs[key];
-	    else if (reset)
-		value = chem.Struct.Atom.attrGetDefault(key);
-	    else
-		continue;
-	    action.addOp(new ui.Action.OpAtomAttr(id, key, value));
-	}
-	if (!reset && 'label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList']) {
+        for (var key in chem.Struct.Atom.attrlist) {
+            var value;
+            if (key in attrs)
+                value = attrs[key];
+            else if (reset)
+                value = chem.Struct.Atom.attrGetDefault(key);
+            else
+                continue;
+            action.addOp(new ui.Action.OpAtomAttr(id, key, value));
+        }
+        if (!reset && 'label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList']) {
             action.addOp(new ui.Action.OpAtomAttr(id, 'atomList', null));
         }
     }, this);
@@ -134,14 +144,14 @@ ui.Action.fromBondAttrs = function (id, attrs, flip, reset)
     var action = new ui.Action();
 
     for (var key in chem.Struct.Bond.attrlist) {
-	var value;
-	if (key in attrs)
-	    value = attrs[key];
-	else if (reset)
-	    value = chem.Struct.Bond.attrGetDefault(key);
-	else
-	    continue;
-	action.addOp(new ui.Action.OpBondAttr(id, key, value));
+        var value;
+        if (key in attrs)
+            value = attrs[key];
+        else if (reset)
+            value = chem.Struct.Bond.attrGetDefault(key);
+        else
+            continue;
+        action.addOp(new ui.Action.OpBondAttr(id, key, value));
     }
     if (flip)
         action.mergeWith(ui.Action.toBondFlipping(id));
@@ -448,15 +458,15 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
     var action = new ui.Action();
 
     /*
-    atoms.each(function (aid)
-    {
-        ui.render.atomGetNeighbors(aid).each(function (nei)
-        {
-            if (ui.selection.bonds.indexOf(nei.bid) == -1)
-                ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
-        }, this);
-    }, this);
-    */
+     atoms.each(function (aid)
+     {
+     ui.render.atomGetNeighbors(aid).each(function (nei)
+     {
+     if (ui.selection.bonds.indexOf(nei.bid) == -1)
+     ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
+     }, this);
+     }, this);
+     */
 
     // TODO: merge close atoms and bonds
 
@@ -750,8 +760,8 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
     }
 
     frag.atoms.each(function (id, a) {
-	var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
-	attrs.fragment = frid;
+        var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
+        attrs.fragment = frid;
         if (id == template.aid) {
             action.mergeWith(ui.Action.fromAtomsAttrs(aid, attrs, true));
             map[id] = aid;
@@ -799,8 +809,8 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     var begin = molecule.atoms.get(bond.begin);
     var end = molecule.atoms.get(bond.end);
     var sgroups = util.Set.list(util.Set.intersection(
-            util.Set.fromList(ui.render.atomGetSGroups(bond.begin)),
-            util.Set.fromList(ui.render.atomGetSGroups(bond.end))));
+        util.Set.fromList(ui.render.atomGetSGroups(bond.begin)),
+        util.Set.fromList(ui.render.atomGetSGroups(bond.end))));
 
     var fr_bond = frag.bonds.get(template.bid);
     var fr_begin;
@@ -843,8 +853,8 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
         var merge_a = R.findClosestAtom(v, 0.1);
 
         if (merge_a == null) {
-	    var op;
-	    action.addOp(
+            var op;
+            action.addOp(
                 op = new ui.Action.OpAtomAdd(
                     attrs,
                     v
@@ -861,17 +871,17 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
     });
 
     frag.bonds.each(function(id, bond) {
-	var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
-	if (exist_id == -1) {
-	    action.addOp(
-		    new ui.Action.OpBondAdd(
-		    map[bond.begin],
-		    map[bond.end],
-		    bond
-		    ).perform(ui.editor));
-	} else {
-	    action.mergeWith(ui.Action.fromBondAttrs(exist_id, fr_bond, false, true));
-	}
+        var exist_id = molecule.findBondId(map[bond.begin], map[bond.end]);
+        if (exist_id == -1) {
+            action.addOp(
+                new ui.Action.OpBondAdd(
+                    map[bond.begin],
+                    map[bond.end],
+                    bond
+                ).perform(ui.editor));
+        } else {
+            action.mergeWith(ui.Action.fromBondAttrs(exist_id, fr_bond, false, true));
+        }
     });
 
     action.operations.reverse();
@@ -945,7 +955,7 @@ ui.Action.fromSgroupAttrs = function (id, attrs)
     var sg = RS.sgroups.get(id).item;
 
     new Hash(attrs).each(function (attr) {
-            action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
+        action.addOp(new ui.Action.OpSGroupAttr(id, attr.key, attr.value));
     }, this);
 
     return action.perform();
@@ -1129,8 +1139,8 @@ ui.Action.fromFlip = function(objects, flip) {
         fids = new Hash(fids);
 
         if (fids.detect(function(frag) {
-            return !util.Set.eq(molecule.getFragmentIds(frag[0]), util.Set.fromList(frag[1]));
-        })) {
+                return !util.Set.eq(molecule.getFragmentIds(frag[0]), util.Set.fromList(frag[1]));
+            })) {
             return action; // empty action
         }
 
@@ -1429,10 +1439,10 @@ ui.Action.OpSGroupAtomRemove = function(sgid, aid) {
         var aid = this.data.aid;
         var sgid = this.data.sgid;
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
-	var atom = DS.atoms.get(aid);
-	var sg = DS.sgroups.get(sgid);
-	chem.SGroup.removeAtom(sg, aid);
-	util.Set.remove(atom.sgs, sgid);
+        var atom = DS.atoms.get(aid);
+        var sg = DS.sgroups.get(sgid);
+        chem.SGroup.removeAtom(sg, aid);
+        util.Set.remove(atom.sgs, sgid);
         R.invalidateAtom(aid);
     };
     this._invert = function() {
@@ -1449,7 +1459,7 @@ ui.Action.OpSGroupAttr = function(sgid, attr, value) {
     this._execute = function(editor) {
         var R = editor.render, RS = R.ctab, DS = RS.molecule;
         var sgid = this.data.sgid;
-	var sg = DS.sgroups.get(sgid);
+        var sg = DS.sgroups.get(sgid);
         if (sg.type == 'DAT' && RS.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
             RS.clearVisel(RS.sgroupData.get(sgid).visel);
             RS.sgroupData.unset(sgid);

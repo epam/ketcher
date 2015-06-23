@@ -6,4 +6,3 @@ require('./map');
 require('./pool');
 require('./set');
 require('./vec2');
-require('./xhr');

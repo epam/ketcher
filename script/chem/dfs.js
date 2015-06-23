@@ -1,8 +1,14 @@
-if (!window.chem || !chem.Struct)
-    throw new Error("Molecule should be defined first");
+/*global require, global:false, chem:false, util:false*/
 
-chem.Dfs = function (mol, atom_data, components, nReactants)
-{
+/*eslint-disable*/
+
+require('../util/');
+require('./element');
+
+var chem = global.chem = global.chem || {}; // jshint ignore:line
+var util = global.util; // jshint ignore:line
+
+chem.Dfs = function (mol, atom_data, components, nReactants) {
     this.molecule = mol;
     this.atom_data = atom_data;
     this.components = components;
@@ -21,7 +27,7 @@ chem.Dfs = function (mol, atom_data, components, nReactants)
         this.edges[bid] = new chem.Dfs.EdgeDesc();
     }, this);
 
-    this.v_seq = new Array();
+    this.v_seq = [];
 };
 
 chem.Dfs.VertexDesc = function ()
@@ -51,7 +57,7 @@ chem.Dfs.SeqElem = function (v_idx, par_vertex, par_edge)
 
 chem.Dfs.prototype.walk = function ()
 {
-   var v_stack = new Array();
+   var v_stack = [];
    var i, j;
    var cid = 0;
    var component = 0;
@@ -125,7 +131,7 @@ chem.Dfs.prototype.walk = function ()
             }
 
             if (j == -1)
-               throw new Error("cycle unwind error");
+               throw new Error('cycle unwind error');
 
             this.edges[this.vertices[j].parent_edge].opening_cycles++;
             this.vertices[v_idx].branches++;
@@ -140,7 +146,7 @@ chem.Dfs.prototype.walk = function ()
                j = v_stack.indexOf(nei_idx);
 
                if (j == -1)
-                  throw new Error("internal: removing vertex from stack");
+                  throw new Error('internal: removing vertex from stack');
 
                v_stack.splice(j, 1);
 
@@ -178,7 +184,7 @@ chem.Dfs.prototype.numOpeningCycles = function (e_idx)
 chem.Dfs.prototype.toString = function ()
 {
     var str = '';
-    this.v_seq.each(function (seq_elem) {str += seq_elem.idx + ' -> '});
+    this.v_seq.each(function (seq_elem) {str += seq_elem.idx + ' -> ';});
     str += '*';
     return str;
 };

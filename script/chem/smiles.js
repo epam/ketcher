@@ -1,10 +1,17 @@
-if (!window.chem || !chem.Struct)
-    throw new Error("Vec2 and Molecule should be defined first");
+/*global require, global, chem:false, util:false*/
+
+/*eslint-disable*/
+
+require('./struct');
+require('../util');
+
+var chem = global.chem = global.chem || {}; // jshint ignore:line
+var util = global.util; // jshint ignore:line
 
 chem.SmilesSaver = function ()
 {
     this.smiles = '';
-    this._written_atoms = new Array();
+    this._written_atoms = [];
     this._written_components = 0;
 
     this.ignore_errors = false;
@@ -12,7 +19,7 @@ chem.SmilesSaver = function ()
 
 chem.SmilesSaver._Atom = function (h_count)
 {
-    this.neighbours = new Array();  // Array of integer pairs {a, b}
+    this.neighbours = [];  // Array of integer pairs {a, b}
     this.aromatic = false;          // has aromatic bond
     this.lowercase = false;         // aromatic and has to be written lowercase
     this.chirality = 0;             // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
@@ -240,7 +247,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
     // cycle_numbers[i] == -1 means that the number is available
     // cycle_numbers[i] == n means that the number is used by vertex n
-    var cycle_numbers = new Array();
+    var cycle_numbers = [];
 
     cycle_numbers.push(0); // never used
 

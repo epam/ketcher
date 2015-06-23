@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 			},
 			dev: {
 				files: {
-					'dist/kercher.dev.js': ['src/main.js']
+					'dist/ketcher.js': ['script/index.js']
 				}
 			}
 		},

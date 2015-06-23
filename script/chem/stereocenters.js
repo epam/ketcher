@@ -1,5 +1,12 @@
-if (!window.chem || !chem.Struct)
-    throw new Error("Vec2 and Molecule should be defined first");
+/*global require, global, chem:false, util:false*/
+
+/*eslint-disable*/
+
+require('./struct');
+require('../util');
+
+var chem = global.chem = global.chem || {}; // jshint ignore:line
+var util = global.util; // jshint ignore:line
 
 chem.Stereocenters = function (mol, neighbors_func, context)
 {

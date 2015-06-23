@@ -1,7 +1,16 @@
-if (!window.Prototype)
-	throw new Error("Prototype.js should be loaded first");
-if (!window.rnd || !rnd.ReStruct)
-	throw new Error("rnd.MolData should be defined prior to loading this file");
+/*global require, global:false, rnd:false*/
+
+/*eslint-disable*/
+
+require('../util');
+require('../chem');
+require('./restruct');
+require('../ui');
+
+var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
+var chem = global.chem = global.chem || {}; // jshint ignore:line
+var util = global.util; // jshint ignore:line
+var ui = global.ui; // jshint ignore:line
 
 // TODO re-factoring needed: client_area parameter is excessive, should be available in render
 rnd.Editor = function(render)
@@ -106,9 +115,8 @@ rnd.Editor.SelectionHelper.prototype.isSelected = function(item) {
         return !Object.isUndefined(this.selection['atoms'])
             && util.Set.subset(util.Set.fromList(atoms), util.Set.fromList(this.selection['atoms']));
     }
-    return 'selection' in this
-        && !Object.isUndefined(this.selection[item.map])
-        && this.selection[item.map].indexOf(item.id) > -1;
+    return 'selection' in this && !Object.isUndefined(this.selection[item.map])&&
+        this.selection[item.map].indexOf(item.id) > -1;
 };
 
 
@@ -184,13 +192,13 @@ rnd.Editor.EditorTool.atom_label_map = {
 rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event, action) {
     if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
         return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
-        this.OnMouseMove0.lastEvent);
+            this.OnMouseMove0.lastEvent);
     } else if (action in rnd.Editor.EditorTool.atom_label_map) {
         var label = rnd.Editor.EditorTool.atom_label_map[action];
         var selection = this.editor.getSelection();
         if (selection && 'atoms' in selection && selection.atoms.length > 0) {
             this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(
-                    selection.atoms, {label: label}, true), true);
+                selection.atoms, {label: label}, true), true);
             this.editor.ui.render.update();
             return true;
         } else {
@@ -199,12 +207,12 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function(event, action) {
                 ci.label = {label: label};
                 if (ci.map === 'atoms') {
                     this.editor.ui.addUndoAction(ui.Action.fromAtomsAttrs(
-                            ci.id, ci.label, true), true);
+                        ci.id, ci.label, true), true);
                 } else if (ci.id == -1) {
                     this.editor.ui.addUndoAction(
-                            this.editor.ui.Action.fromAtomAddition(
+                        this.editor.ui.Action.fromAtomAddition(
                             this.editor.ui.page2obj(
-                            this.OnMouseMove0.lastEvent), ci.label), true);
+                                this.OnMouseMove0.lastEvent), ci.label), true);
                 }
                 this.editor.ui.render.update();
                 return true;
@@ -262,9 +270,9 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
     var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
     var ci = this.editor.render.findItem(
         event,
-        selectFragment
-            ? ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
-            : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+        selectFragment ?
+            ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
+            ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
     );
     if (!ci || ci.type == 'Canvas') {
         if (!this._lassoHelper.fragment)
@@ -315,11 +323,12 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function(event) {
                     clearTimeout(self.dragCtx.timeout);
                     delete self.dragCtx.timeout;
                 }
-            }
+            };
         }
     }
     return true;
 };
+
 rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
     if ('dragCtx' in this) {
         if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
@@ -344,9 +353,9 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function(event) {
         this._hoverHelper.hover(
             this.editor.render.findItem(
                 event,
-                (this._lassoHelper.fragment || event.ctrlKey)
-                    ? ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
-                    : ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+                (this._lassoHelper.fragment || event.ctrlKey) ?
+                    ['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
+                    ['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
             )
         );
     }
@@ -401,11 +410,11 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function(event) {
             this.editor.ui.showAtomProperties(ci.id);
         } else {
             ui.showReaGenericsTable({
-	            values: [atom.label],
-	            onOk: function(res) {
-		            var label = res.values[0];
+                values: [atom.label],
+                onOk: function(res) {
+                    var label = res.values[0];
                     if (atom.label != label) {
-	                    this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, {label: label}));
+                        this.editor.ui.addUndoAction(this.editor.ui.Action.fromAtomsAttrs(ci.id, {label: label}));
                         this.editor.ui.render.update();
                     }
                     return true;
@@ -571,10 +580,10 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function(event) {
         // TODO [RB] kludge fix for KETCHER-560. need to review
         //BEGIN
         /*
-        var action_ret = _E_.ui.Action.fromBondAddition(
-            this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
-        );
-        */
+         var action_ret = _E_.ui.Action.fromBondAddition(
+         this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
+         );
+         */
         var action_ret = _E_.ui.Action.fromBondAddition(
             this.bondProps, _DC_.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
         );
@@ -593,8 +602,8 @@ rnd.Editor.AtomTool.prototype.OnMouseUp = function(event) {
             'action' in _DC_
                 ? _DC_.action
                 : 'item' in _DC_
-                    ? _UI_.Action.fromAtomsAttrs(_DC_.item.id, this.atomProps, true)
-                    : _UI_.Action.fromAtomAddition(_UI_.page2obj(event), this.atomProps),
+                ? _UI_.Action.fromAtomsAttrs(_DC_.item.id, this.atomProps, true)
+                : _UI_.Action.fromAtomAddition(_UI_.page2obj(event), this.atomProps),
             true
         );
         this.editor.render.update();
@@ -693,16 +702,19 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function(event) {
             var bondProps = Object.clone(this.bondProps);
             var bond = _UI_.ctab.bonds.get(_DC_.item.id);
 
-            if (bondProps.stereo != chem.Struct.BOND.STEREO.NONE
-                && bond.type == chem.Struct.BOND.TYPE.SINGLE
-                && bondProps.type == chem.Struct.BOND.TYPE.SINGLE
-                && bond.stereo == bondProps.stereo)
-            {
+            if (
+                bondProps.stereo != chem.Struct.BOND.STEREO.NONE &&
+                bond.type == chem.Struct.BOND.TYPE.SINGLE &&
+                bondProps.type == chem.Struct.BOND.TYPE.SINGLE &&
+                bond.stereo == bondProps.stereo
+            ) {
                 _UI_.addUndoAction(_UI_.Action.fromBondFlipping(_DC_.item.id));
             } else {
-                if (bondProps.type === chem.Struct.BOND.TYPE.SINGLE
-                        && bond.stereo === chem.Struct.BOND.STEREO.NONE
-                        && bondProps.stereo === chem.Struct.BOND.STEREO.NONE) {
+                if (
+                    bondProps.type === chem.Struct.BOND.TYPE.SINGLE &&
+                    bond.stereo === chem.Struct.BOND.STEREO.NONE &&
+                    bondProps.stereo === chem.Struct.BOND.STEREO.NONE
+                ) {
                     var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
                     if (loop) {
                         bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
@@ -1029,30 +1041,30 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseMove = function(event) {
     this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
 rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
-	function sel2Values(rg) {
-		var res = [];
-		for (var rgi = 0; rgi < 32; rgi++)
-			if (rg & (1 << rgi)) {
-				var val = 'R' + (rgi + 1);
-				res.push(val); // push the string
-			}
-		return res;
-	}
-	function values2Sel(vals) {
-		var res = 0;
-		vals.values.forEach(function (val) {
-			var rgi = val.substr(1) - 1;
-			res |= 1 << rgi;
-		});
-		return res;
-	}
+    function sel2Values(rg) {
+        var res = [];
+        for (var rgi = 0; rgi < 32; rgi++)
+            if (rg & (1 << rgi)) {
+                var val = 'R' + (rgi + 1);
+                res.push(val); // push the string
+            }
+        return res;
+    }
+    function values2Sel(vals) {
+        var res = 0;
+        vals.values.forEach(function (val) {
+            var rgi = val.substr(1) - 1;
+            res |= 1 << rgi;
+        });
+        return res;
+    }
     var ci = this.editor.render.findItem(event, ['atoms']);
     if (!ci || ci.type == 'Canvas') {
         this._hoverHelper.hover(null);
-	    this.editor.ui.showRGroupTable({
-		    mode : 'multiple',
-	        onOk : function(rgNew) {
-		        rgNew = values2Sel(rgNew);
+        this.editor.ui.showRGroupTable({
+            mode : 'multiple',
+            onOk : function(rgNew) {
+                rgNew = values2Sel(rgNew);
                 if (rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromAtomAddition(
@@ -1071,11 +1083,11 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function(event) {
         var atom = this.editor.render.ctab.molecule.atoms.get(ci.id);
         var lbOld = atom.label;
         var rgOld = atom.rglabel;
-	    this.editor.ui.showRGroupTable({
-		    mode: 'multiple',
-		    values : sel2Values(rgOld),
-	        onOk : function(rgNew) {
-		        rgNew = values2Sel(rgNew);
+        this.editor.ui.showRGroupTable({
+            mode: 'multiple',
+            values : sel2Values(rgOld),
+            onOk : function(rgNew) {
+                rgNew = values2Sel(rgNew);
                 if (rgOld != rgNew || lbOld != 'R#') {
                     var newProps = Object.clone(chem.Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
                     if (rgNew) {
@@ -1111,12 +1123,12 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function(event) {
     var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
     if (ci && ci.map == 'frags') {
         this._hoverHelper.hover(null);
-	    var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
+        var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
         this.editor.ui.showRGroupTable({
-	        values : rgOld && ['R' + rgOld],
-	        onOk : function(rgNew) {
-		        console.assert(rgNew.values.length <= 1, 'Too much elements');
-		        rgNew = rgNew.values.length ? rgNew.values[0].substr(1) - 0 : 0;
+            values : rgOld && ['R' + rgOld],
+            onOk : function(rgNew) {
+                console.assert(rgNew.values.length <= 1, 'Too much elements');
+                rgNew = rgNew.values.length ? rgNew.values[0].substr(1) - 0 : 0;
                 if (rgOld != rgNew) {
                     this.editor.ui.addUndoAction(
                         this.editor.ui.Action.fromRGroupFragment(rgNew, ci.id),
@@ -1454,36 +1466,36 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function(id,
         }, this);
 
         if (!Object.isUndefined(selection.atoms.detect(function (id)
-        {
-            var sgroups = render.atomGetSGroups(id);
-
-            return !Object.isUndefined(sgroups.detect(function (sid)
             {
-                if (sid in verified)
-                    return false;
+                var sgroups = render.atomGetSGroups(id);
 
-                var sg_atoms = render.sGroupGetAtoms(sid);
-
-                if (sg_atoms.length < selection.atoms.length)
+                return !Object.isUndefined(sgroups.detect(function (sid)
                 {
-                    if (!Object.isUndefined(sg_atoms.detect(function (aid)
+                    if (sid in verified)
+                        return false;
+
+                    var sg_atoms = render.sGroupGetAtoms(sid);
+
+                    if (sg_atoms.length < selection.atoms.length)
                     {
-                        return !(aid in atoms_hash);
-                    }, this)))
+                        if (!Object.isUndefined(sg_atoms.detect(function (aid)
+                            {
+                                return !(aid in atoms_hash);
+                            }, this)))
+                        {
+                            return true;
+                        }
+                    } else if (!Object.isUndefined(selection.atoms.detect(function (aid)
+                        {
+                            return (sg_atoms.indexOf(aid) == -1);
+                        }, this)))
                     {
                         return true;
                     }
-                } else if (!Object.isUndefined(selection.atoms.detect(function (aid)
-                {
-                    return (sg_atoms.indexOf(aid) == -1);
-                }, this)))
-                {
-                    return true;
-                }
 
-                return false;
-            }, this));
-        }, this)))
+                    return false;
+                }, this));
+            }, this)))
         {
             alert("Partial S-group overlapping is not allowed.");
             return;
@@ -1546,8 +1558,8 @@ rnd.Editor.PasteTool = function(editor) {
         this.editor.ui.clipboard,
         'lastEvent' in this.OnMouseMove0
             ? util.Vec2.diff(
-                this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
-                this.editor.ui.clipboard.getAnchorPosition())
+            this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
+            this.editor.ui.clipboard.getAnchorPosition())
             : undefined
     );
     this.editor.render.update();
@@ -1616,9 +1628,9 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function(event) {
                     if (hb.loop >= 0) {
                         var nei_atom = molecule.atoms.get(aid);
                         if (!Object.isUndefined(nei_atom.neighbors.find(function (nei_nei) {
-                            var nei_hb = molecule.halfBonds.get(nei_nei);
-                            return nei_hb.loop >= 0 && selection.atoms.indexOf(nei_hb.end) != -1;
-                        }))) {
+                                var nei_hb = molecule.halfBonds.get(nei_nei);
+                                return nei_hb.loop >= 0 && selection.atoms.indexOf(nei_hb.end) != -1;
+                            }))) {
                             rot_all = true;
                             return true;
                         }

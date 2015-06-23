@@ -1,15 +1,8 @@
 /node_modules
-/extra
-/ketcher.*
 /*.zip
+/dist
 
 .idea/
-
-/*.js
-!/Gruntfile.js
-
 *.pyc
+/extra
 .tern-port
-
-#Browserify compiled js
-dist/

@@ -10,7 +10,9 @@ var util = global.util;
 var chem = global.chem;
 var rnd = global.rnd;
 
-var ketcher = function () {
+// ketcher.* namespace should be global
+// (the only global as we have API methods here)
+var ketcher = global.ketcher = function () {
     this.render = null;
 };
 

@@ -12,13 +12,13 @@ module.exports = function (grunt) {
 			      'template/**', 'Gruntfile.js', 'package.json',
 			      '.jshintrc', '.editorconfig'],
 			libs: ['prototype-min.js', 'raphael.js'],
-			build: ['<%= concat.default.dest %>',
+			build: ['<%= browserify.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
 			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE', 'favicon.ico', 'logo.jpg',
 			          'demo.html', 'templates.sdf'],
-			server: 'server/python/ketcher.py',
+			server: 'server/ketcher.py',
 
 			pkg: '<%= pkg %>',
 
@@ -37,13 +37,10 @@ module.exports = function (grunt) {
 
 		browserify: {
 			options: {
-				browserifyOptions: {
-					debug: true
-				},
+				banner: '<%= options.banner %>',
 				transform: [
 					[
-						'browserify-replace',
-						{
+						'browserify-replace', {
 							replace: [
 								{from: /__TIME_CREATED__/, to: (new Date()).toString()}
 							]
@@ -52,54 +49,33 @@ module.exports = function (grunt) {
 				]
 			},
 			dev: {
-				files: {
-					'dist/ketcher.js': ['script/index.js']
-				}
-			}
-		},
-
-		concat: {
-			default: {  // and the only yet
 				options: {
-					banner: '<%= options.banner %>',
-					stripBanners: true
+					browserifyOptions: {
+						debug: true
+					}
 				},
-				src: [// 'script/vendor/es5-shim.js',
-					'script/vendor/html5shiv.js',
-					'script/vendor/base64.js',
-					'script/vendor/FileSaver.js',
-
-					'script/util/*.js',
-
-					'script/chem/element.js',
-					'script/chem/struct.js',
-					'script/chem/*.js',
-
-					'script/rnd/visel.js',
-					'script/rnd/restruct.js',
-					'script/rnd/*.js',
-
-					'script/ui/**/*.js',
-
-					'script/main.js'
-				],
-				dest: '<%= pkg.name %>.js'
-			}
-		},
-
-		uglify: {
-			options: {
-				banner: '<%= options.banner %>',
-				report: 'min',
-				compress: {
-					global_defs: {
-						DEBUG: false
-					},
-					dead_code: true
+				files: {
+					'dist/<%= pkg.name %>.js': ['script/index.js']
 				}
 			},
 			default: {
-				files: ['<%= concat.default %>']
+				options: {
+					transform: [
+						[
+							'<%= browserify.options.transform %>',
+							'uglifyify', {
+								report: 'min',
+								compress: {
+									global_defs: {
+										DEBUG: false
+									},
+									dead_code: true
+								}
+							}
+						]
+					]
+				},
+				files: '<%= browserify.dev.files %>'
 			}
 		},
 
@@ -110,7 +86,7 @@ module.exports = function (grunt) {
 					report: 'min'
 				},
 				src: 'style/main.less',
-				dest: '<%= pkg.name %>.css'
+				dest: 'dist/<%= pkg.name %>.css'
 			},
 			dev: {
 				files: ['<%= less.default %>']
@@ -127,14 +103,14 @@ module.exports = function (grunt) {
 				},
 
 				src: 'template/main.hbs',
-				dest: '<%= pkg.name %>.html'
+				dest: 'dist/<%= pkg.name %>.html'
 			}
 		},
 
 		fontello: {
 			options: {
 				config  : 'icons/config.json',
-				fonts   : '.',
+				fonts   : 'dist',
 				styles  : false
 			},
 			default: {},
@@ -152,13 +128,19 @@ module.exports = function (grunt) {
 				expand: true,
 				cwd: 'script/vendor',
 				src: ['<%= options.libs %>'],
-				dest: '.'
+				dest: 'dist'
+			},
+			// TODO: find better place to store static
+			static: {
+				expand: true,
+				src: ['<%= options.distrib %>'],
+				dest: 'dist'
 			},
 			'svg-fix': {
 				expand: true,
 				cwd: '.tmp',
 				src: ['<%= pkg.name %>.{svg,ttf}'],
-				dest: '.'
+				dest: 'dist'
 			}
 		},
 
@@ -168,12 +150,6 @@ module.exports = function (grunt) {
 			},
 			src: {
 				src: ['script/**/*.js', '!script/vendor/*.js']
-			},
-			commonjs: {
-				options: {
-					jshintrc: 'src/.jshintrc'
-				},
-				src: ['src/**/*.js', '!script/vendor/*.js']
 			},
 			grunt: {
 				src: 'Gruntfile.js'
@@ -190,33 +166,23 @@ module.exports = function (grunt) {
 				},
 				files: [
 					{
-						src: ['<%= options.build %>', '<%= options.libs %>',
-						      '<%= options.distrib %>'],
-						dest: '<%= pkg.name %>'
+						expand: true,
+						cwd: 'dist',
+						src: '**',
+						dest: '<%= pkg.name %>-<%= pkg.version %>'
 					},
 					{
 						flatten: true,
 						expand: true,
 						src: '<%= options.server %>',
-						dest: '<%= pkg.name %>'
+						dest: '<%= pkg.name %>-<%= pkg.version %>'
 					}
 				]
-			},
-			build_with_sources: {
-				options: {
-					archive: '<%= pkg.name %>-<%= pkg.version %>-src.zip'
-				},
-				// TODO: add server parts to source
-				src: ['<%= options.build %>', '<%= options.libs %>',
-				      '<%= options.distrib %>', '<%= options.src %>'],
-				dest: '<%= pkg.name %>',
-				filter: 'isFile'
 			}
 		},
 
 		clean: {
-			all: ['<%= options.libs %>', '<%= options.build %>',
-			      '<%= pkg.name %>*.zip'],
+			all: ['dist', '<%= pkg.name %>*.zip'],
 			tmp: '.tmp/**'
 		},
 
@@ -235,13 +201,9 @@ module.exports = function (grunt) {
 			options: {
 				atBegin: true
 			},
-			commonjs: {
-				files: 'src/**/*.js',
-				tasks: 'browserify:dev'
-			},
 			js: {
 				files: 'script/**/*.js',
-				tasks: 'concat'
+				tasks: 'browserify:dev'
 			},
 			css: {
 				files: 'style/**/*.less',
@@ -277,8 +239,8 @@ module.exports = function (grunt) {
 
 	// clean:tmp in the end as workaround rimraf bug
 	grunt.registerTask('default', ['shell:rev', 'clean', 'less:default',
-	                               'fontello', 'uglify', 'assemble',
+	                               'fontello', 'browserify:default', 'assemble',
 	                               'copy', 'compress', 'clean:tmp']);
 	grunt.registerTask('dev', ['shell:rev', 'clean', 'less:dev', 'fontello',
-	                           'concat', 'assemble', 'copy', 'clean:tmp']);
+	                           'browserify:dev', 'assemble', 'copy', 'clean:tmp']);
 };

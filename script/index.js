@@ -12,6 +12,8 @@ var util = global.util;
 var chem = global.chem;
 var rnd = global.rnd;
 
+var server = require('./ui/server.js');
+
 // ketcher.* namespace should be global
 // (the only global as we have API methods here)
 var ketcher = global.ketcher = function () {
@@ -24,7 +26,7 @@ ketcher.version = '2.0.0-alpha.1';
 ketcher.getSmiles = function () {
     var saver = ui.standalone ? new chem.SmilesSaver() : new chem.MolfileSaver();
     var mol = saver.saveMolecule(ui.ctab, true);
-    return ui.standalone ? mol : ui.server.smiles.sync({
+    return ui.standalone ? mol : server.smiles.sync({
         moldata: mol
     });
 };

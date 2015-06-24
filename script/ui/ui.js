@@ -2,11 +2,13 @@
 
 /*eslint-disable*/
 
+var ui = global.ui = global.ui || {}; // jshint ignore:line
+
 require('../chem');
 require('../rnd');
 require('../util');
+var server = require('./server.js');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
 var util = global.util;
 var rnd = global.rnd;
@@ -67,7 +69,7 @@ ui.init = function (parameters, opts) {
 
     if (['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
         // TODO: check if this is nesessary
-        ui.server.knocknock().then(function (res) {
+        server.knocknock().then(function (res) {
             ui.standalone = false;
         }, function (val) {
             document.title += ' (standalone)';
@@ -384,7 +386,7 @@ ui.dearomatizeMolecule = function (mol, aromatize)
 
     if (!ui.standalone) {
         var method = aromatize ? 'aromatize' : 'dearomatize',
-            request = ui.server[method]({moldata: mol_string});
+            request = server[method]({moldata: mol_string});
         request.then(function (data) {
             var resmol = ui.parseCTFile(data);
             if (implicitReaction)
@@ -567,7 +569,7 @@ ui.onClick_Automap = function () {
                 return;
             }
             var moldata = new chem.MolfileSaver().saveMolecule(mol, true),
-                request = ui.server.automap({
+                request = server.automap({
                     moldata : moldata,
                     mode : mode
                 });
@@ -624,12 +626,12 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
             }
             return;
         }
-        var request = ui.server.layout_smiles(null, {smiles: smiles});
+        var request = server.layout_smiles(null, {smiles: smiles});
         request.then(function (res) {
             updateFunc.call(ui, ui.parseCTFile(res));
         });
     } else if (!ui.standalone && force_layout) {
-        var req = ui.server.layout({moldata: mol_string},
+        var req = server.layout({moldata: mol_string},
             selective_layout ? {'selective': 1} : null);
         req.then(function (res) {
             updateFunc.call(ui, ui.parseCTFile(res));

@@ -6,6 +6,7 @@ require('../ui');
 require('../../chem');
 require('../../util');
 
+var server = require('../server.js');
 // var base64 = require('base64-js');
 
 var ui = global.ui = global.ui || function () {}; // jshint ignore:line
@@ -179,7 +180,7 @@ ui.fileSaver = function() {
             reject('Standalone mode!');
         else
             resolve(function (data, type) {
-                ui.server.save({filedata: [type, data].join('\n')});
+                server.save({filedata: [type, data].join('\n')});
             });
     });
 };
@@ -191,7 +192,7 @@ ui.convertMolecule = function (molecule, format) {
             resolve(moldata);
         }
         else if (format == 'smi') {
-            resolve(!ui.standalone ? ui.server.smiles({ moldata: moldata }):
+            resolve(!ui.standalone ? server.smiles({ moldata: moldata }):
                 new chem.SmilesSaver().saveMolecule(molecule));
         }
         else if (format == 'inchi') {
@@ -210,7 +211,7 @@ ui.convertMolecule = function (molecule, format) {
                         throw Error('InChi data format doesn\'t support s-groups');
                 }, this);
 
-                resolve(ui.server.inchi({ moldata: moldata }));
+                resolve(server.inchi({ moldata: moldata }));
             }
         }
     });

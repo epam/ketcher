@@ -7,6 +7,8 @@ require('../../util');
 require('../../chem');
 require('../../rnd');
 
+var ajax = require('../../util/ajax.js');
+
 var ui = global.ui = global.ui || function () {};
 var util = global.util;
 var rnd = global.rnd;
@@ -50,7 +52,7 @@ ui.parseTemplateCustom = function (sdf) {
 };
 
 ui.fetchTemplateCustom = function(base_url) {
-    return util.ajax(base_url + 'templates.sdf').then(function (xhr) {
+    return ajax(base_url + 'templates.sdf').then(function (xhr) {
         //headers: {Accept: 'application/octet-stream'}
         var items = ui.parseTemplateCustom(xhr.responseText);
 

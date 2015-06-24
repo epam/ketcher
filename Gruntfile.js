@@ -127,10 +127,10 @@ module.exports = function (grunt) {
 		},
 
 		copy: {
-			libs: {
+			prototype: {
 				expand: true,
-				cwd: 'script/vendor',
-				src: ['<%= options.libs %>'],
+				flatten: true,
+				src: 'script/prototype-min.js',
 				dest: 'dist'
 			},
 			raphael: {

@@ -12,6 +12,8 @@ module.exports = function (grunt) {
 			      'template/**', 'Gruntfile.js', 'package.json',
 			      '.jshintrc', '.editorconfig'],
 			libs: ['prototype-min.js', 'raphael-min.js'],
+			// add 'es5-shim' when prototype goes
+			polyfills: ['html5shiv', 'promise-polyfill', 'filesaver.js'],
 			build: ['<%= browserify.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
@@ -46,7 +48,8 @@ module.exports = function (grunt) {
 							]
 						}
 					]
-				]
+				],
+				preBundleCB: polyfillify
 			},
 			dev: {
 				options: {
@@ -229,12 +232,19 @@ module.exports = function (grunt) {
 		}
 	});
 
-	function patchVersionRev (err, stdout, _, cb) {
+	function patchVersionRev(err, stdout, _, cb) {
 		if (err && err.code != 127)  // not "command not found", so git is here
 			grunt.log.error('Couldn\'t fetch revision. Please git tag the package version.');
 		else if (!err && stdout > 0)
 			grunt.config('pkg.version', grunt.config('pkg.version') + ('+r' + stdout).trim());
 		cb();
+	}
+
+	function polyfillify(b) {
+		var ps = grunt.config('options.polyfills');
+		b.add(ps.map(function (p) {
+			return require.resolve(p);
+		}));
 	}
 
 	require('load-grunt-tasks')(grunt);

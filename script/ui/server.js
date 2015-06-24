@@ -6,11 +6,11 @@ var ui = global.ui;
 // stealed from https://github.com/iambumblehead/form-urlencoded/
 function formEncodeString(str) {
 	return str.replace(/[^ !'()~\*]*/g, encodeURIComponent)
-		.replace(/ /g, '+')
-		.replace(/[!'()~\*]/g, function (ch) {
-			return '%' + ('0' + ch.charCodeAt(0).toString(16))
-				.slice(-2).toUpperCase();
-		});
+	.replace(/ /g, '+')
+	.replace(/[!'()~\*]/g, function (ch) {
+		return '%' + ('0' + ch.charCodeAt(0).toString(16))
+		.slice(-2).toUpperCase();
+	});
 }
 
 function formEncode(obj) {
@@ -18,7 +18,7 @@ function formEncode(obj) {
 	for (var prop in obj) {
 		if (obj.hasOwnProperty(prop)) {// don't handle nested objects
 			str.push(encodeURIComponent(prop) + '=' +
-			         formEncodeString(obj[prop]));
+			formEncodeString(obj[prop]));
 		}
 	}
 	return str.join('&');
@@ -44,7 +44,7 @@ function apiRequest(method, url) {
 			data: data && formEncode(data),
 			headers: data && {
 				'Content-Type': 'application/x-www-form-urlencoded'
-			}
+				}
 		};
 	}
 

@@ -48,7 +48,7 @@ function queryString(obj) {
 	for (var prop in obj) {
 		if (obj.hasOwnProperty(prop)) { // don't handle nested objects
 			str.push(encodeURIComponent(prop) + '=' +
-			         encodeURIComponent(obj[prop]));
+			encodeURIComponent(obj[prop]));
 		}
 	}
 	return str.join('&');

@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 			src: ['script/**', 'style/**', 'icons/**',
 			      'template/**', 'Gruntfile.js', 'package.json',
 			      '.jshintrc', '.editorconfig'],
-			libs: ['prototype-min.js', 'raphael.js'],
+			libs: ['prototype-min.js', 'raphael-min.js'],
 			build: ['<%= browserify.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
@@ -128,6 +128,12 @@ module.exports = function (grunt) {
 				expand: true,
 				cwd: 'script/vendor',
 				src: ['<%= options.libs %>'],
+				dest: 'dist'
+			},
+			raphael: {
+				expand: true,
+				flatten: true,
+				src: require.resolve('raphael/raphael-min.js'),
 				dest: 'dist'
 			},
 			// TODO: find better place to store static

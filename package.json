@@ -28,6 +28,7 @@
   "devDependencies": {
     "assemble": "~0.4.41",
     "browserify-replace": "^0.9.0",
+    "browserify-shim": "^3.8.9",
     "eslint": "^0.22.1",
     "grunt": "~0.4.5",
     "grunt-browserify": "^3.8.0",
@@ -46,5 +47,14 @@
   "scripts": {
     "build": "npm install && grunt",
     "test": "echo \"Error: no test yet exists\" && exit 1"
+  },
+  "dependencies": {
+    "raphael": "^2.1.4"
+  },
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browserify-shim": {
+    "raphael": "global:Raphael"
   }
 }

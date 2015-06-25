@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Map = require('../util/map');
+
 require('./struct');
 require('../util');
 
@@ -11,7 +13,7 @@ var util = global.util; // jshint ignore:line
 chem.Stereocenters = function (mol, neighbors_func, context)
 {
 	this.molecule = mol;
-	this.atoms = new util.Map();
+	this.atoms = new Map();
 	this.getNeighbors = neighbors_func;
 	this.context = context;
 };

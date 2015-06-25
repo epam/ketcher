@@ -1,5 +1,6 @@
 /*global require, global:false, chem:false, util:false*/
 
+var Map = require('../util/map');
 require('../util');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
@@ -14,7 +15,7 @@ chem.Element = function (label, period, group, putHydrogenOnTheLeft, color) {
 	this.color = color || '#000000';
 };
 
-chem.Element.elements = new util.Map({
+chem.Element.elements = new Map({
 	1: new chem.Element( 'H', 1, 1, false, '#000000'),
 	2: new chem.Element('He', 1, 8, false, '#d9ffff'),
 	3: new chem.Element('Li', 2, 1, false, '#cc80ff'),

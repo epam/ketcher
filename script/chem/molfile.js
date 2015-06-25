@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Map = require('../util/map');
+
 require('../util');
 require('./element');
 
@@ -456,13 +458,13 @@ chem.Molfile.applyDataSGroupDataLine = function (sGroups, propData, finalize) {
 chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 {
 	var mf = chem.Molfile;
-	var props = new util.Map();
+	var props = new Map();
 	while (shift < end)
 	{
 		var line = ctabLines[shift];
 		if (line.charAt(0) == 'A') {
 			if (!props.get('label'))
-				props.set('label', new util.Map());
+				props.set('label', new Map());
 			props.get('label').set(mf.parseDecimalInt(line.slice(3, 6)) - 1, ctabLines[++shift]);
 		} else if (line.charAt(0) == 'M') {
 			var type = line.slice(3, 6);
@@ -471,32 +473,32 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				break;
 			} else if (type == 'CHG') {
 				if (!props.get('charge'))
-					props.set('charge', new util.Map());
+					props.set('charge', new Map());
 				props.get('charge').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'RAD') {
 				if (!props.get('radical'))
-					props.set('radical', new util.Map());
+					props.set('radical', new Map());
 				props.get('radical').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'ISO') {
 				if (!props.get('isotope'))
-					props.set('isotope', new util.Map());
+					props.set('isotope', new Map());
 				props.get('isotope').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'RBC') {
 				if (!props.get('ringBondCount'))
-					props.set('ringBondCount', new util.Map());
+					props.set('ringBondCount', new Map());
 				props.get('ringBondCount').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'SUB') {
 				if (!props.get('substitutionCount'))
-					props.set('substitutionCount', new util.Map());
+					props.set('substitutionCount', new Map());
 				props.get('substitutionCount').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'UNS') {
 				if (!props.get('unsaturatedAtom'))
-					props.set('unsaturatedAtom', new util.Map());
+					props.set('unsaturatedAtom', new Map());
 				props.get('unsaturatedAtom').update(mf.readKeyValuePairs(propertyData));
 				// else if (type == "LIN") // link atom
 			} else if (type == 'RGP') { // rgroup atom
 				if (!props.get('rglabel'))
-					props.set('rglabel', new util.Map());
+					props.set('rglabel', new Map());
 				var rglabels = props.get('rglabel');
 				var a2rs = mf.readKeyMultiValuePairs(propertyData);
 				for (var a2ri = 0; a2ri < a2rs.length; a2ri++) {
@@ -517,18 +519,18 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 				rLogic[rgid] = logic;
 			} else if (type == 'APO') {
 				if (!props.get('attpnt'))
-					props.set('attpnt', new util.Map());
+					props.set('attpnt', new Map());
 				props.get('attpnt').update(mf.readKeyValuePairs(propertyData));
 			} else if (type == 'ALS') { // atom list
 				if (!props.get('atomList'))
-					props.set('atomList', new util.Map());
+					props.set('atomList', new Map());
 				var list = mf.parsePropertyLineAtomList(
 				mf.partitionLine(propertyData, [1,3,3,1,1,1]),
 				mf.partitionLineFixed(propertyData.slice(10), 4, false));
 				props.get('atomList').update(
 					list);
 				if (!props.get('label'))
-					props.set('label', new util.Map());
+					props.set('label', new Map());
 				for (var aid in list) props.get('label').set(aid, 'L#');
 			} else if (type == 'STY') { // introduce s-group
 				mf.initSGroup(sGroups, propertyData);
@@ -564,7 +566,7 @@ chem.Molfile.parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups
 	return props;
 };
 
-chem.Molfile.applyAtomProp = function (atoms /* Pool */, values /* util.Map */, propId /* string */, clean /* boolean */)
+chem.Molfile.applyAtomProp = function (atoms /* Pool */, values /* Map */, propId /* string */, clean /* boolean */)
 {
 	values.each(function (aid, propVal){
 		atoms.get(aid)[propId] = propVal;

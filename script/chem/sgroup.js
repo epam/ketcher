@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Box2Abs = require('../util/box2abs');
+var Map = require('../util/map');
 
 require('../util');
 require('./element');
@@ -855,8 +856,8 @@ chem.SGroup.TYPES = {
 
 
 chem.SGroupForest = function (molecule) {
-	this.parent = new util.Map(); // child id -> parent id
-	this.children = new util.Map(); // parent id -> list of child ids
+	this.parent = new Map(); // child id -> parent id
+	this.children = new Map(); // parent id -> list of child ids
 	this.children.set(-1, []); // extra root node
 	this.molecule = molecule;
 }
@@ -879,9 +880,9 @@ chem.SGroupForest.prototype.getAtomSets = function () {
 	});
 }
 
-chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* util.Set */, atomSets /* util.Map of util.Set */) {
+chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* util.Set */, atomSets /* Map of util.Set */) {
 	// find the lowest superset in the hierarchy
-	var isStrictSuperset = new util.Map(), isSubset = new util.Map();
+	var isStrictSuperset = new Map(), isSubset = new Map();
 	var atomSets = this.getAtomSets();
 	atomSets.unset(newId);
 	atomSets.each(function (id, atomSet) {

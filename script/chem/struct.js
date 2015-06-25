@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Map = require('../util/map');
+
 require('../util');
 require('./element');
 
@@ -12,14 +14,14 @@ chem.Struct = function () {
 	this.atoms = new util.Pool();
 	this.bonds = new util.Pool();
 	this.sgroups = new util.Pool();
-	this.halfBonds = new util.Map();
+	this.halfBonds = new Map();
 	this.loops = new util.Pool();
 	this.isChiral = false;
 	this.isReaction = false;
 	this.rxnArrows = new util.Pool();
 	this.rxnPluses = new util.Pool();
 	this.frags = new util.Pool();
-	this.rgroups = new util.Map();
+	this.rgroups = new Map();
 	this.name = '';
 	this.sGroupForest = new chem.SGroupForest(this);
 };

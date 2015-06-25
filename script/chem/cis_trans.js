@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Map = require('../util/map');
+
 require('../util');
 require('./element');
 require('./struct');
@@ -11,7 +13,7 @@ var util = global.util;
 
 chem.CisTrans = function (mol, neighborsFunc, context) {
 	this.molecule = mol;
-	this.bonds = new util.Map();
+	this.bonds = new Map();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
 };
@@ -211,4 +213,3 @@ chem.CisTrans.prototype.build = function (exclude_bonds) {
 			ct.parity = chem.CisTrans.PARITY.TRANS;
 	}, this);
 };
-

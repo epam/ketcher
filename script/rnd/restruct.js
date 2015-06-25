@@ -8,6 +8,7 @@
 /*eslint-disable*/
 
 var Box2Abs = require('../util/box2abs');
+var Map = require('../util/map');
 
 require('../util');
 require('../chem');
@@ -151,23 +152,23 @@ rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 rnd.ReStruct = function (molecule, render, norescale)
 {
 	this.render = render;
-	this.atoms = new util.Map();
-	this.bonds = new util.Map();
-	this.reloops = new util.Map();
-	this.rxnPluses = new util.Map();
-	this.rxnArrows = new util.Map();
-	this.frags = new util.Map();
-	this.rgroups = new util.Map();
-	this.sgroups = new util.Map();
-	this.sgroupData = new util.Map();
-	this.chiralFlags = new util.Map();
+	this.atoms = new Map();
+	this.bonds = new Map();
+	this.reloops = new Map();
+	this.rxnPluses = new Map();
+	this.rxnArrows = new Map();
+	this.frags = new Map();
+	this.rgroups = new Map();
+	this.sgroups = new Map();
+	this.sgroupData = new Map();
+	this.chiralFlags = new Map();
 	this.molecule = molecule || new chem.Struct();
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
 
 	this.connectedComponents = new util.Pool();
-	this.ccFragmentType = new util.Map();
+	this.ccFragmentType = new Map();
 
 	for (var map in rnd.ReStruct.maps) {
 		this[map + 'Changed'] = {};
@@ -564,8 +565,8 @@ rnd.ReStruct.prototype.update = function (force)
 	}
 
 	// only update half-bonds adjacent to atoms that have moved
-	this.molecule.updateHalfBonds(new util.Map(this.atomsChanged).findAll(function (aid, status){ return status >= 0; }, this));
-	this.molecule.sortNeighbors(new util.Map(this.atomsChanged).findAll(function (aid, status){ return status >= 1; }, this));
+	this.molecule.updateHalfBonds(new Map(this.atomsChanged).findAll(function (aid, status){ return status >= 0; }, this));
+	this.molecule.sortNeighbors(new Map(this.atomsChanged).findAll(function (aid, status){ return status >= 1; }, this));
 	this.assignConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();

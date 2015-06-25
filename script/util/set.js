@@ -1,15 +1,13 @@
-/*global require, global:false, util:false*/
+/*global module*/
 
-var util = global.util = global.util || {}; // jshint ignore:line
-
-util.Set = {
+var Set = {
 	empty: function () {
 		return {};
 	},
 
 	single: function (item) {
 		var set = {};
-		util.Set.add(set, item);
+		Set.add(set, item);
 		return set;
 	},
 
@@ -43,7 +41,7 @@ util.Set = {
 		for (var id in set1) {
 			if (set1[id] !== Object.prototype[id]) {
 				if (set2[id] === set1[id]) {
-					util.Set.add(set, id);
+					Set.add(set, id);
 				}
 			}
 		}
@@ -62,7 +60,7 @@ util.Set = {
 	},
 
 	eq: function (set1, set2) {
-		return util.Set.subset(set1, set2) && util.Set.subset(set2, set1);
+		return Set.subset(set1, set2) && Set.subset(set2, set1);
 	},
 
 	each: function (set, func, context) {
@@ -109,8 +107,8 @@ util.Set = {
 	},
 
 	mergeIn: function (set, other) {
-		util.Set.each(other, function (item) {
-			util.Set.add(set, item);
+		Set.each(other, function (item) {
+			Set.add(set, item);
 		});
 	},
 
@@ -122,7 +120,7 @@ util.Set = {
 
 	clone: function (other) {
 		var set = {};
-		util.Set.mergeIn(set, other);
+		Set.mergeIn(set, other);
 		return set;
 	},
 
@@ -155,3 +153,5 @@ util.Set = {
 		return null;
 	}
 };
+
+module.exports = Set;

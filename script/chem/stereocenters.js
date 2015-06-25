@@ -4,6 +4,7 @@
 
 var Map = require('../util/map');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('./struct');
 require('../util');
@@ -178,7 +179,7 @@ chem.Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, 
 			edge_idx: nei.bid,
 			nei_idx: nei.aid,
 			rank: nei.aid,
-			vec: util.Vec2.diff(nei_atom.pp, atom.pp).yComplement()
+			vec: Vec2.diff(nei_atom.pp, atom.pp).yComplement()
 		};
 
 		if (nei_atom.pureHydrogen())
@@ -489,11 +490,11 @@ chem.Stereocenters._xyzzy = function (v1, v2, u)
 {
 	var eps = 0.001;
 
-	var sine1 = util.Vec2.cross(v1, v2);
-	var cosine1 = util.Vec2.dot(v1, v2);
+	var sine1 = Vec2.cross(v1, v2);
+	var cosine1 = Vec2.dot(v1, v2);
 
-	var sine2 = util.Vec2.cross(v1, u);
-	var cosine2 = util.Vec2.dot(v1, u);
+	var sine2 = Vec2.cross(v1, u);
+	var cosine2 = Vec2.dot(v1, u);
 
 	if (Math.abs(sine1) < eps)
 	{

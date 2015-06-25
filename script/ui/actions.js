@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../chem');
 require('../util');
@@ -57,7 +58,7 @@ ui.Action.prototype.isDummy = function ()
 
 ui.Action.fromMultipleMove = function (lists, d)
 {
-	d = new util.Vec2(d);
+	d = new Vec2(d);
 
 	var action = new ui.Action();
 	var i;
@@ -671,7 +672,7 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
 		action.addOp(
 			op = new ui.Action.OpAtomAdd(
 				attrs,
-			util.Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)
+			Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)
 			).perform(ui.editor)
 		);
 
@@ -734,7 +735,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 			action.addOp(
 				op = new ui.Action.OpAtomAdd(
 				{ label: 'C', fragment: frid },
-				(new util.Vec2(1, 0)).rotate(angle).add(atom.pp)
+				(new Vec2(1, 0)).rotate(angle).add(atom.pp)
 				).perform(ui.editor)
 			);
 
@@ -770,7 +771,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 		} else {
 			var v;
 
-			v = util.Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
+			v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
 			action.addOp(
 				op = new ui.Action.OpAtomAdd(
@@ -836,7 +837,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 
 	// calc angle
 	var angle = calcAngle(begin.pp, end.pp) - calcAngle(fr_begin.pp, fr_end.pp);
-	var scale = util.Vec2.dist(begin.pp, end.pp) / util.Vec2.dist(fr_begin.pp, fr_end.pp);
+	var scale = Vec2.dist(begin.pp, end.pp) / Vec2.dist(fr_begin.pp, fr_end.pp);
 
 	var xy0 = fr_begin.pp;
 
@@ -850,7 +851,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 
 		var v;
 
-		v = util.Vec2.diff(a.pp, fr_begin.pp).rotate(angle).scaled(scale).add(begin.pp);
+		v = Vec2.diff(a.pp, fr_begin.pp).rotate(angle).scaled(scale).add(begin.pp);
 
 		var merge_a = R.findClosestAtom(v, 0.1);
 
@@ -915,7 +916,7 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
 	action.operations.reverse();
 
 	nSect.times(function (i) {
-		var pos = new util.Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
+		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
 		var a = ui.render.findClosestAtom(pos, 0.1);
 
@@ -1056,7 +1057,7 @@ ui.Action.fromRGroupFragment = function (rgidNew, frid) {
 };
 
 ui.Action.fromPaste = function (objects, offset) {
-	offset = offset || new util.Vec2();
+	offset = offset || new Vec2();
 	var action = new ui.Action(), amap = {}, fmap = {};
 	// atoms
 	for (var aid = 0; aid < objects.atoms.length; aid++) {
@@ -1153,7 +1154,7 @@ ui.Action.fromFlip = function (objects, flip) {
 
 			Set.each(fragment, function (aid) {
 				var atom = molecule.atoms.get(aid);
-				var d = new util.Vec2();
+				var d = new Vec2();
 
 				if (flip == 'horizontal') {
 					d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
@@ -1299,7 +1300,7 @@ ui.Action.OpAtomAdd = function (atom, pos) {
 			DS.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
 		}
 		RS.notifyAtomAdded(this.data.aid);
-		DS._atomSetPos(this.data.aid, new util.Vec2(this.data.pos));
+		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
 	this._invert = function () {
 		var ret = new ui.Action.OpAtomDelete();
@@ -1487,7 +1488,7 @@ ui.Action.OpSGroupCreate = function (sgid, type, pp) {
 		sg.id = sgid;
 		DS.sgroups.set(sgid, sg);
 		if (this.data.pp) {
-			DS.sgroups.get(sgid).pp = new util.Vec2(this.data.pp);
+			DS.sgroups.get(sgid).pp = new Vec2(this.data.pp);
 		}
 		RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
 		this.data.sgid = sgid;
@@ -1773,7 +1774,7 @@ ui.Action.OpRxnArrowAdd = function (pos) {
 			DS.rxnArrows.set(this.data.arid, new chem.Struct.RxnArrow());
 		}
 		RS.notifyRxnArrowAdded(this.data.arid);
-		DS._rxnArrowSetPos(this.data.arid, new util.Vec2(this.data.pos));
+		DS._rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnArrows', this.data.arid, 1);
 	};
@@ -1835,7 +1836,7 @@ ui.Action.OpRxnPlusAdd = function (pos) {
 			DS.rxnPluses.set(this.data.plid, new chem.Struct.RxnPlus());
 		}
 		RS.notifyRxnPlusAdded(this.data.plid);
-		DS._rxnPlusSetPos(this.data.plid, new util.Vec2(this.data.pos));
+		DS._rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnPluses', this.data.plid, 1);
 	};

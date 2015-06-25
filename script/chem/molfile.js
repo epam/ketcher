@@ -4,6 +4,7 @@
 
 var Map = require('../util/map');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('./element');
@@ -119,7 +120,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 	var params =
 	{
 		// generic
-		pp: new util.Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1])),
+		pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1])),
 		label: atomSplit[4].strip(),
 		explicitValence: mf.fmtInfo.valenceMap[mf.parseDecimalInt(atomSplit[10])],
 
@@ -154,7 +155,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 	var split, subsplit, key, value, i;
 	split = mf.spaceparsplit(line);
 	var params = {
-		pp: new util.Vec2(parseFloat(split[2]), -parseFloat(split[3])),
+		pp: new Vec2(parseFloat(split[2]), -parseFloat(split[3])),
 		aam: split[5].strip()
 	};
 	var label = split[1].strip();
@@ -422,7 +423,7 @@ chem.Molfile.applyDataSGroupInfo = function (sg, propData) {
 	var tagChar = split[10].strip();
 	var daspPos = mf.parseDecimalInt(split[11].strip());
 
-	sg.pp = new util.Vec2(x, -y);
+	sg.pp = new Vec2(x, -y);
 	sg.data.attached = attached;
 	sg.data.absolute = absolute;
 	sg.data.showUnits = showUnits;
@@ -1002,7 +1003,7 @@ chem.MolfileSaver.getComponents = function (molecule) {
 	var i;
 	for (i = 0; i < ccs.length; ++i) {
 		var bb = molecule.getCoordBoundingBox(ccs[i]);
-		var c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
 		var j = 0;
 		while (c.x > barriers[j])
 			++j;
@@ -1017,7 +1018,7 @@ chem.MolfileSaver.getComponents = function (molecule) {
 			continue;
 		}
 		bb = molecule.getCoordBoundingBox(components[i]);
-		c = util.Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
 		if (c.x < arrowPos)
 			reactants.push(components[i]);
 		else
@@ -1592,7 +1593,7 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 	// reaction fragment layout
 	var xorig = 0;
 	var shiftMol = function (ret, mol, bb, xorig, over) {
-		var d = new util.Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
+		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
 		mol.atoms.each(function (aid, atom){
 			atom.pp.add_(d);
 		});
@@ -1627,16 +1628,16 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new util.Vec2(x, y)}));
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
 			bbReactAll = {};
-			bbReactAll.max = new util.Vec2(bbReact[j].max);
-			bbReactAll.min = new util.Vec2(bbReact[j].min);
+			bbReactAll.max = new Vec2(bbReact[j].max);
+			bbReactAll.min = new Vec2(bbReact[j].min);
 		} else {
-			bbReactAll.max = util.Vec2.max(bbReactAll.max, bbReact[j].max);
-			bbReactAll.min = util.Vec2.min(bbReactAll.min, bbReact[j].min);
+			bbReactAll.max = Vec2.max(bbReactAll.max, bbReact[j].max);
+			bbReactAll.min = Vec2.min(bbReactAll.min, bbReact[j].min);
 		}
 	}
 	for (j = 0; j <	bbProd.length - 1; ++j) {
@@ -1646,31 +1647,31 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* chem.
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new util.Vec2(x, y)}));
+		ret.rxnPluses.add(new chem.Struct.RxnPlus({'pp':new Vec2(x, y)}));
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
 			bbProdAll = {};
-			bbProdAll.max = new util.Vec2(bbProd[j].max);
-			bbProdAll.min = new util.Vec2(bbProd[j].min);
+			bbProdAll.max = new Vec2(bbProd[j].max);
+			bbProdAll.min = new Vec2(bbProd[j].min);
 		} else {
-			bbProdAll.max = util.Vec2.max(bbProdAll.max, bbProd[j].max);
-			bbProdAll.min = util.Vec2.min(bbProdAll.min, bbProd[j].min);
+			bbProdAll.max = Vec2.max(bbProdAll.max, bbProd[j].max);
+			bbProdAll.min = Vec2.min(bbProdAll.min, bbProd[j].min);
 		}
 	}
 	bb1 = bbReactAll;
 	bb2 = bbProdAll;
 	if (!bb1 && !bb2) {
-		ret.rxnArrows.add(new chem.Struct.RxnArrow({'pp':new util.Vec2(0, 0)}));
+		ret.rxnArrows.add(new chem.Struct.RxnArrow({'pp':new Vec2(0, 0)}));
 	} else {
-		var v1 = bb1 ? new util.Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
-		var v2 = bb2 ? new util.Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
+		var v1 = bb1 ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
+		var v2 = bb2 ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
 		var defaultOffset = 3;
 		if (!v1)
-			v1 = new util.Vec2(v2.x - defaultOffset, v2.y);
+			v1 = new Vec2(v2.x - defaultOffset, v2.y);
 		if (!v2)
-			v2 = new util.Vec2(v1.x + defaultOffset, v1.y);
-		ret.rxnArrows.add(new chem.Struct.RxnArrow({ 'pp': util.Vec2.lc2(v1, 0.5, v2, 0.5 ) }));
+			v2 = new Vec2(v1.x + defaultOffset, v1.y);
+		ret.rxnArrows.add(new chem.Struct.RxnArrow({ 'pp': Vec2.lc2(v1, 0.5, v2, 0.5 ) }));
 	}
 	ret.isReaction = true;
 	return ret;

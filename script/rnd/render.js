@@ -5,6 +5,7 @@
 var Raphael = require('../raphael-ext.js');
 var Box2Abs = require('../util/box2abs');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('./restruct');
@@ -77,13 +78,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
 	this.baseScale = this.scale;
-	this.offset = new util.Vec2();
+	this.offset = new Vec2();
 	this.clientArea = clientArea = $(clientArea);
 	clientArea.innerHTML = '';
 	this.paper = new Raphael(clientArea);
-	this.size = new util.Vec2();
-	this.viewSz = viewSz || new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
-	this.bb = new Box2Abs(new util.Vec2(), this.viewSz);
+	this.size = new Vec2();
+	this.viewSz = viewSz || new Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
+	this.bb = new Box2Abs(new Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;
 	this.rxnArrow = null;
@@ -100,7 +101,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		element = element.offsetParent;
 	} while (element);
 
-	this.clientAreaPos = new util.Vec2(valueL, valueT);
+	this.clientAreaPos = new Vec2(valueL, valueT);
 
 	// rbalabanov: two-fingers scrolling & zooming for iPad
 	// TODO should be moved to touch.js module, re-factoring needed
@@ -200,9 +201,9 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 				if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
 					// TODO: karulin: fix this on touch devices if needed
 					var co = clientArea.cumulativeOffset();
-					co = new util.Vec2(co[0], co[1]);
-					var vp = new util.Vec2(event.clientX, event.clientY).sub(co);
-					var sz = new util.Vec2(clientArea.clientWidth, clientArea.clientHeight);
+					co = new Vec2(co[0], co[1]);
+					var vp = new Vec2(event.clientX, event.clientY).sub(co);
+					var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
 					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
 						if (eventName == 'MouseMove') {
 							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
@@ -270,8 +271,8 @@ rnd.Render.prototype.obj2view = function (v, isRelative) {
 
 rnd.Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
-			'ui' in window && 'page2obj' in ui ? new util.Vec2(ui.page2obj(event)) :
-		new util.Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
+			'ui' in window && 'page2obj' in ui ? new Vec2(ui.page2obj(event)) :
+		new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
 		maps,
 		skip
 	);
@@ -289,7 +290,7 @@ rnd.Render.prototype.findItem = function (event, maps, skip) {
 };
 
 rnd.Render.prototype.client2Obj = function (clientPos) {
-	return new util.Vec2(clientPos).sub(this.offset);
+	return new Vec2(clientPos).sub(this.offset);
 };
 
 rnd.Render.prototype.setMolecule = function (ctab, norescale)
@@ -584,17 +585,17 @@ rnd.Render.prototype.initSettings = function ()
 rnd.Render.prototype.getStructCenter = function (selection)
 {
 	var bb = this.ctab.getVBoxObj(selection);
-	return util.Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 };
 
 rnd.Render.prototype.onResize = function ()
 {
-	this.setViewSize(new util.Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
+	this.setViewSize(new Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
 };
 
 rnd.Render.prototype.setViewSize = function (viewSz)
 {
-	this.viewSz = new util.Vec2(viewSz);
+	this.viewSz = new Vec2(viewSz);
 };
 
 rnd.Render.prototype._setPaperSize = function (sz)
@@ -631,7 +632,7 @@ rnd.Render.prototype.getElementPos = function (obj)
 			curtop += obj.offsetTop;
 		} while ((obj = obj.offsetParent));
 	}
-	return new util.Vec2(curleft,curtop);
+	return new Vec2(curleft,curtop);
 };
 
 rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
@@ -671,7 +672,7 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 
 	var x0 = Math.min(p0.x, p1.x), x1 = Math.max(p0.x, p1.x), y0 = Math.min(p0.y, p1.y), y1 = Math.max(p0.y, p1.y);
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
+		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
@@ -728,21 +729,21 @@ rnd.Render.prototype.drawSelectionPolygon = function (r) {
 };
 
 rnd.Render.prototype.isPointInPolygon = function (r, p) {
-	var d = new util.Vec2(0, 1);
+	var d = new Vec2(0, 1);
 	var n = d.rotate(Math.PI / 2);
-	var v0 = util.Vec2.diff(r[r.length - 1], p);
-	var n0 = util.Vec2.dot(n, v0);
-	var d0 = util.Vec2.dot(d, v0);
+	var v0 = Vec2.diff(r[r.length - 1], p);
+	var n0 = Vec2.dot(n, v0);
+	var d0 = Vec2.dot(d, v0);
 	var w0 = null;
 	var counter = 0;
 	var eps = 1e-5;
 	var flag1 = false, flag0 = false;
 
 	for (var i = 0; i < r.length; ++i) {
-		var v1 = util.Vec2.diff(r[i], p);
-		var w1 = util.Vec2.diff(v1, v0);
-		var n1 = util.Vec2.dot(n, v1);
-		var d1 = util.Vec2.dot(d, v1);
+		var v1 = Vec2.diff(r[i], p);
+		var w1 = Vec2.diff(v1, v0);
+		var n1 = Vec2.dot(n, v1);
+		var d1 = Vec2.dot(d, v1);
 		flag1 = false;
 		if (n1 * n0 < 0)
 		{
@@ -753,7 +754,7 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 				flag1 = true;
 			}
 		}
-		if (flag1 && flag0 && util.Vec2.dot(w1, n) * util.Vec2(w0, n) >= 0)
+		if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2(w0, n) >= 0)
 			flag1 = false;
 		if (flag1)
 			counter++;
@@ -776,10 +777,10 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 	var atomList = [];
 	var r = [];
 	for (var i = 0; i < rr.length; ++i) {
-		r[i] = new util.Vec2(rr[i].x, rr[i].y);
+		r[i] = new Vec2(rr[i].x, rr[i].y);
 	}
 	this.ctab.bonds.each(function (bid, bond){
-		var centre = util.Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
+		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);
@@ -850,13 +851,13 @@ rnd.Render.prototype.testPolygon = function (rr) {
 		return;
 	var min = rr[0], max = rr[0];
 	for (var j = 1; j < rr.length; ++j) {
-		min = util.Vec2.min(min, rr[j]);
-		max = util.Vec2.max(max, rr[j]);
+		min = Vec2.min(min, rr[j]);
+		max = Vec2.max(max, rr[j]);
 	}
 	this.drawSelectionPolygon(rr);
 	var zz = 10;
 	for (var k = 0; k < 1000; ++k) {
-		var p = new util.Vec2(Math.random() * zz, Math.random() * zz);
+		var p = new Vec2(Math.random() * zz, Math.random() * zz);
 		var isin = this.isPointInPolygon(rr, p);
 		var color = isin ? '#0f0' : '#f00';
 		this.paper.circle(p.x, p.y, 2).attr({
@@ -895,12 +896,12 @@ rnd.Render.prototype.update = function (force)
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
 		var sf = this.settings.scaleFactor;
-		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new util.Vec2());
+		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new Vec2());
 
 		if (!this.opt.autoScale) {
-			var ext = util.Vec2.UNIT.scaled(sf);
+			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(util.Vec2.UNIT.scaled(20)));
+			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(Vec2.UNIT.scaled(20)));
 			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)
 				this.oldCb = new Box2Abs();
@@ -911,7 +912,7 @@ rnd.Render.prototype.update = function (force)
 			if (!this.sz || sz.x != this.sz.x || sz.y != this.sz.y)
 				this.setPaperSize(sz);
 
-			this.offset = this.offset || new util.Vec2();
+			this.offset = this.offset || new Vec2();
 			if (delta.x != 0 || delta.y != 0) {
 				this.setOffset(this.offset.add(delta));
 				this.ctab.translate(delta);
@@ -919,7 +920,7 @@ rnd.Render.prototype.update = function (force)
 		} else {
 			var sz1 = bb.sz();
 			var marg = this.opt.autoScaleMargin;
-			var mv = new util.Vec2(marg, marg);
+			var mv = new Vec2(marg, marg);
 			var csz = this.viewSz;
 			if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)
 				throw new Error('View box too small for the given margin');
@@ -943,7 +944,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO s
 	minDist	 = Math.min(minDist, maxMinDist);
 	this.ctab.atoms.each(function (aid, atom){
 		if (aid != skip) {
-			var dist = util.Vec2.dist(pos, atom.a.pp);
+			var dist = Vec2.dist(pos, atom.a.pp);
 			if (dist < minDist) {
 				closestAtom = aid;
 				minDist = dist;
@@ -968,8 +969,8 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 	this.ctab.bonds.each(function (bid, bond){
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
 		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
-		var mid = util.Vec2.lc2(p1, 0.5, p2, 0.5);
-		var cdist = util.Vec2.dist(pos, mid);
+		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
+		var cdist = Vec2.dist(pos, mid);
 		if (cdist < minCDist) {
 			minCDist = cdist;
 			closestBondCenter = bid;
@@ -982,9 +983,9 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
 		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 
-		var inStripe = util.Vec2.dot(pos.sub(p1),d) * util.Vec2.dot(pos.sub(p2),d) < 0;
+		var inStripe = Vec2.dot(pos.sub(p1),d) * Vec2.dot(pos.sub(p2),d) < 0;
 		if (inStripe) {
-			var dist = Math.abs(util.Vec2.dot(pos.sub(p1),n));
+			var dist = Math.abs(Vec2.dot(pos.sub(p1),n));
 			if (dist < minDist) {
 				closestBond = bid;
 				minDist = dist;
@@ -1094,9 +1095,9 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 		ey += y1 - szy;
 	}
 
-	var d = new util.Vec2(dx, dy).scaled(1 / this.zoom);
+	var d = new Vec2(dx, dy).scaled(1 / this.zoom);
 	if (ey > 0 || ex > 0) {
-		var e = new util.Vec2(ex, ey).scaled(1 / this.zoom);
+		var e = new Vec2(ex, ey).scaled(1 / this.zoom);
 		var sz = this.sz.add(e);
 
 		this.setPaperSize(sz);

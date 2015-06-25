@@ -1,4 +1,3 @@
-/*global require, global:false, rnd*/
+/*global require, global:false*/
 
 global.util = require('./common');
-global.util.Vec2 = require('./vec2');

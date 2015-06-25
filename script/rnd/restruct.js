@@ -11,6 +11,7 @@ var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Pool = require('../util/pool');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('../chem');
@@ -22,7 +23,7 @@ var tfx = util.tfx;
 
 rnd.ReObject = function ()  // TODO ??? should it be in ReStruct namespace
 {
-	this.__ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+	this.__ext = new Vec2(0.05 * 3, 0.05 * 3);
 };
 
 rnd.ReObject.prototype.init = function (viselType)
@@ -214,7 +215,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 
 	if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
-		this.chiralFlags.set(0,new rnd.ReChiralFlag(new util.Vec2(bb.max.x, bb.min.y - 1)));
+		this.chiralFlags.set(0,new rnd.ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
 
 	this.coordProcess(norescale);
@@ -614,7 +615,7 @@ rnd.ReStruct.prototype.drawReactionSymbols = function ()
 rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
 	var centre = this.render.ps(item.item.pp);
-	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
+	var path = this.drawArrow(new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
@@ -718,8 +719,8 @@ rnd.ReLoop = function (loop)
 {
 	this.loop = loop;
 	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
-	this.centre = new util.Vec2();
-	this.radius = new util.Vec2();
+	this.centre = new Vec2();
+	this.radius = new Vec2();
 };
 rnd.ReLoop.prototype = new rnd.ReObject();
 rnd.ReLoop.isSelectable = function () { return false; }
@@ -991,10 +992,10 @@ rnd.ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review 
 			var bba = atom.visel.boundingBox;
 			if (!bba) {
 				bba = new Box2Abs(atom.a.pp, atom.a.pp);
-				var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+				var ext = new Vec2(0.05 * 3, 0.05 * 3);
 				bba = bba.extend(ext, ext);
 			} else {
-				bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
+				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
 			}
 			ret = (ret ? Box2Abs.union(ret, bba) : bba);
 		}
@@ -1005,8 +1006,8 @@ rnd.ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review 
 rnd.ReFrag.prototype._draw = function (render, fid, attrs) { // TODO need to review parameter list
 	var bb = this.calcBBox(render, fid);
 	if (bb) {
-		var p0 = render.obj2scaled(new util.Vec2(bb.p0.x, bb.p0.y));
-		var p1 = render.obj2scaled(new util.Vec2(bb.p1.x, bb.p1.y));
+		var p0 = render.obj2scaled(new Vec2(bb.p0.x, bb.p0.y));
+		var p1 = render.obj2scaled(new Vec2(bb.p1.x, bb.p1.y));
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
 	} else {
 		// TODO abnormal situation, empty fragments must be destroyed by tools
@@ -1070,7 +1071,7 @@ rnd.ReRGroup.findClosest = function (render, p, skip, minDist) {
 		if (rgid != skip) {
 			if (rgroup.labelBox) { // should be true at this stage, as the label is visible
 				if (rgroup.labelBox.contains(p, 0.5)) { // inside the box or within 0.5 units from the edge
-					var dist = util.Vec2.dist(rgroup.labelBox.centre(), p);
+					var dist = Vec2.dist(rgroup.labelBox.centre(), p);
 					if (!ret || dist < minDist) {
 						minDist = dist;
 						ret = { 'id': rgid, 'dist': minDist };
@@ -1095,12 +1096,12 @@ rnd.ReRGroup.prototype.calcBBox = function (render) {
 };
 
 rnd.ReRGroup.drawBrackets = function (set, render, bb, d, n) {
-	d = d || new util.Vec2(1, 0);
+	d = d || new Vec2(1, 0);
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
 	var height = bb.p1.y - bb.p0.y;
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
-	var leftBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d.negated(), d.negated().rotateSC(1, 0), new util.Vec2(bb.p0.x, cy), bracketWidth, height);
-	var rightBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d, d.rotateSC(1, 0), new util.Vec2(bb.p1.x, cy), bracketWidth, height);
+	var leftBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d.negated(), d.negated().rotateSC(1, 0), new Vec2(bb.p0.x, cy), bracketWidth, height);
+	var rightBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d, d.rotateSC(1, 0), new Vec2(bb.p1.x, cy), bracketWidth, height);
 	set.push(leftBracket, rightBracket);
 };
 
@@ -1215,7 +1216,7 @@ rnd.ReSGroup.findClosest = function (render, p) {
 	var minDist = render.opt.selectionDistanceCoefficient;
 	render.ctab.molecule.sgroups.each(function (sgid, sg){
 		var d = sg.bracketDir, n = d.rotateSC(1, 0);
-		var pg = new util.Vec2(util.Vec2.dot(p, d), util.Vec2.dot(p, n));
+		var pg = new Vec2(Vec2.dot(p, d), Vec2.dot(p, n));
 		for (var i = 0; i < sg.areas.length; ++i) {
 			var box = sg.areas[i];
 			var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
@@ -1245,13 +1246,13 @@ rnd.ReSGroup.prototype.drawHighlight = function (render) {
 	var sg = this.item;
 	var bb = sg.bracketBox.transform(render.obj2scaled, render);
 	var lw = settings.lineWidth;
-	var vext = new util.Vec2(lw * 4, lw * 6);
+	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);
 	var d = sg.bracketDir, n = d.rotateSC(1,0);
-	var a0 = util.Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
-	var a1 = util.Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
-	var b0 = util.Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
-	var b1 = util.Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
+	var a0 = Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
+	var a1 = Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
+	var b0 = Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
+	var b1 = Vec2.lc2(d, bb.p1.x, n, bb.p1.y);
 
 	var set = paper.set();
 	sg.highlighting = paper

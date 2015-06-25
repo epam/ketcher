@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Map = require('../util/map');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('./element');
@@ -37,15 +38,15 @@ chem.CisTrans.prototype.getSubstituents = function (idx) {
 };
 
 chem.CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
-	var diff = util.Vec2.diff(beg, end);
-	var norm = new util.Vec2(-diff.y, diff.x);
+	var diff = Vec2.diff(beg, end);
+	var norm = new Vec2(-diff.y, diff.x);
 
 	if (!norm.normalize()) {
 		return 0;
 	}
 
-	var normBeg = util.Vec2.diff(neiBeg, beg);
-	var normEnd = util.Vec2.diff(neiEnd, end);
+	var normBeg = Vec2.diff(neiBeg, beg);
+	var normEnd = Vec2.diff(neiEnd, end);
 
 	if (!normBeg.normalize()) {
 		return 0;
@@ -54,8 +55,8 @@ chem.CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
 		return 0;
 	}
 
-	var prodBeg = util.Vec2.dot(normBeg, norm);
-	var prodEnd = util.Vec2.dot(normEnd, norm);
+	var prodBeg = Vec2.dot(normBeg, norm);
+	var prodEnd = Vec2.dot(normEnd, norm);
 
 	if (Math.abs(prodBeg) < 0.001 || Math.abs(prodEnd) < 0.001) {
 		return 0;

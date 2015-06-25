@@ -5,6 +5,7 @@
 var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('./element');
@@ -23,7 +24,7 @@ chem.SGroup = function (type) {
 	chem.SGroup.equip(this, type);
 	this.label = -1;
 	this.bracketBox = null;
-	this.bracketDir = new util.Vec2(1,0);
+	this.bracketDir = new Vec2(1,0);
 	this.areas = [];
 
 	this.highlight = false;
@@ -216,11 +217,11 @@ chem.SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 chem.SGroup.bracketPos = function (sg, render, mol, xbonds) {
 	var atoms = sg.atoms;
 	if (!xbonds || xbonds.length !== 2) {
-		sg.bracketDir = new util.Vec2(1, 0);
+		sg.bracketDir = new Vec2(1, 0);
 	} else {
 		var b1 = mol.bonds.get(xbonds[0]), b2 = mol.bonds.get(xbonds[1]);
 		var p1 = b1.getCenter(mol), p2 = b2.getCenter(mol);
-		sg.bracketDir = util.Vec2.diff(p2, p1).normalized();
+		sg.bracketDir = Vec2.diff(p2, p1).normalized();
 	}
 	var d = sg.bracketDir;
 	var n = d.rotateSC(1, 0);
@@ -230,13 +231,13 @@ chem.SGroup.bracketPos = function (sg, render, mol, xbonds) {
 	util.each(atoms, function (aid) {
 		var atom = mol.atoms.get(aid);
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
-		var pos = new util.Vec2(atom.pp);
+		var pos = new Vec2(atom.pp);
 		if (util.isNull(bba)) {
 			bba = new Box2Abs(pos, pos);
-			var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
+			var ext = new Vec2(0.05 * 3, 0.05 * 3);
 			bba = bba.extend(ext, ext);
 		} else {
-			bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
+			bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
 		}
 		contentBoxes.push(bba);
 	}, this);
@@ -244,21 +245,21 @@ chem.SGroup.bracketPos = function (sg, render, mol, xbonds) {
 		var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 		if (util.isNull(bba))
 			return; // TODO: use object box instead
-		bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
+		bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
 		contentBoxes.push(bba);
 	}, this);
 	util.each(contentBoxes, function (bba) {
 		var bbb = null;
 		util.each([bba.p0.x, bba.p1.x], function (x) {
 			util.each([bba.p0.y, bba.p1.y], function (y) {
-				var v = new util.Vec2(x, y);
-				var p = new util.Vec2(util.Vec2.dot(v, d), util.Vec2.dot(v, n));
+				var v = new Vec2(x, y);
+				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, n));
 				bbb = util.isNull(bbb) ? new Box2Abs(p, p) : bbb.include(p);
 			}, this);
 		}, this);
 		bb = util.isNull(bb) ? bbb : Box2Abs.union(bb, bbb);
 	}, this);
-	var vext = new util.Vec2(0.2, 0.4);
+	var vext = new Vec2(0.2, 0.4);
 	if (!util.isNull(bb))
 		bb = bb.extend(vext, vext);
 	sg.bracketBox = bb;
@@ -285,7 +286,7 @@ chem.SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n,
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
 		var indexBox = Box2Abs.fromRelBox(rnd.relBox(indexPath.getBBox()));
-		var t = Math.max(util.Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
+		var t = Math.max(Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
 		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
 		set.push(indexPath);
 	};
@@ -326,11 +327,11 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, ren
 	var brackets = [];
 	if (xbonds.length < 2) {
 		(function () {
-			d = d || new util.Vec2(1, 0);
+			d = d || new Vec2(1, 0);
 			n = n || d.rotateSC(1, 0);
 			var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
-			var cl = util.Vec2.lc2(d, bb.p0.x, n, 0.5 * (bb.p0.y + bb.p1.y));
-			var cr = util.Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y));
+			var cl = Vec2.lc2(d, bb.p0.x, n, 0.5 * (bb.p0.y + bb.p1.y));
+			var cr = Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y));
 			var bracketHeight = bb.sz().y;
 
 			brackets.push(new bracketParams(cl, d.negated(), bracketWidth, bracketHeight), new bracketParams(cr, d, bracketWidth, bracketHeight));
@@ -338,18 +339,18 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, ren
 	} else if (xbonds.length === 2) {
 		(function () {
 			var b1 = mol.bonds.get(xbonds[0]), b2 = mol.bonds.get(xbonds[1]);
-			var cl0 = b1.getCenter(mol), cr0 = b2.getCenter(mol), tl = -1, tr = -1, tt = -1, tb = -1, cc = util.Vec2.centre(cl0, cr0);
-			var dr = util.Vec2.diff(cr0, cl0).normalized(), dl = dr.negated(), dt = dr.rotateSC(1,0), db = dt.negated();
+			var cl0 = b1.getCenter(mol), cr0 = b2.getCenter(mol), tl = -1, tr = -1, tt = -1, tb = -1, cc = Vec2.centre(cl0, cr0);
+			var dr = Vec2.diff(cr0, cl0).normalized(), dl = dr.negated(), dt = dr.rotateSC(1,0), db = dt.negated();
 
 			util.each(mol.sGroupForest.children.get(id), function (sgid) {
 				var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 				if (util.isNull(bba))
 					return; // TODO: use object box instead
-				bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
-				tl = Math.max(tl, util.Vec2.shiftRayBox(cl0, dl, bba));
-				tr = Math.max(tr, util.Vec2.shiftRayBox(cr0, dr, bba));
-				tt = Math.max(tt, util.Vec2.shiftRayBox(cc, dt, bba));
-				tb = Math.max(tb, util.Vec2.shiftRayBox(cc, db, bba));
+				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+				tl = Math.max(tl, Vec2.shiftRayBox(cl0, dl, bba));
+				tr = Math.max(tr, Vec2.shiftRayBox(cr0, dr, bba));
+				tt = Math.max(tt, Vec2.shiftRayBox(cc, dt, bba));
+				tb = Math.max(tb, Vec2.shiftRayBox(cc, db, bba));
 			}, this);
 			tl = Math.max(tl + 0.2, 0);
 			tr = Math.max(tr + 0.2, 0);
@@ -722,7 +723,7 @@ chem.SGroup.GroupGen = {
 };
 
 chem.SGroup.getMassCentre = function (mol, atoms) {
-	var c = new util.Vec2(); // mass centre
+	var c = new Vec2(); // mass centre
 	for (var i = 0; i < atoms.length; ++i) {
 		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
 	}
@@ -755,7 +756,7 @@ chem.SGroup.GroupDat = {
 		if (this.pp == null) {
 			// NB: we did not pass xbonds parameter to the backetPos method above,
 			//  so the result will be in the regular coordinate system
-			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new util.Vec2(0.5, 0.5)));
+			chem.SGroup.setPos(remol, this, this.bracketBox.p1.add(new Vec2(0.5, 0.5)));
 		}
 		var ps = this.pp.scaled(settings.scaleFactor);
 

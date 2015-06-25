@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 var ui = global.ui = global.ui || {}; // jshint ignore:line
 
@@ -448,7 +449,7 @@ ui.setZoomRegular = function (zoom) {
 
 // get the size of the view window in pixels
 ui.getViewSz = function () {
-	return new util.Vec2(ui.render.viewSz);
+	return new Vec2(ui.render.viewSz);
 };
 
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
@@ -465,7 +466,7 @@ ui.setZoomCentered = function (zoom, c) {
 
 // set the reference point for the "static point" zoom (in object coordinates)
 ui.setZoomStaticPointInit = function (s) {
-	ui.zspObj = new util.Vec2(s);
+	ui.zspObj = new Vec2(s);
 };
 
 // vp is the point where the reference point should now be (in view coordinates)
@@ -523,7 +524,7 @@ ui.onClick_CleanUp = function ()
 				var dsg = new chem.SGroup('DAT');
 				var dsgid = mol.sgroups.add(dsg);
 				dsg.id = dsgid;
-				dsg.pp = new util.Vec2();
+				dsg.pp = new Vec2();
 				dsg.data.fieldName = '_ketcher_selective_layout';
 				dsg.data.fieldValue = '1';
 				mol.atomAddToSGroup(dsgid, aid);
@@ -647,7 +648,7 @@ ui.page2canvas2 = function (pos)
 {
 	var offset = ui.client_area.cumulativeOffset();
 
-	return new util.Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
+	return new Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
 };
 
 ui.page2obj = function (pagePos)
@@ -657,7 +658,7 @@ ui.page2obj = function (pagePos)
 
 ui.scrollPos = function ()
 {
-	return new util.Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
+	return new Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
 };
 
 //
@@ -701,10 +702,10 @@ ui.atomForNewBond = function (id)
 	{
 		var nei_pos = ui.render.atomGetPos(nei.aid);
 
-		if (util.Vec2.dist(pos, nei_pos) < 0.1)
+		if (Vec2.dist(pos, nei_pos) < 0.1)
 			return;
 
-		neighbours.push({id: nei.aid, v: util.Vec2.diff(nei_pos, pos)});
+		neighbours.push({id: nei.aid, v: Vec2.diff(nei_pos, pos)});
 	});
 
 	neighbours.sort(function (nei1, nei2)
@@ -718,7 +719,7 @@ ui.atomForNewBond = function (id)
 	// TODO: impove layout: tree, ...
 
 	for (i = 0; i < neighbours.length; i++) {
-		angle = util.Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
+		angle = Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
 
 		if (angle < 0)
 			angle += 2 * Math.PI;
@@ -727,7 +728,7 @@ ui.atomForNewBond = function (id)
 			max_i = i, max_angle = angle;
 	}
 
-	var v = new util.Vec2(1, 0);
+	var v = new Vec2(1, 0);
 
 	if (neighbours.length > 0) {
 		if (neighbours.length == 1) {
@@ -738,16 +739,16 @@ ui.atomForNewBond = function (id)
 			if (ui.render.atomGetDegree(nei.aid) > 1) {
 				var nei_neighbours = [];
 				var nei_pos = ui.render.atomGetPos(nei.aid);
-				var nei_v = util.Vec2.diff(pos, nei_pos);
+				var nei_v = Vec2.diff(pos, nei_pos);
 				var nei_angle = Math.atan2(nei_v.y, nei_v.x);
 
 				ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei) {
 					var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
 
-					if (nei_nei.bid == nei.bid || util.Vec2.dist(nei_pos, nei_nei_pos) < 0.1)
+					if (nei_nei.bid == nei.bid || Vec2.dist(nei_pos, nei_nei_pos) < 0.1)
 						return;
 
-					var v_diff = util.Vec2.diff(nei_nei_pos, nei_pos);
+					var v_diff = Vec2.diff(nei_nei_pos, nei_pos);
 					var ang = Math.atan2(v_diff.y, v_diff.x) - nei_angle;
 
 					if (ang < 0)
@@ -790,7 +791,7 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
 	if (oldOffset == null)
 		return;
 
-	var delta = new util.Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
+	var delta = new Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
 
 	ui.client_area.scrollLeft += delta.x;
 	ui.client_area.scrollTop += delta.y;
@@ -877,7 +878,7 @@ ui.copy = function (struct, selection)
 					xmin = Math.min(xmin, this.atoms[i].pp.x); ymin = Math.min(ymin, this.atoms[i].pp.y);
 					xmax = Math.max(xmax, this.atoms[i].pp.x); ymax = Math.max(ymax, this.atoms[i].pp.y);
 				}
-				return new util.Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+				return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
 			} else if (this.rxnArrows.length) {
 				return this.rxnArrows[0].pp;
 			} else if (this.rxnPluses.length) {

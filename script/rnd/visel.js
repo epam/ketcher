@@ -4,6 +4,7 @@
 /*global require, global:false, rnd:false*/
 
 var Box2Abs = require('../util/box2abs');
+var Vec2 = require('../util/vec2');
 require('../util');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
@@ -62,7 +63,7 @@ rnd.Visel.prototype.translate = function (a, b) {
 	x = a;
 	y = b;
 
-	delta = new util.Vec2(x, y);
+	delta = new Vec2(x, y);
 	for (var i = 0; i < this.paths.length; ++i) {
 		this.paths[i].translateAbs(x, y);
 	}

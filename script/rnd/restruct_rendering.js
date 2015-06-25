@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Box2Abs = require('../util/box2abs');
+var Vec2 = require('../util/vec2');
 
 require('./restruct');
 require('../util');
@@ -85,8 +86,8 @@ rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function (hb, neihbid)
 {
 	var bsp = this.render.settings.bondSpace;
 	var neihb = this.molecule.halfBonds.get(neihbid);
-	var cos = util.Vec2.dot(hb.dir, neihb.dir);
-	var sin = util.Vec2.cross(hb.dir, neihb.dir);
+	var cos = Vec2.dot(hb.dir, neihb.dir);
+	var sin = Vec2.cross(hb.dir, neihb.dir);
 	var cosHalf = Math.sqrt(0.5 * (1 - cos));
 	var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
 
@@ -252,13 +253,13 @@ rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
 	var styles = render.styles;
 	var bsp = settings.bondSpace / 2;
 
-	var nSect = (util.Vec2.dist(a, b) / (settings.bondSpace + settings.lineWidth)).toFixed() - 0;
+	var nSect = (Vec2.dist(a, b) / (settings.bondSpace + settings.lineWidth)).toFixed() - 0;
 	if (!(nSect & 1))
 		nSect += 1;
 	var path = '', pp = a;
 
 	for (var i = 1; i <= nSect; ++i) {
-		var pi = util.Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+		var pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
 		if (i & 1) {
 			path += rnd.ReStruct.makeStroke(pp, pi);
 		} else {
@@ -289,8 +290,8 @@ rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 
 rnd.dashedPath = function (p0, p1, dash) {
 	var t0 = 0;
-	var t1 = util.Vec2.dist(p0, p1);
-	var d = util.Vec2.diff(p1, p0).normalized();
+	var t1 = Vec2.dist(p0, p1);
+	var d = Vec2.diff(p1, p0).normalized();
 	var black = true;
 	var path = '';
 	var i = 0;
@@ -495,10 +496,10 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 	else if (bond.doubleBondShift == 0)
 		fixed += settings.bondSpace / 2;
 
-	var s = new util.Vec2(2, 1).scaled(settings.bondSpace);
+	var s = new Vec2(2, 1).scaled(settings.bondSpace);
 	if (bond.b.type == chem.Struct.BOND.TYPE.TRIPLE)
 		fixed += settings.bondSpace;
-	var p = c.add(new util.Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
+	var p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 	var path = paper.text(p.x, p.y, topologyMark)
 	.attr({
 		'font': settings.font,
@@ -733,8 +734,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-						this.radicalBullet(ps.add(new util.Vec2(-hshift, 0))),
-						this.radicalBullet(ps.add(new util.Vec2(hshift, 0))));
+						this.radicalBullet(ps.add(new Vec2(-hshift, 0))),
+						this.radicalBullet(ps.add(new Vec2(hshift, 0))));
 						radical.path.attr('fill', color);
 						break;
 					case 2:
@@ -745,8 +746,8 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path = paper.set();
 						hshift = 1.6 * settings.lineWidth;
 						radical.path.push(
-						this.radicalCap(ps.add(new util.Vec2(-hshift, 0))),
-						this.radicalCap(ps.add(new util.Vec2(hshift, 0))));
+						this.radicalCap(ps.add(new Vec2(-hshift, 0))),
+						this.radicalCap(ps.add(new Vec2(hshift, 0))));
 						radical.path.attr('stroke', color);
 						break;
 				}
@@ -926,7 +927,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j) {
 						attpntText += '\'';
 					}
-					var pos0 = new util.Vec2(ps);
+					var pos0 = new Vec2(ps);
 					var pos1 = ps.addScaled(lsb, 0.7 * settings.scaleFactor);
 
 					var attpntPath1 = paper.text(pos1.x, pos1.y, attpntText)
@@ -939,7 +940,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					this.centerText(attpntPath1, attpntRbb);
 
 					var lsbn = lsb.negated();
-					pos1 = pos1.addScaled(lsbn, util.Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
+					pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
 					pos0 = this.shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
 					var n = lsb.rotateSC(1, 0);
 					var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
@@ -1038,9 +1039,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 			var t = 3;
 			// estimate the shift to clear the atom label
 			for (i = 0; i < visel.exts.length; ++i)
-				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+				t = Math.max(t, Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
 			// estimate the shift backwards to account for the size of the aam/query text box itself
-			t += util.Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
+			t += Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
 			dir = dir.scaled(8 + t);
 			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
 			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
@@ -1053,7 +1054,7 @@ rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
 		var box = visel.exts[k].translate(pos0);
-		t = Math.max(t, util.Vec2.shiftRayBox(pos0, dir, box));
+		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
 	}
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);
@@ -1081,7 +1082,7 @@ rnd.ReStruct.prototype.bisectLargestSector = function (atom)
 			ang = angles[i] + da[i] / 2;
 		}
 	}
-	return new util.Vec2(Math.cos(ang), Math.sin(ang));
+	return new Vec2(Math.cos(ang), Math.sin(ang));
 };
 
 rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
@@ -1095,8 +1096,8 @@ rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
 	hb1.p = this.shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
 	hb2.p = this.shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
-	bond.b.center = util.Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
-	bond.b.len = util.Vec2.dist(p1, p2);
+	bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
+	bond.b.len = Vec2.dist(p1, p2);
 	bond.b.sb = settings.lineWidth * 5;
 	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
@@ -1132,31 +1133,31 @@ rnd.ReStruct.prototype.showBonds = function ()
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null, irbb = null;
 		if (opt.showBondIds) {
-			var pb = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 		if (opt.showHalfBondIds) {
-			var phb1 = util.Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
+			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
-			var phb2 = util.Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
+			var phb2 = Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 		if (opt.showLoopIds && !opt.showBondIds) {
-			var pl1 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
+			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
-			var pl2 = util.Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			var pl2 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
 			irbb = rnd.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
@@ -1186,7 +1187,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		var b1 = this.bonds.get(hb1.bid);
 		var b2 = this.bonds.get(hb2.bid);
 		if (b1.b.type == b2.b.type && b1.b.stereo == chem.Struct.BOND.STEREO.NONE && b2.b.stereo == chem.Struct.BOND.STEREO.NONE)
-		if (Math.abs(util.Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+		if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
 			return true;
 	}
 	return false;
@@ -1306,7 +1307,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 	var molecule = this.molecule;
 	this.reloops.each(function (rlid, reloop){
 		var loop = reloop.loop;
-		reloop.centre = new util.Vec2();
+		reloop.centre = new Vec2();
 		loop.hbs.each(function (hbid){
 			var hb = molecule.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
@@ -1321,8 +1322,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 			var hba = molecule.halfBonds.get(loop.hbs[k]);
 			var hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 			var angle = Math.atan2(
-			util.Vec2.cross(hba.dir, hbb.dir),
-			util.Vec2.dot(hba.dir, hbb.dir));
+			Vec2.cross(hba.dir, hbb.dir),
+			Vec2.dot(hba.dir, hbb.dir));
 			if (angle > 0)
 				loop.convex = false;
 		}
@@ -1333,8 +1334,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 			var hb = molecule.halfBonds.get(hbid);
 			var apos = render.ps(this.atoms.get(hb.begin).a.pp);
 			var bpos = render.ps(this.atoms.get(hb.end).a.pp);
-			var n = util.Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-			var dist = util.Vec2.dot(util.Vec2.diff(apos, reloop.centre), n);
+			var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
+			var dist = Vec2.dot(Vec2.diff(apos, reloop.centre), n);
 			if (reloop.radius < 0) {
 				reloop.radius = dist;
 			} else {
@@ -1358,8 +1359,8 @@ rnd.ReStruct.prototype.renderLoops = function ()
 				hba = molecule.halfBonds.get(loop.hbs[k]);
 				hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 				angle = Math.atan2(
-				util.Vec2.cross(hba.dir, hbb.dir),
-				util.Vec2.dot(hba.dir, hbb.dir));
+				Vec2.cross(hba.dir, hbb.dir),
+				Vec2.dot(hba.dir, hbb.dir));
 				var halfAngle = (Math.PI - angle) / 2;
 				var dir = hbb.dir.rotate(halfAngle);
 				var pi = render.ps(this.atoms.get(hbb.begin).a.pp);

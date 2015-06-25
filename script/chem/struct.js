@@ -5,6 +5,7 @@
 var Map = require('../util/map');
 var Pool = require('../util/pool');
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('./element');
@@ -330,9 +331,9 @@ chem.Struct.Atom = function (params) {
 	this.valence = 0;
 	this.implicitH = 0; // implicitH is not an attribute
 	if (!Object.isUndefined(params.pp))
-		this.pp = new util.Vec2(params.pp);
+		this.pp = new Vec2(params.pp);
 	else
-		this.pp = new util.Vec2();
+		this.pp = new Vec2();
 
 	// sgs should only be set when an atom is added to an s-group by an appropriate method,
 	//   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
@@ -471,7 +472,7 @@ chem.Struct.Bond = function (params)
 	this.hb1 = null; // half-bonds
 	this.hb2 = null;
 	this.len = 0;
-	this.center = new util.Vec2();
+	this.center = new Vec2();
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
@@ -508,7 +509,7 @@ chem.Struct.Bond.prototype.hasRxnProps =  function ()
 chem.Struct.Bond.prototype.getCenter = function (struct) {
 	var p1 = struct.atoms.get(this.begin).pp;
 	var p2 = struct.atoms.get(this.end).pp;
-	return util.Vec2.lc2(p1, 0.5, p2, 0.5);
+	return Vec2.lc2(p1, 0.5, p2, 0.5);
 }
 
 chem.Struct.Bond.prototype.getDir = function (struct) {
@@ -546,10 +547,10 @@ chem.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 	this.bid = bid - 0;
 
 	// rendering properties
-	this.dir = new util.Vec2(); // direction
-	this.norm = new util.Vec2(); // left normal
+	this.dir = new Vec2(); // direction
+	this.norm = new Vec2(); // left normal
 	this.ang = 0; // angle to (1,0), used for sorting the bonds
-	this.p = new util.Vec2(); // corrected origin position
+	this.p = new Vec2(); // corrected origin position
 	this.loop = -1; // left loop id if the half-bond is in a loop, otherwise -1
 	this.contra = -1; // the half bond contrary to this one
 	this.next = -1; // the half-bond next ot this one in CCW order
@@ -592,8 +593,8 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 	var hb = this.halfBonds.get(hbid);
 	var p1 = this.atoms.get(hb.begin).pp;
 	var p2 = this.atoms.get(hb.end).pp;
-	var d = util.Vec2.diff(p2, p1).normalized();
-	hb.dir = util.Vec2.dist(p2, p1) > 1e-4 ? d : new util.Vec2(1, 0);
+	var d = Vec2.diff(p2, p1).normalized();
+	hb.dir = Vec2.dist(p2, p1) > 1e-4 ? d : new Vec2(1, 0);
 	hb.norm = hb.dir.turnLeft();
 	hb.ang = hb.dir.oxAngle();
 	if (hb.loop < 0)
@@ -615,8 +616,8 @@ chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
 {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
-	hbl.rightCos = hb.leftCos = util.Vec2.dot(hbl.dir, hb.dir);
-	hbl.rightSin = hb.leftSin = util.Vec2.cross(hbl.dir, hb.dir);
+	hbl.rightCos = hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
+	hbl.rightSin = hb.leftSin = Vec2.cross(hbl.dir, hb.dir);
 	hb.leftNeighbor = left;
 	hbl.rightNeighbor = hbid;
 };
@@ -749,8 +750,8 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 				max: pp
 			};
 		else {
-			bb.min = util.Vec2.min(bb.min, pp);
-			bb.max = util.Vec2.max(bb.max, pp);
+			bb.min = Vec2.min(bb.min, pp);
+			bb.max = Vec2.max(bb.max, pp);
 		}
 	};
 
@@ -770,8 +771,8 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 	}
 	if (!bb && global)
 		bb = {
-			min: new util.Vec2(0, 0),
-			max: new util.Vec2(1, 1)
+			min: new Vec2(0, 0),
+			max: new Vec2(1, 1)
 		};
 	return bb;
 };
@@ -782,12 +783,12 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	var extend = function (pp) {
 		if (!bb)
 			bb = {
-				min: new util.Vec2(pp),
-				max: new util.Vec2(pp)
+				min: new Vec2(pp),
+				max: new Vec2(pp)
 			};
 		else {
-			bb.min = util.Vec2.min(bb.min, pp);
-			bb.max = util.Vec2.max(bb.max, pp);
+			bb.min = Vec2.min(bb.min, pp);
+			bb.max = Vec2.max(bb.max, pp);
 		}
 	};
 
@@ -802,7 +803,7 @@ chem.Struct.prototype.getBondLengthData = function ()
 	var totalLength = 0;
 	var cnt = 0;
 	this.bonds.each(function (bid, bond){
-		totalLength += util.Vec2.dist(
+		totalLength += Vec2.dist(
 			this.atoms.get(bond.begin).pp,
 			this.atoms.get(bond.end).pp);
 		cnt++;
@@ -825,7 +826,7 @@ chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 		for (j = 0; j < keys.length; ++j) {
 			if (j == k)
 				continue;
-			dist = util.Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
+			dist = Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
 			if (minDist < 0 || minDist > dist)
 				minDist = dist;
 		}
@@ -865,7 +866,7 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 chem.Struct.RxnPlus = function (params)
 {
 	params = params || {};
-	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
+	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
 chem.Struct.RxnPlus.prototype.clone = function ()
@@ -876,7 +877,7 @@ chem.Struct.RxnPlus.prototype.clone = function ()
 chem.Struct.RxnArrow = function (params)
 {
 	params = params || {};
-	this.pp = params.pp ? new util.Vec2(params.pp) : new util.Vec2();
+	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
 chem.Struct.RxnArrow.prototype.clone = function ()
@@ -1039,7 +1040,7 @@ chem.Struct.prototype.loopHasSelfIntersections = function (hbs)
 				continue; // skip edges sharing an atom
 			var aj = this.atoms.get(hbj.begin).pp;
 			var bj = this.atoms.get(hbj.end).pp;
-			if (util.Vec2.segmentIntersection(ai, bi, aj, bj)) {
+			if (Vec2.segmentIntersection(ai, bi, aj, bj)) {
 				return true;
 			}
 		}
@@ -1078,8 +1079,8 @@ chem.Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
 	var hba = this.halfBonds.get(hbid1);
 	var hbb = this.halfBonds.get(hbid2);
 	return Math.atan2(
-	util.Vec2.cross(hba.dir, hbb.dir),
-	util.Vec2.dot(hba.dir, hbb.dir));
+	Vec2.cross(hba.dir, hbb.dir),
+	Vec2.dot(hba.dir, hbb.dir));
 }
 
 chem.Struct.prototype.loopIsConvex = function (loop) {

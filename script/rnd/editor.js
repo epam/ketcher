@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Set = require('../util/set');
+var Vec2 = require('../util/vec2');
 
 require('../util');
 require('../chem');
@@ -227,7 +228,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function (event, action) {
 };
 
 rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
-	var v = util.Vec2.diff(pos1, pos0);
+	var v = Vec2.diff(pos1, pos0);
 	var angle = Math.atan2(v.y, v.x);
 	var sign = angle < 0 ? -1 : 1;
 	var floor = Math.floor(Math.abs(angle) / (Math.PI / 12)) * (Math.PI / 12);
@@ -235,7 +236,7 @@ rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
 	return angle;
 };
 rnd.Editor.EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
-	var v = new util.Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
+	var v = new Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
 	v.add_(pos0);
 	return v;
 };
@@ -658,7 +659,7 @@ rnd.Editor.BondTool.prototype.OnMouseMove = function (event) {
 			} else {
 				i2 = this.atomProps;
 				var xy1 = _E_.ui.page2obj(event);
-				dist = util.Vec2.dist(_DC_.xy0, xy1);
+				dist = Vec2.dist(_DC_.xy0, xy1);
 				if (p1) {
 					p2 = this._calcNewAtomPos(p1, xy1);
 				} else {
@@ -686,7 +687,7 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 			_UI_.addUndoAction(_DC_.action);
 		} else if (!('item' in _DC_)) {
 			var xy = this.editor.ui.page2obj(event);
-			var v = new util.Vec2(1.0 / 2, 0).rotate(
+			var v = new Vec2(1.0 / 2, 0).rotate(
 				this.bondProps.type == chem.Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = _UI_.Action.fromBondAddition(
@@ -759,7 +760,7 @@ rnd.Editor.ChainTool.prototype.OnMouseMove = function (event) {
 		_DC_.action = _E_.ui.Action.fromChain(
 			pos0,
 		this._calcAngle(pos0, pos1),
-		Math.ceil(util.Vec2.diff(pos1, pos0).length()),
+		Math.ceil(Vec2.diff(pos1, pos0).length()),
 				'item' in _DC_ ? _DC_.item.id : null
 		);
 		_R_.update();
@@ -792,7 +793,7 @@ rnd.Editor.TemplateTool = function (editor, template) {
 		var frag = chem.Molfile.parseCTFile(lines);
 		frag.rescale();
 
-		var xy0 = new util.Vec2();
+		var xy0 = new Vec2();
 
 		frag.atoms.each(function (aid, atom) {
 			xy0.add_(atom.pp);
@@ -813,7 +814,7 @@ rnd.Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	var begin = molecule.atoms.get(bond.begin).pp;
 	var end = molecule.atoms.get(bond.end).pp;
 
-	var sign = util.Vec2.cross(util.Vec2.diff(begin, end), util.Vec2.diff(v, end));
+	var sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
 
 	if (sign > 0) return 1;
 	if (sign < 0) return -1;
@@ -833,7 +834,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function (event) {
 	} else if (ci.map == 'bonds') {
 		// calculate fragment center
 		var molecule = _R_.ctab.molecule;
-		var xy0 = new util.Vec2();
+		var xy0 = new Vec2();
 		var bond = molecule.bonds.get(ci.id);
 		var frid = _R_.atomGetAttr(bond.begin, 'fragment');
 		var fr_ids = molecule.getFragmentIds(frid);
@@ -885,7 +886,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function (event) {
 			pos0 = _DC_.xy0;
 		} else if (ci.map == 'atoms') {
 			pos0 = _R_.atomGetPos(ci.id);
-			extra_bond = util.Vec2.dist(pos0, pos1) > 1;
+			extra_bond = Vec2.dist(pos0, pos1) > 1;
 		} else if (ci.map == 'bonds') {
 			var molecule = _R_.ctab.molecule;
 			var bond = molecule.bonds.get(ci.id);
@@ -1560,7 +1561,7 @@ rnd.Editor.PasteTool = function (editor) {
 	this.action = this.editor.ui.Action.fromPaste(
 		this.editor.ui.clipboard,
 			'lastEvent' in this.OnMouseMove0
-			 ? util.Vec2.diff(
+			 ? Vec2.diff(
 		this.editor.ui.page2obj(this.OnMouseMove0.lastEvent),
 		this.editor.ui.clipboard.getAnchorPosition())
 			 : undefined
@@ -1574,7 +1575,7 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	}
 	this.action = this.editor.ui.Action.fromPaste(
 		this.editor.ui.clipboard,
-	util.Vec2.diff(this.editor.ui.page2obj(event), this.editor.ui.clipboard.getAnchorPosition())
+	Vec2.diff(this.editor.ui.page2obj(event), this.editor.ui.clipboard.getAnchorPosition())
 	);
 	this.editor.render.update();
 };
@@ -1607,7 +1608,7 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function (event) {
 	var selection = this.editor._selectionHelper.selection;
 	if (selection.atoms && selection.atoms.length) {
 		var molecule = this.editor.render.ctab.molecule;
-		var xy0 = new util.Vec2();
+		var xy0 = new Vec2();
 
 		if (!selection.atoms || !selection.atoms.length) {
 			return true;

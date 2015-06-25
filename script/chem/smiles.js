@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Set = require('../util/set');
+
 require('./struct');
 require('../util');
 
@@ -96,15 +98,15 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 
 	this.inLoop = (function () {
 		molecule.prepareLoopStructure();
-		var bondsInLoops = util.Set.empty();
+		var bondsInLoops = Set.empty();
 		molecule.loops.each(function (lid, loop) {
 			if (loop.hbs.length <= 6)
-				util.Set.mergeIn(bondsInLoops, util.Set.fromList(util.map(loop.hbs, function (hbid) {
+				Set.mergeIn(bondsInLoops, Set.fromList(util.map(loop.hbs, function (hbid) {
 					return molecule.halfBonds.get(hbid).bid;
 				}, this)));
 		}, this);
 		var inLoop = {};
-		util.Set.each(bondsInLoops, function (bid) {
+		Set.each(bondsInLoops, function (bid) {
 			inLoop[bid] = 1;
 		}, this);
 		return inLoop;
@@ -878,4 +880,3 @@ void SmilesSaver::_writeStereogroups (const Struct &mol, const Array<_Atom> &ato
    }
 }
 */
-

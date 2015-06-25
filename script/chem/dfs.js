@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Set = require('../util/set');
+
 require('../util/');
 require('./element');
 
@@ -79,7 +81,7 @@ chem.Dfs.prototype.walk = function ()
 			};
 
 			while (cid < this.components.length && selected == -1) {
-				selected = util.Set.find(this.components[cid], findFunc, this);
+				selected = Set.find(this.components[cid], findFunc, this);
 				if (selected === null) {
 					selected = -1;
 					cid++;

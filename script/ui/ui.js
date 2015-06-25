@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Set = require('../util/set');
+
 var ui = global.ui = global.ui || {}; // jshint ignore:line
 
 require('../chem');
@@ -497,19 +499,19 @@ ui.onClick_CleanUp = function ()
 	var atoms = util.array(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
 	if (selective) {
-		var atomSet = util.Set.fromList(atoms);
-		var atomSetExtended = util.Set.empty();
+		var atomSet = Set.fromList(atoms);
+		var atomSetExtended = Set.empty();
 		ui.ctab.loops.each(function (lid, loop) {
 			// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
 			if (util.find(loop.hbs, function (hbid) {
-				return util.Set.contains(atomSet, ui.ctab.halfBonds.get(hbid).begin);
+				return Set.contains(atomSet, ui.ctab.halfBonds.get(hbid).begin);
 			}) >= 0)
 				util.each(loop.hbs, function (hbid) {
-					util.Set.add(atomSetExtended, ui.ctab.halfBonds.get(hbid).begin);
+					Set.add(atomSetExtended, ui.ctab.halfBonds.get(hbid).begin);
 				}, this);
 		}, this);
-		util.Set.mergeIn(atomSetExtended, atomSet);
-		atoms = util.Set.list(atomSetExtended);
+		Set.mergeIn(atomSetExtended, atomSet);
+		atoms = Set.list(atomSetExtended);
 	}
 	ui.editor.deselectAll();
 	try {
@@ -952,26 +954,26 @@ ui.structToClipboard = function (clipboard, struct, selection)
 
 	// r-groups
 	var atomFragments = {};
-	var fragments = util.Set.empty();
+	var fragments = Set.empty();
 	selection.atoms.each(function (id) {
 		var atom = struct.atoms.get(id);
 		var frag = atom.fragment;
 		atomFragments[id] = frag;
-		util.Set.add(fragments, frag);
+		Set.add(fragments, frag);
 	});
 
-	var rgids = util.Set.empty();
-	util.Set.each(fragments, function (frid){
+	var rgids = Set.empty();
+	Set.each(fragments, function (frid){
 		var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
 		for (var i = 0; i < atoms.length; ++i)
-			if (!util.Set.contains(atomFragments, atoms[i]))
+			if (!Set.contains(atomFragments, atoms[i]))
 				return;
 		var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
 		clipboard.rgmap[frid] = rgid;
-		util.Set.add(rgids, rgid);
+		Set.add(rgids, rgid);
 	}, this);
 
-	util.Set.each(rgids, function (id){
+	Set.each(rgids, function (id){
 		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
 	}, this);
 };

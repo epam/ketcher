@@ -4,6 +4,7 @@
 
 var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
+var Set = require('../util/set');
 
 require('../util');
 require('./element');
@@ -111,7 +112,7 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s)
 		if (mol.atoms.has(sg.atoms[s]))
-			util.Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
+			Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 
 	mol.sGroupForest.insert(sg.id);
 	return sg.id;
@@ -119,7 +120,7 @@ chem.SGroup.addGroup = function (mol, sg, atomMap)
 
 chem.SGroup.bracketsToMolfile = function (mol, sg, idstr) {
 	var inBonds = [], xBonds = [];
-	var atomSet = util.Set.fromList(sg.atoms);
+	var atomSet = Set.fromList(sg.atoms);
 	chem.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
 	chem.SGroup.bracketPos(sg, null, mol, xBonds);
 	var bb = sg.bracketBox;
@@ -202,10 +203,10 @@ chem.SGroup.removeAtom = function (sgroup, aid)
 
 chem.SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	mol.bonds.each(function (bid, bond){
-		if (util.Set.contains(parentAtomSet, bond.begin) && util.Set.contains(parentAtomSet, bond.end)) {
+		if (Set.contains(parentAtomSet, bond.begin) && Set.contains(parentAtomSet, bond.end)) {
 			if (!util.isNull(inBonds))
 				inBonds.push(bid);
-		} else if (util.Set.contains(parentAtomSet, bond.begin) || util.Set.contains(parentAtomSet, bond.end)) {
+		} else if (Set.contains(parentAtomSet, bond.begin) || Set.contains(parentAtomSet, bond.end)) {
 			if (!util.isNull(xBonds))
 				xBonds.push(bid);
 		}
@@ -363,7 +364,7 @@ chem.SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, ren
 			for (var i = 0; i < xbonds.length; ++i) {
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
-				var d = util.Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
+				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new bracketParams(c, d, 0.2, 1.0));
 			}
 		})();
@@ -426,7 +427,7 @@ chem.SGroup.GroupMul = {
 		var render = remol.render;
 		var set = render.paper.set();
 		var inBonds = [], xBonds = [];
-		var atomSet = util.Set.fromList(this.atoms);
+		var atomSet = Set.fromList(this.atoms);
 		chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 		chem.SGroup.bracketPos(this, render, remol.molecule, xBonds);
 		var bb = this.bracketBox;
@@ -452,15 +453,15 @@ chem.SGroup.GroupMul = {
 	prepareForSaving: function (mol) {
 		var j;
 		this.atoms.sort();
-		this.atomSet = util.Set.fromList(this.atoms);
-		this.parentAtomSet = util.Set.clone(this.atomSet);
+		this.atomSet = Set.fromList(this.atoms);
+		this.parentAtomSet = Set.clone(this.atomSet);
 		var inBonds = [];
 		var xBonds = [];
 
 		mol.bonds.each(function (bid, bond){
-			if (util.Set.contains(this.parentAtomSet, bond.begin) && util.Set.contains(this.parentAtomSet, bond.end))
+			if (Set.contains(this.parentAtomSet, bond.begin) && Set.contains(this.parentAtomSet, bond.end))
 				inBonds.push(bid);
-			else if (util.Set.contains(this.parentAtomSet, bond.begin) || util.Set.contains(this.parentAtomSet,bond.end))
+			else if (Set.contains(this.parentAtomSet, bond.begin) || Set.contains(this.parentAtomSet,bond.end))
 				xBonds.push(bid);
 		}, this);
 		if (xBonds.length != 0 && xBonds.length != 2)
@@ -475,13 +476,13 @@ chem.SGroup.GroupMul = {
 		var crossBond = null;
 		if (xBonds.length == 2) {
 			var bond1 = mol.bonds.get(xBonds[0]);
-			if (util.Set.contains(this.parentAtomSet, bond1.begin)) {
+			if (Set.contains(this.parentAtomSet, bond1.begin)) {
 				xAtom1 = bond1.begin;
 			} else {
 				xAtom1 = bond1.end;
 			}
 			var bond2 = mol.bonds.get(xBonds[1]);
-			if (util.Set.contains(this.parentAtomSet, bond2.begin)) {
+			if (Set.contains(this.parentAtomSet, bond2.begin)) {
 				xAtom2 = bond2.begin;
 			} else {
 				xAtom2 = bond2.end;
@@ -594,7 +595,7 @@ chem.SGroup.GroupSru = {
 		var render = remol.render;
 		var set = render.paper.set();
 		var inBonds = [], xBonds = [];
-		var atomSet = util.Set.fromList(this.atoms);
+		var atomSet = Set.fromList(this.atoms);
 		chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 		chem.SGroup.bracketPos(this, render, remol.molecule, xBonds);
 		var bb = this.bracketBox;
@@ -623,8 +624,8 @@ chem.SGroup.GroupSru = {
 		mol.bonds.each(function (bid, bond){
 			var a1 = mol.atoms.get(bond.begin);
 			var a2 = mol.atoms.get(bond.end);
-			if (util.Set.contains(a1.sgs, this.id) && !util.Set.contains(a2.sgs, this.id) ||
-			util.Set.contains(a2.sgs, this.id) && !util.Set.contains(a1.sgs, this.id))
+			if (Set.contains(a1.sgs, this.id) && !Set.contains(a2.sgs, this.id) ||
+			Set.contains(a2.sgs, this.id) && !Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
 		if (xBonds.length != 0 && xBonds.length != 2)
@@ -642,7 +643,7 @@ chem.SGroup.GroupSup = {
 		var render = remol.render;
 		var set = render.paper.set();
 		var inBonds = [], xBonds = [];
-		var atomSet = util.Set.fromList(this.atoms);
+		var atomSet = Set.fromList(this.atoms);
 		chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 		chem.SGroup.bracketPos(this, render, remol.molecule, xBonds);
 		var bb = this.bracketBox;
@@ -672,8 +673,8 @@ chem.SGroup.GroupSup = {
 		mol.bonds.each(function (bid, bond){
 			var a1 = mol.atoms.get(bond.begin);
 			var a2 = mol.atoms.get(bond.end);
-			if (util.Set.contains(a1.sgs, this.id) && !util.Set.contains(a2.sgs, this.id) ||
-			util.Set.contains(a2.sgs, this.id) && !util.Set.contains(a1.sgs, this.id))
+			if (Set.contains(a1.sgs, this.id) && !Set.contains(a2.sgs, this.id) ||
+			Set.contains(a2.sgs, this.id) && !Set.contains(a1.sgs, this.id))
 				xBonds.push(bid);
 		},this);
 		this.bonds = xBonds;
@@ -693,7 +694,7 @@ chem.SGroup.GroupGen = {
 		var paper = render.paper;
 		var set = paper.set();
 		var inBonds = [], xBonds = [];
-		var atomSet = util.Set.fromList(this.atoms);
+		var atomSet = Set.fromList(this.atoms);
 		chem.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 		chem.SGroup.bracketPos(this, render, remol.molecule, xBonds);
 		var bb = this.bracketBox;
@@ -876,18 +877,18 @@ chem.SGroupForest.prototype.getSGroupsBFS = function () {
 
 chem.SGroupForest.prototype.getAtomSets = function () {
 	return this.molecule.sgroups.map(function (sgid, sgroup){
-		return util.Set.fromList(sgroup.atoms);
+		return Set.fromList(sgroup.atoms);
 	});
 }
 
-chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* util.Set */, atomSets /* Map of util.Set */) {
+chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
 	// find the lowest superset in the hierarchy
 	var isStrictSuperset = new Map(), isSubset = new Map();
 	var atomSets = this.getAtomSets();
 	atomSets.unset(newId);
 	atomSets.each(function (id, atomSet) {
-		isSubset.set(id, util.Set.subset(atoms, atomSet));
-		isStrictSuperset.set(id, util.Set.subset(atomSet, atoms) && !util.Set.eq(atomSet, atoms));
+		isSubset.set(id, Set.subset(atoms, atomSet));
+		isStrictSuperset.set(id, Set.subset(atomSet, atoms) && !Set.eq(atomSet, atoms));
 	}, this);
 	var parents = atomSets.findAll(function (id) {
 		if (!isSubset.get(id))
@@ -927,7 +928,7 @@ chem.SGroupForest.prototype.validate = function () {
 	var valid = true;
 	// 1) child group's atom set is a subset of the parent one's
 	this.parent.each(function (id, parentId) {
-		if (parentId >= 0 && !util.Set.subset(atomSets.get(id), atomSets.get(parentId)))
+		if (parentId >= 0 && !Set.subset(atomSets.get(id), atomSets.get(parentId)))
 			valid = false;
 	}, this);
 
@@ -936,7 +937,7 @@ chem.SGroupForest.prototype.validate = function () {
 		var list = this.children.get(parentId);
 		for (var i = 0; i < list.length; ++i)
 			for (var j = i + 1; j < list.length; ++j)
-				if (!util.Set.disjoint(atomSets.get(list[i]), atomSets.get(list[j])))
+				if (!Set.disjoint(atomSets.get(list[i]), atomSets.get(list[j])))
 					valid = false;
 	}, this);
 	return valid;
@@ -948,7 +949,7 @@ chem.SGroupForest.prototype.insert = function (id, parent /* int, optional */, c
 
 	util.assert(this.validate(), 's-group forest invalid');
 	var atomSets = this.getAtomSets();
-	var atoms = util.Set.fromList(this.molecule.sgroups.get(id).atoms);
+	var atoms = Set.fromList(this.molecule.sgroups.get(id).atoms);
 	if (util.isUndefined(parent) || util.isUndefined(children)) { // if these are not provided, deduce automatically
 		var guess = this.getAtomSetRelations(id, atoms, atomSets);
 		parent = guess.parent;

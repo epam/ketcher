@@ -4,6 +4,7 @@
 
 var Raphael = require('../raphael-ext.js');
 var Box2Abs = require('../util/box2abs');
+var Set = require('../util/set');
 
 require('../util');
 require('./restruct');
@@ -390,7 +391,7 @@ rnd.Render.prototype.atomGetSGroups = function (aid)
 {
 	rnd.logMethod('atomGetSGroups');
 	var atom = this.ctab.atoms.get(aid);
-	return util.Set.list(atom.a.sgs);
+	return Set.list(atom.a.sgs);
 };
 
 rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
@@ -487,8 +488,8 @@ rnd.Render.prototype.rxnPlusGetPos = function (id)
 };
 
 rnd.Render.prototype.getAdjacentBonds = function (atoms) {
-	var aidSet = util.Set.fromList(atoms);
-	var bidSetInner = util.Set.empty(), bidSetCross = util.Set.empty();
+	var aidSet = Set.fromList(atoms);
+	var bidSetInner = Set.empty(), bidSetCross = Set.empty();
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
 		var atom = this.ctab.atoms.get(aid);
@@ -496,9 +497,9 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 			var hbid = atom.a.neighbors[j];
 			var hb = this.ctab.molecule.halfBonds.get(hbid);
 			var endId = hb.end;
-			var set = util.Set.contains(aidSet, endId) ?
+			var set = Set.contains(aidSet, endId) ?
 					bidSetInner : bidSetCross;
-			util.Set.add(set, hb.bid);
+			Set.add(set, hb.bid);
 		}
 	}
 	return {'inner': bidSetInner, 'cross': bidSetCross};

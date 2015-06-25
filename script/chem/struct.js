@@ -4,6 +4,7 @@
 
 var Map = require('../util/map');
 var Pool = require('../util/pool');
+var Set = require('../util/set');
 
 require('../util');
 require('./element');
@@ -52,7 +53,7 @@ chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
 	var sgroupCounts = new Hash();
 
 	util.each(atoms, function (aid) {
-		var sg = util.Set.list(this.atoms.get(aid).sgs);
+		var sg = Set.list(this.atoms.get(aid).sgs);
 
 		sg.each(function (sid) {
 			var n = sgroupCounts.get(sid);
@@ -111,15 +112,15 @@ chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap
 };
 
 chem.Struct.prototype.getScaffold = function () {
-	var atomSet = util.Set.empty();
+	var atomSet = Set.empty();
 	this.atoms.each(function (aid) {
-		util.Set.add(atomSet, aid);
+		Set.add(atomSet, aid);
 	}, this);
 	this.rgroups.each(function (rgid, rg) {
 		rg.frags.each(function (fnum, fid) {
 			this.atoms.each(function (aid, atom) {
 				if (atom.fragment == fid) {
-					util.Set.remove(atomSet, aid);
+					Set.remove(atomSet, aid);
 				}
 			}, this);
 		}, this);
@@ -128,10 +129,10 @@ chem.Struct.prototype.getScaffold = function () {
 };
 
 chem.Struct.prototype.getFragmentIds = function (fid) {
-	var atomSet = util.Set.empty();
+	var atomSet = Set.empty();
 	this.atoms.each(function (aid, atom) {
 		if (atom.fragment == fid) {
-			util.Set.add(atomSet, aid);
+			Set.add(atomSet, aid);
 		}
 	}, this);
 	return atomSet;
@@ -142,16 +143,16 @@ chem.Struct.prototype.getFragment = function (fid) {
 };
 
 chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) {
-	atomSet = atomSet || util.Set.keySetInt(this.atoms);
-	bondSet = bondSet || util.Set.keySetInt(this.bonds);
-	bondSet = util.Set.filter(bondSet, function (bid){
+	atomSet = atomSet || Set.keySetInt(this.atoms);
+	bondSet = bondSet || Set.keySetInt(this.bonds);
+	bondSet = Set.filter(bondSet, function (bid){
 		var bond = this.bonds.get(bid);
-		return util.Set.contains(atomSet, bond.begin) && util.Set.contains(atomSet, bond.end);
+		return Set.contains(atomSet, bond.begin) && Set.contains(atomSet, bond.end);
 	}, this);
 
 	var fidMask = {};
 	this.atoms.each(function (aid, atom) {
-		if (util.Set.contains(atomSet, aid))
+		if (Set.contains(atomSet, aid))
 			fidMask[atom.fragment] = 1;
 	});
 	var fidMap = {};
@@ -184,26 +185,26 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
 	if (typeof aidMap === 'undefined' || aidMap === null)
 		aidMap = {};
 	this.atoms.each(function (aid, atom) {
-		if (util.Set.contains(atomSet, aid))
+		if (Set.contains(atomSet, aid))
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
 	var bidMap = {};
 	this.bonds.each(function (bid, bond) {
-		if (util.Set.contains(bondSet, bid))
+		if (Set.contains(bondSet, bid))
 			bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
 	});
 
 	this.sgroups.each(function (sid, sg) {
 		var i;
 		for (i = 0; i < sg.atoms.length; ++i)
-			if (!util.Set.contains(atomSet, sg.atoms[i]))
+			if (!Set.contains(atomSet, sg.atoms[i]))
 				return;
 		sg = chem.SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (i = 0; i < sg.atoms.length; ++i) {
-			util.Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
+			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 		}
 		cp.sGroupForest.insert(sg.id);
 	});
@@ -686,15 +687,15 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	this.bonds.each(function (bid, bond){
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
-		util.Set.each(a1.sgs, function (sgid){
-			if (!util.Set.contains(a2.sgs, sgid)) {
+		Set.each(a1.sgs, function (sgid){
+			if (!Set.contains(a2.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				util.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
-		util.Set.each(a2.sgs, function (sgid){
-			if (!util.Set.contains(a1.sgs, sgid)) {
+		Set.each(a2.sgs, function (sgid){
+			if (!Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				util.arrayAddIfMissing(sg.neiAtoms, bond.begin);
@@ -707,7 +708,7 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.sgroups.get(sgid);
 	for (var i = 0; i < sg.atoms.length; ++i) {
-		util.Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
+		Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
 	}
 	this.sGroupForest.remove(sgid);
 	this.sgroups.remove(sgid);
@@ -756,7 +757,7 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 	var global = typeof(atomSet) == 'undefined';
 
 	this.atoms.each(function (aid, atom) {
-		if (global || util.Set.contains(atomSet, aid))
+		if (global || Set.contains(atomSet, aid))
 			extend(atom.pp);
 	});
 	if (global) {
@@ -886,16 +887,16 @@ chem.Struct.RxnArrow.prototype.clone = function ()
 chem.Struct.prototype.findConnectedComponent = function (aid) {
 	var map = {};
 	var list = [aid];
-	var ids = util.Set.empty();
+	var ids = Set.empty();
 	while (list.length > 0) {
 		(function () {
 			var aid = list.pop();
 			map[aid] = 1;
-			util.Set.add(ids, aid);
+			Set.add(ids, aid);
 			var atom = this.atoms.get(aid);
 			for (var i = 0; i < atom.neighbors.length; ++i) {
 				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-				if (!util.Set.contains(ids, neiId))
+				if (!Set.contains(ids, neiId))
 					list.push(neiId);
 			}
 		}).apply(this);
@@ -922,7 +923,7 @@ chem.Struct.prototype.findConnectedComponents = function (discardExistingFragmen
 		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
 			var component = this.findConnectedComponent(aid);
 			components.push(component);
-			util.Set.each(component, function (aid){
+			Set.each(component, function (aid){
 				map[aid] = 1;
 			}, this);
 		}
@@ -932,7 +933,7 @@ chem.Struct.prototype.findConnectedComponents = function (discardExistingFragmen
 
 chem.Struct.prototype.markFragment = function (ids) {
 	var fid = this.frags.add(new chem.Struct.Fragment());
-	util.Set.each(ids, function (aid){
+	Set.each(ids, function (aid){
 		this.atoms.get(aid).fragment = fid;
 	}, this);
 };
@@ -1031,10 +1032,10 @@ chem.Struct.prototype.loopHasSelfIntersections = function (hbs)
 		var hbi = this.halfBonds.get(hbs[i]);
 		var ai = this.atoms.get(hbi.begin).pp;
 		var bi = this.atoms.get(hbi.end).pp;
-		var set = util.Set.fromList([hbi.begin, hbi.end]);
+		var set = Set.fromList([hbi.begin, hbi.end]);
 		for (var j = i + 2; j < hbs.length; ++j) {
 			var hbj = this.halfBonds.get(hbs[j]);
-			if (util.Set.contains(set, hbj.begin) || util.Set.contains(set, hbj.end))
+			if (Set.contains(set, hbj.begin) || Set.contains(set, hbj.end))
 				continue; // skip edges sharing an atom
 			var aj = this.atoms.get(hbj.begin).pp;
 			var bj = this.atoms.get(hbj.end).pp;
@@ -1110,7 +1111,7 @@ chem.Struct.prototype.loopIsInner = function (loop) {
 chem.Struct.prototype.findLoops = function ()
 {
 	var newLoops = [];
-	var bondsToMark = util.Set.empty();
+	var bondsToMark = Set.empty();
 
 	// Starting from each half-bond not known to be in a loop yet,
 	//  follow the 'next' links until the initial half-bond is reached or
@@ -1139,7 +1140,7 @@ chem.Struct.prototype.findLoops = function ()
 						}
 						loop.each(function (hbid){
 							this.halfBonds.get(hbid).loop = loopId;
-							util.Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
+							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
 						}, this);
 						if (loopId >= 0) {
 							newLoops.push(loopId);
@@ -1154,7 +1155,7 @@ chem.Struct.prototype.findLoops = function ()
 	}, this);
 	return {
 		newLoops: newLoops,
-		bondsToMark: util.Set.list(bondsToMark)
+		bondsToMark: Set.list(bondsToMark)
 	};
 };
 
@@ -1171,5 +1172,5 @@ chem.Struct.prototype.prepareLoopStructure = function () {
 chem.Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	// TODO: [MK] make sure the addition does not break the hierarchy?
 	chem.SGroup.addAtom(this.sgroups.get(sgid), aid);
-	util.Set.add(this.atoms.get(aid).sgs, sgid);
+	Set.add(this.atoms.get(aid).sgs, sgid);
 }

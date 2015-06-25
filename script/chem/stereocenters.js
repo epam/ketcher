@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Map = require('../util/map');
+var Set = require('../util/set');
 
 require('./struct');
 require('../util');
@@ -31,7 +32,7 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
 	// this is a set of atoms that are likely to belong to allene structures and
 	//  therefore should not be considered as potential stereocenters in the code below,
 	//  as allenes cannot be encoded in the SMILES notation
-	var alleneMask = util.Set.empty();
+	var alleneMask = Set.empty();
 	atoms.each(function (aid, atom) {
 		var nei_list = this.getNeighbors.call(this.context, aid);
 		if (nei_list.length != 2)
@@ -69,16 +70,16 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
 			return bonds.get(nei.bid).stereo == chem.Struct.BOND.STEREO.EITHER;
 		}, this) >= 0)
 			return false;
-		util.Set.add(alleneMask, nei1.aid);
-		util.Set.add(alleneMask, nei2.aid);
+		Set.add(alleneMask, nei1.aid);
+		Set.add(alleneMask, nei2.aid);
 	}, this);
 
-	if (util.Set.size(alleneMask) > 0)
+	if (Set.size(alleneMask) > 0)
 		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
 
 	atoms.each(function (aid)
 	{
-		if (util.Set.contains(alleneMask, aid))
+		if (Set.contains(alleneMask, aid))
 			return;
 		/*
       if (atom_types[atom_idx] == 0)

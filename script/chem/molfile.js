@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Map = require('../util/map');
+var Set = require('../util/set');
 
 require('../util');
 require('./element');
@@ -1006,7 +1007,7 @@ chem.MolfileSaver.getComponents = function (molecule) {
 		while (c.x > barriers[j])
 			++j;
 		components[j] = components[j] || {};
-		util.Set.mergeIn(components[j], ccs[i]);
+		Set.mergeIn(components[j], ccs[i]);
 	}
 	var submolTexts = [];
 	var reactants = [], products = [];

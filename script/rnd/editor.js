@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Set = require('../util/set');
+
 require('../util');
 require('../chem');
 require('./restruct');
@@ -113,7 +115,7 @@ rnd.Editor.SelectionHelper.prototype.isSelected = function (item) {
 			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 		return !Object.isUndefined(this.selection['atoms'])
-			 && util.Set.subset(util.Set.fromList(atoms), util.Set.fromList(this.selection['atoms']));
+			 && Set.subset(Set.fromList(atoms), Set.fromList(this.selection['atoms']));
 	}
 	return 'selection' in this && !Object.isUndefined(this.selection[item.map]) &&
 	this.selection[item.map].indexOf(item.id) > -1;
@@ -850,7 +852,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function (event) {
 				count++;
 			});
 		} else {
-			util.Set.each(fr_ids, function (id) {
+			Set.each(fr_ids, function (id) {
 				xy0.add_(molecule.atoms.get(id).pp);
 				count++;
 			});
@@ -1359,15 +1361,16 @@ rnd.Editor.ReactionMapTool.prototype.OnMouseUp = function (event) {
 	}
 	this._hoverHelper.hover(null);
 };
+
 rnd.Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
 	var t1, t2;
 	for (var ri = 0; (!t1 || !t2) && ri < this.rcs.reactants.length; ri++) {
-		var ro = util.Set.list(this.rcs.reactants[ri]);
+		var ro = Set.list(this.rcs.reactants[ri]);
 		if (!t1 && ro.indexOf(aid1) >= 0) t1 = 'r';
 		if (!t2 && ro.indexOf(aid2) >= 0) t2 = 'r';
 	}
 	for (var pi = 0; (!t1 || !t2) && pi < this.rcs.products.length; pi++) {
-		var po = util.Set.list(this.rcs.products[pi]);
+		var po = Set.list(this.rcs.products[pi]);
 		if (!t1 && po.indexOf(aid1) >= 0) t1 = 'p';
 		if (!t2 && po.indexOf(aid2) >= 0) t2 = 'p';
 	}

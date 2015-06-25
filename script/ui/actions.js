@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Set = require('../util/set');
+
 require('../chem');
 require('../util');
 require('../rnd');
@@ -64,38 +66,38 @@ ui.Action.fromMultipleMove = function (lists, d)
 	var RS = R.ctab;
 	var DS = RS.molecule;
 	var bondlist = [];
-	var loops = util.Set.empty();
-	var atomsToInvalidate = util.Set.empty();
+	var loops = Set.empty();
+	var atomsToInvalidate = Set.empty();
 
 	if (lists.atoms) {
-		var atomSet = util.Set.fromList(lists.atoms);
+		var atomSet = Set.fromList(lists.atoms);
 		RS.bonds.each(function (bid, bond){
 
-			if (util.Set.contains(atomSet, bond.b.begin) && util.Set.contains(atomSet, bond.b.end)) {
+			if (Set.contains(atomSet, bond.b.begin) && Set.contains(atomSet, bond.b.end)) {
 				bondlist.push(bid);
 				// add all adjacent loops
 				// those that are not completely inside the structure will get redrawn anyway
 				util.each(['hb1','hb2'], function (hb){
 					var loop = DS.halfBonds.get(bond.b[hb]).loop;
 					if (loop >= 0)
-						util.Set.add(loops, loop);
+						Set.add(loops, loop);
 				}, this);
 			}
-			else if (util.Set.contains(atomSet, bond.b.begin))
-				util.Set.add(atomsToInvalidate, bond.b.begin);
-			else if (util.Set.contains(atomSet, bond.b.end))
-				util.Set.add(atomsToInvalidate, bond.b.end);
+			else if (Set.contains(atomSet, bond.b.begin))
+				Set.add(atomsToInvalidate, bond.b.begin);
+			else if (Set.contains(atomSet, bond.b.end))
+				Set.add(atomsToInvalidate, bond.b.end);
 		}, this);
 		for (i = 0; i < bondlist.length; ++i) {
 			action.addOp(new ui.Action.OpBondMove(bondlist[i], d));
 		}
-		util.Set.each(loops, function (loopId){
+		Set.each(loops, function (loopId){
 			if (RS.reloops.get(loopId) && RS.reloops.get(loopId).visel) // hack
 				action.addOp(new ui.Action.OpLoopMove(loopId, d));
 		}, this);
 		for (i = 0; i < lists.atoms.length; ++i) {
 			var aid = lists.atoms[i];
-			action.addOp(new ui.Action.OpAtomMove(aid, d, !util.Set.contains(atomsToInvalidate, aid)));
+			action.addOp(new ui.Action.OpAtomMove(aid, d, !Set.contains(atomsToInvalidate, aid)));
 		}
 	}
 
@@ -808,9 +810,9 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 	var bond = molecule.bonds.get(bid);
 	var begin = molecule.atoms.get(bond.begin);
 	var end = molecule.atoms.get(bond.end);
-	var sgroups = util.Set.list(util.Set.intersection(
-	util.Set.fromList(ui.render.atomGetSGroups(bond.begin)),
-	util.Set.fromList(ui.render.atomGetSGroups(bond.end))));
+	var sgroups = Set.list(Set.intersection(
+	Set.fromList(ui.render.atomGetSGroups(bond.begin)),
+	Set.fromList(ui.render.atomGetSGroups(bond.end))));
 
 	var fr_bond = frag.bonds.get(template.bid);
 	var fr_begin;
@@ -1139,17 +1141,17 @@ ui.Action.fromFlip = function (objects, flip) {
 		fids = new Hash(fids);
 
 		if (fids.detect(function (frag) {
-			return !util.Set.eq(molecule.getFragmentIds(frag[0]), util.Set.fromList(frag[1]));
+			return !Set.eq(molecule.getFragmentIds(frag[0]), Set.fromList(frag[1]));
 		})) {
 			return action; // empty action
 		}
 
 		fids.each(function (frag) {
-			var fragment = util.Set.fromList(frag[1]);
+			var fragment = Set.fromList(frag[1]);
 			//var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
 			var bbox = molecule.getCoordBoundingBox(fragment);
 
-			util.Set.each(fragment, function (aid) {
+			Set.each(fragment, function (aid) {
 				var atom = molecule.atoms.get(aid);
 				var d = new util.Vec2();
 
@@ -1442,7 +1444,7 @@ ui.Action.OpSGroupAtomRemove = function (sgid, aid) {
 		var atom = DS.atoms.get(aid);
 		var sg = DS.sgroups.get(sgid);
 		chem.SGroup.removeAtom(sg, aid);
-		util.Set.remove(atom.sgs, sgid);
+		Set.remove(atom.sgs, sgid);
 		R.invalidateAtom(aid);
 	};
 	this._invert = function () {

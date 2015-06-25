@@ -9,6 +9,7 @@
 
 var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
+var Pool = require('../util/pool');
 
 require('../util');
 require('../chem');
@@ -167,7 +168,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	this.layers = [];
 	this.initLayers();
 
-	this.connectedComponents = new util.Pool();
+	this.connectedComponents = new Pool();
 	this.ccFragmentType = new Map();
 
 	for (var map in rnd.ReStruct.maps) {

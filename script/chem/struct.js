@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Map = require('../util/map');
+var Pool = require('../util/pool');
 
 require('../util');
 require('./element');
@@ -11,16 +12,16 @@ var chem = global.chem = global.chem || {}; // jshint ignore:line
 var util = global.util;
 
 chem.Struct = function () {
-	this.atoms = new util.Pool();
-	this.bonds = new util.Pool();
-	this.sgroups = new util.Pool();
+	this.atoms = new Pool();
+	this.bonds = new Pool();
+	this.sgroups = new Pool();
 	this.halfBonds = new Map();
-	this.loops = new util.Pool();
+	this.loops = new Pool();
 	this.isChiral = false;
 	this.isReaction = false;
-	this.rxnArrows = new util.Pool();
-	this.rxnPluses = new util.Pool();
-	this.frags = new util.Pool();
+	this.rxnArrows = new Pool();
+	this.rxnPluses = new Pool();
+	this.frags = new Pool();
 	this.rgroups = new Map();
 	this.name = '';
 	this.sGroupForest = new chem.SGroupForest(this);
@@ -964,7 +965,7 @@ chem.Struct.Fragment.getAtoms = function (struct, frid) {
 
 chem.Struct.RGroup = function (logic) {
 	logic = logic || {};
-	this.frags = new util.Pool();
+	this.frags = new Pool();
 	this.resth = logic.resth || false;
 	this.range = logic.range || '';
 	this.ifthen = logic.ifthen || 0;

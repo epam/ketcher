@@ -2,6 +2,8 @@
 
 /*eslint-disable*/
 
+var Box2Abs = require('../util/box2abs');
+
 require('../util');
 require('./element');
 require('../rnd/restruct_rendering'); //don't require whole rnd module
@@ -228,7 +230,7 @@ chem.SGroup.bracketPos = function (sg, render, mol, xbonds) {
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
 		var pos = new util.Vec2(atom.pp);
 		if (util.isNull(bba)) {
-			bba = new util.Box2Abs(pos, pos);
+			bba = new Box2Abs(pos, pos);
 			var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
 			bba = bba.extend(ext, ext);
 		} else {
@@ -249,10 +251,10 @@ chem.SGroup.bracketPos = function (sg, render, mol, xbonds) {
 			util.each([bba.p0.y, bba.p1.y], function (y) {
 				var v = new util.Vec2(x, y);
 				var p = new util.Vec2(util.Vec2.dot(v, d), util.Vec2.dot(v, n));
-				bbb = util.isNull(bbb) ? new util.Box2Abs(p, p) : bbb.include(p);
+				bbb = util.isNull(bbb) ? new Box2Abs(p, p) : bbb.include(p);
 			}, this);
 		}, this);
-		bb = util.isNull(bb) ? bbb : util.Box2Abs.union(bb, bbb);
+		bb = util.isNull(bb) ? bbb : Box2Abs.union(bb, bbb);
 	}, this);
 	var vext = new util.Vec2(0.2, 0.4);
 	if (!util.isNull(bb))
@@ -280,7 +282,7 @@ chem.SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n,
 		});
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
-		var indexBox = util.Box2Abs.fromRelBox(rnd.relBox(indexPath.getBBox()));
+		var indexBox = Box2Abs.fromRelBox(rnd.relBox(indexPath.getBBox()));
 		var t = Math.max(util.Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
 		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
 		set.push(indexPath);
@@ -374,7 +376,7 @@ chem.SGroup.getObjBBox = function (atoms, mol)
 		throw new Error('Atom list is empty');
 
 	var a0 = mol.atoms.get(atoms[0]).pp;
-	var bb = new util.Box2Abs(a0, a0);
+	var bb = new Box2Abs(a0, a0);
 	for (var i = 1; i < atoms.length; ++i) {
 		var aid = atoms[i];
 		var atom = mol.atoms.get(aid);
@@ -768,7 +770,7 @@ chem.SGroup.GroupDat = {
 				var box_i = rnd.relBox(name_i.getBBox());
 				name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
 				set.push(name_i);
-				var sbox_i = util.Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
+				var sbox_i = Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
 				sbox_i = sbox_i.transform(render.scaled2obj, render);
 				this.areas.push(sbox_i);
 			}
@@ -777,7 +779,7 @@ chem.SGroup.GroupDat = {
 			var box = rnd.relBox(name.getBBox());
 			name.translateAbs(0.5 * box.width, -0.5 * box.height);
 			set.push(name);
-			var sbox = util.Box2Abs.fromRelBox(rnd.relBox(name.getBBox()));
+			var sbox = Box2Abs.fromRelBox(rnd.relBox(name.getBBox()));
 			this.dataArea = sbox.transform(render.scaled2obj, render);
 			if (!remol.sgroupData.has(this.id))
 				remol.sgroupData.set(this.id, new rnd.ReDataSGroupData(this));

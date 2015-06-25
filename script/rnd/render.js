@@ -3,6 +3,7 @@
 /*eslint-disable*/
 
 var Raphael = require('../raphael-ext.js');
+var Box2Abs = require('../util/box2abs');
 
 require('../util');
 require('./restruct');
@@ -81,7 +82,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.paper = new Raphael(clientArea);
 	this.size = new util.Vec2();
 	this.viewSz = viewSz || new util.Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
-	this.bb = new util.Box2Abs(new util.Vec2(), this.viewSz);
+	this.bb = new Box2Abs(new util.Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;
 	this.rxnArrow = null;
@@ -898,10 +899,10 @@ rnd.Render.prototype.update = function (force)
 		if (!this.opt.autoScale) {
 			var ext = util.Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-			var vb = new util.Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(util.Vec2.UNIT.scaled(20)));
-			var cb = util.Box2Abs.union(vb, eb);
+			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(util.Vec2.UNIT.scaled(20)));
+			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)
-				this.oldCb = new util.Box2Abs();
+				this.oldCb = new Box2Abs();
 
 			var sz = cb.sz().floor();
 			var delta = this.oldCb.p0.sub(cb.p0).ceil();

@@ -1,6 +1,8 @@
 /*global require,exports,global:false*/
 
-var Raphael = require('./raphael-ext.js');
+var Raphael = require('./raphael-ext');
+
+var Box2Abs = require('./util/box2abs');
 
 require('./util');
 require('./chem');
@@ -92,7 +94,7 @@ ketcher.testSegment = function (clientArea) {
 	var j;
 	var list = [];
 
-	b = new util.Box2Abs(bx, by, bx + bw, by + bh);
+	b = new Box2Abs(bx, by, bx + bw, by + bh);
 	c = new Raphael(clientArea);
 
 	for (i = 0; i < 100000; ++i) {
@@ -146,7 +148,7 @@ global.onload = function () {
  {
  var bx = 50, by = 180, bw = 220, bh = 40;
 
- var b = new util.Box2Abs(bx, by, bx + bw, by + bh);
+ var b = new Box2Abs(bx, by, bx + bw, by + bh);
  var c = new Raphael(clientArea);
 
  c.rect(0, 0, 300, 300).attr({stroke:'#0f0'});

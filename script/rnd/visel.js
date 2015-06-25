@@ -3,6 +3,7 @@
 
 /*global require, global:false, rnd:false*/
 
+var Box2Abs = require('../util/box2abs');
 require('../util');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
@@ -32,7 +33,7 @@ rnd.Visel.prototype.add = function (path, bb, ext) {
 	this.paths.push(path);
 	if (bb) {
 		this.boxes.push(bb);
-		this.boundingBox = this.boundingBox == null ? bb : util.Box2Abs.union(this.boundingBox, bb);
+		this.boundingBox = this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb);
 	}
 	if (ext) {
 		this.exts.push(ext);

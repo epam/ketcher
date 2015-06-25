@@ -7,6 +7,8 @@
 
 /*eslint-disable*/
 
+var Box2Abs = require('../util/box2abs');
+
 require('../util');
 require('../chem');
 
@@ -93,7 +95,7 @@ rnd.ReAtom.isSelectable = function () { return true; }
 rnd.ReAtom.prototype.getVBoxObj = function (render) {
 	if (this.visel.boundingBox)
 		return rnd.ReObject.prototype.getVBoxObj.call(this, render);
-	return new util.Box2Abs(this.a.pp, this.a.pp);
+	return new Box2Abs(this.a.pp, this.a.pp);
 };
 
 rnd.ReAtom.prototype.drawHighlight = function (render) {
@@ -390,11 +392,11 @@ rnd.ReStruct.prototype.getVBoxObj = function (selection)
 			util.each(selection[map], function (id) {
 				var box = this[map].get(id).getVBoxObj(this.render);
 				if (box)
-					vbox = vbox ? util.Box2Abs.union(vbox, box) : box.clone();
+					vbox = vbox ? Box2Abs.union(vbox, box) : box.clone();
 			}, this);
 		}
 	}
-	vbox = vbox || new util.Box2Abs(0, 0, 0, 0);
+	vbox = vbox || new Box2Abs(0, 0, 0, 0);
 	return vbox;
 };
 
@@ -610,7 +612,7 @@ rnd.ReStruct.prototype.drawReactionArrow = function (id, item)
 {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawArrow(new util.Vec2(centre.x - this.render.scale, centre.y), new util.Vec2(centre.x + this.render.scale, centre.y));
-	item.visel.add(path, util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
+	item.visel.add(path, Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translateAbs(offset.x, offset.y);
@@ -620,7 +622,7 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawPlus(centre);
-	item.visel.add(path, util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
+	item.visel.add(path, Box2Abs.fromRelBox(rnd.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
 		path.translateAbs(offset.x, offset.y);
@@ -985,13 +987,13 @@ rnd.ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review 
 			// TODO ReObject.calcBBox to be used instead
 			var bba = atom.visel.boundingBox;
 			if (!bba) {
-				bba = new util.Box2Abs(atom.a.pp, atom.a.pp);
+				bba = new Box2Abs(atom.a.pp, atom.a.pp);
 				var ext = new util.Vec2(0.05 * 3, 0.05 * 3);
 				bba = bba.extend(ext, ext);
 			} else {
 				bba = bba.translate((render.offset || new util.Vec2()).negated()).transform(render.scaled2obj, render);
 			}
-			ret = (ret ? util.Box2Abs.union(ret, bba) : bba);
+			ret = (ret ? Box2Abs.union(ret, bba) : bba);
 		}
 	}, this);
 	return ret;
@@ -1082,7 +1084,7 @@ rnd.ReRGroup.prototype.calcBBox = function (render) {
 	this.item.frags.each(function (fnum, fid) {
 		var bbf = render.ctab.frags.get(fid).calcBBox(render, fid);
 		if (bbf) {
-			ret = (ret ? util.Box2Abs.union(ret, bbf) : bbf);
+			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
 		}
 	});
 	ret = ret.extend(this.__ext, this.__ext);
@@ -1160,7 +1162,7 @@ rnd.ReRGroup.prototype.draw = function (render) { // TODO need to review paramet
 			labelSet.push(logicPath);
 		}
 		ret.data.push(label);
-		this.labelBox = util.Box2Abs.fromRelBox(labelSet.getBBox()).transform(render.scaled2obj, render);
+		this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(render.scaled2obj, render);
 		return ret;
 	} else {
 		// TODO abnormal situation, empty fragments must be destroyed by tools
@@ -1336,7 +1338,7 @@ rnd.ReChiralFlag.findClosest = function (render, p) {
 };
 
 rnd.ReChiralFlag.prototype.highlightPath = function (render) {
-	var box = util.Box2Abs.fromRelBox(this.path.getBBox());
+	var box = Box2Abs.fromRelBox(this.path.getBBox());
 	var sz = box.p1.sub(box.p0);
 	var p0 = box.p0.sub(render.offset);
 	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);

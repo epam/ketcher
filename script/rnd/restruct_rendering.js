@@ -2,6 +2,8 @@
 /*jshint -W110 */
 /*eslint-disable*/
 
+var Box2Abs = require('../util/box2abs');
+
 require('./restruct');
 require('../util');
 
@@ -937,7 +939,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					this.centerText(attpntPath1, attpntRbb);
 
 					var lsbn = lsb.negated();
-					pos1 = pos1.addScaled(lsbn, util.Vec2.shiftRayBox(pos1, lsbn, util.Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
+					pos1 = pos1.addScaled(lsbn, util.Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
 					pos0 = this.shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
 					var n = lsb.rotateSC(1, 0);
 					var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
@@ -1038,7 +1040,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 			for (i = 0; i < visel.exts.length; ++i)
 				t = Math.max(t, util.Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
 			// estimate the shift backwards to account for the size of the aam/query text box itself
-			t += util.Vec2.shiftRayBox(ps, dir.negated(), util.Box2Abs.fromRelBox(aamBox))
+			t += util.Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox))
 			dir = dir.scaled(8 + t);
 			this.pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
 			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
@@ -1211,7 +1213,7 @@ rnd.ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visi
 	if (!path)
 		return;
 	var offset = this.render.offset;
-	var bb = visible ? util.Box2Abs.fromRelBox(rnd.relBox(path.getBBox())) : null;
+	var bb = visible ? Box2Abs.fromRelBox(rnd.relBox(path.getBBox())) : null;
 	var ext = pos && bb ? bb.translate(pos.negated()) : null;
 	if (offset !== null) {
 		path.translateAbs(offset.x, offset.y);

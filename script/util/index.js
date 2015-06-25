@@ -1,7 +1,7 @@
 /*global require, global:false, rnd*/
 
-require('./common');
-global.Map = require('./map');
-global.Pool = require('./pool');
-global.Set = require('./set');
+global.util = require('./common');
+global.util.Map = require('./map');
+global.util.Pool = require('./pool');
+global.util.Set = require('./set');
 require('./vec2');

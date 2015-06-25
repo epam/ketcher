@@ -1,6 +1,6 @@
 /*global require, global:false, util:false*/
 
-var util = global.util = global.util || {}; // jshint ignore:line
+var util = {}; // jshint ignore:line
 
 Array.prototype.swap = function (i1, i2) { //eslint-disable-line
 	var tmp = this[i1];
@@ -221,6 +221,10 @@ util.assert = function (condition, comment) {
 	}
 };
 
+util.assertDefined = function(v) {
+	util.assert(!util.isNullOrUndefined(v));
+};
+
 util.isUndefined = function (variable) {
 	return Object.isUndefined(variable); // use prototype.js method for now
 };
@@ -248,7 +252,6 @@ util.arrayRemoveByValue = function (array, item) {
 util.listNextRotate = function (list, value) {
 	return list[(list.indexOf(value) + 1) % list.length];
 };
-
 
 // similar to Object.assign
 // http://www.2ality.com/2014/01/object-assign.html
@@ -280,3 +283,5 @@ util.eachAsync = function (list, process, timeGap, startTimeGap) {
 		setTimeout(iterate, startTimeGap || timeGap);
 	});
 };
+
+module.exports = util;

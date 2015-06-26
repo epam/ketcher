@@ -1,16 +1,15 @@
-/*global require, global, chem:false, util:false*/
+/*global require, global, chem:false*/
 
 /*eslint-disable*/
 
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
 require('./struct');
-require('../util');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 
 chem.Stereocenters = function (mol, neighbors_func, context)
 {

@@ -1,7 +1,7 @@
 /*global require, module*/
 
 var getXHR = require('xhrpolyfill');
-var util = require('./common.js');
+var util = require('./index.js');
 
 function ajax(options, callback) {
 	var xhr = getXHR();

@@ -5,15 +5,15 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
+
 var ui = global.ui = global.ui || {}; // jshint ignore:line
 
 require('../chem');
 require('../rnd');
-require('../util');
+var util = require('../util');
 var server = require('./server.js');
 
 var chem = global.chem;
-var util = global.util;
 var rnd = global.rnd;
 
 ui.standalone = true;

@@ -2,7 +2,6 @@
 
 require('../ui');
 require('../../chem');
-require('../../util');
 
 var ui = global.ui = global.ui || function () {};
 

@@ -1,7 +1,7 @@
 /*global require, module*/
 
 /*eslint-disable guard-for-in */
-var util = require('./common.js');
+var util = require('./index');
 
 var Map = function (obj) {
 	if (typeof (obj) !== 'undefined' && obj.constructor !== Object) {

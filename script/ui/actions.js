@@ -4,14 +4,13 @@
 
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
 require('../chem');
-require('../util');
 require('../rnd');
 
 var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
-var util = global.util;
 var rnd = global.rnd;
 
 //

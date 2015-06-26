@@ -1,10 +1,7 @@
-/*global require, global:false, chem:false, util:false*/
+/*global require, global:false, chem:false*/
 
 var Map = require('../util/map');
-require('../util');
-
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 
 // element table and utilities
 chem.Element = function (label, period, group, putHydrogenOnTheLeft, color) {

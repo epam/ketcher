@@ -6,11 +6,6 @@
 
 /*global require, global, key*/
 
-require('../util');
-
-var ui = global.ui = global.ui || function () {};
-var util = global.util;
-
 ui.onKeyPress_Pre = function (action, event, handler, doNotStopIfCoverIsVisible) {
 	util.stopEventPropagation(event); // TODO: still need this?
 

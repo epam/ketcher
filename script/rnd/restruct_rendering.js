@@ -1,15 +1,13 @@
-/*global require, global:false, chem:false, util:false*/
+/*global require, global:false, chem:false*/
 /*jshint -W110 */
 /*eslint-disable*/
 
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
 require('./restruct');
-require('../util');
-
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 var tfx = util.tfx;
 
 rnd.relBox = function (box) {

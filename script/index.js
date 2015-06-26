@@ -4,14 +4,13 @@ var Raphael = require('./raphael-ext');
 
 var Box2Abs = require('./util/box2abs');
 var Vec2 = require('./util/vec2');
+var util = require('./util');
 
-require('./util');
 require('./chem');
 require('./rnd');
 require('./ui');
 
 var ui = global.ui;
-var util = global.util;
 var chem = global.chem;
 var rnd = global.rnd;
 

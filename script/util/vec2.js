@@ -2,7 +2,7 @@
 
 /*eslint-disable */
 
-var util = require('./common.js');
+var util = require('./index');
 
 var Vec2 = function (x, y)
 {

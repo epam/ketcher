@@ -5,14 +5,12 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
-require('../util');
 require('../chem');
 require('./restruct');
 require('../ui');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 var ui = global.ui; // jshint ignore:line
 
 // TODO re-factoring needed: client_area parameter is excessive, should be available in render

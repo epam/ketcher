@@ -3,7 +3,7 @@
 // ReStruct is to store all the auxiliary information for
 //  chem.Struct while rendering
 
-/*global require, global:false, chem:false, util:false, rnd:false*/
+/*global require, global:false*/
 
 /*eslint-disable*/
 
@@ -12,13 +12,12 @@ var Map = require('../util/map');
 var Pool = require('../util/pool');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
-require('../util');
 require('../chem');
 
 var rnd = global.rnd = global.rnd || {};
 var chem = global.chem;
-var util = global.util;
 var tfx = util.tfx;
 
 rnd.ReObject = function ()  // TODO ??? should it be in ReStruct namespace

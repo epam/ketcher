@@ -1,4 +1,4 @@
-/*global require, global:false, chem:false, util:false*/
+/*global require, global:false, chem:false*/
 
 /*eslint-disable*/
 
@@ -6,8 +6,8 @@ var Raphael = require('../raphael-ext.js');
 var Box2Abs = require('../util/box2abs');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
-require('../util');
 require('./restruct');
 require('../ui');
 require('../chem');
@@ -15,7 +15,6 @@ require('./restruct_rendering');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 var ui = global.ui; // jshint ignore:line
 var tfx = util.tfx;
 

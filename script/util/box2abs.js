@@ -1,6 +1,6 @@
 /*global require, module*/
 
-var util = require('./common');
+var util = require('./index');
 var Vec2 = require('./vec2');
 
 var Box2Abs = function () {

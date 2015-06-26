@@ -3,14 +3,13 @@
 /* eslint-disable */
 
 require('../ui');
-require('../../util');
+var util = require('../../util');
 require('../../chem');
 require('../../rnd');
 
 var ajax = require('../../util/ajax.js');
 
 var ui = global.ui = global.ui || function () {};
-var util = global.util;
 var rnd = global.rnd;
 var chem = global.chem;
 

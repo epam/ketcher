@@ -5,12 +5,10 @@
 var Map = require('../util/map');
 var Vec2 = require('../util/vec2');
 
-require('../util');
 require('./element');
 require('./struct');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util;
 
 chem.CisTrans = function (mol, neighborsFunc, context) {
 	this.molecule = mol;

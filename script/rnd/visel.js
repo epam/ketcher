@@ -5,10 +5,8 @@
 
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
-require('../util');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 
 rnd.Visel = function (type) {
 	this.type = type;

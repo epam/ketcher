@@ -1,11 +1,10 @@
 /*global require, global:false, chem:false*/
 
 /*eslint-disable*/
-require('../util');
+var util = require('../util');
 require('./struct');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util;
 
 chem.Struct.prototype.calcConn = function (aid) {
 	var conn = 0;

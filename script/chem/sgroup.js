@@ -1,4 +1,4 @@
-/*global require, global:false, chem:false, util:false*/
+/*global require, global:false, chem:false*/
 
 /*eslint-disable*/
 
@@ -6,13 +6,12 @@ var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var util = require('../util');
 
-require('../util');
 require('./element');
 require('../rnd/restruct_rendering'); //don't require whole rnd module
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 var rnd = global.rnd; // jshint ignore:line
 
 chem.SGroup = function (type) {
@@ -855,7 +854,6 @@ chem.SGroup.TYPES = {
 	'DAT': chem.SGroup.GroupDat,
 	'GEN': chem.SGroup.GroupGen
 };
-
 
 chem.SGroupForest = function (molecule) {
 	this.parent = new Map(); // child id -> parent id

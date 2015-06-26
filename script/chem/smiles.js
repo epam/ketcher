@@ -1,14 +1,13 @@
-/*global require, global, chem:false, util:false*/
+/*global require, global, chem:false*/
 
 /*eslint-disable*/
 
 var Set = require('../util/set');
 
 require('./struct');
-require('../util');
+var util = require('../util');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var util = global.util; // jshint ignore:line
 
 chem.SmilesSaver = function ()
 {

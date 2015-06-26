@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 require('../ui');
-var util = require('../../util');
 require('../../chem');
 require('../../rnd');
 
@@ -74,7 +73,7 @@ var custom_templates;
 ui.initTemplateCustom = function (el, base_url) {
 	return ui.fetchTemplateCustom(base_url).then(function (templates) {
 		custom_templates = templates;
-		return util.eachAsync(templates, function (tmpl, _) {
+		return eachAsync(templates, function (tmpl, _) {
 			var li =  new Element('li');
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
@@ -136,4 +135,20 @@ ui.showTemplateCustom = function (base_url, params) {
 			});
 		});
 	}
+};
+
+function eachAsync(list, process, timeGap, startTimeGap) {
+	return new Promise(function (resolve) {
+		var i = 0;
+		var n = list.length;
+		function iterate() {
+			if (i < n) {
+				process(list[i], i++);
+				setTimeout(iterate, timeGap);
+			} else {
+				resolve();
+			}
+		}
+		setTimeout(iterate, startTimeGap || timeGap);
+	});
 };

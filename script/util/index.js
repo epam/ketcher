@@ -266,22 +266,6 @@ var isObject = function (obj) {
 	return obj === Object(obj);
 };
 
-var eachAsync = function (list, process, timeGap, startTimeGap) {
-	return new Promise(function (resolve) {
-		var i = 0;
-		var n = list.length;
-		function iterate() {
-			if (i < n) {
-				process(list[i], i++);
-				setTimeout(iterate, timeGap);
-			} else {
-				resolve();
-			}
-		}
-		setTimeout(iterate, startTimeGap || timeGap);
-	});
-};
-
 module.exports = {
 	tfx: tfx,
 	each: each,
@@ -317,6 +301,5 @@ module.exports = {
 	arrayRemoveByValue: arrayRemoveByValue,
 	listNextRotate: listNextRotate,
 	extend: extend,
-	isObject: isObject,
-	eachAsync: eachAsync
+	isObject: isObject
 };

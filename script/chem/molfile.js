@@ -11,6 +11,9 @@ require('./element');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
+// TODO: remove me
+var DEBUG = { forwardExceptions: false }; // mimic ui.forwardExceptions
+
 chem.Molfile = function () {};
 
 chem.Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
@@ -965,7 +968,7 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
-				if (ui.forwardExceptions)
+				if (DEBUG.forwardExceptions)
 					throw ex;
 				if (skipErrors && typeof(ex.id) == 'number') {
 					toRemove.push(ex.id);

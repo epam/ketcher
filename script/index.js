@@ -1,6 +1,7 @@
 /*global require,exports,global:false*/
 
 var util = require('./util');
+var queryString = require('query-string');
 
 require('./chem');
 require('./rnd');
@@ -38,7 +39,6 @@ ketcher.setMolecule = function (molString) {
 	if (!Object.isString(molString)) {
 		return;
 	}
-
 	ui.loadMolecule(molString);
 };
 
@@ -79,25 +79,6 @@ ketcher.onStructChange = function (handler) {
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
 global.onload = function () {
-	// Parse URL parameters
-	var i;
-	var pair;
-	var paramList;
-	var paramHash = {};
-	var paramString = document.location.search;
-	var pathname = document.location.pathname;
-
-	if (paramString.length > 0) {
-		paramString = paramString.substring(1);
-	}
-
-	paramList = paramString.split(/&/g);
-
-	for (i = 0; i < paramList.length; ++i) {
-		pair = paramList[i].split('=', 2);
-		paramHash[pair[0]] = pair.length != 2 || unescape(pair[1]);
-	}
-
-	// Initialize UI
-	ui.init(paramHash);
+	var params = queryString.parse(document.location.search);
+	ui.init(params);
 };

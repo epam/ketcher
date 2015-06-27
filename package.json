@@ -53,6 +53,7 @@
     "filesaver.js": "^0.1.1",
     "html5shiv": "git://github.com/aFarkas/html5shiv#0a7343",
     "promise-polyfill": "^2.0.2",
+    "query-string": "^2.3.0",
     "raphael": "^2.1.4",
     "xhrpolyfill": "^1.0.0"
   },

@@ -15,9 +15,7 @@ var server = require('./ui/server.js');
 
 // ketcher.* namespace should be global
 // (the only global as we have API methods here)
-var ketcher = global.ketcher = function () {
-		this.render = null;
-	};
+var ketcher = global.ketcher = {};
 
 ketcher.time_created = '__TIME_CREATED__';
 ketcher.version = '2.0.0-alpha.1';
@@ -26,8 +24,8 @@ ketcher.getSmiles = function () {
 	var saver = ui.standalone ? new chem.SmilesSaver() : new chem.MolfileSaver();
 	var mol = saver.saveMolecule(ui.ctab, true);
 	return ui.standalone ? mol : server.smiles.sync({
-			moldata: mol
-		});
+		moldata: mol
+	});
 };
 
 ketcher.getMolfile = function () {
@@ -49,26 +47,27 @@ ketcher.addFragment = function (molString) {
 	ui.loadMolecule(molString, undefined, undefined, true);
 };
 
-ketcher.showMolfile = function (clientArea, molfileText, autoScale, hideImplicitHydrogen) {
-	return ketcher.showMolfileOpts(clientArea, molfileText, 75, {
-		'showSelectionRegions': false,
-		'showBondIds': false,
-		'showHalfBondIds': false,
-		'showLoopIds': false,
-		'showAtomIds': false,
-		'autoScale': autoScale || false,
-		'autoScaleMargin': 4,
-		'hideImplicitHydrogen': hideImplicitHydrogen || false
-	});
-};
-
-ketcher.showMolfileOpts = function (clientArea, molfileText, bondLength, opts) {
-	this.render = new rnd.Render(clientArea, bondLength, opts);
-	if (molfileText) {
-		this.render.setMolecule(chem.Molfile.parseCTFile(typeof (molfileText) === 'string' ? molfileText.split('\n') : molfileText));
+ketcher.showMolfile = function (clientArea, molString, options) {
+	var opts = util.extend({
+		bondLength: 75,
+		showSelectionRegions: false,
+		showBondIds: false,
+		showHalfBondIds: false,
+		showLoopIds: false,
+		showAtomIds: false,
+		autoScale: false,
+		autoScaleMargin: 4,
+		hideImplicitHydrogen: false
+	}, options);
+	var render = new rnd.Render(clientArea, opts.bondLength, opts);
+	if (molString) {
+		var mt = typeof molString === 'string' ? molString.split('\n') : molString;
+		var mol = chem.Molfile.parseCTFile(mt);
+		render.setMolecule(mol);
 	}
-	this.render.update();
-	return this.render;
+	render.update();
+	// not sure we need to expose guts
+	return render;
 };
 
 ketcher.onStructChange = function (handler) {

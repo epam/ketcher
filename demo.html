@@ -87,13 +87,13 @@
             if ($.trim(molfile).indexOf('\n') == -1)
               alert("Please, input Molfile");
             else
-              ketcher.showMolfileOpts($('<li>').appendTo(show)[0],
-                                      molfile,
-                                      20, { 'autoScale': true,
-                                            'autoScaleMargin': 20,
-                                            'debug': true,
-                                            'ignoreMouseEvents': true
-                                      });
+              ketcher.showMolfile($('<li>').appendTo(show)[0], molfile, {
+                bondLength: 20,
+                autoScale: true,
+                autoScaleMargin: 20,
+                debug: true,
+                ignoreMouseEvents: true
+              });
           });
 
           ketcher.setMolecule(initialMolecule);

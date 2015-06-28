@@ -61,6 +61,7 @@ ketcher.showMolfile = function (clientArea, molString, options) {
 	}, options);
 	var render = new rnd.Render(clientArea, opts.bondLength, opts);
 	if (molString) {
+		// TODO: move split to file parsing
 		var mt = typeof molString === 'string' ? molString.split('\n') : molString;
 		var mol = chem.Molfile.parseCTFile(mt);
 		render.setMolecule(mol);

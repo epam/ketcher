@@ -1031,8 +1031,8 @@ ui.onClick_TemplateCustom = function () {
 	});
 };
 
-// TODO: refactor this
 // try to reconstruct molfile string instead parsing multiple times
+// TODO: move this logic to chem.Molfile
 ui.parseCTFile = function (molfile, check_empty_line) {
 	var lines = molfile.split('\n');
 

@@ -44,31 +44,31 @@ ui.initialized = false;
 // Init section
 //
 ui.init = function (parameters, opts) {
-	this.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
-	this.toolbar = this.ketcher_window.select('[role=toolbar]')[0];
-	this.client_area = $('ketcher');
+	ui.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
+	ui.toolbar = ui.ketcher_window.select('[role=toolbar]')[0];
+	ui.client_area = $('ketcher');
 
 	parameters = Object.extend({
 		api_path: '',
 		static_path: ''
 	}, parameters);
-	this.api_path = parameters.api_path; // move to api-side
-	this.static_path = parameters.static_path;
+	ui.api_path = parameters.api_path; // move to api-side
+	ui.static_path = parameters.static_path;
 
-	this.actionComplete = parameters.actionComplete || function (){};
-	if (this.initialized)
+	ui.actionComplete = parameters.actionComplete || function (){};
+	if (ui.initialized)
 	{
-		this.Action.fromNewCanvas(new chem.Struct());
-		this.render.update();
-		this.undoStack.clear();
-		this.redoStack.clear();
-		this.updateHistoryButtons();
-		this.selectAction(null);
+		ui.Action.fromNewCanvas(new chem.Struct());
+		ui.render.update();
+		ui.undoStack.clear();
+		ui.redoStack.clear();
+		ui.updateHistoryButtons();
+		ui.selectAction(null);
 		return;
 	}
 
-	this.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
-	//this.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
+	ui.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
+	//ui.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
 
 	if (['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check if this is nesessary
@@ -90,7 +90,7 @@ ui.init = function (parameters, opts) {
 		});
 	}
 
-	this.initDialogs();
+	ui.initDialogs();
 
 	// Button events
 	ui.toolbar.select('button').each(function (el) {
@@ -134,27 +134,27 @@ ui.init = function (parameters, opts) {
 	// TODO: remove this^ shit (used in rnd.Render guts)
 	ui.zoomSelect.on('change', function () {
 		ui.updateZoom();
-		//this.blur();
+		//ui.blur();
 	});
-	this.client_area.on('scroll', ui.onScroll_ClientArea);
+	ui.client_area.on('scroll', ui.onScroll_ClientArea);
 
 	ui.updateHistoryButtons();
 
 	// Init renderer
 	opts = new rnd.RenderOptions(opts);
 	opts.atomColoring = true;
-	this.render =  new rnd.Render(this.client_area, ui.SCALE, opts);
-	this.editor = new rnd.Editor(this.render);
+	ui.render =  new rnd.Render(ui.client_area, ui.SCALE, opts);
+	ui.editor = new rnd.Editor(ui.render);
 
-	this.render.onCanvasOffsetChanged = this.onOffsetChanged;
+	ui.render.onCanvasOffsetChanged = ui.onOffsetChanged;
 
-	this.selectAction('select-lasso');
+	ui.selectAction('select-lasso');
 	ui.setScrollOffset(0, 0);
 
-	this.render.setMolecule(this.ctab);
-	this.render.update();
+	ui.render.setMolecule(ui.ctab);
+	ui.render.update();
 
-	this.initialized = true;
+	ui.initialized = true;
 };
 
 ui.subEl = function (id) {
@@ -162,28 +162,28 @@ ui.subEl = function (id) {
 };
 
 ui.hideBlurredControls = function () {
-	if (!this.dropdown_opened) {
+	if (!ui.dropdown_opened) {
 		return false;
 	}
 
-	this.dropdown_opened.removeClassName('opened');
-	var sel = this.dropdown_opened.select('.selected');
+	ui.dropdown_opened.removeClassName('opened');
+	var sel = ui.dropdown_opened.select('.selected');
 	if (sel.length == 1) {
 		//var index = sel[0].previousSiblings().size();
-		var menu = ui.subEl(this.dropdown_opened);
+		var menu = ui.subEl(ui.dropdown_opened);
 		menu.style.marginTop = (-sel[0].offsetTop + menu.offsetTop) + 'px';
 	}
 
 	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
 	// repaint bug: http://bit.ly/1iiSMgy
 	// needs investigation, performance
-	this.client_area.style.visibility = 'hidden';
+	ui.client_area.style.visibility = 'hidden';
 	setTimeout(function () {
 		ui.client_area.style.visibility = 'visible';
 	}, 0);
 	// ?? ui.render.update(true);
 	// END
-	this.dropdown_opened = null;
+	ui.dropdown_opened = null;
 	return true;
 };
 
@@ -331,7 +331,7 @@ ui.updateMolecule = function (mol)
 
 	ui.editor.deselectAll();
 
-	this.addUndoAction(this.Action.fromNewCanvas(mol));
+	ui.addUndoAction(ui.Action.fromNewCanvas(mol));
 
 	ui.showDialog('loading');
 	// setTimeout(function ()
@@ -1154,45 +1154,45 @@ ui.mapTool = function (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new rnd.Editor.LassoTool(this.editor, 0);
+		return new rnd.Editor.LassoTool(ui.editor, 0);
 	} else if (id == 'select-rectangle') {
-		return new rnd.Editor.LassoTool(this.editor, 1);
+		return new rnd.Editor.LassoTool(ui.editor, 1);
 	} else if (id == 'select-fragment') {
-		return new rnd.Editor.LassoTool(this.editor, 1, true);
+		return new rnd.Editor.LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
-		return new rnd.Editor.EraserTool(this.editor, 1); // TODO last selector mode is better
+		return new rnd.Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (ui.atomLabel(id)) {
-		return new rnd.Editor.AtomTool(this.editor, ui.atomLabel(id));
+		return new rnd.Editor.AtomTool(ui.editor, ui.atomLabel(id));
 	} else if (id.startsWith('bond-')) {
-		return new rnd.Editor.BondTool(this.editor, ui.bondType(id));
+		return new rnd.Editor.BondTool(ui.editor, ui.bondType(id));
 	} else if (id == 'chain') {
-		return new rnd.Editor.ChainTool(this.editor);
+		return new rnd.Editor.ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
-		return new rnd.Editor.TemplateTool(this.editor, ui.current_template_custom);
+		return new rnd.Editor.TemplateTool(ui.editor, ui.current_template_custom);
 	} else if (id.startsWith('template')) {
-		return new rnd.Editor.TemplateTool(this.editor, rnd.templates[parseInt(id.split('-')[1])]);
+		return new rnd.Editor.TemplateTool(ui.editor, rnd.templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
-		return new rnd.Editor.ChargeTool(this.editor, 1);
+		return new rnd.Editor.ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {
-		return new rnd.Editor.ChargeTool(this.editor, -1);
+		return new rnd.Editor.ChargeTool(ui.editor, -1);
 	} else if (id == 'sgroup') {
-		return new rnd.Editor.SGroupTool(this.editor);
+		return new rnd.Editor.SGroupTool(ui.editor);
 	} else if (id == 'reaction-arrow') {
-		return new rnd.Editor.ReactionArrowTool(this.editor);
+		return new rnd.Editor.ReactionArrowTool(ui.editor);
 	} else if (id == 'reaction-plus') {
-		return new rnd.Editor.ReactionPlusTool(this.editor);
+		return new rnd.Editor.ReactionPlusTool(ui.editor);
 	} else if (id == 'reaction-map') {
-		return new rnd.Editor.ReactionMapTool(this.editor);
+		return new rnd.Editor.ReactionMapTool(ui.editor);
 	} else if (id == 'reaction-unmap') {
-		return new rnd.Editor.ReactionUnmapTool(this.editor);
+		return new rnd.Editor.ReactionUnmapTool(ui.editor);
 	} else if (id == 'rgroup-label') {
-		return new rnd.Editor.RGroupAtomTool(this.editor);
+		return new rnd.Editor.RGroupAtomTool(ui.editor);
 	} else if (id == 'rgroup-fragment') {
-		return new rnd.Editor.RGroupFragmentTool(this.editor);
+		return new rnd.Editor.RGroupFragmentTool(ui.editor);
 	} else if (id == 'rgroup-attpoints') {
-		return new rnd.Editor.APointTool(this.editor);
+		return new rnd.Editor.APointTool(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {
-		return new rnd.Editor.RotateTool(this.editor);
+		return new rnd.Editor.RotateTool(ui.editor);
 	}
 	return null;
 };

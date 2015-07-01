@@ -46,29 +46,22 @@ rnd.Visel.prototype.clear = function () {
 	this.boundingBox = null;
 };
 
-rnd.Visel.prototype.translate = function (a, b) {
-	var x;
-	var y;
-	var delta;
-
-	if (arguments.length === 1) {
-		y = a.y;
-		x = a.x;
-	} else if (arguments.length !== 2) {
+rnd.Visel.prototype.translate = function (x, y) {
+	if (arguments.length > 2) {    // TODO: replace to debug time assert
 		throw new Error('One vector or two scalar arguments expected');
 	}
-
-	x = a;
-	y = b;
-
-	delta = new Vec2(x, y);
-	for (var i = 0; i < this.paths.length; ++i) {
-		this.paths[i].translateAbs(x, y);
-	}
-	for (var j = 0; j < this.boxes.length; ++j) {
-		this.boxes[j] = this.boxes[j].translate(delta);
-	}
-	if (this.boundingBox !== null) {
-		this.boundingBox = this.boundingBox.translate(delta);
+	if (y === undefined) {
+		this.translate(x.x, x.y);
+	} else {
+		var delta = new Vec2(x, y);
+		for (var i = 0; i < this.paths.length; ++i) {
+			this.paths[i].translateAbs(x, y);
+		}
+		for (var j = 0; j < this.boxes.length; ++j) {
+			this.boxes[j] = this.boxes[j].translate(delta);
+		}
+		if (this.boundingBox !== null) {
+			this.boundingBox = this.boundingBox.translate(delta);
+		}
 	}
 };

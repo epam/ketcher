@@ -16,36 +16,33 @@ var server = require('./server.js');
 var chem = global.chem;
 var rnd = global.rnd;
 
-ui.standalone = true;
-ui.forwardExceptions = false;
 
-ui.SCALE = 40;
-
-ui.DBLCLICK_INTERVAL = 300;
-
-ui.HISTORY_LENGTH = 32;
-
-ui.DEBUG = false;
+var DEBUG = { forwardExceptions: false };
+var SCALE = 40;  // const
 
 ui.render = null;
 
 ui.ctab = new chem.Struct();
 
-ui.client_area = null;
-
+ui.HISTORY_LENGTH = 32;
 ui.undoStack = [];
 ui.redoStack = [];
 
-// ui.is_osx = false;
-// ui.is_touch = false;
-ui.initialized = false;
+ui.standalone = true;
 
+// TODO: to delete (only in dialogs/crap)
+ui.client_area = null;
+
+var initialized = false;
+var ketcher_window;
+var toolbar;
+var zoomSelect;
 //
 // Init section
 //
 ui.init = function (parameters, opts) {
-	ui.ketcher_window = $$('[role=application]')[0] || $$('body')[0];
-	ui.toolbar = ui.ketcher_window.select('[role=toolbar]')[0];
+	ketcher_window = $$('[role=application]')[0] || $$('body')[0];
+	toolbar = ketcher_window.select('[role=toolbar]')[0];
 	ui.client_area = $('ketcher');
 
 	parameters = Object.extend({
@@ -56,7 +53,7 @@ ui.init = function (parameters, opts) {
 	ui.static_path = parameters.static_path;
 
 	ui.actionComplete = parameters.actionComplete || function (){};
-	if (ui.initialized)
+	if (initialized)
 	{
 		ui.Action.fromNewCanvas(new chem.Struct());
 		ui.render.update();
@@ -67,9 +64,6 @@ ui.init = function (parameters, opts) {
 		return;
 	}
 
-	ui.is_osx = (navigator.userAgent.indexOf('Mac OS X') != -1);
-	//ui.is_touch = 'ontouchstart' in document && util.isNull(document.ontouchstart);
-
 	if (['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check if this is nesessary
 		server.knocknock().then(function (res) {
@@ -79,7 +73,7 @@ ui.init = function (parameters, opts) {
 			// probably must be disabled by default
 			$$('#cleanup', '#arom', '#dearom',
 				'#reaction-automap', '#template-custom').each(function (el) {
-				ui.subEl(el).setAttribute('disabled', true);
+				subEl(el).setAttribute('disabled', true);
 			});
 		}).then(function () {
 			// TODO: move it out there as server incapsulates
@@ -93,7 +87,7 @@ ui.init = function (parameters, opts) {
 	ui.initDialogs();
 
 	// Button events
-	ui.toolbar.select('button').each(function (el) {
+	toolbar.select('button').each(function (el) {
 		el.on('mouseover', function () {
 			if (this.hasAttribute('disabled')) {
 				return;
@@ -108,7 +102,7 @@ ui.init = function (parameters, opts) {
 		});
 	});
 
-	ui.toolbar.select('li').each(function (el) {
+	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
 			if (event.target.tagName == 'BUTTON' &&
 			event.target.parentNode == this) {
@@ -128,36 +122,38 @@ ui.init = function (parameters, opts) {
 			}
 		});
 	});
-	ui.zoomSelect = ui.subEl('zoom-list');
-	ui.zoom = parseFloat(ui.zoomSelect.options[ui.zoomSelect.selectedIndex].innerHTML) / 100;
+
+	zoomSelect = subEl('zoom-list');
+	// TODO: only in dialog/crap and render one time
+	ui.zoom = parseFloat(zoomSelect.options[zoomSelect.selectedIndex].innerHTML) / 100;
 
 	// TODO: remove this^ shit (used in rnd.Render guts)
-	ui.zoomSelect.on('change', function () {
-		ui.updateZoom();
+	zoomSelect.on('change', function () {
+		updateZoom();
 		//ui.blur();
 	});
-	ui.client_area.on('scroll', ui.onScroll_ClientArea);
+	ui.client_area.on('scroll', onScroll_ClientArea);
 
 	ui.updateHistoryButtons();
 
 	// Init renderer
 	opts = new rnd.RenderOptions(opts);
 	opts.atomColoring = true;
-	ui.render =  new rnd.Render(ui.client_area, ui.SCALE, opts);
+	ui.render =  new rnd.Render(ui.client_area, SCALE, opts);
 	ui.editor = new rnd.Editor(ui.render);
 
-	ui.render.onCanvasOffsetChanged = ui.onOffsetChanged;
+	ui.render.onCanvasOffsetChanged = onOffsetChanged;
 
 	ui.selectAction('select-lasso');
-	ui.setScrollOffset(0, 0);
+	setScrollOffset(0, 0);
 
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();
 
-	ui.initialized = true;
+	initialized = true;
 };
 
-ui.subEl = function (id) {
+function subEl (id) {
 	return $(id).children[0];
 };
 
@@ -170,7 +166,7 @@ ui.hideBlurredControls = function () {
 	var sel = ui.dropdown_opened.select('.selected');
 	if (sel.length == 1) {
 		//var index = sel[0].previousSiblings().size();
-		var menu = ui.subEl(ui.dropdown_opened);
+		var menu = subEl(ui.dropdown_opened);
 		menu.style.marginTop = (-sel[0].offsetTop + menu.offsetTop) + 'px';
 	}
 
@@ -196,11 +192,11 @@ ui.selectAction = function (query) {
 	el = $(query);
 
 	// TODO: refactor !el - case when there are no such id
-	if (!el || !ui.subEl(el).hasAttribute('disabled')) {
-		var action = ui.actionMap[id],
-		tool = action ? action() : ui.mapTool(id);
+	if (!el || !subEl(el).hasAttribute('disabled')) {
+		var action = actionMap[id],
+		tool = action ? action() : mapTool(id);
 		if (tool) {
-			var oldel = ui.toolbar.select('.selected')[0];
+			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!ui.last_selected || oldel,
 			//               "No last mode selected!");
 
@@ -228,37 +224,37 @@ ui.selectAction = function (query) {
 
 ui.updateHistoryButtons = function () {
 	if (ui.undoStack.length == 0) {
-		ui.subEl('undo').setAttribute('disabled', true);
+		subEl('undo').setAttribute('disabled', true);
 	}
 	else {
-		ui.subEl('undo').removeAttribute('disabled');
+		subEl('undo').removeAttribute('disabled');
 	}
 
 	if (ui.redoStack.length == 0) {
-		ui.subEl('redo').setAttribute('disabled', true);
+		subEl('redo').setAttribute('disabled', true);
 	}
 	else {
-		ui.subEl('redo').removeAttribute('disabled');
+		subEl('redo').removeAttribute('disabled');
 	}
 };
 
 ui.updateClipboardButtons = function () {
-	if (ui.isClipboardEmpty())
-		ui.subEl('paste').setAttribute('disabled', true);
+	if (isClipboardEmpty())
+		subEl('paste').setAttribute('disabled', true);
 	else {
-		ui.subEl('paste').removeAttribute('disabled');
+		subEl('paste').removeAttribute('disabled');
 	}
 
 	if (ui.editor.hasSelection(true)) {
-		ui.subEl('copy').removeAttribute('disabled');
-		ui.subEl('cut').removeAttribute('disabled');
+		subEl('copy').removeAttribute('disabled');
+		subEl('cut').removeAttribute('disabled');
 	} else {
-		ui.subEl('copy').setAttribute('disabled', true);
-		ui.subEl('cut').setAttribute('disabled', true);
+		subEl('copy').setAttribute('disabled', true);
+		subEl('cut').setAttribute('disabled', true);
 	}
 };
 
-ui.transitionEndEvent = function () {
+function transitionEndEvent () {
 	var el = document.createElement('transitionTest'),
 	transEndEventNames = {
 		'WebkitTransition': 'webkitTransitionEnd',
@@ -274,13 +270,13 @@ ui.transitionEndEvent = function () {
 	return false;
 };
 
-ui.animateToggle = function (el, callback) {
-	ui.ketcher_window.addClassName('animate');
-	var transitionEnd = ui.transitionEndEvent(),
+function animateToggle (el, callback) {
+	ketcher_window.addClassName('animate');
+	var transitionEnd = transitionEndEvent(),
 	animateStop = function (cb) {
 		setTimeout(function () {
 				cb && cb();
-			ui.ketcher_window.removeClassName('animate');
+			ketcher_window.removeClassName('animate');
 		}, 0);
 	};
 
@@ -299,7 +295,7 @@ ui.animateToggle = function (el, callback) {
 
 ui.showDialog = function (name) {
 	var dialog = $(name);
-	ui.animateToggle(function () {
+	animateToggle(function () {
 		$$('.overlay')[0].show();
 		// dialog.show();
 		dialog.style.display = '';
@@ -309,7 +305,7 @@ ui.showDialog = function (name) {
 
 ui.hideDialog = function (name) {
 	var cover = $$('.overlay')[0];
-	ui.animateToggle(cover, function () {
+	animateToggle(cover, function () {
 		// $(name).hide();
 		$(name).style.display = 'none';
 		cover.hide();
@@ -324,7 +320,7 @@ ui.echo = function (message) {
 //
 // Main section
 //
-ui.updateMolecule = function (mol)
+function updateMolecule (mol)
 {
 	if (typeof(mol) == 'undefined' || mol == null)
 		return;
@@ -340,10 +336,10 @@ ui.updateMolecule = function (mol)
 	{
 		ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 		ui.render.update();
-		ui.setZoomCentered(null, ui.render.getStructCenter());
+		setZoomCentered(null, ui.render.getStructCenter());
 	} catch (er)
 		{
-			if (ui.forwardExceptions)
+			if (DEBUG.forwardExceptions)
 				throw er;
 			alert(er.message);
 		} finally
@@ -356,7 +352,7 @@ ui.updateMolecule = function (mol)
 //
 // New document
 //
-ui.onClick_NewFile = function ()
+function onClick_NewFile ()
 {
 	ui.selectAction(null);
 
@@ -366,7 +362,7 @@ ui.onClick_NewFile = function ()
 	}
 };
 
-ui.onClick_OpenFile = function ()
+function onClick_OpenFile ()
 {
 	ui.openDialog({
 		onOk: function (res) {
@@ -375,13 +371,13 @@ ui.onClick_OpenFile = function ()
 	});
 };
 
-ui.onClick_SaveFile = function ()
+function onClick_SaveFile ()
 {
 	ui.saveDialog({molecule: ui.ctab});
 };
 
 
-ui.dearomatizeMolecule = function (mol, aromatize)
+function dearomatizeMolecule (mol, aromatize)
 {
 	mol = mol.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
@@ -394,7 +390,7 @@ ui.dearomatizeMolecule = function (mol, aromatize)
 			var resmol = ui.parseCTFile(data);
 			if (implicitReaction)
 				resmol.rxnArrows.clear();
-			ui.updateMolecule(resmol);
+			updateMolecule(resmol);
 		}, ui.echo);
 	} else {
 		throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
@@ -404,38 +400,38 @@ ui.dearomatizeMolecule = function (mol, aromatize)
 //
 // Zoom section
 //
-ui.onClick_ZoomIn = function () {
-	ui.zoomSelect.selectedIndex++;
-	ui.updateZoom();
+function onClick_ZoomIn () {
+	zoomSelect.selectedIndex++;
+	updateZoom();
 };
 
-ui.onClick_ZoomOut = function () {
-	ui.zoomSelect.selectedIndex--;
-	ui.updateZoom();
+function onClick_ZoomOut () {
+	zoomSelect.selectedIndex--;
+	updateZoom();
 };
 
-ui.updateZoom = function () {
-	var i = ui.zoomSelect.selectedIndex,
-	len = ui.zoomSelect.length;
+function updateZoom () {
+	var i = zoomSelect.selectedIndex,
+	len = zoomSelect.length;
 	console.assert(0 <= i && i < len, 'Zoom out of range');
 
 	if (i == len - 1)
-		ui.subEl('zoom-in').setAttribute('disabled', true);
+		subEl('zoom-in').setAttribute('disabled', true);
 	else
-		ui.subEl('zoom-in').removeAttribute('disabled');
+		subEl('zoom-in').removeAttribute('disabled');
 	if (i == 0)
-		ui.subEl('zoom-out').setAttribute('disabled', true);
+		subEl('zoom-out').setAttribute('disabled', true);
 	else
-		ui.subEl('zoom-out').removeAttribute('disabled');
+		subEl('zoom-out').removeAttribute('disabled');
 
-	var value = parseFloat(ui.zoomSelect.options[i].innerHTML) / 100;
-	ui.setZoomCentered(value,
+	var value = parseFloat(zoomSelect.options[i].innerHTML) / 100;
+	setZoomCentered(value,
 	ui.render.getStructCenter(ui.editor.getSelection()));
 	ui.zoom = value;
 	ui.render.update();
 };
 
-ui.setZoomRegular = function (zoom) {
+function setZoomRegular (zoom) {
 	//mr: prevdent unbounded zooming
 	//begin
 	if (zoom < 0.1 || zoom > 10)
@@ -448,20 +444,20 @@ ui.setZoomRegular = function (zoom) {
 };
 
 // get the size of the view window in pixels
-ui.getViewSz = function () {
+function getViewSz () {
 	return new Vec2(ui.render.viewSz);
 };
 
 // c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
-ui.setZoomCentered = function (zoom, c) {
+function setZoomCentered (zoom, c) {
 	if (!c)
 		throw new Error('Center point not specified');
 	if (zoom) {
-		ui.setZoomRegular(zoom);
+		setZoomRegular(zoom);
 	}
-	ui.setScrollOffset(0, 0);
+	setScrollOffset(0, 0);
 	var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
-	ui.setScrollOffset(sp.x, sp.y);
+	setScrollOffset(sp.x, sp.y);
 };
 
 // set the reference point for the "static point" zoom (in object coordinates)
@@ -471,31 +467,31 @@ ui.setZoomStaticPointInit = function (s) {
 
 // vp is the point where the reference point should now be (in view coordinates)
 ui.setZoomStaticPoint = function (zoom, vp) {
-	ui.setZoomRegular(zoom);
-	ui.setScrollOffset(0, 0);
+	setZoomRegular(zoom);
+	setScrollOffset(0, 0);
 	var avp = ui.render.obj2view(ui.zspObj);
 	var so = avp.sub(vp);
-	ui.setScrollOffset(so.x, so.y);
+	setScrollOffset(so.x, so.y);
 };
 
-ui.setScrollOffset = function (x, y) {
+function setScrollOffset (x, y) {
 	var cx = ui.client_area.clientWidth;
 	var cy = ui.client_area.clientHeight;
 	ui.render.extendCanvas(x, y, cx + x, cy + y);
 	ui.client_area.scrollLeft = x;
 	ui.client_area.scrollTop = y;
-	ui.scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
-	ui.scrollTop = ui.client_area.scrollTop;
+	scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
+	scrollTop = ui.client_area.scrollTop;
 };
 
-ui.setScrollOffsetRel = function (dx, dy) {
-	ui.setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
+function setScrollOffsetRel (dx, dy) {
+	setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
 };
 
 //
 // Automatic layout
 //
-ui.onClick_CleanUp = function ()
+function onClick_CleanUp ()
 {
 	var atoms = util.array(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
@@ -533,36 +529,36 @@ ui.onClick_CleanUp = function ()
 		var implicitReaction = mol.addRxnArrowIfNecessary();
 		ui.loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction, selective);
 	} catch (er) {
-			if (ui.forwardExceptions)
+			if (DEBUG.forwardExceptions)
 				throw er;
 			alert('ERROR: ' + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
 		}
 };
 
-ui.onClick_Aromatize = function ()
+function onClick_Aromatize ()
 {
 	try {
-		ui.dearomatizeMolecule(ui.ctab, true);
+		dearomatizeMolecule(ui.ctab, true);
 	} catch (er) {
-			if (ui.forwardExceptions)
+			if (DEBUG.forwardExceptions)
 				throw er;
 			alert('Molfile: ' + er.message);
 		}
 };
 
-ui.onClick_Dearomatize = function ()
+function onClick_Dearomatize ()
 {
 	try {
-		ui.dearomatizeMolecule(ui.ctab, false);
+		dearomatizeMolecule(ui.ctab, false);
 	} catch (er) {
-			if (ui.forwardExceptions)
+			if (DEBUG.forwardExceptions)
 				throw er;
 			alert('Molfile: ' + er.message);
 		}
 };
 
 
-ui.onClick_Automap = function () {
+function onClick_Automap () {
 	ui.showAutomapProperties({
 		onOk: function (mode) {
 			var mol = ui.ctab;
@@ -590,7 +586,7 @@ ui.onClick_Automap = function () {
                  }
                  ui.addUndoAction(action, true);
                  */
-				ui.updateMolecule(mol);
+				updateMolecule(mol);
 				/*
                  ui.render.update();
                  */
@@ -609,7 +605,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 		if (paste) {
 			(function (struct) {
 				struct.rescale();
-				if (!ui.copy(struct)) {
+				if (!copy(struct)) {
 					alert('Not a valid structure to paste');
 					return;
 				}
@@ -617,7 +613,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 				ui.selectAction('paste');
 			}).call(this, struct);
 		} else {
-			ui.updateMolecule.call(this, struct);
+			updateMolecule.call(this, struct);
 		}
 	};
 
@@ -664,17 +660,17 @@ ui.scrollPos = function ()
 //
 // Scrolling
 //
-ui.scrollLeft = null;
-ui.scrollTop = null;
+var scrollLeft = null;
+var scrollTop = null;
 
-ui.onScroll_ClientArea = function (event)
+function onScroll_ClientArea (event)
 {
 	// ! DIALOG ME
 	// if ($('input_label').visible())
 	//      $('input_label').hide();
 
-	ui.scrollLeft = ui.client_area.scrollLeft;
-	ui.scrollTop = ui.client_area.scrollTop;
+	scrollLeft = ui.client_area.scrollLeft;
+	scrollTop = ui.client_area.scrollTop;
 
 	util.stopEventPropagation(event);
 };
@@ -682,7 +678,7 @@ ui.onScroll_ClientArea = function (event)
 //
 // Clicking
 //
-ui.dbl_click = false;
+var dbl_click = false;
 
 ui.bondFlipRequired = function (bond, attrs) {
 	return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
@@ -786,7 +782,7 @@ ui.atomForNewBond = function (id)
 //
 // Canvas size
 //
-ui.onOffsetChanged = function (newOffset, oldOffset)
+function onOffsetChanged (newOffset, oldOffset)
 {
 	if (oldOffset == null)
 		return;
@@ -797,21 +793,21 @@ ui.onOffsetChanged = function (newOffset, oldOffset)
 	ui.client_area.scrollTop += delta.y;
 };
 
-ui.selectAll = function ()
+function selectAll ()
 {
 	if (!ui.ctab.isBlank()) {
 		ui.editor.selectAll();
 	}
 };
 
-ui.removeSelected = function ()
+function removeSelected ()
 {
 	ui.addUndoAction(ui.Action.fromFragmentDeletion());
 	ui.editor.deselectAll();
 	ui.render.update();
 };
 
-ui.undo = function ()
+function undo ()
 {
 	if (ui.render.current_tool)
 		ui.render.current_tool.OnCancel();
@@ -823,7 +819,7 @@ ui.undo = function ()
 	ui.actionComplete();
 };
 
-ui.redo = function ()
+function redo ()
 {
 	if (ui.render.current_tool)
 		ui.render.current_tool.OnCancel();
@@ -841,12 +837,12 @@ ui.redo = function ()
 
 ui.clipboard = null;
 
-ui.isClipboardEmpty = function ()
+function isClipboardEmpty ()
 {
 	return ui.clipboard == null;
 };
 
-ui.copy = function (struct, selection)
+function copy (struct, selection)
 {
 	if (!struct) {
 		struct = ui.ctab;
@@ -891,11 +887,11 @@ ui.copy = function (struct, selection)
 		}
 	};
 
-	ui.structToClipboard(ui.clipboard, struct, selection);
+	structToClipboard(ui.clipboard, struct, selection);
 	return !!ui.clipboard.getAnchorPosition();
 };
 
-ui.structToClipboard = function (clipboard, struct, selection)
+function structToClipboard (clipboard, struct, selection)
 {
 	selection = selection || {
 		atoms: struct.atoms.keys(),
@@ -979,8 +975,8 @@ ui.structToClipboard = function (clipboard, struct, selection)
 	}, this);
 };
 
-ui.current_elemtable_props = null;
-ui.onClick_ElemTableButton = function ()
+var current_elemtable_props = null;
+function onClick_ElemTableButton ()
 {
 	ui.showElemTable({
 		onOk: function (res) {
@@ -997,7 +993,7 @@ ui.onClick_ElemTableButton = function ()
 						ids: res.values
 					})
 				};
-			ui.current_elemtable_props = props;
+			current_elemtable_props = props;
 			ui.selectAction('atom-table');
 			return true;
 		},
@@ -1007,12 +1003,12 @@ ui.onClick_ElemTableButton = function ()
 	});
 };
 
-ui.current_reagenerics = null;
-ui.onClick_ReaGenericsTableButton = function ()
+var current_reagenerics = null;
+function onClick_ReaGenericsTableButton ()
 {
 	ui.showReaGenericsTable({
 		onOk: function (res) {
-			ui.current_reagenerics = {label: res.values[0]};
+			current_reagenerics = {label: res.values[0]};
 			ui.selectAction('atom-reagenerics');
 			return true;
 		}
@@ -1020,11 +1016,11 @@ ui.onClick_ReaGenericsTableButton = function ()
 };
 
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
-ui.current_template_custom = null;
-ui.onClick_TemplateCustom = function () {
+var current_template_custom = null;
+function onClick_TemplateCustom () {
 	ui.showTemplateCustom(ui.static_path,{
 		onOk: function (tmpl) {
-			ui.current_template_custom = tmpl;
+			current_template_custom = tmpl;
 			ui.selectAction('template-custom-select');
 			return true;
 		}
@@ -1040,7 +1036,7 @@ ui.parseCTFile = function (molfile, check_empty_line) {
 		try {
 			return chem.Molfile.parseCTFile(lines);
 		} catch (ex) {
-				if (ui.forwardExceptions)
+				if (DEBUG.forwardExceptions)
 					throw ex;
 				if (check_empty_line) {
 					try {
@@ -1048,7 +1044,7 @@ ui.parseCTFile = function (molfile, check_empty_line) {
 						// this often happens when molfile text is pasted into the dialog window
 						return chem.Molfile.parseCTFile(lines.slice(1));
 					} catch (ex1) {
-							if (ui.forwardExceptions)
+							if (DEBUG.forwardExceptions)
 								throw ex1;
 						}
 					try {
@@ -1056,76 +1052,76 @@ ui.parseCTFile = function (molfile, check_empty_line) {
 						// this sometimes happens when pasting
 						return chem.Molfile.parseCTFile([''].concat(lines));
 					} catch (ex2) {
-							if (ui.forwardExceptions)
+							if (DEBUG.forwardExceptions)
 								throw ex2;
 						}
 				}
 				throw ex;
 			}
 	} catch (er) {
-			if (ui.forwardExceptions)
+			if (DEBUG.forwardExceptions)
 				throw er;
 			alert('Error loading molfile.\n' + er.toString());
 			return null;
 		}
 };
 
-ui.onClick_Cut = function ()
+function onClick_Cut ()
 {
-	if (!ui.copy())
+	if (!copy())
 		return;
-	ui.removeSelected();
+	removeSelected();
 };
 
-ui.onClick_Copy = function ()
+function onClick_Copy ()
 {
-	if (!ui.copy())
+	if (!copy())
 		return;
 	ui.editor.deselectAll();
 };
 
-ui.onClick_Paste = function ()
+function onClick_Paste ()
 {
 	return new rnd.Editor.PasteTool(ui.editor);
 };
 
-ui.actionMap = {
-	'new': ui.onClick_NewFile,
-	'open': ui.onClick_OpenFile,
-	'save': ui.onClick_SaveFile,
-	'undo': ui.undo,
-	'redo': ui.redo,
-	'cut': ui.onClick_Cut,
-	'copy': ui.onClick_Copy,
-	'paste': ui.onClick_Paste,
-	'zoom-in': ui.onClick_ZoomIn,
-	'zoom-out': ui.onClick_ZoomOut,
-	'cleanup': ui.onClick_CleanUp,
-	'arom': ui.onClick_Aromatize,
-	'dearom': ui.onClick_Dearomatize,
-	'period-table': ui.onClick_ElemTableButton,
-	'generic-groups': ui.onClick_ReaGenericsTableButton,
-	'template-custom': ui.onClick_TemplateCustom,
+var actionMap = {
+	'new': onClick_NewFile,
+	'open': onClick_OpenFile,
+	'save': onClick_SaveFile,
+	'undo': undo,
+	'redo': redo,
+	'cut': onClick_Cut,
+	'copy': onClick_Copy,
+	'paste': onClick_Paste,
+	'zoom-in': onClick_ZoomIn,
+	'zoom-out': onClick_ZoomOut,
+	'cleanup': onClick_CleanUp,
+	'arom': onClick_Aromatize,
+	'dearom': onClick_Dearomatize,
+	'period-table': onClick_ElemTableButton,
+	'generic-groups': onClick_ReaGenericsTableButton,
+	'template-custom': onClick_TemplateCustom,
 	'info': function (el) {
 		ui.showDialog('about_dialog');
 	},
-	'reaction-automap': ui.onClick_Automap
+	'reaction-automap': onClick_Automap
 };
 
 // TODO: rewrite declaratively, merge to actionMap
-ui.mapTool = function (id) {
+function mapTool (id) {
 
 	console.assert(id, 'The null tool');
 
 	// special cases
 	if (ui.editor.hasSelection()) {
 		if (id == 'erase') {
-			ui.removeSelected();
+			removeSelected();
 			return null;
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
-		if (ui.atomLabel(id)) {
-			ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, ui.atomLabel(id)), true);
+		if (atomLabel(id)) {
+			ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
 			ui.render.update();
 			return null;
 		}
@@ -1143,7 +1139,7 @@ ui.mapTool = function (id) {
          else if (mode.startsWith('bond_')) {
          var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
          if (cBond) {
-         ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: ui.bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+         ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
          ui.render.update();
          return;
          }
@@ -1161,14 +1157,14 @@ ui.mapTool = function (id) {
 		return new rnd.Editor.LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
 		return new rnd.Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
-	} else if (ui.atomLabel(id)) {
-		return new rnd.Editor.AtomTool(ui.editor, ui.atomLabel(id));
+	} else if (atomLabel(id)) {
+		return new rnd.Editor.AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {
-		return new rnd.Editor.BondTool(ui.editor, ui.bondType(id));
+		return new rnd.Editor.BondTool(ui.editor, bondType(id));
 	} else if (id == 'chain') {
 		return new rnd.Editor.ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
-		return new rnd.Editor.TemplateTool(ui.editor, ui.current_template_custom);
+		return new rnd.Editor.TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {
 		return new rnd.Editor.TemplateTool(ui.editor, rnd.templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
@@ -1212,7 +1208,7 @@ ui.bondTypeMap = {
 	'any':  {type: 8, stereo: chem.Struct.BOND.STEREO.NONE}
 };
 
-ui.bondType = function (mode)
+function bondType (mode)
 {
 	var type_str = mode.substr(5);
 	return ui.bondTypeMap[type_str];
@@ -1220,22 +1216,22 @@ ui.bondType = function (mode)
 
 // temporary hack as mode passed to mapTool is
 // actually li element
-ui.atomLabel = function (mode) {
+function atomLabel (mode) {
 	var label;
 	if (!mode.up || !mode.up('#atom')) {
 		label = mode.substr(5);
 
 		if (label == 'table') {
-			return ui.current_elemtable_props;
+			return current_elemtable_props;
 		}
 		if (label == 'reagenerics')
-			return ui.current_reagenerics;
+			return current_reagenerics;
 		// how can we go here?
 		// if (label == 'any')
 		// 	return {'label':'A'};
 		return null;
 	}
 
-	label = ui.subEl(mode).innerHTML;
+	label = subEl(mode).innerHTML;
 	return {'label': label.capitalize()};
 };

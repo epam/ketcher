@@ -1,4 +1,4 @@
-/*global require, global*/
+/*global require, global, module*/
 
 var ajax = require('../util/ajax.js');
 var ui = global.ui;

@@ -1,4 +1,4 @@
-/*global require, global, ui:false*/
+/*global require, global, module, ui:false*/
 
 var Vec2 = require('../util/vec2');
 require('../chem');
@@ -8,15 +8,15 @@ var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
 var rnd = global.rnd;
 
-ui.Action.OpBase = function () {};
-ui.Action.OpBase.prototype.type = 'OpBase';
-ui.Action.OpBase.prototype._execute = function () {
+function Base () {};
+Base.prototype.type = 'OpBase';
+Base.prototype._execute = function () {
 	throw new Error('Operation._execute() is not implemented');
 };
-ui.Action.OpBase.prototype._invert = function () {
+Base.prototype._invert = function () {
 	throw new Error('Operation._invert() is not implemented');
 };
-ui.Action.OpBase.prototype.perform = function (editor) {
+Base.prototype.perform = function (editor) {
 	this._execute(editor);
 	if (!('__inverted' in this)) {
 		this.__inverted = this._invert();
@@ -24,11 +24,11 @@ ui.Action.OpBase.prototype.perform = function (editor) {
 	}
 	return this.__inverted;
 };
-ui.Action.OpBase.prototype.isDummy = function (editor) {
+Base.prototype.isDummy = function (editor) {
 	return '_isDummy' in this ? this['_isDummy'](editor) : false;
 };
 
-ui.Action.OpAtomAdd = function (atom, pos) {
+function AtomAdd (atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -46,14 +46,14 @@ ui.Action.OpAtomAdd = function (atom, pos) {
 		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpAtomDelete();
+		var ret = new AtomDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpAtomAdd.prototype = new ui.Action.OpBase();
+AtomAdd.prototype = new Base();
 
-ui.Action.OpAtomDelete = function (aid) {
+function AtomDelete (aid) {
 	this.data = { aid: aid, atom: null, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -65,14 +65,14 @@ ui.Action.OpAtomDelete = function (aid) {
 		DS.atoms.remove(this.data.aid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpAtomAdd();
+		var ret = new AtomAdd();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpAtomDelete.prototype = new ui.Action.OpBase();
+AtomDelete.prototype = new Base();
 
-ui.Action.OpAtomAttr = function (aid, attribute, value) {
+function AtomAttr (aid, attribute, value) {
 	this.data = { aid: aid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -87,14 +87,14 @@ ui.Action.OpAtomAttr = function (aid, attribute, value) {
 		return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpAtomAttr();
+		var ret = new AtomAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;return ret;
 	};
 };
-ui.Action.OpAtomAttr.prototype = new ui.Action.OpBase();
+AtomAttr.prototype = new Base();
 
-ui.Action.OpAtomMove = function (aid, d, noinvalidate) {
+function AtomMove (aid, d, noinvalidate) {
 	this.data = {aid: aid, d: d, noinvalidate: noinvalidate};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -112,14 +112,14 @@ ui.Action.OpAtomMove = function (aid, d, noinvalidate) {
 		return this.data.d.x == 0 && this.data.d.y == 0;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpAtomMove();
+		var ret = new AtomMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpAtomMove.prototype = new ui.Action.OpBase();
+AtomMove.prototype = new Base();
 
-ui.Action.OpBondMove = function (bid, d) {
+function BondMove (bid, d) {
 	this.data = {bid: bid, d: d};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -128,14 +128,14 @@ ui.Action.OpBondMove = function (bid, d) {
 		this.data.d = this.data.d.negated();
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpBondMove();
+		var ret = new BondMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpBondMove.prototype = new ui.Action.OpBase();
+BondMove.prototype = new Base();
 
-ui.Action.OpLoopMove = function (id, d) {
+function LoopMove (id, d) {
 	this.data = {id: id, d: d};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -147,14 +147,14 @@ ui.Action.OpLoopMove = function (id, d) {
 		this.data.d = this.data.d.negated();
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpLoopMove();
+		var ret = new LoopMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpLoopMove.prototype = new ui.Action.OpBase();
+LoopMove.prototype = new Base();
 
-ui.Action.OpSGroupAtomAdd = function (sgid, aid) {
+function SGroupAtomAdd (sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
 	this.data = {'aid': aid, 'sgid': sgid};
 	this._execute = function (editor) {
@@ -171,14 +171,14 @@ ui.Action.OpSGroupAtomAdd = function (sgid, aid) {
 		R.invalidateAtom(aid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupAtomRemove();
+		var ret = new SGroupAtomRemove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupAtomAdd.prototype = new ui.Action.OpBase();
+SGroupAtomAdd.prototype = new Base();
 
-ui.Action.OpSGroupAtomRemove = function (sgid, aid) {
+function SGroupAtomRemove (sgid, aid) {
 	this.type = 'OpSGroupAtomRemove';
 	this.data = {'aid': aid, 'sgid': sgid};
 	this._execute = function (editor) {
@@ -192,14 +192,14 @@ ui.Action.OpSGroupAtomRemove = function (sgid, aid) {
 		R.invalidateAtom(aid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupAtomAdd();
+		var ret = new SGroupAtomAdd();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupAtomRemove.prototype = new ui.Action.OpBase();
+SGroupAtomRemove.prototype = new Base();
 
-ui.Action.OpSGroupAttr = function (sgid, attr, value) {
+function SGroupAttr (sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
 	this.data = {sgid: sgid, attr: attr, value: value};
 	this._execute = function (editor) {
@@ -214,14 +214,14 @@ ui.Action.OpSGroupAttr = function (sgid, attr, value) {
 		this.data.value = sg.setAttr(this.data.attr, this.data.value);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupAttr();
+		var ret = new SGroupAttr();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupAttr.prototype = new ui.Action.OpBase();
+SGroupAttr.prototype = new Base();
 
-ui.Action.OpSGroupCreate = function (sgid, type, pp) {
+function SGroupCreate (sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
 	this.data = {'sgid': sgid, 'type': type, 'pp': pp};
 	this._execute = function (editor) {
@@ -237,14 +237,14 @@ ui.Action.OpSGroupCreate = function (sgid, type, pp) {
 		this.data.sgid = sgid;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupDelete();
+		var ret = new SGroupDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupCreate.prototype = new ui.Action.OpBase();
+SGroupCreate.prototype = new Base();
 
-ui.Action.OpSGroupDelete = function (sgid) {
+function SGroupDelete (sgid) {
 	this.type = 'OpSGroupDelete';
 	this.data = {'sgid': sgid};
 	this._execute = function (editor) {
@@ -265,14 +265,14 @@ ui.Action.OpSGroupDelete = function (sgid) {
 		DS.sgroups.remove(sgid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupCreate();
+		var ret = new SGroupCreate();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupDelete.prototype = new ui.Action.OpBase();
+SGroupDelete.prototype = new Base();
 
-ui.Action.OpSGroupAddToHierarchy = function (sgid) {
+function SGroupAddToHierarchy (sgid) {
 	this.type = 'OpSGroupAddToHierarchy';
 	this.data = {'sgid': sgid};
 	this._execute = function (editor) {
@@ -283,14 +283,14 @@ ui.Action.OpSGroupAddToHierarchy = function (sgid) {
 		this.data.children = relations.children;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupRemoveFromHierarchy();
+		var ret = new SGroupRemoveFromHierarchy();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupAddToHierarchy.prototype = new ui.Action.OpBase();
+SGroupAddToHierarchy.prototype = new Base();
 
-ui.Action.OpSGroupRemoveFromHierarchy = function (sgid) {
+function SGroupRemoveFromHierarchy (sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
 	this.data = {'sgid': sgid};
 	this._execute = function (editor) {
@@ -301,14 +301,14 @@ ui.Action.OpSGroupRemoveFromHierarchy = function (sgid) {
 		DS.sGroupForest.remove(sgid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupAddToHierarchy();
+		var ret = new SGroupAddToHierarchy();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupRemoveFromHierarchy.prototype = new ui.Action.OpBase();
+SGroupRemoveFromHierarchy.prototype = new Base();
 
-ui.Action.OpBondAdd = function (begin, end, bond) {
+function BondAdd (begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -340,14 +340,14 @@ ui.Action.OpBondAdd = function (begin, end, bond) {
 		RS.notifyBondAdded(this.data.bid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpBondDelete();
+		var ret = new BondDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpBondAdd.prototype = new ui.Action.OpBase();
+BondAdd.prototype = new Base();
 
-ui.Action.OpBondDelete = function (bid) {
+function BondDelete (bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -377,14 +377,14 @@ ui.Action.OpBondDelete = function (bid) {
 		DS.bonds.remove(this.data.bid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpBondAdd();
+		var ret = new BondAdd();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpBondDelete.prototype = new ui.Action.OpBase();
+BondDelete.prototype = new Base();
 
-ui.Action.OpBondAttr = function (bid, attribute, value) {
+function BondAttr (bid, attribute, value) {
 	this.data = { bid: bid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -403,15 +403,15 @@ ui.Action.OpBondAttr = function (bid, attribute, value) {
 		return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpBondAttr();
+		var ret = new BondAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
 		return ret;
 	};
 };
-ui.Action.OpBondAttr.prototype = new ui.Action.OpBase();
+BondAttr.prototype = new Base();
 
-ui.Action.OpFragmentAdd = function (frid) {
+function FragmentAdd (frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
 	this._execute = function (editor) {
 		var RS = editor.render.ctab, DS = RS.molecule;
@@ -424,12 +424,12 @@ ui.Action.OpFragmentAdd = function (frid) {
 		RS.frags.set(this.frid, new rnd.ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 	this._invert = function () {
-		return new ui.Action.OpFragmentDelete(this.frid);
+		return new FragmentDelete(this.frid);
 	};
 };
-ui.Action.OpFragmentAdd.prototype = new ui.Action.OpBase();
+FragmentAdd.prototype = new Base();
 
-ui.Action.OpFragmentDelete = function (frid) {
+function FragmentDelete (frid) {
 	this.frid = frid;
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -438,12 +438,12 @@ ui.Action.OpFragmentDelete = function (frid) {
 		DS.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
 	};
 	this._invert = function () {
-		return new ui.Action.OpFragmentAdd(this.frid);
+		return new FragmentAdd(this.frid);
 	};
 };
-ui.Action.OpFragmentDelete.prototype = new ui.Action.OpBase();
+FragmentDelete.prototype = new Base();
 
-ui.Action.OpRGroupAttr = function (rgid, attribute, value) {
+function RGroupAttr (rgid, attribute, value) {
 	this.data = { rgid: rgid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -460,15 +460,15 @@ ui.Action.OpRGroupAttr = function (rgid, attribute, value) {
 		return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRGroupAttr();
+		var ret = new RGroupAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRGroupAttr.prototype = new ui.Action.OpBase();
+RGroupAttr.prototype = new Base();
 
-ui.Action.OpRGroupFragment = function (rgid, frid, rg) {
+function RGroupFragment (rgid, frid, rg) {
 	this.rgid_new = rgid;
 	this.rg_new = rg;
 	this.rgid_old = null;
@@ -502,12 +502,12 @@ ui.Action.OpRGroupFragment = function (rgid, frid, rg) {
 		}
 	};
 	this._invert = function () {
-		return new ui.Action.OpRGroupFragment(this.rgid_old, this.frid, this.rg_old);
+		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
 	};
 };
-ui.Action.OpRGroupFragment.prototype = new ui.Action.OpBase();
+RGroupFragment.prototype = new Base();
 
-ui.Action.OpRxnArrowAdd = function (pos) {
+function RxnArrowAdd (pos) {
 	this.data = { arid: null, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -522,14 +522,14 @@ ui.Action.OpRxnArrowAdd = function (pos) {
 		R.invalidateItem('rxnArrows', this.data.arid, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnArrowDelete();
+		var ret = new RxnArrowDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnArrowAdd.prototype = new ui.Action.OpBase();
+RxnArrowAdd.prototype = new Base();
 
-ui.Action.OpRxnArrowDelete = function (arid) {
+function RxnArrowDelete (arid) {
 	this.data = { arid: arid, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -540,14 +540,14 @@ ui.Action.OpRxnArrowDelete = function (arid) {
 		DS.rxnArrows.remove(this.data.arid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnArrowAdd();
+		var ret = new RxnArrowAdd();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnArrowDelete.prototype = new ui.Action.OpBase();
+RxnArrowDelete.prototype = new Base();
 
-ui.Action.OpRxnArrowMove = function (id, d, noinvalidate) {
+function RxnArrowMove (id, d, noinvalidate) {
 	this.data = {id: id, d: d, noinvalidate: noinvalidate};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -562,14 +562,14 @@ ui.Action.OpRxnArrowMove = function (id, d, noinvalidate) {
 			editor.render.invalidateItem('rxnArrows', id, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnArrowMove();
+		var ret = new RxnArrowMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnArrowMove.prototype = new ui.Action.OpBase();
+RxnArrowMove.prototype = new Base();
 
-ui.Action.OpRxnPlusAdd = function (pos) {
+function RxnPlusAdd (pos) {
 	this.data = { plid: null, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -584,14 +584,14 @@ ui.Action.OpRxnPlusAdd = function (pos) {
 		R.invalidateItem('rxnPluses', this.data.plid, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnPlusDelete();
+		var ret = new RxnPlusDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnPlusAdd.prototype = new ui.Action.OpBase();
+RxnPlusAdd.prototype = new Base();
 
-ui.Action.OpRxnPlusDelete = function (plid) {
+function RxnPlusDelete (plid) {
 	this.data = { plid: plid, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -602,14 +602,14 @@ ui.Action.OpRxnPlusDelete = function (plid) {
 		DS.rxnPluses.remove(this.data.plid);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnPlusAdd();
+		var ret = new RxnPlusAdd();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnPlusDelete.prototype = new ui.Action.OpBase();
+RxnPlusDelete.prototype = new Base();
 
-ui.Action.OpRxnPlusMove = function (id, d, noinvalidate) {
+function RxnPlusMove (id, d, noinvalidate) {
 	this.data = {id: id, d: d, noinvalidate: noinvalidate};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -624,14 +624,14 @@ ui.Action.OpRxnPlusMove = function (id, d, noinvalidate) {
 			editor.render.invalidateItem('rxnPluses', id, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpRxnPlusMove();
+		var ret = new RxnPlusMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpRxnPlusMove.prototype = new ui.Action.OpBase();
+RxnPlusMove.prototype = new Base();
 
-ui.Action.OpSGroupDataMove = function (id, d) {
+function SGroupDataMove (id, d) {
 	this.data = {id: id, d: d};
 	this._execute = function (editor) {
 		ui.ctab.sgroups.get(this.data.id).pp.add_(this.data.d);
@@ -639,14 +639,14 @@ ui.Action.OpSGroupDataMove = function (id, d) {
 		editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpSGroupDataMove();
+		var ret = new SGroupDataMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpSGroupDataMove.prototype = new ui.Action.OpBase();
+SGroupDataMove.prototype = new Base();
 
-ui.Action.OpCanvasLoad = function (ctab) {
+function CanvasLoad (ctab) {
 	this.data = {ctab: ctab, norescale: false};
 	this._execute = function (editor) {
 		var R = editor.render;
@@ -660,14 +660,14 @@ ui.Action.OpCanvasLoad = function (ctab) {
 	};
 
 	this._invert = function () {
-		var ret = new ui.Action.OpCanvasLoad();
+		var ret = new CanvasLoad();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpCanvasLoad.prototype = new ui.Action.OpBase();
+CanvasLoad.prototype = new Base();
 
-ui.Action.OpChiralFlagAdd = function (pos) {
+function ChiralFlagAdd (pos) {
 	this.data = {pos: pos};
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -678,14 +678,14 @@ ui.Action.OpChiralFlagAdd = function (pos) {
 		R.invalidateItem('chiralFlags', 0, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpChiralFlagDelete();
+		var ret = new ChiralFlagDelete();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpChiralFlagAdd.prototype = new ui.Action.OpBase();
+ChiralFlagAdd.prototype = new Base();
 
-ui.Action.OpChiralFlagDelete = function () {
+function ChiralFlagDelete () {
 	this.data = {pos: null};
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -697,14 +697,14 @@ ui.Action.OpChiralFlagDelete = function () {
 		DS.isChiral = false;
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpChiralFlagAdd(this.data.pos);
+		var ret = new ChiralFlagAdd(this.data.pos);
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpChiralFlagDelete.prototype = new ui.Action.OpBase();
+ChiralFlagDelete.prototype = new Base();
 
-ui.Action.OpChiralFlagMove = function (d) {
+function ChiralFlagMove (d) {
 	this.data = {d: d};
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab;
@@ -713,9 +713,43 @@ ui.Action.OpChiralFlagMove = function (d) {
 		R.invalidateItem('chiralFlags', 0, 1);
 	};
 	this._invert = function () {
-		var ret = new ui.Action.OpChiralFlagMove();
+		var ret = new ChiralFlagMove();
 		ret.data = this.data;
 		return ret;
 	};
 };
-ui.Action.OpChiralFlagMove.prototype = new ui.Action.OpBase();
+ChiralFlagMove.prototype = new Base();
+
+module.exports = {
+	AtomAdd: AtomAdd,
+	AtomDelete: AtomDelete,
+	AtomAttr: AtomAttr,
+	AtomMove: AtomMove,
+	BondMove: BondMove,
+	LoopMove: LoopMove,
+	SGroupAtomAdd: SGroupAtomAdd,
+	SGroupAtomRemove: SGroupAtomRemove,
+	SGroupAttr: SGroupAttr,
+	SGroupCreate: SGroupCreate,
+	SGroupDelete: SGroupDelete,
+	SGroupAddToHierarchy: SGroupAddToHierarchy,
+	SGroupRemoveFromHierarchy: SGroupRemoveFromHierarchy,
+	BondAdd: BondAdd,
+	BondDelete: BondDelete,
+	BondAttr: BondAttr,
+	FragmentAdd: FragmentAdd,
+	FragmentDelete: FragmentDelete,
+	RGroupAttr: RGroupAttr,
+	RGroupFragment: RGroupFragment,
+	RxnArrowAdd: RxnArrowAdd,
+	RxnArrowDelete: RxnArrowDelete,
+	RxnArrowMove: RxnArrowMove,
+	RxnPlusAdd: RxnPlusAdd,
+	RxnPlusDelete: RxnPlusDelete,
+	RxnPlusMove: RxnPlusMove,
+	SGroupDataMove: SGroupDataMove,
+	CanvasLoad: CanvasLoad,
+	ChiralFlagAdd: ChiralFlagAdd,
+	ChiralFlagDelete: ChiralFlagDelete,
+	ChiralFlagMove: ChiralFlagMove
+};

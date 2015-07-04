@@ -8,25 +8,29 @@ var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
 var rnd = global.rnd;
 
-function Base () {};
-Base.prototype.type = 'OpBase';
-Base.prototype._execute = function () {
-	throw new Error('Operation._execute() is not implemented');
-};
-Base.prototype._invert = function () {
-	throw new Error('Operation._invert() is not implemented');
-};
-Base.prototype.perform = function (editor) {
-	this._execute(editor);
-	if (!('__inverted' in this)) {
-		this.__inverted = this._invert();
-		this.__inverted.__inverted = this;
-	}
-	return this.__inverted;
-};
-Base.prototype.isDummy = function (editor) {
-	return '_isDummy' in this ? this['_isDummy'](editor) : false;
-};
+function Base () {
+	this.type = 'OpBase';
+
+	// assert here?
+	this._execute = function () {
+		throw new Error('Operation._execute() is not implemented');
+	};
+	this._invert = function () {
+		throw new Error('Operation._invert() is not implemented');
+	};
+
+	this.perform = function (editor) {
+		this._execute(editor);
+		if (!this.__inverted) {
+			this.__inverted = this._invert();
+			this.__inverted.__inverted = this;
+		}
+		return this.__inverted;
+	};
+	this.isDummy = function (editor) {
+		return this._isDummy ? this._isDummy(editor) : false;
+	};
+}
 
 function AtomAdd (atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };

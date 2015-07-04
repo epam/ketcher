@@ -5,13 +5,13 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
-
 var ui = global.ui = global.ui || {}; // jshint ignore:line
 
 require('../chem');
 require('../rnd');
 var util = require('../util');
 var server = require('./server.js');
+var Action = require('./action.js');
 
 var chem = global.chem;
 var rnd = global.rnd;
@@ -55,7 +55,7 @@ ui.init = function (parameters, opts) {
 	ui.actionComplete = parameters.actionComplete || function (){};
 	if (initialized)
 	{
-		ui.Action.fromNewCanvas(new chem.Struct());
+		Action.fromNewCanvas(new chem.Struct());
 		ui.render.update();
 		ui.undoStack.clear();
 		ui.redoStack.clear();
@@ -327,7 +327,7 @@ function updateMolecule (mol)
 
 	ui.editor.deselectAll();
 
-	ui.addUndoAction(ui.Action.fromNewCanvas(mol));
+	ui.addUndoAction(Action.fromNewCanvas(mol));
 
 	ui.showDialog('loading');
 	// setTimeout(function ()
@@ -357,7 +357,7 @@ function onClick_NewFile ()
 	ui.selectAction(null);
 
 	if (!ui.ctab.isBlank()) {
-		ui.addUndoAction(ui.Action.fromNewCanvas(new chem.Struct()));
+		ui.addUndoAction(Action.fromNewCanvas(new chem.Struct()));
 		ui.render.update();
 	}
 };
@@ -580,9 +580,9 @@ function onClick_Automap () {
 				}
 				/*
                  var aam = ui.parseCTFile(res.responseText);
-                 var action = new ui.Action();
+                 var action = new Action();
                  for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
-                 action.mergeWith(ui.Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
+                 action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
                  }
                  ui.addUndoAction(action, true);
                  */
@@ -802,7 +802,7 @@ function selectAll ()
 
 function removeSelected ()
 {
-	ui.addUndoAction(ui.Action.fromFragmentDeletion());
+	ui.addUndoAction(Action.fromFragmentDeletion());
 	ui.editor.deselectAll();
 	ui.render.update();
 };
@@ -1121,13 +1121,13 @@ function mapTool (id) {
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
 		if (atomLabel(id)) {
-			ui.addUndoAction(ui.Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
+			ui.addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
 			ui.render.update();
 			return null;
 		}
 
 		if (id.startsWith('transform-flip')) {
-			ui.addUndoAction(ui.Action.fromFlip(ui.editor.getSelection(),
+			ui.addUndoAction(Action.fromFlip(ui.editor.getSelection(),
 				id.endsWith('h') ? 'horizontal' :
 					'vertical'),
 				true);
@@ -1139,7 +1139,7 @@ function mapTool (id) {
          else if (mode.startsWith('bond_')) {
          var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
          if (cBond) {
-         ui.addUndoAction(ui.Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+         ui.addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
          ui.render.update();
          return;
          }

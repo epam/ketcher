@@ -4,6 +4,7 @@ require('../ui');
 require('../../chem');
 
 var util = require('../../util');
+var Action = require('../action');
 
 var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
@@ -92,7 +93,7 @@ ui.applyAtomProperties = function () {
 
 	var id = $('atom_properties').atom_id;
 
-	ui.addUndoAction(ui.Action.fromAtomsAttrs(id,
+	ui.addUndoAction(Action.fromAtomsAttrs(id,
 	{
 		label: $('atom_label').value,
 		charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value, 10),
@@ -198,7 +199,7 @@ ui.applyBondProperties = function () {
 	bond.topology = parseInt($('bond_topology').value, 10);
 	bond.reactingCenterStatus = parseInt($('bond_center').value, 10);
 
-	ui.addUndoAction(ui.Action.fromBondAttrs(id, bond), true);
+	ui.addUndoAction(Action.fromBondAttrs(id, bond), true);
 
 	ui.render.update();
 };
@@ -327,7 +328,7 @@ ui.onKeyPress_InputLabel = function (event)
 		}
 
 		if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null) {
-			ui.addUndoAction(ui.Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
+			ui.addUndoAction(Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
 			ui.render.update();
 		}
 		return util.preventDefault(event);

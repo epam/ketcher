@@ -1,4 +1,4 @@
-/*global require, global, ui:false*/
+/*global require, module, global, ui:false*/
 
 /*eslint-disable*/
 
@@ -10,33 +10,33 @@ var op = require('./op');
 require('../chem');
 require('../rnd');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
+var ui = global.ui = global.ui || {}; // jshint ignore:line
 var chem = global.chem;
 
 //
 // Undo/redo actions
 //
-ui.Action = function ()
+function Action ()
 {
 	this.operations = [];
 };
 
-ui.Action.prototype.addOp = function (operation) {
+Action.prototype.addOp = function (operation) {
 	if (!operation.isDummy(ui.editor))
 		this.operations.push(operation);
 	return operation;
 };
 
-ui.Action.prototype.mergeWith = function (action)
+Action.prototype.mergeWith = function (action)
 {
 	this.operations = this.operations.concat(action.operations);
-	return this; //rbalabanov: let it be possible to chain actions in code easier
+	return this;
 };
 
 // Perform action and return inverted one
-ui.Action.prototype.perform = function ()
+Action.prototype.perform = function ()
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var idx = 0;
 
 	this.operations.each(function (operation) {
@@ -48,18 +48,74 @@ ui.Action.prototype.perform = function ()
 	return action;
 };
 
-ui.Action.prototype.isDummy = function ()
+Action.prototype.isDummy = function ()
 {
 	return this.operations.detect(function (operation) {
 		return !operation.isDummy(ui.editor); // TODO [RB] the condition is always true for op.* operations
 	}, this) == null;
 };
 
-ui.Action.fromMultipleMove = function (lists, d)
+// Add action operation to remove atom from s-group if needed
+Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
+{
+	var sgroups = ui.render.atomGetSGroups(id);
+
+	if (sgroups.length > 0)
+	{
+		sgroups.each(function (sid)
+		{
+			this.addOp(new op.SGroupAtomRemove(sid, id));
+		}, this);
+
+		return true;
+	}
+
+	return false;
+};
+
+// Add action operations to remove whole s-group if needed
+Action.prototype.removeSgroupIfNeeded = function (atoms)
+{
+	var R = ui.render;
+	var RS = R.ctab;
+	var DS = RS.molecule;
+	var sg_counts = new Hash();
+
+	atoms.each(function (id)
+	{
+		var sgroups = ui.render.atomGetSGroups(id);
+
+		sgroups.each(function (sid)
+		{
+			var n = sg_counts.get(sid);
+			if (Object.isUndefined(n))
+				n = 1;
+			else
+				n++;
+			sg_counts.set(sid, n);
+		}, this);
+	}, this);
+
+	sg_counts.each(function (sg)
+	{
+		var sid = parseInt(sg.key);
+		var sg_atoms = ui.render.sGroupGetAtoms(sid);
+
+		if (sg_atoms.length == sg.value)
+		{ // delete whole s-group
+			var sgroup = DS.sgroups.get(sid);
+			this.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
+			this.addOp(new op.SGroupRemoveFromHierarchy(sid));
+			this.addOp(new op.SGroupDelete(sid));
+		}
+	}, this);
+};
+
+function fromMultipleMove (lists, d)
 {
 	d = new Vec2(d);
 
-	var action = new ui.Action();
+	var action = new Action();
 	var i;
 
 	var R = ui.render;
@@ -120,9 +176,9 @@ ui.Action.fromMultipleMove = function (lists, d)
 	return action.perform();
 };
 
-ui.Action.fromAtomsAttrs = function (ids, attrs, reset)
+function fromAtomsAttrs (ids, attrs, reset)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	(typeof(ids) == 'number' ? [ids] : ids).each(function (id) {
 		for (var key in chem.Struct.Atom.attrlist) {
 			var value;
@@ -141,9 +197,9 @@ ui.Action.fromAtomsAttrs = function (ids, attrs, reset)
 	return action.perform();
 };
 
-ui.Action.fromBondAttrs = function (id, attrs, flip, reset)
+function fromBondAttrs (id, attrs, flip, reset)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	for (var key in chem.Struct.Bond.attrlist) {
 		var value;
@@ -156,13 +212,13 @@ ui.Action.fromBondAttrs = function (id, attrs, flip, reset)
 		action.addOp(new op.BondAttr(id, key, value));
 	}
 	if (flip)
-		action.mergeWith(ui.Action.toBondFlipping(id));
+		action.mergeWith(toBondFlipping(id));
 	return action.perform();
 };
 
-ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
+function fromSelectedBondsAttrs (attrs, flips)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	attrs = new Hash(attrs);
 
@@ -173,25 +229,25 @@ ui.Action.fromSelectedBondsAttrs = function (attrs, flips)
 	}, this);
 	if (flips)
 		flips.each(function (id) {
-			action.mergeWith(ui.Action.toBondFlipping(id));
+			action.mergeWith(toBondFlipping(id));
 		}, this);
 	return action.perform();
 };
 
-ui.Action.fromAtomAddition = function (pos, atom)
+function fromAtomAddition (pos, atom)
 {
 	atom = Object.clone(atom);
-	var action = new ui.Action();
+	var action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(ui.editor));
 	return action;
 };
 
-ui.Action.mergeFragments = function (action, frid, frid2) {
+function mergeFragments (action, frid, frid2) {
 	if (frid2 != frid && Object.isNumber(frid2)) {
 		var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
 		if (!Object.isUndefined(rgid)) {
-			action.mergeWith(ui.Action.fromRGroupFragment(null, frid2));
+			action.mergeWith(fromRGroupFragment(null, frid2));
 		}
 		ui.render.ctab.molecule.atoms.each(function (aid, atom) {
 			if (atom.fragment == frid2) {
@@ -202,9 +258,9 @@ ui.Action.mergeFragments = function (action, frid, frid2) {
 	}
 };
 
-ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
+function fromBondAddition (bond, begin, end, pos, pos2)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	var frid = null;
 	if (!Object.isNumber(begin)) {
@@ -216,7 +272,7 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 		frid = ui.render.atomGetAttr(begin, 'fragment');
 		if (Object.isNumber(end)) {
 			var frid2 = ui.render.atomGetAttr(end, 'fragment');
-			ui.Action.mergeFragments(action, frid, frid2);
+			mergeFragments(action, frid, frid2);
 		}
 	}
 	if (frid == null) {
@@ -259,111 +315,55 @@ ui.Action.fromBondAddition = function (bond, begin, end, pos, pos2)
 	return [action, begin, end, bid];
 };
 
-ui.Action.fromArrowAddition = function (pos)
+function fromArrowAddition (pos)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	if (ui.ctab.rxnArrows.count() < 1) {
 		action.addOp(new op.RxnArrowAdd(pos).perform(ui.editor));
 	}
 	return action;
 };
 
-ui.Action.fromArrowDeletion = function (id)
+function fromArrowDeletion (id)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	action.addOp(new op.RxnArrowDelete(id));
 	return action.perform();
 };
 
-ui.Action.fromChiralFlagAddition = function (pos)
+function fromChiralFlagAddition (pos)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	if (ui.render.ctab.chiralFlags.count() < 1) {
 		action.addOp(new op.ChiralFlagAdd(pos).perform(ui.editor));
 	}
 	return action;
 };
 
-ui.Action.fromChiralFlagDeletion = function ()
+function fromChiralFlagDeletion ()
 {
-	var action = new ui.Action();
+	var action = new Action();
 	action.addOp(new op.ChiralFlagDelete());
 	return action.perform();
 };
 
-ui.Action.fromPlusAddition = function (pos)
+function fromPlusAddition (pos)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	action.addOp(new op.RxnPlusAdd(pos).perform(ui.editor));
 	return action;
 };
 
-ui.Action.fromPlusDeletion = function (id)
+function fromPlusDeletion (id)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	action.addOp(new op.RxnPlusDelete(id));
 	return action.perform();
 };
 
-// Add action operation to remove atom from s-group if needed
-ui.Action.prototype.removeAtomFromSgroupIfNeeded = function (id)
+function fromAtomDeletion (id)
 {
-	var sgroups = ui.render.atomGetSGroups(id);
-
-	if (sgroups.length > 0)
-	{
-		sgroups.each(function (sid)
-		{
-			this.addOp(new op.SGroupAtomRemove(sid, id));
-		}, this);
-
-		return true;
-	}
-
-	return false;
-};
-
-// Add action operations to remove whole s-group if needed
-ui.Action.prototype.removeSgroupIfNeeded = function (atoms)
-{
-	var R = ui.render;
-	var RS = R.ctab;
-	var DS = RS.molecule;
-	var sg_counts = new Hash();
-
-	atoms.each(function (id)
-	{
-		var sgroups = ui.render.atomGetSGroups(id);
-
-		sgroups.each(function (sid)
-		{
-			var n = sg_counts.get(sid);
-			if (Object.isUndefined(n))
-				n = 1;
-			else
-				n++;
-			sg_counts.set(sid, n);
-		}, this);
-	}, this);
-
-	sg_counts.each(function (sg)
-	{
-		var sid = parseInt(sg.key);
-		var sg_atoms = ui.render.sGroupGetAtoms(sid);
-
-		if (sg_atoms.length == sg.value)
-		{ // delete whole s-group
-			var sgroup = DS.sgroups.get(sid);
-			this.mergeWith(ui.Action.sGroupAttributeAction(sid, sgroup.getAttrs()));
-			this.addOp(new op.SGroupRemoveFromHierarchy(sid));
-			this.addOp(new op.SGroupDelete(sid));
-		}
-	}, this);
-};
-
-ui.Action.fromAtomDeletion = function (id)
-{
-	var action = new ui.Action();
+	var action = new Action();
 	var atoms_to_remove = new Array();
 
 	var frid = ui.ctab.atoms.get(id).fragment;
@@ -389,14 +389,14 @@ ui.Action.fromAtomDeletion = function (id)
 
 	action = action.perform();
 
-	action.mergeWith(ui.Action.__fromFragmentSplit(frid));
+	action.mergeWith(fromFragmentSplit(frid));
 
 	return action;
 };
 
-ui.Action.fromBondDeletion = function (id)
+function fromBondDeletion (id)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var bond = ui.ctab.bonds.get(id);
 	var frid = ui.ctab.atoms.get(bond.begin).fragment;
 	var atoms_to_remove = new Array();
@@ -423,13 +423,13 @@ ui.Action.fromBondDeletion = function (id)
 
 	action = action.perform();
 
-	action.mergeWith(ui.Action.__fromFragmentSplit(frid));
+	action.mergeWith(fromFragmentSplit(frid));
 
 	return action;
 };
 
-ui.Action.__fromFragmentSplit = function (frid) { // TODO [RB] the thing is too tricky :) need something else in future
-	var action = new ui.Action();
+function fromFragmentSplit (frid) { // TODO [RB] the thing is too tricky :) need something else in future
+	var action = new Action();
 	var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
 	ui.ctab.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid) {
@@ -444,20 +444,20 @@ ui.Action.__fromFragmentSplit = function (frid) { // TODO [RB] the thing is too 
 			};
 			processAtom(aid);
 			if (rgid) {
-				action.mergeWith(ui.Action.fromRGroupFragment(rgid, newfrid));
+				action.mergeWith(fromRGroupFragment(rgid, newfrid));
 			}
 		}
 	});
 	if (frid != -1) {
-		action.mergeWith(ui.Action.fromRGroupFragment(0, frid));
+		action.mergeWith(fromRGroupFragment(0, frid));
 		action.addOp(new op.FragmentDelete(frid).perform(ui.editor));
 	}
 	return action;
 };
 
-ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxnPluses)
+function fromFragmentAddition (atoms, bonds, sgroups, rxnArrows, rxnPluses)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	/*
      atoms.each(function (aid)
@@ -496,24 +496,24 @@ ui.Action.fromFragmentAddition = function (atoms, bonds, sgroups, rxnArrows, rxn
 		action.addOp(new op.RxnPlusDelete(id));
 	}, this);
 
-	action.mergeWith(new ui.Action.__fromFragmentSplit(-1));
+	action.mergeWith(new fromFragmentSplit(-1));
 
 	return action;
 };
 
-ui.Action.fromFragmentDeletion = function (selection)
+function fromFragmentDeletion (selection)
 {
 	selection = selection || ui.editor.getSelection();
 
-	var action = new ui.Action();
+	var action = new Action();
 	var atoms_to_remove = new Array();
 
 	var frids = [];
 
-	var actionRemoveDataSGroups = new ui.Action();
+	var actionRemoveDataSGroups = new Action();
 	if (selection.sgroupData) {
 		selection.sgroupData.each(function (id) {
-			actionRemoveDataSGroups.mergeWith(ui.Action.fromSgroupDeletion(id));
+			actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(id));
 		}, this);
 	}
 
@@ -585,22 +585,22 @@ ui.Action.fromFragmentDeletion = function (selection)
 
 	action = action.perform();
 
-	while (frids.length > 0) action.mergeWith(new ui.Action.__fromFragmentSplit(frids.pop()));
+	while (frids.length > 0) action.mergeWith(new fromFragmentSplit(frids.pop()));
 
 	action.mergeWith(actionRemoveDataSGroups);
 
 	return action;
 };
 
-ui.Action.fromAtomMerge = function (src_id, dst_id)
+function fromAtomMerge (src_id, dst_id)
 {
-	var fragAction = new ui.Action();
+	var fragAction = new Action();
 	var src_frid = ui.render.atomGetAttr(src_id, 'fragment'), dst_frid = ui.render.atomGetAttr(dst_id, 'fragment');
 	if (src_frid != dst_frid) {
-		ui.Action.mergeFragments(fragAction, src_frid, dst_frid);
+		mergeFragments(fragAction, src_frid, dst_frid);
 	}
 
-	var action = new ui.Action();
+	var action = new Action();
 
 	ui.render.atomGetNeighbors(src_id).each(function (nei)
 	{
@@ -640,22 +640,23 @@ ui.Action.fromAtomMerge = function (src_id, dst_id)
 	return action.perform().mergeWith(fragAction);
 };
 
-ui.Action.toBondFlipping = function (id)
+function toBondFlipping (id)
 {
 	var bond = ui.ctab.bonds.get(id);
 
-	var action = new ui.Action();
+	var action = new Action();
 	action.addOp(new op.BondDelete(id));
 	action.addOp(new op.BondAdd(bond.end, bond.begin, bond)).data.bid = id;
 	return action;
 };
-ui.Action.fromBondFlipping = function (bid) {
-	return ui.Action.toBondFlipping(bid).perform();
+
+function fromBondFlipping (bid) {
+	return toBondFlipping(bid).perform();
 };
 
-ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
+function fromTemplateOnCanvas (pos, angle, template)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var frag = template.molecule;
 
 	var fragAction = new op.FragmentAdd().perform(ui.editor);
@@ -694,17 +695,17 @@ ui.Action.fromTemplateOnCanvas = function (pos, angle, template)
 	return action;
 };
 
-ui.Action.atomAddToSGroups = function (sgroups, aid) {
-	var action = new ui.Action();
+function atomAddToSGroups (sgroups, aid) {
+	var action = new Action();
 	util.each(sgroups, function (sid){
 		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(ui.editor));
 	}, this);
 	return action;
 }
 
-ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcAngle)
+function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var frag = template.molecule;
 	var R = ui.render;
 	var RS = R.ctab;
@@ -724,7 +725,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 		if (angle == null)
 		{
 			var middle_atom = ui.atomForNewBond(aid);
-			var action_res = ui.Action.fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
+			var action_res = fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
 			action = action_res[0];
 			action.operations.reverse();
 			aid1 = aid = action_res[2];
@@ -747,7 +748,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 			);
 
 			aid1 = aid = operation.data.aid;
-			action.mergeWith(ui.Action.atomAddToSGroups(sgroups, aid));
+			action.mergeWith(atomAddToSGroups(sgroups, aid));
 		}
 
 		var atom0 = atom;
@@ -765,7 +766,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 		var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == template.aid) {
-			action.mergeWith(ui.Action.fromAtomsAttrs(aid, attrs, true));
+			action.mergeWith(fromAtomsAttrs(aid, attrs, true));
 			map[id] = aid;
 		} else {
 			var v;
@@ -781,7 +782,7 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 			map[id] = operation.data.aid;
 		}
 		if (map[id] - 0 !== aid0 - 0 && map[id] - 0 !== aid1 - 0)
-			action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
+			action.mergeWith(atomAddToSGroups(sgroups, map[id]));
 	});
 
 	frag.bonds.each(function (bid, bond) {
@@ -799,9 +800,9 @@ ui.Action.fromTemplateOnAtom = function (aid, angle, extra_bond, template, calcA
 	return action;
 };
 
-ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
+function fromTemplateOnBond (bid, template, calcAngle, flip)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var frag = template.molecule;
 	var R = ui.render;
 	var RS = R.ctab;
@@ -844,7 +845,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 		var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == fr_bond.begin || id == fr_bond.end) {
-			action.mergeWith(ui.Action.fromAtomsAttrs(map[id], attrs, true));
+			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
 			return;
 		}
 
@@ -864,10 +865,10 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 			);
 
 			map[id] = operation.data.aid;
-			action.mergeWith(ui.Action.atomAddToSGroups(sgroups, map[id]));
+			action.mergeWith(atomAddToSGroups(sgroups, map[id]));
 		} else {
 			map[id] = merge_a.id;
-			action.mergeWith(ui.Action.fromAtomsAttrs(map[id], attrs, true));
+			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
 			// TODO [RB] need to merge fragments?
 		}
 	});
@@ -882,7 +883,7 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 				bond
 			).perform(ui.editor));
 		} else {
-			action.mergeWith(ui.Action.fromBondAttrs(exist_id, fr_bond, false, true));
+			action.mergeWith(fromBondAttrs(exist_id, fr_bond, false, true));
 		}
 	});
 
@@ -891,12 +892,12 @@ ui.Action.fromTemplateOnBond = function (bid, template, calcAngle, flip)
 	return action;
 }
 
-ui.Action.fromChain = function (p0, v, nSect, atom_id)
+function fromChain (p0, v, nSect, atom_id)
 {
 	var angle = Math.PI / 6;
 	var dx = Math.cos(angle), dy = Math.sin(angle);
 
-	var action = new ui.Action();
+	var action = new Action();
 
 	var frid;
 	if (atom_id != null) {
@@ -919,7 +920,7 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
 
 		var a = ui.render.findClosestAtom(pos, 0.1);
 
-		var ret = ui.Action.fromBondAddition({}, id0, a ? a.id : {}, pos);
+		var ret = fromBondAddition({}, id0, a ? a.id : {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
 	}, this);
@@ -927,31 +928,31 @@ ui.Action.fromChain = function (p0, v, nSect, atom_id)
 	return action;
 };
 
-ui.Action.fromNewCanvas = function (ctab)
+function fromNewCanvas (ctab)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	action.addOp(new op.CanvasLoad(ctab));
 	return action.perform();
 };
 
-ui.Action.fromSgroupType = function (id, type)
+function fromSgroupType (id, type)
 {
 	var R = ui.render;
 	var cur_type = R.sGroupGetType(id);
 	if (type && type != cur_type) {
 		var atoms = util.array(R.sGroupGetAtoms(id));
 		var attrs = R.sGroupGetAttrs(id);
-		var actionDeletion = ui.Action.fromSgroupDeletion(id); // [MK] order of execution is important, first delete then recreate
-		var actionAddition = ui.Action.fromSgroupAddition(type, atoms, attrs, id);
+		var actionDeletion = fromSgroupDeletion(id); // [MK] order of execution is important, first delete then recreate
+		var actionAddition = fromSgroupAddition(type, atoms, attrs, id);
 		return actionAddition.mergeWith(actionDeletion); // the actions are already performed and reversed, so we merge them backwards
 	}
-	return new ui.Action();
+	return new Action();
 };
 
-ui.Action.fromSgroupAttrs = function (id, attrs)
+function fromSgroupAttrs (id, attrs)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var R = ui.render;
 	var RS = R.ctab;
 	var sg = RS.sgroups.get(id).item;
@@ -963,9 +964,9 @@ ui.Action.fromSgroupAttrs = function (id, attrs)
 	return action.perform();
 };
 
-ui.Action.sGroupAttributeAction = function (id, attrs)
+function sGroupAttributeAction (id, attrs)
 {
-	var action = new ui.Action();
+	var action = new Action();
 
 	new Hash(attrs).each(function (attr) { // store the attribute assignment
 		action.addOp(new op.SGroupAttr(id, attr.key, attr.value));
@@ -974,9 +975,9 @@ ui.Action.sGroupAttributeAction = function (id, attrs)
 	return action;
 };
 
-ui.Action.fromSgroupDeletion = function (id)
+function fromSgroupDeletion (id)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var R = ui.render;
 	var RS = R.ctab;
 	var DS = RS.molecule;
@@ -1003,14 +1004,14 @@ ui.Action.fromSgroupDeletion = function (id)
 
 	action = action.perform();
 
-	action.mergeWith(ui.Action.sGroupAttributeAction(id, attrs));
+	action.mergeWith(sGroupAttributeAction(id, attrs));
 
 	return action;
 };
 
-ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
+function fromSgroupAddition (type, atoms, attrs, sgid, pp)
 {
-	var action = new ui.Action();
+	var action = new Action();
 	var i;
 
 	// TODO: shoud the id be generated when OpSGroupCreate is executed?
@@ -1026,7 +1027,7 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
 
 	if (type == 'SRU') {
 		ui.render.sGroupsFindCrossBonds();
-		var asterisk_action = new ui.Action();
+		var asterisk_action = new Action();
 		ui.render.sGroupGetNeighborAtoms(sgid).each(function (aid) {
 			if (ui.render.atomGetDegree(aid) == 1 && ui.render.atomIsPlainCarbon(aid)) {
 				asterisk_action.addOp(new op.AtomAttr(aid, 'label', '*'));
@@ -1038,26 +1039,26 @@ ui.Action.fromSgroupAddition = function (type, atoms, attrs, sgid, pp)
 		action = asterisk_action;
 	}
 
-	return ui.Action.fromSgroupAttrs(sgid, attrs).mergeWith(action);
+	return fromSgroupAttrs(sgid, attrs).mergeWith(action);
 };
 
-ui.Action.fromRGroupAttrs = function (id, attrs) {
-	var action = new ui.Action();
+function fromRGroupAttrs (id, attrs) {
+	var action = new Action();
 	new Hash(attrs).each(function (attr) {
 		action.addOp(new op.RGroupAttr(id, attr.key, attr.value));
 	}, this);
 	return action.perform();
 };
 
-ui.Action.fromRGroupFragment = function (rgidNew, frid) {
-	var action = new ui.Action();
+function fromRGroupFragment (rgidNew, frid) {
+	var action = new Action();
 	action.addOp(new op.RGroupFragment(rgidNew, frid));
 	return action.perform();
 };
 
-ui.Action.fromPaste = function (objects, offset) {
+function fromPaste (objects, offset) {
 	offset = offset || new Vec2();
-	var action = new ui.Action(), amap = {}, fmap = {};
+	var action = new Action(), amap = {}, fmap = {};
 	// atoms
 	for (var aid = 0; aid < objects.atoms.length; aid++) {
 		var atom = Object.clone(objects.atoms[aid]);
@@ -1081,7 +1082,7 @@ ui.Action.fromPaste = function (objects, offset) {
 	}
 
 	for (var i = 0; i < rgnew.length; ++i) {
-		action.mergeWith(ui.Action.fromRGroupAttrs(rgnew[i], ui.clipboard.rgroups[rgnew[i]]));
+		action.mergeWith(fromRGroupAttrs(rgnew[i], ui.clipboard.rgroups[rgnew[i]]));
 	}
 
 	//bonds
@@ -1098,7 +1099,7 @@ ui.Action.fromPaste = function (objects, offset) {
 			sgatoms.push(amap[atoms[sgaid]]);
 		}
 		var newsgid = ui.render.ctab.molecule.sgroups.newId();
-		var sgaction = ui.Action.fromSgroupAddition(sgroup_info.type, sgatoms, sgroup_info.attrs, newsgid, sgroup_info.pp ? sgroup_info.pp.add(offset) : null);
+		var sgaction = fromSgroupAddition(sgroup_info.type, sgatoms, sgroup_info.attrs, newsgid, sgroup_info.pp ? sgroup_info.pp.add(offset) : null);
 		for (var iop = sgaction.operations.length - 1; iop >= 0; iop--) {
 			action.addOp(sgaction.operations[iop]);
 		}
@@ -1118,12 +1119,12 @@ ui.Action.fromPaste = function (objects, offset) {
 	return action;
 };
 
-ui.Action.fromFlip = function (objects, flip) {
+function fromFlip (objects, flip) {
 	var render = ui.render;
 	var ctab = render.ctab;
 	var molecule = ctab.molecule;
 
-	var action = new ui.Action();
+	var action = new Action();
 	var i;
 	var fids = {};
 
@@ -1184,12 +1185,12 @@ ui.Action.fromFlip = function (objects, flip) {
 	return action.perform();
 };
 
-ui.Action.fromRotate = function (objects, pos, angle) {
+function fromRotate (objects, pos, angle) {
 	var render = ui.render;
 	var ctab = render.ctab;
 	var molecule = ctab.molecule;
 
-	var action = new ui.Action();
+	var action = new Action();
 	var i;
 	var fids = {};
 
@@ -1263,3 +1264,35 @@ ui.removeDummyAction = function ()
 		ui.updateHistoryButtons();
 	}
 };
+
+module.exports = util.extend(Action, {
+	fromMultipleMove: fromMultipleMove,
+	fromAtomAddition: fromAtomAddition,
+	fromArrowAddition: fromArrowAddition,
+	fromArrowDeletion: fromArrowDeletion,
+	fromChiralFlagDeletion: fromChiralFlagDeletion,
+	fromPlusAddition: fromPlusAddition,
+	fromPlusDeletion: fromPlusDeletion,
+	fromAtomDeletion: fromAtomDeletion,
+	fromBondDeletion: fromBondDeletion,
+	fromFragmentDeletion: fromFragmentDeletion,
+	fromAtomMerge: fromAtomMerge,
+	fromBondFlipping: fromBondFlipping,
+	fromTemplateOnCanvas: fromTemplateOnCanvas,
+	fromTemplateOnAtom: fromTemplateOnAtom,
+	fromTemplateOnBond: fromTemplateOnBond,
+	fromAtomsAttrs: fromAtomsAttrs,
+	fromBondAttrs: fromBondAttrs,
+	fromChain: fromChain,
+	fromBondAddition: fromBondAddition,
+	fromNewCanvas: fromNewCanvas,
+	fromSgroupType: fromSgroupType,
+	fromSgroupDeletion: fromSgroupDeletion,
+	fromSgroupAttrs: fromSgroupAttrs,
+	fromRGroupFragment: fromRGroupFragment,
+	fromPaste: fromPaste,
+	fromRGroupAttrs: fromRGroupAttrs,
+	fromSgroupAddition: fromSgroupAddition,
+	fromFlip: fromFlip,
+	fromRotate: fromRotate
+});

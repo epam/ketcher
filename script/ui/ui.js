@@ -19,24 +19,25 @@ var rnd = global.rnd;
 
 var DEBUG = { forwardExceptions: false };
 var SCALE = 40;  // const
+var HISTORY_LENGTH = 32;
 
 ui.render = null;
 
 ui.ctab = new chem.Struct();
-
-ui.HISTORY_LENGTH = 32;
-ui.undoStack = [];
-ui.redoStack = [];
 
 ui.standalone = true;
 
 // TODO: to delete (only in dialogs/crap)
 ui.client_area = null;
 
+var undoStack = [];
+var redoStack = [];
+
 var initialized = false;
 var ketcher_window;
 var toolbar;
 var zoomSelect;
+var actionComplete;
 //
 // Init section
 //
@@ -52,14 +53,14 @@ ui.init = function (parameters, opts) {
 	ui.api_path = parameters.api_path; // move to api-side
 	ui.static_path = parameters.static_path;
 
-	ui.actionComplete = parameters.actionComplete || function (){};
+	actionComplete = parameters.actionComplete || function (){};
 	if (initialized)
 	{
 		Action.fromNewCanvas(new chem.Struct());
 		ui.render.update();
-		ui.undoStack.clear();
-		ui.redoStack.clear();
-		ui.updateHistoryButtons();
+		undoStack.clear();
+		redoStack.clear();
+		updateHistoryButtons();
 		ui.selectAction(null);
 		return;
 	}
@@ -134,7 +135,7 @@ ui.init = function (parameters, opts) {
 	});
 	ui.client_area.on('scroll', onScroll_ClientArea);
 
-	ui.updateHistoryButtons();
+	updateHistoryButtons();
 
 	// Init renderer
 	opts = new rnd.RenderOptions(opts);
@@ -222,15 +223,15 @@ ui.selectAction = function (query) {
 	}
 };
 
-ui.updateHistoryButtons = function () {
-	if (ui.undoStack.length == 0) {
+function updateHistoryButtons () {
+	if (undoStack.length == 0) {
 		subEl('undo').setAttribute('disabled', true);
 	}
 	else {
 		subEl('undo').removeAttribute('disabled');
 	}
 
-	if (ui.redoStack.length == 0) {
+	if (redoStack.length == 0) {
 		subEl('redo').setAttribute('disabled', true);
 	}
 	else {
@@ -347,6 +348,23 @@ function updateMolecule (mol)
 		ui.hideDialog('loading');
 	}
 //    }, 50);
+};
+
+
+ui.addUndoAction = function (action, check_dummy)
+{
+	if (action == null)
+		return;
+
+	if (check_dummy != true || !action.isDummy())
+	{
+		undoStack.push(action);
+		redoStack.clear();
+		if (undoStack.length > HISTORY_LENGTH)
+			undoStack.splice(0, 1);
+		updateHistoryButtons();
+		actionComplete();
+	}
 };
 
 //
@@ -804,9 +822,9 @@ function undo ()
 		ui.render.current_tool.OnCancel();
 
 	ui.editor.deselectAll();
-	ui.redoStack.push(ui.undoStack.pop().perform());
+	redoStack.push(undoStack.pop().perform());
 	ui.render.update();
-	ui.updateHistoryButtons();
+	updateHistoryButtons();
 	ui.actionComplete();
 };
 
@@ -816,9 +834,9 @@ function redo ()
 		ui.render.current_tool.OnCancel();
 
 	ui.editor.deselectAll();
-	ui.undoStack.push(ui.redoStack.pop().perform());
+	undoStack.push(redoStack.pop().perform());
 	ui.render.update();
-	ui.updateHistoryButtons();
+	updateHistoryButtons();
 	ui.actionComplete();
 };
 
@@ -1184,6 +1202,7 @@ function mapTool (id) {
 	return null;
 };
 
+// TODO: remove. only dialog/crap
 ui.bondTypeMap = {
 	'single': {type: 1, stereo: chem.Struct.BOND.STEREO.NONE},
 	'up': {type: 1, stereo: chem.Struct.BOND.STEREO.UP},

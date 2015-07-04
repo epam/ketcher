@@ -14,12 +14,12 @@ var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 var ui = global.ui; // jshint ignore:line
 
-// TODO re-factoring needed: client_area parameter is excessive, should be available in render
 rnd.Editor = function (render)
 {
 	this.render = render;
 	this._selectionHelper = new rnd.Editor.SelectionHelper(this);
 };
+
 rnd.Editor.prototype.selectAll = function () {
 	var selection = {};
 	for (var map in rnd.ReStruct.maps) {

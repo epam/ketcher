@@ -1240,31 +1240,6 @@ function fromRotate (objects, pos, angle) {
 	return action.perform();
 };
 
-ui.addUndoAction = function (action, check_dummy)
-{
-	if (action == null)
-		return;
-
-	if (check_dummy != true || !action.isDummy())
-	{
-		ui.undoStack.push(action);
-		ui.redoStack.clear();
-		if (ui.undoStack.length > ui.HISTORY_LENGTH)
-			ui.undoStack.splice(0, 1);
-		ui.updateHistoryButtons();
-		ui.actionComplete();
-	}
-};
-
-ui.removeDummyAction = function ()
-{
-	if (ui.undoStack.length != 0 && ui.undoStack.last().isDummy())
-	{
-		ui.undoStack.pop();
-		ui.updateHistoryButtons();
-	}
-};
-
 module.exports = util.extend(Action, {
 	fromMultipleMove: fromMultipleMove,
 	fromAtomAddition: fromAtomAddition,

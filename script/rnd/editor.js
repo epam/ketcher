@@ -721,7 +721,7 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 					}
 				}
 				ui.addUndoAction(
-				Action.fromBondAttrs(_DC_.item.id, bondProps, ui.bondFlipRequired(bond, bondProps)),
+				Action.fromBondAttrs(_DC_.item.id, bondProps, bondFlipRequired(bond, bondProps)),
 					true
 				);
 			}
@@ -1729,3 +1729,11 @@ rnd.Editor.RotateTool.prototype.OnCancel = function () {
 	// don't reset the selection when leaving the canvas, see KETCHER-632
 	// this.editor._selectionHelper.setSelection();
 };
+
+function bondFlipRequired (bond, attrs) {
+	return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
+	       bond.stereo == chem.Struct.BOND.STEREO.NONE &&
+	       attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+	       ui.ctab.atoms.get(bond.begin).neighbors.length <
+	       ui.ctab.atoms.get(bond.end).neighbors.length;
+}

@@ -678,15 +678,6 @@ function onScroll_ClientArea (event)
 //
 // Clicking
 //
-var dbl_click = false;
-
-ui.bondFlipRequired = function (bond, attrs) {
-	return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
-	bond.stereo == chem.Struct.BOND.STEREO.NONE &&
-	attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
-	ui.ctab.atoms.get(bond.begin).neighbors.length <
-	ui.ctab.atoms.get(bond.end).neighbors.length;
-};
 
 // Get new atom id/label and pos for bond being added to existing atom
 ui.atomForNewBond = function (id)

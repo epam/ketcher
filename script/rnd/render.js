@@ -900,6 +900,8 @@ rnd.Render.prototype.update = function (force)
 		if (!this.opt.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
+			// The only reference to ui.zoom
+			console.assert(ui.zoom == this.zoom);
 			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(Vec2.UNIT.scaled(20)));
 			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)

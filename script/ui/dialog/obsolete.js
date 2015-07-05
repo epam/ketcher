@@ -352,7 +352,7 @@ function showLabelEditor (aid)
 	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (onKeyPress_InputLabel, onBlur, etc)
 	var input_el = $('input_label');
 
-	var offset = Math.min(6 * ui.zoom, 16);
+	var offset = 16; //Math.min(6 * ui.zoom, 16);
 
 	input_el.atom_id = aid;
 	input_el.value = ui.render.atomGetAttr(aid, 'label');

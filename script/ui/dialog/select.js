@@ -1,6 +1,6 @@
 /*global module, global*/
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui;
 
 function dialog (name, params) {
 	var dlg = ui.showDialog(name);

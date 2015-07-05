@@ -7,7 +7,7 @@ require('../../rnd');
 
 var ajax = require('../../util/ajax.js');
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui;
 var rnd = global.rnd;
 var chem = global.chem;
 

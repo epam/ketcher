@@ -3,7 +3,7 @@
 
 /* eslint-disable */
 
-var ui = global.ui = global.ui || function () {};
+var ui = global.ui;
 
 function dialog (id, tool, selection, onOk, onCancel) {
 	console.info('sgroup');

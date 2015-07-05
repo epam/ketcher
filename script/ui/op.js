@@ -1,10 +1,10 @@
-/*global require, global, module, ui:false*/
+/*global require, global, module*/
 
 var Vec2 = require('../util/vec2');
 require('../chem');
 require('../rnd');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
+var ui = global.ui;
 var chem = global.chem;
 var rnd = global.rnd;
 

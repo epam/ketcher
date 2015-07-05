@@ -1,11 +1,11 @@
-/*global require, module, global, ui:false*/
+/*global require, module, global*/
 
 require('../../chem');
 
 var util = require('../../util');
 var Action = require('../action');
 
-var ui = global.ui = global.ui || {}; // jshint ignore:line
+var ui = global.ui;
 var chem = global.chem;
 
 function initDialogs () {

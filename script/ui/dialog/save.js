@@ -1,11 +1,11 @@
-/*global require, module, global, ui:false*/
+/*global require, module, global*/
 
 require('../../chem');
 
 var server = require('../server.js');
 
 var chem = global.chem;
-var ui = global.ui = global.ui || {}; // jshint ignore:line
+var ui = global.ui;
 
 function saveDialog (params) {
 	var dlg = ui.showDialog('save-file'),

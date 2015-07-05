@@ -1,11 +1,11 @@
-/*global module, global, ui:false*/
+/*global module, global*/
 
 /*eslint-disable*/
 
 // var server = require('../server.js');
 // var base64 = require('base64-js');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
+var ui = global.ui;
 
 function dialog (params) {
 	var dlg = ui.showDialog('open-file');

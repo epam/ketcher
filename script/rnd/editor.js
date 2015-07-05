@@ -12,7 +12,7 @@ require('../ui');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var chem = global.chem = global.chem || {}; // jshint ignore:line
-var ui = global.ui; // jshint ignore:line
+var ui = global.ui;
 
 rnd.Editor = function (render)
 {

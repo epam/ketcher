@@ -10,15 +10,15 @@ var ui = global.ui = global.ui || {}; // jshint ignore:line
 require('../chem');
 require('../rnd');
 
+var chem = global.chem;
+var rnd = global.rnd;
+
 var util = require('../util');
 var server = require('./server.js');
 var Action = require('./action.js');
 var io = require('./dialog/io');
 var selectDialog = require('./dialog/select');
-
-var chem = global.chem;
-var rnd = global.rnd;
-
+var templatesDialog = require('./dialog/templates');
 
 var DEBUG = { forwardExceptions: false };
 var SCALE = 40;  // const
@@ -425,7 +425,7 @@ function dearomatizeMolecule (mol, aromatize)
 		var method = aromatize ? 'aromatize' : 'dearomatize',
 		request = server[method]({moldata: mol_string});
 		request.then(function (data) {
-			var resmol = ui.parseCTFile(data);
+			var resmol = parseMayBeCorruptedCTFile(data);
 			if (implicitReaction)
 				resmol.rxnArrows.clear();
 			updateMolecule(resmol);
@@ -612,12 +612,12 @@ function onClick_Automap () {
 			});
 
 			request.then(function (res) {
-				var mol = ui.parseCTFile(res);
+				var mol = parseMayBeCorruptedCTFile(res);
 				if (implicitReaction) {
 					mol.rxnArrows.clear();
 				}
 				/*
-                 var aam = ui.parseCTFile(res.responseText);
+                 var aam = parseCTFile(res.responseText);
                  var action = new Action();
                  for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
                  action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
@@ -665,16 +665,16 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 		}
 		var request = server.layout_smiles(null, {smiles: smiles});
 		request.then(function (res) {
-			updateFunc.call(ui, ui.parseCTFile(res));
+			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
 		});
 	} else if (!ui.standalone && force_layout) {
 		var req = server.layout({moldata: mol_string},
 			selective_layout ? {'selective': 1} : null);
 		req.then(function (res) {
-			updateFunc.call(ui, ui.parseCTFile(res));
+			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
 		});
 	} else {
-		updateFunc.call(ui, ui.parseCTFile(mol_string, check_empty_line));
+		updateFunc.call(ui, parseMayBeCorruptedCTFile(mol_string, check_empty_line));
 	}
 };
 
@@ -1047,7 +1047,7 @@ function onClick_ReaGenericsTableButton ()
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
 var current_template_custom = null;
 function onClick_TemplateCustom () {
-	ui.showTemplateCustom(ui.static_path,{
+	templatesDialog(ui.static_path,{
 		onOk: function (tmpl) {
 			current_template_custom = tmpl;
 			ui.selectAction('template-custom-select');
@@ -1058,7 +1058,7 @@ function onClick_TemplateCustom () {
 
 // try to reconstruct molfile string instead parsing multiple times
 // TODO: move this logic to chem.Molfile
-ui.parseCTFile = function (molfile, check_empty_line) {
+function parseMayBeCorruptedCTFile (molfile, check_empty_line) {
 	var lines = molfile.split('\n');
 
 	try {

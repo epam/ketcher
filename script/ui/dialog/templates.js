@@ -1,4 +1,4 @@
-/*global require, global*/
+/*global require, module, global*/
 
 /* eslint-disable */
 
@@ -12,7 +12,8 @@ var ui = global.ui = global.ui || function () {};
 var rnd = global.rnd;
 var chem = global.chem;
 
-ui.parseTemplateCustom = function (sdf) {
+// TODO: move to Molfile
+function parseSdf (sdf) {
 	var items = sdf.split(/^[$][$][$][$]$/m);
 	var parsed = [];
 
@@ -47,12 +48,12 @@ ui.parseTemplateCustom = function (sdf) {
 	});
 
 	return parsed;
-};
+}
 
-ui.fetchTemplateCustom = function (base_url) {
+function fetchTemplateCustom (base_url) {
 	return ajax(base_url + 'templates.sdf').then(function (xhr) {
 		//headers: {Accept: 'application/octet-stream'}
-		var items = ui.parseTemplateCustom(xhr.responseText);
+		var items = parseSdf(xhr.responseText);
 
 		var templates = [];
 		var i = 0;
@@ -70,8 +71,8 @@ ui.fetchTemplateCustom = function (base_url) {
 };
 
 var custom_templates;
-ui.initTemplateCustom = function (el, base_url) {
-	return ui.fetchTemplateCustom(base_url).then(function (templates) {
+function initTemplateCustom (el, base_url) {
+	return fetchTemplateCustom(base_url).then(function (templates) {
 		custom_templates = templates;
 		return eachAsync(templates, function (tmpl, _) {
 			var li =  new Element('li');
@@ -90,52 +91,7 @@ ui.initTemplateCustom = function (el, base_url) {
 			render.update();
 		}, 50);
 	});
-};
-
-ui.showTemplateCustom = function (base_url, params) {
-	var dialog = ui.showDialog('custom_templates'),
-	selectedLi = dialog.select('.selected')[0],
-	okButton = dialog.select('[value=OK]')[0],
-	ul = dialog.select('ul')[0];
-
-	if (ul.children.length === 0) { // first time
-		$('loading').style.display = '';
-		dialog.addClassName('loading');
-		var loading = ui.initTemplateCustom(ul, base_url).then(function () {
-			$('loading').style.display = 'none';
-			dialog.removeClassName('loading');
-		});
-
-		loading.then(function () {
-			okButton.disabled = true;
-			dialog.on('click', 'li', function (_, li) {
-				if (selectedLi == li)
-					okButton.click();
-				else {
-					if (selectedLi)
-						selectedLi.removeClassName('selected');
-					else
-						okButton.disabled = false;
-					li.addClassName('selected');
-					selectedLi = li;
-				}
-			});
-			dialog.on('click', 'input', function (_, input) {
-				var mode = input.value,
-				key = 'on' + input.value.capitalize(),
-				res;
-				if (mode == 'OK') {
-					console.assert(selectedLi, 'No element selected');
-					var ind = selectedLi.previousSiblings().size();
-					res = custom_templates[ind];
-				}
-				ui.hideDialog('custom_templates');
-				if (params && key in params)
-					params[key](res);
-			});
-		});
-	}
-};
+}
 
 function eachAsync(list, process, timeGap, startTimeGap) {
 	return new Promise(function (resolve) {
@@ -152,3 +108,50 @@ function eachAsync(list, process, timeGap, startTimeGap) {
 		setTimeout(iterate, startTimeGap || timeGap);
 	});
 };
+
+function dialog (base_url, params) {
+	var dlg = ui.showDialog('custom_templates'),
+	selectedLi = dlg.select('.selected')[0],
+	okButton = dlg.select('[value=OK]')[0],
+	ul = dlg.select('ul')[0];
+
+	if (ul.children.length === 0) { // first time
+		$('loading').style.display = '';
+		dlg.addClassName('loading');
+		var loading = initTemplateCustom(ul, base_url).then(function () {
+			$('loading').style.display = 'none';
+			dlg.removeClassName('loading');
+		});
+
+		loading.then(function () {
+			okButton.disabled = true;
+			dlg.on('click', 'li', function (_, li) {
+				if (selectedLi == li)
+					okButton.click();
+				else {
+					if (selectedLi)
+						selectedLi.removeClassName('selected');
+					else
+						okButton.disabled = false;
+					li.addClassName('selected');
+					selectedLi = li;
+				}
+			});
+			dlg.on('click', 'input', function (_, input) {
+				var mode = input.value,
+				key = 'on' + input.value.capitalize(),
+				res;
+				if (mode == 'OK') {
+					console.assert(selectedLi, 'No element selected');
+					var ind = selectedLi.previousSiblings().size();
+					res = custom_templates[ind];
+				}
+				ui.hideDialog('custom_templates');
+				if (params && key in params)
+					params[key](res);
+			});
+		});
+	}
+};
+
+module.exports = dialog;

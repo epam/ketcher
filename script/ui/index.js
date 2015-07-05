@@ -16,6 +16,8 @@ var util = require('../util');
 var server = require('./server.js');
 var Action = require('./action.js');
 
+var templates = require('./templates');
+
 var openDialog = require('./dialog/open.js');
 var saveDialog = require('./dialog/save.js');
 var selectDialog = require('./dialog/select');
@@ -1177,7 +1179,7 @@ function mapTool (id) {
 	} else if (id.startsWith('template-custom')) {
 		return new rnd.Editor.TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {
-		return new rnd.Editor.TemplateTool(ui.editor, rnd.templates[parseInt(id.split('-')[1])]);
+		return new rnd.Editor.TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
 		return new rnd.Editor.ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {

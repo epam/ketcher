@@ -1,12 +1,10 @@
-/*global global:false, rnd:false*/
+/*global module*/
 
-var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-
-rnd.templates = [
+module.exports = [
 	{
 		name: 'benzene',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -29,7 +27,7 @@ rnd.templates = [
 	{
 		name: 'cyclopentadiene',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -50,7 +48,7 @@ rnd.templates = [
 	{
 		name: 'cyclohexane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -73,7 +71,7 @@ rnd.templates = [
 	{
 		name: 'cyclopentane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -94,7 +92,7 @@ rnd.templates = [
 	{
 		name: 'cyclopropane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  3  3  0     0  0            999 V2000\n' +
@@ -111,7 +109,7 @@ rnd.templates = [
 	{
 		name: 'cyclobutane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  4  4  0     0  0            999 V2000\n' +
@@ -130,7 +128,7 @@ rnd.templates = [
 	{
 		name: 'cycloheptane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  7  7  0     0  0            999 V2000\n' +
@@ -155,7 +153,7 @@ rnd.templates = [
 	{
 		name: 'cyclooctane',
 		molfile:
-			'\n' +
+		'\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  8  8  0     0  0            999 V2000\n' +
@@ -179,4 +177,4 @@ rnd.templates = [
 		bid: 0,
 		aid: 0
 	}
-	];
+];

@@ -1,12 +1,11 @@
 /*global require, global, ui:false*/
 
-require('../ui');
 require('../../chem');
 
 var util = require('../../util');
 var Action = require('../action');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
+var ui = global.ui = global.ui || {}; // jshint ignore:line
 var chem = global.chem;
 
 ui.initDialogs = function () {
@@ -14,25 +13,25 @@ ui.initDialogs = function () {
 	$('input_label').observe('blur', function () {
 		this.hide();
 	});
-	$('input_label').observe('keypress', ui.onKeyPress_InputLabel);
-	$('input_label').observe('keyup', ui.onKeyUp_InputLabel);
+	$('input_label').observe('keypress', onKeyPress_InputLabel);
+	$('input_label').observe('keyup', onKeyUp_InputLabel);
 
 	// Atom properties dialog events
-	$('atom_label').observe('change', ui.onChange_AtomLabel);
-	$('atom_charge').observe('change', ui.onChange_AtomCharge);
-	$('atom_isotope').observe('change', ui.onChange_AtomIsotope);
-	$('atom_valence').observe('change', ui.onChange_AtomValence);
+	$('atom_label').observe('change', onChange_AtomLabel);
+	$('atom_charge').observe('change', onChange_AtomCharge);
+	$('atom_isotope').observe('change', onChange_AtomIsotope);
+	$('atom_valence').observe('change', onChange_AtomValence);
 	$('atom_prop_cancel').observe('click', function () {
 		ui.hideDialog('atom_properties');
 	});
 	$('atom_prop_ok').observe('click', function () {
-		ui.applyAtomProperties();
+		applyAtomProperties();
 	});
 	$('bond_prop_cancel').observe('click', function () {
 		ui.hideDialog('bond_properties');
 	});
 	$('bond_prop_ok').observe('click', function () {
-		ui.applyBondProperties();
+		applyBondProperties();
 	});
 };
 
@@ -68,7 +67,7 @@ ui.showAtomAttachmentPoints = function (params) {
 ui.showAtomProperties = function (id) {
 	$('atom_properties').atom_id = id;
 	$('atom_label').value = ui.render.atomGetAttr(id, 'label');
-	ui.onChange_AtomLabel.call($('atom_label'));
+	onChange_AtomLabel.call($('atom_label'));
 	var value = ui.render.atomGetAttr(id, 'charge') - 0;
 	$('atom_charge').value = (value == 0 ? '' : value);
 	value = ui.render.atomGetAttr(id, 'isotope') - 0;
@@ -88,7 +87,7 @@ ui.showAtomProperties = function (id) {
 	$('atom_label').activate();
 };
 
-ui.applyAtomProperties = function () {
+function applyAtomProperties () {
 	ui.hideDialog('atom_properties');
 
 	var id = $('atom_properties').atom_id;
@@ -113,7 +112,7 @@ ui.applyAtomProperties = function () {
 	ui.render.update();
 };
 
-ui.onChange_AtomLabel = function () {
+function onChange_AtomLabel () {
 	this.value = this.value.strip().capitalize();
 
 	var element = chem.Element.getElementByLabel(this.value);
@@ -139,7 +138,7 @@ ui.onChange_AtomLabel = function () {
 	}
 };
 
-ui.onChange_AtomCharge = function () {
+function onChange_AtomCharge () {
 	if (this.value.strip() === '' || this.value == '0') {
 		this.value = '';
 	} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
@@ -149,7 +148,7 @@ ui.onChange_AtomCharge = function () {
 	}
 };
 
-ui.onChange_AtomIsotope = function () {
+function onChange_AtomIsotope () {
 	if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0') {
 		this.value = '';
 	} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
@@ -157,7 +156,7 @@ ui.onChange_AtomIsotope = function () {
 	}
 };
 
-ui.onChange_AtomValence = function () {
+function onChange_AtomValence () {
 	/*
      if (this.value.strip() == '')
      this.value = '';
@@ -190,7 +189,7 @@ ui.showBondProperties = function (id) {
 	$('bond_type').activate();
 };
 
-ui.applyBondProperties = function () {
+function applyBondProperties () {
 	ui.hideDialog('bond_properties');
 
 	var id = $('bond_properties').bond_id;
@@ -268,7 +267,7 @@ ui.showRLogicTable = function (args) {
 	$('rlogic_occurrence').activate();
 };
 
-ui.onKeyPress_Dialog = function (event)
+function onKeyPress_Dialog (event)
 {
 	util.stopEventPropagation(event);
 	if (event.keyCode === 27) {
@@ -277,7 +276,7 @@ ui.onKeyPress_Dialog = function (event)
 	}
 };
 
-ui.onKeyPress_InputLabel = function (event)
+function onKeyPress_InputLabel (event)
 {
 	util.stopEventPropagation(event);
 	if (event.keyCode == 13) {
@@ -339,7 +338,7 @@ ui.onKeyPress_InputLabel = function (event)
 	}
 };
 
-ui.onKeyUp_InputLabel = function (event)
+function onKeyUp_InputLabel (event)
 {
 	util.stopEventPropagation(event);
 	if (event.keyCode == 27) {
@@ -350,7 +349,7 @@ ui.onKeyUp_InputLabel = function (event)
 
 ui.showLabelEditor = function (aid)
 {
-	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (ui.onKeyPress_InputLabel, onBlur, etc)
+	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (onKeyPress_InputLabel, onBlur, etc)
 	var input_el = $('input_label');
 
 	var offset = Math.min(6 * ui.zoom, 16);
@@ -362,7 +361,9 @@ ui.showLabelEditor = function (aid)
 	input_el.show();
 
 	var atom_pos = ui.render.obj2view(ui.render.atomGetPos(aid));
-	var offset_client = ui.client_area.cumulativeOffset();
+	// TODO: some other way to handle pos
+	//var offset_client = ui.client_area.cumulativeOffset();
+	var offset_client = {left: 0, top: 0};
 	var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
 	var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
 	input_el.style.left = (atom_pos.x + offset_client.left - offset_parent.left - offset - d).toString() + 'px';

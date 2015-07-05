@@ -33,9 +33,6 @@ ui.ctab = new chem.Struct();
 
 ui.standalone = true;
 
-// TODO: to delete (only in dialogs/crap)
-ui.client_area = null;
-
 var undoStack = [];
 var redoStack = [];
 
@@ -45,13 +42,14 @@ var toolbar;
 var zoomSelect;
 var actionComplete;
 var lastSelected;
+var clientArea = null;
 //
 // Init section
 //
 ui.init = function (parameters, opts) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
-	ui.client_area = $('ketcher');
+	clientArea = $('ketcher');
 
 	parameters = Object.extend({
 		api_path: '',
@@ -140,14 +138,14 @@ ui.init = function (parameters, opts) {
 		updateZoom();
 		//ui.blur();
 	});
-	ui.client_area.on('scroll', onScroll_ClientArea);
+	clientArea.on('scroll', onScroll_ClientArea);
 
 	updateHistoryButtons();
 
 	// Init renderer
 	opts = new rnd.RenderOptions(opts);
 	opts.atomColoring = true;
-	ui.render =  new rnd.Render(ui.client_area, SCALE, opts);
+	ui.render =  new rnd.Render(clientArea, SCALE, opts);
 	ui.editor = new rnd.Editor(ui.render);
 
 	ui.render.onCanvasOffsetChanged = onOffsetChanged;
@@ -181,9 +179,9 @@ ui.hideBlurredControls = function () {
 	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
 	// repaint bug: http://bit.ly/1iiSMgy
 	// needs investigation, performance
-	ui.client_area.style.visibility = 'hidden';
+	clientArea.style.visibility = 'hidden';
 	setTimeout(function () {
-		ui.client_area.style.visibility = 'visible';
+		clientArea.style.visibility = 'visible';
 	}, 0);
 	// ?? ui.render.update(true);
 	// END
@@ -518,17 +516,17 @@ ui.setZoomStaticPoint = function (zoom, vp) {
 };
 
 function setScrollOffset (x, y) {
-	var cx = ui.client_area.clientWidth;
-	var cy = ui.client_area.clientHeight;
+	var cx = clientArea.clientWidth;
+	var cy = clientArea.clientHeight;
 	ui.render.extendCanvas(x, y, cx + x, cy + y);
-	ui.client_area.scrollLeft = x;
-	ui.client_area.scrollTop = y;
-	scrollLeft = ui.client_area.scrollLeft; // TODO: store drag position in scaled systems
-	scrollTop = ui.client_area.scrollTop;
+	clientArea.scrollLeft = x;
+	clientArea.scrollTop = y;
+	scrollLeft = clientArea.scrollLeft; // TODO: store drag position in scaled systems
+	scrollTop = clientArea.scrollTop;
 };
 
 function setScrollOffsetRel (dx, dy) {
-	setScrollOffset(ui.client_area.scrollLeft + dx, ui.client_area.scrollTop + dy);
+	setScrollOffset(clientArea.scrollLeft + dx, clientArea.scrollTop + dy);
 };
 
 //
@@ -685,7 +683,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 
 ui.page2canvas2 = function (pos)
 {
-	var offset = ui.client_area.cumulativeOffset();
+	var offset = clientArea.cumulativeOffset();
 
 	return new Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
 };
@@ -697,7 +695,7 @@ ui.page2obj = function (pagePos)
 
 ui.scrollPos = function ()
 {
-	return new Vec2(ui.client_area.scrollLeft, ui.client_area.scrollTop);
+	return new Vec2(clientArea.scrollLeft, clientArea.scrollTop);
 };
 
 //
@@ -712,8 +710,8 @@ function onScroll_ClientArea (event)
 	// if ($('input_label').visible())
 	//      $('input_label').hide();
 
-	scrollLeft = ui.client_area.scrollLeft;
-	scrollTop = ui.client_area.scrollTop;
+	scrollLeft = clientArea.scrollLeft;
+	scrollTop = clientArea.scrollTop;
 
 	util.stopEventPropagation(event);
 };
@@ -823,8 +821,8 @@ function onOffsetChanged (newOffset, oldOffset)
 
 	var delta = new Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
 
-	ui.client_area.scrollLeft += delta.x;
-	ui.client_area.scrollTop += delta.y;
+	clientArea.scrollLeft += delta.x;
+	clientArea.scrollTop += delta.y;
 };
 
 function selectAll ()

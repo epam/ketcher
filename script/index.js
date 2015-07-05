@@ -3,9 +3,9 @@
 var util = require('./util');
 var queryString = require('query-string');
 
+require('./ui');
 require('./chem');
 require('./rnd');
-require('./ui');
 
 var ui = global.ui;
 var chem = global.chem;

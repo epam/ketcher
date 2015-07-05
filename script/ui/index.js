@@ -1,8 +1,8 @@
-/*global require, alert, global, $$, ui:false*/
+/*global require, module, alert, global, $$*/
 
 /*eslint-disable*/
 
-var ui = global.ui = global.ui || {}; // jshint ignore:line
+var ui = global.ui = {};
 
 require('../chem');
 require('../rnd');
@@ -27,22 +27,6 @@ var DEBUG = { forwardExceptions: false };
 var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
 
-
-util.extend(ui, {
-	showAtomAttachmentPoints: obsolete.showAtomAttachmentPoints,
-	showAtomProperties: obsolete.showAtomProperties,
-	showBondProperties: obsolete.showBondProperties,
-	showAutomapProperties: obsolete.showAutomapProperties,
-	showRLogicTable: obsolete.showRLogicTable,
-	showLabelEditor: obsolete.showLabelEditor
-});
-
-ui.render = null;
-
-ui.ctab = new chem.Struct();
-
-ui.standalone = true;
-
 var undoStack = [];
 var redoStack = [];
 
@@ -50,26 +34,22 @@ var initialized = false;
 var ketcherWindow;
 var toolbar;
 var zoomSelect;
-var actionComplete;
 var lastSelected;
 var clientArea = null;
+var dropdownOpened;
+var zspObj;
 
 //
 // Init section
 //
-ui.init = function (parameters, opts) {
+function init (parameters, opts) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('ketcher');
 
-	parameters = util.extend({
-		api_path: '',
-		static_path: ''
-	}, parameters);
-	ui.api_path = parameters.api_path; // move to api-side
-	ui.static_path = parameters.static_path;
+	ui.api_path = parameters.api_path || ui.api_path;
+	ui.static_path = parameters.static_path || ui.static_path;
 
-	actionComplete = parameters.actionComplete || function (){};
 	if (initialized)
 	{
 		Action.fromNewCanvas(new chem.Struct());
@@ -77,7 +57,7 @@ ui.init = function (parameters, opts) {
 		undoStack.clear();
 		redoStack.clear();
 		updateHistoryButtons();
-		ui.selectAction(null);
+		selectAction(null);
 		return;
 	}
 
@@ -96,7 +76,7 @@ ui.init = function (parameters, opts) {
 			// TODO: move it out there as server incapsulates
 			// standalone
 			if (parameters.mol) {
-				ui.loadMolecule(parameters.mol);
+				loadMolecule(parameters.mol);
 			}
 		});
 	}
@@ -126,15 +106,15 @@ ui.init = function (parameters, opts) {
 				if (!this.hasClassName('selected')) {
 					event.stop();
 				}
-				ui.selectAction(this);
+				selectAction(this);
 			}
 
-			if (ui.hideBlurredControls()) {
+			if (hideBlurredControls()) {
 				event.stop();
 			}
 			else if (this.getStyle('overflow') == 'hidden') {
 				this.addClassName('opened');
-				ui.dropdown_opened = this;
+				dropdownOpened = this;
 				event.stop();
 			}
 		});
@@ -147,7 +127,6 @@ ui.init = function (parameters, opts) {
 	// TODO: remove this^ shit (used in rnd.Render guts)
 	zoomSelect.on('change', function () {
 		updateZoom();
-		//ui.blur();
 	});
 	clientArea.on('scroll', onScroll_ClientArea);
 
@@ -161,7 +140,7 @@ ui.init = function (parameters, opts) {
 
 	ui.render.onCanvasOffsetChanged = onOffsetChanged;
 
-	ui.selectAction('select-lasso');
+	selectAction('select-lasso');
 	setScrollOffset(0, 0);
 
 	ui.render.setMolecule(ui.ctab);
@@ -174,16 +153,16 @@ function subEl (id) {
 	return $(id).children[0];
 };
 
-ui.hideBlurredControls = function () {
-	if (!ui.dropdown_opened) {
+function hideBlurredControls () {
+	if (!dropdownOpened) {
 		return false;
 	}
 
-	ui.dropdown_opened.removeClassName('opened');
-	var sel = ui.dropdown_opened.select('.selected');
+	dropdownOpened.removeClassName('opened');
+	var sel = dropdownOpened.select('.selected');
 	if (sel.length == 1) {
 		//var index = sel[0].previousSiblings().size();
-		var menu = subEl(ui.dropdown_opened);
+		var menu = subEl(dropdownOpened);
 		menu.style.marginTop = (-sel[0].offsetTop + menu.offsetTop) + 'px';
 	}
 
@@ -196,12 +175,12 @@ ui.hideBlurredControls = function () {
 	}, 0);
 	// ?? ui.render.update(true);
 	// END
-	ui.dropdown_opened = null;
+	dropdownOpened = null;
 	return true;
 };
 
 // TODO: split to selection by id (atom) and selection by element
-ui.selectAction = function (query) {
+function selectAction (query) {
 
 	// TODO: lastSelected -> prevtool_id
 	query = query || lastSelected;
@@ -255,7 +234,7 @@ function updateHistoryButtons () {
 	}
 };
 
-ui.updateClipboardButtons = function () {
+function updateClipboardButtons () {
 	if (isClipboardEmpty())
 		subEl('paste').setAttribute('disabled', true);
 	else {
@@ -310,7 +289,7 @@ function animateToggle (el, callback) {
 	}
 };
 
-ui.showDialog = function (name) {
+function showDialog (name) {
 	var dialog = $(name);
 	animateToggle(function () {
 		$$('.overlay')[0].show();
@@ -320,7 +299,7 @@ ui.showDialog = function (name) {
 	return dialog;
 };
 
-ui.hideDialog = function (name) {
+function hideDialog (name) {
 	var cover = $$('.overlay')[0];
 	animateToggle(cover, function () {
 		// $(name).hide();
@@ -329,26 +308,21 @@ ui.hideDialog = function (name) {
 	});
 };
 
-// TODO: remove it as we get better server
-ui.loadMoleculeFromFile = openDialog.loadHook;
-
-ui.showSGroupProperties = sgroupDialog;
-
-ui.showElemTable = function (params) {
+function showElemTable (params) {
 	params.required = true;
 	selectDialog('elem-table', params);
 };
 
-ui.showRGroupTable = function (params) {
+function showRGroupTable (params) {
 	selectDialog('rgroup-table', params);
 };
 
-ui.showReaGenericsTable = function (params) {
+function showReaGenericsTable (params) {
 	params.required = true;
 	selectDialog('generics-table', params);
 };
 
-ui.echo = function (message) {
+function echo (message) {
 	// TODO: make special area for messages
 	alert(message);
 };
@@ -363,9 +337,9 @@ function updateMolecule (mol)
 
 	ui.editor.deselectAll();
 
-	ui.addUndoAction(Action.fromNewCanvas(mol));
+	addUndoAction(Action.fromNewCanvas(mol));
 
-	ui.showDialog('loading');
+	showDialog('loading');
 	// setTimeout(function ()
 	// {
 	try
@@ -380,13 +354,13 @@ function updateMolecule (mol)
 			alert(er.message);
 		} finally
 	{
-		ui.hideDialog('loading');
+		hideDialog('loading');
 	}
 //    }, 50);
 };
 
 
-ui.addUndoAction = function (action, check_dummy)
+function addUndoAction (action, check_dummy)
 {
 	if (action == null)
 		return;
@@ -398,7 +372,6 @@ ui.addUndoAction = function (action, check_dummy)
 		if (undoStack.length > HISTORY_LENGTH)
 			undoStack.splice(0, 1);
 		updateHistoryButtons();
-		actionComplete();
 	}
 };
 
@@ -407,10 +380,10 @@ ui.addUndoAction = function (action, check_dummy)
 //
 function onClick_NewFile ()
 {
-	ui.selectAction(null);
+	selectAction(null);
 
 	if (!ui.ctab.isBlank()) {
-		ui.addUndoAction(Action.fromNewCanvas(new chem.Struct()));
+		addUndoAction(Action.fromNewCanvas(new chem.Struct()));
 		ui.render.update();
 	}
 }
@@ -419,7 +392,7 @@ function onClick_OpenFile ()
 {
 	openDialog({
 		onOk: function (res) {
-			ui.loadMolecule(res.value, false, true, res.fragment);
+			loadMolecule(res.value, false, true, res.fragment);
 		}
 	});
 }
@@ -443,7 +416,7 @@ function dearomatizeMolecule (mol, aromatize)
 			if (implicitReaction)
 				resmol.rxnArrows.clear();
 			updateMolecule(resmol);
-		}, ui.echo);
+		}, echo);
 	} else {
 		throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
 	}
@@ -513,15 +486,15 @@ function setZoomCentered (zoom, c) {
 };
 
 // set the reference point for the "static point" zoom (in object coordinates)
-ui.setZoomStaticPointInit = function (s) {
-	ui.zspObj = new Vec2(s);
+function setZoomStaticPointInit (s) {
+	zspObj = new Vec2(s);
 };
 
 // vp is the point where the reference point should now be (in view coordinates)
-ui.setZoomStaticPoint = function (zoom, vp) {
+function setZoomStaticPoint (zoom, vp) {
 	setZoomRegular(zoom);
 	setScrollOffset(0, 0);
-	var avp = ui.render.obj2view(ui.zspObj);
+	var avp = ui.render.obj2view(zspObj);
 	var so = avp.sub(vp);
 	setScrollOffset(so.x, so.y);
 };
@@ -579,7 +552,7 @@ function onClick_CleanUp ()
 			}, this);
 		}
 		var implicitReaction = mol.addRxnArrowIfNecessary();
-		ui.loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction, selective);
+		loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction, selective);
 	} catch (er) {
 			if (DEBUG.forwardExceptions)
 				throw er;
@@ -611,12 +584,12 @@ function onClick_Dearomatize ()
 
 
 function onClick_Automap () {
-	ui.showAutomapProperties({
+	obsolete.showAutomapProperties({
 		onOk: function (mode) {
 			var mol = ui.ctab;
 			var implicitReaction = mol.addRxnArrowIfNecessary();
 			if (mol.rxnArrows.count() == 0) {
-				ui.echo('Auto-Mapping can only be applied to reactions');
+				echo('Auto-Mapping can only be applied to reactions');
 				return;
 			}
 			var moldata = new chem.MolfileSaver().saveMolecule(mol, true),
@@ -636,20 +609,20 @@ function onClick_Automap () {
                  for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
                  action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
                  }
-                 ui.addUndoAction(action, true);
+                 addUndoAction(action, true);
                  */
 				updateMolecule(mol);
 				/*
                  ui.render.update();
                  */
 
-			}, ui.echo);
+			}, echo);
 		}
 	});
 };
 
 // TODO: refactor me
-ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
+function loadMolecule (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
 {
 	var updateFunc = function (struct) {
 		if (discardRxnArrow)
@@ -662,7 +635,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 					return;
 				}
 				ui.editor.deselectAll();
-				ui.selectAction('paste');
+				selectAction('paste');
 			}).call(this, struct);
 		} else {
 			updateMolecule.call(this, struct);
@@ -673,7 +646,7 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 	if (smiles.indexOf('\n') == -1) {
 		if (ui.standalone) {
 			if (smiles != '') {
-				ui.echo('SMILES is not supported in a standalone mode.');
+				echo('SMILES is not supported in a standalone mode.');
 			}
 			return;
 		}
@@ -692,19 +665,18 @@ ui.loadMolecule = function (mol_string, force_layout, check_empty_line, paste, d
 	}
 };
 
-ui.page2canvas2 = function (pos)
+function page2canvas2 (pos)
 {
 	var offset = clientArea.cumulativeOffset();
-
 	return new Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
 };
 
-ui.page2obj = function (pagePos)
+function page2obj (pagePos)
 {
-	return ui.render.view2obj(ui.page2canvas2(pagePos));
+	return ui.render.view2obj(page2canvas2(pagePos));
 };
 
-ui.scrollPos = function ()
+function scrollPos ()
 {
 	return new Vec2(clientArea.scrollLeft, clientArea.scrollTop);
 };
@@ -732,7 +704,7 @@ function onScroll_ClientArea (event)
 //
 
 // Get new atom id/label and pos for bond being added to existing atom
-ui.atomForNewBond = function (id)
+function atomForNewBond (id)
 {
 	var neighbours = [];
 	var pos = ui.render.atomGetPos(id);
@@ -845,7 +817,7 @@ function selectAll ()
 
 function removeSelected ()
 {
-	ui.addUndoAction(Action.fromFragmentDeletion());
+	addUndoAction(Action.fromFragmentDeletion());
 	ui.editor.deselectAll();
 	ui.render.update();
 };
@@ -859,7 +831,6 @@ function undo ()
 	redoStack.push(undoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
-	ui.actionComplete();
 };
 
 function redo ()
@@ -871,14 +842,11 @@ function redo ()
 	undoStack.push(redoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
-	ui.actionComplete();
 };
 
 //
 // Clipboard actions
 //
-
-ui.clipboard = null;
 
 function isClipboardEmpty ()
 {
@@ -1021,7 +989,7 @@ function structToClipboard (clipboard, struct, selection)
 var current_elemtable_props = null;
 function onClick_ElemTableButton ()
 {
-	ui.showElemTable({
+	showElemTable({
 		onOk: function (res) {
 			var props;
 			if (res.mode == 'single')
@@ -1037,7 +1005,7 @@ function onClick_ElemTableButton ()
 					})
 				};
 			current_elemtable_props = props;
-			ui.selectAction('atom-table');
+			selectAction('atom-table');
 			return true;
 		},
 		onCancel: function () {
@@ -1049,10 +1017,10 @@ function onClick_ElemTableButton ()
 var current_reagenerics = null;
 function onClick_ReaGenericsTableButton ()
 {
-	ui.showReaGenericsTable({
+	showReaGenericsTable({
 		onOk: function (res) {
 			current_reagenerics = {label: res.values[0]};
-			ui.selectAction('atom-reagenerics');
+			selectAction('atom-reagenerics');
 			return true;
 		}
 	});
@@ -1064,7 +1032,7 @@ function onClick_TemplateCustom () {
 	templatesDialog(ui.static_path,{
 		onOk: function (tmpl) {
 			current_template_custom = tmpl;
-			ui.selectAction('template-custom-select');
+			selectAction('template-custom-select');
 			return true;
 		}
 	});
@@ -1146,7 +1114,7 @@ var actionMap = {
 	'generic-groups': onClick_ReaGenericsTableButton,
 	'template-custom': onClick_TemplateCustom,
 	'info': function (el) {
-		ui.showDialog('about_dialog');
+		showDialog('about_dialog');
 	},
 	'reaction-automap': onClick_Automap
 };
@@ -1164,13 +1132,13 @@ function mapTool (id) {
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
 		if (atomLabel(id)) {
-			ui.addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
+			addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
 			ui.render.update();
 			return null;
 		}
 
 		if (id.startsWith('transform-flip')) {
-			ui.addUndoAction(Action.fromFlip(ui.editor.getSelection(),
+			addUndoAction(Action.fromFlip(ui.editor.getSelection(),
 				id.endsWith('h') ? 'horizontal' :
 					'vertical'),
 				true);
@@ -1180,9 +1148,9 @@ function mapTool (id) {
 
 		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
          else if (mode.startsWith('bond_')) {
-         var cBond = ui.render.findClosestBond(ui.page2obj(ui.cursorPos));
+         var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
          if (cBond) {
-         ui.addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
          ui.render.update();
          return;
          }
@@ -1236,8 +1204,8 @@ function mapTool (id) {
 	return null;
 };
 
-// TODO: remove. only dialog/crap
-ui.bondTypeMap = {
+// TODO: remove. only in obsolete dialogs
+var bondTypeMap = {
 	'single': {type: 1, stereo: chem.Struct.BOND.STEREO.NONE},
 	'up': {type: 1, stereo: chem.Struct.BOND.STEREO.UP},
 	'down': {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN},
@@ -1255,7 +1223,7 @@ ui.bondTypeMap = {
 function bondType (mode)
 {
 	var type_str = mode.substr(5);
-	return ui.bondTypeMap[type_str];
+	return bondTypeMap[type_str];
 };
 
 // temporary hack as mode passed to mapTool is
@@ -1279,3 +1247,54 @@ function atomLabel (mode) {
 	label = subEl(mode).innerHTML;
 	return {'label': label.capitalize()};
 };
+
+// The expose guts two way
+module.exports = {
+	init: init,
+	loadMolecule: loadMolecule
+};
+
+util.extend(ui, module.exports);
+
+util.extend(ui, {
+	api_path: '',
+	static_path: '',
+	standalone: true,
+	ctab: new chem.Struct(),
+	render: null,
+	editor: null,
+
+	clipboard: null,
+	hideBlurredControls: hideBlurredControls,
+	updateClipboardButtons: updateClipboardButtons,
+	atomForNewBond: atomForNewBond,
+	selectAction: selectAction,
+	addUndoAction: addUndoAction,
+
+	// TODO: remove me as we get better server API
+	loadMoleculeFromFile: openDialog.loadHook,
+
+	echo: echo,
+	showDialog: showDialog,
+	hideDialog: hideDialog,
+	bondTypeMap: bondTypeMap,
+
+	// TODO: move schrool/zoom machinery to render
+	zoom: 1.0,
+	setZoomStaticPointInit: setZoomStaticPointInit,
+	setZoomStaticPoint: setZoomStaticPoint,
+	page2canvas2: page2canvas2,
+	scrollPos: scrollPos,
+	page2obj: page2obj,
+
+	// TODO: search a way to pass dialogs to editor
+	showSGroupProperties: sgroupDialog,
+	showRGroupTable: showRGroupTable,
+	showElemTable: showElemTable,
+	showReaGenericsTable: showReaGenericsTable,
+	showAtomAttachmentPoints: obsolete.showAtomAttachmentPoints,
+	showAtomProperties: obsolete.showAtomProperties,
+	showBondProperties: obsolete.showBondProperties,
+	showRLogicTable: obsolete.showRLogicTable,
+	showLabelEditor: obsolete.showLabelEditor
+});

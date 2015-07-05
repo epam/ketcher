@@ -16,7 +16,9 @@ var rnd = global.rnd;
 var util = require('../util');
 var server = require('./server.js');
 var Action = require('./action.js');
-var io = require('./dialog/io');
+
+var openDialog = require('./dialog/open.js');
+var saveDialog = require('./dialog/save.js');
 var selectDialog = require('./dialog/select');
 var templatesDialog = require('./dialog/templates');
 var sgroupDialog = require('./dialog/sgroup');
@@ -319,7 +321,7 @@ ui.hideDialog = function (name) {
 };
 
 // TODO: remove it as we get better server
-ui.loadMoleculeFromFile = io.loadHook;
+ui.loadMoleculeFromFile = openDialog.loadHook;
 
 ui.showSGroupProperties = sgroupDialog;
 
@@ -402,22 +404,21 @@ function onClick_NewFile ()
 		ui.addUndoAction(Action.fromNewCanvas(new chem.Struct()));
 		ui.render.update();
 	}
-};
+}
 
 function onClick_OpenFile ()
 {
-	io.openDialog({
+	openDialog({
 		onOk: function (res) {
 			ui.loadMolecule(res.value, false, true, res.fragment);
 		}
 	});
-};
+}
 
 function onClick_SaveFile ()
 {
-	io.saveDialog({molecule: ui.ctab});
-};
-
+	saveDialog({molecule: ui.ctab});
+}
 
 function dearomatizeMolecule (mol, aromatize)
 {

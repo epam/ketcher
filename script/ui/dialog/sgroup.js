@@ -1,14 +1,12 @@
 // TODO: exclude from no-groups build
-/*global require, global*/
+/*global module, global*/
 
 /* eslint-disable */
 
-require('../ui');
-
 var ui = global.ui = global.ui || function () {};
-var alert = global.alert;
 
-ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel) {
+function dialog (id, tool, selection, onOk, onCancel) {
+	console.info('sgroup');
 	if (!tool) {
 		throw new Error('Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.');
 	}
@@ -20,7 +18,7 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel) {
 
 	$('sgroup_properties').sgroup_id = id;
 	$('sgroup_type').value = type;
-	ui.onChange_SGroupType.call($('sgroup_type'));
+	onChange_SGroupType.call($('sgroup_type'));
 
 	switch (type) {
 		case 'SRU':
@@ -122,21 +120,21 @@ ui.showSGroupProperties = function (id, tool, selection, onOk, onCancel) {
 
 	$('sgroup_prop_cancel').observe('click', onClickCancel);
 	$('sgroup_prop_ok').observe('click', onClickOk);
-	$('sgroup_type').observe('change', ui.onChange_SGroupType);
-	$('sgroup_label').observe('change', ui.onChange_SGroupLabel);
+	$('sgroup_type').observe('change', onChange_SGroupType);
+	$('sgroup_label').observe('change', onChange_SGroupLabel);
 
 	ui.showDialog('sgroup_properties');
 	ui.sGroupDlgSelection = selection;
 	$('sgroup_type').activate();
 };
 
-ui.onChange_SGroupLabel = function ()
+function onChange_SGroupLabel ()
 {
 	if ($('sgroup_type').value == 'MUL' && !this.value.match(/^[1-9][0-9]{0,2}$/))
 		this.value = '1';
 };
 
-ui.onChange_SGroupType = function ()
+function onChange_SGroupType ()
 {
 	var type = $('sgroup_type').value;
 
@@ -158,4 +156,6 @@ ui.onChange_SGroupType = function ()
 		$('sgroup_label').value = 'n';
 	else if (type == 'GEN' || type == 'SUP')
 		$('sgroup_label').value = '';
-};
+}
+
+module.exports = dialog;

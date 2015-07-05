@@ -19,6 +19,7 @@ var Action = require('./action.js');
 var io = require('./dialog/io');
 var selectDialog = require('./dialog/select');
 var templatesDialog = require('./dialog/templates');
+var sgroupDialog = require('./dialog/sgroup');
 
 var DEBUG = { forwardExceptions: false };
 var SCALE = 40;  // const
@@ -37,16 +38,17 @@ var undoStack = [];
 var redoStack = [];
 
 var initialized = false;
-var ketcher_window;
+var ketcherWindow;
 var toolbar;
 var zoomSelect;
 var actionComplete;
+var lastSelected;
 //
 // Init section
 //
 ui.init = function (parameters, opts) {
-	ketcher_window = $$('[role=application]')[0] || $$('body')[0];
-	toolbar = ketcher_window.select('[role=toolbar]')[0];
+	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
+	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	ui.client_area = $('ketcher');
 
 	parameters = Object.extend({
@@ -190,8 +192,8 @@ ui.hideBlurredControls = function () {
 // TODO: split to selection by id (atom) and selection by element
 ui.selectAction = function (query) {
 
-	// TODO: last_selected -> prevtool_id
-	query = query || ui.last_selected;
+	// TODO: lastSelected -> prevtool_id
+	query = query || lastSelected;
 	var id = query.id || query,
 	el = $(query);
 
@@ -201,7 +203,7 @@ ui.selectAction = function (query) {
 		tool = action ? action() : mapTool(id);
 		if (tool) {
 			var oldel = toolbar.select('.selected')[0];
-			//console.assert(!ui.last_selected || oldel,
+			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
 
 			if (el != oldel || !el) { // tool canceling needed when dialog opens
@@ -213,7 +215,7 @@ ui.selectAction = function (query) {
 
 				if (id.startsWith && id.startsWith('select-')) {
 					// hack to ensure id is string (not element as in atom case)
-					ui.last_selected = id;
+					lastSelected = id;
 				}
 				if (el) {
 					el.addClassName('selected');
@@ -275,12 +277,12 @@ function transitionEndEvent () {
 };
 
 function animateToggle (el, callback) {
-	ketcher_window.addClassName('animate');
+	ketcherWindow.addClassName('animate');
 	var transitionEnd = transitionEndEvent(),
 	animateStop = function (cb) {
 		setTimeout(function () {
 				cb && cb();
-			ketcher_window.removeClassName('animate');
+			ketcherWindow.removeClassName('animate');
 		}, 0);
 	};
 
@@ -318,6 +320,8 @@ ui.hideDialog = function (name) {
 
 // TODO: remove it as we get better server
 ui.loadMoleculeFromFile = io.loadHook;
+
+ui.showSGroupProperties = sgroupDialog;
 
 ui.showElemTable = function (params) {
 	params.required = true;

@@ -1,17 +1,16 @@
-/*global require, global, ui:false*/
+/*global require, module, global, ui:false*/
 
 /*eslint-disable*/
 
-require('../ui');
 require('../../chem');
 
 var server = require('../server.js');
 // var base64 = require('base64-js');
 
-var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 var chem = global.chem;
+var ui = global.ui = global.ui || function () {}; // jshint ignore:line
 
-ui.openDialog = function (params) {
+function openDialog (params) {
 	var dialog = ui.showDialog('open-file');
 	var okButton = dialog.select('input[value=OK]')[0];
 	var textInput = dialog.select('textarea')[0];
@@ -60,14 +59,14 @@ ui.openDialog = function (params) {
 
 	fileInput.disabled = true;
 	fileInput.parentNode.addClassName('disabled');
-	ui.fileOpener().then(function (f) {
+	fileOpener().then(function (f) {
 		readFile = f;
 		fileInput.disabled = false;
 		fileInput.parentNode.removeClassName('disabled');
 	});
 };
 
-ui.fileOpener = function () {
+function fileOpener () {
 	function throughFileReader(file) {
 		return new Promise(function (resolve, reject) {
 			var rd = new FileReader();
@@ -110,7 +109,7 @@ ui.fileOpener = function () {
 	});
 };
 
-ui.saveDialog = function (params) {
+function saveDialog (params) {
 	var dialog = ui.showDialog('save-file'),
 	output = dialog.select('textarea')[0],
 	formatInput = dialog.select('select')[0],
@@ -137,7 +136,7 @@ ui.saveDialog = function (params) {
 
 	handlers[1] = formatInput.on('change', function (_, input) {
 		var format = formatInput.value;
-		ui.convertMolecule(params.molecule, format).then(function (res) {
+		convertMolecule(params.molecule, format).then(function (res) {
 			outputMolecule(res, format);
 		}, ui.echo);
 	});
@@ -152,14 +151,14 @@ ui.saveDialog = function (params) {
 
 	outputMolecule(new chem.MolfileSaver().saveMolecule(params.molecule));
 	saveButton.addClassName('disabled');
-	ui.fileSaver().then(function (f) {
+	fileSaver().then(function (f) {
 		saveFile = f;
 		saveButton.removeClassName('disabled');
 	});
 	formatInput.select('[value=inchi]')[0].disabled = ui.standalone;
 };
 
-ui.fileSaver = function () {
+function fileSaver () {
 	var mimemap = {
 		'smi': 'chemical/x-daylight-smiles',
 		'mol': 'chemical/x-mdl-molfile',
@@ -184,7 +183,7 @@ ui.fileSaver = function () {
 	});
 };
 
-ui.convertMolecule = function (molecule, format) {
+function convertMolecule (molecule, format) {
 	return new Promise(function (resolve, reject) {
 		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
 		if (format == 'mol') {
@@ -216,7 +215,12 @@ ui.convertMolecule = function (molecule, format) {
 	});
 };
 
-ui.loadMoleculeFromFile = function ()
-{
+function loadHook() {
 	// Called from iframe's 'onload'
+}
+
+module.exports = {
+	loadHook: loadHook,
+	saveDialog: saveDialog,
+	openDialog: openDialog
 };

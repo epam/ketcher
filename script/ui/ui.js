@@ -9,9 +9,11 @@ var ui = global.ui = global.ui || {}; // jshint ignore:line
 
 require('../chem');
 require('../rnd');
+
 var util = require('../util');
 var server = require('./server.js');
 var Action = require('./action.js');
+var io = require('./dialog/io');
 
 var chem = global.chem;
 var rnd = global.rnd;
@@ -380,9 +382,12 @@ function onClick_NewFile ()
 	}
 };
 
+// TODO: remove it as we get better server
+ui.loadMoleculeFromFile = io.loadHook;
+
 function onClick_OpenFile ()
 {
-	ui.openDialog({
+	io.openDialog({
 		onOk: function (res) {
 			ui.loadMolecule(res.value, false, true, res.fragment);
 		}
@@ -391,7 +396,7 @@ function onClick_OpenFile ()
 
 function onClick_SaveFile ()
 {
-	ui.saveDialog({molecule: ui.ctab});
+	io.saveDialog({molecule: ui.ctab});
 };
 
 

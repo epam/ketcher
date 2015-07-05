@@ -14,6 +14,7 @@ var util = require('../util');
 var server = require('./server.js');
 var Action = require('./action.js');
 var io = require('./dialog/io');
+var selectDialog = require('./dialog/select');
 
 var chem = global.chem;
 var rnd = global.rnd;
@@ -315,6 +316,23 @@ ui.hideDialog = function (name) {
 	});
 };
 
+// TODO: remove it as we get better server
+ui.loadMoleculeFromFile = io.loadHook;
+
+ui.showElemTable = function (params) {
+	params.required = true;
+	selectDialog('elem-table', params);
+};
+
+ui.showRGroupTable = function (params) {
+	selectDialog('rgroup-table', params);
+};
+
+ui.showReaGenericsTable = function (params) {
+	params.required = true;
+	selectDialog('generics-table', params);
+};
+
 ui.echo = function (message) {
 	// TODO: make special area for messages
 	alert(message);
@@ -381,9 +399,6 @@ function onClick_NewFile ()
 		ui.render.update();
 	}
 };
-
-// TODO: remove it as we get better server
-ui.loadMoleculeFromFile = io.loadHook;
 
 function onClick_OpenFile ()
 {

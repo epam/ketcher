@@ -1,36 +1,19 @@
-/*global require, global*/
-
-require('../ui');
-require('../../chem');
+/*global module, global*/
 
 var ui = global.ui = global.ui || function () {};
 
-ui.showElemTable = function (params) {
-	params.required = true;
-	ui.selectDialog('elem-table', params);
-};
-
-ui.showRGroupTable = function (params) {
-	ui.selectDialog('rgroup-table', params);
-};
-
-ui.showReaGenericsTable = function (params) {
-	params.required = true;
-	ui.selectDialog('generics-table', params);
-};
-
-ui.selectDialog = function (name, params) {
-	var dialog = ui.showDialog(name);
-	var okButton = dialog.select('input[value=OK]')[0];
+function dialog (name, params) {
+	var dlg = ui.showDialog(name);
+	var okButton = dlg.select('input[value=OK]')[0];
 	var mode = params.mode || 'single';
 	var handlers = [];
 
 	function setSelected(values) {
-		dialog.select('.selected').each(function (button) {
+		dlg.select('.selected').each(function (button) {
 			button.removeClassName('selected');
 		});
 		if (values) {
-			dialog.select('button').each(function (button) {
+			dlg.select('button').each(function (button) {
 				var value = button.value || button.textContent || button.innerText;
 				if (values.indexOf(value) >= 0) {
 					button.addClassName('selected');
@@ -43,21 +26,22 @@ ui.selectDialog = function (name, params) {
 
 	function getSelected() {
 		var values = [];
-		dialog.select('.selected').each(function (button) {
+		dlg.select('.selected').each(function (button) {
 			var value = button.value || button.textContent || button.innerText;
 			values.push(value);
 		});
 		return values;
 	}
 
-	handlers[0] = dialog.on('click', 'input[type=button]', function (_, button) {
+	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		handlers.forEach(function (h) { h.stop(); });
 		ui.hideDialog(name);
 
 		var key = 'on' + button.value.capitalize();
+
 		console.assert(key != 'onOk' || !params.required ||
-		getSelected().length != 0,
-			'No elements selected');
+		               getSelected().length != 0,
+		               'No elements selected');
 		if (params && key in params) {
 			params[key]({
 				mode: mode,
@@ -66,7 +50,7 @@ ui.selectDialog = function (name, params) {
 		}
 	});
 
-	handlers[1] = dialog.on('click', 'button', function (event, button) {
+	handlers[1] = dlg.on('click', 'button', function (event, button) {
 		if (mode === 'single') {
 			if (!button.hasClassName('selected')) {
 				setSelected(null);
@@ -77,12 +61,12 @@ ui.selectDialog = function (name, params) {
 
 		button.toggleClassName('selected');
 		if (params.required) {
-			okButton.disabled = dialog.select('.selected').length === 0;
+			okButton.disabled = dlg.select('.selected').length === 0;
 		}
 		event.stop();
 	});
 
-	handlers[2] = dialog.on('click', 'input[name=mode]', function (_, radio) {
+	handlers[2] = dlg.on('click', 'input[name=mode]', function (_, radio) {
 		if (radio.value != mode) {
 			if (radio.value == 'single') {
 				setSelected(null);
@@ -92,9 +76,11 @@ ui.selectDialog = function (name, params) {
 	});
 
 	setSelected(params.values);
-	dialog.select('input[name=mode]').each(function (radio) {
+	dlg.select('input[name=mode]').each(function (radio) {
 		if (radio.value == mode) {
 			radio.checked = true;
 		}
 	});
-};
+}
+
+module.exports = dialog;

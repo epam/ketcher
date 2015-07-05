@@ -2,7 +2,6 @@
 
 /* eslint-disable */
 
-require('../ui');
 require('../../chem');
 require('../../rnd');
 

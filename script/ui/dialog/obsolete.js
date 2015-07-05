@@ -1,4 +1,4 @@
-/*global require, global, ui:false*/
+/*global require, module, global, ui:false*/
 
 require('../../chem');
 
@@ -8,7 +8,7 @@ var Action = require('../action');
 var ui = global.ui = global.ui || {}; // jshint ignore:line
 var chem = global.chem;
 
-ui.initDialogs = function () {
+function initDialogs () {
 	// Label input events
 	$('input_label').observe('blur', function () {
 		this.hide();
@@ -38,7 +38,7 @@ ui.initDialogs = function () {
 //
 // Atom attachment points dialog
 //
-ui.showAtomAttachmentPoints = function (params) {
+function showAtomAttachmentPoints (params) {
 	$('atom_ap1').checked = ((params.selection || 0) & 1) > 0;
 	$('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
 	ui.showDialog('atom_attpoints');
@@ -64,7 +64,7 @@ ui.showAtomAttachmentPoints = function (params) {
 //
 // Atom properties dialog
 //
-ui.showAtomProperties = function (id) {
+function showAtomProperties (id) {
 	$('atom_properties').atom_id = id;
 	$('atom_label').value = ui.render.atomGetAttr(id, 'label');
 	onChange_AtomLabel.call($('atom_label'));
@@ -168,7 +168,7 @@ function onChange_AtomValence () {
 //
 // Bond properties dialog
 //
-ui.showBondProperties = function (id) {
+function showBondProperties (id) {
 	var bond;
 	$('bond_properties').bond_id = id;
 
@@ -207,7 +207,7 @@ function applyBondProperties () {
 // Reaction auto-mapping
 //
 
-ui.showAutomapProperties = function (params) {
+function showAutomapProperties (params) {
 	ui.showDialog('automap_properties');
 	var _onOk;
 	var _onCancel;
@@ -229,7 +229,7 @@ ui.showAutomapProperties = function (params) {
 	$('automap_mode').activate();
 };
 
-ui.showRLogicTable = function (args) {
+function showRLogicTable (args) {
 	var params = args || {};
 	params.rlogic = params.rlogic || {};
 	$('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
@@ -347,7 +347,7 @@ function onKeyUp_InputLabel (event)
 	}
 };
 
-ui.showLabelEditor = function (aid)
+function showLabelEditor (aid)
 {
 	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (onKeyPress_InputLabel, onBlur, etc)
 	var input_el = $('input_label');
@@ -370,4 +370,14 @@ ui.showLabelEditor = function (aid)
 	input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d).toString() + 'px';
 
 	input_el.activate();
+};
+
+module.exports = {
+	initDialogs: initDialogs,
+	showAtomAttachmentPoints: showAtomAttachmentPoints,
+	showAtomProperties: showAtomProperties,
+	showBondProperties: showBondProperties,
+	showAutomapProperties: showAutomapProperties,
+	showRLogicTable: showRLogicTable,
+	showLabelEditor: showLabelEditor
 };

@@ -235,12 +235,12 @@ class application(object):
         return mol
 
     def serve_static(self):
-        root = self.static_root or getcwd()
+        root = path.realpath(self.static_root or getcwd())
         fpath = self.static_alias.get(self.path, self.path)
-        fpath = path.abspath(path.join(root, fpath))
+        fpath = path.realpath(path.join(root, fpath))
 
         if not fpath.startswith(root + path.sep) or not path.isfile(fpath) \
-           or fpath == path.abspath(__file__):
+           or fpath == path.realpath(__file__):
             raise self.HttpException("404 Not Found",
                                      "Requested file isn't accessible")
 

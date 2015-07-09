@@ -20,10 +20,11 @@ var ketcher = global.ketcher = {};
 ketcher.time_created = '__TIME_CREATED__';
 ketcher.version = '2.0.0-alpha.1';
 
-ketcher.getSmiles = function () {
-	var saver = ui.standalone ? new chem.SmilesSaver() : new chem.MolfileSaver();
+ketcher.getSmiles = function (forceLocal) {
+	var local = ui.standalone || forceLocal;
+	var saver = local ? new chem.SmilesSaver() : new chem.MolfileSaver();
 	var mol = saver.saveMolecule(ui.ctab, true);
-	return ui.standalone ? mol : server.smiles.sync({
+	return local ? mol : server.smiles.sync({
 		moldata: mol
 	});
 };

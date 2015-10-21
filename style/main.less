@@ -73,15 +73,30 @@ main {
 	.selected button {
 		.highlight-invert;
 	}
+	kbd {
+		font: 0.8em monospace;
+		position: relative;
+		right: -0.5em;
+		//float: right;
+		//line-height: 100%;
+		//height: 100%;
+		color: @border-color;
+	}
 }
 
 li.opened {
 	.expanded;
 }
 
-#atom button {
-	font-size: @atom-size;
+#atom {
+	button {
+		font-size: @atom-size;
+	}
+	kbd {
+		display: none;
+	}
 }
+
 
 select {
 	// reset select size after inline-block

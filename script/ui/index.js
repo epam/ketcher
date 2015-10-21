@@ -86,19 +86,19 @@ function init (parameters, opts) {
 	obsolete.initDialogs();
 
 	// Button events
+	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 	toolbar.select('button').each(function (el) {
-		el.on('mouseover', function () {
-			if (this.hasAttribute('disabled')) {
-				return;
-			}
-
-			//! TITLE ME, toolText
-			// var status = this.getAttribute('title');
-			var status = this.innerHTML;
-			if (status != null) {
-				window.status = status;
-			}
-		});
+		// window.status onhover?
+		var caption =  el.textContent || el.innerText;
+		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
+		if (!kd)
+			el.title = caption;
+		else {
+			var keys = kd.split(',').map(function (s) { return s.strip(); });
+			var mk = keys[0].replace('Cmod', isMac ? '⌘' : 'Ctrl');
+			el.title = caption + ' (' + mk + ')';
+			el.innerHTML += ' <kbd>' + mk + '</kbd>';
+		}
 	});
 
 	toolbar.select('li').each(function (el) {

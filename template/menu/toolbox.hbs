@@ -2,33 +2,33 @@
 	<menu>
 		<li id="select">
 			<menu>
-				<li id="select-lasso"><button accesskey="Esc">Lasso Selection</button></li>
-				<li id="select-rectangle"><button accesskey="Esc">Rectangle Selection</button></li>
-				<li id="select-fragment"><button accesskey="Esc">Fragment Selection</button></li>
+				<li id="select-lasso"><button data-keys="Esc, `">Lasso Selection</button></li>
+				<li id="select-rectangle"><button data-keys="Esc, `">Rectangle Selection</button></li>
+				<li id="select-fragment"><button data-keys="Esc, `">Fragment Selection</button></li>
 			</menu>
 		</li>
-		<li id="erase"><button>Erase</button></li>
+		<li id="erase"><button data-keys="Del, Backspace">Erase</button></li>
 		<li id="bond">
 			<menu>
 				<li id="bond-common">
 					<menu>
-						<li id="bond-single"><button accesskey="1">Single Bond</button></li>
-						<li id="bond-double"><button accesskey="2">Double Bond</button></li>
-						<li id="bond-triple"><button accesskey="3">Triple Bond</button></li>
+						<li id="bond-single"><button data-keys="1">Single Bond</button></li>
+						<li id="bond-double"><button data-keys="2">Double Bond</button></li>
+						<li id="bond-triple"><button data-keys="3">Triple Bond</button></li>
 					</menu>
 				</li>
 				<li id="bond-stereo">
 					<menu>
-						<li id="bond-up"><button accesskey="1">Single Up Bond</button></li>
-						<li id="bond-down"><button accesskey="1">Single Down Bond</button></li>
-						<li id="bond-updown"><button accesskey="1">Single Up/Down Bond</button></li>
-						<li id="bond-crossed"><button accesskey="2">Double Cis/Trans Bond</button></li>
+						<li id="bond-up"><button data-keys="1">Single Up Bond</button></li>
+						<li id="bond-down"><button data-keys="1">Single Down Bond</button></li>
+						<li id="bond-updown"><button data-keys="1">Single Up/Down Bond</button></li>
+						<li id="bond-crossed"><button data-keys="2">Double Cis/Trans Bond</button></li>
 					</menu>
 				</li>
 				<li id="bond-query">
 					<menu>
-						<li id="bond-any"><button accesskey="0">Any Bond</button></li>
-						<li id="bond-aromatic"><button accesskey="4">Aromatic Bond</button></li>
+						<li id="bond-any"><button data-keys="0">Any Bond</button></li>
+						<li id="bond-aromatic"><button data-keys="4">Aromatic Bond</button></li>
 						<li id="bond-singledouble"><button>Single/Double Bond</button></li>
 						<li id="bond-singlearomatic"><button>Single/Aromatic Bond</button></li>
 						<li id="bond-doublearomatic"><button>Double/Aromatic Bond</button></li>
@@ -39,13 +39,13 @@
 		<li id="chain"><button>Chain</button></li>
 		<li id="charge">
 			<menu>
-				<li id="charge-plus"><button accesskey="5">Charge Plus</button></li>
-				<li id="charge-minus"><button accesskey="5">Charge Minus</button></li>
+				<li id="charge-plus"><button data-keys="5">Charge Plus</button></li>
+				<li id="charge-minus"><button data-keys="5">Charge Minus</button></li>
 			</menu>
 		</li>
 		<li id="transform">
 			<menu>
-				<li id="transform-rotate"><button>Rotate Tool</button></li>
+				<li id="transform-rotate"><button data-keys="Cmod+R">Rotate Tool</button></li>
 				<li id="transform-flip-h"><button>Horizontal Flip</button></li>
 				<li id="transform-flip-v"><button>Vertical Flip"</button></li>
 			</menu>
@@ -62,19 +62,19 @@
 			</li>
 		{{/unless}}
 		{{#unless no-sgroup}}
-			<li id="sgroup"><button accesskey="Ctrl+G">S-Group</button></li>
+			<li id="sgroup"><button data-keys="Cmod+G">S-Group</button></li>
 		{{/unless}}
 		{{#unless no-rgroup}}
 			<li id="rgroup">
 				<menu>
-					<li id="rgroup-label"><button accesskey="Shift+R">R-Group Label Tool</button></li>
-					<li id="rgroup-fragment"><button accesskey="Shift+R">R-Group Fragment Tool</button></li>
-					<li id="rgroup-attpoints"><button accesskey="Shift+R">Attachment Point Tool</button></li>
+					<li id="rgroup-label"><button data-keys="R, Shift+R">R-Group Label Tool</button></li>
+					<li id="rgroup-fragment"><button data-keys="Shift+R">R-Group Fragment Tool</button></li>
+					<li id="rgroup-attpoints"><button data-keys="Shift+R">Attachment Point Tool</button></li>
 				</menu>
 			</li>
 		{{/unless}}
 		{{#if rgroup-label-only}}
-			<li id="rgroup-label"><button accesskey="Shift+R">R-Group Label Tool</button></li>
+			<li id="rgroup-label"><button data-keys="R, Shift+R">R-Group Label Tool</button></li>
 		{{/if}}
 	</menu>
 </li>

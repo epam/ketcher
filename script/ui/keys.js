@@ -60,45 +60,13 @@ ui.setKeyboardShortcuts = function () {
 };
 
 ui.keyboardShortcuts = {
-	copy: 'ctrl+C',
-	cut: 'ctrl+X',
-	paste: 'ctrl+V',
-	'zoom-in': '=, shift+=, plus, shift+plus, equals, shift+equals',
-	'zoom-out': '-, minus',
-	undo: 'ctrl+Z',
-	redo: 'ctrl+shift+Z,ctrl+Y',
-	bond_tool_any: '0',
-	bond_tool_single: '1',
-	bond_tool_double: '2',
-	bond_tool_triple: '3',
-	bond_tool_aromatic: '4',
-	select_charge_tool: '5',
-	selector: '`',
+// ? 'zoom-in': '=, shift+=, plus, shift+plus, equals, shift+equals',
 	atom_tool_any: 'A',
-	atom_tool_h: 'H',
-	atom_tool_c: 'C',
-	atom_tool_n: 'N',
-	atom_tool_o: 'O',
-	atom_tool_s: 'S',
-	atom_tool_p: 'P',
-	atom_tool_f: 'F',
-	atom_tool_br: 'shift+B',
-	atom_tool_cl: 'shift+C',
-	atom_tool_i: 'I',
-	rgroup_tool_label: 'R',
-	rgroup_tool_select: 'shift+R',
+//? rgroup_tool_label: 'R',
 	select_all: 'ctrl+A',
-	sgroup_tool: 'ctrl+G',
-	cleanup_tool: 'ctrl+L',
-	new_document: 'ctrl+N',
-	open_document: 'ctrl+O',
-	save_document: 'ctrl+S',
-	rotate_tool: 'ctrl+R',
-	template_tool: 'T',
-	customtemplate_tool: 'shift+T',
-	//escape: 'escape',
+//? escape: 'escape',
 
-	force_update: 'ctrl+alt+shift+R'
+	force_update: 'ctrl+alt+R'
 };
 
 ui.selector_tool_modes = ['selector_lasso', 'selector_square', 'selector_fragment'];

@@ -6,7 +6,6 @@
 var ui = global.ui;
 
 function dialog (id, tool, selection, onOk, onCancel) {
-	console.info('sgroup');
 	if (!tool) {
 		throw new Error('Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.');
 	}

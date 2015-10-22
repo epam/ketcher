@@ -10,6 +10,8 @@ require('../rnd');
 var chem = global.chem;
 var rnd = global.rnd;
 
+var keymage = require('keymage');
+
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
@@ -87,6 +89,7 @@ function init (parameters, opts) {
 
 	// Button events
 	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+	var keyMap = {};
 	toolbar.select('button').each(function (el) {
 		// window.status onhover?
 		var caption =  el.textContent || el.innerText;
@@ -95,20 +98,47 @@ function init (parameters, opts) {
 			el.title = caption;
 		else {
 			var keys = kd.split(',').map(function (s) { return s.strip(); });
-			var mk = keys[0].replace('Cmod', isMac ? '⌘' : 'Ctrl');
+			var mk = keys[0].replace(/Cmod/g, isMac ? '⌘' : 'Ctrl');
+			var action = el.parentNode.id;
 			el.title = caption + ' (' + mk + ')';
 			el.innerHTML += ' <kbd>' + mk + '</kbd>';
+
+			keys.forEach(function (kb) {
+				var nk = kb.replace(/\+(?!$)/g, '-')
+				    .replace(/Cmod/g, 'defmod')
+				    .toLowerCase();
+				if (Array.isArray(keyMap[nk]))
+				    keyMap[nk].push(action);
+				else
+					keyMap[nk] = [action];
+			});
 		}
 	});
+	keyMap = util.extend(keyMap, {
+		'a': ['atom-any'],
+		'defmod-a': ['select-all'],
+		'defmod-shift-a': ['deselect-all'],
+		'ctrl-alt-r': ['force-update']
+	});
+	Object.keys(keyMap).forEach(function (key) {
+		keymage('editor', key, keyMap[key].length == 1 ? function () {
+			selectAction(keyMap[key][0]);
+		} : function () {
+			console.info('actions', keyMap[key]);
+		}, {
+			preventDefault: true
+		});
+	});
+	keymage.setScope('editor');
 
 	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
 			if (event.target.tagName == 'BUTTON' &&
-			event.target.parentNode == this) {
+			    event.target.parentNode == this) {
 				if (!this.hasClassName('selected')) {
 					event.stop();
 				}
-				selectAction(this);
+				selectAction(this.id);
 			}
 
 			if (hideBlurredControls()) {
@@ -181,13 +211,11 @@ function hideBlurredControls () {
 	return true;
 };
 
-// TODO: split to selection by id (atom) and selection by element
-function selectAction (query) {
-
+function selectAction (id) {
 	// TODO: lastSelected -> prevtool_id
-	query = query || lastSelected;
-	var id = query.id || query,
-	el = $(query);
+	console.assert(id.startsWith, 'id is not a string', id);
+	id = id || lastSelected;
+	var el = $(id);
 
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).hasAttribute('disabled')) {
@@ -205,8 +233,7 @@ function selectAction (query) {
 				}
 				ui.render.current_tool = tool;
 
-				if (id.startsWith && id.startsWith('select-')) {
-					// hack to ensure id is string (not element as in atom case)
+				if (id.startsWith('select-')) {
 					lastSelected = id;
 				}
 				if (el) {
@@ -293,6 +320,7 @@ function animateToggle (el, callback) {
 
 function showDialog (name) {
 	var dialog = $(name);
+	keymage.setScope('dialog');
 	animateToggle(function () {
 		$$('.overlay')[0].show();
 		// dialog.show();
@@ -307,6 +335,7 @@ function hideDialog (name) {
 		// $(name).hide();
 		$(name).style.display = 'none';
 		cover.hide();
+		keymage.setScope('editor');
 	});
 };
 
@@ -810,13 +839,6 @@ function onOffsetChanged (newOffset, oldOffset)
 	clientArea.scrollTop += delta.y;
 };
 
-function selectAll ()
-{
-	if (!ui.ctab.isBlank()) {
-		ui.editor.selectAll();
-	}
-};
-
 function removeSelected ()
 {
 	addUndoAction(Action.fromFragmentDeletion());
@@ -1118,6 +1140,16 @@ var actionMap = {
 	'info': function (el) {
 		showDialog('about_dialog');
 	},
+	'select-all': function () {
+		ui.editor.selectAll();
+	},
+	'deselect-all': function () {
+		ui.editor.deselectAll();
+	},
+	'force-update': function () {
+		// original: for dev purposes
+		ui.render.update(true);
+	},
 	'reaction-automap': onClick_Automap
 };
 
@@ -1133,7 +1165,7 @@ function mapTool (id) {
 			return null;
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
-		if (atomLabel(id)) {
+		if (id.startsWith('atom-')) {
 			addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
 			ui.render.update();
 			return null;
@@ -1170,7 +1202,7 @@ function mapTool (id) {
 		return new rnd.Editor.LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
 		return new rnd.Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
-	} else if (atomLabel(id)) {
+	} else if (id.startsWith('atom-')) {
 		return new rnd.Editor.AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {
 		return new rnd.Editor.BondTool(ui.editor, bondType(id));
@@ -1228,26 +1260,21 @@ function bondType (mode)
 	return bondTypeMap[type_str];
 };
 
-// temporary hack as mode passed to mapTool is
-// actually li element
 function atomLabel (mode) {
-	var label;
-	if (!mode.up || !mode.up('#atom')) {
-		label = mode.substr(5);
-
-		if (label == 'table') {
-			return current_elemtable_props;
-		}
-		if (label == 'reagenerics')
-			return current_reagenerics;
-		// how can we go here?
-		// if (label == 'any')
-		// 	return {'label':'A'};
-		return null;
+	var label = mode.substr(5);
+	switch (label) {
+	case 'table':
+		return current_elemtable_props;
+	case 'reagenerics':
+		return current_reagenerics;
+	case 'any':
+		return {label:'A'};
+	default:
+		label = label.capitalize();
+		console.assert(chem.Element.getElementByLabel(label),
+		              "No such atom exist");
+		return {label: label};
 	}
-
-	label = subEl(mode).innerHTML;
-	return {'label': label.capitalize()};
 };
 
 // The expose guts two way

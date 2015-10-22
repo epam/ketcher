@@ -735,12 +735,24 @@ chem.SGroup.setPos = function (remol, sg, pos) {
 
 chem.SGroup.GroupDat = {
 	showValue: function (paper, pos, sg, settings) {
-		var name = paper.text(pos.x, pos.y, sg.data.fieldValue)
-		.attr({
-			'font': settings.font,
-			'font-size': settings.fontsz
-		});
-		return name;
+		var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
+		    .attr({
+			    'font': settings.font,
+			    'font-size': settings.fontsz
+		    });
+		var box = text.getBBox();
+		var rect = paper.rect(box.x - 1, box.y - 1,
+		                      box.width + 2, box.height + 2, 3, 3)
+		    .attr({
+			    fill: '#fff',
+			    stroke: '#fff'
+		    });
+		var st = paper.set();
+		st.push(
+			rect,
+			text.toFront()
+		);
+		return st;
 	},
 
 	draw: function (remol) {

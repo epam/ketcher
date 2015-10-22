@@ -74,7 +74,7 @@ function init (parameters, opts) {
 			// probably must be disabled by default
 			$$('#cleanup', '#arom', '#dearom',
 				'#reaction-automap', '#template-custom').each(function (el) {
-				subEl(el).setAttribute('disabled', true);
+				subEl(el).disabled = true;
 			});
 		}).then(function () {
 			// TODO: move it out there as server incapsulates
@@ -100,7 +100,7 @@ function init (parameters, opts) {
 			var keys = kd.split(',').map(function (s) { return s.strip(); });
 			var mk = keys[0].replace(/Cmod/g, isMac ? '⌘' : 'Ctrl');
 			var action = el.parentNode.id;
-			el.title = caption + ' (' + mk + ')';
+			el.title = (el.title || caption) + ' (' + mk + ')';
 			el.innerHTML += ' <kbd>' + mk + '</kbd>';
 
 			keys.forEach(function (kb) {
@@ -153,15 +153,12 @@ function init (parameters, opts) {
 	});
 
 	zoomSelect = subEl('zoom-list');
-	// TODO: only in dialog/crap and render one time
+	// TODO: remove this shit (used in rnd.Render guts)
+	// only in dialog/crap and render one time
 	ui.zoom = parseFloat(zoomSelect.options[zoomSelect.selectedIndex].innerHTML) / 100;
 
-	// TODO: remove this^ shit (used in rnd.Render guts)
-	zoomSelect.on('change', function () {
-		updateZoom();
-	});
+	zoomSelect.on('change', updateZoom);
 	clientArea.on('scroll', onScroll_ClientArea);
-
 	updateHistoryButtons();
 
 	// Init renderer
@@ -213,12 +210,12 @@ function hideBlurredControls () {
 
 function selectAction (id) {
 	// TODO: lastSelected -> prevtool_id
-	console.assert(id.startsWith, 'id is not a string', id);
 	id = id || lastSelected;
+	console.assert(id.startsWith, 'id is not a string', id);
 	var el = $(id);
 
 	// TODO: refactor !el - case when there are no such id
-	if (!el || !subEl(el).hasAttribute('disabled')) {
+	if (!el || !subEl(el).disabled) {
 		var action = actionMap[id],
 		tool = action ? action() : mapTool(id);
 		if (tool) {
@@ -248,35 +245,13 @@ function selectAction (id) {
 };
 
 function updateHistoryButtons () {
-	if (undoStack.length == 0) {
-		subEl('undo').setAttribute('disabled', true);
-	}
-	else {
-		subEl('undo').removeAttribute('disabled');
-	}
-
-	if (redoStack.length == 0) {
-		subEl('redo').setAttribute('disabled', true);
-	}
-	else {
-		subEl('redo').removeAttribute('disabled');
-	}
+	subEl('undo').disabled = (undoStack.length == 0);
+	subEl('redo').disabled = (redoStack.length == 0);
 };
 
 function updateClipboardButtons () {
-	if (isClipboardEmpty())
-		subEl('paste').setAttribute('disabled', true);
-	else {
-		subEl('paste').removeAttribute('disabled');
-	}
-
-	if (ui.editor.hasSelection(true)) {
-		subEl('copy').removeAttribute('disabled');
-		subEl('cut').removeAttribute('disabled');
-	} else {
-		subEl('copy').setAttribute('disabled', true);
-		subEl('cut').setAttribute('disabled', true);
-	}
+	subEl('paste').disabled = isClipboardEmpty();
+	subEl('copy').disabled = subEl('cut').disabled = !ui.editor.hasSelection(true);
 };
 
 function transitionEndEvent () {
@@ -468,17 +443,11 @@ function onClick_ZoomOut () {
 
 function updateZoom () {
 	var i = zoomSelect.selectedIndex,
-	len = zoomSelect.length;
+	    len = zoomSelect.length;
 	console.assert(0 <= i && i < len, 'Zoom out of range');
 
-	if (i == len - 1)
-		subEl('zoom-in').setAttribute('disabled', true);
-	else
-		subEl('zoom-in').removeAttribute('disabled');
-	if (i == 0)
-		subEl('zoom-out').setAttribute('disabled', true);
-	else
-		subEl('zoom-out').removeAttribute('disabled');
+	subEl('zoom-in').disabled = (i == len - 1);
+	subEl('zoom-out').disabled = (i == 0);
 
 	var value = parseFloat(zoomSelect.options[i].innerHTML) / 100;
 	setZoomCentered(value,

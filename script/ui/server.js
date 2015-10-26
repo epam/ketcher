@@ -64,6 +64,7 @@ module.exports = {
 	inchi: apiRequest('POST', 'getinchi'),
 	aromatize: apiRequest('POST', 'aromatize'),
 	dearomatize: apiRequest('POST', 'dearomatize'),
+	calculateCip: apiRequest('POST', 'calculate_cip'),
 	automap: apiRequest('POST', 'automap'),
 	layout_smiles: apiRequest('GET', 'layout'),
 	layout: apiRequest('POST', 'layout'),

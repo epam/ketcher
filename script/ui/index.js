@@ -72,7 +72,7 @@ function init (parameters, opts) {
 		}, function (val) {
 			document.title += ' (standalone)';
 			// probably must be disabled by default
-			$$('#cleanup', '#arom', '#dearom',
+			$$('#cleanup', '#arom', '#dearom', '#calc-cip',
 				'#reaction-automap', '#template-custom').each(function (el) {
 				subEl(el).disabled = true;
 			});
@@ -120,8 +120,10 @@ function init (parameters, opts) {
 		'defmod-shift-a': ['deselect-all'],
 		'ctrl-alt-r': ['force-update']
 	});
+
 	Object.keys(keyMap).forEach(function (key) {
 		keymage('editor', key, keyMap[key].length == 1 ? function () {
+			// TODO: handle disabled
 			selectAction(keyMap[key][0]);
 		} : function () {
 			console.info('actions', keyMap[key]);
@@ -408,14 +410,14 @@ function onClick_SaveFile ()
 	saveDialog({molecule: ui.ctab});
 }
 
-function dearomatizeMolecule (mol, aromatize)
+function aromatize(mol, arom)
 {
 	mol = mol.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
 	var mol_string = new chem.MolfileSaver().saveMolecule(mol);
 
 	if (!ui.standalone) {
-		var method = aromatize ? 'aromatize' : 'dearomatize',
+		var method = arom ? 'aromatize' : 'dearomatize',
 		request = server[method]({moldata: mol_string});
 		request.then(function (data) {
 			var resmol = parseMayBeCorruptedCTFile(data);
@@ -426,6 +428,22 @@ function dearomatizeMolecule (mol, aromatize)
 	} else {
 		throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
 	}
+};
+
+// TODO: merge with arom/dearom + spinner
+function calculateCip() {
+	util.assert(!ui.standalone, 'Can\'t calculate in standalone mode!'); // it's assert error now
+	var mol = ui.ctab.clone();
+	var implicitReaction = mol.addRxnArrowIfNecessary();
+	var mol_string = new chem.MolfileSaver().saveMolecule(mol);
+
+	var request = server.calculateCip({moldata: mol_string});
+	request.then(function (data) {
+		var resmol = parseMayBeCorruptedCTFile(data);
+		if (implicitReaction)
+			resmol.rxnArrows.clear();
+		updateMolecule(resmol);
+	}, echo);
 };
 
 //
@@ -563,7 +581,7 @@ function onClick_CleanUp ()
 function onClick_Aromatize ()
 {
 	try {
-		dearomatizeMolecule(ui.ctab, true);
+		aromatize(ui.ctab, true);
 	} catch (er) {
 			if (DEBUG.forwardExceptions)
 				throw er;
@@ -574,14 +592,13 @@ function onClick_Aromatize ()
 function onClick_Dearomatize ()
 {
 	try {
-		dearomatizeMolecule(ui.ctab, false);
+		aromatize(ui.ctab, false);
 	} catch (er) {
 			if (DEBUG.forwardExceptions)
 				throw er;
 			alert('Molfile: ' + er.message);
 		}
 };
-
 
 function onClick_Automap () {
 	obsolete.showAutomapProperties({
@@ -1119,7 +1136,8 @@ var actionMap = {
 		// original: for dev purposes
 		ui.render.update(true);
 	},
-	'reaction-automap': onClick_Automap
+	'reaction-automap': onClick_Automap,
+	'calc-cip': calculateCip
 };
 
 // TODO: rewrite declaratively, merge to actionMap

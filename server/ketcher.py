@@ -180,7 +180,7 @@ class application(object):
 
     @indigo_required
     def on_calculate_cip(self):
-	indigo.setOption('molfile-saving-add-stereo-desc', True)
+        application.indigo.setOption('molfile-saving-add-stereo-desc', True)
         try:
             md, is_rxn = self.load_moldata()
         except:
@@ -190,10 +190,10 @@ class application(object):
                 md, is_rxn = self.load_moldata(True)
             else:
                 raise
-	result = md.rxnfile() if is_rxn else md.molfile()
-	indigo.setOption('molfile-saving-add-stereo-desc', False)
+        result = md.rxnfile() if is_rxn else md.molfile()
+        application.indigo.setOption('molfile-saving-add-stereo-desc', False)
         return ["Ok.\n",
-  		result]
+                result]
 
     def on_open(self):
         if self.is_form_request():

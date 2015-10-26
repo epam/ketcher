@@ -178,6 +178,23 @@ class application(object):
         return ["Ok.\n",
                 md.rxnfile() if is_rxn else md.molfile()]
 
+    @indigo_required
+    def on_calculate_cip(self):
+	indigo.setOption('molfile-saving-add-stereo-desc', True)
+        try:
+            md, is_rxn = self.load_moldata()
+        except:
+            message = str(sys.exc_info()[1])
+            if message.startswith("\"molfile loader:") and \
+               message.endswith("queries\""): # hack to avoid user confusion
+                md, is_rxn = self.load_moldata(True)
+            else:
+                raise
+	result = md.rxnfile() if is_rxn else md.molfile()
+	indigo.setOption('molfile-saving-add-stereo-desc', False)
+        return ["Ok.\n",
+  		result]
+
     def on_open(self):
         if self.is_form_request():
             self.headers.add_header('Content-Type', 'text/html')

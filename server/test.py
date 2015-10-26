@@ -65,6 +65,15 @@ class TestKetcherServerApi(unittest.TestCase):
         smiles = indigo.loadMolecule(molfile).canonicalSmiles()
         self.assertEquals(smiles, "CCCN1C(=O)N=C(O)C2NC=NC1=2")
 
+    def test_calculate_cip(self):
+        inp = "CCCN1C(=O)N=C(O)c2[nH]c[n]c12"
+        r = make_request("calculate_cip", (("moldata", inp),))
+        self.assertEquals(200, r.code)
+        status, molfile = r.read().split('\n',1)
+        self.assertEquals(status, "Ok.")
+        smiles = indigo.loadMolecule(molfile).canonicalSmiles()
+        self.assertEquals(smiles, "CCCN1C(=O)N=C(O)C2NC=NC1=2")
+                          
     def test_getinchi(self):
         inp = "CCCN1C(=O)N=C(O)c2[nH]c[n]c12"
         r = make_request("getinchi", (("moldata", inp),))

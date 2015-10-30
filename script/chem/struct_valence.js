@@ -2,6 +2,7 @@
 
 /*eslint-disable*/
 var util = require('../util');
+var element = require('./element');
 require('./struct');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
@@ -45,13 +46,13 @@ chem.Struct.Atom.prototype.calcValence = function (conn)
 		this.implicitH = 0;
 		return true;
 	}
-	var elem = chem.Element.getElementByLabel(label);
+	var elem = element.getElementByLabel(label);
 	if (elem == null) {
 		this.implicitH = 0;
 		return true;
 	}
 
-	var groupno = chem.Element.elements.get(elem).group;
+	var groupno = element.get(elem).group;
 	var rad = chem.Struct.radicalElectrons(atom.radical);
 
 	var valence = conn;
@@ -361,7 +362,7 @@ chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;
-	var elem = chem.Element.getElementByLabel(label);
+	var elem = element.getElementByLabel(label);
 	if (elem == null)
 		throw new Error('Element ' + label + ' unknown');
 	if (elem < 0) { // query atom, skip
@@ -369,7 +370,7 @@ chem.Struct.Atom.prototype.calcValenceMinusHyd = function (conn)
 		return null;
 	}
 
-	var groupno = chem.Element.elements.get(elem).group;
+	var groupno = element.get(elem).group;
 	var rad = chem.Struct.radicalElectrons(atom.radical);
 
 	if (groupno == 3)
@@ -434,7 +435,7 @@ chem.Struct.prototype.calcImplicitHydrogen = function (aid)
 		return;
 	}
 	if (atom.explicitValence >= 0) {
-		var elem = chem.Element.getElementByLabel(atom.label);
+		var elem = element.getElementByLabel(atom.label);
 		atom.implicitH = 0;
 		if (elem != null) {
 			atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);

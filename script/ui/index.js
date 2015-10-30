@@ -19,6 +19,7 @@ var server = require('./server.js');
 var Action = require('./action.js');
 
 var templates = require('./templates');
+var element = require('../chem/element');
 
 var openDialog = require('./dialog/open.js');
 var saveDialog = require('./dialog/save.js');
@@ -1004,7 +1005,7 @@ function onClick_ElemTableButton ()
 			var props;
 			if (res.mode == 'single')
 				props = {
-					label: chem.Element.elements.get(res.values[0]).label
+					label: element.get(res.values[0]).label
 				};
 			else
 				props = {
@@ -1258,7 +1259,7 @@ function atomLabel (mode) {
 		return {label:'A'};
 	default:
 		label = label.capitalize();
-		console.assert(chem.Element.getElementByLabel(label),
+		console.assert(element.getElementByLabel(label),
 		              "No such atom exist");
 		return {label: label};
 	}

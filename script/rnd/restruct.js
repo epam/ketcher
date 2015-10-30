@@ -13,6 +13,7 @@ var Pool = require('../util/pool');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
+var element = require('../chem/element');
 
 require('../chem');
 
@@ -685,9 +686,9 @@ rnd.ReStruct.prototype.setHydrogenPos = function () {
 		var atom = this.atoms.get(aid);
 
 		if (atom.a.neighbors.length == 0) {
-			var elem = chem.Element.getElementByLabel(atom.a.label);
+			var elem = element.getElementByLabel(atom.a.label);
 			if (elem != null) {
-				atom.hydrogenOnTheLeft = chem.Element.elements.get(elem).putHydrogenOnTheLeft;
+				atom.hydrogenOnTheLeft = element.get(elem).putHydrogenOnTheLeft;
 			}
 			continue;
 		}

@@ -5,6 +5,7 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
+var element = require('../chem/element');
 
 require('../chem');
 require('./restruct');
@@ -406,7 +407,7 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function (event) {
 					return true;
 				}.bind(this)
 			});
-		} else if ((chem.Element.getElementByLabel(atom.label) || 121) < 120) {
+		} else if ((element.getElementByLabel(atom.label) || 121) < 120) {
 			ui.showAtomProperties(ci.id);
 		} else {
 			ui.showReaGenericsTable({
@@ -1010,7 +1011,7 @@ rnd.Editor.ChargeTool = function (editor, charge) { // TODO [RB] should be "plug
 rnd.Editor.ChargeTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.ChargeTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms' && chem.Element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
+	if (ci && ci.map == 'atoms' && element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
 		this._hoverHelper.hover(ci);
 	} else {
 		this._hoverHelper.hover(null);
@@ -1020,7 +1021,7 @@ rnd.Editor.ChargeTool.prototype.OnMouseMove = function (event) {
 rnd.Editor.ChargeTool.prototype.OnMouseUp = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	var ci = _R_.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms' && chem.Element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
+	if (ci && ci.map == 'atoms' && element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
 		this._hoverHelper.hover(null);
 		ui.addUndoAction(
 		Action.fromAtomsAttrs(ci.id, { charge: _R_.ctab.molecule.atoms.get(ci.id).charge + this.charge })

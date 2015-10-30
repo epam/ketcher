@@ -5,9 +5,9 @@
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
+var element = require('./element');
 
 var util = require('../util');
-require('./element');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
@@ -312,7 +312,7 @@ chem.Molfile.labelsListToIds = function (labels)
 {
 	var ids = [];
 	for (var i = 0; i < labels.length; ++i) {
-		ids.push(chem.Element.getElementByLabel(labels[i].strip()));
+		ids.push(element.getElementByLabel(labels[i].strip()));
 	}
 	return ids;
 };
@@ -1189,7 +1189,7 @@ chem.MolfileSaver.prototype.writeCTab2000 = function (rgroups)
 		if (atom.atomList != null) {
 			label = 'L';
 			atomList_list.push(id);
-		} else if (chem.Element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) {
+		} else if (element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) {
 			label = 'C';
 			atomLabel_list.push(id);
 		}

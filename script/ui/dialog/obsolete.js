@@ -1,12 +1,10 @@
 /*global require, module, global*/
 
-require('../../chem');
-
+var element = require('../../chem/element');
 var util = require('../../util');
 var Action = require('../action');
 
 var ui = global.ui;
-var chem = global.chem;
 
 function initDialogs () {
 	// Label input events
@@ -115,26 +113,26 @@ function applyAtomProperties () {
 function onChange_AtomLabel () {
 	this.value = this.value.strip().capitalize();
 
-	var element = chem.Element.getElementByLabel(this.value);
+	var elem = element.getElementByLabel(this.value);
 
 	if (
-		element == null && this.value !== 'A' &&
+		elem == null && this.value !== 'A' &&
 	this.value !== '*' && this.value !== 'Q' && this.value !== 'X' &&
 	this.value !== 'R'
 	) {
 		this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
 
 		if (this.value !== 'A' && this.value !== '*') {
-			element = chem.Element.getElementByLabel(this.value);
+			elem = element.getElementByLabel(this.value);
 		}
 	}
 
 	if (this.value == 'A' || this.value == '*') {
 		$('atom_number').value = 'any';
-	} else if (!element) {
+	} else if (!elem) {
 		$('atom_number').value = '';
 	} else {
-		$('atom_number').value = element.toString();
+		$('atom_number').value = elem.toString();
 	}
 };
 
@@ -326,7 +324,7 @@ function onKeyPress_InputLabel (event)
 				charge *= -1;
 		}
 
-		if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || chem.Element.getElementByLabel(label) != null) {
+		if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || element.getElementByLabel(label) != null) {
 			ui.addUndoAction(Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
 			ui.render.update();
 		}

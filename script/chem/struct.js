@@ -8,7 +8,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
-require('./element');
+var element = require('./element');
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
 chem.Struct = function () {
@@ -418,7 +418,7 @@ chem.Struct.Atom.prototype.isPlainCarbon =  function ()
 chem.Struct.Atom.prototype.isPseudo =  function ()
 {
 	// TODO: handle reaxys generics separately
-	return !this.atomList && !this.rglabel && !chem.Element.getElementByLabel(this.label);
+	return !this.atomList && !this.rglabel && !element.getElementByLabel(this.label);
 };
 
 chem.Struct.Atom.prototype.hasRxnProps =  function ()
@@ -439,7 +439,7 @@ chem.Struct.AtomList.prototype.labelList = function ()
 {
 	var labels = [];
 	for (var i = 0; i < this.ids.length; ++i)
-		labels.push(chem.Element.elements.get(this.ids[i]).label);
+		labels.push(element.get(this.ids[i]).label);
 	return labels;
 };
 

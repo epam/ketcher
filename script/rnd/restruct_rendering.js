@@ -5,6 +5,7 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
+var element = require('../chem/element');
 
 require('./restruct');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
@@ -681,9 +682,9 @@ rnd.ReStruct.prototype.showLabels = function ()
 			} else {
 				label.text = atom.a.label;
 				if (opt.atomColoring) {
-					var elem = chem.Element.getElementByLabel(label.text);
+					var elem = element.getElementByLabel(label.text);
 					if (elem)
-						color = chem.Element.elements.get(elem).color;
+						color = element.get(elem).color;
 				}
 			}
 			label.path = paper.text(ps.x, ps.y, label.text)

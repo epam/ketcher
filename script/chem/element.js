@@ -136,16 +136,16 @@ var element = new Map({
 
 var labelMap = null;
 element.getElementByLabel = function (label) {
-	if (!this.labelMap) {
-		this.labelMap = {};
-		this.elements.each(function (key, value) {
-			this.labelMap[value.label] = key - 0;
-		}, this);
+	if (!labelMap) {
+		labelMap = {};
+		element.each(function (key, value) {
+			labelMap[value.label] = key - 0;
+		});
 	}
-	if (!this.labelMap.hasOwnProperty(label)) {
+	if (!labelMap.hasOwnProperty(label)) {
 		return null;
 	}
-	return this.labelMap[label];
+	return labelMap[label];
 };
 
 module.exports = element;

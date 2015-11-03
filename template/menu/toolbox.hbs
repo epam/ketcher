@@ -2,9 +2,9 @@
 	<menu>
 		<li id="select">
 			<menu>
-				<li id="select-lasso"><button data-keys="Esc, `">Lasso Selection</button></li>
-				<li id="select-rectangle"><button data-keys="Esc, `">Rectangle Selection</button></li>
-				<li id="select-fragment"><button data-keys="Esc, `">Fragment Selection</button></li>
+				<li id="select-lasso"><button data-keys="`, Esc">Lasso Selection</button></li>
+				<li id="select-rectangle"><button data-keys="`">Rectangle Selection</button></li>
+				<li id="select-fragment"><button data-keys="`">Fragment Selection</button></li>
 			</menu>
 		</li>
 		<li id="erase"><button data-keys="Del, Backspace">Erase</button></li>
@@ -45,7 +45,7 @@
 		</li>
 		<li id="transform">
 			<menu>
-				<li id="transform-rotate"><button data-keys="Cmod+R">Rotate Tool</button></li>
+				<li id="transform-rotate"><button data-keys="Defmod-R">Rotate Tool</button></li>
 				<li id="transform-flip-h"><button>Horizontal Flip</button></li>
 				<li id="transform-flip-v"><button>Vertical Flip"</button></li>
 			</menu>
@@ -62,19 +62,19 @@
 			</li>
 		{{/unless}}
 		{{#unless no-sgroup}}
-			<li id="sgroup"><button data-keys="Cmod+G">S-Group</button></li>
+			<li id="sgroup"><button data-keys="Defmod-G">S-Group</button></li>
 		{{/unless}}
 		{{#unless no-rgroup}}
 			<li id="rgroup">
 				<menu>
-					<li id="rgroup-label"><button data-keys="R, Shift+R">R-Group Label Tool</button></li>
-					<li id="rgroup-fragment"><button data-keys="Shift+R">R-Group Fragment Tool</button></li>
-					<li id="rgroup-attpoints"><button data-keys="Shift+R">Attachment Point Tool</button></li>
+					<li id="rgroup-label"><button data-keys="R, Shift-R">R-Group Label Tool</button></li>
+					<li id="rgroup-fragment"><button data-keys="Shift-R">R-Group Fragment Tool</button></li>
+					<li id="rgroup-attpoints"><button data-keys="Shift-R">Attachment Point Tool</button></li>
 				</menu>
 			</li>
 		{{/unless}}
 		{{#if rgroup-label-only}}
-			<li id="rgroup-label"><button data-keys="R, Shift+R">R-Group Label Tool</button></li>
+			<li id="rgroup-label"><button data-keys="R, Shift-R">R-Group Label Tool</button></li>
 		{{/if}}
 	</menu>
 </li>

@@ -1,4 +1,4 @@
-/*global require, global:false, chem:false*/
+/*global require, module*/
 
 var Map = require('../util/map');
 
@@ -142,10 +142,7 @@ element.getElementByLabel = function (label) {
 			labelMap[value.label] = key - 0;
 		});
 	}
-	if (!labelMap.hasOwnProperty(label)) {
-		return null;
-	}
-	return labelMap[label];
+	return labelMap[label] || null;
 };
 
 module.exports = element;

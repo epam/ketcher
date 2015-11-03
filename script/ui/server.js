@@ -62,6 +62,7 @@ function apiRequest(method, url) {
 
 module.exports = {
 	inchi: apiRequest('POST', 'getinchi'),
+	molfile: apiRequest('POST', 'getmolfile'),
 	aromatize: apiRequest('POST', 'aromatize'),
 	dearomatize: apiRequest('POST', 'dearomatize'),
 	calculateCip: apiRequest('POST', 'calculate_cip'),

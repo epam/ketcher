@@ -45,7 +45,7 @@ ketcher.addFragment = function (molString) {
 	if (!Object.isString(molString)) {
 		return;
 	}
-	ui.loadMolecule(molString, undefined, undefined, true);
+	ui.loadFragment(molString);
 };
 
 ketcher.showMolfile = function (clientArea, molString, options) {

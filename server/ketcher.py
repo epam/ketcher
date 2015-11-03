@@ -135,7 +135,7 @@ class application(object):
     @indigo_required
     def on_getmolfile(self):
         md, is_rxn = self.load_moldata()
-        return ["Ok.\n", mol.molfile()]
+        return ["Ok.\n", md.molfile()]
 
     @indigo_required
     def on_automap(self):

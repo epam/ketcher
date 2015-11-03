@@ -299,8 +299,8 @@ function initCliparea(parent) {
 			console.info(cb.types,
 			             cb.getData('text/plain'),
 			             cb.getData('chemical/x-mdl-molfile'));
+			loadFragment(cb.getData('text/plain'));
 			event.preventDefault();
-			return new rnd.Editor.PasteTool(ui.editor);
 		}
 	});
 }
@@ -330,7 +330,7 @@ function animateToggle (el, callback) {
 	var transitionEnd = transitionEndEvent(),
 	animateStop = function (cb) {
 		setTimeout(function () {
-				cb && cb();
+			cb && cb();
 			ketcherWindow.removeClassName('animate');
 		}, 0);
 	};
@@ -397,24 +397,21 @@ function updateMolecule (mol)
 		return;
 
 	ui.editor.deselectAll();
-
 	addUndoAction(Action.fromNewCanvas(mol));
-
 	showDialog('loading');
 	// setTimeout(function ()
 	// {
-	try
-	{
+	try {
 		ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 		ui.render.update();
 		setZoomCentered(null, ui.render.getStructCenter());
-	} catch (er)
-		{
+	}
+	catch (er) {
 			if (DEBUG.forwardExceptions)
 				throw er;
 			alert(er.message);
-		} finally
-	{
+	}
+	finally {
 		hideDialog('loading');
 	}
 //    }, 50);
@@ -453,7 +450,10 @@ function onClick_OpenFile ()
 {
 	openDialog({
 		onOk: function (res) {
-			loadMolecule(res.value, false, true, res.fragment);
+			if (res.fragment)
+				loadFragment(res.value, true);
+			else
+				loadMolecule(res.value, true);
 		}
 	});
 }
@@ -623,7 +623,15 @@ function onClick_CleanUp ()
 			}, this);
 		}
 		var implicitReaction = mol.addRxnArrowIfNecessary();
-		loadMolecule(new chem.MolfileSaver().saveMolecule(mol), true, false, false, implicitReaction, selective);
+		var req = server.layout({
+			moldata: new chem.MolfileSaver().saveMolecule(mol)
+		}, selective ? {'selective': 1} : null);
+		req.then(function (res) {
+			var struct = parseMayBeCorruptedCTFile(res);
+			if (implicitReaction)
+				struct.rxnArrows.clear();
+			updateMolecule(struct);
+		});
 	} catch (er) {
 			if (DEBUG.forwardExceptions)
 				throw er;
@@ -691,58 +699,47 @@ function onClick_Automap () {
 	});
 };
 
-// TODO: refactor me
-function loadMolecule (mol_string, force_layout, check_empty_line, paste, discardRxnArrow, selective_layout)
-{
-	var updateFunc = function (struct) {
-		if (discardRxnArrow)
-			struct.rxnArrows.clear();
-		if (paste) {
-			(function (struct) {
-				struct.rescale();
-				var cb = structToClipboard(struct);
-				if (!cb.getAnchorPosition()) {
-					alert('Not a valid structure to paste');
-					return;
-				}
-				ui.editor.deselectAll();
-				//selectAction('paste');
-			}).call(this, struct);
-		} else {
-			updateMolecule.call(this, struct);
-		}
-	};
+function loadMolecule (mol_string, check_empty_line) {
+	return getStruct(mol_string,
+	                 check_empty_line).then(updateMolecule);
+}
 
+function loadFragment (mol_string, check_empty_line) {
+	return getStruct(mol_string, check_empty_line).then(function (struct) {
+		struct.rescale();
+		var cb = structToClipboard(struct);
+		if (!cb.getAnchorPosition())
+			throw 'Not a valid structure to paste';
+		ui.clipboard = cb;
+		ui.editor.deselectAll();
+		//selectAction('paste');
+		return new rnd.Editor.PasteTool(ui.editor);
+	});
+}
+
+function getStruct(mol_string, check_empty_line) {
+	var res;
 	if (mol_string.indexOf('<cml ') != -1 ) {
-		if (ui.standalone) {
-			echo('CML is not supported in a standalone mode.');
-			return;
-		}
-		var request = server.molfile({moldata: mol_string});
-		request.then(function (res) {
-			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
-		});
+		if (ui.standalone)
+			throw 'CML is not supported in a standalone mode.';
+
+		res = server.molfile({moldata: mol_string});
 	} else if (mol_string.strip().indexOf('\n') == -1) {
 		var smiles = mol_string.strip();
 		if (ui.standalone) {
-			if (smiles != '') {
-				echo('SMILES is not supported in a standalone mode.');
-			}
-			return;
+			if (smiles != '')
+				throw 'SMILES is not supported in a standalone mode.';
 		}
-		request = server.layout_smiles(null, {smiles: smiles});
-		request.then(function (res) {
-			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
-		});
-	} else if (!ui.standalone && force_layout) {
-		var req = server.layout({moldata: mol_string},
-			selective_layout ? {'selective': 1} : null);
-		req.then(function (res) {
-			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
-		});
+		res = server.layout_smiles(null, {smiles: smiles});
 	} else {
-		updateFunc.call(ui, parseMayBeCorruptedCTFile(mol_string, check_empty_line));
+		res = Promise.resolve(mol_string);
 	}
+
+	return res.then(function (res) {
+		var struct = parseMayBeCorruptedCTFile(res,
+		                                       check_empty_line);
+		return struct;
+	});
 };
 
 function page2canvas2 (pos)
@@ -1302,7 +1299,8 @@ function atomLabel (mode) {
 // The expose guts two way
 module.exports = {
 	init: init,
-	loadMolecule: loadMolecule
+	loadMolecule: loadMolecule,
+	loadFragment: loadFragment
 };
 
 util.extend(ui, module.exports);

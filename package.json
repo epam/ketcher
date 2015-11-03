@@ -42,6 +42,7 @@
     "grunt-shell": "^1.1.2",
     "load-grunt-tasks": "~0.6.0",
     "pretty": "^0.1.2",
+    "qs": "^5.2.0",
     "uglifyify": "^3.0.1"
   },
   "scripts": {

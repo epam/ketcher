@@ -89,25 +89,22 @@ function init (parameters, opts) {
 	obsolete.initDialogs();
 
 	// Button events
-	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 	var keyMap = {};
 	toolbar.select('button').each(function (el) {
 		// window.status onhover?
 		var caption =  el.textContent || el.innerText;
 		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 		if (!kd)
-			el.title = caption;
+			el.title = shortcutStr(el.title || caption);
 		else {
 			var keys = kd.split(',').map(function (s) { return s.strip(); });
-			var mk = keys[0].replace(/Cmod/g, isMac ? '⌘' : 'Ctrl');
+			var mk = shortcutStr(keys[0]);
 			var action = el.parentNode.id;
 			el.title = (el.title || caption) + ' (' + mk + ')';
 			el.innerHTML += ' <kbd>' + mk + '</kbd>';
 
 			keys.forEach(function (kb) {
-				var nk = kb.replace(/\+(?!$)/g, '-')
-				    .replace(/Cmod/g, 'defmod')
-				    .toLowerCase();
+				var nk = kb.toLowerCase();
 				if (Array.isArray(keyMap[nk]))
 				    keyMap[nk].push(action);
 				else
@@ -123,13 +120,12 @@ function init (parameters, opts) {
 	});
 
 	Object.keys(keyMap).forEach(function (key) {
-		keymage('editor', key, keyMap[key].length == 1 ? function () {
+		keymage('editor', key, keyMap[key].length == 1 ? function (event) {
 			// TODO: handle disabled
 			selectAction(keyMap[key][0]);
+			event.preventDefault();
 		} : function () {
 			console.info('actions', keyMap[key]);
-		}, {
-			preventDefault: true
 		});
 	});
 	keymage.setScope('editor');
@@ -155,8 +151,10 @@ function init (parameters, opts) {
 		});
 	});
 
+	initCliparea(ketcherWindow);
+
 	zoomSelect = subEl('zoom-list');
-	// TODO: remove this shit (used in rnd.Render guts)
+	// TODO: remove this shit (used in rnd.Render guts
 	// only in dialog/crap and render one time
 	ui.zoom = parseFloat(zoomSelect.options[zoomSelect.selectedIndex].innerHTML) / 100;
 
@@ -180,6 +178,12 @@ function init (parameters, opts) {
 
 	initialized = true;
 };
+
+function shortcutStr(key) {
+	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+	return key.replace(/Defmod/g, isMac ? '⌘' : 'Ctrl')
+		      .replace(/-(?!$)/g, '+');
+}
 
 function subEl (id) {
 	return $(id).children[0];
@@ -252,8 +256,56 @@ function updateHistoryButtons () {
 	subEl('redo').disabled = (redoStack.length == 0);
 };
 
+function initCliparea(parent) {
+	var cliparea = new Element('input', { type: 'text', 'class': 'cliparea', autofocus: true});
+	var autofocus = function() {
+		if (keymage.getScope() == 'editor') {
+			cliparea.value = ' ';
+			cliparea.focus();
+			cliparea.select();
+			return true;
+		}
+		return false;
+	};
+
+	parent.insert(cliparea);
+	parent.on('mouseup', autofocus);
+	parent.on('focus', autofocus);
+	// ? should be document
+	parent.on('copy', function (event) {
+		if (autofocus()) {
+			console.info('copy');
+			var cb = structToClipboard(ui.ctab, ui.editor.getSelection(true));
+			if (!cb.getAnchorPosition())
+				return;
+			ui.editor.deselectAll();
+			event.preventDefault();
+		}
+	});
+	parent.on('cut', function (event) {
+		if (autofocus()) {
+			console.info('cut');
+			var cb = structToClipboard(ui.ctab, ui.editor.getSelection(true));
+			if (!cb.getAnchorPosition())
+				return;
+			removeSelected();
+			event.preventDefault();
+		}
+	});
+	parent.on('paste', function (event) {
+		if (autofocus()) {
+			console.info('paste');
+			var cb = event.clipboardData;
+			console.info(cb.types,
+			             cb.getData('text/plain'),
+			             cb.getData('chemical/x-mdl-molfile'));
+			event.preventDefault();
+			return new rnd.Editor.PasteTool(ui.editor);
+		}
+	});
+}
+
 function updateClipboardButtons () {
-	subEl('paste').disabled = isClipboardEmpty();
 	subEl('copy').disabled = subEl('cut').disabled = !ui.editor.hasSelection(true);
 };
 
@@ -648,27 +700,37 @@ function loadMolecule (mol_string, force_layout, check_empty_line, paste, discar
 		if (paste) {
 			(function (struct) {
 				struct.rescale();
-				if (!copy(struct)) {
+				var cb = structToClipboard(struct);
+				if (!cb.getAnchorPosition()) {
 					alert('Not a valid structure to paste');
 					return;
 				}
 				ui.editor.deselectAll();
-				selectAction('paste');
+				//selectAction('paste');
 			}).call(this, struct);
 		} else {
 			updateMolecule.call(this, struct);
 		}
 	};
 
-	var smiles = mol_string.strip();
-	if (smiles.indexOf('\n') == -1) {
+	if (mol_string.indexOf('<cml ') != -1 ) {
+		if (ui.standalone) {
+			echo('CML is not supported in a standalone mode.');
+			return;
+		}
+		var request = server.molfile({moldata: mol_string});
+		request.then(function (res) {
+			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
+		});
+	} else if (mol_string.strip().indexOf('\n') == -1) {
+		var smiles = mol_string.strip();
 		if (ui.standalone) {
 			if (smiles != '') {
 				echo('SMILES is not supported in a standalone mode.');
 			}
 			return;
 		}
-		var request = server.layout_smiles(null, {smiles: smiles});
+		request = server.layout_smiles(null, {smiles: smiles});
 		request.then(function (res) {
 			updateFunc.call(ui, parseMayBeCorruptedCTFile(res));
 		});
@@ -855,30 +917,39 @@ function redo ()
 	updateHistoryButtons();
 };
 
-//
-// Clipboard actions
-//
-
-function isClipboardEmpty ()
-{
-	return ui.clipboard == null;
-};
-
-function copy (struct, selection)
-{
-	if (!struct) {
-		struct = ui.ctab;
-		selection = ui.editor.getSelection(true);
+// RB: let it be here for the moment
+// TODO: "clipboard" support to be moved to editor module
+// move to struct
+function getAnchorPosition() {
+	if (this.atoms.length) {
+		var xmin = 1e50, ymin = xmin, xmax = -xmin, ymax = -ymin;
+		for (var i = 0; i < this.atoms.length; i++) {
+			xmin = Math.min(xmin, this.atoms[i].pp.x); ymin = Math.min(ymin, this.atoms[i].pp.y);
+			xmax = Math.max(xmax, this.atoms[i].pp.x); ymax = Math.max(ymax, this.atoms[i].pp.y);
+		}
+		return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+	} else if (this.rxnArrows.length) {
+		return this.rxnArrows[0].pp;
+	} else if (this.rxnPluses.length) {
+		return this.rxnPluses[0].pp;
+	} else if (this.chiralFlags.length) {
+		return this.chiralFlags[0].pp;
+	} else {
+		return null;
 	}
+}
 
+function structToClipboard (struct, selection) {
 	// these will be copied automatically along with the
 	//  corresponding s-groups
 	if (selection && selection.sgroupData) {
 		selection.sgroupData.clear();
 	}
 
-	ui.clipboard =
-	{
+	var clipboard = Object.create({
+		getAnchorPosition: getAnchorPosition
+	});
+	clipboard = util.extend(clipboard, {
 		atoms: [],
 		bonds: [],
 		sgroups: [],
@@ -886,41 +957,15 @@ function copy (struct, selection)
 		rxnPluses: [],
 		chiralFlags: [],
 		rgmap: {},
-		rgroups: {},
-		// RB: let it be here for the moment
-		// TODO: "clipboard" support to be moved to editor module
-		getAnchorPosition: function () {
-			if (this.atoms.length) {
-				var xmin = 1e50, ymin = xmin, xmax = -xmin, ymax = -ymin;
-				for (var i = 0; i < this.atoms.length; i++) {
-					xmin = Math.min(xmin, this.atoms[i].pp.x); ymin = Math.min(ymin, this.atoms[i].pp.y);
-					xmax = Math.max(xmax, this.atoms[i].pp.x); ymax = Math.max(ymax, this.atoms[i].pp.y);
-				}
-				return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
-			} else if (this.rxnArrows.length) {
-				return this.rxnArrows[0].pp;
-			} else if (this.rxnPluses.length) {
-				return this.rxnPluses[0].pp;
-			} else if (this.chiralFlags.length) {
-				return this.chiralFlags[0].pp;
-			} else {
-				return null;
-			}
-		}
-	};
+		rgroups: {}
+	});
 
-	structToClipboard(ui.clipboard, struct, selection);
-	return !!ui.clipboard.getAnchorPosition();
-};
-
-function structToClipboard (clipboard, struct, selection)
-{
 	selection = selection || {
 		atoms: struct.atoms.keys(),
 		bonds: struct.bonds.keys(),
 		rxnArrows: struct.rxnArrows.keys(),
 		rxnPluses: struct.rxnPluses.keys()
-		};
+	};
 
 	var mapping = {};
 
@@ -995,6 +1040,8 @@ function structToClipboard (clipboard, struct, selection)
 	Set.each(rgids, function (id){
 		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
 	}, this);
+
+	return clipboard;
 };
 
 var current_elemtable_props = null;
@@ -1088,34 +1135,12 @@ function parseMayBeCorruptedCTFile (molfile, check_empty_line) {
 		}
 };
 
-function onClick_Cut ()
-{
-	if (!copy())
-		return;
-	removeSelected();
-};
-
-function onClick_Copy ()
-{
-	if (!copy())
-		return;
-	ui.editor.deselectAll();
-};
-
-function onClick_Paste ()
-{
-	return new rnd.Editor.PasteTool(ui.editor);
-};
-
 var actionMap = {
 	'new': onClick_NewFile,
 	'open': onClick_OpenFile,
 	'save': onClick_SaveFile,
 	'undo': undo,
 	'redo': redo,
-	'cut': onClick_Cut,
-	'copy': onClick_Copy,
-	'paste': onClick_Paste,
 	'zoom-in': onClick_ZoomIn,
 	'zoom-out': onClick_ZoomOut,
 	'cleanup': onClick_CleanUp,
@@ -1124,6 +1149,15 @@ var actionMap = {
 	'period-table': onClick_ElemTableButton,
 	'generic-groups': onClick_ReaGenericsTableButton,
 	'template-custom': onClick_TemplateCustom,
+	'cut': function () {
+		document.execCommand('cut');
+	},
+	'copy': function () {
+		document.execCommand('copy');
+	},
+	'paste': function () {
+		document.execCommand('paste');
+	},
 	'info': function (el) {
 		showDialog('about_dialog');
 	},

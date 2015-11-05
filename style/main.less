@@ -81,11 +81,27 @@ main {
 }
 
 input.cliparea {
+	// Copied from http://bit.ly/12nphsK
+	// Search for less verbose way to make FF happy
 	position: absolute;
-	z-index: -10;
-	left: 50%;
-	top: 50%;
-	visibility: hidden;
+	bottom: 0;
+	left: 0;
+	width: 10px;
+	height: 10px;
+	display: block;
+	font-size: 1;
+	z-index: -1;
+	color: transparent;
+	background: transparent;
+	overflow: hidden;
+	border: none;
+	padding: 0;
+	resize: none;
+	outline: none;
+	-webkit-user-select: text;
+	user-select: text;
+	// Because for user-select:none,
+	// Safari won't allow input
 }
 
 li.opened {

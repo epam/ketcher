@@ -8,7 +8,6 @@ var util = require('../util');
 var op = require('./op');
 
 require('../chem');
-require('../rnd');
 
 var ui = global.ui;
 var chem = global.chem;

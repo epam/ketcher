@@ -95,7 +95,7 @@ function init (parameters, opts) {
 		var caption =  el.textContent || el.innerText;
 		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 		if (!kd)
-			el.title = shortcutStr(el.title || caption);
+			el.title = el.title || caption;
 		else {
 			var keys = kd.split(',').map(function (s) { return s.strip(); });
 			var mk = shortcutStr(keys[0]);
@@ -122,8 +122,12 @@ function init (parameters, opts) {
 	Object.keys(keyMap).forEach(function (key) {
 		keymage('editor', key, keyMap[key].length == 1 ? function (event) {
 			// TODO: handle disabled
-			selectAction(keyMap[key][0]);
-			event.preventDefault();
+			var action = keyMap[key][0];
+			if (['cut', 'copy', 'paste'].indexOf(action) == -1) {
+				// else special case: delegate to cliparea
+				selectAction(keyMap[key][0]);
+				event.preventDefault();
+			}
 		} : function () {
 			console.info('actions', keyMap[key]);
 		});
@@ -256,6 +260,19 @@ function updateHistoryButtons () {
 	subEl('redo').disabled = (redoStack.length == 0);
 };
 
+function clipAction(action) {
+	var enabled = document.queryCommandSupported(action);
+	if (enabled) try {
+		enabled = document.execCommand(action);
+	} catch (ex) {
+		// FF < 41
+		enabled = false;
+	}
+	if (!enabled)
+		echo('These action is unavailble via menu.\n' +
+		     'Instead, use ', shortcutStr(key), ' to ', action);
+}
+
 function initCliparea(parent) {
 	var cliparea = new Element('input', { type: 'text', 'class': 'cliparea', autofocus: true});
 	var autofocus = function() {
@@ -296,10 +313,13 @@ function initCliparea(parent) {
 		if (autofocus()) {
 			console.info('paste');
 			var cb = event.clipboardData;
+			// chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-cml,chemical/x-daylight-smiles,chemical/x-inchi
 			console.info(cb.types,
 			             cb.getData('text/plain'),
 			             cb.getData('chemical/x-mdl-molfile'));
-			loadFragment(cb.getData('text/plain'));
+			var data = cb.getData('text/plain');
+			if (data.strip())
+				loadFragment(data);
 			event.preventDefault();
 		}
 	});
@@ -713,7 +733,7 @@ function loadFragment (mol_string, check_empty_line) {
 		ui.clipboard = cb;
 		ui.editor.deselectAll();
 		//selectAction('paste');
-		return new rnd.Editor.PasteTool(ui.editor);
+		return /*ui.render.current_tool = */ new rnd.Editor.PasteTool(ui.editor);
 	});
 }
 

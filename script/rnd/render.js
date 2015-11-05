@@ -213,7 +213,12 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 				}
 
 				ui.render.current_tool.processEvent('On' + eventName, event);
-				util.stopEventPropagation(event);
+				if (eventName != 'MouseUp') {
+					// [NK] do not stop mouseup propagation
+					// to maintain cliparea focus.
+					// Do we really need total stop here?
+					util.stopEventPropagation(event);
+				}
 				if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
 					return util.preventDefault(event);
 			});

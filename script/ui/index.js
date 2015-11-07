@@ -44,9 +44,10 @@ var clientArea = null;
 var dropdownOpened;
 var zspObj;
 
-//
-// Init section
-//
+var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
+                     'reaction-automap', 'template-custom'];
+var clipActions = ['cut', 'copy', 'paste'];
+
 function init (parameters, opts) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
@@ -66,17 +67,15 @@ function init (parameters, opts) {
 		return;
 	}
 
+	updateServerButtons();
 	if (['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check if this is nesessary
 		server.knocknock().then(function (res) {
 			ui.standalone = false;
+			updateServerButtons();
 		}, function (val) {
 			document.title += ' (standalone)';
-			// probably must be disabled by default
-			$$('#cleanup', '#arom', '#dearom', '#calc-cip',
-				'#reaction-automap', '#template-custom').each(function (el) {
-				subEl(el).disabled = true;
-			});
+			// TODO: echo instead
 		}).then(function () {
 			// TODO: move it out there as server incapsulates
 			// standalone
@@ -123,8 +122,8 @@ function init (parameters, opts) {
 		keymage('editor', key, keyMap[key].length == 1 ? function (event) {
 			// TODO: handle disabled
 			var action = keyMap[key][0];
-			if (['cut', 'copy', 'paste'].indexOf(action) == -1) {
-				// else special case: delegate to cliparea
+			if (clipActions.indexOf(action) == -1) {
+				// else delegate to cliparea
 				selectAction(keyMap[key][0]);
 				event.preventDefault();
 			}
@@ -219,17 +218,21 @@ function hideBlurredControls () {
 	return true;
 };
 
-function selectAction (id) {
+function selectAction (action) {
 	// TODO: lastSelected -> prevtool_id
-	id = id || lastSelected;
-	console.assert(id.startsWith, 'id is not a string', id);
-	var el = $(id);
+	action = action || lastSelected;
+	var el = $(action);
+	var args = [].slice.call(arguments, 1);
+	console.assert(action.startsWith, 'id is not a string', action);
+
+	if (clipActions.indexOf(action) != -1 && args.length == 0)
+		return delegateCliparea(action);
 
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
-		var action = actionMap[id],
-		tool = action ? action() : mapTool(id);
-		if (tool) {
+		args.unshift(action);
+		var tool = mapTool.apply(null, args);
+		if (tool instanceof rnd.Editor.EditorTool) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
@@ -241,8 +244,8 @@ function selectAction (id) {
 				}
 				ui.render.current_tool = tool;
 
-				if (id.startsWith('select-')) {
-					lastSelected = id;
+				if (action.startsWith('select-')) {
+					lastSelected = action;
 				}
 				if (el) {
 					el.addClassName('selected');
@@ -252,15 +255,12 @@ function selectAction (id) {
 				}
 			}
 		}
+		return tool;
 	}
+	return null;
 };
 
-function updateHistoryButtons () {
-	subEl('undo').disabled = (undoStack.length == 0);
-	subEl('redo').disabled = (redoStack.length == 0);
-};
-
-function clipAction(action) {
+function delegateCliparea(action) {
 	var enabled = document.queryCommandSupported(action);
 	if (enabled) try {
 		enabled = document.execCommand(action);
@@ -268,13 +268,25 @@ function clipAction(action) {
 		// FF < 41
 		enabled = false;
 	}
-	if (!enabled)
+	if (!enabled) {
+		var el = subEl(action);
+		var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 		echo('These action is unavailble via menu.\n' +
-		     'Instead, use ', shortcutStr(key), ' to ', action);
+		     'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
+	}
+	return null;
 }
 
 function initCliparea(parent) {
 	var cliparea = new Element('input', { type: 'text', 'class': 'cliparea', autofocus: true});
+	var pasteFormats = [
+		'chemical/x-mdl-molfile',
+		'chemical/x-mdl-rxnfile',
+		'chemical/x-cml',
+		'text/plain',
+		'chemical/x-daylight-smiles',
+		'chemical/x-inchi'
+	];
 	var autofocus = function() {
 		if (keymage.getScope() == 'editor') {
 			cliparea.value = ' ';
@@ -289,35 +301,27 @@ function initCliparea(parent) {
 	parent.on('mouseup', autofocus);
 	parent.on('focus', autofocus);
 	// ? should be document
-	parent.on('copy', function (event) {
-		if (autofocus()) {
-			console.info('copy');
-			var cb = structToClipboard(ui.ctab, ui.editor.getSelection(true));
-			if (!cb.getAnchorPosition())
-				return;
-			ui.editor.deselectAll();
-			event.preventDefault();
-		}
-	});
-	parent.on('cut', function (event) {
-		if (autofocus()) {
-			console.info('cut');
-			var cb = structToClipboard(ui.ctab, ui.editor.getSelection(true));
-			if (!cb.getAnchorPosition())
-				return;
-			removeSelected();
-			event.preventDefault();
-		}
+	['copy', 'cut'].forEach(function (action) {
+		parent.on(action, function (event) {
+			if (autofocus()) {
+				var cs = selectAction(action, true);
+				console.info(action, cs);
+				event.preventDefault();
+			}
+		});
 	});
 	parent.on('paste', function (event) {
 		if (autofocus()) {
-			console.info('paste');
 			var cb = event.clipboardData;
-			// chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-cml,chemical/x-daylight-smiles,chemical/x-inchi
-			console.info(cb.types,
-			             cb.getData('text/plain'),
-			             cb.getData('chemical/x-mdl-molfile'));
-			var data = cb.getData('text/plain');
+			var data = '';
+			for (var i = 0; i < pasteFormats.length; i++) {
+				var fmt = pasteFormats[i];
+				if (cb.types.indexOf(fmt) != -1) {
+					data = cb.getData(fmt);
+					break;
+				}
+			}
+			console.info('paste', fmt, data.slice(0, 50), '..');
 			if (data.strip())
 				loadFragment(data);
 			event.preventDefault();
@@ -327,6 +331,17 @@ function initCliparea(parent) {
 
 function updateClipboardButtons () {
 	subEl('copy').disabled = subEl('cut').disabled = !ui.editor.hasSelection(true);
+};
+
+function updateHistoryButtons () {
+	subEl('undo').disabled = (undoStack.length == 0);
+	subEl('redo').disabled = (redoStack.length == 0);
+};
+
+function updateServerButtons () {
+	serverActions.forEach(function (action) {
+		subEl(action).disabled = ui.standalone;
+	});
 };
 
 function transitionEndEvent () {
@@ -727,13 +742,7 @@ function loadMolecule (mol_string, check_empty_line) {
 function loadFragment (mol_string, check_empty_line) {
 	return getStruct(mol_string, check_empty_line).then(function (struct) {
 		struct.rescale();
-		var cb = structToClipboard(struct);
-		if (!cb.getAnchorPosition())
-			throw 'Not a valid structure to paste';
-		ui.clipboard = cb;
-		ui.editor.deselectAll();
-		//selectAction('paste');
-		return /*ui.render.current_tool = */ new rnd.Editor.PasteTool(ui.editor);
+		selectAction('paste', struct);
 	});
 }
 
@@ -1167,13 +1176,24 @@ var actionMap = {
 	'generic-groups': onClick_ReaGenericsTableButton,
 	'template-custom': onClick_TemplateCustom,
 	'cut': function () {
-		document.execCommand('cut');
+		var cs = structToClipboard(ui.ctab,
+		                           ui.editor.getSelection(true));
+		removeSelected();
+		return !cs.getAnchorPosition() ? null : cs;
 	},
 	'copy': function () {
-		document.execCommand('copy');
+		var cs = structToClipboard(ui.ctab,
+		                           ui.editor.getSelection(true));
+		ui.editor.deselectAll();
+		return !cs.getAnchorPosition() ? null : cs;
 	},
-	'paste': function () {
-		document.execCommand('paste');
+	'paste': function (struct) {
+		var cs = structToClipboard(struct);
+		if (!cs.getAnchorPosition())
+			throw 'Not a valid structure to paste';
+		ui.clipboard = cs;
+		ui.editor.deselectAll();
+		return new rnd.Editor.PasteTool(ui.editor);
 	},
 	'info': function (el) {
 		showDialog('about_dialog');
@@ -1197,6 +1217,9 @@ function mapTool (id) {
 
 	console.assert(id, 'The null tool');
 
+	var args = [].slice.call(arguments, 1);
+	if (actionMap[id])
+		return actionMap[id].apply(null, args);
 	// special cases
 	if (ui.editor.hasSelection()) {
 		if (id == 'erase') {

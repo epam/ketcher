@@ -697,8 +697,7 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 			);
 			ui.addUndoAction(bondAddition[0]);
 		} else if (_DC_.item.map == 'atoms') {
-			var atom = ui.atomForNewBond(_DC_.item.id);
-			ui.addUndoAction(Action.fromBondAddition(this.bondProps, _DC_.item.id, atom.atom, atom.pos)[0]);
+			ui.addUndoAction(Action.fromBondAddition(this.bondProps, _DC_.item.id)[0]);
 		} else if (_DC_.item.map == 'bonds') {
 			var bondProps = Object.clone(this.bondProps);
 			var bond = ui.ctab.bonds.get(_DC_.item.id);

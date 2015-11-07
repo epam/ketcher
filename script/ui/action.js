@@ -257,8 +257,104 @@ function mergeFragments (action, frid, frid2) {
 	}
 };
 
+// Get new atom id/label and pos for bond being added to existing atom
+function atomForNewBond (id)
+{
+	var neighbours = [];
+	var pos = ui.render.atomGetPos(id);
+
+	ui.render.atomGetNeighbors(id).each(function (nei)
+	{
+		var nei_pos = ui.render.atomGetPos(nei.aid);
+
+		if (Vec2.dist(pos, nei_pos) < 0.1)
+			return;
+
+		neighbours.push({id: nei.aid, v: Vec2.diff(nei_pos, pos)});
+	});
+
+	neighbours.sort(function (nei1, nei2)
+	{
+		return Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x);
+	});
+
+	var i, max_i = 0;
+	var angle, max_angle = 0;
+
+	// TODO: impove layout: tree, ...
+
+	for (i = 0; i < neighbours.length; i++) {
+		angle = Vec2.angle(neighbours[i].v, neighbours[(i + 1) % neighbours.length].v);
+
+		if (angle < 0)
+			angle += 2 * Math.PI;
+
+		if (angle > max_angle)
+			max_i = i, max_angle = angle;
+	}
+
+	var v = new Vec2(1, 0);
+
+	if (neighbours.length > 0) {
+		if (neighbours.length == 1) {
+			max_angle = -(4 * Math.PI / 3);
+
+			// zig-zag
+			var nei = ui.render.atomGetNeighbors(id)[0];
+			if (ui.render.atomGetDegree(nei.aid) > 1) {
+				var nei_neighbours = [];
+				var nei_pos = ui.render.atomGetPos(nei.aid);
+				var nei_v = Vec2.diff(pos, nei_pos);
+				var nei_angle = Math.atan2(nei_v.y, nei_v.x);
+
+				ui.render.atomGetNeighbors(nei.aid).each(function (nei_nei) {
+					var nei_nei_pos = ui.render.atomGetPos(nei_nei.aid);
+
+					if (nei_nei.bid == nei.bid || Vec2.dist(nei_pos, nei_nei_pos) < 0.1)
+						return;
+
+					var v_diff = Vec2.diff(nei_nei_pos, nei_pos);
+					var ang = Math.atan2(v_diff.y, v_diff.x) - nei_angle;
+
+					if (ang < 0)
+						ang += 2 * Math.PI;
+
+					nei_neighbours.push(ang);
+				});
+				nei_neighbours.sort(function (nei1, nei2) {
+					return nei1 - nei2;
+				});
+
+				if (nei_neighbours[0] <= Math.PI * 1.01 && nei_neighbours[nei_neighbours.length - 1] <= 1.01 * Math.PI)
+					max_angle *= -1;
+
+			}
+		}
+
+		angle = (max_angle / 2) + Math.atan2(neighbours[max_i].v.y, neighbours[max_i].v.x);
+
+		v = v.rotate(angle);
+	}
+
+	v.add_(pos);
+
+	var a = ui.render.findClosestAtom(v, 0.1);
+
+	if (a == null)
+		a = {label: 'C'};
+	else
+		a = a.id;
+
+	return {atom: a, pos: v};
+};
+
 function fromBondAddition (bond, begin, end, pos, pos2)
 {
+	if (end === undefined) {
+		var atom = atomForNewBond(begin);
+		end = atom.atom;
+		pos = atom.pos;
+	}
 	var action = new Action();
 
 	var frid = null;
@@ -723,7 +819,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 		// create extra bond after click on atom
 		if (angle == null)
 		{
-			var middle_atom = ui.atomForNewBond(aid);
+			var middle_atom = atomForNewBond(aid);
 			var action_res = fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
 			action = action_res[0];
 			action.operations.reverse();
@@ -755,7 +851,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 		var delta = calcAngle(atom0.pp, atom.pp) - template.angle0;
 	} else {
 		if (angle == null) {
-			middle_atom = ui.atomForNewBond(aid);
+			middle_atom = atomForNewBond(aid);
 			angle = calcAngle(atom.pp, middle_atom.pos);
 		}
 		delta = angle - template.angle0;

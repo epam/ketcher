@@ -1191,9 +1191,8 @@ var actionMap = {
 		var cs = structToClipboard(struct);
 		if (!cs.getAnchorPosition())
 			throw 'Not a valid structure to paste';
-		ui.clipboard = cs;
 		ui.editor.deselectAll();
-		return new rnd.Editor.PasteTool(ui.editor);
+		return new rnd.Editor.PasteTool(ui.editor, cs);
 	},
 	'info': function (el) {
 		showDialog('about_dialog');
@@ -1356,7 +1355,6 @@ util.extend(ui, {
 	render: null,
 	editor: null,
 
-	clipboard: null,
 	hideBlurredControls: hideBlurredControls,
 	updateClipboardButtons: updateClipboardButtons,
 	atomForNewBond: atomForNewBond,

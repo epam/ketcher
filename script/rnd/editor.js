@@ -1554,15 +1554,16 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function
 	this.postClose();
 };
 
-rnd.Editor.PasteTool = function (editor) {
+rnd.Editor.PasteTool = function (editor, clipboard) {
 	this.editor = editor;
+	this.clipboard = clipboard;
 	this.action = Action.fromPaste(
-		ui.clipboard,
-			'lastEvent' in this.OnMouseMove0
-			 ? Vec2.diff(
-		ui.page2obj(this.OnMouseMove0.lastEvent),
-		ui.clipboard.getAnchorPosition())
-			 : undefined
+		this.clipboard,
+		'lastEvent' in this.OnMouseMove0
+			? Vec2.diff(
+				ui.page2obj(this.OnMouseMove0.lastEvent),
+				this.clipboard.getAnchorPosition())
+			: undefined
 	);
 	this.editor.render.update();
 };
@@ -1571,10 +1572,8 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 	}
-	this.action = Action.fromPaste(
-		ui.clipboard,
-	Vec2.diff(ui.page2obj(event), ui.clipboard.getAnchorPosition())
-	);
+	this.action = Action.fromPaste(this.clipboard,
+		Vec2.diff(ui.page2obj(event), this.clipboard.getAnchorPosition()));
 	this.editor.render.update();
 };
 rnd.Editor.PasteTool.prototype.OnMouseUp = function () {

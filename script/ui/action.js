@@ -1055,12 +1055,12 @@ function fromRGroupFragment (rgidNew, frid) {
 	return action.perform();
 };
 
-function fromPaste (objects, offset) {
+function fromPaste (clipboard, offset) {
 	offset = offset || new Vec2();
 	var action = new Action(), amap = {}, fmap = {};
 	// atoms
-	for (var aid = 0; aid < objects.atoms.length; aid++) {
-		var atom = Object.clone(objects.atoms[aid]);
+	for (var aid = 0; aid < clipboard.atoms.length; aid++) {
+		var atom = Object.clone(clipboard.atoms[aid]);
 		if (!(atom.fragment in fmap)) {
 			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 		}
@@ -1069,29 +1069,29 @@ function fromPaste (objects, offset) {
 	}
 
 	var rgnew = [];
-	for (var rgid in ui.clipboard.rgroups) {
+	for (var rgid in clipboard.rgroups) {
 		if (!ui.ctab.rgroups.has(rgid)) {
 			rgnew.push(rgid);
 		}
 	}
 
 	// assign fragments to r-groups
-	for (var frid in ui.clipboard.rgmap) {
-		action.addOp(new op.RGroupFragment(ui.clipboard.rgmap[frid], fmap[frid]).perform(ui.editor));
+	for (var frid in clipboard.rgmap) {
+		action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(ui.editor));
 	}
 
 	for (var i = 0; i < rgnew.length; ++i) {
-		action.mergeWith(fromRGroupAttrs(rgnew[i], ui.clipboard.rgroups[rgnew[i]]));
+		action.mergeWith(fromRGroupAttrs(rgnew[i], clipboard.rgroups[rgnew[i]]));
 	}
 
 	//bonds
-	for (var bid = 0; bid < objects.bonds.length; bid++) {
-		var bond = Object.clone(objects.bonds[bid]);
+	for (var bid = 0; bid < clipboard.bonds.length; bid++) {
+		var bond = Object.clone(clipboard.bonds[bid]);
 		action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(ui.editor));
 	}
 	//sgroups
-	for (var sgid = 0; sgid < objects.sgroups.length; sgid++) {
-		var sgroup_info = objects.sgroups[sgid];
+	for (var sgid = 0; sgid < clipboard.sgroups.length; sgid++) {
+		var sgroup_info = clipboard.sgroups[sgid];
 		var atoms = sgroup_info.atoms;
 		var sgatoms = [];
 		for (var sgaid = 0; sgaid < atoms.length; sgaid++) {
@@ -1105,13 +1105,13 @@ function fromPaste (objects, offset) {
 	}
 	//reaction arrows
 	if (ui.editor.render.ctab.rxnArrows.count() < 1) {
-		for (var raid = 0; raid < objects.rxnArrows.length; raid++) {
-			action.addOp(new op.RxnArrowAdd(objects.rxnArrows[raid].pp.add(offset)).perform(ui.editor));
+		for (var raid = 0; raid < clipboard.rxnArrows.length; raid++) {
+			action.addOp(new op.RxnArrowAdd(clipboard.rxnArrows[raid].pp.add(offset)).perform(ui.editor));
 		}
 	}
 	//reaction pluses
-	for (var rpid = 0; rpid < objects.rxnPluses.length; rpid++) {
-		action.addOp(new op.RxnPlusAdd(objects.rxnPluses[rpid].pp.add(offset)).perform(ui.editor));
+	for (var rpid = 0; rpid < clipboard.rxnPluses.length; rpid++) {
+		action.addOp(new op.RxnPlusAdd(clipboard.rxnPluses[rpid].pp.add(offset)).perform(ui.editor));
 	}
 	//thats all
 	action.operations.reverse();

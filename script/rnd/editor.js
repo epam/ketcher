@@ -1558,12 +1558,8 @@ rnd.Editor.PasteTool = function (editor, clipboard) {
 	this.clipboard = clipboard;
 	this.action = Action.fromPaste(
 		this.clipboard,
-		'lastEvent' in this.OnMouseMove0
-			? Vec2.diff(
-				ui.page2obj(this.OnMouseMove0.lastEvent),
-				this.clipboard.getAnchorPosition())
-			: undefined
-	);
+		'lastEvent' in this.OnMouseMove0 ?
+			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
 	this.editor.render.update();
 };
 rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
@@ -1571,8 +1567,7 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 	}
-	this.action = Action.fromPaste(this.clipboard,
-		Vec2.diff(ui.page2obj(event), this.clipboard.getAnchorPosition()));
+	this.action = Action.fromPaste(this.clipboard, ui.page2obj(event));
 	this.editor.render.update();
 };
 rnd.Editor.PasteTool.prototype.OnMouseUp = function () {

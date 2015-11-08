@@ -1151,8 +1151,30 @@ function fromRGroupFragment (rgidNew, frid) {
 	return action.perform();
 };
 
-function fromPaste (clipboard, offset) {
-	offset = offset || new Vec2();
+// Should it be named structCenter?
+function getAnchorPosition(clipboard) {
+	if (clipboard.atoms.length) {
+		var xmin = 1e50, ymin = xmin, xmax = -xmin, ymax = -ymin;
+		for (var i = 0; i < clipboard.atoms.length; i++) {
+			xmin = Math.min(xmin, clipboard.atoms[i].pp.x);
+			ymin = Math.min(ymin, clipboard.atoms[i].pp.y);
+			xmax = Math.max(xmax, clipboard.atoms[i].pp.x);
+			ymax = Math.max(ymax, clipboard.atoms[i].pp.y);
+		}
+		return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+	} else if (clipboard.rxnArrows.length) {
+		return clipboard.rxnArrows[0].pp;
+	} else if (clipboard.rxnPluses.length) {
+		return clipboard.rxnPluses[0].pp;
+	} else if (clipboard.chiralFlags.length) {
+		return clipboard.chiralFlags[0].pp;
+	} else {
+		return null;
+	}
+}
+
+function fromPaste (clipboard, point) {
+	var offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
 	var action = new Action(), amap = {}, fmap = {};
 	// atoms
 	for (var aid = 0; aid < clipboard.atoms.length; aid++) {

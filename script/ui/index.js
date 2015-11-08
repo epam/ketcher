@@ -851,25 +851,6 @@ function redo ()
 // RB: let it be here for the moment
 // TODO: "clipboard" support to be moved to editor module
 // move to struct
-function getAnchorPosition() {
-	if (this.atoms.length) {
-		var xmin = 1e50, ymin = xmin, xmax = -xmin, ymax = -ymin;
-		for (var i = 0; i < this.atoms.length; i++) {
-			xmin = Math.min(xmin, this.atoms[i].pp.x); ymin = Math.min(ymin, this.atoms[i].pp.y);
-			xmax = Math.max(xmax, this.atoms[i].pp.x); ymax = Math.max(ymax, this.atoms[i].pp.y);
-		}
-		return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
-	} else if (this.rxnArrows.length) {
-		return this.rxnArrows[0].pp;
-	} else if (this.rxnPluses.length) {
-		return this.rxnPluses[0].pp;
-	} else if (this.chiralFlags.length) {
-		return this.chiralFlags[0].pp;
-	} else {
-		return null;
-	}
-}
-
 function structToClipboard (struct, selection) {
 	// these will be copied automatically along with the
 	//  corresponding s-groups
@@ -877,10 +858,7 @@ function structToClipboard (struct, selection) {
 		selection.sgroupData.clear();
 	}
 
-	var clipboard = Object.create({
-		getAnchorPosition: getAnchorPosition
-	});
-	clipboard = util.extend(clipboard, {
+	var clipboard = {
 		atoms: [],
 		bonds: [],
 		sgroups: [],
@@ -889,7 +867,7 @@ function structToClipboard (struct, selection) {
 		chiralFlags: [],
 		rgmap: {},
 		rgroups: {}
-	});
+	};
 
 	selection = selection || {
 		atoms: struct.atoms.keys(),
@@ -972,7 +950,11 @@ function structToClipboard (struct, selection) {
 		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
 	}, this);
 
-	return clipboard;
+	var nonEmpty = (clipboard.atoms.length ||
+	                clipboard.rxnArrows.length ||
+	                clipboard.rxnPluses.length ||
+	                clipboard.chiralFlags.length);
+	return nonEmpty ? clipboard : null;
 };
 
 var current_elemtable_props = null;
@@ -1084,17 +1066,17 @@ var actionMap = {
 		var cs = structToClipboard(ui.ctab,
 		                           ui.editor.getSelection(true));
 		removeSelected();
-		return !cs.getAnchorPosition() ? null : cs;
+		return cs;
 	},
 	'copy': function () {
 		var cs = structToClipboard(ui.ctab,
 		                           ui.editor.getSelection(true));
 		ui.editor.deselectAll();
-		return !cs.getAnchorPosition() ? null : cs;
+		return cs;
 	},
 	'paste': function (struct) {
 		var cs = structToClipboard(struct);
-		if (!cs.getAnchorPosition())
+		if (!cs)
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
 		return new rnd.Editor.PasteTool(ui.editor, cs);

@@ -848,115 +848,6 @@ function redo ()
 	updateHistoryButtons();
 };
 
-// RB: let it be here for the moment
-// TODO: "clipboard" support to be moved to editor module
-// move to struct
-function structToClipboard (struct, selection) {
-	// these will be copied automatically along with the
-	//  corresponding s-groups
-	if (selection && selection.sgroupData) {
-		selection.sgroupData.clear();
-	}
-
-	var clipboard = {
-		atoms: [],
-		bonds: [],
-		sgroups: [],
-		rxnArrows: [],
-		rxnPluses: [],
-		chiralFlags: [],
-		rgmap: {},
-		rgroups: {}
-	};
-
-	selection = selection || {
-		atoms: struct.atoms.keys(),
-		bonds: struct.bonds.keys(),
-		rxnArrows: struct.rxnArrows.keys(),
-		rxnPluses: struct.rxnPluses.keys()
-	};
-
-	var mapping = {};
-
-	selection.atoms.each(function (id)
-	{
-		var new_atom = new chem.Struct.Atom(struct.atoms.get(id));
-		new_atom.pos = new_atom.pp;
-		mapping[id] = clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
-	});
-
-	selection.bonds.each(function (id)
-	{
-		var new_bond = new chem.Struct.Bond(struct.bonds.get(id));
-		new_bond.begin = mapping[new_bond.begin];
-		new_bond.end = mapping[new_bond.end];
-		clipboard.bonds.push(new chem.Struct.Bond(new_bond));
-	});
-
-	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
-
-	util.each(sgroup_list, function (sid){
-		var sgroup = struct.sgroups.get(sid);
-		var sgAtoms = chem.SGroup.getAtoms(struct, sgroup);
-		var sgroup_info = {
-			type: sgroup.type,
-			attrs: sgroup.getAttrs(),
-			atoms: util.array(sgAtoms),
-			pp: sgroup.pp
-		};
-
-		for (var i = 0; i < sgroup_info.atoms.length; i++)
-			sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
-
-		clipboard.sgroups.push(sgroup_info);
-	}, this);
-
-	selection.rxnArrows.each(function (id)
-	{
-		var arrow = new chem.Struct.RxnArrow(struct.rxnArrows.get(id));
-		arrow.pos = arrow.pp;
-		clipboard.rxnArrows.push(arrow);
-	});
-
-	selection.rxnPluses.each(function (id)
-	{
-		var plus = new chem.Struct.RxnPlus(struct.rxnPluses.get(id));
-		plus.pos = plus.pp;
-		clipboard.rxnPluses.push(plus);
-	});
-
-	// r-groups
-	var atomFragments = {};
-	var fragments = Set.empty();
-	selection.atoms.each(function (id) {
-		var atom = struct.atoms.get(id);
-		var frag = atom.fragment;
-		atomFragments[id] = frag;
-		Set.add(fragments, frag);
-	});
-
-	var rgids = Set.empty();
-	Set.each(fragments, function (frid){
-		var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
-		for (var i = 0; i < atoms.length; ++i)
-			if (!Set.contains(atomFragments, atoms[i]))
-				return;
-		var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
-		clipboard.rgmap[frid] = rgid;
-		Set.add(rgids, rgid);
-	}, this);
-
-	Set.each(rgids, function (id){
-		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
-	}, this);
-
-	var nonEmpty = (clipboard.atoms.length ||
-	                clipboard.rxnArrows.length ||
-	                clipboard.rxnPluses.length ||
-	                clipboard.chiralFlags.length);
-	return nonEmpty ? clipboard : null;
-};
-
 var current_elemtable_props = null;
 function onClick_ElemTableButton ()
 {
@@ -1063,23 +954,20 @@ var actionMap = {
 	'generic-groups': onClick_ReaGenericsTableButton,
 	'template-custom': onClick_TemplateCustom,
 	'cut': function () {
-		var cs = structToClipboard(ui.ctab,
-		                           ui.editor.getSelection(true));
+		var cs = ui.editor.getSelectionClipboard();
 		removeSelected();
 		return cs;
 	},
 	'copy': function () {
-		var cs = structToClipboard(ui.ctab,
-		                           ui.editor.getSelection(true));
+		var cs = ui.editor.getSelectionClipboard();
 		ui.editor.deselectAll();
 		return cs;
 	},
 	'paste': function (struct) {
-		var cs = structToClipboard(struct);
-		if (!cs)
+		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
-		return new rnd.Editor.PasteTool(ui.editor, cs);
+		return new rnd.Editor.PasteTool(ui.editor, struct);
 	},
 	'info': function (el) {
 		showDialog('about_dialog');

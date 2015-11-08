@@ -6,6 +6,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
+var util = require('../util');
 
 require('../chem');
 require('./restruct');
@@ -77,6 +78,119 @@ rnd.Editor.prototype.getSelection = function (explicit) {
 		}
 	}
 	return selection;
+};
+
+rnd.Editor.prototype.getSelectionClipboard = function (struct) {
+	var selection;
+	if (!struct) {
+		console.assert(ui.ctab == this.render.ctab.molecule,
+		               'Another ctab');
+
+		struct = ui.ctab;
+		selection = this.getSelection(true);
+		// these will be copied automatically along with the
+		//  corresponding s-groups
+		if (selection.sgroupData) {
+			selection.sgroupData.clear();
+		}
+	} else {
+		selection = {
+			atoms: struct.atoms.keys(),
+			bonds: struct.bonds.keys(),
+			rxnArrows: struct.rxnArrows.keys(),
+			rxnPluses: struct.rxnPluses.keys()
+		};
+	}
+
+	var clipboard = {
+		atoms: [],
+		bonds: [],
+		sgroups: [],
+		rxnArrows: [],
+		rxnPluses: [],
+		chiralFlags: [],
+		rgmap: {},
+		rgroups: {}
+	};
+
+	var mapping = {};
+	selection.atoms.each(function (id)
+	{
+		var new_atom = new chem.Struct.Atom(struct.atoms.get(id));
+		new_atom.pos = new_atom.pp;
+		mapping[id] = clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
+	});
+
+	selection.bonds.each(function (id)
+	{
+		var new_bond = new chem.Struct.Bond(struct.bonds.get(id));
+		new_bond.begin = mapping[new_bond.begin];
+		new_bond.end = mapping[new_bond.end];
+		clipboard.bonds.push(new chem.Struct.Bond(new_bond));
+	});
+
+	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
+
+	util.each(sgroup_list, function (sid){
+		var sgroup = struct.sgroups.get(sid);
+		var sgAtoms = chem.SGroup.getAtoms(struct, sgroup);
+		var sgroup_info = {
+			type: sgroup.type,
+			attrs: sgroup.getAttrs(),
+			atoms: util.array(sgAtoms),
+			pp: sgroup.pp
+		};
+
+		for (var i = 0; i < sgroup_info.atoms.length; i++)
+			sgroup_info.atoms[i] = mapping[sgroup_info.atoms[i]];
+
+		clipboard.sgroups.push(sgroup_info);
+	}, this);
+
+	selection.rxnArrows.each(function (id)
+	{
+		var arrow = new chem.Struct.RxnArrow(struct.rxnArrows.get(id));
+		arrow.pos = arrow.pp;
+		clipboard.rxnArrows.push(arrow);
+	});
+
+	selection.rxnPluses.each(function (id)
+	{
+		var plus = new chem.Struct.RxnPlus(struct.rxnPluses.get(id));
+		plus.pos = plus.pp;
+		clipboard.rxnPluses.push(plus);
+	});
+
+	// r-groups
+	var atomFragments = {};
+	var fragments = Set.empty();
+	selection.atoms.each(function (id) {
+		var atom = struct.atoms.get(id);
+		var frag = atom.fragment;
+		atomFragments[id] = frag;
+		Set.add(fragments, frag);
+	});
+
+	var rgids = Set.empty();
+	Set.each(fragments, function (frid){
+		var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
+		for (var i = 0; i < atoms.length; ++i)
+			if (!Set.contains(atomFragments, atoms[i]))
+				return;
+		var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
+		clipboard.rgmap[frid] = rgid;
+		Set.add(rgids, rgid);
+	}, this);
+
+	Set.each(rgids, function (id){
+		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
+	}, this);
+
+	var nonEmpty = (clipboard.atoms.length ||
+	                clipboard.rxnArrows.length ||
+	                clipboard.rxnPluses.length ||
+	                clipboard.chiralFlags.length);
+	return nonEmpty ? clipboard : null;
 };
 
 rnd.Editor.SelectionHelper = function (editor) {
@@ -1553,12 +1667,11 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function
 	this.postClose();
 };
 
-rnd.Editor.PasteTool = function (editor, clipboard) {
+rnd.Editor.PasteTool = function (editor, struct) {
 	this.editor = editor;
-	this.clipboard = clipboard;
+	this.struct = struct;
 	this.action = Action.fromPaste(
-		this.clipboard,
-		'lastEvent' in this.OnMouseMove0 ?
+		this.struct, 'lastEvent' in this.OnMouseMove0 ?
 			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
 	this.editor.render.update();
 };
@@ -1567,7 +1680,7 @@ rnd.Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 	}
-	this.action = Action.fromPaste(this.clipboard, ui.page2obj(event));
+	this.action = Action.fromPaste(this.struct, ui.page2obj(event));
 	this.editor.render.update();
 };
 rnd.Editor.PasteTool.prototype.OnMouseUp = function () {

@@ -1173,7 +1173,8 @@ function getAnchorPosition(clipboard) {
 	}
 }
 
-function fromPaste (clipboard, point) {
+function fromPaste (struct, point) {
+	var clipboard = ui.editor.getSelectionClipboard(struct);
 	var offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
 	var action = new Action(), amap = {}, fmap = {};
 	// atoms

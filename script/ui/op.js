@@ -1,6 +1,7 @@
 /*global require, global, module*/
 
 var Vec2 = require('../util/vec2');
+var Set = require('../util/set');
 require('../chem');
 require('../rnd');
 

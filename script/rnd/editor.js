@@ -80,6 +80,32 @@ rnd.Editor.prototype.getSelection = function (explicit) {
 	return selection;
 };
 
+rnd.Editor.prototype.getSelectionStruct = function () {
+	console.assert(ui.ctab == this.render.ctab.molecule,
+	               'Another ctab');
+	var src = ui.ctab;
+	var selection = this.getSelection(true);
+	var dst = src.clone(Set.fromList(selection.atoms),
+	                    Set.fromList(selection.bonds), true);
+
+	// Copy by its own as Struct.clone doesn't support
+	// arrows/pluses id sets
+	src.rxnArrows.each(function (id, item) {
+		if (selection.rxnArrows.indexOf(id) != -1)
+			dst.rxnArrows.add(item.clone());
+	});
+	src.rxnPluses.each(function (id, item) {
+		if (selection.rxnPluses.indexOf(id) != -1)
+			dst.rxnPluses.add(item.clone());
+	});
+
+	// TODO: should be reaction only if arrwos? check this logic
+	dst.isReaction = src.isReaction &&
+		(dst.rxnArrows.count() || dst.rxnPluses.count());
+
+	return dst;
+};
+
 rnd.Editor.prototype.getSelectionClipboard = function (struct) {
 	var selection;
 	if (!struct) {

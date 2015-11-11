@@ -303,8 +303,21 @@ function initCliparea(parent) {
 	['copy', 'cut'].forEach(function (action) {
 		parent.on(action, function (event) {
 			if (autofocus()) {
-				var cs = selectAction(action, true);
-				console.info(action, cs);
+				var struct = selectAction(action, true);
+				if (struct) {
+					var cb = event.clipboardData;
+					var moldata = new chem.MolfileSaver().saveMolecule(struct);
+					cb.setData('text/plain', moldata);
+					try {
+						cb.setData(!struct.isReaction ?
+						           'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
+						           moldata);
+						cb.setData('chemical/x-daylight-smiles',
+						           new chem.SmilesSaver().saveMolecule(struct));
+					} catch (ex) {
+						console.info('Could not write exact type', ex);
+					}
+				}
 				event.preventDefault();
 			}
 		});
@@ -936,14 +949,14 @@ var actionMap = {
 	'generic-groups': onClick_ReaGenericsTableButton,
 	'template-custom': onClick_TemplateCustom,
 	'cut': function () {
-		var cs = ui.editor.getSelectionClipboard();
+		var struct = ui.editor.getSelectionStruct();
 		removeSelected();
-		return cs;
+		return struct.isBlank() ? null : struct;
 	},
 	'copy': function () {
-		var cs = ui.editor.getSelectionClipboard();
+		var struct = ui.editor.getSelectionStruct();
 		ui.editor.deselectAll();
-		return cs;
+		return struct.isBlank() ? null : struct;
 	},
 	'paste': function (struct) {
 		if (struct.isBlank())

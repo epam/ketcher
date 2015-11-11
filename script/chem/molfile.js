@@ -954,32 +954,39 @@ chem.MolfileSaver = function (v3000)
 	this.molecule = null;
 	this.molfile = null;
 
-	this.v3000 = v3000 || false
+	this.v3000 = v3000 || false;
 };
 
-chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors)
+chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc)
 {
 	var mol = this.molecule;
 	var sgroups = mol.sgroups;
 	var toRemove = [];
+	var warn = 0;
 
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
 		var sg = mol.sgroups.get(id);
+
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
-				if (DEBUG.forwardExceptions)
-					throw ex;
-				if (skipErrors && typeof(ex.id) == 'number') {
-					toRemove.push(ex.id);
-				} else {
-					throw ex;
-				}
+			if (DEBUG.forwardExceptions)
+				throw ex;
+			if (skipErrors && typeof(ex.id) == 'number') {
+				warn++;
+				toRemove.push(ex.id);
+			} else {
+				throw ex;
 			}
+		}
+		if (!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
+			toRemove.push(sg.id);
+
 	}, this);
-	if (toRemove.length > 0) {
-		alert('WARNING: ' + toRemove.length.toString() + ' invalid S-groups were detected. They will be omitted.' );
+	if (warn) {
+		alert('WARNING: ' + warn + ' invalid S-groups were detected. They will be omitted.' );
 	}
+
 	for (var i = 0; i < toRemove.length; ++i) {
 		mol.sGroupDelete(toRemove[i]);
 	}
@@ -1041,7 +1048,7 @@ chem.MolfileSaver.prototype.getCTab = function (molecule, rgroups)
 	return this.molfile;
 };
 
-chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups)
+chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups, preserveIndigoDesc)
 {
 	this.reaction = molecule.rxnArrows.count() > 0;
 	if (molecule.rxnArrows.count() > 1)
@@ -1089,7 +1096,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors,
 
 	this.molecule = molecule.clone();
 
-	this.prepareSGroups(skipSGroupErrors);
+	this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
 	this.writeHeader();
 

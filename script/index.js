@@ -18,7 +18,7 @@ var server = require('./ui/server.js');
 var ketcher = global.ketcher = {};
 
 ketcher.time_created = '__TIME_CREATED__';
-ketcher.version = '2.0.0-alpha.1';
+ketcher.version = '2.0.0-alpha.2';
 
 ketcher.getSmiles = function (forceLocal) {
 	var local = ui.standalone || forceLocal;

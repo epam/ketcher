@@ -28,7 +28,6 @@ var templatesDialog = require('./dialog/templates');
 var sgroupDialog = require('./dialog/sgroup');
 var obsolete = require('./dialog/obsolete');
 
-var DEBUG = { forwardExceptions: false };
 var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
 
@@ -442,9 +441,7 @@ function updateMolecule (mol)
 		setZoomCentered(null, ui.render.getStructCenter());
 	}
 	catch (er) {
-			if (DEBUG.forwardExceptions)
-				throw er;
-			alert(er.message);
+		alert(er.message);
 	}
 	finally {
 		hideDialog('loading');
@@ -668,8 +665,6 @@ function onClick_CleanUp ()
 			updateMolecule(struct);
 		});
 	} catch (er) {
-			if (DEBUG.forwardExceptions)
-				throw er;
 			alert('ERROR: ' + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
 		}
 };
@@ -679,10 +674,8 @@ function onClick_Aromatize ()
 	try {
 		aromatize(ui.ctab, true);
 	} catch (er) {
-			if (DEBUG.forwardExceptions)
-				throw er;
-			alert('Molfile: ' + er.message);
-		}
+		alert('Molfile: ' + er.message);
+	}
 };
 
 function onClick_Dearomatize ()
@@ -690,10 +683,8 @@ function onClick_Dearomatize ()
 	try {
 		aromatize(ui.ctab, false);
 	} catch (er) {
-			if (DEBUG.forwardExceptions)
-				throw er;
-			alert('Molfile: ' + er.message);
-		}
+		alert('Molfile: ' + er.message);
+	}
 };
 
 function onClick_Automap () {
@@ -904,39 +895,30 @@ function onClick_TemplateCustom () {
 // TODO: move this logic to chem.Molfile
 function parseMayBeCorruptedCTFile (molfile, check_empty_line) {
 	var lines = molfile.split('\n');
-
 	try {
 		try {
 			return chem.Molfile.parseCTFile(lines);
 		} catch (ex) {
-				if (DEBUG.forwardExceptions)
-					throw ex;
-				if (check_empty_line) {
-					try {
-						// check whether there's an extra empty line on top
-						// this often happens when molfile text is pasted into the dialog window
-						return chem.Molfile.parseCTFile(lines.slice(1));
-					} catch (ex1) {
-							if (DEBUG.forwardExceptions)
-								throw ex1;
-						}
-					try {
-						// check for a missing first line
-						// this sometimes happens when pasting
-						return chem.Molfile.parseCTFile([''].concat(lines));
-					} catch (ex2) {
-							if (DEBUG.forwardExceptions)
-								throw ex2;
-						}
+			if (check_empty_line) {
+				try {
+					// check whether there's an extra empty line on top
+					// this often happens when molfile text is pasted into the dialog window
+					return chem.Molfile.parseCTFile(lines.slice(1));
+				} catch (ex1) {
 				}
-				throw ex;
+				try {
+					// check for a missing first line
+					// this sometimes happens when pasting
+					return chem.Molfile.parseCTFile([''].concat(lines));
+				} catch (ex2) {
+				}
 			}
-	} catch (er) {
-			if (DEBUG.forwardExceptions)
-				throw er;
-			alert('Error loading molfile.\n' + er.toString());
-			return null;
+				throw ex;
 		}
+	} catch (er) {
+		alert('Error loading molfile.\n' + er.toString());
+		return null;
+	}
 };
 
 var actionMap = {

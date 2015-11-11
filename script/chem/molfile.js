@@ -11,9 +11,6 @@ var util = require('../util');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
-// TODO: remove me
-var DEBUG = { forwardExceptions: false }; // mimic ui.forwardExceptions
-
 chem.Molfile = function () {};
 
 chem.Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
@@ -962,29 +959,27 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors, preserveIndig
 	var mol = this.molecule;
 	var sgroups = mol.sgroups;
 	var toRemove = [];
-	var warn = 0;
+	var errors = 0;
 
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
 		var sg = mol.sgroups.get(id);
+		var errorIgnore = false;
 
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
-			if (DEBUG.forwardExceptions)
+			if (!skipErrors || typeof(ex.id) != 'number')
 				throw ex;
-			if (skipErrors && typeof(ex.id) == 'number') {
-				warn++;
-				toRemove.push(ex.id);
-			} else {
-				throw ex;
-			}
+			errorIgnore = true;
 		}
-		if (!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
+		if (errorIgnore ||
+		    !preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName)) {
+			errors += errorIgnore;
 			toRemove.push(sg.id);
-
+		}
 	}, this);
-	if (warn) {
-		alert('WARNING: ' + warn + ' invalid S-groups were detected. They will be omitted.' );
+	if (errors) {
+		alert('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.' );
 	}
 
 	for (var i = 0; i < toRemove.length; ++i) {

@@ -846,16 +846,19 @@ chem.SGroup.GroupDat = {
 	},
 
 	postLoad: function (mol, atomMap) {
-		var allAtomsInGroup = this.atoms.length == mol.atoms.count();
 		if (!this.data.absolute)
 			this.pp = this.pp.add(chem.SGroup.getMassCentre(mol, this.atoms));
-		if (allAtomsInGroup &&
-		(    this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
-		this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||
-		this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE')) {
-			this.atoms = [];
-			this.allAtoms = true;
-		}
+		// [NK] Temporary comment incoplete 'allAtoms' behavior
+		// TODO: need ether remove 'allAtoms' flag or hadle it
+		// consistently (other flags: *_KEY, *_RADICAL?)
+		// var allAtomsInGroup = this.atoms.length == mol.atoms.count();
+		// if (allAtomsInGroup &&
+		//     (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
+		//      this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||
+		//      this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE')) {
+		// 	this.atoms = [];
+		// 	this.allAtoms = true;
+		// }
 	}
 };
 

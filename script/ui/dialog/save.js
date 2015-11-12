@@ -3,6 +3,7 @@
 require('../../chem');
 
 var server = require('../server.js');
+var fs = require('filesaver.js');
 
 var chem = global.chem;
 var ui = global.ui;
@@ -64,13 +65,13 @@ function fileSaver () {
 		'inchi': 'chemical/x-inchi'
 	};
 	return new Promise(function (resolve, reject) {
-		if (global.Blob && global.saveAs)
+		if (global.Blob && fs.saveAs)
 			resolve(function (data, type) {
 				if (type == 'mol' && data.indexOf('$RXN') == 0)
 					type = 'rxn';
 				console.assert(mimemap[type], 'Unknown chemical file type');
 				var blob = new Blob([data], {type: mimemap[type] });
-				global.saveAs(blob, 'ketcher.' + type);
+				fs.saveAs(blob, 'ketcher.' + type);
 			});
 		else if (ui.standalone)
 			reject('Standalone mode!');

@@ -738,40 +738,56 @@ function onClick_Automap () {
 	});
 };
 
-function loadMolecule (mol_string, check_empty_line) {
-	return getStruct(mol_string,
-	                 check_empty_line).then(updateMolecule);
+function loadMolecule (mol, checkEmptyLine) {
+	return getStruct(mol,
+	                 checkEmptyLine).then(updateMolecule);
 }
 
-function loadFragment (mol_string, check_empty_line) {
-	return getStruct(mol_string, check_empty_line).then(function (struct) {
+function loadFragment (mol, checkEmptyLine) {
+	return getStruct(mol, checkEmptyLine).then(function (struct) {
 		struct.rescale();
 		selectAction('paste', struct);
 	});
 }
 
-function getStruct(mol_string, check_empty_line) {
-	var res;
-	if (mol_string.indexOf('<cml ') != -1 ) {
-		if (ui.standalone)
-			throw 'CML is not supported in a standalone mode.';
-
-		res = server.molfile({moldata: mol_string});
-	} else if (mol_string.strip().indexOf('\n') == -1) {
-		var smiles = mol_string.strip();
-		if (ui.standalone) {
-			if (smiles != '')
-				throw 'SMILES is not supported in a standalone mode.';
-		}
-		res = server.layout_smiles(null, {smiles: smiles});
-	} else {
-		res = Promise.resolve(mol_string);
+function guessType(mol, strict) {
+	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
+	var molStr = mol.trim();
+	var molMatch = molStr.match(/^(M  END|\$END MOL)$/m);
+	if (molMatch) {
+		var end = molMatch.index + molMatch[0].length;
+		if (end == molStr.length ||
+		    molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) != -1)
+			return 'mol';
 	}
+	if (molStr[0] == '<' && molStr.indexOf('<molecule') != -1)
+		return 'cml';
+	if (molStr.slice(0, 5) == 'InChI')
+		return 'inchi';
+	if (molStr.indexOf('\n') == -1)
+		return 'smiles';
+	// Molfile by default as Indigo does
+	return strict ? null : 'mol';
+}
 
-	return res.then(function (res) {
-		var struct = parseMayBeCorruptedCTFile(res,
-		                                       check_empty_line);
-		return struct;
+function getStruct(mol, checkEmptyLine) {
+	return new Promise(function (resolve, reject) {
+		var type = guessType(mol);
+		if (type == 'mol') {
+			var struct = parseMayBeCorruptedCTFile(mol,
+			                                       checkEmptyLine);
+			resolve(struct);
+		} else if (ui.standalone)
+			throw type ? type.toUpperCase() : 'Format' +
+			      ' is not supported in a standalone mode.';
+		else {
+			var req = (type == 'smiles') ?
+			    server.layout_smiles(null, {smiles: mol.trim()}) :
+			    server.molfile({moldata: mol});
+			resolve(req.then(function (res) {
+				return parseMayBeCorruptedCTFile(res);
+			}));
+		}
 	});
 };
 
@@ -906,31 +922,26 @@ function onClick_TemplateCustom () {
 
 // try to reconstruct molfile string instead parsing multiple times
 // TODO: move this logic to chem.Molfile
-function parseMayBeCorruptedCTFile (molfile, check_empty_line) {
+function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
 	var lines = molfile.split('\n');
 	try {
-		try {
-			return chem.Molfile.parseCTFile(lines);
-		} catch (ex) {
-			if (check_empty_line) {
-				try {
-					// check whether there's an extra empty line on top
-					// this often happens when molfile text is pasted into the dialog window
-					return chem.Molfile.parseCTFile(lines.slice(1));
-				} catch (ex1) {
-				}
-				try {
-					// check for a missing first line
-					// this sometimes happens when pasting
-					return chem.Molfile.parseCTFile([''].concat(lines));
-				} catch (ex2) {
-				}
+		return chem.Molfile.parseCTFile(lines);
+	} catch (ex) {
+		if (checkEmptyLine) {
+			try {
+				// check whether there's an extra empty line on top
+				// this often happens when molfile text is pasted into the dialog window
+				return chem.Molfile.parseCTFile(lines.slice(1));
+			} catch (ex1) {
 			}
-				throw ex;
+			try {
+				// check for a missing first line
+				// this sometimes happens when pasting
+				return chem.Molfile.parseCTFile([''].concat(lines));
+			} catch (ex2) {
+			}
 		}
-	} catch (er) {
-		alert('Error loading molfile.\n' + er.toString());
-		return null;
+		throw ex;
 	}
 };
 

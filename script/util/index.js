@@ -116,6 +116,14 @@ var stringPadded = function (string, width, leftAligned) {
 	return (leftAligned) ? string + space : space + string;
 };
 
+var normalizeNewlines = function (str) {
+	var nlRe = /\r\n|[\n\r]/g;
+	// According Unicode Consortium sould be
+	// nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
+	// http://www.unicode.org/reports/tr18/#Line_Boundaries
+	return str.replace(nlRe, '\n');
+};
+
 var idList = function (object) {
 	var list = [];
 	for (var aid in object) {
@@ -278,6 +286,7 @@ module.exports = {
 	setElementTextContent: setElementTextContent,
 	getElementTextContent: getElementTextContent,
 	stringPadded: stringPadded,
+	normalizeNewlines: normalizeNewlines,
 	idList: idList,
 	mapArray: mapArray,
 	arrayMax: arrayMax,

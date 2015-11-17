@@ -829,15 +829,16 @@ chem.SGroup.GroupDat = {
 		util.stringPadded(data.tagChar, 1) + // m
 			'  ' + util.paddedInt(data.daspPos, 1) + // n
 			'  '; // oo
-		lines.push(sddLine);
-		data.fieldValue.replace(/[\r\n|\n|\r]*$/, '').split(/\r\n|\n|\r/).each(function (str) {
-			var charsPerLine = 69;
-			while (str.length > charsPerLine) {
-				lines.push('M  SCD ' + idstr + ' ' + str.slice(0, charsPerLine));
-				str = str.slice(69);
+			lines.push(sddLine);
+		var val = util.normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
+		var charsPerLine = 69;
+		val.split('\n').each(function (chars) {
+			while (chars.length > charsPerLine) {
+				lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
+				chars = chars.slice(charsPerLine);
 			}
-			lines.push('M  SED ' + idstr + ' ' + util.stringPadded(str, charsPerLine, true));
-		}, this);
+			lines.push('M  SED ' + idstr + ' ' + chars);
+		});
 		return lines.join('\n');
 	},
 

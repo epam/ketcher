@@ -263,7 +263,7 @@ function selectAction (action) {
 function delegateCliparea(action) {
 	var enabled = document.queryCommandSupported(action);
 	if (enabled) try {
-		enabled = document.execCommand(action);
+		document.execCommand(action);
 	} catch (ex) {
 		// FF < 41
 		enabled = false;
@@ -279,6 +279,7 @@ function delegateCliparea(action) {
 
 function initCliparea(parent) {
 	var cliparea = new Element('input', { type: 'text', 'class': 'cliparea', autofocus: true});
+	var ieCb = window.clipboardData;
 	var pasteFormats = [
 		'chemical/x-mdl-molfile',
 		'chemical/x-mdl-rxnfile',
@@ -296,46 +297,58 @@ function initCliparea(parent) {
 		}
 		return false;
 	};
+	var copyCut = function (struct, cb) {
+		var moldata = new chem.MolfileSaver().saveMolecule(struct);
+		if (!cb && ieCb) {
+			ieCb.setData('text', moldata);
+		} else {
+			cb.setData('text/plain', moldata);
+			try {
+				cb.setData(!struct.isReaction ?
+				           'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
+				           moldata);
+				cb.setData('chemical/x-daylight-smiles',
+				           new chem.SmilesSaver().saveMolecule(struct));
+			} catch (ex) {
+				console.info('Could not write exact type', ex);
+			}
+		}
+	};
+	var paste = function (cb) {
+		var data = '';
+		if (!cb && ieCb) {
+			data = ieCb.getData('text');
+		} else {
+			console.info('data items', cb.items, cb.types);
+			for (var i = 0; i < pasteFormats.length; i++) {
+				data = cb.getData(pasteFormats[i]);
+				if (data)
+					break;
+			}
+		}
+		console.info('paste', i >= 0 && pasteFormats[i], data.slice(0, 50), '..');
+		return data;
+	};
 
 	parent.insert(cliparea);
 	parent.on('mouseup', autofocus);
 	parent.on('focus', autofocus);
-	// ? should be document
+
+	// ? events should be attached to document
 	['copy', 'cut'].forEach(function (action) {
 		parent.on(action, function (event) {
 			if (autofocus()) {
 				var struct = selectAction(action, true);
-				if (struct) {
-					var cb = event.clipboardData;
-					var moldata = new chem.MolfileSaver().saveMolecule(struct);
-					cb.setData('text/plain', moldata);
-					try {
-						cb.setData(!struct.isReaction ?
-						           'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
-						           moldata);
-						cb.setData('chemical/x-daylight-smiles',
-						           new chem.SmilesSaver().saveMolecule(struct));
-					} catch (ex) {
-						console.info('Could not write exact type', ex);
-					}
-				}
+				if (struct)
+					copyCut(struct, event.clipboardData);
 				event.preventDefault();
 			}
 		});
 	});
 	parent.on('paste', function (event) {
 		if (autofocus()) {
-			var cb = event.clipboardData;
-			var data = '';
-			for (var i = 0; i < pasteFormats.length; i++) {
-				var fmt = pasteFormats[i];
-				if (cb.types.indexOf(fmt) != -1) {
-					data = cb.getData(fmt);
-					break;
-				}
-			}
-			console.info('paste', fmt, data.slice(0, 50), '..');
-			if (data.strip())
+			var data = paste(event.clipboardData);
+			if (data)
 				loadFragment(data);
 			event.preventDefault();
 		}

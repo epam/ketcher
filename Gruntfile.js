@@ -13,7 +13,7 @@ module.exports = function (grunt) {
 			      '.jshintrc', '.editorconfig'],
 			libs: ['prototype-min.js', 'raphael-min.js'],
 			// add 'es5-shim' when prototype goes
-			polyfills: ['html5shiv', 'promise-polyfill', 'filesaver.js'],
+			polyfills: ['html5shiv'],
 			build: ['<%= browserify.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',

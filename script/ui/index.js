@@ -10,6 +10,7 @@ require('../rnd');
 var chem = global.chem;
 var rnd = global.rnd;
 
+var Promise = require('promise-polyfill');
 var keymage = require('keymage');
 
 var Set = require('../util/set');

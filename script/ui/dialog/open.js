@@ -1,7 +1,8 @@
-/*global module, global*/
+/*global module, global, require*/
 
 /*eslint-disable*/
 
+var Promise = require('promise-polyfill');
 // var server = require('../server.js');
 // var base64 = require('base64-js');
 

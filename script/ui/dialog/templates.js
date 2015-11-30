@@ -2,6 +2,8 @@
 
 /* eslint-disable */
 
+var Promise = require('promise-polyfill');
+
 require('../../chem');
 require('../../rnd');
 

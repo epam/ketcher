@@ -1,5 +1,6 @@
 /*global require, module, global*/
 
+var Promise = require('promise-polyfill');
 require('../../chem');
 
 var server = require('../server.js');

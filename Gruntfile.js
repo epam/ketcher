@@ -44,7 +44,7 @@ module.exports = function (grunt) {
 					[
 						'browserify-replace', {
 							replace: [
-								{from: /__TIME_CREATED__/, to: (new Date()).toString()}
+								{from: /__TIME_CREATED__/, to: new Date()}
 							]
 						}
 					]

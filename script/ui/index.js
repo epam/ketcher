@@ -38,7 +38,6 @@ var redoStack = [];
 var initialized = false;
 var ketcherWindow;
 var toolbar;
-var zoomSelect;
 var lastSelected;
 var clientArea = null;
 var dropdownOpened;
@@ -155,15 +154,13 @@ function init (parameters, opts) {
 	});
 
 	initCliparea(ketcherWindow);
-
-	zoomSelect = subEl('zoom-list');
-	// TODO: remove this shit (used in rnd.Render guts
-	// only in dialog/crap and render one time
-	ui.zoom = parseFloat(zoomSelect.options[zoomSelect.selectedIndex].innerHTML) / 100;
-
-	zoomSelect.on('change', updateZoom);
-	clientArea.on('scroll', onScroll_ClientArea);
+	initZoom();
 	updateHistoryButtons();
+
+	clientArea.on('scroll', onScroll_ClientArea);
+	clientArea.on('mousedown', function () {
+		keymage.setScope('editor');
+	});
 
 	// Init renderer
 	opts = new rnd.RenderOptions(opts);
@@ -319,7 +316,6 @@ function initCliparea(parent) {
 		if (!cb && ieCb) {
 			data = ieCb.getData('text');
 		} else {
-			console.info('data items', cb.items, cb.types);
 			for (var i = 0; i < pasteFormats.length; i++) {
 				data = cb.getData(pasteFormats[i]);
 				if (data)
@@ -332,7 +328,6 @@ function initCliparea(parent) {
 
 	parent.insert(cliparea);
 	parent.on('mouseup', autofocus);
-	parent.on('focus', autofocus);
 
 	// ? events should be attached to document
 	['copy', 'cut'].forEach(function (action) {
@@ -561,17 +556,30 @@ function calculateCip() {
 //
 // Zoom section
 //
+function initZoom() {
+	var zoomSelect = subEl('zoom-list');
+	zoomSelect.on('focus', function () {
+		keymage.pushScope('zoom');
+	});
+	zoomSelect.on('blur', function () {
+		keymage.popScope('zoom');
+	});
+	zoomSelect.on('change', updateZoom);
+	updateZoom(true);
+}
+
 function onClick_ZoomIn () {
-	zoomSelect.selectedIndex++;
+	subEl('zoom-list').selectedIndex++;
 	updateZoom();
 };
 
 function onClick_ZoomOut () {
-	zoomSelect.selectedIndex--;
+	subEl('zoom-list').selectedIndex--;
 	updateZoom();
 };
 
-function updateZoom () {
+function updateZoom (noRefresh) {
+	var zoomSelect = subEl('zoom-list');
 	var i = zoomSelect.selectedIndex,
 	    len = zoomSelect.length;
 	console.assert(0 <= i && i < len, 'Zoom out of range');
@@ -580,10 +588,14 @@ function updateZoom () {
 	subEl('zoom-out').disabled = (i == 0);
 
 	var value = parseFloat(zoomSelect.options[i].innerHTML) / 100;
-	setZoomCentered(value,
-	ui.render.getStructCenter(ui.editor.getSelection()));
+	// TODO: remove this shit (used in rnd.Render guts
+	// only in dialog/crap and render one time
 	ui.zoom = value;
-	ui.render.update();
+	if (!noRefresh) {
+		setZoomCentered(value,
+		                ui.render.getStructCenter(ui.editor.getSelection()));
+		ui.render.update();
+	}
 };
 
 function setZoomRegular (zoom) {

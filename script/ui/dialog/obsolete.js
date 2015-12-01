@@ -1,5 +1,6 @@
 /*global require, module, global*/
 
+var keymage = require('keymage');
 var element = require('../../chem/element');
 var util = require('../../util');
 var Action = require('../action');
@@ -9,6 +10,7 @@ var ui = global.ui;
 function initDialogs () {
 	// Label input events
 	$('input_label').observe('blur', function () {
+		keymage.setScope('editor');
 		this.hide();
 	});
 	$('input_label').observe('keypress', onKeyPress_InputLabel);
@@ -278,6 +280,7 @@ function onKeyPress_InputLabel (event)
 {
 	util.stopEventPropagation(event);
 	if (event.keyCode == 13) {
+		keymage.setScope('editor');
 		this.hide();
 
 		var label = '';
@@ -332,6 +335,7 @@ function onKeyPress_InputLabel (event)
 	}
 	if (event.keyCode == 27) {
 		this.hide();
+		keymage.setScope('editor');
 		return util.preventDefault(event);
 	}
 };
@@ -341,6 +345,7 @@ function onKeyUp_InputLabel (event)
 	util.stopEventPropagation(event);
 	if (event.keyCode == 27) {
 		this.hide();
+		keymage.setScope('editor');
 		return util.preventDefault(event);
 	}
 };
@@ -349,12 +354,13 @@ function showLabelEditor (aid)
 {
 	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (onKeyPress_InputLabel, onBlur, etc)
 	var input_el = $('input_label');
+	keymage.setScope('label');
 
-	var offset = 16; //Math.min(6 * ui.zoom, 16);
+	var offset = Math.min(7 * ui.render.zoom, 16);
 
 	input_el.atom_id = aid;
 	input_el.value = ui.render.atomGetAttr(aid, 'label');
-	input_el.style.fontSize = (offset * 2).toString() + 'px';
+	input_el.style.fontSize = offset * 2 + 'px';
 
 	input_el.show();
 
@@ -364,8 +370,8 @@ function showLabelEditor (aid)
 	var offset_client = {left: 0, top: 0};
 	var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
 	var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
-	input_el.style.left = (atom_pos.x + offset_client.left - offset_parent.left - offset - d).toString() + 'px';
-	input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d).toString() + 'px';
+	input_el.style.left = (atom_pos.x + offset_client.left - offset_parent.left - offset - d) + 'px';
+	input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d) + 'px';
 
 	input_el.activate();
 };

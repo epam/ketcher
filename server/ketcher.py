@@ -231,18 +231,21 @@ class application(object):
     class HttpException(Exception): pass
     def load_moldata(self, is_query=False):
         moldata = self.fields.getfirst('moldata')
+        is_rxn = False
         if moldata.startswith('$RXN'):
             if is_query:
                 md = self.indigo.loadQueryReaction(moldata)
             else:
                 md = self.indigo.loadReaction(moldata)
             is_rxn = True
+        elif moldata.startswith('InChI'):
+            md = self.indigo_inchi.loadMolecule(moldata)
+            md.layout()
         else:
             if is_query:
                 md = self.indigo.loadQueryMolecule(moldata)
             else:
                 md = self.indigo.loadMolecule(moldata)
-            is_rxn = False
         return md, is_rxn
 
     def selective_layout(self, mol):

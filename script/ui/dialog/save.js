@@ -105,9 +105,10 @@ function convertMolecule (molecule, format) {
 			else {
 				molecule = molecule.clone();
 				molecule.sgroups.each(function (sgid, sg) {
-					if (sg.type !== 'MUL')
+					// ? Not sure we should check it client side
+					if (sg.type != 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
 						throw Error('InChi data format doesn\'t support s-groups');
-				}, this);
+				});
 
 				resolve(server.inchi({ moldata: moldata }));
 			}

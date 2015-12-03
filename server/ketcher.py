@@ -296,23 +296,25 @@ if __name__ == '__main__':
     from wsgiref.simple_server import make_server
 
     def parse_args():
-        arg = sys.argv[1] if len(sys.argv) > 1 else ''
-        res = arg.rsplit(':', 1)
-        return res[0] if len(res) > 1 else '0.0.0.0', \
+        dir = sys.argv[1] if len(sys.argv) > 1 else ''
+        addr = sys.argv[2] if len(sys.argv) > 2 else ''
+        res = addr.rsplit(':', 1)
+        return dir, \
+               res[0] if len(res) > 1 else '0.0.0.0', \
                int(res[-1] or 8080)
     def usage():
         progname = sys.argv[0]
         if not progname.startswith('./'):
             progname = 'python ' + progname
-        print( "USAGE:\n   %s [port|address:port]\n" % progname)
+        print( "USAGE:\n   %s [static_dir [port|address:port]]\n" % progname)
 
     if not application.indigo:
         print("WARNING: Indigo is not found. Server-side functionality " + \
               "will not be available")
-
-    application.static_serve = True     # allow to serve static
-    try:                                # in standalone python-server mode
-        address, port = parse_args()
+    try:
+        dir, address, port = parse_args()
+        application.static_serve = True     # allow to serve static
+        application.static_root = dir       # in standalone python-server mode
         httpd = make_server(address, port, application)
         print("Serving on %s:%d..." % (address, port))
         httpd.serve_forever()

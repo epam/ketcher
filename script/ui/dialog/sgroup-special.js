@@ -10,14 +10,13 @@ function dialog (params) {
 
 	console.assert(!params.type || params.type == 'DAT');
 
-	$('sgroup_field_name').value = params.attrs.fieldName;
-	$('sgroup_field_value').value = params.attrs.fieldValue;
+	setChoise(params.attrs.fieldName || 'Fragment', params.attrs.fieldValue);
 	if (params.attrs.attached)
-		$('sgroup_pos_attached').checked = true;
+		$('sgroup_special_attached').checked = true;
 	else if (params.attrs.absolute)
-		$('sgroup_pos_absolute').checked = true;
+		$('sgroup_special_absolute').checked = true;
 	else
-		$('sgroup_pos_relative').checked = true;
+		$('sgroup_special_relative').checked = true;
 
 	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
@@ -31,8 +30,9 @@ function dialog (params) {
 		}
 	});
 
-	// handlers[1] = $('sgroup_type').on('change', onChange_SGroupType);
-	// handlers[2] = $('sgroup_label').on('change', onChange_SGroupLabel);
+	handlers[1] = dlg.on('change', 'select', function (_, select) {
+		setChoise($('sgroup_context').value, $('sgroup_special_name').value);
+	});
 };
 
 function getValidateAttrs() {
@@ -43,10 +43,10 @@ function getValidateAttrs() {
 		subscript: ''
 	};
 
-	attrs.fieldName = $('sgroup_field_name').value.strip();
-	attrs.fieldValue = $('sgroup_field_value').value.strip();
-	attrs.absolute = $('sgroup_pos_absolute').checked;
-	attrs.attached = $('sgroup_pos_attached').checked;
+	attrs.fieldName = $('sgroup_special_name').value.strip();
+	attrs.fieldValue = $('sgroup_special_value').value.strip();
+	attrs.absolute = $('sgroup_special_absolute').checked;
+	attrs.attached = $('sgroup_special_attached').checked;
 
 	if (attrs.fieldValue == '') {
 		alert('Please, specify data field value.');
@@ -56,9 +56,55 @@ function getValidateAttrs() {
 	return attrs;
 };
 
+function arrayFind(array, pred) {
+	for (var i = 0; i < array.length; i++) {
+		if (pred(array[i], i, array))
+			return array[i];
+	}
+	return undefined;
+}
+
+function setChoise(context, field) {
+	if (!setChoise.cache)
+		setChoise.cache = {};
+	var cache = setChoise.cache;
+
+	console.info('set', context, field, cache);
+	if (!cache.context || context != cache.context.name) {
+		var ctx = arrayFind(special_choices, function (opt) {
+			return opt.name == context;
+		});
+		cache.context = ctx; // assert
+		var str = ctx.value.reduce(function (res, opt) {
+			return res + '<option value="' + opt.name + '">' + opt.name + "</option>";
+		}, '');
+		$('sgroup_special_name').update(str);
+		if (!field) {
+			$('sgroup_special_name').selectedIndex = 0;
+			field = $('sgroup_special_name').value;
+		}
+	}
+	if (!cache.field || field != cache.field.name) {
+		ctx = arrayFind(cache.context.value, function (opt) {
+			return opt.name == field;
+		});
+		cache.field = ctx;
+		if (!ctx.value)
+			$('sgroup_special_value').outerHTML = '<textarea id="sgroup_special_value"></textarea>';
+		else {
+			str = ctx.value.reduce(function (res, opt) {
+				return res + '<option value="' + opt + '">' + opt + "</option>";
+			}, '');
+			$('sgroup_special_value').outerHTML = '<select size="10" id="sgroup_special_value">' + str + '</select>';
+		}
+	}
+}
+
 var special_choices = [
-	{ Fragment : [
-		{ MDLBG_FRAGMENT_STEREO: [
+	{ name: 'Fragment',
+	  value: [
+		  { name: 'MDLBG_FRAGMENT_STEREO',
+		    value: [
 			'abs',
 			'(+)-enantiomer',
 			'(-)-enantiomer',
@@ -68,13 +114,18 @@ var special_choices = [
 			'S(a)',
 			'R(p)',
 			'S(p)'
-		]},
-		{ MDLBG_FRAGMENT_COEFFICIENT: null},
-		{ MDLBG_FRAGMENT_CHARGE: null },
-		{ MDLBG_FRAGMENT_RADICALS: null },
+		    ]},
+		  { name: 'MDLBG_FRAGMENT_COEFFICIENT',
+		    value: null},
+		  { name: 'MDLBG_FRAGMENT_CHARGE',
+		    value: null },
+		  { name: 'MDLBG_FRAGMENT_RADICALS',
+		    value: null },
 	]},
-	{ 'Single Bond': [
-		{ MDLBG_STEREO_KEY: [
+	{ name: 'Single Bond',
+	  value: [
+		  { name: 'MDLBG_STEREO_KEY',
+		    value: [
 			'erythro',
 			'threo',
 			'alpha',
@@ -85,13 +136,16 @@ var special_choices = [
 			'syn',
 			'ECL',
 			'STG'
-		]},
-		{ MDLBG_BOND_KEY: [
-			'Value=4'
-		]},
+		    ]},
+		  { name: 'MDLBG_BOND_KEY',
+		    value: [
+			    'Value=4'
+		    ]},
 	]},
-	{ Atom: [
-		{ MDLBG_STEREO_KEY: [
+	{ name: 'Atom',
+	  value: [
+		  { name: 'MDLBG_STEREO_KEY',
+		    value: [
 			'RS',
 			'SR',
 			'P-3',
@@ -116,12 +170,14 @@ var special_choices = [
 			'HB-9'
 		]}
 	]},
-	{ Group: [
-		{ MDLBG_STEREO_KEY: [
+	{ name: 'Group',
+	  value: [
+		  { name: 'MDLBG_STEREO_KEY',
+		    value: [
 			'cis',
 			'trans'
-		]}
-	]}
+		    ]}
+	  ]}
 ];
 
 module.exports = dialog;

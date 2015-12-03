@@ -813,8 +813,7 @@ rnd.Editor.TemplateTool = function (editor, template) {
 
 	// load template molfile in advance
 	if (!this.template.molecule) {
-		var lines = this.template.molfile.split('\n');
-		var frag = chem.Molfile.parseCTFile(lines);
+		var frag = chem.Molfile.parseCTFile(this.template.molfile);
 		frag.rescale();
 
 		var xy0 = new Vec2();

@@ -47,8 +47,9 @@ chem.Molfile.partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, 
 	return res;
 };
 
-chem.Molfile.parseCTFile = function (molfileLines)
+chem.Molfile.parseCTFile = function (molfile)
 {
+	var molfileLines = Array.isArray(molfile) ? molfile : molfile.split('\n');
 	var ret = null;
 	if (molfileLines[0].search('\\$RXN') == 0)
 		ret = chem.Molfile.parseRxn(molfileLines);

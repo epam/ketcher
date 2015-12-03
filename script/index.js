@@ -56,9 +56,7 @@ function showMolfile(clientArea, molString, options) {
 	}, options);
 	var render = new rnd.Render(clientArea, opts.bondLength, opts);
 	if (molString) {
-		// TODO: move split to file parsing
-		var mt = typeof molString === 'string' ? molString.split('\n') : molString;
-		var mol = chem.Molfile.parseCTFile(mt);
+		var mol = chem.Molfile.parseCTFile(molString);
 		render.setMolecule(mol);
 	}
 	render.update();
@@ -86,6 +84,7 @@ var ketcher = module.exports = {
 	api_path: '__API_PATH__',
 	build_date: '__BUILD_DATE__',
 	build_number: '__BUILD_NUMBER__' || null,
+	build_options: '__BUILD_NUMBER__',
 
 	getSmiles: getSmiles,
 	getMolfile: getMolfile,

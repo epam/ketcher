@@ -79,7 +79,7 @@ function initTemplateCustom (el, base_url) {
 			var li =  new Element('li');
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
-			var mol = chem.Molfile.parseCTFile(tmpl.molfile.split('\n')),
+			var mol = chem.Molfile.parseCTFile(tmpl.molfile),
 			render = new rnd.Render(li, 0, {
 				'autoScale': true,
 				'autoScaleMargin': 0,

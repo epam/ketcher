@@ -50,7 +50,7 @@ var clipActions = ['cut', 'copy', 'paste'];
 function init (options, apiServer) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
-	clientArea = $('ketcher');
+	clientArea = $('canvas');
 	server = apiServer;
 
 	if (initialized)

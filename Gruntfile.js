@@ -40,6 +40,9 @@ module.exports = function (grunt) {
 		browserify: {
 			options: {
 				banner: '<%= options.banner %>',
+				browserifyOptions: {
+					standalone: '<%= pkg.name %>'
+				},
 				transform: [
 					[
 						'browserify-replace', {
@@ -48,12 +51,13 @@ module.exports = function (grunt) {
 							]
 						}
 					]
-				],
-				preBundleCB: polyfillify
+				]
+				//preBundleCB: polyfillify
 			},
 			dev: {
 				options: {
 					browserifyOptions: {
+						standalone: '<%= pkg.name %>',
 						debug: true
 					}
 				},

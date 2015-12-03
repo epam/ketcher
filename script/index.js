@@ -1,4 +1,4 @@
-/*global require,exports,global:false*/
+/*global require, module, global*/
 
 var queryString = require('query-string');
 
@@ -13,43 +13,36 @@ var ui = global.ui;
 var chem = global.chem;
 var rnd = global.rnd;
 
-// ketcher.* namespace should be global
-// (the only global as we have API methods here)
-var ketcher = global.ketcher = {};
-
-ketcher.time_created = '__TIME_CREATED__';
-ketcher.version = '2.0.0-alpha.2';
-ketcher.server = api('');
-
-ketcher.getSmiles = function (forceLocal) {
+var server;   // TODO: Remove me. Remains here for getSmiles api compatibility
+function getSmiles(forceLocal) {
 	var local = ui.standalone || forceLocal;
 	var saver = local ? new chem.SmilesSaver() : new chem.MolfileSaver();
 	var mol = saver.saveMolecule(ui.ctab, true);
-	return local ? mol : ketcher.server.smiles.sync({
+	return local ? mol : server.smiles.sync({
 		moldata: mol
 	});
 };
 
-ketcher.getMolfile = function () {
+function getMolfile() {
 	var saver = new chem.MolfileSaver();
 	return saver.saveMolecule(ui.ctab, true);
 };
 
-ketcher.setMolecule = function (molString) {
+function setMolecule(molString) {
 	if (!Object.isString(molString)) {
 		return;
 	}
 	ui.loadMolecule(molString);
 };
 
-ketcher.addFragment = function (molString) {
+function addFragment(molString) {
 	if (!Object.isString(molString)) {
 		return;
 	}
 	ui.loadFragment(molString);
 };
 
-ketcher.showMolfile = function (clientArea, molString, options) {
+function showMolfile(clientArea, molString, options) {
 	var opts = util.extend({
 		bondLength: 75,
 		showSelectionRegions: false,
@@ -73,14 +66,26 @@ ketcher.showMolfile = function (clientArea, molString, options) {
 	return render;
 };
 
-ketcher.onStructChange = function (handler) {
+function onStructChange(handler) {
 	util.assert(handler);
 	ui.render.addStructChangeHandler(handler);
 };
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
-global.onload = function () {
+window.onload = function () {
 	var params = queryString.parse(document.location.search);
-	ui.init(util.extend({}, params), ketcher.server);
+	server = api(params.api_path || '');
+	ui.init(util.extend({}, params), server);
+};
+
+module.exports = {
+	time_created: '__TIME_CREATED__',
+	version: '2.0.0-alpha.2',
+	getSmiles: getSmiles,
+	getMolfile: getMolfile,
+	setMolecule: setMolecule,
+	addFragment: addFragment,
+	showMolfile: showMolfile,
+	onStructChange: onStructChange
 };

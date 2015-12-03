@@ -1,26 +1,24 @@
 // TODO: exclude from no-groups build
-/*global module, global*/
+/*global module, require */
 
 /* eslint-disable */
+var util = require('../../util');
 
 var ui = global.ui;
 
 function dialog (params) {
 	var dlg = ui.showDialog('sgroup_special');
 	var cache = {};
+	var handlers = [];
 
 	console.assert(!params.type || params.type == 'DAT');
+	console.assert(!params.type || params.attrs.fieldName);
 
-	var context = params.context;
+	var context = params.type && matchContext(params.attrs.fieldName, params.attrs.fieldValue) ||
+		          params.context || 'Fragment';
+	setContext(context, cache, true);
 	if (params.attrs.fieldName)
-		context = findContext(params.attrs.fieldName, params.attrs.fieldValue);
-
-	console.info('Initial context', context);
-	setContext(context || 'Fragment', cache);
-	if (params.attrs.fieldName) {
-		setField(params.attrs.fieldName, cache);
-		$('sgroup_special_name').value = params.attrs.fieldName;
-	}
+		setField(params.attrs.fieldName, cache, true);
 
 	$('sgroup_special_value').value = params.attrs.fieldValue;
 	if (params.attrs.attached)
@@ -30,7 +28,6 @@ function dialog (params) {
 	else
 		$('sgroup_special_relative').checked = true;
 
-	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		var key = 'on' + button.value.capitalize();
 		var res = key != 'onOk' || getValidateAttrs();
@@ -72,57 +69,53 @@ function getValidateAttrs() {
 	         attrs: attrs };
 };
 
-function arrayFind(array, pred) {
-	for (var i = 0; i < array.length; i++) {
-		if (pred(array[i], i, array))
-			return array[i];
-	}
-	return undefined;
-}
-
-function setContext(context, cache) {
-	console.info('set', context, cache);
-	if (!cache.context || context != cache.context.name) {
-		var ctx = arrayFind(special_choices, function (opt) {
+function setContext(context, cache, force) {
+	console.info('set context:', context, cache);
+	console.assert(cache.context || force, 'Field setup should be forced');
+	if (force || context != cache.context.name) {
+		cache.context = util.find(special_choices, function (opt) {
 			return opt.name == context;
 		});
-		var str = ctx.value.reduce(function (res, opt) {
+		console.assert(cache.context, 'Can\'t find such context');
+		var str = cache.context.value.reduce(function (res, opt) {
 			return res + '<option value="' + opt.name + '">' + opt.name + "</option>";
 		}, '');
 		$('sgroup_special_name').update(str);
-		cache.context = ctx; // assert
-		setField(ctx.value[0].name, cache, true);
+		setField(cache.context.value[0].name, cache, true);
+		if (force)
+			$('sgroup_context').value = context;
 	}
 }
 
 function setField(field, cache, force) {
-	console.info('set', field, cache);
-	if (force || !cache.field || field != cache.field.name) {
-		var ctx = arrayFind(cache.context.value, function (opt) {
-			console.log(opt.name, field);
+	console.info('set field:', field, cache);
+	console.assert(cache.field || force, 'Field setup should be forced');
+	if (field || field != cache.field.name) {
+		cache.field = util.find(cache.context.value, function (opt) {
 			return opt.name == field;
 		});
-		cache.field = ctx;
-		if (!ctx.value)
+		console.assert(cache.field, 'Can\'t find such field');
+		if (!cache.field.value)
 			$('sgroup_special_value').outerHTML = '<textarea id="sgroup_special_value"></textarea>';
 		else {
-			var str = ctx.value.reduce(function (res, opt) {
+			var str = cache.field.value.reduce(function (res, opt) {
 				return res + '<option value="' + opt + '">' + opt + "</option>";
 			}, '');
 			$('sgroup_special_value').outerHTML = '<select size="10" id="sgroup_special_value">' + str + '</select>';
 		}
+		$('sgroup_special_name').value = field;
 	}
 }
 
-function findContext(field, value) {
-	console.info('search:', field, value);
-	var c = arrayFind(special_choices, function(c) {
-		var f = arrayFind(c.value, function(f) {
+function matchContext(field, value) {
+	console.info('search:', util.unicodeLiteral(field), util.unicodeLiteral(value));
+	var c = util.find(special_choices, function(c) {
+		var f = util.find(c.value, function(f) {
 			return f.name == field;
 		});
 		if (!f)
 			return false;
-		return !value || !f.value || !!arrayFind(f.value, function(v) {
+		return !value || !f.value || !!util.find(f.value, function(v) {
 			return v == value;
 		});
 	});
@@ -208,5 +201,10 @@ var special_choices = [
 		    ]}
 	  ]}
 ];
+
+dialog.match = function (params) {
+	return !params.type ||
+		params.type == 'DAT' && !!matchContext(params.attrs.fieldName, params.attrs.fieldValue);
+};
 
 module.exports = dialog;

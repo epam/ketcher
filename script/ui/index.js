@@ -653,7 +653,7 @@ function onClick_CleanUp ()
 		var atomSetExtended = Set.empty();
 		ui.ctab.loops.each(function (lid, loop) {
 			// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
-			if (util.find(loop.hbs, function (hbid) {
+			if (util.findIndex(loop.hbs, function (hbid) {
 				return Set.contains(atomSet, ui.ctab.halfBonds.get(hbid).begin);
 			}) >= 0)
 				util.each(loop.hbs, function (hbid) {
@@ -933,7 +933,7 @@ function onClick_TemplateCustom () {
 };
 
 function showSgroupDialog(params) {
-	if (__SGROUP_SPECIAL__)
+	if (__SGROUP_SPECIAL__ && sgroupSpecialDialog.match(params))
 		return sgroupSpecialDialog(params);
 	return sgroupDialog(params);
 };

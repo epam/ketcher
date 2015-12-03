@@ -941,7 +941,7 @@ function showSgroupDialog(params) {
 // try to reconstruct molfile string instead parsing multiple times
 // TODO: move this logic to chem.Molfile
 function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
-	var lines = molfile.split('\n');
+	var lines = util.splitNewlines(molfile);
 	try {
 		return chem.Molfile.parseCTFile(lines);
 	} catch (ex) {

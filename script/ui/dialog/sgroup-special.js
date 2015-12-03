@@ -7,10 +7,15 @@ var ui = global.ui;
 
 function dialog (params) {
 	var dlg = ui.showDialog('sgroup_special');
+	var cache = {};
 
 	console.assert(!params.type || params.type == 'DAT');
 
-	setChoise(params.attrs.fieldName || 'Fragment', params.attrs.fieldValue);
+	setContext(params.context || 'Fragment', cache);
+	if (params.attrs.fieldName)
+		setField(params.attrs.fieldName, cache);
+
+	$('sgroup_special_value').value = params.attrs.fieldValue;
 	if (params.attrs.attached)
 		$('sgroup_special_attached').checked = true;
 	else if (params.attrs.absolute)
@@ -31,7 +36,10 @@ function dialog (params) {
 	});
 
 	handlers[1] = dlg.on('change', 'select', function (_, select) {
-		setChoise($('sgroup_context').value, $('sgroup_special_name').value);
+		if (select.id == 'sgroup_context')
+			setContext($('sgroup_context').value, cache);
+		if (select.id == 'sgroup_special_name')
+			setField($('sgroup_special_name').value, cache);
 	});
 };
 
@@ -53,7 +61,8 @@ function getValidateAttrs() {
 		return null;
 	}
 
-	return attrs;
+	return { type: 'DAT',
+	         attrs: attrs };
 };
 
 function arrayFind(array, pred) {
@@ -64,35 +73,33 @@ function arrayFind(array, pred) {
 	return undefined;
 }
 
-function setChoise(context, field) {
-	if (!setChoise.cache)
-		setChoise.cache = {};
-	var cache = setChoise.cache;
-
-	console.info('set', context, field, cache);
+function setContext(context, cache) {
+	console.info('set', context, cache);
 	if (!cache.context || context != cache.context.name) {
 		var ctx = arrayFind(special_choices, function (opt) {
 			return opt.name == context;
 		});
-		cache.context = ctx; // assert
 		var str = ctx.value.reduce(function (res, opt) {
 			return res + '<option value="' + opt.name + '">' + opt.name + "</option>";
 		}, '');
 		$('sgroup_special_name').update(str);
-		if (!field) {
-			$('sgroup_special_name').selectedIndex = 0;
-			field = $('sgroup_special_name').value;
-		}
+		cache.context = ctx; // assert
+		setField(ctx.value[0].name, cache, true);
 	}
-	if (!cache.field || field != cache.field.name) {
-		ctx = arrayFind(cache.context.value, function (opt) {
+}
+
+function setField(field, cache, force) {
+	console.info('set', field, cache);
+	if (force || !cache.field || field != cache.field.name) {
+		var ctx = arrayFind(cache.context.value, function (opt) {
+			console.log(opt.name, field);
 			return opt.name == field;
 		});
 		cache.field = ctx;
 		if (!ctx.value)
 			$('sgroup_special_value').outerHTML = '<textarea id="sgroup_special_value"></textarea>';
 		else {
-			str = ctx.value.reduce(function (res, opt) {
+			var str = ctx.value.reduce(function (res, opt) {
 				return res + '<option value="' + opt + '">' + opt + "</option>";
 			}, '');
 			$('sgroup_special_value').outerHTML = '<select size="10" id="sgroup_special_value">' + str + '</select>';

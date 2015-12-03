@@ -16,7 +16,6 @@ var keymage = require('keymage');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
-var server = require('./server.js');
 var Action = require('./action.js');
 
 var templates = require('./templates');
@@ -42,18 +41,17 @@ var lastSelected;
 var clientArea = null;
 var dropdownOpened;
 var zspObj;
+var server;
 
 var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-custom'];
 var clipActions = ['cut', 'copy', 'paste'];
 
-function init (parameters, opts) {
+function init (options, apiServer) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('ketcher');
-
-	ui.api_path = parameters.api_path || ui.api_path;
-	ui.static_path = parameters.static_path || ui.static_path;
+	server = apiServer;
 
 	if (initialized)
 	{
@@ -67,7 +65,7 @@ function init (parameters, opts) {
 	}
 
 	updateServerButtons();
-	if (['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
+	if (server && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check if this is nesessary
 		server.knocknock().then(function (res) {
 			ui.standalone = false;
@@ -78,8 +76,8 @@ function init (parameters, opts) {
 		}).then(function () {
 			// TODO: move it out there as server incapsulates
 			// standalone
-			if (parameters.mol) {
-				loadMolecule(parameters.mol);
+			if (options.mol) {
+				loadMolecule(options.mol);
 			}
 		});
 	}
@@ -163,7 +161,7 @@ function init (parameters, opts) {
 	});
 
 	// Init renderer
-	opts = new rnd.RenderOptions(opts);
+	var opts = new rnd.RenderOptions(options);
 	opts.atomColoring = true;
 	ui.render =  new rnd.Render(clientArea, SCALE, opts);
 	ui.editor = new rnd.Editor(ui.render);
@@ -514,7 +512,7 @@ function onClick_OpenFile ()
 
 function onClick_SaveFile ()
 {
-	saveDialog({molecule: ui.ctab});
+	saveDialog({molecule: ui.ctab}, server);
 }
 
 function aromatize(mol, arom)
@@ -937,7 +935,7 @@ function onClick_ReaGenericsTableButton ()
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
 var current_template_custom = null;
 function onClick_TemplateCustom () {
-	templatesDialog(ui.static_path,{
+	templatesDialog('', {
 		onOk: function (tmpl) {
 			current_template_custom = tmpl;
 			selectAction('template-custom-select');
@@ -1155,8 +1153,6 @@ module.exports = {
 util.extend(ui, module.exports);
 
 util.extend(ui, {
-	api_path: '',
-	static_path: '',
 	standalone: true,
 	ctab: new chem.Struct(),
 	render: null,

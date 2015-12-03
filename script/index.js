@@ -1,7 +1,9 @@
 /*global require,exports,global:false*/
 
-var util = require('./util');
 var queryString = require('query-string');
+
+var util = require('./util');
+var api = require('./api.js');
 
 require('./ui');
 require('./chem');
@@ -11,20 +13,19 @@ var ui = global.ui;
 var chem = global.chem;
 var rnd = global.rnd;
 
-var server = require('./ui/server.js');
-
 // ketcher.* namespace should be global
 // (the only global as we have API methods here)
 var ketcher = global.ketcher = {};
 
 ketcher.time_created = '__TIME_CREATED__';
 ketcher.version = '2.0.0-alpha.2';
+ketcher.server = api('');
 
 ketcher.getSmiles = function (forceLocal) {
 	var local = ui.standalone || forceLocal;
 	var saver = local ? new chem.SmilesSaver() : new chem.MolfileSaver();
 	var mol = saver.saveMolecule(ui.ctab, true);
-	return local ? mol : server.smiles.sync({
+	return local ? mol : ketcher.server.smiles.sync({
 		moldata: mol
 	});
 };
@@ -81,5 +82,5 @@ ketcher.onStructChange = function (handler) {
 // to start early
 global.onload = function () {
 	var params = queryString.parse(document.location.search);
-	ui.init(params);
+	ui.init(util.extend({}, params), ketcher.server);
 };

@@ -1,15 +1,14 @@
 /*global require, module, global*/
 
 var Promise = require('promise-polyfill');
-require('../../chem');
-
-var server = require('../server.js');
 var fs = require('filesaver.js');
+
+require('../../chem');
 
 var chem = global.chem;
 var ui = global.ui;
 
-function saveDialog (params) {
+function saveDialog (params, server) {
 	var dlg = ui.showDialog('save-file'),
 	output = dlg.select('textarea')[0],
 	formatInput = dlg.select('select')[0],
@@ -36,7 +35,7 @@ function saveDialog (params) {
 
 	handlers[1] = formatInput.on('change', function (_, input) {
 		var format = formatInput.value;
-		convertMolecule(params.molecule, format).then(function (res) {
+		convertMolecule(server, params.molecule, format).then(function (res) {
 			outputMolecule(res, format);
 		}, ui.echo);
 	});
@@ -51,14 +50,14 @@ function saveDialog (params) {
 
 	outputMolecule(new chem.MolfileSaver().saveMolecule(params.molecule));
 	saveButton.addClassName('disabled');
-	fileSaver().then(function (f) {
+	fileSaver(server).then(function (f) {
 		saveFile = f;
 		saveButton.removeClassName('disabled');
 	});
 	formatInput.select('[value=inchi]')[0].disabled = ui.standalone;
 };
 
-function fileSaver () {
+function fileSaver (server) {
 	var mimemap = {
 		'smi': 'chemical/x-daylight-smiles',
 		'mol': 'chemical/x-mdl-molfile',
@@ -83,7 +82,7 @@ function fileSaver () {
 	});
 };
 
-function convertMolecule (molecule, format) {
+function convertMolecule (server, molecule, format) {
 	return new Promise(function (resolve, reject) {
 		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
 		if (format == 'mol') {

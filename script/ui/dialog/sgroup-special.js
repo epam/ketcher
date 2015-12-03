@@ -11,9 +11,16 @@ function dialog (params) {
 
 	console.assert(!params.type || params.type == 'DAT');
 
-	setContext(params.context || 'Fragment', cache);
+	var context = params.context;
 	if (params.attrs.fieldName)
+		context = findContext(params.attrs.fieldName, params.attrs.fieldValue);
+
+	console.info('Initial context', context);
+	setContext(context || 'Fragment', cache);
+	if (params.attrs.fieldName) {
 		setField(params.attrs.fieldName, cache);
+		$('sgroup_special_name').value = params.attrs.fieldName;
+	}
 
 	$('sgroup_special_value').value = params.attrs.fieldValue;
 	if (params.attrs.attached)
@@ -105,6 +112,21 @@ function setField(field, cache, force) {
 			$('sgroup_special_value').outerHTML = '<select size="10" id="sgroup_special_value">' + str + '</select>';
 		}
 	}
+}
+
+function findContext(field, value) {
+	console.info('search:', field, value);
+	var c = arrayFind(special_choices, function(c) {
+		var f = arrayFind(c.value, function(f) {
+			return f.name == field;
+		});
+		if (!f)
+			return false;
+		return !value || !f.value || !!arrayFind(f.value, function(v) {
+			return v == value;
+		});
+	});
+	return c && c.name;
 }
 
 var special_choices = [

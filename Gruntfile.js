@@ -28,13 +28,21 @@ module.exports = function (grunt) {
 			// is there a way to automate?
 			'build-number': grunt.option('build-number'),
 			'build-date': grunt.option('build-date') ||
-				          grunt.option('build-number') && grunt.template.today('yyyy-mm-dd HH-MM-ss'),
+				          grunt.template.today('yyyy-mm-dd HH-MM-ss'),
 
+			'api-path': grunt.option('api-path') || '',
 			'no-generics': grunt.option('no-generics'),
 			'no-reactions': grunt.option('no-reactions'),
 			'no-sgroup': grunt.option('no-sgroup'),
 			'no-rgroup': grunt.option('no-rgroup') || grunt.option('rgroup-label-only'),
-			'rgroup-label-only': grunt.option('rgroup-label-only')
+			'rgroup-label-only': grunt.option('rgroup-label-only'),
+
+			replace: [
+				{from: '__VERSION__', to: '<%= pkg.version %>'},
+				{from: '__API_PATH__', to: '<%= options["api-path"] %>' },
+				{from: '__BUILD_NUMBER__', to: '<%= options["build-number"] %>' },
+				{from: '__BUILD_DATE__', to: '<%= options["build-date"] %>' },
+			]
 		},
 
 		browserify: {
@@ -44,13 +52,9 @@ module.exports = function (grunt) {
 					standalone: '<%= pkg.name %>'
 				},
 				transform: [
-					[
-						'browserify-replace', {
-							replace: [
-								{from: /__TIME_CREATED__/, to: new Date()}
-							]
-						}
-					]
+					['browserify-replace', {
+							replace: '<%= options.replace %>'
+					}]
 				]
 				//preBundleCB: polyfillify
 			},
@@ -68,9 +72,10 @@ module.exports = function (grunt) {
 			default: {
 				options: {
 					transform: [
-						[
-							'<%= browserify.options.transform %>',
-							'uglifyify', {
+						['browserify-replace', {
+								replace: '<%= options.replace %>'
+						}],
+						['uglifyify', {
 								report: 'min',
 								compress: {
 									global_defs: {
@@ -78,8 +83,7 @@ module.exports = function (grunt) {
 									},
 									dead_code: true
 								}
-							}
-						]
+						}]
 					]
 				},
 				files: '<%= browserify.dev.files %>'
@@ -216,7 +220,7 @@ module.exports = function (grunt) {
 			},
 			js: {
 				files: 'script/**/*.js',
-				tasks: 'browserify:dev'
+				tasks: ['shell:rev', 'browserify:dev']
 			},
 			css: {
 				files: 'style/**/*.less',

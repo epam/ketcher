@@ -65,8 +65,9 @@ function init (options, apiServer) {
 	}
 
 	updateServerButtons();
-	if (server && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) { // don't try to knock if the file is opened locally ("file:" protocol)
-		// TODO: check if this is nesessary
+	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
+		// don't try to knock if the file is opened locally ("file:" protocol)
+		// TODO: check when this is nesessary
 		server.knocknock().then(function (res) {
 			ui.standalone = false;
 			updateServerButtons();

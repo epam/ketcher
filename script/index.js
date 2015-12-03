@@ -13,12 +13,12 @@ var ui = global.ui;
 var chem = global.chem;
 var rnd = global.rnd;
 
-var server;   // TODO: Remove me. Remains here for getSmiles api compatibility
 function getSmiles(forceLocal) {
 	var local = ui.standalone || forceLocal;
 	var saver = local ? new chem.SmilesSaver() : new chem.MolfileSaver();
 	var mol = saver.saveMolecule(ui.ctab, true);
-	return local ? mol : server.smiles.sync({
+	// TODO: Remove me. Remains here for getSmiles api compatibility
+	return local ? mol : ketcher.server.smiles.sync({
 		moldata: mol
 	});
 };
@@ -75,13 +75,18 @@ function onStructChange(handler) {
 // to start early
 window.onload = function () {
 	var params = queryString.parse(document.location.search);
-	server = api(params.api_path || '');
-	ui.init(util.extend({}, params), server);
+	if (params.api_path)
+		ketcher.api_path = params.api_path;
+	ketcher.server = api(ketcher.api_path);
+	ui.init(util.extend({}, params), ketcher.server);
 };
 
-module.exports = {
-	time_created: '__TIME_CREATED__',
-	version: '2.0.0-alpha.2',
+var ketcher = module.exports = {
+	version: '__VERSION__',
+	api_path: '__API_PATH__',
+	build_date: '__BUILD_DATE__',
+	build_number: '__BUILD_NUMBER__' || null,
+
 	getSmiles: getSmiles,
 	getMolfile: getMolfile,
 	setMolecule: setMolecule,

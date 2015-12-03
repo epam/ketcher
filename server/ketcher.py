@@ -28,6 +28,9 @@ class application(object):
         self.FileWrapper = environ.get('wsgi.file_wrapper', FileWrapper)
         self.headers = Headers([])
 
+        if self.static_serve:
+            self.headers['Access-Control-Allow-Origin'] = '*'
+
         route = getattr(self, 'on_' + self.path, None)
         if route is None:
             route = self.serve_static if self.method == 'GET' and \

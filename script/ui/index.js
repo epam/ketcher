@@ -34,7 +34,6 @@ var HISTORY_LENGTH = 32;
 var undoStack = [];
 var redoStack = [];
 
-var initialized = false;
 var ketcherWindow;
 var toolbar;
 var lastSelected;
@@ -52,17 +51,6 @@ function init (options, apiServer) {
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('canvas');
 	server = apiServer;
-
-	if (initialized)
-	{
-		Action.fromNewCanvas(new chem.Struct());
-		ui.render.update();
-		undoStack.clear();
-		redoStack.clear();
-		updateHistoryButtons();
-		selectAction(null);
-		return;
-	}
 
 	updateServerButtons();
 	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
@@ -174,8 +162,6 @@ function init (options, apiServer) {
 
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();
-
-	initialized = true;
 };
 
 function shortcutStr(key) {
@@ -1144,9 +1130,20 @@ function atomLabel (mode) {
 	}
 };
 
+function clean () {
+	// latter if (initialized)
+	Action.fromNewCanvas(new chem.Struct());
+	ui.render.update();
+	undoStack.clear();
+	redoStack.clear();
+	updateHistoryButtons();
+	selectAction(null);
+}
+
 // The expose guts two way
 module.exports = {
 	init: init,
+	clean: clean,
 	loadMolecule: loadMolecule,
 	loadFragment: loadFragment
 };

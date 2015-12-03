@@ -1531,7 +1531,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id
 	}
 
 	ui.showSGroupProperties({
-		type: id !== null ? ui.render.sGroupGetType(id) : 'GEN',
+		type: id !== null ? ui.render.sGroupGetType(id) : null,
 		attrs: id !== null ? ui.render.sGroupGetAttrs(id) : {},
 		onCancel: function () {
 			this.editor.deselectAll();

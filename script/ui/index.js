@@ -26,6 +26,7 @@ var saveDialog = require('./dialog/save.js');
 var selectDialog = require('./dialog/select');
 var templatesDialog = require('./dialog/templates');
 var sgroupDialog = require('./dialog/sgroup');
+var sgroupSpecialDialog = require('./dialog/sgroup-special');
 var obsolete = require('./dialog/obsolete');
 
 var SCALE = 40;  // const
@@ -931,6 +932,12 @@ function onClick_TemplateCustom () {
 	});
 };
 
+function showSgroupDialog(params) {
+	if (__SGROUP_SPECIAL__)
+		return sgroupSpecialDialog(params);
+	return sgroupDialog(params);
+};
+
 // try to reconstruct molfile string instead parsing multiple times
 // TODO: move this logic to chem.Molfile
 function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
@@ -1178,7 +1185,7 @@ util.extend(ui, {
 	page2obj: page2obj,
 
 	// TODO: search a way to pass dialogs to editor
-	showSGroupProperties: sgroupDialog,
+	showSGroupProperties: showSgroupDialog,
 	showRGroupTable: showRGroupTable,
 	showElemTable: showElemTable,
 	showReaGenericsTable: showReaGenericsTable,

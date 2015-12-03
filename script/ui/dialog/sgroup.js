@@ -7,12 +7,13 @@ var ui = global.ui;
 
 function dialog (params) {
 	var dlg = ui.showDialog('sgroup_properties');
+	var type = params.type || 'GEN';
 
-	$('sgroup_type').value = params.type;
+	$('sgroup_type').value = type;
 	$('sgroup_type').activate();
 	onChange_SGroupType.call($('sgroup_type'));
 
-	switch (params.type) {
+	switch (type) {
 	case 'SRU':
 		$('sgroup_connection').value = params.attrs.connectivity;
 		$('sgroup_label').value = params.attrs.subscript;
@@ -37,7 +38,7 @@ function dialog (params) {
 			break;
 	}
 
-	if (params.type != 'DAT') {
+	if (type != 'DAT') {
 		$('sgroup_field_name').value = '';
 		$('sgroup_field_value').value = '';
 	}

@@ -36,12 +36,14 @@ module.exports = function (grunt) {
 			'no-sgroup': grunt.option('no-sgroup'),
 			'no-rgroup': grunt.option('no-rgroup') || grunt.option('rgroup-label-only'),
 			'rgroup-label-only': grunt.option('rgroup-label-only'),
+			'sgroup-data-special': grunt.option('sgroup-data-special') || false,
 
 			replace: [
 				{from: '__VERSION__', to: '<%= pkg.version %>'},
 				{from: '__API_PATH__', to: '<%= options["api-path"] %>' },
 				{from: '__BUILD_NUMBER__', to: '<%= options["build-number"] %>' },
 				{from: '__BUILD_DATE__', to: '<%= options["build-date"] %>' },
+				{from: '__SGROUP_SPECIAL__', to: '<%= options["sgroup-data-special"] %>' },
 			]
 		},
 

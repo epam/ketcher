@@ -444,7 +444,8 @@ chem.Molfile.applyDataSGroupData = function (sg, data, finalize) {
 		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
-		sg.data.fieldValue += '\n';
+		// Partially revert f556e8, from KETCHER-457 and RB with love
+		// sg.data.fieldValue += '\n';
 	}
 };
 

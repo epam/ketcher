@@ -5,126 +5,105 @@
 
 var ui = global.ui;
 
-function dialog (id, tool, selection, onOk, onCancel) {
-	if (!tool) {
-		throw new Error('Tool not specified. Note: this method should only be invoked by rnd.Editor.SGroupTool.SGroupHelper, all other usages are obsolete.');
-	}
-	if ($('sgroup_properties').visible()) {
-		return;
-	}
+function dialog (params) {
+	var dlg = ui.showDialog('sgroup_properties');
 
-	var type = (id == null) ? 'GEN' : ui.render.sGroupGetType(id);
-
-	$('sgroup_properties').sgroup_id = id;
-	$('sgroup_type').value = type;
+	$('sgroup_type').value = params.type;
+	$('sgroup_type').activate();
 	onChange_SGroupType.call($('sgroup_type'));
 
-	switch (type) {
-		case 'SRU':
-			$('sgroup_connection').value = ui.render.sGroupGetAttr(id, 'connectivity');
-			$('sgroup_label').value = ui.render.sGroupGetAttr(id, 'subscript');
-			break;
-		case 'MUL':
-			$('sgroup_label').value = ui.render.sGroupGetAttr(id, 'mul');
-			break;
-		case 'SUP':
-			$('sgroup_label').value = ui.render.sGroupGetAttr(id, 'name');
-			break;
-		case 'DAT':
-			$('sgroup_field_name').value = ui.render.sGroupGetAttr(id, 'fieldName');
-			$('sgroup_field_value').value = ui.render.sGroupGetAttr(id, 'fieldValue');
-			var isAttached = ui.render.sGroupGetAttr(id, 'attached');
-			var isAbsolute = ui.render.sGroupGetAttr(id, 'absolute');
-			(isAttached ? $('sgroup_pos_attached') : (isAbsolute ? $('sgroup_pos_absolute') : $('sgroup_pos_relative'))).checked = true;
+	switch (params.type) {
+	case 'SRU':
+		$('sgroup_connection').value = params.attrs.connectivity;
+		$('sgroup_label').value = params.attrs.subscript;
+		break;
+	case 'MUL':
+		$('sgroup_label').value = params.attrs.mul;
+		break;
+	case 'SUP':
+		$('sgroup_label').value = params.attrs.name;
+		break;
+	case 'DAT':
+		$('sgroup_field_name').value = params.attrs.fieldName;
+		$('sgroup_field_value').value = params.attrs.fieldValue;
+		if (params.attrs.attached)
+			$('sgroup_pos_attached').checked = true;
+		else if (params.attrs.absolute)
+			$('sgroup_pos_absolute').checked = true;
+		else
+			$('sgroup_pos_relative').checked = true;
 			break;
 		default:
 			break;
 	}
 
-	if (type != 'DAT')
-	{
+	if (params.type != 'DAT') {
 		$('sgroup_field_name').value = '';
 		$('sgroup_field_value').value = '';
 	}
 
-	var onClickCancel = function ()
-	{
-		ui.hideDialog('sgroup_properties');
-		resetListeners();
-		onCancel.call(tool);
-	};
-
-	var onClickOk = function ()
-	{
-		ui.hideDialog('sgroup_properties');
-		var id = $('sgroup_properties').sgroup_id;
-
-		var type = $('sgroup_type').value;
-		var attrs =
-		{
-			mul: null,
-			connectivity: '',
-			name: '',
-			subscript: '',
-			fieldName: '',
-			fieldValue: ''
-		};
-
-		switch (type)
-			{
-			case 'SRU':
-				attrs.connectivity = $('sgroup_connection').value.strip();
-				attrs.subscript = $('sgroup_label').value.strip();
-				if (attrs.subscript.length != 1 || !attrs.subscript.match(/^[a-zA-Z]$/)) {
-					alert(attrs.subscript.length ? 'SRU subscript should consist of a single letter.' : 'Please provide an SRU subscript.');
-					ui.showDialog('sgroup_properties');
-					return;
-				}
-				break;
-			case 'MUL':
-				attrs.mul = parseInt($('sgroup_label').value);
-				break;
-			case 'SUP':
-				attrs.name = $('sgroup_label').value.strip();
-				if (!attrs.name) {
-					alert('Please provide a name for the superatom.');
-					ui.showDialog('sgroup_properties');
-					return;
-				}
-				break;
-			case 'DAT':
-				attrs.fieldName = $('sgroup_field_name').value.strip();
-				attrs.fieldValue = $('sgroup_field_value').value.strip();
-				attrs.absolute = $('sgroup_pos_absolute').checked;
-				attrs.attached = $('sgroup_pos_attached').checked;
-
-				if (attrs.fieldName == '' || attrs.fieldValue == '') {
-					alert('Please, specify data field name and value.');
-					ui.showDialog('sgroup_properties');
-					return;
-				}
-				break;
+	var handlers = [];
+	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
+		var key = 'on' + button.value.capitalize();
+		var res = key != 'onOk' || getValidateAttrs();
+		if (res) {
+			handlers.forEach(function (h) { h.stop(); });
+			ui.hideDialog('sgroup_properties');
+			if (key in params && res)
+				params[key](res);
 		}
+	});
 
-		resetListeners();
-		onOk.call(tool, id, type, attrs);
+	handlers[1] = $('sgroup_type').on('change', onChange_SGroupType);
+	handlers[2] = $('sgroup_label').on('change', onChange_SGroupLabel);
+};
+
+function getValidateAttrs() {
+	var type = $('sgroup_type').value;
+	var attrs = {
+		mul: null,
+		connectivity: '',
+		name: '',
+		subscript: '',
+		fieldName: '',
+		fieldValue: '',
+		attached: false,
+		absolute: false
 	};
 
-	var resetListeners = function () {
-		$('sgroup_prop_cancel').stopObserving('click', onClickCancel);
-		$('sgroup_prop_ok').stopObserving('click', onClickOk);
-		$('sgroup_type').observe('change');
-		$('sgroup_label').observe('change');
-	};
+	switch (type) {
+	case 'SRU':
+		attrs.connectivity = $('sgroup_connection').value.strip();
+		attrs.subscript = $('sgroup_label').value.strip();
+		if (attrs.subscript.length != 1 || !attrs.subscript.match(/^[a-zA-Z]$/)) {
+			alert(attrs.subscript.length ? 'SRU subscript should consist of a single letter.' : 'Please provide an SRU subscript.');
+			return null;
+		}
+		break;
+	case 'MUL':
+		attrs.mul = parseInt($('sgroup_label').value);
+		break;
+	case 'SUP':
+		attrs.name = $('sgroup_label').value.strip();
+		if (!attrs.name) {
+			alert('Please provide a name for the superatom.');
+			return null;
+		}
+		break;
+	case 'DAT':
+		attrs.fieldName = $('sgroup_field_name').value.strip();
+		attrs.fieldValue = $('sgroup_field_value').value.strip();
+		attrs.absolute = $('sgroup_pos_absolute').checked;
+		attrs.attached = $('sgroup_pos_attached').checked;
 
-	$('sgroup_prop_cancel').observe('click', onClickCancel);
-	$('sgroup_prop_ok').observe('click', onClickOk);
-	$('sgroup_type').observe('change', onChange_SGroupType);
-	$('sgroup_label').observe('change', onChange_SGroupLabel);
-
-	ui.showDialog('sgroup_properties');
-	ui.sGroupDlgSelection = selection;
-	$('sgroup_type').activate();
+		if (attrs.fieldName == '' || attrs.fieldValue == '') {
+			alert('Please, specify data field name and value.');
+			return null;
+		}
+		break;
+	}
+	return { type: type,
+	         attrs: attrs };
 };
 
 function onChange_SGroupLabel ()
@@ -136,13 +115,11 @@ function onChange_SGroupLabel ()
 function onChange_SGroupType ()
 {
 	var type = $('sgroup_type').value;
-
 	if (type == 'DAT') {
 		$$('#sgroup_properties .base')[0].hide();
 		$$('#sgroup_properties .data')[0].show();
 		return;
 	}
-
 	$$('#sgroup_properties .base')[0].show();
 	$$('#sgroup_properties .data')[0].hide();
 

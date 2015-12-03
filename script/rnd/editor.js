@@ -1530,7 +1530,26 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id
 		}
 	}
 
-	ui.showSGroupProperties(id, this, this.selection, this.OnPropertiesDialogOk, this.OnPropertiesDialogCancel);
+	ui.showSGroupProperties({
+		type: id !== null ? ui.render.sGroupGetType(id) : 'GEN',
+		attrs: id !== null ? ui.render.sGroupGetAttrs(id) : {},
+		onCancel: function () {
+			this.editor.deselectAll();
+		}.bind(this),
+		onOk: function (params) {
+			if (id == null) {
+				id = ui.render.ctab.molecule.sgroups.newId();
+				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
+				                                           params.attrs, id), true);
+			} else {
+				ui.addUndoAction(Action.fromSgroupType(id, params.type)
+				                 .mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
+			}
+			this.editor.deselectAll();
+			this.editor.render.update();
+
+		}.bind(this)
+	});
 };
 
 rnd.Editor.SGroupTool.prototype.OnMouseUp = function (event) {
@@ -1559,25 +1578,6 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function (event) {
 	// TODO: handle click on an existing group?
 	if (id != null || (selection && selection.atoms && selection.atoms.length > 0))
 		this._sGroupHelper.showPropertiesDialog(id, selection);
-};
-
-rnd.Editor.SGroupTool.SGroupHelper.prototype.postClose = function () {
-	this.editor.deselectAll();
-	this.editor.render.update();
-};
-
-rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogOk = function (id, type, attrs) {
-	if (id == null) {
-		id = ui.render.ctab.molecule.sgroups.newId();
-		ui.addUndoAction(Action.fromSgroupAddition(type, this.selection.atoms, attrs, id), true);
-	} else {
-		ui.addUndoAction(Action.fromSgroupType(id, type).mergeWith(Action.fromSgroupAttrs(id, attrs)), true);
-	}
-	this.postClose();
-};
-
-rnd.Editor.SGroupTool.SGroupHelper.prototype.OnPropertiesDialogCancel = function () {
-	this.postClose();
 };
 
 rnd.Editor.PasteTool = function (editor, struct) {

@@ -908,7 +908,7 @@ chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set 
 	var parents = atomSets.findAll(function (id) {
 		if (!isSubset.get(id))
 			return false;
-		if (util.find(this.children.get(id), function (childId) {
+		if (util.findIndex(this.children.get(id), function (childId) {
 			return isSubset.get(childId);
 		}, this) >= 0) {
 			return false;

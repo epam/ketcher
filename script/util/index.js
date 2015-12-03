@@ -27,7 +27,15 @@ var map_each = function (map, func, context) {
 	}
 };
 
-var find = function (array, func, context) {
+function find(array, pred) {
+	for (var i = 0; i < array.length; i++) {
+		if (pred(array[i], i, array))
+			return array[i];
+	}
+	return undefined;
+}
+
+function findIndex(array, func, context) {
 	for (var i = 0; i < array.length; ++i) {
 		if (func.call(context, array[i], i)) {
 			return i;
@@ -123,6 +131,25 @@ var normalizeNewlines = function (str) {
 	// http://www.unicode.org/reports/tr18/#Line_Boundaries
 	return str.replace(nlRe, '\n');
 };
+
+function unicodeLiteral(str){
+	function fixedHex(number, length){
+		var str = number.toString(16).toUpperCase();
+		while(str.length < length)
+			str = "0" + str;
+		return str;
+	}
+	var i;
+	var result = "";
+	for( i = 0; i < str.length; ++i){
+		if(str.charCodeAt(i) > 126 || str.charCodeAt(i) < 32)
+			result += "\\u" + fixedHex(str.charCodeAt(i),4);
+		else
+			result += str[i];
+	}
+	return result;
+}
+
 
 var idList = function (object) {
 	var list = [];
@@ -278,6 +305,7 @@ module.exports = {
 	tfx: tfx,
 	each: each,
 	find: find,
+	findIndex: findIndex,
 	findAll: findAll,
 	array: array,
 	isEmpty: isEmpty,
@@ -287,6 +315,7 @@ module.exports = {
 	getElementTextContent: getElementTextContent,
 	stringPadded: stringPadded,
 	normalizeNewlines: normalizeNewlines,
+	unicodeLiteral: unicodeLiteral,
 	idList: idList,
 	mapArray: mapArray,
 	arrayMax: arrayMax,

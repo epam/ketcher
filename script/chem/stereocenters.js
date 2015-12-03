@@ -40,13 +40,13 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
 		var nei1 = nei_list[0];
 		var nei2 = nei_list[1];
 		// check atom labels
-		if (util.find([aid, nei1.aid, nei2.aid], function (aid) {
+		if (util.findIndex([aid, nei1.aid, nei2.aid], function (aid) {
 			return ['C', 'Si'].indexOf(atoms.get(aid).label) < 0;
 		}, this) >= 0)
 			return false;
 
 		// check adjacent bond types
-		if (util.find([nei1.bid, nei2.bid], function (bid) {
+		if (util.findIndex([nei1.bid, nei2.bid], function (bid) {
 			return bonds.get(bid).type != chem.Struct.BOND.TYPE.DOUBLE;
 		}, this) >= 0)
 			return false;
@@ -61,12 +61,12 @@ chem.Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types,
 		if (nei1nei.length < 1 || nei1nei.length > 2 || nei2nei.length < 1 || nei2nei.length > 2)
 			return false;
 
-		if (util.find(nei1nei.concat(nei2nei), function (nei) {
+		if (util.findIndex(nei1nei.concat(nei2nei), function (nei) {
 			return bonds.get(nei.bid).type != chem.Struct.BOND.TYPE.SINGLE;
 		}, this) >= 0)
 			return false;
 
-		if (util.find(nei1nei.concat(nei2nei), function (nei) {
+		if (util.findIndex(nei1nei.concat(nei2nei), function (nei) {
 			return bonds.get(nei.bid).stereo == chem.Struct.BOND.STEREO.EITHER;
 		}, this) >= 0)
 			return false;

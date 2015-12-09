@@ -473,7 +473,7 @@ function addUndoAction (action, check_dummy)
 //
 // New document
 //
-function onClick_NewFile () {
+function clear () {
 	selectAction(null);
 
 	if (!ui.ctab.isBlank()) {
@@ -482,9 +482,7 @@ function onClick_NewFile () {
 	}
 }
 
-
-function onClick_OpenFile ()
-{
+function open () {
 	modal.open({
 		onOk: function (res) {
 			if (res.fragment)
@@ -495,8 +493,7 @@ function onClick_OpenFile ()
 	});
 }
 
-function onClick_SaveFile ()
-{
+function save () {
 	modal.save({molecule: ui.ctab}, server);
 }
 
@@ -516,10 +513,6 @@ function serverTransform(method, mol, options) {
 	}).then(null, echo);
 }
 
-function calculateCip() {
-	return serverTransform('calculateCip');
-};
-
 //
 // Zoom section
 //
@@ -537,12 +530,12 @@ function initZoom() {
 	updateZoom();
 }
 
-function onClick_ZoomIn () {
+function zoomIn () {
 	subEl('zoom-list').selectedIndex++;
 	updateZoom(true);
 };
 
-function onClick_ZoomOut () {
+function zoomOut () {
 	subEl('zoom-list').selectedIndex--;
 	updateZoom(true);
 };
@@ -595,7 +588,7 @@ function packSelective(mol, atoms) {
 	return res;
 }
 
-function onClick_CleanUp () {
+function layout () {
 	var atoms = util.array(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
 
@@ -604,15 +597,19 @@ function onClick_CleanUp () {
 	                       selective ? {selective: '1'} : null);
 };
 
-function onClick_Aromatize () {
+function aromatize () {
 	return serverTransform('aromatize');
 };
 
-function onClick_Dearomatize () {
+function dearomatize () {
 	return serverTransform('dearomatize');
 };
 
-function onClick_Automap () {
+function calculateCip() {
+	return serverTransform('calculateCip');
+};
+
+function automap () {
 	var mol = ui.ctab.clone();
 	mol.addRxnArrowIfNecessary();    // TODO: better way to check reaction
 	if (mol.rxnArrows.count() == 0)  // without cloning
@@ -707,7 +704,7 @@ function redo ()
 };
 
 var current_elemtable_props = null;
-function onClick_ElemTableButton ()
+function elemTable ()
 {
 	modal.periodTable({
 		onOk: function (res) {
@@ -735,7 +732,7 @@ function onClick_ElemTableButton ()
 };
 
 var current_reagenerics = null;
-function onClick_ReaGenericsTableButton ()
+function genericsTable ()
 {
 	modal.genericGroups({
 		onOk: function (res) {
@@ -748,7 +745,7 @@ function onClick_ReaGenericsTableButton ()
 
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
 var current_template_custom = null;
-function onClick_TemplateCustom () {
+function templateCustom () {
 	modal.templates('', {
 		onOk: function (tmpl) {
 			current_template_custom = tmpl;
@@ -784,19 +781,19 @@ function parseMayBeCorruptedCTFile (str, checkEmptyLine) {
 };
 
 var actionMap = {
-	'new': onClick_NewFile,
-	'open': onClick_OpenFile,
-	'save': onClick_SaveFile,
+	'new': clear,
+	'open': open,
+	'save': save,
 	'undo': undo,
 	'redo': redo,
-	'zoom-in': onClick_ZoomIn,
-	'zoom-out': onClick_ZoomOut,
-	'cleanup': onClick_CleanUp,
-	'arom': onClick_Aromatize,
-	'dearom': onClick_Dearomatize,
-	'period-table': onClick_ElemTableButton,
-	'generic-groups': onClick_ReaGenericsTableButton,
-	'template-custom': onClick_TemplateCustom,
+	'zoom-in': zoomIn,
+	'zoom-out': zoomOut,
+	'cleanup': layout,
+	'arom': aromatize,
+	'dearom': dearomatize,
+	'period-table': elemTable,
+	'generic-groups': genericsTable,
+	'template-custom': templateCustom,
 	'cut': function () {
 		var struct = ui.editor.getSelectionStruct();
 		removeSelected();
@@ -824,7 +821,7 @@ var actionMap = {
 		// original: for dev purposes
 		ui.render.update(true);
 	},
-	'reaction-automap': onClick_Automap,
+	'reaction-automap': automap,
 	'calc-cip': calculateCip
 };
 

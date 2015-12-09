@@ -379,6 +379,7 @@ function transitionEndEvent () {
 };
 
 function animateToggle (el, callback) {
+	// TODO: add animate to animated part
 	ketcherWindow.addClassName('animate');
 	var transitionEnd = transitionEndEvent(),
 	animateStop = function (cb) {
@@ -430,28 +431,13 @@ function echo (message) {
 //
 // Main section
 //
-function updateMolecule (mol)
-{
-	if (typeof(mol) == 'undefined' || mol == null)
-		return;
-
+function updateMolecule (mol) {
+	console.assert(mol, 'No molecule to update');
 	ui.editor.deselectAll();
 	addUndoAction(Action.fromNewCanvas(mol));
-	showDialog('loading');
-	// setTimeout(function ()
-	// {
-	try {
-		ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
-		ui.render.update();
-		ui.render.recoordinate(ui.render.getStructCenter());
-	}
-	catch (er) {
-		alert(er.message);
-	}
-	finally {
-		hideDialog('loading');
-	}
-//    }, 50);
+	ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
+	ui.render.update();
+	ui.render.recoordinate(ui.render.getStructCenter());
 };
 
 
@@ -505,12 +491,17 @@ function serverTransform(method, mol, options) {
 	var request = server[method](util.extend({
 		moldata: molfile.stringify(mol, { ignoreErrors: true })
 	}, options));
+	showDialog('loading');
 	request.then(function (data) {
 		var resmol = parseMayBeCorruptedCTFile(data);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
-	}).then(null, echo);
+		hideDialog('loading');
+	}).then(null, function (er) {
+		hideDialog('loading');
+		echo(er);
+	});
 }
 
 //

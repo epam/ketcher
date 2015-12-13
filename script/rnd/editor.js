@@ -2,6 +2,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
+var Atom = require('../chem/atom');
 var Struct = require('../chem/struct');
 var util = require('../util');
 
@@ -1112,7 +1113,7 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
 			onOk: function (rgNew) {
 				rgNew = values2Sel(rgNew);
 				if (rgOld != rgNew || lbOld != 'R#') {
-					var newProps = Object.clone(Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
+					var newProps = Object.clone(Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
 					if (rgNew) {
 						newProps.label = 'R#';
 						newProps.rglabel = rgNew;

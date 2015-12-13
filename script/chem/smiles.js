@@ -1,5 +1,6 @@
 var Set = require('../util/set');
 
+var Atom = require('./atom');
 var Struct = require('./struct');
 var util = require('../util');
 
@@ -754,9 +755,9 @@ chem.SmilesSaver.prototype._writeRadicals = function (mol)
 			this.comma = true;
 		}
 
-		if (radical == Struct.ATOM.RADICAL.SINGLET)
+		if (radical == Atom.PATTERN.RADICAL.SINGLET)
 			this.smiles += '^3:';
-		else if (radical == Struct.ATOM.RADICAL.DOUPLET)
+		else if (radical == Atom.PATTERN.RADICAL.DOUPLET)
 			this.smiles += '^1:';
 		else // RADICAL_TRIPLET
 			this.smiles += '^4:';

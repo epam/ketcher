@@ -1,5 +1,6 @@
 var ui = global.ui = {};
 
+var AtomList = require('../chem/atomlist');
 require('../chem');
 require('../rnd');
 
@@ -890,7 +891,7 @@ function onClick_ElemTableButton ()
 			else
 				props = {
 					label: 'L#',
-					atomList: new Struct.AtomList({
+					atomList: new AtomList({
 						notList: res.mode == 'not-list',
 						ids: res.values
 					})

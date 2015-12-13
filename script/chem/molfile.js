@@ -2,6 +2,8 @@ var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var element = require('./element');
+var Atom = require('./atom');
+var AtomList = require('./atomlist');
 var Struct = require('./struct');
 
 var util = require('../util');
@@ -144,7 +146,7 @@ chem.Molfile.parseAtomLine = function (atomLine)
 		// reaction query
 		exactChangeFlag: mf.parseDecimalInt(atomSplit[16]) != 0
 	};
-	return new Struct.Atom(params);
+	return new Atom(params);
 };
 
 chem.Molfile.stripV30 = function (line)
@@ -180,7 +182,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 			label = label.substr(1); // remove '['
 		}
 		atomListParams.ids = mf.labelsListToIds(label.split(','));
-		params['atomList'] = new Struct.AtomList(atomListParams);
+		params['atomList'] = new AtomList(atomListParams);
 		params['label'] = 'L#';
 	} else {
 		params['label'] = label;
@@ -210,7 +212,7 @@ chem.Molfile.parseAtomLineV3000 = function (line)
 			params.attpnt = value.strip() - 0;
 		}
 	}
-	return new Struct.Atom(params);
+	return new Atom(params);
 };
 
 chem.Molfile.parseBondLineV3000 = function (line)
@@ -277,7 +279,7 @@ chem.Molfile.parseAtomListLine = function (/* string */atomListLine)
 
 	return {
 		'aid': number,
-		'atomList': new Struct.AtomList({
+		'atomList': new AtomList({
 			'notList': notList,
 			'ids': list
 		})
@@ -328,7 +330,7 @@ chem.Molfile.parsePropertyLineAtomList = function (hdr, lst)
 	var notList = hdr[4].strip() == 'T';
 	var ids = mf.labelsListToIds(lst.slice(0, count));
 	var ret = {};
-	ret[aid] = new Struct.AtomList({
+	ret[aid] = new AtomList({
 		'notList': notList,
 		'ids': ids
 	});

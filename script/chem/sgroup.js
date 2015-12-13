@@ -4,6 +4,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
+var Atom = require('./atom');
 var Struct = require('./struct');
 
 require('../rnd/restruct_rendering'); //don't require whole rnd module
@@ -495,7 +496,7 @@ chem.SGroup.GroupMul = {
 			amap = {};
 			util.each(this.atoms, function (aid) {
 				var atom = mol.atoms.get(aid);
-				var aid2 = mol.atoms.add(new Struct.Atom(atom));
+				var aid2 = mol.atoms.add(new Atom(atom));
 				newAtoms.push(aid2);
 				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;

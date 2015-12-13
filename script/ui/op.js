@@ -1,6 +1,7 @@
 var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
 
+var Atom = require('../chem/atom');
 var Struct = require('../chem/struct');
 require('../chem');
 require('../rnd');
@@ -43,9 +44,9 @@ function AtomAdd (atom, pos) {
 				pp[p] = this.data.atom[p];
 		pp.label = pp.label || 'C';
 		if (!Object.isNumber(this.data.aid)) {
-			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
+			this.data.aid = DS.atoms.add(new Atom(pp));
 		} else {
-			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
+			DS.atoms.set(this.data.aid, new Atom(pp));
 		}
 		RS.notifyAtomAdded(this.data.aid);
 		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));

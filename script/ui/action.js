@@ -3,6 +3,7 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 var op = require('./op');
 
+var Atom = require('../chem/atom');
 var Struct = require('../chem/struct');
 
 require('../chem');
@@ -177,12 +178,12 @@ function fromAtomsAttrs (ids, attrs, reset)
 {
 	var action = new Action();
 	(typeof(ids) == 'number' ? [ids] : ids).each(function (id) {
-		for (var key in Struct.Atom.attrlist) {
+		for (var key in Atom.attrlist) {
 			var value;
 			if (key in attrs)
 				value = attrs[key];
 			else if (reset)
-				value = Struct.Atom.attrGetDefault(key);
+				value = Atom.attrGetDefault(key);
 			else
 				continue;
 			action.addOp(new op.AtomAttr(id, key, value));
@@ -714,7 +715,7 @@ function fromAtomMerge (src_id, dst_id)
 		action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
-	var attrs = Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
+	var attrs = Atom.getAttrHash(ui.ctab.atoms.get(src_id));
 
 	if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
 		attrs.set('label', 'C');
@@ -759,7 +760,7 @@ function fromTemplateOnCanvas (pos, angle, template)
 	// Only template atom label matters for now
 	frag.atoms.each(function (aid, atom) {
 		var operation;
-		var attrs = Struct.Atom.getAttrHash(atom).toObject();
+		var attrs = Atom.getAttrHash(atom).toObject();
 		attrs.fragment = fragAction.frid;
 
 		action.addOp(
@@ -856,7 +857,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 	}
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == template.aid) {
 			action.mergeWith(fromAtomsAttrs(aid, attrs, true));
@@ -935,7 +936,7 @@ function fromTemplateOnBond (bid, template, calcAngle, flip)
 	var xy0 = fr_begin.pp;
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == fr_bond.begin || id == fr_bond.end) {
 			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
@@ -1205,9 +1206,9 @@ function struct2Clipboard(struct) {
 	var mapping = {};
 	selection.atoms.each(function (id)
 	{
-		var new_atom = new Struct.Atom(struct.atoms.get(id));
+		var new_atom = new Atom(struct.atoms.get(id));
 		new_atom.pos = new_atom.pp;
-		mapping[id] = clipboard.atoms.push(new Struct.Atom(new_atom)) - 1;
+		mapping[id] = clipboard.atoms.push(new Atom(new_atom)) - 1;
 	});
 
 	selection.bonds.each(function (id)

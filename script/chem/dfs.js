@@ -1,7 +1,3 @@
-/*global require, global:false, chem:false, util:false*/
-
-/*eslint-disable*/
-
 var Set = require('../util/set');
 
 require('../util/');

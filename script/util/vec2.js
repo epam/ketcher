@@ -1,7 +1,3 @@
-/*global require, module*/
-
-/*eslint-disable */
-
 var util = require('./index');
 
 var Vec2 = function (x, y)

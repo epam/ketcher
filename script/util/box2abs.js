@@ -1,5 +1,3 @@
-/*global require, module*/
-
 var util = require('./index');
 var Vec2 = require('./vec2');
 

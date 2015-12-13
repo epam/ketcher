@@ -1,7 +1,3 @@
-/*global require, global:false, rnd:false*/
-
-/*eslint-disable*/
-
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');

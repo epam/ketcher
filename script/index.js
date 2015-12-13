@@ -1,5 +1,3 @@
-/*global require, module, global*/
-
 var queryString = require('query-string');
 
 var util = require('./util');

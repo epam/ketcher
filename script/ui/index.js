@@ -1,7 +1,3 @@
-/*global require, module, alert, global, $$*/
-
-/*eslint-disable*/
-
 var ui = global.ui = {};
 
 require('../chem');

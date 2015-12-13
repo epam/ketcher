@@ -1,7 +1,3 @@
-/*global require, global:false, chem:false*/
-/*jshint -W110 */
-/*eslint-disable*/
-
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var util = require('../util');

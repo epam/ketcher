@@ -1,7 +1,3 @@
-/*global require, module, global*/
-
-/* eslint-disable */
-
 var Promise = require('promise-polyfill');
 
 require('../../chem');

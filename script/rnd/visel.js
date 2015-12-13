@@ -1,8 +1,5 @@
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-
-/*global require, global:false, rnd:false*/
-
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 

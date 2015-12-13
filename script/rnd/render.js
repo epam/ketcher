@@ -1,7 +1,3 @@
-/*global require, global:false, chem:false*/
-
-/*eslint-disable*/
-
 var Raphael = require('../raphael-ext.js');
 var Box2Abs = require('../util/box2abs');
 var Set = require('../util/set');

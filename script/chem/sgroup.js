@@ -1,7 +1,3 @@
-/*global require, global:false, chem:false*/
-
-/*eslint-disable*/
-
 var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Set = require('../util/set');

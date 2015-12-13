@@ -1,5 +1,3 @@
-/*global require, module*/
-
 var getXHR = require('xhrpolyfill');
 var Promise = require('promise-polyfill');
 var util = require('./index.js');

@@ -1,5 +1,3 @@
-/*global require, module, global*/
-
 var keymage = require('keymage');
 var element = require('../../chem/element');
 var util = require('../../util');

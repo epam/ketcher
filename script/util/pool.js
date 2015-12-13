@@ -1,5 +1,3 @@
-/*global require, module*/
-
 var Map = require('./map.js');
 
 var Pool = function () {

@@ -2,11 +2,6 @@
 //
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
-
-/*global require, global:false*/
-
-/*eslint-disable*/
-
 var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Pool = require('../util/pool');

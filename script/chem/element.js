@@ -1,5 +1,3 @@
-/*global require, module*/
-
 var Map = require('../util/map');
 
 function el(label, period, group, putHydrogenOnTheLeft, color) {

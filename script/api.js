@@ -1,5 +1,3 @@
-/*global require, global, module*/
-
 var ajax = require('./util/ajax.js');
 
 // stealed from https://github.com/iambumblehead/form-urlencoded/

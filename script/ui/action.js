@@ -1,7 +1,3 @@
-/*global require, module, global*/
-
-/*eslint-disable*/
-
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');

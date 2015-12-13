@@ -1,7 +1,3 @@
-/*global require, global, chem:false*/
-
-/*eslint-disable*/
-
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');

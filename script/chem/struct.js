@@ -1,7 +1,3 @@
-/*global require, global:false, chem:false*/
-
-/*eslint-disable*/
-
 var Map = require('../util/map');
 var Pool = require('../util/pool');
 var Set = require('../util/set');

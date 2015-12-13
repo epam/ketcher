@@ -1,5 +1,3 @@
-/*global require, global*/
-
 require('./struct');
 require('./cis_trans');
 require('./dfs');

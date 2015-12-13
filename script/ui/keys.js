@@ -4,8 +4,6 @@
 //document.observe('keyup', ui.onKeyUp);
 //ui.setKeyboardShortcuts();
 
-/*global require, global, key*/
-
 ui.onKeyPress_Pre = function (action, event, handler, doNotStopIfCoverIsVisible) {
 	util.stopEventPropagation(event); // TODO: still need this?
 

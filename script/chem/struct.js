@@ -924,4 +924,52 @@ Struct.prototype.setImplicitHydrogen = function (list) {
         util.each(list, f, this);
 };
 
+Struct.prototype.getComponents = function () {
+    /* saver */
+    var ccs = this.findConnectedComponents(true);
+    var submols = [];
+    var barriers = [];
+    var arrowPos = null;
+    this.rxnArrows.each(function (id, item) { // there's just one arrow
+        arrowPos = item.pp.x;
+    });
+    this.rxnPluses.each(function (id, item) {
+        barriers.push(item.pp.x);
+    });
+    if (arrowPos != null)
+        barriers.push(arrowPos);
+    barriers.sort(function (a, b) { return a - b; });
+    var components = [];
+    
+    var i;
+    for (i = 0; i < ccs.length; ++i) {
+        var bb = this.getCoordBoundingBox(ccs[i]);
+        var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+        var j = 0;
+        while (c.x > barriers[j])
+            ++j;
+        components[j] = components[j] || {};
+        Set.mergeIn(components[j], ccs[i]);
+    }
+    var submolTexts = [];
+    var reactants = [], products = [];
+    for (i = 0; i < components.length; ++i) {
+        if (!components[i]) {
+            submolTexts.push('');
+            continue;
+        }
+        bb = this.getCoordBoundingBox(components[i]);
+        c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+        if (c.x < arrowPos)
+            reactants.push(components[i]);
+        else
+            products.push(components[i]);
+    }
+    
+    return {
+        'reactants': reactants,
+        'products': products
+    };
+};
+
 module.exports = Struct;

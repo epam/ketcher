@@ -1320,7 +1320,7 @@ rnd.Editor.ReactionMapTool = function (editor) {
 
 	this.editor._selectionHelper.setSelection(null);
 
-	this.rcs = chem.MolfileSaver.getComponents(this.editor.render.ctab.molecule);
+	this.rcs = this.editor.render.ctab.molecule.getComponents();
 };
 rnd.Editor.ReactionMapTool.prototype = new rnd.Editor.EditorTool();
 rnd.Editor.ReactionMapTool.prototype.OnMouseDown = function (event) {

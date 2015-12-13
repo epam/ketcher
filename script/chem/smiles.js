@@ -115,7 +115,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 	this._touched_cistransbonds = 0;
 	this._markCisTrans(molecule);
 
-	var components = chem.MolfileSaver.getComponents(molecule);
+	var components = molecule.getComponents();
 	var componentsAll = components.reactants.concat(components.products);
 
 	var walk = new Dfs(molecule, this.atoms, componentsAll, components.reactants.length);

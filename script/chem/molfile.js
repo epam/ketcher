@@ -999,53 +999,6 @@ chem.MolfileSaver.prototype.prepareSGroups = function (skipErrors, preserveIndig
 	return mol;
 };
 
-chem.MolfileSaver.getComponents = function (molecule) {
-	var ccs = molecule.findConnectedComponents(true);
-	var submols = [];
-	var barriers = [];
-	var arrowPos = null;
-	molecule.rxnArrows.each(function (id, item){ // there's just one arrow
-		arrowPos = item.pp.x;
-	});
-	molecule.rxnPluses.each(function (id, item){
-		barriers.push(item.pp.x);
-	});
-	if (arrowPos != null)
-		barriers.push(arrowPos);
-	barriers.sort(function (a,b) {return a - b;});
-	var components = [];
-
-	var i;
-	for (i = 0; i < ccs.length; ++i) {
-		var bb = molecule.getCoordBoundingBox(ccs[i]);
-		var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-		var j = 0;
-		while (c.x > barriers[j])
-			++j;
-		components[j] = components[j] || {};
-		Set.mergeIn(components[j], ccs[i]);
-	}
-	var submolTexts = [];
-	var reactants = [], products = [];
-	for (i = 0; i < components.length; ++i) {
-		if (!components[i]) {
-			submolTexts.push('');
-			continue;
-		}
-		bb = molecule.getCoordBoundingBox(components[i]);
-		c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-		if (c.x < arrowPos)
-			reactants.push(components[i]);
-		else
-			products.push(components[i]);
-	}
-
-	return {
-		'reactants':reactants,
-		'products':products
-	};
-};
-
 chem.MolfileSaver.prototype.getCTab = function (molecule, rgroups)
 {
 	this.molecule = molecule.clone();
@@ -1063,7 +1016,7 @@ chem.MolfileSaver.prototype.saveMolecule = function (molecule, skipSGroupErrors,
 	if (this.reaction) {
 		if (molecule.rgroups.count() > 0)
 			throw new Error('Unable to save the structure - reactions with r-groups are not supported at the moment');
-		var components = chem.MolfileSaver.getComponents(molecule);
+		var components = molecule.getComponents();
 
 		var reactants = components.reactants, products = components.products, all = reactants.concat(products);
 		this.molfile = '$RXN\n\n\n\n' + util.paddedInt(reactants.length, 3) + util.paddedInt(products.length, 3) + util.paddedInt(0, 3) + '\n';

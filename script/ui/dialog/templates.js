@@ -1,13 +1,13 @@
 var Promise = require('promise-polyfill');
 
-require('../../chem');
 require('../../rnd');
+var Molfile = require('../../chem/molfile');
 
 var ajax = require('../../util/ajax.js');
 
 var ui = global.ui;
 var rnd = global.rnd;
-var chem = global.chem;
+
 
 // TODO: move to Molfile
 function parseSdf (sdf) {
@@ -75,7 +75,7 @@ function initTemplateCustom (el, base_url) {
 			var li =  new Element('li');
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
-			var mol = chem.Molfile.parseCTFile(tmpl.molfile),
+			var mol = new Molfile().parseCTFile(tmpl.molfile),
 			render = new rnd.Render(li, 0, {
 				'autoScale': true,
 				'autoScaleMargin': 0,

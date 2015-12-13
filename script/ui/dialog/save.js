@@ -1,6 +1,7 @@
 var Promise = require('promise-polyfill');
 var fs = require('filesaver.js');
 
+var Molfile = require('../../chem/molfile');
 require('../../chem');
 
 var chem = global.chem;
@@ -46,7 +47,7 @@ function saveDialog (params, server) {
 		event.preventDefault();
 	});
 
-	outputMolecule(new chem.MolfileSaver().saveMolecule(params.molecule));
+	outputMolecule(new Molfile().saveMolecule(params.molecule));
 	saveButton.addClassName('disabled');
 	fileSaver(server).then(function (f) {
 		saveFile = f;
@@ -82,7 +83,7 @@ function fileSaver (server) {
 
 function convertMolecule (server, molecule, format) {
 	return new Promise(function (resolve, reject) {
-		var moldata = new chem.MolfileSaver().saveMolecule(molecule);
+		var moldata = new Molfile().saveMolecule(molecule);
 		if (format == 'mol') {
 			resolve(moldata);
 		}

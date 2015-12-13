@@ -2,6 +2,7 @@ var queryString = require('query-string');
 
 var util = require('./util');
 var api = require('./api.js');
+var Molfile = require('./chem/molfile');
 
 require('./ui');
 require('./chem');
@@ -13,7 +14,7 @@ var rnd = global.rnd;
 
 function getSmiles(forceLocal) {
 	var local = ui.standalone || forceLocal;
-	var saver = local ? new chem.SmilesSaver() : new chem.MolfileSaver();
+	var saver = local ? new chem.SmilesSaver() : new Molfile();
 	var mol = saver.saveMolecule(ui.ctab, true);
 	// TODO: Remove me. Remains here for getSmiles api compatibility
 	return local ? mol : ketcher.server.smiles.sync({
@@ -22,7 +23,7 @@ function getSmiles(forceLocal) {
 };
 
 function getMolfile() {
-	var saver = new chem.MolfileSaver();
+	var saver = new Molfile();
 	return saver.saveMolecule(ui.ctab, true);
 };
 
@@ -54,7 +55,7 @@ function showMolfile(clientArea, molString, options) {
 	}, options);
 	var render = new rnd.Render(clientArea, opts.bondLength, opts);
 	if (molString) {
-		var mol = chem.Molfile.parseCTFile(molString);
+		var mol = new Molfile().parseCTFile(molString);
 		render.setMolecule(mol);
 	}
 	render.update();

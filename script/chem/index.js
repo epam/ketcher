@@ -1,4 +1,3 @@
-require('./molfile');
 require('./sgroup');
 require('./smiles');
 require('./stereocenters');

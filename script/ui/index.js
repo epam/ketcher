@@ -2,6 +2,7 @@ var ui = global.ui = {};
 
 var AtomList = require('../chem/atomlist');
 var Bond = require('../chem/bond');
+var Molfile = require('../chem/molfile');
 require('../chem');
 require('../rnd');
 
@@ -280,7 +281,7 @@ function initCliparea(parent) {
 		return false;
 	};
 	var copyCut = function (struct, cb) {
-		var moldata = new chem.MolfileSaver().saveMolecule(struct);
+		var moldata = new Molfile().saveMolecule(struct);
 		if (!cb && ieCb) {
 			ieCb.setData('text', moldata);
 		} else {
@@ -506,7 +507,7 @@ function aromatize(mol, arom)
 {
 	mol = mol.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = new chem.MolfileSaver().saveMolecule(mol);
+	var mol_string = new Molfile().saveMolecule(mol);
 
 	if (!ui.standalone) {
 		var method = arom ? 'aromatize' : 'dearomatize',
@@ -527,7 +528,7 @@ function calculateCip() {
 	util.assert(!ui.standalone, 'Can\'t calculate in standalone mode!'); // it's assert error now
 	var mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = new chem.MolfileSaver().saveMolecule(mol);
+	var mol_string = new Molfile().saveMolecule(mol);
 
 	var request = server.calculateCip({moldata: mol_string});
 	request.then(function (data) {
@@ -680,7 +681,7 @@ function onClick_CleanUp ()
 		}
 		var implicitReaction = mol.addRxnArrowIfNecessary();
 		var req = server.layout({
-			moldata: new chem.MolfileSaver().saveMolecule(mol)
+			moldata: new Molfile().saveMolecule(mol)
 		}, selective ? {'selective': 1} : null);
 		req.then(function (res) {
 			var struct = parseMayBeCorruptedCTFile(res);
@@ -720,7 +721,7 @@ function onClick_Automap () {
 				echo('Auto-Mapping can only be applied to reactions');
 				return;
 			}
-			var moldata = new chem.MolfileSaver().saveMolecule(mol, true),
+			var moldata = new Molfile().saveMolecule(mol, true),
 			request = server.automap({
 				moldata: moldata,
 				mode: mode
@@ -942,19 +943,19 @@ function showSgroupDialog(params) {
 function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
 	var lines = util.splitNewlines(molfile);
 	try {
-		return chem.Molfile.parseCTFile(lines);
+		return new Molfile().parseCTFile(lines);
 	} catch (ex) {
 		if (checkEmptyLine) {
 			try {
 				// check whether there's an extra empty line on top
 				// this often happens when molfile text is pasted into the dialog window
-				return chem.Molfile.parseCTFile(lines.slice(1));
+				return new Molfile().parseCTFile(lines.slice(1));
 			} catch (ex1) {
 			}
 			try {
 				// check for a missing first line
 				// this sometimes happens when pasting
-				return chem.Molfile.parseCTFile([''].concat(lines));
+				return new Molfile().parseCTFile([''].concat(lines));
 			} catch (ex2) {
 			}
 		}

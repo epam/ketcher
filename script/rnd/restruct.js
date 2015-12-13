@@ -13,6 +13,8 @@ var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 
+var Visel = require('./visel');
+
 var rnd = global.rnd = global.rnd || {};
 var tfx = util.tfx;
 
@@ -23,7 +25,7 @@ rnd.ReObject = function ()  // TODO ??? should it be in ReStruct namespace
 
 rnd.ReObject.prototype.init = function (viselType)
 {
-	this.visel = new rnd.Visel(viselType);
+	this.visel = new Visel(viselType);
 
 	this.highlight = false;
 	this.highlighting = null;
@@ -79,7 +81,7 @@ rnd.ReObject.prototype.makeSelectionPlate = function (render) {
 
 rnd.ReAtom = function (/*chem.Atom*/atom)
 {
-	this.init(rnd.Visel.TYPE.ATOM);
+	this.init(Visel.TYPE.ATOM);
 
 	this.a = atom; // TODO rename a to item
 	this.showLabel = false;
@@ -119,7 +121,7 @@ rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 
 rnd.ReBond = function (/*chem.Bond*/bond)
 {
-	this.init(rnd.Visel.TYPE.BOND);
+	this.init(Visel.TYPE.BOND);
 
 	this.b = bond; // TODO rename b to item
 	this.doubleBondShift = 0;
@@ -713,7 +715,7 @@ rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 rnd.ReLoop = function (loop)
 {
 	this.loop = loop;
-	this.visel = new rnd.Visel(rnd.Visel.TYPE.LOOP);
+	this.visel = new Visel(Visel.TYPE.LOOP);
 	this.centre = new Vec2();
 	this.radius = new Vec2();
 };
@@ -852,7 +854,7 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 
 rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
 {
-	this.init(rnd.Visel.TYPE.PLUS);
+	this.init(Visel.TYPE.PLUS);
 
 	this.item = plus;
 };
@@ -892,7 +894,7 @@ rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) 
 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
 {
-	this.init(rnd.Visel.TYPE.ARROW);
+	this.init(Visel.TYPE.ARROW);
 
 	this.item = arrow;
 };
@@ -933,7 +935,7 @@ rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles)
 };
 
 rnd.ReFrag = function (/*Struct.Fragment = {}*/frag) {
-	this.init(rnd.Visel.TYPE.FRAGMENT);
+	this.init(Visel.TYPE.FRAGMENT);
 
 	this.item = frag;
 };
@@ -1035,7 +1037,7 @@ rnd.ReFrag.prototype.setHighlight = function (highLight, render) {
 };
 
 rnd.ReRGroup = function (/*Struct.RGroup*/rgroup) {
-	this.init(rnd.Visel.TYPE.RGROUP);
+	this.init(Visel.TYPE.RGROUP);
 
 	this.labelBox = null;
 	this.item = rgroup;
@@ -1198,7 +1200,7 @@ rnd.ReRGroup.prototype.drawHighlight = function (render) {
 };
 
 rnd.ReSGroup = function (sgroup) {
-	this.init(rnd.Visel.TYPE.SGROUP);
+	this.init(Visel.TYPE.SGROUP);
 
 	this.item = sgroup;
 };
@@ -1266,7 +1268,7 @@ rnd.ReSGroup.prototype.drawHighlight = function (render) {
 
 rnd.ReDataSGroupData = function (sgroup)
 {
-	this.init(rnd.Visel.TYPE.SGROUP_DATA);
+	this.init(Visel.TYPE.SGROUP_DATA);
 
 	this.sgroup = sgroup;
 };
@@ -1311,7 +1313,7 @@ rnd.ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, s
 
 rnd.ReChiralFlag = function (pos)
 {
-	this.init(rnd.Visel.TYPE.CHIRAL_FLAG);
+	this.init(Visel.TYPE.CHIRAL_FLAG);
 
 	this.pp = pos;
 };

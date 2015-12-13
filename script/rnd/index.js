@@ -1,4 +1,3 @@
-require('./visel');
 require('./restruct');
 require('./editor');
 require('./render');

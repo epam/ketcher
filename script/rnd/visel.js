@@ -3,16 +3,14 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 
-var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-
-rnd.Visel = function (type) {
+var Visel = function (type) {
 	this.type = type;
 	this.paths = [];
 	this.boxes = [];
 	this.boundingBox = null;
 };
 
-rnd.Visel.TYPE = {
+Visel.TYPE = {
 	'ATOM': 1,
 	'BOND': 2,
 	'LOOP': 3,
@@ -25,7 +23,7 @@ rnd.Visel.TYPE = {
 	'CHIRAL_FLAG': 10
 };
 
-rnd.Visel.prototype.add = function (path, bb, ext) {
+Visel.prototype.add = function (path, bb, ext) {
 	this.paths.push(path);
 	if (bb) {
 		this.boxes.push(bb);
@@ -36,14 +34,14 @@ rnd.Visel.prototype.add = function (path, bb, ext) {
 	}
 };
 
-rnd.Visel.prototype.clear = function () {
+Visel.prototype.clear = function () {
 	this.paths = [];
 	this.boxes = [];
 	this.exts = [];
 	this.boundingBox = null;
 };
 
-rnd.Visel.prototype.translate = function (x, y) {
+Visel.prototype.translate = function (x, y) {
 	if (arguments.length > 2) {    // TODO: replace to debug time assert
 		throw new Error('One vector or two scalar arguments expected');
 	}
@@ -62,3 +60,5 @@ rnd.Visel.prototype.translate = function (x, y) {
 		}
 	}
 };
+
+module.exports = Visel;

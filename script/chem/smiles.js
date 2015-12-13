@@ -183,13 +183,13 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			if (sc.pyramid[3] == -1)
 				implicit_h_idx = 3;
 			/*
-            else for (j = 0; j < 4; j++)
-                if (ignored_vertices[pyramid[j]])
-                {
-                    implicit_h_idx = j;
-                    break;
-                }
-                */
+			else for (j = 0; j < 4; j++)
+				if (ignored_vertices[pyramid[j]])
+				{
+					implicit_h_idx = j;
+					break;
+				}
+				*/
 
 			var pyramid_mapping = new Array(4);
 			var counter = 0;
@@ -394,28 +394,28 @@ Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality
 	var aam = 0;
 
 	/*
-    if (mol.haveQueryAtoms())
-    {
-      query_atom = &mol.getQueryAtom(idx);
+	if (mol.haveQueryAtoms())
+	{
+	  query_atom = &mol.getQueryAtom(idx);
 
-      if (query_atom->type == QUERY_ATOM_RGROUP)
-      {
-         if (mol.getRGroups()->isRGroupAtom(idx))
-         {
-            const Array<int> &rg = mol.getRGroups()->getSiteRGroups(idx);
+	  if (query_atom->type == QUERY_ATOM_RGROUP)
+	  {
+		 if (mol.getRGroups()->isRGroupAtom(idx))
+		 {
+			const Array<int> &rg = mol.getRGroups()->getSiteRGroups(idx);
 
-            if (rg.size() != 1)
-               throw Error("rgroup count %d", rg.size());
+			if (rg.size() != 1)
+			   throw Error("rgroup count %d", rg.size());
 
-            _output.printf("[&%d]", rg[0] + 1);
-         }
-         else
-            _output.printf("[&%d]", 1);
+			_output.printf("[&%d]", rg[0] + 1);
+		 }
+		 else
+			_output.printf("[&%d]", 1);
 
-         return;
-      }
-    }
-    */
+		 return;
+	  }
+	}
+	*/
 
 	if (atom.label == 'A')
 	{
@@ -508,24 +508,24 @@ Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality
 		this.smiles += ']';
 
 	/*
-    if (mol.getRGroupFragment() != 0)
-    {
-      for (i = 0; i < 2; i++)
-      {
-         int j;
+	if (mol.getRGroupFragment() != 0)
+	{
+	  for (i = 0; i < 2; i++)
+	  {
+		 int j;
 
-         for (j = 0; mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1; j++)
-            if (idx == mol.getRGroupFragment()->getAttachmentPoint(i, j))
-            {
-               _output.printf("([*])");
-               break;
-            }
+		 for (j = 0; mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1; j++)
+			if (idx == mol.getRGroupFragment()->getAttachmentPoint(i, j))
+			{
+			   _output.printf("([*])");
+			   break;
+			}
 
-         if (mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1)
-            break;
-      }
-    }
-    */
+		 if (mol.getRGroupFragment()->getAttachmentPoint(i, j) != -1)
+			break;
+	  }
+	}
+	*/
 };
 
 Smiles.prototype._markCisTrans = function (mol)

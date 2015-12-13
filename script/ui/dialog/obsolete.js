@@ -156,11 +156,11 @@ function onChange_AtomIsotope () {
 
 function onChange_AtomValence () {
 	/*
-     if (this.value.strip() == '')
-     this.value = '';
-     else if (!this.value.match(/^[0-9]$/))
-     this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
-     */
+	 if (this.value.strip() == '')
+	 this.value = '';
+	 else if (!this.value.match(/^[0-9]$/))
+	 this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
+	 */
 };
 
 //

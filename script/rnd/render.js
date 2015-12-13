@@ -8,7 +8,6 @@ var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 
 require('./restruct');
-require('../ui');
 require('./restruct_rendering');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line

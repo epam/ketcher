@@ -421,8 +421,8 @@ BondAttr.prototype = new Base();
 function FragmentAdd (frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
 	this._execute = function (editor) {
-        var RS = editor.render.ctab;
-        var DS = RS.molecule;
+		var RS = editor.render.ctab;
+		var DS = RS.molecule;
 		var frag = {};
 		if (this.frid == null) {
 			this.frid = DS.frags.add(frag);

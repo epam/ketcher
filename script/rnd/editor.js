@@ -11,7 +11,6 @@ var SGroup = require('../chem/sgroup');
 var util = require('../util');
 
 require('./restruct');
-require('../ui');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var ui = global.ui;
@@ -82,11 +81,11 @@ Editor.prototype.getSelection = function (explicit) {
 
 Editor.prototype.getSelectionStruct = function () {
 	console.assert(ui.ctab == this.render.ctab.molecule,
-	               'Another ctab');
+				   'Another ctab');
 	var src = ui.ctab;
 	var selection = this.getSelection(true);
 	var dst = src.clone(Set.fromList(selection.atoms),
-	                    Set.fromList(selection.bonds), true);
+						Set.fromList(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets
@@ -608,10 +607,10 @@ Editor.AtomTool.prototype.OnMouseMove = function (event) {
 		// TODO [RB] kludge fix for KETCHER-560. need to review
 		//BEGIN
 		/*
-         var action_ret = Action.fromBondAddition(
-         this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
-         );
-         */
+		 var action_ret = Action.fromBondAddition(
+		 this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
+		 );
+		 */
 		var action_ret = Action.fromBondAddition(
 			this.bondProps, _DC_.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
 		);
@@ -1539,10 +1538,10 @@ Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id, se
 			if (id == null) {
 				id = ui.render.ctab.molecule.sgroups.newId();
 				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
-				                                           params.attrs, id), true);
+														   params.attrs, id), true);
 			} else {
 				ui.addUndoAction(Action.fromSgroupType(id, params.type)
-				                 .mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
+								 .mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
 			}
 			this.editor.deselectAll();
 			this.editor.render.update();
@@ -1751,10 +1750,10 @@ Editor.RotateTool.prototype.OnCancel = function () {
 
 function bondFlipRequired (bond, attrs) {
 	return attrs.type == Bond.PATTERN.TYPE.SINGLE &&
-	       bond.stereo == Bond.PATTERN.STEREO.NONE &&
-	       attrs.stereo != Bond.PATTERN.STEREO.NONE &&
-	       ui.ctab.atoms.get(bond.begin).neighbors.length <
-	       ui.ctab.atoms.get(bond.end).neighbors.length;
+		   bond.stereo == Bond.PATTERN.STEREO.NONE &&
+		   attrs.stereo != Bond.PATTERN.STEREO.NONE &&
+		   ui.ctab.atoms.get(bond.begin).neighbors.length <
+		   ui.ctab.atoms.get(bond.end).neighbors.length;
 }
 
 module.exports = Editor;

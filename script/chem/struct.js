@@ -633,7 +633,7 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 };
 
 Struct.prototype.markFragment = function (ids) {
-    var frag = {};
+	var frag = {};
 	var fid = this.frags.add(frag);
 	Set.each(ids, function (aid){
 		this.atoms.get(aid).fragment = fid;
@@ -864,112 +864,112 @@ Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 }
 
 Struct.prototype.calcConn = function (aid) {
-    var conn = 0;
-    var atom = this.atoms.get(aid);
-    var hasAromatic = false;
-    for (var i = 0; i < atom.neighbors.length; ++i) {
-        var hb = this.halfBonds.get(atom.neighbors[i]);
-        var bond = this.bonds.get(hb.bid);
-        switch (bond.type) {
-            case Bond.PATTERN.TYPE.SINGLE:
-                conn += 1;
-                break;
-            case Bond.PATTERN.TYPE.DOUBLE:
-                conn += 2;
-                break;
-            case Bond.PATTERN.TYPE.TRIPLE:
-                conn += 3;
-                break;
-            case Bond.PATTERN.TYPE.AROMATIC:
-                conn += 1;
-                hasAromatic = true;
-                break;
-            default:
-                return -1;
-        }
-    }
-    if (hasAromatic)
-        conn += 1;
-    return conn;
+	var conn = 0;
+	var atom = this.atoms.get(aid);
+	var hasAromatic = false;
+	for (var i = 0; i < atom.neighbors.length; ++i) {
+		var hb = this.halfBonds.get(atom.neighbors[i]);
+		var bond = this.bonds.get(hb.bid);
+		switch (bond.type) {
+			case Bond.PATTERN.TYPE.SINGLE:
+				conn += 1;
+				break;
+			case Bond.PATTERN.TYPE.DOUBLE:
+				conn += 2;
+				break;
+			case Bond.PATTERN.TYPE.TRIPLE:
+				conn += 3;
+				break;
+			case Bond.PATTERN.TYPE.AROMATIC:
+				conn += 1;
+				hasAromatic = true;
+				break;
+			default:
+				return -1;
+		}
+	}
+	if (hasAromatic)
+		conn += 1;
+	return conn;
 };
 
 Struct.prototype.calcImplicitHydrogen = function (aid) {
-    var conn = this.calcConn(aid);
-    var atom = this.atoms.get(aid);
-    atom.badConn = false;
-    if (conn < 0 || atom.isQuery()) {
-        atom.implicitH = 0;
-        return;
-    }
-    if (atom.explicitValence >= 0) {
-        var elem = element.getElementByLabel(atom.label);
-        atom.implicitH = 0;
-        if (elem != null) {
-            atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);
-            if (atom.implicitH < 0) {
-                atom.implicitH = 0;
-                atom.badConn = true;
-            }
-        }
-    } else {
-        atom.calcValence(conn);
-    }
+	var conn = this.calcConn(aid);
+	var atom = this.atoms.get(aid);
+	atom.badConn = false;
+	if (conn < 0 || atom.isQuery()) {
+		atom.implicitH = 0;
+		return;
+	}
+	if (atom.explicitValence >= 0) {
+		var elem = element.getElementByLabel(atom.label);
+		atom.implicitH = 0;
+		if (elem != null) {
+			atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);
+			if (atom.implicitH < 0) {
+				atom.implicitH = 0;
+				atom.badConn = true;
+			}
+		}
+	} else {
+		atom.calcValence(conn);
+	}
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
-    var f = function (aid) { this.calcImplicitHydrogen(aid); };
-    if (util.isNullOrUndefined(list))
-        this.atoms.each(f, this);
-    else
-        util.each(list, f, this);
+	var f = function (aid) { this.calcImplicitHydrogen(aid); };
+	if (util.isNullOrUndefined(list))
+		this.atoms.each(f, this);
+	else
+		util.each(list, f, this);
 };
 
 Struct.prototype.getComponents = function () {
-    /* saver */
-    var ccs = this.findConnectedComponents(true);
-    var submols = [];
-    var barriers = [];
-    var arrowPos = null;
-    this.rxnArrows.each(function (id, item) { // there's just one arrow
-        arrowPos = item.pp.x;
-    });
-    this.rxnPluses.each(function (id, item) {
-        barriers.push(item.pp.x);
-    });
-    if (arrowPos != null)
-        barriers.push(arrowPos);
-    barriers.sort(function (a, b) { return a - b; });
-    var components = [];
-    
-    var i;
-    for (i = 0; i < ccs.length; ++i) {
-        var bb = this.getCoordBoundingBox(ccs[i]);
-        var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-        var j = 0;
-        while (c.x > barriers[j])
-            ++j;
-        components[j] = components[j] || {};
-        Set.mergeIn(components[j], ccs[i]);
-    }
-    var submolTexts = [];
-    var reactants = [], products = [];
-    for (i = 0; i < components.length; ++i) {
-        if (!components[i]) {
-            submolTexts.push('');
-            continue;
-        }
-        bb = this.getCoordBoundingBox(components[i]);
-        c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-        if (c.x < arrowPos)
-            reactants.push(components[i]);
-        else
-            products.push(components[i]);
-    }
-    
-    return {
-        'reactants': reactants,
-        'products': products
-    };
+	/* saver */
+	var ccs = this.findConnectedComponents(true);
+	var submols = [];
+	var barriers = [];
+	var arrowPos = null;
+	this.rxnArrows.each(function (id, item) { // there's just one arrow
+		arrowPos = item.pp.x;
+	});
+	this.rxnPluses.each(function (id, item) {
+		barriers.push(item.pp.x);
+	});
+	if (arrowPos != null)
+		barriers.push(arrowPos);
+	barriers.sort(function (a, b) { return a - b; });
+	var components = [];
+	
+	var i;
+	for (i = 0; i < ccs.length; ++i) {
+		var bb = this.getCoordBoundingBox(ccs[i]);
+		var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		var j = 0;
+		while (c.x > barriers[j])
+			++j;
+		components[j] = components[j] || {};
+		Set.mergeIn(components[j], ccs[i]);
+	}
+	var submolTexts = [];
+	var reactants = [], products = [];
+	for (i = 0; i < components.length; ++i) {
+		if (!components[i]) {
+			submolTexts.push('');
+			continue;
+		}
+		bb = this.getCoordBoundingBox(components[i]);
+		c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		if (c.x < arrowPos)
+			reactants.push(components[i]);
+		else
+			products.push(components[i]);
+	}
+	
+	return {
+		'reactants': reactants,
+		'products': products
+	};
 };
 
 module.exports = Struct;

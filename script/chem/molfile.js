@@ -12,25 +12,25 @@ var SGroup = require('./sgroup');
 var util = require('../util');
 
 var FRAGMENT = {
-    NONE: 0,
-    REACTANT: 1,
-    PRODUCT: 2,
-    AGENT: 3
+	NONE: 0,
+	REACTANT: 1,
+	PRODUCT: 2,
+	AGENT: 3
 };
 
 var Molfile = function (v3000) {
-    /* reader */    
-    /* saver */
-    this.molecule = null;
-    this.molfile = null;
-    this.v3000 = v3000 || false;
+	/* reader */
+	/* saver */
+	this.molecule = null;
+	this.molfile = null;
+	this.v3000 = v3000 || false;
 };
 
 Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
 
 var parseDecimalInt = function (str)
 {
-    /* reader */    
+	/* reader */
 	var val = parseInt(str, 10);
 
 	return isNaN(val) ? 0 : val;
@@ -38,7 +38,7 @@ var parseDecimalInt = function (str)
 
 var partitionLine = function (/*string*/ str, /*array of int*/ parts, /*bool*/ withspace)
 {
-    /* reader */    
+	/* reader */
 	var res = [];
 	for (var i = 0, shift = 0; i < parts.length; ++i)
 	{
@@ -52,7 +52,7 @@ var partitionLine = function (/*string*/ str, /*array of int*/ parts, /*bool*/ w
 
 var partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, /*bool*/ withspace)
 {
-    /* reader */    
+	/* reader */
 	var res = [];
 	for (var shift = 0; shift < str.length; shift += itemLength)
 	{
@@ -130,7 +130,7 @@ var fmtInfo = {
 
 var parseAtomLine = function (atomLine)
 {
-    /* reader */    
+	/* reader */
 	var atomSplit = partitionLine(atomLine, fmtInfo.atomLinePartition);
 	var params =
 	{
@@ -159,7 +159,7 @@ var parseAtomLine = function (atomLine)
 
 var stripV30 = function (line)
 {
-    /* reader */    
+	/* reader */
 	if (line.slice(0, 7) != 'M  V30 ')
 		throw Error('Prefix invalid');
 	return line.slice(7);
@@ -167,7 +167,7 @@ var stripV30 = function (line)
 
 var parseAtomLineV3000 = function (line)
 {
-    /* reader */    
+	/* reader */
 	var split, subsplit, key, value, i;
 	split = spaceparsplit(line);
 	var params = {
@@ -226,7 +226,7 @@ var parseAtomLineV3000 = function (line)
 
 var parseBondLineV3000 = function (line)
 {
-    /* reader */    
+	/* reader */
 	var split, subsplit, key, value, i;
 	split = spaceparsplit(line);
 	var params = {
@@ -256,7 +256,7 @@ var parseBondLineV3000 = function (line)
 
 var parseBondLine = function (bondLine)
 {
-    /* reader */    
+	/* reader */
 	var bondSplit = partitionLine(bondLine, fmtInfo.bondLinePartition);
 	var params =
 	{
@@ -273,7 +273,7 @@ var parseBondLine = function (bondLine)
 
 var parseAtomListLine = function (/* string */atomListLine)
 {
-    /* reader */    
+	/* reader */
 	var split = partitionLine(atomListLine, fmtInfo.atomListHeaderPartition);
 
 	var number = parseDecimalInt(split[0]) - 1;
@@ -297,7 +297,7 @@ var parseAtomListLine = function (/* string */atomListLine)
 
 var readKeyValuePairs = function (str, /* bool */ valueString)
 {
-    /* reader */    
+	/* reader */
 	var ret = {};
 	var partition = partitionLineFixed(str, 3, true);
 	var count = parseDecimalInt(partition[0]);
@@ -310,7 +310,7 @@ var readKeyValuePairs = function (str, /* bool */ valueString)
 
 var readKeyMultiValuePairs = function (str, /* bool */ valueString)
 {
-    /* reader */    
+	/* reader */
 	var ret = [];
 	var partition = partitionLineFixed(str, 3, true);
 	var count = parseDecimalInt(partition[0]);
@@ -324,7 +324,7 @@ var readKeyMultiValuePairs = function (str, /* bool */ valueString)
 
 var labelsListToIds = function (labels)
 {
-    /* reader */    
+	/* reader */
 	var ids = [];
 	for (var i = 0; i < labels.length; ++i) {
 		ids.push(element.getElementByLabel(labels[i].strip()));
@@ -334,7 +334,7 @@ var labelsListToIds = function (labels)
 
 var parsePropertyLineAtomList = function (hdr, lst)
 {
-    /* reader */    
+	/* reader */
 	var aid = parseDecimalInt(hdr[1]) - 1;
 	var count = parseDecimalInt(hdr[2]);
 	var notList = hdr[4].strip() == 'T';
@@ -349,7 +349,7 @@ var parsePropertyLineAtomList = function (hdr, lst)
 
 var initSGroup = function (sGroups, propData)
 {
-    /* reader */    
+	/* reader */
 	var kv = readKeyValuePairs(propData, true);
 	for (var key in kv) {
 		var type = kv[key];
@@ -372,7 +372,7 @@ var applySGroupProp = function (sGroups, propName, propData, numeric, core)
 
 var toIntArray = function (strArray)
 {
-    /* reader */    
+	/* reader */
 	var ret = [];
 	for (var j = 0; j < strArray.length; ++j)
 		ret[j] = parseDecimalInt(strArray[j]);
@@ -381,7 +381,7 @@ var toIntArray = function (strArray)
 
 var applySGroupArrayProp = function (sGroups, propName, propData, shift)
 {
-    /* reader */    
+	/* reader */
 	var sid = parseDecimalInt(propData.slice(1, 4)) - 1;
 	var num = parseDecimalInt(propData.slice(4, 8));
 	var part = toIntArray(partitionLineFixed(propData.slice(8), 3, true));
@@ -397,22 +397,22 @@ var applySGroupArrayProp = function (sGroups, propName, propData, shift)
 };
 
 var applyDataSGroupName = function (sg, name) {
-    /* reader */    
+	/* reader */
 	sg.data.fieldName = name;
 };
 
 var applyDataSGroupQuery = function (sg, query) {
-    /* reader */    
+	/* reader */
 	sg.data.query = query;
 };
 
 var applyDataSGroupQueryOp = function (sg, queryOp) {
-    /* reader */    
+	/* reader */
 	sg.data.queryOp = queryOp;
 };
 
 var applyDataSGroupDesc = function (sGroups, propData) {
-    /* reader */    
+	/* reader */
 	var split = partitionLine(propData, [4,31,2,20,2,3], false);
 	var id = parseDecimalInt(split[0]) - 1;
 	var fieldName = split[1].strip();
@@ -429,7 +429,7 @@ var applyDataSGroupDesc = function (sGroups, propData) {
 };
 
 var applyDataSGroupInfo = function (sg, propData) {
-    /* reader */    
+	/* reader */
 	var split = partitionLine(propData, [10/*x.x*/,10/*y.y*/,4/* eee*/,1/*f*/,1/*g*/,1/*h*/,3/* i */,3/*jjj*/,3/*kkk*/,3/*ll*/,2/*m*/,3/*n*/,2/*oo*/], false);
 
 	var x = parseFloat(split[0]);
@@ -452,14 +452,14 @@ var applyDataSGroupInfo = function (sg, propData) {
 };
 
 var applyDataSGroupInfoLine = function (sGroups, propData) {
-    /* reader */    
+	/* reader */
 	var id = parseDecimalInt(propData.substr(0,4)) - 1;
 	var sg = sGroups[id];
 	applyDataSGroupInfo(sg, propData.substr(5));
 };
 
 var applyDataSGroupData = function (sg, data, finalize) {
-    /* reader */    
+	/* reader */
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
 		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
@@ -471,7 +471,7 @@ var applyDataSGroupData = function (sg, data, finalize) {
 };
 
 var applyDataSGroupDataLine = function (sGroups, propData, finalize) {
-    /* reader */    
+	/* reader */
 	var id = parseDecimalInt(propData.substr(0,5)) - 1;
 	var data = propData.substr(5);
 	var sg = sGroups[id];
@@ -480,7 +480,7 @@ var applyDataSGroupDataLine = function (sGroups, propData, finalize) {
 
 var parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 {
-    /* reader */    
+	/* reader */
 	var props = new Map();
 	while (shift < end)
 	{
@@ -591,7 +591,7 @@ var parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 
 var applyAtomProp = function (atoms /* Pool */, values /* Map */, propId /* string */, clean /* boolean */)
 {
-    /* reader */    
+	/* reader */
 	values.each(function (aid, propVal){
 		atoms.get(aid)[propId] = propVal;
 	});
@@ -599,7 +599,7 @@ var applyAtomProp = function (atoms /* Pool */, values /* Map */, propId /* stri
 
 var parseCTabV2000 = function (ctabLines, countsSplit)
 {
-    /* reader */    
+	/* reader */
 	var ctab = new Struct();
 	var i;
 	var atomCount = parseDecimalInt(countsSplit[0]);
@@ -673,7 +673,7 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 // split a line by spaces outside parentheses
 var spaceparsplit = function (line)
 {
-    /* reader */    
+	/* reader */
 	var split = [], pc = 0, c, i, i0 = -1;
 	var line_array = line.toArray(); // IE7 doesn't support line[i]
 	var quoted = false;
@@ -701,14 +701,14 @@ var spaceparsplit = function (line)
 
 var splitonce = function (line, delim)
 {
-    /* reader */    
+	/* reader */
 	var p = line.indexOf(delim);
 	return [line.slice(0,p),line.slice(p + 1)];
 };
 
 var splitSGroupDef = function (line)
 {
-    /* reader */    
+	/* reader */
 	var split = [];
 	var braceBalance = 0;
 	var quoted = false;
@@ -737,7 +737,7 @@ var splitSGroupDef = function (line)
 
 var parseBracedNumberList = function (line, shift)
 {
-    /* reader */    
+	/* reader */
 	if (!line)
 		return null;
 	var list = [];
@@ -753,7 +753,7 @@ var parseBracedNumberList = function (line, shift)
 
 var v3000parseCollection = function (ctab, ctabLines, shift)
 {
-    /* reader */    
+	/* reader */
 	shift++;
 	while (ctabLines[shift].strip() != 'M  V30 END COLLECTION')
 		shift++;
@@ -763,7 +763,7 @@ var v3000parseCollection = function (ctab, ctabLines, shift)
 
 var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 {
-    /* reader */    
+	/* reader */
 	var line = '';
 	shift++;
 	while (shift < ctabLines.length) {
@@ -832,7 +832,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 
 var parseCTabV3000 = function (ctabLines, norgroups)
 {
-    /* reader */    
+	/* reader */
 	var ctab = new Struct();
 
 	var shift = 0;
@@ -896,7 +896,7 @@ var parseCTabV3000 = function (ctabLines, norgroups)
 
 var readRGroups3000 = function (ctab, /* string */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	var rfrags = {};
 	var rLogic = {};
 	var shift = 0;
@@ -952,7 +952,7 @@ var readRGroups3000 = function (ctab, /* string */ ctabLines) /* Struct */
 
 var parseMol = function (/* string */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	if (ctabLines[0].search('\\$MDL') == 0) {
 		return parseRg2000(ctabLines);
 	}
@@ -963,7 +963,7 @@ var parseMol = function (/* string */ ctabLines) /* Struct */
 
 var parseCTab = function (/* string */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	var countsSplit = partitionLine(ctabLines[0], fmtInfo.countsLinePartition);
 	var version = countsSplit[11].strip();
 	ctabLines = ctabLines.slice(1);
@@ -976,41 +976,41 @@ var parseCTab = function (/* string */ ctabLines) /* Struct */
 };
 
 Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
-    var mol = this.molecule;
-    var sgroups = mol.sgroups;
-    var toRemove = [];
-    var errors = 0;
-    
-    util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
-        var sg = mol.sgroups.get(id);
-        var errorIgnore = false;
-        
-        try {
-            sg.prepareForSaving(mol);
-        } catch (ex) {
-            if (!skipErrors || typeof (ex.id) != 'number')
-                throw ex;
-            errorIgnore = true;
-        }
-        if (errorIgnore ||
-		    !preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName)) {
-            errors += errorIgnore;
-            toRemove.push(sg.id);
-        }
-    }, this);
-    if (errors) {
-        alert('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.');
-    }
-    
-    for (var i = 0; i < toRemove.length; ++i) {
-        mol.sGroupDelete(toRemove[i]);
-    }
-    return mol;
+	var mol = this.molecule;
+	var sgroups = mol.sgroups;
+	var toRemove = [];
+	var errors = 0;
+	
+	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
+		var sg = mol.sgroups.get(id);
+		var errorIgnore = false;
+		
+		try {
+			sg.prepareForSaving(mol);
+		} catch (ex) {
+			if (!skipErrors || typeof (ex.id) != 'number')
+				throw ex;
+			errorIgnore = true;
+		}
+		if (errorIgnore ||
+			!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName)) {
+			errors += errorIgnore;
+			toRemove.push(sg.id);
+		}
+	}, this);
+	if (errors) {
+		alert('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.');
+	}
+	
+	for (var i = 0; i < toRemove.length; ++i) {
+		mol.sGroupDelete(toRemove[i]);
+	}
+	return mol;
 };
 
 Molfile.prototype.getCTab = function (molecule, rgroups)
 {
-    /* saver */
+	/* saver */
 	this.molecule = molecule.clone();
 	this.molfile = '';
 	this.writeCTab2000(rgroups);
@@ -1019,7 +1019,7 @@ Molfile.prototype.getCTab = function (molecule, rgroups)
 
 Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups, preserveIndigoDesc)
 {
-    /* saver */
+	/* saver */
 	this.reaction = molecule.rxnArrows.count() > 0;
 	if (molecule.rxnArrows.count() > 1)
 		throw new Error('Reaction may not contain more than one arrow');
@@ -1078,7 +1078,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 
 Molfile.prototype.writeHeader = function ()
 {
-    /* saver */
+	/* saver */
 
 	var date = new Date();
 
@@ -1093,13 +1093,13 @@ Molfile.prototype.writeHeader = function ()
 
 Molfile.prototype.write = function (str)
 {
-    /* saver */
+	/* saver */
 	this.molfile += str;
 };
 
 Molfile.prototype.writeCR = function (str)
 {
-    /* saver */
+	/* saver */
 	if (arguments.length == 0)
 		str = '';
 
@@ -1108,7 +1108,7 @@ Molfile.prototype.writeCR = function (str)
 
 Molfile.prototype.writeWhiteSpace = function (length)
 {
-    /* saver */
+	/* saver */
 
 	if (arguments.length == 0)
 		length = 1;
@@ -1121,14 +1121,14 @@ Molfile.prototype.writeWhiteSpace = function (length)
 
 Molfile.prototype.writePadded = function (str, width)
 {
-    /* saver */
+	/* saver */
 	this.write(str);
 	this.writeWhiteSpace(width - str.length);
 };
 
 Molfile.prototype.writePaddedNumber = function (number, width)
 {
-    /* saver */
+	/* saver */
 
 	var str = (number - 0).toString();
 
@@ -1138,14 +1138,14 @@ Molfile.prototype.writePaddedNumber = function (number, width)
 
 Molfile.prototype.writePaddedFloat = function (number, width, precision)
 {
-    /* saver */
+	/* saver */
 
 	this.write(util.paddedFloat(number, width, precision));
 };
 
 Molfile.prototype.writeCTab2000Header = function ()
 {
-    /* saver */
+	/* saver */
 
 	this.writePaddedNumber(this.molecule.atoms.count(), 3);
 	this.writePaddedNumber(this.molecule.bonds.count(), 3);
@@ -1161,7 +1161,7 @@ Molfile.prototype.writeCTab2000Header = function ()
 
 Molfile.prototype.writeCTab2000 = function (rgroups)
 {
-    /* saver */
+	/* saver */
 	this.writeCTab2000Header();
 
 	this.mapping = {};
@@ -1425,7 +1425,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 
 var parseRxn = function (/* string[] */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	var split = ctabLines[0].strip().split(' ');
 	if (split.length > 1 && split[1] == 'V3000')
 		return parseRxn3000(ctabLines);
@@ -1435,7 +1435,7 @@ var parseRxn = function (/* string[] */ ctabLines) /* Struct */
 
 var parseRxn2000 = function (/* string[] */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = partitionLine(ctabLines[0], fmtInfo.rxnItemsPartition);
 	var nReactants = countsSplit[0] - 0,
@@ -1455,7 +1455,7 @@ var parseRxn2000 = function (/* string[] */ ctabLines) /* Struct */
 
 var parseRxn3000 = function (/* string[] */ ctabLines) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = ctabLines[0].split(/\s+/g).slice(3);
 	var nReactants = countsSplit[0] - 0,
@@ -1535,7 +1535,7 @@ var parseRxn3000 = function (/* string[] */ ctabLines) /* Struct */
 
 var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	var ret = new Struct();
 	var bbReact = [],
 	bbAgent = [],
@@ -1671,7 +1671,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 
 var rgMerge = function (scaffold, rgroups) /* Struct */
 {
-    /* reader */    
+	/* reader */
 	var ret = new Struct();
 
 	scaffold.mergeInto(ret, null, null, false, true);

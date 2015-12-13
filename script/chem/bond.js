@@ -25,44 +25,44 @@ var Bond = function (params)
 
 Bond.PATTERN =
 {
-    TYPE:
+	TYPE:
  {
-        SINGLE: 1,
-        DOUBLE: 2,
-        TRIPLE: 3,
-        AROMATIC: 4,
-        SINGLE_OR_DOUBLE: 5,
-        SINGLE_OR_AROMATIC: 6,
-        DOUBLE_OR_AROMATIC: 7,
-        ANY: 8
-    },
-    
-    STEREO:
+		SINGLE: 1,
+		DOUBLE: 2,
+		TRIPLE: 3,
+		AROMATIC: 4,
+		SINGLE_OR_DOUBLE: 5,
+		SINGLE_OR_AROMATIC: 6,
+		DOUBLE_OR_AROMATIC: 7,
+		ANY: 8
+	},
+	
+	STEREO:
  {
-        NONE: 0,
-        UP: 1,
-        EITHER: 4,
-        DOWN: 6,
-        CIS_TRANS: 3
-    },
-    
-    TOPOLOGY:
+		NONE: 0,
+		UP: 1,
+		EITHER: 4,
+		DOWN: 6,
+		CIS_TRANS: 3
+	},
+	
+	TOPOLOGY:
  {
-        EITHER: 0,
-        RING: 1,
-        CHAIN: 2
-    },
-    
-    REACTING_CENTER:
+		EITHER: 0,
+		RING: 1,
+		CHAIN: 2
+	},
+	
+	REACTING_CENTER:
  {
-        NOT_CENTER: -1,
-        UNMARKED: 0,
-        CENTER: 1,
-        UNCHANGED: 2,
-        MADE_OR_BROKEN: 4,
-        ORDER_CHANGED: 8,
-        MADE_OR_BROKEN_AND_CHANGED: 12
-    }
+		NOT_CENTER: -1,
+		UNMARKED: 0,
+		CENTER: 1,
+		UNCHANGED: 2,
+		MADE_OR_BROKEN: 4,
+		ORDER_CHANGED: 8,
+		MADE_OR_BROKEN_AND_CHANGED: 12
+	}
 };
 
 Bond.attrlist = {

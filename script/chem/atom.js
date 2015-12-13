@@ -67,13 +67,13 @@ Atom.attrGetDefault = function (attr) {
 
 Atom.PATTERN =
 {
-    RADICAL:
+	RADICAL:
  {
-        NONE: 0,
-        SINGLET: 1,
-        DOUPLET: 2,
-        TRIPLET: 3
-    }
+		NONE: 0,
+		SINGLET: 1,
+		DOUPLET: 2,
+		TRIPLET: 3
+	}
 };
 
 Atom.attrlist = {
@@ -95,15 +95,15 @@ Atom.attrlist = {
 };
 
 var radicalElectrons = function (radical) {
-    radical = radical - 0;
-    if (radical == Atom.PATTERN.RADICAL.NONE)
-        return 0;
-    else if (radical == Atom.PATTERN.RADICAL.DOUPLET)
-        return 1;
-    else if (radical == Atom.PATTERN.RADICAL.SINGLET ||
-        radical == Atom.PATTERN.RADICAL.TRIPLET)
-        return 2;
-    throw new Error('Unknown radical value');
+	radical = radical - 0;
+	if (radical == Atom.PATTERN.RADICAL.NONE)
+		return 0;
+	else if (radical == Atom.PATTERN.RADICAL.DOUPLET)
+		return 1;
+	else if (radical == Atom.PATTERN.RADICAL.SINGLET ||
+		radical == Atom.PATTERN.RADICAL.TRIPLET)
+		return 2;
+	throw new Error('Unknown radical value');
 };
 
 Atom.prototype.clone = function (fidMap)
@@ -464,60 +464,60 @@ Atom.prototype.calcValence = function (conn)
 };
 
 Atom.prototype.calcValenceMinusHyd = function (conn) {
-    var atom = this;
-    var charge = atom.charge;
-    var label = atom.label;
-    var elem = element.getElementByLabel(label);
-    if (elem == null)
-        throw new Error('Element ' + label + ' unknown');
-    if (elem < 0) { // query atom, skip
-        this.implicitH = 0;
-        return null;
-    }
-    
-    var groupno = element.get(elem).group;
-    var rad = radicalElectrons(atom.radical);
-    
-    if (groupno == 3) {
-        if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In') {
-            if (charge == -1)
-                if (rad + conn <= 4)
-                    return rad + conn;
-        }
-    }
-    else if (groupno == 5) {
-        if (label == 'N' || label == 'P') {
-            if (charge == 1)
-                return rad + conn;
-            if (charge == 2)
-                return rad + conn;
-        }
-        else if (label == 'Sb' || label == 'Bi' || label == 'As') {
-            if (charge == 1)
-                return rad + conn;
-            else if (charge == 2)
-                return rad + conn;
-        }
-    }
-    else if (groupno == 6) {
-        if (label == 'O') {
-            if (charge >= 1)
-                return rad + conn;
-        }
-        else if (label == 'S' || label == 'Se' || label == 'Po') {
-            if (charge == 1)
-                return rad + conn;
-        }
-    }
-    else if (groupno == 7) {
-        if (label == 'Cl' || label == 'Br' ||
+	var atom = this;
+	var charge = atom.charge;
+	var label = atom.label;
+	var elem = element.getElementByLabel(label);
+	if (elem == null)
+		throw new Error('Element ' + label + ' unknown');
+	if (elem < 0) { // query atom, skip
+		this.implicitH = 0;
+		return null;
+	}
+	
+	var groupno = element.get(elem).group;
+	var rad = radicalElectrons(atom.radical);
+	
+	if (groupno == 3) {
+		if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In') {
+			if (charge == -1)
+				if (rad + conn <= 4)
+					return rad + conn;
+		}
+	}
+	else if (groupno == 5) {
+		if (label == 'N' || label == 'P') {
+			if (charge == 1)
+				return rad + conn;
+			if (charge == 2)
+				return rad + conn;
+		}
+		else if (label == 'Sb' || label == 'Bi' || label == 'As') {
+			if (charge == 1)
+				return rad + conn;
+			else if (charge == 2)
+				return rad + conn;
+		}
+	}
+	else if (groupno == 6) {
+		if (label == 'O') {
+			if (charge >= 1)
+				return rad + conn;
+		}
+		else if (label == 'S' || label == 'Se' || label == 'Po') {
+			if (charge == 1)
+				return rad + conn;
+		}
+	}
+	else if (groupno == 7) {
+		if (label == 'Cl' || label == 'Br' ||
 			label == 'I' || label == 'At') {
-            if (charge == 1)
-                return rad + conn;
-        }
-    }
-    
-    return rad + conn + Math.abs(charge);
+			if (charge == 1)
+				return rad + conn;
+		}
+	}
+	
+	return rad + conn + Math.abs(charge);
 };
 
 module.exports = Atom;

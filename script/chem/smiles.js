@@ -4,9 +4,9 @@ var Atom = require('./atom');
 var Bond = require('./bond');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
+var Stereocenters = require('./stereocenters');
 
 var util = require('../util');
-var chem = global.chem = global.chem || {}; // jshint ignore:line
 
 var Smiles = function ()
 {
@@ -167,7 +167,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 
 	try {
 		// detect chiral configurations
-		var stereocenters = new chem.Stereocenters(molecule, function (idx)
+		var stereocenters = new Stereocenters(molecule, function (idx)
 		{
 			return this.atoms[idx].neighbours;
 		}, this);
@@ -234,7 +234,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			else if (counter != 3)
 				throw new Error('cannot calculate chirality');
 
-			if (chem.Stereocenters.isPyramidMappingRigid(pyramid_mapping))
+			if (Stereocenters.isPyramidMappingRigid(pyramid_mapping))
 				this.atoms[atom_idx].chirality = 1;
 			else
 				this.atoms[atom_idx].chirality = 2;

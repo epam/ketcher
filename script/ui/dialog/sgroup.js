@@ -104,7 +104,7 @@ function getValidateAttrs() {
 		break;
 	}
 	return { type: type,
-	         attrs: attrs };
+			 attrs: attrs };
 };
 
 function onChange_SGroupLabel ()

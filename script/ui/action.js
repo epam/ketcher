@@ -553,15 +553,15 @@ function fromFragmentAddition (atoms, bonds, sgroups, rxnArrows, rxnPluses)
 	var action = new Action();
 
 	/*
-     atoms.each(function (aid)
-     {
-     ui.render.atomGetNeighbors(aid).each(function (nei)
-     {
-     if (ui.selection.bonds.indexOf(nei.bid) == -1)
-     ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
-     }, this);
-     }, this);
-     */
+	 atoms.each(function (aid)
+	 {
+	 ui.render.atomGetNeighbors(aid).each(function (nei)
+	 {
+	 if (ui.selection.bonds.indexOf(nei.bid) == -1)
+	 ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
+	 }, this);
+	 }, this);
+	 */
 
 	// TODO: merge close atoms and bonds
 
@@ -1172,12 +1172,12 @@ function getAnchorPosition(clipboard) {
 }
 
 var getAtoms = function (struct, frid) {
-    var atoms = [];
-    struct.atoms.each(function (aid, atom) {
-        if (atom.fragment == frid)
-            atoms.push(aid);
-    }, this);
-    return atoms;
+	var atoms = [];
+	struct.atoms.each(function (aid, atom) {
+		if (atom.fragment == frid)
+			atoms.push(aid);
+	}, this);
+	return atoms;
 }
 
 // TODO: merge to bellow

@@ -307,12 +307,12 @@ var isObject = function (obj) {
 };
 
 var relBox = function (box) {
-    return {
-        x: box.x,
-        y: box.y,
-        width: box.width,
-        height: box.height
-    };
+	return {
+		x: box.x,
+		y: box.y,
+		width: box.width,
+		height: box.height
+	};
 };
 
 module.exports = {
@@ -354,6 +354,6 @@ module.exports = {
 	arrayRemoveByValue: arrayRemoveByValue,
 	listNextRotate: listNextRotate,
 	extend: extend,
-    isObject: isObject,
-    relBox: relBox
+	isObject: isObject,
+	relBox: relBox
 };

@@ -47,7 +47,7 @@ var zspObj;
 var server;
 
 var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-custom'];
+					 'reaction-automap', 'template-custom'];
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -95,7 +95,7 @@ function init (options, apiServer) {
 			keys.forEach(function (kb) {
 				var nk = kb.toLowerCase();
 				if (Array.isArray(keyMap[nk]))
-				    keyMap[nk].push(action);
+					keyMap[nk].push(action);
 				else
 					keyMap[nk] = [action];
 			});
@@ -126,7 +126,7 @@ function init (options, apiServer) {
 	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
 			if (event.target.tagName == 'BUTTON' &&
-			    event.target.parentNode == this) {
+				event.target.parentNode == this) {
 				if (!this.hasClassName('selected')) {
 					event.stop();
 				}
@@ -171,7 +171,7 @@ function init (options, apiServer) {
 function shortcutStr(key) {
 	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 	return key.replace(/Defmod/g, isMac ? '⌘' : 'Ctrl')
-		      .replace(/-(?!$)/g, '+');
+			  .replace(/-(?!$)/g, '+');
 }
 
 function subEl (id) {
@@ -258,7 +258,7 @@ function delegateCliparea(action) {
 		var el = subEl(action);
 		var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 		echo('These action is unavailble via menu.\n' +
-		     'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
+			 'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 	}
 	return null;
 }
@@ -291,10 +291,10 @@ function initCliparea(parent) {
 			cb.setData('text/plain', moldata);
 			try {
 				cb.setData(!struct.isReaction ?
-				           'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
-				           moldata);
+						   'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
+						   moldata);
 				cb.setData('chemical/x-daylight-smiles',
-				           new Smiles().saveMolecule(struct));
+						   new Smiles().saveMolecule(struct));
 			} catch (ex) {
 				console.info('Could not write exact type', ex);
 			}
@@ -570,7 +570,7 @@ function onClick_ZoomOut () {
 function updateZoom (noRefresh) {
 	var zoomSelect = subEl('zoom-list');
 	var i = zoomSelect.selectedIndex,
-	    len = zoomSelect.length;
+		len = zoomSelect.length;
 	console.assert(0 <= i && i < len, 'Zoom out of range');
 
 	subEl('zoom-in').disabled = (i == len - 1);
@@ -582,7 +582,7 @@ function updateZoom (noRefresh) {
 	ui.zoom = value;
 	if (!noRefresh) {
 		setZoomCentered(value,
-		                ui.render.getStructCenter(ui.editor.getSelection()));
+						ui.render.getStructCenter(ui.editor.getSelection()));
 		ui.render.update();
 	}
 };
@@ -736,17 +736,17 @@ function onClick_Automap () {
 					mol.rxnArrows.clear();
 				}
 				/*
-                 var aam = parseCTFile(res.responseText);
-                 var action = new Action();
-                 for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
-                 action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
-                 }
-                 addUndoAction(action, true);
-                 */
+				 var aam = parseCTFile(res.responseText);
+				 var action = new Action();
+				 for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
+				 action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
+				 }
+				 addUndoAction(action, true);
+				 */
 				updateMolecule(mol);
 				/*
-                 ui.render.update();
-                 */
+				 ui.render.update();
+				 */
 
 			}, echo);
 		}
@@ -755,7 +755,7 @@ function onClick_Automap () {
 
 function loadMolecule (mol, checkEmptyLine) {
 	return getStruct(mol,
-	                 checkEmptyLine).then(updateMolecule);
+					 checkEmptyLine).then(updateMolecule);
 }
 
 function loadFragment (mol, checkEmptyLine) {
@@ -772,7 +772,7 @@ function guessType(mol, strict) {
 	if (molMatch) {
 		var end = molMatch.index + molMatch[0].length;
 		if (end == molStr.length ||
-		    molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) != -1)
+			molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) != -1)
 			return 'mol';
 	}
 	if (molStr[0] == '<' && molStr.indexOf('<molecule') != -1)
@@ -790,15 +790,15 @@ function getStruct(mol, checkEmptyLine) {
 		var type = guessType(mol);
 		if (type == 'mol') {
 			var struct = parseMayBeCorruptedCTFile(mol,
-			                                       checkEmptyLine);
+												   checkEmptyLine);
 			resolve(struct);
 		} else if (ui.standalone)
 			throw type ? type.toUpperCase() : 'Format' +
-			      ' is not supported in a standalone mode.';
+				  ' is not supported in a standalone mode.';
 		else {
 			var req = (type == 'smiles') ?
-			    server.layout_smiles(null, {smiles: mol.trim()}) :
-			    server.molfile({moldata: mol});
+				server.layout_smiles(null, {smiles: mol.trim()}) :
+				server.molfile({moldata: mol});
 			resolve(req.then(function (res) {
 				return parseMayBeCorruptedCTFile(res);
 			}));
@@ -1044,14 +1044,14 @@ function mapTool (id) {
 		}
 
 		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
-         else if (mode.startsWith('bond_')) {
-         var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
-         if (cBond) {
-         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
-         ui.render.update();
-         return;
-         }
-         } */
+		 else if (mode.startsWith('bond_')) {
+		 var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
+		 if (cBond) {
+		 addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
+		 ui.render.update();
+		 return;
+		 }
+		 } */
 	}
 
 	if (id != 'transform-rotate')
@@ -1135,7 +1135,7 @@ function atomLabel (mode) {
 	default:
 		label = label.capitalize();
 		console.assert(element.getElementByLabel(label),
-		              "No such atom exist");
+					  "No such atom exist");
 		return {label: label};
 	}
 };

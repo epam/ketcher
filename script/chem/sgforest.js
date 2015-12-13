@@ -1,10 +1,6 @@
-var Box2Abs = require('../util/box2abs');
 var Map = require('../util/map');
 var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
 var util = require('../util');
-var Atom = require('./atom');
-
 
 var SGroupForest = function (molecule) {
 	this.parent = new Map(); // child id -> parent id

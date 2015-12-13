@@ -1,26 +1,32 @@
 var Vec2 = require('../util/vec2');
-var util = require('../util');
-
 var element = require('./element');
 
 var Bond = function (params)
 {
 	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
 		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
-
+	
 	this.begin = params.begin;
 	this.end = params.end;
 	this.type = params.type;
-	util.ifDef(this, params, 'stereo', Bond.PATTERN.STEREO.NONE);
-	util.ifDef(this, params, 'topology', Bond.PATTERN.TOPOLOGY.EITHER);
-	util.ifDef(this, params, 'reactingCenterStatus', 0);
+	this.stereo = Bond.PATTERN.STEREO.NONE;
+	this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+	this.reactingCenterStatus = 0;
 	this.hb1 = null; // half-bonds
 	this.hb2 = null;
 	this.len = 0;
-	this.center = new Vec2();
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
+	
+	if (params.stereo)
+		this.stereo = params.stereo;
+	if (params.topology)
+		this.topology = params.topology;
+	if (params.reactingCenterStatus)
+		this.reactingCenterStatus = params.reactingCenterStatus;
+	
+	this.center = new Vec2();
 };
 
 Bond.PATTERN =

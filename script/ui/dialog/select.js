@@ -40,8 +40,8 @@ function dialog (name, params) {
 		var key = 'on' + button.value.capitalize();
 
 		console.assert(key != 'onOk' || !params.required ||
-		               getSelected().length != 0,
-		               'No elements selected');
+					   getSelected().length != 0,
+					   'No elements selected');
 		if (params && key in params) {
 			params[key]({
 				mode: mode,

@@ -15,7 +15,7 @@ function dialog (params) {
 	console.assert(!params.type || params.attrs.fieldName);
 
 	var context = params.type && matchContext(params.attrs.fieldName, params.attrs.fieldValue) ||
-		          params.context || 'Fragment';
+				  params.context || 'Fragment';
 	setContext(context, cache, true);
 	if (params.attrs.fieldName)
 		setField(params.attrs.fieldName, cache, true);
@@ -66,7 +66,7 @@ function getValidateAttrs() {
 	}
 
 	return { type: 'DAT',
-	         attrs: attrs };
+			 attrs: attrs };
 };
 
 function setContext(context, cache, force) {
@@ -126,7 +126,7 @@ var special_choices = [
 	{ name: 'Fragment',
 	  value: [
 		  { name: 'MDLBG_FRAGMENT_STEREO',
-		    value: [
+			value: [
 			'abs',
 			'(+)-enantiomer',
 			'(-)-enantiomer',
@@ -136,18 +136,18 @@ var special_choices = [
 			'S(a)',
 			'R(p)',
 			'S(p)'
-		    ]},
+			]},
 		  { name: 'MDLBG_FRAGMENT_COEFFICIENT',
-		    value: null},
+			value: null},
 		  { name: 'MDLBG_FRAGMENT_CHARGE',
-		    value: null },
+			value: null },
 		  { name: 'MDLBG_FRAGMENT_RADICALS',
-		    value: null },
+			value: null },
 	]},
 	{ name: 'Single Bond',
 	  value: [
 		  { name: 'MDLBG_STEREO_KEY',
-		    value: [
+			value: [
 			'erythro',
 			'threo',
 			'alpha',
@@ -158,16 +158,16 @@ var special_choices = [
 			'syn',
 			'ECL',
 			'STG'
-		    ]},
+			]},
 		  { name: 'MDLBG_BOND_KEY',
-		    value: [
-			    'Value=4'
-		    ]},
+			value: [
+				'Value=4'
+			]},
 	]},
 	{ name: 'Atom',
 	  value: [
 		  { name: 'MDLBG_STEREO_KEY',
-		    value: [
+			value: [
 			'RS',
 			'SR',
 			'P-3',
@@ -195,10 +195,10 @@ var special_choices = [
 	{ name: 'Group',
 	  value: [
 		  { name: 'MDLBG_STEREO_KEY',
-		    value: [
+			value: [
 			'cis',
 			'trans'
-		    ]}
+			]}
 	  ]}
 ];
 

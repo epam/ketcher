@@ -5,7 +5,6 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var element = require('./element');
-var Atom = require('./atom');
 var Bond = require('./bond');
 var SGroup = require('./sgroup');
 var SGroupForest = require('./sgforest');

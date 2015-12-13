@@ -1,5 +1,4 @@
 var Box2Abs = require('../util/box2abs');
-var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
@@ -7,9 +6,7 @@ var util = require('../util');
 var Atom = require('./atom');
 var Bond = require('./bond');
 
-require('../rnd/restruct_rendering'); //don't require whole rnd module
-
-var rnd = global.rnd; // jshint ignore:line
+var rnd = global.rnd = global.rnd || {};
 
 var SGroup = function (type) {
 	if (!type || !(type in SGroup.TYPES))

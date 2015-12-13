@@ -933,7 +933,7 @@ rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles)
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-rnd.ReFrag = function (/*Struct.Fragment*/frag) {
+rnd.ReFrag = function (/*Struct.Fragment = {}*/frag) {
 	this.init(rnd.Visel.TYPE.FRAGMENT);
 
 	this.item = frag;

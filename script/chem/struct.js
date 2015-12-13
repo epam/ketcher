@@ -234,17 +234,6 @@ Struct.prototype.findBondId = function (begin, end)
 	return id;
 };
 
-Struct.ATOM =
-{
-	RADICAL:
-	{
-		NONE:    0,
-		SINGLET: 1,
-		DOUPLET: 2,
-		TRIPLET: 3
-	}
-};
-
 Struct.radicalElectrons = function (radical)
 {
 	radical = radical - 0;
@@ -258,54 +247,17 @@ Struct.radicalElectrons = function (radical)
 	throw new Error('Unknown radical value');
 };
 
-Struct.BOND =
+Struct.ATOM =
 {
-	TYPE:
-	{
-		SINGLE: 1,
-		DOUBLE: 2,
-		TRIPLE: 3,
-		AROMATIC: 4,
-		SINGLE_OR_DOUBLE: 5,
-		SINGLE_OR_AROMATIC: 6,
-		DOUBLE_OR_AROMATIC: 7,
-		ANY: 8
-	},
-
-	STEREO:
-	{
-		NONE: 0,
-		UP: 1,
-		EITHER: 4,
-		DOWN: 6,
-		CIS_TRANS: 3
-	},
-
-	TOPOLOGY:
-	{
-		EITHER: 0,
-		RING: 1,
-		CHAIN: 2
-	},
-
-	REACTING_CENTER:
-	{
-		NOT_CENTER: -1,
-		UNMARKED: 0,
-		CENTER: 1,
-		UNCHANGED: 2,
-		MADE_OR_BROKEN: 4,
-		ORDER_CHANGED: 8,
-		MADE_OR_BROKEN_AND_CHANGED: 12
-	}
+    RADICAL:
+ {
+        NONE: 0,
+        SINGLET: 1,
+        DOUPLET: 2,
+        TRIPLET: 3
+    }
 };
 
-Struct.FRAGMENT = {
-	NONE:0,
-	REACTANT:1,
-	PRODUCT:2,
-	AGENT:3
-};
 
 Struct.Atom = function (params) {
 	var def = Struct.Atom.attrGetDefault;
@@ -450,6 +402,48 @@ Struct.AtomList.prototype.label = function ()
 Struct.AtomList.prototype.equals = function (x)
 {
 	return this.notList == x.notList && (this.ids || []).sort().toString() == (x.ids || []).sort().toString();
+};
+
+Struct.BOND =
+{
+    TYPE:
+ {
+        SINGLE: 1,
+        DOUBLE: 2,
+        TRIPLE: 3,
+        AROMATIC: 4,
+        SINGLE_OR_DOUBLE: 5,
+        SINGLE_OR_AROMATIC: 6,
+        DOUBLE_OR_AROMATIC: 7,
+        ANY: 8
+    },
+    
+    STEREO:
+ {
+        NONE: 0,
+        UP: 1,
+        EITHER: 4,
+        DOWN: 6,
+        CIS_TRANS: 3
+    },
+    
+    TOPOLOGY:
+ {
+        EITHER: 0,
+        RING: 1,
+        CHAIN: 2
+    },
+    
+    REACTING_CENTER:
+ {
+        NOT_CENTER: -1,
+        UNMARKED: 0,
+        CENTER: 1,
+        UNCHANGED: 2,
+        MADE_OR_BROKEN: 4,
+        ORDER_CHANGED: 8,
+        MADE_OR_BROKEN_AND_CHANGED: 12
+    }
 };
 
 Struct.Bond = function (params)
@@ -927,7 +921,8 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 };
 
 Struct.prototype.markFragment = function (ids) {
-	var fid = this.frags.add(new Struct.Fragment());
+    var frag = {};
+	var fid = this.frags.add(frag);
 	Set.each(ids, function (aid){
 		this.atoms.get(aid).fragment = fid;
 	}, this);
@@ -943,21 +938,6 @@ Struct.prototype.markFragments = function () {
 		this.markFragment(components[i]);
 	}
 };
-
-Struct.Fragment = function () {
-};
-Struct.Fragment.prototype.clone = function () {
-	return Object.clone(this);
-};
-
-Struct.Fragment.getAtoms = function (struct, frid) {
-	var atoms = [];
-	struct.atoms.each(function (aid, atom) {
-		if (atom.fragment == frid)
-			atoms.push(aid);
-	}, this);
-	return atoms;
-}
 
 Struct.RGroup = function (logic) {
 	logic = logic || {};

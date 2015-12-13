@@ -12,6 +12,15 @@ chem.Molfile = function () {};
 
 chem.Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
 
+
+var FRAGMENT = {
+    NONE: 0,
+    REACTANT: 1,
+    PRODUCT: 2,
+    AGENT: 3
+};
+
+
 chem.Molfile.parseDecimalInt = function (str)
 {
 	var val = parseInt(str, 10);
@@ -911,8 +920,9 @@ chem.Molfile.readRGroups3000 = function (ctab, /* string */ ctabLines) /* Struct
 	for (var rgid in rfrags) {
 		for (var j = 0; j < rfrags[rgid].length; ++j) {
 			var rg = rfrags[rgid][j];
-			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
-			var frid = rg.frags.add(new Struct.Fragment());
+            rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
+            var frag = {};
+			var frid = rg.frags.add(frag);
 			rg.rgroups.get(rgid).frags.add(frid);
 			rg.atoms.each(function (aid, atom) {atom.fragment = frid;});
 			rg.mergeInto(ctab);
@@ -1573,16 +1583,16 @@ chem.Molfile.rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struc
 		if (!bb)
 			continue;
 
-		var fragmentType = (j < nReactants ? Struct.FRAGMENT.REACTANT :
-			(j < nReactants + nProducts ? Struct.FRAGMENT.PRODUCT :
-					Struct.FRAGMENT.AGENT));
-		if (fragmentType == Struct.FRAGMENT.REACTANT) {
+		var fragmentType = (j < nReactants ? FRAGMENT.REACTANT :
+			(j < nReactants + nProducts ? FRAGMENT.PRODUCT :
+					FRAGMENT.AGENT));
+		if (fragmentType == FRAGMENT.REACTANT) {
 			bbReact.push(bb);
 			molReact.push(mol);
-		} else if (fragmentType == Struct.FRAGMENT.AGENT) {
+		} else if (fragmentType == FRAGMENT.AGENT) {
 			bbAgent.push(bb);
 			molAgent.push(mol);
-		} else if (fragmentType == Struct.FRAGMENT.PRODUCT) {
+		} else if (fragmentType == FRAGMENT.PRODUCT) {
 			bbProd.push(bb);
 			molProd.push(mol);
 		}
@@ -1687,8 +1697,9 @@ chem.Molfile.rgMerge = function (scaffold, rgroups) /* Struct */
 	for (var rgid in rgroups) {
 		for (var j = 0; j < rgroups[rgid].length; ++j) {
 			var ctab = rgroups[rgid][j];
-			ctab.rgroups.set(rgid, new Struct.RGroup());
-			var frid = ctab.frags.add(new Struct.Fragment());
+            ctab.rgroups.set(rgid, new Struct.RGroup());
+            var frag = {};
+			var frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
 			ctab.atoms.each(function (aid, atom) {atom.fragment = frid;});
 			ctab.mergeInto(ret);

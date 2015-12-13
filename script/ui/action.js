@@ -1171,6 +1171,15 @@ function getAnchorPosition(clipboard) {
 	}
 }
 
+var getAtoms = function (struct, frid) {
+    var atoms = [];
+    struct.atoms.each(function (aid, atom) {
+        if (atom.fragment == frid)
+            atoms.push(aid);
+    }, this);
+    return atoms;
+}
+
 // TODO: merge to bellow
 function struct2Clipboard(struct) {
 	console.assert(!struct.isBlank(), 'Empty struct');
@@ -1253,7 +1262,7 @@ function struct2Clipboard(struct) {
 
 	var rgids = Set.empty();
 	Set.each(fragments, function (frid){
-		var atoms = Struct.Fragment.getAtoms(struct, frid);
+		var atoms = getAtoms(struct, frid);
 		for (var i = 0; i < atoms.length; ++i)
 			if (!Set.contains(atomFragments, atoms[i]))
 				return;

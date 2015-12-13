@@ -1,7 +1,7 @@
 // rnd.ReStruct constructor and utilities are defined here
 //
 // ReStruct is to store all the auxiliary information for
-//  chem.Struct while rendering
+//  Struct while rendering
 
 /*global require, global:false*/
 
@@ -14,6 +14,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 var element = require('../chem/element');
+var Struct = require('../chem/struct');
 
 require('../chem');
 
@@ -165,7 +166,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	this.sgroups = new Map();
 	this.sgroupData = new Map();
 	this.chiralFlags = new Map();
-	this.molecule = molecule || new chem.Struct();
+	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
 	this.initLayers();
@@ -460,9 +461,9 @@ rnd.ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeB
 		if (bid === bid0)
 			return false;
 		var neibond = this.bonds.get(bid);
-		if (neibond.b.type === chem.Struct.BOND.TYPE.SINGLE && neibond.b.stereo === chem.Struct.BOND.STEREO.UP)
+		if (neibond.b.type === Struct.BOND.TYPE.SINGLE && neibond.b.stereo === Struct.BOND.STEREO.UP)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
-		if (neibond.b.type === chem.Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === chem.Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
+		if (neibond.b.type === Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
 			return true;
 		return false;
 	}, this);
@@ -937,7 +938,7 @@ rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles)
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-rnd.ReFrag = function (/*chem.Struct.Fragment*/frag) {
+rnd.ReFrag = function (/*Struct.Fragment*/frag) {
 	this.init(rnd.Visel.TYPE.FRAGMENT);
 
 	this.item = frag;
@@ -1039,7 +1040,7 @@ rnd.ReFrag.prototype.setHighlight = function (highLight, render) {
 	}
 };
 
-rnd.ReRGroup = function (/*chem.Struct.RGroup*/rgroup) {
+rnd.ReRGroup = function (/*Struct.RGroup*/rgroup) {
 	this.init(rnd.Visel.TYPE.RGROUP);
 
 	this.labelBox = null;

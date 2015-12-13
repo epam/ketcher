@@ -8,6 +8,8 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
+var Struct = require('../chem/struct');
+
 require('./restruct');
 require('../ui');
 require('../chem');
@@ -225,7 +227,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		}, this);
 	}
 
-	this.ctab = new rnd.ReStruct(new chem.Struct(), this);
+	this.ctab = new rnd.ReStruct(new Struct(), this);
 	this.settings = null;
 	this.styles = null;
 

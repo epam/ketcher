@@ -6,6 +6,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
+var Struct = require('../chem/struct');
 var util = require('../util');
 
 require('../chem');
@@ -576,7 +577,7 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function (event) {
 rnd.Editor.AtomTool = function (editor, atomProps) {
 	this.editor = editor;
 	this.atomProps = atomProps;
-	this.bondProps = { type: 1, stereo: chem.Struct.BOND.STEREO.NONE };
+	this.bondProps = { type: 1, stereo: Struct.BOND.STEREO.NONE };
 
 	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -645,9 +646,9 @@ rnd.Editor.BondTool = function (editor, bondProps) {
 	this.atomProps = { label: 'C' };
 	this.bondProps = bondProps;
 	this.plainBondTypes = [
-			chem.Struct.BOND.TYPE.SINGLE,
-			chem.Struct.BOND.TYPE.DOUBLE,
-			chem.Struct.BOND.TYPE.TRIPLE];
+			Struct.BOND.TYPE.SINGLE,
+			Struct.BOND.TYPE.DOUBLE,
+			Struct.BOND.TYPE.TRIPLE];
 
 	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -713,7 +714,7 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 		} else if (!('item' in _DC_)) {
 			var xy = ui.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
-				this.bondProps.type == chem.Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
+				this.bondProps.type == Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = Action.fromBondAddition(
 				this.bondProps,
@@ -730,17 +731,17 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 			var bond = ui.ctab.bonds.get(_DC_.item.id);
 
 			if (
-			bondProps.stereo != chem.Struct.BOND.STEREO.NONE &&
-			bond.type == chem.Struct.BOND.TYPE.SINGLE &&
-			bondProps.type == chem.Struct.BOND.TYPE.SINGLE &&
+			bondProps.stereo != Struct.BOND.STEREO.NONE &&
+			bond.type == Struct.BOND.TYPE.SINGLE &&
+			bondProps.type == Struct.BOND.TYPE.SINGLE &&
 			bond.stereo == bondProps.stereo
 			) {
 				ui.addUndoAction(Action.fromBondFlipping(_DC_.item.id));
 			} else {
 				if (
-				bondProps.type === chem.Struct.BOND.TYPE.SINGLE &&
-				bond.stereo === chem.Struct.BOND.STEREO.NONE &&
-				bondProps.stereo === chem.Struct.BOND.STEREO.NONE
+				bondProps.type === Struct.BOND.TYPE.SINGLE &&
+				bond.stereo === Struct.BOND.STEREO.NONE &&
+				bondProps.stereo === Struct.BOND.STEREO.NONE
 				) {
 					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
 					if (loop) {
@@ -1115,7 +1116,7 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
 			onOk: function (rgNew) {
 				rgNew = values2Sel(rgNew);
 				if (rgOld != rgNew || lbOld != 'R#') {
-					var newProps = Object.clone(chem.Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
+					var newProps = Object.clone(Struct.Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
 					if (rgNew) {
 						newProps.label = 'R#';
 						newProps.rglabel = rgNew;
@@ -1149,7 +1150,7 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
 	if (ci && ci.map == 'frags') {
 		this._hoverHelper.hover(null);
-		var rgOld = chem.Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
+		var rgOld = Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
 		ui.showRGroupTable({
 			values: rgOld && ['R' + rgOld],
 			onOk: function (rgNew) {
@@ -1750,9 +1751,9 @@ rnd.Editor.RotateTool.prototype.OnCancel = function () {
 };
 
 function bondFlipRequired (bond, attrs) {
-	return attrs.type == chem.Struct.BOND.TYPE.SINGLE &&
-	       bond.stereo == chem.Struct.BOND.STEREO.NONE &&
-	       attrs.stereo != chem.Struct.BOND.STEREO.NONE &&
+	return attrs.type == Struct.BOND.TYPE.SINGLE &&
+	       bond.stereo == Struct.BOND.STEREO.NONE &&
+	       attrs.stereo != Struct.BOND.STEREO.NONE &&
 	       ui.ctab.atoms.get(bond.begin).neighbors.length <
 	       ui.ctab.atoms.get(bond.end).neighbors.length;
 }

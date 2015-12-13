@@ -8,7 +8,8 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
-require('./element');
+var Struct = require('./struct');
+
 require('../rnd/restruct_rendering'); //don't require whole rnd module
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
@@ -498,20 +499,20 @@ chem.SGroup.GroupMul = {
 			amap = {};
 			util.each(this.atoms, function (aid) {
 				var atom = mol.atoms.get(aid);
-				var aid2 = mol.atoms.add(new chem.Struct.Atom(atom));
+				var aid2 = mol.atoms.add(new Struct.Atom(atom));
 				newAtoms.push(aid2);
 				this.atomSet[aid2] = 1;
 				amap[aid] = aid2;
 			}, this);
 			util.each(inBonds, function (bid) {
 				var bond = mol.bonds.get(bid);
-				var newBond = new chem.Struct.Bond(bond);
+				var newBond = new Struct.Bond(bond);
 				newBond.begin = amap[newBond.begin];
 				newBond.end = amap[newBond.end];
 				mol.bonds.add(newBond);
 			}, this);
 			if (crossBond != null) {
-				var newCrossBond = new chem.Struct.Bond(crossBond);
+				var newCrossBond = new Struct.Bond(crossBond);
 				newCrossBond.begin = tailAtom;
 				newCrossBond.end = amap[xAtom2];
 				mol.bonds.add(newCrossBond);

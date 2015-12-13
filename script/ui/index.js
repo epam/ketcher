@@ -20,6 +20,7 @@ var Action = require('./action.js');
 
 var templates = require('./templates');
 var element = require('../chem/element');
+var Struct = require('../chem/struct');
 
 var openDialog = require('./dialog/open.js');
 var saveDialog = require('./dialog/save.js');
@@ -481,7 +482,7 @@ function onClick_NewFile ()
 	selectAction(null);
 
 	if (!ui.ctab.isBlank()) {
-		addUndoAction(Action.fromNewCanvas(new chem.Struct()));
+		addUndoAction(Action.fromNewCanvas(new Struct()));
 		ui.render.update();
 	}
 }
@@ -893,7 +894,7 @@ function onClick_ElemTableButton ()
 			else
 				props = {
 					label: 'L#',
-					atomList: new chem.Struct.AtomList({
+					atomList: new Struct.AtomList({
 						notList: res.mode == 'not-list',
 						ids: res.values
 					})
@@ -1044,7 +1045,7 @@ function mapTool (id) {
          else if (mode.startsWith('bond_')) {
          var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
          if (cBond) {
-         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: chem.Struct.BOND.STEREO.NONE }), true);
+         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Struct.BOND.STEREO.NONE }), true);
          ui.render.update();
          return;
          }
@@ -1100,18 +1101,18 @@ function mapTool (id) {
 
 // TODO: remove. only in obsolete dialogs
 var bondTypeMap = {
-	'single': {type: 1, stereo: chem.Struct.BOND.STEREO.NONE},
-	'up': {type: 1, stereo: chem.Struct.BOND.STEREO.UP},
-	'down': {type: 1, stereo: chem.Struct.BOND.STEREO.DOWN},
-	'updown': {type: 1, stereo: chem.Struct.BOND.STEREO.EITHER},
-	'double': {type: 2, stereo: chem.Struct.BOND.STEREO.NONE},
-	'crossed': {type: 2, stereo: chem.Struct.BOND.STEREO.CIS_TRANS},
-	'triple': {type: 3, stereo: chem.Struct.BOND.STEREO.NONE},
-	'aromatic': {type: 4, stereo: chem.Struct.BOND.STEREO.NONE},
-	'singledouble': {type: 5, stereo: chem.Struct.BOND.STEREO.NONE},
-	'singlearomatic': {type: 6, stereo: chem.Struct.BOND.STEREO.NONE},
-	'doublearomatic': {type: 7, stereo: chem.Struct.BOND.STEREO.NONE},
-	'any':  {type: 8, stereo: chem.Struct.BOND.STEREO.NONE}
+	'single': {type: 1, stereo: Struct.BOND.STEREO.NONE},
+	'up': {type: 1, stereo: Struct.BOND.STEREO.UP},
+	'down': {type: 1, stereo: Struct.BOND.STEREO.DOWN},
+	'updown': {type: 1, stereo: Struct.BOND.STEREO.EITHER},
+	'double': {type: 2, stereo: Struct.BOND.STEREO.NONE},
+	'crossed': {type: 2, stereo: Struct.BOND.STEREO.CIS_TRANS},
+	'triple': {type: 3, stereo: Struct.BOND.STEREO.NONE},
+	'aromatic': {type: 4, stereo: Struct.BOND.STEREO.NONE},
+	'singledouble': {type: 5, stereo: Struct.BOND.STEREO.NONE},
+	'singlearomatic': {type: 6, stereo: Struct.BOND.STEREO.NONE},
+	'doublearomatic': {type: 7, stereo: Struct.BOND.STEREO.NONE},
+	'any':  {type: 8, stereo: Struct.BOND.STEREO.NONE}
 };
 
 function bondType (mode)
@@ -1139,7 +1140,7 @@ function atomLabel (mode) {
 
 function clean () {
 	// latter if (initialized)
-	Action.fromNewCanvas(new chem.Struct());
+	Action.fromNewCanvas(new Struct());
 	ui.render.update();
 	undoStack.clear();
 	redoStack.clear();
@@ -1159,7 +1160,7 @@ util.extend(ui, module.exports);
 
 util.extend(ui, {
 	standalone: true,
-	ctab: new chem.Struct(),
+	ctab: new Struct(),
 	render: null,
 	editor: null,
 

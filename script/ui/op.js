@@ -2,6 +2,8 @@
 
 var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
+
+var Struct = require('../chem/struct');
 require('../chem');
 require('../rnd');
 
@@ -43,9 +45,9 @@ function AtomAdd (atom, pos) {
 				pp[p] = this.data.atom[p];
 		pp.label = pp.label || 'C';
 		if (!Object.isNumber(this.data.aid)) {
-			this.data.aid = DS.atoms.add(new chem.Struct.Atom(pp));
+			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
 		} else {
-			DS.atoms.set(this.data.aid, new chem.Struct.Atom(pp));
+			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		}
 		RS.notifyAtomAdded(this.data.aid);
 		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
@@ -329,14 +331,14 @@ function BondAdd (begin, end, bond) {
 		if (this.data.bond)
 			for (var p in this.data.bond)
 				pp[p] = this.data.bond[p];
-		pp.type = pp.type || chem.Struct.BOND.TYPE.SINGLE;
+		pp.type = pp.type || Struct.BOND.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
 		if (!Object.isNumber(this.data.bid)) {
-			this.data.bid = DS.bonds.add(new chem.Struct.Bond(pp));
+			this.data.bid = DS.bonds.add(new Struct.Bond(pp));
 		} else {
-			DS.bonds.set(this.data.bid, new chem.Struct.Bond(pp));
+			DS.bonds.set(this.data.bid, new Struct.Bond(pp));
 		}
 		DS.bondInitHalfBonds(this.data.bid);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);
@@ -420,7 +422,7 @@ function FragmentAdd (frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
 	this._execute = function (editor) {
 		var RS = editor.render.ctab, DS = RS.molecule;
-		var frag = new chem.Struct.Fragment();
+		var frag = new Struct.Fragment();
 		if (this.frid == null) {
 			this.frid = DS.frags.add(frag);
 		} else {
@@ -481,7 +483,7 @@ function RGroupFragment (rgid, frid, rg) {
 	this.frid = frid;
 	this._execute = function (editor) {
 		var RS = editor.render.ctab, DS = RS.molecule;
-		this.rgid_old = this.rgid_old || chem.Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
+		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
 		this.rg_old = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
 		if (this.rg_old) {
 			this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
@@ -497,7 +499,7 @@ function RGroupFragment (rgid, frid, rg) {
 		if (this.rgid_new) {
 			var rgNew = DS.rgroups.get(this.rgid_new);
 			if (!rgNew) {
-				rgNew = this.rg_new || new chem.Struct.RGroup();
+				rgNew = this.rg_new || new Struct.RGroup();
 				DS.rgroups.set(this.rgid_new, rgNew);
 				RS.rgroups.set(this.rgid_new, new rnd.ReRGroup(rgNew));
 			} else {
@@ -517,9 +519,9 @@ function RxnArrowAdd (pos) {
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (!Object.isNumber(this.data.arid)) {
-			this.data.arid = DS.rxnArrows.add(new chem.Struct.RxnArrow());
+			this.data.arid = DS.rxnArrows.add(new Struct.RxnArrow());
 		} else {
-			DS.rxnArrows.set(this.data.arid, new chem.Struct.RxnArrow());
+			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 		}
 		RS.notifyRxnArrowAdded(this.data.arid);
 		DS._rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
@@ -579,9 +581,9 @@ function RxnPlusAdd (pos) {
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (!Object.isNumber(this.data.plid)) {
-			this.data.plid = DS.rxnPluses.add(new chem.Struct.RxnPlus());
+			this.data.plid = DS.rxnPluses.add(new Struct.RxnPlus());
 		} else {
-			DS.rxnPluses.set(this.data.plid, new chem.Struct.RxnPlus());
+			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 		}
 		RS.notifyRxnPlusAdded(this.data.plid);
 		DS._rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));

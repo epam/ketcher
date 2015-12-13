@@ -7,6 +7,8 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 var op = require('./op');
 
+var Struct = require('../chem/struct');
+
 require('../chem');
 
 var ui = global.ui;
@@ -179,12 +181,12 @@ function fromAtomsAttrs (ids, attrs, reset)
 {
 	var action = new Action();
 	(typeof(ids) == 'number' ? [ids] : ids).each(function (id) {
-		for (var key in chem.Struct.Atom.attrlist) {
+		for (var key in Struct.Atom.attrlist) {
 			var value;
 			if (key in attrs)
 				value = attrs[key];
 			else if (reset)
-				value = chem.Struct.Atom.attrGetDefault(key);
+				value = Struct.Atom.attrGetDefault(key);
 			else
 				continue;
 			action.addOp(new op.AtomAttr(id, key, value));
@@ -200,12 +202,12 @@ function fromBondAttrs (id, attrs, flip, reset)
 {
 	var action = new Action();
 
-	for (var key in chem.Struct.Bond.attrlist) {
+	for (var key in Struct.Bond.attrlist) {
 		var value;
 		if (key in attrs)
 			value = attrs[key];
 		else if (reset)
-			value = chem.Struct.Bond.attrGetDefault(key);
+			value = Struct.Bond.attrGetDefault(key);
 		else
 			continue;
 		action.addOp(new op.BondAttr(id, key, value));
@@ -244,7 +246,7 @@ function fromAtomAddition (pos, atom)
 
 function mergeFragments (action, frid, frid2) {
 	if (frid2 != frid && Object.isNumber(frid2)) {
-		var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
+		var rgid = Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
 		if (!Object.isUndefined(rgid)) {
 			action.mergeWith(fromRGroupFragment(null, frid2));
 		}
@@ -525,7 +527,7 @@ function fromBondDeletion (id)
 
 function fromFragmentSplit (frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
-	var rgid = chem.Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
+	var rgid = Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
 	ui.ctab.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid) {
 			var newfrid = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
@@ -716,7 +718,7 @@ function fromAtomMerge (src_id, dst_id)
 		action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
-	var attrs = chem.Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
+	var attrs = Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
 
 	if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
 		attrs.set('label', 'C');
@@ -761,7 +763,7 @@ function fromTemplateOnCanvas (pos, angle, template)
 	// Only template atom label matters for now
 	frag.atoms.each(function (aid, atom) {
 		var operation;
-		var attrs = chem.Struct.Atom.getAttrHash(atom).toObject();
+		var attrs = Struct.Atom.getAttrHash(atom).toObject();
 		attrs.fragment = fragAction.frid;
 
 		action.addOp(
@@ -858,7 +860,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 	}
 
 	frag.atoms.each(function (id, a) {
-		var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == template.aid) {
 			action.mergeWith(fromAtomsAttrs(aid, attrs, true));
@@ -937,7 +939,7 @@ function fromTemplateOnBond (bid, template, calcAngle, flip)
 	var xy0 = fr_begin.pp;
 
 	frag.atoms.each(function (id, a) {
-		var attrs = chem.Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == fr_bond.begin || id == fr_bond.end) {
 			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
@@ -1198,17 +1200,17 @@ function struct2Clipboard(struct) {
 	var mapping = {};
 	selection.atoms.each(function (id)
 	{
-		var new_atom = new chem.Struct.Atom(struct.atoms.get(id));
+		var new_atom = new Struct.Atom(struct.atoms.get(id));
 		new_atom.pos = new_atom.pp;
-		mapping[id] = clipboard.atoms.push(new chem.Struct.Atom(new_atom)) - 1;
+		mapping[id] = clipboard.atoms.push(new Struct.Atom(new_atom)) - 1;
 	});
 
 	selection.bonds.each(function (id)
 	{
-		var new_bond = new chem.Struct.Bond(struct.bonds.get(id));
+		var new_bond = new Struct.Bond(struct.bonds.get(id));
 		new_bond.begin = mapping[new_bond.begin];
 		new_bond.end = mapping[new_bond.end];
-		clipboard.bonds.push(new chem.Struct.Bond(new_bond));
+		clipboard.bonds.push(new Struct.Bond(new_bond));
 	});
 
 	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
@@ -1231,14 +1233,14 @@ function struct2Clipboard(struct) {
 
 	selection.rxnArrows.each(function (id)
 	{
-		var arrow = new chem.Struct.RxnArrow(struct.rxnArrows.get(id));
+		var arrow = new Struct.RxnArrow(struct.rxnArrows.get(id));
 		arrow.pos = arrow.pp;
 		clipboard.rxnArrows.push(arrow);
 	});
 
 	selection.rxnPluses.each(function (id)
 	{
-		var plus = new chem.Struct.RxnPlus(struct.rxnPluses.get(id));
+		var plus = new Struct.RxnPlus(struct.rxnPluses.get(id));
 		plus.pos = plus.pp;
 		clipboard.rxnPluses.push(plus);
 	});
@@ -1255,11 +1257,11 @@ function struct2Clipboard(struct) {
 
 	var rgids = Set.empty();
 	Set.each(fragments, function (frid){
-		var atoms = chem.Struct.Fragment.getAtoms(struct, frid);
+		var atoms = Struct.Fragment.getAtoms(struct, frid);
 		for (var i = 0; i < atoms.length; ++i)
 			if (!Set.contains(atomFragments, atoms[i]))
 				return;
-		var rgid = chem.Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
+		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
 		clipboard.rgmap[frid] = rgid;
 		Set.add(rgids, rgid);
 	}, this);
@@ -1387,11 +1389,11 @@ function fromFlip (objects, flip) {
 				var bid = objects.bonds[i];
 				var bond = molecule.bonds.get(bid);
 
-				if (bond.type == chem.Struct.BOND.TYPE.SINGLE) {
-					if (bond.stereo == chem.Struct.BOND.STEREO.UP) {
-						action.addOp(new op.BondAttr(bid, 'stereo', chem.Struct.BOND.STEREO.DOWN));
-					} else if (bond.stereo == chem.Struct.BOND.STEREO.DOWN) {
-						action.addOp(new op.BondAttr(bid, 'stereo', chem.Struct.BOND.STEREO.UP));
+				if (bond.type == Struct.BOND.TYPE.SINGLE) {
+					if (bond.stereo == Struct.BOND.STEREO.UP) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Struct.BOND.STEREO.DOWN));
+					} else if (bond.stereo == Struct.BOND.STEREO.DOWN) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Struct.BOND.STEREO.UP));
 					}
 				}
 			}

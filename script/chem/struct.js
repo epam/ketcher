@@ -11,7 +11,7 @@ var util = require('../util');
 var element = require('./element');
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
-chem.Struct = function () {
+var Struct = function () {
 	this.atoms = new Pool();
 	this.bonds = new Pool();
 	this.sgroups = new Pool();
@@ -27,7 +27,7 @@ chem.Struct = function () {
 	this.sGroupForest = new chem.SGroupForest(this);
 };
 
-chem.Struct.prototype.hasRxnProps = function () {
+Struct.prototype.hasRxnProps = function () {
 	return this.atoms.find(function (aid, atom) {
 		return atom.hasRxnProps();
 	}, this) >= 0 || this.bonds.find(function (bid, bond) {
@@ -35,20 +35,20 @@ chem.Struct.prototype.hasRxnProps = function () {
 	}, this) >= 0;
 };
 
-chem.Struct.prototype.hasRxnArrow = function () {
+Struct.prototype.hasRxnArrow = function () {
 	return this.rxnArrows.count() > 0;
 };
 
-chem.Struct.prototype.addRxnArrowIfNecessary = function () {
+Struct.prototype.addRxnArrowIfNecessary = function () {
 	var implicitReaction = !this.hasRxnArrow() && this.hasRxnProps();
 	if (implicitReaction) {
-		this.rxnArrows.add(new chem.Struct.RxnArrow());
+		this.rxnArrows.add(new Struct.RxnArrow());
 	}
 	return implicitReaction;
 };
 
 // returns a list of id's of s-groups, which contain only atoms in the given list
-chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
+Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
 	var sgroupCounts = new Hash();
 
 	util.each(atoms, function (aid) {
@@ -77,13 +77,13 @@ chem.Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
 	return sgroupList;
 };
 
-chem.Struct.prototype.isBlank = function () {
+Struct.prototype.isBlank = function () {
 	return this.atoms.count() === 0 &&
 	this.rxnArrows.count() === 0 &&
 	this.rxnPluses.count() === 0 && !this.isChiral;
 };
 
-chem.Struct.prototype.toLists = function () {
+Struct.prototype.toLists = function () {
 	var aidMap = {};
 	var atomList = [];
 	this.atoms.each(function (aid, atom) {
@@ -93,7 +93,7 @@ chem.Struct.prototype.toLists = function () {
 
 	var bondList = [];
 	this.bonds.each(function (bid, bond) {
-		var b = new chem.Struct.Bond(bond);
+		var b = new Struct.Bond(bond);
 		b.begin = aidMap[bond.begin];
 		b.end = aidMap[bond.end];
 		bondList.push(b);
@@ -105,12 +105,12 @@ chem.Struct.prototype.toLists = function () {
 	};
 };
 
-chem.Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
-	var cp = new chem.Struct();
+Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
+	var cp = new Struct();
 	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols, false, aidMap);
 };
 
-chem.Struct.prototype.getScaffold = function () {
+Struct.prototype.getScaffold = function () {
 	var atomSet = Set.empty();
 	this.atoms.each(function (aid) {
 		Set.add(atomSet, aid);
@@ -127,7 +127,7 @@ chem.Struct.prototype.getScaffold = function () {
 	return this.clone(atomSet);
 };
 
-chem.Struct.prototype.getFragmentIds = function (fid) {
+Struct.prototype.getFragmentIds = function (fid) {
 	var atomSet = Set.empty();
 	this.atoms.each(function (aid, atom) {
 		if (atom.fragment == fid) {
@@ -137,11 +137,11 @@ chem.Struct.prototype.getFragmentIds = function (fid) {
 	return atomSet;
 };
 
-chem.Struct.prototype.getFragment = function (fid) {
+Struct.prototype.getFragment = function (fid) {
 	return this.clone(this.getFragmentIds(fid));
 };
 
-chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) {
+Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) {
 	atomSet = atomSet || Set.keySetInt(this.atoms);
 	bondSet = bondSet || Set.keySetInt(this.bonds);
 	bondSet = Set.filter(bondSet, function (bid){
@@ -220,7 +220,7 @@ chem.Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols
 	return cp;
 };
 
-chem.Struct.prototype.findBondId = function (begin, end)
+Struct.prototype.findBondId = function (begin, end)
 {
 	var id = -1;
 
@@ -238,7 +238,7 @@ chem.Struct.prototype.findBondId = function (begin, end)
 	return id;
 };
 
-chem.Struct.ATOM =
+Struct.ATOM =
 {
 	RADICAL:
 	{
@@ -249,20 +249,20 @@ chem.Struct.ATOM =
 	}
 };
 
-chem.Struct.radicalElectrons = function (radical)
+Struct.radicalElectrons = function (radical)
 {
 	radical = radical - 0;
-	if (radical == chem.Struct.ATOM.RADICAL.NONE)
+	if (radical == Struct.ATOM.RADICAL.NONE)
 		return 0;
-	else if (radical == chem.Struct.ATOM.RADICAL.DOUPLET)
+	else if (radical == Struct.ATOM.RADICAL.DOUPLET)
 		return 1;
-	else if (radical == chem.Struct.ATOM.RADICAL.SINGLET ||
-		radical == chem.Struct.ATOM.RADICAL.TRIPLET)
+	else if (radical == Struct.ATOM.RADICAL.SINGLET ||
+		radical == Struct.ATOM.RADICAL.TRIPLET)
 		return 2;
 	throw new Error('Unknown radical value');
 };
 
-chem.Struct.BOND =
+Struct.BOND =
 {
 	TYPE:
 	{
@@ -304,15 +304,15 @@ chem.Struct.BOND =
 	}
 };
 
-chem.Struct.FRAGMENT = {
+Struct.FRAGMENT = {
 	NONE:0,
 	REACTANT:1,
 	PRODUCT:2,
 	AGENT:3
 };
 
-chem.Struct.Atom = function (params) {
-	var def = chem.Struct.Atom.attrGetDefault;
+Struct.Atom = function (params) {
+	var def = Struct.Atom.attrGetDefault;
 	if (!params || !('label' in params))
 		throw new Error('label must be specified!');
 
@@ -350,14 +350,14 @@ chem.Struct.Atom = function (params) {
 	util.ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
 	util.ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
-	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new chem.Struct.AtomList(params.atomList) : null;
+	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new Struct.AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
 };
 
-chem.Struct.Atom.getAttrHash = function (atom) {
+Struct.Atom.getAttrHash = function (atom) {
 	var attrs = new Hash();
-	for (var attr in chem.Struct.Atom.attrlist) {
+	for (var attr in Struct.Atom.attrlist) {
 		if (typeof(atom[attr]) != 'undefined') {
 			attrs.set(attr, atom[attr]);
 		}
@@ -365,13 +365,13 @@ chem.Struct.Atom.getAttrHash = function (atom) {
 	return attrs;
 };
 
-chem.Struct.Atom.attrGetDefault = function (attr) {
-	if (attr in chem.Struct.Atom.attrlist)
-		return chem.Struct.Atom.attrlist[attr];
+Struct.Atom.attrGetDefault = function (attr) {
+	if (attr in Struct.Atom.attrlist)
+		return Struct.Atom.attrlist[attr];
 	throw new Error('Attribute unknown');
 };
 
-chem.Struct.Atom.attrlist = {
+Struct.Atom.attrlist = {
 	'label': 'C',
 	'isotope': 0,
 	'radical': 0,
@@ -389,44 +389,44 @@ chem.Struct.Atom.attrlist = {
 	'aam': 0
 };
 
-chem.Struct.Atom.prototype.clone = function (fidMap)
+Struct.Atom.prototype.clone = function (fidMap)
 {
-	var ret = new chem.Struct.Atom(this);
+	var ret = new Struct.Atom(this);
 	if (fidMap && this.fragment in fidMap) {
 		ret.fragment = fidMap[this.fragment];
 	}
 	return ret;
 };
 
-chem.Struct.Atom.prototype.isQuery =  function ()
+Struct.Atom.prototype.isQuery =  function ()
 {
 	return this.atomList != null || this.label == 'A' || this.attpnt || this.hCount;
 };
 
-chem.Struct.Atom.prototype.pureHydrogen =  function ()
+Struct.Atom.prototype.pureHydrogen =  function ()
 {
 	return this.label == 'H' && this.isotope == 0;
 };
 
-chem.Struct.Atom.prototype.isPlainCarbon =  function ()
+Struct.Atom.prototype.isPlainCarbon =  function ()
 {
 	return this.label == 'C' && this.isotope == 0 && this.radical == 0 && this.charge == 0
 		 && this.explicitValence < 0 && this.ringBondCount == 0 && this.substitutionCount == 0
 		 && this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
 };
 
-chem.Struct.Atom.prototype.isPseudo =  function ()
+Struct.Atom.prototype.isPseudo =  function ()
 {
 	// TODO: handle reaxys generics separately
 	return !this.atomList && !this.rglabel && !element.getElementByLabel(this.label);
 };
 
-chem.Struct.Atom.prototype.hasRxnProps =  function ()
+Struct.Atom.prototype.hasRxnProps =  function ()
 {
 	return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.attpnt) || this.aam);
 };
 
-chem.Struct.AtomList = function (params)
+Struct.AtomList = function (params)
 {
 	if (!params || !('notList' in params) || !('ids' in params))
 		throw new Error('\'notList\' and \'ids\' must be specified!');
@@ -435,7 +435,7 @@ chem.Struct.AtomList = function (params)
 	this.ids = params.ids; /*Array of integers*/
 };
 
-chem.Struct.AtomList.prototype.labelList = function ()
+Struct.AtomList.prototype.labelList = function ()
 {
 	var labels = [];
 	for (var i = 0; i < this.ids.length; ++i)
@@ -443,7 +443,7 @@ chem.Struct.AtomList.prototype.labelList = function ()
 	return labels;
 };
 
-chem.Struct.AtomList.prototype.label = function ()
+Struct.AtomList.prototype.label = function ()
 {
 	var label = '[' + this.labelList().join(',') + ']';
 	if (this.notList)
@@ -451,12 +451,12 @@ chem.Struct.AtomList.prototype.label = function ()
 	return label;
 };
 
-chem.Struct.AtomList.prototype.equals = function (x)
+Struct.AtomList.prototype.equals = function (x)
 {
 	return this.notList == x.notList && (this.ids || []).sort().toString() == (x.ids || []).sort().toString();
 };
 
-chem.Struct.Bond = function (params)
+Struct.Bond = function (params)
 {
 	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
 		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
@@ -464,8 +464,8 @@ chem.Struct.Bond = function (params)
 	this.begin = params.begin;
 	this.end = params.end;
 	this.type = params.type;
-	util.ifDef(this, params, 'stereo', chem.Struct.BOND.STEREO.NONE);
-	util.ifDef(this, params, 'topology', chem.Struct.BOND.TOPOLOGY.EITHER);
+	util.ifDef(this, params, 'stereo', Struct.BOND.STEREO.NONE);
+	util.ifDef(this, params, 'topology', Struct.BOND.TOPOLOGY.EITHER);
 	util.ifDef(this, params, 'reactingCenterStatus', 0);
 	this.hb1 = null; // half-bonds
 	this.hb2 = null;
@@ -476,16 +476,16 @@ chem.Struct.Bond = function (params)
 	this.angle = 0;
 };
 
-chem.Struct.Bond.attrlist = {
-	'type': chem.Struct.BOND.TYPE.SINGLE,
-	'stereo': chem.Struct.BOND.STEREO.NONE,
-	'topology': chem.Struct.BOND.TOPOLOGY.EITHER,
+Struct.Bond.attrlist = {
+	'type': Struct.BOND.TYPE.SINGLE,
+	'stereo': Struct.BOND.STEREO.NONE,
+	'topology': Struct.BOND.TOPOLOGY.EITHER,
 	'reactingCenterStatus': 0
 };
 
-chem.Struct.Bond.getAttrHash = function (bond) {
+Struct.Bond.getAttrHash = function (bond) {
 	var attrs = new Hash();
-	for (var attr in chem.Struct.Bond.attrlist) {
+	for (var attr in Struct.Bond.attrlist) {
 		if (typeof(bond[attr]) !== 'undefined') {
 			attrs.set(attr, bond[attr]);
 		}
@@ -493,32 +493,32 @@ chem.Struct.Bond.getAttrHash = function (bond) {
 	return attrs;
 };
 
-chem.Struct.Bond.attrGetDefault = function (attr) {
-	if (attr in chem.Struct.Bond.attrlist)
-		return chem.Struct.Bond.attrlist[attr];
+Struct.Bond.attrGetDefault = function (attr) {
+	if (attr in Struct.Bond.attrlist)
+		return Struct.Bond.attrlist[attr];
 	throw new Error('Attribute unknown');
 }
 
-chem.Struct.Bond.prototype.hasRxnProps =  function ()
+Struct.Bond.prototype.hasRxnProps =  function ()
 {
 	return !!this.reactingCenterStatus;
 };
 
-chem.Struct.Bond.prototype.getCenter = function (struct) {
+Struct.Bond.prototype.getCenter = function (struct) {
 	var p1 = struct.atoms.get(this.begin).pp;
 	var p2 = struct.atoms.get(this.end).pp;
 	return Vec2.lc2(p1, 0.5, p2, 0.5);
 }
 
-chem.Struct.Bond.prototype.getDir = function (struct) {
+Struct.Bond.prototype.getDir = function (struct) {
 	var p1 = struct.atoms.get(this.begin).pp;
 	var p2 = struct.atoms.get(this.end).pp;
 	return p2.sub(p1).normalized();
 }
 
-chem.Struct.Bond.prototype.clone = function (aidMap)
+Struct.Bond.prototype.clone = function (aidMap)
 {
-	var cp = new chem.Struct.Bond(this);
+	var cp = new Struct.Bond(this);
 	if (aidMap) {
 		cp.begin = aidMap[cp.begin];
 		cp.end = aidMap[cp.end];
@@ -526,7 +526,7 @@ chem.Struct.Bond.prototype.clone = function (aidMap)
 	return cp;
 };
 
-chem.Struct.Bond.prototype.findOtherEnd = function (i)
+Struct.Bond.prototype.findOtherEnd = function (i)
 {
 	if (i == this.begin)
 		return this.end;
@@ -560,7 +560,7 @@ chem.HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 	this.rightNeighbor = 0;
 };
 
-chem.Struct.prototype.initNeighbors = function ()
+Struct.prototype.initNeighbors = function ()
 {
 	this.atoms.each(function (aid, atom){
 		atom.neighbors = [];
@@ -573,7 +573,7 @@ chem.Struct.prototype.initNeighbors = function ()
 	}, this);
 };
 
-chem.Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
+Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 {
 	bond = bond || this.bonds.get(bid);
 	bond.hb1 = 2 * bid;
@@ -586,7 +586,7 @@ chem.Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
 	hb2.contra = bond.hb1;
 };
 
-chem.Struct.prototype.halfBondUpdate = function (hbid)
+Struct.prototype.halfBondUpdate = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
 	var p1 = this.atoms.get(hb.begin).pp;
@@ -599,18 +599,18 @@ chem.Struct.prototype.halfBondUpdate = function (hbid)
 		hb.loop = -1;
 };
 
-chem.Struct.prototype.initHalfBonds = function ()
+Struct.prototype.initHalfBonds = function ()
 {
 	this.halfBonds.clear();
 	this.bonds.each(this.bondInitHalfBonds, this);
 };
 
-chem.Struct.prototype.setHbNext = function (hbid, next)
+Struct.prototype.setHbNext = function (hbid, next)
 {
 	this.halfBonds.get(this.halfBonds.get(hbid).contra).next = next;
 };
 
-chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
+Struct.prototype.halfBondSetAngle = function (hbid, left)
 {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
@@ -620,7 +620,7 @@ chem.Struct.prototype.halfBondSetAngle = function (hbid, left)
 	hbl.rightNeighbor = hbid;
 };
 
-chem.Struct.prototype.atomAddNeighbor = function (hbid)
+Struct.prototype.atomAddNeighbor = function (hbid)
 {
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
@@ -638,7 +638,7 @@ chem.Struct.prototype.atomAddNeighbor = function (hbid)
 	this.halfBondSetAngle(ir, hbid);
 };
 
-chem.Struct.prototype.atomSortNeighbors = function (aid) {
+Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
 	atom.neighbors = atom.neighbors.sortBy(function (nei){
 		return this.halfBonds.get(nei).ang;
@@ -653,7 +653,7 @@ chem.Struct.prototype.atomSortNeighbors = function (aid) {
 			atom.neighbors[i]);
 };
 
-chem.Struct.prototype.sortNeighbors = function (list) {
+Struct.prototype.sortNeighbors = function (list) {
 	var f = function (aid) { this.atomSortNeighbors(aid); };
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
@@ -661,7 +661,7 @@ chem.Struct.prototype.sortNeighbors = function (list) {
 		util.each(list, f, this);
 };
 
-chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
+Struct.prototype.atomUpdateHalfBonds = function (aid) {
 	var nei = this.atoms.get(aid).neighbors;
 	for (var i = 0; i < nei.length; ++i) {
 		var hbid = nei[i];
@@ -670,7 +670,7 @@ chem.Struct.prototype.atomUpdateHalfBonds = function (aid) {
 	}
 };
 
-chem.Struct.prototype.updateHalfBonds = function (list) {
+Struct.prototype.updateHalfBonds = function (list) {
 	var f = function (aid) { this.atomUpdateHalfBonds(aid); };
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
@@ -678,7 +678,7 @@ chem.Struct.prototype.updateHalfBonds = function (list) {
 		util.each(list, f, this);
 };
 
-chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
+Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	this.sgroups.each(function (sgid, sg){
 		sg.xBonds = [];
 		sg.neiAtoms = [];
@@ -703,7 +703,7 @@ chem.Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	},this);
 };
 
-chem.Struct.prototype.sGroupDelete = function (sgid)
+Struct.prototype.sGroupDelete = function (sgid)
 {
 	var sg = this.sgroups.get(sgid);
 	for (var i = 0; i < sg.atoms.length; ++i) {
@@ -713,32 +713,32 @@ chem.Struct.prototype.sGroupDelete = function (sgid)
 	this.sgroups.remove(sgid);
 };
 
-chem.Struct.itemSetPos = function (item, pp) // TODO: remove
+Struct.itemSetPos = function (item, pp) // TODO: remove
 {
 	item.pp = pp;
 };
 
-chem.Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
+Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
 {
-	chem.Struct.itemSetPos(this[map].get(id), pp, scaleFactor);
+	Struct.itemSetPos(this[map].get(id), pp, scaleFactor);
 };
 
-chem.Struct.prototype._atomSetPos = function (id, pp, scaleFactor)
+Struct.prototype._atomSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('atoms', id, pp, scaleFactor);
 };
 
-chem.Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
+Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('rxnPluses', id, pp, scaleFactor);
 };
 
-chem.Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
+Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
 {
 	this._itemSetPos('rxnArrows', id, pp, scaleFactor);
 };
 
-chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
+Struct.prototype.getCoordBoundingBox = function (atomSet)
 {
 	var bb = null;
 	var extend = function (pp) {
@@ -775,7 +775,7 @@ chem.Struct.prototype.getCoordBoundingBox = function (atomSet)
 	return bb;
 };
 
-chem.Struct.prototype.getCoordBoundingBoxObj = function ()
+Struct.prototype.getCoordBoundingBoxObj = function ()
 {
 	var bb = null;
 	var extend = function (pp) {
@@ -796,7 +796,7 @@ chem.Struct.prototype.getCoordBoundingBoxObj = function ()
 	return bb;
 };
 
-chem.Struct.prototype.getBondLengthData = function ()
+Struct.prototype.getBondLengthData = function ()
 {
 	var totalLength = 0;
 	var cnt = 0;
@@ -809,13 +809,13 @@ chem.Struct.prototype.getBondLengthData = function ()
 	return {cnt:cnt, totalLength:totalLength};
 };
 
-chem.Struct.prototype.getAvgBondLength = function ()
+Struct.prototype.getAvgBondLength = function ()
 {
 	var bld = this.getBondLengthData();
 	return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
 };
 
-chem.Struct.prototype.getAvgClosestAtomDistance = function ()
+Struct.prototype.getAvgClosestAtomDistance = function ()
 {
 	var totalDist = 0, minDist, dist = 0;
 	var keys = this.atoms.keys(), k, j;
@@ -834,7 +834,7 @@ chem.Struct.prototype.getAvgClosestAtomDistance = function ()
 	return keys.length > 0 ? totalDist / keys.length : -1;
 };
 
-chem.Struct.prototype.checkBondExists = function (begin, end)
+Struct.prototype.checkBondExists = function (begin, end)
 {
 	var bondExists = false;
 	this.bonds.each(function (bid, bond){
@@ -854,36 +854,36 @@ chem.Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 
 	hbs.each(function (hb){
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
-		if (bond.type != chem.Struct.BOND.TYPE.AROMATIC)
+		if (bond.type != Struct.BOND.TYPE.AROMATIC)
 			this.aromatic = false;
-		if (bond.type == chem.Struct.BOND.TYPE.DOUBLE)
+		if (bond.type == Struct.BOND.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
 };
 
-chem.Struct.RxnPlus = function (params)
+Struct.RxnPlus = function (params)
 {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
-chem.Struct.RxnPlus.prototype.clone = function ()
+Struct.RxnPlus.prototype.clone = function ()
 {
-	return new chem.Struct.RxnPlus(this);
+	return new Struct.RxnPlus(this);
 };
 
-chem.Struct.RxnArrow = function (params)
+Struct.RxnArrow = function (params)
 {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
-chem.Struct.RxnArrow.prototype.clone = function ()
+Struct.RxnArrow.prototype.clone = function ()
 {
-	return new chem.Struct.RxnArrow(this);
+	return new Struct.RxnArrow(this);
 };
 
-chem.Struct.prototype.findConnectedComponent = function (aid) {
+Struct.prototype.findConnectedComponent = function (aid) {
 	var map = {};
 	var list = [aid];
 	var ids = Set.empty();
@@ -903,7 +903,7 @@ chem.Struct.prototype.findConnectedComponent = function (aid) {
 	return ids;
 };
 
-chem.Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
+Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 	// NB: this is a hack
 	// TODO: need to maintain half-bond and neighbor structure permanently
 	if (!this.halfBonds.count()) {
@@ -930,31 +930,31 @@ chem.Struct.prototype.findConnectedComponents = function (discardExistingFragmen
 	return components;
 };
 
-chem.Struct.prototype.markFragment = function (ids) {
-	var fid = this.frags.add(new chem.Struct.Fragment());
+Struct.prototype.markFragment = function (ids) {
+	var fid = this.frags.add(new Struct.Fragment());
 	Set.each(ids, function (aid){
 		this.atoms.get(aid).fragment = fid;
 	}, this);
 };
 
-chem.Struct.prototype.markFragmentByAtomId = function (aid) {
+Struct.prototype.markFragmentByAtomId = function (aid) {
 	this.markFragment(this.findConnectedComponent(aid));
 };
 
-chem.Struct.prototype.markFragments = function () {
+Struct.prototype.markFragments = function () {
 	var components = this.findConnectedComponents();
 	for (var i = 0; i < components.length; ++i) {
 		this.markFragment(components[i]);
 	}
 };
 
-chem.Struct.Fragment = function () {
+Struct.Fragment = function () {
 };
-chem.Struct.Fragment.prototype.clone = function () {
+Struct.Fragment.prototype.clone = function () {
 	return Object.clone(this);
 };
 
-chem.Struct.Fragment.getAtoms = function (struct, frid) {
+Struct.Fragment.getAtoms = function (struct, frid) {
 	var atoms = [];
 	struct.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid)
@@ -963,7 +963,7 @@ chem.Struct.Fragment.getAtoms = function (struct, frid) {
 	return atoms;
 }
 
-chem.Struct.RGroup = function (logic) {
+Struct.RGroup = function (logic) {
 	logic = logic || {};
 	this.frags = new Pool();
 	this.resth = logic.resth || false;
@@ -971,7 +971,7 @@ chem.Struct.RGroup = function (logic) {
 	this.ifthen = logic.ifthen || 0;
 };
 
-chem.Struct.RGroup.prototype.getAttrs = function () {
+Struct.RGroup.prototype.getAttrs = function () {
 	return {
 		resth: this.resth,
 		range: this.range,
@@ -979,22 +979,22 @@ chem.Struct.RGroup.prototype.getAttrs = function () {
 	};
 };
 
-chem.Struct.RGroup.findRGroupByFragment = function (rgroups, frid) {
+Struct.RGroup.findRGroupByFragment = function (rgroups, frid) {
 	var ret;
 	rgroups.each(function (rgid, rgroup) {
 		if (!Object.isUndefined(rgroup.frags.keyOf(frid))) ret = rgid;
 	});
 	return ret;
 };
-chem.Struct.RGroup.prototype.clone = function (fidMap) {
-	var ret = new chem.Struct.RGroup(this);
+Struct.RGroup.prototype.clone = function (fidMap) {
+	var ret = new Struct.RGroup(this);
 	this.frags.each(function (fnum, fid) {
 		ret.frags.add(fidMap ? fidMap[fid] : fid);
 	});
 	return ret;
 };
 
-chem.Struct.prototype.scale = function (scale)
+Struct.prototype.scale = function (scale)
 {
 	if (scale != 1) {
 		this.atoms.each(function (aid, atom){
@@ -1012,7 +1012,7 @@ chem.Struct.prototype.scale = function (scale)
 	}
 };
 
-chem.Struct.prototype.rescale = function ()
+Struct.prototype.rescale = function ()
 {
 	var avg = this.getAvgBondLength();
 	if (avg < 0 && !this.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
@@ -1025,7 +1025,7 @@ chem.Struct.prototype.rescale = function ()
 	this.scale(scale);
 };
 
-chem.Struct.prototype.loopHasSelfIntersections = function (hbs)
+Struct.prototype.loopHasSelfIntersections = function (hbs)
 {
 	for (var i = 0; i < hbs.length; ++i) {
 		var hbi = this.halfBonds.get(hbs[i]);
@@ -1048,7 +1048,7 @@ chem.Struct.prototype.loopHasSelfIntersections = function (hbs)
 
 // partition a cycle into simple cycles
 // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
-chem.Struct.prototype.partitionLoop = function (loop) {
+Struct.prototype.partitionLoop = function (loop) {
 	var subloops = [];
 	var continueFlag = true;
 	search: while (continueFlag) {
@@ -1073,7 +1073,7 @@ chem.Struct.prototype.partitionLoop = function (loop) {
 	return subloops;
 }
 
-chem.Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
+Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
 	var hba = this.halfBonds.get(hbid1);
 	var hbb = this.halfBonds.get(hbid2);
 	return Math.atan2(
@@ -1081,7 +1081,7 @@ chem.Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
 	Vec2.dot(hba.dir, hbb.dir));
 }
 
-chem.Struct.prototype.loopIsConvex = function (loop) {
+Struct.prototype.loopIsConvex = function (loop) {
 	for (var k = 0; k < loop.length; ++k) {
 		var angle = this.halfBondAngle(loop[k], loop[(k + 1) % loop.length]);
 		if (angle > 0)
@@ -1092,7 +1092,7 @@ chem.Struct.prototype.loopIsConvex = function (loop) {
 
 // check whether a loop is on the inner or outer side of the polygon
 //  by measuring the total angle between bonds
-chem.Struct.prototype.loopIsInner = function (loop) {
+Struct.prototype.loopIsInner = function (loop) {
 	var totalAngle = 2 * Math.PI;
 	for (var k = 0; k < loop.length; ++k) {
 		var hbida = loop[k];
@@ -1107,7 +1107,7 @@ chem.Struct.prototype.loopIsInner = function (loop) {
 	return Math.abs(totalAngle) < Math.PI;
 }
 
-chem.Struct.prototype.findLoops = function ()
+Struct.prototype.findLoops = function ()
 {
 	var newLoops = [];
 	var bondsToMark = Set.empty();
@@ -1160,7 +1160,7 @@ chem.Struct.prototype.findLoops = function ()
 
 // NB: this updates the structure without modifying the corresponding ReStruct.
 //  To be applied to standalone structures only.
-chem.Struct.prototype.prepareLoopStructure = function () {
+Struct.prototype.prepareLoopStructure = function () {
 	this.initHalfBonds();
 	this.initNeighbors();
 	this.updateHalfBonds(this.atoms.keys());
@@ -1168,8 +1168,449 @@ chem.Struct.prototype.prepareLoopStructure = function () {
 	this.findLoops();
 }
 
-chem.Struct.prototype.atomAddToSGroup = function (sgid, aid) {
+Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	// TODO: [MK] make sure the addition does not break the hierarchy?
 	chem.SGroup.addAtom(this.sgroups.get(sgid), aid);
 	Set.add(this.atoms.get(aid).sgs, sgid);
 }
+
+Struct.prototype.calcConn = function (aid) {
+    var conn = 0;
+    var atom = this.atoms.get(aid);
+    var hasAromatic = false;
+    for (var i = 0; i < atom.neighbors.length; ++i) {
+        var hb = this.halfBonds.get(atom.neighbors[i]);
+        var bond = this.bonds.get(hb.bid);
+        switch (bond.type) {
+            case Struct.BOND.TYPE.SINGLE:
+                conn += 1;
+                break;
+            case Struct.BOND.TYPE.DOUBLE:
+                conn += 2;
+                break;
+            case Struct.BOND.TYPE.TRIPLE:
+                conn += 3;
+                break;
+            case Struct.BOND.TYPE.AROMATIC:
+                conn += 1;
+                hasAromatic = true;
+                break;
+            default:
+                return -1;
+        }
+    }
+    if (hasAromatic)
+        conn += 1;
+    return conn;
+};
+
+Struct.Atom.prototype.calcValenceMinusHyd = function (conn) {
+    var atom = this;
+    var charge = atom.charge;
+    var label = atom.label;
+    var elem = element.getElementByLabel(label);
+    if (elem == null)
+        throw new Error('Element ' + label + ' unknown');
+    if (elem < 0) { // query atom, skip
+        this.implicitH = 0;
+        return null;
+    }
+    
+    var groupno = element.get(elem).group;
+    var rad = Struct.radicalElectrons(atom.radical);
+    
+    if (groupno == 3) {
+        if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In') {
+            if (charge == -1)
+                if (rad + conn <= 4)
+                    return rad + conn;
+        }
+    }
+    else if (groupno == 5) {
+        if (label == 'N' || label == 'P') {
+            if (charge == 1)
+                return rad + conn;
+            if (charge == 2)
+                return rad + conn;
+        }
+        else if (label == 'Sb' || label == 'Bi' || label == 'As') {
+            if (charge == 1)
+                return rad + conn;
+            else if (charge == 2)
+                return rad + conn;
+        }
+    }
+    else if (groupno == 6) {
+        if (label == 'O') {
+            if (charge >= 1)
+                return rad + conn;
+        }
+        else if (label == 'S' || label == 'Se' || label == 'Po') {
+            if (charge == 1)
+                return rad + conn;
+        }
+    }
+    else if (groupno == 7) {
+        if (label == 'Cl' || label == 'Br' ||
+			label == 'I' || label == 'At') {
+            if (charge == 1)
+                return rad + conn;
+        }
+    }
+    
+    return rad + conn + Math.abs(charge);
+};
+
+Struct.prototype.calcImplicitHydrogen = function (aid) {
+    var conn = this.calcConn(aid);
+    var atom = this.atoms.get(aid);
+    atom.badConn = false;
+    if (conn < 0 || atom.isQuery()) {
+        atom.implicitH = 0;
+        return;
+    }
+    if (atom.explicitValence >= 0) {
+        var elem = element.getElementByLabel(atom.label);
+        atom.implicitH = 0;
+        if (elem != null) {
+            atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);
+            if (atom.implicitH < 0) {
+                atom.implicitH = 0;
+                atom.badConn = true;
+            }
+        }
+    } else {
+        atom.calcValence(conn);
+    }
+};
+
+Struct.prototype.setImplicitHydrogen = function (list) {
+    var f = function (aid) { this.calcImplicitHydrogen(aid); };
+    if (util.isNullOrUndefined(list))
+        this.atoms.each(f, this);
+    else
+        util.each(list, f, this);
+};
+
+Struct.Atom.prototype.calcValence = function (conn)
+{
+	var atom = this;
+	var charge = atom.charge;
+	var label = atom.label;
+	if (atom.isQuery()) {
+		this.implicitH = 0;
+		return true;
+	}
+	var elem = element.getElementByLabel(label);
+	if (elem == null) {
+		this.implicitH = 0;
+		return true;
+	}
+
+	var groupno = element.get(elem).group;
+	var rad = Struct.radicalElectrons(atom.radical);
+
+	var valence = conn;
+	var hyd = 0;
+	var absCharge = Math.abs(charge);
+
+	if (groupno == 1)
+	{
+		if (label == 'H' ||
+			label == 'Li' || label == 'Na' || label == 'K' ||
+			label == 'Rb' || label == 'Cs' || label == 'Fr')
+		{
+			valence = 1;
+			hyd = 1 - rad - conn - absCharge;
+		}
+	}
+	else if (groupno == 3)
+	{
+		if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In')
+		{
+			if (charge == -1)
+			{
+				valence = 4;
+				hyd = 4 - rad - conn;
+			}
+			else
+			{
+				valence = 3;
+				hyd = 3 - rad - conn - absCharge;
+			}
+		}
+		else if (label == 'Tl')
+		{
+			if (charge == -1)
+			{
+				if (rad + conn <= 2)
+				{
+					valence = 2;
+					hyd = 2 - rad - conn;
+				}
+				else
+				{
+					valence = 4;
+					hyd = 4 - rad - conn;
+				}
+			}
+			else if (charge == -2)
+			{
+				if (rad + conn <= 3)
+				{
+					valence = 3;
+					hyd = 3 - rad - conn;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn;
+				}
+			}
+			else
+			{
+				if (rad + conn + absCharge <= 1)
+				{
+					valence = 1;
+					hyd = 1 - rad - conn - absCharge;
+				}
+				else
+				{
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
+				}
+			}
+		}
+	}
+	else if (groupno == 4)
+	{
+		if (label == 'C' || label == 'Si' || label == 'Ge')
+		{
+			valence = 4;
+			hyd = 4 - rad - conn - absCharge;
+		}
+		else if (label == 'Sn' || label == 'Pb')
+		{
+			if (conn + rad + absCharge <= 2)
+			{
+				valence = 2;
+				hyd = 2 - rad - conn - absCharge;
+			}
+			else
+			{
+				valence = 4;
+				hyd = 4 - rad - conn - absCharge;
+			}
+		}
+	}
+	else if (groupno == 5)
+	{
+		if (label == 'N' || label == 'P')
+		{
+			if (charge == 1)
+			{
+				valence = 4;
+				hyd = 4 - rad - conn;
+			}
+			else if (charge == 2)
+			{
+				valence = 3;
+				hyd = 3 - rad - conn;
+			}
+			else
+			{
+				if (label == 'N' || rad + conn + absCharge <= 3)
+				{
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
+				}
+				else // ELEM_P && rad + conn + absCharge > 3
+				{
+					valence = 5;
+					hyd = 5 - rad - conn - absCharge;
+				}
+			}
+		}
+		else if (label == 'Bi' || label == 'Sb' || label == 'As')
+		{
+			if (charge == 1)
+			{
+				if (rad + conn <= 2 && label != 'As')
+				{
+					valence = 2;
+					hyd = 2 - rad - conn;
+				}
+				else
+				{
+					valence = 4;
+					hyd = 4 - rad - conn;
+				}
+			}
+			else if (charge == 2)
+			{
+				valence = 3;
+				hyd = 3 - rad - conn;
+			}
+			else
+			{
+				if (rad + conn <= 3)
+				{
+					valence = 3;
+					hyd = 3 - rad - conn - absCharge;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn - absCharge;
+				}
+			}
+		}
+	}
+	else if (groupno == 6)
+	{
+		if (label == 'O')
+		{
+			if (charge >= 1)
+			{
+				valence = 3;
+				hyd = 3 - rad - conn;
+			}
+			else
+			{
+				valence = 2;
+				hyd = 2 - rad - conn - absCharge;
+			}
+		}
+		else if (label == 'S' || label == 'Se' || label == 'Po')
+		{
+			if (charge == 1)
+			{
+				if (conn <= 3)
+				{
+					valence = 3;
+					hyd = 3 - rad - conn;
+				}
+				else
+				{
+					valence = 5;
+					hyd = 5 - rad - conn;
+				}
+			}
+			else
+			{
+				if (conn + rad + absCharge <= 2)
+				{
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
+				}
+				else if (conn + rad + absCharge <= 4)
+					// See examples in PubChem
+					// [S] : CID 16684216
+					// [Se]: CID 5242252
+					// [Po]: no example, just following ISIS/Draw logic here
+				{
+					valence = 4;
+					hyd = 4 - rad - conn - absCharge;
+				}
+				else
+					// See examples in PubChem
+					// [S] : CID 46937044
+					// [Se]: CID 59786
+					// [Po]: no example, just following ISIS/Draw logic here
+				{
+					valence = 6;
+					hyd = 6 - rad - conn - absCharge;
+				}
+			}
+		}
+		else if (label == 'Te')
+		{
+			if (charge == -1)
+			{
+				if (conn <= 2)
+				{
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
+				}
+			}
+			else if (charge == 0 || charge == 2)
+			{
+				if (conn <= 2)
+				{
+					valence = 2;
+					hyd = 2 - rad - conn - absCharge;
+				}
+				else if (conn <= 4)
+				{
+					valence = 4;
+					hyd = 4 - rad - conn - absCharge;
+				}
+				else if (charge == 0 && conn <= 6)
+				{
+					valence = 6;
+					hyd = 6 - rad - conn - absCharge;
+				}
+				else
+					hyd = -1;
+			}
+		}
+	}
+	else if (groupno == 7)
+	{
+		if (label == 'F')
+		{
+			valence = 1;
+			hyd = 1 - rad - conn - absCharge;
+		}
+		else if (label == 'Cl' || label == 'Br' ||
+			label == 'I'  || label == 'At')
+		{
+			if (charge == 1)
+			{
+				if (conn <= 2)
+				{
+					valence = 2;
+					hyd = 2 - rad - conn;
+				}
+				else if (conn == 3 || conn == 5 || conn >= 7)
+					hyd = -1;
+			}
+			else if (charge == 0)
+			{
+				if (conn <= 1)
+				{
+					valence = 1;
+					hyd = 1 - rad - conn;
+				}
+					// While the halogens can have valence 3, they can not have
+					// hydrogens in that case.
+				else if (conn == 2 || conn == 4 || conn == 6)
+				{
+					if (rad == 1)
+					{
+						valence = conn;
+						hyd = 0;
+					}
+					else
+						hyd = -1; // will throw an error in the end
+				}
+				else if (conn > 7)
+					hyd = -1; // will throw an error in the end
+			}
+		}
+	}
+
+	this.valence = valence;
+	this.implicitH = hyd;
+	if (this.implicitH < 0)
+	{
+		this.valence = conn;
+		this.implicitH = 0;
+		this.badConn = true;
+		return false;
+	}
+	return true;
+};
+
+
+module.exports = Struct;

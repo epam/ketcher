@@ -5,14 +5,13 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var Struct = require('../chem/struct');
+var SGroup = require('../chem/sgroup');
 
 require('./restruct');
 require('../ui');
-require('../chem');
 require('./restruct_rendering');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-var chem = global.chem = global.chem || {}; // jshint ignore:line
 var ui = global.ui;
 var tfx = util.tfx;
 
@@ -414,7 +413,7 @@ rnd.Render.prototype.sGroupGetAtoms = function (sgid)
 {
 	rnd.logMethod('sGroupGetAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
-	return chem.SGroup.getAtoms(this.ctab.molecule, sg);
+	return SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
 rnd.Render.prototype.sGroupGetType = function (sgid)

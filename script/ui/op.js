@@ -4,11 +4,11 @@ var Set = require('../util/set');
 var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-require('../chem');
+var SGroup = require('../chem/sgroup');
+
 require('../rnd');
 
 var ui = global.ui;
-var chem = global.chem;
 var rnd = global.rnd;
 
 function Base () {
@@ -194,7 +194,7 @@ function SGroupAtomRemove (sgid, aid) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var atom = DS.atoms.get(aid);
 		var sg = DS.sgroups.get(sgid);
-		chem.SGroup.removeAtom(sg, aid);
+		SGroup.removeAtom(sg, aid);
 		Set.remove(atom.sgs, sgid);
 		R.invalidateAtom(aid);
 	};
@@ -233,7 +233,7 @@ function SGroupCreate (sgid, type, pp) {
 	this.data = {'sgid': sgid, 'type': type, 'pp': pp};
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		var sg = new chem.SGroup(this.data.type);
+		var sg = new SGroup(this.data.type);
 		var sgid = this.data.sgid;
 		sg.id = sgid;
 		DS.sgroups.set(sgid, sg);

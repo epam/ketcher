@@ -4,10 +4,10 @@ var AtomList = require('../chem/atomlist');
 var Bond = require('../chem/bond');
 var Molfile = require('../chem/molfile');
 var Smiles = require('../chem/smiles');
-require('../chem');
+var SGroup = require('../chem/sgroup');
+
 require('../rnd');
 
-var chem = global.chem;
 var rnd = global.rnd;
 
 var Promise = require('promise-polyfill');
@@ -671,7 +671,7 @@ function onClick_CleanUp ()
 		if (selective) {
 			util.each(atoms, function (aid){
 				aid = aidMap[aid];
-				var dsg = new chem.SGroup('DAT');
+				var dsg = new SGroup('DAT');
 				var dsgid = mol.sgroups.add(dsg);
 				dsg.id = dsgid;
 				dsg.pp = new Vec2();

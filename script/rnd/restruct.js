@@ -11,11 +11,9 @@ var util = require('../util');
 var element = require('../chem/element');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-
-require('../chem');
+var SGroup = require('../chem/sgroup');
 
 var rnd = global.rnd = global.rnd || {};
-var chem = global.chem;
 var tfx = util.tfx;
 
 rnd.ReObject = function ()  // TODO ??? should it be in ReStruct namespace
@@ -1097,8 +1095,8 @@ rnd.ReRGroup.drawBrackets = function (set, render, bb, d, n) {
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
 	var height = bb.p1.y - bb.p0.y;
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
-	var leftBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d.negated(), d.negated().rotateSC(1, 0), new Vec2(bb.p0.x, cy), bracketWidth, height);
-	var rightBracket = chem.SGroup.drawBracket(render, render.paper, render.styles, d, d.rotateSC(1, 0), new Vec2(bb.p1.x, cy), bracketWidth, height);
+	var leftBracket = SGroup.drawBracket(render, render.paper, render.styles, d.negated(), d.negated().rotateSC(1, 0), new Vec2(bb.p0.x, cy), bracketWidth, height);
+	var rightBracket = SGroup.drawBracket(render, render.paper, render.styles, d, d.rotateSC(1, 0), new Vec2(bb.p1.x, cy), bracketWidth, height);
 	set.push(leftBracket, rightBracket);
 };
 
@@ -1257,10 +1255,10 @@ rnd.ReSGroup.prototype.drawHighlight = function (render) {
 	.attr(styles.highlightStyle);
 	set.push(sg.highlighting);
 
-	chem.SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
+	SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	chem.SGroup.getBonds(render.ctab.molecule, sg).each(function (bid) {
+	SGroup.getBonds(render.ctab.molecule, sg).each(function (bid) {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);

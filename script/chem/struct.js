@@ -7,9 +7,8 @@ var util = require('../util');
 var element = require('./element');
 var Atom = require('./atom');
 var Bond = require('./bond');
+var SGroup = require('./sgroup');
 var SGroupForest = require('./sgforest');
-
-var chem = global.chem = global.chem || {}; // jshint ignore:line
 
 var Struct = function () {
 	this.atoms = new Pool();
@@ -69,7 +68,7 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
 	sgroupCounts.each(function (sg) {
 		var sid = parseInt(sg.key, 10);
 		var sgroup = this.sgroups.get(sid);
-		var sgAtoms = chem.SGroup.getAtoms(this, sgroup);
+		var sgAtoms = SGroup.getAtoms(this, sgroup);
 		if (sg.value == sgAtoms.length) {
 			sgroupList.push(sid);
 		}
@@ -199,7 +198,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		for (i = 0; i < sg.atoms.length; ++i)
 			if (!Set.contains(atomSet, sg.atoms[i]))
 				return;
-		sg = chem.SGroup.clone(sg, aidMap, bidMap);
+		sg = SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (i = 0; i < sg.atoms.length; ++i) {
@@ -860,7 +859,7 @@ Struct.prototype.prepareLoopStructure = function () {
 
 Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	// TODO: [MK] make sure the addition does not break the hierarchy?
-	chem.SGroup.addAtom(this.sgroups.get(sgid), aid);
+	SGroup.addAtom(this.sgroups.get(sgid), aid);
 	Set.add(this.atoms.get(aid).sgs, sgid);
 }
 

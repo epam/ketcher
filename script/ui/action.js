@@ -6,11 +6,9 @@ var op = require('./op');
 var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-
-require('../chem');
+var SGroup = require('../chem/sgroup');
 
 var ui = global.ui;
-var chem = global.chem;
 
 //
 // Undo/redo actions
@@ -1089,7 +1087,7 @@ function fromSgroupDeletion (id)
 	}
 
 	var sg = DS.sgroups.get(id);
-	var atoms = chem.SGroup.getAtoms(DS, sg);
+	var atoms = SGroup.getAtoms(DS, sg);
 	var attrs = sg.getAttrs();
 	action.addOp(new op.SGroupRemoveFromHierarchy(id));
 	for (var i = 0; i < atoms.length; ++i) {
@@ -1224,7 +1222,7 @@ function struct2Clipboard(struct) {
 
 	util.each(sgroup_list, function (sid){
 		var sgroup = struct.sgroups.get(sid);
-		var sgAtoms = chem.SGroup.getAtoms(struct, sgroup);
+		var sgAtoms = SGroup.getAtoms(struct, sgroup);
 		var sgroup_info = {
 			type: sgroup.type,
 			attrs: sgroup.getAttrs(),

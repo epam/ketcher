@@ -6,15 +6,14 @@ var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var Molfile = require('../chem/molfile');
+var SGroup = require('../chem/sgroup');
 
 var util = require('../util');
 
-require('../chem');
 require('./restruct');
 require('../ui');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
-var chem = global.chem = global.chem || {}; // jshint ignore:line
 var ui = global.ui;
 
 rnd.Editor = function (render)
@@ -320,7 +319,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function (event) {
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
 				this.editor._selectionHelper.setSelection(
-				{ 'atoms': chem.SGroup.getAtoms(mol, sgroup), 'bonds': chem.SGroup.getBonds(mol, sgroup) },
+				{ 'atoms': SGroup.getAtoms(mol, sgroup), 'bonds': SGroup.getBonds(mol, sgroup) },
 					event.shiftKey
 				);
 			} else if (ci.map == 'rgroups') {

@@ -7,9 +7,9 @@ var Atom = require('./atom');
 var AtomList = require('./atomlist');
 var Bond = require('./bond');
 var Struct = require('./struct');
+var SGroup = require('./sgroup');
 
 var util = require('../util');
-var chem = global.chem = global.chem || {}; // jshint ignore:line
 
 var FRAGMENT = {
     NONE: 0,
@@ -353,9 +353,9 @@ var initSGroup = function (sGroups, propData)
 	var kv = readKeyValuePairs(propData, true);
 	for (var key in kv) {
 		var type = kv[key];
-		if (!(type in chem.SGroup.TYPES))
+		if (!(type in SGroup.TYPES))
 			throw new Error('Unsupported S-group type');
-		var sg = new chem.SGroup(type);
+		var sg = new SGroup(type);
 		sg.number = key;
 		sGroups[key] = sg;
 	}
@@ -652,11 +652,11 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 		}
 	}
 	for (sid in sGroups) {
-		chem.SGroup.addGroup(ctab, sGroups[sid], atomMap);
+		SGroup.addGroup(ctab, sGroups[sid], atomMap);
 	}
 	var emptyGroups = [];
 	for (sid in sGroups) { // TODO: why do we need that?
-		chem.SGroup.filter(ctab, sGroups[sid], atomMap);
+		SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(sid);
 	}
@@ -775,7 +775,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 			stripV30(ctabLines[shift++])).strip();
 		var split = splitSGroupDef(line);
 		var type = split[1];
-		var sg = new chem.SGroup(type);
+		var sg = new SGroup(type);
 		sg.number = split[0] - 0;
 		sg.type = type;
 		sg.label = split[2] - 0;
@@ -825,7 +825,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 		if (props['QUERYOP']) {
 			applyDataSGroupQueryOp(sg, props['QUERYOP'][0]);
 		}
-		chem.SGroup.addGroup(ctab, sg, atomMap);
+		SGroup.addGroup(ctab, sg, atomMap);
 	}
 	throw new Error('S-group declaration incomplete.');
 };

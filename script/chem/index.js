@@ -1,4 +1,3 @@
-require('./dfs');
 require('./molfile');
 require('./sgroup');
 require('./smiles');

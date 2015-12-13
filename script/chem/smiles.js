@@ -3,6 +3,8 @@ var Set = require('../util/set');
 var Atom = require('./atom');
 var Bond = require('./bond');
 var CisTrans = require('./cis_trans');
+var Dfs = require('./dfs');
+
 
 var util = require('../util');
 
@@ -116,7 +118,7 @@ chem.SmilesSaver.prototype.saveMolecule = function (molecule, ignore_errors)
 	var components = chem.MolfileSaver.getComponents(molecule);
 	var componentsAll = components.reactants.concat(components.products);
 
-	var walk = new chem.Dfs(molecule, this.atoms, componentsAll, components.reactants.length);
+	var walk = new Dfs(molecule, this.atoms, componentsAll, components.reactants.length);
 
 	walk.walk();
 

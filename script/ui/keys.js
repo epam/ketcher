@@ -4,6 +4,8 @@
 //document.observe('keyup', ui.onKeyUp);
 //ui.setKeyboardShortcuts();
 
+/*eslint-disable*/
+
 ui.onKeyPress_Pre = function (action, event, handler, doNotStopIfCoverIsVisible) {
 	util.stopEventPropagation(event); // TODO: still need this?
 

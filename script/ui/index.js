@@ -6,6 +6,8 @@ var Molfile = require('../chem/molfile');
 var Smiles = require('../chem/smiles');
 var SGroup = require('../chem/sgroup');
 
+var Editor = require('../rnd/editor');
+
 require('../rnd');
 
 var rnd = global.rnd;
@@ -155,7 +157,7 @@ function init (options, apiServer) {
 	var opts = new rnd.RenderOptions(options);
 	opts.atomColoring = true;
 	ui.render =  new rnd.Render(clientArea, SCALE, opts);
-	ui.editor = new rnd.Editor(ui.render);
+	ui.editor = new Editor(ui.render);
 
 	ui.render.onCanvasOffsetChanged = onOffsetChanged;
 
@@ -216,7 +218,7 @@ function selectAction (action) {
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
 		var tool = mapTool.apply(null, args);
-		if (tool instanceof rnd.Editor.EditorTool) {
+		if (tool instanceof Editor.EditorTool) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
@@ -992,7 +994,7 @@ var actionMap = {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
-		return new rnd.Editor.PasteTool(ui.editor, struct);
+		return new Editor.PasteTool(ui.editor, struct);
 	},
 	'info': function (el) {
 		showDialog('about_dialog');
@@ -1056,45 +1058,45 @@ function mapTool (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new rnd.Editor.LassoTool(ui.editor, 0);
+		return new Editor.LassoTool(ui.editor, 0);
 	} else if (id == 'select-rectangle') {
-		return new rnd.Editor.LassoTool(ui.editor, 1);
+		return new Editor.LassoTool(ui.editor, 1);
 	} else if (id == 'select-fragment') {
-		return new rnd.Editor.LassoTool(ui.editor, 1, true);
+		return new Editor.LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
-		return new rnd.Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
+		return new Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
-		return new rnd.Editor.AtomTool(ui.editor, atomLabel(id));
+		return new Editor.AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {
-		return new rnd.Editor.BondTool(ui.editor, bondType(id));
+		return new Editor.BondTool(ui.editor, bondType(id));
 	} else if (id == 'chain') {
-		return new rnd.Editor.ChainTool(ui.editor);
+		return new Editor.ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
-		return new rnd.Editor.TemplateTool(ui.editor, current_template_custom);
+		return new Editor.TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {
-		return new rnd.Editor.TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
+		return new Editor.TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
-		return new rnd.Editor.ChargeTool(ui.editor, 1);
+		return new Editor.ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {
-		return new rnd.Editor.ChargeTool(ui.editor, -1);
+		return new Editor.ChargeTool(ui.editor, -1);
 	} else if (id == 'sgroup') {
-		return new rnd.Editor.SGroupTool(ui.editor);
+		return new Editor.SGroupTool(ui.editor);
 	} else if (id == 'reaction-arrow') {
-		return new rnd.Editor.ReactionArrowTool(ui.editor);
+		return new Editor.ReactionArrowTool(ui.editor);
 	} else if (id == 'reaction-plus') {
-		return new rnd.Editor.ReactionPlusTool(ui.editor);
+		return new Editor.ReactionPlusTool(ui.editor);
 	} else if (id == 'reaction-map') {
-		return new rnd.Editor.ReactionMapTool(ui.editor);
+		return new Editor.ReactionMapTool(ui.editor);
 	} else if (id == 'reaction-unmap') {
-		return new rnd.Editor.ReactionUnmapTool(ui.editor);
+		return new Editor.ReactionUnmapTool(ui.editor);
 	} else if (id == 'rgroup-label') {
-		return new rnd.Editor.RGroupAtomTool(ui.editor);
+		return new Editor.RGroupAtomTool(ui.editor);
 	} else if (id == 'rgroup-fragment') {
-		return new rnd.Editor.RGroupFragmentTool(ui.editor);
+		return new Editor.RGroupFragmentTool(ui.editor);
 	} else if (id == 'rgroup-attpoints') {
-		return new rnd.Editor.APointTool(ui.editor);
+		return new Editor.APointTool(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {
-		return new rnd.Editor.RotateTool(ui.editor);
+		return new Editor.RotateTool(ui.editor);
 	}
 	return null;
 };

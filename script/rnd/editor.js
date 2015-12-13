@@ -16,23 +16,23 @@ require('../ui');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var ui = global.ui;
 
-rnd.Editor = function (render)
+var Editor = function (render)
 {
 	this.render = render;
-	this._selectionHelper = new rnd.Editor.SelectionHelper(this);
+	this._selectionHelper = new Editor.SelectionHelper(this);
 };
 
-rnd.Editor.prototype.selectAll = function () {
+Editor.prototype.selectAll = function () {
 	var selection = {};
 	for (var map in rnd.ReStruct.maps) {
 		selection[map] = ui.render.ctab[map].ikeys();
 	}
 	this._selectionHelper.setSelection(selection);
 };
-rnd.Editor.prototype.deselectAll = function () {
+Editor.prototype.deselectAll = function () {
 	this._selectionHelper.setSelection();
 };
-rnd.Editor.prototype.hasSelection = function (copyable) {
+Editor.prototype.hasSelection = function (copyable) {
 	if ('selection' in this._selectionHelper)
 		for (var map in this._selectionHelper.selection)
 			if (this._selectionHelper.selection[map].length > 0)
@@ -40,7 +40,7 @@ rnd.Editor.prototype.hasSelection = function (copyable) {
 				return true;
 	return false;
 };
-rnd.Editor.prototype.getSelection = function (explicit) {
+Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
 	if ('selection' in this._selectionHelper) {
 		for (var map in this._selectionHelper.selection) {
@@ -80,7 +80,7 @@ rnd.Editor.prototype.getSelection = function (explicit) {
 	return selection;
 };
 
-rnd.Editor.prototype.getSelectionStruct = function () {
+Editor.prototype.getSelectionStruct = function () {
 	console.assert(ui.ctab == this.render.ctab.molecule,
 	               'Another ctab');
 	var src = ui.ctab;
@@ -106,10 +106,10 @@ rnd.Editor.prototype.getSelectionStruct = function () {
 	return dst;
 };
 
-rnd.Editor.SelectionHelper = function (editor) {
+Editor.SelectionHelper = function (editor) {
 	this.editor = editor;
 };
-rnd.Editor.SelectionHelper.prototype.setSelection = function (selection, add) {
+Editor.SelectionHelper.prototype.setSelection = function (selection, add) {
 	if (!('selection' in this) || !add) {
 		this.selection = {};
 		for (var map1 in rnd.ReStruct.maps) this.selection[map1] = []; // TODO it should NOT be mandatory
@@ -133,7 +133,7 @@ rnd.Editor.SelectionHelper.prototype.setSelection = function (selection, add) {
 
 	ui.updateClipboardButtons(); // TODO notify ui about selection
 };
-rnd.Editor.SelectionHelper.prototype.isSelected = function (item) {
+Editor.SelectionHelper.prototype.isSelected = function (item) {
 	var render = this.editor.render;
 	var ctab = render.ctab;
 	if (item.map == 'frags' || item.map == 'rgroups') {
@@ -148,10 +148,10 @@ rnd.Editor.SelectionHelper.prototype.isSelected = function (item) {
 };
 
 
-rnd.Editor.EditorTool = function (editor) {
+Editor.EditorTool = function (editor) {
 	this.editor = editor;
 };
-rnd.Editor.EditorTool.prototype.processEvent = function (name, event, action) {
+Editor.EditorTool.prototype.processEvent = function (name, event, action) {
 	if (!('touches' in event) || event.touches.length == 1) {
 		if (name + '0' in this)
 			return this[name + '0'](event, action);
@@ -164,15 +164,15 @@ rnd.Editor.EditorTool.prototype.processEvent = function (name, event, action) {
 		return this.OnMouseUp0(event, action);
 	}
 };
-rnd.Editor.EditorTool.prototype.OnMouseDown = function () {};
-rnd.Editor.EditorTool.prototype.OnMouseMove = function () {};
-rnd.Editor.EditorTool.prototype.OnMouseUp = function () {};
-rnd.Editor.EditorTool.prototype.OnClick = function () {};
-rnd.Editor.EditorTool.prototype.OnDblClick = function () {};
-rnd.Editor.EditorTool.prototype.OnMouseLeave = function () { this.OnCancel();};
-rnd.Editor.EditorTool.prototype.OnKeyPress = function () {};
-rnd.Editor.EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
-rnd.Editor.EditorTool.prototype.OnMouseDown0 = function (event) {
+Editor.EditorTool.prototype.OnMouseDown = function () {};
+Editor.EditorTool.prototype.OnMouseMove = function () {};
+Editor.EditorTool.prototype.OnMouseUp = function () {};
+Editor.EditorTool.prototype.OnClick = function () {};
+Editor.EditorTool.prototype.OnDblClick = function () {};
+Editor.EditorTool.prototype.OnMouseLeave = function () { this.OnCancel();};
+Editor.EditorTool.prototype.OnKeyPress = function () {};
+Editor.EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
+Editor.EditorTool.prototype.OnMouseDown0 = function (event) {
 	if (ui.hideBlurredControls()) return true; // TODO review (don't stop propagation to handle dropdown closing)
 
 	this.OnMouseDown0.lastEvent = event;
@@ -180,12 +180,12 @@ rnd.Editor.EditorTool.prototype.OnMouseDown0 = function (event) {
 
 	if ('OnMouseDown' in this) return this.OnMouseDown(event);
 };
-rnd.Editor.EditorTool.prototype.OnMouseMove0 = function (event) {
+Editor.EditorTool.prototype.OnMouseMove0 = function (event) {
 	this.OnMouseMove0.lastEvent = event;
 
 	if ('OnMouseMove' in this) return this.OnMouseMove(event);
 };
-rnd.Editor.EditorTool.prototype.OnMouseUp0 = function (event) {
+Editor.EditorTool.prototype.OnMouseUp0 = function (event) {
 	// here we suppress event we got when second touch released in guesture
 	if (!('lastEvent' in this.OnMouseDown0)) return true;
 
@@ -203,7 +203,7 @@ rnd.Editor.EditorTool.prototype.OnMouseUp0 = function (event) {
 	}
 };
 
-rnd.Editor.EditorTool.atom_label_map = {
+Editor.EditorTool.atom_label_map = {
 	atom_tool_any: 'A',
 	atom_tool_h: 'H',
 	atom_tool_c: 'C',
@@ -217,12 +217,12 @@ rnd.Editor.EditorTool.atom_label_map = {
 	atom_tool_i: 'I'
 };
 
-rnd.Editor.EditorTool.prototype.OnKeyPress0 = function (event, action) {
+Editor.EditorTool.prototype.OnKeyPress0 = function (event, action) {
 	if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
-		return rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
+		return Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
 			this.OnMouseMove0.lastEvent);
-	} else if (action in rnd.Editor.EditorTool.atom_label_map) {
-		var label = rnd.Editor.EditorTool.atom_label_map[action];
+	} else if (action in Editor.EditorTool.atom_label_map) {
+		var label = Editor.EditorTool.atom_label_map[action];
 		var selection = this.editor.getSelection();
 		if (selection && 'atoms' in selection && selection.atoms.length > 0) {
 			ui.addUndoAction(Action.fromAtomsAttrs(
@@ -252,7 +252,7 @@ rnd.Editor.EditorTool.prototype.OnKeyPress0 = function (event, action) {
 	return false;
 };
 
-rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
+Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
 	var v = Vec2.diff(pos1, pos0);
 	var angle = Math.atan2(v.y, v.x);
 	var sign = angle < 0 ? -1 : 1;
@@ -260,17 +260,17 @@ rnd.Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
 	angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
 	return angle;
 };
-rnd.Editor.EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
+Editor.EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
 	var v = new Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
 	v.add_(pos0);
 	return v;
 };
 
 
-rnd.Editor.EditorTool.HoverHelper = function (editorTool) {
+Editor.EditorTool.HoverHelper = function (editorTool) {
 	this.editorTool = editorTool;
 };
-rnd.Editor.EditorTool.HoverHelper.prototype.hover = function (ci) {
+Editor.EditorTool.HoverHelper.prototype.hover = function (ci) {
 	if (ci && ci.type == 'Canvas')
 		ci = null;
 	// TODO add custom highlight style parameter, to be used when fusing atoms, sgroup children highlighting, etc
@@ -283,15 +283,15 @@ rnd.Editor.EditorTool.HoverHelper.prototype.hover = function (ci) {
 	}
 };
 
-rnd.Editor.LassoTool = function (editor, mode, fragment) {
+Editor.LassoTool = function (editor, mode, fragment) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
-	this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor, fragment);
-	this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor, fragment);
+	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 };
-rnd.Editor.LassoTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.LassoTool.prototype.OnMouseDown = function (event) {
+Editor.LassoTool.prototype = new Editor.EditorTool();
+Editor.LassoTool.prototype.OnMouseDown = function (event) {
 	var render = this.editor.render;
 	var ctab = render.ctab, mol = ctab.molecule;
 	this._hoverHelper.hover(null); // TODO review hovering for touch devices
@@ -357,7 +357,7 @@ rnd.Editor.LassoTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-rnd.Editor.LassoTool.prototype.OnMouseMove = function (event) {
+Editor.LassoTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		// moving selected objects
@@ -389,7 +389,7 @@ rnd.Editor.LassoTool.prototype.OnMouseMove = function (event) {
 	}
 	return true;
 };
-rnd.Editor.LassoTool.prototype.OnMouseUp = function (event) {
+Editor.LassoTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
@@ -415,14 +415,14 @@ rnd.Editor.LassoTool.prototype.OnMouseUp = function (event) {
 	}
 	return true;
 };
-rnd.Editor.LassoTool.prototype.OnDblClick = function (event) {
+Editor.LassoTool.prototype.OnDblClick = function (event) {
 	var ci = this.editor.render.findItem(event);
 	if (ci.map == 'atoms') {
 		this.editor._selectionHelper.setSelection(ci);
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = ui.ctab.atoms.get(ci.id);
 		if (atom.label == 'R#') {
-			rnd.Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, event);
+			Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, event);
 		} else if (atom.label == 'L#') {
 			ui.showElemTable({
 				selection: atom,
@@ -460,7 +460,7 @@ rnd.Editor.LassoTool.prototype.OnDblClick = function (event) {
 	}
 	return true;
 };
-rnd.Editor.LassoTool.prototype.OnCancel = function () {
+Editor.LassoTool.prototype.OnCancel = function () {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		ui.addUndoAction(this.dragCtx.action, true);
@@ -473,12 +473,12 @@ rnd.Editor.LassoTool.prototype.OnCancel = function () {
 };
 
 
-rnd.Editor.LassoTool.LassoHelper = function (mode, editor, fragment) {
+Editor.LassoTool.LassoHelper = function (mode, editor, fragment) {
 	this.mode = mode;
 	this.fragment = fragment;
 	this.editor = editor;
 };
-rnd.Editor.LassoTool.LassoHelper.prototype.getSelection = function () {
+Editor.LassoTool.LassoHelper.prototype.getSelection = function () {
 	if (this.mode == 0) {
 		return ui.render.getElementsInPolygon(this.points);
 	} else if (this.mode == 1) {
@@ -487,16 +487,16 @@ rnd.Editor.LassoTool.LassoHelper.prototype.getSelection = function () {
 		throw new Error('Selector mode unknown');
 	}
 };
-rnd.Editor.LassoTool.LassoHelper.prototype.begin = function (event) {
+Editor.LassoTool.LassoHelper.prototype.begin = function (event) {
 	this.points = [ ui.page2obj(event) ];
 	if (this.mode == 1) {
 		this.points.push(this.points[0]);
 	}
 };
-rnd.Editor.LassoTool.LassoHelper.prototype.running = function () {
+Editor.LassoTool.LassoHelper.prototype.running = function () {
 	return 'points' in this;
 };
-rnd.Editor.LassoTool.LassoHelper.prototype.addPoint = function (event) {
+Editor.LassoTool.LassoHelper.prototype.addPoint = function (event) {
 	if (!this.running()) return false;
 	if (this.mode == 0) {
 		this.points.push(ui.page2obj(event));
@@ -507,7 +507,7 @@ rnd.Editor.LassoTool.LassoHelper.prototype.addPoint = function (event) {
 	}
 	return this.getSelection();
 };
-rnd.Editor.LassoTool.LassoHelper.prototype.end = function () {
+Editor.LassoTool.LassoHelper.prototype.end = function () {
 	var ret = this.getSelection();
 	if ('points' in this) {
 		this.editor.render.drawSelectionPolygon(null);
@@ -517,21 +517,21 @@ rnd.Editor.LassoTool.LassoHelper.prototype.end = function () {
 };
 
 
-rnd.Editor.EraserTool = function (editor, mode) {
+Editor.EraserTool = function (editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
-	this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(mode || 0, editor);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
-rnd.Editor.EraserTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.EraserTool.prototype.OnMouseDown = function (event) {
+Editor.EraserTool.prototype = new Editor.EditorTool();
+Editor.EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas') {
 		this._lassoHelper.begin(event);
 	}
 };
-rnd.Editor.EraserTool.prototype.OnMouseMove = function (event) {
+Editor.EraserTool.prototype.OnMouseMove = function (event) {
 	if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
 		this._lassoHelper.addPoint(event)
@@ -540,7 +540,7 @@ rnd.Editor.EraserTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
 	}
 };
-rnd.Editor.EraserTool.prototype.OnMouseUp = function (event) {
+Editor.EraserTool.prototype.OnMouseUp = function (event) {
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		ui.addUndoAction(Action.fromFragmentDeletion(this._lassoHelper.end(event)));
 		this.editor.deselectAll();
@@ -573,15 +573,15 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.AtomTool = function (editor, atomProps) {
+Editor.AtomTool = function (editor, atomProps) {
 	this.editor = editor;
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.AtomTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.AtomTool.prototype.OnMouseDown = function (event) {
+Editor.AtomTool.prototype = new Editor.EditorTool();
+Editor.AtomTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
@@ -595,7 +595,7 @@ rnd.Editor.AtomTool.prototype.OnMouseDown = function (event) {
 		};
 	}
 };
-rnd.Editor.AtomTool.prototype.OnMouseMove = function (event) {
+Editor.AtomTool.prototype.OnMouseMove = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
 		var _DC_ = this.dragCtx;
@@ -623,7 +623,7 @@ rnd.Editor.AtomTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(_R_.findItem(event, ['atoms']));
 	}
 };
-rnd.Editor.AtomTool.prototype.OnMouseUp = function (event) {
+Editor.AtomTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		ui.addUndoAction(
@@ -640,7 +640,7 @@ rnd.Editor.AtomTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.BondTool = function (editor, bondProps) {
+Editor.BondTool = function (editor, bondProps) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
 	this.bondProps = bondProps;
@@ -649,11 +649,11 @@ rnd.Editor.BondTool = function (editor, bondProps) {
 			Bond.PATTERN.TYPE.DOUBLE,
 			Bond.PATTERN.TYPE.TRIPLE];
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.BondTool.prototype = new rnd.Editor.EditorTool();
+Editor.BondTool.prototype = new Editor.EditorTool();
 
-rnd.Editor.BondTool.prototype.OnMouseDown = function (event) {
+Editor.BondTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: ui.page2obj(event),
@@ -663,7 +663,7 @@ rnd.Editor.BondTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-rnd.Editor.BondTool.prototype.OnMouseMove = function (event) {
+Editor.BondTool.prototype.OnMouseMove = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
@@ -705,7 +705,7 @@ rnd.Editor.BondTool.prototype.OnMouseMove = function (event) {
 	return true;
 };
 
-rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
+Editor.BondTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		if ('action' in _DC_) {
@@ -759,13 +759,13 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-rnd.Editor.ChainTool = function (editor) {
+Editor.ChainTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.ChainTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ChainTool.prototype.OnMouseDown = function (event) {
+Editor.ChainTool.prototype = new Editor.EditorTool();
+Editor.ChainTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: ui.page2obj(event),
@@ -774,7 +774,7 @@ rnd.Editor.ChainTool.prototype.OnMouseDown = function (event) {
 	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
 	return true;
 };
-rnd.Editor.ChainTool.prototype.OnMouseMove = function (event) {
+Editor.ChainTool.prototype.OnMouseMove = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
@@ -793,7 +793,7 @@ rnd.Editor.ChainTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(_R_.findItem(event, ['atoms']));
 	return true;
 };
-rnd.Editor.ChainTool.prototype.OnMouseUp = function () {
+Editor.ChainTool.prototype.OnMouseUp = function () {
 	if ('dragCtx' in this) {
 		if ('action' in this.dragCtx) {
 			ui.addUndoAction(this.dragCtx.action);
@@ -802,12 +802,12 @@ rnd.Editor.ChainTool.prototype.OnMouseUp = function () {
 	}
 	return true;
 };
-rnd.Editor.ChainTool.prototype.OnCancel = function () {
+Editor.ChainTool.prototype.OnCancel = function () {
 	this.OnMouseUp();
 };
 
 
-rnd.Editor.TemplateTool = function (editor, template) {
+Editor.TemplateTool = function (editor, template) {
 	this.editor = editor;
 	this.template = template;
 
@@ -830,10 +830,10 @@ rnd.Editor.TemplateTool = function (editor, template) {
 		this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 	}
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.TemplateTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
+Editor.TemplateTool.prototype = new Editor.EditorTool();
+Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	var begin = molecule.atoms.get(bond.begin).pp;
 	var end = molecule.atoms.get(bond.end).pp;
 
@@ -843,7 +843,7 @@ rnd.Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	if (sign < 0) return -1;
 	return 0;
 };
-rnd.Editor.TemplateTool.prototype.OnMouseDown = function (event) {
+Editor.TemplateTool.prototype.OnMouseDown = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
@@ -892,7 +892,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseDown = function (event) {
 	}
 	return true;
 };
-rnd.Editor.TemplateTool.prototype.OnMouseMove = function (event) {
+Editor.TemplateTool.prototype.OnMouseMove = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
@@ -967,7 +967,7 @@ rnd.Editor.TemplateTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
-rnd.Editor.TemplateTool.prototype.OnMouseUp = function (event) {
+Editor.TemplateTool.prototype.OnMouseUp = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
@@ -1023,18 +1023,18 @@ rnd.Editor.TemplateTool.prototype.OnMouseUp = function (event) {
 		delete this.dragCtx;
 	}
 };
-rnd.Editor.TemplateTool.prototype.OnCancel = function () {
+Editor.TemplateTool.prototype.OnCancel = function () {
 	this.OnMouseUp();
 };
 
-rnd.Editor.ChargeTool = function (editor, charge) { // TODO [RB] should be "pluggable"
+Editor.ChargeTool = function (editor, charge) { // TODO [RB] should be "pluggable"
 	this.editor = editor;
 	this.charge = charge;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.ChargeTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ChargeTool.prototype.OnMouseMove = function (event) {
+Editor.ChargeTool.prototype = new Editor.EditorTool();
+Editor.ChargeTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
 		this._hoverHelper.hover(ci);
@@ -1043,7 +1043,7 @@ rnd.Editor.ChargeTool.prototype.OnMouseMove = function (event) {
 	}
 	return true;
 };
-rnd.Editor.ChargeTool.prototype.OnMouseUp = function (event) {
+Editor.ChargeTool.prototype.OnMouseUp = function (event) {
 	var _E_ = this.editor, _R_ = _E_.render;
 	var ci = _R_.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
@@ -1057,16 +1057,16 @@ rnd.Editor.ChargeTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.RGroupAtomTool = function (editor) {
+Editor.RGroupAtomTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.RGroupAtomTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.RGroupAtomTool.prototype.OnMouseMove = function (event) {
+Editor.RGroupAtomTool.prototype = new Editor.EditorTool();
+Editor.RGroupAtomTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
-rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
+Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
 	function sel2Values(rg) {
 		var res = [];
 		for (var rgi = 0; rgi < 32; rgi++)
@@ -1134,18 +1134,18 @@ rnd.Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.RGroupFragmentTool = function (editor) {
+Editor.RGroupFragmentTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
 
-rnd.Editor.RGroupFragmentTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.RGroupFragmentTool.prototype.OnMouseMove = function (event) {
+Editor.RGroupFragmentTool.prototype = new Editor.EditorTool();
+Editor.RGroupFragmentTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
 };
 
-rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
+Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
 	if (ci && ci.map == 'frags') {
 		this._hoverHelper.hover(null);
@@ -1204,16 +1204,16 @@ rnd.Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	}
 };
 
-rnd.Editor.APointTool = function (editor) {
+Editor.APointTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.APointTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.APointTool.prototype.OnMouseMove = function (event) {
+Editor.APointTool.prototype = new Editor.EditorTool();
+Editor.APointTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
-rnd.Editor.APointTool.prototype.OnMouseUp = function (event) {
+Editor.APointTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this._hoverHelper.hover(null);
@@ -1232,13 +1232,13 @@ rnd.Editor.APointTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.ReactionArrowTool = function (editor) {
+Editor.ReactionArrowTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.ReactionArrowTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ReactionArrowTool.prototype.OnMouseDown = function (event) {
+Editor.ReactionArrowTool.prototype = new Editor.EditorTool();
+Editor.ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
 		this._hoverHelper.hover(null);
@@ -1248,7 +1248,7 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseDown = function (event) {
 		};
 	}
 };
-rnd.Editor.ReactionArrowTool.prototype.OnMouseMove = function (event) {
+Editor.ReactionArrowTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
@@ -1261,7 +1261,7 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnArrows']));
 	}
 };
-rnd.Editor.ReactionArrowTool.prototype.OnMouseUp = function (event) {
+Editor.ReactionArrowTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
 		this.editor.render.update();
@@ -1273,13 +1273,13 @@ rnd.Editor.ReactionArrowTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.ReactionPlusTool = function (editor) {
+Editor.ReactionPlusTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 };
-rnd.Editor.ReactionPlusTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ReactionPlusTool.prototype.OnMouseDown = function (event) {
+Editor.ReactionPlusTool.prototype = new Editor.EditorTool();
+Editor.ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
 		this._hoverHelper.hover(null);
@@ -1289,7 +1289,7 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseDown = function (event) {
 		};
 	}
 };
-rnd.Editor.ReactionPlusTool.prototype.OnMouseMove = function (event) {
+Editor.ReactionPlusTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
@@ -1302,7 +1302,7 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(this.editor.render.findItem(event, ['rxnPluses']));
 	}
 };
-rnd.Editor.ReactionPlusTool.prototype.OnMouseUp = function (event) {
+Editor.ReactionPlusTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
 		this.editor.render.update();
@@ -1314,17 +1314,17 @@ rnd.Editor.ReactionPlusTool.prototype.OnMouseUp = function (event) {
 };
 
 
-rnd.Editor.ReactionMapTool = function (editor) {
+Editor.ReactionMapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 };
-rnd.Editor.ReactionMapTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ReactionMapTool.prototype.OnMouseDown = function (event) {
+Editor.ReactionMapTool.prototype = new Editor.EditorTool();
+Editor.ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this._hoverHelper.hover(null);
@@ -1334,7 +1334,7 @@ rnd.Editor.ReactionMapTool.prototype.OnMouseDown = function (event) {
 		}
 	}
 };
-rnd.Editor.ReactionMapTool.prototype.OnMouseMove = function (event) {
+Editor.ReactionMapTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
@@ -1349,7 +1349,7 @@ rnd.Editor.ReactionMapTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	}
 };
-rnd.Editor.ReactionMapTool.prototype.OnMouseUp = function (event) {
+Editor.ReactionMapTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
@@ -1386,7 +1386,7 @@ rnd.Editor.ReactionMapTool.prototype.OnMouseUp = function (event) {
 	this._hoverHelper.hover(null);
 };
 
-rnd.Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
+Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
 	var t1, t2;
 	for (var ri = 0; (!t1 || !t2) && ri < this.rcs.reactants.length; ri++) {
 		var ro = Set.list(this.rcs.reactants[ri]);
@@ -1402,15 +1402,15 @@ rnd.Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
 };
 
 
-rnd.Editor.ReactionUnmapTool = function (editor) {
+Editor.ReactionUnmapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 };
-rnd.Editor.ReactionUnmapTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.ReactionUnmapTool.prototype.OnMouseMove = function (event) {
+Editor.ReactionUnmapTool.prototype = new Editor.EditorTool();
+Editor.ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this._hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
@@ -1418,7 +1418,7 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(null);
 	}
 };
-rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function (event) {
+Editor.ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	var atoms = this.editor.render.ctab.molecule.atoms;
 	if (ci && ci.map == 'atoms' && atoms.get(ci.id).aam) {
@@ -1438,13 +1438,13 @@ rnd.Editor.ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 	this._hoverHelper.hover(null);
 };
 
-rnd.Editor.SGroupTool = function (editor) {
+Editor.SGroupTool = function (editor) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
-	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
-	this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
-	this._sGroupHelper = new rnd.Editor.SGroupTool.SGroupHelper(editor);
+	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._lassoHelper = new Editor.LassoTool.LassoHelper(1, editor);
+	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 
 	var selection = this.editor.getSelection();
 	if (selection.atoms && selection.atoms.length > 0) {
@@ -1455,14 +1455,14 @@ rnd.Editor.SGroupTool = function (editor) {
 		this.editor.deselectAll();
 	}
 };
-rnd.Editor.SGroupTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.SGroupTool.prototype.OnMouseDown = function (event) {
+Editor.SGroupTool.prototype = new Editor.EditorTool();
+Editor.SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas') {
 		this._lassoHelper.begin(event);
 	}
 };
-rnd.Editor.SGroupTool.prototype.OnMouseMove = function (event) {
+Editor.SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
 		this._lassoHelper.addPoint(event)
@@ -1472,12 +1472,12 @@ rnd.Editor.SGroupTool.prototype.OnMouseMove = function (event) {
 	}
 };
 
-rnd.Editor.SGroupTool.SGroupHelper = function (editor) {
+Editor.SGroupTool.SGroupHelper = function (editor) {
 	this.editor = editor;
 	this.selection = null;
 };
 
-rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
+Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	this.selection = selection;
 
 	var render = this.editor.render;
@@ -1551,7 +1551,7 @@ rnd.Editor.SGroupTool.SGroupHelper.prototype.showPropertiesDialog = function (id
 	});
 };
 
-rnd.Editor.SGroupTool.prototype.OnMouseUp = function (event) {
+Editor.SGroupTool.prototype.OnMouseUp = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
@@ -1579,7 +1579,7 @@ rnd.Editor.SGroupTool.prototype.OnMouseUp = function (event) {
 		this._sGroupHelper.showPropertiesDialog(id, selection);
 };
 
-rnd.Editor.PasteTool = function (editor, struct) {
+Editor.PasteTool = function (editor, struct) {
 	this.editor = editor;
 	this.struct = struct;
 	this.action = Action.fromPaste(
@@ -1587,29 +1587,29 @@ rnd.Editor.PasteTool = function (editor, struct) {
 			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
 	this.editor.render.update();
 };
-rnd.Editor.PasteTool.prototype = new rnd.Editor.EditorTool();
-rnd.Editor.PasteTool.prototype.OnMouseMove = function (event) {
+Editor.PasteTool.prototype = new Editor.EditorTool();
+Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 	}
 	this.action = Action.fromPaste(this.struct, ui.page2obj(event));
 	this.editor.render.update();
 };
-rnd.Editor.PasteTool.prototype.OnMouseUp = function () {
+Editor.PasteTool.prototype.OnMouseUp = function () {
 	ui.addUndoAction(this.action);
 	delete this.action;
 	ui.selectAction(null);
 };
-rnd.Editor.PasteTool.prototype.OnCancel = function () {
+Editor.PasteTool.prototype.OnCancel = function () {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 		delete this.action;
 	}
 };
 
-rnd.Editor.RotateTool = function (editor) {
+Editor.RotateTool = function (editor) {
 	this.editor = editor;
-	this._lassoHelper = new rnd.Editor.LassoTool.LassoHelper(1, editor);
+	this._lassoHelper = new Editor.LassoTool.LassoHelper(1, editor);
 
 	var selection = this.editor._selectionHelper.selection;
 	if (!selection.atoms || !selection.atoms.length) {
@@ -1617,9 +1617,9 @@ rnd.Editor.RotateTool = function (editor) {
 		this.editor._selectionHelper.setSelection(null);
 	}
 };
-rnd.Editor.RotateTool.prototype = new rnd.Editor.EditorTool();
+Editor.RotateTool.prototype = new Editor.EditorTool();
 
-rnd.Editor.RotateTool.prototype.OnMouseDown = function (event) {
+Editor.RotateTool.prototype.OnMouseDown = function (event) {
 
 	var selection = this.editor._selectionHelper.selection;
 	if (selection.atoms && selection.atoms.length) {
@@ -1682,7 +1682,7 @@ rnd.Editor.RotateTool.prototype.OnMouseDown = function (event) {
 	}
 	return true;
 };
-rnd.Editor.RotateTool.prototype.OnMouseMove = function (event) {
+Editor.RotateTool.prototype.OnMouseMove = function (event) {
 	if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
 		this._lassoHelper.addPoint(event)
@@ -1719,7 +1719,7 @@ rnd.Editor.RotateTool.prototype.OnMouseMove = function (event) {
 	return true;
 };
 
-rnd.Editor.RotateTool.prototype.OnMouseUp = function (event) {
+Editor.RotateTool.prototype.OnMouseUp = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
@@ -1736,7 +1736,7 @@ rnd.Editor.RotateTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-rnd.Editor.RotateTool.prototype.OnCancel = function () {
+Editor.RotateTool.prototype.OnCancel = function () {
 	if ('dragCtx' in this) {
 		if ('action' in this.dragCtx) {
 			ui.addUndoAction(this.dragCtx.action, true);
@@ -1756,3 +1756,5 @@ function bondFlipRequired (bond, attrs) {
 	       ui.ctab.atoms.get(bond.begin).neighbors.length <
 	       ui.ctab.atoms.get(bond.end).neighbors.length;
 }
+
+module.exports = Editor;

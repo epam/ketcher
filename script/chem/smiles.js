@@ -2,6 +2,8 @@ var Set = require('../util/set');
 
 var Atom = require('./atom');
 var Bond = require('./bond');
+var CisTrans = require('./cis_trans');
+
 var util = require('../util');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
@@ -528,7 +530,7 @@ chem.SmilesSaver.prototype._writeAtom = function (mol, idx, aromatic, lowercase,
 
 chem.SmilesSaver.prototype._markCisTrans = function (mol)
 {
-	this.cis_trans = new chem.CisTrans (mol, function (idx)
+	this.cis_trans = new CisTrans (mol, function (idx)
 	{
 		return this.atoms[idx].neighbours;
 	}, this);
@@ -646,7 +648,7 @@ chem.SmilesSaver.prototype._updateSideBonds = function (mol, bond_idx)
 			n4++;
 	}
 
-	if (parity == chem.CisTrans.PARITY.CIS)
+	if (parity == CisTrans.PARITY.CIS)
 	{
 		n1 += n3;
 		n2 += n4;
@@ -672,10 +674,10 @@ chem.SmilesSaver.prototype._updateSideBonds = function (mol, bond_idx)
 				(mol.bonds.get(sidebonds[1]).begin == bond.begin) ? 2 : 1;
 
 		this._dbonds[sidebonds[2]].saved =
-			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == chem.CisTrans.PARITY.CIS)) ? 1 : 2;
+			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 1 : 2;
 		if (sidebonds[3] != -1)
 			this._dbonds[sidebonds[3]].saved =
-				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == chem.CisTrans.PARITY.CIS)) ? 2 : 1;
+				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 2 : 1;
 	}
 	if (n2 > 0)
 	{
@@ -686,10 +688,10 @@ chem.SmilesSaver.prototype._updateSideBonds = function (mol, bond_idx)
 				(mol.bonds.get(sidebonds[1]).begin == bond.begin) ? 1 : 2;
 
 		this._dbonds[sidebonds[2]].saved =
-			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == chem.CisTrans.PARITY.CIS)) ? 2 : 1;
+			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 2 : 1;
 		if (sidebonds[3] != -1)
 			this._dbonds[sidebonds[3]].saved =
-				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == chem.CisTrans.PARITY.CIS)) ? 1 : 2;
+				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 1 : 2;
 	}
 
 	return true;

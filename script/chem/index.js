@@ -1,5 +1,3 @@
-require('./struct');
-require('./cis_trans');
 require('./dfs');
 require('./molfile');
 require('./sgroup');

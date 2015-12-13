@@ -3,34 +3,32 @@ var Vec2 = require('../util/vec2');
 
 var Bond = require('./bond');
 
-var chem = global.chem = global.chem || {}; // jshint ignore:line
-
-chem.CisTrans = function (mol, neighborsFunc, context) {
+var CisTrans = function (mol, neighborsFunc, context) {
 	this.molecule = mol;
 	this.bonds = new Map();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
 };
 
-chem.CisTrans.PARITY = {
+CisTrans.PARITY = {
 	NONE: 0,
 	CIS: 1,
 	TRANS: 2
 };
 
-chem.CisTrans.prototype.each = function (func, context) {
+CisTrans.prototype.each = function (func, context) {
 	this.bonds.each(func, context);
 };
 
-chem.CisTrans.prototype.getParity = function (idx) {
+CisTrans.prototype.getParity = function (idx) {
 	return this.bonds.get(idx).parity;
 };
 
-chem.CisTrans.prototype.getSubstituents = function (idx) {
+CisTrans.prototype.getSubstituents = function (idx) {
 	return this.bonds.get(idx).substituents;
 };
 
-chem.CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
+CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
 	var diff = Vec2.diff(beg, end);
 	var norm = new Vec2(-diff.y, diff.x);
 
@@ -58,12 +56,12 @@ chem.CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
 	return (prodBeg * prodEnd > 0) ? 1 : -1;
 };
 
-chem.CisTrans.prototype._sameside = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
+CisTrans.prototype._sameside = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
 	return this.sameside(this.molecule.atoms.get(iBeg).pp, this.molecule.atoms.get(iEnd).pp,
 		this.molecule.atoms.get(iNeiBeg).pp, this.molecule.atoms.get(iNeiEnd).pp);
 };
 
-chem.CisTrans.prototype._sortSubstituents = function (substituents) {
+CisTrans.prototype._sortSubstituents = function (substituents) {
 	var h0 = this.molecule.atoms.get(substituents[0]).pureHydrogen();
 	var h1 = substituents[1] < 0 || this.molecule.atoms.get(substituents[1]).pureHydrogen();
 	var h2 = this.molecule.atoms.get(substituents[2]).pureHydrogen();
@@ -97,7 +95,7 @@ chem.CisTrans.prototype._sortSubstituents = function (substituents) {
 	return true;
 };
 
-chem.CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
+CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 
@@ -182,7 +180,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	return true;
 };
 
-chem.CisTrans.prototype.build = function (exclude_bonds) {
+CisTrans.prototype.build = function (exclude_bonds) {
 	this.molecule.bonds.each(function (bid, bond) {
 		var ct = this.bonds.set(bid,
 		{
@@ -202,8 +200,10 @@ chem.CisTrans.prototype.build = function (exclude_bonds) {
 		var sign = this._sameside(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
 
 		if (sign == 1)
-			ct.parity = chem.CisTrans.PARITY.CIS;
+			ct.parity = CisTrans.PARITY.CIS;
 		else if (sign == -1)
-			ct.parity = chem.CisTrans.PARITY.TRANS;
+			ct.parity = CisTrans.PARITY.TRANS;
 	}, this);
 };
+
+module.exports = CisTrans;

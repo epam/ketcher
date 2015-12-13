@@ -7,6 +7,7 @@ var util = require('../util');
 var element = require('./element');
 var Atom = require('./atom');
 var Bond = require('./bond');
+var SGroupForest = require('./sgforest');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
@@ -23,7 +24,7 @@ var Struct = function () {
 	this.frags = new Pool();
 	this.rgroups = new Map();
 	this.name = '';
-	this.sGroupForest = new chem.SGroupForest(this);
+	this.sGroupForest = new SGroupForest(this);
 };
 
 Struct.prototype.hasRxnProps = function () {

@@ -3,12 +3,10 @@ var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
-var Struct = require('./struct');
 var Atom = require('./atom');
 
-var chem = global.chem = global.chem || {}; 
 
-chem.SGroupForest = function (molecule) {
+var SGroupForest = function (molecule) {
 	this.parent = new Map(); // child id -> parent id
 	this.children = new Map(); // parent id -> list of child ids
 	this.children.set(-1, []); // extra root node
@@ -16,7 +14,7 @@ chem.SGroupForest = function (molecule) {
 }
 
 // returns an array or s-group ids in the order of breadth-first search
-chem.SGroupForest.prototype.getSGroupsBFS = function () {
+SGroupForest.prototype.getSGroupsBFS = function () {
 	var order = [], queue = [], id = -1;
 	queue = util.array(this.children.get(-1));
 	while (queue.length > 0) {
@@ -27,13 +25,13 @@ chem.SGroupForest.prototype.getSGroupsBFS = function () {
 	return order;
 }
 
-chem.SGroupForest.prototype.getAtomSets = function () {
+SGroupForest.prototype.getAtomSets = function () {
 	return this.molecule.sgroups.map(function (sgid, sgroup){
 		return Set.fromList(sgroup.atoms);
 	});
 }
 
-chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
+SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
 	// find the lowest superset in the hierarchy
 	var isStrictSuperset = new Map(), isSubset = new Map();
 	var atomSets = this.getAtomSets();
@@ -62,7 +60,7 @@ chem.SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set 
 	};
 }
 
-chem.SGroupForest.prototype.getPathToRoot = function (sgid) {
+SGroupForest.prototype.getPathToRoot = function (sgid) {
 	var path = [];
 	for (var id = sgid; id >= 0; id = this.parent.get(id)) {
 		util.assert(path.indexOf(id) < 0, 'SGroupForest: loop detected');
@@ -71,7 +69,7 @@ chem.SGroupForest.prototype.getPathToRoot = function (sgid) {
 	return path;
 }
 
-chem.SGroupForest.prototype.validate = function () {
+SGroupForest.prototype.validate = function () {
 	var atomSets = this.getAtomSets();
 	this.molecule.sgroups.each(function (id) {
 		this.getPathToRoot(id); // this will throw an exception if there is a loop in the path to root
@@ -95,7 +93,7 @@ chem.SGroupForest.prototype.validate = function () {
 	return valid;
 }
 
-chem.SGroupForest.prototype.insert = function (id, parent /* int, optional */, children /* [int], optional */) {
+SGroupForest.prototype.insert = function (id, parent /* int, optional */, children /* [int], optional */) {
 	util.assert(!this.parent.has(id), 'sgid already present in the forest');
 	util.assert(!this.children.has(id), 'sgid already present in the forest');
 
@@ -120,7 +118,7 @@ chem.SGroupForest.prototype.insert = function (id, parent /* int, optional */, c
 	return {parent: parent, children: children};
 }
 
-chem.SGroupForest.prototype.remove = function (id) {
+SGroupForest.prototype.remove = function (id) {
 	util.assert(this.parent.has(id), 'sgid is not in the forest');
 	util.assert(this.children.has(id), 'sgid is not in the forest');
 
@@ -135,3 +133,5 @@ chem.SGroupForest.prototype.remove = function (id) {
 	this.parent.unset(id);
 	util.assert(this.validate(), 's-group forest invalid');
 }
+
+module.exports = SGroupForest;

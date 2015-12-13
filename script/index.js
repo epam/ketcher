@@ -3,18 +3,17 @@ var queryString = require('query-string');
 var util = require('./util');
 var api = require('./api.js');
 var Molfile = require('./chem/molfile');
+var Smiles = require('./chem/smiles');
 
 require('./ui');
-require('./chem');
 require('./rnd');
 
 var ui = global.ui;
-var chem = global.chem;
 var rnd = global.rnd;
 
 function getSmiles(forceLocal) {
 	var local = ui.standalone || forceLocal;
-	var saver = local ? new chem.SmilesSaver() : new Molfile();
+	var saver = local ? new Smiles() : new Molfile();
 	var mol = saver.saveMolecule(ui.ctab, true);
 	// TODO: Remove me. Remains here for getSmiles api compatibility
 	return local ? mol : ketcher.server.smiles.sync({

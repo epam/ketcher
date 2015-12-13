@@ -3,6 +3,7 @@ var ui = global.ui = {};
 var AtomList = require('../chem/atomlist');
 var Bond = require('../chem/bond');
 var Molfile = require('../chem/molfile');
+var Smiles = require('../chem/smiles');
 require('../chem');
 require('../rnd');
 
@@ -291,7 +292,7 @@ function initCliparea(parent) {
 				           'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
 				           moldata);
 				cb.setData('chemical/x-daylight-smiles',
-				           new chem.SmilesSaver().saveMolecule(struct));
+				           new Smiles().saveMolecule(struct));
 			} catch (ex) {
 				console.info('Could not write exact type', ex);
 			}

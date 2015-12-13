@@ -2,9 +2,8 @@ var Promise = require('promise-polyfill');
 var fs = require('filesaver.js');
 
 var Molfile = require('../../chem/molfile');
-require('../../chem');
+var Smiles = require('../../chem/smiles');
 
-var chem = global.chem;
 var ui = global.ui;
 
 function saveDialog (params, server) {
@@ -89,7 +88,7 @@ function convertMolecule (server, molecule, format) {
 		}
 		else if (format == 'smi') {
 			resolve(!ui.standalone ? server.smiles({ moldata: moldata }) :
-				new chem.SmilesSaver().saveMolecule(molecule));
+				new Smiles().saveMolecule(molecule));
 		}
 		else if (format == 'inchi') {
 			if (ui.standalone)

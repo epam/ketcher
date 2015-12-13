@@ -2,7 +2,7 @@ var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 var element = require('../chem/element');
-var Struct = require('../chem/struct');
+var Bond = require('../chem/bond');
 
 require('./restruct');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
@@ -421,13 +421,13 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 
 	switch (bond.b.reactingCenterStatus)
 		{
-		case Struct.BOND.REACTING_CENTER.NOT_CENTER: // X
+		case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
 			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
 			p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
 			break;
-		case Struct.BOND.REACTING_CENTER.CENTER:  // #
+		case Bond.PATTERN.REACTING_CENTER.CENTER:  // #
 			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
 			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
@@ -437,20 +437,20 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 			p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
 			p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
 			break;
-//	case Struct.BOND.REACTING_CENTER.UNCHANGED:  // o
+//	case Bond.PATTERN.REACTING_CENTER.UNCHANGED:  // o
 //		//draw a circle
 //		break;
-		case Struct.BOND.REACTING_CENTER.MADE_OR_BROKEN:
+		case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
 			p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
 			p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
 			break;
-		case Struct.BOND.REACTING_CENTER.ORDER_CHANGED:
+		case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
 			p.push(c.addScaled(n, acrossSz));
 			p.push(c.addScaled(n, -acrossSz));
 			break;
-		case Struct.BOND.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
+		case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
 			p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 			p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
 			p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
@@ -472,9 +472,9 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 {
 	var topologyMark = null;
 
-	if (bond.b.topology == Struct.BOND.TOPOLOGY.RING)
+	if (bond.b.topology == Bond.PATTERN.TOPOLOGY.RING)
 		topologyMark = 'rng';
-	else if (bond.b.topology == Struct.BOND.TOPOLOGY.CHAIN)
+	else if (bond.b.topology == Bond.PATTERN.TOPOLOGY.CHAIN)
 		topologyMark = 'chn';
 	else
 		return null;
@@ -493,7 +493,7 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 		fixed += settings.bondSpace / 2;
 
 	var s = new Vec2(2, 1).scaled(settings.bondSpace);
-	if (bond.b.type == Struct.BOND.TYPE.TRIPLE)
+	if (bond.b.type == Bond.PATTERN.TYPE.TRIPLE)
 		fixed += settings.bondSpace;
 	var p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 	var path = paper.text(p.x, p.y, topologyMark)
@@ -513,19 +513,19 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 	var molecule = this.molecule;
 	switch (bond.b.type)
 		{
-		case Struct.BOND.TYPE.SINGLE:
+		case Bond.PATTERN.TYPE.SINGLE:
 			switch (bond.b.stereo) {
-				case Struct.BOND.STEREO.UP:
+				case Bond.PATTERN.STEREO.UP:
 					this.findIncomingUpBonds(hb1.bid, bond);
 					if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 						path = this.drawBondSingleStereoBold(hb1, hb2, bond);
 					else
 						path = this.drawBondSingleUp(hb1, hb2, bond);
 					break;
-				case Struct.BOND.STEREO.DOWN:
+				case Bond.PATTERN.STEREO.DOWN:
 					path = this.drawBondSingleDown(hb1, hb2, bond);
 					break;
-				case Struct.BOND.STEREO.EITHER:
+				case Bond.PATTERN.STEREO.EITHER:
 					path = this.drawBondSingleEither(hb1, hb2, bond);
 					break;
 				default:
@@ -533,33 +533,33 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 					break;
 			}
 			break;
-		case Struct.BOND.TYPE.DOUBLE:
+		case Bond.PATTERN.TYPE.DOUBLE:
 			this.findIncomingUpBonds(hb1.bid, bond);
-			if (bond.b.stereo === Struct.BOND.STEREO.NONE && bond.boldStereo
+			if (bond.b.stereo === Bond.PATTERN.STEREO.NONE && bond.boldStereo
 				 && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 				path = this.drawBondSingleStereoBold(hb1, hb2, bond, true);
 			else
 				path = this.drawBondDouble(hb1, hb2, bond,
-				bond.b.stereo === Struct.BOND.STEREO.CIS_TRANS);
+				bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS);
 			break;
-		case Struct.BOND.TYPE.TRIPLE:
+		case Bond.PATTERN.TYPE.TRIPLE:
 			path = this.drawBondTriple(hb1, hb2, bond);
 			break;
-		case Struct.BOND.TYPE.AROMATIC:
+		case Bond.PATTERN.TYPE.AROMATIC:
 			var inAromaticLoop = (hb1.loop >= 0 && molecule.loops.get(hb1.loop).aromatic) ||
 			(hb2.loop >= 0 && molecule.loops.get(hb2.loop).aromatic);
 			path = this.drawBondAromatic(hb1, hb2, bond, !inAromaticLoop);
 			break;
-		case Struct.BOND.TYPE.SINGLE_OR_DOUBLE:
+		case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
 			path = this.drawBondSingleOrDouble(hb1, hb2, bond);
 			break;
-		case Struct.BOND.TYPE.SINGLE_OR_AROMATIC:
+		case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
 			path = this.drawBondSingleOrAromatic(hb1, hb2, bond);
 			break;
-		case Struct.BOND.TYPE.DOUBLE_OR_AROMATIC:
+		case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
 			path = this.drawBondDoubleOrAromatic(hb1, hb2, bond);
 			break;
-		case Struct.BOND.TYPE.ANY:
+		case Bond.PATTERN.TYPE.ANY:
 			path = this.drawBondAny(hb1, hb2, bond);
 			break;
 		default:
@@ -1182,7 +1182,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 		var hb2 = this.molecule.halfBonds.get(n2);
 		var b1 = this.bonds.get(hb1.bid);
 		var b2 = this.bonds.get(hb2.bid);
-		if (b1.b.type == b2.b.type && b1.b.stereo == Struct.BOND.STEREO.NONE && b2.b.stereo == Struct.BOND.STEREO.NONE)
+		if (b1.b.type == b2.b.type && b1.b.stereo == Bond.PATTERN.STEREO.NONE && b2.b.stereo == Bond.PATTERN.STEREO.NONE)
 		if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
 			return true;
 	}
@@ -1308,7 +1308,7 @@ rnd.ReStruct.prototype.renderLoops = function ()
 			var hb = molecule.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
 			var apos = render.ps(this.atoms.get(hb.begin).a.pp);
-			if (bond.b.type != Struct.BOND.TYPE.AROMATIC)
+			if (bond.b.type != Bond.PATTERN.TYPE.AROMATIC)
 				loop.aromatic = false;
 			reloop.centre.add_(apos);
 		}, this);

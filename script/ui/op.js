@@ -2,6 +2,7 @@ var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
 
 var Atom = require('../chem/atom');
+var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 require('../chem');
 require('../rnd');
@@ -330,14 +331,14 @@ function BondAdd (begin, end, bond) {
 		if (this.data.bond)
 			for (var p in this.data.bond)
 				pp[p] = this.data.bond[p];
-		pp.type = pp.type || Struct.BOND.TYPE.SINGLE;
+		pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
 		if (!Object.isNumber(this.data.bid)) {
-			this.data.bid = DS.bonds.add(new Struct.Bond(pp));
+			this.data.bid = DS.bonds.add(new Bond(pp));
 		} else {
-			DS.bonds.set(this.data.bid, new Struct.Bond(pp));
+			DS.bonds.set(this.data.bid, new Bond(pp));
 		}
 		DS.bondInitHalfBonds(this.data.bid);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);

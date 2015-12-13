@@ -6,6 +6,7 @@ var util = require('../util');
 
 var element = require('./element');
 var Atom = require('./atom');
+var Bond = require('./bond');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
@@ -91,7 +92,7 @@ Struct.prototype.toLists = function () {
 
 	var bondList = [];
 	this.bonds.each(function (bid, bond) {
-		var b = new Struct.Bond(bond);
+		var b = new Bond(bond);
 		b.begin = aidMap[bond.begin];
 		b.end = aidMap[bond.end];
 		bondList.push(b);
@@ -234,127 +235,6 @@ Struct.prototype.findBondId = function (begin, end)
 	}, this);
 
 	return id;
-};
-
-Struct.BOND =
-{
-    TYPE:
- {
-        SINGLE: 1,
-        DOUBLE: 2,
-        TRIPLE: 3,
-        AROMATIC: 4,
-        SINGLE_OR_DOUBLE: 5,
-        SINGLE_OR_AROMATIC: 6,
-        DOUBLE_OR_AROMATIC: 7,
-        ANY: 8
-    },
-    
-    STEREO:
- {
-        NONE: 0,
-        UP: 1,
-        EITHER: 4,
-        DOWN: 6,
-        CIS_TRANS: 3
-    },
-    
-    TOPOLOGY:
- {
-        EITHER: 0,
-        RING: 1,
-        CHAIN: 2
-    },
-    
-    REACTING_CENTER:
- {
-        NOT_CENTER: -1,
-        UNMARKED: 0,
-        CENTER: 1,
-        UNCHANGED: 2,
-        MADE_OR_BROKEN: 4,
-        ORDER_CHANGED: 8,
-        MADE_OR_BROKEN_AND_CHANGED: 12
-    }
-};
-
-Struct.Bond = function (params)
-{
-	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
-		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
-
-	this.begin = params.begin;
-	this.end = params.end;
-	this.type = params.type;
-	util.ifDef(this, params, 'stereo', Struct.BOND.STEREO.NONE);
-	util.ifDef(this, params, 'topology', Struct.BOND.TOPOLOGY.EITHER);
-	util.ifDef(this, params, 'reactingCenterStatus', 0);
-	this.hb1 = null; // half-bonds
-	this.hb2 = null;
-	this.len = 0;
-	this.center = new Vec2();
-	this.sb = 0;
-	this.sa = 0;
-	this.angle = 0;
-};
-
-Struct.Bond.attrlist = {
-	'type': Struct.BOND.TYPE.SINGLE,
-	'stereo': Struct.BOND.STEREO.NONE,
-	'topology': Struct.BOND.TOPOLOGY.EITHER,
-	'reactingCenterStatus': 0
-};
-
-Struct.Bond.getAttrHash = function (bond) {
-	var attrs = new Hash();
-	for (var attr in Struct.Bond.attrlist) {
-		if (typeof(bond[attr]) !== 'undefined') {
-			attrs.set(attr, bond[attr]);
-		}
-	}
-	return attrs;
-};
-
-Struct.Bond.attrGetDefault = function (attr) {
-	if (attr in Struct.Bond.attrlist)
-		return Struct.Bond.attrlist[attr];
-	throw new Error('Attribute unknown');
-}
-
-Struct.Bond.prototype.hasRxnProps =  function ()
-{
-	return !!this.reactingCenterStatus;
-};
-
-Struct.Bond.prototype.getCenter = function (struct) {
-	var p1 = struct.atoms.get(this.begin).pp;
-	var p2 = struct.atoms.get(this.end).pp;
-	return Vec2.lc2(p1, 0.5, p2, 0.5);
-}
-
-Struct.Bond.prototype.getDir = function (struct) {
-	var p1 = struct.atoms.get(this.begin).pp;
-	var p2 = struct.atoms.get(this.end).pp;
-	return p2.sub(p1).normalized();
-}
-
-Struct.Bond.prototype.clone = function (aidMap)
-{
-	var cp = new Struct.Bond(this);
-	if (aidMap) {
-		cp.begin = aidMap[cp.begin];
-		cp.end = aidMap[cp.end];
-	}
-	return cp;
-};
-
-Struct.Bond.prototype.findOtherEnd = function (i)
-{
-	if (i == this.begin)
-		return this.end;
-	if (i == this.end)
-		return this.begin;
-	throw new Error('bond end not found');
 };
 
 var HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
@@ -676,9 +556,9 @@ var Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 
 	hbs.each(function (hb){
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
-		if (bond.type != Struct.BOND.TYPE.AROMATIC)
+		if (bond.type != Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
-		if (bond.type == Struct.BOND.TYPE.DOUBLE)
+		if (bond.type == Bond.PATTERN.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
 };
@@ -991,16 +871,16 @@ Struct.prototype.calcConn = function (aid) {
         var hb = this.halfBonds.get(atom.neighbors[i]);
         var bond = this.bonds.get(hb.bid);
         switch (bond.type) {
-            case Struct.BOND.TYPE.SINGLE:
+            case Bond.PATTERN.TYPE.SINGLE:
                 conn += 1;
                 break;
-            case Struct.BOND.TYPE.DOUBLE:
+            case Bond.PATTERN.TYPE.DOUBLE:
                 conn += 2;
                 break;
-            case Struct.BOND.TYPE.TRIPLE:
+            case Bond.PATTERN.TYPE.TRIPLE:
                 conn += 3;
                 break;
-            case Struct.BOND.TYPE.AROMATIC:
+            case Bond.PATTERN.TYPE.AROMATIC:
                 conn += 1;
                 hasAromatic = true;
                 break;

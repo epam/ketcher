@@ -5,7 +5,7 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var Atom = require('./atom');
-var Struct = require('./struct');
+var Bond = require('./bond');
 
 require('../rnd/restruct_rendering'); //don't require whole rnd module
 
@@ -503,13 +503,13 @@ chem.SGroup.GroupMul = {
 			}, this);
 			util.each(inBonds, function (bid) {
 				var bond = mol.bonds.get(bid);
-				var newBond = new Struct.Bond(bond);
+				var newBond = new Bond(bond);
 				newBond.begin = amap[newBond.begin];
 				newBond.end = amap[newBond.end];
 				mol.bonds.add(newBond);
 			}, this);
 			if (crossBond != null) {
-				var newCrossBond = new Struct.Bond(crossBond);
+				var newCrossBond = new Bond(crossBond);
 				newCrossBond.begin = tailAtom;
 				newCrossBond.end = amap[xAtom2];
 				mol.bonds.add(newCrossBond);

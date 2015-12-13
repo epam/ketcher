@@ -1,7 +1,7 @@
 var Map = require('../util/map');
 var Vec2 = require('../util/vec2');
 
-var Struct = require('./struct');
+var Bond = require('./bond');
 
 var chem = global.chem = global.chem || {}; // jshint ignore:line
 
@@ -101,7 +101,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 
-	if (bond.type != Struct.BOND.TYPE.DOUBLE) {
+	if (bond.type != Bond.PATTERN.TYPE.DOUBLE) {
 		return false;
 	}
 
@@ -142,7 +142,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 			continue;
 		}
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.BOND.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ chem.CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 			continue;
 		}
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.BOND.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
 			return false;
 		}
 

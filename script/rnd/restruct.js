@@ -9,6 +9,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 var element = require('../chem/element');
+var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 
 require('../chem');
@@ -456,9 +457,9 @@ rnd.ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeB
 		if (bid === bid0)
 			return false;
 		var neibond = this.bonds.get(bid);
-		if (neibond.b.type === Struct.BOND.TYPE.SINGLE && neibond.b.stereo === Struct.BOND.STEREO.UP)
+		if (neibond.b.type === Bond.PATTERN.TYPE.SINGLE && neibond.b.stereo === Bond.PATTERN.STEREO.UP)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
-		if (neibond.b.type === Struct.BOND.TYPE.DOUBLE && neibond.b.stereo === Struct.BOND.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
+		if (neibond.b.type === Bond.PATTERN.TYPE.DOUBLE && neibond.b.stereo === Bond.PATTERN.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
 			return true;
 		return false;
 	}, this);

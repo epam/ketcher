@@ -4,6 +4,7 @@ var Vec2 = require('../util/vec2');
 var element = require('./element');
 var Atom = require('./atom');
 var AtomList = require('./atomlist');
+var Bond = require('./bond');
 var Struct = require('./struct');
 
 var util = require('../util');
@@ -70,32 +71,32 @@ chem.Molfile.parseCTFile = function (molfile) {
 
 chem.Molfile.fmtInfo = {
 	bondTypeMap: {
-		1: Struct.BOND.TYPE.SINGLE,
-		2: Struct.BOND.TYPE.DOUBLE,
-		3: Struct.BOND.TYPE.TRIPLE,
-		4: Struct.BOND.TYPE.AROMATIC,
-		5: Struct.BOND.TYPE.SINGLE_OR_DOUBLE,
-		6: Struct.BOND.TYPE.SINGLE_OR_AROMATIC,
-		7: Struct.BOND.TYPE.DOUBLE_OR_AROMATIC,
-		8: Struct.BOND.TYPE.ANY
+		1: Bond.PATTERN.TYPE.SINGLE,
+		2: Bond.PATTERN.TYPE.DOUBLE,
+		3: Bond.PATTERN.TYPE.TRIPLE,
+		4: Bond.PATTERN.TYPE.AROMATIC,
+		5: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+		6: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+		7: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+		8: Bond.PATTERN.TYPE.ANY
 	},
 	bondStereoMap: {
-		0: Struct.BOND.STEREO.NONE,
-		1: Struct.BOND.STEREO.UP,
-		4: Struct.BOND.STEREO.EITHER,
-		6: Struct.BOND.STEREO.DOWN,
-		3: Struct.BOND.STEREO.CIS_TRANS
+		0: Bond.PATTERN.STEREO.NONE,
+		1: Bond.PATTERN.STEREO.UP,
+		4: Bond.PATTERN.STEREO.EITHER,
+		6: Bond.PATTERN.STEREO.DOWN,
+		3: Bond.PATTERN.STEREO.CIS_TRANS
 	},
 	v30bondStereoMap: {
-		0: Struct.BOND.STEREO.NONE,
-		1: Struct.BOND.STEREO.UP,
-		2: Struct.BOND.STEREO.EITHER,
-		3: Struct.BOND.STEREO.DOWN
+		0: Bond.PATTERN.STEREO.NONE,
+		1: Bond.PATTERN.STEREO.UP,
+		2: Bond.PATTERN.STEREO.EITHER,
+		3: Bond.PATTERN.STEREO.DOWN
 	},
 	bondTopologyMap: {
-		0: Struct.BOND.TOPOLOGY.EITHER,
-		1: Struct.BOND.TOPOLOGY.RING,
-		2: Struct.BOND.TOPOLOGY.CHAIN
+		0: Bond.PATTERN.TOPOLOGY.EITHER,
+		1: Bond.PATTERN.TOPOLOGY.RING,
+		2: Bond.PATTERN.TOPOLOGY.CHAIN
 	},
 	countsLinePartition: [3,3,3,3,3,3,3,3,3,3,3,6],
 	atomLinePartition: [10,10,10,1,3,2,3,3,3,3,3,3,3,3,3,3,3],
@@ -232,8 +233,8 @@ chem.Molfile.parseBondLineV3000 = function (line)
 		value = subsplit[1];
 		if (key == 'CFG') {
 			params.stereo = mf.fmtInfo.v30bondStereoMap[mf.parseDecimalInt(value)];
-			if (params.type == Struct.BOND.TYPE.DOUBLE && params.stereo == Struct.BOND.STEREO.EITHER)
-				params.stereo = Struct.BOND.STEREO.CIS_TRANS;
+			if (params.type == Bond.PATTERN.TYPE.DOUBLE && params.stereo == Bond.PATTERN.STEREO.EITHER)
+				params.stereo = Bond.PATTERN.STEREO.CIS_TRANS;
 		} else if (key == 'TOPO') {
 			params.topology = mf.fmtInfo.bondTopologyMap[mf.parseDecimalInt(value)];
 		} else if (key == 'RXCTR') {
@@ -242,7 +243,7 @@ chem.Molfile.parseBondLineV3000 = function (line)
 			params.stereoCare = mf.parseDecimalInt(value);
 		}
 	}
-	return new Struct.Bond(params);
+	return new Bond(params);
 };
 
 chem.Molfile.parseBondLine = function (bondLine)
@@ -259,7 +260,7 @@ chem.Molfile.parseBondLine = function (bondLine)
 		reactingCenterStatus: mf.parseDecimalInt(bondSplit[6])
 	};
 
-	return new Struct.Bond(params);
+	return new Bond(params);
 };
 
 chem.Molfile.parseAtomListLine = function (/* string */atomListLine)

@@ -4,6 +4,7 @@ var util = require('../util');
 var op = require('./op');
 
 var Atom = require('../chem/atom');
+var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 
 require('../chem');
@@ -199,12 +200,12 @@ function fromBondAttrs (id, attrs, flip, reset)
 {
 	var action = new Action();
 
-	for (var key in Struct.Bond.attrlist) {
+	for (var key in Bond.attrlist) {
 		var value;
 		if (key in attrs)
 			value = attrs[key];
 		else if (reset)
-			value = Struct.Bond.attrGetDefault(key);
+			value = Bond.attrGetDefault(key);
 		else
 			continue;
 		action.addOp(new op.BondAttr(id, key, value));
@@ -1213,10 +1214,10 @@ function struct2Clipboard(struct) {
 
 	selection.bonds.each(function (id)
 	{
-		var new_bond = new Struct.Bond(struct.bonds.get(id));
+		var new_bond = new Bond(struct.bonds.get(id));
 		new_bond.begin = mapping[new_bond.begin];
 		new_bond.end = mapping[new_bond.end];
-		clipboard.bonds.push(new Struct.Bond(new_bond));
+		clipboard.bonds.push(new Bond(new_bond));
 	});
 
 	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
@@ -1395,11 +1396,11 @@ function fromFlip (objects, flip) {
 				var bid = objects.bonds[i];
 				var bond = molecule.bonds.get(bid);
 
-				if (bond.type == Struct.BOND.TYPE.SINGLE) {
-					if (bond.stereo == Struct.BOND.STEREO.UP) {
-						action.addOp(new op.BondAttr(bid, 'stereo', Struct.BOND.STEREO.DOWN));
-					} else if (bond.stereo == Struct.BOND.STEREO.DOWN) {
-						action.addOp(new op.BondAttr(bid, 'stereo', Struct.BOND.STEREO.UP));
+				if (bond.type == Bond.PATTERN.TYPE.SINGLE) {
+					if (bond.stereo == Bond.PATTERN.STEREO.UP) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN));
+					} else if (bond.stereo == Bond.PATTERN.STEREO.DOWN) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP));
 					}
 				}
 			}

@@ -1,6 +1,7 @@
 var ui = global.ui = {};
 
 var AtomList = require('../chem/atomlist');
+var Bond = require('../chem/bond');
 require('../chem');
 require('../rnd');
 
@@ -1042,7 +1043,7 @@ function mapTool (id) {
          else if (mode.startsWith('bond_')) {
          var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
          if (cBond) {
-         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Struct.BOND.STEREO.NONE }), true);
+         addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
          ui.render.update();
          return;
          }
@@ -1098,18 +1099,18 @@ function mapTool (id) {
 
 // TODO: remove. only in obsolete dialogs
 var bondTypeMap = {
-	'single': {type: 1, stereo: Struct.BOND.STEREO.NONE},
-	'up': {type: 1, stereo: Struct.BOND.STEREO.UP},
-	'down': {type: 1, stereo: Struct.BOND.STEREO.DOWN},
-	'updown': {type: 1, stereo: Struct.BOND.STEREO.EITHER},
-	'double': {type: 2, stereo: Struct.BOND.STEREO.NONE},
-	'crossed': {type: 2, stereo: Struct.BOND.STEREO.CIS_TRANS},
-	'triple': {type: 3, stereo: Struct.BOND.STEREO.NONE},
-	'aromatic': {type: 4, stereo: Struct.BOND.STEREO.NONE},
-	'singledouble': {type: 5, stereo: Struct.BOND.STEREO.NONE},
-	'singlearomatic': {type: 6, stereo: Struct.BOND.STEREO.NONE},
-	'doublearomatic': {type: 7, stereo: Struct.BOND.STEREO.NONE},
-	'any':  {type: 8, stereo: Struct.BOND.STEREO.NONE}
+	'single': {type: 1, stereo: Bond.PATTERN.STEREO.NONE},
+	'up': {type: 1, stereo: Bond.PATTERN.STEREO.UP},
+	'down': {type: 1, stereo: Bond.PATTERN.STEREO.DOWN},
+	'updown': {type: 1, stereo: Bond.PATTERN.STEREO.EITHER},
+	'double': {type: 2, stereo: Bond.PATTERN.STEREO.NONE},
+	'crossed': {type: 2, stereo: Bond.PATTERN.STEREO.CIS_TRANS},
+	'triple': {type: 3, stereo: Bond.PATTERN.STEREO.NONE},
+	'aromatic': {type: 4, stereo: Bond.PATTERN.STEREO.NONE},
+	'singledouble': {type: 5, stereo: Bond.PATTERN.STEREO.NONE},
+	'singlearomatic': {type: 6, stereo: Bond.PATTERN.STEREO.NONE},
+	'doublearomatic': {type: 7, stereo: Bond.PATTERN.STEREO.NONE},
+	'any':  {type: 8, stereo: Bond.PATTERN.STEREO.NONE}
 };
 
 function bondType (mode)

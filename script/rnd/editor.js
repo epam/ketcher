@@ -3,6 +3,7 @@ var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
 var Atom = require('../chem/atom');
+var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var util = require('../util');
 
@@ -574,7 +575,7 @@ rnd.Editor.EraserTool.prototype.OnMouseUp = function (event) {
 rnd.Editor.AtomTool = function (editor, atomProps) {
 	this.editor = editor;
 	this.atomProps = atomProps;
-	this.bondProps = { type: 1, stereo: Struct.BOND.STEREO.NONE };
+	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 
 	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -643,9 +644,9 @@ rnd.Editor.BondTool = function (editor, bondProps) {
 	this.atomProps = { label: 'C' };
 	this.bondProps = bondProps;
 	this.plainBondTypes = [
-			Struct.BOND.TYPE.SINGLE,
-			Struct.BOND.TYPE.DOUBLE,
-			Struct.BOND.TYPE.TRIPLE];
+			Bond.PATTERN.TYPE.SINGLE,
+			Bond.PATTERN.TYPE.DOUBLE,
+			Bond.PATTERN.TYPE.TRIPLE];
 
 	this._hoverHelper = new rnd.Editor.EditorTool.HoverHelper(this);
 };
@@ -711,7 +712,7 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 		} else if (!('item' in _DC_)) {
 			var xy = ui.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
-				this.bondProps.type == Struct.BOND.TYPE.SINGLE ? -Math.PI / 6 : 0
+				this.bondProps.type == Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = Action.fromBondAddition(
 				this.bondProps,
@@ -728,17 +729,17 @@ rnd.Editor.BondTool.prototype.OnMouseUp = function (event) {
 			var bond = ui.ctab.bonds.get(_DC_.item.id);
 
 			if (
-			bondProps.stereo != Struct.BOND.STEREO.NONE &&
-			bond.type == Struct.BOND.TYPE.SINGLE &&
-			bondProps.type == Struct.BOND.TYPE.SINGLE &&
+			bondProps.stereo != Bond.PATTERN.STEREO.NONE &&
+			bond.type == Bond.PATTERN.TYPE.SINGLE &&
+			bondProps.type == Bond.PATTERN.TYPE.SINGLE &&
 			bond.stereo == bondProps.stereo
 			) {
 				ui.addUndoAction(Action.fromBondFlipping(_DC_.item.id));
 			} else {
 				if (
-				bondProps.type === Struct.BOND.TYPE.SINGLE &&
-				bond.stereo === Struct.BOND.STEREO.NONE &&
-				bondProps.stereo === Struct.BOND.STEREO.NONE
+				bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
+				bond.stereo === Bond.PATTERN.STEREO.NONE &&
+				bondProps.stereo === Bond.PATTERN.STEREO.NONE
 				) {
 					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
 					if (loop) {
@@ -1748,9 +1749,9 @@ rnd.Editor.RotateTool.prototype.OnCancel = function () {
 };
 
 function bondFlipRequired (bond, attrs) {
-	return attrs.type == Struct.BOND.TYPE.SINGLE &&
-	       bond.stereo == Struct.BOND.STEREO.NONE &&
-	       attrs.stereo != Struct.BOND.STEREO.NONE &&
+	return attrs.type == Bond.PATTERN.TYPE.SINGLE &&
+	       bond.stereo == Bond.PATTERN.STEREO.NONE &&
+	       attrs.stereo != Bond.PATTERN.STEREO.NONE &&
 	       ui.ctab.atoms.get(bond.begin).neighbors.length <
 	       ui.ctab.atoms.get(bond.end).neighbors.length;
 }

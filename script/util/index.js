@@ -306,6 +306,15 @@ var isObject = function (obj) {
 	return obj === Object(obj);
 };
 
+var relBox = function (box) {
+    return {
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height
+    };
+};
+
 module.exports = {
 	tfx: tfx,
 	each: each,
@@ -345,5 +354,6 @@ module.exports = {
 	arrayRemoveByValue: arrayRemoveByValue,
 	listNextRotate: listNextRotate,
 	extend: extend,
-	isObject: isObject
+    isObject: isObject,
+    relBox: relBox
 };

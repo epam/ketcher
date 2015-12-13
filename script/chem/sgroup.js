@@ -282,7 +282,7 @@ chem.SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n,
 		});
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
-		var indexBox = Box2Abs.fromRelBox(rnd.relBox(indexPath.getBBox()));
+		var indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
 		var t = Math.max(Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
 		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
 		set.push(indexPath);
@@ -779,19 +779,19 @@ chem.SGroup.GroupDat = {
 				}
 				p.x += settings.lineWidth; // shift a bit to the right
 				var name_i = this.showValue(paper, p, this, settings);
-				var box_i = rnd.relBox(name_i.getBBox());
+				var box_i = util.relBox(name_i.getBBox());
 				name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
 				set.push(name_i);
-				var sbox_i = Box2Abs.fromRelBox(rnd.relBox(name_i.getBBox()));
+				var sbox_i = Box2Abs.fromRelBox(util.relBox(name_i.getBBox()));
 				sbox_i = sbox_i.transform(render.scaled2obj, render);
 				this.areas.push(sbox_i);
 			}
 		} else {
 			var name = this.showValue(paper, ps, this, settings);
-			var box = rnd.relBox(name.getBBox());
+			var box = util.relBox(name.getBBox());
 			name.translateAbs(0.5 * box.width, -0.5 * box.height);
 			set.push(name);
-			var sbox = Box2Abs.fromRelBox(rnd.relBox(name.getBBox()));
+			var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
 			this.dataArea = sbox.transform(render.scaled2obj, render);
 			if (!remol.sgroupData.has(this.id))
 				remol.sgroupData.set(this.id, new rnd.ReDataSGroupData(this));

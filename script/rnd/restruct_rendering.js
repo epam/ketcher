@@ -8,15 +8,6 @@ require('./restruct');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var tfx = util.tfx;
 
-rnd.relBox = function (box) {
-	return {
-		x: box.x,
-		y: box.y,
-		width: box.width,
-		height: box.height
-	};
-};
-
 rnd.ReStruct.prototype.drawArrow = function (a, b)
 {
 	var width = 5, length = 7;
@@ -502,7 +493,7 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 		'font-size': settings.fontszsub,
 		'fill': '#000'
 	});
-	var rbb = rnd.relBox(path.getBBox());
+	var rbb = util.relBox(path.getBBox());
 	this.centerText(path, rbb);
 	return path;
 };
@@ -656,7 +647,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				'font-size': settings.fontszsub,
 				'fill': '#070'
 			});
-			index.rbb = rnd.relBox(index.path.getBBox());
+			index.rbb = util.relBox(index.path.getBBox());
 			this.centerText(index.path, index.rbb);
 			this.addReObjectPath('indices', atom.visel, index.path, ps);
 		}
@@ -690,7 +681,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				'font-size': settings.fontsz,
 				'fill': color
 			});
-			label.rbb = rnd.relBox(label.path.getBBox());
+			label.rbb = util.relBox(label.path.getBBox());
 			this.centerText(label.path, label.rbb);
 			if (atom.a.atomList != null)
 				this.pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
@@ -711,7 +702,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'font-size': settings.fontszsub,
 					'fill': color
 				});
-				hydroIndex.rbb = rnd.relBox(hydroIndex.path.getBBox());
+				hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 				this.centerText(hydroIndex.path, hydroIndex.rbb);
 				this.pathAndRBoxTranslate(hydroIndex.path, hydroIndex.rbb,
 					rightMargin + 0.5 * hydroIndex.rbb.width + delta,
@@ -747,7 +738,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 						radical.path.attr('stroke', color);
 						break;
 				}
-				radical.rbb = rnd.relBox(radical.path.getBBox());
+				radical.rbb = util.relBox(radical.path.getBBox());
 				var vshift = -0.5 * (label.rbb.height + radical.rbb.height);
 				if (atom.a.radical == 3)
 					vshift -= settings.lineWidth / 2;
@@ -766,7 +757,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'font-size': settings.fontszsub,
 					'fill': color
 				});
-				isotope.rbb = rnd.relBox(isotope.path.getBBox());
+				isotope.rbb = util.relBox(isotope.path.getBBox());
 				this.centerText(isotope.path, isotope.rbb);
 				this.pathAndRBoxTranslate(isotope.path, isotope.rbb,
 					leftMargin - 0.5 * isotope.rbb.width - delta,
@@ -783,7 +774,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'font-size': settings.fontsz,
 					'fill': color
 				});
-				hydrogen.rbb = rnd.relBox(hydrogen.path.getBBox());
+				hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
 				this.centerText(hydrogen.path, hydrogen.rbb);
 				if (!hydrogenLeft) {
 					this.pathAndRBoxTranslate(hydrogen.path, hydrogen.rbb,
@@ -800,7 +791,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 						'font-size': settings.fontszsub,
 						'fill': color
 					});
-					hydroIndex.rbb = rnd.relBox(hydroIndex.path.getBBox());
+					hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 					this.centerText(hydroIndex.path, hydroIndex.rbb);
 					if (!hydrogenLeft) {
 						this.pathAndRBoxTranslate(hydroIndex.path, hydroIndex.rbb,
@@ -843,7 +834,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'font-size': settings.fontszsub,
 					'fill': color
 				});
-				charge.rbb = rnd.relBox(charge.path.getBBox());
+				charge.rbb = util.relBox(charge.path.getBBox());
 				this.centerText(charge.path, charge.rbb);
 				this.pathAndRBoxTranslate(charge.path, charge.rbb,
 					rightMargin + 0.5 * charge.rbb.width + delta,
@@ -882,7 +873,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 					'font-size': settings.fontszsub,
 					'fill': color
 				});
-				valence.rbb = rnd.relBox(valence.path.getBBox());
+				valence.rbb = util.relBox(valence.path.getBBox());
 				this.centerText(valence.path, valence.rbb);
 				this.pathAndRBoxTranslate(valence.path, valence.rbb,
 					rightMargin + 0.5 * valence.rbb.width + delta,
@@ -900,7 +891,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				.attr({
 					'stroke':'#F00'
 				});
-				warning.rbb = rnd.relBox(warning.path.getBBox());
+				warning.rbb = util.relBox(warning.path.getBBox());
 				this.addReObjectPath('warnings', atom.visel, warning.path, ps, true);
 			}
 			if (index)
@@ -932,7 +923,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 						'font-size': settings.fontsz,
 						'fill': color
 					});
-					var attpntRbb = rnd.relBox(attpntPath1.getBBox());
+					var attpntRbb = util.relBox(attpntPath1.getBBox());
 					this.centerText(attpntPath1, attpntRbb);
 
 					var lsbn = lsb.negated();
@@ -1028,7 +1019,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 				'font-size': settings.fontszsub,
 				'fill': color
 			});
-			var aamBox = rnd.relBox(aamPath.getBBox());
+			var aamBox = util.relBox(aamPath.getBBox());
 			this.centerText(aamPath, aamBox);
 			var dir = this.bisectLargestSector(atom);
 			var visel = atom.visel;
@@ -1111,18 +1102,18 @@ rnd.ReStruct.prototype.showBonds = function ()
 		hb2 = this.molecule.halfBonds.get(bond.b.hb2);
 		this.bondRecalc(settings, bond);
 		bond.path = this.drawBond(bond, hb1, hb2);
-		bond.rbb = rnd.relBox(bond.path.getBBox());
+		bond.rbb = util.relBox(bond.path.getBBox());
 		this.addReObjectPath('data', bond.visel, bond.path, null, true);
 		var reactingCenter = {};
 		reactingCenter.path = this.drawReactingCenter(bond, hb1, hb2);
 		if (reactingCenter.path) {
-			reactingCenter.rbb = rnd.relBox(reactingCenter.path.getBBox());
+			reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
 			this.addReObjectPath('data', bond.visel, reactingCenter.path, null, true);
 		}
 		var topology = {};
 		topology.path = this.drawTopologyMark(bond, hb1, hb2);
 		if (topology.path) {
-			topology.rbb = rnd.relBox(topology.path.getBBox());
+			topology.rbb = util.relBox(topology.path.getBBox());
 			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
 		bond.setHighlight(bond.highlight, render);
@@ -1131,31 +1122,31 @@ rnd.ReStruct.prototype.showBonds = function ()
 		if (opt.showBondIds) {
 			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
-			irbb = rnd.relBox(ipath.getBBox());
+			irbb = util.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 		if (opt.showHalfBondIds) {
 			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
-			irbb = rnd.relBox(ipath.getBBox());
+			irbb = util.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 			var phb2 = Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
 			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
-			irbb = rnd.relBox(ipath.getBBox());
+			irbb = util.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 		if (opt.showLoopIds && !opt.showBondIds) {
 			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
-			irbb = rnd.relBox(ipath.getBBox());
+			irbb = util.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 			var pl2 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
-			irbb = rnd.relBox(ipath.getBBox());
+			irbb = util.relBox(ipath.getBBox());
 			this.centerText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
@@ -1210,7 +1201,7 @@ rnd.ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visi
 	if (!path)
 		return;
 	var offset = this.render.offset;
-	var bb = visible ? Box2Abs.fromRelBox(rnd.relBox(path.getBBox())) : null;
+	var bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
 	var ext = pos && bb ? bb.translate(pos.negated()) : null;
 	if (offset !== null) {
 		path.translateAbs(offset.x, offset.y);

@@ -1,8 +1,8 @@
 var Promise = require('promise-polyfill');
 var fs = require('filesaver.js');
 
-var Molfile = require('../../chem/molfile');
-var Smiles = require('../../chem/smiles');
+var molfile = require('../../chem/molfile');
+var smiles = require('../../chem/smiles');
 
 var ui = global.ui;
 
@@ -46,7 +46,7 @@ function saveDialog (params, server) {
 		event.preventDefault();
 	});
 
-	outputMolecule(new Molfile().saveMolecule(params.molecule));
+	outputMolecule(molfile.stringify(params.molecule));
 	saveButton.addClassName('disabled');
 	fileSaver(server).then(function (f) {
 		saveFile = f;
@@ -82,13 +82,13 @@ function fileSaver (server) {
 
 function convertMolecule (server, molecule, format) {
 	return new Promise(function (resolve, reject) {
-		var moldata = new Molfile().saveMolecule(molecule);
+		var moldata = molfile.stringify(molecule);
 		if (format == 'mol') {
 			resolve(moldata);
 		}
 		else if (format == 'smi') {
 			resolve(!ui.standalone ? server.smiles({ moldata: moldata }) :
-				new Smiles().saveMolecule(molecule));
+				smiles.stringify(molecule));
 		}
 		else if (format == 'inchi') {
 			if (ui.standalone)

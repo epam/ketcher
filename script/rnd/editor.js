@@ -5,7 +5,7 @@ var element = require('../chem/element');
 var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-var Molfile = require('../chem/molfile');
+var molfile = require('../chem/molfile');
 var SGroup = require('../chem/sgroup');
 
 require('./restruct');
@@ -810,7 +810,7 @@ Editor.TemplateTool = function (editor, template) {
 
 	// load template molfile in advance
 	if (!this.template.molecule) {
-		var frag = new Molfile().parseCTFile(this.template.molfile);
+		var frag = molfile.parse(this.template.molfile);
 		frag.rescale();
 
 		var xy0 = new Vec2();

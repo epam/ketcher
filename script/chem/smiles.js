@@ -775,4 +775,9 @@ Smiles.prototype._writeRadicals = function (mol)
 	}
 };
 
-module.exports = Smiles; 
+module.exports = {
+	stringify: function (molecule, options) {
+		var opts = options || {};
+		return new Smiles().saveMolecule(molecule, opts.ignoreErrors);
+	}
+};

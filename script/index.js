@@ -2,8 +2,8 @@ var queryString = require('query-string');
 
 var util = require('./util');
 var api = require('./api.js');
-var Molfile = require('./chem/molfile');
-var Smiles = require('./chem/smiles');
+var molfile = require('./chem/molfile');
+var smiles = require('./chem/smiles');
 
 require('./ui');
 require('./rnd');
@@ -13,8 +13,8 @@ var rnd = global.rnd;
 
 function getSmiles(forceLocal) {
 	var local = ui.standalone || forceLocal;
-	var saver = local ? new Smiles() : new Molfile();
-	var mol = saver.saveMolecule(ui.ctab, true);
+	var saver = local ? smiles : molfile;
+	var mol = saver.stringify(ui.ctab, { ignoreErrors: true });
 	// TODO: Remove me. Remains here for getSmiles api compatibility
 	return local ? mol : ketcher.server.smiles.sync({
 		moldata: mol
@@ -22,8 +22,7 @@ function getSmiles(forceLocal) {
 };
 
 function getMolfile() {
-	var saver = new Molfile();
-	return saver.saveMolecule(ui.ctab, true);
+	return molfile.stringify(ui.ctab, { ignoreErrors: true });
 };
 
 function setMolecule(molString) {
@@ -54,7 +53,7 @@ function showMolfile(clientArea, molString, options) {
 	}, options);
 	var render = new rnd.Render(clientArea, opts.bondLength, opts);
 	if (molString) {
-		var mol = new Molfile().parseCTFile(molString);
+		var mol = molfile.parse(molString);
 		render.setMolecule(mol);
 	}
 	render.update();
@@ -82,7 +81,7 @@ var ketcher = module.exports = {
 	api_path: '__API_PATH__',
 	build_date: '__BUILD_DATE__',
 	build_number: '__BUILD_NUMBER__' || null,
-	build_options: '__BUILD_NUMBER__',
+	build_options: '__BUILD_OPTIONS__',
 
 	getSmiles: getSmiles,
 	getMolfile: getMolfile,

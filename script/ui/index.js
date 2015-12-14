@@ -2,8 +2,8 @@ var ui = global.ui = {};
 
 var AtomList = require('../chem/atomlist');
 var Bond = require('../chem/bond');
-var Molfile = require('../chem/molfile');
-var Smiles = require('../chem/smiles');
+var molfile = require('../chem/molfile');
+var smiles = require('../chem/smiles');
 var SGroup = require('../chem/sgroup');
 
 var Editor = require('../rnd/editor');
@@ -284,7 +284,7 @@ function initCliparea(parent) {
 		return false;
 	};
 	var copyCut = function (struct, cb) {
-		var moldata = new Molfile().saveMolecule(struct);
+		var moldata = molfile.stringify(struct);
 		if (!cb && ieCb) {
 			ieCb.setData('text', moldata);
 		} else {
@@ -294,7 +294,7 @@ function initCliparea(parent) {
 						   'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
 						   moldata);
 				cb.setData('chemical/x-daylight-smiles',
-						   new Smiles().saveMolecule(struct));
+						   smiles.stringify(struct));
 			} catch (ex) {
 				console.info('Could not write exact type', ex);
 			}
@@ -510,7 +510,7 @@ function aromatize(mol, arom)
 {
 	mol = mol.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = new Molfile().saveMolecule(mol);
+	var mol_string = molfile.stringify(mol);
 
 	if (!ui.standalone) {
 		var method = arom ? 'aromatize' : 'dearomatize',
@@ -531,7 +531,7 @@ function calculateCip() {
 	util.assert(!ui.standalone, 'Can\'t calculate in standalone mode!'); // it's assert error now
 	var mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = new Molfile().saveMolecule(mol);
+	var mol_string = molfile.stringify(mol);
 
 	var request = server.calculateCip({moldata: mol_string});
 	request.then(function (data) {
@@ -684,7 +684,7 @@ function onClick_CleanUp ()
 		}
 		var implicitReaction = mol.addRxnArrowIfNecessary();
 		var req = server.layout({
-			moldata: new Molfile().saveMolecule(mol)
+			moldata: molfile.stringify(mol)
 		}, selective ? {'selective': 1} : null);
 		req.then(function (res) {
 			var struct = parseMayBeCorruptedCTFile(res);
@@ -724,7 +724,7 @@ function onClick_Automap () {
 				echo('Auto-Mapping can only be applied to reactions');
 				return;
 			}
-			var moldata = new Molfile().saveMolecule(mol, true),
+			var moldata = molfile.stringify(mol, true),
 			request = server.automap({
 				moldata: moldata,
 				mode: mode
@@ -946,19 +946,19 @@ function showSgroupDialog(params) {
 function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
 	var lines = util.splitNewlines(molfile);
 	try {
-		return new Molfile().parseCTFile(lines);
+		return molfile.parse(lines);
 	} catch (ex) {
 		if (checkEmptyLine) {
 			try {
 				// check whether there's an extra empty line on top
 				// this often happens when molfile text is pasted into the dialog window
-				return new Molfile().parseCTFile(lines.slice(1));
+				return molfile.parse(lines.slice(1));
 			} catch (ex1) {
 			}
 			try {
 				// check for a missing first line
 				// this sometimes happens when pasting
-				return new Molfile().parseCTFile([''].concat(lines));
+				return molfile.parse([''].concat(lines));
 			} catch (ex2) {
 			}
 		}

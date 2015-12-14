@@ -1744,4 +1744,13 @@ var parseRg2000 = function (/* string[] */ ctabLines) /* Struct */
 	return rgMerge(core, frag);
 };
 
-module.exports = Molfile;
+module.exports = {
+	stringify: function (molecule, options) {
+		var opts = options || {};
+		return new Molfile(opts.v3000).saveMolecule(molecule, opts.ignoreErrors,
+													opts.noRgroups, opts.preserveIndigoDesc);
+	},
+	parse: function (str) {
+		return new Molfile().parseCTFile(str);
+	}
+};

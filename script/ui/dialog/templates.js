@@ -1,7 +1,7 @@
 var Promise = require('promise-polyfill');
 
 require('../../rnd');
-var Molfile = require('../../chem/molfile');
+var molfile = require('../../chem/molfile');
 
 var ajax = require('../../util/ajax.js');
 
@@ -75,7 +75,7 @@ function initTemplateCustom (el, base_url) {
 			var li =  new Element('li');
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
-			var mol = new Molfile().parseCTFile(tmpl.molfile),
+			var mol = molfile.parse(tmpl.molfile),
 			render = new rnd.Render(li, 0, {
 				'autoScale': true,
 				'autoScaleMargin': 0,

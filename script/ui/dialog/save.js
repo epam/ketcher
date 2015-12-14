@@ -87,8 +87,7 @@ function convertMolecule (server, molecule, format) {
 			resolve(moldata);
 		}
 		else if (format == 'smi') {
-			resolve(!ui.standalone ? server.smiles({ moldata: moldata }) :
-				smiles.stringify(molecule));
+			resolve(smiles.stringify(molecule));
 		}
 		else if (format == 'inchi') {
 			if (ui.standalone)

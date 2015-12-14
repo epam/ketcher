@@ -11,14 +11,8 @@ require('./rnd');
 var ui = global.ui;
 var rnd = global.rnd;
 
-function getSmiles(forceLocal) {
-	var local = ui.standalone || forceLocal;
-	var saver = local ? smiles : molfile;
-	var mol = saver.stringify(ui.ctab, { ignoreErrors: true });
-	// TODO: Remove me. Remains here for getSmiles api compatibility
-	return local ? mol : ketcher.server.smiles.sync({
-		moldata: mol
-	});
+function getSmiles() {
+	return smiles.stringify(ui.ctab, { ignoreErrors: true });
 };
 
 function getMolfile() {

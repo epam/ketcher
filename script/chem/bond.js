@@ -1,11 +1,10 @@
 var Vec2 = require('../util/vec2');
-var element = require('./element');
 
 var Bond = function (params)
 {
 	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
 		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
-	
+
 	this.begin = params.begin;
 	this.end = params.end;
 	this.type = params.type;
@@ -18,14 +17,14 @@ var Bond = function (params)
 	this.sb = 0;
 	this.sa = 0;
 	this.angle = 0;
-	
+
 	if (params.stereo)
 		this.stereo = params.stereo;
 	if (params.topology)
 		this.topology = params.topology;
 	if (params.reactingCenterStatus)
 		this.reactingCenterStatus = params.reactingCenterStatus;
-	
+
 	this.center = new Vec2();
 };
 
@@ -42,7 +41,7 @@ Bond.PATTERN =
 		DOUBLE_OR_AROMATIC: 7,
 		ANY: 8
 	},
-	
+
 	STEREO:
  {
 		NONE: 0,
@@ -51,14 +50,14 @@ Bond.PATTERN =
 		DOWN: 6,
 		CIS_TRANS: 3
 	},
-	
+
 	TOPOLOGY:
  {
 		EITHER: 0,
 		RING: 1,
 		CHAIN: 2
 	},
-	
+
 	REACTING_CENTER:
  {
 		NOT_CENTER: -1,

@@ -1,5 +1,4 @@
 var Map = require('../util/map');
-var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var element = require('./element');
 
@@ -980,11 +979,11 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	var sgroups = mol.sgroups;
 	var toRemove = [];
 	var errors = 0;
-	
+
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
 		var sg = mol.sgroups.get(id);
 		var errorIgnore = false;
-		
+
 		try {
 			sg.prepareForSaving(mol);
 		} catch (ex) {
@@ -1001,7 +1000,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	if (errors) {
 		alert('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.');
 	}
-	
+
 	for (var i = 0; i < toRemove.length; ++i) {
 		mol.sGroupDelete(toRemove[i]);
 	}

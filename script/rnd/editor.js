@@ -8,8 +8,6 @@ var Struct = require('../chem/struct');
 var Molfile = require('../chem/molfile');
 var SGroup = require('../chem/sgroup');
 
-var util = require('../util');
-
 require('./restruct');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line

@@ -214,6 +214,12 @@ module.exports = function (grunt) {
 			}
 		},
 
+		githooks: {
+			default: {
+				'pre-commit': 'check-epam-email'
+			}
+		},
+
 		watch: {
 			options: {
 				atBegin: true
@@ -238,6 +244,19 @@ module.exports = function (grunt) {
 				files: '<%= options.dist %>/**'
 			}
 		}
+	});
+
+	grunt.registerTask('check-epam-email', 'Checks for epam email', function(arg1, arg2) {
+		// TODO: should be pre-push and check remote origin
+		var cp = require('child_process');
+		try {
+			var email = cp.execSync('git config user.email').toString().trim();
+			if (!/@epam.com$/.test(email)) {
+				grunt.log.error('Email', email, 'is not from EPAM domain.');
+				grunt.log.error('To check git project\'s settings run `git config --list`');
+				grunt.fatal('Could not continue. Bye!', 3);
+			}
+		} catch(e) {};
 	});
 
 	function patchVersionRev(err, stdout, _, cb) {

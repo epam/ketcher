@@ -39,6 +39,7 @@
     "grunt-contrib-less": "~0.11.3",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-fontello": "~0.1.3",
+    "grunt-githooks": "^0.4.0",
     "grunt-shell": "^1.1.2",
     "load-grunt-tasks": "~0.6.0",
     "pretty": "^0.1.2",
@@ -47,6 +48,7 @@
   },
   "scripts": {
     "build": "npm install && grunt",
+    "postinstall": "grunt githooks",
     "test": "echo \"Error: no test yet exists\" && exit 1"
   },
   "dependencies": {

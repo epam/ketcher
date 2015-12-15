@@ -47,7 +47,7 @@ module.exports = function (grunt) {
 
 		browserify: {
 			options: {
-				banner: '<%= options.banner %>',
+				//banner: '<%= options.banner %>',
 				browserifyOptions: {
 					standalone: '<%= pkg.name %>'
 				},

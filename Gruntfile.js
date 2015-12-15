@@ -1,6 +1,3 @@
-/* jshint node: true */
-/* eslint-disable */
-
 module.exports = function (grunt) {
 	'use strict';
 
@@ -26,6 +23,7 @@ module.exports = function (grunt) {
 
 			// build options
 			// is there a way to automate?
+			'dist': grunt.option('dist') || 'dist',
 			'build-number': grunt.option('build-number'),
 			'build-date': grunt.option('build-date') ||
 				          grunt.template.today('yyyy-mm-dd HH-MM-ss'),
@@ -68,7 +66,7 @@ module.exports = function (grunt) {
 					}
 				},
 				files: {
-					'dist/<%= pkg.name %>.js': ['script/index.js']
+					'<%= options.dist %>/<%= pkg.name %>.js': ['script/index.js']
 				}
 			},
 			default: {
@@ -99,7 +97,7 @@ module.exports = function (grunt) {
 					report: 'min'
 				},
 				src: 'style/main.less',
-				dest: 'dist/<%= pkg.name %>.css'
+				dest: '<%= options.dist %>/<%= pkg.name %>.css'
 			},
 			dev: {
 				files: ['<%= less.default %>']
@@ -116,14 +114,14 @@ module.exports = function (grunt) {
 				},
 
 				src: 'template/main.hbs',
-				dest: 'dist/<%= pkg.name %>.html'
+				dest: '<%= options.dist %>/<%= pkg.name %>.html'
 			}
 		},
 
 		fontello: {
 			options: {
 				config  : 'icons/config.json',
-				fonts   : 'dist',
+				fonts   : '<%= options.dist %>',
 				styles  : false
 			},
 			default: {},
@@ -141,25 +139,25 @@ module.exports = function (grunt) {
 				expand: true,
 				flatten: true,
 				src: 'script/prototype-min.js',
-				dest: 'dist'
+				dest: '<%= options.dist %>'
 			},
 			raphael: {
 				expand: true,
 				flatten: true,
 				src: require.resolve('raphael/raphael-min.js'),
-				dest: 'dist'
+				dest: '<%= options.dist %>'
 			},
 			// TODO: find better place to store static
 			static: {
 				expand: true,
 				src: ['<%= options.distrib %>'],
-				dest: 'dist'
+				dest: '<%= options.dist %>'
 			},
 			'svg-fix': {
 				expand: true,
 				cwd: '.tmp',
 				src: ['<%= pkg.name %>.{svg,ttf}'],
-				dest: 'dist'
+				dest: '<%= options.dist %>'
 			}
 		},
 
@@ -186,7 +184,7 @@ module.exports = function (grunt) {
 				files: [
 					{
 						expand: true,
-						cwd: 'dist',
+						cwd: '<%= options.dist %>',
 						src: '**',
 						dest: '<%= pkg.name %>-<%= pkg.version %>'
 					},
@@ -201,7 +199,7 @@ module.exports = function (grunt) {
 		},
 
 		clean: {
-			all: ['dist', '<%= pkg.name %>*.zip'],
+			all: ['<%= options.dist %>', '<%= pkg.name %>*.zip'],
 			tmp: '.tmp/**'
 		},
 
@@ -237,7 +235,7 @@ module.exports = function (grunt) {
 					atBegin: false,
 					livereload: true
 				},
-				files: 'dist/**'
+				files: '<%= options.dist %>/**'
 			}
 		}
 	});

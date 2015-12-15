@@ -31,7 +31,9 @@ function unwrap(xhr) {
 	throw Error('Unknown server error: ' + data);
 }
 
-function api (base_url) {
+function api (base) {
+	var baseUrl = /\/$/.test(base) ? base : base + '/';
+
 	function request (method, url) {
 		function options(data, params, sync) {
 			return {
@@ -52,7 +54,7 @@ function api (base_url) {
 			// TODO: handle errors
 			return unwrap(ajax(options(data, params, true)));
 		};
-		res.url = base_url + url;
+		res.url = baseUrl + url;
 		return res;
 	}
 
@@ -68,7 +70,7 @@ function api (base_url) {
 		smiles: request('POST', 'smiles'),
 		save: request('POST', 'save'),
 		knocknock: function () {
-			return ajax(base_url + 'knocknock').then(function (xhr) {
+			return ajax(baseUrl + 'knocknock').then(function (xhr) {
 				if (xhr.responseText !== 'You are welcome!') {
 					throw Error('Server is not compatible');
 				}

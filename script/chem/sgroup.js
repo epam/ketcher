@@ -417,20 +417,6 @@ SGroup.getBonds = function (mol, sg) {
 };
 
 var GroupMul = {
-	draw: function (remol) {
-		var render = remol.render;
-		var set = render.paper.set();
-		var inBonds = [], xBonds = [];
-		var atomSet = Set.fromList(this.atoms);
-		SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-		SGroup.bracketPos(this, render, remol.molecule, xBonds);
-		var bb = this.bracketBox;
-		var d = this.bracketDir, n = d.rotateSC(1, 0);
-		this.areas = [bb];
-		SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, this.data.mul);
-		return set;
-	},
-
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = util.stringPadded(sgMap[this.id], 3);
 
@@ -585,24 +571,6 @@ var GroupMul = {
 };
 
 var GroupSru = {
-	draw: function (remol) {
-		var render = remol.render;
-		var set = render.paper.set();
-		var inBonds = [], xBonds = [];
-		var atomSet = Set.fromList(this.atoms);
-		SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-		SGroup.bracketPos(this, render, remol.molecule, xBonds);
-		var bb = this.bracketBox;
-		var d = this.bracketDir, n = d.rotateSC(1, 0);
-		this.areas = [bb];
-		var connectivity = this.data.connectivity || 'eu';
-		if (connectivity == 'ht')
-			connectivity = '';
-		var subscript = this.data.subscript || 'n';
-		SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, subscript, connectivity);
-		return set;
-	},
-
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = util.stringPadded(sgMap[this.id], 3);
 
@@ -633,22 +601,6 @@ var GroupSru = {
 };
 
 var GroupSup = {
-	draw: function (remol) {
-		var render = remol.render;
-		var set = render.paper.set();
-		var inBonds = [], xBonds = [];
-		var atomSet = Set.fromList(this.atoms);
-		SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-		SGroup.bracketPos(this, render, remol.molecule, xBonds);
-		var bb = this.bracketBox;
-		var d = this.bracketDir, n = d.rotateSC(1, 0);
-		this.areas = [bb];
-		SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n, this.data.name, null, {
-			'font-style': 'italic'
-		});
-		return set;
-	},
-
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = util.stringPadded(sgMap[this.id], 3);
 
@@ -681,23 +633,6 @@ var GroupSup = {
 };
 
 var GroupGen = {
-	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var styles = render.styles;
-		var paper = render.paper;
-		var set = paper.set();
-		var inBonds = [], xBonds = [];
-		var atomSet = Set.fromList(this.atoms);
-		SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-		SGroup.bracketPos(this, render, remol.molecule, xBonds);
-		var bb = this.bracketBox;
-		var d = this.bracketDir, n = d.rotateSC(1, 0);
-		this.areas = [bb];
-		SGroup.drawBrackets(set, render, this, xBonds, atomSet, bb, d, n);
-		return set;
-	},
-
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
 		var idstr = util.stringPadded(sgMap[this.id], 3);
 
@@ -747,52 +682,6 @@ var GroupDat = {
 			text.toFront()
 		);
 		return st;
-	},
-
-	draw: function (remol) {
-		var render = remol.render;
-		var settings = render.settings;
-		var paper = render.paper;
-		var set = paper.set();
-		var atoms = SGroup.getAtoms(remol, this);
-		var i;
-		SGroup.bracketPos(this, render, remol.molecule);
-		this.areas = this.bracketBox ? [this.bracketBox] : [];
-		if (this.pp == null) {
-			// NB: we did not pass xbonds parameter to the backetPos method above,
-			//  so the result will be in the regular coordinate system
-			SGroup.setPos(remol, this, this.bracketBox.p1.add(new Vec2(0.5, 0.5)));
-		}
-		var ps = this.pp.scaled(settings.scaleFactor);
-
-		if (this.data.attached) {
-			for (i = 0; i < atoms.length; ++i) {
-				var atom = remol.atoms.get(atoms[i]);
-				var p = render.ps(atom.a.pp);
-				var bb = atom.visel.boundingBox;
-				if (bb != null) {
-					p.x = Math.max(p.x, bb.p1.x);
-				}
-				p.x += settings.lineWidth; // shift a bit to the right
-				var name_i = this.showValue(paper, p, this, settings);
-				var box_i = util.relBox(name_i.getBBox());
-				name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
-				set.push(name_i);
-				var sbox_i = Box2Abs.fromRelBox(util.relBox(name_i.getBBox()));
-				sbox_i = sbox_i.transform(render.scaled2obj, render);
-				this.areas.push(sbox_i);
-			}
-		} else {
-			var name = this.showValue(paper, ps, this, settings);
-			var box = util.relBox(name.getBBox());
-			name.translateAbs(0.5 * box.width, -0.5 * box.height);
-			set.push(name);
-			var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
-			this.dataArea = sbox.transform(render.scaled2obj, render);
-			if (!remol.sgroupData.has(this.id))
-				remol.sgroupData.set(this.id, new rnd.ReDataSGroupData(this));
-		}
-		return set;
 	},
 
 	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {

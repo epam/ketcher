@@ -629,13 +629,137 @@ rnd.ReStruct.prototype.drawReactionPlus = function (id, item)
 		path.translateAbs(offset.x, offset.y);
 };
 
+var drawGroupMul = function (remol, sgroup) {
+	var render = remol.render;
+	var set = render.paper.set();
+	var inBonds = [], xBonds = [];
+	var atomSet = Set.fromList(sgroup.atoms);
+	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	var bb = sgroup.bracketBox;
+	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
+	sgroup.areas = [bb];
+	SGroup.drawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, sgroup.data.mul);
+	return set;
+}
+
+var drawGroupSru = function (remol, sgroup) {
+	var render = remol.render;
+	var set = render.paper.set();
+	var inBonds = [], xBonds = [];
+	var atomSet = Set.fromList(sgroup.atoms);
+	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	var bb = sgroup.bracketBox;
+	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
+	sgroup.areas = [bb];
+	var connectivity = sgroup.data.connectivity || 'eu';
+	if (connectivity == 'ht')
+		connectivity = '';
+	var subscript = sgroup.data.subscript || 'n';
+	SGroup.drawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, subscript, connectivity);
+	return set;
+}
+
+var drawGroupSup = function (remol, sgroup) {
+	var render = remol.render;
+	var set = render.paper.set();
+	var inBonds = [], xBonds = [];
+	var atomSet = Set.fromList(sgroup.atoms);
+	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	var bb = sgroup.bracketBox;
+	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
+	sgroup.areas = [bb];
+	SGroup.drawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, sgroup.data.name, null, {
+		'font-style': 'italic'
+	});
+	return set;
+}
+
+var drawGroupGen = function (remol, sgroup) {
+	var render = remol.render;
+	var paper = render.paper;
+	var set = paper.set();
+	var inBonds = [], xBonds = [];
+	var atomSet = Set.fromList(sgroup.atoms);
+	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	var bb = sgroup.bracketBox;
+	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
+	sgroup.areas = [bb];
+	SGroup.drawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n);
+	return set;
+}
+
+var drawGroupDat = function (remol, sgroup) {
+	var render = remol.render;
+	var settings = render.settings;
+	var paper = render.paper;
+	var set = paper.set();
+	var atoms = SGroup.getAtoms(remol, sgroup);
+	var i;
+	SGroup.bracketPos(sgroup, render, remol.molecule);
+	sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
+	if (sgroup.pp == null) {
+		// NB: we did not pass xbonds parameter to the backetPos method above,
+		//  so the result will be in the regular coordinate system
+		SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
+	}
+	var ps = sgroup.pp.scaled(settings.scaleFactor);
+	
+	if (sgroup.data.attached) {
+		for (i = 0; i < atoms.length; ++i) {
+			var atom = remol.atoms.get(atoms[i]);
+			var p = render.ps(atom.a.pp);
+			var bb = atom.visel.boundingBox;
+			if (bb != null) {
+				p.x = Math.max(p.x, bb.p1.x);
+			}
+			p.x += settings.lineWidth; // shift a bit to the right
+			var name_i = sgroup.showValue(paper, p, sgroup, settings);
+			var box_i = util.relBox(name_i.getBBox());
+			name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
+			set.push(name_i);
+			var sbox_i = Box2Abs.fromRelBox(util.relBox(name_i.getBBox()));
+			sbox_i = sbox_i.transform(render.scaled2obj, render);
+			sgroup.areas.push(sbox_i);
+		}
+	} else {
+		var name = sgroup.showValue(paper, ps, sgroup, settings);
+		var box = util.relBox(name.getBBox());
+		name.translateAbs(0.5 * box.width, -0.5 * box.height);
+		set.push(name);
+		var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
+		sgroup.dataArea = sbox.transform(render.scaled2obj, render);
+		if (!remol.sgroupData.has(sgroup.id))
+			remol.sgroupData.set(sgroup.id, new rnd.ReDataSGroupData(sgroup));
+	}
+	return set;
+}
+
+var SGroup_draw = {
+	'MUL': drawGroupMul,
+	'SRU': drawGroupSru,
+	'SUP': drawGroupSup,
+	'DAT': drawGroupDat,
+	'GEN': drawGroupGen
+};
+
+var sgroup_draw = function (remol, sgroup) {
+//	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
+	SGroup_draw[sgroup.type](remol, sgroup);
+} 
+
 rnd.ReStruct.prototype.drawSGroups = function ()
 {
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
-		var sgroup = this.sgroups.get(id);
-		var path = sgroup.draw(this.render);
-		this.addReObjectPath('data', sgroup.visel, path, null, true);
-		sgroup.setHighlight(sgroup.highlight, this.render); // TODO: fix this
+		var resgroup = this.sgroups.get(id);
+		var sgroup = resgroup.item;
+		var remol = this.render.ctab;
+		var path = sgroup_draw(remol, sgroup);
+		this.addReObjectPath('data', resgroup.visel, path, null, true);
+		resgroup.setHighlight(resgroup.highlight, this.render); // TODO: fix this
 	}, this);
 };
 
@@ -1133,13 +1257,13 @@ rnd.ReRGroup.prototype.draw = function (render) { // TODO need to review paramet
 		// TODO [RB] temporary solution, need to review
 		//BEGIN
 		/*
-         if (this.item.range.length > 0)
-         logic.push(this.item.range);
-         if (this.item.resth)
-         logic.push("RestH");
-         if (this.item.ifthen > 0)
-         logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
-         */
+		 if (this.item.range.length > 0)
+		 logic.push(this.item.range);
+		 if (this.item.resth)
+		 logic.push("RestH");
+		 if (this.item.ifthen > 0)
+		 logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
+		 */
 		logic.push(
 			(this.item.ifthen > 0 ? 'IF ' : '')
 			 + 'R' + key.toString()
@@ -1186,10 +1310,10 @@ rnd.ReRGroup.prototype.drawHighlight = function (render) {
 		var ret = this._draw(render, rgid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*
-         this.getAtoms(render).each(function(aid) {
-         render.ctab.atoms.get(aid).drawHighlight(render);
-         }, this);
-         */
+		 this.getAtoms(render).each(function(aid) {
+		 render.ctab.atoms.get(aid).drawHighlight(render);
+		 }, this);
+		 */
 		this.item.frags.each(function (fnum, fid) {
 			render.ctab.frags.get(fid).drawHighlight(render);
 		}, this);
@@ -1230,10 +1354,6 @@ rnd.ReSGroup.findClosest = function (render, p) {
 			'dist':minDist
 		};
 	return null;
-};
-
-rnd.ReSGroup.prototype.draw = function (render) { // TODO need to review parameter list
-	return this.item.draw(render.ctab);
 };
 
 rnd.ReSGroup.prototype.drawHighlight = function (render) {

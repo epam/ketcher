@@ -146,6 +146,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 		//END
 
+		var zoomStaticPoint = null;
 		clientArea.observe('touchstart', function (event) {
 			self.resetLongTapTimeout(true);
 			if (event.touches.length == 2) {
@@ -154,7 +155,8 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 					pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
 					pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
 				};
-				ui.setZoomStaticPointInit(ui.page2obj(this._tui.center));
+				// set the reference point for the "static point" zoom (in object coordinates)
+				zoomStaticPoint = new Vec2(ui.page2obj(this._tui.center));
 			} else if (event.touches.length == 1) {
 				self.setLongTapTimeout(event);
 			}
@@ -175,7 +177,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 		clientArea.observe('gesturechange', function (event) {
 			ui.render.setZoom(this._tui.scale0 * event.scale);
-			ui.setZoomStaticPoint(ui.page2canvas2(this._tui.center));
+			ui.setZoomStaticPoint(ui.page2canvas2(this._tui.center), zoomStaticPoint);
 			ui.render.update();
 			event.preventDefault();
 		});

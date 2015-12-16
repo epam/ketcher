@@ -42,7 +42,6 @@ var toolbar;
 var lastSelected;
 var clientArea = null;
 var dropdownOpened;
-var zspObj;
 var server;
 
 var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
@@ -161,7 +160,7 @@ function init (options, apiServer) {
 	ui.render.onCanvasOffsetChanged = onOffsetChanged;
 
 	selectAction('select-lasso');
-	setScrollOffset(0, 0);
+	//setScrollOffset(0, 0);
 
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();
@@ -585,31 +584,16 @@ function updateZoom (refresh) {
 	}
 }
 
-// get the size of the view window in pixels
-function getViewSz () {
-	return new Vec2(ui.render.viewSz);
-};
-
-function recenter (cp) {
-	// c is a point in scaled coordinates, which will be positioned in the center of the view area
-	console.assert(cp, 'Center point not specified');
+function recenter (rp, vp) {
+	// rp is a point in scaled coordinates, which will be positioned
+	// vp is the point where the reference point should now be (in view coordinates)
+	//    or the center if not set
+	console.assert(rp, 'Reference point not specified');
 	setScrollOffset(0, 0);
-	var sp = ui.render.obj2view(cp).sub(ui.render.viewSz.scaled(0.5));
-	setScrollOffset(sp.x, sp.y);
-};
-
-// set the reference point for the "static point" zoom (in object coordinates)
-function setZoomStaticPointInit (s) {
-	zspObj = new Vec2(s);
-};
-
-// vp is the point where the reference point should now be (in view coordinates)
-function setZoomStaticPoint (vp) {
-	setScrollOffset(0, 0);
-	var avp = ui.render.obj2view(zspObj);
-	var so = avp.sub(vp);
+	var avp = ui.render.obj2view(rp);
+	var so = avp.sub(vp || ui.render.viewSz.scaled(0.5));
 	setScrollOffset(so.x, so.y);
-};
+}
 
 function setScrollOffset (x, y) {
 	var cx = clientArea.clientWidth;
@@ -617,13 +601,10 @@ function setScrollOffset (x, y) {
 	ui.render.extendCanvas(x, y, cx + x, cy + y);
 	clientArea.scrollLeft = x;
 	clientArea.scrollTop = y;
-	scrollLeft = clientArea.scrollLeft; // TODO: store drag position in scaled systems
-	scrollTop = clientArea.scrollTop;
-};
-
-function setScrollOffsetRel (dx, dy) {
-	setScrollOffset(clientArea.scrollLeft + dx, clientArea.scrollTop + dy);
-};
+	 // TODO: store drag position in scaled systems
+	// scrollLeft = clientArea.scrollLeft;
+	// scrollTop = clientArea.scrollTop;
+}
 
 //
 // Automatic layout
@@ -803,20 +784,14 @@ function scrollPos ()
 	return new Vec2(clientArea.scrollLeft, clientArea.scrollTop);
 };
 
-//
-// Scrolling
-//
-var scrollLeft = null;
-var scrollTop = null;
 
 function onScroll_ClientArea (event)
 {
-	// ! DIALOG ME
-	// if ($('input_label').visible())
-	//      $('input_label').hide();
+	if ($('input_label').visible())
+		$('input_label').hide();
 
-	scrollLeft = clientArea.scrollLeft;
-	scrollTop = clientArea.scrollTop;
+	// scrollLeft = clientArea.scrollLeft;
+	// scrollTop = clientArea.scrollTop;
 
 	util.stopEventPropagation(event);
 };
@@ -1161,8 +1136,7 @@ util.extend(ui, {
 	bondTypeMap: bondTypeMap,
 
 	// TODO: move schrool/zoom machinery to render
-	setZoomStaticPointInit: setZoomStaticPointInit,
-	setZoomStaticPoint: setZoomStaticPoint,
+	setZoomStaticPoint: recenter,
 	page2canvas2: page2canvas2,
 	scrollPos: scrollPos,
 	page2obj: page2obj,

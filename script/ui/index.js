@@ -447,7 +447,7 @@ function updateMolecule (mol)
 	try {
 		ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 		ui.render.update();
-		recenter(ui.render.getStructCenter());
+		ui.render.recoordinate(ui.render.getStructCenter());
 	}
 	catch (er) {
 		alert(er.message);
@@ -579,31 +579,9 @@ function updateZoom (refresh) {
 	var value = parseFloat(zoomSelect.value) / 100;
 	if (refresh) {
 		ui.render.setZoom(value);
-		recenter(ui.render.getStructCenter(ui.editor.getSelection()));
+		ui.render.recoordinate(ui.render.getStructCenter(ui.editor.getSelection()));
 		ui.render.update();
 	}
-}
-
-function recenter (rp, vp) {
-	// rp is a point in scaled coordinates, which will be positioned
-	// vp is the point where the reference point should now be (in view coordinates)
-	//    or the center if not set
-	console.assert(rp, 'Reference point not specified');
-	setScrollOffset(0, 0);
-	var avp = ui.render.obj2view(rp);
-	var so = avp.sub(vp || ui.render.viewSz.scaled(0.5));
-	setScrollOffset(so.x, so.y);
-}
-
-function setScrollOffset (x, y) {
-	var cx = clientArea.clientWidth;
-	var cy = clientArea.clientHeight;
-	ui.render.extendCanvas(x, y, cx + x, cy + y);
-	clientArea.scrollLeft = x;
-	clientArea.scrollTop = y;
-	 // TODO: store drag position in scaled systems
-	// scrollLeft = clientArea.scrollLeft;
-	// scrollTop = clientArea.scrollTop;
 }
 
 //
@@ -783,7 +761,6 @@ function scrollPos ()
 {
 	return new Vec2(clientArea.scrollLeft, clientArea.scrollTop);
 };
-
 
 function onScroll_ClientArea (event)
 {
@@ -1136,7 +1113,6 @@ util.extend(ui, {
 	bondTypeMap: bondTypeMap,
 
 	// TODO: move schrool/zoom machinery to render
-	setZoomStaticPoint: recenter,
 	page2canvas2: page2canvas2,
 	scrollPos: scrollPos,
 	page2obj: page2obj,

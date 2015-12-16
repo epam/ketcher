@@ -177,7 +177,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 		clientArea.observe('gesturechange', function (event) {
 			ui.render.setZoom(this._tui.scale0 * event.scale);
-			ui.setZoomStaticPoint(ui.page2canvas2(this._tui.center), zoomStaticPoint);
+			ui.render.recoordinate(ui.page2canvas2(this._tui.center), zoomStaticPoint);
 			ui.render.update();
 			event.preventDefault();
 		});
@@ -1075,6 +1075,29 @@ rnd.Render.prototype.setZoom = function (zoom) {
 	console.info('set zoom', zoom);
 	this.zoom = zoom;
 	this._setPaperSize(this.sz);
+};
+
+rnd.Render.prototype.setScrollOffset = function (x, y) {
+	var clientArea = this.clientArea;
+	var cx = clientArea.clientWidth;
+	var cy = clientArea.clientHeight;
+	this.extendCanvas(x, y, cx + x, cy + y);
+	clientArea.scrollLeft = x;
+	clientArea.scrollTop = y;
+	 // TODO: store drag position in scaled systems
+	// scrollLeft = clientArea.scrollLeft;
+	// scrollTop = clientArea.scrollTop;
+};
+
+rnd.Render.prototype.recoordinate = function (rp, vp) {
+	// rp is a point in scaled coordinates, which will be positioned
+	// vp is the point where the reference point should now be (in view coordinates)
+	//    or the center if not set
+	console.assert(rp, 'Reference point not specified');
+	this.setScrollOffset(0, 0);
+	var avp = this.obj2view(rp);
+	var so = avp.sub(vp || this.viewSz.scaled(0.5));
+	this.setScrollOffset(so.x, so.y);
 };
 
 rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {

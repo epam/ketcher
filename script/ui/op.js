@@ -255,7 +255,9 @@ function SGroupDelete (sgid) {
 	this.type = 'OpSGroupDelete';
 	this.data = {'sgid': sgid};
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var sgid = this.data.sgid;
 		var sg = RS.sgroups.get(sgid);
 		this.data.type = sg.item.type;

@@ -414,29 +414,22 @@ Struct.prototype.sGroupDelete = function (sgid)
 	this.sgroups.remove(sgid);
 };
 
-Struct.itemSetPos = function (item, pp) // TODO: remove
+Struct.prototype._atomSetPos = function (id, pp)
 {
-	item.pp = pp;
+	var item_id = this['atoms'].get(id);
+	item_id.pp = pp;
 };
 
-Struct.prototype._itemSetPos = function (map, id, pp, scaleFactor)
+Struct.prototype._rxnPlusSetPos = function (id, pp)
 {
-	Struct.itemSetPos(this[map].get(id), pp, scaleFactor);
-};
-
-Struct.prototype._atomSetPos = function (id, pp, scaleFactor)
-{
-	this._itemSetPos('atoms', id, pp, scaleFactor);
-};
-
-Struct.prototype._rxnPlusSetPos = function (id, pp, scaleFactor)
-{
-	this._itemSetPos('rxnPluses', id, pp, scaleFactor);
+	var item_id = this['rxnPluses'].get(id);
+	item_id.pp = pp;
 };
 
 Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
 {
-	this._itemSetPos('rxnArrows', id, pp, scaleFactor);
+	var item_id = this['rxnArrows'].get(id);
+	item_id.pp = pp;
 };
 
 Struct.prototype.getCoordBoundingBox = function (atomSet)

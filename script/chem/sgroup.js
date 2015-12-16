@@ -6,8 +6,6 @@ var util = require('../util');
 var Atom = require('./atom');
 var Bond = require('./bond');
 
-var rnd = global.rnd = global.rnd || {};
-
 var SGroup = function (type) {
 	if (!type || !(type in SGroup.TYPES))
 		throw new Error('Invalid or unsupported s-group type');

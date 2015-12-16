@@ -152,9 +152,8 @@ function init (options, apiServer) {
 	});
 
 	// Init renderer
-	var opts = new rnd.RenderOptions(options);
-	opts.atomColoring = true;
-	ui.render =  new rnd.Render(clientArea, SCALE, opts);
+	ui.render =  new rnd.Render(clientArea, SCALE,
+	                            util.extend({ atomColoring: true }, options));
 	ui.editor = new Editor(ui.render);
 
 	ui.render.onCanvasOffsetChanged = onOffsetChanged;

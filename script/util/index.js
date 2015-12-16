@@ -293,10 +293,15 @@ var listNextRotate = function (list, value) {
 
 // similar to Object.assign
 // http://www.2ality.com/2014/01/object-assign.html
-var extend = function (dest, src) {
-	for (var prop in src) {
-		if (src.hasOwnProperty(prop)) {
-			dest[prop] = src[prop];
+function extend(dest) {
+	for (var i = 1; i < arguments.length; i++) {
+		var src = arguments[i];
+		if (!src)
+			continue;
+		for (var prop in src) {
+			if (src.hasOwnProperty(prop)) {
+				dest[prop] = src[prop];
+			}
 		}
 	}
 	return dest;

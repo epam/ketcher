@@ -29,46 +29,29 @@ var EventMap = {
 rnd.logMethod = function () { };
 //rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
-rnd.RenderDummy = function (clientArea, scale, opt, viewSz)
-{
-	this.clientArea = clientArea = $(clientArea);
-	clientArea.innerHTML = '';
-	this.paper = new Raphael(clientArea);
-	this.paper.rect(0, 0, 100, 100).attr({
-		'fill':'#0F0',
-		'stroke':'none'
-	});
-	this.setMolecule = function (){};
-	this.update = function (){};
-};
-
-rnd.RenderOptions = function (opt)
-{
-	opt = opt || {};
-
+var defaultRenderOps = {
 	// flags for debugging
-	this.showSelectionRegions = opt.showSelectionRegions || false;
-	this.showAtomIds = opt.showAtomIds || false;
-	this.showBondIds = opt.showBondIds || false;
-	this.showHalfBondIds = opt.showHalfBondIds || false;
-	this.showLoopIds = opt.showLoopIds || false;
-	this.hideChiralFlag = opt.hideChiralFlag || false;
-
+	showSelectionRegions: false,
+	showAtomIds: false,
+	showBondIds: false,
+	showHalfBondIds: false,
+	showLoopIds: false,
 	// rendering customization flags
-	this.showValenceWarnings = !Object.isUndefined(opt.showValenceWarnings) ? opt.showValenceWarnings : true;
-	this.autoScale = opt.autoScale || false; // scale structure to fit into the given view box, used in view mode
-	this.autoScaleMargin = opt.autoScaleMargin || 0;
-	this.maxBondLength = opt.maxBondLength || 0; // 0 stands for "not specified"
-	this.atomColoring = opt.atomColoring || 0;
-	this.hideImplicitHydrogen = opt.hideImplicitHydrogen || false;
-	this.hideTerminalLabels = opt.hideTerminalLabels || false;
-	this.ignoreMouseEvents = opt.ignoreMouseEvents || false; // for view mode
-	this.selectionDistanceCoefficient = (opt.selectionDistanceCoefficient || 0.4) - 0;
+	hideChiralFlag: false,
+	showValenceWarnings: true,
+	autoScale: false, // scale structure to fit into the given view box, used in view mode
+	autoScaleMargin: 0,
+	maxBondLength: 0, // 0 stands for "not specified"
+	atomColoring: 0,
+	hideImplicitHydrogen: false,
+	hideTerminalLabels: false,
+	ignoreMouseEvents: false, // for view mode
+	selectionDistanceCoefficient: 0.4
 };
 
 rnd.Render = function (clientArea, scale, opt, viewSz)
 {
-	this.opt = new rnd.RenderOptions(opt);
+	this.opt = util.extend({}, defaultRenderOps, opt);
 
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
@@ -78,7 +61,8 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	clientArea.innerHTML = '';
 	this.paper = new Raphael(clientArea);
 	this.size = new Vec2();
-	this.viewSz = viewSz || new Vec2(clientArea['clientWidth'] || 100, clientArea['clientHeight'] || 100);
+	this.viewSz = viewSz || new Vec2(clientArea.clientWidth || 100,
+	                                 clientArea.clientHeight || 100);
 	this.bb = new Box2Abs(new Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;

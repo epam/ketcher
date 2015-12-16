@@ -85,6 +85,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.rxnArrow = null;
 	this.rxnMode = false;
 	this.zoom = 1.0;
+	this.current_tool = null;
 	this.structChangeHandlers = [];
 
 	var render = this;
@@ -172,13 +173,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		});
 		clientArea.observe('gesturestart', function (event) {
 			this._tui = this._tui || {};
-			this._tui.scale0 = ui.render.zoom;
+			this._tui.scale0 = self.zoom;
 			event.preventDefault();
 		});
 		clientArea.observe('gesturechange', function (event) {
-			ui.render.setZoom(this._tui.scale0 * event.scale);
-			ui.render.recoordinate(ui.page2canvas2(this._tui.center), zoomStaticPoint);
-			ui.render.update();
+			self.setZoom(this._tui.scale0 * event.scale);
+			self.recoordinate(ui.page2canvas2(this._tui.center), zoomStaticPoint);
+			self.update();
 			event.preventDefault();
 		});
 		clientArea.observe('gestureend', function (event) {
@@ -205,13 +206,13 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
 						if (eventName == 'MouseMove') {
 							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							ui.render.current_tool.processEvent('OnMouseLeave', event);
+							self.current_tool.processEvent('OnMouseLeave', event);
 						}
 						return util.preventDefault(event);
 					}
 				}
 
-				ui.render.current_tool.processEvent('On' + eventName, event);
+				self.current_tool.processEvent('On' + eventName, event);
 				if (eventName != 'MouseUp') {
 					// [NK] do not stop mouseup propagation
 					// to maintain cliparea focus.

@@ -776,8 +776,8 @@ Smiles.prototype._writeRadicals = function (mol)
 };
 
 module.exports = {
-	stringify: function (molecule, options) {
+	stringify: function (struct, options) {
 		var opts = options || {};
-		return new Smiles().saveMolecule(molecule, opts.ignoreErrors);
+		return new Smiles().saveMolecule(struct, opts.ignoreErrors);
 	}
 };

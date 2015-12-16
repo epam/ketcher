@@ -1,28 +1,27 @@
 var ui = global.ui = {};
 
-var AtomList = require('../chem/atomlist');
-var Bond = require('../chem/bond');
-var molfile = require('../chem/molfile');
-var smiles = require('../chem/smiles');
-var SGroup = require('../chem/sgroup');
-
-var Editor = require('../rnd/editor');
-
-require('../rnd');
-
-var rnd = global.rnd;
-
 var Promise = require('promise-polyfill');
 var keymage = require('keymage');
 
+var util = require('../util');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
-var util = require('../util');
-var Action = require('./action.js');
 
-var templates = require('./templates');
+var AtomList = require('../chem/atomlist');
+var Bond = require('../chem/bond');
+var SGroup = require('../chem/sgroup');
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
+
+var molfile = require('../chem/molfile');
+var smiles = require('../chem/smiles');
+
+require('../rnd');
+var rnd = global.rnd;
+var Editor = require('../rnd/editor');
+
+var Action = require('./action.js');
+var templates = require('./templates');
 
 var openDialog = require('./dialog/open.js');
 var saveDialog = require('./dialog/save.js');
@@ -943,8 +942,8 @@ function showSgroupDialog(params) {
 
 // try to reconstruct molfile string instead parsing multiple times
 // TODO: move this logic to chem.Molfile
-function parseMayBeCorruptedCTFile (molfile, checkEmptyLine) {
-	var lines = util.splitNewlines(molfile);
+function parseMayBeCorruptedCTFile (str, checkEmptyLine) {
+	var lines = util.splitNewlines(str);
 	try {
 		return molfile.parse(lines);
 	} catch (ex) {

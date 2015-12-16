@@ -1745,10 +1745,10 @@ var parseRg2000 = function (/* string[] */ ctabLines) /* Struct */
 };
 
 module.exports = {
-	stringify: function (molecule, options) {
+	stringify: function (struct, options) {
 		var opts = options || {};
-		return new Molfile(opts.v3000).saveMolecule(molecule, opts.ignoreErrors,
-													opts.noRgroups, opts.preserveIndigoDesc);
+		return new Molfile(opts.v3000).saveMolecule(struct, opts.ignoreErrors,
+		                                            opts.noRgroups, opts.preserveIndigoDesc);
 	},
 	parse: function (str) {
 		return new Molfile().parseCTFile(str);

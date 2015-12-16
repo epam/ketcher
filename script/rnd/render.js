@@ -174,7 +174,8 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 			event.preventDefault();
 		});
 		clientArea.observe('gesturechange', function (event) {
-			ui.setZoomStaticPoint(this._tui.scale0 * event.scale, ui.page2canvas2(this._tui.center));
+			ui.render.setZoom(this._tui.scale0 * event.scale);
+			ui.setZoomStaticPoint(ui.page2canvas2(this._tui.center));
 			ui.render.update();
 			event.preventDefault();
 		});
@@ -901,9 +902,7 @@ rnd.Render.prototype.update = function (force)
 		if (!this.opt.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-			// The only reference to ui.zoom
-			console.assert(ui.zoom == this.zoom);
-			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / ui.zoom).sub(Vec2.UNIT.scaled(20)));
+			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
 			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)
 				this.oldCb = new Box2Abs();
@@ -1069,6 +1068,9 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 };
 
 rnd.Render.prototype.setZoom = function (zoom) {
+	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
+	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
+	console.info('set zoom', zoom);
 	this.zoom = zoom;
 	this._setPaperSize(this.sz);
 };

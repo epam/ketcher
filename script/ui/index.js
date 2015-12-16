@@ -448,7 +448,7 @@ function updateMolecule (mol)
 	try {
 		ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 		ui.render.update();
-		setZoomCentered(null, ui.render.getStructCenter());
+		recenter(ui.render.getStructCenter());
 	}
 	catch (er) {
 		alert(er.message);
@@ -546,6 +546,8 @@ function calculateCip() {
 //
 function initZoom() {
 	var zoomSelect = subEl('zoom-list');
+	// TODO: need a way to setup zoom range
+	//       e.g. if (zoom < 0.1 || zoom > 10)
 	zoomSelect.on('focus', function () {
 		keymage.pushScope('zoom');
 	});
@@ -553,20 +555,20 @@ function initZoom() {
 		keymage.popScope('zoom');
 	});
 	zoomSelect.on('change', updateZoom);
-	updateZoom(true);
+	updateZoom();
 }
 
 function onClick_ZoomIn () {
 	subEl('zoom-list').selectedIndex++;
-	updateZoom();
+	updateZoom(true);
 };
 
 function onClick_ZoomOut () {
 	subEl('zoom-list').selectedIndex--;
-	updateZoom();
+	updateZoom(true);
 };
 
-function updateZoom (noRefresh) {
+function updateZoom (refresh) {
 	var zoomSelect = subEl('zoom-list');
 	var i = zoomSelect.selectedIndex,
 		len = zoomSelect.length;
@@ -575,43 +577,24 @@ function updateZoom (noRefresh) {
 	subEl('zoom-in').disabled = (i == len - 1);
 	subEl('zoom-out').disabled = (i == 0);
 
-	var value = parseFloat(zoomSelect.options[i].innerHTML) / 100;
-	// TODO: remove this shit (used in rnd.Render guts
-	// only in dialog/crap and render one time
-	ui.zoom = value;
-	if (!noRefresh) {
-		setZoomCentered(value,
-						ui.render.getStructCenter(ui.editor.getSelection()));
+	var value = parseFloat(zoomSelect.value) / 100;
+	if (refresh) {
+		ui.render.setZoom(value);
+		recenter(ui.render.getStructCenter(ui.editor.getSelection()));
 		ui.render.update();
 	}
-};
-
-function setZoomRegular (zoom) {
-	//mr: prevdent unbounded zooming
-	//begin
-	if (zoom < 0.1 || zoom > 10)
-		return;
-	//end
-	ui.zoom = zoom;
-	ui.render.setZoom(ui.zoom);
-	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
-	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-};
+}
 
 // get the size of the view window in pixels
 function getViewSz () {
 	return new Vec2(ui.render.viewSz);
 };
 
-// c is a point in scaled coordinates, which will be positioned in the center of the view area after zooming
-function setZoomCentered (zoom, c) {
-	if (!c)
-		throw new Error('Center point not specified');
-	if (zoom) {
-		setZoomRegular(zoom);
-	}
+function recenter (cp) {
+	// c is a point in scaled coordinates, which will be positioned in the center of the view area
+	console.assert(cp, 'Center point not specified');
 	setScrollOffset(0, 0);
-	var sp = ui.render.obj2view(c).sub(ui.render.viewSz.scaled(0.5));
+	var sp = ui.render.obj2view(cp).sub(ui.render.viewSz.scaled(0.5));
 	setScrollOffset(sp.x, sp.y);
 };
 
@@ -621,8 +604,7 @@ function setZoomStaticPointInit (s) {
 };
 
 // vp is the point where the reference point should now be (in view coordinates)
-function setZoomStaticPoint (zoom, vp) {
-	setZoomRegular(zoom);
+function setZoomStaticPoint (vp) {
 	setScrollOffset(0, 0);
 	var avp = ui.render.obj2view(zspObj);
 	var so = avp.sub(vp);
@@ -1179,7 +1161,6 @@ util.extend(ui, {
 	bondTypeMap: bondTypeMap,
 
 	// TODO: move schrool/zoom machinery to render
-	zoom: 1.0,
 	setZoomStaticPointInit: setZoomStaticPointInit,
 	setZoomStaticPoint: setZoomStaticPoint,
 	page2canvas2: page2canvas2,

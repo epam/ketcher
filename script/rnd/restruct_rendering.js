@@ -8,7 +8,6 @@ var ReLoop = require('./reloop')
 var ReStruct = require('./restruct')
 
 require('./restruct');
-var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var tfx = util.tfx;
 
 ReStruct.prototype.drawArrow = function (a, b)
@@ -278,7 +277,7 @@ ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 	.attr(styles.lineattr);
 };
 
-rnd.dashedPath = function (p0, p1, dash) {
+ReStruct.prototype.dashedPath = function (p0, p1, dash) {
 	var t0 = 0;
 	var t1 = Vec2.dist(p0, p1);
 	var d = Vec2.diff(p1, p0).normalized();
@@ -313,14 +312,14 @@ ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine)
 	return paper.set([l1,l2]);
 };
 
-rnd.dashdotPattern = [0.125,0.125,0.005,0.125];
+ReStruct.prototype.dashdotPattern = [0.125,0.125,0.005,0.125];
 
 ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 {
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
 	var scale = this.render.settings.scaleFactor;
-	var dash = util.map(rnd.dashdotPattern, function (v){ return v * scale; });
+	var dash = util.map(this.dashdotPattern, function (v){ return v * scale; });
 	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, shift > 0 ? 1 : 2, dash);
 	var l1 = paths[0], l2 = paths[1];
 // dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
@@ -361,8 +360,8 @@ ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 			this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	var l1 = paper.path(dash && (mask & 1) ? rnd.dashedPath(a2, b2, dash) : ReStruct.makeStroke(a2, b2)).attr(styles.lineattr);
-	var l2 = paper.path(dash && (mask & 2) ? rnd.dashedPath(a3, b3, dash) : ReStruct.makeStroke(a3, b3)).attr(styles.lineattr);
+	var l1 = paper.path(dash && (mask & 1) ? this.dashedPath(a2, b2, dash) : ReStruct.makeStroke(a2, b2)).attr(styles.lineattr);
+	var l2 = paper.path(dash && (mask & 2) ? this.dashedPath(a3, b3, dash) : ReStruct.makeStroke(a3, b3)).attr(styles.lineattr);
 	return [l1, l2];
 };
 
@@ -372,7 +371,7 @@ ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
 	var scale = this.render.settings.scaleFactor;
-	var dash = util.map(rnd.dashdotPattern, function (v){ return v * scale; });
+	var dash = util.map(this.dashdotPattern, function (v){ return v * scale; });
 	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, 3, dash);
 	var l1 = paths[0], l2 = paths[1];
 // dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)

@@ -17,8 +17,9 @@ var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
 
 require('../rnd');
-var rnd = global.rnd;
+
 var Editor = require('../rnd/editor');
+var Render = require('../rnd/render')
 
 var Action = require('./action.js');
 var templates = require('./templates');
@@ -152,7 +153,7 @@ function init (options, apiServer) {
 	});
 
 	// Init renderer
-	ui.render =  new rnd.Render(clientArea, SCALE,
+	ui.render =  new Render(clientArea, SCALE,
 	                            util.extend({ atomColoring: true }, options));
 	ui.editor = new Editor(ui.render);
 

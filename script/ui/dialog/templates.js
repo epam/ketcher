@@ -6,8 +6,8 @@ var molfile = require('../../chem/molfile');
 var ajax = require('../../util/ajax.js');
 
 var ui = global.ui;
-var rnd = global.rnd;
 
+var Render = require('../../rnd/render')
 
 // TODO: move to Molfile
 function parseSdf (sdf) {
@@ -76,7 +76,7 @@ function initTemplateCustom (el, base_url) {
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
 			var mol = molfile.parse(tmpl.molfile),
-			render = new rnd.Render(li, 0, {
+			render = new Render(li, 0, {
 				'autoScale': true,
 				'autoScaleMargin': 0,
 				//'debug': true,

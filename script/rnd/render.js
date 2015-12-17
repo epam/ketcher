@@ -57,7 +57,7 @@ var defaultRenderOps = {
 	selectionDistanceCoefficient: 0.4
 };
 
-rnd.Render = function (clientArea, scale, opt, viewSz)
+var Render = function (clientArea, scale, opt, viewSz)
 {
 	this.opt = util.extend({}, defaultRenderOps, opt);
 
@@ -225,14 +225,14 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 	this.onCanvasSizeChanged = null; //function(newSize, oldSize){};
 };
 
-rnd.Render.prototype.addStructChangeHandler = function (handler)
+Render.prototype.addStructChangeHandler = function (handler)
 {
 	if (handler in this.structChangeHandlers)
 		throw new Error('handler already present');
 	this.structChangeHandlers.push(handler);
 };
 
-rnd.Render.prototype.view2scaled = function (p, isRelative) {
+Render.prototype.view2scaled = function (p, isRelative) {
 	var scroll = ui.scrollPos();
 	if (!this.useOldZoom) {
 		p = p.scaled(1 / this.zoom);
@@ -242,30 +242,30 @@ rnd.Render.prototype.view2scaled = function (p, isRelative) {
 	return p;
 };
 
-rnd.Render.prototype.scaled2view = function (p, isRelative) {
+Render.prototype.scaled2view = function (p, isRelative) {
 	p = isRelative ? p : p.add(this.offset).sub(ui.scrollPos().scaled(1 / this.zoom));
 	if (!this.useOldZoom)
 		p = p.scaled(this.zoom);
 	return p;
 };
 
-rnd.Render.prototype.scaled2obj = function (v) {
+Render.prototype.scaled2obj = function (v) {
 	return v.scaled(1 / this.settings.scaleFactor);
 };
 
-rnd.Render.prototype.obj2scaled = function (v) {
+Render.prototype.obj2scaled = function (v) {
 	return v.scaled(this.settings.scaleFactor);
 };
 
-rnd.Render.prototype.view2obj = function (v, isRelative) {
+Render.prototype.view2obj = function (v, isRelative) {
 	return this.scaled2obj(this.view2scaled(v, isRelative));
 };
 
-rnd.Render.prototype.obj2view = function (v, isRelative) {
+Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
 };
 
-rnd.Render.prototype.findItem = function (event, maps, skip) {
+Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
 			'ui' in window && 'page2obj' in ui ? new Vec2(ui.page2obj(event)) :
 		new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
@@ -285,11 +285,11 @@ rnd.Render.prototype.findItem = function (event, maps, skip) {
 	return ci;
 };
 
-rnd.Render.prototype.client2Obj = function (clientPos) {
+Render.prototype.client2Obj = function (clientPos) {
 	return new Vec2(clientPos).sub(this.offset);
 };
 
-rnd.Render.prototype.setMolecule = function (ctab, norescale)
+Render.prototype.setMolecule = function (ctab, norescale)
 {
 	rnd.logMethod('setMolecule');
 	this.paper.clear();
@@ -301,14 +301,14 @@ rnd.Render.prototype.setMolecule = function (ctab, norescale)
 };
 
 // molecule manipulation interface
-rnd.Render.prototype.atomGetAttr = function (aid, name)
+Render.prototype.atomGetAttr = function (aid, name)
 {
 	rnd.logMethod('atomGetAttr');
 	// TODO: check attribute names
 	return this.ctab.molecule.atoms.get(aid)[name];
 };
 
-rnd.Render.prototype.invalidateAtom = function (aid, level)
+Render.prototype.invalidateAtom = function (aid, level)
 {
 	var atom = this.ctab.atoms.get(aid);
 	this.ctab.markAtom(aid, level ? 1 : 0);
@@ -325,7 +325,7 @@ rnd.Render.prototype.invalidateAtom = function (aid, level)
 	}
 };
 
-rnd.Render.prototype.invalidateLoop = function (bid)
+Render.prototype.invalidateLoop = function (bid)
 {
 	var bond = this.ctab.bonds.get(bid);
 	var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
@@ -336,7 +336,7 @@ rnd.Render.prototype.invalidateLoop = function (bid)
 		this.ctab.loopRemove(lid2);
 };
 
-rnd.Render.prototype.invalidateBond = function (bid)
+Render.prototype.invalidateBond = function (bid)
 {
 	var bond = this.ctab.bonds.get(bid);
 	this.invalidateLoop(bid);
@@ -344,7 +344,7 @@ rnd.Render.prototype.invalidateBond = function (bid)
 	this.invalidateAtom(bond.b.end, 0);
 };
 
-rnd.Render.prototype.invalidateItem = function (map, id, level)
+Render.prototype.invalidateItem = function (map, id, level)
 {
 	if (map == 'atoms') {
 		this.invalidateAtom(id, level);
@@ -357,19 +357,19 @@ rnd.Render.prototype.invalidateItem = function (map, id, level)
 	}
 };
 
-rnd.Render.prototype.atomGetDegree = function (aid)
+Render.prototype.atomGetDegree = function (aid)
 {
 	rnd.logMethod('atomGetDegree');
 	return this.ctab.atoms.get(aid).a.neighbors.length;
 };
 
-rnd.Render.prototype.isBondInRing = function (bid) {
+Render.prototype.isBondInRing = function (bid) {
 	var bond = this.ctab.bonds.get(bid);
 	return this.ctab.molecule.halfBonds.get(bond.b.hb1).loop >= 0 ||
 	this.ctab.molecule.halfBonds.get(bond.b.hb2).loop >= 0;
 };
 
-rnd.Render.prototype.atomGetNeighbors = function (aid)
+Render.prototype.atomGetNeighbors = function (aid)
 {
 	var atom = this.ctab.atoms.get(aid);
 	var neiAtoms = [];
@@ -384,48 +384,48 @@ rnd.Render.prototype.atomGetNeighbors = function (aid)
 };
 
 // returns an array of s-group id's
-rnd.Render.prototype.atomGetSGroups = function (aid)
+Render.prototype.atomGetSGroups = function (aid)
 {
 	rnd.logMethod('atomGetSGroups');
 	var atom = this.ctab.atoms.get(aid);
 	return Set.list(atom.a.sgs);
 };
 
-rnd.Render.prototype.sGroupGetAttr = function (sgid, name)
+Render.prototype.sGroupGetAttr = function (sgid, name)
 {
 	rnd.logMethod('sGroupGetAttr');
 	return this.ctab.sgroups.get(sgid).item.getAttr(name);
 };
 
-rnd.Render.prototype.sGroupGetAttrs = function (sgid)
+Render.prototype.sGroupGetAttrs = function (sgid)
 {
 	rnd.logMethod('sGroupGetAttrs');
 	return this.ctab.sgroups.get(sgid).item.getAttrs();
 };
 
 // TODO: move to SGroup
-rnd.Render.prototype.sGroupGetAtoms = function (sgid)
+Render.prototype.sGroupGetAtoms = function (sgid)
 {
 	rnd.logMethod('sGroupGetAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
-rnd.Render.prototype.sGroupGetType = function (sgid)
+Render.prototype.sGroupGetType = function (sgid)
 {
 	rnd.logMethod('sGroupGetType');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.type;
 };
 
-rnd.Render.prototype.sGroupsFindCrossBonds = function ()
+Render.prototype.sGroupsFindCrossBonds = function ()
 {
 	rnd.logMethod('sGroupsFindCrossBonds');
 	this.ctab.molecule.sGroupsRecalcCrossBonds();
 };
 
 // TODO: move to ReStruct
-rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
+Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 {
 	rnd.logMethod('sGroupGetNeighborAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
@@ -433,13 +433,13 @@ rnd.Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 };
 
 // TODO: move to ReStruct
-rnd.Render.prototype.atomIsPlainCarbon = function (aid)
+Render.prototype.atomIsPlainCarbon = function (aid)
 {
 	rnd.logMethod('atomIsPlainCarbon');
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 };
 
-rnd.Render.prototype.highlightObject = function (obj, visible) {
+Render.prototype.highlightObject = function (obj, visible) {
 	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(obj.map) > -1) {
 		var item = this.ctab[obj.map].get(obj.id);
 		if (item == null)
@@ -461,30 +461,30 @@ rnd.Render.prototype.highlightObject = function (obj, visible) {
 	return true;
 };
 
-rnd.Render.prototype.itemGetPos = function (map, id)
+Render.prototype.itemGetPos = function (map, id)
 {
 	return this.ctab.molecule[map].get(id).pp;
 };
 
-rnd.Render.prototype.atomGetPos = function (id)
+Render.prototype.atomGetPos = function (id)
 {
 	rnd.logMethod('atomGetPos');
 	return this.itemGetPos('atoms', id);
 };
 
-rnd.Render.prototype.rxnArrowGetPos = function (id)
+Render.prototype.rxnArrowGetPos = function (id)
 {
 	rnd.logMethod('rxnArrowGetPos');
 	return this.itemGetPos('rxnArrows', id);
 };
 
-rnd.Render.prototype.rxnPlusGetPos = function (id)
+Render.prototype.rxnPlusGetPos = function (id)
 {
 	rnd.logMethod('rxnPlusGetPos');
 	return this.itemGetPos('rxnPluses', id);
 };
 
-rnd.Render.prototype.getAdjacentBonds = function (atoms) {
+Render.prototype.getAdjacentBonds = function (atoms) {
 	var aidSet = Set.fromList(atoms);
 	var bidSetInner = Set.empty(), bidSetCross = Set.empty();
 	for (var i = 0; i < atoms.length; ++i) {
@@ -502,13 +502,13 @@ rnd.Render.prototype.getAdjacentBonds = function (atoms) {
 	return {'inner': bidSetInner, 'cross': bidSetCross};
 };
 
-rnd.Render.prototype.bondGetAttr = function (bid, name)
+Render.prototype.bondGetAttr = function (bid, name)
 {
 	rnd.logMethod('bondGetAttr');
 	return this.ctab.bonds.get(bid).b[name];
 };
 
-rnd.Render.prototype.setSelection = function (selection)
+Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod('setSelection');
 	for (var map in ReStruct.maps) {
@@ -523,7 +523,7 @@ rnd.Render.prototype.setSelection = function (selection)
 	}
 };
 
-rnd.Render.prototype.initStyles = function ()
+Render.prototype.initStyles = function ()
 {
 	// TODO move fonts, dashed lines, etc. here
 	var settings = this.settings;
@@ -558,7 +558,7 @@ rnd.Render.prototype.initStyles = function ()
 	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
 };
 
-rnd.Render.prototype.initSettings = function ()
+Render.prototype.initSettings = function ()
 {
 	var settings = this.settings = {};
 	settings.delta = this.ctab.molecule.getCoordBoundingBox();
@@ -578,30 +578,30 @@ rnd.Render.prototype.initSettings = function ()
 	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
-rnd.Render.prototype.getStructCenter = function (selection)
+Render.prototype.getStructCenter = function (selection)
 {
 	var bb = this.ctab.getVBoxObj(selection);
 	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 };
 
-rnd.Render.prototype.onResize = function ()
+Render.prototype.onResize = function ()
 {
 	this.setViewSize(new Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
 };
 
-rnd.Render.prototype.setViewSize = function (viewSz)
+Render.prototype.setViewSize = function (viewSz)
 {
 	this.viewSz = new Vec2(viewSz);
 };
 
-rnd.Render.prototype._setPaperSize = function (sz)
+Render.prototype._setPaperSize = function (sz)
 {
 	var z = this.zoom;
 	this.paper.setSize(sz.x * z, sz.y * z);
 	this.setViewBox(z);
 };
 
-rnd.Render.prototype.setPaperSize = function (sz)
+Render.prototype.setPaperSize = function (sz)
 {
 	rnd.logMethod('setPaperSize');
 	var oldSz = this.sz;
@@ -611,14 +611,14 @@ rnd.Render.prototype.setPaperSize = function (sz)
 		this.onCanvasSizeChanged(sz, oldSz);
 };
 
-rnd.Render.prototype.setOffset = function (newoffset)
+Render.prototype.setOffset = function (newoffset)
 {
 	rnd.logMethod('setOffset');
 	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(newoffset, this.offset);
 	this.offset = newoffset;
 };
 
-rnd.Render.prototype.getElementPos = function (obj)
+Render.prototype.getElementPos = function (obj)
 {
 	var curleft = 0, curtop = 0;
 
@@ -631,7 +631,7 @@ rnd.Render.prototype.getElementPos = function (obj)
 	return new Vec2(curleft,curtop);
 };
 
-rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
+Render.prototype.drawSelectionLine = function (p0, p1) {
 	rnd.logMethod('drawSelectionLine');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
@@ -646,7 +646,7 @@ rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
 	}
 };
 
-rnd.Render.prototype.drawSelectionRectangle = function (p0, p1) {
+Render.prototype.drawSelectionRectangle = function (p0, p1) {
 	rnd.logMethod('drawSelectionRectangle');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
@@ -661,7 +661,7 @@ rnd.Render.prototype.drawSelectionRectangle = function (p0, p1) {
 	}
 };
 
-rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
+Render.prototype.getElementsInRectangle = function (p0,p1) {
 	rnd.logMethod('getElementsInRectangle');
 	var bondList = [];
 	var atomList = [];
@@ -707,7 +707,7 @@ rnd.Render.prototype.getElementsInRectangle = function (p0,p1) {
 	};
 };
 
-rnd.Render.prototype.drawSelectionPolygon = function (r) {
+Render.prototype.drawSelectionPolygon = function (r) {
 	rnd.logMethod('drawSelectionPolygon');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
@@ -724,7 +724,7 @@ rnd.Render.prototype.drawSelectionPolygon = function (r) {
 	}
 };
 
-rnd.Render.prototype.isPointInPolygon = function (r, p) {
+Render.prototype.isPointInPolygon = function (r, p) {
 	var d = new Vec2(0, 1);
 	var n = d.rotate(Math.PI / 2);
 	var v0 = Vec2.diff(r[r.length - 1], p);
@@ -763,11 +763,11 @@ rnd.Render.prototype.isPointInPolygon = function (r, p) {
 	return (counter % 2) != 0;
 };
 
-rnd.Render.prototype.ps = function (pp) {
+Render.prototype.ps = function (pp) {
 	return pp.scaled(this.settings.scaleFactor);
 };
 
-rnd.Render.prototype.getElementsInPolygon = function (rr) {
+Render.prototype.getElementsInPolygon = function (rr) {
 	rnd.logMethod('getElementsInPolygon');
 	var bondList = [];
 	var atomList = [];
@@ -816,7 +816,7 @@ rnd.Render.prototype.getElementsInPolygon = function (rr) {
 	};
 };
 
-rnd.Render.prototype.testPolygon = function (rr) {
+Render.prototype.testPolygon = function (rr) {
 	rr = rr || [
 	{
 		x:50,
@@ -864,7 +864,7 @@ rnd.Render.prototype.testPolygon = function (rr) {
 	this.drawSelectionPolygon(rr);
 };
 
-rnd.Render.prototype.update = function (force)
+Render.prototype.update = function (force)
 {
 	rnd.logMethod('update');
 
@@ -929,11 +929,11 @@ rnd.Render.prototype.update = function (force)
 	}
 };
 
-rnd.Render.prototype.checkBondExists = function (begin, end) {
+Render.prototype.checkBondExists = function (begin, end) {
 	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
-rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)
+Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)
 	var closestAtom = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
@@ -955,7 +955,7 @@ rnd.Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO s
 	return null;
 };
 
-rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
+Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
 	var closestBond = null;
 	var closestBondCenter = null;
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
@@ -998,7 +998,7 @@ rnd.Render.prototype.findClosestBond = function (pos, minDist) { // TODO should 
 	return null;
 };
 
-rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
+Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var ret = null;
 	var updret = function (type, item, force) {
 		if (item != null && (ret == null || ret.dist > item.dist || force)) {
@@ -1062,7 +1062,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 	return ret;
 };
 
-rnd.Render.prototype.setZoom = function (zoom) {
+Render.prototype.setZoom = function (zoom) {
 	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
 	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
 	console.info('set zoom', zoom);
@@ -1070,7 +1070,7 @@ rnd.Render.prototype.setZoom = function (zoom) {
 	this._setPaperSize(this.sz);
 };
 
-rnd.Render.prototype.setScrollOffset = function (x, y) {
+Render.prototype.setScrollOffset = function (x, y) {
 	var clientArea = this.clientArea;
 	var cx = clientArea.clientWidth;
 	var cy = clientArea.clientHeight;
@@ -1082,7 +1082,7 @@ rnd.Render.prototype.setScrollOffset = function (x, y) {
 	// scrollTop = clientArea.scrollTop;
 };
 
-rnd.Render.prototype.recoordinate = function (rp, vp) {
+Render.prototype.recoordinate = function (rp, vp) {
 	// rp is a point in scaled coordinates, which will be positioned
 	// vp is the point where the reference point should now be (in view coordinates)
 	//    or the center if not set
@@ -1093,7 +1093,7 @@ rnd.Render.prototype.recoordinate = function (rp, vp) {
 	this.setScrollOffset(so.x, so.y);
 };
 
-rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
+Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 	var ex = 0, ey = 0, dx = 0, dy = 0;
 	x0 = x0 - 0;
 	x1 = x1 - 0;
@@ -1131,7 +1131,7 @@ rnd.Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 	return d;
 };
 
-rnd.Render.prototype.setScale = function (z) {
+Render.prototype.setScale = function (z) {
 	if (this.offset)
 		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);
 	this.scale = this.baseScale * this.zoom;
@@ -1139,9 +1139,11 @@ rnd.Render.prototype.setScale = function (z) {
 	this.update(true);
 };
 
-rnd.Render.prototype.setViewBox = function (z) {
+Render.prototype.setViewBox = function (z) {
 	if (!this.useOldZoom)
 		this.paper.canvas.setAttribute('viewBox', '0 0 ' + this.sz.x + ' ' + this.sz.y);
 	else
 		this.setScale(z);
 };
+
+module.exports = Render

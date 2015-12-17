@@ -9,7 +9,8 @@ require('./ui');
 require('./rnd');
 
 var ui = global.ui;
-var rnd = global.rnd;
+
+var Render = require('./rnd/render')
 
 function getSmiles() {
 	return smiles.stringify(ui.ctab, { ignoreErrors: true });
@@ -45,7 +46,7 @@ function showMolfile(clientArea, molString, options) {
 		autoScaleMargin: 4,
 		hideImplicitHydrogen: false
 	}, options);
-	var render = new rnd.Render(clientArea, opts.bondLength, opts);
+	var render = new Render(clientArea, opts.bondLength, opts);
 	if (molString) {
 		var mol = molfile.parse(molString);
 		render.setMolecule(mol);

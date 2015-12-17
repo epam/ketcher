@@ -24,6 +24,7 @@ var RGroupAtomTool = require('../editor/rgroupatomtool');
 var LassoTool = require('../editor/lassotool');
 var SGroupTool = require('../editor/sgrouptool');
 var EraserTool = require('../editor/erasertool');
+var AtomTool = require('../editor/atomtool');
 
 var Render = require('../rnd/render')
 
@@ -1005,7 +1006,7 @@ function mapTool (id) {
 	} else if (id == 'erase') {
 		return new EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
-		return new Editor.AtomTool(ui.editor, atomLabel(id));
+		return new AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {
 		return new Editor.BondTool(ui.editor, bondType(id));
 	} else if (id == 'chain') {

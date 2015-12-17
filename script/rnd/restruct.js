@@ -20,6 +20,7 @@ var tfx = util.tfx;
 
 var ReObject = require("./reobject")
 var ReRxnPlus = require("./rerxnplus")
+var ReRxnArrow = require("./rerxnarrow")
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -135,7 +136,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	}, this);
 
 	molecule.rxnArrows.each(function (id, item){
-		this.rxnArrows.set(id, new rnd.ReRxnArrow(item));
+		this.rxnArrows.set(id, new ReRxnArrow(item));
 	}, this);
 
 	molecule.frags.each(function (id, item) {
@@ -808,7 +809,7 @@ rnd.ReStruct.prototype.notifyRxnPlusAdded = function (plid) {
 };
 
 rnd.ReStruct.prototype.notifyRxnArrowAdded = function (arid) {
-	this.rxnArrows.set(arid, new rnd.ReRxnArrow(this.molecule.rxnArrows.get(arid)));
+	this.rxnArrows.set(arid, new ReRxnArrow(this.molecule.rxnArrows.get(arid)));
 };
 
 rnd.ReStruct.prototype.notifyRxnArrowRemoved = function (arid) {
@@ -917,48 +918,6 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 			}
 		}
 	}
-};
-
-rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
-{
-	this.init(Visel.TYPE.ARROW);
-
-	this.item = arrow;
-};
-rnd.ReRxnArrow.prototype = new ReObject();
-rnd.ReRxnArrow.isSelectable = function () { return true; }
-
-rnd.ReRxnArrow.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	render.ctab.rxnArrows.each(function (id, arrow) {
-		var pos = arrow.item.pp;
-		if (Math.abs(p.x - pos.x) < 1.0) {
-			var dist = Math.abs(p.y - pos.y);
-			if (dist < 0.3 && (!ret || dist < minDist)) {
-				minDist = dist;
-				ret = {'id': id, 'dist': minDist};
-			}
-		}
-	});
-	return ret;
-};
-
-rnd.ReRxnArrow.prototype.highlightPath = function (render) {
-	var p = render.ps(this.item.pp);
-	var s = render.settings.scaleFactor;
-	return render.paper.rect(p.x - s, p.y - s / 4, 2 * s, s / 2, s / 8);
-};
-
-rnd.ReRxnArrow.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-rnd.ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
 rnd.ReFrag = function (/*Struct.Fragment = {}*/frag) {
@@ -1395,7 +1354,7 @@ rnd.ReStruct.maps = {
 	'atoms':       ReAtom,
 	'bonds':       ReBond,
 	'rxnPluses':   ReRxnPlus,
-	'rxnArrows':   rnd.ReRxnArrow,
+	'rxnArrows':   ReRxnArrow,
 	'frags':       rnd.ReFrag,
 	'rgroups':     rnd.ReRGroup,
 	'sgroupData':  rnd.ReDataSGroupData,

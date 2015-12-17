@@ -27,6 +27,7 @@ var EraserTool = require('../editor/erasertool');
 var AtomTool = require('../editor/atomtool');
 var BondTool = require('../editor/bondtool');
 var ChainTool = require('../editor/chaintool');
+var TemplateTool = require('../editor/templatetool');
 
 
 var Render = require('../rnd/render')
@@ -1015,9 +1016,9 @@ function mapTool (id) {
 	} else if (id == 'chain') {
 		return new ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
-		return new Editor.TemplateTool(ui.editor, current_template_custom);
+		return new TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {
-		return new Editor.TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
+		return new TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
 		return new Editor.ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {

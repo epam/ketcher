@@ -23,6 +23,7 @@ var EditorTool = require('../editor/editortool');
 var RGroupAtomTool = require('../editor/rgroupatomtool');
 var LassoTool = require('../editor/lassotool');
 var SGroupTool = require('../editor/sgrouptool');
+var EraserTool = require('../editor/erasertool');
 
 var Render = require('../rnd/render')
 
@@ -1002,7 +1003,7 @@ function mapTool (id) {
 	} else if (id == 'select-fragment') {
 		return new LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
-		return new Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
+		return new EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
 		return new Editor.AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {

@@ -4,6 +4,8 @@ var util = require('../util');
 var element = require('../chem/element');
 var Bond = require('../chem/bond');
 
+var ReLoop = require('./reloop')
+
 require('./restruct');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var tfx = util.tfx;
@@ -1282,7 +1284,7 @@ rnd.ReStruct.prototype.updateLoops = function ()
 		this.markBond(bid, 1);
 	}, this);
 	util.each(ret.newLoops, function (loopId) {
-		this.reloops.set(loopId, new rnd.ReLoop(this.molecule.loops.get(loopId)));
+		this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
 	}, this);
 };
 

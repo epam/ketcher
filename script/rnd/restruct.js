@@ -25,6 +25,7 @@ var ReRGroup = require('./rergroup')
 var ReDataSGroupData = require('./redatasgroupdata')
 var ReChiralFlag = require('./rechiralflag')
 var ReSGroup = require('./resgroup')
+var ReLoop = require('./reloop')
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -132,7 +133,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	}, this);
 
 	molecule.loops.each(function (lid, loop){
-		this.reloops.set(lid, new rnd.ReLoop(loop));
+		this.reloops.set(lid, new ReLoop(loop));
 	}, this);
 
 	molecule.rxnPluses.each(function (id, item){
@@ -784,16 +785,6 @@ rnd.ReStruct.prototype.setImplicitHydrogen = function () {
 	this.molecule.setImplicitHydrogen(util.idList(this.atomsChanged));
 };
 
-rnd.ReLoop = function (loop)
-{
-	this.loop = loop;
-	this.visel = new Visel(Visel.TYPE.LOOP);
-	this.centre = new Vec2();
-	this.radius = new Vec2();
-};
-rnd.ReLoop.prototype = new ReObject();
-rnd.ReLoop.isSelectable = function () { return false; }
-
 rnd.ReStruct.prototype.coordProcess = function (norescale)
 {
 	if (!norescale) {
@@ -934,5 +925,5 @@ rnd.ReStruct.maps = {
 	'sgroupData':  ReDataSGroupData,
 	'chiralFlags': ReChiralFlag,
 	'sgroups':     ReSGroup,
-	'reloops':     rnd.ReLoop
+	'reloops':     ReLoop
 };

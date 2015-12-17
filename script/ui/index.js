@@ -19,6 +19,8 @@ var smiles = require('../chem/smiles');
 require('../rnd');
 
 var Editor = require('../editor/editor');
+var EditorTool = require('../editor/editortool');
+
 var Render = require('../rnd/render')
 
 var Action = require('./action.js');
@@ -216,7 +218,7 @@ function selectAction (action) {
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
 		var tool = mapTool.apply(null, args);
-		if (tool instanceof Editor.EditorTool) {
+		if (tool instanceof EditorTool) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");

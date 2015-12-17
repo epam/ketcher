@@ -10,6 +10,8 @@ var SGroup = require('../chem/sgroup');
 
 var ReStruct = require('../rnd/restruct')
 
+var EditorTool = require('./editortool')
+
 var ui = global.ui;
 
 var Editor = function (render)
@@ -143,150 +145,14 @@ Editor.SelectionHelper.prototype.isSelected = function (item) {
 	this.selection[item.map].indexOf(item.id) > -1;
 };
 
-
-Editor.EditorTool = function (editor) {
-	this.editor = editor;
-};
-Editor.EditorTool.prototype.processEvent = function (name, event, action) {
-	if (!('touches' in event) || event.touches.length == 1) {
-		if (name + '0' in this)
-			return this[name + '0'](event, action);
-		else if (name in this)
-			return this[name](event, action);
-		console.log('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
-	} else if ('lastEvent' in this.OnMouseDown0) {
-		// here we finish previous MouseDown and MouseMoves with simulated MouseUp
-		// before gesture (canvas zoom, scroll, rotate) started
-		return this.OnMouseUp0(event, action);
-	}
-};
-Editor.EditorTool.prototype.OnMouseDown = function () {};
-Editor.EditorTool.prototype.OnMouseMove = function () {};
-Editor.EditorTool.prototype.OnMouseUp = function () {};
-Editor.EditorTool.prototype.OnClick = function () {};
-Editor.EditorTool.prototype.OnDblClick = function () {};
-Editor.EditorTool.prototype.OnMouseLeave = function () { this.OnCancel();};
-Editor.EditorTool.prototype.OnKeyPress = function () {};
-Editor.EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
-Editor.EditorTool.prototype.OnMouseDown0 = function (event) {
-	if (ui.hideBlurredControls()) return true; // TODO review (don't stop propagation to handle dropdown closing)
-
-	this.OnMouseDown0.lastEvent = event;
-	this.OnMouseMove0.lastEvent = event;
-
-	if ('OnMouseDown' in this) return this.OnMouseDown(event);
-};
-Editor.EditorTool.prototype.OnMouseMove0 = function (event) {
-	this.OnMouseMove0.lastEvent = event;
-
-	if ('OnMouseMove' in this) return this.OnMouseMove(event);
-};
-Editor.EditorTool.prototype.OnMouseUp0 = function (event) {
-	// here we suppress event we got when second touch released in guesture
-	if (!('lastEvent' in this.OnMouseDown0)) return true;
-
-	if ('lastEvent' in this.OnMouseMove0) {
-		// this data is missing for 'touchend' event when last finger is out
-		event = Object.clone(event); // pageX & pageY properties are readonly in Opera
-		event.pageX = this.OnMouseMove0.lastEvent.pageX;
-		event.pageY = this.OnMouseMove0.lastEvent.pageY;
-	}
-
-	try {
-		if ('OnMouseUp' in this) return this.OnMouseUp(event);
-	} finally {
-		delete this.OnMouseDown0.lastEvent;
-	}
-};
-
-Editor.EditorTool.atom_label_map = {
-	atom_tool_any: 'A',
-	atom_tool_h: 'H',
-	atom_tool_c: 'C',
-	atom_tool_n: 'N',
-	atom_tool_o: 'O',
-	atom_tool_s: 'S',
-	atom_tool_p: 'P',
-	atom_tool_f: 'F',
-	atom_tool_br: 'Br',
-	atom_tool_cl: 'Cl',
-	atom_tool_i: 'I'
-};
-
-Editor.EditorTool.prototype.OnKeyPress0 = function (event, action) {
-	if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
-		return Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
-			this.OnMouseMove0.lastEvent);
-	} else if (action in Editor.EditorTool.atom_label_map) {
-		var label = Editor.EditorTool.atom_label_map[action];
-		var selection = this.editor.getSelection();
-		if (selection && 'atoms' in selection && selection.atoms.length > 0) {
-			ui.addUndoAction(Action.fromAtomsAttrs(
-				selection.atoms, {label: label}, true), true);
-			ui.render.update();
-			return true;
-		} else {
-			var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
-			if (ci) {
-				ci.label = {label: label};
-				if (ci.map === 'atoms') {
-					ui.addUndoAction(Action.fromAtomsAttrs(
-						ci.id, ci.label, true), true);
-				} else if (ci.id == -1) {
-					ui.addUndoAction(
-					Action.fromAtomAddition(
-					ui.page2obj(
-						this.OnMouseMove0.lastEvent), ci.label), true);
-				}
-				ui.render.update();
-				return true;
-			}
-		}
-	}
-	if ('OnKeyPress' in this)
-		return this.OnKeyPress(event);
-	return false;
-};
-
-Editor.EditorTool.prototype._calcAngle = function (pos0, pos1) {
-	var v = Vec2.diff(pos1, pos0);
-	var angle = Math.atan2(v.y, v.x);
-	var sign = angle < 0 ? -1 : 1;
-	var floor = Math.floor(Math.abs(angle) / (Math.PI / 12)) * (Math.PI / 12);
-	angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
-	return angle;
-};
-Editor.EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
-	var v = new Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
-	v.add_(pos0);
-	return v;
-};
-
-
-Editor.EditorTool.HoverHelper = function (editorTool) {
-	this.editorTool = editorTool;
-};
-Editor.EditorTool.HoverHelper.prototype.hover = function (ci) {
-	if (ci && ci.type == 'Canvas')
-		ci = null;
-	// TODO add custom highlight style parameter, to be used when fusing atoms, sgroup children highlighting, etc
-	if ('ci' in this && (!ci || this.ci.type != ci.type || this.ci.id != ci.id)) {
-		this.editorTool.editor.render.highlightObject(this.ci, false);
-		delete this.ci;
-	}
-	if (ci && this.editorTool.editor.render.highlightObject(ci, true)) {
-		this.ci = ci;
-	}
-};
-
 Editor.LassoTool = function (editor, mode, fragment) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor, fragment);
 	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 };
-Editor.LassoTool.prototype = new Editor.EditorTool();
+Editor.LassoTool.prototype = new EditorTool();
 Editor.LassoTool.prototype.OnMouseDown = function (event) {
 	var render = this.editor.render;
 	var ctab = render.ctab, mol = ctab.molecule;
@@ -517,10 +383,10 @@ Editor.EraserTool = function (editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
-Editor.EraserTool.prototype = new Editor.EditorTool();
+Editor.EraserTool.prototype = new EditorTool();
 Editor.EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas') {
@@ -574,9 +440,9 @@ Editor.AtomTool = function (editor, atomProps) {
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.AtomTool.prototype = new Editor.EditorTool();
+Editor.AtomTool.prototype = new EditorTool();
 Editor.AtomTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
 	var ci = this.editor.render.findItem(event, ['atoms']);
@@ -645,9 +511,9 @@ Editor.BondTool = function (editor, bondProps) {
 			Bond.PATTERN.TYPE.DOUBLE,
 			Bond.PATTERN.TYPE.TRIPLE];
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.BondTool.prototype = new Editor.EditorTool();
+Editor.BondTool.prototype = new EditorTool();
 
 Editor.BondTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
@@ -758,9 +624,9 @@ Editor.BondTool.prototype.OnMouseUp = function (event) {
 Editor.ChainTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.ChainTool.prototype = new Editor.EditorTool();
+Editor.ChainTool.prototype = new EditorTool();
 Editor.ChainTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
@@ -826,9 +692,9 @@ Editor.TemplateTool = function (editor, template) {
 		this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 	}
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.TemplateTool.prototype = new Editor.EditorTool();
+Editor.TemplateTool.prototype = new EditorTool();
 Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	var begin = molecule.atoms.get(bond.begin).pp;
 	var end = molecule.atoms.get(bond.end).pp;
@@ -1027,9 +893,9 @@ Editor.ChargeTool = function (editor, charge) { // TODO [RB] should be "pluggabl
 	this.editor = editor;
 	this.charge = charge;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.ChargeTool.prototype = new Editor.EditorTool();
+Editor.ChargeTool.prototype = new EditorTool();
 Editor.ChargeTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(ui.ctab.atoms.get(ci.id).label) != null) {
@@ -1056,9 +922,9 @@ Editor.ChargeTool.prototype.OnMouseUp = function (event) {
 Editor.RGroupAtomTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.RGroupAtomTool.prototype = new Editor.EditorTool();
+Editor.RGroupAtomTool.prototype = new EditorTool();
 Editor.RGroupAtomTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
@@ -1133,10 +999,10 @@ Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
 Editor.RGroupFragmentTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
 
-Editor.RGroupFragmentTool.prototype = new Editor.EditorTool();
+Editor.RGroupFragmentTool.prototype = new EditorTool();
 Editor.RGroupFragmentTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
 };
@@ -1203,9 +1069,9 @@ Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 Editor.APointTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.APointTool.prototype = new Editor.EditorTool();
+Editor.APointTool.prototype = new EditorTool();
 Editor.APointTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
@@ -1231,9 +1097,9 @@ Editor.APointTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionArrowTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.ReactionArrowTool.prototype = new Editor.EditorTool();
+Editor.ReactionArrowTool.prototype = new EditorTool();
 Editor.ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
@@ -1272,9 +1138,9 @@ Editor.ReactionArrowTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionPlusTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 };
-Editor.ReactionPlusTool.prototype = new Editor.EditorTool();
+Editor.ReactionPlusTool.prototype = new EditorTool();
 Editor.ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
@@ -1313,13 +1179,13 @@ Editor.ReactionPlusTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionMapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 };
-Editor.ReactionMapTool.prototype = new Editor.EditorTool();
+Editor.ReactionMapTool.prototype = new EditorTool();
 Editor.ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
@@ -1401,11 +1267,11 @@ Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
 Editor.ReactionUnmapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 };
-Editor.ReactionUnmapTool.prototype = new Editor.EditorTool();
+Editor.ReactionUnmapTool.prototype = new EditorTool();
 Editor.ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
@@ -1438,7 +1304,7 @@ Editor.SGroupTool = function (editor) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
-	this._hoverHelper = new Editor.EditorTool.HoverHelper(this);
+	this._hoverHelper = new EditorTool.HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(1, editor);
 	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 
@@ -1451,7 +1317,7 @@ Editor.SGroupTool = function (editor) {
 		this.editor.deselectAll();
 	}
 };
-Editor.SGroupTool.prototype = new Editor.EditorTool();
+Editor.SGroupTool.prototype = new EditorTool();
 Editor.SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas') {
@@ -1583,7 +1449,7 @@ Editor.PasteTool = function (editor, struct) {
 			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
 	this.editor.render.update();
 };
-Editor.PasteTool.prototype = new Editor.EditorTool();
+Editor.PasteTool.prototype = new EditorTool();
 Editor.PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
@@ -1613,7 +1479,8 @@ Editor.RotateTool = function (editor) {
 		this.editor._selectionHelper.setSelection(null);
 	}
 };
-Editor.RotateTool.prototype = new Editor.EditorTool();
+
+Editor.RotateTool.prototype = new EditorTool();
 
 Editor.RotateTool.prototype.OnMouseDown = function (event) {
 

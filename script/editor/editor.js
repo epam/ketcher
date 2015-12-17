@@ -2,7 +2,6 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
-var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 
@@ -103,125 +102,6 @@ Editor.prototype.getSelectionStruct = function () {
 		(dst.rxnArrows.count() || dst.rxnPluses.count());
 
 	return dst;
-};
-
-Editor.BondTool = function (editor, bondProps) {
-	this.editor = editor;
-	this.atomProps = { label: 'C' };
-	this.bondProps = bondProps;
-	this.plainBondTypes = [
-			Bond.PATTERN.TYPE.SINGLE,
-			Bond.PATTERN.TYPE.DOUBLE,
-			Bond.PATTERN.TYPE.TRIPLE];
-
-	this._hoverHelper = new HoverHelper(this);
-};
-Editor.BondTool.prototype = new EditorTool();
-
-Editor.BondTool.prototype.OnMouseDown = function (event) {
-	this._hoverHelper.hover(null);
-	this.dragCtx = {
-		xy0: ui.page2obj(event),
-		item: this.editor.render.findItem(event, ['atoms', 'bonds'])
-	};
-	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
-	return true;
-};
-
-Editor.BondTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
-	if ('dragCtx' in this) {
-		var _DC_ = this.dragCtx;
-		if (!('item' in _DC_) || _DC_.item.map == 'atoms') {
-			if ('action' in _DC_) _DC_.action.perform();
-			var i1, i2, p1, p2;
-			if (('item' in _DC_ && _DC_.item.map == 'atoms')) {
-				i1 = _DC_.item.id;
-				i2 = _R_.findItem(event, ['atoms'], _DC_.item);
-			} else {
-				i1 = this.atomProps;
-				p1 = _DC_.xy0;
-				i2 = _R_.findItem(event, ['atoms']);
-			}
-			var dist = Number.MAX_VALUE;
-			if (i2 && i2.map == 'atoms') {
-				i2 = i2.id;
-			} else {
-				i2 = this.atomProps;
-				var xy1 = ui.page2obj(event);
-				dist = Vec2.dist(_DC_.xy0, xy1);
-				if (p1) {
-					p2 = this._calcNewAtomPos(p1, xy1);
-				} else {
-					p1 = this._calcNewAtomPos(_R_.atomGetPos(i1), xy1);
-				}
-			}
-			// don't rotate the bond if the distance between the start and end point is too small
-			if (dist > 0.3) {
-				_DC_.action = Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
-			} else {
-				delete _DC_.action;
-			}
-			_R_.update();
-			return true;
-		}
-	}
-	this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
-	return true;
-};
-
-Editor.BondTool.prototype.OnMouseUp = function (event) {
-	if ('dragCtx' in this) {
-		var _DC_ = this.dragCtx;
-		if ('action' in _DC_) {
-			ui.addUndoAction(_DC_.action);
-		} else if (!('item' in _DC_)) {
-			var xy = ui.page2obj(event);
-			var v = new Vec2(1.0 / 2, 0).rotate(
-				this.bondProps.type == Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
-			);
-			var bondAddition = Action.fromBondAddition(
-				this.bondProps,
-			{ label: 'C' },
-			{ label: 'C' },
-			{ x: xy.x - v.x, y: xy.y - v.y},
-			{ x: xy.x + v.x, y: xy.y + v.y}
-			);
-			ui.addUndoAction(bondAddition[0]);
-		} else if (_DC_.item.map == 'atoms') {
-			ui.addUndoAction(Action.fromBondAddition(this.bondProps, _DC_.item.id)[0]);
-		} else if (_DC_.item.map == 'bonds') {
-			var bondProps = Object.clone(this.bondProps);
-			var bond = ui.ctab.bonds.get(_DC_.item.id);
-
-			if (
-			bondProps.stereo != Bond.PATTERN.STEREO.NONE &&
-			bond.type == Bond.PATTERN.TYPE.SINGLE &&
-			bondProps.type == Bond.PATTERN.TYPE.SINGLE &&
-			bond.stereo == bondProps.stereo
-			) {
-				ui.addUndoAction(Action.fromBondFlipping(_DC_.item.id));
-			} else {
-				if (
-				bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-				bond.stereo === Bond.PATTERN.STEREO.NONE &&
-				bondProps.stereo === Bond.PATTERN.STEREO.NONE
-				) {
-					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
-					if (loop) {
-						bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-					}
-				}
-				ui.addUndoAction(
-				Action.fromBondAttrs(_DC_.item.id, bondProps, bondFlipRequired(bond, bondProps)),
-					true
-				);
-			}
-		}
-		this.editor.render.update();
-		delete this.dragCtx;
-	}
-	return true;
 };
 
 Editor.ChainTool = function (editor) {
@@ -995,13 +875,5 @@ Editor.RotateTool.prototype.OnCancel = function () {
 	// don't reset the selection when leaving the canvas, see KETCHER-632
 	// this.editor._selectionHelper.setSelection();
 };
-
-function bondFlipRequired (bond, attrs) {
-	return attrs.type == Bond.PATTERN.TYPE.SINGLE &&
-		   bond.stereo == Bond.PATTERN.STEREO.NONE &&
-		   attrs.stereo != Bond.PATTERN.STEREO.NONE &&
-		   ui.ctab.atoms.get(bond.begin).neighbors.length <
-		   ui.ctab.atoms.get(bond.end).neighbors.length;
-}
 
 module.exports = Editor;

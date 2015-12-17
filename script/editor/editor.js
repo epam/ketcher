@@ -8,7 +8,7 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var SGroup = require('../chem/sgroup');
 
-var ReStruct = require('./restruct')
+var ReStruct = require('../rnd/restruct')
 
 var ui = global.ui;
 

@@ -18,7 +18,7 @@ var smiles = require('../chem/smiles');
 
 require('../rnd');
 
-var Editor = require('../rnd/editor');
+var Editor = require('../editor/editor');
 var Render = require('../rnd/render')
 
 var Action = require('./action.js');

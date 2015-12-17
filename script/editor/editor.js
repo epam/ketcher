@@ -5,7 +5,6 @@ var Action = require('../ui/action');
 var ReStruct = require('../rnd/restruct')
 
 var EditorTool = require('./editortool');
-var HoverHelper = require('./hoverhelper');
 var LassoHelper = require('./lassohelper');
 var SelectionHelper = require('./selectionhelper');
 
@@ -100,42 +99,6 @@ Editor.prototype.getSelectionStruct = function () {
 
 	return dst;
 };                                        
-
-Editor.ReactionUnmapTool = function (editor) {
-	this.editor = editor;
-
-	this._hoverHelper = new HoverHelper(this);
-
-	this.editor._selectionHelper.setSelection(null);
-};
-Editor.ReactionUnmapTool.prototype = new EditorTool();
-Editor.ReactionUnmapTool.prototype.OnMouseMove = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
-	} else {
-		this._hoverHelper.hover(null);
-	}
-};
-Editor.ReactionUnmapTool.prototype.OnMouseUp = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
-	var atoms = this.editor.render.ctab.molecule.atoms;
-	if (ci && ci.map == 'atoms' && atoms.get(ci.id).aam) {
-		var action = new Action();
-		var aam = atoms.get(ci.id).aam;
-		atoms.each(
-		function (aid, atom) {
-			if (atom.aam == aam) {
-				action.mergeWith(Action.fromAtomsAttrs(aid, { aam: 0 }));
-			}
-		},
-			this
-		);
-		ui.addUndoAction(action, true);
-		this.editor.render.update();
-	}
-	this._hoverHelper.hover(null);
-};
 
 Editor.PasteTool = function (editor, struct) {
 	this.editor = editor;

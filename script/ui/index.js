@@ -34,8 +34,9 @@ var APointTool = require('../editor/apointtool');
 var ReactionArrowTool = require('../editor/reactionarrowtool');
 var ReactionPlusTool = require('../editor/reactionplustool');
 var ReactionMapTool = require('../editor/reactionmaptool');
+var ReactionUnmapTool = require('../editor/reactionunmaptool');
       
-   
+      
 var Render = require('../rnd/render')
 
 var Action = require('./action.js');
@@ -1038,7 +1039,7 @@ function mapTool (id) {
 	} else if (id == 'reaction-map') {
 		return new ReactionMapTool(ui.editor);
 	} else if (id == 'reaction-unmap') {
-		return new Editor.ReactionUnmapTool(ui.editor);
+		return new ReactionUnmapTool(ui.editor);
 	} else if (id == 'rgroup-label') {
 		return new RGroupAtomTool(ui.editor);
 	} else if (id == 'rgroup-fragment') {

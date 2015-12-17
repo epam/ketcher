@@ -7,6 +7,7 @@ var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 var ReFrag = require('../rnd/refrag')
 var ReRGroup = require('../rnd/rergroup')
+var ReChiralFlag = require('../rnd/rechiralflag')
 
 require('../rnd');
 
@@ -685,7 +686,7 @@ function ChiralFlagAdd (pos) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (RS.chiralFlags.count() > 0)
 			throw new Error('Cannot add more than one Chiral flag');
-		RS.chiralFlags.set(0, new rnd.ReChiralFlag(pos));
+		RS.chiralFlags.set(0, new ReChiralFlag(pos));
 		DS.isChiral = true;
 		R.invalidateItem('chiralFlags', 0, 1);
 	};

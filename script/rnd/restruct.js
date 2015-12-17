@@ -24,6 +24,7 @@ var ReRxnArrow = require("./rerxnarrow")
 var ReFrag = require('./refrag')
 var ReRGroup = require('./rergroup')
 var ReDataSGroupData = require('./redatasgroupdata')
+var ReChiralFlag = require('./rechiralflag')
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -159,7 +160,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 
 	if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
-		this.chiralFlags.set(0,new rnd.ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
+		this.chiralFlags.set(0,new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
 
 	this.coordProcess(norescale);
@@ -986,63 +987,6 @@ rnd.ReSGroup.prototype.drawHighlight = function (render) {
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
 
-rnd.ReChiralFlag = function (pos)
-{
-	this.init(Visel.TYPE.CHIRAL_FLAG);
-
-	this.pp = pos;
-};
-rnd.ReChiralFlag.prototype = new ReObject();
-rnd.ReChiralFlag.isSelectable = function () { return true; }
-
-rnd.ReChiralFlag.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	// there is only one chiral flag, but we treat it as a "map" for convenience
-	render.ctab.chiralFlags.each(function (id, item) {
-		var pos = item.pp;
-		if (Math.abs(p.x - pos.x) < 1.0) {
-			var dist = Math.abs(p.y - pos.y);
-			if (dist < 0.3 && (!ret || dist < minDist)) {
-				minDist = dist;
-				ret = {'id': id, 'dist': minDist};
-			}
-		}
-	});
-	return ret;
-};
-
-rnd.ReChiralFlag.prototype.highlightPath = function (render) {
-	var box = Box2Abs.fromRelBox(this.path.getBBox());
-	var sz = box.p1.sub(box.p0);
-	var p0 = box.p0.sub(render.offset);
-	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
-};
-
-rnd.ReChiralFlag.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-rnd.ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
-};
-
-rnd.ReChiralFlag.prototype.draw = function (render) {
-	var paper = render.paper;
-	var settings = render.settings;
-	var ps = render.ps(this.pp);
-	this.path = paper.text(ps.x, ps.y, 'Chiral')
-	.attr({
-		'font': settings.font,
-		'font-size': settings.fontsz,
-		'fill': '#000'
-	});
-	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
-};
-
 rnd.ReStruct.maps = {
 	'atoms':       ReAtom,
 	'bonds':       ReBond,
@@ -1051,7 +995,7 @@ rnd.ReStruct.maps = {
 	'frags':       ReFrag,
 	'rgroups':     ReRGroup,
 	'sgroupData':  ReDataSGroupData,
-	'chiralFlags': rnd.ReChiralFlag,
+	'chiralFlags': ReChiralFlag,
 	'sgroups':     rnd.ReSGroup,
 	'reloops':     rnd.ReLoop
 };

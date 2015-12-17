@@ -2,7 +2,6 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
 var element = require('../chem/element');
-var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
@@ -10,7 +9,9 @@ var SGroup = require('../chem/sgroup');
 
 var ReStruct = require('../rnd/restruct')
 
-var EditorTool = require('./editortool')
+var EditorTool = require('./editortool');
+var HoverHelper = require('./hoverhelper');
+var RGroupAtomTool = require('./rgroupatomtool');
 
 var ui = global.ui;
 
@@ -148,7 +149,7 @@ Editor.SelectionHelper.prototype.isSelected = function (item) {
 Editor.LassoTool = function (editor, mode, fragment) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor, fragment);
 	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 };
@@ -284,7 +285,7 @@ Editor.LassoTool.prototype.OnDblClick = function (event) {
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = ui.ctab.atoms.get(ci.id);
 		if (atom.label == 'R#') {
-			Editor.RGroupAtomTool.prototype.OnMouseUp.call(this, event);
+			RGroupAtomTool.prototype.OnMouseUp.call(this, event);
 		} else if (atom.label == 'L#') {
 			ui.showElemTable({
 				selection: atom,
@@ -383,7 +384,7 @@ Editor.EraserTool = function (editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(mode || 0, editor);
 };
 Editor.EraserTool.prototype = new EditorTool();
@@ -440,7 +441,7 @@ Editor.AtomTool = function (editor, atomProps) {
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.AtomTool.prototype = new EditorTool();
 Editor.AtomTool.prototype.OnMouseDown = function (event) {
@@ -511,7 +512,7 @@ Editor.BondTool = function (editor, bondProps) {
 			Bond.PATTERN.TYPE.DOUBLE,
 			Bond.PATTERN.TYPE.TRIPLE];
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.BondTool.prototype = new EditorTool();
 
@@ -624,7 +625,7 @@ Editor.BondTool.prototype.OnMouseUp = function (event) {
 Editor.ChainTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.ChainTool.prototype = new EditorTool();
 Editor.ChainTool.prototype.OnMouseDown = function (event) {
@@ -692,7 +693,7 @@ Editor.TemplateTool = function (editor, template) {
 		this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 	}
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.TemplateTool.prototype = new EditorTool();
 Editor.TemplateTool.prototype._getSign = function (molecule, bond, v) {
@@ -893,7 +894,7 @@ Editor.ChargeTool = function (editor, charge) { // TODO [RB] should be "pluggabl
 	this.editor = editor;
 	this.charge = charge;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.ChargeTool.prototype = new EditorTool();
 Editor.ChargeTool.prototype.OnMouseMove = function (event) {
@@ -917,89 +918,11 @@ Editor.ChargeTool.prototype.OnMouseUp = function (event) {
 	}
 	return true;
 };
-
-
-Editor.RGroupAtomTool = function (editor) {
-	this.editor = editor;
-
-	this._hoverHelper = new EditorTool.HoverHelper(this);
-};
-Editor.RGroupAtomTool.prototype = new EditorTool();
-Editor.RGroupAtomTool.prototype.OnMouseMove = function (event) {
-	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
-};
-Editor.RGroupAtomTool.prototype.OnMouseUp = function (event) {
-	function sel2Values(rg) {
-		var res = [];
-		for (var rgi = 0; rgi < 32; rgi++)
-			if (rg & (1 << rgi)) {
-				var val = 'R' + (rgi + 1);
-				res.push(val); // push the string
-			}
-		return res;
-	}
-	function values2Sel(vals) {
-		var res = 0;
-		vals.values.forEach(function (val) {
-			var rgi = val.substr(1) - 1;
-			res |= 1 << rgi;
-		});
-		return res;
-	}
-	var ci = this.editor.render.findItem(event, ['atoms']);
-	if (!ci || ci.type == 'Canvas') {
-		this._hoverHelper.hover(null);
-		ui.showRGroupTable({
-			mode: 'multiple',
-			onOk: function (rgNew) {
-				rgNew = values2Sel(rgNew);
-				if (rgNew) {
-					ui.addUndoAction(
-					Action.fromAtomAddition(
-					ui.page2obj(this.OnMouseMove0.lastEvent),
-					{ label: 'R#', rglabel: rgNew}
-					),
-						true
-					);
-					ui.render.update();
-				}
-			}.bind(this)
-		});
-		return true;
-	} else if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(null);
-		var atom = this.editor.render.ctab.molecule.atoms.get(ci.id);
-		var lbOld = atom.label;
-		var rgOld = atom.rglabel;
-		ui.showRGroupTable({
-			mode: 'multiple',
-			values: sel2Values(rgOld),
-			onOk: function (rgNew) {
-				rgNew = values2Sel(rgNew);
-				if (rgOld != rgNew || lbOld != 'R#') {
-					var newProps = Object.clone(Atom.attrlist); // TODO review: using Atom.attrlist as a source of default property values
-					if (rgNew) {
-						newProps.label = 'R#';
-						newProps.rglabel = rgNew;
-						newProps.aam = atom.aam;
-					} else {
-						newProps.label = 'C';
-						newProps.aam = atom.aam;
-					}
-					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, newProps), true);
-					ui.render.update();
-				}
-			}.bind(this)
-		});
-		return true;
-	}
-};
-
-
+                                        
 Editor.RGroupFragmentTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 
 Editor.RGroupFragmentTool.prototype = new EditorTool();
@@ -1069,7 +992,7 @@ Editor.RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 Editor.APointTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.APointTool.prototype = new EditorTool();
 Editor.APointTool.prototype.OnMouseMove = function (event) {
@@ -1097,7 +1020,7 @@ Editor.APointTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionArrowTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.ReactionArrowTool.prototype = new EditorTool();
 Editor.ReactionArrowTool.prototype.OnMouseDown = function (event) {
@@ -1138,7 +1061,7 @@ Editor.ReactionArrowTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionPlusTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 };
 Editor.ReactionPlusTool.prototype = new EditorTool();
 Editor.ReactionPlusTool.prototype.OnMouseDown = function (event) {
@@ -1179,7 +1102,7 @@ Editor.ReactionPlusTool.prototype.OnMouseUp = function (event) {
 Editor.ReactionMapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 
@@ -1267,7 +1190,7 @@ Editor.ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
 Editor.ReactionUnmapTool = function (editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
 };
@@ -1304,7 +1227,7 @@ Editor.SGroupTool = function (editor) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
-	this._hoverHelper = new EditorTool.HoverHelper(this);
+	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new Editor.LassoTool.LassoHelper(1, editor);
 	this._sGroupHelper = new Editor.SGroupTool.SGroupHelper(editor);
 

@@ -1,5 +1,6 @@
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');
+var EditorGlobal = require('./editorglobal');
 
 var ui = global.ui;
 
@@ -74,7 +75,7 @@ EditorTool.atom_label_map = {
 
 EditorTool.prototype.OnKeyPress0 = function (event, action) {
 	if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
-		return Editor.RGroupAtomTool.prototype.OnMouseUp.call(this,
+		return EditorGlobal.RGroupAtomTool_OnMouseUp.call(this,
 			this.OnMouseMove0.lastEvent);
 	} else if (action in EditorTool.atom_label_map) {
 		var label = EditorTool.atom_label_map[action];
@@ -119,23 +120,6 @@ EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
 	var v = new Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
 	v.add_(pos0);
 	return v;
-};
-
-
-EditorTool.HoverHelper = function (editorTool) {
-	this.editorTool = editorTool;
-};
-EditorTool.HoverHelper.prototype.hover = function (ci) {
-	if (ci && ci.type == 'Canvas')
-		ci = null;
-	// TODO add custom highlight style parameter, to be used when fusing atoms, sgroup children highlighting, etc
-	if ('ci' in this && (!ci || this.ci.type != ci.type || this.ci.id != ci.id)) {
-		this.editorTool.editor.render.highlightObject(this.ci, false);
-		delete this.ci;
-	}
-	if (ci && this.editorTool.editor.render.highlightObject(ci, true)) {
-		this.ci = ci;
-	}
 };
 
 module.exports = EditorTool

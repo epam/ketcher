@@ -20,6 +20,7 @@ require('../rnd');
 
 var Editor = require('../editor/editor');
 var EditorTool = require('../editor/editortool');
+var RGroupAtomTool = require('../editor/rgroupatomtool');
 
 var Render = require('../rnd/render')
 
@@ -1025,7 +1026,7 @@ function mapTool (id) {
 	} else if (id == 'reaction-unmap') {
 		return new Editor.ReactionUnmapTool(ui.editor);
 	} else if (id == 'rgroup-label') {
-		return new Editor.RGroupAtomTool(ui.editor);
+		return new RGroupAtomTool(ui.editor);
 	} else if (id == 'rgroup-fragment') {
 		return new Editor.RGroupFragmentTool(ui.editor);
 	} else if (id == 'rgroup-attpoints') {

@@ -120,30 +120,30 @@ ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	.attr(styles.selectionStyle);
 };
 
-rnd.ReBond = function (/*chem.Bond*/bond)
+var ReBond = function (/*chem.Bond*/bond)
 {
 	this.init(Visel.TYPE.BOND);
 
 	this.b = bond; // TODO rename b to item
 	this.doubleBondShift = 0;
 };
-rnd.ReBond.prototype = new rnd.ReObject();
-rnd.ReBond.isSelectable = function () { return true; }
+ReBond.prototype = new rnd.ReObject();
+ReBond.isSelectable = function () { return true; }
 
-rnd.ReBond.prototype.drawHighlight = function (render) {
+ReBond.prototype.drawHighlight = function (render) {
 	var ret = this.makeHighlightPlate(render);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };
 
-rnd.ReBond.prototype.makeHighlightPlate = function (render) {
+ReBond.prototype.makeHighlightPlate = function (render) {
 	render.ctab.bondRecalc(render.settings, this);
 	var c = render.ps(this.b.center);
 	return render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
 	.attr(render.styles.highlightStyle);
 };
 
-rnd.ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
+ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	restruct.bondRecalc(restruct.render.settings, this);
 	var c = restruct.render.ps(this.b.center);
 	return paper.circle(c.x, c.y, 0.8 * styles.atomSelectionPlateRadius)
@@ -181,7 +181,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	}, this);
 
 	molecule.bonds.each(function (bid, bond){
-		this.bonds.set(bid, new rnd.ReBond(bond));
+		this.bonds.set(bid, new ReBond(bond));
 	}, this);
 
 	molecule.loops.each(function (lid, loop){
@@ -882,7 +882,7 @@ rnd.ReStruct.prototype.notifyRxnPlusRemoved = function (plid) {
 };
 
 rnd.ReStruct.prototype.notifyBondAdded = function (bid) {
-	this.bonds.set(bid, new rnd.ReBond(this.molecule.bonds.get(bid)));
+	this.bonds.set(bid, new ReBond(this.molecule.bonds.get(bid)));
 	this.markBond(bid, 1);
 };
 
@@ -1491,7 +1491,7 @@ rnd.ReChiralFlag.prototype.draw = function (render) {
 
 rnd.ReStruct.maps = {
 	'atoms':       ReAtom,
-	'bonds':       rnd.ReBond,
+	'bonds':       ReBond,
 	'rxnPluses':   rnd.ReRxnPlus,
 	'rxnArrows':   rnd.ReRxnArrow,
 	'frags':       rnd.ReFrag,

@@ -29,6 +29,7 @@ var BondTool = require('../editor/bondtool');
 var ChainTool = require('../editor/chaintool');
 var TemplateTool = require('../editor/templatetool');
 var ChargeTool = require('../editor/chargetool');
+var RGroupFragmentTool = require('../editor/rgroupfragmenttool');
 
    
 var Render = require('../rnd/render')
@@ -1037,7 +1038,7 @@ function mapTool (id) {
 	} else if (id == 'rgroup-label') {
 		return new RGroupAtomTool(ui.editor);
 	} else if (id == 'rgroup-fragment') {
-		return new Editor.RGroupFragmentTool(ui.editor);
+		return new RGroupFragmentTool(ui.editor);
 	} else if (id == 'rgroup-attpoints') {
 		return new Editor.APointTool(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {

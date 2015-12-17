@@ -21,6 +21,8 @@ require('../rnd');
 var Editor = require('../editor/editor');
 var EditorTool = require('../editor/editortool');
 var RGroupAtomTool = require('../editor/rgroupatomtool');
+var LassoTool = require('../editor/lassotool');
+var SGroupTool = require('../editor/sgrouptool');
 
 var Render = require('../rnd/render')
 
@@ -994,11 +996,11 @@ function mapTool (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new Editor.LassoTool(ui.editor, 0);
+		return new LassoTool(ui.editor, 0);
 	} else if (id == 'select-rectangle') {
-		return new Editor.LassoTool(ui.editor, 1);
+		return new LassoTool(ui.editor, 1);
 	} else if (id == 'select-fragment') {
-		return new Editor.LassoTool(ui.editor, 1, true);
+		return new LassoTool(ui.editor, 1, true);
 	} else if (id == 'erase') {
 		return new Editor.EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
@@ -1016,7 +1018,7 @@ function mapTool (id) {
 	} else if (id == 'charge-minus') {
 		return new Editor.ChargeTool(ui.editor, -1);
 	} else if (id == 'sgroup') {
-		return new Editor.SGroupTool(ui.editor);
+		return new SGroupTool(ui.editor);
 	} else if (id == 'reaction-arrow') {
 		return new Editor.ReactionArrowTool(ui.editor);
 	} else if (id == 'reaction-plus') {

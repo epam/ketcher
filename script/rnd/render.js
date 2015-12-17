@@ -10,6 +10,7 @@ var SGroup = require('../chem/sgroup');
 var ReRxnPlus = require('./rerxnplus')
 var ReRxnArrow = require('./rerxnarrow')
 var ReFrag = require('./refrag')
+var ReRGroup = require('./rergroup')
 
 require('./restruct');
 require('./restruct_rendering');
@@ -1047,7 +1048,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 		updret('Fragment', frag);
 	}
 	if (!maps || maps.indexOf('rgroups') >= 0) {
-		var rgroup = rnd.ReRGroup.findClosest(this, pos);
+		var rgroup = ReRGroup.findClosest(this, pos);
 		updret('RGroup', rgroup);
 	}
 

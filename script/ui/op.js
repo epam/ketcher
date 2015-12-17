@@ -6,6 +6,7 @@ var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 var ReFrag = require('../rnd/refrag')
+var ReRGroup = require('../rnd/rergroup')
 
 require('../rnd');
 
@@ -505,7 +506,7 @@ function RGroupFragment (rgid, frid, rg) {
 			if (!rgNew) {
 				rgNew = this.rg_new || new Struct.RGroup();
 				DS.rgroups.set(this.rgid_new, rgNew);
-				RS.rgroups.set(this.rgid_new, new rnd.ReRGroup(rgNew));
+				RS.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
 			} else {
 				RS.markItem('rgroups', this.rgid_new, 1);
 			}

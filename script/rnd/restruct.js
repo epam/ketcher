@@ -79,7 +79,7 @@ rnd.ReObject.prototype.makeSelectionPlate = function (render) {
 	console.log('ReObject.makeSelectionPlate is not overridden');
 };
 
-rnd.ReAtom = function (/*chem.Atom*/atom)
+var ReAtom = function (/*chem.Atom*/atom)
 {
 	this.init(Visel.TYPE.ATOM);
 
@@ -90,22 +90,23 @@ rnd.ReAtom = function (/*chem.Atom*/atom)
 
 	this.component = -1;
 };
-rnd.ReAtom.prototype = new rnd.ReObject();
-rnd.ReAtom.isSelectable = function () { return true; }
 
-rnd.ReAtom.prototype.getVBoxObj = function (render) {
+ReAtom.prototype = new rnd.ReObject();
+ReAtom.isSelectable = function () { return true; }
+
+ReAtom.prototype.getVBoxObj = function (render) {
 	if (this.visel.boundingBox)
 		return rnd.ReObject.prototype.getVBoxObj.call(this, render);
 	return new Box2Abs(this.a.pp, this.a.pp);
 };
 
-rnd.ReAtom.prototype.drawHighlight = function (render) {
+ReAtom.prototype.drawHighlight = function (render) {
 	var ret = this.makeHighlightPlate(render);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };
 
-rnd.ReAtom.prototype.makeHighlightPlate = function (render) {
+ReAtom.prototype.makeHighlightPlate = function (render) {
 	var paper = render.paper;
 	var styles = render.styles;
 	var ps = render.ps(this.a.pp);
@@ -113,7 +114,7 @@ rnd.ReAtom.prototype.makeHighlightPlate = function (render) {
 	.attr(styles.highlightStyle);
 };
 
-rnd.ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
+ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	var ps = restruct.render.ps(this.a.pp);
 	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
 	.attr(styles.selectionStyle);
@@ -176,7 +177,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	this.structChanged = false;
 
 	molecule.atoms.each(function (aid, atom){
-		this.atoms.set(aid, new rnd.ReAtom(atom));
+		this.atoms.set(aid, new ReAtom(atom));
 	}, this);
 
 	molecule.bonds.each(function (bid, bond){
@@ -854,7 +855,7 @@ rnd.ReStruct.prototype.coordProcess = function (norescale)
 };
 
 rnd.ReStruct.prototype.notifyAtomAdded = function (aid) {
-	var atomData = new rnd.ReAtom(this.molecule.atoms.get(aid));
+	var atomData = new ReAtom(this.molecule.atoms.get(aid));
 	atomData.component = this.connectedComponents.add(Set.single(aid));
 	this.atoms.set(aid, atomData);
 	this.markAtom(aid, 1);
@@ -1489,7 +1490,7 @@ rnd.ReChiralFlag.prototype.draw = function (render) {
 };
 
 rnd.ReStruct.maps = {
-	'atoms':       rnd.ReAtom,
+	'atoms':       ReAtom,
 	'bonds':       rnd.ReBond,
 	'rxnPluses':   rnd.ReRxnPlus,
 	'rxnArrows':   rnd.ReRxnArrow,

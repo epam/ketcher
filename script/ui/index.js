@@ -30,7 +30,8 @@ var ChainTool = require('../editor/chaintool');
 var TemplateTool = require('../editor/templatetool');
 var ChargeTool = require('../editor/chargetool');
 var RGroupFragmentTool = require('../editor/rgroupfragmenttool');
-
+var APointTool = require('../editor/apointtool');
+    
    
 var Render = require('../rnd/render')
 
@@ -1040,7 +1041,7 @@ function mapTool (id) {
 	} else if (id == 'rgroup-fragment') {
 		return new RGroupFragmentTool(ui.editor);
 	} else if (id == 'rgroup-attpoints') {
-		return new Editor.APointTool(ui.editor);
+		return new APointTool(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {
 		return new Editor.RotateTool(ui.editor);
 	}

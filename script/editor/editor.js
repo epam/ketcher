@@ -99,35 +99,7 @@ Editor.prototype.getSelectionStruct = function () {
 		(dst.rxnArrows.count() || dst.rxnPluses.count());
 
 	return dst;
-};
-                                        
-Editor.APointTool = function (editor) {
-	this.editor = editor;
-
-	this._hoverHelper = new HoverHelper(this);
-};
-Editor.APointTool.prototype = new EditorTool();
-Editor.APointTool.prototype.OnMouseMove = function (event) {
-	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
-};
-Editor.APointTool.prototype.OnMouseUp = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(null);
-		var apOld = this.editor.render.ctab.molecule.atoms.get(ci.id).attpnt;
-		ui.showAtomAttachmentPoints({
-			selection: apOld,
-			onOk: function (apNew) {
-				if (apOld != apNew) {
-					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { attpnt: apNew }), true);
-					ui.render.update();
-				}
-			}.bind(this)
-		});
-		return true;
-	}
-};
-
+};                                        
 
 Editor.ReactionArrowTool = function (editor) {
 	this.editor = editor;

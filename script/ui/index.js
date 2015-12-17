@@ -28,8 +28,9 @@ var AtomTool = require('../editor/atomtool');
 var BondTool = require('../editor/bondtool');
 var ChainTool = require('../editor/chaintool');
 var TemplateTool = require('../editor/templatetool');
+var ChargeTool = require('../editor/chargetool');
 
-
+   
 var Render = require('../rnd/render')
 
 var Action = require('./action.js');
@@ -1020,9 +1021,9 @@ function mapTool (id) {
 	} else if (id.startsWith('template')) {
 		return new TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
-		return new Editor.ChargeTool(ui.editor, 1);
+		return new ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {
-		return new Editor.ChargeTool(ui.editor, -1);
+		return new ChargeTool(ui.editor, -1);
 	} else if (id == 'sgroup') {
 		return new SGroupTool(ui.editor);
 	} else if (id == 'reaction-arrow') {

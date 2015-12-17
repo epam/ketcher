@@ -36,6 +36,7 @@ var ReactionPlusTool = require('../editor/reactionplustool');
 var ReactionMapTool = require('../editor/reactionmaptool');
 var ReactionUnmapTool = require('../editor/reactionunmaptool');
 var PasteTool = require('../editor/pastetool');
+var RotateTool = require('../editor/rotatetool');
       
       
 var Render = require('../rnd/render')
@@ -1048,7 +1049,7 @@ function mapTool (id) {
 	} else if (id == 'rgroup-attpoints') {
 		return new APointTool(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {
-		return new Editor.RotateTool(ui.editor);
+		return new RotateTool(ui.editor);
 	}
 	return null;
 };

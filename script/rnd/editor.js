@@ -8,9 +8,8 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var SGroup = require('../chem/sgroup');
 
-require('./restruct');
+var ReStruct = require('./restruct')
 
-var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var ui = global.ui;
 
 var Editor = function (render)
@@ -21,7 +20,7 @@ var Editor = function (render)
 
 Editor.prototype.selectAll = function () {
 	var selection = {};
-	for (var map in rnd.ReStruct.maps) {
+	for (var map in ReStruct.maps) {
 		selection[map] = ui.render.ctab[map].ikeys();
 	}
 	this._selectionHelper.setSelection(selection);
@@ -109,7 +108,7 @@ Editor.SelectionHelper = function (editor) {
 Editor.SelectionHelper.prototype.setSelection = function (selection, add) {
 	if (!('selection' in this) || !add) {
 		this.selection = {};
-		for (var map1 in rnd.ReStruct.maps) this.selection[map1] = []; // TODO it should NOT be mandatory
+		for (var map1 in ReStruct.maps) this.selection[map1] = []; // TODO it should NOT be mandatory
 	}
 	if (selection && 'id' in selection && 'map' in selection) {
 		(selection[selection.map] = selection[selection.map] || []).push(selection.id);

@@ -5,12 +5,13 @@ var element = require('../chem/element');
 var Bond = require('../chem/bond');
 
 var ReLoop = require('./reloop')
+var ReStruct = require('./restruct')
 
 require('./restruct');
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var tfx = util.tfx;
 
-rnd.ReStruct.prototype.drawArrow = function (a, b)
+ReStruct.prototype.drawArrow = function (a, b)
 {
 	var width = 5, length = 7;
 	var paper = this.render.paper;
@@ -19,7 +20,7 @@ rnd.ReStruct.prototype.drawArrow = function (a, b)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawPlus = function (c)
+ReStruct.prototype.drawPlus = function (c)
 {
 	var s = this.render.scale / 5;
 	var paper = this.render.paper;
@@ -28,16 +29,16 @@ rnd.ReStruct.prototype.drawPlus = function (c)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawBondSingle = function (hb1, hb2)
+ReStruct.prototype.drawBondSingle = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path(rnd.ReStruct.makeStroke(a, b))
+	return paper.path(ReStruct.makeStroke(a, b))
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2, bond)
+ReStruct.prototype.drawBondSingleUp = function (hb1, hb2, bond)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var settings = this.render.settings;
@@ -58,7 +59,7 @@ rnd.ReStruct.prototype.drawBondSingleUp = function (hb1, hb2, bond)
 	});
 };
 
-rnd.ReStruct.prototype.drawVec = function (a, dir, color, len) {
+ReStruct.prototype.drawVec = function (a, dir, color, len) {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
@@ -71,7 +72,7 @@ rnd.ReStruct.prototype.drawVec = function (a, dir, color, len) {
 	});
 };
 
-rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function (hb, neihbid)
+ReStruct.prototype.stereoUpBondGetCoordinates = function (hb, neihbid)
 {
 	var bsp = this.render.settings.bondSpace;
 	var neihb = this.molecule.halfBonds.get(neihbid);
@@ -87,7 +88,7 @@ rnd.ReStruct.prototype.stereoUpBondGetCoordinates = function (hb, neihbid)
 	return sin > 0 ? [a1, a2] : [a2, a1];
 };
 
-rnd.ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDouble)
+ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDouble)
 {
 	var paper = this.render.paper;
 	var settings = this.render.settings;
@@ -130,7 +131,7 @@ rnd.ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDo
 	return pathMain;
 };
 
-rnd.ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
+ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var settings = this.render.settings;
@@ -150,13 +151,13 @@ rnd.ReStruct.prototype.drawBondSingleDown = function (hb1, hb2)
 		r = a.addScaled(d, step * i);
 		p = r.addScaled(n, bsp * (i + 0.5) / (nlines - 0.5));
 		q = r.addScaled(n, -bsp * (i + 0.5) / (nlines - 0.5));
-		path += rnd.ReStruct.makeStroke(p, q);
+		path += ReStruct.makeStroke(p, q);
 	}
 	return paper.path(path)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawBondSingleEither = function (hb1, hb2)
+ReStruct.prototype.drawBondSingleEither = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var settings = this.render.settings;
@@ -181,14 +182,14 @@ rnd.ReStruct.prototype.drawBondSingleEither = function (hb1, hb2)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.getBondLineShift = function (cos, sin)
+ReStruct.prototype.getBondLineShift = function (cos, sin)
 {
 	if (sin < 0 || Math.abs(cos) > 0.9)
 		return 0;
 	return sin / (1 - cos);
 };
 
-rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
+ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm, shift = cis_trans ? 0 : bond.doubleBondShift;
 	var settings = this.render.settings;
@@ -228,12 +229,12 @@ rnd.ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cis_trans)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.makeStroke = function (a, b) {
+ReStruct.makeStroke = function (a, b) {
 	return 'M' + tfx(a.x) + ',' + tfx(a.y) +
 		'L' + tfx(b.x) + ',' + tfx(b.y) + '	';
 };
 
-rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
+ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var render = this.render;
@@ -250,10 +251,10 @@ rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
 	for (var i = 1; i <= nSect; ++i) {
 		var pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
 		if (i & 1) {
-			path += rnd.ReStruct.makeStroke(pp, pi);
+			path += ReStruct.makeStroke(pp, pi);
 		} else {
-			path += rnd.ReStruct.makeStroke(pp.addScaled(n, bsp), pi.addScaled(n, bsp));
-			path += rnd.ReStruct.makeStroke(pp.addScaled(n, -bsp), pi.addScaled(n, -bsp));
+			path += ReStruct.makeStroke(pp.addScaled(n, bsp), pi.addScaled(n, bsp));
+			path += ReStruct.makeStroke(pp.addScaled(n, -bsp), pi.addScaled(n, -bsp));
 		}
 		pp = pi;
 	}
@@ -262,7 +263,7 @@ rnd.ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2)
 	.attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
+ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p, n = hb1.norm;
 	var render = this.render;
@@ -273,7 +274,7 @@ rnd.ReStruct.prototype.drawBondTriple = function (hb1, hb2)
 	var b2 = b.addScaled(n, settings.bondSpace);
 	var a3 = a.addScaled(n, -settings.bondSpace);
 	var b3 = b.addScaled(n, -settings.bondSpace);
-	return paper.path(rnd.ReStruct.makeStroke(a,b) + rnd.ReStruct.makeStroke(a2,b2) + rnd.ReStruct.makeStroke(a3,b3))
+	return paper.path(ReStruct.makeStroke(a,b) + ReStruct.makeStroke(a2,b2) + ReStruct.makeStroke(a3,b3))
 	.attr(styles.lineattr);
 };
 
@@ -297,7 +298,7 @@ rnd.dashedPath = function (p0, p1, dash) {
 	return path;
 }
 
-rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine)
+ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine)
 {
 	if (!drawDashLine) {
 		return this.drawBondSingle(hb1, hb2);
@@ -314,7 +315,7 @@ rnd.ReStruct.prototype.drawBondAromatic = function (hb1, hb2, bond, drawDashLine
 
 rnd.dashdotPattern = [0.125,0.125,0.005,0.125];
 
-rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
+ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 {
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
@@ -329,7 +330,7 @@ rnd.ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 	return paper.set([l1,l2]);
 };
 
-rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask, dash)
+ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask, dash)
 {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
@@ -360,13 +361,13 @@ rnd.ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, 
 			b3 = b3.addScaled(hb1.dir, -settings.bondSpace *
 			this.getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
-	var l1 = paper.path(dash && (mask & 1) ? rnd.dashedPath(a2, b2, dash) : rnd.ReStruct.makeStroke(a2, b2)).attr(styles.lineattr);
-	var l2 = paper.path(dash && (mask & 2) ? rnd.dashedPath(a3, b3, dash) : rnd.ReStruct.makeStroke(a3, b3)).attr(styles.lineattr);
+	var l1 = paper.path(dash && (mask & 1) ? rnd.dashedPath(a2, b2, dash) : ReStruct.makeStroke(a2, b2)).attr(styles.lineattr);
+	var l2 = paper.path(dash && (mask & 2) ? rnd.dashedPath(a3, b3, dash) : ReStruct.makeStroke(a3, b3)).attr(styles.lineattr);
 	return [l1, l2];
 };
 
 
-rnd.ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
+ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
 {
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
@@ -380,18 +381,18 @@ rnd.ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
 	return paper.set([l1,l2]);
 };
 
-rnd.ReStruct.prototype.drawBondAny = function (hb1, hb2)
+ReStruct.prototype.drawBondAny = function (hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
-	return paper.path(rnd.ReStruct.makeStroke(a,b))
+	return paper.path(ReStruct.makeStroke(a,b))
 	.attr(styles.lineattr).attr({
 		'stroke-dasharray':'- '
 	});
 };
 
-rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
+ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 {
 	var a = hb1.p, b = hb2.p;
 	var c = b.add(a).scaled(0.5);
@@ -457,11 +458,11 @@ rnd.ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2)
 
 	var pathdesc = '';
 	for (var i = 0; i < p.length / 2; ++i)
-		pathdesc += rnd.ReStruct.makeStroke(p[2 * i], p[2 * i + 1]);
+		pathdesc += ReStruct.makeStroke(p[2 * i], p[2 * i + 1]);
 	return paper.path(pathdesc).attr(styles.lineattr);
 };
 
-rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
+ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 {
 	var topologyMark = null;
 
@@ -500,7 +501,7 @@ rnd.ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2)
 	return path;
 };
 
-rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
+ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 {
 	var path = null;
 	var molecule = this.molecule;
@@ -561,7 +562,7 @@ rnd.ReStruct.prototype.drawBond = function (bond, hb1, hb2)
 	return path;
 };
 
-rnd.ReStruct.prototype.radicalCap = function (p)
+ReStruct.prototype.radicalCap = function (p)
 {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
@@ -577,7 +578,7 @@ rnd.ReStruct.prototype.radicalCap = function (p)
 	});
 };
 
-rnd.ReStruct.prototype.radicalBullet = function (p)
+ReStruct.prototype.radicalBullet = function (p)
 {
 	var settings = this.render.settings;
 	var paper = this.render.paper;
@@ -588,7 +589,7 @@ rnd.ReStruct.prototype.radicalBullet = function (p)
 	});
 };
 
-rnd.ReStruct.prototype.centerText = function (path, rbb)
+ReStruct.prototype.centerText = function (path, rbb)
 {
 	// TODO: find a better way
 	if (this.render.paper.raphael.vml) {
@@ -596,12 +597,12 @@ rnd.ReStruct.prototype.centerText = function (path, rbb)
 	}
 };
 
-rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
+ReStruct.prototype.showItemSelection = function (id, item, visible)
 {
 	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
 	// rbalabanov: here is temporary fix for "drag issue" on iPad
 	//BEGIN
-	exists = exists && (!('hiddenPaths' in rnd.ReStruct.prototype) || rnd.ReStruct.prototype.hiddenPaths.indexOf(item.selectionPlate) < 0);
+	exists = exists && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(item.selectionPlate) < 0);
 	//END
 	if (visible) {
 		if (!exists) {
@@ -618,7 +619,7 @@ rnd.ReStruct.prototype.showItemSelection = function (id, item, visible)
 	}
 };
 
-rnd.ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y)
+ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y)
 {
 	path.translateAbs(x, y);
 	rbb.x += x;
@@ -627,7 +628,7 @@ rnd.ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y)
 
 var markerColors = ['black', 'cyan', 'magenta', 'red', 'green', 'blue', 'green'];
 
-rnd.ReStruct.prototype.showLabels = function ()
+ReStruct.prototype.showLabels = function ()
 {
 	var render = this.render;
 	var settings = render.settings;
@@ -1038,7 +1039,7 @@ rnd.ReStruct.prototype.showLabels = function ()
 	}
 };
 
-rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
+ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
 	var t = 0;
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
@@ -1050,7 +1051,7 @@ rnd.ReStruct.prototype.shiftBondEnd = function (atom, pos0, dir, margin){
 	return pos0;
 };
 
-rnd.ReStruct.prototype.bisectLargestSector = function (atom)
+ReStruct.prototype.bisectLargestSector = function (atom)
 {
 	var angles = [];
 	atom.a.neighbors.each( function (hbid) {
@@ -1074,7 +1075,7 @@ rnd.ReStruct.prototype.bisectLargestSector = function (atom)
 	return new Vec2(Math.cos(ang), Math.sin(ang));
 };
 
-rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
+ReStruct.prototype.bondRecalc = function (settings, bond) {
 
 	var render = this.render;
 	var atom1 = this.atoms.get(bond.b.begin);
@@ -1092,7 +1093,7 @@ rnd.ReStruct.prototype.bondRecalc = function (settings, bond) {
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };
 
-rnd.ReStruct.prototype.showBonds = function ()
+ReStruct.prototype.showBonds = function ()
 {
 	var render = this.render;
 	var settings = render.settings;
@@ -1155,7 +1156,7 @@ rnd.ReStruct.prototype.showBonds = function ()
 	}
 };
 
-rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
+ReStruct.prototype.labelIsVisible = function (aid, atom)
 {
 	if (atom.a.neighbors.length == 0 ||
 		(atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
@@ -1182,7 +1183,7 @@ rnd.ReStruct.prototype.labelIsVisible = function (aid, atom)
 	return false;
 };
 
-rnd.ReStruct.prototype.checkLabelsToShow = function ()
+ReStruct.prototype.checkLabelsToShow = function ()
 {
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
@@ -1190,7 +1191,7 @@ rnd.ReStruct.prototype.checkLabelsToShow = function ()
 	}
 };
 
-rnd.ReStruct.layerMap = {
+ReStruct.layerMap = {
 	'background': 0,
 	'selection-plate': 1,
 	'highlighting': 2,
@@ -1199,7 +1200,7 @@ rnd.ReStruct.layerMap = {
 	'indices': 5
 };
 
-rnd.ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) {
+ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) {
 	if (!path)
 		return;
 	var offset = this.render.offset;
@@ -1210,17 +1211,17 @@ rnd.ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visi
 		bb = bb ? bb.translate(offset) : null;
 	}
 	visel.add(path, bb, ext);
-	this.insertInLayer(rnd.ReStruct.layerMap[group], path);
+	this.insertInLayer(ReStruct.layerMap[group], path);
 };
 
-rnd.ReStruct.prototype.clearVisel = function (visel)
+ReStruct.prototype.clearVisel = function (visel)
 {
 	for (var i = 0; i < visel.paths.length; ++i)
 		visel.paths[i].remove();
 	visel.clear();
 };
 
-rnd.ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {
+ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {
 	if (n1 == 6 && n2 != 6 && (d1 > 1 || d2 == 1))
 		return -1;
 	if (n2 == 6 && n1 != 6 && (d2 > 1 || d1 == 1))
@@ -1234,7 +1235,7 @@ rnd.ReStruct.prototype.selectDoubleBondShift = function (n1, n2, d1, d2) {
 	return 1;
 };
 
-rnd.ReStruct.prototype.selectDoubleBondShift_Chain = function (bond) {
+ReStruct.prototype.selectDoubleBondShift_Chain = function (bond) {
 	var struct = this.molecule;
 	var hb1 = struct.halfBonds.get(bond.b.hb1);
 	var hb2 = struct.halfBonds.get(bond.b.hb2);
@@ -1249,7 +1250,7 @@ rnd.ReStruct.prototype.selectDoubleBondShift_Chain = function (bond) {
 	return 0;
 };
 
-rnd.ReStruct.prototype.setDoubleBondShift = function ()
+ReStruct.prototype.setDoubleBondShift = function ()
 {
 	var struct = this.molecule;
 	// double bonds in loops
@@ -1274,7 +1275,7 @@ rnd.ReStruct.prototype.setDoubleBondShift = function ()
 	}
 };
 
-rnd.ReStruct.prototype.updateLoops = function ()
+ReStruct.prototype.updateLoops = function ()
 {
 	this.reloops.each(function (rlid, reloop){
 		this.clearVisel(reloop.visel);
@@ -1288,7 +1289,7 @@ rnd.ReStruct.prototype.updateLoops = function ()
 	}, this);
 };
 
-rnd.ReStruct.prototype.renderLoops = function ()
+ReStruct.prototype.renderLoops = function ()
 {
 	var render = this.render;
 	var settings = render.settings;

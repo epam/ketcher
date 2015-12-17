@@ -14,8 +14,8 @@ var ReRGroup = require('./rergroup')
 var ReDataSGroupData = require('./redatasgroupdata')
 var ReChiralFlag = require('./rechiralflag')
 var ReSGroup = require('./resgroup')
+var ReStruct = require('./restruct')
 
-require('./restruct');
 require('./restruct_rendering');
 
 var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
@@ -120,10 +120,10 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 
 	// rbalabanov: here is temporary fix for "drag issue" on iPad
 	//BEGIN
-	if ('hiddenPaths' in rnd.ReStruct.prototype) {
+	if ('hiddenPaths' in ReStruct.prototype) {
 		clientArea.observe('touchend', function (event) {
 			if (event.touches.length == 0) {
-				while (rnd.ReStruct.prototype.hiddenPaths.length > 0) rnd.ReStruct.prototype.hiddenPaths.pop().remove();
+				while (ReStruct.prototype.hiddenPaths.length > 0) ReStruct.prototype.hiddenPaths.pop().remove();
 			}
 		});
 	}
@@ -217,7 +217,7 @@ rnd.Render = function (clientArea, scale, opt, viewSz)
 		}, this);
 	}
 
-	this.ctab = new rnd.ReStruct(new Struct(), this);
+	this.ctab = new ReStruct(new Struct(), this);
 	this.settings = null;
 	this.styles = null;
 
@@ -293,7 +293,7 @@ rnd.Render.prototype.setMolecule = function (ctab, norescale)
 {
 	rnd.logMethod('setMolecule');
 	this.paper.clear();
-	this.ctab = new rnd.ReStruct(ctab, this, norescale);
+	this.ctab = new ReStruct(ctab, this, norescale);
 	this.offset = null;
 	this.size = null;
 	this.bb = null;
@@ -511,8 +511,8 @@ rnd.Render.prototype.bondGetAttr = function (bid, name)
 rnd.Render.prototype.setSelection = function (selection)
 {
 	rnd.logMethod('setSelection');
-	for (var map in rnd.ReStruct.maps) {
-		if (!rnd.ReStruct.maps[map].isSelectable())
+	for (var map in ReStruct.maps) {
+		if (!ReStruct.maps[map].isSelectable())
 			continue;
 		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
 		this.ctab[map].each(function (id, item){
@@ -641,7 +641,7 @@ rnd.Render.prototype.drawSelectionLine = function (p0, p1) {
 		p0 = this.obj2scaled(p0).add(this.offset);
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.path(
-		rnd.ReStruct.makeStroke(p0, p1)
+		ReStruct.makeStroke(p0, p1)
 		).attr({'stroke':'gray', 'stroke-width':'1px'});
 	}
 };

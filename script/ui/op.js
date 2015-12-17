@@ -5,6 +5,7 @@ var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
+var ReFrag = require('../rnd/refrag')
 
 require('../rnd');
 
@@ -431,7 +432,7 @@ function FragmentAdd (frid) {
 		} else {
 			DS.frags.set(this.frid, frag);
 		}
-		RS.frags.set(this.frid, new rnd.ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+		RS.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 	this._invert = function () {
 		return new FragmentDelete(this.frid);

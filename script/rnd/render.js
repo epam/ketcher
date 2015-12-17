@@ -9,6 +9,7 @@ var SGroup = require('../chem/sgroup');
 
 var ReRxnPlus = require('./rerxnplus')
 var ReRxnArrow = require('./rerxnarrow')
+var ReFrag = require('./refrag')
 
 require('./restruct');
 require('./restruct_rendering');
@@ -1042,7 +1043,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 		updret('RxnPlus',plus);
 	}
 	if (!maps || maps.indexOf('frags') >= 0) {
-		var frag = rnd.ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
+		var frag = ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
 		updret('Fragment', frag);
 	}
 	if (!maps || maps.indexOf('rgroups') >= 0) {

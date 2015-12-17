@@ -7,6 +7,8 @@ var util = require('../util');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 
+var ReRxnPlus = require('./rerxnplus')
+
 require('./restruct');
 require('./restruct_rendering');
 
@@ -1035,7 +1037,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 		updret('RxnArrow',arrow);
 	}
 	if (!maps || maps.indexOf('rxnPluses') >= 0) {
-		var plus = rnd.ReRxnPlus.findClosest(this, pos);
+		var plus = ReRxnPlus.findClosest(this, pos);
 		updret('RxnPlus',plus);
 	}
 	if (!maps || maps.indexOf('frags') >= 0) {

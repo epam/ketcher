@@ -19,6 +19,7 @@ var rnd = global.rnd = global.rnd || {};
 var tfx = util.tfx;
 
 var ReObject = require("./reobject")
+var ReRxnPlus = require("./rerxnplus")
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -130,7 +131,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	}, this);
 
 	molecule.rxnPluses.each(function (id, item){
-		this.rxnPluses.set(id, new rnd.ReRxnPlus(item));
+		this.rxnPluses.set(id, new ReRxnPlus(item));
 	}, this);
 
 	molecule.rxnArrows.each(function (id, item){
@@ -803,7 +804,7 @@ rnd.ReStruct.prototype.notifyAtomAdded = function (aid) {
 };
 
 rnd.ReStruct.prototype.notifyRxnPlusAdded = function (plid) {
-	this.rxnPluses.set(plid, new rnd.ReRxnPlus(this.molecule.rxnPluses.get(plid)));
+	this.rxnPluses.set(plid, new ReRxnPlus(this.molecule.rxnPluses.get(plid)));
 };
 
 rnd.ReStruct.prototype.notifyRxnArrowAdded = function (arid) {
@@ -916,46 +917,6 @@ rnd.ReStruct.prototype.BFS = function (onAtom, orig, context) {
 			}
 		}
 	}
-};
-
-rnd.ReRxnPlus = function (/*chem.RxnPlus*/plus)
-{
-	this.init(Visel.TYPE.PLUS);
-
-	this.item = plus;
-};
-rnd.ReRxnPlus.prototype = new ReObject();
-rnd.ReRxnPlus.isSelectable = function () { return true; }
-
-rnd.ReRxnPlus.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	render.ctab.rxnPluses.each(function (id, plus) {
-		var pos = plus.item.pp;
-		var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
-		if (dist < 0.5 && (!ret || dist < minDist)) {
-			minDist = dist;
-			ret = {'id': id, 'dist': minDist};
-		}
-	});
-	return ret;
-};
-
-rnd.ReRxnPlus.prototype.highlightPath = function (render) {
-	var p = render.ps(this.item.pp);
-	var s = render.settings.scaleFactor;
-	return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
-};
-
-rnd.ReRxnPlus.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-rnd.ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
-	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
 rnd.ReRxnArrow = function (/*chem.RxnArrow*/arrow)
@@ -1433,7 +1394,7 @@ rnd.ReChiralFlag.prototype.draw = function (render) {
 rnd.ReStruct.maps = {
 	'atoms':       ReAtom,
 	'bonds':       ReBond,
-	'rxnPluses':   rnd.ReRxnPlus,
+	'rxnPluses':   ReRxnPlus,
 	'rxnArrows':   rnd.ReRxnArrow,
 	'frags':       rnd.ReFrag,
 	'rgroups':     rnd.ReRGroup,

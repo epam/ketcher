@@ -13,7 +13,9 @@ var ReSGroup = require('../rnd/resgroup')
 require('../rnd');
 
 var ui = global.ui;
-var rnd = global.rnd;
+
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false}
+DEBUG.logMethod = function () { };
 
 function Base () {
 	this.type = 'OpBase';
@@ -327,7 +329,7 @@ function BondAdd (begin, end, bond) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (this.data.begin == this.data.end)
 			throw new Error('Distinct atoms expected');
-		if (rnd.DEBUG && this.molecule.checkBondExists(this.data.begin, this.data.end))
+		if (DEBUG.debug && this.molecule.checkBondExists(this.data.begin, this.data.end))
 			throw new Error('Bond already exists');
 
 		R.invalidateAtom(this.data.begin, 1);

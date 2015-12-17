@@ -18,24 +18,19 @@ var ReStruct = require('./restruct')
 
 require('./restruct_rendering');
 
-var rnd = global.rnd = global.rnd || {}; // jshint ignore:line
 var ui = global.ui;
 var tfx = util.tfx;
 
-rnd.DEBUG = false;
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false}
+DEBUG.logMethod = function () { };
+//DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
 
-rnd.logcnt = 0;
-rnd.logmouse = false;
-rnd.hl = false;
 
 var EventMap = {
 	mousemove: 'mousemove',
 	mousedown: 'mousedown',
 	mouseup: 'mouseup'
 };
-
-rnd.logMethod = function () { };
-//rnd.logMethod = function (method) {console.log("METHOD: " + method);}
 
 var defaultRenderOps = {
 	// flags for debugging
@@ -291,7 +286,7 @@ Render.prototype.client2Obj = function (clientPos) {
 
 Render.prototype.setMolecule = function (ctab, norescale)
 {
-	rnd.logMethod('setMolecule');
+	DEBUG.logMethod('setMolecule');
 	this.paper.clear();
 	this.ctab = new ReStruct(ctab, this, norescale);
 	this.offset = null;
@@ -303,7 +298,7 @@ Render.prototype.setMolecule = function (ctab, norescale)
 // molecule manipulation interface
 Render.prototype.atomGetAttr = function (aid, name)
 {
-	rnd.logMethod('atomGetAttr');
+	DEBUG.logMethod('atomGetAttr');
 	// TODO: check attribute names
 	return this.ctab.molecule.atoms.get(aid)[name];
 };
@@ -359,7 +354,7 @@ Render.prototype.invalidateItem = function (map, id, level)
 
 Render.prototype.atomGetDegree = function (aid)
 {
-	rnd.logMethod('atomGetDegree');
+	DEBUG.logMethod('atomGetDegree');
 	return this.ctab.atoms.get(aid).a.neighbors.length;
 };
 
@@ -386,48 +381,48 @@ Render.prototype.atomGetNeighbors = function (aid)
 // returns an array of s-group id's
 Render.prototype.atomGetSGroups = function (aid)
 {
-	rnd.logMethod('atomGetSGroups');
+	DEBUG.logMethod('atomGetSGroups');
 	var atom = this.ctab.atoms.get(aid);
 	return Set.list(atom.a.sgs);
 };
 
 Render.prototype.sGroupGetAttr = function (sgid, name)
 {
-	rnd.logMethod('sGroupGetAttr');
+	DEBUG.logMethod('sGroupGetAttr');
 	return this.ctab.sgroups.get(sgid).item.getAttr(name);
 };
 
 Render.prototype.sGroupGetAttrs = function (sgid)
 {
-	rnd.logMethod('sGroupGetAttrs');
+	DEBUG.logMethod('sGroupGetAttrs');
 	return this.ctab.sgroups.get(sgid).item.getAttrs();
 };
 
 // TODO: move to SGroup
 Render.prototype.sGroupGetAtoms = function (sgid)
 {
-	rnd.logMethod('sGroupGetAtoms');
+	DEBUG.logMethod('sGroupGetAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
 Render.prototype.sGroupGetType = function (sgid)
 {
-	rnd.logMethod('sGroupGetType');
+	DEBUG.logMethod('sGroupGetType');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.type;
 };
 
 Render.prototype.sGroupsFindCrossBonds = function ()
 {
-	rnd.logMethod('sGroupsFindCrossBonds');
+	DEBUG.logMethod('sGroupsFindCrossBonds');
 	this.ctab.molecule.sGroupsRecalcCrossBonds();
 };
 
 // TODO: move to ReStruct
 Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 {
-	rnd.logMethod('sGroupGetNeighborAtoms');
+	DEBUG.logMethod('sGroupGetNeighborAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.neiAtoms;
 };
@@ -435,7 +430,7 @@ Render.prototype.sGroupGetNeighborAtoms = function (sgid)
 // TODO: move to ReStruct
 Render.prototype.atomIsPlainCarbon = function (aid)
 {
-	rnd.logMethod('atomIsPlainCarbon');
+	DEBUG.logMethod('atomIsPlainCarbon');
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 };
 
@@ -468,19 +463,19 @@ Render.prototype.itemGetPos = function (map, id)
 
 Render.prototype.atomGetPos = function (id)
 {
-	rnd.logMethod('atomGetPos');
+	DEBUG.logMethod('atomGetPos');
 	return this.itemGetPos('atoms', id);
 };
 
 Render.prototype.rxnArrowGetPos = function (id)
 {
-	rnd.logMethod('rxnArrowGetPos');
+	DEBUG.logMethod('rxnArrowGetPos');
 	return this.itemGetPos('rxnArrows', id);
 };
 
 Render.prototype.rxnPlusGetPos = function (id)
 {
-	rnd.logMethod('rxnPlusGetPos');
+	DEBUG.logMethod('rxnPlusGetPos');
 	return this.itemGetPos('rxnPluses', id);
 };
 
@@ -504,13 +499,13 @@ Render.prototype.getAdjacentBonds = function (atoms) {
 
 Render.prototype.bondGetAttr = function (bid, name)
 {
-	rnd.logMethod('bondGetAttr');
+	DEBUG.logMethod('bondGetAttr');
 	return this.ctab.bonds.get(bid).b[name];
 };
 
 Render.prototype.setSelection = function (selection)
 {
-	rnd.logMethod('setSelection');
+	DEBUG.logMethod('setSelection');
 	for (var map in ReStruct.maps) {
 		if (!ReStruct.maps[map].isSelectable())
 			continue;
@@ -603,7 +598,7 @@ Render.prototype._setPaperSize = function (sz)
 
 Render.prototype.setPaperSize = function (sz)
 {
-	rnd.logMethod('setPaperSize');
+	DEBUG.logMethod('setPaperSize');
 	var oldSz = this.sz;
 	this.sz = sz;
 	this._setPaperSize(sz);
@@ -613,7 +608,7 @@ Render.prototype.setPaperSize = function (sz)
 
 Render.prototype.setOffset = function (newoffset)
 {
-	rnd.logMethod('setOffset');
+	DEBUG.logMethod('setOffset');
 	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(newoffset, this.offset);
 	this.offset = newoffset;
 };
@@ -632,7 +627,7 @@ Render.prototype.getElementPos = function (obj)
 };
 
 Render.prototype.drawSelectionLine = function (p0, p1) {
-	rnd.logMethod('drawSelectionLine');
+	DEBUG.logMethod('drawSelectionLine');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
 		this.selectionRect = null;
@@ -647,7 +642,7 @@ Render.prototype.drawSelectionLine = function (p0, p1) {
 };
 
 Render.prototype.drawSelectionRectangle = function (p0, p1) {
-	rnd.logMethod('drawSelectionRectangle');
+	DEBUG.logMethod('drawSelectionRectangle');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
 		this.selectionRect = null;
@@ -662,7 +657,7 @@ Render.prototype.drawSelectionRectangle = function (p0, p1) {
 };
 
 Render.prototype.getElementsInRectangle = function (p0,p1) {
-	rnd.logMethod('getElementsInRectangle');
+	DEBUG.logMethod('getElementsInRectangle');
 	var bondList = [];
 	var atomList = [];
 
@@ -708,7 +703,7 @@ Render.prototype.getElementsInRectangle = function (p0,p1) {
 };
 
 Render.prototype.drawSelectionPolygon = function (r) {
-	rnd.logMethod('drawSelectionPolygon');
+	DEBUG.logMethod('drawSelectionPolygon');
 	if (this.selectionRect) {
 		this.selectionRect.remove();
 		this.selectionRect = null;
@@ -768,7 +763,7 @@ Render.prototype.ps = function (pp) {
 };
 
 Render.prototype.getElementsInPolygon = function (rr) {
-	rnd.logMethod('getElementsInPolygon');
+	DEBUG.logMethod('getElementsInPolygon');
 	var bondList = [];
 	var atomList = [];
 	var r = [];
@@ -866,7 +861,7 @@ Render.prototype.testPolygon = function (rr) {
 
 Render.prototype.update = function (force)
 {
-	rnd.logMethod('update');
+	DEBUG.logMethod('update');
 
 	if (!this.settings || this.dirty) {
 		if (this.opt.autoScale) {

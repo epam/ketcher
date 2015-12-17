@@ -26,6 +26,8 @@ var SGroupTool = require('../editor/sgrouptool');
 var EraserTool = require('../editor/erasertool');
 var AtomTool = require('../editor/atomtool');
 var BondTool = require('../editor/bondtool');
+var ChainTool = require('../editor/chaintool');
+
 
 var Render = require('../rnd/render')
 
@@ -1011,7 +1013,7 @@ function mapTool (id) {
 	} else if (id.startsWith('bond-')) {
 		return new BondTool(ui.editor, bondType(id));
 	} else if (id == 'chain') {
-		return new Editor.ChainTool(ui.editor);
+		return new ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
 		return new Editor.TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {

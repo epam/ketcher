@@ -11,6 +11,7 @@ var ReRxnPlus = require('./rerxnplus')
 var ReRxnArrow = require('./rerxnarrow')
 var ReFrag = require('./refrag')
 var ReRGroup = require('./rergroup')
+var ReDataSGroupData = require('./redatasgroupdata')
 
 require('./restruct');
 require('./restruct_rendering');
@@ -1028,7 +1029,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 		updret('ChiralFlag', flag); // [MK] TODO: replace this with map name, 'ChiralFlag' -> 'chiralFlags', to avoid the extra mapping "if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';"
 	}
 	if (!maps || maps.indexOf('sgroupData') >= 0) {
-		var sgd = rnd.ReDataSGroupData.findClosest(this, pos);
+		var sgd = ReDataSGroupData.findClosest(this, pos);
 		updret('DataSGroupData', sgd);
 	}
 	if (!maps || maps.indexOf('sgroups') >= 0) {

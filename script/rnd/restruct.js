@@ -23,6 +23,7 @@ var ReRxnPlus = require("./rerxnplus")
 var ReRxnArrow = require("./rerxnarrow")
 var ReFrag = require('./refrag')
 var ReRGroup = require('./rergroup')
+var ReDataSGroupData = require('./redatasgroupdata')
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -152,7 +153,7 @@ rnd.ReStruct = function (molecule, render, norescale)
 	molecule.sgroups.each(function (id, item) {
 		this.sgroups.set(id, new rnd.ReSGroup(item));
 		if (item.type == 'DAT' && !item.data.attached) {
-			this.sgroupData.set(id, new rnd.ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
+			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 		}
 	}, this);
 
@@ -679,7 +680,7 @@ var drawGroupDat = function (remol, sgroup) {
 		var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
 		sgroup.dataArea = sbox.transform(render.scaled2obj, render);
 		if (!remol.sgroupData.has(sgroup.id))
-			remol.sgroupData.set(sgroup.id, new rnd.ReDataSGroupData(sgroup));
+			remol.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
 	}
 	return set;
 }
@@ -985,51 +986,6 @@ rnd.ReSGroup.prototype.drawHighlight = function (render) {
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
 
-rnd.ReDataSGroupData = function (sgroup)
-{
-	this.init(Visel.TYPE.SGROUP_DATA);
-
-	this.sgroup = sgroup;
-};
-
-rnd.ReDataSGroupData.prototype = new ReObject();
-rnd.ReDataSGroupData.isSelectable = function () { return true; }
-
-rnd.ReDataSGroupData.findClosest = function (render, p) {
-	var minDist = null;
-	var ret = null;
-
-	render.ctab.sgroupData.each(function (id, item) {
-		if (item.sgroup.type != 'DAT')
-			throw new Error('Data group expected');
-		var box = item.sgroup.dataArea;
-		var inBox = box.p0.y < p.y && box.p1.y > p.y && box.p0.x < p.x && box.p1.x > p.x;
-		var xDist = Math.min(Math.abs(box.p0.x - p.x), Math.abs(box.p1.x - p.x));
-		if (inBox && (ret == null || xDist < minDist)) {
-			ret = {'id': id, 'dist': xDist};
-			minDist = xDist;
-		}
-	});
-	return ret;
-};
-
-rnd.ReDataSGroupData.prototype.highlightPath = function (render) {
-	var box = this.sgroup.dataArea;
-	var p0 = render.obj2scaled(box.p0);
-	var sz = render.obj2scaled(box.p1).sub(p0);
-	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
-};
-
-rnd.ReDataSGroupData.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-rnd.ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
-	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
-};
-
 rnd.ReChiralFlag = function (pos)
 {
 	this.init(Visel.TYPE.CHIRAL_FLAG);
@@ -1094,7 +1050,7 @@ rnd.ReStruct.maps = {
 	'rxnArrows':   ReRxnArrow,
 	'frags':       ReFrag,
 	'rgroups':     ReRGroup,
-	'sgroupData':  rnd.ReDataSGroupData,
+	'sgroupData':  ReDataSGroupData,
 	'chiralFlags': rnd.ReChiralFlag,
 	'sgroups':     rnd.ReSGroup,
 	'reloops':     rnd.ReLoop

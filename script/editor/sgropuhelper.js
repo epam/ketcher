@@ -81,4 +81,4 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	});
 };
 
-module.exports = SGroupHelper
+module.exports = SGroupHelper;

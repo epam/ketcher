@@ -64,4 +64,4 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 		this._sGroupHelper.showPropertiesDialog(id, selection);
 };
 
-module.exports = SGroupTool
+module.exports = SGroupTool;

@@ -43,4 +43,4 @@ LassoHelper.prototype.end = function () {
 	return ret;
 };
 
-module.exports = LassoHelper
+module.exports = LassoHelper;

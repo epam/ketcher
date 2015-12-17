@@ -122,4 +122,4 @@ EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
 	return v;
 };
 
-module.exports = EditorTool
+module.exports = EditorTool;

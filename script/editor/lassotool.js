@@ -199,4 +199,4 @@ LassoTool.prototype.OnCancel = function () {
 	this._hoverHelper.hover(null);
 };
 
-module.exports = LassoTool
+module.exports = LassoTool;

@@ -72,4 +72,4 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 	}
 };
 
-module.exports = EditorGlobal
+module.exports = EditorGlobal;

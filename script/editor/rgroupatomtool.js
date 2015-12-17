@@ -13,4 +13,4 @@ RGroupAtomTool.prototype.OnMouseMove = function (event) {
 };
 RGroupAtomTool.prototype.OnMouseUp = EditorGlobal.RGroupAtomTool_OnMouseUp;
 
-module.exports = RGroupAtomTool
+module.exports = RGroupAtomTool;

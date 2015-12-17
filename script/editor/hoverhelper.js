@@ -15,4 +15,4 @@ HoverHelper.prototype.hover = function (ci) {
 	}
 };
 
-module.exports = HoverHelper
+module.exports = HoverHelper;

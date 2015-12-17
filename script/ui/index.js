@@ -31,7 +31,8 @@ var TemplateTool = require('../editor/templatetool');
 var ChargeTool = require('../editor/chargetool');
 var RGroupFragmentTool = require('../editor/rgroupfragmenttool');
 var APointTool = require('../editor/apointtool');
-    
+var ReactionArrowTool = require('../editor/reactionarrowtool');
+      
    
 var Render = require('../rnd/render')
 
@@ -1029,7 +1030,7 @@ function mapTool (id) {
 	} else if (id == 'sgroup') {
 		return new SGroupTool(ui.editor);
 	} else if (id == 'reaction-arrow') {
-		return new Editor.ReactionArrowTool(ui.editor);
+		return new ReactionArrowTool(ui.editor);
 	} else if (id == 'reaction-plus') {
 		return new Editor.ReactionPlusTool(ui.editor);
 	} else if (id == 'reaction-map') {

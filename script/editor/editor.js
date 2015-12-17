@@ -100,34 +100,6 @@ Editor.prototype.getSelectionStruct = function () {
 	return dst;
 };                                        
 
-Editor.PasteTool = function (editor, struct) {
-	this.editor = editor;
-	this.struct = struct;
-	this.action = Action.fromPaste(
-		this.struct, 'lastEvent' in this.OnMouseMove0 ?
-			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
-	this.editor.render.update();
-};
-Editor.PasteTool.prototype = new EditorTool();
-Editor.PasteTool.prototype.OnMouseMove = function (event) {
-	if ('action' in this) {
-		this.action.perform(this.editor);
-	}
-	this.action = Action.fromPaste(this.struct, ui.page2obj(event));
-	this.editor.render.update();
-};
-Editor.PasteTool.prototype.OnMouseUp = function () {
-	ui.addUndoAction(this.action);
-	delete this.action;
-	ui.selectAction(null);
-};
-Editor.PasteTool.prototype.OnCancel = function () {
-	if ('action' in this) {
-		this.action.perform(this.editor);
-		delete this.action;
-	}
-};
-
 Editor.RotateTool = function (editor) {
 	this.editor = editor;
 	this._lassoHelper = new LassoHelper(1, editor);

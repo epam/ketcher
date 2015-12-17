@@ -35,6 +35,7 @@ var ReactionArrowTool = require('../editor/reactionarrowtool');
 var ReactionPlusTool = require('../editor/reactionplustool');
 var ReactionMapTool = require('../editor/reactionmaptool');
 var ReactionUnmapTool = require('../editor/reactionunmaptool');
+var PasteTool = require('../editor/pastetool');
       
       
 var Render = require('../rnd/render')
@@ -945,7 +946,7 @@ var actionMap = {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
-		return new Editor.PasteTool(ui.editor, struct);
+		return new PasteTool(ui.editor, struct);
 	},
 	'info': function (el) {
 		showDialog('about_dialog');

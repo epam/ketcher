@@ -748,7 +748,7 @@ var SGroup_draw = {
 
 var sgroup_draw = function (remol, sgroup) {
 //	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
-	SGroup_draw[sgroup.type](remol, sgroup);
+	return SGroup_draw[sgroup.type](remol, sgroup);
 } 
 
 rnd.ReStruct.prototype.drawSGroups = function ()

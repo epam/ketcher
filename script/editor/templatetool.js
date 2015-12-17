@@ -1,3 +1,4 @@
+var Set = require('../util/set');
 var molfile = require('../chem/molfile');
 var Vec2 = require('../util/vec2');
 var Action = require('../ui/action');

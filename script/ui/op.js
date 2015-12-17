@@ -8,6 +8,7 @@ var SGroup = require('../chem/sgroup');
 var ReFrag = require('../rnd/refrag')
 var ReRGroup = require('../rnd/rergroup')
 var ReChiralFlag = require('../rnd/rechiralflag')
+var ReSGroup = require('../rnd/resgroup')
 
 require('../rnd');
 
@@ -243,7 +244,7 @@ function SGroupCreate (sgid, type, pp) {
 		if (this.data.pp) {
 			DS.sgroups.get(sgid).pp = new Vec2(this.data.pp);
 		}
-		RS.sgroups.set(sgid, new rnd.ReSGroup(DS.sgroups.get(sgid)));
+		RS.sgroups.set(sgid, new ReSGroup(DS.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
 	this._invert = function () {

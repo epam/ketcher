@@ -13,6 +13,7 @@ var ReFrag = require('./refrag')
 var ReRGroup = require('./rergroup')
 var ReDataSGroupData = require('./redatasgroupdata')
 var ReChiralFlag = require('./rechiralflag')
+var ReSGroup = require('./resgroup')
 
 require('./restruct');
 require('./restruct_rendering');
@@ -1034,7 +1035,7 @@ rnd.Render.prototype.findClosestItem = function (pos, maps, skip) {
 		updret('DataSGroupData', sgd);
 	}
 	if (!maps || maps.indexOf('sgroups') >= 0) {
-		var sg = rnd.ReSGroup.findClosest(this, pos);
+		var sg = ReSGroup.findClosest(this, pos);
 		updret('SGroup', sg);
 	}
 	if (!maps || maps.indexOf('rxnArrows') >= 0) {

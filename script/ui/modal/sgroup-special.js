@@ -11,7 +11,7 @@ function dialog (params) {
 		console.info('set context:', context, cache);
 		console.assert(cache.context || force, 'Field setup should be forced');
 		if (force || context != cache.context.name) {
-			cache.context = util.find(specialChoices, function (opt) {
+			cache.context = specialChoices.find(function (opt) {
 				return opt.name == context;
 			});
 			console.assert(cache.context, 'Can\'t find such context');
@@ -29,7 +29,7 @@ function dialog (params) {
 		console.info('set field:', field, cache);
 		console.assert(cache.field || force, 'Field setup should be forced');
 		if (field || field != cache.field.name) {
-			cache.field = util.find(cache.context.value, function (opt) {
+			cache.field = cache.context.value.find(function (opt) {
 				return opt.name == field;
 			});
 			console.assert(cache.field, 'Can\'t find such field');
@@ -105,13 +105,13 @@ function getValidateAttrs(dlg) {
 
 function matchContext(field, value) {
 	console.info('search:', util.unicodeLiteral(field), util.unicodeLiteral(value));
-	var c = util.find(specialChoices, function(c) {
-		var f = util.find(c.value, function(f) {
+	var c = specialChoices.find(function(c) {
+		var f = c.value.find(function(f) {
 			return f.name == field;
 		});
 		if (!f)
 			return false;
-		return !value || !f.value || !!util.find(f.value, function(v) {
+		return !value || !f.value || !!f.value.find(function(v) {
 			return v == value;
 		});
 	});

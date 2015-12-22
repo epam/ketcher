@@ -10,15 +10,6 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-var map_each = function (map, func, context) {
-	assert(!isNullOrUndefined(map), 'map must be defined');
-	for (var key in map) {
-		if (map.hasOwnProperty(key)) {
-			func.call(context, key, map[key]);
-		}
-	}
-};
-
 function find(array, pred) {
 	for (var i = 0; i < array.length; i++) {
 		if (pred(array[i], i, array))

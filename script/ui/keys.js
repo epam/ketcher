@@ -55,8 +55,8 @@ ui.setKeyboardShortcuts = function () {
 				return ret;
 			})]);
 	};
-	util.map_each(ui.keyboardShortcuts, setShortcuts);
-	util.map_each((ui.is_osx ? ui.keyboardShortcuts_OSX : ui.keyboardShortcuts_nonOSX), setShortcuts);
+	Object.keys(ui.keyboardShortcuts).forEach(setShortcuts);
+	Object.keys(ui.is_osx ? ui.keyboardShortcuts_OSX : ui.keyboardShortcuts_nonOSX).forEach(setShortcuts);
 };
 
 ui.keyboardShortcuts = {

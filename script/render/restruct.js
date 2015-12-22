@@ -397,7 +397,7 @@ ReStruct.prototype.clearVisels = function () {
 };
 
 ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldStereoBond) {
-	return util.findIndex(atom.neighbors, function (hbid) {
+	return atom.neighbors.findIndex(function (hbid) {
 		var hb = this.molecule.halfBonds.get(hbid);
 		var bid = hb.bid;
 		if (bid === bid0)

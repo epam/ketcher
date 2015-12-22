@@ -39,7 +39,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, a
 	var parents = atomSets.findAll(function (id) {
 		if (!isSubset.get(id))
 			return false;
-		if (util.findIndex(this.children.get(id), function (childId) {
+		if (this.children.get(id).findIndex(function (childId) {
 			return isSubset.get(childId);
 		}, this) >= 0) {
 			return false;

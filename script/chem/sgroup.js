@@ -412,7 +412,7 @@ SGroup.packDataGroup = function (name, value, mol, atoms) {
 	var atomSetExtended = Set.empty();
 	mol.loops.each(function (lid, loop) {
 		// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
-		if (util.findIndex(loop.hbs, function (hbid) {
+		if (loop.hbs.findIndex(function (hbid) {
 			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
 		}) >= 0)
 			loop.hbs.forEach(function (hbid) {

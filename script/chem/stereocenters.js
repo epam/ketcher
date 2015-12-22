@@ -34,13 +34,13 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 		var nei1 = nei_list[0];
 		var nei2 = nei_list[1];
 		// check atom labels
-		if (util.findIndex([aid, nei1.aid, nei2.aid], function (aid) {
+		if ([aid, nei1.aid, nei2.aid].findIndex(function (aid) {
 			return ['C', 'Si'].indexOf(atoms.get(aid).label) < 0;
 		}, this) >= 0)
 			return false;
 
 		// check adjacent bond types
-		if (util.findIndex([nei1.bid, nei2.bid], function (bid) {
+		if ([nei1.bid, nei2.bid].findIndex(function (bid) {
 			return bonds.get(bid).type != Bond.PATTERN.TYPE.DOUBLE;
 		}, this) >= 0)
 			return false;
@@ -55,12 +55,12 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 		if (nei1nei.length < 1 || nei1nei.length > 2 || nei2nei.length < 1 || nei2nei.length > 2)
 			return false;
 
-		if (util.findIndex(nei1nei.concat(nei2nei), function (nei) {
+		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
 			return bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE;
 		}, this) >= 0)
 			return false;
 
-		if (util.findIndex(nei1nei.concat(nei2nei), function (nei) {
+		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
 			return bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER;
 		}, this) >= 0)
 			return false;

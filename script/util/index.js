@@ -10,15 +10,6 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-function findIndex(array, func, context) {
-	for (var i = 0; i < array.length; ++i) {
-		if (func.call(context, array[i], i)) {
-			return i;
-		}
-	}
-	return -1;
-};
-
 var findAll = function (array, func, context) {
 	var i;
 	var ret = [];
@@ -277,7 +268,6 @@ var relBox = function (box) {
 
 module.exports = {
 	tfx: tfx,
-	findIndex: findIndex,
 	findAll: findAll,
 	array: array,
 	isEmpty: isEmpty,

@@ -49,7 +49,7 @@ Struct.prototype.addRxnArrowIfNecessary = function () {
 Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
 	var sgroupCounts = new Hash();
 
-	util.each(atoms, function (aid) {
+	atoms.forEach(function (aid) {
 		var sg = Set.list(this.atoms.get(aid).sgs);
 
 		sg.each(function (sid) {
@@ -359,7 +359,7 @@ Struct.prototype.sortNeighbors = function (list) {
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
-		util.each(list, f, this);
+		list.forEach(f, this);
 };
 
 Struct.prototype.atomUpdateHalfBonds = function (aid) {
@@ -376,7 +376,7 @@ Struct.prototype.updateHalfBonds = function (list) {
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
-		util.each(list, f, this);
+		list.forEach(f, this);
 };
 
 Struct.prototype.sGroupsRecalcCrossBonds = function () {
@@ -808,7 +808,7 @@ Struct.prototype.findLoops = function ()
 				j = this.halfBonds.get(j).next, ++c) {
 				if (c > 0 && j == i) { // loop found
 					var subloops = this.partitionLoop(loop);
-					util.each(subloops, function (loop) {
+					subloops.forEach(function (loop) {
 						if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) { // loop is internal
 							// use lowest half-bond id in the loop as the loop id
 							// this ensures that the loop gets the same id if it is discarded and then recreated,
@@ -913,7 +913,7 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
-		util.each(list, f, this);
+		list.forEach(f, this);
 };
 
 Struct.prototype.getComponents = function () {

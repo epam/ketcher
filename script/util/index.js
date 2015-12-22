@@ -10,14 +10,6 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-// "each" function for an array
-var each = function (array, func, context) {
-	assert(!isNullOrUndefined(array), 'array must be defined');
-	for (var i = 0; i < array.length; ++i) {
-		func.call(context, array[i], i);
-	}
-};
-
 var map_each = function (map, func, context) {
 	assert(!isNullOrUndefined(map), 'map must be defined');
 	for (var key in map) {
@@ -302,7 +294,6 @@ var relBox = function (box) {
 
 module.exports = {
 	tfx: tfx,
-	each: each,
 	find: find,
 	findIndex: findIndex,
 	findAll: findAll,

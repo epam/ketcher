@@ -180,7 +180,7 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 
 	var bb = null;
 	var contentBoxes = [];
-	util.each(atoms, function (aid) {
+	atoms.forEach(function (aid) {
 		var atom = mol.atoms.get(aid);
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
 		var pos = new Vec2(atom.pp);
@@ -193,17 +193,17 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 		}
 		contentBoxes.push(bba);
 	}, this);
-	util.each(mol.sGroupForest.children.get(sg.id), function (sgid) {
+	mol.sGroupForest.children.get(sg.id).forEach(function (sgid) {
 		var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 		if (util.isNull(bba))
 			return; // TODO: use object box instead
 		bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
 		contentBoxes.push(bba);
 	}, this);
-	util.each(contentBoxes, function (bba) {
+	contentBoxes.forEach(function (bba) {
 		var bbb = null;
-		util.each([bba.p0.x, bba.p1.x], function (x) {
-			util.each([bba.p0.y, bba.p1.y], function (y) {
+		[bba.p0.x, bba.p1.x].forEach(function (x) {
+			[bba.p0.y, bba.p1.y].forEach(function (y) {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, n));
 				bbb = util.isNull(bbb) ? new Box2Abs(p, p) : bbb.include(p);
@@ -243,7 +243,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 			var cl0 = b1.getCenter(mol), cr0 = b2.getCenter(mol), tl = -1, tr = -1, tt = -1, tb = -1, cc = Vec2.centre(cl0, cr0);
 			var dr = Vec2.diff(cr0, cl0).normalized(), dl = dr.negated(), dt = dr.rotateSC(1,0), db = dt.negated();
 
-			util.each(mol.sGroupForest.children.get(id), function (sgid) {
+			mol.sGroupForest.children.get(id).forEach(function (sgid) {
 				var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 				if (util.isNull(bba))
 					return; // TODO: use object box instead
@@ -356,20 +356,20 @@ SGroup.prepareMulForSaving = function (sgroup, mol) {
 	var newAtoms = [];
 	for (j = 0; j < sgroup.data.mul - 1; ++j) {
 		amap = {};
-		util.each(sgroup.atoms, function (aid) {
+		sgroup.atoms.forEach(function (aid) {
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new Atom(atom));
 			newAtoms.push(aid2);
 			sgroup.atomSet[aid2] = 1;
 			amap[aid] = aid2;
-		}, sgroup);
-		util.each(inBonds, function (bid) {
+		});
+		inBonds.forEach(function (bid) {
 			var bond = mol.bonds.get(bid);
 			var newBond = new Bond(bond);
 			newBond.begin = amap[newBond.begin];
 			newBond.end = amap[newBond.end];
 			mol.bonds.add(newBond);
-		}, sgroup);
+		});
 		if (crossBond != null) {
 			var newCrossBond = new Bond(crossBond);
 			newCrossBond.begin = tailAtom;
@@ -379,11 +379,11 @@ SGroup.prepareMulForSaving = function (sgroup, mol) {
 		}
 	}
 
-	util.each(newAtoms, function (aid) {
-		util.each(mol.sGroupForest.getPathToRoot(sgroup.id).reverse(), function (sgid) {
+	newAtoms.forEach(function (aid) {
+		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach(function (sgid) {
 			mol.atomAddToSGroup(sgid, aid);
-		}, sgroup);
-	}, sgroup);
+		});
+	});
 	if (tailAtom >= 0) {
 		var xBond2 = mol.bonds.get(xBonds[0]);
 		if (xBond2.begin == xAtom1)
@@ -415,7 +415,7 @@ SGroup.packDataGroup = function (name, value, mol, atoms) {
 		if (util.findIndex(loop.hbs, function (hbid) {
 			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
 		}) >= 0)
-			util.each(loop.hbs, function (hbid) {
+			loop.hbs.forEach(function (hbid) {
 				Set.add(atomSetExtended, mol.halfBonds.get(hbid).begin);
 			}, this);
 	}, this);
@@ -424,7 +424,7 @@ SGroup.packDataGroup = function (name, value, mol, atoms) {
 
 	var aidMap = {};
 	var res = mol.clone(null, null, false, aidMap);
-	util.each(atoms, function (aid){
+	atoms.forEach(function (aid){
 		aid = aidMap[aid];
 		var dsg = new SGroup('DAT');
 		var dsgid = res.sgroups.add(dsg);

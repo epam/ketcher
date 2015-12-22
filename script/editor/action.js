@@ -130,7 +130,7 @@ function fromMultipleMove (lists, d)
 				bondlist.push(bid);
 				// add all adjacent loops
 				// those that are not completely inside the structure will get redrawn anyway
-				util.each(['hb1','hb2'], function (hb){
+				['hb1','hb2'].forEach(function (hb){
 					var loop = DS.halfBonds.get(bond.b[hb]).loop;
 					if (loop >= 0)
 						Set.add(loops, loop);
@@ -790,7 +790,7 @@ function fromTemplateOnCanvas (pos, angle, template)
 
 function atomAddToSGroups (sgroups, aid) {
 	var action = new Action();
-	util.each(sgroups, function (sid){
+	sgroups.forEach(function (sid){
 		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(ui.editor));
 	}, this);
 	return action;
@@ -1220,7 +1220,7 @@ function struct2Clipboard(struct) {
 
 	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
 
-	util.each(sgroup_list, function (sid){
+	sgroup_list.forEach(function (sid){
 		var sgroup = struct.sgroups.get(sid);
 		var sgAtoms = SGroup.getAtoms(struct, sgroup);
 		var sgroup_info = {

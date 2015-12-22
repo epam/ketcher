@@ -1154,7 +1154,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	var toRemove = [];
 	var errors = 0;
 
-	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
+	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var sgroup = mol.sgroups.get(id);
 		var errorIgnore = false;
 
@@ -1659,7 +1659,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 
 	var sgmap = {}, cnt = 1, sgmapback = {};
 	var sgorder = this.molecule.sGroupForest.getSGroupsBFS();
-	util.each(sgorder, function (id) {
+	sgorder.forEach(function (id) {
 		sgmapback[cnt] = id;
 		sgmap[id] = cnt++;
 	}, this);

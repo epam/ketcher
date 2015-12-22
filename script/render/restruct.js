@@ -336,7 +336,7 @@ ReStruct.prototype.getVBoxObj = function (selection)
 	var vbox = null;
 	for (var map in ReStruct.maps) {
 		if (selection[map]) {
-			util.each(selection[map], function (id) {
+			selection[map].forEach(function (id) {
 				var box = this[map].get(id).getVBoxObj(this.render);
 				if (box)
 					vbox = vbox ? Box2Abs.union(vbox, box) : box.clone();
@@ -487,7 +487,7 @@ ReStruct.prototype.update = function (force)
 		}
 	}).call(this);
 	if (this.structChanged)
-		util.each(this.render.structChangeHandlers, function (handler){handler.call();});
+		this.render.structChangeHandlers.forEach(function (handler){handler.call();});
 
 	// TODO: when to update sgroup?
 	this.sgroups.each(function (sid, sgroup){
@@ -578,7 +578,7 @@ ReStruct.prototype.drawReactionPlus = function (id, item)
 
 ReStruct.prototype.drawSGroups = function ()
 {
-	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
+	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var resgroup = this.sgroups.get(id);
 		var sgroup = resgroup.item;
 		var remol = this.render.ctab;

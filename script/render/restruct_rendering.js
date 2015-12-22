@@ -1279,10 +1279,10 @@ ReStruct.prototype.updateLoops = function ()
 		this.clearVisel(reloop.visel);
 	}, this);
 	var ret = this.molecule.findLoops();
-	util.each(ret.bondsToMark, function (bid) {
+	ret.bondsToMark.forEach(function (bid) {
 		this.markBond(bid, 1);
 	}, this);
-	util.each(ret.newLoops, function (loopId) {
+	ret.newLoops.forEach(function (loopId) {
 		this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
 	}, this);
 };

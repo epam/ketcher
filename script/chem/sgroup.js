@@ -129,7 +129,7 @@ SGroup.clone = function (sgroup, aidMap, bidMap)
 	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
 	}
-	cp.atoms = util.mapArray(sgroup.atoms, aidMap);
+	cp.atoms = sgroup.atoms.map(function(elem) {return aidMap[elem]; });
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;

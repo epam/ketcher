@@ -777,7 +777,7 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 			if (parent >= 0) {
 				var psg = sGroups[parent - 1];
 				if (psg.type === 'GEN') {
-					sg.atoms = util.array(psg.atoms);
+					sg.atoms = [].slice.call(psg.atoms);
 				}
 			}
 		}

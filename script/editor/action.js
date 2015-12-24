@@ -1034,7 +1034,7 @@ function fromSgroupType (id, type)
 	var R = ui.render;
 	var cur_type = R.sGroupGetType(id);
 	if (type && type != cur_type) {
-		var atoms = util.array(R.sGroupGetAtoms(id));
+		var atoms = [].slice.call(R.sGroupGetAtoms(id));
 		var attrs = R.sGroupGetAttrs(id);
 		var actionDeletion = fromSgroupDeletion(id); // [MK] order of execution is important, first delete then recreate
 		var actionAddition = fromSgroupAddition(type, atoms, attrs, id);
@@ -1226,7 +1226,7 @@ function struct2Clipboard(struct) {
 		var sgroup_info = {
 			type: sgroup.type,
 			attrs: sgroup.getAttrs(),
-			atoms: util.array(sgAtoms),
+			atoms: [].slice.call(sgAtoms),
 			pp: sgroup.pp
 		};
 

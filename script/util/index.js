@@ -10,15 +10,6 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-var array = function (arrayLike) {
-	var a = [];
-	var i = arrayLike.length;
-	while (--i >= 0) {
-		a[i] = arrayLike[i];
-	}
-	return a;
-};
-
 var isEmpty = function (obj) {
 	for (var v in obj) {
 		if (obj.hasOwnProperty(v)) {
@@ -257,7 +248,6 @@ var relBox = function (box) {
 
 module.exports = {
 	tfx: tfx,
-	array: array,
 	isEmpty: isEmpty,
 	stopEventPropagation: stopEventPropagation,
 	preventDefault: preventDefault,

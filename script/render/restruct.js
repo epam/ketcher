@@ -192,7 +192,7 @@ ReStruct.prototype.clearConnectedComponents = function () {
 };
 
 ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
-	var list = (typeof(aid['length']) == 'number') ? util.array(aid) : [aid];
+	var list = (typeof(aid['length']) == 'number') ? [].slice.call(aid) : [aid];
 	var ids = Set.empty();
 
 	while (list.length > 0) {

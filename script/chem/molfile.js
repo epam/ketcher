@@ -593,7 +593,7 @@ var applyDataSGroupData = function (sg, data, finalize) {
 	/* reader */
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
-		sg.data.fieldValue = util.stripRight(sg.data.fieldValue);
+		sg.data.fieldValue = sg.data.fieldValue.trimRight();
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
 		// Partially revert f556e8, from KETCHER-457 and RB with love

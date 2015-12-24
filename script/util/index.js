@@ -109,10 +109,6 @@ var strip = function (src) {
 	return src.replace(/\s*$/, '').replace(/^\s*/, '');
 };
 
-var stripRight = function (src) {
-	return src.replace(/\s*$/, '');
-};
-
 var stripQuotes = function (str) {
 	if (str[0] === '"' && str[str.length - 1] === '"') {
 		return str.substr(1, str.length - 2);
@@ -228,7 +224,6 @@ module.exports = {
 	ifDefList: ifDefList,
 	identityMap: identityMap,
 	strip: strip,
-	stripRight: stripRight,
 	stripQuotes: stripQuotes,
 	paddedFloat: paddedFloat,
 	paddedInt: paddedInt,

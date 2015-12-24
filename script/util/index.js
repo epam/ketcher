@@ -89,12 +89,6 @@ var arrayMin = function (array) {
 	return Math.min.apply(Math, array);
 };
 
-var apply = function (array, func) {
-	for (var i = 0; i < array.length; ++i) {
-		array[i] = func(array[i]);
-	}
-};
-
 var ifDef = function (dst, src, prop, def) {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 };
@@ -230,7 +224,6 @@ module.exports = {
 	unicodeLiteral: unicodeLiteral,
 	arrayMax: arrayMax,
 	arrayMin: arrayMin,
-	apply: apply,
 	ifDef: ifDef,
 	ifDefList: ifDefList,
 	identityMap: identityMap,

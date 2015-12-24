@@ -520,7 +520,7 @@ var applySGroupArrayProp = function (sGroups, propName, propData, shift)
 	if (part.length != num)
 		throw new Error('File format invalid');
 	if (shift) {
-		util.apply(part, function (v) {
+		part = part.map(function (v) {
 			return v + shift;
 		});
 	}

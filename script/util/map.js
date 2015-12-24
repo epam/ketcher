@@ -131,7 +131,7 @@ Map.prototype.count = function () {
 };
 
 Map.prototype.idList = function () {
-	return util.idList(this._obj);
+	return Object.keys(this._obj);
 };
 
 Map.prototype.keyOf = function (value) {

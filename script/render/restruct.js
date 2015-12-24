@@ -658,7 +658,7 @@ ReStruct.prototype.setHydrogenPos = function () {
 
 ReStruct.prototype.setImplicitHydrogen = function () {
 	// calculate implicit hydrogens for atoms that have been modified
-	this.molecule.setImplicitHydrogen(util.idList(this.atomsChanged));
+	this.molecule.setImplicitHydrogen(Object.keys(this.atomsChanged));
 };
 
 ReStruct.prototype.coordProcess = function (norescale)

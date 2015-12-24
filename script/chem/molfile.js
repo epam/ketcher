@@ -1374,8 +1374,8 @@ var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
 
 	var lines = [];
-	lines = lines.concat(makeAtomBondLines('SAL', idstr, util.idList(sgroup.atomSet), atomMap)); // TODO: check atomSet
-	lines = lines.concat(makeAtomBondLines('SPA', idstr, util.idList(sgroup.parentAtomSet), atomMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, Object.keys(sgroup.atomSet), atomMap)); // TODO: check atomSet
+	lines = lines.concat(makeAtomBondLines('SPA', idstr, Object.keys(sgroup.parentAtomSet), atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 	var smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
 	lines.push(smtLine);

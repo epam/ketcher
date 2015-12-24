@@ -81,17 +81,6 @@ function unicodeLiteral(str){
 	return result;
 }
 
-
-var idList = function (object) {
-	var list = [];
-	for (var aid in object) {
-		if (object.hasOwnProperty(aid)) {
-			list.push(aid);
-		}
-	}
-	return list;
-};
-
 var mapArray = function (src, map) {
 	var dst = [];
 	for (var i = 0; i < src.length; ++i) {
@@ -255,7 +244,6 @@ module.exports = {
 	normalizeNewlines: normalizeNewlines,
 	splitNewlines: splitNewlines,
 	unicodeLiteral: unicodeLiteral,
-	idList: idList,
 	mapArray: mapArray,
 	arrayMax: arrayMax,
 	arrayMin: arrayMin,

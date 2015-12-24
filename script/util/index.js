@@ -81,28 +81,12 @@ function unicodeLiteral(str){
 	return result;
 }
 
-var mapArray = function (src, map) {
-	var dst = [];
-	for (var i = 0; i < src.length; ++i) {
-		dst.push(map[src[i]]);
-	}
-	return dst;
-};
-
 var arrayMax = function (array) {
 	return Math.max.apply(Math, array);
 };
 
 var arrayMin = function (array) {
 	return Math.min.apply(Math, array);
-};
-
-var map = function (src, func, context) {
-	var dst = [];
-	for (var i = 0; i < src.length; ++i) {
-		dst.push(func.call(context, src[i]));
-	}
-	return dst;
 };
 
 var apply = function (array, func) {
@@ -244,10 +228,8 @@ module.exports = {
 	normalizeNewlines: normalizeNewlines,
 	splitNewlines: splitNewlines,
 	unicodeLiteral: unicodeLiteral,
-	mapArray: mapArray,
 	arrayMax: arrayMax,
 	arrayMin: arrayMin,
-	map: map,
 	apply: apply,
 	ifDef: ifDef,
 	ifDefList: ifDefList,

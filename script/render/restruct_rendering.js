@@ -318,7 +318,7 @@ ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond)
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
 	var scale = this.render.settings.scaleFactor;
-	var dash = util.map(this.dashdotPattern, function (v){ return v * scale; });
+	var dash = this.dashdotPattern.map(function (v){ return v * scale; });
 	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, shift > 0 ? 1 : 2, dash);
 	var l1 = paths[0], l2 = paths[1];
 // dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
@@ -370,7 +370,7 @@ ReStruct.prototype.drawBondDoubleOrAromatic = function (hb1, hb2, bond)
 	var shift = bond.doubleBondShift;
 	var paper = this.render.paper;
 	var scale = this.render.settings.scaleFactor;
-	var dash = util.map(this.dashdotPattern, function (v){ return v * scale; });
+	var dash = this.dashdotPattern.map(function (v){ return v * scale; });
 	var paths = this.preparePathsForAromaticBond(hb1, hb2, shift, 3, dash);
 	var l1 = paths[0], l2 = paths[1];
 // dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)

@@ -100,10 +100,10 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 		var bondsInLoops = Set.empty();
 		molecule.loops.each(function (lid, loop) {
 			if (loop.hbs.length <= 6)
-				Set.mergeIn(bondsInLoops, Set.fromList(util.map(loop.hbs, function (hbid) {
+				Set.mergeIn(bondsInLoops, Set.fromList(loop.hbs.map(function (hbid) {
 					return molecule.halfBonds.get(hbid).bid;
-				}, this)));
-		}, this);
+				})));
+		});
 		var inLoop = {};
 		Set.each(bondsInLoops, function (bid) {
 			inLoop[bid] = 1;

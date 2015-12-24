@@ -412,7 +412,7 @@ ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldS
 }
 
 ReStruct.prototype.checkStereoBold = function (bid0, bond) {
-	var halfbonds = util.map([bond.b.begin, bond.b.end], function (aid) {
+	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
 		var atom = this.molecule.atoms.get(aid);
 		var pos =  this.findIncomingStereoUpBond(atom, bid0, false);
 		return pos < 0 ? -1 : atom.neighbors[pos];
@@ -422,7 +422,7 @@ ReStruct.prototype.checkStereoBold = function (bid0, bond) {
 };
 
 ReStruct.prototype.findIncomingUpBonds = function (bid0, bond) {
-	var halfbonds = util.map([bond.b.begin, bond.b.end], function (aid) {
+	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
 		var atom = this.molecule.atoms.get(aid);
 		var pos =  this.findIncomingStereoUpBond(atom, bid0, true);
 		return pos < 0 ? -1 : atom.neighbors[pos];

@@ -8,7 +8,7 @@ var smiles = require('./chem/smiles');
 require('./ui');
 var ui = global.ui;
 
-var Render = require('./rnd/render')
+var Render = require('./render');
 
 function getSmiles() {
 	return smiles.stringify(ui.ctab, { ignoreErrors: true });

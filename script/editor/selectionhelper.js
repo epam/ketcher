@@ -1,4 +1,4 @@
-var ReStruct = require('../rnd/restruct')
+var ReStruct = require('../render/restruct');
 
 var ui = global.ui;
 

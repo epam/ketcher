@@ -5,14 +5,14 @@ var Atom = require('../chem/atom');
 var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
-var ReFrag = require('../rnd/refrag')
-var ReRGroup = require('../rnd/rergroup')
-var ReChiralFlag = require('../rnd/rechiralflag')
-var ReSGroup = require('../rnd/resgroup')
+var ReFrag = require('../render/refrag');
+var ReRGroup = require('../render/rergroup');
+var ReChiralFlag = require('../render/rechiralflag');
+var ReSGroup = require('../render/resgroup');
 
 var ui = global.ui;
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false}
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false};
 DEBUG.logMethod = function () { };
 
 function Base () {

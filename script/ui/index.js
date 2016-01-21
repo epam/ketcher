@@ -36,7 +36,7 @@ var ReactionUnmapTool = require('../editor/reactionunmaptool');
 var PasteTool = require('../editor/pastetool');
 var RotateTool = require('../editor/rotatetool');
 
-var Render = require('../rnd/render');
+var Render = require('../render');
 
 var Action = require('./action.js');
 var templates = require('./templates');

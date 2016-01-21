@@ -1,5 +1,5 @@
 var Set = require('../util/set');
-var ReStruct = require('../rnd/restruct')
+var ReStruct = require('../render/restruct');
 var SelectionHelper = require('./selectionhelper');
 
 var ui = global.ui;
@@ -92,6 +92,6 @@ Editor.prototype.getSelectionStruct = function () {
 		(dst.rxnArrows.count() || dst.rxnPluses.count());
 
 	return dst;
-};                                        
+};
 
 module.exports = Editor;

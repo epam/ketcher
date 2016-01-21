@@ -1,7 +1,7 @@
 var keymage = require('keymage');
 var element = require('../../chem/element');
 var util = require('../../util');
-var Action = require('../action');
+var Action = require('../../editor/action');
 
 var ui = global.ui;
 

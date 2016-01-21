@@ -1,4 +1,4 @@
-var Action = require('../ui/action');
+var Action = require('./action');
 var EditorTool = require('./editortool');
 var HoverHelper = require('./hoverhelper');
 var LassoHelper = require('./lassohelper');

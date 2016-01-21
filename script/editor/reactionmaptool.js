@@ -1,5 +1,5 @@
 var Set = require('../util/set');
-var Action = require('../ui/action');
+var Action = require('./action');
 var HoverHelper = require('./hoverhelper');
 var EditorTool = require('./editortool');
 

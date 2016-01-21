@@ -38,7 +38,7 @@ var RotateTool = require('../editor/rotatetool');
 
 var Render = require('../render');
 
-var Action = require('./action.js');
+var Action = require('../editor/action.js');
 var templates = require('./templates');
 
 var openDialog = require('./dialog/open.js');

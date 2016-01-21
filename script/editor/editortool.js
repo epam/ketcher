@@ -1,5 +1,5 @@
 var Vec2 = require('../util/vec2');
-var Action = require('../ui/action');
+var Action = require('./action');
 var EditorGlobal = require('./editorglobal');
 
 var ui = global.ui;

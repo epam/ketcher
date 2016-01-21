@@ -48,7 +48,7 @@
   },
   "scripts": {
     "build": "npm install && grunt",
-    "postinstall": "grunt githooks",
+    "postinstall": "grunt githooks || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1"
   },
   "dependencies": {

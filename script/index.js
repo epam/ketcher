@@ -6,8 +6,6 @@ var molfile = require('./chem/molfile');
 var smiles = require('./chem/smiles');
 
 require('./ui');
-require('./rnd');
-
 var ui = global.ui;
 
 var Render = require('./rnd/render')

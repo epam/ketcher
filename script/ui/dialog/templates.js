@@ -1,13 +1,10 @@
 var Promise = require('promise-polyfill');
-
-require('../../rnd');
 var molfile = require('../../chem/molfile');
-
 var ajax = require('../../util/ajax.js');
 
 var ui = global.ui;
 
-var Render = require('../../rnd/render')
+var Render = require('../../rnd/render');
 
 // TODO: move to Molfile
 function parseSdf (sdf) {

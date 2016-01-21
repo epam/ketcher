@@ -7,7 +7,6 @@ var Bond = require('../chem/bond');
 var ReLoop = require('./reloop')
 var ReStruct = require('./restruct')
 
-require('./restruct');
 var tfx = util.tfx;
 
 ReStruct.prototype.drawArrow = function (a, b)

@@ -1,5 +1,3 @@
-/*global module*/
-
 module.exports = [
 	{
 		name: 'benzene',

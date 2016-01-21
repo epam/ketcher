@@ -10,8 +10,6 @@ var ReRGroup = require('../rnd/rergroup')
 var ReChiralFlag = require('../rnd/rechiralflag')
 var ReSGroup = require('../rnd/resgroup')
 
-require('../rnd');
-
 var ui = global.ui;
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false}

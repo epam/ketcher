@@ -16,8 +16,6 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
 
-require('../rnd');
-
 var Editor = require('../editor/editor');
 var EditorTool = require('../editor/editortool');
 var RGroupAtomTool = require('../editor/rgroupatomtool');
@@ -37,9 +35,8 @@ var ReactionMapTool = require('../editor/reactionmaptool');
 var ReactionUnmapTool = require('../editor/reactionunmaptool');
 var PasteTool = require('../editor/pastetool');
 var RotateTool = require('../editor/rotatetool');
-      
-      
-var Render = require('../rnd/render')
+
+var Render = require('../rnd/render');
 
 var Action = require('./action.js');
 var templates = require('./templates');

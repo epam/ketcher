@@ -919,7 +919,6 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 Struct.prototype.getComponents = function () {
 	/* saver */
 	var ccs = this.findConnectedComponents(true);
-	var submols = [];
 	var barriers = [];
 	var arrowPos = null;
 	this.rxnArrows.each(function (id, item) { // there's just one arrow

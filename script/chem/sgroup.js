@@ -415,19 +415,6 @@ SGroup.getBonds = function (mol, sg) {
 };
 
 var GroupMul = {
-	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = util.stringPadded(sgMap[this.id], 3);
-
-		var lines = [];
-		lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, util.idList(this.atomSet), atomMap)); // TODO: check atomSet
-		lines = lines.concat(SGroup.makeAtomBondLines('SPA', idstr, util.idList(this.parentAtomSet), atomMap));
-		lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
-		var smtLine = 'M  SMT ' + idstr + ' ' + this.data.mul;
-		lines.push(smtLine);
-		lines = lines.concat(SGroup.bracketsToMolfile(mol, this, idstr));
-		return lines.join('\n');
-	},
-
 	prepareForSaving: function (mol) {
 		var j;
 		this.atoms.sort();
@@ -569,16 +556,6 @@ var GroupMul = {
 };
 
 var GroupSru = {
-	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = util.stringPadded(sgMap[this.id], 3);
-
-		var lines = [];
-		lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
-		lines = lines.concat(SGroup.bracketsToMolfile(mol, this, idstr));
-		return lines.join('\n');
-	},
-
 	prepareForSaving: function (mol) {
 		var xBonds = [];
 		mol.bonds.each(function (bid, bond){
@@ -599,17 +576,6 @@ var GroupSru = {
 };
 
 var GroupSup = {
-	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = util.stringPadded(sgMap[this.id], 3);
-
-		var lines = [];
-		lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
-		if (this.data.name && this.data.name != '')
-			lines.push('M  SMT ' + idstr + ' ' + this.data.name);
-		return lines.join('\n');
-	},
-
 	prepareForSaving: function (mol) {
 		// This code is also used for GroupSru and should be moved into a separate common method
 		// It seems that such code should be used for any sgroup by this this should be checked
@@ -631,16 +597,6 @@ var GroupSup = {
 };
 
 var GroupGen = {
-	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = util.stringPadded(sgMap[this.id], 3);
-
-		var lines = [];
-		lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, this.bonds, bondMap));
-		lines = lines.concat(SGroup.bracketsToMolfile(mol, this, idstr));
-		return lines.join('\n');
-	},
-
 	prepareForSaving: function (mol) {
 	},
 
@@ -680,47 +636,6 @@ var GroupDat = {
 			text.toFront()
 		);
 		return st;
-	},
-
-	saveToMolfile: function (mol, sgMap, atomMap, bondMap) {
-		var idstr = util.stringPadded(sgMap[this.id], 3);
-
-		var data = this.data;
-		var pp = this.pp;
-		if (!data.absolute)
-			pp = pp.sub(SGroup.getMassCentre(mol, this.atoms));
-		var lines = [];
-		lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, this.atoms, atomMap));
-		var sdtLine = 'M  SDT ' + idstr +
-			' ' + util.stringPadded(data.fieldName, 30, true) +
-		util.stringPadded(data.fieldType, 2) +
-		util.stringPadded(data.units, 20, true) +
-		util.stringPadded(data.query, 2) +
-		util.stringPadded(data.queryOp, 3);
-		lines.push(sdtLine);
-		var sddLine = 'M  SDD ' + idstr +
-			' ' + util.paddedFloat(pp.x, 10, 4) + util.paddedFloat(-pp.y, 10, 4) +
-			'    ' + // ' eee'
-			(data.attached ? 'A' : 'D') + // f
-			(data.absolute ? 'A' : 'R') + // g
-			(data.showUnits ? 'U' : ' ') + // h
-			'   ' + //  i
-			(data.nCharnCharsToDisplay >= 0 ? util.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
-			'  1   ' + // 'kkk ll '
-		util.stringPadded(data.tagChar, 1) + // m
-			'  ' + util.paddedInt(data.daspPos, 1) + // n
-			'  '; // oo
-			lines.push(sddLine);
-		var val = util.normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
-		var charsPerLine = 69;
-		val.split('\n').each(function (chars) {
-			while (chars.length > charsPerLine) {
-				lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
-				chars = chars.slice(charsPerLine);
-			}
-			lines.push('M  SED ' + idstr + ' ' + chars);
-		});
-		return lines.join('\n');
 	},
 
 	prepareForSaving: function (mol) {

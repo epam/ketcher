@@ -305,7 +305,6 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			}
 
 			var bond = molecule.bonds.get(e_idx);
-			var bond_written = true;
 
 			var dir = 0;
 
@@ -327,8 +326,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 				this.smiles += ':'; // TODO: Check if this : is needed
 			else if (bond.type == Bond.PATTERN.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
 				this.smiles += '-';
-			else
-				bond_written = false;
+
 
 
 			if (walk.edgeClosingCycle(e_idx))
@@ -388,7 +386,6 @@ Smiles.prototype._writeCycleNumber = function (n)
 Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality)
 {
 	var atom = mol.atoms.get(idx);
-	var i;
 	var need_brackets = false;
 	var hydro = -1;
 	var aam = 0;

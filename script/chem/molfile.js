@@ -976,7 +976,6 @@ var parseCTab = function (/* string */ ctabLines) /* Struct */
 
 Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	var mol = this.molecule;
-	var sgroups = mol.sgroups;
 	var toRemove = [];
 	var errors = 0;
 
@@ -1156,6 +1155,99 @@ Molfile.prototype.writeCTab2000Header = function ()
 	this.writeWhiteSpace(12);
 	this.writePaddedNumber(999, 3);
 	this.writeCR(' V2000');
+};
+
+var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
+	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
+	
+	var lines = [];
+	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, util.idList(sgroup.atomSet), atomMap)); // TODO: check atomSet
+	lines = lines.concat(SGroup.makeAtomBondLines('SPA', idstr, util.idList(sgroup.parentAtomSet), atomMap));
+	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	var smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
+	lines.push(smtLine);
+	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	return lines.join('\n');
+};
+
+var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
+	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
+	
+	var lines = [];
+	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	return lines.join('\n');
+};
+
+var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
+	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
+	
+	var lines = [];
+	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	if (sgroup.data.name && sgroup.data.name != '')
+		lines.push('M  SMT ' + idstr + ' ' + sgroup.data.name);
+	return lines.join('\n');
+};
+
+var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
+	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
+	
+	var data = sgroup.data;
+	var pp = sgroup.pp;
+	if (!data.absolute)
+		pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
+	var lines = [];
+	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	var sdtLine = 'M  SDT ' + idstr +
+			' ' + util.stringPadded(data.fieldName, 30, true) +
+		util.stringPadded(data.fieldType, 2) +
+		util.stringPadded(data.units, 20, true) +
+		util.stringPadded(data.query, 2) +
+		util.stringPadded(data.queryOp, 3);
+	lines.push(sdtLine);
+	var sddLine = 'M  SDD ' + idstr +
+			' ' + util.paddedFloat(pp.x, 10, 4) + util.paddedFloat(-pp.y, 10, 4) +
+			'    ' + // ' eee'
+			(data.attached ? 'A' : 'D') + // f
+			(data.absolute ? 'A' : 'R') + // g
+			(data.showUnits ? 'U' : ' ') + // h
+			'   ' + //  i
+			(data.nCharnCharsToDisplay >= 0 ? util.paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+			'  1   ' + // 'kkk ll '
+		util.stringPadded(data.tagChar, 1) + // m
+			'  ' + util.paddedInt(data.daspPos, 1) + // n
+			'  '; // oo
+	lines.push(sddLine);
+	var val = util.normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
+	var charsPerLine = 69;
+	val.split('\n').each(function (chars) {
+		while (chars.length > charsPerLine) {
+			lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
+			chars = chars.slice(charsPerLine);
+		}
+		lines.push('M  SED ' + idstr + ' ' + chars);
+	});
+	return lines.join('\n');
+};
+
+var saveGenToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
+	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
+	
+	var lines = [];
+	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	return lines.join('\n');
+};
+
+var saveToMolfile = {
+	'MUL': saveMulToMolfile,
+	'SRU': saveSruToMolfile,
+	'SUP': saveSupToMolfile,
+	'DAT': saveDatToMolfile,
+	'GEN': saveGenToMolfile
 };
 
 Molfile.prototype.writeCTab2000 = function (rgroups)
@@ -1410,8 +1502,8 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 			this.write(sgroup.data.subscript || 'n');
 			this.writeCR();
 		}
-
-		this.writeCR(sgroup.saveToMolfile(this.molecule, sgmap, this.mapping, this.bondMapping));
+		
+		this.writeCR(saveToMolfile[sgroup.type](sgroup, this.molecule, sgmap, this.mapping, this.bondMapping));
 	}
 
 	// TODO: write M  APO

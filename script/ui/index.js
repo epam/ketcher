@@ -16,7 +16,7 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
 
-var Editor = require('../editor/editor');
+var Editor = require('../editor');
 var EditorTool = require('../editor/editortool');
 var RGroupAtomTool = require('../editor/rgroupatomtool');
 var LassoTool = require('../editor/lassotool');

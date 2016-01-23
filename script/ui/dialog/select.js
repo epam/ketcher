@@ -1,5 +1,3 @@
-/*global module, global*/
-
 var ui = global.ui;
 
 function dialog (name, params) {

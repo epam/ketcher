@@ -6,7 +6,7 @@ var SGroup = require('../chem/sgroup');
 
 var Visel = require('./visel');
 
-var ReObject = require('./reobject')
+var ReObject = require('./reobject');
 
 var ReRGroup = function (/*Struct.RGroup*/rgroup) {
 	this.init(Visel.TYPE.RGROUP);

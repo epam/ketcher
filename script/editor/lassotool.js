@@ -5,7 +5,7 @@ var SGroup = require('../chem/sgroup');
 var EditorTool = require('./editortool');
 var HoverHelper = require('./hoverhelper');
 var LassoHelper = require('./lassohelper');
-var SGroupHelper = require('./sgropuhelper');
+var SGroupHelper = require('./sgrouphelper');
 var RGroupAtomTool = require('./rgroupatomtool');
 
 var ui = global.ui;

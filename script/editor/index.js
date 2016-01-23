@@ -13,7 +13,7 @@ var Editor = function (render)
 Editor.prototype.selectAll = function () {
 	var selection = {};
 	for (var map in ReStruct.maps) {
-		selection[map] = ui.render.ctab[map].ikeys();
+		selection[map] = this.render.ctab[map].ikeys();
 	}
 	this._selectionHelper.setSelection(selection);
 };

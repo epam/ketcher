@@ -39,7 +39,7 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 					),
 						true
 					);
-					ui.render.update();
+					rnd.update();
 				}
 			}.bind(this)
 		});
@@ -65,7 +65,7 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 						newProps.aam = atom.aam;
 					}
 					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, newProps), true);
-					ui.render.update();
+					rnd.update();
 				}
 			}.bind(this)
 		});

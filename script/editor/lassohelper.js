@@ -6,10 +6,11 @@ var LassoHelper = function (mode, editor, fragment) {
 	this.editor = editor;
 };
 LassoHelper.prototype.getSelection = function () {
+	var rnd = this.editor.render;
 	if (this.mode == 0) {
-		return ui.render.getElementsInPolygon(this.points);
+		return rnd.getElementsInPolygon(this.points);
 	} else if (this.mode == 1) {
-		return ui.render.getElementsInRectangle(this.points[0], this.points[1]);
+		return rnd.getElementsInRectangle(this.points[0], this.points[1]);
 	} else {
 		throw new Error('Selector mode unknown');
 	}

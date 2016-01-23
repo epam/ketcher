@@ -18,10 +18,11 @@ RGroupFragmentTool.prototype.OnMouseMove = function (event) {
 };
 
 RGroupFragmentTool.prototype.OnMouseUp = function (event) {
-	var ci = this.editor.render.findItem(event, ['frags', 'rgroups']);
+	var rnd = this.editor.render;
+	var ci = rnd.findItem(event, ['frags', 'rgroups']);
 	if (ci && ci.map == 'frags') {
 		this._hoverHelper.hover(null);
-		var rgOld = Struct.RGroup.findRGroupByFragment(this.editor.render.ctab.molecule.rgroups, ci.id);
+		var rgOld = Struct.RGroup.findRGroupByFragment(rnd.ctab.molecule.rgroups, ci.id);
 		ui.showRGroupTable({
 			values: rgOld && ['R' + rgOld],
 			onOk: function (rgNew) {
@@ -32,7 +33,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 					Action.fromRGroupFragment(rgNew, ci.id),
 						true
 					);
-					ui.render.update();
+					rnd.update();
 				}
 			}.bind(this)
 		});
@@ -40,8 +41,8 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	}
 	else if (ci && ci.map == 'rgroups') {
 		this._hoverHelper.hover(null);
-		var rg = this.editor.render.ctab.molecule.rgroups.get(ci.id);
-		var rgmask = 0; this.editor.render.ctab.molecule.rgroups.each(function (rgid) { rgmask |= (1 << (rgid - 1)); });
+		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
+		var rgmask = 0; rnd.ctab.molecule.rgroups.each(function (rgid) { rgmask |= (1 << (rgid - 1)); });
 		var oldLogic = {
 			occurrence: rg.range,
 			resth: rg.resth,
@@ -67,7 +68,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 				if (oldLogic.ifthen != newLogic.ifthen) props.ifthen = newLogic.ifthen;
 				if ('range' in props || 'resth' in props || 'ifthen' in props) {
 					ui.addUndoAction(Action.fromRGroupAttrs(ci.id, props));
-					this.editor.render.update();
+					rnd.update();
 				}
 				return true;
 			}.bind(this)

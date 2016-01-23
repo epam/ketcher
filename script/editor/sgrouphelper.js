@@ -10,7 +10,7 @@ var SGroupHelper = function (editor) {
 SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	this.selection = selection;
 
-	var render = this.editor.render;
+	var rnd = this.editor.render;
 	// check s-group overlappings
 	if (id == null)
 	{
@@ -24,14 +24,14 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 
 		if (!Object.isUndefined(selection.atoms.detect(function (id)
 		{
-			var sgroups = render.atomGetSGroups(id);
+			var sgroups = rnd.atomGetSGroups(id);
 
 			return !Object.isUndefined(sgroups.detect(function (sid)
 			{
 				if (sid in verified)
 					return false;
 
-				var sg_atoms = render.sGroupGetAtoms(sid);
+				var sg_atoms = rnd.sGroupGetAtoms(sid);
 
 				if (sg_atoms.length < selection.atoms.length)
 				{
@@ -60,14 +60,14 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	}
 
 	ui.showSGroupProperties({
-		type: id !== null ? ui.render.sGroupGetType(id) : null,
-		attrs: id !== null ? ui.render.sGroupGetAttrs(id) : {},
+		type: id !== null ? rnd.sGroupGetType(id) : null,
+		attrs: id !== null ? rnd.sGroupGetAttrs(id) : {},
 		onCancel: function () {
 			this.editor.deselectAll();
 		}.bind(this),
 		onOk: function (params) {
 			if (id == null) {
-				id = ui.render.ctab.molecule.sgroups.newId();
+				id = rnd.ctab.molecule.sgroups.newId();
 				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
 														   params.attrs, id), true);
 			} else {
@@ -75,7 +75,7 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 								 .mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
 			}
 			this.editor.deselectAll();
-			this.editor.render.update();
+			rnd.update();
 
 		}.bind(this)
 	});

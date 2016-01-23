@@ -144,7 +144,8 @@ LassoTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 LassoTool.prototype.OnDblClick = function (event) {
-	var ci = this.editor.render.findItem(event);
+	var rnd = this.editor.render;
+	var ci = rnd.findItem(event);
 	if (ci.map == 'atoms') {
 		this.editor._selectionHelper.setSelection(ci);
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
@@ -157,7 +158,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 				onOk: function (attrs) {
 					if (atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)) {
 						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, attrs));
-						ui.render.update();
+						rnd.update();
 					}
 					return true;
 				}.bind(this)
@@ -171,7 +172,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 					var label = res.values[0];
 					if (atom.label != label) {
 						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {label: label}));
-						ui.render.update();
+						rnd.update();
 					}
 					return true;
 				}.bind(this)
@@ -189,10 +190,11 @@ LassoTool.prototype.OnDblClick = function (event) {
 	return true;
 };
 LassoTool.prototype.OnCancel = function () {
+	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		ui.addUndoAction(this.dragCtx.action, true);
-		this.editor.render.update();
+		rnd.update();
 		delete this.dragCtx;
 	} else if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(this._lassoHelper.end());

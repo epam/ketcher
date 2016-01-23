@@ -29,12 +29,13 @@ EraserTool.prototype.OnMouseMove = function (event) {
 	}
 };
 EraserTool.prototype.OnMouseUp = function (event) {
+	var rnd = this.editor.render;
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		ui.addUndoAction(Action.fromFragmentDeletion(this._lassoHelper.end(event)));
 		this.editor.deselectAll();
-		ui.render.update();
+		rnd.update();
 	} else {
-		var ci = this.editor.render.findItem(event, this.maps);
+		var ci = rnd.findItem(event, this.maps);
 		if (ci && ci.type != 'Canvas') {
 			this._hoverHelper.hover(null);
 			if (ci.map == 'atoms') {
@@ -55,7 +56,7 @@ EraserTool.prototype.OnMouseUp = function (event) {
 				return;
 			}
 			this.editor.deselectAll();
-			ui.render.update();
+			rnd.update();
 		}
 	}
 };

@@ -20,17 +20,18 @@ var BondTool = function (editor, bondProps) {
 BondTool.prototype = new EditorTool();
 
 BondTool.prototype.OnMouseDown = function (event) {
+	var rnd = this.editor.render;
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
-		xy0: ui.page2obj(event),
-		item: this.editor.render.findItem(event, ['atoms', 'bonds'])
+		xy0: rnd.page2obj(event),
+		item: rnd.findItem(event, ['atoms', 'bonds'])
 	};
 	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
 	return true;
 };
 
 BondTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
+	var _E_ = this.editor, rnd = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		if (!('item' in _DC_) || _DC_.item.map == 'atoms') {
@@ -38,23 +39,23 @@ BondTool.prototype.OnMouseMove = function (event) {
 			var i1, i2, p1, p2;
 			if (('item' in _DC_ && _DC_.item.map == 'atoms')) {
 				i1 = _DC_.item.id;
-				i2 = _R_.findItem(event, ['atoms'], _DC_.item);
+				i2 = rnd.findItem(event, ['atoms'], _DC_.item);
 			} else {
 				i1 = this.atomProps;
 				p1 = _DC_.xy0;
-				i2 = _R_.findItem(event, ['atoms']);
+				i2 = rnd.findItem(event, ['atoms']);
 			}
 			var dist = Number.MAX_VALUE;
 			if (i2 && i2.map == 'atoms') {
 				i2 = i2.id;
 			} else {
 				i2 = this.atomProps;
-				var xy1 = ui.page2obj(event);
+				var xy1 = rnd.page2obj(event);
 				dist = Vec2.dist(_DC_.xy0, xy1);
 				if (p1) {
 					p2 = this._calcNewAtomPos(p1, xy1);
 				} else {
-					p1 = this._calcNewAtomPos(_R_.atomGetPos(i1), xy1);
+					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1), xy1);
 				}
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
@@ -63,21 +64,22 @@ BondTool.prototype.OnMouseMove = function (event) {
 			} else {
 				delete _DC_.action;
 			}
-			_R_.update();
+			rnd.update();
 			return true;
 		}
 	}
-	this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
+	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 
 BondTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
+		var rnd = this.editor.render;
 		if ('action' in _DC_) {
 			ui.addUndoAction(_DC_.action);
 		} else if (!('item' in _DC_)) {
-			var xy = ui.page2obj(event);
+			var xy = rnd.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
 				this.bondProps.type == Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
@@ -119,7 +121,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 				);
 			}
 		}
-		this.editor.render.update();
+		rnd.update();
 		delete this.dragCtx;
 	}
 	return true;

@@ -16,12 +16,13 @@ var ReactionMapTool = function (editor) {
 };
 ReactionMapTool.prototype = new EditorTool();
 ReactionMapTool.prototype.OnMouseDown = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
+	var rnd = this.editor.render;
+	var ci = rnd.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this._hoverHelper.hover(null);
 		this.dragCtx = {
 			item: ci,
-			xy0: ui.page2obj(event)
+			xy0: rnd.page2obj(event)
 		}
 	}
 };
@@ -34,7 +35,7 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
 		} else {
 			this._hoverHelper.hover(null);
-			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), ui.page2obj(event));
+			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
 		}
 	} else {
 		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));

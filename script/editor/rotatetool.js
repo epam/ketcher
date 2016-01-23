@@ -23,7 +23,8 @@ RotateTool.prototype.OnMouseDown = function (event) {
 
 	var selection = this.editor._selectionHelper.selection;
 	if (selection.atoms && selection.atoms.length) {
-		var molecule = this.editor.render.ctab.molecule;
+		var rnd = this.editor.render;
+		var molecule = rnd.ctab.molecule;
 		var xy0 = new Vec2();
 
 		if (!selection.atoms || !selection.atoms.length) {
@@ -74,7 +75,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 
 		this.dragCtx = {
 			xy0: xy0,
-			angle1: this._calcAngle(xy0, ui.page2obj(event)),
+			angle1: this._calcAngle(xy0, rnd.page2obj(event)),
 			all: rot_all
 		};
 	} else {
@@ -88,10 +89,10 @@ RotateTool.prototype.OnMouseMove = function (event) {
 		this._lassoHelper.addPoint(event)
 		);
 	} else if ('dragCtx' in this) {
-		var _E_ = this.editor, _R_ = _E_.render;
+		var _E_ = this.editor, rnd = _E_.render;
 		var _DC_ = this.dragCtx;
 
-		var pos = ui.page2obj(event);
+		var pos = rnd.page2obj(event);
 		var angle = this._calcAngle(_DC_.xy0, pos) - _DC_.angle1;
 
 		var degrees = Math.round(angle / Math.PI * 180);
@@ -107,14 +108,14 @@ RotateTool.prototype.OnMouseMove = function (event) {
 
 		_DC_.angle = degrees;
 		_DC_.action = Action.fromRotate(
-			_DC_.all ? _R_.ctab.molecule : this.editor.getSelection(),
+			_DC_.all ? rnd.ctab.molecule : this.editor.getSelection(),
 			_DC_.xy0,
 			angle
 		);
 
 		$('toolText').update(degrees + 'º');
 
-		_R_.update();
+		rnd.update();
 	}
 	return true;
 };

@@ -144,7 +144,7 @@ var Render = function (clientArea, scale, opt, viewSz)
 					pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
 				};
 				// set the reference point for the "static point" zoom (in object coordinates)
-				zoomStaticPoint = new Vec2(ui.page2obj(this._tui.center));
+				zoomStaticPoint = new Vec2(self.page2obj(this._tui.center));
 			} else if (event.touches.length == 1) {
 				self.setLongTapTimeout(event);
 			}
@@ -267,13 +267,17 @@ Render.prototype.scrollPos = function() {
 	return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
 };
 
+Render.prototype.page2obj = function (pagePos) {
+	var offset = this.clientArea.cumulativeOffset();
+	var pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top);
+	return this.view2obj(pp);
+};
+
 Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
-			'ui' in window && 'page2obj' in ui ? new Vec2(ui.page2obj(event)) :
-		new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
-		maps,
-		skip
-	);
+			'ui' in window ? new Vec2(this.page2obj(event)) :
+			                 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
+		maps, skip);
 	//rbalabanov: let it be this way at the moment
 	if (ci.type == 'Atom') ci.map = 'atoms';
 	else if (ci.type == 'Bond') ci.map = 'bonds';

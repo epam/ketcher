@@ -15,24 +15,25 @@ var AtomTool = function (editor, atomProps) {
 AtomTool.prototype = new EditorTool();
 AtomTool.prototype.OnMouseDown = function (event) {
 	this._hoverHelper.hover(null);
-	var ci = this.editor.render.findItem(event, ['atoms']);
+	var rnd = this.editor.render;
+	var ci = rnd.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
 		this.dragCtx = {
-			xy0: ui.page2obj(event)
+			xy0: rnd.page2obj(event)
 		};
 	} else if (ci.map == 'atoms') {
 		this.dragCtx = {
 			item: ci,
-			xy0: ui.page2obj(event)
+			xy0: rnd.page2obj(event)
 		};
 	}
 };
 AtomTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
+	var _E_ = this.editor, rnd = _E_.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
 		var _DC_ = this.dragCtx;
 		var newAtomPos = this._calcNewAtomPos(
-		_R_.atomGetPos(_DC_.item.id), ui.page2obj(event)
+		rnd.atomGetPos(_DC_.item.id), rnd.page2obj(event)
 		);
 		if ('action' in _DC_) {
 			_DC_.action.perform();
@@ -50,23 +51,24 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		//END
 		_DC_.action = action_ret[0];
 		_DC_.aid2 = action_ret[2];
-		_R_.update();
+		rnd.update();
 	} else {
-		this._hoverHelper.hover(_R_.findItem(event, ['atoms']));
+		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	}
 };
 AtomTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
+		var rnd = this.editor.render;
 		ui.addUndoAction(
 				'action' in _DC_
 				 ? _DC_.action
 				 : 'item' in _DC_
 					 ? Action.fromAtomsAttrs(_DC_.item.id, this.atomProps, true)
-					 : Action.fromAtomAddition(ui.page2obj(event), this.atomProps),
+					 : Action.fromAtomAddition(rnd.page2obj(event), this.atomProps),
 			true
 		);
-		this.editor.render.update();
+		rnd.update();
 		delete this.dragCtx;
 	}
 };

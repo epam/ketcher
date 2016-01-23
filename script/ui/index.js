@@ -762,12 +762,6 @@ function getStruct(mol, checkEmptyLine) {
 	});
 };
 
-function page2obj (pagePos) {
-	var offset = clientArea.cumulativeOffset();
-	var pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top);
-	return ui.render.view2obj(pp);
-};
-
 function onScroll_ClientArea (event)
 {
 	if ($('input_label').visible())
@@ -984,7 +978,7 @@ function mapTool (id) {
 
 		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
 		 else if (mode.startsWith('bond_')) {
-		 var cBond = ui.render.findClosestBond(page2obj(ui.cursorPos));
+		 var cBond = ui.render.findClosestBond(ui.render.page2obj(ui.cursorPos));
 		 if (cBond) {
 		 addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
 		 ui.render.update();
@@ -1117,9 +1111,6 @@ util.extend(ui, {
 	showDialog: showDialog,
 	hideDialog: hideDialog,
 	bondTypeMap: bondTypeMap,
-
-	// TODO: move schrool/zoom machinery to render
-	page2obj: page2obj,
 
 	// TODO: search a way to pass dialogs to editor
 	showSGroupProperties: showSgroupDialog,

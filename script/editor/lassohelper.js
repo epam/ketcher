@@ -15,7 +15,8 @@ LassoHelper.prototype.getSelection = function () {
 	}
 };
 LassoHelper.prototype.begin = function (event) {
-	this.points = [ ui.page2obj(event) ];
+	var rnd = this.editor.render;
+	this.points = [ rnd.page2obj(event) ];
 	if (this.mode == 1) {
 		this.points.push(this.points[0]);
 	}
@@ -25,12 +26,13 @@ LassoHelper.prototype.running = function () {
 };
 LassoHelper.prototype.addPoint = function (event) {
 	if (!this.running()) return false;
+	var rnd = this.editor.render;
 	if (this.mode == 0) {
-		this.points.push(ui.page2obj(event));
-		this.editor.render.drawSelectionPolygon(this.points);
+		this.points.push(rnd.page2obj(event));
+		rnd.drawSelectionPolygon(this.points);
 	} else if (this.mode == 1) {
-		this.points = [ this.points[0], ui.page2obj(event) ];
-		this.editor.render.drawSelectionRectangle(this.points[0], this.points[1]);
+		this.points = [ this.points[0], rnd.page2obj(event) ];
+		rnd.drawSelectionRectangle(this.points[0], this.points[1]);
 	}
 	return this.getSelection();
 };

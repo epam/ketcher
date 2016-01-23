@@ -80,13 +80,14 @@ EditorTool.prototype.OnKeyPress0 = function (event, action) {
 	} else if (action in EditorTool.atom_label_map) {
 		var label = EditorTool.atom_label_map[action];
 		var selection = this.editor.getSelection();
+		var rnd = this.editor.render;
 		if (selection && 'atoms' in selection && selection.atoms.length > 0) {
 			ui.addUndoAction(Action.fromAtomsAttrs(
 				selection.atoms, {label: label}, true), true);
-			ui.render.update();
+			rnd.update();
 			return true;
 		} else {
-			var ci = this.editor.render.findItem(this.OnMouseMove0.lastEvent);
+			var ci = rnd.findItem(this.OnMouseMove0.lastEvent);
 			if (ci) {
 				ci.label = {label: label};
 				if (ci.map === 'atoms') {
@@ -94,11 +95,10 @@ EditorTool.prototype.OnKeyPress0 = function (event, action) {
 						ci.id, ci.label, true), true);
 				} else if (ci.id == -1) {
 					ui.addUndoAction(
-					Action.fromAtomAddition(
-					ui.page2obj(
-						this.OnMouseMove0.lastEvent), ci.label), true);
+						Action.fromAtomAddition(rnd.page2obj(this.OnMouseMove0.lastEvent), ci.label),
+						true);
 				}
-				ui.render.update();
+				rnd.update();
 				return true;
 			}
 		}

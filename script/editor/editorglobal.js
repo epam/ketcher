@@ -23,7 +23,8 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 		});
 		return res;
 	}
-	var ci = this.editor.render.findItem(event, ['atoms']);
+	var rnd = this.editor.render;
+	var ci = rnd.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
 		this._hoverHelper.hover(null);
 		ui.showRGroupTable({
@@ -33,7 +34,7 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 				if (rgNew) {
 					ui.addUndoAction(
 					Action.fromAtomAddition(
-					ui.page2obj(this.OnMouseMove0.lastEvent),
+					rnd.page2obj(this.OnMouseMove0.lastEvent),
 					{ label: 'R#', rglabel: rgNew}
 					),
 						true
@@ -45,7 +46,7 @@ EditorGlobal.RGroupAtomTool_OnMouseUp = function (event) {
 		return true;
 	} else if (ci && ci.map == 'atoms') {
 		this._hoverHelper.hover(null);
-		var atom = this.editor.render.ctab.molecule.atoms.get(ci.id);
+		var atom = rnd.ctab.molecule.atoms.get(ci.id);
 		var lbOld = atom.label;
 		var rgOld = atom.rglabel;
 		ui.showRGroupTable({

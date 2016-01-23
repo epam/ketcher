@@ -19,11 +19,11 @@ var LassoTool = function (editor, mode, fragment) {
 };
 LassoTool.prototype = new EditorTool();
 LassoTool.prototype.OnMouseDown = function (event) {
-	var render = this.editor.render;
-	var ctab = render.ctab, mol = ctab.molecule;
+	var rnd = this.editor.render;
+	var ctab = rnd.ctab, mol = ctab.molecule;
 	this._hoverHelper.hover(null); // TODO review hovering for touch devices
 	var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
-	var ci = this.editor.render.findItem(
+	var ci = rnd.findItem(
 		event,
 		selectFragment ?
 			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
@@ -34,13 +34,13 @@ LassoTool.prototype.OnMouseDown = function (event) {
 			this._lassoHelper.begin(event);
 	} else {
 		this._hoverHelper.hover(null);
-		if ('onShowLoupe' in this.editor.render)
-			this.editor.render.onShowLoupe(true);
+		if ('onShowLoupe' in rnd)
+			rnd.onShowLoupe(true);
 		if (!this.editor._selectionHelper.isSelected(ci)) {
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
 				this.editor._selectionHelper.setSelection(
-				{ 'atoms': frag.fragGetAtoms(render, ci.id), 'bonds': frag.fragGetBonds(render, ci.id) },
+				{ 'atoms': frag.fragGetAtoms(rnd, ci.id), 'bonds': frag.fragGetBonds(rnd, ci.id) },
 					event.shiftKey
 				);
 			} else if (ci.map == 'sgroups') {
@@ -52,7 +52,7 @@ LassoTool.prototype.OnMouseDown = function (event) {
 			} else if (ci.map == 'rgroups') {
 				var rgroup = ctab.rgroups.get(ci.id);
 				this.editor._selectionHelper.setSelection(
-				{ 'atoms': rgroup.getAtoms(render), 'bonds': rgroup.getBonds(render) },
+				{ 'atoms': rgroup.getAtoms(rnd), 'bonds': rgroup.getBonds(rnd) },
 					event.shiftKey
 				);
 			} else {
@@ -61,7 +61,7 @@ LassoTool.prototype.OnMouseDown = function (event) {
 		}
 		this.dragCtx = {
 			item: ci,
-			xy0: ui.page2obj(event)
+			xy0: rnd.page2obj(event)
 		};
 		if (ci.map == 'atoms' && !ui.is_touch) {
 			var self = this;
@@ -85,28 +85,29 @@ LassoTool.prototype.OnMouseDown = function (event) {
 };
 
 LassoTool.prototype.OnMouseMove = function (event) {
+	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		// moving selected objects
 		if (this.dragCtx.action) {
 			this.dragCtx.action.perform();
-			this.editor.render.update(); // redraw the elements in unshifted position, lest the have different offset
+			rnd.update(); // redraw the elements in unshifted position, lest the have different offset
 		}
 		this.dragCtx.action = Action.fromMultipleMove(
 		this.editor.getSelection(true),
-		ui.page2obj(event).sub(this.dragCtx.xy0));
+		rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
 		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
-			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
 		}
-		this.editor.render.update();
+		rnd.update();
 	} else if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
 	} else {
 		this._hoverHelper.hover(
-		this.editor.render.findItem(
+		rnd.findItem(
 			event,
 			(this._lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :

@@ -6,18 +6,21 @@ var ui = global.ui;
 var PasteTool = function (editor, struct) {
 	this.editor = editor;
 	this.struct = struct;
+
+	var rnd = editor.render;
 	this.action = Action.fromPaste(
 		this.struct, 'lastEvent' in this.OnMouseMove0 ?
-			ui.page2obj(this.OnMouseMove0.lastEvent) : undefined);
-	this.editor.render.update();
+			rnd.page2obj(this.OnMouseMove0.lastEvent) : undefined);
+	rnd.update();
 };
 PasteTool.prototype = new EditorTool();
 PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this) {
 		this.action.perform(this.editor);
 	}
-	this.action = Action.fromPaste(this.struct, ui.page2obj(event));
-	this.editor.render.update();
+	var rnd = this.editor.render;
+	this.action = Action.fromPaste(this.struct, rnd.page2obj(event));
+	rnd.update();
 };
 PasteTool.prototype.OnMouseUp = function () {
 	ui.addUndoAction(this.action);

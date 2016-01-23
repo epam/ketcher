@@ -44,11 +44,11 @@ TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	return 0;
 };
 TemplateTool.prototype.OnMouseDown = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
+	var _E_ = this.editor, rnd = _E_.render;
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
-		xy0: ui.page2obj(event),
-		item: _R_.findItem(event, ['atoms', 'bonds'])
+		xy0: rnd.page2obj(event),
+		item: rnd.findItem(event, ['atoms', 'bonds'])
 	};
 	var _DC_ = this.dragCtx;
 	var ci = _DC_.item;
@@ -56,10 +56,10 @@ TemplateTool.prototype.OnMouseDown = function (event) {
 		delete _DC_.item;
 	} else if (ci.map == 'bonds') {
 		// calculate fragment center
-		var molecule = _R_.ctab.molecule;
+		var molecule = rnd.ctab.molecule;
 		var xy0 = new Vec2();
 		var bond = molecule.bonds.get(ci.id);
-		var frid = _R_.atomGetAttr(bond.begin, 'fragment');
+		var frid = rnd.atomGetAttr(bond.begin, 'fragment');
 		var fr_ids = molecule.getFragmentIds(frid);
 		var count = 0;
 
@@ -93,12 +93,12 @@ TemplateTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 TemplateTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
+	var _E_ = this.editor, rnd = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		var ci = _DC_.item;
 		var pos0;
-		var pos1 = ui.page2obj(event);
+		var pos1 = rnd.page2obj(event);
 		var angle, extra_bond;
 		var self = this;
 
@@ -108,10 +108,10 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 		if (!ci || ci.type == 'Canvas') {
 			pos0 = _DC_.xy0;
 		} else if (ci.map == 'atoms') {
-			pos0 = _R_.atomGetPos(ci.id);
+			pos0 = rnd.atomGetPos(ci.id);
 			extra_bond = Vec2.dist(pos0, pos1) > 1;
 		} else if (ci.map == 'bonds') {
-			var molecule = _R_.ctab.molecule;
+			var molecule = rnd.ctab.molecule;
 			var bond = molecule.bonds.get(ci.id);
 			var sign = this._getSign(molecule, bond, pos1);
 
@@ -124,7 +124,7 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 				if ('action' in _DC_) _DC_.action.perform();
 				_DC_.sign2 = sign;
 				_DC_.action = Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
-				_R_.update();
+				rnd.update();
 			}
 
 			return true;
@@ -161,10 +161,10 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 			);
 			_DC_.extra_bond = extra_bond;
 		}
-		_R_.update();
+		rnd.update();
 		return true;
 	}
-	this._hoverHelper.hover(_R_.findItem(event, ['atoms', 'bonds']));
+	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 TemplateTool.prototype.OnMouseUp = function (event) {

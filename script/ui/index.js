@@ -213,7 +213,6 @@ function hideBlurredControls () {
 	setTimeout(function () {
 		clientArea.style.visibility = 'visible';
 	}, 0);
-	// ?? ui.render.update(true);
 	// END
 	dropdownOpened = null;
 	return true;
@@ -763,20 +762,10 @@ function getStruct(mol, checkEmptyLine) {
 	});
 };
 
-function page2canvas2 (pos)
-{
+function page2obj (pagePos) {
 	var offset = clientArea.cumulativeOffset();
-	return new Vec2(pos.pageX - offset.left, pos.pageY - offset.top);
-};
-
-function page2obj (pagePos)
-{
-	return ui.render.view2obj(page2canvas2(pagePos));
-};
-
-function scrollPos ()
-{
-	return new Vec2(clientArea.scrollLeft, clientArea.scrollTop);
+	var pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top);
+	return ui.render.view2obj(pp);
 };
 
 function onScroll_ClientArea (event)
@@ -1130,8 +1119,6 @@ util.extend(ui, {
 	bondTypeMap: bondTypeMap,
 
 	// TODO: move schrool/zoom machinery to render
-	page2canvas2: page2canvas2,
-	scrollPos: scrollPos,
 	page2obj: page2obj,
 
 	// TODO: search a way to pass dialogs to editor

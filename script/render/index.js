@@ -7,14 +7,14 @@ var util = require('../util');
 var Struct = require('../chem/struct');
 var SGroup = require('../chem/sgroup');
 
-var ReRxnPlus = require('./rerxnplus')
-var ReRxnArrow = require('./rerxnarrow')
-var ReFrag = require('./refrag')
-var ReRGroup = require('./rergroup')
-var ReDataSGroupData = require('./redatasgroupdata')
-var ReChiralFlag = require('./rechiralflag')
-var ReSGroup = require('./resgroup')
-var ReStruct = require('./restruct')
+var ReRxnPlus = require('./rerxnplus');
+var ReRxnArrow = require('./rerxnarrow');
+var ReFrag = require('./refrag');
+var ReRGroup = require('./rergroup');
+var ReDataSGroupData = require('./redatasgroupdata');
+var ReChiralFlag = require('./rechiralflag');
+var ReSGroup = require('./resgroup');
+var ReStruct = require('./restruct');
 
 require('./restruct_rendering');
 
@@ -165,7 +165,10 @@ var Render = function (clientArea, scale, opt, viewSz)
 		});
 		clientArea.observe('gesturechange', function (event) {
 			self.setZoom(this._tui.scale0 * event.scale);
-			self.recoordinate(ui.page2canvas2(this._tui.center), zoomStaticPoint);
+			var offset = clientArea.cumulativeOffset();
+			var pp = new Vec2(this._tui.center.pageX - offset.left,
+			                  this._tui.center.pageY - offset.top);
+			self.recoordinate(pp, zoomStaticPoint);
 			self.update();
 			event.preventDefault();
 		});
@@ -228,7 +231,7 @@ Render.prototype.addStructChangeHandler = function (handler)
 };
 
 Render.prototype.view2scaled = function (p, isRelative) {
-	var scroll = ui.scrollPos();
+	var scroll = this.scrollPos();
 	if (!this.useOldZoom) {
 		p = p.scaled(1 / this.zoom);
 		scroll = scroll.scaled(1 / this.zoom);
@@ -238,7 +241,7 @@ Render.prototype.view2scaled = function (p, isRelative) {
 };
 
 Render.prototype.scaled2view = function (p, isRelative) {
-	p = isRelative ? p : p.add(this.offset).sub(ui.scrollPos().scaled(1 / this.zoom));
+	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.zoom));
 	if (!this.useOldZoom)
 		p = p.scaled(this.zoom);
 	return p;
@@ -258,6 +261,10 @@ Render.prototype.view2obj = function (v, isRelative) {
 
 Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
+};
+
+Render.prototype.scrollPos = function() {
+	return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
 };
 
 Render.prototype.findItem = function (event, maps, skip) {
@@ -892,7 +899,7 @@ Render.prototype.update = function (force)
 		if (!this.opt.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-			var vb = new Box2Abs(ui.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
+			var vb = new Box2Abs(this.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
 			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)
 				this.oldCb = new Box2Abs();
@@ -1141,4 +1148,4 @@ Render.prototype.setViewBox = function (z) {
 		this.setScale(z);
 };
 
-module.exports = Render
+module.exports = Render;

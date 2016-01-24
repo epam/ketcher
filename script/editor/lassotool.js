@@ -20,7 +20,7 @@ var LassoTool = function (editor, mode, fragment) {
 LassoTool.prototype = new EditorTool();
 LassoTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	var ctab = rnd.ctab, mol = ctab.molecule;
+	var ctab = rnd.ctab, struct = ctab.molecule;
 	this._hoverHelper.hover(null); // TODO review hovering for touch devices
 	var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
 	var ci = rnd.findItem(
@@ -46,7 +46,7 @@ LassoTool.prototype.OnMouseDown = function (event) {
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
 				this.editor._selectionHelper.setSelection(
-				{ 'atoms': SGroup.getAtoms(mol, sgroup), 'bonds': SGroup.getBonds(mol, sgroup) },
+				{ 'atoms': SGroup.getAtoms(struct, sgroup), 'bonds': SGroup.getBonds(struct, sgroup) },
 					event.shiftKey
 				);
 			} else if (ci.map == 'rgroups') {
@@ -143,13 +143,15 @@ LassoTool.prototype.OnMouseUp = function (event) {
 	}
 	return true;
 };
+
 LassoTool.prototype.OnDblClick = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event);
+	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
 		this.editor._selectionHelper.setSelection(ci);
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
-		var atom = ui.ctab.atoms.get(ci.id);
+		var atom = struct.atoms.get(ci.id);
 		if (atom.label == 'R#') {
 			RGroupAtomTool.prototype.OnMouseUp.call(this, event);
 		} else if (atom.label == 'L#') {

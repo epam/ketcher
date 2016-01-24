@@ -648,7 +648,8 @@ RxnPlusMove.prototype = new Base();
 function SGroupDataMove (id, d) {
 	this.data = {id: id, d: d};
 	this._execute = function (editor) {
-		ui.ctab.sgroups.get(this.data.id).pp.add_(this.data.d);
+		var struct = editor.render.ctab.molecule;
+		struct.sgroups.get(this.data.id).pp.add_(this.data.d);
 		this.data.d = this.data.d.negated();
 		editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};
@@ -663,13 +664,15 @@ SGroupDataMove.prototype = new Base();
 function CanvasLoad (ctab) {
 	this.data = {ctab: ctab, norescale: false};
 	this._execute = function (editor) {
-		var R = editor.render;
+		var rnd = editor.render;
+		var struct = rnd.ctab.molecule;
 
-		R.ctab.clearVisels();
-		var oldCtab = ui.ctab;
-		ui.ctab = this.data.ctab;
-		R.setMolecule(ui.ctab, this.data.norescale);
-		this.data.ctab = oldCtab;
+		rnd.ctab.clearVisels();
+		var oldStruct = struct;
+		rnd.setMolecule(this.data.ctab, this.data.norescale);
+		ui.ctab = rnd.ctab.molecule;
+
+		this.data.ctab = oldStruct;
 		this.data.norescale = true;
 	};
 

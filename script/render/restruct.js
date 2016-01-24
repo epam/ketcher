@@ -15,15 +15,15 @@ var SGroup = require('../chem/sgroup');
 
 var Visel = require('./visel');
 
-var ReObject = require("./reobject")
-var ReRxnPlus = require("./rerxnplus")
-var ReRxnArrow = require("./rerxnarrow")
-var ReFrag = require('./refrag')
-var ReRGroup = require('./rergroup')
-var ReDataSGroupData = require('./redatasgroupdata')
-var ReChiralFlag = require('./rechiralflag')
-var ReSGroup = require('./resgroup')
-var ReLoop = require('./reloop')
+var ReObject = require("./reobject");
+var ReRxnPlus = require("./rerxnplus");
+var ReRxnArrow = require("./rerxnarrow");
+var ReFrag = require('./refrag');
+var ReRGroup = require('./rergroup');
+var ReDataSGroupData = require('./redatasgroupdata');
+var ReChiralFlag = require('./rechiralflag');
+var ReSGroup = require('./resgroup');
+var ReLoop = require('./reloop');
 
 var ReAtom = function (/*chem.Atom*/atom)
 {
@@ -654,7 +654,7 @@ var drawGroupDat = function (remol, sgroup) {
 		SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
 	}
 	var ps = sgroup.pp.scaled(settings.scaleFactor);
-	
+
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {
 			var atom = remol.atoms.get(atoms[i]);
@@ -696,7 +696,7 @@ var SGroup_draw = {
 var sgroup_draw = function (remol, sgroup) {
 //	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
 	return SGroup_draw[sgroup.type](remol, sgroup);
-} 
+}
 
 ReStruct.prototype.drawSGroups = function ()
 {
@@ -926,4 +926,4 @@ ReStruct.maps = {
 	'reloops':     ReLoop
 };
 
-module.exports = ReStruct
+module.exports = ReStruct;

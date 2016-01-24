@@ -2,8 +2,6 @@ var Set = require('../util/set');
 var ReStruct = require('../render/restruct');
 var SelectionHelper = require('./selectionhelper');
 
-var ui = global.ui;
-
 var Editor = function (render)
 {
 	this.render = render;
@@ -17,9 +15,11 @@ Editor.prototype.selectAll = function () {
 	}
 	this._selectionHelper.setSelection(selection);
 };
+
 Editor.prototype.deselectAll = function () {
 	this._selectionHelper.setSelection();
 };
+
 Editor.prototype.hasSelection = function (copyable) {
 	if ('selection' in this._selectionHelper)
 		for (var map in this._selectionHelper.selection)
@@ -28,6 +28,7 @@ Editor.prototype.hasSelection = function (copyable) {
 				return true;
 	return false;
 };
+
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
 	if ('selection' in this._selectionHelper) {
@@ -69,26 +70,24 @@ Editor.prototype.getSelection = function (explicit) {
 };
 
 Editor.prototype.getSelectionStruct = function () {
-	console.assert(ui.ctab == this.render.ctab.molecule,
-				   'Another ctab');
-	var src = ui.ctab;
+	var struct = this.render.ctab.molecule;
 	var selection = this.getSelection(true);
-	var dst = src.clone(Set.fromList(selection.atoms),
-						Set.fromList(selection.bonds), true);
+	var dst = struct.clone(Set.fromList(selection.atoms),
+	                       Set.fromList(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets
-	src.rxnArrows.each(function (id, item) {
+	struct.rxnArrows.each(function (id, item) {
 		if (selection.rxnArrows.indexOf(id) != -1)
 			dst.rxnArrows.add(item.clone());
 	});
-	src.rxnPluses.each(function (id, item) {
+	struct.rxnPluses.each(function (id, item) {
 		if (selection.rxnPluses.indexOf(id) != -1)
 			dst.rxnPluses.add(item.clone());
 	});
 
 	// TODO: should be reaction only if arrwos? check this logic
-	dst.isReaction = src.isReaction &&
+	dst.isReaction = struct.isReaction &&
 		(dst.rxnArrows.count() || dst.rxnPluses.count());
 
 	return dst;

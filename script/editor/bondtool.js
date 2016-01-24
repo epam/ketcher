@@ -76,6 +76,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		var rnd = this.editor.render;
+		var struct = rnd.ctab.molecule;
 		if ('action' in _DC_) {
 			ui.addUndoAction(_DC_.action);
 		} else if (!('item' in _DC_)) {
@@ -95,7 +96,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 			ui.addUndoAction(Action.fromBondAddition(this.bondProps, _DC_.item.id)[0]);
 		} else if (_DC_.item.map == 'bonds') {
 			var bondProps = Object.clone(this.bondProps);
-			var bond = ui.ctab.bonds.get(_DC_.item.id);
+			var bond = struct.bonds.get(_DC_.item.id);
 
 			if (
 			bondProps.stereo != Bond.PATTERN.STEREO.NONE &&
@@ -116,9 +117,8 @@ BondTool.prototype.OnMouseUp = function (event) {
 					}
 				}
 				ui.addUndoAction(
-				Action.fromBondAttrs(_DC_.item.id, bondProps, bondFlipRequired(bond, bondProps)),
-					true
-				);
+					Action.fromBondAttrs(_DC_.item.id, bondProps,
+					                     bondFlipRequired(struct, bond, bondProps)), true);
 			}
 		}
 		rnd.update();
@@ -127,12 +127,12 @@ BondTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-function bondFlipRequired (bond, attrs) {
+function bondFlipRequired (struct, bond, attrs) {
 	return attrs.type == Bond.PATTERN.TYPE.SINGLE &&
 		   bond.stereo == Bond.PATTERN.STEREO.NONE &&
 		   attrs.stereo != Bond.PATTERN.STEREO.NONE &&
-		   ui.ctab.atoms.get(bond.begin).neighbors.length <
-		   ui.ctab.atoms.get(bond.end).neighbors.length;
+		   struct.atoms.get(bond.begin).neighbors.length <
+		   struct.atoms.get(bond.end).neighbors.length;
 }
 
 

@@ -639,6 +639,27 @@ var drawGroupGen = function (remol, sgroup) {
 	return set;
 }
 
+var showValue = function (paper, pos, sg, settings) {
+	var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
+			.attr({
+		'font': settings.font,
+		'font-size': settings.fontsz
+	});
+	var box = text.getBBox();
+	var rect = paper.rect(box.x - 1, box.y - 1,
+							  box.width + 2, box.height + 2, 3, 3)
+			.attr({
+		fill: '#fff',
+		stroke: '#fff'
+	});
+	var st = paper.set();
+	st.push(
+		rect,
+			text.toFront()
+	);
+	return st;
+}
+
 var drawGroupDat = function (remol, sgroup) {
 	var render = remol.render;
 	var settings = render.settings;
@@ -664,7 +685,7 @@ var drawGroupDat = function (remol, sgroup) {
 				p.x = Math.max(p.x, bb.p1.x);
 			}
 			p.x += settings.lineWidth; // shift a bit to the right
-			var name_i = sgroup.showValue(paper, p, sgroup, settings);
+			var name_i = showValue(paper, p, sgroup, settings);
 			var box_i = util.relBox(name_i.getBBox());
 			name_i.translateAbs(0.5 * box_i.width, -0.3 * box_i.height);
 			set.push(name_i);
@@ -673,7 +694,7 @@ var drawGroupDat = function (remol, sgroup) {
 			sgroup.areas.push(sbox_i);
 		}
 	} else {
-		var name = sgroup.showValue(paper, ps, sgroup, settings);
+		var name = showValue(paper, ps, sgroup, settings);
 		var box = util.relBox(name.getBBox());
 		name.translateAbs(0.5 * box.width, -0.5 * box.height);
 		set.push(name);

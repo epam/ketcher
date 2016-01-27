@@ -218,9 +218,6 @@ var Render = function (clientArea, scale, opt, viewSz)
 	this.ctab = new ReStruct(new Struct(), this);
 	this.settings = null;
 	this.styles = null;
-
-	this.onCanvasOffsetChanged = null; //function(newOffset, oldOffset){};
-	this.onCanvasSizeChanged = null; //function(newSize, oldSize){};
 };
 
 Render.prototype.addStructChangeHandler = function (handler)
@@ -613,14 +610,14 @@ Render.prototype.setPaperSize = function (sz)
 	var oldSz = this.sz;
 	this.sz = sz;
 	this._setPaperSize(sz);
-	if (this.onCanvasSizeChanged)
-		this.onCanvasSizeChanged(sz, oldSz);
 };
 
 Render.prototype.setOffset = function (newoffset)
 {
 	DEBUG.logMethod('setOffset');
-	if (this.onCanvasOffsetChanged) this.onCanvasOffsetChanged(newoffset, this.offset);
+	var delta = new Vec2(newoffset.x - this.offset.x, newoffset.y - this.offset.y);
+	this.clientArea.scrollLeft += delta.x;
+	this.clientArea.scrollTop += delta.y;
 	this.offset = newoffset;
 };
 

@@ -164,17 +164,18 @@ function init (options, apiServer) {
 	initZoom();
 	updateHistoryButtons();
 
-	clientArea.on('scroll', onScroll_ClientArea);
+	clientArea.on('scroll', function () {
+		if ($('input_label').visible())
+			$('input_label').hide();
+	});
 	clientArea.on('mousedown', function () {
 		keymage.setScope('editor');
 	});
 
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,
-	                            util.extend({ atomColoring: true }, options));
+	                        util.extend({ atomColoring: true }, options));
 	ui.editor = new Editor(ui.render);
-
-	ui.render.onCanvasOffsetChanged = onOffsetChanged;
 
 	selectAction('select-lasso');
 	//setScrollOffset(0, 0);
@@ -760,31 +761,6 @@ function getStruct(mol, checkEmptyLine) {
 			}));
 		}
 	});
-};
-
-function onScroll_ClientArea (event)
-{
-	if ($('input_label').visible())
-		$('input_label').hide();
-
-	// scrollLeft = clientArea.scrollLeft;
-	// scrollTop = clientArea.scrollTop;
-
-	util.stopEventPropagation(event);
-};
-
-//
-// Canvas size
-//
-function onOffsetChanged (newOffset, oldOffset)
-{
-	if (oldOffset == null)
-		return;
-
-	var delta = new Vec2(newOffset.x - oldOffset.x, newOffset.y - oldOffset.y);
-
-	clientArea.scrollLeft += delta.x;
-	clientArea.scrollTop += delta.y;
 };
 
 function removeSelected ()

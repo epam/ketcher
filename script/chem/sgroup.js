@@ -414,91 +414,93 @@ SGroup.getBonds = function (mol, sg) {
 	return bonds;
 };
 
-var GroupMul = {
-	prepareForSaving: function (mol) {
-		var j;
-		this.atoms.sort();
-		this.atomSet = Set.fromList(this.atoms);
-		this.parentAtomSet = Set.clone(this.atomSet);
-		var inBonds = [];
-		var xBonds = [];
-
-		mol.bonds.each(function (bid, bond){
-			if (Set.contains(this.parentAtomSet, bond.begin) && Set.contains(this.parentAtomSet, bond.end))
-				inBonds.push(bid);
-			else if (Set.contains(this.parentAtomSet, bond.begin) || Set.contains(this.parentAtomSet,bond.end))
-				xBonds.push(bid);
-		}, this);
-		if (xBonds.length != 0 && xBonds.length != 2)
-			throw {
-				'id':this.id,
-				'error-type':'cross-bond-number',
-				'message':'Unsupported cross-bonds number'
-			};
-
-		var xAtom1 = -1,
+SGroup.prepareMulForSaving = function (mol) {
+	var j;
+	this.atoms.sort();
+	this.atomSet = Set.fromList(this.atoms);
+	this.parentAtomSet = Set.clone(this.atomSet);
+	var inBonds = [];
+	var xBonds = [];
+	
+	mol.bonds.each(function (bid, bond) {
+		if (Set.contains(this.parentAtomSet, bond.begin) && Set.contains(this.parentAtomSet, bond.end))
+			inBonds.push(bid);
+		else if (Set.contains(this.parentAtomSet, bond.begin) || Set.contains(this.parentAtomSet, bond.end))
+			xBonds.push(bid);
+	}, this);
+	if (xBonds.length != 0 && xBonds.length != 2)
+		throw {
+			'id': this.id,
+			'error-type': 'cross-bond-number',
+			'message': 'Unsupported cross-bonds number'
+		};
+	
+	var xAtom1 = -1,
 		xAtom2 = -1;
-		var crossBond = null;
-		if (xBonds.length == 2) {
-			var bond1 = mol.bonds.get(xBonds[0]);
-			if (Set.contains(this.parentAtomSet, bond1.begin)) {
-				xAtom1 = bond1.begin;
-			} else {
-				xAtom1 = bond1.end;
-			}
-			var bond2 = mol.bonds.get(xBonds[1]);
-			if (Set.contains(this.parentAtomSet, bond2.begin)) {
-				xAtom2 = bond2.begin;
-			} else {
-				xAtom2 = bond2.end;
-			}
-			crossBond = bond2;
+	var crossBond = null;
+	if (xBonds.length == 2) {
+		var bond1 = mol.bonds.get(xBonds[0]);
+		if (Set.contains(this.parentAtomSet, bond1.begin)) {
+			xAtom1 = bond1.begin;
+		} else {
+			xAtom1 = bond1.end;
 		}
-
-		var amap = null;
-		var tailAtom = xAtom1;
-
-		var newAtoms = [];
-		for (j = 0; j < this.data.mul - 1; ++j) {
-			amap = {};
-			util.each(this.atoms, function (aid) {
-				var atom = mol.atoms.get(aid);
-				var aid2 = mol.atoms.add(new Atom(atom));
-				newAtoms.push(aid2);
-				this.atomSet[aid2] = 1;
-				amap[aid] = aid2;
-			}, this);
-			util.each(inBonds, function (bid) {
-				var bond = mol.bonds.get(bid);
-				var newBond = new Bond(bond);
-				newBond.begin = amap[newBond.begin];
-				newBond.end = amap[newBond.end];
-				mol.bonds.add(newBond);
-			}, this);
-			if (crossBond != null) {
-				var newCrossBond = new Bond(crossBond);
-				newCrossBond.begin = tailAtom;
-				newCrossBond.end = amap[xAtom2];
-				mol.bonds.add(newCrossBond);
-				tailAtom = amap[xAtom1];
-			}
+		var bond2 = mol.bonds.get(xBonds[1]);
+		if (Set.contains(this.parentAtomSet, bond2.begin)) {
+			xAtom2 = bond2.begin;
+		} else {
+			xAtom2 = bond2.end;
 		}
-
-		util.each(newAtoms, function (aid) {
-			util.each(mol.sGroupForest.getPathToRoot(this.id).reverse(), function (sgid) {
-				mol.atomAddToSGroup(sgid, aid);
-			}, this);
+		crossBond = bond2;
+	}
+	
+	var amap = null;
+	var tailAtom = xAtom1;
+	
+	var newAtoms = [];
+	for (j = 0; j < this.data.mul - 1; ++j) {
+		amap = {};
+		util.each(this.atoms, function (aid) {
+			var atom = mol.atoms.get(aid);
+			var aid2 = mol.atoms.add(new Atom(atom));
+			newAtoms.push(aid2);
+			this.atomSet[aid2] = 1;
+			amap[aid] = aid2;
 		}, this);
-		if (tailAtom >= 0) {
-			var xBond2 = mol.bonds.get(xBonds[0]);
-			if (xBond2.begin == xAtom1)
-				xBond2.begin = tailAtom;
-			else
-				xBond2.end = tailAtom;
+		util.each(inBonds, function (bid) {
+			var bond = mol.bonds.get(bid);
+			var newBond = new Bond(bond);
+			newBond.begin = amap[newBond.begin];
+			newBond.end = amap[newBond.end];
+			mol.bonds.add(newBond);
+		}, this);
+		if (crossBond != null) {
+			var newCrossBond = new Bond(crossBond);
+			newCrossBond.begin = tailAtom;
+			newCrossBond.end = amap[xAtom2];
+			mol.bonds.add(newCrossBond);
+			tailAtom = amap[xAtom1];
 		}
+	}
+	
+	util.each(newAtoms, function (aid) {
+		util.each(mol.sGroupForest.getPathToRoot(this.id).reverse(), function (sgid) {
+			mol.atomAddToSGroup(sgid, aid);
+		}, this);
+	}, this);
+	if (tailAtom >= 0) {
+		var xBond2 = mol.bonds.get(xBonds[0]);
+		if (xBond2.begin == xAtom1)
+			xBond2.begin = tailAtom;
+		else
+			xBond2.end = tailAtom;
+	}
+	
+	this.bonds = xBonds;
+}
 
-		this.bonds = xBonds;
-	},
+var GroupMul = {
+	prepareForSaving: SGroup.prepareMulForSaving,
 
 	postLoad: function (mol, atomMap)
 	{

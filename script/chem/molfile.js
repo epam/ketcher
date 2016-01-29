@@ -1,4 +1,5 @@
 var Map = require('../util/map');
+var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var element = require('./element');
 
@@ -1157,16 +1158,54 @@ Molfile.prototype.writeCTab2000Header = function ()
 	this.writeCR(' V2000');
 };
 
+var makeAtomBondLines = function (prefix, idstr, ids, map) {
+	if (!ids)
+		return [];
+	var lines = [];
+	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
+		var rem = Math.min(ids.length - 15 * i, 15);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + util.paddedInt(rem, 2);
+		for (var j = 0; j < rem; ++j) {
+			salLine += ' ' + util.paddedInt(map[ids[i * 15 + j]], 3);
+		}
+		lines.push(salLine);
+	}
+	return lines;
+};
+
+var bracketsToMolfile = function (mol, sg, idstr) {
+	var inBonds = [], xBonds = [];
+	var atomSet = Set.fromList(sg.atoms);
+	SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
+	SGroup.bracketPos(sg, null, mol, xBonds);
+	var bb = sg.bracketBox;
+	var d = sg.bracketDir, n = d.rotateSC(1, 0);
+	var brackets = SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
+	var lines = [];
+	for (var i = 0; i < brackets.length; ++i) {
+		var bracket = brackets[i];
+		var a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
+		var a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
+		var line = 'M  SDI ' + idstr + util.paddedInt(4, 3);
+		var coord = [a0.x, a0.y, a1.x, a1.y];
+		for (var j = 0; j < coord.length; ++j) {
+			line += util.paddedFloat(coord[j], 10, 4);
+		}
+		lines.push(line);
+	}
+	return lines;
+};
+
 var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
 	
 	var lines = [];
-	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, util.idList(sgroup.atomSet), atomMap)); // TODO: check atomSet
-	lines = lines.concat(SGroup.makeAtomBondLines('SPA', idstr, util.idList(sgroup.parentAtomSet), atomMap));
-	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, util.idList(sgroup.atomSet), atomMap)); // TODO: check atomSet
+	lines = lines.concat(makeAtomBondLines('SPA', idstr, util.idList(sgroup.parentAtomSet), atomMap));
+	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 	var smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
 	lines.push(smtLine);
-	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
 	return lines.join('\n');
 };
 
@@ -1174,9 +1213,9 @@ var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
 	
 	var lines = [];
-	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
 	return lines.join('\n');
 };
 
@@ -1184,8 +1223,8 @@ var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
 	
 	var lines = [];
-	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 	if (sgroup.data.name && sgroup.data.name != '')
 		lines.push('M  SMT ' + idstr + ' ' + sgroup.data.name);
 	return lines.join('\n');
@@ -1199,7 +1238,7 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	if (!data.absolute)
 		pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
 	var lines = [];
-	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	var sdtLine = 'M  SDT ' + idstr +
 			' ' + util.stringPadded(data.fieldName, 30, true) +
 		util.stringPadded(data.fieldType, 2) +
@@ -1236,9 +1275,9 @@ var saveGenToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
 	
 	var lines = [];
-	lines = lines.concat(SGroup.makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-	lines = lines.concat(SGroup.makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-	lines = lines.concat(SGroup.bracketsToMolfile(mol, sgroup, idstr));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+	lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
 	return lines.join('\n');
 };
 

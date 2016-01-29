@@ -110,29 +110,6 @@ SGroup.addGroup = function (mol, sg, atomMap)
 	return sg.id;
 };
 
-SGroup.bracketsToMolfile = function (mol, sg, idstr) {
-	var inBonds = [], xBonds = [];
-	var atomSet = Set.fromList(sg.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
-	SGroup.bracketPos(sg, null, mol, xBonds);
-	var bb = sg.bracketBox;
-	var d = sg.bracketDir, n = d.rotateSC(1, 0);
-	var brackets = SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
-	var lines = [];
-	for (var i = 0; i < brackets.length; ++i) {
-		var bracket = brackets[i];
-		var a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
-		var a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
-		var line = 'M  SDI ' + idstr + util.paddedInt(4, 3);
-		var coord = [a0.x, a0.y, a1.x, a1.y];
-		for (var j = 0; j < coord.length; ++j) {
-			line += util.paddedFloat(coord[j], 10, 4);
-		}
-		lines.push(line);
-	}
-	return lines;
-};
-
 SGroup.filterAtoms = function (atoms, map) {
 	var newAtoms = [];
 	for (var i = 0; i < atoms.length; ++i) {
@@ -378,21 +355,6 @@ SGroup.getObjBBox = function (atoms, mol)
 		bb = bb.include(p);
 	}
 	return bb;
-};
-
-SGroup.makeAtomBondLines = function (prefix, idstr, ids, map) {
-	if (!ids)
-		return [];
-	var lines = [];
-	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
-		var rem = Math.min(ids.length - 15 * i, 15);
-		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + util.paddedInt(rem, 2);
-		for (var j = 0; j < rem; ++j) {
-			salLine += ' ' + util.paddedInt(map[ids[i * 15 + j]], 3);
-		}
-		lines.push(salLine);
-	}
-	return lines;
 };
 
 SGroup.getAtoms = function (mol, sg) {

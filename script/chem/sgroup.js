@@ -12,7 +12,6 @@ var SGroup = function (type) {
 
 	this.type = type;
 	this.id = -1;
-	SGroup.equip(this, type);
 	this.label = -1;
 	this.bracketBox = null;
 	this.bracketDir = new Vec2(1,0);
@@ -51,6 +50,14 @@ var SGroup = function (type) {
 	}
 };
 
+SGroup.TYPES = {
+	'MUL': 1,
+	'SRU': 2,
+	'SUP': 3,
+	'DAT': 4,
+	'GEN': 5
+};
+
 // TODO: these methods should be overridden
 //      and should only accept valid attributes for each S-group type.
 //      The attributes should be accessed via these methods only and not directly through this.data.
@@ -79,12 +86,6 @@ SGroup.prototype.checkAttr = function (attr, value) {
 	return this.data[attr] == value;
 };
 
-SGroup.equip = function (sgroup, type) {
-	var impl = SGroup.TYPES[type];
-	for (var method in impl)
-		sgroup[method] = impl[method];
-};
-
 SGroup.numberArrayToString = function (numbers, map) {
 	var str = util.stringPadded(numbers.length, 3);
 	for (var i = 0; i < numbers.length; ++i) {
@@ -99,8 +100,7 @@ SGroup.addGroup = function (mol, sg, atomMap)
 	sg.id = mol.sgroups.add(sg);
 
 	// apply type-specific post-processing
-	sg.postLoad(mol, atomMap);
-
+	postLoad[sg.type](sg, mol, atomMap);
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s)
 		if (mol.atoms.has(sg.atoms[s]))
@@ -358,6 +358,7 @@ SGroup.getObjBBox = function (atoms, mol)
 };
 
 SGroup.getAtoms = function (mol, sg) {
+	/* shoud we use prototype? */
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
@@ -376,23 +377,23 @@ SGroup.getBonds = function (mol, sg) {
 	return bonds;
 };
 
-SGroup.prepareMulForSaving = function (mol) {
+SGroup.prepareMulForSaving = function (sgroup, mol) {
 	var j;
-	this.atoms.sort();
-	this.atomSet = Set.fromList(this.atoms);
-	this.parentAtomSet = Set.clone(this.atomSet);
+	sgroup.atoms.sort();
+	sgroup.atomSet = Set.fromList(sgroup.atoms);
+	sgroup.parentAtomSet = Set.clone(sgroup.atomSet);
 	var inBonds = [];
 	var xBonds = [];
 	
 	mol.bonds.each(function (bid, bond) {
-		if (Set.contains(this.parentAtomSet, bond.begin) && Set.contains(this.parentAtomSet, bond.end))
+		if (Set.contains(sgroup.parentAtomSet, bond.begin) && Set.contains(sgroup.parentAtomSet, bond.end))
 			inBonds.push(bid);
-		else if (Set.contains(this.parentAtomSet, bond.begin) || Set.contains(this.parentAtomSet, bond.end))
+		else if (Set.contains(sgroup.parentAtomSet, bond.begin) || Set.contains(sgroup.parentAtomSet, bond.end))
 			xBonds.push(bid);
-	}, this);
+	}, sgroup);
 	if (xBonds.length != 0 && xBonds.length != 2)
 		throw {
-			'id': this.id,
+			'id': sgroup.id,
 			'error-type': 'cross-bond-number',
 			'message': 'Unsupported cross-bonds number'
 		};
@@ -402,13 +403,13 @@ SGroup.prepareMulForSaving = function (mol) {
 	var crossBond = null;
 	if (xBonds.length == 2) {
 		var bond1 = mol.bonds.get(xBonds[0]);
-		if (Set.contains(this.parentAtomSet, bond1.begin)) {
+		if (Set.contains(sgroup.parentAtomSet, bond1.begin)) {
 			xAtom1 = bond1.begin;
 		} else {
 			xAtom1 = bond1.end;
 		}
 		var bond2 = mol.bonds.get(xBonds[1]);
-		if (Set.contains(this.parentAtomSet, bond2.begin)) {
+		if (Set.contains(sgroup.parentAtomSet, bond2.begin)) {
 			xAtom2 = bond2.begin;
 		} else {
 			xAtom2 = bond2.end;
@@ -420,22 +421,22 @@ SGroup.prepareMulForSaving = function (mol) {
 	var tailAtom = xAtom1;
 	
 	var newAtoms = [];
-	for (j = 0; j < this.data.mul - 1; ++j) {
+	for (j = 0; j < sgroup.data.mul - 1; ++j) {
 		amap = {};
-		util.each(this.atoms, function (aid) {
+		util.each(sgroup.atoms, function (aid) {
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new Atom(atom));
 			newAtoms.push(aid2);
-			this.atomSet[aid2] = 1;
+			sgroup.atomSet[aid2] = 1;
 			amap[aid] = aid2;
-		}, this);
+		}, sgroup);
 		util.each(inBonds, function (bid) {
 			var bond = mol.bonds.get(bid);
 			var newBond = new Bond(bond);
 			newBond.begin = amap[newBond.begin];
 			newBond.end = amap[newBond.end];
 			mol.bonds.add(newBond);
-		}, this);
+		}, sgroup);
 		if (crossBond != null) {
 			var newCrossBond = new Bond(crossBond);
 			newCrossBond.begin = tailAtom;
@@ -446,10 +447,10 @@ SGroup.prepareMulForSaving = function (mol) {
 	}
 	
 	util.each(newAtoms, function (aid) {
-		util.each(mol.sGroupForest.getPathToRoot(this.id).reverse(), function (sgid) {
+		util.each(mol.sGroupForest.getPathToRoot(sgroup.id).reverse(), function (sgid) {
 			mol.atomAddToSGroup(sgid, aid);
-		}, this);
-	}, this);
+		}, sgroup);
+	}, sgroup);
 	if (tailAtom >= 0) {
 		var xBond2 = mol.bonds.get(xBonds[0]);
 		if (xBond2.begin == xAtom1)
@@ -458,136 +459,78 @@ SGroup.prepareMulForSaving = function (mol) {
 			xBond2.end = tailAtom;
 	}
 	
-	this.bonds = xBonds;
-}
+	sgroup.bonds = xBonds;
+};
 
-var GroupMul = {
-	prepareForSaving: SGroup.prepareMulForSaving,
-
-	postLoad: function (mol, atomMap)
-	{
-		this.data.mul = this.data.subscript - 0;
-		var atomReductionMap = {};
-
-		this.atoms = SGroup.filterAtoms(this.atoms, atomMap);
-		this.patoms = SGroup.filterAtoms(this.patoms, atomMap);
-
-		// mark repetitions for removal
-		for (var k = 1; k < this.data.mul; ++k) {
-			for (var m = 0; m < this.patoms.length; ++m) {
-				var raid = this.atoms[k * this.patoms.length + m];
-				if (raid < 0)
-					continue;
-				if (this.patoms[m] < 0) {
-					throw new Error('parent atom missing');
-				}
-//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
-				atomReductionMap[raid] = this.patoms[m]; // "merge" atom in parent
+var postLoadMul = function (sgroup, mol, atomMap) {
+	sgroup.data.mul = sgroup.data.subscript - 0;
+	var atomReductionMap = {};
+	
+	sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
+	sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
+	
+	// mark repetitions for removal
+	for (var k = 1; k < sgroup.data.mul; ++k) {
+		for (var m = 0; m < sgroup.patoms.length; ++m) {
+			var raid = sgroup.atoms[k * sgroup.patoms.length + m];
+			if (raid < 0)
+				continue;
+			if (sgroup.patoms[m] < 0) {
+				throw new Error('parent atom missing');
 			}
+			//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
+			atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
 		}
-		this.patoms = SGroup.removeNegative(this.patoms);
-
-		var patomsMap = util.identityMap(this.patoms);
-
-		var bondsToRemove = [];
-		mol.bonds.each(function (bid, bond){
-			var beginIn = bond.begin in atomReductionMap;
-			var endIn = bond.end in atomReductionMap;
-			// if both adjacent atoms of a bond are to be merged, remove it
-			if (beginIn && endIn
-				 || beginIn && bond.end in patomsMap
+	}
+	sgroup.patoms = SGroup.removeNegative(sgroup.patoms);
+	
+	var patomsMap = util.identityMap(sgroup.patoms);
+	
+	var bondsToRemove = [];
+	mol.bonds.each(function (bid, bond) {
+		var beginIn = bond.begin in atomReductionMap;
+		var endIn = bond.end in atomReductionMap;
+		// if both adjacent atoms of a bond are to be merged, remove it
+		if (beginIn && endIn 
+				 || beginIn && bond.end in patomsMap 
 				 || endIn && bond.begin in patomsMap) {
-				bondsToRemove.push(bid);
+			bondsToRemove.push(bid);
 				// if just one atom is merged, modify the bond accordingly
-			} else if (beginIn) {
-				bond.begin = atomReductionMap[bond.begin];
-			} else if (endIn) {
-				bond.end = atomReductionMap[bond.end];
-			}
-		}, this);
-
-		// apply removal lists
-		for (var b = 0; b < bondsToRemove.length; ++b) {
-			mol.bonds.remove(bondsToRemove[b]);
+		} else if (beginIn) {
+			bond.begin = atomReductionMap[bond.begin];
+		} else if (endIn) {
+			bond.end = atomReductionMap[bond.end];
 		}
-		for (var a in atomReductionMap) {
-			mol.atoms.remove(a);
-			atomMap[a] = -1;
-		}
-		this.atoms = this.patoms;
-		this.patoms = null;
+	}, sgroup);
+	
+	// apply removal lists
+	for (var b = 0; b < bondsToRemove.length; ++b) {
+		mol.bonds.remove(bondsToRemove[b]);
 	}
-};
-
-var GroupSru = {
-	prepareForSaving: function (mol) {
-		var xBonds = [];
-		mol.bonds.each(function (bid, bond){
-			var a1 = mol.atoms.get(bond.begin);
-			var a2 = mol.atoms.get(bond.end);
-			if (Set.contains(a1.sgs, this.id) && !Set.contains(a2.sgs, this.id) ||
-			Set.contains(a2.sgs, this.id) && !Set.contains(a1.sgs, this.id))
-				xBonds.push(bid);
-		},this);
-		if (xBonds.length != 0 && xBonds.length != 2)
-			throw {'id':this.id, 'error-type':'cross-bond-number', 'message':'Unsupported cross-bonds number'};
-		this.bonds = xBonds;
-	},
-
-	postLoad: function (mol, atomMap) {
-		this.data.connectivity = (this.data.connectivity || 'EU').strip().toLowerCase();
+	for (var a in atomReductionMap) {
+		mol.atoms.remove(a);
+		atomMap[a] = -1;
 	}
+	sgroup.atoms = sgroup.patoms;
+	sgroup.patoms = null;
 };
 
-var GroupSup = {
-	prepareForSaving: function (mol) {
-		// This code is also used for GroupSru and should be moved into a separate common method
-		// It seems that such code should be used for any sgroup by this this should be checked
-		var xBonds = [];
-		mol.bonds.each(function (bid, bond){
-			var a1 = mol.atoms.get(bond.begin);
-			var a2 = mol.atoms.get(bond.end);
-			if (Set.contains(a1.sgs, this.id) && !Set.contains(a2.sgs, this.id) ||
-			Set.contains(a2.sgs, this.id) && !Set.contains(a1.sgs, this.id))
-				xBonds.push(bid);
-		},this);
-		this.bonds = xBonds;
-	},
 
-	postLoad: function (mol, atomMap) {
-		this.data.name = (this.data.subscript || '').strip();
-		this.data.subscript = '';
-	}
+var postLoadSru = function (sgroup, mol, atomMap) {
+	sgroup.data.connectivity = (sgroup.data.connectivity || 'EU').strip().toLowerCase();
 };
 
-var GroupGen = {
-	prepareForSaving: function (mol) {
-	},
-
-	postLoad: function (mol, atomMap) {
-	}
+var postLoadSup = function (sgroup, mol, atomMap) {
+	sgroup.data.name = (sgroup.data.subscript || '').strip();
+	sgroup.data.subscript = '';
 };
 
-SGroup.getMassCentre = function (mol, atoms) {
-	var c = new Vec2(); // mass centre
-	for (var i = 0; i < atoms.length; ++i) {
-		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
-	}
-	return c;
+var postLoadGen = function (sgroup, mol, atomMap) {
 };
 
-SGroup.setPos = function (remol, sg, pos) {
-	sg.pp = pos;
-};
-
-var GroupDat = {
-	prepareForSaving: function (mol) {
-		this.atoms = SGroup.getAtoms(mol, this);
-	},
-
-	postLoad: function (mol, atomMap) {
-		if (!this.data.absolute)
-			this.pp = this.pp.add(SGroup.getMassCentre(mol, this.atoms));
+var postLoadDat = function (sgroup, mol, atomMap) {
+	if (!sgroup.data.absolute)
+		sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
 		// [NK] Temporary comment incoplete 'allAtoms' behavior
 		// TODO: need ether remove 'allAtoms' flag or hadle it
 		// consistently (other flags: *_KEY, *_RADICAL?)
@@ -599,15 +542,27 @@ var GroupDat = {
 		// 	this.atoms = [];
 		// 	this.allAtoms = true;
 		// }
-	}
 };
 
-SGroup.TYPES = {
-	'MUL': GroupMul,
-	'SRU': GroupSru,
-	'SUP': GroupSup,
-	'DAT': GroupDat,
-	'GEN': GroupGen
+var postLoad = {
+	'MUL': postLoadMul,
+	'SRU': postLoadSru,
+	'SUP': postLoadSup,
+	'DAT': postLoadDat,
+	'GEN': postLoadGen
+};
+
+
+SGroup.getMassCentre = function (mol, atoms) {
+	var c = new Vec2(); // mass centre
+	for (var i = 0; i < atoms.length; ++i) {
+		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
+	}
+	return c;
+};
+
+SGroup.setPos = function (remol, sg, pos) {
+	sg.pp = pos;
 };
 
 module.exports = SGroup;

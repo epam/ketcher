@@ -975,26 +975,69 @@ var parseCTab = function (/* string */ ctabLines) /* Struct */
 		throw Error('Molfile version unknown: ' + version);
 };
 
+var prepareSruForSaving = function (sgroup, mol) {
+	var xBonds = [];
+	mol.bonds.each(function (bid, bond) {
+		var a1 = mol.atoms.get(bond.begin);
+		var a2 = mol.atoms.get(bond.end);
+		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
+			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+			xBonds.push(bid);
+	}, sgroup);
+	if (xBonds.length != 0 && xBonds.length != 2)
+		throw { 'id': sgroup.id, 'error-type': 'cross-bond-number', 'message': 'Unsupported cross-bonds number' };
+	sgroup.bonds = xBonds;
+};
+
+var prepareSupForSaving = function (sgroup, mol) {
+	// This code is also used for GroupSru and should be moved into a separate common method
+	// It seems that such code should be used for any sgroup by this this should be checked
+	var xBonds = [];
+	mol.bonds.each(function (bid, bond) {
+		var a1 = mol.atoms.get(bond.begin);
+		var a2 = mol.atoms.get(bond.end);
+		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
+			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+			xBonds.push(bid);
+	}, sgroup);
+	sgroup.bonds = xBonds;
+};
+
+var prepareGenForSaving = function (sgroup, mol) {
+};
+
+var prepareDatForSaving = function (sgroup, mol) {
+	sgroup.atoms = SGroup.getAtoms(mol, sgroup);
+};
+
+var prepareForSaving = {
+	'MUL': SGroup.prepareMulForSaving,
+	'SRU': prepareSruForSaving,
+	'SUP': prepareSupForSaving,
+	'DAT': prepareDatForSaving,
+	'GEN': prepareGenForSaving
+};
+
 Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	var mol = this.molecule;
 	var toRemove = [];
 	var errors = 0;
 
 	util.each(this.molecule.sGroupForest.getSGroupsBFS().reverse(), function (id) {
-		var sg = mol.sgroups.get(id);
+		var sgroup = mol.sgroups.get(id);
 		var errorIgnore = false;
 
 		try {
-			sg.prepareForSaving(mol);
+			prepareForSaving[sgroup.type](sgroup, mol);
 		} catch (ex) {
 			if (!skipErrors || typeof (ex.id) != 'number')
 				throw ex;
 			errorIgnore = true;
 		}
 		if (errorIgnore ||
-			!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sg.data.fieldName)) {
+			!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName)) {
 			errors += errorIgnore;
-			toRemove.push(sg.id);
+			toRemove.push(sgroup.id);
 		}
 	}, this);
 	if (errors) {

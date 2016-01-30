@@ -5,6 +5,7 @@ var Bond = require('./bond');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
 var Stereocenters = require('./stereocenters');
+var SGroup = require('./sgroup');
 
 var util = require('../util');
 
@@ -56,7 +57,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 	molecule.sgroups.each(function (sgid, sg) {
 		if (sg.type == 'MUL') {
 			try {
-				sg.prepareForSaving(molecule);
+				SGroup.prepareMulForSaving(sg, molecule);
+				console.log("prepareMulForSaving -run");
 			} catch(ex) {
 					throw { message: 'Bad s-group (' + ex.message + ')' };
 				}

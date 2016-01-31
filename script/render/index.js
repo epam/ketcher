@@ -1149,4 +1149,22 @@ Render.prototype.setViewBox = function (z) {
 		this.setScale(z);
 };
 
+Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
+	bracketWidth = bracketWidth || 0.25;
+	bracketHeight = bracketHeight || 1.0;
+	var a0 = c.addScaled(n, -0.5 * bracketHeight);
+	var a1 = c.addScaled(n, 0.5 * bracketHeight);
+	var b0 = a0.addScaled(d, -bracketWidth);
+	var b1 = a1.addScaled(d, -bracketWidth);
+	
+	a0 = this.obj2scaled(a0);
+	a1 = this.obj2scaled(a1);
+	b0 = this.obj2scaled(b0);
+	b1 = this.obj2scaled(b1);
+	
+	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
+		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
+	.attr(this.styles.sgroupBracketStyle);
+};
+
 module.exports = Render;

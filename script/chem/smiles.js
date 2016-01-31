@@ -58,7 +58,6 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 		if (sg.type == 'MUL') {
 			try {
 				SGroup.prepareMulForSaving(sg, molecule);
-				console.log("prepareMulForSaving -run");
 			} catch(ex) {
 					throw { message: 'Bad s-group (' + ex.message + ')' };
 				}

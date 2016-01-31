@@ -233,57 +233,6 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 	sg.bracketBox = bb;
 };
 
-SGroup.drawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) {
-	var brackets = SGroup.getBracketParameters(render.ctab.molecule, xbonds, atomSet, bb, d, n, render, sg.id);
-	var ir = -1;
-	for (var i = 0; i < brackets.length; ++i) {
-		var bracket = brackets[i];
-		var path = SGroup.drawBracket(render, render.paper, render.styles, bracket.d, bracket.n, bracket.c, bracket.w, bracket.h);
-		set.push(path);
-		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
-			ir = i;
-	}
-	var bracketR = brackets[ir];
-	var renderIndex = function (text, shift) {
-		var indexPos = render.ps(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
-		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
-		.attr({
-			'font': render.settings.font,
-			'font-size': render.settings.fontszsub
-		});
-		if (indexAttribute)
-			indexPath.attr(indexAttribute);
-		var indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
-		var t = Math.max(Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
-		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
-		set.push(indexPath);
-	};
-	if (lowerIndexText) {
-		renderIndex(lowerIndexText, 0.5);
-	}
-	if (upperIndexText) {
-		renderIndex(upperIndexText, -0.5);
-	}
-};
-
-SGroup.drawBracket = function (render, paper, styles, d, n, c, bracketWidth, bracketHeight) {
-	bracketWidth = bracketWidth || 0.25;
-	bracketHeight = bracketHeight || 1.0;
-	var a0 = c.addScaled(n, -0.5 * bracketHeight);
-	var a1 = c.addScaled(n, 0.5 * bracketHeight);
-	var b0 = a0.addScaled(d, -bracketWidth);
-	var b1 = a1.addScaled(d, -bracketWidth);
-
-	a0 = render.obj2scaled(a0);
-	a1 = render.obj2scaled(a1);
-	b0 = render.obj2scaled(b0);
-	b1 = render.obj2scaled(b1);
-
-	return paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
-		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
-	.attr(styles.sgroupBracketStyle);
-};
-
 SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) {
 	var bracketParams = function (c, d, w, h) {
 		this.c = c;

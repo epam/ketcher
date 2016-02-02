@@ -406,7 +406,8 @@ function updateHistoryButtons () {
 
 function updateServerButtons (standalone) {
 	serverActions.forEach(function (action) {
-		subEl(action).disabled = standalone;
+		if ($(action))
+			subEl(action).disabled = ui.standalone;
 	});
 };
 
@@ -832,6 +833,15 @@ var actionMap = {
 	},
 	'help': function () {
 		dialog(modal.help);
+	},
+	'external-view': function() {
+		modal.externalView(server, {
+			struct: ui.ctab,
+			onOk: function(res) {
+				if (res.struct)
+					updateMolecule(res.struct);
+			}
+		});
 	}
 };
 

@@ -1,4 +1,5 @@
 var ReStruct = require('../render/restruct');
+var Set = require('../util/set');
 
 var ui = global.ui;
 

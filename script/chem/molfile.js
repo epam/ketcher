@@ -135,7 +135,7 @@ var parseAtomLine = function (atomLine)
 	var params =
 	{
 		// generic
-		pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1])),
+		pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
 		label: atomSplit[4].strip(),
 		explicitValence: fmtInfo.valenceMap[parseDecimalInt(atomSplit[10])],
 
@@ -171,7 +171,7 @@ var parseAtomLineV3000 = function (line)
 	var split, subsplit, key, value, i;
 	split = spaceparsplit(line);
 	var params = {
-		pp: new Vec2(parseFloat(split[2]), -parseFloat(split[3])),
+		pp: new Vec2(parseFloat(split[2]), -parseFloat(split[3]), parseFloat(split[4])),
 		aam: split[5].strip()
 	};
 	var label = split[1].strip();
@@ -1241,7 +1241,7 @@ var bracketsToMolfile = function (mol, sg, idstr) {
 
 var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
-	
+
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, util.idList(sgroup.atomSet), atomMap)); // TODO: check atomSet
 	lines = lines.concat(makeAtomBondLines('SPA', idstr, util.idList(sgroup.parentAtomSet), atomMap));
@@ -1254,7 +1254,7 @@ var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 
 var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
-	
+
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
@@ -1264,7 +1264,7 @@ var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 
 var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
-	
+
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
@@ -1275,7 +1275,7 @@ var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 
 var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
-	
+
 	var data = sgroup.data;
 	var pp = sgroup.pp;
 	if (!data.absolute)
@@ -1316,7 +1316,7 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 
 var saveGenToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var idstr = util.stringPadded(sgMap[sgroup.id], 3);
-	
+
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
@@ -1346,7 +1346,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 	{
 		this.writePaddedFloat(atom.pp.x, 10, 4);
 		this.writePaddedFloat(-atom.pp.y, 10, 4);
-		this.writePaddedFloat(0, 10, 4);
+		this.writePaddedFloat(atom.pp.z, 10, 4);
 		this.writeWhiteSpace();
 
 		var label = atom.label;
@@ -1584,7 +1584,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 			this.write(sgroup.data.subscript || 'n');
 			this.writeCR();
 		}
-		
+
 		this.writeCR(saveToMolfile[sgroup.type](sgroup, this.molecule, sgmap, this.mapping, this.bondMapping));
 	}
 

@@ -1,16 +1,22 @@
 var util = require('./index');
 
-var Vec2 = function (x, y)
-{
+var Vec2 = function (x, y, z) {
 	if (arguments.length == 0) {
 		this.x = 0;
 		this.y = 0;
+		this.z = 0;
 	} else if (arguments.length == 1) {
 		this.x = parseFloat(x.x);
 		this.y = parseFloat(x.y);
+		this.z = parseFloat(x.z);
 	} else if (arguments.length == 2) {
 		this.x = parseFloat(x);
 		this.y = parseFloat(y);
+		this.z = 0;
+	} else if (arguments.length == 3) {
+		this.x = parseFloat(x);
+		this.y = parseFloat(y);
+		this.z = parseFloat(z);
 	} else {
 		throw new Error('Vec2(): invalid arguments');
 	}
@@ -38,38 +44,39 @@ Vec2.prototype.equals = function (v) {
 
 Vec2.prototype.add = function (v) {
 	util.assertDefined(v);
-	return new Vec2(this.x + v.x, this.y + v.y);
+	return new Vec2(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
 Vec2.prototype.add_ = function (v) {
 	util.assertDefined(v);
 	this.x += v.x;
 	this.y += v.y;
+	this.z += v.z;
 };
 
 Vec2.prototype.sub = function (v) {
 	util.assertDefined(v);
-	return new Vec2(this.x - v.x, this.y - v.y);
+	return new Vec2(this.x - v.x, this.y - v.y, this.z - v.z);
 };
 
 Vec2.prototype.scaled = function (s) {
 	util.assertDefined(s);
-	return new Vec2(this.x * s, this.y * s);
+	return new Vec2(this.x * s, this.y * s, this.z * s);
 };
 
 Vec2.prototype.negated = function () {
-	return new Vec2(-this.x, -this.y);
+	return new Vec2(-this.x, -this.y, -this.z);
 };
 
 Vec2.prototype.yComplement = function (y1) {
 	y1 = y1 || 0;
-	return new Vec2(this.x, y1 - this.y);
+	return new Vec2(this.x, y1 - this.y, this.z);
 };
 
 Vec2.prototype.addScaled = function (v, f) {
 	util.assertDefined(v);
 	util.assertDefined(f);
-	return new Vec2(this.x + v.x * f, this.y + v.y * f);
+	return new Vec2(this.x + v.x * f, this.y + v.y * f, this.z + v.z * f);
 };
 
 Vec2.prototype.normalized = function () {
@@ -89,7 +96,7 @@ Vec2.prototype.normalize = function () {
 };
 
 Vec2.prototype.turnLeft = function () {
-	return new Vec2(-this.y, this.x);
+	return new Vec2(-this.y, this.x, this.z);
 };
 
 Vec2.prototype.coordStr = function () {
@@ -109,13 +116,13 @@ Vec2.dist = function (a, b) {
 Vec2.max = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
-	return new Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y));
+	return new Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y), Math.max(v1.z, v2.z));
 };
 
 Vec2.min = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
-	return new Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y));
+	return new Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y), Math.min(v1.z, v2.z));
 };
 
 Vec2.prototype.max = function (v) {
@@ -129,17 +136,17 @@ Vec2.prototype.min = function (v) {
 };
 
 Vec2.prototype.ceil = function () {
-	return new Vec2(Math.ceil(this.x), Math.ceil(this.y));
+	return new Vec2(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z));
 };
 
 Vec2.prototype.floor = function () {
-	return new Vec2(Math.floor(this.x), Math.floor(this.y));
+	return new Vec2(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z));
 };
 
 Vec2.sum = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
-	return new Vec2(v1.x + v2.x, v1.y + v2.y);
+	return new Vec2(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 };
 
 Vec2.dot = function (v1, v2) {
@@ -165,7 +172,7 @@ Vec2.prototype.rotate = function (angle) {
 Vec2.prototype.rotateSC = function (si, co) {
 	util.assertDefined(si);
 	util.assertDefined(co);
-	return new Vec2(this.x * co - this.y * si, this.x * si + this.y * co);
+	return new Vec2(this.x * co - this.y * si, this.x * si + this.y * co, this.z);
 };
 
 Vec2.angle = function (v1, v2) {
@@ -181,7 +188,7 @@ Vec2.prototype.oxAngle = function () {
 Vec2.diff = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
-	return new Vec2(v1.x - v2.x, v1.y - v2.y);
+	return new Vec2(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 };
 
 // assume arguments v1, f1, v2, f2, v3, f3, etc.
@@ -198,7 +205,7 @@ Vec2.lc2 = function (v1, f1, v2, f2) {
 	util.assertDefined(v2);
 	util.assertDefined(f1);
 	util.assertDefined(f2);
-	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2);
+	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2 );
 };
 
 Vec2.centre = function (v1, v2) {

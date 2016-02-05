@@ -130,6 +130,7 @@ var special_choices = [
 			'abs',
 			'(+)-enantiomer',
 			'(-)-enantiomer',
+			'racemate',
 			'steric',
 			'rel',
 			'R(a)',

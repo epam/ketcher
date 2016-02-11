@@ -347,6 +347,112 @@ var parsePropertyLineAtomList = function (hdr, lst)
 	return ret;
 };
 
+var postLoadMul = function (sgroup, mol, atomMap) {
+	sgroup.data.mul = sgroup.data.subscript - 0;
+	var atomReductionMap = {};
+
+	sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
+	sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
+
+	// mark repetitions for removal
+	for (var k = 1; k < sgroup.data.mul; ++k) {
+		for (var m = 0; m < sgroup.patoms.length; ++m) {
+			var raid = sgroup.atoms[k * sgroup.patoms.length + m];
+			if (raid < 0)
+				continue;
+			if (sgroup.patoms[m] < 0) {
+				throw new Error('parent atom missing');
+			}
+			//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
+			atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
+		}
+	}
+	sgroup.patoms = SGroup.removeNegative(sgroup.patoms);
+
+	var patomsMap = util.identityMap(sgroup.patoms);
+
+	var bondsToRemove = [];
+	mol.bonds.each(function (bid, bond) {
+		var beginIn = bond.begin in atomReductionMap;
+		var endIn = bond.end in atomReductionMap;
+		// if both adjacent atoms of a bond are to be merged, remove it
+		if (beginIn && endIn
+				 || beginIn && bond.end in patomsMap
+				 || endIn && bond.begin in patomsMap) {
+			bondsToRemove.push(bid);
+				// if just one atom is merged, modify the bond accordingly
+		} else if (beginIn) {
+			bond.begin = atomReductionMap[bond.begin];
+		} else if (endIn) {
+			bond.end = atomReductionMap[bond.end];
+		}
+	}, sgroup);
+
+	// apply removal lists
+	for (var b = 0; b < bondsToRemove.length; ++b) {
+		mol.bonds.remove(bondsToRemove[b]);
+	}
+	for (var a in atomReductionMap) {
+		mol.atoms.remove(a);
+		atomMap[a] = -1;
+	}
+	sgroup.atoms = sgroup.patoms;
+	sgroup.patoms = null;
+};
+
+
+var postLoadSru = function (sgroup, mol, atomMap) {
+	sgroup.data.connectivity = (sgroup.data.connectivity || 'EU').strip().toLowerCase();
+};
+
+var postLoadSup = function (sgroup, mol, atomMap) {
+	sgroup.data.name = (sgroup.data.subscript || '').strip();
+	sgroup.data.subscript = '';
+};
+
+var postLoadGen = function (sgroup, mol, atomMap) {
+};
+
+var postLoadDat = function (sgroup, mol, atomMap) {
+	if (!sgroup.data.absolute)
+		sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
+		// [NK] Temporary comment incoplete 'allAtoms' behavior
+		// TODO: need ether remove 'allAtoms' flag or hadle it
+		// consistently (other flags: *_KEY, *_RADICAL?)
+		// var allAtomsInGroup = this.atoms.length == mol.atoms.count();
+		// if (allAtomsInGroup &&
+		//     (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
+		//      this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||
+		//      this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE')) {
+		// 	this.atoms = [];
+		// 	this.allAtoms = true;
+		// }
+};
+
+function loadSGroup(mol, sg, atomMap)
+{
+	var postLoadMap = {
+		'MUL': postLoadMul,
+		'SRU': postLoadSru,
+		'SUP': postLoadSup,
+		'DAT': postLoadDat,
+		'GEN': postLoadGen
+	};
+
+	// add the group to the molecule
+	sg.id = mol.sgroups.add(sg);
+
+	// apply type-specific post-processing
+	postLoadMap[sg.type](sg, mol, atomMap);
+	// mark atoms in the group as belonging to it
+	for (var s = 0; s < sg.atoms.length; ++s)
+		if (mol.atoms.has(sg.atoms[s]))
+			Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
+
+	mol.sGroupForest.insert(sg.id);
+	return sg.id;
+};
+
 var initSGroup = function (sGroups, propData)
 {
 	/* reader */
@@ -652,7 +758,7 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 		}
 	}
 	for (sid in sGroups) {
-		SGroup.addGroup(ctab, sGroups[sid], atomMap);
+		loadSGroup(ctab, sGroups[sid], atomMap);
 	}
 	var emptyGroups = [];
 	for (sid in sGroups) { // TODO: why do we need that?
@@ -825,7 +931,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 		if (props['QUERYOP']) {
 			applyDataSGroupQueryOp(sg, props['QUERYOP'][0]);
 		}
-		SGroup.addGroup(ctab, sg, atomMap);
+		loadSGroup(ctab, sg, atomMap);
 	}
 	throw new Error('S-group declaration incomplete.');
 };

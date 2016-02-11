@@ -818,7 +818,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 		if (angle == null)
 		{
 			var middle_atom = atomForNewBond(aid);
-			var action_res = fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos);
+			var action_res = fromBondAddition({type: 1}, aid, middle_atom.atom, middle_atom.pos.get_xy0());
 			action = action_res[0];
 			action.operations.reverse();
 			aid1 = aid = action_res[2];
@@ -828,7 +828,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 			action.addOp(
 				operation = new op.AtomAdd(
 				{ label: 'C', fragment: frid },
-				(new Vec2(1, 0)).rotate(angle).add(atom.pp)
+				(new Vec2(1, 0)).rotate(angle).add(atom.pp).get_xy0()
 				).perform(ui.editor)
 			);
 
@@ -869,7 +869,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 			action.addOp(
 				operation = new op.AtomAdd(
 					attrs,
-					v
+					v.get_xy0()
 				).perform(ui.editor)
 			);
 			map[id] = operation.data.aid;

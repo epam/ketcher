@@ -6,12 +6,12 @@ var Vec2 = function (x, y, z) {
 		this.y = 0;
 		this.z = 0;
 	} else if (arguments.length == 1) {
-		this.x = parseFloat(x.x);
-		this.y = parseFloat(x.y);
-		this.z = parseFloat(x.z);
+		this.x = parseFloat(x.x || 0);
+		this.y = parseFloat(x.y || 0);
+		this.z = parseFloat(x.z || 0);
 	} else if (arguments.length == 2) {
-		this.x = parseFloat(x);
-		this.y = parseFloat(y);
+		this.x = parseFloat(x || 0);
+		this.y = parseFloat(y || 0);
 		this.z = 0;
 	} else if (arguments.length == 3) {
 		this.x = parseFloat(x);
@@ -52,6 +52,10 @@ Vec2.prototype.add_ = function (v) {
 	this.x += v.x;
 	this.y += v.y;
 	this.z += v.z;
+};
+
+Vec2.prototype.get_xy0 = function () {
+	return new Vec2(this.x, this.y);
 };
 
 Vec2.prototype.sub = function (v) {

@@ -38,24 +38,30 @@ BondTool.prototype.OnMouseMove = function (event) {
 			if ('action' in _DC_) _DC_.action.perform();
 			var i1, i2, p1, p2;
 			if (('item' in _DC_ && _DC_.item.map == 'atoms')) {
+				// first mousedown event intersect with any atom
 				i1 = _DC_.item.id;
 				i2 = rnd.findItem(event, ['atoms'], _DC_.item);
 			} else {
+				// first mousedown event intersect with any canvas
 				i1 = this.atomProps;
 				p1 = _DC_.xy0;
 				i2 = rnd.findItem(event, ['atoms']);
 			}
 			var dist = Number.MAX_VALUE;
 			if (i2 && i2.map == 'atoms') {
+				// after mousedown events is appered, cursor is moved and then cursor intersects any atoms
 				i2 = i2.id;
 			} else {
 				i2 = this.atomProps;
 				var xy1 = rnd.page2obj(event);
 				dist = Vec2.dist(_DC_.xy0, xy1);
 				if (p1) {
+					// rotation only, leght of bond = 1;
 					p2 = this._calcNewAtomPos(p1, xy1);
 				} else {
-					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1), xy1);
+					// first mousedown event intersect with any atom and 
+					// rotation only, leght of bond = 1;
+					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1).get_xy0(), xy1);
 				}
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
@@ -88,11 +94,12 @@ BondTool.prototype.OnMouseUp = function (event) {
 				this.bondProps,
 			{ label: 'C' },
 			{ label: 'C' },
-			{ x: xy.x - v.x, y: xy.y - v.y},
-			{ x: xy.x + v.x, y: xy.y + v.y}
+			Vec2.diff(xy, v),
+			Vec2.sum(xy, v)
 			);
 			ui.addUndoAction(bondAddition[0]);
 		} else if (_DC_.item.map == 'atoms') {
+			// when does it hapend?
 			ui.addUndoAction(Action.fromBondAddition(this.bondProps, _DC_.item.id)[0]);
 		} else if (_DC_.item.map == 'bonds') {
 			var bondProps = Object.clone(this.bondProps);

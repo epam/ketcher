@@ -32,7 +32,7 @@ function unwrap(xhr) {
 }
 
 function api (base) {
-	var baseUrl = /\/$/.test(base) ? base : base + '/';
+	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
 	function request (method, url) {
 		function options(data, params, sync) {

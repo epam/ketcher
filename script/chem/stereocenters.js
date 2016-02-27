@@ -539,3 +539,5 @@ Stereocenters.isPyramidMappingRigid = function (mapping)
 
 	return rigid;
 };
+
+module.exports = Stereocenters;

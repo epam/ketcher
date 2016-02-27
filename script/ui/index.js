@@ -977,7 +977,7 @@ function mapTool (id) {
 	} else if (id.startsWith('atom-')) {
 		return new AtomTool(ui.editor, atomLabel(id));
 	} else if (id.startsWith('bond-')) {
-		return new BondTool(ui.editor, bondType(id));
+		return new BondTool(ui.editor, id.substr(5));
 	} else if (id == 'chain') {
 		return new ChainTool(ui.editor);
 	} else if (id.startsWith('template-custom')) {
@@ -1008,28 +1008,6 @@ function mapTool (id) {
 		return new RotateTool(ui.editor);
 	}
 	return null;
-};
-
-// TODO: remove. only in obsolete dialogs
-var bondTypeMap = {
-	'single': {type: 1, stereo: Bond.PATTERN.STEREO.NONE},
-	'up': {type: 1, stereo: Bond.PATTERN.STEREO.UP},
-	'down': {type: 1, stereo: Bond.PATTERN.STEREO.DOWN},
-	'updown': {type: 1, stereo: Bond.PATTERN.STEREO.EITHER},
-	'double': {type: 2, stereo: Bond.PATTERN.STEREO.NONE},
-	'crossed': {type: 2, stereo: Bond.PATTERN.STEREO.CIS_TRANS},
-	'triple': {type: 3, stereo: Bond.PATTERN.STEREO.NONE},
-	'aromatic': {type: 4, stereo: Bond.PATTERN.STEREO.NONE},
-	'singledouble': {type: 5, stereo: Bond.PATTERN.STEREO.NONE},
-	'singlearomatic': {type: 6, stereo: Bond.PATTERN.STEREO.NONE},
-	'doublearomatic': {type: 7, stereo: Bond.PATTERN.STEREO.NONE},
-	'any':  {type: 8, stereo: Bond.PATTERN.STEREO.NONE}
-};
-
-function bondType (mode)
-{
-	var type_str = mode.substr(5);
-	return bondTypeMap[type_str];
 };
 
 function atomLabel (mode) {
@@ -1086,7 +1064,6 @@ util.extend(ui, {
 	echo: echo,
 	showDialog: showDialog,
 	hideDialog: hideDialog,
-	bondTypeMap: bondTypeMap,
 
 	// TODO: search a way to pass dialogs to editor
 	showSGroupProperties: showSgroupDialog,

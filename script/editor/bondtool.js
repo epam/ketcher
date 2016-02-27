@@ -6,10 +6,10 @@ var EditorTool = require('./editortool');
 
 var ui = global.ui;
 
-var BondTool = function (editor, bondProps) {
+var BondTool = function (editor, bondCaption) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
-	this.bondProps = bondProps;
+	this.bondProps = Bond.caption2Type(bondCaption);
 	this.plainBondTypes = [
 			Bond.PATTERN.TYPE.SINGLE,
 			Bond.PATTERN.TYPE.DOUBLE,
@@ -59,7 +59,7 @@ BondTool.prototype.OnMouseMove = function (event) {
 					// rotation only, leght of bond = 1;
 					p2 = this._calcNewAtomPos(p1, xy1);
 				} else {
-					// first mousedown event intersect with any atom and 
+					// first mousedown event intersect with any atom and
 					// rotation only, leght of bond = 1;
 					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1).get_xy0(), xy1);
 				}

@@ -1,5 +1,6 @@
 var keymage = require('keymage');
 var element = require('../../chem/element');
+var Bond = require('../../chem/bond');
 var util = require('../../util');
 var Action = require('../../editor/action');
 var inputDialog = require('./input');
@@ -149,17 +150,11 @@ function onChange_AtomValence () {
 // Bond properties dialog
 //
 function showBondProperties (id) {
-	var bond;
 	$('bond_properties').bond_id = id;
 
 	var type = ui.render.bondGetAttr(id, 'type');
 	var stereo = ui.render.bondGetAttr(id, 'stereo');
-
-	for (bond in ui.bondTypeMap) {
-		if (ui.bondTypeMap[bond].type == type && ui.bondTypeMap[bond].stereo == stereo) {
-			break;
-		}
-	}
+	var bond = Bond.type2Caption(type, stereo);
 
 	$('bond_type').value = bond;
 	$('bond_topology').value = ui.render.bondGetAttr(id, 'topology') || 0;
@@ -173,7 +168,7 @@ function applyBondProperties () {
 	ui.hideDialog('bond_properties');
 
 	var id = $('bond_properties').bond_id;
-	var bond = Object.clone(ui.bondTypeMap[$('bond_type').value]);
+	var bond = Bond.caption2Type($('bond_type').value);
 
 	bond.topology = parseInt($('bond_topology').value, 10);
 	bond.reactingCenterStatus = parseInt($('bond_center').value, 10);

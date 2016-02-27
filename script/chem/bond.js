@@ -77,6 +77,33 @@ Bond.attrlist = {
 	'reactingCenterStatus': 0
 };
 
+var captionMap = {
+	'single': {type: Bond.PATTERN.TYPE.SINGLE,
+	           stereo: Bond.PATTERN.STEREO.NONE},
+	'up': {type: Bond.PATTERN.TYPE.SINGLE,
+	       stereo: Bond.PATTERN.STEREO.UP},
+	'down': {type: Bond.PATTERN.TYPE.SINGLE,
+	         stereo: Bond.PATTERN.STEREO.DOWN},
+	'updown': {type: Bond.PATTERN.TYPE.SINGLE,
+	           stereo: Bond.PATTERN.STEREO.EITHER},
+	'double': {type: Bond.PATTERN.TYPE.DOUBLE,
+	           stereo: Bond.PATTERN.STEREO.NONE},
+	'crossed': {type: Bond.PATTERN.TYPE.DOUBLE,
+	            stereo: Bond.PATTERN.STEREO.CIS_TRANS},
+	'triple': {type: Bond.PATTERN.TYPE.TRIPLE,
+	           stereo: Bond.PATTERN.STEREO.NONE},
+	'aromatic': {type: Bond.PATTERN.TYPE.AROMATIC,
+	             stereo: Bond.PATTERN.STEREO.NONE},
+	'singledouble': {type: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+	                 stereo: Bond.PATTERN.STEREO.NONE},
+	'singlearomatic': {type: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+	                   stereo: Bond.PATTERN.STEREO.NONE},
+	'doublearomatic': {type: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+	                   stereo: Bond.PATTERN.STEREO.NONE},
+	'any':  {type: Bond.PATTERN.TYPE.ANY,
+	         stereo: Bond.PATTERN.STEREO.NONE}
+};
+
 Bond.getAttrHash = function (bond) {
 	var attrs = new Hash();
 	for (var attr in Bond.attrlist) {
@@ -91,7 +118,21 @@ Bond.attrGetDefault = function (attr) {
 	if (attr in Bond.attrlist)
 		return Bond.attrlist[attr];
 	throw new Error('Attribute unknown');
-}
+};
+
+Bond.type2Caption = function (type, stereo) {
+	for (var caption in captionMap) {
+		if (captionMap[caption].type == type &&
+		    captionMap[caption].stereo == stereo) {
+			return caption;
+		}
+	}
+	throw 'No such bond caption';
+};
+
+Bond.caption2Type = function (caption) {
+	return Object.clone(captionMap[caption]);
+};
 
 Bond.prototype.hasRxnProps =  function ()
 {

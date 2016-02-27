@@ -2,6 +2,7 @@ var keymage = require('keymage');
 var element = require('../../chem/element');
 var util = require('../../util');
 var Action = require('../../editor/action');
+var inputDialog = require('./input');
 
 var ui = global.ui;
 
@@ -37,26 +38,7 @@ function initDialogs () {
 // Atom attachment points dialog
 //
 function showAtomAttachmentPoints (params) {
-	$('atom_ap1').checked = ((params.selection || 0) & 1) > 0;
-	$('atom_ap2').checked = ((params.selection || 0) & 2) > 0;
-	ui.showDialog('atom_attpoints');
-	var _onOk = new Event.Handler('atom_attpoints_ok', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		ui.hideDialog('atom_attpoints');
-		if ('onOk' in params) {
-			params.onOk(($('atom_ap1').checked ? 1 : 0) + ($('atom_ap2').checked ? 2 : 0));
-		}
-	}).start();
-	var _onCancel = new Event.Handler('atom_attpoints_cancel', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		ui.hideDialog('atom_attpoints');
-		if ('onCancel' in params) {
-			params.onCancel();
-		}
-	}).start();
-	$('atom_attpoints_ok').focus();
+	inputDialog('atom_attpoints', params);
 };
 
 //

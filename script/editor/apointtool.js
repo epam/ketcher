@@ -20,13 +20,15 @@ APointTool.prototype.OnMouseUp = function (event) {
 		this._hoverHelper.hover(null);
 		var apOld = rnd.ctab.molecule.atoms.get(ci.id).attpnt;
 		ui.showAtomAttachmentPoints({
-			selection: apOld,
-			onOk: function (apNew) {
+			primary: ((apOld || 0) & 1) > 0,
+			secondary: ((apOld || 0) & 2) > 0,
+			onOk: function (res) {
+				var apNew = (res.primary && 1) + (res.secondary && 2);
 				if (apOld != apNew) {
 					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { attpnt: apNew }), true);
 					rnd.update();
 				}
-			}.bind(this)
+			}
 		});
 		return true;
 	}

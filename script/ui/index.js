@@ -674,7 +674,7 @@ function onClick_Dearomatize ()
 
 function onClick_Automap () {
 	obsolete.showAutomapProperties({
-		onOk: function (mode) {
+		onOk: function (res) {
 			var mol = ui.ctab;
 			var implicitReaction = mol.addRxnArrowIfNecessary();
 			if (mol.rxnArrows.count() == 0) {
@@ -684,7 +684,7 @@ function onClick_Automap () {
 			var moldata = molfile.stringify(mol, true),
 			request = server.automap({
 				moldata: moldata,
-				mode: mode
+				mode: res.mode
 			});
 
 			request.then(function (res) {

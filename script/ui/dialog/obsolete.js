@@ -37,30 +37,8 @@ function showBondProperties (params) {
 	inputDialog('bond_properties', params);
 };
 
-//
-// Reaction auto-mapping
-//
-
 function showAutomapProperties (params) {
-	ui.showDialog('automap_properties');
-	var _onOk;
-	var _onCancel;
-
-	_onOk = new Event.Handler('automap_ok', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
-		ui.hideDialog('automap_properties');
-	}).start();
-
-	_onCancel = new Event.Handler('automap_cancel', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		ui.hideDialog('automap_properties');
-		if (params && 'onCancel' in params) params['onCancel']();
-	}).start();
-
-	$('automap_mode').activate();
+	inputDialog('automap_properties', params);
 };
 
 //

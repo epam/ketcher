@@ -3,7 +3,6 @@ var ui = global.ui;
 function dialog (name, params) {
 	var dlg = ui.showDialog(name);
 	var handlers = [];
-
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		handlers.forEach(function (h) { h.stop(); });
 		ui.hideDialog(name);
@@ -12,7 +11,7 @@ function dialog (name, params) {
 		if (params && key in params) {
 			var res = {};
 			eachNamedInput(dlg, function (field) {
-				res[field.name] = field.checked !== undefined ?
+				res[field.name] = field.type == 'checkbox' ?
 					field.checked : field.value;
 			});
 			params[key](res);
@@ -21,7 +20,7 @@ function dialog (name, params) {
 
 	eachNamedInput(dlg, function (field) {
 		if (params.hasOwnProperty(field.name))
-			field[field.checked !== undefined ? 'checked' : 'value'] = params[field.name];
+			field[field.type == 'checkbox' ? 'checked' : 'value'] = params[field.name];
 	});
 	dlg.select('input[value=OK]')[0].focus();
 }

@@ -1,6 +1,5 @@
 var keymage = require('keymage');
 var element = require('../../chem/element');
-var Bond = require('../../chem/bond');
 var util = require('../../util');
 var Action = require('../../editor/action');
 var inputDialog = require('./input');
@@ -15,18 +14,6 @@ function initDialogs () {
 	});
 	$('input_label').observe('keypress', onKeyPress_InputLabel);
 	$('input_label').observe('keyup', onKeyUp_InputLabel);
-
-	// Atom properties dialog events
-	$('atom_label').observe('change', onChange_AtomLabel);
-	$('atom_charge').observe('change', onChange_AtomCharge);
-	$('atom_isotope').observe('change', onChange_AtomIsotope);
-	$('atom_valence').observe('change', onChange_AtomValence);
-	$('atom_prop_cancel').observe('click', function () {
-		ui.hideDialog('atom_properties');
-	});
-	$('atom_prop_ok').observe('click', function () {
-		applyAtomProperties();
-	});
 };
 
 function showAtomAttachmentPoints (params) {
@@ -41,103 +28,64 @@ function showAutomapProperties (params) {
 	inputDialog('automap_properties', params);
 };
 
-//
-// Atom properties dialog
-//
 function showAtomProperties (params) {
-	$('atom_properties').params = params;
+	var dlg = $('atom_properties');
+	var numberInput = dlg.select('.number')[0];
+	var handlers = [];
 
-	$('atom_label').value = params.label;
-	$('atom_charge').value = params.charge;
-	$('atom_isotope').value = params.isotope;
-	$('atom_valence').value = params.explicitValence;
-	$('atom_radical').value = params.radical;
-	$('atom_inversion').value = params.invRet;
-	$('atom_exactchange').value = params.exactChangeFlag;
-	$('atom_ringcount').value = params.ringBondCount;
-	$('atom_substitution').value = params.substitutionCount;
-	$('atom_unsaturation').value = params.unsaturatedAtom;
-	$('atom_hcount').value = params.hCount;
+	function atomChange(val) {
+		var change = (this == val.target);
+		var label = !change ? val : this.value.strip().capitalize();
+		if (change)
+			this.value = label;
+		var elem = element.getElementByLabel(label);
+		if (elem == null && label !== 'A' &&
+		    label !== '*' && label !== 'Q' &&
+		    label !== 'X' && label !== 'R') {
 
-	onChange_AtomLabel.call($('atom_label'));
-	ui.showDialog('atom_properties');
-	$('atom_label').activate();
-};
+			console.assert(change, 'Incorrect input params label');
+			this.value = params.label;
 
-function applyAtomProperties () {
-	ui.hideDialog('atom_properties');
+			if (label !== 'A' && label !== '*') {
+				elem = element.getElementByLabel(label);
+			}
+		}
 
-	var params = $('atom_properties').params;
-	params.onOk({
-		label: $('atom_label').value,
-		charge: $('atom_charge').value,
-		isotope: $('atom_isotope').value,
-		explicitValence: $('atom_valence').value,
-		radical: $('atom_radical').value,
-		// reaction flags
-		invRet: $('atom_inversion').value,
-		exactChangeFlag: $('atom_exactchange').value,
-		// query flags
-		ringBondCount: $('atom_ringcount').value,
-		substitutionCount: $('atom_substitution').value,
-		unsaturatedAtom: $('atom_unsaturation').value,
-		hCount: $('atom_hcount').value
-	});
-	ui.render.update();
-};
-
-function onChange_AtomLabel () {
-	this.value = this.value.strip().capitalize();
-
-	var elem = element.getElementByLabel(this.value);
-	var params = $('atom_properties').params;
-
-	if (elem == null && this.value !== 'A' &&
-	    this.value !== '*' && this.value !== 'Q' &&
-	    this.value !== 'X' && this.value !== 'R') {
-
-		this.value = params.label;
-
-		if (this.value !== 'A' && this.value !== '*') {
-			elem = element.getElementByLabel(this.value);
+		if (label == 'A' || label == '*') {
+			numberInput.value = 'any';
+		} else if (!elem) {
+			numberInput.value = '';
+		} else {
+			numberInput.value = elem.toString();
 		}
 	}
-
-	if (this.value == 'A' || this.value == '*') {
-		$('atom_number').value = 'any';
-	} else if (!elem) {
-		$('atom_number').value = '';
-	} else {
-		$('atom_number').value = elem.toString();
+	function stopHandlers() {
+		handlers.forEach(function (h) { h.stop(); });
 	}
-};
 
-function onChange_AtomCharge () {
-	var params = $('atom_properties').params;
-	if (this.value.strip() === '' || this.value == '0') {
-		this.value = '';
-	} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
-		this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
-	} else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/)) {
-		this.value = params.charge;
-	}
-};
+	inputDialog('atom_properties', util.extend({}, params, {
+		onOk: function (res) { stopHandlers(); params.onOk(res); },
+		onCancel: function (res) { stopHandlers(); }
+	}));
 
-function onChange_AtomIsotope () {
-	var params = $('atom_properties').params;
-	if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0') {
-		this.value = '';
-	} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
-		this.value = params.isotope;
-	}
-};
-
-function onChange_AtomValence () {
-	// var params = $('atom_properties').params;
-	// if (this.value.strip() == '')
-	// 	this.value = '';
-	// else if (!this.value.match(/^[0-9]$/))
-	// 	this.value = params.explicitValence;
+	handlers[0] = $(dlg.charge).on('change', function () {
+		if (this.value.strip() === '' || this.value == '0') {
+			this.value = '';
+		} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
+			this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
+		} else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/)) {
+			this.value = params.charge;
+		}
+	});
+	handlers[1] = $(dlg.isotope).on('change', function () {
+		if (this.value == util.getElementTextContent(numberInput) || this.value.strip() == '' || this.value == '0') {
+			this.value = '';
+		} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
+			this.value = params.isotope;
+		}
+	});
+	handlers[2] = $(dlg.label).on('change', atomChange);
+	atomChange(params.label);
 };
 
 function showRLogicTable (args) {

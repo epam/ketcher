@@ -2,16 +2,16 @@
 	<header>Atom Properties</header>
 	<fieldset class="main">
 		<label>Label:
-			<input id="atom_label" type="text" maxlength="2">
+			<input name="label" type="text" maxlength="2">
 		</label>
 		<label>Number:
-			<input id="atom_number" type="text" readonly="readonly" maxlength="3">
+			<input class="number" type="text" readonly="readonly" maxlength="3">
 		</label>
 		<label>Charge:
-			<input id="atom_charge" type="text" maxlength="3">
+			<input name="charge" type="text" maxlength="3">
 		</label>
 		<label>Valency:
-			<select id="atom_valence">
+			<select name="explicitValence">
 				<option value=""></option>
 				<option value="0">0</option>
 				<option value="1">I</option>
@@ -25,10 +25,10 @@
 			</select>
 		</label>
 		<label>Isotope:
-			<input id="atom_isotope" type="text" maxlength="3">
+			<input name="isotope" type="text" maxlength="3">
 		</label>
 		<label>Radical:
-			<select id="atom_radical">
+			<select name="radical">
 				<option value="0"></option>
 				<option value="2">Monoradical</option>
 				<option value="1">Diradical (singlet)</option>
@@ -39,7 +39,7 @@
 	<fieldset class="query">
 		<legend>Query specific</legend>
 		<label>Ring bond count:
-			<select id="atom_ringcount">
+			<select name="ringBondCount">
 				<option value="0"></option>
 				<option value="-2">As drawn</option>
 				<option value="-1">0</option>
@@ -49,7 +49,7 @@
 			</select>
 		</label>
 		<label>H count:
-			<select id="atom_hcount">
+			<select name="hCount">
 				<option value="0"></option>
 				<option value="1">0</option>
 				<option value="2">1</option>
@@ -59,7 +59,7 @@
 			</select>
 		</label>
 		<label>Substitution count:
-			<select id="atom_substitution">
+			<select name="substitutionCount">
 				<option value="0"></option>
 				<option value="-2">As drawn</option>
 				<option value="-1">0</option>
@@ -72,7 +72,7 @@
 			</select>
 		</label>
 		<label>Unsaturation:
-			<select id="atom_unsaturation">
+			<select name="unsaturatedAtom">
 				<option value="0"></option>
 				<option value="1">Unsaturated</option>
 			</select>
@@ -81,21 +81,21 @@
 	<fieldset class="reaction">
 		<legend>Reaction flags</legend>
 		<label>Inversion:
-			<select id="atom_inversion">
+			<select name="invRet">
 				<option value="0"></option>
 				<option value="1">Inverts</option>
 				<option value="2">Retains</option>
 			</select>
 		</label>
 		<label>Exact:
-			<select id="atom_exactchange">
+			<select name="exactChangeFlag">
 				<option value="0"></option>
 				<option value="1">Exact change</option>
 			</select>
 		</label>
 	</fieldset>
 	<footer>
-		<input id="atom_prop_cancel" type="button" value="Cancel">
-		<input id="atom_prop_ok" type="button" value="OK">
+		<input type="button" value="Cancel">
+		<input type="button" value="OK">
 	</footer>
 </form>

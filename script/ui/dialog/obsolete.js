@@ -27,19 +27,40 @@ function initDialogs () {
 	$('atom_prop_ok').observe('click', function () {
 		applyAtomProperties();
 	});
-	$('bond_prop_cancel').observe('click', function () {
-		ui.hideDialog('bond_properties');
-	});
-	$('bond_prop_ok').observe('click', function () {
-		applyBondProperties();
-	});
+};
+
+function showAtomAttachmentPoints (params) {
+	inputDialog('atom_attpoints', params);
+};
+
+function showBondProperties (params) {
+	inputDialog('bond_properties', params);
 };
 
 //
-// Atom attachment points dialog
+// Reaction auto-mapping
 //
-function showAtomAttachmentPoints (params) {
-	inputDialog('atom_attpoints', params);
+
+function showAutomapProperties (params) {
+	ui.showDialog('automap_properties');
+	var _onOk;
+	var _onCancel;
+
+	_onOk = new Event.Handler('automap_ok', 'click', undefined, function () {
+		_onOk.stop();
+		_onCancel.stop();
+		if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
+		ui.hideDialog('automap_properties');
+	}).start();
+
+	_onCancel = new Event.Handler('automap_cancel', 'click', undefined, function () {
+		_onOk.stop();
+		_onCancel.stop();
+		ui.hideDialog('automap_properties');
+		if (params && 'onCancel' in params) params['onCancel']();
+	}).start();
+
+	$('automap_mode').activate();
 };
 
 //
@@ -144,64 +165,6 @@ function onChange_AtomValence () {
 	 else if (!this.value.match(/^[0-9]$/))
 	 this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
 	 */
-};
-
-//
-// Bond properties dialog
-//
-function showBondProperties (id) {
-	$('bond_properties').bond_id = id;
-
-	var type = ui.render.bondGetAttr(id, 'type');
-	var stereo = ui.render.bondGetAttr(id, 'stereo');
-	var bond = Bond.type2Caption(type, stereo);
-
-	$('bond_type').value = bond;
-	$('bond_topology').value = ui.render.bondGetAttr(id, 'topology') || 0;
-	$('bond_center').value = ui.render.bondGetAttr(id, 'reactingCenterStatus') || 0;
-
-	ui.showDialog('bond_properties');
-	$('bond_type').activate();
-};
-
-function applyBondProperties () {
-	ui.hideDialog('bond_properties');
-
-	var id = $('bond_properties').bond_id;
-	var bond = Bond.caption2Type($('bond_type').value);
-
-	bond.topology = parseInt($('bond_topology').value, 10);
-	bond.reactingCenterStatus = parseInt($('bond_center').value, 10);
-
-	ui.addUndoAction(Action.fromBondAttrs(id, bond), true);
-
-	ui.render.update();
-};
-
-//
-// Reaction auto-mapping
-//
-
-function showAutomapProperties (params) {
-	ui.showDialog('automap_properties');
-	var _onOk;
-	var _onCancel;
-
-	_onOk = new Event.Handler('automap_ok', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		if (params && 'onOk' in params) params['onOk']($('automap_mode').value);
-		ui.hideDialog('automap_properties');
-	}).start();
-
-	_onCancel = new Event.Handler('automap_cancel', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		ui.hideDialog('automap_properties');
-		if (params && 'onCancel' in params) params['onCancel']();
-	}).start();
-
-	$('automap_mode').activate();
 };
 
 function showRLogicTable (args) {

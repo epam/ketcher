@@ -1,6 +1,8 @@
 var Action = require('./action');
 var element = require('../chem/element');
 var SGroup = require('../chem/sgroup');
+var Bond = require('../chem/bond');
+var util = require('../util');
 
 var EditorTool = require('./editortool');
 var HoverHelper = require('./hoverhelper');
@@ -182,7 +184,21 @@ LassoTool.prototype.OnDblClick = function (event) {
 		}
 	} else if (ci.map == 'bonds') {
 		this.editor._selectionHelper.setSelection(ci);
-		ui.showBondProperties(ci.id);
+		var type = rnd.bondGetAttr(ci.id, 'type');
+		var stereo = rnd.bondGetAttr(ci.id, 'stereo');
+		ui.showBondProperties({
+			type: Bond.type2Caption(type, stereo),
+			topology: rnd.bondGetAttr(ci.id, 'topology') || 0,
+			center: rnd.bondGetAttr(ci.id, 'reactingCenterStatus') || 0,
+			onOk: function (res) {
+				var bond = util.extend(Bond.caption2Type(res.type), {
+					topology: parseInt(res.topology),
+					reactingCenterStatus: parseInt(res.center)
+				});
+				ui.addUndoAction(Action.fromBondAttrs(ci.id, bond), true);
+				ui.render.update();
+			}
+		});
 	} else if (ci.map == 'sgroups') {
 		this.editor._selectionHelper.setSelection(ci);
 		this._sGroupHelper.showPropertiesDialog(ci.id);

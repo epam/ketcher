@@ -3,7 +3,7 @@
 		Bond Properties
 	</header>
 	<label>Type:
-		<select id="bond_type">
+		<select name="type">
 			<option value="single">Single</option>
 			<option value="up">Single Up</option>
 			<option value="down">Single Down</option>
@@ -19,14 +19,14 @@
 		</select>
 	</label>
 	<label>Topology:
-		<select id="bond_topology">
+		<select name="topology">
 			<option value="0">Either</option>
 			<option value="1">Ring</option>
 			<option value="2">Chain</option>
 		</select>
 	</label>
 	<label>Reacting Center:
-		<select id="bond_center">
+		<select name="center">
 			<option value="0">Unmarked</option>
 			<option value="-1">Not center</option>
 			<option value="1">Center</option>
@@ -40,7 +40,7 @@
 		</select>
 	</label>
 	<footer>
-		<input id="bond_prop_cancel" type="button" value="Cancel">
-		<input id="bond_prop_ok" type="button" value="OK">
+		<input type="button" value="Cancel">
+		<input type="button" value="OK">
 	</footer>
 </form>

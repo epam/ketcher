@@ -19,6 +19,7 @@ var LassoTool = function (editor, mode, fragment) {
 	this._lassoHelper = new LassoHelper(mode || 0, editor, fragment);
 	this._sGroupHelper = new SGroupHelper(editor);
 };
+
 LassoTool.prototype = new EditorTool();
 LassoTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
@@ -168,7 +169,41 @@ LassoTool.prototype.OnDblClick = function (event) {
 				}.bind(this)
 			});
 		} else if ((element.getElementByLabel(atom.label) || 121) < 120) {
-			ui.showAtomProperties(ci.id);
+			var charge = rnd.atomGetAttr(ci.id, 'charge') - 0;
+			var isotope = rnd.atomGetAttr(ci.id, 'isotope') - 0;
+			var explicitValence = rnd.atomGetAttr(ci.id, 'explicitValence') - 0;
+			//ui.showAtomProperties(ci.id);
+			ui.showAtomProperties({
+				label: rnd.atomGetAttr(ci.id, 'label'),
+				charge: charge == 0 ? '' : charge,
+				isotope: isotope == 0 ? '' : isotope,
+				explicitValence: explicitValence < 0 ? '' : explicitValence,
+				radical: rnd.atomGetAttr(ci.id, 'radical'),
+				invRet: rnd.atomGetAttr(ci.id, 'invRet'),
+				exactChangeFlag: rnd.atomGetAttr(ci.id, 'exactChangeFlag') ? 1 : 0,
+				ringBondCount: rnd.atomGetAttr(ci.id, 'ringBondCount'),
+				substitutionCount: rnd.atomGetAttr(ci.id, 'substitutionCount'),
+				unsaturatedAtom: rnd.atomGetAttr(ci.id, 'unsaturatedAtom'),
+				hCount: rnd.atomGetAttr(ci.id, 'hCount'),
+				onOk: function (res) {
+					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {
+						label: res.label,
+						charge: res.charge == '' ? 0 : parseInt(res.charge, 10),
+						isotope: res.isotope == '' ? 0 : parseInt(res.isotope, 10),
+						explicitValence: res.explicitValence == '' ? -1 : parseInt(res.explicitValence, 10),
+						radical: parseInt(res.radical, 10),
+						// reaction flags
+						invRet: parseInt(res.invRet, 10),
+						exactChangeFlag: !!(res.exactChangeFlag - 0),
+						// query flags
+						ringBondCount: parseInt(res.ringBondCount, 10),
+						substitutionCount: parseInt(res.substitutionCount, 10),
+						unsaturatedAtom: parseInt(res.unsaturatedAtom, 10),
+						hCount: parseInt(res.hCount, 10)
+					}), true);
+					ui.render.update();
+				}
+			});
 		} else {
 			ui.showReaGenericsTable({
 				values: [atom.label],
@@ -179,7 +214,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 						rnd.update();
 					}
 					return true;
-				}.bind(this)
+				}
 			});
 		}
 	} else if (ci.map == 'bonds') {
@@ -192,8 +227,8 @@ LassoTool.prototype.OnDblClick = function (event) {
 			center: rnd.bondGetAttr(ci.id, 'reactingCenterStatus') || 0,
 			onOk: function (res) {
 				var bond = util.extend(Bond.caption2Type(res.type), {
-					topology: parseInt(res.topology),
-					reactingCenterStatus: parseInt(res.center)
+					topology: parseInt(res.topology, 10),
+					reactingCenterStatus: parseInt(res.center, 10)
 				});
 				ui.addUndoAction(Action.fromBondAttrs(ci.id, bond), true);
 				ui.render.update();
@@ -207,6 +242,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 	}
 	return true;
 };
+
 LassoTool.prototype.OnCancel = function () {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {

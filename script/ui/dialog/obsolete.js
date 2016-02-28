@@ -44,25 +44,22 @@ function showAutomapProperties (params) {
 //
 // Atom properties dialog
 //
-function showAtomProperties (id) {
-	$('atom_properties').atom_id = id;
-	$('atom_label').value = ui.render.atomGetAttr(id, 'label');
+function showAtomProperties (params) {
+	$('atom_properties').params = params;
+
+	$('atom_label').value = params.label;
+	$('atom_charge').value = params.charge;
+	$('atom_isotope').value = params.isotope;
+	$('atom_valence').value = params.explicitValence;
+	$('atom_radical').value = params.radical;
+	$('atom_inversion').value = params.invRet;
+	$('atom_exactchange').value = params.exactChangeFlag;
+	$('atom_ringcount').value = params.ringBondCount;
+	$('atom_substitution').value = params.substitutionCount;
+	$('atom_unsaturation').value = params.unsaturatedAtom;
+	$('atom_hcount').value = params.hCount;
+
 	onChange_AtomLabel.call($('atom_label'));
-	var value = ui.render.atomGetAttr(id, 'charge') - 0;
-	$('atom_charge').value = (value == 0 ? '' : value);
-	value = ui.render.atomGetAttr(id, 'isotope') - 0;
-	$('atom_isotope').value = (value == 0 ? '' : value);
-	value = ui.render.atomGetAttr(id, 'explicitValence') - 0;
-	$('atom_valence').value = value < 0 ? '' : value;
-	$('atom_radical').value = ui.render.atomGetAttr(id, 'radical');
-
-	$('atom_inversion').value = ui.render.atomGetAttr(id, 'invRet');
-	$('atom_exactchange').value = ui.render.atomGetAttr(id, 'exactChangeFlag') ? 1 : 0;
-	$('atom_ringcount').value = ui.render.atomGetAttr(id, 'ringBondCount');
-	$('atom_substitution').value = ui.render.atomGetAttr(id, 'substitutionCount');
-	$('atom_unsaturation').value = ui.render.atomGetAttr(id, 'unsaturatedAtom');
-	$('atom_hcount').value = ui.render.atomGetAttr(id, 'hCount');
-
 	ui.showDialog('atom_properties');
 	$('atom_label').activate();
 };
@@ -70,25 +67,22 @@ function showAtomProperties (id) {
 function applyAtomProperties () {
 	ui.hideDialog('atom_properties');
 
-	var id = $('atom_properties').atom_id;
-
-	ui.addUndoAction(Action.fromAtomsAttrs(id,
-	{
+	var params = $('atom_properties').params;
+	params.onOk({
 		label: $('atom_label').value,
-		charge: $('atom_charge').value == '' ? 0 : parseInt($('atom_charge').value, 10),
-		isotope: $('atom_isotope').value == '' ? 0 : parseInt($('atom_isotope').value, 10),
-		explicitValence: $('atom_valence').value == '' ? -1 : parseInt($('atom_valence').value, 10),
-		radical: parseInt($('atom_radical').value, 10),
+		charge: $('atom_charge').value,
+		isotope: $('atom_isotope').value,
+		explicitValence: $('atom_valence').value,
+		radical: $('atom_radical').value,
 		// reaction flags
-		invRet: parseInt($('atom_inversion').value, 10),
-		exactChangeFlag: parseInt($('atom_exactchange').value, 10) ? true : false,
+		invRet: $('atom_inversion').value,
+		exactChangeFlag: $('atom_exactchange').value,
 		// query flags
-		ringBondCount: parseInt($('atom_ringcount').value, 10),
-		substitutionCount: parseInt($('atom_substitution').value, 10),
-		unsaturatedAtom: parseInt($('atom_unsaturation').value, 10),
-		hCount: parseInt($('atom_hcount').value, 10)
-	}), true);
-
+		ringBondCount: $('atom_ringcount').value,
+		substitutionCount: $('atom_substitution').value,
+		unsaturatedAtom: $('atom_unsaturation').value,
+		hCount: $('atom_hcount').value
+	});
 	ui.render.update();
 };
 
@@ -96,13 +90,13 @@ function onChange_AtomLabel () {
 	this.value = this.value.strip().capitalize();
 
 	var elem = element.getElementByLabel(this.value);
+	var params = $('atom_properties').params;
 
-	if (
-		elem == null && this.value !== 'A' &&
-	this.value !== '*' && this.value !== 'Q' && this.value !== 'X' &&
-	this.value !== 'R'
-	) {
-		this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'label');
+	if (elem == null && this.value !== 'A' &&
+	    this.value !== '*' && this.value !== 'Q' &&
+	    this.value !== 'X' && this.value !== 'R') {
+
+		this.value = params.label;
 
 		if (this.value !== 'A' && this.value !== '*') {
 			elem = element.getElementByLabel(this.value);
@@ -119,30 +113,31 @@ function onChange_AtomLabel () {
 };
 
 function onChange_AtomCharge () {
+	var params = $('atom_properties').params;
 	if (this.value.strip() === '' || this.value == '0') {
 		this.value = '';
 	} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
 		this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
 	} else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/)) {
-		this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'charge');
+		this.value = params.charge;
 	}
 };
 
 function onChange_AtomIsotope () {
+	var params = $('atom_properties').params;
 	if (this.value == util.getElementTextContent($('atom_number')) || this.value.strip() == '' || this.value == '0') {
 		this.value = '';
 	} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
-		this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'isotope');
+		this.value = params.isotope;
 	}
 };
 
 function onChange_AtomValence () {
-	/*
-	 if (this.value.strip() == '')
-	 this.value = '';
-	 else if (!this.value.match(/^[0-9]$/))
-	 this.value = ui.render.atomGetAttr($('atom_properties').atom_id, 'valence');
-	 */
+	// var params = $('atom_properties').params;
+	// if (this.value.strip() == '')
+	// 	this.value = '';
+	// else if (!this.value.match(/^[0-9]$/))
+	// 	this.value = params.explicitValence;
 };
 
 function showRLogicTable (args) {

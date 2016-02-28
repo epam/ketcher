@@ -94,26 +94,6 @@ var preventDefault = function (event) {
 	return false;
 };
 
-var setElementTextContent = function (element, text) {
-	if ('textContent' in element) {// Mozilla, Opera, Safari
-		element.textContent = text;
-	} else if ('innerText' in element) {// IE and others (except Mozilla)
-		element.innerText = text;
-	} else {
-		throw Error('Browser unrecognized');
-	}
-};
-
-var getElementTextContent = function (element) {
-	if ('textContent' in element) {// Mozilla, Opera, Safari
-		return element.textContent;
-	} else if ('innerText' in element) {// IE and others (except Mozilla)
-		return element.innerText;
-	}
-
-	throw Error('Browser unrecognized');
-};
-
 var stringPadded = function (string, width, leftAligned) {
 	var str = string + '';
 	var space = '';
@@ -330,8 +310,6 @@ module.exports = {
 	isEmpty: isEmpty,
 	stopEventPropagation: stopEventPropagation,
 	preventDefault: preventDefault,
-	setElementTextContent: setElementTextContent,
-	getElementTextContent: getElementTextContent,
 	stringPadded: stringPadded,
 	normalizeNewlines: normalizeNewlines,
 	splitNewlines: splitNewlines,

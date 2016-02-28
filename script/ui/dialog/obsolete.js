@@ -78,7 +78,7 @@ function showAtomProperties (params) {
 		}
 	});
 	handlers[1] = $(dlg.isotope).on('change', function () {
-		if (this.value == util.getElementTextContent(numberInput) || this.value.strip() == '' || this.value == '0') {
+		if (this.value == numberInput.value || this.value.strip() == '' || this.value == '0') {
 			this.value = '';
 		} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
 			this.value = params.isotope;

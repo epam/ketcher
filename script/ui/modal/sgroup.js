@@ -1,7 +1,4 @@
 // TODO: exclude from no-groups build
-/*global module, global*/
-
-/* eslint-disable */
 
 var ui = global.ui;
 
@@ -9,44 +6,61 @@ function dialog (params) {
 	var dlg = ui.showDialog('sgroup_properties');
 	var type = params.type || 'GEN';
 
-	$('sgroup_type').value = type;
-	$('sgroup_type').activate();
-	onChange_SGroupType.call($('sgroup_type'));
+	dlg.type.value = type;
+	typeChange();
 
 	switch (type) {
 	case 'SRU':
-		$('sgroup_connection').value = params.attrs.connectivity;
-		$('sgroup_label').value = params.attrs.subscript;
+		dlg.connectivity.value = params.attrs.connectivity;
+		dlg.label.value = params.attrs.subscript;
 		break;
 	case 'MUL':
-		$('sgroup_label').value = params.attrs.mul;
+		dlg.label.value = params.attrs.mul;
 		break;
 	case 'SUP':
-		$('sgroup_label').value = params.attrs.name;
+		dlg.label.value = params.attrs.name;
 		break;
 	case 'DAT':
-		$('sgroup_field_name').value = params.attrs.fieldName;
-		$('sgroup_field_value').value = params.attrs.fieldValue;
-		if (params.attrs.attached)
-			$('sgroup_pos_attached').checked = true;
-		else if (params.attrs.absolute)
-			$('sgroup_pos_absolute').checked = true;
-		else
-			$('sgroup_pos_relative').checked = true;
-			break;
-		default:
-			break;
+		dlg.fieldName.value = params.attrs.fieldName;
+		dlg.fieldValue.value = params.attrs.fieldValue;
+		dlg.fieldPos.value = params.attrs.attached ? 'attached' :
+			params.attrs.absolute ? 'absolute' : 'relative';
+		break;
+	default:
+		break;
 	}
 
 	if (type != 'DAT') {
-		$('sgroup_field_name').value = '';
-		$('sgroup_field_value').value = '';
+		dlg.fieldName.value = '';
+		dlg.fieldValue.value = '';
+	}
+
+	function typeChange ()
+	{
+		var type = dlg.type.value;
+		if (type == 'DAT') {
+			dlg.select('.base')[0].hide();
+			dlg.select('.data')[0].show();
+			return;
+		}
+		dlg.select('.base')[0].show();
+		dlg.select('.data')[0].hide();
+
+		dlg.label.disabled = (type != 'SRU') && (type != 'MUL') && (type != 'SUP');
+		dlg.connectivity.disabled = (type != 'SRU');
+
+		if (type == 'MUL' && !dlg.label.value.match(/^[1-9][0-9]{0,2}$/))
+			dlg.label.value = '1';
+		else if (type == 'SRU')
+			dlg.label.value = 'n';
+		else if (type == 'GEN' || type == 'SUP')
+			dlg.label.value = '';
 	}
 
 	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		var key = 'on' + button.value.capitalize();
-		var res = key != 'onOk' || getValidateAttrs();
+		var res = key != 'onOk' || getValidateAttrs(dlg);
 		if (res) {
 			handlers.forEach(function (h) { h.stop(); });
 			ui.hideDialog('sgroup_properties');
@@ -54,13 +68,16 @@ function dialog (params) {
 				params[key](res);
 		}
 	});
-
-	handlers[1] = $('sgroup_type').on('change', onChange_SGroupType);
-	handlers[2] = $('sgroup_label').on('change', onChange_SGroupLabel);
+	handlers[1] = $(dlg.type).on('change', typeChange);
+	handlers[2] = $(dlg.label).on('change', function () {
+		if (dlg.type.value == 'MUL' &&
+		    !dlg.label.value.match(/^[1-9][0-9]{0,2}$/))
+			dlg.label.value = '1';
+	});
 };
 
-function getValidateAttrs() {
-	var type = $('sgroup_type').value;
+function getValidateAttrs(dlg) {
+	var type = dlg.type.value;
 	var attrs = {
 		mul: null,
 		connectivity: '',
@@ -74,28 +91,30 @@ function getValidateAttrs() {
 
 	switch (type) {
 	case 'SRU':
-		attrs.connectivity = $('sgroup_connection').value.strip();
-		attrs.subscript = $('sgroup_label').value.strip();
+		attrs.connectivity = dlg.connectivity.value.strip();
+		attrs.subscript = dlg.label.value.strip();
 		if (attrs.subscript.length != 1 || !attrs.subscript.match(/^[a-zA-Z]$/)) {
-			alert(attrs.subscript.length ? 'SRU subscript should consist of a single letter.' : 'Please provide an SRU subscript.');
+			alert(attrs.subscript.length ?
+			      'SRU subscript should consist of a single letter.' :
+			      'Please provide an SRU subscript.');
 			return null;
 		}
 		break;
 	case 'MUL':
-		attrs.mul = parseInt($('sgroup_label').value);
+		attrs.mul = parseInt(dlg.label.value, 10);
 		break;
 	case 'SUP':
-		attrs.name = $('sgroup_label').value.strip();
+		attrs.name = dlg.label.value.strip();
 		if (!attrs.name) {
 			alert('Please provide a name for the superatom.');
 			return null;
 		}
 		break;
 	case 'DAT':
-		attrs.fieldName = $('sgroup_field_name').value.strip();
-		attrs.fieldValue = $('sgroup_field_value').value.strip();
-		attrs.absolute = $('sgroup_pos_absolute').checked;
-		attrs.attached = $('sgroup_pos_attached').checked;
+		attrs.fieldName = dlg.fieldName.value.strip();
+		attrs.fieldValue = dlg.fieldValue.value.strip();
+		attrs.absolute = dlg.fieldPos.value == 'absolute';
+		attrs.attached = dlg.fieldPos.value == 'attached';
 
 		if (attrs.fieldName == '' || attrs.fieldValue == '') {
 			alert('Please, specify data field name and value.');
@@ -104,35 +123,7 @@ function getValidateAttrs() {
 		break;
 	}
 	return { type: type,
-			 attrs: attrs };
+	         attrs: attrs };
 };
-
-function onChange_SGroupLabel ()
-{
-	if ($('sgroup_type').value == 'MUL' && !this.value.match(/^[1-9][0-9]{0,2}$/))
-		this.value = '1';
-};
-
-function onChange_SGroupType ()
-{
-	var type = $('sgroup_type').value;
-	if (type == 'DAT') {
-		$$('#sgroup_properties .base')[0].hide();
-		$$('#sgroup_properties .data')[0].show();
-		return;
-	}
-	$$('#sgroup_properties .base')[0].show();
-	$$('#sgroup_properties .data')[0].hide();
-
-	$('sgroup_label').disabled = (type != 'SRU') && (type != 'MUL') && (type != 'SUP');
-	$('sgroup_connection').disabled = (type != 'SRU');
-
-	if (type == 'MUL' && !$('sgroup_label').value.match(/^[1-9][0-9]{0,2}$/))
-		$('sgroup_label').value = '1';
-	else if (type == 'SRU')
-		$('sgroup_label').value = 'n';
-	else if (type == 'GEN' || type == 'SUP')
-		$('sgroup_label').value = '';
-}
 
 module.exports = dialog;

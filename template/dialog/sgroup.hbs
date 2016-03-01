@@ -2,7 +2,7 @@
 	<form role="dialog" id="sgroup_properties" style="display:none;">
 		<header>S-Group Properties</header>
 		<label>Type:
-			<select id="sgroup_type">
+			<select name="type">
 				<option value="GEN">Generic</option>
 				<option value="MUL">Multiple group</option>
 				<option value="SRU">SRU polymer</option>
@@ -12,39 +12,39 @@
 		</label>
 		<fieldset class="base">
 			<label>Connection:
-				<select id="sgroup_connection">
+				<select name="connectivity">
 					<option value="ht">Head-to-tail</option>
 					<option value="hh">Head-to-head</option>
 					<option value="eu">Either unknown</option>
 				</select>
 			</label>
 			<label>Label (subscript):
-				<input id="sgroup_label" type="text" maxlength="15">
+				<input name="label" type="text" maxlength="15">
 			</label>
 		</fieldset>
 		<fieldset class="data">
 			<label>Field name:
-				<input id="sgroup_field_name" type="text" maxlength="30">
+				<input name="fieldName" type="text" maxlength="30">
 			</label>
 			<label>Field value:
-				<textarea id="sgroup_field_value"></textarea>
+				<textarea name="fieldValue"></textarea>
 			</label>
 			<label class="pos">
-				<input type="radio" id="sgroup_pos_absolute" name="data_field_pos" checked>
+				<input type="radio" value="absolute" name="fieldPos" checked>
 				Absolute
 			</label>
 			<label class="pos">
-				<input type="radio" id="sgroup_pos_relative" name="data_field_pos">
+				<input type="radio" value="relative" name="fieldPos">
 				Relative
 			</label>
 			<label class="pos">
-				<input type="radio" id="sgroup_pos_attached" name="data_field_pos">
+				<input type="radio" value="attached" name="fieldPos">
 				Attached
 			</label>
 		</fieldset>
-	    <footer>
-		  <input type="button" value="Cancel">
-		  <input type="button" value="OK">
-	    </footer>
+		<footer>
+			<input type="button" value="Cancel">
+			<input type="button" value="OK">
+		</footer>
 	</form>
 {{/unless}}

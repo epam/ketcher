@@ -48,6 +48,7 @@ var templatesDialog = require('./dialog/templates');
 var sgroupDialog = require('./dialog/sgroup');
 var sgroupSpecialDialog = require('./dialog/sgroup-special');
 var obsolete = require('./dialog/obsolete');
+var contextEdit = require('./contextedit.js');
 
 var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
@@ -90,8 +91,6 @@ function init (options, apiServer) {
 			}
 		});
 	}
-
-	obsolete.initDialogs();
 
 	// Button events
 	var keyMap = {};
@@ -410,7 +409,7 @@ function animateToggle (el, callback) {
 
 function showDialog (name) {
 	var dialog = $(name);
-	keymage.setScope('dialog');
+	keymage.setScope('modal');
 	animateToggle(function () {
 		$$('.overlay')[0].show();
 		// dialog.show();
@@ -1074,5 +1073,5 @@ util.extend(ui, {
 	showAtomProperties: obsolete.showAtomProperties,
 	showBondProperties: obsolete.showBondProperties,
 	showRLogicTable: obsolete.showRLogicTable,
-	showLabelEditor: obsolete.showLabelEditor
+	showLabelEditor: contextEdit
 });

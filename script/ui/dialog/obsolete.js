@@ -1,20 +1,8 @@
-var keymage = require('keymage');
-var element = require('../../chem/element');
 var util = require('../../util');
-var Action = require('../../editor/action');
+var element = require('../../chem/element');
 var inputDialog = require('./input');
 
 var ui = global.ui;
-
-function initDialogs () {
-	// Label input events
-	$('input_label').observe('blur', function () {
-		keymage.setScope('editor');
-		this.hide();
-	});
-	$('input_label').observe('keypress', onKeyPress_InputLabel);
-	$('input_label').observe('keyup', onKeyUp_InputLabel);
-};
 
 function showAtomAttachmentPoints (params) {
 	inputDialog('atom_attpoints', params);
@@ -133,114 +121,12 @@ function onKeyPress_Dialog (event)
 		ui.hideDialog(this.id);
 		return util.preventDefault(event);
 	}
-};
-
-function onKeyPress_InputLabel (event)
-{
-	util.stopEventPropagation(event);
-	if (event.keyCode == 13) {
-		keymage.setScope('editor');
-		this.hide();
-
-		var label = '';
-		var charge = 0;
-		var value_arr = this.value.toArray();
-
-		if (this.value == '*') {
-			label = 'A';
-		}
-		else if (this.value.match(/^[*][1-9]?[+-]$/i)) {
-			label = 'A';
-
-			if (this.value.length == 2)
-				charge = 1;
-			else
-				charge = parseInt(value_arr[1]);
-
-			if (value_arr[2] == '-')
-				charge *= -1;
-		}
-		else if (this.value.match(/^[A-Z]{1,2}$/i)) {
-			label = this.value.capitalize();
-		}
-		else if (this.value.match(/^[A-Z]{1,2}[0][+-]?$/i)) {
-			if (this.value.match(/^[A-Z]{2}/i))
-				label = this.value.substr(0, 2).capitalize();
-			else
-				label = value_arr[0].capitalize();
-		}
-		else if (this.value.match(/^[A-Z]{1,2}[1-9]?[+-]$/i)) {
-			if (this.value.match(/^[A-Z]{2}/i))
-				label = this.value.substr(0, 2).capitalize();
-			else
-				label = value_arr[0].capitalize();
-
-			var match = this.value.match(/[0-9]/i);
-
-			if (match != null)
-				charge = parseInt(match[0]);
-			else
-				charge = 1;
-
-			if (value_arr[this.value.length - 1] == '-')
-				charge *= -1;
-		}
-
-		if (label == 'A' || label == 'Q' || label == 'X' || label == 'R' || element.getElementByLabel(label) != null) {
-			ui.addUndoAction(Action.fromAtomsAttrs(this.atom_id, {label: label, charge: charge}), true);
-			ui.render.update();
-		}
-		return util.preventDefault(event);
-	}
-	if (event.keyCode == 27) {
-		this.hide();
-		keymage.setScope('editor');
-		return util.preventDefault(event);
-	}
-};
-
-function onKeyUp_InputLabel (event)
-{
-	util.stopEventPropagation(event);
-	if (event.keyCode == 27) {
-		this.hide();
-		keymage.setScope('editor');
-		return util.preventDefault(event);
-	}
-};
-
-function showLabelEditor (aid)
-{
-	// TODO: RB: to be refactored later, need to attach/detach listeners here as anon-functions, not on global scope (onKeyPress_InputLabel, onBlur, etc)
-	var input_el = $('input_label');
-	keymage.setScope('label');
-
-	var offset = Math.min(7 * ui.render.zoom, 16);
-
-	input_el.atom_id = aid;
-	input_el.value = ui.render.atomGetAttr(aid, 'label');
-	input_el.style.fontSize = offset * 2 + 'px';
-
-	input_el.show();
-
-	var atom_pos = ui.render.obj2view(ui.render.atomGetPos(aid));
-	// TODO: some other way to handle pos
-	//var offset_client = ui.client_area.cumulativeOffset();
-	var offset_client = {left: 0, top: 0};
-	var offset_parent = Element.cumulativeOffset(input_el.offsetParent);
-	var d = 0; // TODO: fix/Math.ceil(4 * ui.abl() / 100);
-	input_el.style.left = (atom_pos.x + offset_client.left - offset_parent.left - offset - d) + 'px';
-	input_el.style.top = (atom_pos.y + offset_client.top - offset_parent.top - offset - d) + 'px';
-
-	input_el.activate();
-};
+}
 
 module.exports = {
-	initDialogs: initDialogs,
 	showAtomAttachmentPoints: showAtomAttachmentPoints,
 	showAtomProperties: showAtomProperties,
 	showBondProperties: showBondProperties,
 	showAutomapProperties: showAutomapProperties,
-	showRLogicTable: showRLogicTable,
-	showLabelEditor: showLabelEditor
+	showRLogicTable: showRLogicTable
 };

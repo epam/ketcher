@@ -72,7 +72,16 @@ LassoTool.prototype.OnMouseDown = function (event) {
 			function () {
 				delete self.dragCtx;
 				self.editor._selectionHelper.setSelection(null);
-				ui.showLabelEditor(ci.id);
+				ui.showLabelEditor({
+					pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
+					label: rnd.atomGetAttr(ci.id, 'label'),
+					charge: rnd.atomGetAttr(ci.id, 'charge'),
+
+					onOk: function (res) {
+						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, res), true);
+						rnd.update();
+					}
+				});
 			},
 				750
 			);
@@ -201,7 +210,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 						unsaturatedAtom: parseInt(res.unsaturatedAtom, 10),
 						hCount: parseInt(res.hCount, 10)
 					}), true);
-					ui.render.update();
+					rnd.update();
 				}
 			});
 		} else {
@@ -231,7 +240,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 					reactingCenterStatus: parseInt(res.center, 10)
 				});
 				ui.addUndoAction(Action.fromBondAttrs(ci.id, bond), true);
-				ui.render.update();
+				rnd.update();
 			}
 		});
 	} else if (ci.map == 'sgroups') {

@@ -42,30 +42,30 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	else if (ci && ci.map == 'rgroups') {
 		this._hoverHelper.hover(null);
 		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
-		var rgmask = 0; rnd.ctab.molecule.rgroups.each(function (rgid) { rgmask |= (1 << (rgid - 1)); });
-		var oldLogic = {
-			occurrence: rg.range,
-			resth: rg.resth,
-			ifthen: rg.ifthen
-		};
+		var rgroupLabels = [];
+		rnd.ctab.molecule.rgroups.each(function (rgid) {
+			rgroupLabels.push(rgid);
+		});
 		ui.showRLogicTable({
-			rgid: ci.id,
-			rlogic: oldLogic,
-			rgmask: rgmask,
-			onOk: function (newLogic) {
+			label: ci.id,
+			rgroupLabels: rgroupLabels,
+			range: rg.range || '>0',
+			resth: rg.resth - 0,
+			ifthen: rg.ifthen,
+			onOk: function (res) {
 				var props = {};
-				if (oldLogic.occurrence != newLogic.occurrence) {
-					var isValid = newLogic.occurrence.split(',').all(function (s){
+				if (rg.range != res.range) {
+					var isValid = res.range.split(',').all(function (s){
 						return s.match(/^[>,<,=]?[0-9]+$/g) || s.match(/^[0-9]+\-[0-9]+$/g);
 					});
 					if (!isValid) {
 						alert('Bad occurrence value');
 						return false;
 					}
-					props.range = newLogic.occurrence;
+					props.range = res.range;
 				}
-				if (oldLogic.resth != newLogic.resth) props.resth = newLogic.resth;
-				if (oldLogic.ifthen != newLogic.ifthen) props.ifthen = newLogic.ifthen;
+				if (rg.resth != res.resth) props.resth = res.resth;
+				if (rg.ifthen != res.ifthen) props.ifthen = res.ifthen;
 				if ('range' in props || 'resth' in props || 'ifthen' in props) {
 					ui.addUndoAction(Action.fromRGroupAttrs(ci.id, props));
 					rnd.update();

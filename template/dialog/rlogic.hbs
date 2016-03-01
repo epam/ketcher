@@ -1,21 +1,21 @@
 <form role="dialog" id="rlogic_table" style="display:none;">
 	<header>R-Group Logic</header>
-	<label for="rlogic_occurrence">Occurrence:
-		<input id="rlogic_occurrence" type="text" maxlength="50">
+	<label>Occurrence:
+		<input name="range" type="text" maxlength="50">
 	</label>
-	<label for="rlogic_resth">RestH:
-		<select id="rlogic_resth">
+	<label>RestH:
+		<select name="resth">
 			<option value="0">Off</option>
 			<option value="1">On</option>
 		</select>
 	</label>
-	<label for="rlogic_if">Condition:
-		<select id="rlogic_if">
+	<label>Condition:
+		<select name="ifthen">
 			<option value="0">Always</option>
 		</select>
 	</label>
 	<footer>
-		<input id="rlogic_cancel" type="button" value="Cancel">
-		<input id="rlogic_ok" type="button" value="OK">
+		<input type="button" value="Cancel">
+		<input type="button" value="OK">
 	</footer>
 </form>

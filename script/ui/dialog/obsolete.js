@@ -2,8 +2,6 @@ var util = require('../../util');
 var element = require('../../chem/element');
 var inputDialog = require('./input');
 
-var ui = global.ui;
-
 function showAtomAttachmentPoints (params) {
 	inputDialog('atom_attpoints', params);
 };
@@ -76,52 +74,28 @@ function showAtomProperties (params) {
 	atomChange(params.label);
 };
 
-function showRLogicTable (args) {
-	var params = args || {};
-	params.rlogic = params.rlogic || {};
-	$('rlogic_occurrence').value = params.rlogic.occurrence || '>0';
-	$('rlogic_resth').value = params.rlogic.resth ? '1' : '0';
-	var ifOptHtml = '<option value="0">Always</option>';
-	for (var r = 1; r <= 32; r++) {
-		if (r != params.rgid && (params.rgmask & (1 << (r - 1))) != 0) {
-			ifOptHtml += '<option value="' + r + '">IF R' + params.rgid + ' THEN R' + r + '</option>';
+function showRLogicTable (params) {
+	inputDialog('rlogic_table', util.extend({}, params, {
+		onOk: function (res) {
+			params.onOk({
+				range: res.range.replace(/\s*/g, '').replace(/,+/g, ',')
+					.replace(/^,/, '').replace(/,$/, ''),
+				resth: res.resth == 1,
+				ifthen: parseInt(res.ifthen, 10)
+			});
 		}
-	}
-	$('rlogic_if').outerHTML = '<select id="rlogic_if">' + ifOptHtml + '</select>'; // [RB] thats tricky because IE8 fails to set innerHTML
-	$('rlogic_if').value = params.rlogic.ifthen;
-	ui.showDialog('rlogic_table');
+	}));
+	var ifOpts = params.rgroupLabels.reduce(function (res, label) {
+		if (params.label == label)
+			return res;
+		return res + '<option value="' + label + '">' +
+			'IF R' + params.label + ' THEN R' + label + '</option>';
+	}, '<option value="0">Always</option>');
 
-	var _onOk = new Event.Handler('rlogic_ok', 'click', undefined, function () {
-		var result = {
-			'occurrence': $('rlogic_occurrence').value
-			.replace(/\s*/g, '').replace(/,+/g, ',').replace(/^,/, '').replace(/,$/, ''),
-			'resth': $('rlogic_resth').value == '1',
-			'ifthen': parseInt($('rlogic_if').value, 10)
-		};
-		if (!params || !('onOk' in params) || params.onOk(result)) {
-			_onOk.stop();
-			_onCancel.stop();
-			ui.hideDialog('rlogic_table');
-		}
-	}).start();
-	var _onCancel = new Event.Handler('rlogic_cancel', 'click', undefined, function () {
-		_onOk.stop();
-		_onCancel.stop();
-		ui.hideDialog('rlogic_table');
-		if (params && 'onCancel' in params) params['onCancel']();
-	}).start();
-
-	$('rlogic_occurrence').activate();
+	var dlg = $('rlogic_table');
+	$(dlg.ifthen).update(ifOpts);
+	dlg.ifthen.value = params.ifthen;
 };
-
-function onKeyPress_Dialog (event)
-{
-	util.stopEventPropagation(event);
-	if (event.keyCode === 27) {
-		ui.hideDialog(this.id);
-		return util.preventDefault(event);
-	}
-}
 
 module.exports = {
 	showAtomAttachmentPoints: showAtomAttachmentPoints,

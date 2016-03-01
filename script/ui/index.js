@@ -41,11 +41,6 @@ var Render = require('../render');
 var Action = require('../editor/action.js');
 var templates = require('./templates');
 
-var openDialog = require('./modal/open.js');
-var saveDialog = require('./modal/save.js');
-var templatesDialog = require('./modal/templates');
-var sgroupDialog = require('./modal/sgroup');
-var sgroupSpecialDialog = require('./modal/sgroup-special');
 var modal = require('./modal');
 var contextEdit = require('./contextedit.js');
 
@@ -490,7 +485,7 @@ function onClick_NewFile ()
 
 function onClick_OpenFile ()
 {
-	openDialog({
+	modal.open({
 		onOk: function (res) {
 			if (res.fragment)
 				loadFragment(res.value, true);
@@ -502,7 +497,7 @@ function onClick_OpenFile ()
 
 function onClick_SaveFile ()
 {
-	saveDialog({molecule: ui.ctab}, server);
+	modal.save({molecule: ui.ctab}, server);
 }
 
 function aromatize(mol, arom)
@@ -657,7 +652,7 @@ function onClick_Dearomatize ()
 };
 
 function onClick_Automap () {
-	modal.showAutomapProperties({
+	modal.automap({
 		onOk: function (res) {
 			var mol = ui.ctab;
 			var implicitReaction = mol.addRxnArrowIfNecessary();
@@ -779,7 +774,7 @@ function redo ()
 var current_elemtable_props = null;
 function onClick_ElemTableButton ()
 {
-	modal.showElemTable({
+	modal.periodTable({
 		onOk: function (res) {
 			var props;
 			if (res.mode == 'single')
@@ -807,7 +802,7 @@ function onClick_ElemTableButton ()
 var current_reagenerics = null;
 function onClick_ReaGenericsTableButton ()
 {
-	modal.showReaGenericsTable({
+	modal.genericGroups({
 		onOk: function (res) {
 			current_reagenerics = {label: res.values[0]};
 			selectAction('atom-reagenerics');
@@ -819,19 +814,13 @@ function onClick_ReaGenericsTableButton ()
 // TODO: remove this crap (quick hack to pass parametr to selectAction)
 var current_template_custom = null;
 function onClick_TemplateCustom () {
-	templatesDialog('', {
+	modal.templates('', {
 		onOk: function (tmpl) {
 			current_template_custom = tmpl;
 			selectAction('template-custom-select');
 			return true;
 		}
 	});
-};
-
-function showSgroupDialog(params) {
-	if (__SGROUP_SPECIAL__ && sgroupSpecialDialog.match(params))
-		return sgroupSpecialDialog(params);
-	return sgroupDialog(params);
 };
 
 // try to reconstruct molfile string instead parsing multiple times
@@ -889,9 +878,7 @@ var actionMap = {
 		ui.editor.deselectAll();
 		return new PasteTool(ui.editor, struct);
 	},
-	'info': function (el) {
-		showDialog('about_dialog');
-	},
+	'info': modal.about,
 	'select-all': function () {
 		ui.editor.selectAll();
 	},
@@ -1043,20 +1030,20 @@ util.extend(ui, {
 	addUndoAction: addUndoAction,
 
 	// TODO: remove me as we get better server API
-	loadMoleculeFromFile: openDialog.loadHook,
+	loadMoleculeFromFile: modal.open.loadHook,
 
 	echo: echo,
 	showDialog: showDialog,
 	hideDialog: hideDialog,
 
 	// TODO: search a way to pass dialogs to editor
-	showSGroupProperties: showSgroupDialog,
-	showRGroupTable: modal.showRGroupTable,
-	showElemTable: modal.showElemTable,
-	showReaGenericsTable: modal.showReaGenericsTable,
-	showAtomAttachmentPoints: modal.showAtomAttachmentPoints,
-	showAtomProperties: modal.showAtomProperties,
-	showBondProperties: modal.showBondProperties,
-	showRLogicTable: modal.showRLogicTable,
+	showSGroupProperties: modal.sgroup,
+	showRGroupTable: modal.rgroup,
+	showElemTable: modal.periodTable,
+	showReaGenericsTable: modal.genericGroups,
+	showAtomAttachmentPoints: modal.attachmentPoints,
+	showAtomProperties: modal.atomProps,
+	showBondProperties: modal.bondProps,
+	showRLogicTable: modal.rgroupLogic,
 	showLabelEditor: contextEdit
 });

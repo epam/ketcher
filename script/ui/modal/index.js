@@ -1,35 +1,46 @@
 var util = require('../../util');
 var element = require('../../chem/element');
+
 var inputDialog = require('./input');
 var selectDialog = require('./select');
 
-function showElemTable (params) {
+var openDialog = require('./open.js');
+var saveDialog = require('./save.js');
+var templatesDialog = require('./templates');
+var sgroupDialog = require('./sgroup');
+var sgroupSpecialDialog = require('./sgroup-special');
+
+function periodTable (params) {
 	params.required = true;
 	selectDialog('elem-table', params);
 };
 
-function showRGroupTable (params) {
+function rgroup (params) {
 	selectDialog('rgroup-table', params);
 };
 
-function showReaGenericsTable (params) {
+function genericGroups (params) {
 	params.required = true;
 	selectDialog('generics-table', params);
 };
 
-function showAtomAttachmentPoints (params) {
+function about(el) {
+	inputDialog('about_dialog');
+}
+
+function attachmentPoints (params) {
 	inputDialog('atom_attpoints', params);
 };
 
-function showBondProperties (params) {
+function bondProps (params) {
 	inputDialog('bond_properties', params);
 };
 
-function showAutomapProperties (params) {
+function automap (params) {
 	inputDialog('automap_properties', params);
 };
 
-function showAtomProperties (params) {
+function atomProps (params) {
 	var dlg = $('atom_properties');
 	var numberInput = dlg.select('.number')[0];
 	var handlers = [];
@@ -89,7 +100,7 @@ function showAtomProperties (params) {
 	atomChange(params.label);
 };
 
-function showRLogicTable (params) {
+function rgroupLogic (params) {
 	inputDialog('rlogic_table', util.extend({}, params, {
 		onOk: function (res) {
 			params.onOk({
@@ -112,13 +123,24 @@ function showRLogicTable (params) {
 	dlg.ifthen.value = params.ifthen;
 };
 
+function sgroup(params) {
+	if (__SGROUP_SPECIAL__ && sgroupSpecialDialog.match(params))
+		return sgroupSpecialDialog(params);
+	return sgroupDialog(params);
+};
+
 module.exports = {
-	showElemTable: showElemTable,
-	showRGroupTable: showRGroupTable,
-	showReaGenericsTable: showReaGenericsTable,
-	showAtomAttachmentPoints: showAtomAttachmentPoints,
-	showAtomProperties: showAtomProperties,
-	showBondProperties: showBondProperties,
-	showAutomapProperties: showAutomapProperties,
-	showRLogicTable: showRLogicTable
+	periodTable: periodTable,
+	rgroup: rgroup,
+	genericGroups: genericGroups,
+	about: about,
+	attachmentPoints: attachmentPoints,
+	atomProps: atomProps,
+	bondProps: bondProps,
+	automap: automap,
+	rgroupLogic: rgroupLogic,
+	sgroup: sgroup,
+	open: openDialog,
+	save: saveDialog,
+	templates: templatesDialog
 };

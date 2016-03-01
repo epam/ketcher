@@ -1,6 +1,21 @@
 var util = require('../../util');
 var element = require('../../chem/element');
 var inputDialog = require('./input');
+var selectDialog = require('./select');
+
+function showElemTable (params) {
+	params.required = true;
+	selectDialog('elem-table', params);
+};
+
+function showRGroupTable (params) {
+	selectDialog('rgroup-table', params);
+};
+
+function showReaGenericsTable (params) {
+	params.required = true;
+	selectDialog('generics-table', params);
+};
 
 function showAtomAttachmentPoints (params) {
 	inputDialog('atom_attpoints', params);
@@ -98,6 +113,9 @@ function showRLogicTable (params) {
 };
 
 module.exports = {
+	showElemTable: showElemTable,
+	showRGroupTable: showRGroupTable,
+	showReaGenericsTable: showReaGenericsTable,
 	showAtomAttachmentPoints: showAtomAttachmentPoints,
 	showAtomProperties: showAtomProperties,
 	showBondProperties: showBondProperties,

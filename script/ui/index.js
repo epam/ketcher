@@ -41,13 +41,12 @@ var Render = require('../render');
 var Action = require('../editor/action.js');
 var templates = require('./templates');
 
-var openDialog = require('./dialog/open.js');
-var saveDialog = require('./dialog/save.js');
-var selectDialog = require('./dialog/select');
-var templatesDialog = require('./dialog/templates');
-var sgroupDialog = require('./dialog/sgroup');
-var sgroupSpecialDialog = require('./dialog/sgroup-special');
-var obsolete = require('./dialog/obsolete');
+var openDialog = require('./modal/open.js');
+var saveDialog = require('./modal/save.js');
+var templatesDialog = require('./modal/templates');
+var sgroupDialog = require('./modal/sgroup');
+var sgroupSpecialDialog = require('./modal/sgroup-special');
+var modal = require('./modal');
 var contextEdit = require('./contextedit.js');
 
 var SCALE = 40;  // const
@@ -64,7 +63,7 @@ var dropdownOpened;
 var server;
 
 var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
-					 'reaction-automap', 'template-custom'];
+                     'reaction-automap', 'template-custom'];
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -428,20 +427,6 @@ function hideDialog (name) {
 	});
 };
 
-function showElemTable (params) {
-	params.required = true;
-	selectDialog('elem-table', params);
-};
-
-function showRGroupTable (params) {
-	selectDialog('rgroup-table', params);
-};
-
-function showReaGenericsTable (params) {
-	params.required = true;
-	selectDialog('generics-table', params);
-};
-
 function echo (message) {
 	// TODO: make special area for messages
 	alert(message);
@@ -672,7 +657,7 @@ function onClick_Dearomatize ()
 };
 
 function onClick_Automap () {
-	obsolete.showAutomapProperties({
+	modal.showAutomapProperties({
 		onOk: function (res) {
 			var mol = ui.ctab;
 			var implicitReaction = mol.addRxnArrowIfNecessary();
@@ -794,7 +779,7 @@ function redo ()
 var current_elemtable_props = null;
 function onClick_ElemTableButton ()
 {
-	showElemTable({
+	modal.showElemTable({
 		onOk: function (res) {
 			var props;
 			if (res.mode == 'single')
@@ -822,7 +807,7 @@ function onClick_ElemTableButton ()
 var current_reagenerics = null;
 function onClick_ReaGenericsTableButton ()
 {
-	showReaGenericsTable({
+	modal.showReaGenericsTable({
 		onOk: function (res) {
 			current_reagenerics = {label: res.values[0]};
 			selectAction('atom-reagenerics');
@@ -1066,12 +1051,12 @@ util.extend(ui, {
 
 	// TODO: search a way to pass dialogs to editor
 	showSGroupProperties: showSgroupDialog,
-	showRGroupTable: showRGroupTable,
-	showElemTable: showElemTable,
-	showReaGenericsTable: showReaGenericsTable,
-	showAtomAttachmentPoints: obsolete.showAtomAttachmentPoints,
-	showAtomProperties: obsolete.showAtomProperties,
-	showBondProperties: obsolete.showBondProperties,
-	showRLogicTable: obsolete.showRLogicTable,
+	showRGroupTable: modal.showRGroupTable,
+	showElemTable: modal.showElemTable,
+	showReaGenericsTable: modal.showReaGenericsTable,
+	showAtomAttachmentPoints: modal.showAtomAttachmentPoints,
+	showAtomProperties: modal.showAtomProperties,
+	showBondProperties: modal.showBondProperties,
+	showRLogicTable: modal.showRLogicTable,
 	showLabelEditor: contextEdit
 });

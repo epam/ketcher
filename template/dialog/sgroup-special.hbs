@@ -2,37 +2,37 @@
 	<form role="dialog" id="sgroup_special" style="display:none;">
 		<header>S-Group Properties</header>
 		<label>Context:
-			<select id="sgroup_context">
+			<select name="context">
 				<option value="Fragment">Fragment</option>
 				<option value="Single Bond">Single Bond</option>
 				<option value="Atom">Atom</option>
-                <option value="Group">Group</option>
+				<option value="Group">Group</option>
 			</select>
 		</label>
 		<fieldset class="data">
-		  <label class="sgroup_special_name">Field name:
-          	<select id="sgroup_special_name">
-            </select>
-		  </label>
-		  <label class="sgroup_special_value">Field value:
-			<textarea id="sgroup_special_value"></textarea>
-		  </label>
-		  <label class="pos">
-			<input type="radio" id="sgroup_special_absolute" name="data_field_pos" checked>
-			Absolute
-		  </label>
-		  <label class="pos">
-			<input type="radio" id="sgroup_special_relative" name="data_field_pos">
-			Relative
-		  </label>
-		  <label class="pos">
-			<input type="radio" id="sgroup_special_attached" name="data_field_pos">
-			Attached
-		  </label>
+			<label>Field name:
+				<select name="fieldName">
+				</select>
+			</label>
+			<label>Field value:
+				<textarea name="fieldValue"></textarea>
+			</label>
+			<label class="pos">
+				<input type="radio" value="absolute" name="fieldPos" checked>
+				Absolute
+			</label>
+			<label class="pos">
+				<input type="radio" value="relative" name="fieldPos">
+				Relative
+			</label>
+			<label class="pos">
+				<input type="radio" value="attached" name="fieldPos">
+				Attached
+			</label>
 		</fieldset>
-	    <footer>
-		  <input type="button" value="Cancel">
-		  <input type="button" value="OK">
-	    </footer>
+		<footer>
+			<input type="button" value="Cancel">
+			<input type="button" value="OK">
+		</footer>
 	</form>
 {{/unless}}

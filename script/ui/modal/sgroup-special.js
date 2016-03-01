@@ -1,36 +1,70 @@
 // TODO: exclude from no-groups build
-/*global module, require */
 
-/* eslint-disable */
 var util = require('../../util');
-
 var ui = global.ui;
 
 function dialog (params) {
 	var dlg = ui.showDialog('sgroup_special');
 	var cache = {};
-	var handlers = [];
+
+	function setContext(context, force) {
+		console.info('set context:', context, cache);
+		console.assert(cache.context || force, 'Field setup should be forced');
+		if (force || context != cache.context.name) {
+			cache.context = util.find(specialChoices, function (opt) {
+				return opt.name == context;
+			});
+			console.assert(cache.context, 'Can\'t find such context');
+			var str = cache.context.value.reduce(function (res, opt) {
+				return res + '<option value="' + opt.name + '">' + opt.name + "</option>";
+			}, '');
+			$(dlg.fieldName).update(str);
+			setField(cache.context.value[0].name, true);
+			if (force)
+				dlg.context.value = context;
+		}
+	}
+
+	function setField(field, force) {
+		console.info('set field:', field, cache);
+		console.assert(cache.field || force, 'Field setup should be forced');
+		if (field || field != cache.field.name) {
+			cache.field = util.find(cache.context.value, function (opt) {
+				return opt.name == field;
+			});
+			console.assert(cache.field, 'Can\'t find such field');
+			if (!cache.field.value)
+				dlg.fieldValue.outerHTML = '<textarea name="fieldValue"></textarea>';
+			else {
+				var str = cache.field.value.reduce(function (res, opt) {
+					return res + '<option value="' + opt + '">' + opt + "</option>";
+				}, '');
+				dlg.fieldValue.outerHTML = '<select size="10" name="fieldValue">' + str + '</select>';
+			}
+			dlg.fieldName.value = field;
+		}
+	}
 
 	console.assert(!params.type || params.type == 'DAT');
 	console.assert(!params.type || params.attrs.fieldName);
 
-	var context = params.type && matchContext(params.attrs.fieldName, params.attrs.fieldValue) ||
-				  params.context || 'Fragment';
-	setContext(context, cache, true);
+	var context = params.type &&
+	    matchContext(params.attrs.fieldName, params.attrs.fieldValue) ||
+	    params.context || 'Fragment';
+
+	setContext(context, true);
 	if (params.attrs.fieldName)
-		setField(params.attrs.fieldName, cache, true);
+		setField(params.attrs.fieldName, true);
 
-	$('sgroup_special_value').value = params.attrs.fieldValue;
-	if (params.attrs.attached)
-		$('sgroup_special_attached').checked = true;
-	else if (params.attrs.absolute)
-		$('sgroup_special_absolute').checked = true;
-	else
-		$('sgroup_special_relative').checked = true;
+	dlg.fieldValue.value = params.attrs.fieldValue;
+	//  absolute by default
+	dlg.fieldPos.value = params.attrs.attached ? 'attached' :
+		params.attrs.absolute === false ? 'relative' : 'absolute';
 
+	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		var key = 'on' + button.value.capitalize();
-		var res = key != 'onOk' || getValidateAttrs();
+		var res = key != 'onOk' || getValidateAttrs(dlg);
 		if (res) {
 			handlers.forEach(function (h) { h.stop(); });
 			ui.hideDialog('sgroup_special');
@@ -39,15 +73,16 @@ function dialog (params) {
 		}
 	});
 
-	handlers[1] = dlg.on('change', 'select', function (_, select) {
-		if (select.id == 'sgroup_context')
-			setContext($('sgroup_context').value, cache);
-		if (select.id == 'sgroup_special_name')
-			setField($('sgroup_special_name').value, cache);
+	handlers[1] = $(dlg.context).on('change', function () {
+		setContext(dlg.context.value);
+	});
+
+	handlers[2] = $(dlg.fieldName).on('change', function () {
+		setField(dlg.fieldName.value);
 	});
 };
 
-function getValidateAttrs() {
+function getValidateAttrs(dlg) {
 	var attrs = {
 		mul: null,
 		connectivity: '',
@@ -55,10 +90,10 @@ function getValidateAttrs() {
 		subscript: ''
 	};
 
-	attrs.fieldName = $('sgroup_special_name').value.strip();
-	attrs.fieldValue = $('sgroup_special_value').value.strip();
-	attrs.absolute = $('sgroup_special_absolute').checked;
-	attrs.attached = $('sgroup_special_attached').checked;
+	attrs.fieldName = dlg.fieldName.value.strip();
+	attrs.fieldValue = dlg.fieldValue.value.strip();
+	attrs.absolute = dlg.fieldPos.value == 'absolute';
+	attrs.attached = dlg.fieldPos.value == 'attached';
 
 	if (attrs.fieldValue == '') {
 		alert('Please, specify data field value.');
@@ -69,47 +104,9 @@ function getValidateAttrs() {
 			 attrs: attrs };
 };
 
-function setContext(context, cache, force) {
-	console.info('set context:', context, cache);
-	console.assert(cache.context || force, 'Field setup should be forced');
-	if (force || context != cache.context.name) {
-		cache.context = util.find(special_choices, function (opt) {
-			return opt.name == context;
-		});
-		console.assert(cache.context, 'Can\'t find such context');
-		var str = cache.context.value.reduce(function (res, opt) {
-			return res + '<option value="' + opt.name + '">' + opt.name + "</option>";
-		}, '');
-		$('sgroup_special_name').update(str);
-		setField(cache.context.value[0].name, cache, true);
-		if (force)
-			$('sgroup_context').value = context;
-	}
-}
-
-function setField(field, cache, force) {
-	console.info('set field:', field, cache);
-	console.assert(cache.field || force, 'Field setup should be forced');
-	if (field || field != cache.field.name) {
-		cache.field = util.find(cache.context.value, function (opt) {
-			return opt.name == field;
-		});
-		console.assert(cache.field, 'Can\'t find such field');
-		if (!cache.field.value)
-			$('sgroup_special_value').outerHTML = '<textarea id="sgroup_special_value"></textarea>';
-		else {
-			var str = cache.field.value.reduce(function (res, opt) {
-				return res + '<option value="' + opt + '">' + opt + "</option>";
-			}, '');
-			$('sgroup_special_value').outerHTML = '<select size="10" id="sgroup_special_value">' + str + '</select>';
-		}
-		$('sgroup_special_name').value = field;
-	}
-}
-
 function matchContext(field, value) {
 	console.info('search:', util.unicodeLiteral(field), util.unicodeLiteral(value));
-	var c = util.find(special_choices, function(c) {
+	var c = util.find(specialChoices, function(c) {
 		var f = util.find(c.value, function(f) {
 			return f.name == field;
 		});
@@ -122,7 +119,7 @@ function matchContext(field, value) {
 	return c && c.name;
 }
 
-var special_choices = [
+var specialChoices = [
 	{ name: 'Fragment',
 	  value: [
 		  { name: 'MDLBG_FRAGMENT_STEREO',

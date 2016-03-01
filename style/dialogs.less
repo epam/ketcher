@@ -14,7 +14,7 @@
 }
 
 #input_label {
-    margin: 14px 0 0 14px;
+	margin: 14px 0 0 14px;
 	position: absolute;
 	z-index:  30;
 }
@@ -94,7 +94,7 @@ form[role=dialog] {
 	.border-radius(4px);
 
 	// &[disabled] {
-	// 	color: @disabled-color;
+	//		color: @disabled-color;
 	// }
 	&:active, &:focus {
 		outline: 0;
@@ -172,8 +172,8 @@ input[type=text] {
 }
 
 // select, option {
-// 	text-align: right;
-// 	direction: rtl;
+//		text-align: right;
+//		direction: rtl;
 // }
 
 input[type=radio],
@@ -313,13 +313,13 @@ legend {
 	.data label {
 		text-align: left;
 	}
-	.data textarea, #sgroup_special_value {
+	.data textarea, select[name=fieldValue] {
 		display: block;
 		width: 20em;
-		height: 15em;
+		height: 12em;
 		overflow: auto;
 	}
-	.data input[type=text] {
+	.data input[type=text], select[name=fieldName] {
 		width: 20em;
 		display: block;
 	}
@@ -545,7 +545,7 @@ legend {
 			margin: 0 auto;
 			position: absolute;
 		}
-    }
+	}
 	button {
 		font-size: 1.1em;
 		height: 2em;

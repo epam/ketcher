@@ -50,7 +50,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			label: ci.id,
 			rgroupLabels: rgroupLabels,
 			range: rg.range || '>0',
-			resth: rg.resth - 0,
+			resth: rg.resth,
 			ifthen: rg.ifthen,
 			onOk: function (res) {
 				var props = {};

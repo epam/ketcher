@@ -176,6 +176,8 @@ input[type=text] {
 //		direction: rtl;
 // }
 
+@input-height: 2.4em + 2 * 0.35em;
+
 input[type=radio],
 input[type=checkbox] {
 	vertical-align: middle;
@@ -259,6 +261,8 @@ legend {
 	label {
 		display: block;
 		text-align: right;
+		line-height: @input-height;
+		height: @input-height;
 	}
 	.main {
 		float: left;
@@ -289,12 +293,17 @@ legend {
 
 #rlogic_table {
 	label {
-		display: block;
+		display: inline-block;
 		text-align: right;
-		input {
-			width: 7em;
-		}
+		line-height: @input-height;
 	}
+	.cond {
+		display: block;
+	}
+	input[type=text] {
+		width: 7em;
+	}
+
 }
 
 #sgroup_properties, #sgroup_special {

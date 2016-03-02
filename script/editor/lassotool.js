@@ -181,7 +181,6 @@ LassoTool.prototype.OnDblClick = function (event) {
 			var charge = rnd.atomGetAttr(ci.id, 'charge') - 0;
 			var isotope = rnd.atomGetAttr(ci.id, 'isotope') - 0;
 			var explicitValence = rnd.atomGetAttr(ci.id, 'explicitValence') - 0;
-			//ui.showAtomProperties(ci.id);
 			ui.showAtomProperties({
 				label: rnd.atomGetAttr(ci.id, 'label'),
 				charge: charge == 0 ? '' : charge,
@@ -189,7 +188,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 				explicitValence: explicitValence < 0 ? '' : explicitValence,
 				radical: rnd.atomGetAttr(ci.id, 'radical'),
 				invRet: rnd.atomGetAttr(ci.id, 'invRet'),
-				exactChangeFlag: rnd.atomGetAttr(ci.id, 'exactChangeFlag') ? 1 : 0,
+				exactChangeFlag: rnd.atomGetAttr(ci.id, 'exactChangeFlag'),
 				ringBondCount: rnd.atomGetAttr(ci.id, 'ringBondCount'),
 				substitutionCount: rnd.atomGetAttr(ci.id, 'substitutionCount'),
 				unsaturatedAtom: rnd.atomGetAttr(ci.id, 'unsaturatedAtom'),
@@ -203,11 +202,11 @@ LassoTool.prototype.OnDblClick = function (event) {
 						radical: parseInt(res.radical, 10),
 						// reaction flags
 						invRet: parseInt(res.invRet, 10),
-						exactChangeFlag: !!(res.exactChangeFlag - 0),
+						exactChangeFlag: res.exactChangeFlag,
 						// query flags
 						ringBondCount: parseInt(res.ringBondCount, 10),
 						substitutionCount: parseInt(res.substitutionCount, 10),
-						unsaturatedAtom: parseInt(res.unsaturatedAtom, 10),
+						unsaturatedAtom: res.unsaturatedAtom,
 						hCount: parseInt(res.hCount, 10)
 					}), true);
 					rnd.update();

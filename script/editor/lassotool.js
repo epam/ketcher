@@ -175,9 +175,9 @@ LassoTool.prototype.OnDblClick = function (event) {
 						rnd.update();
 					}
 					return true;
-				}.bind(this)
+				}
 			});
-		} else if ((element.getElementByLabel(atom.label) || 121) < 120) {
+		} else if (element.getElementByLabel(atom.label)) {
 			var charge = rnd.atomGetAttr(ci.id, 'charge') - 0;
 			var isotope = rnd.atomGetAttr(ci.id, 'isotope') - 0;
 			var explicitValence = rnd.atomGetAttr(ci.id, 'explicitValence') - 0;

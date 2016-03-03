@@ -56,7 +56,7 @@ function atomProps (params) {
 		    label !== 'X' && label !== 'R') {
 
 			console.assert(change, 'Incorrect input params label');
-			this.value = params.label;
+			label = this.value = params.label;
 
 			if (label !== 'A' && label !== '*') {
 				elem = element.getElementByLabel(label);

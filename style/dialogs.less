@@ -163,11 +163,12 @@ input[type=text] {
 	.box-sizing(border-box);
 
 	&[disabled],
+	&[readonly],
 	fieldset[disabled] & {
 		cursor: not-allowed;
 		//.box-shadow(none);
-		background: #ddd;
-		.opacity(0.5);
+		background: #efefef;
+		.opacity(0.6);
 	}
 }
 
@@ -616,6 +617,7 @@ legend {
 		height: 23em;
 		overflow: auto;
 		white-space: pre;
+		cursor: text;
 		resize: both;
 	}
 	.save {

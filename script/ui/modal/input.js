@@ -22,7 +22,7 @@ function dialog (name, params) {
 		if (params.hasOwnProperty(field.name))
 			field[field.type == 'checkbox' ? 'checked' : 'value'] = params[field.name];
 	});
-	dlg.select('input[value=OK]')[0].focus();
+	dlg.select('input, select')[0].activate();
 }
 
 function eachNamedInput(el, func) {

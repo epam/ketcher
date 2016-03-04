@@ -141,6 +141,11 @@ class application(object):
         return ["Ok.\n", md.molfile()]
 
     @indigo_required
+    def on_getcml(self):
+        md, is_rxn = self.load_moldata()
+        return ["Ok.\n", md.cml()]
+
+    @indigo_required
     def on_automap(self):
         moldata = None
         if self.method == 'GET' and 'smiles' in self.fields:

@@ -61,6 +61,7 @@ function api (base) {
 	return {
 		inchi: request('POST', 'getinchi'),
 		molfile: request('POST', 'getmolfile'),
+		cml: request('POST', 'getcml'),
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),

@@ -473,8 +473,7 @@ function addUndoAction (action, check_dummy)
 //
 // New document
 //
-function onClick_NewFile ()
-{
+function onClick_NewFile () {
 	selectAction(null);
 
 	if (!ui.ctab.isBlank()) {
@@ -482,6 +481,7 @@ function onClick_NewFile ()
 		ui.render.update();
 	}
 }
+
 
 function onClick_OpenFile ()
 {
@@ -500,40 +500,24 @@ function onClick_SaveFile ()
 	modal.save({molecule: ui.ctab}, server);
 }
 
-function aromatize(mol, arom)
-{
-	mol = mol.clone();
+function serverTransform(method, mol, options) {
+	util.assert(!ui.standalone, 'Call server in standalone mode!');
+	if (!mol)
+		mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = molfile.stringify(mol);
-
-	if (!ui.standalone) {
-		var method = arom ? 'aromatize' : 'dearomatize',
-		request = server[method]({moldata: mol_string});
-		request.then(function (data) {
-			var resmol = parseMayBeCorruptedCTFile(data);
-			if (implicitReaction)
-				resmol.rxnArrows.clear();
-			updateMolecule(resmol);
-		}, echo);
-	} else {
-		throw new Error('Aromatization and dearomatization are not supported in the standalone mode.');
-	}
-};
-
-// TODO: merge with arom/dearom + spinner
-function calculateCip() {
-	util.assert(!ui.standalone, 'Can\'t calculate in standalone mode!'); // it's assert error now
-	var mol = ui.ctab.clone();
-	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var mol_string = molfile.stringify(mol);
-
-	var request = server.calculateCip({moldata: mol_string});
+	var request = server[method](util.extend({
+		moldata: molfile.stringify(mol, { ignoreErrors: true })
+	}, options));
 	request.then(function (data) {
 		var resmol = parseMayBeCorruptedCTFile(data);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
-	}, echo);
+	}).then(null, echo);
+}
+
+function calculateCip() {
+	return serverTransform('calculateCip');
 };
 
 //
@@ -580,118 +564,70 @@ function updateZoom (refresh) {
 	}
 }
 
-//
-// Automatic layout
-//
-function onClick_CleanUp ()
-{
+// TODO: chemistry move it to chem
+function packSelective(mol, atoms) {
+	var atomSet = Set.fromList(atoms);
+	var atomSetExtended = Set.empty();
+	mol.loops.each(function (lid, loop) {
+		// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
+		if (util.findIndex(loop.hbs, function (hbid) {
+			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
+		}) >= 0)
+			util.each(loop.hbs, function (hbid) {
+				Set.add(atomSetExtended, mol.halfBonds.get(hbid).begin);
+			}, this);
+	}, this);
+	Set.mergeIn(atomSetExtended, atomSet);
+	atoms = Set.list(atomSetExtended);
+
+	var aidMap = {};
+	var res = mol.clone(null, null, false, aidMap);
+	util.each(atoms, function (aid){
+		aid = aidMap[aid];
+		var dsg = new SGroup('DAT');
+		var dsgid = res.sgroups.add(dsg);
+		dsg.id = dsgid;
+		dsg.pp = new Vec2();
+		dsg.data.fieldName = '_ketcher_selective_layout';
+		dsg.data.fieldValue = '1';
+		res.atomAddToSGroup(dsgid, aid);
+	});
+	return res;
+}
+
+function onClick_CleanUp () {
 	var atoms = util.array(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
-	if (selective) {
-		var atomSet = Set.fromList(atoms);
-		var atomSetExtended = Set.empty();
-		ui.ctab.loops.each(function (lid, loop) {
-			// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
-			if (util.findIndex(loop.hbs, function (hbid) {
-				return Set.contains(atomSet, ui.ctab.halfBonds.get(hbid).begin);
-			}) >= 0)
-				util.each(loop.hbs, function (hbid) {
-					Set.add(atomSetExtended, ui.ctab.halfBonds.get(hbid).begin);
-				}, this);
-		}, this);
-		Set.mergeIn(atomSetExtended, atomSet);
-		atoms = Set.list(atomSetExtended);
-	}
-	ui.editor.deselectAll();
-	try {
-		var aidMap = {};
-		var mol = ui.ctab.clone(null, null, false, aidMap);
-		if (selective) {
-			util.each(atoms, function (aid){
-				aid = aidMap[aid];
-				var dsg = new SGroup('DAT');
-				var dsgid = mol.sgroups.add(dsg);
-				dsg.id = dsgid;
-				dsg.pp = new Vec2();
-				dsg.data.fieldName = '_ketcher_selective_layout';
-				dsg.data.fieldValue = '1';
-				mol.atomAddToSGroup(dsgid, aid);
-			}, this);
-		}
-		var implicitReaction = mol.addRxnArrowIfNecessary();
-		var req = server.layout({
-			moldata: molfile.stringify(mol)
-		}, selective ? {'selective': 1} : null);
-		req.then(function (res) {
-			var struct = parseMayBeCorruptedCTFile(res);
-			if (implicitReaction)
-				struct.rxnArrows.clear();
-			updateMolecule(struct);
-		});
-	} catch (er) {
-			alert('ERROR: ' + er.message); // TODO [RB] ??? global re-factoring needed on error-reporting
-		}
+
+	return serverTransform('layout',
+	                       selective ? packSelective(ui.ctab, atoms) : ui.ctab.clone(),
+	                       selective ? {selective: '1'} : null);
 };
 
-function onClick_Aromatize ()
-{
-	try {
-		aromatize(ui.ctab, true);
-	} catch (er) {
-		alert('Molfile: ' + er.message);
-	}
+function onClick_Aromatize () {
+	return serverTransform('aromatize');
 };
 
-function onClick_Dearomatize ()
-{
-	try {
-		aromatize(ui.ctab, false);
-	} catch (er) {
-		alert('Molfile: ' + er.message);
-	}
+function onClick_Dearomatize () {
+	return serverTransform('dearomatize');
 };
 
 function onClick_Automap () {
-	modal.automap({
-		onOk: function (res) {
-			var mol = ui.ctab;
-			var implicitReaction = mol.addRxnArrowIfNecessary();
-			if (mol.rxnArrows.count() == 0) {
-				echo('Auto-Mapping can only be applied to reactions');
-				return;
+	var mol = ui.ctab.clone();
+	mol.addRxnArrowIfNecessary();    // TODO: better way to check reaction
+	if (mol.rxnArrows.count() == 0)  // without cloning
+		echo('Auto-Mapping can only be applied to reactions');
+	else {
+		modal.automap({
+			onOk: function (mode) {
+				return serverTransform('automap', mol, { mode: mode });
 			}
-			var moldata = molfile.stringify(mol, true),
-			request = server.automap({
-				moldata: moldata,
-				mode: res.mode
-			});
-
-			request.then(function (res) {
-				var mol = parseMayBeCorruptedCTFile(res);
-				if (implicitReaction) {
-					mol.rxnArrows.clear();
-				}
-				/*
-				 var aam = parseCTFile(res.responseText);
-				 var action = new Action();
-				 for (var aid = aam.atoms.count() - 1; aid >= 0; aid--) {
-				 action.mergeWith(Action.fromAtomAttrs(aid, { aam : aam.atoms.get(aid).aam }));
-				 }
-				 addUndoAction(action, true);
-				 */
-				updateMolecule(mol);
-				/*
-				 ui.render.update();
-				 */
-
-			}, echo);
-		}
-	});
+		});
+	}
 };
 
 function loadMolecule (mol, checkEmptyLine) {
-	return getStruct(mol,
-					 checkEmptyLine).then(updateMolecule);
+	return getStruct(mol, checkEmptyLine).then(updateMolecule);
 }
 
 function loadFragment (mol, checkEmptyLine) {
@@ -725,8 +661,7 @@ function getStruct(mol, checkEmptyLine) {
 	return new Promise(function (resolve, reject) {
 		var type = guessType(mol);
 		if (type == 'mol') {
-			var struct = parseMayBeCorruptedCTFile(mol,
-												   checkEmptyLine);
+			var struct = parseMayBeCorruptedCTFile(mol, checkEmptyLine);
 			resolve(struct);
 		} else if (ui.standalone)
 			throw type ? type.toUpperCase() : 'Format' +

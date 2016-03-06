@@ -10,6 +10,7 @@ var ui = global.ui;
 
 var Render = require('./render');
 
+
 function getSmiles() {
 	return smiles.stringify(ui.ctab, { ignoreErrors: true });
 };

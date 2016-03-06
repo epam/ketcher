@@ -663,9 +663,7 @@ function redo ()
 	updateHistoryButtons();
 };
 
-var current_elemtable_props = null;
-function elemTable ()
-{
+function elemTable () {
 	modal.periodTable({
 		onOk: function (res) {
 			var props;
@@ -681,35 +679,27 @@ function elemTable ()
 						ids: res.values
 					})
 				};
-			current_elemtable_props = props;
-			selectAction('atom-table');
+			selectAction('atom-table', props);
 			return true;
-		},
-		onCancel: function () {
-			//ui.elem_table_obj.restore();
 		}
 	});
 };
 
-var current_reagenerics = null;
-function genericsTable ()
-{
+function genericsTable () {
 	modal.genericGroups({
 		onOk: function (res) {
-			current_reagenerics = {label: res.values[0]};
-			selectAction('atom-reagenerics');
+			var props = {label: res.values[0]};
+			selectAction('atom-reagenerics', props);
 			return true;
 		}
 	});
 };
 
-// TODO: remove this crap (quick hack to pass parametr to selectAction)
-var current_template_custom = null;
 function templateCustom () {
 	modal.templates('', {
 		onOk: function (tmpl) {
-			current_template_custom = tmpl;
-			selectAction('template-custom-select');
+			// C doesn't conflict with menu id
+			selectAction('template-C', tmpl);
 			return true;
 		}
 	});
@@ -776,7 +766,7 @@ function mapTool (id) {
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
 		if (id.startsWith('atom-')) {
-			addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, atomLabel(id)), true);
+			addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, args[0] || atomLabel(id)), true);
 			ui.render.update();
 			return null;
 		}
@@ -813,15 +803,13 @@ function mapTool (id) {
 	} else if (id == 'erase') {
 		return new EraserTool(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
-		return new AtomTool(ui.editor, atomLabel(id));
+		return new AtomTool(ui.editor, args[0] || atomLabel(id));
 	} else if (id.startsWith('bond-')) {
 		return new BondTool(ui.editor, id.substr(5));
 	} else if (id == 'chain') {
 		return new ChainTool(ui.editor);
-	} else if (id.startsWith('template-custom')) {
-		return new TemplateTool(ui.editor, current_template_custom);
 	} else if (id.startsWith('template')) {
-		return new TemplateTool(ui.editor, templates[parseInt(id.split('-')[1])]);
+		return new TemplateTool(ui.editor, args[0] || templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
 		return new ChargeTool(ui.editor, 1);
 	} else if (id == 'charge-minus') {
@@ -851,10 +839,6 @@ function mapTool (id) {
 function atomLabel (mode) {
 	var label = mode.substr(5);
 	switch (label) {
-	case 'table':
-		return current_elemtable_props;
-	case 'reagenerics':
-		return current_reagenerics;
 	case 'any':
 		return {label:'A'};
 	default:

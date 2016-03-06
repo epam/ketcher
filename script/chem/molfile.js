@@ -63,8 +63,33 @@ var partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, /*bool*/ 
 	return res;
 };
 
-Molfile.prototype.parseCTFile = function (molfile) {
-	var molfileLines = Array.isArray(molfile) ? molfile : util.splitNewlines(molfile);
+// TODO: reconstruct molfile string instead parsing multiple times
+//       merge to bottom
+function parseCTFile (str, options) {
+	var molfile = new Molfile();
+	var lines = util.splitNewlines(str);
+	try {
+		return molfile.parseCTFile(lines);
+	} catch (ex) {
+		if (options.badHeaderRecover) {
+			try {
+				// check whether there's an extra empty line on top
+				// this often happens when molfile text is pasted into the dialog window
+				return molfile.parseCTFile(lines.slice(1));
+			} catch (ex1) {
+			}
+			try {
+				// check for a missing first line
+				// this sometimes happens when pasting
+				return molfile.parseCTFile([''].concat(lines));
+			} catch (ex2) {
+			}
+		}
+		throw ex;
+	}
+};
+
+Molfile.prototype.parseCTFile = function (molfileLines) {
 	var ret = null;
 	if (molfileLines[0].search('\\$RXN') == 0)
 		ret = parseRxn(molfileLines);
@@ -2011,7 +2036,7 @@ var parseRg2000 = function (/* string[] */ ctabLines) /* Struct */
 		}
 	}
 
-	var core = parseCTab(coreLines)
+	var core = parseCTab(coreLines);
 	var frag = {};
 	if (Molfile.loadRGroupFragments) {
 		for (var id in fragmentLines) {
@@ -2030,7 +2055,7 @@ module.exports = {
 		return new Molfile(opts.v3000).saveMolecule(struct, opts.ignoreErrors,
 		                                            opts.noRgroups, opts.preserveIndigoDesc);
 	},
-	parse: function (str) {
-		return new Molfile().parseCTFile(str);
+	parse: function (str, options) {
+		return parseCTFile(str, options);
 	}
 };

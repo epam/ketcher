@@ -493,7 +493,7 @@ function serverTransform(method, mol, options) {
 	}, options));
 	showDialog('loading');
 	request.then(function (data) {
-		var resmol = parseMayBeCorruptedCTFile(data);
+		var resmol = molfile.parse(data);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
@@ -504,9 +504,6 @@ function serverTransform(method, mol, options) {
 	});
 }
 
-//
-// Zoom section
-//
 function initZoom() {
 	var zoomSelect = subEl('zoom-list');
 	// TODO: need a way to setup zoom range
@@ -548,44 +545,14 @@ function updateZoom (refresh) {
 	}
 }
 
-// TODO: chemistry move it to chem
-function packSelective(mol, atoms) {
-	var atomSet = Set.fromList(atoms);
-	var atomSetExtended = Set.empty();
-	mol.loops.each(function (lid, loop) {
-		// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
-		if (util.findIndex(loop.hbs, function (hbid) {
-			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
-		}) >= 0)
-			util.each(loop.hbs, function (hbid) {
-				Set.add(atomSetExtended, mol.halfBonds.get(hbid).begin);
-			}, this);
-	}, this);
-	Set.mergeIn(atomSetExtended, atomSet);
-	atoms = Set.list(atomSetExtended);
-
-	var aidMap = {};
-	var res = mol.clone(null, null, false, aidMap);
-	util.each(atoms, function (aid){
-		aid = aidMap[aid];
-		var dsg = new SGroup('DAT');
-		var dsgid = res.sgroups.add(dsg);
-		dsg.id = dsgid;
-		dsg.pp = new Vec2();
-		dsg.data.fieldName = '_ketcher_selective_layout';
-		dsg.data.fieldValue = '1';
-		res.atomAddToSGroup(dsgid, aid);
-	});
-	return res;
-}
-
 function layout () {
 	var atoms = util.array(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
 
-	return serverTransform('layout',
-	                       selective ? packSelective(ui.ctab, atoms) : ui.ctab.clone(),
-	                       selective ? {selective: '1'} : null);
+	return !selective ? serverTransform('layout') :
+		serverTransform('layout',
+		                SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms),
+		                {selective: '1'});
 };
 
 function aromatize () {
@@ -649,7 +616,9 @@ function getStruct(mol, checkEmptyLine) {
 	return new Promise(function (resolve, reject) {
 		var type = guessType(mol);
 		if (type == 'mol') {
-			var struct = parseMayBeCorruptedCTFile(mol, checkEmptyLine);
+			var struct = molfile.parse(mol, {
+				badHeaderRecover: checkEmptyLine
+			});
 			resolve(struct);
 		} else if (ui.standalone)
 			throw type ? type.toUpperCase() : 'Format' +
@@ -659,7 +628,7 @@ function getStruct(mol, checkEmptyLine) {
 				server.layout_smiles(null, {smiles: mol.trim()}) :
 				server.molfile({moldata: mol});
 			resolve(req.then(function (res) {
-				return parseMayBeCorruptedCTFile(res);
+				return molfile.parse(res);
 			}));
 		}
 	});
@@ -744,31 +713,6 @@ function templateCustom () {
 			return true;
 		}
 	});
-};
-
-// try to reconstruct molfile string instead parsing multiple times
-// TODO: move this logic to chem.Molfile
-function parseMayBeCorruptedCTFile (str, checkEmptyLine) {
-	var lines = util.splitNewlines(str);
-	try {
-		return molfile.parse(lines);
-	} catch (ex) {
-		if (checkEmptyLine) {
-			try {
-				// check whether there's an extra empty line on top
-				// this often happens when molfile text is pasted into the dialog window
-				return molfile.parse(lines.slice(1));
-			} catch (ex1) {
-			}
-			try {
-				// check for a missing first line
-				// this sometimes happens when pasting
-				return molfile.parse([''].concat(lines));
-			} catch (ex2) {
-			}
-		}
-		throw ex;
-	}
 };
 
 var actionMap = {

@@ -407,4 +407,34 @@ SGroup.setPos = function (remol, sg, pos) {
 	sg.pp = pos;
 };
 
+SGroup.packDataGroup = function (name, value, mol, atoms) {
+	var atomSet = Set.fromList(atoms);
+	var atomSetExtended = Set.empty();
+	mol.loops.each(function (lid, loop) {
+		// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
+		if (util.findIndex(loop.hbs, function (hbid) {
+			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
+		}) >= 0)
+			util.each(loop.hbs, function (hbid) {
+				Set.add(atomSetExtended, mol.halfBonds.get(hbid).begin);
+			}, this);
+	}, this);
+	Set.mergeIn(atomSetExtended, atomSet);
+	atoms = Set.list(atomSetExtended);
+
+	var aidMap = {};
+	var res = mol.clone(null, null, false, aidMap);
+	util.each(atoms, function (aid){
+		aid = aidMap[aid];
+		var dsg = new SGroup('DAT');
+		var dsgid = res.sgroups.add(dsg);
+		dsg.id = dsgid;
+		dsg.pp = new Vec2();
+		dsg.data.fieldName = name;
+		dsg.data.fieldValue = value;
+		res.atomAddToSGroup(dsgid, aid);
+	});
+	return res;
+};
+
 module.exports = SGroup;

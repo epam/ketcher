@@ -738,6 +738,7 @@ var actionMap = {
 	'info': modal.about,
 	'select-all': function () {
 		ui.editor.selectAll();
+		selectAction(null);
 	},
 	'deselect-all': function () {
 		ui.editor.deselectAll();
@@ -791,7 +792,7 @@ function mapTool (id) {
 		 } */
 	}
 
-	if (id != 'transform-rotate')
+	if (id != 'transform-rotate' && !id.startsWith('select-'))
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {

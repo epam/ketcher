@@ -50,6 +50,12 @@
 				<li id="transform-flip-v"><button>Vertical Flip</button></li>
 			</menu>
 		</li>
+		{{#unless no-sgroup}}
+			<li id="sgroup"><button data-keys="Defmod-G">S-Group</button></li>
+			{{#if sgroup-data-special}}
+				<li id="sgroup-data"><button data-keys="Defmod-G">Data S-Group</button></li>
+			{{/if}}
+		{{/unless}}
 		{{#unless no-reactions}}
 			<li id="reaction">
 				<menu>
@@ -60,9 +66,6 @@
 					<li id="reaction-unmap"><button>Reaction Unmappping Tool</button></li>
 				</menu>
 			</li>
-		{{/unless}}
-		{{#unless no-sgroup}}
-			<li id="sgroup"><button data-keys="Defmod-G">S-Group</button></li>
 		{{/unless}}
 		{{#unless no-rgroup}}
 			<li id="rgroup">

@@ -27,28 +27,31 @@
 	font-style: normal;
 }
 
-#select-fragment, #select-rectangle {
+#select-fragment, #select-rectangle, #sgroup-data {
 	button:before {
 		font-family: 'ketcher-svg-fix';
 	}
 }
 
-#template-common {
-	.separate-item(horizontal, 10px);
+#template-custom, #calc-cip {
+	button:before {
+		font-family: FreeSans, Arimo, "Droid Sans", Helvetica,
+	                "Helvetica Neue", Arial, sans-serif;
+	}
 }
 
 #template-custom {
 	button:before {
 		content: 'T' !important;
-		font-family: FreeSans, Arimo, "Droid Sans", Helvetica,
-	                "Helvetica Neue", Arial, sans-serif;
 	}
 }
 
 #calc-cip {
 	button:before {
 		content: 'Ɽ' !important;
-		font-family: FreeSans, Arimo, "Droid Sans", Helvetica,
-	                 "Helvetica Neue", Arial, sans-serif;
 	}
+}
+
+#template-common {
+	.separate-item(horizontal, 10px);
 }

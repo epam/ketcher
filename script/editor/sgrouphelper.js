@@ -2,9 +2,10 @@ var Action = require('./action');
 
 var ui = global.ui;
 
-var SGroupHelper = function (editor) {
+var SGroupHelper = function (editor, type) {
 	this.editor = editor;
 	this.selection = null;
+	this.defaultType = type || null;
 };
 
 SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
@@ -60,7 +61,7 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	}
 
 	ui.showSGroupProperties({
-		type: id !== null ? rnd.sGroupGetType(id) : null,
+		type: id !== null ? rnd.sGroupGetType(id) : this.defaultType,
 		attrs: id !== null ? rnd.sGroupGetAttrs(id) : {},
 		onCancel: function () {
 			this.editor.deselectAll();

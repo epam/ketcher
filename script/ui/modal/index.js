@@ -124,7 +124,7 @@ function rgroupLogic (params) {
 };
 
 function sgroup(params) {
-	if (__SGROUP_SPECIAL__ && sgroupSpecialDialog.match(params))
+	if (sgroupSpecialDialog.match(params))
 		return sgroupSpecialDialog(params);
 	return sgroupDialog(params);
 };

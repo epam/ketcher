@@ -8,7 +8,6 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var AtomList = require('../chem/atomlist');
-var Bond = require('../chem/bond');
 var SGroup = require('../chem/sgroup');
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
@@ -428,9 +427,6 @@ function echo (message) {
 	alert(message);
 };
 
-//
-// Main section
-//
 function updateMolecule (mol) {
 	console.assert(mol, 'No molecule to update');
 	ui.editor.deselectAll();
@@ -456,9 +452,6 @@ function addUndoAction (action, check_dummy)
 	}
 };
 
-//
-// New document
-//
 function clear () {
 	selectAction(null);
 
@@ -817,6 +810,8 @@ function mapTool (id) {
 		return new ChargeTool(ui.editor, -1);
 	} else if (id == 'sgroup') {
 		return new SGroupTool(ui.editor);
+	} else if (id == 'sgroup-data') {
+		return new SGroupTool(ui.editor, 'DAT');
 	} else if (id == 'reaction-arrow') {
 		return new ReactionArrowTool(ui.editor);
 	} else if (id == 'reaction-plus') {

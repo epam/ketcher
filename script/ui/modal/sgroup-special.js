@@ -46,9 +46,8 @@ function dialog (params) {
 	}
 
 	console.assert(!params.type || params.type == 'DAT');
-	console.assert(!params.type || params.attrs.fieldName);
 
-	var context = params.type &&
+	var context = params.attrs.fieldName &&
 	    matchContext(params.attrs.fieldName, params.attrs.fieldValue) ||
 	    params.context || 'Fragment';
 
@@ -201,8 +200,8 @@ var specialChoices = [
 ];
 
 dialog.match = function (params) {
-	return !params.type ||
-		params.type == 'DAT' && !!matchContext(params.attrs.fieldName, params.attrs.fieldValue);
+	return params.type == 'DAT' && (!params.attrs.fieldName ||
+		!!matchContext(params.attrs.fieldName, params.attrs.fieldValue));
 };
 
 module.exports = dialog;

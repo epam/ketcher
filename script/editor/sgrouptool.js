@@ -3,13 +3,13 @@ var HoverHelper = require('./hoverhelper');
 var LassoHelper = require('./lassohelper');
 var SGroupHelper = require('./sgrouphelper');
 
-var SGroupTool = function (editor) {
+var SGroupTool = function (editor, type) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new LassoHelper(1, editor);
-	this._sGroupHelper = new SGroupHelper(editor);
+	this._sGroupHelper = new SGroupHelper(editor, type);
 
 	var selection = this.editor.getSelection();
 	if (selection.atoms && selection.atoms.length > 0) {

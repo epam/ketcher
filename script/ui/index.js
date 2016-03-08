@@ -40,6 +40,7 @@ var Render = require('../render');
 var Action = require('../editor/action.js');
 var templates = require('./templates');
 
+var utils = require('./utils');
 var modal = require('./modal');
 var contextEdit = require('./contextedit.js');
 
@@ -361,63 +362,25 @@ function updateServerButtons () {
 	});
 };
 
-function transitionEndEvent () {
-	var el = document.createElement('transitionTest'),
-	transEndEventNames = {
-		'WebkitTransition': 'webkitTransitionEnd',
-		'MozTransition': 'transitionend',
-		'OTransition': 'oTransitionEnd otransitionend',
-		'transition': 'transitionend'
-	},
-	name;
-	for (name in transEndEventNames) {
-		if (el.style[name] !== undefined)
-			return transEndEventNames[name];
-	}
-	return false;
-};
-
-function animateToggle (el, callback) {
-	// TODO: add animate to animated part
-	ketcherWindow.addClassName('animate');
-	var transitionEnd = transitionEndEvent(),
-	animateStop = function (cb) {
-		setTimeout(function () {
-			cb && cb();
-			ketcherWindow.removeClassName('animate');
-		}, 0);
-	};
-
-	if (!callback || !transitionEnd) {
-		animateStop(callback);
-			callback || el();
-	}
-	else {
-		var fireOne = function () {
-			animateStop(callback);
-			el.removeEventListener(transitionEnd, fireOne, false);
-		};
-		el.addEventListener(transitionEnd, fireOne, false);
-	}
-};
-
 function showDialog (name) {
 	var dialog = $(name);
+	var cover = $$('.overlay')[0];
 	keymage.setScope('modal');
-	animateToggle(function () {
-		$$('.overlay')[0].show();
-		// dialog.show();
-		dialog.style.display = '';
-	});
+	dialog.style.display = '';
+	cover.style.display = '';
+
+	utils.animate(cover, 'show');
+	utils.animate(dialog, 'show');
 	return dialog;
 };
 
 function hideDialog (name) {
+	var dialog = $(name);
 	var cover = $$('.overlay')[0];
-	animateToggle(cover, function () {
-		// $(name).hide();
-		$(name).style.display = 'none';
-		cover.hide();
+	utils.animate(cover, 'hide');
+	utils.animate(dialog, 'hide').then(function () {
+		cover.style.display = 'none';
+		dialog.style.display = 'none';
 		keymage.setScope('editor');
 	});
 };
@@ -484,15 +447,15 @@ function serverTransform(method, mol, options) {
 	var request = server[method](util.extend({
 		moldata: molfile.stringify(mol, { ignoreErrors: true })
 	}, options));
-	showDialog('loading');
+	utils.loading('show');
 	request.then(function (data) {
 		var resmol = molfile.parse(data);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
-		hideDialog('loading');
+		utils.loading('hide');
 	}).then(null, function (er) {
-		hideDialog('loading');
+		utils.loading('hide');
 		echo(er);
 	});
 }
@@ -619,9 +582,14 @@ function getStruct(mol, checkEmptyLine) {
 		else {
 			var req = (type == 'smiles') ?
 				server.layout_smiles(null, {smiles: mol.trim()}) :
-				server.molfile({moldata: mol});
+			    server.molfile({moldata: mol});
+			utils.loading('show');
 			resolve(req.then(function (res) {
+				utils.loading('hide');
 				return molfile.parse(res);
+			}, function (err) {
+				utils.loading('hide');
+				throw err;
 			}));
 		}
 	});

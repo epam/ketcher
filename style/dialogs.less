@@ -32,12 +32,14 @@
 
 	background-image: data-uri('overlay.svg');
 	.background-opacity(#777, 0.2);
-
-
-	.transition(background-color 0.25s);
-	//.transition(opacity 0.3s);
 	//opacity: 1;
-	.animate & {
+
+	&.animate {
+		.transition(background-color 0.3s);
+		//.transition(opacity 0.3s);
+	}
+
+	&.hide {
 		background-color: fade(#777, 1%);
 		//opacity: 0.1;
 	}
@@ -53,7 +55,6 @@
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
-		.transition-zoom;
 	}
 }
 
@@ -66,6 +67,7 @@ form[role=dialog] {
 	.box-shadow(0 3px 9px rgba(0,0,0,.5));
 	background-clip: padding-box;
 	overflow: hidden;
+	.transition-zoom;
 	//outline: 0;
 	>* {
 		margin: 0.3em;

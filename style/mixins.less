@@ -327,7 +327,7 @@
 .transition-twirl(@time: 0.3s) {
 	.transform(rotateX(0));
 	.transition(transform @time);
-	.animate & {
+	&.hide {
 		.transform-style(preserve-3d);
 		.transform(perspective(350px) rotateX(-70deg));
 	}
@@ -337,7 +337,8 @@
 	opacity: 1;
 	.scale(1);
 	.transition(transform @time, opacity @time;);
-	.animate & {
+
+	&.hide {
 		opacity: .2;
 		.scale(.5);
 	}

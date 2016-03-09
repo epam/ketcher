@@ -60,6 +60,7 @@ function fileSaver (server) {
 		'smi': 'chemical/x-daylight-smiles',
 		'mol': 'chemical/x-mdl-molfile',
 		'rxn': 'chemical/x-mdl-rxnfile',
+		'cml': 'chemical/x-cml',
 		'inchi': 'chemical/x-inchi'
 	};
 	return new Promise(function (resolve, reject) {
@@ -89,10 +90,13 @@ function convertMolecule (server, molecule, format) {
 		else if (format == 'smi') {
 			resolve(smiles.stringify(molecule));
 		}
+		else if (ui.standalone)
+			// TODO: 'InChI'
+ 			throw Error(format.capitalize() + ' is not supported in the standalone mode');
+		else if (format == 'cml') {
+			resolve(server.cml({ moldata: moldata }));
+		}
 		else if (format == 'inchi') {
-			if (ui.standalone)
-				throw Error('InChI is not supported in the standalone mode');
-
 			if (molecule.rgroups.count() !== 0)
 				ui.echo('R-group fragments are not supported and will be discarded');
 			molecule = molecule.getScaffold();

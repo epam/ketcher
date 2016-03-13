@@ -233,10 +233,10 @@ function selectAction (action) {
 
 			if (el != oldel || !el) { // tool canceling needed when dialog opens
 				// if el.selected not changed
-				if (ui.render.current_tool) {
-					ui.render.current_tool.OnCancel();
+				if (ui.editor.current_tool) {
+					ui.editor.current_tool.OnCancel();
 				}
-				ui.render.current_tool = tool;
+				ui.editor.current_tool = tool;
 
 				if (action.startsWith('select-')) {
 					lastSelected = action;
@@ -604,8 +604,8 @@ function removeSelected ()
 
 function undo ()
 {
-	if (ui.render.current_tool)
-		ui.render.current_tool.OnCancel();
+	if (ui.editor.current_tool)
+		ui.editor.current_tool.OnCancel();
 
 	ui.editor.deselectAll();
 	redoStack.push(undoStack.pop().perform());
@@ -615,8 +615,8 @@ function undo ()
 
 function redo ()
 {
-	if (ui.render.current_tool)
-		ui.render.current_tool.OnCancel();
+	if (ui.editor.current_tool)
+		ui.editor.current_tool.OnCancel();
 
 	ui.editor.deselectAll();
 	undoStack.push(redoStack.pop().perform());

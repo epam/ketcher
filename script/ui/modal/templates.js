@@ -77,7 +77,6 @@ function initTemplateCustom (el, base_url) {
 				'autoScale': true,
 				'autoScaleMargin': 0,
 				//'debug': true,
-				'ignoreMouseEvents': true,
 				'hideChiralFlag': true,
 				'maxBondLength': 30
 			});

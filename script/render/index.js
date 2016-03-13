@@ -18,19 +18,11 @@ var ReStruct = require('./restruct');
 
 require('./restruct_rendering');
 
-var ui = global.ui;
 var tfx = util.tfx;
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false}
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false};
 DEBUG.logMethod = function () { };
 //DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
-
-
-var EventMap = {
-	mousemove: 'mousemove',
-	mousedown: 'mousedown',
-	mouseup: 'mouseup'
-};
 
 var defaultRenderOps = {
 	// flags for debugging
@@ -48,7 +40,6 @@ var defaultRenderOps = {
 	atomColoring: 0,
 	hideImplicitHydrogen: false,
 	hideTerminalLabels: false,
-	ignoreMouseEvents: false, // for view mode
 	selectionDistanceCoefficient: 0.4
 };
 
@@ -72,7 +63,6 @@ var Render = function (clientArea, scale, opt, viewSz)
 	this.rxnArrow = null;
 	this.rxnMode = false;
 	this.zoom = 1.0;
-	this.current_tool = null;
 	this.structChangeHandlers = [];
 
 	var render = this;
@@ -85,135 +75,6 @@ var Render = function (clientArea, scale, opt, viewSz)
 	} while (element);
 
 	this.clientAreaPos = new Vec2(valueL, valueT);
-
-	// rbalabanov: two-fingers scrolling & zooming for iPad
-	// TODO should be moved to touch.js module, re-factoring needed
-	//BEGIN
-	var self = this;
-	self.longTapFlag = false;
-	self.longTapTimeout = null;
-	self.longTapTouchstart = null;
-
-	self.setLongTapTimeout = function (event) {
-		self.longTapFlag = false;
-		self.longTapTouchstart = event;
-		self.longTapTimeout = setTimeout(function () {
-			self.longTapFlag = true;
-			self.longTapTimeout = null;
-		}, 500);
-	};
-
-	self.resetLongTapTimeout = function (resetFlag) {
-		clearTimeout(self.longTapTimeout);
-		self.longTapTimeout = null;
-		if (resetFlag) {
-			self.longTapTouchstart = null;
-			self.longTapFlag = false;
-		}
-	};
-	//END
-
-	// rbalabanov: here is temporary fix for "drag issue" on iPad
-	//BEGIN
-	if ('hiddenPaths' in ReStruct.prototype) {
-		clientArea.observe('touchend', function (event) {
-			if (event.touches.length == 0) {
-				while (ReStruct.prototype.hiddenPaths.length > 0) ReStruct.prototype.hiddenPaths.pop().remove();
-			}
-		});
-	}
-	//END
-
-	if (!this.opt.ignoreMouseEvents) {
-		// [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
-		// here we prevent that freaking "accelerators menu" on IE8
-		//BEGIN
-		clientArea.observe('selectstart', function (event) {
-			util.stopEventPropagation(event);
-			return util.preventDefault(event);
-		});
-		//END
-
-		var zoomStaticPoint = null;
-		clientArea.observe('touchstart', function (event) {
-			self.resetLongTapTimeout(true);
-			if (event.touches.length == 2) {
-				this._tui = this._tui || {};
-				this._tui.center = {
-					pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
-					pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
-				};
-				// set the reference point for the "static point" zoom (in object coordinates)
-				zoomStaticPoint = new Vec2(self.page2obj(this._tui.center));
-			} else if (event.touches.length == 1) {
-				self.setLongTapTimeout(event);
-			}
-		});
-		clientArea.observe('touchmove', function (event) {
-			self.resetLongTapTimeout(true);
-			if ('_tui' in this && event.touches.length == 2) {
-				this._tui.center = {
-					pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
-					pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
-				};
-			}
-		});
-		clientArea.observe('gesturestart', function (event) {
-			this._tui = this._tui || {};
-			this._tui.scale0 = self.zoom;
-			event.preventDefault();
-		});
-		clientArea.observe('gesturechange', function (event) {
-			self.setZoom(this._tui.scale0 * event.scale);
-			var offset = clientArea.cumulativeOffset();
-			var pp = new Vec2(this._tui.center.pageX - offset.left,
-			                  this._tui.center.pageY - offset.top);
-			self.recoordinate(pp, zoomStaticPoint);
-			self.update();
-			event.preventDefault();
-		});
-		clientArea.observe('gestureend', function (event) {
-			delete this._tui;
-			event.preventDefault();
-		});
-		//END
-
-		clientArea.observe('onresize', function (event) {
-			render.onResize();
-		});
-
-		// assign canvas events handlers
-		['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName){
-			var bindEventName = eventName.toLowerCase();
-			bindEventName = EventMap[bindEventName] || bindEventName;
-			clientArea.observe(bindEventName, function (event) {
-				if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
-					// TODO: karulin: fix this on touch devices if needed
-					var co = clientArea.cumulativeOffset();
-					co = new Vec2(co[0], co[1]);
-					var vp = new Vec2(event.clientX, event.clientY).sub(co);
-					var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
-					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
-						if (eventName == 'MouseMove') {
-							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							self.current_tool.processEvent('OnMouseLeave', event);
-						}
-						return util.preventDefault(event);
-					}
-				}
-
-				self.current_tool.processEvent('On' + eventName, event);
-				if (eventName != 'MouseUp') {
-					// [NK] do not stop mouseup propagation
-					// to maintain cliparea focus.
-					// Do we really need total stop here?
-					util.stopEventPropagation(event);
-				}
-				if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
-					return util.preventDefault(event);
-			});
-		}, this);
-	}
 
 	this.ctab = new ReStruct(new Struct(), this);
 	this.settings = null;
@@ -1156,12 +1017,12 @@ Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
 	var a1 = c.addScaled(n, 0.5 * bracketHeight);
 	var b0 = a0.addScaled(d, -bracketWidth);
 	var b1 = a1.addScaled(d, -bracketWidth);
-	
+
 	a0 = this.obj2scaled(a0);
 	a1 = this.obj2scaled(a1);
 	b0 = this.obj2scaled(b0);
 	b1 = this.obj2scaled(b1);
-	
+
 	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
 		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
 	.attr(this.styles.sgroupBracketStyle);

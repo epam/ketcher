@@ -1,5 +1,3 @@
-var ui = global.ui;
-
 var LassoHelper = function (mode, editor, fragment) {
 	this.mode = mode;
 	this.fragment = fragment;

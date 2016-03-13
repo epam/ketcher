@@ -15,27 +15,8 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
 
-var Editor = require('../editor');
-var EditorTool = require('../editor/editortool');
-var RGroupAtomTool = require('../editor/rgroupatomtool');
-var LassoTool = require('../editor/lassotool');
-var SGroupTool = require('../editor/sgrouptool');
-var EraserTool = require('../editor/erasertool');
-var AtomTool = require('../editor/atomtool');
-var BondTool = require('../editor/bondtool');
-var ChainTool = require('../editor/chaintool');
-var TemplateTool = require('../editor/templatetool');
-var ChargeTool = require('../editor/chargetool');
-var RGroupFragmentTool = require('../editor/rgroupfragmenttool');
-var APointTool = require('../editor/apointtool');
-var ReactionArrowTool = require('../editor/reactionarrowtool');
-var ReactionPlusTool = require('../editor/reactionplustool');
-var ReactionMapTool = require('../editor/reactionmaptool');
-var ReactionUnmapTool = require('../editor/reactionunmaptool');
-var PasteTool = require('../editor/pastetool');
-var RotateTool = require('../editor/rotatetool');
-
 var Render = require('../render');
+var Editor = require('../editor');
 
 var Action = require('../editor/action.js');
 var templates = require('./templates');
@@ -226,7 +207,7 @@ function selectAction (action) {
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
 		var tool = mapTool.apply(null, args);
-		if (tool instanceof EditorTool) {
+		if (tool instanceof Editor.tool.base) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
@@ -694,7 +675,7 @@ var actionMap = {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
-		return new PasteTool(ui.editor, struct);
+		return new Editor.tool.paste(ui.editor, struct);
 	},
 	'info': modal.about,
 	'select-all': function () {
@@ -757,45 +738,45 @@ function mapTool (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new LassoTool(ui.editor, 0);
+		return new Editor.tool.lasso(ui.editor, 0);
 	} else if (id == 'select-rectangle') {
-		return new LassoTool(ui.editor, 1);
+		return new Editor.tool.lasso(ui.editor, 1);
 	} else if (id == 'select-fragment') {
-		return new LassoTool(ui.editor, 1, true);
+		return new Editor.tool.lasso(ui.editor, 1, true);
 	} else if (id == 'erase') {
-		return new EraserTool(ui.editor, 1); // TODO last selector mode is better
+		return new Editor.tool.eraser(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
-		return new AtomTool(ui.editor, args[0] || atomLabel(id));
+		return new Editor.tool.atom(ui.editor, args[0] || atomLabel(id));
 	} else if (id.startsWith('bond-')) {
-		return new BondTool(ui.editor, id.substr(5));
+		return new Editor.tool.bond(ui.editor, id.substr(5));
 	} else if (id == 'chain') {
-		return new ChainTool(ui.editor);
+		return new Editor.tool.chain(ui.editor);
 	} else if (id.startsWith('template')) {
-		return new TemplateTool(ui.editor, args[0] || templates[parseInt(id.split('-')[1])]);
+		return new Editor.tool.template(ui.editor, args[0] || templates[parseInt(id.split('-')[1])]);
 	} else if (id == 'charge-plus') {
-		return new ChargeTool(ui.editor, 1);
+		return new Editor.tool.charge(ui.editor, 1);
 	} else if (id == 'charge-minus') {
-		return new ChargeTool(ui.editor, -1);
+		return new Editor.tool.charge(ui.editor, -1);
 	} else if (id == 'sgroup') {
-		return new SGroupTool(ui.editor);
+		return new Editor.tool.sgroup(ui.editor);
 	} else if (id == 'sgroup-data') {
-		return new SGroupTool(ui.editor, 'DAT');
+		return new Editor.tool.sgroup(ui.editor, 'DAT');
 	} else if (id == 'reaction-arrow') {
-		return new ReactionArrowTool(ui.editor);
+		return new Editor.tool.reactionarrow(ui.editor);
 	} else if (id == 'reaction-plus') {
-		return new ReactionPlusTool(ui.editor);
+		return new Editor.tool.reactionplus(ui.editor);
 	} else if (id == 'reaction-map') {
-		return new ReactionMapTool(ui.editor);
+		return new Editor.tool.reactionmap(ui.editor);
 	} else if (id == 'reaction-unmap') {
-		return new ReactionUnmapTool(ui.editor);
+		return new Editor.tool.reactionunmap(ui.editor);
 	} else if (id == 'rgroup-label') {
-		return new RGroupAtomTool(ui.editor);
+		return new Editor.tool.rgroupatom(ui.editor);
 	} else if (id == 'rgroup-fragment') {
-		return new RGroupFragmentTool(ui.editor);
+		return new Editor.tool.rgroupfragment(ui.editor);
 	} else if (id == 'rgroup-attpoints') {
-		return new APointTool(ui.editor);
+		return new Editor.tool.apoint(ui.editor);
 	} else if (id.startsWith('transform-rotate')) {
-		return new RotateTool(ui.editor);
+		return new Editor.tool.rotate(ui.editor);
 	}
 	return null;
 };

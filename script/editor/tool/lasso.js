@@ -1,14 +1,14 @@
-var Action = require('./action');
-var element = require('../chem/element');
-var SGroup = require('../chem/sgroup');
-var Bond = require('../chem/bond');
-var util = require('../util');
+var Action = require('../action');
+var element = require('../../chem/element');
+var SGroup = require('../../chem/sgroup');
+var Bond = require('../../chem/bond');
+var util = require('../../util');
 
-var EditorTool = require('./editortool');
-var HoverHelper = require('./hoverhelper');
-var LassoHelper = require('./lassohelper');
-var SGroupHelper = require('./sgrouphelper');
-var RGroupAtomTool = require('./rgroupatomtool');
+var EditorTool = require('./base');
+var HoverHelper = require('./helper/hover');
+var LassoHelper = require('./helper/lasso');
+var SGroupHelper = require('./helper/sgroup');
+var RGroupAtomTool = require('./rgroupatom');
 
 var ui = global.ui;
 

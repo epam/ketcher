@@ -1,4 +1,4 @@
-var Action = require('./action');
+var Action = require('../../action');
 
 var ui = global.ui;
 

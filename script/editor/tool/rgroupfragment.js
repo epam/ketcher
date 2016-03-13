@@ -1,8 +1,8 @@
-var Struct = require('../chem/struct');
+var Struct = require('../../chem/struct');
 
-var Action = require('./action');
-var HoverHelper = require('./hoverhelper');
-var EditorTool = require('./editortool');
+var Action = require('../action');
+var HoverHelper = require('./helper/hover');
+var EditorTool = require('./base');
 
 var ui = global.ui;
 

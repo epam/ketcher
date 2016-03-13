@@ -1,7 +1,7 @@
-var Action = require('./action');
-var HoverHelper = require('./hoverhelper');
-var EditorTool = require('./editortool');
-var element = require('../chem/element');
+var Action = require('../action');
+var HoverHelper = require('./helper/hover');
+var EditorTool = require('./base');
+var element = require('../../chem/element');
 
 var ui = global.ui;
 

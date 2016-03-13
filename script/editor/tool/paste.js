@@ -1,5 +1,5 @@
-var Action = require('./action');
-var EditorTool = require('./editortool');
+var Action = require('../action');
+var EditorTool = require('./base');
 
 var ui = global.ui;
 

@@ -1,7 +1,7 @@
-var EditorTool = require('./editortool');
-var HoverHelper = require('./hoverhelper');
-var LassoHelper = require('./lassohelper');
-var SGroupHelper = require('./sgrouphelper');
+var EditorTool = require('./base');
+var HoverHelper = require('./helper/hover');
+var LassoHelper = require('./helper/lasso');
+var SGroupHelper = require('./helper/sgroup');
 
 var SGroupTool = function (editor, type) {
 	this.editor = editor;

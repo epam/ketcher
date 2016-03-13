@@ -1,8 +1,8 @@
-var Vec2 = require('../util/vec2');
+var Vec2 = require('../../util/vec2');
 
-var Action = require('./action');
-var LassoHelper = require('./lassohelper');
-var EditorTool = require('./editortool');
+var Action = require('../action');
+var LassoHelper = require('./helper/lasso');
+var EditorTool = require('./base');
 
 var ui = global.ui;
 

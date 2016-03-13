@@ -1,6 +1,6 @@
-var EditorTool = require('./editortool');
-var HoverHelper = require('./hoverhelper');
-var EditorGlobal = require('./editorglobal');
+var EditorTool = require('./base');
+var HoverHelper = require('./helper/hover');
+var EditorGlobal = require('./global');
 
 var RGroupAtomTool = function (editor) {
 	this.editor = editor;

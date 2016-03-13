@@ -3,7 +3,28 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var ReStruct = require('../render/restruct');
-var SelectionHelper = require('./selectionhelper');
+var SelectionHelper = require('./tool/helper/selection');
+
+var toolMap = {
+	base: require('./tool/base'),
+	rgroupatom: require('./tool/rgroupatom'),
+	lasso: require('./tool/lasso'),
+	sgroup: require('./tool/sgroup'),
+	eraser: require('./tool/eraser'),
+	atom: require('./tool/atom'),
+	bond: require('./tool/bond'),
+	chain: require('./tool/chain'),
+	template: require('./tool/template'),
+	charge: require('./tool/charge'),
+	rgroupfragment: require('./tool/rgroupfragment'),
+	apoint: require('./tool/apoint'),
+	reactionarrow: require('./tool/reactionarrow'),
+	reactionplus: require('./tool/reactionplus'),
+	reactionmap: require('./tool/reactionmap'),
+	reactionunmap: require('./tool/reactionunmap'),
+	paste: require('./tool/paste'),
+	rotate: require('./tool/rotate')
+};
 
 var ui = global.ui;
 
@@ -14,6 +35,8 @@ var Editor = function (render)
 	this.current_tool = null;
 	this.setupEvents();
 };
+
+Editor.tool = toolMap;
 
 // Events setup extracted from render
 Editor.prototype.setupEvents = function () {

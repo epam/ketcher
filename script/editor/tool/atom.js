@@ -1,7 +1,7 @@
-var Bond = require('../chem/bond');
-var Action = require('./action');
-var HoverHelper = require('./hoverhelper');
-var EditorTool = require('./editortool');
+var Bond = require('../../chem/bond');
+var Action = require('../action');
+var HoverHelper = require('./helper/hover');
+var EditorTool = require('./base');
 
 var ui = global.ui;
 

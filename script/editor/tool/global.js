@@ -1,5 +1,5 @@
-var Atom = require('../chem/atom');
-var Action = require('./action');
+var Atom = require('../../chem/atom');
+var Action = require('../action');
 
 var ui = global.ui;
 

@@ -1,7 +1,7 @@
-var Action = require('./action');
-var EditorTool = require('./editortool');
-var HoverHelper = require('./hoverhelper');
-var LassoHelper = require('./lassohelper');
+var Action = require('../action');
+var EditorTool = require('./base');
+var HoverHelper = require('./helper/hover');
+var LassoHelper = require('./helper/lasso');
 
 var ui = global.ui;
 

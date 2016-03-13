@@ -1,7 +1,7 @@
-var Set = require('../util/set');
-var Action = require('./action');
-var HoverHelper = require('./hoverhelper');
-var EditorTool = require('./editortool');
+var Set = require('../../util/set');
+var Action = require('../action');
+var HoverHelper = require('./helper/hover');
+var EditorTool = require('./base');
 
 var ui = global.ui;
 

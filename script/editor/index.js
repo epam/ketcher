@@ -6,11 +6,6 @@ var ReStruct = require('../render/restruct');
 var SelectionHelper = require('./selectionhelper');
 
 var ui = global.ui;
-var EventMap = {
-	mousemove: 'mousemove',
-	mousedown: 'mousedown',
-	mouseup: 'mouseup'
-};
 
 var Editor = function (render)
 {
@@ -22,7 +17,7 @@ var Editor = function (render)
 
 // Events setup extracted from render
 Editor.prototype.setupEvents = function () {
-	var self = this;
+	var editor = this;
 	var render = this.render;
 	var clientArea = render.clientArea;
 	// rbalabanov: here is temporary fix for "drag issue" on iPad
@@ -39,25 +34,25 @@ Editor.prototype.setupEvents = function () {
 	// rbalabanov: two-fingers scrolling & zooming for iPad
 	// TODO should be moved to touch.js module, re-factoring needed
 	//BEGIN
-	self.longTapFlag = false;
-	self.longTapTimeout = null;
-	self.longTapTouchstart = null;
+	this.longTapFlag = false;
+	this.longTapTimeout = null;
+	this.longTapTouchstart = null;
 
-	self.setLongTapTimeout = function (event) {
-		self.longTapFlag = false;
-		self.longTapTouchstart = event;
-		self.longTapTimeout = setTimeout(function () {
-			self.longTapFlag = true;
-			self.longTapTimeout = null;
+	editor.setLongTapTimeout = function (event) {
+		editor.longTapFlag = false;
+		editor.longTapTouchstart = event;
+		editor.longTapTimeout = setTimeout(function () {
+			editor.longTapFlag = true;
+			editor.longTapTimeout = null;
 		}, 500);
 	};
 
-	self.resetLongTapTimeout = function (resetFlag) {
-		clearTimeout(self.longTapTimeout);
-		self.longTapTimeout = null;
+	editor.resetLongTapTimeout = function (resetFlag) {
+		clearTimeout(editor.longTapTimeout);
+		editor.longTapTimeout = null;
 		if (resetFlag) {
-			self.longTapTouchstart = null;
-			self.longTapFlag = false;
+			editor.longTapTouchstart = null;
+			editor.longTapFlag = false;
 		}
 	};
 	//END
@@ -73,7 +68,7 @@ Editor.prototype.setupEvents = function () {
 
 	var zoomStaticPoint = null;
 	clientArea.observe('touchstart', function (event) {
-		self.resetLongTapTimeout(true);
+		editor.resetLongTapTimeout(true);
 		if (event.touches.length == 2) {
 			this._tui = this._tui || {};
 			this._tui.center = {
@@ -83,11 +78,11 @@ Editor.prototype.setupEvents = function () {
 			// set the reference point for the "static point" zoom (in object coordinates)
 			zoomStaticPoint = new Vec2(render.page2obj(this._tui.center));
 		} else if (event.touches.length == 1) {
-			self.setLongTapTimeout(event);
+			editor.setLongTapTimeout(event);
 		}
 	});
 	clientArea.observe('touchmove', function (event) {
-		self.resetLongTapTimeout(true);
+		editor.resetLongTapTimeout(true);
 		if ('_tui' in this && event.touches.length == 2) {
 			this._tui.center = {
 				pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
@@ -122,7 +117,6 @@ Editor.prototype.setupEvents = function () {
 	// assign canvas events handlers
 	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName){
 		var bindEventName = eventName.toLowerCase();
-		bindEventName = EventMap[bindEventName] || bindEventName;
 		clientArea.observe(bindEventName, function (event) {
 			if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
 				// TODO: karulin: fix this on touch devices if needed
@@ -133,13 +127,13 @@ Editor.prototype.setupEvents = function () {
 				if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
 					if (eventName == 'MouseMove') {
 						// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-						self.current_tool.processEvent('OnMouseLeave', event);
+						editor.current_tool.processEvent('OnMouseLeave', event);
 					}
 					return util.preventDefault(event);
 				}
 			}
 
-			self.current_tool.processEvent('On' + eventName, event);
+			editor.current_tool.processEvent('On' + eventName, event);
 			if (eventName != 'MouseUp') {
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.

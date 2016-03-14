@@ -206,19 +206,15 @@ function selectAction (action) {
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
-		var tool = mapTool.apply(null, args);
-		if (tool instanceof Editor.tool.base) {
+		var act = mapTool.apply(null, args);
+		if (act && act.tool) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
 
 			if (el != oldel || !el) { // tool canceling needed when dialog opens
 				// if el.selected not changed
-				if (ui.editor.current_tool) {
-					ui.editor.current_tool.OnCancel();
-				}
-				ui.editor.current_tool = tool;
-
+				ui.editor.tool(act.tool, act.opts);
 				if (action.startsWith('select-')) {
 					lastSelected = action;
 				}
@@ -230,7 +226,7 @@ function selectAction (action) {
 				}
 			}
 		}
-		return tool;
+		return act;
 	}
 	return null;
 };
@@ -585,8 +581,8 @@ function removeSelected ()
 
 function undo ()
 {
-	if (ui.editor.current_tool)
-		ui.editor.current_tool.OnCancel();
+	if (ui.editor.tool())
+		ui.editor.tool().OnCancel();
 
 	ui.editor.deselectAll();
 	redoStack.push(undoStack.pop().perform());
@@ -596,8 +592,8 @@ function undo ()
 
 function redo ()
 {
-	if (ui.editor.current_tool)
-		ui.editor.current_tool.OnCancel();
+	if (ui.editor.tool())
+		ui.editor.tool().OnCancel();
 
 	ui.editor.deselectAll();
 	undoStack.push(redoStack.pop().perform());
@@ -675,7 +671,7 @@ var actionMap = {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
-		return new Editor.tool.paste(ui.editor, struct);
+		return { tool: 'paste', opts: struct };
 	},
 	'info': modal.about,
 	'select-all': function () {
@@ -715,10 +711,8 @@ function mapTool (id) {
 		}
 
 		if (id.startsWith('transform-flip')) {
-			addUndoAction(Action.fromFlip(ui.editor.getSelection(),
-				id.endsWith('h') ? 'horizontal' :
-					'vertical'),
-				true);
+			addUndoAction(Action.fromFlip(ui.editor.getSelection(), id.endsWith('h') ? 'horizontal' :
+			                              'vertical'), true);
 			ui.render.update();
 			return null;
 		}
@@ -738,45 +732,45 @@ function mapTool (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new Editor.tool.select(ui.editor, 'lasso');
+		return { tool: 'select', opts: 'lasso' };
 	} else if (id == 'select-rectangle') {
-		return new Editor.tool.select(ui.editor, 'rectangle');
+		return { tool: 'select', opts: 'rectangle' };
 	} else if (id == 'select-fragment') {
-		return new Editor.tool.select(ui.editor, 'fragment');
+		return { tool: 'select', opts:'fragment' };
 	} else if (id == 'erase') {
-		return new Editor.tool.eraser(ui.editor, 1); // TODO last selector mode is better
+		return { tool: 'eraser', opts: 1 }; // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
-		return new Editor.tool.atom(ui.editor, args[0] || atomLabel(id));
+		return { tool: 'atom', opts: args[0] || atomLabel(id) };
 	} else if (id.startsWith('bond-')) {
-		return new Editor.tool.bond(ui.editor, id.substr(5));
+		return { tool: 'bond', opts: id.substr(5) };
 	} else if (id == 'chain') {
-		return new Editor.tool.chain(ui.editor);
+		return { tool: 'chain' };
 	} else if (id.startsWith('template')) {
-		return new Editor.tool.template(ui.editor, args[0] || templates[parseInt(id.split('-')[1])]);
+		return { tool: 'template', opts: args[0] || templates[parseInt(id.split('-')[1])] };
 	} else if (id == 'charge-plus') {
-		return new Editor.tool.charge(ui.editor, 1);
+		return { tool: 'charge', opts: 1 };
 	} else if (id == 'charge-minus') {
-		return new Editor.tool.charge(ui.editor, -1);
+		return { tool: 'charge', opts: -1 };
 	} else if (id == 'sgroup') {
-		return new Editor.tool.sgroup(ui.editor);
+		return { tool: 'sgroup' };
 	} else if (id == 'sgroup-data') {
-		return new Editor.tool.sgroup(ui.editor, 'DAT');
+		return { tool: 'sgroup', opts: 'DAT' };
 	} else if (id == 'reaction-arrow') {
-		return new Editor.tool.reactionarrow(ui.editor);
+		return { tool: 'reactionarrow' };
 	} else if (id == 'reaction-plus') {
-		return new Editor.tool.reactionplus(ui.editor);
+		return { tool: 'reactionplus' };
 	} else if (id == 'reaction-map') {
-		return new Editor.tool.reactionmap(ui.editor);
+		return { tool: 'reactionmap' };
 	} else if (id == 'reaction-unmap') {
-		return new Editor.tool.reactionunmap(ui.editor);
+		return { tool: 'reactionunmap' };
 	} else if (id == 'rgroup-label') {
-		return new Editor.tool.rgroupatom(ui.editor);
+		return { tool: 'rgroupatom' };
 	} else if (id == 'rgroup-fragment') {
-		return new Editor.tool.rgroupfragment(ui.editor);
+		return { tool: 'rgroupfragment' };
 	} else if (id == 'rgroup-attpoints') {
-		return new Editor.tool.apoint(ui.editor);
+		return { tool: 'apoint' };
 	} else if (id.startsWith('transform-rotate')) {
-		return new Editor.tool.rotate(ui.editor);
+		return { tool: 'rotate' };
 	}
 	return null;
 };

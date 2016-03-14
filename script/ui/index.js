@@ -738,11 +738,11 @@ function mapTool (id) {
 		ui.editor.deselectAll();
 
 	if (id == 'select-lasso') {
-		return new Editor.tool.lasso(ui.editor, 0);
+		return new Editor.tool.select(ui.editor, 'lasso');
 	} else if (id == 'select-rectangle') {
-		return new Editor.tool.lasso(ui.editor, 1);
+		return new Editor.tool.select(ui.editor, 'rectangle');
 	} else if (id == 'select-fragment') {
-		return new Editor.tool.lasso(ui.editor, 1, true);
+		return new Editor.tool.select(ui.editor, 'fragment');
 	} else if (id == 'erase') {
 		return new Editor.tool.eraser(ui.editor, 1); // TODO last selector mode is better
 	} else if (id.startsWith('atom-')) {
@@ -789,7 +789,7 @@ function atomLabel (mode) {
 	default:
 		label = label.capitalize();
 		console.assert(element.getElementByLabel(label),
-					  "No such atom exist");
+		               "No such atom exist");
 		return {label: label};
 	}
 };

@@ -8,7 +8,7 @@ var SelectionHelper = require('./tool/helper/selection');
 var toolMap = {
 	base: require('./tool/base'),
 	rgroupatom: require('./tool/rgroupatom'),
-	lasso: require('./tool/lasso'),
+	select: require('./tool/select'),
 	sgroup: require('./tool/sgroup'),
 	eraser: require('./tool/eraser'),
 	atom: require('./tool/atom'),

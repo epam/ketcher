@@ -12,16 +12,16 @@ var RGroupAtomTool = require('./rgroupatom');
 
 var ui = global.ui;
 
-var LassoTool = function (editor, mode, fragment) {
+var SelectTool = function (editor, mode) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-	this._lassoHelper = new LassoHelper(mode || 0, editor, fragment);
+	this._lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 	this._sGroupHelper = new SGroupHelper(editor);
 };
 
-LassoTool.prototype = new EditorTool();
-LassoTool.prototype.OnMouseDown = function (event) {
+SelectTool.prototype = new EditorTool();
+SelectTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab, struct = ctab.molecule;
 	this._hoverHelper.hover(null); // TODO review hovering for touch devices
@@ -96,7 +96,7 @@ LassoTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-LassoTool.prototype.OnMouseMove = function (event) {
+SelectTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
@@ -129,7 +129,7 @@ LassoTool.prototype.OnMouseMove = function (event) {
 	}
 	return true;
 };
-LassoTool.prototype.OnMouseUp = function (event) {
+SelectTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
@@ -156,7 +156,7 @@ LassoTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-LassoTool.prototype.OnDblClick = function (event) {
+SelectTool.prototype.OnDblClick = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event);
 	var struct = rnd.ctab.molecule;
@@ -251,7 +251,7 @@ LassoTool.prototype.OnDblClick = function (event) {
 	return true;
 };
 
-LassoTool.prototype.OnCancel = function () {
+SelectTool.prototype.OnCancel = function () {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
@@ -264,4 +264,4 @@ LassoTool.prototype.OnCancel = function () {
 	this._hoverHelper.hover(null);
 };
 
-module.exports = LassoTool;
+module.exports = SelectTool;

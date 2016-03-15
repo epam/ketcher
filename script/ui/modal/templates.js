@@ -1,4 +1,3 @@
-var Promise = require('promise-polyfill');
 var molfile = require('../../chem/molfile');
 var ajax = require('../../util/ajax.js');
 

@@ -1,6 +1,5 @@
 var ui = global.ui = {};
 
-var Promise = require('promise-polyfill');
 var keymage = require('keymage');
 
 var util = require('../util');

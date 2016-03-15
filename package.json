@@ -58,7 +58,6 @@
     "filesaver.js": "^0.2.0",
     "html5shiv": "^3.7.3",
     "keymage": "^1.1.0",
-    "promise-polyfill": "^2.0.2",
     "query-string": "^2.3.0",
     "raphael": "^2.1.4",
     "xhrpolyfill": "^1.0.0"

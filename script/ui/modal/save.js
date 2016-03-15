@@ -1,4 +1,3 @@
-var Promise = require('promise-polyfill');
 var fs = require('filesaver.js');
 
 var molfile = require('../../chem/molfile');

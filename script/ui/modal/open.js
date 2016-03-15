@@ -2,7 +2,6 @@
 
 /*eslint-disable*/
 
-var Promise = require('promise-polyfill');
 // var base64 = require('base64-js');
 
 var ui = global.ui;

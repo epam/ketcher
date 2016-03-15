@@ -1,5 +1,3 @@
-var Promise = require('promise-polyfill');
-
 function transitionEndEvent () {
 	var el = document.createElement('transitionTest'),
 	transEndEventNames = {

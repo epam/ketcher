@@ -8,9 +8,7 @@ module.exports = function (grunt) {
 			src: ['script/**', 'style/**', 'icons/**',
 			      'template/**', 'Gruntfile.js', 'package.json',
 			      '.jshintrc', '.editorconfig'],
-			libs: ['prototype-min.js', 'raphael-min.js'],
-			// add 'es5-shim' when prototype goes
-			polyfills: ['html5shiv'],
+			polyfills: ['html5shiv', 'es5-shim', 'es6-shim'],
 			build: ['<%= browserify.default.dest %>',
 			        '<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
@@ -55,8 +53,8 @@ module.exports = function (grunt) {
 					['browserify-replace', {
 							replace: '<%= options.replace %>'
 					}]
-				]
-				//preBundleCB: polyfillify
+				],
+				preBundleCB: polyfillify
 			},
 			dev: {
 				options: {
@@ -267,11 +265,28 @@ module.exports = function (grunt) {
 		cb();
 	}
 
-	function polyfillify(b) {
+	function polyfillify(build) {
+		var fs = require('fs');
+		var through = require('through2');
 		var ps = grunt.config('options.polyfills');
-		b.add(ps.map(function (p) {
-			return require.resolve(p);
-		}));
+		build.on('bundle', function() {
+			console.info('hello');
+			var firstChunk = true;
+			var polyfillData = ps.reduce(function (res, module) {
+				var data = fs.readFileSync(require.resolve(module));
+				return res + data + '\n';
+			}, '');
+			var stream = through.obj(function (buf, enc, next) {
+				if (firstChunk) {
+					this.push(polyfillData);
+					firstChunk = false;
+				}
+				this.push(buf);
+				next();
+			});
+			stream.label = "prepend";
+			build.pipeline.get('wrap').push(stream);
+		});
 	}
 
 	require('load-grunt-tasks')(grunt);

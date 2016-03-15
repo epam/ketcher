@@ -164,18 +164,6 @@ var isNullOrUndefined = function (v) {
 	return isUndefined(v) || isNull(v);
 };
 
-var arrayRemoveByValue = function (array, item) {
-	assert(!isUndefined(array) && !isNull(array), 'array must be defined');
-	var idx = array.indexOf(item);
-	var cnt = 0;
-	while (idx >= 0) {
-		array.splice(idx, 1);
-		cnt += 1;
-		idx = array.indexOf(item);
-	}
-	return cnt;
-};
-
 var listNextRotate = function (list, value) {
 	return list[(list.indexOf(value) + 1) % list.length];
 };
@@ -233,7 +221,6 @@ module.exports = {
 	isUndefined: isUndefined,
 	isNull: isNull,
 	isNullOrUndefined: isNullOrUndefined,
-	arrayRemoveByValue: arrayRemoveByValue,
 	listNextRotate: listNextRotate,
 	extend: extend,
 	isObject: isObject,

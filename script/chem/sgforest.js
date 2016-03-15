@@ -104,7 +104,11 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 
 	// TODO: make children Map<int, Set> instead of Map<int, []>?
 	children.forEach(function (childId){ // reset parent links
-		util.assert(util.arrayRemoveByValue(this.children.get(this.parent.get(childId)), childId) === 1);
+		var parentId = this.parent.get(childId);
+		var cho = this.children.get(parentId);
+		var chn = cho.filter(function (id) { return id != childId; });
+		util.assert(cho.length == chn.length + 1);
+		this.children.set(parentId, chn);
 		this.parent.set(childId, id);
 	}, this);
 	this.children.set(id, children);
@@ -124,7 +128,11 @@ SGroupForest.prototype.remove = function (id) {
 		this.parent.set(childId, parentId);
 		this.children.get(parentId).push(childId);
 	}, this);
-	util.assert(util.arrayRemoveByValue(this.children.get(parentId), id) === 1);
+
+	var cho = this.children.get(parentId);
+	var chn = cho.filter(function (i) { return i != id; });
+	util.assert(cho.length == chn.length + 1);
+
 	this.children.unset(id);
 	this.parent.unset(id);
 	util.assert(this.validate(), 's-group forest invalid');

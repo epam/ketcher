@@ -270,7 +270,6 @@ module.exports = function (grunt) {
 		var through = require('through2');
 		var ps = grunt.config('options.polyfills');
 		build.on('bundle', function() {
-			console.info('hello');
 			var firstChunk = true;
 			var polyfillData = ps.reduce(function (res, module) {
 				var data = fs.readFileSync(require.resolve(module));

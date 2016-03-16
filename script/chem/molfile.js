@@ -593,7 +593,7 @@ var applyDataSGroupData = function (sg, data, finalize) {
 	/* reader */
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
-		sg.data.fieldValue = sg.data.fieldValue.trimRight();
+		sg.data.fieldValue = trimRight(sg.data.fieldValue);
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
 		// Partially revert f556e8, from KETCHER-457 and RB with love
@@ -2077,6 +2077,14 @@ function paddedInt(number, width) {
 	return stringPadded(numStr, width);
 }
 
+function trimRight(str) {
+	if (str.trimRight)
+		return str.trimRight();
+	return str.replace(/\s+$/, '');
+}
+// consider using https://github.com/es-shims/es7-shim
+// ^for all that above
+
 function stripQuotes(str) {
 	if (str[0] === '"' && str[str.length - 1] === '"') {
 		return str.substr(1, str.length - 2);
@@ -2104,6 +2112,6 @@ module.exports = {
 		                                            opts.noRgroups, opts.preserveIndigoDesc);
 	},
 	parse: function (str, options) {
-		return parseCTFile(str, options);
+		return parseCTFile(str, options || {});
 	}
 };

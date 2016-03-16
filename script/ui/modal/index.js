@@ -1,4 +1,3 @@
-var util = require('../../util');
 var element = require('../../chem/element');
 
 var inputDialog = require('./input');
@@ -75,7 +74,7 @@ function atomProps (params) {
 		handlers.forEach(function (h) { h.stop(); });
 	}
 
-	inputDialog('atom_properties', util.extend({}, params, {
+	inputDialog('atom_properties', Object.assign({}, params, {
 		onOk: function (res) { stopHandlers(); params.onOk(res); },
 		onCancel: function (res) { stopHandlers(); }
 	}));
@@ -101,7 +100,7 @@ function atomProps (params) {
 };
 
 function rgroupLogic (params) {
-	inputDialog('rlogic_table', util.extend({}, params, {
+	inputDialog('rlogic_table', Object.assign({}, params, {
 		onOk: function (res) {
 			params.onOk({
 				range: res.range.replace(/\s*/g, '').replace(/,+/g, ',')

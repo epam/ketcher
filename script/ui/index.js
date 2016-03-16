@@ -2,7 +2,6 @@ var ui = global.ui = {};
 
 var keymage = require('keymage');
 
-var util = require('../util');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
@@ -90,7 +89,7 @@ function init (options, apiServer) {
 			});
 		}
 	});
-	keyMap = util.extend(keyMap, {
+	keyMap = Object.assign(keyMap, {
 		'a': ['atom-any'],
 		'defmod-a': ['select-all'],
 		'defmod-shift-a': ['deselect-all'],
@@ -147,7 +146,7 @@ function init (options, apiServer) {
 
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,
-	                        util.extend({ atomColoring: true }, options));
+	                        Object.assign({ atomColoring: true }, options));
 	ui.editor = new Editor(ui.render);
 
 	selectAction('select-lasso');
@@ -416,11 +415,11 @@ function save () {
 }
 
 function serverTransform(method, mol, options) {
-	util.assert(!ui.standalone, 'Call server in standalone mode!');
+	console.assert(!ui.standalone, 'Call server in standalone mode!');
 	if (!mol)
 		mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var request = server[method](util.extend({
+	var request = server[method](Object.assign({
 		moldata: molfile.stringify(mol, { ignoreErrors: true })
 	}, options));
 	utils.loading('show');
@@ -805,9 +804,9 @@ module.exports = {
 	loadFragment: loadFragment
 };
 
-util.extend(ui, module.exports);
+Object.assign(ui, module.exports);
 
-util.extend(ui, {
+Object.assign(ui, {
 	standalone: true,
 	ctab: new Struct(),
 	render: null,

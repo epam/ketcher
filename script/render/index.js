@@ -45,7 +45,7 @@ var defaultRenderOps = {
 
 var Render = function (clientArea, scale, opt, viewSz)
 {
-	this.opt = util.extend({}, defaultRenderOps, opt);
+	this.opt = Object.assign({}, defaultRenderOps, opt);
 
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;

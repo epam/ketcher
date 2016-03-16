@@ -33,7 +33,7 @@ function addFragment(molString) {
 };
 
 function showMolfile(clientArea, molString, options) {
-	var opts = util.extend({
+	var opts = Object.assign({
 		bondLength: 75,
 		showSelectionRegions: false,
 		showBondIds: false,
@@ -66,7 +66,7 @@ window.onload = function () {
 	if (params.api_path)
 		ketcher.api_path = params.api_path;
 	ketcher.server = api(ketcher.api_path);
-	ui.init(util.extend({}, params), ketcher.server);
+	ui.init(Object.assign({}, params), ketcher.server);
 };
 
 var ketcher = module.exports = {

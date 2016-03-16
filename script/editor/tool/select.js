@@ -2,7 +2,6 @@ var Action = require('../action');
 var element = require('../../chem/element');
 var SGroup = require('../../chem/sgroup');
 var Bond = require('../../chem/bond');
-var util = require('../../util');
 
 var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
@@ -234,7 +233,7 @@ SelectTool.prototype.OnDblClick = function (event) {
 			topology: rnd.bondGetAttr(ci.id, 'topology') || 0,
 			center: rnd.bondGetAttr(ci.id, 'reactingCenterStatus') || 0,
 			onOk: function (res) {
-				var bond = util.extend(Bond.caption2Type(res.type), {
+				var bond = Object.assign(Bond.caption2Type(res.type), {
 					topology: parseInt(res.topology, 10),
 					reactingCenterStatus: parseInt(res.center, 10)
 				});

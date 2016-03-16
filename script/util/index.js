@@ -168,22 +168,6 @@ var listNextRotate = function (list, value) {
 	return list[(list.indexOf(value) + 1) % list.length];
 };
 
-// similar to Object.assign
-// http://www.2ality.com/2014/01/object-assign.html
-function extend(dest) {
-	for (var i = 1; i < arguments.length; i++) {
-		var src = arguments[i];
-		if (!src)
-			continue;
-		for (var prop in src) {
-			if (src.hasOwnProperty(prop)) {
-				dest[prop] = src[prop];
-			}
-		}
-	}
-	return dest;
-};
-
 var isObject = function (obj) {
 	return obj === Object(obj);
 };
@@ -222,7 +206,6 @@ module.exports = {
 	isNull: isNull,
 	isNullOrUndefined: isNullOrUndefined,
 	listNextRotate: listNextRotate,
-	extend: extend,
 	isObject: isObject,
 	relBox: relBox
 };

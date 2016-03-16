@@ -51,7 +51,7 @@ function queryString(obj) {
 }
 
 function request(opts) {
-	var options = util.extend({
+	var options = Object.assign({
 		method: 'GET',
 		headers: {},
 		timeout: 6000

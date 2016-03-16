@@ -1,6 +1,5 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
-var util = require('../util');
 var op = require('./op');
 
 var Atom = require('../chem/atom');
@@ -1463,7 +1462,7 @@ function fromRotate (objects, pos, angle) {
 	return action.perform();
 };
 
-module.exports = util.extend(Action, {
+module.exports = Object.assign(Action, {
 	fromMultipleMove: fromMultipleMove,
 	fromAtomAddition: fromAtomAddition,
 	fromArrowAddition: fromArrowAddition,

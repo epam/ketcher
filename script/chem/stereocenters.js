@@ -46,12 +46,12 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 			return false;
 
 		// get the other neighbors of the two adjacent atoms except for the central atom
-		var nei1nei = util.findAll(this.getNeighbors.call(this.context, nei1.aid), function (nei) {
+		var nei1nei = this.getNeighbors.call(this.context, nei1.aid).filter(function (nei) {
 			return nei.aid != aid;
-		}, this);
-		var nei2nei = util.findAll(this.getNeighbors.call(this.context, nei2.aid), function (nei) {
+		});
+		var nei2nei = this.getNeighbors.call(this.context, nei2.aid).filter(function (nei) {
 			return nei.aid != aid;
-		}, this);
+		});
 		if (nei1nei.length < 1 || nei1nei.length > 2 || nei2nei.length < 1 || nei2nei.length > 2)
 			return false;
 

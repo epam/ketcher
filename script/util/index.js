@@ -10,17 +10,6 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-var findAll = function (array, func, context) {
-	var i;
-	var ret = [];
-	for (i = 0; i < array.length; ++i) {
-		if (func.call(context, array[i], i)) {
-			ret.push(array[i]);
-		}
-	}
-	return ret;
-};
-
 var array = function (arrayLike) {
 	var a = [];
 	var i = arrayLike.length;
@@ -268,7 +257,6 @@ var relBox = function (box) {
 
 module.exports = {
 	tfx: tfx,
-	findAll: findAll,
 	array: array,
 	isEmpty: isEmpty,
 	stopEventPropagation: stopEventPropagation,

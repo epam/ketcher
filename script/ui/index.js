@@ -478,7 +478,7 @@ function updateZoom (refresh) {
 }
 
 function layout () {
-	var atoms = util.array(ui.editor.getSelection(true).atoms);
+	var atoms = [].slice.call(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
 
 	return !selective ? serverTransform('layout') :

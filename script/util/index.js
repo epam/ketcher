@@ -1,11 +1,3 @@
-/*global module*/
-
-Array.prototype.swap = function (i1, i2) { //eslint-disable-line
-	var tmp = this[i1];
-	this[i1] = this[i2];
-	this[i2] = tmp;
-};
-
 var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };

@@ -80,7 +80,7 @@ CisTrans.prototype._sortSubstituents = function (substituents) {
 		substituents[0] = substituents[1];
 		substituents[1] = -1;
 	} else if (substituents[0] > substituents[1]) {
-		substituents.swap(0, 1);
+		swap(substituents, 0, 1);
 	}
 
 	if (h3) {
@@ -89,7 +89,7 @@ CisTrans.prototype._sortSubstituents = function (substituents) {
 		substituents[2] = substituents[3];
 		substituents[3] = -1;
 	} else if (substituents[2] > substituents[3]) {
-		substituents.swap(2, 3);
+		swap(substituents, 2, 3);
 	}
 
 	return true;
@@ -205,5 +205,11 @@ CisTrans.prototype.build = function (exclude_bonds) {
 			ct.parity = CisTrans.PARITY.TRANS;
 	}, this);
 };
+
+function swap(arr, i1, i2) {
+	var tmp = arr[i1];
+	arr[i1] = arr[i2];
+	arr[i2] = tmp;
+}
 
 module.exports = CisTrans;

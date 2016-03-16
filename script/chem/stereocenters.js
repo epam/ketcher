@@ -1,7 +1,6 @@
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
-var util = require('../util');
 
 var Bond = require('./bond');
 
@@ -227,17 +226,17 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 	{
 		// sort by neighbor atom index (ascending)
 		if (edge_ids[0].rank > edge_ids[1].rank)
-			edge_ids.swap(0, 1);
+			swap(edge_ids, 0, 1);
 		if (edge_ids[1].rank > edge_ids[2].rank)
-			edge_ids.swap(1, 2);
+			swap(edge_ids, 1, 2);
 		if (edge_ids[2].rank > edge_ids[3].rank)
-			edge_ids.swap(2, 3);
+			swap(edge_ids, 2, 3);
 		if (edge_ids[1].rank > edge_ids[2].rank)
-			edge_ids.swap(1, 2);
+			swap(edge_ids, 1, 2);
 		if (edge_ids[0].rank > edge_ids[1].rank)
-			edge_ids.swap(0, 1);
+			swap(edge_ids, 0, 1);
 		if (edge_ids[1].rank > edge_ids[2].rank)
-			edge_ids.swap(1, 2);
+			swap(edge_ids, 1, 2);
 
 		var main1 = -1, main2 = -1, side1 = -1, side2 = -1;
 		var main_dir = 0;
@@ -337,11 +336,11 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 	{
 		// sort by neighbor atom index (ascending)
 		if (edge_ids[0].rank > edge_ids[1].rank)
-			edge_ids.swap(0, 1);
+			swap(edge_ids, 0, 1);
 		if (edge_ids[1].rank > edge_ids[2].rank)
-			edge_ids.swap(1, 2);
+			swap(edge_ids, 1, 2);
 		if (edge_ids[0].rank > edge_ids[1].rank)
-			edge_ids.swap(0, 1);
+			swap(edge_ids, 0, 1);
 
 		var stereo0 = this._getBondStereo(atom_idx, edge_ids[0].edge_idx);
 		var stereo1 = this._getBondStereo(atom_idx, edge_ids[1].edge_idx);
@@ -525,19 +524,25 @@ Stereocenters.isPyramidMappingRigid = function (mapping)
 	var rigid = true;
 
 	if (arr[0] > arr[1])
-		arr.swap(0, 1), rigid = !rigid;
+		swap(arr, 0, 1), rigid = !rigid;
 	if (arr[1] > arr[2])
-		arr.swap(1, 2), rigid = !rigid;
+		swap(arr, 1, 2), rigid = !rigid;
 	if (arr[2] > arr[3])
-		arr.swap(2, 3), rigid = !rigid;
+		swap(arr, 2, 3), rigid = !rigid;
 	if (arr[1] > arr[2])
-		arr.swap(1, 2), rigid = !rigid;
+		swap(arr, 1, 2), rigid = !rigid;
 	if (arr[0] > arr[1])
-		arr.swap(0, 1), rigid = !rigid;
+		swap(arr, 0, 1), rigid = !rigid;
 	if (arr[1] > arr[2])
-		arr.swap(1, 2), rigid = !rigid;
+		swap(arr, 1, 2), rigid = !rigid;
 
 	return rigid;
 };
+
+function swap(arr, i1, i2) {
+	var tmp = arr[i1];
+	arr[i1] = arr[i2];
+	arr[i2] = tmp;
+}
 
 module.exports = Stereocenters;

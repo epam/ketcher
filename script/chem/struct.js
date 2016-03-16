@@ -813,7 +813,7 @@ Struct.prototype.findLoops = function ()
 							// use lowest half-bond id in the loop as the loop id
 							// this ensures that the loop gets the same id if it is discarded and then recreated,
 							// which in turn is required to enable redrawing while dragging, as actions store item id's
-							loopId = util.arrayMin(loop);
+							loopId = Math.min.apply(Math, loop);
 							this.loops.set(loopId, new Loop(loop, this, this.loopIsConvex(loop)));
 						} else {
 							loopId = -2;
@@ -931,7 +931,7 @@ Struct.prototype.getComponents = function () {
 		barriers.push(arrowPos);
 	barriers.sort(function (a, b) { return a - b; });
 	var components = [];
-	
+
 	var i;
 	for (i = 0; i < ccs.length; ++i) {
 		var bb = this.getCoordBoundingBox(ccs[i]);
@@ -956,7 +956,7 @@ Struct.prototype.getComponents = function () {
 		else
 			products.push(components[i]);
 	}
-	
+
 	return {
 		'reactants': reactants,
 		'products': products

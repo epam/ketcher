@@ -86,13 +86,13 @@ SGroup.prototype.checkAttr = function (attr, value) {
 	return this.data[attr] == value;
 };
 
-SGroup.numberArrayToString = function (numbers, map) {
-	var str = util.stringPadded(numbers.length, 3);
-	for (var i = 0; i < numbers.length; ++i) {
-		str += ' ' + util.stringPadded(map[numbers[i]], 3);
-	}
-	return str;
-};
+// SGroup.numberArrayToString = function (numbers, map) {
+// 	var str = util.stringPadded(numbers.length, 3);
+// 	for (var i = 0; i < numbers.length; ++i) {
+// 		str += ' ' + util.stringPadded(map[numbers[i]], 3);
+// 	}
+// 	return str;
+// };
 
 SGroup.filterAtoms = function (atoms, map) {
 	var newAtoms = [];

@@ -10,13 +10,13 @@ var tfx = function (v) {
 	return (v - 0).toFixed(8);
 };
 
-var isEmpty = function (obj) {
-	for (var v in obj) {
-		if (obj.hasOwnProperty(v)) {
-			return false;
-		}
-	}
-	return true;
+var relBox = function (box) {
+	return {
+		x: box.x,
+		y: box.y,
+		width: box.width,
+		height: box.height
+	};
 };
 
 var stopEventPropagation = function (event) {
@@ -40,29 +40,6 @@ var preventDefault = function (event) {
 	return false;
 };
 
-var stringPadded = function (string, width, leftAligned) {
-	var str = string + '';
-	var space = '';
-	while (str.length + space.length < width) {
-		space += ' ';
-	}
-
-	return (leftAligned) ? string + space : space + string;
-};
-
-
-// According Unicode Consortium sould be
-// nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// http://www.unicode.org/reports/tr18/#Line_Boundaries
-var nlRe = /\r\n|[\n\r]/g;
-
-function normalizeNewlines(str) {
-	return str.replace(nlRe, '\n');
-};
-function splitNewlines(str) {
-	return str.split(nlRe);
-};
-
 function unicodeLiteral(str){
 	function fixedHex(number, length){
 		var str = number.toString(16).toUpperCase();
@@ -81,20 +58,8 @@ function unicodeLiteral(str){
 	return result;
 }
 
-var arrayMax = function (array) {
-	return Math.max.apply(Math, array);
-};
-
-var arrayMin = function (array) {
-	return Math.min.apply(Math, array);
-};
-
 var ifDef = function (dst, src, prop, def) {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
-};
-
-var ifDefList = function (dst, src, prop, def) {
-	dst[prop] = !Object.isUndefined(src[prop]) && src[prop] !== null ? array(src[prop]) : def;
 };
 
 var identityMap = function (array) {
@@ -103,33 +68,6 @@ var identityMap = function (array) {
 		map[array[i]] = array[i];
 	}
 	return map;
-};
-
-var strip = function (src) {
-	return src.replace(/\s*$/, '').replace(/^\s*/, '');
-};
-
-var stripQuotes = function (str) {
-	if (str[0] === '"' && str[str.length - 1] === '"') {
-		return str.substr(1, str.length - 2);
-	}
-	return str;
-};
-
-var paddedFloat = function (number, width, precision) {
-	var numStr = number.toFixed(precision).replace(',', '.');
-	if (numStr.length > width) {
-		throw new Error('number does not fit');
-	}
-	return stringPadded(numStr, width);
-};
-
-var paddedInt = function (number, width) {
-	var numStr = number.toFixed(0);
-	if (numStr.length > width) {
-		throw new Error('number does not fit');
-	}
-	return stringPadded(numStr, width);
 };
 
 var arrayAddIfMissing = function (array, item) {
@@ -152,6 +90,15 @@ var assertDefined = function(v) {
 	assert(!isNullOrUndefined(v));
 };
 
+var isEmpty = function (obj) {
+	for (var v in obj) {
+		if (obj.hasOwnProperty(v)) {
+			return false;
+		}
+	}
+	return true;
+};
+
 var isUndefined = function (variable) {
 	return Object.isUndefined(variable); // use prototype.js method for now
 };
@@ -172,33 +119,14 @@ var isObject = function (obj) {
 	return obj === Object(obj);
 };
 
-var relBox = function (box) {
-	return {
-		x: box.x,
-		y: box.y,
-		width: box.width,
-		height: box.height
-	};
-};
-
 module.exports = {
 	tfx: tfx,
 	isEmpty: isEmpty,
 	stopEventPropagation: stopEventPropagation,
 	preventDefault: preventDefault,
-	stringPadded: stringPadded,
-	normalizeNewlines: normalizeNewlines,
-	splitNewlines: splitNewlines,
 	unicodeLiteral: unicodeLiteral,
-	arrayMax: arrayMax,
-	arrayMin: arrayMin,
 	ifDef: ifDef,
-	ifDefList: ifDefList,
 	identityMap: identityMap,
-	strip: strip,
-	stripQuotes: stripQuotes,
-	paddedFloat: paddedFloat,
-	paddedInt: paddedInt,
 	arrayAddIfMissing: arrayAddIfMissing,
 	assert: assert,
 	assertDefined: assertDefined,

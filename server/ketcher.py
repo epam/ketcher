@@ -240,7 +240,7 @@ class application(object):
     def load_moldata(self, is_query=False):
         moldata = self.fields.getfirst('moldata')
         is_rxn = False
-        if moldata.startswith('$RXN'):
+        if moldata.startswith('$RXN') or '<reactantList>' in moldata:
             if is_query:
                 md = self.indigo.loadQueryReaction(moldata)
             else:

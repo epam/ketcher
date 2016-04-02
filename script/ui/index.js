@@ -506,8 +506,8 @@ function automap () {
 		echo('Auto-Mapping can only be applied to reactions');
 	else {
 		modal.automap({
-			onOk: function (mode) {
-				return serverTransform('automap', mol, { mode: mode });
+			onOk: function (res) {
+				return serverTransform('automap', mol, res);
 			}
 		});
 	}

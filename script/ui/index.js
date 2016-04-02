@@ -93,7 +93,8 @@ function init (options, apiServer) {
 		'a': ['atom-any'],
 		'defmod-a': ['select-all'],
 		'defmod-shift-a': ['deselect-all'],
-		'ctrl-alt-r': ['force-update']
+		'ctrl-shift-r': ['force-update'],
+		'alt-shift-r': ['mol-serialize']
 	});
 
 	Object.keys(keyMap).forEach(function (key) {
@@ -642,36 +643,36 @@ function templateCustom () {
 };
 
 var actionMap = {
-	'new': clear,
-	'open': open,
-	'save': save,
-	'undo': undo,
-	'redo': redo,
+	new: clear,
+	open: open,
+	save: save,
+	undo: undo,
+	redo: redo,
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
-	'cleanup': layout,
-	'arom': aromatize,
-	'dearom': dearomatize,
+	cleanup: layout,
+	arom: aromatize,
+	dearom: dearomatize,
 	'period-table': elemTable,
 	'generic-groups': genericsTable,
 	'template-custom': templateCustom,
-	'cut': function () {
+	cut: function () {
 		var struct = ui.editor.getSelectionStruct();
 		removeSelected();
 		return struct.isBlank() ? null : struct;
 	},
-	'copy': function () {
+	copy: function () {
 		var struct = ui.editor.getSelectionStruct();
 		ui.editor.deselectAll();
 		return struct.isBlank() ? null : struct;
 	},
-	'paste': function (struct) {
+	paste: function (struct) {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
 		ui.editor.deselectAll();
 		return { tool: 'paste', opts: struct };
 	},
-	'info': modal.about,
+	info: modal.about,
 	'select-all': function () {
 		ui.editor.selectAll();
 		selectAction(null);
@@ -682,6 +683,14 @@ var actionMap = {
 	'force-update': function () {
 		// original: for dev purposes
 		ui.render.update(true);
+	},
+	'mol-serialize': function () {
+		var molStr = molfile.stringify(ui.ctab);
+		var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
+		var qs = document.location.search;
+		document.location.search = !qs ? '?' + molQs :
+			qs.search('mol=') == -1 ? qs + '&' + molQs :
+			qs.replace(/mol=[^&$]*/, molQs);
 	},
 	'reaction-automap': automap,
 	'calc-cip': calculateCip

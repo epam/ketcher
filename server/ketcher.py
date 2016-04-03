@@ -41,180 +41,132 @@ class application(object):
             self.response = route()
         except self.HttpException as e:
             status = e.args[0]
-            self.response = [e.args[1]]
+            self.response = e.args[1]
 
         self.headers.setdefault('Content-Type', 'text/plain')
         start_response(status, self.headers.items())
 
     def __iter__(self):
-        for chunk in self.response:
+        chunks = self.response if not isinstance(self.response, basestring) else [self.response]
+        for chunk in chunks:
             yield chunk if sys.version_info.major < 3 or \
                            not hasattr(chunk, 'encode') else chunk.encode()
-
-    def notsupported(self):
-        raise self.HttpException("405 Method Not Allowed",
-                                 "Request not supported")
 
     def indigo_required(method):
         def wrapper(self, **args):
             if not self.indigo:
                 raise self.HttpException("501 Not Implemented",
                                          "Indigo libraries are not found")
-            try:
-                return method(self, **args)
-            except indigo.IndigoException as e:
-                message = str(sys.exc_info()[1])
-                if 'indigoLoad' in message:    # error on load
-                    message = "Cannot load the specified " + \
-                              "structure: %s " % str(e)
+            return method(self, **args)
+        return wrapper
+
+    def load_moldata(self):
+        if self.method == 'GET' and 'smiles' in self.fields:
+            moldata = self.fields.getfirst('smiles')
+        elif self.is_form_request() and 'moldata' in self.fields:
+            moldata = self.fields.getfirst('moldata')
+
+        if not moldata:
+            raise self.HttpException("400 Bad Request",
+                                     "No molecule data")
+        try:
+            if moldata.startswith('InChI'):
+                return self.indigo_inchi.loadMolecule(moldata), False, False
+            else:
+                is_rxn = '>>' in moldata or moldata.startswith('$RXN') or '<reactantList>' in moldata
+                try:
+                    md = self.indigo.loadReaction(moldata) if is_rxn else \
+                         self.indigo.loadMolecule(moldata)
+                    return md, is_rxn, False
+                except:
+                    message = str(sys.exc_info()[1])
+                    if not message.startswith("\"molfile loader:") or \
+                       not message.endswith("queries\""):
+                        raise
+
+                md = self.indigo.loadQueryReaction(moldata) if is_rxn else \
+                     self.indigo.loadQueryMolecule(moldata)
+                return md, is_rxn, True
+
+        except indigo.IndigoException as e:
+            message = str(sys.exc_info()[1])
+            if 'indigoLoad' in message:    # error on load
+                message = "Cannot load the specified " + \
+                          "structure: %s " % str(e)
                 raise self.HttpException("400 Bad Request",
                                          message)
-        return wrapper
 
     @indigo_required
     def on_knocknock(self):
-        return ["You are welcome!"]
-
-    @indigo_required
-    def on_layout(self):
-        moldata = None
-        if self.method == 'GET' and 'smiles' in self.fields:
-            moldata = self.fields.getfirst('smiles')
-        elif self.is_form_request() and 'moldata' in self.fields:
-            moldata = self.fields.getfirst('moldata')
-        selective = 'selective' in self.fields
-        if moldata:
-            if '>>' in moldata or moldata.startswith('$RXN'):
-                rxn = self.indigo.loadQueryReaction(moldata)
-                if selective:
-                    for mol in rxn.iterateMolecules():
-                        self.selective_layout(mol)
-                else:
-                    rxn.layout()
-                return ["Ok.\n",
-                        rxn.rxnfile()]
-            elif moldata.startswith('InChI'):
-                mol = self.indigo_inchi.loadMolecule(moldata)
-                mol.layout()
-                return ["Ok.\n",
-                        mol.molfile()]
-            else:
-                mol = self.indigo.loadQueryMolecule(moldata)
-                if selective:
-                    for rg in mol.iterateRGroups():
-                        for frag in rg.iterateRGroupFragments():
-                            self.selective_layout(frag)
-                    self.selective_layout(mol)
-                else:
-                    mol.layout()
-                return ["Ok.\n",
-                        mol.molfile()]
-        self.notsupported()
+        return "You are welcome!"
 
     @indigo_required
     def on_smiles(self):
-        moldata = self.fields.getfirst('moldata')
-        if moldata:
-            if '>>' in moldata or moldata.startswith('$RXN'):
-                rxn = self.indigo.loadQueryReaction(moldata)
-                return ["Ok.\n",
-                        rxn.smiles()]
-            elif moldata.startswith('InChI'):
-                mol = self.indigo_inchi.loadMolecule(moldata)
-                return ["Ok.\n",
-                        mol.smiles()]
-            else:
-                mol = self.indigo.loadQueryMolecule(moldata)
-                return ["Ok.\n",
-                        mol.smiles()]
-        self.notsupported()
+        md, is_rxn, _ = self.load_moldata()
+        return "Ok.\n", md.smiles()
 
     @indigo_required
     def on_getinchi(self):
-        md, is_rxn = self.load_moldata()
-        inchi = self.indigo_inchi.getInchi(md)
-        return ["Ok.\n", inchi]
+        md, is_rxn, _ = self.load_moldata()
+        return "Ok.\n", self.indigo_inchi.getInchi(md)
 
     @indigo_required
     def on_getmolfile(self):
-        md, is_rxn = self.load_moldata()
-        return ["Ok.\n", md.molfile()]
+        md, is_rxn, _ = self.load_moldata()
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
     @indigo_required
     def on_getcml(self):
-        md, is_rxn = self.load_moldata()
-        return ["Ok.\n", md.cml()]
+        md, is_rxn, _ = self.load_moldata()
+        return "Ok.\n", md.cml()
+
+    @indigo_required
+    def on_layout(self):
+        if 'selective' in self.fields:
+            return self.on_selective_layout()
+        md, is_rxn, _ = self.load_moldata()
+        md.layout()
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
     @indigo_required
     def on_automap(self):
-        moldata = None
-        if self.method == 'GET' and 'smiles' in self.fields:
-            moldata = self.fields.getfirst('smiles')
-        elif self.is_form_request() and 'moldata' in self.fields:
-            moldata = self.fields.getfirst('moldata')
-
-        if moldata:
-            mode = self.fields.getfirst('mode', 'discard')
-            rxn = self.indigo.loadQueryReaction(moldata)
-            if not moldata.startswith('$RXN'):
-                rxn.layout()
-            rxn.automap(mode)
-            return ["Ok.\n",
-                    rxn.rxnfile()]
-        self.notsupported()
+        md, is_rxn, _ = self.load_moldata()
+        mode = self.fields.getfirst('mode', 'discard')
+        md.automap(mode)
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
     @indigo_required
     def on_aromatize(self):
-        try:
-            md, is_rxn = self.load_moldata()
-        except:
-            message = str(sys.exc_info()[1])
-            if message.startswith("\"molfile loader:") and \
-               message.endswith("queries\""): # hack to avoid user confusion
-                md, is_rxn = self.load_moldata(True)
-            else:
-                raise
+        md, is_rxn, _ = self.load_moldata()
         md.aromatize()
-        return ["Ok.\n",
-                md.rxnfile() if is_rxn else md.molfile()]
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
     @indigo_required
     def on_dearomatize(self):
-        try:
-            md, is_rxn = self.load_moldata()
-        except:                 # TODO: test for query features presence
+        md, is_rxn, is_query = self.load_moldata()
+        if is_query:
             raise self.HttpException("400 Bad Request",
                                      "Molecules and reactions " + \
                                      "containing query features " + \
                                      "cannot be dearomatized yet.")
         md.dearomatize()
-        return ["Ok.\n",
-                md.rxnfile() if is_rxn else md.molfile()]
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
     @indigo_required
     def on_calculate_cip(self):
+        md, is_rxn, _ = self.load_moldata()
         application.indigo.setOption('molfile-saving-add-stereo-desc', True)
-        try:
-            md, is_rxn = self.load_moldata()
-        except:
-            message = str(sys.exc_info()[1])
-            if message.startswith("\"molfile loader:") and \
-               message.endswith("queries\""): # hack to avoid user confusion
-                md, is_rxn = self.load_moldata(True)
-            else:
-                raise
-        result = md.rxnfile() if is_rxn else md.molfile()
+        res = md.rxnfile() if is_rxn else md.molfile()
         application.indigo.setOption('molfile-saving-add-stereo-desc', False)
-        return ["Ok.\n",
-                result]
+        return "Ok.\n", res
 
     def on_open(self):
         if self.is_form_request():
             self.headers.add_header('Content-Type', 'text/html')
-            return ['<html><body onload="parent.ui.loadMoleculeFromFile()" title="',
-                    b64encode("Ok.\n"),
-                    b64encode(self.fields.getfirst('filedata')),
-                    '"></body></html>']
+            return ''.join(['<html><body onload="parent.ui.loadMoleculeFromFile()" title="',
+                            b64encode("Ok.\n"),
+                            b64encode(self.fields.getfirst('filedata')),
+                            '"></body></html>'])
         self.notsupported()
 
     def on_save(self):
@@ -233,30 +185,24 @@ class application(object):
             self.headers.add_header('Content-Length', str(len(data)))
             self.headers.add_header('Content-Disposition', 'attachment',
                                     filename='ketcher.%s' % type)
-            return [data]
+            return data
         self.notsupported()
 
-    class HttpException(Exception): pass
-    def load_moldata(self, is_query=False):
-        moldata = self.fields.getfirst('moldata')
-        is_rxn = False
-        if moldata.startswith('$RXN') or '<reactantList>' in moldata:
-            if is_query:
-                md = self.indigo.loadQueryReaction(moldata)
-            else:
-                md = self.indigo.loadReaction(moldata)
-            is_rxn = True
-        elif moldata.startswith('InChI'):
-            md = self.indigo_inchi.loadMolecule(moldata)
-            md.layout()
+    @indigo_required
+    def on_selective_layout(self):
+        md, is_rxn, _ = self.load_moldata()
+        if is_rxn:
+            for mol in md.iterateMolecules():
+                self.layout_selective(mol)
         else:
-            if is_query:
-                md = self.indigo.loadQueryMolecule(moldata)
-            else:
-                md = self.indigo.loadMolecule(moldata)
-        return md, is_rxn
+            for rg in md.iterateRGroups():
+                for frag in rg.iterateRGroupFragments():
+                    self.layout_selective(frag)
+            self.layout_selective(md)
+        return "Ok.\n", md.rxnfile() if is_rxn else md.molfile()
 
-    def selective_layout(self, mol):
+    @staticmethod
+    def layout_selective(mol):
         dsgs = [dsg for dsg in mol.iterateDataSGroups() \
                 if dsg.description() == '_ketcher_selective_layout' and \
                 dsg.data() == '1']
@@ -266,6 +212,11 @@ class application(object):
             dsg.remove()
         mol.getSubmolecule(atoms).layout()
         return mol
+
+    class HttpException(Exception): pass
+    def notsupported(self):
+        raise self.HttpException("405 Method Not Allowed",
+                                 "Request not supported")
 
     def serve_static(self):
         root = path.realpath(self.static_root or getcwd())

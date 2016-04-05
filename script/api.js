@@ -60,15 +60,15 @@ function api (base) {
 
 	return {
 		inchi: request('POST', 'getinchi'),
+		smiles: request('POST', 'smiles'),
 		molfile: request('POST', 'getmolfile'),
 		cml: request('POST', 'getcml'),
+		layout: request('POST', 'layout'),
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
 		automap: request('POST', 'automap'),
-		layout_smiles: request('GET', 'layout'),
-		layout: request('POST', 'layout'),
-		smiles: request('POST', 'smiles'),
+		selectiveLayout: request('POST', 'selective_layout'),
 		save: request('POST', 'save'),
 		knocknock: function () {
 			return ajax(baseUrl + 'knocknock').then(function (xhr) {

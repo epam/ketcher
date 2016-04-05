@@ -482,9 +482,8 @@ function layout () {
 	var selective = atoms.length > 0;
 
 	return !selective ? serverTransform('layout') :
-		serverTransform('layout',
-		                SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms),
-		                {selective: '1'});
+		serverTransform('selectiveLayout',
+		                SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms));
 };
 
 function aromatize () {
@@ -556,8 +555,8 @@ function getStruct(mol, checkEmptyLine) {
 			throw type ? type.toUpperCase() : 'Format' +
 				  ' is not supported in a standalone mode.';
 		else {
-			var req = (type == 'smiles') ?
-				server.layout_smiles(null, {smiles: mol.trim()}) :
+			var req = (type == 'smiles' || type == 'inchi') ?
+			    server.layout({moldata: mol.trim()}) :
 			    server.molfile({moldata: mol});
 			utils.loading('show');
 			resolve(req.then(function (res) {

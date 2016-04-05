@@ -247,6 +247,7 @@ try:
     application.indigo = indigo.Indigo()
     application.indigo_inchi = indigo_inchi.IndigoInchi(application.indigo)
     application.indigo.setOption('ignore-stereochemistry-errors', 'true')
+    application.indigo.setOption('smart-layout', 'true')
 except:
     pass
 

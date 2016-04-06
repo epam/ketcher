@@ -46,7 +46,13 @@ function init (options, apiServer) {
 	clientArea = $('canvas');
 	server = apiServer;
 
-	updateServerButtons();
+	// Init renderer
+	ui.render =  new Render(clientArea, SCALE,
+	                        Object.assign({ atomColoring: true }, options));
+	ui.editor = new Editor(ui.render);
+	ui.render.setMolecule(ui.ctab);
+	ui.render.update();
+
 	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
 		// don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check when this is nesessary
@@ -65,57 +71,43 @@ function init (options, apiServer) {
 		});
 	}
 
-	// Button events
-	var keyMap = {};
-	toolbar.select('button').each(function (el) {
-		// window.status onhover?
-		var caption =  el.textContent || el.innerText;
-		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
-		if (!kd)
-			el.title = el.title || caption;
-		else {
-			var keys = kd.split(',').map(function (s) { return s.strip(); });
-			var mk = shortcutStr(keys[0]);
-			var action = el.parentNode.id;
-			el.title = (el.title || caption) + ' (' + mk + ')';
-			el.innerHTML += ' <kbd>' + mk + '</kbd>';
+	initDropdown(toolbar);
+	initCliparea(ketcherWindow);
+	initZoom();
 
-			keys.forEach(function (kb) {
-				var nk = kb.toLowerCase();
-				if (Array.isArray(keyMap[nk]))
-					keyMap[nk].push(action);
-				else
-					keyMap[nk] = [action];
-			});
-		}
-	});
-	keyMap = Object.assign(keyMap, {
-		'a': ['atom-any'],
-		'defmod-a': ['select-all'],
-		'defmod-shift-a': ['deselect-all'],
-		'ctrl-shift-r': ['force-update'],
-		'alt-shift-r': ['mol-serialize']
-	});
-
-	Object.keys(keyMap).forEach(function (key) {
-		keymage('editor', key, keyMap[key].length == 1 ? function (event) {
-			// TODO: handle disabled
-			var action = keyMap[key][0];
-			if (clipActions.indexOf(action) == -1) {
-				// else delegate to cliparea
-				selectAction(keyMap[key][0]);
-				event.preventDefault();
-			}
-		} : function () {
-			console.info('actions', keyMap[key]);
-		});
-	});
+	initHotKeys(toolbar, 'editor');
 	keymage.setScope('editor');
 
+	updateHistoryButtons();
+	updateClipboardButtons();
+	updateServerButtons();
+
+	clientArea.on('scroll', function () {
+		if ($('input_label').visible())
+			$('input_label').hide();
+	});
+	clientArea.on('mousedown', function () {
+		keymage.setScope('editor');
+	});
+	//setScrollOffset(0, 0);
+	selectAction('select-lasso');
+};
+
+function shortcutStr(key) {
+	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+	return key.replace(/Defmod/g, isMac ? '⌘' : 'Ctrl')
+			  .replace(/-(?!$)/g, '+');
+}
+
+function subEl (id) {
+	return $(id).children[0];
+};
+
+function initDropdown(toolbar) {
 	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
 			if (event.target.tagName == 'BUTTON' &&
-				event.target.parentNode == this) {
+			    event.target.parentNode == this) {
 				if (!this.hasClassName('selected')) {
 					event.stop();
 				}
@@ -132,40 +124,7 @@ function init (options, apiServer) {
 			}
 		});
 	});
-
-	initCliparea(ketcherWindow);
-	initZoom();
-	updateHistoryButtons();
-
-	clientArea.on('scroll', function () {
-		if ($('input_label').visible())
-			$('input_label').hide();
-	});
-	clientArea.on('mousedown', function () {
-		keymage.setScope('editor');
-	});
-
-	// Init renderer
-	ui.render =  new Render(clientArea, SCALE,
-	                        Object.assign({ atomColoring: true }, options));
-	ui.editor = new Editor(ui.render);
-
-	selectAction('select-lasso');
-	//setScrollOffset(0, 0);
-
-	ui.render.setMolecule(ui.ctab);
-	ui.render.update();
-};
-
-function shortcutStr(key) {
-	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-	return key.replace(/Defmod/g, isMac ? '⌘' : 'Ctrl')
-			  .replace(/-(?!$)/g, '+');
 }
-
-function subEl (id) {
-	return $(id).children[0];
-};
 
 function hideBlurredControls () {
 	if (!dropdownOpened) {
@@ -320,6 +279,54 @@ function initCliparea(parent) {
 				loadFragment(data);
 			event.preventDefault();
 		}
+	});
+}
+
+function initHotKeys(toolbar, scope) {
+	// Initial keymap
+	var keyMap = {
+		'a': ['atom-any'],
+		'defmod-a': ['select-all'],
+		'defmod-shift-a': ['deselect-all'],
+		'ctrl-shift-r': ['force-update'],
+		'alt-shift-r': ['mol-serialize']
+	};
+
+	toolbar.select('button').each(function (el) {
+		// window.status onhover?
+		var caption =  el.textContent || el.innerText;
+		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
+		if (!kd)
+			el.title = el.title || caption;
+		else {
+			var keys = kd.split(',').map(function (s) { return s.strip(); });
+			var mk = shortcutStr(keys[0]);
+			var action = el.parentNode.id;
+			el.title = (el.title || caption) + ' (' + mk + ')';
+			el.innerHTML += ' <kbd>' + mk + '</kbd>';
+
+			keys.forEach(function (kb) {
+				var nk = kb.toLowerCase();
+				if (Array.isArray(keyMap[nk]))
+					keyMap[nk].push(action);
+				else
+					keyMap[nk] = [action];
+			});
+		}
+	});
+
+	Object.keys(keyMap).forEach(function (key) {
+		keymage(scope, key, keyMap[key].length == 1 ? function (event) {
+			// TODO: handle disabled
+			var action = keyMap[key][0];
+			if (clipActions.indexOf(action) == -1) {
+				// else delegate to cliparea
+				selectAction(keyMap[key][0]);
+				event.preventDefault();
+			}
+		} : function () {
+			console.info('actions', keyMap[key]);
+		});
 	});
 }
 

@@ -10,14 +10,23 @@ from wsgiref.headers import Headers
 
 from base64 import b64encode
 
+try:
+    import indigo
+    import indigo_inchi
+except:
+    sys.stderr.write("WARNING: Indigo is not found. Chemical server-side functionality " + \
+                     "will not be available\n")
+
 class application(object):
     # don't serve static by default
     static_serve = False
-    static_alias = { '' : 'ketcher.html' }
     static_root = None
+    static_alias = { '' : 'ketcher.html' }
 
-    indigo = None
-    indigo_inchi = None
+    indigo_defaults = {
+        'ignore-stereochemistry-errors': 'true',
+        'smart-layout': 'true'
+    }
 
     def __init__(self, environ, start_response):
         self.path = environ['PATH_INFO'].strip('/')
@@ -54,7 +63,7 @@ class application(object):
 
     def indigo_moldata(method):
         def wrapper(self, **args):
-            if not self.indigo:
+            if not self.indigo_init():
                 raise self.HttpException("501 Not Implemented",
                                          "Sorry, no Indigo libs")
             molstr = None
@@ -84,9 +93,18 @@ class application(object):
 
         return wrapper
 
+    def indigo_init(self):
+        try:
+            self.indigo = indigo.Indigo()
+            self.indigo.inchi = indigo_inchi.IndigoInchi(self.indigo)
+            for option, value in self.indigo_defaults:
+                self.indigo.setOption(option, value)
+        except:
+            return None
+
     def moldata(self, molstr):
         if molstr.startswith('InChI'):
-            return self.indigo_inchi.loadMolecule(molstr), False, False
+            return self.indigo.inchi.loadMolecule(molstr), False, False
         else:
             is_rxn = '>>' in molstr or molstr.startswith('$RXN') or '<reactantList>' in molstr
             try:
@@ -104,7 +122,7 @@ class application(object):
             return md, is_rxn, True
 
     def on_knocknock(self):
-        if not self.indigo:     # raise to be backward-compatible
+        if not self.indigo_init():     # raise to be backward-compatible
             raise self.HttpException("501 Not Implemented",
                                      "Indigo libraries are not found")
         return "You are welcome!"
@@ -115,7 +133,7 @@ class application(object):
 
     @indigo_moldata
     def on_getinchi(self, md, is_rxn, is_query):
-        return self.indigo_inchi.getInchi(md)
+        return self.indigo.inchi.getInchi(md)
 
     @indigo_moldata
     def on_getmolfile(self, md, is_rxn, is_query):
@@ -156,9 +174,7 @@ class application(object):
     @indigo_moldata
     def on_calculate_cip(self, md, is_rxn, is_query):
         self.indigo.setOption('molfile-saving-add-stereo-desc', True)
-        res = md.rxnfile() if is_rxn else md.molfile()
-        self.indigo.setOption('molfile-saving-add-stereo-desc', False)
-        return res
+        return md.rxnfile() if is_rxn else md.molfile()
 
     def on_open(self):
         if self.is_form_request():
@@ -240,15 +256,6 @@ class application(object):
                (self.content_type.startswith('application/x-www-form-urlencoded')
                 or self.content_type.startswith('multipart/form-data'))
 
-try:
-    import indigo
-    import indigo_inchi
-    application.indigo = indigo.Indigo()
-    application.indigo_inchi = indigo_inchi.IndigoInchi(application.indigo)
-    application.indigo.setOption('ignore-stereochemistry-errors', 'true')
-    application.indigo.setOption('smart-layout', 'true')
-except:
-    pass
 
 if __name__ == '__main__':
     import socket
@@ -267,9 +274,6 @@ if __name__ == '__main__':
             progname = "python " + progname
         print( "USAGE:\n   %s [static_dir [port|address:port]]\n" % progname)
 
-    if not application.indigo:
-        print("WARNING: Indigo is not found. Server-side functionality " + \
-              "will not be available")
     try:
         dir, address, port = parse_args()
         application.static_serve = True     # allow to serve static

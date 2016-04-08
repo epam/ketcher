@@ -23,10 +23,10 @@ function formEncode(obj) {
 
 function unwrap(xhr) {
 	var data = xhr.responseText;
-	var value = data.substring(data.indexOf('\n') + 1);
-
+	if (xhr.status >= 300)
+		throw data;
 	if (data.startsWith('Ok.')) {
-		return value;
+		return data.substring(data.indexOf('\n') + 1);
 	}
 	throw Error('Unknown server error: ' + data);
 }
@@ -48,7 +48,7 @@ function api (base) {
 			};
 		}
 		var res = function (data, params) {
-			return ajax(options(data, params)).then(unwrap);
+			return ajax(options(data, params)).then(unwrap, unwrap);
 		};
 		res.sync = function (data, params) {
 			// TODO: handle errors

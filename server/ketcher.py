@@ -206,6 +206,18 @@ class application(object):
         self.indigo.setOption('molfile-saving-add-stereo-desc', True)
         return md
 
+    @indigo_moldata
+    def on_selective_layout(self, md):
+        if md.is_rxn:
+            for mol in md.struct.iterateMolecules():
+                self.layout_selective(mol)
+        else:
+            for rg in md.struct.iterateRGroups():
+                for frag in rg.iterateRGroupFragments():
+                    self.layout_selective(frag)
+            self.layout_selective(md.struct)
+        return md
+
     def on_open(self):
         if self.is_form_request():
             self.headers.add_header('Content-Type', 'text/html')
@@ -233,18 +245,6 @@ class application(object):
                                     filename="ketcher.%s" % type)
             return data
         self.notsupported()
-
-    @indigo_moldata
-    def on_selective_layout(self, md):
-        if md.is_rxn:
-            for mol in md.struct.iterateMolecules():
-                self.layout_selective(mol)
-        else:
-            for rg in md.struct.iterateRGroups():
-                for frag in rg.iterateRGroupFragments():
-                    self.layout_selective(frag)
-            self.layout_selective(md.struct)
-        return md
 
     @staticmethod
     def layout_selective(mol):

@@ -103,10 +103,6 @@ var isNullOrUndefined = function (v) {
 	return isUndefined(v) || isNull(v);
 };
 
-var listNextRotate = function (list, value) {
-	return list[(list.indexOf(value) + 1) % list.length];
-};
-
 var isObject = function (obj) {
 	return obj === Object(obj);
 };
@@ -125,7 +121,6 @@ module.exports = {
 	isUndefined: isUndefined,
 	isNull: isNull,
 	isNullOrUndefined: isNullOrUndefined,
-	listNextRotate: listNextRotate,
 	isObject: isObject,
 	relBox: relBox
 };

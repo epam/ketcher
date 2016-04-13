@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
 from os import path, getcwd
 from mimetypes import guess_type
 from cgi import FieldStorage
@@ -129,8 +130,7 @@ class application(object):
                 return md
             except:
                 message = str(sys.exc_info()[1])
-                if not message.startswith("molfile loader:") or \
-                   not message.endswith("queries"):
+                if not re.search('loader.+quer(y|ies)', message):
                     raise
             md.is_query = True
             md.struct = self.indigo.loadQueryReaction(molstr) if md.is_rxn else \

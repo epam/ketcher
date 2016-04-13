@@ -142,7 +142,7 @@ module.exports = function (grunt) {
 			raphael: {
 				expand: true,
 				flatten: true,
-				src: require.resolve('raphael/raphael-min.js'),
+				src: require.resolve('raphael/raphael.min.js'),
 				dest: '<%= options.dist %>'
 			},
 			// TODO: find better place to store static

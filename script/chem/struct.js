@@ -910,6 +910,8 @@ Struct.prototype.getComponents = function () {
 	};
 };
 
+// Other struct objects
+
 var RxnPlus = function (params)
 {
 	params = params || {};

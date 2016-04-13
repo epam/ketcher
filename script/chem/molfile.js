@@ -1073,7 +1073,7 @@ var readRGroups3000 = function (ctab, /* string */ ctabLines) /* Struct */
 		for (var j = 0; j < rfrags[rgid].length; ++j) {
 			var rg = rfrags[rgid][j];
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
-			var frid = rg.frags.add(new Struct.Fragment());
+			var frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
 			rg.atoms.each(function (aid, atom) {atom.fragment = frid;});
 			rg.mergeInto(ctab);

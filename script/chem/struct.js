@@ -7,6 +7,7 @@ var util = require('../util');
 var element = require('./element');
 var Bond = require('./bond');
 var SGroup = require('./sgroup');
+var RGroup = require('./rgroup');
 var SGroupForest = require('./sgforest');
 
 var Struct = function () {
@@ -40,7 +41,7 @@ Struct.prototype.hasRxnArrow = function () {
 Struct.prototype.addRxnArrowIfNecessary = function () {
 	var implicitReaction = !this.hasRxnArrow() && this.hasRxnProps();
 	if (implicitReaction) {
-		this.rxnArrows.add(new Struct.RxnArrow());
+		this.rxnArrows.add(new RxnArrow());
 	}
 	return implicitReaction;
 };
@@ -555,28 +556,6 @@ var Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
 	}, this);
 };
 
-Struct.RxnPlus = function (params)
-{
-	params = params || {};
-	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
-};
-
-Struct.RxnPlus.prototype.clone = function ()
-{
-	return new Struct.RxnPlus(this);
-};
-
-Struct.RxnArrow = function (params)
-{
-	params = params || {};
-	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
-};
-
-Struct.RxnArrow.prototype.clone = function ()
-{
-	return new Struct.RxnArrow(this);
-};
-
 Struct.prototype.findConnectedComponent = function (aid) {
 	var map = {};
 	var list = [aid];
@@ -641,38 +620,6 @@ Struct.prototype.markFragments = function () {
 	for (var i = 0; i < components.length; ++i) {
 		this.markFragment(components[i]);
 	}
-};
-
-Struct.RGroup = function (logic) {
-	logic = logic || {};
-	this.frags = new Pool();
-	this.resth = logic.resth || false;
-	this.range = logic.range || '';
-	this.ifthen = logic.ifthen || 0;
-};
-
-Struct.RGroup.prototype.getAttrs = function () {
-	return {
-		resth: this.resth,
-		range: this.range,
-		ifthen: this.ifthen
-	};
-};
-
-Struct.RGroup.findRGroupByFragment = function (rgroups, frid) {
-	var ret;
-	rgroups.each(function (rgid, rgroup) {
-		if (!Object.isUndefined(rgroup.frags.keyOf(frid))) ret = rgid;
-	});
-	return ret;
-};
-
-Struct.RGroup.prototype.clone = function (fidMap) {
-	var ret = new Struct.RGroup(this);
-	this.frags.each(function (fnum, fid) {
-		ret.frags.add(fidMap ? fidMap[fid] : fid);
-	});
-	return ret;
 };
 
 Struct.prototype.scale = function (scale)
@@ -963,4 +910,30 @@ Struct.prototype.getComponents = function () {
 	};
 };
 
-module.exports = Struct;
+var RxnPlus = function (params)
+{
+	params = params || {};
+	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
+};
+
+RxnPlus.prototype.clone = function ()
+{
+	return new RxnPlus(this);
+};
+
+var RxnArrow = function (params)
+{
+	params = params || {};
+	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
+};
+
+RxnArrow.prototype.clone = function ()
+{
+	return new RxnArrow(this);
+};
+
+module.exports = Object.assign(Struct, {
+	RGroup: RGroup,
+	RxnPlus: RxnPlus,
+	RxnArrow: RxnArrow
+});

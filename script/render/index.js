@@ -5,7 +5,6 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var Struct = require('../chem/struct');
-var SGroup = require('../chem/sgroup');
 
 var ReRxnPlus = require('./rerxnplus');
 var ReRxnArrow = require('./rerxnarrow');
@@ -272,7 +271,7 @@ Render.prototype.sGroupGetAtoms = function (sgid)
 {
 	DEBUG.logMethod('sGroupGetAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
-	return SGroup.getAtoms(this.ctab.molecule, sg);
+	return Struct.SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
 Render.prototype.sGroupGetType = function (sgid)

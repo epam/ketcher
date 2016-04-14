@@ -1,7 +1,6 @@
 var Action = require('../action');
 var element = require('../../chem/element');
-var SGroup = require('../../chem/sgroup');
-var Bond = require('../../chem/bond');
+var Struct = require('../../chem/struct');
 
 var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
@@ -48,7 +47,7 @@ SelectTool.prototype.OnMouseDown = function (event) {
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
 				this.editor._selectionHelper.setSelection(
-				{ 'atoms': SGroup.getAtoms(struct, sgroup), 'bonds': SGroup.getBonds(struct, sgroup) },
+				{ 'atoms': Struct.SGroup.getAtoms(struct, sgroup), 'bonds': Struct.SGroup.getBonds(struct, sgroup) },
 					event.shiftKey
 				);
 			} else if (ci.map == 'rgroups') {
@@ -229,11 +228,11 @@ SelectTool.prototype.OnDblClick = function (event) {
 		var type = rnd.bondGetAttr(ci.id, 'type');
 		var stereo = rnd.bondGetAttr(ci.id, 'stereo');
 		ui.showBondProperties({
-			type: Bond.type2Caption(type, stereo),
+			type: Struct.Bond.type2Caption(type, stereo),
 			topology: rnd.bondGetAttr(ci.id, 'topology') || 0,
 			center: rnd.bondGetAttr(ci.id, 'reactingCenterStatus') || 0,
 			onOk: function (res) {
-				var bond = Object.assign(Bond.caption2Type(res.type), {
+				var bond = Object.assign(Struct.Bond.caption2Type(res.type), {
 					topology: parseInt(res.topology, 10),
 					reactingCenterStatus: parseInt(res.center, 10)
 				});

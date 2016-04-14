@@ -1,10 +1,7 @@
 var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
 
-var Atom = require('../chem/atom');
-var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-var SGroup = require('../chem/sgroup');
 var ReFrag = require('../render/refrag');
 var ReRGroup = require('../render/rergroup');
 var ReChiralFlag = require('../render/rechiralflag');
@@ -49,9 +46,9 @@ function AtomAdd (atom, pos) {
 				pp[p] = this.data.atom[p];
 		pp.label = pp.label || 'C';
 		if (!Object.isNumber(this.data.aid)) {
-			this.data.aid = DS.atoms.add(new Atom(pp));
+			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
 		} else {
-			DS.atoms.set(this.data.aid, new Atom(pp));
+			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		}
 		RS.notifyAtomAdded(this.data.aid);
 		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
@@ -198,7 +195,7 @@ function SGroupAtomRemove (sgid, aid) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var atom = DS.atoms.get(aid);
 		var sg = DS.sgroups.get(sgid);
-		SGroup.removeAtom(sg, aid);
+		Struct.SGroup.removeAtom(sg, aid);
 		Set.remove(atom.sgs, sgid);
 		R.invalidateAtom(aid);
 	};
@@ -237,7 +234,7 @@ function SGroupCreate (sgid, type, pp) {
 	this.data = {'sgid': sgid, 'type': type, 'pp': pp};
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		var sg = new SGroup(this.data.type);
+		var sg = new Struct.SGroup(this.data.type);
 		var sgid = this.data.sgid;
 		sg.id = sgid;
 		DS.sgroups.set(sgid, sg);
@@ -337,14 +334,14 @@ function BondAdd (begin, end, bond) {
 		if (this.data.bond)
 			for (var p in this.data.bond)
 				pp[p] = this.data.bond[p];
-		pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
+		pp.type = pp.type || Struct.Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
 		if (!Object.isNumber(this.data.bid)) {
-			this.data.bid = DS.bonds.add(new Bond(pp));
+			this.data.bid = DS.bonds.add(new Struct.Bond(pp));
 		} else {
-			DS.bonds.set(this.data.bid, new Bond(pp));
+			DS.bonds.set(this.data.bid, new Struct.Bond(pp));
 		}
 		DS.bondInitHalfBonds(this.data.bid);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);

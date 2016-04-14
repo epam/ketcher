@@ -2,10 +2,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var op = require('./op');
 
-var Atom = require('../chem/atom');
-var Bond = require('../chem/bond');
 var Struct = require('../chem/struct');
-var SGroup = require('../chem/sgroup');
 
 var ui = global.ui;
 
@@ -176,12 +173,12 @@ function fromAtomsAttrs (ids, attrs, reset)
 {
 	var action = new Action();
 	(typeof(ids) == 'number' ? [ids] : ids).each(function (id) {
-		for (var key in Atom.attrlist) {
+		for (var key in Struct.Atom.attrlist) {
 			var value;
 			if (key in attrs)
 				value = attrs[key];
 			else if (reset)
-				value = Atom.attrGetDefault(key);
+				value = Struct.Atom.attrGetDefault(key);
 			else
 				continue;
 			action.addOp(new op.AtomAttr(id, key, value));
@@ -197,12 +194,12 @@ function fromBondAttrs (id, attrs, flip, reset)
 {
 	var action = new Action();
 
-	for (var key in Bond.attrlist) {
+	for (var key in Struct.Bond.attrlist) {
 		var value;
 		if (key in attrs)
 			value = attrs[key];
 		else if (reset)
-			value = Bond.attrGetDefault(key);
+			value = Struct.Bond.attrGetDefault(key);
 		else
 			continue;
 		action.addOp(new op.BondAttr(id, key, value));
@@ -713,7 +710,7 @@ function fromAtomMerge (src_id, dst_id)
 		action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
-	var attrs = Atom.getAttrHash(ui.ctab.atoms.get(src_id));
+	var attrs = Struct.Atom.getAttrHash(ui.ctab.atoms.get(src_id));
 
 	if (ui.render.atomGetDegree(src_id) == 1 && attrs.get('label') == '*')
 		attrs.set('label', 'C');
@@ -758,7 +755,7 @@ function fromTemplateOnCanvas (pos, angle, template)
 	// Only template atom label matters for now
 	frag.atoms.each(function (aid, atom) {
 		var operation;
-		var attrs = Atom.getAttrHash(atom).toObject();
+		var attrs = Struct.Atom.getAttrHash(atom).toObject();
 		attrs.fragment = fragAction.frid;
 
 		action.addOp(
@@ -855,7 +852,7 @@ function fromTemplateOnAtom (aid, angle, extra_bond, template, calcAngle)
 	}
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == template.aid) {
 			action.mergeWith(fromAtomsAttrs(aid, attrs, true));
@@ -934,7 +931,7 @@ function fromTemplateOnBond (bid, template, calcAngle, flip)
 	var xy0 = fr_begin.pp;
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a).toObject();
 		attrs.fragment = frid;
 		if (id == fr_bond.begin || id == fr_bond.end) {
 			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
@@ -1086,7 +1083,7 @@ function fromSgroupDeletion (id)
 	}
 
 	var sg = DS.sgroups.get(id);
-	var atoms = SGroup.getAtoms(DS, sg);
+	var atoms = Struct.SGroup.getAtoms(DS, sg);
 	var attrs = sg.getAttrs();
 	action.addOp(new op.SGroupRemoveFromHierarchy(id));
 	for (var i = 0; i < atoms.length; ++i) {
@@ -1204,24 +1201,24 @@ function struct2Clipboard(struct) {
 	var mapping = {};
 	selection.atoms.each(function (id)
 	{
-		var new_atom = new Atom(struct.atoms.get(id));
+		var new_atom = new Struct.Atom(struct.atoms.get(id));
 		new_atom.pos = new_atom.pp;
-		mapping[id] = clipboard.atoms.push(new Atom(new_atom)) - 1;
+		mapping[id] = clipboard.atoms.push(new Struct.Atom(new_atom)) - 1;
 	});
 
 	selection.bonds.each(function (id)
 	{
-		var new_bond = new Bond(struct.bonds.get(id));
+		var new_bond = new Struct.Bond(struct.bonds.get(id));
 		new_bond.begin = mapping[new_bond.begin];
 		new_bond.end = mapping[new_bond.end];
-		clipboard.bonds.push(new Bond(new_bond));
+		clipboard.bonds.push(new Struct.Bond(new_bond));
 	});
 
 	var sgroup_list = struct.getSGroupsInAtomSet(selection.atoms);
 
 	sgroup_list.forEach(function (sid){
 		var sgroup = struct.sgroups.get(sid);
-		var sgAtoms = SGroup.getAtoms(struct, sgroup);
+		var sgAtoms = Struct.SGroup.getAtoms(struct, sgroup);
 		var sgroup_info = {
 			type: sgroup.type,
 			attrs: sgroup.getAttrs(),
@@ -1393,11 +1390,11 @@ function fromFlip (objects, flip) {
 				var bid = objects.bonds[i];
 				var bond = molecule.bonds.get(bid);
 
-				if (bond.type == Bond.PATTERN.TYPE.SINGLE) {
-					if (bond.stereo == Bond.PATTERN.STEREO.UP) {
-						action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN));
-					} else if (bond.stereo == Bond.PATTERN.STEREO.DOWN) {
-						action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP));
+				if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE) {
+					if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.DOWN));
+					} else if (bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN) {
+						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.UP));
 					}
 				}
 			}

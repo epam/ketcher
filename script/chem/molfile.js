@@ -1,15 +1,10 @@
 var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
-var element = require('./element');
-
-var Atom = require('./atom');
-var AtomList = require('./atomlist');
-var Bond = require('./bond');
-var Struct = require('./struct');
-var SGroup = require('./sgroup');
-
 var util = require('../util');
+
+var element = require('./element');
+var Struct = require('./struct');
 
 var FRAGMENT = {
 	NONE: 0,
@@ -103,32 +98,32 @@ Molfile.prototype.parseCTFile = function (molfileLines) {
 
 var fmtInfo = {
 	bondTypeMap: {
-		1: Bond.PATTERN.TYPE.SINGLE,
-		2: Bond.PATTERN.TYPE.DOUBLE,
-		3: Bond.PATTERN.TYPE.TRIPLE,
-		4: Bond.PATTERN.TYPE.AROMATIC,
-		5: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-		6: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-		7: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-		8: Bond.PATTERN.TYPE.ANY
+		1: Struct.Bond.PATTERN.TYPE.SINGLE,
+		2: Struct.Bond.PATTERN.TYPE.DOUBLE,
+		3: Struct.Bond.PATTERN.TYPE.TRIPLE,
+		4: Struct.Bond.PATTERN.TYPE.AROMATIC,
+		5: Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+		6: Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+		7: Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+		8: Struct.Bond.PATTERN.TYPE.ANY
 	},
 	bondStereoMap: {
-		0: Bond.PATTERN.STEREO.NONE,
-		1: Bond.PATTERN.STEREO.UP,
-		4: Bond.PATTERN.STEREO.EITHER,
-		6: Bond.PATTERN.STEREO.DOWN,
-		3: Bond.PATTERN.STEREO.CIS_TRANS
+		0: Struct.Bond.PATTERN.STEREO.NONE,
+		1: Struct.Bond.PATTERN.STEREO.UP,
+		4: Struct.Bond.PATTERN.STEREO.EITHER,
+		6: Struct.Bond.PATTERN.STEREO.DOWN,
+		3: Struct.Bond.PATTERN.STEREO.CIS_TRANS
 	},
 	v30bondStereoMap: {
-		0: Bond.PATTERN.STEREO.NONE,
-		1: Bond.PATTERN.STEREO.UP,
-		2: Bond.PATTERN.STEREO.EITHER,
-		3: Bond.PATTERN.STEREO.DOWN
+		0: Struct.Bond.PATTERN.STEREO.NONE,
+		1: Struct.Bond.PATTERN.STEREO.UP,
+		2: Struct.Bond.PATTERN.STEREO.EITHER,
+		3: Struct.Bond.PATTERN.STEREO.DOWN
 	},
 	bondTopologyMap: {
-		0: Bond.PATTERN.TOPOLOGY.EITHER,
-		1: Bond.PATTERN.TOPOLOGY.RING,
-		2: Bond.PATTERN.TOPOLOGY.CHAIN
+		0: Struct.Bond.PATTERN.TOPOLOGY.EITHER,
+		1: Struct.Bond.PATTERN.TOPOLOGY.RING,
+		2: Struct.Bond.PATTERN.TOPOLOGY.CHAIN
 	},
 	countsLinePartition: [3,3,3,3,3,3,3,3,3,3,3,6],
 	atomLinePartition: [10,10,10,1,3,2,3,3,3,3,3,3,3,3,3,3,3],
@@ -179,7 +174,7 @@ var parseAtomLine = function (atomLine)
 		// reaction query
 		exactChangeFlag: parseDecimalInt(atomSplit[16]) != 0
 	};
-	return new Atom(params);
+	return new Struct.Atom(params);
 };
 
 var stripV30 = function (line)
@@ -216,7 +211,7 @@ var parseAtomLineV3000 = function (line)
 			label = label.substr(1); // remove '['
 		}
 		atomListParams.ids = labelsListToIds(label.split(','));
-		params['atomList'] = new AtomList(atomListParams);
+		params['atomList'] = new Struct.AtomList(atomListParams);
 		params['label'] = 'L#';
 	} else {
 		params['label'] = label;
@@ -246,7 +241,7 @@ var parseAtomLineV3000 = function (line)
 			params.attpnt = value.strip() - 0;
 		}
 	}
-	return new Atom(params);
+	return new Struct.Atom(params);
 };
 
 var parseBondLineV3000 = function (line)
@@ -266,8 +261,8 @@ var parseBondLineV3000 = function (line)
 		value = subsplit[1];
 		if (key == 'CFG') {
 			params.stereo = fmtInfo.v30bondStereoMap[parseDecimalInt(value)];
-			if (params.type == Bond.PATTERN.TYPE.DOUBLE && params.stereo == Bond.PATTERN.STEREO.EITHER)
-				params.stereo = Bond.PATTERN.STEREO.CIS_TRANS;
+			if (params.type == Struct.Bond.PATTERN.TYPE.DOUBLE && params.stereo == Struct.Bond.PATTERN.STEREO.EITHER)
+				params.stereo = Struct.Bond.PATTERN.STEREO.CIS_TRANS;
 		} else if (key == 'TOPO') {
 			params.topology = fmtInfo.bondTopologyMap[parseDecimalInt(value)];
 		} else if (key == 'RXCTR') {
@@ -276,7 +271,7 @@ var parseBondLineV3000 = function (line)
 			params.stereoCare = parseDecimalInt(value);
 		}
 	}
-	return new Bond(params);
+	return new Struct.Bond(params);
 };
 
 var parseBondLine = function (bondLine)
@@ -293,7 +288,7 @@ var parseBondLine = function (bondLine)
 		reactingCenterStatus: parseDecimalInt(bondSplit[6])
 	};
 
-	return new Bond(params);
+	return new Struct.Bond(params);
 };
 
 var parseAtomListLine = function (/* string */atomListLine)
@@ -313,7 +308,7 @@ var parseAtomListLine = function (/* string */atomListLine)
 
 	return {
 		'aid': number,
-		'atomList': new AtomList({
+		'atomList': new Struct.AtomList({
 			'notList': notList,
 			'ids': list
 		})
@@ -365,7 +360,7 @@ var parsePropertyLineAtomList = function (hdr, lst)
 	var notList = hdr[4].strip() == 'T';
 	var ids = labelsListToIds(lst.slice(0, count));
 	var ret = {};
-	ret[aid] = new AtomList({
+	ret[aid] = new Struct.AtomList({
 		'notList': notList,
 		'ids': ids
 	});
@@ -376,8 +371,8 @@ var postLoadMul = function (sgroup, mol, atomMap) {
 	sgroup.data.mul = sgroup.data.subscript - 0;
 	var atomReductionMap = {};
 
-	sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
-	sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
+	sgroup.atoms = Struct.SGroup.filterAtoms(sgroup.atoms, atomMap);
+	sgroup.patoms = Struct.SGroup.filterAtoms(sgroup.patoms, atomMap);
 
 	// mark repetitions for removal
 	for (var k = 1; k < sgroup.data.mul; ++k) {
@@ -392,7 +387,7 @@ var postLoadMul = function (sgroup, mol, atomMap) {
 			atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
 		}
 	}
-	sgroup.patoms = SGroup.removeNegative(sgroup.patoms);
+	sgroup.patoms = Struct.SGroup.removeNegative(sgroup.patoms);
 
 	var patomsMap = util.identityMap(sgroup.patoms);
 
@@ -440,7 +435,7 @@ var postLoadGen = function (sgroup, mol, atomMap) {
 
 var postLoadDat = function (sgroup, mol, atomMap) {
 	if (!sgroup.data.absolute)
-		sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
+		sgroup.pp = sgroup.pp.add(Struct.SGroup.getMassCentre(mol, sgroup.atoms));
 		// [NK] Temporary comment incoplete 'allAtoms' behavior
 		// TODO: need ether remove 'allAtoms' flag or hadle it
 		// consistently (other flags: *_KEY, *_RADICAL?)
@@ -484,9 +479,9 @@ var initSGroup = function (sGroups, propData)
 	var kv = readKeyValuePairs(propData, true);
 	for (var key in kv) {
 		var type = kv[key];
-		if (!(type in SGroup.TYPES))
+		if (!(type in Struct.SGroup.TYPES))
 			throw new Error('Unsupported S-group type');
-		var sg = new SGroup(type);
+		var sg = new Struct.SGroup(type);
 		sg.number = key;
 		sGroups[key] = sg;
 	}
@@ -787,7 +782,7 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 	}
 	var emptyGroups = [];
 	for (sid in sGroups) { // TODO: why do we need that?
-		SGroup.filter(ctab, sGroups[sid], atomMap);
+		Struct.SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(sid);
 	}
@@ -906,7 +901,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 			stripV30(ctabLines[shift++])).strip();
 		var split = splitSGroupDef(line);
 		var type = split[1];
-		var sg = new SGroup(type);
+		var sg = new Struct.SGroup(type);
 		sg.number = split[0] - 0;
 		sg.type = type;
 		sg.label = split[2] - 0;
@@ -1138,11 +1133,11 @@ var prepareGenForSaving = function (sgroup, mol) {
 };
 
 var prepareDatForSaving = function (sgroup, mol) {
-	sgroup.atoms = SGroup.getAtoms(mol, sgroup);
+	sgroup.atoms = Struct.SGroup.getAtoms(mol, sgroup);
 };
 
 var prepareForSaving = {
-	'MUL': SGroup.prepareMulForSaving,
+	'MUL': Struct.SGroup.prepareMulForSaving,
 	'SRU': prepareSruForSaving,
 	'SUP': prepareSupForSaving,
 	'DAT': prepareDatForSaving,
@@ -1350,11 +1345,11 @@ var makeAtomBondLines = function (prefix, idstr, ids, map) {
 var bracketsToMolfile = function (mol, sg, idstr) {
 	var inBonds = [], xBonds = [];
 	var atomSet = Set.fromList(sg.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
-	SGroup.bracketPos(sg, null, mol, xBonds);
+	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
+	Struct.SGroup.bracketPos(sg, null, mol, xBonds);
 	var bb = sg.bracketBox;
 	var d = sg.bracketDir, n = d.rotateSC(1, 0);
-	var brackets = SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
+	var brackets = Struct.SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
 	var lines = [];
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
@@ -1410,7 +1405,7 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var data = sgroup.data;
 	var pp = sgroup.pp;
 	if (!data.absolute)
-		pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
+		pp = pp.sub(Struct.SGroup.getMassCentre(mol, sgroup.atoms));
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	var sdtLine = 'M  SDT ' + idstr +

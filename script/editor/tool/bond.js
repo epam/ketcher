@@ -1,5 +1,5 @@
 var Vec2 = require('../../util/vec2');
-var Bond = require('../../chem/bond');
+var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
@@ -9,11 +9,11 @@ var ui = global.ui;
 var BondTool = function (editor, bondCaption) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
-	this.bondProps = Bond.caption2Type(bondCaption);
+	this.bondProps = Struct.Bond.caption2Type(bondCaption);
 	this.plainBondTypes = [
-			Bond.PATTERN.TYPE.SINGLE,
-			Bond.PATTERN.TYPE.DOUBLE,
-			Bond.PATTERN.TYPE.TRIPLE];
+			Struct.Bond.PATTERN.TYPE.SINGLE,
+			Struct.Bond.PATTERN.TYPE.DOUBLE,
+			Struct.Bond.PATTERN.TYPE.TRIPLE];
 
 	this._hoverHelper = new HoverHelper(this);
 };
@@ -88,7 +88,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 		} else if (!('item' in _DC_)) {
 			var xy = rnd.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
-				this.bondProps.type == Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
+				this.bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = Action.fromBondAddition(
 				this.bondProps,
@@ -106,17 +106,17 @@ BondTool.prototype.OnMouseUp = function (event) {
 			var bond = struct.bonds.get(_DC_.item.id);
 
 			if (
-			bondProps.stereo != Bond.PATTERN.STEREO.NONE &&
-			bond.type == Bond.PATTERN.TYPE.SINGLE &&
-			bondProps.type == Bond.PATTERN.TYPE.SINGLE &&
+			bondProps.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
+			bond.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
+			bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
 			bond.stereo == bondProps.stereo
 			) {
 				ui.addUndoAction(Action.fromBondFlipping(_DC_.item.id));
 			} else {
 				if (
-				bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-				bond.stereo === Bond.PATTERN.STEREO.NONE &&
-				bondProps.stereo === Bond.PATTERN.STEREO.NONE
+				bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+				bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+				bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE
 				) {
 					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
 					if (loop) {
@@ -135,9 +135,9 @@ BondTool.prototype.OnMouseUp = function (event) {
 };
 
 function bondFlipRequired (struct, bond, attrs) {
-	return attrs.type == Bond.PATTERN.TYPE.SINGLE &&
-		   bond.stereo == Bond.PATTERN.STEREO.NONE &&
-		   attrs.stereo != Bond.PATTERN.STEREO.NONE &&
+	return attrs.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
+		   bond.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
+		   attrs.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
 		   struct.atoms.get(bond.begin).neighbors.length <
 		   struct.atoms.get(bond.end).neighbors.length;
 }

@@ -1,4 +1,4 @@
-var Bond = require('../../chem/bond');
+var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
@@ -8,7 +8,7 @@ var ui = global.ui;
 var AtomTool = function (editor, atomProps) {
 	this.editor = editor;
 	this.atomProps = atomProps;
-	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
+	this.bondProps = { type: 1, stereo: Struct.Bond.PATTERN.STEREO.NONE };
 
 	this._hoverHelper = new HoverHelper(this);
 };

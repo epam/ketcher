@@ -2,7 +2,7 @@ var Map = require('../util/map');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
-var Bond = require('./bond');
+var Struct = require('./struct');
 
 var Stereocenters = function (mol, neighbors_func, context)
 {
@@ -40,7 +40,7 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 
 		// check adjacent bond types
 		if ([nei1.bid, nei2.bid].findIndex(function (bid) {
-			return bonds.get(bid).type != Bond.PATTERN.TYPE.DOUBLE;
+			return bonds.get(bid).type != Struct.Bond.PATTERN.TYPE.DOUBLE;
 		}, this) >= 0)
 			return false;
 
@@ -55,12 +55,12 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 			return false;
 
 		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
-			return bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE;
+			return bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE;
 		}, this) >= 0)
 			return false;
 
 		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
-			return bonds.get(nei.bid).stereo == Bond.PATTERN.STEREO.EITHER;
+			return bonds.get(nei.bid).stereo == Struct.Bond.PATTERN.STEREO.EITHER;
 		}, this) >= 0)
 			return false;
 		Set.add(alleneMask, nei1.aid);
@@ -85,8 +85,8 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 		{
 			var bond = this.molecule.bonds.get(nei.bid);
 
-			if (bond.type == Bond.PATTERN.TYPE.SINGLE && bond.begin == aid)
-			if (bond.stereo == Bond.PATTERN.STEREO.UP || bond.stereo == Bond.PATTERN.STEREO.DOWN)
+			if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE && bond.begin == aid)
+			if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP || bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN)
 			{
 				stereocenter = true;
 				return true;
@@ -184,11 +184,11 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 		if (!edge_ids[nei_idx].vec.normalize())
 			throw new Error('zero bond length');
 
-		if (bond.type == Bond.PATTERN.TYPE.TRIPLE)
+		if (bond.type == Struct.Bond.PATTERN.TYPE.TRIPLE)
 			throw new Error('non-single bonds not allowed near stereocenter');
-		else if (bond.type == Bond.PATTERN.TYPE.AROMATIC)
+		else if (bond.type == Struct.Bond.PATTERN.TYPE.AROMATIC)
 			throw new Error('aromatic bonds not allowed near stereocenter');
-		else if (bond.type == Bond.PATTERN.TYPE.DOUBLE)
+		else if (bond.type == Struct.Bond.PATTERN.TYPE.DOUBLE)
 			n_double_bonds++;
 
 		nei_idx++;
@@ -245,7 +245,7 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 		{
 			var stereo = this._getBondStereo(atom_idx, edge_ids[nei_idx].edge_idx);
 
-			if (stereo == Bond.PATTERN.STEREO.UP || stereo == Bond.PATTERN.STEREO.DOWN)
+			if (stereo == Struct.Bond.PATTERN.STEREO.UP || stereo == Struct.Bond.PATTERN.STEREO.DOWN)
 			{
 				main1 = nei_idx;
 				main_dir = stereo;
@@ -299,9 +299,9 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 		if (main2 == -1)
 			throw new Error('internal error: can not find opposite bond');
 
-		if (main_dir == Bond.PATTERN.STEREO.UP && this._getBondStereo(atom_idx, edge_ids[main2].edge_idx) == Bond.PATTERN.STEREO.DOWN)
+		if (main_dir == Struct.Bond.PATTERN.STEREO.UP && this._getBondStereo(atom_idx, edge_ids[main2].edge_idx) == Struct.Bond.PATTERN.STEREO.DOWN)
 			throw new Error('stereo types of the opposite bonds mismatch');
-		if (main_dir == Bond.PATTERN.STEREO.DOWN && this._getBondStereo(atom_idx, edge_ids[main2].edge_idx) == Bond.PATTERN.STEREO.UP)
+		if (main_dir == Struct.Bond.PATTERN.STEREO.DOWN && this._getBondStereo(atom_idx, edge_ids[main2].edge_idx) == Struct.Bond.PATTERN.STEREO.UP)
 			throw new Error('stereo types of the opposite bonds mismatch');
 
 		if (main_dir == this._getBondStereo(atom_idx, edge_ids[side1].edge_idx))
@@ -312,12 +312,12 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 		if (main1 == 3 || main2 == 3)
 			last_atom_dir = main_dir;
 		else
-			last_atom_dir = (main_dir == Bond.PATTERN.STEREO.UP ? Bond.PATTERN.STEREO.DOWN : Bond.PATTERN.STEREO.UP);
+			last_atom_dir = (main_dir == Struct.Bond.PATTERN.STEREO.UP ? Struct.Bond.PATTERN.STEREO.DOWN : Struct.Bond.PATTERN.STEREO.UP);
 
 		sign = Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
 
-		if ((last_atom_dir == Bond.PATTERN.STEREO.UP && sign > 0) ||
-		(last_atom_dir == Bond.PATTERN.STEREO.DOWN && sign < 0))
+		if ((last_atom_dir == Struct.Bond.PATTERN.STEREO.UP && sign > 0) ||
+		(last_atom_dir == Struct.Bond.PATTERN.STEREO.DOWN && sign < 0))
 		{
 			stereocenter.pyramid[0] = edge_ids[0].nei_idx;
 			stereocenter.pyramid[1] = edge_ids[1].nei_idx;
@@ -348,13 +348,13 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 
 		var n_up = 0, n_down = 0;
 
-		n_up += ((stereo0 == Bond.PATTERN.STEREO.UP) ? 1 : 0);
-		n_up += ((stereo1 == Bond.PATTERN.STEREO.UP) ? 1 : 0);
-		n_up += ((stereo2 == Bond.PATTERN.STEREO.UP) ? 1 : 0);
+		n_up += ((stereo0 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
+		n_up += ((stereo1 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
+		n_up += ((stereo2 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
 
-		n_down += ((stereo0 == Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
-		n_down += ((stereo1 == Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
-		n_down += ((stereo2 == Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
+		n_down += ((stereo0 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
+		n_down += ((stereo1 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
+		n_down += ((stereo2 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
 
 		if (implicit_degree == 4) // have implicit hydrogen
 		{
@@ -371,9 +371,9 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 			main_dir = 0;
 
 			if (n_up == 2)
-				last_atom_dir = Bond.PATTERN.STEREO.DOWN;
+				last_atom_dir = Struct.Bond.PATTERN.STEREO.DOWN;
 			else if (n_down == 2)
-				last_atom_dir = Bond.PATTERN.STEREO.UP;
+				last_atom_dir = Struct.Bond.PATTERN.STEREO.UP;
 			else
 			{
 				main1 = -1;
@@ -384,7 +384,7 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 				{
 					dir = this._getBondStereo(atom_idx, edge_ids[nei_idx].edge_idx);
 
-					if (dir == Bond.PATTERN.STEREO.UP || dir == Bond.PATTERN.STEREO.DOWN)
+					if (dir == Struct.Bond.PATTERN.STEREO.UP || dir == Struct.Bond.PATTERN.STEREO.DOWN)
 					{
 						main1 = nei_idx;
 						main_dir = dir;
@@ -405,13 +405,13 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 				if (xyz == 1)
 					last_atom_dir = main_dir;
 				else
-					last_atom_dir = (main_dir == Bond.PATTERN.STEREO.UP ? Bond.PATTERN.STEREO.DOWN : Bond.PATTERN.STEREO.UP);
+					last_atom_dir = (main_dir == Struct.Bond.PATTERN.STEREO.UP ? Struct.Bond.PATTERN.STEREO.DOWN : Struct.Bond.PATTERN.STEREO.UP);
 			}
 
 			var sign = Stereocenters._sign(edge_ids[0].vec, edge_ids[1].vec, edge_ids[2].vec);
 
-			if ((last_atom_dir == Bond.PATTERN.STEREO.UP && sign > 0) ||
-			(last_atom_dir == Bond.PATTERN.STEREO.DOWN && sign < 0))
+			if ((last_atom_dir == Struct.Bond.PATTERN.STEREO.UP && sign > 0) ||
+			(last_atom_dir == Struct.Bond.PATTERN.STEREO.DOWN && sign < 0))
 			{
 				stereocenter.pyramid[0] = edge_ids[0].nei_idx;
 				stereocenter.pyramid[1] = edge_ids[1].nei_idx;

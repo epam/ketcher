@@ -5,8 +5,6 @@ var keymage = require('keymage');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
-var AtomList = require('../chem/atomlist');
-var SGroup = require('../chem/sgroup');
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
 
@@ -490,7 +488,7 @@ function layout () {
 
 	return !selective ? serverTransform('layout') :
 		serverTransform('selectiveLayout',
-		                SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms));
+		                Struct.SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms));
 };
 
 function aromatize () {
@@ -617,7 +615,7 @@ function elemTable () {
 			else
 				props = {
 					label: 'L#',
-					atomList: new AtomList({
+					atomList: new Struct.AtomList({
 						notList: res.mode == 'not-list',
 						ids: res.values
 					})

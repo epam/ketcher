@@ -5,6 +5,9 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var element = require('./element');
+
+var Atom = require('./atom');
+var AtomList = require('./atomlist');
 var Bond = require('./bond');
 var SGroup = require('./sgroup');
 var RGroup = require('./rgroup');
@@ -935,6 +938,10 @@ RxnArrow.prototype.clone = function ()
 };
 
 module.exports = Object.assign(Struct, {
+	Atom: Atom,
+	AtomList: AtomList,
+	Bond: Bond,
+	SGroup: SGroup,
 	RGroup: RGroup,
 	RxnPlus: RxnPlus,
 	RxnArrow: RxnArrow

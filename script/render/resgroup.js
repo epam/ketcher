@@ -1,14 +1,14 @@
 var Box2Abs = require('../util/box2abs');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
-var SGroup = require('../chem/sgroup');
+var Struct = require('../chem/struct');
 
 var util = require('../util');
 
 var Visel = require('./visel');
 
 var ReDataSGroupData = require('./redatasgroupdata');
-var ReObject = require('./reobject')
+var ReObject = require('./reobject');
 
 var tfx = util.tfx;
 
@@ -18,7 +18,7 @@ var ReSGroup = function (sgroup) {
 	this.item = sgroup;
 };
 ReSGroup.prototype = new ReObject();
-ReSGroup.isSelectable = function () { return false; }
+ReSGroup.isSelectable = function () { return false; };
 
 
 ReSGroup.findClosest = function (render, p) {
@@ -51,7 +51,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 }
 
 var SGroupdrawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) {
-	var brackets = SGroup.getBracketParameters(render.ctab.molecule, xbonds, atomSet, bb, d, n, render, sg.id);
+	var brackets = Struct.SGroup.getBracketParameters(render.ctab.molecule, xbonds, atomSet, bb, d, n, render, sg.id);
 	var ir = -1;
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
@@ -88,8 +88,8 @@ var drawGroupMul = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [], xBonds = [];
 	var atomSet = Set.fromList(sgroup.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	Struct.SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
 	sgroup.areas = [bb];
@@ -102,8 +102,8 @@ var drawGroupSru = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [], xBonds = [];
 	var atomSet = Set.fromList(sgroup.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	Struct.SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
 	sgroup.areas = [bb];
@@ -120,8 +120,8 @@ var drawGroupSup = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [], xBonds = [];
 	var atomSet = Set.fromList(sgroup.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	Struct.SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
 	sgroup.areas = [bb];
@@ -137,8 +137,8 @@ var drawGroupGen = function (remol, sgroup) {
 	var set = paper.set();
 	var inBonds = [], xBonds = [];
 	var atomSet = Set.fromList(sgroup.atoms);
-	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
-	SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
+	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	Struct.SGroup.bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
 	sgroup.areas = [bb];
@@ -172,17 +172,17 @@ var drawGroupDat = function (remol, sgroup) {
 	var settings = render.settings;
 	var paper = render.paper;
 	var set = paper.set();
-	var atoms = SGroup.getAtoms(remol, sgroup);
+	var atoms = Struct.SGroup.getAtoms(remol, sgroup);
 	var i;
-	SGroup.bracketPos(sgroup, render, remol.molecule);
+	Struct.SGroup.bracketPos(sgroup, render, remol.molecule);
 	sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
 	if (sgroup.pp == null) {
 		// NB: we did not pass xbonds parameter to the backetPos method above,
 		//  so the result will be in the regular coordinate system
-		SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
+		Struct.SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
 	}
 	var ps = sgroup.pp.scaled(settings.scaleFactor);
-	
+
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {
 			var atom = remol.atoms.get(atoms[i]);
@@ -242,10 +242,10 @@ ReSGroup.prototype.drawHighlight = function (render) {
 	.attr(styles.highlightStyle);
 	set.push(sg.highlighting);
 
-	SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
+	Struct.SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	SGroup.getBonds(render.ctab.molecule, sg).each(function (bid) {
+	Struct.SGroup.getBonds(render.ctab.molecule, sg).each(function (bid) {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);

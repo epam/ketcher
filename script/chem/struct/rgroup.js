@@ -1,4 +1,4 @@
-var Pool = require('../util/pool');
+var Pool = require('../../util/pool');
 
 var RGroup = function (logic) {
 	logic = logic || {};

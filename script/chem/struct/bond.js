@@ -1,4 +1,4 @@
-var Vec2 = require('../util/vec2');
+var Vec2 = require('../../util/vec2');
 
 var Bond = function (params)
 {

@@ -1,7 +1,7 @@
-var Vec2 = require('../util/vec2');
-var util = require('../util');
+var Vec2 = require('../../util/vec2');
+var util = require('../../util');
 
-var element = require('./element');
+var element = require('../element');
 var AtomList = require('./atomlist');
 
 var Atom = function (params) {
@@ -474,10 +474,10 @@ Atom.prototype.calcValenceMinusHyd = function (conn) {
 		this.implicitH = 0;
 		return null;
 	}
-	
+
 	var groupno = element.get(elem).group;
 	var rad = radicalElectrons(atom.radical);
-	
+
 	if (groupno == 3) {
 		if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In') {
 			if (charge == -1)
@@ -516,7 +516,7 @@ Atom.prototype.calcValenceMinusHyd = function (conn) {
 				return rad + conn;
 		}
 	}
-	
+
 	return rad + conn + Math.abs(charge);
 };
 

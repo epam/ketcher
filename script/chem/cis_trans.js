@@ -1,7 +1,7 @@
 var Map = require('../util/map');
 var Vec2 = require('../util/vec2');
 
-var Bond = require('./bond');
+var Struct = require('./struct');
 
 var CisTrans = function (mol, neighborsFunc, context) {
 	this.molecule = mol;
@@ -99,7 +99,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 
-	if (bond.type != Bond.PATTERN.TYPE.DOUBLE) {
+	if (bond.type != Struct.Bond.PATTERN.TYPE.DOUBLE) {
 		return false;
 	}
 
@@ -140,7 +140,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 			continue;
 		}
 
-		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE) {
 			return false;
 		}
 
@@ -158,7 +158,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 			continue;
 		}
 
-		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE) {
 			return false;
 		}
 

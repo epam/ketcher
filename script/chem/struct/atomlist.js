@@ -1,4 +1,4 @@
-var element = require('./element');
+var element = require('../element');
 
 var AtomList = function (params)
 {

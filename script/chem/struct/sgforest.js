@@ -1,13 +1,13 @@
-var Map = require('../util/map');
-var Set = require('../util/set');
-var util = require('../util');
+var Map = require('../../util/map');
+var Set = require('../../util/set');
+var util = require('../../util');
 
 var SGroupForest = function (molecule) {
 	this.parent = new Map(); // child id -> parent id
 	this.children = new Map(); // parent id -> list of child ids
 	this.children.set(-1, []); // extra root node
 	this.molecule = molecule;
-}
+};
 
 // returns an array or s-group ids in the order of breadth-first search
 SGroupForest.prototype.getSGroupsBFS = function () {

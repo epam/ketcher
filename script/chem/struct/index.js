@@ -1,10 +1,10 @@
-var Map = require('../util/map');
-var Pool = require('../util/pool');
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
-var util = require('../util');
+var Map = require('../../util/map');
+var Pool = require('../../util/pool');
+var Set = require('../../util/set');
+var Vec2 = require('../../util/vec2');
+var util = require('../../util');
 
-var element = require('./element');
+var element = require('../element');
 
 var Atom = require('./atom');
 var AtomList = require('./atomlist');

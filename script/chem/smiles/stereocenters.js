@@ -1,8 +1,8 @@
-var Map = require('../util/map');
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
+var Map = require('../../util/map');
+var Set = require('../../util/set');
+var Vec2 = require('../../util/vec2');
 
-var Struct = require('./struct');
+var Struct = require('../struct');
 
 var Stereocenters = function (mol, neighbors_func, context)
 {

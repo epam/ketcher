@@ -1,7 +1,7 @@
-var Map = require('../util/map');
-var Vec2 = require('../util/vec2');
+var Map = require('../../util/map');
+var Vec2 = require('../../util/vec2');
 
-var Struct = require('./struct');
+var Struct = require('../struct');
 
 var CisTrans = function (mol, neighborsFunc, context) {
 	this.molecule = mol;

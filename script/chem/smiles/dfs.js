@@ -1,4 +1,4 @@
-var Set = require('../util/set');
+var Set = require('../../util/set');
 
 var Dfs = function (mol, atom_data, components, nReactants) {
 	this.molecule = mol;

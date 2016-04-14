@@ -1,7 +1,7 @@
-var Set = require('../util/set');
-var util = require('../util');
+var Set = require('../../util/set');
+var util = require('../../util');
 
-var Struct = require('./struct');
+var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
 var Stereocenters = require('./stereocenters');

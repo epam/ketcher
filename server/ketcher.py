@@ -65,7 +65,11 @@ class application(object):
     def indigo_moldata(save_format='ctab'):
         def decorator(method):
             def wrapper(self, **args):
-                if not self.indigo_init():
+                opts = self.indigo_defaults.copy() # see https://epa.ms/CKnh9
+                for fn in filter(lambda s: s.startswith('indigo-'), self.fields):
+                    opts[fn[7:]] = self.fields[fn].value
+
+                if not self.indigo_init(**opts):
                     raise self.HttpException("501 Not Implemented",
                                              "Sorry, no Indigo libs")
                 molstr = None
@@ -108,11 +112,11 @@ class application(object):
 
         return decorator
 
-    def indigo_init(self):
+    def indigo_init(self, **options):
         try:
             self.indigo = indigo.Indigo()
             self.indigo.inchi = indigo_inchi.IndigoInchi(self.indigo)
-            for option, value in self.indigo_defaults.iteritems():
+            for option, value in options.iteritems():
                  self.indigo.setOption(option, value)
             return self.indigo
         except:

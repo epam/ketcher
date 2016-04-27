@@ -31,11 +31,12 @@ function unwrap(xhr) {
 	throw Error('Unknown server error: ' + data);
 }
 
-function api (base) {
+function api (base, defaultOptions) {
 	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
 	function request (method, url) {
-		function options(data, params, sync) {
+		function options(opts, params, sync) {
+			var data = Object.assign({}, defaultOptions, opts);
 			return {
 				method: method,
 				url: res.url,

@@ -6,8 +6,7 @@ var Box2Abs = function () {
 		this.p0 = arguments[0].min;
 		this.p1 = arguments[0].max;
 	}
-
-	if (arguments.length == 2 && arguments[0] instanceof Vec2 && arguments[1] instanceof Vec2) {
+	if (arguments.length == 2) {
 		this.p0 = arguments[0];
 		this.p1 = arguments[1];
 	} else if (arguments.length == 4) {

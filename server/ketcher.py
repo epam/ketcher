@@ -22,6 +22,7 @@ class application(object):
     # don't serve static by default
     static_serve = False
     static_root = None
+    static_symlinks = False
     static_alias = { '' : 'ketcher.html' }
 
     indigo_defaults = {
@@ -273,9 +274,10 @@ class application(object):
                                  "Request not supported")
 
     def serve_static(self):
-        root = path.realpath(self.static_root or getcwd())
+        normpath = path.normpath if self.static_symlinks else path.realpath
+        root = normpath(self.static_root or getcwd())
         fpath = self.static_alias.get(self.path, self.path)
-        fpath = path.realpath(path.join(root, fpath))
+        fpath = normpath(path.join(root, fpath))
 
         if not fpath.startswith(root + path.sep) or not path.isfile(fpath) \
            or fpath == path.realpath(__file__):
@@ -316,6 +318,7 @@ if __name__ == '__main__':
     try:
         dir, address, port = parse_args()
         application.static_serve = True     # allow to serve static
+        application.static_symlinks = True  # allow symlinks
         application.static_root = dir       # in standalone python-server mode
         httpd = make_server(address, port, application)
         print("Serving on %s:%d..." % (address, port))

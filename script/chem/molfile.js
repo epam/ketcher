@@ -1409,11 +1409,14 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	var sdtLine = 'M  SDT ' + idstr +
-			' ' + stringPadded(data.fieldName, 30, true) +
-		stringPadded(data.fieldType, 2) +
-		stringPadded(data.units, 20, true) +
-		stringPadded(data.query, 2) +
-		stringPadded(data.queryOp, 3);
+	    ' ' + stringPadded(data.fieldName, 30, true) +
+	    stringPadded(data.fieldType, 2) +
+	    stringPadded(data.units, 20, true) +
+	    stringPadded(data.query, 2);
+
+	if (data.queryOp)    // see gitlab #184
+		sdtLine += stringPadded(data.queryOp, 80 - 65);
+
 	lines.push(sdtLine);
 	var sddLine = 'M  SDD ' + idstr +
 			' ' + paddedFloat(pp.x, 10, 4) + paddedFloat(-pp.y, 10, 4) +

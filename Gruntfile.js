@@ -136,7 +136,7 @@ module.exports = function (grunt) {
 			prototype: {
 				expand: true,
 				flatten: true,
-				src: 'script/prototype-min.js',
+				src: 'script/prototype.js',
 				dest: '<%= options.dist %>'
 			},
 			raphael: {

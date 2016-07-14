@@ -86,12 +86,12 @@ function convertMolecule (server, molecule, format) {
 		if (format == 'mol') {
 			resolve(moldata);
 		}
-		else if (format == 'smi') {
-			resolve(smiles.stringify(molecule));
-		}
 		else if (ui.standalone)
 			// TODO: 'InChI'
- 			throw Error(format.capitalize() + ' is not supported in the standalone mode');
+			throw Error(format.capitalize() + ' is not supported in the standalone mode');
+		else if (format == 'smi') {
+			resolve(server.smiles({ moldata: moldata }));
+		}
 		else if (format == 'cml') {
 			resolve(server.cml({ moldata: moldata }));
 		}

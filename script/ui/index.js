@@ -93,6 +93,16 @@ function init (options, apiServer) {
 	});
 	//setScrollOffset(0, 0);
 	selectAction('select-lasso');
+
+	Event.observe(window, 'resize', function () {
+		$$('menu').filter(function (menu) {
+			return parseFloat(menu.style.marginTop) < 0;
+		}).each(function (menu) {
+			menu.style.marginTop = 0;
+		});
+		// TODO: pop all active
+		popAction(toolbar);
+	});
 };
 
 function shortcutStr(key) {
@@ -313,8 +323,6 @@ function initHotKeys(toolbar, scope) {
 			});
 		}
 	});
-
-	console.info(keyMap);
 
 	Object.keys(keyMap).forEach(function (key) {
 		keymage(scope, key, function (event) {

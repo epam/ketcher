@@ -129,6 +129,7 @@ function hideBlurredControls () {
 		return false;
 	}
 
+	console.info('dropdownOpened', dropdownOpened);
 	dropdownOpened.removeClassName('opened');
 	var sel = dropdownOpened.select('.selected');
 	if (sel.length == 1) {
@@ -313,17 +314,23 @@ function initHotKeys(toolbar, scope) {
 		}
 	});
 
+	console.info(keyMap);
+
 	Object.keys(keyMap).forEach(function (key) {
-		keymage(scope, key, keyMap[key].length == 1 ? function (event) {
-			// TODO: handle disabled
-			var action = keyMap[key][0];
+		keymage(scope, key, function (event) {
+			var group = keyMap[key];
+			var index = group.index || 0;
+			var prevEl = toolbar.select('.selected')[0];
+			if (group.length != 1 && group.indexOf(prevEl && prevEl.id) != -1) {
+				group.index = index = (index + 1) % group.length;
+			}
+			var action = group[index];
+			console.info('action', action);
 			if (clipActions.indexOf(action) == -1) {
 				// else delegate to cliparea
-				selectAction(keyMap[key][0]);
+				selectAction(action);
 				event.preventDefault();
 			}
-		} : function () {
-			console.info('actions', keyMap[key]);
 		});
 	});
 }

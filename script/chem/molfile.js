@@ -588,7 +588,7 @@ var applyDataSGroupData = function (sg, data, finalize) {
 	/* reader */
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
-		sg.data.fieldValue = trimRight(sg.data.fieldValue);
+		sg.data.fieldValue = sg.data.fieldValue.trimRight();
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
 		// Partially revert f556e8, from KETCHER-457 and RB with love
@@ -1198,7 +1198,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 		var components = molecule.getComponents();
 
 		var reactants = components.reactants, products = components.products, all = reactants.concat(products);
-		this.molfile = '$RXN\n\n\n\n' + paddedInt(reactants.length, 3) + paddedInt(products.length, 3) + paddedInt(0, 3) + '\n';
+		this.molfile = '$RXN\n\n\n\n' + paddedNum(reactants.length, 3) + paddedNum(products.length, 3) + paddedNum(0, 3) + '\n';
 		for (var i = 0; i < all.length; ++i) {
 			var saver = new Molfile(false);
 			var submol = molecule.clone(all[i], null, true);
@@ -1308,7 +1308,7 @@ Molfile.prototype.writePaddedFloat = function (number, width, precision)
 {
 	/* saver */
 
-	this.write(paddedFloat(number, width, precision));
+	this.write(paddedNum(number, width, precision));
 };
 
 Molfile.prototype.writeCTab2000Header = function ()
@@ -1333,9 +1333,9 @@ var makeAtomBondLines = function (prefix, idstr, ids, map) {
 	var lines = [];
 	for (var i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
 		var rem = Math.min(ids.length - 15 * i, 15);
-		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + paddedInt(rem, 2);
+		var salLine = 'M  ' + prefix + ' ' + idstr + ' ' + paddedNum(rem, 2);
 		for (var j = 0; j < rem; ++j) {
-			salLine += ' ' + paddedInt(map[ids[i * 15 + j]], 3);
+			salLine += ' ' + paddedNum(map[ids[i * 15 + j]], 3);
 		}
 		lines.push(salLine);
 	}
@@ -1355,10 +1355,10 @@ var bracketsToMolfile = function (mol, sg, idstr) {
 		var bracket = brackets[i];
 		var a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
 		var a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
-		var line = 'M  SDI ' + idstr + paddedInt(4, 3);
+		var line = 'M  SDI ' + idstr + paddedNum(4, 3);
 		var coord = [a0.x, a0.y, a1.x, a1.y];
 		for (var j = 0; j < coord.length; ++j) {
-			line += paddedFloat(coord[j], 10, 4);
+			line += paddedNum(coord[j], 10, 4);
 		}
 		lines.push(line);
 	}
@@ -1366,7 +1366,7 @@ var bracketsToMolfile = function (mol, sg, idstr) {
 };
 
 var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
-	var idstr = stringPadded(sgMap[sgroup.id], 3);
+	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, Object.keys(sgroup.atomSet), atomMap)); // TODO: check atomSet
@@ -1379,7 +1379,7 @@ var saveMulToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 };
 
 var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
-	var idstr = stringPadded(sgMap[sgroup.id], 3);
+	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
@@ -1389,7 +1389,7 @@ var saveSruToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 };
 
 var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
-	var idstr = stringPadded(sgMap[sgroup.id], 3);
+	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
@@ -1400,7 +1400,7 @@ var saveSupToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 };
 
 var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
-	var idstr = stringPadded(sgMap[sgroup.id], 3);
+	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var data = sgroup.data;
 	var pp = sgroup.pp;
@@ -1408,27 +1408,27 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 		pp = pp.sub(Struct.SGroup.getMassCentre(mol, sgroup.atoms));
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-	var sdtLine = 'M  SDT ' + idstr +
-	    ' ' + stringPadded(data.fieldName, 30, true) +
-	    stringPadded(data.fieldType, 2) +
-	    stringPadded(data.units, 20, true) +
-	    stringPadded(data.query, 2);
+	var sdtLine = 'M  SDT ' + idstr + ' ' +
+	    (data.fieldName || '').padEnd(30) +
+	    (data.fieldType || '').padStart(2) +
+	    (data.units || '').padEnd(20) +
+	    (data.query || '').padStart(2);
 
 	if (data.queryOp)    // see gitlab #184
-		sdtLine += stringPadded(data.queryOp, 80 - 65);
+		sdtLine += data.queryOp.padEnd(80 - 65);
 
 	lines.push(sdtLine);
 	var sddLine = 'M  SDD ' + idstr +
-			' ' + paddedFloat(pp.x, 10, 4) + paddedFloat(-pp.y, 10, 4) +
+			' ' + paddedNum(pp.x, 10, 4) + paddedNum(-pp.y, 10, 4) +
 			'    ' + // ' eee'
 			(data.attached ? 'A' : 'D') + // f
 			(data.absolute ? 'A' : 'R') + // g
 			(data.showUnits ? 'U' : ' ') + // h
 			'   ' + //  i
-			(data.nCharnCharsToDisplay >= 0 ? paddedInt(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
+			(data.nCharnCharsToDisplay >= 0 ? paddedNum(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
 			'  1   ' + // 'kkk ll '
-		stringPadded(data.tagChar, 1) + // m
-			'  ' + paddedInt(data.daspPos, 1) + // n
+		data.tagChar || ' ' + // m
+			'  ' + paddedNum(data.daspPos, 1) + // n
 			'  '; // oo
 	lines.push(sddLine);
 	var val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
@@ -1444,7 +1444,7 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 };
 
 var saveGenToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
-	var idstr = stringPadded(sgMap[sgroup.id], 3);
+	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
@@ -1591,7 +1591,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 	if (rgroups)
 		rgroups.each(function (rgid, rg) {
 			if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-				var line = '  1 ' + paddedInt(rgid, 3) + ' ' + paddedInt(rg.ifthen, 3) + ' ' + paddedInt(rg.resth ? 1 : 0, 3) + '   ' + rg.range;
+				var line = '  1 ' + paddedNum(rgid, 3) + ' ' + paddedNum(rg.ifthen, 3) + ' ' + paddedNum(rg.resth ? 1 : 0, 3) + '   ' + rg.range;
 				rglogic_list.push(line);
 			}
 		});
@@ -1697,9 +1697,9 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 		if (sgroup.type == 'SRU' && sgroup.data.connectivity) {
 			var connectivity = '';
 			connectivity += ' ';
-			connectivity += stringPadded(q.toString(), 3);
+			connectivity += q.toString().padStart(3);
 			connectivity += ' ';
-			connectivity += stringPadded(sgroup.data.connectivity, 3, true);
+			connectivity += (sgroup.data.connectivity || '').padEnd(3);
 			this.write('M  SCN');
 			this.writePaddedNumber(1, 3);
 			this.write(connectivity.toUpperCase());
@@ -2049,39 +2049,13 @@ var parseRg2000 = function (/* string[] */ ctabLines) /* Struct */
 
 // Utility functions
 
-function stringPadded(string, width, leftAligned) {
-	var str = string + '';
-	var space = '';
-	while (str.length + space.length < width) {
-		space += ' ';
-	}
-
-	return (leftAligned) ? string + space : space + string;
-}
-
-function paddedFloat(number, width, precision) {
-	var numStr = number.toFixed(precision).replace(',', '.');
+function paddedNum(number, width, precision) {
+	var numStr = number.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
 	if (numStr.length > width) {
 		throw new Error('number does not fit');
 	}
-	return stringPadded(numStr, width);
+	return numStr.padStart(width);
 }
-
-function paddedInt(number, width) {
-	var numStr = number.toFixed(0);
-	if (numStr.length > width) {
-		throw new Error('number does not fit');
-	}
-	return stringPadded(numStr, width);
-}
-
-function trimRight(str) {
-	if (str.trimRight)
-		return str.trimRight();
-	return str.replace(/\s+$/, '');
-}
-// consider using https://github.com/es-shims/es7-shim
-// ^for all that above
 
 function stripQuotes(str) {
 	if (str[0] === '"' && str[str.length - 1] === '"') {

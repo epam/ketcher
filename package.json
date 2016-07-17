@@ -55,6 +55,7 @@
   "dependencies": {
     "es5-shim": "^4.5.7",
     "es6-shim": "^0.35.0",
+    "es7-shim": "^6.0.0",
     "filesaver.js": "^0.2.0",
     "html5shiv": "^3.7.3",
     "keymage": "^1.1.0",

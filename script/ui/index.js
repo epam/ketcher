@@ -31,7 +31,6 @@ var ketcherWindow;
 var toolbar;
 var lastSelected;
 var clientArea = null;
-var dropdownOpened;
 var server;
 
 var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
@@ -84,7 +83,12 @@ function init (options, apiServer) {
 		if ($('input_label').visible())
 			$('input_label').hide();
 	});
-	clientArea.on('mousedown', function () {
+	clientArea.on('mousedown', function (event) {
+		var dropdown = toolbar.select('.opened')[0];
+		if (dropdown) {
+			dropdown.removeClassName('opened');
+			event.stop();       // TODO: don't delegate to editor
+		}
 		keymage.setScope('editor');
 	});
 	//setScrollOffset(0, 0);
@@ -101,6 +105,17 @@ function subEl (id) {
 	return $(id).children[0];
 };
 
+function hiddenAncestor(el, base) {
+	base = base || document.body;
+	var res = el.parentNode;
+	while (res.getStyle('overflow') != 'hidden') {
+		if (res == base)
+			return null;
+		res = res.parentNode;
+	}
+	return res;
+}
+
 function initDropdown(toolbar) {
 	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
@@ -112,42 +127,22 @@ function initDropdown(toolbar) {
 				selectAction(this.id);
 			}
 
-			if (hideBlurredControls()) {
-				event.stop();
-			}
-			else if (this.getStyle('overflow') == 'hidden') {
+			if (this.getStyle('overflow') == 'hidden') {
 				this.addClassName('opened');
-				dropdownOpened = this;
 				event.stop();
 			}
 		});
 	});
 }
 
-function hideBlurredControls () {
-	if (!dropdownOpened) {
-		return false;
+function popAction(toolbar, action) {
+	var sel = action ? $(action) : toolbar.select('.selected')[0];
+	var dropdown = sel && hiddenAncestor(sel);
+	if (dropdown) {
+		// var index = sel[0].previousSiblings().size();
+		var menu = subEl(dropdown);
+		menu.style.marginTop = (-sel.offsetTop + menu.offsetTop) + 'px';
 	}
-
-	console.info('dropdownOpened', dropdownOpened);
-	dropdownOpened.removeClassName('opened');
-	var sel = dropdownOpened.select('.selected');
-	if (sel.length == 1) {
-		//var index = sel[0].previousSiblings().size();
-		var menu = subEl(dropdownOpened);
-		menu.style.marginTop = (-sel[0].offsetTop + menu.offsetTop) + 'px';
-	}
-
-	// FIX: Quick fix of Chrome (Webkit probably) box-shadow
-	// repaint bug: http://bit.ly/1iiSMgy
-	// needs investigation, performance
-	clientArea.style.visibility = 'hidden';
-	setTimeout(function () {
-		clientArea.style.visibility = 'visible';
-	}, 0);
-	// END
-	dropdownOpened = null;
-	return true;
 };
 
 function selectAction (action) {
@@ -156,6 +151,10 @@ function selectAction (action) {
 	var el = $(action);
 	var args = [].slice.call(arguments, 1);
 	console.assert(action.startsWith, 'id is not a string', action);
+
+	var dropdown = toolbar.select('.opened')[0];
+	if (dropdown)
+		dropdown.removeClassName('opened');
 
 	if (clipActions.indexOf(action) != -1 && args.length == 0)
 		return delegateCliparea(action);
@@ -177,6 +176,7 @@ function selectAction (action) {
 				}
 				if (el) {
 					el.addClassName('selected');
+					popAction(toolbar, el);
 				}
 				if (oldel) {
 					oldel.removeClassName('selected');
@@ -832,7 +832,6 @@ Object.assign(ui, {
 	render: null,
 	editor: null,
 
-	hideBlurredControls: hideBlurredControls,
 	updateClipboardButtons: updateClipboardButtons,
 	selectAction: selectAction,
 	addUndoAction: addUndoAction,

@@ -178,10 +178,13 @@ class application(object):
     def on_getcml(self, md):
         return md
 
+    def on_layout(self):
+        if 'selective' in self.fields:        # old interface compatible
+            return self.on_selective_layout() # routing. replace it with
+        return self.layout_basic()            # layout_basic body when ready
+
     @indigo_moldata
-    def on_layout(self, md):
-        if 'selective' in self.fields:        # old versions
-            return self.on_selective_layout() # interface compat
+    def layout_basic(self, md):
         md.struct.layout()
         return md
 

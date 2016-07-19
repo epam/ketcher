@@ -1,10 +1,9 @@
 var Vec2 = require('../../util/vec2');
-var Action = require('../action');
-var EditorGlobal = require('./global');
 
 var EditorTool = function (editor) {
 	this.editor = editor;
 };
+
 EditorTool.prototype.processEvent = function (name, event, action) {
 	if (!('touches' in event) || event.touches.length == 1) {
 		if (name + '0' in this)

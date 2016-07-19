@@ -84,11 +84,8 @@ function init (options, apiServer) {
 			$('input_label').hide();
 	});
 	clientArea.on('mousedown', function (event) {
-		var dropdown = toolbar.select('.opened')[0];
-		if (dropdown) {
-			dropdown.removeClassName('opened');
+		if (dropdownToggle(toolbar))
 			event.stop();       // TODO: don't delegate to editor
-		}
 		keymage.setScope('editor');
 	});
 	//setScrollOffset(0, 0);
@@ -138,12 +135,21 @@ function initDropdown(toolbar) {
 			}
 
 			if (this.getStyle('overflow') == 'hidden') {
-				this.addClassName('opened');
+				dropdownToggle(toolbar, this);
 				event.stop();
 			}
 		});
 	});
 }
+
+function dropdownToggle(toolbar, el) {
+	var dropdown = toolbar.select('.opened')[0];
+	if (dropdown)
+		dropdown.removeClassName('opened');
+	if (el && el != dropdown)
+		el.addClassName('opened');
+	return !!dropdown && !el;
+};
 
 function popAction(toolbar, action) {
 	var sel = action ? $(action) : toolbar.select('.selected')[0];
@@ -162,9 +168,7 @@ function selectAction (action) {
 	var args = [].slice.call(arguments, 1);
 	console.assert(action.startsWith, 'id is not a string', action);
 
-	var dropdown = toolbar.select('.opened')[0];
-	if (dropdown)
-		dropdown.removeClassName('opened');
+	dropdownToggle(toolbar);
 
 	if (clipActions.indexOf(action) != -1 && args.length == 0)
 		return delegateCliparea(action);
@@ -327,13 +331,13 @@ function initHotKeys(toolbar, scope) {
 	Object.keys(keyMap).forEach(function (key) {
 		keymage(scope, key, function (event) {
 			var group = keyMap[key];
-			var index = group.index || 0;
+			var index = group.index || 0; // TODO: store index in dom to revert on resize and
+			                              //       sync mouse with keyboard
 			var prevEl = toolbar.select('.selected')[0];
 			if (group.length != 1 && group.indexOf(prevEl && prevEl.id) != -1) {
 				group.index = index = (index + 1) % group.length;
 			}
 			var action = group[index];
-			console.info('action', action);
 			if (clipActions.indexOf(action) == -1) {
 				// else delegate to cliparea
 				selectAction(action);

@@ -1427,7 +1427,7 @@ var saveDatToMolfile = function (sgroup, mol, sgMap, atomMap, bondMap) {
 			'   ' + //  i
 			(data.nCharnCharsToDisplay >= 0 ? paddedNum(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
 			'  1   ' + // 'kkk ll '
-		data.tagChar || ' ' + // m
+	    (data.tagChar || ' ') + // m
 			'  ' + paddedNum(data.daspPos, 1) + // n
 			'  '; // oo
 	lines.push(sddLine);

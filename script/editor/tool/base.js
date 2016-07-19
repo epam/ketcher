@@ -2,8 +2,6 @@ var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var EditorGlobal = require('./global');
 
-var ui = global.ui;
-
 var EditorTool = function (editor) {
 	this.editor = editor;
 };
@@ -26,7 +24,6 @@ EditorTool.prototype.OnMouseUp = function () {};
 EditorTool.prototype.OnClick = function () {};
 EditorTool.prototype.OnDblClick = function () {};
 EditorTool.prototype.OnMouseLeave = function () { this.OnCancel();};
-EditorTool.prototype.OnKeyPress = function () {};
 EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
 EditorTool.prototype.OnMouseDown0 = function (event) {
 	this.OnMouseDown0.lastEvent = event;
@@ -56,55 +53,6 @@ EditorTool.prototype.OnMouseUp0 = function (event) {
 	} finally {
 		delete this.OnMouseDown0.lastEvent;
 	}
-};
-
-EditorTool.atom_label_map = {
-	atom_tool_any: 'A',
-	atom_tool_h: 'H',
-	atom_tool_c: 'C',
-	atom_tool_n: 'N',
-	atom_tool_o: 'O',
-	atom_tool_s: 'S',
-	atom_tool_p: 'P',
-	atom_tool_f: 'F',
-	atom_tool_br: 'Br',
-	atom_tool_cl: 'Cl',
-	atom_tool_i: 'I'
-};
-
-EditorTool.prototype.OnKeyPress0 = function (event, action) {
-	if (action === 'rgroup_tool_label' && 'lastEvent' in this.OnMouseMove0) {
-		return EditorGlobal.RGroupAtomTool_OnMouseUp.call(this,
-			this.OnMouseMove0.lastEvent);
-	} else if (action in EditorTool.atom_label_map) {
-		var label = EditorTool.atom_label_map[action];
-		var selection = this.editor.getSelection();
-		var rnd = this.editor.render;
-		if (selection && 'atoms' in selection && selection.atoms.length > 0) {
-			ui.addUndoAction(Action.fromAtomsAttrs(
-				selection.atoms, {label: label}, true), true);
-			rnd.update();
-			return true;
-		} else {
-			var ci = rnd.findItem(this.OnMouseMove0.lastEvent);
-			if (ci) {
-				ci.label = {label: label};
-				if (ci.map === 'atoms') {
-					ui.addUndoAction(Action.fromAtomsAttrs(
-						ci.id, ci.label, true), true);
-				} else if (ci.id == -1) {
-					ui.addUndoAction(
-						Action.fromAtomAddition(rnd.page2obj(this.OnMouseMove0.lastEvent), ci.label),
-						true);
-				}
-				rnd.update();
-				return true;
-			}
-		}
-	}
-	if ('OnKeyPress' in this)
-		return this.OnKeyPress(event);
-	return false;
 };
 
 EditorTool.prototype._calcAngle = function (pos0, pos1) {

@@ -23,6 +23,7 @@ function dialog (name, params) {
 			field[field.type == 'checkbox' ? 'checked' : 'value'] = params[field.name];
 	});
 	dlg.select('input, select')[0].activate();
+	return dlg;
 }
 
 function eachNamedInput(el, func) {

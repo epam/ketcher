@@ -362,9 +362,19 @@ function updateServerButtons () {
 	});
 };
 
+function createDialog(name, container) {
+	var dn = name.replace(/([A-Z])/g, function (l) {
+		return '-' + l.toLowerCase();
+	});
+	var tmpl = $(dn + '-tmpl').innerHTML;
+	var dialog = new Element('form', { role: 'dialog', className: dn });
+	container.insert(dialog);
+	return dialog.update(tmpl);
+}
+
 function showDialog (name) {
-	var dialog = $(name);
 	var cover = $$('.overlay')[0];
+	var dialog = cover.querySelector('form#' + name) || createDialog(name, cover);
 	keymage.setScope('modal');
 	dialog.style.display = '';
 	cover.style.display = '';
@@ -375,12 +385,19 @@ function showDialog (name) {
 };
 
 function hideDialog (name) {
-	var dialog = $(name);
 	var cover = $$('.overlay')[0];
+	var dn = name.replace(/([A-Z])/g, function (l) {
+		return '-' + l.toLowerCase();
+	});
+	var dialog = cover.querySelector('form.' + dn) || $(name);
+
 	utils.animate(cover, 'hide');
 	utils.animate(dialog, 'hide').then(function () {
 		cover.style.display = 'none';
-		dialog.style.display = 'none';
+		if (cover.querySelector('form.' + dn))
+			dialog.remove();
+		else
+			dialog.style.display = 'none';
 		keymage.setScope('editor');
 	});
 };

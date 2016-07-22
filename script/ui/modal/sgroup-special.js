@@ -4,7 +4,7 @@ var util = require('../../util');
 var ui = global.ui;
 
 function dialog (params) {
-	var dlg = ui.showDialog('sgroup_special');
+	var dlg = ui.showDialog('sgroupSpecial');
 	var cache = {};
 
 	function setContext(context, force) {
@@ -66,7 +66,7 @@ function dialog (params) {
 		var res = key != 'onOk' || getValidateAttrs(dlg);
 		if (res) {
 			handlers.forEach(function (h) { h.stop(); });
-			ui.hideDialog('sgroup_special');
+			ui.hideDialog('sgroupSpecial');
 			if (key in params && res)
 				params[key](res);
 		}

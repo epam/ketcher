@@ -108,8 +108,8 @@ module.exports = function (grunt) {
 				options: {
 					partials: ['template/menu/*',
 					           'template/dialog/*'],
-					options: '<%= options %>',
-					postprocess: require('pretty')
+					options: '<%= options %>'
+					//postprocess: require('pretty')
 				},
 
 				src: 'template/main.hbs',

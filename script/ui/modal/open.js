@@ -7,7 +7,7 @@
 var ui = global.ui;
 
 function dialog (params) {
-	var dlg = ui.showDialog('open-file');
+	var dlg = ui.showDialog('open');
 	var okButton = dlg.select('input[value=OK]')[0];
 	var textInput = dlg.select('textarea')[0];
 	var fileInput = dlg.select('input[type=file]')[0];
@@ -17,7 +17,7 @@ function dialog (params) {
 
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		handlers.forEach(function (h) { h.stop(); });
-		ui.hideDialog('open-file');
+		ui.hideDialog('open');
 
 		var key = 'on' + button.value.capitalize();
 		if (params && key in params) {

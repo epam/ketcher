@@ -6,7 +6,7 @@ var smiles = require('../../chem/smiles');
 var ui = global.ui;
 
 function saveDialog (params, server) {
-	var dlg = ui.showDialog('save-file'),
+	var dlg = ui.showDialog('save'),
 	output = dlg.select('textarea')[0],
 	formatInput = dlg.select('select')[0],
 	saveButton = dlg.select('.save')[0],
@@ -22,7 +22,7 @@ function saveDialog (params, server) {
 
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		handlers.forEach(function (h) { h.stop(); });
-		ui.hideDialog('save-file');
+		ui.hideDialog('save');
 
 		var key = 'on' + button.value.capitalize();
 		if (params && key in params) {

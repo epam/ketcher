@@ -3,7 +3,7 @@
 var ui = global.ui;
 
 function dialog (params) {
-	var dlg = ui.showDialog('sgroup_properties');
+	var dlg = ui.showDialog('sgroup');
 	var type = params.type || 'GEN';
 
 	dlg.type.value = type;
@@ -63,7 +63,7 @@ function dialog (params) {
 		var res = key != 'onOk' || getValidateAttrs(dlg);
 		if (res) {
 			handlers.forEach(function (h) { h.stop(); });
-			ui.hideDialog('sgroup_properties');
+			ui.hideDialog('sgroup');
 			if (key in params && res)
 				params[key](res);
 		}

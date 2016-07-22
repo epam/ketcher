@@ -10,6 +10,19 @@
 		<script src="raphael.min.js"></script>
 		<script src="{{pkg.name}}.js"></script>
 		<script src="prototype.js"></script>
+		{{>about}}
+		{{>atom-props}}
+		{{>attachment-points}}
+		{{>automap}}
+		{{>bond-props}}
+		{{>generic-groups}}
+		{{>open}}
+		{{>period-table}}
+		{{>rgroup}}
+		{{>rgroup-logic}}
+		{{>save}}
+		{{>sgroup}}
+		{{>sgroup-special}}
 	</head>
 
 	<body role="applicaion">
@@ -22,19 +35,6 @@
 		</menu>
 		<div class="overlay" style="display:none">
 			{{>loading}}
-			{{>about}}
-			{{>atom}}
-			{{>attpoints}}
-			{{>automap}}
-			{{>bond}}
-			{{>generic-groups}}
-			{{>open}}
-			{{>period-table}}
-			{{>rgroup}}
-			{{>rlogic}}
-			{{>save}}
-			{{>sgroup}}
-			{{>sgroup-special}}
 			{{>templates}}
 		</div>
 		{{>crap}}

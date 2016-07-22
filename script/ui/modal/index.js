@@ -11,36 +11,39 @@ var sgroupSpecialDialog = require('./sgroup-special');
 
 function periodTable (params) {
 	params.required = true;
-	selectDialog('elem-table', params);
+	selectDialog('periodTable', params);
 };
 
 function rgroup (params) {
-	selectDialog('rgroup-table', params);
+	selectDialog('rgroup', params);
 };
 
 function genericGroups (params) {
 	params.required = true;
-	selectDialog('generics-table', params);
+	selectDialog('genericGroups', params);
 };
 
 function about(el) {
-	inputDialog('about_dialog');
+	inputDialog('about');
 }
 
 function attachmentPoints (params) {
-	inputDialog('atom_attpoints', params);
+	inputDialog('attachmentPoints', params);
 };
 
 function bondProps (params) {
-	inputDialog('bond_properties', params);
+	inputDialog('bondProps', params);
 };
 
 function automap (params) {
-	inputDialog('automap_properties', params);
+	inputDialog('automap', params);
 };
 
 function atomProps (params) {
-	var dlg = $('atom_properties');
+	var dlg = inputDialog('atomProps', Object.assign({}, params, {
+		onOk: function (res) { stopHandlers(); params.onOk(res); },
+		onCancel: function (res) { stopHandlers(); }
+	}));
 	var numberInput = dlg.select('.number')[0];
 	var handlers = [];
 
@@ -74,11 +77,6 @@ function atomProps (params) {
 		handlers.forEach(function (h) { h.stop(); });
 	}
 
-	inputDialog('atom_properties', Object.assign({}, params, {
-		onOk: function (res) { stopHandlers(); params.onOk(res); },
-		onCancel: function (res) { stopHandlers(); }
-	}));
-
 	handlers[0] = $(dlg.charge).on('change', function () {
 		if (this.value.strip() === '' || this.value == '0') {
 			this.value = '';
@@ -100,7 +98,7 @@ function atomProps (params) {
 };
 
 function rgroupLogic (params) {
-	inputDialog('rlogic_table', Object.assign({}, params, {
+	var dlg = inputDialog('rgroupLogic', Object.assign({}, params, {
 		onOk: function (res) {
 			params.onOk({
 				range: res.range.replace(/\s*/g, '').replace(/,+/g, ',')
@@ -117,7 +115,6 @@ function rgroupLogic (params) {
 			'IF R' + params.label + ' THEN R' + label + '</option>';
 	}, '<option value="0">Always</option>');
 
-	var dlg = $('rlogic_table');
 	$(dlg.ifthen).update(ifOpts);
 	dlg.ifthen.value = params.ifthen;
 };

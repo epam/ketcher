@@ -33,7 +33,7 @@ var lastSelected;
 var clientArea = null;
 var server;
 
-var serverActions = ['cleanup', 'arom', 'dearom', 'calc-cip',
+var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-custom'];
 var clipActions = ['cut', 'copy', 'paste'];
 
@@ -527,6 +527,10 @@ function layout () {
 		                Struct.SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms));
 };
 
+function clean2d() {
+	return serverTransform('clean');
+};
+
 function aromatize () {
 	return serverTransform('aromatize');
 };
@@ -690,7 +694,8 @@ var actionMap = {
 	redo: redo,
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
-	cleanup: layout,
+	layout: layout,
+	cleanup: clean2d,
 	arom: aromatize,
 	dearom: dearomatize,
 	'period-table': elemTable,

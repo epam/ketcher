@@ -65,6 +65,7 @@ function api (base, defaultOptions) {
 		molfile: request('POST', 'getmolfile'),
 		cml: request('POST', 'getcml'),
 		layout: request('POST', 'layout'),
+		clean: request('POST', 'clean'),
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),

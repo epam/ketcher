@@ -189,6 +189,11 @@ class application(object):
         return md
 
     @indigo_moldata
+    def on_clean(self, md):
+        md.struct.clean2d()
+        return md
+
+    @indigo_moldata
     def on_automap(self, md):
         mode = self.fields.getfirst('mode', 'discard')
         md.struct.automap(mode)

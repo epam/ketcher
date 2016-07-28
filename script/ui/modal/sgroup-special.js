@@ -57,8 +57,9 @@ function dialog (params) {
 
 	dlg.fieldValue.value = params.attrs.fieldValue;
 	//  absolute by default
-	dlg.fieldPos.value = params.attrs.attached ? 'attached' :
-		params.attrs.absolute === false ? 'relative' : 'absolute';
+	var posValue = params.attrs.attached ? 'attached' :
+	    params.attrs.absolute === false ? 'relative' : 'absolute';
+	dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.value == posValue; }).checked = true;
 
 	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
@@ -91,8 +92,10 @@ function getValidateAttrs(dlg) {
 
 	attrs.fieldName = dlg.fieldName.value.strip();
 	attrs.fieldValue = dlg.fieldValue.value.strip();
-	attrs.absolute = dlg.fieldPos.value == 'absolute';
-	attrs.attached = dlg.fieldPos.value == 'attached';
+
+	var posValue = dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.checked; }).value;
+	attrs.absolute = posValue == 'absolute';
+	attrs.attached = posValue == 'attached';
 
 	if (attrs.fieldValue == '') {
 		alert('Please, specify data field value.');

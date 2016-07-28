@@ -23,8 +23,10 @@ function dialog (params) {
 	case 'DAT':
 		dlg.fieldName.value = params.attrs.fieldName;
 		dlg.fieldValue.value = params.attrs.fieldValue;
-		dlg.fieldPos.value = params.attrs.attached ? 'attached' :
-			params.attrs.absolute ? 'absolute' : 'relative';
+
+		var posValue = params.attrs.attached ? 'attached' :
+		    params.attrs.absolute ? 'absolute' : 'relative';
+		dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.value == posValue; }).checked = true;
 		break;
 	default:
 		break;
@@ -113,8 +115,9 @@ function getValidateAttrs(dlg) {
 	case 'DAT':
 		attrs.fieldName = dlg.fieldName.value.strip();
 		attrs.fieldValue = dlg.fieldValue.value.strip();
-		attrs.absolute = dlg.fieldPos.value == 'absolute';
-		attrs.attached = dlg.fieldPos.value == 'attached';
+		var posValue = dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.checked; }).value;
+		attrs.absolute = posValue == 'absolute';
+		attrs.attached = posValue == 'attached';
 
 		if (attrs.fieldName == '' || attrs.fieldValue == '') {
 			alert('Please, specify data field name and value.');

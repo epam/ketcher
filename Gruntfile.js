@@ -4,14 +4,11 @@ module.exports = function (grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		options: {
-			banner: grunt.file.read('script/banner.js'),
 			src: ['script/**', 'style/**', 'icons/**',
 			      'template/**', 'Gruntfile.js', 'package.json',
 			      '.jshintrc', '.editorconfig'],
-			polyfills: ['html5shiv', 'es5-shim', 'es6-shim',
-			            'es7-shim/dist/es7-shim'],
-			build: ['<%= browserify.default.dest %>',
-			        '<%= less.default.dest %>',
+
+			build: ['<%= less.default.dest %>',
 			        '<%= assemble.default.dest %>',
 			        '<%= pkg.name %>.{svg,ttf,eot,woff}'],
 			distrib: ['LICENSE', 'favicon.ico', 'logo.jpg',
@@ -33,60 +30,8 @@ module.exports = function (grunt) {
 			'no-sgroup': grunt.option('no-sgroup'),
 			'no-rgroup': grunt.option('no-rgroup') || grunt.option('rgroup-label-only'),
 			'rgroup-label-only': grunt.option('rgroup-label-only'),
-			'sgroup-data-special': grunt.option('sgroup-data-special') || false,
+			'sgroup-data-special': grunt.option('sgroup-data-special') || false
 
-			replace: [
-				{from: '__VERSION__', to: '<%= pkg.version %>'},
-				{from: '__API_PATH__', to: '<%= options["api-path"] %>' },
-				{from: '__BUILD_NUMBER__', to: '<%= options["build-number"] %>' },
-				{from: '__BUILD_DATE__', to: '<%= options["build-date"] %>' },
-				{from: '__SGROUP_SPECIAL__', to: '<%= options["sgroup-data-special"] %>' },
-			]
-		},
-
-		browserify: {
-			options: {
-				//banner: '<%= options.banner %>',
-				browserifyOptions: {
-					standalone: '<%= pkg.name %>'
-				},
-				transform: [
-					['browserify-replace', {
-							replace: '<%= options.replace %>'
-					}]
-				],
-				preBundleCB: polyfillify
-			},
-			dev: {
-				options: {
-					browserifyOptions: {
-						standalone: '<%= pkg.name %>',
-						debug: true
-					}
-				},
-				files: {
-					'<%= options.dist %>/<%= pkg.name %>.js': ['script/index.js']
-				}
-			},
-			default: {
-				options: {
-					transform: [
-						['browserify-replace', {
-								replace: '<%= options.replace %>'
-						}],
-						['uglifyify', {
-								report: 'min',
-								compress: {
-									global_defs: {
-										DEBUG: false
-									},
-									dead_code: true
-								}
-						}]
-					]
-				},
-				files: '<%= browserify.dev.files %>'
-			}
 		},
 
 		less: {
@@ -266,29 +211,6 @@ module.exports = function (grunt) {
 		cb();
 	}
 
-	function polyfillify(build) {
-		var fs = require('fs');
-		var through = require('through2');
-		var ps = grunt.config('options.polyfills');
-		build.on('bundle', function() {
-			var firstChunk = true;
-			var polyfillData = ps.reduce(function (res, module) {
-				var data = fs.readFileSync(require.resolve(module));
-				return res + data + '\n';
-			}, '');
-			var stream = through.obj(function (buf, enc, next) {
-				if (firstChunk) {
-					this.push(polyfillData);
-					firstChunk = false;
-				}
-				this.push(buf);
-				next();
-			});
-			stream.label = "prepend";
-			build.pipeline.get('wrap').push(stream);
-		});
-	}
-
 	require('load-grunt-tasks')(grunt);
 	// waiting for assemble 0.5.0
 	grunt.loadNpmTasks('assemble');
@@ -296,9 +218,9 @@ module.exports = function (grunt) {
 	grunt.registerTask('font', ['fontello', 'clean:tmp']);
 
 	// clean:tmp in the end as workaround rimraf bug
-	grunt.registerTask('default', ['shell:rev', 'clean', 'less:default',
-	                               'fontello', 'browserify:default', 'assemble',
-	                               'copy', 'compress', 'clean:tmp']);
-	grunt.registerTask('dev', ['shell:rev', 'clean', 'less:dev', 'fontello',
-	                           'browserify:dev', 'assemble', 'copy', 'clean:tmp']);
+	grunt.registerTask('default', ['shell:rev', 'less:default',
+	                               'fontello', 'assemble', 'copy',
+	                               'compress', 'clean:tmp']);
+	grunt.registerTask('dev', ['shell:rev', 'less:dev',
+	                           'fontello', 'assemble', 'copy', 'clean:tmp']);
 };

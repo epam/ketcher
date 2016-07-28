@@ -67,7 +67,10 @@ function fileOpener () {
 		return new Promise(function (resolve, reject) {
 			var rd = new FileReader();
 			rd.onload = function (event) {
-				resolve(event.target.result);
+				var content = rd.result;
+				if (file.msClose)
+					file.msClose();
+				resolve(content);
 			};
 			rd.onerror = function (event) {
 				reject(event);

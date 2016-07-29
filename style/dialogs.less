@@ -35,8 +35,8 @@
 	//opacity: 1;
 
 	&.animate {
-		.transition(background-color 0.3s);
-		//.transition(opacity 0.3s);
+		transition: background-color 0.3s;
+		//transition: opacity 0.3s;
 	}
 
 	&.hide {
@@ -63,8 +63,8 @@ form[role=dialog] {
 	background-color: #fff;
 	border: 1px solid #999;
 	border: 1px solid rgba(0,0,0,.3);
-	.border-radius(6px);
-	.box-shadow(0 3px 9px rgba(0,0,0,.5));
+	border-radius: 6px;
+	box-shadow: 0 3px 9px rgba(0,0,0,.5);
 	background-clip: padding-box;
 	overflow: hidden;
 	.transition-zoom;
@@ -93,7 +93,7 @@ form[role=dialog] {
 /////////////////////
 
 .control() {
-	.border-radius(4px);
+	border-radius: 4px;
 
 	// &[disabled] {
 	//		color: @disabled-color;
@@ -118,11 +118,11 @@ input[type=reset], input[type=button] {
 	color: #333;
 	background-color: #fff;
 	border-color: #ccc;
-	.border-radius(4px);
-	.user-select(none);
+	border-radius: 4px;
+	user-select: none;
 
 	&:hover, &:focus {
-		.background-image(linear-gradient(to bottom, #fff, darken(#fff, 7%)));
+		background-image: linear-gradient(to bottom, #fff, darken(#fff, 7%));
 		//.gradient-vertical-three(25%, #fff, darken(#fff, 10%), #fff);
 		//color: @btn-default-color;
 		outline: 0;
@@ -131,14 +131,14 @@ input[type=reset], input[type=button] {
 	&:active {
 		outline: 0;
 		background-image: none;
-		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+		box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
 	}
 
 	&.disabled, &[disabled], fieldset[disabled] & {
 		background-image: none;
 		cursor: not-allowed;
-		.opacity(.5);
-		.box-shadow(none);
+		opacity: .5;
+		box-shadow: none;
 	}
 }
 
@@ -156,21 +156,21 @@ input[type=text] {
 	margin: 2px;
 
 	border: 1px solid @border-color;
-	.box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
 
-	// .transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+	// transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 	&:hover, &:focus {
 		.highlight-shadow(black);
 	}
-	.box-sizing(border-box);
+	box-sizing: border-box;
 
 	&[disabled],
 	&[readonly],
 	fieldset[disabled] & {
 		cursor: not-allowed;
-		//.box-shadow(none);
+		//box-shadow: none;
 		background: #efefef;
-		.opacity(0.6);
+		opacity: 0.6;
 	}
 }
 
@@ -195,7 +195,7 @@ fieldset {
 	border: 1px solid @border-color;
 	padding: 0.3em;
 	margin: 0;
-	.border-radius(4px);
+	border-radius: 4px;
 
 	&.-hidden {
 		border-color: transparent;
@@ -414,7 +414,7 @@ legend {
 		vertical-align: middle;
 	}
 	th, td.ref {
-		.opacity(0.6);
+		opacity: 0.6;
 		font-weight: normal;
 		font-size: 0.8em;
 		padding: 0.3em 0.8em;
@@ -441,7 +441,7 @@ legend {
 
 		&:after {
 			position: absolute;
-			.opacity(0.6);
+			opacity: 0.6;
 			top: 0.3em;
 			right: 0.3em;
 			font-size: 0.5em;

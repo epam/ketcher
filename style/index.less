@@ -1,11 +1,11 @@
+@import (less) 'normalize.css';
 @import 'font';
-@import 'reset';
 
 @import 'variables';
 @import 'mixins';
 @import 'dialogs';
 
-li, ul, menu {	// move to reset
+li, ul, menu { // move to reset
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -59,7 +59,7 @@ main {
 }
 
 [role='toolbar'] {
-	.user-select(none);
+	user-select: none;
 	menu {
 		.remove-inline-spacing;
 	}
@@ -98,7 +98,6 @@ input.cliparea {
 	padding: 0;
 	resize: none;
 	outline: none;
-	-webkit-user-select: text;
 	user-select: text;
 	// Because for user-select:none,
 	// Safari won't allow input

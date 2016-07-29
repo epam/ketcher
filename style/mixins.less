@@ -1,5 +1,3 @@
-@import 'lesshat';
-
 // Workaround less issue:
 // https://github.com/less/less.js/issues/2004
 
@@ -17,7 +15,7 @@
 .canvas(@dim: inherit) {
 	position: absolute;
 	border: @border-color 1px solid;
-	.border-radius(5px);
+	border-radius: 5px;
 	overflow: auto;
 	.canvas-size(@dim);
 	// svg {
@@ -190,8 +188,8 @@
 
 		background: white;
 		border: 1px solid @border-color;
-		.border-radius(5px);
-		.box-shadow(0 6px 12px rgba(0,0,0,.175));
+		border-radius: 5px;
+		box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	}
 }
 
@@ -275,30 +273,30 @@
 // Highlight effects
 
 .highlight-scale() {
-	.transition(transform, 0.2s, ease-out);
-	.scale(1.25);
+	transition: transform, 0.2s, ease-out;
+	transform: scale(1.25);
 }
 
 .highlight-scale(none) {
-	.scale(1);
+	transform: scale(1);
 }
 
 .highlight-shadow(inset, @color: @active-color) {
-	.box-shadow(0px -1px 6px fade(@color, 5%) inset,
-	            0px 1px 3px @color inset);
+	box-shadow: 0px -1px 6px fade(@color, 5%) inset,
+	            0px 1px 3px @color inset;
 }
 
 .highlight-shadow(@color: @active-color) when (iscolor(@color)) {
-	.box-shadow(inset 0 0 1px 1px fade(@color, 12%));
+	box-shadow: inset 0 0 1px 1px fade(@color, 12%);
 }
 
 .highlight-shadow(none) {
-	.box-shadow(none);
+	box-shadow: none;
 }
 
 .highlight-circle(@color: @active-color, @inset: '') {
-	.border-radius((@icon-size + @icon-padding) / 2);
-	.box-shadow(~'0 0 4px @{color} @{inset}');
+	border-radius: (@icon-size + @icon-padding) / 2;
+	box-shadow: ~'0 0 4px @{color} @{inset}';
 }
 
 .highlight-symbol(@color: @active-color) {
@@ -325,22 +323,22 @@
 // Transition effects
 
 .transition-twirl(@time: 0.3s) {
-	.transform(rotateX(0));
-	.transition(transform @time);
+	transform: rotateX(0);
+	transition: transform @time;
 	&.hide {
-		.transform-style(preserve-3d);
-		.transform(perspective(350px) rotateX(-70deg));
+		transform-style: preserve-3d;
+		transform: perspective(350px) rotateX(-70deg);
 	}
 }
 
 .transition-zoom(@time: 0.3s) {
 	opacity: 1;
-	.scale(1);
-	.transition(transform @time, opacity @time;);
+	transform: scale(1);
+	transition: transform @time, opacity @time;
 
 	&.hide {
 		opacity: .2;
-		.scale(.5);
+		transform: scale(.5);
 	}
 }
 

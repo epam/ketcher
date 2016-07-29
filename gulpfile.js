@@ -57,12 +57,13 @@ gulp.task('script-watch', ['patch-version'], function () {
 gulp.task('style', function () {
 	return gulp.src('style/index.less')
 		.pipe(plugins.sourcemaps.init())
-		.pipe(plugins.less({ paths: ['node_modules'] }))
+		.pipe(plugins.rename(pkg.name))
+		.pipe(plugins.less({ paths: ['node_modules/normalize.css'] }))
 	    // don't use less plugins due http://git.io/vqVDy bug
 		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
 		.pipe(plugins.minifyCss())
 		.pipe(plugins.sourcemaps.write('./'))
-		.pipe(gulp.dest('dist'))
+		.pipe(gulp.dest(options.dist))
 		.pipe(plugins.livereload());
 });
 

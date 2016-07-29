@@ -34,20 +34,6 @@ module.exports = function (grunt) {
 
 		},
 
-		less: {
-			default: {
-				options: {
-					cleancss: true,
-					report: 'min'
-				},
-				src: 'style/main.less',
-				dest: '<%= options.dist %>/<%= pkg.name %>.css'
-			},
-			dev: {
-				files: ['<%= less.default %>']
-			}
-		},
-
 		assemble: {
 			default: {
 				options: {

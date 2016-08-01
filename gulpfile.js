@@ -31,6 +31,8 @@ var polyfills = ['html5shiv', 'es5-shim', 'es6-shim',
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
                'demo.html', 'templates.sdf'];
 
+var iconfont = {};
+
 gulp.task('script', ['patch-version'], function() {
 	return scriptBundle('script/index.js')
 		// Don't transform, see: http://git.io/vcJlV
@@ -55,11 +57,14 @@ gulp.task('script-watch', ['patch-version'], function () {
 	});
 });
 
-gulp.task('style', function () {
+gulp.task('style', ['font'], function () {
 	return gulp.src('style/index.less')
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rename(pkg.name))
-		.pipe(plugins.less({ paths: ['node_modules/normalize.css'] }))
+		.pipe(plugins.less({
+			paths: ['node_modules/normalize.css'],
+			modifyVars: iconfont
+		}))
 	    // don't use less plugins due http://git.io/vqVDy bug
 		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
 		.pipe(plugins.minifyCss())
@@ -76,6 +81,19 @@ gulp.task('html', ['patch-version'], function () {
 	return gulp.src('template/index.hbs')
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))
+		.pipe(gulp.dest(options.dist));
+});
+
+gulp.task('font', function () {
+	return gulp.src(['icons/*.svg'])
+		.pipe(plugins.iconfont({
+			fontName: 'ketcher',
+			formats: ['ttf', 'svg', 'eot', 'woff'],
+			timestamp: options['build-date']
+		}))
+		.on('glyphs', function(glyphs) {
+			iconfont = glyphReduce(glyphs);
+		})
 		.pipe(gulp.dest(options.dist));
 });
 
@@ -163,4 +181,11 @@ function polyfillify(build) {
 	});
 }
 
-gulp.task('default', ['clean', 'style', 'script']);
+function glyphReduce(glyphs) {
+	return glyphs.reduce(function (res, glyph) {
+		res['icon-' + glyph.name] = "'" + glyph.unicode[0] + "'";
+		return res;
+	}, {});
+}
+
+gulp.task('default', ['clean', 'style', 'html', 'script']);

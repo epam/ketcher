@@ -15,23 +15,8 @@ module.exports = function (grunt) {
 			          'demo.html', 'templates.sdf'],
 			server: 'server/ketcher.py',
 
-			pkg: '<%= pkg %>'
-		},
-
-		fontello: {
-			options: {
-				config  : 'icons/config.json',
-				fonts   : '<%= options.dist %>',
-				styles  : false
-			},
-			default: {},
-			'svg-fix': {
-				options: {
-					config  : 'icons/config-svg-fix.json',
-					fonts   : '.tmp',
-					styles  : false
-				}
-			}
+			pkg: '<%= pkg %>',
+			dist: 'dist'
 		},
 
 		copy: {
@@ -136,12 +121,5 @@ module.exports = function (grunt) {
 		} catch(e) {};
 	});
 
-	grunt.registerTask('font', ['fontello', 'clean:tmp']);
-
-	// clean:tmp in the end as workaround rimraf bug
-	grunt.registerTask('default', ['shell:rev', 'less:default',
-	                               'fontello', 'assemble', 'copy',
-	                               'compress', 'clean:tmp']);
-	grunt.registerTask('dev', ['shell:rev', 'less:dev',
-	                           'fontello', 'assemble', 'copy', 'clean:tmp']);
+	require('load-grunt-tasks')(grunt);
 };

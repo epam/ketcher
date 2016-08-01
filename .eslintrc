@@ -13,6 +13,7 @@
   "rules": {
     "no-debugger": "error",
     // "no-alert": "error",
+    // "no-console": "error",
     "no-caller": "error",
     "no-else-return": "error",
     "curly": ["error", "multi-or-nest", "consistent"],

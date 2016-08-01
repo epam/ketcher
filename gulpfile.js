@@ -14,7 +14,8 @@ var minimist = require('minimist');
 var pkg = require('./package.json');
 var options = minimist(process.argv.slice(2), {
 	string: ['dist', 'api-path', 'build-number', 'build-date'],
-	boolean: ['sgroup-data-special'],
+	boolean: ['sgroup-data-special', 'no-generics', 'no-reactions',
+	          'no-sgroup', 'no-rgroup', 'rgroup-label-only'],
 	default: {
 		'dist': 'dist',
 		'api-path': '',
@@ -65,6 +66,17 @@ gulp.task('style', function () {
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist))
 		.pipe(plugins.livereload());
+});
+
+gulp.task('html', ['patch-version'], function () {
+	var hbs = plugins.hb({ debug: 1 })
+	    .partials('template/menu/*.hbs')
+	    .partials('template/dialog/*.hbs')
+	    .data(Object.assign({ pkg: pkg }, options));
+	return gulp.src('template/index.hbs')
+		.pipe(hbs)
+		.pipe(plugins.rename('ketcher.html'))
+		.pipe(gulp.dest(options.dist));
 });
 
 gulp.task('patch-version', function (cb) {

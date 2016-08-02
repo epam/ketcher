@@ -67,14 +67,14 @@ gulp.task('style', ['font'], function () {
 		}))
 	    // don't use less plugins due http://git.io/vqVDy bug
 		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
-		.pipe(plugins.minifyCss())
+		.pipe(plugins.cleanCss({compatibility: 'ie8'}))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist))
 		.pipe(plugins.livereload());
 });
 
 gulp.task('html', ['patch-version'], function () {
-	var hbs = plugins.hb({ debug: 1 })
+	var hbs = plugins.hb()
 	    .partials('template/menu/*.hbs')
 	    .partials('template/dialog/*.hbs')
 	    .data(Object.assign({ pkg: pkg }, options));
@@ -97,6 +97,17 @@ gulp.task('font', function () {
 		.pipe(gulp.dest(options.dist));
 });
 
+gulp.task('libs', function () {
+	return gulp.src(['raphael/raphael.min.js',
+	                 './script/prototype.js'].map(require.resolve))
+		.pipe(gulp.dest(options.dist));
+});
+
+gulp.task('distrib', function () {
+	return gulp.src(distrib)
+		.pipe(gulp.dest(options.dist));
+});
+
 gulp.task('patch-version', function (cb) {
 	if (pkg.rev)
 		return cb();
@@ -112,8 +123,30 @@ gulp.task('patch-version', function (cb) {
 	});
 });
 
+gulp.task('check-epam-email', function(cb) {
+	// TODO: should be pre-push and check remote origin
+	try {
+		var email = cp.execSync('git config user.email').toString().trim();
+		if (/@epam.com$/.test(email))
+			cb();
+		else {
+			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
+			gutil.log('To check git project\'s settings run `git config --list`');
+			gutil.log('Could not continue. Bye!');
+		}
+	} catch(e) {};
+});
+
+gulp.task('archive', ['clean', 'assets', 'code'], function () {
+	var an = pkg.name + '-' + pkg.version;
+	return gulp.src([options.dist + '/*', '!**/*.map'])
+		.pipe(plugins.rename({ dirname: an }))
+		.pipe(plugins.zip(an + '.zip'))
+		.pipe(gulp.dest('.'));
+});
+
 gulp.task('clean', function () {
-	return del('dist/*');
+	return del([options.dist + '/*', pkg.name + '-*.zip']);
 });
 
 gulp.task('reload', function() {
@@ -188,4 +221,7 @@ function glyphReduce(glyphs) {
 	}, {});
 }
 
-gulp.task('default', ['clean', 'style', 'html', 'script']);
+gulp.task('pre-commit', ['check-epam-email']);
+gulp.task('assets', ['libs', 'distrib']);
+gulp.task('code', ['style', 'script', 'html']);
+gulp.task('build', ['clean', 'assets', 'code']);

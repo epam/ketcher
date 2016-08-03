@@ -176,7 +176,12 @@ function scriptBundle(src, watchUpdate) {
 			{ from: '__API_PATH__', to: options['api-path'] },
 			{ from: '__BUILD_NUMBER__', to: options['build-number'] },
 			{ from: '__BUILD_DATE__', to: options['build-date'] },
-		]});
+		]})
+		.transform('babelify', {
+			presets: ["es2015", "react"],
+			extensions: [".jsx"],
+			only: 'script/ui'
+		});
 
 	polyfillify(build);
 	if (!watchUpdate)

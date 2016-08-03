@@ -25,6 +25,9 @@
     "url": "https://github.com/epam/ketcher/issues"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "browserify-replace": "^0.9.0",
     "del": "^2.1.0",
@@ -44,6 +47,7 @@
     "gulp-util": "^3.0.7",
     "gulp-zip": "^3.2.0",
     "guppy-cli": "^1.0.1",
+    "lebab": "^2.0.1",
     "minimist": "^1.2.0",
     "through2": "^2.0.1",
     "vinyl-buffer": "^1.0.0",
@@ -54,6 +58,7 @@
     "build": "gulp build",
     "archive": "gulp archive",
     "serve": "gulp serve",
+    "lebab": "lebab",
     "gulp": "gulp",
     "postinstall": "guppy pre-commit || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1"

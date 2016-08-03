@@ -1,16 +1,16 @@
-var molfile = require('../../chem/molfile');
-var ajax = require('../../util/ajax.js');
+import molfile from '../../chem/molfile';
+import ajax from '../../util/ajax.js';
 
 var ui = global.ui;
 
-var Render = require('../../render');
+import Render from '../../render';
 
 // TODO: move to Molfile
 function parseSdf (sdf) {
 	var items = sdf.split(/^[$][$][$][$]$/m);
 	var parsed = [];
 
-	items.each(function (item) {
+	items.each(item => {
 		item = item.replace(/\r/g, '');
 		item = item.strip();
 		var end_idx = item.indexOf('M  END');
@@ -27,7 +27,7 @@ function parseSdf (sdf) {
 
 		var entries = item.split(/^$/m);
 
-		entries.each(function (entry) {
+		entries.each(entry => {
 			entry = entry.strip();
 			if (!entry.startsWith('> <')) {
 				return;
@@ -44,13 +44,13 @@ function parseSdf (sdf) {
 }
 
 function fetchTemplateCustom (base_url) {
-	return ajax(base_url + 'templates.sdf').then(function (xhr) {
+	return ajax(base_url + 'templates.sdf').then(xhr => {
 		//headers: {Accept: 'application/octet-stream'}
 		var items = parseSdf(xhr.responseText);
 
 		var templates = [];
 		var i = 0;
-		items.each(function (item) {
+		items.each(item => {
 			templates.push({
 				name: (item.name || ('customtemplate ' + (++i))).capitalize(),
 				molfile: item.molfile,
@@ -61,13 +61,13 @@ function fetchTemplateCustom (base_url) {
 
 		return templates;
 	});
-};
+}
 
 var custom_templates;
 function initTemplateCustom (el, base_url) {
-	return fetchTemplateCustom(base_url).then(function (templates) {
+	return fetchTemplateCustom(base_url).then(templates => {
 		custom_templates = templates;
-		return eachAsync(templates, function (tmpl, _) {
+		return eachAsync(templates, (tmpl, _) => {
 			var li =  new Element('li');
 			li.title = tmpl.name;
 			el.insert({ bottom: li });
@@ -86,7 +86,7 @@ function initTemplateCustom (el, base_url) {
 }
 
 function eachAsync(list, process, timeGap, startTimeGap) {
-	return new Promise(function (resolve) {
+	return new Promise(resolve => {
 		var i = 0;
 		var n = list.length;
 		function iterate() {
@@ -99,7 +99,7 @@ function eachAsync(list, process, timeGap, startTimeGap) {
 		}
 		setTimeout(iterate, startTimeGap || timeGap);
 	});
-};
+}
 
 function dialog (base_url, params) {
 	var dlg = ui.showDialog('custom_templates'),
@@ -110,14 +110,14 @@ function dialog (base_url, params) {
 	if (ul.children.length === 0) { // first time
 		$('loading').style.display = '';
 		dlg.addClassName('loading');
-		var loading = initTemplateCustom(ul, base_url).then(function () {
+		var loading = initTemplateCustom(ul, base_url).then(() => {
 			$('loading').style.display = 'none';
 			dlg.removeClassName('loading');
 		});
 
-		loading.then(function () {
+		loading.then(() => {
 			okButton.disabled = true;
-			dlg.on('click', 'li', function (_, li) {
+			dlg.on('click', 'li', (_, li) => {
 				if (selectedLi == li)
 					okButton.click();
 				else {
@@ -129,7 +129,7 @@ function dialog (base_url, params) {
 					selectedLi = li;
 				}
 			});
-			dlg.on('click', 'input', function (_, input) {
+			dlg.on('click', 'input', (_, input) => {
 				var mode = input.value,
 				key = 'on' + input.value.capitalize(),
 				res;
@@ -144,6 +144,5 @@ function dialog (base_url, params) {
 			});
 		});
 	}
-};
-
-module.exports = dialog;
+}
+export default dialog;

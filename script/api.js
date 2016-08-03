@@ -25,9 +25,8 @@ function unwrap(xhr) {
 	var data = xhr.responseText;
 	if (xhr.status >= 300)
 		throw data;
-	if (data.startsWith('Ok.')) {
+	if (data.startsWith('Ok.'))
 		return data.substring(data.indexOf('\n') + 1);
-	}
 	throw Error('Unknown server error: ' + data);
 }
 
@@ -46,9 +45,9 @@ function api(base, defaultOptions) {
 				headers: data && { 'Content-Type': 'application/x-www-form-urlencoded' }
 			};
 		}
-		var res = function (data, params) {
+		function res(data, params) {
 			return ajax(options(data, params)).then(unwrap, unwrap);
-		};
+		}
 		res.sync = function (data, params) {
 			// TODO: handle errors
 			return unwrap(ajax(options(data, params, true)));
@@ -72,9 +71,8 @@ function api(base, defaultOptions) {
 		save: request('POST', 'save'),
 		knocknock: function () {
 			return ajax(baseUrl + 'knocknock').then(function (xhr) {
-				if (xhr.responseText !== 'You are welcome!') {
+				if (xhr.responseText !== 'You are welcome!')
 					throw Error('Server is not compatible');
-				}
 			});
 		}
 	};

@@ -19,16 +19,14 @@ function getMolfile() {
 }
 
 function setMolecule(molString) {
-	if (!Object.isString(molString)) {
+	if (!Object.isString(molString))
 		return;
-	}
 	ui.loadMolecule(molString);
 }
 
 function addFragment(molString) {
-	if (!Object.isString(molString)) {
+	if (!Object.isString(molString))
 		return;
-	}
 	ui.loadFragment(molString);
 }
 

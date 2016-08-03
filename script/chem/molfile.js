@@ -31,7 +31,7 @@ var parseDecimalInt = function (str)
 	return isNaN(val) ? 0 : val;
 };
 
-var partitionLine = function (/*string*/ str, /*array of int*/ parts, /*bool*/ withspace)
+var partitionLine = function (/* string*/ str, /* array of int*/ parts, /* bool*/ withspace)
 {
 	/* reader */
 	var res = [];
@@ -45,7 +45,7 @@ var partitionLine = function (/*string*/ str, /*array of int*/ parts, /*bool*/ w
 	return res;
 };
 
-var partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, /*bool*/ withspace)
+var partitionLineFixed = function (/* string*/ str, /* int*/ itemLength, /* bool*/ withspace)
 {
 	/* reader */
 	var res = [];
@@ -60,7 +60,7 @@ var partitionLineFixed = function (/*string*/ str, /*int*/ itemLength, /*bool*/ 
 
 // TODO: reconstruct molfile string instead parsing multiple times
 //       merge to bottom
-function parseCTFile (str, options) {
+function parseCTFile(str, options) {
 	var molfile = new Molfile();
 	var lines = splitNewlines(str);
 	try {
@@ -82,7 +82,7 @@ function parseCTFile (str, options) {
 		}
 		throw ex;
 	}
-};
+}
 
 Molfile.prototype.parseCTFile = function (molfileLines) {
 	var ret = null;
@@ -125,27 +125,27 @@ var fmtInfo = {
 		1: Struct.Bond.PATTERN.TOPOLOGY.RING,
 		2: Struct.Bond.PATTERN.TOPOLOGY.CHAIN
 	},
-	countsLinePartition: [3,3,3,3,3,3,3,3,3,3,3,6],
-	atomLinePartition: [10,10,10,1,3,2,3,3,3,3,3,3,3,3,3,3,3],
-	bondLinePartition: [3,3,3,3,3,3,3],
-	atomListHeaderPartition: [3,1,1,4,1,1],
+	countsLinePartition: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6],
+	atomLinePartition: [10, 10, 10, 1, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+	bondLinePartition: [3, 3, 3, 3, 3, 3, 3],
+	atomListHeaderPartition: [3, 1, 1, 4, 1, 1],
 	atomListHeaderLength: 11, // = atomListHeaderPartition.reduce(function(a,b) { return a + b; }, 0)
 	atomListHeaderItemLength: 4,
 	chargeMap: [0, +3, +2, +1, 0, -1, -2, -3],
 	valenceMap: [undefined, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0],
 	implicitHydrogenMap: [undefined, 0, 1, 2, 3, 4],
 	v30atomPropMap: {
-		'CHG':'charge',
-		'RAD':'radical',
-		'MASS':'isotope',
-		'VAL':'explicitValence',
-		'HCOUNT':'hCount',
-		'INVRET':'invRet',
-		'SUBST':'substitutionCount',
-		'UNSAT':'unsaturatedAtom',
-		'RBCNT':'ringBondCount'
+		'CHG': 'charge',
+		'RAD': 'radical',
+		'MASS': 'isotope',
+		'VAL': 'explicitValence',
+		'HCOUNT': 'hCount',
+		'INVRET': 'invRet',
+		'SUBST': 'substitutionCount',
+		'UNSAT': 'unsaturatedAtom',
+		'RBCNT': 'ringBondCount'
 	},
-	rxnItemsPartition: [3,3,3]
+	rxnItemsPartition: [3, 3, 3]
 };
 
 var parseAtomLine = function (atomLine)
@@ -153,27 +153,27 @@ var parseAtomLine = function (atomLine)
 	/* reader */
 	var atomSplit = partitionLine(atomLine, fmtInfo.atomLinePartition);
 	var params =
-	{
+		{
 		// generic
-		pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
-		label: atomSplit[4].strip(),
-		explicitValence: fmtInfo.valenceMap[parseDecimalInt(atomSplit[10])],
+			pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
+			label: atomSplit[4].strip(),
+			explicitValence: fmtInfo.valenceMap[parseDecimalInt(atomSplit[10])],
 
 		// obsolete
-		massDifference: parseDecimalInt(atomSplit[5]),
-		charge: fmtInfo.chargeMap[parseDecimalInt(atomSplit[6])],
+			massDifference: parseDecimalInt(atomSplit[5]),
+			charge: fmtInfo.chargeMap[parseDecimalInt(atomSplit[6])],
 
 		// query
-		hCount: parseDecimalInt(parseDecimalInt(atomSplit[8])),
-		stereoCare: parseDecimalInt(atomSplit[9]) != 0,
+			hCount: parseDecimalInt(parseDecimalInt(atomSplit[8])),
+			stereoCare: parseDecimalInt(atomSplit[9]) != 0,
 
 		// reaction
-		aam: parseDecimalInt(atomSplit[14]),
-		invRet: parseDecimalInt(atomSplit[15]),
+			aam: parseDecimalInt(atomSplit[14]),
+			invRet: parseDecimalInt(atomSplit[15]),
 
 		// reaction query
-		exactChangeFlag: parseDecimalInt(atomSplit[16]) != 0
-	};
+			exactChangeFlag: parseDecimalInt(atomSplit[16]) != 0
+		};
 	return new Struct.Atom(params);
 };
 
@@ -279,14 +279,14 @@ var parseBondLine = function (bondLine)
 	/* reader */
 	var bondSplit = partitionLine(bondLine, fmtInfo.bondLinePartition);
 	var params =
-	{
-		begin: parseDecimalInt(bondSplit[0]) - 1,
-		end: parseDecimalInt(bondSplit[1]) - 1,
-		type: fmtInfo.bondTypeMap[parseDecimalInt(bondSplit[2])],
-		stereo: fmtInfo.bondStereoMap[parseDecimalInt(bondSplit[3])],
-		topology: fmtInfo.bondTopologyMap[parseDecimalInt(bondSplit[5])],
-		reactingCenterStatus: parseDecimalInt(bondSplit[6])
-	};
+		{
+			begin: parseDecimalInt(bondSplit[0]) - 1,
+			end: parseDecimalInt(bondSplit[1]) - 1,
+			type: fmtInfo.bondTypeMap[parseDecimalInt(bondSplit[2])],
+			stereo: fmtInfo.bondStereoMap[parseDecimalInt(bondSplit[3])],
+			topology: fmtInfo.bondTopologyMap[parseDecimalInt(bondSplit[5])],
+			reactingCenterStatus: parseDecimalInt(bondSplit[6])
+		};
 
 	return new Struct.Bond(params);
 };
@@ -337,8 +337,8 @@ var readKeyMultiValuePairs = function (str, /* bool */ valueString)
 	for (var i = 0; i < count; ++i)
 		ret.push([
 			parseDecimalInt(partition[2 * i + 1]) - 1,
-				valueString ? partition[2 * i + 2].strip() : parseDecimalInt(partition[2 * i + 2])
-			]);
+			valueString ? partition[2 * i + 2].strip() : parseDecimalInt(partition[2 * i + 2])
+		]);
 	return ret;
 };
 
@@ -471,7 +471,7 @@ function loadSGroup(mol, sg, atomMap)
 
 	mol.sGroupForest.insert(sg.id);
 	return sg.id;
-};
+}
 
 var initSGroup = function (sGroups, propData)
 {
@@ -492,7 +492,7 @@ var applySGroupProp = function (sGroups, propName, propData, numeric, core)
 	var kv = readKeyValuePairs(propData, !(numeric));
 	for (var key in kv) {
 		// "core" properties are stored directly in an sgroup, not in sgroup.data
-		(core ? sGroups[key] : sGroups[key].data) [propName] = kv[key];
+		(core ? sGroups[key] : sGroups[key].data)[propName] = kv[key];
 	}
 };
 
@@ -539,7 +539,7 @@ var applyDataSGroupQueryOp = function (sg, queryOp) {
 
 var applyDataSGroupDesc = function (sGroups, propData) {
 	/* reader */
-	var split = partitionLine(propData, [4,31,2,20,2,3], false);
+	var split = partitionLine(propData, [4, 31, 2, 20, 2, 3], false);
 	var id = parseDecimalInt(split[0]) - 1;
 	var fieldName = split[1].strip();
 	var fieldType = split[2].strip();
@@ -556,7 +556,7 @@ var applyDataSGroupDesc = function (sGroups, propData) {
 
 var applyDataSGroupInfo = function (sg, propData) {
 	/* reader */
-	var split = partitionLine(propData, [10/*x.x*/,10/*y.y*/,4/* eee*/,1/*f*/,1/*g*/,1/*h*/,3/* i */,3/*jjj*/,3/*kkk*/,3/*ll*/,2/*m*/,3/*n*/,2/*oo*/], false);
+	var split = partitionLine(propData, [10/* x.x*/, 10/* y.y*/, 4/* eee*/, 1/* f*/, 1/* g*/, 1/* h*/, 3/* i */, 3/* jjj*/, 3/* kkk*/, 3/* ll*/, 2/* m*/, 3/* n*/, 2/* oo*/], false);
 
 	var x = parseFloat(split[0]);
 	var y = parseFloat(split[1]);
@@ -579,7 +579,7 @@ var applyDataSGroupInfo = function (sg, propData) {
 
 var applyDataSGroupInfoLine = function (sGroups, propData) {
 	/* reader */
-	var id = parseDecimalInt(propData.substr(0,4)) - 1;
+	var id = parseDecimalInt(propData.substr(0, 4)) - 1;
 	var sg = sGroups[id];
 	applyDataSGroupInfo(sg, propData.substr(5));
 };
@@ -598,7 +598,7 @@ var applyDataSGroupData = function (sg, data, finalize) {
 
 var applyDataSGroupDataLine = function (sGroups, propData, finalize) {
 	/* reader */
-	var id = parseDecimalInt(propData.substr(0,5)) - 1;
+	var id = parseDecimalInt(propData.substr(0, 5)) - 1;
 	var data = propData.substr(5);
 	var sg = sGroups[id];
 	applyDataSGroupData(sg, data, finalize);
@@ -656,9 +656,9 @@ var parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 				}
 			} else if (type == 'LOG') { // rgroup atom
 				propertyData = propertyData.slice(4);
-				var rgid = parseDecimalInt(propertyData.slice(0,3).strip());
-				var iii = parseDecimalInt(propertyData.slice(4,7).strip());
-				var hhh = parseDecimalInt(propertyData.slice(8,11).strip());
+				var rgid = parseDecimalInt(propertyData.slice(0, 3).strip());
+				var iii = parseDecimalInt(propertyData.slice(4, 7).strip());
+				var hhh = parseDecimalInt(propertyData.slice(8, 11).strip());
 				var ooo = propertyData.slice(12).strip();
 				var logic = {};
 				if (iii > 0)
@@ -674,7 +674,7 @@ var parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 				if (!props.get('atomList'))
 					props.set('atomList', new Map());
 				var list = parsePropertyLineAtomList(
-				partitionLine(propertyData, [1,3,3,1,1,1]),
+				partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
 				partitionLineFixed(propertyData.slice(10), 4, false));
 				props.get('atomList').update(
 					list);
@@ -718,7 +718,7 @@ var parsePropertyLines = function (ctab, ctabLines, shift, end, sGroups, rLogic)
 var applyAtomProp = function (atoms /* Pool */, values /* Map */, propId /* string */, clean /* boolean */)
 {
 	/* reader */
-	values.each(function (aid, propVal){
+	values.each(function (aid, propVal) {
 		atoms.get(aid)[propId] = propVal;
 	});
 };
@@ -751,7 +751,7 @@ var parseCTabV2000 = function (ctabLines, countsSplit)
 		ctab.bonds.add(bonds[i]);
 
 	var atomLists = atomListLines.map(parseAtomListLine);
-	atomLists.each(function (pair){
+	atomLists.each(function (pair) {
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 		ctab.atoms.get(pair.aid).label = 'L#';
 	});
@@ -829,7 +829,7 @@ var splitonce = function (line, delim)
 {
 	/* reader */
 	var p = line.indexOf(delim);
-	return [line.slice(0,p),line.slice(p + 1)];
+	return [line.slice(0, p), line.slice(p + 1)];
 };
 
 var splitSGroupDef = function (line)
@@ -893,7 +893,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 	var line = '';
 	shift++;
 	while (shift < ctabLines.length) {
-		line =stripV30(ctabLines[shift++]).strip();
+		line = stripV30(ctabLines[shift++]).strip();
 		if (line.strip() == 'END SGROUP')
 			return shift;
 		while (line.charAt(line.length - 1) == '-')
@@ -908,7 +908,7 @@ var v3000parseSGroup = function (ctab, ctabLines, sgroups, atomMap, shift)
 		sgroups[sg.number] = sg;
 		var props = {};
 		for (var i = 3; i < split.length; ++i) {
-			var subsplit = splitonce(split[i],'=');
+			var subsplit = splitonce(split[i], '=');
 			if (subsplit.length != 2) {
 				throw 'A record of form AAA=BBB or AAA=(...) expected, got \'' + split[i] + '\'';
 			}
@@ -974,11 +974,11 @@ var parseCTabV3000 = function (ctabLines, norgroups)
 		shift++;
 		var line;
 		while (shift < ctabLines.length) {
-			line =stripV30(ctabLines[shift++]).strip();
+			line = stripV30(ctabLines[shift++]).strip();
 			if (line == 'END ATOM')
 				break;
 			while (line.charAt(line.length - 1) == '-')
-				line = (line.substring(0, line.length - 1) +stripV30(ctabLines[shift++])).strip();
+				line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).strip();
 			ctab.atoms.add(parseAtomLineV3000(line));
 		}
 
@@ -986,11 +986,11 @@ var parseCTabV3000 = function (ctabLines, norgroups)
 		{
 			shift++;
 			while (shift < ctabLines.length) {
-				line =stripV30(ctabLines[shift++]).strip();
+				line = stripV30(ctabLines[shift++]).strip();
 				if (line == 'END BOND')
 					break;
 				while (line.charAt(line.length - 1) == '-')
-					line = (line.substring(0, line.length - 1) +stripV30(ctabLines[shift++])).strip();
+					line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).strip();
 				ctab.bonds.add(parseBondLineV3000(line));
 			}
 		}
@@ -1070,7 +1070,7 @@ var readRGroups3000 = function (ctab, /* string */ ctabLines) /* Struct */
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
 			var frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
-			rg.atoms.each(function (aid, atom) {atom.fragment = frid;});
+			rg.atoms.each(function (aid, atom) { atom.fragment = frid; });
 			rg.mergeInto(ctab);
 		}
 	}
@@ -1216,7 +1216,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 			this.molfile = '$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n';
 			this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
-			molecule.rgroups.each(function (rgid, rg){
+			molecule.rgroups.each(function (rgid, rg) {
 				this.molfile += '$RGP\n';
 				this.writePaddedNumber(rgid, 3);
 				this.molfile += '\n';
@@ -1550,7 +1550,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups)
 	}, this);
 
 	while (atomLabel_list.length > 0) {
-		this.write('A  ');this.writePaddedNumber(atomLabel_list[0] + 1, 3);this.writeCR();
+		this.write('A  '); this.writePaddedNumber(atomLabel_list[0] + 1, 3); this.writeCR();
 		this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
 		atomLabel_list.splice(0, 1);
 	}
@@ -1741,8 +1741,8 @@ var parseRxn2000 = function (/* string[] */ ctabLines) /* Struct */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = partitionLine(ctabLines[0], fmtInfo.rxnItemsPartition);
 	var nReactants = countsSplit[0] - 0,
-	nProducts = countsSplit[1] - 0,
-	nAgents = countsSplit[2] - 0;
+		nProducts = countsSplit[1] - 0,
+		nAgents = countsSplit[2] - 0;
 	ctabLines = ctabLines.slice(1); // consume counts line
 
 	var mols = [];
@@ -1761,8 +1761,8 @@ var parseRxn3000 = function (/* string[] */ ctabLines) /* Struct */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = ctabLines[0].split(/\s+/g).slice(3);
 	var nReactants = countsSplit[0] - 0,
-	nProducts = countsSplit[1] - 0,
-	nAgents = countsSplit.length > 2 ? countsSplit[2] - 0 : 0;
+		nProducts = countsSplit[1] - 0,
+		nAgents = countsSplit.length > 2 ? countsSplit[2] - 0 : 0;
 
 	var assert = function (condition) {
 		util.assert(condition, 'CTab format invalid');
@@ -1806,11 +1806,11 @@ var parseRxn3000 = function (/* string[] */ ctabLines) /* Struct */
 		} else if (line.startsWith('M  V30 BEGIN RGROUP')) {
 			assert(current == null);
 			var j = findRGroupEnd(i);
-			rGroups.push(ctabLines.slice(i,j + 1));
+			rGroups.push(ctabLines.slice(i, j + 1));
 			i = j;
 		} else if (line == 'M  V30 BEGIN CTAB') {
 			var j = findCtabEnd(i);
-			current.push(ctabLines.slice(i,j + 1));
+			current.push(ctabLines.slice(i, j + 1));
 			i = j;
 		} else {
 			throw new Error('line unrecognized: ' + line);
@@ -1840,13 +1840,13 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 	/* reader */
 	var ret = new Struct();
 	var bbReact = [],
-	bbAgent = [],
-	bbProd = [];
+		bbAgent = [],
+		bbProd = [];
 	var molReact = [],
-	molAgent = [],
-	molProd = [];
+		molAgent = [],
+		molProd = [];
 	var j;
-	var bondLengthData = {cnt:0,totalLength:0};
+	var bondLengthData = { cnt: 0, totalLength: 0 };
 	for (j = 0; j < mols.length; ++j) {
 		var mol = mols[j];
 		var bondLengthDataMol = mol.getBondLengthData();
@@ -1879,7 +1879,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 			molProd.push(mol);
 		}
 
-		mol.atoms.each(function (aid, atom){
+		mol.atoms.each(function (aid, atom) {
 			atom.rxnFragmentType = fragmentType;
 		});
 	}
@@ -1888,10 +1888,10 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 	var xorig = 0;
 	var shiftMol = function (ret, mol, bb, xorig, over) {
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
-		mol.atoms.each(function (aid, atom){
+		mol.atoms.each(function (aid, atom) {
 			atom.pp.add_(d);
 		});
-		mol.sgroups.each(function (id, item){
+		mol.sgroups.each(function (id, item) {
 			if (item.pp)
 				item.pp.add_(d);
 		});
@@ -1922,7 +1922,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new Struct.RxnPlus({'pp':new Vec2(x, y)}));
+		ret.rxnPluses.add(new Struct.RxnPlus({ 'pp': new Vec2(x, y) }));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
@@ -1941,7 +1941,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new Struct.RxnPlus({'pp':new Vec2(x, y)}));
+		ret.rxnPluses.add(new Struct.RxnPlus({ 'pp': new Vec2(x, y) }));
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
@@ -1956,7 +1956,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 	bb1 = bbReactAll;
 	bb2 = bbProdAll;
 	if (!bb1 && !bb2) {
-		ret.rxnArrows.add(new Struct.RxnArrow({'pp':new Vec2(0, 0)}));
+		ret.rxnArrows.add(new Struct.RxnArrow({ 'pp': new Vec2(0, 0) }));
 	} else {
 		var v1 = bb1 ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
 		var v2 = bb2 ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
@@ -1965,7 +1965,7 @@ var rxnMerge = function (mols, nReactants, nProducts, nAgents) /* Struct */
 			v1 = new Vec2(v2.x - defaultOffset, v2.y);
 		if (!v2)
 			v2 = new Vec2(v1.x + defaultOffset, v1.y);
-		ret.rxnArrows.add(new Struct.RxnArrow({ 'pp': Vec2.lc2(v1, 0.5, v2, 0.5 ) }));
+		ret.rxnArrows.add(new Struct.RxnArrow({ 'pp': Vec2.lc2(v1, 0.5, v2, 0.5) }));
 	}
 	ret.isReaction = true;
 	return ret;
@@ -1984,7 +1984,7 @@ var rgMerge = function (scaffold, rgroups) /* Struct */
 			var frag = {};
 			var frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
-			ctab.atoms.each(function (aid, atom) {atom.fragment = frid;});
+			ctab.atoms.each(function (aid, atom) { atom.fragment = frid; });
 			ctab.mergeInto(ret);
 		}
 	}

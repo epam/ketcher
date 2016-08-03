@@ -50,7 +50,7 @@ Struct.prototype.addRxnArrowIfNecessary = function () {
 };
 
 // returns a list of id's of s-groups, which contain only atoms in the given list
-Struct.prototype.getSGroupsInAtomSet = function (atoms/*Array*/) {
+Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 	var sgroupCounts = new Hash();
 
 	atoms.forEach(function (aid) {
@@ -146,7 +146,7 @@ Struct.prototype.getFragment = function (fid) {
 Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) {
 	atomSet = atomSet || Set.keySetInt(this.atoms);
 	bondSet = bondSet || Set.keySetInt(this.bonds);
-	bondSet = Set.filter(bondSet, function (bid){
+	bondSet = Set.filter(bondSet, function (bid) {
 		var bond = this.bonds.get(bid);
 		return Set.contains(atomSet, bond.begin) && Set.contains(atomSet, bond.end);
 	}, this);
@@ -240,7 +240,7 @@ Struct.prototype.findBondId = function (begin, end)
 	return id;
 };
 
-var HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
+var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid)
 {
 	if (arguments.length != 3)
 		throw new Error('Invalid parameter number!');
@@ -267,10 +267,10 @@ var HalfBond = function (/*num*/begin, /*num*/end, /*num*/bid)
 
 Struct.prototype.initNeighbors = function ()
 {
-	this.atoms.each(function (aid, atom){
+	this.atoms.each(function (aid, atom) {
 		atom.neighbors = [];
 	});
-	this.bonds.each(function (bid, bond){
+	this.bonds.each(function (bid, bond) {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
 		a1.neighbors.push(bond.hb1);
@@ -278,7 +278,7 @@ Struct.prototype.initNeighbors = function ()
 	}, this);
 };
 
-Struct.prototype.bondInitHalfBonds = function (bid, /*opt*/ bond)
+Struct.prototype.bondInitHalfBonds = function (bid, /* opt*/ bond)
 {
 	bond = bond || this.bonds.get(bid);
 	bond.hb1 = 2 * bid;
@@ -345,7 +345,7 @@ Struct.prototype.atomAddNeighbor = function (hbid)
 
 Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
-	atom.neighbors = atom.neighbors.sortBy(function (nei){
+	atom.neighbors = atom.neighbors.sortBy(function (nei) {
 		return this.halfBonds.get(nei).ang;
 	}, this);
 
@@ -384,28 +384,28 @@ Struct.prototype.updateHalfBonds = function (list) {
 };
 
 Struct.prototype.sGroupsRecalcCrossBonds = function () {
-	this.sgroups.each(function (sgid, sg){
+	this.sgroups.each(function (sgid, sg) {
 		sg.xBonds = [];
 		sg.neiAtoms = [];
-	},this);
-	this.bonds.each(function (bid, bond){
+	}, this);
+	this.bonds.each(function (bid, bond) {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
-		Set.each(a1.sgs, function (sgid){
+		Set.each(a1.sgs, function (sgid) {
 			if (!Set.contains(a2.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				util.arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
-		Set.each(a2.sgs, function (sgid){
+		Set.each(a2.sgs, function (sgid) {
 			if (!Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				util.arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
 		}, this);
-	},this);
+	}, this);
 };
 
 Struct.prototype.sGroupDelete = function (sgid)
@@ -451,7 +451,7 @@ Struct.prototype.getCoordBoundingBox = function (atomSet)
 		}
 	};
 
-	var global = typeof(atomSet) == 'undefined';
+	var global = typeof (atomSet) == 'undefined';
 
 	this.atoms.each(function (aid, atom) {
 		if (global || Set.contains(atomSet, aid))
@@ -498,13 +498,13 @@ Struct.prototype.getBondLengthData = function ()
 {
 	var totalLength = 0;
 	var cnt = 0;
-	this.bonds.each(function (bid, bond){
+	this.bonds.each(function (bid, bond) {
 		totalLength += Vec2.dist(
 			this.atoms.get(bond.begin).pp,
 			this.atoms.get(bond.end).pp);
 		cnt++;
 	}, this);
-	return {cnt:cnt, totalLength:totalLength};
+	return { cnt: cnt, totalLength: totalLength };
 };
 
 Struct.prototype.getAvgBondLength = function ()
@@ -535,7 +535,7 @@ Struct.prototype.getAvgClosestAtomDistance = function ()
 Struct.prototype.checkBondExists = function (begin, end)
 {
 	var bondExists = false;
-	this.bonds.each(function (bid, bond){
+	this.bonds.each(function (bid, bond) {
 		if ((bond.begin == begin && bond.end == end) ||
 		(bond.end == begin && bond.begin == end))
 			bondExists = true;
@@ -543,14 +543,14 @@ Struct.prototype.checkBondExists = function (begin, end)
 	return bondExists;
 };
 
-var Loop = function (/*Array of num*/hbs, /*Struct*/struct, /*bool*/convex)
+var Loop = function (/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex)
 {
 	this.hbs = hbs; // set of half-bonds involved
 	this.dblBonds = 0; // number of double bonds in the loop
 	this.aromatic = true;
 	this.convex = convex || false;
 
-	hbs.each(function (hb){
+	hbs.each(function (hb) {
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
 		if (bond.type != Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
@@ -594,11 +594,11 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 		map[aid] = -1;
 	}, this);
 	var components = [];
-	this.atoms.each(function (aid,atom){
+	this.atoms.each(function (aid, atom) {
 		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
 			var component = this.findConnectedComponent(aid);
 			components.push(component);
-			Set.each(component, function (aid){
+			Set.each(component, function (aid) {
 				map[aid] = 1;
 			}, this);
 		}
@@ -609,7 +609,7 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 Struct.prototype.markFragment = function (ids) {
 	var frag = {};
 	var fid = this.frags.add(frag);
-	Set.each(ids, function (aid){
+	Set.each(ids, function (aid) {
 		this.atoms.get(aid).fragment = fid;
 	}, this);
 };
@@ -628,16 +628,16 @@ Struct.prototype.markFragments = function () {
 Struct.prototype.scale = function (scale)
 {
 	if (scale != 1) {
-		this.atoms.each(function (aid, atom){
+		this.atoms.each(function (aid, atom) {
 			atom.pp = atom.pp.scaled(scale);
 		}, this);
-		this.rxnPluses.each(function (id, item){
+		this.rxnPluses.each(function (id, item) {
 			item.pp = item.pp.scaled(scale);
 		}, this);
-		this.rxnArrows.each(function (id, item){
+		this.rxnArrows.each(function (id, item) {
 			item.pp = item.pp.scaled(scale);
 		}, this);
-		this.sgroups.each(function (id, item){
+		this.sgroups.each(function (id, item) {
 			item.pp = item.pp ? item.pp.scaled(scale) : null;
 		}, this);
 	}
@@ -675,7 +675,7 @@ Struct.prototype.loopHasSelfIntersections = function (hbs)
 		}
 	}
 	return false;
-}
+};
 
 // partition a cycle into simple cycles
 // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
@@ -683,26 +683,26 @@ Struct.prototype.partitionLoop = function (loop) {
 	var subloops = [];
 	var continueFlag = true;
 	search: while (continueFlag) {
-			var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-			for (var l = 0; l < loop.length; ++l) {
-				var hbid = loop[l];
-				var aid1 = this.halfBonds.get(hbid).begin;
-				var aid2 = this.halfBonds.get(hbid).end;
-				if (aid2 in atomToHalfBond) { // subloop found
-					var s = atomToHalfBond[aid2]; // where the subloop begins
-					var subloop = loop.slice(s, l + 1);
-					subloops.push(subloop);
-					if (l < loop.length) // remove half-bonds corresponding to the subloop
-						loop.splice(s, l - s + 1);
-					continue search;
-				}
-				atomToHalfBond[aid1] = l;
+		var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+		for (var l = 0; l < loop.length; ++l) {
+			var hbid = loop[l];
+			var aid1 = this.halfBonds.get(hbid).begin;
+			var aid2 = this.halfBonds.get(hbid).end;
+			if (aid2 in atomToHalfBond) { // subloop found
+				var s = atomToHalfBond[aid2]; // where the subloop begins
+				var subloop = loop.slice(s, l + 1);
+				subloops.push(subloop);
+				if (l < loop.length) // remove half-bonds corresponding to the subloop
+					loop.splice(s, l - s + 1);
+				continue search;
 			}
-			continueFlag = false; // we're done, no more subloops found
-			subloops.push(loop);
+			atomToHalfBond[aid1] = l;
 		}
+		continueFlag = false; // we're done, no more subloops found
+		subloops.push(loop);
+	}
 	return subloops;
-}
+};
 
 Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
 	var hba = this.halfBonds.get(hbid1);
@@ -710,7 +710,7 @@ Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
 	return Math.atan2(
 	Vec2.cross(hba.dir, hbb.dir),
 	Vec2.dot(hba.dir, hbb.dir));
-}
+};
 
 Struct.prototype.loopIsConvex = function (loop) {
 	for (var k = 0; k < loop.length; ++k) {
@@ -719,7 +719,7 @@ Struct.prototype.loopIsConvex = function (loop) {
 			return false;
 	}
 	return true;
-}
+};
 
 // check whether a loop is on the inner or outer side of the polygon
 //  by measuring the total angle between bonds
@@ -736,7 +736,7 @@ Struct.prototype.loopIsInner = function (loop) {
 			totalAngle += angle;
 	}
 	return Math.abs(totalAngle) < Math.PI;
-}
+};
 
 Struct.prototype.findLoops = function ()
 {
@@ -768,7 +768,7 @@ Struct.prototype.findLoops = function ()
 						} else {
 							loopId = -2;
 						}
-						loop.each(function (hbid){
+						loop.each(function (hbid) {
 							this.halfBonds.get(hbid).loop = loopId;
 							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
 						}, this);
@@ -797,13 +797,13 @@ Struct.prototype.prepareLoopStructure = function () {
 	this.updateHalfBonds(this.atoms.keys());
 	this.sortNeighbors(this.atoms.keys());
 	this.findLoops();
-}
+};
 
 Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	// TODO: [MK] make sure the addition does not break the hierarchy?
 	SGroup.addAtom(this.sgroups.get(sgid), aid);
 	Set.add(this.atoms.get(aid).sgs, sgid);
-}
+};
 
 Struct.prototype.calcConn = function (aid) {
 	var conn = 0;
@@ -813,21 +813,21 @@ Struct.prototype.calcConn = function (aid) {
 		var hb = this.halfBonds.get(atom.neighbors[i]);
 		var bond = this.bonds.get(hb.bid);
 		switch (bond.type) {
-			case Bond.PATTERN.TYPE.SINGLE:
-				conn += 1;
-				break;
-			case Bond.PATTERN.TYPE.DOUBLE:
-				conn += 2;
-				break;
-			case Bond.PATTERN.TYPE.TRIPLE:
-				conn += 3;
-				break;
-			case Bond.PATTERN.TYPE.AROMATIC:
-				conn += 1;
-				hasAromatic = true;
-				break;
-			default:
-				return -1;
+		case Bond.PATTERN.TYPE.SINGLE:
+			conn += 1;
+			break;
+		case Bond.PATTERN.TYPE.DOUBLE:
+			conn += 2;
+			break;
+		case Bond.PATTERN.TYPE.TRIPLE:
+			conn += 3;
+			break;
+		case Bond.PATTERN.TYPE.AROMATIC:
+			conn += 1;
+			hasAromatic = true;
+			break;
+		default:
+			return -1;
 		}
 	}
 	if (hasAromatic)

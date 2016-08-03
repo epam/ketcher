@@ -11,9 +11,9 @@ var BondTool = function (editor, bondCaption) {
 	this.atomProps = { label: 'C' };
 	this.bondProps = Struct.Bond.caption2Type(bondCaption);
 	this.plainBondTypes = [
-			Struct.Bond.PATTERN.TYPE.SINGLE,
-			Struct.Bond.PATTERN.TYPE.DOUBLE,
-			Struct.Bond.PATTERN.TYPE.TRIPLE];
+		Struct.Bond.PATTERN.TYPE.SINGLE,
+		Struct.Bond.PATTERN.TYPE.DOUBLE,
+		Struct.Bond.PATTERN.TYPE.TRIPLE];
 
 	this._hoverHelper = new HoverHelper(this);
 };
@@ -134,7 +134,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-function bondFlipRequired (struct, bond, attrs) {
+function bondFlipRequired(struct, bond, attrs) {
 	return attrs.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
 		   bond.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
 		   attrs.stereo != Struct.Bond.PATTERN.STEREO.NONE &&

@@ -1,5 +1,5 @@
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var util = require('../util');
 
 var ReObject = function ()  // TODO ??? should it be in ReStruct namespace
@@ -42,9 +42,9 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 			}
 		}
 		// rbalabanov: here is temporary fix for "drag issue" on iPad
-		//BEGIN
-		//noredraw = noredraw && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
-		//END
+		// BEGIN
+		// noredraw = noredraw && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
+		// END
 		if (noredraw) {
 			this.highlighting.show();
 		}
@@ -63,4 +63,4 @@ ReObject.prototype.makeSelectionPlate = function (render) {
 	console.log('ReObject.makeSelectionPlate is not overridden');
 };
 
-module.exports = ReObject
+module.exports = ReObject;

@@ -51,7 +51,7 @@ var Atom = function (params) {
 Atom.getAttrHash = function (atom) {
 	var attrs = new Hash();
 	for (var attr in Atom.attrlist) {
-		if (typeof(atom[attr]) != 'undefined') {
+		if (typeof (atom[attr]) != 'undefined') {
 			attrs.set(attr, atom[attr]);
 		}
 	}
@@ -68,7 +68,7 @@ Atom.attrGetDefault = function (attr) {
 Atom.PATTERN =
 {
 	RADICAL:
- {
+ 										{
 		NONE: 0,
 		SINGLET: 1,
 		DOUPLET: 2,

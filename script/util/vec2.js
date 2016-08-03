@@ -209,7 +209,7 @@ Vec2.lc2 = function (v1, f1, v2, f2) {
 	util.assertDefined(v2);
 	util.assertDefined(f1);
 	util.assertDefined(f2);
-	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2 );
+	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2);
 };
 
 Vec2.centre = function (v1, v2) {
@@ -218,23 +218,23 @@ Vec2.centre = function (v1, v2) {
 
 // find intersection of a ray and a box and
 //  return the shift magnitude to avoid it
-Vec2.shiftRayBox = function (/*Vec2*/p, /*Vec2*/d, /*Box2Abs*/bb) {
+Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) {
 	util.assertDefined(p);
 	util.assertDefined(d);
 	util.assertDefined(bb);
 	// four corner points of the box
 	var b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
 			bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
-	var r = b.map(function (v){return v.sub(p)}); // b relative to p
+	var r = b.map(function (v) { return v.sub(p); }); // b relative to p
 	d = d.normalized();
-	var rc = r.map(function (v){return Vec2.cross(v, d)}); // cross prods
-	var rd = r.map(function (v){return Vec2.dot(v, d)}); // dot prods
+	var rc = r.map(function (v) { return Vec2.cross(v, d); }); // cross prods
+	var rd = r.map(function (v) { return Vec2.dot(v, d); }); // dot prods
 
 	// find foremost points on the right and on the left of the ray
 	var pid = -1, nid = -1;
 	for (var i = 0; i < 4; ++i)
-		if (rc[i] > 0)  {if (pid < 0 || rd[pid] < rd[i]) pid = i;}
-		else            {if (nid < 0 || rd[nid] < rd[i]) nid = i;}
+		if (rc[i] > 0)  { if (pid < 0 || rd[pid] < rd[i]) pid = i; }
+		else            { if (nid < 0 || rd[nid] < rd[i]) nid = i; }
 
 	if (nid < 0 || pid < 0) // no intersection, no shift
 		return 0;

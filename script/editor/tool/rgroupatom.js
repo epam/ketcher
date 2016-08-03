@@ -27,7 +27,7 @@ RGroupAtomTool.prototype.OnMouseUp = function (event) {
 					ui.addUndoAction(
 					Action.fromAtomAddition(
 					rnd.page2obj(this.OnMouseMove0.lastEvent),
-					{ label: 'R#', rglabel: rgNew}
+					{ label: 'R#', rglabel: rgNew }
 					),
 						true
 					);

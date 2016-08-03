@@ -41,9 +41,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 	if (!Object.isUndefined(ignore_errors))
 		this.ignore_errors = ignore_errors;
 
-	//[RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
-	//TODO the fix is temporary, still need to implement error handling/reporting
-	//BEGIN
+	// [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
+	// TODO the fix is temporary, still need to implement error handling/reporting
+	// BEGIN
 //    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
 //        throw new Error("SMILES doesn't support s-groups");
 	molecule = molecule.clone();
@@ -55,14 +55,14 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 		if (sg.type == 'MUL') {
 			try {
 				Struct.SGroup.prepareMulForSaving(sg, molecule);
-			} catch(ex) {
-					throw { message: 'Bad s-group (' + ex.message + ')' };
-				}
+			} catch (ex) {
+				throw { message: 'Bad s-group (' + ex.message + ')' };
+			}
 		} else if (!this.ignore_errors) {
 			throw new Error('SMILES data format doesn\'t support s-groups');
 		}
 	}, this);
-	//END
+	// END
 
 	this.atoms = new Array(molecule.atoms.count());
 
@@ -88,8 +88,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			if (allowed_lowercase.indexOf(molecule.atoms.get(bond.end).label) != -1)
 				this.atoms[bond.end].lowercase = true;
 		}
-		this.atoms[bond.begin].neighbours.push({aid: bond.end, bid: bid});
-		this.atoms[bond.end].neighbours.push({aid: bond.begin, bid: bid});
+		this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid: bid });
+		this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid: bid });
 	}, this);
 
 	this.inLoop = (function () {
@@ -138,7 +138,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			var opening_cycles = walk.numOpeningCycles(e_idx);
 
 			for (j = 0; j < opening_cycles; j++)
-				this.atoms[v_prev_idx].neighbours.push({aid: -1, bid: -1});
+				this.atoms[v_prev_idx].neighbours.push({ aid: -1, bid: -1 });
 
 			if (walk.edgeClosingCycle(e_idx))
 			{
@@ -156,10 +156,10 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 			}
 			else
 			{
-				atom.neighbours.push({aid: v_prev_idx, bid: e_idx});
+				atom.neighbours.push({ aid: v_prev_idx, bid: e_idx });
 				atom.parent = v_prev_idx;
 			}
-			this.atoms[v_prev_idx].neighbours.push({aid: v_idx, bid: e_idx});
+			this.atoms[v_prev_idx].neighbours.push({ aid: v_idx, bid: e_idx });
 		}
 	}
 
@@ -171,9 +171,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 		}, this);
 		stereocenters.buildFromBonds(this.ignore_errors);
 
-		stereocenters.each (function (atom_idx, sc)
+		stereocenters.each(function (atom_idx, sc)
 		{
-			//if (sc.type < MoleculeStereocenters::ATOM_AND)
+			// if (sc.type < MoleculeStereocenters::ATOM_AND)
 			//    continue;
 
 			var implicit_h_idx = -1;
@@ -238,8 +238,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 				this.atoms[atom_idx].chirality = 2;
 		}, this);
 	} catch (ex) {
-			alert('Warning: ' + ex.message);
-		}
+		alert('Warning: ' + ex.message);
+	}
 
 	// write the SMILES itself
 
@@ -262,8 +262,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 		if (v_prev_idx >= 0)
 		{
 			if (walk.numBranches(v_prev_idx) > 1)
-			if (this.atoms[v_prev_idx].branch_cnt > 0 && this.atoms[v_prev_idx].paren_written)
-				this.smiles += ')';
+				if (this.atoms[v_prev_idx].branch_cnt > 0 && this.atoms[v_prev_idx].paren_written)
+					this.smiles += ')';
 
 			opening_cycles = walk.numOpeningCycles(e_idx);
 
@@ -285,16 +285,16 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 				var branches = walk.numBranches(v_prev_idx);
 
 				if (branches > 1)
-				if (this.atoms[v_prev_idx].branch_cnt < branches - 1)
+					if (this.atoms[v_prev_idx].branch_cnt < branches - 1)
 				{
-					if (walk.edgeClosingCycle(e_idx))
-						this.atoms[v_prev_idx].paren_written = false;
-					else
+						if (walk.edgeClosingCycle(e_idx))
+							this.atoms[v_prev_idx].paren_written = false;
+						else
 					{
-						this.smiles += '(';
-						this.atoms[v_prev_idx].paren_written = true;
+							this.smiles += '(';
+							this.atoms[v_prev_idx].paren_written = true;
+						}
 					}
-				}
 
 				this.atoms[v_prev_idx].branch_cnt++;
 
@@ -324,7 +324,6 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 				this.smiles += ':'; // TODO: Check if this : is needed
 			else if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
 				this.smiles += '-';
-
 
 
 			if (walk.edgeClosingCycle(e_idx))
@@ -357,16 +356,15 @@ Smiles.prototype.saveMolecule = function (molecule, ignore_errors)
 
 	this.comma = false;
 
-	//this._writeStereogroups(mol, atoms);
+	// this._writeStereogroups(mol, atoms);
 	this._writeRadicals(molecule);
-	//this._writePseudoAtoms(mol);
-	//this._writeHighlighting();
+	// this._writePseudoAtoms(mol);
+	// this._writeHighlighting();
 
 	if (this.comma)
 		this.smiles += '|';
 
 	return this.smiles;
-
 };
 
 Smiles.prototype._writeCycleNumber = function (n)
@@ -424,12 +422,12 @@ Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality
 		return;
 	}
 
-	//KETCHER-598 (Ketcher does not save AAM into reaction SMILES)
-	//BEGIN
+	// KETCHER-598 (Ketcher does not save AAM into reaction SMILES)
+	// BEGIN
 //    if (this.atom_atom_mapping)
 //        aam = atom_atom_mapping[idx];
 	aam = atom.aam;
-	//END
+	// END
 
 	if (atom.label != 'C' && atom.label != 'P' &&
 	atom.label != 'N' && atom.label != 'S' &&
@@ -525,7 +523,7 @@ Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality
 
 Smiles.prototype._markCisTrans = function (mol)
 {
-	this.cis_trans = new CisTrans (mol, function (idx)
+	this.cis_trans = new CisTrans(mol, function (idx)
 	{
 		return this.atoms[idx].neighbours;
 	}, this);
@@ -539,7 +537,7 @@ Smiles.prototype._markCisTrans = function (mol)
 			ctbond_beg: -1,
 			ctbond_end: -1,
 			saved: 0
-		}
+		};
 	}, this);
 
 	this.cis_trans.each(function (bid, ct)

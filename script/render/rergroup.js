@@ -6,14 +6,14 @@ var Visel = require('./visel');
 
 var ReObject = require('./reobject');
 
-var ReRGroup = function (/*Struct.RGroup*/rgroup) {
+var ReRGroup = function (/* Struct.RGroup*/rgroup) {
 	this.init(Visel.TYPE.RGROUP);
 
 	this.labelBox = null;
 	this.item = rgroup;
 };
 ReRGroup.prototype = new ReObject();
-ReRGroup.isSelectable = function () { return false; }
+ReRGroup.isSelectable = function () { return false; };
 
 ReRGroup.prototype.getAtoms = function (render) {
 	var ret = [];
@@ -85,11 +85,11 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 		var key = render.ctab.rgroups.keyOf(this);
 		var labelSet = render.paper.set();
 		var label = render.paper.text(p0.x, (p0.y + p1.y) / 2, 'R' + key + '=')
-		.attr({
-			'font': settings.font,
-			'font-size': settings.fontRLabel,
-			'fill': 'black'
-		});
+			.attr({
+				'font': settings.font,
+				'font-size': settings.fontRLabel,
+				'fill': 'black'
+			});
 		var labelBox = util.relBox(label.getBBox());
 		label.translateAbs(-labelBox.width / 2 - settings.lineWidth, 0);
 		labelSet.push(label);
@@ -101,7 +101,7 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 
 		var logic = [];
 		// TODO [RB] temporary solution, need to review
-		//BEGIN
+		// BEGIN
 		/*
          if (this.item.range.length > 0)
          logic.push(this.item.range);
@@ -121,7 +121,7 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 			 + (this.item.resth ? ' (RestH)' : '')
 			 + (this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
 		);
-		//END
+		// END
 		var shift = labelBox.height / 2 + settings.lineWidth / 2;
 		for (var i = 0; i < logic.length; ++i) {
 			var logicPath = render.paper.text(p0.x, (p0.y + p1.y) / 2, logic[i]).attr(logicStyle);
@@ -153,7 +153,7 @@ ReRGroup.prototype._draw = function (render, rgid, attrs) { // TODO need to revi
 ReRGroup.prototype.drawHighlight = function (render) {
 	var rgid = render.ctab.rgroups.keyOf(this);
 	if (!Object.isUndefined(rgid)) {
-		var ret = this._draw(render, rgid, render.styles.highlightStyle/*{ 'fill' : 'red' }*/);
+		var ret = this._draw(render, rgid, render.styles.highlightStyle/* { 'fill' : 'red' }*/);
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*
          this.getAtoms(render).each(function(aid) {
@@ -168,4 +168,4 @@ ReRGroup.prototype.drawHighlight = function (render) {
 		// TODO abnormal situation, fragment does not belong to the render
 	}
 };
-module.exports = ReRGroup
+module.exports = ReRGroup;

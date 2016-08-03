@@ -12,9 +12,9 @@ var relBox = function (box) {
 };
 
 var stopEventPropagation = function (event) {
-	if ('stopPropagation' in event) {// Mozilla, Opera, Safari
+	if ('stopPropagation' in event) { // Mozilla, Opera, Safari
 		event.stopPropagation();
-	} else if ('cancelBubble' in event) {// IE
+	} else if ('cancelBubble' in event) { // IE
 		event.cancelBubble = true;
 	} else {
 		throw Error('Browser unrecognized');
@@ -32,18 +32,18 @@ var preventDefault = function (event) {
 	return false;
 };
 
-function unicodeLiteral(str){
-	function fixedHex(number, length){
+function unicodeLiteral(str) {
+	function fixedHex(number, length) {
 		var str = number.toString(16).toUpperCase();
-		while(str.length < length)
+		while (str.length < length)
 			str = "0" + str;
 		return str;
 	}
 	var i;
 	var result = "";
-	for( i = 0; i < str.length; ++i){
-		if(str.charCodeAt(i) > 126 || str.charCodeAt(i) < 32)
-			result += "\\u" + fixedHex(str.charCodeAt(i),4);
+	for (i = 0; i < str.length; ++i) {
+		if (str.charCodeAt(i) > 126 || str.charCodeAt(i) < 32)
+			result += "\\u" + fixedHex(str.charCodeAt(i), 4);
 		else
 			result += str[i];
 	}
@@ -78,7 +78,7 @@ var assert = function (condition, comment) {
 	}
 };
 
-var assertDefined = function(v) {
+var assertDefined = function (v) {
 	assert(!isNullOrUndefined(v));
 };
 

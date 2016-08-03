@@ -73,11 +73,10 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 														   params.attrs, id), true);
 			} else {
 				ui.addUndoAction(Action.fromSgroupType(id, params.type)
-								 .mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
+					.mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
 			}
 			this.editor.deselectAll();
 			rnd.update();
-
 		}.bind(this)
 	});
 };

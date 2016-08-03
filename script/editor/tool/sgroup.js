@@ -49,10 +49,10 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 
 		if (ci.map == 'atoms') {
 			// if we click the SGroup tool on a single atom or bond, make a group out of those
-			selection = {'atoms': [ci.id]};
+			selection = { 'atoms': [ci.id] };
 		} else if (ci.map == 'bonds') {
 			var bond = this.editor.render.ctab.bonds.get(ci.id);
-			selection = {'atoms': [bond.b.begin, bond.b.end]};
+			selection = { 'atoms': [bond.b.begin, bond.b.end] };
 		} else if (ci.map == 'sgroups') {
 			id = ci.id;
 		} else {

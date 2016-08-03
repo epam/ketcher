@@ -55,7 +55,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			onOk: function (res) {
 				var props = {};
 				if (rg.range != res.range) {
-					var isValid = res.range.split(',').all(function (s){
+					var isValid = res.range.split(',').all(function (s) {
 						return s.match(/^[>,<,=]?[0-9]+$/g) || s.match(/^[0-9]+\-[0-9]+$/g);
 					});
 					if (!isValid) {

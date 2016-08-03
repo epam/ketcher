@@ -5,8 +5,8 @@ var AtomList = function (params)
 	if (!params || !('notList' in params) || !('ids' in params))
 		throw new Error('\'notList\' and \'ids\' must be specified!');
 
-	this.notList = params.notList; /*boolean*/
-	this.ids = params.ids; /*Array of integers*/
+	this.notList = params.notList; /* boolean*/
+	this.ids = params.ids; /* Array of integers*/
 };
 
 AtomList.prototype.labelList = function ()

@@ -20,7 +20,6 @@ var RotateTool = function (editor) {
 RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
-
 	var selection = this.editor._selectionHelper.selection;
 	if (selection.atoms && selection.atoms.length) {
 		var rnd = this.editor.render;

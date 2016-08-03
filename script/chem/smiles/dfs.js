@@ -176,7 +176,7 @@ Dfs.prototype.numOpeningCycles = function (e_idx)
 Dfs.prototype.toString = function ()
 {
 	var str = '';
-	this.v_seq.each(function (seq_elem) {str += seq_elem.idx + ' -> ';});
+	this.v_seq.each(function (seq_elem) { str += seq_elem.idx + ' -> '; });
 	str += '*';
 	return str;
 };

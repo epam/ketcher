@@ -1,14 +1,14 @@
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
-var ReRxnArrow = function (/*chem.RxnArrow*/arrow)
+var ReRxnArrow = function (/* chem.RxnArrow*/arrow)
 {
 	this.init(Visel.TYPE.ARROW);
 
 	this.item = arrow;
 };
 ReRxnArrow.prototype = new ReObject();
-ReRxnArrow.isSelectable = function () { return true; }
+ReRxnArrow.isSelectable = function () { return true; };
 
 ReRxnArrow.findClosest = function (render, p) {
 	var minDist;
@@ -20,7 +20,7 @@ ReRxnArrow.findClosest = function (render, p) {
 			var dist = Math.abs(p.y - pos.y);
 			if (dist < 0.3 && (!ret || dist < minDist)) {
 				minDist = dist;
-				ret = {'id': id, 'dist': minDist};
+				ret = { 'id': id, 'dist': minDist };
 			}
 		}
 	});
@@ -43,4 +43,4 @@ ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-module.exports = ReRxnArrow
+module.exports = ReRxnArrow;

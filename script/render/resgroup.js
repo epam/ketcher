@@ -24,7 +24,7 @@ ReSGroup.isSelectable = function () { return false; };
 ReSGroup.findClosest = function (render, p) {
 	var ret = null;
 	var minDist = render.opt.selectionDistanceCoefficient;
-	render.ctab.molecule.sgroups.each(function (sgid, sg){
+	render.ctab.molecule.sgroups.each(function (sgid, sg) {
 		var d = sg.bracketDir, n = d.rotateSC(1, 0);
 		var pg = new Vec2(Vec2.dot(p, d), Vec2.dot(p, n));
 		for (var i = 0; i < sg.areas.length; ++i) {
@@ -39,8 +39,8 @@ ReSGroup.findClosest = function (render, p) {
 	}, this);
 	if (ret != null)
 		return {
-			'id':ret,
-			'dist':minDist
+			'id': ret,
+			'dist': minDist
 		};
 	return null;
 };
@@ -48,7 +48,7 @@ ReSGroup.findClosest = function (render, p) {
 ReSGroup.prototype.draw = function (remol, sgroup) {
 	//	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
 	return SGroup_draw[sgroup.type](remol, sgroup);
-}
+};
 
 var SGroupdrawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) {
 	var brackets = Struct.SGroup.getBracketParameters(render.ctab.molecule, xbonds, atomSet, bb, d, n, render, sg.id);
@@ -64,10 +64,10 @@ var SGroupdrawBrackets = function (set, render, sg, xbonds, atomSet, bb, d, n, l
 	var renderIndex = function (text, shift) {
 		var indexPos = render.ps(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
-		.attr({
-			'font': render.settings.font,
-			'font-size': render.settings.fontszsub
-		});
+			.attr({
+				'font': render.settings.font,
+				'font-size': render.settings.fontszsub
+			});
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
 		var indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
@@ -95,7 +95,7 @@ var drawGroupMul = function (remol, sgroup) {
 	sgroup.areas = [bb];
 	SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, sgroup.data.mul);
 	return set;
-}
+};
 
 var drawGroupSru = function (remol, sgroup) {
 	var render = remol.render;
@@ -113,7 +113,7 @@ var drawGroupSru = function (remol, sgroup) {
 	var subscript = sgroup.data.subscript || 'n';
 	SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, subscript, connectivity);
 	return set;
-}
+};
 
 var drawGroupSup = function (remol, sgroup) {
 	var render = remol.render;
@@ -125,11 +125,9 @@ var drawGroupSup = function (remol, sgroup) {
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir, n = d.rotateSC(1, 0);
 	sgroup.areas = [bb];
-	SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, sgroup.data.name, null, {
-		'font-style': 'italic'
-	});
+	SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n, sgroup.data.name, null, { 'font-style': 'italic' });
 	return set;
-}
+};
 
 var drawGroupGen = function (remol, sgroup) {
 	var render = remol.render;
@@ -144,21 +142,21 @@ var drawGroupGen = function (remol, sgroup) {
 	sgroup.areas = [bb];
 	SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, n);
 	return set;
-}
+};
 
 var showValue = function (paper, pos, sg, settings) {
 	var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
-			.attr({
-		'font': settings.font,
-		'font-size': settings.fontsz
-	});
+		.attr({
+			'font': settings.font,
+			'font-size': settings.fontsz
+		});
 	var box = text.getBBox();
 	var rect = paper.rect(box.x - 1, box.y - 1,
 							  box.width + 2, box.height + 2, 3, 3)
-			.attr({
-		fill: '#fff',
-		stroke: '#fff'
-	});
+		.attr({
+			fill: '#fff',
+			stroke: '#fff'
+		});
 	var st = paper.set();
 	st.push(
 		rect,
@@ -211,7 +209,7 @@ var drawGroupDat = function (remol, sgroup) {
 			remol.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
 	}
 	return set;
-}
+};
 
 var SGroup_draw = {
 	'MUL': drawGroupMul,
@@ -230,7 +228,7 @@ ReSGroup.prototype.drawHighlight = function (render) {
 	var lw = settings.lineWidth;
 	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);
-	var d = sg.bracketDir, n = d.rotateSC(1,0);
+	var d = sg.bracketDir, n = d.rotateSC(1, 0);
 	var a0 = Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
 	var a1 = Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
 	var b0 = Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
@@ -238,8 +236,8 @@ ReSGroup.prototype.drawHighlight = function (render) {
 
 	var set = paper.set();
 	sg.highlighting = paper
-	.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}', tfx(a0.x), tfx(a0.y), tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(b0.x), tfx(b0.y))
-	.attr(styles.highlightStyle);
+		.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}', tfx(a0.x), tfx(a0.y), tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(b0.x), tfx(b0.y))
+		.attr(styles.highlightStyle);
 	set.push(sg.highlighting);
 
 	Struct.SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
@@ -250,4 +248,4 @@ ReSGroup.prototype.drawHighlight = function (render) {
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
-module.exports = ReSGroup
+module.exports = ReSGroup;

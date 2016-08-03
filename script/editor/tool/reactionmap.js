@@ -23,7 +23,7 @@ ReactionMapTool.prototype.OnMouseDown = function (event) {
 		this.dragCtx = {
 			item: ci,
 			xy0: rnd.page2obj(event)
-		}
+		};
 	}
 };
 ReactionMapTool.prototype.OnMouseMove = function (event) {

@@ -15,7 +15,7 @@ LassoHelper.prototype.getSelection = function () {
 };
 LassoHelper.prototype.begin = function (event) {
 	var rnd = this.editor.render;
-	this.points = [ rnd.page2obj(event) ];
+	this.points = [rnd.page2obj(event)];
 	if (this.mode == 1) {
 		this.points.push(this.points[0]);
 	}
@@ -30,7 +30,7 @@ LassoHelper.prototype.addPoint = function (event) {
 		this.points.push(rnd.page2obj(event));
 		rnd.drawSelectionPolygon(this.points);
 	} else if (this.mode == 1) {
-		this.points = [ this.points[0], rnd.page2obj(event) ];
+		this.points = [this.points[0], rnd.page2obj(event)];
 		rnd.drawSelectionRectangle(this.points[0], this.points[1]);
 	}
 	return this.getSelection();

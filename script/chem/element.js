@@ -8,7 +8,7 @@ function el(label, period, group, putHydrogenOnTheLeft, color) {
 		putHydrogenOnTheLeft: putHydrogenOnTheLeft,
 		color: color || '#000000'
 	};
-};
+}
 
 var element = new Map({
 	1: el('H', 1, 1, false, '#000000'),

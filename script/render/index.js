@@ -19,9 +19,9 @@ require('./restruct_rendering');
 
 var tfx = util.tfx;
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false};
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
-//DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
+// DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
 
 var defaultRenderOps = {
 	// flags for debugging
@@ -120,7 +120,7 @@ Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
 };
 
-Render.prototype.scrollPos = function() {
+Render.prototype.scrollPos = function () {
 	return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
 };
 
@@ -135,7 +135,7 @@ Render.prototype.findItem = function (event, maps, skip) {
 			'ui' in window ? new Vec2(this.page2obj(event)) :
 			                 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
 		maps, skip);
-	//rbalabanov: let it be this way at the moment
+	// rbalabanov: let it be this way at the moment
 	if (ci.type == 'Atom') ci.map = 'atoms';
 	else if (ci.type == 'Bond') ci.map = 'bonds';
 	else if (ci.type == 'SGroup') ci.map = 'sgroups';
@@ -362,7 +362,7 @@ Render.prototype.getAdjacentBonds = function (atoms) {
 			Set.add(set, hb.bid);
 		}
 	}
-	return {'inner': bidSetInner, 'cross': bidSetCross};
+	return { 'inner': bidSetInner, 'cross': bidSetCross };
 };
 
 Render.prototype.bondGetAttr = function (bid, name)
@@ -378,7 +378,7 @@ Render.prototype.setSelection = function (selection)
 		if (!ReStruct.maps[map].isSelectable())
 			continue;
 		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
-		this.ctab[map].each(function (id, item){
+		this.ctab[map].each(function (id, item) {
 			var selected = set ? set[id] === id : item.selected;
 			item.selected = selected;
 			this.ctab.showItemSelection(id, item, selected);
@@ -398,27 +398,27 @@ Render.prototype.initStyles = function ()
 		'stroke-linejoin': 'round'
 	};
 	this.styles.selectionStyle = {
-		'fill':'#7f7',
-		'stroke':'none'
+		'fill': '#7f7',
+		'stroke': 'none'
 	};
 	this.styles.selectionZoneStyle = {
-		'fill':'#000',
-		'stroke':'none',
-		'opacity':0.0
+		'fill': '#000',
+		'stroke': 'none',
+		'opacity': 0.0
 	};
 	this.styles.highlightStyle = {
-		'stroke':'#0c0',
-		'stroke-width':0.6 * settings.lineWidth
+		'stroke': '#0c0',
+		'stroke-width': 0.6 * settings.lineWidth
 	};
 	this.styles.sGroupHighlightStyle = {
-		'stroke':'#9900ff',
-		'stroke-width':0.6 * settings.lineWidth
+		'stroke': '#9900ff',
+		'stroke-width': 0.6 * settings.lineWidth
 	};
 	this.styles.sgroupBracketStyle = {
-		'stroke':'darkgray',
-		'stroke-width':0.5 * settings.lineWidth
+		'stroke': 'darkgray',
+		'stroke-width': 0.5 * settings.lineWidth
 	};
-	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
+	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2;
 };
 
 Render.prototype.initSettings = function ()
@@ -491,7 +491,7 @@ Render.prototype.getElementPos = function (obj)
 			curtop += obj.offsetTop;
 		} while ((obj = obj.offsetParent));
 	}
-	return new Vec2(curleft,curtop);
+	return new Vec2(curleft, curtop);
 };
 
 Render.prototype.drawSelectionLine = function (p0, p1) {
@@ -505,7 +505,7 @@ Render.prototype.drawSelectionLine = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.path(
 		ReStruct.makeStroke(p0, p1)
-		).attr({'stroke':'gray', 'stroke-width':'1px'});
+		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
@@ -520,17 +520,17 @@ Render.prototype.drawSelectionRectangle = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.rect(
 		Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)
-		).attr({'stroke':'gray', 'stroke-width':'1px'});
+		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
-Render.prototype.getElementsInRectangle = function (p0,p1) {
+Render.prototype.getElementsInRectangle = function (p0, p1) {
 	DEBUG.logMethod('getElementsInRectangle');
 	var bondList = [];
 	var atomList = [];
 
 	var x0 = Math.min(p0.x, p1.x), x1 = Math.max(p0.x, p1.x), y0 = Math.min(p0.y, p1.y), y1 = Math.max(p0.y, p1.y);
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
@@ -542,31 +542,31 @@ Render.prototype.getElementsInRectangle = function (p0,p1) {
 	}, this);
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	this.ctab.rxnArrows.each(function (id, item){
+	this.ctab.rxnArrows.each(function (id, item) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	}, this);
-	this.ctab.rxnPluses.each(function (id, item){
+	this.ctab.rxnPluses.each(function (id, item) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
 	var chiralFlagList = [];
-	this.ctab.chiralFlags.each(function (id, item){
+	this.ctab.chiralFlags.each(function (id, item) {
 		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
 			chiralFlagList.push(id);
 	}, this);
 	var sgroupDataList = [];
-	this.ctab.sgroupData.each(function (id, item){
+	this.ctab.sgroupData.each(function (id, item) {
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
 			sgroupDataList.push(id);
 	}, this);
 	return {
-		'atoms':atomList,
-		'bonds':bondList,
-		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList,
-		'chiralFlags':chiralFlagList,
-		'sgroupData':sgroupDataList
+		'atoms': atomList,
+		'bonds': bondList,
+		'rxnArrows': rxnArrowsList,
+		'rxnPluses': rxnPlusesList,
+		'chiralFlags': chiralFlagList,
+		'sgroupData': sgroupDataList
 	};
 };
 
@@ -583,7 +583,7 @@ Render.prototype.drawSelectionPolygon = function (r) {
 			v = this.obj2scaled(r[i]).add(this.offset);
 			pstr += 'L' + tfx(v.x) + ',' + tfx(v.y);
 		}
-		this.selectionRect = this.paper.path(pstr).attr({'stroke':'gray', 'stroke-width':'1px'});
+		this.selectionRect = this.paper.path(pstr).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
@@ -638,74 +638,74 @@ Render.prototype.getElementsInPolygon = function (rr) {
 	for (var i = 0; i < rr.length; ++i) {
 		r[i] = new Vec2(rr[i].x, rr[i].y);
 	}
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);
 	}, this);
-	this.ctab.atoms.each(function (aid, atom){
+	this.ctab.atoms.each(function (aid, atom) {
 		if (this.isPointInPolygon(r, atom.a.pp))
 			atomList.push(aid);
 	}, this);
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	this.ctab.rxnArrows.each(function (id, item){
+	this.ctab.rxnArrows.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnArrowsList.push(id);
 	}, this);
-	this.ctab.rxnPluses.each(function (id, item){
+	this.ctab.rxnPluses.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	}, this);
 	var chiralFlagList = [];
-	this.ctab.chiralFlags.each(function (id, item){
+	this.ctab.chiralFlags.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.pp))
 			chiralFlagList.push(id);
 	}, this);
 	var sgroupDataList = [];
-	this.ctab.sgroupData.each(function (id, item){
+	this.ctab.sgroupData.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.sgroup.pp))
 			sgroupDataList.push(id);
 	}, this);
 
 	return {
-		'atoms':atomList,
-		'bonds':bondList,
-		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList,
-		'chiralFlags':chiralFlagList,
-		'sgroupData':sgroupDataList
+		'atoms': atomList,
+		'bonds': bondList,
+		'rxnArrows': rxnArrowsList,
+		'rxnPluses': rxnPlusesList,
+		'chiralFlags': chiralFlagList,
+		'sgroupData': sgroupDataList
 	};
 };
 
 Render.prototype.testPolygon = function (rr) {
 	rr = rr || [
-	{
-		x:50,
-		y:10
-	},
+		{
+			x: 50,
+			y: 10
+		},
 
-	{
-		x:20,
-		y:90
-	},
+		{
+			x: 20,
+			y: 90
+		},
 
-	{
-		x:90,
-		y:30
-	},
+		{
+			x: 90,
+			y: 30
+		},
 
-	{
-		x:10,
-		y:30
-	},
+		{
+			x: 10,
+			y: 30
+		},
 
-	{
-		x:90,
-		y:80
-	}
-		];
+		{
+			x: 90,
+			y: 80
+		}
+	];
 	if (rr.length < 3)
 		return;
 	var min = rr[0], max = rr[0];
@@ -720,8 +720,8 @@ Render.prototype.testPolygon = function (rr) {
 		var isin = this.isPointInPolygon(rr, p);
 		var color = isin ? '#0f0' : '#f00';
 		this.paper.circle(p.x, p.y, 2).attr({
-			'fill':color,
-			'stroke':'none'
+			'fill': color,
+			'stroke': 'none'
 		});
 	}
 	this.drawSelectionPolygon(rr);
@@ -801,7 +801,7 @@ Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO shoul
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist	 = Math.min(minDist, maxMinDist);
-	this.ctab.atoms.each(function (aid, atom){
+	this.ctab.atoms.each(function (aid, atom) {
 		if (aid != skip) {
 			var dist = Vec2.dist(pos, atom.a.pp);
 			if (dist < minDist) {
@@ -812,8 +812,8 @@ Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO shoul
 	}, this);
 	if (closestAtom != null)
 		return {
-			'id':closestAtom,
-			'dist':minDist
+			'id': closestAtom,
+			'dist': minDist
 		};
 	return null;
 };
@@ -825,9 +825,9 @@ Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var minCDist = minDist;
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
+			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
 		var cdist = Vec2.dist(pos, mid);
 		if (cdist < minCDist) {
@@ -835,16 +835,16 @@ Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a
 			closestBondCenter = bid;
 		}
 	}, this);
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
+			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 
-		var inStripe = Vec2.dot(pos.sub(p1),d) * Vec2.dot(pos.sub(p2),d) < 0;
+		var inStripe = Vec2.dot(pos.sub(p1), d) * Vec2.dot(pos.sub(p2), d) < 0;
 		if (inStripe) {
-			var dist = Math.abs(Vec2.dot(pos.sub(p1),n));
+			var dist = Math.abs(Vec2.dot(pos.sub(p1), n));
 			if (dist < minDist) {
 				closestBond = bid;
 				minDist = dist;
@@ -866,9 +866,9 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var updret = function (type, item, force) {
 		if (item != null && (ret == null || ret.dist > item.dist || force)) {
 			ret = {
-				'type':type,
-				'id':item.id,
-				'dist':item.dist
+				'type': type,
+				'id': item.id,
+				'dist': item.dist
 			};
 		}
 	};
@@ -884,7 +884,7 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 		var bond = this.findClosestBond(pos);
 		if (bond) {
 			if (bond.cid !== null)
-				updret('Bond', {'id': bond.cid, 'dist': bond.cdist});
+				updret('Bond', { 'id': bond.cid, 'dist': bond.cdist });
 			if (ret == null || ret.dist > 0.4 * this.scale) // hack
 				updret('Bond', bond);
 		}
@@ -903,11 +903,11 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	}
 	if (!maps || maps.indexOf('rxnArrows') >= 0) {
 		var arrow = ReRxnArrow.findClosest(this, pos);
-		updret('RxnArrow',arrow);
+		updret('RxnArrow', arrow);
 	}
 	if (!maps || maps.indexOf('rxnPluses') >= 0) {
 		var plus = ReRxnPlus.findClosest(this, pos);
-		updret('RxnPlus',plus);
+		updret('RxnPlus', plus);
 	}
 	if (!maps || maps.indexOf('frags') >= 0) {
 		var frag = ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
@@ -919,9 +919,9 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	}
 
 	ret = ret || {
-		'type':'Canvas',
-		'id':-1
-		};
+		'type': 'Canvas',
+		'id': -1
+	};
 	return ret;
 };
 
@@ -1024,7 +1024,7 @@ Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
 
 	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
 		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
-	.attr(this.styles.sgroupBracketStyle);
+		.attr(this.styles.sgroupBracketStyle);
 };
 
 module.exports = Render;

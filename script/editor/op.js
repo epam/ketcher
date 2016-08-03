@@ -9,10 +9,10 @@ var ReSGroup = require('../render/resgroup');
 
 var ui = global.ui;
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false};
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 
-function Base () {
+function Base() {
 	this.type = 'OpBase';
 
 	// assert here?
@@ -36,7 +36,7 @@ function Base () {
 	};
 }
 
-function AtomAdd (atom, pos) {
+function AtomAdd(atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -58,10 +58,10 @@ function AtomAdd (atom, pos) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 AtomAdd.prototype = new Base();
 
-function AtomDelete (aid) {
+function AtomDelete(aid) {
 	this.data = { aid: aid, atom: null, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -77,10 +77,10 @@ function AtomDelete (aid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 AtomDelete.prototype = new Base();
 
-function AtomAttr (aid, attribute, value) {
+function AtomAttr(aid, attribute, value) {
 	this.data = { aid: aid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -97,13 +97,13 @@ function AtomAttr (aid, attribute, value) {
 	this._invert = function () {
 		var ret = new AtomAttr();
 		ret.data = this.data2;
-		ret.data2 = this.data;return ret;
+		ret.data2 = this.data; return ret;
 	};
-};
+}
 AtomAttr.prototype = new Base();
 
-function AtomMove (aid, d, noinvalidate) {
-	this.data = {aid: aid, d: d, noinvalidate: noinvalidate};
+function AtomMove(aid, d, noinvalidate) {
+	this.data = { aid: aid, d: d, noinvalidate: noinvalidate };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -124,11 +124,11 @@ function AtomMove (aid, d, noinvalidate) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 AtomMove.prototype = new Base();
 
-function BondMove (bid, d) {
-	this.data = {bid: bid, d: d};
+function BondMove(bid, d) {
+	this.data = { bid: bid, d: d };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -140,11 +140,11 @@ function BondMove (bid, d) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 BondMove.prototype = new Base();
 
-function LoopMove (id, d) {
-	this.data = {id: id, d: d};
+function LoopMove(id, d) {
+	this.data = { id: id, d: d };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -159,12 +159,12 @@ function LoopMove (id, d) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 LoopMove.prototype = new Base();
 
-function SGroupAtomAdd (sgid, aid) {
+function SGroupAtomAdd(sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
-	this.data = {'aid': aid, 'sgid': sgid};
+	this.data = { 'aid': aid, 'sgid': sgid };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var aid = this.data.aid;
@@ -183,12 +183,12 @@ function SGroupAtomAdd (sgid, aid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupAtomAdd.prototype = new Base();
 
-function SGroupAtomRemove (sgid, aid) {
+function SGroupAtomRemove(sgid, aid) {
 	this.type = 'OpSGroupAtomRemove';
-	this.data = {'aid': aid, 'sgid': sgid};
+	this.data = { 'aid': aid, 'sgid': sgid };
 	this._execute = function (editor) {
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
@@ -204,12 +204,12 @@ function SGroupAtomRemove (sgid, aid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupAtomRemove.prototype = new Base();
 
-function SGroupAttr (sgid, attr, value) {
+function SGroupAttr(sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
-	this.data = {sgid: sgid, attr: attr, value: value};
+	this.data = { sgid: sgid, attr: attr, value: value };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var sgid = this.data.sgid;
@@ -226,12 +226,12 @@ function SGroupAttr (sgid, attr, value) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupAttr.prototype = new Base();
 
-function SGroupCreate (sgid, type, pp) {
+function SGroupCreate(sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
-	this.data = {'sgid': sgid, 'type': type, 'pp': pp};
+	this.data = { 'sgid': sgid, 'type': type, 'pp': pp };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var sg = new Struct.SGroup(this.data.type);
@@ -249,12 +249,12 @@ function SGroupCreate (sgid, type, pp) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupCreate.prototype = new Base();
 
-function SGroupDelete (sgid) {
+function SGroupDelete(sgid) {
 	this.type = 'OpSGroupDelete';
-	this.data = {'sgid': sgid};
+	this.data = { 'sgid': sgid };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -279,12 +279,12 @@ function SGroupDelete (sgid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupDelete.prototype = new Base();
 
-function SGroupAddToHierarchy (sgid) {
+function SGroupAddToHierarchy(sgid) {
 	this.type = 'OpSGroupAddToHierarchy';
-	this.data = {'sgid': sgid};
+	this.data = { 'sgid': sgid };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var sgid = this.data.sgid;
@@ -297,12 +297,12 @@ function SGroupAddToHierarchy (sgid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupAddToHierarchy.prototype = new Base();
 
-function SGroupRemoveFromHierarchy (sgid) {
+function SGroupRemoveFromHierarchy(sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
-	this.data = {'sgid': sgid};
+	this.data = { 'sgid': sgid };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		var sgid = this.data.sgid;
@@ -315,10 +315,10 @@ function SGroupRemoveFromHierarchy (sgid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupRemoveFromHierarchy.prototype = new Base();
 
-function BondAdd (begin, end, bond) {
+function BondAdd(begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -354,10 +354,10 @@ function BondAdd (begin, end, bond) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 BondAdd.prototype = new Base();
 
-function BondDelete (bid) {
+function BondDelete(bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -391,10 +391,10 @@ function BondDelete (bid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 BondDelete.prototype = new Base();
 
-function BondAttr (bid, attribute, value) {
+function BondAttr(bid, attribute, value) {
 	this.data = { bid: bid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -418,10 +418,10 @@ function BondAttr (bid, attribute, value) {
 		ret.data2 = this.data;
 		return ret;
 	};
-};
+}
 BondAttr.prototype = new Base();
 
-function FragmentAdd (frid) {
+function FragmentAdd(frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
 	this._execute = function (editor) {
 		var RS = editor.render.ctab;
@@ -437,10 +437,10 @@ function FragmentAdd (frid) {
 	this._invert = function () {
 		return new FragmentDelete(this.frid);
 	};
-};
+}
 FragmentAdd.prototype = new Base();
 
-function FragmentDelete (frid) {
+function FragmentDelete(frid) {
 	this.frid = frid;
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -451,10 +451,10 @@ function FragmentDelete (frid) {
 	this._invert = function () {
 		return new FragmentAdd(this.frid);
 	};
-};
+}
 FragmentDelete.prototype = new Base();
 
-function RGroupAttr (rgid, attribute, value) {
+function RGroupAttr(rgid, attribute, value) {
 	this.data = { rgid: rgid, attribute: attribute, value: value };
 	this.data2 = null;
 	this._execute = function (editor) {
@@ -476,10 +476,10 @@ function RGroupAttr (rgid, attribute, value) {
 		ret.data2 = this.data;
 		return ret;
 	};
-};
+}
 RGroupAttr.prototype = new Base();
 
-function RGroupFragment (rgid, frid, rg) {
+function RGroupFragment(rgid, frid, rg) {
 	this.rgid_new = rgid;
 	this.rg_new = rg;
 	this.rgid_old = null;
@@ -515,10 +515,10 @@ function RGroupFragment (rgid, frid, rg) {
 	this._invert = function () {
 		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
 	};
-};
+}
 RGroupFragment.prototype = new Base();
 
-function RxnArrowAdd (pos) {
+function RxnArrowAdd(pos) {
 	this.data = { arid: null, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -537,10 +537,10 @@ function RxnArrowAdd (pos) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnArrowAdd.prototype = new Base();
 
-function RxnArrowDelete (arid) {
+function RxnArrowDelete(arid) {
 	this.data = { arid: arid, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -555,11 +555,11 @@ function RxnArrowDelete (arid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnArrowDelete.prototype = new Base();
 
-function RxnArrowMove (id, d, noinvalidate) {
-	this.data = {id: id, d: d, noinvalidate: noinvalidate};
+function RxnArrowMove(id, d, noinvalidate) {
+	this.data = { id: id, d: d, noinvalidate: noinvalidate };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -577,10 +577,10 @@ function RxnArrowMove (id, d, noinvalidate) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnArrowMove.prototype = new Base();
 
-function RxnPlusAdd (pos) {
+function RxnPlusAdd(pos) {
 	this.data = { plid: null, pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -599,10 +599,10 @@ function RxnPlusAdd (pos) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnPlusAdd.prototype = new Base();
 
-function RxnPlusDelete (plid) {
+function RxnPlusDelete(plid) {
 	this.data = { plid: plid, pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
@@ -617,11 +617,11 @@ function RxnPlusDelete (plid) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnPlusDelete.prototype = new Base();
 
-function RxnPlusMove (id, d, noinvalidate) {
-	this.data = {id: id, d: d, noinvalidate: noinvalidate};
+function RxnPlusMove(id, d, noinvalidate) {
+	this.data = { id: id, d: d, noinvalidate: noinvalidate };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -639,11 +639,11 @@ function RxnPlusMove (id, d, noinvalidate) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 RxnPlusMove.prototype = new Base();
 
-function SGroupDataMove (id, d) {
-	this.data = {id: id, d: d};
+function SGroupDataMove(id, d) {
+	this.data = { id: id, d: d };
 	this._execute = function (editor) {
 		var struct = editor.render.ctab.molecule;
 		struct.sgroups.get(this.data.id).pp.add_(this.data.d);
@@ -655,11 +655,11 @@ function SGroupDataMove (id, d) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 SGroupDataMove.prototype = new Base();
 
-function CanvasLoad (ctab) {
-	this.data = {ctab: ctab, norescale: false};
+function CanvasLoad(ctab) {
+	this.data = { ctab: ctab, norescale: false };
 	this._execute = function (editor) {
 		var rnd = editor.render;
 		var struct = rnd.ctab.molecule;
@@ -678,11 +678,11 @@ function CanvasLoad (ctab) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 CanvasLoad.prototype = new Base();
 
-function ChiralFlagAdd (pos) {
-	this.data = {pos: pos};
+function ChiralFlagAdd(pos) {
+	this.data = { pos: pos };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (RS.chiralFlags.count() > 0)
@@ -696,11 +696,11 @@ function ChiralFlagAdd (pos) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 ChiralFlagAdd.prototype = new Base();
 
-function ChiralFlagDelete () {
-	this.data = {pos: null};
+function ChiralFlagDelete() {
+	this.data = { pos: null };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab, DS = RS.molecule;
 		if (RS.chiralFlags.count() < 1)
@@ -715,11 +715,11 @@ function ChiralFlagDelete () {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 ChiralFlagDelete.prototype = new Base();
 
-function ChiralFlagMove (d) {
-	this.data = {d: d};
+function ChiralFlagMove(d) {
+	this.data = { d: d };
 	this._execute = function (editor) {
 		var R = editor.render, RS = R.ctab;
 		RS.chiralFlags.get(0).pp.add_(this.data.d);
@@ -731,7 +731,7 @@ function ChiralFlagMove (d) {
 		ret.data = this.data;
 		return ret;
 	};
-};
+}
 ChiralFlagMove.prototype = new Base();
 
 module.exports = {

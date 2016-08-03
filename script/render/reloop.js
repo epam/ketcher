@@ -1,5 +1,5 @@
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 var ReLoop = function (loop)
@@ -10,6 +10,6 @@ var ReLoop = function (loop)
 	this.radius = new Vec2();
 };
 ReLoop.prototype = new ReObject();
-ReLoop.isSelectable = function () { return false; }
+ReLoop.isSelectable = function () { return false; };
 
-module.exports = ReLoop
+module.exports = ReLoop;

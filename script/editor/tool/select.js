@@ -107,7 +107,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		this.editor.getSelection(true),
 		rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
-		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
+		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
@@ -130,7 +130,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 SelectTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
-		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
+		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
@@ -216,7 +216,7 @@ SelectTool.prototype.OnDblClick = function (event) {
 				onOk: function (res) {
 					var label = res.values[0];
 					if (atom.label != label) {
-						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {label: label}));
+						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { label: label }));
 						rnd.update();
 					}
 					return true;

@@ -1,5 +1,5 @@
 var Box2Abs = require('../util/box2abs');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 var ReChiralFlag = function (pos)
@@ -9,7 +9,7 @@ var ReChiralFlag = function (pos)
 	this.pp = pos;
 };
 ReChiralFlag.prototype = new ReObject();
-ReChiralFlag.isSelectable = function () { return true; }
+ReChiralFlag.isSelectable = function () { return true; };
 
 ReChiralFlag.findClosest = function (render, p) {
 	var minDist;
@@ -22,7 +22,7 @@ ReChiralFlag.findClosest = function (render, p) {
 			var dist = Math.abs(p.y - pos.y);
 			if (dist < 0.3 && (!ret || dist < minDist)) {
 				minDist = dist;
-				ret = {'id': id, 'dist': minDist};
+				ret = { 'id': id, 'dist': minDist };
 			}
 		}
 	});
@@ -51,12 +51,12 @@ ReChiralFlag.prototype.draw = function (render) {
 	var settings = render.settings;
 	var ps = render.ps(this.pp);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
-	.attr({
-		'font': settings.font,
-		'font-size': settings.fontsz,
-		'fill': '#000'
-	});
+		.attr({
+			'font': settings.font,
+			'font-size': settings.fontsz,
+			'fill': '#000'
+		});
 	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
 };
 
-module.exports = ReChiralFlag
+module.exports = ReChiralFlag;

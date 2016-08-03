@@ -146,7 +146,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 
 		if (substituents[0] == -1) {
 			substituents[0] = nei.aid;
-		}else { // (substituents[1] == -1)
+		} else { // (substituents[1] == -1)
 			substituents[1] = nei.aid;
 		}
 	}
@@ -183,10 +183,10 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 CisTrans.prototype.build = function (exclude_bonds) {
 	this.molecule.bonds.each(function (bid, bond) {
 		var ct = this.bonds.set(bid,
-		{
-			parity: 0,
-			substituents: new Array(4)
-		});
+			{
+				parity: 0,
+				substituents: new Array(4)
+			});
 
 		if (Object.isArray(exclude_bonds) && exclude_bonds[bid])
 			return;

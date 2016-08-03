@@ -1,9 +1,9 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
-var ReFrag = function (/*Struct.Fragment = {}*/frag) {
+var ReFrag = function (/* Struct.Fragment = {}*/frag) {
 	this.init(Visel.TYPE.FRAGMENT);
 
 	this.item = frag;
@@ -81,12 +81,12 @@ ReFrag.prototype._draw = function (render, fid, attrs) { // TODO need to review 
 };
 
 ReFrag.prototype.draw = function (render) {
-	return null;//this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
+	return null;// this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
 };
 
 ReFrag.prototype.drawHighlight = function (render) {
 	// Do nothing. This method shouldn't actually be called.
-}
+};
 
 ReFrag.prototype.setHighlight = function (highLight, render) {
 	var fid = render.ctab.frags.keyOf(this);
@@ -105,4 +105,4 @@ ReFrag.prototype.setHighlight = function (highLight, render) {
 	}
 };
 
-module.exports = ReFrag
+module.exports = ReFrag;

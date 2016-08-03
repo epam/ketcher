@@ -1,4 +1,4 @@
-/*global module*/
+/* global module*/
 
 var Set = {
 	empty: function () {

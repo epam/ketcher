@@ -17,7 +17,7 @@ Stereocenters.prototype.each = function (func, context)
 	this.atoms.each(func, context);
 };
 
-Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, const int *atom_groups, const int *bond_orientations, */ignore_errors)
+Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, const int *atom_groups, const int *bond_orientations, */ignore_errors)
 {
 	var atoms = this.molecule.atoms;
 	var bonds = this.molecule.bonds;
@@ -86,11 +86,11 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 			var bond = this.molecule.bonds.get(nei.bid);
 
 			if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE && bond.begin == aid)
-			if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP || bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN)
+				if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP || bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN)
 			{
-				stereocenter = true;
-				return true;
-			}
+					stereocenter = true;
+					return true;
+				}
 			return false;
 		}, this);
 
@@ -101,36 +101,36 @@ Stereocenters.prototype.buildFromBonds = function (/*const int *atom_types, cons
 		{
 //         try
 //         {
-			this._buildOneCenter(aid/*, atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
+			this._buildOneCenter(aid/* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
 //         }
 //         catch (er)
 //         {
 //         }
 		}
 		else
-			this._buildOneCenter(aid/*, atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
+			this._buildOneCenter(aid/* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
 	}, this);
 };
 
 Stereocenters.allowed_stereocenters =
-	[
-	{elem: 'C',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'C',  charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'Si', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'Si', charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'N',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'N',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'N',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3},
-	{elem: 'S',  charge: 0, degree: 4, n_double_bonds: 2, implicit_degree: 4},
-	{elem: 'S',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 3},
-	{elem: 'S',  charge: 0, degree: 3, n_double_bonds: 1, implicit_degree: 3},
-	{elem: 'P',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3},
-	{elem: 'P',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4},
-	{elem: 'P',  charge: 0, degree: 4, n_double_bonds: 1, implicit_degree: 4}
-	];
+[
+	{ elem: 'C',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'C',  charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'Si', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'Si', charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'N',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'N',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'N',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'S',  charge: 0, degree: 4, n_double_bonds: 2, implicit_degree: 4 },
+	{ elem: 'S',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'S',  charge: 0, degree: 3, n_double_bonds: 1, implicit_degree: 3 },
+	{ elem: 'P',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'P',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'P',  charge: 0, degree: 4, n_double_bonds: 1, implicit_degree: 4 }
+];
 
 
-Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int type, const int *bond_orientations*/)
+Stereocenters.prototype._buildOneCenter = function (atom_idx/* , int group, int type, const int *bond_orientations*/)
 {
 	var atom = this.molecule.atoms.get(atom_idx);
 
@@ -139,11 +139,11 @@ Stereocenters.prototype._buildOneCenter = function (atom_idx/*, int group, int t
 	var implicit_degree = -1;
 
 	var stereocenter =
-	{
-		group: 0, // = group;
-		type: 0, // = type;
-		pyramid: new Array(4)
-	};
+		{
+			group: 0, // = group;
+			type: 0, // = type;
+			pyramid: new Array(4)
+		};
 
 	var nei_idx = 0;
 	var edge_ids = new Array(4);

@@ -3,17 +3,17 @@ var ajax = require('./util/ajax.js');
 // stealed from https://github.com/iambumblehead/form-urlencoded/
 function formEncodeString(str) {
 	return str.replace(/[^ !'()~\*]*/g, encodeURIComponent)
-	.replace(/ /g, '+')
-	.replace(/[!'()~\*]/g, function (ch) {
-		return '%' + ('0' + ch.charCodeAt(0).toString(16))
-		.slice(-2).toUpperCase();
-	});
+		.replace(/ /g, '+')
+		.replace(/[!'()~\*]/g, function (ch) {
+			return '%' + ('0' + ch.charCodeAt(0).toString(16))
+				.slice(-2).toUpperCase();
+		});
 }
 
 function formEncode(obj) {
 	var str = [];
 	for (var prop in obj) {
-		if (obj.hasOwnProperty(prop)) {// don't handle nested objects
+		if (obj.hasOwnProperty(prop)) { // don't handle nested objects
 			str.push(encodeURIComponent(prop) + '=' +
 			formEncodeString(obj[prop]));
 		}
@@ -31,10 +31,10 @@ function unwrap(xhr) {
 	throw Error('Unknown server error: ' + data);
 }
 
-function api (base, defaultOptions) {
+function api(base, defaultOptions) {
 	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
-	function request (method, url) {
+	function request(method, url) {
 		function options(opts, params, sync) {
 			var data = Object.assign({}, defaultOptions, opts);
 			return {
@@ -43,9 +43,7 @@ function api (base, defaultOptions) {
 				sync: sync,
 				params: params,
 				data: data && formEncode(data),
-				headers: data && {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
+				headers: data && { 'Content-Type': 'application/x-www-form-urlencoded' }
 			};
 		}
 		var res = function (data, params) {

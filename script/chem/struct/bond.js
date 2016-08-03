@@ -31,7 +31,7 @@ var Bond = function (params)
 Bond.PATTERN =
 {
 	TYPE:
- {
+ 										{
 		SINGLE: 1,
 		DOUBLE: 2,
 		TRIPLE: 3,
@@ -43,7 +43,7 @@ Bond.PATTERN =
 	},
 
 	STEREO:
- {
+ 										{
 		NONE: 0,
 		UP: 1,
 		EITHER: 4,
@@ -52,14 +52,14 @@ Bond.PATTERN =
 	},
 
 	TOPOLOGY:
- {
+ 										{
 		EITHER: 0,
 		RING: 1,
 		CHAIN: 2
 	},
 
 	REACTING_CENTER:
- {
+ 										{
 		NOT_CENTER: -1,
 		UNMARKED: 0,
 		CENTER: 1,
@@ -78,36 +78,60 @@ Bond.attrlist = {
 };
 
 var captionMap = {
-	'single': {type: Bond.PATTERN.TYPE.SINGLE,
-	           stereo: Bond.PATTERN.STEREO.NONE},
-	'up': {type: Bond.PATTERN.TYPE.SINGLE,
-	       stereo: Bond.PATTERN.STEREO.UP},
-	'down': {type: Bond.PATTERN.TYPE.SINGLE,
-	         stereo: Bond.PATTERN.STEREO.DOWN},
-	'updown': {type: Bond.PATTERN.TYPE.SINGLE,
-	           stereo: Bond.PATTERN.STEREO.EITHER},
-	'double': {type: Bond.PATTERN.TYPE.DOUBLE,
-	           stereo: Bond.PATTERN.STEREO.NONE},
-	'crossed': {type: Bond.PATTERN.TYPE.DOUBLE,
-	            stereo: Bond.PATTERN.STEREO.CIS_TRANS},
-	'triple': {type: Bond.PATTERN.TYPE.TRIPLE,
-	           stereo: Bond.PATTERN.STEREO.NONE},
-	'aromatic': {type: Bond.PATTERN.TYPE.AROMATIC,
-	             stereo: Bond.PATTERN.STEREO.NONE},
-	'singledouble': {type: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-	                 stereo: Bond.PATTERN.STEREO.NONE},
-	'singlearomatic': {type: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-	                   stereo: Bond.PATTERN.STEREO.NONE},
-	'doublearomatic': {type: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-	                   stereo: Bond.PATTERN.STEREO.NONE},
-	'any':  {type: Bond.PATTERN.TYPE.ANY,
-	         stereo: Bond.PATTERN.STEREO.NONE}
+	'single': {
+		type: Bond.PATTERN.TYPE.SINGLE,
+	           									stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'up': {
+		type: Bond.PATTERN.TYPE.SINGLE,
+	       									stereo: Bond.PATTERN.STEREO.UP
+	},
+	'down': {
+ 																type: Bond.PATTERN.TYPE.SINGLE,
+	         								stereo: Bond.PATTERN.STEREO.DOWN
+	},
+	'updown': {
+ 																type: Bond.PATTERN.TYPE.SINGLE,
+	           								stereo: Bond.PATTERN.STEREO.EITHER
+	},
+	'double': {
+ 																type: Bond.PATTERN.TYPE.DOUBLE,
+	           								stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'crossed': {
+		type: Bond.PATTERN.TYPE.DOUBLE,
+	            									stereo: Bond.PATTERN.STEREO.CIS_TRANS
+	},
+	'triple': {
+ 																type: Bond.PATTERN.TYPE.TRIPLE,
+	           								stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'aromatic': {
+		type: Bond.PATTERN.TYPE.AROMATIC,
+	             									stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'singledouble': {
+		type: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+	                 									stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'singlearomatic': {
+ 																type: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+	                   								stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'doublearomatic': {
+ 																type: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+	                   								stereo: Bond.PATTERN.STEREO.NONE
+	},
+	'any': {
+ 																type: Bond.PATTERN.TYPE.ANY,
+	         								stereo: Bond.PATTERN.STEREO.NONE
+	}
 };
 
 Bond.getAttrHash = function (bond) {
 	var attrs = new Hash();
 	for (var attr in Bond.attrlist) {
-		if (typeof(bond[attr]) !== 'undefined') {
+		if (typeof (bond[attr]) !== 'undefined') {
 			attrs.set(attr, bond[attr]);
 		}
 	}
@@ -143,13 +167,13 @@ Bond.prototype.getCenter = function (struct) {
 	var p1 = struct.atoms.get(this.begin).pp;
 	var p2 = struct.atoms.get(this.end).pp;
 	return Vec2.lc2(p1, 0.5, p2, 0.5);
-}
+};
 
 Bond.prototype.getDir = function (struct) {
 	var p1 = struct.atoms.get(this.begin).pp;
 	var p2 = struct.atoms.get(this.end).pp;
 	return p2.sub(p1).normalized();
-}
+};
 
 Bond.prototype.clone = function (aidMap)
 {

@@ -1,4 +1,4 @@
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 var ReDataSGroupData = function (sgroup)
@@ -9,7 +9,7 @@ var ReDataSGroupData = function (sgroup)
 };
 
 ReDataSGroupData.prototype = new ReObject();
-ReDataSGroupData.isSelectable = function () { return true; }
+ReDataSGroupData.isSelectable = function () { return true; };
 
 ReDataSGroupData.findClosest = function (render, p) {
 	var minDist = null;
@@ -22,7 +22,7 @@ ReDataSGroupData.findClosest = function (render, p) {
 		var inBox = box.p0.y < p.y && box.p1.y > p.y && box.p0.x < p.x && box.p1.x > p.x;
 		var xDist = Math.min(Math.abs(box.p0.x - p.x), Math.abs(box.p1.x - p.x));
 		if (inBox && (ret == null || xDist < minDist)) {
-			ret = {'id': id, 'dist': xDist};
+			ret = { 'id': id, 'dist': xDist };
 			minDist = xDist;
 		}
 	});
@@ -46,4 +46,4 @@ ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, style
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-module.exports = ReDataSGroupData
+module.exports = ReDataSGroupData;

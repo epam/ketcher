@@ -19,13 +19,13 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 		order.push(id);
 	}
 	return order;
-}
+};
 
 SGroupForest.prototype.getAtomSets = function () {
-	return this.molecule.sgroups.map(function (sgid, sgroup){
+	return this.molecule.sgroups.map(function (sgid, sgroup) {
 		return Set.fromList(sgroup.atoms);
 	});
-}
+};
 
 SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
 	// find the lowest superset in the hierarchy
@@ -54,7 +54,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, a
 		'children': children,
 		'parent': parents.length === 0 ? -1 : parents[0]
 	};
-}
+};
 
 SGroupForest.prototype.getPathToRoot = function (sgid) {
 	var path = [];
@@ -63,7 +63,7 @@ SGroupForest.prototype.getPathToRoot = function (sgid) {
 		path.push(id);
 	}
 	return path;
-}
+};
 
 SGroupForest.prototype.validate = function () {
 	var atomSets = this.getAtomSets();
@@ -87,7 +87,7 @@ SGroupForest.prototype.validate = function () {
 					valid = false;
 	}, this);
 	return valid;
-}
+};
 
 SGroupForest.prototype.insert = function (id, parent /* int, optional */, children /* [int], optional */) {
 	util.assert(!this.parent.has(id), 'sgid already present in the forest');
@@ -103,7 +103,7 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	}
 
 	// TODO: make children Map<int, Set> instead of Map<int, []>?
-	children.forEach(function (childId){ // reset parent links
+	children.forEach(function (childId) { // reset parent links
 		var childs = this.children.get(this.parent.get(childId));
 		var i = childs.indexOf(childId);
 		util.assert(i >= 0 && childs.indexOf(childId, i + 1) < 0); // one element
@@ -114,8 +114,8 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	this.parent.set(id, parent);
 	this.children.get(parent).push(id);
 	util.assert(this.validate(), 's-group forest invalid');
-	return {parent: parent, children: children};
-}
+	return { parent: parent, children: children };
+};
 
 SGroupForest.prototype.remove = function (id) {
 	util.assert(this.parent.has(id), 'sgid is not in the forest');
@@ -123,7 +123,7 @@ SGroupForest.prototype.remove = function (id) {
 
 	util.assert(this.validate(), 's-group forest invalid');
 	var parentId = this.parent.get(id);
-	this.children.get(id).forEach(function (childId){ // reset parent links
+	this.children.get(id).forEach(function (childId) { // reset parent links
 		this.parent.set(childId, parentId);
 		this.children.get(parentId).push(childId);
 	}, this);
@@ -136,6 +136,6 @@ SGroupForest.prototype.remove = function (id) {
 	this.children.unset(id);
 	this.parent.unset(id);
 	util.assert(this.validate(), 's-group forest invalid');
-}
+};
 
 module.exports = SGroupForest;

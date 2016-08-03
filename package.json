@@ -53,6 +53,7 @@
   "scripts": {
     "build": "gulp build",
     "archive": "gulp archive",
+    "serve": "gulp serve",
     "gulp": "gulp",
     "postinstall": "guppy pre-commit || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1"

@@ -137,6 +137,10 @@ gulp.task('check-epam-email', function(cb) {
 	} catch(e) {};
 });
 
+gulp.task('clean', function () {
+	return del([options.dist + '/*', pkg.name + '-*.zip']);
+});
+
 gulp.task('archive', ['clean', 'assets', 'code'], function () {
 	var an = pkg.name + '-' + pkg.version;
 	return gulp.src([options.dist + '/*', '!**/*.map'])
@@ -145,23 +149,20 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('clean', function () {
-	return del([options.dist + '/*', pkg.name + '-*.zip']);
-});
+gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], function() {
+	gulp.watch('style/**.less', ['style']);
+	gulp.watch('templates/**', ['html']);
+	gulp.watch(['gulpfile.js', 'package.json'], function() {
+		cp.spawn('gulp', ['serve'], { stdio: 'inherit' });
+		process.exit();
+	});
 
-gulp.task('reload', function() {
-	cp.spawn('gulp', ['watch'], { stdio: 'inherit' });
-	process.exit();
-});
-
-gulp.task('watch', ['assets', 'style', 'script'], function() {
+	cp.spawn('python', ['server/ketcher.py', 'dist'], {
+		stdio: 'inherit',
+		env: { 'PYTHONPATH': 'indigo' }
+	});
 	plugins.livereload.listen();
-	// gulp.watch('style/**.less', ['style']);
-	gulp.watch('script/**.js', ['script']);
-	// gulp.watch('index.html', ['html']);
-	gulp.watch(['gulpfile.js', 'package.json'], ['reload']);
 });
-
 
 function scriptBundle(src, watchUpdate) {
 	var build = browserify(src, {

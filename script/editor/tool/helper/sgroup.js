@@ -13,48 +13,37 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 
 	var rnd = this.editor.render;
 	// check s-group overlappings
-	if (id == null)
-	{
+	if (id == null) {
 		var verified = {};
-		var atoms_hash = {};
+		var atomsHash = {};
 
-		selection.atoms.each(function (id)
-		{
-			atoms_hash[id] = true;
+		selection.atoms.each(function (id) {
+			atomsHash[id] = true;
 		}, this);
 
-		if (!Object.isUndefined(selection.atoms.detect(function (id)
-		{
+		if (!Object.isUndefined(selection.atoms.detect(function (id) {
 			var sgroups = rnd.atomGetSGroups(id);
 
-			return !Object.isUndefined(sgroups.detect(function (sid)
-			{
+			return !Object.isUndefined(sgroups.detect(function (sid) {
 				if (sid in verified)
 					return false;
 
-				var sg_atoms = rnd.sGroupGetAtoms(sid);
+				var sgAtoms = rnd.sGroupGetAtoms(sid);
 
-				if (sg_atoms.length < selection.atoms.length)
-				{
-					if (!Object.isUndefined(sg_atoms.detect(function (aid)
-					{
-						return !(aid in atoms_hash);
+				if (sgAtoms.length < selection.atoms.length) {
+					if (!Object.isUndefined(sgAtoms.detect(function (aid) {
+						return !(aid in atomsHash);
 					}, this)))
-					{
 						return true;
-					}
-				} else if (!Object.isUndefined(selection.atoms.detect(function (aid)
-				{
-					return (sg_atoms.indexOf(aid) == -1);
-				}, this)))
-				{
+				} else if (!Object.isUndefined(selection.atoms.detect(function (aid) {
+					return (sgAtoms.indexOf(aid) == -1);
+				}, this))) {
 					return true;
 				}
 
 				return false;
 			}, this));
-		}, this)))
-		{
+		}, this))) {
 			alert('Partial S-group overlapping is not allowed.');
 			return;
 		}

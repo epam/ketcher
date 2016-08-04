@@ -22,7 +22,8 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 ChainTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, rnd = _E_.render;
+	var _E_ = this.editor;
+	var rnd = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		if ('action' in _DC_) _DC_.action.perform();
@@ -42,9 +43,8 @@ ChainTool.prototype.OnMouseMove = function (event) {
 };
 ChainTool.prototype.OnMouseUp = function () {
 	if ('dragCtx' in this) {
-		if ('action' in this.dragCtx) {
+		if ('action' in this.dragCtx)
 			ui.addUndoAction(this.dragCtx.action);
-		}
 		delete this.dragCtx;
 	}
 	return true;

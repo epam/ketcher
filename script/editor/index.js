@@ -28,8 +28,7 @@ var toolMap = {
 
 var ui = global.ui;
 
-var Editor = function (render)
-{
+var Editor = function (render) {
 	this.render = render;
 	this._selectionHelper = new SelectionHelper(this);
 	this._tool = null;
@@ -38,9 +37,8 @@ var Editor = function (render)
 
 Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
-		if (this._tool) {
+		if (this._tool)
 			this._tool.OnCancel();
-		}
 		this._tool = new toolMap[name](this, opts);
 	}
 	return this._tool;
@@ -55,9 +53,8 @@ Editor.prototype.setupEvents = function () {
 	// BEGIN
 	if ('hiddenPaths' in ReStruct.prototype) {
 		clientArea.observe('touchend', function (event) {
-			if (event.touches.length == 0) {
+			if (event.touches.length == 0)
 				while (ReStruct.prototype.hiddenPaths.length > 0) ReStruct.prototype.hiddenPaths.pop().remove();
-			}
 		});
 	}
 	// END
@@ -141,7 +138,7 @@ Editor.prototype.setupEvents = function () {
 	});
 	// END
 
-	clientArea.observe('onresize', function (event) {
+	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
 		render.onResize();
 	});
 
@@ -149,28 +146,28 @@ Editor.prototype.setupEvents = function () {
 	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName) {
 		var bindEventName = eventName.toLowerCase();
 		clientArea.observe(bindEventName, function (event) {
-			if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
-				// TODO: karulin: fix this on touch devices if needed
-				var co = clientArea.cumulativeOffset();
-				co = new Vec2(co[0], co[1]);
-				var vp = new Vec2(event.clientX, event.clientY).sub(co);
-				var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
-				if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
-					if (eventName == 'MouseMove') {
-						// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-						editor._tool.processEvent('OnMouseLeave', event);
+			if (eventName != 'MouseLeave') {
+				if (!ui || !ui.is_touch) {
+					// TODO: karulin: fix this on touch devices if needed
+					var co = clientArea.cumulativeOffset();
+					co = new Vec2(co[0], co[1]);
+					var vp = new Vec2(event.clientX, event.clientY).sub(co);
+					var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
+					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
+						if (eventName == 'MouseMove')
+							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+							editor._tool.processEvent('OnMouseLeave', event);
+						return util.preventDefault(event);
 					}
-					return util.preventDefault(event);
 				}
 			}
 
 			editor._tool.processEvent('On' + eventName, event);
-			if (eventName != 'MouseUp') {
+			if (eventName != 'MouseUp')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.
 				// Do we really need total stop here?
 				util.stopEventPropagation(event);
-			}
 			if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
 				return util.preventDefault(event);
 		});
@@ -179,9 +176,8 @@ Editor.prototype.setupEvents = function () {
 
 Editor.prototype.selectAll = function () {
 	var selection = {};
-	for (var map in ReStruct.maps) {
+	for (var map in ReStruct.maps)
 		selection[map] = this.render.ctab[map].ikeys();
-	}
 	this._selectionHelper.setSelection(selection);
 };
 
@@ -190,20 +186,22 @@ Editor.prototype.deselectAll = function () {
 };
 
 Editor.prototype.hasSelection = function (copyable) {
-	if ('selection' in this._selectionHelper)
-		for (var map in this._selectionHelper.selection)
-			if (this._selectionHelper.selection[map].length > 0)
+	if ('selection' in this._selectionHelper) {
+		for (var map in this._selectionHelper.selection) {
+			if (this._selectionHelper.selection[map].length > 0) {
 				if (!copyable || map !== 'sgroupData')
 					return true;
+			}
+		}
+	}
 	return false;
 };
 
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
 	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection) {
+		for (var map in this._selectionHelper.selection)
 			selection[map] = this._selectionHelper.selection[map].slice(0);
-		}
 	}
 	if (explicit) {
 		var struct = this.render.ctab.molecule;

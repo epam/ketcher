@@ -369,7 +369,7 @@ function postLoadMul(sgroup, mol, atomMap) {
 		for (var m = 0; m < sgroup.patoms.length; ++m) {
 			var raid = sgroup.atoms[k * sgroup.patoms.length + m]; // eslint-disable-line no-mixed-operators
 			if (raid < 0)
-				continue;
+				continue; // eslint-disable-line no-continueSS
 			if (sgroup.patoms[m] < 0)
 				throw new Error('parent atom missing');
 			//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
@@ -1502,7 +1502,9 @@ Molfile.prototype.writeCTab2000 = function (rgroups) {
 	}, this);
 
 	while (atomLabel_list.length > 0) {
-		this.write('A  '); this.writePaddedNumber(atomLabel_list[0] + 1, 3); this.writeCR();
+		this.write('A  ');
+		this.writePaddedNumber(atomLabel_list[0] + 1, 3);
+		this.writeCR();
 		this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
 		atomLabel_list.splice(0, 1);
 	}

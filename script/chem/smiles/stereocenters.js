@@ -124,9 +124,9 @@ Stereocenters.allowed_stereocenters =
 
 
 Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int type, const int *bond_orientations*/) {
-	var atom = this.molecule.atoms.get(atom_idx);
+	var atom = this.molecule.atoms.get(atomIdx);
 
-	var neiList = this.getNeighbors.call(this.context, atom_idx);
+	var neiList = this.getNeighbors.call(this.context, atomIdx);
 	var degree = neiList.length;
 	var implicitDegree = -1;
 
@@ -235,7 +235,7 @@ Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int t
 		for (neiIdx = 0; neiIdx < 4; neiIdx++) {
 			var stereo = this._getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx);
 
-			if (stereo == Struct.Bond.PATTERN.STEREO.UP || stereo == Struct.Bond.PATTERN.STEREO.DOWN){
+			if (stereo == Struct.Bond.PATTERN.STEREO.UP || stereo == Struct.Bond.PATTERN.STEREO.DOWN) {
 				main1 = neiIdx;
 				mainDir = stereo;
 				break;
@@ -430,7 +430,6 @@ Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int t
 			stereocenter.pyramid[3] = -1;
 		}
 	}
-
 	this.atoms.set(atomIdx, stereocenter);
 };
 

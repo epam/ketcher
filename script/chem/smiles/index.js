@@ -212,8 +212,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 				pyramidMapping[1] = pyramidMapping[2];
 				pyramidMapping[2] = pyramidMapping[3];
 				pyramidMapping[3] = counter;
-			} else if (counter != 3)
+			} else if (counter != 3) {
 				throw new Error('cannot calculate chirality');
+			}
 
 			if (Stereocenters.isPyramidMappingRigid(pyramidMapping))
 				this.atoms[atomIdx].chirality = 1;
@@ -320,8 +321,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 				cycleNumbers[j] = -1;
 				writeAtom = false;
 			}
-		}
-		else {
+		} else {
 			if (!firstComponent)
 				this.smiles += (this._written_components == walk.nComponentsInReactants) ? '>>' : '.';
 			firstComponent = false;

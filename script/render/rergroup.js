@@ -6,14 +6,16 @@ var Visel = require('./visel');
 
 var ReObject = require('./reobject');
 
-var ReRGroup = function (/* Struct.RGroup*/rgroup) {
+function ReRGroup(/* Struct.RGroup*/rgroup) {
 	this.init(Visel.TYPE.RGROUP);
 
 	this.labelBox = null;
 	this.item = rgroup;
-};
+}
 ReRGroup.prototype = new ReObject();
-ReRGroup.isSelectable = function () { return false; };
+ReRGroup.isSelectable = function () {
+	return false;
+};
 
 ReRGroup.prototype.getAtoms = function (render) {
 	var ret = [];
@@ -41,7 +43,7 @@ ReRGroup.findClosest = function (render, p, skip, minDist) {
 					var dist = Vec2.dist(rgroup.labelBox.centre(), p);
 					if (!ret || dist < minDist) {
 						minDist = dist;
-						ret = { 'id': rgid, 'dist': minDist };
+						ret = { id: rgid, dist: minDist };
 					}
 				}
 			}
@@ -54,15 +56,14 @@ ReRGroup.prototype.calcBBox = function (render) {
 	var ret;
 	this.item.frags.each(function (fnum, fid) {
 		var bbf = render.ctab.frags.get(fid).calcBBox(render, fid);
-		if (bbf) {
+		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
-		}
 	});
 	ret = ret.extend(this.__ext, this.__ext);
 	return ret;
 };
 
-var RGroupdrawBrackets = function (set, render, bb, d, n) {
+function RGroupdrawBrackets(set, render, bb, d, n) {
 	d = d || new Vec2(1, 0);
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
 	var height = bb.p1.y - bb.p0.y;
@@ -70,13 +71,13 @@ var RGroupdrawBrackets = function (set, render, bb, d, n) {
 	var leftBracket = render.drawBracket(d.negated(), d.negated().rotateSC(1, 0), new Vec2(bb.p0.x, cy), bracketWidth, height);
 	var rightBracket = render.drawBracket(d, d.rotateSC(1, 0), new Vec2(bb.p1.x, cy), bracketWidth, height);
 	set.push(leftBracket, rightBracket);
-};
+}
 
 ReRGroup.prototype.draw = function (render) { // TODO need to review parameter list
 	var bb = this.calcBBox(render);
 	var settings = render.settings;
 	if (bb) {
-		var ret = { 'data': [] };
+		var ret = { data: [] };
 		var p0 = render.obj2scaled(bb.p0);
 		var p1 = render.obj2scaled(bb.p1);
 		var brackets = render.paper.set();
@@ -91,7 +92,9 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 				'fill': 'black'
 			});
 		var labelBox = util.relBox(label.getBBox());
+		/* eslint-disable no-mixed-operators*/
 		label.translateAbs(-labelBox.width / 2 - settings.lineWidth, 0);
+		/* eslint-enable no-mixed-operators*/
 		labelSet.push(label);
 		var logicStyle = {
 			'font': settings.font,
@@ -111,24 +114,26 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
          logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
          */
 		logic.push(
-			(this.item.ifthen > 0 ? 'IF ' : '')
-			 + 'R' + key.toString()
-			 + (this.item.range.length > 0
-			 ? this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=')
-				 ? this.item.range
-				 : '=' + this.item.range
-			 : '>0')
-			 + (this.item.resth ? ' (RestH)' : '')
-			 + (this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
+			(this.item.ifthen > 0 ? 'IF ' : '') +
+			'R' + key.toString() +
+			(this.item.range.length > 0 ?
+			this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=') ?
+			this.item.range : '=' + this.item.range : '>0') +
+			(this.item.resth ? ' (RestH)' : '') +
+			(this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
 		);
 		// END
+		/* eslint-disable no-mixed-operators*/
 		var shift = labelBox.height / 2 + settings.lineWidth / 2;
+		/* eslint-enable no-mixed-operators*/
 		for (var i = 0; i < logic.length; ++i) {
 			var logicPath = render.paper.text(p0.x, (p0.y + p1.y) / 2, logic[i]).attr(logicStyle);
 			var logicBox = util.relBox(logicPath.getBBox());
 			shift += logicBox.height / 2;
+			/* eslint-disable no-mixed-operators*/
 			logicPath.translateAbs(-logicBox.width / 2 - 6 * settings.lineWidth, shift);
 			shift += logicBox.height / 2 + settings.lineWidth / 2;
+			/* eslint-enable no-mixed-operators*/
 			ret.data.push(logicPath);
 			labelSet.push(logicPath);
 		}

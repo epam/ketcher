@@ -1,7 +1,7 @@
 var util = require('./index');
 var Vec2 = require('./vec2');
 
-var Box2Abs = function () {
+function Box2Abs() {
 	if (arguments.length == 1 && 'min' in arguments[0] && 'max' in arguments[0]) {
 		this.p0 = arguments[0].min;
 		this.p1 = arguments[0].max;
@@ -18,7 +18,7 @@ var Box2Abs = function () {
 	} else {
 		new Error('Box2Abs constructor only accepts 4 numbers or 2 vectors or no arguments!');
 	}
-};
+}
 
 Box2Abs.prototype.toString = function () {
 	return this.p0.toString() + ' ' + this.p1.toString();

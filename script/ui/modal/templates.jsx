@@ -1,5 +1,12 @@
 import molfile from '../../chem/molfile';
 import ajax from '../../util/ajax.js';
+import VisibleView from './visibleview';
+
+// import ReactDOM from 'react-dom';
+// import React from 'react';
+
+import { h, Component, render } from 'preact';
+/** @jsx h */
 
 var ui = global.ui;
 
@@ -29,13 +36,12 @@ function parseSdf (sdf) {
 
 		entries.each(entry => {
 			entry = entry.strip();
-			if (!entry.startsWith('> <')) {
-				return;
+			var m = entry.match(/^> {1,3}<(\S+)>/);
+			if (m) {
+				var lines = entry.split('\n');
+				var field = m[1].strip();
+				iparsed[field] = parseInt(lines[1].strip()) || lines[1].strip();
 			}
-			var lines = entry.split('\n');
-			var field = lines[0].strip().substring(3, lines[0].lastIndexOf('>')).strip();
-
-			iparsed[field] = parseInt(lines[1].strip()) || lines[1].strip();
 		});
 		parsed.push(iparsed);
 	});
@@ -45,7 +51,6 @@ function parseSdf (sdf) {
 
 function fetchTemplateCustom (base_url) {
 	return ajax(base_url + 'templates.sdf').then(xhr => {
-		//headers: {Accept: 'application/octet-stream'}
 		var items = parseSdf(xhr.responseText);
 
 		var templates = [];
@@ -54,6 +59,7 @@ function fetchTemplateCustom (base_url) {
 			templates.push({
 				name: (item.name || ('customtemplate ' + (++i))).capitalize(),
 				molfile: item.molfile,
+				group: item.group,
 				aid: (item.atomid || 1) - 1,
 				bid: (item.bondid || 1) - 1
 			});
@@ -63,26 +69,24 @@ function fetchTemplateCustom (base_url) {
 	});
 }
 
-var custom_templates;
-function initTemplateCustom (el, base_url) {
-	return fetchTemplateCustom(base_url).then(templates => {
-		custom_templates = templates;
-		return eachAsync(templates, (tmpl, _) => {
-			var li =  new Element('li');
-			li.title = tmpl.name;
-			el.insert({ bottom: li });
-			var mol = molfile.parse(tmpl.molfile),
-			render = new Render(li, 0, {
-				'autoScale': true,
-				'autoScaleMargin': 0,
-				//'debug': true,
-				'hideChiralFlag': true,
-				'maxBondLength': 30
-			});
-			render.setMolecule(mol);
-			render.update();
-		}, 50);
-	});
+function renderTmpl(el, tmpl) {
+	if (tmpl.prerender)
+		el.innerHTML = tmpl.prerender;
+	else {
+		var mol = molfile.parse(tmpl.molfile);
+		var rnd = new Render(el, 0, {
+			'autoScale': true,
+			'autoScaleMargin': 0,
+			//'debug': true,
+			'hideChiralFlag': true,
+			'maxBondLength': 30
+		});
+		rnd.setMolecule(mol);
+		rnd.update();
+		el.title = mol.name;
+		console.info('render!');//, el.innerHTML);
+		//tmpl.prerender = el.innerHTML;
+	}
 }
 
 function eachAsync(list, process, timeGap, startTimeGap) {
@@ -101,9 +105,48 @@ function eachAsync(list, process, timeGap, startTimeGap) {
 	});
 }
 
+function dialog2(base_url, params) {
+	var dlg = ui.showDialog('custom_templates');
+	var selectedLi = dlg.select('.selected')[0];
+	var ul = dlg.select('ul')[0];
+
+	fetchTemplateCustom(base_url).then(templates => {
+		// renders a single row
+		var Row = row => (
+				<li class="row" ref={ el => renderTmpl(el, row) }>loading..</li>
+		);
+
+		var groups = templates.reduce(function (res, tmpl) {
+			var group = tmpl.group || 'Ungroupt';
+			if (!res.includes(group))
+				res.push(group);
+			return res;
+		}, []);
+		console.info('Groups', groups);
+
+		render((
+				<VisibleView data={templates} rowHeight={120} renderRow={Row} />
+		), ul);
+	});
+
+	dlg.on('click', 'input', (_, input) => {
+		var mode = input.value,
+		key = 'on' + input.value.capitalize(),
+		res;
+		if (mode == 'OK') {
+			console.assert(selectedLi, 'No element selected');
+			var ind = selectedLi.previousSiblings().size();
+			res = custom_templates[ind];
+		}
+		ui.hideDialog('custom_templates');
+		if (params && key in params)
+			params[key](res);
+	});
+}
+
 function dialog (base_url, params) {
 	var dlg = ui.showDialog('custom_templates'),
-	selectedLi = dlg.select('.selected')[0],
+	    selectedLi = dlg.select('.selected')[0],
 	okButton = dlg.select('[value=OK]')[0],
 	ul = dlg.select('ul')[0];
 
@@ -145,4 +188,4 @@ function dialog (base_url, params) {
 		});
 	}
 }
-export default dialog;
+export default dialog2;

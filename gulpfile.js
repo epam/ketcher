@@ -167,6 +167,7 @@ gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], functio
 function scriptBundle(src, watchUpdate) {
 	var build = browserify(src, {
 		standalone: pkg.name,
+		extensions: ['.jsx'],
 		cache: {}, packageCache: {},
 		debug: true
 	});
@@ -179,6 +180,8 @@ function scriptBundle(src, watchUpdate) {
 		]})
 		.transform('babelify', {
 			presets: ["es2015", "react"],
+			plugins: ['transform-class-properties',
+			          'transform-object-rest-spread'],
 			extensions: [".jsx"],
 			only: 'script/ui'
 		});

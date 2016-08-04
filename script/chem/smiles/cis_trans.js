@@ -3,12 +3,12 @@ var Vec2 = require('../../util/vec2');
 
 var Struct = require('../struct');
 
-var CisTrans = function (mol, neighborsFunc, context) {
+function CisTrans(mol, neighborsFunc, context) {
 	this.molecule = mol;
 	this.bonds = new Map();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
-};
+}
 
 CisTrans.PARITY = {
 	NONE: 0,
@@ -32,26 +32,22 @@ CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
 	var diff = Vec2.diff(beg, end);
 	var norm = new Vec2(-diff.y, diff.x);
 
-	if (!norm.normalize()) {
+	if (!norm.normalize())
 		return 0;
-	}
 
 	var normBeg = Vec2.diff(neiBeg, beg);
 	var normEnd = Vec2.diff(neiEnd, end);
 
-	if (!normBeg.normalize()) {
+	if (!normBeg.normalize())
 		return 0;
-	}
-	if (!normEnd.normalize()) {
+	if (!normEnd.normalize())
 		return 0;
-	}
 
 	var prodBeg = Vec2.dot(normBeg, norm);
 	var prodEnd = Vec2.dot(normEnd, norm);
 
-	if (Math.abs(prodBeg) < 0.001 || Math.abs(prodEnd) < 0.001) {
+	if (Math.abs(prodBeg) < 0.001 || Math.abs(prodEnd) < 0.001)
 		return 0;
-	}
 
 	return (prodBeg * prodEnd > 0) ? 1 : -1;
 };
@@ -67,12 +63,10 @@ CisTrans.prototype._sortSubstituents = function (substituents) {
 	var h2 = this.molecule.atoms.get(substituents[2]).pureHydrogen();
 	var h3 = substituents[3] < 0 || this.molecule.atoms.get(substituents[3]).pureHydrogen();
 
-	if (h0 && h1) {
+	if (h0 && h1)
 		return false;
-	}
-	if (h2 && h3) {
+	if (h2 && h3)
 		return false;
-	}
 
 	if (h1) {
 		substituents[1] = -1;
@@ -99,19 +93,16 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 
-	if (bond.type != Struct.Bond.PATTERN.TYPE.DOUBLE) {
+	if (bond.type != Struct.Bond.PATTERN.TYPE.DOUBLE)
 		return false;
-	}
 
 	var label1 = this.molecule.atoms.get(bond.begin).label;
 	var label2 = this.molecule.atoms.get(bond.end).label;
 
-	if (label1 != 'C' && label1 != 'N' && label1 != 'Si' && label1 != 'Ge') {
+	if (label1 != 'C' && label1 != 'N' && label1 != 'Si' && label1 != 'Ge')
 		return false;
-	}
-	if (label2 != 'C' && label2 != 'N' && label2 != 'Si' && label2 != 'Ge') {
+	if (label2 != 'C' && label2 != 'N' && label2 != 'Si' && label2 != 'Ge')
 		return false;
-	}
 
 	// the atoms should have 1 or 2 single bonds
 	// (apart from the double bond under consideration)
@@ -121,9 +112,8 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	if (
 	neiBegin.length < 2 || neiBegin.length > 3 ||
 	neiЕnd.length < 2 || neiЕnd.length > 3
-	) {
+	)
 		return false;
-	}
 
 	substituents[0] = -1;
 	substituents[1] = -1;
@@ -136,51 +126,42 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
 	for (i = 0; i < neiBegin.length; i++) {
 		nei = neiBegin[i];
 
-		if (nei.bid == bondIdx) {
-			continue;
-		}
+		if (nei.bid == bondIdx)
+			continue; // eslint-disable-line no-continue
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
 			return false;
-		}
 
-		if (substituents[0] == -1) {
+		if (substituents[0] == -1)
 			substituents[0] = nei.aid;
-		} else { // (substituents[1] == -1)
+		else // (substituents[1] == -1)
 			substituents[1] = nei.aid;
-		}
 	}
 
 	for (i = 0; i < neiЕnd.length; i++) {
 		nei = neiЕnd[i];
 
-		if (nei.bid == bondIdx) {
-			continue;
-		}
+		if (nei.bid == bondIdx)
+			continue;  // eslint-disable-line no-continue
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE) {
+		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
 			return false;
-		}
 
-		if (substituents[2] == -1) {
+		if (substituents[2] == -1)
 			substituents[2] = nei.aid;
-		}
-		else { // (substituents[3] == -1)
+		else // (substituents[3] == -1)
 			substituents[3] = nei.aid;
-		}
 	}
 
-	if (substituents[1] != -1 && this._sameside(bond.begin, bond.end, substituents[0], substituents[1]) != -1) {
+	if (substituents[1] != -1 && this._sameside(bond.begin, bond.end, substituents[0], substituents[1]) != -1)
 		return false;
-	}
-	if (substituents[3] != -1 && this._sameside(bond.begin, bond.end, substituents[2], substituents[3]) != -1) {
+	if (substituents[3] != -1 && this._sameside(bond.begin, bond.end, substituents[2], substituents[3]) != -1)
 		return false;
-	}
 
 	return true;
 };
 
-CisTrans.prototype.build = function (exclude_bonds) {
+CisTrans.prototype.build = function (excludeBonds) {
 	this.molecule.bonds.each(function (bid, bond) {
 		var ct = this.bonds.set(bid,
 			{
@@ -188,7 +169,7 @@ CisTrans.prototype.build = function (exclude_bonds) {
 				substituents: new Array(4)
 			});
 
-		if (Object.isArray(exclude_bonds) && exclude_bonds[bid])
+		if (Object.isArray(excludeBonds) && excludeBonds[bid])
 			return;
 
 		if (!this.isGeomStereoBond(bid, ct.substituents))

@@ -38,8 +38,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			}.bind(this)
 		});
 		return true;
-	}
-	else if (ci && ci.map == 'rgroups') {
+	} else if (ci && ci.map == 'rgroups') {
 		this._hoverHelper.hover(null);
 		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
 		var rgroupLabels = [];

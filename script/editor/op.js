@@ -39,17 +39,19 @@ function Base() {
 function AtomAdd(atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var pp = {};
-		if (this.data.atom)
+		if (this.data.atom) {
 			for (var p in this.data.atom)
 				pp[p] = this.data.atom[p];
-		pp.label = pp.label || 'C';
-		if (!Object.isNumber(this.data.aid)) {
-			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
-		} else {
-			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		}
+		pp.label = pp.label || 'C';
+		if (!Object.isNumber(this.data.aid))
+			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
+		else
+			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		RS.notifyAtomAdded(this.data.aid);
 		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
@@ -64,7 +66,9 @@ AtomAdd.prototype = new Base();
 function AtomDelete(aid) {
 	this.data = { aid: aid, atom: null, pos: null };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		if (!this.data.atom) {
 			this.data.atom = DS.atoms.get(this.data.aid);
 			this.data.pos = R.atomGetPos(this.data.aid);
@@ -85,9 +89,8 @@ function AtomAttr(aid, attribute, value) {
 	this.data2 = null;
 	this._execute = function (editor) {
 		var atom = editor.render.ctab.molecule.atoms.get(this.data.aid);
-		if (!this.data2) {
+		if (!this.data2)
 			this.data2 = { aid: this.data.aid, attribute: this.data.attribute, value: atom[this.data.attribute] };
-		}
 		atom[this.data.attribute] = this.data.value;
 		editor.render.invalidateAtom(this.data.aid);
 	};
@@ -116,7 +119,7 @@ function AtomMove(aid, d, noinvalidate) {
 		if (!this.data.noinvalidate)
 			R.invalidateAtom(aid, 1);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function () {
 		return this.data.d.x == 0 && this.data.d.y == 0;
 	};
 	this._invert = function () {
@@ -164,9 +167,11 @@ LoopMove.prototype = new Base();
 
 function SGroupAtomAdd(sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
-	this.data = { 'aid': aid, 'sgid': sgid };
+	this.data = { aid: aid, sgid: sgid };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
 		var atom = DS.atoms.get(aid);
@@ -188,11 +193,13 @@ SGroupAtomAdd.prototype = new Base();
 
 function SGroupAtomRemove(sgid, aid) {
 	this.type = 'OpSGroupAtomRemove';
-	this.data = { 'aid': aid, 'sgid': sgid };
+	this.data = { aid: aid, sgid: sgid };
 	this._execute = function (editor) {
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var atom = DS.atoms.get(aid);
 		var sg = DS.sgroups.get(sgid);
 		Struct.SGroup.removeAtom(sg, aid);
@@ -211,7 +218,9 @@ function SGroupAttr(sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
 	this.data = { sgid: sgid, attr: attr, value: value };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var sgid = this.data.sgid;
 		var sg = DS.sgroups.get(sgid);
 		if (sg.type == 'DAT' && RS.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
@@ -231,16 +240,17 @@ SGroupAttr.prototype = new Base();
 
 function SGroupCreate(sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
-	this.data = { 'sgid': sgid, 'type': type, 'pp': pp };
+	this.data = { sgid: sgid, type: type, pp: pp };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var sg = new Struct.SGroup(this.data.type);
 		var sgid = this.data.sgid;
 		sg.id = sgid;
 		DS.sgroups.set(sgid, sg);
-		if (this.data.pp) {
+		if (this.data.pp)
 			DS.sgroups.get(sgid).pp = new Vec2(this.data.pp);
-		}
 		RS.sgroups.set(sgid, new ReSGroup(DS.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
@@ -254,7 +264,7 @@ SGroupCreate.prototype = new Base();
 
 function SGroupDelete(sgid) {
 	this.type = 'OpSGroupDelete';
-	this.data = { 'sgid': sgid };
+	this.data = { sgid: sgid };
 	this._execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
@@ -284,9 +294,11 @@ SGroupDelete.prototype = new Base();
 
 function SGroupAddToHierarchy(sgid) {
 	this.type = 'OpSGroupAddToHierarchy';
-	this.data = { 'sgid': sgid };
+	this.data = { sgid: sgid };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var sgid = this.data.sgid;
 		var relations = DS.sGroupForest.insert(sgid, this.data.parent, this.data.children);
 		this.data.parent = relations.parent;
@@ -302,9 +314,11 @@ SGroupAddToHierarchy.prototype = new Base();
 
 function SGroupRemoveFromHierarchy(sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
-	this.data = { 'sgid': sgid };
+	this.data = { sgid: sgid };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		var sgid = this.data.sgid;
 		this.data.parent = DS.sGroupForest.parent.get(sgid);
 		this.data.children = DS.sGroupForest.children.get(sgid);
@@ -321,7 +335,9 @@ SGroupRemoveFromHierarchy.prototype = new Base();
 function BondAdd(begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		if (this.data.begin == this.data.end)
 			throw new Error('Distinct atoms expected');
 		if (DEBUG.debug && this.molecule.checkBondExists(this.data.begin, this.data.end))
@@ -331,18 +347,18 @@ function BondAdd(begin, end, bond) {
 		R.invalidateAtom(this.data.end, 1);
 
 		var pp = {};
-		if (this.data.bond)
+		if (this.data.bond) {
 			for (var p in this.data.bond)
 				pp[p] = this.data.bond[p];
+		}
 		pp.type = pp.type || Struct.Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
-		if (!Object.isNumber(this.data.bid)) {
+		if (!Object.isNumber(this.data.bid))
 			this.data.bid = DS.bonds.add(new Struct.Bond(pp));
-		} else {
+		else
 			DS.bonds.set(this.data.bid, new Struct.Bond(pp));
-		}
 		DS.bondInitHalfBonds(this.data.bid);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb2);
@@ -360,7 +376,9 @@ BondAdd.prototype = new Base();
 function BondDelete(bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		if (!this.data.bond) {
 			this.data.bond = DS.bonds.get(this.data.bid);
 			this.data.begin = this.data.bond.begin;
@@ -399,9 +417,8 @@ function BondAttr(bid, attribute, value) {
 	this.data2 = null;
 	this._execute = function (editor) {
 		var bond = editor.render.ctab.molecule.bonds.get(this.data.bid);
-		if (!this.data2) {
+		if (!this.data2)
 			this.data2 = { bid: this.data.bid, attribute: this.data.attribute, value: bond[this.data.attribute] };
-		}
 
 		bond[this.data.attribute] = this.data.value;
 
@@ -427,11 +444,10 @@ function FragmentAdd(frid) {
 		var RS = editor.render.ctab;
 		var DS = RS.molecule;
 		var frag = {};
-		if (this.frid == null) {
+		if (this.frid == null)
 			this.frid = DS.frags.add(frag);
-		} else {
+		else
 			DS.frags.set(this.frid, frag);
-		}
 		RS.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 	this._invert = function () {
@@ -443,7 +459,9 @@ FragmentAdd.prototype = new Base();
 function FragmentDelete(frid) {
 	this.frid = frid;
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		R.invalidateItem('frags', this.frid, 1);
 		RS.frags.unset(this.frid);
 		DS.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
@@ -459,9 +477,8 @@ function RGroupAttr(rgid, attribute, value) {
 	this.data2 = null;
 	this._execute = function (editor) {
 		var rgp = editor.render.ctab.molecule.rgroups.get(this.data.rgid);
-		if (!this.data2) {
+		if (!this.data2)
 			this.data2 = { rgid: this.data.rgid, attribute: this.data.attribute, value: rgp[this.data.attribute] };
-		}
 
 		rgp[this.data.attribute] = this.data.value;
 
@@ -486,7 +503,8 @@ function RGroupFragment(rgid, frid, rg) {
 	this.rg_old = null;
 	this.frid = frid;
 	this._execute = function (editor) {
-		var RS = editor.render.ctab, DS = RS.molecule;
+		var RS = editor.render.ctab;
+		var DS = RS.molecule;
 		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
 		this.rg_old = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
 		if (this.rg_old) {
@@ -521,12 +539,13 @@ RGroupFragment.prototype = new Base();
 function RxnArrowAdd(pos) {
 	this.data = { arid: null, pos: pos };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		if (!Object.isNumber(this.data.arid)) {
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
+		if (!Object.isNumber(this.data.arid))
 			this.data.arid = DS.rxnArrows.add(new Struct.RxnArrow());
-		} else {
+		else
 			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
-		}
 		RS.notifyRxnArrowAdded(this.data.arid);
 		DS._rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
@@ -543,10 +562,11 @@ RxnArrowAdd.prototype = new Base();
 function RxnArrowDelete(arid) {
 	this.data = { arid: arid, pos: null };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		if (!this.data.pos) {
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
+		if (!this.data.pos)
 			this.data.pos = R.rxnArrowGetPos(this.data.arid);
-		}
 		RS.notifyRxnArrowRemoved(this.data.arid);
 		DS.rxnArrows.remove(this.data.arid);
 	};
@@ -583,12 +603,13 @@ RxnArrowMove.prototype = new Base();
 function RxnPlusAdd(pos) {
 	this.data = { plid: null, pos: pos };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		if (!Object.isNumber(this.data.plid)) {
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
+		if (!Object.isNumber(this.data.plid))
 			this.data.plid = DS.rxnPluses.add(new Struct.RxnPlus());
-		} else {
+		else
 			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
-		}
 		RS.notifyRxnPlusAdded(this.data.plid);
 		DS._rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
@@ -605,10 +626,11 @@ RxnPlusAdd.prototype = new Base();
 function RxnPlusDelete(plid) {
 	this.data = { plid: plid, pos: null };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
-		if (!this.data.pos) {
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
+		if (!this.data.pos)
 			this.data.pos = R.rxnPlusGetPos(this.data.plid);
-		}
 		RS.notifyRxnPlusRemoved(this.data.plid);
 		DS.rxnPluses.remove(this.data.plid);
 	};
@@ -684,7 +706,9 @@ CanvasLoad.prototype = new Base();
 function ChiralFlagAdd(pos) {
 	this.data = { pos: pos };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		if (RS.chiralFlags.count() > 0)
 			throw new Error('Cannot add more than one Chiral flag');
 		RS.chiralFlags.set(0, new ReChiralFlag(pos));
@@ -702,7 +726,9 @@ ChiralFlagAdd.prototype = new Base();
 function ChiralFlagDelete() {
 	this.data = { pos: null };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab, DS = RS.molecule;
+		var R = editor.render;
+		var RS = R.ctab;
+		var DS = RS.molecule;
 		if (RS.chiralFlags.count() < 1)
 			throw new Error('Cannot remove chiral flag');
 		RS.clearVisel(RS.chiralFlags.get(0).visel);
@@ -721,7 +747,8 @@ ChiralFlagDelete.prototype = new Base();
 function ChiralFlagMove(d) {
 	this.data = { d: d };
 	this._execute = function (editor) {
-		var R = editor.render, RS = R.ctab;
+		var R = editor.render;
+		var RS = R.ctab;
 		RS.chiralFlags.get(0).pp.add_(this.data.d);
 		this.data.d = this.data.d.negated();
 		R.invalidateItem('chiralFlags', 0, 1);

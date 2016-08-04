@@ -43,9 +43,8 @@ Struct.prototype.hasRxnArrow = function () {
 
 Struct.prototype.addRxnArrowIfNecessary = function () {
 	var implicitReaction = !this.hasRxnArrow() && this.hasRxnProps();
-	if (implicitReaction) {
+	if (implicitReaction)
 		this.rxnArrows.add(new RxnArrow());
-	}
 	return implicitReaction;
 };
 
@@ -58,11 +57,10 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 
 		sg.each(function (sid) {
 			var n = sgroupCounts.get(sid);
-			if (Object.isUndefined(n)) {
+			if (Object.isUndefined(n))
 				n = 1;
-			} else {
+			else
 				n++;
-			}
 			sgroupCounts.set(sid, n);
 		}, this);
 	}, this);
@@ -72,9 +70,8 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 		var sid = parseInt(sg.key, 10);
 		var sgroup = this.sgroups.get(sid);
 		var sgAtoms = SGroup.getAtoms(this, sgroup);
-		if (sg.value == sgAtoms.length) {
+		if (sg.value == sgAtoms.length)
 			sgroupList.push(sid);
-		}
 	}, this);
 	return sgroupList;
 };
@@ -102,8 +99,8 @@ Struct.prototype.toLists = function () {
 	});
 
 	return {
-		'atoms': atomList,
-		'bonds': bondList
+		atoms: atomList,
+		bonds: bondList
 	};
 };
 
@@ -120,9 +117,8 @@ Struct.prototype.getScaffold = function () {
 	this.rgroups.each(function (rgid, rg) {
 		rg.frags.each(function (fnum, fid) {
 			this.atoms.each(function (aid, atom) {
-				if (atom.fragment == fid) {
+				if (atom.fragment == fid)
 					Set.remove(atomSet, aid);
-				}
 			}, this);
 		}, this);
 	}, this);
@@ -132,9 +128,8 @@ Struct.prototype.getScaffold = function () {
 Struct.prototype.getFragmentIds = function (fid) {
 	var atomSet = Set.empty();
 	this.atoms.each(function (aid, atom) {
-		if (atom.fragment == fid) {
+		if (atom.fragment == fid)
 			Set.add(atomSet, aid);
-		}
 	}, this);
 	return atomSet;
 };
@@ -198,15 +193,15 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 
 	this.sgroups.each(function (sid, sg) {
 		var i;
-		for (i = 0; i < sg.atoms.length; ++i)
+		for (i = 0; i < sg.atoms.length; ++i) {
 			if (!Set.contains(atomSet, sg.atoms[i]))
 				return;
+		}
 		sg = SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
-		for (i = 0; i < sg.atoms.length; ++i) {
+		for (i = 0; i < sg.atoms.length; ++i)
 			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
-		}
 		cp.sGroupForest.insert(sg.id);
 	});
 	cp.isChiral = this.isChiral;
@@ -222,15 +217,12 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	return cp;
 };
 
-Struct.prototype.findBondId = function (begin, end)
-{
+Struct.prototype.findBondId = function (begin, end) {
 	var id = -1;
 
-	this.bonds.find(function (bid, bond)
-	{
+	this.bonds.find(function (bid, bond) {
 		if ((bond.begin == begin && bond.end == end) ||
-		(bond.begin == end && bond.end == begin))
-		{
+		(bond.begin == end && bond.end == begin)) {
 			id = bid;
 			return true;
 		}
@@ -240,8 +232,7 @@ Struct.prototype.findBondId = function (begin, end)
 	return id;
 };
 
-var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid)
-{
+var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid) {
 	if (arguments.length != 3)
 		throw new Error('Invalid parameter number!');
 
@@ -265,8 +256,7 @@ var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid)
 	this.rightNeighbor = 0;
 };
 
-Struct.prototype.initNeighbors = function ()
-{
+Struct.prototype.initNeighbors = function () {
 	this.atoms.each(function (aid, atom) {
 		atom.neighbors = [];
 	});
@@ -278,11 +268,10 @@ Struct.prototype.initNeighbors = function ()
 	}, this);
 };
 
-Struct.prototype.bondInitHalfBonds = function (bid, /* opt*/ bond)
-{
+Struct.prototype.bondInitHalfBonds = function (bid, /* opt*/ bond) {
 	bond = bond || this.bonds.get(bid);
 	bond.hb1 = 2 * bid;
-	bond.hb2 = 2 * bid + 1;
+	bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
 	this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
 	this.halfBonds.set(bond.hb2, new HalfBond(bond.end, bond.begin, bid));
 	var hb1 = this.halfBonds.get(bond.hb1);
@@ -291,8 +280,7 @@ Struct.prototype.bondInitHalfBonds = function (bid, /* opt*/ bond)
 	hb2.contra = bond.hb1;
 };
 
-Struct.prototype.halfBondUpdate = function (hbid)
-{
+Struct.prototype.halfBondUpdate = function (hbid) {
 	var hb = this.halfBonds.get(hbid);
 	var p1 = this.atoms.get(hb.begin).pp;
 	var p2 = this.atoms.get(hb.end).pp;
@@ -304,19 +292,16 @@ Struct.prototype.halfBondUpdate = function (hbid)
 		hb.loop = -1;
 };
 
-Struct.prototype.initHalfBonds = function ()
-{
+Struct.prototype.initHalfBonds = function () {
 	this.halfBonds.clear();
 	this.bonds.each(this.bondInitHalfBonds, this);
 };
 
-Struct.prototype.setHbNext = function (hbid, next)
-{
+Struct.prototype.setHbNext = function (hbid, next) {
 	this.halfBonds.get(this.halfBonds.get(hbid).contra).next = next;
 };
 
-Struct.prototype.halfBondSetAngle = function (hbid, left)
-{
+Struct.prototype.halfBondSetAngle = function (hbid, left) {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
 	hbl.rightCos = hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
@@ -325,18 +310,18 @@ Struct.prototype.halfBondSetAngle = function (hbid, left)
 	hbl.rightNeighbor = hbid;
 };
 
-Struct.prototype.atomAddNeighbor = function (hbid)
-{
+Struct.prototype.atomAddNeighbor = function (hbid) {
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
 	var i = 0;
-	for (i = 0; i < atom.neighbors.length; ++i)
+	for (i = 0; i < atom.neighbors.length; ++i) {
 		if (this.halfBonds.get(atom.neighbors[i]).ang > hb.ang)
 			break;
+	}
 	atom.neighbors.splice(i, 0, hbid);
 	var ir = atom.neighbors[(i + 1) % atom.neighbors.length];
-	var il = atom.neighbors[(i + atom.neighbors.length - 1)
-			 % atom.neighbors.length];
+	var il = atom.neighbors[(i + atom.neighbors.length - 1) %
+		atom.neighbors.length];
 	this.setHbNext(il, hbid);
 	this.setHbNext(hbid, ir);
 	this.halfBondSetAngle(hbid, il);
@@ -350,16 +335,20 @@ Struct.prototype.atomSortNeighbors = function (aid) {
 	}, this);
 
 	var i;
-	for (i = 0; i < atom.neighbors.length; ++i)
+	for (i = 0; i < atom.neighbors.length; ++i) {
 		this.halfBonds.get(this.halfBonds.get(atom.neighbors[i]).contra).next =
 			atom.neighbors[(i + 1) % atom.neighbors.length];
-	for (i = 0; i < atom.neighbors.length; ++i)
+	}
+	for (i = 0; i < atom.neighbors.length; ++i) {
 		this.halfBondSetAngle(atom.neighbors[(i + 1) % atom.neighbors.length],
 			atom.neighbors[i]);
+	}
 };
 
 Struct.prototype.sortNeighbors = function (list) {
-	var f = function (aid) { this.atomSortNeighbors(aid); };
+	var f = function (aid) {
+		this.atomSortNeighbors(aid);
+	};
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
@@ -376,7 +365,9 @@ Struct.prototype.atomUpdateHalfBonds = function (aid) {
 };
 
 Struct.prototype.updateHalfBonds = function (list) {
-	var f = function (aid) { this.atomUpdateHalfBonds(aid); };
+	var f = function (aid) {
+		this.atomUpdateHalfBonds(aid);
+	};
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
@@ -408,44 +399,38 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	}, this);
 };
 
-Struct.prototype.sGroupDelete = function (sgid)
-{
+Struct.prototype.sGroupDelete = function (sgid) {
 	var sg = this.sgroups.get(sgid);
-	for (var i = 0; i < sg.atoms.length; ++i) {
+	for (var i = 0; i < sg.atoms.length; ++i)
 		Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
-	}
 	this.sGroupForest.remove(sgid);
 	this.sgroups.remove(sgid);
 };
 
-Struct.prototype._atomSetPos = function (id, pp)
-{
-	var item_id = this['atoms'].get(id);
-	item_id.pp = pp;
+Struct.prototype._atomSetPos = function (id, pp) {
+	var itemId = this['atoms'].get(id);
+	itemId.pp = pp;
 };
 
-Struct.prototype._rxnPlusSetPos = function (id, pp)
-{
-	var item_id = this['rxnPluses'].get(id);
-	item_id.pp = pp;
+Struct.prototype._rxnPlusSetPos = function (id, pp) {
+	var itemId = this['rxnPluses'].get(id);
+	itemId.pp = pp;
 };
 
-Struct.prototype._rxnArrowSetPos = function (id, pp, scaleFactor)
-{
-	var item_id = this['rxnArrows'].get(id);
-	item_id.pp = pp;
+Struct.prototype._rxnArrowSetPos = function (id, pp) {
+	var itemId = this['rxnArrows'].get(id);
+	itemId.pp = pp;
 };
 
-Struct.prototype.getCoordBoundingBox = function (atomSet)
-{
+Struct.prototype.getCoordBoundingBox = function (atomSet) {
 	var bb = null;
 	var extend = function (pp) {
-		if (!bb)
+		if (!bb) {
 			bb = {
 				min: pp,
 				max: pp
 			};
-		else {
+		} else {
 			bb.min = Vec2.min(bb.min, pp);
 			bb.max = Vec2.max(bb.max, pp);
 		}
@@ -465,24 +450,24 @@ Struct.prototype.getCoordBoundingBox = function (atomSet)
 			extend(item.pp);
 		});
 	}
-	if (!bb && global)
+	if (!bb && global) {
 		bb = {
 			min: new Vec2(0, 0),
 			max: new Vec2(1, 1)
 		};
+	}
 	return bb;
 };
 
-Struct.prototype.getCoordBoundingBoxObj = function ()
-{
+Struct.prototype.getCoordBoundingBoxObj = function () {
 	var bb = null;
 	var extend = function (pp) {
-		if (!bb)
+		if (!bb) {
 			bb = {
 				min: new Vec2(pp),
 				max: new Vec2(pp)
 			};
-		else {
+		} else {
 			bb.min = Vec2.min(bb.min, pp);
 			bb.max = Vec2.max(bb.max, pp);
 		}
@@ -494,8 +479,7 @@ Struct.prototype.getCoordBoundingBoxObj = function ()
 	return bb;
 };
 
-Struct.prototype.getBondLengthData = function ()
-{
+Struct.prototype.getBondLengthData = function () {
 	var totalLength = 0;
 	var cnt = 0;
 	this.bonds.each(function (bid, bond) {
@@ -507,21 +491,23 @@ Struct.prototype.getBondLengthData = function ()
 	return { cnt: cnt, totalLength: totalLength };
 };
 
-Struct.prototype.getAvgBondLength = function ()
-{
+Struct.prototype.getAvgBondLength = function () {
 	var bld = this.getBondLengthData();
 	return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
 };
 
-Struct.prototype.getAvgClosestAtomDistance = function ()
-{
-	var totalDist = 0, minDist, dist = 0;
-	var keys = this.atoms.keys(), k, j;
+Struct.prototype.getAvgClosestAtomDistance = function () {
+	var totalDist = 0;
+	var minDist;
+	var dist = 0;
+	var keys = this.atoms.keys();
+	var k;
+	var j;
 	for (k = 0; k < keys.length; ++k) {
 		minDist = -1;
 		for (j = 0; j < keys.length; ++j) {
 			if (j == k)
-				continue;
+				continue; // eslint-disable-line no-continue
 			dist = Vec2.dist(this.atoms.get(keys[j]).pp, this.atoms.get(keys[k]).pp);
 			if (minDist < 0 || minDist > dist)
 				minDist = dist;
@@ -532,8 +518,7 @@ Struct.prototype.getAvgClosestAtomDistance = function ()
 	return keys.length > 0 ? totalDist / keys.length : -1;
 };
 
-Struct.prototype.checkBondExists = function (begin, end)
-{
+Struct.prototype.checkBondExists = function (begin, end) {
 	var bondExists = false;
 	this.bonds.each(function (bid, bond) {
 		if ((bond.begin == begin && bond.end == end) ||
@@ -543,8 +528,7 @@ Struct.prototype.checkBondExists = function (begin, end)
 	return bondExists;
 };
 
-var Loop = function (/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex)
-{
+var Loop = function (/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.hbs = hbs; // set of half-bonds involved
 	this.dblBonds = 0; // number of double bonds in the loop
 	this.aromatic = true;
@@ -620,13 +604,11 @@ Struct.prototype.markFragmentByAtomId = function (aid) {
 
 Struct.prototype.markFragments = function () {
 	var components = this.findConnectedComponents();
-	for (var i = 0; i < components.length; ++i) {
+	for (var i = 0; i < components.length; ++i)
 		this.markFragment(components[i]);
-	}
 };
 
-Struct.prototype.scale = function (scale)
-{
+Struct.prototype.scale = function (scale) {
 	if (scale != 1) {
 		this.atoms.each(function (aid, atom) {
 			atom.pp = atom.pp.scaled(scale);
@@ -643,8 +625,7 @@ Struct.prototype.scale = function (scale)
 	}
 };
 
-Struct.prototype.rescale = function ()
-{
+Struct.prototype.rescale = function () {
 	var avg = this.getAvgBondLength();
 	if (avg < 0 && !this.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
 		// the atoms in different components are generally larger than those between atoms of a single component
@@ -656,8 +637,7 @@ Struct.prototype.rescale = function ()
 	this.scale(scale);
 };
 
-Struct.prototype.loopHasSelfIntersections = function (hbs)
-{
+Struct.prototype.loopHasSelfIntersections = function (hbs) {
 	for (var i = 0; i < hbs.length; ++i) {
 		var hbi = this.halfBonds.get(hbs[i]);
 		var ai = this.atoms.get(hbi.begin).pp;
@@ -666,12 +646,13 @@ Struct.prototype.loopHasSelfIntersections = function (hbs)
 		for (var j = i + 2; j < hbs.length; ++j) {
 			var hbj = this.halfBonds.get(hbs[j]);
 			if (Set.contains(set, hbj.begin) || Set.contains(set, hbj.end))
+				/* eslint-disable no-continue*/
 				continue; // skip edges sharing an atom
+				/* eslint-enable no-continue*/
 			var aj = this.atoms.get(hbj.begin).pp;
 			var bj = this.atoms.get(hbj.end).pp;
-			if (Vec2.segmentIntersection(ai, bi, aj, bj)) {
+			if (Vec2.segmentIntersection(ai, bi, aj, bj))
 				return true;
-			}
 		}
 	}
 	return false;
@@ -738,8 +719,7 @@ Struct.prototype.loopIsInner = function (loop) {
 	return Math.abs(totalAngle) < Math.PI;
 };
 
-Struct.prototype.findLoops = function ()
-{
+Struct.prototype.findLoops = function () {
 	var newLoops = [];
 	var bondsToMark = Set.empty();
 
@@ -772,9 +752,8 @@ Struct.prototype.findLoops = function ()
 							this.halfBonds.get(hbid).loop = loopId;
 							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
 						}, this);
-						if (loopId >= 0) {
+						if (loopId >= 0)
 							newLoops.push(loopId);
-						}
 					}, this);
 					break;
 				} else {
@@ -859,7 +838,9 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
-	var f = function (aid) { this.calcImplicitHydrogen(aid); };
+	var f = function (aid) {
+		this.calcImplicitHydrogen(aid);
+	};
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
@@ -879,7 +860,9 @@ Struct.prototype.getComponents = function () {
 	});
 	if (arrowPos != null)
 		barriers.push(arrowPos);
-	barriers.sort(function (a, b) { return a - b; });
+	barriers.sort(function (a, b) {
+		return a - b;
+	});
 	var components = [];
 
 	var i;
@@ -893,7 +876,8 @@ Struct.prototype.getComponents = function () {
 		Set.mergeIn(components[j], ccs[i]);
 	}
 	var submolTexts = [];
-	var reactants = [], products = [];
+	var reactants = [];
+	var products = [];
 	for (i = 0; i < components.length; ++i) {
 		if (!components[i]) {
 			submolTexts.push('');
@@ -908,32 +892,28 @@ Struct.prototype.getComponents = function () {
 	}
 
 	return {
-		'reactants': reactants,
-		'products': products
+		reactants: reactants,
+		products: products
 	};
 };
 
 // Other struct objects
 
-var RxnPlus = function (params)
-{
+var RxnPlus = function (params) {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
-RxnPlus.prototype.clone = function ()
-{
+RxnPlus.prototype.clone = function () {
 	return new RxnPlus(this);
 };
 
-var RxnArrow = function (params)
-{
+var RxnArrow = function (params) {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 };
 
-RxnArrow.prototype.clone = function ()
-{
+RxnArrow.prototype.clone = function () {
 	return new RxnArrow(this);
 };
 

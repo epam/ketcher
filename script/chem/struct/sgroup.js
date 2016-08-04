@@ -29,33 +29,33 @@ var SGroup = function (type) {
 	this.neiAtoms = [];
 	this.pp = null;
 	this.data = {
-		'mul': 1, // multiplication count for MUL group
-		'connectivity': 'ht', // head-to-head, head-to-tail or either-unknown
-		'name': '',
-		'subscript': 'n',
+		mul: 1, // multiplication count for MUL group
+		connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
+		name: '',
+		subscript: 'n',
 
 		// data s-group fields
-		'attached': false,
-		'absolute': true,
-		'showUnits': false,
-		'nCharsToDisplay': -1,
-		'tagChar': '',
-		'daspPos': 1,
-		'fieldType': 'F',
-		'fieldName': '',
-		'fieldValue': '',
-		'units': '',
-		'query': '',
-		'queryOp': ''
+		attached: false,
+		absolute: true,
+		showUnits: false,
+		nCharsToDisplay: -1,
+		tagChar: '',
+		daspPos: 1,
+		fieldType: 'F',
+		fieldName: '',
+		fieldValue: '',
+		units: '',
+		query: '',
+		queryOp: ''
 	};
 };
 
 SGroup.TYPES = {
-	'MUL': 1,
-	'SRU': 2,
-	'SUP': 3,
-	'DAT': 4,
-	'GEN': 5
+	MUL: 1,
+	SRU: 2,
+	SUP: 3,
+	DAT: 4,
+	GEN: 5
 };
 
 // TODO: these methods should be overridden
@@ -98,37 +98,34 @@ SGroup.filterAtoms = function (atoms, map) {
 	var newAtoms = [];
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
-		if (typeof (map[aid]) != 'number') {
+		if (typeof (map[aid]) != 'number')
 			newAtoms.push(aid);
-		} else if (map[aid] >= 0) {
+		else if (map[aid] >= 0)
 			newAtoms.push(map[aid]);
-		} else {
+		else
 			newAtoms.push(-1);
-		}
 	}
 	return newAtoms;
 };
 
 SGroup.removeNegative = function (atoms) {
 	var newAtoms = [];
-	for (var j = 0; j < atoms.length; ++j)
+	for (var j = 0; j < atoms.length; ++j) {
 		if (atoms[j] >= 0)
 			newAtoms.push(atoms[j]);
+	}
 	return newAtoms;
 };
 
-SGroup.filter = function (mol, sg, atomMap)
-{
+SGroup.filter = function (mol, sg, atomMap) {
 	sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
 };
 
-SGroup.clone = function (sgroup, aidMap, bidMap)
-{
+SGroup.clone = function (sgroup, aidMap) {
 	var cp = new SGroup(sgroup.type);
 
-	for (var field in sgroup.data) { // TODO: remove all non-primitive properties from 'data'
+	for (var field in sgroup.data) // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
-	}
 	cp.atoms = sgroup.atoms.map(function (elem) { return aidMap[elem]; });
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
@@ -138,13 +135,11 @@ SGroup.clone = function (sgroup, aidMap, bidMap)
 	return cp;
 };
 
-SGroup.addAtom = function (sgroup, aid)
-{
+SGroup.addAtom = function (sgroup, aid) {
 	sgroup.atoms.push(aid);
 };
 
-SGroup.removeAtom = function (sgroup, aid)
-{
+SGroup.removeAtom = function (sgroup, aid) {
 	for (var i = 0; i < sgroup.atoms.length; ++i) {
 		if (sgroup.atoms[i] === aid) {
 			sgroup.atoms.splice(i, 1);
@@ -171,8 +166,10 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 	if (!xbonds || xbonds.length !== 2) {
 		sg.bracketDir = new Vec2(1, 0);
 	} else {
-		var b1 = mol.bonds.get(xbonds[0]), b2 = mol.bonds.get(xbonds[1]);
-		var p1 = b1.getCenter(mol), p2 = b2.getCenter(mol);
+		var b1 = mol.bonds.get(xbonds[0]);
+		var b2 = mol.bonds.get(xbonds[1]);
+		var p1 = b1.getCenter(mol);
+		var p2 = b2.getCenter(mol);
 		sg.bracketDir = Vec2.diff(p2, p1).normalized();
 	}
 	var d = sg.bracketDir;
@@ -239,9 +236,19 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 		})();
 	} else if (xbonds.length === 2) {
 		(function () {
-			var b1 = mol.bonds.get(xbonds[0]), b2 = mol.bonds.get(xbonds[1]);
-			var cl0 = b1.getCenter(mol), cr0 = b2.getCenter(mol), tl = -1, tr = -1, tt = -1, tb = -1, cc = Vec2.centre(cl0, cr0);
-			var dr = Vec2.diff(cr0, cl0).normalized(), dl = dr.negated(), dt = dr.rotateSC(1, 0), db = dt.negated();
+			var b1 = mol.bonds.get(xbonds[0]);
+			var b2 = mol.bonds.get(xbonds[1]);
+			var cl0 = b1.getCenter(mol);
+			var cr0 = b2.getCenter(mol);
+			var tl = -1;
+			var tr = -1;
+			var tt = -1;
+			var tb = -1;
+			var cc = Vec2.centre(cl0, cr0);
+			var dr = Vec2.diff(cr0, cl0).normalized();
+			var dl = dr.negated();
+			var dt = dr.rotateSC(1, 0);
+			var db = dt.negated();
 
 			mol.sGroupForest.children.get(id).forEach(function (sgid) {
 				var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
@@ -273,8 +280,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 	return brackets;
 };
 
-SGroup.getObjBBox = function (atoms, mol)
-{
+SGroup.getObjBBox = function (atoms, mol) {
 	if (atoms.length == 0)
 		throw new Error('Atom list is empty');
 
@@ -323,29 +329,28 @@ SGroup.prepareMulForSaving = function (sgroup, mol) {
 		else if (Set.contains(sgroup.parentAtomSet, bond.begin) || Set.contains(sgroup.parentAtomSet, bond.end))
 			xBonds.push(bid);
 	}, sgroup);
-	if (xBonds.length != 0 && xBonds.length != 2)
+	if (xBonds.length != 0 && xBonds.length != 2) {
 		throw {
 			'id': sgroup.id,
 			'error-type': 'cross-bond-number',
 			'message': 'Unsupported cross-bonds number'
 		};
+	}
 
 	var xAtom1 = -1,
 		xAtom2 = -1;
 	var crossBond = null;
 	if (xBonds.length == 2) {
 		var bond1 = mol.bonds.get(xBonds[0]);
-		if (Set.contains(sgroup.parentAtomSet, bond1.begin)) {
+		if (Set.contains(sgroup.parentAtomSet, bond1.begin))
 			xAtom1 = bond1.begin;
-		} else {
+		else
 			xAtom1 = bond1.end;
-		}
 		var bond2 = mol.bonds.get(xBonds[1]);
-		if (Set.contains(sgroup.parentAtomSet, bond2.begin)) {
+		if (Set.contains(sgroup.parentAtomSet, bond2.begin))
 			xAtom2 = bond2.begin;
-		} else {
+		else
 			xAtom2 = bond2.end;
-		}
 		crossBond = bond2;
 	}
 
@@ -396,9 +401,8 @@ SGroup.prepareMulForSaving = function (sgroup, mol) {
 
 SGroup.getMassCentre = function (mol, atoms) {
 	var c = new Vec2(); // mass centre
-	for (var i = 0; i < atoms.length; ++i) {
+	for (var i = 0; i < atoms.length; ++i)
 		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
-	}
 	return c;
 };
 
@@ -413,10 +417,11 @@ SGroup.packDataGroup = function (name, value, mol, atoms) {
 		// if selection contains any of the atoms in this loop, add all the atoms in the loop to selection
 		if (loop.hbs.findIndex(function (hbid) {
 			return Set.contains(atomSet, mol.halfBonds.get(hbid).begin);
-		}) >= 0)
+		}) >= 0) {
 			loop.hbs.forEach(function (hbid) {
 				Set.add(atomSetExtended, mol.halfBonds.get(hbid).begin);
 			}, this);
+		}
 	}, this);
 	Set.mergeIn(atomSetExtended, atomSet);
 	atoms = Set.list(atomSetExtended);

@@ -16,11 +16,10 @@ ChargeTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['atoms']);
 	var struct = rnd.ctab.molecule;
-	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) {
+	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null)
 		this._hoverHelper.hover(ci);
-	} else {
+	else
 		this._hoverHelper.hover(null);
-	}
 	return true;
 };
 ChargeTool.prototype.OnMouseUp = function (event) {

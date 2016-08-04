@@ -44,7 +44,8 @@ TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	return 0;
 };
 TemplateTool.prototype.OnMouseDown = function (event) {
-	var _E_ = this.editor, rnd = _E_.render;
+	var _E_ = this.editor;
+	var rnd = _E_.render;
 	this._hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
@@ -60,23 +61,22 @@ TemplateTool.prototype.OnMouseDown = function (event) {
 		var xy0 = new Vec2();
 		var bond = molecule.bonds.get(ci.id);
 		var frid = rnd.atomGetAttr(bond.begin, 'fragment');
-		var fr_ids = molecule.getFragmentIds(frid);
+		var frIds = molecule.getFragmentIds(frid);
 		var count = 0;
 
 		var loop = molecule.halfBonds.get(bond.hb1).loop;
 
-		if (loop < 0) {
+		if (loop < 0)
 			loop = molecule.halfBonds.get(bond.hb2).loop;
-		}
 
 		if (loop >= 0) {
-			var loop_hbs = molecule.loops.get(loop).hbs;
-			loop_hbs.each(function (hb) {
+			var loopHbs = molecule.loops.get(loop).hbs;
+			loopHbs.each(function (hb) {
 				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp);
 				count++;
 			});
 		} else {
-			Set.each(fr_ids, function (id) {
+			Set.each(frIds, function (id) {
 				xy0.add_(molecule.atoms.get(id).pp);
 				count++;
 			});
@@ -93,14 +93,15 @@ TemplateTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 TemplateTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, rnd = _E_.render;
+	var _E_ = this.editor;
+	var rnd = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		var ci = _DC_.item;
 		var pos0;
 		var pos1 = rnd.page2obj(event);
-		var angle, extra_bond;
-		var self = this;
+		var angle;
+		var extraBond;
 
 		_DC_.mouse_moved = true;
 
@@ -109,16 +110,14 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 			pos0 = _DC_.xy0;
 		} else if (ci.map == 'atoms') {
 			pos0 = rnd.atomGetPos(ci.id);
-			extra_bond = Vec2.dist(pos0, pos1) > 1;
+			extraBond = Vec2.dist(pos0, pos1) > 1;
 		} else if (ci.map == 'bonds') {
 			var molecule = rnd.ctab.molecule;
 			var bond = molecule.bonds.get(ci.id);
 			var sign = this._getSign(molecule, bond, pos1);
 
-			if (_DC_.sign1 * this.template.sign > 0) {
+			if (_DC_.sign1 * this.template.sign > 0)
 				sign = -sign;
-			}
-
 			if (sign != _DC_.sign2 || !_DC_.action) {
 				// undo previous action
 				if ('action' in _DC_) _DC_.action.perform();
@@ -135,7 +134,7 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 		// check if anything changed since last time
 		if ('angle' in _DC_ && _DC_.angle == degrees) {
 			if ('extra_bond' in _DC_) {
-				if (_DC_.extra_bond == extra_bond)
+				if (_DC_.extra_bond == extraBond)
 					return true;
 			} else {
 				return true;
@@ -155,11 +154,11 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 			_DC_.action = Action.fromTemplateOnAtom(
 				ci.id,
 				angle,
-				extra_bond,
+				extraBond,
 				this.template,
 				this._calcAngle
 			);
-			_DC_.extra_bond = extra_bond;
+			_DC_.extra_bond = extraBond;
 		}
 		rnd.update();
 		return true;
@@ -168,7 +167,8 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 	return true;
 };
 TemplateTool.prototype.OnMouseUp = function (event) {
-	var _E_ = this.editor, _R_ = _E_.render;
+	var _E_ = this.editor;
+	var _R_ = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		var ci = _DC_.item;
@@ -189,9 +189,9 @@ TemplateTool.prototype.OnMouseUp = function (event) {
 					);
 				} else if (degree == 1) { // on chain end
 					var molecule = _R_.ctab.molecule;
-					var nei_id = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
+					var neiId = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
 					var atom = molecule.atoms.get(ci.id);
-					var nei = molecule.atoms.get(nei_id);
+					var nei = molecule.atoms.get(neiId);
 
 					_DC_.action = Action.fromTemplateOnAtom(
 						ci.id,

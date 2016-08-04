@@ -48,15 +48,16 @@ ReactionMapTool.prototype.OnMouseUp = function (event) {
 		if (ci && ci.map == 'atoms' && this._isValidMap(this.dragCtx.item.id, ci.id)) {
 			var action = new Action();
 			var atoms = rnd.ctab.molecule.atoms;
-			var atom1 = atoms.get(this.dragCtx.item.id), atom2 = atoms.get(ci.id);
-			var aam1 = atom1.aam, aam2 = atom2.aam;
+			var atom1 = atoms.get(this.dragCtx.item.id);
+			var atom2 = atoms.get(ci.id);
+			var aam1 = atom1.aam;
+			var aam2 = atom2.aam;
 			if (!aam1 || aam1 != aam2) {
-				if (aam1 && aam1 != aam2 || !aam1 && aam2) {
+				if (aam1 && aam1 != aam2 || !aam1 && aam2) { // eslint-disable-line no-mixed-operators
 					atoms.each(
 					function (aid, atom) {
-						if (aid != this.dragCtx.item.id && (aam1 && atom.aam == aam1 || aam2 && atom.aam == aam2)) {
+						if (aid != this.dragCtx.item.id && (aam1 && atom.aam == aam1 || aam2 && atom.aam == aam2)) // eslint-disable-line no-mixed-operators
 							action.mergeWith(Action.fromAtomsAttrs(aid, { aam: 0 }));
-						}
 					},
 						this
 					);

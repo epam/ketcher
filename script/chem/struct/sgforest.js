@@ -11,7 +11,9 @@ var SGroupForest = function (molecule) {
 
 // returns an array or s-group ids in the order of breadth-first search
 SGroupForest.prototype.getSGroupsBFS = function () {
-	var order = [], queue = [], id = -1;
+	var order = [];
+	var queue = [];
+	var id = -1;
 	queue = [].slice.call(this.children.get(-1));
 	while (queue.length > 0) {
 		var id = queue.shift();
@@ -29,7 +31,8 @@ SGroupForest.prototype.getAtomSets = function () {
 
 SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
 	// find the lowest superset in the hierarchy
-	var isStrictSuperset = new Map(), isSubset = new Map();
+	var isStrictSuperset = new Map();
+	var isSubset = new Map();
 	var atomSets = this.getAtomSets();
 	atomSets.unset(newId);
 	atomSets.each(function (id, atomSet) {
@@ -41,18 +44,17 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, a
 			return false;
 		if (this.children.get(id).findIndex(function (childId) {
 			return isSubset.get(childId);
-		}, this) >= 0) {
+		}, this) >= 0)
 			return false;
-		}
 		return true;
 	}, this);
 	util.assert(parents.length <= 1); // there should be only one parent
-	var children = atomSets.findAll(function (id, set) {
+	var children = atomSets.findAll(function (id) {
 		return isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id));
 	}, this);
 	return {
-		'children': children,
-		'parent': parents.length === 0 ? -1 : parents[0]
+		children: children,
+		parent: parents.length === 0 ? -1 : parents[0]
 	};
 };
 
@@ -81,10 +83,12 @@ SGroupForest.prototype.validate = function () {
 	// 2) siblings have disjoint atom sets
 	this.children.each(function (parentId) {
 		var list = this.children.get(parentId);
-		for (var i = 0; i < list.length; ++i)
-			for (var j = i + 1; j < list.length; ++j)
+		for (var i = 0; i < list.length; ++i) {
+			for (var j = i + 1; j < list.length; ++j) {
 				if (!Set.disjoint(atomSets.get(list[i]), atomSets.get(list[j])))
 					valid = false;
+			}
+		}
 	}, this);
 	return valid;
 };

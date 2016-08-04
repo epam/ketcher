@@ -58,7 +58,7 @@
     "postinstall": "guppy pre-commit || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1",
     "lint" : "eslint script",
-    "nibble": "eslint-nibble script/editor"
+    "nibble": "eslint-nibble script"
   },
   "dependencies": {
     "es5-shim": "^4.5.7",

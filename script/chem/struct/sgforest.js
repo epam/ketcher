@@ -16,7 +16,7 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 	var id = -1;
 	queue = [].slice.call(this.children.get(-1));
 	while (queue.length > 0) {
-		var id = queue.shift();
+		id = queue.shift();
 		queue = queue.concat(this.children.get(id));
 		order.push(id);
 	}
@@ -29,7 +29,7 @@ SGroupForest.prototype.getAtomSets = function () {
 	});
 };
 
-SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */, atomSets /* Map of Set */) {
+SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
 	// find the lowest superset in the hierarchy
 	var isStrictSuperset = new Map();
 	var isSubset = new Map();

@@ -65,7 +65,10 @@ ReactionMapTool.prototype.OnMouseUp = function (event) {
 				if (aam1) {
 					action.mergeWith(Action.fromAtomsAttrs(ci.id, { aam: aam1 }));
 				} else {
-					var aam = 0; atoms.each(function (aid, atom) { aam = Math.max(aam, atom.aam || 0); });
+					var aam = 0;
+					atoms.each(function (aid, atom) {
+						aam = Math.max(aam, atom.aam || 0);
+					});
 					action.mergeWith(Action.fromAtomsAttrs(this.dragCtx.item.id, { aam: aam + 1 }));
 					action.mergeWith(Action.fromAtomsAttrs(ci.id, { aam: aam + 1 }));
 				}

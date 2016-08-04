@@ -126,7 +126,9 @@ SGroup.clone = function (sgroup, aidMap) {
 
 	for (var field in sgroup.data) // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
-	cp.atoms = sgroup.atoms.map(function (elem) { return aidMap[elem]; });
+	cp.atoms = sgroup.atoms.map(function (elem) {
+		return aidMap[elem];
+	});
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
@@ -215,7 +217,7 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 };
 
 SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) {
-	var bracketParams = function (c, d, w, h) {
+	var BracketParams = function (c, d, w, h) {
 		this.c = c;
 		this.d = d;
 		this.n = d.rotateSC(1, 0);
@@ -232,7 +234,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 			var cr = Vec2.lc2(d, bb.p1.x, n, 0.5 * (bb.p0.y + bb.p1.y));
 			var bracketHeight = bb.sz().y;
 
-			brackets.push(new bracketParams(cl, d.negated(), bracketWidth, bracketHeight), new bracketParams(cr, d, bracketWidth, bracketHeight));
+			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
 		})();
 	} else if (xbonds.length === 2) {
 		(function () {
@@ -263,9 +265,10 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 			tl = Math.max(tl + 0.2, 0);
 			tr = Math.max(tr + 0.2, 0);
 			tt = Math.max(Math.max(tt, tb) + 0.1, 0);
-			var bracketWidth = 0.25, bracketHeight = 1.5 + tt;
-			brackets.push(new bracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
-			new bracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight));
+			var bracketWidth = 0.25;
+			var bracketHeight = 1.5 + tt;
+			brackets.push(new BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
+			new BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight));
 		})();
 	} else {
 		(function () {
@@ -273,7 +276,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
 				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
-				brackets.push(new bracketParams(c, d, 0.2, 1.0));
+				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
 		})();
 	}

@@ -196,7 +196,7 @@ function fromBondAttrs(id, attrs, flip, reset) {
 	return action.perform();
 }
 
-function fromSelectedBondsAttrs(attrs, flips) {
+function fromSelectedBondsAttrs(attrs, flips) { // eslint-disable-line no-unused-vars
 	var action = new Action();
 
 	attrs = new Hash(attrs);
@@ -344,7 +344,9 @@ function fromBondAddition(bond, begin, end, pos, pos2) {
 			var frid2 = ui.render.atomGetAttr(end, 'fragment');
 			mergeFragments(action, frid, frid2);
 		}
-	} if (frid == null)
+	}
+
+	if (frid == null)
 		frid = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 
 	if (!Object.isNumber(begin)) {
@@ -390,7 +392,7 @@ function fromArrowDeletion(id) {
 	return action.perform();
 }
 
-function fromChiralFlagAddition(pos) {
+function fromChiralFlagAddition(pos) {  // eslint-disable-line no-unused-vars
 	var action = new Action();
 	if (ui.render.ctab.chiralFlags.count() < 1)
 		action.addOp(new op.ChiralFlagAdd(pos).perform(ui.editor));
@@ -440,13 +442,12 @@ function fromAtomDeletion(id) {
 
 	action = action.perform();
 
-	action.mergeWith(fromFragmentSplit(frid));
+	action.mergeWith(new FromFragmentSplit(frid));
 
 	return action;
 }
 
-function fromBondDeletion(id)
-{
+function fromBondDeletion(id) {
 	var action = new Action();
 	var bond = ui.ctab.bonds.get(id);
 	var frid = ui.ctab.atoms.get(bond.begin).fragment;
@@ -472,12 +473,12 @@ function fromBondDeletion(id)
 
 	action = action.perform();
 
-	action.mergeWith(fromFragmentSplit(frid));
+	action.mergeWith(new FromFragmentSplit(frid));
 
 	return action;
 }
 
-function fromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need something else in future
+function FromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(ui.ctab.rgroups, frid);
 	ui.ctab.atoms.each(function (aid, atom) {
@@ -502,12 +503,12 @@ function fromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need 
 	return action;
 }
 
-function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {
+function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {  // eslint-disable-line no-unused-vars
 	var action = new Action();
 
 	/*
 	 atoms.each(function (aid)
-	 {
+	 {function fromFragmentSplit(frid)function fromFragmentSplit(frid)
 	 ui.render.atomGetNeighbors(aid).each(function (nei)
 	 {
 	 if (ui.selection.bonds.indexOf(nei.bid) == -1)
@@ -541,7 +542,7 @@ function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {
 		action.addOp(new op.RxnPlusDelete(id));
 	}, this);
 
-	action.mergeWith(new fromFragmentSplit(-1));
+	action.mergeWith(new FromFragmentSplit(-1));
 
 	return action;
 }
@@ -623,7 +624,7 @@ function fromFragmentDeletion(selection) {
 
 	action = action.perform();
 
-	while (frids.length > 0) action.mergeWith(new fromFragmentSplit(frids.pop()));
+	while (frids.length > 0) action.mergeWith(new FromFragmentSplit(frids.pop()));
 
 	action.mergeWith(actionRemoveDataSGroups);
 
@@ -867,8 +868,6 @@ function fromTemplateOnBond(bid, template, calcAngle, flip) {
 	// calc angle
 	var angle = calcAngle(begin.pp, end.pp) - calcAngle(frBegin.pp, frEnd.pp);
 	var scale = Vec2.dist(begin.pp, end.pp) / Vec2.dist(frBegin.pp, frEnd.pp);
-
-	var xy0 = frBegin.pp;
 
 	frag.atoms.each(function (id, a) {
 		var attrs = Struct.Atom.getAttrHash(a).toObject();

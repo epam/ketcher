@@ -138,7 +138,7 @@ Editor.prototype.setupEvents = function () {
 	});
 	// END
 
-	clientArea.observe('onresize', function (event) {
+	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
 		render.onResize();
 	});
 

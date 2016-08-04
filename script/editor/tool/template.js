@@ -166,7 +166,7 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
-TemplateTool.prototype.OnMouseUp = function (event) {
+TemplateTool.prototype.OnMouseUp = function () {
 	var _E_ = this.editor;
 	var _R_ = _E_.render;
 	if ('dragCtx' in this) {

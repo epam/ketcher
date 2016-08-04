@@ -11,16 +11,14 @@ SelectionHelper.prototype.setSelection = function (selection, add) {
 		this.selection = {};
 		for (var map1 in ReStruct.maps) this.selection[map1] = []; // TODO it should NOT be mandatory
 	}
-	if (selection && 'id' in selection && 'map' in selection) {
+	if (selection && 'id' in selection && 'map' in selection)
 		(selection[selection.map] = selection[selection.map] || []).push(selection.id);
-	}
 	if (selection) {
 		for (var map2 in this.selection) {
 			if (map2 in selection) {
 				for (var i = 0; i < selection[map2].length; i++) {
-					if (this.selection[map2].indexOf(selection[map2][i]) < 0) {
+					if (this.selection[map2].indexOf(selection[map2][i]) < 0)
 						this.selection[map2].push(selection[map2][i]);
-					}
 				}
 			}
 		}
@@ -37,8 +35,8 @@ SelectionHelper.prototype.isSelected = function (item) {
 		var atoms = item.map == 'frags' ?
 			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
-		return !Object.isUndefined(this.selection['atoms'])
-			 && Set.subset(Set.fromList(atoms), Set.fromList(this.selection['atoms']));
+		return !Object.isUndefined(this.selection['atoms']) &&
+			Set.subset(Set.fromList(atoms), Set.fromList(this.selection['atoms']));
 	}
 	return 'selection' in this && !Object.isUndefined(this.selection[item.map]) &&
 	this.selection[item.map].indexOf(item.id) > -1;

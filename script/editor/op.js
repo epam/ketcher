@@ -100,7 +100,8 @@ function AtomAttr(aid, attribute, value) {
 	this._invert = function () {
 		var ret = new AtomAttr();
 		ret.data = this.data2;
-		ret.data2 = this.data; return ret;
+		ret.data2 = this.data;
+		return ret;
 	};
 }
 AtomAttr.prototype = new Base();

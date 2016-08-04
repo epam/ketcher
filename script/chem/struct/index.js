@@ -881,7 +881,7 @@ Struct.prototype.getComponents = function () {
 	for (i = 0; i < components.length; ++i) {
 		if (!components[i]) {
 			submolTexts.push('');
-			continue;
+			continue; // eslint-disable-line no-continue
 		}
 		bb = this.getCoordBoundingBox(components[i]);
 		c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);

@@ -311,8 +311,7 @@ Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int t
 		}
 
 		stereocenter.pyramid[3] = edgeIds[3].nei_idx;
-	}
-	else if (degree == 3) {
+	} else if (degree == 3) {
 		// sort by neighbor atom index (ascending)
 		if (edgeIds[0].rank > edgeIds[1].rank)
 			swap(edgeIds, 0, 1);

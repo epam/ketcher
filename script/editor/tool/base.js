@@ -22,7 +22,9 @@ EditorTool.prototype.OnMouseMove = function () {};
 EditorTool.prototype.OnMouseUp = function () {};
 EditorTool.prototype.OnClick = function () {};
 EditorTool.prototype.OnDblClick = function () {};
-EditorTool.prototype.OnMouseLeave = function () { this.OnCancel(); };
+EditorTool.prototype.OnMouseLeave = function () {
+	this.OnCancel();
+};
 EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
 EditorTool.prototype.OnMouseDown0 = function (event) {
 	this.OnMouseDown0.lastEvent = event;

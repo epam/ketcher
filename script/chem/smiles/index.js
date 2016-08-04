@@ -268,8 +268,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 
 				if (branches > 1) {
 					if (this.atoms[vPrevIdx].branch_cnt < branches - 1) {
-						if (walk.edgeClosingCycle(eIdx))
+						if (walk.edgeClosingCycle(eIdx)) {
 							this.atoms[vPrevIdx].paren_written = false;
+						}
 						else {
 							this.smiles += '(';
 							this.atoms[vPrevIdx].paren_written = true;
@@ -688,12 +689,12 @@ Smiles.prototype._writeRadicals = function (mol) {
 
 	for (i = 0; i < this._written_atoms.size(); i++) {
 		if (marked[i])
-			continue;
+			continue; // eslint-disable-line no-continue
 
 		var radical = mol.atoms.get(this._written_atoms[i]).radical;
 
 		if (radical == 0)
-			continue;
+			continue; // eslint-disable-line no-continue
 
 		if (this.comma) {
 			this.smiles += ',';

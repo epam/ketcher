@@ -143,7 +143,7 @@ input[type=reset], input[type=button] {
 }
 
 select, textarea,
-input[type=text] {
+input[type=text], input[type=search] {
 	.control;
 	display: inline-block;
 	//display: block;
@@ -209,18 +209,31 @@ legend {
 	font-size: 0.9em;
 }
 
-/////////////////////
+//////
 
-#custom_templates {
-	>ul, .outer {
+.custom-templates {
+	.outer {
+		margin-top: 3.5em;
 		padding: 0;
-		//width: 25em;
+		//margin-left: 12em;
+		float: left;
 		width: 350px;
 		height: 18em;
 		overflow: auto;
 	}
 	.groups {
-
+		margin-top: 3.5em;
+		height: 18em;
+		width: 11em;
+		float: left;
+	}
+	label {
+		position: absolute;
+		right: 0;
+		left: 0;
+	}
+	input[type=search] {
+		width: 100%;
 	}
 	li {
 		padding: 10px 0;

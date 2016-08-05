@@ -374,9 +374,8 @@ function createDialog(name, container) {
 
 function showDialog (name) {
 	var cover = $$('.overlay')[0];
-	var dialog = cover.querySelector('form#' + name) || createDialog(name, cover);
+	var dialog = createDialog(name, cover);
 	keymage.setScope('modal');
-	dialog.style.display = '';
 	cover.style.display = '';
 
 	utils.animate(cover, 'show');
@@ -386,21 +385,35 @@ function showDialog (name) {
 
 function hideDialog (name) {
 	var cover = $$('.overlay')[0];
-	var dn = name.replace(/([A-Z])/g, function (l) {
-		return '-' + l.toLowerCase();
-	});
-	var dialog = cover.querySelector('form.' + dn) || $(name);
+	var dialog = cover.lastChild;
 
 	utils.animate(cover, 'hide');
 	utils.animate(dialog, 'hide').then(function () {
 		cover.style.display = 'none';
-		if (cover.querySelector('form.' + dn))
-			dialog.remove();
-		else
-			dialog.style.display = 'none';
+		dialog.remove();
 		keymage.setScope('editor');
 	});
 };
+
+function dialog(modal, params) {
+	var cover = $$('.overlay')[0];
+	cover.style.display = '';
+	keymage.setScope('modal');
+
+	function close() {
+		keymage.setScope('editor');
+		cover.style.display = 'none';
+		// TODO: remove
+	}
+	return new Promise(function (resolve, reject) {
+		utils.animate(cover, 'show').then(function () {
+			modal(Object.assign({
+				onOk: function (res) { close(); resolve(res); },
+				onCancel: function (res) { close(); reject(res); }
+			}, params));
+		});
+	});
+}
 
 function echo (message) {
 	// TODO: make special area for messages
@@ -677,12 +690,10 @@ function genericsTable () {
 };
 
 function templateCustom () {
-	modal.templates('', {
-		onOk: function (tmpl) {
+	dialog(modal.templates.bind(modal, '')).then(function (tmpl) {
 			// C doesn't conflict with menu id
 			selectAction('template-C', tmpl);
 			return true;
-		}
 	});
 };
 

@@ -151,7 +151,7 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 
 gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], function() {
 	gulp.watch('style/**.less', ['style']);
-	gulp.watch('templates/**', ['html']);
+	gulp.watch('template/**', ['html']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
 		cp.spawn('gulp', ['serve'], { stdio: 'inherit' });
 		process.exit();

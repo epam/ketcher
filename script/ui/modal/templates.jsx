@@ -36,7 +36,7 @@ function parseSdf (sdf) {
 
 		entries.each(entry => {
 			entry = entry.strip();
-			var m = entry.match(/^> {1,3}<(\S+)>/);
+			var m = entry.match(/^> [ \d]*<(\S+)>/);
 			if (m) {
 				var lines = entry.split('\n');
 				var field = m[1].strip();
@@ -69,6 +69,19 @@ function fetchTemplateCustom (base_url) {
 	});
 }
 
+function DialogCommon ({ children, caption, name }) {
+	return (
+			<form role="dialog" className={name}>
+			<header>{caption}</header>
+			{ children }
+			<footer>
+			<input type="button" value="Cancel"/>
+			<input type="button" value="OK"/>
+			</footer>
+			</form>
+	);
+}
+
 function renderTmpl(el, tmpl) {
 	if (tmpl.prerender)
 		el.innerHTML = tmpl.prerender;
@@ -89,26 +102,8 @@ function renderTmpl(el, tmpl) {
 	}
 }
 
-function eachAsync(list, process, timeGap, startTimeGap) {
-	return new Promise(resolve => {
-		var i = 0;
-		var n = list.length;
-		function iterate() {
-			if (i < n) {
-				process(list[i], i++);
-				setTimeout(iterate, timeGap);
-			} else {
-				resolve();
-			}
-		}
-		setTimeout(iterate, startTimeGap || timeGap);
-	});
-}
-
 function dialog2(base_url, params) {
-	var dlg = ui.showDialog('custom_templates');
-	var selectedLi = dlg.select('.selected')[0];
-	var ul = dlg.select('ul')[0];
+	var overlay = $$('.overlay')[0];
 
 	fetchTemplateCustom(base_url).then(templates => {
 		// renders a single row
@@ -122,25 +117,18 @@ function dialog2(base_url, params) {
 				res.push(group);
 			return res;
 		}, []);
-		console.info('Groups', groups);
 
 		render((
+				<DialogCommon caption="Custom Templates" name="custom-templates">
+				<label>
+				<input type="search" placeholder="Filter" />
+				</label>
+				<select size="10" class="groups">
+				{ groups.map(group => (<option>{group}</option>)) }
+				</select>
 				<VisibleView data={templates} rowHeight={120} renderRow={Row} />
-		), ul);
-	});
-
-	dlg.on('click', 'input', (_, input) => {
-		var mode = input.value,
-		key = 'on' + input.value.capitalize(),
-		res;
-		if (mode == 'OK') {
-			console.assert(selectedLi, 'No element selected');
-			var ind = selectedLi.previousSiblings().size();
-			res = custom_templates[ind];
-		}
-		ui.hideDialog('custom_templates');
-		if (params && key in params)
-			params[key](res);
+			</DialogCommon>
+		), overlay);
 	});
 }
 

@@ -403,7 +403,10 @@ function dialog(modal, params) {
 	function close() {
 		keymage.setScope('editor');
 		cover.style.display = 'none';
-		// TODO: remove
+		// var node = this.getDOMNode();
+		// React.unmountComponentAtNode(node);
+		var dialog = cover.lastChild;
+		dialog.remove();
 	}
 	return new Promise(function (resolve, reject) {
 		utils.animate(cover, 'show').then(function () {
@@ -691,9 +694,10 @@ function genericsTable () {
 
 function templateCustom () {
 	dialog(modal.templates.bind(modal, '')).then(function (tmpl) {
-			// C doesn't conflict with menu id
-			selectAction('template-C', tmpl);
-			return true;
+		// C doesn't conflict with menu id
+		console.info('result', tmpl);
+		selectAction('template-C', tmpl);
+		return true;
 	});
 };
 

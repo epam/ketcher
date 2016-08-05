@@ -1,14 +1,12 @@
-import molfile from '../../chem/molfile';
-import ajax from '../../util/ajax.js';
-import VisibleView from './visibleview';
-
 // import ReactDOM from 'react-dom';
 // import React from 'react';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-var ui = global.ui;
+import molfile from '../../chem/molfile';
+import ajax from '../../util/ajax.js';
+import VisibleView from './visibleview';
 
 import Render from '../../render';
 
@@ -69,14 +67,21 @@ function fetchTemplateCustom (base_url) {
 	});
 }
 
-function DialogCommon ({ children, caption, name }) {
+function DialogCommon ({ children, caption, name, params={}, result=() => null, valid=() => true }) {
+	function exit(mode) {
+		var key = 'on' + mode.capitalize();
+		var res = result();
+		console.info(mode);
+		if (params && key in params)
+			params[key](res);
+	}
 	return (
 			<form role="dialog" className={name}>
 			<header>{caption}</header>
 			{ children }
 			<footer>
-			<input type="button" value="Cancel"/>
-			<input type="button" value="OK"/>
+			<input type="button" onClick={() => exit('Cancel')} value="Cancel"/>
+			<input type="button" disabled={!valid()} onClick={() => exit('OK')} value="OK"/>
 			</footer>
 			</form>
 	);
@@ -102,78 +107,95 @@ function renderTmpl(el, tmpl) {
 	}
 }
 
-function dialog2(base_url, params) {
-	var overlay = $$('.overlay')[0];
+class Comp extends Component {
+	constructor({params, templates}) {
+		super();
+		this.all = templates;
+		this.params = params;
+		var groups = this.getGroups();
 
-	fetchTemplateCustom(base_url).then(templates => {
-		// renders a single row
-		var Row = row => (
-				<li class="row" ref={ el => renderTmpl(el, row) }>loading..</li>
-		);
+		this.state.selected = null;
+		this.state.selectedGroup = groups[0];
+		this.state.filter = '';
+		console.info(this.state);
+	}
 
-		var groups = templates.reduce(function (res, tmpl) {
+	getGroups() {
+		console.info('groups', this.state);
+		return this.getFilter().reduce(function (res, tmpl) {
 			var group = tmpl.group || 'Ungroupt';
 			if (!res.includes(group))
 				res.push(group);
 			return res;
 		}, []);
+	}
 
-		render((
-				<DialogCommon caption="Custom Templates" name="custom-templates">
-				<label>
-				<input type="search" placeholder="Filter" />
-				</label>
-				<select size="10" class="groups">
-				{ groups.map(group => (<option>{group}</option>)) }
-				</select>
-				<VisibleView data={templates} rowHeight={120} renderRow={Row} />
-			</DialogCommon>
-		), overlay);
-	});
-}
+	getFilter() {
+		console.info('filter', this.state);
+		if (!this.state.filter)
+			return this.all;
+		var re = RegExp(this.state.filter, 'i');
+		return this.all.filter(tmpl => tmpl.name.search(re) != -1);
+	}
 
-function dialog (base_url, params) {
-	var dlg = ui.showDialog('custom_templates'),
-	    selectedLi = dlg.select('.selected')[0],
-	okButton = dlg.select('[value=OK]')[0],
-	ul = dlg.select('ul')[0];
-
-	if (ul.children.length === 0) { // first time
-		$('loading').style.display = '';
-		dlg.addClassName('loading');
-		var loading = initTemplateCustom(ul, base_url).then(() => {
-			$('loading').style.display = 'none';
-			dlg.removeClassName('loading');
-		});
-
-		loading.then(() => {
-			okButton.disabled = true;
-			dlg.on('click', 'li', (_, li) => {
-				if (selectedLi == li)
-					okButton.click();
-				else {
-					if (selectedLi)
-						selectedLi.removeClassName('selected');
-					else
-						okButton.disabled = false;
-					li.addClassName('selected');
-					selectedLi = li;
-				}
-			});
-			dlg.on('click', 'input', (_, input) => {
-				var mode = input.value,
-				key = 'on' + input.value.capitalize(),
-				res;
-				if (mode == 'OK') {
-					console.assert(selectedLi, 'No element selected');
-					var ind = selectedLi.previousSiblings().size();
-					res = custom_templates[ind];
-				}
-				ui.hideDialog('custom_templates');
-				if (params && key in params)
-					params[key](res);
-			});
+	getTemplates() {
+		console.info('templates', this.state);
+		if (!this.getGroups().includes(this.state.selectedGroup))
+			return this.getFilter();
+		return this.getFilter().filter(tmpl => {
+			var group = tmpl.group || 'Ungroupt';
+			return this.state.selectedGroup == group;
 		});
 	}
+
+	select(tmpl) {
+		if (tmpl == this.state.selected)
+			this.params.onOk(tmpl);
+		else
+			this.setState({ selected: tmpl });
+	}
+
+	selectGroup(select) {
+		var group = select.options[select.selectedIndex].value;
+		this.setState({
+			selectedGroup: group,
+			selected: null
+		});
+	}
+
+	setFilter(filter) {
+		this.setState({
+			filter: filter,
+			selected: null           // TODO: change this
+		});
+	}
+
+	render (props, {selected, selectedGroup, filter}) {
+		console.info('all rerender');
+		var Row = row => (
+				<li class={row == selected ? 'selected' : ''} onClick={() => this.select(row)} ref={ el => renderTmpl(el, row) }>loading..</li>
+		);
+
+		return (
+				<DialogCommon caption="Custom Templates" name="custom-templates" params={props.params} result={() => selected} valid={() => !!selected}>
+				<label>
+				<input type="search" placeholder="Filter" value={filter} onInput={(ev) => this.setFilter(ev.target.value)} />
+				</label>
+				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)}>
+				{ this.getGroups().map(group => (<option>{group}</option>)) }
+			  </select>
+				<VisibleView data={this.getTemplates()} rowHeight={120} renderRow={Row} />
+				</DialogCommon>
+		);
+	}
 }
-export default dialog2;
+
+export default function dialog(base_url, params) {
+	var overlay = $$('.overlay')[0];
+	fetchTemplateCustom(base_url).then(templates => {
+		// renders a single row
+		return render((
+				<Comp params={params} templates={templates}/>
+		), overlay);
+	});
+};

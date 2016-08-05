@@ -34,7 +34,7 @@ var clientArea = null;
 var server;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-custom'];
+                     'reaction-automap', 'template-lib'];
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -692,7 +692,7 @@ function genericsTable () {
 	});
 };
 
-function templateCustom () {
+function templateLib () {
 	dialog(modal.templates.bind(modal, '')).then(function (tmpl) {
 		// C doesn't conflict with menu id
 		console.info('result', tmpl);
@@ -715,7 +715,7 @@ var actionMap = {
 	dearom: dearomatize,
 	'period-table': elemTable,
 	'generic-groups': genericsTable,
-	'template-custom': templateCustom,
+	'template-lib': templateLib,
 	cut: function () {
 		var struct = ui.editor.getSelectionStruct();
 		removeSelected();

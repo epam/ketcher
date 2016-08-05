@@ -54,7 +54,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	return SGroupDraw[sgroup.type](remol, sgroup);
 };
 
-function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) {
+function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerIndexText, upperIndexText, indexAttribute) { // eslint-disable-line max-params
 	var brackets = Struct.SGroup.getBracketParameters(render.ctab.molecule, xbonds, atomSet, bb, d, n, render, sg.id);
 	var ir = -1;
 	for (var i = 0; i < brackets.length; ++i) {
@@ -175,7 +175,7 @@ function showValue(paper, pos, sg, settings) {
 	return st;
 }
 
-function drawGroupDat(remol, sgroup) {
+function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 	var render = remol.render;
 	var settings = render.settings;
 	var paper = render.paper;
@@ -227,7 +227,7 @@ var SGroupDraw = {
 	GEN: drawGroupGen
 };
 
-ReSGroup.prototype.drawHighlight = function (render) {
+ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line max-statements
 	var styles = render.styles;
 	var settings = render.settings;
 	var paper = render.paper;

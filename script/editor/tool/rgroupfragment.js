@@ -6,11 +6,11 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var RGroupFragmentTool = function (editor) {
+function RGroupFragmentTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 
 RGroupFragmentTool.prototype = new EditorTool();
 RGroupFragmentTool.prototype.OnMouseMove = function (event) {

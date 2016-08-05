@@ -7,7 +7,7 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var TemplateTool = function (editor, template) {
+function TemplateTool(editor, template) {
 	this.editor = editor;
 	this.template = template;
 
@@ -31,7 +31,7 @@ var TemplateTool = function (editor, template) {
 	}
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 TemplateTool.prototype = new EditorTool();
 TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	var begin = molecule.atoms.get(bond.begin).pp;
@@ -43,7 +43,7 @@ TemplateTool.prototype._getSign = function (molecule, bond, v) {
 	if (sign < 0) return -1;
 	return 0;
 };
-TemplateTool.prototype.OnMouseDown = function (event) {
+TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var _E_ = this.editor;
 	var rnd = _E_.render;
 	this._hoverHelper.hover(null);
@@ -92,7 +92,7 @@ TemplateTool.prototype.OnMouseDown = function (event) {
 	}
 	return true;
 };
-TemplateTool.prototype.OnMouseMove = function (event) {
+TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	var _E_ = this.editor;
 	var rnd = _E_.render;
 	if ('dragCtx' in this) {
@@ -166,7 +166,7 @@ TemplateTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
-TemplateTool.prototype.OnMouseUp = function () {
+TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-statements
 	var _E_ = this.editor;
 	var _R_ = _E_.render;
 	if ('dragCtx' in this) {
@@ -224,7 +224,7 @@ TemplateTool.prototype.OnMouseUp = function () {
 	}
 };
 TemplateTool.prototype.OnCancel = function () {
-	this.OnMouseUp();
+	this.OnMouseUp(); // eslint-disable-line new-cap
 };
 
 module.exports = TemplateTool;

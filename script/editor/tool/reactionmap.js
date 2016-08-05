@@ -5,7 +5,7 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var ReactionMapTool = function (editor) {
+function ReactionMapTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
@@ -13,7 +13,7 @@ var ReactionMapTool = function (editor) {
 	this.editor._selectionHelper.setSelection(null);
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
-};
+}
 ReactionMapTool.prototype = new EditorTool();
 ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
@@ -41,7 +41,7 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	}
 };
-ReactionMapTool.prototype.OnMouseUp = function (event) {
+ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);

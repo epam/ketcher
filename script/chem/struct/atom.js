@@ -4,7 +4,7 @@ var util = require('../../util');
 var element = require('../element');
 var AtomList = require('./atomlist');
 
-function Atom(params) {
+function Atom(params) { // eslint-disable-line max-statements
 	var def = Atom.attrGetDefault;
 	if (!params || !('label' in params))
 		throw new Error('label must be specified!');
@@ -93,7 +93,7 @@ Atom.attrlist = {
 	aam: 0
 };
 
-var radicalElectrons = function (radical) {
+function radicalElectrons(radical) {
 	radical -= 0;
 	if (radical == Atom.PATTERN.RADICAL.NONE)
 		return 0;
@@ -103,7 +103,7 @@ var radicalElectrons = function (radical) {
 		radical == Atom.PATTERN.RADICAL.TRIPLET)
 		return 2;
 	throw new Error('Unknown radical value');
-};
+}
 
 Atom.prototype.clone = function (fidMap) {
 	var ret = new Atom(this);
@@ -135,7 +135,7 @@ Atom.prototype.hasRxnProps =  function () {
 	return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.attpnt) || this.aam);
 };
 
-Atom.prototype.calcValence = function (conn) {
+Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statements
 	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;
@@ -346,7 +346,7 @@ Atom.prototype.calcValence = function (conn) {
 	return true;
 };
 
-Atom.prototype.calcValenceMinusHyd = function (conn) {
+Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line max-statements
 	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;

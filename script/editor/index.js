@@ -28,24 +28,24 @@ var toolMap = {
 
 var ui = global.ui;
 
-var Editor = function (render) {
+function Editor(render) {
 	this.render = render;
 	this._selectionHelper = new SelectionHelper(this);
 	this._tool = null;
 	this.setupEvents();
-};
+}
 
 Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
 		if (this._tool)
-			this._tool.OnCancel();
+			this._tool.OnCancel(); // eslint-disable-line new-cap
 		this._tool = new toolMap[name](this, opts);
 	}
 	return this._tool;
 };
 
 // Events setup extracted from render
-Editor.prototype.setupEvents = function () {
+Editor.prototype.setupEvents = function () { // eslint-disable-line max-statements
 	var editor = this;
 	var render = this.render;
 	var clientArea = render.clientArea;

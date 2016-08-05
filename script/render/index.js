@@ -42,7 +42,7 @@ var defaultRenderOps = {
 	selectionDistanceCoefficient: 0.4
 };
 
-function Render(clientArea, scale, opt, viewSz) {
+function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements
 	this.opt = Object.assign({}, defaultRenderOps, opt);
 
 	this.useOldZoom = Prototype.Browser.IE;
@@ -63,7 +63,7 @@ function Render(clientArea, scale, opt, viewSz) {
 	this.zoom = 1.0;
 	this.structChangeHandlers = [];
 
-	var render = this;
+	var render = this; // eslint-disable-line no-unused-vars
 	var valueT = 0,
 		valueL = 0;
 	var element = clientArea;
@@ -230,8 +230,8 @@ Render.prototype.atomGetNeighbors = function (aid) {
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
 		var hb = this.ctab.molecule.halfBonds.get(atom.a.neighbors[i]);
 		neiAtoms.push({
-			'aid': hb.end - 0,
-			'bid': hb.bid - 0
+			aid: hb.end - 0,
+			bid: hb.bid - 0
 		});
 	}
 	return neiAtoms;
@@ -342,7 +342,7 @@ Render.prototype.getAdjacentBonds = function (atoms) {
 			Set.add(set, hb.bid);
 		}
 	}
-	return { 'inner': bidSetInner, 'cross': bidSetCross };
+	return { inner: bidSetInner, cross: bidSetCross };
 };
 
 Render.prototype.bondGetAttr = function (bid, name) {
@@ -355,7 +355,7 @@ Render.prototype.setSelection = function (selection) {
 	for (var map in ReStruct.maps) {
 		if (!ReStruct.maps[map].isSelectable())
 			continue; // eslint-disable-line no-continue
-		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
+		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null; // eslint-disable-line no-nested-ternary
 		this.ctab[map].each(function (id, item) {
 			var selected = set ? set[id] === id : item.selected;
 			item.selected = selected;
@@ -368,12 +368,14 @@ Render.prototype.initStyles = function () {
 	// TODO move fonts, dashed lines, etc. here
 	var settings = this.settings;
 	this.styles = {};
+	/* eslint-disable quote-props */
 	this.styles.lineattr = {
 		stroke: '#000',
 		'stroke-width': settings.lineWidth,
 		'stroke-linecap': 'round',
 		'stroke-linejoin': 'round'
 	};
+	/* eslint-enable quote-props */
 	this.styles.selectionStyle = {
 		fill: '#7f7',
 		stroke: 'none'
@@ -438,7 +440,6 @@ Render.prototype._setPaperSize = function (sz) {
 
 Render.prototype.setPaperSize = function (sz) {
 	DEBUG.logMethod('setPaperSize');
-	var oldSz = this.sz;
 	this.sz = sz;
 	this._setPaperSize(sz);
 };
@@ -560,7 +561,7 @@ Render.prototype.drawSelectionPolygon = function (r) {
 	}
 };
 
-Render.prototype.isPointInPolygon = function (r, p) {
+Render.prototype.isPointInPolygon = function (r, p) { // eslint-disable-line max-statements
 	var d = new Vec2(0, 1);
 	var n = d.rotate(Math.PI / 2);
 	var v0 = Vec2.diff(r[r.length - 1], p);
@@ -588,7 +589,7 @@ Render.prototype.isPointInPolygon = function (r, p) {
 				flag1 = true;
 			}
 		}
-		if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2(w0, n) >= 0)
+		if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2(w0, n) >= 0) // eslint-disable-line new-cap
 			flag1 = false;
 		if (flag1)
 			counter++;
@@ -605,7 +606,7 @@ Render.prototype.ps = function (pp) {
 	return pp.scaled(this.settings.scaleFactor);
 };
 
-Render.prototype.getElementsInPolygon = function (rr) {
+Render.prototype.getElementsInPolygon = function (rr) { // eslint-disable-line max-statements
 	DEBUG.logMethod('getElementsInPolygon');
 	var bondList = [];
 	var atomList = [];
@@ -702,7 +703,7 @@ Render.prototype.testPolygon = function (rr) {
 	this.drawSelectionPolygon(rr);
 };
 
-Render.prototype.update = function (force) {
+Render.prototype.update = function (force) { // eslint-disable-line max-statements
 	DEBUG.logMethod('update');
 
 	if (!this.settings || this.dirty) {
@@ -843,9 +844,9 @@ Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a
 	return null;
 };
 
-Render.prototype.findClosestItem = function (pos, maps, skip) {
+Render.prototype.findClosestItem = function (pos, maps, skip) { // eslint-disable-line max-statements
 	var ret = null;
-	var updret = function (type, item, force) {
+	function updret(type, item, force) {
 		if (item != null && (ret == null || ret.dist > item.dist || force)) {
 			ret = {
 				type: type,
@@ -853,7 +854,7 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 				dist: item.dist
 			};
 		}
-	};
+	}
 
 	// TODO make it "map-independent", each object should be able to "report" its distance to point (something like ReAtom.dist(point))
 	if (!maps || maps.indexOf('atoms') >= 0) {
@@ -938,7 +939,7 @@ Render.prototype.recoordinate = function (rp, vp) {
 	this.setScrollOffset(so.x, so.y);
 };
 
-Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
+Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements
 	var ex = 0,
 		ey = 0,
 		dx = 0,
@@ -993,7 +994,7 @@ Render.prototype.setViewBox = function (z) {
 		this.setScale(z);
 };
 
-Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
+Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) { // eslint-disable-line max-params
 	bracketWidth = bracketWidth || 0.25;
 	bracketHeight = bracketHeight || 1.0;
 	var a0 = c.addScaled(n, -0.5 * bracketHeight);

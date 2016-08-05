@@ -61,7 +61,7 @@ function request(opts) {
 		options.url = options.url + (options.url.indexOf('?') < 0 ? '?' : '&') + queryString(options.params);
 
 	if (!options.sync) {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve, reject) { // eslint-disable-line no-undef
 			ajax(options, function (xhr) {
 				var complete = successful(xhr) ? resolve : reject;
 				complete(xhr);

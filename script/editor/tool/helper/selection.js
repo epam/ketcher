@@ -3,9 +3,9 @@ var Set = require('../../../util/set');
 
 var ui = global.ui;
 
-var SelectionHelper = function (editor) {
+function SelectionHelper(editor) {
 	this.editor = editor;
-};
+}
 SelectionHelper.prototype.setSelection = function (selection, add) {
 	if (!('selection' in this) || !add) {
 		this.selection = {};
@@ -17,7 +17,7 @@ SelectionHelper.prototype.setSelection = function (selection, add) {
 		for (var map2 in this.selection) {
 			if (map2 in selection) {
 				for (var i = 0; i < selection[map2].length; i++) {
-					if (this.selection[map2].indexOf(selection[map2][i]) < 0)
+					if (this.selection[map2].indexOf(selection[map2][i]) < 0) // eslint-disable-line max-depth
 						this.selection[map2].push(selection[map2][i]);
 				}
 			}

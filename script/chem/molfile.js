@@ -180,7 +180,7 @@ function stripV30(line) {
 	return line.slice(7);
 }
 
-function parseAtomLineV3000(line) {
+function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 	/* reader */
 	var split, subsplit, key, value, i;
 	split = spaceparsplit(line);
@@ -357,7 +357,7 @@ function parsePropertyLineAtomList(hdr, lst) {
 	return ret;
 }
 
-function postLoadMul(sgroup, mol, atomMap) {
+function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statements
 	sgroup.data.mul = sgroup.data.subscript - 0;
 	var atomReductionMap = {};
 
@@ -369,7 +369,7 @@ function postLoadMul(sgroup, mol, atomMap) {
 		for (var m = 0; m < sgroup.patoms.length; ++m) {
 			var raid = sgroup.atoms[k * sgroup.patoms.length + m]; // eslint-disable-line no-mixed-operators
 			if (raid < 0)
-				continue; // eslint-disable-line no-continueSS
+				continue; // eslint-disable-line no-continue
 			if (sgroup.patoms[m] < 0)
 				throw new Error('parent atom missing');
 			//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
@@ -475,7 +475,7 @@ function initSGroup(sGroups, propData) {
 	}
 }
 
-function applySGroupProp(sGroups, propName, propData, numeric, core) {
+function applySGroupProp(sGroups, propName, propData, numeric, core) { // eslint-disable-line max-params
 	var kv = readKeyValuePairs(propData, !(numeric));
 	for (var key in kv)
 		// "core" properties are stored directly in an sgroup, not in sgroup.data
@@ -538,7 +538,7 @@ function applyDataSGroupDesc(sGroups, propData) {
 	sGroup.data.queryOp = queryOp;
 }
 
-function applyDataSGroupInfo(sg, propData) {
+function applyDataSGroupInfo(sg, propData) { // eslint-disable-line max-statements
 	/* reader */
 	var split = partitionLine(propData, [10/* x.x*/, 10/* y.y*/, 4/* eee*/, 1/* f*/, 1/* g*/, 1/* h*/, 3/* i */, 3/* jjj*/, 3/* kkk*/, 3/* ll*/, 2/* m*/, 3/* n*/, 2/* oo*/], false);
 
@@ -588,7 +588,7 @@ function applyDataSGroupDataLine(sGroups, propData, finalize) {
 	applyDataSGroupData(sg, data, finalize);
 }
 
-function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
+function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // eslint-disable-line max-statements, max-params
 	/* reader */
 	var props = new Map();
 	while (shift < end) {
@@ -704,7 +704,7 @@ function applyAtomProp(atoms /* Pool */, values /* Map */, propId /* string */) 
 	});
 }
 
-function parseCTabV2000(ctabLines, countsSplit) {
+function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-statements
 	/* reader */
 	var ctab = new Struct();
 	var i;
@@ -775,7 +775,7 @@ function parseCTabV2000(ctabLines, countsSplit) {
 }
 
 // split a line by spaces outside parentheses
-function spaceparsplit(line) {
+function spaceparsplit(line) { // eslint-disable-line max-statements
 	/* reader */
 	var split = [];
 	var pc = 0;
@@ -811,7 +811,7 @@ function splitonce(line, delim) {
 	return [line.slice(0, p), line.slice(p + 1)];
 }
 
-function splitSGroupDef(line) {
+function splitSGroupDef(line) { // eslint-disable-line max-statements
 	/* reader */
 	var split = [];
 	var braceBalance = 0;
@@ -862,7 +862,7 @@ function v3000parseCollection(ctab, ctabLines, shift) {
 	return shift;
 }
 
-function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
+function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) { // eslint-disable-line max-params, max-statements
 	/* reader */
 	var line = '';
 	shift++;
@@ -920,7 +920,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
 	throw new Error('S-group declaration incomplete.');
 }
 
-function parseCTabV3000(ctabLines, norgroups) {
+function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-statements
 	/* reader */
 	var ctab = new Struct();
 
@@ -980,7 +980,7 @@ function parseCTabV3000(ctabLines, norgroups) {
 	return ctab;
 }
 
-function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
+function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	var rfrags = {};
 	var rLogic = {};
@@ -1146,7 +1146,7 @@ Molfile.prototype.getCTab = function (molecule, rgroups) {
 	return this.molfile;
 };
 
-Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups, preserveIndigoDesc) {
+Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups, preserveIndigoDesc) { // eslint-disable-line max-statements
 	/* saver */
 	this.reaction = molecule.rxnArrows.count() > 0;
 	if (molecule.rxnArrows.count() > 1)
@@ -1294,7 +1294,7 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 	return lines;
 }
 
-function bracketsToMolfile(mol, sg, idstr) {
+function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statements
 	var inBonds = [];
 	var xBonds = [];
 	var atomSet = Set.fromList(sg.atoms);
@@ -1318,7 +1318,7 @@ function bracketsToMolfile(mol, sg, idstr) {
 	return lines;
 }
 
-function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disable-line max-params
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
@@ -1331,7 +1331,7 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 	return lines.join('\n');
 }
 
-function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disable-line max-params
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
@@ -1341,7 +1341,7 @@ function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
 	return lines.join('\n');
 }
 
-function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disable-line max-params
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
@@ -1396,7 +1396,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 	return lines.join('\n');
 }
 
-function saveGenToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
+function saveGenToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disable-line max-params
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
@@ -1414,7 +1414,7 @@ var saveToMolfile = {
 	GEN: saveGenToMolfile
 };
 
-Molfile.prototype.writeCTab2000 = function (rgroups) {
+Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line max-statements
 	/* saver */
 	this.writeCTab2000Header();
 
@@ -1425,7 +1425,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) {
 	var atomList_list = [];
 	var atomLabel_list = [];
 	/* eslint-enable camel-case*/
-	this.molecule.atoms.each(function (id, atom) {
+	this.molecule.atoms.each(function (id, atom) { // eslint-disable-line max-statements
 		this.writePaddedFloat(atom.pp.x, 10, 4);
 		this.writePaddedFloat(-atom.pp.y, 10, 4);
 		this.writePaddedFloat(atom.pp.z, 10, 4);
@@ -1704,7 +1704,7 @@ function parseRxn2000(/* string[] */ ctabLines) /* Struct */ {
 	return rxnMerge(mols, nReactants, nProducts, nAgents);
 }
 
-function parseRxn3000(/* string[] */ ctabLines) /* Struct */ {
+function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = ctabLines[0].split(/\s+/g).slice(3);
@@ -1787,7 +1787,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ {
 	return ctab;
 }
 
-function rxnMerge(mols, nReactants, nProducts) /* Struct */ {
+function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	var ret = new Struct();
 	var bbReact = [],
@@ -1837,7 +1837,7 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ {
 
 	// reaction fragment layout
 	var xorig = 0;
-	function shiftMol(ret, mol, bb, xorig, over) {
+	function shiftMol(ret, mol, bb, xorig, over) { // eslint-disable-line max-params
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
 		mol.atoms.each(function (aid, atom) {
 			atom.pp.add_(d);
@@ -1946,7 +1946,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 	return ret;
 }
 
-function parseRg2000(/* string[] */ ctabLines) /* Struct */ {
+function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	ctabLines = ctabLines.slice(7);
 	if (ctabLines[0].strip() != '$CTAB')
 		throw new Error('RGFile format invalid');

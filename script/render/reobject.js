@@ -25,8 +25,8 @@ ReObject.prototype.getVBoxObj = function (render) {
 	return vbox.transform(render.scaled2obj, render);
 };
 
-ReObject.prototype.drawHighlight = function (render) {
-	console.log('ReObject.drawHighlight is not overridden');
+ReObject.prototype.drawHighlight = function (render) { // eslint-disable-line no-unused-vars
+	console.log('ReObject.drawHighlight is not overridden'); // eslint-disable-line no-console
 };
 
 ReObject.prototype.setHighlight = function (highLight, render) { // TODO render should be field
@@ -57,8 +57,8 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 	this.highlight = highLight;
 };
 
-ReObject.prototype.makeSelectionPlate = function (render) {
-	console.log('ReObject.makeSelectionPlate is not overridden');
+ReObject.prototype.makeSelectionPlate = function (render) { // eslint-disable-line no-unused-vars
+	console.log('ReObject.makeSelectionPlate is not overridden'); // eslint-disable-line no-console
 };
 
 module.exports = ReObject;

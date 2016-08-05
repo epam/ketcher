@@ -1,6 +1,6 @@
 var Map = require('../util/map');
 
-function el(label, period, group, putHydrogenOnTheLeft, color) {
+function el(label, period, group, putHydrogenOnTheLeft, color) { // eslint-disable-line max-params
 	return {
 		label: label,
 		period: period,

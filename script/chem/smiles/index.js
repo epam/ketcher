@@ -6,13 +6,13 @@ var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
 var Stereocenters = require('./stereocenters');
 
-var Smiles = function () {
+function Smiles() {
 	this.smiles = '';
 	this._written_atoms = [];
 	this._written_components = 0;
 
 	this.ignore_errors = false;
-};
+}
 
 Smiles._Atom = function (hСount) {
 	this.neighbours = [];  // Array of integer pairs {a, b}
@@ -32,7 +32,7 @@ Smiles.prototype.isBondInRing = function (bid) {
 	return this.inLoop[bid];
 };
 
-Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
+Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-disable-line max-statements
 	var i, j, k;
 
 	if (!Object.isUndefined(ignoreErrors))
@@ -134,7 +134,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 
 			if (walk.edgeClosingCycle(eIdx)) {
 				for (k = 0; k < atom.neighbours.length; k++) {
-					if (atom.neighbours[k].aid == -1) {
+					if (atom.neighbours[k].aid == -1) { // eslint-disable-line max-depth
 						atom.neighbours[k].aid = vPrevIdx;
 						atom.neighbours[k].bid = eIdx;
 						break;
@@ -157,7 +157,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 		}, this);
 		stereocenters.buildFromBonds(this.ignore_errors);
 
-		stereocenters.each(function (atomIdx, sc) {
+		stereocenters.each(function (atomIdx, sc) { // eslint-disable-line max-statements
 			// if (sc.type < MoleculeStereocenters::ATOM_AND)
 			//    continue;
 
@@ -252,7 +252,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 
 			for (j = 0; j < openingCycles; j++) {
 				for (k = 1; k < cycleNumbers.length; k++) {
-					if (cycleNumbers[k] == -1)
+					if (cycleNumbers[k] == -1) // eslint-disable-line max-depth
 						break;
 				}
 				if (k == cycleNumbers.length)
@@ -266,15 +266,12 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) {
 			if (vPrevIdx >= 0) {
 				var branches = walk.numBranches(vPrevIdx);
 
-				if (branches > 1) {
-					if (this.atoms[vPrevIdx].branch_cnt < branches - 1) {
-						if (walk.edgeClosingCycle(eIdx)) {
-							this.atoms[vPrevIdx].paren_written = false;
-						}
-						else {
-							this.smiles += '(';
-							this.atoms[vPrevIdx].paren_written = true;
-						}
+				if (branches > 1 && this.atoms[vPrevIdx].branch_cnt < branches - 1) {
+					if (walk.edgeClosingCycle(eIdx)) { // eslint-disable-line max-depth
+						this.atoms[vPrevIdx].paren_written = false;
+					} else {
+						this.smiles += '(';
+						this.atoms[vPrevIdx].paren_written = true;
 					}
 				}
 
@@ -358,7 +355,7 @@ Smiles.prototype._writeCycleNumber = function (n) {
 		throw new Error('bad cycle number: ' + n);
 };
 
-Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality) {
+Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality) { // eslint-disable-line max-params, max-statements
 	var atom = mol.atoms.get(idx);
 	var needBrackets = false;
 	var hydro = -1;
@@ -554,7 +551,7 @@ Smiles.prototype._markCisTrans = function (mol) {
 	}, this);
 };
 
-Smiles.prototype._updateSideBonds = function (mol, bondIdx) {
+Smiles.prototype._updateSideBonds = function (mol, bondIdx) { // eslint-disable-line max-statements
 	var bond = mol.bonds.get(bondIdx);
 	var subst = this.cis_trans.getSubstituents(bondIdx);
 	var parity = this.cis_trans.getParity(bondIdx);
@@ -683,7 +680,7 @@ Smiles.prototype._calcBondDirection = function (mol, idx, vprev) {
 	return this._dbonds[idx].saved;
 };
 
-Smiles.prototype._writeRadicals = function (mol) {
+Smiles.prototype._writeRadicals = function (mol) { // eslint-disable-line max-statements
 	var marked = new Array(this._written_atoms.length);
 	var i, j;
 

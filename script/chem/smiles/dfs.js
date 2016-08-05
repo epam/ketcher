@@ -42,7 +42,7 @@ Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
 	this.parent_edge = parEdge;     // edge to parent vertex
 };
 
-Dfs.prototype.walk = function () {
+Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 	var vStack = [];
 	var i, j;
 	var cid = 0;
@@ -52,7 +52,7 @@ Dfs.prototype.walk = function () {
 		if (vStack.length < 1) {
 			var selected = -1;
 
-			var findFunc = function (aid) {
+			var findFunc = function (aid) { // eslint-disable-line func-style
 				if (this.vertices[aid].dfs_state == 0) {
 					selected = aid;
 					return true;
@@ -116,14 +116,14 @@ Dfs.prototype.walk = function () {
 				if (this.vertices[neiIdx].dfs_state == 1) {
 					j = vStack.indexOf(neiIdx);
 
-					if (j == -1)
+					if (j == -1) // eslint-disable-line max-depth
 						throw new Error('internal: removing vertex from stack');
 
 					vStack.splice(j, 1);
 
 					var parent = this.vertices[neiIdx].parent_vertex;
 
-					if (parent >= 0)
+					if (parent >= 0) // eslint-disable-line max-depth
 						this.vertices[parent].branches--;
 				}
 

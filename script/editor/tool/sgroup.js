@@ -3,7 +3,7 @@ var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 var SGroupHelper = require('./helper/sgroup');
 
-var SGroupTool = function (editor, type) {
+function SGroupTool(editor, type) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
@@ -18,7 +18,7 @@ var SGroupTool = function (editor, type) {
 	else
 		// otherwise, clear selection
 		this.editor.deselectAll();
-};
+}
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);

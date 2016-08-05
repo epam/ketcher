@@ -1,6 +1,6 @@
 var Vec2 = require('../../util/vec2');
 
-var Bond = function (params) {
+function Bond(params) { // eslint-disable-line max-statements
 	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
 		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
 
@@ -25,7 +25,7 @@ var Bond = function (params) {
 		this.reactingCenterStatus = params.reactingCenterStatus;
 
 	this.center = new Vec2();
-};
+}
 
 Bond.PATTERN =
 {

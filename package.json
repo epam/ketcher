@@ -58,7 +58,7 @@
     "postinstall": "guppy pre-commit || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1",
     "lint" : "eslint script",
-    "nibble": "eslint-nibble script"
+    "nibble": "eslint-nibble script/chem script/editor script/render script/util api.js banner.js index.js prototype.js raphael-ext.js"
   },
   "dependencies": {
     "es5-shim": "^4.5.7",

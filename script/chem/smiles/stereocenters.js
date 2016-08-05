@@ -123,7 +123,7 @@ Stereocenters.allowed_stereocenters =
 ];
 
 
-Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int type, const int *bond_orientations*/) {
+Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int type, const int *bond_orientations*/) { // eslint-disable-line max-statements
 	var atom = this.molecule.atoms.get(atomIdx);
 
 	var neiList = this.getNeighbors.call(this.context, atomIdx);
@@ -360,7 +360,7 @@ Stereocenters.prototype._buildOneCenter = function (atomIdx/* , int group, int t
 				for (neiIdx = 0; neiIdx < 3; neiIdx++) {
 					dir = this._getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx);
 
-					if (dir == Struct.Bond.PATTERN.STEREO.UP || dir == Struct.Bond.PATTERN.STEREO.DOWN) {
+					if (dir == Struct.Bond.PATTERN.STEREO.UP || dir == Struct.Bond.PATTERN.STEREO.DOWN) { // eslint-disable-line max-depth
 						main1 = neiIdx;
 						mainDir = dir;
 						side1 = (neiIdx + 1) % 3;

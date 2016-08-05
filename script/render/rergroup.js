@@ -63,7 +63,7 @@ ReRGroup.prototype.calcBBox = function (render) {
 	return ret;
 };
 
-function RGroupdrawBrackets(set, render, bb, d, n) {
+function rGroupdrawBrackets(set, render, bb, d) {
 	d = d || new Vec2(1, 0);
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
 	var height = bb.p1.y - bb.p0.y;
@@ -73,7 +73,8 @@ function RGroupdrawBrackets(set, render, bb, d, n) {
 	set.push(leftBracket, rightBracket);
 }
 
-ReRGroup.prototype.draw = function (render) { // TODO need to review parameter list
+// TODO need to review parameter list
+ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-statements
 	var bb = this.calcBBox(render);
 	var settings = render.settings;
 	if (bb) {
@@ -81,7 +82,7 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 		var p0 = render.obj2scaled(bb.p0);
 		var p1 = render.obj2scaled(bb.p1);
 		var brackets = render.paper.set();
-		RGroupdrawBrackets(brackets, render, bb);
+		rGroupdrawBrackets(brackets, render, bb); // eslint-disable-line new-cap
 		ret.data.push(brackets);
 		var key = render.ctab.rgroups.keyOf(this);
 		var labelSet = render.paper.set();
@@ -116,11 +117,13 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 		logic.push(
 			(this.item.ifthen > 0 ? 'IF ' : '') +
 			'R' + key.toString() +
+			/* eslint-disable no-nested-ternary */
 			(this.item.range.length > 0 ?
 			this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=') ?
 			this.item.range : '=' + this.item.range : '>0') +
 			(this.item.resth ? ' (RestH)' : '') +
 			(this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
+			/* eslint-enable no-nested-ternary */
 		);
 		// END
 		/* eslint-disable no-mixed-operators*/
@@ -140,7 +143,7 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 		ret.data.push(label);
 		this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(render.scaled2obj, render);
 		return ret;
-	} else {
+	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, empty fragments must be destroyed by tools
 		return {};
 	}
@@ -169,7 +172,7 @@ ReRGroup.prototype.drawHighlight = function (render) {
 			render.ctab.frags.get(fid).drawHighlight(render);
 		}, this);
 		return ret;
-	} else {
+	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, fragment does not belong to the render
 	}
 };

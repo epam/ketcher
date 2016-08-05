@@ -81,7 +81,7 @@ ReStruct.prototype.stereoUpBondGetCoordinates = function (hb, neihbid) {
 	return sin > 0 ? [a1, a2] : [a2, a1];
 };
 
-ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDouble) {
+ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDouble) { // eslint-disable-line max-statements
 	var paper = this.render.paper;
 	var settings = this.render.settings;
 	var styles = this.render.styles;
@@ -126,7 +126,7 @@ ReStruct.prototype.drawBondSingleStereoBold = function (hb1, hb2, bond, isDouble
 	return pathMain;
 };
 
-ReStruct.prototype.drawBondSingleDown = function (hb1, hb2) {
+ReStruct.prototype.drawBondSingleDown = function (hb1, hb2) { // eslint-disable-line max-statements
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm;
@@ -156,7 +156,7 @@ ReStruct.prototype.drawBondSingleDown = function (hb1, hb2) {
 		.attr(styles.lineattr);
 };
 
-ReStruct.prototype.drawBondSingleEither = function (hb1, hb2) {
+ReStruct.prototype.drawBondSingleEither = function (hb1, hb2) { // eslint-disable-line max-statements
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm;
@@ -189,7 +189,7 @@ ReStruct.prototype.getBondLineShift = function (cos, sin) {
 	return sin / (1 - cos);
 };
 
-ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cisTrans) {
+ReStruct.prototype.drawBondDouble = function (hb1, hb2, bond, cisTrans) { // eslint-disable-line max-statements
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm,
@@ -241,7 +241,7 @@ ReStruct.makeStroke = function (a, b) {
 		'L' + tfx(b.x) + ',' + tfx(b.y) + '	';
 };
 
-ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2) {
+ReStruct.prototype.drawBondSingleOrDouble = function (hb1, hb2) { // eslint-disable-line max-statements
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm;
@@ -339,7 +339,7 @@ ReStruct.prototype.drawBondSingleOrAromatic = function (hb1, hb2, bond) {
 	return paper.set([l1, l2]);
 };
 
-ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask, dash) {
+ReStruct.prototype.preparePathsForAromaticBond = function (hb1, hb2, shift, mask, dash) { // eslint-disable-line max-params, max-statements
 	var settings = this.render.settings;
 	var paper = this.render.paper;
 	var styles = this.render.styles;
@@ -479,7 +479,7 @@ ReStruct.prototype.drawReactingCenter = function (bond, hb1, hb2) {
 	return paper.path(pathdesc).attr(styles.lineattr);
 };
 
-ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2) {
+ReStruct.prototype.drawTopologyMark = function (bond, hb1, hb2) { // eslint-disable-line max-statements
 	var topologyMark = null;
 
 	if (bond.b.topology == Struct.Bond.PATTERN.TOPOLOGY.RING)
@@ -637,9 +637,9 @@ ReStruct.prototype.pathAndRBoxTranslate = function (path, rbb, x, y) {
 	rbb.y += y;
 };
 
-var markerColors = ['black', 'cyan', 'magenta', 'red', 'green', 'blue', 'green'];
+var markerColors = ['black', 'cyan', 'magenta', 'red', 'green', 'blue', 'green']; // eslint-disable-line no-unused-vars
 
-ReStruct.prototype.showLabels = function () {
+ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
 	var render = this.render;
 	var settings = render.settings;
 	var styles = render.styles;
@@ -676,16 +676,16 @@ ReStruct.prototype.showLabels = function () {
 				label.text = atom.a.atomList.label();
 			} else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
 				label.text = '';
-				for (var rgi = 0; rgi < 32; rgi++)
-					if (atom.a.rglabel & (1 << rgi)) label.text += ('R' + (rgi + 1).toString());
+				for (var rgi = 0; rgi < 32; rgi++) {
+					if (atom.a.rglabel & (1 << rgi)) // eslint-disable-line max-depth
+						label.text += ('R' + (rgi + 1).toString());
+				}
 				if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
 			} else {
 				label.text = atom.a.label;
-				if (opt.atomColoring) {
-					var elem = element.getElementByLabel(label.text);
-					if (elem)
-						color = element.get(elem).color;
-				}
+				var elem = element.getElementByLabel(label.text);
+				if (opt.atomColoring && elem)
+					color = element.get(elem).color;
 			}
 			label.path = paper.text(ps.x, ps.y, label.text)
 				.attr({
@@ -930,7 +930,7 @@ ReStruct.prototype.showLabels = function () {
 
 		var asterisk = Prototype.Browser.IE ? '*' : '∗';
 		if (atom.a.attpnt) {
-			var i, c, j;
+			var i, c, j; // eslint-disable-line no-unused-vars
 			for (i = 0, c = 0; i < 4; ++i) {
 				var attpntText = '';
 				if (atom.a.attpnt & (1 << i)) {
@@ -1121,7 +1121,7 @@ ReStruct.prototype.bondRecalc = function (settings, bond) {
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };
 
-ReStruct.prototype.showBonds = function () {
+ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
 	var render = this.render;
 	var settings = render.settings;
 	var paper = render.paper;
@@ -1227,7 +1227,7 @@ ReStruct.layerMap = {
 	'indices': 5
 };
 
-ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) {
+ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) { // eslint-disable-line max-params
 	if (!path)
 		return;
 	var offset = this.render.offset;
@@ -1318,7 +1318,7 @@ ReStruct.prototype.renderLoops = function () {
 	var settings = render.settings;
 	var paper = render.paper;
 	var molecule = this.molecule;
-	this.reloops.each(function (rlid, reloop) {
+	this.reloops.each(function (rlid, reloop) { // eslint-disable-line max-statements
 		var loop = reloop.loop;
 		reloop.centre = new Vec2();
 		loop.hbs.each(function (hbid) {

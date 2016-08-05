@@ -6,7 +6,7 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var RotateTool = function (editor) {
+function RotateTool(editor) {
 	this.editor = editor;
 	this._lassoHelper = new LassoHelper(1, editor);
 
@@ -14,7 +14,7 @@ var RotateTool = function (editor) {
 	if (!selection.atoms || !selection.atoms.length)
 		// otherwise, clear selection
 		this.editor._selectionHelper.setSelection(null);
-};
+}
 
 RotateTool.prototype = new EditorTool();
 
@@ -79,7 +79,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 	}
 	return true;
 };
-RotateTool.prototype.OnMouseMove = function (event) {
+RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	if (this._lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
 		this._lassoHelper.addPoint(event)
@@ -117,7 +117,8 @@ RotateTool.prototype.OnMouseMove = function (event) {
 };
 
 RotateTool.prototype.OnMouseUp = function (event) {
-	var selection = null; // atoms to include in a newly created group
+	// atoms to include in a newly created group
+	var selection = null; // eslint-disable-line no-unused-vars
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		selection = this._lassoHelper.end(event);
 	} else if ('dragCtx' in this) {

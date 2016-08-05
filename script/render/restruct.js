@@ -96,7 +96,7 @@ ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 		.attr(styles.selectionStyle);
 };
 
-function ReStruct(molecule, render, norescale) {
+function ReStruct(molecule, render, norescale) { // eslint-disable-line max-statements
 	this.render = render;
 	this.atoms = new Map();
 	this.bonds = new Map();
@@ -432,7 +432,7 @@ ReStruct.prototype.checkStereoBoldBonds = function () {
 	this.bonds.each(this.checkStereoBold, this);
 };
 
-ReStruct.prototype.update = function (force) {
+ReStruct.prototype.update = function (force) { // eslint-disable-line max-statements
 	force = force || !this.initialized;
 
 	// check items to update

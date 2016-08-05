@@ -335,7 +335,7 @@ SGroupRemoveFromHierarchy.prototype = new Base();
 
 function BondAdd(begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
-	this._execute = function (editor) {
+	this._execute = function (editor) { // eslint-disable-line max-statements
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -503,7 +503,7 @@ function RGroupFragment(rgid, frid, rg) {
 	this.rgid_old = null;
 	this.rg_old = null;
 	this.frid = frid;
-	this._execute = function (editor) {
+	this._execute = function (editor) { // eslint-disable-line max-statements
 		var RS = editor.render.ctab;
 		var DS = RS.molecule;
 		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);

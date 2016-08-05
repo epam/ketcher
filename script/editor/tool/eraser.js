@@ -5,13 +5,13 @@ var LassoHelper = require('./helper/lasso');
 
 var ui = global.ui;
 
-var EraserTool = function (editor, mode) {
+function EraserTool(editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
 	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new LassoHelper(mode || 0, editor);
-};
+}
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
@@ -27,7 +27,7 @@ EraserTool.prototype.OnMouseMove = function (event) {
 		this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
 	}
 };
-EraserTool.prototype.OnMouseUp = function (event) {
+EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		ui.addUndoAction(Action.fromFragmentDeletion(this._lassoHelper.end(event)));

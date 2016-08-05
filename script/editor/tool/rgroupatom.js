@@ -5,11 +5,11 @@ var HoverHelper = require('./helper/hover');
 
 var ui = global.ui;
 
-var RGroupAtomTool = function (editor) {
+function RGroupAtomTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 RGroupAtomTool.prototype = new EditorTool();
 RGroupAtomTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));

@@ -2,11 +2,11 @@ var Action = require('../../action');
 
 var ui = global.ui;
 
-var SGroupHelper = function (editor, type) {
+function SGroupHelper(editor, type) {
 	this.editor = editor;
 	this.selection = null;
 	this.defaultType = type || null;
-};
+}
 
 SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	this.selection = selection;

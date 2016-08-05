@@ -6,7 +6,7 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var BondTool = function (editor, bondCaption) {
+function BondTool(editor, bondCaption) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
 	this.bondProps = Struct.Bond.caption2Type(bondCaption);
@@ -16,7 +16,7 @@ var BondTool = function (editor, bondCaption) {
 		Struct.Bond.PATTERN.TYPE.TRIPLE];
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 BondTool.prototype = new EditorTool();
 
 BondTool.prototype.OnMouseDown = function (event) {
@@ -30,7 +30,7 @@ BondTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-BondTool.prototype.OnMouseMove = function (event) {
+BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	var _E_ = this.editor;
 	var rnd = _E_.render;
 	if ('dragCtx' in this) {
@@ -77,7 +77,7 @@ BondTool.prototype.OnMouseMove = function (event) {
 	return true;
 };
 
-BondTool.prototype.OnMouseUp = function (event) {
+BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		var rnd = this.editor.render;
@@ -112,15 +112,15 @@ BondTool.prototype.OnMouseUp = function (event) {
 			) {
 				ui.addUndoAction(Action.fromBondFlipping(_DC_.item.id));
 			} else {
+				var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
 				if (
 				bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
 				bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-				bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE
-				) {
-					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
-					if (loop)
-						bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-				}
+				bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+				loop
+				)
+					bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
+
 				ui.addUndoAction(
 					Action.fromBondAttrs(_DC_.item.id, bondProps,
 					                     bondFlipRequired(struct, bond, bondProps)), true);

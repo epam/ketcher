@@ -6,7 +6,7 @@ var util = require('../../util');
 var Atom = require('./atom');
 var Bond = require('./bond');
 
-var SGroup = function (type) {
+function SGroup(type) { // eslint-disable-line max-statements
 	if (!type || !(type in SGroup.TYPES))
 		throw new Error('Invalid or unsupported s-group type');
 
@@ -48,7 +48,7 @@ var SGroup = function (type) {
 		query: '',
 		queryOp: ''
 	};
-};
+}
 
 SGroup.TYPES = {
 	MUL: 1,
@@ -163,7 +163,7 @@ SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	}, this);
 };
 
-SGroup.bracketPos = function (sg, render, mol, xbonds) {
+SGroup.bracketPos = function (sg, render, mol, xbonds) { // eslint-disable-line max-statements
 	var atoms = sg.atoms;
 	if (!xbonds || xbonds.length !== 2) {
 		sg.bracketDir = new Vec2(1, 0);
@@ -216,14 +216,14 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) {
 	sg.bracketBox = bb;
 };
 
-SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) {
-	var BracketParams = function (c, d, w, h) {
+SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) { // eslint-disable-line max-params
+	function BracketParams(c, d, w, h) {
 		this.c = c;
 		this.d = d;
 		this.n = d.rotateSC(1, 0);
 		this.w = w;
 		this.h = h;
-	};
+	}
 	var brackets = [];
 	if (xbonds.length < 2) {
 		(function () {
@@ -237,7 +237,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
 		})();
 	} else if (xbonds.length === 2) {
-		(function () {
+		(function () { // eslint-disable-line max-statements
 			var b1 = mol.bonds.get(xbonds[0]);
 			var b2 = mol.bonds.get(xbonds[1]);
 			var cl0 = b1.getCenter(mol);
@@ -318,7 +318,7 @@ SGroup.getBonds = function (mol, sg) {
 	return bonds;
 };
 
-SGroup.prepareMulForSaving = function (sgroup, mol) {
+SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max-statements
 	var j;
 	sgroup.atoms.sort();
 	sgroup.atomSet = Set.fromList(sgroup.atoms);

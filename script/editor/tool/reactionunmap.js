@@ -4,13 +4,13 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var ReactionUnmapTool = function (editor) {
+function ReactionUnmapTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
 
 	this.editor._selectionHelper.setSelection(null);
-};
+}
 ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);

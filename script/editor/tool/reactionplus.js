@@ -4,11 +4,11 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var ReactionPlusTool = function (editor) {
+function ReactionPlusTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 ReactionPlusTool.prototype = new EditorTool();
 ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;

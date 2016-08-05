@@ -14,6 +14,7 @@
     "no-debugger": "error",
     // "no-alert": "error",
     // "no-console": "error",
+    "no-console": "off",
     "no-caller": "error",
     "no-else-return": "error",
     "curly": ["error", "multi-or-nest", "consistent"],

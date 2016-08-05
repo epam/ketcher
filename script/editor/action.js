@@ -27,7 +27,7 @@ Action.prototype.mergeWith = function (action) {
 // Perform action and return inverted one
 Action.prototype.perform = function () {
 	var action = new Action();
-	var idx = 0;
+	var idx = 0; // eslint-disable-line no-unused-vars
 
 	this.operations.each(function (operation) {
 		action.addOp(operation.perform(ui.editor));
@@ -93,7 +93,7 @@ Action.prototype.removeSgroupIfNeeded = function (atoms) {
 	}, this);
 };
 
-function fromMultipleMove(lists, d) {
+function fromMultipleMove(lists, d) { // eslint-disable-line max-statements
 	d = new Vec2(d);
 
 	var action = new Action();
@@ -236,7 +236,7 @@ function mergeFragments(action, frid, frid2) {
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-function atomForNewBond(id) {
+function atomForNewBond(id) { // eslint-disable-line max-statements
 	var neighbours = [];
 	var pos = ui.render.atomGetPos(id);
 
@@ -326,7 +326,7 @@ function atomForNewBond(id) {
 	return { atom: a, pos: v };
 }
 
-function fromBondAddition(bond, begin, end, pos, pos2) {
+function fromBondAddition(bond, begin, end, pos, pos2) { // eslint-disable-line max-params, max-statements
 	if (end === undefined) {
 		var atom = atomForNewBond(begin);
 		end = atom.atom;
@@ -484,7 +484,7 @@ function FromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need 
 	ui.ctab.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid) {
 			var newfrid = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
-			var processAtom = function (aid1) {
+			var processAtom = function (aid1) { // eslint-disable-line func-style
 				action.addOp(new op.AtomAttr(aid1, 'fragment', newfrid).perform(ui.editor));
 				ui.render.atomGetNeighbors(aid1).each(function (nei) {
 					if (ui.ctab.atoms.get(nei.aid).fragment == frid)
@@ -503,7 +503,7 @@ function FromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need 
 	return action;
 }
 
-function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {  // eslint-disable-line no-unused-vars
+function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {  // eslint-disable-line no-unused-vars, max-params
 	var action = new Action();
 
 	/*
@@ -547,7 +547,7 @@ function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {  //
 	return action;
 }
 
-function fromFragmentDeletion(selection) {
+function fromFragmentDeletion(selection) { // eslint-disable-line max-statements
 	selection = selection || ui.editor.getSelection();
 
 	var action = new Action();
@@ -736,7 +736,7 @@ function atomAddToSGroups(sgroups, aid) {
 	return action;
 }
 
-function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) {
+function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) { // eslint-disable-line max-params, max-statements
 	var action = new Action();
 	var frag = template.molecule;
 	var R = ui.render;
@@ -831,7 +831,7 @@ function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) {
 	return action;
 }
 
-function fromTemplateOnBond(bid, template, calcAngle, flip) {
+function fromTemplateOnBond(bid, template, calcAngle, flip) { // eslint-disable-line max-statements
 	var action = new Action();
 	var frag = template.molecule;
 	var R = ui.render;
@@ -994,7 +994,7 @@ function sGroupAttributeAction(id, attrs) {
 	return action;
 }
 
-function fromSgroupDeletion(id) {
+function fromSgroupDeletion(id) { // eslint-disable-line max-statements
 	var action = new Action();
 	var R = ui.render;
 	var RS = R.ctab;
@@ -1025,7 +1025,7 @@ function fromSgroupDeletion(id) {
 	return action;
 }
 
-function fromSgroupAddition(type, atoms, attrs, sgid, pp) {
+function fromSgroupAddition(type, atoms, attrs, sgid, pp) { // eslint-disable-line max-params
 	var action = new Action();
 	var i;
 
@@ -1095,17 +1095,17 @@ function getAnchorPosition(clipboard) {
 	}
 }
 
-var getAtoms = function (struct, frid) {
+function getAtoms(struct, frid) {
 	var atoms = [];
 	struct.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid)
 			atoms.push(aid);
 	}, this);
 	return atoms;
-};
+}
 
 // TODO: merge to bellow
-function struct2Clipboard(struct) {
+function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	console.assert(!struct.isBlank(), 'Empty struct');
 
 	var selection = {
@@ -1199,7 +1199,7 @@ function struct2Clipboard(struct) {
 	return clipboard;
 }
 
-function fromPaste(struct, point) {
+function fromPaste(struct, point) { // eslint-disable-line max-statements
 	var clipboard = struct2Clipboard(struct);
 	var offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
 	var action = new Action();
@@ -1257,7 +1257,7 @@ function fromPaste(struct, point) {
 	return action;
 }
 
-function fromFlip(objects, flip) {
+function fromFlip(objects, flip) { // eslint-disable-line max-statements
 	var render = ui.render;
 	var ctab = render.ctab;
 	var molecule = ctab.molecule;
@@ -1309,7 +1309,7 @@ function fromFlip(objects, flip) {
 				var bond = molecule.bonds.get(bid);
 
 				if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE) {
-					if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP)
+					if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP) // eslint-disable-line max-depth
 						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.DOWN));
 					else if (bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN)
 						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.UP));
@@ -1321,7 +1321,7 @@ function fromFlip(objects, flip) {
 	return action.perform();
 }
 
-function fromRotate(objects, pos, angle) {
+function fromRotate(objects, pos, angle) { // eslint-disable-line max-statements
 	var render = ui.render;
 	var ctab = render.ctab;
 	var molecule = ctab.molecule;

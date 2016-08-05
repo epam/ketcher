@@ -4,11 +4,11 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var APointTool = function (editor) {
+function APointTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 APointTool.prototype = new EditorTool();
 APointTool.prototype.OnMouseMove = function (event) {
 	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));

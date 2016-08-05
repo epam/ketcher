@@ -137,12 +137,12 @@ Vec2.min = function (v1, v2) {
 
 Vec2.prototype.max = function (v) {
 	util.assertDefined(v);
-	return new Vec2.max(this, v);
+	return new Vec2.max(this, v); // eslint-disable-line new-cap
 };
 
 Vec2.prototype.min = function (v) {
 	util.assertDefined(v);
-	return new Vec2.min(this, v);
+	return new Vec2.min(this, v); // eslint-disable-line new-cap
 };
 
 Vec2.prototype.ceil = function () {
@@ -229,12 +229,12 @@ Vec2.lc2 = function (v1, f1, v2, f2) {
 };
 
 Vec2.centre = function (v1, v2) {
-	return new Vec2.lc2(v1, 0.5, v2, 0.5);
+	return new Vec2.lc2(v1, 0.5, v2, 0.5); // eslint-disable-line new-cap
 };
 
 // find intersection of a ray and a box and
 //  return the shift magnitude to avoid it
-Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) {
+Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) { // eslint-disable-line max-statements
 	util.assertDefined(p);
 	util.assertDefined(d);
 	util.assertDefined(bb);

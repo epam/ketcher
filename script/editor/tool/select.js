@@ -10,16 +10,16 @@ var RGroupAtomTool = require('./rgroupatom');
 
 var ui = global.ui;
 
-var SelectTool = function (editor, mode) {
+function SelectTool(editor, mode) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
 	this._lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 	this._sGroupHelper = new SGroupHelper(editor);
-};
+}
 
 SelectTool.prototype = new EditorTool();
-SelectTool.prototype.OnMouseDown = function (event) {
+SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
@@ -157,7 +157,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-SelectTool.prototype.OnDblClick = function (event) {
+SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event);
 	var struct = rnd.ctab.molecule;

@@ -5,11 +5,11 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var ChainTool = function (editor) {
+function ChainTool(editor) {
 	this.editor = editor;
 
 	this._hoverHelper = new HoverHelper(this);
-};
+}
 ChainTool.prototype = new EditorTool();
 ChainTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
@@ -50,7 +50,7 @@ ChainTool.prototype.OnMouseUp = function () {
 	return true;
 };
 ChainTool.prototype.OnCancel = function () {
-	this.OnMouseUp();
+	this.OnMouseUp(); // eslint-disable-line new-cap
 };
 
 module.exports = ChainTool;

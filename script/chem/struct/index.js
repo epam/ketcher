@@ -13,7 +13,7 @@ var SGroup = require('./sgroup');
 var RGroup = require('./rgroup');
 var SGroupForest = require('./sgforest');
 
-var Struct = function () {
+function Struct() {
 	this.atoms = new Pool();
 	this.bonds = new Pool();
 	this.sgroups = new Pool();
@@ -27,7 +27,7 @@ var Struct = function () {
 	this.rgroups = new Map();
 	this.name = '';
 	this.sGroupForest = new SGroupForest(this);
-};
+}
 
 Struct.prototype.hasRxnProps = function () {
 	return this.atoms.find(function (aid, atom) {
@@ -138,7 +138,7 @@ Struct.prototype.getFragment = function (fid) {
 	return this.clone(this.getFragmentIds(fid));
 };
 
-Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) {
+Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) { // eslint-disable-line max-params, max-statements
 	atomSet = atomSet || Set.keySetInt(this.atoms);
 	bondSet = bondSet || Set.keySetInt(this.bonds);
 	bondSet = Set.filter(bondSet, function (bid) {
@@ -232,7 +232,7 @@ Struct.prototype.findBondId = function (begin, end) {
 	return id;
 };
 
-var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid) {
+function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
 	if (arguments.length != 3)
 		throw new Error('Invalid parameter number!');
 
@@ -254,7 +254,7 @@ var HalfBond = function (/* num*/begin, /* num*/end, /* num*/bid) {
 	this.rightSin = 0;
 	this.rightCos = 0;
 	this.rightNeighbor = 0;
-};
+}
 
 Struct.prototype.initNeighbors = function () {
 	this.atoms.each(function (aid, atom) {
@@ -346,9 +346,9 @@ Struct.prototype.atomSortNeighbors = function (aid) {
 };
 
 Struct.prototype.sortNeighbors = function (list) {
-	var f = function (aid) {
+	function f(aid) {
 		this.atomSortNeighbors(aid);
-	};
+	}
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
@@ -365,9 +365,9 @@ Struct.prototype.atomUpdateHalfBonds = function (aid) {
 };
 
 Struct.prototype.updateHalfBonds = function (list) {
-	var f = function (aid) {
+	function f(aid) {
 		this.atomUpdateHalfBonds(aid);
-	};
+	}
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
@@ -424,7 +424,7 @@ Struct.prototype._rxnArrowSetPos = function (id, pp) {
 
 Struct.prototype.getCoordBoundingBox = function (atomSet) {
 	var bb = null;
-	var extend = function (pp) {
+	function extend(pp) {
 		if (!bb) {
 			bb = {
 				min: pp,
@@ -434,7 +434,7 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 			bb.min = Vec2.min(bb.min, pp);
 			bb.max = Vec2.max(bb.max, pp);
 		}
-	};
+	}
 
 	var global = typeof (atomSet) == 'undefined';
 
@@ -461,7 +461,7 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 
 Struct.prototype.getCoordBoundingBoxObj = function () {
 	var bb = null;
-	var extend = function (pp) {
+	function extend(pp) {
 		if (!bb) {
 			bb = {
 				min: new Vec2(pp),
@@ -471,7 +471,7 @@ Struct.prototype.getCoordBoundingBoxObj = function () {
 			bb.min = Vec2.min(bb.min, pp);
 			bb.max = Vec2.max(bb.max, pp);
 		}
-	};
+	}
 
 	this.atoms.each(function (aid, atom) {
 		extend(atom.pp);
@@ -528,7 +528,7 @@ Struct.prototype.checkBondExists = function (begin, end) {
 	return bondExists;
 };
 
-var Loop = function (/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
+function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.hbs = hbs; // set of half-bonds involved
 	this.dblBonds = 0; // number of double bonds in the loop
 	this.aromatic = true;
@@ -541,7 +541,7 @@ var Loop = function (/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 		if (bond.type == Bond.PATTERN.TYPE.DOUBLE)
 			this.dblBonds++;
 	}, this);
-};
+}
 
 Struct.prototype.findConnectedComponent = function (aid) {
 	var map = {};
@@ -660,10 +660,10 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 
 // partition a cycle into simple cycles
 // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
-Struct.prototype.partitionLoop = function (loop) {
+Struct.prototype.partitionLoop = function (loop) { // eslint-disable-line max-statements
 	var subloops = [];
 	var continueFlag = true;
-	search: while (continueFlag) {
+	search: while (continueFlag) { // eslint-disable-line no-restricted-syntax
 		var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
 		for (var l = 0; l < loop.length; ++l) {
 			var hbid = loop[l];
@@ -675,7 +675,7 @@ Struct.prototype.partitionLoop = function (loop) {
 				subloops.push(subloop);
 				if (l < loop.length) // remove half-bonds corresponding to the subloop
 					loop.splice(s, l - s + 1);
-				continue search;
+				continue search; // eslint-disable-line no-continue
 			}
 			atomToHalfBond[aid1] = l;
 		}
@@ -838,16 +838,16 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
-	var f = function (aid) {
+	function f(aid) {
 		this.calcImplicitHydrogen(aid);
-	};
+	}
 	if (util.isNullOrUndefined(list))
 		this.atoms.each(f, this);
 	else
 		list.forEach(f, this);
 };
 
-Struct.prototype.getComponents = function () {
+Struct.prototype.getComponents = function () { // eslint-disable-line max-statements
 	/* saver */
 	var ccs = this.findConnectedComponents(true);
 	var barriers = [];
@@ -899,19 +899,19 @@ Struct.prototype.getComponents = function () {
 
 // Other struct objects
 
-var RxnPlus = function (params) {
+function RxnPlus(params) {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
-};
+}
 
 RxnPlus.prototype.clone = function () {
 	return new RxnPlus(this);
 };
 
-var RxnArrow = function (params) {
+function RxnArrow(params) {
 	params = params || {};
 	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
-};
+}
 
 RxnArrow.prototype.clone = function () {
 	return new RxnArrow(this);

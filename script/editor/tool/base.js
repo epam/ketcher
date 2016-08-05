@@ -1,8 +1,8 @@
 var Vec2 = require('../../util/vec2');
 
-var EditorTool = function (editor) {
+function EditorTool(editor) {
 	this.editor = editor;
-};
+}
 
 EditorTool.prototype.processEvent = function (name, event, action) {
 	if (!('touches' in event) || event.touches.length == 1) {
@@ -14,7 +14,7 @@ EditorTool.prototype.processEvent = function (name, event, action) {
 	} else if ('lastEvent' in this.OnMouseDown0) {
 		// here we finish previous MouseDown and MouseMoves with simulated MouseUp
 		// before gesture (canvas zoom, scroll, rotate) started
-		return this.OnMouseUp0(event, action);
+		return this.OnMouseUp0(event, action); // eslint-disable-line new-cap
 	}
 };
 EditorTool.prototype.OnMouseDown = function () {};
@@ -23,20 +23,20 @@ EditorTool.prototype.OnMouseUp = function () {};
 EditorTool.prototype.OnClick = function () {};
 EditorTool.prototype.OnDblClick = function () {};
 EditorTool.prototype.OnMouseLeave = function () {
-	this.OnCancel();
+	this.OnCancel(); // eslint-disable-line new-cap
 };
 EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
 EditorTool.prototype.OnMouseDown0 = function (event) {
 	this.OnMouseDown0.lastEvent = event;
 	this.OnMouseMove0.lastEvent = event;
 
-	if ('OnMouseDown' in this) return this.OnMouseDown(event);
+	if ('OnMouseDown' in this) return this.OnMouseDown(event); // eslint-disable-line new-cap
 };
 
 EditorTool.prototype.OnMouseMove0 = function (event) {
 	this.OnMouseMove0.lastEvent = event;
 
-	if ('OnMouseMove' in this) return this.OnMouseMove(event);
+	if ('OnMouseMove' in this) return this.OnMouseMove(event); // eslint-disable-line new-cap
 };
 EditorTool.prototype.OnMouseUp0 = function (event) {
 	// here we suppress event we got when second touch released in guesture
@@ -50,7 +50,7 @@ EditorTool.prototype.OnMouseUp0 = function (event) {
 	}
 
 	try {
-		if ('OnMouseUp' in this) return this.OnMouseUp(event);
+		if ('OnMouseUp' in this) return this.OnMouseUp(event); // eslint-disable-line new-cap
 	} finally {
 		delete this.OnMouseDown0.lastEvent;
 	}

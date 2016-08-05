@@ -1,12 +1,12 @@
 var Pool = require('../../util/pool');
 
-var RGroup = function (logic) {
+function RGroup(logic) {
 	logic = logic || {};
 	this.frags = new Pool();
 	this.resth = logic.resth || false;
 	this.range = logic.range || '';
 	this.ifthen = logic.ifthen || 0;
-};
+}
 
 RGroup.prototype.getAttrs = function () {
 	return {

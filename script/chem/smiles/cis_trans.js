@@ -57,7 +57,7 @@ CisTrans.prototype._sameside = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
 		this.molecule.atoms.get(iNeiBeg).pp, this.molecule.atoms.get(iNeiEnd).pp);
 };
 
-CisTrans.prototype._sortSubstituents = function (substituents) {
+CisTrans.prototype._sortSubstituents = function (substituents) { // eslint-disable-line max-statements
 	var h0 = this.molecule.atoms.get(substituents[0]).pureHydrogen();
 	var h1 = substituents[1] < 0 || this.molecule.atoms.get(substituents[1]).pureHydrogen();
 	var h2 = this.molecule.atoms.get(substituents[2]).pureHydrogen();
@@ -89,7 +89,7 @@ CisTrans.prototype._sortSubstituents = function (substituents) {
 	return true;
 };
 
-CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) {
+CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // eslint-disable-line max-statements
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 

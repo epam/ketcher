@@ -54,7 +54,7 @@ function Render(clientArea, scale, opt, viewSz) {
 	this.paper = new Raphael(clientArea);
 	this.size = new Vec2();
 	this.viewSz = viewSz || new Vec2(clientArea.clientWidth || 100,
-	                                 clientArea.clientHeight || 100);
+									 clientArea.clientHeight || 100);
 	this.bb = new Box2Abs(new Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;
@@ -132,7 +132,7 @@ Render.prototype.page2obj = function (pagePos) {
 Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
 			'ui' in window ? new Vec2(this.page2obj(event)) :
-			                 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
+							 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
 		maps, skip);
 	// rbalabanov: let it be this way at the moment
 	if (ci.type == 'Atom') ci.map = 'atoms';

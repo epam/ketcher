@@ -1362,10 +1362,10 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 	var lines = [];
 	lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
 	var sdtLine = 'M  SDT ' + idstr + ' ' +
-	    (data.fieldName || '').padEnd(30) +
-	    (data.fieldType || '').padStart(2) +
-	    (data.units || '').padEnd(20) +
-	    (data.query || '').padStart(2);
+		(data.fieldName || '').padEnd(30) +
+		(data.fieldType || '').padStart(2) +
+		(data.units || '').padEnd(20) +
+		(data.query || '').padStart(2);
 
 	if (data.queryOp)    // see gitlab #184
 		sdtLine += data.queryOp.padEnd(80 - 65);
@@ -1380,7 +1380,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 			'   ' + //  i
 			(data.nCharnCharsToDisplay >= 0 ? paddedNum(data.nCharnCharsToDisplay, 3) : 'ALL') + // jjj
 			'  1   ' + // 'kkk ll '
-	    (data.tagChar || ' ') + // m
+		(data.tagChar || ' ') + // m
 			'  ' + paddedNum(data.daspPos, 1) + // n
 			'  '; // oo
 	lines.push(sddLine);
@@ -2033,7 +2033,7 @@ module.exports = {
 	stringify: function (struct, options) {
 		var opts = options || {};
 		return new Molfile(opts.v3000).saveMolecule(struct, opts.ignoreErrors,
-		                                            opts.noRgroups, opts.preserveIndigoDesc);
+													opts.noRgroups, opts.preserveIndigoDesc);
 	},
 	parse: function (str, options) {
 		return parseCTFile(str, options || {});

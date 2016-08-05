@@ -127,7 +127,7 @@ Editor.prototype.setupEvents = function () {
 		render.setZoom(this._tui.scale0 * event.scale);
 		var offset = clientArea.cumulativeOffset();
 		var pp = new Vec2(this._tui.center.pageX - offset.left,
-		                  this._tui.center.pageY - offset.top);
+						  this._tui.center.pageY - offset.top);
 		render.recoordinate(pp, zoomStaticPoint);
 		render.update();
 		event.preventDefault();
@@ -240,7 +240,7 @@ Editor.prototype.getSelectionStruct = function () {
 	var struct = this.render.ctab.molecule;
 	var selection = this.getSelection(true);
 	var dst = struct.clone(Set.fromList(selection.atoms),
-	                       Set.fromList(selection.bonds), true);
+						   Set.fromList(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets

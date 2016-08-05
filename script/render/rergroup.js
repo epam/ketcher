@@ -106,13 +106,13 @@ ReRGroup.prototype.draw = function (render) { // TODO need to review parameter l
 		// TODO [RB] temporary solution, need to review
 		// BEGIN
 		/*
-         if (this.item.range.length > 0)
-         logic.push(this.item.range);
-         if (this.item.resth)
-         logic.push("RestH");
-         if (this.item.ifthen > 0)
-         logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
-         */
+		 if (this.item.range.length > 0)
+		 logic.push(this.item.range);
+		 if (this.item.resth)
+		 logic.push("RestH");
+		 if (this.item.ifthen > 0)
+		 logic.push("IF R" + key.toString() + " THEN R" + this.item.ifthen.toString());
+		 */
 		logic.push(
 			(this.item.ifthen > 0 ? 'IF ' : '') +
 			'R' + key.toString() +
@@ -161,10 +161,10 @@ ReRGroup.prototype.drawHighlight = function (render) {
 		var ret = this._draw(render, rgid, render.styles.highlightStyle/* { 'fill' : 'red' }*/);
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*
-         this.getAtoms(render).each(function(aid) {
-         render.ctab.atoms.get(aid).drawHighlight(render);
-         }, this);
-         */
+		 this.getAtoms(render).each(function(aid) {
+		 render.ctab.atoms.get(aid).drawHighlight(render);
+		 }, this);
+		 */
 		this.item.frags.each(function (fnum, fid) {
 			render.ctab.frags.get(fid).drawHighlight(render);
 		}, this);

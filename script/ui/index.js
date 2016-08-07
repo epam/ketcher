@@ -400,19 +400,22 @@ function dialog(modal, params) {
 	cover.style.display = '';
 	keymage.setScope('modal');
 
-	function close() {
+	function close(fn, res) {
 		keymage.setScope('editor');
 		cover.style.display = 'none';
 		// var node = this.getDOMNode();
 		// React.unmountComponentAtNode(node);
 		var dialog = cover.lastChild;
 		dialog.remove();
+		if (fn) fn(res);
 	}
 	return new Promise(function (resolve, reject) {
 		utils.animate(cover, 'show').then(function () {
+			var ok = params.onOk;
+			var cancel = params.onCancel;
 			modal(Object.assign({
-				onOk: function (res) { close(); resolve(res); },
-				onCancel: function (res) { close(); reject(res); }
+				onOk: function (res) { close(ok, res); resolve(res); },
+				onCancel: function (res) { close(cancel, res); reject(res); }
 			}, params));
 		});
 	});

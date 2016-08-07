@@ -99,7 +99,7 @@ class Templates extends Component {
 
 	select(tmpl) {
 		if (tmpl == this.state.selected)
-			this.params.onOk(tmpl);
+			this.params.onOk(this.result());
 		else
 			this.setState({ selected: tmpl });
 	}
@@ -119,7 +119,19 @@ class Templates extends Component {
 		});
 	}
 
-	render (props, {selected, selectedGroup, filter}) {
+	result() {
+		var tmpl = this.state.selected;
+		console.assert(tmpl.props, 'Incorrect SDF parse');
+		return tmpl ? {
+			struct: tmpl.struct,
+			aid: parseInt(tmpl.props.atomid) || null,
+			bid: parseInt(tmpl.props.bondid) || null
+		} : null;
+	}
+
+	render (props) {
+    var {selected, selectedGroup, filter} = this.state;
+
 		console.info('all rerender');
 		var Tmpl = (tmpl, i) => (
 			<li title={normName(tmpl, i)}
@@ -131,7 +143,7 @@ class Templates extends Component {
 		return (
 			<DialogCommon caption="Template Library"
                     name="template-lib" params={props.params}
-                    result={() => selected} valid={() => !!selected}>
+                    result={() => this.result()} valid={() => !!selected}>
 				<label>
 				  <input type="search" placeholder="Filter" value={filter}
                  onInput={(ev) => this.setFilter(ev.target.value)} />

@@ -813,7 +813,11 @@ function mapTool (id) {
 	} else if (id == 'chain') {
 		return { tool: 'chain' };
 	} else if (id.startsWith('template')) {
-		return { tool: 'template', opts: args[0] || templates[parseInt(id.split('-')[1])] };
+		return { tool: 'template',
+		         opts: args[0] || {
+			         struct: molfile.parse(templates[parseInt(id.split('-')[1])])
+		         }
+		       };
 	} else if (id == 'charge-plus') {
 		return { tool: 'charge', opts: 1 };
 	} else if (id == 'charge-minus') {

@@ -1,5 +1,4 @@
 var Set = require('../../util/set');
-var molfile = require('../../chem/molfile');
 var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
@@ -7,13 +6,14 @@ var EditorTool = require('./base');
 
 var ui = global.ui;
 
-var TemplateTool = function (editor, template) {
+var TemplateTool = function (editor, tmpl) {
 	this.editor = editor;
-	this.template = template;
+	this.template = {
+		aid: (tmpl.aid || 1) - 1,
+		bid: (tmpl.bid || 1) - 1
+	};
 
-	// load template molfile in advance
-	if (!this.template.molecule) {
-		var frag = molfile.parse(this.template.molfile);
+		var frag = tmpl.struct;
 		frag.rescale();
 
 		var xy0 = new Vec2();
@@ -28,7 +28,6 @@ var TemplateTool = function (editor, template) {
 
 		var bond = frag.bonds.get(this.template.bid);
 		this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
-	}
 
 	this._hoverHelper = new HoverHelper(this);
 };

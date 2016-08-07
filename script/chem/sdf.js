@@ -2,14 +2,14 @@ var molfile = require('./molfile');
 
 function parse(str, options) {
 	var chunks = str.split(/^\$\$\$\$$/m); // TODO: stream parser
-	                                       // do not split all file
+	                                       // do not split all the file
 	return chunks.reduce(function (res, chunk) {
 		chunk = chunk.replace(/\r/g, ''); // TODO: normalize newline?
 		chunk = chunk.trim();
 		var end = chunk.indexOf('M  END');
 		if (end != -1) {
 			var item = {};
-			var propChunks = chunk.substr(end + 7).trim().split(/^$/m);
+			var propChunks = chunk.substr(end + 7).trim().split(/^$\n?/m);
 
 			item.struct = molfile.parse(chunk.substring(0, end + 6),
 			                            options);

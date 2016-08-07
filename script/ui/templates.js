@@ -1,8 +1,7 @@
+/* eslint-disable */
+
 module.exports = [
-	{
-		name: 'benzene',
-		molfile:
-		'\n' +
+		'Benzene\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -19,13 +18,7 @@ module.exports = [
 			'  5  6  1  0     0  0\n' +
 			'  6  1  2  0     0  0\n' +
 			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclopentadiene',
-		molfile:
-		'\n' +
+		'Cyclopentadiene\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -39,14 +32,9 @@ module.exports = [
 			'  3  4  1  0     0  0\n' +
 			'  4  5  2  0     0  0\n' +
 			'  5  1  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclohexane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cyclohexane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -62,14 +50,9 @@ module.exports = [
 			'  4  5  1  0     0  0\n' +
 			'  5  6  1  0     0  0\n' +
 			'  6  1  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclopentane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cyclopentane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -83,14 +66,9 @@ module.exports = [
 			'  3  4  1  0     0  0\n' +
 			'  4  5  1  0     0  0\n' +
 			'  5  1  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclopropane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cyclopropane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  3  3  0     0  0            999 V2000\n' +
@@ -100,14 +78,9 @@ module.exports = [
 			'  1  2  1  0     0  0\n' +
 			'  2  3  1  0     0  0\n' +
 			'  1  3  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclobutane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cyclobutane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  4  4  0     0  0            999 V2000\n' +
@@ -119,14 +92,9 @@ module.exports = [
 			'  1  3  1  0     0  0\n' +
 			'  3  4  1  0     0  0\n' +
 			'  4  2  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cycloheptane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cycloheptane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  7  7  0     0  0            999 V2000\n' +
@@ -144,14 +112,9 @@ module.exports = [
 			'  3  4  1  0     0  0\n' +
 			'  2  3  1  0     0  0\n' +
 			'  1  2  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	},
-	{
-		name: 'cyclooctane',
-		molfile:
-		'\n' +
+		'M  END\n',
+
+		'Cyclooctane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  8  8  0     0  0            999 V2000\n' +
@@ -171,8 +134,5 @@ module.exports = [
 			'  1  4  1  0     0  0\n' +
 			'  2  3  1  0     0  0\n' +
 			'  1  2  1  0     0  0\n' +
-			'M  END\n',
-		bid: 0,
-		aid: 0
-	}
+		'M  END\n'
 ];

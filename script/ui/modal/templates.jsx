@@ -1,6 +1,3 @@
-// import ReactDOM from 'react-dom';
-// import React from 'react';
-
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
@@ -10,32 +7,14 @@ import VisibleView from './visibleview';
 
 import Render from '../../render';
 
-function DialogCommon ({ children, caption, name, params={},
-                         result=() => null, valid=() => true }) {
-	function exit(mode) {
-		var key = 'on' + mode.capitalize();
-		var res = result();
-		if (params && key in params)
-			params[key](res);
-	}
-	return (
-			<form role="dialog" class={name}>
-			<header>{caption}</header>
-			{ children }
-			<footer>
-			<input type="button" onClick={() => exit('Cancel')} value="Cancel"/>
-			<input type="button" disabled={!valid()} onClick={() => exit('OK')} value="OK"/>
-			</footer>
-			</form>
-	);
-}
+import Dialog from './dialog';
 
 function normGroup(tmpl, i) {
-  return tmpl.props.group || 'Ungroupt';
+	return tmpl.props.group || 'Ungroupt';
 }
 
 function normName(tmpl, i) {
-  return tmpl.struct.name || `{normGroup(tmpl)} template {i + 1}`;
+	return tmpl.struct.name || `{normGroup(tmpl)} template {i + 1}`;
 }
 
 function renderTmpl(el, tmpl) {
@@ -84,8 +63,8 @@ class Templates extends Component {
 			return this.all;
 		var re = RegExp(this.state.filter, 'i');
 		return this.all.filter((tmpl, i) => (
-      normName(tmpl, i).search(re) != -1
-    ));
+			normName(tmpl, i).search(re) != -1
+		));
 	}
 
 	getTemplates() {
@@ -130,7 +109,7 @@ class Templates extends Component {
 	}
 
 	render (props) {
-    var {selected, selectedGroup, filter} = this.state;
+		var {selected, selectedGroup, filter} = this.state;
 
 		console.info('all rerender');
 		var Tmpl = (tmpl, i) => (
@@ -141,21 +120,21 @@ class Templates extends Component {
 		);
 
 		return (
-			<DialogCommon caption="Template Library"
-                    name="template-lib" params={props.params}
-                    result={() => this.result()} valid={() => !!selected}>
+			<Dialog caption="Template Library"
+					name="template-lib" params={props.params}
+					result={() => this.result()} valid={() => !!selected}>
 				<label>
-				  <input type="search" placeholder="Filter" value={filter}
-                 onInput={(ev) => this.setFilter(ev.target.value)} />
+					<input type="search" placeholder="Filter" value={filter}
+						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
 				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)}>
-				  { this.getGroups().map(group => (
-            <option selected={group == selectedGroup}>{group}</option>
-          )) }
-			  </select>
+					{ this.getGroups().map(group => (
+						<option selected={group == selectedGroup}>{group}</option>
+					)) }
+				</select>
 				<VisibleView data={this.getTemplates()} rowHeight={120}
-                     renderRow={Tmpl} />
-				</DialogCommon>
+                             renderRow={Tmpl} />
+			</Dialog>
 		);
 	}
 }
@@ -165,7 +144,7 @@ export default function dialog(baseUrl, params) {
 	return ajax(baseUrl + 'templates.sdf').then(xhr => {
 		var templates = sdf.parse(xhr.responseText);
 		return render((
-				<Templates params={params} templates={templates}/>
+			<Templates params={params} templates={templates}/>
 		), overlay);
 	});
 };

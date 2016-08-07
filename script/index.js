@@ -12,25 +12,23 @@ var Render = require('./render');
 
 function getSmiles() {
 	return smiles.stringify(ui.ctab, { ignoreErrors: true });
-};
+}
 
 function getMolfile() {
 	return molfile.stringify(ui.ctab, { ignoreErrors: true });
-};
+}
 
 function setMolecule(molString) {
-	if (!Object.isString(molString)) {
+	if (!Object.isString(molString))
 		return;
-	}
 	ui.loadMolecule(molString);
-};
+}
 
 function addFragment(molString) {
-	if (!Object.isString(molString)) {
+	if (!Object.isString(molString))
 		return;
-	}
 	ui.loadFragment(molString);
-};
+}
 
 function showMolfile(clientArea, molString, options) {
 	var opts = Object.assign({
@@ -52,12 +50,12 @@ function showMolfile(clientArea, molString, options) {
 	render.update();
 	// not sure we need to expose guts
 	return render;
-};
+}
 
 function onStructChange(handler) {
 	util.assert(handler);
 	ui.render.addStructChangeHandler(handler);
-};
+}
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
@@ -65,9 +63,7 @@ window.onload = function () {
 	var params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.api_path = params.api_path;
-	ketcher.server = api(ketcher.api_path, {
-		'indigo-smart-layout': 'false'
-	});
+	ketcher.server = api(ketcher.api_path, { 'indigo-smart-layout': 'false' });
 	ui.init(Object.assign({}, params), ketcher.server);
 };
 

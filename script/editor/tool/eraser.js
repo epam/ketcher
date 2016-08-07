@@ -15,9 +15,8 @@ var EraserTool = function (editor, mode) {
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci || ci.type == 'Canvas')
 		this._lassoHelper.begin(event);
-	}
 };
 EraserTool.prototype.OnMouseMove = function (event) {
 	if (this._lassoHelper.running()) {

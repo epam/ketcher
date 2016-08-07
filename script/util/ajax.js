@@ -8,15 +8,13 @@ function ajax(options, callback) {
 	xhr.open(options.method, options.url, !!callback, options.user, options.password);
 
 	for (var k in headers) {
-		if (headers.hasOwnProperty(k)) {
+		if (headers.hasOwnProperty(k))
 			xhr.setRequestHeader(k, headers[k]);
-		}
 	}
 	if (typeof options.config === 'function') {
 		var maybeXhr = options.config(xhr, options);
-		if (maybeXhr !== undefined) {
+		if (maybeXhr !== undefined)
 			xhr = maybeXhr;
-		}
 	}
 	if (options.timeout > 0) {
 		setTimeout(function () {
@@ -26,9 +24,8 @@ function ajax(options, callback) {
 	}
 	if (callback) {
 		xhr.onreadystatechange = function () {
-			if (xhr.readyState === 4) {
+			if (xhr.readyState === 4)
 				callback(xhr);
-			}
 		};
 	}
 	xhr.send(options.data);
@@ -60,9 +57,8 @@ function request(opts) {
 		options.data = JSON.stringify(options.data);
 		options.headers['Content-Type'] = 'application/json; charset=utf-8';
 	}
-	if (options.params) {
+	if (options.params)
 		options.url = options.url + (options.url.indexOf('?') < 0 ? '?' : '&') + queryString(options.params);
-	}
 
 	if (!options.sync) {
 		return new Promise(function (resolve, reject) {
@@ -74,9 +70,8 @@ function request(opts) {
 	}
 
 	var xhr = ajax(options);
-	if (!successful(xhr)) {
+	if (!successful(xhr))
 		throw xhr;
-	}
 	return xhr;
 }
 

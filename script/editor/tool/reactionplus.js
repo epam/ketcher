@@ -16,9 +16,7 @@ ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	if (ci && ci.map == 'rxnPluses') {
 		this._hoverHelper.hover(null);
 		this.editor._selectionHelper.setSelection(ci);
-		this.dragCtx = {
-			xy0: rnd.page2obj(event)
-		};
+		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
 ReactionPlusTool.prototype.OnMouseMove = function (event) {

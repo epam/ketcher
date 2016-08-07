@@ -27,7 +27,7 @@ RGroupAtomTool.prototype.OnMouseUp = function (event) {
 					ui.addUndoAction(
 					Action.fromAtomAddition(
 					rnd.page2obj(this.OnMouseMove0.lastEvent),
-					{ label: 'R#', rglabel: rgNew}
+					{ label: 'R#', rglabel: rgNew }
 					),
 						true
 					);
@@ -67,11 +67,12 @@ RGroupAtomTool.prototype.OnMouseUp = function (event) {
 
 function sel2Values(rg) {
 	var res = [];
-	for (var rgi = 0; rgi < 32; rgi++)
+	for (var rgi = 0; rgi < 32; rgi++) {
 		if (rg & (1 << rgi)) {
 			var val = 'R' + (rgi + 1);
 			res.push(val); // push the string
 		}
+	}
 	return res;
 }
 function values2Sel(vals) {

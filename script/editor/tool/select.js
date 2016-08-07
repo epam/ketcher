@@ -21,7 +21,8 @@ var SelectTool = function (editor, mode) {
 SelectTool.prototype = new EditorTool();
 SelectTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	var ctab = rnd.ctab, struct = ctab.molecule;
+	var ctab = rnd.ctab;
+	var struct = ctab.molecule;
 	this._hoverHelper.hover(null); // TODO review hovering for touch devices
 	var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
 	var ci = rnd.findItem(
@@ -40,21 +41,25 @@ SelectTool.prototype.OnMouseDown = function (event) {
 		if (!this.editor._selectionHelper.isSelected(ci)) {
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
-				this.editor._selectionHelper.setSelection(
-				{ 'atoms': frag.fragGetAtoms(rnd, ci.id), 'bonds': frag.fragGetBonds(rnd, ci.id) },
+				this.editor._selectionHelper.setSelection({
+					atoms: frag.fragGetAtoms(rnd, ci.id),
+					bonds: frag.fragGetBonds(rnd, ci.id)
+				},
 					event.shiftKey
 				);
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
-				this.editor._selectionHelper.setSelection(
-				{ 'atoms': Struct.SGroup.getAtoms(struct, sgroup), 'bonds': Struct.SGroup.getBonds(struct, sgroup) },
-					event.shiftKey
+				this.editor._selectionHelper.setSelection({
+					atoms: Struct.SGroup.getAtoms(struct, sgroup),
+					bonds: Struct.SGroup.getBonds(struct, sgroup)
+				}, event.shiftKey
 				);
 			} else if (ci.map == 'rgroups') {
 				var rgroup = ctab.rgroups.get(ci.id);
-				this.editor._selectionHelper.setSelection(
-				{ 'atoms': rgroup.getAtoms(rnd), 'bonds': rgroup.getBonds(rnd) },
-					event.shiftKey
+				this.editor._selectionHelper.setSelection({
+					atoms: rgroup.getAtoms(rnd),
+					bonds: rgroup.getBonds(rnd)
+				}, event.shiftKey
 				);
 			} else {
 				this.editor._selectionHelper.setSelection(ci, event.shiftKey);
@@ -107,7 +112,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		this.editor.getSelection(true),
 		rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
-		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
+		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
@@ -130,26 +135,24 @@ SelectTool.prototype.OnMouseMove = function (event) {
 SelectTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
-		if (['atoms'/*, 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
+		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
 				this._hoverHelper.hover(null);
 				this.editor._selectionHelper.setSelection();
-				this.dragCtx.action = this.dragCtx.action
-						 ? Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action)
-						 : Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
+				this.dragCtx.action = this.dragCtx.action ?
+					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
+						Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
 			}
 		}
 		ui.addUndoAction(this.dragCtx.action, true);
 		this.editor.render.update();
 		delete this.dragCtx;
-	} else {
-		if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-			this.editor._selectionHelper.setSelection(this._lassoHelper.end(), event.shiftKey);
-		} else if (this._lassoHelper.fragment) {
-			this.editor._selectionHelper.setSelection();
-		}
+	} else if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		this.editor._selectionHelper.setSelection(this._lassoHelper.end(), event.shiftKey);
+	} else if (this._lassoHelper.fragment) {
+		this.editor._selectionHelper.setSelection();
 	}
 	return true;
 };
@@ -216,7 +219,7 @@ SelectTool.prototype.OnDblClick = function (event) {
 				onOk: function (res) {
 					var label = res.values[0];
 					if (atom.label != label) {
-						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {label: label}));
+						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { label: label }));
 						rnd.update();
 					}
 					return true;

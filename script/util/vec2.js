@@ -1,6 +1,6 @@
 var util = require('./index');
 
-var Vec2 = function (x, y, z) {
+function Vec2(x, y, z) {
 	if (arguments.length == 0) {
 		this.x = 0;
 		this.y = 0;
@@ -20,21 +20,25 @@ var Vec2 = function (x, y, z) {
 	} else {
 		throw new Error('Vec2(): invalid arguments');
 	}
-};
+}
 
 Vec2.ZERO = new Vec2(0, 0);
 Vec2.UNIT = new Vec2(1, 1);
 
 Vec2.segmentIntersection = function (a, b, c, d) {
+	/* eslint-disable no-mixed-operators*/
 	var dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
 	var dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
 	var da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
 	var db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
+	/* eslint-enable no-mixed-operators*/
 	return dc * dd <= 0 && da * db <= 0;
 };
 
 Vec2.prototype.length = function () {
+	/* eslint-disable no-mixed-operators*/
 	return Math.sqrt(this.x * this.x + this.y * this.y);
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.prototype.equals = function (v) {
@@ -80,7 +84,9 @@ Vec2.prototype.yComplement = function (y1) {
 Vec2.prototype.addScaled = function (v, f) {
 	util.assertDefined(v);
 	util.assertDefined(f);
+	/* eslint-disable no-mixed-operators*/
 	return new Vec2(this.x + v.x * f, this.y + v.y * f, this.z + v.z * f);
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.prototype.normalized = function () {
@@ -156,13 +162,17 @@ Vec2.sum = function (v1, v2) {
 Vec2.dot = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
+	/* eslint-disable no-mixed-operators*/
 	return v1.x * v2.x + v1.y * v2.y;
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.cross = function (v1, v2) {
 	util.assertDefined(v1);
 	util.assertDefined(v2);
+	/* eslint-disable no-mixed-operators*/
 	return v1.x * v2.y - v1.y * v2.x;
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.prototype.rotate = function (angle) {
@@ -176,7 +186,9 @@ Vec2.prototype.rotate = function (angle) {
 Vec2.prototype.rotateSC = function (si, co) {
 	util.assertDefined(si);
 	util.assertDefined(co);
+	/* eslint-disable no-mixed-operators*/
 	return new Vec2(this.x * co - this.y * si, this.x * si + this.y * co, this.z);
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.angle = function (v1, v2) {
@@ -200,7 +212,9 @@ Vec2.diff = function (v1, v2) {
 Vec2.lc = function () {
 	var v = new Vec2();
 	for (var i = 0; i < arguments.length / 2; ++i)
+		/* eslint-disable no-mixed-operators*/
 		v = v.addScaled(arguments[2 * i], arguments[2 * i + 1]);
+		/* eslint-enable no-mixed-operators*/
 	return v;
 };
 
@@ -209,7 +223,9 @@ Vec2.lc2 = function (v1, f1, v2, f2) {
 	util.assertDefined(v2);
 	util.assertDefined(f1);
 	util.assertDefined(f2);
-	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2 );
+	/* eslint-disable no-mixed-operators*/
+	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2);
+	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.centre = function (v1, v2) {
@@ -218,24 +234,35 @@ Vec2.centre = function (v1, v2) {
 
 // find intersection of a ray and a box and
 //  return the shift magnitude to avoid it
-Vec2.shiftRayBox = function (/*Vec2*/p, /*Vec2*/d, /*Box2Abs*/bb) {
+Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) {
 	util.assertDefined(p);
 	util.assertDefined(d);
 	util.assertDefined(bb);
 	// four corner points of the box
 	var b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
 			bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
-	var r = b.map(function (v){return v.sub(p)}); // b relative to p
+	var r = b.map(function (v) {
+		return v.sub(p);
+	}); // b relative to p
 	d = d.normalized();
-	var rc = r.map(function (v){return Vec2.cross(v, d)}); // cross prods
-	var rd = r.map(function (v){return Vec2.dot(v, d)}); // dot prods
+	var rc = r.map(function (v) {
+		return Vec2.cross(v, d);
+	}); // cross prods
+	var rd = r.map(function (v) {
+		return Vec2.dot(v, d);
+	}); // dot prods
 
 	// find foremost points on the right and on the left of the ray
-	var pid = -1, nid = -1;
-	for (var i = 0; i < 4; ++i)
-		if (rc[i] > 0)  {if (pid < 0 || rd[pid] < rd[i]) pid = i;}
-		else            {if (nid < 0 || rd[nid] < rd[i]) nid = i;}
-
+	var pid = -1,
+		nid = -1;
+	for (var i = 0; i < 4; ++i) {
+		if (rc[i] > 0)  {
+			if (pid < 0 || rd[pid] < rd[i]) pid = i;
+		} else
+		if (nid < 0 || rd[nid] < rd[i]) {
+			nid = i;
+		}
+	}
 	if (nid < 0 || pid < 0) // no intersection, no shift
 		return 0;
 
@@ -247,8 +274,10 @@ Vec2.shiftRayBox = function (/*Vec2*/p, /*Vec2*/d, /*Box2Abs*/bb) {
 		id0 = pid, id1 = nid;
 
 	// simple proportion to calculate the shift
-	return rd[id0] + Math.abs(rc[id0]) * (rd[id1] - rd[id0])
-		 / (Math.abs(rc[id0]) + Math.abs(rc[id1]));
+	/* eslint-disable no-mixed-operators*/
+	return rd[id0] + Math.abs(rc[id0]) * (rd[id1] - rd[id0]) /
+		(Math.abs(rc[id0]) + Math.abs(rc[id1]));
+		 /* eslint-enable no-mixed-operators*/
 };
 
 module.exports = Vec2;

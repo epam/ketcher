@@ -19,9 +19,9 @@ require('./restruct_rendering');
 
 var tfx = util.tfx;
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false};
+var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
-//DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
+// DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
 
 var defaultRenderOps = {
 	// flags for debugging
@@ -42,8 +42,7 @@ var defaultRenderOps = {
 	selectionDistanceCoefficient: 0.4
 };
 
-var Render = function (clientArea, scale, opt, viewSz)
-{
+function Render(clientArea, scale, opt, viewSz) {
 	this.opt = Object.assign({}, defaultRenderOps, opt);
 
 	this.useOldZoom = Prototype.Browser.IE;
@@ -55,7 +54,7 @@ var Render = function (clientArea, scale, opt, viewSz)
 	this.paper = new Raphael(clientArea);
 	this.size = new Vec2();
 	this.viewSz = viewSz || new Vec2(clientArea.clientWidth || 100,
-	                                 clientArea.clientHeight || 100);
+									 clientArea.clientHeight || 100);
 	this.bb = new Box2Abs(new Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;
@@ -65,7 +64,8 @@ var Render = function (clientArea, scale, opt, viewSz)
 	this.structChangeHandlers = [];
 
 	var render = this;
-	var valueT = 0, valueL = 0;
+	var valueT = 0,
+		valueL = 0;
 	var element = clientArea;
 	do {
 		valueT += element.offsetTop  || 0;
@@ -78,10 +78,9 @@ var Render = function (clientArea, scale, opt, viewSz)
 	this.ctab = new ReStruct(new Struct(), this);
 	this.settings = null;
 	this.styles = null;
-};
+}
 
-Render.prototype.addStructChangeHandler = function (handler)
-{
+Render.prototype.addStructChangeHandler = function (handler) {
 	if (handler in this.structChangeHandlers)
 		throw new Error('handler already present');
 	this.structChangeHandlers.push(handler);
@@ -120,7 +119,7 @@ Render.prototype.obj2view = function (v, isRelative) {
 	return this.scaled2view(this.obj2scaled(v, isRelative));
 };
 
-Render.prototype.scrollPos = function() {
+Render.prototype.scrollPos = function () {
 	return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
 };
 
@@ -133,9 +132,9 @@ Render.prototype.page2obj = function (pagePos) {
 Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
 			'ui' in window ? new Vec2(this.page2obj(event)) :
-			                 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
+							 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
 		maps, skip);
-	//rbalabanov: let it be this way at the moment
+	// rbalabanov: let it be this way at the moment
 	if (ci.type == 'Atom') ci.map = 'atoms';
 	else if (ci.type == 'Bond') ci.map = 'bonds';
 	else if (ci.type == 'SGroup') ci.map = 'sgroups';
@@ -152,8 +151,7 @@ Render.prototype.client2Obj = function (clientPos) {
 	return new Vec2(clientPos).sub(this.offset);
 };
 
-Render.prototype.setMolecule = function (ctab, norescale)
-{
+Render.prototype.setMolecule = function (ctab, norescale) {
 	DEBUG.logMethod('setMolecule');
 	this.paper.clear();
 	this.ctab = new ReStruct(ctab, this, norescale);
@@ -164,15 +162,13 @@ Render.prototype.setMolecule = function (ctab, norescale)
 };
 
 // molecule manipulation interface
-Render.prototype.atomGetAttr = function (aid, name)
-{
+Render.prototype.atomGetAttr = function (aid, name) {
 	DEBUG.logMethod('atomGetAttr');
 	// TODO: check attribute names
 	return this.ctab.molecule.atoms.get(aid)[name];
 };
 
-Render.prototype.invalidateAtom = function (aid, level)
-{
+Render.prototype.invalidateAtom = function (aid, level) {
 	var atom = this.ctab.atoms.get(aid);
 	this.ctab.markAtom(aid, level ? 1 : 0);
 	var hbs = this.ctab.molecule.halfBonds;
@@ -188,8 +184,7 @@ Render.prototype.invalidateAtom = function (aid, level)
 	}
 };
 
-Render.prototype.invalidateLoop = function (bid)
-{
+Render.prototype.invalidateLoop = function (bid) {
 	var bond = this.ctab.bonds.get(bid);
 	var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
 	var lid2 = this.ctab.molecule.halfBonds.get(bond.b.hb2).loop;
@@ -199,16 +194,14 @@ Render.prototype.invalidateLoop = function (bid)
 		this.ctab.loopRemove(lid2);
 };
 
-Render.prototype.invalidateBond = function (bid)
-{
+Render.prototype.invalidateBond = function (bid) {
 	var bond = this.ctab.bonds.get(bid);
 	this.invalidateLoop(bid);
 	this.invalidateAtom(bond.b.begin, 0);
 	this.invalidateAtom(bond.b.end, 0);
 };
 
-Render.prototype.invalidateItem = function (map, id, level)
-{
+Render.prototype.invalidateItem = function (map, id, level) {
 	if (map == 'atoms') {
 		this.invalidateAtom(id, level);
 	} else if (map == 'bonds') {
@@ -220,8 +213,7 @@ Render.prototype.invalidateItem = function (map, id, level)
 	}
 };
 
-Render.prototype.atomGetDegree = function (aid)
-{
+Render.prototype.atomGetDegree = function (aid) {
 	DEBUG.logMethod('atomGetDegree');
 	return this.ctab.atoms.get(aid).a.neighbors.length;
 };
@@ -232,8 +224,7 @@ Render.prototype.isBondInRing = function (bid) {
 	this.ctab.molecule.halfBonds.get(bond.b.hb2).loop >= 0;
 };
 
-Render.prototype.atomGetNeighbors = function (aid)
-{
+Render.prototype.atomGetNeighbors = function (aid) {
 	var atom = this.ctab.atoms.get(aid);
 	var neiAtoms = [];
 	for (var i = 0; i < atom.a.neighbors.length; ++i) {
@@ -247,57 +238,49 @@ Render.prototype.atomGetNeighbors = function (aid)
 };
 
 // returns an array of s-group id's
-Render.prototype.atomGetSGroups = function (aid)
-{
+Render.prototype.atomGetSGroups = function (aid) {
 	DEBUG.logMethod('atomGetSGroups');
 	var atom = this.ctab.atoms.get(aid);
 	return Set.list(atom.a.sgs);
 };
 
-Render.prototype.sGroupGetAttr = function (sgid, name)
-{
+Render.prototype.sGroupGetAttr = function (sgid, name) {
 	DEBUG.logMethod('sGroupGetAttr');
 	return this.ctab.sgroups.get(sgid).item.getAttr(name);
 };
 
-Render.prototype.sGroupGetAttrs = function (sgid)
-{
+Render.prototype.sGroupGetAttrs = function (sgid) {
 	DEBUG.logMethod('sGroupGetAttrs');
 	return this.ctab.sgroups.get(sgid).item.getAttrs();
 };
 
 // TODO: move to SGroup
-Render.prototype.sGroupGetAtoms = function (sgid)
-{
+Render.prototype.sGroupGetAtoms = function (sgid) {
 	DEBUG.logMethod('sGroupGetAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return Struct.SGroup.getAtoms(this.ctab.molecule, sg);
 };
 
-Render.prototype.sGroupGetType = function (sgid)
-{
+Render.prototype.sGroupGetType = function (sgid) {
 	DEBUG.logMethod('sGroupGetType');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.type;
 };
 
-Render.prototype.sGroupsFindCrossBonds = function ()
-{
+Render.prototype.sGroupsFindCrossBonds = function () {
 	DEBUG.logMethod('sGroupsFindCrossBonds');
 	this.ctab.molecule.sGroupsRecalcCrossBonds();
 };
 
 // TODO: move to ReStruct
-Render.prototype.sGroupGetNeighborAtoms = function (sgid)
-{
+Render.prototype.sGroupGetNeighborAtoms = function (sgid) {
 	DEBUG.logMethod('sGroupGetNeighborAtoms');
 	var sg = this.ctab.sgroups.get(sgid).item;
 	return sg.neiAtoms;
 };
 
 // TODO: move to ReStruct
-Render.prototype.atomIsPlainCarbon = function (aid)
-{
+Render.prototype.atomIsPlainCarbon = function (aid) {
 	DEBUG.logMethod('atomIsPlainCarbon');
 	return this.ctab.atoms.get(aid).a.isPlainCarbon();
 };
@@ -324,32 +307,29 @@ Render.prototype.highlightObject = function (obj, visible) {
 	return true;
 };
 
-Render.prototype.itemGetPos = function (map, id)
-{
+Render.prototype.itemGetPos = function (map, id) {
 	return this.ctab.molecule[map].get(id).pp;
 };
 
-Render.prototype.atomGetPos = function (id)
-{
+Render.prototype.atomGetPos = function (id) {
 	DEBUG.logMethod('atomGetPos');
 	return this.itemGetPos('atoms', id);
 };
 
-Render.prototype.rxnArrowGetPos = function (id)
-{
+Render.prototype.rxnArrowGetPos = function (id) {
 	DEBUG.logMethod('rxnArrowGetPos');
 	return this.itemGetPos('rxnArrows', id);
 };
 
-Render.prototype.rxnPlusGetPos = function (id)
-{
+Render.prototype.rxnPlusGetPos = function (id) {
 	DEBUG.logMethod('rxnPlusGetPos');
 	return this.itemGetPos('rxnPluses', id);
 };
 
 Render.prototype.getAdjacentBonds = function (atoms) {
 	var aidSet = Set.fromList(atoms);
-	var bidSetInner = Set.empty(), bidSetCross = Set.empty();
+	var bidSetInner = Set.empty(),
+		bidSetCross = Set.empty();
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
 		var atom = this.ctab.atoms.get(aid);
@@ -362,23 +342,21 @@ Render.prototype.getAdjacentBonds = function (atoms) {
 			Set.add(set, hb.bid);
 		}
 	}
-	return {'inner': bidSetInner, 'cross': bidSetCross};
+	return { 'inner': bidSetInner, 'cross': bidSetCross };
 };
 
-Render.prototype.bondGetAttr = function (bid, name)
-{
+Render.prototype.bondGetAttr = function (bid, name) {
 	DEBUG.logMethod('bondGetAttr');
 	return this.ctab.bonds.get(bid).b[name];
 };
 
-Render.prototype.setSelection = function (selection)
-{
+Render.prototype.setSelection = function (selection) {
 	DEBUG.logMethod('setSelection');
 	for (var map in ReStruct.maps) {
 		if (!ReStruct.maps[map].isSelectable())
-			continue;
+			continue; // eslint-disable-line no-continue
 		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null;
-		this.ctab[map].each(function (id, item){
+		this.ctab[map].each(function (id, item) {
 			var selected = set ? set[id] === id : item.selected;
 			item.selected = selected;
 			this.ctab.showItemSelection(id, item, selected);
@@ -386,8 +364,7 @@ Render.prototype.setSelection = function (selection)
 	}
 };
 
-Render.prototype.initStyles = function ()
-{
+Render.prototype.initStyles = function () {
 	// TODO move fonts, dashed lines, etc. here
 	var settings = this.settings;
 	this.styles = {};
@@ -398,31 +375,30 @@ Render.prototype.initStyles = function ()
 		'stroke-linejoin': 'round'
 	};
 	this.styles.selectionStyle = {
-		'fill':'#7f7',
-		'stroke':'none'
+		fill: '#7f7',
+		stroke: 'none'
 	};
 	this.styles.selectionZoneStyle = {
-		'fill':'#000',
-		'stroke':'none',
-		'opacity':0.0
+		fill: '#000',
+		stroke: 'none',
+		opacity: 0.0
 	};
 	this.styles.highlightStyle = {
-		'stroke':'#0c0',
-		'stroke-width':0.6 * settings.lineWidth
+		'stroke': '#0c0',
+		'stroke-width': 0.6 * settings.lineWidth
 	};
 	this.styles.sGroupHighlightStyle = {
-		'stroke':'#9900ff',
-		'stroke-width':0.6 * settings.lineWidth
+		'stroke': '#9900ff',
+		'stroke-width': 0.6 * settings.lineWidth
 	};
 	this.styles.sgroupBracketStyle = {
-		'stroke':'darkgray',
-		'stroke-width':0.5 * settings.lineWidth
+		'stroke': 'darkgray',
+		'stroke-width': 0.5 * settings.lineWidth
 	};
-	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2 ;
+	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2;
 };
 
-Render.prototype.initSettings = function ()
-{
+Render.prototype.initSettings = function () {
 	var settings = this.settings = {};
 	settings.delta = this.ctab.molecule.getCoordBoundingBox();
 	settings.margin = 0.1;
@@ -441,39 +417,33 @@ Render.prototype.initSettings = function ()
 	settings.fontRLogic = this.settings.labelFontSize * 0.7;
 };
 
-Render.prototype.getStructCenter = function (selection)
-{
+Render.prototype.getStructCenter = function (selection) {
 	var bb = this.ctab.getVBoxObj(selection);
 	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 };
 
-Render.prototype.onResize = function ()
-{
+Render.prototype.onResize = function () {
 	this.setViewSize(new Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
 };
 
-Render.prototype.setViewSize = function (viewSz)
-{
+Render.prototype.setViewSize = function (viewSz) {
 	this.viewSz = new Vec2(viewSz);
 };
 
-Render.prototype._setPaperSize = function (sz)
-{
+Render.prototype._setPaperSize = function (sz) {
 	var z = this.zoom;
 	this.paper.setSize(sz.x * z, sz.y * z);
 	this.setViewBox(z);
 };
 
-Render.prototype.setPaperSize = function (sz)
-{
+Render.prototype.setPaperSize = function (sz) {
 	DEBUG.logMethod('setPaperSize');
 	var oldSz = this.sz;
 	this.sz = sz;
 	this._setPaperSize(sz);
 };
 
-Render.prototype.setOffset = function (newoffset)
-{
+Render.prototype.setOffset = function (newoffset) {
 	DEBUG.logMethod('setOffset');
 	var delta = new Vec2(newoffset.x - this.offset.x, newoffset.y - this.offset.y);
 	this.clientArea.scrollLeft += delta.x;
@@ -481,9 +451,9 @@ Render.prototype.setOffset = function (newoffset)
 	this.offset = newoffset;
 };
 
-Render.prototype.getElementPos = function (obj)
-{
-	var curleft = 0, curtop = 0;
+Render.prototype.getElementPos = function (obj) {
+	var curleft = 0,
+		curtop = 0;
 
 	if (obj.offsetParent) {
 		do {
@@ -491,7 +461,7 @@ Render.prototype.getElementPos = function (obj)
 			curtop += obj.offsetTop;
 		} while ((obj = obj.offsetParent));
 	}
-	return new Vec2(curleft,curtop);
+	return new Vec2(curleft, curtop);
 };
 
 Render.prototype.drawSelectionLine = function (p0, p1) {
@@ -505,7 +475,7 @@ Render.prototype.drawSelectionLine = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.path(
 		ReStruct.makeStroke(p0, p1)
-		).attr({'stroke':'gray', 'stroke-width':'1px'});
+		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
@@ -520,17 +490,20 @@ Render.prototype.drawSelectionRectangle = function (p0, p1) {
 		p1 = this.obj2scaled(p1).add(this.offset);
 		this.selectionRect = this.paper.rect(
 		Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)
-		).attr({'stroke':'gray', 'stroke-width':'1px'});
+		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
-Render.prototype.getElementsInRectangle = function (p0,p1) {
+Render.prototype.getElementsInRectangle = function (p0, p1) {
 	DEBUG.logMethod('getElementsInRectangle');
 	var bondList = [];
 	var atomList = [];
 
-	var x0 = Math.min(p0.x, p1.x), x1 = Math.max(p0.x, p1.x), y0 = Math.min(p0.y, p1.y), y1 = Math.max(p0.y, p1.y);
-	this.ctab.bonds.each(function (bid, bond){
+	var x0 = Math.min(p0.x, p1.x),
+		x1 = Math.max(p0.x, p1.x),
+		y0 = Math.min(p0.y, p1.y),
+		y1 = Math.max(p0.y, p1.y);
+	this.ctab.bonds.each(function (bid, bond) {
 		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
@@ -542,31 +515,31 @@ Render.prototype.getElementsInRectangle = function (p0,p1) {
 	}, this);
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	this.ctab.rxnArrows.each(function (id, item){
+	this.ctab.rxnArrows.each(function (id, item) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	}, this);
-	this.ctab.rxnPluses.each(function (id, item){
+	this.ctab.rxnPluses.each(function (id, item) {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	}, this);
 	var chiralFlagList = [];
-	this.ctab.chiralFlags.each(function (id, item){
+	this.ctab.chiralFlags.each(function (id, item) {
 		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
 			chiralFlagList.push(id);
 	}, this);
 	var sgroupDataList = [];
-	this.ctab.sgroupData.each(function (id, item){
+	this.ctab.sgroupData.each(function (id, item) {
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
 			sgroupDataList.push(id);
 	}, this);
 	return {
-		'atoms':atomList,
-		'bonds':bondList,
-		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList,
-		'chiralFlags':chiralFlagList,
-		'sgroupData':sgroupDataList
+		atoms: atomList,
+		bonds: bondList,
+		rxnArrows: rxnArrowsList,
+		rxnPluses: rxnPlusesList,
+		chiralFlags: chiralFlagList,
+		sgroupData: sgroupDataList
 	};
 };
 
@@ -583,7 +556,7 @@ Render.prototype.drawSelectionPolygon = function (r) {
 			v = this.obj2scaled(r[i]).add(this.offset);
 			pstr += 'L' + tfx(v.x) + ',' + tfx(v.y);
 		}
-		this.selectionRect = this.paper.path(pstr).attr({'stroke':'gray', 'stroke-width':'1px'});
+		this.selectionRect = this.paper.path(pstr).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
 	}
 };
 
@@ -596,7 +569,8 @@ Render.prototype.isPointInPolygon = function (r, p) {
 	var w0 = null;
 	var counter = 0;
 	var eps = 1e-5;
-	var flag1 = false, flag0 = false;
+	var flag1 = false,
+		flag0 = false;
 
 	for (var i = 0; i < r.length; ++i) {
 		var v1 = Vec2.diff(r[i], p);
@@ -604,12 +578,13 @@ Render.prototype.isPointInPolygon = function (r, p) {
 		var n1 = Vec2.dot(n, v1);
 		var d1 = Vec2.dot(d, v1);
 		flag1 = false;
-		if (n1 * n0 < 0)
-		{
+		if (n1 * n0 < 0) {
 			if (d1 * d0 > -eps) {
 				if (d0 > -eps)
 					flag1 = true;
+				/* eslint-disable no-mixed-operators*/
 			} else if ((Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 > 0) {
+				/* eslint-enable no-mixed-operators*/
 				flag1 = true;
 			}
 		}
@@ -635,80 +610,80 @@ Render.prototype.getElementsInPolygon = function (rr) {
 	var bondList = [];
 	var atomList = [];
 	var r = [];
-	for (var i = 0; i < rr.length; ++i) {
+	for (var i = 0; i < rr.length; ++i)
 		r[i] = new Vec2(rr[i].x, rr[i].y);
-	}
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var centre = Vec2.lc2(this.ctab.atoms.get(bond.b.begin).a.pp, 0.5,
 			this.ctab.atoms.get(bond.b.end).a.pp, 0.5);
 		if (this.isPointInPolygon(r, centre))
 			bondList.push(bid);
 	}, this);
-	this.ctab.atoms.each(function (aid, atom){
+	this.ctab.atoms.each(function (aid, atom) {
 		if (this.isPointInPolygon(r, atom.a.pp))
 			atomList.push(aid);
 	}, this);
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	this.ctab.rxnArrows.each(function (id, item){
+	this.ctab.rxnArrows.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnArrowsList.push(id);
 	}, this);
-	this.ctab.rxnPluses.each(function (id, item){
+	this.ctab.rxnPluses.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	}, this);
 	var chiralFlagList = [];
-	this.ctab.chiralFlags.each(function (id, item){
+	this.ctab.chiralFlags.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.pp))
 			chiralFlagList.push(id);
 	}, this);
 	var sgroupDataList = [];
-	this.ctab.sgroupData.each(function (id, item){
+	this.ctab.sgroupData.each(function (id, item) {
 		if (this.isPointInPolygon(r, item.sgroup.pp))
 			sgroupDataList.push(id);
 	}, this);
 
 	return {
-		'atoms':atomList,
-		'bonds':bondList,
-		'rxnArrows':rxnArrowsList,
-		'rxnPluses':rxnPlusesList,
-		'chiralFlags':chiralFlagList,
-		'sgroupData':sgroupDataList
+		atoms: atomList,
+		bonds: bondList,
+		rxnArrows: rxnArrowsList,
+		rxnPluses: rxnPlusesList,
+		chiralFlags: chiralFlagList,
+		sgroupData: sgroupDataList
 	};
 };
 
 Render.prototype.testPolygon = function (rr) {
 	rr = rr || [
-	{
-		x:50,
-		y:10
-	},
+		{
+			x: 50,
+			y: 10
+		},
 
-	{
-		x:20,
-		y:90
-	},
+		{
+			x: 20,
+			y: 90
+		},
 
-	{
-		x:90,
-		y:30
-	},
+		{
+			x: 90,
+			y: 30
+		},
 
-	{
-		x:10,
-		y:30
-	},
+		{
+			x: 10,
+			y: 30
+		},
 
-	{
-		x:90,
-		y:80
-	}
-		];
+		{
+			x: 90,
+			y: 80
+		}
+	];
 	if (rr.length < 3)
 		return;
-	var min = rr[0], max = rr[0];
+	var min = rr[0],
+		max = rr[0];
 	for (var j = 1; j < rr.length; ++j) {
 		min = Vec2.min(min, rr[j]);
 		max = Vec2.max(max, rr[j]);
@@ -720,15 +695,14 @@ Render.prototype.testPolygon = function (rr) {
 		var isin = this.isPointInPolygon(rr, p);
 		var color = isin ? '#0f0' : '#f00';
 		this.paper.circle(p.x, p.y, 2).attr({
-			'fill':color,
-			'stroke':'none'
+			fill: color,
+			stroke: 'none'
 		});
 	}
 	this.drawSelectionPolygon(rr);
 };
 
-Render.prototype.update = function (force)
-{
+Render.prototype.update = function (force) {
 	DEBUG.logMethod('update');
 
 	if (!this.settings || this.dirty) {
@@ -781,13 +755,19 @@ Render.prototype.update = function (force)
 			var marg = this.opt.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
 			var csz = this.viewSz;
+			 /* eslint-disable no-mixed-operators*/
 			if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)
+				/* eslint-enable no-mixed-operators*/
 				throw new Error('View box too small for the given margin');
+				/* eslint-disable no-mixed-operators*/
 			var rescale = Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
+			/* eslint-enable no-mixed-operators*/
 			if (this.opt.maxBondLength / rescale > 1.0)
 				rescale = 1.0;
 			var sz2 = sz1.add(mv.scaled(2 * rescale));
+			/* eslint-disable no-mixed-operators*/
 			this.paper.setViewBox(bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2, bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2, csz.x * rescale, csz.y * rescale);
+			/* eslint-enable no-mixed-operators*/
 		}
 	}
 };
@@ -801,7 +781,7 @@ Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO shoul
 	var maxMinDist = this.opt.selectionDistanceCoefficient;
 	minDist = minDist || maxMinDist;
 	minDist	 = Math.min(minDist, maxMinDist);
-	this.ctab.atoms.each(function (aid, atom){
+	this.ctab.atoms.each(function (aid, atom) {
 		if (aid != skip) {
 			var dist = Vec2.dist(pos, atom.a.pp);
 			if (dist < minDist) {
@@ -810,11 +790,12 @@ Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO shoul
 			}
 		}
 	}, this);
-	if (closestAtom != null)
+	if (closestAtom != null) {
 		return {
-			'id':closestAtom,
-			'dist':minDist
+			id: closestAtom,
+			dist: minDist
 		};
+	}
 	return null;
 };
 
@@ -825,9 +806,9 @@ Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var minCDist = minDist;
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
+			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
 		var cdist = Vec2.dist(pos, mid);
 		if (cdist < minCDist) {
@@ -835,29 +816,30 @@ Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a
 			closestBondCenter = bid;
 		}
 	}, this);
-	this.ctab.bonds.each(function (bid, bond){
+	this.ctab.bonds.each(function (bid, bond) {
 		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
 		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-		p2 = this.ctab.atoms.get(bond.b.end).a.pp;
+			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
 
-		var inStripe = Vec2.dot(pos.sub(p1),d) * Vec2.dot(pos.sub(p2),d) < 0;
+		var inStripe = Vec2.dot(pos.sub(p1), d) * Vec2.dot(pos.sub(p2), d) < 0;
 		if (inStripe) {
-			var dist = Math.abs(Vec2.dot(pos.sub(p1),n));
+			var dist = Math.abs(Vec2.dot(pos.sub(p1), n));
 			if (dist < minDist) {
 				closestBond = bid;
 				minDist = dist;
 			}
 		}
 	}, this);
-	if (closestBond !== null || closestBondCenter !== null)
+	if (closestBond !== null || closestBondCenter !== null) {
 		return {
-			'id': closestBond,
-			'dist': minDist,
-			'cid': closestBondCenter,
-			'cdist': minCDist
+			id: closestBond,
+			dist: minDist,
+			cid: closestBondCenter,
+			cdist: minCDist
 		};
+	}
 	return null;
 };
 
@@ -866,9 +848,9 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	var updret = function (type, item, force) {
 		if (item != null && (ret == null || ret.dist > item.dist || force)) {
 			ret = {
-				'type':type,
-				'id':item.id,
-				'dist':item.dist
+				type: type,
+				id: item.id,
+				dist: item.dist
 			};
 		}
 	};
@@ -884,7 +866,7 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 		var bond = this.findClosestBond(pos);
 		if (bond) {
 			if (bond.cid !== null)
-				updret('Bond', {'id': bond.cid, 'dist': bond.cdist});
+				updret('Bond', { id: bond.cid, dist: bond.cdist });
 			if (ret == null || ret.dist > 0.4 * this.scale) // hack
 				updret('Bond', bond);
 		}
@@ -903,11 +885,11 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	}
 	if (!maps || maps.indexOf('rxnArrows') >= 0) {
 		var arrow = ReRxnArrow.findClosest(this, pos);
-		updret('RxnArrow',arrow);
+		updret('RxnArrow', arrow);
 	}
 	if (!maps || maps.indexOf('rxnPluses') >= 0) {
 		var plus = ReRxnPlus.findClosest(this, pos);
-		updret('RxnPlus',plus);
+		updret('RxnPlus', plus);
 	}
 	if (!maps || maps.indexOf('frags') >= 0) {
 		var frag = ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
@@ -919,9 +901,9 @@ Render.prototype.findClosestItem = function (pos, maps, skip) {
 	}
 
 	ret = ret || {
-		'type':'Canvas',
-		'id':-1
-		};
+		type: 'Canvas',
+		id: -1
+	};
 	return ret;
 };
 
@@ -957,11 +939,14 @@ Render.prototype.recoordinate = function (rp, vp) {
 };
 
 Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
-	var ex = 0, ey = 0, dx = 0, dy = 0;
-	x0 = x0 - 0;
-	x1 = x1 - 0;
-	y0 = y0 - 0;
-	y1 = y1 - 0;
+	var ex = 0,
+		ey = 0,
+		dx = 0,
+		dy = 0;
+	x0 -= 0;
+	x1 -= 0;
+	y0 -= 0;
+	y1 -= 0;
 
 	if (x0 < 0) {
 		ex += -x0;
@@ -972,13 +957,12 @@ Render.prototype.extendCanvas = function (x0, y0, x1, y1) {
 		dy += -y0;
 	}
 
-	var szx = this.sz.x * this.zoom, szy = this.sz.y * this.zoom;
-	if (szx < x1) {
+	var szx = this.sz.x * this.zoom,
+		szy = this.sz.y * this.zoom;
+	if (szx < x1)
 		ex += x1 - szx;
-	}
-	if (szy < y1) {
+	if (szy < y1)
 		ey += y1 - szy;
-	}
 
 	var d = new Vec2(dx, dy).scaled(1 / this.zoom);
 	if (ey > 0 || ex > 0) {
@@ -1024,7 +1008,7 @@ Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
 
 	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
 		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
-	.attr(this.styles.sgroupBracketStyle);
+		.attr(this.styles.sgroupBracketStyle);
 };
 
 module.exports = Render;

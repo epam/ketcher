@@ -38,8 +38,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			}.bind(this)
 		});
 		return true;
-	}
-	else if (ci && ci.map == 'rgroups') {
+	} else if (ci && ci.map == 'rgroups') {
 		this._hoverHelper.hover(null);
 		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
 		var rgroupLabels = [];
@@ -55,7 +54,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			onOk: function (res) {
 				var props = {};
 				if (rg.range != res.range) {
-					var isValid = res.range.split(',').all(function (s){
+					var isValid = res.range.split(',').all(function (s) {
 						return s.match(/^[>,<,=]?[0-9]+$/g) || s.match(/^[0-9]+\-[0-9]+$/g);
 					});
 					if (!isValid) {

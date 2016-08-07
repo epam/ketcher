@@ -1,9 +1,9 @@
 var Map = require('./map.js');
 
-var Pool = function () {
+function Pool() {
 	this._map = new Map();
 	this._nextId = 0;
-};
+}
 
 Pool.prototype.newId = function () {
 	return this._nextId++;

@@ -1,29 +1,26 @@
 var Set = require('../../util/set');
 
-var Dfs = function (mol, atom_data, components, nReactants) {
+function Dfs(mol, atomData, components, nReactants) {
 	this.molecule = mol;
-	this.atom_data = atom_data;
+	this.atom_data = atomData;
 	this.components = components;
 	this.nComponentsInReactants = -1;
 	this.nReactants = nReactants;
 
 	this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
-	this.molecule.atoms.each(function (aid)
-	{
+	this.molecule.atoms.each(function (aid) {
 		this.vertices[aid] = new Dfs.VertexDesc();
 	}, this);
 
 	this.edges = new Array(this.molecule.bonds.count()); // Minimum size
-	this.molecule.bonds.each(function (bid)
-	{
+	this.molecule.bonds.each(function (bid) {
 		this.edges[bid] = new Dfs.EdgeDesc();
 	}, this);
 
 	this.v_seq = [];
-};
+}
 
-Dfs.VertexDesc = function ()
-{
+Dfs.VertexDesc = function () {
 	this.dfs_state = 0;       // 0 -- not on stack
 	// 1 -- on stack
 	// 2 -- removed from stack
@@ -32,38 +29,31 @@ Dfs.VertexDesc = function ()
 	this.branches = 0;    // how many DFS branches go out from this vertex}
 };
 
-Dfs.EdgeDesc = function ()
-{
+Dfs.EdgeDesc = function () {
 	this.opening_cycles = 0; // how many cycles are
 	// (i) starting with this edge
 	// and (ii) ending in this edge's first vertex
 	this.closing_cycle = 0;  // 1 if this edge closes a cycle
 };
 
-Dfs.SeqElem = function (v_idx, par_vertex, par_edge)
-{
-	this.idx = v_idx;                // index of vertex in _graph
-	this.parent_vertex = par_vertex; // parent vertex in DFS tree
-	this.parent_edge = par_edge;     // edge to parent vertex
+Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
+	this.idx = vIdx;                // index of vertex in _graph
+	this.parent_vertex = parVertex; // parent vertex in DFS tree
+	this.parent_edge = parEdge;     // edge to parent vertex
 };
 
-Dfs.prototype.walk = function ()
-{
-	var v_stack = [];
+Dfs.prototype.walk = function () {
+	var vStack = [];
 	var i, j;
 	var cid = 0;
 	var component = 0;
 
-	while (true)
-	{
-		if (v_stack.length < 1)
-		{
+	while (true) { // eslint-disable-line no-constant-condition
+		if (vStack.length < 1) {
 			var selected = -1;
 
-			var findFunc = function (aid)
-			{
-				if (this.vertices[aid].dfs_state == 0)
-				{
+			var findFunc = function (aid) {
+				if (this.vertices[aid].dfs_state == 0) {
 					selected = aid;
 					return true;
 				}
@@ -75,108 +65,95 @@ Dfs.prototype.walk = function ()
 				if (selected === null) {
 					selected = -1;
 					cid++;
-					if (cid == this.nReactants) {
-						this.nComponentsInReactants = component;
-					}
 				}
+				if (cid == this.nReactants)
+					this.nComponentsInReactants = component;
 			}
-			if (selected < -1) {
+			if (selected < -1)
 				this.molecule.atoms.find(findFunc, this);
-			}
 			if (selected == -1)
 				break;
 			this.vertices[selected].parent_vertex = -1;
 			this.vertices[selected].parent_edge = -1;
-			v_stack.push(selected);
+			vStack.push(selected);
 			component++;
 		}
 
-		var v_idx = v_stack.pop();
-		var parent_vertex = this.vertices[v_idx].parent_vertex;
+		var vIdx = vStack.pop();
+		var parentVertex = this.vertices[vIdx].parent_vertex;
 
-		var seq_elem = new Dfs.SeqElem(v_idx, parent_vertex, this.vertices[v_idx].parent_edge);
-		this.v_seq.push(seq_elem);
+		var seqElem = new Dfs.SeqElem(vIdx, parentVertex, this.vertices[vIdx].parent_edge);
+		this.v_seq.push(seqElem);
 
-		this.vertices[v_idx].dfs_state = 2;
+		this.vertices[vIdx].dfs_state = 2;
 
-		var atom_d = this.atom_data[v_idx];
+		var atomD = this.atom_data[vIdx];
 
-		for (i = 0; i < atom_d.neighbours.length; i++)
-		{
-			var nei_idx = atom_d.neighbours[i].aid;
-			var edge_idx = atom_d.neighbours[i].bid;
+		for (i = 0; i < atomD.neighbours.length; i++) {
+			var neiIdx = atomD.neighbours[i].aid;
+			var edgeIdx = atomD.neighbours[i].bid;
 
-			if (nei_idx == parent_vertex)
-				continue;
+			if (neiIdx == parentVertex)
+				continue; // eslint-disable-line no-continue
 
-			if (this.vertices[nei_idx].dfs_state == 2)
-			{
-				this.edges[edge_idx].closing_cycle = 1;
+			if (this.vertices[neiIdx].dfs_state == 2) {
+				this.edges[edgeIdx].closing_cycle = 1;
 
-				j = v_idx;
+				j = vIdx;
 
-				while (j != -1)
-				{
-					if (this.vertices[j].parent_vertex == nei_idx)
-						break;
+				while (j != -1 && this.vertices[j].parent_vertex != neiIdx)
 					j = this.vertices[j].parent_vertex;
-				}
 
 				if (j == -1)
 					throw new Error('cycle unwind error');
 
 				this.edges[this.vertices[j].parent_edge].opening_cycles++;
-				this.vertices[v_idx].branches++;
+				this.vertices[vIdx].branches++;
 
-				seq_elem = new Dfs.SeqElem(nei_idx, v_idx, edge_idx);
-				this.v_seq.push(seq_elem);
-			}
-			else
-			{
-				if (this.vertices[nei_idx].dfs_state == 1)
-				{
-					j = v_stack.indexOf(nei_idx);
+				seqElem = new Dfs.SeqElem(neiIdx, vIdx, edgeIdx);
+				this.v_seq.push(seqElem);
+			} else {
+				if (this.vertices[neiIdx].dfs_state == 1) {
+					j = vStack.indexOf(neiIdx);
 
 					if (j == -1)
 						throw new Error('internal: removing vertex from stack');
 
-					v_stack.splice(j, 1);
+					vStack.splice(j, 1);
 
-					var parent = this.vertices[nei_idx].parent_vertex;
+					var parent = this.vertices[neiIdx].parent_vertex;
 
 					if (parent >= 0)
 						this.vertices[parent].branches--;
 				}
 
-				this.vertices[v_idx].branches++;
-				this.vertices[nei_idx].parent_vertex = v_idx;
-				this.vertices[nei_idx].parent_edge = edge_idx;
-				this.vertices[nei_idx].dfs_state = 1;
-				v_stack.push(nei_idx);
+				this.vertices[vIdx].branches++;
+				this.vertices[neiIdx].parent_vertex = vIdx;
+				this.vertices[neiIdx].parent_edge = edgeIdx;
+				this.vertices[neiIdx].dfs_state = 1;
+				vStack.push(neiIdx);
 			}
 		}
 	}
 };
 
-Dfs.prototype.edgeClosingCycle = function (e_idx)
-{
-	return this.edges[e_idx].closing_cycle != 0;
+Dfs.prototype.edgeClosingCycle = function (eIdx) {
+	return this.edges[eIdx].closing_cycle != 0;
 };
 
-Dfs.prototype.numBranches = function (v_idx)
-{
-	return this.vertices[v_idx].branches;
+Dfs.prototype.numBranches = function (vIdx) {
+	return this.vertices[vIdx].branches;
 };
 
-Dfs.prototype.numOpeningCycles = function (e_idx)
-{
-	return this.edges[e_idx].opening_cycles;
+Dfs.prototype.numOpeningCycles = function (eIdx) {
+	return this.edges[eIdx].opening_cycles;
 };
 
-Dfs.prototype.toString = function ()
-{
+Dfs.prototype.toString = function () {
 	var str = '';
-	this.v_seq.each(function (seq_elem) {str += seq_elem.idx + ' -> ';});
+	this.v_seq.each(function (seqElem) {
+		str += seqElem.idx + ' -> ';
+	});
 	str += '*';
 	return str;
 };

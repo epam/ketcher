@@ -1,15 +1,17 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
-var ReFrag = function (/*Struct.Fragment = {}*/frag) {
+var ReFrag = function (/* Struct.Fragment = {}*/frag) {
 	this.init(Visel.TYPE.FRAGMENT);
 
 	this.item = frag;
 };
 ReFrag.prototype = new ReObject();
-ReFrag.isSelectable = function () { return false; };
+ReFrag.isSelectable = function () {
+	return false;
+};
 
 ReFrag.findClosest = function (render, p, skip, minDist) {
 	minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
@@ -21,7 +23,7 @@ ReFrag.findClosest = function (render, p, skip, minDist) {
 				var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
 				if (!ret || xDist < minDist) {
 					minDist = xDist;
-					ret = { 'id': fid, 'dist': minDist };
+					ret = { id: fid, dist: minDist };
 				}
 			}
 		}
@@ -32,9 +34,8 @@ ReFrag.findClosest = function (render, p, skip, minDist) {
 ReFrag.prototype.fragGetAtoms = function (render, fid) {
 	var ret = [];
 	render.ctab.atoms.each(function (aid, atom) {
-		if (atom.a.fragment == fid) {
+		if (atom.a.fragment == fid)
 			ret.push(aid);
-		}
 	}, this);
 	return ret;
 };
@@ -43,9 +44,8 @@ ReFrag.prototype.fragGetBonds = function (render, fid) {
 	var ret = [];
 	render.ctab.bonds.each(function (bid, bond) {
 		if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid &&
-		render.ctab.atoms.get(bond.b.end).a.fragment == fid) {
+		render.ctab.atoms.get(bond.b.end).a.fragment == fid)
 			ret.push(bid);
-		}
 	}, this);
 	return ret;
 };
@@ -81,20 +81,19 @@ ReFrag.prototype._draw = function (render, fid, attrs) { // TODO need to review 
 };
 
 ReFrag.prototype.draw = function (render) {
-	return null;//this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
+	return null;// this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
 };
 
 ReFrag.prototype.drawHighlight = function (render) {
 	// Do nothing. This method shouldn't actually be called.
-}
+};
 
 ReFrag.prototype.setHighlight = function (highLight, render) {
 	var fid = render.ctab.frags.keyOf(this);
 	if (!Object.isUndefined(fid)) {
 		render.ctab.atoms.each(function (aid, atom) {
-			if (atom.a.fragment == fid) {
+			if (atom.a.fragment == fid)
 				atom.setHighlight(highLight, render);
-			}
 		}, this);
 		render.ctab.bonds.each(function (bid, bond) {
 			if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid)
@@ -105,4 +104,4 @@ ReFrag.prototype.setHighlight = function (highLight, render) {
 	}
 };
 
-module.exports = ReFrag
+module.exports = ReFrag;

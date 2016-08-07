@@ -1,25 +1,23 @@
 var util = require('./index');
 
-var Map = function (obj) {
-	if (typeof (obj) !== 'undefined' && obj.constructor !== Object) {
+function Map(obj) {
+	if (typeof (obj) !== 'undefined' && obj.constructor !== Object)
 		throw Error('Passed object is not an instance of "Object"!');
-	}
 	this._obj = obj || {};
 	this._count = 0;
-};
+}
 
 Map.prototype.each = function (func, context) {
-	var v;
-	var value;
-	var vInt;
+	var v,
+		value,
+		vInt;
 
 	for (v in this._obj) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
 
-		if (!isNaN(vInt)) {
+		if (!isNaN(vInt))
 			v = vInt;
-		}
 		func.call(context, v, value);
 	}
 };
@@ -33,56 +31,50 @@ Map.prototype.map = function (func, context) {
 };
 
 Map.prototype.find = function (func, context) {
-	var v;
-	var vInt;
-	var value;
+	var v,
+		vInt,
+		value;
 
 	for (v in this._obj) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
 
-		if (!isNaN(vInt)) {
+		if (!isNaN(vInt))
 			v = vInt;
-		}
-		if (func.call(context, v, value)) {
+		if (func.call(context, v, value))
 			return v;
-		}
 	}
 };
 
 Map.prototype.findAll = function (func, context) {
-	var v;
-	var vInt;
-	var value;
-	var vv = [];
+	var v,
+		vInt,
+		value,
+		vv = [];
 
 	for (v in this._obj) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
-		if (!isNaN(vInt)) {
+		if (!isNaN(vInt))
 			v = vInt;
-		}
-		if (func.call(context, v, value)) {
+		if (func.call(context, v, value))
 			vv.push(v);
-		}
 	}
 	return vv;
 };
 
 Map.prototype.keys = function () {
-	var keys = [];
-	var v;
-	for (v in this._obj) {
+	var keys = [],
+		v;
+	for (v in this._obj)
 		keys.push(v);
-	}
 	return keys;
 };
 
 Map.prototype.ikeys = function () {
 	var keys = [];
-	for (var v in this._obj) {
+	for (var v in this._obj)
 		keys.push(v - 0);
-	}
 	return keys;
 };
 
@@ -101,9 +93,8 @@ Map.prototype.set = function (key, value) {
 };
 
 Map.prototype.get = function (key) {
-	if (this._obj[key] !== Object.prototype[key]) {
+	if (this._obj[key] !== Object.prototype[key])
 		return this._obj[key];
-	}
 	return undefined;
 };
 
@@ -116,9 +107,8 @@ Map.prototype.unset = function (key) {
 };
 
 Map.prototype.update = function (object) {
-	for (var v in object) {
+	for (var v in object)
 		this.set(v, object[v]);
-	}
 };
 
 Map.prototype.clear = function () {
@@ -136,9 +126,8 @@ Map.prototype.idList = function () {
 
 Map.prototype.keyOf = function (value) {
 	for (var key in this._obj) {
-		if (this._obj[key] === value) {
+		if (this._obj[key] === value)
 			return key;
-		}
 	}
 };
 

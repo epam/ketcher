@@ -1,14 +1,15 @@
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var ReObject = require('./reobject');
 
-var ReRxnPlus = function (/*chem.RxnPlus*/plus)
-{
+function ReRxnPlus(/* chem.RxnPlus*/plus) {
 	this.init(Visel.TYPE.PLUS);
 
 	this.item = plus;
-};
+}
 ReRxnPlus.prototype = new ReObject();
-ReRxnPlus.isSelectable = function () { return true; }
+ReRxnPlus.isSelectable = function () {
+	return true;
+};
 
 ReRxnPlus.findClosest = function (render, p) {
 	var minDist;
@@ -19,7 +20,7 @@ ReRxnPlus.findClosest = function (render, p) {
 		var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
 		if (dist < 0.5 && (!ret || dist < minDist)) {
 			minDist = dist;
-			ret = {'id': id, 'dist': minDist};
+			ret = { id: id, dist: minDist };
 		}
 	});
 	return ret;
@@ -28,7 +29,9 @@ ReRxnPlus.findClosest = function (render, p) {
 ReRxnPlus.prototype.highlightPath = function (render) {
 	var p = render.ps(this.item.pp);
 	var s = render.settings.scaleFactor;
+	/* eslint-disable no-mixed-operators*/
 	return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
+	/* eslint-enable no-mixed-operators*/
 };
 
 ReRxnPlus.prototype.drawHighlight = function (render) {
@@ -41,4 +44,4 @@ ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) { //
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-module.exports = ReRxnPlus
+module.exports = ReRxnPlus;

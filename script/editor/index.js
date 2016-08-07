@@ -28,19 +28,17 @@ var toolMap = {
 
 var ui = global.ui;
 
-var Editor = function (render)
-{
+var Editor = function (render) {
 	this.render = render;
 	this._selectionHelper = new SelectionHelper(this);
 	this._tool = null;
 	this.setupEvents();
 };
 
-Editor.prototype.tool = function(name, opts) {
+Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
-		if (this._tool) {
+		if (this._tool)
 			this._tool.OnCancel();
-		}
 		this._tool = new toolMap[name](this, opts);
 	}
 	return this._tool;
@@ -52,19 +50,18 @@ Editor.prototype.setupEvents = function () {
 	var render = this.render;
 	var clientArea = render.clientArea;
 	// rbalabanov: here is temporary fix for "drag issue" on iPad
-	//BEGIN
+	// BEGIN
 	if ('hiddenPaths' in ReStruct.prototype) {
 		clientArea.observe('touchend', function (event) {
-			if (event.touches.length == 0) {
+			if (event.touches.length == 0)
 				while (ReStruct.prototype.hiddenPaths.length > 0) ReStruct.prototype.hiddenPaths.pop().remove();
-			}
 		});
 	}
-	//END
+	// END
 
 	// rbalabanov: two-fingers scrolling & zooming for iPad
 	// TODO should be moved to touch.js module, re-factoring needed
-	//BEGIN
+	// BEGIN
 	this.longTapFlag = false;
 	this.longTapTimeout = null;
 	this.longTapTouchstart = null;
@@ -86,16 +83,16 @@ Editor.prototype.setupEvents = function () {
 			editor.longTapFlag = false;
 		}
 	};
-	//END
+	// END
 
 	// [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
 	// here we prevent that freaking "accelerators menu" on IE8
-	//BEGIN
+	// BEGIN
 	clientArea.observe('selectstart', function (event) {
 		util.stopEventPropagation(event);
 		return util.preventDefault(event);
 	});
-	//END
+	// END
 
 	var zoomStaticPoint = null;
 	clientArea.observe('touchstart', function (event) {
@@ -130,7 +127,7 @@ Editor.prototype.setupEvents = function () {
 		render.setZoom(this._tui.scale0 * event.scale);
 		var offset = clientArea.cumulativeOffset();
 		var pp = new Vec2(this._tui.center.pageX - offset.left,
-		                  this._tui.center.pageY - offset.top);
+						  this._tui.center.pageY - offset.top);
 		render.recoordinate(pp, zoomStaticPoint);
 		render.update();
 		event.preventDefault();
@@ -139,50 +136,48 @@ Editor.prototype.setupEvents = function () {
 		delete this._tui;
 		event.preventDefault();
 	});
-	//END
+	// END
 
-	clientArea.observe('onresize', function (event) {
+	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
 		render.onResize();
 	});
 
 	// assign canvas events handlers
-	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName){
+	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName) {
 		var bindEventName = eventName.toLowerCase();
 		clientArea.observe(bindEventName, function (event) {
-			if (eventName != 'MouseLeave') if (!ui || !ui.is_touch) {
-				// TODO: karulin: fix this on touch devices if needed
-				var co = clientArea.cumulativeOffset();
-				co = new Vec2(co[0], co[1]);
-				var vp = new Vec2(event.clientX, event.clientY).sub(co);
-				var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
-				if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) {// ignore events on the hidden part of the canvas
-					if (eventName == 'MouseMove') {
-						// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-						editor._tool.processEvent('OnMouseLeave', event);
+			if (eventName != 'MouseLeave') {
+				if (!ui || !ui.is_touch) {
+					// TODO: karulin: fix this on touch devices if needed
+					var co = clientArea.cumulativeOffset();
+					co = new Vec2(co[0], co[1]);
+					var vp = new Vec2(event.clientX, event.clientY).sub(co);
+					var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
+					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
+						if (eventName == 'MouseMove')
+							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+							editor._tool.processEvent('OnMouseLeave', event);
+						return util.preventDefault(event);
 					}
-					return util.preventDefault(event);
 				}
 			}
 
 			editor._tool.processEvent('On' + eventName, event);
-			if (eventName != 'MouseUp') {
+			if (eventName != 'MouseUp')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.
 				// Do we really need total stop here?
 				util.stopEventPropagation(event);
-			}
 			if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
 				return util.preventDefault(event);
 		});
 	}, this);
-
 };
 
 Editor.prototype.selectAll = function () {
 	var selection = {};
-	for (var map in ReStruct.maps) {
+	for (var map in ReStruct.maps)
 		selection[map] = this.render.ctab[map].ikeys();
-	}
 	this._selectionHelper.setSelection(selection);
 };
 
@@ -191,20 +186,22 @@ Editor.prototype.deselectAll = function () {
 };
 
 Editor.prototype.hasSelection = function (copyable) {
-	if ('selection' in this._selectionHelper)
-		for (var map in this._selectionHelper.selection)
-			if (this._selectionHelper.selection[map].length > 0)
-			if (!copyable || map !== 'sgroupData')
-				return true;
+	if ('selection' in this._selectionHelper) {
+		for (var map in this._selectionHelper.selection) {
+			if (this._selectionHelper.selection[map].length > 0) {
+				if (!copyable || map !== 'sgroupData')
+					return true;
+			}
+		}
+	}
 	return false;
 };
 
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
 	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection) {
+		for (var map in this._selectionHelper.selection)
 			selection[map] = this._selectionHelper.selection[map].slice(0);
-		}
 	}
 	if (explicit) {
 		var struct = this.render.ctab.molecule;
@@ -243,7 +240,7 @@ Editor.prototype.getSelectionStruct = function () {
 	var struct = this.render.ctab.molecule;
 	var selection = this.getSelection(true);
 	var dst = struct.clone(Set.fromList(selection.atoms),
-	                       Set.fromList(selection.bonds), true);
+						   Set.fromList(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets

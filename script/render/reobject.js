@@ -1,14 +1,12 @@
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');          
+var Visel = require('./visel');
 var util = require('../util');
 
-var ReObject = function ()  // TODO ??? should it be in ReStruct namespace
-{
+function ReObject() { // TODO ??? should it be in ReStruct namespace
 	this.__ext = new Vec2(0.05 * 3, 0.05 * 3);
-};
+}
 
-ReObject.prototype.init = function (viselType)
-{
+ReObject.prototype.init = function (viselType) {
 	this.visel = new Visel(viselType);
 
 	this.highlight = false;
@@ -35,27 +33,27 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 	if (highLight) {
 		var noredraw = 'highlighting' in this && this.highlighting != null;// && !this.highlighting.removed;
 		if (noredraw) {
-			if (this.highlighting.type == 'set') {
+			if (this.highlighting.type == 'set')
 				noredraw = !this.highlighting[0].removed;
-			} else {
+			 else
 				noredraw = !this.highlighting.removed;
-			}
 		}
 		// rbalabanov: here is temporary fix for "drag issue" on iPad
-		//BEGIN
-		//noredraw = noredraw && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
-		//END
+		// BEGIN
+		// noredraw = noredraw && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
+		// END
 		if (noredraw) {
 			this.highlighting.show();
-		}
-		else {
+		} else {
 			render.paper.setStart();
 			this.drawHighlight(render);
 			this.highlighting = render.paper.setFinish();
 		}
-	} else {
-		if (this.highlighting) this.highlighting.hide();
-	}
+	} else
+		if (this.highlighting) {
+			this.highlighting.hide();
+		}
+
 	this.highlight = highLight;
 };
 
@@ -63,4 +61,4 @@ ReObject.prototype.makeSelectionPlate = function (render) {
 	console.log('ReObject.makeSelectionPlate is not overridden');
 };
 
-module.exports = ReObject
+module.exports = ReObject;

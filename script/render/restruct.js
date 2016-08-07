@@ -23,8 +23,7 @@ var ReChiralFlag = require('./rechiralflag');
 var ReSGroup = require('./resgroup');
 var ReLoop = require('./reloop');
 
-var ReAtom = function (/*chem.Atom*/atom)
-{
+function ReAtom(/* chem.Atom*/atom) {
 	this.init(Visel.TYPE.ATOM);
 
 	this.a = atom; // TODO rename a to item
@@ -33,10 +32,12 @@ var ReAtom = function (/*chem.Atom*/atom)
 	this.hydrogenOnTheLeft = false;
 
 	this.component = -1;
-};
+}
 
 ReAtom.prototype = new ReObject();
-ReAtom.isSelectable = function () { return true; }
+ReAtom.isSelectable = function () {
+	return true;
+};
 
 ReAtom.prototype.getVBoxObj = function (render) {
 	if (this.visel.boundingBox)
@@ -55,24 +56,25 @@ ReAtom.prototype.makeHighlightPlate = function (render) {
 	var styles = render.styles;
 	var ps = render.ps(this.a.pp);
 	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-	.attr(styles.highlightStyle);
+		.attr(styles.highlightStyle);
 };
 
 ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	var ps = restruct.render.ps(this.a.pp);
 	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-	.attr(styles.selectionStyle);
+		.attr(styles.selectionStyle);
 };
 
-var ReBond = function (/*chem.Bond*/bond)
-{
+function ReBond(/* chem.Bond*/bond) {
 	this.init(Visel.TYPE.BOND);
 
 	this.b = bond; // TODO rename b to item
 	this.doubleBondShift = 0;
-};
+}
 ReBond.prototype = new ReObject();
-ReBond.isSelectable = function () { return true; }
+ReBond.isSelectable = function () {
+	return true;
+};
 
 ReBond.prototype.drawHighlight = function (render) {
 	var ret = this.makeHighlightPlate(render);
@@ -84,18 +86,17 @@ ReBond.prototype.makeHighlightPlate = function (render) {
 	render.ctab.bondRecalc(render.settings, this);
 	var c = render.ps(this.b.center);
 	return render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
-	.attr(render.styles.highlightStyle);
+		.attr(render.styles.highlightStyle);
 };
 
 ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	restruct.bondRecalc(restruct.render.settings, this);
 	var c = restruct.render.ps(this.b.center);
 	return paper.circle(c.x, c.y, 0.8 * styles.atomSelectionPlateRadius)
-	.attr(styles.selectionStyle);
+		.attr(styles.selectionStyle);
 };
 
-var ReStruct = function (molecule, render, norescale)
-{
+function ReStruct(molecule, render, norescale) {
 	this.render = render;
 	this.atoms = new Map();
 	this.bonds = new Map();
@@ -115,28 +116,27 @@ var ReStruct = function (molecule, render, norescale)
 	this.connectedComponents = new Pool();
 	this.ccFragmentType = new Map();
 
-	for (var map in ReStruct.maps) {
+	for (var map in ReStruct.maps)
 		this[map + 'Changed'] = {};
-	}
 	this.structChanged = false;
 
-	molecule.atoms.each(function (aid, atom){
+	molecule.atoms.each(function (aid, atom) {
 		this.atoms.set(aid, new ReAtom(atom));
 	}, this);
 
-	molecule.bonds.each(function (bid, bond){
+	molecule.bonds.each(function (bid, bond) {
 		this.bonds.set(bid, new ReBond(bond));
 	}, this);
 
-	molecule.loops.each(function (lid, loop){
+	molecule.loops.each(function (lid, loop) {
 		this.reloops.set(lid, new ReLoop(loop));
 	}, this);
 
-	molecule.rxnPluses.each(function (id, item){
+	molecule.rxnPluses.each(function (id, item) {
 		this.rxnPluses.set(id, new ReRxnPlus(item));
 	}, this);
 
-	molecule.rxnArrows.each(function (id, item){
+	molecule.rxnArrows.each(function (id, item) {
 		this.rxnArrows.set(id, new ReRxnArrow(item));
 	}, this);
 
@@ -150,18 +150,17 @@ var ReStruct = function (molecule, render, norescale)
 
 	molecule.sgroups.each(function (id, item) {
 		this.sgroups.set(id, new ReSGroup(item));
-		if (item.type == 'DAT' && !item.data.attached) {
+		if (item.type == 'DAT' && !item.data.attached)
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
-		}
 	}, this);
 
 	if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
-		this.chiralFlags.set(0,new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
+		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
 
 	this.coordProcess(norescale);
-};
+}
 
 ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 	atom = atom || this.atoms.get(aid);
@@ -177,7 +176,7 @@ ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 
 ReStruct.prototype.printConnectedComponents = function () {
 	var strs = [];
-	this.connectedComponents.each(function (ccid, cc){
+	this.connectedComponents.each(function (ccid, cc) {
 		strs.push(' ' + ccid + ':[' + Set.list(cc).toString() + '].' + Set.size(cc).toString());
 	}, this);
 	console.log(strs.toString());
@@ -191,7 +190,7 @@ ReStruct.prototype.clearConnectedComponents = function () {
 };
 
 ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
-	var list = (typeof(aid['length']) == 'number') ? [].slice.call(aid) : [aid];
+	var list = (typeof (aid['length']) == 'number') ? [].slice.call(aid) : [aid];
 	var ids = Set.empty();
 
 	while (list.length > 0) {
@@ -199,9 +198,8 @@ ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 			var aid = list.pop();
 			Set.add(ids, aid);
 			var atom = this.atoms.get(aid);
-			if (atom.component >= 0) {
+			if (atom.component >= 0)
 				Set.add(adjacentComponents, atom.component);
-			}
 			for (var i = 0; i < atom.a.neighbors.length; ++i) {
 				var neiId = this.molecule.halfBonds.get(atom.a.neighbors[i]).end;
 				if (!Set.contains(ids, neiId))
@@ -248,12 +246,12 @@ ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
 };
 
 ReStruct.prototype.assignConnectedComponents = function () {
-	this.atoms.each(function (aid,atom){
+	this.atoms.each(function (aid, atom) {
 		if (atom.component >= 0)
 			return;
 		var adjacentComponents = Set.empty();
 		var ids = this.getConnectedComponent(aid, adjacentComponents);
-		Set.each(adjacentComponents, function (ccid){
+		Set.each(adjacentComponents, function (ccid) {
 			this.removeConnectedComponent(ccid);
 		}, this);
 		this.addConnectedComponent(ids);
@@ -262,7 +260,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 
 ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 	cc = cc || this.connectedComponents.get(ccid);
-	bb = bb || {'min':null, 'max':null};
+	bb = bb || { min: null, max: null };
 	Set.each(cc, function (aid) {
 		var ps = this.render.ps(this.atoms.get(aid).a.pp);
 		if (bb.min == null) {
@@ -276,13 +274,14 @@ ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 };
 
 ReStruct.prototype.initLayers = function () {
-	for (var group in ReStruct.layerMap)
+	for (var group in ReStruct.layerMap) {
 		this.layers[ReStruct.layerMap[group]] =
 		this.render.paper.rect(0, 0, 10, 10)
-		.attr({
-			'fill':'#000',
-			'opacity':'0.0'
-		}).toFront();
+			.attr({
+				fill: '#000',
+				opacity: '0.0'
+			}).toFront();
+	}
 };
 
 ReStruct.prototype.insertInLayer = function (lid, path) {
@@ -290,9 +289,8 @@ ReStruct.prototype.insertInLayer = function (lid, path) {
 };
 
 ReStruct.prototype.clearMarks = function () {
-	for (var map in ReStruct.maps) {
+	for (var map in ReStruct.maps)
 		this[map + 'Changed'] = {};
-	}
 	this.structChanged = false;
 };
 
@@ -310,7 +308,7 @@ ReStruct.prototype.markAtom = function (aid, mark) {
 
 ReStruct.prototype.markItem = function (map, id, mark) {
 	var mapChanged = this[map + 'Changed'];
-	mapChanged[id] = (typeof(mapChanged[id]) != 'undefined') ?
+	mapChanged[id] = (typeof (mapChanged[id]) != 'undefined') ?
 		Math.max(mark, mapChanged[id]) : mark;
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
@@ -324,16 +322,14 @@ ReStruct.prototype.eachVisel = function (func, context) {
 	}
 };
 
-ReStruct.prototype.getVBoxObj = function (selection)
-{
+ReStruct.prototype.getVBoxObj = function (selection) {
 	selection = selection || {};
 	if (this.selectionIsEmpty(selection)) {
-		for (var map in ReStruct.maps) {
+		for (var map in ReStruct.maps)
 			selection[map] = this[map].keys();
-		}
 	}
 	var vbox = null;
-	for (var map in ReStruct.maps) {
+	for (map in ReStruct.maps) {
 		if (selection[map]) {
 			selection[map].forEach(function (id) {
 				var box = this[map].get(id).getVBoxObj(this.render);
@@ -350,21 +346,22 @@ ReStruct.prototype.selectionIsEmpty = function (selection) {
 	util.assert(!util.isUndefined(selection), '\'selection\' is not defined');
 	if (util.isNull(selection))
 		return true;
-	for (var map in ReStruct.maps)
+	for (var map in ReStruct.maps) {
 		if (selection[map] && selection[map].length > 0)
 			return false;
+	}
 	return true;
-}
+};
 
 ReStruct.prototype.translate = function (d) {
-	this.eachVisel(function (visel){
+	this.eachVisel(function (visel) {
 		visel.translate(d);
 	}, this);
 };
 
 ReStruct.prototype.scale = function (s) {
 	// NOTE: bounding boxes are not valid after scaling
-	this.eachVisel(function (visel){
+	this.eachVisel(function (visel) {
 		this.scaleVisel(visel, s);
 	}, this);
 };
@@ -390,7 +387,7 @@ ReStruct.prototype.scaleVisel = function (visel, s) {
 };
 
 ReStruct.prototype.clearVisels = function () {
-	this.eachVisel(function (visel){
+	this.eachVisel(function (visel) {
 		this.clearVisel(visel);
 	}, this);
 };
@@ -408,7 +405,7 @@ ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldS
 			return true;
 		return false;
 	}, this);
-}
+};
 
 ReStruct.prototype.checkStereoBold = function (bid0, bond) {
 	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
@@ -435,29 +432,29 @@ ReStruct.prototype.checkStereoBoldBonds = function () {
 	this.bonds.each(this.checkStereoBold, this);
 };
 
-ReStruct.prototype.update = function (force)
-{
+ReStruct.prototype.update = function (force) {
 	force = force || !this.initialized;
 
 	// check items to update
 	var id;
 	if (force) {
-		(function (){
+		(function () {
 			for (var map in ReStruct.maps) {
 				var mapChanged = this[map + 'Changed'];
-				this[map].each(function (id){
+				this[map].each(function (id) {
 					mapChanged[id] = 1;
 				}, this);
 			}
 		}).call(this);
 	} else {
 		// check if some of the items marked are already gone
-		(function (){
+		(function () {
 			for (var map in ReStruct.maps) {
 				var mapChanged = this[map + 'Changed'];
-				for (id in mapChanged)
+				for (id in mapChanged) {
 					if (!this[map].has(id))
 						delete mapChanged[id];
+				}
 			}
 		}).call(this);
 	}
@@ -476,7 +473,7 @@ ReStruct.prototype.update = function (force)
 		this.molecule.frags.remove(fid);
 	}
 
-	(function (){
+	(function () {
 		for (var map in ReStruct.maps) {
 			var mapChanged = this[map + 'Changed'];
 			for (id in mapChanged) {
@@ -486,10 +483,10 @@ ReStruct.prototype.update = function (force)
 		}
 	}).call(this);
 	if (this.structChanged)
-		this.render.structChangeHandlers.forEach(function (handler){handler.call();});
+		this.render.structChangeHandlers.forEach(function (handler) { handler.call(); });
 
 	// TODO: when to update sgroup?
-	this.sgroups.each(function (sid, sgroup){
+	this.sgroups.each(function (sid, sgroup) {
 		this.clearVisel(sgroup.visel);
 		sgroup.highlighting = null;
 		sgroup.selectionPlate = null;
@@ -510,8 +507,12 @@ ReStruct.prototype.update = function (force)
 	}
 
 	// only update half-bonds adjacent to atoms that have moved
-	this.molecule.updateHalfBonds(new Map(this.atomsChanged).findAll(function (aid, status){ return status >= 0; }, this));
-	this.molecule.sortNeighbors(new Map(this.atomsChanged).findAll(function (aid, status){ return status >= 1; }, this));
+	this.molecule.updateHalfBonds(new Map(this.atomsChanged).findAll(function (aid, status) {
+		return status >= 0;
+	}, this));
+	this.molecule.sortNeighbors(new Map(this.atomsChanged).findAll(function (aid, status) {
+		return status >= 1;
+	}, this));
 	this.assignConnectedComponents();
 	this.setImplicitHydrogen();
 	this.setHydrogenPos();
@@ -540,8 +541,7 @@ ReStruct.prototype.update = function (force)
 	return true;
 };
 
-ReStruct.prototype.drawReactionSymbols = function ()
-{
+ReStruct.prototype.drawReactionSymbols = function () {
 	var item;
 	var id;
 	for (id in this.rxnArrowsChanged) {
@@ -554,8 +554,7 @@ ReStruct.prototype.drawReactionSymbols = function ()
 	}
 };
 
-ReStruct.prototype.drawReactionArrow = function (id, item)
-{
+ReStruct.prototype.drawReactionArrow = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawArrow(new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
@@ -564,8 +563,7 @@ ReStruct.prototype.drawReactionArrow = function (id, item)
 		path.translateAbs(offset.x, offset.y);
 };
 
-ReStruct.prototype.drawReactionPlus = function (id, item)
-{
+ReStruct.prototype.drawReactionPlus = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
 	var path = this.drawPlus(centre);
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
@@ -575,8 +573,7 @@ ReStruct.prototype.drawReactionPlus = function (id, item)
 };
 
 
-ReStruct.prototype.drawSGroups = function ()
-{
+ReStruct.prototype.drawSGroups = function () {
 	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var resgroup = this.sgroups.get(id);
 		var sgroup = resgroup.item;
@@ -599,9 +596,8 @@ ReStruct.prototype.drawRGroups = function () {
 	this.rgroups.each(function (id, rgroup) {
 		var drawing = rgroup.draw(this.render);
 		for (var group in drawing) {
-			while (drawing[group].length > 0) {
+			while (drawing[group].length > 0)
 				this.addReObjectPath(group, rgroup.visel, drawing[group].shift(), null, true);
-			}
 		}
 		// TODO rgroup selection & highlighting
 	}, this);
@@ -614,9 +610,8 @@ ReStruct.prototype.eachCC = function (func, type, context) {
 	}, this);
 };
 
-ReStruct.prototype.getGroupBB = function (type)
-{
-	var bb = {'min':null, 'max':null};
+ReStruct.prototype.getGroupBB = function (type) {
+	var bb = { min: null, max: null };
 
 	this.eachCC(function (ccid, cc) {
 		bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);
@@ -632,12 +627,14 @@ ReStruct.prototype.setHydrogenPos = function () {
 
 		if (atom.a.neighbors.length == 0) {
 			var elem = element.getElementByLabel(atom.a.label);
-			if (elem != null) {
+			if (elem != null)
 				atom.hydrogenOnTheLeft = element.get(elem).putHydrogenOnTheLeft;
-			}
-			continue;
+			continue;// eslint-disable-line no-continue
 		}
-		var yl = 1, yr = 1, nl = 0, nr = 0;
+		var yl = 1,
+			yr = 1,
+			nl = 0,
+			nr = 0;
 		for (var i = 0; i < atom.a.neighbors.length; ++i) {
 			var d = this.molecule.halfBonds.get(atom.a.neighbors[i]).dir;
 			if (d.x <= 0) {
@@ -660,11 +657,9 @@ ReStruct.prototype.setImplicitHydrogen = function () {
 	this.molecule.setImplicitHydrogen(Object.keys(this.atomsChanged));
 };
 
-ReStruct.prototype.coordProcess = function (norescale)
-{
-	if (!norescale) {
+ReStruct.prototype.coordProcess = function (norescale) {
+	if (!norescale)
 		this.molecule.rescale();
-	}
 };
 
 ReStruct.prototype.notifyAtomAdded = function (aid) {
@@ -703,9 +698,8 @@ ReStruct.prototype.notifyAtomRemoved = function (aid) {
 	var atom = this.atoms.get(aid);
 	var set = this.connectedComponents.get(atom.component);
 	Set.remove(set, aid);
-	if (Set.size(set) == 0) {
+	if (Set.size(set) == 0)
 		this.connectedComponents.remove(atom.component);
-	}
 	this.clearVisel(atom.visel);
 	this.atoms.unset(aid);
 	this.markItemRemoved();
@@ -723,8 +717,7 @@ ReStruct.prototype.notifyBondRemoved = function (bid) {
 	this.markItemRemoved();
 };
 
-ReStruct.prototype.loopRemove = function (loopId)
-{
+ReStruct.prototype.loopRemove = function (loopId) {
 	if (!this.reloops.has(loopId))
 		return;
 	var reloop = this.reloops.get(loopId);
@@ -733,7 +726,7 @@ ReStruct.prototype.loopRemove = function (loopId)
 	for (var i = 0; i < reloop.loop.hbs.length; ++i) {
 		var hbid = reloop.loop.hbs[i];
 		if (!this.molecule.halfBonds.has(hbid))
-			continue;
+			continue;// eslint-disable-line no-continue
 		var hb = this.molecule.halfBonds.get(hbid);
 		hb.loop = -1;
 		this.markBond(hb.bid, 1);
@@ -748,30 +741,26 @@ ReStruct.prototype.loopIsValid = function (rlid, reloop) {
 	var halfBonds = this.molecule.halfBonds;
 	var loop = reloop.loop;
 	var bad = false;
-	loop.hbs.each(function (hbid){
-		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid) {
+	loop.hbs.each(function (hbid) {
+		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid)
 			bad = true;
-		}
 	}, this);
 	return !bad;
 };
 
-ReStruct.prototype.verifyLoops = function ()
-{
+ReStruct.prototype.verifyLoops = function () {
 	var toRemove = [];
-	this.reloops.each(function (rlid, reloop){
-		if (!this.loopIsValid(rlid, reloop)) {
+	this.reloops.each(function (rlid, reloop) {
+		if (!this.loopIsValid(rlid, reloop))
 			toRemove.push(rlid);
-		}
 	}, this);
-	for (var i = 0; i < toRemove.length; ++i) {
+	for (var i = 0; i < toRemove.length; ++i)
 		this.loopRemove(toRemove[i]);
-	}
 };
 
 ReStruct.prototype.BFS = function (onAtom, orig, context) {
-	orig = orig - 0;
-	var queue = new Array();
+	orig -= 0;
+	var queue = [];
 	var mask = {};
 	queue.push(orig);
 	mask[orig] = 1;
@@ -791,16 +780,16 @@ ReStruct.prototype.BFS = function (onAtom, orig, context) {
 };
 
 ReStruct.maps = {
-	'atoms':       ReAtom,
-	'bonds':       ReBond,
-	'rxnPluses':   ReRxnPlus,
-	'rxnArrows':   ReRxnArrow,
-	'frags':       ReFrag,
-	'rgroups':     ReRGroup,
-	'sgroupData':  ReDataSGroupData,
-	'chiralFlags': ReChiralFlag,
-	'sgroups':     ReSGroup,
-	'reloops':     ReLoop
+	atoms: ReAtom,
+	bonds: ReBond,
+	rxnPluses: ReRxnPlus,
+	rxnArrows: ReRxnArrow,
+	frags: ReFrag,
+	rgroups: ReRGroup,
+	sgroupData: ReDataSGroupData,
+	chiralFlags: ReChiralFlag,
+	sgroups: ReSGroup,
+	reloops: ReLoop
 };
 
 module.exports = ReStruct;

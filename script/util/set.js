@@ -1,4 +1,4 @@
-/*global module*/
+/* global module*/
 
 var Set = {
 	empty: function () {
@@ -14,9 +14,8 @@ var Set = {
 	size: function (set) {
 		var cnt = 0;
 		for (var id in set) {
-			if (set[id] !== Object.prototype[id]) {
+			if (set[id] !== Object.prototype[id])
 				cnt++;
-			}
 		}
 		return cnt;
 	},
@@ -28,9 +27,8 @@ var Set = {
 	subset: function (subset, superset) {
 		for (var id in subset) {
 			if (subset[id] !== Object.prototype[id]) {
-				if (superset[id] !== subset[id]) {
+				if (superset[id] !== subset[id])
 					return false;
-				}
 			}
 		}
 		return true;
@@ -40,9 +38,8 @@ var Set = {
 		var set = {};
 		for (var id in set1) {
 			if (set1[id] !== Object.prototype[id]) {
-				if (set2[id] === set1[id]) {
+				if (set2[id] === set1[id])
 					Set.add(set, id);
-				}
 			}
 		}
 		return set;
@@ -51,9 +48,8 @@ var Set = {
 	disjoint: function (set1, set2) {
 		for (var id in set1) {
 			if (set1[id] !== Object.prototype[id]) {
-				if (set2[id] === set1[id]) {
+				if (set2[id] === set1[id])
 					return false;
-				}
 			}
 		}
 		return true;
@@ -65,9 +61,8 @@ var Set = {
 
 	each: function (set, func, context) {
 		for (var v in set) {
-			if (set[v] !== Object.prototype[v]) {
+			if (set[v] !== Object.prototype[v])
 				func.call(context, set[v]);
-			}
 		}
 	},
 
@@ -75,9 +70,8 @@ var Set = {
 		var subset = {};
 		for (var v in set) {
 			if (set[v] !== Object.prototype[v]) {
-				if (func.call(context, set[v])) {
+				if (func.call(context, set[v]))
 					subset[set[v]] = set[v];
-				}
 			}
 		}
 		return subset;
@@ -85,9 +79,8 @@ var Set = {
 
 	pick: function (set) {
 		for (var v in set) {
-			if (set[v] !== Object.prototype[v]) {
+			if (set[v] !== Object.prototype[v])
 				return set[v];
-			}
 		}
 		return null;
 	},
@@ -95,9 +88,8 @@ var Set = {
 	list: function (set) {
 		var list = [];
 		for (var v in set) {
-			if (set[v] !== Object.prototype[v]) {
+			if (set[v] !== Object.prototype[v])
 				list.push(set[v]);
-			}
 		}
 		return list;
 	},
@@ -127,9 +119,8 @@ var Set = {
 	fromList: function (list) {
 		var set = {};
 		if (list) {
-			for (var i = 0; i < list.length; ++i) {
+			for (var i = 0; i < list.length; ++i)
 				set[list[i] - 0] = list[i] - 0;
-			}
 		}
 		return set;
 	},
@@ -145,9 +136,8 @@ var Set = {
 	find: function (set, func, context) {
 		for (var v in set) {
 			if (set[v] !== Object.prototype[v]) {
-				if (func.call(context, set[v])) {
+				if (func.call(context, set[v]))
 					return v;
-				}
 			}
 		}
 		return null;

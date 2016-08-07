@@ -1,4 +1,4 @@
-/****************************************************************************
+/** **************************************************************************
  * Copyright (C) 2009-<%= grunt.template.today("yyyy") %>. EPAM Systems.
  *
  * This file may be distributed and/or modified under the terms of the

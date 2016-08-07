@@ -11,9 +11,9 @@ var BondTool = function (editor, bondCaption) {
 	this.atomProps = { label: 'C' };
 	this.bondProps = Struct.Bond.caption2Type(bondCaption);
 	this.plainBondTypes = [
-			Struct.Bond.PATTERN.TYPE.SINGLE,
-			Struct.Bond.PATTERN.TYPE.DOUBLE,
-			Struct.Bond.PATTERN.TYPE.TRIPLE];
+		Struct.Bond.PATTERN.TYPE.SINGLE,
+		Struct.Bond.PATTERN.TYPE.DOUBLE,
+		Struct.Bond.PATTERN.TYPE.TRIPLE];
 
 	this._hoverHelper = new HoverHelper(this);
 };
@@ -31,7 +31,8 @@ BondTool.prototype.OnMouseDown = function (event) {
 };
 
 BondTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor, rnd = _E_.render;
+	var _E_ = this.editor;
+	var rnd = _E_.render;
 	if ('dragCtx' in this) {
 		var _DC_ = this.dragCtx;
 		if (!('item' in _DC_) || _DC_.item.map == 'atoms') {
@@ -55,21 +56,19 @@ BondTool.prototype.OnMouseMove = function (event) {
 				i2 = this.atomProps;
 				var xy1 = rnd.page2obj(event);
 				dist = Vec2.dist(_DC_.xy0, xy1);
-				if (p1) {
+				if (p1)
 					// rotation only, leght of bond = 1;
 					p2 = this._calcNewAtomPos(p1, xy1);
-				} else {
+				else
 					// first mousedown event intersect with any atom and
 					// rotation only, leght of bond = 1;
 					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1).get_xy0(), xy1);
-				}
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
-			if (dist > 0.3) {
+			if (dist > 0.3)
 				_DC_.action = Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
-			} else {
+			else
 				delete _DC_.action;
-			}
 			rnd.update();
 			return true;
 		}
@@ -119,9 +118,8 @@ BondTool.prototype.OnMouseUp = function (event) {
 				bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE
 				) {
 					var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
-					if (loop) {
+					if (loop)
 						bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-					}
 				}
 				ui.addUndoAction(
 					Action.fromBondAttrs(_DC_.item.id, bondProps,
@@ -134,7 +132,7 @@ BondTool.prototype.OnMouseUp = function (event) {
 	return true;
 };
 
-function bondFlipRequired (struct, bond, attrs) {
+function bondFlipRequired(struct, bond, attrs) {
 	return attrs.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
 		   bond.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
 		   attrs.stereo != Struct.Bond.PATTERN.STEREO.NONE &&

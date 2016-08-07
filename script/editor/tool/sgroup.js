@@ -12,20 +12,18 @@ var SGroupTool = function (editor, type) {
 	this._sGroupHelper = new SGroupHelper(editor, type);
 
 	var selection = this.editor.getSelection();
-	if (selection.atoms && selection.atoms.length > 0) {
+	if (selection.atoms && selection.atoms.length > 0)
 		// if the selection contains atoms, create an s-group out of those
 		this._sGroupHelper.showPropertiesDialog(null, selection);
-	} else {
+	else
 		// otherwise, clear selection
 		this.editor.deselectAll();
-	}
 };
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci || ci.type == 'Canvas')
 		this._lassoHelper.begin(event);
-	}
 };
 SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this._lassoHelper.running()) {
@@ -49,10 +47,10 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 
 		if (ci.map == 'atoms') {
 			// if we click the SGroup tool on a single atom or bond, make a group out of those
-			selection = {'atoms': [ci.id]};
+			selection = { atoms: [ci.id] };
 		} else if (ci.map == 'bonds') {
 			var bond = this.editor.render.ctab.bonds.get(ci.id);
-			selection = {'atoms': [bond.b.begin, bond.b.end]};
+			selection = { atoms: [bond.b.begin, bond.b.end] };
 		} else if (ci.map == 'sgroups') {
 			id = ci.id;
 		} else {

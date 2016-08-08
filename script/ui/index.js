@@ -407,16 +407,16 @@ function dialog(modal, params) {
 		// React.unmountComponentAtNode(node);
 		var dialog = cover.lastChild;
 		dialog.remove();
+		console.info('output', res);
 		if (fn) fn(res);
 	}
 	return new Promise(function (resolve, reject) {
+		console.info('input', params);
 		utils.animate(cover, 'show').then(function () {
-			var ok = params.onOk;
-			var cancel = params.onCancel;
-			modal(Object.assign({
-				onOk: function (res) { close(ok, res); resolve(res); },
-				onCancel: function (res) { close(cancel, res); reject(res); }
-			}, params));
+			modal(Object.assign({}, params, {
+				onOk: function (res) { close(params.onOk, res); resolve(res); },
+				onCancel: function (res) { close(params.onCancel, res); reject(res); }
+			}));
 		});
 	});
 }
@@ -901,7 +901,7 @@ Object.assign(ui, {
 
 	// TODO: search a way to pass dialogs to editor
 	showSGroupProperties: modal.sgroup,
-	showRGroupTable: modal.rgroup,
+	showRGroupTable: dialog.bind(null, modal.rgroup),
 	showElemTable: modal.periodTable,
 	showReaGenericsTable: modal.genericGroups,
 	showAtomAttachmentPoints: modal.attachmentPoints,

@@ -5,17 +5,15 @@ var selectDialog = require('./select');
 
 var openDialog = require('./open.js');
 var saveDialog = require('./save.js');
-var templatesDialog = require('./templates.jsx').default;
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
+
+var templatesDialog = require('./templates.jsx').default;
+var rgroupDialog = require('./rgroup.jsx').default;
 
 function periodTable (params) {
 	params.required = true;
 	selectDialog('periodTable', params);
-};
-
-function rgroup (params) {
-	selectDialog('rgroup', params);
 };
 
 function genericGroups (params) {
@@ -127,7 +125,7 @@ function sgroup(params) {
 
 module.exports = {
 	periodTable: periodTable,
-	rgroup: rgroup,
+	rgroup: rgroupDialog,
 	genericGroups: genericGroups,
 	about: about,
 	attachmentPoints: attachmentPoints,

@@ -628,7 +628,7 @@ ReStruct.prototype.setHydrogenPos = function () {
 		if (atom.a.neighbors.length == 0) {
 			var elem = element.getElementByLabel(atom.a.label);
 			if (elem != null)
-				atom.hydrogenOnTheLeft = element.get(elem).putHydrogenOnTheLeft;
+				atom.hydrogenOnTheLeft = element[elem].putHydrogenOnTheLeft;
 			continue;// eslint-disable-line no-continue
 		}
 		var yl = 1,

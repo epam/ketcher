@@ -62,7 +62,7 @@ function deserialize(value) {
 				charge = -charge;
 		}
 		// Not consistant
-		if (label == 'A' || label == 'Q' || label == 'X' || element.getElementByLabel(label) != null)
+		if (label == 'A' || label == 'Q' || label == 'X' || label == 'M' || element.getElementByLabel(label) != null)
 			return { label: label, charge: charge };
 	}
 	return null;

@@ -53,7 +53,7 @@ function atomProps (params) {
 		var elem = element.getElementByLabel(label);
 		if (elem == null && label !== 'A' &&
 		    label !== '*' && label !== 'Q' &&
-		    label !== 'X' && label !== 'R') {
+		    label !== 'X' && label !== 'R') { // generics ?
 
 			console.assert(change, 'Incorrect input params label');
 			label = this.value = params.label;

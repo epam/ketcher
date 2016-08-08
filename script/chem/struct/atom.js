@@ -149,7 +149,7 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 		return true;
 	}
 
-	var groupno = element.get(elem).group;
+	var groupno = element[elem].group;
 	var rad = radicalElectrons(atom.radical);
 
 	var valence = conn;
@@ -358,7 +358,7 @@ Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line ma
 		return null;
 	}
 
-	var groupno = element.get(elem).group;
+	var groupno = element[elem].group;
 	var rad = radicalElectrons(atom.radical);
 
 	if (groupno == 3) {

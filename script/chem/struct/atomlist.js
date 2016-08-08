@@ -11,7 +11,7 @@ function AtomList(params) {
 AtomList.prototype.labelList = function () {
 	var labels = [];
 	for (var i = 0; i < this.ids.length; ++i)
-		labels.push(element.get(this.ids[i]).label);
+		labels.push(element[this.ids[i]].label);
 	return labels;
 };
 

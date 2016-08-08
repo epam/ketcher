@@ -669,7 +669,7 @@ function elemTable () {
 			var props;
 			if (res.mode == 'single')
 				props = {
-					label: element.get(res.values[0]).label
+					label: element[res.values[0]].label
 				};
 			else
 				props = {

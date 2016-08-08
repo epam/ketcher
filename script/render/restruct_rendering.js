@@ -685,7 +685,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				label.text = atom.a.label;
 				var elem = element.getElementByLabel(label.text);
 				if (opt.atomColoring && elem)
-					color = element.get(elem).color;
+					color = element[elem].color;
 			}
 			label.path = paper.text(ps.x, ps.y, label.text)
 				.attr({

@@ -41,7 +41,6 @@ class Templates extends Component {
 		this.all = templates;
 		this.params = params;
 		var groups = this.getGroups();
-
 		this.state.selected = null;
 		this.state.selectedGroup = groups[0];
 		this.state.filter = '';
@@ -100,7 +99,7 @@ class Templates extends Component {
 
 	result() {
 		var tmpl = this.state.selected;
-		console.assert(tmpl.props, 'Incorrect SDF parse');
+		//console.assert(tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
 			struct: tmpl.struct,
 			aid: parseInt(tmpl.props.atomid) || null,
@@ -108,7 +107,7 @@ class Templates extends Component {
 		} : null;
 	}
 
-	render (props) {
+	render () {
 		var {selected, selectedGroup, filter} = this.state;
 
 		console.info('all rerender');
@@ -121,7 +120,7 @@ class Templates extends Component {
 
 		return (
 			<Dialog caption="Template Library"
-					name="template-lib" params={props.params}
+					name="template-lib" params={this.params}
 					result={() => this.result()} valid={() => !!selected}>
 				<label>
 					<input type="search" placeholder="Filter" value={filter}

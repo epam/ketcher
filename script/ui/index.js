@@ -414,8 +414,8 @@ function dialog(modal, params) {
 		console.info('input', params);
 		utils.animate(cover, 'show').then(function () {
 			modal(Object.assign({}, params, {
-				onOk: function (res) { close(params.onOk, res); resolve(res); },
-				onCancel: function (res) { close(params.onCancel, res); reject(res); }
+				onOk: function (res) { close(params && params.onOk, res); resolve(res); },
+				onCancel: function (res) { close(params && params.onCancel, res); reject(res); }
 			}));
 		});
 	});

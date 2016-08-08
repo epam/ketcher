@@ -1,6 +1,6 @@
 {
   "name": "ketcher",
-  "version": "2.0.0-alpha.5",
+  "version": "2.0.0-alpha.6",
   "description": "Web-based molecule sketcher",
   "main": "ketcher.js",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -25,6 +25,11 @@
     "url": "https://github.com/epam/ketcher/issues"
   },
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.11.5",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.11.1",
+    "babelify": "^7.3.0",
     "browserify": "^13.1.0",
     "browserify-replace": "^0.9.0",
     "del": "^2.1.0",
@@ -53,12 +58,12 @@
   "scripts": {
     "build": "gulp build",
     "archive": "gulp archive",
-    "serve": "gulp serve",
+    "start": "gulp serve",
     "gulp": "gulp",
     "postinstall": "guppy pre-commit || exit 0",
     "test": "echo \"Error: no test yet exists\" && exit 1",
     "lint" : "eslint script",
-    "nibble": "eslint-nibble script/chem script/editor script/render script/util api.js banner.js index.js prototype.js raphael-ext.js"
+    "nibble": "eslint-nibble script"
   },
   "dependencies": {
     "es5-shim": "^4.5.7",
@@ -68,6 +73,7 @@
     "html5shiv": "^3.7.3",
     "keymage": "^1.1.0",
     "normalize.css": "^4.2.0",
+    "preact": "^5.6.0",
     "query-string": "^2.3.0",
     "raphael": "^2.1.4",
     "xhrpolyfill": "^1.0.0"

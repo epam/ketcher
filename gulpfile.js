@@ -151,7 +151,7 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 
 gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], function() {
 	gulp.watch('style/**.less', ['style']);
-	gulp.watch('templates/**', ['html']);
+	gulp.watch('template/**', ['html']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
 		cp.spawn('gulp', ['serve'], { stdio: 'inherit' });
 		process.exit();
@@ -167,6 +167,7 @@ gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], functio
 function scriptBundle(src, watchUpdate) {
 	var build = browserify(src, {
 		standalone: pkg.name,
+		extensions: ['.jsx'],
 		cache: {}, packageCache: {},
 		debug: true
 	});
@@ -176,7 +177,14 @@ function scriptBundle(src, watchUpdate) {
 			{ from: '__API_PATH__', to: options['api-path'] },
 			{ from: '__BUILD_NUMBER__', to: options['build-number'] },
 			{ from: '__BUILD_DATE__', to: options['build-date'] },
-		]});
+		]})
+		.transform('babelify', {
+			presets: ["es2015", "react"],
+			plugins: ['transform-class-properties',
+			          'transform-object-rest-spread'],
+			extensions: [".jsx"],
+			only: 'script/ui'
+		});
 
 	polyfillify(build);
 	if (!watchUpdate)

@@ -143,7 +143,7 @@ input[type=reset], input[type=button] {
 }
 
 select, textarea,
-input[type=text] {
+input[type=text], input[type=search] {
 	.control;
 	display: inline-block;
 	//display: block;
@@ -209,15 +209,30 @@ legend {
 	font-size: 0.9em;
 }
 
-/////////////////////
+//////
 
-#custom_templates {
-	ul {
+.template-lib {
+	.outer {
+		margin-top: 3.5em;
 		padding: 0;
-		//width: 25em;
+		float: left;
 		width: 350px;
 		height: 18em;
 		overflow: auto;
+	}
+	.groups {
+		margin-top: 3.5em;
+		height: 18em;
+		width: 11em;
+		float: left;
+	}
+	label {
+		position: absolute;
+		right: 0;
+		left: 0;
+	}
+	input[type=search] {
+		width: 100%;
 	}
 	li {
 		padding: 10px 0;
@@ -239,13 +254,6 @@ legend {
 		}
 		&.selected, &:hover {
 			background: lighten(@border-color, 15%);
-		}
-	}
-
-	&.loading {
-		visibility: hidden;
-		li {			  // workaround padding in
-			height: 95px; // autoScale width bug
 		}
 	}
 }

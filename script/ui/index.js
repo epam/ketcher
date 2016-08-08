@@ -34,7 +34,7 @@ var clientArea = null;
 var server;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-custom'];
+                     'reaction-automap', 'template-lib'];
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -374,9 +374,8 @@ function createDialog(name, container) {
 
 function showDialog (name) {
 	var cover = $$('.overlay')[0];
-	var dialog = cover.querySelector('form#' + name) || createDialog(name, cover);
+	var dialog = createDialog(name, cover);
 	keymage.setScope('modal');
-	dialog.style.display = '';
 	cover.style.display = '';
 
 	utils.animate(cover, 'show');
@@ -386,21 +385,41 @@ function showDialog (name) {
 
 function hideDialog (name) {
 	var cover = $$('.overlay')[0];
-	var dn = name.replace(/([A-Z])/g, function (l) {
-		return '-' + l.toLowerCase();
-	});
-	var dialog = cover.querySelector('form.' + dn) || $(name);
+	var dialog = cover.lastChild;
 
 	utils.animate(cover, 'hide');
 	utils.animate(dialog, 'hide').then(function () {
 		cover.style.display = 'none';
-		if (cover.querySelector('form.' + dn))
-			dialog.remove();
-		else
-			dialog.style.display = 'none';
+		dialog.remove();
 		keymage.setScope('editor');
 	});
 };
+
+function dialog(modal, params) {
+	var cover = $$('.overlay')[0];
+	cover.style.display = '';
+	keymage.setScope('modal');
+
+	function close(fn, res) {
+		keymage.setScope('editor');
+		cover.style.display = 'none';
+		// var node = this.getDOMNode();
+		// React.unmountComponentAtNode(node);
+		var dialog = cover.lastChild;
+		dialog.remove();
+		if (fn) fn(res);
+	}
+	return new Promise(function (resolve, reject) {
+		utils.animate(cover, 'show').then(function () {
+			var ok = params.onOk;
+			var cancel = params.onCancel;
+			modal(Object.assign({
+				onOk: function (res) { close(ok, res); resolve(res); },
+				onCancel: function (res) { close(cancel, res); reject(res); }
+			}, params));
+		});
+	});
+}
 
 function echo (message) {
 	// TODO: make special area for messages
@@ -676,13 +695,12 @@ function genericsTable () {
 	});
 };
 
-function templateCustom () {
-	modal.templates('', {
-		onOk: function (tmpl) {
-			// C doesn't conflict with menu id
-			selectAction('template-C', tmpl);
-			return true;
-		}
+function templateLib () {
+	dialog(modal.templates.bind(modal, '')).then(function (tmpl) {
+		// C doesn't conflict with menu id
+		console.info('result', tmpl);
+		selectAction('template-C', tmpl);
+		return true;
 	});
 };
 
@@ -700,7 +718,7 @@ var actionMap = {
 	dearom: dearomatize,
 	'period-table': elemTable,
 	'generic-groups': genericsTable,
-	'template-custom': templateCustom,
+	'template-lib': templateLib,
 	cut: function () {
 		var struct = ui.editor.getSelectionStruct();
 		removeSelected();
@@ -798,7 +816,11 @@ function mapTool (id) {
 	} else if (id == 'chain') {
 		return { tool: 'chain' };
 	} else if (id.startsWith('template')) {
-		return { tool: 'template', opts: args[0] || templates[parseInt(id.split('-')[1])] };
+		return { tool: 'template',
+		         opts: args[0] || {
+			         struct: molfile.parse(templates[parseInt(id.split('-')[1])])
+		         }
+		       };
 	} else if (id == 'charge-plus') {
 		return { tool: 'charge', opts: 1 };
 	} else if (id == 'charge-minus') {

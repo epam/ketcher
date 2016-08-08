@@ -79,6 +79,8 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 					//pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
 					label: rnd.atomGetAttr(ci.id, 'label'),
 					charge: rnd.atomGetAttr(ci.id, 'charge'),
+					isotope: rnd.atomGetAttr(ci.id, 'isotope'),
+					radical: rnd.atomGetAttr(ci.id, 'radical'),
 
 					onOk: function (res) {
 						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, res), true);

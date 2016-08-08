@@ -7,28 +7,37 @@ import generics from '../../chem/generics';
 import Dialog from './dialog';
 
 function serialize(lc) {
-	if (!lc.charge)
-		return lc.label;
-	var sign = lc.charge < 0 ? '-' : '+';
 	var charge = Math.abs(lc.charge);
-	return lc.label + (charge > 1 ? charge: '') + sign;
+	var radical = ['', ':', '.', '^^'][lc.radical] || '';
+	var sign = '';
+	if (charge)
+		sign = lc.charge < 0 ? '-' : '+';
+	return (lc.isotope || '') + lc.label + radical +
+		   (charge > 1 ? charge: '') + sign;
 }
 
 function deserialize(value) {
-	var match = value.match(/^([a-z*]{1,3})(\d[-+]|[-+]\d|[-+])?$/i);
+	var match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i); // TODO: radical on last place
 	if (match) {
-		var label = match[1] == '*' ? 'A' : match[1].capitalize();
+		console.info('match', match);
+		var label = match[2] == '*' ? 'A' : match[2].capitalize();
 		var charge = 0;
-		if (match[2]) {
-			charge = parseInt(match[2]);
+		var isotope = 0;
+		var radical = 0;
+		if (match[1])
+			isotope = parseInt(match[1]);
+		if (match[3])
+			radical = { ':': 1, '.': 2, '^^': 3 }[match[3]];
+		if (match[4]) {
+			charge = parseInt(match[4]);
 			if (isNaN(charge)) // NaN => [-+]
 				charge = 1;
-			if (match[2].endsWith('-'))
+			if (match[4].endsWith('-'))
 				charge = -charge;
 		}
 		// Not consistant
 		if (label == 'A' || label == 'Q' || label == 'X' || label == 'M' || element.getElementByLabel(label) != null)
-			return { label, charge };
+			return { label, charge, isotope, radical };
 	}
 	return null;
 }
@@ -52,7 +61,7 @@ class LabelEdit extends Component {
 		return (
 			<Dialog caption="" name="labeledit" params={props.params}
 					result={() => this.result()}>
-				<input type="text" maxlength="5" size="4"
+				<input type="text" maxlength="20" size="10"
 					   onInput={ev => this.type(ev.target.value)}
 					   value={this.state.input}
 					/>

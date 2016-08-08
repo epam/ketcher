@@ -72,7 +72,14 @@ function init (options, apiServer) {
 	initZoom();
 
 	initHotKeys(toolbar, 'editor');
+	bulkEditKeys('editor.label');
 	keymage.setScope('editor');
+
+	var watchScope = keymage.setScope.bind(keymage);
+	keymage.setScope = function (scope) {
+		console.info('KEY SCOPE', scope);
+		watchScope(scope);
+	};
 
 	updateHistoryButtons();
 	updateClipboardButtons();
@@ -81,7 +88,8 @@ function init (options, apiServer) {
 	clientArea.on('mousedown', function (event) {
 		if (dropdownToggle(toolbar))
 			event.stop();       // TODO: don't delegate to editor
-		keymage.setScope('editor');
+		if (!keymage.getScope().startsWith('editor'))
+			keymage.setScope('editor');
 	});
 	//setScrollOffset(0, 0);
 	selectAction('select-lasso');
@@ -342,8 +350,23 @@ function initHotKeys(toolbar, scope) {
 	});
 }
 
+function bulkEditKeys(scope) {
+	Array.apply(null, { length: 26 }).forEach(function(_, i) {
+		var letter = String.fromCharCode('a'.charCodeAt(0) + i);
+		keymage(scope, letter, function() {
+			dialog(modal.labelEdit, { letter: letter }).then(function (res) {
+				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
+				ui.render.update();
+				ui.editor.deselectAll();
+			});
+		});
+	});
+}
+
 function updateClipboardButtons () {
-	subEl('copy').disabled = subEl('cut').disabled = !ui.editor.hasSelection(true);
+	var selected = ui.editor.hasSelection(true);
+	subEl('copy').disabled = subEl('cut').disabled = !selected;
+	keymage.setScope(selected && ui.editor.getSelection().atoms.length ? 'editor.label' : 'editor');
 };
 
 function updateHistoryButtons () {

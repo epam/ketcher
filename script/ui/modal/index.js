@@ -8,6 +8,7 @@ var saveDialog = require('./save.js');
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
 
+var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;
 
@@ -136,5 +137,6 @@ module.exports = {
 	sgroup: sgroup,
 	open: openDialog,
 	save: saveDialog,
-	templates: templatesDialog
+	templates: templatesDialog,
+	labelEdit: labelEdit
 };

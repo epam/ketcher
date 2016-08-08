@@ -76,7 +76,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 				delete self.dragCtx;
 				self.editor._selectionHelper.setSelection(null);
 				ui.showLabelEditor({
-					pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
+					//pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
 					label: rnd.atomGetAttr(ci.id, 'label'),
 					charge: rnd.atomGetAttr(ci.id, 'charge'),
 

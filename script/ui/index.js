@@ -19,7 +19,6 @@ var templates = require('./templates');
 
 var utils = require('./utils');
 var modal = require('./modal');
-var contextEdit = require('./contextedit.js');
 
 var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
@@ -79,10 +78,6 @@ function init (options, apiServer) {
 	updateClipboardButtons();
 	updateServerButtons();
 
-	clientArea.on('scroll', function () {
-		if ($('input_label').visible())
-			$('input_label').hide();
-	});
 	clientArea.on('mousedown', function (event) {
 		if (dropdownToggle(toolbar))
 			event.stop();       // TODO: don't delegate to editor
@@ -908,5 +903,5 @@ Object.assign(ui, {
 	showAtomProperties: modal.atomProps,
 	showBondProperties: modal.bondProps,
 	showRLogicTable: modal.rgroupLogic,
-	showLabelEditor: contextEdit
+	showLabelEditor: dialog.bind(null, modal.labelEdit)
 });

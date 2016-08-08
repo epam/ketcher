@@ -121,7 +121,7 @@ class Templates extends Component {
 		return (
 			<Dialog caption="Template Library"
 					name="template-lib" params={this.params}
-					result={() => this.result()} valid={() => !!selected}>
+					result={() => this.result()}>
 				<label>
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />

@@ -2,7 +2,7 @@ import { h } from 'preact';
 /** @jsx h */
 
 export default function Dialog ({ children, caption, name, params={},
-                                  result=() => null, valid=() => true }) {
+                                  result=() => null, valid=() => !!result() }) {
 	function exit(mode) {
 		var key = 'on' + mode.capitalize();
 		var res = result();

@@ -85,12 +85,12 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		this.lassoHelper.addPoint(event)
 		);
 	} else if ('dragCtx' in this) {
-		var _E_ = this.editor;
-		var rnd = _E_.render;
-		var _DC_ = this.dragCtx;
+		var editor = this.editor;
+		var rnd = editor.render;
+		var dragCtx = this.dragCtx;
 
 		var pos = rnd.page2obj(event);
-		var angle = this.calcAngle(_DC_.xy0, pos) - _DC_.angle1;
+		var angle = this.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
 
 		var degrees = Math.round(angle / Math.PI * 180);
 
@@ -99,13 +99,13 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		else if (degrees <= -180)
 			degrees += 360;
 
-		if ('angle' in _DC_ && _DC_.angle == degrees) return true;
-		if ('action' in _DC_) _DC_.action.perform();
+		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
+		if ('action' in dragCtx) dragCtx.action.perform();
 
-		_DC_.angle = degrees;
-		_DC_.action = Action.fromRotate(
-			_DC_.all ? rnd.ctab.molecule : this.editor.getSelection(),
-			_DC_.xy0,
+		dragCtx.angle = degrees;
+		dragCtx.action = Action.fromRotate(
+			dragCtx.all ? rnd.ctab.molecule : this.editor.getSelection(),
+			dragCtx.xy0,
 			angle
 		);
 

@@ -27,28 +27,28 @@ AtomTool.prototype.OnMouseDown = function (event) {
 	}
 };
 AtomTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor;
-	var rnd = _E_.render;
+	var editor = this.editor;
+	var rnd = editor.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
-		var _DC_ = this.dragCtx;
+		var dragCtx = this.dragCtx;
 		var newAtomPos = this._calcNewAtomPos(
-		rnd.atomGetPos(_DC_.item.id), rnd.page2obj(event)
+		rnd.atomGetPos(dragCtx.item.id), rnd.page2obj(event)
 		);
-		if ('action' in _DC_)
-			_DC_.action.perform();
+		if ('action' in dragCtx)
+			dragCtx.action.perform();
 		// TODO [RB] kludge fix for KETCHER-560. need to review
 		// BEGIN
 		/*
 		 var action_ret = Action.fromBondAddition(
-		 this.bondProps, _DC_.item.id, this.atomProps, newAtomPos, newAtomPos
+		 this.bondProps, dragCtx.item.id, this.atomProps, newAtomPos, newAtomPos
 		 );
 		 */
 		var actionRet = Action.fromBondAddition(
-			this.bondProps, _DC_.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
+			this.bondProps, dragCtx.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
 		);
 		// END
-		_DC_.action = actionRet[0];
-		_DC_.aid2 = actionRet[2];
+		dragCtx.action = actionRet[0];
+		dragCtx.aid2 = actionRet[2];
 		rnd.update();
 	} else {
 		this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
@@ -56,12 +56,12 @@ AtomTool.prototype.OnMouseMove = function (event) {
 };
 AtomTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
-		var _DC_ = this.dragCtx;
+		var dragCtx = this.dragCtx;
 		var rnd = this.editor.render;
 		/* eslint-disable no-nested-ternary*/
 		ui.addUndoAction(
-				'action' in _DC_ ? _DC_.action : 'item' in _DC_ ?
-					Action.fromAtomsAttrs(_DC_.item.id, this.atomProps, true) :
+				'action' in dragCtx ? dragCtx.action : 'item' in dragCtx ?
+					Action.fromAtomsAttrs(dragCtx.item.id, this.atomProps, true) :
 						Action.fromAtomAddition(rnd.page2obj(event), this.atomProps),
 			true
 		);

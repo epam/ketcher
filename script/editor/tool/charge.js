@@ -23,8 +23,8 @@ ChargeTool.prototype.OnMouseMove = function (event) {
 	return true;
 };
 ChargeTool.prototype.OnMouseUp = function (event) {
-	var _E_ = this.editor;
-	var rnd = _E_.render;
+	var editor = this.editor;
+	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) {

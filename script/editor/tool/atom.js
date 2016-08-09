@@ -10,11 +10,11 @@ function AtomTool(editor, atomProps) {
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Struct.Bond.PATTERN.STEREO.NONE };
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 AtomTool.prototype = new EditorTool();
 AtomTool.prototype.OnMouseDown = function (event) {
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
@@ -51,7 +51,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		_DC_.aid2 = actionRet[2];
 		rnd.update();
 	} else {
-		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
+		this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	}
 };
 AtomTool.prototype.OnMouseUp = function (event) {

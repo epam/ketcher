@@ -27,12 +27,12 @@ function TemplateTool(editor, tmpl) {
 	this.template.angle0 = this.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
 
 	var bond = frag.bonds.get(this.template.bid);
-	this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+	this.template.sign = this.getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 TemplateTool.prototype = new EditorTool();
-TemplateTool.prototype._getSign = function (molecule, bond, v) {
+TemplateTool.prototype.getSign = function (molecule, bond, v) {
 	var begin = molecule.atoms.get(bond.begin).pp;
 	var end = molecule.atoms.get(bond.end).pp;
 
@@ -45,7 +45,7 @@ TemplateTool.prototype._getSign = function (molecule, bond, v) {
 TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var _E_ = this.editor;
 	var rnd = _E_.render;
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: rnd.findItem(event, ['atoms', 'bonds'])
@@ -83,7 +83,7 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 
 		_DC_.v0 = xy0.scaled(1 / count);
 
-		var sign = this._getSign(molecule, bond, _DC_.v0);
+		var sign = this.getSign(molecule, bond, _DC_.v0);
 
 		// calculate default template flip
 		_DC_.sign1 = sign || 1;
@@ -113,7 +113,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		} else if (ci.map == 'bonds') {
 			var molecule = rnd.ctab.molecule;
 			var bond = molecule.bonds.get(ci.id);
-			var sign = this._getSign(molecule, bond, pos1);
+			var sign = this.getSign(molecule, bond, pos1);
 
 			if (_DC_.sign1 * this.template.sign > 0)
 				sign = -sign;
@@ -162,7 +162,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		rnd.update();
 		return true;
 	}
-	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
+	this.hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-statements

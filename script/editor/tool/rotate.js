@@ -8,7 +8,7 @@ var ui = global.ui;
 
 function RotateTool(editor) {
 	this.editor = editor;
-	this._lassoHelper = new LassoHelper(1, editor);
+	this.lassoHelper = new LassoHelper(1, editor);
 
 	var selection = this.editor._selectionHelper.selection;
 	if (!selection.atoms || !selection.atoms.length)
@@ -75,14 +75,14 @@ RotateTool.prototype.OnMouseDown = function (event) {
 			all: rotAll
 		};
 	} else {
-		this._lassoHelper.begin(event);
+		this.lassoHelper.begin(event);
 	}
 	return true;
 };
 RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
-	if (this._lassoHelper.running()) {
+	if (this.lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
-		this._lassoHelper.addPoint(event)
+		this.lassoHelper.addPoint(event)
 		);
 	} else if ('dragCtx' in this) {
 		var _E_ = this.editor;
@@ -119,8 +119,8 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 RotateTool.prototype.OnMouseUp = function (event) {
 	// atoms to include in a newly created group
 	var selection = null; // eslint-disable-line no-unused-vars
-	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		selection = this._lassoHelper.end(event);
+	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		selection = this.lassoHelper.end(event);
 	} else if ('dragCtx' in this) {
 		if ('action' in this.dragCtx) {
 			ui.addUndoAction(this.dragCtx.action, true);

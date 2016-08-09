@@ -9,19 +9,19 @@ var ui = global.ui;
 function RGroupFragmentTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 
 RGroupFragmentTool.prototype = new EditorTool();
 RGroupFragmentTool.prototype.OnMouseMove = function (event) {
-	this._hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
+	this.hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
 };
 
 RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['frags', 'rgroups']);
 	if (ci && ci.map == 'frags') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		var rgOld = Struct.RGroup.findRGroupByFragment(rnd.ctab.molecule.rgroups, ci.id);
 		ui.showRGroupTable({
 			values: rgOld && ['R' + rgOld],
@@ -39,7 +39,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 		});
 		return true;
 	} else if (ci && ci.map == 'rgroups') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
 		var rgroupLabels = [];
 		rnd.ctab.molecule.rgroups.each(function (rgid) {

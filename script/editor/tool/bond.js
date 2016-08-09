@@ -15,13 +15,13 @@ function BondTool(editor, bondCaption) {
 		Struct.Bond.PATTERN.TYPE.DOUBLE,
 		Struct.Bond.PATTERN.TYPE.TRIPLE];
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 BondTool.prototype = new EditorTool();
 
 BondTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: rnd.findItem(event, ['atoms', 'bonds'])
@@ -73,7 +73,7 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 			return true;
 		}
 	}
-	this._hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
+	this.hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 

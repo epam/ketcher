@@ -8,12 +8,12 @@ var ui = global.ui;
 function ChainTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 ChainTool.prototype = new EditorTool();
 ChainTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: rnd.findItem(event, ['atoms'])
@@ -38,7 +38,7 @@ ChainTool.prototype.OnMouseMove = function (event) {
 		rnd.update();
 		return true;
 	}
-	this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
+	this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	return true;
 };
 ChainTool.prototype.OnMouseUp = function () {

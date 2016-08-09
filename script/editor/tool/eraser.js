@@ -9,34 +9,34 @@ function EraserTool(editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
-	this._hoverHelper = new HoverHelper(this);
-	this._lassoHelper = new LassoHelper(mode || 0, editor);
+	this.hoverHelper = new HoverHelper(this);
+	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.render.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas')
-		this._lassoHelper.begin(event);
+		this.lassoHelper.begin(event);
 };
 EraserTool.prototype.OnMouseMove = function (event) {
-	if (this._lassoHelper.running()) {
+	if (this.lassoHelper.running()) {
 		this.editor._selectionHelper.setSelection(
-		this._lassoHelper.addPoint(event)
+		this.lassoHelper.addPoint(event)
 		);
 	} else {
-		this._hoverHelper.hover(this.editor.render.findItem(event, this.maps));
+		this.hoverHelper.hover(this.editor.render.findItem(event, this.maps));
 	}
 };
 EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
-	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		ui.addUndoAction(Action.fromFragmentDeletion(this._lassoHelper.end(event)));
+	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		ui.addUndoAction(Action.fromFragmentDeletion(this.lassoHelper.end(event)));
 		this.editor.deselectAll();
 		rnd.update();
 	} else {
 		var ci = rnd.findItem(event, this.maps);
 		if (ci && ci.type != 'Canvas') {
-			this._hoverHelper.hover(null);
+			this.hoverHelper.hover(null);
 			if (ci.map == 'atoms') {
 				ui.addUndoAction(Action.fromAtomDeletion(ci.id));
 			} else if (ci.map == 'bonds') {

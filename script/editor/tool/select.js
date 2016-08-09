@@ -13,8 +13,8 @@ var ui = global.ui;
 function SelectTool(editor, mode) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
-	this._lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
+	this.hoverHelper = new HoverHelper(this);
+	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 	this._sGroupHelper = new SGroupHelper(editor);
 }
 
@@ -23,8 +23,8 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
-	this._hoverHelper.hover(null); // TODO review hovering for touch devices
-	var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
+	this.hoverHelper.hover(null); // TODO review hovering for touch devices
+	var selectFragment = (this.lassoHelper.fragment || event.ctrlKey);
 	var ci = rnd.findItem(
 		event,
 		selectFragment ?
@@ -32,10 +32,10 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 	);
 	if (!ci || ci.type == 'Canvas') {
-		if (!this._lassoHelper.fragment)
-			this._lassoHelper.begin(event);
+		if (!this.lassoHelper.fragment)
+			this.lassoHelper.begin(event);
 	} else {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		if ('onShowLoupe' in rnd)
 			rnd.onShowLoupe(true);
 		if (!this.editor._selectionHelper.isSelected(ci)) {
@@ -115,16 +115,16 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
+			this.hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
 		}
 		rnd.update();
-	} else if (this._lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
+	} else if (this.lassoHelper.running()) {
+		this.editor._selectionHelper.setSelection(this.lassoHelper.addPoint(event), event.shiftKey);
 	} else {
-		this._hoverHelper.hover(
+		this.hoverHelper.hover(
 		rnd.findItem(
 			event,
-			(this._lassoHelper.fragment || event.ctrlKey) ?
+			(this.lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 		)
@@ -139,7 +139,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
-				this._hoverHelper.hover(null);
+				this.hoverHelper.hover(null);
 				this.editor._selectionHelper.setSelection();
 				this.dragCtx.action = this.dragCtx.action ?
 					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
@@ -149,9 +149,9 @@ SelectTool.prototype.OnMouseUp = function (event) {
 		ui.addUndoAction(this.dragCtx.action, true);
 		this.editor.render.update();
 		delete this.dragCtx;
-	} else if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		this.editor._selectionHelper.setSelection(this._lassoHelper.end(), event.shiftKey);
-	} else if (this._lassoHelper.fragment) {
+	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		this.editor._selectionHelper.setSelection(this.lassoHelper.end(), event.shiftKey);
+	} else if (this.lassoHelper.fragment) {
 		this.editor._selectionHelper.setSelection();
 	}
 	return true;
@@ -259,10 +259,10 @@ SelectTool.prototype.OnCancel = function () {
 		ui.addUndoAction(this.dragCtx.action, true);
 		rnd.update();
 		delete this.dragCtx;
-	} else if (this._lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(this._lassoHelper.end());
+	} else if (this.lassoHelper.running()) {
+		this.editor._selectionHelper.setSelection(this.lassoHelper.end());
 	}
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 };
 
 module.exports = SelectTool;

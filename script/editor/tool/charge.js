@@ -9,7 +9,7 @@ function ChargeTool(editor, charge) { // TODO [RB] should be "pluggable"
 	this.editor = editor;
 	this.charge = charge;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 ChargeTool.prototype = new EditorTool();
 ChargeTool.prototype.OnMouseMove = function (event) {
@@ -17,9 +17,9 @@ ChargeTool.prototype.OnMouseMove = function (event) {
 	var ci = rnd.findItem(event, ['atoms']);
 	var struct = rnd.ctab.molecule;
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null)
-		this._hoverHelper.hover(ci);
+		this.hoverHelper.hover(ci);
 	else
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 	return true;
 };
 ChargeTool.prototype.OnMouseUp = function (event) {
@@ -28,7 +28,7 @@ ChargeTool.prototype.OnMouseUp = function (event) {
 	var struct = rnd.ctab.molecule;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		ui.addUndoAction(
 		Action.fromAtomsAttrs(ci.id, { charge: struct.atoms.get(ci.id).charge + this.charge })
 		);

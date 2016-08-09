@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle*/
+
 var Map = require('./map.js');
 
 function Pool() {

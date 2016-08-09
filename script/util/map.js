@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle*/
+
 function Map(obj) {
 	if (typeof (obj) !== 'undefined' && obj.constructor !== Object)
 		throw Error('Passed object is not an instance of "Object"!');

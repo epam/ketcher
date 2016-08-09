@@ -13,21 +13,21 @@ function TemplateTool(editor, tmpl) {
 		bid: (tmpl.bid || 1) - 1
 	};
 
-		var frag = tmpl.struct;
-		frag.rescale();
+	var frag = tmpl.struct;
+	frag.rescale();
 
-		var xy0 = new Vec2();
+	var xy0 = new Vec2();
 
-		frag.atoms.each(function (aid, atom) {
-			xy0.add_(atom.pp);
-		});
+	frag.atoms.each(function (aid, atom) {
+		xy0.add_(atom.pp);
+	});
 
-		this.template.molecule = frag; // preloaded struct
-		this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
-		this.template.angle0 = this._calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
+	this.template.molecule = frag; // preloaded struct
+	this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
+	this.template.angle0 = this._calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
 
-		var bond = frag.bonds.get(this.template.bid);
-		this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+	var bond = frag.bonds.get(this.template.bid);
+	this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 
 	this._hoverHelper = new HoverHelper(this);
 }

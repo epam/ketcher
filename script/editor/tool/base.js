@@ -56,7 +56,7 @@ EditorTool.prototype.OnMouseUp0 = function (event) {
 	}
 };
 
-EditorTool.prototype._calcAngle = function (pos0, pos1) {
+EditorTool.prototype.calcAngle = function (pos0, pos1) {
 	var v = Vec2.diff(pos1, pos0);
 	var angle = Math.atan2(v.y, v.x);
 	var sign = angle < 0 ? -1 : 1;
@@ -65,7 +65,7 @@ EditorTool.prototype._calcAngle = function (pos0, pos1) {
 	return angle;
 };
 EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
-	var v = new Vec2(1, 0).rotate(this._calcAngle(pos0, pos1));
+	var v = new Vec2(1, 0).rotate(this.calcAngle(pos0, pos1));
 	v.add_(pos0);
 	return v;
 };

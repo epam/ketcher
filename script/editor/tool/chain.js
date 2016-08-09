@@ -31,7 +31,7 @@ ChainTool.prototype.OnMouseMove = function (event) {
 		var pos1 = rnd.page2obj(event);
 		_DC_.action = Action.fromChain(
 			pos0,
-		this._calcAngle(pos0, pos1),
+		this.calcAngle(pos0, pos1),
 		Math.ceil(Vec2.diff(pos1, pos0).length()),
 				'item' in _DC_ ? _DC_.item.id : null
 		);

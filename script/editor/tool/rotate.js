@@ -71,7 +71,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 
 		this.dragCtx = {
 			xy0: xy0,
-			angle1: this._calcAngle(xy0, rnd.page2obj(event)),
+			angle1: this.calcAngle(xy0, rnd.page2obj(event)),
 			all: rotAll
 		};
 	} else {
@@ -90,7 +90,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		var _DC_ = this.dragCtx;
 
 		var pos = rnd.page2obj(event);
-		var angle = this._calcAngle(_DC_.xy0, pos) - _DC_.angle1;
+		var angle = this.calcAngle(_DC_.xy0, pos) - _DC_.angle1;
 
 		var degrees = Math.round(angle / Math.PI * 180);
 

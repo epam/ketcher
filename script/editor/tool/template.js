@@ -24,7 +24,7 @@ function TemplateTool(editor, tmpl) {
 
 	this.template.molecule = frag; // preloaded struct
 	this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
-	this.template.angle0 = this._calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
+	this.template.angle0 = this.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
 
 	var bond = frag.bonds.get(this.template.bid);
 	this.template.sign = this._getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
@@ -121,14 +121,14 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				// undo previous action
 				if ('action' in _DC_) _DC_.action.perform();
 				_DC_.sign2 = sign;
-				_DC_.action = Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
+				_DC_.action = Action.fromTemplateOnBond(ci.id, this.template, this.calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
 				rnd.update();
 			}
 
 			return true;
 		}
 
-		angle = this._calcAngle(pos0, pos1);
+		angle = this.calcAngle(pos0, pos1);
 		var degrees = Math.round(180 / Math.PI * angle);
 		// check if anything changed since last time
 		if ('angle' in _DC_ && _DC_.angle == degrees) {
@@ -155,7 +155,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				angle,
 				extraBond,
 				this.template,
-				this._calcAngle
+				this.calcAngle
 			);
 			_DC_.extra_bond = extraBond;
 		}
@@ -184,7 +184,7 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 						null,
 						true,
 						this.template,
-						this._calcAngle
+						this.calcAngle
 					);
 				} else if (degree == 1) { // on chain end
 					var molecule = _R_.ctab.molecule;
@@ -194,10 +194,10 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 
 					_DC_.action = Action.fromTemplateOnAtom(
 						ci.id,
-					this._calcAngle(nei.pp, atom.pp),
+					this.calcAngle(nei.pp, atom.pp),
 						false,
 						this.template,
-						this._calcAngle
+						this.calcAngle
 					);
 				} else { // on single atom
 					_DC_.action = Action.fromTemplateOnAtom(
@@ -205,11 +205,11 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 						0,
 						false,
 						this.template,
-						this._calcAngle
+						this.calcAngle
 					);
 				}
 			} else if (ci.map == 'bonds') {
-				_DC_.action = Action.fromTemplateOnBond(ci.id, this.template, this._calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
+				_DC_.action = Action.fromTemplateOnBond(ci.id, this.template, this.calcAngle, _DC_.sign1 * _DC_.sign2 > 0);
 			}
 
 			_R_.update();

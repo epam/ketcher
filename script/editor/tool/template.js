@@ -167,7 +167,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 };
 TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-statements
 	var editor = this.editor;
-	var _R_ = editor.render;
+	var render = editor.render;
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
@@ -176,7 +176,7 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 			if (!ci || ci.type == 'Canvas') {
 				dragCtx.action = Action.fromTemplateOnCanvas(dragCtx.xy0, 0, this.template);
 			} else if (ci.map == 'atoms') {
-				var degree = _R_.atomGetDegree(ci.id);
+				var degree = render.atomGetDegree(ci.id);
 
 				if (degree > 1) { // common case
 					dragCtx.action = Action.fromTemplateOnAtom(
@@ -187,7 +187,7 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 						this.calcAngle
 					);
 				} else if (degree == 1) { // on chain end
-					var molecule = _R_.ctab.molecule;
+					var molecule = render.ctab.molecule;
 					var neiId = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
 					var atom = molecule.atoms.get(ci.id);
 					var nei = molecule.atoms.get(neiId);
@@ -212,7 +212,7 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, this.calcAngle, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 
-			_R_.update();
+			render.update();
 		}
 
 		if ('action' in this.dragCtx) {

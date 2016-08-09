@@ -72,7 +72,7 @@ function init (options, apiServer) {
 	initZoom();
 
 	initHotKeys(toolbar, 'editor');
-	bulkEditKeys('editor.label');
+	labelEditKeys('editor.label', 'a-z0-9');
 	keymage.setScope('editor');
 
 	var watchScope = keymage.setScope.bind(keymage);
@@ -234,7 +234,7 @@ function initCliparea(parent) {
 		'chemical/x-inchi'
 	];
 	var autofocus = function() {
-		if (keymage.getScope() == 'editor') {
+		if (keymage.getScope().startsWith('editor')) {
 			cliparea.value = ' ';
 			cliparea.focus();
 			cliparea.select();
@@ -350,9 +350,8 @@ function initHotKeys(toolbar, scope) {
 	});
 }
 
-function bulkEditKeys(scope) {
-	Array.apply(null, { length: 26 }).forEach(function(_, i) {
-		var letter = String.fromCharCode('a'.charCodeAt(0) + i);
+function labelEditKeys(scope, range) {
+	function bindLetter(letter) {
 		keymage(scope, letter, function() {
 			dialog(modal.labelEdit, { letter: letter }).then(function (res) {
 				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
@@ -360,7 +359,16 @@ function bulkEditKeys(scope) {
 				ui.editor.deselectAll();
 			});
 		});
-	});
+	}
+	var re = /(\S)-(\S)/g;
+	var match;
+	while ((match = re.exec(range)) !== null) {
+		var from = match[1], to = match[2];
+		var len = to.charCodeAt(0) - from.charCodeAt(0);
+		Array.apply(null, { length: len }).forEach(function(_, i) {
+			bindLetter(String.fromCharCode(from.charCodeAt(0) + i));
+		});
+	}
 }
 
 function updateClipboardButtons () {

@@ -20,7 +20,7 @@ EraserTool.prototype.OnMouseDown = function (event) {
 };
 EraserTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(
+		this.editor.selectionHelper.setSelection(
 		this.lassoHelper.addPoint(event)
 		);
 	} else {

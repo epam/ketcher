@@ -9,12 +9,12 @@ function SGroupTool(editor, type) {
 	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(1, editor);
-	this._sGroupHelper = new SGroupHelper(editor, type);
+	this.sGroupHelper = new SGroupHelper(editor, type);
 
 	var selection = this.editor.getSelection();
 	if (selection.atoms && selection.atoms.length > 0)
 		// if the selection contains atoms, create an s-group out of those
-		this._sGroupHelper.showPropertiesDialog(null, selection);
+		this.sGroupHelper.showPropertiesDialog(null, selection);
 	else
 		// otherwise, clear selection
 		this.editor.deselectAll();
@@ -27,7 +27,7 @@ SGroupTool.prototype.OnMouseDown = function (event) {
 };
 SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(
+		this.editor.selectionHelper.setSelection(
 		this.lassoHelper.addPoint(event)
 		);
 	} else {
@@ -59,7 +59,7 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 	}
 	// TODO: handle click on an existing group?
 	if (id != null || (selection && selection.atoms && selection.atoms.length > 0))
-		this._sGroupHelper.showPropertiesDialog(id, selection);
+		this.sGroupHelper.showPropertiesDialog(id, selection);
 };
 
 module.exports = SGroupTool;

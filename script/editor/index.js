@@ -30,7 +30,7 @@ var ui = global.ui;
 
 function Editor(render) {
 	this.render = render;
-	this._selectionHelper = new SelectionHelper(this);
+	this.selectionHelper = new SelectionHelper(this);
 	this._tool = null;
 	this.setupEvents();
 }
@@ -178,17 +178,17 @@ Editor.prototype.selectAll = function () {
 	var selection = {};
 	for (var map in ReStruct.maps)
 		selection[map] = this.render.ctab[map].ikeys();
-	this._selectionHelper.setSelection(selection);
+	this.selectionHelper.setSelection(selection);
 };
 
 Editor.prototype.deselectAll = function () {
-	this._selectionHelper.setSelection();
+	this.selectionHelper.setSelection();
 };
 
 Editor.prototype.hasSelection = function (copyable) {
-	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection) {
-			if (this._selectionHelper.selection[map].length > 0) {
+	if ('selection' in this.selectionHelper) {
+		for (var map in this.selectionHelper.selection) {
+			if (this.selectionHelper.selection[map].length > 0) {
 				if (!copyable || map !== 'sgroupData')
 					return true;
 			}
@@ -199,9 +199,9 @@ Editor.prototype.hasSelection = function (copyable) {
 
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
-	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection)
-			selection[map] = this._selectionHelper.selection[map].slice(0);
+	if ('selection' in this.selectionHelper) {
+		for (var map in this.selectionHelper.selection)
+			selection[map] = this.selectionHelper.selection[map].slice(0);
 	}
 	if (explicit) {
 		var struct = this.render.ctab.molecule;

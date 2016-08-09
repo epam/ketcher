@@ -103,8 +103,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 		return inLoop;
 	})();
 
-	this._touched_cistransbonds = 0;
-	this._markCisTrans(molecule);
+	this.touchedCistransbonds = 0;
+	this.markCisTrans(molecule);
 
 	var components = molecule.getComponents();
 	var componentsAll = components.reactants.concat(components.products);
@@ -260,7 +260,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				else
 					cycleNumbers[k] = vPrevIdx;
 
-				this._writeCycleNumber(k);
+				this.writeCycleNumber(k);
 			}
 
 			if (vPrevIdx >= 0) {
@@ -286,7 +286,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			var dir = 0;
 
 			if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE)
-				dir = this._calcBondDirection(molecule, eIdx, vPrevIdx);
+				dir = this.calcBondDirection(molecule, eIdx, vPrevIdx);
 
 			if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin))
 				this.smiles += '/';
@@ -314,7 +314,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				if (j == cycleNumbers.length)
 					throw new Error('cycle number not found');
 
-				this._writeCycleNumber(j);
+				this.writeCycleNumber(j);
 
 				cycleNumbers[j] = -1;
 				writeAtom = false;
@@ -326,7 +326,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			this.writtenComponents++;
 		}
 		if (writeAtom) {
-			this._writeAtom(molecule, vIdx, this.atoms[vIdx].aromatic, this.atoms[vIdx].lowercase, this.atoms[vIdx].chirality);
+			this.writeAtom(molecule, vIdx, this.atoms[vIdx].aromatic, this.atoms[vIdx].lowercase, this.atoms[vIdx].chirality);
 			this.writtenAtoms.push(seqEl.idx);
 		}
 	}
@@ -334,7 +334,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	this.comma = false;
 
 	// this._writeStereogroups(mol, atoms);
-	this._writeRadicals(molecule);
+	this.writeRadicals(molecule);
 	// this._writePseudoAtoms(mol);
 	// this._writeHighlighting();
 
@@ -344,7 +344,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	return this.smiles;
 };
 
-Smiles.prototype._writeCycleNumber = function (n) {
+Smiles.prototype.writeCycleNumber = function (n) {
 	if (n > 0 && n < 10)
 		this.smiles += n;
 	else if (n >= 10 && n < 100)
@@ -355,7 +355,7 @@ Smiles.prototype._writeCycleNumber = function (n) {
 		throw new Error('bad cycle number: ' + n);
 };
 
-Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality) { // eslint-disable-line max-params, max-statements
+Smiles.prototype.writeAtom = function (mol, idx, aromatic, lowercase, chirality) { // eslint-disable-line max-params, max-statements
 	var atom = mol.atoms.get(idx);
 	var needBrackets = false;
 	var hydro = -1;
@@ -492,15 +492,15 @@ Smiles.prototype._writeAtom = function (mol, idx, aromatic, lowercase, chirality
 	*/
 };
 
-Smiles.prototype._markCisTrans = function (mol) {
+Smiles.prototype.markCisTrans = function (mol) {
 	this.cis_trans = new CisTrans(mol, function (idx) {
 		return this.atoms[idx].neighbours;
 	}, this);
 	this.cis_trans.build();
-	this._dbonds = new Array(mol.bonds.count());
+	this.dbonds = new Array(mol.bonds.count());
 
 	mol.bonds.each(function (bid) {
-		this._dbonds[bid] =
+		this.dbonds[bid] =
 		{
 			ctbond_beg: -1,
 			ctbond_end: -1,
@@ -533,25 +533,25 @@ Smiles.prototype._markCisTrans = function (mol) {
 			neiBeg.each(function (nei) {
 				if (nei.bid != bid) {
 					if (mol.bonds.get(nei.bid).begin == bond.begin)
-						this._dbonds[nei.bid].ctbond_beg = bid;
+						this.dbonds[nei.bid].ctbond_beg = bid;
 					else
-						this._dbonds[nei.bid].ctbond_end = bid;
+						this.dbonds[nei.bid].ctbond_end = bid;
 				}
 			}, this);
 
 			neiEnd.each(function (nei) {
 				if (nei.bid != bid) {
 					if (mol.bonds.get(nei.bid).begin == bond.end)
-						this._dbonds[nei.bid].ctbond_beg = bid;
+						this.dbonds[nei.bid].ctbond_beg = bid;
 					else
-						this._dbonds[nei.bid].ctbond_end = bid;
+						this.dbonds[nei.bid].ctbond_end = bid;
 				}
 			}, this);
 		}
 	}, this);
 };
 
-Smiles.prototype._updateSideBonds = function (mol, bondIdx) { // eslint-disable-line max-statements
+Smiles.prototype.updateSideBonds = function (mol, bondIdx) { // eslint-disable-line max-statements
 	var bond = mol.bonds.get(bondIdx);
 	var subst = this.cis_trans.getSubstituents(bondIdx);
 	var parity = this.cis_trans.getParity(bondIdx);
@@ -571,30 +571,30 @@ Smiles.prototype._updateSideBonds = function (mol, bondIdx) { // eslint-disable-
 	var n3 = 0;
 	var n4 = 0;
 
-	if (this._dbonds[sidebonds[0]].saved != 0) {
-		if ((this._dbonds[sidebonds[0]].saved == 1 && mol.bonds.get(sidebonds[0]).begin == bond.begin) ||
-		(this._dbonds[sidebonds[0]].saved == 2 && mol.bonds.get(sidebonds[0]).end == bond.begin))
+	if (this.dbonds[sidebonds[0]].saved != 0) {
+		if ((this.dbonds[sidebonds[0]].saved == 1 && mol.bonds.get(sidebonds[0]).begin == bond.begin) ||
+		(this.dbonds[sidebonds[0]].saved == 2 && mol.bonds.get(sidebonds[0]).end == bond.begin))
 			n1++;
 		else
 			n2++;
 	}
-	if (sidebonds[1] != -1 && this._dbonds[sidebonds[1]].saved != 0) {
-		if ((this._dbonds[sidebonds[1]].saved == 2 && mol.bonds.get(sidebonds[1]).begin == bond.begin) ||
-		(this._dbonds[sidebonds[1]].saved == 1 && mol.bonds.get(sidebonds[1]).end == bond.begin))
+	if (sidebonds[1] != -1 && this.dbonds[sidebonds[1]].saved != 0) {
+		if ((this.dbonds[sidebonds[1]].saved == 2 && mol.bonds.get(sidebonds[1]).begin == bond.begin) ||
+		(this.dbonds[sidebonds[1]].saved == 1 && mol.bonds.get(sidebonds[1]).end == bond.begin))
 			n1++;
 		else
 			n2++;
 	}
-	if (this._dbonds[sidebonds[2]].saved != 0) {
-		if ((this._dbonds[sidebonds[2]].saved == 1 && mol.bonds.get(sidebonds[2]).begin == bond.end) ||
-		(this._dbonds[sidebonds[2]].saved == 2 && mol.bonds.get(sidebonds[2]).end == bond.end))
+	if (this.dbonds[sidebonds[2]].saved != 0) {
+		if ((this.dbonds[sidebonds[2]].saved == 1 && mol.bonds.get(sidebonds[2]).begin == bond.end) ||
+		(this.dbonds[sidebonds[2]].saved == 2 && mol.bonds.get(sidebonds[2]).end == bond.end))
 			n3++;
 		else
 			n4++;
 	}
-	if (sidebonds[3] != -1 && this._dbonds[sidebonds[3]].saved != 0) {
-		if ((this._dbonds[sidebonds[3]].saved == 2 && mol.bonds.get(sidebonds[3]).begin == bond.end) ||
-		(this._dbonds[sidebonds[3]].saved == 1 && mol.bonds.get(sidebonds[3]).end == bond.end))
+	if (sidebonds[3] != -1 && this.dbonds[sidebonds[3]].saved != 0) {
+		if ((this.dbonds[sidebonds[3]].saved == 2 && mol.bonds.get(sidebonds[3]).begin == bond.end) ||
+		(this.dbonds[sidebonds[3]].saved == 1 && mol.bonds.get(sidebonds[3]).end == bond.end))
 			n3++;
 		else
 			n4++;
@@ -615,32 +615,32 @@ Smiles.prototype._updateSideBonds = function (mol, bondIdx) { // eslint-disable-
 		return false;
 
 	if (n1 > 0) {
-		this._dbonds[sidebonds[0]].saved =
+		this.dbonds[sidebonds[0]].saved =
 			(mol.bonds.get(sidebonds[0]).begin == bond.begin) ? 1 : 2;
 		if (sidebonds[1] != -1) {
-			this._dbonds[sidebonds[1]].saved =
+			this.dbonds[sidebonds[1]].saved =
 				(mol.bonds.get(sidebonds[1]).begin == bond.begin) ? 2 : 1;
 		}
 
-		this._dbonds[sidebonds[2]].saved =
+		this.dbonds[sidebonds[2]].saved =
 			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 1 : 2;
 		if (sidebonds[3] != -1) {
-			this._dbonds[sidebonds[3]].saved =
+			this.dbonds[sidebonds[3]].saved =
 				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 2 : 1;
 		}
 	}
 	if (n2 > 0) {
-		this._dbonds[sidebonds[0]].saved =
+		this.dbonds[sidebonds[0]].saved =
 			(mol.bonds.get(sidebonds[0]).begin == bond.begin) ? 2 : 1;
 		if (sidebonds[1] != -1) {
-			this._dbonds[sidebonds[1]].saved =
+			this.dbonds[sidebonds[1]].saved =
 				(mol.bonds.get(sidebonds[1]).begin == bond.begin) ? 1 : 2;
 		}
 
-		this._dbonds[sidebonds[2]].saved =
+		this.dbonds[sidebonds[2]].saved =
 			((mol.bonds.get(sidebonds[2]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 2 : 1;
 		if (sidebonds[3] != -1) {
-			this._dbonds[sidebonds[3]].saved =
+			this.dbonds[sidebonds[3]].saved =
 				((mol.bonds.get(sidebonds[3]).begin == bond.end) == (parity == CisTrans.PARITY.CIS)) ? 1 : 2;
 		}
 	}
@@ -648,10 +648,10 @@ Smiles.prototype._updateSideBonds = function (mol, bondIdx) { // eslint-disable-
 	return true;
 };
 
-Smiles.prototype._calcBondDirection = function (mol, idx, vprev) {
+Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 	var ntouched;
 
-	if (this._dbonds[idx].ctbond_beg == -1 && this._dbonds[idx].ctbond_end == -1)
+	if (this.dbonds[idx].ctbond_beg == -1 && this.dbonds[idx].ctbond_end == -1)
 		return 0;
 
 	if (mol.bonds.get(idx).type != Struct.Bond.PATTERN.TYPE.SINGLE)
@@ -661,26 +661,26 @@ Smiles.prototype._calcBondDirection = function (mol, idx, vprev) {
 		ntouched = 0;
 		this.cis_trans.each(function (bid, ct) {
 			if (ct.parity != 0 && !this.isBondInRing(bid)) {
-				if (this._updateSideBonds(mol, bid))
+				if (this.updateSideBonds(mol, bid))
 					ntouched++;
 			}
 		}, this);
-		if (ntouched == this._touched_cistransbonds)
+		if (ntouched == this.touchedCistransbonds)
 			break;
-		this._touched_cistransbonds = ntouched;
+		this.touchedCistransbonds = ntouched;
 	}
 
-	if (this._dbonds[idx].saved == 0) {
+	if (this.dbonds[idx].saved == 0) {
 		if (vprev == mol.bonds.get(idx).begin)
-			this._dbonds[idx].saved = 1;
+			this.dbonds[idx].saved = 1;
 		else
-			this._dbonds[idx].saved = 2;
+			this.dbonds[idx].saved = 2;
 	}
 
-	return this._dbonds[idx].saved;
+	return this.dbonds[idx].saved;
 };
 
-Smiles.prototype._writeRadicals = function (mol) { // eslint-disable-line max-statements
+Smiles.prototype.writeRadicals = function (mol) { // eslint-disable-line max-statements
 	var marked = new Array(this.writtenAtoms.length);
 	var i, j;
 

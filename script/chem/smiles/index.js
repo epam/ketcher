@@ -8,13 +8,13 @@ var Stereocenters = require('./stereocenters');
 
 function Smiles() {
 	this.smiles = '';
-	this._written_atoms = [];
-	this._written_components = 0;
+	this.writtenAtoms = [];
+	this.writtenComponents = 0;
 
 	this.ignore_errors = false;
 }
 
-Smiles._Atom = function (hСount) {
+Smiles._Atom = function (hСount) { // eslint-disable-line no-underscore-dangle
 	this.neighbours = [];  // Array of integer pairs {a, b}
 	this.aromatic = false;          // has aromatic bond
 	this.lowercase = false;         // aromatic and has to be written lowercase
@@ -64,7 +64,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	this.atoms = new Array(molecule.atoms.count());
 
 	molecule.atoms.each(function (aid, atom) {
-		this.atoms[aid] = new Smiles._Atom(atom.implicitH);
+		this.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
 	}, this);
 
 	// From the SMILES specification:
@@ -321,13 +321,13 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			}
 		} else {
 			if (!firstComponent)
-				this.smiles += (this._written_components == walk.nComponentsInReactants) ? '>>' : '.';
+				this.smiles += (this.writtenComponents == walk.nComponentsInReactants) ? '>>' : '.';
 			firstComponent = false;
-			this._written_components++;
+			this.writtenComponents++;
 		}
 		if (writeAtom) {
 			this._writeAtom(molecule, vIdx, this.atoms[vIdx].aromatic, this.atoms[vIdx].lowercase, this.atoms[vIdx].chirality);
-			this._written_atoms.push(seqEl.idx);
+			this.writtenAtoms.push(seqEl.idx);
 		}
 	}
 
@@ -681,14 +681,14 @@ Smiles.prototype._calcBondDirection = function (mol, idx, vprev) {
 };
 
 Smiles.prototype._writeRadicals = function (mol) { // eslint-disable-line max-statements
-	var marked = new Array(this._written_atoms.length);
+	var marked = new Array(this.writtenAtoms.length);
 	var i, j;
 
-	for (i = 0; i < this._written_atoms.size(); i++) {
+	for (i = 0; i < this.writtenAtoms.size(); i++) {
 		if (marked[i])
 			continue; // eslint-disable-line no-continue
 
-		var radical = mol.atoms.get(this._written_atoms[i]).radical;
+		var radical = mol.atoms.get(this.writtenAtoms[i]).radical;
 
 		if (radical == 0)
 			continue; // eslint-disable-line no-continue
@@ -709,8 +709,8 @@ Smiles.prototype._writeRadicals = function (mol) { // eslint-disable-line max-st
 
 		this.smiles += i;
 
-		for (j = i + 1; j < this._written_atoms.length; j++) {
-			if (mol.atoms.get(this._written_atoms[j]).radical == radical) {
+		for (j = i + 1; j < this.writtenAtoms.length; j++) {
+			if (mol.atoms.get(this.writtenAtoms[j]).radical == radical) {
 				marked[j] = true;
 				this.smiles += ',' + j;
 			}

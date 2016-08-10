@@ -51,7 +51,7 @@ Vec2.prototype.add = function (v) {
 	return new Vec2(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
-Vec2.prototype.add_ = function (v) {
+Vec2.prototype.add_ = function (v) { // eslint-disable-line no-underscore-dangle
 	util.assertDefined(v);
 	this.x += v.x;
 	this.y += v.y;

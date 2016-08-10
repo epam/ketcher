@@ -34,7 +34,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 		selection.atoms.each(function (aid) {
 			var atom = molecule.atoms.get(aid);
 
-			xy0.add_(atom.pp);
+			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 
 			if (rotAll)
 				return;

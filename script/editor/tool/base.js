@@ -64,9 +64,9 @@ EditorTool.prototype.calcAngle = function (pos0, pos1) {
 	angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
 	return angle;
 };
-EditorTool.prototype._calcNewAtomPos = function (pos0, pos1) {
+EditorTool.prototype.calcNewAtomPos = function (pos0, pos1) {
 	var v = new Vec2(1, 0).rotate(this.calcAngle(pos0, pos1));
-	v.add_(pos0);
+	v.add_(pos0); // eslint-disable-line no-underscore-dangle
 	return v;
 };
 

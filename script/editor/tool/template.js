@@ -19,7 +19,7 @@ function TemplateTool(editor, tmpl) {
 	var xy0 = new Vec2();
 
 	frag.atoms.each(function (aid, atom) {
-		xy0.add_(atom.pp);
+		xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 	});
 
 	this.template.molecule = frag; // preloaded struct

@@ -58,11 +58,11 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 				dist = Vec2.dist(dragCtx.xy0, xy1);
 				if (p1)
 					// rotation only, leght of bond = 1;
-					p2 = this._calcNewAtomPos(p1, xy1);
+					p2 = this.calcNewAtomPos(p1, xy1);
 				else
 					// first mousedown event intersect with any atom and
 					// rotation only, leght of bond = 1;
-					p1 = this._calcNewAtomPos(rnd.atomGetPos(i1).get_xy0(), xy1);
+					p1 = this.calcNewAtomPos(rnd.atomGetPos(i1).get_xy0(), xy1);
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
 			if (dist > 0.3)

@@ -31,17 +31,17 @@ var ui = global.ui;
 function Editor(render) {
 	this.render = render;
 	this.selectionHelper = new SelectionHelper(this);
-	this.tool = null;
+	this._tool = null;
 	this.setupEvents();
 }
 
 Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
-		if (this.tool)
-			this.tool.OnCancel(); // eslint-disable-line new-cap
-		this.tool = new toolMap[name](this, opts);
+		if (this._tool)
+			this._tool.OnCancel(); // eslint-disable-line new-cap
+		this._tool = new toolMap[name](this, opts);
 	}
-	return this.tool;
+	return this._tool;
 };
 
 // Events setup extracted from render
@@ -156,13 +156,13 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
 						if (eventName == 'MouseMove')
 							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							editor.tool.processEvent('OnMouseLeave', event);
+							editor._tool.processEvent('OnMouseLeave', event);
 						return util.preventDefault(event);
 					}
 				}
 			}
 
-			editor.tool.processEvent('On' + eventName, event);
+			editor._tool.processEvent('On' + eventName, event);
 			if (eventName != 'MouseUp')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.

@@ -1327,7 +1327,7 @@ ReStruct.prototype.renderLoops = function () {
 			var apos = render.ps(this.atoms.get(hb.begin).a.pp);
 			if (bond.b.type != Struct.Bond.PATTERN.TYPE.AROMATIC)
 				loop.aromatic = false;
-			reloop.centre.add_(apos); // eslint-disable-line no-underscore-dangle
+			reloop.centre.add_(apos);
 		}, this);
 		loop.convex = true;
 		for (var k = 0; k < reloop.loop.hbs.length; ++k) {

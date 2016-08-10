@@ -25,6 +25,7 @@ function Base() {
 
 	this.perform = function (editor) {
 		this.execute(editor);
+		/* eslint-disable no-underscore-dangle */
 		if (!this._inverted) {
 			this._inverted = this.invert();
 			this._inverted._inverted = this;
@@ -33,6 +34,7 @@ function Base() {
 	};
 	this.isDummy = function (editor) {
 		return this._isDummy ? this._isDummy(editor) : false;
+		/* eslint-enable no-underscore-dangle */
 	};
 }
 
@@ -53,7 +55,7 @@ function AtomAdd(atom, pos) {
 		else
 			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		RS.notifyAtomAdded(this.data.aid);
-		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
+		DS.atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
 	this.invert = function () {
 		var ret = new AtomDelete();
@@ -94,7 +96,7 @@ function AtomAttr(aid, attribute, value) {
 		atom[this.data.attribute] = this.data.value;
 		editor.render.invalidateAtom(this.data.aid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
 	};
 	this.invert = function () {
@@ -114,13 +116,13 @@ function AtomMove(aid, d, noinvalidate) {
 		var DS = RS.molecule;
 		var aid = this.data.aid;
 		var d = this.data.d;
-		DS.atoms.get(aid).pp.add_(d);
+		DS.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.atoms.get(aid).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			R.invalidateAtom(aid, 1);
 	};
-	this._isDummy = function () {
+	this._isDummy = function () { // eslint-disable-line no-underscore-dangle
 		return this.data.d.x == 0 && this.data.d.y == 0;
 	};
 	this.invert = function () {
@@ -427,7 +429,7 @@ function BondAttr(bid, attribute, value) {
 		if (this.data.attribute == 'type')
 			editor.render.invalidateLoop(this.data.bid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
 	};
 	this.invert = function () {
@@ -485,7 +487,7 @@ function RGroupAttr(rgid, attribute, value) {
 
 		editor.render.invalidateItem('rgroups', this.data.rgid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
 	};
 	this.invert = function () {
@@ -548,7 +550,7 @@ function RxnArrowAdd(pos) {
 		else
 			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 		RS.notifyRxnArrowAdded(this.data.arid);
-		DS._rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
+		DS.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnArrows', this.data.arid, 1);
 	};
@@ -587,7 +589,7 @@ function RxnArrowMove(id, d, noinvalidate) {
 		var DS = RS.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnArrows.get(id).pp.add_(d);
+		DS.rxnArrows.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.rxnArrows.get(id).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
@@ -612,7 +614,7 @@ function RxnPlusAdd(pos) {
 		else
 			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 		RS.notifyRxnPlusAdded(this.data.plid);
-		DS._rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
+		DS.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnPluses', this.data.plid, 1);
 	};
@@ -651,7 +653,7 @@ function RxnPlusMove(id, d, noinvalidate) {
 		var DS = RS.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnPluses.get(id).pp.add_(d);
+		DS.rxnPluses.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.rxnPluses.get(id).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
@@ -669,7 +671,7 @@ function SGroupDataMove(id, d) {
 	this.data = { id: id, d: d };
 	this.execute = function (editor) {
 		var struct = editor.render.ctab.molecule;
-		struct.sgroups.get(this.data.id).pp.add_(this.data.d);
+		struct.sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
 		editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};
@@ -750,7 +752,7 @@ function ChiralFlagMove(d) {
 	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
-		RS.chiralFlags.get(0).pp.add_(this.data.d);
+		RS.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
 		R.invalidateItem('chiralFlags', 0, 1);
 	};

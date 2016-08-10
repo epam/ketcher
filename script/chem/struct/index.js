@@ -407,17 +407,17 @@ Struct.prototype.sGroupDelete = function (sgid) {
 	this.sgroups.remove(sgid);
 };
 
-Struct.prototype._atomSetPos = function (id, pp) {
+Struct.prototype.atomSetPos = function (id, pp) {
 	var itemId = this['atoms'].get(id);
 	itemId.pp = pp;
 };
 
-Struct.prototype._rxnPlusSetPos = function (id, pp) {
+Struct.prototype.rxnPlusSetPos = function (id, pp) {
 	var itemId = this['rxnPluses'].get(id);
 	itemId.pp = pp;
 };
 
-Struct.prototype._rxnArrowSetPos = function (id, pp) {
+Struct.prototype.rxnArrowSetPos = function (id, pp) {
 	var itemId = this['rxnArrows'].get(id);
 	itemId.pp = pp;
 };

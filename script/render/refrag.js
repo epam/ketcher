@@ -69,7 +69,8 @@ ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review para
 	return ret;
 };
 
-ReFrag.prototype._draw = function (render, fid, attrs) { // TODO need to review parameter list
+// TODO need to review parameter list
+ReFrag.prototype._draw = function (render, fid, attrs) { // eslint-disable-line no-underscore-dangle
 	var bb = this.calcBBox(render, fid);
 	if (bb) {
 		var p0 = render.obj2scaled(new Vec2(bb.p0.x, bb.p0.y));

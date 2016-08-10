@@ -31,17 +31,19 @@ var ui = global.ui;
 function Editor(render) {
 	this.render = render;
 	this.selectionHelper = new SelectionHelper(this);
-	this._tool = null;
+	this._tool = null; // eslint-disable-line
 	this.setupEvents();
 }
 
 Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
+		/* eslint-disable no-underscore-dangle*/
 		if (this._tool)
 			this._tool.OnCancel(); // eslint-disable-line new-cap
 		this._tool = new toolMap[name](this, opts);
 	}
 	return this._tool;
+	/* eslint-enable no-underscore-dangle*/
 };
 
 // Events setup extracted from render
@@ -94,6 +96,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 	});
 	// END
 
+	/* eslint-disable no-underscore-dangle*/
 	var zoomStaticPoint = null;
 	clientArea.observe('touchstart', function (event) {
 		editor.resetLongTapTimeout(true);
@@ -137,6 +140,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 		event.preventDefault();
 	});
 	// END
+	/* eslint-enable no-underscore-dangle*/
 
 	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
 		render.onResize();
@@ -156,13 +160,13 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
 						if (eventName == 'MouseMove')
 							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							editor._tool.processEvent('OnMouseLeave', event);
+							editor._tool.processEvent('OnMouseLeave', event); // eslint-disable-line no-underscore-dangle
 						return util.preventDefault(event);
 					}
 				}
 			}
 
-			editor._tool.processEvent('On' + eventName, event);
+			editor._tool.processEvent('On' + eventName, event); // eslint-disable-line no-underscore-dangle
 			if (eventName != 'MouseUp')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.

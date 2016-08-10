@@ -71,12 +71,12 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 		if (loop >= 0) {
 			var loopHbs = molecule.loops.get(loop).hbs;
 			loopHbs.each(function (hb) {
-				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp);
+				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});
 		} else {
 			Set.each(frIds, function (id) {
-				xy0.add_(molecule.atoms.get(id).pp);
+				xy0.add_(molecule.atoms.get(id).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});
 		}

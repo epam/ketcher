@@ -432,7 +432,7 @@ Render.prototype.setViewSize = function (viewSz) {
 	this.viewSz = new Vec2(viewSz);
 };
 
-Render.prototype._setPaperSize = function (sz) {
+Render.prototype._setPaperSize = function (sz) { // eslint-disable-line no-underscore-dangle
 	var z = this.zoom;
 	this.paper.setSize(sz.x * z, sz.y * z);
 	this.setViewBox(z);
@@ -441,7 +441,7 @@ Render.prototype._setPaperSize = function (sz) {
 Render.prototype.setPaperSize = function (sz) {
 	DEBUG.logMethod('setPaperSize');
 	this.sz = sz;
-	this._setPaperSize(sz);
+	this._setPaperSize(sz); // eslint-disable-line no-underscore-dangle
 };
 
 Render.prototype.setOffset = function (newoffset) {
@@ -913,7 +913,7 @@ Render.prototype.setZoom = function (zoom) {
 	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
 	console.info('set zoom', zoom);
 	this.zoom = zoom;
-	this._setPaperSize(this.sz);
+	this._setPaperSize(this.sz); // eslint-disable-line no-underscore-dangle
 };
 
 Render.prototype.setScrollOffset = function (x, y) {

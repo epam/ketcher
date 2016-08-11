@@ -783,7 +783,12 @@ var actionMap = {
 			qs.replace(/mol=[^&$]*/, molQs);
 	},
 	'reaction-automap': automap,
-	'calc-cip': calculateCip
+	'calc-cip': calculateCip,
+	'recognize-molecule': function () {
+		dialog(modal.recognizeMolecule).then(function (res) {
+			console.info('RES', res);
+		});
+	}
 };
 
 // TODO: rewrite declaratively, merge to actionMap

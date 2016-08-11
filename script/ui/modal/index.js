@@ -11,6 +11,7 @@ var sgroupSpecialDialog = require('./sgroup-special');
 var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;
+var recognizeMoleculeDialog = require('./recognize-molecule.jsx').default;
 
 function periodTable (params) {
 	params.required = true;
@@ -138,5 +139,6 @@ module.exports = {
 	open: openDialog,
 	save: saveDialog,
 	templates: templatesDialog,
-	labelEdit: labelEdit
+	labelEdit: labelEdit,
+	recognizeMolecule: recognizeMoleculeDialog
 };

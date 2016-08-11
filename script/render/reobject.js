@@ -3,7 +3,7 @@ var Visel = require('./visel');
 var util = require('../util');
 
 function ReObject() { // TODO ??? should it be in ReStruct namespace
-	this.__ext = new Vec2(0.05 * 3, 0.05 * 3);
+	this.__ext = new Vec2(0.05 * 3, 0.05 * 3); // eslint-disable-line no-underscore-dangle
 }
 
 ReObject.prototype.init = function (viselType) {

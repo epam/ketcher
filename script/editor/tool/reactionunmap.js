@@ -7,17 +7,17 @@ var ui = global.ui;
 function ReactionUnmapTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 
-	this.editor._selectionHelper.setSelection(null);
+	this.editor.selectionHelper.setSelection(null);
 }
 ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms')
-		this._hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
+		this.hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
 	else
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 };
 ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.render.findItem(event, ['atoms']);
@@ -35,7 +35,7 @@ ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 		ui.addUndoAction(action, true);
 		this.editor.render.update();
 	}
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 };
 
 module.exports = ReactionUnmapTool;

@@ -314,7 +314,7 @@ function atomForNewBond(id) { // eslint-disable-line max-statements
 		v = v.rotate(angle);
 	}
 
-	v.add_(pos);
+	v.add_(pos); // eslint-disable-line no-underscore-dangle
 
 	var a = ui.render.findClosestAtom(v, 0.1);
 
@@ -1331,7 +1331,7 @@ function fromRotate(objects, pos, angle) { // eslint-disable-line max-statements
 	function rotateDelta(v) {
 		var v1 = v.sub(pos);
 		v1 = v1.rotate(angle);
-		v1.add_(pos);
+		v1.add_(pos); // eslint-disable-line no-underscore-dangle
 		return v1.sub(v);
 	}
 

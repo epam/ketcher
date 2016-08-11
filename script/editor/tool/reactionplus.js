@@ -7,15 +7,15 @@ var ui = global.ui;
 function ReactionPlusTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 ReactionPlusTool.prototype = new EditorTool();
 ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
-		this._hoverHelper.hover(null);
-		this.editor._selectionHelper.setSelection(ci);
+		this.hoverHelper.hover(null);
+		this.editor.selectionHelper.setSelection(ci);
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
@@ -25,12 +25,12 @@ ReactionPlusTool.prototype.OnMouseMove = function (event) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
 		this.dragCtx.action = Action.fromMultipleMove(
-			this.editor._selectionHelper.selection,
+			this.editor.selectionHelper.selection,
 		rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
 		rnd.update();
 	} else {
-		this._hoverHelper.hover(rnd.findItem(event, ['rxnPluses']));
+		this.hoverHelper.hover(rnd.findItem(event, ['rxnPluses']));
 	}
 };
 ReactionPlusTool.prototype.OnMouseUp = function (event) {

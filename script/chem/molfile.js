@@ -1840,14 +1840,14 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 	function shiftMol(ret, mol, bb, xorig, over) { // eslint-disable-line max-params
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
 		mol.atoms.each(function (aid, atom) {
-			atom.pp.add_(d);
+			atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
 		mol.sgroups.each(function (id, item) {
 			if (item.pp)
-				item.pp.add_(d);
+				item.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
-		bb.min.add_(d);
-		bb.max.add_(d);
+		bb.min.add_(d); // eslint-disable-line no-underscore-dangle
+		bb.max.add_(d); // eslint-disable-line no-underscore-dangle
 		mol.mergeInto(ret);
 		return bb.max.x - bb.min.x;
 	}

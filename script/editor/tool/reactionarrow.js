@@ -7,15 +7,15 @@ var ui = global.ui;
 function ReactionArrowTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 ReactionArrowTool.prototype = new EditorTool();
 ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
-		this._hoverHelper.hover(null);
-		this.editor._selectionHelper.setSelection(ci);
+		this.hoverHelper.hover(null);
+		this.editor.selectionHelper.setSelection(ci);
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
@@ -25,12 +25,12 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
 		this.dragCtx.action = Action.fromMultipleMove(
-			this.editor._selectionHelper.selection,
+			this.editor.selectionHelper.selection,
 		rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
 		rnd.render.update();
 	} else {
-		this._hoverHelper.hover(rnd.findItem(event, ['rxnArrows']));
+		this.hoverHelper.hover(rnd.findItem(event, ['rxnArrows']));
 	}
 };
 ReactionArrowTool.prototype.OnMouseUp = function (event) {

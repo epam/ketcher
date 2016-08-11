@@ -8,12 +8,12 @@ var ui = global.ui;
 function ChainTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 ChainTool.prototype = new EditorTool();
 ChainTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: rnd.findItem(event, ['atoms'])
@@ -22,23 +22,23 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 ChainTool.prototype.OnMouseMove = function (event) {
-	var _E_ = this.editor;
-	var rnd = _E_.render;
+	var editor = this.editor;
+	var rnd = editor.render;
 	if ('dragCtx' in this) {
-		var _DC_ = this.dragCtx;
-		if ('action' in _DC_) _DC_.action.perform();
-		var pos0 = 'item' in _DC_ ? rnd.atomGetPos(_DC_.item.id) : _DC_.xy0;
+		var dragCtx = this.dragCtx;
+		if ('action' in dragCtx) dragCtx.action.perform();
+		var pos0 = 'item' in dragCtx ? rnd.atomGetPos(dragCtx.item.id) : dragCtx.xy0;
 		var pos1 = rnd.page2obj(event);
-		_DC_.action = Action.fromChain(
+		dragCtx.action = Action.fromChain(
 			pos0,
-		this._calcAngle(pos0, pos1),
+		this.calcAngle(pos0, pos1),
 		Math.ceil(Vec2.diff(pos1, pos0).length()),
-				'item' in _DC_ ? _DC_.item.id : null
+				'item' in dragCtx ? dragCtx.item.id : null
 		);
 		rnd.update();
 		return true;
 	}
-	this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
+	this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	return true;
 };
 ChainTool.prototype.OnMouseUp = function () {

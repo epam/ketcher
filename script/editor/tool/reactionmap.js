@@ -8,9 +8,9 @@ var ui = global.ui;
 function ReactionMapTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 
-	this.editor._selectionHelper.setSelection(null);
+	this.editor.selectionHelper.setSelection(null);
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
@@ -19,7 +19,7 @@ ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		this.dragCtx = {
 			item: ci,
 			xy0: rnd.page2obj(event)
@@ -30,22 +30,22 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
-		if (ci && ci.map == 'atoms' && this._isValidMap(this.dragCtx.item.id, ci.id)) {
-			this._hoverHelper.hover(ci);
+		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
+			this.hoverHelper.hover(ci);
 			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
 		} else {
-			this._hoverHelper.hover(null);
+			this.hoverHelper.hover(null);
 			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
 		}
 	} else {
-		this._hoverHelper.hover(rnd.findItem(event, ['atoms']));
+		this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
 	}
 };
 ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
-		if (ci && ci.map == 'atoms' && this._isValidMap(this.dragCtx.item.id, ci.id)) {
+		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
 			var action = new Action();
 			var atoms = rnd.ctab.molecule.atoms;
 			var atom1 = atoms.get(this.dragCtx.item.id);
@@ -79,10 +79,10 @@ ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line 
 		rnd.drawSelectionLine(null);
 		delete this.dragCtx;
 	}
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 };
 
-ReactionMapTool.prototype._isValidMap = function (aid1, aid2) {
+ReactionMapTool.prototype.isValidMap = function (aid1, aid2) {
 	var t1, t2;
 	for (var ri = 0; (!t1 || !t2) && ri < this.rcs.reactants.length; ri++) {
 		var ro = Set.list(this.rcs.reactants[ri]);

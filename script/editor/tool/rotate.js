@@ -8,18 +8,18 @@ var ui = global.ui;
 
 function RotateTool(editor) {
 	this.editor = editor;
-	this._lassoHelper = new LassoHelper(1, editor);
+	this.lassoHelper = new LassoHelper(1, editor);
 
-	var selection = this.editor._selectionHelper.selection;
+	var selection = this.editor.selectionHelper.selection;
 	if (!selection.atoms || !selection.atoms.length)
 		// otherwise, clear selection
-		this.editor._selectionHelper.setSelection(null);
+		this.editor.selectionHelper.setSelection(null);
 }
 
 RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
-	var selection = this.editor._selectionHelper.selection;
+	var selection = this.editor.selectionHelper.selection;
 	if (selection.atoms && selection.atoms.length) {
 		var rnd = this.editor.render;
 		var molecule = rnd.ctab.molecule;
@@ -34,7 +34,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 		selection.atoms.each(function (aid) {
 			var atom = molecule.atoms.get(aid);
 
-			xy0.add_(atom.pp);
+			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 
 			if (rotAll)
 				return;
@@ -71,26 +71,26 @@ RotateTool.prototype.OnMouseDown = function (event) {
 
 		this.dragCtx = {
 			xy0: xy0,
-			angle1: this._calcAngle(xy0, rnd.page2obj(event)),
+			angle1: this.calcAngle(xy0, rnd.page2obj(event)),
 			all: rotAll
 		};
 	} else {
-		this._lassoHelper.begin(event);
+		this.lassoHelper.begin(event);
 	}
 	return true;
 };
 RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
-	if (this._lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(
-		this._lassoHelper.addPoint(event)
+	if (this.lassoHelper.running()) {
+		this.editor.selectionHelper.setSelection(
+		this.lassoHelper.addPoint(event)
 		);
 	} else if ('dragCtx' in this) {
-		var _E_ = this.editor;
-		var rnd = _E_.render;
-		var _DC_ = this.dragCtx;
+		var editor = this.editor;
+		var rnd = editor.render;
+		var dragCtx = this.dragCtx;
 
 		var pos = rnd.page2obj(event);
-		var angle = this._calcAngle(_DC_.xy0, pos) - _DC_.angle1;
+		var angle = this.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
 
 		var degrees = Math.round(angle / Math.PI * 180);
 
@@ -99,13 +99,13 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		else if (degrees <= -180)
 			degrees += 360;
 
-		if ('angle' in _DC_ && _DC_.angle == degrees) return true;
-		if ('action' in _DC_) _DC_.action.perform();
+		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
+		if ('action' in dragCtx) dragCtx.action.perform();
 
-		_DC_.angle = degrees;
-		_DC_.action = Action.fromRotate(
-			_DC_.all ? rnd.ctab.molecule : this.editor.getSelection(),
-			_DC_.xy0,
+		dragCtx.angle = degrees;
+		dragCtx.action = Action.fromRotate(
+			dragCtx.all ? rnd.ctab.molecule : this.editor.getSelection(),
+			dragCtx.xy0,
 			angle
 		);
 
@@ -119,14 +119,14 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 RotateTool.prototype.OnMouseUp = function (event) {
 	// atoms to include in a newly created group
 	var selection = null; // eslint-disable-line no-unused-vars
-	if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		selection = this._lassoHelper.end(event);
+	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		selection = this.lassoHelper.end(event);
 	} else if ('dragCtx' in this) {
 		if ('action' in this.dragCtx) {
 			ui.addUndoAction(this.dragCtx.action, true);
 			$('toolText').update('');
 		} else {
-			this.editor._selectionHelper.setSelection();
+			this.editor.selectionHelper.setSelection();
 		}
 		delete this.dragCtx;
 	}
@@ -143,7 +143,7 @@ RotateTool.prototype.OnCancel = function () {
 	}
 
 	// don't reset the selection when leaving the canvas, see KETCHER-632
-	// this.editor._selectionHelper.setSelection();
+	// this.editor.selectionHelper.setSelection();
 };
 
 module.exports = RotateTool;

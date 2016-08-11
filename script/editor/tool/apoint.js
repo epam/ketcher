@@ -7,17 +7,17 @@ var ui = global.ui;
 function APointTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 APointTool.prototype = new EditorTool();
 APointTool.prototype.OnMouseMove = function (event) {
-	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+	this.hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
 APointTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		var apOld = rnd.ctab.molecule.atoms.get(ci.id).attpnt;
 		ui.showAtomAttachmentPoints({
 			primary: ((apOld || 0) & 1) > 0,

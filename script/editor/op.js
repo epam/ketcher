@@ -16,29 +16,31 @@ function Base() {
 	this.type = 'OpBase';
 
 	// assert here?
-	this._execute = function () {
-		throw new Error('Operation._execute() is not implemented');
+	this.execute = function () {
+		throw new Error('Operation.execute() is not implemented');
 	};
-	this._invert = function () {
-		throw new Error('Operation._invert() is not implemented');
+	this.invert = function () {
+		throw new Error('Operation.invert() is not implemented');
 	};
 
 	this.perform = function (editor) {
-		this._execute(editor);
-		if (!this.__inverted) {
-			this.__inverted = this._invert();
-			this.__inverted.__inverted = this;
+		this.execute(editor);
+		/* eslint-disable no-underscore-dangle */
+		if (!this._inverted) {
+			this._inverted = this.invert();
+			this._inverted._inverted = this;
 		}
-		return this.__inverted;
+		return this._inverted;
 	};
 	this.isDummy = function (editor) {
 		return this._isDummy ? this._isDummy(editor) : false;
+		/* eslint-enable no-underscore-dangle */
 	};
 }
 
 function AtomAdd(atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -53,9 +55,9 @@ function AtomAdd(atom, pos) {
 		else
 			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
 		RS.notifyAtomAdded(this.data.aid);
-		DS._atomSetPos(this.data.aid, new Vec2(this.data.pos));
+		DS.atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new AtomDelete();
 		ret.data = this.data;
 		return ret;
@@ -65,7 +67,7 @@ AtomAdd.prototype = new Base();
 
 function AtomDelete(aid) {
 	this.data = { aid: aid, atom: null, pos: null };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -76,7 +78,7 @@ function AtomDelete(aid) {
 		RS.notifyAtomRemoved(this.data.aid);
 		DS.atoms.remove(this.data.aid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new AtomAdd();
 		ret.data = this.data;
 		return ret;
@@ -87,17 +89,17 @@ AtomDelete.prototype = new Base();
 function AtomAttr(aid, attribute, value) {
 	this.data = { aid: aid, attribute: attribute, value: value };
 	this.data2 = null;
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var atom = editor.render.ctab.molecule.atoms.get(this.data.aid);
 		if (!this.data2)
 			this.data2 = { aid: this.data.aid, attribute: this.data.attribute, value: atom[this.data.attribute] };
 		atom[this.data.attribute] = this.data.value;
 		editor.render.invalidateAtom(this.data.aid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new AtomAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
@@ -108,22 +110,22 @@ AtomAttr.prototype = new Base();
 
 function AtomMove(aid, d, noinvalidate) {
 	this.data = { aid: aid, d: d, noinvalidate: noinvalidate };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
 		var aid = this.data.aid;
 		var d = this.data.d;
-		DS.atoms.get(aid).pp.add_(d);
+		DS.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.atoms.get(aid).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			R.invalidateAtom(aid, 1);
 	};
-	this._isDummy = function () {
+	this._isDummy = function () { // eslint-disable-line no-underscore-dangle
 		return this.data.d.x == 0 && this.data.d.y == 0;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new AtomMove();
 		ret.data = this.data;
 		return ret;
@@ -133,13 +135,13 @@ AtomMove.prototype = new Base();
 
 function BondMove(bid, d) {
 	this.data = { bid: bid, d: d };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		RS.bonds.get(this.data.bid).visel.translate(R.ps(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new BondMove();
 		ret.data = this.data;
 		return ret;
@@ -149,7 +151,7 @@ BondMove.prototype = new Base();
 
 function LoopMove(id, d) {
 	this.data = { id: id, d: d };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		// not sure if there should be an action to move a loop in the first place
@@ -158,7 +160,7 @@ function LoopMove(id, d) {
 			RS.reloops.get(this.data.id).visel.translate(R.ps(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new LoopMove();
 		ret.data = this.data;
 		return ret;
@@ -169,7 +171,7 @@ LoopMove.prototype = new Base();
 function SGroupAtomAdd(sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
 	this.data = { aid: aid, sgid: sgid };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -184,7 +186,7 @@ function SGroupAtomAdd(sgid, aid) {
 		DS.atomAddToSGroup(sgid, aid);
 		R.invalidateAtom(aid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupAtomRemove();
 		ret.data = this.data;
 		return ret;
@@ -195,7 +197,7 @@ SGroupAtomAdd.prototype = new Base();
 function SGroupAtomRemove(sgid, aid) {
 	this.type = 'OpSGroupAtomRemove';
 	this.data = { aid: aid, sgid: sgid };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
 		var R = editor.render;
@@ -207,7 +209,7 @@ function SGroupAtomRemove(sgid, aid) {
 		Set.remove(atom.sgs, sgid);
 		R.invalidateAtom(aid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupAtomAdd();
 		ret.data = this.data;
 		return ret;
@@ -218,7 +220,7 @@ SGroupAtomRemove.prototype = new Base();
 function SGroupAttr(sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
 	this.data = { sgid: sgid, attr: attr, value: value };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -231,7 +233,7 @@ function SGroupAttr(sgid, attr, value) {
 
 		this.data.value = sg.setAttr(this.data.attr, this.data.value);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupAttr();
 		ret.data = this.data;
 		return ret;
@@ -242,7 +244,7 @@ SGroupAttr.prototype = new Base();
 function SGroupCreate(sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
 	this.data = { sgid: sgid, type: type, pp: pp };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -255,7 +257,7 @@ function SGroupCreate(sgid, type, pp) {
 		RS.sgroups.set(sgid, new ReSGroup(DS.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupDelete();
 		ret.data = this.data;
 		return ret;
@@ -266,7 +268,7 @@ SGroupCreate.prototype = new Base();
 function SGroupDelete(sgid) {
 	this.type = 'OpSGroupDelete';
 	this.data = { sgid: sgid };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -285,7 +287,7 @@ function SGroupDelete(sgid) {
 		RS.sgroups.unset(sgid);
 		DS.sgroups.remove(sgid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupCreate();
 		ret.data = this.data;
 		return ret;
@@ -296,7 +298,7 @@ SGroupDelete.prototype = new Base();
 function SGroupAddToHierarchy(sgid) {
 	this.type = 'OpSGroupAddToHierarchy';
 	this.data = { sgid: sgid };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -305,7 +307,7 @@ function SGroupAddToHierarchy(sgid) {
 		this.data.parent = relations.parent;
 		this.data.children = relations.children;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupRemoveFromHierarchy();
 		ret.data = this.data;
 		return ret;
@@ -316,7 +318,7 @@ SGroupAddToHierarchy.prototype = new Base();
 function SGroupRemoveFromHierarchy(sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
 	this.data = { sgid: sgid };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -325,7 +327,7 @@ function SGroupRemoveFromHierarchy(sgid) {
 		this.data.children = DS.sGroupForest.children.get(sgid);
 		DS.sGroupForest.remove(sgid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupAddToHierarchy();
 		ret.data = this.data;
 		return ret;
@@ -335,7 +337,7 @@ SGroupRemoveFromHierarchy.prototype = new Base();
 
 function BondAdd(begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
-	this._execute = function (editor) { // eslint-disable-line max-statements
+	this.execute = function (editor) { // eslint-disable-line max-statements
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -366,7 +368,7 @@ function BondAdd(begin, end, bond) {
 
 		RS.notifyBondAdded(this.data.bid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new BondDelete();
 		ret.data = this.data;
 		return ret;
@@ -376,7 +378,7 @@ BondAdd.prototype = new Base();
 
 function BondDelete(bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -405,7 +407,7 @@ function BondDelete(bid) {
 
 		DS.bonds.remove(this.data.bid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new BondAdd();
 		ret.data = this.data;
 		return ret;
@@ -416,7 +418,7 @@ BondDelete.prototype = new Base();
 function BondAttr(bid, attribute, value) {
 	this.data = { bid: bid, attribute: attribute, value: value };
 	this.data2 = null;
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var bond = editor.render.ctab.molecule.bonds.get(this.data.bid);
 		if (!this.data2)
 			this.data2 = { bid: this.data.bid, attribute: this.data.attribute, value: bond[this.data.attribute] };
@@ -427,10 +429,10 @@ function BondAttr(bid, attribute, value) {
 		if (this.data.attribute == 'type')
 			editor.render.invalidateLoop(this.data.bid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new BondAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
@@ -441,7 +443,7 @@ BondAttr.prototype = new Base();
 
 function FragmentAdd(frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var RS = editor.render.ctab;
 		var DS = RS.molecule;
 		var frag = {};
@@ -451,7 +453,7 @@ function FragmentAdd(frid) {
 			DS.frags.set(this.frid, frag);
 		RS.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
-	this._invert = function () {
+	this.invert = function () {
 		return new FragmentDelete(this.frid);
 	};
 }
@@ -459,7 +461,7 @@ FragmentAdd.prototype = new Base();
 
 function FragmentDelete(frid) {
 	this.frid = frid;
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -467,7 +469,7 @@ function FragmentDelete(frid) {
 		RS.frags.unset(this.frid);
 		DS.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
 	};
-	this._invert = function () {
+	this.invert = function () {
 		return new FragmentAdd(this.frid);
 	};
 }
@@ -476,7 +478,7 @@ FragmentDelete.prototype = new Base();
 function RGroupAttr(rgid, attribute, value) {
 	this.data = { rgid: rgid, attribute: attribute, value: value };
 	this.data2 = null;
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var rgp = editor.render.ctab.molecule.rgroups.get(this.data.rgid);
 		if (!this.data2)
 			this.data2 = { rgid: this.data.rgid, attribute: this.data.attribute, value: rgp[this.data.attribute] };
@@ -485,10 +487,10 @@ function RGroupAttr(rgid, attribute, value) {
 
 		editor.render.invalidateItem('rgroups', this.data.rgid);
 	};
-	this._isDummy = function (editor) {
+	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RGroupAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
@@ -503,7 +505,7 @@ function RGroupFragment(rgid, frid, rg) {
 	this.rgid_old = null;
 	this.rg_old = null;
 	this.frid = frid;
-	this._execute = function (editor) { // eslint-disable-line max-statements
+	this.execute = function (editor) { // eslint-disable-line max-statements
 		var RS = editor.render.ctab;
 		var DS = RS.molecule;
 		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
@@ -531,7 +533,7 @@ function RGroupFragment(rgid, frid, rg) {
 			rgNew.frags.add(this.frid);
 		}
 	};
-	this._invert = function () {
+	this.invert = function () {
 		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
 	};
 }
@@ -539,7 +541,7 @@ RGroupFragment.prototype = new Base();
 
 function RxnArrowAdd(pos) {
 	this.data = { arid: null, pos: pos };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -548,11 +550,11 @@ function RxnArrowAdd(pos) {
 		else
 			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 		RS.notifyRxnArrowAdded(this.data.arid);
-		DS._rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
+		DS.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnArrows', this.data.arid, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnArrowDelete();
 		ret.data = this.data;
 		return ret;
@@ -562,7 +564,7 @@ RxnArrowAdd.prototype = new Base();
 
 function RxnArrowDelete(arid) {
 	this.data = { arid: arid, pos: null };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -571,7 +573,7 @@ function RxnArrowDelete(arid) {
 		RS.notifyRxnArrowRemoved(this.data.arid);
 		DS.rxnArrows.remove(this.data.arid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnArrowAdd();
 		ret.data = this.data;
 		return ret;
@@ -581,19 +583,19 @@ RxnArrowDelete.prototype = new Base();
 
 function RxnArrowMove(id, d, noinvalidate) {
 	this.data = { id: id, d: d, noinvalidate: noinvalidate };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnArrows.get(id).pp.add_(d);
+		DS.rxnArrows.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.rxnArrows.get(id).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			editor.render.invalidateItem('rxnArrows', id, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnArrowMove();
 		ret.data = this.data;
 		return ret;
@@ -603,7 +605,7 @@ RxnArrowMove.prototype = new Base();
 
 function RxnPlusAdd(pos) {
 	this.data = { plid: null, pos: pos };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -612,11 +614,11 @@ function RxnPlusAdd(pos) {
 		else
 			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 		RS.notifyRxnPlusAdded(this.data.plid);
-		DS._rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
+		DS.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnPluses', this.data.plid, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnPlusDelete();
 		ret.data = this.data;
 		return ret;
@@ -626,7 +628,7 @@ RxnPlusAdd.prototype = new Base();
 
 function RxnPlusDelete(plid) {
 	this.data = { plid: plid, pos: null };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -635,7 +637,7 @@ function RxnPlusDelete(plid) {
 		RS.notifyRxnPlusRemoved(this.data.plid);
 		DS.rxnPluses.remove(this.data.plid);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnPlusAdd();
 		ret.data = this.data;
 		return ret;
@@ -645,19 +647,19 @@ RxnPlusDelete.prototype = new Base();
 
 function RxnPlusMove(id, d, noinvalidate) {
 	this.data = { id: id, d: d, noinvalidate: noinvalidate };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnPluses.get(id).pp.add_(d);
+		DS.rxnPluses.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		RS.rxnPluses.get(id).visel.translate(R.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			editor.render.invalidateItem('rxnPluses', id, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new RxnPlusMove();
 		ret.data = this.data;
 		return ret;
@@ -667,13 +669,13 @@ RxnPlusMove.prototype = new Base();
 
 function SGroupDataMove(id, d) {
 	this.data = { id: id, d: d };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var struct = editor.render.ctab.molecule;
-		struct.sgroups.get(this.data.id).pp.add_(this.data.d);
+		struct.sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
 		editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new SGroupDataMove();
 		ret.data = this.data;
 		return ret;
@@ -683,7 +685,7 @@ SGroupDataMove.prototype = new Base();
 
 function CanvasLoad(ctab) {
 	this.data = { ctab: ctab, norescale: false };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var rnd = editor.render;
 		var struct = rnd.ctab.molecule;
 
@@ -696,7 +698,7 @@ function CanvasLoad(ctab) {
 		this.data.norescale = true;
 	};
 
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new CanvasLoad();
 		ret.data = this.data;
 		return ret;
@@ -706,7 +708,7 @@ CanvasLoad.prototype = new Base();
 
 function ChiralFlagAdd(pos) {
 	this.data = { pos: pos };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -716,7 +718,7 @@ function ChiralFlagAdd(pos) {
 		DS.isChiral = true;
 		R.invalidateItem('chiralFlags', 0, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new ChiralFlagDelete();
 		ret.data = this.data;
 		return ret;
@@ -726,7 +728,7 @@ ChiralFlagAdd.prototype = new Base();
 
 function ChiralFlagDelete() {
 	this.data = { pos: null };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -737,7 +739,7 @@ function ChiralFlagDelete() {
 		RS.chiralFlags.unset(0);
 		DS.isChiral = false;
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new ChiralFlagAdd(this.data.pos);
 		ret.data = this.data;
 		return ret;
@@ -747,14 +749,14 @@ ChiralFlagDelete.prototype = new Base();
 
 function ChiralFlagMove(d) {
 	this.data = { d: d };
-	this._execute = function (editor) {
+	this.execute = function (editor) {
 		var R = editor.render;
 		var RS = R.ctab;
-		RS.chiralFlags.get(0).pp.add_(this.data.d);
+		RS.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
 		R.invalidateItem('chiralFlags', 0, 1);
 	};
-	this._invert = function () {
+	this.invert = function () {
 		var ret = new ChiralFlagMove();
 		ret.data = this.data;
 		return ret;

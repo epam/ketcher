@@ -8,17 +8,17 @@ var ui = global.ui;
 function RGroupAtomTool(editor) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
+	this.hoverHelper = new HoverHelper(this);
 }
 RGroupAtomTool.prototype = new EditorTool();
 RGroupAtomTool.prototype.OnMouseMove = function (event) {
-	this._hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+	this.hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
 };
 RGroupAtomTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
 	var ci = rnd.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		ui.showRGroupTable({
 			mode: 'multiple',
 			onOk: function (rgNew) {
@@ -37,7 +37,7 @@ RGroupAtomTool.prototype.OnMouseUp = function (event) {
 		});
 		return true;
 	} else if (ci && ci.map == 'atoms') {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		var atom = rnd.ctab.molecule.atoms.get(ci.id);
 		var lbOld = atom.label;
 		var rgOld = atom.rglabel;

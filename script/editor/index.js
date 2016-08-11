@@ -30,18 +30,20 @@ var ui = global.ui;
 
 function Editor(render) {
 	this.render = render;
-	this._selectionHelper = new SelectionHelper(this);
-	this._tool = null;
+	this.selectionHelper = new SelectionHelper(this);
+	this._tool = null; // eslint-disable-line
 	this.setupEvents();
 }
 
 Editor.prototype.tool = function (name, opts) {
 	if (name != undefined) {
+		/* eslint-disable no-underscore-dangle*/
 		if (this._tool)
 			this._tool.OnCancel(); // eslint-disable-line new-cap
 		this._tool = new toolMap[name](this, opts);
 	}
 	return this._tool;
+	/* eslint-enable no-underscore-dangle*/
 };
 
 // Events setup extracted from render
@@ -94,6 +96,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 	});
 	// END
 
+	/* eslint-disable no-underscore-dangle*/
 	var zoomStaticPoint = null;
 	clientArea.observe('touchstart', function (event) {
 		editor.resetLongTapTimeout(true);
@@ -137,6 +140,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 		event.preventDefault();
 	});
 	// END
+	/* eslint-enable no-underscore-dangle*/
 
 	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
 		render.onResize();
@@ -156,13 +160,13 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
 						if (eventName == 'MouseMove')
 							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							editor._tool.processEvent('OnMouseLeave', event);
+							editor._tool.processEvent('OnMouseLeave', event); // eslint-disable-line no-underscore-dangle
 						return util.preventDefault(event);
 					}
 				}
 			}
 
-			editor._tool.processEvent('On' + eventName, event);
+			editor._tool.processEvent('On' + eventName, event); // eslint-disable-line no-underscore-dangle
 			if (eventName != 'MouseUp')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.
@@ -178,17 +182,17 @@ Editor.prototype.selectAll = function () {
 	var selection = {};
 	for (var map in ReStruct.maps)
 		selection[map] = this.render.ctab[map].ikeys();
-	this._selectionHelper.setSelection(selection);
+	this.selectionHelper.setSelection(selection);
 };
 
 Editor.prototype.deselectAll = function () {
-	this._selectionHelper.setSelection();
+	this.selectionHelper.setSelection();
 };
 
 Editor.prototype.hasSelection = function (copyable) {
-	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection) {
-			if (this._selectionHelper.selection[map].length > 0) {
+	if ('selection' in this.selectionHelper) {
+		for (var map in this.selectionHelper.selection) {
+			if (this.selectionHelper.selection[map].length > 0) {
 				if (!copyable || map !== 'sgroupData')
 					return true;
 			}
@@ -199,9 +203,9 @@ Editor.prototype.hasSelection = function (copyable) {
 
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
-	if ('selection' in this._selectionHelper) {
-		for (var map in this._selectionHelper.selection)
-			selection[map] = this._selectionHelper.selection[map].slice(0);
+	if ('selection' in this.selectionHelper) {
+		for (var map in this.selectionHelper.selection)
+			selection[map] = this.selectionHelper.selection[map].slice(0);
 	}
 	if (explicit) {
 		var struct = this.render.ctab.molecule;

@@ -59,7 +59,7 @@ ReRGroup.prototype.calcBBox = function (render) {
 		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
 	});
-	ret = ret.extend(this.__ext, this.__ext);
+	ret = ret.extend(this.__ext, this.__ext); // eslint-disable-line no-underscore-dangle
 	return ret;
 };
 
@@ -149,8 +149,9 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 	}
 };
 
-ReRGroup.prototype._draw = function (render, rgid, attrs) { // TODO need to review parameter list
-	var bb = this.getVBoxObj(render).extend(this.__ext, this.__ext);
+// TODO need to review parameter list
+ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-line no-underscore-dangle
+	var bb = this.getVBoxObj(render).extend(this.__ext, this.__ext); // eslint-disable-line no-underscore-dangle
 	if (bb) {
 		var p0 = render.obj2scaled(bb.p0);
 		var p1 = render.obj2scaled(bb.p1);
@@ -161,7 +162,7 @@ ReRGroup.prototype._draw = function (render, rgid, attrs) { // TODO need to revi
 ReRGroup.prototype.drawHighlight = function (render) {
 	var rgid = render.ctab.rgroups.keyOf(this);
 	if (!Object.isUndefined(rgid)) {
-		var ret = this._draw(render, rgid, render.styles.highlightStyle/* { 'fill' : 'red' }*/);
+		var ret = this._draw(render, rgid, render.styles.highlightStyle/* { 'fill' : 'red' }*/); // eslint-disable-line no-underscore-dangle
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*
 		 this.getAtoms(render).each(function(aid) {

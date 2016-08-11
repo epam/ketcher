@@ -13,9 +13,9 @@ var ui = global.ui;
 function SelectTool(editor, mode) {
 	this.editor = editor;
 
-	this._hoverHelper = new HoverHelper(this);
-	this._lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
-	this._sGroupHelper = new SGroupHelper(editor);
+	this.hoverHelper = new HoverHelper(this);
+	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
+	this.sGroupHelper = new SGroupHelper(editor);
 }
 
 SelectTool.prototype = new EditorTool();
@@ -23,8 +23,8 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
-	this._hoverHelper.hover(null); // TODO review hovering for touch devices
-	var selectFragment = (this._lassoHelper.fragment || event.ctrlKey);
+	this.hoverHelper.hover(null); // TODO review hovering for touch devices
+	var selectFragment = (this.lassoHelper.fragment || event.ctrlKey);
 	var ci = rnd.findItem(
 		event,
 		selectFragment ?
@@ -32,16 +32,16 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 	);
 	if (!ci || ci.type == 'Canvas') {
-		if (!this._lassoHelper.fragment)
-			this._lassoHelper.begin(event);
+		if (!this.lassoHelper.fragment)
+			this.lassoHelper.begin(event);
 	} else {
-		this._hoverHelper.hover(null);
+		this.hoverHelper.hover(null);
 		if ('onShowLoupe' in rnd)
 			rnd.onShowLoupe(true);
-		if (!this.editor._selectionHelper.isSelected(ci)) {
+		if (!this.editor.selectionHelper.isSelected(ci)) {
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
-				this.editor._selectionHelper.setSelection({
+				this.editor.selectionHelper.setSelection({
 					atoms: frag.fragGetAtoms(rnd, ci.id),
 					bonds: frag.fragGetBonds(rnd, ci.id)
 				},
@@ -49,20 +49,20 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 				);
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
-				this.editor._selectionHelper.setSelection({
+				this.editor.selectionHelper.setSelection({
 					atoms: Struct.SGroup.getAtoms(struct, sgroup),
 					bonds: Struct.SGroup.getBonds(struct, sgroup)
 				}, event.shiftKey
 				);
 			} else if (ci.map == 'rgroups') {
 				var rgroup = ctab.rgroups.get(ci.id);
-				this.editor._selectionHelper.setSelection({
+				this.editor.selectionHelper.setSelection({
 					atoms: rgroup.getAtoms(rnd),
 					bonds: rgroup.getBonds(rnd)
 				}, event.shiftKey
 				);
 			} else {
-				this.editor._selectionHelper.setSelection(ci, event.shiftKey);
+				this.editor.selectionHelper.setSelection(ci, event.shiftKey);
 			}
 		}
 		this.dragCtx = {
@@ -74,9 +74,9 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			this.dragCtx.timeout = setTimeout(
 			function () {
 				delete self.dragCtx;
-				self.editor._selectionHelper.setSelection(null);
+				self.editor.selectionHelper.setSelection(null);
 				ui.showLabelEditor({
-					//pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
+					// pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
 					label: rnd.atomGetAttr(ci.id, 'label'),
 					charge: rnd.atomGetAttr(ci.id, 'charge'),
 					isotope: rnd.atomGetAttr(ci.id, 'isotope'),
@@ -117,16 +117,16 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this._hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
+			this.hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
 		}
 		rnd.update();
-	} else if (this._lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(this._lassoHelper.addPoint(event), event.shiftKey);
+	} else if (this.lassoHelper.running()) {
+		this.editor.selectionHelper.setSelection(this.lassoHelper.addPoint(event), event.shiftKey);
 	} else {
-		this._hoverHelper.hover(
+		this.hoverHelper.hover(
 		rnd.findItem(
 			event,
-			(this._lassoHelper.fragment || event.ctrlKey) ?
+			(this.lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 		)
@@ -141,8 +141,8 @@ SelectTool.prototype.OnMouseUp = function (event) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
-				this._hoverHelper.hover(null);
-				this.editor._selectionHelper.setSelection();
+				this.hoverHelper.hover(null);
+				this.editor.selectionHelper.setSelection();
 				this.dragCtx.action = this.dragCtx.action ?
 					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
 						Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
@@ -151,10 +151,10 @@ SelectTool.prototype.OnMouseUp = function (event) {
 		ui.addUndoAction(this.dragCtx.action, true);
 		this.editor.render.update();
 		delete this.dragCtx;
-	} else if (this._lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		this.editor._selectionHelper.setSelection(this._lassoHelper.end(), event.shiftKey);
-	} else if (this._lassoHelper.fragment) {
-		this.editor._selectionHelper.setSelection();
+	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+		this.editor.selectionHelper.setSelection(this.lassoHelper.end(), event.shiftKey);
+	} else if (this.lassoHelper.fragment) {
+		this.editor.selectionHelper.setSelection();
 	}
 	return true;
 };
@@ -164,7 +164,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	var ci = rnd.findItem(event);
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
-		this.editor._selectionHelper.setSelection(ci);
+		this.editor.selectionHelper.setSelection(ci);
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = struct.atoms.get(ci.id);
 		if (atom.label == 'R#') {
@@ -229,7 +229,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 			});
 		}
 	} else if (ci.map == 'bonds') {
-		this.editor._selectionHelper.setSelection(ci);
+		this.editor.selectionHelper.setSelection(ci);
 		var type = rnd.bondGetAttr(ci.id, 'type');
 		var stereo = rnd.bondGetAttr(ci.id, 'stereo');
 		ui.showBondProperties({
@@ -246,10 +246,10 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 			}
 		});
 	} else if (ci.map == 'sgroups') {
-		this.editor._selectionHelper.setSelection(ci);
-		this._sGroupHelper.showPropertiesDialog(ci.id);
+		this.editor.selectionHelper.setSelection(ci);
+		this.sGroupHelper.showPropertiesDialog(ci.id);
 //    } else if (ci.map == 'sgroupData') {
-//        this._sGroupHelper.showPropertiesDialog(ci.sgid);
+//        this.sGroupHelper.showPropertiesDialog(ci.sgid);
 	}
 	return true;
 };
@@ -261,10 +261,10 @@ SelectTool.prototype.OnCancel = function () {
 		ui.addUndoAction(this.dragCtx.action, true);
 		rnd.update();
 		delete this.dragCtx;
-	} else if (this._lassoHelper.running()) {
-		this.editor._selectionHelper.setSelection(this._lassoHelper.end());
+	} else if (this.lassoHelper.running()) {
+		this.editor.selectionHelper.setSelection(this.lassoHelper.end());
 	}
-	this._hoverHelper.hover(null);
+	this.hoverHelper.hover(null);
 };
 
 module.exports = SelectTool;

@@ -71,12 +71,11 @@
     "es6-shim": "^0.35.0",
     "es7-shim": "^6.0.0",
     "filesaver.js": "^0.2.0",
-    "html5shiv": "^3.7.3",
     "keymage": "^1.1.0",
     "normalize.css": "^4.2.0",
     "preact": "^5.6.0",
     "query-string": "^2.3.0",
     "raphael": "^2.1.4",
-    "xhrpolyfill": "^1.0.0"
+    "whatwg-fetch": "^1.0.0"
   }
 }

@@ -413,6 +413,8 @@ SGroup.setPos = function (remol, sg, pos) {
 	sg.pp = pos;
 };
 
+// Used to pack atoms to sgroup in old-server selective layout
+// e.g. packDataGroup('_ketcher_selective_layout', '1', ctab, atoms))
 SGroup.packDataGroup = function (name, value, mol, atoms) {
 	var atomSet = Set.fromList(atoms);
 	var atomSetExtended = Set.empty();

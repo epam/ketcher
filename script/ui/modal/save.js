@@ -33,7 +33,7 @@ function saveDialog (params, server) {
 	handlers[1] = formatInput.on('change', function (_, input) {
 		var format = formatInput.value;
 		convertMolecule(server, params.molecule, format).then(function (res) {
-			outputMolecule(res, format);
+			outputMolecule(res.struct, format);
 		}, ui.echo);
 	});
 
@@ -74,9 +74,7 @@ function fileSaver (server) {
 		else if (ui.standalone)
 			reject('Standalone mode!');
 		else
-			resolve(function (data, type) {
-				server.save({filedata: [type, data].join('\n')});
-			});
+			reject(new Error("Server doesn't support echo method"));
 	});
 };
 
@@ -84,16 +82,16 @@ function convertMolecule (server, molecule, format) {
 	return new Promise(function (resolve, reject) {
 		var moldata = molfile.stringify(molecule);
 		if (format == 'mol') {
-			resolve(moldata);
+			resolve({ struct: moldata });
 		}
 		else if (ui.standalone)
 			// TODO: 'InChI'
 			throw Error(format.capitalize() + ' is not supported in the standalone mode');
 		else if (format == 'smi') {
-			resolve(server.smiles({ moldata: moldata }));
+			resolve(server.convert({ struct: moldata, output_format: 'chemical/x-daylight-smiles' }));
 		}
 		else if (format == 'cml') {
-			resolve(server.cml({ moldata: moldata }));
+			resolve(server.convert({ struct: moldata, output_format: 'chemical/x-cml'}));
 		}
 		else if (format == 'inchi') {
 			if (molecule.rgroups.count() !== 0)
@@ -109,7 +107,7 @@ function convertMolecule (server, molecule, format) {
 						throw Error('InChi data format doesn\'t support s-groups');
 				});
 
-				resolve(server.inchi({ moldata: moldata }));
+				resolve(server.convert({ struct: moldata, output_format: 'chemical/x-inchi' }));
 			}
 		}
 	});

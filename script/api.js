@@ -1,39 +1,25 @@
-var ajax = require('./util/ajax.js');
-
-// stealed from https://github.com/iambumblehead/form-urlencoded/
-function formEncodeString(str) {
-	return str.replace(/[^ !'()~\*]*/g, encodeURIComponent)
-		.replace(/ /g, '+')
-		.replace(/[!'()~\*]/g, function (ch) {
-			return '%' + ('0' + ch.charCodeAt(0).toString(16))
-				.slice(-2).toUpperCase();
-		});
-}
-
-function formEncode(obj) {
-	var str = [];
-	for (var prop in obj) {
-		if (obj.hasOwnProperty(prop)) { // don't handle nested objects
-			str.push(encodeURIComponent(prop) + '=' +
-			formEncodeString(obj[prop]));
-		}
-	}
-	return str.join('&');
-}
-
-function unwrap(xhr) {
-	var data = xhr.responseText;
-	if (xhr.status >= 300)
-		throw data;
-	if (data.startsWith('Ok.'))
-		return data.substring(data.indexOf('\n') + 1);
-	throw Error('Unknown server error: ' + data);
-}
-
 function api(base, defaultOptions) {
 	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
-	function request(method, url) {
+	function request(method, url, defaultData) {
+		return function (data, options) {
+			return fetch(baseUrl + url, {
+				method: method,
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			}).then(function (response) {
+				if (response.ok)
+					return response.json();
+				else
+					throw response.json();
+			});
+		};
+	}
+
+	function request_old(method, url) {
+		var baseUrl_old = '';
 		function options(opts, params, sync) {
 			var data = Object.assign({}, defaultOptions, opts);
 			return {
@@ -52,27 +38,25 @@ function api(base, defaultOptions) {
 			// TODO: handle errors
 			return unwrap(ajax(options(data, params, true)));
 		};
-		res.url = baseUrl + url;
+		res.url = baseUrl_old + url;
 		return res;
 	}
 
 	return {
-		inchi: request('POST', 'getinchi'),
-		smiles: request('POST', 'smiles'),
-		molfile: request('POST', 'getmolfile'),
-		cml: request('POST', 'getcml'),
+		convert: request('POST', 'convert'),
 		layout: request('POST', 'layout'),
 		clean: request('POST', 'clean'),
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
 		automap: request('POST', 'automap'),
-		selectiveLayout: request('POST', 'selective_layout'),
-		save: request('POST', 'save'),
-		knocknock: function () {
-			return ajax(baseUrl + 'knocknock').then(function (xhr) {
-				if (xhr.responseText !== 'You are welcome!')
-					throw Error('Server is not compatible');
+
+		//save: request2('POST', 'save'),
+		info: function () {
+			return request('GET', 'info')().then(function (res) {
+				return res;
+			}, function (err) {
+				throw Error('Server is not compatible');
 			});
 		}
 	};

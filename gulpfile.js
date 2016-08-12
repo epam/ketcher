@@ -25,8 +25,8 @@ var options = minimist(process.argv.slice(2), {
 });
 
 // banner: grunt.file.read('script/banner.js'),
-var polyfills = ['html5shiv', 'es5-shim', 'es6-shim',
-                 'es7-shim/dist/es7-shim'];
+var polyfills = ['es5-shim', 'es6-shim',
+                 'es7-shim/dist/es7-shim', 'whatwg-fetch'];
 
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
                'demo.html', 'templates.sdf'];

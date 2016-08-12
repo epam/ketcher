@@ -52,7 +52,7 @@ function init (options, apiServer) {
 	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
 		// don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check when this is nesessary
-		server.knocknock().then(function (res) {
+		server.info().then(function (res) {
 			ui.standalone = false;
 			updateServerButtons();
 		}, function (val) {
@@ -507,11 +507,11 @@ function serverTransform(method, mol, options) {
 		mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
 	var request = server[method](Object.assign({
-		moldata: molfile.stringify(mol, { ignoreErrors: true })
+		struct: molfile.stringify(mol, { ignoreErrors: true })
 	}, options));
 	utils.loading('show');
-	request.then(function (data) {
-		var resmol = molfile.parse(data);
+	request.then(function (res) {
+		var resmol = molfile.parse(res.struct);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
@@ -566,10 +566,8 @@ function updateZoom (refresh) {
 function layout () {
 	var atoms = [].slice.call(ui.editor.getSelection(true).atoms);
 	var selective = atoms.length > 0;
-
-	return !selective ? serverTransform('layout') :
-		serverTransform('selectiveLayout',
-		                Struct.SGroup.packDataGroup('_ketcher_selective_layout', '1', ui.ctab, atoms));
+	return serverTransform('layout', null,
+	                       selective ? { 'atom_list': atoms } : null);
 };
 
 function clean2d() {
@@ -646,12 +644,15 @@ function getStruct(mol, checkEmptyLine) {
 				  ' is not supported in a standalone mode.';
 		else {
 			var req = (type == 'smiles' || type == 'inchi') ?
-			    server.layout({moldata: mol.trim()}) :
-			    server.molfile({moldata: mol});
+			    server.layout({ struct: mol.trim() }) :
+			    server.convert({
+				    struct: mol,
+				    output_format: 'chemical/x-mdl-molfile'
+			    });
 			utils.loading('show');
 			resolve(req.then(function (res) {
 				utils.loading('hide');
-				return molfile.parse(res);
+				return molfile.parse(res.struct);
 			}, function (err) {
 				utils.loading('hide');
 				throw err;

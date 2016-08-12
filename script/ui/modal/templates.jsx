@@ -2,7 +2,6 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import sdf from '../../chem/sdf';
-import ajax from '../../util/ajax.js';
 import VisibleView from './visibleview';
 
 import Render from '../../render';
@@ -140,8 +139,11 @@ class Templates extends Component {
 
 export default function dialog(baseUrl, params) {
 	var overlay = $$('.overlay')[0];
-	return ajax(baseUrl + 'templates.sdf').then(xhr => {
-		var templates = sdf.parse(xhr.responseText);
+	return fetch(baseUrl + 'templates.sdf').then(response => {
+    if (response.ok)
+      return response.text();
+  }).then(text => {
+		var templates = sdf.parse(text);
 		return render((
 			<Templates params={params} templates={templates}/>
 		), overlay);

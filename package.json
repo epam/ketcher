@@ -47,6 +47,7 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
+    "gulp-webserver": "^0.9.1",
     "gulp-zip": "^3.2.0",
     "guppy-cli": "^1.0.1",
     "minimist": "^1.2.0",

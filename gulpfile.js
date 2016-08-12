@@ -153,15 +153,18 @@ gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], functio
 	gulp.watch('style/**.less', ['style']);
 	gulp.watch('template/**', ['html']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
-		cp.spawn('gulp', ['serve'], { stdio: 'inherit' });
+		cp.spawn('gulp', process.argv.slice(2), {
+			stdio: 'inherit'
+		});
 		process.exit();
 	});
-
-	cp.spawn('python', ['server/ketcher.py', 'dist'], {
-		stdio: 'inherit',
-		env: { 'PYTHONPATH': 'indigo' }
-	});
-	plugins.livereload.listen();
+	//plugins.livereload.listen();
+	return gulp.src(options.dist)
+		.pipe(plugins.webserver({
+			port: 9966,
+			livereload: true,
+			fallback: 'ketcher.html'
+		}));
 });
 
 function scriptBundle(src, watchUpdate) {

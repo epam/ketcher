@@ -123,6 +123,13 @@ gulp.task('patch-version', function (cb) {
 	});
 });
 
+gulp.task('lint', function () {
+	return gulp.src('script/**')
+		.pipe(plugins.eslint())
+		.pipe(plugins.eslint.format())
+		.pipe(plugins.eslint.failAfterError());
+});
+
 gulp.task('check-epam-email', function(cb) {
 	// TODO: should be pre-push and check remote origin
 	try {
@@ -233,7 +240,7 @@ function glyphReduce(glyphs) {
 	}, {});
 }
 
-gulp.task('pre-commit', ['check-epam-email']);
+gulp.task('pre-commit', ['lint', 'check-epam-email']);
 gulp.task('assets', ['libs', 'distrib']);
 gulp.task('code', ['style', 'script', 'html']);
 gulp.task('build', ['clean', 'assets', 'code']);

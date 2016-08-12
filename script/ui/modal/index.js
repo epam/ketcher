@@ -12,6 +12,7 @@ var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;
 var checkStructDialog = require('./check-struct.jsx').default;
+var calculatedValuesDialog = require('./calc-val.jsx').default;
 
 function periodTable (params) {
 	params.required = true;
@@ -140,5 +141,6 @@ module.exports = {
 	save: saveDialog,
 	templates: templatesDialog,
 	labelEdit: labelEdit,
-  checkStruct: checkStructDialog
+  checkStruct: checkStructDialog,
+  calculatedValues: calculatedValuesDialog
 };

@@ -788,6 +788,11 @@ var actionMap = {
     dialog(modal.checkStruct).then(function (res) {
       console.info('RES', res);
     });
+  },
+  'calc-val': function () {
+    dialog(modal.calculatedValues).then(function (res) {
+      console.info('RES', res);
+    });
   }
 };
 

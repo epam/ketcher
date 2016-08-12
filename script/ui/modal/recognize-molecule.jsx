@@ -18,12 +18,7 @@ class RecognizeMolecule extends Component {
                  <input type="checkbox" name="fragment"></input>
                  Load as a fragment and copy to the Clipboard 
               </label>
-              <footer>
-                  <input type="button" value="Cancel"></input>
-                  <input type="button" value="OK"></input>
-                  <input accept="chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-cml,chemical/x-daylight-smiles,chemical/x-inchi,
-                  .mol,.rxn,.cml,.smi,.smiles,.inchi" type="file"></input>
-              </footer>
+              <input class="block" accept="" type="file"></input>
             </Dialog>
         );
     }

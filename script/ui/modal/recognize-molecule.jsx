@@ -9,10 +9,21 @@ class RecognizeMolecule extends Component {
     }
     render (props) {
         return (
-            <Dialog caption="Recognize Molecule"
+            <Dialog caption="Import From Image"
                     name="recognize-molecule" params={props.params}
                     result={() => this.result()}>
-              <button>Open From File...</button>
+              <textarea></textarea>
+              <textarea></textarea>
+              <label class="open">
+                 <input type="checkbox" name="fragment"></input>
+                 Load as a fragment and copy to the Clipboard 
+              </label>
+              <footer>
+                  <input type="button" value="Cancel"></input>
+                  <input type="button" value="OK"></input>
+                  <input accept="chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-cml,chemical/x-daylight-smiles,chemical/x-inchi,
+                  .mol,.rxn,.cml,.smi,.smiles,.inchi" type="file"></input>
+              </footer>
             </Dialog>
         );
     }

@@ -63,7 +63,9 @@ window.onload = function () {
 	var params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.api_path = params.api_path;
-	ketcher.server = api(ketcher.api_path, { 'indigo-smart-layout': 'false' });
+	ketcher.server = api(ketcher.api_path, {
+		'smart-layout': 'false'
+	});
 	ui.init(Object.assign({}, params), ketcher.server);
 };
 

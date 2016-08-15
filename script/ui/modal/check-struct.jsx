@@ -4,6 +4,17 @@ import { h, Component, render } from 'preact';
 import Dialog from './dialog';
 
 class CheckStruct extends Component {
+    constructor(props) {
+      super(props);
+      this.state.tabIndex = 0;
+      this.tabs = ['Check', 'Settings'];
+    }
+    changeTab(ev, index) {
+      this.setState({
+        tabIndex: index
+      });
+      ev.preventDefault();
+    }
     result () {
         return `Yo!`;
     }
@@ -12,7 +23,23 @@ class CheckStruct extends Component {
             <Dialog caption="Structure Check"
                     name="check-struct" params={props.params}
                     result={() => this.result()}>
-              <button>Hello World!</button>
+              <ul class="tabs">
+                { this.tabs.map((caption, index) => (
+                  <li class={this.state.tabIndex == index ? 'active' : ''}>
+                     <a onClick={ ev => this.changeTab(ev, index) }>{caption}</a>
+                  </li>
+                  ))
+                }
+              </ul>
+              {[(
+                <div tabTitle = "Check">
+                  <button>Hello Check!</button>
+                </div>
+                ), (
+                <div tabTitle = "Setting">
+                  <button>Hello Settings!</button>
+                </div>
+              )][this.state.tabIndex]};
             </Dialog>
         );
     }

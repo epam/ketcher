@@ -50,6 +50,7 @@ function api(base, defaultOptions) {
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
 		automap: request('POST', 'automap'),
+    check: request('POST', 'check'),
 
 		//save: request2('POST', 'save'),
 		info: function () {

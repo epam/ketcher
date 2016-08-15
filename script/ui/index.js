@@ -785,7 +785,9 @@ var actionMap = {
 	'reaction-automap': automap,
 	'calc-cip': calculateCip,
   'check-struct': function () {
-    dialog(modal.checkStruct).then(function (res) {
+    dialog(modal.checkStruct, {
+      struct: molfile.stringify(ui.ctab),
+      server: server }).then(function (res) {
       console.info('RES', res);
     });
   },

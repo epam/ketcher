@@ -20,6 +20,10 @@ class CheckStruct extends Component {
 
 
 export default function dialog(params) {
+    var {server, struct} = params;
+    server.check({struct}).then(res => {
+      console.info('check result', res);
+    })
     var overlay = $$('.overlay')[0];
     return render((
         <CheckStruct params={params}/>

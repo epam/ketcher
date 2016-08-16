@@ -20,6 +20,8 @@ class RecognizeMolecule extends Component {
             };
             image.src = imageUrl;
         }
+        document.getElementById('recognizeButton').style.display = 'inline';
+
     }
     render (props) {
         return (
@@ -28,11 +30,12 @@ class RecognizeMolecule extends Component {
                     result={() => this.result()}>
               <img id="pic" src="" />
               <img />
-              <label class="open">
+              <label class="open, block">
                  <input type="checkbox"></input>
                  Load as a fragment and copy to the Clipboard 
               </label>
-              <input class="block" id='input' onChange={this.onChange.bind(this)} accept="image/*" type="file"></input>
+              <input id="input" onChange={this.onChange.bind(this)} accept="image/*" type="file"></input>
+              <button type="button" id="recognizeButton" class="hidden">Recognize</button>
             </Dialog>
         );
     }

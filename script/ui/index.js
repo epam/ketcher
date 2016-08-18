@@ -487,13 +487,11 @@ function clear () {
 }
 
 function open () {
-	modal.open({
-		onOk: function (res) {
+	dialog(modal.open).then(function (res) {
 			if (res.fragment)
-				loadFragment(res.value, true);
+				loadFragment(res.structStr, true);
 			else
-				loadMolecule(res.value, true);
-		}
+				loadMolecule(res.structStr, true);
 	});
 }
 

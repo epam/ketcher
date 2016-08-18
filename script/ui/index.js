@@ -365,7 +365,7 @@ function labelEditKeys(scope, range) {
 	while ((match = re.exec(range)) !== null) {
 		var from = match[1], to = match[2];
 		var len = to.charCodeAt(0) - from.charCodeAt(0);
-		Array.apply(null, { length: len }).forEach(function(_, i) {
+		Array.apply(null, { length: len + 1 }).forEach(function(_, i) {
 			bindLetter(String.fromCharCode(from.charCodeAt(0) + i));
 		});
 	}

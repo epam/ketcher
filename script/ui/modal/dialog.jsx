@@ -18,6 +18,7 @@ export default function Dialog ({ children, caption, name, params={},
 		if (key == 13 || key == 27) {
 			exit(key == 13 ? 'OK': 'Cancel');
 			ev.preventDefault();
+			ev.stopPropagation();
 		}
 	}
 	function focus(el) {

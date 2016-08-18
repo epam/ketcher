@@ -2,6 +2,8 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import sdf from '../../chem/sdf';
+import molfile from '../../chem/molfile';
+
 import VisibleView from './visibleview';
 
 import Render from '../../render';
@@ -13,7 +15,7 @@ function normGroup(tmpl, i) {
 }
 
 function normName(tmpl, i) {
-	return tmpl.struct.name || `{normGroup(tmpl)} template {i + 1}`;
+	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
 }
 
 function renderTmpl(el, tmpl) {
@@ -111,7 +113,7 @@ class Templates extends Component {
 
 		console.info('all rerender');
 		var Tmpl = (tmpl, i) => (
-			<li title={normName(tmpl, i)}
+			<li key={i} title={normName(tmpl, i)}
 			    class={tmpl == selected ? 'selected' : ''}
 			    onClick={() => this.select(tmpl)}
 			    ref={ el => renderTmpl(el, tmpl) }>loading..</li>
@@ -125,9 +127,9 @@ class Templates extends Component {
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
-				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)}>
+				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)} value={selectedGroup}>
 					{ this.getGroups().map(group => (
-						<option selected={group == selectedGroup}>{group}</option>
+						<option>{group}</option>
 					)) }
 				</select>
 				<VisibleView data={this.getTemplates()} rowHeight={120}
@@ -137,13 +139,24 @@ class Templates extends Component {
 	}
 }
 
-export default function dialog(baseUrl, params) {
-	var overlay = $$('.overlay')[0];
+function getTemplates(baseUrl) {
 	return fetch(baseUrl + 'templates.sdf').then(response => {
     if (response.ok)
       return response.text();
   }).then(text => {
 		var templates = sdf.parse(text);
+    var userTemplates = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+
+    return userTemplates.reduce((res, struct) => {
+      res.push({ struct: molfile.parse(struct), props: { group: 'User' }});
+      return res;
+    }, templates);
+  });
+}
+
+export default function dialog(baseUrl, params) {
+	var overlay = $$('.overlay')[0];
+	return getTemplates(baseUrl).then(templates => {
 		return render((
 			<Templates params={params} templates={templates}/>
 		), overlay);

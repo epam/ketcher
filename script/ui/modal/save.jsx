@@ -65,6 +65,11 @@ class Save extends Component {
 		}
 		ev.preventDefault();
 	}
+	saveTemplate(ev) {
+		var storage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+		storage.push(this.molStr);
+		localStorage['ketcher-tmpl'] = JSON.stringify(storage);
+	}
 	render () {
 	    // formatInput.select('[value=inchi]')[0].disabled = ui.standalone;
 		return (
@@ -72,6 +77,10 @@ class Save extends Component {
 					name="save" params={this.props.params}
 					buttons={[(
 						<a className={!this.state.fileSaver ? "disabled save" : "save"} onClick={ev => this.save(ev)} download>Save To File…</a>
+					), (
+						<button className="save-tmpl"
+								onClick={ ev => this.saveTemplate(ev) }>
+							Save to Templates</button>
 					), "Close"]}>
 				<label>Format:
 				<select value={this.state.type} onChange={ev => this.changeType(ev)}>{

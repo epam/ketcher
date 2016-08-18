@@ -38,6 +38,18 @@ function renderTmpl(el, tmpl) {
   }
 }
 
+function SelectList ({ children, options, onChange, value, ...props}) {
+  return (
+    <ul {...props} tabindex="0">{
+        options.map((opt, index) => (
+          <li onClick={() => onChange(opt, index) }
+              className={opt == value ? 'selected' : ''}>
+            {opt}</li>
+        ))
+    }</ul>
+  );
+}
+
 class Templates extends Component {
 	constructor({params, templates}) {
 		super();
@@ -85,8 +97,7 @@ class Templates extends Component {
 			this.setState({ selected: tmpl });
 	}
 
-	selectGroup(ev) {
-		var group = ev.target.value;
+	selectGroup(group) {
 		this.setState({
 			selectedGroup: group,
 			selected: null
@@ -122,11 +133,7 @@ class Templates extends Component {
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
-				<select size="15" class="groups" onChange={ev => this.selectGroup(ev)} value={selectedGroup}>
-					{ this.getGroups().map(group => (
-						<option>{group}</option>
-					)) }
-				</select>
+				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
 				<VisibleView data={this.getTemplates()} rowHeight={141}>{
           (tmpl, i) => (
 			      <li key={i} title={normName(tmpl, i)}

@@ -62,6 +62,7 @@ class Save extends Component {
 			this.state.fileSaver(this.state.structStr,
 								 this.state.type);
 			//dlg.select('input[type=button]')[0].click();
+			this.props.onOk();
 		}
 		ev.preventDefault();
 	}
@@ -69,12 +70,13 @@ class Save extends Component {
 		var storage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 		storage.push(this.molStr);
 		localStorage['ketcher-tmpl'] = JSON.stringify(storage);
+		this.props.onOk();
 	}
 	render () {
 	    // formatInput.select('[value=inchi]')[0].disabled = ui.standalone;
 		return (
 			<Dialog caption="Save Structure"
-					name="save" params={this.props.params}
+					name="save" params={this.props}
 					buttons={[(
 						<a className={!this.state.fileSaver ? "disabled save" : "save"} onClick={ev => this.save(ev)} download>Save To File…</a>
 					), (

@@ -124,7 +124,7 @@ class Templates extends Component {
 				</label>
 				<select size="15" class="groups" onChange={ev => this.selectGroup(ev)} value={selectedGroup}>
 					{ this.getGroups().map(group => (
-						<option value={group}>{group}</option>
+						<option>{group}</option>
 					)) }
 				</select>
 				<VisibleView data={this.getTemplates()} rowHeight={141}>{

@@ -75,7 +75,7 @@ export default class VirtualList extends Component {
 			<div class="outer" onScroll={this.handleScroll} {...props}>
 				<div style={`${STYLE_INNER} height:${data.length*rowHeight}px;`}>
 					<ul style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
-						{ selection.map(renderRow) }
+						{ selection.map((d, i) => renderRow(d, start + i)) }
 					</ul>
 				</div>
 			</div>

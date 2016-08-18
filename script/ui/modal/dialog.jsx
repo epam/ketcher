@@ -4,8 +4,11 @@ import { h } from 'preact';
 export default function Dialog ({ children, caption, name, params={},
                                   result=() => null, valid=() => !!result(), buttons=["Cancel", "OK"] }) {
 
+	function isReturn(mode) {
+		return mode == 'OK';
+	}
 	function exit(mode) {
-		var key = 'on' + mode.capitalize();
+		var key = isReturn(mode) ? 'onOk' : 'onCancel';
 		var res = result();
 		if (params && key in params && (key != 'onOk' || valid()) )
 			params[key](res);
@@ -33,11 +36,9 @@ export default function Dialog ({ children, caption, name, params={},
 			<footer>{
 				buttons.map(b => (
 					typeof b != 'string' ? b :
-						<input type="button" onClick={() => exit(b)} value={b}/>
+						<input type="button" disabled={ isReturn(b) && !valid() } onClick={() => exit(b)} value={b}/>
 				))
 			}</footer>
 		</form>
 	);
-		// 				<input type="button" disabled={!valid()} onClick={() => exit('OK')} value="OK"/>
-
 }

@@ -498,7 +498,7 @@ function open () {
 }
 
 function save () {
-	modal.save({molecule: ui.ctab}, server);
+	dialog(modal.save, { server: server, struct: ui.ctab });
 }
 
 function serverTransform(method, mol, options) {
@@ -918,9 +918,6 @@ Object.assign(ui, {
 	updateClipboardButtons: updateClipboardButtons,
 	selectAction: selectAction,
 	addUndoAction: addUndoAction,
-
-	// TODO: remove me as we get better server API
-	loadMoleculeFromFile: modal.open.loadHook,
 
 	echo: echo,
 	showDialog: showDialog,

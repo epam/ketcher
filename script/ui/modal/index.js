@@ -4,10 +4,11 @@ var inputDialog = require('./input');
 var selectDialog = require('./select');
 
 var openDialog = require('./open.js');
-var saveDialog = require('./save.js');
+
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
 
+var saveDialog = require('./save.jsx').default;
 var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;

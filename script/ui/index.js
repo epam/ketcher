@@ -252,8 +252,8 @@ function initCliparea(parent) {
 				cb.setData(!struct.isReaction ?
 						   'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
 						   moldata);
-				cb.setData('chemical/x-daylight-smiles',
-						   smiles.stringify(struct));
+				// cb.setData('chemical/x-daylight-smiles',
+				// 		   smiles.stringify(struct));
 			} catch (ex) {
 				console.info('Could not write exact type', ex);
 			}

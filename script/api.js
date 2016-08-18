@@ -32,8 +32,8 @@ function api(base, defaultOptions) {
 		automap: request('POST', 'automap'),
 
 		info: function () {
-			return request('GET', 'info')().then(function (res) {
-				return res;
+			return fetch(baseUrl + 'info', { method: 'GET' }).then(function (res) {
+				return res.json();
 			}, function () {
 				throw Error('Server is not compatible');
 			});

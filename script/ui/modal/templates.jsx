@@ -19,21 +19,23 @@ function normName(tmpl, i) {
 }
 
 function renderTmpl(el, tmpl) {
-	if (tmpl.prerender)           // Should it sit here?
-		el.innerHTML = tmpl.prerender;
-	else {
-		var rnd = new Render(el, 0, {
-			'autoScale': true,
-			'autoScaleMargin': 0,
-			//'debug': true,
-			'hideChiralFlag': true,
-			'maxBondLength': 30
-		});
-		rnd.setMolecule(tmpl.struct);
-		rnd.update();
-		console.info('render!');//, el.innerHTML);
-		//tmpl.prerender = el.innerHTML;
-	}
+  if (el) {
+	  if (tmpl.prerender)           // Should it sit here?
+		  el.innerHTML = tmpl.prerender;
+	  else {
+		  var rnd = new Render(el, 0, {
+			  'autoScale': true,
+			  'autoScaleMargin': 0,
+			  //'debug': true,
+			  'hideChiralFlag': true,
+			  'maxBondLength': 30
+		  });
+		  rnd.setMolecule(tmpl.struct);
+		  rnd.update();
+		  console.info('render!');//, el.innerHTML);
+		  //tmpl.prerender = el.innerHTML;
+	  }
+  }
 }
 
 class Templates extends Component {
@@ -83,8 +85,8 @@ class Templates extends Component {
 			this.setState({ selected: tmpl });
 	}
 
-	selectGroup(select) {
-		var group = select.options[select.selectedIndex].value;
+	selectGroup(ev) {
+		var group = ev.target.value;
 		this.setState({
 			selectedGroup: group,
 			selected: null
@@ -112,13 +114,6 @@ class Templates extends Component {
 		var {selected, selectedGroup, filter} = this.state;
 
 		console.info('all rerender');
-		var Tmpl = (tmpl, i) => (
-			<li key={i} title={normName(tmpl, i)}
-			    class={tmpl == selected ? 'selected' : ''}
-			    onClick={() => this.select(tmpl)}
-			    ref={ el => renderTmpl(el, tmpl) }>loading..</li>
-		);
-
 		return (
 			<Dialog caption="Template Library"
 					name="template-lib" params={this.params}
@@ -127,13 +122,19 @@ class Templates extends Component {
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
-				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)} value={selectedGroup}>
+				<select size="15" class="groups" onChange={ev => this.selectGroup(ev)} value={selectedGroup}>
 					{ this.getGroups().map(group => (
-						<option>{group}</option>
+						<option value={group}>{group}</option>
 					)) }
 				</select>
-				<VisibleView data={this.getTemplates()} rowHeight={120}
-                             renderRow={Tmpl} />
+				<VisibleView data={this.getTemplates()} rowHeight={141}>{
+          (tmpl, i) => (
+			      <li key={i} title={normName(tmpl, i)}
+			          class={tmpl == selected ? 'selected' : ''}
+			          onClick={() => this.select(tmpl)}
+			        ref={ el => renderTmpl(el, tmpl) }>loading..</li>
+		      )
+        }</VisibleView>
 			</Dialog>
 		);
 	}

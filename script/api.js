@@ -42,6 +42,27 @@ function api(base, defaultOptions) {
 		return res;
 	}
 
+	function pollDeferred(process, complete, timeGap, startTimeGap) {
+		return new Promise(function (resolve, reject) {
+			function iterate() {
+				process().then(function (val) {
+					try {
+						var finish = complete(val);
+						if (finish)
+							resolve(val);
+						else
+							window.setTimeout(iterate, timeGap);
+					} catch (e) {
+						reject(e);
+					}
+				}, function (err) {
+					return reject(err);
+				});
+			}
+			window.setTimeout(iterate, startTimeGap || 0);
+		});
+	}
+
 	return {
 		convert: request('POST', 'convert'),
 		layout: request('POST', 'layout'),
@@ -58,7 +79,9 @@ function api(base, defaultOptions) {
 			}, function (err) {
 				throw Error('Server is not compatible');
 			});
-		}
+		},
+
+		pollDeferred: pollDeferred(process, complete, timeGap, startTimeGap)
 	};
 }
 

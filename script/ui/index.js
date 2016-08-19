@@ -511,15 +511,15 @@ function serverTransform(method, mol, options) {
 	}, function (err) {
 		throw 'Call server in standalone mode!\n' + err;
 	});
-	utils.loading('show');
+	//utils.loading('show');
 	request.then(function (res) {
 		var resmol = molfile.parse(res.struct);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
-		utils.loading('hide');
+		//utils.loading('hide');
 	}).then(null, function (er) {
-		utils.loading('hide');
+		//utils.loading('hide');
 		echo(er);
 	});
 }
@@ -614,11 +614,11 @@ function loadFragment (mol, checkEmptyLine) {
 }
 
 function getStruct(mol, checkEmptyLine) {
-	utils.loading('show');
+	//utils.loading('show');
 	return structFormat.fromString(mol, {
 		badHeaderRecover: checkEmptyLine
 	}, server).then(function (res) {
-		utils.loading('hide');
+		//utils.loading('hide');
 		return res;
 	}, function (err) {
 		utils.loading('hide');

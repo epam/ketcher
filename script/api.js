@@ -4,8 +4,8 @@ function api(base, defaultOptions) {
 	function request(method, url, defaultData) {
 		return function (data, options) {
 			var body = Object.assign({}, defaultData, data);
-			body.options = Object.assign(body.options || {},
-			                             defaultOptions, options);
+			body.indigo_options = Object.assign(body.indigo_options || {},
+			                                    defaultOptions, options);
 			return fetch(baseUrl + url, {
 				method: method,
 				headers: {
@@ -35,7 +35,9 @@ function api(base, defaultOptions) {
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
-		automap: request('POST', 'automap')
+		automap: request('POST', 'automap'),
+		check: request('POST', 'check'),
+		calculate: request('POST', 'calculate')
 	});
 }
 

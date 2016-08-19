@@ -3,46 +3,32 @@ function api(base, defaultOptions) {
 
 	function request(method, url, defaultData) {
 		return function (data, options) {
+			var body = Object.assign({}, defaultData, data);
+			body.indigo_options = Object.assign(body.indigo_options || {},
+			                                    defaultOptions, options);
 			return fetch(baseUrl + url, {
 				method: method,
 				headers: {
+					'Accept': 'application/json',
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data)
+				body: JSON.stringify(body)
 			}).then(function (response) {
 				if (response.ok)
 					return response.json();
-				else
-					throw response.json();
+				// console.info('PLAIN RESPONSE', response);
+				throw response.json();
 			});
 		};
 	}
 
-	function request_old(method, url) {
-		var baseUrl_old = '';
-		function options(opts, params, sync) {
-			var data = Object.assign({}, defaultOptions, opts);
-			return {
-				method: method,
-				url: res.url,
-				sync: sync,
-				params: params,
-				data: data && formEncode(data),
-				headers: data && { 'Content-Type': 'application/x-www-form-urlencoded' }
-			};
-		}
-		function res(data, params) {
-			return ajax(options(data, params)).then(unwrap, unwrap);
-		}
-		res.sync = function (data, params) {
-			// TODO: handle errors
-			return unwrap(ajax(options(data, params, true)));
-		};
-		res.url = baseUrl_old + url;
-		return res;
-	}
+	var info = fetch(baseUrl + 'indigo/info', { method: 'GET' }).then(function (res) {
+		return res.json();
+	}, function () {
+		throw Error('Server is not compatible');
+	});
 
-	function pollDeferred(process, complete, timeGap, startTimeGap) {
+	function pollDeferred (process, complete, timeGap, startTimeGap) {
 		return new Promise(function (resolve, reject) {
 			function iterate() {
 				process().then(function (val) {
@@ -63,26 +49,22 @@ function api(base, defaultOptions) {
 		});
 	}
 
-	return {
-		convert: request('POST', 'convert'),
-		layout: request('POST', 'layout'),
-		clean: request('POST', 'clean'),
-		aromatize: request('POST', 'aromatize'),
-		dearomatize: request('POST', 'dearomatize'),
-		calculateCip: request('POST', 'calculate_cip'),
-		automap: request('POST', 'automap'),
-
-		//save: request2('POST', 'save'),
-		info: function () {
-			return request('GET', 'info')().then(function (res) {
-				return res;
-			}, function (err) {
-				throw Error('Server is not compatible');
+	return Object.assign(info, {
+		convert: request('POST', 'indigo/convert'),
+		layout: request('POST', 'indigo/layout'),
+		clean: request('POST', 'indigo/clean'),
+		aromatize: request('POST', 'indigo/aromatize'),
+		dearomatize: request('POST', 'indigo/dearomatize'),
+		calculateCip: request('POST', 'indigo/calculate_cip'),
+		automap: request('POST', 'indigo/automap'),
+		check: request('POST', 'indigo/check'),
+		calculate: request('POST', 'indigo/calculate'),
+		recognize: function() {
+			return new Promise(function (resolve) {
+				setTimeout(() => resolve(info.layout({struct: 'C1CC1'})), 500);
 			});
-		},
-
-		pollDeferred: pollDeferred(process, complete, timeGap, startTimeGap)
-	};
+		}		
+	});
 }
 
 module.exports = api;

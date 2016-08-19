@@ -8,9 +8,22 @@ const STYLE_INNER = 'position:relative; overflow:hidden; width:100%; min-height:
 const STYLE_CONTENT = 'position:absolute; top:0; left:0; height:100%; width:100%; overflow:visible;';
 
 export default class VirtualList extends Component {
-	resize = () => {
-		if (this.state.height!==this.base.offsetHeight) {
-			this.setState({ height: this.base.offsetHeight });
+	constructor(props) {
+		super(props);
+		this.state = {
+			offset: 0,
+			height: 0
+		};
+	}
+
+	resize = (reset) => {
+		var height = this.base.offsetHeight;
+		if (this.state.height !== height) {
+			this.setState({ height });
+		}
+		if (reset) {
+			this.setState({offset: 0});
+			this.base.scrollTop = 0;
 		}
 	};
 
@@ -19,8 +32,10 @@ export default class VirtualList extends Component {
 		if (this.props.sync) this.forceUpdate();
 	};
 
-	componentDidUpdate() {
-		this.resize();
+	componentDidUpdate({data}) {
+		var equal = (data.length == this.props.data.length &&
+					 this.props.data.every((v,i)=> v === data[i]));
+		this.resize(!equal);
 	}
 
 	componentDidMount() {
@@ -32,13 +47,16 @@ export default class VirtualList extends Component {
 		removeEventListener('resize', this.resize);
 	}
 
-	render({ data, rowHeight, renderRow, overscanCount=1, sync, ...props },
-	       { offset=0, height=0 }) {
+	render() {
+		var { data, rowHeight, children, overscanCount=1, sync, ...props } = this.props;
+		var { offset, height } = this.state;
+		console.info('offset', offset);
 		// first visible row index
-		let start = (offset / rowHeight)|0;
+		let start = (offset / rowHeight) || 0;
+		let renderRow = children[0];
 
 		// actual number of visible rows (without overscan)
-		let visibleRowCount = (height / rowHeight)|0;
+		let visibleRowCount = (height / rowHeight) || 0;
 
 		// Overscan: render blocks of rows modulo an overscan row count
 		// This dramatically reduces DOM writes during scrolling
@@ -57,7 +75,7 @@ export default class VirtualList extends Component {
 			<div class="outer" onScroll={this.handleScroll} {...props}>
 				<div style={`${STYLE_INNER} height:${data.length*rowHeight}px;`}>
 					<ul style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
-						{ selection.map(renderRow) }
+						{ selection.map((d, i) => renderRow(d, start + i)) }
 					</ul>
 				</div>
 			</div>

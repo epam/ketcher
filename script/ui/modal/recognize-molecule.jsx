@@ -2,7 +2,10 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from './dialog';
-import api from '../../api.js'
+import api from '../../api'
+
+import Render from '../../render';
+import molfile from '../../chem/molfile'
 
 function upload(server, file) {
 //function upload(server, app, event) {
@@ -42,6 +45,7 @@ class RecognizeMolecule extends Component {
     constructor(props) {
         super(props);
         this.state.imgUrl = null;
+        this.state.structStr;
     }
     result () {
         return `Yo!`;
@@ -50,9 +54,10 @@ class RecognizeMolecule extends Component {
         var URL = window.URL || window.webkitURL;
         var imageUrl;
         var image;
-        file = ev.target.files[0];
+        this.file = ev.target.files[0];
         if (URL) {
-            imageUrl = URL.createObjectURL(file);
+            imageUrl = URL.createObjectURL(this.file);
+            console.info('imageUrl', imageUrl);
             this.setState({
                 imgUrl: imageUrl
             })            
@@ -62,29 +67,49 @@ class RecognizeMolecule extends Component {
             
         }
         //document.getElementById('recognizeButton').style.display = 'inline';
-        this.refs.recognizeButton.style.display = 'inline';
-
     }
     recognize() {
         console.info("Recognize");
 
         //var server = api(api_path);
-
-        upload( server, file);
+        this.setState({ sturctStr: 'recognizing' });
+        this.props.server.recognize(this.file).then(res => {
+            this.setState({ structStr: molfile.parse(res.struct) });
+        })
+    }
+    renderRes(el) {
+        var rnd = new Render(el, 0, {
+              'autoScale': true,
+              'autoScaleMargin': 0,
+              'maxBondLength': 30
+        });
+        console.info('struct', this.state.structStr)
+        rnd.setMolecule(this.state.structStr);
+        rnd.update();
     }
     render (props) {
+        console.info('hello')
         return (
             <Dialog caption="Import From Image"
                     name="recognize-molecule" params={props.params}
-                    result={() => this.result()}>
-              <img id="pic" src={this.state.imgUrl ? this.state.imgUrl : ""} />
-              <img />
+                    result={() => this.result()}
+                    buttons={[
+                      ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
+                      this.state.imgUrl ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Regonize</button>  ) : null,
+                      "Cancel", "OK" 
+                    ]}>
+              <img id="pic" src={this.state.imgUrl ? this.state.imgUrl : ""} onError={ ev => console.info('error') }/>
+              { this.state.structStr ? ( 
+                <div className="output">
+                {
+                  this.state.structStr == 'recognizing' ? ( <strong>Recognizing</strong> ) : ( <div ref={ el => this.renderRes(el) } /> )
+                }
+                </div> 
+              ) : null }
               <label class="open, block">
                  <input type="checkbox"></input>
                  Load as a fragment and copy to the Clipboard 
               </label>
-              <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}></input>
-              <button type="button" ref="recognizeButton" class="hidden" onclick={this.recognize.bind(this)}>Recognize</button>
             </Dialog>
         );
     }
@@ -93,6 +118,6 @@ class RecognizeMolecule extends Component {
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
     return render((
-        <RecognizeMolecule params={params}/>
+        <RecognizeMolecule {...params}/>
     ), overlay);
 };

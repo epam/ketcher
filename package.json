@@ -33,15 +33,14 @@
     "browserify": "^13.1.0",
     "browserify-replace": "^0.9.0",
     "del": "^2.1.0",
-    "eslint": "^3.1.1",
     "exposify": "^0.5.0",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-clean-css": "^2.0.12",
+    "gulp-eslint": "^3.0.1",
     "gulp-hb": "^5.1.0",
     "gulp-iconfont": "^8.0.1",
     "gulp-less": "^3.1.0",
-    "gulp-livereload": "^3.8.1",
     "gulp-load-plugins": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
@@ -54,17 +53,15 @@
     "through2": "^2.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.7.0",
-    "whatwg-fetch": "^1.0.0"
+    "watchify": "^3.7.0"
   },
   "scripts": {
     "build": "gulp build",
     "archive": "gulp archive",
     "start": "gulp serve",
+    "test": "gulp lint",
     "gulp": "gulp",
     "postinstall": "guppy pre-commit || exit 0",
-    "test": "echo \"Error: no test yet exists\" && exit 1",
-    "lint": "eslint script",
     "nibble": "eslint-nibble script"
   },
   "dependencies": {

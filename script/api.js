@@ -51,6 +51,7 @@ function api(base, defaultOptions) {
 		calculateCip: request('POST', 'calculate_cip'),
 		automap: request('POST', 'automap'),
     check: request('POST', 'check'),
+    calculate :request('POST', 'calculate'),
 
 		//save: request2('POST', 'save'),
 		info: function () {

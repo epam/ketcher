@@ -910,7 +910,26 @@ function clean () {
 	updateHistoryButtons();
 	selectAction(null);
 }
-
+function checkAndCalc () {
+    server.check({ struct: molfile.stringify(ui.ctab),
+                   options: {
+                       checks: {
+                           'valence': true,
+                           'ambiguous_h': true,
+                           'radicals': true,
+                           'query': true
+                       }
+                   }
+                 }).then(res => console.info('check', res));
+    server.calculate({
+        struct: molfile.stringify(ui.ctab),
+        options: {
+            properties: ['molecular-weight', 'most-abundant-mass',
+                         'monoisotopic-mass', 'gross', 'mass-composition']
+        }
+    }).then(res => console.info('calc', res));
+}
+global.checkAndCalc = checkAndCalc;
 // The expose guts two way
 module.exports = {
 	init: init,

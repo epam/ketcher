@@ -183,7 +183,7 @@ gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], functio
 function scriptBundle(src, watchUpdate) {
 	var build = browserify(src, {
 		standalone: pkg.name,
-		extensions: ['.jsx'],
+		extensions: ['.jsx', '.es'],
 		cache: {}, packageCache: {},
 		debug: true
 	});
@@ -198,7 +198,7 @@ function scriptBundle(src, watchUpdate) {
 			presets: ["es2015", "react"],
 			plugins: ['transform-class-properties',
 			          'transform-object-rest-spread'],
-			extensions: [".jsx"],
+			extensions: ['.jsx', '.es'],
 			only: 'script/ui'
 		});
 

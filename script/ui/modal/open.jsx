@@ -1,6 +1,7 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
+import { map as formatMap } from '../structformat';
 import Dialog from './dialog';
 
 var ui = global.ui;
@@ -44,6 +45,11 @@ class Open extends Component {
 		}
 		ev.preventDefault();
 	}
+	accept() {
+		return Object.keys(formatMap).reduce((res, key) => (
+			res.concat(formatMap[key].mime, ...formatMap[key].ext)
+		), []).join(',');
+	}
 	render () {
 		let { structStr, fragment, fileOpener } = this.state;
 		return (
@@ -54,7 +60,7 @@ class Open extends Component {
 					<label className="open" disabled={!fileOpener}>
 						Open From File…
 						<input onChange={ ev => this.open(ev) }
-							accept="chemical/x-mdl-molfile,chemical/x-mdl-rxnfile,chemical/x-cml,chemical/x-daylight-smiles,chemical/x-inchi,.mol,.rxn,.cml,.smi,.smiles,.inchi" type="file"/>
+							accept={ this.accept() } type="file"/>
 					</label>
 				), "Cancel", "OK"]}>
 				<textarea value={structStr}
@@ -69,7 +75,7 @@ class Open extends Component {
 	}
 }
 
-function fileOpener (/* server */) {
+function fileOpener (server) {
 	function throughFileReader(file) {
 		return new Promise((resolve, reject) => {
 			var rd = new FileReader();
@@ -92,24 +98,26 @@ function fileOpener (/* server */) {
 		fd.Close();
 		return content;
 	}
-	function throughForm2IframePosting(file) {
-	}
 	return new Promise((resolve, reject) => {
 		// TODO: refactor return
 		if (global.FileReader)
-			return resolve(throughFileReader);
+			resolve(throughFileReader);
 
-		if (global.ActiveXObject) {
+		else if (global.ActiveXObject) {
 			try {
 				var fso = new ActiveXObject('Scripting.FileSystemObject');
-				return resolve(file => Promise.resolve(throughFileSystemObject(fso, file)));
+				resolve(file => Promise.resolve(throughFileSystemObject(fso, file)));
 			} catch (e) {
+				reject(e);
 			}
 		}
-
-		if (ui.standalone)
-			return reject('Standalone mode!');
-		return resolve(throughForm2IframePosting);
+		else
+			resolve(server.then(() => {
+				throw "Server doesn't still support echo method";
+				//return resolve(throughForm2IframePosting);
+			}, () => {
+				throw new Error("Standalone mode!");
+			}));
 	});
 }
 

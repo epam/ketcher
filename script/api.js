@@ -22,23 +22,21 @@ function api(base, defaultOptions) {
 		};
 	}
 
-	return {
+	var info = fetch(baseUrl + 'info', { method: 'GET' }).then(function (res) {
+		return res.json();
+	}, function () {
+		throw Error('Server is not compatible');
+	});
+
+	return Object.assign(info, {
 		convert: request('POST', 'convert'),
 		layout: request('POST', 'layout'),
 		clean: request('POST', 'clean'),
 		aromatize: request('POST', 'aromatize'),
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
-		automap: request('POST', 'automap'),
-
-		info: function () {
-			return fetch(baseUrl + 'info', { method: 'GET' }).then(function (res) {
-				return res.json();
-			}, function () {
-				throw Error('Server is not compatible');
-			});
-		}
-	};
+		automap: request('POST', 'automap')
+	});
 }
 
 module.exports = api;

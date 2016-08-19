@@ -2,66 +2,36 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 import fs from 'filesaver.js';
 
+import * as structFormat from '../structformat';
+
 import Dialog from './dialog';
-import molfile from '../../chem/molfile';
-import smiles from '../../chem/smiles';
 
 var ui = global.ui;
-
-const typeMap = {
-	'mol': {
-		name: 'MDL/Symyx Molfile',
-		mime: 'chemical/x-mdl-molfile'
-	},
-	'rxn': {
-		name: 'MDL/Symyx Rxnfile',
-		mime:'chemical/x-mdl-rxnfile'
-	},
-	'smi': {
-		name: 'Daylight SMILES',
-		mime: 'chemical/x-daylight-smiles'
-	},
-	'cml': {
-		name: 'CML',
-		mime: 'chemical/x-cml'
-	},
-	'inchi': {
-		name: 'InChI String',
-		mime: 'chemical/x-inchi'
-	}
-};
 
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.molStr = molfile.stringify(props.struct); // cache stub for convert
-		this.state = {
-			type: 'mol',
-			structStr: this.molStr,
-			fileSaver: null
-		};
+		this.changeType(props.struct.isReaction ? 'rxn' : 'mol');
 		fileSaver(props.server).then(f => {
 			this.setState({
 				fileSaver: f
 			});
-		});
+		}, ui.echo);
 	}
 
 	changeType(ev) {
-		var type = ev.target.value;
-		convertMolecule(this.props.server, this.props.struct, type).then(res => {
-			this.setState({
-				type: type,
-				structStr: res.struct
-			});
-		}, ui.echo);
+		var type = ev.target ? ev.target.value : ev;
+		if (ev.target)
+			ev.preventDefault();
+		structFormat.toString(this.props.struct, type, this.props.server)
+			.then(structStr => this.setState({ type, structStr }),
+				  e => ui.echo(e));
 	}
 
 	save(ev) {
 		if (this.state.fileSaver) {
 			this.state.fileSaver(this.state.structStr,
 								 this.state.type);
-			//dlg.select('input[type=button]')[0].click();
 			this.props.onOk();
 		}
 		ev.preventDefault();
@@ -73,7 +43,7 @@ class Save extends Component {
 		this.props.onOk();
 	}
 	render () {
-	    // formatInput.select('[value=inchi]')[0].disabled = ui.standalone;
+	    // $('[value=inchi]').disabled = ui.standalone;
 		return (
 			<Dialog caption="Save Structure"
 					name="save" params={this.props}
@@ -86,67 +56,32 @@ class Save extends Component {
 					), "Close"]}>
 				<label>Format:
 				<select value={this.state.type} onChange={ev => this.changeType(ev)}>{
-					['mol', 'smi', 'cml', 'inchi'].map(type => (
-						<option value={type}>{typeMap[type].name}</option>
+					[this.props.struct.isReaction ? 'rxn' : 'mol', 'smiles', 'cml', 'inchi'].map(type => (
+						<option value={type}>{structFormat.map[type].name}</option>
 					))
 				}</select>
 				</label>
-				<textarea className={this.state.type} readonly
-			              value={this.state.structStr} />
+				<textarea className={ this.state.type } readonly
+			              value={ this.state.structStr } />
 			</Dialog>
 		);
 	}
-};
+}
 
-function fileSaver (/*server*/) {
+function fileSaver(server) {
 	return new Promise((resolve, reject) => {
 		if (global.Blob && fs.saveAs)
 			resolve((data, type) => {
-				if (type == 'mol' && data.indexOf('$RXN') == 0)
-					type = 'rxn';
-				console.assert(typeMap[type], 'Unknown chemical file type');
-				var blob = new Blob([data], {type: typeMap[type] });
-				fs.saveAs(blob, 'ketcher.' + type);
+				console.assert(structFormat.map[type], 'Unknown chemical file type');
+				var blob = new Blob([data], { type: structFormat.map[type] });
+				fs.saveAs(blob, 'ketcher' + structFormat.map[type].ext[0]);
 			});
-		else if (ui.standalone)
-			reject('Standalone mode!');
 		else
-			reject(new Error("Server doesn't support echo method"));
-	});
-}
-
-function convertMolecule (server, molecule, format) {
-	return new Promise((resolve, reject) => {
-		var moldata = molfile.stringify(molecule);
-		if (format == 'mol') {
-			resolve({ struct: moldata });
-		}
-		else if (ui.standalone)
-			// TODO: 'InChI'
-			throw Error(format.capitalize() + ' is not supported in the standalone mode');
-		else if (format == 'smi') {
-			resolve(server.convert({ struct: moldata, output_format: 'chemical/x-daylight-smiles' }));
-		}
-		else if (format == 'cml') {
-			resolve(server.convert({ struct: moldata, output_format: 'chemical/x-cml'}));
-		}
-		else if (format == 'inchi') {
-			if (molecule.rgroups.count() !== 0)
-				ui.echo('R-group fragments are not supported and will be discarded');
-			molecule = molecule.getScaffold();
-			if (molecule.atoms.count() === 0)
-				resolve('');
-			else {
-				molecule = molecule.clone();
-				molecule.sgroups.each((sgid, sg) => {
-					// ? Not sure we should check it client side
-					if (sg.type != 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
-						throw Error('InChi data format doesn\'t support s-groups');
-				});
-
-				resolve(server.convert({ struct: moldata, output_format: 'chemical/x-inchi' }));
-			}
-		}
+			resolve(server.then(() => {
+				throw "Server doesn't still support echo method";
+			}, () => {
+				throw new Error("Standalone mode!");
+			}));
 	});
 }
 

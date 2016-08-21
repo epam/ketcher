@@ -3,46 +3,32 @@ function api(base, defaultOptions) {
 
 	function request(method, url, defaultData) {
 		return function (data, options) {
+			var body = Object.assign({}, defaultData, data);
+			body.indigo_options = Object.assign(body.indigo_options || {},
+			                                    defaultOptions, options);
 			return fetch(baseUrl + url, {
 				method: method,
 				headers: {
+					'Accept': 'application/json',
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(data)
+				body: JSON.stringify(body)
 			}).then(function (response) {
 				if (response.ok)
 					return response.json();
-				else
-					throw response.json();
+				// console.info('PLAIN RESPONSE', response);
+				throw response.json();
 			});
 		};
 	}
 
-	function request_old(method, url) {
-		var baseUrl_old = '';
-		function options(opts, params, sync) {
-			var data = Object.assign({}, defaultOptions, opts);
-			return {
-				method: method,
-				url: res.url,
-				sync: sync,
-				params: params,
-				data: data && formEncode(data),
-				headers: data && { 'Content-Type': 'application/x-www-form-urlencoded' }
-			};
-		}
-		function res(data, params) {
-			return ajax(options(data, params)).then(unwrap, unwrap);
-		}
-		res.sync = function (data, params) {
-			// TODO: handle errors
-			return unwrap(ajax(options(data, params, true)));
-		};
-		res.url = baseUrl_old + url;
-		return res;
-	}
+	var info = fetch(baseUrl + 'info', { method: 'GET' }).then(function (res) {
+		return res.json();
+	}, function () {
+		throw Error('Server is not compatible');
+	});
 
-	return {
+	return Object.assign(info, {
 		convert: request('POST', 'convert'),
 		layout: request('POST', 'layout'),
 		clean: request('POST', 'clean'),
@@ -50,18 +36,9 @@ function api(base, defaultOptions) {
 		dearomatize: request('POST', 'dearomatize'),
 		calculateCip: request('POST', 'calculate_cip'),
 		automap: request('POST', 'automap'),
-    check: request('POST', 'check'),
-    calculate :request('POST', 'calculate'),
-
-		//save: request2('POST', 'save'),
-		info: function () {
-			return request('GET', 'info')().then(function (res) {
-				return res;
-			}, function (err) {
-				throw Error('Server is not compatible');
-			});
-		}
-	};
+		check: request('POST', 'check'),
+		calculate: request('POST', 'calculate')
+	});
 }
 
 module.exports = api;

@@ -31,7 +31,7 @@ var polyfills = ['es5-shim', 'es6-shim',
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
                'demo.html', 'templates.sdf'];
 
-var iconfont = {};
+var iconfont = null;
 
 gulp.task('script', ['patch-version'], function() {
 	return scriptBundle('script/index.js')
@@ -52,8 +52,7 @@ gulp.task('script', ['patch-version'], function() {
 gulp.task('script-watch', ['patch-version'], function () {
 	return scriptBundle('script/index.js', function (bundle) {
 		return bundle.pipe(source('ketcher.js'))
-			.pipe(gulp.dest(options.dist))
-			.pipe(plugins.livereload());
+			.pipe(gulp.dest(options.dist));
 	});
 });
 
@@ -69,8 +68,7 @@ gulp.task('style', ['font'], function () {
 		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
 		.pipe(plugins.cleanCss({compatibility: 'ie8'}))
 		.pipe(plugins.sourcemaps.write('./'))
-		.pipe(gulp.dest(options.dist))
-		.pipe(plugins.livereload());
+		.pipe(gulp.dest(options.dist));
 });
 
 gulp.task('html', ['patch-version'], function () {
@@ -84,8 +82,8 @@ gulp.task('html', ['patch-version'], function () {
 		.pipe(gulp.dest(options.dist));
 });
 
-gulp.task('font', function () {
-	return gulp.src(['icons/*.svg'])
+gulp.task('font', function (cb) {
+	return iconfont ? cb() : gulp.src(['icons/*.svg'])
 		.pipe(plugins.iconfont({
 			fontName: 'ketcher',
 			formats: ['ttf', 'svg', 'eot', 'woff'],
@@ -123,6 +121,13 @@ gulp.task('patch-version', function (cb) {
 	});
 });
 
+gulp.task('lint', function () {
+	return gulp.src('script/**')
+		.pipe(plugins.eslint())
+		.pipe(plugins.eslint.format())
+		.pipe(plugins.eslint.failAfterError());
+});
+
 gulp.task('check-epam-email', function(cb) {
 	// TODO: should be pre-push and check remote origin
 	try {
@@ -150,27 +155,35 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 });
 
 gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], function() {
+	var server = gulp.src(options.dist)
+		.pipe(plugins.webserver({
+			port: 9966,
+			livereload: {
+				enable: true,
+				filter: function (fn) {
+					return !fn.match(/.map$/);
+				}
+			},
+			fallback: 'ketcher.html'
+		}));
+
 	gulp.watch('style/**.less', ['style']);
 	gulp.watch('template/**', ['html']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
+		server.emit('kill');
 		cp.spawn('gulp', process.argv.slice(2), {
 			stdio: 'inherit'
 		});
-		process.exit();
+		process.exit(0);
 	});
-	//plugins.livereload.listen();
-	return gulp.src(options.dist)
-		.pipe(plugins.webserver({
-			port: 9966,
-			livereload: true,
-			fallback: 'ketcher.html'
-		}));
+
+	return server;
 });
 
 function scriptBundle(src, watchUpdate) {
 	var build = browserify(src, {
 		standalone: pkg.name,
-		extensions: ['.jsx'],
+		extensions: ['.jsx', '.es'],
 		cache: {}, packageCache: {},
 		debug: true
 	});
@@ -185,7 +198,7 @@ function scriptBundle(src, watchUpdate) {
 			presets: ["es2015", "react"],
 			plugins: ['transform-class-properties',
 			          'transform-object-rest-spread'],
-			extensions: [".jsx"],
+			extensions: ['.jsx', '.es'],
 			only: 'script/ui'
 		});
 
@@ -233,7 +246,7 @@ function glyphReduce(glyphs) {
 	}, {});
 }
 
-gulp.task('pre-commit', ['check-epam-email']);
+gulp.task('pre-commit', ['lint', 'check-epam-email']);
 gulp.task('assets', ['libs', 'distrib']);
 gulp.task('code', ['style', 'script', 'html']);
 gulp.task('build', ['clean', 'assets', 'code']);

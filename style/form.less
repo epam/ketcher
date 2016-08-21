@@ -1,0 +1,92 @@
+@import "variables";
+@import (reference) "component";
+
+button, input[type=submit],
+input[type=reset], input[type=button] {
+	display: inline-block;
+	margin-bottom: 0;
+	text-align: center;
+	vertical-align: middle;
+	//touch-action: manipulation;
+	//cursor: pointer;
+	background-image: none;
+	border: 1px solid transparent;
+	padding: 0.42em 0.85em;
+
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+	border-radius: 4px;
+	user-select: none;
+
+	&:hover, &:focus {
+		background-image: linear-gradient(to bottom, #fff, darken(#fff, 7%));
+		//.gradient-vertical-three(25%, #fff, darken(#fff, 10%), #fff);
+		//color: @btn-default-color;
+		outline: 0;
+	}
+
+	&:active {
+		outline: 0;
+		background-image: none;
+		box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+	}
+
+	&.disabled, &[disabled], fieldset[disabled] & {
+		background-image: none;
+		cursor: not-allowed;
+		opacity: .5;
+		box-shadow: none;
+	}
+}
+
+select, textarea,
+input[type=text], input[type=search] {
+	&:extend(.-Control);
+	&:active, &:focus {
+		outline: 0;
+	}
+	&:hover, &:focus {
+		.highlight-shadow(black);
+	}
+
+	&[disabled],
+	&[readonly],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		//box-shadow: none;
+		background: #efefef;
+		opacity: 0.6;
+	}
+}
+
+
+@input-height: 2.4em + 2 * 0.35em;
+
+input[type=radio],
+input[type=checkbox] {
+	vertical-align: middle;
+	//display: inline-block;
+	margin: 0 0.3em;
+	margin-top: 1px \9; // IE8-9
+	line-height: normal;
+	// TODO: style focus, active, etc
+}
+
+fieldset {
+	border: 1px solid @border-color;
+	padding: 0.3em;
+	margin: 0;
+	border-radius: 4px;
+
+	&.-hidden {
+		border-color: transparent;
+		margin-top: 0.9em + 2 * 0.3em;
+	}
+}
+
+legend {
+	color: darken(@border-color, 25%);
+	padding: 0 0.4em;
+	font-size: 0.9em;
+}

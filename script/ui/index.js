@@ -20,6 +20,8 @@ var templates = require('./templates');
 var utils = require('./utils');
 var modal = require('./modal');
 
+var structFormat = require('./structformat');
+
 var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
 
@@ -52,8 +54,7 @@ function init (options, apiServer) {
 	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
 		// don't try to knock if the file is opened locally ("file:" protocol)
 		// TODO: check when this is nesessary
-		server.info().then(function (res) {
-			ui.standalone = false;
+		server.then(function (res) {
 			updateServerButtons();
 		}, function (val) {
 			document.title += ' (standalone)';
@@ -83,7 +84,7 @@ function init (options, apiServer) {
 
 	updateHistoryButtons();
 	updateClipboardButtons();
-	updateServerButtons();
+	updateServerButtons(true);
 
 	clientArea.on('mousedown', function (event) {
 		if (dropdownToggle(toolbar))
@@ -252,8 +253,8 @@ function initCliparea(parent) {
 				cb.setData(!struct.isReaction ?
 						   'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
 						   moldata);
-				cb.setData('chemical/x-daylight-smiles',
-						   smiles.stringify(struct));
+				// cb.setData('chemical/x-daylight-smiles',
+				// 		   smiles.stringify(struct));
 			} catch (ex) {
 				console.info('Could not write exact type', ex);
 			}
@@ -365,7 +366,7 @@ function labelEditKeys(scope, range) {
 	while ((match = re.exec(range)) !== null) {
 		var from = match[1], to = match[2];
 		var len = to.charCodeAt(0) - from.charCodeAt(0);
-		Array.apply(null, { length: len }).forEach(function(_, i) {
+		Array.apply(null, { length: len + 1 }).forEach(function(_, i) {
 			bindLetter(String.fromCharCode(from.charCodeAt(0) + i));
 		});
 	}
@@ -382,9 +383,9 @@ function updateHistoryButtons () {
 	subEl('redo').disabled = (redoStack.length == 0);
 };
 
-function updateServerButtons () {
+function updateServerButtons (standalone) {
 	serverActions.forEach(function (action) {
-		subEl(action).disabled = ui.standalone;
+		subEl(action).disabled = standalone;
 	});
 };
 
@@ -487,37 +488,38 @@ function clear () {
 }
 
 function open () {
-	modal.open({
-		onOk: function (res) {
+	dialog(modal.open).then(function (res) {
 			if (res.fragment)
-				loadFragment(res.value, true);
+				loadFragment(res.structStr, true);
 			else
-				loadMolecule(res.value, true);
-		}
+				loadMolecule(res.structStr, true);
 	});
 }
 
 function save () {
-	modal.save({molecule: ui.ctab}, server);
+	dialog(modal.save, { server: server, struct: ui.ctab });
 }
 
 function serverTransform(method, mol, options) {
-	console.assert(!ui.standalone, 'Call server in standalone mode!');
 	if (!mol)
 		mol = ui.ctab.clone();
 	var implicitReaction = mol.addRxnArrowIfNecessary();
-	var request = server[method](Object.assign({
-		struct: molfile.stringify(mol, { ignoreErrors: true })
-	}, options));
-	utils.loading('show');
+	var request = server.then(function () {
+		return server[method](Object.assign({
+			struct: molfile.stringify(mol, { ignoreErrors: true })
+		}, options));
+	}, function (err) {
+		throw 'Call server in standalone mode!\n' + err;
+	});
+	//utils.loading('show');
 	request.then(function (res) {
 		var resmol = molfile.parse(res.struct);
 		if (implicitReaction)
 			resmol.rxnArrows.clear();
 		updateMolecule(resmol);
-		utils.loading('hide');
+		//utils.loading('hide');
 	}).then(null, function (er) {
-		utils.loading('hide');
+		//utils.loading('hide');
 		echo(er);
 	});
 }
@@ -611,58 +613,20 @@ function loadFragment (mol, checkEmptyLine) {
 	});
 }
 
-function guessType(mol, strict) {
-	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
-	var molStr = mol.trim();
-	var molMatch = molStr.match(/^(M  END|\$END MOL)$/m);
-	if (molMatch) {
-		var end = molMatch.index + molMatch[0].length;
-		if (end == molStr.length ||
-			molStr.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) != -1)
-			return 'mol';
-	}
-	if (molStr[0] == '<' && molStr.indexOf('<molecule') != -1)
-		return 'cml';
-	if (molStr.slice(0, 5) == 'InChI')
-		return 'inchi';
-	if (molStr.indexOf('\n') == -1)
-		return 'smiles';
-	// Molfile by default as Indigo does
-	return strict ? null : 'mol';
+function getStruct(mol, checkEmptyLine) {
+	//utils.loading('show');
+	return structFormat.fromString(mol, {
+		badHeaderRecover: checkEmptyLine
+	}, server).then(function (res) {
+		//utils.loading('hide');
+		return res;
+	}, function (err) {
+		utils.loading('hide');
+		throw err;
+	});
 }
 
-function getStruct(mol, checkEmptyLine) {
-	return new Promise(function (resolve, reject) {
-		var type = guessType(mol);
-		if (type == 'mol') {
-			var struct = molfile.parse(mol, {
-				badHeaderRecover: checkEmptyLine
-			});
-			resolve(struct);
-		} else if (ui.standalone)
-			throw type ? type.toUpperCase() : 'Format' +
-				  ' is not supported in a standalone mode.';
-		else {
-			var req = (type == 'smiles' || type == 'inchi') ?
-			    server.layout({ struct: mol.trim() }) :
-			    server.convert({
-				    struct: mol,
-				    output_format: 'chemical/x-mdl-molfile'
-			    });
-			utils.loading('show');
-			resolve(req.then(function (res) {
-				utils.loading('hide');
-				return molfile.parse(res.struct);
-			}, function (err) {
-				utils.loading('hide');
-				throw err;
-			}));
-		}
-	});
-};
-
-function removeSelected ()
-{
+function removeSelected () {
 	addUndoAction(Action.fromFragmentDeletion());
 	ui.editor.deselectAll();
 	ui.render.update();
@@ -941,7 +905,6 @@ module.exports = {
 Object.assign(ui, module.exports);
 
 Object.assign(ui, {
-	standalone: true,
 	ctab: new Struct(),
 	render: null,
 	editor: null,
@@ -949,9 +912,6 @@ Object.assign(ui, {
 	updateClipboardButtons: updateClipboardButtons,
 	selectAction: selectAction,
 	addUndoAction: addUndoAction,
-
-	// TODO: remove me as we get better server API
-	loadMoleculeFromFile: modal.open.loadHook,
 
 	echo: echo,
 	showDialog: showDialog,

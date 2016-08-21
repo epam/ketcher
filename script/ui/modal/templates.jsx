@@ -2,6 +2,8 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import sdf from '../../chem/sdf';
+import molfile from '../../chem/molfile';
+
 import VisibleView from './visibleview';
 
 import Render from '../../render';
@@ -13,25 +15,39 @@ function normGroup(tmpl, i) {
 }
 
 function normName(tmpl, i) {
-	return tmpl.struct.name || `{normGroup(tmpl)} template {i + 1}`;
+	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
 }
 
 function renderTmpl(el, tmpl) {
-	if (tmpl.prerender)           // Should it sit here?
-		el.innerHTML = tmpl.prerender;
-	else {
-		var rnd = new Render(el, 0, {
-			'autoScale': true,
-			'autoScaleMargin': 0,
-			//'debug': true,
-			'hideChiralFlag': true,
-			'maxBondLength': 30
-		});
-		rnd.setMolecule(tmpl.struct);
-		rnd.update();
-		console.info('render!');//, el.innerHTML);
-		//tmpl.prerender = el.innerHTML;
-	}
+  if (el) {
+	  if (tmpl.prerender)           // Should it sit here?
+		  el.innerHTML = tmpl.prerender;
+	  else {
+		  var rnd = new Render(el, 0, {
+			  'autoScale': true,
+			  'autoScaleMargin': 0,
+			  //'debug': true,
+			  'hideChiralFlag': true,
+			  'maxBondLength': 30
+		  });
+		  rnd.setMolecule(tmpl.struct);
+		  rnd.update();
+		  console.info('render!');//, el.innerHTML);
+		  //tmpl.prerender = el.innerHTML;
+	  }
+  }
+}
+
+function SelectList ({ children, options, onChange, value, ...props}) {
+  return (
+    <ul {...props} tabindex="0">{
+        options.map((opt, index) => (
+          <li onClick={() => onChange(opt, index) }
+              className={opt == value ? 'selected' : ''}>
+            {opt}</li>
+        ))
+    }</ul>
+  );
 }
 
 class Templates extends Component {
@@ -81,8 +97,7 @@ class Templates extends Component {
 			this.setState({ selected: tmpl });
 	}
 
-	selectGroup(select) {
-		var group = select.options[select.selectedIndex].value;
+	selectGroup(group) {
 		this.setState({
 			selectedGroup: group,
 			selected: null
@@ -110,13 +125,6 @@ class Templates extends Component {
 		var {selected, selectedGroup, filter} = this.state;
 
 		console.info('all rerender');
-		var Tmpl = (tmpl, i) => (
-			<li title={normName(tmpl, i)}
-			    class={tmpl == selected ? 'selected' : ''}
-			    onClick={() => this.select(tmpl)}
-			    ref={ el => renderTmpl(el, tmpl) }>loading..</li>
-		);
-
 		return (
 			<Dialog caption="Template Library"
 					name="template-lib" params={this.params}
@@ -125,25 +133,38 @@ class Templates extends Component {
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
-				<select size="10" class="groups" onChange={ev => this.selectGroup(ev.target)}>
-					{ this.getGroups().map(group => (
-						<option selected={group == selectedGroup}>{group}</option>
-					)) }
-				</select>
-				<VisibleView data={this.getTemplates()} rowHeight={120}
-                             renderRow={Tmpl} />
+				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
+				<VisibleView data={this.getTemplates()} rowHeight={141}>{
+          (tmpl, i) => (
+			      <li key={i} title={normName(tmpl, i)}
+			          class={tmpl == selected ? 'selected' : ''}
+			          onClick={() => this.select(tmpl)}
+			        ref={ el => renderTmpl(el, tmpl) }>loading..</li>
+		      )
+        }</VisibleView>
 			</Dialog>
 		);
 	}
 }
 
-export default function dialog(baseUrl, params) {
-	var overlay = $$('.overlay')[0];
+function getTemplates(baseUrl) {
 	return fetch(baseUrl + 'templates.sdf').then(response => {
     if (response.ok)
       return response.text();
   }).then(text => {
 		var templates = sdf.parse(text);
+    var userTemplates = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+
+    return userTemplates.reduce((res, struct) => {
+      res.push({ struct: molfile.parse(struct), props: { group: 'User' }});
+      return res;
+    }, templates);
+  });
+}
+
+export default function dialog(baseUrl, params) {
+	var overlay = $$('.overlay')[0];
+	return getTemplates(baseUrl).then(templates => {
 		return render((
 			<Templates params={params} templates={templates}/>
 		), overlay);

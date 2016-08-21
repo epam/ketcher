@@ -37,13 +37,13 @@ class CheckStruct extends Component {
                 </div>
                 ), (
                 <div tabTitle = "Setting">
-                 <input type="checkbox"/>Valence Check
-                 <input type="checkbox"/>Radical Check
-                 <input type="checkbox"/>Pseudoatom Check
-                 <input type="checkbox"/>Stereochemistry Check
-                 <input type="checkbox"/>Query Check
-                 <input type="checkbox"/>Overlapping Atoms Check
-                 <input type="checkbox"/>3D Structure Check
+                 <input type="checkbox"/>Valence Check<br />
+                 <input type="checkbox"/>Radical Check<br />
+                 <input type="checkbox"/>Pseudoatom Check<br />
+                 <input type="checkbox"/>Stereochemistry Check<br />
+                 <input type="checkbox"/>Query Check<br />
+                 <input type="checkbox"/>Overlapping Atoms Check<br />
+                 <input type="checkbox"/>3D Structure Check<br />
                   <button>Hello Settings!</button>
                 </div>
               )][this.state.tabIndex]}

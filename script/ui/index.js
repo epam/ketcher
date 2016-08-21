@@ -880,8 +880,16 @@ function checkAndCalc () {
                        checks: {
                            'valence': true,
                            'ambiguous_h': true,
+                           'query': true,
+                           'pseudoatoms': true,
                            'radicals': true,
-                           'query': true
+						   'stereo': true,
+						   '3d': true,
+						   'sgroups': true,
+						   'v3000': true,
+						   'rgroups': true,
+						   'overlapping_atoms': true,
+						   'overlapping_bonds': true
                        }
                    }
                  }).then(res => console.info('check', res));

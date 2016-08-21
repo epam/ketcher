@@ -472,35 +472,67 @@ form[role=dialog] {
 .check-struct {
 	width: 40em;
 	height: 30em;
-	button {
-		background-color: red !important;
-	}
+
+
 	.tabs {
-		margin: 0 auto;
 		position: relative;
 		top: 10px;
-		width: 250px;
-		height: 200px;
-		border: 1px solid #ddd;
-		li {
-			display: inline-block;
-			padding:  15px 25px;
-			border: 1px solid #ddd;
-			margin: 0 0 -1px;
-			font-weight: bold;
-			color: #aaaaaa;
-			background: #f1f1f1;
+		height: 44px;
+		border-bottom: 1px solid #ddd;
+		 li {
+			float: left;
+			border-radius: 10px 10px 0 0;
+			border: 0.5px solid #ddd;
+			padding:  15px 0px;
+			// Make the list-items overlay the bottom border
+			margin-bottom: -1px;
+			// Actual tabs (as links)
+			 a {
+				line-height: 1;
+				border: 1px solid transparent;
+				border-radius: 10px 10px 0 0;
+				padding:  15px 35px;
+				&:hover {
+					border-color: black;
+				}
+			}
+			 // Active state, and its :hover to override normal :hover
+			 &.active > a {
+			 	&,
+			 	&:hover,
+			 	&:focus {
+			 		color: green;
+			 		background-color: #ddd;
+			 		cursor: default;
+
+			 	}
+			 }
+			}
 		}
-		li:hover {
-			color: black;
-			cursor: pointer;
+		button {
+			background-color: red !important;
 		}
-	}
+		div{
+			position:absolute !important;
+			top:90px;
+			left: 10px;
+			margin: 2% auto;
+			input{
+				text-align: left;
+				margin: 2% auto;
+			}
+		}
+		footer{
+			position: relative;
+			top: 220px;
+
+
+		}
 }
 
 .calc-val {
 	width: 40em;
-	height: 20em;
+	height: 25em;
 	label {
 		display: block;
 		text-align: left;

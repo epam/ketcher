@@ -10,6 +10,9 @@
       "jsx": true
     }
   },
+  "globals": {
+    "Promise": true
+  },
   "rules": {
     "no-debugger": "error",
     // "no-alert": "error",
@@ -66,7 +69,7 @@
     "no-underscore-dangle": "warn",
     "no-unneeded-ternary": "error",
     "no-whitespace-before-property": "error",
-    "object-curly-newline": ["warn", { "multiline": true }],
+    "object-curly-newline": "off",
     "object-curly-spacing": ["error", "always"],
     "object-property-newline": ["error", {
       "allowMultiplePropertiesPerLine": true,

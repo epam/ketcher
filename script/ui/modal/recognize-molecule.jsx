@@ -44,29 +44,28 @@ var file;
 class RecognizeMolecule extends Component {
     constructor(props) {
         super(props);
-        this.state.imgUrl = null;
-        this.state.structStr;
+        this.state = {
+            file: null,
+            struct: null,
+            fragment: false
+        }
     }
     result () {
-        return `Yo!`;
+        return {
+            struct: this.state.struct,
+            fragment: this.state.fragment
+        };
     }
     uploadImage(ev) {
-        var URL = window.URL || window.webkitURL;
-        var imageUrl;
-        var image;
-        this.file = ev.target.files[0];
-        if (URL) {
-            imageUrl = URL.createObjectURL(this.file);
-            console.info('imageUrl', imageUrl);
             this.setState({
-                imgUrl: imageUrl
-            })            
-            /*image.onload = function() {
-                URL.revokeObjectURL(imageUrl);
-            };*/
-            
-        }
-        //document.getElementById('recognizeButton').style.display = 'inline';
+                file: ev.target.files[0]
+            });
+    }
+    url() {
+        if (!this.state.file)
+            return null;
+        var URL = window.URL || window.webkitURL;
+        return URL ? URL.createObjectURL(this.state.file) : "No preview";
     }
     recognize() {
         console.info("Recognize");
@@ -74,8 +73,8 @@ class RecognizeMolecule extends Component {
         //var server = api(api_path);
         this.setState({ sturctStr: 'recognizing' });
         //console.info("Cl: " + JSON.stringify(this.file));
-        this.props.server.recognize(this.file).then(res => {
-            this.setState({ structStr: molfile.parse(res.struct) });
+        this.props.server.recognize(this.state.file).then(res => {
+            this.setState({ struct: molfile.parse(res.struct) });
         })
     }
     renderRes(el) {
@@ -84,9 +83,12 @@ class RecognizeMolecule extends Component {
               'autoScaleMargin': 0,
               'maxBondLength': 30
         });
-        console.info('struct', this.state.structStr)
-        rnd.setMolecule(this.state.structStr);
+        console.info('struct', this.state.struct)
+        rnd.setMolecule(this.state.struct);
         rnd.update();
+    }
+    checkFragment(ev) {
+        this.setState({fragment: !this.state.fragment});
     }
     render (props) {
         console.info('hello')
@@ -96,19 +98,19 @@ class RecognizeMolecule extends Component {
                 params={this.props}
                 buttons={[
                     ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
-                    this.state.imgUrl ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
+                    this.state.file ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel", "OK"]}>
-                <img id="pic" src={this.state.imgUrl ? this.state.imgUrl : ""} onError={ ev => console.info('error') }/>
-                { this.state.structStr ? ( 
+                <img id="pic" src={this.state.file ? this.url() : ""} onError={ ev => console.info('error') }/>
+                { this.state.struct ? ( 
                 <div className="output">
                 {
-                  this.state.structStr == 'recognizing' ? ( <strong>Recognizing</strong> ) : ( <div ref={ el => this.renderRes(el) } /> )
+                  this.state.struct == 'recognizing' ? ( <strong>Recognizing</strong> ) : ( <div ref={ el => this.renderRes(el) } /> )
                 }
                 </div> 
                  ) : null }
-                <label class="open, block">
-                  <input type="checkbox"></input>
-                  Load as a fragment and copy to the Clipboard 
+                <label class="open block">
+                  <input type="checkbox" onChange={ ev => this.checkFragment(ev) }></input>
+                  Load as a fragment
                 </label>
             </Dialog>
         );

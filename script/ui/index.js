@@ -750,7 +750,12 @@ var actionMap = {
 	'calc-cip': calculateCip,
 	'recognize-molecule': function () {
 		dialog(modal.recognizeMolecule, { server: server }).then(function (res) {
-			console.info('RES', res);
+			if (res.fragment) {
+				//struct.rescale();
+				selectAction('paste', res.struct);
+			}
+			else
+				updateMolecule(res.struct);
 		});
 	}
 };

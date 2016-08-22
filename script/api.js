@@ -60,27 +60,6 @@ function api(base, defaultOptions) {
 		throw Error('Server is not compatible');
 	});
 
-	function pollDeferred(process, complete, timeGap, startTimeGap) {
-		return new Promise(function (resolve, reject) {
-			function iterate() {
-				process().then(function (val) {
-					try {
-						var finish = complete(val);
-						if (finish)
-							resolve(val);
-						else
-							window.setTimeout(iterate, timeGap);
-					} catch (e) {
-						reject(e);
-					}
-				}, function (err) {
-					return reject(err);
-				});
-			}
-			window.setTimeout(iterate, startTimeGap || 0);
-		});
-	}
-
 	return Object.assign(info, {
 		convert: indigoCall('POST', 'indigo/convert'),
 		layout: indigoCall('POST', 'indigo/layout'),

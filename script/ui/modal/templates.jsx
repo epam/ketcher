@@ -26,8 +26,6 @@ function renderTmpl(el, tmpl) {
 		  var rnd = new Render(el, 0, {
 			  'autoScale': true,
 			  'autoScaleMargin': 0,
-			  //'debug': true,
-			  'hideChiralFlag': true,
 			  'maxBondLength': 30
 		  });
 		  rnd.setMolecule(tmpl.struct);

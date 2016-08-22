@@ -62,7 +62,7 @@ class Save extends Component {
 				}</select>
 				</label>
 				<textarea className={ this.state.type } readonly
-			              value={ this.state.structStr } />
+			              value={ this.state.structStr } focus={ ev => ev.target.select() }/>
 			</Dialog>
 		);
 	}

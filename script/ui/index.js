@@ -602,20 +602,20 @@ function automap () {
 	}
 };
 
-function loadMolecule (mol, checkEmptyLine) {
-	return getStruct(mol, checkEmptyLine).then(updateMolecule);
+function loadMolecule (structStr, checkEmptyLine) {
+	return getStruct(structStr, checkEmptyLine).then(updateMolecule);
 }
 
-function loadFragment (mol, checkEmptyLine) {
-	return getStruct(mol, checkEmptyLine).then(function (struct) {
+function loadFragment (structStr, checkEmptyLine) {
+	return getStruct(structStr, checkEmptyLine).then(function (struct) {
 		struct.rescale();
 		selectAction('paste', struct);
 	});
 }
 
-function getStruct(mol, checkEmptyLine) {
+function getStruct(structStr, checkEmptyLine) {
 	//utils.loading('show');
-	return structFormat.fromString(mol, {
+	return structFormat.fromString(structStr, {
 		badHeaderRecover: checkEmptyLine
 	}, server).then(function (res) {
 		//utils.loading('hide');

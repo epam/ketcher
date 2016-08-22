@@ -46,30 +46,31 @@ class RGroupFragment extends RGroupBase {
 		return index === this.state.value;
 	}
 	result() {
-		return { values: this.state.value ? [this.name(this.state.value)] : [] };
+		return { values: this.state.value != null ? [this.name(this.state.value)] : [] };
 	}
 }
 
 class RGroupAtom extends RGroupBase {
 	constructor(props) {
 		super(props);
-		this.state.values = new Set(this.values);
+		this.state.values = this.values;
     }
 	select(index) {
 		var vals = this.state.values;
-		if (vals.has(index))
-			vals.delete(index);
+    var i = vals.indexOf(index);
+		if (i < 0)
+			vals.push(index);
 		else
-			vals.add(index);
+			vals.splice(i, 1);
 		this.setState({
 			values: vals
 		});
 	}
 	selected(index) {
-		return this.state.values.has(index);
+		return this.state.values.includes(index);
 	}
 	result() {
-		return { values: [...this.state.values].map(i => this.name(i)) };
+		return { values: this.state.values.map(i => this.name(i)) };
 	}
 }
 

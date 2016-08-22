@@ -34,7 +34,7 @@ export const map = {
 export function guess (structStr, strict) {
 	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
 	var molStr = structStr.trim();
-	if (molStr.indexOf('$RXN'))
+	if (molStr.indexOf('$RXN') != -1)
 		return 'rxn';
 	var molMatch = molStr.match(/^(M  END|\$END MOL)$/m);
 	if (molMatch) {

@@ -11,7 +11,7 @@ var ui = global.ui;
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.changeType(props.struct.isReaction ? 'rxn' : 'mol');
+		this.changeType(props.struct.rxnArrows.count() > 0 ? 'rxn' : 'mol');
 		fileSaver(props.server).then(f => {
 			this.setState({
 				fileSaver: f
@@ -56,13 +56,13 @@ class Save extends Component {
 					), "Close"]}>
 				<label>Format:
 				<select value={this.state.type} onChange={ev => this.changeType(ev)}>{
-					[this.props.struct.isReaction ? 'rxn' : 'mol', 'smiles', 'cml', 'inchi'].map(type => (
+					[this.props.struct.rxnArrows.count() > 0 ? 'rxn' : 'mol', 'smiles', 'cml', 'inchi'].map(type => (
 						<option value={type}>{structFormat.map[type].name}</option>
 					))
 				}</select>
 				</label>
 				<textarea className={ this.state.type } readonly
-			              value={ this.state.structStr } />
+			              value={ this.state.structStr } focus={ ev => ev.target.select() }/>
 			</Dialog>
 		);
 	}

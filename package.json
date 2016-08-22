@@ -60,6 +60,7 @@
     "archive": "gulp archive",
     "start": "gulp serve",
     "test": "gulp lint",
+    "style": "gulp style",
     "gulp": "gulp",
     "postinstall": "guppy pre-commit || exit 0",
     "nibble": "eslint-nibble script"

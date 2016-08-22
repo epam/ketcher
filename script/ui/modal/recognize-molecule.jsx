@@ -73,6 +73,7 @@ class RecognizeMolecule extends Component {
 
         //var server = api(api_path);
         this.setState({ sturctStr: 'recognizing' });
+        //console.info("Cl: " + JSON.stringify(this.file));
         this.props.server.recognize(this.file).then(res => {
             this.setState({ structStr: molfile.parse(res.struct) });
         })
@@ -91,25 +92,24 @@ class RecognizeMolecule extends Component {
         console.info('hello')
         return (
             <Dialog caption="Import From Image"
-                    name="recognize-molecule" params={props.params}
-                    result={() => this.result()}
-                    buttons={[
-                      ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
-                      this.state.imgUrl ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Regonize</button>  ) : null,
-                      "Cancel", "OK" 
-                    ]}>
-              <img id="pic" src={this.state.imgUrl ? this.state.imgUrl : ""} onError={ ev => console.info('error') }/>
-              { this.state.structStr ? ( 
+                name="recognize-molecule" result={() => this.result() }
+                params={this.props}
+                buttons={[
+                    ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
+                    this.state.imgUrl ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
+                    "Cancel", "OK"]}>
+                <img id="pic" src={this.state.imgUrl ? this.state.imgUrl : ""} onError={ ev => console.info('error') }/>
+                { this.state.structStr ? ( 
                 <div className="output">
                 {
                   this.state.structStr == 'recognizing' ? ( <strong>Recognizing</strong> ) : ( <div ref={ el => this.renderRes(el) } /> )
                 }
                 </div> 
-              ) : null }
-              <label class="open, block">
-                 <input type="checkbox"></input>
-                 Load as a fragment and copy to the Clipboard 
-              </label>
+                 ) : null }
+                <label class="open, block">
+                  <input type="checkbox"></input>
+                  Load as a fragment and copy to the Clipboard 
+                </label>
             </Dialog>
         );
     }

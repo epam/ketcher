@@ -471,13 +471,31 @@ form[role=dialog] {
 
 .recognize-molecule {
 	width: 42em;
+	height: auto;
 	img, .output {
-		div {
-			height: 100%;
-		}
 		display: inline-block;
 		width: 20em;
 		height: 23em;
+		.struct {
+			width: 100%;
+			height: 100%;
+		}
+		.loader{
+		    display: block;
+		    position: absolute;
+		    top: 40%;
+		    left:60%;
+		    border: 16px solid #f3f3f3;
+		    border-top: 16px solid #0000ff;
+		    border-radius: 50%;
+		    width: 5em;
+		    height: 5em;
+		    animation: spin 3s linear infinite;
+		}
+		@keyframes spin {
+		    0% { transform: rotate(0deg); }
+		    100% { transform: rotate(360deg); }
+		}
 	}
 	.block {
 		display: block !important;

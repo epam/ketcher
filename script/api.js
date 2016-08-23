@@ -56,7 +56,6 @@ function api(base, defaultOptions) {
 		};
 	}
 
-
 	var info = request('GET', 'indigo/info').then(null, function () {
 		throw Error('Server is not compatible');
 	});

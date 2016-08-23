@@ -33,7 +33,7 @@ class CheckStruct extends Component {
               </ul>
               {[(
                 <div tabTitle = "Check">
-                  <button>Hello Check!</button>
+                  <output>info</output>
                 </div>
                 ), (
                 <div tabTitle = "Setting">
@@ -44,7 +44,7 @@ class CheckStruct extends Component {
                  <input type="checkbox"/>Query Check<br />
                  <input type="checkbox"/>Overlapping Atoms Check<br />
                  <input type="checkbox"/>3D Structure Check<br />
-                  <button>Hello Settings!</button>
+
                 </div>
               )][this.state.tabIndex]}
             </Dialog>

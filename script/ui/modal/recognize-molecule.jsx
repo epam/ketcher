@@ -34,7 +34,7 @@ class RecognizeMolecule extends Component {
         return URL ? URL.createObjectURL(this.state.file) : "No preview";
     }
     recognize() {
-        this.setState({ sturctStr: 'recognizing' });
+        this.setState({ struct: 'recognizing' });
         this.props.server.recognize(this.state.file).then(res => {
             this.setState({ struct: molfile.parse(res.struct) });
         })

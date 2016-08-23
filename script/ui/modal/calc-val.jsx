@@ -14,9 +14,13 @@ class CalculatedValues extends Component {
                     result={() => this.result()}>
               <button>Hello World!</button>
               <label>Chemical Formula</label>
+              <input type="text"></input><br />
               <label>Molecular Weight</label>
+              <input type="text"></input><br />
               <label>Exact Mass</label>
+              <input type="text"></input><br />
               <label>Elemental Analysis</label>
+              <input type="text"></input><br />
             </Dialog>
         );
     }

@@ -61,6 +61,7 @@ export default function dialog(params) {
 	server.check({struct}).then(res => {
       console.info('check result', res);
     })
+
     var overlay = $$('.overlay')[0];
     return render((
         <CheckStruct params={params}/>

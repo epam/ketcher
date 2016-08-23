@@ -560,14 +560,14 @@ function checkAndCalc () {
 						   'overlapping_bonds': true
                        }
                    }
-                 }).then(res => console.info('check1', res));
+                 }).then(res => dialog(modal.checkStruct, res));
     server.calculate({
         struct: molfile.stringify(ui.ctab),
         options: {
             properties: ['molecular-weight', 'most-abundant-mass',
                          'monoisotopic-mass', 'gross', 'mass-composition']
         }
-    }).then(res => console.info('calc1', res));
+    }).then(res => dialog(modal.modal.calculatedValues, res));
 }
 global.checkAndCalc = checkAndCalc;
 
@@ -780,13 +780,13 @@ var actionMap = {
     dialog(modal.checkStruct, {
       struct: molfile.stringify(ui.ctab),
       server: server }).then(function (res) {
-      	checkAndCalc();
+
       	console.info('RES', res);
     });
   },
   'calc-val': function () {
     dialog(modal.calculatedValues).then(function (res) {
-    	checkAndCalc();
+
     	console.info('RES', res);
     });
   }

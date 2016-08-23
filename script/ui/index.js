@@ -780,12 +780,14 @@ var actionMap = {
     dialog(modal.checkStruct, {
       struct: molfile.stringify(ui.ctab),
       server: server }).then(function (res) {
-      console.info('RES', res);
+      	checkAndCalc();
+      	console.info('RES', res);
     });
   },
   'calc-val': function () {
     dialog(modal.calculatedValues).then(function (res) {
-      console.info('RES', res);
+    	checkAndCalc();
+    	console.info('RES', res);
     });
   }
 };

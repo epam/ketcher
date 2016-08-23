@@ -35,7 +35,8 @@ var clientArea = null;
 var server;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-lib'];
+                     'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
+
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -631,14 +632,14 @@ function automap () {
 };
 
 function loadMolecule (structStr, checkEmptyLine) {
-	return getStruct(structStr, checkEmptyLine).then(updateMolecule);
+	return getStruct(structStr, checkEmptyLine).then(updateMolecule, echo);
 }
 
 function loadFragment (structStr, checkEmptyLine) {
 	return getStruct(structStr, checkEmptyLine).then(function (struct) {
 		struct.rescale();
 		selectAction('paste', struct);
-	});
+	}, echo);
 }
 
 function getStruct(structStr, checkEmptyLine) {

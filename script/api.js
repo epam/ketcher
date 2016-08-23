@@ -38,10 +38,11 @@ function api(base, defaultOptions) {
 			}, headers),
 			body: method != 'GET' ? data : null
 		}).then(function (response) {
-			if (response.ok)
-				return response.json();
-			// console.info('PLAIN RESPONSE', response);
-			throw response.json();
+			return response.json().then(function (res) {
+				return response.ok ? res : Promise.reject(res.error);
+			}, function (err) {
+				throw 'Cannot parse result\n' + err;
+			});
 		});
 	}
 

@@ -11,7 +11,7 @@ var ui = global.ui;
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.changeType(props.struct.rxnArrows.count() > 0 ? 'rxn' : 'mol');
+		this.changeType(props.struct.rxnArrows.count() > 0 ? 'rxn' : 'mol').then(null, () => props.onCancel());
 		fileSaver(props.server).then(f => {
 			this.setState({
 				fileSaver: f
@@ -23,9 +23,9 @@ class Save extends Component {
 		var type = ev.target ? ev.target.value : ev;
 		if (ev.target)
 			ev.preventDefault();
-		structFormat.toString(this.props.struct, type, this.props.server)
+		return structFormat.toString(this.props.struct, type, this.props.server)
 			.then(structStr => this.setState({ type, structStr }),
-				  e => ui.echo(e));
+				  e => { ui.echo(e); throw e });
 	}
 
 	save(ev) {

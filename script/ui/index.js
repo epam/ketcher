@@ -541,7 +541,35 @@ function initZoom() {
 function zoomIn () {
 	subEl('zoom-list').selectedIndex++;
 	updateZoom(true);
-};
+}
+function checkAndCalc () {
+    server.check({ struct: molfile.stringify(ui.ctab),
+                   options: {
+                       checks: {
+                           'valence': true,
+                           'ambiguous_h': true,
+                           'query': true,
+                           'pseudoatoms': true,
+                           'radicals': true,
+						   'stereo': true,
+						   '3d': true,
+						   'sgroups': true,
+						   'v3000': true,
+						   'rgroups': true,
+						   'overlapping_atoms': true,
+						   'overlapping_bonds': true
+                       }
+                   }
+                 }).then(res => console.info('check1', res));
+    server.calculate({
+        struct: molfile.stringify(ui.ctab),
+        options: {
+            properties: ['molecular-weight', 'most-abundant-mass',
+                         'monoisotopic-mass', 'gross', 'mass-composition']
+        }
+    }).then(res => console.info('calc1', res));
+}
+global.checkAndCalc = checkAndCalc;
 
 function zoomOut () {
 	subEl('zoom-list').selectedIndex--;
@@ -756,6 +784,20 @@ var actionMap = {
 			}
 			else
 				updateMolecule(res.struct);
+		});
+	},
+	'check-struct': function () {
+		dialog(modal.checkStruct, {
+			struct: molfile.stringify(ui.ctab),
+			server: server }).then(function (res) {
+				checkAndCalc();
+				console.info('RES', res);
+			});
+	},
+	'calc-val': function () {
+		dialog(modal.calculatedValues).then(function (res) {
+			checkAndCalc();
+			console.info('RES', res);
 		});
 	}
 };

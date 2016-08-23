@@ -487,6 +487,74 @@ form[role=dialog] {
 	}
 }
 
+.check-struct {
+	width: 40em;
+	height: 30em;
+
+	.tabs {
+		position: relative;
+		top: 10px;
+		height: 44px;
+		border-bottom: 1px solid #ddd;
+		 li {
+			float: left;
+			border-radius: 10px 10px 0 0;
+			border: 0.5px solid #ddd;
+			padding:  15px 0px;
+			// Make the list-items overlay the bottom border
+			margin-bottom: -1px;
+			// Actual tabs (as links)
+			 a {
+				line-height: 1;
+				border: 1px solid transparent;
+				border-radius: 10px 10px 0 0;
+				padding:  15px 35px;
+				&:hover {
+					border-color: black;
+				}
+			}
+			 // Active state, and its :hover to override normal :hover
+			 &.active > a {
+			 	&,
+			 	&:hover,
+			 	&:focus {
+			 		color: white;
+			 		background-color: #ddd;
+			 		cursor: default;
+
+			 	}
+			 }
+			}
+		}
+		button {
+			background-color: red !important;
+		}
+		div{
+			position:absolute !important;
+			top:90px;
+			left: 10px;
+			margin: 2% auto;
+			input{
+				text-align: left;
+				margin: 2% auto;
+			}
+		}
+		footer{
+			position: relative;
+			top: 220px;
+		}
+}
+
+.calc-val {
+	width: 40em;
+	height: 25em;
+	label {
+		display: block;
+		text-align: left;
+		margin: 2% auto;
+	}
+}
+
 .open {
 	// constrain dialog resizebility
 	// max-width: 50%;

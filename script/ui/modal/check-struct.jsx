@@ -22,7 +22,7 @@ class CheckStruct extends Component {
         return (
             <Dialog caption="Structure Check"
                     name="check-struct" params={props.params}
-                    result={() => this.result()}>
+                    result={() => this.result()} buttons={[ "Cancel"]}>
               <ul class="tabs">
                 { this.tabs.map((caption, index) => (
                   <li class={this.state.tabIndex == index ? 'active' : ''}>

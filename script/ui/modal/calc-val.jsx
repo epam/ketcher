@@ -11,12 +11,15 @@ class CalculatedValues extends Component {
         return (
             <Dialog caption="Calculated Values"
                     name="calc-val" params={props.params}
-                    result={() => this.result()}>
-              <button>Hello World!</button>
+                    result={() => this.result()} buttons={["Cancel"]}>
               <label>Chemical Formula</label>
+              <output>Chemical Formula</output><br />
               <label>Molecular Weight</label>
+              <output>Molecular Weight</output><br />
               <label>Exact Mass</label>
+              <output>Exact Mass</output><br />
               <label>Elemental Analysis</label>
+              <output>Elemental Analysis</output><br />
             </Dialog>
         );
     }

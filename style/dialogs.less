@@ -506,15 +506,14 @@ form[role=dialog] {
 }
 
 .check-struct {
-	width: 40em;
-	height: 30em;
-
+	>div {
+		//min-width: 40em;
+		height: 30em;
+	}
 	.tabs {
-		position: relative;
-		top: 10px;
-		height: 44px;
+		overflow: hidden;
 		border-bottom: 1px solid #ddd;
-		 li {
+		li {
 			float: left;
 			border-radius: 10px 10px 0 0;
 			border: 0.5px solid #ddd;
@@ -522,7 +521,7 @@ form[role=dialog] {
 			// Make the list-items overlay the bottom border
 			margin-bottom: -1px;
 			// Actual tabs (as links)
-			 a {
+			a {
 				line-height: 1;
 				border: 1px solid transparent;
 				border-radius: 10px 10px 0 0;
@@ -531,8 +530,8 @@ form[role=dialog] {
 					border-color: black;
 				}
 			}
-			 // Active state, and its :hover to override normal :hover
-			 &.active > a {
+			// Active state, and its :hover to override normal :hover
+			&.active > a {
 			 	&,
 			 	&:hover,
 			 	&:focus {
@@ -541,35 +540,31 @@ form[role=dialog] {
 			 		cursor: default;
 
 			 	}
-			 }
 			}
 		}
-		button {
-			background-color: red !important;
-		}
-		div{
-			position:absolute !important;
-			top:90px;
-			left: 10px;
-			margin: 2% auto;
-			input{
-				text-align: left;
-				margin: 2% auto;
-			}
-		}
-		footer{
-			position: relative;
-			top: 220px;
-		}
+	}
+	input[type="checkbox"]{
+		margin: 6% auto;
+	}
+
 }
 
 .calc-val {
-	width: 40em;
-	height: 25em;
 	label {
 		display: block;
 		text-align: left;
 		margin: 2% auto;
+		margin-left: 2%
+	}
+	output{
+		display: block;
+		margin-left: 10em;
+		margin-top: -6%;
+		text-align: center;;
+		border-radius: 2px;
+		border: 1px solid #ddd;
+		height: 20px;
+		width: 200px;
 	}
 }
 

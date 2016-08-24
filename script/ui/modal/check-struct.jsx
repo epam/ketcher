@@ -22,7 +22,7 @@ class CheckStruct extends Component {
         return (
             <Dialog caption="Structure Check"
                     name="check-struct" params={props.params}
-                    result={() => this.result()}>
+                    result={() => this.result()} buttons={[ "Cancel"]}>
               <ul class="tabs">
                 { this.tabs.map((caption, index) => (
                   <li class={this.state.tabIndex == index ? 'active' : ''}>
@@ -33,7 +33,7 @@ class CheckStruct extends Component {
               </ul>
               {[(
                 <div tabTitle = "Check">
-                  <button>Hello Check!</button>
+                  <output>info</output>
                 </div>
                 ), (
                 <div tabTitle = "Setting">
@@ -44,7 +44,6 @@ class CheckStruct extends Component {
                  <input type="checkbox"/>Query Check<br />
                  <input type="checkbox"/>Overlapping Atoms Check<br />
                  <input type="checkbox"/>3D Structure Check<br />
-                  <button>Hello Settings!</button>
                 </div>
               )][this.state.tabIndex]}
             </Dialog>
@@ -61,6 +60,7 @@ export default function dialog(params) {
 	server.check({struct}).then(res => {
       console.info('check result', res);
     })
+
     var overlay = $$('.overlay')[0];
     return render((
         <CheckStruct params={params}/>

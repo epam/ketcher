@@ -543,32 +543,33 @@ function zoomIn () {
 	subEl('zoom-list').selectedIndex++;
 	updateZoom(true);
 }
+
 function checkAndCalc () {
-    server.check({ struct: molfile.stringify(ui.ctab),
-                   options: {
-                       checks: {
-                           'valence': true,
-                           'ambiguous_h': true,
-                           'query': true,
-                           'pseudoatoms': true,
-                           'radicals': true,
-						   'stereo': true,
-						   '3d': true,
-						   'sgroups': true,
-						   'v3000': true,
-						   'rgroups': true,
-						   'overlapping_atoms': true,
-						   'overlapping_bonds': true
-                       }
-                   }
-                 }).then(res => dialog(modal.checkStruct, res));
-    server.calculate({
-        struct: molfile.stringify(ui.ctab),
-        options: {
-            properties: ['molecular-weight', 'most-abundant-mass',
-                         'monoisotopic-mass', 'gross', 'mass-composition']
-        }
-    }).then(res => dialog(modal.calculatedValues, res));
+	server.check({ struct: molfile.stringify(ui.ctab),
+	               options: {
+		               checks: {
+			               'valence': true,
+			               'ambiguous_h': true,
+			               'query': true,
+			               'pseudoatoms': true,
+			               'radicals': true,
+			               'stereo': true,
+			               '3d': true,
+			               'sgroups': true,
+			               'v3000': true,
+			               'rgroups': true,
+			               'overlapping_atoms': true,
+			               'overlapping_bonds': true
+		               }
+	               }
+	             }).then(function (res) { dialog(modal.checkStruct, res) });
+	server.calculate({
+		struct: molfile.stringify(ui.ctab),
+		options: {
+			properties: ['molecular-weight', 'most-abundant-mass',
+			             'monoisotopic-mass', 'gross', 'mass-composition']
+		}
+	}).then(function (res) { dialog(modal.calculatedValues, res) });
 }
 global.checkAndCalc = checkAndCalc;
 

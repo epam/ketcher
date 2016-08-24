@@ -35,7 +35,7 @@ var clientArea = null;
 var server;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-lib'];
+                     'reaction-automap', 'template-lib','check-struct', 'calc-val'];
 var clipActions = ['cut', 'copy', 'paste'];
 
 function init (options, apiServer) {
@@ -567,7 +567,7 @@ function checkAndCalc () {
             properties: ['molecular-weight', 'most-abundant-mass',
                          'monoisotopic-mass', 'gross', 'mass-composition']
         }
-    }).then(res => dialog(modal.modal.calculatedValues, res));
+    }).then(res => dialog(modal.calculatedValues, res));
 }
 global.checkAndCalc = checkAndCalc;
 

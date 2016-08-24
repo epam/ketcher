@@ -64,7 +64,7 @@ class RecognizeMolecule extends Component {
                 { this.state.struct ? ( 
                 <div className="output">
                 {
-                  this.state.struct == 'recognizing' ? ( <strong>Recognizing</strong> ) : ( <div ref={ el => this.renderRes(el) } /> )
+                  this.state.struct == 'recognizing' ? ( <div class="loader"></div> ) : ( <div className="struct" ref={ el => this.renderRes(el) } /> )
                 }
                 </div> 
                  ) : null }

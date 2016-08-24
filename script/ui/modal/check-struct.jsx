@@ -44,7 +44,6 @@ class CheckStruct extends Component {
                  <input type="checkbox"/>Query Check<br />
                  <input type="checkbox"/>Overlapping Atoms Check<br />
                  <input type="checkbox"/>3D Structure Check<br />
-
                 </div>
               )][this.state.tabIndex]}
             </Dialog>

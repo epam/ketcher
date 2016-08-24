@@ -8,6 +8,7 @@ class CalculatedValues extends Component {
         return `Yo!`;
     }
     render (props) {
+		console.info('PROPS', props);
         return (
             <Dialog caption="Calculated Values"
                     name="calc-val" params={props.params}
@@ -29,6 +30,6 @@ class CalculatedValues extends Component {
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
     return render((
-        <CalculatedValues params={params}/>
+        <CalculatedValues {...params}/>
     ), overlay);
 };

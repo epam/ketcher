@@ -2,6 +2,7 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from './dialog';
+import molfile from '../../chem/molfile';
 
 class CheckStruct extends Component {
     constructor(props) {
@@ -15,6 +16,14 @@ class CheckStruct extends Component {
       });
       ev.preventDefault();
     }
+    doCheck() {
+        this.props.server.check({ struct: molfile.stringify(this.props.struct),
+                                  checks: ['valence', 'ambiguous_h', 'query', 'pseudoatoms',
+                                           'radicals', 'stereo', '3d', 'sgroups', 'v3000',
+                                           'rgroups', 'overlapping_atoms', 'overlapping_bonds' ] })
+            .then(res => console.info('CHECK RES', res));
+
+    };
     result () {
         return `Yo!`;
     }
@@ -33,7 +42,8 @@ class CheckStruct extends Component {
               </ul>
               {[(
                 <div tabTitle = "Check">
-                  <output>info</output>
+                    <output>info</output>
+                    <button onClick={() => this.doCheck() }>Do Checks</button>
                 </div>
                 ), (
                 <div tabTitle = "Setting">
@@ -53,16 +63,8 @@ class CheckStruct extends Component {
 
 
 export default function dialog(params) {
-    var {server, struct} = params;
-    server.calculate({struct}).then(res => {
-      console.info('calculate result', res);
-    })
-	server.check({struct}).then(res => {
-      console.info('check result', res);
-    })
-
     var overlay = $$('.overlay')[0];
     return render((
-        <CheckStruct params={params}/>
+        <CheckStruct {...params}/>
     ), overlay);
 };

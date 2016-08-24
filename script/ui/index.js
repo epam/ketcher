@@ -544,35 +544,6 @@ function zoomIn () {
 	updateZoom(true);
 }
 
-function checkAndCalc () {
-	server.check({ struct: molfile.stringify(ui.ctab),
-	               options: {
-		               checks: {
-			               'valence': true,
-			               'ambiguous_h': true,
-			               'query': true,
-			               'pseudoatoms': true,
-			               'radicals': true,
-			               'stereo': true,
-			               '3d': true,
-			               'sgroups': true,
-			               'v3000': true,
-			               'rgroups': true,
-			               'overlapping_atoms': true,
-			               'overlapping_bonds': true
-		               }
-	               }
-	             }).then(function (res) { dialog(modal.checkStruct, res) });
-	server.calculate({
-		struct: molfile.stringify(ui.ctab),
-		options: {
-			properties: ['molecular-weight', 'most-abundant-mass',
-			             'monoisotopic-mass', 'gross', 'mass-composition']
-		}
-	}).then(function (res) { dialog(modal.calculatedValues, res) });
-}
-global.checkAndCalc = checkAndCalc;
-
 function zoomOut () {
 	subEl('zoom-list').selectedIndex--;
 	updateZoom(true);
@@ -790,17 +761,18 @@ var actionMap = {
 	},
 	'check-struct': function () {
 		dialog(modal.checkStruct, {
-			struct: molfile.stringify(ui.ctab),
-			server: server }).then(function (res) {
-				checkAndCalc();
-				console.info('RES', res);
-			});
+			struct: ui.ctab,
+			server: server
+		});
 	},
 	'calc-val': function () {
-		dialog(modal.calculatedValues).then(function (res) {
-			checkAndCalc();
-			console.info('RES', res);
-		});
+		server.calculate({
+			struct: molfile.stringify(ui.ctab),
+			properties: ['molecular-weight', 'most-abundant-mass',
+			             'monoisotopic-mass', 'gross', 'mass-composition']
+		}).then(function (values) {
+			return dialog(modal.calculatedValues, values);
+		}, echo);
 	}
 };
 

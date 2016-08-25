@@ -14,13 +14,13 @@ class CalculatedValues extends Component {
                     name="calc-val" params={props.params}
                     result={() => this.result()} buttons={["Cancel"]}>
               <label>Chemical Formula</label>
-              <output>Chemical Formula</output><br />
+              <output>{JSON.stringify(props.gross)}</output><br />
               <label>Molecular Weight</label>
-              <output>Molecular Weight</output><br />
+              <output>{JSON.stringify(props.molecular-weight)}</output><br />
               <label>Exact Mass</label>
-              <output>Exact Mass</output><br />
+              <output>{JSON.stringify(props.most-abundant-mass)}</output><br />
               <label>Elemental Analysis</label>
-              <output>Elemental Analysis</output><br />
+              <output>{JSON.stringify(props.mass-composition)}</output><br />
             </Dialog>
         );
     }

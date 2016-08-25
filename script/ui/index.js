@@ -785,6 +785,9 @@ var actionMap = {
 		}).then(function (values) {
 			return dialog(modal.calculatedValues, values, true);
 		}, echo);
+	},
+	'settings': function () {
+		dialog(modal.openSettings, {});
 	}
 };
 

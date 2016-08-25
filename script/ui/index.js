@@ -423,7 +423,7 @@ function hideDialog (name) {
 	});
 };
 
-function dialog(modal, params) {
+function dialog(modal, params, noAnimate) {
 	var cover = $$('.overlay')[0];
 	cover.style.display = '';
 	keymage.setScope('modal');
@@ -438,14 +438,19 @@ function dialog(modal, params) {
 		console.info('output', res);
 		if (fn) fn(res);
 	}
+
+	function open(resolve, reject) {
+		modal(Object.assign({}, params, {
+			onOk: function (res) { close(params && params.onOk, res); resolve(res); },
+			onCancel: function (res) { close(params && params.onCancel, res); reject(res); }
+		}));
+	}
 	return new Promise(function (resolve, reject) {
 		console.info('input', params);
-		utils.animate(cover, 'show').then(function () {
-			modal(Object.assign({}, params, {
-				onOk: function (res) { close(params && params.onOk, res); resolve(res); },
-				onCancel: function (res) { close(params && params.onCancel, res); reject(res); }
-			}));
-		});
+		if (noAnimate)
+			open(resolve, reject);
+		else
+			utils.animate(cover, 'show').then(open.bind(null, resolve, reject));
 	});
 }
 
@@ -771,7 +776,7 @@ var actionMap = {
 			properties: ['molecular-weight', 'most-abundant-mass',
 			             'monoisotopic-mass', 'gross', 'mass-composition']
 		}).then(function (values) {
-			return dialog(modal.calculatedValues, values);
+			return dialog(modal.calculatedValues, values, true);
 		}, echo);
 	}
 };

@@ -787,7 +787,7 @@ var actionMap = {
 		}, echo);
 	},
 	'settings': function () {
-		dialog(modal.openSettings, {});
+		dialog(modal.openSettings);
 	}
 };
 

@@ -11,8 +11,12 @@ class CheckStruct extends Component {
       		tabIndex: 0,
       		data: null,
       		checker:[],
+      		checkboxIndex:0
       }
       this.tabs = ['Check', 'Settings'];
+      this.checkbox = ['Valence Check','Radical Check','Pseudoatom Check',
+      				'Stereochemistry Check','Query Check',
+      				'Overlapping Atoms Check','3D Structure Check'];
   }
     changeTab(ev, index) {
       this.setState({
@@ -36,7 +40,7 @@ class CheckStruct extends Component {
                 })
            	)
     };
-    UpdateCheckerList(){
+    UpdateCheckerList(ev,index){
 
     };
 
@@ -64,20 +68,13 @@ class CheckStruct extends Component {
                 </div>
                 ), (
                 <div tabTitle = "Setting">
-                <ul>{[
-                	{name:'Valence Check'}
-                	].map(v => (
-                		<input type="checkbox"><label>{name}</label></input>
-                		))
+                <ul>{this.checkbox.map((caption,index) =>(
+                	<label><input type="checkbox" onClick={ev => this.UpdateCheckerList(ev,index)}/>
+                	{caption}<br />
+                	</label>
+                	))
                 }
                 </ul>
-                 <input type="checkbox"/>Valence Check<br />
-                 <input type="checkbox"/>Radical Check<br />
-                 <input type="checkbox"/>Pseudoatom Check<br />
-                 <input type="checkbox"/>Stereochemistry Check<br />
-                 <input type="checkbox"/>Query Check<br />
-                 <input type="checkbox"/>Overlapping Atoms Check<br />
-                 <input type="checkbox"/>3D Structure Check<br />
                 </div>
               )][this.state.tabIndex]}
             </Dialog>

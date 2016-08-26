@@ -4,30 +4,29 @@ import { h, Component, render } from 'preact';
 import Dialog from './dialog';
 
 class CalculatedValues extends Component {
-    result () {
-        return `Yo!`;
-    }
-    render (props) {
-		console.info('PROPS', props);
-        return (
-            <Dialog caption="Calculated Values"
-                    name="calc-val" params={props.params}
-                    result={() => this.result()} buttons={["Cancel"]}>
-                     [{caption='Chemical Formula', key='gross'},
-                      {caption='Molecular Weigh', key='molecular-wieght'},
-                      {caption='Exact Mass', key='most-abundant-mass'},
-                      {caption='Elemental Analysis', key='mass-composition'}
-                      ].map( v => ( <label>{v.caption}<output>{props[v.key]}</output></label>))
-
-            </Dialog>
-        );
-    }
+	render () {
+		return (
+			<Dialog caption="Calculated Values"
+					name="calc-val" params={this.props}
+					buttons={["Cancel"]}>
+				<ul>{[
+						{ name: 'Chemical Formula', key: 'gross' },
+						{ name: 'Molecular Weight', key: 'molecular-weight' },
+						{ name: 'Exact Mass', key: 'monoisotopic-mass' },
+						{ name: 'Elemental Analysis', key: 'mass-composition' }
+						].map(v => (
+							<label>{v.name}<output>{this.props[v.key]}</output></label>
+						))
+					}</ul>
+			</Dialog>
+		);
+	}
 }
 
 
 export default function dialog(params) {
-    var overlay = $$('.overlay')[0];
-    return render((
-        <CalculatedValues {...params}/>
-    ), overlay);
+	var overlay = $$('.overlay')[0];
+	return render((
+		<CalculatedValues {...params}/>
+	), overlay);
 };

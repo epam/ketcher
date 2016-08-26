@@ -38,7 +38,7 @@ class Save extends Component {
 	}
 	saveTemplate(ev) {
 		var storage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-		storage.push(this.molStr);
+		storage.push(this.state.structStr);
 		localStorage['ketcher-tmpl'] = JSON.stringify(storage);
 		this.props.onOk();
 	}

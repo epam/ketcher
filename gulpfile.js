@@ -85,7 +85,8 @@ gulp.task('html', ['patch-version'], function () {
 gulp.task('font', function (cb) {
 	return iconfont ? cb() : gulp.src(['icons/*.svg'])
 		.pipe(plugins.iconfont({
-			fontName: 'ketcher',
+			fontName: pkg.name,
+			normalize: true,
 			formats: ['ttf', 'svg', 'eot', 'woff'],
 			timestamp: options['build-date']
 		}))

@@ -2,9 +2,10 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from './dialog';
+import defaultOptions from './options';
 
 class OpenSettings extends Component {
-    opts = [
+    /*opts = [
         {name: 'showAtomIds',
         type: 'boolean',
         defaultValue: false,
@@ -59,15 +60,14 @@ class OpenSettings extends Component {
         type: 'boolean',
         defaultValue: false,
         tab: 'chemul'}
-    ]
+    ]*/
 
      constructor(props) {
         super(props);
         /*this.state = {
             selectedItem: null
         }*/
-        this.props.opts = this.opts;
-        //console.log("opts: " + this.opts)
+        this.props.opts = defaultOptions();
     }
     result () {
         return `Yo!`;

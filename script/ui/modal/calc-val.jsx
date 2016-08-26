@@ -13,14 +13,12 @@ class CalculatedValues extends Component {
             <Dialog caption="Calculated Values"
                     name="calc-val" params={props.params}
                     result={() => this.result()} buttons={["Cancel"]}>
-              <label>Chemical Formula</label>
-              <output>{JSON.stringify(props.gross)}</output><br />
-              <label>Molecular Weight</label>
-              <output>{JSON.stringify(props.molecular-weight)}</output><br />
-              <label>Exact Mass</label>
-              <output>{JSON.stringify(props.most-abundant-mass)}</output><br />
-              <label>Elemental Analysis</label>
-              <output>{JSON.stringify(props.mass-composition)}</output><br />
+                     [{caption='Chemical Formula', key='gross'},
+                      {caption='Molecular Weigh', key='molecular-wieght'},
+                      {caption='Exact Mass', key='most-abundant-mass'},
+                      {caption='Elemental Analysis', key='mass-composition'}
+                      ].map( v => ( <label>{v.caption}<output>{props[v.key]}</output></label>))
+
             </Dialog>
         );
     }

@@ -7,13 +7,17 @@ import molfile from '../../chem/molfile';
 class CheckStruct extends Component {
     constructor(props) {
       super(props);
-      this.state.tabIndex = 0;
+      this.state = {
+      		tabIndex: 0,
+      		data: null,
+      }
       this.tabs = ['Check', 'Settings'];
-    }
+  }
     changeTab(ev, index) {
       this.setState({
         tabIndex: index
       });
+     console.info('data',this.state.data);
       ev.preventDefault();
     }
     doCheck() {
@@ -21,7 +25,10 @@ class CheckStruct extends Component {
                                   checks: ['valence', 'ambiguous_h', 'query', 'pseudoatoms',
                                            'radicals', 'stereo', '3d', 'sgroups', 'v3000',
                                            'rgroups', 'overlapping_atoms', 'overlapping_bonds' ] })
-            .then(res => console.info('CHECK RES', res));
+            .then(res => this.setState({
+                	data: res
+                })
+           	)
 
     };
     result () {
@@ -60,7 +67,6 @@ class CheckStruct extends Component {
         );
     }
 }
-
 
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];

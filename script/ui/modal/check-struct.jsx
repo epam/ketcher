@@ -10,27 +10,36 @@ class CheckStruct extends Component {
       this.state = {
       		tabIndex: 0,
       		data: null,
+      		checker:[],
       }
       this.tabs = ['Check', 'Settings'];
   }
     changeTab(ev, index) {
       this.setState({
-        tabIndex: index
+        tabIndex: index,
+        //checker:this.state.checker.concat(['overlapping_atoms'])
       });
      console.info('data',this.state.data);
+     console.info('cheker',this.state.checker);
       ev.preventDefault();
     }
+     doAdd(parametr){
+    	this.setState({
+    		checker:this.state.checker.concat([parametr])
+    		})
+    };
     doCheck() {
         this.props.server.check({ struct: molfile.stringify(this.props.struct),
-                                  checks: ['valence', 'ambiguous_h', 'query', 'pseudoatoms',
-                                           'radicals', 'stereo', '3d', 'sgroups', 'v3000',
-                                           'rgroups', 'overlapping_atoms', 'overlapping_bonds' ] })
+                                  checks: this.state.checker})
             .then(res => this.setState({
                 	data: res
                 })
            	)
+    };
+    UpdateCheckerList(){
 
     };
+
     result () {
         return `Yo!`;
     }
@@ -51,9 +60,17 @@ class CheckStruct extends Component {
                 <div tabTitle = "Check">
                     <output>info</output>
                     <button onClick={() => this.doCheck() }>Do Checks</button>
+                     <button onClick={() => this.doAdd('overlapping_atoms') }>Do Add</button>
                 </div>
                 ), (
                 <div tabTitle = "Setting">
+                <ul>{[
+                	{name:'Valence Check'}
+                	].map(v => (
+                		<input type="checkbox"><label>{name}</label></input>
+                		))
+                }
+                </ul>
                  <input type="checkbox"/>Valence Check<br />
                  <input type="checkbox"/>Radical Check<br />
                  <input type="checkbox"/>Pseudoatom Check<br />

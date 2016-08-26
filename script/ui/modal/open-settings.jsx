@@ -5,11 +5,57 @@ import Dialog from './dialog';
 
 class OpenSettings extends Component {
     opts = [
-        {name: 'render-atom-ids-visible',
+        {name: 'showAtomIds',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'atoms'},
+        {name: 'hideImplicitHydrogen',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'atoms'},
+
+        {name: 'Display attached data',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'attachedData'},
+
+        {name: 'bondLength',
+        type: 'number',
+        defaultValue: 75,
+        values: [75, 100, 150],
+        tab: 'bonds'},
+        {name: 'showSelectionRegions',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'bonds'},
+        {name: 'showBondIds',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'bonds'},
+        {name: 'showHalfBondIds',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'bonds'},
+        {name: 'showLoopIds',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'bonds'},
+
+        {name: 'autoScale',
+        type: 'boolean',
+        defaultValue: false,
+        tab: 'scaling'},
+        {name: 'autoScaleMargin',
+        type: 'number',
+        defaultValue: 4,
+        values: [2, 4, 8],
+        tab: 'scaling'},
+
+        {name: 'Do not show the "Chiral" flag',
         type: 'boolean',
         defaultValue: false,
         tab: 'chemul'},
-        {name: 'render-bond-ids-visible',
+        {name: 'Show the Data S-Group Tool',
         type: 'boolean',
         defaultValue: false,
         tab: 'chemul'}
@@ -17,9 +63,11 @@ class OpenSettings extends Component {
 
      constructor(props) {
         super(props);
-        this.state = {
+        /*this.state = {
             selectedItem: null
-        }
+        }*/
+        this.props.opts = this.opts;
+        //console.log("opts: " + this.opts)
     }
     result () {
         return `Yo!`;
@@ -30,33 +78,6 @@ class OpenSettings extends Component {
             selectedItem: true //?
         })
     }*/
-    createHtmlCheckbox(value, name, div) {
-        var input = $('<input>');
-        if (value === true) {
-            input.attr({'type': 'checkbox', 'checked': true, 'id': name});
-        } else {
-            input.attr({'type': 'checkbox', 'checked': false, 'id': name});
-        }
-        div.append(input);
-        input.change(function () {
-            onChangeInSetupIndigo();
-        });
-    }
-    createHtmlElement(values, name, container, func) {
-        func(values, name, container);
-        container.append(name);
-        container.append($('<br>'));
-    }
-    fillHtmlContainer(container) {
-        this.props.opts = opts;
-          this.state.opts = {
-            'render-bond-ids-visible': true,
-            'hide-chiral': true
-          }
-        container.empty();
-        for (i = 0; i < opts.length; i++)
-            createHtmlElement(opts[i].defaultValue, opts[i].name, container, createHtmlCheckbox);
-    }
     render (props) {
         return (
             <Dialog caption="Settings"
@@ -75,32 +96,35 @@ class OpenSettings extends Component {
                         <input type="checkbox" class="menu" id="atoms" checked></input>
                             <label for="atoms">Atoms</label>
                                 <ul>
-                                    <li><output>Atom label margin</output></li>
-                                    <li><output>Auto-reset tool Strip to C</output></li>
+                                    { test(props.opts, "atoms") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="attachedData" checked></input>
                             <label for="attachedData">Attached data</label>
                                 <ul>
-                                    <li><output>Diplay attached data</output></li>
+                                    { test(props.opts, "attachedData") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="bonds" checked></input>
                             <label for="bonds">Bonds</label>
                                 <ul>
-                                    <li><output>Aromatic bond as circle</output></li>
-                                    <li><output>Bond thickness</output></li>
+                                    { test(props.opts, "bonds") }
+                                </ul>
+                    </li>
+                    <li class="has-children">
+                        <input type="checkbox" class="menu" id="scaling" checked></input>
+                            <label for="scaling">Scaling</label>
+                                <ul>
+                                    { test(props.opts, "scaling") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="chemul" checked></input>
                             <label for="chemul">Chemul</label>
                                 <ul>
-                                    { test() }
-                                    <li> <output>Do not show the 'Chiral' flag</output> <input type="checkbox" checked/></li>
-                                    <li><output>Show the Data S-Group Tool</output></li>
+                                    { test(props.opts, "chemul") }
                                 </ul>
                     </li>    
                 </ul>
@@ -110,36 +134,45 @@ class OpenSettings extends Component {
     }
 }
 
-function test() {
-    var opts = [
-        {name: 'render-atom-ids-visible',
-        type: 'boolean',
-        defaultValue: false,
-        tab: 'chemul'},
-        {name: 'render-bond-ids-visible',
-        type: 'boolean',
-        defaultValue: false,
-        tab: 'chemul'}
-    ]
+function createSelectListItem(values, defaultOption) {
+    var listComponents = values.map(function(value) {
+        if (value === defaultOption) {
+            return ( <option value="" selected="selected" > {value} </option>);
+        } else {
+            return ( <option value=""> {value} </option>);
+        }
+    });
+    return <select>{listComponents}</select>;
+}
 
-    var stationComponents = opts.map(function(station) {
+function test(opts, tab) {
+    var optsComponents = opts.map(function(elem) {
+        var values;
+        var defaultValue;
+        if (elem.type === 'boolean') {
+            values = ['on', 'off'];
+            if (elem.defaultValue === true)
+                defaultValue = "on";
+             else
+                defaultValue = "off";
+        } else{
+            values = elem.values;
+            defaultValue = elem.defaultValue;
+        }
+        if (elem.tab === tab) {
             return (
             <li>
-                <output>Some text</output>
-                <select>
-                <option value="">on</option>
-                <option value="" selected="selected">off</option>
-                </select>
+                <output> { elem.name } </output>
+                {createSelectListItem(values, defaultValue)}
             </li>);
-        });
-    return <div>{stationComponents}</div>;
+        }
+    });
+    return <div>{optsComponents}</div>;
 }
 
 
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
-    var t = test();
-    console.info('test', test);
     return render((
         <OpenSettings params={params}/>
     ), overlay);

@@ -574,7 +574,7 @@ form[role=dialog] {
 
 
 	.accordion-menu {
-		input[type=checkbox] {
+		input.menu[type=checkbox] {
 			position: absolute;
 			opacity: 0;
 		}
@@ -589,8 +589,8 @@ form[role=dialog] {
 			display: block;
 			font-size: 16px;
 		}
-		input[type=checkbox]:checked + label + ul,
-		input[type=checkbox]:checked + label:nth-of-type(n) + ul {
+		input.menu[type=checkbox]:checked + label + ul,
+		input.menu[type=checkbox]:checked + label:nth-of-type(n) + ul {
 			display: none;
 		}
 	}

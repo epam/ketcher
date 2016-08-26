@@ -11,7 +11,8 @@ class CheckStruct extends Component {
       		tabIndex: 0,
       		data: null,
       		checker:[],
-      		checkboxIndex:0
+      		checkboxIndex:0,
+      		checked: false
       }
       this.tabs = ['Check', 'Settings'];
       this.checkbox = ['Valence Check','Radical Check','Pseudoatom Check',
@@ -41,7 +42,18 @@ class CheckStruct extends Component {
            	)
     };
     UpdateCheckerList(ev,index){
-
+    	console.info('ev',ev);
+    	console.info('index',index);
+    	console.info('checked',this.state.checked);
+    	if(this.state.checked == false){
+    		this.setState({
+    			checked:true
+    		})
+    	}else{
+    		this.setState({
+    			checked:false
+    		})
+    	}
     };
 
     result () {
@@ -69,7 +81,7 @@ class CheckStruct extends Component {
                 ), (
                 <div tabTitle = "Setting">
                 <ul>{this.checkbox.map((caption,index) =>(
-                	<label><input type="checkbox" onClick={ev => this.UpdateCheckerList(ev,index)}/>
+                	<label><input type="checkbox" checked={this.state.checked} onChange={ev => this.UpdateCheckerList(ev,index)}/>
                 	{caption}<br />
                 	</label>
                 	))

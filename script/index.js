@@ -62,22 +62,26 @@ function onStructChange(handler) {
 window.onload = function () {
 	var params = queryString.parse(document.location.search);
 	if (params.api_path)
-		ketcher.api_path = params.api_path;
-	ketcher.server = api(ketcher.api_path, { 'smart-layout': 'false' });
-	ui.init(Object.assign({}, params), ketcher.server);
+		ketcher.apiPath = params.api_path;
+	ketcher.server = api(ketcher.apiPath, {
+		'smart-layout': 'false'
+	});
+	ui.init(Object.assign({}, params, buildInfo), ketcher.server);
 };
 
-var ketcher = module.exports = {
+var buildInfo = {
 	version: '__VERSION__',
-	api_path: '__API_PATH__',
-	build_date: '__BUILD_DATE__',
-	build_number: '__BUILD_NUMBER__' || null,
-	build_options: '__BUILD_OPTIONS__',
+	apiPath: '__API_PATH__',
+	buildDate: '__BUILD_DATE__',
+	buildNumber: '__BUILD_NUMBER__' || null,
+	buildOptions: '__BUILD_OPTIONS__'
+};
 
+var ketcher = module.exports = Object.assign({
 	getSmiles: getSmiles,
 	getMolfile: getMolfile,
 	setMolecule: setMolecule,
 	addFragment: addFragment,
 	showMolfile: showMolfile,
 	onStructChange: onStructChange
-};
+}, buildInfo);

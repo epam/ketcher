@@ -11,6 +11,7 @@ var saveDialog = require('./save.jsx').default;
 var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;
+var aboutDialog = require('./about.jsx').default;
 var recognizeMoleculeDialog = require('./recognize-molecule.jsx').default;
 var checkStructDialog = require('./check-struct.jsx').default;
 var calculatedValuesDialog = require('./calc-val.jsx').default;
@@ -24,10 +25,6 @@ function genericGroups (params) {
 	params.required = true;
 	selectDialog('genericGroups', params);
 };
-
-function about(el) {
-	inputDialog('about');
-}
 
 function attachmentPoints (params) {
 	inputDialog('attachmentPoints', params);
@@ -131,7 +128,6 @@ module.exports = {
 	periodTable: periodTable,
 	rgroup: rgroupDialog,
 	genericGroups: genericGroups,
-	about: about,
 	attachmentPoints: attachmentPoints,
 	atomProps: atomProps,
 	bondProps: bondProps,
@@ -142,6 +138,7 @@ module.exports = {
 	save: saveDialog,
 	templates: templatesDialog,
 	labelEdit: labelEdit,
+	about: aboutDialog,
 	recognizeMolecule: recognizeMoleculeDialog,
 	checkStruct: checkStructDialog,
 	calculatedValues: calculatedValuesDialog

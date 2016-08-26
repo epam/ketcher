@@ -33,17 +33,20 @@ var toolbar;
 var lastSelected;
 var clientArea = null;
 var server;
+var options;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
 
 var clipActions = ['cut', 'copy', 'paste'];
 
-function init (options, apiServer) {
+function init (opts, apiServer) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('canvas');
+
 	server = apiServer;
+	options = opts;
 
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,
@@ -732,7 +735,11 @@ var actionMap = {
 		ui.editor.deselectAll();
 		return { tool: 'paste', opts: struct };
 	},
-	info: modal.about,
+	info: function () {
+		server.then(function (res) {
+			return dialog(modal.about, Object.assign(res, options));
+		});
+	},
 	'select-all': function () {
 		ui.editor.selectAll();
 		selectAction(null);

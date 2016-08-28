@@ -28,9 +28,14 @@ class CheckStruct extends Component {
      console.info('cheker',this.state.checker);
       ev.preventDefault();
     }
-     doAdd(parametr){
+    doAdd(parametr){
     	this.setState({
     		checker:this.state.checker.concat([parametr])
+    		})
+    };
+    doDelete(parametr){
+    	this.setState({
+    		checker:this.state.checker.splice(this.state.checker.indexOf(parametr),1)
     		})
     };
     doCheck() {
@@ -51,8 +56,47 @@ class CheckStruct extends Component {
     	if(this.props.checked == false){
     		this.props.checked = true;
     	}else{
-    		this.props.checked =false;
+    		this.props.checked = false;
     	}
+
+    	if(index==0){
+    		this.doAdd('valence');
+    	}else{
+    		this.doDelete('valence');
+    	}
+    	if(index==1){
+    		this.doAdd('radicals');
+    	}else{
+    		this.doDelete('radicals');
+    	}
+    	if(index==2){
+    		this.doAdd('pseudoatoms');
+    	}else{
+    		this.doDelete('pseudoatoms');
+    	}
+    	if(index==3){
+    		this.doAdd('stereo');
+    	}else{
+    		this.doDelete('stereo');
+    	}
+    	if(index==4){
+    		this.doAdd('query');
+    	}else{
+    		this.doDelete('query');
+    	}
+    	if(index==5){
+    		this.doAdd('overlapping_atoms');
+    	}else{
+    		this.doDelete('overlapping_atoms');
+    	}
+    	if(index==6){
+    		this.doAdd('3d');
+    	}else{
+    		this.doDelete('3d');
+    	}
+    	docheck();
+
+
     };
 
     result () {

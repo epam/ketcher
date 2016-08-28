@@ -5,16 +5,15 @@ import Dialog from './dialog';
 import molfile from '../../chem/molfile';
 
 class CheckStruct extends Component {
+
     constructor(props) {
       super(props);
       this.state = {
       		tabIndex: 0,
       		data: null,
       		checker:[],
-      		checkboxIndex:0,
       	}
-      this.props.checked=false;
-      console.info(this.props.checked[this.state.checkboxIndex]);
+      this.props.checked = [false,false,false,false,false,false,false];
       this.tabs = ['Check', 'Settings'];
       this.checkbox = ['Valence Check','Radical Check','Pseudoatom Check',
       				'Stereochemistry Check','Query Check',
@@ -24,8 +23,6 @@ class CheckStruct extends Component {
       this.setState({
         tabIndex: index,
       });
-     console.info('data',this.state.data);
-     console.info('cheker',this.state.checker);
       ev.preventDefault();
     }
     doAdd(parametr){
@@ -47,15 +44,15 @@ class CheckStruct extends Component {
            	)
            	return JSON.stringify(this.state.data);
     };
+    doChecked(index){
+    	if (this.props.checked[index] == false){
+    		this.props.checked[index] = true;
+    	}else{
+    		this.props.checked[index] =false;
+    	}
+    };
     UpdateCheckerList(ev,index){
-    	this.setState({
-        checkboxIndex: index
-      });
-    	console.info('ev',ev);
-    	console.info('index',index);
-    	console.info('checked',this.props.checked);
-
-
+    	this.doChecked(index);
     	if(index==0){
     		this.doAdd('valence');
     	}else{
@@ -113,13 +110,11 @@ class CheckStruct extends Component {
               {[(
                 <div tabTitle = "Check">
                     <output>{this.doCheck()}</output>
-                    <button onClick={() => this.doCheck() }>Do Checks</button>
-                     <button onClick={() => this.doAdd('overlapping_atoms') }>Do Add</button>
                 </div>
                 ), (
                 <div tabTitle = "Setting">
                 <ul>{this.checkbox.map((caption,index) =>(
-                	<label><input type="checkbox" checked={this.props.checked = (this.props.checked==true) ? false: true} onChange={ev => this.UpdateCheckerList(ev,index)}/>
+                	<label><input type="checkbox" checked={this.props.checked[index]} onChange={ev => this.UpdateCheckerList(ev,index)}/>
                 	{caption}<br />
                 	</label>
                 	))

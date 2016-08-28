@@ -14,6 +14,7 @@ class CheckStruct extends Component {
       		checkboxIndex:0,
       	}
       this.props.checked=false;
+      console.info(this.props.checked[this.state.checkboxIndex]);
       this.tabs = ['Check', 'Settings'];
       this.checkbox = ['Valence Check','Radical Check','Pseudoatom Check',
       				'Stereochemistry Check','Query Check',
@@ -22,8 +23,6 @@ class CheckStruct extends Component {
     changeTab(ev, index) {
       this.setState({
         tabIndex: index,
-
-        //checker:this.state.checker.concat(['overlapping_atoms'])
       });
      console.info('data',this.state.data);
      console.info('cheker',this.state.checker);
@@ -43,6 +42,9 @@ class CheckStruct extends Component {
            	)
     };
     UpdateCheckerList(ev,index){
+    	this.setState({
+        checkboxIndex: index
+      });
     	console.info('ev',ev);
     	console.info('index',index);
     	console.info('checked',this.props.checked);
@@ -78,7 +80,7 @@ class CheckStruct extends Component {
                 ), (
                 <div tabTitle = "Setting">
                 <ul>{this.checkbox.map((caption,index) =>(
-                	<label><input type="checkbox" checked={this.props.checked} onChange={ev => this.UpdateCheckerList(ev,index)}/>
+                	<label><input type="checkbox" checked={this.props.checked == index ? false: true} onChange={ev => this.UpdateCheckerList(ev,index)}/>
                 	{caption}<br />
                 	</label>
                 	))

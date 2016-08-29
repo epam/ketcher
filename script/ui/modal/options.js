@@ -46,7 +46,7 @@ function opts() {
         values: [2, 4, 8],
         tab: 'scaling' },
 
-        { name: 'Do not show the "Chiral" flag',
+        { name: 'Do not show the Chiral flag',
         type: 'boolean',
         defaultValue: false,
         tab: 'chemul' },

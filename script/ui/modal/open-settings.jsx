@@ -1,6 +1,7 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
+import fs from 'filesaver.js';
 import Dialog from './dialog';
 import defaultOptions from './options';
 
@@ -13,9 +14,11 @@ class OpenSettings extends Component {
             tmp[this.props.opts[i].name] = this.props.opts[i].defaultValue;
         }
         this.setState(tmp);
+        //Object.assign... from localstorage
         console.log("state", this.state);
 
         this.changeState = this.changeState.bind(this);
+        this.saveState = this.saveState.bind(this);
     }
     result () {
         return `Yo!`;
@@ -33,7 +36,26 @@ class OpenSettings extends Component {
         //this.props.opts = Object.assign(this.props.opts, userOpts);
     }
 
-    changeState(ev, value) {
+    saveState(ev) {
+        var state = this.state;
+        var currentState = {};
+
+        Object.keys(state).forEach(function (option) {
+            //console.log("state1", state);
+           //console.info(option + " " + state[option]);
+
+            // currentState[i] = {};
+            // currentState[i][option.name] = option.value;
+            currentState[option] = state[option];
+        });
+       // for (i = 0; i < currentState.length; i++)
+            //console.info("currentState " + JSON.stringify(currentState));
+
+       var blob = new Blob([JSON.stringify(currentState)], {type: 'application/json'});
+       fs.saveAs(blob, 'ketcher1');
+    }
+
+    changeState(ev) {
         console.log("ev", ev.target.id);
         console.log("state1", this.state);
         console.log("11111111111");
@@ -97,7 +119,7 @@ class OpenSettings extends Component {
                      buttons={[
                         <input type="file" onChange={ ev => this.uploadSettings(ev) }/>,
                         <button onClick={ ev => this.load(ev) }>Load</button>,
-                        <button onClick={ ev => this.changeState(ev) }>Save as...</button>,
+                        <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
                         <button>Reset</button>,
                         <button>Apply and Save</button>,
                         <button>Apply</button>,

@@ -13,12 +13,15 @@ class OpenSettings extends Component {
         for (var i = 0; i < this.props.opts.length; i++) {
             tmp[this.props.opts[i].name] = this.props.opts[i].defaultValue;
         }
-        this.setState(tmp);
+        this.setState({opts: tmp});
         //Object.assign... from localstorage
-        console.log("state", this.state);
+        console.log("state opts", this.state.opts);
 
         this.changeState = this.changeState.bind(this);
         this.saveState = this.saveState.bind(this);
+        this.createSelectListItem = this.createSelectListItem.bind(this);
+        this.load = this.load.bind(this);
+        this.load2 = this.load2.bind(this);
     }
     result () {
         return `Yo!`;
@@ -28,65 +31,74 @@ class OpenSettings extends Component {
                 file: ev.target.files[0]
         });
     }
+
     load (ev) {
-        var file = toString(this.state.file);
-        var userOpts = file.split('},');
-        console.log("userOpts: ", userOpts)
-        //
-        //this.props.opts = Object.assign(this.props.opts, userOpts);
+        var reader = new FileReader();
+        reader.readAsText(this.state.file);
+        reader.onload = function() {
+            //console.log("content: ", reader.result);
+            //console.info("state1", this.state.opts);
+            var userOpts = JSON.parse(reader.result);
+            this.state.opts = Object.assign(this.state.opts, userOpts);
+        }.bind(this);
+        //console.info("state1", this.state.opts);
+    }
+    load2 (ev) {
+        console.info("state1", this.state.opts);
     }
 
     saveState(ev) {
-        var state = this.state;
+        var state = this.state.opts;
         var currentState = {};
 
         Object.keys(state).forEach(function (option) {
-            //console.log("state1", state);
-           //console.info(option + " " + state[option]);
-
-            // currentState[i] = {};
-            // currentState[i][option.name] = option.value;
             currentState[option] = state[option];
         });
-       // for (i = 0; i < currentState.length; i++)
-            //console.info("currentState " + JSON.stringify(currentState));
-
        var blob = new Blob([JSON.stringify(currentState)], {type: 'application/json'});
-       fs.saveAs(blob, 'ketcher1');
+       fs.saveAs(blob, 'ketcher-settings');
     }
 
     changeState(ev) {
-        console.log("ev", ev.target.id);
-        console.log("state1", this.state);
-        console.log("11111111111");
-        var tmp = {};
-        tmp[ev.target.id] = ev.target.value;
-        Object.assign(this.state, tmp);
-        console.log("state1", this.state);
-        console.log("22222222222");
+         //console.log("ev", ev.target.value);
+        // console.log("state1", this.state.opts);
+        // console.log("11111111111");
+         var tmp = {};
+         tmp[ev.target.id] = ev.target.value;
+         this.state.opts = Object.assign(this.state.opts, tmp);
+        // console.log("state1", this.state.opts);
+        // console.log("22222222222");
     }
 
-    createSelectListItem(f, values, defaultOption, name) {
+    createSelectListItem(f, values, type, name) {
+        //console.log("state1", this.state.opts);
+        var opts = this.state.opts;
         var listComponents = values.map(function(value) {
             var booleanValue = false;
             if (value === "on")
                 booleanValue = true;
-
-            if (value === defaultOption) {
-                return ( <option value={booleanValue} selected="selected" > {value} </option>);
-            } else {
-                return ( <option value={booleanValue}> {value} </option>);
-            }
+            return ( <option value={booleanValue}> {value} </option>);
         });
         return (
             <li>
                 <output> { name } </output>
-                <select  id={name} onChange = { ev => f(ev, name) }>{listComponents}</select>
+                <select  id={name} onChange = { ev => f(ev, name) } value = {this.getValue(this.state.opts[name], type)}>{listComponents}</select>
             </li>
             );
     }
 
+    getValue (opt, type) {
+        if(type == "boolean") {
+            if (opt == true)
+                return "on";
+            else
+                return "off";
+        } else {
+            return opt;
+        }
+    }
+
     test(opts, tab) {
+        var state = this.state;
         var f = this.changeState;
         var createItem = this.createSelectListItem;
         var optsComponents = opts.map(function(elem) {
@@ -98,13 +110,17 @@ class OpenSettings extends Component {
                     defaultValue = "on";
                  else
                     defaultValue = "off";
+                // values = elem.values;
+                // defaultValue = state.opts[elem.name];
             } else{
                 values = elem.values;
                 defaultValue = elem.defaultValue;
+                //defaultValue = state.opts[elem.name];
+                //console.log("defaultValue", state.opts[elem.name]);
             }
             if (elem.tab === tab) {
                 return (
-                    createItem(f, values, defaultValue, elem.name)
+                    createItem(f, values, elem.type, elem.name)
                 );
             }
         });
@@ -119,6 +135,7 @@ class OpenSettings extends Component {
                      buttons={[
                         <input type="file" onChange={ ev => this.uploadSettings(ev) }/>,
                         <button onClick={ ev => this.load(ev) }>Load</button>,
+                        <button onClick={ ev => this.load2(ev) }>Load2</button>,
                         <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
                         <button>Reset</button>,
                         <button>Apply and Save</button>,

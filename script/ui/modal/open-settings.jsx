@@ -4,6 +4,7 @@ import { h, Component, render } from 'preact';
 import fs from 'filesaver.js';
 import Dialog from './dialog';
 import defaultOptions from './options';
+import Render from '../../render'
 
 class OpenSettings extends Component {
      constructor(props) {
@@ -35,12 +36,11 @@ class OpenSettings extends Component {
         reader.readAsText(this.state.file);
         reader.onload = function() {
             var userOpts = JSON.parse(reader.result);
-            this.state.opts = Object.assign(this.state.opts, userOpts);
+            var currentState = Object.assign(this.state.opts, userOpts);
+            this.setState({opts: currentState});
+
             localStorage.setItem("opts",  JSON.stringify(this.state.opts)); //?
         }.bind(this);
-    }
-    load2 (ev) {
-        console.info("state1", this.state.opts);
     }
 
     saveState(ev) {
@@ -59,6 +59,18 @@ class OpenSettings extends Component {
          tmp[ev.target.id] = ev.target.value;
          this.state.opts = Object.assign(this.state.opts, tmp);
          localStorage.setItem("opts",  JSON.stringify(this.state.opts));
+
+        //$('#canvas').empty();
+        var clientArea = $('#canvas')[0];
+        var render = new Render(clientArea, this.state.opts.bondLength, this.state.opts);
+        // getFile().then(function (struct) {
+        //     $('.loader')[0].style.display = 'none';
+        //     render.setMolecule(struct);
+        //     render.update();
+        // }, function (err) {
+        //     console.log('Error: ' + err);
+        // });
+
     }
 
     createSelectListItem(f, values, type, name) {

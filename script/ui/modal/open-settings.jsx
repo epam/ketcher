@@ -13,15 +13,13 @@ class OpenSettings extends Component {
         for (var i = 0; i < this.props.opts.length; i++) {
             tmp[this.props.opts[i].name] = this.props.opts[i].defaultValue;
         }
+        tmp = Object.assign(tmp,  JSON.parse(localStorage.getItem("opts")));
         this.setState({opts: tmp});
-        //Object.assign... from localstorage
-        console.log("state opts", this.state.opts);
 
         this.changeState = this.changeState.bind(this);
         this.saveState = this.saveState.bind(this);
         this.createSelectListItem = this.createSelectListItem.bind(this);
         this.load = this.load.bind(this);
-        this.load2 = this.load2.bind(this);
     }
     result () {
         return `Yo!`;
@@ -36,12 +34,10 @@ class OpenSettings extends Component {
         var reader = new FileReader();
         reader.readAsText(this.state.file);
         reader.onload = function() {
-            //console.log("content: ", reader.result);
-            //console.info("state1", this.state.opts);
             var userOpts = JSON.parse(reader.result);
             this.state.opts = Object.assign(this.state.opts, userOpts);
+            localStorage.setItem("opts",  JSON.stringify(this.state.opts)); //?
         }.bind(this);
-        //console.info("state1", this.state.opts);
     }
     load2 (ev) {
         console.info("state1", this.state.opts);
@@ -59,18 +55,13 @@ class OpenSettings extends Component {
     }
 
     changeState(ev) {
-         //console.log("ev", ev.target.value);
-        // console.log("state1", this.state.opts);
-        // console.log("11111111111");
          var tmp = {};
          tmp[ev.target.id] = ev.target.value;
          this.state.opts = Object.assign(this.state.opts, tmp);
-        // console.log("state1", this.state.opts);
-        // console.log("22222222222");
+         localStorage.setItem("opts",  JSON.stringify(this.state.opts));
     }
 
     createSelectListItem(f, values, type, name) {
-        //console.log("state1", this.state.opts);
         var opts = this.state.opts;
         var listComponents = values.map(function(value) {
             var booleanValue = false;
@@ -135,7 +126,6 @@ class OpenSettings extends Component {
                      buttons={[
                         <input type="file" onChange={ ev => this.uploadSettings(ev) }/>,
                         <button onClick={ ev => this.load(ev) }>Load</button>,
-                        <button onClick={ ev => this.load2(ev) }>Load2</button>,
                         <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
                         <button>Reset</button>,
                         <button>Apply and Save</button>,

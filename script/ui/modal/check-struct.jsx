@@ -4,36 +4,54 @@ import { h, Component, render } from 'preact';
 import Dialog from './dialog';
 import molfile from '../../chem/molfile';
 
+const checkScheckSchema = [
+	{ title: 'Valence', value: 'valence' },
+	{ title: 'Radical', value: 'radicals'},
+	{ title: 'Pseudoatom', value: 'pseudoatoms'},
+	{ title: 'Stereochemistry', value: 'stereo' },
+	{ title: 'Query', value: 'query' },
+	{ title: 'Overlapping Atoms', value: 'overlapping_atoms'},
+	{ title: '3D Structure', value: '3d'}
+];
+
 class CheckStruct extends Component {
     constructor(props) {
       super(props);
-      this.state.tabIndex = 0;
-      this.tabs = ['Check', 'Settings'];
-    }
+      this.state = {
+      		tabIndex: 0,
+      		data: {},
+      		checker: {},
+      	}
+  	}
     changeTab(ev, index) {
       this.setState({
-        tabIndex: index
+        tabIndex: index,
       });
+      if (index == 0)
+      	  this.doCheck();
       ev.preventDefault();
     }
     doCheck() {
+    	var checks = Object.keys(this.state.checker).filter(v => this.state.checker[v]);
         this.props.server.check({ struct: molfile.stringify(this.props.struct),
-                                  checks: ['valence', 'ambiguous_h', 'query', 'pseudoatoms',
-                                           'radicals', 'stereo', '3d', 'sgroups', 'v3000',
-                                           'rgroups', 'overlapping_atoms', 'overlapping_bonds' ] })
-            .then(res => console.info('CHECK RES', res));
-
+                                  checks: checks})
+            .then(res => this.setState({
+                	data: res
+                })
+           	)
     };
-    result () {
-        return `Yo!`;
+    checkItem(val) {
+    	this.state.checker[val] = !this.state.checker[val];
+    	this.setState(this.state.checker);
     }
     render (props) {
+    	var tabs = ['Check', 'Settings'];
         return (
             <Dialog caption="Structure Check"
                     name="check-struct" params={props}
-                    result={() => this.result()} buttons={[ "Cancel"]}>
+                    buttons={[ "Cancel"]}>
               <ul class="tabs">
-                { this.tabs.map((caption, index) => (
+                { tabs.map((caption, index) => (
                   <li class={this.state.tabIndex == index ? 'active' : ''}>
                      <a onClick={ ev => this.changeTab(ev, index) }>{caption}</a>
                   </li>
@@ -41,26 +59,31 @@ class CheckStruct extends Component {
                 }
               </ul>
               {[(
-                <div tabTitle = "Check">
-                    <output>info</output>
-                    <button onClick={() => this.doCheck() }>Do Checks</button>
+                <div>
+                <ul>{
+					checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
+                		<li><label>{item.title} Error<input type="text" disabled="true"
+                		                        value={this.state.data[item.value]}/></label></li>
+                	))
+                }
+                </ul>
                 </div>
                 ), (
-                <div tabTitle = "Setting">
-                 <input type="checkbox"/>Valence Check<br />
-                 <input type="checkbox"/>Radical Check<br />
-                 <input type="checkbox"/>Pseudoatom Check<br />
-                 <input type="checkbox"/>Stereochemistry Check<br />
-                 <input type="checkbox"/>Query Check<br />
-                 <input type="checkbox"/>Overlapping Atoms Check<br />
-                 <input type="checkbox"/>3D Structure Check<br />
+                <div>
+                <ul>{checkScheckSchema.map((item) =>(
+                	<li><label><input type="checkbox" checked={this.state.checker[item.value]}
+                				onClick={ev => this.checkItem(item.value)}/>
+                	{item.title} Check
+                	</label></li>
+                	))
+                }
+                </ul>
                 </div>
               )][this.state.tabIndex]}
             </Dialog>
         );
     }
 }
-
 
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];

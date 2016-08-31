@@ -23,8 +23,7 @@ class OpenSettings extends Component {
             tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
         }
 
-        //tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
-        tmp = Object.assign(tmp, JSON.parse(localStorage.getItem("opts")));
+        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
         this.setState({opts: tmp});
 
         this.changeState = this.changeState.bind(this);
@@ -33,7 +32,24 @@ class OpenSettings extends Component {
         this.load = this.load.bind(this);
     }
     result () {
-        return this.state.opts;
+        var opts = {};
+        for (var key in this.state.opts) {
+          if (this.state.opts.hasOwnProperty(key)) {
+            if (this.state.opts[key] === "on")
+                opts[key] = true;
+            else if (this.state.opts[key] === "off")
+                opts[key] = false;
+            else
+                opts[key] = this.state.opts[key];
+          }
+        }
+        //console.log("Opts", opts);
+
+        return {
+            opts: opts,
+            localStorageOpts: this.state.opts
+        };
+        //return this.state.opts;
     }
     uploadSettings(ev) {
         this.setState({

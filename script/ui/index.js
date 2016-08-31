@@ -788,10 +788,10 @@ var actionMap = {
 	},
 	'settings': function () {
 		dialog(modal.openSettings, { server: server }).then(function (res) {
-			localStorage.setItem("opts",  JSON.stringify(res));
-			// ui.render =  new Render(clientArea, SCALE, res);
-			// ui.render.setMolecule(ui.ctab);
-			// ui.render.update();
+			localStorage.setItem("opts",  JSON.stringify(res.localStorageOpts));
+			ui.render =  new Render(clientArea, SCALE, res.opts);
+			ui.render.setMolecule(ui.ctab);
+			ui.render.update();
 		});
 	}
 };

@@ -9,12 +9,12 @@ import Render from '../../render'
 class OpenSettings extends Component {
      constructor(props) {
         super(props);
-        this.props.opts = defaultOptions();
+        this.defOpts = defaultOptions();
         var tmp = {};
-        for (var i = 0; i < this.props.opts.length; i++) {
-            tmp[this.props.opts[i].name] = this.props.opts[i].defaultValue;
+        for (var i = 0; i < this.defOpts.length; i++) {
+            tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
         }
-        tmp = Object.assign(tmp,  JSON.parse(localStorage.getItem("opts")));
+        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
         this.setState({opts: tmp});
 
         this.changeState = this.changeState.bind(this);
@@ -59,18 +59,6 @@ class OpenSettings extends Component {
          tmp[ev.target.id] = ev.target.value;
          this.state.opts = Object.assign(this.state.opts, tmp);
          localStorage.setItem("opts",  JSON.stringify(this.state.opts));
-
-        //$('#canvas').empty();
-        var clientArea = $('#canvas')[0];
-        var render = new Render(clientArea, this.state.opts.bondLength, this.state.opts);
-        // getFile().then(function (struct) {
-        //     $('.loader')[0].style.display = 'none';
-        //     render.setMolecule(struct);
-        //     render.update();
-        // }, function (err) {
-        //     console.log('Error: ' + err);
-        // });
-
     }
 
     createSelectListItem(f, values, type, name) {
@@ -149,35 +137,35 @@ class OpenSettings extends Component {
                         <input type="checkbox" class="menu" id="atoms" checked></input>
                             <label for="atoms">Atoms</label>
                                 <ul>
-                                    { this.test(props.opts, "atoms") }
+                                    { this.test(this.defOpts, "atoms") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="attachedData" checked></input>
                             <label for="attachedData">Attached data</label>
                                 <ul>
-                                    { this.test(props.opts, "attachedData") }
+                                    { this.test(this.defOpts, "attachedData") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="bonds" checked></input>
                             <label for="bonds">Bonds</label>
                                 <ul>
-                                    { this.test(props.opts, "bonds") }
+                                    { this.test(this.defOpts, "bonds") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="scaling" checked></input>
                             <label for="scaling">Scaling</label>
                                 <ul>
-                                    { this.test(props.opts, "scaling") }
+                                    { this.test(this.defOpts, "scaling") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="chemul" checked></input>
                             <label for="chemul">Chemul</label>
                                 <ul>
-                                    { this.test(props.opts, "chemul") }
+                                    { this.test(this.defOpts, "chemul") }
                                 </ul>
                     </li>    
                 </ul>

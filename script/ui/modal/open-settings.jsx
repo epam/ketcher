@@ -10,8 +10,16 @@ class OpenSettings extends Component {
      constructor(props) {
         super(props);
         this.defOpts = defaultOptions();
+
         var tmp = {};
         for (var i = 0; i < this.defOpts.length; i++) {
+            if (this.defOpts[i].type === "boolean") {
+                this.defOpts[i].values = ["on", "off"];
+                if (this.defOpts[i].defaultValue === true)
+                    this.defOpts[i].defaultValue = "on";
+                else
+                    this.defOpts[i].defaultValue = "off";
+            }
             tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
         }
 
@@ -21,7 +29,7 @@ class OpenSettings extends Component {
 
         this.changeState = this.changeState.bind(this);
         this.saveState = this.saveState.bind(this);
-        this.createSelectListItem = this.createSelectListItem.bind(this);
+        this.createSelectList = this.createSelectList.bind(this);
         this.load = this.load.bind(this);
     }
     result () {
@@ -58,81 +66,30 @@ class OpenSettings extends Component {
          var tmp = {};
          console.log(ev.target.name, "ev.target.value", ev.target.value);
          tmp[ev.target.id] = ev.target.value;
-         //this.state.opts = Object.assign(this.state.opts, tmp);
-         this.setState({opts: Object.assign(this.state.opts, tmp)});
+         this.state.opts = Object.assign(this.state.opts, tmp);
     }
 
-    createSelectListItem(f, values, type, name) {
+    createSelectList(f, values, type, name) {
         var opts = this.state.opts;
-        //console.log("values", values);
         var listComponents = values.map(function(value) {
-            // var booleanValue = false;
-            // if (value === "on")
-            //     booleanValue = true;
-            // return ( <option value={booleanValue}> {value} </option>);
-            var strValue;
-            if (type === "boolean") {
-                strValue = "off";
-                if (value === true)
-                    strValue = "on";
-            } else {
-                strValue = value;
-            }
-            return ( <option value={value}> {strValue} </option>);
+            return ( <option value={value}> {value} </option>);
         });
-        //console.log(name, this.state.opts[name])
         return (
             <li>
                 <output> { name } </output>
-                <select  id={name} onChange = { ev => f(ev, name) } value = {this.getValue(this.state.opts[name], type)}>{listComponents}</select>
+                <select  id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select>
             </li>
-            );
-    }
-
-    getValue (opt, type) {
-        if(type == "boolean") {
-            //console.log("opt", opt, type);
-            if (Boolean(opt) == true)
-                return "on";
-            //else
-                return "off";
-        } else {
-            return opt;
-        }
+        );
     }
 
     draw(opts, tab) {
         var state = this.state;
-        var f = this.changeState;
-        var createItem = this.createSelectListItem;
+        var changeState = this.changeState;
+        var createSelectList = this.createSelectList;
         var optsComponents = opts.map(function(elem) {
-            var values;
-            var defaultValue;
-            // if (elem.type === 'boolean') {
-            //     // values = elem.values;
-            //     // defaultValue = elem.defaultValue;
-            //     // console.log(elem.name + " values:" + values + " defaultValue:");
-            //     values = ['on', 'off'];
-            //     if (elem.defaultValue === true)
-            //         defaultValue = "on";
-            //      else
-            //         defaultValue = "off";
-            //     // values = elem.values;
-            //     // defaultValue = state.opts[elem.name];
-            // } else{
-            //     values = elem.values;
-            //     defaultValue = elem.defaultValue;
-            //     //defaultValue = state.opts[elem.name];
-            //     //console.log("defaultValue", state.opts[elem.name]);
-            // 
-            if (elem.type === 'boolean')
-                values = [true, false];
-            else
-                values = elem.values;
-
             if (elem.tab === tab) {
                 return (
-                    createItem(f, values, elem.type, elem.name)
+                    createSelectList(changeState, elem.values, elem.type, elem.name)
                 );
             }
         });

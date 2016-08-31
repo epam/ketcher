@@ -14,7 +14,9 @@ class OpenSettings extends Component {
         for (var i = 0; i < this.defOpts.length; i++) {
             tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
         }
-        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
+
+        //tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
+        tmp = Object.assign(tmp, JSON.parse(localStorage.getItem("opts")));
         this.setState({opts: tmp});
 
         this.changeState = this.changeState.bind(this);
@@ -23,7 +25,7 @@ class OpenSettings extends Component {
         this.load = this.load.bind(this);
     }
     result () {
-        return `Yo!`;
+        return this.state.opts;
     }
     uploadSettings(ev) {
         this.setState({
@@ -38,8 +40,6 @@ class OpenSettings extends Component {
             var userOpts = JSON.parse(reader.result);
             var currentState = Object.assign(this.state.opts, userOpts);
             this.setState({opts: currentState});
-
-            localStorage.setItem("opts",  JSON.stringify(this.state.opts)); //?
         }.bind(this);
     }
 
@@ -56,19 +56,31 @@ class OpenSettings extends Component {
 
     changeState(ev) {
          var tmp = {};
+         console.log(ev.target.name, "ev.target.value", ev.target.value);
          tmp[ev.target.id] = ev.target.value;
-         this.state.opts = Object.assign(this.state.opts, tmp);
-         localStorage.setItem("opts",  JSON.stringify(this.state.opts));
+         //this.state.opts = Object.assign(this.state.opts, tmp);
+         this.setState({opts: Object.assign(this.state.opts, tmp)});
     }
 
     createSelectListItem(f, values, type, name) {
         var opts = this.state.opts;
+        //console.log("values", values);
         var listComponents = values.map(function(value) {
-            var booleanValue = false;
-            if (value === "on")
-                booleanValue = true;
-            return ( <option value={booleanValue}> {value} </option>);
+            // var booleanValue = false;
+            // if (value === "on")
+            //     booleanValue = true;
+            // return ( <option value={booleanValue}> {value} </option>);
+            var strValue;
+            if (type === "boolean") {
+                strValue = "off";
+                if (value === true)
+                    strValue = "on";
+            } else {
+                strValue = value;
+            }
+            return ( <option value={value}> {strValue} </option>);
         });
+        //console.log(name, this.state.opts[name])
         return (
             <li>
                 <output> { name } </output>
@@ -79,36 +91,45 @@ class OpenSettings extends Component {
 
     getValue (opt, type) {
         if(type == "boolean") {
-            if (opt == true)
+            //console.log("opt", opt, type);
+            if (Boolean(opt) == true)
                 return "on";
-            else
+            //else
                 return "off";
         } else {
             return opt;
         }
     }
 
-    test(opts, tab) {
+    draw(opts, tab) {
         var state = this.state;
         var f = this.changeState;
         var createItem = this.createSelectListItem;
         var optsComponents = opts.map(function(elem) {
             var values;
             var defaultValue;
-            if (elem.type === 'boolean') {
-                values = ['on', 'off'];
-                if (elem.defaultValue === true)
-                    defaultValue = "on";
-                 else
-                    defaultValue = "off";
-                // values = elem.values;
-                // defaultValue = state.opts[elem.name];
-            } else{
+            // if (elem.type === 'boolean') {
+            //     // values = elem.values;
+            //     // defaultValue = elem.defaultValue;
+            //     // console.log(elem.name + " values:" + values + " defaultValue:");
+            //     values = ['on', 'off'];
+            //     if (elem.defaultValue === true)
+            //         defaultValue = "on";
+            //      else
+            //         defaultValue = "off";
+            //     // values = elem.values;
+            //     // defaultValue = state.opts[elem.name];
+            // } else{
+            //     values = elem.values;
+            //     defaultValue = elem.defaultValue;
+            //     //defaultValue = state.opts[elem.name];
+            //     //console.log("defaultValue", state.opts[elem.name]);
+            // 
+            if (elem.type === 'boolean')
+                values = [true, false];
+            else
                 values = elem.values;
-                defaultValue = elem.defaultValue;
-                //defaultValue = state.opts[elem.name];
-                //console.log("defaultValue", state.opts[elem.name]);
-            }
+
             if (elem.tab === tab) {
                 return (
                     createItem(f, values, elem.type, elem.name)
@@ -130,42 +151,42 @@ class OpenSettings extends Component {
                         <button>Reset</button>,
                         <button>Apply and Save</button>,
                         <button>Apply</button>,
-                        "Cancel"]}>
+                        "OK", "Cancel"]}>
             <div>
                 <ul class="accordion-menu">
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="atoms" checked></input>
                             <label for="atoms">Atoms</label>
                                 <ul>
-                                    { this.test(this.defOpts, "atoms") }
+                                    { this.draw(this.defOpts, "atoms") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="attachedData" checked></input>
                             <label for="attachedData">Attached data</label>
                                 <ul>
-                                    { this.test(this.defOpts, "attachedData") }
+                                    { this.draw(this.defOpts, "attachedData") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="bonds" checked></input>
                             <label for="bonds">Bonds</label>
                                 <ul>
-                                    { this.test(this.defOpts, "bonds") }
+                                    { this.draw(this.defOpts, "bonds") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="scaling" checked></input>
                             <label for="scaling">Scaling</label>
                                 <ul>
-                                    { this.test(this.defOpts, "scaling") }
+                                    { this.draw(this.defOpts, "scaling") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="chemul" checked></input>
                             <label for="chemul">Chemul</label>
                                 <ul>
-                                    { this.test(this.defOpts, "chemul") }
+                                    { this.draw(this.defOpts, "chemul") }
                                 </ul>
                     </li>    
                 </ul>

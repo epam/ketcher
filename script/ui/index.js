@@ -787,7 +787,12 @@ var actionMap = {
 		}, echo);
 	},
 	'settings': function () {
-		dialog(modal.openSettings);
+		dialog(modal.openSettings, { server: server }).then(function (res) {
+			localStorage.setItem("opts",  JSON.stringify(res));
+			// ui.render =  new Render(clientArea, SCALE, res);
+			// ui.render.setMolecule(ui.ctab);
+			// ui.render.update();
+		});
 	}
 };
 

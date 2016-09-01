@@ -788,7 +788,7 @@ var actionMap = {
 	},
 	'settings': function () {
 		dialog(modal.openSettings, { server: server }).then(function (res) {
-			localStorage.setItem("opts",  JSON.stringify(res.localStorageOpts));
+			localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
 			ui.render =  ui.editor.render = new Render(clientArea, SCALE, res.opts);
 			ui.render.setMolecule(ui.ctab);
 			ui.render.update();

@@ -23,7 +23,7 @@ class OpenSettings extends Component {
             tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
         }
 
-        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("opts")));
+        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
         this.setState({opts: tmp});
 
         this.changeState = this.changeState.bind(this);

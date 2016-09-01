@@ -43,14 +43,12 @@ class OpenSettings extends Component {
                 opts[key] = this.state.opts[key];
           }
         }
-        //console.log("Opts", opts);
-
         return {
             opts: opts,
             localStorageOpts: this.state.opts
         };
-        //return this.state.opts;
     }
+
     uploadSettings(ev) {
         this.setState({
                 file: ev.target.files[0]
@@ -80,7 +78,6 @@ class OpenSettings extends Component {
 
     changeState(ev) {
          var tmp = {};
-         console.log(ev.target.name, "ev.target.value", ev.target.value);
          tmp[ev.target.id] = ev.target.value;
          this.state.opts = Object.assign(this.state.opts, tmp);
     }

@@ -13,7 +13,8 @@ class RecognizeMolecule extends Component {
         this.state = {
             file: null,
             struct: null,
-            fragment: false
+            fragment: false,
+            recognised: false
         }
     }
     result () {
@@ -36,7 +37,8 @@ class RecognizeMolecule extends Component {
     recognize() {
         this.setState({ struct: 'recognizing' });
         this.props.server.recognize(this.state.file).then(res => {
-            this.setState({ struct: molfile.parse(res.struct) });
+            this.state.recognised = true;
+            this.setState({struct: molfile.parse(res.struct) });
         })
     }
     renderRes(el) {
@@ -59,7 +61,9 @@ class RecognizeMolecule extends Component {
                 buttons={[
                     ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
                     this.state.file ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
-                    "Cancel", "OK"]}>
+                    "Cancel",
+                    this.state.recognised ? ( "OK" ) : null
+                    ]}>
                 <div>
                 <img id="pic" src={this.state.file ? this.url() : ""} onError={ ev => console.info('error') }/>
                 { this.state.struct ? ( 

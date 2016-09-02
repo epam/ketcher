@@ -25,7 +25,6 @@ DEBUG.logMethod = function () { };
 
 var defaultRenderOps = {
 	// flags for debugging
-	showSelectionRegions: false,
 	showAtomIds: false,
 	showBondIds: false,
 	showHalfBondIds: false,
@@ -36,7 +35,7 @@ var defaultRenderOps = {
 	autoScale: false, // scale structure to fit into the given view box, used in view mode
 	autoScaleMargin: 0,
 	maxBondLength: 0, // 0 stands for "not specified"
-	atomColoring: 0,
+	atomColoring: false,
 	hideImplicitHydrogen: false,
 	hideTerminalLabels: false,
 	selectionDistanceCoefficient: 0.4

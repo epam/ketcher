@@ -82,14 +82,14 @@ class OpenSettings extends Component {
          this.state.opts = Object.assign(this.state.opts, tmp);
     }
 
-    createSelectList(f, values, type, name) {
+    createSelectList(f, values, type, name, label) {
         var opts = this.state.opts;
         var listComponents = values.map(function(value) {
             return ( <option value={value}> {value} </option>);
         });
         return (
             <li>
-                <output> { name } </output>
+                <output> { label } </output>
                 <select  id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select>
             </li>
         );
@@ -102,7 +102,7 @@ class OpenSettings extends Component {
         var optsComponents = opts.map(function(elem) {
             if (elem.tab === tab) {
                 return (
-                    createSelectList(changeState, elem.values, elem.type, elem.name)
+                    createSelectList(changeState, elem.values, elem.type, elem.name, elem.label)
                 );
             }
         });
@@ -126,39 +126,18 @@ class OpenSettings extends Component {
                 <ul class="accordion-menu">
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="atoms" checked></input>
-                            <label for="atoms">Atoms</label>
+                            <label for="atoms">Options for debugging</label>
                                 <ul>
-                                    { this.draw(this.defOpts, "atoms") }
-                                </ul>
-                    </li>
-                    <li class="has-children">
-                        <input type="checkbox" class="menu" id="attachedData" checked></input>
-                            <label for="attachedData">Attached data</label>
-                                <ul>
-                                    { this.draw(this.defOpts, "attachedData") }
+                                    { this.draw(this.defOpts, "debug") }
                                 </ul>
                     </li>
                     <li class="has-children">
                         <input type="checkbox" class="menu" id="bonds" checked></input>
-                            <label for="bonds">Bonds</label>
+                            <label for="bonds">Rendering customization options</label>
                                 <ul>
-                                    { this.draw(this.defOpts, "bonds") }
+                                    { this.draw(this.defOpts, "render") }
                                 </ul>
-                    </li>
-                    <li class="has-children">
-                        <input type="checkbox" class="menu" id="scaling" checked></input>
-                            <label for="scaling">Scaling</label>
-                                <ul>
-                                    { this.draw(this.defOpts, "scaling") }
-                                </ul>
-                    </li>
-                    <li class="has-children">
-                        <input type="checkbox" class="menu" id="chemul" checked></input>
-                            <label for="chemul">Chemul</label>
-                                <ul>
-                                    { this.draw(this.defOpts, "chemul") }
-                                </ul>
-                    </li>    
+                    </li>  
                 </ul>
             </div>
             </Dialog>

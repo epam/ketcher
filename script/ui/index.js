@@ -48,9 +48,22 @@ function init (opts, apiServer) {
 	server = apiServer;
 	options = opts;
 
+	var currentOptions = {};
+	var defOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
+    for (var key in defOpts) {
+    	if (defOpts.hasOwnProperty(key)) {
+    		if (defOpts[key] === "on")
+	            currentOptions[key] = true;
+	        else if (defOpts[key] === "off")
+	            currentOptions[key] = false;
+	        else
+	            currentOptions[key] = defOpts[key];
+      	}
+    }
+
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,
-	                        Object.assign({ atomColoring: true }, options));
+	                        Object.assign({ atomColoring: true }, options, currentOptions));
 	ui.editor = new Editor(ui.render);
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();

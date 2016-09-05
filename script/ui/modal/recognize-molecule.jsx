@@ -13,7 +13,8 @@ class RecognizeMolecule extends Component {
         this.state = {
             file: null,
             struct: null,
-            fragment: false
+            fragment: false,
+            recognised: false
         }
     }
     result () {
@@ -36,7 +37,8 @@ class RecognizeMolecule extends Component {
     recognize() {
         this.setState({ struct: 'recognizing' });
         this.props.server.recognize(this.state.file).then(res => {
-            this.setState({ struct: molfile.parse(res.struct) });
+            this.state.recognised = true;
+            this.setState({struct: molfile.parse(res.struct) });
         })
     }
     renderRes(el) {

@@ -11,26 +11,33 @@ class OpenSettings extends Component {
         super(props);
         this.defOpts = defaultOptions();
 
-        var tmp = {};
-        for (var i = 0; i < this.defOpts.length; i++) {
-            if (this.defOpts[i].type === "boolean") {
-                this.defOpts[i].values = ["on", "off"];
-                if (this.defOpts[i].defaultValue === true)
-                    this.defOpts[i].defaultValue = "on";
-                else
-                    this.defOpts[i].defaultValue = "off";
-            }
-            tmp[this.defOpts[i].name] = this.defOpts[i].defaultValue;
-        }
-
-        tmp = Object.assign(tmp, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
-        this.setState({opts: tmp});
+        var opts = this.getDefOpts (this.defOpts);
+        opts = Object.assign(opts, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
+        this.setState({opts: opts});
 
         this.changeState = this.changeState.bind(this);
         this.saveState = this.saveState.bind(this);
         this.createSelectList = this.createSelectList.bind(this);
         this.load = this.load.bind(this);
     }
+
+    getDefOpts (defOpts) {
+        var tmp = {};
+        for (var i = 0; i < defOpts.length; i++) {
+            if (defOpts[i].type === "boolean") {
+                this.defOpts[i].values = ["on", "off"];
+                if (defOpts[i].defaultValue === true)
+                    defOpts[i].defaultValue = "on";
+                else
+                    defOpts[i].defaultValue = "off";
+            }
+            tmp[defOpts[i].name] = defOpts[i].defaultValue;
+        }
+
+        return tmp;
+
+    }
+
     result () {
         var opts = {};
         for (var key in this.state.opts) {
@@ -109,6 +116,11 @@ class OpenSettings extends Component {
         return <div>{optsComponents}</div>;
     }
 
+    reset(ev) {
+        var opts = this.getDefOpts (this.defOpts);
+        this.setState({opts: opts});
+    }
+
     render (props) {
         return (
             <Dialog caption="Settings"
@@ -118,9 +130,7 @@ class OpenSettings extends Component {
                         <input type="file" onChange={ ev => this.uploadSettings(ev) }/>,
                         <button onClick={ ev => this.load(ev) }>Load</button>,
                         <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
-                        <button>Reset</button>,
-                        <button>Apply and Save</button>,
-                        <button>Apply</button>,
+                        <button onClick={ ev => this.reset(ev) }>Reset</button>,
                         "OK", "Cancel"]}>
             <div>
                 <ul class="accordion-menu">

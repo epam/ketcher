@@ -62,7 +62,7 @@ class RecognizeMolecule extends Component {
                     ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
                     this.state.file ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel",
-                    this.state.struct == 'recognizing' ? null : ( "OK" )
+                    (this.state.struct && this.state.struct !== 'recognizing') ? ( "OK" ) : null
                     ]}>
                 <div>
                 <img id="pic" src={this.state.file ? this.url() : ""} onError={ ev => console.info('error') }/>

@@ -11,6 +11,10 @@ class OpenSettings extends Component {
         super(props);
         this.defOpts = defaultOptions();
 
+        this.state = {
+            onlyCurrentSession: false
+        }
+
         var opts = this.getDefOpts (this.defOpts);
         opts = Object.assign(opts, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
         this.setState({opts: opts});
@@ -52,7 +56,8 @@ class OpenSettings extends Component {
         }
         return {
             opts: opts,
-            localStorageOpts: this.state.opts
+            localStorageOpts: this.state.opts,
+            onlyCurrentSession: this.state.onlyCurrentSession
         };
     }
 
@@ -121,6 +126,10 @@ class OpenSettings extends Component {
         this.setState({opts: opts});
     }
 
+    apply(ev) {
+        this.setState({onlyCurrentSession: true});
+    }
+
     render (props) {
         return (
             <Dialog caption="Settings"
@@ -150,6 +159,10 @@ class OpenSettings extends Component {
                     </li>  
                 </ul>
             </div>
+            <label class="open block">
+                <input type="checkbox" onChange={ ev => this.reset(ev) }></input>
+                Only for current session
+            </label>
             </Dialog>
         );
     }

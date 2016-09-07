@@ -44,6 +44,25 @@ function opts() {
         label: 'Do not show the Chiral flag',
         type: 'boolean',
         defaultValue: false,
+        tab: 'render' },
+
+        { name: 'lineWidth',
+        label: 'Line width',
+        type: 'number',
+        defaultValue: 2,
+        values: [2, 4, 6], //?
+        tab: 'render' },
+        { name: 'margin',
+        label: 'Margin',
+        type: 'number',
+        defaultValue: 0.1,
+        values: [0.1, 0.2], //?
+        tab: 'render' },
+        { name: 'labelFontSize',
+        label: 'Label font size',
+        type: 'number',
+        defaultValue: 13,
+        values: [10, 13, 100], //?
         tab: 'render' }
     ];
 }

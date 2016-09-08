@@ -35,8 +35,8 @@ var clientArea = null;
 var server;
 var options;
 
-var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
-                     'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
+var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
+                     'reaction-automap', 'template-lib', 'recognize', 'check', 'analyse'];
 
 var clipActions = ['cut', 'copy', 'paste'];
 
@@ -310,7 +310,7 @@ function initHotKeys(toolbar, scope) {
 		'defmod-a': ['select-all'],
 		'defmod-shift-a': ['deselect-all'],
 		'ctrl-shift-r': ['force-update'],
-		'alt-shift-r': ['mol-serialize']
+		'alt-shift-r': ['qs-serialize']
 	};
 
 	toolbar.select('button').each(function (el) {
@@ -751,7 +751,7 @@ var actionMap = {
 		// original: for dev purposes
 		ui.render.update(true);
 	},
-	'mol-serialize': function () {
+	'qs-serialize': function () {
 		var molStr = molfile.stringify(ui.ctab);
 		var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
 		var qs = document.location.search;
@@ -760,8 +760,8 @@ var actionMap = {
 			qs.replace(/mol=[^&$]*/, molQs);
 	},
 	'reaction-automap': automap,
-	'calc-cip': calculateCip,
-	'recognize-molecule': function () {
+	'cip': calculateCip,
+	'recognize': function () {
 		dialog(modal.recognizeMolecule, { server: server }).then(function (res) {
 			if (res.fragment) {
 				//struct.rescale();
@@ -771,13 +771,13 @@ var actionMap = {
 				updateMolecule(res.struct);
 		});
 	},
-	'check-struct': function () {
+	'check': function () {
 		dialog(modal.checkStruct, {
 			struct: ui.ctab,
 			server: server
 		});
 	},
-	'calc-val': function () {
+	'analyse': function () {
 		server.calculate({
 			struct: molfile.stringify(ui.ctab),
 			properties: ['molecular-weight', 'most-abundant-mass',

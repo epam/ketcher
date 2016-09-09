@@ -36,7 +36,10 @@ var server;
 var options;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
-                     'reaction-automap', 'template-lib', 'recognize', 'check', 'analyse'];
+                     'reaction-automap', 'template-lib', 'recognize',
+                     'check', 'analyse'];
+
+var addionalAttoms = [];
 
 var clipActions = ['cut', 'copy', 'paste'];
 
@@ -48,9 +51,22 @@ function init (opts, apiServer) {
 	server = apiServer;
 	options = opts;
 
+	var currentOptions = {};
+	var defOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
+    for (var key in defOpts) {
+    	if (defOpts.hasOwnProperty(key)) {
+    		if (defOpts[key] === "on")
+	            currentOptions[key] = true;
+	        else if (defOpts[key] === "off")
+	            currentOptions[key] = false;
+	        else
+	            currentOptions[key] = defOpts[key];
+      	}
+    }
+
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,
-	                        Object.assign({ atomColoring: true }, options));
+	                        Object.assign({ atomColoring: true }, options, currentOptions));
 	ui.editor = new Editor(ui.render);
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();
@@ -75,6 +91,7 @@ function init (opts, apiServer) {
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
+	updateAtoms();
 
 	initHotKeys(toolbar, 'editor');
 	labelEditKeys('editor.label', 'a-z0-9');
@@ -109,6 +126,26 @@ function init (opts, apiServer) {
 		popAction(toolbar);
 	});
 };
+
+
+function updateAtoms() {
+	if (addionalAttoms.length > 0) {
+		var al = "<menu>" + addionalAttoms.reduce(function (res, atom) {
+			return res + "<li id=\"atom-" + atom.toLowerCase() +
+			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
+			            atom + "</button></li>";
+		}, "") + "</menu>";
+		var cont = toolbar.select('#freq-atom')[0];
+		if (!cont) {
+			var sa = toolbar.select('#atom')[0];
+			sa.insert({ after: "<li id=\"freq-atoms\"/>" });
+			cont = sa.nextElementSibling;
+			console.info(cont, sa);
+		}
+		cont.update(al);
+		initDropdown(cont);
+	}
+}
 
 function shortcutStr(key) {
 	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -282,7 +319,7 @@ function initCliparea(parent) {
 	parent.insert(cliparea);
 	parent.on('mouseup', autofocus);
 
-	// ? events should be attached to document
+	// ? events should be attached to documen\t
 	['copy', 'cut'].forEach(function (action) {
 		parent.on(action, function (event) {
 			if (autofocus()) {
@@ -785,6 +822,17 @@ var actionMap = {
 		}).then(function (values) {
 			return dialog(modal.calculatedValues, values, true);
 		}, echo);
+	},
+	'settings': function () {
+		dialog(modal.openSettings, { server: server }).then(function (res) {
+			if (res.onlyCurrentSession)
+				localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
+			else
+				localStorage.setItem("ketcher-opts",  '{}');
+			ui.render =  ui.editor.render = new Render(clientArea, SCALE, res.opts);
+			ui.render.setMolecule(ui.ctab);
+			ui.render.update();
+		});
 	}
 };
 

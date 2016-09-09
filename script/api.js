@@ -49,7 +49,7 @@ function api(base, defaultOptions) {
 	function indigoCall(method, url, defaultData) {
 		return function (data, options) {
 			var body = Object.assign({}, defaultData, data);
-			body.indigo_options = Object.assign(body.indigo_options || {},
+			body.options = Object.assign(body.options || {},
 			                                    defaultOptions, options);
 			return request(method, url, JSON.stringify(body), {
 				'Content-Type': 'application/json'

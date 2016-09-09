@@ -25,7 +25,6 @@ DEBUG.logMethod = function () { };
 
 var defaultRenderOps = {
 	// flags for debugging
-	showSelectionRegions: false,
 	showAtomIds: false,
 	showBondIds: false,
 	showHalfBondIds: false,
@@ -36,7 +35,7 @@ var defaultRenderOps = {
 	autoScale: false, // scale structure to fit into the given view box, used in view mode
 	autoScaleMargin: 0,
 	maxBondLength: 0, // 0 stands for "not specified"
-	atomColoring: 0,
+	atomColoring: false,
 	hideImplicitHydrogen: false,
 	hideTerminalLabels: false,
 	selectionDistanceCoefficient: 0.4
@@ -401,22 +400,26 @@ Render.prototype.initStyles = function () {
 };
 
 Render.prototype.initSettings = function () {
-	var settings = this.settings = {};
-	settings.delta = this.ctab.molecule.getCoordBoundingBox();
-	settings.margin = 0.1;
-	settings.scaleFactor = this.scale;
-	settings.lineWidth = settings.scaleFactor / 20;
-	settings.bondShift = settings.scaleFactor / 6;
-	settings.bondSpace = settings.scaleFactor / 7;
-	settings.labelFontSize = Math.ceil(1.9 * (settings.scaleFactor / 6)); // TODO: don't round?
-	settings.subFontSize = Math.ceil(0.7 * settings.labelFontSize);
-	// font size is not determined by the number in this string,
-	//  but by the 'font-size' property
-	settings.font = '30px "Arial"';
-	settings.fontsz = this.settings.labelFontSize;
-	settings.fontszsub = this.settings.subFontSize;
-	settings.fontRLabel = this.settings.labelFontSize * 1.2;
-	settings.fontRLogic = this.settings.labelFontSize * 0.7;
+	var scaleFactor = this.scale;
+	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
+	var subFontSize = Math.ceil(0.7 * labelFontSize);
+	var defaultSettings = {
+		delta: this.ctab.molecule.getCoordBoundingBox(),
+		margin: 0.1,
+		scaleFactor: scaleFactor,
+		lineWidth: scaleFactor / 20,
+		bondShift: scaleFactor / 6,
+		bondSpace: scaleFactor / 7,
+		labelFontSize: labelFontSize,
+		subFontSize: subFontSize,
+		font: '30px "Arial"',
+		fontsz: labelFontSize,
+		fontszsub: subFontSize,
+		fontRLabel: labelFontSize * 1.2,
+		fontRLogic: labelFontSize * 0.7
+
+	};
+	this.settings = Object.assign({}, defaultSettings);
 };
 
 Render.prototype.getStructCenter = function (selection) {

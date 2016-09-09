@@ -35,6 +35,8 @@ var clientArea = null;
 var server;
 var options;
 
+var addionalAttoms = ["Y", "Zr", "Nb"];
+
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
 
@@ -88,6 +90,7 @@ function init (opts, apiServer) {
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
+	updateAtoms();
 
 	initHotKeys(toolbar, 'editor');
 	labelEditKeys('editor.label', 'a-z0-9');
@@ -122,6 +125,26 @@ function init (opts, apiServer) {
 		popAction(toolbar);
 	});
 };
+
+
+function updateAtoms() {
+	if (addionalAttoms.length > 0) {
+		var al = "<menu>" + addionalAttoms.reduce(function (res, atom) {
+			return res + "<li id=\"atom-" + atom.toLowerCase() +
+			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
+			            atom + "</button></li>";
+		}, "") + "</menu>";
+		var cont = toolbar.select('#freq-atom')[0];
+		if (!cont) {
+			var sa = toolbar.select('#atom')[0];
+			sa.insert({ after: "<li id=\"freq-atoms\"/>" });
+			cont = sa.nextElementSibling;
+			console.info(cont, sa);
+		}
+		cont.update(al);
+		initDropdown(cont);
+	}
+}
 
 function shortcutStr(key) {
 	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
@@ -194,6 +217,9 @@ function selectAction (action) {
 	if (clipActions.indexOf(action) != -1 && args.length == 0)
 		return delegateCliparea(action);
 
+	if (action.startsWith('atom-')) {
+		console.info('atom', action);
+	}
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);

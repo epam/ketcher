@@ -760,8 +760,11 @@ var actionMap = {
 		return { tool: 'paste', opts: struct };
 	},
 	info: function () {
+		var about = dialog.bind(null, modal.about);
 		server.then(function (res) {
-			return dialog(modal.about, Object.assign(res, options));
+			return about(Object.assign(res, options));
+		}, function () {
+			return about(options);
 		});
 	},
 	'select-all': function () {

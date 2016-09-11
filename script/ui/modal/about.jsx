@@ -24,10 +24,15 @@ function About(props) {
 						at <time>props.buildDate}</time>
 					</dd> ) : null
 				}
-		<dt>
-		<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo Toolkit</a>
-		</dt>
-		<dd>version <var>{props.indigoVersion}</var></dd>
+				{ props.indigoVersion ? (
+				<div><dt>
+				<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo Toolkit</a>
+				</dt>
+					<dd>version <var>{props.indigoVersion}</var></dd></div>
+				) : (
+				 <dd>standalone</dd>
+				 )
+				}
 		<dt>
 		<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>
 		</dt>

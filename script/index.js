@@ -63,10 +63,16 @@ window.onload = function () {
 	var params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.apiPath = params.api_path;
-	ketcher.server = api(ketcher.apiPath, {
+	var server = ketcher.server = api(ketcher.apiPath, {
 		'smart-layout': 'false'
 	});
-	ui.init(Object.assign({}, params, buildInfo), ketcher.server);
+	server.then(function () {
+		if (params.mol)
+			ui.loadMolecule(params.mol);
+	}, function () {
+		document.title += ' (standalone)';
+	});
+	ui.init(Object.assign({}, params, buildInfo), server);
 };
 
 var buildInfo = {

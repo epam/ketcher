@@ -48,7 +48,8 @@ function init (opts, apiServer) {
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('canvas');
 
-	server = apiServer;
+	server = apiServer ||
+		Promise.reject("Standalone mode!");
 	options = opts;
 
 	var currentOptions = {};
@@ -71,23 +72,6 @@ function init (opts, apiServer) {
 	ui.render.setMolecule(ui.ctab);
 	ui.render.update();
 
-	if (server) { // && ['http:', 'https:'].indexOf(window.location.protocol) >= 0) {
-		// don't try to knock if the file is opened locally ("file:" protocol)
-		// TODO: check when this is nesessary
-		server.then(function (res) {
-			updateServerButtons();
-		}, function (val) {
-			document.title += ' (standalone)';
-			// TODO: echo instead
-		}).then(function () {
-			// TODO: move it out there as server incapsulates
-			// standalone
-			if (options.mol) {
-				loadMolecule(options.mol);
-			}
-		});
-	}
-
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
@@ -106,6 +90,11 @@ function init (opts, apiServer) {
 	updateHistoryButtons();
 	updateClipboardButtons();
 	updateServerButtons(true);
+	server.then(function () {
+		updateServerButtons();
+	}, function (err) {
+		echo(err);
+	});
 
 	clientArea.on('mousedown', function (event) {
 		if (dropdownToggle(toolbar))
@@ -554,8 +543,6 @@ function serverTransform(method, mol, options) {
 		return server[method](Object.assign({
 			struct: molfile.stringify(mol, { ignoreErrors: true })
 		}, options));
-	}, function (err) {
-		throw 'Call server in standalone mode!\n' + err;
 	});
 	//utils.loading('show');
 	request.then(function (res) {

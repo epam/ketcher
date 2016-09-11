@@ -28,6 +28,12 @@ function parametrizeUrl(url, params) {
 function api(base, defaultOptions) {
 	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
+	var info = request('GET', 'indigo/info').then(function (res) {
+		return { indigoVersion: res.Indigo.version };
+	}).catch(function () {
+		throw Error('Server is not compatible');
+	});
+
 	function request(method, url, data, headers) {
 		if (data && method == 'GET')
 			url = parametrizeUrl(url, data);
@@ -40,7 +46,7 @@ function api(base, defaultOptions) {
 		}).then(function (response) {
 			return response.json().then(function (res) {
 				return response.ok ? res : Promise.reject(res.error);
-			}, function (err) {
+			}).catch(function (err) {
 				throw 'Cannot parse result\n' + err;
 			});
 		});
@@ -50,18 +56,14 @@ function api(base, defaultOptions) {
 		return function (data, options) {
 			var body = Object.assign({}, defaultData, data);
 			body.options = Object.assign(body.options || {},
-			                                    defaultOptions, options);
-			return request(method, url, JSON.stringify(body), {
-				'Content-Type': 'application/json'
+			                             defaultOptions, options);
+			return info.then(function () {
+				request(method, url, JSON.stringify(body), {
+					'Content-Type': 'application/json'
+				});
 			});
 		};
 	}
-
-	var info = request('GET', 'indigo/info').then(function (res) {
-		return { indigoVersion: res.Indigo.version };
-	}, function () {
-		throw Error('Server is not compatible');
-	});
 
 	return Object.assign(info, {
 		convert: indigoCall('POST', 'indigo/convert'),

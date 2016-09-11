@@ -355,15 +355,6 @@
 	.monochrome-icons(@names, @color, (@i + 1));
 }
 
-.twocolor-icons(@names, @color-A: inherit, @color-B: inherit, @i: 1) when (@i <= length(@names)) {
-	@item: extract(@names, @i);
-	@icon-A: 'icon-@{item}-A';
-	@icon-B: 'icon-@{item}-B';
-	#@{item} button:before { content: @@icon-A; .colorize(@color-A); }
-	#@{item} button:after { content: @@icon-B; .colorize(@color-B); }
-	.twocolor-icons(@names, @color-A, @color-B, (@i + 1));
-}
-
 .atom-sketching(@names, @i: 1) when (@i <= length(@names)) {
 	@item: extract(@names, @i);
 	@color: 'atom-@{item}-sketching-color';

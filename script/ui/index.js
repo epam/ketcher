@@ -35,7 +35,9 @@ var clientArea = null;
 var server;
 var options;
 
-var addionalAttoms = ["Y", "Zr", "Nb"];
+// var addionalAtoms = ["Y", "Zr", "Nb"];
+var addionalAtoms = [];
+var maxNumOfAddionalAtoms = 3;
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
@@ -128,8 +130,8 @@ function init (opts, apiServer) {
 
 
 function updateAtoms() {
-	if (addionalAttoms.length > 0) {
-		var al = "<menu>" + addionalAttoms.reduce(function (res, atom) {
+	if (addionalAtoms.length > 0) {
+		var al = "<menu>" + addionalAtoms.reduce(function (res, atom) {
 			return res + "<li id=\"atom-" + atom.toLowerCase() +
 			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
 			            atom + "</button></li>";
@@ -710,11 +712,20 @@ function elemTable () {
 				props = {
 					label: element[res.values[0]].label
 				};
-				addionalAttoms.shift();
-				addionalAttoms.push(element[res.values[0]].label);
-				updateAtoms();
-			}
-			else
+				var atoms = [];
+				for( var i = 0; i < 10; i++) {
+					var atomLabel = toolbar.select('#atom')[0].select('li')[i].id.substr(5);
+					atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
+					atoms.push(atomLabel);
+				}
+				console.log("atoms", atoms);
+				if (atoms.indexOf(element[res.values[0]].label) < 0) {
+					if (addionalAtoms.length >= maxNumOfAddionalAtoms)
+						addionalAtoms.shift();
+					addionalAtoms.push(element[res.values[0]].label);
+					updateAtoms();
+				}
+			} else
 				props = {
 					label: 'L#',
 					atomList: new Struct.AtomList({

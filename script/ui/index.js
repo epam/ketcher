@@ -706,10 +706,14 @@ function elemTable () {
 	modal.periodTable({
 		onOk: function (res) {
 			var props;
-			if (res.mode == 'single')
+			if (res.mode == 'single') {
 				props = {
 					label: element[res.values[0]].label
 				};
+				addionalAttoms.shift();
+				addionalAttoms.push(element[res.values[0]].label);
+				updateAtoms();
+			}
 			else
 				props = {
 					label: 'L#',

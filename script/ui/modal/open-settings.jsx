@@ -160,7 +160,7 @@ class OpenSettings extends Component {
                 </ul>
             </div>
             <label class="open block">
-                <input type="checkbox" onChange={ ev => this.reset(ev) }></input>
+                <input type="checkbox" onChange={ ev => this.apply(ev) }></input>
                 Apply settings only for current session
             </label>
             </Dialog>

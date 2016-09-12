@@ -136,12 +136,11 @@ function updateAtoms() {
 			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
 			            atom + "</button></li>";
 		}, "") + "</menu>";
-		var cont = toolbar.select('#freq-atom')[0];
+		var cont = toolbar.select('#freq-atoms')[0];
 		if (!cont) {
 			var sa = toolbar.select('#atom')[0];
 			sa.insert({ after: "<li id=\"freq-atoms\"/>" });
 			cont = sa.nextElementSibling;
-			console.info(cont, sa);
 		}
 		cont.update(al);
 		initDropdown(cont);
@@ -219,9 +218,6 @@ function selectAction (action) {
 	if (clipActions.indexOf(action) != -1 && args.length == 0)
 		return delegateCliparea(action);
 
-	if (action.startsWith('atom-')) {
-		console.info('atom', action);
-	}
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
@@ -718,7 +714,6 @@ function elemTable () {
 					atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
 					atoms.push(atomLabel);
 				}
-				console.log("atoms", atoms);
 				if (atoms.indexOf(element[res.values[0]].label) < 0) {
 					if (addionalAtoms.length >= maxNumOfAddionalAtoms)
 						addionalAtoms.shift();

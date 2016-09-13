@@ -58,7 +58,7 @@ function api(base, defaultOptions) {
 			body.options = Object.assign(body.options || {},
 			                             defaultOptions, options);
 			return info.then(function () {
-				request(method, url, JSON.stringify(body), {
+				return request(method, url, JSON.stringify(body), {
 					'Content-Type': 'application/json'
 				});
 			});

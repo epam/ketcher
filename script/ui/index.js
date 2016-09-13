@@ -737,7 +737,7 @@ var actionMap = {
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
 	layout: layout,
-	cleanup: clean2d,
+	clean: clean2d,
 	arom: aromatize,
 	dearom: dearomatize,
 	'period-table': elemTable,

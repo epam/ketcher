@@ -13,12 +13,14 @@ var minimist = require('minimist');
 
 var pkg = require('./package.json');
 var options = minimist(process.argv.slice(2), {
-	string: ['dist', 'api-path', 'build-number', 'build-date'],
+	string: ['dist', 'api-path', 'build-number', 'build-date',
+	         'miew-path'],
 	boolean: ['sgroup-data-special', 'no-generics', 'no-reactions',
 	          'no-sgroup', 'no-rgroup', 'rgroup-label-only'],
 	default: {
 		'dist': 'dist',
 		'api-path': '',
+		'miew-path': null,
 		'build-number': '',
 		'build-date': new Date() // TODO: format me
 	}
@@ -29,7 +31,7 @@ var polyfills = ['es5-shim', 'es6-shim',
                  'es7-shim/dist/es7-shim', 'whatwg-fetch'];
 
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
-               'demo.html', 'templates.sdf'];
+               'demo.html', 'templates.sdf', 'templates.svg'];
 
 var iconfont = null;
 
@@ -193,6 +195,7 @@ function scriptBundle(src, watchUpdate) {
 			{ from: '__API_PATH__', to: options['api-path'] },
 			{ from: '__BUILD_NUMBER__', to: options['build-number'] },
 			{ from: '__BUILD_DATE__', to: options['build-date'] },
+			{ from: '__MIEW_PATH__', to: options['miew-path'] },
 		]})
 		.transform('babelify', {
 			presets: ["es2015", "react"],

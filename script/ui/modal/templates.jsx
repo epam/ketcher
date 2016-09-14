@@ -4,11 +4,10 @@ import { h, Component, render } from 'preact';
 import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
 
-import VisibleView from './visibleview';
-
-import Render from '../../render';
-
-import Dialog from './dialog';
+import VisibleView from '../component/visibleview';
+import StructRender from '../component/structrender';
+import SelectList from '../component/select';
+import Dialog from '../component/dialog';
 
 function normGroup(tmpl, i) {
 	return tmpl.props.group || 'Ungroupt';
@@ -16,47 +15,6 @@ function normGroup(tmpl, i) {
 
 function normName(tmpl, i) {
 	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
-}
-
-function renderTmpl(el, struct) {
-	if (el) {
-		if (struct.prerender)           // Should it sit here?
-			el.innerHTML = struct.prerender;
-		else {
-			var rnd = new Render(el, 0, {
-				'autoScale': true,
-				'autoScaleMargin': 0,
-				'maxBondLength': 30
-			});
-			rnd.setMolecule(struct);
-			rnd.update();
-			console.info('render!');//, el.innerHTML);
-			//tmpl.prerender = el.innerHTML;
-		}
-	}
-}
-
-class StructRender extends Component {
-	render ({ struct, xhref, Tag="div", ...props }) {
-		console.info('xhref', xhref);
-		return (
-			xhref ?
-			<Tag {...props}><img src={xhref}/></Tag> :
-			<Tag ref={ el => renderTmpl(el, struct) } {...props}/>
-		);
-	}
-}
-
-function SelectList ({ children, options, onChange, value, ...props}) {
-  return (
-    <ul {...props} tabindex="0">{
-        options.map((opt, index) => (
-          <li onClick={() => onChange(opt, index) }
-              className={opt == value ? 'selected' : ''}>
-            {opt}</li>
-        ))
-    }</ul>
-  );
 }
 
 class Templates extends Component {

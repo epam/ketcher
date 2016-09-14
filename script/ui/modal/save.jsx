@@ -4,7 +4,7 @@ import fs from 'filesaver.js';
 
 import * as structFormat from '../structformat';
 
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 
 var ui = global.ui;
 

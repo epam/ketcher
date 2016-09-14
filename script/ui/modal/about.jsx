@@ -1,7 +1,7 @@
 import { h, render } from 'preact';
 /** @jsx h */
 
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 
 function About(props) {
 	return (

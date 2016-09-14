@@ -4,7 +4,7 @@ import { h, Component, render } from 'preact';
 import element from '../../chem/element';
 import generics from '../../chem/generics';
 
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 
 function serialize(lc) {
 	var charge = Math.abs(lc.charge);

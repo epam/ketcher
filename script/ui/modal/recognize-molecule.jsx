@@ -1,7 +1,7 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 import api from '../../api'
 
 import Render from '../../render';
@@ -66,12 +66,12 @@ class RecognizeMolecule extends Component {
                     ]}>
                 <div>
                 <img id="pic" src={this.state.file ? this.url() : ""} onError={ ev => console.info('error') }/>
-                { this.state.struct ? ( 
+                { this.state.struct ? (
                 <div className="output">
                 {
                   this.state.struct == 'recognizing' ? ( <div class="loader"></div> ) : ( <div className="struct" ref={ el => this.renderRes(el) } /> )
                 }
-                </div> 
+                </div>
                  ) : null }
                 </div>
                 <label class="open block">

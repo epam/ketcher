@@ -2,7 +2,7 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import fs from 'filesaver.js';
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 import defaultOptions from './options';
 import Render from '../../render'
 
@@ -156,7 +156,7 @@ class OpenSettings extends Component {
                                 <ul>
                                     { this.draw(this.defOpts, "render") }
                                 </ul>
-                    </li>  
+                    </li>
                 </ul>
             </div>
             <label class="open block">

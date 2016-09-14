@@ -1,7 +1,7 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 
 class CalculatedValues extends Component {
 	render () {

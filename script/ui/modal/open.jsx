@@ -2,7 +2,7 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import { map as formatMap } from '../structformat';
-import Dialog from './dialog';
+import Dialog from '../component/dialog';
 
 var ui = global.ui;
 

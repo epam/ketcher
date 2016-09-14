@@ -35,9 +35,11 @@ var clientArea = null;
 var server;
 var options;
 
-// var addionalAtoms = ["Y", "Zr", "Nb"];
-var addionalAtoms = [];
-var maxNumOfAddionalAtoms = 3;
+ var addionalAtoms = {
+ 	storage: [],
+ 	capacity: 7,
+ 	current: 0
+ };
 
 var serverActions = ['layout', 'cleanup', 'arom', 'dearom', 'calc-cip',
                      'reaction-automap', 'template-lib', 'recognize-molecule', 'check-struct', 'calc-val'];
@@ -130,8 +132,8 @@ function init (opts, apiServer) {
 
 
 function updateAtoms() {
-	if (addionalAtoms.length > 0) {
-		var al = "<menu>" + addionalAtoms.reduce(function (res, atom) {
+	if (addionalAtoms.storage.length > 0) {
+		var al = "<menu>" + addionalAtoms.storage.reduce(function (res, atom) {
 			return res + "<li id=\"atom-" + atom.toLowerCase() +
 			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
 			            atom + "</button></li>";
@@ -700,6 +702,22 @@ function redo ()
 	updateHistoryButtons();
 };
 
+function addAtoms(res) {
+	var atoms = [];
+	for (var i = 0; i < 10; i++) {
+		var atomLabel = toolbar.select('#atom')[0].select('li')[i].id.substr(5);
+		atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
+		atoms.push(atomLabel);
+	}
+	if (atoms.indexOf(element[res.values[0]].label) < 0) {
+		if (addionalAtoms.current >= addionalAtoms.capacity)
+			addionalAtoms.current = 0;
+		addionalAtoms.storage[addionalAtoms.current] = element[res.values[0]].label;
+		updateAtoms();
+		addionalAtoms.current++;
+	}
+}
+
 function elemTable () {
 	modal.periodTable({
 		onOk: function (res) {
@@ -708,18 +726,7 @@ function elemTable () {
 				props = {
 					label: element[res.values[0]].label
 				};
-				var atoms = [];
-				for( var i = 0; i < 10; i++) {
-					var atomLabel = toolbar.select('#atom')[0].select('li')[i].id.substr(5);
-					atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
-					atoms.push(atomLabel);
-				}
-				if (atoms.indexOf(element[res.values[0]].label) < 0) {
-					if (addionalAtoms.length >= maxNumOfAddionalAtoms)
-						addionalAtoms.shift();
-					addionalAtoms.push(element[res.values[0]].label);
-					updateAtoms();
-				}
+				addAtoms(res);
 			} else
 				props = {
 					label: 'L#',

@@ -1,5 +1,5 @@
 ADALLOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.8119    2.6861    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -30,9 +30,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib1
+
 $$$$
 ADALTRO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -0.9910    2.2903    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -63,9 +66,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib2
+
 $$$$
 ADARABIF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -1.4482    2.3917    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -92,9 +98,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib3
+
 $$$$
 ADARABIP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.3346    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -121,9 +130,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib4
+
 $$$$
 ADERYTH
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  1  0  0  0  0  0999 V2000
    -2.3742    2.6418    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -146,9 +158,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib5
+
 $$$$
 ADGALAC
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.5577    2.5236    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -179,9 +194,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib6
+
 $$$$
 ADGLUCO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1744    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -212,9 +230,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib7
+
 $$$$
 ADGULOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1119    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -245,9 +266,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib8
+
 $$$$
 ADIDOSE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.9244    2.7736    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -278,9 +302,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib9
+
 $$$$
 ADLYXOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1148    2.9334    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -307,9 +334,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib10
+
 $$$$
 ADLYXOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.4513    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -336,9 +366,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib11
+
 $$$$
 ADMANNO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1577    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -369,9 +402,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib12
+
 $$$$
 ADPSICO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.5540    2.5291    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -402,9 +438,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib13
+
 $$$$
 ADRIBOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -1.8940    2.7251    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -431,9 +470,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib14
+
 $$$$
 ADRIBOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1138    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -460,9 +502,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib15
+
 $$$$
 ADSORBO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.6290    2.6125    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -493,9 +538,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib16
+
 $$$$
 ADTAGAT
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.3790    2.4875    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -526,9 +574,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib17
+
 $$$$
 ADTALOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.9910    2.9403    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -559,9 +610,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib18
+
 $$$$
 ADTHREO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  1  0  0  0  0  0999 V2000
    -2.8117    2.6835    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -584,9 +638,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib19
+
 $$$$
 ADXYLOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1648    2.8084    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -613,9 +670,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib20
+
 $$$$
 ADXYLOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.5429    3.0236    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -642,9 +702,12 @@ M  END
 >  <group>
 Alpha-D-Sugars
 
+>  <prerender>
+templates.svg#lib21
+
 $$$$
 ALA-L-Alanine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  5  0  0  0  0  0  0  0  0999 V2000
    13.6700   -6.8246    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -662,9 +725,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib22
+
 $$$$
 ARG-L-Arginine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  0  0  0  0  0  0999 V2000
    12.0694   -4.2443    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -694,9 +760,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib23
+
 $$$$
 ASN-L-Asparagine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  0  0  0  0  0  0999 V2000
    10.8319   -5.4762    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -720,9 +789,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib24
+
 $$$$
 ASP-L-Aspartic acid
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  0  0  0  0  0  0999 V2000
    10.7814   -5.6761    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -746,9 +818,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib25
+
 $$$$
 CYS-L-Cysteine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  0  0  0  0  0  0999 V2000
     6.9511   -4.7004    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -768,9 +843,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib26
+
 $$$$
 GLN-L-Glutamine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  0  0  0  0  0  0999 V2000
    11.1341   -5.3758    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -796,9 +874,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib27
+
 $$$$
 GLU-L-Glutamic acid
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  0  0  0  0  0  0999 V2000
    11.4591   -5.3259    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -824,9 +905,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib28
+
 $$$$
 GLY-Glycine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  4  0  0  0  0  0  0  0  0999 V2000
    10.6670   -7.3750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -842,9 +926,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib29
+
 $$$$
 HIS-L-Histidine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 11  0  0  0  0  0  0  0  0999 V2000
    11.4910   -6.5739    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -873,9 +960,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib30
+
 $$$$
 ILE-L-Isoleucine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  0  0  0  0  0  0999 V2000
    11.8001   -9.8252    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -899,9 +989,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib31
+
 $$$$
 LEU-L-Leucine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  0  0  0  0  0  0999 V2000
    12.2568   -9.3502    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -925,9 +1018,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib32
+
 $$$$
 LYS-L-Lysine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  0  0  0  0  0  0999 V2000
    10.6692   -9.3254    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -953,9 +1049,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib33
+
 $$$$
 MET-L-Methionine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  0  0  0  0  0  0999 V2000
    11.6195   -9.8247    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -979,9 +1078,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib34
+
 $$$$
 PHE-L-Phenylalanine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 11  0  0  0  0  0  0  0  0999 V2000
    12.5510   -6.0250    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1010,9 +1112,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib35
+
 $$$$
 PRO-L-Proline
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  0  0  0  0  0  0999 V2000
    10.6969   -1.7001    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1035,9 +1140,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib36
+
 $$$$
 SER-L-Serine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  0  0  0  0  0  0999 V2000
    10.3261   -6.8754    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1057,9 +1165,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib37
+
 $$$$
 THR-L-Threonine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  0  0  0  0  0  0999 V2000
    11.5255   -8.1243    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1081,9 +1192,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib38
+
 $$$$
 TRP-L-Tryptophan
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  15 16  0  0  0  0  0  0  0  0999 V2000
    11.9929   -5.3065    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1121,9 +1235,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib39
+
 $$$$
 TYR-L-Tyrosine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 13  0  0  0  0  0  0  0  0999 V2000
    12.5019   -5.8250    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1156,9 +1273,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib40
+
 $$$$
 VAL-L-Valine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  0  0  0  0  0  0999 V2000
    10.8255   -8.9494    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1180,9 +1300,12 @@ M  END
 >  <group>
 Amino Acids
 
+>  <prerender>
+templates.svg#lib41
+
 $$$$
 1-Cyclopenta-1,3-diene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     9.6696   -5.8045    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1199,9 +1322,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib42
+
 $$$$
 10-Triphenylene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 21  0  0  0  0  0  0  0  0999 V2000
    10.5140   -3.4503    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1247,9 +1373,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib43
+
 $$$$
 11-Triptycene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  20 24  0  0  0  0  0  0  0  0999 V2000
     9.9580   -4.2298    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1300,9 +1429,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib44
+
 $$$$
 12-14-Annulene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 14  0  0  0  0  0  0  0  0999 V2000
    12.0122   -0.7560    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1337,9 +1469,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib45
+
 $$$$
 13-18-Annulene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
     9.2590    6.2250    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1382,9 +1517,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib46
+
 $$$$
 14-Porphyrin
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  24 28  0  0  0  0  0  0  0  0999 V2000
     6.4862   -8.7407    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1443,9 +1581,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib47
+
 $$$$
 15-Phthalocyanine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  40 48  0  0  0  0  0  0  0  0999 V2000
    13.9159   -3.5449    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1540,9 +1681,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib48
+
 $$$$
 16-C60
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  60 90  0  0  0  0  0  0  0  0999 V2000
    10.6305   -3.5766    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1699,9 +1843,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib49
+
 $$$$
 17-C80
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  80120  0  0  0  0  0  0  0  0999 V2000
    11.8140   -5.2993    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1908,9 +2055,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib50
+
 $$$$
 2-1H-indene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     7.1899   -4.2253    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1936,9 +2086,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib51
+
 $$$$
 3-Naphtalene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
    11.0090   -4.7500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1966,9 +2119,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib52
+
 $$$$
 4-Azulene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
    12.4941   -7.5235    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -1996,9 +2152,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib53
+
 $$$$
 5-E-Stilbene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 15  0  0  0  0  0  0  0  0999 V2000
    10.8250   -2.9010    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2034,9 +2193,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib54
+
 $$$$
 6-Z-Stilbene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 15  0  0  0  0  0  0  0  0999 V2000
    12.3750   -3.8920    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2072,9 +2234,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib55
+
 $$$$
 7-Anthracene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 16  0  0  0  0  0  0  0  0999 V2000
     8.0930   -3.2750    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2111,9 +2276,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib56
+
 $$$$
 8-Phenantrene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 16  0  0  0  0  0  0  0  0999 V2000
    10.7760   -1.9500    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2150,9 +2318,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib57
+
 $$$$
 9-Pyrene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  16 19  0  0  0  0  0  0  0  0999 V2000
    13.2084   -1.8748    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2194,9 +2365,12 @@ M  END
 >  <group>
 Aromatics
 
+>  <prerender>
+templates.svg#lib58
+
 $$$$
 BDALLOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.8119    2.6861    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2227,9 +2401,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib59
+
 $$$$
 BDALTRO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -0.9910    2.2903    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2260,9 +2437,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib60
+
 $$$$
 BDARABIF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -1.4482    2.3917    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2289,9 +2469,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib61
+
 $$$$
 BDARABIP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.3346    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2318,9 +2501,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib62
+
 $$$$
 BDERYTH
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  1  0  0  0  0  0999 V2000
    -2.3742    2.6418    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2343,9 +2529,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib63
+
 $$$$
 BDFRUCT
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.6256    2.7205    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2376,9 +2565,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib64
+
 $$$$
 BDGALAC
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.5577    2.5236    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2409,9 +2601,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib65
+
 $$$$
 BDGLUCO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1744    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2442,9 +2637,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib66
+
 $$$$
 BDGULOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1119    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2475,9 +2673,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib67
+
 $$$$
 BDIDOSE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.9244    2.7736    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2508,9 +2709,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib68
+
 $$$$
 BDLYXOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1148    2.9334    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2537,9 +2741,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib69
+
 $$$$
 BDLYXOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.4513    2.8153    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2566,9 +2773,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib70
+
 $$$$
 BDMANNO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -2.1577    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2599,9 +2809,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib71
+
 $$$$
 BDPSICO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.5540    2.5291    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2632,9 +2845,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib72
+
 $$$$
 BDRIBOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -1.8940    2.7251    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2661,9 +2877,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib73
+
 $$$$
 BDRIBOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1138    2.8570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2690,9 +2909,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib74
+
 $$$$
 BDSORBO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.6290    2.6125    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2723,9 +2945,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib75
+
 $$$$
 BDTAGAT
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.3790    2.4875    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2756,9 +2981,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib76
+
 $$$$
 BDTALOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
    -1.9910    2.9403    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2789,9 +3017,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib77
+
 $$$$
 BDTHREO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  1  0  0  0  0  0999 V2000
    -2.8117    2.6835    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2814,9 +3045,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib78
+
 $$$$
 BDXYLOF
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.1648    2.8084    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2843,9 +3077,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib79
+
 $$$$
 BDXYLOP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
    -2.5429    3.0236    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2872,9 +3109,12 @@ M  END
 >  <group>
 Beta-D-Sugars
 
+>  <prerender>
+templates.svg#lib80
+
 $$$$
 1-Bicyclo[1-1-1]pentane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  6  0  0  0  0  0  0  0  0999 V2000
     9.8611   -7.2251    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2892,9 +3132,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib81
+
 $$$$
 10-Bicyclo[3-3-1]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     8.9718   -5.4180    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2920,9 +3163,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib82
+
 $$$$
 11-Bicyclo[4-2-1]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     9.1712   -6.4644    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2948,9 +3194,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib83
+
 $$$$
 12-Bicyclo[4-2-1]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     9.8115   -5.9359    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -2976,9 +3225,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib84
+
 $$$$
 13-Bicyclo[4-2-1]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     7.9553   -6.4806    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3004,9 +3256,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib85
+
 $$$$
 14-Bicyclo[5-1-1]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     7.7834   -6.8950    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3032,9 +3287,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib86
+
 $$$$
 15-Bicyclo[3-3-2]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     9.6949   -6.5741    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3062,9 +3320,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib87
+
 $$$$
 16-Bicyclo[4-2-2]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.8472   -8.1683    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3092,9 +3353,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib88
+
 $$$$
 17-Bicyclo[4-2-2]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.7142   -6.3595    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3122,9 +3386,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib89
+
 $$$$
 18-Bicyclo[4-2-2]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.8948   -6.4814    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3152,9 +3419,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib90
+
 $$$$
 19-Bicyclo[4-3-1]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     9.3349   -6.7026    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3182,9 +3452,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib91
+
 $$$$
 2- Bicyclo[2-1-1]hexane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  7  0  0  0  0  0  0  0  0999 V2000
     9.7097   -6.3707    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3204,9 +3477,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib92
+
 $$$$
 20-Bicyclo[4-3-1]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.8223   -6.3064    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3234,9 +3510,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib93
+
 $$$$
 21-Bicyclo[4-3-1]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     9.4787   -5.2376    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3264,9 +3543,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib94
+
 $$$$
 22-Bicyclo[4-3-1]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.5704   -6.7776    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3294,9 +3576,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib95
+
 $$$$
 23-Bicyclo[5-2-1]decane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     8.3634   -6.6141    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3324,9 +3609,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib96
+
 $$$$
 24-Bicyclo[3-3-3]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     9.9074   -6.3316    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3356,9 +3644,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib97
+
 $$$$
 25-Bicyclo[4-3-2]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     7.6205   -6.7375    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3388,9 +3679,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib98
+
 $$$$
 26-Bicyclo[4-3-2]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     7.3641   -7.3779    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3420,9 +3714,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib99
+
 $$$$
 27-Bicyclo[4-3-2]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     9.7033   -5.4113    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3452,9 +3749,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib100
+
 $$$$
 28-Bicyclo[4-3-2]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     9.5890   -6.0668    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3484,9 +3784,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib101
+
 $$$$
 29-Bicyclo[4-4-1]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     7.3728   -6.4270    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3516,9 +3819,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib102
+
 $$$$
 3-Bicyclo[2-2-1]heptane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  8  0  0  0  0  0  0  0  0999 V2000
     8.4502   -7.5691    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3540,9 +3846,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib103
+
 $$$$
 30-Bicyclo[4-4-1]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     7.9403   -6.9988    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3572,9 +3881,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib104
+
 $$$$
 31-Bicyclo[4-4-1]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     8.3680   -5.6420    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3604,9 +3916,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib105
+
 $$$$
 32-Bicyclo[5-3-1]undecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     7.4699   -5.4930    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3636,9 +3951,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib106
+
 $$$$
 33-Bicyclo[4-4-2]dodecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 13  0  0  0  0  0  0  0  0999 V2000
     7.9693   -5.3924    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3670,9 +3988,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib107
+
 $$$$
 34-Bicyclo[4-4-2]dodecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 13  0  0  0  0  0  0  0  0999 V2000
     6.8935   -6.1590    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3704,9 +4025,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib108
+
 $$$$
 35-Bicyclo[4-4-2]dodecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 13  0  0  0  0  0  0  0  0999 V2000
     6.5042   -6.4951    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3738,9 +4062,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib109
+
 $$$$
 36-Bicyclo[5-3-2]dodecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 13  0  0  0  0  0  0  0  0999 V2000
     7.9640   -5.7259    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3772,9 +4099,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib110
+
 $$$$
 37-Bicyclo[5-4-1]dodecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 13  0  0  0  0  0  0  0  0999 V2000
     7.7173   -5.1368    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3806,9 +4136,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib111
+
 $$$$
 38-Bicyclo[5-3-3]tridecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 14  0  0  0  0  0  0  0  0999 V2000
     8.4981   -5.1011    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3842,9 +4175,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib112
+
 $$$$
 39-Bicyclo[5-4-2]tridecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 14  0  0  0  0  0  0  0  0999 V2000
     7.4687   -5.4926    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3878,9 +4214,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib113
+
 $$$$
 4-Bicyclo[3-1-1]heptane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  8  0  0  0  0  0  0  0  0999 V2000
     8.2782   -1.8550    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3902,9 +4241,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib114
+
 $$$$
 40-Bicyclo[5-5-1]tridecane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 14  0  0  0  0  0  0  0  0999 V2000
     7.5850   -5.9774    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3938,9 +4280,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib115
+
 $$$$
 5-Bicyclo[2-2-2]octane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  9  0  0  0  0  0  0  0  0999 V2000
    10.8583   -6.6275    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3964,9 +4309,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib116
+
 $$$$
 6-Bicyclo[3-2-1]octane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  9  0  0  0  0  0  0  0  0999 V2000
     9.0974   -5.5533    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -3990,9 +4338,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib117
+
 $$$$
 7-Bicyclo[4-1-1]octane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  9  0  0  0  0  0  0  0  0999 V2000
     9.6925   -6.1684    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4016,9 +4367,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib118
+
 $$$$
 8-Bicyclo[4-1-1]octane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  9  0  0  0  0  0  0  0  0999 V2000
    10.2044   -7.1593    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4042,9 +4396,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib119
+
 $$$$
 9-Bicyclo[3-2-2]nonane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     8.9873   -5.7688    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4070,9 +4427,12 @@ M  END
 >  <group>
 Bicycles
 
+>  <prerender>
+templates.svg#lib120
+
 $$$$
 adamantane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 12  0  0  0  0  0  0  0  0999 V2000
     7.5634   -6.5061    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4101,9 +4461,12 @@ M  END
 >  <group>
 Bridged Polycyclics
 
+>  <prerender>
+templates.svg#lib121
+
 $$$$
 cubane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8 12  0  0  0  0  0  0  0  0999 V2000
     7.9520   -5.0848    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4130,9 +4493,12 @@ M  END
 >  <group>
 Bridged Polycyclics
 
+>  <prerender>
+templates.svg#lib122
+
 $$$$
 prismane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  9  0  0  0  0  0  0  0  0999 V2000
     7.7612   -4.0397    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4154,9 +4520,12 @@ M  END
 >  <group>
 Bridged Polycyclics
 
+>  <prerender>
+templates.svg#lib123
+
 $$$$
 twistane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 12  0  0  0  0  0  0  0  0999 V2000
    10.9227   -5.4167    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4185,9 +4554,12 @@ M  END
 >  <group>
 Bridged Polycyclics
 
+>  <prerender>
+templates.svg#lib124
+
 $$$$
 12-Crown-4
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  0  0  0  0  0  0999 V2000
     9.6950   -4.9978    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4218,9 +4590,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib125
+
 $$$$
 13-Crown-4
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 13  0  0  0  0  0  0  0  0999 V2000
     6.2108   -5.8522    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4253,9 +4628,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib126
+
 $$$$
 14-Crown-4
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 14  0  0  0  0  0  0  0  0999 V2000
    11.4453   -5.1251    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4290,9 +4668,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib127
+
 $$$$
 15-Crown-5
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  15 15  0  0  0  0  0  0  0  0999 V2000
     9.3051   -3.6194    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4329,9 +4710,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib128
+
 $$$$
 16-Crown-5
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  16 16  0  0  0  0  0  0  0  0999 V2000
    10.1579   -7.9802    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4370,9 +4754,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib129
+
 $$$$
 17-Crown-5
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  17 17  0  0  0  0  0  0  0  0999 V2000
    11.0779   -6.2549    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4413,9 +4800,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib130
+
 $$$$
 18-Crown-6
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
    12.0989   -6.5157    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4458,9 +4848,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib131
+
 $$$$
 20-Crown-6
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  20 20  0  0  0  0  0  0  0  0999 V2000
    12.9696   -6.7231    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4507,9 +4900,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib132
+
 $$$$
 21-Crown-7
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  21 21  0  0  0  0  0  0  0  0999 V2000
     9.2476   -4.0933    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4558,9 +4954,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib133
+
 $$$$
 24-Crown-8
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  24 24  0  0  0  0  0  0  0  0999 V2000
     9.0714   -9.5538    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4615,9 +5014,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib134
+
 $$$$
 27-Crown-9
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  27 27  0  0  0  0  0  0  0  0999 V2000
    12.8715   -5.4793    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4678,9 +5080,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib135
+
 $$$$
 30-Crown-10
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  30 30  0  0  0  0  0  0  0  0999 V2000
    10.5968   -3.4933    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4747,9 +5152,12 @@ M  END
 >  <group>
 Crown Ethers
 
+>  <prerender>
+templates.svg#lib136
+
 $$$$
 DALA
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  4  0  0  1  0  0  0  0  0999 V2000
     3.0969    2.3897    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4765,9 +5173,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib137
+
 $$$$
 DARG
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 10  0  0  1  0  0  0  0  0999 V2000
     8.5445    0.7117    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4795,9 +5206,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib138
+
 $$$$
 DASN
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     0.9618   15.3777    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4819,9 +5233,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib139
+
 $$$$
 DASP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     4.6471    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4843,9 +5260,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib140
+
 $$$$
 DCYS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  5  0  0  1  0  0  0  0  0999 V2000
     3.1417    1.0787    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4863,9 +5283,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib141
+
 $$$$
 DGLN
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4889,9 +5312,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib142
+
 $$$$
 DGLU
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7497    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4915,9 +5341,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib143
+
 $$$$
 DHIS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
     4.0007    1.1673    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4944,9 +5373,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib144
+
 $$$$
 DILE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     7.3772   -2.5106    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4968,9 +5400,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib145
+
 $$$$
 DLEU
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
    -2.0122   13.6561    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -4992,9 +5427,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib146
+
 $$$$
 DLYS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     7.2452    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5018,9 +5456,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib147
+
 $$$$
 DMET
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5042,9 +5483,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib148
+
 $$$$
 DPHE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 11  0  0  1  0  0  0  0  0999 V2000
    -0.3680   12.9964    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5073,9 +5517,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib149
+
 $$$$
 DPRO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  7  0  0  1  0  0  0  0  0999 V2000
     3.0721    1.2516    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5096,9 +5543,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib150
+
 $$$$
 DSER
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  5  0  0  1  0  0  0  0  0999 V2000
    -2.4658   11.6067    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5116,9 +5566,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib151
+
 $$$$
 DTHR
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  1  0  0  0  0  0999 V2000
     5.7552   -4.9073    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5138,9 +5591,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib152
+
 $$$$
 DTRP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 15  0  0  1  0  0  0  0  0999 V2000
     2.4101   12.3869    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5176,9 +5632,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib153
+
 $$$$
 DTYR
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
     0.9360   11.2770    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5209,9 +5668,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib154
+
 $$$$
 DVAL
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  1  0  0  0  0  0999 V2000
    -1.8988   11.9472    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5231,9 +5693,12 @@ M  END
 >  <group>
 D-Amino Acids
 
+>  <prerender>
+templates.svg#lib155
+
 $$$$
 DALLOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.4194   -1.6883    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5263,9 +5728,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib156
+
 $$$$
 DALTRO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.4516   -1.2975    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5295,9 +5763,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib157
+
 $$$$
 DARABI
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -3.8949   -0.0936    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5323,9 +5794,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib158
+
 $$$$
 DERYTH
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
    -4.1906    0.0133    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5347,9 +5821,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib159
+
 $$$$
 DERYTHU
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
    -4.1896    2.0954    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5371,9 +5848,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib160
+
 $$$$
 DFRUCT
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.1480    1.9843    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5403,9 +5883,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib161
+
 $$$$
 DGALAC
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.8880   -0.9644    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5435,9 +5918,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib162
+
 $$$$
 DGLUCO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.5186   -1.2143    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5467,9 +5953,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib163
+
 $$$$
 DGULOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -4.3047   -1.0894    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5499,9 +5988,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib164
+
 $$$$
 DIDOSE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.7380   -1.2977    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5531,9 +6023,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib165
+
 $$$$
 DLYXOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -3.9033    0.3647    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5559,9 +6054,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib166
+
 $$$$
 DMANNO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.9005   -1.2560    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5591,9 +6089,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib167
+
 $$$$
 DPSICO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -4.1455    2.7364    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5623,9 +6124,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib168
+
 $$$$
 DRIBOSE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -3.4471   -0.1770    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5651,9 +6155,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib169
+
 $$$$
 DRIBUL
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -3.1689   -0.5395    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5679,9 +6186,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib170
+
 $$$$
 DSORBO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -3.8077    2.3989    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5711,9 +6221,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib171
+
 $$$$
 DTAGAT
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -4.0163    2.4031    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5743,9 +6256,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib172
+
 $$$$
 DTALOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 11  0  0  1  0  0  0  0  0999 V2000
    -4.0547   -0.8394    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5775,9 +6291,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib173
+
 $$$$
 DTHREO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
    -4.7339    0.2599    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5799,9 +6318,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib174
+
 $$$$
 DXYLOS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -3.7801   -0.0936    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5827,9 +6349,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib175
+
 $$$$
 DXYLUL
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10  9  0  0  1  0  0  0  0  0999 V2000
    -2.9398   -0.2937    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5855,9 +6380,12 @@ M  END
 >  <group>
 D-Sugars
 
+>  <prerender>
+templates.svg#lib176
+
 $$$$
 1_2_3-oxadiazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5874,9 +6402,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib177
+
 $$$$
 Dioxane
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     4.2090   -3.4616    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5895,9 +6426,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib178
+
 $$$$
 Furan
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5914,9 +6448,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib179
+
 $$$$
 Imidazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5933,9 +6470,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib180
+
 $$$$
 Indole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     6.3344   -5.9612    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5961,9 +6501,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib181
+
 $$$$
 Isoquinoline
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     7.2094   -5.7112    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -5991,9 +6534,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib182
+
 $$$$
 Isoxazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6010,9 +6556,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib183
+
 $$$$
 Morpholine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     4.2090   -3.4616    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6031,9 +6580,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib184
+
 $$$$
 Oxazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6050,9 +6602,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib185
+
 $$$$
 Piperazine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     4.2090   -3.4616    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6071,9 +6626,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib186
+
 $$$$
 Purine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9 10  0  0  0  0  0  0  0  0999 V2000
     6.3344   -5.9612    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6099,9 +6657,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib187
+
 $$$$
 Pyran
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     4.2090   -3.4616    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6120,9 +6681,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib188
+
 $$$$
 Pyrazine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     6.4094   -4.0362    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6141,9 +6705,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib189
+
 $$$$
 Pyrazol
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6160,9 +6727,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib190
+
 $$$$
 Pyridazine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     6.4094   -4.0362    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6181,9 +6751,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib191
+
 $$$$
 Pyridine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     6.4094   -4.0362    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6202,9 +6775,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib192
+
 $$$$
 Pyridone
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  7  0  0  0  0  0  0  0  0999 V2000
     5.2590   -5.0116    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6225,9 +6801,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib193
+
 $$$$
 Pyrimidine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     6.4094   -4.0362    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6246,9 +6825,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib194
+
 $$$$
 Pyrole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.6685  -10.0843    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6265,9 +6847,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib195
+
 $$$$
 Pyrone
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  7  0  0  0  0  0  0  0  0999 V2000
     5.2590   -5.0116    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6288,9 +6873,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib196
+
 $$$$
 Pyrrolidine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.7210   -3.9181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6307,9 +6895,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib197
+
 $$$$
 Quinoline
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     7.2094   -5.7112    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6337,9 +6928,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib198
+
 $$$$
 Tetrahydrofuran
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.7210   -3.9181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6356,9 +6950,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib199
+
 $$$$
 Tetrahydrothiophene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.7210   -3.9181    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6375,9 +6972,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib200
+
 $$$$
 Tetrazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6394,9 +6994,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib201
+
 $$$$
 Thiophene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6413,9 +7016,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib202
+
 $$$$
 Triazine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     6.4094   -4.0362    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6434,9 +7040,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib203
+
 $$$$
 Triazole
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     4.9500   -4.1780    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6453,9 +7062,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib204
+
 $$$$
 piperidine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     3.0000   -9.5098    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6474,9 +7086,12 @@ M  END
 >  <group>
 Heterocyclic Rings
 
+>  <prerender>
+templates.svg#lib205
+
 $$$$
 LALA
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  4  0  0  1  0  0  0  0  0999 V2000
     3.0969    2.3897    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6492,9 +7107,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib206
+
 $$$$
 LARG
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 10  0  0  1  0  0  0  0  0999 V2000
     8.5442    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6522,9 +7140,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib207
+
 $$$$
 LASN
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     3.8352    1.4103    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6546,9 +7167,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib208
+
 $$$$
 LASP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     4.4463    1.4604    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6570,9 +7194,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib209
+
 $$$$
 LCYS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  5  0  0  1  0  0  0  0  0999 V2000
     3.1417    1.0787    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6590,9 +7217,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib210
+
 $$$$
 LGLN
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7419    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6616,9 +7246,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib211
+
 $$$$
 LGLU
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6642,9 +7275,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib212
+
 $$$$
 LHIS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  1  0  0  0  0  0999 V2000
     4.0007    1.1673    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6671,9 +7307,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib213
+
 $$$$
 LILE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     7.5104   -4.1959    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6695,9 +7334,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib214
+
 $$$$
 LLEU
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
    -1.8988   11.3882    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6719,9 +7361,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib215
+
 $$$$
 LLYS
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  8  0  0  1  0  0  0  0  0999 V2000
     7.2452    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6745,9 +7390,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib216
+
 $$$$
 LMET
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  7  0  0  1  0  0  0  0  0999 V2000
     5.9462    0.7500    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6769,9 +7417,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib217
+
 $$$$
 LPHE
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 11  0  0  1  0  0  0  0  0999 V2000
     0.0855   12.6562    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6800,9 +7451,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib218
+
 $$$$
 LPRO
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  7  0  0  1  0  0  0  0  0999 V2000
     3.0721    1.2516    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6823,9 +7477,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib219
+
 $$$$
 LSER
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  5  0  0  1  0  0  0  0  0999 V2000
    -2.2957   11.6634    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6843,9 +7500,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib220
+
 $$$$
 LTHR
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  1  0  0  0  0  0999 V2000
     5.3655   -4.8210    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6865,9 +7525,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib221
+
 $$$$
 LTRP
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 15  0  0  1  0  0  0  0  0999 V2000
     0.9360   10.7994    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6903,9 +7566,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib222
+
 $$$$
 LTYR
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  1  0  0  0  0  0999 V2000
     0.6525   10.8235    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6936,9 +7602,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib223
+
 $$$$
 LVAL
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  6  0  0  1  0  0  0  0  0999 V2000
     0.8226   10.8700    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6958,9 +7627,12 @@ M  END
 >  <group>
 L-Amino Acids
 
+>  <prerender>
+templates.svg#lib224
+
 $$$$
 Guanine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 12  0  0  0  0  0  0  0  0999 V2000
     3.4897    0.3839    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -6990,9 +7662,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib225
+
 $$$$
 Adenine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 11  0  0  0  0  0  0  0  0999 V2000
     3.4903   -2.0759    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7020,9 +7695,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib226
+
 $$$$
 Uracil
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  0  0  0  0  0  0999 V2000
     3.7124   -0.5250    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7045,9 +7723,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib227
+
 $$$$
 Cytosine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  0  0  0  0  0  0999 V2000
     3.7084   -1.9709    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7070,9 +7751,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib228
+
 $$$$
 Ribose
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 14  0  0  0  0  0  0  0  0999 V2000
     3.6483   -1.5101    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7113,9 +7797,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib229
+
 $$$$
 Adenosine Monophosphate
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  23 25  0  0  1  0  0  0  0  0999 V2000
    13.0195  -10.5215    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7176,9 +7863,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib230
+
 $$$$
 Adenosine diphosphate
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  27 29  0  0  1  0  0  0  0  0999 V2000
    11.2820   -9.5684    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7247,9 +7937,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib231
+
 $$$$
 Adenosine triphosphate
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  31 33  0  0  1  0  0  0  0  0999 V2000
    14.6695  -10.5215    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7326,9 +8019,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib232
+
 $$$$
 Deoxyribose
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
     7.2539   -3.4517    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7372,9 +8068,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib233
+
 $$$$
 Thymine
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  9  0  0  0  0  0  0  0  0999 V2000
     2.4396   -1.5954    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7399,9 +8098,12 @@ M  END
 >  <group>
 Nucleobases
 
+>  <prerender>
+templates.svg#lib234
+
 $$$$
 benzene
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     0.6548    2.2452    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7420,9 +8122,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib235
+
 $$$$
 boat
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     5.8944    2.4444    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7441,9 +8146,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib236
+
 $$$$
 chair
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     8.5333    5.5888    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7462,9 +8170,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib237
+
 $$$$
 chair1
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     4.9944    2.4555    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7483,9 +8194,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib238
+
 $$$$
 chair2
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
    10.4055    2.4555    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7504,9 +8218,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib239
+
 $$$$
 chair3
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
     5.0777    4.5777    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7549,9 +8266,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib240
+
 $$$$
 chair4
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
    10.4888    4.5777    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7594,9 +8314,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib241
+
 $$$$
 cpd
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.8091    8.2444    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7613,9 +8336,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib242
+
 $$$$
 ring10
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  10 10  0  0  0  0  0  0  0  0999 V2000
     3.5215    2.9499    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7642,9 +8368,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib243
+
 $$$$
 ring11
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  11 11  0  0  0  0  0  0  0  0999 V2000
     3.7115    0.9202    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7673,9 +8402,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib244
+
 $$$$
 ring12
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  12 12  0  0  0  0  0  0  0  0999 V2000
     3.7276    1.1285    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7706,9 +8438,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib245
+
 $$$$
 ring13
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  13 13  0  0  0  0  0  0  0  0999 V2000
     3.2666    4.9710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7741,9 +8476,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib246
+
 $$$$
 ring14
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  14 14  0  0  0  0  0  0  0  0999 V2000
     6.8995    3.2081    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7778,9 +8516,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib247
+
 $$$$
 ring15
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  15 15  0  0  0  0  0  0  0  0999 V2000
     6.3839    2.8393    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7817,9 +8558,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib248
+
 $$$$
 ring16
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  16 16  0  0  0  0  0  0  0  0999 V2000
     5.3307    1.4944    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7858,9 +8602,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib249
+
 $$$$
 ring18
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  18 18  0  0  0  0  0  0  0  0999 V2000
     6.7675    4.0116    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7903,9 +8650,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib250
+
 $$$$
 ring20
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  20 20  0  0  0  0  0  0  0  0999 V2000
     5.1641    6.8777    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -7952,9 +8702,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib251
+
 $$$$
 ring21
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  21 21  0  0  0  0  0  0  0  0999 V2000
    13.0927    4.9401    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8003,9 +8756,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib252
+
 $$$$
 ring3
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   3  3  0  0  0  0  0  0  0  0999 V2000
     2.6123    1.5663    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8018,9 +8774,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib253
+
 $$$$
 ring4
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   4  4  0  0  0  0  0  0  0  0999 V2000
     3.4956    1.8862    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8035,9 +8794,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib254
+
 $$$$
 ring5
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   5  5  0  0  0  0  0  0  0  0999 V2000
     3.3632    3.2710    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8054,9 +8816,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib255
+
 $$$$
 ring6
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   6  6  0  0  0  0  0  0  0  0999 V2000
     2.5500    3.6722    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8075,9 +8840,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib256
+
 $$$$
 ring7
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   7  7  0  0  0  0  0  0  0  0999 V2000
    21.4111    6.3389    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8098,9 +8866,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib257
+
 $$$$
 ring8
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   8  8  0  0  0  0  0  0  0  0999 V2000
     2.9268    2.2122    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8123,9 +8894,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib258
+
 $$$$
 ring9
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
   9  9  0  0  0  0  0  0  0  0999 V2000
     2.7667    2.2210    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8150,9 +8924,12 @@ M  END
 >  <group>
 Rings
 
+>  <prerender>
+templates.svg#lib259
+
 $$$$
 ad_allos
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -4.1124    6.2007    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8193,9 +8970,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib260
+
 $$$$
 ad_alltros
-  -INDIGO-08151617402D
+  -INDIGO-09131619512D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -6.8433    4.3051    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8236,9 +9016,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib261
+
 $$$$
 ad_galactose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -6.4899    2.6666    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8279,9 +9062,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib262
+
 $$$$
 ad_glucose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -7.7107   -0.2570    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8322,9 +9108,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib263
+
 $$$$
 ad_gulose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -5.8152    3.8232    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8365,9 +9154,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib264
+
 $$$$
 ad_idose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -6.0079    2.7309    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8408,9 +9200,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib265
+
 $$$$
 ad_mannose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -5.5581    1.8634    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8451,9 +9246,12 @@ M  END
 >  <group>
 Sugars
 
+>  <prerender>
+templates.svg#lib266
+
 $$$$
 ad_talose
-  -INDIGO-08151617402D
+  -INDIGO-09131619522D
 
  17 17  0  0  1  0  0  0  0  0999 V2000
    -6.3613    0.1928    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
@@ -8493,5 +9291,8 @@ ad_talose
 M  END
 >  <group>
 Sugars
+
+>  <prerender>
+templates.svg#lib267
 
 $$$$

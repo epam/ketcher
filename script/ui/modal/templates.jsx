@@ -18,22 +18,33 @@ function normName(tmpl, i) {
 	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
 }
 
-function renderTmpl(el, tmpl) {
-  if (el) {
-	  if (tmpl.prerender)           // Should it sit here?
-		  el.innerHTML = tmpl.prerender;
-	  else {
-		  var rnd = new Render(el, 0, {
-			  'autoScale': true,
-			  'autoScaleMargin': 0,
-			  'maxBondLength': 30
-		  });
-		  rnd.setMolecule(tmpl.struct);
-		  rnd.update();
-		  console.info('render!');//, el.innerHTML);
-		  //tmpl.prerender = el.innerHTML;
-	  }
-  }
+function renderTmpl(el, struct) {
+	if (el) {
+		if (struct.prerender)           // Should it sit here?
+			el.innerHTML = struct.prerender;
+		else {
+			var rnd = new Render(el, 0, {
+				'autoScale': true,
+				'autoScaleMargin': 0,
+				'maxBondLength': 30
+			});
+			rnd.setMolecule(struct);
+			rnd.update();
+			console.info('render!');//, el.innerHTML);
+			//tmpl.prerender = el.innerHTML;
+		}
+	}
+}
+
+class StructRender extends Component {
+	render ({ struct, xhref, Tag="div", ...props }) {
+		console.info('xhref', xhref);
+		return (
+			xhref ?
+			<Tag {...props}><img src={xhref}/></Tag> :
+			<Tag ref={ el => renderTmpl(el, struct) } {...props}/>
+		);
+	}
 }
 
 function SelectList ({ children, options, onChange, value, ...props}) {
@@ -133,12 +144,13 @@ class Templates extends Component {
 				</label>
 				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
 				<VisibleView data={this.getTemplates()} rowHeight={141}>{
-          (tmpl, i) => (
-			      <li key={i} title={normName(tmpl, i)}
-			          class={tmpl == selected ? 'selected' : ''}
-			          onClick={() => this.select(tmpl)}
-			        ref={ el => renderTmpl(el, tmpl) }>loading..</li>
-		      )
+						(tmpl, i) => (
+							<StructRender struct={tmpl.struct} Tag="li"
+										  xhref={ tmpl.props && tmpl.props.prerender }
+										  key={i} title={normName(tmpl, i)}
+										  class={tmpl == selected ? 'selected' : ''}
+										  onClick={() => this.select(tmpl)} />
+						)
         }</VisibleView>
 			</Dialog>
 		);
@@ -150,8 +162,8 @@ function getTemplates(baseUrl) {
     if (response.ok)
       return response.text();
   }).then(text => {
-		var templates = sdf.parse(text);
-    var userTemplates = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	  var templates = sdf.parse(text);
+      var userTemplates = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 
     return userTemplates.reduce((res, struct) => {
       res.push({ struct: molfile.parse(struct), props: { group: 'User' }});

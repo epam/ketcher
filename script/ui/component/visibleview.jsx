@@ -48,7 +48,7 @@ export default class VirtualList extends Component {
 	}
 
 	render() {
-		var { data, rowHeight, children, overscanCount=1, sync, ...props } = this.props;
+		var { data, rowHeight, children, Tag="div", overscanCount=1, sync, ...props } = this.props;
 		var { offset, height } = this.state;
 		console.info('offset', offset);
 		// first visible row index
@@ -74,9 +74,9 @@ export default class VirtualList extends Component {
 		return (
 			<div class="outer" onScroll={this.handleScroll} {...props}>
 				<div style={`${STYLE_INNER} height:${data.length*rowHeight}px;`}>
-					<ul style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
+					<Tag style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
 						{ selection.map((d, i) => renderRow(d, start + i)) }
-					</ul>
+					</Tag>
 				</div>
 			</div>
 		);

@@ -89,25 +89,6 @@ form[role=dialog] {
 /////////////////////
 
 .template-lib {
-	.outer {
-		margin-top: 3.5em;
-		padding: 0;
-		float: left;
-		width: 350px;
-		height: 23em;
-		overflow: auto;
-	}
-	.groups {
-		&:extend(.-Select all);
-		margin-top: 3.5em;
-		height: 23em;
-		width: 11em;
-		float: left;
-	}
-	img {
-		width: 100%;
-		height: 100%;
-	}
 	label {
 		position: absolute;
 		right: 0;
@@ -116,30 +97,62 @@ form[role=dialog] {
 	input[type=search] {
 		width: 100%;
 	}
-	.outer li {
-		padding: 10px 0;
-		overflow: hidden;
-		height: 120px;
+	.groups {
+		&:extend(.-Select all);
+		margin-top: 3.5em;
+		height: 27em;
+		width: 11em;
+		float: left;
+	}
+	.outer {
+		margin-top: 3.5em;
+		padding: 0;
+		float: left;
+		width: 550px;
+		height: 27em;
+		overflow: auto;
+	}
+	img {
 		width: 100%;
+		height: 100%;
+	}
+	table, tr {
+		width: 100%;
+		table-layout: fixed;
+		border-collapse: collapse;
+		border: 0;
+	}
+	tr {
+		line-height: 120px;
+		height: 120px;
+	}
+	td {
+		//padding: @item-pad;
+		padding: 0 5px;
+		overflow: hidden;
+		width: 33%;
+		height: 120px;
+		line-height: 120px;
 		position: relative;
+		div {
+			height: 120px;
+			overflow: hidden;
+			&:before {
+				position: absolute;
+				left: 10px;
+				top: 5px;
+				font-size: 10px;
+				color: darken(@border-color, 30%);
+				content: attr(title);
+			}
+			&:hover {
+				background: @form-hover-background;
+			}
+			&.selected {
+				background-color: lighten(@form-selected-background, 15%);
+			}
+		}
 
-		& + li {
-			border-top: 1px solid @border-color;
-		}
-		&:before {
-			position: absolute;
-			left: 10px;
-			top: 5px;
-			font-size: 10px;
-			color: darken(@border-color, 30%);
-			content: attr(title);
-		}
-		&:hover {
-			background: @form-hover-background;
-		}
-		&.selected {
-			background-color: lighten(@form-selected-background, 15%);
-		}
 	}
 }
 

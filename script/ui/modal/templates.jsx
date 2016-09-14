@@ -17,6 +17,13 @@ function normName(tmpl, i) {
 	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
 }
 
+function partition(n, array) {
+	var res = [];
+	for (var i = 0; i < array.length; i += n)
+		res.push(array.slice(i, i + n));
+	return res;
+}
+
 class Templates extends Component {
 	constructor({params, templates}) {
 		super();
@@ -88,8 +95,27 @@ class Templates extends Component {
 		} : null;
 	}
 
+	renderRow (row, index) {
+		let { selected } = this.state;
+		return (
+			<tr key={index}>{ row.map((tmpl, i) => (
+				<td>
+				<StructRender struct={tmpl.struct}
+							  xhref={ tmpl.props && tmpl.props.prerender }
+							  title={normName(tmpl, index + i)}
+							  class={tmpl == selected ? 'selected' : ''}
+							  onClick={() => this.select(tmpl)} />
+				</td>
+
+			))
+			}</tr>
+		);
+	}
+
 	render () {
-		var {selected, selectedGroup, filter} = this.state;
+		const COLS = 3;
+		let {selectedGroup, filter} = this.state;
+		let rows = partition(COLS, this.getTemplates());
 
 		console.info('all rerender');
 		return (
@@ -101,14 +127,9 @@ class Templates extends Component {
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
 				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
-				<VisibleView data={this.getTemplates()} rowHeight={141}>{
-						(tmpl, i) => (
-							<StructRender struct={tmpl.struct} Tag="li"
-										  xhref={ tmpl.props && tmpl.props.prerender }
-										  key={i} title={normName(tmpl, i)}
-										  class={tmpl == selected ? 'selected' : ''}
-										  onClick={() => this.select(tmpl)} />
-						)
+				<VisibleView data={rows} rowHeight={120} Tag="table">{
+						(row, i) => this.renderRow(row, i)
+
         }</VisibleView>
 			</Dialog>
 		);

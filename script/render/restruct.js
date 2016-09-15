@@ -572,15 +572,16 @@ ReStruct.prototype.drawReactionPlus = function (id, item) {
 		path.translateAbs(offset.x, offset.y);
 };
 
-
 ReStruct.prototype.drawSGroups = function () {
 	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var resgroup = this.sgroups.get(id);
 		var sgroup = resgroup.item;
-		var remol = this.render.ctab;
-		var path = resgroup.draw(remol, sgroup);
-		this.addReObjectPath('data', resgroup.visel, path, null, true);
-		resgroup.setHighlight(resgroup.highlight, this.render); // TODO: fix this
+		if (sgroup.data.fieldName != "MRV_IMPLICIT_H") {
+			var remol = this.render.ctab;
+			var path = resgroup.draw(remol, sgroup);
+			this.addReObjectPath('data', resgroup.visel, path, null, true);
+			resgroup.setHighlight(resgroup.highlight, this.render); // TODO: fix this
+		}
 	}, this);
 };
 

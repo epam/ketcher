@@ -21,7 +21,7 @@ var tfx = util.tfx;
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
-// DEBUG.logMethod = function (method) {console.log("METHOD: " + method);
+// DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
 var defaultRenderOps = {
 	// flags for debugging
@@ -929,17 +929,19 @@ Render.prototype.setScrollOffset = function (x, y) {
 	 // TODO: store drag position in scaled systems
 	// scrollLeft = clientArea.scrollLeft;
 	// scrollTop = clientArea.scrollTop;
+	this.update(true);
 };
 
-Render.prototype.recoordinate = function (rp, vp) {
+Render.prototype.recoordinate = function (rp/* , vp*/) {
 	// rp is a point in scaled coordinates, which will be positioned
 	// vp is the point where the reference point should now be (in view coordinates)
 	//    or the center if not set
 	console.assert(rp, 'Reference point not specified');
 	this.setScrollOffset(0, 0);
-	var avp = this.obj2view(rp);
-	var so = avp.sub(vp || this.viewSz.scaled(0.5));
-	this.setScrollOffset(so.x, so.y);
+	// var avp = this.obj2view(rp);
+	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
+	// this.setScrollOffset(so.x, so.y);
+	this.update(true);
 };
 
 Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements

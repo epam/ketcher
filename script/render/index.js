@@ -158,6 +158,7 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	this.size = null;
 	this.bb = null;
 	this.rxnMode = ctab.isReaction;
+	this.update(false);
 };
 
 // molecule manipulation interface
@@ -929,7 +930,7 @@ Render.prototype.setScrollOffset = function (x, y) {
 	 // TODO: store drag position in scaled systems
 	// scrollLeft = clientArea.scrollLeft;
 	// scrollTop = clientArea.scrollTop;
-	this.update(true);
+	this.update(false);
 };
 
 Render.prototype.recoordinate = function (rp/* , vp*/) {
@@ -941,7 +942,6 @@ Render.prototype.recoordinate = function (rp/* , vp*/) {
 	// var avp = this.obj2view(rp);
 	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
 	// this.setScrollOffset(so.x, so.y);
-	this.update(true);
 };
 
 Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements

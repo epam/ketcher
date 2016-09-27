@@ -11,8 +11,8 @@ const checkScheckSchema = [
 	{ title: 'Stereochemistry', value: 'stereo' },
 	{ title: 'Query', value: 'query' },
 	{ title: 'Overlapping Atoms', value: 'overlapping_atoms'},
-	{ title: '3D Structure', value: '3d'},
-	{ title: 'Overlapping Bonds', value: 'ovrlapping_bonds'}
+	{ title: 'Overlapping Bonds', value: 'ovrlapping_bonds'},
+	{ title: '3D Structure', value: '3d'}
 ];
 
 class CheckStruct extends Component {

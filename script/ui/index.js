@@ -35,6 +35,7 @@ var clientArea = null;
 var server;
 var options;
 
+
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
                      'reaction-automap', 'template-lib', 'recognize',
                      'check', 'analyse'];
@@ -43,8 +44,6 @@ var addionalAtoms = {
 	capacity: 7,
 	current: 0
 };
-
-var addionalAttoms = [];
 
 var clipActions = ['cut', 'copy', 'paste'];
 
@@ -80,7 +79,6 @@ function init (opts, apiServer) {
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
-	updateAtoms();
 
 	initHotKeys(toolbar, 'editor');
 	labelEditKeys('editor.label', 'a-z0-9');
@@ -120,7 +118,6 @@ function init (opts, apiServer) {
 		popAction(toolbar);
 	});
 };
-
 
 function updateAtoms() {
 	if (addionalAtoms.storage.length > 0) {
@@ -836,10 +833,11 @@ var actionMap = {
 	},
 	'settings': function () {
 		dialog(modal.openSettings, { server: server }).then(function (res) {
-			if (res.onlyCurrentSession)
+			if (!res.onlyCurrentSession)
 				localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
-			else
-				localStorage.setItem("ketcher-opts",  '{}');
+			// else
+			// 	localStorage.setItem("ketcher-opts",  '{}');
+			console.log("ketcher-opts", res.localStorageOpts);
 			ui.render =  ui.editor.render = new Render(clientArea, SCALE, res.opts);
 			ui.render.setMolecule(ui.ctab);
 			ui.render.update();

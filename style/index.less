@@ -107,7 +107,7 @@ li.opened {
 	.expanded;
 }
 
-#atom, #freq-atom {
+#atom, #freq-atoms {
 	button {
 		font-size: @atom-size;
 	}
@@ -197,7 +197,7 @@ select {
 }
 
 @media (min-height: 650px) {
-	#erase, #chain, #charge, #transform, #atom {
+	#erase, #chain, #charge, #transform, #atom, #freq-atoms {
 		.separate-item(vertical, 10px);
 	}
 }
@@ -230,7 +230,8 @@ select {
 		.expanded-size(small);
 	}
 
-	#atom button {
+	#atom button,
+	#freq-atoms button{
 		font-size: @atom-size;
 	}
 }

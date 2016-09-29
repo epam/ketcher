@@ -38,6 +38,11 @@ var options;
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
                      'reaction-automap', 'template-lib', 'recognize',
                      'check', 'analyse'];
+var addionalAtoms = {
+	storage: [],
+	capacity: 7,
+	current: 0
+};
 
 var addionalAttoms = [];
 
@@ -118,18 +123,17 @@ function init (opts, apiServer) {
 
 
 function updateAtoms() {
-	if (addionalAttoms.length > 0) {
-		var al = "<menu>" + addionalAttoms.reduce(function (res, atom) {
+	if (addionalAtoms.storage.length > 0) {
+		var al = "<menu>" + addionalAtoms.storage.reduce(function (res, atom) {
 			return res + "<li id=\"atom-" + atom.toLowerCase() +
 			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
 			            atom + "</button></li>";
 		}, "") + "</menu>";
-		var cont = toolbar.select('#freq-atom')[0];
+		var cont = toolbar.select('#freq-atoms')[0];
 		if (!cont) {
 			var sa = toolbar.select('#atom')[0];
 			sa.insert({ after: "<li id=\"freq-atoms\"/>" });
 			cont = sa.nextElementSibling;
-			console.info(cont, sa);
 		}
 		cont.update(al);
 		initDropdown(cont);
@@ -687,15 +691,32 @@ function redo ()
 	updateHistoryButtons();
 };
 
+function addAtoms(res) {
+	var atoms = [];
+	for (var i = 0; i < 10; i++) {
+		var atomLabel = toolbar.select('#atom')[0].select('li')[i].id.substr(5);
+		atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
+		atoms.push(atomLabel);
+	}
+	if (atoms.indexOf(element[res.values[0]].label) < 0) {
+		if (addionalAtoms.current >= addionalAtoms.capacity)
+			addionalAtoms.current = 0;
+		addionalAtoms.storage[addionalAtoms.current] = element[res.values[0]].label;
+		updateAtoms();
+		addionalAtoms.current++;
+	}
+}
+
 function elemTable () {
 	modal.periodTable({
 		onOk: function (res) {
 			var props;
-			if (res.mode == 'single')
+			if (res.mode == 'single') {
 				props = {
 					label: element[res.values[0]].label
 				};
-			else
+				addAtoms(res);
+			} else
 				props = {
 					label: 'L#',
 					atomList: new Struct.AtomList({

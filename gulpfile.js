@@ -11,6 +11,9 @@ var cp = require('child_process');
 var del = require('del');
 var minimist = require('minimist');
 
+var MarkdownIt = require('markdown-it');
+var tap = require('gulp-tap');
+
 var pkg = require('./package.json');
 var options = minimist(process.argv.slice(2), {
 	string: ['dist', 'api-path', 'build-number', 'build-date',
@@ -82,6 +85,17 @@ gulp.task('html', ['patch-version'], function () {
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))
 		.pipe(gulp.dest(options.dist));
+});
+
+gulp.task('help', function () {
+	return gulp.src('doc/help.md')
+		.pipe(tap(function (file) {
+			const fs = require('fs');
+			var fileContent = fs.readFileSync(file.path, "utf8");
+			var result = new MarkdownIt().render(fileContent);
+			fs.mkdir('dist/doc');
+			fs.writeFileSync('dist/doc/help.html', result);
+		}));
 });
 
 gulp.task('font', function (cb) {

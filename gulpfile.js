@@ -87,14 +87,19 @@ gulp.task('html', ['patch-version'], function () {
 		.pipe(gulp.dest(options.dist));
 });
 
-gulp.task('help', function () {
+gulp.task('doc', function () {
+	return gulp.src('doc/*.{png, jpg, gif}')
+		.pipe(gulp.dest(options.dist + '/doc'))
+});
+
+gulp.task('help', ['doc'], function () {
 	return gulp.src('doc/help.md')
 		.pipe(tap(function (file) {
 			const fs = require('fs');
 			var fileContent = fs.readFileSync(file.path, "utf8");
 			var result = new MarkdownIt().render(fileContent);
-			fs.mkdir('dist/doc');
-			fs.writeFileSync('dist/doc/help.html', result);
+			var doctype = '<!DOCTYPE html>';
+			fs.writeFileSync('dist/doc/help.html', doctype + result);
 		}));
 });
 
@@ -170,7 +175,7 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('serve', ['clean', 'help', 'assets', 'style', 'html', 'script-watch'], function() {
+gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch', 'help'], function() {
 	var server = gulp.src(options.dist)
 		.pipe(plugins.webserver({
 			port: 9966,

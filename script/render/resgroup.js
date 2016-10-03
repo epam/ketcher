@@ -20,7 +20,7 @@ function ReSGroup(sgroup) {
 ReSGroup.prototype = new ReObject();
 ReSGroup.isSelectable = function () {
 	return false;
- };
+};
 
 
 ReSGroup.findClosest = function (render, p) {

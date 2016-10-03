@@ -536,13 +536,13 @@ function save () {
 	dialog(modal.save, { server: server, struct: ui.ctab });
 }
 
-function serverTransform(method, mol, options) {
-	if (!mol)
-		mol = ui.ctab.clone();
-	var implicitReaction = mol.addRxnArrowIfNecessary();
+function serverTransform(method, struct, options) {
+	if (!struct)
+		struct = ui.ctab.clone();
+	var implicitReaction = struct.addRxnArrowIfNecessary();
 	var request = server.then(function () {
 		return server[method](Object.assign({
-			struct: molfile.stringify(mol, { ignoreErrors: true })
+			struct: molfile.stringify(struct, { ignoreErrors: true })
 		}, options));
 	});
 	//utils.loading('show');
@@ -556,6 +556,18 @@ function serverTransform(method, mol, options) {
 		//utils.loading('hide');
 		echo(er);
 	});
+}
+
+function serverTransformSelected(method) {
+	var aidMap = {};
+	var struct = ui.ctab.clone(null, null, false, aidMap);
+
+	var selectedAtoms = ui.editor.getSelection(true).atoms;
+	selectedAtoms = selectedAtoms.map(function (aid) {
+		return aidMap[aid];
+	});
+	return serverTransform(method, struct,
+	                       selectedAtoms.length > 0 ? { 'atom_list': selectedAtoms } : null);
 }
 
 function initZoom() {
@@ -598,29 +610,6 @@ function updateZoom (refresh) {
 		ui.render.update();
 	}
 }
-
-function layout () {
-	var atoms = [].slice.call(ui.editor.getSelection(true).atoms);
-	var selective = atoms.length > 0;
-	return serverTransform('layout', null,
-	                       selective ? { 'atom_list': atoms } : null);
-};
-
-function clean2d() {
-	return serverTransform('clean');
-};
-
-function aromatize () {
-	return serverTransform('aromatize');
-};
-
-function dearomatize () {
-	return serverTransform('dearomatize');
-};
-
-function calculateCip() {
-	return serverTransform('calculateCip');
-};
 
 function automap () {
 	var mol = ui.ctab.clone();
@@ -754,13 +743,25 @@ var actionMap = {
 	redo: redo,
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
-	layout: layout,
-	clean: clean2d,
-	arom: aromatize,
-	dearom: dearomatize,
 	'period-table': elemTable,
 	'generic-groups': genericsTable,
 	'template-lib': templateLib,
+
+	layout: function () {
+		return serverTransformSelected('layout');
+	},
+	clean: function () {
+		return serverTransformSelected('clean');
+	},
+	arom:  function () {
+		return serverTransform('aromatize');
+	},
+	dearom: function () {
+		return serverTransform('dearomatize');
+	},
+	cip: function () {
+		return serverTransform('calculateCip');
+	},
 	cut: function () {
 		var struct = ui.editor.getSelectionStruct();
 		removeSelected();
@@ -805,7 +806,6 @@ var actionMap = {
 			qs.replace(/mol=[^&$]*/, molQs);
 	},
 	'reaction-automap': automap,
-	'cip': calculateCip,
 	'recognize': function () {
 		dialog(modal.recognizeMolecule, { server: server }).then(function (res) {
 			if (res.fragment) {

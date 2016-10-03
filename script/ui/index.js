@@ -990,5 +990,7 @@ Object.assign(ui, {
 	showAtomProperties: modal.atomProps,
 	showBondProperties: modal.bondProps,
 	showRLogicTable: modal.rgroupLogic,
-	showLabelEditor: dialog.bind(null, modal.labelEdit)
+	showLabelEditor: function (val) {
+		return dialog(modal.labelEdit, val, true);
+	}
 });

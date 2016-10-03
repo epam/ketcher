@@ -16,6 +16,7 @@ var recognizeMoleculeDialog = require('./recognize.jsx').default;
 var checkStructDialog = require('./check.jsx').default;
 var calculatedValuesDialog = require('./analyse.jsx').default;
 var openSettingsDialog = require('./settings.jsx').default;
+var helpDialog = require('./help.jsx').default;
 
 function periodTable (params) {
 	params.required = true;
@@ -143,5 +144,6 @@ module.exports = {
 	recognizeMolecule: recognizeMoleculeDialog,
 	checkStruct: checkStructDialog,
 	calculatedValues: calculatedValuesDialog,
-	openSettings: openSettingsDialog
+	openSettings: openSettingsDialog,
+	help: helpDialog
 };

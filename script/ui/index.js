@@ -872,6 +872,12 @@ var actionMap = {
 			ui.render.setMolecule(ui.ctab);
 			ui.render.update();
 		});
+	},
+	'help': function () {
+		dialog(modal.help, {
+			struct: ui.ctab,
+			server: server
+		});
 	}
 };
 

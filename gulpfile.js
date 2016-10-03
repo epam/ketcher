@@ -170,7 +170,7 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch'], function() {
+gulp.task('serve', ['clean', 'help', 'assets', 'style', 'html', 'script-watch'], function() {
 	var server = gulp.src(options.dist)
 		.pipe(plugins.webserver({
 			port: 9966,

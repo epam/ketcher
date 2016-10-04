@@ -1,5 +1,3 @@
-# Help
-
 **Ketcher** is a tool to draw molecular structures and chemical reactions.
 
 # Ketcher Overview
@@ -152,7 +150,7 @@ To draw/edit bonds you can:
 
 Use the _R-Group_ toolbox ![](Rgroup.png) to draw R-groups in Markush structures:
 
- ![](RgroupMenu.png)
+ ![](RGroupmenu.png)
 
 \*For the full screen format, the _R-Group_ splits into separate buttons:
 
@@ -214,9 +212,9 @@ Schematically, the entire process of the R-Group member creation can be presente
 
 # Marking S-Groups
 
-To mark S-Groups, use the _S-Group tool_ ![](Sgroup.png) and the following dialog that appears after selecting a fragment with this tool:
+To mark S-Groups, use the _S-Group tool_ ![](SGroup.png) and the following dialog that appears after selecting a fragment with this tool:
 
- ![](SgroupProperties.png)
+ ![](SGroupProperties.png)
 
 Available S-Group types:
 
@@ -262,7 +260,7 @@ Use the _Flip/Rotate_ tool ![](flipRotate.png) to change the structure display:
 
 \*For the full screen format, the _Flip/Rotate_tool is split into separate buttons:
 
- ![](flipFull.png)
+ ![](FlipFull.png)
 
 # Drawing Reactions
 

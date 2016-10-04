@@ -8,7 +8,7 @@ function Help(props) {
 		<Dialog caption="Help"
 				name="help" params={props}
 				buttons={["Close"]}>
-			<iframe src="doc/help.html" height="720px" width="1280px"></iframe>
+			<iframe className="help" src="doc/help.html" height="720px" width="1280px"></iframe>
 		</Dialog>
 	);
 }

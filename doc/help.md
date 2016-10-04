@@ -8,7 +8,7 @@
 
 **Ketcher** consists of the following elements:
 
- ![](/doc/toolbars.png "Toolbars")
+ ![](toolbars.png "Toolbars")
 
 **Note** : Depending on the screen size, some tools on the _Tool palette_ can be displayed in expanded or collapsed forms.
 
@@ -22,11 +22,11 @@ Using the _Tool palette,_ you can
 
 a)  in the expanded form
 
- ![](/doc/selection2.png "Selection")
+ ![](selection2.png "Selection")
 
 b)  in the collapsed form
 
- ![](/doc/selection.png "Selection2")
+ ![](selection.png "Selection2")
 
 To select one atom or bond, click Lasso or Rectangle Selection tool, and then click the atom or bond.
 
@@ -45,7 +45,7 @@ To select multiple atoms, bonds, structures, or other objects, do one of the fol
 
 You can use the buttons of the _Main_ toolbar:
 
- ![](/doc/toolbar.png "Tolbar")
+ ![](toolbar.png "Tolbar")
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this command clears the drawing area;
 - **Open…** (2) and **Save As…** (3) buttons to import a molecule from a molecular file or save it to a supported molecular file format;
@@ -57,11 +57,11 @@ You can use the buttons of the _Main_ toolbar:
 - **Calculate CIP** button (13) to determine R/S and E/Z configurations;
 - **Check structure** button (14) to check the following properties of the structure:
 
- ![](/doc/checkStructure.png "Structure Ckeck")
+ ![](checkStructure.png "Structure Ckeck")
 
 - **Calculated Values** button (15) to display some properties of the structure:
 
- ![](/doc/calculated.png "Calculated")
+ ![](calculated.png "Calculated")
 
 - **Recognize molecule** button (16) to recognize a structure in the image file and load it to the canvas;
 - **3D Viewer** button (17) to open the structure in the three-dimensional Viewer;
@@ -74,7 +74,7 @@ You can use the buttons of the _Main_ toolbar:
 
 The structure appears in a modal window after clicking on the **3D Viewer** button:
 
- ![](/doc/3DViewer.png "3DViewer")
+ ![](3DViewer.png "3DViewer")
 
 You can perform the following actions:
 
@@ -88,7 +88,7 @@ Menu in top left corner of the window allows to:
 - Load a new structure;
 - Save the position of the structure.
 
- ![](/doc/3DViewerMenu.png "3DViewerMenu")
+ ![](3DViewerMenu.png "3DViewerMenu")
 
 &quot;Lines&quot; drawing method, &quot;Atom name&quot; coloring method, &quot;Low&quot; resolution, &quot;Colored&quot; atom names and &quot;White&quot; background coloring are default.
 
@@ -100,75 +100,75 @@ To draw/edit atoms you can:
 
 - select an atom in the Atoms toolbar and click inside the drawing area;
 -
-??if the desired atom is absent in the toolbar, click on the ![](/doc/PT.png) button to invoke the Periodic Table and click on the desired atom (available options: _Single_ – selection of a single atom, _List_ – choose an atom from the list of selected options (To allow one atom from a list of atoms of your choice at that position), _Not List_ - exclude any atom on your list at that position).
+??if the desired atom is absent in the toolbar, click on the ![](PT.png) button to invoke the Periodic Table and click on the desired atom (available options: _Single_ – selection of a single atom, _List_ – choose an atom from the list of selected options (To allow one atom from a list of atoms of your choice at that position), _Not List_ - exclude any atom on your list at that position).
 
- ![](/doc/periodic.png "Periodic")
+ ![](periodic.png "Periodic")
 
 - add an atom to the existing molecule by selecting an atom in the _Atoms_ toolbar, clicking on an atom in the molecule, and dragging the cursor; the atom will be added with a single bond; vacant valences will be filled with the corresponding number of hydrogen atoms;
 - change an atom by selecting an atom in the _Atoms_ toolbar and clicking on the atom to be changed; in the case a wrong valence thus appears the atom will be underlined in red;
 - change an atom by clicking on an existing atom with the _Selection_ tool and waiting for a couple of seconds for the text box to appear; type another atom symbol in the text box:
 
- ![](/doc/changeAtom.png "Change Atom")
+ ![](changeAtom.png "Change Atom")
 
 - change the charge of an atom by selecting the Charge Plus or Charge Minus tool and clicking consecutively on an atom to increase/decrease its charge
 
- ![](/doc/ions.png "Ions")
+ ![](ions.png "Ions")
 
 - change an atom or its properties by double-clicking on the atom to invoke the Atom Properties dialog (the dialog also provides atom query features):
 
- ![](/doc/atomProperties.png "Atom Properties")
+ ![](atomProperties.png "Atom Properties")
 
 - click on Generic Groups to invoke the Generic Groups dialog and select a corresponding Reaxys generic group:
 
- ![](/doc/genericGroups.png "Generic Groups")
+ ![](genericGroups.png "Generic Groups")
 
 # Drawing Bonds
 
 To draw/edit bonds you can:
 
 -
-??Click an arrow on the Bond tool   ![](/doc/bond.png) in the Tools palette to open the drop-down list with the following bond types:
+??Click an arrow on the Bond tool   ![](bond.png) in the Tools palette to open the drop-down list with the following bond types:
 
- ![](/doc/bonds.png)
+ ![](bonds.png)
 
 \*For the full screen format, the Bond tool from the Tools palette splits into three: _Single Bond,__Single Up Bond,_ and _Any Bond_,which include the corresponding bond types:
 
- ![](/doc/bondz.png)
+ ![](bondz.png)
 
 - select a bond type from the drop down list and click inside the drawing area; a bond of the selected type will be drawn;
 - click on an atom in the molecule; a bond of the selected type will be added to the atom at the angle of 120 degrees;
 - add a bond to the existing molecule by clicking on an atom in the molecule and dragging the cursor; in this case you can set the angle manually;
 - change the bond type by clicking on it;
 -
-??use the Chain Tool ![](/doc/chain.png)  to draw consecutive single bonds; you can use hotkeys to change atom types.
+??use the Chain Tool ![](chain.png)  to draw consecutive single bonds; you can use hotkeys to change atom types.
 - change a bond or its properties by double-clicking on the bond to invoke the Bond Properties dialog:
 
- ![](/doc/bondProperties.png "Bond Properties")
+ ![](bondProperties.png "Bond Properties")
 
 - clicking on a drawn stereo bond changes its direction.
 - clicking with the Single Bond tool switches the bond type cyclically: Single-Double-Triple-Single.
 
 # Drawing R-Groups
 
-Use the _R-Group_ toolbox ![](/doc/Rgroup.png) to draw R-groups in Markush structures:
+Use the _R-Group_ toolbox ![](Rgroup.png) to draw R-groups in Markush structures:
 
- ![](/doc/RgroupMenu.png)
+ ![](RgroupMenu.png)
 
 \*For the full screen format, the _R-Group_ splits into separate buttons:
 
- ![](/doc/RgroupLarge.png)
+ ![](RgroupLarge.png)
 
 Selecting the _R-Group_ _Label_ Tool and clicking on an atom in the structure invokes the dialog to select the R-Group label for a current atom position in the structure:
 
- ![](/doc/RgroupLabel.png)
+ ![](RgroupLabel.png)
 
 Selecting the R-Group label and clicking **OK** converts the structure into a Markush structure with the selected R-Group label:
 
- ![](/doc/RgroupLabel1.png)
+ ![](RgroupLabel1.png)
 
 **Note** : You can choose several R-Group labels simultaneously:
 
- ![](/doc/RgroupLabel2.png)
+ ![](RgroupLabel2.png)
 
 Particular chemical fragments that may be substituted for a given R-Group form a set of R-Group members. R-Group members can be any structural fragment, including functional groups and single atoms or atom lists.
 
@@ -184,15 +184,15 @@ An R-Group attachment point is the atom in an R-Group member fragment that attac
 
 Selecting the _Attachment Point Tool_ and clicking on an atom in the R-Group fragment converts this atom into an attachment point. If the R-Group contains more than one attachment point, you can specify one of them as primary and the other as secondary. You can select between either the primary or secondary attachment point using the dialog that appears after clicking on the atom:
 
- ![](/doc/attachmentPoints.png)
+ ![](attachmentPoints.png)
 
 If there are two attachment points on an R-Group member, there must be two corresponding attachments (bonds) to the R-Group atom that has the same R-Group label. Clicking on **OK** in the above dialog creates the attachment point.
 
 Schematically, the entire process of the R-Group member creation can be presented as:
 
- ![](/doc/scheme1.png)
+ ![](scheme1.png)
 
- ![](/doc/scheme1.png)
+ ![](scheme1.png)
 
 # R-Group Logic
 
@@ -202,7 +202,7 @@ Schematically, the entire process of the R-Group member creation can be presente
 
 2.   Move the cursor over the entire fragment for the green frame to appear, then click inside the fragment. The following dialog appears:
 
- ![](/doc/RgroupLogic.png)
+ ![](RgroupLogic.png)
 
 3.   Specify **Occurrence** to define how many of an R-Group occurs. If an R-Group atom appears several times in the initial structure, you will specify **Occurrence**&quot;&gt;n&quot;, n being the number of occurrences; if it appears once, you see &quot;R1 &gt;0&quot;.
 
@@ -214,9 +214,9 @@ Schematically, the entire process of the R-Group member creation can be presente
 
 # Marking S-Groups
 
-To mark S-Groups, use the _S-Group tool_ ![](/doc/Sgroup.png) and the following dialog that appears after selecting a fragment with this tool:
+To mark S-Groups, use the _S-Group tool_ ![](Sgroup.png) and the following dialog that appears after selecting a fragment with this tool:
 
- ![](/doc/SgroupProperties.png)
+ ![](SgroupProperties.png)
 
 Available S-Group types:
 
@@ -236,7 +236,7 @@ _Data_
 
 Attached data is numeric or text data that you can associate with all or part of a structure. You can attach data to an atom, a bond, a fragment, the entire structure or to any collection of atoms and bonds. For this type of S-Groups the S-Group Properties dialog changes into:
 
- ![](/doc/SgroupProperties2.png)
+ ![](SgroupProperties2.png)
 
 - Add the appropriate S-Group Field Name. If you enter a wrong value, the attached data can be saved to a molfile but cannot be registered to the target database or used in a search.
 - Type the appropriate Field Value.
@@ -244,11 +244,11 @@ Attached data is numeric or text data that you can associate with all or part of
 
 # Data S-Groups
 
-The _Data S-Groups Tool_ ![](/doc/dataSgroups.png) is a separate tool for comfortable use with the accustomed set of descriptors (like Attached Data in **Marvin** Editor).
+The _Data S-Groups Tool_ ![](dataSgroups.png) is a separate tool for comfortable use with the accustomed set of descriptors (like Attached Data in **Marvin** Editor).
 
 You can attach data to an atom, a fragment, a single bond, or a group. The defined set of _Names_ and _Values_ is introduced for each type of selected elements:
 
- ![](/doc/SgroupDataProperties.png)
+ ![](SgroupDataProperties.png)
 
 - Select the appropriate S-Group Field Name.
 - Select or type the appropriate Field Value.
@@ -256,13 +256,13 @@ You can attach data to an atom, a fragment, a single bond, or a group. The defin
 
 # Changing Structure Display
 
-Use the _Flip/Rotate_ tool ![](/doc/flipRotate.png) to change the structure display:
+Use the _Flip/Rotate_ tool ![](flipRotate.png) to change the structure display:
 
- ![](/doc/flipMenu.png)
+ ![](flipMenu.png)
 
 \*For the full screen format, the _Flip/Rotate_tool is split into separate buttons:
 
- ![](/doc/flipFull.png)
+ ![](flipFull.png)
 
 # Drawing Reactions
 
@@ -270,9 +270,9 @@ To draw/edit reactions you can
 
 - draw reagents and products as described above;
 -
-??use options of the _Reaction Arrow Tool_ ![](/doc/arrow.png) to draw an arrow and pluses in the reaction equation and map same atoms in reagents and products.
+??use options of the _Reaction Arrow Tool_ ![](arrow.png) to draw an arrow and pluses in the reaction equation and map same atoms in reagents and products.
 
- ![](/doc/arrowReaction.png)
+ ![](arrowReaction.png)
 
 **Note** : Reaction Auto-Mapping Tool is available only in the Server mode.
 
@@ -280,7 +280,7 @@ To draw/edit reactions you can
 
 You can add templates (rings or other predefined structures) to the structure using the _Templates_ toolbar together with the _Custom Templates_ button located at the bottom:
 
- ![](/doc/templates.png)
+ ![](templates.png)
 
 To add a ring to the molecule, select a ring from the toolbar and click inside the drawing area, or click on an atom or a bond in the molecule.
 
@@ -288,16 +288,16 @@ Rules of using templates:
 
 ?         Selecting a template and clicking on an atom in the existing structure adds the template to the structure connected with a single bond:
 
- ![](/doc/fusion1.png)
+ ![](fusion1.png)
 
 - Selecting a template and dragging the cursor from an atom in the existing structure adds the template directly to this atom resulting in the fused structure:
 
- ![](/doc/fusion2.png)
+ ![](fusion2.png)
 
 - Dragging the cursor from an atom in the existing structure results in the single bond attachment if the cursor is dragged to more than the bond length; otherwise the fused structure is drawn.
 - Selecting a template and clicking on a bond in the existing structure created a bond-to-bond fused structure:
 
- ![](/doc/fusion3.png)
+ ![](fusion3.png)
 
 ?         The bond in the initial structure is replaced with the bond in the template.
 
@@ -307,9 +307,9 @@ Rules of using templates:
 
 **Note** : The added template will be fused by the default attachment atom or bond preset in the program.
 
-The _Custom Templates_ button ![](/doc/custom.png)invokes the scrolling list of templates available in the program; both built-in and created by user:
+The _Custom Templates_ button ![](custom.png)invokes the scrolling list of templates available in the program; both built-in and created by user:
 
- ![](/doc/template.png)
+ ![](template.png)
 
 ** **
 
@@ -329,11 +329,11 @@ Ketcher supports the following molecular formats that can be entered either manu
 
 You can use the **Open…** and **Save As…** buttons of the _Main_ toolbar to import a molecule from a molecular file or save it to a supported molecular file format. The _Open Structure_ dialog enables one to either browse for a file (Server mode) or manually input, e.g., the Molfile ctable for the molecule to be imported:
 
- ![](/doc/openStructure.png)
+ ![](openStructure.png)
 
 The _Save Structure_ dialog enables one to save the molecular file:
 
- ![](/doc/saveStructure.png)
+ ![](saveStructure.png)
 
 **Note** : In the standalone version only mol/rxn are supported for Open and mol/SMILES for Save.
 

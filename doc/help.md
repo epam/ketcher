@@ -53,7 +53,7 @@ You can use the buttons of the _Main_ toolbar:
 - **Clean Up** button (11) to improve the appearance of the structure by assigning them uniform bond lengths and angles.
 - **Aromatize** / **Dearomatize** buttons (12) to mark aromatic structures (to convert a structure to the Aromatic or Kekule presentation);
 - **Calculate CIP** button (13) to determine R/S and E/Z configurations;
-- **Check structure** button (14) to check the following properties of the structure:
+- **Check Structure** button (14) to check the following properties of the structure:
 
  ![](checkStructure.png "Structure Ckeck")
 
@@ -61,12 +61,12 @@ You can use the buttons of the _Main_ toolbar:
 
  ![](calculated.png "Calculated")
 
-- **Recognize molecule** button (16) to recognize a structure in the image file and load it to the canvas;
+- **Recognize Molecule** button (16) to recognize a structure in the image file and load it to the canvas;
 - **3D Viewer** button (17) to open the structure in the three-dimensional Viewer;
 - **About** button (18) to display version and copyright information of the program;
 - **Settings** button (19) to make some settings for molecular files.
 
-**Note** : **Clean, Aromatize** / **Dearomatize,**  **Calculate CIP,** and **3D View** buttons are active only in the Server mode.
+**Note** : **Clean, Aromatize** / **Dearomatize,**  **Calculate CIP,** **Check Structure,** **Calculated Values,** **Recognize Molecule** and **3D View** buttons are active only in the Server mode.
 
 # 3D Viewer
 
@@ -97,8 +97,7 @@ Menu in top left corner of the window allows to:
 To draw/edit atoms you can:
 
 - select an atom in the Atoms toolbar and click inside the drawing area;
--
-??if the desired atom is absent in the toolbar, click on the ![](PT.png) button to invoke the Periodic Table and click on the desired atom (available options: _Single_ – selection of a single atom, _List_ – choose an atom from the list of selected options (To allow one atom from a list of atoms of your choice at that position), _Not List_ - exclude any atom on your list at that position).
+- if the desired atom is absent in the toolbar, click on the ![](PT.png) button to invoke the Periodic Table and click on the desired atom (available options: _Single_ – selection of a single atom, _List_ – choose an atom from the list of selected options (To allow one atom from a list of atoms of your choice at that position), _Not List_ - exclude any atom on your list at that position).
 
  ![](periodic.png "Periodic")
 

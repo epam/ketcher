@@ -271,4 +271,4 @@ function glyphReduce(glyphs) {
 gulp.task('pre-commit', ['lint', 'check-epam-email']);
 gulp.task('assets', ['libs', 'distrib']);
 gulp.task('code', ['style', 'script', 'html']);
-gulp.task('build', ['clean', 'assets', 'code']);
+gulp.task('build', ['clean', 'assets', 'code', 'help']);

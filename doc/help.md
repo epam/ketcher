@@ -116,7 +116,7 @@ To draw/edit atoms you can:
 
 - change an atom or its properties by double-clicking on the atom to invoke the Atom Properties dialog (the dialog also provides atom query features):
 
- ![](/doc/atomProperties "Atom Properties")
+ ![](/doc/atomProperties.png "Atom Properties")
 
 - click on Generic Groups to invoke the Generic Groups dialog and select a corresponding Reaxys generic group:
 

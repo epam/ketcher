@@ -489,7 +489,7 @@ function echo (message) {
 	alert(message);
 };
 
-function updateMolecule (mol) {
+function updateStruct (mol) {
 	console.assert(mol, 'No molecule to update');
 	ui.editor.deselectAll();
 	addUndoAction(Action.fromNewCanvas(mol));
@@ -536,41 +536,49 @@ function save () {
 	dialog(modal.save, { server: server, struct: ui.ctab });
 }
 
-function serverTransform(method, options, struct) {
+function serverCall(method, options, struct) {
 	if (!struct) {
-		struct = ui.ctab.clone();
+		var aidMap = {};
+		struct = ui.ctab.clone(null, null, false, aidMap);
+
+		// retain reaction props on transform
 		var implicitReaction = !struct.hasRxnArrow() && struct.hasRxnProps();
 		if (implicitReaction)
 			struct.rxnArrows.add(new Struct.RxnArrow());
+
+		var selectedAtoms = ui.editor.getSelection(true).atoms;
+		selectedAtoms = selectedAtoms.map(function (aid) {
+			return aidMap[aid];
+		});
 	}
 
 	var request = server.then(function () {
 		return server[method](Object.assign({
 			struct: molfile.stringify(struct, { ignoreErrors: true })
-		}, options));
+		}, selectedAtoms && selectedAtoms.length > 0 ? {
+			selected: selectedAtoms
+		} : null, options));
 	});
 	//utils.loading('show');
-	request.then(function (res) {
-		var resmol = molfile.parse(res.struct);
-		if (implicitReaction)
-			resmol.rxnArrows.clear();
-		updateMolecule(resmol);
+	request.catch(function (err) {
+		echo(err);
+	}).then(function (er) {
 		//utils.loading('hide');
-	}).then(null, function (er) {
-		//utils.loading('hide');
-		echo(er);
 	});
+	return request;
 }
 
-function serverTransformSelected(method) {
-	var aidMap = {};
-	var struct = ui.ctab.clone(null, null, false, aidMap);
-
-	var selectedAtoms = ui.editor.getSelection(true).atoms;
-	selectedAtoms = selectedAtoms.map(function (aid) {
-		return aidMap[aid];
+function serverTransform(method, options, struct) {
+	if (!struct)
+		var implicitReaction = !ui.ctab.hasRxnArrow() && ui.ctab.hasRxnProps();
+	return serverCall(method, options, struct).then(function (res) {
+		var struct = molfile.parse(res.struct);
+		if (implicitReaction)
+			struct.rxnArrows.clear();
+		updateStruct(struct);
+	}).catch(function (err) {
+		echo("Can't parse server response!");
 	});
-	return serverTransform(method, selectedAtoms.length > 0 ? { 'atom_list': selectedAtoms } : null, struct);
 }
 
 function initZoom() {
@@ -628,7 +636,7 @@ function automap () {
 };
 
 function loadMolecule (structStr, checkEmptyLine) {
-	return getStruct(structStr, checkEmptyLine).then(updateMolecule, echo);
+	return getStruct(structStr, checkEmptyLine).then(updateStruct, echo);
 }
 
 function loadFragment (structStr, checkEmptyLine) {
@@ -646,7 +654,7 @@ function getStruct(structStr, checkEmptyLine) {
 		//utils.loading('hide');
 		return res;
 	}, function (err) {
-		utils.loading('hide');
+		//utils.loading('hide');
 		throw err;
 	});
 }
@@ -750,10 +758,10 @@ var actionMap = {
 	'template-lib': templateLib,
 
 	layout: function () {
-		return serverTransformSelected('layout');
+		return serverTransform('layout');
 	},
 	clean: function () {
-		return serverTransformSelected('clean');
+		return serverTransform('clean');
 	},
 	arom:  function () {
 		return serverTransform('aromatize');
@@ -815,23 +823,21 @@ var actionMap = {
 				selectAction('paste', res.struct);
 			}
 			else
-				updateMolecule(res.struct);
+				updateStruct(res.struct);
 		});
 	},
 	'check': function () {
 		dialog(modal.checkStruct, {
-			struct: ui.ctab,
-			server: server
+			check: serverCall.bind(null, 'check')
 		});
 	},
 	'analyse': function () {
-		server.calculate({
-			struct: molfile.stringify(ui.ctab),
+		serverCall('calculate', {
 			properties: ['molecular-weight', 'most-abundant-mass',
 			             'monoisotopic-mass', 'gross', 'mass-composition']
 		}).then(function (values) {
 			return dialog(modal.calculatedValues, values, true);
-		}, echo);
+		});
 	},
 	'settings': function () {
 		dialog(modal.openSettings, { server: server }).then(function (res) {

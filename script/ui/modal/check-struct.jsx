@@ -2,7 +2,6 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
-import molfile from '../../chem/molfile';
 
 const checkScheckSchema = [
 	{ title: 'Valence', value: 'valence' },
@@ -19,14 +18,14 @@ class CheckStruct extends Component {
     constructor(props) {
       super(props);
       this.state = {
-      		tabIndex: 0,
-      		data: {},
-      		checker: {},
-      	}
+      	  tabIndex: 0,
+      	  data: {},
+      	  checker: {}
+      };
   	}
     changeTab(ev, index) {
       this.setState({
-        tabIndex: index,
+        tabIndex: index
       });
       if (index == 0)
       	  this.doCheck();
@@ -34,12 +33,9 @@ class CheckStruct extends Component {
     }
     doCheck() {
     	var checks = Object.keys(this.state.checker).filter(v => this.state.checker[v]);
-        this.props.server.check({ struct: molfile.stringify(this.props.struct),
-                                  checks: checks})
-            .then(res => this.setState({
-                	data: res
-                })
-           	)
+        this.props.check({ checks }).then(res => this.setState({
+            data: res
+        }));
     };
     checkItem(val) {
     	this.state.checker[val] = !this.state.checker[val];

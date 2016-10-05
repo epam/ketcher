@@ -130,6 +130,12 @@ class OpenSettings extends Component {
         this.setState({onlyCurrentSession: true});
     }
 
+	changeAccord(ev) {
+		let id = ev.target.name + '-span';
+		ev.target.checked ?
+		document.getElementById(id).innerHTML = "+" : document.getElementById(id).innerHTML = "-";
+	}
+ 
     render (props, state) {
         return (
             <Dialog caption="Settings"
@@ -150,16 +156,18 @@ class OpenSettings extends Component {
             <div className="accordion-wrapper">
                 <ul class="accordion-menu">
                     <li className="has-children">
-                        <input type="checkbox" className="menu" id="bonds"></input>
-						<label for="bonds">Rendering customization options</label>
+                        <input type="checkbox" className="menu" name="bonds" id="bonds" onChange={this.changeAccord}></input>
+						<label for="bonds"><span className="accordion-dropdown" id="bonds-span">-</span>
+							Rendering customization options</label>
 						<ul>
 							{ this.draw(this.defOpts, "render") }
 						</ul>
                     </li>
 					<li className="has-children">
-						<input type="checkbox" className="menu" id="atoms" checked></input>
-						<label for="atoms">Options for debugging</label>
-						<ul>
+						<input type="checkbox" className="menu" name="atoms" id="atoms" checked onChange={this.changeAccord}></input>
+						<label for="atoms"><span className="accordion-dropdown" id="atoms-span">+</span>
+							Options for debugging</label>
+						<ul> 
 							{ this.draw(this.defOpts, "debug") }
 						</ul>
 					</li>

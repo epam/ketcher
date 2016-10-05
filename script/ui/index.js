@@ -536,10 +536,14 @@ function save () {
 	dialog(modal.save, { server: server, struct: ui.ctab });
 }
 
-function serverTransform(method, struct, options) {
-	if (!struct)
+function serverTransform(method, options, struct) {
+	if (!struct) {
 		struct = ui.ctab.clone();
-	var implicitReaction = struct.addRxnArrowIfNecessary();
+		var implicitReaction = !struct.hasRxnArrow() && struct.hasRxnProps();
+		if (implicitReaction)
+			struct.rxnArrows.add(new Struct.RxnArrow());
+	}
+
 	var request = server.then(function () {
 		return server[method](Object.assign({
 			struct: molfile.stringify(struct, { ignoreErrors: true })
@@ -566,8 +570,7 @@ function serverTransformSelected(method) {
 	selectedAtoms = selectedAtoms.map(function (aid) {
 		return aidMap[aid];
 	});
-	return serverTransform(method, struct,
-	                       selectedAtoms.length > 0 ? { 'atom_list': selectedAtoms } : null);
+	return serverTransform(method, selectedAtoms.length > 0 ? { 'atom_list': selectedAtoms } : null, struct);
 }
 
 function initZoom() {
@@ -612,14 +615,13 @@ function updateZoom (refresh) {
 }
 
 function automap () {
-	var mol = ui.ctab.clone();
-	mol.addRxnArrowIfNecessary();    // TODO: better way to check reaction
-	if (mol.rxnArrows.count() == 0)  // without cloning
+	if (!ui.ctab.hasRxnArrow())
+		// not a reaction explicit or implicit
 		echo('Auto-Mapping can only be applied to reactions');
 	else {
 		modal.automap({
 			onOk: function (res) {
-				return serverTransform('automap', mol, res);
+				return serverTransform('automap', res);
 			}
 		});
 	}

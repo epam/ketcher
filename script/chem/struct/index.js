@@ -41,13 +41,6 @@ Struct.prototype.hasRxnArrow = function () {
 	return this.rxnArrows.count() > 0;
 };
 
-Struct.prototype.addRxnArrowIfNecessary = function () {
-	var implicitReaction = !this.hasRxnArrow() && this.hasRxnProps();
-	if (implicitReaction)
-		this.rxnArrows.add(new RxnArrow());
-	return implicitReaction;
-};
-
 // returns a list of id's of s-groups, which contain only atoms in the given list
 Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 	var sgroupCounts = new Hash();

@@ -643,7 +643,7 @@ form[role=dialog] {
 			margin-top: 6px;
 			margin-left: 5px;
 			position: absolute;
-			max-width: 120px;
+			max-width: 9em;
 			overflow: hidden;
 		}
 	}
@@ -664,8 +664,27 @@ form[role=dialog] {
 			}
 			ul {
 				display: block;
-				padding: 5px;
 				font-size: 16px;
+				.settings-table {
+					border-collapse: collapse;
+					width: 100%;
+					tr {
+						td {
+							border: 1px solid #eee;
+							padding: 0;
+							width: 50%;
+							output {
+								margin-left: 10px;
+							}
+							select {
+								margin: 0;
+								padding: 0;
+								width: 100%;
+								border: 0;
+							}
+						}
+					}
+				}
 			}
 			input.menu[type=checkbox]:checked + label + ul,
 			input.menu[type=checkbox]:checked + label:nth-of-type(n) + ul {

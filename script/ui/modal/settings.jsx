@@ -100,10 +100,10 @@ class OpenSettings extends Component {
             return ( <option value={value}> {value} </option>);
         });
         return (
-            <li>
-                <output> { label } </output>
-                <select  id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select>
-            </li>
+            <tr>
+				<td><output> { label } </output></td>
+                <td><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></td>
+            </tr>
         );
     }
 
@@ -118,7 +118,7 @@ class OpenSettings extends Component {
                 );
             }
         });
-        return <div>{optsComponents}</div>;
+        return <table className="settings-table"> {optsComponents} </table>;
     }
 
     reset(ev) {
@@ -146,11 +146,11 @@ class OpenSettings extends Component {
                      <button onClick={ ev => this.load(ev) }>Load</button>,
                      <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
                      <button onClick={ ev => this.reset(ev) }>Reset</button>,
-                     "OK", "Cancel"]} >   
+                     "OK", "Cancel"]} >
             <div className="accordion-wrapper">
                 <ul class="accordion-menu">
                     <li className="has-children">
-                        <input type="checkbox" className="menu" id="bonds"></input> 
+                        <input type="checkbox" className="menu" id="bonds"></input>
 						<label for="bonds">Rendering customization options</label>
 						<ul>
 							{ this.draw(this.defOpts, "render") }

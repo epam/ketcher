@@ -628,26 +628,54 @@ form[role=dialog] {
 	width: 42em;
 	height: auto;
 
+	input[type=file] {
+		position: absolute;
+		width: 89px;
+		margin: -4px 0 0 -12px;
+		padding: 0 0 7px 0;
+		opacity: 0;
+	}
 
-	.accordion-menu {
-		input.menu[type=checkbox] {
+	.choose-wrapper {
+		display: inline-block;
+		float: left;
+		span {
+			margin-top: 6px;
+			margin-left: 5px;
 			position: absolute;
-			opacity: 0;
+			max-width: 120px;
+			overflow: hidden;
 		}
-		label, a {
-			position: relative;
-			display: block;
-			padding: 18px 18px 18px 64px;
-			box-shadow: inset 0 -1px #555960;
-			font-size: 1.2rem;
+	}
+
+	.accordion-wrapper {
+		margin: 0;
+		.accordion-menu {
+			input.menu[type=checkbox] {
+				position: absolute;
+				opacity: 0;
+			}
+			label, a {
+				background-color: #eee;
+				display: block;
+				padding: 5px;
+				box-shadow: inset 0 -1px #555960;
+				font-size: 1.2rem;
+			}
+			ul {
+				display: block;
+				padding: 5px;
+				font-size: 16px;
+			}
+			input.menu[type=checkbox]:checked + label + ul,
+			input.menu[type=checkbox]:checked + label:nth-of-type(n) + ul {
+				display: none;
+			}
 		}
-		ul {
+		.current {
 			display: block;
+			padding: 5px;
 			font-size: 16px;
-		}
-		input.menu[type=checkbox]:checked + label + ul,
-		input.menu[type=checkbox]:checked + label:nth-of-type(n) + ul {
-			display: none;
 		}
 	}
 }

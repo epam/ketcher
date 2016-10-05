@@ -130,39 +130,45 @@ class OpenSettings extends Component {
         this.setState({onlyCurrentSession: true});
     }
 
-    render (props) {
+    render (props, state) {
         return (
             <Dialog caption="Settings"
                     name="open-settings" params={props.params}
                     result={() => this.result()}
                      buttons={[
-                        <input type="file" onChange={ ev => this.uploadSettings(ev) }/>,
-                        <button onClick={ ev => this.load(ev) }>Load</button>,
-                        <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
-                        <button onClick={ ev => this.reset(ev) }>Reset</button>,
-                        "OK", "Cancel"]}>
-            <div>
+                     <div className="choose-wrapper">
+                     	<div className="choose-file">
+                     		<input id="input-file" type="file" onChange={ ev => this.uploadSettings(ev) }/>
+                     		<label for="input-file">Choose file ...</label>
+                     	</div>
+                     	<span>{state.file ? state.file.name : ''}</span>
+                     </div>,
+                     <button onClick={ ev => this.load(ev) }>Load</button>,
+                     <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
+                     <button onClick={ ev => this.reset(ev) }>Reset</button>,
+                     "OK", "Cancel"]} >   
+            <div className="accordion-wrapper">
                 <ul class="accordion-menu">
-                    <li class="has-children">
-                        <input type="checkbox" class="menu" id="atoms" checked></input>
-                            <label for="atoms">Options for debugging</label>
-                                <ul>
-                                    { this.draw(this.defOpts, "debug") }
-                                </ul>
+                    <li className="has-children">
+                        <input type="checkbox" className="menu" id="bonds"></input> 
+						<label for="bonds">Rendering customization options</label>
+						<ul>
+							{ this.draw(this.defOpts, "render") }
+						</ul>
                     </li>
-                    <li class="has-children">
-                        <input type="checkbox" class="menu" id="bonds" checked></input>
-                            <label for="bonds">Rendering customization options</label>
-                                <ul>
-                                    { this.draw(this.defOpts, "render") }
-                                </ul>
-                    </li>
+					<li className="has-children">
+						<input type="checkbox" className="menu" id="atoms" checked></input>
+						<label for="atoms">Options for debugging</label>
+						<ul>
+							{ this.draw(this.defOpts, "debug") }
+						</ul>
+					</li>
                 </ul>
+				<label className="current">
+					<input type="checkbox" onChange={ ev => this.apply(ev) }></input>
+					Apply settings only for current session
+				</label>
             </div>
-            <label class="open block">
-                <input type="checkbox" onChange={ ev => this.apply(ev) }></input>
-                Apply settings only for current session
-            </label>
             </Dialog>
         );
     }

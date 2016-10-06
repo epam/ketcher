@@ -4,27 +4,26 @@ import { h, Component } from 'preact';
 class OpenButton extends Component {
 	constructor(props) {
 		super(props);
-		fileOpener(props.server).then(f => {
-			this.setState({
-				opener: f
-			});
+		fileOpener(props.server).then(opener => {
+			this.setState({opener});
 		});
 	}
 	open(ev) {
 		let files = ev.target.files;
 		let noop = () => null;
 		let { onLoad=noop, onError=noop } = this.props;
-		if (this.state.opener && files.length)
+		if (this.state.opener && files.length) {
 			this.state.opener(files[0]).then(onLoad, onError);
+		}
 		ev.preventDefault();
 	}
 	render() {
-		let { children, accept } = this.props;
+		let { children, type, ...props } = this.props;
 		return (
-			<label disabled={ !this.state.opener } { ...this.props }>
+			<label disabled={ !this.state.opener } { ...props }>
 				{ children }
 				<input onChange={ ev => this.open(ev) }
-					accept={ accept } type="file"/>
+				       accept={ type } type="file"/>
 			</label>
 		);
 	}

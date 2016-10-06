@@ -38,8 +38,8 @@ class Open extends Component {
 				name="open" result={() => this.result() }
 				params={this.props}
 				buttons={[(
-					<OpenButton className="open" accept={structMime()}
-								server={this.props.server}
+					<OpenButton className="open" server={this.props.server}
+								type={structAcceptMimes()}
 								onLoad={ s => this.changeStructStr(s) }>
 						Open From File…
 					</OpenButton>
@@ -56,7 +56,7 @@ class Open extends Component {
 	}
 }
 
-function structMime() {
+function structAcceptMimes() {
 	return Object.keys(formatMap).reduce((res, key) => (
 		res.concat(formatMap[key].mime, ...formatMap[key].ext)
 	), []).join(',');

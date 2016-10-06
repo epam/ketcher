@@ -1,88 +1,71 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
-import fs from 'filesaver.js';
-
 import * as structFormat from '../structformat';
 
 import Dialog from '../component/dialog';
+import SaveButton from '../component/savebutton';
 
 var ui = global.ui;
 
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.changeType(props.struct.hasRxnArrow() ? 'rxn' : 'mol').then(null, () => props.onCancel());
-		fileSaver(props.server).then(f => {
-			this.setState({
-				fileSaver: f
-			});
-		}, ui.echo);
+		this.state = { type: props.struct.hasRxnArrow() ? 'rxn' : 'mol' };
+		this.changeType().catch(props.onCancel);
 	}
 
 	changeType(ev) {
-		var type = ev.target ? ev.target.value : ev;
-		if (ev.target)
+		let { type } = this.state;
+		if (ev) {
+			type = ev.target.value;
 			ev.preventDefault();
+		}
 		return structFormat.toString(this.props.struct, type, this.props.server)
-			.then(structStr => this.setState({ type, structStr }),
-				  e => { ui.echo(e); throw e });
+			.then(structStr => this.setState({ type, structStr }), e => { ui.echo(e); });
 	}
 
-	save(ev) {
-		if (this.state.fileSaver) {
-			this.state.fileSaver(this.state.structStr,
-								 this.state.type);
-			this.props.onOk();
-		}
-		ev.preventDefault();
-	}
 	saveTemplate(ev) {
 		var storage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 		storage.push(this.state.structStr);
 		localStorage['ketcher-tmpl'] = JSON.stringify(storage);
 		this.props.onOk();
 	}
+
 	render () {
 	    // $('[value=inchi]').disabled = ui.standalone;
+		let { type, structStr } = this.state;
+		let format = structFormat.map[type];
+		console.assert(format, "Unknown chemical file type");
+
 		return (
 			<Dialog caption="Save Structure"
 					name="save" params={this.props}
 					buttons={[(
-						<a className={!this.state.fileSaver ? "disabled save" : "save"} onClick={ev => this.save(ev)} download>Save To File…</a>
+						<SaveButton className="save"
+									data={structStr}
+									filename={'ketcher' + format.ext[0]}
+									type={format.mime}
+									server={this.props.server}
+									onSave={ () => this.props.onOk() }>
+							Save To File…
+						</SaveButton>
 					), (
 						<button className="save-tmpl"
 								onClick={ ev => this.saveTemplate(ev) }>
 							Save to Templates</button>
 					), "Close"]}>
 				<label>Format:
-				<select value={this.state.type} onChange={ev => this.changeType(ev)}>{
+				<select value={type} onChange={ev => this.changeType(ev)}>{
 					[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'cml', 'inchi'].map(type => (
 						<option value={type}>{structFormat.map[type].name}</option>
 					))
 				}</select>
 				</label>
-				<textarea className={ this.state.type } readonly
-			              value={ this.state.structStr } focus={ ev => ev.target.select() }/>
+				<textarea className={type} value={structStr} readonly
+						  focus={ ev => ev.target.select() }/>
 			</Dialog>
 		);
 	}
-}
-
-function fileSaver(server) {
-	return new Promise((resolve, reject) => {
-		if (global.Blob && fs.saveAs)
-			resolve((data, type) => {
-				console.assert(structFormat.map[type], 'Unknown chemical file type');
-				var blob = new Blob([data], { type: structFormat.map[type] });
-				fs.saveAs(blob, 'ketcher' + structFormat.map[type].ext[0]);
-			});
-		else
-			resolve(server.then(() => {
-				throw "Server doesn't still support echo method";
-			}, () => {
-				throw new Error("Standalone mode!");
-			}));
-	});
 }
 
 export default function dialog(params) {

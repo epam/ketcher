@@ -11,6 +11,7 @@ class RecognizeMolecule extends Component {
     constructor(props) {
         super(props);
         this.state = {
+        	image: true,
             file: null,
             struct: null,
             fragment: false,
@@ -25,6 +26,7 @@ class RecognizeMolecule extends Component {
     }
     uploadImage(ev) {
             this.setState({
+            	image: true,
                 file: ev.target.files[0]
             });
     }
@@ -76,7 +78,8 @@ class RecognizeMolecule extends Component {
                     ]}>
                 <div className="recognize-wrapper">
 					<div className="picture">
-                		<img id="pic" src={state.file ? this.url() : ""} onError={ ev => console.info('error') } />
+						{ state.image ? ( <img id="pic" src={state.file ? this.url() : ""} onError={ ev => state.file ? this.setState({ image: false }) : null } /> )
+						: ( <div className="recognize-error">Error, it is not picture</div> ) }
 					</div>
                 { state.struct ? (
 					<div className="output">

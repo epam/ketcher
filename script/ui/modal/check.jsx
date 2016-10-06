@@ -22,24 +22,29 @@ class CheckStruct extends Component {
       	  data: {},
       	  checker: {}
       };
+      checkScheckSchema.map((item) => {
+		  this.state.checker[item.value] = true;
+	  });
+	  this.doCheck();
   	}
     changeTab(ev, index) {
-      this.setState({
-        tabIndex: index
-      });
-      if (index == 0)
-      	  this.doCheck();
-      ev.preventDefault();
+		ev.preventDefault();
+      	this.setState({
+      	  tabIndex: index
+      	});
+      	if (index == 0) this.doCheck();
     }
     doCheck() {
-    	var checks = Object.keys(this.state.checker).filter(v => this.state.checker[v]);
-        this.props.check({ checks }).then(res => this.setState({
-            data: res
-        }));
+        this.props.check().then(res => {
+        	let data = {};
+        	for (let key in res)
+        		if (this.state.checker[key]) data[key] = res[key];
+        	this.setState({	data: data });
+		});
     };
     checkItem(val) {
     	this.state.checker[val] = !this.state.checker[val];
-    	this.setState(this.state.checker);
+    	this.setState({checker: this.state.checker});
     }
     render (props) {
     	var tabs = ['Check', 'Settings'];

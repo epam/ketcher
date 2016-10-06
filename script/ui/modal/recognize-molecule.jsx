@@ -37,10 +37,14 @@ class RecognizeMolecule extends Component {
     recognize() {
         this.setState({ struct: 'recognizing' });
         this.props.server.recognize(this.state.file).then(res => {
-            this.state.recognised = true;
-            this.setState({struct: molfile.parse(res.struct) });
+        	if (res.struct != "error") {
+				this.state.recognised = true;
+				this.setState({struct: molfile.parse(res.struct) });
+			} else {
+				this.setState({struct: 'error' });
+			}
         })
-    }
+	}
     renderRes(el) {
         var rnd = new Render(el, 0, {
               'autoScale': true,
@@ -53,29 +57,35 @@ class RecognizeMolecule extends Component {
     checkFragment(ev) {
         this.setState({fragment: !this.state.fragment});
     }
-    render (props) {
+    render (props, state) {
         return (
             <Dialog caption="Import From Image"
                 name="recognize-molecule" result={() => this.result() }
-                params={this.props}
+                params={props}
                 buttons={[
                     ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
-                    this.state.file ? ( <button class="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
+                    state.file ? ( <button className="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel",
-                    (this.state.struct && this.state.struct !== 'recognizing') ? ( "OK" ) : null
+                    (state.struct && state.struct !== 'recognizing') ? ( "OK" ) : null
                     ]}>
                 <div>
-                <img id="pic" src={this.state.file ? this.url() : ""} onError={ ev => console.info('error') }/>
-                { this.state.struct ? (
-                <div className="output">
-                {
-                  this.state.struct == 'recognizing' ? ( <div class="loader"></div> ) : ( <div className="struct" ref={ el => this.renderRes(el) } /> )
-                }
-                </div>
+					<div className="picture">
+                		<img id="pic" src={state.file ? this.url() : ""} onError={ ev => console.info('error') } />
+					</div>
+                { state.struct ? (
+					<div className="output">
+					{
+						state.struct != 'error' ?
+							state.struct != 'recognizing'
+								? ( <div className="struct" ref={ el => this.renderRes(el) } /> )
+								: ( <div className="loader"></div> )
+							: ( <div className="recognize-error">Error</div> )
+					}
+					</div>
                  ) : null }
                 </div>
-                <label class="open block">
-                  <input type="checkbox" onChange={ ev => this.checkFragment(ev) }></input>
+                <label className="open block">
+                  <input type="checkbox" onChange={ ev => this.checkFragment(ev) }/>
                   Load as a fragment
                 </label>
             </Dialog>

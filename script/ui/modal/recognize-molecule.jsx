@@ -63,12 +63,18 @@ class RecognizeMolecule extends Component {
                 name="recognize-molecule" result={() => this.result() }
                 params={props}
                 buttons={[
-                    ( <input id="input" accept="image/*" type="file" onChange={ev => this.uploadImage(ev)}/> ),
+                    ( <div className="choose-wrapper">
+						<div className="choose-file">
+							<input id="input" type="file" accept="image/*" onChange={ev => this.uploadImage(ev)}/>
+							<label for="input">Choose file ...</label>
+						</div>
+						<span>{state.file ? state.file.name : ''}</span>
+					</div> ),
                     state.file ? ( <button className="recognize" onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel",
                     (state.struct && state.struct !== 'recognizing') ? ( "OK" ) : null
                     ]}>
-                <div>
+                <div className="recognize-wrapper">
 					<div className="picture">
                 		<img id="pic" src={state.file ? this.url() : ""} onError={ ev => console.info('error') } />
 					</div>

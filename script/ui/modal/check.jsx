@@ -52,36 +52,36 @@ class CheckStruct extends Component {
             <Dialog caption="Structure Check"
                     name="check-struct" params={props}
                     buttons={[ "Cancel"]}>
-              <ul class="tabs">
-                { tabs.map((caption, index) => (
-                  <li class={this.state.tabIndex == index ? 'active' : ''}>
-                     <a onClick={ ev => this.changeTab(ev, index) }>{caption}</a>
-                  </li>
-                  ))
-                }
-              </ul>
-              {[(
-                <div>
-                <ul>{
-					checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
-                		<li><label>{item.title} Error<input type="text" disabled="true"
-                		                        value={this.state.data[item.value]}/></label></li>
-                	))
-                }
-                </ul>
-                </div>
-                ), (
-                <div>
-                <ul>{checkScheckSchema.map((item) =>(
-                	<li><label><input type="checkbox" checked={this.state.checker[item.value]}
-                				onClick={ev => this.checkItem(item.value)}/>
-                	{item.title} Check
-                	</label></li>
-                	))
-                }
-                </ul>
-                </div>
-              )][this.state.tabIndex]}
+              	<div className="tabs">
+					{ tabs.map((caption, index) => (
+					  <div className={this.state.tabIndex == index ? 'tab active' : 'tab'} onClick={ ev => this.changeTab(ev, index)}>
+						 {caption}
+					  </div>
+					  ))
+					}
+              	</div>
+				<div className="check-settings">
+				  {[(
+					<ul>{
+						checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
+							<li>
+								<div className="error-name">{item.title} error : </div>
+								<div className="description">{this.state.data[item.value]}</div>
+							</li>
+						))
+					}
+					</ul>
+					), (
+					<ul>{checkScheckSchema.map((item) =>(
+						<li><label><input type="checkbox" checked={this.state.checker[item.value]}
+									onClick={ev => this.checkItem(item.value)}/>
+						{item.title} check
+						</label></li>
+						))
+					}
+					</ul>
+				  )][this.state.tabIndex]}
+				</div>
             </Dialog>
         );
     }

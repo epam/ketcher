@@ -562,47 +562,45 @@ form[role=dialog] {
 }
 
 .check-struct {
-	>div {
-		//min-width: 40em;
-		height: 30em;
-	}
 	.tabs {
-		overflow: hidden;
-		border-bottom: 1px solid #ddd;
-		li {
-			float: left;
-			border-radius: 10px 10px 0 0;
-			border: 0.5px solid #ddd;
-			padding:  15px 0px;
-			// Make the list-items overlay the bottom border
-			margin-bottom: -1px;
-			// Actual tabs (as links)
-			a {
-				line-height: 1;
-				border: 1px solid transparent;
-				border-radius: 10px 10px 0 0;
-				padding:  15px 35px;
-				&:hover {
-					border-color: black;
-				}
+		margin: 0;
+		.tab {
+			margin-right: 1px;
+			cursor: pointer;
+			font-size: 1.3em;
+			border: 1px solid #aaa;
+			background-color: #ddd;
+			text-align: center;
+			width: 49%;
+			display: inline-block;
+			line-height: 2em;
+			&:hover,
+			&:focus {
+				color: black;
+				background-color: #eee;
 			}
-			// Active state, and its :hover to override normal :hover
-			&.active > a {
-			 	&,
-			 	&:hover,
-			 	&:focus {
-			 		color: white;
-			 		background-color: #ddd;
-			 		cursor: default;
-
-			 	}
+			&.active {
+				border-bottom: 0;
+			 	color: black;
+			 	background-color: white;
 			}
 		}
 	}
-	input[type="checkbox"]{
-		margin: 6% auto;
+	.check-settings {
+		height: 30em;
+		width: 25em;
+		li {
+			margin-left: 5px;
+			line-height: 3em;
+			.error-name {
+				font-weight: bold;
+			}
+			.description {
+				margin-left: 10px;
+				line-height: 1em;
+			}
+		}
 	}
-
 }
 
 .calc-val {

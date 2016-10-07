@@ -100,10 +100,10 @@ class OpenSettings extends Component {
             return ( <option value={value}> {value} </option>);
         });
         return (
-            <tr>
-				<td><output> { label } </output></td>
-                <td><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></td>
-            </tr>
+            <li>
+				<div> { label } </div>
+                <div><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></div> 
+            </li>
         );
     }
 
@@ -118,7 +118,7 @@ class OpenSettings extends Component {
                 );
             }
         });
-        return <table className="settings-table"> {optsComponents} </table>;
+        return <ul> {optsComponents} </ul>;
     }
 
     reset(ev) {
@@ -135,7 +135,7 @@ class OpenSettings extends Component {
 		ev.target.checked ?
 		document.getElementById(id).innerHTML = "+" : document.getElementById(id).innerHTML = "-";
 	}
- 
+
     render (props, state) {
         return (
             <Dialog caption="Settings"
@@ -159,17 +159,17 @@ class OpenSettings extends Component {
                         <input type="checkbox" className="menu" name="bonds" id="bonds" onChange={this.changeAccord}></input>
 						<label for="bonds"><span className="accordion-dropdown" id="bonds-span">-</span>
 							Rendering customization options</label>
-						<ul>
+						<div class="accordion">
 							{ this.draw(this.defOpts, "render") }
-						</ul>
+						</div>
                     </li>
 					<li className="has-children">
 						<input type="checkbox" className="menu" name="atoms" id="atoms" checked onChange={this.changeAccord}></input>
 						<label for="atoms"><span className="accordion-dropdown" id="atoms-span">+</span>
 							Options for debugging</label>
-						<ul> 
+						<div class="accordion">
 							{ this.draw(this.defOpts, "debug") }
-						</ul>
+						</div>
 					</li>
                 </ul>
 				<label className="current">

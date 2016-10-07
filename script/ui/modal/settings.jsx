@@ -102,7 +102,7 @@ class OpenSettings extends Component {
         return (
             <li>
 				<div> { label } </div>
-                <div><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></div> 
+                <div><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></div>
             </li>
         );
     }
@@ -131,9 +131,10 @@ class OpenSettings extends Component {
     }
 
 	changeAccord(ev) {
-		let id = ev.target.name + '-span';
-		ev.target.checked ?
-		document.getElementById(id).innerHTML = "+" : document.getElementById(id).innerHTML = "-";
+		let id = ev.target.title;
+		document.getElementById(id + '-accordion').classList.toggle("none");
+		let span = document.getElementById(id + '-span');
+		if (span.innerHTML == "+") span.innerHTML = "-"; else span.innerHTML = "+";
 	}
 
     render (props, state) {
@@ -156,18 +157,16 @@ class OpenSettings extends Component {
             <div className="accordion-wrapper">
                 <ul class="accordion-menu">
                     <li className="has-children">
-                        <input type="checkbox" className="menu" name="bonds" id="bonds" onChange={this.changeAccord}></input>
-						<label for="bonds"><span className="accordion-dropdown" id="bonds-span">-</span>
+						<label title="bonds" onClick={this.changeAccord}><span className="accordion-dropdown" id="bonds-span">-</span>
 							Rendering customization options</label>
-						<div class="accordion">
+						<div id="bonds-accordion" class="accordion">
 							{ this.draw(this.defOpts, "render") }
 						</div>
                     </li>
 					<li className="has-children">
-						<input type="checkbox" className="menu" name="atoms" id="atoms" checked onChange={this.changeAccord}></input>
-						<label for="atoms"><span className="accordion-dropdown" id="atoms-span">+</span>
+						<label title="atoms" onClick={this.changeAccord}><span className="accordion-dropdown" id="atoms-span">+</span>
 							Options for debugging</label>
-						<div class="accordion">
+						<div id="atoms-accordion"  class="accordion none">
 							{ this.draw(this.defOpts, "debug") }
 						</div>
 					</li>

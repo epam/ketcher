@@ -11,11 +11,11 @@ var saveDialog = require('./save.jsx').default;
 var labelEdit = require('./labeledit.jsx').default;
 var templatesDialog = require('./templates.jsx').default;
 var rgroupDialog = require('./rgroup.jsx').default;
-var aboutDialog = require('./about.jsx').default;
-var recognizeMoleculeDialog = require('./recognize-molecule.jsx').default;
-var checkStructDialog = require('./check-struct.jsx').default;
-var calculatedValuesDialog = require('./calc-val.jsx').default;
-var openSettingsDialog = require('./open-settings.jsx').default;
+var aboutDialog = require('./info.jsx').default;
+var recognizeMoleculeDialog = require('./recognize.jsx').default;
+var checkStructDialog = require('./check.jsx').default;
+var calculatedValuesDialog = require('./analyse.jsx').default;
+var openSettingsDialog = require('./settings.jsx').default;
 
 function periodTable (params) {
 	params.required = true;

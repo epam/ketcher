@@ -487,32 +487,29 @@ form[role=dialog] {
 }
 
 .recognize-molecule {
-	width: 42em;
 	.recognize-wrapper {
 		position: relative;
 		width: 100%;
 		height: 25em;
+		vertical-align: middle;
 		.picture {
 			height: 25em;
-			display: -moz-inline-stack;
-			display: inline-block;
-			vertical-align: top;
+			width: 21em;
+			display: table-cell;
 			*display: inline;
-			width: 50%;
+			vertical-align: middle;
+			text-align: center;
 			img {
-				vertical-align: middle;
 				max-height: 100%;
 				max-width: 100%;
 			}
 		}
 		.output {
 			height: 25em;
-			display: -moz-inline-stack;
-			display: inline-block;
-			vertical-align: top;
-			*display: inline;
+			width: 21em;
+			display: table-cell;
+			vertical-align: middle;
 			max-height: 100%;
-			width: 50%;
 			.struct {
 				margin-left: 10%;
 				max-width: 90%;
@@ -538,18 +535,8 @@ form[role=dialog] {
 			}
 		}
 	}
-	.recognize-error {
-		max-height: 100%;
-		font-size: 1.3em;
-		color: red;
-		text-align: center;
-		line-height: 100%;
-	}
 	.block {
 		display: block !important;
-	}
-	#recognizeButton {
-		display: none;
 	}
 	footer {
 		input[type=file] {
@@ -567,6 +554,7 @@ form[role=dialog] {
 				margin-top: 6px;
 				margin-left: 5px;
 				position: absolute;
+				max-height: 1.2em;
 				max-width: 9em;
 				overflow: hidden;
 			}

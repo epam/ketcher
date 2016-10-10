@@ -3,7 +3,7 @@ import { h, Component } from 'preact';
 
 import Render from '../../render';
 
-function renderTmpl(el, struct) {
+function renderStruct(el, struct) {
 	if (el) {
 		if (struct.prerender)           // Should it sit here?
 			el.innerHTML = struct.prerender;
@@ -22,12 +22,9 @@ function renderTmpl(el, struct) {
 }
 
 class StructRender extends Component {
-	render ({ struct, xhref, Tag="div", ...props }) {
-		console.info('xhref', xhref);
+	render ({ struct, Tag="div", ...props }) {
 		return (
-			xhref ?
-			<Tag {...props}><img src={xhref}/></Tag> :
-			<Tag ref={ el => renderTmpl(el, struct) } {...props}/>
+			<Tag ref={ el => renderStruct(el, struct) } {...props}/>
 		);
 	}
 }

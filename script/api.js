@@ -46,9 +46,9 @@ function api(base, defaultOptions) {
 		}).then(function (response) {
 			return response.json().then(function (res) {
 				return response.ok ? res : Promise.reject(res.error);
-			}).catch(function (err) {
-				throw 'Cannot parse result\n' + err;
 			});
+		}).catch(function (err) {
+			throw 'Cannot parse result\n' + err;
 		});
 	}
 

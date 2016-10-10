@@ -2,10 +2,10 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
-import api from '../../api'
+import api from '../../api';
 
 import Render from '../../render';
-import molfile from '../../chem/molfile'
+import molfile from '../../chem/molfile';
 
 class RecognizeMolecule extends Component {
     constructor(props) {

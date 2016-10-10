@@ -1,9 +1,6 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import sdf from '../../chem/sdf';
-import molfile from '../../chem/molfile';
-
 import VisibleView from '../component/visibleview';
 import StructRender from '../component/structrender';
 import SelectList from '../component/select';
@@ -24,15 +21,21 @@ function partition(n, array) {
 	return res;
 }
 
+function RenderTmpl({tmpl, ...props}) {
+	return tmpl.props && tmpl.props.prerender ?
+	    ( <div {...props}><img src={tmpl.props.prerender}/></div> ) :
+	    ( <StructRender struct={tmpl.struct} {...props}/> );
+}
+
 class Templates extends Component {
-	constructor({params, templates}) {
-		super();
-		this.all = templates;
-		this.params = params;
+	constructor(props) {
+		super(props);
 		var groups = this.getGroups();
-		this.state.selected = null;
-		this.state.selectedGroup = groups[0];
-		this.state.filter = '';
+		this.state = {
+			selected: null,
+			filter: '',
+			selectedGroup: groups[0]
+		};
 	}
 
 	getGroups() {
@@ -48,9 +51,9 @@ class Templates extends Component {
 	getFilter() {
 		console.info('filter', this.state);
 		if (!this.state.filter)
-			return this.all;
+			return this.props.templates;
 		var re = RegExp(this.state.filter, 'i');
-		return this.all.filter((tmpl, i) => (
+		return this.props.templates.filter((tmpl, i) => (
 			normName(tmpl, i).search(re) != -1
 		));
 	}
@@ -66,7 +69,7 @@ class Templates extends Component {
 
 	select(tmpl) {
 		if (tmpl == this.state.selected)
-			this.params.onOk(this.result());
+			this.props.onOk(this.result());
 		else
 			this.setState({ selected: tmpl });
 	}
@@ -96,19 +99,15 @@ class Templates extends Component {
 	}
 
 	renderRow (row, index) {
-		let { selected } = this.state;
 		return (
 			<tr key={index}>{ row.map((tmpl, i) => (
 				<td>
-				<StructRender struct={tmpl.struct}
-							  xhref={ tmpl.props && tmpl.props.prerender }
+				  <RenderTmpl tmpl={tmpl}
 							  title={normName(tmpl, index + i)}
-							  class={tmpl == selected ? 'selected' : ''}
+							  class={tmpl == this.state.selected ? 'selected' : ''}
 							  onClick={() => this.select(tmpl)} />
 				</td>
-
-			))
-			}</tr>
+			))}</tr>
 		);
 	}
 
@@ -120,42 +119,24 @@ class Templates extends Component {
 		console.info('all rerender');
 		return (
 			<Dialog caption="Template Library"
-					name="template-lib" params={this.params}
+					name="template-lib" params={this.props}
 					result={() => this.result()}>
 				<label>
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
 				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
-				<VisibleView data={rows} rowHeight={120} Tag="table">{
-						(row, i) => this.renderRow(row, i)
-
-        }</VisibleView>
+				  <VisibleView data={rows} rowHeight={120} Tag="table">
+					{ (row, i) => this.renderRow(row, i) }
+				  </VisibleView>
 			</Dialog>
 		);
 	}
 }
 
-function getTemplates(baseUrl) {
-	return fetch(baseUrl + 'templates.sdf').then(response => {
-    if (response.ok)
-      return response.text();
-  }).then(text => {
-	  var templates = sdf.parse(text);
-      var userTemplates = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-
-    return userTemplates.reduce((res, struct) => {
-      res.push({ struct: molfile.parse(struct), props: { group: 'User' }});
-      return res;
-    }, templates);
-  });
-}
-
-export default function dialog(baseUrl, params) {
+export default function dialog(templates, params) {
 	var overlay = $$('.overlay')[0];
-	return getTemplates(baseUrl).then(templates => {
-		return render((
-			<Templates params={params} templates={templates}/>
-		), overlay);
-	});
+	return render((
+		<Templates templates={templates} {...params}/>
+	), overlay);
 };

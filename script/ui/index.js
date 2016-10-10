@@ -10,6 +10,7 @@ var Struct = require('../chem/struct');
 
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
+var sdf = require('../chem/sdf');
 
 var Render = require('../render');
 var Editor = require('../editor');
@@ -35,10 +36,11 @@ var clientArea = null;
 var server;
 var options;
 
+var tmplLib = null;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
-                     'reaction-automap', 'template-lib', 'recognize',
-                     'check', 'analyse'];
+                     'reaction-automap', 'recognize', 'check', 'analyse'];
+
 var addionalAtoms = {
 	storage: [],
 	capacity: 7,
@@ -52,8 +54,7 @@ function init (opts, apiServer) {
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('canvas');
 
-	server = apiServer ||
-		Promise.reject("Standalone mode!");
+	server = apiServer || Promise.reject("Standalone mode!");
 	options = opts;
 
 	var currentOptions = {};
@@ -97,6 +98,12 @@ function init (opts, apiServer) {
 		updateServerButtons();
 	}, function (err) {
 		echo(err);
+	});
+
+	subEl('template-lib').disabled = true;
+	initTemplates('').then(function (res) {
+		tmplLib = res;
+		subEl('template-lib').disabled = false;
 	});
 
 	clientArea.on('mousedown', function (event) {
@@ -252,6 +259,16 @@ function delegateCliparea(action) {
 			 'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 	}
 	return null;
+}
+
+function initTemplates(baseUrl) {
+	return fetch(baseUrl + 'templates.sdf').then(function (resp) {
+		if (resp.ok)
+			return resp.text();
+		throw "Could not fetch templates";
+	}).then(function(text) {
+		return sdf.parse(text);
+	});
 }
 
 function initCliparea(parent) {
@@ -737,9 +754,14 @@ function genericsTable () {
 };
 
 function templateLib () {
-	dialog(modal.templates.bind(modal, '')).then(function (tmpl) {
+	var tmplUser = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	var tmpls = tmplUser.reduce(function (res, struct) {
+		res.push({ struct: molfile.parse(struct), props: { group: 'User' }});
+		return res;
+	}, tmplLib);
+
+	dialog(modal.templates.bind(modal, tmpls)).then(function (tmpl) {
 		// C doesn't conflict with menu id
-		console.info('result', tmpl);
 		selectAction('template-C', tmpl);
 		return true;
 	});

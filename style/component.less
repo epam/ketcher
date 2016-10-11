@@ -35,3 +35,32 @@
 		}
 	}
 }
+
+.-Tabs {
+	margin: 0;
+	.tabs {
+		li {
+			width: 8em;
+			margin-right: 1px;
+			display: inline-block;
+			cursor: pointer;
+			text-align: center;
+			font-size: 1.3em;
+			line-height: 2em;
+			border: 1px solid #aaa;
+			background-color: #ddd;
+			&:hover {
+				color: black;
+				background-color: #eee;
+			}
+			&.active {
+				border-bottom: 0;
+				color: black;
+				background-color: white;
+			}
+		}
+	}
+	.tabs-content {
+		height: 30em;
+	}
+}

@@ -11,11 +11,9 @@ class RecognizeMolecule extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        	image: true,
             file: null,
             struct: null,
-            fragment: false,
-            recognised: false
+            fragment: false
         }
     }
     result () {
@@ -26,8 +24,6 @@ class RecognizeMolecule extends Component {
     }
     uploadImage(ev) {
             this.setState({
-            	image: true,
-				struct: null,
                 file: ev.target.files[0]
             });
     }
@@ -40,13 +36,11 @@ class RecognizeMolecule extends Component {
     recognize() {
         this.setState({ struct: 'recognizing' });
         this.props.server.recognize(this.state.file).then(res => {
-        	if (res.struct != "error") {
-				this.state.recognised = true;
-				this.setState({struct: molfile.parse(res.struct) });
-			} else {
-				this.setState({struct: 'error' });
-			}
-        })
+			this.setState({struct: molfile.parse(res.struct) });
+        }, err => {
+			this.setState({struct: null });
+			alert("Error! The picture isn't recognized.");
+		})
 	}
     renderRes(el) {
         var rnd = new Render(el, 0, {
@@ -61,10 +55,8 @@ class RecognizeMolecule extends Component {
         this.setState({fragment: !this.state.fragment});
     }
     imageError(ev) {
-		if (this.state.file) {
-			this.setState({ image: false });
-			alert("Error, it isn't a picture");
-		}
+		this.setState({ file: null });
+		alert("Error, it isn't a picture");
 	}
     render (props, state) {
         return (
@@ -77,7 +69,7 @@ class RecognizeMolecule extends Component {
 							<input id="input" type="file" accept="image/*" onChange={ev => this.uploadImage(ev)}/>
 							<label for="input">Choose file ...</label>
 						</div>
-						<span>{state.file && state.image ? state.file.name : ''}</span>
+						<span>{state.file? state.file.name : ''}</span>
 					</div> ),
                     state.file ? ( <button onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel",
@@ -85,16 +77,15 @@ class RecognizeMolecule extends Component {
                     ]}>
                 <div className="recognize-wrapper">
 					<div className="picture">
-						{ state.image ? <img id="pic" src={state.file ? this.url() : ""} onError={ ev => this.imageError(ev) } /> : null }
+						{ state.file ? <img id="pic" src={state.file ? this.url() : ""} onError={ ev => this.imageError(ev) } /> : null }
 					</div>
 					<div className="output">
                 	{ 	state.struct ?
-							state.struct != 'error' ?
-								state.struct != 'recognizing'
-									? ( <div className="struct" ref={ el => this.renderRes(el) } /> )
-									: ( <div className="loader"></div> )
-								: ( alert("Error! The picture isn't recognized.") )
-                		: null }
+							state.struct != 'recognizing'
+								? ( <div className="struct" ref={ el => this.renderRes(el) } /> )
+								: ( <div className="loader"></div> )
+						: null
+                	}
 					</div>
                 </div>
                 <label className="open block">

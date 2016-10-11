@@ -90,8 +90,6 @@ function api(base, defaultOptions) {
 					}, 500, 300);
 			}).then(function correct(res) {
 				return { struct: res.metadata.mol_str };
-			}, function incorrect() {
-				return { struct: 'error' };
 			});
 		}
 	});

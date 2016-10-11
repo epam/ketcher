@@ -123,8 +123,7 @@ To draw/edit atoms you can:
 
 To draw/edit bonds you can:
 
--
-??Click an arrow on the Bond tool   ![](bond.png) in the Tools palette to open the drop-down list with the following bond types:
+- Click an arrow on the Bond tool   ![](bond.png) in the Tools palette to open the drop-down list with the following bond types:
 
  ![](bonds.png)
 
@@ -136,8 +135,7 @@ To draw/edit bonds you can:
 - click on an atom in the molecule; a bond of the selected type will be added to the atom at the angle of 120 degrees;
 - add a bond to the existing molecule by clicking on an atom in the molecule and dragging the cursor; in this case you can set the angle manually;
 - change the bond type by clicking on it;
--
-??use the Chain Tool ![](chain.png)  to draw consecutive single bonds; you can use hotkeys to change atom types.
+- use the Chain Tool ![](chain.png)  to draw consecutive single bonds; you can use hotkeys to change atom types.
 - change a bond or its properties by double-clicking on the bond to invoke the Bond Properties dialog:
 
  ![](bondProperties.png "Bond Properties")
@@ -189,7 +187,7 @@ Schematically, the entire process of the R-Group member creation can be presente
 
  ![](scheme1.png)
 
- ![](scheme1.png)
+ ![](scheme2.png)
 
 # R-Group Logic
 
@@ -207,7 +205,6 @@ Schematically, the entire process of the R-Group member creation can be presente
 
 5.   Specify the logical **Condition**. Use the R-Group condition **If R(i) Then** to specify whether the presence of an R-Group is dependent on the presence of another R-Group.
 
-#
 
 # Marking S-Groups
 
@@ -266,8 +263,7 @@ Use the _Flip/Rotate_ tool ![](flipRotate.png) to change the structure display:
 To draw/edit reactions you can
 
 - draw reagents and products as described above;
--
-??use options of the _Reaction Arrow Tool_ ![](arrow.png) to draw an arrow and pluses in the reaction equation and map same atoms in reagents and products.
+- use options of the _Reaction Arrow Tool_ ![](arrow.png) to draw an arrow and pluses in the reaction equation and map same atoms in reagents and products.
 
  ![](arrowReaction.png)
 
@@ -296,11 +292,11 @@ Rules of using templates:
 
  ![](fusion3.png)
 
-?         The bond in the initial structure is replaced with the bond in the template.
+- The bond in the initial structure is replaced with the bond in the template.
 
-?         This procedure doesn&#39;t change the length of the bond in the initial structure.
+- This procedure doesn&#39;t change the length of the bond in the initial structure.
 
-?         Dragging the cursor relative to the initial bond applies the template at the corresponding side of the bond.
+- Dragging the cursor relative to the initial bond applies the template at the corresponding side of the bond.
 
 **Note** : The added template will be fused by the default attachment atom or bond preset in the program.
 
@@ -308,21 +304,18 @@ The _Custom Templates_ button ![](custom.png)invokes the scrolling list of templ
 
  ![](template.png)
 
-** **
-
-#
 
 # Working with Files
 
 Ketcher supports the following molecular formats that can be entered either manually or from files:
 
-?         MDL Molfile or RXN file;
+- MDL Molfile or RXN file;
 
-?         Daylight SMILES (Server mode only);
+- Daylight SMILES (Server mode only);
 
-?         InChi string (Server mode only);
+- InChi string (Server mode only);
 
-?         CML file (Server mode only).
+- CML file (Server mode only).
 
 You can use the **Open…** and **Save As…** buttons of the _Main_ toolbar to import a molecule from a molecular file or save it to a supported molecular file format. The _Open Structure_ dialog enables one to either browse for a file (Server mode) or manually input, e.g., the Molfile ctable for the molecule to be imported:
 
@@ -334,7 +327,6 @@ The _Save Structure_ dialog enables one to save the molecular file:
 
 **Note** : In the standalone version only mol/rxn are supported for Open and mol/SMILES for Save.
 
-#
 
 # Hotkeys
 

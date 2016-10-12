@@ -1,9 +1,9 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import fs from 'filesaver.js';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton'
+import SaveButton from '../component/savebutton'
 import defaultOptions from './options';
 import Render from '../../render'
 
@@ -21,7 +21,6 @@ class OpenSettings extends Component {
         this.setState({opts: opts});
 
         this.changeState = this.changeState.bind(this);
-        this.saveState = this.saveState.bind(this);
         this.createSelectList = this.createSelectList.bind(this);
     }
 
@@ -73,21 +72,10 @@ class OpenSettings extends Component {
 		}
     }
 
-    saveState(ev) {
-        var state = this.state.opts;
-        var currentState = {};
-
-        Object.keys(state).forEach(function (option) {
-            currentState[option] = state[option];
-        });
-       var blob = new Blob([JSON.stringify(currentState)], {type: 'application/json'});
-       fs.saveAs(blob, 'ketcher-settings');
-    }
-
     changeState(ev) {
          var tmp = {};
          tmp[ev.target.id] = ev.target.value;
-         this.state.opts = Object.assign(this.state.opts, tmp);
+		 this.setState(Object.assign(this.state.opts, tmp));
     }
 
     createSelectList(f, values, type, name, label) {
@@ -143,7 +131,11 @@ class OpenSettings extends Component {
 									 onLoad={ newOpts => this.uploadSettings(newOpts) }>
 							 Open From File…
 						 </OpenButton>,
-                     <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
+						 <SaveButton className="save"
+									 data={JSON.stringify(this.state.opts)}
+									 filename={'ketcher-settings'} >
+							 Save To File…
+						 </SaveButton>,
                      <button onClick={ ev => this.reset(ev) }>Reset</button>,
                      "OK", "Cancel"]} >
             <div className="accordion-wrapper">

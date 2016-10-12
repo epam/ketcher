@@ -66,7 +66,7 @@ You can use the buttons of the _Main_ toolbar:
 - **About** button (18) to display version and copyright information of the program;
 - **Settings** button (19) to make some settings for molecular files.
 
-**Note** : **Clean, Aromatize** / **Dearomatize,**  **Calculate CIP,** **Check Structure,** **Calculated Values,** **Recognize Molecule** and **3D View** buttons are active only in the Server mode.
+**Note** : **Layout,** **Clean Up,** **Aromatize** / **Dearomatize,**  **Calculate CIP,** **Check Structure,** **Calculated Values,** **Recognize Molecule** and **3D View** buttons are active only in the Server mode.
 
 # 3D Viewer
 

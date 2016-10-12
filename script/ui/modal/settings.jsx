@@ -3,6 +3,7 @@ import { h, Component, render } from 'preact';
 
 import fs from 'filesaver.js';
 import Dialog from '../component/dialog';
+import OpenButton from '../component/openbutton'
 import defaultOptions from './options';
 import Render from '../../render'
 
@@ -22,7 +23,6 @@ class OpenSettings extends Component {
         this.changeState = this.changeState.bind(this);
         this.saveState = this.saveState.bind(this);
         this.createSelectList = this.createSelectList.bind(this);
-        this.load = this.load.bind(this);
     }
 
     getDefOpts (defOpts) {
@@ -61,20 +61,16 @@ class OpenSettings extends Component {
         };
     }
 
-    uploadSettings(ev) {
-        this.setState({
-                file: ev.target.files[0]
-        });
-    }
-
-    load (ev) {
-        var reader = new FileReader();
-        reader.readAsText(this.state.file);
-        reader.onload = function() {
-            var userOpts = JSON.parse(reader.result);
-            var currentState = Object.assign(this.state.opts, userOpts);
-            this.setState({opts: currentState});
-        }.bind(this);
+    uploadSettings(newOpts) {
+    	try {
+			let userOpts = JSON.parse(newOpts);
+			let currentState = Object.assign(this.state.opts, userOpts);
+			this.setState({
+				opts: currentState
+			});
+		} catch (ex) {
+			console.info('Bad file');
+		}
     }
 
     saveState(ev) {
@@ -143,14 +139,10 @@ class OpenSettings extends Component {
                     name="open-settings" params={props.params}
                     result={() => this.result()}
                      buttons={[
-                     <div className="choose-wrapper">
-                     	<div className="choose-file">
-                     		<input id="input-file" type="file" onChange={ ev => this.uploadSettings(ev) }/>
-                     		<label for="input-file">Choose file ...</label>
-                     	</div>
-                     	<span>{state.file ? state.file.name : ''}</span>
-                     </div>,
-                     <button onClick={ ev => this.load(ev) }>Load</button>,
+						 <OpenButton className="open" server={this.props.server}
+									 onLoad={ newOpts => this.uploadSettings(newOpts) }>
+							 Open From File…
+						 </OpenButton>,
                      <button onClick={ ev => this.saveState(ev) }>Save as...</button>,
                      <button onClick={ ev => this.reset(ev) }>Reset</button>,
                      "OK", "Cancel"]} >

@@ -628,24 +628,9 @@ form[role=dialog] {
 	width: 42em;
 	height: auto;
 
-	input[type=file] {
-		position: absolute;
-		width: 89px;
-		margin: -4px 0 0 -12px;
-		padding: 0 0 7px 0;
-		opacity: 0;
-	}
-
-	.choose-wrapper {
-		display: inline-block;
+	.open {
+		&:extend(button all);
 		float: left;
-		span {
-			margin-top: 6px;
-			margin-left: 5px;
-			position: absolute;
-			max-width: 9em;
-			overflow: hidden;
-		}
 	}
 
 	.accordion-wrapper {

@@ -8,7 +8,7 @@ class Tabs extends Component {
 	}
 	changeTab(ev, index) {
 		this.setState({	tabIndex: index });
-		this.props.changeTab(index);
+		if (this.props.changeTab) this.props.changeTab(index);
 	}
 
 	render() {

@@ -14,19 +14,19 @@ class Tabs extends Component {
 	render() {
 		let {children, captions, ...props} = this.props;
 		return (
-			<div {...props}>
-				<ul className="tabs">
+			<ul {...props}>
+				<li className="tabs">
 					{ captions.map((caption, index) => (
-						<li className={this.state.tabIndex == index ? 'active' : ''}
+						<a className={this.state.tabIndex == index ? 'active' : ''}
 							 onClick={ ev => this.changeTab(ev, index)}>
 							{caption}
-						</li>
+						</a>
 					)) }
-				</ul>
-				<div className="tabs-content">
+				</li>
+				<li className="tabs-content">
 					{ children[this.state.tabIndex] }
-				</div>
-			</div>
+				</li>
+			</ul>
 		);
 	}
 }

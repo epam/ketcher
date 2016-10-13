@@ -4,14 +4,13 @@ import {h, Component} from 'preact';
 class Accordion extends Component {
 	constructor(props) {
 		super(props);
-		this.state.activeTabs = props.activeTabs;
+		this.state.active = props.active ? props.active : {};
 	}
-	changeActiveTabs(ev, caption) {
-		let newState = this.state.activeTabs;
-		let index = newState.indexOf(caption);
-		if (index != -1) newState.splice(index, 1);
-		else newState.push(caption);
-		this.setState({ activeTabs: newState})
+	onActive(ev, index) {
+		let newActive = {};
+		newActive[index] = !this.state.active[index];
+		this.setState({ active: Object.assign(this.state.active, newActive)});
+		if (this.props.onActive) this.props.onActive();
 	}
 
 	render() {
@@ -20,11 +19,11 @@ class Accordion extends Component {
 			<ul {...props}>
 				{ captions.map((caption, index) => (
 					<li className="tab">
-						<div className={this.state.activeTabs.indexOf(caption) != -1 ? 'active' : ''}
-							onClick={ ev => this.changeActiveTabs(ev, caption)}>
-							{caption}
-						</div>
-						{ this.state.activeTabs.indexOf(caption) != -1 ? children[index] : null }
+						<a className={this.state.active[index]  ? 'active' : ''}
+							onClick={ ev => this.onActive(ev, index)}>
+							{this.state.active[index] ? <span>-</span> : <span>+</span> }{caption}
+						</a>
+						{this.state.active[index] ? children[index] : null }
 					</li>
 				)) }
 			</ul>

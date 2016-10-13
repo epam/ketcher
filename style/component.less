@@ -39,7 +39,7 @@
 .-Tabs {
 	margin: 0;
 	.tabs {
-		li {
+		a {
 			padding: 0 3px;
 			margin-right: 1px;
 			display: inline-block;
@@ -67,7 +67,8 @@
 
 .-Accordion {
 	.tab {
-		& > div:first-child {
+		& > a:first-child {
+			display: block;
 			padding: 0 3px;
 			margin-right: 1px;
 			cursor: pointer;
@@ -75,12 +76,20 @@
 			font-size: 1.3em;
 			line-height: 2em;
 			border: 1px solid #aaa;
-			background-color: white;
+			background-color: #eee;
 			&:hover {
-				background-color: #eee;
+				background-color: #ddd;
 			}
 			&.active {
-				background-color: #ddd;
+				&:hover {
+					background-color: #ddd;
+				}
+				background-color: #ccc;
+			}
+			span {
+				float: left;
+				margin-left: 30px;
+				margin-right: -30px;
 			}
 		}
 	}

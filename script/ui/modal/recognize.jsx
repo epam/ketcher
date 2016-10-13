@@ -39,7 +39,7 @@ class RecognizeMolecule extends Component {
 			this.setState({struct: molfile.parse(res.struct) });
         }, err => {
 			this.setState({struct: null });
-			alert("Error! The picture isn't recognized.");
+			setTimeout(() => alert("Error! The picture isn't recognized.") , 200); // TODO: remove me...
 		})
 	}
     renderRes(el) {

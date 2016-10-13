@@ -2,7 +2,7 @@
 @import (reference) "component";
 
 button, input[type=submit],
-.choose-file, input[type=reset], input[type=button] {
+input[type=reset], input[type=button] {
 	display: inline-block;
 	margin-bottom: 0;
 	text-align: center;
@@ -37,6 +37,11 @@ button, input[type=submit],
 		cursor: not-allowed;
 		opacity: .5;
 		box-shadow: none;
+	}
+
+	&>input[type=file] { // hide file input
+		left: -9999px;
+		position: absolute;
 	}
 }
 

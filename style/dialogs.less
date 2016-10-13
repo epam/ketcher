@@ -496,7 +496,6 @@ form[role=dialog] {
 			height: 25em;
 			width: 21em;
 			display: table-cell;
-			*display: inline;
 			vertical-align: middle;
 			text-align: center;
 			img {
@@ -671,11 +670,6 @@ form[role=dialog] {
 	.open {
 		&:extend(button all);
 		float: left;
-	}
-	input[type=file] {
-		// hide
-		left: -9999px;
-		position: absolute;
 	}
 }
 

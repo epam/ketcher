@@ -4,6 +4,7 @@ import { h, Component, render } from 'preact';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton'
 import SaveButton from '../component/savebutton'
+import Accordion from '../component/accordion'
 import defaultOptions from './options';
 import Render from '../../render'
 
@@ -114,14 +115,9 @@ class OpenSettings extends Component {
         this.setState({onlyCurrentSession: true});
     }
 
-	changeAccord(ev) {
-		let id = ev.target.title;
-		document.getElementById(id + '-accordion').classList.toggle("none");
-		let span = document.getElementById(id + '-span');
-		if (span.innerHTML == "+") span.innerHTML = "-"; else span.innerHTML = "+";
-	}
-
     render (props, state) {
+    	let tabs = ['Rendering customization options', 'Options for debugging'];
+    	let activeTabs = ['Rendering customization options'];
         return (
             <Dialog caption="Settings"
                     name="open-settings" params={props.params}
@@ -139,22 +135,14 @@ class OpenSettings extends Component {
                      <button onClick={ ev => this.reset(ev) }>Reset</button>,
                      "OK", "Cancel"]} >
             <div className="accordion-wrapper">
-                <ul class="accordion-menu">
-                    <li className="has-children">
-						<label title="bonds" onClick={this.changeAccord}><span className="accordion-dropdown" id="bonds-span">-</span>
-							Rendering customization options</label>
-						<div id="bonds-accordion" class="accordion">
-							{ this.draw(this.defOpts, "render") }
-						</div>
-                    </li>
-					<li className="has-children">
-						<label title="atoms" onClick={this.changeAccord}><span className="accordion-dropdown" id="atoms-span">+</span>
-							Options for debugging</label>
-						<div id="atoms-accordion"  class="accordion none">
-							{ this.draw(this.defOpts, "debug") }
-						</div>
-					</li>
-                </ul>
+				<Accordion className="accordion" captions={tabs} activeTabs={activeTabs}>
+					<div className="content">
+						{ this.draw(this.defOpts, "render") }
+					</div>
+					<div className="content">
+						{ this.draw(this.defOpts, "debug") }
+					</div>
+				</Accordion>
 				<label className="current">
 					<input type="checkbox" onChange={ ev => this.apply(ev) }></input>
 					Apply settings only for current session

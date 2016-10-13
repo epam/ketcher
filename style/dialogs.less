@@ -640,48 +640,32 @@ form[role=dialog] {
 
 	.accordion-wrapper {
 		margin: 0;
-		.accordion-menu {
-			input.menu[type=checkbox] {
-				position: absolute;
-				opacity: 0;
-			}
-			label, a {
-				background-color: #eee;
-				display: block;
-				padding: 5px;
-				box-shadow: inset 0 -1px #555960;
-				font-size: 1.2rem;
-			}
-			.accordion {
-				display: block;
-				font-size: 16px;
-				ul {
-					border-collapse: collapse;
-					width: 100%;
-					li {
-						border: 1px solid #eee;
-						div {
-							padding-left: 5px;
-							display: inline-block;
+		.accordion {
+			&:extend(.-Accordion all);
+		}
+
+		.content {
+			display: block;
+			font-size: 16px;
+			ul {
+				border-collapse: collapse;
+				width: 100%;
+				li {
+					border: 1px solid #eee;
+					div {
+						padding-left: 5px;
+						display: inline-block;
+						margin: 0;
+						width: 49%;
+						select {
+							border: 0;
 							margin: 0;
-							width: 49%;
-							select {
-								border: 0;
-								margin: 0;
-								padding: 0;
-								width: 100%;
-							}
+							padding: 0;
+							width: 100%;
 						}
 					}
 				}
 			}
-			.none {
-				display: none;
-			}
-		}
-		.accordion-dropdown {
-			margin: 0 10px;
-			font-weight: bold;
 		}
 		.current {
 			display: block;

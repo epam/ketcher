@@ -562,29 +562,8 @@ form[role=dialog] {
 }
 
 .check-struct {
-	.tabs {
-		margin: 0;
-		.tab {
-			margin-right: 1px;
-			cursor: pointer;
-			font-size: 1.3em;
-			border: 1px solid #aaa;
-			background-color: #ddd;
-			text-align: center;
-			width: 49%;
-			display: inline-block;
-			line-height: 2em;
-			&:hover,
-			&:focus {
-				color: black;
-				background-color: #eee;
-			}
-			&.active {
-				border-bottom: 0;
-			 	color: black;
-			 	background-color: white;
-			}
-		}
+	.check-tabs {
+		&:extend(.-Tabs all);
 	}
 	.check-settings {
 		height: 30em;

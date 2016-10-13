@@ -2,6 +2,7 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
+import Tabs from '../component/tabs'
 
 const checkScheckSchema = [
 	{ title: 'Valence', value: 'valence' },
@@ -25,21 +26,17 @@ class CheckStruct extends Component {
       checkScheckSchema.map((item) => {
 		  this.state.checker[item.value] = true;
 	  });
-	  this.doCheck();
+	  this.onCheck();
   	}
-    changeTab(ev, index) {
-		ev.preventDefault();
-      	this.setState({
-      	  tabIndex: index
-      	});
-      	if (index == 0) this.doCheck();
+    changeTab(index) {
+      	if (index == 0) this.onCheck();
     }
-    doCheck() {
-        this.props.check().then(res => {
-        	let data = {};
-        	for (let key in res)
-        		if (this.state.checker[key]) data[key] = res[key];
-        	this.setState({	data: data });
+    onCheck() {
+    	let checkOpts = [];
+		for (let key in this.state.checker)
+			if (this.state.checker[key]) checkOpts.push(key);
+        this.props.check({ 'types': checkOpts }).then(res => {
+        	this.setState({	data: res });
 		});
     };
     checkItem(val) {
@@ -52,36 +49,23 @@ class CheckStruct extends Component {
             <Dialog caption="Structure Check"
                     name="check-struct" params={props}
                     buttons={[ "Cancel"]}>
-              	<div className="tabs">
-					{ tabs.map((caption, index) => (
-					  <div className={this.state.tabIndex == index ? 'tab active' : 'tab'} onClick={ ev => this.changeTab(ev, index)}>
-						 {caption}
-					  </div>
-					  ))
-					}
-              	</div>
-				<div className="check-settings">
-				  {[(
-					<ul>{
+				<Tabs className="check-tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
+					<ul className="check-settings">{
 						checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
 							<li>
 								<div className="error-name">{item.title} error : </div>
 								<div className="description">{this.state.data[item.value]}</div>
 							</li>
 						))
-					}
-					</ul>
-					), (
-					<ul>{checkScheckSchema.map((item) =>(
+					}</ul>
+					<ul className="check-settings">{checkScheckSchema.map((item) =>(
 						<li><label><input type="checkbox" checked={this.state.checker[item.value]}
-									onClick={ev => this.checkItem(item.value)}/>
-						{item.title} check
+										  onClick={ev => this.checkItem(item.value)}/>
+							{item.title} check
 						</label></li>
 						))
-					}
-					</ul>
-				  )][this.state.tabIndex]}
-				</div>
+					}</ul>
+				</Tabs>
             </Dialog>
         );
     }

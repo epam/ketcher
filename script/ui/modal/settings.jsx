@@ -6,7 +6,6 @@ import OpenButton from '../component/openbutton'
 import SaveButton from '../component/savebutton'
 import Accordion from '../component/accordion'
 import defaultOptions from './options';
-import Render from '../../render'
 
 class OpenSettings extends Component {
      constructor(props) {
@@ -15,9 +14,9 @@ class OpenSettings extends Component {
 
         this.state = {
             onlyCurrentSession: false
-        }
+        };
 
-        var opts = this.getDefOpts (this.defOpts);
+        var opts = this.getDefOpts(this.defOpts);
         opts = Object.assign(opts, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
         this.setState({opts: opts});
 
@@ -25,37 +24,17 @@ class OpenSettings extends Component {
         this.createSelectList = this.createSelectList.bind(this);
     }
 
-    getDefOpts (defOpts) {
+    getDefOpts(defOpts) {
         var tmp = {};
         for (var i = 0; i < defOpts.length; i++) {
-            if (defOpts[i].type === "boolean") {
-                this.defOpts[i].values = ["on", "off"];
-                if (defOpts[i].defaultValue === true)
-                    defOpts[i].defaultValue = "on";
-                else
-                    defOpts[i].defaultValue = "off";
-            }
             tmp[defOpts[i].name] = defOpts[i].defaultValue;
         }
-
         return tmp;
-
     }
 
     result () {
-        var opts = {};
-        for (var key in this.state.opts) {
-          if (this.state.opts.hasOwnProperty(key)) {
-            if (this.state.opts[key] === "on")
-                opts[key] = true;
-            else if (this.state.opts[key] === "off")
-                opts[key] = false;
-            else
-                opts[key] = this.state.opts[key];
-          }
-        }
         return {
-            opts: opts,
+            opts: this.state.opts,
             localStorageOpts: this.state.opts,
             onlyCurrentSession: this.state.onlyCurrentSession
         };
@@ -73,35 +52,38 @@ class OpenSettings extends Component {
 		}
     }
 
-    changeState(ev) {
+    changeState(name, value) {
          var tmp = {};
-         tmp[ev.target.id] = ev.target.value;
+         tmp[name] = value;
 		 this.setState(Object.assign(this.state.opts, tmp));
     }
 
-    createSelectList(f, values, type, name, label) {
-        var opts = this.state.opts;
-        var listComponents = values.map(function(value) {
+    createSelectList(elem) {
+		let change = this.changeState;
+    	let {values, type, name, label} = elem;
+		if (type == 'boolean')
+			return (
+				<li>
+					<div> { label } </div>
+					<div><SelectCheck name={ name } onChange={ change } value={ this.state.opts[name] }/></div>
+				</li>
+			);
+        let listComponents = values.map(function(value) {
             return ( <option value={value}> {value} </option>);
         });
         return (
             <li>
 				<div> { label } </div>
-                <div><select id={name} onChange = { ev => f(ev, name) } value = {this.state.opts[name]}>{listComponents}</select></div>
+                <div><select onChange = { ev => change(name, ev.target.value) } value = {this.state.opts[name]}>{listComponents}</select></div>
             </li>
         );
     }
 
-    draw(opts, tab) {
-        var state = this.state;
-        var changeState = this.changeState;
+    draw(tab) {
         var createSelectList = this.createSelectList;
-        var optsComponents = opts.map(function(elem) {
-            if (elem.tab === tab) {
-                return (
-                    createSelectList(changeState, elem.values, elem.type, elem.name, elem.label)
-                );
-            }
+        var optsComponents = this.defOpts.map(function(elem) {
+            if (elem.tab === tab)
+                return createSelectList(elem);
         });
         return <ul> {optsComponents} </ul>;
     }
@@ -117,7 +99,7 @@ class OpenSettings extends Component {
 
     render (props, state) {
     	let tabs = ['Rendering customization options', 'Options for debugging'];
-    	let activeTabs = ['Rendering customization options'];
+    	let activeTabs = {'0': true , '1': false};
         return (
             <Dialog caption="Settings"
                     name="open-settings" params={props.params}
@@ -127,20 +109,19 @@ class OpenSettings extends Component {
 									 onLoad={ newOpts => this.uploadSettings(newOpts) }>
 							 Open From File…
 						 </OpenButton>,
-						 <SaveButton className="save"
-									 data={JSON.stringify(this.state.opts)}
+						 <SaveButton className="save" data={JSON.stringify(this.state.opts)}
 									 filename={'ketcher-settings'} >
 							 Save To File…
 						 </SaveButton>,
                      <button onClick={ ev => this.reset(ev) }>Reset</button>,
                      "OK", "Cancel"]} >
             <div className="accordion-wrapper">
-				<Accordion className="accordion" captions={tabs} activeTabs={activeTabs}>
+				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<div className="content">
-						{ this.draw(this.defOpts, "render") }
+						{ this.draw("render") }
 					</div>
 					<div className="content">
-						{ this.draw(this.defOpts, "debug") }
+						{ this.draw("debug") }
 					</div>
 				</Accordion>
 				<label className="current">
@@ -153,6 +134,14 @@ class OpenSettings extends Component {
     }
 }
 
+function SelectCheck({ name, value, onChange }) {
+	return (
+		<select onChange={ev => onChange(name, ev.target.value == "on") } value={value ? "on" : "off"}>
+			<option>on</option>
+			<option>off</option>
+		</select>
+	);
+}
 
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];

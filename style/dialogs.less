@@ -488,33 +488,21 @@ form[role=dialog] {
 }
 
 .recognize {
-	.recognize-wrapper {
-		position: relative;
-		width: 100%;
+	.output, .picture {
 		height: 25em;
+		width: 21em;
+		display: table-cell;
 		vertical-align: middle;
-		.picture {
-			height: 25em;
-			width: 21em;
-			display: table-cell;
-			vertical-align: middle;
-			text-align: center;
-			img {
-				max-height: 100%;
-				max-width: 100%;
-			}
-		}
-		.output {
-			height: 25em;
-			width: 21em;
-			display: table-cell;
-			vertical-align: middle;
-			max-height: 100%;
-			.struct {
-				width: 21em;
-			}
-		}
+		text-align: center;
 	}
+	img, .struct {
+		display: block;
+		overflow: hidden;
+		position: relative;
+		max-height: 100%;
+		max-width: 100%;
+	}
+
 	label {
 		display: block;
 	}
@@ -552,7 +540,7 @@ form[role=dialog] {
 		margin: 2% auto;
 		margin-left: 2%
 	}
-	output{
+	output {
 		display: block;
 		margin-left: 10em;
 		margin-top: -6%;

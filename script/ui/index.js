@@ -563,7 +563,7 @@ function serverCall(method, options, struct) {
 		if (implicitReaction)
 			struct.rxnArrows.add(new Struct.RxnArrow());
 
-		var selectedAtoms = ui.editor.getSelection(true).atoms;
+		var selectedAtoms = ui.editor.getSelection(true).atoms || [];
 		selectedAtoms = selectedAtoms.map(function (aid) {
 			return aidMap[aid];
 		});
@@ -840,12 +840,10 @@ var actionMap = {
 	'reaction-automap': automap,
 	'recognize': function () {
 		dialog(modal.recognize, { server: server }).then(function (res) {
-			if (res.fragment) {
-				//struct.rescale();
-				selectAction('paste', res.struct);
-			}
+			if (res.fragment)
+				loadFragment(res.structStr, true);
 			else
-				updateStruct(res.struct);
+				loadMolecule(res.structStr, true);
 		});
 	},
 	'check': function () {

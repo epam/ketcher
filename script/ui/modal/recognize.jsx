@@ -64,17 +64,18 @@ class RecognizeMolecule extends Component {
                 name="recognize-molecule" result={() => this.result() }
                 params={props}
                 buttons={[
-                    ( <div className="choose-wrapper">
-						<div className="choose-file">
-							<input id="input" type="file" accept="image/*" onChange={ev => this.uploadImage(ev)}/>
-							<label for="input">Choose file ...</label>
-						</div>
-						<span>{state.file? state.file.name : ''}</span>
-					</div> ),
+                    (
+						<label className="open">
+							Choose file…
+							<input onChange={ ev => this.uploadImage(ev) }
+								accept="image/*" type="file"/>
+						</label>
+					),
                     state.file ? ( <button onClick={ ev => this.recognize(ev) }>Recognize</button>  ) : null,
                     "Cancel",
                     (state.struct && state.struct !== 'recognizing') ? ( "OK" ) : null
-                    ]}>
+                ]}>
+
                 <div className="recognize-wrapper">
 					<div className="picture">
 						{ state.file ? <img id="pic" src={state.file ? this.url() : ""} onError={ ev => this.imageError(ev) } /> : null }
@@ -88,10 +89,11 @@ class RecognizeMolecule extends Component {
                 	}
 					</div>
                 </div>
-                <label className="open block">
-                  <input type="checkbox" onChange={ ev => this.checkFragment(ev) }/>
-                  Load as a fragment
-                </label>
+				<label>
+				  <input type="checkbox" checked={this.state.fragment}
+					   onClick={ev => this.checkFragment(ev.target)} />
+					Load as a fragment
+				</label>
             </Dialog>
         );
     }

@@ -534,30 +534,12 @@ form[role=dialog] {
 			}
 		}
 	}
-	.block {
-		display: block !important;
+	label {
+		display: block;
 	}
-	footer {
-		input[type=file] {
-			position: absolute;
-			width: 89px;
-			margin: -4px 0 0 -12px;
-			padding: 0 0 7px 0;
-			opacity: 0;
-		}
-
-		.choose-wrapper {
-			display: inline-block;
-			float: left;
-			span {
-				margin-top: 6px;
-				margin-left: 5px;
-				position: absolute;
-				max-height: 1.2em;
-				max-width: 9em;
-				overflow: hidden;
-			}
-		}
+	.open {
+		&:extend(button all);
+		float: left;
 	}
 }
 

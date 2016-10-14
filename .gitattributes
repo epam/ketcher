@@ -2,7 +2,7 @@
 
 * .js text eol=lf
 
-* .png binary
-* .jpg binary
-* .jpeg binary
-* .gif binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary

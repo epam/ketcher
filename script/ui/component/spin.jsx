@@ -3,7 +3,7 @@ import { h, Component } from 'preact';
 
 function Spin({...props}) {
 	return (
-		<div className="spin" {...props}></div>
+		<div className="spinner" {...props}></div>
 	);
 }
 

@@ -2,21 +2,6 @@
 @import "form";
 @import (reference) "component";
 
-#loading {
-	position: absolute;
-	margin: auto;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 10%;
-	height: 10%;
-
-	fill: rgba(0, 0, 0, 0.5);
-}
-
-/////////////////////
-
 .overlay {
 	position: fixed;
 	left: 0;
@@ -51,6 +36,22 @@
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
+	}
+}
+
+.spinner {
+	margin: auto;
+	display: block;
+	border: 16px solid #f3f3f3;
+	border-top: 16px solid #0000ff;
+	border-radius: 50%;
+	width: 5em;
+	height: 5em;
+	animation: spin 3s linear infinite;
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
 	}
 }
 
@@ -483,22 +484,6 @@ form[role=dialog] {
 		&.selected {
 			.highlight-invert;
 		}
-	}
-}
-
-.spin {
-	margin: auto;
-	display: block;
-	border: 16px solid #f3f3f3;
-	border-top: 16px solid #0000ff;
-	border-radius: 50%;
-	width: 5em;
-	height: 5em;
-	animation: spin 3s linear infinite;
-
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
 	}
 }
 

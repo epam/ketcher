@@ -486,7 +486,23 @@ form[role=dialog] {
 	}
 }
 
-.recognize-molecule {
+.spin {
+	margin: auto;
+	display: block;
+	border: 16px solid #f3f3f3;
+	border-top: 16px solid #0000ff;
+	border-radius: 50%;
+	width: 5em;
+	height: 5em;
+	animation: spin 3s linear infinite;
+
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+}
+
+.recognize {
 	.recognize-wrapper {
 		position: relative;
 		width: 100%;
@@ -512,24 +528,6 @@ form[role=dialog] {
 			.struct {
 				width: 21em;
 			}
-			.loader {
-				margin: auto;
-				display: block;
-				border: 16px solid #f3f3f3;
-				border-top: 16px solid #0000ff;
-				border-radius: 50%;
-				width: 5em;
-				height: 5em;
-				animation: spin 3s linear infinite;
-			}
-			@keyframes spin {
-				0% {
-					transform: rotate(0deg);
-				}
-				100% {
-					transform: rotate(360deg);
-				}
-			}
 		}
 	}
 	label {
@@ -541,7 +539,7 @@ form[role=dialog] {
 	}
 }
 
-.check-struct {
+.check {
 	.check-tabs {
 		&:extend(.-Tabs all);
 	}
@@ -562,7 +560,7 @@ form[role=dialog] {
 	}
 }
 
-.calc-val {
+.analyse {
 	label {
 		display: block;
 		text-align: left;
@@ -581,7 +579,7 @@ form[role=dialog] {
 	}
 }
 
-.open-settings {
+.settings {
 	width: 42em;
 	height: auto;
 

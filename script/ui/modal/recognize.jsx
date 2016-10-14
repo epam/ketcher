@@ -3,11 +3,12 @@ import { h, Component, render } from 'preact';
 
 import Dialog from '../component/dialog';
 import StructRender from '../component/structrender'
+import Spin from '../component/spin'
 import api from '../../api';
 
 import molfile from '../../chem/molfile';
 
-class RecognizeMolecule extends Component {
+class Recognize extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -52,7 +53,7 @@ class RecognizeMolecule extends Component {
     render (props, state) {
         return (
             <Dialog caption="Import From Image"
-                name="recognize-molecule" result={() => this.result() }
+                name="recognize" result={() => this.result() }
                 params={props}
                 buttons={[
                     (
@@ -75,7 +76,7 @@ class RecognizeMolecule extends Component {
                 	{ 	state.struct ?
 							state.struct != 'recognizing'
 								? ( <StructRender className="struct" struct={state.struct} /> )
-								: ( <div className="loader"></div> )
+								: ( <Spin/> )
 						: null
                 	}
 					</div>
@@ -93,6 +94,6 @@ class RecognizeMolecule extends Component {
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
     return render((
-        <RecognizeMolecule {...params}/>
+        <Recognize {...params}/>
     ), overlay);
 };

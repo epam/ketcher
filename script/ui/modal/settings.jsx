@@ -7,7 +7,7 @@ import SaveButton from '../component/savebutton'
 import Accordion from '../component/accordion'
 import defaultOptions from './options';
 
-class OpenSettings extends Component {
+class Settings extends Component {
      constructor(props) {
         super(props);
         this.defOpts = defaultOptions();
@@ -102,7 +102,7 @@ class OpenSettings extends Component {
     	let activeTabs = {'0': true , '1': false};
         return (
             <Dialog caption="Settings"
-                    name="open-settings" params={props.params}
+                    name="settings" params={props.params}
                     result={() => this.result()}
                      buttons={[
 						 <OpenButton className="open" server={this.props.server}
@@ -146,6 +146,6 @@ function SelectCheck({ name, value, onChange }) {
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
     return render((
-        <OpenSettings params={params}/>
+        <Settings params={params}/>
     ), overlay);
 };

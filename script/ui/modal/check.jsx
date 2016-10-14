@@ -15,15 +15,14 @@ const checkScheckSchema = [
 	{ title: '3D Structure', value: '3d'}
 ];
 
-class CheckStruct extends Component {
+class Check extends Component {
     constructor(props) {
       super(props);
       this.state = {
-      	  tabIndex: 0,
       	  data: {},
       	  checker: {}
       };
-      checkScheckSchema.map((item) => {
+      checkScheckSchema.forEach((item) => {
 		  this.state.checker[item.value] = true;
 	  });
 	  this.onCheck();
@@ -47,7 +46,7 @@ class CheckStruct extends Component {
     	var tabs = ['Check', 'Settings'];
         return (
             <Dialog caption="Structure Check"
-                    name="check-struct" params={props}
+                    name="check" params={props}
                     buttons={[ "Cancel"]}>
 				<Tabs className="check-tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
 					<ul className="check-settings">{
@@ -74,6 +73,6 @@ class CheckStruct extends Component {
 export default function dialog(params) {
     var overlay = $$('.overlay')[0];
     return render((
-        <CheckStruct {...params}/>
+        <Check {...params}/>
     ), overlay);
 };

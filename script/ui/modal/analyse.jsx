@@ -3,11 +3,11 @@ import { h, Component, render } from 'preact';
 
 import Dialog from '../component/dialog';
 
-class CalculatedValues extends Component {
+class Analyse extends Component {
 	render () {
 		return (
 			<Dialog caption="Calculated Values"
-					name="calc-val" params={this.props}
+					name="analyse" params={this.props}
 					buttons={["Cancel"]}>
 				<ul>{[
 						{ name: 'Chemical Formula', key: 'gross' },
@@ -27,6 +27,6 @@ class CalculatedValues extends Component {
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
 	return render((
-		<CalculatedValues {...params}/>
+		<Analyse {...params}/>
 	), overlay);
 };

@@ -77,10 +77,18 @@
 			line-height: 2em;
 			border: 1px solid #aaa;
 			background-color: #eee;
+			&:before {
+				margin-left: 30px;
+				float: left;
+				content: '+';
+			}
 			&:hover {
 				background-color: #ddd;
 			}
 			&.active {
+				&:before {
+					content: '-';
+				}
 				&:hover {
 					background-color: #ddd;
 				}

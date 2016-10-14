@@ -839,7 +839,7 @@ var actionMap = {
 	},
 	'reaction-automap': automap,
 	'recognize': function () {
-		dialog(modal.recognizeMolecule, { server: server }).then(function (res) {
+		dialog(modal.recognize, { server: server }).then(function (res) {
 			if (res.fragment) {
 				//struct.rescale();
 				selectAction('paste', res.struct);
@@ -849,7 +849,7 @@ var actionMap = {
 		});
 	},
 	'check': function () {
-		dialog(modal.checkStruct, {
+		dialog(modal.check, {
 			check: serverCall.bind(null, 'check')
 		});
 	},
@@ -862,7 +862,7 @@ var actionMap = {
 		});
 	},
 	'settings': function () {
-		dialog(modal.openSettings, { server: server }).then(function (res) {
+		dialog(modal.settings, { server: server }).then(function (res) {
 			if (!res.onlyCurrentSession)
 				localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
 			// else

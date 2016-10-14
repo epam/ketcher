@@ -21,7 +21,7 @@ class Accordion extends Component {
 					<li className="tab">
 						<a className={this.state.active[index]  ? 'active' : ''}
 							onClick={ ev => this.onActive(ev, index)}>
-							{this.state.active[index] ? <span>-</span> : <span>+</span> }{caption}
+							{caption}
 						</a>
 						{this.state.active[index] ? children[index] : null }
 					</li>

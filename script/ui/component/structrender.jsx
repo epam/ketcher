@@ -35,7 +35,7 @@ class StructRender extends Component {
 		}
 	}
 	shouldComponentUpdate() {
-		return false;
+		return true;
 	}
 	render () {
 		let { struct, Tag="div", options, ...props } = this.props;

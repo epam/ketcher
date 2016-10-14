@@ -2,9 +2,9 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
+import StructRender from '../component/structrender'
 import api from '../../api';
 
-import Render from '../../render';
 import molfile from '../../chem/molfile';
 
 class RecognizeMolecule extends Component {
@@ -42,15 +42,6 @@ class RecognizeMolecule extends Component {
 			setTimeout(() => alert("Error! The picture isn't recognized.") , 200); // TODO: remove me...
 		})
 	}
-    renderRes(el) {
-        var rnd = new Render(el, 0, {
-              'autoScale': true,
-              'autoScaleMargin': 0,
-              'maxBondLength': 30
-        });
-        rnd.setMolecule(this.state.struct);
-        rnd.update();
-    }
     checkFragment(ev) {
         this.setState({fragment: !this.state.fragment});
     }
@@ -83,7 +74,7 @@ class RecognizeMolecule extends Component {
 					<div className="output">
                 	{ 	state.struct ?
 							state.struct != 'recognizing'
-								? ( <div className="struct" ref={ el => this.renderRes(el) } /> )
+								? ( <StructRender className="struct" struct={state.struct} /> )
 								: ( <div className="loader"></div> )
 						: null
                 	}

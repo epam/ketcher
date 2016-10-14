@@ -5,8 +5,6 @@ import { map as formatMap } from '../structformat';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
 
-var ui = global.ui;
-
 class Open extends Component {
 	constructor(props) {
 		super(props);
@@ -16,10 +14,8 @@ class Open extends Component {
 		};
 	}
 	result() {
-		return this.state.structStr ? {
-			structStr: this.state.structStr,
-			fragment: this.state.fragment
-		} : null;
+		let { structStr, fragment } = this.state;
+		return structStr ? { structStr, fragment } : null;
 	}
 	changeStructStr(target) {
 		this.setState({

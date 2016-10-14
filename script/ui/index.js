@@ -97,7 +97,7 @@ function init (opts, apiServer) {
 	server.then(function () {
 		updateServerButtons();
 	}, function (err) {
-		echo(err);
+		alert(err);
 	});
 
 	subEl('template-lib').disabled = true;
@@ -255,7 +255,7 @@ function delegateCliparea(action) {
 	if (!enabled) {
 		var el = subEl(action);
 		var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
-		echo('These action is unavailble via menu.\n' +
+		alert('These action is unavailble via menu.\n' +
 			 'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 	}
 	return null;
@@ -501,11 +501,6 @@ function dialog(modal, params, noAnimate) {
 	});
 }
 
-function echo (message) {
-	// TODO: make special area for messages
-	alert(message);
-};
-
 function updateStruct (mol) {
 	console.assert(mol, 'No molecule to update');
 	ui.editor.deselectAll();
@@ -578,7 +573,7 @@ function serverCall(method, options, struct) {
 	});
 	//utils.loading('show');
 	request.catch(function (err) {
-		echo(err);
+		alert(err);
 	}).then(function (er) {
 		//utils.loading('hide');
 	});
@@ -594,7 +589,7 @@ function serverTransform(method, options, struct) {
 			struct.rxnArrows.clear();
 		updateStruct(struct);
 	}).catch(function (err) {
-		echo("Can't parse server response!");
+		alert("Can't parse server response!");
 	});
 }
 
@@ -642,7 +637,7 @@ function updateZoom (refresh) {
 function automap () {
 	if (!ui.ctab.hasRxnArrow())
 		// not a reaction explicit or implicit
-		echo('Auto-Mapping can only be applied to reactions');
+		alert('Auto-Mapping can only be applied to reactions');
 	else {
 		modal.automap({
 			onOk: function (res) {
@@ -653,14 +648,14 @@ function automap () {
 };
 
 function loadMolecule (structStr, checkEmptyLine) {
-	return getStruct(structStr, checkEmptyLine).then(updateStruct, echo);
+	return getStruct(structStr, checkEmptyLine).then(updateStruct, alert);
 }
 
 function loadFragment (structStr, checkEmptyLine) {
 	return getStruct(structStr, checkEmptyLine).then(function (struct) {
 		struct.rescale();
 		selectAction('paste', struct);
-	}, echo);
+	}, alert);
 }
 
 function getStruct(structStr, checkEmptyLine) {
@@ -1011,7 +1006,6 @@ Object.assign(ui, {
 	selectAction: selectAction,
 	addUndoAction: addUndoAction,
 
-	echo: echo,
 	showDialog: showDialog,
 	hideDialog: hideDialog,
 

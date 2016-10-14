@@ -5,8 +5,6 @@ import * as structFormat from '../structformat';
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
 
-var ui = global.ui;
-
 class Save extends Component {
 	constructor(props) {
 		super(props);
@@ -21,7 +19,7 @@ class Save extends Component {
 			ev.preventDefault();
 		}
 		return structFormat.toString(this.props.struct, type, this.props.server)
-			.then(structStr => this.setState({ type, structStr }), e => { ui.echo(e); });
+			.then(structStr => this.setState({ type, structStr }), e => { alert(e); });
 	}
 
 	saveTemplate(ev) {

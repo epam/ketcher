@@ -22,9 +22,10 @@ class Recognize extends Component {
             { structStr, fragment } : null;
     }
     uploadImage(ev) {
-            this.setState({
-                file: ev.target.files[0]
-            });
+        this.setState({
+            file: ev.target.files[0],
+			structStr: null
+		});
     }
     url() {
         if (!this.state.file)
@@ -42,7 +43,7 @@ class Recognize extends Component {
 		this.setState({ structStr: process });
 	}
     checkFragment(ev) {
-        this.setState({fragment: !this.state.fragment});
+        this.state.fragment = !this.state.fragment;
     }
     imageError(ev) {
 		this.setState({ file: null });

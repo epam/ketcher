@@ -10,9 +10,7 @@ var watchify = require('watchify');
 var cp = require('child_process');
 var del = require('del');
 var minimist = require('minimist');
-
 var MarkdownIt = require('markdown-it');
-var tap = require('gulp-tap');
 
 var pkg = require('./package.json');
 var options = minimist(process.argv.slice(2), {
@@ -89,18 +87,13 @@ gulp.task('html', ['patch-version'], function () {
 
 gulp.task('doc', function () {
 	return gulp.src('doc/*.{png, jpg, gif}')
-		.pipe(gulp.dest(options.dist + '/doc'))
+		.pipe(gulp.dest(options.dist + '/doc'));
 });
 
 gulp.task('help', ['doc'], function () {
 	return gulp.src('doc/help.md')
-		.pipe(tap(function (file) {
-			const fs = require('fs');
-			var fileContent = fs.readFileSync(file.path, "utf8");
-			var result = new MarkdownIt().render(fileContent);
-			var doctype = '<!DOCTYPE html>';
-			fs.writeFileSync('dist/doc/help.html', doctype + result);
-		}));
+		.pipe(plugins.tap(markdownify()))
+		.pipe(gulp.dest(options.dist + '/doc'));
 });
 
 gulp.task('font', function (cb) {
@@ -164,7 +157,7 @@ gulp.task('check-epam-email', function(cb) {
 });
 
 gulp.task('clean', function () {
-	return del([options.dist + '/*', pkg.name + '-*.zip']);
+	return del.sync([options.dist + '/**', pkg.name + '-*.zip']);
 });
 
 gulp.task('archive', ['clean', 'assets', 'code'], function () {
@@ -175,9 +168,10 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('serve', ['clean', 'assets', 'style', 'html', 'script-watch', 'help'], function() {
+gulp.task('serve', ['clean', 'style', 'html', 'script-watch', 'assets'], function() {
 	var server = gulp.src(options.dist)
-		.pipe(plugins.webserver({
+	    .pipe(plugins.webserver({
+		    host: '0.0.0.0',
 			port: 9966,
 			livereload: {
 				enable: true,
@@ -261,6 +255,23 @@ function polyfillify(build) {
 	});
 }
 
+function markdownify (options) {
+	var header = '<!DOCTYPE html>';
+	var footer = '';
+	var md = MarkdownIt(Object.assign({
+		html: true,
+		linkify: true,
+		typographer: true
+	}, options));
+	if (options && options.style)
+		header += `<link rel="stylesheet" href="${options.style}">`;
+	return function process (file) {
+		var data = md.render(file.contents.toString());
+		file.contents = new Buffer(header + data + footer);
+		file.path = gutil.replaceExtension(file.path, '.html');
+	};
+}
+
 function glyphReduce(glyphs) {
 	return glyphs.reduce(function (res, glyph) {
 		res['icon-' + glyph.name] = "'" + glyph.unicode[0] + "'";
@@ -269,6 +280,6 @@ function glyphReduce(glyphs) {
 }
 
 gulp.task('pre-commit', ['lint', 'check-epam-email']);
-gulp.task('assets', ['libs', 'distrib']);
+gulp.task('assets', ['libs', 'distrib', 'help']);
 gulp.task('code', ['style', 'script', 'html']);
-gulp.task('build', ['clean', 'assets', 'code', 'help']);
+gulp.task('build', ['clean', 'code', 'assets']);

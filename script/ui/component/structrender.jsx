@@ -12,7 +12,6 @@ function renderStruct(el, struct, options={}) {
 		else {
 			var rnd = new Render(el, 0, {
 				autoScale: true,
-				autoScaleMargin: 0,
 				maxBondLength: 30,
 				...options
 			});

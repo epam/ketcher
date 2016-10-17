@@ -31,18 +31,8 @@ function addFragment(molString) {
 }
 
 function showMolfile(clientArea, molString, options) {
-	var opts = Object.assign({
-		bondLength: 75,
-		showSelectionRegions: false,
-		showBondIds: false,
-		showHalfBondIds: false,
-		showLoopIds: false,
-		showAtomIds: false,
-		autoScale: false,
-		autoScaleMargin: 4,
-		hideImplicitHydrogen: false
-	}, options);
-	var render = new Render(clientArea, opts.bondLength, opts);
+	var render = new Render(clientArea, options.bondLength || 75,
+	                        options);
 	if (molString) {
 		var mol = molfile.parse(molString);
 		render.setMolecule(mol);

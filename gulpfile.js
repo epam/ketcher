@@ -263,8 +263,6 @@ function markdownify (options) {
 		linkify: true,
 		typographer: true
 	}, options));
-	if (options && options.style)
-		header += `<link rel="stylesheet" href="${options.style}">`;
 	return function process (file) {
 		var data = md.render(file.contents.toString());
 		file.contents = new Buffer(header + data + footer);

@@ -72,7 +72,7 @@ export default class VirtualList extends Component {
 		let selection = data.slice(start, end);
 
 		return (
-			<div class="outer" onScroll={this.handleScroll} {...props}>
+			<div onScroll={this.handleScroll} {...props}>
 				<div style={`${STYLE_INNER} height:${data.length*rowHeight}px;`}>
 					<Tag style={`${STYLE_CONTENT} top:${start*rowHeight}px;`}>
 						{ selection.map((d, i) => renderRow(d, start + i)) }

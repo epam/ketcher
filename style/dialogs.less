@@ -105,7 +105,7 @@ form[role=dialog] {
 		width: 11em;
 		float: left;
 	}
-	.outer {
+	.table {
 		margin-top: 3.5em;
 		padding: 0;
 		float: left;
@@ -113,47 +113,51 @@ form[role=dialog] {
 		height: 27em;
 		overflow: auto;
 	}
-	img {
-		width: 100%;
-		height: 100%;
-	}
-	table, tr {
-		width: 100%;
-		table-layout: fixed;
-		border-collapse: collapse;
-		border: 0;
-	}
-	tr {
-		line-height: 120px;
+	.tr {
 		height: 120px;
 	}
-	td {
-		//padding: @item-pad;
-		padding: 0 5px;
+	.td {
 		overflow: hidden;
 		width: 33%;
-		height: 120px;
-		line-height: 120px;
+		float: left;
+		height: 100%;
 		position: relative;
-		div {
-			height: 120px;
-			overflow: hidden;
-			&:before {
-				position: absolute;
-				left: 10px;
-				top: 5px;
-				font-size: 10px;
-				color: darken(@border-color, 30%);
-				content: attr(title);
-			}
-			&:hover {
-				background: @form-hover-background;
-			}
-			&.selected {
-				background-color: lighten(@form-selected-background, 15%);
-			}
-		}
+	}
+	img {
+		padding: 4%;
+		width: 92%;
+		height: 92%;
+	}
+	.struct {
+		display: block;
+		position: absolute;
 
+		top: 0.3em;
+		bottom: 0.3em;
+		left: 0.2em;
+		right: 0.2em;
+		height: auto;
+		width: auto;
+		border: 1px solid @border-color;
+		border-radius: 5px;
+
+		&:before {
+			position: absolute;
+			left: 0.5em;
+			top: -0.5em;
+			padding: 0 4px;
+			border-radius: 3px;
+			font-size: 10px;
+			color: darken(@border-color, 30%);
+			background-color: white;
+			content: attr(title);
+		}
+		&:hover {
+			background: @form-hover-background;
+		}
+		&.selected {
+			background-color: lighten(@form-selected-background, 15%);
+		}
 	}
 }
 

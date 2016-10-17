@@ -100,14 +100,14 @@ class Templates extends Component {
 
 	renderRow (row, index) {
 		return (
-			<tr key={index}>{ row.map((tmpl, i) => (
-				<td>
+			<div class="tr" key={index}>{ row.map((tmpl, i) => (
+				<div class="td">
 				  <RenderTmpl tmpl={tmpl}
 							  title={normName(tmpl, index + i)}
-							  class={tmpl == this.state.selected ? 'selected' : ''}
+							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
-				</td>
-			))}</tr>
+				</div>
+			))}</div>
 		);
 	}
 
@@ -126,9 +126,9 @@ class Templates extends Component {
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
 				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
-				  <VisibleView data={rows} rowHeight={120} Tag="table">
+				<VisibleView data={rows} rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i) }
-				  </VisibleView>
+				</VisibleView>
 			</Dialog>
 		);
 	}

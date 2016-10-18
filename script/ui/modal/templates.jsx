@@ -6,12 +6,9 @@ import StructRender from '../component/structrender';
 import SelectList from '../component/select';
 import Dialog from '../component/dialog';
 
-function normGroup(tmpl, i) {
-	return tmpl.props.group || 'Ungroupt';
-}
-
-function normName(tmpl, i) {
-	return tmpl.struct.name || `${normGroup(tmpl)} template ${i + 1}`;
+function tmplName(tmpl, i) {
+	console.assert(tmpl.props && tmpl.props.group, "No group");
+	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
 function partition(n, array) {
@@ -19,6 +16,35 @@ function partition(n, array) {
 	for (var i = 0; i < array.length; i += n)
 		res.push(array.slice(i, i + n));
 	return res;
+}
+
+function filterLib(lib, filter) {
+	console.info('filter', filter);
+	if (!filter)
+		return lib;
+	var re = RegExp(filter, 'i');
+	return lib.reduce((res, group) => {
+		if (group.name.search(re) != -1 && group.templates.length > 0) {
+			res.push(group);
+		} else {
+			let tmpls = group.templates.filter((tmpl, i) => (
+				tmplName(tmpl, i).search(re) != -1
+			));
+			if (tmpls.length > 0)
+				res.push({ name: group.name, templates: tmpls });
+		}
+		return res;
+	}, []);
+}
+
+function groupTemplates(lib, groupName) {
+	console.info('group', groupName);
+	var group = lib.find(function (group) {
+		return group.name == groupName;
+	});
+	return group ? group.templates : lib.reduce((res, group) => (
+		res.concat(...group.templates)
+	), []);
 }
 
 function RenderTmpl({tmpl, ...props}) {
@@ -30,41 +56,12 @@ function RenderTmpl({tmpl, ...props}) {
 class Templates extends Component {
 	constructor(props) {
 		super(props);
-		var groups = this.getGroups();
+		console.info(props);
 		this.state = {
 			selected: null,
 			filter: '',
-			selectedGroup: groups[0]
+			group: props.lib[0].name
 		};
-	}
-
-	getGroups() {
-		console.info('groups', this.state);
-		return this.getFilter().reduce(function (res, tmpl, i) {
-			var group = normGroup(tmpl, i);
-			if (!res.includes(group))
-				res.push(group);
-			return res;
-		}, []);
-	}
-
-	getFilter() {
-		console.info('filter', this.state);
-		if (!this.state.filter)
-			return this.props.templates;
-		var re = RegExp(this.state.filter, 'i');
-		return this.props.templates.filter((tmpl, i) => (
-			normName(tmpl, i).search(re) != -1
-		));
-	}
-
-	getTemplates() {
-		console.info('templates', this.state);
-		if (!this.getGroups().includes(this.state.selectedGroup))
-			return this.getFilter();
-		return this.getFilter().filter((tmpl, i) => (
-			this.state.selectedGroup == normGroup(tmpl, i)
-		));
 	}
 
 	select(tmpl) {
@@ -76,14 +73,14 @@ class Templates extends Component {
 
 	selectGroup(group) {
 		this.setState({
-			selectedGroup: group,
+			group: group,
 			selected: null
 		});
 	}
 
 	setFilter(filter) {
 		this.setState({
-			filter: filter,
+			filter: filter.trim(),
 			selected: null           // TODO: change this
 		});
 	}
@@ -103,7 +100,7 @@ class Templates extends Component {
 			<div class="tr" key={index}>{ row.map((tmpl, i) => (
 				<div class="td">
 				  <RenderTmpl tmpl={tmpl}
-							  title={normName(tmpl, index + i)}
+							  title={tmplName(tmpl, index + i)}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
 				</div>
@@ -113,8 +110,9 @@ class Templates extends Component {
 
 	render () {
 		const COLS = 3;
-		let {selectedGroup, filter} = this.state;
-		let rows = partition(COLS, this.getTemplates());
+		let {group, filter} = this.state;
+		let lib = filterLib(this.props.lib, filter);
+		let rows = partition(COLS, groupTemplates(lib, group));
 
 		console.info('all rerender');
 		return (
@@ -125,7 +123,9 @@ class Templates extends Component {
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />
 				</label>
-				<SelectList className="groups" onChange={g => this.selectGroup(g)} value={selectedGroup} options={ this.getGroups() } />
+				<SelectList className="groups"
+					onChange={g => this.selectGroup(g)}
+					value={group} options={ lib.map(g => g.name) } />
 				<VisibleView data={rows} rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i) }
 				</VisibleView>
@@ -134,9 +134,9 @@ class Templates extends Component {
 	}
 }
 
-export default function dialog(templates, params) {
+export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
 	return render((
-		<Templates templates={templates} {...params}/>
+		<Templates {...params}/>
 	), overlay);
 };

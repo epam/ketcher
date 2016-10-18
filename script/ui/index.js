@@ -267,7 +267,19 @@ function initTemplates(baseUrl) {
 			return resp.text();
 		throw "Could not fetch templates";
 	}).then(function(text) {
-		return sdf.parse(text);
+		var tmpls = sdf.parse(text);
+		return tmpls.reduce(function (res, tmpl) {
+			var name = tmpl.props.group || 'Ungroupt';
+			var group = res.find(function (group) {
+				return group.name == name;
+			});
+			if (!group) {
+				group = { name: name, templates: [] };
+				res.push(group);
+			}
+			group.templates.push(tmpl);
+			return res;
+		}, []);
 	});
 }
 
@@ -749,13 +761,19 @@ function genericsTable () {
 };
 
 function templateLib () {
-	var tmplUser = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-	var tmpls = tmplUser.reduce(function (res, struct) {
-		res.push({ struct: molfile.parse(struct), props: { group: 'User' }});
-		return res;
-	}, tmplLib);
+	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	var userTmpls = store.map(function (structStr) {
+		return {
+			struct: molfile.parse(structStr),
+			props: { group: 'User' }
+		};
+	});
+	var lib = tmplLib.concat({
+		name: 'User',
+		templates: userTmpls
+	});
 
-	dialog(modal.templates.bind(modal, tmpls)).then(function (tmpl) {
+	dialog(modal.templates, { lib: lib }, true).then(function (tmpl) {
 		// C doesn't conflict with menu id
 		selectAction('template-C', tmpl);
 		return true;

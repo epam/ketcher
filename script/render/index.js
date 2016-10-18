@@ -128,6 +128,10 @@ Render.prototype.page2obj = function (pagePos) {
 	return this.view2obj(pp);
 };
 
+Render.prototype.client2Obj = function (clientPos) {
+	return new Vec2(clientPos).sub(this.offset);
+};
+
 Render.prototype.findItem = function (event, maps, skip) {
 	var ci = this.findClosestItem(
 			'ui' in window ? new Vec2(this.page2obj(event)) :
@@ -144,10 +148,6 @@ Render.prototype.findItem = function (event, maps, skip) {
 	else if (ci.type == 'RGroup') ci.map = 'rgroups';
 	else if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';
 	return ci;
-};
-
-Render.prototype.client2Obj = function (clientPos) {
-	return new Vec2(clientPos).sub(this.offset);
 };
 
 Render.prototype.setMolecule = function (ctab, norescale) {
@@ -216,12 +216,6 @@ Render.prototype.invalidateItem = function (map, id, level) {
 Render.prototype.atomGetDegree = function (aid) {
 	DEBUG.logMethod('atomGetDegree');
 	return this.ctab.atoms.get(aid).a.neighbors.length;
-};
-
-Render.prototype.isBondInRing = function (bid) {
-	var bond = this.ctab.bonds.get(bid);
-	return this.ctab.molecule.halfBonds.get(bond.b.hb1).loop >= 0 ||
-	this.ctab.molecule.halfBonds.get(bond.b.hb2).loop >= 0;
 };
 
 Render.prototype.atomGetNeighbors = function (aid) {
@@ -326,25 +320,6 @@ Render.prototype.rxnPlusGetPos = function (id) {
 	return this.itemGetPos('rxnPluses', id);
 };
 
-Render.prototype.getAdjacentBonds = function (atoms) {
-	var aidSet = Set.fromList(atoms);
-	var bidSetInner = Set.empty(),
-		bidSetCross = Set.empty();
-	for (var i = 0; i < atoms.length; ++i) {
-		var aid = atoms[i];
-		var atom = this.ctab.atoms.get(aid);
-		for (var j = 0; j < atom.a.neighbors.length; ++j) {
-			var hbid = atom.a.neighbors[j];
-			var hb = this.ctab.molecule.halfBonds.get(hbid);
-			var endId = hb.end;
-			var set = Set.contains(aidSet, endId) ?
-					bidSetInner : bidSetCross;
-			Set.add(set, hb.bid);
-		}
-	}
-	return { inner: bidSetInner, cross: bidSetCross };
-};
-
 Render.prototype.bondGetAttr = function (bid, name) {
 	DEBUG.logMethod('bondGetAttr');
 	return this.ctab.bonds.get(bid).b[name];
@@ -429,7 +404,8 @@ Render.prototype.getStructCenter = function (selection) {
 };
 
 Render.prototype.onResize = function () {
-	this.setViewSize(new Vec2(this.clientArea['clientWidth'], this.clientArea['clientHeight']));
+	this.setViewSize(new Vec2(this.clientArea.clientWidth,
+	                          this.clientArea.clientHeight));
 };
 
 Render.prototype.setViewSize = function (viewSz) {
@@ -454,19 +430,6 @@ Render.prototype.setOffset = function (newoffset) {
 	this.clientArea.scrollLeft += delta.x;
 	this.clientArea.scrollTop += delta.y;
 	this.offset = newoffset;
-};
-
-Render.prototype.getElementPos = function (obj) {
-	var curleft = 0,
-		curtop = 0;
-
-	if (obj.offsetParent) {
-		do {
-			curleft += obj.offsetLeft;
-			curtop += obj.offsetTop;
-		} while ((obj = obj.offsetParent));
-	}
-	return new Vec2(curleft, curtop);
 };
 
 Render.prototype.drawSelectionLine = function (p0, p1) {
@@ -565,6 +528,8 @@ Render.prototype.drawSelectionPolygon = function (r) {
 	}
 };
 
+// TODO: test me see testPolygon from
+// 'Remove unused methods from render' commit
 Render.prototype.isPointInPolygon = function (r, p) { // eslint-disable-line max-statements
 	var d = new Vec2(0, 1);
 	var n = d.rotate(Math.PI / 2);
@@ -658,55 +623,6 @@ Render.prototype.getElementsInPolygon = function (rr) { // eslint-disable-line m
 	};
 };
 
-Render.prototype.testPolygon = function (rr) {
-	rr = rr || [
-		{
-			x: 50,
-			y: 10
-		},
-
-		{
-			x: 20,
-			y: 90
-		},
-
-		{
-			x: 90,
-			y: 30
-		},
-
-		{
-			x: 10,
-			y: 30
-		},
-
-		{
-			x: 90,
-			y: 80
-		}
-	];
-	if (rr.length < 3)
-		return;
-	var min = rr[0],
-		max = rr[0];
-	for (var j = 1; j < rr.length; ++j) {
-		min = Vec2.min(min, rr[j]);
-		max = Vec2.max(max, rr[j]);
-	}
-	this.drawSelectionPolygon(rr);
-	var zz = 10;
-	for (var k = 0; k < 1000; ++k) {
-		var p = new Vec2(Math.random() * zz, Math.random() * zz);
-		var isin = this.isPointInPolygon(rr, p);
-		var color = isin ? '#0f0' : '#f00';
-		this.paper.circle(p.x, p.y, 2).attr({
-			fill: color,
-			stroke: 'none'
-		});
-	}
-	this.drawSelectionPolygon(rr);
-};
-
 Render.prototype.update = function (force) { // eslint-disable-line max-statements
 	DEBUG.logMethod('update');
 
@@ -775,10 +691,6 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			/* eslint-enable no-mixed-operators*/
 		}
 	}
-};
-
-Render.prototype.checkBondExists = function (begin, end) {
-	return this.ctab.molecule.checkBondExists(begin, end);
 };
 
 Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)

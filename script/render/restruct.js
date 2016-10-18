@@ -13,8 +13,8 @@ var Struct = require('../chem/struct');
 
 var ReAtom = require('./reatom');
 var ReBond = require('./rebond');
-var ReRxnPlus = require("./rerxnplus");
-var ReRxnArrow = require("./rerxnarrow");
+var ReRxnPlus = require('./rerxnplus');
+var ReRxnArrow = require('./rerxnarrow');
 var ReFrag = require('./refrag');
 var ReRGroup = require('./rergroup');
 var ReDataSGroupData = require('./redatasgroupdata');
@@ -587,61 +587,6 @@ ReStruct.prototype.setImplicitHydrogen = function () {
 ReStruct.prototype.coordProcess = function (norescale) {
 	if (!norescale)
 		this.molecule.rescale();
-};
-
-ReStruct.prototype.notifyAtomAdded = function (aid) {
-	var atomData = new ReAtom(this.molecule.atoms.get(aid));
-	atomData.component = this.connectedComponents.add(Set.single(aid));
-	this.atoms.set(aid, atomData);
-	this.markAtom(aid, 1);
-};
-
-ReStruct.prototype.notifyRxnPlusAdded = function (plid) {
-	this.rxnPluses.set(plid, new ReRxnPlus(this.molecule.rxnPluses.get(plid)));
-};
-
-ReStruct.prototype.notifyRxnArrowAdded = function (arid) {
-	this.rxnArrows.set(arid, new ReRxnArrow(this.molecule.rxnArrows.get(arid)));
-};
-
-ReStruct.prototype.notifyRxnArrowRemoved = function (arid) {
-	this.markItemRemoved();
-	this.clearVisel(this.rxnArrows.get(arid).visel);
-	this.rxnArrows.unset(arid);
-};
-
-ReStruct.prototype.notifyRxnPlusRemoved = function (plid) {
-	this.markItemRemoved();
-	this.clearVisel(this.rxnPluses.get(plid).visel);
-	this.rxnPluses.unset(plid);
-};
-
-ReStruct.prototype.notifyBondAdded = function (bid) {
-	this.bonds.set(bid, new ReBond(this.molecule.bonds.get(bid)));
-	this.markBond(bid, 1);
-};
-
-ReStruct.prototype.notifyAtomRemoved = function (aid) {
-	var atom = this.atoms.get(aid);
-	var set = this.connectedComponents.get(atom.component);
-	Set.remove(set, aid);
-	if (Set.size(set) == 0)
-		this.connectedComponents.remove(atom.component);
-	this.clearVisel(atom.visel);
-	this.atoms.unset(aid);
-	this.markItemRemoved();
-};
-
-ReStruct.prototype.notifyBondRemoved = function (bid) {
-	var bond = this.bonds.get(bid);
-	[bond.b.hb1, bond.b.hb2].each(function (hbid) {
-		var hb = this.molecule.halfBonds.get(hbid);
-		if (hb.loop >= 0)
-			this.loopRemove(hb.loop);
-	}, this);
-	this.clearVisel(bond.visel);
-	this.bonds.unset(bid);
-	this.markItemRemoved();
 };
 
 ReStruct.prototype.loopRemove = function (loopId) {

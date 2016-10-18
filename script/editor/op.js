@@ -2,6 +2,11 @@ var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
 
 var Struct = require('../chem/struct');
+
+var ReAtom = require('../render/reatom');
+var ReBond = require('../render/rebond');
+var ReRxnPlus = require('../render/rerxnplus');
+var ReRxnArrow = require('../render/rerxnarrow');
 var ReFrag = require('../render/refrag');
 var ReRGroup = require('../render/rergroup');
 var ReChiralFlag = require('../render/rechiralflag');
@@ -54,7 +59,13 @@ function AtomAdd(atom, pos) {
 			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
 		else
 			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
-		RS.notifyAtomAdded(this.data.aid);
+
+		// notifyAtomAdded
+		var atomData = new ReAtom(RS.molecule.atoms.get(this.data.aid));
+		atomData.component = RS.connectedComponents.add(Set.single(this.data.aid));
+		RS.atoms.set(this.data.aid, atomData);
+		RS.markAtom(this.data.aid, 1);
+
 		DS.atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
 	this.invert = function () {
@@ -75,7 +86,17 @@ function AtomDelete(aid) {
 			this.data.atom = DS.atoms.get(this.data.aid);
 			this.data.pos = R.atomGetPos(this.data.aid);
 		}
-		RS.notifyAtomRemoved(this.data.aid);
+
+		// notifyAtomRemoved(this.data.aid);
+		var atom = RS.atoms.get(this.data.aid);
+		var set = RS.connectedComponents.get(atom.component);
+		Set.remove(set, this.data.aid);
+		if (Set.size(set) == 0)
+			RS.connectedComponents.remove(atom.component);
+		RS.clearVisel(atom.visel);
+		RS.atoms.unset(this.data.aid);
+		RS.markItemRemoved();
+
 		DS.atoms.remove(this.data.aid);
 	};
 	this.invert = function () {
@@ -366,7 +387,9 @@ function BondAdd(begin, end, bond) {
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);
 		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb2);
 
-		RS.notifyBondAdded(this.data.bid);
+		// notifyBondAdded
+		RS.bonds.set(this.data.bid, new ReBond(RS.molecule.bonds.get(this.data.bid)));
+		RS.markBond(this.data.bid, 1);
 	};
 	this.invert = function () {
 		var ret = new BondDelete();
@@ -378,7 +401,7 @@ BondAdd.prototype = new Base();
 
 function BondDelete(bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
-	this.execute = function (editor) {
+	this.execute = function (editor) {  // eslint-disable-line max-statements
 		var R = editor.render;
 		var RS = R.ctab;
 		var DS = RS.molecule;
@@ -390,7 +413,16 @@ function BondDelete(bid) {
 
 		R.invalidateBond(this.data.bid);
 
-		RS.notifyBondRemoved(this.data.bid);
+		// notifyBondRemoved
+		var rebond = RS.bonds.get(this.data.bid);
+		[rebond.b.hb1, rebond.b.hb2].each(function (hbid) {
+			var hb = RS.molecule.halfBonds.get(hbid);
+			if (hb.loop >= 0)
+				RS.loopRemove(hb.loop);
+		}, RS);
+		RS.clearVisel(rebond.visel);
+		RS.bonds.unset(this.data.bid);
+		RS.markItemRemoved();
 
 		var bond = DS.bonds.get(this.data.bid);
 		[bond.hb1, bond.hb2].each(function (hbid) {
@@ -549,7 +581,10 @@ function RxnArrowAdd(pos) {
 			this.data.arid = DS.rxnArrows.add(new Struct.RxnArrow());
 		else
 			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
-		RS.notifyRxnArrowAdded(this.data.arid);
+
+		// notifyRxnArrowAdded
+		RS.rxnArrows.set(this.data.arid, new ReRxnArrow(RS.molecule.rxnArrows.get(this.data.arid)));
+
 		DS.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnArrows', this.data.arid, 1);
@@ -570,7 +605,12 @@ function RxnArrowDelete(arid) {
 		var DS = RS.molecule;
 		if (!this.data.pos)
 			this.data.pos = R.rxnArrowGetPos(this.data.arid);
-		RS.notifyRxnArrowRemoved(this.data.arid);
+
+		// notifyRxnArrowRemoved
+		RS.markItemRemoved();
+		RS.clearVisel(RS.rxnArrows.get(this.data.arid).visel);
+		RS.rxnArrows.unset(this.data.arid);
+
 		DS.rxnArrows.remove(this.data.arid);
 	};
 	this.invert = function () {
@@ -613,7 +653,10 @@ function RxnPlusAdd(pos) {
 			this.data.plid = DS.rxnPluses.add(new Struct.RxnPlus());
 		else
 			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
-		RS.notifyRxnPlusAdded(this.data.plid);
+
+		// notifyRxnPlusAdded
+		RS.rxnPluses.set(this.data.plid, new ReRxnPlus(RS.molecule.rxnPluses.get(this.data.plid)));
+
 		DS.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
 		R.invalidateItem('rxnPluses', this.data.plid, 1);
@@ -634,7 +677,12 @@ function RxnPlusDelete(plid) {
 		var DS = RS.molecule;
 		if (!this.data.pos)
 			this.data.pos = R.rxnPlusGetPos(this.data.plid);
-		RS.notifyRxnPlusRemoved(this.data.plid);
+
+		// notifyRxnPlusRemoved
+		RS.markItemRemoved();
+		RS.clearVisel(RS.rxnPluses.get(this.data.plid).visel);
+		RS.rxnPluses.unset(this.data.plid);
+
 		DS.rxnPluses.remove(this.data.plid);
 	};
 	this.invert = function () {

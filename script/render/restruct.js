@@ -11,9 +11,8 @@ var util = require('../util');
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
 
-var Visel = require('./visel');
-
-var ReObject = require("./reobject");
+var ReAtom = require('./reatom');
+var ReBond = require('./rebond');
 var ReRxnPlus = require("./rerxnplus");
 var ReRxnArrow = require("./rerxnarrow");
 var ReFrag = require('./refrag');
@@ -22,79 +21,6 @@ var ReDataSGroupData = require('./redatasgroupdata');
 var ReChiralFlag = require('./rechiralflag');
 var ReSGroup = require('./resgroup');
 var ReLoop = require('./reloop');
-
-function ReAtom(/* chem.Atom*/atom) {
-	this.init(Visel.TYPE.ATOM);
-
-	this.a = atom; // TODO rename a to item
-	this.showLabel = false;
-
-	this.hydrogenOnTheLeft = false;
-
-	this.component = -1;
-}
-
-ReAtom.prototype = new ReObject();
-ReAtom.isSelectable = function () {
-	return true;
-};
-
-ReAtom.prototype.getVBoxObj = function (render) {
-	if (this.visel.boundingBox)
-		return ReObject.prototype.getVBoxObj.call(this, render);
-	return new Box2Abs(this.a.pp, this.a.pp);
-};
-
-ReAtom.prototype.drawHighlight = function (render) {
-	var ret = this.makeHighlightPlate(render);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-ReAtom.prototype.makeHighlightPlate = function (render) {
-	var paper = render.paper;
-	var styles = render.styles;
-	var ps = render.ps(this.a.pp);
-	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-		.attr(styles.highlightStyle);
-};
-
-ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	var ps = restruct.render.ps(this.a.pp);
-	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-		.attr(styles.selectionStyle);
-};
-
-function ReBond(/* chem.Bond*/bond) {
-	this.init(Visel.TYPE.BOND);
-
-	this.b = bond; // TODO rename b to item
-	this.doubleBondShift = 0;
-}
-ReBond.prototype = new ReObject();
-ReBond.isSelectable = function () {
-	return true;
-};
-
-ReBond.prototype.drawHighlight = function (render) {
-	var ret = this.makeHighlightPlate(render);
-	render.ctab.addReObjectPath('highlighting', this.visel, ret);
-	return ret;
-};
-
-ReBond.prototype.makeHighlightPlate = function (render) {
-	render.ctab.bondRecalc(render.settings, this);
-	var c = render.ps(this.b.center);
-	return render.paper.circle(c.x, c.y, 0.8 * render.styles.atomSelectionPlateRadius)
-		.attr(render.styles.highlightStyle);
-};
-
-ReBond.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	restruct.bondRecalc(restruct.render.settings, this);
-	var c = restruct.render.ps(this.b.center);
-	return paper.circle(c.x, c.y, 0.8 * styles.atomSelectionPlateRadius)
-		.attr(styles.selectionStyle);
-};
 
 function ReStruct(molecule, render, norescale) { // eslint-disable-line max-statements
 	this.render = render;

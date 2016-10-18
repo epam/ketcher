@@ -35,7 +35,8 @@ class Check extends Component {
 		for (let key in this.state.checker)
 			if (this.state.checker[key]) checkOpts.push(key);
         this.props.check({ 'types': checkOpts }).then(res => {
-        	this.setState({	data: res });
+			if (Object.keys(res).length == 0) this.setState({ data: 'correct' });
+        	else this.setState({ data: res });
 		});
     };
     checkItem(val) {
@@ -50,6 +51,7 @@ class Check extends Component {
                     buttons={[ "Cancel"]}>
 				<Tabs className="check-tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
 					<ul className="check-settings">{
+						this.state.data == 'correct' ? <li><div className="error-name">No errors found</div></li> :
 						checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
 							<li>
 								<div className="error-name">{item.title} error : </div>

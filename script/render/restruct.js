@@ -11,6 +11,8 @@ var util = require('../util');
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
 
+var draw = require('./draw');
+
 var ReAtom = require('./reatom');
 var ReBond = require('./rebond');
 var ReRxnPlus = require('./rerxnplus');
@@ -21,6 +23,17 @@ var ReDataSGroupData = require('./redatasgroupdata');
 var ReChiralFlag = require('./rechiralflag');
 var ReSGroup = require('./resgroup');
 var ReLoop = require('./reloop');
+
+var tfx = util.tfx;
+
+var LAYER_MAP = {
+	background: 0,
+	selectionPlate: 1,
+	highlighting: 2,
+	warnings: 3,
+	data: 4,
+	indices: 5
+};
 
 function ReStruct(molecule, render, norescale) { // eslint-disable-line max-statements
 	this.render = render;
@@ -200,9 +213,9 @@ ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 };
 
 ReStruct.prototype.initLayers = function () {
-	for (var group in ReStruct.layerMap) {
-		this.layers[ReStruct.layerMap[group]] =
-		this.render.paper.rect(0, 0, 10, 10)
+	for (var group in LAYER_MAP) {
+		this.layers[LAYER_MAP[group]] =
+			this.render.paper.rect(0, 0, 10, 10)
 			.attr({
 				fill: '#000',
 				opacity: '0.0'
@@ -210,8 +223,18 @@ ReStruct.prototype.initLayers = function () {
 	}
 };
 
-ReStruct.prototype.insertInLayer = function (lid, path) {
-	path.insertBefore(this.layers[lid]);
+ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) { // eslint-disable-line max-params
+	if (!path)
+		return;
+	var offset = this.render.offset;
+	var bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
+	var ext = pos && bb ? bb.translate(pos.negated()) : null;
+	if (offset !== null) {
+		path.translateAbs(offset.x, offset.y);
+		bb = bb ? bb.translate(offset) : null;
+	}
+	visel.add(path, bb, ext);
+	path.insertBefore(this.layers[LAYER_MAP[group]]);
 };
 
 ReStruct.prototype.clearMarks = function () {
@@ -238,6 +261,12 @@ ReStruct.prototype.markItem = function (map, id, mark) {
 		Math.max(mark, mapChanged[id]) : mark;
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
+};
+
+ReStruct.prototype.clearVisel = function (visel) {
+	for (var i = 0; i < visel.paths.length; ++i)
+		visel.paths[i].remove();
+	visel.clear();
 };
 
 ReStruct.prototype.eachVisel = function (func, context) {
@@ -467,6 +496,125 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	return true;
 };
 
+ReStruct.prototype.setDoubleBondShift = function () {
+	var struct = this.molecule;
+	// double bonds in loops
+	for (var bid in this.bondsChanged) {
+		var bond = this.bonds.get(bid);
+		var loop1, loop2;
+		loop1 = struct.halfBonds.get(bond.b.hb1).loop;
+		loop2 = struct.halfBonds.get(bond.b.hb2).loop;
+		if (loop1 >= 0 && loop2 >= 0) {
+			var d1 = struct.loops.get(loop1).dblBonds;
+			var d2 = struct.loops.get(loop2).dblBonds;
+			var n1 = struct.loops.get(loop1).hbs.length;
+			var n2 = struct.loops.get(loop2).hbs.length;
+			bond.doubleBondShift = selectDoubleBondShift(n1, n2, d1, d2);
+		} else if (loop1 >= 0) {
+			bond.doubleBondShift = -1;
+		} else if (loop2 >= 0) {
+			bond.doubleBondShift = 1;
+		} else {
+			bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+		}
+	}
+};
+
+ReStruct.prototype.updateLoops = function () {
+	this.reloops.each(function (rlid, reloop) {
+		this.clearVisel(reloop.visel);
+	}, this);
+	var ret = this.molecule.findLoops();
+	ret.bondsToMark.forEach(function (bid) {
+		this.markBond(bid, 1);
+	}, this);
+	ret.newLoops.forEach(function (loopId) {
+		this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
+	}, this);
+};
+
+ReStruct.prototype.renderLoops = function () {
+	var render = this.render;
+	var settings = render.settings;
+	var paper = render.paper;
+	var molecule = this.molecule;
+	this.reloops.each(function (rlid, reloop) { // eslint-disable-line max-statements
+		var loop = reloop.loop;
+		reloop.centre = new Vec2();
+		loop.hbs.each(function (hbid) {
+			var hb = molecule.halfBonds.get(hbid);
+			var bond = this.bonds.get(hb.bid);
+			var apos = render.ps(this.atoms.get(hb.begin).a.pp);
+			if (bond.b.type != Struct.Bond.PATTERN.TYPE.AROMATIC)
+				loop.aromatic = false;
+			reloop.centre.add_(apos); // eslint-disable-line no-underscore-dangle
+		}, this);
+		loop.convex = true;
+		for (var k = 0; k < reloop.loop.hbs.length; ++k) {
+			var hba = molecule.halfBonds.get(loop.hbs[k]);
+			var hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+			var angle = Math.atan2(
+			Vec2.cross(hba.dir, hbb.dir),
+			Vec2.dot(hba.dir, hbb.dir));
+			if (angle > 0)
+				loop.convex = false;
+		}
+
+		reloop.centre = reloop.centre.scaled(1.0 / loop.hbs.length);
+		reloop.radius = -1;
+		loop.hbs.each(function (hbid) {
+			var hb = molecule.halfBonds.get(hbid);
+			var apos = render.ps(this.atoms.get(hb.begin).a.pp);
+			var bpos = render.ps(this.atoms.get(hb.end).a.pp);
+			var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
+			var dist = Vec2.dot(Vec2.diff(apos, reloop.centre), n);
+			if (reloop.radius < 0)
+				reloop.radius = dist;
+			 else
+				reloop.radius = Math.min(reloop.radius, dist);
+		}, this);
+		reloop.radius *= 0.7;
+		if (!loop.aromatic)
+			return;
+		var path = null;
+		if (loop.convex) {
+			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
+				.attr({
+					'stroke': '#000',
+					'stroke-width': settings.lineWidth
+				});
+		} else {
+			var pathStr = '';
+			for (k = 0; k < loop.hbs.length; ++k) {
+				hba = molecule.halfBonds.get(loop.hbs[k]);
+				hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+				angle = Math.atan2(
+				Vec2.cross(hba.dir, hbb.dir),
+				Vec2.dot(hba.dir, hbb.dir));
+				var halfAngle = (Math.PI - angle) / 2;
+				var dir = hbb.dir.rotate(halfAngle);
+				var pi = render.ps(this.atoms.get(hbb.begin).a.pp);
+				var sin = Math.sin(halfAngle);
+				var minSin = 0.1;
+				if (Math.abs(sin) < minSin)
+					sin = sin * minSin / Math.abs(sin);
+				var offset = settings.bondSpace / sin;
+				var qi = pi.addScaled(dir, -offset);
+				pathStr += (k == 0 ? 'M' : 'L');
+				pathStr += tfx(qi.x) + ',' + tfx(qi.y);
+			}
+			pathStr += 'Z';
+			path = paper.path(pathStr)
+				.attr({
+					'stroke': '#000',
+					'stroke-width': settings.lineWidth,
+					'stroke-dasharray': '- '
+				});
+		}
+		this.addReObjectPath('data', reloop.visel, path, null, true);
+	}, this);
+};
+
 ReStruct.prototype.drawReactionSymbols = function () {
 	var item;
 	var id;
@@ -482,7 +630,7 @@ ReStruct.prototype.drawReactionSymbols = function () {
 
 ReStruct.prototype.drawReactionArrow = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
-	var path = this.drawArrow(new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
+	var path = draw.arrow(this.render, new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
@@ -491,7 +639,7 @@ ReStruct.prototype.drawReactionArrow = function (id, item) {
 
 ReStruct.prototype.drawReactionPlus = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
-	var path = this.drawPlus(centre);
+	var path = draw.plus(this.render, centre);
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)
@@ -650,6 +798,708 @@ ReStruct.prototype.BFS = function (onAtom, orig, context) {
 		}
 	}
 };
+
+ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
+	var render = this.render;
+	var settings = render.settings;
+	var styles = render.styles;
+	var opt = render.opt;
+	var paper = render.paper;
+	var delta = 0.5 * settings.lineWidth;
+	for (var aid in this.atomsChanged) {
+		var atom = this.atoms.get(aid);
+
+		var ps = render.ps(atom.a.pp);
+		var index = null;
+		if (opt.showAtomIds) {
+			index = {};
+			index.text = aid.toString();
+			index.path = paper.text(ps.x, ps.y, index.text)
+				.attr({
+					'font': settings.font,
+					'font-size': settings.fontszsub,
+					'fill': '#070'
+				});
+			index.rbb = util.relBox(index.path.getBBox());
+			draw.recenterText(index.path, index.rbb);
+			this.addReObjectPath('indices', atom.visel, index.path, ps);
+		}
+		atom.setHighlight(atom.highlight, render);
+
+		var color = '#000000';
+		if (atom.showLabel) {
+			var rightMargin = 0,
+				leftMargin = 0;
+			// label
+			var label = {};
+			if (atom.a.atomList != null) {
+				label.text = atom.a.atomList.label();
+			} else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
+				label.text = '';
+				for (var rgi = 0; rgi < 32; rgi++) {
+					if (atom.a.rglabel & (1 << rgi)) // eslint-disable-line max-depth
+						label.text += ('R' + (rgi + 1).toString());
+				}
+				if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+			} else {
+				label.text = atom.a.label;
+				var elem = element.getElementByLabel(label.text);
+				if (opt.atomColoring && elem)
+					color = element[elem].color;
+			}
+			label.path = paper.text(ps.x, ps.y, label.text)
+				.attr({
+					'font': settings.font,
+					'font-size': settings.fontsz,
+					'fill': color
+				});
+			label.rbb = util.relBox(label.path.getBBox());
+			draw.recenterText(label.path, label.rbb);
+			if (atom.a.atomList != null)
+				pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
+			this.addReObjectPath('data', atom.visel, label.path, ps, true);
+			rightMargin = label.rbb.width / 2;
+			leftMargin = -label.rbb.width / 2;
+			var implh = Math.floor(atom.a.implicitH);
+			var isHydrogen = label.text == 'H';
+			var hydrogen = {},
+				hydroIndex = null;
+			var hydrogenLeft = atom.hydrogenOnTheLeft;
+			if (isHydrogen && implh > 0) {
+				hydroIndex = {};
+				hydroIndex.text = (implh + 1).toString();
+				hydroIndex.path =
+				paper.text(ps.x, ps.y, hydroIndex.text)
+					.attr({
+						'font': settings.font,
+						'font-size': settings.fontszsub,
+						'fill': color
+					});
+				hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
+				draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+				/* eslint-disable no-mixed-operators*/
+				pathAndRBoxTranslate(hydroIndex.path, hydroIndex.rbb,
+					rightMargin + 0.5 * hydroIndex.rbb.width + delta,
+					0.2 * label.rbb.height);
+				/* eslint-enable no-mixed-operators*/
+				rightMargin += hydroIndex.rbb.width + delta;
+				this.addReObjectPath('data', atom.visel, hydroIndex.path, ps, true);
+			}
+
+			var radical = {};
+			if (atom.a.radical != 0) {
+				var hshift;
+				switch (atom.a.radical) {
+				case 1:
+					radical.path = paper.set();
+					hshift = 1.6 * settings.lineWidth;
+					radical.path.push(
+						draw.radicalBullet(this.render, ps.add(new Vec2(-hshift, 0))),
+						draw.radicalBullet(this.render, ps.add(new Vec2(hshift, 0))));
+					radical.path.attr('fill', color);
+					break;
+				case 2:
+					radical.path = draw.radicalBullet(this.render, ps)
+						.attr('fill', color);
+					break;
+				case 3:
+					radical.path = paper.set();
+					hshift = 1.6 * settings.lineWidth;
+					radical.path.push(
+						draw.radicalCap(this.render, ps.add(new Vec2(-hshift, 0))),
+						draw.radicalCap(this.render, ps.add(new Vec2(hshift, 0))));
+					radical.path.attr('stroke', color);
+					break;
+				}
+				radical.rbb = util.relBox(radical.path.getBBox());
+				var vshift = -0.5 * (label.rbb.height + radical.rbb.height);
+				if (atom.a.radical == 3)
+					vshift -= settings.lineWidth / 2;
+				pathAndRBoxTranslate(radical.path, radical.rbb,
+					0, vshift);
+				this.addReObjectPath('data', atom.visel, radical.path, ps, true);
+			}
+
+			var isotope = {};
+			if (atom.a.isotope != 0) {
+				isotope.text = atom.a.isotope.toString();
+				isotope.path = paper.text(ps.x, ps.y, isotope.text)
+					.attr({
+						'font': settings.font,
+						'font-size': settings.fontszsub,
+						'fill': color
+					});
+				isotope.rbb = util.relBox(isotope.path.getBBox());
+				draw.recenterText(isotope.path, isotope.rbb);
+				/* eslint-disable no-mixed-operators*/
+				pathAndRBoxTranslate(isotope.path, isotope.rbb,
+					leftMargin - 0.5 * isotope.rbb.width - delta,
+					-0.3 * label.rbb.height);
+				/* eslint-enable no-mixed-operators*/
+				leftMargin -= isotope.rbb.width + delta;
+				this.addReObjectPath('data', atom.visel, isotope.path, ps, true);
+			}
+			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen) {
+				hydrogen.text = 'H';
+				hydrogen.path = paper.text(ps.x, ps.y, hydrogen.text)
+					.attr({
+						'font': settings.font,
+						'font-size': settings.fontsz,
+						'fill': color
+					});
+				hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
+				draw.recenterText(hydrogen.path, hydrogen.rbb);
+				if (!hydrogenLeft) {
+					 /* eslint-disable no-mixed-operators*/
+					pathAndRBoxTranslate(hydrogen.path, hydrogen.rbb,
+						rightMargin + 0.5 * hydrogen.rbb.width + delta, 0);
+					/* eslint-enable no-mixed-operators*/
+					rightMargin += hydrogen.rbb.width + delta;
+				}
+				if (implh > 1) {
+					hydroIndex = {};
+					hydroIndex.text = implh.toString();
+					hydroIndex.path =
+					paper.text(ps.x, ps.y, hydroIndex.text)
+						.attr({
+							'font': settings.font,
+							'font-size': settings.fontszsub,
+							'fill': color
+						});
+					hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
+					draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+					if (!hydrogenLeft) {
+						/* eslint-disable no-mixed-operators*/
+						pathAndRBoxTranslate(hydroIndex.path, hydroIndex.rbb,
+							rightMargin + 0.5 * hydroIndex.rbb.width + delta,
+							0.2 * label.rbb.height);
+						/* eslint-enable no-mixed-operators*/
+						rightMargin += hydroIndex.rbb.width + delta;
+					}
+				}
+				if (hydrogenLeft) {
+					if (hydroIndex != null) {
+						/* eslint-disable no-mixed-operators*/
+						pathAndRBoxTranslate(hydroIndex.path, hydroIndex.rbb,
+							leftMargin - 0.5 * hydroIndex.rbb.width - delta,
+							0.2 * label.rbb.height);
+						/* eslint-enable no-mixed-operators*/
+						leftMargin -= hydroIndex.rbb.width + delta;
+					}
+					/* eslint-disable no-mixed-operators*/
+					pathAndRBoxTranslate(hydrogen.path, hydrogen.rbb,
+						leftMargin - 0.5 * hydrogen.rbb.width - delta, 0);
+					/* eslint-enable no-mixed-operators*/
+					leftMargin -= hydrogen.rbb.width + delta;
+				}
+				this.addReObjectPath('data', atom.visel, hydrogen.path, ps, true);
+				if (hydroIndex != null)
+					this.addReObjectPath('data', atom.visel, hydroIndex.path, ps, true);
+			}
+
+			var charge = {};
+			if (atom.a.charge != 0) {
+				charge.text = '';
+				var absCharge = Math.abs(atom.a.charge);
+				if (absCharge != 1)
+					charge.text = absCharge.toString();
+				if (atom.a.charge < 0)
+					charge.text += '\u2013';
+				else
+					charge.text += '+';
+
+				charge.path = paper.text(ps.x, ps.y, charge.text)
+					.attr({
+						'font': settings.font,
+						'font-size': settings.fontszsub,
+						'fill': color
+					});
+				charge.rbb = util.relBox(charge.path.getBBox());
+				draw.recenterText(charge.path, charge.rbb);
+				/* eslint-disable no-mixed-operators*/
+				pathAndRBoxTranslate(charge.path, charge.rbb,
+					rightMargin + 0.5 * charge.rbb.width + delta,
+					-0.3 * label.rbb.height);
+				/* eslint-enable no-mixed-operators*/
+				rightMargin += charge.rbb.width + delta;
+				this.addReObjectPath('data', atom.visel, charge.path, ps, true);
+			}
+
+			var valence = {};
+			var mapValence = {
+				0: '0',
+				1: 'I',
+				2: 'II',
+				3: 'III',
+				4: 'IV',
+				5: 'V',
+				6: 'VI',
+				7: 'VII',
+				8: 'VIII',
+				9: 'IX',
+				10: 'X',
+				11: 'XI',
+				12: 'XII',
+				13: 'XIII',
+				14: 'XIV'
+			};
+			if (atom.a.explicitValence >= 0) {
+				valence.text = mapValence[atom.a.explicitValence];
+				if (!valence.text)
+					throw new Error('invalid valence ' + atom.a.explicitValence.toString());
+				valence.text = '(' + valence.text + ')';
+				valence.path = paper.text(ps.x, ps.y, valence.text)
+					.attr({
+						'font': settings.font,
+						'font-size': settings.fontszsub,
+						'fill': color
+					});
+				valence.rbb = util.relBox(valence.path.getBBox());
+				draw.recenterText(valence.path, valence.rbb);
+				/* eslint-disable no-mixed-operators*/
+				pathAndRBoxTranslate(valence.path, valence.rbb,
+					rightMargin + 0.5 * valence.rbb.width + delta,
+					-0.3 * label.rbb.height);
+				/* eslint-enable no-mixed-operators*/
+				rightMargin += valence.rbb.width + delta;
+				this.addReObjectPath('data', atom.visel, valence.path, ps, true);
+			}
+
+			if (atom.a.badConn && opt.showValenceWarnings) {
+				var warning = {};
+				/* eslint-disable no-mixed-operators*/
+				var y = ps.y + label.rbb.height / 2 + delta;
+				/* eslint-enable no-mixed-operators*/
+				warning.path = paper.path('M{0},{1}L{2},{3}',
+				tfx(ps.x + leftMargin), tfx(y), tfx(ps.x + rightMargin), tfx(y))
+					.attr(this.render.styles.lineattr)
+					.attr({ stroke: '#F00' });
+				warning.rbb = util.relBox(warning.path.getBBox());
+				this.addReObjectPath('warnings', atom.visel, warning.path, ps, true);
+			}
+			if (index) {
+				/* eslint-disable no-mixed-operators*/
+				pathAndRBoxTranslate(index.path, index.rbb,
+					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
+					0.3 * label.rbb.height);
+				/* eslint-enable no-mixed-operators*/
+			}
+		}
+
+		var lsb = bisectLargestSector(atom, this.molecule);
+
+		var asterisk = Prototype.Browser.IE ? '*' : '∗';
+		if (atom.a.attpnt) {
+			var i, c, j; // eslint-disable-line no-unused-vars
+			for (i = 0, c = 0; i < 4; ++i) {
+				var attpntText = '';
+				if (atom.a.attpnt & (1 << i)) {
+					if (attpntText.length > 0)
+						attpntText += ' ';
+					attpntText += asterisk;
+					for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j)
+						attpntText += '\'';
+					var pos0 = new Vec2(ps);
+					var pos1 = ps.addScaled(lsb, 0.7 * settings.scaleFactor);
+
+					var attpntPath1 = paper.text(pos1.x, pos1.y, attpntText)
+						.attr({
+							'font': settings.font,
+							'font-size': settings.fontsz,
+							'fill': color
+						});
+					var attpntRbb = util.relBox(attpntPath1.getBBox());
+					draw.recenterText(attpntPath1, attpntRbb);
+
+					var lsbn = lsb.negated();
+					/* eslint-disable no-mixed-operators*/
+					pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
+					/* eslint-enable no-mixed-operators*/
+					pos0 = shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
+					var n = lsb.rotateSC(1, 0);
+					var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+					var arrowRight = pos1.addScaled(n, -0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+					var attpntPath = paper.set();
+					attpntPath.push(
+						attpntPath1,
+					paper.path('M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}', tfx(pos0.x), tfx(pos0.y), tfx(pos1.x), tfx(pos1.y), tfx(arrowLeft.x), tfx(arrowLeft.y), tfx(arrowRight.x), tfx(arrowRight.y))
+						.attr(styles.lineattr).attr({ 'stroke-width': settings.lineWidth / 2 })
+					);
+					this.addReObjectPath('indices', atom.visel, attpntPath, ps);
+					lsb = lsb.rotate(Math.PI / 6);
+				}
+			}
+		}
+
+		var aamText = '';
+		if (atom.a.aam > 0)
+			aamText += atom.a.aam;
+		if (atom.a.invRet > 0) {
+			if (aamText.length > 0)
+				aamText += ',';
+			if (atom.a.invRet == 1)
+				aamText += 'Inv';
+			else if (atom.a.invRet == 2)
+				aamText += 'Ret';
+			else
+				throw new Error('Invalid value for the invert/retain flag');
+		}
+
+		var queryAttrsText = '';
+		if (atom.a.ringBondCount != 0) {
+			if (atom.a.ringBondCount > 0)
+				queryAttrsText += 'rb' + atom.a.ringBondCount.toString();
+			else if (atom.a.ringBondCount == -1)
+				queryAttrsText += 'rb0';
+			else if (atom.a.ringBondCount == -2)
+				queryAttrsText += 'rb*';
+			else
+				throw new Error('Ring bond count invalid');
+		}
+		if (atom.a.substitutionCount != 0) {
+			if (queryAttrsText.length > 0)
+				queryAttrsText += ',';
+
+			if (atom.a.substitutionCount > 0)
+				queryAttrsText += 's' + atom.a.substitutionCount.toString();
+			else if (atom.a.substitutionCount == -1)
+				queryAttrsText += 's0';
+			else if (atom.a.substitutionCount == -2)
+				queryAttrsText += 's*';
+			else
+				throw new Error('Substitution count invalid');
+		}
+		if (atom.a.unsaturatedAtom > 0) {
+			if (queryAttrsText.length > 0)
+				queryAttrsText += ',';
+
+			if (atom.a.unsaturatedAtom == 1)
+				queryAttrsText += 'u';
+			else
+				throw new Error('Unsaturated atom invalid value');
+		}
+		if (atom.a.hCount > 0) {
+			if (queryAttrsText.length > 0)
+				queryAttrsText += ',';
+
+			queryAttrsText += 'H' + (atom.a.hCount - 1).toString();
+		}
+
+
+		if (atom.a.exactChangeFlag > 0) {
+			if (aamText.length > 0)
+				aamText += ',';
+			if (atom.a.exactChangeFlag == 1)
+				aamText += 'ext';
+			else
+				throw new Error('Invalid value for the exact change flag');
+		}
+
+		// this includes both aam flags, if any, and query features, if any
+		// we render them together to avoid possible collisions
+		aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
+		if (aamText.length > 0) {
+			var aamPath = paper.text(ps.x, ps.y, aamText)
+				.attr({
+					'font': settings.font,
+					'font-size': settings.fontszsub,
+					'fill': color
+				});
+			var aamBox = util.relBox(aamPath.getBBox());
+			draw.recenterText(aamPath, aamBox);
+			var dir = bisectLargestSector(atom, this.molecule);
+			var visel = atom.visel;
+			var t = 3;
+			// estimate the shift to clear the atom label
+			for (i = 0; i < visel.exts.length; ++i)
+				t = Math.max(t, Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+			// estimate the shift backwards to account for the size of the aam/query text box itself
+			t += Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+			dir = dir.scaled(8 + t);
+			pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
+			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
+		}
+	}
+};
+
+ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
+	var render = this.render;
+	var settings = render.settings;
+	var paper = render.paper;
+	var opt = render.opt;
+	for (var bid in this.bondsChanged) {
+		var bond = this.bonds.get(bid);
+		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
+			hb2 = this.molecule.halfBonds.get(bond.b.hb2);
+		this.bondRecalc(settings, bond);
+		bond.path = this.showBond(bond, hb1, hb2);
+		bond.rbb = util.relBox(bond.path.getBBox());
+		this.addReObjectPath('data', bond.visel, bond.path, null, true);
+		var reactingCenter = {};
+		reactingCenter.path = draw.reactingCenter(this.render, bond, hb1, hb2);
+		if (reactingCenter.path) {
+			reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
+			this.addReObjectPath('data', bond.visel, reactingCenter.path, null, true);
+		}
+		var topology = {};
+		topology.path = draw.topologyMark(this.render, bond, hb1, hb2);
+		if (topology.path) {
+			topology.rbb = util.relBox(topology.path.getBBox());
+			this.addReObjectPath('data', bond.visel, topology.path, null, true);
+		}
+		bond.setHighlight(bond.highlight, render);
+		var bondIdxOff = settings.subFontSize * 0.6;
+		var ipath = null,
+			 irbb = null;
+		if (opt.showBondIds) {
+			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			ipath = paper.text(pb.x, pb.y, bid.toString());
+			irbb = util.relBox(ipath.getBBox());
+			draw.recenterText(ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
+		}
+		if (opt.showHalfBondIds) {
+			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
+			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
+			irbb = util.relBox(ipath.getBBox());
+			draw.recenterText(ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
+			var phb2 = Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
+			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
+			irbb = util.relBox(ipath.getBBox());
+			draw.recenterText(ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
+		}
+		if (opt.showLoopIds && !opt.showBondIds) {
+			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
+			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
+			irbb = util.relBox(ipath.getBBox());
+			draw.recenterText(ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
+			var pl2 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
+			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
+			irbb = util.relBox(ipath.getBBox());
+			draw.recenterText(ipath, irbb);
+			this.addReObjectPath('indices', bond.visel, ipath);
+		}
+	}
+};
+
+ReStruct.prototype.showBond = function (bond, hb1, hb2) {
+	var path = null;
+	var struct = this.molecule;
+	var shiftA = !this.atoms.get(hb1.begin).showLabel;
+	var shiftB = !this.atoms.get(hb2.begin).showLabel;
+
+	switch (bond.b.type) {
+	case Struct.Bond.PATTERN.TYPE.SINGLE:
+		switch (bond.b.stereo) {
+		case Struct.Bond.PATTERN.STEREO.UP:
+			this.findIncomingUpBonds(hb1.bid, bond);
+			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+				path = draw.bondSingleStereoBold(this.render, hb1, hb2, bond, shiftA, shiftB);
+			else
+				path = draw.bondSingleUp(this.render, hb1, hb2, bond, struct);
+			break;
+		case Struct.Bond.PATTERN.STEREO.DOWN:
+			path = draw.bondSingleDown(this.render, hb1, hb2);
+			break;
+		case Struct.Bond.PATTERN.STEREO.EITHER:
+			path = draw.bondSingleEither(this.render, hb1, hb2);
+			break;
+		default:
+			path = draw.bondSingle(this.render, hb1, hb2);
+			break;
+		}
+		break;
+	case Struct.Bond.PATTERN.TYPE.DOUBLE:
+		this.findIncomingUpBonds(hb1.bid, bond);
+		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
+			bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
+			path = draw.bondSingleStereoBold(this.render, hb1, hb2, bond, shiftA, shiftB);
+		} else {
+			path = draw.bondDouble(this.render, hb1, hb2, bond,
+			                       bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS, shiftA, shiftB);
+		}
+		break;
+	case Struct.Bond.PATTERN.TYPE.TRIPLE:
+		path = draw.bondTriple(this.render, hb1, hb2);
+		break;
+	case Struct.Bond.PATTERN.TYPE.AROMATIC:
+		var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
+			(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
+		path = inAromaticLoop ? draw.bondSingle(this.render, hb1, hb2) :
+			draw.bondAromatic(this.render, hb1, hb2,
+			                  bond.doubleBondShift, shiftA, shiftB);
+		break;
+	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
+		path = draw.bondSingleOrDouble(this.render, hb1, hb2);
+		break;
+	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
+		path = draw.bondSingleOrAromatic(this.render, hb1, hb2,
+		                                 bond.doubleBondShift, shiftA, shiftB);
+		break;
+	case Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+		path = draw.bondDoubleOrAromatic(this.render, hb1, hb2,
+		                                 bond.doubleBondShift, shiftA, shiftB);
+
+		break;
+	case Struct.Bond.PATTERN.TYPE.ANY:
+		path = draw.bondAny(this.render, hb1, hb2);
+		break;
+	default:
+		throw new Error('Bond type ' + bond.b.type + ' not supported');
+	}
+	return path;
+};
+
+ReStruct.prototype.showItemSelection = function (id, item, visible) {
+	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
+	// rbalabanov: here is temporary fix for "drag issue" on iPad
+	// BEGIN
+	exists = exists && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(item.selectionPlate) < 0);
+	// END
+	if (visible) {
+		if (!exists) {
+			var render = this.render;
+			var styles = render.styles;
+			var paper = render.paper;
+			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
+			this.addReObjectPath('selectionPlate', item.visel, item.selectionPlate);
+		}
+		if (item.selectionPlate) item.selectionPlate.show(); // TODO [RB] review
+	} else
+		if (exists) {
+			if (item.selectionPlate) item.selectionPlate.hide(); // TODO [RB] review
+		}
+};
+
+ReStruct.prototype.labelIsVisible = function (aid, atom) {
+	if (atom.a.neighbors.length == 0 ||
+		(atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
+	atom.a.label.toLowerCase() != 'c' ||
+		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
+	atom.a.isotope != 0 ||
+	atom.a.radical != 0 ||
+	atom.a.charge != 0 ||
+	atom.a.explicitValence >= 0 ||
+	atom.a.atomList != null ||
+	atom.a.rglabel != null)
+		return true;
+	if (atom.a.neighbors.length == 2) {
+		var n1 = atom.a.neighbors[0];
+		var n2 = atom.a.neighbors[1];
+		var hb1 = this.molecule.halfBonds.get(n1);
+		var hb2 = this.molecule.halfBonds.get(n2);
+		var b1 = this.bonds.get(hb1.bid);
+		var b2 = this.bonds.get(hb2.bid);
+		if (b1.b.type == b2.b.type && b1.b.stereo == Struct.Bond.PATTERN.STEREO.NONE && b2.b.stereo == Struct.Bond.PATTERN.STEREO.NONE) {
+			if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+				return true;
+		}
+	}
+	return false;
+};
+
+ReStruct.prototype.checkLabelsToShow = function () {
+	for (var aid in this.atomsChanged) {
+		var atom = this.atoms.get(aid);
+		atom.showLabel = this.labelIsVisible(aid, atom);
+	}
+};
+
+ReStruct.prototype.bondRecalc = function (settings, bond) {
+	var render = this.render;
+	var atom1 = this.atoms.get(bond.b.begin);
+	var atom2 = this.atoms.get(bond.b.end);
+	var p1 = render.ps(atom1.a.pp);
+	var p2 = render.ps(atom2.a.pp);
+	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
+	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
+	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
+	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
+	bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
+	bond.b.len = Vec2.dist(p1, p2);
+	bond.b.sb = settings.lineWidth * 5;
+	/* eslint-disable no-mixed-operators*/
+	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
+	/* eslint-enable no-mixed-operators*/
+	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
+};
+
+function pathAndRBoxTranslate(path, rbb, x, y) {
+	path.translateAbs(x, y);
+	rbb.x += x;
+	rbb.y += y;
+}
+
+function bisectLargestSector(atom, struct) {
+	var angles = [];
+	atom.a.neighbors.each(function (hbid) {
+		var hb = struct.halfBonds.get(hbid);
+		angles.push(hb.ang);
+	});
+	angles = angles.sort(function (a, b) {
+		return a - b;
+	});
+	var da = [];
+	for (var i = 0; i < angles.length - 1; ++i)
+		da.push(angles[(i + 1) % angles.length] - angles[i]);
+	/* eslint-disable no-mixed-operators*/
+	da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+	/* eslint-enable no-mixed-operators*/
+	var daMax = 0;
+	var ang = -Math.PI / 2;
+	for (i = 0; i < angles.length; ++i) {
+		if (da[i] > daMax) {
+			daMax = da[i];
+			/* eslint-disable no-mixed-operators*/
+			ang = angles[i] + da[i] / 2;
+			/* eslint-enable no-mixed-operators*/
+		}
+	}
+	return new Vec2(Math.cos(ang), Math.sin(ang));
+}
+
+function shiftBondEnd(atom, pos0, dir, margin) {
+	var t = 0;
+	var visel = atom.visel;
+	for (var k = 0; k < visel.exts.length; ++k) {
+		var box = visel.exts[k].translate(pos0);
+		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+	}
+	if (t > 0)
+		pos0 = pos0.addScaled(dir, t + margin);
+	return pos0;
+}
+
+function selectDoubleBondShift(n1, n2, d1, d2) {
+	if (n1 == 6 && n2 != 6 && (d1 > 1 || d2 == 1))
+		return -1;
+	if (n2 == 6 && n1 != 6 && (d2 > 1 || d1 == 1))
+		return 1;
+	if (n2 * d1 > n1 * d2)
+		return -1;
+	if (n2 * d1 < n1 * d2)
+		return 1;
+	if (n2 > n1)
+		return -1;
+	return 1;
+}
+
+function selectDoubleBondShiftChain(struct, bond) {
+	var hb1 = struct.halfBonds.get(bond.b.hb1);
+	var hb2 = struct.halfBonds.get(bond.b.hb2);
+	var nLeft = (hb1.leftSin > 0.3 ? 1 : 0) + (hb2.rightSin > 0.3 ? 1 : 0);
+	var nRight = (hb2.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0);
+	if (nLeft > nRight)
+		return -1;
+	if (nLeft < nRight)
+		return 1;
+	if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1)
+		return 1;
+	return 0;
+}
 
 ReStruct.maps = {
 	atoms: ReAtom,

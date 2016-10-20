@@ -1355,10 +1355,6 @@ ReStruct.prototype.showBond = function (bond, hb1, hb2) {
 
 ReStruct.prototype.showItemSelection = function (id, item, visible) {
 	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
-	// rbalabanov: here is temporary fix for "drag issue" on iPad
-	// BEGIN
-	exists = exists && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(item.selectionPlate) < 0);
-	// END
 	if (visible) {
 		if (!exists) {
 			var render = this.render;

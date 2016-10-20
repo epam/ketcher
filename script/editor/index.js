@@ -51,15 +51,6 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 	var editor = this;
 	var render = this.render;
 	var clientArea = render.clientArea;
-	// rbalabanov: here is temporary fix for "drag issue" on iPad
-	// BEGIN
-	if ('hiddenPaths' in ReStruct.prototype) {
-		clientArea.observe('touchend', function (event) {
-			if (event.touches.length == 0)
-				while (ReStruct.prototype.hiddenPaths.length > 0) ReStruct.prototype.hiddenPaths.pop().remove();
-		});
-	}
-	// END
 
 	// rbalabanov: two-fingers scrolling & zooming for iPad
 	// TODO should be moved to touch.js module, re-factoring needed

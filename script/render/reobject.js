@@ -38,10 +38,6 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 			 else
 				noredraw = !this.highlighting.removed;
 		}
-		// rbalabanov: here is temporary fix for "drag issue" on iPad
-		// BEGIN
-		// noredraw = noredraw && (!('hiddenPaths' in ReStruct.prototype) || ReStruct.prototype.hiddenPaths.indexOf(this.highlighting) < 0);
-		// END
 		if (noredraw) {
 			this.highlighting.show();
 		} else {

@@ -26,7 +26,7 @@ function opts() {
         defaultValue: false,
         tab: 'render' },
         { name: 'hideTerminalLabels',
-        label: 'Hide terminal labels',
+        label: 'Hide terminal carbon labels',
         type: 'boolean',
         defaultValue: false,
         tab: 'render' },

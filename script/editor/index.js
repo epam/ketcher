@@ -3,6 +3,7 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var ReStruct = require('../render/restruct');
+var closest = require('./closest');
 
 var toolMap = {
 	base: require('./tool/base'),
@@ -166,6 +167,24 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 				return util.preventDefault(event);
 		});
 	}, this);
+};
+
+Editor.prototype.findItem = function (event, maps, skip) {
+	var pos = 'ui' in window ? new Vec2(this.render.page2obj(event)) :
+	    new Vec2(event.pageX, event.pageY).sub(this.render.clientAreaPos);
+	var ci = closest.item(this.render.ctab, pos, maps, skip);
+
+	// rbalabanov: let it be this way at the moment
+	if (ci.type == 'Atom') ci.map = 'atoms';
+	else if (ci.type == 'Bond') ci.map = 'bonds';
+	else if (ci.type == 'SGroup') ci.map = 'sgroups';
+	else if (ci.type == 'DataSGroupData') ci.map = 'sgroupData';
+	else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
+	else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
+	else if (ci.type == 'Fragment') ci.map = 'frags';
+	else if (ci.type == 'RGroup') ci.map = 'rgroups';
+	else if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';
+	return ci;
 };
 
 Editor.prototype.hasSelection = function (copyable) {

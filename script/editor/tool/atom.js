@@ -16,7 +16,7 @@ AtomTool.prototype = new EditorTool();
 AtomTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	} else if (ci.map == 'atoms') {
@@ -51,7 +51,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		dragCtx.aid2 = actionRet[2];
 		rnd.update();
 	} else {
-		this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
+		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	}
 };
 AtomTool.prototype.OnMouseUp = function (event) {

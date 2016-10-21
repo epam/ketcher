@@ -12,11 +12,11 @@ function RGroupAtomTool(editor) {
 }
 RGroupAtomTool.prototype = new EditorTool();
 RGroupAtomTool.prototype.OnMouseMove = function (event) {
-	this.hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
 RGroupAtomTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci || ci.type == 'Canvas') {
 		this.hoverHelper.hover(null);
 		ui.showRGroupTable({

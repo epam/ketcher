@@ -922,7 +922,7 @@ function mapTool (id) {
 
 		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
 		 else if (mode.startsWith('bond_')) {
-		 var cBond = ui.render.findClosestBond(ui.render.page2obj(ui.cursorPos));
+		 var cBond = ui.editor.findClosestBond(ui.render.page2obj(ui.cursorPos));
 		 if (cBond) {
 		 addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
 		 ui.render.update();

@@ -5,14 +5,6 @@ var Vec2 = require('../util/vec2');
 var util = require('../util');
 
 var Struct = require('../chem/struct');
-
-var ReRxnPlus = require('./rerxnplus');
-var ReRxnArrow = require('./rerxnarrow');
-var ReFrag = require('./refrag');
-var ReRGroup = require('./rergroup');
-var ReDataSGroupData = require('./redatasgroupdata');
-var ReChiralFlag = require('./rechiralflag');
-var ReSGroup = require('./resgroup');
 var ReStruct = require('./restruct');
 
 var tfx = util.tfx;
@@ -35,8 +27,7 @@ var defaultRenderOps = {
 	maxBondLength: 0, // 0 stands for "not specified"
 	atomColoring: false,
 	hideImplicitHydrogen: false,
-	hideTerminalLabels: false,
-	selectionDistanceCoefficient: 0.4
+	hideTerminalLabels: false
 };
 
 function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements
@@ -126,24 +117,6 @@ Render.prototype.page2obj = function (pagePos) {
 
 Render.prototype.client2Obj = function (clientPos) {
 	return new Vec2(clientPos).sub(this.offset);
-};
-
-Render.prototype.findItem = function (event, maps, skip) {
-	var ci = this.findClosestItem(
-			'ui' in window ? new Vec2(this.page2obj(event)) :
-							 new Vec2(event.pageX, event.pageY).sub(this.clientAreaPos),
-		maps, skip);
-	// rbalabanov: let it be this way at the moment
-	if (ci.type == 'Atom') ci.map = 'atoms';
-	else if (ci.type == 'Bond') ci.map = 'bonds';
-	else if (ci.type == 'SGroup') ci.map = 'sgroups';
-	else if (ci.type == 'DataSGroupData') ci.map = 'sgroupData';
-	else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
-	else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
-	else if (ci.type == 'Fragment') ci.map = 'frags';
-	else if (ci.type == 'RGroup') ci.map = 'rgroups';
-	else if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';
-	return ci;
 };
 
 Render.prototype.setMolecule = function (ctab, norescale) {
@@ -625,137 +598,6 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			/* eslint-enable no-mixed-operators*/
 		}
 	}
-};
-
-Render.prototype.findClosestAtom = function (pos, minDist, skip) { // TODO should be a member of ReAtom (see ReFrag)
-	var closestAtom = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient;
-	minDist = minDist || maxMinDist;
-	minDist	 = Math.min(minDist, maxMinDist);
-	this.ctab.atoms.each(function (aid, atom) {
-		if (aid != skip) {
-			var dist = Vec2.dist(pos, atom.a.pp);
-			if (dist < minDist) {
-				closestAtom = aid;
-				minDist = dist;
-			}
-		}
-	}, this);
-	if (closestAtom != null) {
-		return {
-			id: closestAtom,
-			dist: minDist
-		};
-	}
-	return null;
-};
-
-Render.prototype.findClosestBond = function (pos, minDist) { // TODO should be a member of ReBond (see ReFrag)
-	var closestBond = null;
-	var closestBondCenter = null;
-	var maxMinDist = this.opt.selectionDistanceCoefficient;
-	minDist = minDist || maxMinDist;
-	minDist = Math.min(minDist, maxMinDist);
-	var minCDist = minDist;
-	this.ctab.bonds.each(function (bid, bond) {
-		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
-		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
-		var cdist = Vec2.dist(pos, mid);
-		if (cdist < minCDist) {
-			minCDist = cdist;
-			closestBondCenter = bid;
-		}
-	}, this);
-	this.ctab.bonds.each(function (bid, bond) {
-		var hb = this.ctab.molecule.halfBonds.get(bond.b.hb1);
-		var d = hb.dir;
-		var n = hb.norm;
-		var p1 = this.ctab.atoms.get(bond.b.begin).a.pp,
-			p2 = this.ctab.atoms.get(bond.b.end).a.pp;
-
-		var inStripe = Vec2.dot(pos.sub(p1), d) * Vec2.dot(pos.sub(p2), d) < 0;
-		if (inStripe) {
-			var dist = Math.abs(Vec2.dot(pos.sub(p1), n));
-			if (dist < minDist) {
-				closestBond = bid;
-				minDist = dist;
-			}
-		}
-	}, this);
-	if (closestBond !== null || closestBondCenter !== null) {
-		return {
-			id: closestBond,
-			dist: minDist,
-			cid: closestBondCenter,
-			cdist: minCDist
-		};
-	}
-	return null;
-};
-
-Render.prototype.findClosestItem = function (pos, maps, skip) { // eslint-disable-line max-statements
-	var ret = null;
-	function updret(type, item, force) {
-		if (item != null && (ret == null || ret.dist > item.dist || force)) {
-			ret = {
-				type: type,
-				id: item.id,
-				dist: item.dist
-			};
-		}
-	}
-
-	// TODO make it "map-independent", each object should be able to "report" its distance to point (something like ReAtom.dist(point))
-	if (!maps || maps.indexOf('atoms') >= 0) {
-		var atom = this.findClosestAtom(
-			pos, undefined, !Object.isUndefined(skip) && skip.map == 'atoms' ? skip.id : undefined
-		);
-		updret('Atom', atom);
-	}
-	if (!maps || maps.indexOf('bonds') >= 0) {
-		var bond = this.findClosestBond(pos);
-		if (bond) {
-			if (bond.cid !== null)
-				updret('Bond', { id: bond.cid, dist: bond.cdist });
-			if (ret == null || ret.dist > 0.4 * this.scale) // hack
-				updret('Bond', bond);
-		}
-	}
-	if (!maps || maps.indexOf('chiralFlags') >= 0) {
-		var flag = ReChiralFlag.findClosest(this, pos);
-		updret('ChiralFlag', flag); // [MK] TODO: replace this with map name, 'ChiralFlag' -> 'chiralFlags', to avoid the extra mapping "if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';"
-	}
-	if (!maps || maps.indexOf('sgroupData') >= 0) {
-		var sgd = ReDataSGroupData.findClosest(this, pos);
-		updret('DataSGroupData', sgd);
-	}
-	if (!maps || maps.indexOf('sgroups') >= 0) {
-		var sg = ReSGroup.findClosest(this, pos);
-		updret('SGroup', sg);
-	}
-	if (!maps || maps.indexOf('rxnArrows') >= 0) {
-		var arrow = ReRxnArrow.findClosest(this, pos);
-		updret('RxnArrow', arrow);
-	}
-	if (!maps || maps.indexOf('rxnPluses') >= 0) {
-		var plus = ReRxnPlus.findClosest(this, pos);
-		updret('RxnPlus', plus);
-	}
-	if (!maps || maps.indexOf('frags') >= 0) {
-		var frag = ReFrag.findClosest(this, pos, skip && skip.map == 'atoms' ? skip.id : undefined);
-		updret('Fragment', frag);
-	}
-	if (!maps || maps.indexOf('rgroups') >= 0) {
-		var rgroup = ReRGroup.findClosest(this, pos);
-		updret('RGroup', rgroup);
-	}
-
-	ret = ret || {
-		type: 'Canvas',
-		id: -1
-	};
-	return ret;
 };
 
 Render.prototype.setZoom = function (zoom) {

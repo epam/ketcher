@@ -14,7 +14,7 @@ function ChargeTool(editor, charge) { // TODO [RB] should be "pluggable"
 ChargeTool.prototype = new EditorTool();
 ChargeTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	var struct = rnd.ctab.molecule;
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null)
 		this.hoverHelper.hover(ci);
@@ -26,7 +26,7 @@ ChargeTool.prototype.OnMouseUp = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) {
 		this.hoverHelper.hover(null);
 		ui.addUndoAction(

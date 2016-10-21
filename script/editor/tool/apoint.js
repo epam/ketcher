@@ -11,11 +11,11 @@ function APointTool(editor) {
 }
 APointTool.prototype = new EditorTool();
 APointTool.prototype.OnMouseMove = function (event) {
-	this.hoverHelper.hover(this.editor.render.findItem(event, ['atoms']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
 APointTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this.hoverHelper.hover(null);
 		var apOld = rnd.ctab.molecule.atoms.get(ci.id).attpnt;

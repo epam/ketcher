@@ -11,23 +11,6 @@ ReRxnArrow.isSelectable = function () {
 	return true;
 };
 
-ReRxnArrow.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	render.ctab.rxnArrows.each(function (id, arrow) {
-		var pos = arrow.item.pp;
-		if (Math.abs(p.x - pos.x) < 1.0) {
-			var dist = Math.abs(p.y - pos.y);
-			if (dist < 0.3 && (!ret || dist < minDist)) {
-				minDist = dist;
-				ret = { id: id, dist: minDist };
-			}
-		}
-	});
-	return ret;
-};
-
 ReRxnArrow.prototype.highlightPath = function (render) {
 	var p = render.ps(this.item.pp);
 	var s = render.settings.scaleFactor;

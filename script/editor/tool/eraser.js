@@ -14,7 +14,7 @@ function EraserTool(editor, mode) {
 }
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
-	var ci = this.editor.render.findItem(event, this.maps);
+	var ci = this.editor.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas')
 		this.lassoHelper.begin(event);
 };
@@ -24,7 +24,7 @@ EraserTool.prototype.OnMouseMove = function (event) {
 		this.lassoHelper.addPoint(event)
 		);
 	} else {
-		this.hoverHelper.hover(this.editor.render.findItem(event, this.maps));
+		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
 	}
 };
 EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
@@ -34,7 +34,7 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 		this.editor.setSelection(null);
 		rnd.update();
 	} else {
-		var ci = rnd.findItem(event, this.maps);
+		var ci = this.editor.findItem(event, this.maps);
 		if (ci && ci.type != 'Canvas') {
 			this.hoverHelper.hover(null);
 			if (ci.map == 'atoms') {

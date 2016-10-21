@@ -48,7 +48,7 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
-		item: rnd.findItem(event, ['atoms', 'bonds'])
+		item: editor.findItem(event, ['atoms', 'bonds'])
 	};
 	var dragCtx = this.dragCtx;
 	var ci = dragCtx.item;
@@ -162,7 +162,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		rnd.update();
 		return true;
 	}
-	this.hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-statements

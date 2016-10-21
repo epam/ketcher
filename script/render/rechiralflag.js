@@ -12,24 +12,6 @@ ReChiralFlag.isSelectable = function () {
 	return true;
 };
 
-ReChiralFlag.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	// there is only one chiral flag, but we treat it as a "map" for convenience
-	render.ctab.chiralFlags.each(function (id, item) {
-		var pos = item.pp;
-		if (Math.abs(p.x - pos.x) < 1.0) {
-			var dist = Math.abs(p.y - pos.y);
-			if (dist < 0.3 && (!ret || dist < minDist)) {
-				minDist = dist;
-				ret = { id: id, dist: minDist };
-			}
-		}
-	});
-	return ret;
-};
-
 ReChiralFlag.prototype.highlightPath = function (render) {
 	var box = Box2Abs.fromRelBox(this.path.getBBox());
 	var sz = box.p1.sub(box.p0);

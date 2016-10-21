@@ -13,14 +13,14 @@ function ReactionUnmapTool(editor) {
 }
 ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms')
 		this.hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
 	else
 		this.hoverHelper.hover(null);
 };
 ReactionUnmapTool.prototype.OnMouseUp = function (event) {
-	var ci = this.editor.render.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	var atoms = this.editor.render.ctab.molecule.atoms;
 	if (ci && ci.map == 'atoms' && atoms.get(ci.id).aam) {
 		var action = new Action();

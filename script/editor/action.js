@@ -3,6 +3,7 @@ var Vec2 = require('../util/vec2');
 var op = require('./op');
 
 var Struct = require('../chem/struct');
+var closest = require('./closest');
 
 var ui = global.ui;
 
@@ -316,7 +317,7 @@ function atomForNewBond(id) { // eslint-disable-line max-statements
 
 	v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-	var a = ui.render.findClosestAtom(v, 0.1);
+	var a = closest.atom(ui.render.ctab, v, 0.1);
 
 	if (a == null)
 		a = { label: 'C' };
@@ -881,7 +882,7 @@ function fromTemplateOnBond(bid, template, calcAngle, flip) { // eslint-disable-
 
 		v = Vec2.diff(a.pp, frBegin.pp).rotate(angle).scaled(scale).add(begin.pp);
 
-		var mergeA = R.findClosestAtom(v, 0.1);
+		var mergeA = closest.atom(ui.render.ctab, v, 0.1);
 
 		if (mergeA == null) {
 			var operation;
@@ -944,7 +945,7 @@ function fromChain(p0, v, nSect, atomId) {
 	nSect.times(function (i) {
 		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-		var a = ui.render.findClosestAtom(pos, 0.1);
+		var a = closest.atom(ui.render.ctab, pos, 0.1);
 
 		var ret = fromBondAddition({}, id0, a ? a.id : {}, pos);
 		action = ret[0].mergeWith(action);

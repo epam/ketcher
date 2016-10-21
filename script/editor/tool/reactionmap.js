@@ -17,7 +17,7 @@ function ReactionMapTool(editor) {
 ReactionMapTool.prototype = new EditorTool();
 ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['atoms']);
+	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
 		this.hoverHelper.hover(null);
 		this.dragCtx = {
@@ -29,7 +29,7 @@ ReactionMapTool.prototype.OnMouseDown = function (event) {
 ReactionMapTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
-		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
+		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
 		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
 			this.hoverHelper.hover(ci);
 			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
@@ -38,13 +38,13 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
 		}
 	} else {
-		this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
+		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	}
 };
 ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
-		var ci = rnd.findItem(event, ['atoms'], this.dragCtx.item);
+		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
 		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
 			var action = new Action();
 			var atoms = rnd.ctab.molecule.atoms;

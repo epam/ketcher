@@ -16,7 +16,7 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
-		item: rnd.findItem(event, ['atoms'])
+		item: this.editor.findItem(event, ['atoms'])
 	};
 	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
 	return true;
@@ -38,7 +38,7 @@ ChainTool.prototype.OnMouseMove = function (event) {
 		rnd.update();
 		return true;
 	}
-	this.hoverHelper.hover(rnd.findItem(event, ['atoms']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	return true;
 };
 ChainTool.prototype.OnMouseUp = function () {

@@ -24,7 +24,7 @@ BondTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
-		item: rnd.findItem(event, ['atoms', 'bonds'])
+		item: this.editor.findItem(event, ['atoms', 'bonds'])
 	};
 	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
 	return true;
@@ -41,12 +41,12 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 			if (('item' in dragCtx && dragCtx.item.map == 'atoms')) {
 				// first mousedown event intersect with any atom
 				i1 = dragCtx.item.id;
-				i2 = rnd.findItem(event, ['atoms'], dragCtx.item);
+				i2 = editor.findItem(event, ['atoms'], dragCtx.item);
 			} else {
 				// first mousedown event intersect with any canvas
 				i1 = this.atomProps;
 				p1 = dragCtx.xy0;
-				i2 = rnd.findItem(event, ['atoms']);
+				i2 = editor.findItem(event, ['atoms']);
 			}
 			var dist = Number.MAX_VALUE;
 			if (i2 && i2.map == 'atoms') {
@@ -73,7 +73,7 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 			return true;
 		}
 	}
-	this.hoverHelper.hover(rnd.findItem(event, ['atoms', 'bonds']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 

@@ -33,29 +33,10 @@ ReRGroup.prototype.getBonds = function (render) {
 	return ret;
 };
 
-ReRGroup.findClosest = function (render, p, skip, minDist) {
-	minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
-	var ret;
-	render.ctab.rgroups.each(function (rgid, rgroup) {
-		if (rgid != skip) {
-			if (rgroup.labelBox) { // should be true at this stage, as the label is visible
-				if (rgroup.labelBox.contains(p, 0.5)) { // inside the box or within 0.5 units from the edge
-					var dist = Vec2.dist(rgroup.labelBox.centre(), p);
-					if (!ret || dist < minDist) {
-						minDist = dist;
-						ret = { id: rgid, dist: minDist };
-					}
-				}
-			}
-		}
-	});
-	return ret;
-};
-
 ReRGroup.prototype.calcBBox = function (render) {
 	var ret;
 	this.item.frags.each(function (fnum, fid) {
-		var bbf = render.ctab.frags.get(fid).calcBBox(render, fid);
+		var bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render);
 		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
 	});

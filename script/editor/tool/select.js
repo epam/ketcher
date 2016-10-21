@@ -27,7 +27,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 	var struct = ctab.molecule;
 	this.hoverHelper.hover(null); // TODO review hovering for touch devices
 	var selectFragment = (this.lassoHelper.fragment || event.ctrlKey);
-	var ci = rnd.findItem(
+	var ci = this.editor.findItem(
 		event,
 		selectFragment ?
 			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
@@ -38,8 +38,6 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			this.lassoHelper.begin(event);
 	} else {
 		this.hoverHelper.hover(null);
-		if ('onShowLoupe' in rnd)
-			rnd.onShowLoupe(true);
 		if (!isSelected(rnd, this.editor.selection, ci)) {
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
@@ -118,7 +116,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		// finding & highlighting object to stick to
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
-			var ci = rnd.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			this.hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
 		}
 		rnd.update();
@@ -126,7 +124,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		this.editor.setSelection(this.lassoHelper.addPoint(event), event.shiftKey);
 	} else {
 		this.hoverHelper.hover(
-		rnd.findItem(
+		this.editor.findItem(
 			event,
 			(this.lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
@@ -141,7 +139,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
-			var ci = this.editor.render.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
 				this.hoverHelper.hover(null);
 				this.editor.setSelection();
@@ -163,7 +161,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 
 SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event);
+	var ci = this.editor.findItem(event);
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
 		this.editor.setSelection(ci);

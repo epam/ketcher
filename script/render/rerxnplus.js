@@ -11,21 +11,6 @@ ReRxnPlus.isSelectable = function () {
 	return true;
 };
 
-ReRxnPlus.findClosest = function (render, p) {
-	var minDist;
-	var ret;
-
-	render.ctab.rxnPluses.each(function (id, plus) {
-		var pos = plus.item.pp;
-		var dist = Math.max(Math.abs(p.x - pos.x), Math.abs(p.y - pos.y));
-		if (dist < 0.5 && (!ret || dist < minDist)) {
-			minDist = dist;
-			ret = { id: id, dist: minDist };
-		}
-	});
-	return ret;
-};
-
 ReRxnPlus.prototype.highlightPath = function (render) {
 	var p = render.ps(this.item.pp);
 	var s = render.settings.scaleFactor;

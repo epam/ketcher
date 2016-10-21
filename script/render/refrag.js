@@ -13,24 +13,6 @@ ReFrag.isSelectable = function () {
 	return false;
 };
 
-ReFrag.findClosest = function (render, p, skip, minDist) {
-	minDist = Math.min(minDist || render.opt.selectionDistanceCoefficient, render.opt.selectionDistanceCoefficient);
-	var ret;
-	render.ctab.frags.each(function (fid, frag) {
-		if (fid != skip) {
-			var bb = frag.calcBBox(render, fid); // TODO any faster way to obtain bb?
-			if (bb.p0.y < p.y && bb.p1.y > p.y && bb.p0.x < p.x && bb.p1.x > p.x) {
-				var xDist = Math.min(Math.abs(bb.p0.x - p.x), Math.abs(bb.p1.x - p.x));
-				if (!ret || xDist < minDist) {
-					minDist = xDist;
-					ret = { id: fid, dist: minDist };
-				}
-			}
-		}
-	});
-	return ret;
-};
-
 ReFrag.prototype.fragGetAtoms = function (render, fid) {
 	var ret = [];
 	render.ctab.atoms.each(function (aid, atom) {

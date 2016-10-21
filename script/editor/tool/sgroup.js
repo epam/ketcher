@@ -21,7 +21,7 @@ function SGroupTool(editor, type) {
 }
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
-	var ci = this.editor.render.findItem(event, this.maps);
+	var ci = this.editor.findItem(event, this.maps);
 	if (!ci || ci.type == 'Canvas')
 		this.lassoHelper.begin(event);
 };
@@ -31,7 +31,7 @@ SGroupTool.prototype.OnMouseMove = function (event) {
 		this.lassoHelper.addPoint(event)
 		);
 	} else {
-		this.hoverHelper.hover(this.editor.render.findItem(event, this.maps));
+		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
 	}
 };
 SGroupTool.prototype.OnMouseUp = function (event) {
@@ -40,7 +40,7 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		selection = this.lassoHelper.end(event);
 	} else {
-		var ci = this.editor.render.findItem(event, this.maps);
+		var ci = this.editor.findItem(event, this.maps);
 		if (!ci || ci.type == 'Canvas')
 			return;
 		this.hoverHelper.hover(null);

@@ -12,7 +12,7 @@ function ReactionPlusTool(editor) {
 ReactionPlusTool.prototype = new EditorTool();
 ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['rxnPluses']);
+	var ci = this.editor.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
 		this.hoverHelper.hover(null);
 		this.editor.setSelection(ci);
@@ -30,7 +30,7 @@ ReactionPlusTool.prototype.OnMouseMove = function (event) {
 		);
 		rnd.update();
 	} else {
-		this.hoverHelper.hover(rnd.findItem(event, ['rxnPluses']));
+		this.hoverHelper.hover(this.editor.findItem(event, ['rxnPluses']));
 	}
 };
 ReactionPlusTool.prototype.OnMouseUp = function (event) {

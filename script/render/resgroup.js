@@ -22,33 +22,6 @@ ReSGroup.isSelectable = function () {
 	return false;
 };
 
-
-ReSGroup.findClosest = function (render, p) {
-	var ret = null;
-	var minDist = render.opt.selectionDistanceCoefficient;
-	render.ctab.molecule.sgroups.each(function (sgid, sg) {
-		var d = sg.bracketDir,
-			n = d.rotateSC(1, 0);
-		var pg = new Vec2(Vec2.dot(p, d), Vec2.dot(p, n));
-		for (var i = 0; i < sg.areas.length; ++i) {
-			var box = sg.areas[i];
-			var inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
-			var xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
-			if (inBox && (ret == null || xDist < minDist)) {
-				ret = sgid;
-				minDist = xDist;
-			}
-		}
-	}, this);
-	if (ret != null) {
-		return {
-			id: ret,
-			dist: minDist
-		};
-	}
-	return null;
-};
-
 ReSGroup.prototype.draw = function (remol, sgroup) {
 	//	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
 	return SGroupDraw[sgroup.type](remol, sgroup);
@@ -257,4 +230,5 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
+
 module.exports = ReSGroup;

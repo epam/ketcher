@@ -12,26 +12,6 @@ ReDataSGroupData.isSelectable = function () {
 	return true;
 };
 
-ReDataSGroupData.findClosest = function (render, p) {
-	var minDist = null;
-	var ret = null;
-
-	render.ctab.sgroupData.each(function (id, item) {
-		if (item.sgroup.type != 'DAT')
-			throw new Error('Data group expected');
-		if (item.sgroup.data.fieldName != "MRV_IMPLICIT_H") {
-			var box = item.sgroup.dataArea;
-			var inBox = box.p0.y < p.y && box.p1.y > p.y && box.p0.x < p.x && box.p1.x > p.x;
-			var xDist = Math.min(Math.abs(box.p0.x - p.x), Math.abs(box.p1.x - p.x));
-			if (inBox && (ret == null || xDist < minDist)) {
-				ret = { id: id, dist: xDist };
-				minDist = xDist;
-			}
-		}
-	});
-	return ret;
-};
-
 ReDataSGroupData.prototype.highlightPath = function (render) {
 	var box = this.sgroup.dataArea;
 	var p0 = render.obj2scaled(box.p0);

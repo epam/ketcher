@@ -14,12 +14,12 @@ function RGroupFragmentTool(editor) {
 
 RGroupFragmentTool.prototype = new EditorTool();
 RGroupFragmentTool.prototype.OnMouseMove = function (event) {
-	this.hoverHelper.hover(this.editor.render.findItem(event, ['frags', 'rgroups']));
+	this.hoverHelper.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };
 
 RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['frags', 'rgroups']);
+	var ci = this.editor.findItem(event, ['frags', 'rgroups']);
 	if (ci && ci.map == 'frags') {
 		this.hoverHelper.hover(null);
 		var rgOld = Struct.RGroup.findRGroupByFragment(rnd.ctab.molecule.rgroups, ci.id);

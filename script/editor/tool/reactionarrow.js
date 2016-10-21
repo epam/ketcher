@@ -12,7 +12,7 @@ function ReactionArrowTool(editor) {
 ReactionArrowTool.prototype = new EditorTool();
 ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
-	var ci = rnd.findItem(event, ['rxnArrows']);
+	var ci = this.editor.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
 		this.hoverHelper.hover(null);
 		this.editor.setSelection(ci);
@@ -30,7 +30,7 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 		);
 		rnd.render.update();
 	} else {
-		this.hoverHelper.hover(rnd.findItem(event, ['rxnArrows']));
+		this.hoverHelper.hover(this.editor.findItem(event, ['rxnArrows']));
 	}
 };
 ReactionArrowTool.prototype.OnMouseUp = function (event) {

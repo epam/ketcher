@@ -63,6 +63,7 @@ class Recognize extends Component {
 								accept="image/*" type="file"/>
 						</label>
 					),
+					<span className="open-filename">{file ? file.name : null}</span>,
                     file && !(structStr instanceof Promise) ? (
 						<button onClick={ ev => this.recognize(ev) }>Recognize</button>
 					) : null,

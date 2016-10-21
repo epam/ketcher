@@ -52,13 +52,6 @@ function ifDef(dst, src, prop, def) {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 }
 
-function identityMap(array) {
-	var map = {};
-	for (var i = 0; i < array.length; ++i)
-		map[array[i]] = array[i];
-	return map;
-}
-
 function arrayAddIfMissing(array, item) {
 	for (var i = 0; i < array.length; ++i) {
 		if (array[i] === item)
@@ -108,7 +101,6 @@ module.exports = {
 	preventDefault: preventDefault,
 	unicodeLiteral: unicodeLiteral,
 	ifDef: ifDef,
-	identityMap: identityMap,
 	arrayAddIfMissing: arrayAddIfMissing,
 	assert: assert,
 	assertDefined: assertDefined,

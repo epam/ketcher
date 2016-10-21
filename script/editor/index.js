@@ -215,7 +215,7 @@ Editor.prototype.setSelection = function (selection, add) {
 	if (!add) {
 		this.selection = {};
 		for (var map1 in ReStruct.maps)
-			this.selection[map1] = []; // TODO it should NOT be mandatory
+			this.selection[map1] = [];
 	}
 
 	if (selection) {
@@ -231,7 +231,8 @@ Editor.prototype.setSelection = function (selection, add) {
 			}
 		}
 	}
-	this.render.setSelection(this.selection);
+	console.assert(this.selection, 'Selection cannot be null');
+	this.render.ctab.setSelection(this.selection);
 	this.render.update();
 
 	ui.updateClipboardButtons(); // TODO notify ui about selection

@@ -1,5 +1,3 @@
-// ReStruct constructor and utilities are defined here
-//
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
 var Box2Abs = require('../util/box2abs');
@@ -59,6 +57,7 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 		this[map + 'Changed'] = {};
 	this.structChanged = false;
 
+	// TODO: eachItem ?
 	molecule.atoms.each(function (aid, atom) {
 		this.atoms.set(aid, new ReAtom(atom));
 	}, this);
@@ -269,17 +268,17 @@ ReStruct.prototype.clearVisel = function (visel) {
 	visel.clear();
 };
 
-ReStruct.prototype.eachVisel = function (func, context) {
+ReStruct.prototype.eachItem = function (func, context) {
 	for (var map in ReStruct.maps) {
 		this[map].each(function (id, item) {
-			func.call(context, item.visel);
-		}, this);
+			func.call(context, item);
+		});
 	}
 };
 
 ReStruct.prototype.getVBoxObj = function (selection) {
 	selection = selection || {};
-	if (this.selectionIsEmpty(selection)) {
+	if (isSelectionEmpty(selection)) {
 		for (var map in ReStruct.maps)
 			selection[map] = this[map].keys();
 	}
@@ -297,34 +296,33 @@ ReStruct.prototype.getVBoxObj = function (selection) {
 	return vbox;
 };
 
-ReStruct.prototype.selectionIsEmpty = function (selection) {
-	util.assert(!util.isUndefined(selection), '\'selection\' is not defined');
-	if (util.isNull(selection))
-		return true;
-	for (var map in ReStruct.maps) {
-		if (selection[map] && selection[map].length > 0)
-			return false;
+function isSelectionEmpty(selection) {
+	if (selection) {
+		for (var map in ReStruct.maps) {
+			if (selection[map] && selection[map].length > 0)
+				return false;
+		}
 	}
 	return true;
-};
+}
 
 ReStruct.prototype.translate = function (d) {
-	this.eachVisel(function (visel) {
-		visel.translate(d);
-	}, this);
+	this.eachItem(function (item) {
+		item.visel.translate(d);
+	});
 };
 
 ReStruct.prototype.scale = function (s) {
 	// NOTE: bounding boxes are not valid after scaling
-	this.eachVisel(function (visel) {
-		this.scaleVisel(visel, s);
-	}, this);
+	this.eachItem(function (item) {
+		scaleVisel(item.visel, s);
+	});
 };
 
-ReStruct.prototype.scaleRPath = function (path, s) {
+function scaleRPath(path, s) {
 	if (path.type == 'set') { // TODO: rework scaling
 		for (var i = 0; i < path.length; ++i)
-			this.scaleRPath(path[i], s);
+			scaleRPath(path[i], s);
 	} else {
 		if (!Object.isUndefined(path.attrs)) {
 			if ('font-size' in path.attrs)
@@ -334,16 +332,16 @@ ReStruct.prototype.scaleRPath = function (path, s) {
 		}
 		path.scale(s, s, 0, 0);
 	}
-};
+}
 
-ReStruct.prototype.scaleVisel = function (visel, s) {
+function scaleVisel(visel, s) {
 	for (var i = 0; i < visel.paths.length; ++i)
-		this.scaleRPath(visel.paths[i], s);
-};
+		scaleRPath(visel.paths[i], s);
+}
 
 ReStruct.prototype.clearVisels = function () {
-	this.eachVisel(function (visel) {
-		this.clearVisel(visel);
+	this.eachItem(function (item) {
+		this.clearVisel(item.visel);
 	}, this);
 };
 
@@ -1353,20 +1351,36 @@ ReStruct.prototype.showBond = function (bond, hb1, hb2) {
 	return path;
 };
 
-ReStruct.prototype.showItemSelection = function (id, item, visible) {
-	var exists = (item.selectionPlate != null) && !item.selectionPlate.removed;
-	if (visible) {
+ReStruct.prototype.setSelection = function (selection) {
+	for (var map in ReStruct.maps) {
+		if (ReStruct.maps[map].isSelectable() && selection[map]) {
+			// TODO: iterate over selection ids
+			this[map].each(function (id, item) {
+				var selected = selection[map].indexOf(id) > -1;
+				this.showItemSelection(item, selected);
+			}, this);
+		}
+	}
+};
+
+ReStruct.prototype.showItemSelection = function (item, selected) {
+	var exists = item.selectionPlate != null; // && !item.selectionPlate.removed;
+	// TODO: simplify me
+	if (selected) {
 		if (!exists) {
 			var render = this.render;
 			var styles = render.styles;
 			var paper = render.paper;
+
+			item.selected = selected;
 			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
 			this.addReObjectPath('selectionPlate', item.visel, item.selectionPlate);
 		}
-		if (item.selectionPlate) item.selectionPlate.show(); // TODO [RB] review
+		if (item.selectionPlate)
+			item.selectionPlate.show(); // TODO [RB] review
 	} else
-		if (exists) {
-			if (item.selectionPlate) item.selectionPlate.hide(); // TODO [RB] review
+		if (exists && item.selectionPlate) {
+			item.selectionPlate.hide(); // TODO [RB] review
 		}
 };
 

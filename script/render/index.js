@@ -320,20 +320,6 @@ Render.prototype.bondGetAttr = function (bid, name) {
 	return this.ctab.bonds.get(bid).b[name];
 };
 
-Render.prototype.setSelection = function (selection) {
-	DEBUG.logMethod('setSelection');
-	for (var map in ReStruct.maps) {
-		if (!ReStruct.maps[map].isSelectable())
-			continue; // eslint-disable-line no-continue
-		var set = selection ? (selection[map] ? util.identityMap(selection[map]) : {}) : null; // eslint-disable-line no-nested-ternary
-		this.ctab[map].each(function (id, item) {
-			var selected = set ? set[id] === id : item.selected;
-			item.selected = selected;
-			this.ctab.showItemSelection(id, item, selected);
-		}, this);
-	}
-};
-
 Render.prototype.initStyles = function () {
 	// TODO move fonts, dashed lines, etc. here
 	var settings = this.settings;
@@ -592,7 +578,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 
 	var start = (new Date()).getTime();
 	var changes = this.ctab.update(force);
-	this.setSelection(null); // [MK] redraw the selection bits where necessary
+	this.ctab.setSelection({}); // [MK] redraw the selection bits where necessary
 	var time = (new Date()).getTime() - start;
 	if (force && $('log'))
 		$('log').innerHTML = time.toString() + '\n';

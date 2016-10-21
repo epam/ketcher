@@ -378,7 +378,7 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 	}
 	sgroup.patoms = Struct.SGroup.removeNegative(sgroup.patoms);
 
-	var patomsMap = util.identityMap(sgroup.patoms);
+	var patomsMap = identityMap(sgroup.patoms);
 
 	var bondsToRemove = [];
 	mol.bonds.each(function (bid, bond) {
@@ -2014,6 +2014,13 @@ function stripQuotes(str) {
 	if (str[0] === '"' && str[str.length - 1] === '"')
 		return str.substr(1, str.length - 2);
 	return str;
+}
+
+function identityMap(array) {
+	var map = {};
+	for (var i = 0; i < array.length; ++i)
+		map[array[i]] = array[i];
+	return map;
 }
 
 // According Unicode Consortium sould be

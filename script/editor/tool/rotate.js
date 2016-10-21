@@ -10,16 +10,16 @@ function RotateTool(editor) {
 	this.editor = editor;
 	this.lassoHelper = new LassoHelper(1, editor);
 
-	var selection = this.editor.selectionHelper.selection;
+	var selection = this.editor.selection;
 	if (!selection.atoms || !selection.atoms.length)
 		// otherwise, clear selection
-		this.editor.selectionHelper.setSelection(null);
+		this.editor.setSelection(null);
 }
 
 RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
-	var selection = this.editor.selectionHelper.selection;
+	var selection = this.editor.selection;
 	if (selection.atoms && selection.atoms.length) {
 		var rnd = this.editor.render;
 		var molecule = rnd.ctab.molecule;
@@ -81,7 +81,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 };
 RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	if (this.lassoHelper.running()) {
-		this.editor.selectionHelper.setSelection(
+		this.editor.setSelection(
 		this.lassoHelper.addPoint(event)
 		);
 	} else if ('dragCtx' in this) {
@@ -126,7 +126,7 @@ RotateTool.prototype.OnMouseUp = function (event) {
 			ui.addUndoAction(this.dragCtx.action, true);
 			$('toolText').update('');
 		} else {
-			this.editor.selectionHelper.setSelection();
+			this.editor.setSelection();
 		}
 		delete this.dragCtx;
 	}
@@ -143,7 +143,7 @@ RotateTool.prototype.OnCancel = function () {
 	}
 
 	// don't reset the selection when leaving the canvas, see KETCHER-632
-	// this.editor.selectionHelper.setSelection();
+	// this.editor.setSelection();
 };
 
 module.exports = RotateTool;

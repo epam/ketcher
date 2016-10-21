@@ -417,7 +417,7 @@ function labelEditKeys(scope, range) {
 			dialog(modal.labelEdit, { letter: letter }).then(function (res) {
 				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
 				ui.render.update();
-				ui.editor.deselectAll();
+				ui.editor.setSelection(null);
 			});
 		});
 	}
@@ -515,7 +515,7 @@ function dialog(modal, params, noAnimate) {
 
 function updateStruct (mol) {
 	console.assert(mol, 'No molecule to update');
-	ui.editor.deselectAll();
+	ui.editor.setSelection(null);
 	addUndoAction(Action.fromNewCanvas(mol));
 	ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 	ui.render.update();
@@ -685,7 +685,7 @@ function getStruct(structStr, checkEmptyLine) {
 
 function removeSelected () {
 	addUndoAction(Action.fromFragmentDeletion());
-	ui.editor.deselectAll();
+	ui.editor.setSelection(null);
 	ui.render.update();
 };
 
@@ -694,7 +694,7 @@ function undo ()
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
-	ui.editor.deselectAll();
+	ui.editor.setSelection(null);
 	redoStack.push(undoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
@@ -705,7 +705,7 @@ function redo ()
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
-	ui.editor.deselectAll();
+	ui.editor.setSelection(null);
 	undoStack.push(redoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
@@ -814,13 +814,13 @@ var actionMap = {
 	},
 	copy: function () {
 		var struct = ui.editor.getSelectionStruct();
-		ui.editor.deselectAll();
+		ui.editor.setSelection(null);
 		return struct.isBlank() ? null : struct;
 	},
 	paste: function (struct) {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
-		ui.editor.deselectAll();
+		ui.editor.setSelection(null);
 		return { tool: 'paste', opts: struct };
 	},
 	info: function () {
@@ -836,7 +836,7 @@ var actionMap = {
 		selectAction(null);
 	},
 	'deselect-all': function () {
-		ui.editor.deselectAll();
+		ui.editor.setSelection(null);
 	},
 	'force-update': function () {
 		// original: for dev purposes
@@ -932,7 +932,7 @@ function mapTool (id) {
 	}
 
 	if (id != 'transform-rotate' && !id.startsWith('select-'))
-		ui.editor.deselectAll();
+		ui.editor.setSelection(null);
 
 	if (id == 'select-lasso') {
 		return { tool: 'select', opts: 'lasso' };

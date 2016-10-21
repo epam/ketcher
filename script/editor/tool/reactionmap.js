@@ -10,7 +10,7 @@ function ReactionMapTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 
-	this.editor.selectionHelper.setSelection(null);
+	this.editor.setSelection(null);
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }

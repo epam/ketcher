@@ -3,7 +3,6 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var ReStruct = require('../render/restruct');
-var SelectionHelper = require('./tool/helper/selection');
 
 var toolMap = {
 	base: require('./tool/base'),
@@ -30,7 +29,7 @@ var ui = global.ui;
 
 function Editor(render) {
 	this.render = render;
-	this.selectionHelper = new SelectionHelper(this);
+	this.selection = {};
 	this._tool = null; // eslint-disable-line
 	this.setupEvents();
 }
@@ -169,35 +168,20 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 	}, this);
 };
 
-Editor.prototype.selectAll = function () {
-	var selection = {};
-	for (var map in ReStruct.maps)
-		selection[map] = this.render.ctab[map].ikeys();
-	this.selectionHelper.setSelection(selection);
-};
-
-Editor.prototype.deselectAll = function () {
-	this.selectionHelper.setSelection();
-};
-
 Editor.prototype.hasSelection = function (copyable) {
-	if ('selection' in this.selectionHelper) {
-		for (var map in this.selectionHelper.selection) {
-			if (this.selectionHelper.selection[map].length > 0) {
-				if (!copyable || map !== 'sgroupData')
-					return true;
-			}
-		}
+	for (var map in this.selection) {
+		if (this.selection[map].length > 0 &&
+		    (!copyable || map !== 'sgroupData'))
+			return true;
 	}
 	return false;
 };
 
 Editor.prototype.getSelection = function (explicit) {
 	var selection = {};
-	if ('selection' in this.selectionHelper) {
-		for (var map in this.selectionHelper.selection)
-			selection[map] = this.selectionHelper.selection[map].slice(0);
-	}
+	for (var map in this.selection)
+		selection[map] = this.selection[map].slice();
+
 	if (explicit) {
 		var struct = this.render.ctab.molecule;
 		// "auto-select" the atoms for the bonds in selection
@@ -208,9 +192,7 @@ Editor.prototype.getSelection = function (explicit) {
 				selection.atoms = selection.atoms || [];
 				if (selection.atoms.indexOf(bond.begin) < 0) selection.atoms.push(bond.begin);
 				if (selection.atoms.indexOf(bond.end) < 0) selection.atoms.push(bond.end);
-			},
-				this
-			);
+			});
 		}
 		// "auto-select" the bonds with both atoms selected
 		if ('atoms' in selection && 'bonds' in selection) {
@@ -223,12 +205,43 @@ Editor.prototype.getSelection = function (explicit) {
 						selection.bonds.push(bid);
 					}
 				}
-			},
-				this
-			);
+			});
 		}
 	}
 	return selection;
+};
+
+Editor.prototype.setSelection = function (selection, add) {
+	if (!add) {
+		this.selection = {};
+		for (var map1 in ReStruct.maps)
+			this.selection[map1] = []; // TODO it should NOT be mandatory
+	}
+
+	if (selection) {
+		if ('id' in selection && 'map' in selection)
+			(selection[selection.map] = selection[selection.map] || []).push(selection.id); // NK: WTF??
+
+		for (var map2 in this.selection) {
+			if (map2 in selection) {
+				for (var i = 0; i < selection[map2].length; i++) {
+					if (this.selection[map2].indexOf(selection[map2][i]) < 0) // eslint-disable-line max-depth
+						this.selection[map2].push(selection[map2][i]);
+				}
+			}
+		}
+	}
+	this.render.setSelection(this.selection);
+	this.render.update();
+
+	ui.updateClipboardButtons(); // TODO notify ui about selection
+};
+
+Editor.prototype.selectAll = function () {
+	var selection = {};
+	for (var map in ReStruct.maps)
+		selection[map] = this.render.ctab[map].ikeys();
+	this.setSelection(selection);
 };
 
 Editor.prototype.getSelectionStruct = function () {
@@ -247,7 +260,7 @@ Editor.prototype.getSelectionStruct = function () {
 		if (selection.rxnPluses.indexOf(id) != -1)
 			dst.rxnPluses.add(item.clone());
 	});
-
+// TODO: Chiral
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&
 		(dst.rxnArrows.count() || dst.rxnPluses.count());

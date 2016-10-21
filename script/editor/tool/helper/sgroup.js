@@ -53,7 +53,7 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 		type: id !== null ? rnd.sGroupGetType(id) : this.defaultType,
 		attrs: id !== null ? rnd.sGroupGetAttrs(id) : {},
 		onCancel: function () {
-			this.editor.deselectAll();
+			this.editor.setSelection(null);
 		}.bind(this),
 		onOk: function (params) {
 			if (id == null) {
@@ -64,7 +64,7 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 				ui.addUndoAction(Action.fromSgroupType(id, params.type)
 					.mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
 			}
-			this.editor.deselectAll();
+			this.editor.setSelection(null);
 			rnd.update();
 		}.bind(this)
 	});

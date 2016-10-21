@@ -17,7 +17,7 @@ function SGroupTool(editor, type) {
 		this.sGroupHelper.showPropertiesDialog(null, selection);
 	else
 		// otherwise, clear selection
-		this.editor.deselectAll();
+		this.editor.setSelection(null);
 }
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
@@ -27,7 +27,7 @@ SGroupTool.prototype.OnMouseDown = function (event) {
 };
 SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running()) {
-		this.editor.selectionHelper.setSelection(
+		this.editor.setSelection(
 		this.lassoHelper.addPoint(event)
 		);
 	} else {

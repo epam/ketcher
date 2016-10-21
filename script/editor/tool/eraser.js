@@ -20,7 +20,7 @@ EraserTool.prototype.OnMouseDown = function (event) {
 };
 EraserTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running()) {
-		this.editor.selectionHelper.setSelection(
+		this.editor.setSelection(
 		this.lassoHelper.addPoint(event)
 		);
 	} else {
@@ -31,7 +31,7 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 	var rnd = this.editor.render;
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		ui.addUndoAction(Action.fromFragmentDeletion(this.lassoHelper.end(event)));
-		this.editor.deselectAll();
+		this.editor.setSelection(null);
 		rnd.update();
 	} else {
 		var ci = rnd.findItem(event, this.maps);
@@ -54,7 +54,7 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 				console.log('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');
 				return;
 			}
-			this.editor.deselectAll();
+			this.editor.setSelection(null);
 			rnd.update();
 		}
 	}

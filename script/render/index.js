@@ -55,8 +55,6 @@ function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-sta
 	this.bb = new Box2Abs(new Vec2(), this.viewSz);
 	this.dirty = true;
 	this.selectionRect = null;
-	this.rxnArrow = null;
-	this.rxnMode = false;
 	this.zoom = 1.0;
 	this.structChangeHandlers = [];
 
@@ -155,7 +153,6 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	this.offset = null;
 	this.size = null;
 	this.bb = null;
-	this.rxnMode = ctab.isReaction;
 	this.update(false);
 };
 

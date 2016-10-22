@@ -259,6 +259,10 @@ Render.prototype.initStyles = function () {
 		'stroke': 'darkgray',
 		'stroke-width': 0.5 * settings.lineWidth
 	};
+	this.styles.lassoStyle = {
+		'stroke': 'gray',
+		'stroke-width': '1px'
+	};
 	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2;
 };
 
@@ -494,55 +498,9 @@ Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) {
 	b1 = this.obj2scaled(b1);
 
 	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
-		b0.x, b0.y, a0.x, a0.y, a1.x, a1.y, b1.x, b1.y)
+	                       tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
+	                       tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y))
 		.attr(this.styles.sgroupBracketStyle);
-};
-
-Render.prototype.drawSelectionLine = function (p0, p1) {
-	DEBUG.logMethod('drawSelectionLine');
-	if (this.selectionRect) {
-		this.selectionRect.remove();
-		this.selectionRect = null;
-	}
-	if (p0 && p1) {
-		p0 = this.obj2scaled(p0).add(this.offset);
-		p1 = this.obj2scaled(p1).add(this.offset);
-		this.selectionRect = this.paper.path(
-		ReStruct.makeStroke(p0, p1)
-		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
-	}
-};
-
-Render.prototype.drawSelectionRectangle = function (p0, p1) {
-	DEBUG.logMethod('drawSelectionRectangle');
-	if (this.selectionRect) {
-		this.selectionRect.remove();
-		this.selectionRect = null;
-	}
-	if (p0 && p1) {
-		p0 = this.obj2scaled(p0).add(this.offset);
-		p1 = this.obj2scaled(p1).add(this.offset);
-		this.selectionRect = this.paper.rect(
-		Math.min(p0.x, p1.x), Math.min(p0.y, p1.y), Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)
-		).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
-	}
-};
-
-Render.prototype.drawSelectionPolygon = function (r) {
-	DEBUG.logMethod('drawSelectionPolygon');
-	if (this.selectionRect) {
-		this.selectionRect.remove();
-		this.selectionRect = null;
-	}
-	if (r && r.length > 1) {
-		var v = this.obj2scaled(r[r.length - 1]).add(this.offset);
-		var pstr = 'M' + tfx(v.x) + ',' + tfx(v.y);
-		for (var i = 0; i < r.length; ++i) {
-			v = this.obj2scaled(r[i]).add(this.offset);
-			pstr += 'L' + tfx(v.x) + ',' + tfx(v.y);
-		}
-		this.selectionRect = this.paper.path(pstr).attr({ 'stroke': 'gray', 'stroke-width': '1px' });
-	}
 };
 
 module.exports = Render;

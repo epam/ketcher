@@ -2,6 +2,7 @@ var Set = require('../../util/set');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
+var draw = require('../../render/draw');
 
 var ui = global.ui;
 
@@ -14,6 +15,7 @@ function ReactionMapTool(editor) {
 
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
+
 ReactionMapTool.prototype = new EditorTool();
 ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
@@ -30,22 +32,36 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
-		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
+		if (ci && ci.map == 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
 			this.hoverHelper.hover(ci);
-			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
+			this.updateLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
 		} else {
 			this.hoverHelper.hover(null);
-			rnd.drawSelectionLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
+			this.updateLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
 		}
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	}
 };
+
+ReactionMapTool.prototype.updateLine = function (p1, p2) {
+	if (this.line) {
+		this.line.remove();
+		this.line = null;
+	}
+	if (p1 && p2) {
+		var rnd = this.editor.render;
+		this.line = draw.selectionLine(rnd,
+		                               rnd.obj2scaled(p1).add(rnd.offset),
+		                               rnd.obj2scaled(p2).add(rnd.offset));
+	}
+};
+
 ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
-		if (ci && ci.map == 'atoms' && this.isValidMap(this.dragCtx.item.id, ci.id)) {
+		if (ci && ci.map == 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
 			var action = new Action();
 			var atoms = rnd.ctab.molecule.atoms;
 			var atom1 = atoms.get(this.dragCtx.item.id);
@@ -76,25 +92,25 @@ ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line 
 				rnd.update();
 			}
 		}
-		rnd.drawSelectionLine(null);
+		this.updateLine(null);
 		delete this.dragCtx;
 	}
 	this.hoverHelper.hover(null);
 };
 
-ReactionMapTool.prototype.isValidMap = function (aid1, aid2) {
+function isValidMap(rcs, aid1, aid2) {
 	var t1, t2;
-	for (var ri = 0; (!t1 || !t2) && ri < this.rcs.reactants.length; ri++) {
-		var ro = Set.list(this.rcs.reactants[ri]);
+	for (var ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
+		var ro = Set.list(rcs.reactants[ri]);
 		if (!t1 && ro.indexOf(aid1) >= 0) t1 = 'r';
 		if (!t2 && ro.indexOf(aid2) >= 0) t2 = 'r';
 	}
-	for (var pi = 0; (!t1 || !t2) && pi < this.rcs.products.length; pi++) {
-		var po = Set.list(this.rcs.products[pi]);
+	for (var pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
+		var po = Set.list(rcs.products[pi]);
 		if (!t1 && po.indexOf(aid1) >= 0) t1 = 'p';
 		if (!t2 && po.indexOf(aid2) >= 0) t2 = 'p';
 	}
 	return t1 && t2 && t1 != t2;
-};
+}
 
 module.exports = ReactionMapTool;

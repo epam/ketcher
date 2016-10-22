@@ -1,4 +1,5 @@
 var locate = require('./locate');
+var draw = require('../../../render/draw');
 
 function LassoHelper(mode, editor, fragment) {
 	this.mode = mode;
@@ -14,33 +15,51 @@ LassoHelper.prototype.getSelection = function () {
 	else
 		throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
 };
+
 LassoHelper.prototype.begin = function (event) {
 	var rnd = this.editor.render;
 	this.points = [rnd.page2obj(event)];
 	if (this.mode == 1)
 		this.points.push(this.points[0]);
 };
+
 LassoHelper.prototype.running = function () {
-	return 'points' in this;
+	return !!this.points;
 };
+
 LassoHelper.prototype.addPoint = function (event) {
-	if (!this.running()) return false;
-	var rnd = this.editor.render;
-	if (this.mode == 0) {
-		this.points.push(rnd.page2obj(event));
-		rnd.drawSelectionPolygon(this.points);
-	} else if (this.mode == 1) {
-		this.points = [this.points[0], rnd.page2obj(event)];
-		rnd.drawSelectionRectangle(this.points[0], this.points[1]);
+	if (this.points) {
+		var rnd = this.editor.render;
+		if (this.mode == 0)
+			this.points.push(rnd.page2obj(event));
+		else if (this.mode == 1)
+			this.points = [this.points[0], rnd.page2obj(event)];
+		this.update();
+		return this.getSelection();
 	}
-	return this.getSelection();
+	return null;
 };
+
+LassoHelper.prototype.update = function () {
+	if (this.selection) {
+		this.selection.remove();
+		this.selection = null;
+	}
+	if (this.points && this.points.length > 1) {
+		var rnd = this.editor.render;
+		var dp = this.points.map(function (p) {
+			return rnd.obj2scaled(p).add(rnd.offset);
+		});
+		this.selection = this.mode == 0 ?
+			draw.selectionPolygon(rnd, dp) :
+			draw.selectionRectangle(rnd, dp[0], dp[1]);
+	}
+};
+
 LassoHelper.prototype.end = function () {
 	var ret = this.getSelection();
-	if ('points' in this) {
-		this.editor.render.drawSelectionPolygon(null);
-		delete this.points;
-	}
+	this.points = null;
+	this.update(null);
 	return ret;
 };
 

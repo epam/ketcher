@@ -431,11 +431,36 @@ function radicalCap(render, p) {
 function radicalBullet(render, p) {
 	var settings = render.settings;
 	var paper = render.paper;
-	return paper.circle(p.x, p.y, settings.lineWidth)
+	return paper.circle(tfx(p.x), tfx(p.y), settings.lineWidth)
 		.attr({
 			stroke: null,
 			fill: '#000'
 		});
+}
+
+function selectionRectangle(render, p0, p1) {
+	var paper = render.paper;
+	var styles = render.styles;
+	return paper.rect(tfx(Math.min(p0.x, p1.x)),
+	                  tfx(Math.min(p0.y, p1.y)),
+	                  tfx(Math.abs(p1.x - p0.x)),
+	                  tfx(Math.abs(p1.y - p0.y))).attr(styles.lassoStyle);
+}
+
+function selectionPolygon(render, r) {
+	var paper = render.paper;
+	var styles = render.styles;
+	var v = r[r.length - 1];
+	var pstr = 'M' + tfx(v.x) + ',' + tfx(v.y);
+	for (var i = 0; i < r.length; ++i)
+		pstr += 'L' + tfx(r[i].x) + ',' + tfx(r[i].y);
+	return paper.path(pstr).attr(styles.lassoStyle);
+}
+
+function selectionLine(render, p0, p1) {
+	var paper = render.paper;
+	var styles = render.styles;
+	return paper.path(makeStroke(p0, p1)).attr(styles.lassoStyle);
 }
 
 function stereoUpBondGetCoordinates(hb, neihbid, bondSpace, struct) {
@@ -549,5 +574,8 @@ module.exports = {
 	reactingCenter: reactingCenter,
 	topologyMark: topologyMark,
 	radicalCap: radicalCap,
-	radicalBullet: radicalBullet
+	radicalBullet: radicalBullet,
+	selectionRectangle: selectionRectangle,
+	selectionPolygon: selectionPolygon,
+	selectionLine: selectionLine
 };

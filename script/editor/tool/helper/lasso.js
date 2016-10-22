@@ -1,3 +1,5 @@
+var locate = require('./locate');
+
 function LassoHelper(mode, editor, fragment) {
 	this.mode = mode;
 	this.fragment = fragment;
@@ -6,9 +8,9 @@ function LassoHelper(mode, editor, fragment) {
 LassoHelper.prototype.getSelection = function () {
 	var rnd = this.editor.render;
 	if (this.mode == 0)
-		return rnd.getElementsInPolygon(this.points);
+		return locate.inPolygon(rnd.ctab, this.points);
 	else if (this.mode == 1)
-		return rnd.getElementsInRectangle(this.points[0], this.points[1]);
+		return locate.inRectangle(rnd.ctab, this.points[0], this.points[1]);
 	else
 		throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
 };

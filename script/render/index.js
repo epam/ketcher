@@ -136,51 +136,6 @@ Render.prototype.atomGetAttr = function (aid, name) {
 	return this.ctab.molecule.atoms.get(aid)[name];
 };
 
-Render.prototype.invalidateAtom = function (aid, level) {
-	var atom = this.ctab.atoms.get(aid);
-	this.ctab.markAtom(aid, level ? 1 : 0);
-	var hbs = this.ctab.molecule.halfBonds;
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hbid = atom.a.neighbors[i];
-		if (hbs.has(hbid)) {
-			var hb = hbs.get(hbid);
-			this.ctab.markBond(hb.bid, 1);
-			this.ctab.markAtom(hb.end, 0);
-			if (level)
-				this.invalidateLoop(hb.bid);
-		}
-	}
-};
-
-Render.prototype.invalidateLoop = function (bid) {
-	var bond = this.ctab.bonds.get(bid);
-	var lid1 = this.ctab.molecule.halfBonds.get(bond.b.hb1).loop;
-	var lid2 = this.ctab.molecule.halfBonds.get(bond.b.hb2).loop;
-	if (lid1 >= 0)
-		this.ctab.loopRemove(lid1);
-	if (lid2 >= 0)
-		this.ctab.loopRemove(lid2);
-};
-
-Render.prototype.invalidateBond = function (bid) {
-	var bond = this.ctab.bonds.get(bid);
-	this.invalidateLoop(bid);
-	this.invalidateAtom(bond.b.begin, 0);
-	this.invalidateAtom(bond.b.end, 0);
-};
-
-Render.prototype.invalidateItem = function (map, id, level) {
-	if (map == 'atoms') {
-		this.invalidateAtom(id, level);
-	} else if (map == 'bonds') {
-		this.invalidateBond(id);
-		if (level > 0)
-			this.invalidateLoop(id);
-	} else {
-		this.ctab.markItem(map, id, level);
-	}
-};
-
 Render.prototype.atomGetDegree = function (aid) {
 	DEBUG.logMethod('atomGetDegree');
 	return this.ctab.atoms.get(aid).a.neighbors.length;

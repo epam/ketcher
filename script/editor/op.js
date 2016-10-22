@@ -46,9 +46,9 @@ function Base() {
 function AtomAdd(atom, pos) {
 	this.data = { aid: null, atom: atom, pos: pos };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var pp = {};
 		if (this.data.atom) {
 			for (var p in this.data.atom)
@@ -56,17 +56,17 @@ function AtomAdd(atom, pos) {
 		}
 		pp.label = pp.label || 'C';
 		if (!Object.isNumber(this.data.aid))
-			this.data.aid = DS.atoms.add(new Struct.Atom(pp));
+			this.data.aid = struct.atoms.add(new Struct.Atom(pp));
 		else
-			DS.atoms.set(this.data.aid, new Struct.Atom(pp));
+			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
 
 		// notifyAtomAdded
-		var atomData = new ReAtom(RS.molecule.atoms.get(this.data.aid));
-		atomData.component = RS.connectedComponents.add(Set.single(this.data.aid));
-		RS.atoms.set(this.data.aid, atomData);
-		RS.markAtom(this.data.aid, 1);
+		var atomData = new ReAtom(restruct.molecule.atoms.get(this.data.aid));
+		atomData.component = restruct.connectedComponents.add(Set.single(this.data.aid));
+		restruct.atoms.set(this.data.aid, atomData);
+		restruct.markAtom(this.data.aid, 1);
 
-		DS.atomSetPos(this.data.aid, new Vec2(this.data.pos));
+		struct.atomSetPos(this.data.aid, new Vec2(this.data.pos));
 	};
 	this.invert = function () {
 		var ret = new AtomDelete();
@@ -79,25 +79,25 @@ AtomAdd.prototype = new Base();
 function AtomDelete(aid) {
 	this.data = { aid: aid, atom: null, pos: null };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!this.data.atom) {
-			this.data.atom = DS.atoms.get(this.data.aid);
-			this.data.pos = R.atomGetPos(this.data.aid);
+			this.data.atom = struct.atoms.get(this.data.aid);
+			this.data.pos = rnd.atomGetPos(this.data.aid);
 		}
 
 		// notifyAtomRemoved(this.data.aid);
-		var atom = RS.atoms.get(this.data.aid);
-		var set = RS.connectedComponents.get(atom.component);
+		var atom = restruct.atoms.get(this.data.aid);
+		var set = restruct.connectedComponents.get(atom.component);
 		Set.remove(set, this.data.aid);
 		if (Set.size(set) == 0)
-			RS.connectedComponents.remove(atom.component);
-		RS.clearVisel(atom.visel);
-		RS.atoms.unset(this.data.aid);
-		RS.markItemRemoved();
+			restruct.connectedComponents.remove(atom.component);
+		restruct.clearVisel(atom.visel);
+		restruct.atoms.unset(this.data.aid);
+		restruct.markItemRemoved();
 
-		DS.atoms.remove(this.data.aid);
+		struct.atoms.remove(this.data.aid);
 	};
 	this.invert = function () {
 		var ret = new AtomAdd();
@@ -115,7 +115,7 @@ function AtomAttr(aid, attribute, value) {
 		if (!this.data2)
 			this.data2 = { aid: this.data.aid, attribute: this.data.attribute, value: atom[this.data.attribute] };
 		atom[this.data.attribute] = this.data.value;
-		editor.render.invalidateAtom(this.data.aid);
+		invalidateAtom(editor.render.ctab, this.data.aid);
 	};
 	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
@@ -132,16 +132,16 @@ AtomAttr.prototype = new Base();
 function AtomMove(aid, d, noinvalidate) {
 	this.data = { aid: aid, d: d, noinvalidate: noinvalidate };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var aid = this.data.aid;
 		var d = this.data.d;
-		DS.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		RS.atoms.get(aid).visel.translate(R.ps(d));
+		struct.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
+		restruct.atoms.get(aid).visel.translate(rnd.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
-			R.invalidateAtom(aid, 1);
+			invalidateAtom(restruct, aid, 1);
 	};
 	this._isDummy = function () { // eslint-disable-line no-underscore-dangle
 		return this.data.d.x == 0 && this.data.d.y == 0;
@@ -157,9 +157,9 @@ AtomMove.prototype = new Base();
 function BondMove(bid, d) {
 	this.data = { bid: bid, d: d };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		RS.bonds.get(this.data.bid).visel.translate(R.ps(this.data.d));
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		restruct.bonds.get(this.data.bid).visel.translate(rnd.ps(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
 	this.invert = function () {
@@ -173,12 +173,12 @@ BondMove.prototype = new Base();
 function LoopMove(id, d) {
 	this.data = { id: id, d: d };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
 		// not sure if there should be an action to move a loop in the first place
 		// but we have to somehow move the aromatic ring, which is associated with the loop, rather than with any of the bonds
-		if (RS.reloops.get(this.data.id) && RS.reloops.get(this.data.id).visel)
-			RS.reloops.get(this.data.id).visel.translate(R.ps(this.data.d));
+		if (restruct.reloops.get(this.data.id) && restruct.reloops.get(this.data.id).visel)
+			restruct.reloops.get(this.data.id).visel.translate(rnd.ps(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
 	this.invert = function () {
@@ -193,19 +193,19 @@ function SGroupAtomAdd(sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
 	this.data = { aid: aid, sgid: sgid };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
-		var atom = DS.atoms.get(aid);
-		var sg = DS.sgroups.get(sgid);
+		var atom = struct.atoms.get(aid);
+		var sg = struct.sgroups.get(sgid);
 		if (sg.atoms.indexOf(aid) >= 0)
 			throw new Error('The same atom cannot be added to an S-group more than once');
 		if (!atom)
 			throw new Error('OpSGroupAtomAdd: Atom ' + aid + ' not found');
-		DS.atomAddToSGroup(sgid, aid);
-		R.invalidateAtom(aid);
+		struct.atomAddToSGroup(sgid, aid);
+		invalidateAtom(restruct, aid);
 	};
 	this.invert = function () {
 		var ret = new SGroupAtomRemove();
@@ -221,14 +221,14 @@ function SGroupAtomRemove(sgid, aid) {
 	this.execute = function (editor) {
 		var aid = this.data.aid;
 		var sgid = this.data.sgid;
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
-		var atom = DS.atoms.get(aid);
-		var sg = DS.sgroups.get(sgid);
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
+		var atom = struct.atoms.get(aid);
+		var sg = struct.sgroups.get(sgid);
 		Struct.SGroup.removeAtom(sg, aid);
 		Set.remove(atom.sgs, sgid);
-		R.invalidateAtom(aid);
+		invalidateAtom(restruct, aid);
 	};
 	this.invert = function () {
 		var ret = new SGroupAtomAdd();
@@ -242,14 +242,14 @@ function SGroupAttr(sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
 	this.data = { sgid: sgid, attr: attr, value: value };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
-		var sg = DS.sgroups.get(sgid);
-		if (sg.type == 'DAT' && RS.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-			RS.clearVisel(RS.sgroupData.get(sgid).visel);
-			RS.sgroupData.unset(sgid);
+		var sg = struct.sgroups.get(sgid);
+		if (sg.type == 'DAT' && restruct.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
+			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
+			restruct.sgroupData.unset(sgid);
 		}
 
 		this.data.value = sg.setAttr(this.data.attr, this.data.value);
@@ -266,16 +266,16 @@ function SGroupCreate(sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
 	this.data = { sgid: sgid, type: type, pp: pp };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var sg = new Struct.SGroup(this.data.type);
 		var sgid = this.data.sgid;
 		sg.id = sgid;
-		DS.sgroups.set(sgid, sg);
+		struct.sgroups.set(sgid, sg);
 		if (this.data.pp)
-			DS.sgroups.get(sgid).pp = new Vec2(this.data.pp);
-		RS.sgroups.set(sgid, new ReSGroup(DS.sgroups.get(sgid)));
+			struct.sgroups.get(sgid).pp = new Vec2(this.data.pp);
+		restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
 	this.invert = function () {
@@ -290,23 +290,23 @@ function SGroupDelete(sgid) {
 	this.type = 'OpSGroupDelete';
 	this.data = { sgid: sgid };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
-		var sg = RS.sgroups.get(sgid);
+		var sg = restruct.sgroups.get(sgid);
 		this.data.type = sg.item.type;
 		this.data.pp = sg.item.pp;
-		if (sg.item.type == 'DAT' && RS.sgroupData.has(sgid)) {
-			RS.clearVisel(RS.sgroupData.get(sgid).visel);
-			RS.sgroupData.unset(sgid);
+		if (sg.item.type == 'DAT' && restruct.sgroupData.has(sgid)) {
+			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
+			restruct.sgroupData.unset(sgid);
 		}
 
-		RS.clearVisel(sg.visel);
+		restruct.clearVisel(sg.visel);
 		if (sg.item.atoms.length != 0)
 			throw new Error('S-Group not empty!');
-		RS.sgroups.unset(sgid);
-		DS.sgroups.remove(sgid);
+		restruct.sgroups.unset(sgid);
+		struct.sgroups.remove(sgid);
 	};
 	this.invert = function () {
 		var ret = new SGroupCreate();
@@ -320,11 +320,11 @@ function SGroupAddToHierarchy(sgid) {
 	this.type = 'OpSGroupAddToHierarchy';
 	this.data = { sgid: sgid };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
-		var relations = DS.sGroupForest.insert(sgid, this.data.parent, this.data.children);
+		var relations = struct.sGroupForest.insert(sgid, this.data.parent, this.data.children);
 		this.data.parent = relations.parent;
 		this.data.children = relations.children;
 	};
@@ -340,13 +340,13 @@ function SGroupRemoveFromHierarchy(sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
 	this.data = { sgid: sgid };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
-		this.data.parent = DS.sGroupForest.parent.get(sgid);
-		this.data.children = DS.sGroupForest.children.get(sgid);
-		DS.sGroupForest.remove(sgid);
+		this.data.parent = struct.sGroupForest.parent.get(sgid);
+		this.data.children = struct.sGroupForest.children.get(sgid);
+		struct.sGroupForest.remove(sgid);
 	};
 	this.invert = function () {
 		var ret = new SGroupAddToHierarchy();
@@ -359,16 +359,16 @@ SGroupRemoveFromHierarchy.prototype = new Base();
 function BondAdd(begin, end, bond) {
 	this.data = { bid: null, bond: bond, begin: begin, end: end };
 	this.execute = function (editor) { // eslint-disable-line max-statements
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (this.data.begin == this.data.end)
 			throw new Error('Distinct atoms expected');
 		if (DEBUG.debug && this.molecule.checkBondExists(this.data.begin, this.data.end))
 			throw new Error('Bond already exists');
 
-		R.invalidateAtom(this.data.begin, 1);
-		R.invalidateAtom(this.data.end, 1);
+		invalidateAtom(restruct, this.data.begin, 1);
+		invalidateAtom(restruct, this.data.end, 1);
 
 		var pp = {};
 		if (this.data.bond) {
@@ -380,16 +380,16 @@ function BondAdd(begin, end, bond) {
 		pp.end = this.data.end;
 
 		if (!Object.isNumber(this.data.bid))
-			this.data.bid = DS.bonds.add(new Struct.Bond(pp));
+			this.data.bid = struct.bonds.add(new Struct.Bond(pp));
 		else
-			DS.bonds.set(this.data.bid, new Struct.Bond(pp));
-		DS.bondInitHalfBonds(this.data.bid);
-		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb1);
-		DS.atomAddNeighbor(DS.bonds.get(this.data.bid).hb2);
+			struct.bonds.set(this.data.bid, new Struct.Bond(pp));
+		struct.bondInitHalfBonds(this.data.bid);
+		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb1);
+		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb2);
 
 		// notifyBondAdded
-		RS.bonds.set(this.data.bid, new ReBond(RS.molecule.bonds.get(this.data.bid)));
-		RS.markBond(this.data.bid, 1);
+		restruct.bonds.set(this.data.bid, new ReBond(restruct.molecule.bonds.get(this.data.bid)));
+		restruct.markBond(this.data.bid, 1);
 	};
 	this.invert = function () {
 		var ret = new BondDelete();
@@ -402,42 +402,42 @@ BondAdd.prototype = new Base();
 function BondDelete(bid) {
 	this.data = { bid: bid, bond: null, begin: null, end: null };
 	this.execute = function (editor) {  // eslint-disable-line max-statements
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!this.data.bond) {
-			this.data.bond = DS.bonds.get(this.data.bid);
+			this.data.bond = struct.bonds.get(this.data.bid);
 			this.data.begin = this.data.bond.begin;
 			this.data.end = this.data.bond.end;
 		}
 
-		R.invalidateBond(this.data.bid);
+		invalidateBond(restruct, this.data.bid);
 
 		// notifyBondRemoved
-		var rebond = RS.bonds.get(this.data.bid);
+		var rebond = restruct.bonds.get(this.data.bid);
 		[rebond.b.hb1, rebond.b.hb2].each(function (hbid) {
-			var hb = RS.molecule.halfBonds.get(hbid);
+			var hb = restruct.molecule.halfBonds.get(hbid);
 			if (hb.loop >= 0)
-				RS.loopRemove(hb.loop);
-		}, RS);
-		RS.clearVisel(rebond.visel);
-		RS.bonds.unset(this.data.bid);
-		RS.markItemRemoved();
+				restruct.loopRemove(hb.loop);
+		}, restruct);
+		restruct.clearVisel(rebond.visel);
+		restruct.bonds.unset(this.data.bid);
+		restruct.markItemRemoved();
 
-		var bond = DS.bonds.get(this.data.bid);
+		var bond = struct.bonds.get(this.data.bid);
 		[bond.hb1, bond.hb2].each(function (hbid) {
-			var hb = DS.halfBonds.get(hbid);
-			var atom = DS.atoms.get(hb.begin);
+			var hb = struct.halfBonds.get(hbid);
+			var atom = struct.atoms.get(hb.begin);
 			var pos = atom.neighbors.indexOf(hbid);
 			var prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;
 			var next = (pos + 1) % atom.neighbors.length;
-			DS.setHbNext(atom.neighbors[prev], atom.neighbors[next]);
+			struct.setHbNext(atom.neighbors[prev], atom.neighbors[next]);
 			atom.neighbors.splice(pos, 1);
 		}, this);
-		DS.halfBonds.unset(bond.hb1);
-		DS.halfBonds.unset(bond.hb2);
+		struct.halfBonds.unset(bond.hb1);
+		struct.halfBonds.unset(bond.hb2);
 
-		DS.bonds.remove(this.data.bid);
+		struct.bonds.remove(this.data.bid);
 	};
 	this.invert = function () {
 		var ret = new BondAdd();
@@ -457,9 +457,9 @@ function BondAttr(bid, attribute, value) {
 
 		bond[this.data.attribute] = this.data.value;
 
-		editor.render.invalidateBond(this.data.bid);
+		invalidateBond(editor.render.ctab, this.data.bid);
 		if (this.data.attribute == 'type')
-			editor.render.invalidateLoop(this.data.bid);
+			invalidateLoop(editor.render.ctab, this.data.bid);
 	};
 	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.bonds.get(this.data.bid)[this.data.attribute] == this.data.value;
@@ -476,14 +476,14 @@ BondAttr.prototype = new Base();
 function FragmentAdd(frid) {
 	this.frid = Object.isUndefined(frid) ? null : frid;
 	this.execute = function (editor) {
-		var RS = editor.render.ctab;
-		var DS = RS.molecule;
+		var restruct = editor.render.ctab;
+		var struct = restruct.molecule;
 		var frag = {};
 		if (this.frid == null)
-			this.frid = DS.frags.add(frag);
+			this.frid = struct.frags.add(frag);
 		else
-			DS.frags.set(this.frid, frag);
-		RS.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+			struct.frags.set(this.frid, frag);
+		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 	this.invert = function () {
 		return new FragmentDelete(this.frid);
@@ -494,12 +494,12 @@ FragmentAdd.prototype = new Base();
 function FragmentDelete(frid) {
 	this.frid = frid;
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
-		R.invalidateItem('frags', this.frid, 1);
-		RS.frags.unset(this.frid);
-		DS.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
+		invalidateItem(restruct, 'frags', this.frid, 1);
+		restruct.frags.unset(this.frid);
+		struct.frags.remove(this.frid); // TODO add ReStruct.notifyFragmentRemoved
 	};
 	this.invert = function () {
 		return new FragmentAdd(this.frid);
@@ -517,7 +517,7 @@ function RGroupAttr(rgid, attribute, value) {
 
 		rgp[this.data.attribute] = this.data.value;
 
-		editor.render.invalidateItem('rgroups', this.data.rgid);
+		invalidateItem(editor.render.ctab, 'rgroups', this.data.rgid);
 	};
 	this._isDummy = function (editor) { // eslint-disable-line no-underscore-dangle
 		return editor.render.ctab.molecule.rgroups.get(this.data.rgid)[this.data.attribute] == this.data.value;
@@ -538,29 +538,29 @@ function RGroupFragment(rgid, frid, rg) {
 	this.rg_old = null;
 	this.frid = frid;
 	this.execute = function (editor) { // eslint-disable-line max-statements
-		var RS = editor.render.ctab;
-		var DS = RS.molecule;
-		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(DS.rgroups, this.frid);
-		this.rg_old = (this.rgid_old ? DS.rgroups.get(this.rgid_old) : null);
+		var restruct = editor.render.ctab;
+		var struct = restruct.molecule;
+		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(struct.rgroups, this.frid);
+		this.rg_old = (this.rgid_old ? struct.rgroups.get(this.rgid_old) : null);
 		if (this.rg_old) {
 			this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
-			RS.clearVisel(RS.rgroups.get(this.rgid_old).visel);
+			restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
 			if (this.rg_old.frags.count() == 0) {
-				RS.rgroups.unset(this.rgid_old);
-				DS.rgroups.unset(this.rgid_old);
-				RS.markItemRemoved();
+				restruct.rgroups.unset(this.rgid_old);
+				struct.rgroups.unset(this.rgid_old);
+				restruct.markItemRemoved();
 			} else {
-				RS.markItem('rgroups', this.rgid_old, 1);
+				restruct.markItem('rgroups', this.rgid_old, 1);
 			}
 		}
 		if (this.rgid_new) {
-			var rgNew = DS.rgroups.get(this.rgid_new);
+			var rgNew = struct.rgroups.get(this.rgid_new);
 			if (!rgNew) {
 				rgNew = this.rg_new || new Struct.RGroup();
-				DS.rgroups.set(this.rgid_new, rgNew);
-				RS.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
+				struct.rgroups.set(this.rgid_new, rgNew);
+				restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
 			} else {
-				RS.markItem('rgroups', this.rgid_new, 1);
+				restruct.markItem('rgroups', this.rgid_new, 1);
 			}
 			rgNew.frags.add(this.frid);
 		}
@@ -574,20 +574,20 @@ RGroupFragment.prototype = new Base();
 function RxnArrowAdd(pos) {
 	this.data = { arid: null, pos: pos };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!Object.isNumber(this.data.arid))
-			this.data.arid = DS.rxnArrows.add(new Struct.RxnArrow());
+			this.data.arid = struct.rxnArrows.add(new Struct.RxnArrow());
 		else
-			DS.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
+			struct.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 
 		// notifyRxnArrowAdded
-		RS.rxnArrows.set(this.data.arid, new ReRxnArrow(RS.molecule.rxnArrows.get(this.data.arid)));
+		restruct.rxnArrows.set(this.data.arid, new ReRxnArrow(restruct.molecule.rxnArrows.get(this.data.arid)));
 
-		DS.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
+		struct.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
-		R.invalidateItem('rxnArrows', this.data.arid, 1);
+		invalidateItem(restruct, 'rxnArrows', this.data.arid, 1);
 	};
 	this.invert = function () {
 		var ret = new RxnArrowDelete();
@@ -600,18 +600,18 @@ RxnArrowAdd.prototype = new Base();
 function RxnArrowDelete(arid) {
 	this.data = { arid: arid, pos: null };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!this.data.pos)
-			this.data.pos = R.rxnArrowGetPos(this.data.arid);
+			this.data.pos = rnd.rxnArrowGetPos(this.data.arid);
 
 		// notifyRxnArrowRemoved
-		RS.markItemRemoved();
-		RS.clearVisel(RS.rxnArrows.get(this.data.arid).visel);
-		RS.rxnArrows.unset(this.data.arid);
+		restruct.markItemRemoved();
+		restruct.clearVisel(restruct.rxnArrows.get(this.data.arid).visel);
+		restruct.rxnArrows.unset(this.data.arid);
 
-		DS.rxnArrows.remove(this.data.arid);
+		struct.rxnArrows.remove(this.data.arid);
 	};
 	this.invert = function () {
 		var ret = new RxnArrowAdd();
@@ -624,16 +624,16 @@ RxnArrowDelete.prototype = new Base();
 function RxnArrowMove(id, d, noinvalidate) {
 	this.data = { id: id, d: d, noinvalidate: noinvalidate };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnArrows.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		RS.rxnArrows.get(id).visel.translate(R.ps(d));
+		struct.rxnArrows.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
+		restruct.rxnArrows.get(id).visel.translate(rnd.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
-			editor.render.invalidateItem('rxnArrows', id, 1);
+			invalidateItem(restruct, 'rxnArrows', id, 1);
 	};
 	this.invert = function () {
 		var ret = new RxnArrowMove();
@@ -646,20 +646,20 @@ RxnArrowMove.prototype = new Base();
 function RxnPlusAdd(pos) {
 	this.data = { plid: null, pos: pos };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!Object.isNumber(this.data.plid))
-			this.data.plid = DS.rxnPluses.add(new Struct.RxnPlus());
+			this.data.plid = struct.rxnPluses.add(new Struct.RxnPlus());
 		else
-			DS.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
+			struct.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 
 		// notifyRxnPlusAdded
-		RS.rxnPluses.set(this.data.plid, new ReRxnPlus(RS.molecule.rxnPluses.get(this.data.plid)));
+		restruct.rxnPluses.set(this.data.plid, new ReRxnPlus(restruct.molecule.rxnPluses.get(this.data.plid)));
 
-		DS.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
+		struct.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
-		R.invalidateItem('rxnPluses', this.data.plid, 1);
+		invalidateItem(restruct, 'rxnPluses', this.data.plid, 1);
 	};
 	this.invert = function () {
 		var ret = new RxnPlusDelete();
@@ -672,18 +672,18 @@ RxnPlusAdd.prototype = new Base();
 function RxnPlusDelete(plid) {
 	this.data = { plid: plid, pos: null };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		if (!this.data.pos)
-			this.data.pos = R.rxnPlusGetPos(this.data.plid);
+			this.data.pos = rnd.rxnPlusGetPos(this.data.plid);
 
 		// notifyRxnPlusRemoved
-		RS.markItemRemoved();
-		RS.clearVisel(RS.rxnPluses.get(this.data.plid).visel);
-		RS.rxnPluses.unset(this.data.plid);
+		restruct.markItemRemoved();
+		restruct.clearVisel(restruct.rxnPluses.get(this.data.plid).visel);
+		restruct.rxnPluses.unset(this.data.plid);
 
-		DS.rxnPluses.remove(this.data.plid);
+		struct.rxnPluses.remove(this.data.plid);
 	};
 	this.invert = function () {
 		var ret = new RxnPlusAdd();
@@ -696,16 +696,16 @@ RxnPlusDelete.prototype = new Base();
 function RxnPlusMove(id, d, noinvalidate) {
 	this.data = { id: id, d: d, noinvalidate: noinvalidate };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
 		var id = this.data.id;
 		var d = this.data.d;
-		DS.rxnPluses.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		RS.rxnPluses.get(id).visel.translate(R.ps(d));
+		struct.rxnPluses.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
+		restruct.rxnPluses.get(id).visel.translate(rnd.ps(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
-			editor.render.invalidateItem('rxnPluses', id, 1);
+			invalidateItem(restruct, 'rxnPluses', id, 1);
 	};
 	this.invert = function () {
 		var ret = new RxnPlusMove();
@@ -721,7 +721,7 @@ function SGroupDataMove(id, d) {
 		var struct = editor.render.ctab.molecule;
 		struct.sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
-		editor.render.invalidateItem('sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
+		invalidateItem(editor.render.ctab, 'sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};
 	this.invert = function () {
 		var ret = new SGroupDataMove();
@@ -757,14 +757,14 @@ CanvasLoad.prototype = new Base();
 function ChiralFlagAdd(pos) {
 	this.data = { pos: pos };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
-		if (RS.chiralFlags.count() > 0)
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
+		if (restruct.chiralFlags.count() > 0)
 			throw new Error('Cannot add more than one Chiral flag');
-		RS.chiralFlags.set(0, new ReChiralFlag(pos));
-		DS.isChiral = true;
-		R.invalidateItem('chiralFlags', 0, 1);
+		restruct.chiralFlags.set(0, new ReChiralFlag(pos));
+		struct.isChiral = true;
+		invalidateItem(restruct, 'chiralFlags', 0, 1);
 	};
 	this.invert = function () {
 		var ret = new ChiralFlagDelete();
@@ -777,15 +777,15 @@ ChiralFlagAdd.prototype = new Base();
 function ChiralFlagDelete() {
 	this.data = { pos: null };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		var DS = RS.molecule;
-		if (RS.chiralFlags.count() < 1)
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		var struct = restruct.molecule;
+		if (restruct.chiralFlags.count() < 1)
 			throw new Error('Cannot remove chiral flag');
-		RS.clearVisel(RS.chiralFlags.get(0).visel);
-		this.data.pos = RS.chiralFlags.get(0).pp;
-		RS.chiralFlags.unset(0);
-		DS.isChiral = false;
+		restruct.clearVisel(restruct.chiralFlags.get(0).visel);
+		this.data.pos = restruct.chiralFlags.get(0).pp;
+		restruct.chiralFlags.unset(0);
+		struct.isChiral = false;
 	};
 	this.invert = function () {
 		var ret = new ChiralFlagAdd(this.data.pos);
@@ -798,11 +798,11 @@ ChiralFlagDelete.prototype = new Base();
 function ChiralFlagMove(d) {
 	this.data = { d: d };
 	this.execute = function (editor) {
-		var R = editor.render;
-		var RS = R.ctab;
-		RS.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
+		var rnd = editor.render;
+		var restruct = rnd.ctab;
+		restruct.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
-		R.invalidateItem('chiralFlags', 0, 1);
+		invalidateItem(restruct, 'chiralFlags', 0, 1);
 	};
 	this.invert = function () {
 		var ret = new ChiralFlagMove();
@@ -811,6 +811,51 @@ function ChiralFlagMove(d) {
 	};
 }
 ChiralFlagMove.prototype = new Base();
+
+function invalidateAtom(restruct, aid, level) {
+	var atom = restruct.atoms.get(aid);
+	restruct.markAtom(aid, level ? 1 : 0);
+	var hbs = restruct.molecule.halfBonds;
+	for (var i = 0; i < atom.a.neighbors.length; ++i) {
+		var hbid = atom.a.neighbors[i];
+		if (hbs.has(hbid)) {
+			var hb = hbs.get(hbid);
+			restruct.markBond(hb.bid, 1);
+			restruct.markAtom(hb.end, 0);
+			if (level)
+				invalidateLoop(restruct, hb.bid);
+		}
+	}
+}
+
+function invalidateLoop(restruct, bid) {
+	var bond = restruct.bonds.get(bid);
+	var lid1 = restruct.molecule.halfBonds.get(bond.b.hb1).loop;
+	var lid2 = restruct.molecule.halfBonds.get(bond.b.hb2).loop;
+	if (lid1 >= 0)
+		restruct.loopRemove(lid1);
+	if (lid2 >= 0)
+		restruct.loopRemove(lid2);
+}
+
+function invalidateBond(restruct, bid) {
+	var bond = restruct.bonds.get(bid);
+	invalidateLoop(restruct, bid);
+	invalidateAtom(restruct, bond.b.begin, 0);
+	invalidateAtom(restruct, bond.b.end, 0);
+}
+
+function invalidateItem(restruct, map, id, level) {
+	if (map == 'atoms') {
+		invalidateAtom(restruct, id, level);
+	} else if (map == 'bonds') {
+		invalidateBond(restruct, id);
+		if (level > 0)
+			invalidateLoop(restruct, id);
+	} else {
+		restruct.markItem(map, id, level);
+	}
+}
 
 module.exports = {
 	AtomAdd: AtomAdd,

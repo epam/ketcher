@@ -417,7 +417,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	// clean up empty fragments
 	// TODO: fragment removal should be triggered by the action responsible for the fragment contents removal and form an operation of its own
 	var emptyFrags = this.frags.findAll(function (fid, frag) {
-		return !frag.calcBBox(this.render, fid);
+		return !frag.calcBBox(this.render.ctab, fid, this.render);
 	}, this);
 	for (var j = 0; j < emptyFrags.length; ++j) {
 		var fid = emptyFrags[j];

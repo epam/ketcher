@@ -3,6 +3,8 @@ var Vec2 = require('../util/vec2');
 var Visel = require('./visel');
 var ReObject = require('./reobject');
 
+var ui = global.ui;
+
 function ReFrag(/* Struct.Fragment = {}*/frag) {
 	this.init(Visel.TYPE.FRAGMENT);
 
@@ -32,9 +34,9 @@ ReFrag.prototype.fragGetBonds = function (render, fid) {
 	return ret;
 };
 
-ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review parameter list
+ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to review parameter list
 	var ret;
-	render.ctab.atoms.each(function (aid, atom) {
+	restruct.atoms.each(function (aid, atom) {
 		if (atom.a.fragment == fid) {
 			// TODO ReObject.calcBBox to be used instead
 			var bba = atom.visel.boundingBox;
@@ -43,23 +45,29 @@ ReFrag.prototype.calcBBox = function (render, fid) { // TODO need to review para
 				var ext = new Vec2(0.05 * 3, 0.05 * 3);
 				bba = bba.extend(ext, ext);
 			} else {
+				if (!render) {
+					console.warn('No boundingBox fragment precalc');
+					render = ui.render;
+				}
+
 				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
 			}
 			ret = (ret ? Box2Abs.union(ret, bba) : bba);
 		}
-	}, this);
+	});
 	return ret;
 };
 
 // TODO need to review parameter list
 ReFrag.prototype._draw = function (render, fid, attrs) { // eslint-disable-line no-underscore-dangle
-	var bb = this.calcBBox(render, fid);
+	var bb = this.calcBBox(render.ctab, fid, render);
 	if (bb) {
 		var p0 = render.obj2scaled(new Vec2(bb.p0.x, bb.p0.y));
 		var p1 = render.obj2scaled(new Vec2(bb.p1.x, bb.p1.y));
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
 	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, empty fragments must be destroyed by tools
+		console.assert(null, 'Empty fragment');
 	}
 };
 

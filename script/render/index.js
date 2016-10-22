@@ -49,7 +49,6 @@ function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-sta
 	this.zoom = 1.0;
 	this.structChangeHandlers = [];
 
-	var render = this; // eslint-disable-line no-unused-vars
 	var valueT = 0,
 		valueL = 0;
 	var element = clientArea;
@@ -72,23 +71,6 @@ Render.prototype.addStructChangeHandler = function (handler) {
 	this.structChangeHandlers.push(handler);
 };
 
-Render.prototype.view2scaled = function (p, isRelative) {
-	var scroll = this.scrollPos();
-	if (!this.useOldZoom) {
-		p = p.scaled(1 / this.zoom);
-		scroll = scroll.scaled(1 / this.zoom);
-	}
-	p = isRelative ? p : p.add(scroll).sub(this.offset);
-	return p;
-};
-
-Render.prototype.scaled2view = function (p, isRelative) {
-	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.zoom));
-	if (!this.useOldZoom)
-		p = p.scaled(this.zoom);
-	return p;
-};
-
 Render.prototype.scaled2obj = function (v) {
 	return v.scaled(1 / this.settings.scaleFactor);
 };
@@ -97,12 +79,22 @@ Render.prototype.obj2scaled = function (v) {
 	return v.scaled(this.settings.scaleFactor);
 };
 
-Render.prototype.view2obj = function (v, isRelative) {
-	return this.scaled2obj(this.view2scaled(v, isRelative));
+Render.prototype.view2obj = function (p, isRelative) {
+	var scroll = this.scrollPos();
+	if (!this.useOldZoom) {
+		p = p.scaled(1 / this.zoom);
+		scroll = scroll.scaled(1 / this.zoom);
+	}
+	p = isRelative ? p : p.add(scroll).sub(this.offset);
+	return this.scaled2obj(p);
 };
 
 Render.prototype.obj2view = function (v, isRelative) {
-	return this.scaled2view(this.obj2scaled(v, isRelative));
+	var p = this.obj2scaled(v, isRelative);
+	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.zoom));
+	if (!this.useOldZoom)
+		p = p.scaled(this.zoom);
+	return p;
 };
 
 Render.prototype.scrollPos = function () {
@@ -115,8 +107,116 @@ Render.prototype.page2obj = function (pagePos) {
 	return this.view2obj(pp);
 };
 
-Render.prototype.client2Obj = function (clientPos) {
-	return new Vec2(clientPos).sub(this.offset);
+Render.prototype.onResize = function () {
+	this.viewSz = new Vec2(this.clientArea.clientWidth,
+	                       this.clientArea.clientHeight);
+};
+
+Render.prototype.setPaperSize = function (sz) {
+	DEBUG.logMethod('setPaperSize');
+	this.sz = sz;
+	this.paper.setSize(sz.x * this.zoom, sz.y * this.zoom);
+	this.setViewBox(this.zoom);
+};
+
+Render.prototype.setOffset = function (newoffset) {
+	DEBUG.logMethod('setOffset');
+	var delta = new Vec2(newoffset.x - this.offset.x, newoffset.y - this.offset.y);
+	this.clientArea.scrollLeft += delta.x;
+	this.clientArea.scrollTop += delta.y;
+	this.offset = newoffset;
+};
+
+Render.prototype.setZoom = function (zoom) {
+	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
+	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
+	console.info('set zoom', zoom);
+	this.zoom = zoom;
+	this.paper.setSize(this.sz.x * zoom, this.sz.y * zoom);
+	this.setViewBox(zoom);
+};
+
+Render.prototype.setScrollOffset = function (x, y) {
+	var clientArea = this.clientArea;
+	var cx = clientArea.clientWidth;
+	var cy = clientArea.clientHeight;
+	this.extendCanvas(x, y, cx + x, cy + y);
+	clientArea.scrollLeft = x;
+	clientArea.scrollTop = y;
+	 // TODO: store drag position in scaled systems
+	// scrollLeft = clientArea.scrollLeft;
+	// scrollTop = clientArea.scrollTop;
+	this.update(false);
+};
+
+Render.prototype.recoordinate = function (rp/* , vp*/) {
+	// rp is a point in scaled coordinates, which will be positioned
+	// vp is the point where the reference point should now be (in view coordinates)
+	//    or the center if not set
+	console.assert(rp, 'Reference point not specified');
+	this.setScrollOffset(0, 0);
+	// var avp = this.obj2view(rp);
+	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
+	// this.setScrollOffset(so.x, so.y);
+};
+
+Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements
+	var ex = 0,
+		ey = 0,
+		dx = 0,
+		dy = 0;
+	x0 -= 0;
+	x1 -= 0;
+	y0 -= 0;
+	y1 -= 0;
+
+	if (x0 < 0) {
+		ex += -x0;
+		dx += -x0;
+	}
+	if (y0 < 0) {
+		ey += -y0;
+		dy += -y0;
+	}
+
+	var szx = this.sz.x * this.zoom,
+		szy = this.sz.y * this.zoom;
+	if (szx < x1)
+		ex += x1 - szx;
+	if (szy < y1)
+		ey += y1 - szy;
+
+	var d = new Vec2(dx, dy).scaled(1 / this.zoom);
+	if (ey > 0 || ex > 0) {
+		var e = new Vec2(ex, ey).scaled(1 / this.zoom);
+		var sz = this.sz.add(e);
+
+		this.setPaperSize(sz);
+		if (d.x > 0 || d.y > 0) {
+			this.ctab.translate(d);
+			this.setOffset(this.offset.add(d));
+		}
+	}
+	return d;
+};
+
+Render.prototype.setScale = function (z) {
+	if (this.offset)
+		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);
+	this.scale = this.baseScale * this.zoom;
+	this.settings = null;
+	this.update(true);
+};
+
+Render.prototype.setViewBox = function (z) {
+	if (!this.useOldZoom)
+		this.paper.canvas.setAttribute('viewBox', '0 0 ' + this.sz.x + ' ' + this.sz.y);
+	else
+		this.setScale(z);
+};
+
+Render.prototype.ps = function (pp) {
+	return pp.scaled(this.settings.scaleFactor);
 };
 
 Render.prototype.setMolecule = function (ctab, norescale) {
@@ -289,40 +389,6 @@ Render.prototype.initSettings = function () {
 	this.settings = Object.assign({}, defaultSettings);
 };
 
-Render.prototype.getStructCenter = function (selection) {
-	var bb = this.ctab.getVBoxObj(selection);
-	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
-};
-
-Render.prototype.onResize = function () {
-	this.setViewSize(new Vec2(this.clientArea.clientWidth,
-	                          this.clientArea.clientHeight));
-};
-
-Render.prototype.setViewSize = function (viewSz) {
-	this.viewSz = new Vec2(viewSz);
-};
-
-Render.prototype._setPaperSize = function (sz) { // eslint-disable-line no-underscore-dangle
-	var z = this.zoom;
-	this.paper.setSize(sz.x * z, sz.y * z);
-	this.setViewBox(z);
-};
-
-Render.prototype.setPaperSize = function (sz) {
-	DEBUG.logMethod('setPaperSize');
-	this.sz = sz;
-	this._setPaperSize(sz); // eslint-disable-line no-underscore-dangle
-};
-
-Render.prototype.setOffset = function (newoffset) {
-	DEBUG.logMethod('setOffset');
-	var delta = new Vec2(newoffset.x - this.offset.x, newoffset.y - this.offset.y);
-	this.clientArea.scrollLeft += delta.x;
-	this.clientArea.scrollTop += delta.y;
-	this.offset = newoffset;
-};
-
 Render.prototype.update = function (force) { // eslint-disable-line max-statements
 	DEBUG.logMethod('update');
 
@@ -391,97 +457,6 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			/* eslint-enable no-mixed-operators*/
 		}
 	}
-};
-
-Render.prototype.setZoom = function (zoom) {
-	// when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
-	// don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-	console.info('set zoom', zoom);
-	this.zoom = zoom;
-	this._setPaperSize(this.sz); // eslint-disable-line no-underscore-dangle
-};
-
-Render.prototype.setScrollOffset = function (x, y) {
-	var clientArea = this.clientArea;
-	var cx = clientArea.clientWidth;
-	var cy = clientArea.clientHeight;
-	this.extendCanvas(x, y, cx + x, cy + y);
-	clientArea.scrollLeft = x;
-	clientArea.scrollTop = y;
-	 // TODO: store drag position in scaled systems
-	// scrollLeft = clientArea.scrollLeft;
-	// scrollTop = clientArea.scrollTop;
-	this.update(false);
-};
-
-Render.prototype.recoordinate = function (rp/* , vp*/) {
-	// rp is a point in scaled coordinates, which will be positioned
-	// vp is the point where the reference point should now be (in view coordinates)
-	//    or the center if not set
-	console.assert(rp, 'Reference point not specified');
-	this.setScrollOffset(0, 0);
-	// var avp = this.obj2view(rp);
-	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
-	// this.setScrollOffset(so.x, so.y);
-};
-
-Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements
-	var ex = 0,
-		ey = 0,
-		dx = 0,
-		dy = 0;
-	x0 -= 0;
-	x1 -= 0;
-	y0 -= 0;
-	y1 -= 0;
-
-	if (x0 < 0) {
-		ex += -x0;
-		dx += -x0;
-	}
-	if (y0 < 0) {
-		ey += -y0;
-		dy += -y0;
-	}
-
-	var szx = this.sz.x * this.zoom,
-		szy = this.sz.y * this.zoom;
-	if (szx < x1)
-		ex += x1 - szx;
-	if (szy < y1)
-		ey += y1 - szy;
-
-	var d = new Vec2(dx, dy).scaled(1 / this.zoom);
-	if (ey > 0 || ex > 0) {
-		var e = new Vec2(ex, ey).scaled(1 / this.zoom);
-		var sz = this.sz.add(e);
-
-		this.setPaperSize(sz);
-		if (d.x > 0 || d.y > 0) {
-			this.ctab.translate(d);
-			this.setOffset(this.offset.add(d));
-		}
-	}
-	return d;
-};
-
-Render.prototype.setScale = function (z) {
-	if (this.offset)
-		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);
-	this.scale = this.baseScale * this.zoom;
-	this.settings = null;
-	this.update(true);
-};
-
-Render.prototype.setViewBox = function (z) {
-	if (!this.useOldZoom)
-		this.paper.canvas.setAttribute('viewBox', '0 0 ' + this.sz.x + ' ' + this.sz.y);
-	else
-		this.setScale(z);
-};
-
-Render.prototype.ps = function (pp) {
-	return pp.scaled(this.settings.scaleFactor);
 };
 
 Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) { // eslint-disable-line max-params

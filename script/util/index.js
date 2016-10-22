@@ -52,15 +52,6 @@ function ifDef(dst, src, prop, def) {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 }
 
-function arrayAddIfMissing(array, item) {
-	for (var i = 0; i < array.length; ++i) {
-		if (array[i] === item)
-			return false;
-	}
-	array.push(item);
-	return true;
-}
-
 function assert(condition, comment) {
 	if (!condition)
 		throw new Error(comment ? ('Assertion failed: ' + comment) : 'Assertion failed');
@@ -68,14 +59,6 @@ function assert(condition, comment) {
 
 function assertDefined(v) {
 	assert(!isNullOrUndefined(v));
-}
-
-function isEmpty(obj) {
-	for (var v in obj) {
-		if (obj.hasOwnProperty(v))
-			return false;
-	}
-	return true;
 }
 
 function isUndefined(variable) {
@@ -96,12 +79,10 @@ function isObject(obj) {
 
 module.exports = {
 	tfx: tfx,
-	isEmpty: isEmpty,
 	stopEventPropagation: stopEventPropagation,
 	preventDefault: preventDefault,
 	unicodeLiteral: unicodeLiteral,
 	ifDef: ifDef,
-	arrayAddIfMissing: arrayAddIfMissing,
 	assert: assert,
 	assertDefined: assertDefined,
 	isUndefined: isUndefined,

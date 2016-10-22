@@ -513,15 +513,19 @@ function dialog(modal, params, noAnimate) {
 	});
 }
 
-function updateStruct (mol) {
-	console.assert(mol, 'No molecule to update');
+function updateStruct(struct) {
+	console.assert(struct, 'No molecule to update');
 	ui.editor.setSelection(null);
-	addUndoAction(Action.fromNewCanvas(mol));
+	addUndoAction(Action.fromNewCanvas(struct));
 	ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 	ui.render.update();
-	ui.render.recoordinate(ui.render.getStructCenter());
+	ui.render.recoordinate(getStructCenter(ui.render.ctab));
 };
 
+function getStructCenter(restruct, selection) {
+	var bb = restruct.getVBoxObj(selection);
+	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+}
 
 function addUndoAction (action, check_dummy)
 {
@@ -641,7 +645,8 @@ function updateZoom (refresh) {
 	var value = parseFloat(zoomSelect.value) / 100;
 	if (refresh) {
 		ui.render.setZoom(value);
-		ui.render.recoordinate(ui.render.getStructCenter(ui.editor.getSelection()));
+		ui.render.recoordinate(getStructCenter(ui.ctab,
+		                                       ui.editor.getSelection()));
 		ui.render.update();
 	}
 }

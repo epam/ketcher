@@ -379,14 +379,14 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 			if (!Set.contains(a2.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
-				util.arrayAddIfMissing(sg.neiAtoms, bond.end);
+				arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
 		Set.each(a2.sgs, function (sgid) {
 			if (!Set.contains(a1.sgs, sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
-				util.arrayAddIfMissing(sg.neiAtoms, bond.begin);
+				arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
 		}, this);
 	}, this);
@@ -909,6 +909,16 @@ function RxnArrow(params) {
 RxnArrow.prototype.clone = function () {
 	return new RxnArrow(this);
 };
+
+function arrayAddIfMissing(array, item) {
+	for (var i = 0; i < array.length; ++i) {
+		if (array[i] === item)
+			return false;
+	}
+	array.push(item);
+	return true;
+}
+
 
 module.exports = Object.assign(Struct, {
 	Atom: Atom,

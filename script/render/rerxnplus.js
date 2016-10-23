@@ -1,8 +1,7 @@
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReRxnPlus(/* chem.RxnPlus*/plus) {
-	this.init(Visel.TYPE.PLUS);
+	this.init('rxnPlus');
 
 	this.item = plus;
 }

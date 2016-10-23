@@ -1,9 +1,8 @@
 var Box2Abs = require('../util/box2abs');
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReChiralFlag(pos) {
-	this.init(Visel.TYPE.CHIRAL_FLAG);
+	this.init('chiralFlag');
 
 	this.pp = pos;
 }

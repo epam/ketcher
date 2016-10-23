@@ -1,8 +1,7 @@
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReBond(/* chem.Bond*/bond) {
-	this.init(Visel.TYPE.BOND);
+	this.init('bond');
 
 	this.b = bond; // TODO rename b to item
 	this.doubleBondShift = 0;

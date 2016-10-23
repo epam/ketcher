@@ -1,12 +1,11 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 var ui = global.ui;
 
 function ReFrag(/* Struct.Fragment = {}*/frag) {
-	this.init(Visel.TYPE.FRAGMENT);
+	this.init('frag');
 
 	this.item = frag;
 }

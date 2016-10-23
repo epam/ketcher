@@ -1,10 +1,8 @@
 var Box2Abs = require('../util/box2abs');
-
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReAtom(/* chem.Atom*/atom) {
-	this.init(Visel.TYPE.ATOM);
+	this.init('atom');
 
 	this.a = atom; // TODO rename a to item
 	this.showLabel = false;

@@ -136,7 +136,7 @@ Render.prototype.setZoom = function (zoom) {
 	this.setViewBox(zoom);
 };
 
-function calcExtend(sSz, x0, y0, x1, y1) {
+function calcExtend(sSz, x0, y0, x1, y1) { // eslint-disable-line max-params
 	var ex = (x0 < 0) ? -x0 : 0;
 	var ey = (y0 < 0) ? -y0 : 0;
 

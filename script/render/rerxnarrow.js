@@ -1,8 +1,7 @@
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReRxnArrow(/* chem.RxnArrow*/arrow) {
-	this.init(Visel.TYPE.ARROW);
+	this.init('rxnArrow');
 
 	this.item = arrow;
 }

@@ -10,19 +10,6 @@ function Visel(type) {
 	this.boundingBox = null;
 }
 
-Visel.TYPE = {
-	ATOM: 1,
-	BOND: 2,
-	LOOP: 3,
-	ARROW: 4,
-	PLUS: 5,
-	SGROUP: 6,
-	TMP: 7, // [MK] TODO: do we still need it?
-	FRAGMENT: 8,
-	RGROUP: 9,
-	CHIRAL_FLAG: 10
-};
-
 Visel.prototype.add = function (path, bb, ext) {
 	this.paths.push(path);
 	if (bb) {

@@ -1,8 +1,7 @@
-var Visel = require('./visel');
 var ReObject = require('./reobject');
 
 function ReDataSGroupData(sgroup) {
-	this.init(Visel.TYPE.SGROUP_DATA);
+	this.init('sgroupData');
 
 	this.sgroup = sgroup;
 }

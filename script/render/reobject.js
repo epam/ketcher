@@ -1,9 +1,7 @@
-var Vec2 = require('../util/vec2');
 var Visel = require('./visel');
 var util = require('../util');
 
-function ReObject() { // TODO ??? should it be in ReStruct namespace
-	this.__ext = new Vec2(0.05 * 3, 0.05 * 3); // eslint-disable-line no-underscore-dangle
+function ReObject() {
 }
 
 ReObject.prototype.init = function (viselType) {
@@ -23,10 +21,6 @@ ReObject.prototype.getVBoxObj = function (render) {
 	if (render.offset)
 		vbox = vbox.translate(render.offset.negated());
 	return vbox.transform(render.scaled2obj, render);
-};
-
-ReObject.prototype.drawHighlight = function (render) { // eslint-disable-line no-unused-vars
-	console.log('ReObject.drawHighlight is not overridden'); // eslint-disable-line no-console
 };
 
 ReObject.prototype.setHighlight = function (highLight, render) { // TODO render should be field
@@ -53,8 +47,13 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 	this.highlight = highLight;
 };
 
-ReObject.prototype.makeSelectionPlate = function (render) { // eslint-disable-line no-unused-vars
-	console.log('ReObject.makeSelectionPlate is not overridden'); // eslint-disable-line no-console
+
+ReObject.prototype.drawHighlight = function () {
+	console.assert('ReObject.drawHighlight is not overridden'); // eslint-disable-line no-console
+};
+
+ReObject.prototype.makeSelectionPlate = function () {
+	console.assert(null, 'ReObject.makeSelectionPlate is not overridden'); // eslint-disable-line no-console
 };
 
 module.exports = ReObject;

@@ -2,12 +2,12 @@ var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
-var Visel = require('./visel');
-
 var ReObject = require('./reobject');
 
+var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
+
 function ReRGroup(/* Struct.RGroup*/rgroup) {
-	this.init(Visel.TYPE.RGROUP);
+	this.init('rgroup');
 
 	this.labelBox = null;
 	this.item = rgroup;
@@ -40,7 +40,7 @@ ReRGroup.prototype.calcBBox = function (render) {
 		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
 	});
-	ret = ret.extend(this.__ext, this.__ext); // eslint-disable-line no-underscore-dangle
+	ret = ret.extend(BORDER_EXT, BORDER_EXT); // eslint-disable-line no-underscore-dangle
 	return ret;
 };
 
@@ -132,7 +132,7 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 
 // TODO need to review parameter list
 ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-line no-underscore-dangle
-	var bb = this.getVBoxObj(render).extend(this.__ext, this.__ext); // eslint-disable-line no-underscore-dangle
+	var bb = this.getVBoxObj(render).extend(BORDER_EXT, BORDER_EXT); // eslint-disable-line no-underscore-dangle
 	if (bb) {
 		var p0 = render.obj2scaled(bb.p0);
 		var p1 = render.obj2scaled(bb.p1);

@@ -5,15 +5,13 @@ var Struct = require('../chem/struct');
 
 var util = require('../util');
 
-var Visel = require('./visel');
-
 var ReDataSGroupData = require('./redatasgroupdata');
 var ReObject = require('./reobject');
 
 var tfx = util.tfx;
 
 function ReSGroup(sgroup) {
-	this.init(Visel.TYPE.SGROUP);
+	this.init('sgroup');
 
 	this.item = sgroup;
 }

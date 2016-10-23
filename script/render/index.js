@@ -136,11 +136,32 @@ Render.prototype.setZoom = function (zoom) {
 	this.setViewBox(zoom);
 };
 
+function calcExtend(sSz, x0, y0, x1, y1) {
+	var ex = (x0 < 0) ? -x0 : 0;
+	var ey = (y0 < 0) ? -y0 : 0;
+
+	if (sSz.x < x1)
+		ex += x1 - sSz.x;
+	if (sSz.y < y1)
+		ey += y1 - sSz.y;
+	return new Vec2(ex, ey);
+}
+
 Render.prototype.setScrollOffset = function (x, y) {
 	var clientArea = this.clientArea;
 	var cx = clientArea.clientWidth;
 	var cy = clientArea.clientHeight;
-	this.extendCanvas(x, y, cx + x, cy + y);
+	var e = calcExtend(this.sz.scaled(this.zoom), x, y,
+	                   cx + x, cy + y).scaled(1 / this.zoom);
+	if (e.x > 0 || e.y > 0) {
+		this.setPaperSize(this.sz.add(e));
+		var d = new Vec2((x < 0) ? -x : 0,
+		                 (y < 0) ? -y : 0).scaled(1 / this.zoom);
+		if (d.x > 0 || d.y > 0) {
+			this.ctab.translate(d);
+			this.setOffset(this.offset.add(d));
+		}
+	}
 	clientArea.scrollLeft = x;
 	clientArea.scrollTop = y;
 	 // TODO: store drag position in scaled systems
@@ -158,46 +179,6 @@ Render.prototype.recoordinate = function (rp/* , vp*/) {
 	// var avp = this.obj2view(rp);
 	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
 	// this.setScrollOffset(so.x, so.y);
-};
-
-Render.prototype.extendCanvas = function (x0, y0, x1, y1) { // eslint-disable-line max-statements
-	var ex = 0,
-		ey = 0,
-		dx = 0,
-		dy = 0;
-	x0 -= 0;
-	x1 -= 0;
-	y0 -= 0;
-	y1 -= 0;
-
-	if (x0 < 0) {
-		ex += -x0;
-		dx += -x0;
-	}
-	if (y0 < 0) {
-		ey += -y0;
-		dy += -y0;
-	}
-
-	var szx = this.sz.x * this.zoom,
-		szy = this.sz.y * this.zoom;
-	if (szx < x1)
-		ex += x1 - szx;
-	if (szy < y1)
-		ey += y1 - szy;
-
-	var d = new Vec2(dx, dy).scaled(1 / this.zoom);
-	if (ey > 0 || ex > 0) {
-		var e = new Vec2(ex, ey).scaled(1 / this.zoom);
-		var sz = this.sz.add(e);
-
-		this.setPaperSize(sz);
-		if (d.x > 0 || d.y > 0) {
-			this.ctab.translate(d);
-			this.setOffset(this.offset.add(d));
-		}
-	}
-	return d;
 };
 
 Render.prototype.setScale = function (z) {

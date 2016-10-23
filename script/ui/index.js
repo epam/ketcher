@@ -112,7 +112,6 @@ function init (opts, apiServer) {
 		if (!keymage.getScope().startsWith('editor'))
 			keymage.setScope('editor');
 	});
-	//setScrollOffset(0, 0);
 	selectAction('select-lasso');
 
 	Event.observe(window, 'resize', function () {

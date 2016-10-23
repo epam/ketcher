@@ -1,4 +1,6 @@
 var Action = require('../../action');
+var Struct = require('../../../chem/struct');
+var Set = require('../../../util/set');
 
 var ui = global.ui;
 
@@ -22,13 +24,15 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 		}, this);
 
 		if (!Object.isUndefined(selection.atoms.detect(function (id) {
-			var sgroups = rnd.atomGetSGroups(id);
+			var atom = rnd.ctab.atoms.get(id);
+			var sgroups = Set.list(atom.a.sgs);
 
 			return !Object.isUndefined(sgroups.detect(function (sid) {
 				if (sid in verified)
 					return false;
 
-				var sgAtoms = rnd.sGroupGetAtoms(sid);
+				var sg = rnd.ctab.sgroups.get(sid).item;
+				var sgAtoms = Struct.SGroup.getAtoms(rnd.ctab.molecule, sg);
 
 				if (sgAtoms.length < selection.atoms.length) {
 					if (!Object.isUndefined(sgAtoms.detect(function (aid) {
@@ -49,9 +53,10 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 		}
 	}
 
+	var sg = (id != null) && rnd.ctab.sgroups.get(id).item;
 	ui.showSGroupProperties({
-		type: id !== null ? rnd.sGroupGetType(id) : this.defaultType,
-		attrs: id !== null ? rnd.sGroupGetAttrs(id) : {},
+		type: sg ? sg.type : this.defaultType,
+		attrs: sg ? sg.getAttrs() : {},
 		onCancel: function () {
 			this.editor.setSelection(null);
 		}.bind(this),

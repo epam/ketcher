@@ -1,6 +1,5 @@
 var Raphael = require('../raphael-ext');
 var Box2Abs = require('../util/box2abs');
-var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
 
@@ -208,103 +207,6 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	this.size = null;
 	this.bb = null;
 	this.update(false);
-};
-
-// molecule manipulation interface
-Render.prototype.atomGetAttr = function (aid, name) {
-	DEBUG.logMethod('atomGetAttr');
-	// TODO: check attribute names
-	return this.ctab.molecule.atoms.get(aid)[name];
-};
-
-Render.prototype.atomGetDegree = function (aid) {
-	DEBUG.logMethod('atomGetDegree');
-	return this.ctab.atoms.get(aid).a.neighbors.length;
-};
-
-Render.prototype.atomGetNeighbors = function (aid) {
-	var atom = this.ctab.atoms.get(aid);
-	var neiAtoms = [];
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = this.ctab.molecule.halfBonds.get(atom.a.neighbors[i]);
-		neiAtoms.push({
-			aid: hb.end - 0,
-			bid: hb.bid - 0
-		});
-	}
-	return neiAtoms;
-};
-
-// returns an array of s-group id's
-Render.prototype.atomGetSGroups = function (aid) {
-	DEBUG.logMethod('atomGetSGroups');
-	var atom = this.ctab.atoms.get(aid);
-	return Set.list(atom.a.sgs);
-};
-
-Render.prototype.sGroupGetAttr = function (sgid, name) {
-	DEBUG.logMethod('sGroupGetAttr');
-	return this.ctab.sgroups.get(sgid).item.getAttr(name);
-};
-
-Render.prototype.sGroupGetAttrs = function (sgid) {
-	DEBUG.logMethod('sGroupGetAttrs');
-	return this.ctab.sgroups.get(sgid).item.getAttrs();
-};
-
-// TODO: move to SGroup
-Render.prototype.sGroupGetAtoms = function (sgid) {
-	DEBUG.logMethod('sGroupGetAtoms');
-	var sg = this.ctab.sgroups.get(sgid).item;
-	return Struct.SGroup.getAtoms(this.ctab.molecule, sg);
-};
-
-Render.prototype.sGroupGetType = function (sgid) {
-	DEBUG.logMethod('sGroupGetType');
-	var sg = this.ctab.sgroups.get(sgid).item;
-	return sg.type;
-};
-
-Render.prototype.sGroupsFindCrossBonds = function () {
-	DEBUG.logMethod('sGroupsFindCrossBonds');
-	this.ctab.molecule.sGroupsRecalcCrossBonds();
-};
-
-// TODO: move to ReStruct
-Render.prototype.sGroupGetNeighborAtoms = function (sgid) {
-	DEBUG.logMethod('sGroupGetNeighborAtoms');
-	var sg = this.ctab.sgroups.get(sgid).item;
-	return sg.neiAtoms;
-};
-
-// TODO: move to ReStruct
-Render.prototype.atomIsPlainCarbon = function (aid) {
-	DEBUG.logMethod('atomIsPlainCarbon');
-	return this.ctab.atoms.get(aid).a.isPlainCarbon();
-};
-
-Render.prototype.itemGetPos = function (map, id) {
-	return this.ctab.molecule[map].get(id).pp;
-};
-
-Render.prototype.atomGetPos = function (id) {
-	DEBUG.logMethod('atomGetPos');
-	return this.itemGetPos('atoms', id);
-};
-
-Render.prototype.rxnArrowGetPos = function (id) {
-	DEBUG.logMethod('rxnArrowGetPos');
-	return this.itemGetPos('rxnArrows', id);
-};
-
-Render.prototype.rxnPlusGetPos = function (id) {
-	DEBUG.logMethod('rxnPlusGetPos');
-	return this.itemGetPos('rxnPluses', id);
-};
-
-Render.prototype.bondGetAttr = function (bid, name) {
-	DEBUG.logMethod('bondGetAttr');
-	return this.ctab.bonds.get(bid).b[name];
 };
 
 Render.prototype.initStyles = function () {

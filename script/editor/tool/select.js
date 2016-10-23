@@ -75,12 +75,13 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			function () {
 				delete self.dragCtx;
 				self.editor.setSelection(null);
+				var atom = rnd.ctab.molecule.atoms.get(ci.id);
 				ui.showLabelEditor({
-					// pos: rnd.obj2view(rnd.atomGetPos(ci.id)),
-					label: rnd.atomGetAttr(ci.id, 'label'),
-					charge: rnd.atomGetAttr(ci.id, 'charge'),
-					isotope: rnd.atomGetAttr(ci.id, 'isotope'),
-					radical: rnd.atomGetAttr(ci.id, 'radical'),
+					// pos: rnd.obj2view(atom.pp)
+					label: atom.label,
+					charge: atom.charge,
+					isotope: atom.isotope,
+					radical: atom.radical,
 
 					onOk: function (res) {
 						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, res), true);
@@ -181,21 +182,23 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 				}
 			});
 		} else if (element.getElementByLabel(atom.label)) {
-			var charge = rnd.atomGetAttr(ci.id, 'charge') - 0;
-			var isotope = rnd.atomGetAttr(ci.id, 'isotope') - 0;
-			var explicitValence = rnd.atomGetAttr(ci.id, 'explicitValence') - 0;
+			// TODO: the same as atom?
+			var atom2 = rnd.ctab.molecule.atoms.get(ci.id);
+			var charge = atom2.charge - 0;
+			var isotope = atom2.isotope - 0;
+			var explicitValence = atom2.explicitValence - 0;
 			ui.showAtomProperties({
-				label: rnd.atomGetAttr(ci.id, 'label'),
+				label: atom2.label,
 				charge: charge == 0 ? '' : charge,
 				isotope: isotope == 0 ? '' : isotope,
 				explicitValence: explicitValence < 0 ? '' : explicitValence,
-				radical: rnd.atomGetAttr(ci.id, 'radical'),
-				invRet: rnd.atomGetAttr(ci.id, 'invRet'),
-				exactChangeFlag: rnd.atomGetAttr(ci.id, 'exactChangeFlag'),
-				ringBondCount: rnd.atomGetAttr(ci.id, 'ringBondCount'),
-				substitutionCount: rnd.atomGetAttr(ci.id, 'substitutionCount'),
-				unsaturatedAtom: rnd.atomGetAttr(ci.id, 'unsaturatedAtom'),
-				hCount: rnd.atomGetAttr(ci.id, 'hCount'),
+				radical: atom2.radical,
+				invRet: atom2.invRet,
+				exactChangeFlag: atom2.exactChangeFlag,
+				ringBondCount: atom2.ringBondCount,
+				substitutionCount: atom2.substitutionCount,
+				unsaturatedAtom: atom2.unsaturatedAtom,
+				hCount: atom2.hCount,
 				onOk: function (res) {
 					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {
 						label: res.label,
@@ -230,12 +233,13 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		}
 	} else if (ci.map == 'bonds') {
 		this.editor.setSelection(ci);
-		var type = rnd.bondGetAttr(ci.id, 'type');
-		var stereo = rnd.bondGetAttr(ci.id, 'stereo');
+		var bond = rnd.ctab.bonds.get(ci.id).b;
+		var type = bond.type;
+		var stereo = bond.stereo;
 		ui.showBondProperties({
 			type: Struct.Bond.type2Caption(type, stereo),
-			topology: rnd.bondGetAttr(ci.id, 'topology') || 0,
-			center: rnd.bondGetAttr(ci.id, 'reactingCenterStatus') || 0,
+			topology: bond.topology || 0,
+			center: bond.reactingCenterStatus || 0,
 			onOk: function (res) {
 				var bond = Object.assign(Struct.Bond.caption2Type(res.type), {
 					topology: parseInt(res.topology, 10),

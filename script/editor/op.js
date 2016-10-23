@@ -84,7 +84,7 @@ function AtomDelete(aid) {
 		var struct = restruct.molecule;
 		if (!this.data.atom) {
 			this.data.atom = struct.atoms.get(this.data.aid);
-			this.data.pos = rnd.atomGetPos(this.data.aid);
+			this.data.pos = this.data.atom.pp;
 		}
 
 		// notifyAtomRemoved(this.data.aid);
@@ -604,7 +604,7 @@ function RxnArrowDelete(arid) {
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
 		if (!this.data.pos)
-			this.data.pos = rnd.rxnArrowGetPos(this.data.arid);
+			this.data.pos = struct.rxnArrows.get(this.data.arid).pp;
 
 		// notifyRxnArrowRemoved
 		restruct.markItemRemoved();
@@ -676,7 +676,7 @@ function RxnPlusDelete(plid) {
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
 		if (!this.data.pos)
-			this.data.pos = rnd.rxnPlusGetPos(this.data.plid);
+			this.data.pos = struct.rxnPluses.get(this.data.plid).pp;
 
 		// notifyRxnPlusRemoved
 		restruct.markItemRemoved();

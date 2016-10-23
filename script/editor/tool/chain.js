@@ -27,7 +27,8 @@ ChainTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		if ('action' in dragCtx) dragCtx.action.perform();
-		var pos0 = 'item' in dragCtx ? rnd.atomGetPos(dragCtx.item.id) : dragCtx.xy0;
+		var atoms = rnd.ctab.molecule.atoms;
+		var pos0 = 'item' in dragCtx ? atoms.get(dragCtx.item.id).pp : dragCtx.xy0;
 		var pos1 = rnd.page2obj(event);
 		dragCtx.action = Action.fromChain(
 			pos0,

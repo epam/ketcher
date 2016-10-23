@@ -32,12 +32,13 @@ ReactionMapTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
+		var atoms = rnd.ctab.molecule.atoms;
 		if (ci && ci.map == 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
 			this.hoverHelper.hover(ci);
-			this.updateLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.atomGetPos(ci.id));
+			this.updateLine(atoms.get(this.dragCtx.item.id).pp, atoms.get(ci.id).pp);
 		} else {
 			this.hoverHelper.hover(null);
-			this.updateLine(rnd.atomGetPos(this.dragCtx.item.id), rnd.page2obj(event));
+			this.updateLine(atoms.get(this.dragCtx.item.id).pp, rnd.page2obj(event));
 		}
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));

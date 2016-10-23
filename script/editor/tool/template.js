@@ -59,7 +59,7 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 		var molecule = rnd.ctab.molecule;
 		var xy0 = new Vec2();
 		var bond = molecule.bonds.get(ci.id);
-		var frid = rnd.atomGetAttr(bond.begin, 'fragment');
+		var frid = molecule.atoms.get(bond.begin).fragment;
 		var frIds = molecule.getFragmentIds(frid);
 		var count = 0;
 
@@ -104,16 +104,16 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 
 		dragCtx.mouse_moved = true;
 
+		var struct = rnd.ctab.molecule;
 		// calc initial pos and is extra bond needed
 		if (!ci || ci.type == 'Canvas') {
 			pos0 = dragCtx.xy0;
 		} else if (ci.map == 'atoms') {
-			pos0 = rnd.atomGetPos(ci.id);
+			pos0 = struct.atoms.get(ci.id).pp;
 			extraBond = Vec2.dist(pos0, pos1) > 1;
 		} else if (ci.map == 'bonds') {
-			var molecule = rnd.ctab.molecule;
-			var bond = molecule.bonds.get(ci.id);
-			var sign = this.getSign(molecule, bond, pos1);
+			var bond = struct.bonds.get(ci.id);
+			var sign = this.getSign(struct, bond, pos1);
 
 			if (dragCtx.sign1 * this.template.sign > 0)
 				sign = -sign;
@@ -171,12 +171,14 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
+		var restruct = render.ctab;
+		var struct = restruct.molecule;
 
 		if (!dragCtx.action) {
 			if (!ci || ci.type == 'Canvas') {
 				dragCtx.action = Action.fromTemplateOnCanvas(dragCtx.xy0, 0, this.template);
 			} else if (ci.map == 'atoms') {
-				var degree = render.atomGetDegree(ci.id);
+				var degree = restruct.atoms.get(ci.id).a.neighbors.length;
 
 				if (degree > 1) { // common case
 					dragCtx.action = Action.fromTemplateOnAtom(
@@ -187,10 +189,9 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 						this.calcAngle
 					);
 				} else if (degree == 1) { // on chain end
-					var molecule = render.ctab.molecule;
-					var neiId = molecule.halfBonds.get(molecule.atoms.get(ci.id).neighbors[0]).end;
-					var atom = molecule.atoms.get(ci.id);
-					var nei = molecule.atoms.get(neiId);
+					var neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
+					var atom = struct.atoms.get(ci.id);
+					var nei = struct.atoms.get(neiId);
 
 					dragCtx.action = Action.fromTemplateOnAtom(
 						ci.id,

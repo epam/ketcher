@@ -31,8 +31,9 @@ AtomTool.prototype.OnMouseMove = function (event) {
 	var rnd = editor.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
 		var dragCtx = this.dragCtx;
+		var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
 		var newAtomPos = this.calcNewAtomPos(
-		rnd.atomGetPos(dragCtx.item.id), rnd.page2obj(event)
+			atom.pp, rnd.page2obj(event)
 		);
 		if ('action' in dragCtx)
 			dragCtx.action.perform();

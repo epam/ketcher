@@ -97,7 +97,8 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
 
-	this.coordProcess(norescale);
+	if (!norescale)
+		this.molecule.rescale();
 }
 
 ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
@@ -110,14 +111,6 @@ ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 		this.connectedComponents.remove(atom.component);
 
 	atom.component = -1;
-};
-
-ReStruct.prototype.printConnectedComponents = function () {
-	var strs = [];
-	this.connectedComponents.each(function (ccid, cc) {
-		strs.push(' ' + ccid + ':[' + Set.list(cc).toString() + '].' + Set.size(cc).toString());
-	}, this);
-	console.log(strs.toString());
 };
 
 ReStruct.prototype.clearConnectedComponents = function () {
@@ -481,11 +474,11 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	this.showLabels();
 	this.showBonds();
 	if (updLoops)
-		this.renderLoops();
-	this.drawReactionSymbols();
-	this.drawSGroups();
-	this.drawFragments();
-	this.drawRGroups();
+		this.showLoops();
+	this.showReactionSymbols();
+	this.showSGroups();
+	this.showFragments();
+	this.showRGroups();
 	this.chiralFlags.each(function (id, item) {
 		if (this.chiralFlagsChanged[id] > 0)
 			item.draw(this.render);
@@ -531,7 +524,7 @@ ReStruct.prototype.updateLoops = function () {
 	}, this);
 };
 
-ReStruct.prototype.renderLoops = function () {
+ReStruct.prototype.showLoops = function () {
 	var render = this.render;
 	var settings = render.settings;
 	var paper = render.paper;
@@ -613,20 +606,20 @@ ReStruct.prototype.renderLoops = function () {
 	}, this);
 };
 
-ReStruct.prototype.drawReactionSymbols = function () {
+ReStruct.prototype.showReactionSymbols = function () {
 	var item;
 	var id;
 	for (id in this.rxnArrowsChanged) {
 		item = this.rxnArrows.get(id);
-		this.drawReactionArrow(id, item);
+		this.showReactionArrow(id, item);
 	}
 	for (id in this.rxnPlusesChanged) {
 		item = this.rxnPluses.get(id);
-		this.drawReactionPlus(id, item);
+		this.showReactionPlus(id, item);
 	}
 };
 
-ReStruct.prototype.drawReactionArrow = function (id, item) {
+ReStruct.prototype.showReactionArrow = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
 	var path = draw.arrow(this.render, new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
@@ -635,7 +628,7 @@ ReStruct.prototype.drawReactionArrow = function (id, item) {
 		path.translateAbs(offset.x, offset.y);
 };
 
-ReStruct.prototype.drawReactionPlus = function (id, item) {
+ReStruct.prototype.showReactionPlus = function (id, item) {
 	var centre = this.render.ps(item.item.pp);
 	var path = draw.plus(this.render, centre);
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
@@ -644,7 +637,7 @@ ReStruct.prototype.drawReactionPlus = function (id, item) {
 		path.translateAbs(offset.x, offset.y);
 };
 
-ReStruct.prototype.drawSGroups = function () {
+ReStruct.prototype.showSGroups = function () {
 	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var resgroup = this.sgroups.get(id);
 		var sgroup = resgroup.item;
@@ -657,7 +650,7 @@ ReStruct.prototype.drawSGroups = function () {
 	}, this);
 };
 
-ReStruct.prototype.drawFragments = function () {
+ReStruct.prototype.showFragments = function () {
 	this.frags.each(function (id, frag) {
 		var path = frag.draw(this.render, id);
 		if (path) this.addReObjectPath('data', frag.visel, path, null, true);
@@ -665,7 +658,7 @@ ReStruct.prototype.drawFragments = function () {
 	}, this);
 };
 
-ReStruct.prototype.drawRGroups = function () {
+ReStruct.prototype.showRGroups = function () {
 	this.rgroups.each(function (id, rgroup) {
 		var drawing = rgroup.draw(this.render);
 		for (var group in drawing) {
@@ -730,11 +723,6 @@ ReStruct.prototype.setImplicitHydrogen = function () {
 	this.molecule.setImplicitHydrogen(Object.keys(this.atomsChanged));
 };
 
-ReStruct.prototype.coordProcess = function (norescale) {
-	if (!norescale)
-		this.molecule.rescale();
-};
-
 ReStruct.prototype.loopRemove = function (loopId) {
 	if (!this.reloops.has(loopId))
 		return;
@@ -774,27 +762,6 @@ ReStruct.prototype.verifyLoops = function () {
 	}, this);
 	for (var i = 0; i < toRemove.length; ++i)
 		this.loopRemove(toRemove[i]);
-};
-
-ReStruct.prototype.BFS = function (onAtom, orig, context) {
-	orig -= 0;
-	var queue = [];
-	var mask = {};
-	queue.push(orig);
-	mask[orig] = 1;
-	while (queue.length > 0) {
-		var aid = queue.shift();
-		onAtom.call(context, aid);
-		var atom = this.atoms.get(aid);
-		for (var i = 0; i < atom.a.neighbors.length; ++i) {
-			var nei = atom.a.neighbors[i];
-			var hb = this.molecule.halfBonds.get(nei);
-			if (!mask[hb.end]) {
-				mask[hb.end] = 1;
-				queue.push(hb.end);
-			}
-		}
-	}
 };
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements

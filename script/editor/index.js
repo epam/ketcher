@@ -264,7 +264,7 @@ Editor.prototype.selectAll = function () {
 	this.setSelection(selection);
 };
 
-Editor.prototype.getSelectionStruct = function () {
+Editor.prototype.selectedStruct = function () {
 	var struct = this.render.ctab.molecule;
 	var selection = this.getSelection(true);
 	var dst = struct.clone(Set.fromList(selection.atoms),
@@ -280,7 +280,8 @@ Editor.prototype.getSelectionStruct = function () {
 		if (selection.rxnPluses.indexOf(id) != -1)
 			dst.rxnPluses.add(item.clone());
 	});
-// TODO: Chiral
+	dst.isChiral = (selection.chiralFlags.length > 0);
+
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&
 		(dst.rxnArrows.count() || dst.rxnPluses.count());

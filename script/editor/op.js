@@ -752,8 +752,12 @@ function ChiralFlagAdd(pos) {
 		var rnd = editor.render;
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
-		if (restruct.chiralFlags.count() > 0)
-			throw new Error('Cannot add more than one Chiral flag');
+		if (restruct.chiralFlags.count() > 0) {
+			// throw new Error('Cannot add more than one Chiral flag');
+			restruct.clearVisel(restruct.chiralFlags.get(0).visel);
+			restruct.chiralFlags.unset(0);
+		}
+
 		restruct.chiralFlags.set(0, new ReStruct.ChiralFlag(pos));
 		struct.isChiral = true;
 		invalidateItem(restruct, 'chiralFlags', 0, 1);

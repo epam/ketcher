@@ -1254,6 +1254,12 @@ function fromPaste(struct, point) { // eslint-disable-line max-statements
 	for (var rpid = 0; rpid < clipboard.rxnPluses.length; rpid++)
 		action.addOp(new op.RxnPlusAdd(clipboard.rxnPluses[rpid].pp.add(offset)).perform(ui.editor));
 	// thats all
+	if (struct.isChiral) {
+		// mimic Restruct initialization
+		var bb = struct.getCoordBoundingBox();
+		var pp = new Vec2(bb.max.x, bb.min.y - 1);
+		action.addOp(new op.ChiralFlagAdd(pp.add(offset))).perform(ui.editor);
+	}
 	action.operations.reverse();
 	return action;
 }

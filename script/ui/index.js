@@ -812,12 +812,12 @@ var actionMap = {
 		return serverTransform('calculateCip');
 	},
 	cut: function () {
-		var struct = ui.editor.getSelectionStruct();
+		var struct = ui.editor.selectedStruct();
 		removeSelected();
 		return struct.isBlank() ? null : struct;
 	},
 	copy: function () {
-		var struct = ui.editor.getSelectionStruct();
+		var struct = ui.editor.selectedStruct();
 		ui.editor.setSelection(null);
 		return struct.isBlank() ? null : struct;
 	},

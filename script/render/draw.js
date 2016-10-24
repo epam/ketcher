@@ -438,6 +438,22 @@ function radicalBullet(render, p) {
 		});
 }
 
+function bracket(render, d, n, c, bracketWidth, bracketHeight) { // eslint-disable-line max-params
+	var paper = render.paper;
+	var styles = render.styles;
+	bracketWidth = bracketWidth || 0.25;
+	bracketHeight = bracketHeight || 1.0;
+	var a0 = c.addScaled(n, -0.5 * bracketHeight);
+	var a1 = c.addScaled(n, 0.5 * bracketHeight);
+	var b0 = a0.addScaled(d, -bracketWidth);
+	var b1 = a1.addScaled(d, -bracketWidth);
+
+	return paper.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
+	                  tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
+	                  tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y))
+		.attr(styles.sgroupBracketStyle);
+}
+
 function selectionRectangle(render, p0, p1) {
 	var paper = render.paper;
 	var styles = render.styles;
@@ -575,6 +591,7 @@ module.exports = {
 	topologyMark: topologyMark,
 	radicalCap: radicalCap,
 	radicalBullet: radicalBullet,
+	bracket: bracket,
 	selectionRectangle: selectionRectangle,
 	selectionPolygon: selectionPolygon,
 	selectionLine: selectionLine

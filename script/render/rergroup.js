@@ -1,6 +1,7 @@
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var util = require('../util');
+var draw = require('./draw');
 
 var ReObject = require('./reobject');
 
@@ -45,13 +46,21 @@ ReRGroup.prototype.calcBBox = function (render) {
 };
 
 function rGroupdrawBrackets(set, render, bb, d) {
-	d = d || new Vec2(1, 0);
+	d = render.obj2scaled(d || new Vec2(1, 0));
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
-	var height = bb.p1.y - bb.p0.y;
+	var bracketHeight = bb.p1.y - bb.p0.y;
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
-	var leftBracket = render.drawBracket(d.negated(), d.negated().rotateSC(1, 0), new Vec2(bb.p0.x, cy), bracketWidth, height);
-	var rightBracket = render.drawBracket(d, d.rotateSC(1, 0), new Vec2(bb.p1.x, cy), bracketWidth, height);
-	set.push(leftBracket, rightBracket);
+
+	var leftBracket = draw.bracket(render, d.negated(),
+	                               d.negated().rotateSC(1, 0),
+	                               render.obj2scaled(new Vec2(bb.p0.x, cy)),
+	                               bracketWidth, bracketHeight);
+
+	var rightBracket = draw.bracket(render, d, d.rotateSC(1, 0),
+	                                render.obj2scaled(new Vec2(bb.p1.x, cy)),
+	                                bracketWidth, bracketHeight);
+
+	return set.push(leftBracket, rightBracket);
 }
 
 // TODO need to review parameter list

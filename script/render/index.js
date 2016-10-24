@@ -1,12 +1,9 @@
 var Raphael = require('../raphael-ext');
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
-var util = require('../util');
 
 var Struct = require('../chem/struct');
 var ReStruct = require('./restruct');
-
-var tfx = util.tfx;
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
@@ -340,25 +337,6 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			/* eslint-enable no-mixed-operators*/
 		}
 	}
-};
-
-Render.prototype.drawBracket = function (d, n, c, bracketWidth, bracketHeight) { // eslint-disable-line max-params
-	bracketWidth = bracketWidth || 0.25;
-	bracketHeight = bracketHeight || 1.0;
-	var a0 = c.addScaled(n, -0.5 * bracketHeight);
-	var a1 = c.addScaled(n, 0.5 * bracketHeight);
-	var b0 = a0.addScaled(d, -bracketWidth);
-	var b1 = a1.addScaled(d, -bracketWidth);
-
-	a0 = this.obj2scaled(a0);
-	a1 = this.obj2scaled(a1);
-	b0 = this.obj2scaled(b0);
-	b1 = this.obj2scaled(b1);
-
-	return this.paper.path('M {0}, {1} L {2} , {3} L {4} , {5} L {6} , {7}',
-	                       tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
-	                       tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y))
-		.attr(this.styles.sgroupBracketStyle);
 };
 
 module.exports = Render;

@@ -2,6 +2,7 @@ var Box2Abs = require('../util/box2abs');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var Struct = require('../chem/struct');
+var draw = require('./draw');
 
 var util = require('../util');
 
@@ -30,7 +31,10 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerInd
 	var ir = -1;
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
-		var path = render.drawBracket(bracket.d, bracket.n, bracket.c, bracket.w, bracket.h);
+		var path = draw.bracket(render, render.obj2scaled(bracket.d),
+		                        render.obj2scaled(bracket.n),
+		                        render.obj2scaled(bracket.c),
+		                        bracket.w, bracket.h);
 		set.push(path);
 		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
 			ir = i;

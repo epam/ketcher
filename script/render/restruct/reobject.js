@@ -1,5 +1,5 @@
 var Visel = require('./visel');
-var util = require('../util');
+var util = require('../../util');
 
 function ReObject() {
 }

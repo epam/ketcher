@@ -1,4 +1,4 @@
-var Box2Abs = require('../util/box2abs');
+var Box2Abs = require('../../util/box2abs');
 var ReObject = require('./reobject');
 
 function ReAtom(/* chem.Atom*/atom) {

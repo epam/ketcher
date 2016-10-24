@@ -1,10 +1,10 @@
-var Box2Abs = require('../util/box2abs');
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
-var Struct = require('../chem/struct');
-var draw = require('./draw');
+var Box2Abs = require('../../util/box2abs');
+var Set = require('../../util/set');
+var Vec2 = require('../../util/vec2');
+var util = require('../../util');
 
-var util = require('../util');
+var Struct = require('../../chem/struct');
+var draw = require('../draw');
 
 var ReDataSGroupData = require('./redatasgroupdata');
 var ReObject = require('./reobject');

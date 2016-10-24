@@ -2,15 +2,7 @@ var Vec2 = require('../util/vec2');
 var Set = require('../util/set');
 
 var Struct = require('../chem/struct');
-
-var ReAtom = require('../render/reatom');
-var ReBond = require('../render/rebond');
-var ReRxnPlus = require('../render/rerxnplus');
-var ReRxnArrow = require('../render/rerxnarrow');
-var ReFrag = require('../render/refrag');
-var ReRGroup = require('../render/rergroup');
-var ReChiralFlag = require('../render/rechiralflag');
-var ReSGroup = require('../render/resgroup');
+var ReStruct = require('../render/restruct');
 
 var ui = global.ui;
 
@@ -61,7 +53,7 @@ function AtomAdd(atom, pos) {
 			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
 
 		// notifyAtomAdded
-		var atomData = new ReAtom(restruct.molecule.atoms.get(this.data.aid));
+		var atomData = new ReStruct.Atom(restruct.molecule.atoms.get(this.data.aid));
 		atomData.component = restruct.connectedComponents.add(Set.single(this.data.aid));
 		restruct.atoms.set(this.data.aid, atomData);
 		restruct.markAtom(this.data.aid, 1);
@@ -275,7 +267,7 @@ function SGroupCreate(sgid, type, pp) {
 		struct.sgroups.set(sgid, sg);
 		if (this.data.pp)
 			struct.sgroups.get(sgid).pp = new Vec2(this.data.pp);
-		restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)));
+		restruct.sgroups.set(sgid, new ReStruct.SGroup(struct.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
 	this.invert = function () {
@@ -388,7 +380,7 @@ function BondAdd(begin, end, bond) {
 		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb2);
 
 		// notifyBondAdded
-		restruct.bonds.set(this.data.bid, new ReBond(restruct.molecule.bonds.get(this.data.bid)));
+		restruct.bonds.set(this.data.bid, new ReStruct.Bond(restruct.molecule.bonds.get(this.data.bid)));
 		restruct.markBond(this.data.bid, 1);
 	};
 	this.invert = function () {
@@ -483,7 +475,7 @@ function FragmentAdd(frid) {
 			this.frid = struct.frags.add(frag);
 		else
 			struct.frags.set(this.frid, frag);
-		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+		restruct.frags.set(this.frid, new ReStruct.Frag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 	this.invert = function () {
 		return new FragmentDelete(this.frid);
@@ -558,7 +550,7 @@ function RGroupFragment(rgid, frid, rg) {
 			if (!rgNew) {
 				rgNew = this.rg_new || new Struct.RGroup();
 				struct.rgroups.set(this.rgid_new, rgNew);
-				restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
+				restruct.rgroups.set(this.rgid_new, new ReStruct.RGroup(rgNew));
 			} else {
 				restruct.markItem('rgroups', this.rgid_new, 1);
 			}
@@ -583,7 +575,7 @@ function RxnArrowAdd(pos) {
 			struct.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 
 		// notifyRxnArrowAdded
-		restruct.rxnArrows.set(this.data.arid, new ReRxnArrow(restruct.molecule.rxnArrows.get(this.data.arid)));
+		restruct.rxnArrows.set(this.data.arid, new ReStruct.RxnArrow(restruct.molecule.rxnArrows.get(this.data.arid)));
 
 		struct.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
@@ -655,7 +647,7 @@ function RxnPlusAdd(pos) {
 			struct.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 
 		// notifyRxnPlusAdded
-		restruct.rxnPluses.set(this.data.plid, new ReRxnPlus(restruct.molecule.rxnPluses.get(this.data.plid)));
+		restruct.rxnPluses.set(this.data.plid, new ReStruct.RxnPlus(restruct.molecule.rxnPluses.get(this.data.plid)));
 
 		struct.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
@@ -762,7 +754,7 @@ function ChiralFlagAdd(pos) {
 		var struct = restruct.molecule;
 		if (restruct.chiralFlags.count() > 0)
 			throw new Error('Cannot add more than one Chiral flag');
-		restruct.chiralFlags.set(0, new ReChiralFlag(pos));
+		restruct.chiralFlags.set(0, new ReStruct.ChiralFlag(pos));
 		struct.isChiral = true;
 		invalidateItem(restruct, 'chiralFlags', 0, 1);
 	};

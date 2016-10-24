@@ -1,7 +1,7 @@
-var Box2Abs = require('../util/box2abs');
-var Vec2 = require('../util/vec2');
-var util = require('../util');
-var draw = require('./draw');
+var Box2Abs = require('../../util/box2abs');
+var Vec2 = require('../../util/vec2');
+var util = require('../../util');
+var draw = require('../draw');
 
 var ReObject = require('./reobject');
 

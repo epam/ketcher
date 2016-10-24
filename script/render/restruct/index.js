@@ -1,15 +1,15 @@
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
-var Box2Abs = require('../util/box2abs');
-var Map = require('../util/map');
-var Pool = require('../util/pool');
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
-var util = require('../util');
-var element = require('../chem/element');
-var Struct = require('../chem/struct');
+var Box2Abs = require('../../util/box2abs');
+var Map = require('../../util/map');
+var Pool = require('../../util/pool');
+var Set = require('../../util/set');
+var Vec2 = require('../../util/vec2');
+var util = require('../../util');
+var element = require('../../chem/element');
+var Struct = require('../../chem/struct');
 
-var draw = require('./draw');
+var draw = require('../draw');
 
 var ReAtom = require('./reatom');
 var ReBond = require('./rebond');
@@ -1491,4 +1491,13 @@ ReStruct.maps = {
 	reloops: ReLoop
 };
 
-module.exports = ReStruct;
+module.exports = Object.assign(ReStruct, {
+	Atom: ReAtom,
+	Bond: ReBond,
+	RxnPlus: ReRxnPlus,
+	RxnArrow: ReRxnArrow,
+	Frag: ReFrag,
+	RGroup: ReRGroup,
+	ChiralFlag: ReChiralFlag,
+	SGroup: ReSGroup
+});

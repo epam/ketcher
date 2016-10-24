@@ -1,5 +1,5 @@
-var Box2Abs = require('../util/box2abs');
-var Vec2 = require('../util/vec2');
+var Box2Abs = require('../../util/box2abs');
+var Vec2 = require('../../util/vec2');
 var ReObject = require('./reobject');
 
 var ui = global.ui;

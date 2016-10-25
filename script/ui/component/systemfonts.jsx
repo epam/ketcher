@@ -37,11 +37,11 @@ class SystemFonts extends Component {
 	render() {
 		let {...props} = this.props;
 		let content = this.state.availableFonts.map((fontName) =>
-			<div style={{ fontFamily: fontName }}>{fontName}</div>);
+			<option value={fontName}>{fontName}</option>);
 		return (
-			<div {...props}>
+			<select {...props}>
 				{content}
-			</div>
+			</select>
 		);
 	}
 }

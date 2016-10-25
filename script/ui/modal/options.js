@@ -63,7 +63,13 @@ function opts() {
         type: 'number',
         defaultValue: 13,
         values: [10, 13, 100], //?
-        tab: 'render' }
+        tab: 'render' },
+
+		{ name: 'fontFamily',
+		label: 'Font',
+		type: 'string',
+		defaultValue: "Arial",
+		tab: 'render' }
     ];
 }
 

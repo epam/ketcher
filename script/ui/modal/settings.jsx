@@ -2,9 +2,10 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
-import OpenButton from '../component/openbutton'
-import SaveButton from '../component/savebutton'
-import Accordion from '../component/accordion'
+import OpenButton from '../component/openbutton';
+import SaveButton from '../component/savebutton';
+import Accordion from '../component/accordion';
+import SystemFonts from '../component/systemfonts'
 import defaultOptions from './options';
 
 class Settings extends Component {
@@ -61,6 +62,13 @@ class Settings extends Component {
     createSelectList(elem) {
 		let change = this.changeState;
     	let {values, type, name, label} = elem;
+		if (name == 'fontFamily')
+			return (
+				<li>
+					<div> { label } </div>
+					<div><SystemFonts onChange={ev => change(name, ev.target.value)}/></div>
+				</li>
+			);
 		if (type == 'boolean')
 			return (
 				<li>

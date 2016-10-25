@@ -19,25 +19,34 @@ let commonFonts = [
 	"Droid Sans", "Droid Serif", "Droid Sans Mono", "Roboto"
 ];
 
+function checkInSystem() {
+	let availableFontsPromises = commonFonts.map((fontName) => {
+		let observer = new FontFaceObserver(fontName);
+		return observer.check().then(() => fontName, () => null);
+	});
+	return Promise.all(availableFontsPromises);
+}
+
+let cache = null;
+
 class SystemFonts extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { availableFonts: [] };
-		let observer, tmp;
-
-		commonFonts.forEach((fontName) => {
-			observer = new FontFaceObserver(fontName);
-			observer.check().then(() => {
-				tmp = this.state.availableFonts;
-				tmp.push(fontName);
-				this.setState({ availableFonts: tmp })
+		this.setAvailableFonts();
+	}
+	setAvailableFonts() {
+		cache ? this.setState({ availableFonts: cache }) :
+			checkInSystem().then((results) => {
+				cache = results.filter((i) => i !== null);
+				this.setState({ availableFonts: cache });
 			});
-		});
 	}
 	render() {
-		let {...props} = this.props;
+		let {current, ...props} = this.props;
 		let content = this.state.availableFonts.map((fontName) =>
-			<option value={fontName}>{fontName}</option>);
+			fontName == current ? <option value={fontName} selected>{fontName}</option> :
+					<option value={fontName}>{fontName}</option>);
 		return (
 			<select {...props}>
 				{content}

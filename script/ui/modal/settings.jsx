@@ -66,7 +66,7 @@ class Settings extends Component {
 			return (
 				<li>
 					<div> { label } </div>
-					<div><SystemFonts onChange={ev => change(name, ev.target.value)}/></div>
+					<div><SystemFonts current={this.state.opts.fontFamily} onChange={ev => change(name, ev.target.value)}/></div>
 				</li>
 			);
 		if (type == 'boolean')

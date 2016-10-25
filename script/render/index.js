@@ -57,6 +57,7 @@ function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-sta
 	this.clientAreaPos = new Vec2(valueL, valueT);
 
 	this.ctab = new ReStruct(new Struct(), this);
+	this.font = opt.fontFamily || "Arial";
 	this.settings = null;
 	this.styles = null;
 }
@@ -259,7 +260,7 @@ Render.prototype.initSettings = function () {
 		bondSpace: scaleFactor / 7,
 		labelFontSize: labelFontSize,
 		subFontSize: subFontSize,
-		font: '30px "Arial"',
+		font: '30px ' + this.font,
 		fontsz: labelFontSize,
 		fontszsub: subFontSize,
 		fontRLabel: labelFontSize * 1.2,

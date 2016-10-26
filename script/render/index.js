@@ -5,30 +5,13 @@ var Vec2 = require('../util/vec2');
 var Struct = require('../chem/struct');
 var ReStruct = require('./restruct');
 
+var defaultSettingsAndStyles = require('./options');
+
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 // DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
-var defaultRenderOps = {
-	// flags for debugging
-	showAtomIds: false,
-	showBondIds: false,
-	showHalfBondIds: false,
-	showLoopIds: false,
-	// rendering customization flags
-	hideChiralFlag: false,
-	showValenceWarnings: true,
-	autoScale: false, // scale structure to fit into the given view box, used in view mode
-	autoScaleMargin: 0,
-	maxBondLength: 0, // 0 stands for "not specified"
-	atomColoring: false,
-	hideImplicitHydrogen: false,
-	hideTerminalLabels: false
-};
-
 function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements
-	this.opt = Object.assign({}, defaultRenderOps, opt);
-
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
 	this.baseScale = this.scale;
@@ -57,9 +40,10 @@ function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-sta
 	this.clientAreaPos = new Vec2(valueL, valueT);
 
 	this.ctab = new ReStruct(new Struct(), this);
-	this.font = opt.fontFamily || "Arial";
-	this.settings = null;
-	this.styles = null;
+
+	var defaultOpts = defaultSettingsAndStyles(scale, opt, this.ctab);
+	this.settings = defaultOpts.settings;
+	this.styles = defaultOpts.styles;
 }
 
 Render.prototype.addStructChangeHandler = function (handler) {
@@ -207,84 +191,19 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	this.update(false);
 };
 
-Render.prototype.initStyles = function () {
-	// TODO move fonts, dashed lines, etc. here
-	var settings = this.settings;
-	this.styles = {};
-	/* eslint-disable quote-props */
-	this.styles.lineattr = {
-		stroke: '#000',
-		'stroke-width': settings.lineWidth,
-		'stroke-linecap': 'round',
-		'stroke-linejoin': 'round'
-	};
-	/* eslint-enable quote-props */
-	this.styles.selectionStyle = {
-		fill: '#7f7',
-		stroke: 'none'
-	};
-	this.styles.selectionZoneStyle = {
-		fill: '#000',
-		stroke: 'none',
-		opacity: 0.0
-	};
-	this.styles.highlightStyle = {
-		'stroke': '#0c0',
-		'stroke-width': 0.6 * settings.lineWidth
-	};
-	this.styles.sGroupHighlightStyle = {
-		'stroke': '#9900ff',
-		'stroke-width': 0.6 * settings.lineWidth
-	};
-	this.styles.sgroupBracketStyle = {
-		'stroke': 'darkgray',
-		'stroke-width': 0.5 * settings.lineWidth
-	};
-	this.styles.lassoStyle = {
-		'stroke': 'gray',
-		'stroke-width': '1px'
-	};
-	this.styles.atomSelectionPlateRadius = settings.labelFontSize * 1.2;
-};
-
-Render.prototype.initSettings = function () {
-	var scaleFactor = this.scale;
-	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
-	var subFontSize = Math.ceil(0.7 * labelFontSize);
-	var defaultSettings = {
-		delta: this.ctab.molecule.getCoordBoundingBox(),
-		margin: 0.1,
-		scaleFactor: scaleFactor,
-		lineWidth: scaleFactor / 20,
-		bondShift: scaleFactor / 6,
-		bondSpace: scaleFactor / 7,
-		labelFontSize: labelFontSize,
-		subFontSize: subFontSize,
-		font: '30px ' + this.font,
-		fontsz: labelFontSize,
-		fontszsub: subFontSize,
-		fontRLabel: labelFontSize * 1.2,
-		fontRLogic: labelFontSize * 0.7
-
-	};
-	this.settings = Object.assign({}, defaultSettings);
-};
-
 Render.prototype.update = function (force) { // eslint-disable-line max-statements
 	DEBUG.logMethod('update');
 
-	if (!this.settings || this.dirty) {
-		if (this.opt.autoScale) {
+	if (this.dirty) {
+		if (this.settings.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
 			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
 			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
 			this.scale = Math.min(sy, sx);
-			if (this.opt.maxBondLength > 0 && this.scale > this.opt.maxBondLength)
-				this.scale = this.opt.maxBondLength;
+			if (this.settings.maxBondLength > 0 && this.scale > this.settings.maxBondLength)
+				this.scale = this.settings.maxBondLength;
 		}
-		this.initSettings();
-		this.initStyles();
 		this.dirty = false;
 		force = true;
 	}
@@ -299,7 +218,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 		var sf = this.settings.scaleFactor;
 		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new Vec2());
 
-		if (!this.opt.autoScale) {
+		if (!this.settings.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
 			var vb = new Box2Abs(this.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
@@ -320,7 +239,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			}
 		} else {
 			var sz1 = bb.sz();
-			var marg = this.opt.autoScaleMargin;
+			var marg = this.settings.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
 			var csz = this.viewSz;
 			 /* eslint-disable no-mixed-operators*/
@@ -330,7 +249,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 				/* eslint-disable no-mixed-operators*/
 			var rescale = Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 			/* eslint-enable no-mixed-operators*/
-			if (this.opt.maxBondLength / rescale > 1.0)
+			if (this.settings.maxBondLength / rescale > 1.0)
 				rescale = 1.0;
 			var sz2 = sz1.add(mv.scaled(2 * rescale));
 			/* eslint-disable no-mixed-operators*/

@@ -62,11 +62,11 @@ class Settings extends Component {
     createSelectList(elem) {
 		let change = this.changeState;
     	let {values, type, name, label} = elem;
-		if (name == 'fontFamily')
+		if (name == 'font')
 			return (
 				<li>
 					<div> { label } </div>
-					<div><SystemFonts current={this.state.opts.fontFamily} onChange={ev => change(name, ev.target.value)}/></div>
+					<div><SystemFonts current={this.state.opts.font} onChange={ev => change(name, '30px ' + ev.target.value)}/></div>
 				</li>
 			);
 		if (type == 'boolean')

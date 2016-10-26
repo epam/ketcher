@@ -92,7 +92,7 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	}, this);
 
-	if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
+	if (molecule.isChiral && !this.render.settings.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
@@ -768,7 +768,6 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 	var render = this.render;
 	var settings = render.settings;
 	var styles = render.styles;
-	var opt = render.opt;
 	var paper = render.paper;
 	var delta = 0.5 * settings.lineWidth;
 	for (var aid in this.atomsChanged) {
@@ -776,7 +775,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 
 		var ps = render.ps(atom.a.pp);
 		var index = null;
-		if (opt.showAtomIds) {
+		if (settings.showAtomIds) {
 			index = {};
 			index.text = aid.toString();
 			index.path = paper.text(ps.x, ps.y, index.text)
@@ -809,7 +808,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 			} else {
 				label.text = atom.a.label;
 				var elem = element.getElementByLabel(label.text);
-				if (opt.atomColoring && elem)
+				if (settings.atomColoring && elem)
 					color = element[elem].color;
 			}
 			label.path = paper.text(ps.x, ps.y, label.text)
@@ -904,7 +903,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				leftMargin -= isotope.rbb.width + delta;
 				this.addReObjectPath('data', atom.visel, isotope.path, ps, true);
 			}
-			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen) {
+			if (!isHydrogen && implh > 0 && !render.settings.hideImplicitHydrogen) {
 				hydrogen.text = 'H';
 				hydrogen.path = paper.text(ps.x, ps.y, hydrogen.text)
 					.attr({
@@ -1030,7 +1029,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				this.addReObjectPath('data', atom.visel, valence.path, ps, true);
 			}
 
-			if (atom.a.badConn && opt.showValenceWarnings) {
+			if (atom.a.badConn && settings.showValenceWarnings) {
 				var warning = {};
 				/* eslint-disable no-mixed-operators*/
 				var y = ps.y + label.rbb.height / 2 + delta;
@@ -1191,7 +1190,6 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 	var render = this.render;
 	var settings = render.settings;
 	var paper = render.paper;
-	var opt = render.opt;
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
 		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
@@ -1216,14 +1214,14 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 		var bondIdxOff = settings.subFontSize * 0.6;
 		var ipath = null,
 			 irbb = null;
-		if (opt.showBondIds) {
+		if (settings.showBondIds) {
 			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = util.relBox(ipath.getBBox());
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (opt.showHalfBondIds) {
+		if (settings.showHalfBondIds) {
 			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -1235,7 +1233,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (opt.showLoopIds && !opt.showBondIds) {
+		if (settings.showLoopIds && !settings.showBondIds) {
 			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -1354,9 +1352,9 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 
 ReStruct.prototype.labelIsVisible = function (aid, atom) {
 	if (atom.a.neighbors.length == 0 ||
-		(atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
+		(atom.a.neighbors.length < 2 && !this.render.settings.hideTerminalLabels) ||
 	atom.a.label.toLowerCase() != 'c' ||
-		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
+		(atom.a.badConn && this.render.settings.showValenceWarnings) ||
 	atom.a.isotope != 0 ||
 	atom.a.radical != 0 ||
 	atom.a.charge != 0 ||

@@ -45,7 +45,7 @@ class SystemFonts extends Component {
 	render() {
 		let {current, ...props} = this.props;
 		let content = this.state.availableFonts.map((fontName) =>
-			fontName == current ? <option value={fontName} selected>{fontName}</option> :
+			('30px ' + fontName) == current ? <option value={fontName} selected>{fontName}</option> :
 					<option value={fontName}>{fontName}</option>);
 		return (
 			<select {...props}>

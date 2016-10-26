@@ -65,10 +65,10 @@ function opts() {
         values: [10, 13, 100], //?
         tab: 'render' },
 
-		{ name: 'fontFamily',
+		{ name: 'font',
 		label: 'Font',
 		type: 'string',
-		defaultValue: "Arial",
+		defaultValue: '30px "Arial"',
 		tab: 'render' }
     ];
 }

@@ -66,7 +66,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
 // TODO need to review parameter list
 ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-statements
 	var bb = this.calcBBox(render);
-	var settings = render.settings;
+	var options = render.options;
 	if (bb) {
 		var ret = { data: [] };
 		var p0 = render.obj2scaled(bb.p0);
@@ -78,18 +78,18 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 		var labelSet = render.paper.set();
 		var label = render.paper.text(p0.x, (p0.y + p1.y) / 2, 'R' + key + '=')
 			.attr({
-				'font': settings.font,
-				'font-size': settings.fontRLabel,
+				'font': options.font,
+				'font-size': options.fontRLabel,
 				'fill': 'black'
 			});
 		var labelBox = util.relBox(label.getBBox());
 		/* eslint-disable no-mixed-operators*/
-		label.translateAbs(-labelBox.width / 2 - settings.lineWidth, 0);
+		label.translateAbs(-labelBox.width / 2 - options.lineWidth, 0);
 		/* eslint-enable no-mixed-operators*/
 		labelSet.push(label);
 		var logicStyle = {
-			'font': settings.font,
-			'font-size': settings.fontRLogic,
+			'font': options.font,
+			'font-size': options.fontRLogic,
 			'fill': 'black'
 		};
 
@@ -117,15 +117,15 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 		);
 		// END
 		/* eslint-disable no-mixed-operators*/
-		var shift = labelBox.height / 2 + settings.lineWidth / 2;
+		var shift = labelBox.height / 2 + options.lineWidth / 2;
 		/* eslint-enable no-mixed-operators*/
 		for (var i = 0; i < logic.length; ++i) {
 			var logicPath = render.paper.text(p0.x, (p0.y + p1.y) / 2, logic[i]).attr(logicStyle);
 			var logicBox = util.relBox(logicPath.getBBox());
 			shift += logicBox.height / 2;
 			/* eslint-disable no-mixed-operators*/
-			logicPath.translateAbs(-logicBox.width / 2 - 6 * settings.lineWidth, shift);
-			shift += logicBox.height / 2 + settings.lineWidth / 2;
+			logicPath.translateAbs(-logicBox.width / 2 - 6 * options.lineWidth, shift);
+			shift += logicBox.height / 2 + options.lineWidth / 2;
 			/* eslint-enable no-mixed-operators*/
 			ret.data.push(logicPath);
 			labelSet.push(logicPath);
@@ -152,7 +152,7 @@ ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-li
 ReRGroup.prototype.drawHighlight = function (render) {
 	var rgid = render.ctab.rgroups.keyOf(this);
 	if (!Object.isUndefined(rgid)) {
-		var ret = this._draw(render, rgid, render.styles.highlightStyle/* { 'fill' : 'red' }*/); // eslint-disable-line no-underscore-dangle
+		var ret = this._draw(render, rgid, render.options.highlightStyle/* { 'fill' : 'red' }*/); // eslint-disable-line no-underscore-dangle
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*
 		 this.getAtoms(render).each(function(aid) {

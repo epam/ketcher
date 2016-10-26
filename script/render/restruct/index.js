@@ -92,7 +92,7 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	}, this);
 
-	if (molecule.isChiral && !this.render.settings.hideChiralFlag) {
+	if (molecule.isChiral && !this.render.options.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
@@ -526,7 +526,7 @@ ReStruct.prototype.updateLoops = function () {
 
 ReStruct.prototype.showLoops = function () {
 	var render = this.render;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	var molecule = this.molecule;
 	this.reloops.each(function (rlid, reloop) { // eslint-disable-line max-statements
@@ -572,7 +572,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': settings.lineWidth
+					'stroke-width': options.lineWidth
 				});
 		} else {
 			var pathStr = '';
@@ -589,7 +589,7 @@ ReStruct.prototype.showLoops = function () {
 				var minSin = 0.1;
 				if (Math.abs(sin) < minSin)
 					sin = sin * minSin / Math.abs(sin);
-				var offset = settings.bondSpace / sin;
+				var offset = options.bondSpace / sin;
 				var qi = pi.addScaled(dir, -offset);
 				pathStr += (k == 0 ? 'M' : 'L');
 				pathStr += tfx(qi.x) + ',' + tfx(qi.y);
@@ -598,7 +598,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.path(pathStr)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': settings.lineWidth,
+					'stroke-width': options.lineWidth,
 					'stroke-dasharray': '- '
 				});
 		}
@@ -766,22 +766,21 @@ ReStruct.prototype.verifyLoops = function () {
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
 	var render = this.render;
-	var settings = render.settings;
-	var styles = render.styles;
+	var options = render.options;
 	var paper = render.paper;
-	var delta = 0.5 * settings.lineWidth;
+	var delta = 0.5 * options.lineWidth;
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
 
 		var ps = render.ps(atom.a.pp);
 		var index = null;
-		if (settings.showAtomIds) {
+		if (options.showAtomIds) {
 			index = {};
 			index.text = aid.toString();
 			index.path = paper.text(ps.x, ps.y, index.text)
 				.attr({
-					'font': settings.font,
-					'font-size': settings.fontszsub,
+					'font': options.font,
+					'font-size': options.fontszsub,
 					'fill': '#070'
 				});
 			index.rbb = util.relBox(index.path.getBBox());
@@ -808,13 +807,13 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 			} else {
 				label.text = atom.a.label;
 				var elem = element.getElementByLabel(label.text);
-				if (settings.atomColoring && elem)
+				if (options.atomColoring && elem)
 					color = element[elem].color;
 			}
 			label.path = paper.text(ps.x, ps.y, label.text)
 				.attr({
-					'font': settings.font,
-					'font-size': settings.fontsz,
+					'font': options.font,
+					'font-size': options.fontsz,
 					'fill': color
 				});
 			label.rbb = util.relBox(label.path.getBBox());
@@ -835,8 +834,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				hydroIndex.path =
 				paper.text(ps.x, ps.y, hydroIndex.text)
 					.attr({
-						'font': settings.font,
-						'font-size': settings.fontszsub,
+						'font': options.font,
+						'font-size': options.fontszsub,
 						'fill': color
 					});
 				hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -856,7 +855,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				switch (atom.a.radical) {
 				case 1:
 					radical.path = paper.set();
-					hshift = 1.6 * settings.lineWidth;
+					hshift = 1.6 * options.lineWidth;
 					radical.path.push(
 						draw.radicalBullet(this.render, ps.add(new Vec2(-hshift, 0))),
 						draw.radicalBullet(this.render, ps.add(new Vec2(hshift, 0))));
@@ -868,7 +867,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 					break;
 				case 3:
 					radical.path = paper.set();
-					hshift = 1.6 * settings.lineWidth;
+					hshift = 1.6 * options.lineWidth;
 					radical.path.push(
 						draw.radicalCap(this.render, ps.add(new Vec2(-hshift, 0))),
 						draw.radicalCap(this.render, ps.add(new Vec2(hshift, 0))));
@@ -878,7 +877,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				radical.rbb = util.relBox(radical.path.getBBox());
 				var vshift = -0.5 * (label.rbb.height + radical.rbb.height);
 				if (atom.a.radical == 3)
-					vshift -= settings.lineWidth / 2;
+					vshift -= options.lineWidth / 2;
 				pathAndRBoxTranslate(radical.path, radical.rbb,
 					0, vshift);
 				this.addReObjectPath('data', atom.visel, radical.path, ps, true);
@@ -889,8 +888,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				isotope.text = atom.a.isotope.toString();
 				isotope.path = paper.text(ps.x, ps.y, isotope.text)
 					.attr({
-						'font': settings.font,
-						'font-size': settings.fontszsub,
+						'font': options.font,
+						'font-size': options.fontszsub,
 						'fill': color
 					});
 				isotope.rbb = util.relBox(isotope.path.getBBox());
@@ -903,12 +902,12 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				leftMargin -= isotope.rbb.width + delta;
 				this.addReObjectPath('data', atom.visel, isotope.path, ps, true);
 			}
-			if (!isHydrogen && implh > 0 && !render.settings.hideImplicitHydrogen) {
+			if (!isHydrogen && implh > 0 && !render.options.hideImplicitHydrogen) {
 				hydrogen.text = 'H';
 				hydrogen.path = paper.text(ps.x, ps.y, hydrogen.text)
 					.attr({
-						'font': settings.font,
-						'font-size': settings.fontsz,
+						'font': options.font,
+						'font-size': options.fontsz,
 						'fill': color
 					});
 				hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
@@ -926,8 +925,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 					hydroIndex.path =
 					paper.text(ps.x, ps.y, hydroIndex.text)
 						.attr({
-							'font': settings.font,
-							'font-size': settings.fontszsub,
+							'font': options.font,
+							'font-size': options.fontszsub,
 							'fill': color
 						});
 					hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -974,8 +973,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 
 				charge.path = paper.text(ps.x, ps.y, charge.text)
 					.attr({
-						'font': settings.font,
-						'font-size': settings.fontszsub,
+						'font': options.font,
+						'font-size': options.fontszsub,
 						'fill': color
 					});
 				charge.rbb = util.relBox(charge.path.getBBox());
@@ -1014,8 +1013,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				valence.text = '(' + valence.text + ')';
 				valence.path = paper.text(ps.x, ps.y, valence.text)
 					.attr({
-						'font': settings.font,
-						'font-size': settings.fontszsub,
+						'font': options.font,
+						'font-size': options.fontszsub,
 						'fill': color
 					});
 				valence.rbb = util.relBox(valence.path.getBBox());
@@ -1029,14 +1028,14 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 				this.addReObjectPath('data', atom.visel, valence.path, ps, true);
 			}
 
-			if (atom.a.badConn && settings.showValenceWarnings) {
+			if (atom.a.badConn && options.showValenceWarnings) {
 				var warning = {};
 				/* eslint-disable no-mixed-operators*/
 				var y = ps.y + label.rbb.height / 2 + delta;
 				/* eslint-enable no-mixed-operators*/
 				warning.path = paper.path('M{0},{1}L{2},{3}',
 				tfx(ps.x + leftMargin), tfx(y), tfx(ps.x + rightMargin), tfx(y))
-					.attr(this.render.styles.lineattr)
+					.attr(this.render.options.lineattr)
 					.attr({ stroke: '#F00' });
 				warning.rbb = util.relBox(warning.path.getBBox());
 				this.addReObjectPath('warnings', atom.visel, warning.path, ps, true);
@@ -1064,12 +1063,12 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 					for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j)
 						attpntText += '\'';
 					var pos0 = new Vec2(ps);
-					var pos1 = ps.addScaled(lsb, 0.7 * settings.scaleFactor);
+					var pos1 = ps.addScaled(lsb, 0.7 * options.scaleFactor);
 
 					var attpntPath1 = paper.text(pos1.x, pos1.y, attpntText)
 						.attr({
-							'font': settings.font,
-							'font-size': settings.fontsz,
+							'font': options.font,
+							'font-size': options.fontsz,
 							'fill': color
 						});
 					var attpntRbb = util.relBox(attpntPath1.getBBox());
@@ -1077,17 +1076,17 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 
 					var lsbn = lsb.negated();
 					/* eslint-disable no-mixed-operators*/
-					pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
+					pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
 					/* eslint-enable no-mixed-operators*/
-					pos0 = shiftBondEnd(atom, pos0, lsb, settings.lineWidth);
+					pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth);
 					var n = lsb.rotateSC(1, 0);
-					var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
-					var arrowRight = pos1.addScaled(n, -0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+					var arrowLeft = pos1.addScaled(n, 0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
+					var arrowRight = pos1.addScaled(n, -0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
 					var attpntPath = paper.set();
 					attpntPath.push(
 						attpntPath1,
 					paper.path('M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}', tfx(pos0.x), tfx(pos0.y), tfx(pos1.x), tfx(pos1.y), tfx(arrowLeft.x), tfx(arrowLeft.y), tfx(arrowRight.x), tfx(arrowRight.y))
-						.attr(styles.lineattr).attr({ 'stroke-width': settings.lineWidth / 2 })
+						.attr(options.lineattr).attr({ 'stroke-width': options.lineWidth / 2 })
 					);
 					this.addReObjectPath('indices', atom.visel, attpntPath, ps);
 					lsb = lsb.rotate(Math.PI / 6);
@@ -1165,8 +1164,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 		if (aamText.length > 0) {
 			var aamPath = paper.text(ps.x, ps.y, aamText)
 				.attr({
-					'font': settings.font,
-					'font-size': settings.fontszsub,
+					'font': options.font,
+					'font-size': options.fontszsub,
 					'fill': color
 				});
 			var aamBox = util.relBox(aamPath.getBBox());
@@ -1188,13 +1187,13 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
 	var render = this.render;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
 		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
 			hb2 = this.molecule.halfBonds.get(bond.b.hb2);
-		this.bondRecalc(settings, bond);
+		this.bondRecalc(options, bond);
 		bond.path = this.showBond(bond, hb1, hb2);
 		bond.rbb = util.relBox(bond.path.getBBox());
 		this.addReObjectPath('data', bond.visel, bond.path, null, true);
@@ -1211,17 +1210,17 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
 		bond.setHighlight(bond.highlight, render);
-		var bondIdxOff = settings.subFontSize * 0.6;
+		var bondIdxOff = options.subFontSize * 0.6;
 		var ipath = null,
 			 irbb = null;
-		if (settings.showBondIds) {
+		if (options.showBondIds) {
 			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = util.relBox(ipath.getBBox());
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (settings.showHalfBondIds) {
+		if (options.showHalfBondIds) {
 			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -1233,7 +1232,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (settings.showLoopIds && !settings.showBondIds) {
+		if (options.showLoopIds && !options.showBondIds) {
 			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -1336,10 +1335,10 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 	if (selected) {
 		if (!exists) {
 			var render = this.render;
-			var styles = render.styles;
+			var options = render.options;
 			var paper = render.paper;
 
-			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
+			item.selectionPlate = item.makeSelectionPlate(this, paper, options);
 			this.addReObjectPath('selectionPlate', item.visel, item.selectionPlate);
 		}
 		if (item.selectionPlate)
@@ -1352,9 +1351,9 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 
 ReStruct.prototype.labelIsVisible = function (aid, atom) {
 	if (atom.a.neighbors.length == 0 ||
-		(atom.a.neighbors.length < 2 && !this.render.settings.hideTerminalLabels) ||
+		(atom.a.neighbors.length < 2 && !this.render.options.hideTerminalLabels) ||
 	atom.a.label.toLowerCase() != 'c' ||
-		(atom.a.badConn && this.render.settings.showValenceWarnings) ||
+		(atom.a.badConn && this.render.options.showValenceWarnings) ||
 	atom.a.isotope != 0 ||
 	atom.a.radical != 0 ||
 	atom.a.charge != 0 ||
@@ -1384,7 +1383,7 @@ ReStruct.prototype.checkLabelsToShow = function () {
 	}
 };
 
-ReStruct.prototype.bondRecalc = function (settings, bond) {
+ReStruct.prototype.bondRecalc = function (options, bond) {
 	var render = this.render;
 	var atom1 = this.atoms.get(bond.b.begin);
 	var atom2 = this.atoms.get(bond.b.end);
@@ -1392,13 +1391,13 @@ ReStruct.prototype.bondRecalc = function (settings, bond) {
 	var p2 = render.ps(atom2.a.pp);
 	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
 	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
-	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
-	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
+	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth);
+	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth);
 	bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
 	bond.b.len = Vec2.dist(p1, p2);
-	bond.b.sb = settings.lineWidth * 5;
+	bond.b.sb = options.lineWidth * 5;
 	/* eslint-disable no-mixed-operators*/
-	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
+	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - options.lineWidth * 2);
 	/* eslint-enable no-mixed-operators*/
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };

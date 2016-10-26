@@ -12,12 +12,12 @@ ReRxnArrow.isSelectable = function () {
 
 ReRxnArrow.prototype.highlightPath = function (render) {
 	var p = render.ps(this.item.pp);
-	var s = render.settings.scaleFactor;
+	var s = render.options.scaleFactor;
 	return render.paper.rect(p.x - s, p.y - s / 4, 2 * s, s / 2, s / 8); // eslint-disable-line no-mixed-operators
 };
 
 ReRxnArrow.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
+	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };

@@ -5,13 +5,14 @@ var Vec2 = require('../util/vec2');
 var Struct = require('../chem/struct');
 var ReStruct = require('./restruct');
 
-var defaultSettingsAndStyles = require('./options');
+var defaultOptions = require('./options');
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 // DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
 function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements
+	this.userOpts = opt;
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
 	this.baseScale = this.scale;
@@ -41,9 +42,7 @@ function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-sta
 
 	this.ctab = new ReStruct(new Struct(), this);
 
-	var defaultOpts = defaultSettingsAndStyles(scale, opt, this.ctab);
-	this.settings = defaultOpts.settings;
-	this.styles = defaultOpts.styles;
+	this.options = defaultOptions(scale, this.userOpts);
 }
 
 Render.prototype.addStructChangeHandler = function (handler) {
@@ -53,11 +52,11 @@ Render.prototype.addStructChangeHandler = function (handler) {
 };
 
 Render.prototype.scaled2obj = function (v) {
-	return v.scaled(1 / this.settings.scaleFactor);
+	return v.scaled(1 / this.options.scaleFactor);
 };
 
 Render.prototype.obj2scaled = function (v) {
-	return v.scaled(this.settings.scaleFactor);
+	return v.scaled(this.options.scaleFactor);
 };
 
 Render.prototype.view2obj = function (p, isRelative) {
@@ -166,7 +165,7 @@ Render.prototype.setScale = function (z) {
 	if (this.offset)
 		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);
 	this.scale = this.baseScale * this.zoom;
-	this.settings = null;
+	this.options = defaultOptions(this.scale, this.userOpts);
 	this.update(true);
 };
 
@@ -178,7 +177,7 @@ Render.prototype.setViewBox = function (z) {
 };
 
 Render.prototype.ps = function (pp) {
-	return pp.scaled(this.settings.scaleFactor);
+	return pp.scaled(this.options.scaleFactor);
 };
 
 Render.prototype.setMolecule = function (ctab, norescale) {
@@ -195,14 +194,14 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 	DEBUG.logMethod('update');
 
 	if (this.dirty) {
-		if (this.settings.autoScale) {
+		if (this.options.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
 			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
 			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
 			this.scale = Math.min(sy, sx);
-			if (this.settings.maxBondLength > 0 && this.scale > this.settings.maxBondLength)
-				this.scale = this.settings.maxBondLength;
+			if (this.options.maxBondLength > 0 && this.scale > this.options.maxBondLength)
+				this.scale = this.options.maxBondLength;
 		}
 		this.dirty = false;
 		force = true;
@@ -215,10 +214,10 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 	if (force && $('log'))
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
-		var sf = this.settings.scaleFactor;
+		var sf = this.options.scaleFactor;
 		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new Vec2());
 
-		if (!this.settings.autoScale) {
+		if (!this.options.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
 			var vb = new Box2Abs(this.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
@@ -239,7 +238,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			}
 		} else {
 			var sz1 = bb.sz();
-			var marg = this.settings.autoScaleMargin;
+			var marg = this.options.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
 			var csz = this.viewSz;
 			 /* eslint-disable no-mixed-operators*/
@@ -249,7 +248,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 				/* eslint-disable no-mixed-operators*/
 			var rescale = Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 			/* eslint-enable no-mixed-operators*/
-			if (this.settings.maxBondLength / rescale > 1.0)
+			if (this.options.maxBondLength / rescale > 1.0)
 				rescale = 1.0;
 			var sz2 = sz1.add(mv.scaled(2 * rescale));
 			/* eslint-disable no-mixed-operators*/

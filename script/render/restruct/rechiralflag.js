@@ -19,23 +19,23 @@ ReChiralFlag.prototype.highlightPath = function (render) {
 };
 
 ReChiralFlag.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
+	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };
 
-ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
+ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) {
+	return this.highlightPath(restruct.render).attr(options.selectionStyle);
 };
 
 ReChiralFlag.prototype.draw = function (render) {
 	var paper = render.paper;
-	var settings = render.settings;
+	var options = render.options;
 	var ps = render.ps(this.pp);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontsz,
+			'font': options.font,
+			'font-size': options.fontsz,
 			'fill': '#000'
 		});
 	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);

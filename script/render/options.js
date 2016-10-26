@@ -1,10 +1,10 @@
-function defaultSettingsAndStyles(scale, opt, ctab) {
-	var defaultSettingsAndStyles = {};
-
+function defaultOptions(scale, opt) {
 	var scaleFactor = scale;
+
 	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
 	var subFontSize = Math.ceil(0.7 * labelFontSize);
-	var defaultSettings = {
+
+	var defaultOptions = {
 		// flags for debugging
 		showAtomIds: false,
 		showBondIds: false,
@@ -20,7 +20,7 @@ function defaultSettingsAndStyles(scale, opt, ctab) {
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
 
-		delta: ctab.molecule.getCoordBoundingBox(),
+		delta: '',
 		margin: 0.1,
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
@@ -32,15 +32,12 @@ function defaultSettingsAndStyles(scale, opt, ctab) {
 		fontsz: labelFontSize,
 		fontszsub: subFontSize,
 		fontRLabel: labelFontSize * 1.2,
-		fontRLogic: labelFontSize * 0.7
-	};
-	defaultSettingsAndStyles['settings'] = Object.assign({}, defaultSettings, opt);
+		fontRLogic: labelFontSize * 0.7,
 
-	var defaultStyles = {
-		/* eslint-disable quote-props */
+		/* styles */
 		lineattr: {
-			stroke: '#000',
-			'stroke-width': defaultSettings.lineWidth,
+			'stroke': '#000',
+			'stroke-width': scaleFactor / 20,
 			'stroke-linecap': 'round',
 			'stroke-linejoin': 'round'
 		},
@@ -56,25 +53,24 @@ function defaultSettingsAndStyles(scale, opt, ctab) {
 		},
 		highlightStyle: {
 			'stroke': '#0c0',
-			'stroke-width': 0.6 * defaultSettings.lineWidth
+			'stroke-width': 0.6 * scaleFactor / 20
 		},
 		sGroupHighlightStyle: {
 			'stroke': '#9900ff',
-			'stroke-width': 0.6 * defaultSettings.lineWidth
+			'stroke-width': 0.6 * scaleFactor / 20
 		},
 		sgroupBracketStyle: {
 			'stroke': 'darkgray',
-			'stroke-width': 0.5 * defaultSettings.lineWidth
+			'stroke-width': 0.5 * scaleFactor / 20
 		},
 		lassoStyle: {
 			'stroke': 'gray',
 			'stroke-width': '1px'
 		},
-		atomSelectionPlateRadius: defaultSettings.labelFontSize * 1.2
+		atomSelectionPlateRadius: labelFontSize * 1.2
 	};
-	defaultSettingsAndStyles['styles'] = Object.assign({}, defaultStyles);
 
-	return defaultSettingsAndStyles;
+	return Object.assign({}, defaultOptions, opt);
 }
 
-module.exports = defaultSettingsAndStyles;
+module.exports = defaultOptions;

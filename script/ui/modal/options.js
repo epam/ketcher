@@ -47,28 +47,27 @@ function opts() {
         tab: 'render' },
 
         { name: 'lineWidth',
-        label: 'Line width',
+        label: 'Letter-spacing',
         type: 'number',
         defaultValue: 2,
-        values: [2, 4, 6], //?
+        values: [2, 6, 10],
         tab: 'render' },
-        { name: 'margin',
-        label: 'Margin',
-        type: 'number',
-        defaultValue: 0.1,
-        values: [0.1, 0.2], //?
-        tab: 'render' },
-        { name: 'labelFontSize',
-        label: 'Label font size',
-        type: 'number',
-        defaultValue: 13,
-        values: [10, 13, 100], //?
-        tab: 'render' },
-
 		{ name: 'font',
 		label: 'Font',
 		type: 'string',
 		defaultValue: '30px "Arial"',
+		tab: 'render' },
+		{ name: 'fontsz',
+        label: 'Font size',
+        type: 'number',
+        defaultValue: 13,
+        values: [10, 13, 20],
+        tab: 'render' },
+		{ name: 'fontszsub',
+		label: 'Sub font size',
+		type: 'number',
+		defaultValue: 13,
+		values: [10, 13, 20],
 		tab: 'render' }
     ];
 }

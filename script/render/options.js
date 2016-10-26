@@ -20,13 +20,9 @@ function defaultOptions(scale, opt) {
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
 
-		delta: '',
-		margin: 0.1,
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
-		bondShift: scaleFactor / 6,
 		bondSpace: scaleFactor / 7,
-		labelFontSize: labelFontSize,
 		subFontSize: subFontSize,
 		font: '30px "Arial"',
 		fontsz: labelFontSize,
@@ -46,17 +42,8 @@ function defaultOptions(scale, opt) {
 			fill: '#7f7',
 			stroke: 'none'
 		},
-		selectionZoneStyle: {
-			fill: '#000',
-			stroke: 'none',
-			opacity: 0.0
-		},
 		highlightStyle: {
 			'stroke': '#0c0',
-			'stroke-width': 0.6 * scaleFactor / 20
-		},
-		sGroupHighlightStyle: {
-			'stroke': '#9900ff',
 			'stroke-width': 0.6 * scaleFactor / 20
 		},
 		sgroupBracketStyle: {

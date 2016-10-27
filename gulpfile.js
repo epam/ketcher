@@ -32,7 +32,7 @@ var polyfills = ['es5-shim', 'es6-shim',
                  'es7-shim/dist/es7-shim', 'whatwg-fetch'];
 
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
-               'demo.html', 'templates.sdf', 'templates.svg'];
+               'demo.html', 'library.sdf', 'library.svg'];
 
 var iconfont = null;
 

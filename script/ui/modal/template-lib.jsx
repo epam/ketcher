@@ -55,10 +55,9 @@ function RenderTmpl({tmpl, ...props}) {
 	    ( <StructRender struct={tmpl.struct} {...props}/> );
 }
 
-class Templates extends Component {
+class TemplateLib extends Component {
 	constructor(props) {
 		super(props);
-		console.info(props);
 		this.state = {
 			selected: null,
 			filter: '',
@@ -195,7 +194,7 @@ function regroupLib(tmpls, cachedFiles) {
 }
 
 export function init(baseUrl, cacheEl) {
-	return fetchFile(baseUrl + 'templates.sdf').then(text => {
+	return fetchFile(baseUrl + 'library.sdf').then(text => {
 		var tmpls = sdf.parse(text);
 		return prefetchRender(tmpls, baseUrl, cacheEl).then(cached => (
 			regroupLib(tmpls, cached)
@@ -206,6 +205,6 @@ export function init(baseUrl, cacheEl) {
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
 	return render((
-		<Templates {...params}/>
+		<TemplateLib {...params}/>
 	), overlay);
 };

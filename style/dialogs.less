@@ -123,21 +123,9 @@ form[role=dialog] {
 		height: 100%;
 		position: relative;
 	}
-	img {
-		padding: 4%;
-		width: 92%;
-		height: 92%;
-	}
 	.struct {
+        position: absolute;
 		display: block;
-		position: absolute;
-
-		top: 0.3em;
-		bottom: 0.3em;
-		left: 0.2em;
-		right: 0.2em;
-		height: auto;
-		width: auto;
 		border: 1px solid @border-color;
 		border-radius: 5px;
 
@@ -159,6 +147,20 @@ form[role=dialog] {
 			background-color: lighten(@form-selected-background, 15%);
 		}
 	}
+    div.struct {
+		top: 0.3em;
+		bottom: 0.3em;
+		left: 0.2em;
+		right: 0.2em;
+		height: auto;
+		width: auto;
+    }
+    svg.struct {
+		padding: 4%;
+		width: 92%;
+		height: 92%;
+	}
+
 }
 
 .bond-props {

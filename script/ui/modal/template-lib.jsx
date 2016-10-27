@@ -13,6 +13,21 @@ function tmplName(tmpl, i) {
 	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
+function tmplsLib(tmpls) {
+	return tmpls.reduce((res, tmpl) => {
+		var name = tmpl.props.group || 'Ungroupt';
+		var group = res.find(group => (
+			group.name == name
+		));
+		if (!group) {
+			group = { name: name, templates: [] };
+			res.push(group);
+		}
+		group.templates.push(tmpl);
+		return res;
+	}, []);
+}
+
 function partition(n, array) {
 	var res = [];
 	for (var i = 0; i < array.length; i += n)
@@ -35,12 +50,12 @@ function filterLib(lib, filter) {
 			if (tmpls.length > 0)
 				res.push({ name: group.name, templates: tmpls });
 		}
+		console.info(res);
 		return res;
 	}, []);
 }
 
 function groupTemplates(lib, groupName) {
-	console.info('group', groupName);
 	var group = lib.find(function (group) {
 		return group.name == groupName;
 	});
@@ -51,17 +66,18 @@ function groupTemplates(lib, groupName) {
 
 function RenderTmpl({tmpl, ...props}) {
 	return tmpl.props && tmpl.props.prerender ?
-	    ( <div {...props}><img src={tmpl.props.prerender}/></div> ) :
+	    ( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
 	    ( <StructRender struct={tmpl.struct} {...props}/> );
 }
 
 class TemplateLib extends Component {
 	constructor(props) {
+		console.info('lib constructor');
 		super(props);
 		this.state = {
 			selected: null,
 			filter: '',
-			group: props.lib[0].name
+			group: this.props.lib[0].name
 		};
 	}
 
@@ -88,7 +104,7 @@ class TemplateLib extends Component {
 
 	result() {
 		var tmpl = this.state.selected;
-		//console.assert(tmpl.props, 'Incorrect SDF parse');
+		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
 			struct: tmpl.struct,
 			aid: parseInt(tmpl.props.atomid) || null,
@@ -135,7 +151,7 @@ class TemplateLib extends Component {
 	}
 }
 
-function fetchFile(url) {
+function prefetchStatic(url) {
 	return fetch(url).then(function (resp) {
 		if (resp.ok)
 			return resp.text();
@@ -143,7 +159,7 @@ function fetchFile(url) {
 	});
 }
 
-function idSplit(tmpl) {
+function prefetchSplit(tmpl) {
 	var pr = tmpl.props.prerender;
 	var res = pr && pr.split('#', 2);
 	return {
@@ -154,57 +170,48 @@ function idSplit(tmpl) {
 
 function prefetchRender(tmpls, baseUrl, cacheEl) {
 	var files = tmpls.reduce((res, tmpl) => {
-		let file = idSplit(tmpl).file;
+		let file = prefetchSplit(tmpl).file;
 		if (file && res.indexOf(file) == -1)
 			res.push(file);
 		return res;
 	}, []);
-	var precontent = Promise.all(files.map(file => (
-		fetchFile(baseUrl + file).catch(() => null)
+	var fetch = Promise.all(files.map(fn => (
+		prefetchStatic(baseUrl + fn).catch(() => null)
 	)));
-	return precontent.then(ar => {
-		ar.forEach(svg => {
-			if (svg)
-				cacheEl.innerHTML += svg;
+	return fetch.then(svgs => {
+		svgs.forEach(svgContent => {
+			if (svgContent)
+				cacheEl.innerHTML += svgContent;
 		});
 		return files.filter((file, i) => (
-			!!ar[i]
+			!!svgs[i]
 		));
 	});
 
 }
 
-function regroupLib(tmpls, cachedFiles) {
-	return tmpls.reduce((res, tmpl) => {
-		var name = tmpl.props.group || 'Ungroupt';
-		var group = res.find(group => (
-			group.name == name
-		));
-		if (!group) {
-			group = { name: name, templates: [] };
-			res.push(group);
-		}
-		let cached = idSplit(tmpl);
-		if (cached.file)
-			tmpl.props.prerender = cachedFiles.indexOf(cached.file) != -1 ? '#' + cached.id : '';
-		group.templates.push(tmpl);
-		return res;
-	}, []);
-
-}
-
 export function init(baseUrl, cacheEl) {
-	return fetchFile(baseUrl + 'library.sdf').then(text => {
+	return prefetchStatic(baseUrl + 'library.sdf').then(text => {
 		var tmpls = sdf.parse(text);
-		return prefetchRender(tmpls, baseUrl, cacheEl).then(cached => (
-			regroupLib(tmpls, cached)
+		var prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
+		return prefetch.then(cachedFiles => (
+			tmpls.map(tmpl => {
+				let pr = prefetchSplit(tmpl);
+				if (pr.file)
+					tmpl.props.prerender = cachedFiles.indexOf(pr.file) != -1 ? `#${pr.id}` : '';
+				return tmpl;
+			})
 		));
 	});
 }
 
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
+	var lib = tmplsLib(params.tmpls).concat({
+		name: 'User',
+		templates: params.userTmpls
+	});
 	return render((
-		<TemplateLib {...params}/>
+		<TemplateLib lib={lib} {...params}/>
 	), overlay);
 };

@@ -35,7 +35,7 @@ var clientArea = null;
 var server;
 var options;
 
-var tmplLib = null;
+var libTmpls = null;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
                      'reaction-automap', 'recognize', 'check', 'analyse'];
@@ -101,7 +101,7 @@ function init (opts, apiServer) {
 
 	subEl('template-lib').disabled = true;
 	modal.templates.init('', $$('.cellar')[0]).then(function (res) {
-		tmplLib = res;
+		libTmpls = res;
 		subEl('template-lib').disabled = false;
 	});
 
@@ -749,12 +749,8 @@ function templateLib () {
 			props: { group: 'User' }
 		};
 	});
-	var lib = tmplLib.concat({
-		name: 'User',
-		templates: userTmpls
-	});
 
-	dialog(modal.templates, { lib: lib }, true).then(function (tmpl) {
+	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (tmpl) {
 		// C doesn't conflict with menu id
 		selectAction('template-C', tmpl);
 		return true;

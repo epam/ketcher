@@ -290,7 +290,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 
 	var start = (new Date()).getTime();
 	var changes = this.ctab.update(force);
-	this.ctab.setSelection({}); // [MK] redraw the selection bits where necessary
+	this.ctab.setSelection(null); // [MK] redraw the selection bits where necessary
 	var time = (new Date()).getTime() - start;
 	if (force && $('log'))
 		$('log').innerHTML = time.toString() + '\n';

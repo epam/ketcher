@@ -1320,10 +1320,11 @@ ReStruct.prototype.showBond = function (bond, hb1, hb2) {
 
 ReStruct.prototype.setSelection = function (selection) {
 	for (var map in ReStruct.maps) {
-		if (ReStruct.maps[map].isSelectable() && selection[map]) {
+		if (ReStruct.maps[map].isSelectable() && (!selection || selection[map])) {
 			// TODO: iterate over selection ids
 			this[map].each(function (id, item) {
-				var selected = selection[map].indexOf(id) > -1;
+				var selected = selection ? selection[map].indexOf(id) > -1 :
+				                           item.selected; // for render.update only
 				this.showItemSelection(item, selected);
 			}, this);
 		}
@@ -1331,15 +1332,15 @@ ReStruct.prototype.setSelection = function (selection) {
 };
 
 ReStruct.prototype.showItemSelection = function (item, selected) {
-	var exists = item.selectionPlate != null; // && !item.selectionPlate.removed;
-	// TODO: simplify me
+	var exists = item.selectionPlate != null && !item.selectionPlate.removed;
+	// TODO: simplify me, who sets `removed`?
+	item.selected = selected;
 	if (selected) {
 		if (!exists) {
 			var render = this.render;
 			var styles = render.styles;
 			var paper = render.paper;
 
-			item.selected = selected;
 			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
 			this.addReObjectPath('selectionPlate', item.visel, item.selectionPlate);
 		}

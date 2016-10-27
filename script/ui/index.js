@@ -10,7 +10,6 @@ var Struct = require('../chem/struct');
 
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
-var sdf = require('../chem/sdf');
 
 var Render = require('../render');
 var Editor = require('../editor');
@@ -101,7 +100,7 @@ function init (opts, apiServer) {
 	});
 
 	subEl('template-lib').disabled = true;
-	initTemplates('').then(function (res) {
+	modal.templates.init('', $$('.cellar')[0]).then(function (res) {
 		tmplLib = res;
 		subEl('template-lib').disabled = false;
 	});
@@ -258,28 +257,6 @@ function delegateCliparea(action) {
 			 'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 	}
 	return null;
-}
-
-function initTemplates(baseUrl) {
-	return fetch(baseUrl + 'templates.sdf').then(function (resp) {
-		if (resp.ok)
-			return resp.text();
-		throw "Could not fetch templates";
-	}).then(function(text) {
-		var tmpls = sdf.parse(text);
-		return tmpls.reduce(function (res, tmpl) {
-			var name = tmpl.props.group || 'Ungroupt';
-			var group = res.find(function (group) {
-				return group.name == name;
-			});
-			if (!group) {
-				group = { name: name, templates: [] };
-				res.push(group);
-			}
-			group.templates.push(tmpl);
-			return res;
-		}, []);
-	});
 }
 
 function initCliparea(parent) {

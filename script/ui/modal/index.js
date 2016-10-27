@@ -9,7 +9,7 @@ var sgroupSpecialDialog = require('./sgroup-special');
 var openDialog = require('./open.jsx').default;
 var saveDialog = require('./save.jsx').default;
 var labelEdit = require('./labeledit.jsx').default;
-var templatesDialog = require('./templates.jsx').default;
+var templatesDialog = require('./templates.jsx');
 var rgroupDialog = require('./rgroup.jsx').default;
 var aboutDialog = require('./info.jsx').default;
 var recognizeDialog = require('./recognize.jsx').default;
@@ -126,6 +126,8 @@ function sgroup(params) {
 	return sgroupDialog(params);
 };
 
+templatesDialog.default.init = templatesDialog.init;
+
 module.exports = {
 	periodTable: periodTable,
 	rgroup: rgroupDialog,
@@ -138,7 +140,7 @@ module.exports = {
 	sgroup: sgroup,
 	open: openDialog,
 	save: saveDialog,
-	templates: templatesDialog,
+	templates: templatesDialog.default,
 	labelEdit: labelEdit,
 	about: aboutDialog,
 	recognize: recognizeDialog,

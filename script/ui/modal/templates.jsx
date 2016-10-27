@@ -1,6 +1,8 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
+import sdf from '../../chem/sdf';
+
 import VisibleView from '../component/visibleview';
 import StructRender from '../component/structrender';
 import SelectList from '../component/select';
@@ -132,6 +134,73 @@ class Templates extends Component {
 			</Dialog>
 		);
 	}
+}
+
+function fetchFile(url) {
+	return fetch(url).then(function (resp) {
+		if (resp.ok)
+			return resp.text();
+		throw "Could not fetch " + url;
+	});
+}
+
+function idSplit(tmpl) {
+	var pr = tmpl.props.prerender;
+	var res = pr && pr.split('#', 2);
+	return {
+		file: pr && res[0],
+		id: pr && res[1]
+	};
+}
+
+function prefetchRender(tmpls, baseUrl, cacheEl) {
+	var files = tmpls.reduce((res, tmpl) => {
+		let file = idSplit(tmpl).file;
+		if (file && res.indexOf(file) == -1)
+			res.push(file);
+		return res;
+	}, []);
+	var precontent = Promise.all(files.map(file => (
+		fetchFile(baseUrl + file).catch(() => null)
+	)));
+	return precontent.then(ar => {
+		ar.forEach(svg => {
+			if (svg)
+				cacheEl.innerHTML += svg;
+		});
+		return files.filter((file, i) => (
+			!!ar[i]
+		));
+	});
+
+}
+
+function regroupLib(tmpls, cachedFiles) {
+	return tmpls.reduce((res, tmpl) => {
+		var name = tmpl.props.group || 'Ungroupt';
+		var group = res.find(group => (
+			group.name == name
+		));
+		if (!group) {
+			group = { name: name, templates: [] };
+			res.push(group);
+		}
+		let cached = idSplit(tmpl);
+		if (cached.file)
+			tmpl.props.prerender = cachedFiles.indexOf(cached.file) != -1 ? '#' + cached.id : '';
+		group.templates.push(tmpl);
+		return res;
+	}, []);
+
+}
+
+export function init(baseUrl, cacheEl) {
+	return fetchFile(baseUrl + 'templates.sdf').then(text => {
+		var tmpls = sdf.parse(text);
+		return prefetchRender(tmpls, baseUrl, cacheEl).then(cached => (
+			regroupLib(tmpls, cached)
+		));
+	});
 }
 
 export default function dialog(params) {

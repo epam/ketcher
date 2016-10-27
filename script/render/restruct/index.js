@@ -338,40 +338,14 @@ ReStruct.prototype.clearVisels = function () {
 	}, this);
 };
 
-ReStruct.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldStereoBond) {
-	return atom.neighbors.findIndex(function (hbid) {
-		var hb = this.molecule.halfBonds.get(hbid);
-		var bid = hb.bid;
-		if (bid === bid0)
-			return false;
-		var neibond = this.bonds.get(bid);
-		if (neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP)
-			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
-		if (neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo)
-			return true;
-		return false;
-	}, this);
-};
-
 ReStruct.prototype.checkStereoBold = function (bid0, bond) {
 	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
 		var atom = this.molecule.atoms.get(aid);
-		var pos =  this.findIncomingStereoUpBond(atom, bid0, false);
+		var pos =  bond.findIncomingStereoUpBond(atom, bid0, false, this);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, this);
 	util.assert(halfbonds.length === 2);
 	bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
-};
-
-ReStruct.prototype.findIncomingUpBonds = function (bid0, bond) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
-		var atom = this.molecule.atoms.get(aid);
-		var pos =  this.findIncomingStereoUpBond(atom, bid0, true);
-		return pos < 0 ? -1 : atom.neighbors[pos];
-	}, this);
-	util.assert(halfbonds.length === 2);
-	bond.neihbid1 = this.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
-	bond.neihbid2 = this.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
 };
 
 ReStruct.prototype.checkStereoBoldBonds = function () {
@@ -1197,7 +1171,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
 			hb2 = this.molecule.halfBonds.get(bond.b.hb2);
 		this.bondRecalc(settings, bond);
-		bond.path = this.showBond(bond, hb1, hb2);
+		bond.show(this);
 		bond.rbb = util.relBox(bond.path.getBBox());
 		this.addReObjectPath('data', bond.visel, bond.path, null, true);
 		var reactingCenter = {};
@@ -1248,74 +1222,6 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
 	}
-};
-
-ReStruct.prototype.showBond = function (bond, hb1, hb2) {
-	var path = null;
-	var struct = this.molecule;
-	var shiftA = !this.atoms.get(hb1.begin).showLabel;
-	var shiftB = !this.atoms.get(hb2.begin).showLabel;
-
-	switch (bond.b.type) {
-	case Struct.Bond.PATTERN.TYPE.SINGLE:
-		switch (bond.b.stereo) {
-		case Struct.Bond.PATTERN.STEREO.UP:
-			this.findIncomingUpBonds(hb1.bid, bond);
-			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
-				path = draw.bondSingleStereoBold(this.render, hb1, hb2, bond, shiftA, shiftB);
-			else
-				path = draw.bondSingleUp(this.render, hb1, hb2, bond, struct);
-			break;
-		case Struct.Bond.PATTERN.STEREO.DOWN:
-			path = draw.bondSingleDown(this.render, hb1, hb2);
-			break;
-		case Struct.Bond.PATTERN.STEREO.EITHER:
-			path = draw.bondSingleEither(this.render, hb1, hb2);
-			break;
-		default:
-			path = draw.bondSingle(this.render, hb1, hb2);
-			break;
-		}
-		break;
-	case Struct.Bond.PATTERN.TYPE.DOUBLE:
-		this.findIncomingUpBonds(hb1.bid, bond);
-		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
-			bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-			path = draw.bondSingleStereoBold(this.render, hb1, hb2, bond, shiftA, shiftB);
-		} else {
-			path = draw.bondDouble(this.render, hb1, hb2, bond,
-			                       bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS, shiftA, shiftB);
-		}
-		break;
-	case Struct.Bond.PATTERN.TYPE.TRIPLE:
-		path = draw.bondTriple(this.render, hb1, hb2);
-		break;
-	case Struct.Bond.PATTERN.TYPE.AROMATIC:
-		var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
-			(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
-		path = inAromaticLoop ? draw.bondSingle(this.render, hb1, hb2) :
-			draw.bondAromatic(this.render, hb1, hb2,
-			                  bond.doubleBondShift, shiftA, shiftB);
-		break;
-	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-		path = draw.bondSingleOrDouble(this.render, hb1, hb2);
-		break;
-	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
-		path = draw.bondSingleOrAromatic(this.render, hb1, hb2,
-		                                 bond.doubleBondShift, shiftA, shiftB);
-		break;
-	case Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
-		path = draw.bondDoubleOrAromatic(this.render, hb1, hb2,
-		                                 bond.doubleBondShift, shiftA, shiftB);
-
-		break;
-	case Struct.Bond.PATTERN.TYPE.ANY:
-		path = draw.bondAny(this.render, hb1, hb2);
-		break;
-	default:
-		throw new Error('Bond type ' + bond.b.type + ' not supported');
-	}
-	return path;
 };
 
 ReStruct.prototype.setSelection = function (selection) {

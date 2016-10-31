@@ -3,17 +3,19 @@ import { h, Component, render } from 'preact';
 
 import Dialog from '../component/dialog';
 
+function roundOff(str, round) {
+	return str.replace(/[0-9]*\.[0-9]+/g, (str) => (
+		(+str).toFixed(round)
+	));
+}
+
 class Analyse extends Component {
 	constructor() {
 		super();
 		this.state = {
 			roundWeight: 3,
 			roundMass: 3
-		}
-	}
-
-	regExpReplace(str, round) {
-		return (str.replace(/[0-9]*\.[0-9]*/g, (str) => (+str).toFixed(round)));
+		};
 	}
 
 	changeRound(name, value) {
@@ -47,7 +49,7 @@ class Analyse extends Component {
 					<li>
 						<label>{v.name}:</label>
 						{v.round ?
-							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : this.regExpReplace(props[v.key], state[v.round]) } readonly/> :
+							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : roundOff(props[v.key], state[v.round]) } readonly/> :
 							<input value={props[v.key]} readonly/>}
 						{v.round ? this.selectContent(v.round) : null}
 					</li>

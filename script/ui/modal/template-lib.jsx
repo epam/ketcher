@@ -114,10 +114,9 @@ class TemplateLib extends Component {
 
 	renderRow (row, index) {
 		return (
-			<div class="tr" key={index}>{ row.map((tmpl, i) => (
-				<div class="td">
+			<div className="tr" key={index}>{ row.map((tmpl, i) => (
+				<div className="td" title={tmplName(tmpl, index + i)}>
 				  <RenderTmpl tmpl={tmpl}
-							  title={tmplName(tmpl, index + i)}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
 				</div>

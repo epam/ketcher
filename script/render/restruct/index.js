@@ -741,97 +741,16 @@ ReStruct.prototype.verifyLoops = function () {
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
 	var render = this.render;
 	var settings = render.settings;
-	var opt = render.opt;
-	var paper = render.paper;
-	var delta = 0.5 * settings.lineWidth;
+
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
-
 		var ps = render.ps(atom.a.pp);
-		var index = null;
-		if (opt.showAtomIds) {
-			index = {};
-			index.text = aid.toString();
-			index.path = paper.text(ps.x, ps.y, index.text)
-				.attr({
-					'font': settings.font,
-					'font-size': settings.fontszsub,
-					'fill': '#070'
-				});
-			index.rbb = util.relBox(index.path.getBBox());
-			draw.recenterText(index.path, index.rbb);
-			this.addReObjectPath('indices', atom.visel, index.path, ps);
-		}
-		atom.setHighlight(atom.highlight, render);
-
-		if (atom.showLabel) {
-			// label
-			var label = atom.buildLabel(render);
-			this.addReObjectPath('data', atom.visel, label.path, ps, true);
-
-			var rightMargin = label.rbb.width / 2;
-			var leftMargin = -label.rbb.width / 2;
-			var implh = Math.floor(atom.a.implicitH);
-			var isHydrogen = label.text == 'H';
-			var hydroIndex = null;
-			if (isHydrogen && implh > 0) {
-				hydroIndex = atom.hydroIndex(render, implh, rightMargin);
-				rightMargin += hydroIndex.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, hydroIndex.path, ps, true);
-			}
-
-			if (atom.a.radical != 0) {
-				var radical = atom.radical(render);
-				this.addReObjectPath('data', atom.visel, radical.path, ps, true);
-			}
-			if (atom.a.isotope != 0) {
-				var isotope = atom.isotope(render, leftMargin);
-				leftMargin -= isotope.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, isotope.path, ps, true);
-			}
-			if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen) {
-				var data = atom.hydrogen(render, implh, {
-					hydrogen: {},
-					hydroIndex: hydroIndex,
-					rightMargin: rightMargin,
-					leftMargin: leftMargin
-				});
-				var hydrogen = data.hydrogen;
-				hydroIndex = data.hydroIndex;
-				rightMargin = data.rightMargin;
-				leftMargin = data.leftMargin;
-				this.addReObjectPath('data', atom.visel, hydrogen.path, ps, true);
-				if (hydroIndex != null)
-					this.addReObjectPath('data', atom.visel, hydroIndex.path, ps, true);
-			}
-
-			if (atom.a.charge != 0) {
-				var charge = atom.charge(render, rightMargin);
-				rightMargin += charge.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, charge.path, ps, true);
-			}
-			if (atom.a.explicitValence >= 0) {
-				var valence = atom.explicitValence(render, rightMargin);
-				rightMargin += valence.rbb.width + delta;
-				this.addReObjectPath('data', atom.visel, valence.path, ps, true);
-			}
-
-			if (atom.a.badConn && opt.showValenceWarnings) {
-				var warning = atom.warning(render, leftMargin, rightMargin);
-				this.addReObjectPath('warnings', atom.visel, warning.path, ps, true);
-			}
-			if (index) {
-				/* eslint-disable no-mixed-operators*/
-				pathAndRBoxTranslate(index.path, index.rbb,
-					-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
-					0.3 * label.rbb.height);
-				/* eslint-enable no-mixed-operators*/
-			}
-		}
+		if (atom.showLabel) // label
+			atom.show(render, aid, this.addReObjectPath.bind(this));
 
 		if (atom.a.attpnt) {
 			var lsb = bisectLargestSector(this, this.molecule);
-			atom.attpnt(render, lsb, this.addReObjectPath, shiftBondEnd);
+			atom.attpnt(render, lsb, this.addReObjectPath.bind(this), shiftBondEnd);
 		}
 
 		var aamText = atom.aamText();
@@ -841,7 +760,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 		// we render them together to avoid possible collisions
 		aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
 		if (aamText.length > 0) {
-			var aamPath = paper.text(ps.x, ps.y, aamText).attr({
+			var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
 				'font': settings.font,
 				'font-size': settings.fontszsub,
 				'fill': '#000000'

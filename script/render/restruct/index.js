@@ -882,7 +882,8 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 ReStruct.prototype.labelIsVisible = function (aid, atom) {
 	if (atom.a.neighbors.length == 0 ||
 		(atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
-	atom.a.label.toLowerCase() != 'c' ||
+		(this.render.opt.carbonExplicitly) ||
+		atom.a.label.toLowerCase() != 'c' ||
 		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
 	atom.a.isotope != 0 ||
 	atom.a.radical != 0 ||

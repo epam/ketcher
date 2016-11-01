@@ -22,8 +22,10 @@ var defaultRenderOps = {
 	autoScaleMargin: 0,
 	maxBondLength: 0, // 0 stands for "not specified"
 	atomColoring: false,
-	hideImplicitHydrogen: false,
-	hideTerminalLabels: false
+	hideTerminalLabels: false,
+	showCharge: true,
+	showValence: true,
+	carbonExplicitly: false
 };
 
 function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements

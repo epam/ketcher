@@ -91,7 +91,7 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 		leftMargin -= isotope.rbb.width + delta;
 		addReObjectPath('data', this.visel, isotope.path, ps, true);
 	}
-	if (!isHydrogen && implh > 0 && !render.opt.hideImplicitHydrogen) {
+	if (!isHydrogen && implh > 0 && showHydrogen(render.opt.hydrogenLabels, this)) {
 		var data = this.hydrogen(render, implh, {
 			hydrogen: {},
 			hydroIndex: hydroIndex,
@@ -107,12 +107,12 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 			addReObjectPath('data', this.visel, hydroIndex.path, ps, true);
 	}
 
-	if (this.a.charge != 0) {
+	if (this.a.charge != 0 && render.opt.showCharge) {
 		var charge = this.charge(render, rightMargin);
 		rightMargin += charge.rbb.width + delta;
 		addReObjectPath('data', this.visel, charge.path, ps, true);
 	}
-	if (this.a.explicitValence >= 0) {
+	if (this.a.explicitValence >= 0 && render.opt.showValence) {
 		var valence = this.explicitValence(render, rightMargin);
 		rightMargin += valence.rbb.width + delta;
 		addReObjectPath('data', this.visel, valence.path, ps, true);
@@ -130,6 +130,13 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 		/* eslint-enable no-mixed-operators*/
 	}
 };
+
+function showHydrogen(hydrogenLabels, atom) {
+	return !!((hydrogenLabels == 'on') ||
+	(hydrogenLabels == 'Terminal' && atom.a.neighbors.length < 2) ||
+	(hydrogenLabels == 'Hetero' && atom.label.text.toLowerCase() != 'c') ||
+	(hydrogenLabels == 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() != 'c')));
+}
 
 ReAtom.prototype.buildLabel = function (render) {
 	var ps = render.ps(this.a.pp);
@@ -149,7 +156,7 @@ ReAtom.prototype.buildLabel = function (render) {
 		label.text = this.a.label;
 		var elem = element.getElementByLabel(label.text);
 		if (render.opt.atomColoring && elem)
-			this.color = element[elem].this.color;
+			this.color = element[elem].color;
 	}
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({

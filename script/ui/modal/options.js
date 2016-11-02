@@ -63,6 +63,12 @@ function opts() {
 		values: ['off', 'Hetero', 'Terminal', 'Terminal and Hetero', 'on'],
 		tab: 'atoms' },
 
+		{ name: 'aromaticCircle',
+		label: 'Aromatic Bonds as circle',
+		type: 'boolean',
+		defaultValue: true,
+		tab: 'bonds' },
+
         { name: 'lineWidth',
         label: 'Letter-spacing',
         type: 'number',

@@ -542,7 +542,7 @@ ReStruct.prototype.showLoops = function () {
 		if (!loop.aromatic)
 			return;
 		var path = null;
-		if (loop.convex) {
+		if (loop.convex && options.aromaticCircle) {
 			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
 				.attr({
 					'stroke': '#000',

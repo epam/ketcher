@@ -36,6 +36,7 @@ function opts() {
         defaultValue: false,
         tab: 'render' },
 
+		/* Atoms */
 		{ name: 'carbonExplicitly',
 		label: 'Display carbon explicitly',
 		type: 'boolean',
@@ -63,10 +64,25 @@ function opts() {
 		values: ['off', 'Hetero', 'Terminal', 'Terminal and Hetero', 'on'],
 		tab: 'atoms' },
 
+		/* Bonds */
 		{ name: 'aromaticCircle',
 		label: 'Aromatic Bonds as circle',
 		type: 'boolean',
 		defaultValue: true,
+		tab: 'bonds' },
+		{ name: 'bondSpace',
+		label: 'Double bond width',
+		type: 'field',
+		defaultValue: 6,
+		values: [0, 10],
+		measures: ['px', 'pt', 'in'],
+		tab: 'bonds' },
+		{ name: 'bondThickness',
+		label: 'Bond thickness',
+		type: 'field',
+		defaultValue: 2,
+		values: [0, 10],
+		measures: ['px', 'pt', 'in'],
 		tab: 'bonds' },
 
         { name: 'lineWidth',
@@ -77,7 +93,7 @@ function opts() {
         tab: 'render' },
 		{ name: 'font',
 		label: 'Font',
-		type: 'string',
+		type: 'font',
 		defaultValue: '30px "Arial"',
 		tab: 'render' },
 		{ name: 'fontsz',

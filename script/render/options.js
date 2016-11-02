@@ -33,7 +33,7 @@ function defaultOptions(scale, opt) {
 		/* styles */
 		lineattr: {
 			'stroke': '#000',
-			'stroke-width': scaleFactor / 20,
+			'stroke-width': (opt.bondThickness || scaleFactor / 20) + (opt.bondThicknessMeasure || 'px'),
 			'stroke-linecap': 'round',
 			'stroke-linejoin': 'round'
 		},

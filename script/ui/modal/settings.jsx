@@ -59,33 +59,36 @@ class Settings extends Component {
 		 this.setState(Object.assign(this.state.opts, tmp));
     }
 
-    createSelectList(elem) {
+	createSelectList(elem) {
 		let change = this.changeState;
-    	let {values, type, name, label} = elem;
-		if (name == 'font')
-			return (
-				<li>
-					<div> { label } </div>
-					<div><SystemFonts current={this.state.opts.font} onChange={ev => change(name, '30px ' + ev.target.value)}/></div>
-				</li>
-			);
-		if (type == 'boolean')
-			return (
-				<li>
-					<div> { label } </div>
-					<div><SelectCheck name={ name } onChange={ change } value={ this.state.opts[name] }/></div>
-				</li>
-			);
-        let listComponents = values.map(function(value) {
-            return ( <option value={value}> {value} </option>);
-        });
-        return (
-            <li>
+		let {values, type, name, label} = elem;
+		let content = null;
+		switch (type) {
+			case 'font':
+				content = <div><SystemFonts current={this.state.opts.font}
+											onChange={ev => change(name, '30px ' + ev.target.value)}/></div>;
+				break;
+			case 'field':
+				content = <MeasureField name={ name } onChange={ change } values = { values }
+					value = { this.state.opts[name] } measureValue = { this.state.opts[name + "Measure"] } />;
+				break;
+			case 'boolean':
+				content = <div><SelectCheck name={ name } onChange={ change } value={ this.state.opts[name] }/></div>;
+				break;
+			default:
+				let listComponents = values.map(function (value) {
+					return ( <option value={value}> {value} </option>);
+				});
+				content = <div><select onChange={ ev => change(name, ev.target.value) }
+									   value={this.state.opts[name]}>{listComponents}</select></div>;
+		}
+		return (
+			<li>
 				<div> { label } </div>
-                <div><select onChange = { ev => change(name, ev.target.value) } value = {this.state.opts[name]}>{listComponents}</select></div>
-            </li>
-        );
-    }
+				{ content }
+			</li>
+		);
+	}
 
     draw(tab) {
         var createSelectList = this.createSelectList;
@@ -154,6 +157,21 @@ function SelectCheck({ name, value, onChange }) {
 			<option>on</option>
 			<option>off</option>
 		</select>
+	);
+}
+
+function MeasureField({ name, value, values, measureValue, onChange }) {
+	return (
+		<div>
+			<input type="number" min={ values[0] } max={ values[1] }
+				   onChange={ ev => onChange(name, ev.target.value) } value={ value }/>
+			<select className="measure" onChange={ ev => onChange(name + "Measure", ev.target.value) }
+					value={measureValue || 'px'}>
+				<option>px</option>
+				<option>pt</option>
+				<option>in</option>
+			</select>
+		</div>
 	);
 }
 

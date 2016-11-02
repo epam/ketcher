@@ -19,7 +19,7 @@ ReDataSGroupData.prototype.highlightPath = function (render) {
 };
 
 ReDataSGroupData.prototype.drawHighlight = function (render) {
-	var ret = this.highlightPath(render).attr(render.styles.highlightStyle);
+	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };

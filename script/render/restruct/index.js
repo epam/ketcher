@@ -92,7 +92,7 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	}, this);
 
-	if (molecule.isChiral && !this.render.opt.hideChiralFlag) {
+	if (molecule.isChiral && !this.render.options.hideChiralFlag) {
 		var bb = molecule.getCoordBoundingBox();
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
@@ -500,7 +500,7 @@ ReStruct.prototype.updateLoops = function () {
 
 ReStruct.prototype.showLoops = function () {
 	var render = this.render;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	var molecule = this.molecule;
 	this.reloops.each(function (rlid, reloop) { // eslint-disable-line max-statements
@@ -546,7 +546,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': settings.lineWidth
+					'stroke-width': options.lineWidth
 				});
 		} else {
 			var pathStr = '';
@@ -563,7 +563,7 @@ ReStruct.prototype.showLoops = function () {
 				var minSin = 0.1;
 				if (Math.abs(sin) < minSin)
 					sin = sin * minSin / Math.abs(sin);
-				var offset = settings.bondSpace / sin;
+				var offset = options.bondSpace / sin;
 				var qi = pi.addScaled(dir, -offset);
 				pathStr += (k == 0 ? 'M' : 'L');
 				pathStr += tfx(qi.x) + ',' + tfx(qi.y);
@@ -572,7 +572,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.path(pathStr)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': settings.lineWidth,
+					'stroke-width': options.lineWidth,
 					'stroke-dasharray': '- '
 				});
 		}
@@ -740,7 +740,7 @@ ReStruct.prototype.verifyLoops = function () {
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
 	var render = this.render;
-	var settings = render.settings;
+	var options = render.options;
 
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
@@ -761,8 +761,8 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 		aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
 		if (aamText.length > 0) {
 			var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
-				'font': settings.font,
-				'font-size': settings.fontszsub,
+				'font': options.font,
+				'font-size': options.fontszsub,
 				'fill': '#000000'
 			});
 			var aamBox = util.relBox(aamPath.getBBox());
@@ -784,14 +784,13 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
 	var render = this.render;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
-	var opt = render.opt;
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
 		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
 			hb2 = this.molecule.halfBonds.get(bond.b.hb2);
-		this.bondRecalc(settings, bond);
+		this.bondRecalc(options, bond);
 		bond.show(this);
 		bond.rbb = util.relBox(bond.path.getBBox());
 		this.addReObjectPath('data', bond.visel, bond.path, null, true);
@@ -808,17 +807,17 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			this.addReObjectPath('data', bond.visel, topology.path, null, true);
 		}
 		bond.setHighlight(bond.highlight, render);
-		var bondIdxOff = settings.subFontSize * 0.6;
+		var bondIdxOff = options.subFontSize * 0.6;
 		var ipath = null,
 			 irbb = null;
-		if (opt.showBondIds) {
+		if (options.showBondIds) {
 			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
 			ipath = paper.text(pb.x, pb.y, bid.toString());
 			irbb = util.relBox(ipath.getBBox());
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (opt.showHalfBondIds) {
+		if (options.showHalfBondIds) {
 			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
 			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -830,7 +829,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 			draw.recenterText(ipath, irbb);
 			this.addReObjectPath('indices', bond.visel, ipath);
 		}
-		if (opt.showLoopIds && !opt.showBondIds) {
+		if (options.showLoopIds && !options.showBondIds) {
 			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
 			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
 			irbb = util.relBox(ipath.getBBox());
@@ -865,10 +864,10 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 	if (selected) {
 		if (!exists) {
 			var render = this.render;
-			var styles = render.styles;
+			var options = render.options;
 			var paper = render.paper;
 
-			item.selectionPlate = item.makeSelectionPlate(this, paper, styles);
+			item.selectionPlate = item.makeSelectionPlate(this, paper, options);
 			this.addReObjectPath('selectionPlate', item.visel, item.selectionPlate);
 		}
 		if (item.selectionPlate)
@@ -881,10 +880,10 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 
 ReStruct.prototype.labelIsVisible = function (aid, atom) {
 	if (atom.a.neighbors.length == 0 ||
-		(atom.a.neighbors.length < 2 && !this.render.opt.hideTerminalLabels) ||
-		(this.render.opt.carbonExplicitly) ||
+		(atom.a.neighbors.length < 2 && !this.render.options.hideTerminalLabels) ||
+		(this.render.options.carbonExplicitly) ||
 		atom.a.label.toLowerCase() != 'c' ||
-		(atom.a.badConn && this.render.opt.showValenceWarnings) ||
+		(atom.a.badConn && this.render.options.showValenceWarnings) ||
 	atom.a.isotope != 0 ||
 	atom.a.radical != 0 ||
 	atom.a.charge != 0 ||
@@ -914,7 +913,7 @@ ReStruct.prototype.checkLabelsToShow = function () {
 	}
 };
 
-ReStruct.prototype.bondRecalc = function (settings, bond) {
+ReStruct.prototype.bondRecalc = function (options, bond) {
 	var render = this.render;
 	var atom1 = this.atoms.get(bond.b.begin);
 	var atom2 = this.atoms.get(bond.b.end);
@@ -922,13 +921,13 @@ ReStruct.prototype.bondRecalc = function (settings, bond) {
 	var p2 = render.ps(atom2.a.pp);
 	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
 	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
-	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * settings.lineWidth);
-	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * settings.lineWidth);
+	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth);
+	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth);
 	bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
 	bond.b.len = Vec2.dist(p1, p2);
-	bond.b.sb = settings.lineWidth * 5;
+	bond.b.sb = options.lineWidth * 5;
 	/* eslint-disable no-mixed-operators*/
-	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - settings.lineWidth * 2);
+	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - options.lineWidth * 2);
 	/* eslint-enable no-mixed-operators*/
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };

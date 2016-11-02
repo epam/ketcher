@@ -72,6 +72,7 @@
     "es6-shim": "^0.35.0",
     "es7-shim": "^6.0.0",
     "filesaver.js": "^0.2.0",
+    "font-face-observer": "^1.0.0",
     "keymage": "^1.1.0",
     "normalize.css": "^4.2.0",
     "preact": "^6.0.2",

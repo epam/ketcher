@@ -44,8 +44,8 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerInd
 		var indexPos = render.ps(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
 			.attr({
-				'font': render.settings.font,
-				'font-size': render.settings.fontszsub
+				'font': render.options.font,
+				'font-size': render.options.fontszsub
 			});
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
@@ -129,11 +129,11 @@ function drawGroupGen(remol, sgroup) {
 	return set;
 }
 
-function showValue(paper, pos, sg, settings) {
+function showValue(paper, pos, sg, options) {
 	var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontsz
+			'font': options.font,
+			'font-size': options.fontsz
 		});
 	var box = text.getBBox();
 	var rect = paper.rect(box.x - 1, box.y - 1,
@@ -152,7 +152,7 @@ function showValue(paper, pos, sg, settings) {
 
 function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 	var render = remol.render;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	var set = paper.set();
 	var atoms = Struct.SGroup.getAtoms(remol, sgroup);
@@ -163,7 +163,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 		// NB: we did not pass xbonds parameter to the backetPos method above,
 		//  so the result will be in the regular coordinate system
 		Struct.SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
-	var ps = sgroup.pp.scaled(settings.scaleFactor);
+	var ps = sgroup.pp.scaled(options.scaleFactor);
 
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {
@@ -172,8 +172,8 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 			var bb = atom.visel.boundingBox;
 			if (bb != null)
 				p.x = Math.max(p.x, bb.p1.x);
-			p.x += settings.lineWidth; // shift a bit to the right
-			var nameI = showValue(paper, p, sgroup, settings);
+			p.x += options.lineWidth; // shift a bit to the right
+			var nameI = showValue(paper, p, sgroup, options);
 			var boxI = util.relBox(nameI.getBBox());
 			nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
 			set.push(nameI);
@@ -182,7 +182,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 			sgroup.areas.push(sboxI);
 		}
 	} else {
-		var name = showValue(paper, ps, sgroup, settings);
+		var name = showValue(paper, ps, sgroup, options);
 		var box = util.relBox(name.getBBox());
 		name.translateAbs(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
@@ -203,12 +203,11 @@ var SGroupDraw = {
 };
 
 ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line max-statements
-	var styles = render.styles;
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	var sg = this.item;
 	var bb = sg.bracketBox.transform(render.obj2scaled, render);
-	var lw = settings.lineWidth;
+	var lw = options.lineWidth;
 	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);
 	var d = sg.bracketDir,
@@ -221,7 +220,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	var set = paper.set();
 	sg.highlighting = paper
 		.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}', tfx(a0.x), tfx(a0.y), tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(b0.x), tfx(b0.y))
-		.attr(styles.highlightStyle);
+		.attr(options.highlightStyle);
 	set.push(sg.highlighting);
 
 	Struct.SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {

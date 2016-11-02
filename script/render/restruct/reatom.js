@@ -37,10 +37,10 @@ ReAtom.prototype.drawHighlight = function (render) {
 
 ReAtom.prototype.makeHighlightPlate = function (render) {
 	var paper = render.paper;
-	var styles = render.styles;
+	var options = render.options;
 	var ps = render.ps(this.a.pp);
-	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
-		.attr(styles.highlightStyle);
+	return paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
+		.attr(options.highlightStyle);
 };
 
 ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {

@@ -50,7 +50,7 @@ class Analyse extends Component {
 						<label>{v.name}:</label>
 						{v.round ?
 							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : roundOff(props[v.key], state[v.round]) } readonly/> :
-							<input value={props[v.key]} readonly/>}
+							<input value={props[v.key]} focus readonly/>}
 						{v.round ? this.selectContent(v.round) : null}
 					</li>
 				))

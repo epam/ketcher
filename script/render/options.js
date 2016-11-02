@@ -16,7 +16,7 @@ function defaultOptions(scale, opt) {
 		autoScale: false, // scale structure to fit into the given view box, used in view mode
 		autoScaleMargin: 0,
 		maxBondLength: 0, // 0 stands for "not specified"
-		atomColoring: false,
+		atomColoring: true,
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
 

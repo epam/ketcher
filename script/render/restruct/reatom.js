@@ -52,7 +52,7 @@ ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 	var ps = render.ps(this.a.pp);
 	var label = this.buildLabel(render);
-	var delta = 0.5 * render.settings.lineWidth;
+	var delta = 0.5 * render.options.lineWidth;
 	var rightMargin = label.rbb.width / 2;
 	var leftMargin = -label.rbb.width / 2;
 	var implh = Math.floor(this.a.implicitH);
@@ -61,13 +61,13 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 	addReObjectPath('data', this.visel, label.path, ps, true);
 
 	var index = null;
-	if (render.opt.showAtomIds) {
+	if (render.options.showAtomIds) {
 		index = {};
 		index.text = aid.toString();
 		index.path = render.paper.text(ps.x, ps.y, index.text)
 			.attr({
-				'font': render.settings.font,
-				'font-size': render.settings.fontszsub,
+				'font': render.options.font,
+				'font-size': render.options.fontszsub,
 				'fill': '#070'
 			});
 		index.rbb = util.relBox(index.path.getBBox());
@@ -91,7 +91,7 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 		leftMargin -= isotope.rbb.width + delta;
 		addReObjectPath('data', this.visel, isotope.path, ps, true);
 	}
-	if (!isHydrogen && implh > 0 && showHydrogen(render.opt.hydrogenLabels, this)) {
+	if (!isHydrogen && implh > 0 && showHydrogen(render.options.hydrogenLabels, this)) {
 		var data = this.hydrogen(render, implh, {
 			hydrogen: {},
 			hydroIndex: hydroIndex,
@@ -107,18 +107,18 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 			addReObjectPath('data', this.visel, hydroIndex.path, ps, true);
 	}
 
-	if (this.a.charge != 0 && render.opt.showCharge) {
+	if (this.a.charge != 0 && render.options.showCharge) {
 		var charge = this.charge(render, rightMargin);
 		rightMargin += charge.rbb.width + delta;
 		addReObjectPath('data', this.visel, charge.path, ps, true);
 	}
-	if (this.a.explicitValence >= 0 && render.opt.showValence) {
+	if (this.a.explicitValence >= 0 && render.options.showValence) {
 		var valence = this.explicitValence(render, rightMargin);
 		rightMargin += valence.rbb.width + delta;
 		addReObjectPath('data', this.visel, valence.path, ps, true);
 	}
 
-	if (this.a.badConn && render.opt.showValenceWarnings) {
+	if (this.a.badConn && render.options.showValenceWarnings) {
 		var warning = this.warning(render, leftMargin, rightMargin);
 		addReObjectPath('warnings', this.visel, warning.path, ps, true);
 	}
@@ -140,7 +140,7 @@ function showHydrogen(hydrogenLabels, atom) {
 
 ReAtom.prototype.buildLabel = function (render) {
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
+	var options = render.options;
 	var paper = render.paper;
 	var label = {};
 	if (this.a.atomList != null) {
@@ -155,13 +155,13 @@ ReAtom.prototype.buildLabel = function (render) {
 	} else {
 		label.text = this.a.label;
 		var elem = element.getElementByLabel(label.text);
-		if (render.opt.atomColoring && elem)
+		if (render.options.atomColoring && elem)
 			this.color = element[elem].color;
 	}
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontsz,
+			'font': options.font,
+			'font-size': options.fontsz,
 			'fill': this.color
 		});
 	label.rbb = util.relBox(label.path.getBBox());
@@ -174,15 +174,15 @@ ReAtom.prototype.buildLabel = function (render) {
 
 ReAtom.prototype.hydroIndex = function (render, implh, rightMargin) {
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
-	var delta = 0.5 * settings.lineWidth;
+	var options = render.options;
+	var delta = 0.5 * options.lineWidth;
 	var hydroIndex = {};
 	hydroIndex.text = (implh + 1).toString();
 	hydroIndex.path =
 		render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': settings.font,
-				'font-size': settings.fontszsub,
+				'font': options.font,
+				'font-size': options.fontszsub,
 				'fill': this.color
 			});
 	hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -197,13 +197,13 @@ ReAtom.prototype.hydroIndex = function (render, implh, rightMargin) {
 
 ReAtom.prototype.radical = function (render) {
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
+	var options = render.options;
 	var radical = {};
 	var hshift;
 	switch (this.a.radical) {
 	case 1:
 		radical.path = render.paper.set();
-		hshift = 1.6 * settings.lineWidth;
+		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalBullet(render, ps.add(new Vec2(-hshift, 0))),
 			draw.radicalBullet(render, ps.add(new Vec2(hshift, 0))));
@@ -214,7 +214,7 @@ ReAtom.prototype.radical = function (render) {
 		break;
 	case 3:
 		radical.path = render.paper.set();
-		hshift = 1.6 * settings.lineWidth;
+		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalCap(render, ps.add(new Vec2(-hshift, 0))),
 			draw.radicalCap(render, ps.add(new Vec2(hshift, 0))));
@@ -224,7 +224,7 @@ ReAtom.prototype.radical = function (render) {
 	radical.rbb = util.relBox(radical.path.getBBox());
 	var vshift = -0.5 * (this.label.rbb.height + radical.rbb.height);
 	if (this.a.radical == 3)
-		vshift -= settings.lineWidth / 2;
+		vshift -= options.lineWidth / 2;
 	pathAndRBoxTranslate(radical.path, radical.rbb,
 		0, vshift);
 	return radical;
@@ -232,14 +232,14 @@ ReAtom.prototype.radical = function (render) {
 
 ReAtom.prototype.isotope = function (render, leftMargin) {
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
-	var delta = 0.5 * settings.lineWidth;
+	var options = render.options;
+	var delta = 0.5 * options.lineWidth;
 	var isotope = {};
 	isotope.text = this.a.isotope.toString();
 	isotope.path = render.paper.text(ps.x, ps.y, isotope.text)
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontszsub,
+			'font': options.font,
+			'font-size': options.fontszsub,
 			'fill': this.color
 		});
 	isotope.rbb = util.relBox(isotope.path.getBBox());
@@ -254,8 +254,8 @@ ReAtom.prototype.isotope = function (render, leftMargin) {
 
 ReAtom.prototype.charge = function (render, rightMargin) {
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
-	var delta = 0.5 * settings.lineWidth;
+	var options = render.options;
+	var delta = 0.5 * options.lineWidth;
 	var charge = {};
 	charge.text = '';
 	var absCharge = Math.abs(this.a.charge);
@@ -268,8 +268,8 @@ ReAtom.prototype.charge = function (render, rightMargin) {
 
 	charge.path = render.paper.text(ps.x, ps.y, charge.text)
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontszsub,
+			'font': options.font,
+			'font-size': options.fontszsub,
 			'fill': this.color
 		});
 	charge.rbb = util.relBox(charge.path.getBBox());
@@ -301,8 +301,8 @@ ReAtom.prototype.explicitValence = function (render, rightMargin) {
 		14: 'XIV'
 	};
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
-	var delta = 0.5 * settings.lineWidth;
+	var options = render.options;
+	var delta = 0.5 * options.lineWidth;
 	var valence = {};
 	valence.text = mapValence[this.a.explicitValence];
 	if (!valence.text)
@@ -310,8 +310,8 @@ ReAtom.prototype.explicitValence = function (render, rightMargin) {
 	valence.text = '(' + valence.text + ')';
 	valence.path = render.paper.text(ps.x, ps.y, valence.text)
 		.attr({
-			'font': settings.font,
-			'font-size': settings.fontszsub,
+			'font': options.font,
+			'font-size': options.fontszsub,
 			'fill': this.color
 		});
 	valence.rbb = util.relBox(valence.path.getBBox());
@@ -328,13 +328,13 @@ ReAtom.prototype.hydrogen = function (render, implh, data) {
 	var hydroIndex = data.hydroIndex;
 	var hydrogenLeft = this.hydrogenOnTheLeft;
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
-	var delta = 0.5 * settings.lineWidth;
+	var options = render.options;
+	var delta = 0.5 * options.lineWidth;
 	var hydrogen = data.hydrogen;
 	hydrogen.text = 'H';
 	hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
-		'font': settings.font,
-		'font-size': settings.fontsz,
+		'font': options.font,
+		'font-size': options.fontsz,
 		'fill': this.color
 	});
 	hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
@@ -349,8 +349,8 @@ ReAtom.prototype.hydrogen = function (render, implh, data) {
 		hydroIndex.text = implh.toString();
 		hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': settings.font,
-				'font-size': settings.fontszsub,
+				'font': options.font,
+				'font-size': options.fontszsub,
 				'fill': this.color
 			});
 		hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -378,13 +378,13 @@ ReAtom.prototype.hydrogen = function (render, implh, data) {
 
 ReAtom.prototype.warning = function (render, leftMargin, rightMargin) {
 	var ps = render.ps(this.a.pp);
-	var delta = 0.5 * render.settings.lineWidth;
+	var delta = 0.5 * render.options.lineWidth;
 	var tfx = util.tfx;
 	var warning = {};
 	var y = ps.y + (this.label.rbb.height / 2) + delta;
 	warning.path = render.paper.path('M{0},{1}L{2},{3}',
 		tfx(ps.x + leftMargin), tfx(y), tfx(ps.x + rightMargin), tfx(y))
-		.attr(render.styles.lineattr).attr({ stroke: '#F00' });
+		.attr(render.options.lineattr).attr({ stroke: '#F00' });
 	warning.rbb = util.relBox(warning.path.getBBox());
 	return warning;
 };
@@ -392,7 +392,7 @@ ReAtom.prototype.warning = function (render, leftMargin, rightMargin) {
 ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) {
 	var asterisk = Prototype.Browser.IE ? '*' : '∗';
 	var ps = render.ps(this.a.pp);
-	var settings = render.settings;
+	var options = render.options;
 	var tfx = util.tfx;
 	var i, c, j; // eslint-disable-line no-unused-vars
 	for (i = 0, c = 0; i < 4; ++i) {
@@ -404,12 +404,12 @@ ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) 
 			for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j)
 				attpntText += '\'';
 			var pos0 = new Vec2(ps);
-			var pos1 = ps.addScaled(lsb, 0.7 * settings.scaleFactor);
+			var pos1 = ps.addScaled(lsb, 0.7 * options.scaleFactor);
 
 			var attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText)
 				.attr({
-					'font': settings.font,
-					'font-size': settings.fontsz,
+					'font': options.font,
+					'font-size': options.fontsz,
 					'fill': this.color
 				});
 			var attpntRbb = util.relBox(attpntPath1.getBBox());
@@ -417,17 +417,17 @@ ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) 
 
 			var lsbn = lsb.negated();
 			/* eslint-disable no-mixed-operators*/
-			pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + settings.lineWidth / 2);
+			pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
 			/* eslint-enable no-mixed-operators*/
-			pos0 = shiftBondEnd(this, pos0, lsb, settings.lineWidth);
+			pos0 = shiftBondEnd(this, pos0, lsb, options.lineWidth);
 			var n = lsb.rotateSC(1, 0);
-			var arrowLeft = pos1.addScaled(n, 0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
-			var arrowRight = pos1.addScaled(n, -0.05 * settings.scaleFactor).addScaled(lsbn, 0.09 * settings.scaleFactor);
+			var arrowLeft = pos1.addScaled(n, 0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
+			var arrowRight = pos1.addScaled(n, -0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
 			var attpntPath = render.paper.set();
 			attpntPath.push(
 				attpntPath1,
 				render.paper.path('M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}', tfx(pos0.x), tfx(pos0.y), tfx(pos1.x), tfx(pos1.y), tfx(arrowLeft.x), tfx(arrowLeft.y), tfx(arrowRight.x), tfx(arrowRight.y))
-					.attr(render.styles.lineattr).attr({ 'stroke-width': settings.lineWidth / 2 })
+					.attr(render.options.lineattr).attr({ 'stroke-width': options.lineWidth / 2 })
 			);
 			addReObjectPath('indices', this.visel, attpntPath, ps);
 			lsb = lsb.rotate(Math.PI / 6);

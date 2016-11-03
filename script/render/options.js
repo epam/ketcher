@@ -22,7 +22,7 @@ function defaultOptions(scale, opt) {
 
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
-		bondSpace: scaleFactor / 7,
+		bondSpace: convertToPixels(opt.doubleBondWidth, opt.doubleBondWidthMeasure) || scaleFactor / 7,
 		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
 		font: '30px "Arial"',
@@ -34,7 +34,7 @@ function defaultOptions(scale, opt) {
 		/* styles */
 		lineattr: {
 			'stroke': '#000',
-			'stroke-width': (opt.bondThickness || scaleFactor / 20) + (opt.bondThicknessMeasure || 'px'),
+			'stroke-width': convertToPixels(opt.bondThickness, opt.bondThicknessMeasure) || scaleFactor / 20,
 			'stroke-linecap': 'round',
 			'stroke-linejoin': 'round'
 		},
@@ -59,6 +59,18 @@ function defaultOptions(scale, opt) {
 	};
 
 	return Object.assign({}, defaultOptions, opt);
+}
+
+function convertToPixels(value, measure) {
+	if (!value) return null;
+	switch (measure) {
+	case 'px':
+		return value;
+	case 'pt':
+		return (value * 1.333333).toFixed();
+	case 'inch':
+		return (value * 96).toFixed();
+	}
 }
 
 module.exports = defaultOptions;

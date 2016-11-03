@@ -546,7 +546,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': options.lineWidth
+					'stroke-width': options.lineattr['stroke-width']
 				});
 		} else {
 			var pathStr = '';
@@ -572,7 +572,7 @@ ReStruct.prototype.showLoops = function () {
 			path = paper.path(pathStr)
 				.attr({
 					'stroke': '#000',
-					'stroke-width': options.lineWidth,
+					'stroke-width': options.lineattr['stroke-width'],
 					'stroke-dasharray': '- '
 				});
 		}

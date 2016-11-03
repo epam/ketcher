@@ -56,18 +56,7 @@ function init (opts, apiServer) {
 	server = apiServer || Promise.reject("Standalone mode!");
 	options = opts;
 
-	var currentOptions = {};
-	var defOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
-    for (var key in defOpts) {
-    	if (defOpts.hasOwnProperty(key)) {
-    		if (defOpts[key] === "on")
-	            currentOptions[key] = true;
-	        else if (defOpts[key] === "off")
-	            currentOptions[key] = false;
-	        else
-	            currentOptions[key] = defOpts[key];
-      	}
-    }
+	var currentOptions = JSON.parse(localStorage.getItem("ketcher-opts"));
 
 	// Init renderer
 	ui.render =  new Render(clientArea, SCALE,

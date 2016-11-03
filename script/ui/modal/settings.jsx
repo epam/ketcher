@@ -28,6 +28,7 @@ class Settings extends Component {
     getDefOpts(defOpts) {
         var tmp = {};
         for (var i = 0; i < defOpts.length; i++) {
+			if (defOpts[i].type == 'field') tmp[defOpts[i].name + "Measure"] = defOpts[i].defaultMeasure;
             tmp[defOpts[i].name] = defOpts[i].defaultValue;
         }
         return tmp;
@@ -110,7 +111,7 @@ class Settings extends Component {
 
     render (props, state) {
     	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Options for debugging'];
-    	let activeTabs = {'0': true, '1': true, '2': false, '3': false};
+    	let activeTabs = {'0': true, '1': false, '2': true, '3': false};
         return (
             <Dialog caption="Settings"
                     name="settings" params={props.params}
@@ -169,7 +170,7 @@ function MeasureField({ name, value, values, measureValue, onChange }) {
 					value={measureValue || 'px'}>
 				<option>px</option>
 				<option>pt</option>
-				<option>in</option>
+				<option>inch</option>
 			</select>
 		</div>
 	);

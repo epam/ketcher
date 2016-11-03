@@ -31,7 +31,7 @@ ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) 
 ReChiralFlag.prototype.draw = function (render) {
 	var paper = render.paper;
 	var options = render.options;
-	var ps = render.ps(this.pp);
+	var ps = render.obj2scaled(this.pp);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
 		.attr({
 			'font': options.font,

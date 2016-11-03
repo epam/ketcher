@@ -24,14 +24,14 @@ ReBond.prototype.drawHighlight = function (render) {
 
 ReBond.prototype.makeHighlightPlate = function (render) {
 	render.ctab.bondRecalc(render.options, this);
-	var c = render.ps(this.b.center);
+	var c = render.obj2scaled(this.b.center);
 	return render.paper.circle(c.x, c.y, 0.8 * render.options.atomSelectionPlateRadius)
 		.attr(render.options.highlightStyle);
 };
 
 ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 	restruct.bondRecalc(restruct.render.options, this);
-	var c = restruct.render.ps(this.b.center);
+	var c = restruct.render.obj2scaled(this.b.center);
 	return paper.circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
 		.attr(options.selectionStyle);
 };

@@ -130,7 +130,7 @@ function AtomMove(aid, d, noinvalidate) {
 		var aid = this.data.aid;
 		var d = this.data.d;
 		struct.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		restruct.atoms.get(aid).visel.translate(rnd.ps(d));
+		restruct.atoms.get(aid).visel.translate(rnd.obj2scaled(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			invalidateAtom(restruct, aid, 1);
@@ -151,7 +151,7 @@ function BondMove(bid, d) {
 	this.execute = function (editor) {
 		var rnd = editor.render;
 		var restruct = rnd.ctab;
-		restruct.bonds.get(this.data.bid).visel.translate(rnd.ps(this.data.d));
+		restruct.bonds.get(this.data.bid).visel.translate(rnd.obj2scaled(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
 	this.invert = function () {
@@ -170,7 +170,7 @@ function LoopMove(id, d) {
 		// not sure if there should be an action to move a loop in the first place
 		// but we have to somehow move the aromatic ring, which is associated with the loop, rather than with any of the bonds
 		if (restruct.reloops.get(this.data.id) && restruct.reloops.get(this.data.id).visel)
-			restruct.reloops.get(this.data.id).visel.translate(rnd.ps(this.data.d));
+			restruct.reloops.get(this.data.id).visel.translate(rnd.obj2scaled(this.data.d));
 		this.data.d = this.data.d.negated();
 	};
 	this.invert = function () {
@@ -622,7 +622,7 @@ function RxnArrowMove(id, d, noinvalidate) {
 		var id = this.data.id;
 		var d = this.data.d;
 		struct.rxnArrows.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		restruct.rxnArrows.get(id).visel.translate(rnd.ps(d));
+		restruct.rxnArrows.get(id).visel.translate(rnd.obj2scaled(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			invalidateItem(restruct, 'rxnArrows', id, 1);
@@ -694,7 +694,7 @@ function RxnPlusMove(id, d, noinvalidate) {
 		var id = this.data.id;
 		var d = this.data.d;
 		struct.rxnPluses.get(id).pp.add_(d); // eslint-disable-line no-underscore-dangle
-		restruct.rxnPluses.get(id).visel.translate(rnd.ps(d));
+		restruct.rxnPluses.get(id).visel.translate(rnd.obj2scaled(d));
 		this.data.d = d.negated();
 		if (!this.data.noinvalidate)
 			invalidateItem(restruct, 'rxnPluses', id, 1);

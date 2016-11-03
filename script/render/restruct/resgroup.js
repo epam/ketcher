@@ -22,7 +22,6 @@ ReSGroup.isSelectable = function () {
 };
 
 ReSGroup.prototype.draw = function (remol, sgroup) {
-	//	console.log("Draw Sgroup: " + sgroup.type); //  sgroup.type == MUL || SRU ||...
 	return SGroupDraw[sgroup.type](remol, sgroup);
 };
 
@@ -41,7 +40,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerInd
 	}
 	var bracketR = brackets[ir];
 	function renderIndex(text, shift) {
-		var indexPos = render.ps(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
+		var indexPos = render.obj2scaled(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
 			.attr({
 				'font': render.options.font,
@@ -168,7 +167,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {
 			var atom = remol.atoms.get(atoms[i]);
-			var p = render.ps(atom.a.pp);
+			var p = render.obj2scaled(atom.a.pp);
 			var bb = atom.visel.boundingBox;
 			if (bb != null)
 				p.x = Math.max(p.x, bb.p1.x);

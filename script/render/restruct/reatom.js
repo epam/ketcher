@@ -38,19 +38,19 @@ ReAtom.prototype.drawHighlight = function (render) {
 ReAtom.prototype.makeHighlightPlate = function (render) {
 	var paper = render.paper;
 	var options = render.options;
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	return paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
 		.attr(options.highlightStyle);
 };
 
 ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	var ps = restruct.render.ps(this.a.pp);
+	var ps = restruct.render.obj2scaled(this.a.pp);
 	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
 		.attr(styles.selectionStyle);
 };
 
 ReAtom.prototype.show = function (render, aid, addReObjectPath) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var label = this.buildLabel(render);
 	var delta = 0.5 * render.options.lineWidth;
 	var rightMargin = label.rbb.width / 2;
@@ -139,7 +139,7 @@ function showHydrogen(hydrogenLabels, atom) {
 }
 
 ReAtom.prototype.buildLabel = function (render) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var paper = render.paper;
 	var label = {};
@@ -173,7 +173,7 @@ ReAtom.prototype.buildLabel = function (render) {
 };
 
 ReAtom.prototype.hydroIndex = function (render, implh, rightMargin) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var hydroIndex = {};
@@ -196,7 +196,7 @@ ReAtom.prototype.hydroIndex = function (render, implh, rightMargin) {
 };
 
 ReAtom.prototype.radical = function (render) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var radical = {};
 	var hshift;
@@ -231,7 +231,7 @@ ReAtom.prototype.radical = function (render) {
 };
 
 ReAtom.prototype.isotope = function (render, leftMargin) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var isotope = {};
@@ -253,7 +253,7 @@ ReAtom.prototype.isotope = function (render, leftMargin) {
 };
 
 ReAtom.prototype.charge = function (render, rightMargin) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var charge = {};
@@ -300,7 +300,7 @@ ReAtom.prototype.explicitValence = function (render, rightMargin) {
 		13: 'XIII',
 		14: 'XIV'
 	};
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var valence = {};
@@ -327,7 +327,7 @@ ReAtom.prototype.explicitValence = function (render, rightMargin) {
 ReAtom.prototype.hydrogen = function (render, implh, data) {
 	var hydroIndex = data.hydroIndex;
 	var hydrogenLeft = this.hydrogenOnTheLeft;
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var hydrogen = data.hydrogen;
@@ -377,7 +377,7 @@ ReAtom.prototype.hydrogen = function (render, implh, data) {
 };
 
 ReAtom.prototype.warning = function (render, leftMargin, rightMargin) {
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var delta = 0.5 * render.options.lineWidth;
 	var tfx = util.tfx;
 	var warning = {};
@@ -391,7 +391,7 @@ ReAtom.prototype.warning = function (render, leftMargin, rightMargin) {
 
 ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) {
 	var asterisk = Prototype.Browser.IE ? '*' : '∗';
-	var ps = render.ps(this.a.pp);
+	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var tfx = util.tfx;
 	var i, c, j; // eslint-disable-line no-unused-vars

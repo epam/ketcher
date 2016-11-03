@@ -70,7 +70,7 @@ Render.prototype.view2obj = function (p, isRelative) {
 };
 
 Render.prototype.obj2view = function (v, isRelative) {
-	var p = this.obj2scaled(v, isRelative);
+	var p = this.obj2scaled(v);
 	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.zoom));
 	if (!this.useOldZoom)
 		p = p.scaled(this.zoom);
@@ -174,10 +174,6 @@ Render.prototype.setViewBox = function (z) {
 		this.paper.canvas.setAttribute('viewBox', '0 0 ' + this.sz.x + ' ' + this.sz.y);
 	else
 		this.setScale(z);
-};
-
-Render.prototype.ps = function (pp) {
-	return pp.scaled(this.options.scaleFactor);
 };
 
 Render.prototype.setMolecule = function (ctab, norescale) {

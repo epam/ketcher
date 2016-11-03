@@ -23,6 +23,7 @@ function defaultOptions(scale, opt) {
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
 		bondSpace: scaleFactor / 7,
+		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
 		font: '30px "Arial"',
 		fontsz: labelFontSize,

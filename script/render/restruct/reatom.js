@@ -91,7 +91,7 @@ ReAtom.prototype.show = function (render, aid, addReObjectPath) {
 		leftMargin -= isotope.rbb.width + delta;
 		addReObjectPath('data', this.visel, isotope.path, ps, true);
 	}
-	if (!isHydrogen && implh > 0 && showHydrogen(render.options.hydrogenLabels, this)) {
+	if (!isHydrogen && implh > 0 && showHydrogen(render.options.showHydrogenLabels, this)) {
 		var data = this.hydrogen(render, implh, {
 			hydrogen: {},
 			hydroIndex: hydroIndex,

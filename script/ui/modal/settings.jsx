@@ -5,7 +5,7 @@ import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
 import SaveButton from '../component/savebutton';
 import Accordion from '../component/accordion';
-import SystemFonts from '../component/systemfonts'
+import SystemFonts from '../component/systemfonts';
 import defaultOptions from './options';
 
 class Settings extends Component {

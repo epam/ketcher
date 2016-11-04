@@ -49,7 +49,7 @@ ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 		.attr(styles.selectionStyle);
 };
 
-ReAtom.prototype.show = function (render, aid, addReObjectPath) {
+ReAtom.prototype.show = function (render, aid, addReObjectPath) { // eslint-disable-line max-statements
 	var ps = render.obj2scaled(this.a.pp);
 	var label = this.buildLabel(render);
 	var delta = 0.5 * render.options.lineWidth;
@@ -138,7 +138,7 @@ function showHydrogen(hydrogenLabels, atom) {
 	(hydrogenLabels == 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() != 'c')));
 }
 
-ReAtom.prototype.buildLabel = function (render) {
+ReAtom.prototype.buildLabel = function (render) { // eslint-disable-line max-statements
 	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;
 	var paper = render.paper;
@@ -324,7 +324,7 @@ ReAtom.prototype.explicitValence = function (render, rightMargin) {
 	return valence;
 };
 
-ReAtom.prototype.hydrogen = function (render, implh, data) {
+ReAtom.prototype.hydrogen = function (render, implh, data) { // eslint-disable-line max-statements
 	var hydroIndex = data.hydroIndex;
 	var hydrogenLeft = this.hydrogenOnTheLeft;
 	var ps = render.obj2scaled(this.a.pp);
@@ -389,7 +389,7 @@ ReAtom.prototype.warning = function (render, leftMargin, rightMargin) {
 	return warning;
 };
 
-ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) {
+ReAtom.prototype.attpnt = function (render, lsb, addReObjectPath, shiftBondEnd) { // eslint-disable-line max-statements
 	var asterisk = Prototype.Browser.IE ? '*' : '∗';
 	var ps = render.obj2scaled(this.a.pp);
 	var options = render.options;

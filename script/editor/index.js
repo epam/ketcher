@@ -133,8 +133,9 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 	// END
 	/* eslint-enable no-underscore-dangle*/
 
-	clientArea.observe('onresize', function (event) {  // eslint-disable-line no-unused-vars
-		render.onResize();
+	clientArea.observe('onresize', function () {
+		console.info('resize');
+		// render.onResize();
 	});
 
 	// assign canvas events handlers
@@ -171,7 +172,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 
 Editor.prototype.findItem = function (event, maps, skip) {
 	var pos = 'ui' in window ? new Vec2(this.render.page2obj(event)) :
-	    new Vec2(event.pageX, event.pageY).sub(this.render.clientAreaPos);
+	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 	var ci = closest.item(this.render.ctab, pos, maps, skip);
 
 	// rbalabanov: let it be this way at the moment
@@ -288,5 +289,17 @@ Editor.prototype.selectedStruct = function () {
 
 	return dst;
 };
+
+// TODO: find DOM shorthand
+function elementOffset(element) {
+	var top = 0,
+		left = 0;
+	do {
+		top += element.offsetTop  || 0;
+		left += element.offsetLeft || 0;
+		element = element.offsetParent;
+	} while (element);
+	return new Vec2(left, top);
+}
 
 module.exports = Editor;

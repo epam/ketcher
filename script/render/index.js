@@ -11,34 +11,19 @@ var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 // DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
-function Render(clientArea, scale, opt, viewSz) { // eslint-disable-line max-statements
+function Render(clientArea, scale, opt) {
 	this.userOpts = opt;
+
 	this.useOldZoom = Prototype.Browser.IE;
 	this.scale = scale || 100;
 	this.baseScale = this.scale;
-	this.offset = new Vec2();
-	this.clientArea = clientArea = $(clientArea);
-	clientArea.innerHTML = '';
-	this.paper = new Raphael(clientArea);
-	this.size = new Vec2();
-	this.viewSz = viewSz || new Vec2(clientArea.clientWidth || 100,
-									 clientArea.clientHeight || 100);
-	this.bb = new Box2Abs(new Vec2(), this.viewSz);
-	this.dirty = true;
-	this.selectionRect = null;
 	this.zoom = 1.0;
+	this.offset = new Vec2();
+
+	this.clientArea = clientArea = $(clientArea);
+	this.paper = new Raphael(clientArea);
+	this.dirty = true;
 	this.structChangeHandlers = [];
-
-	var valueT = 0,
-		valueL = 0;
-	var element = clientArea;
-	do {
-		valueT += element.offsetTop  || 0;
-		valueL += element.offsetLeft || 0;
-		element = element.offsetParent;
-	} while (element);
-
-	this.clientAreaPos = new Vec2(valueL, valueT);
 
 	this.ctab = new ReStruct(new Struct(), this);
 
@@ -85,11 +70,6 @@ Render.prototype.page2obj = function (pagePos) {
 	var offset = this.clientArea.cumulativeOffset();
 	var pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top);
 	return this.view2obj(pp);
-};
-
-Render.prototype.onResize = function () {
-	this.viewSz = new Vec2(this.clientArea.clientWidth,
-	                       this.clientArea.clientHeight);
 };
 
 Render.prototype.setPaperSize = function (sz) {
@@ -181,20 +161,20 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	this.paper.clear();
 	this.ctab = new ReStruct(ctab, this, norescale);
 	this.offset = null;
-	this.size = null;
-	this.bb = null;
 	this.update(false);
 };
 
-Render.prototype.update = function (force) { // eslint-disable-line max-statements
+Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-statements
 	DEBUG.logMethod('update');
+	viewSz = viewSz || new Vec2(this.clientArea.clientWidth || 100,
+	                            this.clientArea.clientHeight || 100);
 
 	if (this.dirty) {
 		if (this.options.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
 			// this is only an approximation to select some scale that's close enough to the target one
-			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * this.viewSz.y / (cbb.max.y - cbb.min.y) : 100;
-			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * this.viewSz.x / (cbb.max.x - cbb.min.x) : 100;
+			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * viewSz.y / (cbb.max.y - cbb.min.y) : 100;
+			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * viewSz.x / (cbb.max.x - cbb.min.x) : 100;
 			this.scale = Math.min(sy, sx);
 			if (this.options.maxBondLength > 0 && this.scale > this.options.maxBondLength)
 				this.scale = this.options.maxBondLength;
@@ -216,7 +196,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 		if (!this.options.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
 			var eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-			var vb = new Box2Abs(this.scrollPos(), this.viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
+			var vb = new Box2Abs(this.scrollPos(), viewSz.scaled(1 / this.zoom).sub(Vec2.UNIT.scaled(20)));
 			var cb = Box2Abs.union(vb, eb);
 			if (!this.oldCb)
 				this.oldCb = new Box2Abs();
@@ -236,7 +216,7 @@ Render.prototype.update = function (force) { // eslint-disable-line max-statemen
 			var sz1 = bb.sz();
 			var marg = this.options.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
-			var csz = this.viewSz;
+			var csz = viewSz;
 			 /* eslint-disable no-mixed-operators*/
 			if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)
 				/* eslint-enable no-mixed-operators*/

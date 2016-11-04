@@ -482,7 +482,6 @@ function updateStruct(struct) {
 	console.assert(struct, 'No molecule to update');
 	ui.editor.setSelection(null);
 	addUndoAction(Action.fromNewCanvas(struct));
-	ui.render.onResize(); // TODO: this methods should be called in the resize-event handler
 	ui.render.update();
 	ui.render.recoordinate(getStructCenter(ui.render.ctab));
 };

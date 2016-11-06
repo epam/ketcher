@@ -130,17 +130,6 @@ Render.prototype.setScrollOffset = function (x, y) {
 	this.update(false);
 };
 
-Render.prototype.recoordinate = function (rp/* , vp*/) {
-	// rp is a point in scaled coordinates, which will be positioned
-	// vp is the point where the reference point should now be (in view coordinates)
-	//    or the center if not set
-	console.assert(rp, 'Reference point not specified');
-	this.setScrollOffset(0, 0);
-	// var avp = this.obj2view(rp);
-	// var so = avp.sub(vp || this.viewSz.scaled(0.5));
-	// this.setScrollOffset(so.x, so.y);
-};
-
 Render.prototype.setScale = function (z) {
 	if (this.offset)
 		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);

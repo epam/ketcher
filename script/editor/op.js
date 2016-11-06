@@ -4,8 +4,6 @@ var Set = require('../util/set');
 var Struct = require('../chem/struct');
 var ReStruct = require('../render/restruct');
 
-var ui = global.ui;
-
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 
@@ -723,17 +721,12 @@ function SGroupDataMove(id, d) {
 }
 SGroupDataMove.prototype = new Base();
 
-function CanvasLoad(ctab) {
-	this.data = { ctab: ctab, norescale: false };
+function CanvasLoad(struct) {
+	this.data = { ctab: struct, norescale: false };
 	this.execute = function (editor) {
 		var rnd = editor.render;
-		var struct = rnd.ctab.molecule;
-
-		rnd.ctab.clearVisels();
-		var oldStruct = struct;
-		rnd.setMolecule(this.data.ctab, this.data.norescale);
-		ui.ctab = rnd.ctab.molecule;
-
+		var oldStruct = rnd.ctab.molecule;
+		editor.struct(this.data.ctab, this.data.norescale);
 		this.data.ctab = oldStruct;
 		this.data.norescale = true;
 	};

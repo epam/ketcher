@@ -2,6 +2,7 @@ var util = require('../util');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
+var Render = require('../render');
 var ReStruct = require('../render/restruct');
 var closest = require('./closest');
 
@@ -26,17 +27,19 @@ var toolMap = {
 	rotate: require('./tool/rotate')
 };
 
+var SCALE = 40;  // const
 var ui = global.ui;
 
-function Editor(render) {
-	this.render = render;
+function Editor(clientArea, options) {
+	this.render = new Render(clientArea, SCALE,
+	                         Object.assign({ atomColoring: true }, options));
 	this.selection = {};
 	this._tool = null; // eslint-disable-line
-	this.setupEvents();
+	this.setupEvents(this.render.clientArea);
 }
 
 Editor.prototype.tool = function (name, opts) {
-	if (name != undefined) {
+	if (arguments.length > 0) {
 		/* eslint-disable no-underscore-dangle*/
 		if (this._tool)
 			this._tool.OnCancel(); // eslint-disable-line new-cap
@@ -46,11 +49,45 @@ Editor.prototype.tool = function (name, opts) {
 	/* eslint-enable no-underscore-dangle*/
 };
 
+Editor.prototype.struct = function (value, norescale) {
+	if (arguments.length > 0) {
+		this.setSelection(null);
+		this.render.ctab.clearVisels(); // TODO: What is it?
+		this.render.setMolecule(value, norescale);
+		this.render.update();
+		this.recoordinate(getStructCenter(this.render.ctab));
+	}
+	return this.render.ctab.molecule;
+};
+
+Editor.prototype.options = function (value) {
+	if (arguments.length > 0) {
+		var struct = this.render.ctab.molecule;
+		var zoom = this.render.zoom;
+		this.render.clientArea.innerHTML = '';
+		this.render = new Render(this.render.clientArea,
+		                         SCALE, value);
+		this.render.setMolecule(struct); // TODO: reuse this.struct here?
+		this.render.setZoom(zoom);
+		this.render.update();
+	}
+	return this.render.options;
+};
+
+Editor.prototype.zoom = function (value) {
+	if (arguments.length > 0) {
+		this.render.setZoom(value);
+		this.recoordinate(getStructCenter(this.render.ctab,
+		                                  this.getSelection()));
+		this.render.update();
+	}
+	return this.render.zoom;
+};
+
 // Events setup extracted from render
-Editor.prototype.setupEvents = function () { // eslint-disable-line max-statements
+Editor.prototype.setupEvents = function (clientArea) { // eslint-disable-line max-statements
 	var editor = this;
 	var render = this.render;
-	var clientArea = render.clientArea;
 
 	// rbalabanov: two-fingers scrolling & zooming for iPad
 	// TODO should be moved to touch.js module, re-factoring needed
@@ -122,7 +159,7 @@ Editor.prototype.setupEvents = function () { // eslint-disable-line max-statemen
 		var offset = clientArea.cumulativeOffset();
 		var pp = new Vec2(this._tui.center.pageX - offset.left,
 						  this._tui.center.pageY - offset.top);
-		render.recoordinate(pp, zoomStaticPoint);
+		this.recoordinate(pp, zoomStaticPoint);
 		render.update();
 		event.preventDefault();
 	});
@@ -289,6 +326,22 @@ Editor.prototype.selectedStruct = function () {
 
 	return dst;
 };
+
+Editor.prototype.recoordinate = function (rp/* , vp*/) {
+	// rp is a point in scaled coordinates, which will be positioned
+	// vp is the point where the reference point should now be (in view coordinates)
+	//    or the center if not set
+	console.assert(rp, 'Reference point not specified');
+	this.render.setScrollOffset(0, 0);
+	// var avp = this.render.obj2view(rp);
+	// var so = avp.sub(vp || this.render.viewSz.scaled(0.5));
+	// this.render.setScrollOffset(so.x, so.y);
+};
+
+function getStructCenter(restruct, selection) {
+	var bb = restruct.getVBoxObj(selection);
+	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
+}
 
 // TODO: find DOM shorthand
 function elementOffset(element) {

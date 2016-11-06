@@ -11,7 +11,6 @@ var Struct = require('../chem/struct');
 var molfile = require('../chem/molfile');
 var smiles = require('../chem/smiles');
 
-var Render = require('../render');
 var Editor = require('../editor');
 
 var Action = require('../editor/action.js');
@@ -22,7 +21,6 @@ var modal = require('./modal');
 
 var structFormat = require('./structformat');
 
-var SCALE = 40;  // const
 var HISTORY_LENGTH = 32;
 
 var undoStack = [];
@@ -59,11 +57,9 @@ function init (opts, apiServer) {
 	var currentOptions = JSON.parse(localStorage.getItem("ketcher-opts"));
 
 	// Init renderer
-	ui.render =  new Render(clientArea, SCALE,
-	                        Object.assign({ atomColoring: true }, options, currentOptions));
-	ui.editor = new Editor(ui.render);
-	ui.render.setMolecule(ui.ctab);
-	ui.render.update();
+	ui.editor = new Editor(clientArea,
+	                       Object.assign(options, currentOptions));
+	ui.render = ui.editor.render;
 
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
@@ -480,15 +476,7 @@ function dialog(modal, params, noAnimate) {
 
 function updateStruct(struct) {
 	console.assert(struct, 'No molecule to update');
-	ui.editor.setSelection(null);
 	addUndoAction(Action.fromNewCanvas(struct));
-	ui.render.update();
-	ui.render.recoordinate(getStructCenter(ui.render.ctab));
-};
-
-function getStructCenter(restruct, selection) {
-	var bb = restruct.getVBoxObj(selection);
-	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 
 function addUndoAction (action, check_dummy)
@@ -508,11 +496,9 @@ function addUndoAction (action, check_dummy)
 
 function clear () {
 	selectAction(null);
-
-	if (!ui.ctab.isBlank()) {
+	if (!ui.editor.struct().isBlank())
 		addUndoAction(Action.fromNewCanvas(new Struct()));
-		ui.render.update();
-	}
+
 }
 
 function open () {
@@ -525,13 +511,14 @@ function open () {
 }
 
 function save () {
-	dialog(modal.save, { server: server, struct: ui.ctab });
+	dialog(modal.save, { server: server,
+	                     struct: ui.editor.struct() });
 }
 
 function serverCall(method, options, struct) {
 	if (!struct) {
 		var aidMap = {};
-		struct = ui.ctab.clone(null, null, false, aidMap);
+		struct = ui.editor.struct().clone(null, null, false, aidMap);
 
 		// retain reaction props on transform
 		var implicitReaction = !struct.hasRxnArrow() && struct.hasRxnProps();
@@ -562,7 +549,8 @@ function serverCall(method, options, struct) {
 
 function serverTransform(method, options, struct) {
 	if (!struct)
-		var implicitReaction = !ui.ctab.hasRxnArrow() && ui.ctab.hasRxnProps();
+		var implicitReaction = !ui.editor.struct().hasRxnArrow() &&
+		    ui.editor.struct().hasRxnProps();
 	return serverCall(method, options, struct).then(function (res) {
 		var struct = molfile.parse(res.struct);
 		if (implicitReaction)
@@ -607,16 +595,12 @@ function updateZoom (refresh) {
 	subEl('zoom-out').disabled = (i == 0);
 
 	var value = parseFloat(zoomSelect.value) / 100;
-	if (refresh) {
-		ui.render.setZoom(value);
-		ui.render.recoordinate(getStructCenter(ui.ctab,
-		                                       ui.editor.getSelection()));
-		ui.render.update();
-	}
+	if (refresh)
+		ui.editor.zoom(value);
 }
 
 function automap () {
-	if (!ui.ctab.hasRxnArrow())
+	if (!ui.editor.struct().hasRxnArrow())
 		// not a reaction explicit or implicit
 		alert('Auto-Mapping can only be applied to reactions');
 	else {
@@ -808,7 +792,7 @@ var actionMap = {
 		ui.render.update(true);
 	},
 	'qs-serialize': function () {
-		var molStr = molfile.stringify(ui.ctab);
+		var molStr = molfile.stringify(ui.editor.struct());
 		var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
 		var qs = document.location.search;
 		document.location.search = !qs ? '?' + molQs :
@@ -841,19 +825,13 @@ var actionMap = {
 		dialog(modal.settings, { server: server }).then(function (res) {
 			if (!res.onlyCurrentSession)
 				localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
-			// else
-			// 	localStorage.setItem("ketcher-opts",  '{}');
 			console.log("ketcher-opts", res.localStorageOpts);
-			ui.render =  ui.editor.render = new Render(clientArea, SCALE, res.opts);
-			ui.render.setMolecule(ui.ctab);
-			ui.render.update();
+			ui.editor.options(res.opts);
+			ui.render = ui.editor.render;
 		});
 	},
 	'help': function () {
-		dialog(modal.help, {
-			struct: ui.ctab,
-			server: server
-		});
+		dialog(modal.help);
 	}
 };
 
@@ -962,8 +940,7 @@ function atomLabel (mode) {
 
 function clean () {
 	// latter if (initialized)
-	Action.fromNewCanvas(new Struct());
-	ui.render.update();
+	ui.editor.struct(new Struct());
 	undoStack.clear();
 	redoStack.clear();
 	updateHistoryButtons();
@@ -981,7 +958,6 @@ module.exports = {
 Object.assign(ui, module.exports);
 
 Object.assign(ui, {
-	ctab: new Struct(),
 	render: null,
 	editor: null,
 

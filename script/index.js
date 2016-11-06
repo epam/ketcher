@@ -11,11 +11,13 @@ var ui = global.ui;
 var Render = require('./render');
 
 function getSmiles() {
-	return smiles.stringify(ui.ctab, { ignoreErrors: true });
+	return smiles.stringify(ui.editor.struct(),
+	                        { ignoreErrors: true });
 }
 
 function getMolfile() {
-	return molfile.stringify(ui.ctab, { ignoreErrors: true });
+	return molfile.stringify(ui.editor.struct(),
+	                         { ignoreErrors: true });
 }
 
 function setMolecule(molString) {

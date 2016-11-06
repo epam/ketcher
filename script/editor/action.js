@@ -952,10 +952,10 @@ function fromChain(p0, v, nSect, atomId) {
 	return action;
 }
 
-function fromNewCanvas(ctab) {
+function fromNewCanvas(struct) {
 	var action = new Action();
 
-	action.addOp(new op.CanvasLoad(ctab));
+	action.addOp(new op.CanvasLoad(struct));
 	return action.perform();
 }
 

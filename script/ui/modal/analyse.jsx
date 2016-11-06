@@ -39,7 +39,7 @@ class Analyse extends Component {
 		return (
 			<Dialog caption="Calculated Values"
 					name="analyse" params={this.props}
-					buttons={["Cancel"]}>
+					buttons={["Close"]}>
 				<ul>{[
 					{ name: 'Chemical Formula', key: 'gross' },
 					{ name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight' },

@@ -48,7 +48,7 @@ class Check extends Component {
         return (
             <Dialog caption="Structure Check"
                     name="check" params={props}
-                    buttons={[ "Cancel"]}>
+                    buttons={[ "Close"]}>
 				<Tabs className="check-tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
 					<ul className="check-settings">{
 						this.state.data == 'correct' ? <li><div className="error-name">No errors found</div></li> :

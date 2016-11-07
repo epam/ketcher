@@ -749,7 +749,7 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 			atom.show(render, aid, this.addReObjectPath.bind(this));
 
 		if (atom.a.attpnt) {
-			var lsb = bisectLargestSector(this, this.molecule);
+			var lsb = bisectLargestSector(atom, this.molecule);
 			atom.attpnt(render, lsb, this.addReObjectPath.bind(this), shiftBondEnd);
 		}
 

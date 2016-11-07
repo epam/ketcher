@@ -1,6 +1,7 @@
 var Vec2 = require('../util/vec2');
 
 var SELECTION_DISTANCE_COEFFICIENT = 0.4;
+var ui = global.ui;
 
 function findClosestAtom(restruct, pos, minDist, skip) {
 	var closestAtom = null;
@@ -230,7 +231,7 @@ function findClosestItem(restruct, pos, maps, skip) { // eslint-disable-line max
 		if (bond) {
 			if (bond.cid !== null)
 				res = updret(res, 'Bond', { id: bond.cid, dist: bond.cdist });
-			if (res == null || res.dist > 0.4 * this.scale) // hack
+			if (res == null || res.dist > 0.4 * ui.render.scale) // hack
 				res = updret(res, 'Bond', bond);
 		}
 	}

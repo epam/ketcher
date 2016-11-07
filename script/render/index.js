@@ -134,7 +134,7 @@ Render.prototype.setScale = function (z) {
 	if (this.offset)
 		this.offset = this.offset.scaled(1 / z).scaled(this.zoom);
 	this.scale = this.baseScale * this.zoom;
-	this.options = defaultOptions(this.scale, this.userOpts);
+	this.options = null;
 	this.update(true);
 };
 
@@ -168,6 +168,8 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 			if (this.options.maxBondLength > 0 && this.scale > this.options.maxBondLength)
 				this.scale = this.options.maxBondLength;
 		}
+		// TODO: remove me. Hack to update scaleFactor while autoscale
+		this.options = defaultOptions(this.scale, this.userOpts);
 		this.dirty = false;
 		force = true;
 	}

@@ -83,7 +83,7 @@ function showBond(render, structData, bond) {
 		case Struct.Bond.PATTERN.STEREO.UP:
 			findIncomingUpBonds(hb1.bid, bond, structData);
 			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
-				path = draw.bondSingleStereoBold(render, hb1, hb2, bond, shiftA, shiftB);
+				path = draw.bondSingleStereoBold(render, hb1, hb2, bond, false, struct, shiftA, shiftB);
 			else
 				path = draw.bondSingleUp(render, hb1, hb2, bond, struct);
 			break;
@@ -102,7 +102,7 @@ function showBond(render, structData, bond) {
 		findIncomingUpBonds(hb1.bid, bond, structData);
 		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
 			bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-			path = draw.bondSingleStereoBold(render, hb1, hb2, bond, shiftA, shiftB);
+			path = draw.bondSingleStereoBold(render, hb1, hb2, bond, true, struct, shiftA, shiftB);
 		} else {
 			path = draw.bondDouble(render, hb1, hb2, bond,
 				bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS, shiftA, shiftB);

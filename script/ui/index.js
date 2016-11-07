@@ -775,9 +775,9 @@ var actionMap = {
 	info: function () {
 		var about = dialog.bind(null, modal.about);
 		server.then(function (res) {
-			return about(Object.assign(res, options));
+			return about(Object.assign(res, options), true);
 		}, function () {
-			return about(options);
+			return about(options, true);
 		});
 	},
 	'select-all': function () {

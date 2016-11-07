@@ -772,7 +772,7 @@ var actionMap = {
 		ui.editor.setSelection(null);
 		return { tool: 'paste', opts: struct };
 	},
-	info: function () {
+	about: function () {
 		var about = dialog.bind(null, modal.about);
 		server.then(function (res) {
 			return about(Object.assign(res, options), true);

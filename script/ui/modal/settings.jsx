@@ -155,8 +155,8 @@ class Settings extends Component {
 function SelectCheck({ name, value, onChange }) {
 	return (
 		<select onChange={ev => onChange(name, ev.target.value == "on") } value={value ? "on" : "off"}>
-			<option>on</option>
-			<option>off</option>
+			<option value="on">on</option>
+			<option value="off">off</option>
 		</select>
 	);
 }
@@ -168,9 +168,9 @@ function MeasureField({ name, value, values, measureValue, onChange }) {
 				   onChange={ ev => onChange(name, ev.target.value) } value={ value }/>
 			<select className="measure" onChange={ ev => onChange(name + "Measure", ev.target.value) }
 					value={measureValue || 'px'}>
-				<option>px</option>
-				<option>pt</option>
-				<option>inch</option>
+				<option value="px">px</option>
+				<option value="pt">pt</option>
+				<option value="inch">inch</option>
 			</select>
 		</div>
 	);

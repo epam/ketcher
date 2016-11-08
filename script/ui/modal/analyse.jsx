@@ -3,10 +3,24 @@ import { h, Component, render } from 'preact';
 
 import Dialog from '../component/dialog';
 
-function roundOff(str, round) {
-	return str.replace(/[0-9]*\.[0-9]+/g, (str) => (
-		(+str).toFixed(round)
-	));
+function SelectRound({value, onChange}) {
+	return (
+		<select value={value} onChange={ev => onChange(ev.target.value)}>
+		  {
+			  range(8).map(i => (
+				  <option value={i}>{i + ' decimal places'}</option>
+			  ))
+		  }
+		</select>
+	);
+}
+
+function FrozenInput({value}) {
+	return (
+		<input type="text" spellcheck="false" value={value}
+			   onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])} />
+		// tab, left, right, home, end codes
+	);
 }
 
 class Analyse extends Component {
@@ -23,24 +37,6 @@ class Analyse extends Component {
 		newState[name] = +value;
 		this.setState(newState);
 	}
-	ignore(value) {
-		if(value.code == 'ArrowLeft' || value.code == 'ArrowRight' ||
-		   value.code == 'Home' || value.code == 'End') {
-		} else {
-			value.preventDefault();
-		}
-	}
-
-	selectContent(roundName) {
-		let selectList = [];
-		for (let i = 0; i < 8; i++) {
-			selectList.push(i == this.state[roundName] ? <option value={i} selected>{i + ' decimal places'}</option> :
-				<option value={i}>{i + ' decimal places'}</option>)
-		}
-		return (<select onChange={el => this.changeRound(roundName, el.target.value)}>
-			{selectList}
-		</select>)
-	}
 
 	render (props, state) {
 		return (
@@ -52,22 +48,39 @@ class Analyse extends Component {
 					{ name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight' },
 					{ name: 'Exact Mass', key: 'monoisotopic-mass', round: 'roundMass' },
 					{ name: 'Elemental Analysis', key: 'mass-composition' }
-				].map(v => (
+				].map(item => (
 					<li>
-						<label>{v.name}:</label>
-						{v.round ?
-							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : roundOff(props[v.key], state[v.round])}
-								   onkeydown={ev => this.ignore(ev)} onkeypress={ev => this.ignore(ev)} onkeyup={ev => this.ignore(ev)} /> :
-							<input value={props[v.key]} onkeydown={ev => this.ignore(ev)} onkeypress={ev => this.ignore(ev)} onkeyup={ev => this.ignore(ev)} focus/>}
-						{v.round ? this.selectContent(v.round) : null}
+					  <label>{item.name}:</label>
+					  <FrozenInput
+						value={ item.round ? roundOff(props[item.key], state[item.round]) : props[item.key] } />
+					  { item.round ? (
+						  <SelectRound value={state[item.round]} onChange={val => this.changeRound(item.round, val)}/>
+					  ) : null}
 					</li>
 				))
-				}</ul>
+			}</ul>
 			</Dialog>
 		);
 	}
 }
 
+function filterKeyCode(event, allowed) {
+	if (allowed.indexOf(event.keyCode) == -1)
+		event.preventDefault();
+}
+
+function roundOff(value, round) {
+	if (typeof value == 'number')
+		return value.toFixed(round);
+	return value.replace(/[0-9]*\.[0-9]+/g, (str) => (
+		(+str).toFixed(round)
+	));
+}
+
+function range(n, start=0) {
+	// not so widely known hack
+	return Array.apply(null, { length: n }).map((_, i) => i + start);
+}
 
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];

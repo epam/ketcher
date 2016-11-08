@@ -24,7 +24,7 @@ class Analyse extends Component {
 		this.setState(newState);
 	}
 	ignore(value) {
-		if(value.code == 'ArrowLeft' || value.code == 'ArrowRight' || value.code == 'ArrowDown' || value.code == 'ArrowUp' ||
+		if(value.code == 'ArrowLeft' || value.code == 'ArrowRight' ||
 		   value.code == 'Home' || value.code == 'End') {
 		} else {
 			value.preventDefault();
@@ -56,7 +56,8 @@ class Analyse extends Component {
 					<li>
 						<label>{v.name}:</label>
 						{v.round ?
-							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : roundOff(props[v.key], state[v.round]) } readonly/> :
+							<input value={typeof props[v.key] == 'number' ? props[v.key].toFixed(state[v.round]) : roundOff(props[v.key], state[v.round])}
+								   onkeydown={ev => this.ignore(ev)} onkeypress={ev => this.ignore(ev)} onkeyup={ev => this.ignore(ev)} /> :
 							<input value={props[v.key]} onkeydown={ev => this.ignore(ev)} onkeypress={ev => this.ignore(ev)} onkeyup={ev => this.ignore(ev)} focus/>}
 						{v.round ? this.selectContent(v.round) : null}
 					</li>

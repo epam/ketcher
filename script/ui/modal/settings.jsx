@@ -7,6 +7,7 @@ import SaveButton from '../component/savebutton';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
 import defaultOptions from './options';
+import util from '../../util';
 
 class Settings extends Component {
      constructor(props) {
@@ -162,12 +163,26 @@ function SelectCheck({ name, value, onChange }) {
 }
 
 function MeasureField({ name, value, values, measureValue, onChange }) {
+	function setValue(ev) {
+		var valuepx = util.convertToPixels(ev.target.value, measureValue);
+		if (valuepx <= values[0] || valuepx > values[1]) {
+			ev.target.value = value;
+			return;
+		}
+		onChange(name, ev.target.value);
+	}
+	function setMeasure(ev) {
+		var valuepx = util.convertToPixels(value, measureValue);
+		var newvalue = util.convertFromPixels(valuepx, ev.target.value);
+		onChange(name, newvalue);
+		onChange(name + "Measure", ev.target.value);
+	}
 	return (
 		<div>
 			<input type="number" min={ values[0] } max={ values[1] }
-				   onChange={ ev => onChange(name, ev.target.value) } value={ value }/>
-			<select className="measure" onChange={ ev => onChange(name + "Measure", ev.target.value) }
-					value={measureValue || 'px'}>
+				   onChange={ ev => setValue(ev) } value={ value }/>
+			<select className="measure" value={measureValue || 'px'} onChange={ ev => setMeasure(ev) }>
+				<option value="cm">cm</option>
 				<option value="px">px</option>
 				<option value="pt">pt</option>
 				<option value="inch">inch</option>

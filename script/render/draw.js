@@ -39,11 +39,11 @@ function bondSingleUp(render, hb1, hb2, bond, struct) { // eslint-disable-line m
 		n = hb1.norm;
 	var paper = render.paper;
 	var options = render.options;
-	var bsp = 0.7 * options.bondSpace;
+	var bsp = 0.7 * options.stereoBond;
 	var b2 = b.addScaled(n, bsp);
 	var b3 = b.addScaled(n, -bsp);
 	if (bond.neihbid2 >= 0) { // if the end is shared with another up-bond heading this way
-		var coords = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.bondSpace, struct);
+		var coords = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
 		b2 = coords[0];
 		b3 = coords[1];
 	}
@@ -55,8 +55,8 @@ function bondSingleUp(render, hb1, hb2, bond, struct) { // eslint-disable-line m
 function bondSingleStereoBold(render, hb1, hb2, bond, isDouble, struct, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
 	var paper = render.paper;
 	var options = render.options;
-	var coords1 = stereoUpBondGetCoordinates(hb1, bond.neihbid1, options.bondSpace, struct);
-	var coords2 = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.bondSpace, struct);
+	var coords1 = stereoUpBondGetCoordinates(hb1, bond.neihbid1, options.stereoBond, struct);
+	var coords2 = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
 	var a1 = coords1[0];
 	var a2 = coords1[1];
 	var a3 = coords2[0];
@@ -72,7 +72,7 @@ function bondSingleStereoBold(render, hb1, hb2, bond, isDouble, struct, shiftA, 
 			b = hb2.p,
 			n = hb1.norm,
 			shift = bond.doubleBondShift;
-		var bsp = 1.5 * options.bondSpace;
+		var bsp = 1.5 * options.stereoBond;
 		var b1 = a.addScaled(n, bsp * shift);
 		var b2 = b.addScaled(n, bsp * shift);
 		if (shift > 0) {
@@ -100,7 +100,7 @@ function bondSingleDown(render, hb1, hb2) { // eslint-disable-line max-statement
 		n = hb1.norm;
 	var paper = render.paper;
 	var options = render.options;
-	var bsp = 0.7 * options.bondSpace;
+	var bsp = 0.7 * options.stereoBond;
 	var d = b.sub(a);
 	var len = d.length() + 0.2;
 	d = d.normalized();
@@ -129,7 +129,7 @@ function bondSingleEither(render, hb1, hb2) { // eslint-disable-line max-stateme
 		n = hb1.norm;
 	var paper = render.paper;
 	var options = render.options;
-	var bsp = 0.7 * options.bondSpace;
+	var bsp = 0.7 * options.stereoBond;
 	var d = b.sub(a);
 	var len = d.length();
 	d = d.normalized();

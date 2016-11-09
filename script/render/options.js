@@ -25,6 +25,7 @@ function defaultOptions(scale, opt) {
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
 		bondSpace: util.convertToPixels(opt.doubleBondWidth, opt.doubleBondWidthMeasure) || scaleFactor / 7,
+		stereoBond: util.convertToPixels(opt.stereoBondWidth, opt.stereoBondWidthMeasure) || scaleFactor / 7,
 		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
 		font: '30px "Arial"',

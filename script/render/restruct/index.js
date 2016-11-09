@@ -739,46 +739,11 @@ ReStruct.prototype.verifyLoops = function () {
 };
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
-	var render = this.render;
-	var options = render.options;
+	var options = this.render.options;
 
 	for (var aid in this.atomsChanged) {
 		var atom = this.atoms.get(aid);
-		var ps = render.obj2scaled(atom.a.pp);
-		if (atom.showLabel) // label
-			atom.show(render, aid, this.addReObjectPath.bind(this));
-
-		if (atom.a.attpnt) {
-			var lsb = bisectLargestSector(atom, this.molecule);
-			atom.attpnt(render, lsb, this.addReObjectPath.bind(this), shiftBondEnd);
-		}
-
-		var aamText = atom.aamText();
-		var queryAttrsText = atom.queryAttrsText();
-
-		// this includes both aam flags, if any, and query features, if any
-		// we render them together to avoid possible collisions
-		aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
-		if (aamText.length > 0) {
-			var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
-				'font': options.font,
-				'font-size': options.fontszsub,
-				'fill': '#000000'
-			});
-			var aamBox = util.relBox(aamPath.getBBox());
-			draw.recenterText(aamPath, aamBox);
-			var dir = bisectLargestSector(atom, this.molecule);
-			var visel = atom.visel;
-			var t = 3;
-			// estimate the shift to clear the atom label
-			for (var i = 0; i < visel.exts.length; ++i)
-				t = Math.max(t, Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
-			// estimate the shift backwards to account for the size of the aam/query text box itself
-			t += Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
-			dir = dir.scaled(8 + t);
-			pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
-			this.addReObjectPath('data', atom.visel, aamPath, ps, true);
-		}
+		atom.show(this, aid, options);
 	}
 };
 
@@ -931,40 +896,6 @@ ReStruct.prototype.bondRecalc = function (options, bond) {
 	/* eslint-enable no-mixed-operators*/
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 };
-
-function pathAndRBoxTranslate(path, rbb, x, y) {
-	path.translateAbs(x, y);
-	rbb.x += x;
-	rbb.y += y;
-}
-
-function bisectLargestSector(atom, struct) {
-	var angles = [];
-	atom.a.neighbors.each(function (hbid) {
-		var hb = struct.halfBonds.get(hbid);
-		angles.push(hb.ang);
-	});
-	angles = angles.sort(function (a, b) {
-		return a - b;
-	});
-	var da = [];
-	for (var i = 0; i < angles.length - 1; ++i)
-		da.push(angles[(i + 1) % angles.length] - angles[i]);
-	/* eslint-disable no-mixed-operators*/
-	da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-	/* eslint-enable no-mixed-operators*/
-	var daMax = 0;
-	var ang = -Math.PI / 2;
-	for (i = 0; i < angles.length; ++i) {
-		if (da[i] > daMax) {
-			daMax = da[i];
-			/* eslint-disable no-mixed-operators*/
-			ang = angles[i] + da[i] / 2;
-			/* eslint-enable no-mixed-operators*/
-		}
-	}
-	return new Vec2(Math.cos(ang), Math.sin(ang));
-}
 
 function shiftBondEnd(atom, pos0, dir, margin) {
 	var t = 0;

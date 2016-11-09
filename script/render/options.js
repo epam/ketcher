@@ -1,5 +1,3 @@
-var util = require('../util');
-
 function defaultOptions(scale, opt) {
 	var scaleFactor = scale;
 
@@ -24,8 +22,8 @@ function defaultOptions(scale, opt) {
 
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
-		bondSpace: util.convertToPixels(opt.doubleBondWidth, opt.doubleBondWidthMeasure) || scaleFactor / 7,
-		stereoBond: util.convertToPixels(opt.stereoBondWidth, opt.stereoBondWidthMeasure) || scaleFactor / 7,
+		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
+		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
 		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
 		font: '30px "Arial"',
@@ -37,7 +35,7 @@ function defaultOptions(scale, opt) {
 		/* styles */
 		lineattr: {
 			'stroke': '#000',
-			'stroke-width': util.convertToPixels(opt.bondThickness, opt.bondThicknessMeasure) || scaleFactor / 20,
+			'stroke-width': opt.bondThickness || scaleFactor / 20,
 			'stroke-linecap': 'round',
 			'stroke-linejoin': 'round'
 		},

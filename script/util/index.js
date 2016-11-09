@@ -48,34 +48,6 @@ function unicodeLiteral(str) {
 	return result;
 }
 
-function convertToPixels(value, measure) {
-	if (!value) return null;
-	switch (measure) {
-	case 'px':
-		return value;
-	case 'cm':
-		return (value * 37.795278).toFixed();
-	case 'pt':
-		return (value * 1.333333).toFixed();
-	case 'inch':
-		return (value * 96).toFixed();
-	}
-}
-
-function convertFromPixels(value, measure) {
-	if (!value) return null;
-	switch (measure) {
-	case 'px':
-		return value;
-	case 'cm':
-		return (value * 0.026458).toFixed(3);
-	case 'pt':
-		return (value * 0.75).toFixed(1);
-	case 'inch':
-		return (value * 0.010417).toFixed(3);
-	}
-}
-
 function ifDef(dst, src, prop, def) {
 	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
 }
@@ -117,7 +89,5 @@ module.exports = {
 	isNull: isNull,
 	isNullOrUndefined: isNullOrUndefined,
 	isObject: isObject,
-	relBox: relBox,
-	convertToPixels: convertToPixels,
-	convertFromPixels: convertFromPixels
+	relBox: relBox
 };

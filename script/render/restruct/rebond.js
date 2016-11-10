@@ -2,6 +2,7 @@ var ReObject = require('./reobject');
 
 var Struct = require('../../chem/struct');
 var draw = require('../draw');
+var Vec2 = require('../../util/vec2');
 var util = require('../../util');
 
 function ReBond(/* chem.Bond*/bond) {
@@ -36,52 +37,86 @@ ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 		.attr(options.selectionStyle);
 };
 
-ReBond.prototype.show = function (restruct) {
-	var structData = {
-		molecule: restruct.molecule,
-		atoms: restruct.atoms,
-		bonds: restruct.bonds
-	};
-	this.path = showBond(restruct.render, structData, this);
+ReBond.prototype.show = function (restruct, bid, options) {
+	var render = restruct.render;
+	var paper = render.paper;
+	var hb1 = restruct.molecule.halfBonds.get(this.b.hb1),
+		hb2 = restruct.molecule.halfBonds.get(this.b.hb2);
+
+	this.path = getBondPath(restruct, this, hb1, hb2);
+
+	this.rbb = util.relBox(this.path.getBBox());
+	restruct.addReObjectPath('data', this.visel, this.path, null, true);
+	var reactingCenter = {};
+	reactingCenter.path = draw.reactingCenter(render, this, hb1, hb2);
+	if (reactingCenter.path) {
+		reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
+		restruct.addReObjectPath('data', this.visel, reactingCenter.path, null, true);
+	}
+	var topology = {};
+	topology.path = draw.topologyMark(render, this, hb1, hb2);
+	if (topology.path) {
+		topology.rbb = util.relBox(topology.path.getBBox());
+		restruct.addReObjectPath('data', this.visel, topology.path, null, true);
+	}
+	this.setHighlight(this.highlight, render);
+
+	var ipath = null;
+	var bondIdxOff = options.subFontSize * 0.6;
+	if (options.showBondIds) {
+		ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm);
+		restruct.addReObjectPath('indices', this.visel, ipath);
+	}
+	if (options.showHalfBondIds) {
+		ipath = getIdsPath(this.b.hb1, paper, hb1, hb2, bondIdxOff, 0.8, 0.2, hb1.norm);
+		restruct.addReObjectPath('indices', this.visel, ipath);
+		ipath = getIdsPath(this.b.hb2, paper, hb1, hb2, bondIdxOff, 0.2, 0.8, hb2.norm);
+		restruct.addReObjectPath('indices', this.visel, ipath);
+	}
+	if (options.showLoopIds && !options.showBondIds) {
+		ipath = getIdsPath(hb1.loop, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb2.norm);
+		restruct.addReObjectPath('indices', this.visel, ipath);
+		ipath = getIdsPath(hb2.loop, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm);
+		restruct.addReObjectPath('indices', this.visel, ipath);
+	}
 };
 
-ReBond.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldStereoBond, structData) {
+ReBond.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldStereoBond, restruct) {
 	return atom.neighbors.findIndex(function (hbid) {
-		var hb = structData.molecule.halfBonds.get(hbid);
+		var hb = restruct.molecule.halfBonds.get(hbid);
 		var bid = hb.bid;
 		if (bid === bid0)
 			return false;
-		var neibond = structData.bonds.get(bid);
+		var neibond = restruct.bonds.get(bid);
 		if (neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
 		return !!(neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo);
 	}, this);
 };
 
-function findIncomingUpBonds(bid0, bond, structData) {
+function findIncomingUpBonds(bid0, bond, restruct) {
 	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
-		var atom = structData.molecule.atoms.get(aid);
-		var pos =  bond.findIncomingStereoUpBond(atom, bid0, true, structData);
+		var atom = restruct.molecule.atoms.get(aid);
+		var pos =  bond.findIncomingStereoUpBond(atom, bid0, true, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, this);
 	util.assert(halfbonds.length === 2);
-	bond.neihbid1 = structData.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
-	bond.neihbid2 = structData.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
+	bond.neihbid1 = restruct.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
+	bond.neihbid2 = restruct.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
 }
 
-function showBond(render, structData, bond) {
-	var struct = structData.molecule;
+function getBondPath(restruct, bond, hb1, hb2) {
 	var path = null;
-	var hb1 = struct.halfBonds.get(bond.b.hb1),
-		hb2 = struct.halfBonds.get(bond.b.hb2);
-	var shiftA = !structData.atoms.get(hb1.begin).showLabel;
-	var shiftB = !structData.atoms.get(hb2.begin).showLabel;
+	var render = restruct.render;
+	var struct = restruct.molecule;
+	var shiftA = !restruct.atoms.get(hb1.begin).showLabel;
+	var shiftB = !restruct.atoms.get(hb2.begin).showLabel;
 
 	switch (bond.b.type) {
 	case Struct.Bond.PATTERN.TYPE.SINGLE:
 		switch (bond.b.stereo) {
 		case Struct.Bond.PATTERN.STEREO.UP:
-			findIncomingUpBonds(hb1.bid, bond, structData);
+			findIncomingUpBonds(hb1.bid, bond, restruct);
 			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 				path = draw.bondSingleStereoBold(render, hb1, hb2, bond, false, struct, shiftA, shiftB);
 			else
@@ -99,7 +134,7 @@ function showBond(render, structData, bond) {
 		}
 		break;
 	case Struct.Bond.PATTERN.TYPE.DOUBLE:
-		findIncomingUpBonds(hb1.bid, bond, structData);
+		findIncomingUpBonds(hb1.bid, bond, restruct);
 		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
 			bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
 			path = draw.bondSingleStereoBold(render, hb1, hb2, bond, true, struct, shiftA, shiftB);
@@ -136,6 +171,14 @@ function showBond(render, structData, bond) {
 		throw new Error('Bond type ' + bond.b.type + ' not supported');
 	}
 	return path;
+}
+
+function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) {
+	var pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
+	var ipath = paper.text(pb.x, pb.y, bid.toString());
+	var irbb = util.relBox(ipath.getBBox());
+	draw.recenterText(ipath, irbb);
+	return ipath;
 }
 
 module.exports = ReBond;

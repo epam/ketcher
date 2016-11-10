@@ -748,64 +748,12 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 };
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
-	var render = this.render;
-	var options = render.options;
-	var paper = render.paper;
+	var options = this.render.options;
+
 	for (var bid in this.bondsChanged) {
 		var bond = this.bonds.get(bid);
-		var hb1 = this.molecule.halfBonds.get(bond.b.hb1),
-			hb2 = this.molecule.halfBonds.get(bond.b.hb2);
 		this.bondRecalc(options, bond);
-		bond.show(this);
-		bond.rbb = util.relBox(bond.path.getBBox());
-		this.addReObjectPath('data', bond.visel, bond.path, null, true);
-		var reactingCenter = {};
-		reactingCenter.path = draw.reactingCenter(this.render, bond, hb1, hb2);
-		if (reactingCenter.path) {
-			reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
-			this.addReObjectPath('data', bond.visel, reactingCenter.path, null, true);
-		}
-		var topology = {};
-		topology.path = draw.topologyMark(this.render, bond, hb1, hb2);
-		if (topology.path) {
-			topology.rbb = util.relBox(topology.path.getBBox());
-			this.addReObjectPath('data', bond.visel, topology.path, null, true);
-		}
-		bond.setHighlight(bond.highlight, render);
-		var bondIdxOff = options.subFontSize * 0.6;
-		var ipath = null,
-			 irbb = null;
-		if (options.showBondIds) {
-			var pb = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
-			ipath = paper.text(pb.x, pb.y, bid.toString());
-			irbb = util.relBox(ipath.getBBox());
-			draw.recenterText(ipath, irbb);
-			this.addReObjectPath('indices', bond.visel, ipath);
-		}
-		if (options.showHalfBondIds) {
-			var phb1 = Vec2.lc(hb1.p, 0.8, hb2.p, 0.2, hb1.norm, bondIdxOff);
-			ipath = paper.text(phb1.x, phb1.y, bond.b.hb1.toString());
-			irbb = util.relBox(ipath.getBBox());
-			draw.recenterText(ipath, irbb);
-			this.addReObjectPath('indices', bond.visel, ipath);
-			var phb2 = Vec2.lc(hb1.p, 0.2, hb2.p, 0.8, hb2.norm, bondIdxOff);
-			ipath = paper.text(phb2.x, phb2.y, bond.b.hb2.toString());
-			irbb = util.relBox(ipath.getBBox());
-			draw.recenterText(ipath, irbb);
-			this.addReObjectPath('indices', bond.visel, ipath);
-		}
-		if (options.showLoopIds && !options.showBondIds) {
-			var pl1 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb2.norm, bondIdxOff);
-			ipath = paper.text(pl1.x, pl1.y, hb1.loop.toString());
-			irbb = util.relBox(ipath.getBBox());
-			draw.recenterText(ipath, irbb);
-			this.addReObjectPath('indices', bond.visel, ipath);
-			var pl2 = Vec2.lc(hb1.p, 0.5, hb2.p, 0.5, hb1.norm, bondIdxOff);
-			ipath = paper.text(pl2.x, pl2.y, hb2.loop.toString());
-			irbb = util.relBox(ipath.getBBox());
-			draw.recenterText(ipath, irbb);
-			this.addReObjectPath('indices', bond.visel, ipath);
-		}
+		bond.show(this, bid, options);
 	}
 };
 

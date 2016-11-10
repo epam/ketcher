@@ -1,5 +1,5 @@
 var queryString = require('query-string');
-var molfile = require('../../chem/molfile');
+var structFormat = require('../structformat');
 
 var ui = global.ui;
 
@@ -40,10 +40,11 @@ function origin (url) {
 }
 
 function dialog(server, params) {
-	var frameUrl = '__EXTERNAL_VIEW__';
-	var dlg = ui.showDialog('external_view');
+	var frameUrl = '__MIEW_PATH__';
+	console.info('frameUrl', frameUrl);
+	var dlg = ui.showDialog('miew');
 	var loadFrame = initFrame(dlg.select('iframe')[0], frameUrl);
-	var loadCML = server.cml({moldata: molfile.stringify(params.struct)});
+	var loadCML = structFormat.toString(params.struct, 'cml', server);
 	var handlers = [];
 	var res = null;
 
@@ -93,18 +94,9 @@ function dialog(server, params) {
 
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
 		handlers.forEach(function (h) { h.stop(); });
-		ui.hideDialog('external_view');
-		dlg.select('iframe')[0].src = 'about:blank';
-		if (params.onOk) {
-			if (!res)
-				params.onOk({});
-			else {
-				var req = server.molfile({moldata: res});
-				req.then(function (mol) {
-					params.onOk({struct: molfile.parse(mol)});
-				});
-			}
-		}
+		ui.hideDialog('miew');
+		if (params.onOk)
+			params.onOk(res ? {} : { structStr: res });
 	});
 
 }

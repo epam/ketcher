@@ -17,6 +17,7 @@
 		{{>rgroup-logic}}
 		{{>sgroup}}
 		{{>sgroup-special}}
+		{{#if miew-path}}{{>miew}}{{/if}}
 	</head>
 
 	<body role="applicaion">
@@ -29,7 +30,6 @@
 		</menu>
 		<div class="overlay" style="display:none">
 			<div id="loading" class="spinner" style="display:none"></div>
-			{{#if external-view}}{{>external-view}}{{/if}}
 		</div>
         <div class="cellar"></div>
 		{{>crap}}

@@ -5,7 +5,7 @@ var selectDialog = require('./select');
 
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
-var externalViewDialog = require('./external-view');
+var miewDialog = require('./miew');
 
 var openDialog = require('./open.jsx').default;
 var saveDialog = require('./save.jsx').default;
@@ -149,5 +149,5 @@ module.exports = {
 	calculatedValues: calculatedValuesDialog,
 	settings: settingsDialog,
 	help: helpDialog,
-	externalView: externalViewDialog
+	miew: miewDialog
 };

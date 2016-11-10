@@ -834,12 +834,12 @@ var actionMap = {
 	'help': function () {
 		dialog(modal.help);
 	},
-	'external-view': function() {
-		modal.externalView(server, {
-			struct: ui.ctab,
+	'miew': function() {
+		modal.miew(server, {
+			struct: ui.editor.struct(),
 			onOk: function(res) {
-				if (res.struct)
-					updateMolecule(res.struct);
+				if (res.structStr)
+					loadMolecule(res.structStr);
 			}
 		});
 	}

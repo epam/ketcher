@@ -17,7 +17,7 @@ function SelectRound({value, onChange}) {
 
 function FrozenInput({value}) {
 	return (
-		<input type="text" spellcheck="false" value={value}
+		<input type="text" focus="true" spellcheck="false" value={value}
 			   onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])} />
 		// tab, left, right, home, end codes
 	);

@@ -36,7 +36,8 @@ var options;
 var libTmpls = null;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
-                     'reaction-automap', 'recognize', 'check', 'analyse'];
+                     'reaction-automap', 'recognize', 'check',
+                     'analyse', 'miew'];
 
 var addionalAtoms = {
 	storage: [],
@@ -835,12 +836,15 @@ var actionMap = {
 		dialog(modal.help);
 	},
 	'miew': function() {
-		modal.miew(server, {
-			struct: ui.editor.struct(),
-			onOk: function(res) {
-				if (res.structStr)
-					loadMolecule(res.structStr);
-			}
+		var convert = structFormat.toString(ui.editor.struct(),
+		                                    'cml', server);
+		convert.then(function (cml) {
+			dialog(modal.miew, {
+				structStr: cml
+			}, true).then(function(res) {
+			if (res.structStr)
+				loadMolecule(res.structStr);
+			});
 		});
 	}
 };

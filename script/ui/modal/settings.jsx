@@ -163,9 +163,9 @@ function SelectCheck({ name, value, onChange }) {
 
 function MeasureField({ name, value, values, measureValue, onChange }) {
 	function setValue(ev) {
-		var valuepx = convertToPixels(ev.target.value, measureValue);
+		var valuepx = convertValue(ev.target.value, measureValue, 'px');
 		if (valuepx <= values[0] || valuepx > values[1]) {
-			ev.target.value = convertFromPixels(value, measureValue);
+			ev.target.value = convertValue(value, 'px', measureValue);
 			return;
 		}
 		onChange(name, valuepx);
@@ -173,7 +173,7 @@ function MeasureField({ name, value, values, measureValue, onChange }) {
 	return (
 		<div>
 			<input type="number" min={ values[0] } max={ values[1] }
-				   onChange={ ev => setValue(ev) } value={ convertFromPixels(value, measureValue) }/>
+				   onChange={ ev => setValue(ev) } value={ convertValue(value, 'px', measureValue) }/>
 			<select className="measure" value={measureValue || 'px'} onChange={ ev => onChange(name + "Measure", ev.target.value) }>
 				<option value="cm">cm</option>
 				<option value="px">px</option>
@@ -184,32 +184,17 @@ function MeasureField({ name, value, values, measureValue, onChange }) {
 	);
 }
 
-function convertToPixels(value, measure) {
+function convertValue(value, measureFrom, measureTo) {
 	if (!value) return null;
-	switch (measure) {
-		case 'px':
-			return value;
-		case 'cm':
-			return (value * 37.795278).toFixed();
-		case 'pt':
-			return (value * 1.333333).toFixed();
-		case 'inch':
-			return (value * 96).toFixed();
-	}
-}
-
-function convertFromPixels(value, measure) {
-	if (!value) return null;
-	switch (measure) {
-		case 'px':
-			return value;
-		case 'cm':
-			return (value * 0.026458).toFixed(3);
-		case 'pt':
-			return (value * 0.75).toFixed(1);
-		case 'inch':
-			return (value * 0.010417).toFixed(3);
-	}
+	var measureMap = {
+		'px': 1,
+		'cm': 37.795278,
+		'pt': 1.333333,
+		'inch': 96,
+	};
+	return (measureTo == 'px' || measureTo == 'pt')
+		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed()
+		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3);
 }
 
 export default function dialog(params) {

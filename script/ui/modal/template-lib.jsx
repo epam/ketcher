@@ -37,11 +37,18 @@ function partition(n, array) {
 	return res;
 }
 
+function reEscape(str) {
+	const reSpecial = ["-", "[", "]", "/", "{", "}", "(", ")", "*",
+					   "+", "?", ".", "\\", "^", "$", "|"];
+	const reFilter = RegExp('[' + reSpecial.join('\\') + ']', 'g');
+	return str.replace(reFilter, "\\$&");
+}
+
 function filterLib(lib, filter) {
 	console.warn('filter', filter);
 	if (!filter)
 		return lib;
-	var re = RegExp(filter, 'i');
+	var re = RegExp(reEscape(filter), 'i');
 	return lib.reduce((res, group) => {
 		if (group.name.search(re) != -1 && group.templates.length > 0) {
 			res.push(group);

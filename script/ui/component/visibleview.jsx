@@ -10,13 +10,14 @@ const STYLE_CONTENT = 'position:absolute; top:0; left:0; height:100%; width:100%
 export default class VirtualList extends Component {
 	constructor(props) {
 		super(props);
+		console.info(props);
 		this.state = {
 			offset: 0,
 			height: 0
 		};
 	}
 
-	resize = (reset) => {
+	resize = (ev, reset) => {
 		var height = this.base.offsetHeight;
 		if (this.state.height !== height) {
 			this.setState({ height });
@@ -35,7 +36,7 @@ export default class VirtualList extends Component {
 	componentDidUpdate({data}) {
 		var equal = (data.length == this.props.data.length &&
 					 this.props.data.every((v,i)=> v === data[i]));
-		this.resize(!equal);
+		this.resize(null, !equal);
 	}
 
 	componentDidMount() {
@@ -50,7 +51,7 @@ export default class VirtualList extends Component {
 	render() {
 		var { data, rowHeight, children, Tag="div", overscanCount=1, sync, ...props } = this.props;
 		var { offset, height } = this.state;
-		console.info('offset', offset);
+		//console.info('offset', offset);
 		// first visible row index
 		let start = (offset / rowHeight) || 0;
 		let renderRow = children[0];

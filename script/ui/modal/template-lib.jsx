@@ -1,5 +1,6 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
+import memoize from 'lru-memoize';
 
 import sdf from '../../chem/sdf';
 
@@ -29,6 +30,7 @@ function tmplsLib(tmpls) {
 }
 
 function partition(n, array) {
+	console.warn('partition', n);
 	var res = [];
 	for (var i = 0; i < array.length; i += n)
 		res.push(array.slice(i, i + n));
@@ -36,7 +38,7 @@ function partition(n, array) {
 }
 
 function filterLib(lib, filter) {
-	console.info('filter', filter);
+	console.warn('filter', filter);
 	if (!filter)
 		return lib;
 	var re = RegExp(filter, 'i');
@@ -50,12 +52,12 @@ function filterLib(lib, filter) {
 			if (tmpls.length > 0)
 				res.push({ name: group.name, templates: tmpls });
 		}
-		console.info(res);
 		return res;
 	}, []);
 }
 
 function groupTemplates(lib, groupName) {
+	console.warn('group', groupName);
 	var group = lib.find(function (group) {
 		return group.name == groupName;
 	});
@@ -63,6 +65,11 @@ function groupTemplates(lib, groupName) {
 		res.concat(...group.templates)
 	), []);
 }
+
+var libFilter = memoize(30)((lib, filter) => filterLib(lib, filter));
+var libRows = memoize(5)((lib, group, n) =>
+	partition(n, groupTemplates(lib, group))
+);
 
 function RenderTmpl({tmpl, ...props}) {
 	return tmpl.props && tmpl.props.prerender ?
@@ -89,10 +96,11 @@ class TemplateLib extends Component {
 	}
 
 	selectGroup(group) {
-		this.setState({
-			group: group,
-			selected: null
-		});
+		if (this.state.group != group) // don't drop selection
+			this.setState({            // if not changed
+				group: group,
+				selected: null
+			});
 	}
 
 	setFilter(filter) {
@@ -127,8 +135,7 @@ class TemplateLib extends Component {
 	render () {
 		const COLS = 3;
 		let {group, filter} = this.state;
-		let lib = filterLib(this.props.lib, filter);
-		let rows = partition(COLS, groupTemplates(lib, group));
+		let lib = libFilter(this.props.lib, filter);
 
 		console.info('all rerender');
 		return (
@@ -142,7 +149,8 @@ class TemplateLib extends Component {
 				<SelectList className="groups"
 					onChange={g => this.selectGroup(g)}
 					value={group} options={ lib.map(g => g.name) } />
-				<VisibleView data={rows} rowHeight={120} className="table">
+				  <VisibleView data={libRows(lib, group, COLS)}
+							   rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i) }
 				</VisibleView>
 			</Dialog>

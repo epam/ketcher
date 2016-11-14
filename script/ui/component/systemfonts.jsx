@@ -32,7 +32,9 @@ let cache = null;
 class SystemFonts extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { availableFonts: [] };
+		var opts = JSON.parse(localStorage.getItem("ketcher-opts"));
+		var currentFont = opts ? opts['font'].substring(opts['font'].indexOf('px ') + 3) : 'Arial';
+		this.state = { availableFonts: [currentFont] };
 		this.setAvailableFonts();
 	}
 	setAvailableFonts() {

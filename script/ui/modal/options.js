@@ -93,7 +93,7 @@ function opts() {
 		{ name: 'font',
 		label: 'Font',
 		type: 'font',
-		defaultValue: '30px "Arial"',
+		defaultValue: '30px Arial',
 		tab: 'render' },
 		{ name: 'fontsz',
         label: 'Font size',

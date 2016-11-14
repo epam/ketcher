@@ -26,7 +26,7 @@ function defaultOptions(scale, opt) {
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
 		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
-		font: '30px "Arial"',
+		font: '30px Arial',
 		fontsz: labelFontSize,
 		fontszsub: subFontSize,
 		fontRLabel: labelFontSize * 1.2,

@@ -10,7 +10,6 @@ const STYLE_CONTENT = 'position:absolute; top:0; left:0; height:100%; width:100%
 export default class VirtualList extends Component {
 	constructor(props) {
 		super(props);
-		console.info(props);
 		this.state = {
 			offset: 0,
 			height: 0

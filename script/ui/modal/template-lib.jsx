@@ -222,7 +222,7 @@ export function init(baseUrl, cacheEl) {
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
 	var lib = tmplsLib(params.tmpls).concat({
-		name: 'User',
+		name: 'User Templates',
 		templates: params.userTmpls
 	});
 	return render((

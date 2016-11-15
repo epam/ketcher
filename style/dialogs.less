@@ -104,6 +104,17 @@ form[role=dialog] {
 		height: 27em;
 		width: 11em;
 		float: left;
+		li:nth-child(15) { // TODO: probably temp hack
+			               // User tmpls shoudn't be at 15th place
+			margin-top: 12px;
+			&:before {
+				display: block;
+				position: relative;
+				content: '';
+				top: -7px;
+				border-top: 1px @border-color solid;
+			}
+		}
 	}
 	.table {
 		margin-top: 3.5em;

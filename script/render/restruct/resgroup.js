@@ -2,6 +2,7 @@ var Box2Abs = require('../../util/box2abs');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var util = require('../../util');
+var scale = require('../../util/scale');
 
 var Struct = require('../../chem/struct');
 var draw = require('../draw');
@@ -30,9 +31,9 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerInd
 	var ir = -1;
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
-		var path = draw.bracket(render, render.obj2scaled(bracket.d),
-		                        render.obj2scaled(bracket.n),
-		                        render.obj2scaled(bracket.c),
+		var path = draw.bracket(render, scale.obj2scaled(bracket.d, render.options),
+		                        scale.obj2scaled(bracket.n, render.options),
+		                        scale.obj2scaled(bracket.c, render.options),
 		                        bracket.w, bracket.h);
 		set.push(path);
 		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
@@ -40,7 +41,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, n, lowerInd
 	}
 	var bracketR = brackets[ir];
 	function renderIndex(text, shift) {
-		var indexPos = render.obj2scaled(bracketR.c.addScaled(bracketR.n, shift * bracketR.h));
+		var indexPos = scale.obj2scaled(bracketR.c.addScaled(bracketR.n, shift * bracketR.h), render.options);
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
 			.attr({
 				'font': render.options.font,
@@ -167,7 +168,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {
 			var atom = remol.atoms.get(atoms[i]);
-			var p = render.obj2scaled(atom.a.pp);
+			var p = scale.obj2scaled(atom.a.pp, options);
 			var bb = atom.visel.boundingBox;
 			if (bb != null)
 				p.x = Math.max(p.x, bb.p1.x);
@@ -177,7 +178,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 			nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
 			set.push(nameI);
 			var sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
-			sboxI = sboxI.transform(render.scaled2obj, render);
+			sboxI = sboxI.transform(scale.scaled2obj, render.options);
 			sgroup.areas.push(sboxI);
 		}
 	} else {
@@ -186,7 +187,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 		name.translateAbs(0.5 * box.width, -0.5 * box.height);
 		set.push(name);
 		var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
-		sgroup.dataArea = sbox.transform(render.scaled2obj, render);
+		sgroup.dataArea = sbox.transform(scale.scaled2obj, render.options);
 		if (!remol.sgroupData.has(sgroup.id))
 			remol.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
 	}
@@ -205,7 +206,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	var options = render.options;
 	var paper = render.paper;
 	var sg = this.item;
-	var bb = sg.bracketBox.transform(render.obj2scaled, render);
+	var bb = sg.bracketBox.transform(scale.obj2scaled, options);
 	var lw = options.lineWidth;
 	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);

@@ -1,5 +1,6 @@
 var Box2Abs = require('../../util/box2abs');
 var ReObject = require('./reobject');
+var scale = require('../../util/scale');
 
 var element = require('../../chem/element');
 var draw = require('../draw');
@@ -38,20 +39,20 @@ ReAtom.prototype.drawHighlight = function (render) {
 ReAtom.prototype.makeHighlightPlate = function (render) {
 	var paper = render.paper;
 	var options = render.options;
-	var ps = render.obj2scaled(this.a.pp);
+	var ps = scale.obj2scaled(this.a.pp, options);
 	return paper.circle(ps.x, ps.y, options.atomSelectionPlateRadius)
 		.attr(options.highlightStyle);
 };
 
 ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
-	var ps = restruct.render.obj2scaled(this.a.pp);
+	var ps = scale.obj2scaled(this.a.pp, restruct.render.options);
 	return paper.circle(ps.x, ps.y, styles.atomSelectionPlateRadius)
 		.attr(styles.selectionStyle);
 };
 
 ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-line max-statements
 	var render = restruct.render;
-	var ps = render.obj2scaled(this.a.pp);
+	var ps = scale.obj2scaled(this.a.pp, render.options);
 
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
@@ -206,7 +207,7 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 }
 
 function showHydroIndex(atom, render, implh, rightMargin) {
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var hydroIndex = {};
@@ -229,7 +230,7 @@ function showHydroIndex(atom, render, implh, rightMargin) {
 }
 
 function showRadical(atom, render) {
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var radical = {};
 	var hshift;
@@ -264,7 +265,7 @@ function showRadical(atom, render) {
 }
 
 function showIsotope(atom, render, leftMargin) {
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var isotope = {};
@@ -286,7 +287,7 @@ function showIsotope(atom, render, leftMargin) {
 }
 
 function showCharge(atom, render, rightMargin) {
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var charge = {};
@@ -333,7 +334,7 @@ function showExplicitValence(atom, render, rightMargin) {
 		13: 'XIII',
 		14: 'XIV'
 	};
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var valence = {};
@@ -360,7 +361,7 @@ function showExplicitValence(atom, render, rightMargin) {
 function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-statements
 	var hydroIndex = data.hydroIndex;
 	var hydrogenLeft = atom.hydrogenOnTheLeft;
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var delta = 0.5 * options.lineWidth;
 	var hydrogen = data.hydrogen;
@@ -410,7 +411,7 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 }
 
 function showWarning(atom, render, leftMargin, rightMargin) {
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var delta = 0.5 * render.options.lineWidth;
 	var tfx = util.tfx;
 	var warning = {};
@@ -424,7 +425,7 @@ function showWarning(atom, render, leftMargin, rightMargin) {
 
 function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line max-statements
 	var asterisk = Prototype.Browser.IE ? '*' : '∗';
-	var ps = render.obj2scaled(atom.a.pp);
+	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var tfx = util.tfx;
 	var i, c, j; // eslint-disable-line no-unused-vars

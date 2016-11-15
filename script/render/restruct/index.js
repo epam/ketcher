@@ -5,6 +5,7 @@ var Map = require('../../util/map');
 var Pool = require('../../util/pool');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
+var scale = require('../../util/scale');
 var util = require('../../util');
 var element = require('../../chem/element');
 var Struct = require('../../chem/struct');
@@ -193,7 +194,7 @@ ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 	cc = cc || this.connectedComponents.get(ccid);
 	bb = bb || { min: null, max: null };
 	Set.each(cc, function (aid) {
-		var ps = this.render.obj2scaled(this.atoms.get(aid).a.pp);
+		var ps = scale.obj2scaled(this.atoms.get(aid).a.pp, this.render.options);
 		if (bb.min == null) {
 			bb.min = bb.max = ps;
 		} else {
@@ -509,7 +510,7 @@ ReStruct.prototype.showLoops = function () {
 		loop.hbs.each(function (hbid) {
 			var hb = molecule.halfBonds.get(hbid);
 			var bond = this.bonds.get(hb.bid);
-			var apos = render.obj2scaled(this.atoms.get(hb.begin).a.pp);
+			var apos = scale.obj2scaled(this.atoms.get(hb.begin).a.pp, render.options);
 			if (bond.b.type != Struct.Bond.PATTERN.TYPE.AROMATIC)
 				loop.aromatic = false;
 			reloop.centre.add_(apos); // eslint-disable-line no-underscore-dangle
@@ -529,8 +530,8 @@ ReStruct.prototype.showLoops = function () {
 		reloop.radius = -1;
 		loop.hbs.each(function (hbid) {
 			var hb = molecule.halfBonds.get(hbid);
-			var apos = render.obj2scaled(this.atoms.get(hb.begin).a.pp);
-			var bpos = render.obj2scaled(this.atoms.get(hb.end).a.pp);
+			var apos = scale.obj2scaled(this.atoms.get(hb.begin).a.pp, render.options);
+			var bpos = scale.obj2scaled(this.atoms.get(hb.end).a.pp, render.options);
 			var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
 			var dist = Vec2.dot(Vec2.diff(apos, reloop.centre), n);
 			if (reloop.radius < 0)
@@ -558,7 +559,7 @@ ReStruct.prototype.showLoops = function () {
 				Vec2.dot(hba.dir, hbb.dir));
 				var halfAngle = (Math.PI - angle) / 2;
 				var dir = hbb.dir.rotate(halfAngle);
-				var pi = render.obj2scaled(this.atoms.get(hbb.begin).a.pp);
+				var pi = scale.obj2scaled(this.atoms.get(hbb.begin).a.pp, render.options);
 				var sin = Math.sin(halfAngle);
 				var minSin = 0.1;
 				if (Math.abs(sin) < minSin)
@@ -594,7 +595,7 @@ ReStruct.prototype.showReactionSymbols = function () {
 };
 
 ReStruct.prototype.showReactionArrow = function (id, item) {
-	var centre = this.render.obj2scaled(item.item.pp);
+	var centre = scale.obj2scaled(item.item.pp, this.render.options);
 	var path = draw.arrow(this.render, new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = this.render.offset;
@@ -603,7 +604,7 @@ ReStruct.prototype.showReactionArrow = function (id, item) {
 };
 
 ReStruct.prototype.showReactionPlus = function (id, item) {
-	var centre = this.render.obj2scaled(item.item.pp);
+	var centre = scale.obj2scaled(item.item.pp, this.render.options);
 	var path = draw.plus(this.render, centre);
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = this.render.offset;
@@ -830,8 +831,8 @@ ReStruct.prototype.bondRecalc = function (options, bond) {
 	var render = this.render;
 	var atom1 = this.atoms.get(bond.b.begin);
 	var atom2 = this.atoms.get(bond.b.end);
-	var p1 = render.obj2scaled(atom1.a.pp);
-	var p2 = render.obj2scaled(atom2.a.pp);
+	var p1 = scale.obj2scaled(atom1.a.pp, render.options);
+	var p2 = scale.obj2scaled(atom2.a.pp, render.options);
 	var hb1 = this.molecule.halfBonds.get(bond.b.hb1);
 	var hb2 = this.molecule.halfBonds.get(bond.b.hb2);
 	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth);

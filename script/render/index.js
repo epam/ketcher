@@ -1,6 +1,7 @@
 var Raphael = require('../raphael-ext');
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
+var scale = require('../util/scale');
 
 var Struct = require('../chem/struct');
 var ReStruct = require('./restruct');
@@ -36,14 +37,6 @@ Render.prototype.addStructChangeHandler = function (handler) {
 	this.structChangeHandlers.push(handler);
 };
 
-Render.prototype.scaled2obj = function (v) {
-	return v.scaled(1 / this.options.scaleFactor);
-};
-
-Render.prototype.obj2scaled = function (v) {
-	return v.scaled(this.options.scaleFactor);
-};
-
 Render.prototype.view2obj = function (p, isRelative) {
 	var scroll = this.scrollPos();
 	if (!this.useOldZoom) {
@@ -51,11 +44,11 @@ Render.prototype.view2obj = function (p, isRelative) {
 		scroll = scroll.scaled(1 / this.zoom);
 	}
 	p = isRelative ? p : p.add(scroll).sub(this.offset);
-	return this.scaled2obj(p);
+	return scale.scaled2obj(p, this.options);
 };
 
 Render.prototype.obj2view = function (v, isRelative) {
-	var p = this.obj2scaled(v);
+	var p = scale.obj2scaled(v, this.options);
 	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.zoom));
 	if (!this.useOldZoom)
 		p = p.scaled(this.zoom);
@@ -182,7 +175,7 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
 		var sf = this.options.scaleFactor;
-		var bb = this.ctab.getVBoxObj().transform(this.obj2scaled, this).translate(this.offset || new Vec2());
+		var bb = this.ctab.getVBoxObj().transform(scale.obj2scaled, this.options).translate(this.offset || new Vec2());
 
 		if (!this.options.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);

@@ -1,6 +1,7 @@
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
 var ReObject = require('./reobject');
+var scale = require('../../util/scale');
 
 var ui = global.ui;
 
@@ -49,7 +50,7 @@ ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to r
 					render = ui.render;
 				}
 
-				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+				bba = bba.translate((render.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 			}
 			ret = (ret ? Box2Abs.union(ret, bba) : bba);
 		}
@@ -61,8 +62,8 @@ ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to r
 ReFrag.prototype._draw = function (render, fid, attrs) { // eslint-disable-line no-underscore-dangle
 	var bb = this.calcBBox(render.ctab, fid, render);
 	if (bb) {
-		var p0 = render.obj2scaled(new Vec2(bb.p0.x, bb.p0.y));
-		var p1 = render.obj2scaled(new Vec2(bb.p1.x, bb.p1.y));
+		var p0 = scale.obj2scaled(new Vec2(bb.p0.x, bb.p0.y), render.options);
+		var p1 = scale.obj2scaled(new Vec2(bb.p1.x, bb.p1.y), render.options);
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
 	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, empty fragments must be destroyed by tools

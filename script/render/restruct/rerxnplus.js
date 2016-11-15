@@ -1,4 +1,5 @@
 var ReObject = require('./reobject');
+var scale = require('../../util/scale');
 
 function ReRxnPlus(/* chem.RxnPlus*/plus) {
 	this.init('rxnPlus');
@@ -11,7 +12,7 @@ ReRxnPlus.isSelectable = function () {
 };
 
 ReRxnPlus.prototype.highlightPath = function (render) {
-	var p = render.obj2scaled(this.item.pp);
+	var p = scale.obj2scaled(this.item.pp, render.options);
 	var s = render.options.scaleFactor;
 	/* eslint-disable no-mixed-operators*/
 	return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);

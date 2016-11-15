@@ -2,6 +2,7 @@ var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
 var util = require('../../util');
 var draw = require('../draw');
+var scale = require('../../util/scale');
 
 var ReObject = require('./reobject');
 
@@ -46,18 +47,18 @@ ReRGroup.prototype.calcBBox = function (render) {
 };
 
 function rGroupdrawBrackets(set, render, bb, d) {
-	d = render.obj2scaled(d || new Vec2(1, 0));
+	d = scale.obj2scaled(d || new Vec2(1, 0), render.options);
 	var bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
 	var bracketHeight = bb.p1.y - bb.p0.y;
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
 
 	var leftBracket = draw.bracket(render, d.negated(),
 	                               d.negated().rotateSC(1, 0),
-	                               render.obj2scaled(new Vec2(bb.p0.x, cy)),
+	                               scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
 	                               bracketWidth, bracketHeight);
 
 	var rightBracket = draw.bracket(render, d, d.rotateSC(1, 0),
-	                                render.obj2scaled(new Vec2(bb.p1.x, cy)),
+	                                scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
 	                                bracketWidth, bracketHeight);
 
 	return set.push(leftBracket, rightBracket);
@@ -69,8 +70,8 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 	var options = render.options;
 	if (bb) {
 		var ret = { data: [] };
-		var p0 = render.obj2scaled(bb.p0);
-		var p1 = render.obj2scaled(bb.p1);
+		var p0 = scale.obj2scaled(bb.p0, options);
+		var p1 = scale.obj2scaled(bb.p1, options);
 		var brackets = render.paper.set();
 		rGroupdrawBrackets(brackets, render, bb); // eslint-disable-line new-cap
 		ret.data.push(brackets);
@@ -131,7 +132,7 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 			labelSet.push(logicPath);
 		}
 		ret.data.push(label);
-		this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(render.scaled2obj, render);
+		this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(scale.scaled2obj, render.options);
 		return ret;
 	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, empty fragments must be destroyed by tools
@@ -143,8 +144,8 @@ ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-stateme
 ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-line no-underscore-dangle
 	var bb = this.getVBoxObj(render).extend(BORDER_EXT, BORDER_EXT); // eslint-disable-line no-underscore-dangle
 	if (bb) {
-		var p0 = render.obj2scaled(bb.p0);
-		var p1 = render.obj2scaled(bb.p1);
+		var p0 = scale.obj2scaled(bb.p0, render.options);
+		var p1 = scale.obj2scaled(bb.p1, render.options);
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
 	}
 };

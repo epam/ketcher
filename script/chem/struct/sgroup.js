@@ -2,6 +2,7 @@ var Box2Abs = require('../../util/box2abs');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var util = require('../../util');
+var scale = require('../../util/scale');
 
 var Atom = require('./atom');
 var Bond = require('./bond');
@@ -188,7 +189,7 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) { // eslint-disable-line 
 			var ext = new Vec2(0.05 * 3, 0.05 * 3);
 			bba = bba.extend(ext, ext);
 		} else {
-			bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+			bba = bba.translate((render.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		}
 		contentBoxes.push(bba);
 	}, this);
@@ -196,7 +197,7 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) { // eslint-disable-line 
 		var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 		if (util.isNull(bba))
 			return; // TODO: use object box instead
-		bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+		bba = bba.translate((render.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		contentBoxes.push(bba);
 	}, this);
 	contentBoxes.forEach(function (bba) {
@@ -256,7 +257,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 				var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
 				if (util.isNull(bba))
 					return; // TODO: use object box instead
-				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+				bba = bba.translate((render.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 				tl = Math.max(tl, Vec2.shiftRayBox(cl0, dl, bba));
 				tr = Math.max(tr, Vec2.shiftRayBox(cr0, dr, bba));
 				tt = Math.max(tt, Vec2.shiftRayBox(cc, dt, bba));

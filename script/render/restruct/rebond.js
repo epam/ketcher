@@ -4,6 +4,7 @@ var Struct = require('../../chem/struct');
 var draw = require('../draw');
 var Vec2 = require('../../util/vec2');
 var util = require('../../util');
+var scale = require('../../util/scale');
 
 function ReBond(/* chem.Bond*/bond) {
 	this.init('bond');
@@ -25,14 +26,14 @@ ReBond.prototype.drawHighlight = function (render) {
 
 ReBond.prototype.makeHighlightPlate = function (render) {
 	render.ctab.bondRecalc(render.options, this);
-	var c = render.obj2scaled(this.b.center);
+	var c = scale.obj2scaled(this.b.center, render.options);
 	return render.paper.circle(c.x, c.y, 0.8 * render.options.atomSelectionPlateRadius)
 		.attr(render.options.highlightStyle);
 };
 
 ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 	restruct.bondRecalc(restruct.render.options, this);
-	var c = restruct.render.obj2scaled(this.b.center);
+	var c = scale.obj2scaled(this.b.center, restruct.render.options);
 	return paper.circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
 		.attr(options.selectionStyle);
 };

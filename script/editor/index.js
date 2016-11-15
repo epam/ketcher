@@ -63,7 +63,7 @@ Editor.prototype.struct = function (value, norescale) {
 Editor.prototype.options = function (value) {
 	if (arguments.length > 0) {
 		var struct = this.render.ctab.molecule;
-		var zoom = this.render.zoom;
+		var zoom = this.render.options.zoom;
 		this.render.clientArea.innerHTML = '';
 		this.render = new Render(this.render.clientArea,
 		                         SCALE, value);
@@ -81,7 +81,7 @@ Editor.prototype.zoom = function (value) {
 		                                  this.getSelection()));
 		this.render.update();
 	}
-	return this.render.zoom;
+	return this.render.options.zoom;
 };
 
 // Events setup extracted from render
@@ -151,7 +151,7 @@ Editor.prototype.setupEvents = function (clientArea) { // eslint-disable-line ma
 	});
 	clientArea.observe('gesturestart', function (event) {
 		this._tui = this._tui || {};
-		this._tui.scale0 = render.zoom;
+		this._tui.scale0 = render.options.zoom;
 		event.preventDefault();
 	});
 	clientArea.observe('gesturechange', function (event) {

@@ -20,6 +20,8 @@ function defaultOptions(scale, opt) {
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
 
+		zoom: 1.0,
+
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,

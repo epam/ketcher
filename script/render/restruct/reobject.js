@@ -19,8 +19,8 @@ ReObject.prototype.getVBoxObj = function (render) {
 	var vbox = this.visel.boundingBox;
 	if (util.isNull(vbox))
 		return null;
-	if (render.offset)
-		vbox = vbox.translate(render.offset.negated());
+	if (render.options.offset)
+		vbox = vbox.translate(render.options.offset.negated());
 	return vbox.transform(scale.scaled2obj, render.options);
 };
 

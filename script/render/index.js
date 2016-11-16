@@ -16,7 +16,6 @@ function Render(clientArea, opt) {
 	this.userOpts = opt;
 
 	this.useOldZoom = Prototype.Browser.IE;
-	this.offset = new Vec2();
 
 	this.clientArea = clientArea = $(clientArea);
 	this.paper = new Raphael(clientArea);
@@ -40,13 +39,13 @@ Render.prototype.view2obj = function (p, isRelative) {
 		p = p.scaled(1 / this.options.zoom);
 		scroll = scroll.scaled(1 / this.options.zoom);
 	}
-	p = isRelative ? p : p.add(scroll).sub(this.offset);
+	p = isRelative ? p : p.add(scroll).sub(this.options.offset);
 	return scale.scaled2obj(p, this.options);
 };
 
 Render.prototype.obj2view = function (v, isRelative) {
 	var p = scale.obj2scaled(v, this.options);
-	p = isRelative ? p : p.add(this.offset).sub(this.scrollPos().scaled(1 / this.options.zoom));
+	p = isRelative ? p : p.add(this.options.offset).sub(this.scrollPos().scaled(1 / this.options.zoom));
 	if (!this.useOldZoom)
 		p = p.scaled(this.options.zoom);
 	return p;
@@ -71,10 +70,10 @@ Render.prototype.setPaperSize = function (sz) {
 
 Render.prototype.setOffset = function (newoffset) {
 	DEBUG.logMethod('setOffset');
-	var delta = new Vec2(newoffset.x - this.offset.x, newoffset.y - this.offset.y);
+	var delta = new Vec2(newoffset.x - this.options.offset.x, newoffset.y - this.options.offset.y);
 	this.clientArea.scrollLeft += delta.x;
 	this.clientArea.scrollTop += delta.y;
-	this.offset = newoffset;
+	this.options.offset = newoffset;
 };
 
 Render.prototype.setZoom = function (zoom) {
@@ -109,7 +108,7 @@ Render.prototype.setScrollOffset = function (x, y) {
 		                 (y < 0) ? -y : 0).scaled(1 / this.options.zoom);
 		if (d.x > 0 || d.y > 0) {
 			this.ctab.translate(d);
-			this.setOffset(this.offset.add(d));
+			this.setOffset(this.options.offset.add(d));
 		}
 	}
 	clientArea.scrollLeft = x;
@@ -121,8 +120,8 @@ Render.prototype.setScrollOffset = function (x, y) {
 };
 
 Render.prototype.setScale = function (z) {
-	if (this.offset)
-		this.offset = this.offset.scaled(1 / z).scaled(z);
+	if (this.options.offset)
+		this.options.offset = this.options.offset.scaled(1 / z).scaled(z);
 	this.userOpts.scale *= z;
 	this.options = null;
 	this.update(true);
@@ -139,7 +138,7 @@ Render.prototype.setMolecule = function (ctab, norescale) {
 	DEBUG.logMethod('setMolecule');
 	this.paper.clear();
 	this.ctab = new ReStruct(ctab, this, norescale);
-	this.offset = null;
+	this.options.offset = null;
 	this.update(false);
 };
 
@@ -172,7 +171,7 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
 		var sf = this.options.scale;
-		var bb = this.ctab.getVBoxObj().transform(scale.obj2scaled, this.options).translate(this.offset || new Vec2());
+		var bb = this.ctab.getVBoxObj().transform(scale.obj2scaled, this.options).translate(this.options.offset || new Vec2());
 
 		if (!this.options.autoScale) {
 			var ext = Vec2.UNIT.scaled(sf);
@@ -188,9 +187,9 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 			if (!this.sz || sz.x != this.sz.x || sz.y != this.sz.y)
 				this.setPaperSize(sz);
 
-			this.offset = this.offset || new Vec2();
+			this.options.offset = this.options.offset || new Vec2();
 			if (delta.x != 0 || delta.y != 0) {
-				this.setOffset(this.offset.add(delta));
+				this.setOffset(this.options.offset.add(delta));
 				this.ctab.translate(delta);
 			}
 		} else {

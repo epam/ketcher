@@ -54,8 +54,8 @@ ReactionMapTool.prototype.updateLine = function (p1, p2) {
 	if (p1 && p2) {
 		var rnd = this.editor.render;
 		this.line = draw.selectionLine(rnd,
-		                               scale.obj2scaled(p1, rnd.options).add(rnd.offset),
-									   scale.obj2scaled(p2, rnd.options).add(rnd.offset));
+		                               scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
+									   scale.obj2scaled(p2, rnd.options).add(rnd.options.offset));
 	}
 };
 

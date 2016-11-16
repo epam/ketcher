@@ -219,7 +219,7 @@ ReStruct.prototype.initLayers = function () {
 ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) { // eslint-disable-line max-params
 	if (!path)
 		return;
-	var offset = this.render.offset;
+	var offset = this.render.options.offset;
 	var bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
 	var ext = pos && bb ? bb.translate(pos.negated()) : null;
 	if (offset !== null) {
@@ -600,7 +600,7 @@ ReStruct.prototype.showReactionArrow = function (id, item) {
 		new Vec2(centre.x - this.render.options.scale, centre.y),
 		new Vec2(centre.x + this.render.options.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-	var offset = this.render.offset;
+	var offset = this.render.options.offset;
 	if (offset != null)
 		path.translateAbs(offset.x, offset.y);
 };
@@ -609,7 +609,7 @@ ReStruct.prototype.showReactionPlus = function (id, item) {
 	var centre = scale.obj2scaled(item.item.pp, this.render.options);
 	var path = draw.plus(this.render, centre);
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-	var offset = this.render.offset;
+	var offset = this.render.options.offset;
 	if (offset != null)
 		path.translateAbs(offset.x, offset.y);
 };

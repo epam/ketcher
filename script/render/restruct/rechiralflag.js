@@ -15,7 +15,7 @@ ReChiralFlag.isSelectable = function () {
 ReChiralFlag.prototype.highlightPath = function (render) {
 	var box = Box2Abs.fromRelBox(this.path.getBBox());
 	var sz = box.p1.sub(box.p0);
-	var p0 = box.p0.sub(render.offset);
+	var p0 = box.p0.sub(render.options.offset);
 	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
 };
 

@@ -1,3 +1,5 @@
+var Vec2 = require('../util/vec2');
+
 function defaultOptions(opt) {
 	var scaleFactor = opt.scale || 100;
 
@@ -22,6 +24,7 @@ function defaultOptions(opt) {
 
 		scale: scaleFactor,
 		zoom: 1.0,
+		offset: new Vec2(),
 
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,

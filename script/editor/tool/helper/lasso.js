@@ -49,7 +49,7 @@ LassoHelper.prototype.update = function () {
 	if (this.points && this.points.length > 1) {
 		var rnd = this.editor.render;
 		var dp = this.points.map(function (p) {
-			return scale.obj2scaled(p, rnd.options).add(rnd.offset);
+			return scale.obj2scaled(p, rnd.options).add(rnd.options.offset);
 		});
 		this.selection = this.mode == 0 ?
 			draw.selectionPolygon(rnd, dp) :

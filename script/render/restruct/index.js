@@ -879,17 +879,19 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 };
 
 ReStruct.prototype.labelIsVisible = function (aid, atom) {
+	var opt = this.render.options;
+	var isVisibleTerminal = opt.showHydrogenLabels !== 'off' && opt.showHydrogenLabels !== 'Hetero';
 	if (atom.a.neighbors.length == 0 ||
-		(atom.a.neighbors.length < 2 && !this.render.options.hideTerminalLabels) ||
-		(this.render.options.carbonExplicitly) ||
+		(atom.a.neighbors.length < 2 && isVisibleTerminal) ||
+		opt.carbonExplicitly ||
 		atom.a.label.toLowerCase() != 'c' ||
-		(atom.a.badConn && this.render.options.showValenceWarnings) ||
-	atom.a.isotope != 0 ||
-	atom.a.radical != 0 ||
-	atom.a.charge != 0 ||
-	atom.a.explicitValence >= 0 ||
-	atom.a.atomList != null ||
-	atom.a.rglabel != null)
+		(atom.a.badConn && opt.showValenceWarnings) ||
+		atom.a.isotope != 0 ||
+		atom.a.radical != 0 ||
+		atom.a.charge != 0 ||
+		atom.a.explicitValence >= 0 ||
+		atom.a.atomList != null ||
+		atom.a.rglabel != null)
 		return true;
 	if (atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];

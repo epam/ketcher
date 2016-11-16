@@ -10,15 +10,15 @@ function renderStruct(el, struct, options={}) {
 		if (struct.prerender)           // Should it sit here?
 			el.innerHTML = struct.prerender;
 		else {
+			console.info('render!', el.clientWidth, el.clientWidth);
 			var rnd = new Render(el, 0, {
 				autoScale: true,
-				maxBondLength: 30,
 				...options
 			});
 			rnd.setMolecule(struct);
 			rnd.update();
-			console.info('render!');//, el.innerHTML);
-			//struct.prerender = el.innerHTML;
+			// console.info('render!');//, el.innerHTML);
+			// struct.prerender = el.innerHTML;
 		}
 	}
 }
@@ -34,14 +34,17 @@ class StructRender extends Component {
 		}
 	}
 	shouldComponentUpdate() {
-		return true;
+		return false;
+	}
+	componentDidMount() {
+		let el = this.refs ? this.refs.base : this.base;
+		let { struct, options } = this.props;
+		renderStruct(el, struct, options);
 	}
 	render () {
-		let { struct, Tag="div", options, ...props } = this.props;
-		return struct ? (
-			<Tag ref={ el => renderStruct(el, struct, options) } {...props}/>
-		) : (
-			<Tag>No molecule</Tag>
+		let { struct, Tag="div", ...props } = this.props;
+		return (
+			<Tag /*ref="el"*/ {...props}>{ struct ? null :  'No molecule' }</Tag>
 		);
 	}
 }

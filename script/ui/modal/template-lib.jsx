@@ -81,7 +81,7 @@ var libRows = memoize(5)((lib, group, n) =>
 function RenderTmpl({tmpl, ...props}) {
 	return tmpl.props && tmpl.props.prerender ?
 	    ( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
-	    ( <StructRender struct={tmpl.struct} {...props}/> );
+	    ( <StructRender struct={tmpl.struct} options={{autoScaleMargin: 15 }} {...props}/> );
 }
 
 class TemplateLib extends Component {

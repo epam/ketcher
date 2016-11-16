@@ -596,7 +596,9 @@ ReStruct.prototype.showReactionSymbols = function () {
 
 ReStruct.prototype.showReactionArrow = function (id, item) {
 	var centre = scale.obj2scaled(item.item.pp, this.render.options);
-	var path = draw.arrow(this.render, new Vec2(centre.x - this.render.scale, centre.y), new Vec2(centre.x + this.render.scale, centre.y));
+	var path = draw.arrow(this.render,
+		new Vec2(centre.x - this.render.options.scale, centre.y),
+		new Vec2(centre.x + this.render.options.scale, centre.y));
 	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = this.render.offset;
 	if (offset != null)

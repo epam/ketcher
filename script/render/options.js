@@ -1,5 +1,5 @@
-function defaultOptions(scale, opt) {
-	var scaleFactor = scale;
+function defaultOptions(opt) {
+	var scaleFactor = opt.scale || 100;
 
 	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
 	var subFontSize = Math.ceil(0.7 * labelFontSize);
@@ -20,9 +20,9 @@ function defaultOptions(scale, opt) {
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
 
+		scale: scaleFactor,
 		zoom: 1.0,
 
-		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,

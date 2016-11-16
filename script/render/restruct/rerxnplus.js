@@ -13,7 +13,7 @@ ReRxnPlus.isSelectable = function () {
 
 ReRxnPlus.prototype.highlightPath = function (render) {
 	var p = scale.obj2scaled(this.item.pp, render.options);
-	var s = render.options.scaleFactor;
+	var s = render.options.scale;
 	/* eslint-disable no-mixed-operators*/
 	return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
 	/* eslint-enable no-mixed-operators*/

@@ -31,8 +31,7 @@ var SCALE = 40;  // const
 var ui = global.ui;
 
 function Editor(clientArea, options) {
-	this.render = new Render(clientArea, SCALE,
-	                         Object.assign({ atomColoring: true }, options));
+	this.render = new Render(clientArea, Object.assign({ atomColoring: true, scale: SCALE }, options));
 	this.selection = {};
 	this._tool = null; // eslint-disable-line
 	this.setupEvents(this.render.clientArea);
@@ -65,8 +64,7 @@ Editor.prototype.options = function (value) {
 		var struct = this.render.ctab.molecule;
 		var zoom = this.render.options.zoom;
 		this.render.clientArea.innerHTML = '';
-		this.render = new Render(this.render.clientArea,
-		                         SCALE, value);
+		this.render = new Render(this.render.clientArea, Object.assign({ scale: SCALE }, value));
 		this.render.setMolecule(struct); // TODO: reuse this.struct here?
 		this.render.setZoom(zoom);
 		this.render.update();

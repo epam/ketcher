@@ -1,9 +1,9 @@
 function scaled2obj(v, options) {
-	return v.scaled(1 / options.scaleFactor);
+	return v.scaled(1 / options.scale);
 }
 
 function obj2scaled(v, options) {
-	return v.scaled(options.scaleFactor);
+	return v.scaled(options.scale);
 }
 
 module.exports = {

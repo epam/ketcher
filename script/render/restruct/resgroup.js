@@ -163,7 +163,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 		// NB: we did not pass xbonds parameter to the backetPos method above,
 		//  so the result will be in the regular coordinate system
 		Struct.SGroup.setPos(remol, sgroup, sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5)));
-	var ps = sgroup.pp.scaled(options.scaleFactor);
+	var ps = sgroup.pp.scaled(options.scale);
 
 	if (sgroup.data.attached) {
 		for (i = 0; i < atoms.length; ++i) {

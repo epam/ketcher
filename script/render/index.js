@@ -12,12 +12,10 @@ var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
 // DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
-function Render(clientArea, scale, opt) {
+function Render(clientArea, opt) {
 	this.userOpts = opt;
 
 	this.useOldZoom = Prototype.Browser.IE;
-	this.scale = scale || 100;
-	this.baseScale = this.scale;
 	this.offset = new Vec2();
 
 	this.clientArea = clientArea = $(clientArea);
@@ -27,7 +25,7 @@ function Render(clientArea, scale, opt) {
 
 	this.ctab = new ReStruct(new Struct(), this);
 
-	this.options = defaultOptions(scale, this.userOpts);
+	this.options = defaultOptions(this.userOpts);
 }
 
 Render.prototype.addStructChangeHandler = function (handler) {
@@ -124,8 +122,8 @@ Render.prototype.setScrollOffset = function (x, y) {
 
 Render.prototype.setScale = function (z) {
 	if (this.offset)
-		this.offset = this.offset.scaled(1 / z).scaled(this.options.zoom);
-	this.scale = this.baseScale * this.options.zoom;
+		this.offset = this.offset.scaled(1 / z).scaled(z);
+	this.userOpts.scale *= z;
 	this.options = null;
 	this.update(true);
 };
@@ -156,12 +154,12 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 			// this is only an approximation to select some scale that's close enough to the target one
 			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * viewSz.y / (cbb.max.y - cbb.min.y) : 100;
 			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * viewSz.x / (cbb.max.x - cbb.min.x) : 100;
-			this.scale = Math.min(sy, sx);
-			if (this.options.maxBondLength > 0 && this.scale > this.options.maxBondLength)
-				this.scale = this.options.maxBondLength;
+			this.userOpts.scale = Math.min(sy, sx);
+			if (this.options.maxBondLength > 0 && this.userOpts.scale > this.options.maxBondLength)
+				this.userOpts.scale = this.options.maxBondLength;
 		}
 		// TODO: remove me. Hack to update scaleFactor while autoscale
-		this.options = defaultOptions(this.scale, this.userOpts);
+		this.options = defaultOptions(this.userOpts);
 		this.dirty = false;
 		force = true;
 	}
@@ -173,7 +171,7 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 	if (force && $('log'))
 		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
-		var sf = this.options.scaleFactor;
+		var sf = this.options.scale;
 		var bb = this.ctab.getVBoxObj().transform(scale.obj2scaled, this.options).translate(this.offset || new Vec2());
 
 		if (!this.options.autoScale) {

@@ -10,7 +10,7 @@ function renderStruct(el, struct, options={}) {
 		if (struct.prerender)           // Should it sit here?
 			el.innerHTML = struct.prerender;
 		else {
-			var rnd = new Render(el, 0, {
+			var rnd = new Render(el, {
 				autoScale: true,
 				maxBondLength: 30,
 				...options

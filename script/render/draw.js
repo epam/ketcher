@@ -17,9 +17,9 @@ function arrow(render, a, b) {
 }
 
 function plus(render, c) {
-	var s = render.scale / 5;
-	var paper = render.paper;
 	var options = render.options;
+	var s = options.scale / 5;
+	var paper = render.paper;
 	return paper.path('M{0},{4}L{0},{5}M{2},{1}L{3},{1}', tfx(c.x), tfx(c.y), tfx(c.x - s), tfx(c.x + s), tfx(c.y - s), tfx(c.y + s))
 		.attr(options.lineattr);
 }
@@ -251,7 +251,7 @@ function bondSingleOrAromatic(render, hb1, hb2, bondShift, shiftA, shiftB) {  //
 	var paper = render.paper;
 	var options = render.options;
 	var dash = dashdotPattern.map(function (v) {
-		return v * options.scaleFactor;
+		return v * options.scale;
 	});
 	var paths = aromaticBondPaths(hb1, hb2, bondShift,
 	                              shiftA, shiftB, options.bondSpace,
@@ -269,7 +269,7 @@ function bondDoubleOrAromatic(render, hb1, hb2, bondShift, shiftA, shiftB) {  //
 	var paper = render.paper;
 	var options = render.options;
 	var dash = dashdotPattern.map(function (v) {
-		return v * options.scaleFactor;
+		return v * options.scale;
 	});
 	var paths = aromaticBondPaths(hb1, hb2, bondShift,
 	                              shiftA, shiftB, options.bondSpace,

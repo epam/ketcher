@@ -438,7 +438,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 			for (j = 0; j < (i == 0 ? 0 : (i + 1)); ++j)
 				attpntText += '\'';
 			var pos0 = new Vec2(ps);
-			var pos1 = ps.addScaled(lsb, 0.7 * options.scaleFactor);
+			var pos1 = ps.addScaled(lsb, 0.7 * options.scale);
 
 			var attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText)
 				.attr({
@@ -455,8 +455,8 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 			/* eslint-enable no-mixed-operators*/
 			pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth);
 			var n = lsb.rotateSC(1, 0);
-			var arrowLeft = pos1.addScaled(n, 0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
-			var arrowRight = pos1.addScaled(n, -0.05 * options.scaleFactor).addScaled(lsbn, 0.09 * options.scaleFactor);
+			var arrowLeft = pos1.addScaled(n, 0.05 * options.scale).addScaled(lsbn, 0.09 * options.scale);
+			var arrowRight = pos1.addScaled(n, -0.05 * options.scale).addScaled(lsbn, 0.09 * options.scale);
 			var attpntPath = render.paper.set();
 			attpntPath.push(
 				attpntPath1,

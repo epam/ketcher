@@ -780,6 +780,7 @@ Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 Struct.prototype.calcConn = function (aid) {
 	var conn = 0;
 	var atom = this.atoms.get(aid);
+	var oddLoop = false;
 	var hasAromatic = false;
 	for (var i = 0; i < atom.neighbors.length; ++i) {
 		var hb = this.halfBonds.get(atom.neighbors[i]);
@@ -797,12 +798,16 @@ Struct.prototype.calcConn = function (aid) {
 		case Bond.PATTERN.TYPE.AROMATIC:
 			conn += 1;
 			hasAromatic = true;
+			this.loops.each(function (id, item) {
+				if (item.hbs.indexOf(atom.neighbors[i]) != -1 && item.hbs.length % 2 == 1)
+					oddLoop = true;
+			}, this);
 			break;
 		default:
 			return -1;
 		}
 	}
-	if (hasAromatic)
+	if (hasAromatic && !atom.hasImplicitH && !oddLoop)
 		conn += 1;
 	return conn;
 };
@@ -831,6 +836,10 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
+	this.sgroups.each(function (id, item) {
+		if (item.data.fieldName == "MRV_IMPLICIT_H")
+			this.atoms.get(item.atoms[0]).hasImplicitH = true;
+	}, this);
 	function f(aid) {
 		this.calcImplicitHydrogen(aid);
 	}

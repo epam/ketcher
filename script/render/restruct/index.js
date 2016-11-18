@@ -434,7 +434,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 		return status >= 1;
 	}, this));
 	this.assignConnectedComponents();
-	this.setImplicitHydrogen();
 	this.setHydrogenPos();
 	this.initialized = true;
 
@@ -442,6 +441,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
+	this.setImplicitHydrogen();
 	this.setDoubleBondShift();
 	this.checkLabelsToShow();
 	this.checkStereoBoldBonds();

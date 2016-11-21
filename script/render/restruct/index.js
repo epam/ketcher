@@ -170,6 +170,7 @@ ReStruct.prototype.removeConnectedComponent = function (ccid) {
 	return this.connectedComponents.remove(ccid);
 };
 
+//	TODO: remove? not used
 ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
 	Set.each(set, function (aid) {
 		this.atoms.get(aid).component = ccid;
@@ -190,6 +191,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 	}, this);
 };
 
+//	TODO: remove? not used
 ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
 	cc = cc || this.connectedComponents.get(ccid);
 	bb = bb || { min: null, max: null };
@@ -443,7 +445,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
-	this.setDoubleBondShift();
 	this.checkLabelsToShow();
 	this.checkStereoBoldBonds();
 	this.showLabels();
@@ -460,30 +461,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	}, this);
 	this.clearMarks();
 	return true;
-};
-
-ReStruct.prototype.setDoubleBondShift = function () {
-	var struct = this.molecule;
-	// double bonds in loops
-	for (var bid in this.bondsChanged) {
-		var bond = this.bonds.get(bid);
-		var loop1, loop2;
-		loop1 = struct.halfBonds.get(bond.b.hb1).loop;
-		loop2 = struct.halfBonds.get(bond.b.hb2).loop;
-		if (loop1 >= 0 && loop2 >= 0) {
-			var d1 = struct.loops.get(loop1).dblBonds;
-			var d2 = struct.loops.get(loop2).dblBonds;
-			var n1 = struct.loops.get(loop1).hbs.length;
-			var n2 = struct.loops.get(loop2).hbs.length;
-			bond.doubleBondShift = selectDoubleBondShift(n1, n2, d1, d2);
-		} else if (loop1 >= 0) {
-			bond.doubleBondShift = -1;
-		} else if (loop2 >= 0) {
-			bond.doubleBondShift = 1;
-		} else {
-			bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
-		}
-	}
 };
 
 ReStruct.prototype.updateLoops = function () {
@@ -653,6 +630,7 @@ ReStruct.prototype.eachCC = function (func, type, context) {
 	}, this);
 };
 
+//	TODO: remove? not used
 ReStruct.prototype.getGroupBB = function (type) {
 	var bb = { min: null, max: null };
 
@@ -858,34 +836,6 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);
 	return pos0;
-}
-
-function selectDoubleBondShift(n1, n2, d1, d2) {
-	if (n1 == 6 && n2 != 6 && (d1 > 1 || d2 == 1))
-		return -1;
-	if (n2 == 6 && n1 != 6 && (d2 > 1 || d1 == 1))
-		return 1;
-	if (n2 * d1 > n1 * d2)
-		return -1;
-	if (n2 * d1 < n1 * d2)
-		return 1;
-	if (n2 > n1)
-		return -1;
-	return 1;
-}
-
-function selectDoubleBondShiftChain(struct, bond) {
-	var hb1 = struct.halfBonds.get(bond.b.hb1);
-	var hb2 = struct.halfBonds.get(bond.b.hb2);
-	var nLeft = (hb1.leftSin > 0.3 ? 1 : 0) + (hb2.rightSin > 0.3 ? 1 : 0);
-	var nRight = (hb2.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0);
-	if (nLeft > nRight)
-		return -1;
-	if (nLeft < nRight)
-		return 1;
-	if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1)
-		return 1;
-	return 0;
 }
 
 ReStruct.maps = {

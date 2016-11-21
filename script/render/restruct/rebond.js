@@ -40,9 +40,12 @@ ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 
 ReBond.prototype.show = function (restruct, bid, options) {
 	var render = restruct.render;
+	var struct = restruct.molecule;
 	var paper = render.paper;
-	var hb1 = restruct.molecule.halfBonds.get(this.b.hb1),
-		hb2 = restruct.molecule.halfBonds.get(this.b.hb2);
+	var hb1 = struct.halfBonds.get(this.b.hb1),
+		hb2 = struct.halfBonds.get(this.b.hb2);
+
+	setDoubleBondShift(this, struct);
 
 	this.path = getBondPath(restruct, this, hb1, hb2);
 
@@ -180,6 +183,53 @@ function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) {
 	var irbb = util.relBox(ipath.getBBox());
 	draw.recenterText(ipath, irbb);
 	return ipath;
+}
+
+function setDoubleBondShift(bond, struct) {
+	var loop1, loop2;
+	loop1 = struct.halfBonds.get(bond.b.hb1).loop;
+	loop2 = struct.halfBonds.get(bond.b.hb2).loop;
+	if (loop1 >= 0 && loop2 >= 0) {
+		var d1 = struct.loops.get(loop1).dblBonds;
+		var d2 = struct.loops.get(loop2).dblBonds;
+		var n1 = struct.loops.get(loop1).hbs.length;
+		var n2 = struct.loops.get(loop2).hbs.length;
+		bond.doubleBondShift = selectDoubleBondShift(n1, n2, d1, d2);
+	} else if (loop1 >= 0) {
+		bond.doubleBondShift = -1;
+	} else if (loop2 >= 0) {
+		bond.doubleBondShift = 1;
+	} else {
+		bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+	}
+}
+
+function selectDoubleBondShift(n1, n2, d1, d2) {
+	if (n1 == 6 && n2 != 6 && (d1 > 1 || d2 == 1))
+		return -1;
+	if (n2 == 6 && n1 != 6 && (d2 > 1 || d1 == 1))
+		return 1;
+	if (n2 * d1 > n1 * d2)
+		return -1;
+	if (n2 * d1 < n1 * d2)
+		return 1;
+	if (n2 > n1)
+		return -1;
+	return 1;
+}
+
+function selectDoubleBondShiftChain(struct, bond) {
+	var hb1 = struct.halfBonds.get(bond.b.hb1);
+	var hb2 = struct.halfBonds.get(bond.b.hb2);
+	var nLeft = (hb1.leftSin > 0.3 ? 1 : 0) + (hb2.rightSin > 0.3 ? 1 : 0);
+	var nRight = (hb2.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0);
+	if (nLeft > nRight)
+		return -1;
+	if (nLeft < nRight)
+		return 1;
+	if ((hb1.leftSin > 0.3 ? 1 : 0) + (hb1.rightSin > 0.3 ? 1 : 0) == 1)
+		return 1;
+	return 0;
 }
 
 module.exports = ReBond;

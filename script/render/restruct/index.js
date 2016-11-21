@@ -7,7 +7,6 @@ var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var scale = require('../../util/scale');
 var util = require('../../util');
-var element = require('../../chem/element');
 var Struct = require('../../chem/struct');
 
 var draw = require('../draw');
@@ -438,7 +437,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	}, this));
 	this.assignConnectedComponents();
 	this.setImplicitHydrogen();
-	this.setHydrogenPos();
 	this.initialized = true;
 
 	this.verifyLoops();
@@ -638,38 +636,6 @@ ReStruct.prototype.getGroupBB = function (type) {
 	}, type, this);
 
 	return bb;
-};
-
-ReStruct.prototype.setHydrogenPos = function () {
-	// check where should the hydrogen be put on the left of the label
-	for (var aid in this.atomsChanged) {
-		var atom = this.atoms.get(aid);
-
-		if (atom.a.neighbors.length == 0) {
-			var elem = element.getElementByLabel(atom.a.label);
-			if (elem != null)
-				atom.hydrogenOnTheLeft = element[elem].putHydrogenOnTheLeft;
-			continue;// eslint-disable-line no-continue
-		}
-		var yl = 1,
-			yr = 1,
-			nl = 0,
-			nr = 0;
-		for (var i = 0; i < atom.a.neighbors.length; ++i) {
-			var d = this.molecule.halfBonds.get(atom.a.neighbors[i]).dir;
-			if (d.x <= 0) {
-				yl = Math.min(yl, Math.abs(d.y));
-				nl++;
-			} else {
-				yr = Math.min(yr, Math.abs(d.y));
-				nr++;
-			}
-		}
-		if (yl < 0.51 || yr < 0.51)
-			atom.hydrogenOnTheLeft = yr < yl;
-		else
-			atom.hydrogenOnTheLeft = nr > nl;
-	}
 };
 
 ReStruct.prototype.setImplicitHydrogen = function () {

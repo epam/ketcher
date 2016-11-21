@@ -55,6 +55,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	var render = restruct.render;
 	var ps = scale.obj2scaled(this.a.pp, render.options);
 
+	this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
 	this.showLabel = labelIsVisible(restruct, render.options, this);
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
@@ -205,6 +206,31 @@ function displayHydrogen(hydrogenLabels, atom) {
 	(hydrogenLabels == 'Terminal' && atom.a.neighbors.length < 2) ||
 	(hydrogenLabels == 'Hetero' && atom.label.text.toLowerCase() != 'c') ||
 	(hydrogenLabels == 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() != 'c')));
+}
+
+function setHydrogenPos(struct, atom) {
+	// check where should the hydrogen be put on the left of the label
+	if (atom.a.neighbors.length == 0) {
+		var elem = element.getElementByLabel(atom.a.label);
+		if (elem != null)
+			atom.hydrogenOnTheLeft = element[elem].putHydrogenOnTheLeft;
+		return null;
+	}
+	var yl = 1,
+		yr = 1,
+		nl = 0,
+		nr = 0;
+	for (var i = 0; i < atom.a.neighbors.length; ++i) {
+		var d = struct.halfBonds.get(atom.a.neighbors[i]).dir;
+		if (d.x <= 0) {
+			yl = Math.min(yl, Math.abs(d.y));
+			nl++;
+		} else {
+			yr = Math.min(yr, Math.abs(d.y));
+			nr++;
+		}
+	}
+	return (yl < 0.51 || yr < 0.51) ? yr < yl : nr > nl;
 }
 
 function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-statements

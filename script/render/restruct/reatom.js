@@ -6,6 +6,7 @@ var element = require('../../chem/element');
 var draw = require('../draw');
 var util = require('../../util');
 var Vec2 = require('../../util/vec2');
+var Struct = require('../../chem/struct');
 
 function ReAtom(/* chem.Atom*/atom) {
 	this.init('atom');
@@ -54,6 +55,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	var render = restruct.render;
 	var ps = scale.obj2scaled(this.a.pp, render.options);
 
+	this.showLabel = labelIsVisible(restruct, render.options, this);
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
 		var delta = 0.5 * options.lineWidth;
@@ -167,6 +169,36 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		restruct.addReObjectPath('data', this.visel, aamPath, ps, true);
 	}
 };
+
+function labelIsVisible(restruct, options, atom) {
+	if (atom.a.neighbors.length == 0 ||
+		(atom.a.neighbors.length < 2 && !options.hideTerminalLabels) ||
+		(options.carbonExplicitly) ||
+		atom.a.label.toLowerCase() != 'c' ||
+		(atom.a.badConn && options.showValenceWarnings) ||
+		atom.a.isotope != 0 ||
+		atom.a.radical != 0 ||
+		atom.a.charge != 0 ||
+		atom.a.explicitValence >= 0 ||
+		atom.a.atomList != null ||
+		atom.a.rglabel != null)
+		return true;
+	if (atom.a.neighbors.length == 2) {
+		var n1 = atom.a.neighbors[0];
+		var n2 = atom.a.neighbors[1];
+		var hb1 = restruct.molecule.halfBonds.get(n1);
+		var hb2 = restruct.molecule.halfBonds.get(n2);
+		var b1 = restruct.bonds.get(hb1.bid);
+		var b2 = restruct.bonds.get(hb2.bid);
+		if (b1.b.type == b2.b.type &&
+			b1.b.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
+			b2.b.stereo == Struct.Bond.PATTERN.STEREO.NONE) {
+			if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+				return true;
+		}
+	}
+	return false;
+}
 
 function displayHydrogen(hydrogenLabels, atom) {
 	return !!((hydrogenLabels == 'on') ||

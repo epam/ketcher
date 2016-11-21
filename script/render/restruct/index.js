@@ -445,7 +445,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
-	this.checkLabelsToShow();
 	this.checkStereoBoldBonds();
 	this.showLabels();
 	this.showBonds();
@@ -770,41 +769,6 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 		if (exists && item.selectionPlate) {
 			item.selectionPlate.hide(); // TODO [RB] review
 		}
-};
-
-ReStruct.prototype.labelIsVisible = function (aid, atom) {
-	if (atom.a.neighbors.length == 0 ||
-		(atom.a.neighbors.length < 2 && !this.render.options.hideTerminalLabels) ||
-		(this.render.options.carbonExplicitly) ||
-		atom.a.label.toLowerCase() != 'c' ||
-		(atom.a.badConn && this.render.options.showValenceWarnings) ||
-	atom.a.isotope != 0 ||
-	atom.a.radical != 0 ||
-	atom.a.charge != 0 ||
-	atom.a.explicitValence >= 0 ||
-	atom.a.atomList != null ||
-	atom.a.rglabel != null)
-		return true;
-	if (atom.a.neighbors.length == 2) {
-		var n1 = atom.a.neighbors[0];
-		var n2 = atom.a.neighbors[1];
-		var hb1 = this.molecule.halfBonds.get(n1);
-		var hb2 = this.molecule.halfBonds.get(n2);
-		var b1 = this.bonds.get(hb1.bid);
-		var b2 = this.bonds.get(hb2.bid);
-		if (b1.b.type == b2.b.type && b1.b.stereo == Struct.Bond.PATTERN.STEREO.NONE && b2.b.stereo == Struct.Bond.PATTERN.STEREO.NONE) {
-			if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
-				return true;
-		}
-	}
-	return false;
-};
-
-ReStruct.prototype.checkLabelsToShow = function () {
-	for (var aid in this.atomsChanged) {
-		var atom = this.atoms.get(aid);
-		atom.showLabel = this.labelIsVisible(aid, atom);
-	}
 };
 
 ReStruct.prototype.bondRecalc = function (options, bond) {

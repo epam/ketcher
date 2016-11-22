@@ -25,15 +25,16 @@ ReBond.prototype.drawHighlight = function (render) {
 };
 
 ReBond.prototype.makeHighlightPlate = function (render) {
-	render.ctab.bondRecalc(render.options, this);
-	var c = scale.obj2scaled(this.b.center, render.options);
-	return render.paper.circle(c.x, c.y, 0.8 * render.options.atomSelectionPlateRadius)
-		.attr(render.options.highlightStyle);
+	var options = render.options;
+	bondRecalc(this, render.ctab, options);
+	var c = scale.obj2scaled(this.b.center, options);
+	return render.paper.circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
+		.attr(options.highlightStyle);
 };
 
 ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
-	restruct.bondRecalc(restruct.render.options, this);
-	var c = scale.obj2scaled(this.b.center, restruct.render.options);
+	bondRecalc(this, restruct, options);
+	var c = scale.obj2scaled(this.b.center, options);
 	return paper.circle(c.x, c.y, 0.8 * options.atomSelectionPlateRadius)
 		.attr(options.selectionStyle);
 };
@@ -45,6 +46,7 @@ ReBond.prototype.show = function (restruct, bid, options) {
 	var hb1 = struct.halfBonds.get(this.b.hb1),
 		hb2 = struct.halfBonds.get(this.b.hb2);
 
+	bondRecalc(this, restruct, options);
 	setDoubleBondShift(this, struct);
 
 	this.path = getBondPath(restruct, this, hb1, hb2);
@@ -202,6 +204,37 @@ function setDoubleBondShift(bond, struct) {
 	} else {
 		bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
 	}
+}
+
+function bondRecalc(bond, restruct, options) {
+	var render = restruct.render;
+	var atom1 = restruct.atoms.get(bond.b.begin);
+	var atom2 = restruct.atoms.get(bond.b.end);
+	var p1 = scale.obj2scaled(atom1.a.pp, render.options);
+	var p2 = scale.obj2scaled(atom2.a.pp, render.options);
+	var hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
+	var hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
+	hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth);
+	hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth);
+	bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
+	bond.b.len = Vec2.dist(p1, p2);
+	bond.b.sb = options.lineWidth * 5;
+	/* eslint-disable no-mixed-operators*/
+	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - options.lineWidth * 2);
+	/* eslint-enable no-mixed-operators*/
+	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
+}
+
+function shiftBondEnd(atom, pos0, dir, margin) {
+	var t = 0;
+	var visel = atom.visel;
+	for (var k = 0; k < visel.exts.length; ++k) {
+		var box = visel.exts[k].translate(pos0);
+		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+	}
+	if (t > 0)
+		pos0 = pos0.addScaled(dir, t + margin);
+	return pos0;
 }
 
 function selectDoubleBondShift(n1, n2, d1, d2) {

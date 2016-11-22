@@ -436,8 +436,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	this.showFragments();
 	this.showRGroups();
 	this.chiralFlags.each(function (id, item) {
-		if (this.chiralFlagsChanged[id] > 0)
-			item.draw(this.render);
+		item.show(this, id, this.render.options);
 	}, this);
 	this.clearMarks();
 	return true;
@@ -553,15 +552,10 @@ ReStruct.prototype.showReactionSymbols = function () {
 };
 
 ReStruct.prototype.showSGroups = function () {
+	var options = this.render.options;
 	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
 		var resgroup = this.sgroups.get(id);
-		var sgroup = resgroup.item;
-		if (sgroup.data.fieldName != "MRV_IMPLICIT_H") {
-			var remol = this.render.ctab;
-			var path = resgroup.draw(remol, sgroup);
-			this.addReObjectPath('data', resgroup.visel, path, null, true);
-			resgroup.setHighlight(resgroup.highlight, this.render); // TODO: fix this
-		}
+		resgroup.show(this, id, options);
 	}, this);
 };
 
@@ -574,13 +568,9 @@ ReStruct.prototype.showFragments = function () {
 };
 
 ReStruct.prototype.showRGroups = function () {
+	var options = this.render.options;
 	this.rgroups.each(function (id, rgroup) {
-		var drawing = rgroup.draw(this.render);
-		for (var group in drawing) {
-			while (drawing[group].length > 0)
-				this.addReObjectPath(group, rgroup.visel, drawing[group].shift(), null, true);
-		}
-		// TODO rgroup selection & highlighting
+		rgroup.show(this, id, options);
 	}, this);
 };
 

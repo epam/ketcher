@@ -29,9 +29,11 @@ ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) 
 	return this.highlightPath(restruct.render).attr(options.selectionStyle);
 };
 
-ReChiralFlag.prototype.draw = function (render) {
+ReChiralFlag.prototype.show = function (restruct, id, options) {
+	var render = restruct.render;
+	if (restruct.chiralFlagsChanged[id] <= 0) return;
+
 	var paper = render.paper;
-	var options = render.options;
 	var ps = scale.obj2scaled(this.pp, options);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
 		.attr({

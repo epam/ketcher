@@ -65,9 +65,8 @@ function rGroupdrawBrackets(set, render, bb, d) {
 }
 
 // TODO need to review parameter list
-ReRGroup.prototype.draw = function (render) { // eslint-disable-line max-statements
+ReRGroup.prototype.draw = function (render, options) { // eslint-disable-line max-statements
 	var bb = this.calcBBox(render);
-	var options = render.options;
 	if (bb) {
 		var ret = { data: [] };
 		var p0 = scale.obj2scaled(bb.p0, options);
@@ -168,4 +167,14 @@ ReRGroup.prototype.drawHighlight = function (render) {
 		// TODO abnormal situation, fragment does not belong to the render
 	}
 };
+
+ReRGroup.prototype.show = function (restruct, id, options) {
+	var drawing = this.draw(restruct.render, options);
+	for (var group in drawing) {
+		while (drawing[group].length > 0)
+			restruct.addReObjectPath(group, this.visel, drawing[group].shift(), null, true);
+	}
+	// TODO rgroup selection & highlighting
+};
+
 module.exports = ReRGroup;

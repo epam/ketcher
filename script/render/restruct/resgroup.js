@@ -299,4 +299,15 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
 };
 
+ReSGroup.prototype.show = function (restruct) {
+	var render = restruct.render;
+	var sgroup = this.item;
+	if (sgroup.data.fieldName != "MRV_IMPLICIT_H") {
+		var remol = render.ctab;
+		var path = this.draw(remol, sgroup);
+		restruct.addReObjectPath('data', this.visel, path, null, true);
+		this.setHighlight(this.highlight, render); // TODO: fix this
+	}
+};
+
 module.exports = ReSGroup;

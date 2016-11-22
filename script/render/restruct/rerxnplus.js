@@ -1,4 +1,7 @@
 var ReObject = require('./reobject');
+var Box2Abs = require('../../util/box2abs');
+var draw = require('../draw');
+var util = require('../../util');
 var scale = require('../../util/scale');
 
 function ReRxnPlus(/* chem.RxnPlus*/plus) {
@@ -27,6 +30,16 @@ ReRxnPlus.prototype.drawHighlight = function (render) {
 
 ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) { // TODO [MK] review parameters
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
+};
+
+ReRxnPlus.prototype.show = function (restruct, id, options) {
+	var render = restruct.render;
+	var centre = scale.obj2scaled(this.item.pp, options);
+	var path = draw.plus(render, centre);
+	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
+	var offset = options.offset;
+	if (offset != null)
+		path.translateAbs(offset.x, offset.y);
 };
 
 module.exports = ReRxnPlus;

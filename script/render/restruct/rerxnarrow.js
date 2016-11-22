@@ -1,4 +1,8 @@
 var ReObject = require('./reobject');
+var Box2Abs = require('../../util/box2abs');
+var Vec2 = require('../../util/vec2');
+var draw = require('../draw');
+var util = require('../../util');
 var scale = require('../../util/scale');
 
 function ReRxnArrow(/* chem.RxnArrow*/arrow) {
@@ -25,6 +29,18 @@ ReRxnArrow.prototype.drawHighlight = function (render) {
 
 ReRxnArrow.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
+};
+
+ReRxnArrow.prototype.show = function (restruct, id, options) {
+	var render = restruct.render;
+	var centre = scale.obj2scaled(this.item.pp, options);
+	var path = draw.arrow(render,
+		new Vec2(centre.x - render.options.scale, centre.y),
+		new Vec2(centre.x + render.options.scale, centre.y));
+	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
+	var offset = render.options.offset;
+	if (offset != null)
+		path.translateAbs(offset.x, offset.y);
 };
 
 module.exports = ReRxnArrow;

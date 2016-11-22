@@ -9,8 +9,6 @@ var scale = require('../../util/scale');
 var util = require('../../util');
 var Struct = require('../../chem/struct');
 
-var draw = require('../draw');
-
 var ReAtom = require('./reatom');
 var ReBond = require('./rebond');
 var ReRxnPlus = require('./rerxnplus');
@@ -541,36 +539,17 @@ ReStruct.prototype.showLoops = function () {
 };
 
 ReStruct.prototype.showReactionSymbols = function () {
+	var options = this.render.options;
 	var item;
 	var id;
 	for (id in this.rxnArrowsChanged) {
 		item = this.rxnArrows.get(id);
-		this.showReactionArrow(id, item);
+		item.show(this, id, options);
 	}
 	for (id in this.rxnPlusesChanged) {
 		item = this.rxnPluses.get(id);
-		this.showReactionPlus(id, item);
+		item.show(this, id, options);
 	}
-};
-
-ReStruct.prototype.showReactionArrow = function (id, item) {
-	var centre = scale.obj2scaled(item.item.pp, this.render.options);
-	var path = draw.arrow(this.render,
-		new Vec2(centre.x - this.render.options.scale, centre.y),
-		new Vec2(centre.x + this.render.options.scale, centre.y));
-	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-	var offset = this.render.options.offset;
-	if (offset != null)
-		path.translateAbs(offset.x, offset.y);
-};
-
-ReStruct.prototype.showReactionPlus = function (id, item) {
-	var centre = scale.obj2scaled(item.item.pp, this.render.options);
-	var path = draw.plus(this.render, centre);
-	item.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-	var offset = this.render.options.offset;
-	if (offset != null)
-		path.translateAbs(offset.x, offset.y);
 };
 
 ReStruct.prototype.showSGroups = function () {

@@ -340,20 +340,6 @@ ReStruct.prototype.clearVisels = function () {
 	}, this);
 };
 
-ReStruct.prototype.checkStereoBold = function (bid0, bond) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
-		var atom = this.molecule.atoms.get(aid);
-		var pos =  bond.findIncomingStereoUpBond(atom, bid0, false, this);
-		return pos < 0 ? -1 : atom.neighbors[pos];
-	}, this);
-	util.assert(halfbonds.length === 2);
-	bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
-};
-
-ReStruct.prototype.checkStereoBoldBonds = function () {
-	this.bonds.each(this.checkStereoBold, this);
-};
-
 ReStruct.prototype.update = function (force) { // eslint-disable-line max-statements
 	force = force || !this.initialized;
 
@@ -443,7 +429,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	var updLoops = force || this.structChanged;
 	if (updLoops)
 		this.updateLoops();
-	this.checkStereoBoldBonds();
 	this.showLabels();
 	this.showBonds();
 	if (updLoops)

@@ -46,6 +46,7 @@ ReBond.prototype.show = function (restruct, bid, options) {
 	var hb1 = struct.halfBonds.get(this.b.hb1),
 		hb2 = struct.halfBonds.get(this.b.hb2);
 
+	checkStereoBold(bid, this, restruct);
 	bondRecalc(this, restruct, options);
 	setDoubleBondShift(this, struct);
 
@@ -87,7 +88,7 @@ ReBond.prototype.show = function (restruct, bid, options) {
 	}
 };
 
-ReBond.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldStereoBond, restruct) {
+function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
 	return atom.neighbors.findIndex(function (hbid) {
 		var hb = restruct.molecule.halfBonds.get(hbid);
 		var bid = hb.bid;
@@ -97,18 +98,28 @@ ReBond.prototype.findIncomingStereoUpBond = function (atom, bid0, includeBoldSte
 		if (neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
 		return !!(neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo);
-	}, this);
-};
+	});
+}
 
 function findIncomingUpBonds(bid0, bond, restruct) {
 	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
 		var atom = restruct.molecule.atoms.get(aid);
-		var pos =  bond.findIncomingStereoUpBond(atom, bid0, true, restruct);
+		var pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, this);
 	util.assert(halfbonds.length === 2);
 	bond.neihbid1 = restruct.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
 	bond.neihbid2 = restruct.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
+}
+
+function checkStereoBold(bid0, bond, restruct) {
+	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
+		var atom = restruct.molecule.atoms.get(aid);
+		var pos =  findIncomingStereoUpBond(atom, bid0, false, restruct);
+		return pos < 0 ? -1 : atom.neighbors[pos];
+	}, restruct);
+	util.assert(halfbonds.length === 2);
+	bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
 }
 
 function getBondPath(restruct, bond, hb1, hb2) {

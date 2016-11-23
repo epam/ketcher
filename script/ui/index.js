@@ -521,12 +521,6 @@ function serverCall(method, options, struct) {
 	if (!struct) {
 		var aidMap = {};
 		struct = ui.editor.struct().clone(null, null, false, aidMap);
-
-		// retain reaction props on transform
-		var implicitReaction = !struct.hasRxnArrow() && struct.hasRxnProps();
-		if (implicitReaction)
-			struct.rxnArrows.add(new Struct.RxnArrow());
-
 		var selectedAtoms = ui.editor.getSelection(true).atoms || [];
 		selectedAtoms = selectedAtoms.map(function (aid) {
 			return aidMap[aid];
@@ -550,13 +544,8 @@ function serverCall(method, options, struct) {
 }
 
 function serverTransform(method, options, struct) {
-	if (!struct)
-		var implicitReaction = !ui.editor.struct().hasRxnArrow() &&
-		    ui.editor.struct().hasRxnProps();
 	return serverCall(method, options, struct).then(function (res) {
 		var struct = molfile.parse(res.struct);
-		if (implicitReaction)
-			struct.rxnArrows.clear();
 		updateStruct(struct);
 	}).catch(function (err) {
 		alert("Can't parse server response!");

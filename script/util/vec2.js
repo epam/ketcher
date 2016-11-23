@@ -240,7 +240,7 @@ Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) { // eslint
 	util.assertDefined(bb);
 	// four corner points of the box
 	var b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
-			bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
+	         bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
 	var r = b.map(function (v) {
 		return v.sub(p);
 	}); // b relative to p

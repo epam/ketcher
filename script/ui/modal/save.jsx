@@ -54,7 +54,7 @@ class Save extends Component {
 					), "Close"]}>
 				<label>Format:
 				<select value={type} onChange={ev => this.changeType(ev)}>{
-					[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'cml', 'inchi'].map(type => (
+					[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'smarts', 'cml', 'inchi'].map(type => (
 						<option value={type}>{structFormat.map[type].name}</option>
 					))
 				}</select>

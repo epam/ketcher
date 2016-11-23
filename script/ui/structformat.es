@@ -18,6 +18,11 @@ export const map = {
 		mime: 'chemical/x-daylight-smiles',
 		ext: ['.smi', '.smiles']
 	},
+	'smarts': {
+		name: 'Daylight SMARTS',
+		mime: 'chemical/x-daylight-smarts',
+		ext: ['.smarts']
+	},
 	'cml': {
 		name: 'CML',
 		mime: 'chemical/x-cml',

@@ -20,8 +20,6 @@ var ReChiralFlag = require('./rechiralflag');
 var ReSGroup = require('./resgroup');
 var ReLoop = require('./reloop');
 
-var tfx = util.tfx;
-
 var LAYER_MAP = {
 	background: 0,
 	selectionPlate: 1,
@@ -456,84 +454,9 @@ ReStruct.prototype.updateLoops = function () {
 };
 
 ReStruct.prototype.showLoops = function () {
-	var render = this.render;
-	var options = render.options;
-	var paper = render.paper;
-	var molecule = this.molecule;
-	this.reloops.each(function (rlid, reloop) { // eslint-disable-line max-statements
-		var loop = reloop.loop;
-		reloop.centre = new Vec2();
-		loop.hbs.each(function (hbid) {
-			var hb = molecule.halfBonds.get(hbid);
-			var bond = this.bonds.get(hb.bid);
-			var apos = scale.obj2scaled(this.atoms.get(hb.begin).a.pp, render.options);
-			if (bond.b.type != Struct.Bond.PATTERN.TYPE.AROMATIC)
-				loop.aromatic = false;
-			reloop.centre.add_(apos); // eslint-disable-line no-underscore-dangle
-		}, this);
-		loop.convex = true;
-		for (var k = 0; k < reloop.loop.hbs.length; ++k) {
-			var hba = molecule.halfBonds.get(loop.hbs[k]);
-			var hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
-			var angle = Math.atan2(
-			Vec2.cross(hba.dir, hbb.dir),
-			Vec2.dot(hba.dir, hbb.dir));
-			if (angle > 0)
-				loop.convex = false;
-		}
-
-		reloop.centre = reloop.centre.scaled(1.0 / loop.hbs.length);
-		reloop.radius = -1;
-		loop.hbs.each(function (hbid) {
-			var hb = molecule.halfBonds.get(hbid);
-			var apos = scale.obj2scaled(this.atoms.get(hb.begin).a.pp, render.options);
-			var bpos = scale.obj2scaled(this.atoms.get(hb.end).a.pp, render.options);
-			var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-			var dist = Vec2.dot(Vec2.diff(apos, reloop.centre), n);
-			if (reloop.radius < 0)
-				reloop.radius = dist;
-			 else
-				reloop.radius = Math.min(reloop.radius, dist);
-		}, this);
-		reloop.radius *= 0.7;
-		if (!loop.aromatic)
-			return;
-		var path = null;
-		if (loop.convex && options.aromaticCircle) {
-			path = paper.circle(reloop.centre.x, reloop.centre.y, reloop.radius)
-				.attr({
-					'stroke': '#000',
-					'stroke-width': options.lineattr['stroke-width']
-				});
-		} else {
-			var pathStr = '';
-			for (k = 0; k < loop.hbs.length; ++k) {
-				hba = molecule.halfBonds.get(loop.hbs[k]);
-				hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
-				angle = Math.atan2(
-				Vec2.cross(hba.dir, hbb.dir),
-				Vec2.dot(hba.dir, hbb.dir));
-				var halfAngle = (Math.PI - angle) / 2;
-				var dir = hbb.dir.rotate(halfAngle);
-				var pi = scale.obj2scaled(this.atoms.get(hbb.begin).a.pp, render.options);
-				var sin = Math.sin(halfAngle);
-				var minSin = 0.1;
-				if (Math.abs(sin) < minSin)
-					sin = sin * minSin / Math.abs(sin);
-				var offset = options.bondSpace / sin;
-				var qi = pi.addScaled(dir, -offset);
-				pathStr += (k == 0 ? 'M' : 'L');
-				pathStr += tfx(qi.x) + ',' + tfx(qi.y);
-			}
-			pathStr += 'Z';
-			path = paper.path(pathStr)
-				.attr({
-					'stroke': '#000',
-					'stroke-width': options.lineattr['stroke-width'],
-					'stroke-dasharray': '- '
-				});
-		}
-		this.addReObjectPath('data', reloop.visel, path, null, true);
+	var options = this.render.options;
+	this.reloops.each(function (rlid, reloop) {
+		reloop.show(this, rlid, options);
 	}, this);
 };
 
@@ -617,21 +540,10 @@ ReStruct.prototype.loopRemove = function (loopId) {
 	this.molecule.loops.remove(loopId);
 };
 
-ReStruct.prototype.loopIsValid = function (rlid, reloop) {
-	var halfBonds = this.molecule.halfBonds;
-	var loop = reloop.loop;
-	var bad = false;
-	loop.hbs.each(function (hbid) {
-		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid)
-			bad = true;
-	}, this);
-	return !bad;
-};
-
 ReStruct.prototype.verifyLoops = function () {
 	var toRemove = [];
 	this.reloops.each(function (rlid, reloop) {
-		if (!this.loopIsValid(rlid, reloop))
+		if (!reloop.isValid(this.molecule, rlid))
 			toRemove.push(rlid);
 	}, this);
 	for (var i = 0; i < toRemove.length; ++i)

@@ -33,65 +33,29 @@ function bondSingle(render, hb1, hb2) {
 		.attr(options.lineattr);
 }
 
-function bondSingleUp(render, hb1, hb2, bond, struct) { // eslint-disable-line max-params
-	var a = hb1.p,
-		b = hb2.p,
-		n = hb1.norm;
+function bondSingleUp(render, a, b2, b3) {
 	var paper = render.paper;
 	var options = render.options;
-	var bsp = 0.7 * options.stereoBond;
-	var b2 = b.addScaled(n, bsp);
-	var b3 = b.addScaled(n, -bsp);
-	if (bond.neihbid2 >= 0) { // if the end is shared with another up-bond heading this way
-		var coords = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
-		b2 = coords[0];
-		b3 = coords[1];
-	}
-	return paper.path('M{0},{1}L{2},{3}L{4},{5}Z',
-	tfx(a.x), tfx(a.y), tfx(b2.x), tfx(b2.y), tfx(b3.x), tfx(b3.y))
+	return paper.path('M{0},{1}L{2},{3}L{4},{5}Z', tfx(a.x), tfx(a.y), tfx(b2.x), tfx(b2.y), tfx(b3.x), tfx(b3.y))
 		.attr(options.lineattr).attr({ fill: '#000' });
 }
 
-function bondSingleStereoBold(render, hb1, hb2, bond, isDouble, struct, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
+function bondSingleStereoBold(render, a1, a2, a3, a4) { // eslint-disable-line max-params
 	var paper = render.paper;
 	var options = render.options;
-	var coords1 = stereoUpBondGetCoordinates(hb1, bond.neihbid1, options.stereoBond, struct);
-	var coords2 = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
-	var a1 = coords1[0];
-	var a2 = coords1[1];
-	var a3 = coords2[0];
-	var a4 = coords2[1];
-	var pathMain = paper.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
-	tfx(a1.x), tfx(a1.y), tfx(a2.x), tfx(a2.y), tfx(a3.x), tfx(a3.y), tfx(a4.x), tfx(a4.y))
+	return paper.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
+		tfx(a1.x), tfx(a1.y), tfx(a2.x), tfx(a2.y), tfx(a3.x), tfx(a3.y), tfx(a4.x), tfx(a4.y))
 		.attr(options.lineattr).attr({
 			stroke: '#000',
 			fill: '#000'
 		});
-	if (isDouble) {
-		var a = hb1.p,
-			b = hb2.p,
-			n = hb1.norm,
-			shift = bond.doubleBondShift;
-		var bsp = 1.5 * options.stereoBond;
-		var b1 = a.addScaled(n, bsp * shift);
-		var b2 = b.addScaled(n, bsp * shift);
-		if (shift > 0) {
-			if (shiftA)
-				b1 = b1.addScaled(hb1.dir, bsp * getBondLineShift(hb1.rightCos, hb1.rightSin));
-			if (shiftB)
-				b2 = b2.addScaled(hb1.dir, -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin));
-		} else if (shift < 0) {
-			if (shiftA)
-				b1 = b1.addScaled(hb1.dir, bsp * getBondLineShift(hb1.leftCos, hb1.leftSin));
-			if (shiftB)
-				b2 = b2.addScaled(hb1.dir, -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin));
-		}
+}
 
-		return paper.set([pathMain, paper.path(
-				'M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
-			.attr(options.lineattr)]);
-	}
-	return pathMain;
+function bondDoubleStereoBold(render, sgBondPath, b1, b2) {
+	var paper = render.paper;
+	var options = render.options;
+	return paper.set([sgBondPath, paper.path('M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
+		.attr(options.lineattr)]);
 }
 
 function bondSingleDown(render, hb1, hb2) { // eslint-disable-line max-statements
@@ -468,20 +432,6 @@ function selectionLine(render, p0, p1) {
 	return paper.path(makeStroke(p0, p1)).attr(options.lassoStyle);
 }
 
-function stereoUpBondGetCoordinates(hb, neihbid, bondSpace, struct) {
-	var neihb = struct.halfBonds.get(neihbid);
-	var cos = Vec2.dot(hb.dir, neihb.dir);
-	var sin = Vec2.cross(hb.dir, neihb.dir);
-	var cosHalf = Math.sqrt(0.5 * (1 - cos));
-	var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
-
-	var denomAdd = 0.3;
-	var scale = 0.7;
-	var a1 = hb.p.addScaled(biss, scale * bondSpace / (cosHalf + denomAdd));
-	var a2 = hb.p.addScaled(biss.negated(), scale * bondSpace / (cosHalf + denomAdd));
-	return sin > 0 ? [a1, a2] : [a2, a1];
-}
-
 function makeStroke(a, b) {
 	return 'M' + tfx(a.x) + ',' + tfx(a.y) +
 		'L' + tfx(b.x) + ',' + tfx(b.y) + '	';
@@ -567,6 +517,7 @@ module.exports = {
 	bondSingle: bondSingle,
 	bondSingleUp: bondSingleUp,
 	bondSingleStereoBold: bondSingleStereoBold,
+	bondDoubleStereoBold: bondDoubleStereoBold,
 	bondSingleDown: bondSingleDown,
 	bondSingleEither: bondSingleEither,
 	bondDouble: bondDouble,

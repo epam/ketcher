@@ -39,7 +39,7 @@ ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 		.attr(options.selectionStyle);
 };
 
-ReBond.prototype.show = function (restruct, bid, options) {
+ReBond.prototype.show = function (restruct, bid, options) { // eslint-disable-line max-statements
 	var render = restruct.render;
 	var struct = restruct.molecule;
 	var paper = render.paper;
@@ -135,9 +135,9 @@ function getBondPath(restruct, bond, hb1, hb2) {
 		case Struct.Bond.PATTERN.STEREO.UP:
 			findIncomingUpBonds(hb1.bid, bond, restruct);
 			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
-				path = draw.bondSingleStereoBold(render, hb1, hb2, bond, false, struct, shiftA, shiftB);
+				path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
 			else
-				path = draw.bondSingleUp(render, hb1, hb2, bond, struct);
+				path = getBondSingleUpPath(render, hb1, hb2, bond, struct);
 			break;
 		case Struct.Bond.PATTERN.STEREO.DOWN:
 			path = draw.bondSingleDown(render, hb1, hb2);
@@ -154,7 +154,7 @@ function getBondPath(restruct, bond, hb1, hb2) {
 		findIncomingUpBonds(hb1.bid, bond, restruct);
 		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
 			bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-			path = draw.bondSingleStereoBold(render, hb1, hb2, bond, true, struct, shiftA, shiftB);
+			path = getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB);
 		} else {
 			path = draw.bondDouble(render, hb1, hb2, bond,
 				bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS, shiftA, shiftB);
@@ -190,6 +190,77 @@ function getBondPath(restruct, bond, hb1, hb2) {
 	return path;
 }
 
+/* Get Path */
+function getBondSingleUpPath(render, hb1, hb2, bond, struct) {
+	var a = hb1.p,
+		b = hb2.p,
+		n = hb1.norm;
+	var options = render.options;
+	var bsp = 0.7 * options.stereoBond;
+	var b2 = b.addScaled(n, bsp);
+	var b3 = b.addScaled(n, -bsp);
+	if (bond.neihbid2 >= 0) { // if the end is shared with another up-bond heading this way
+		var coords = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
+		b2 = coords[0];
+		b3 = coords[1];
+	}
+	return draw.bondSingleUp(render, a, b2, b3);
+}
+
+function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) {
+	var options = render.options;
+	var coords1 = stereoUpBondGetCoordinates(hb1, bond.neihbid1, options.stereoBond, struct);
+	var coords2 = stereoUpBondGetCoordinates(hb2, bond.neihbid2, options.stereoBond, struct);
+	var a1 = coords1[0];
+	var a2 = coords1[1];
+	var a3 = coords2[0];
+	var a4 = coords2[1];
+	return draw.bondSingleStereoBold(render, a1, a2, a3, a4);
+}
+
+function getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB) {
+	var a = hb1.p,
+		b = hb2.p,
+		n = hb1.norm,
+		shift = bond.doubleBondShift;
+	var bsp = 1.5 * render.options.stereoBond;
+	var b1 = a.addScaled(n, bsp * shift);
+	var b2 = b.addScaled(n, bsp * shift);
+	if (shift > 0) {
+		if (shiftA)
+			b1 = b1.addScaled(hb1.dir, bsp * getBondLineShift(hb1.rightCos, hb1.rightSin));
+		if (shiftB)
+			b2 = b2.addScaled(hb1.dir, -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin));
+	} else if (shift < 0) {
+		if (shiftA)
+			b1 = b1.addScaled(hb1.dir, bsp * getBondLineShift(hb1.leftCos, hb1.leftSin));
+		if (shiftB)
+			b2 = b2.addScaled(hb1.dir, -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin));
+	}
+	var sgBondPath = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
+	return draw.bondDoubleStereoBold(render, sgBondPath, b1, b2);
+}
+
+function getBondLineShift(cos, sin) {
+	if (sin < 0 || Math.abs(cos) > 0.9)
+		return 0;
+	return sin / (1 - cos);
+}
+
+function stereoUpBondGetCoordinates(hb, neihbid, bondSpace, struct) {
+	var neihb = struct.halfBonds.get(neihbid);
+	var cos = Vec2.dot(hb.dir, neihb.dir);
+	var sin = Vec2.cross(hb.dir, neihb.dir);
+	var cosHalf = Math.sqrt(0.5 * (1 - cos));
+	var biss = neihb.dir.rotateSC((sin >= 0 ? -1 : 1) * cosHalf, Math.sqrt(0.5 * (1 + cos)));
+
+	var denomAdd = 0.3;
+	var scale = 0.7;
+	var a1 = hb.p.addScaled(biss, scale * bondSpace / (cosHalf + denomAdd));
+	var a2 = hb.p.addScaled(biss.negated(), scale * bondSpace / (cosHalf + denomAdd));
+	return sin > 0 ? [a1, a2] : [a2, a1];
+}
+
 function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) {
 	var pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
 	var ipath = paper.text(pb.x, pb.y, bid.toString());
@@ -197,6 +268,7 @@ function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) {
 	draw.recenterText(ipath, irbb);
 	return ipath;
 }
+/* ----- */
 
 function setDoubleBondShift(bond, struct) {
 	var loop1, loop2;

@@ -1,11 +1,8 @@
 var util = require('../util');
 var Vec2 = require('../util/vec2');
-var Struct = require('../chem/struct');
 var Raphael = require('../raphael-ext');
 
 var tfx = util.tfx;
-
-var dashdotPattern = [0.125, 0.125, 0.005, 0.125];
 
 function arrow(render, a, b) {
 	var width = 5,
@@ -58,49 +55,32 @@ function bondDoubleStereoBold(render, sgBondPath, b1, b2) {
 		.attr(options.lineattr)]);
 }
 
-function bondSingleDown(render, hb1, hb2) { // eslint-disable-line max-statements
+function bondSingleDown(render, hb1, d, nlines, step) { // eslint-disable-line max-params
 	var a = hb1.p,
-		b = hb2.p,
 		n = hb1.norm;
 	var paper = render.paper;
 	var options = render.options;
 	var bsp = 0.7 * options.stereoBond;
-	var d = b.sub(a);
-	var len = d.length() + 0.2;
-	d = d.normalized();
-	var interval = 1.2 * options.lineWidth;
-	var nlines = Math.max(Math.floor((len - options.lineWidth) /
-	(options.lineWidth + interval)), 0) + 2;
-	var step = len / (nlines - 1);
 
 	var path = '',
 		p,
 		q,
-		r = a;
+		r;
 	for (var i = 0; i < nlines; ++i) {
 		r = a.addScaled(d, step * i);
 		p = r.addScaled(n, bsp * (i + 0.5) / (nlines - 0.5));
 		q = r.addScaled(n, -bsp * (i + 0.5) / (nlines - 0.5));
 		path += makeStroke(p, q);
 	}
-	return paper.path(path)
-		.attr(options.lineattr);
+	return paper.path(path).attr(options.lineattr);
 }
 
-function bondSingleEither(render, hb1, hb2) { // eslint-disable-line max-statements
+function bondSingleEither(render, hb1, d, nlines, step) { // eslint-disable-line max-params
 	var a = hb1.p,
-		b = hb2.p,
 		n = hb1.norm;
 	var paper = render.paper;
 	var options = render.options;
 	var bsp = 0.7 * options.stereoBond;
-	var d = b.sub(a);
-	var len = d.length();
-	d = d.normalized();
-	var interval = 0.6 * options.lineWidth;
-	var nlines = Math.max(Math.floor((len - options.lineWidth) /
-	(options.lineWidth + interval)), 0) + 2;
-	var step = len / (nlines - 0.5);
 
 	var path = 'M' + tfx(a.x) + ',' + tfx(a.y),
 		r = a;
@@ -113,51 +93,17 @@ function bondSingleEither(render, hb1, hb2) { // eslint-disable-line max-stateme
 		.attr(options.lineattr);
 }
 
-function bondDouble(render, hb1, hb2, bond, cisTrans, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
-	var a = hb1.p,
-		b = hb2.p,
-		n = hb1.norm,
-		shift = cisTrans ? 0 : bond.doubleBondShift;
+function bondDouble(render, a1, a2, b1, b2, cisTrans) { // eslint-disable-line max-params, max-statements
 	var paper = render.paper;
 	var options = render.options;
-	var bsp = options.bondSpace / 2;
-	var s1 = bsp,
-		s2 = -bsp;
-	s1 += shift * bsp;
-	s2 += shift * bsp;
-	var a2 = a.addScaled(n, s1);
-	var b2 = b.addScaled(n, s1);
-	var a3 = a.addScaled(n, s2);
-	var b3 = b.addScaled(n, s2);
-
-	if (shift > 0) {
-		if (shiftA) {
-			a2 = a2.addScaled(hb1.dir, options.bondSpace *
-			getBondLineShift(hb1.rightCos, hb1.rightSin));
-		}
-		if (shiftB) {
-			b2 = b2.addScaled(hb1.dir, -options.bondSpace *
-			getBondLineShift(hb2.leftCos, hb2.leftSin));
-		}
-	} else if (shift < 0) {
-		if (shiftA) {
-			a3 = a3.addScaled(hb1.dir, options.bondSpace *
-			getBondLineShift(hb1.leftCos, hb1.leftSin));
-		}
-		if (shiftB) {
-			b3 = b3.addScaled(hb1.dir, -options.bondSpace *
-			getBondLineShift(hb2.rightCos, hb2.rightSin));
-		}
-	}
-
 	return paper.path(cisTrans ?
 			'M{0},{1}L{6},{7}M{4},{5}L{2},{3}' :
 			'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
-	tfx(a2.x), tfx(a2.y), tfx(b2.x), tfx(b2.y), tfx(a3.x), tfx(a3.y), tfx(b3.x), tfx(b3.y))
+	tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(a2.x), tfx(a2.y), tfx(b2.x), tfx(b2.y))
 		.attr(options.lineattr);
 }
 
-function bondSingleOrDouble(render, hb1, hb2) { // eslint-disable-line max-statements
+function bondSingleOrDouble(render, hb1, hb2, nSect) { // eslint-disable-line max-statements
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm;
@@ -165,14 +111,11 @@ function bondSingleOrDouble(render, hb1, hb2) { // eslint-disable-line max-state
 	var options = render.options;
 	var bsp = options.bondSpace / 2;
 
-	var nSect = (Vec2.dist(a, b) / (options.bondSpace + options.lineWidth)).toFixed() - 0;
-	if (!(nSect & 1))
-		nSect += 1;
 	var path = '',
+		pi,
 		pp = a;
-
 	for (var i = 1; i <= nSect; ++i) {
-		var pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
+		pi = Vec2.lc2(a, (nSect - i) / nSect, b, i / nSect);
 		if (i & 1) {
 			path += makeStroke(pp, pi);
 		} else {
@@ -181,7 +124,6 @@ function bondSingleOrDouble(render, hb1, hb2) { // eslint-disable-line max-state
 		}
 		pp = pi;
 	}
-
 	return paper.path(path)
 		.attr(options.lineattr);
 }
@@ -200,49 +142,13 @@ function bondTriple(render, hb1, hb2) {
 		.attr(options.lineattr);
 }
 
-function bondAromatic(render, hb1, hb2, bondShift, shiftA, shiftB) {  // eslint-disable-line max-params
+function bondAromatic(render, paths, bondShift) {
 	var paper = render.paper;
 	var options = render.options;
-	var paths = aromaticBondPaths(hb1, hb2, bondShift,
-	                              shiftA, shiftB, options.bondSpace);
 	var l1 = paper.path(paths[0]).attr(options.lineattr);
 	var l2 = paper.path(paths[1]).attr(options.lineattr);
-	(bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' });
-	return paper.set([l1, l2]);
-}
-
-function bondSingleOrAromatic(render, hb1, hb2, bondShift, shiftA, shiftB) {  // eslint-disable-line max-params
-	var paper = render.paper;
-	var options = render.options;
-	var dash = dashdotPattern.map(function (v) {
-		return v * options.scale;
-	});
-	var paths = aromaticBondPaths(hb1, hb2, bondShift,
-	                              shiftA, shiftB, options.bondSpace,
-	                              bondShift > 0 ? 1 : 2, dash);
-	var l1 = paper.path(paths[0]).attr(options.lineattr);
-	var l2 = paper.path(paths[1]).attr(options.lineattr);
-	// dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
-	//	(shift > 0 ? l1 : l2).attr({
-	//		'stroke-dasharray':'-.'
-	//	});
-	return paper.set([l1, l2]);
-}
-
-function bondDoubleOrAromatic(render, hb1, hb2, bondShift, shiftA, shiftB) {  // eslint-disable-line max-params
-	var paper = render.paper;
-	var options = render.options;
-	var dash = dashdotPattern.map(function (v) {
-		return v * options.scale;
-	});
-	var paths = aromaticBondPaths(hb1, hb2, bondShift,
-	                              shiftA, shiftB, options.bondSpace,
-	                              3, dash);
-	var l1 = paper.path(paths[0]).attr(options.lineattr);
-	var l2 = paper.path(paths[1]).attr(options.lineattr);
-	// dotted line doesn't work in Chrome, render manually instead (see rnd.dashedPath)
-	//	l1.attr({'stroke-dasharray':'-.'});
-	//	l2.attr({'stroke-dasharray':'-.'});
+	if (bondShift)
+		(bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' });
 	return paper.set([l1, l2]);
 }
 
@@ -255,69 +161,9 @@ function bondAny(render, hb1, hb2) {
 		.attr(options.lineattr).attr({ 'stroke-dasharray': '- ' });
 }
 
-function reactingCenter(render, bond, hb1, hb2) {
-	var a = hb1.p,
-		b = hb2.p;
-	var c = b.add(a).scaled(0.5);
-	var d = b.sub(a).normalized();
-	var n = d.rotateSC(1, 0);
-
+function reactingCenter(render, p) {
 	var paper = render.paper;
 	var options = render.options;
-
-	var p = [];
-
-	var lw = options.lineWidth,
-		bs = options.bondSpace / 2;
-	var alongIntRc = lw, // half interval along for CENTER
-		alongIntMadeBroken = 2 * lw, // half interval between along for MADE_OR_BROKEN
-		alongSz = 1.5 * bs, // half size along for CENTER
-		acrossInt = 1.5 * bs, // half interval across for CENTER
-		acrossSz = 3.0 * bs, // half size across for all
-		tiltTan = 0.2; // tangent of the tilt angle
-
-	switch (bond.b.reactingCenterStatus) {
-	case Struct.Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
-		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER:  // #
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, -alongIntRc));
-		p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
-		p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
-		p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
-		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
-		break;
-//	case Bond.PATTERN.REACTING_CENTER.UNCHANGED:  // o
-//		//draw a circle
-//		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
-		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
-		p.push(c.addScaled(n, acrossSz));
-		p.push(c.addScaled(n, -acrossSz));
-		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
-		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz));
-		p.push(c.addScaled(n, -acrossSz));
-		break;
-	default:
-		return null;
-	}
-
 	var pathdesc = '';
 	for (var i = 0; i < p.length / 2; ++i)
 		/* eslint-disable no-mixed-operators*/
@@ -326,34 +172,9 @@ function reactingCenter(render, bond, hb1, hb2) {
 	return paper.path(pathdesc).attr(options.lineattr);
 }
 
-function topologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-statements
-	var mark = null;
-
-	if (bond.b.topology == Struct.Bond.PATTERN.TOPOLOGY.RING)
-		mark = 'rng';
-	else if (bond.b.topology == Struct.Bond.PATTERN.TOPOLOGY.CHAIN)
-		mark = 'chn';
-	else
-		return null;
-
+function topologyMark(render, p, mark) { // eslint-disable-line max-statements
 	var paper = render.paper;
 	var options = render.options;
-
-	var a = hb1.p,
-		b = hb2.p;
-	var c = b.add(a).scaled(0.5);
-	var d = b.sub(a).normalized();
-	var n = d.rotateSC(1, 0);
-	var fixed = options.lineWidth;
-	if (bond.doubleBondShift > 0)
-		n = n.scaled(-bond.doubleBondShift);
-	else if (bond.doubleBondShift == 0)
-		fixed += options.bondSpace / 2;
-
-	var s = new Vec2(2, 1).scaled(options.bondSpace);
-	if (bond.b.type == Struct.Bond.PATTERN.TYPE.TRIPLE)
-		fixed += options.bondSpace;
-	var p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 	var path = paper.text(p.x, p.y, mark)
 		.attr({
 			'font': options.font,
@@ -437,12 +258,6 @@ function makeStroke(a, b) {
 		'L' + tfx(b.x) + ',' + tfx(b.y) + '	';
 }
 
-function getBondLineShift(cos, sin) {
-	if (sin < 0 || Math.abs(cos) > 0.9)
-		return 0;
-	return sin / (1 - cos);
-}
-
 function dashedPath(p0, p1, dash) {
 	var t0 = 0;
 	var t1 = Vec2.dist(p0, p1);
@@ -463,38 +278,7 @@ function dashedPath(p0, p1, dash) {
 	return path;
 }
 
-function aromaticBondPaths(hb1, hb2, shift, shiftA, shiftB, bondSpace, mask, dash) { // eslint-disable-line max-params, max-statements
-	var a = hb1.p,
-		b = hb2.p,
-		n = hb1.norm;
-	var bsp = bondSpace / 2;
-	var s1 = bsp,
-		s2 = -bsp;
-	s1 += shift * bsp;
-	s2 += shift * bsp;
-	var a2 = a.addScaled(n, s1);
-	var b2 = b.addScaled(n, s1);
-	var a3 = a.addScaled(n, s2);
-	var b3 = b.addScaled(n, s2);
-	if (shift > 0) {
-		if (shiftA) {
-			a2 = a2.addScaled(hb1.dir, bondSpace *
-			                  getBondLineShift(hb1.rightCos, hb1.rightSin));
-		}
-		if (shiftB) {
-			b2 = b2.addScaled(hb1.dir, -bondSpace *
-			                  getBondLineShift(hb2.leftCos, hb2.leftSin));
-		}
-	} else if (shift < 0) {
-		if (shiftA) {
-			a3 = a3.addScaled(hb1.dir, bondSpace *
-			                  getBondLineShift(hb1.leftCos, hb1.leftSin));
-		}
-		if (shiftB) {
-			b3 = b3.addScaled(hb1.dir, -bondSpace *
-			                  getBondLineShift(hb2.rightCos, hb2.rightSin));
-		}
-	}
+function aromaticBondPaths(a2, a3, b2, b3, mask, dash) { // eslint-disable-line max-params
 	var l1 = dash && (mask & 1) ? dashedPath(a2, b2, dash) : makeStroke(a2, b2);
 	var l2 = dash && (mask & 2) ? dashedPath(a3, b3, dash) : makeStroke(a3, b3);
 
@@ -514,6 +298,7 @@ module.exports = {
 	recenterText: recenterText,
 	arrow: arrow,
 	plus: plus,
+	aromaticBondPaths: aromaticBondPaths,
 	bondSingle: bondSingle,
 	bondSingleUp: bondSingleUp,
 	bondSingleStereoBold: bondSingleStereoBold,
@@ -524,8 +309,6 @@ module.exports = {
 	bondSingleOrDouble: bondSingleOrDouble,
 	bondTriple: bondTriple,
 	bondAromatic: bondAromatic,
-	bondSingleOrAromatic: bondSingleOrAromatic,
-	bondDoubleOrAromatic: bondDoubleOrAromatic,
 	bondAny: bondAny,
 	reactingCenter: reactingCenter,
 	topologyMark: topologyMark,

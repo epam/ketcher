@@ -9,7 +9,7 @@ const MIEW_OPTIONS = {
 	settings: {
 		labels: 'obj',
 		theme: 'light',
-		atomLabel: 'bright',
+		autoPreset: false,
 		inversePanning: true
 	},
 	reps: [{
@@ -33,6 +33,27 @@ function origin (url) {
 		   (!loc.port ? '' : ':' + loc.port);
 }
 
+function queryOptions(options) {
+	if (Array.isArray(options)) {
+		return options.reduce((res, item) => {
+			let value = queryOptions(item);
+			if (value !== null)
+				res.push(value);
+			return res;
+		}, []).join('&');
+	} else if (typeof options == 'object') {
+		return Object.keys(options).reduce((res, item) => {
+			let value = options[item];
+			res.push(typeof value == 'object' ?
+					 queryOptions(value) :
+					 `${item}=${value}`);
+			return res;
+		}, []).join('&');
+	} else {
+		return null;
+	}
+}
+
 function miewLoad(iframe, url, options={}) { // TODO: timeout
 	return new Promise(function (resolve, reject) {
 		window.addEventListener('message', function onload(event) {
@@ -42,10 +63,12 @@ function miewLoad(iframe, url, options={}) { // TODO: timeout
 				miew._opts.load = false; // setOptions({ load: '' })
 				miew._menuDisabled = true; // no way to disable menu after constructor return
 				if (miew.init()) {
-					miew.setOptions(options);
 					miew.benchmarkGfx().then(() => {
 						miew.run();
-						resolve(miew);
+						setTimeout(function() {
+							//miew.setOptions(options);
+							resolve(miew);
+						}, 10);
 					});
 				}
 			}
@@ -74,7 +97,10 @@ class Miew extends Component {
 		let miew = miewLoad(ev.target, MIEW_PATH, MIEW_OPTIONS);
 		this.setState({ miew });
 		this.state.miew.then(miew => {
-			miew.parse(this.props.structStr, { fileType: 'cml' });
+			miew.parse(this.props.structStr, {
+				fileType: 'cml',
+				loaded: true
+			});
 			this.setState({ miew });
 		});
 	}
@@ -97,8 +123,9 @@ class Miew extends Component {
 						<button disabled={miew instanceof Promise || structStr instanceof Promise}
 								onClick={ ev => this.save(ev) }>Apply</button>
 					]}>
-			  <iframe id="miew-iframe" src={MIEW_PATH}
-					  onLoad={ev => this.load(ev) }></iframe>
+				<iframe id="miew-iframe"
+						src={`${MIEW_PATH}?${queryOptions(MIEW_OPTIONS)}`}
+						onLoad={ev => this.load(ev) }></iframe>
 			</Dialog>
 		);
 	}

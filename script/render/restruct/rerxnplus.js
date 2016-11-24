@@ -35,7 +35,7 @@ ReRxnPlus.prototype.makeSelectionPlate = function (restruct, paper, styles) { //
 ReRxnPlus.prototype.show = function (restruct, id, options) {
 	var render = restruct.render;
 	var centre = scale.obj2scaled(this.item.pp, options);
-	var path = draw.plus(render, centre);
+	var path = draw.plus(render.paper, centre, render.options);
 	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 	var offset = options.offset;
 	if (offset != null)

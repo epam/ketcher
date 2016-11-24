@@ -52,14 +52,14 @@ function rGroupdrawBrackets(set, render, bb, d) {
 	var bracketHeight = bb.p1.y - bb.p0.y;
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
 
-	var leftBracket = draw.bracket(render, d.negated(),
+	var leftBracket = draw.bracket(render.paper, d.negated(),
 	                               d.negated().rotateSC(1, 0),
 	                               scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
-	                               bracketWidth, bracketHeight);
+	                               bracketWidth, bracketHeight, render.options);
 
-	var rightBracket = draw.bracket(render, d, d.rotateSC(1, 0),
+	var rightBracket = draw.bracket(render.paper, d, d.rotateSC(1, 0),
 	                                scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
-	                                bracketWidth, bracketHeight);
+	                                bracketWidth, bracketHeight, render.options);
 
 	return set.push(leftBracket, rightBracket);
 }

@@ -63,10 +63,10 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 	var ir = -1;
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
-		var path = draw.bracket(render, scale.obj2scaled(bracket.d, render.options),
+		var path = draw.bracket(render.paper, scale.obj2scaled(bracket.d, render.options),
 		                        scale.obj2scaled(bracket.n, render.options),
 		                        scale.obj2scaled(bracket.c, render.options),
-		                        bracket.w, bracket.h);
+		                        bracket.w, bracket.h, render.options);
 		set.push(path);
 		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
 			ir = i;

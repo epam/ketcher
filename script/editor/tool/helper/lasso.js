@@ -52,8 +52,8 @@ LassoHelper.prototype.update = function () {
 			return scale.obj2scaled(p, rnd.options).add(rnd.options.offset);
 		});
 		this.selection = this.mode == 0 ?
-			draw.selectionPolygon(rnd, dp) :
-			draw.selectionRectangle(rnd, dp[0], dp[1]);
+			draw.selectionPolygon(rnd.paper, dp, rnd.options) :
+			draw.selectionRectangle(rnd.paper, dp[0], dp[1], rnd.options);
 	}
 };
 

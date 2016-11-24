@@ -146,7 +146,7 @@ function getBondPath(restruct, bond, hb1, hb2) {
 			path = getBondSingleEitherPath(render, hb1, hb2);
 			break;
 		default:
-			path = draw.bondSingle(render, hb1, hb2);
+			path = draw.bondSingle(render.paper, hb1, hb2, render.options);
 			break;
 		}
 		break;
@@ -159,12 +159,12 @@ function getBondPath(restruct, bond, hb1, hb2) {
 			path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
 	case Struct.Bond.PATTERN.TYPE.TRIPLE:
-		path = draw.bondTriple(render, hb1, hb2);
+		path = draw.bondTriple(render.paper, hb1, hb2, render.options);
 		break;
 	case Struct.Bond.PATTERN.TYPE.AROMATIC:
 		var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
 			(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
-		path = inAromaticLoop ? draw.bondSingle(render, hb1, hb2) :
+		path = inAromaticLoop ? draw.bondSingle(render.paper, hb1, hb2, render.options) :
 			getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
 	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
@@ -177,7 +177,7 @@ function getBondPath(restruct, bond, hb1, hb2) {
 		path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
 	case Struct.Bond.PATTERN.TYPE.ANY:
-		path = draw.bondAny(render, hb1, hb2);
+		path = draw.bondAny(render.paper, hb1, hb2, render.options);
 		break;
 	default:
 		throw new Error('Bond type ' + bond.b.type + ' not supported');
@@ -199,7 +199,7 @@ function getBondSingleUpPath(render, hb1, hb2, bond, struct) { // eslint-disable
 		b2 = coords[0];
 		b3 = coords[1];
 	}
-	return draw.bondSingleUp(render, a, b2, b3);
+	return draw.bondSingleUp(render.paper, a, b2, b3, options);
 }
 
 function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) { // eslint-disable-line max-params
@@ -210,7 +210,7 @@ function getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct) { // eslint
 	var a2 = coords1[1];
 	var a3 = coords2[0];
 	var a4 = coords2[1];
-	return draw.bondSingleStereoBold(render, a1, a2, a3, a4);
+	return draw.bondSingleStereoBold(render.paper, a1, a2, a3, a4, options);
 }
 
 function getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB) { // eslint-disable-line max-params
@@ -233,7 +233,7 @@ function getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shi
 			b2 = b2.addScaled(hb1.dir, -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin));
 	}
 	var sgBondPath = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
-	return draw.bondDoubleStereoBold(render, sgBondPath, b1, b2);
+	return draw.bondDoubleStereoBold(render.paper, sgBondPath, b1, b2, render.options);
 }
 
 function getBondLineShift(cos, sin) {
@@ -267,7 +267,7 @@ function getBondSingleDownPath(render, hb1, hb2) {
 	var nlines = Math.max(Math.floor((len - options.lineWidth) /
 			(options.lineWidth + interval)), 0) + 2;
 	var step = len / (nlines - 1);
-	return draw.bondSingleDown(render, hb1, d, nlines, step);
+	return draw.bondSingleDown(render.paper, hb1, d, nlines, step, options);
 }
 
 function getBondSingleEitherPath(render, hb1, hb2) {
@@ -281,7 +281,7 @@ function getBondSingleEitherPath(render, hb1, hb2) {
 	var nlines = Math.max(Math.floor((len - options.lineWidth) /
 			(options.lineWidth + interval)), 0) + 2;
 	var step = len / (nlines - 0.5);
-	return draw.bondSingleEither(render, hb1, d, nlines, step);
+	return draw.bondSingleEither(render.paper, hb1, d, nlines, step, options);
 }
 
 function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params
@@ -319,7 +319,7 @@ function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-d
 				getBondLineShift(hb2.rightCos, hb2.rightSin));
 		}
 	}
-	return draw.bondDouble(render, a1, a2, b1, b2, cisTrans);
+	return draw.bondDouble(render.paper, a1, a2, b1, b2, cisTrans, options);
 }
 
 function getSingleOrDoublePath(render, hb1, hb2) {
@@ -330,7 +330,7 @@ function getSingleOrDoublePath(render, hb1, hb2) {
 	var nSect = (Vec2.dist(a, b) / (options.bondSpace + options.lineWidth)).toFixed() - 0;
 	if (!(nSect & 1))
 		nSect += 1;
-	return draw.bondSingleOrDouble(render, hb1, hb2, nSect);
+	return draw.bondSingleOrDouble(render.paper, hb1, hb2, nSect, options);
 }
 
 function getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params
@@ -353,7 +353,7 @@ function getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint
 		});
 	}
 	var paths = getAromaticBondPaths(hb1, hb2, bondShift, shiftA, shiftB, options.bondSpace, mark, dash);
-	return draw.bondAromatic(render, paths, bondShift);
+	return draw.bondAromatic(render.paper, paths, bondShift, options);
 }
 
 function getAromaticBondPaths(hb1, hb2, shift, shiftA, shiftB, bondSpace, mask, dash) { // eslint-disable-line max-params, max-statements
@@ -448,7 +448,7 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 	default:
 		return null;
 	}
-	return draw.reactingCenter(render, p);
+	return draw.reactingCenter(render.paper, p, render.options);
 }
 
 function getTopologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-statements
@@ -478,7 +478,7 @@ function getTopologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-st
 		fixed += options.bondSpace;
 	var p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 
-	return draw.topologyMark(render, p, mark);
+	return draw.topologyMark(render.paper, p, mark, options);
 }
 
 function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) { // eslint-disable-line max-params

@@ -290,26 +290,27 @@ function showHydroIndex(atom, render, implh, rightMargin) {
 function showRadical(atom, render) {
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
+	var paper = render.paper;
 	var radical = {};
 	var hshift;
 	switch (atom.a.radical) {
 	case 1:
-		radical.path = render.paper.set();
+		radical.path = paper.set();
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
-			draw.radicalBullet(render, ps.add(new Vec2(-hshift, 0))),
-			draw.radicalBullet(render, ps.add(new Vec2(hshift, 0))));
+			draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
+			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0))), options);
 		radical.path.attr('fill', atom.color);
 		break;
 	case 2:
-		radical.path = draw.radicalBullet(render, ps).attr('fill', this.color);
+		radical.path = draw.radicalBullet(paper, ps, options).attr('fill', this.color);
 		break;
 	case 3:
-		radical.path = render.paper.set();
+		radical.path = paper.set();
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
-			draw.radicalCap(render, ps.add(new Vec2(-hshift, 0))),
-			draw.radicalCap(render, ps.add(new Vec2(hshift, 0))));
+			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
+			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0))), options);
 		radical.path.attr('stroke', atom.color);
 		break;
 	}

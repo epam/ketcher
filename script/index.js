@@ -57,7 +57,8 @@ window.onload = function () {
 		ketcher.apiPath = params.api_path;
 	var server = ketcher.server = api(ketcher.apiPath, {
 		'smart-layout': true,
-		'ignore-stereochemistry-errors': true
+		'ignore-stereochemistry-errors': true,
+		'mass-skip-error-on-pseudoatoms': false
 	});
 	server.then(function () {
 		if (params.mol)

@@ -7,8 +7,8 @@ const MIEW_PATH = '__MIEW_PATH__';
 const MIEW_OPTIONS = {
 	preset: 'small',
 	settings: {
-		labels: 'obj',
 		theme: 'light',
+		atomLabel: 'bright',
 		autoPreset: false,
 		inversePanning: true
 	},

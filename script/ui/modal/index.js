@@ -6,17 +6,17 @@ var selectDialog = require('./select');
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
 
-var openDialog = require('./open.jsx').default;
-var saveDialog = require('./save.jsx').default;
-var labelEdit = require('./labeledit.jsx').default;
-var templatesDialog = require('./template-lib.jsx');
-var rgroupDialog = require('./rgroup.jsx').default;
-var aboutDialog = require('./about.jsx').default;
-var recognizeDialog = require('./recognize.jsx').default;
-var checkDialog = require('./check.jsx').default;
-var calculatedValuesDialog = require('./analyse.jsx').default;
-var settingsDialog = require('./settings.jsx').default;
-var helpDialog = require('./help.jsx').default;
+var openDialog = require('./open').default;
+var saveDialog = require('./save').default;
+var labelEdit = require('./labeledit').default;
+var templatesDialog = require('./template-lib');
+var rgroupDialog = require('./rgroup').default;
+var aboutDialog = require('./about').default;
+var recognizeDialog = require('./recognize').default;
+var checkDialog = require('./check').default;
+var calculatedValuesDialog = require('./analyse').default;
+var settingsDialog = require('./settings').default;
+var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 
 function periodTable (params) {

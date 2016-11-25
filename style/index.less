@@ -22,12 +22,15 @@ html {
 }
 
 body {
-	min-height: 100%;
+	height: 100%;
 	position: relative;
 	font: @base-size FreeSans, Arimo, "Droid Sans", Helvetica,
 	                 "Helvetica Neue", Arial, sans-serif;
 	background-color: white;
 	color: @main-color;
+
+	min-width: 640px;
+	min-height: 400px;
 }
 
 main {
@@ -42,6 +45,8 @@ main {
 }
 #template {
 	.toolbar(bottom);
+	overflow: hidden; // #300 quick fix,
+	                  // no menu here
 }
 #toolbox {
 	.toolbar(left);
@@ -130,9 +135,12 @@ select {
 	.collapsed-ifnot(opened);
 }
 
-@media (max-width: 850px) {
+@media (max-width: 840px) {
 	#bond-common, #bond-stereo, #bond-query {
 		.collapsed-size(small);
+	}
+	#zoom-in, #zoom-out {
+		display: none;
 	}
 }
 
@@ -184,12 +192,6 @@ select {
 	}
 }
 
-@media (min-width: 650px) {
-	#document, #edit, #zoom {
-		.separate-item(horizontal, 15px);
-	}
-}
-
 @media (min-height: 800px) {
 	#reaction {
 		.separate-item(vertical, 10px);
@@ -202,7 +204,13 @@ select {
 	}
 }
 
-@media (max-height: 600px), (max-width: 850px) {
+@media (min-width: 1160px) {
+	#analyse, #document, #edit, #zoom {
+		.separate-item(horizontal, 15px);
+	}
+}
+
+@media (max-height: 600px), (max-width: 1040px) {
 	.set-size(small);
 
 	body, select {
@@ -231,31 +239,25 @@ select {
 	}
 
 	#atom button,
-	#freq-atoms button{
+	#freq-atoms button {
 		font-size: @atom-size;
 	}
 }
 
-@media (max-width: 720px) {
-	#meta {
+@media (max-width: 770px) {
+	#help, #about {
 		display: none;
 	}
 	#mainmenu {
-		right: 0;
-	}
-	body {
-		min-width: 520px;
-		//min-height: 450px;
+		@set-size(@small-dim);
+		left: @toolbar-gap;
+		right: @toolbar-gap;
 	}
 }
 
 
 #template-common {
-	.separate-item(horizontal, 10px);
-}
-
-#analyse {
-	.separate-item(horizontal, 20px);
+	.separate-item(horizontal, 15px);
 }
 
 .cellar {

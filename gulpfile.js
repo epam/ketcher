@@ -123,15 +123,18 @@ gulp.task('distrib', function () {
 gulp.task('patch-version', function (cb) {
 	if (pkg.rev)
 		return cb();
-	cp.exec('git rev-list ' + pkg.version + '..HEAD --count', function (err, stdout, _) {
-		if (err && err.code != 127) // not "command not found"
-			gutil.log('Could not fetch revision. ' +
-			          'Please git tag the package version.');
+	cp.exec('git rev-list ' + pkg.version + '..HEAD --count', function (err, stdout, stderr) {
+		if (err && stderr.toString().search('path not in') > 0) {
+			var exit = new gutil.PluginError('autorevision',
+			                                 'Could not fetch revision. ' +
+			                                 'Please git tag the package version.');
+			cb(exit);
+		}
 		else if (!err && stdout > 0) {
 			pkg.rev =  stdout.toString().trim();
 			pkg.version += ('+r' + pkg.rev);
 		}
-		cb(err);
+		cb();
 	});
 });
 

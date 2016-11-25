@@ -527,24 +527,22 @@ form[role=dialog] {
 }
 
 .check {
-	.check-tabs {
+	.tabs {
 		&:extend(.-Tabs all);
 	}
-	.check-settings {
+	.settings, .result {
 		overflow-y: auto;
 		height: 28em;
 		width: 25em;
-		li {
-			margin-left: 5px;
-			line-height: 3em;
-			.error-name {
-				font-weight: bold;
-			}
-			.description {
-				margin-left: 10px;
-				line-height: 1em;
-			}
+		li, dt {
+		    margin: 1.1em 0 0.3em 0.3em;
 		}
+	}
+	dt {
+		font-weight: bold;
+	}
+	dd {
+		margin-left: 1.5em;
 	}
 }
 

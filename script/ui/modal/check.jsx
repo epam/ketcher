@@ -2,7 +2,7 @@ import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
-import Tabs from '../component/tabs'
+import Tabs from '../component/tabs';
 
 const checkScheckSchema = [
 	{ title: 'Valence', value: 'valence' },
@@ -12,6 +12,8 @@ const checkScheckSchema = [
 	{ title: 'Query', value: 'query' },
 	{ title: 'Overlapping Atoms', value: 'overlapping_atoms'},
 	{ title: 'Overlapping Bonds', value: 'overlapping_bonds'},
+	{ title: 'R-Groups', value: 'rgroups'},
+	{ title: 'Chirality', value: 'chiral'},
 	{ title: '3D Structure', value: '3d'}
 ];
 
@@ -49,17 +51,19 @@ class Check extends Component {
             <Dialog caption="Structure Check"
                     name="check" params={props}
                     buttons={[ "Close"]}>
-				<Tabs className="check-tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
-					<ul className="check-settings">{
+				<Tabs className="tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
+				  <dl className="result">{
 						this.state.data == 'correct' ? <li><div className="error-name">No errors found</div></li> :
-						checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
-							<li>
-								<div className="error-name">{item.title} error : </div>
-								<div className="description">{this.state.data[item.value]}</div>
-							</li>
+							checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
+								<div>
+								  {/* A wrapper for react */}
+								  <dt>{item.title} error : </dt>
+								  <dd>{this.state.data[item.value]}</dd>
+								</div>
 						))
-					}</ul>
-					<ul className="check-settings">{checkScheckSchema.map((item) =>(
+					}</dl>
+				<ul className="settings">{
+					checkScheckSchema.map((item) => (
 						<li><label><input type="checkbox" checked={this.state.checker[item.value]}
 										  onClick={ev => this.checkItem(item.value)}/>
 							{item.title} check

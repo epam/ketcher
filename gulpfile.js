@@ -165,8 +165,11 @@ gulp.task('clean', function () {
 
 gulp.task('archive', ['clean', 'assets', 'code'], function () {
 	var an = pkg.name + '-' + pkg.version;
-	return gulp.src([options.dist + '/*', '!**/*.map'])
-		.pipe(plugins.rename({ dirname: an }))
+	return gulp.src(['**', '!*.map'], { cwd: options.dist })
+		.pipe(plugins.rename(function (path) {
+			path.dirname = an + '/' + path.dirname;
+			return path;
+		}))
 		.pipe(plugins.zip(an + '.zip'))
 		.pipe(gulp.dest('.'));
 });

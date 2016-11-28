@@ -4,7 +4,7 @@
 button, input[type=submit],
 input[type=reset], input[type=button] {
 	display: inline-block;
-	margin-bottom: 0;
+	margin: 0;
 	text-align: center;
 	vertical-align: middle;
 	//touch-action: manipulation;
@@ -42,6 +42,9 @@ input[type=reset], input[type=button] {
 	&>input[type=file] { // hide file input
 		left: -9999px;
 		position: absolute;
+	}
+	&+& {
+		margin-left: 0.3em;
 	}
 }
 

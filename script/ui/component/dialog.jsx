@@ -29,17 +29,22 @@ export default function Dialog ({ children, caption, name, params={},
 	}
 
 	return (
-		<form role="dialog" class={name} ref={el => focus(el)}
+		<form role="dialog" className={name} ref={el => focus(el)}
 			onSubmit={ev => ev.preventDefault()}
 			onKeyDown={keyDown}>
-			<header>{caption}</header>
-			{ children }
-			<footer>{
+		  <header>{caption}
+			{ params.onCancel && (
+				<button className="close"
+						onClick={() => exit('Cancel')}>×</button> )
+			}
+		  </header>
+		  { children }
+		  <footer>{
 				buttons.map(b => (
 					typeof b != 'string' ? b :
 						<input type="button" disabled={ isReturn(b) && !valid() } onClick={() => exit(b)} value={b}/>
 				))
-			}</footer>
+		  }</footer>
 		</form>
 	);
 }

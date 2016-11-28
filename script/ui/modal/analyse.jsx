@@ -23,6 +23,24 @@ function FrozenInput({value}) {
 	);
 }
 
+function FormulaInput({value}) {
+	var content = ["\u200B"];
+	var regExp = /\b([A-Z])(\d*)\s*\b/g;
+	var cnd;
+	var pos = 0;
+	while (cnd = regExp.exec(value)) {
+		content.push(value.substring(pos, cnd.index) + cnd[1]);
+		content.push(<sub>{cnd[2]}</sub>);
+		pos = cnd.index + cnd[0].length;
+	}
+	if (pos == 0) content.push(value);
+	else content.push(value.substring(pos, value.length));
+	return (
+		<output className="chem-input" contenteditable={true} focus={true}
+				onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])} >{content}</output>
+	);
+}
+
 class Analyse extends Component {
 	constructor() {
 		super();
@@ -38,27 +56,30 @@ class Analyse extends Component {
 		this.setState(newState);
 	}
 
-	render (props, state) {
+	render(props, state) {
 		return (
 			<Dialog caption="Calculated Values"
 					name="analyse" params={this.props}
 					buttons={["Close"]}>
 				<ul>{[
-					{ name: 'Chemical Formula', key: 'gross' },
-					{ name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight' },
-					{ name: 'Exact Mass', key: 'monoisotopic-mass', round: 'roundMass' },
-					{ name: 'Elemental Analysis', key: 'mass-composition' }
+					{name: 'Chemical Formula', key: 'gross'},
+					{name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight'},
+					{name: 'Exact Mass', key: 'monoisotopic-mass', round: 'roundMass'},
+					{name: 'Elemental Analysis', key: 'mass-composition'}
 				].map(item => (
 					<li>
-					  <label>{item.name}:</label>
-					  <FrozenInput
-						value={ item.round ? roundOff(props[item.key], state[item.round]) : props[item.key] } />
-					  { item.round ? (
-						  <SelectRound value={state[item.round]} onChange={val => this.changeRound(item.round, val)}/>
-					  ) : null}
+						<label>{item.name}:</label>
+						{ item.key == 'gross'
+							? <FormulaInput value={ props[item.key] }/>
+							: <FrozenInput value={ item.round ? roundOff(props[item.key], state[item.round]) : props[item.key] }/>
+						}
+						{ item.round
+							? <SelectRound value={state[item.round]} onChange={val => this.changeRound(item.round, val)}/>
+						 	: null
+						}
 					</li>
 				))
-			}</ul>
+				}</ul>
 			</Dialog>
 		);
 	}
@@ -77,7 +98,7 @@ function roundOff(value, round) {
 	));
 }
 
-function range(n, start=0) {
+function range(n, start = 0) {
 	// not so widely known hack
 	return Array.apply(null, { length: n }).map((_, i) => i + start);
 }

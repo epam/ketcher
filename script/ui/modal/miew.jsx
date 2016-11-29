@@ -18,6 +18,14 @@ const MIEW_OPTIONS = {
 		selector: 'all'
 	}]
 };
+const MIEW_WINDOW = {
+	location: 'no',
+	menubar: 'no',
+	toolbar: 'no',
+	directories: 'no',
+	modal: 'yes',
+	alwaysRaised: 'yes'
+};
 
 function origin (url) {
 	var loc = url;
@@ -33,42 +41,42 @@ function origin (url) {
 		   (!loc.port ? '' : ':' + loc.port);
 }
 
-function queryOptions(options) {
+function queryOptions(options, sep='&') {
 	if (Array.isArray(options)) {
 		return options.reduce((res, item) => {
 			let value = queryOptions(item);
 			if (value !== null)
 				res.push(value);
 			return res;
-		}, []).join('&');
+		}, []).join(sep);
 	} else if (typeof options == 'object') {
 		return Object.keys(options).reduce((res, item) => {
 			let value = options[item];
 			res.push(typeof value == 'object' ?
 					 queryOptions(value) :
-					 `${item}=${value}`);
+					 encodeURIComponent(item) + '=' +
+					 encodeURIComponent(value));
 			return res;
-		}, []).join('&');
+		}, []).join(sep);
 	} else {
 		return null;
 	}
 }
 
-function miewLoad(iframe, url, options={}) { // TODO: timeout
+function miewLoad(wnd, url, options={}) { // TODO: timeout
 	return new Promise(function (resolve, reject) {
 		window.addEventListener('message', function onload(event) {
 			if (event.origin == origin(url) && event.data == 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
-				let miew = iframe.contentWindow.MIEWS[0];
+				let miew = wnd.MIEWS[0];
 				miew._opts.load = false; // setOptions({ load: '' })
 				miew._menuDisabled = true; // no way to disable menu after constructor return
 				if (miew.init()) {
+					miew.setOptions(options);
 					miew.benchmarkGfx().then(() => {
 						miew.run();
-						setTimeout(function() {
-							//miew.setOptions(options);
-							resolve(miew);
-						}, 10);
+						setTimeout(() => resolve(miew), 10);
+						// see setOptions message handler
 					});
 				}
 			}
@@ -94,7 +102,8 @@ class Miew extends Component {
 		super(props);
 	}
 	load(ev) {
-		let miew = miewLoad(ev.target, MIEW_PATH, MIEW_OPTIONS);
+		let miew = miewLoad(ev.target.contentWindow,
+							MIEW_PATH, MIEW_OPTIONS);
 		this.setState({ miew });
 		this.state.miew.then(miew => {
 			miew.parse(this.props.structStr, {
@@ -113,6 +122,30 @@ class Miew extends Component {
 			});
 		};
 	}
+	window() {
+		let opts = {
+			...MIEW_OPTIONS,
+			load: `CML:${btoa(this.props.structStr)}`,
+			sourceType: 'message'
+		};
+		let br = this.base.getBoundingClientRect(); // Preact specifiec
+		                                            // see: epa.ms/1NAYWp
+		let wndProps = {
+			...MIEW_WINDOW,
+			top: Math.round(br.top),
+			left: Math.round(br.left),
+			width: Math.round(br.width),
+			height: Math.round(br.height)
+		};
+		let wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
+		                      'miew', queryOptions(wndProps, ','));
+		if (wnd) {
+			this.props.onCancel && this.props.onCancel();
+			wnd.onload = function () {
+				console.info('windowed');
+			};
+		};
+	}
 	render(props) {
 		let {miew, structStr} = this.state;
 		return (
@@ -121,10 +154,16 @@ class Miew extends Component {
 					buttons={[
 						"Close",
 						<button disabled={miew instanceof Promise || structStr instanceof Promise}
-								onClick={ ev => this.save(ev) }>Apply</button>
+								onClick={ ev => this.save(ev) }>
+						  Apply
+						</button>,
+						<button className="window"
+								onClick={ ev => this.window() }>
+							Detach to new window
+						</button>
 					]}>
 				<iframe id="miew-iframe"
-						src={`${MIEW_PATH}?${queryOptions(MIEW_OPTIONS)}`}
+						src={MIEW_PATH}
 						onLoad={ev => this.load(ev) }></iframe>
 			</Dialog>
 		);

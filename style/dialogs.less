@@ -576,12 +576,12 @@ form[role=dialog] {
 		margin: 0;
 	}
 	.chem-input {
-		&:extend(input[type=button]);
-		width: 13.25em;
-		text-align: left;
-		padding: .5em .3em;
-		margin: 2px;
-		color: black;
+		&:extend(input[type=text]);
+		&:active, &:focus {
+			outline: 0;
+			.highlight-shadow(black);
+		}
+		width: 14em;
 		overflow: hidden;
 		white-space: nowrap;
 	}

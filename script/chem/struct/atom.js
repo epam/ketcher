@@ -163,6 +163,11 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 			valence = 1;
 			hyd = 1 - rad - conn - absCharge;
 		}
+	} else if (groupno == 2) {
+		if (conn + rad + absCharge == 2 || conn + rad + absCharge == 0)
+			valence = 2;
+		else
+			hyd = -1;
 	} else if (groupno == 3) {
 		if (label == 'B' || label == 'Al' || label == 'Ga' || label == 'In') {
 			if (charge == -1) {

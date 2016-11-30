@@ -24,20 +24,20 @@ function FrozenInput({value}) {
 }
 
 function FormulaInput({value}) {
-	var content = ["\u200B"];
-	var regExp = /\b([A-Z])(\d*)\s*\b/g;
+	var content = [];
+	var regExp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
 	var cnd;
 	var pos = 0;
 	while (cnd = regExp.exec(value)) {
 		content.push(value.substring(pos, cnd.index) + cnd[1]);
-		content.push(<sub>{cnd[2]}</sub>);
+		if (cnd[2].length > 0) content.push(<sub>{cnd[2]}</sub>);
 		pos = cnd.index + cnd[0].length;
 	}
 	if (pos == 0) content.push(value);
 	else content.push(value.substring(pos, value.length));
 	return (
-		<output className="chem-input" contenteditable={true} focus={true}
-				onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])} >{content}</output>
+		<div className="chem-input" contenteditable={true} focus={true}
+			 onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])}>{content}</div>
 	);
 }
 

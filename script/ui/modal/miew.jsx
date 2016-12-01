@@ -26,6 +26,21 @@ const MIEW_WINDOW = {
 	modal: 'yes',
 	alwaysRaised: 'yes'
 };
+const MIEW_MODES = {
+	'lines': 'LN',
+	'ballsAndSticks': 'BS',
+	'licorice': 'LC'
+};
+
+function getLocalMiewOpts() {
+	let userOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
+	if (!userOpts) return MIEW_OPTIONS;
+	let opts = MIEW_OPTIONS;
+	if (userOpts.miewTheme) 	opts.settings.theme = camelCase(userOpts.miewTheme);
+	if (userOpts.miewAtomLabel) opts.settings.atomLabel = camelCase(userOpts.miewAtomLabel);
+	if (userOpts.miewMode) 		opts.reps[0].mode = MIEW_MODES[camelCase(userOpts.miewMode)];
+	return opts;
+}
 
 function origin (url) {
 	var loc = url;
@@ -100,10 +115,11 @@ class Miew extends Component {
 	constructor(props) {
 		console.info('init');
 		super(props);
+		this.opts = getLocalMiewOpts();
 	}
 	load(ev) {
 		let miew = miewLoad(ev.target.contentWindow,
-							MIEW_PATH, MIEW_OPTIONS);
+							MIEW_PATH, this.opts);
 		this.setState({ miew });
 		this.state.miew.then(miew => {
 			miew.parse(this.props.structStr, {
@@ -124,7 +140,7 @@ class Miew extends Component {
 	}
 	window() {
 		let opts = {
-			...MIEW_OPTIONS,
+			...this.opts,
 			load: `CML:${btoa(this.props.structStr)}`,
 			sourceType: 'message'
 		};
@@ -169,6 +185,13 @@ class Miew extends Component {
 			</Dialog>
 		);
 	}
+}
+
+function camelCase(str) {
+	return str
+		.replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
+		.replace(/\s/g, '')
+		.replace(/^(.)/, function($1) { return $1.toLowerCase(); });
 }
 
 export default function dialog(params) {

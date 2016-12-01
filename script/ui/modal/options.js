@@ -110,7 +110,26 @@ function opts() {
 		values: [0, 96],
 		defaultMeasure: 'px',
 		measures: ['cm', 'px', 'pt', 'inch'],
-		tab: 'render' }
+		tab: 'render' },
+
+		{ name: 'miewMode',
+		label: 'Display mode',
+		type: 'string',
+		defaultValue: 'lines',
+		values: ['lines', 'balls and sticks', 'licorice'],
+		tab: 'miew' },
+		{ name: 'miewTheme',
+		label: 'Background color',
+		type: 'string',
+		defaultValue: 'light',
+		values: ['light', 'dark'],
+		tab: 'miew' },
+		{ name: 'miewAtomLabel',
+		label: 'Label coloring',
+		type: 'string',
+		defaultValue: 'bright',
+		values: ['no', 'bright', 'inverse', 'black and white', 'black'],
+		tab: 'miew' }
     ];
 }
 

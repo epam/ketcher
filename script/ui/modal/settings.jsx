@@ -110,8 +110,8 @@ class Settings extends Component {
     }
 
     render (props, state) {
-    	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Options for debugging'];
-    	let activeTabs = {'0': true, '1': false, '2': true, '3': false};
+    	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
+    	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
         return (
             <Dialog caption="Settings"
                     name="settings" params={props.params}
@@ -137,6 +137,9 @@ class Settings extends Component {
 					</div>
 					<div className="content">
 						{ this.draw("bonds") }
+					</div>
+					<div className="content">
+						{ this.draw("miew") }
 					</div>
 					<div className="content">
 						{ this.draw("debug") }

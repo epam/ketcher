@@ -158,6 +158,7 @@ class Miew extends Component {
 						  Apply
 						</button>,
 						<button className="window"
+								disabled={/MSIE|rv:11/i.test(navigator.userAgent)}
 								onClick={ ev => this.window() }>
 							Detach to new window
 						</button>

@@ -125,10 +125,8 @@ gulp.task('patch-version', function (cb) {
 		return cb();
 	cp.exec('git rev-list ' + pkg.version + '..HEAD --count', function (err, stdout, stderr) {
 		if (err && stderr.toString().search('path not in') > 0) {
-			var exit = new gutil.PluginError('autorevision',
-			                                 'Could not fetch revision. ' +
-			                                 'Please git tag the package version.');
-			cb(exit);
+			cb(new Error('Could not fetch revision. ' +
+			             'Please git tag the package version.'));
 		}
 		else if (!err && stdout > 0) {
 			pkg.rev =  stdout.toString().trim();
@@ -157,6 +155,21 @@ gulp.task('check-epam-email', function(cb) {
 			gutil.log('Could not continue. Bye!');
 		}
 	} catch(e) {};
+});
+
+gulp.task('check-deps-exact', function (cb) {
+	var semver = require('semver'); // TODO: output corrupted packages
+	['dependencies', 'devDependencies'].forEach(d => {
+		var dep = pkg[d];
+		Object.keys(dep).forEach(name => {
+			var ver = dep[name];
+			if (!semver.valid(ver) || !semver.clean(ver))
+				cb(new Error('check-deps-exact',
+				   'All top level dependencies should be installed' +
+				   'using `npm install --save-exact` command'));
+		});
+	});
+	cb();
 });
 
 gulp.task('clean', function () {
@@ -283,7 +296,8 @@ function glyphReduce(glyphs) {
 	}, {});
 }
 
-gulp.task('pre-commit', ['lint', 'check-epam-email']);
+gulp.task('pre-commit', ['lint', 'check-epam-email',
+                         'check-deps-exact']);
 gulp.task('assets', ['libs', 'distrib', 'help']);
 gulp.task('code', ['style', 'script', 'html']);
 gulp.task('build', ['clean', 'code', 'assets']);

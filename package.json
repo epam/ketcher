@@ -52,6 +52,7 @@
     "guppy-cli": "1.0.1",
     "markdown-it": "8.0.0",
     "minimist": "1.2.0",
+    "semver": "5.3.0",
     "through2": "2.0.1",
     "vinyl-buffer": "1.0.0",
     "vinyl-source-stream": "1.1.0",

@@ -2,13 +2,13 @@ import molfile from '../chem/molfile';
 
 export const map = {
 	'mol': {
-		name: 'MDL/Symyx Molfile',
+		name: 'MDL Molfile',
 		mime: 'chemical/x-mdl-molfile',
 		ext: ['.mol'],
 		supportsCoords: true
 	},
 	'rxn': {
-		name: 'MDL/Symyx Rxnfile',
+		name: 'MDL Rxnfile',
 		mime:'chemical/x-mdl-rxnfile',
 		ext: ['.rxn'],
 		supportsCoords: true

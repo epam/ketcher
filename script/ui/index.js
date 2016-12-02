@@ -1,6 +1,6 @@
 var ui = global.ui = {};
 
-var keymage = require('keymage');
+var keyNorm = require('./keynorm');
 
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
@@ -32,6 +32,7 @@ var lastSelected;
 var clientArea = null;
 var server;
 var options;
+var scope;
 
 var libTmpls = null;
 
@@ -66,16 +67,6 @@ function init (opts, apiServer) {
 	initCliparea(ketcherWindow);
 	initZoom();
 
-	initHotKeys(toolbar, 'editor');
-	labelEditKeys('editor.label', 'a-z0-9');
-	keymage.setScope('editor');
-
-	var watchScope = keymage.setScope.bind(keymage);
-	keymage.setScope = function (scope) {
-		console.info('KEY SCOPE', scope);
-		watchScope(scope);
-	};
-
 	updateHistoryButtons();
 	updateClipboardButtons();
 	updateServerButtons(true);
@@ -91,11 +82,16 @@ function init (opts, apiServer) {
 		subEl('template-lib').disabled = false;
 	});
 
+	scope = 'editor';
+	var hotKeys = initHotKeys(toolbar);
+	ketcherWindow.on('keydown', function (event) {
+		if (scope == 'editor')
+			keyHandle(toolbar, hotKeys, event);
+	});
 	clientArea.on('mousedown', function (event) {
 		if (dropdownToggle(toolbar))
 			event.stop();       // TODO: don't delegate to editor
-		if (!keymage.getScope().startsWith('editor'))
-			keymage.setScope('editor');
+		scope = 'editor';
 	});
 	selectAction('select-lasso');
 
@@ -265,7 +261,7 @@ function initCliparea(parent) {
 		'chemical/x-inchi'
 	];
 	var autofocus = function() {
-		if (keymage.getScope().startsWith('editor')) {
+		if (scope == 'editor') {
 			cliparea.value = ' ';
 			cliparea.focus();
 			cliparea.select();
@@ -331,7 +327,7 @@ function initCliparea(parent) {
 
 function initHotKeys(toolbar) {
 	// Initial keymap
-	var keyMap = {
+	var hotKeys = {
 		'a': ['atom-any'],
 		'Mod-a': ['select-all'],
 		'Mod-Shift-a': ['deselect-all'],
@@ -353,58 +349,47 @@ function initHotKeys(toolbar) {
 			el.innerHTML += ' <kbd>' + mk + '</kbd>';
 
 			keys.forEach(function (kb) {
-				if (Array.isArray(keyMap[kb]))
-					keyMap[kb].push(action);
+				if (Array.isArray(hotKeys[kb]))
+					hotKeys[kb].push(action);
 				else
-					keyMap[kb] = [action];
+					hotKeys[kb] = [action];
 			});
 		}
 	});
-
-	Object.keys(keyMap).forEach(function (key) {
-		keymage(key, function (event) {
-			var group = keyMap[key];
-			var index = group.index || 0; // TODO: store index in dom to revert on resize and
-			                              //       sync mouse with keyboard
-			var prevEl = toolbar.select('.selected')[0];
-			if (group.length != 1 && group.indexOf(prevEl && prevEl.id) != -1) {
-				group.index = index = (index + 1) % group.length;
-			}
-			var action = group[index];
-			if (clipActions.indexOf(action) == -1) {
-				// else delegate to cliparea
-				selectAction(action);
-				event.preventDefault();
-			}
-		});
-	});
+	return keyNorm(hotKeys);
 }
 
-function labelEditKeys(scope, range) {
-	function bindLetter(letter) {
-		keymage(scope, letter, function() {
-			dialog(modal.labelEdit, { letter: letter }).then(function (res) {
+function keyHandle(toolbar, hotKeys, event) {
+	var key = keyNorm(event);
+	var atomsSelected = ui.editor.getSelection().atoms;
+	var group;
+
+	if (key.length == 1 && atomsSelected.length > 0 && key.match(/\w/)) {
+		dialog(modal.labelEdit, { letter: key }).then(function (res) {
 				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
 				ui.render.update();
 				ui.editor.setSelection(null);
-			});
 		});
-	}
-	var re = /(\S)-(\S)/g;
-	var match;
-	while ((match = re.exec(range)) !== null) {
-		var from = match[1], to = match[2];
-		var len = to.charCodeAt(0) - from.charCodeAt(0);
-		Array.apply(null, { length: len + 1 }).forEach(function(_, i) {
-			bindLetter(String.fromCharCode(from.charCodeAt(0) + i));
-		});
+		event.preventDefault();
+	} else if (group = keyNorm.lookup(hotKeys, event)) {
+		var index = group.index || 0; // TODO: store index in dom to revert on resize and
+		//       sync mouse with keyboard
+		var prevEl = toolbar.select('.selected')[0];
+		if (group.length != 1 && group.indexOf(prevEl && prevEl.id) != -1) {
+			group.index = index = (index + 1) % group.length;
+		}
+		var action = group[index];
+		if (clipActions.indexOf(action) == -1) {
+			// else delegate to cliparea
+			selectAction(action);
+			event.preventDefault();
+		}
 	}
 }
 
 function updateClipboardButtons () {
 	var selected = ui.editor.hasSelection(true);
 	subEl('copy').disabled = subEl('cut').disabled = !selected;
-	keymage.setScope(selected && ui.editor.getSelection().atoms.length ? 'editor.label' : 'editor');
 };
 
 function updateHistoryButtons () {
@@ -432,7 +417,7 @@ function createDialog(name, container) {
 function showDialog (name) {
 	var cover = $$('.overlay')[0];
 	var dialog = createDialog(name, cover);
-	keymage.setScope('modal');
+	scope = 'modal';
 	cover.style.display = '';
 
 	utils.animate(cover, 'show');
@@ -448,17 +433,17 @@ function hideDialog (name) {
 	utils.animate(dialog, 'hide').then(function () {
 		cover.style.display = 'none';
 		dialog.remove();
-		keymage.setScope('editor');
+		scope = 'editor';
 	});
 };
 
 function dialog(modal, params, noAnimate) {
 	var cover = $$('.overlay')[0];
 	cover.style.display = '';
-	keymage.setScope('modal');
+	scope = 'modal';
 
 	function close(fn, res) {
-		keymage.setScope('editor');
+		scope = 'editor';
 		cover.style.display = 'none';
 		// var node = this.getDOMNode();
 		// React.unmountComponentAtNode(node);
@@ -564,10 +549,10 @@ function initZoom() {
 	// TODO: need a way to setup zoom range
 	//       e.g. if (zoom < 0.1 || zoom > 10)
 	zoomSelect.on('focus', function () {
-		keymage.pushScope('zoom');
+		scope = 'zoom';
 	});
 	zoomSelect.on('blur', function () {
-		keymage.popScope('zoom');
+		scope = 'editor';
 	});
 	zoomSelect.on('change', updateZoom);
 	updateZoom();

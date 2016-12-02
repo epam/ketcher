@@ -35,7 +35,7 @@ export default function Dialog ({ children, caption, name, params={},
 			onSubmit={ev => ev.preventDefault()}
 			onKeyDown={keyDown}>
 		  <header>{caption}
-			{ params.onCancel && (
+			{ params.onCancel && caption && (
 				<button className="close"
 						onClick={() => exit('Cancel')}>×</button> )
 			}

@@ -2,12 +2,12 @@
 	<menu>
 		<li id="select">
 			<menu>
-				<li id="select-lasso"><button data-keys="Esc">Lasso Selection</button></li>
-				<li id="select-rectangle"><button data-keys="Esc">Rectangle Selection</button></li>
-				<li id="select-fragment"><button data-keys="Esc">Fragment Selection</button></li>
+				<li id="select-lasso"><button data-keys="Escape">Lasso Selection</button></li>
+				<li id="select-rectangle"><button data-keys="Escape">Rectangle Selection</button></li>
+				<li id="select-fragment"><button data-keys="Escape">Fragment Selection</button></li>
 			</menu>
 		</li>
-		<li id="erase"><button data-keys="Del, Backspace">Erase</button></li>
+		<li id="erase"><button data-keys="Delete, Backspace">Erase</button></li>
 		<li id="bond">
 			<menu>
 				<li id="bond-common">
@@ -45,15 +45,15 @@
 		</li>
 		<li id="transform">
 			<menu>
-				<li id="transform-rotate"><button data-keys="Defmod-R">Rotate Tool</button></li>
+				<li id="transform-rotate"><button data-keys="Mod-r">Rotate Tool</button></li>
 				<li id="transform-flip-h"><button>Horizontal Flip</button></li>
 				<li id="transform-flip-v"><button>Vertical Flip</button></li>
 			</menu>
 		</li>
 		{{#unless no-sgroup}}
-			<li id="sgroup"><button data-keys="Defmod-G">S-Group</button></li>
+			<li id="sgroup"><button data-keys="Mod-g">S-Group</button></li>
 			{{#if sgroup-data-special}}
-				<li id="sgroup-data"><button data-keys="Defmod-G">Data S-Group</button></li>
+				<li id="sgroup-data"><button data-keys="Mod-g">Data S-Group</button></li>
 			{{/if}}
 		{{/unless}}
 		{{#unless no-reactions}}
@@ -70,14 +70,14 @@
 		{{#unless no-rgroup}}
 			<li id="rgroup">
 				<menu>
-					<li id="rgroup-label"><button data-keys="Shift-R">R-Group Label Tool</button></li>
-					<li id="rgroup-fragment"><button data-keys="Shift-R">R-Group Fragment Tool</button></li>
-					<li id="rgroup-attpoints"><button data-keys="Shift-R">Attachment Point Tool</button></li>
+					<li id="rgroup-label"><button data-keys="Shift-r">R-Group Label Tool</button></li>
+					<li id="rgroup-fragment"><button data-keys="Shift-r">R-Group Fragment Tool</button></li>
+					<li id="rgroup-attpoints"><button data-keys="Shift-r">Attachment Point Tool</button></li>
 				</menu>
 			</li>
 		{{/unless}}
 		{{#if rgroup-label-only}}
-			<li id="rgroup-label"><button data-keys="Shift-R">R-Group Label Tool</button></li>
+			<li id="rgroup-label"><button data-keys="Shift-r">R-Group Label Tool</button></li>
 		{{/if}}
 	</menu>
 </li>

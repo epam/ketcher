@@ -128,10 +128,18 @@ function updateAtoms() {
 	}
 }
 
+
 function shortcutStr(key) {
-	var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-	return key.replace(/Defmod/g, isMac ? '⌘' : 'Ctrl')
-			  .replace(/-(?!$)/g, '+');
+	var isMac = /Mac/.test(navigator.platform);
+	var aliasMap = {
+		'Escape': 'Esc',
+		'Delete': 'Del'
+	};
+	return key.replace(/Mod/g, isMac ? '⌘' : 'Ctrl')
+		.replace(/-(?!$)/g, '+')
+		.replace(/\+?([^+]+)$/, function (key) {
+			return aliasMap[key] || key.toUpperCase();
+		});
 }
 
 function subEl (id) {
@@ -321,14 +329,14 @@ function initCliparea(parent) {
 	});
 }
 
-function initHotKeys(toolbar, scope) {
+function initHotKeys(toolbar) {
 	// Initial keymap
 	var keyMap = {
 		'a': ['atom-any'],
-		'defmod-a': ['select-all'],
-		'defmod-shift-a': ['deselect-all'],
-		'ctrl-shift-r': ['force-update'],
-		'alt-shift-r': ['qs-serialize']
+		'Mod-a': ['select-all'],
+		'Mod-Shift-a': ['deselect-all'],
+		'Ctrl-Shift-r': ['force-update'],
+		'Alt-Shift-r': ['qs-serialize']
 	};
 
 	toolbar.select('button').each(function (el) {
@@ -345,17 +353,16 @@ function initHotKeys(toolbar, scope) {
 			el.innerHTML += ' <kbd>' + mk + '</kbd>';
 
 			keys.forEach(function (kb) {
-				var nk = kb.toLowerCase();
-				if (Array.isArray(keyMap[nk]))
-					keyMap[nk].push(action);
+				if (Array.isArray(keyMap[kb]))
+					keyMap[kb].push(action);
 				else
-					keyMap[nk] = [action];
+					keyMap[kb] = [action];
 			});
 		}
 	});
 
 	Object.keys(keyMap).forEach(function (key) {
-		keymage(scope, key, function (event) {
+		keymage(key, function (event) {
 			var group = keyMap[key];
 			var index = group.index || 0; // TODO: store index in dom to revert on resize and
 			                              //       sync mouse with keyboard

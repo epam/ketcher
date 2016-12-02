@@ -209,6 +209,7 @@ ReStruct.prototype.initLayers = function () {
 		this.layers[LAYER_MAP[group]] =
 			this.render.paper.rect(0, 0, 10, 10)
 			.attr({
+				class: group + 'Layer',
 				fill: '#000',
 				opacity: '0.0'
 			}).toFront();

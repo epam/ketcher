@@ -135,16 +135,14 @@ function showValue(paper, pos, sg, options) {
 			'font-size': options.fontsz
 		});
 	var box = text.getBBox();
-	var rect = paper.rect(box.x - 1, box.y - 1,
-							  box.width + 2, box.height + 2, 3, 3)
-		.attr({
-			fill: '#fff',
-			stroke: '#fff'
-		});
+	var rect = paper.rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3);
+	rect = sg.selected ?
+		rect.attr(options.selectionStyle) :
+		rect.attr({ fill: '#fff', stroke: '#fff' });
 	var st = paper.set();
 	st.push(
 		rect,
-			text.toFront()
+		text.toFront()
 	);
 	return st;
 }

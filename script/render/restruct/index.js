@@ -862,6 +862,7 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 	var exists = item.selectionPlate != null && !item.selectionPlate.removed;
 	// TODO: simplify me, who sets `removed`?
 	item.selected = selected;
+	if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
 	if (selected) {
 		if (!exists) {
 			var render = this.render;

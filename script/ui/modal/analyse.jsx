@@ -1,6 +1,8 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
+import keyName from 'w3c-keyname';
+
 import Dialog from '../component/dialog';
 
 function SelectRound({value, onChange}) {
@@ -18,8 +20,7 @@ function SelectRound({value, onChange}) {
 function FrozenInput({value}) {
 	return (
 		<input type="text" focus="true" spellcheck="false" value={value}
-			   onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])} />
-		// tab, left, right, home, end codes
+			   onKeyDown={ev => allowMovement(ev)}/>
 	);
 }
 
@@ -36,8 +37,8 @@ function FormulaInput({value}) {
 	if (pos == 0) content.push(value);
 	else content.push(value.substring(pos, value.length));
 	return (
-		<div className="chem-input" contenteditable={true} focus={true}
-			 onKeydown={ev => filterKeyCode(ev, [9, 37, 39, 36, 35])}>{content}</div>
+		<div className="chem-input" spellcheck="false" contenteditable="true" focus="true"
+			 onKeyDown={ev => allowMovement(ev)}>{content}</div>
 	);
 }
 
@@ -85,8 +86,11 @@ class Analyse extends Component {
 	}
 }
 
-function filterKeyCode(event, allowed) {
-	if (allowed.indexOf(event.keyCode) == -1)
+function allowMovement(event) {
+	var movementKeys =  ['Tab', 'ArrowLeft', 'ArrowRight',
+						 'Home', 'End'];
+	var key = keyName(event);
+	if (movementKeys.indexOf(key) == -1)
 		event.preventDefault();
 }
 

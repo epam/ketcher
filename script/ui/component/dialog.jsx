@@ -1,6 +1,8 @@
 import { h } from 'preact';
 /** @jsx h */
 
+import keyName from 'w3c-keyname';
+
 export default function Dialog ({ children, caption, name, params={},
                                   result=() => null, valid=() => !!result(), buttons=["Cancel", "OK"] }) {
 
@@ -14,9 +16,9 @@ export default function Dialog ({ children, caption, name, params={},
 			params[key](res);
 	}
 	function keyDown(ev) {
-		var key = ev.keyCode;
-		if (key == 13 || key == 27) {
-			exit(key == 13 ? 'OK': 'Cancel');
+		var key = keyName(ev);
+		if (key == 'Enter' || key == 'Escape') {
+			exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 			ev.stopPropagation();
 		}

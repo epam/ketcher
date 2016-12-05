@@ -17,10 +17,8 @@ class Open extends Component {
 		let { structStr, fragment } = this.state;
 		return structStr ? { structStr, fragment } : null;
 	}
-	changeStructStr(target) {
-		this.setState({
-			structStr: target.value ? target.value.trim() : target
-		});
+	changeStructStr(structStr) {
+		this.setState({ structStr });
 	}
 	changeFragment(target) {
 		this.setState({
@@ -41,7 +39,7 @@ class Open extends Component {
 					</OpenButton>
 				), "Cancel", "OK"]}>
 				<textarea value={structStr}
-			              onInput={ ev => this.changeStructStr(ev.target) } />
+			              onInput={ ev => this.changeStructStr(ev.target.value) } />
 				<label>
 				<input type="checkbox" checked={fragment}
 			           onClick={ev => this.changeFragment(ev.target)} />

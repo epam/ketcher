@@ -338,6 +338,11 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 				}
 			}
 		}
+	} else if (groupno == 8) {
+		if (conn + rad + absCharge == 0)
+			valence = 1;
+		else
+			hyd = -1;
 	}
 
 	this.valence = valence;

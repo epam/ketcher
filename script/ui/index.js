@@ -461,10 +461,10 @@ function dialog(modal, params, noAnimate) {
 	}
 	return new Promise(function (resolve, reject) {
 		console.info('input', params);
-		if (noAnimate)
-			open(resolve, reject);
-		else
+		if (noAnimate === false)
 			utils.animate(cover, 'show').then(open.bind(null, resolve, reject));
+		else
+			open(resolve, reject);
 	});
 }
 

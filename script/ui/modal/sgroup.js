@@ -1,4 +1,5 @@
 // TODO: exclude from no-groups build
+var keyName = require('w3c-keyname');
 
 var ui = global.ui;
 
@@ -61,14 +62,7 @@ function dialog (params) {
 
 	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
-		var key = 'on' + button.value.capitalize();
-		var res = key != 'onOk' || getValidateAttrs(dlg);
-		if (res) {
-			handlers.forEach(function (h) { h.stop(); });
-			ui.hideDialog('sgroup');
-			if (key in params && res)
-				params[key](res);
-		}
+		exit(button.value);
 	});
 	handlers[1] = $(dlg.type).on('change', typeChange);
 	handlers[2] = $(dlg.label).on('change', function () {
@@ -76,6 +70,26 @@ function dialog (params) {
 		    !dlg.label.value.match(/^[1-9][0-9]{0,2}$/))
 			dlg.label.value = '1';
 	});
+	handlers[3] = dlg.on('keydown', function (ev) {
+		var key = keyName(ev);
+		if (key == 'Escape' || key == 'Enter') {
+			exit(key == 'Enter' ? 'OK': 'Cancel');
+			ev.preventDefault();
+		}
+		ev.stopPropagation();
+	});
+
+	function exit(mode) {
+		var key = mode == 'OK' ? 'onOk' : 'onCancel';
+		var res = key != 'onOk' || getValidateAttrs(dlg);
+		if (res) {
+			handlers.forEach(function (h) { h.stop(); });
+			ui.hideDialog('sgroup');
+			if (key in params && res)
+				params[key](res);
+		}
+	}
+	dlg.select('button, select, textarea, input')[0].activate();
 };
 
 function getValidateAttrs(dlg) {

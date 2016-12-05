@@ -1,13 +1,29 @@
+var keyName = require('w3c-keyname');
+
 var ui = global.ui;
 
 function dialog (name, params) {
 	var dlg = ui.showDialog(name);
 	var handlers = [];
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
+		exit(button.value);
+	});
+	handlers[1] = dlg.on('keydown', function (ev) {
+		var key = keyName(ev);
+		var active = document.activeElement;
+		var activeTextarea = active && active.tagName == 'TEXTAREA';
+		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
+			exit(key == 'Enter' ? 'OK': 'Cancel');
+			ev.preventDefault();
+		}
+		ev.stopPropagation();
+	});
+
+	function exit(mode) {
+		var key = mode == 'OK' ? 'onOk' : 'onCancel';
 		handlers.forEach(function (h) { h.stop(); });
 		ui.hideDialog(name);
 
-		var key = 'on' + button.value.capitalize();
 		if (params && key in params) {
 			var res = {};
 			eachNamedInput(dlg, function (field) {
@@ -16,7 +32,7 @@ function dialog (name, params) {
 			});
 			params[key](res);
 		}
-	});
+	}
 
 	eachNamedInput(dlg, function (field) {
 		if (params.hasOwnProperty(field.name))

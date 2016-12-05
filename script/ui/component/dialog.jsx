@@ -42,7 +42,7 @@ export default function Dialog ({ children, caption, name, params={},
 		  <header>{caption}
 			{ params.onCancel && caption && (
 				<button className="close"
-					   onClick={() => exit('Cancel')}>×</button> )
+						onClick={() => exit('Cancel')}>×</button> )
 			}
 		  </header>
 		  { children }

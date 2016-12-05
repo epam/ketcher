@@ -1,3 +1,5 @@
+var keyName = require('w3c-keyname');
+
 var ui = global.ui;
 
 function dialog (name, params) {
@@ -32,20 +34,7 @@ function dialog (name, params) {
 	}
 
 	handlers[0] = dlg.on('click', 'input[type=button]', function (_, button) {
-		handlers.forEach(function (h) { h.stop(); });
-		ui.hideDialog(name);
-
-		var key = 'on' + button.value.capitalize();
-
-		console.assert(key != 'onOk' || !params.required ||
-					   getSelected().length != 0,
-					   'No elements selected');
-		if (params && key in params) {
-			params[key]({
-				mode: mode,
-				values: getSelected()
-			});
-		}
+		exit(button.value);
 	});
 
 	handlers[1] = dlg.on('click', 'button', function (event, button) {
@@ -72,6 +61,30 @@ function dialog (name, params) {
 			mode = radio.value;
 		}
 	});
+	handlers[3] = dlg.on('keydown', function (ev) {
+		var key = keyName(ev);
+		if (key == 'Escape' || key == 'Enter' && !okButton.disabled) {
+			exit(key == 'Enter' ? 'OK': 'Cancel');
+			ev.preventDefault();
+		}
+		ev.stopPropagation();
+	});
+
+	function exit(mod) {
+		var key = mod == 'OK' ? 'onOk' : 'onCancel';
+		handlers.forEach(function (h) { h.stop(); });
+		ui.hideDialog(name);
+
+		console.assert(key != 'onOk' || !params.required ||
+					   getSelected().length != 0,
+					   'No elements selected');
+		if (params && key in params) {
+			params[key]({
+				mode: mode,
+				values: getSelected()
+			});
+		}
+	}
 
 	setSelected(params.values);
 	dlg.select('input[name=mode]').each(function (radio) {
@@ -79,6 +92,7 @@ function dialog (name, params) {
 			radio.checked = true;
 		}
 	});
+	dlg.select('button, input')[0].activate();
 }
 
 module.exports = dialog;

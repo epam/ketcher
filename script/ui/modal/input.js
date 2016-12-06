@@ -12,7 +12,7 @@ function dialog (name, params) {
 		var key = keyName(ev);
 		var active = document.activeElement;
 		var activeTextarea = active && active.tagName == 'TEXTAREA';
-		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
+		if (key.startsWith('Esc') || key == 'Enter' && !activeTextarea) {
 			exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}

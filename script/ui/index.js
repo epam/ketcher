@@ -127,14 +127,10 @@ function updateAtoms() {
 
 function shortcutStr(key) {
 	var isMac = /Mac/.test(navigator.platform);
-	var aliasMap = {
-		'Escape': 'Esc',
-		'Delete': 'Del'
-	};
 	return key.replace(/Mod/g, isMac ? '⌘' : 'Ctrl')
 		.replace(/-(?!$)/g, '+')
 		.replace(/\+?([^+]+)$/, function (key) {
-			return aliasMap[key] || key.toUpperCase();
+			return key.length == 1 ? key.toUpperCase() : key;
 		});
 }
 

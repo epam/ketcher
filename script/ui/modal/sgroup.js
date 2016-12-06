@@ -72,7 +72,7 @@ function dialog (params) {
 	});
 	handlers[3] = dlg.on('keydown', function (ev) {
 		var key = keyName(ev);
-		if (key == 'Escape' || key == 'Enter') {
+		if (key.startsWith('Esc') || key == 'Enter') {
 			exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}

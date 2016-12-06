@@ -19,7 +19,7 @@ export default function Dialog ({ children, caption, name, params={},
 		let key = keyName(ev);
 		let active = document.activeElement;
 		let activeTextarea = active && active.tagName == 'TEXTAREA';
-		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
+		if (key.startsWith('Esc') || key == 'Enter' && !activeTextarea) {
 			exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}

@@ -573,22 +573,17 @@ function fromFragmentDeletion(selection) { // eslint-disable-line max-statements
 		action.addOp(new op.BondDelete(bid));
 
 		var bond = ui.render.ctab.molecule.bonds.get(bid);
+		var frid = ui.render.ctab.molecule.atoms.get(bond.begin).fragment;
+		if (frids.indexOf(frid) < 0)
+			frids.push(frid);
 
 		if (selection.atoms.indexOf(bond.begin) == -1 && atomGetDegree(ui.render.ctab, bond.begin) == 1) {
-			var frid1 = ui.render.ctab.molecule.atoms.get(bond.begin).fragment;
-			if (frids.indexOf(frid1) < 0)
-				frids.push(frid1);
-
 			if (action.removeAtomFromSgroupIfNeeded(bond.begin))
 				atomsToRemove.push(bond.begin);
 
 			action.addOp(new op.AtomDelete(bond.begin));
 		}
 		if (selection.atoms.indexOf(bond.end) == -1 && atomGetDegree(ui.render.ctab, bond.end) == 1) {
-			var frid2 = ui.render.ctab.molecule.atoms.get(bond.end).fragment;
-			if (frids.indexOf(frid2) < 0)
-				frids.push(frid2);
-
 			if (action.removeAtomFromSgroupIfNeeded(bond.end))
 				atomsToRemove.push(bond.end);
 

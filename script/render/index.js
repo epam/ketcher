@@ -145,10 +145,10 @@ Render.prototype.setViewBox = function (z) {
 		this.setScale(z);
 };
 
-Render.prototype.setMolecule = function (ctab, norescale) {
+Render.prototype.setMolecule = function (ctab) {
 	DEBUG.logMethod('setMolecule');
 	this.paper.clear();
-	this.ctab = new ReStruct(ctab, this, norescale);
+	this.ctab = new ReStruct(ctab, this);
 	this.offset = null;
 	this.update(false);
 };

@@ -49,11 +49,11 @@ Editor.prototype.tool = function (name, opts) {
 	/* eslint-enable no-underscore-dangle*/
 };
 
-Editor.prototype.struct = function (value, norescale) {
+Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.setSelection(null);
 		this.render.ctab.clearVisels(); // TODO: What is it?
-		this.render.setMolecule(value, norescale);
+		this.render.setMolecule(value);
 		this.render.update();
 		this.recoordinate(getStructCenter(this.render.ctab));
 	}

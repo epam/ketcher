@@ -33,7 +33,7 @@ var LAYER_MAP = {
 	indices: 5
 };
 
-function ReStruct(molecule, render, norescale) { // eslint-disable-line max-statements
+function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	this.render = render;
 	this.atoms = new Map();
 	this.bonds = new Map();
@@ -96,9 +96,6 @@ function ReStruct(molecule, render, norescale) { // eslint-disable-line max-stat
 		var bb = molecule.getCoordBoundingBox();
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
-
-	if (!norescale)
-		this.molecule.rescale();
 }
 
 ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {

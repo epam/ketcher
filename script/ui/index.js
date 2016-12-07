@@ -2,9 +2,6 @@ var ui = global.ui = {};
 
 var keyNorm = require('./keynorm');
 
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
-
 var element = require('../chem/element');
 var Struct = require('../chem/struct');
 
@@ -597,7 +594,6 @@ function loadMolecule (structStr, checkEmptyLine) {
 
 function loadFragment (structStr, checkEmptyLine) {
 	return getStruct(structStr, checkEmptyLine).then(function (struct) {
-		struct.rescale();
 		selectAction('paste', struct);
 	}, alert);
 }

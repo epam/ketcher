@@ -369,6 +369,6 @@ You can use keyboard hotkeys (including Numeric keypad) for some features/comman
 | **Delete** | Delete the selected objects |
 | **Ctrl+L** | Clean Up |
 | **Alt+P** | Calculate CIP |
-| **Shift+/** | About |
+| **?** | About |
 
 **Note** : Please, use **Ctrl+V** to paste the selected object in Google Chrome and Mozilla Firefox browsers.

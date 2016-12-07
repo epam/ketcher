@@ -152,11 +152,11 @@ ReAtom.prototype.buildLabel = function (render) { // eslint-disable-line max-sta
 				label.text += ('R' + (rgi + 1).toString());
 		}
 		if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+		this.color = 'black';
 	} else {
 		label.text = this.a.label;
 		var elem = element.getElementByLabel(label.text);
-		if (render.options.atomColoring && elem)
-			this.color = element[elem].color;
+		this.color = (render.options.atomColoring && elem) ? element[elem].color : 'black';
 	}
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({

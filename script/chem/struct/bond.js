@@ -127,11 +127,12 @@ var captionMap = {
 	}
 };
 
+// TODO: not used
 Bond.getAttrHash = function (bond) {
-	var attrs = new Hash();
+	var attrs = {};
 	for (var attr in Bond.attrlist) {
 		if (typeof (bond[attr]) !== 'undefined')
-			attrs.set(attr, bond[attr]);
+			attrs[attr] = bond[attr];
 	}
 	return attrs;
 };

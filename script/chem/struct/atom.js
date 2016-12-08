@@ -49,10 +49,10 @@ function Atom(params) { // eslint-disable-line max-statements
 }
 
 Atom.getAttrHash = function (atom) {
-	var attrs = new Hash();
+	var attrs = {};
 	for (var attr in Atom.attrlist) {
 		if (typeof (atom[attr]) != 'undefined')
-			attrs.set(attr, atom[attr]);
+			attrs[attr] = atom[attr];
 	}
 	return attrs;
 };

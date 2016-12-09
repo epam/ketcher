@@ -299,7 +299,7 @@ function showRadical(atom, render) {
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0))), options);
+			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options));
 		radical.path.attr('fill', atom.color);
 		break;
 	case 2:
@@ -310,7 +310,7 @@ function showRadical(atom, render) {
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0))), options);
+			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options));
 		radical.path.attr('stroke', atom.color);
 		break;
 	}

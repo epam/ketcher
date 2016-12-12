@@ -14,12 +14,6 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	this.selection = selection;
 
 	var rnd = this.editor.render;
-	// check s-group overlappings
-	if (id == null && checkOverlapping(id, selection, rnd.ctab)) {
-		alert('Partial S-group overlapping is not allowed.');
-		return;
-	}
-
 	var sg = (id != null) && rnd.ctab.sgroups.get(id).item;
 	ui.showSGroupProperties({
 		type: sg ? sg.type : this.defaultType,
@@ -28,13 +22,16 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 			this.editor.setSelection(null);
 		}.bind(this),
 		onOk: function (params) {
-			if (id == null) {
-				id = rnd.ctab.molecule.sgroups.newId();
-				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
-														   params.attrs, id), true);
-			} else {
+			if (id != null) {
 				ui.addUndoAction(Action.fromSgroupType(id, params.type)
 					.mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
+			} else if (params.type != 'DAT' &&
+			           checkOverlapping(id, selection, rnd.ctab)) {
+				alert('Partial S-group overlapping is not allowed.');
+			} else {
+				id = rnd.ctab.molecule.sgroups.newId();
+				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
+				                                           params.attrs, id), true);
 			}
 			this.editor.setSelection(null);
 			rnd.update();
@@ -55,10 +52,10 @@ function checkOverlapping(id, selection, restruct) {
 		var sgroups = Set.list(atom.a.sgs);
 
 		return 0 <= sgroups.findIndex(function (sid) {
-			if (sid in verified)
+			var sg = restruct.sgroups.get(sid).item;
+			if (sg.type == 'DAT' || sid in verified)
 				return false;
 
-			var sg = restruct.sgroups.get(sid).item;
 			var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sg);
 
 			if (sgAtoms.length < selection.atoms.length) {

@@ -85,7 +85,11 @@ SGroupForest.prototype.validate = function () {
 		var list = this.children.get(parentId);
 		for (var i = 0; i < list.length; ++i) {
 			for (var j = i + 1; j < list.length; ++j) {
-				if (!Set.disjoint(atomSets.get(list[i]), atomSets.get(list[j])))
+				var id1 = list[i];
+				var id2 = list[j];
+				var sg1 = this.molecule.sgroups.get(id1);
+				var sg2 = this.molecule.sgroups.get(id2);
+				if (!Set.disjoint(atomSets.get(id1), atomSets.get(id2)) && sg1.type != 'DAT' && sg2.type != 'DAT')
 					valid = false;
 			}
 		}

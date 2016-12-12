@@ -35,13 +35,13 @@ ReRxnArrow.prototype.show = function (restruct, id, options) {
 	var render = restruct.render;
 	var centre = scale.obj2scaled(this.item.pp, options);
 	var path = draw.arrow(render.paper,
-		new Vec2(centre.x - render.options.scale, centre.y),
-		new Vec2(centre.x + render.options.scale, centre.y),
-		render.options);
-	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-	var offset = render.options.offset;
+		new Vec2(centre.x - options.scale, centre.y),
+		new Vec2(centre.x + options.scale, centre.y),
+		options);
+	var offset = options.offset;
 	if (offset != null)
 		path.translateAbs(offset.x, offset.y);
+	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 };
 
 module.exports = ReRxnArrow;

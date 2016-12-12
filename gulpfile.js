@@ -243,21 +243,19 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
 function polyfillify(bundle, polyfills) {
 	var fs = require('fs');
 	var through = require('through2');
+
 	bundle.on('bundle', function() {
-		var firstChunk = true;
 		var polyfillData = polyfills.reduce(function (res, module) {
 			var data = fs.readFileSync(require.resolve(module));
 			return res + data + '\n';
 		}, '');
-		var stream = through.obj(function (buf, enc, next) {
-			if (firstChunk) {
-				this.push(polyfillData);
-				firstChunk = false;
-			}
-			this.push(buf);
-			next();
-		});
-		stream.label = "prepend";
+		var stream = through({ objectMode: true },
+		                     (chunk, enc, cb) => cb(null, chunk),
+		                     function(next) {
+			                     this.push(polyfillData);
+			                     next();
+		                     });
+		stream.label = "append";
 		bundle.pipeline.get('wrap').push(stream);
 	});
 }

@@ -143,10 +143,10 @@ Render.prototype.setMolecule = function (ctab) {
 };
 
 Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-statements
-	DEBUG.logMethod('update');
 	viewSz = viewSz || new Vec2(this.clientArea.clientWidth || 100,
 	                            this.clientArea.clientHeight || 100);
 
+	console.info('update');
 	if (this.dirty) {
 		if (this.options.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();

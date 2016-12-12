@@ -85,17 +85,25 @@ export function fromString (structStr, opts, server) {
 		if (format == 'mol' || format == 'rxn') {
 			var struct = molfile.parse(structStr, opts);
 			resolve(struct);
-		} else
+		} else {
+			let withCoords = map[format].supportsCoords;
 			resolve(server.then(() => (
-				map[format].supportsCoords ? server.convert({
+				withCoords ? server.convert({
 					struct: structStr,
 					output_format: map['mol'].mime
 				}) : server.layout({
-					struct: structStr.trim()
+					struct: structStr.trim(),
+					output_format: map['mol'].mime
 				})
 			), () => {
 				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then(res => molfile.parse(res.struct)));
+			}).then(res => {
+				let struct = molfile.parse(res.struct);
+				if (!withCoords)
+					struct.rescale();
+				return struct;
+			}));
+		}
 	});
 };
 

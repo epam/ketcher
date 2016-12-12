@@ -1,57 +1,61 @@
-import { h } from 'preact';
+import { h, Component } from 'preact';
 /** @jsx h */
 
 import keyName from 'w3c-keyname';
 
-export default function Dialog ({ children, caption, name, params={},
-                                  result=() => null, valid=() => !!result(), buttons=["Cancel", "OK"] }) {
-
-	function isReturn(mode) {
-		return mode == 'OK';
-	}
-	function exit(mode) {
-		var key = isReturn(mode) ? 'onOk' : 'onCancel';
-		var res = result();
+class Dialog extends Component {
+	exit(mode) {
+		let { params, result=() => null,
+			  valid=() => !!result() } = this.props;
+		var key = (mode == 'OK') ? 'onOk' : 'onCancel';
 		if (params && key in params && (key != 'onOk' || valid()) )
-			params[key](res);
+			params[key](result());
 	}
-	function keyDown(ev) {
+	keyDown(ev) {
 		let key = keyName(ev);
 		let active = document.activeElement;
 		let activeTextarea = active && active.tagName == 'TEXTAREA';
 		if (key.startsWith('Esc') || key == 'Enter' && !activeTextarea) {
-			exit(key == 'Enter' ? 'OK': 'Cancel');
+			this.exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}
 		ev.stopPropagation();
 	}
-	function focus(el) {          // TODO: untimeout
-		if (!el.mountFocus) {     // should I sit in componentDidMount?
-			el.mountFocus = true; // accessibility: onblur to cycle through dialog elements
-			var fe = el.querySelector(['input:not([type=button])', 'textarea',
-									   '[contenteditable]'].join(',')) ||
-				el.querySelector(['select', 'button:not(.close)', 'input'].join(','));
-			setTimeout(() => fe.focus(), 0);
-		}
+	componentDidMount() {
+		var fe = this.base.querySelector(['input:not([type=button])', 'textarea',
+			                            '[contenteditable]'].join(',')) ||
+			     this.base.querySelector(['select', 'button:not(.close)', 'input'].join(','));
+		console.assert(fe, 'No active buttons');
+		fe.focus();
 	}
-	console.info('dialog render');
-	return (
-		<form role="dialog" className={name} ref={el => focus(el)}
-			onSubmit={ev => ev.preventDefault()}
-			onKeyDown={keyDown}>
-		  <header>{caption}
-			{ params.onCancel && caption && (
-				<button className="close"
-						onClick={() => exit('Cancel')}>×</button> )
-			}
-		  </header>
-		  { children }
-		  <footer>{
-				buttons.map(b => (
-					typeof b != 'string' ? b :
-						<input type="button" disabled={ isReturn(b) && !valid() } onClick={() => exit(b)} value={b}/>
-				))
-		  }</footer>
-		</form>
-	);
-}
+	render() {
+		console.info('dialog render');
+		let { children, caption, name, params={},
+			  result=() => null, valid=() => !!result(), // Hmm, dublicate.. No simple default props
+			  buttons=["Cancel", "OK"] } = this.props;   // see: https://git.io/v1KR6
+		return (
+			<form role="dialog" className={name}
+			  onSubmit={ev => ev.preventDefault()}
+			  onKeyDown={ev => this.keyDown(ev)}>
+			  <header>{caption}
+				{ params.onCancel && caption && (
+					<button className="close"
+							onClick={() => this.exit('Cancel')}>×
+					</button> )
+				}
+			</header>
+				{ children }
+				<footer>{
+					buttons.map(b => (
+						typeof b != 'string' ? b :
+							<input type="button" value={b}
+						           disabled={ b == 'OK' && !valid() }
+						           onClick={() => this.exit(b)} />
+					))
+				}</footer>
+			</form>
+		);
+	}
+};
+
+export default Dialog;

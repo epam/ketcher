@@ -143,6 +143,7 @@ ReAtom.prototype.buildLabel = function (render) { // eslint-disable-line max-sta
 	var options = render.options;
 	var paper = render.paper;
 	var label = {};
+	this.color = 'black';
 	if (this.a.atomList != null) {
 		label.text = this.a.atomList.label();
 	} else if (this.a.label == 'R#' && this.a.rglabel != null) {
@@ -152,11 +153,10 @@ ReAtom.prototype.buildLabel = function (render) { // eslint-disable-line max-sta
 				label.text += ('R' + (rgi + 1).toString());
 		}
 		if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
-		this.color = 'black';
 	} else {
 		label.text = this.a.label;
 		var elem = element.getElementByLabel(label.text);
-		this.color = (render.options.atomColoring && elem) ? element[elem].color : 'black';
+		if (render.options.atomColoring && elem) this.color = element[elem].color;
 	}
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({

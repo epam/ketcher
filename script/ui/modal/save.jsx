@@ -18,9 +18,9 @@ class Save extends Component {
 			type = ev.target.value;
 			ev.preventDefault();
 		}
-		let formatted = structFormat.toString(this.props.struct, type, this.props.server);
-		formatted.then(structStr => this.setState({ type, structStr }),
-					   e => { alert(e); });
+		let converted = structFormat.toString(this.props.struct, type, this.props.server);
+		return converted.then(structStr => this.setState({ type, structStr }),
+							  e => { alert(e); });
 	}
 
 	saveTemplate(ev) {

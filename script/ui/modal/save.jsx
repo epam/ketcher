@@ -18,8 +18,9 @@ class Save extends Component {
 			type = ev.target.value;
 			ev.preventDefault();
 		}
-		return structFormat.toString(this.props.struct, type, this.props.server)
-			.then(structStr => this.setState({ type, structStr }), e => { alert(e); });
+		let formatted = structFormat.toString(this.props.struct, type, this.props.server);
+		formatted.then(structStr => this.setState({ type, structStr }),
+					   e => { alert(e); });
 	}
 
 	saveTemplate(ev) {
@@ -60,7 +61,7 @@ class Save extends Component {
 				}</select>
 				</label>
 				<textarea className={type} value={structStr} readonly
-						  onFocus={ ev => ev.target.select() }/>
+			              ref={ el => el.select() }/>
 			</Dialog>
 		);
 	}

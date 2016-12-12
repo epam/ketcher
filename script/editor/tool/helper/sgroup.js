@@ -15,42 +15,9 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 
 	var rnd = this.editor.render;
 	// check s-group overlappings
-	if (id == null) {
-		var verified = {};
-		var atomsHash = {};
-
-		selection.atoms.each(function (id) {
-			atomsHash[id] = true;
-		}, this);
-
-		if (!Object.isUndefined(selection.atoms.detect(function (id) {
-			var atom = rnd.ctab.atoms.get(id);
-			var sgroups = Set.list(atom.a.sgs);
-
-			return !Object.isUndefined(sgroups.detect(function (sid) {
-				if (sid in verified)
-					return false;
-
-				var sg = rnd.ctab.sgroups.get(sid).item;
-				var sgAtoms = Struct.SGroup.getAtoms(rnd.ctab.molecule, sg);
-
-				if (sgAtoms.length < selection.atoms.length) {
-					if (!Object.isUndefined(sgAtoms.detect(function (aid) {
-						return !(aid in atomsHash);
-					}, this)))
-						return true;
-				} else if (!Object.isUndefined(selection.atoms.detect(function (aid) {
-					return (sgAtoms.indexOf(aid) == -1);
-				}, this))) {
-					return true;
-				}
-
-				return false;
-			}, this));
-		}, this))) {
-			alert('Partial S-group overlapping is not allowed.');
-			return;
-		}
+	if (id == null && checkOverlapping(id, selection, rnd.ctab)) {
+		alert('Partial S-group overlapping is not allowed.');
+		return;
 	}
 
 	var sg = (id != null) && rnd.ctab.sgroups.get(id).item;
@@ -74,5 +41,40 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 		}.bind(this)
 	});
 };
+
+function checkOverlapping(id, selection, restruct) {
+	var verified = {};
+	var atomsHash = {};
+
+	selection.atoms.each(function (id) {
+		atomsHash[id] = true;
+	});
+
+	return 0 <= selection.atoms.findIndex(function (id) {
+		var atom = restruct.atoms.get(id);
+		var sgroups = Set.list(atom.a.sgs);
+
+		return 0 <= sgroups.findIndex(function (sid) {
+			if (sid in verified)
+				return false;
+
+			var sg = restruct.sgroups.get(sid).item;
+			var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sg);
+
+			if (sgAtoms.length < selection.atoms.length) {
+				if (0 <= sgAtoms.findIndex(function (aid) {
+					return !(aid in atomsHash);
+				}))
+					return true;
+			} else if (0 <= selection.atoms.findIndex(function (aid) {
+				return (sgAtoms.indexOf(aid) == -1);
+			})) {
+				return true;
+			}
+
+			return false;
+		});
+	});
+}
 
 module.exports = SGroupHelper;

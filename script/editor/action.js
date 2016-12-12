@@ -40,9 +40,9 @@ Action.prototype.perform = function () {
 };
 
 Action.prototype.isDummy = function () {
-	return this.operations.detect(function (operation) {
+	return this.operations.find(function (operation) {
 		return !operation.isDummy(ui.editor); // TODO [RB] the condition is always true for op.* operations
-	}, this) == null;
+	}) == null;
 };
 
 // Add action operation to remove atom from s-group if needed
@@ -1277,15 +1277,13 @@ function fromFlip(objects, flip) { // eslint-disable-line max-statements
 				fids[atom.fragment].push(aid);
 		}
 
-		fids = new Hash(fids);
-
-		if (fids.detect(function (frag) {
-			return !Set.eq(struct.getFragmentIds(frag[0]), Set.fromList(frag[1]));
+		if (Object.keys(fids).find(function (frag) {
+			return !Set.eq(struct.getFragmentIds(frag), Set.fromList(fids[frag]));
 		}))
 			return action; // empty action
 
-		fids.each(function (frag) {
-			var fragment = Set.fromList(frag[1]);
+		Object.keys(fids).forEach(function (frag) {
+			var fragment = Set.fromList(fids[frag]);
 			// var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
 			var bbox = struct.getCoordBoundingBox(fragment);
 

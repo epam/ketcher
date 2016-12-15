@@ -1030,7 +1030,9 @@ function fromSgroupAddition(type, atoms, attrs, sgid, pp) { // eslint-disable-li
 	action.addOp(new op.SGroupCreate(sgid, type, pp));
 	for (i = 0; i < atoms.length; i++)
 		action.addOp(new op.SGroupAtomAdd(sgid, atoms[i]));
-	action.addOp(new op.SGroupAddToHierarchy(sgid));
+	action.addOp(type != 'DAT' ?
+	             new op.SGroupAddToHierarchy(sgid) :
+	             new op.SGroupAddToHierarchy(sgid, -1, []));
 
 	action = action.perform();
 

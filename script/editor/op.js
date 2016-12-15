@@ -306,15 +306,15 @@ function SGroupDelete(sgid) {
 }
 SGroupDelete.prototype = new Base();
 
-function SGroupAddToHierarchy(sgid) {
+function SGroupAddToHierarchy(sgid, parent, children) {
 	this.type = 'OpSGroupAddToHierarchy';
-	this.data = { sgid: sgid };
+	this.data = { sgid: sgid, parent: parent, children: children };
 	this.execute = function (editor) {
 		var rnd = editor.render;
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
-		var relations = struct.sGroupForest.insert(sgid, this.data.parent, this.data.children);
+		var relations = struct.sGroupForest.insert(sgid, parent, children);
 		this.data.parent = relations.parent;
 		this.data.children = relations.children;
 	};

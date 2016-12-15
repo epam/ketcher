@@ -195,7 +195,11 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		sg.id = id;
 		for (i = 0; i < sg.atoms.length; ++i)
 			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
-		cp.sGroupForest.insert(sg.id);
+
+		if (sg.type == 'DAT')
+			cp.sGroupForest.insert(sg.id, -1, []);
+		else
+			cp.sGroupForest.insert(sg.id);
 	});
 	cp.isChiral = this.isChiral;
 	if (!dropRxnSymbols) {

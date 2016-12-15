@@ -48,7 +48,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
 			return false;
 		return true;
 	}, this);
-	util.assert(parents.length <= 1); // there should be only one parent
+	util.assert(parents.length <= 1, "We are here"); // there should be only one parent
 	var children = atomSets.findAll(function (id) {
 		return isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id));
 	}, this);
@@ -104,7 +104,7 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	util.assert(this.validate(), 's-group forest invalid');
 	var atomSets = this.getAtomSets();
 	var atoms = Set.fromList(this.molecule.sgroups.get(id).atoms);
-	if (util.isUndefined(parent) || util.isUndefined(children)) { // if these are not provided, deduce automatically
+	if (!parent || !children) { // if these are not provided, deduce automatically
 		var guess = this.getAtomSetRelations(id, atoms, atomSets);
 		parent = guess.parent;
 		children = guess.children;

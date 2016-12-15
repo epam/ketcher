@@ -458,7 +458,11 @@ function loadSGroup(mol, sg, atomMap) {
 			Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
 	}
 
-	mol.sGroupForest.insert(sg.id);
+	// Inconsistant: see `sgmap` and `sgmapback` bellow
+	if (sg.parent)
+		mol.sGroupForest.insert(sg.id, sg.parent - 1, []);
+	else
+		mol.sGroupForest.insert(sg.id);
 	return sg.id;
 }
 

@@ -531,6 +531,9 @@ function serverCall(method, options, struct) {
 function serverTransform(method, options, struct) {
 	return serverCall(method, options, struct).then(function (res) {
 		var struct = molfile.parse(res.struct);
+		if (method == 'layout') // Let it be an exception
+			struct.rescale();   // for now as layout does not
+		                        // preserve bond lengths
 		updateStruct(struct);
 	}).catch(function (err) {
 		alert("Can't parse server response!");

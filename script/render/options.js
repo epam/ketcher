@@ -19,12 +19,18 @@ function defaultOptions(scale, opt) {
 		atomColoring: true,
 		hideImplicitHydrogen: false,
 		hideTerminalLabels: false,
+		// atoms
+		carbonExplicitly: false,
+		showCharge: true,
+		showHydrogenLabels: 'on',
+		showValence: true,
+		// bonds
+		aromaticCircle: true,
 
 		scaleFactor: scaleFactor,
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
-		showHydrogenLabels: 'on',
 		subFontSize: subFontSize,
 		font: '30px Arial',
 		fontsz: labelFontSize,

@@ -1,0 +1,51 @@
+image: node:6
+
+stages:
+  - build
+
+before_script:
+  - npm prune
+  - npm install
+
+cache:
+  paths:
+   - node_modules/
+
+variables:
+  API_PATH: "$SERVER:8081/v2"
+  MIEW_PATH: "/static/miew/"
+
+unstable:
+  stage: build
+  script:
+    - npm run archive -- --sgroup-data-special --api-path=$API_PATH --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - master
+    - /^task-.*$/
+
+standalone:
+  stage: build
+  script:
+    - npm run archive -- --sgroup-data-special
+    - BUILD=standalone deploy www ketcher-*.zip
+    - deploy artifact ketcher-*.zip
+  only:
+    - master
+
+stable:
+  stage: build
+  script:
+    - npm run archive -- --sgroup-data-special --api-path="$SERVER:8082/v2" --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - /^test-.*$/
+
+frozen:
+  stage: build
+  script:
+    - npm run archive -- --sgroup-data-special --api-path="$SERVER:8083/v2" --miew-path=$MIEW_PATH
+    - deploy www ketcher-*.zip
+  only:
+    - demo
+    - /^2.0.0-.*$/

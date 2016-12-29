@@ -42,7 +42,8 @@ function api(base, defaultOptions) {
 			headers: Object.assign({
 				Accept: 'application/json'
 			}, headers),
-			body: method != 'GET' ? data : null
+			body: method != 'GET' ? data : null,
+			credentials: 'same-origin'
 		}).then(function (response) {
 			return response.json().then(function (res) {
 				return response.ok ? res : Promise.reject(res.error);

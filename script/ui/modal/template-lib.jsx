@@ -166,7 +166,7 @@ class TemplateLib extends Component {
 }
 
 function prefetchStatic(url) {
-	return fetch(url).then(function (resp) {
+	return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
 		if (resp.ok)
 			return resp.text();
 		throw "Could not fetch " + url;

@@ -45,8 +45,9 @@ main {
 }
 #template {
 	.toolbar(bottom);
-	overflow: hidden; // #300 quick fix,
-	                  // no menu here
+	&>menu {
+		overflow: hidden; // #300 quick fix,
+	}                     // no menu expansion
 }
 #toolbox {
 	.toolbar(left);

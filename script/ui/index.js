@@ -310,9 +310,11 @@ function initCliparea(parent) {
 	});
 	parent.on('paste', function (event) {
 		if (autofocus()) {
-			var data = paste(event.clipboardData);
-			if (data)
-				loadFragment(data);
+			var structStr = paste(event.clipboardData);
+			if (structStr)
+				load(structStr, {
+					fragment: true
+				});
 			event.preventDefault();
 		}
 	});
@@ -461,11 +463,6 @@ function dialog(modal, params, noAnimate) {
 	});
 }
 
-function updateStruct(struct) {
-	console.assert(struct, 'No molecule to update');
-	addUndoAction(Action.fromNewCanvas(struct));
-}
-
 function addUndoAction (action, check_dummy)
 {
 	if (action == null)
@@ -490,10 +487,10 @@ function clear () {
 
 function open () {
 	dialog(modal.open).then(function (res) {
-			if (res.fragment)
-				loadFragment(res.structStr, true);
-			else
-				loadMolecule(res.structStr, true);
+		load(res.structStr, {
+			badHeaderRecover: true,
+			fragment: res.fragment
+		});
 	});
 }
 
@@ -530,13 +527,9 @@ function serverCall(method, options, struct) {
 
 function serverTransform(method, options, struct) {
 	return serverCall(method, options, struct).then(function (res) {
-		var struct = molfile.parse(res.struct);
-		if (method == 'layout') // Let it be an exception
-			struct.rescale();   // for now as layout does not
-		                        // preserve bond lengths
-		updateStruct(struct);
-	}).catch(function (err) {
-		alert("Can't parse server response!");
+		return load(res.struct, {       // Let it be an exception
+			rescale: method == 'layout' // for now as layout does not
+		});                             // preserve bond lengths
 	});
 }
 
@@ -591,26 +584,30 @@ function automap () {
 	}
 };
 
-function loadMolecule (structStr, checkEmptyLine) {
-	return getStruct(structStr, checkEmptyLine).then(updateStruct, alert);
-}
-
-function loadFragment (structStr, checkEmptyLine) {
-	return getStruct(structStr, checkEmptyLine).then(function (struct) {
-		selectAction('paste', struct);
-	}, alert);
-}
-
-function getStruct(structStr, checkEmptyLine) {
+function load(structStr, options) {
+	options = options || {};
+	// TODO: check if structStr is parsed already
 	//utils.loading('show');
-	return structFormat.fromString(structStr, {
-		badHeaderRecover: checkEmptyLine
-	}, server).then(function (res) {
+	var parsed = structFormat.fromString(structStr,
+	                                     options, server);
+
+	parsed.catch(function (err) {
 		//utils.loading('hide');
-		return res;
+		alert("Can't parse molecule!");
+	});
+
+	return parsed.then(function (struct) {
+		//utils.loading('hide');
+		console.assert(struct, 'No molecule to update');
+		if (options.rescale)
+			struct.rescale();   // TODO: move out parsing?
+		if (options.fragment)
+			selectAction('paste', struct);
+		else
+			addUndoAction(Action.fromNewCanvas(struct));
+		return struct;
 	}, function (err) {
-		//utils.loading('hide');
-		throw err;
+		alert(err);
 	});
 }
 
@@ -780,10 +777,10 @@ var actionMap = {
 	'reaction-automap': automap,
 	'recognize': function () {
 		dialog(modal.recognize, { server: server }).then(function (res) {
-			if (res.fragment)
-				loadFragment(res.structStr, true);
-			else
-				loadMolecule(res.structStr, true);
+			load(res.structStr, {
+				rescale: true,
+				fragment: res.fragment
+			});
 		});
 	},
 	'check': function () {
@@ -819,7 +816,7 @@ var actionMap = {
 				structStr: cml
 			}, true).then(function(res) {
 			if (res.structStr)
-				loadMolecule(res.structStr);
+				load(res.structStr);
 			});
 		});
 	}
@@ -940,9 +937,7 @@ function clean () {
 // The expose guts two way
 module.exports = {
 	init: init,
-	clean: clean,
-	loadMolecule: loadMolecule,
-	loadFragment: loadFragment
+	load: load
 };
 
 Object.assign(ui, module.exports);

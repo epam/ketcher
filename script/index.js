@@ -23,13 +23,18 @@ function getMolfile() {
 function setMolecule(molString) {
 	if (!Object.isString(molString))
 		return;
-	ui.loadMolecule(molString);
+	ui.load(molString, {
+		rescale: true
+	});
 }
 
 function addFragment(molString) {
 	if (!Object.isString(molString))
 		return;
-	ui.loadFragment(molString);
+	ui.load(molString, {
+		rescale: true,
+		fragment: true
+	});
 }
 
 function showMolfile(clientArea, molString, options) {
@@ -63,7 +68,7 @@ window.onload = function () {
 	});
 	server.then(function () {
 		if (params.mol)
-			ui.loadMolecule(params.mol);
+			ui.load(params.mol);
 	}, function () {
 		document.title += ' (standalone)';
 	});

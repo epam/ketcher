@@ -1,18 +1,18 @@
 var molfile = require('./molfile');
 
 function parse(str, options) {
-	var chunks = str.split(/^\$\$\$\$$/m); // TODO: stream parser
-	                                       // do not split all the file
-	return chunks.reduce(function (res, chunk) {
-		chunk = chunk.replace(/\r/g, ''); // TODO: normalize newline?
+	var regexp = /^[^]+?\$\$\$\$$/gm;
+	var m, chunk;
+	var result = [];
+	while ((m = regexp.exec(str)) !== null) {
+		chunk = m[0].replace(/\r/g, ''); // TODO: normalize newline?
 		chunk = chunk.trim();
 		var end = chunk.indexOf('M  END');
 		if (end != -1) {
 			var item = {};
 			var propChunks = chunk.substr(end + 7).trim().split(/^$\n?/m);
 
-			item.struct = molfile.parse(chunk.substring(0, end + 6),
-			                            options);
+			item.struct = molfile.parse(chunk.substring(0, end + 6), options);
 			item.props = propChunks.reduce(function (props, pc) {
 				var m = pc.match(/^> [ \d]*<(\S+)>/);
 				if (m) {
@@ -23,15 +23,26 @@ function parse(str, options) {
 				return props;
 			}, {});
 
-			res.push(item);
+			result.push(item);
 		}
-		return res;
-	}, []);
+	}
+	return result;
+}
+
+function stringify(items, options) {
+	return items.reduce(function (res, item) {
+		res += molfile.stringify(item.struct, options);
+
+		for (var prop in item.props) {
+			res += "> <" + prop + ">\n";
+			res += item.props[prop] + "\n\n";
+		}
+
+		return res + '\$\$\$\$';
+	}, '');
 }
 
 module.exports = {
-	stringify: function () {
-		throw new Error('Not implemented yet');
-	},
+	stringify: stringify,
 	parse: parse
 };

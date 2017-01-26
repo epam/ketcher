@@ -1,6 +1,5 @@
 var Map = require('../../util/map');
 var Set = require('../../util/set');
-var util = require('../../util');
 
 function SGroupForest(molecule) {
 	this.parent = new Map(); // child id -> parent id
@@ -48,7 +47,8 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
 			return false;
 		return true;
 	}, this);
-	util.assert(parents.length <= 1, "We are here"); // there should be only one parent
+	console.assert(parents.length <= 1, "We are here"); // there should be only one parent
+
 	var children = atomSets.findAll(function (id) {
 		return isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id));
 	}, this);
@@ -61,7 +61,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
 SGroupForest.prototype.getPathToRoot = function (sgid) {
 	var path = [];
 	for (var id = sgid; id >= 0; id = this.parent.get(id)) {
-		util.assert(path.indexOf(id) < 0, 'SGroupForest: loop detected');
+		console.assert(path.indexOf(id) < 0, 'SGroupForest: loop detected');
 		path.push(id);
 	}
 	return path;
@@ -98,10 +98,10 @@ SGroupForest.prototype.validate = function () {
 };
 
 SGroupForest.prototype.insert = function (id, parent /* int, optional */, children /* [int], optional */) {
-	util.assert(!this.parent.has(id), 'sgid already present in the forest');
-	util.assert(!this.children.has(id), 'sgid already present in the forest');
+	console.assert(!this.parent.has(id), 'sgid already present in the forest');
+	console.assert(!this.children.has(id), 'sgid already present in the forest');
+	console.assert(this.validate(), 's-group forest invalid');
 
-	util.assert(this.validate(), 's-group forest invalid');
 	var atomSets = this.getAtomSets();
 	var atoms = Set.fromList(this.molecule.sgroups.get(id).atoms);
 	if (!parent || !children) { // if these are not provided, deduce automatically
@@ -114,22 +114,22 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	children.forEach(function (childId) { // reset parent links
 		var childs = this.children.get(this.parent.get(childId));
 		var i = childs.indexOf(childId);
-		util.assert(i >= 0 && childs.indexOf(childId, i + 1) < 0); // one element
+		console.assert(i >= 0 && childs.indexOf(childId, i + 1) < 0, 'Assertion failed'); // one element
 		childs.splice(i, 1);
 		this.parent.set(childId, id);
 	}, this);
 	this.children.set(id, children);
 	this.parent.set(id, parent);
 	this.children.get(parent).push(id);
-	util.assert(this.validate(), 's-group forest invalid');
+	console.assert(this.validate(), 's-group forest invalid');
 	return { parent: parent, children: children };
 };
 
 SGroupForest.prototype.remove = function (id) {
-	util.assert(this.parent.has(id), 'sgid is not in the forest');
-	util.assert(this.children.has(id), 'sgid is not in the forest');
+	console.assert(this.parent.has(id), 'sgid is not in the forest');
+	console.assert(this.children.has(id), 'sgid is not in the forest');
+	console.assert(this.validate(), 's-group forest invalid');
 
-	util.assert(this.validate(), 's-group forest invalid');
 	var parentId = this.parent.get(id);
 	this.children.get(id).forEach(function (childId) { // reset parent links
 		this.parent.set(childId, parentId);
@@ -138,12 +138,12 @@ SGroupForest.prototype.remove = function (id) {
 
 	var childs = this.children.get(parentId);
 	var i = childs.indexOf(id);
-	util.assert(i >= 0 && childs.indexOf(id, i + 1) < 0); // one element
+	console.assert(i >= 0 && childs.indexOf(id, i + 1) < 0, 'Assertion failed'); // one element
 	childs.splice(i, 1);
 
 	this.children.unset(id);
 	this.parent.unset(id);
-	util.assert(this.validate(), 's-group forest invalid');
+	console.assert(this.validate(), 's-group forest invalid');
 };
 
 module.exports = SGroupForest;

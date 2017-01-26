@@ -2,7 +2,6 @@ var Map = require('../../util/map');
 var Pool = require('../../util/pool');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
-var util = require('../../util');
 
 var element = require('../element');
 
@@ -234,8 +233,7 @@ Struct.prototype.findBondId = function (begin, end) {
 };
 
 function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
-	if (arguments.length != 3)
-		throw new Error('Invalid parameter number!');
+	console.assert(arguments.length == 3, 'Invalid parameter number!');
 
 	this.begin = begin - 0;
 	this.end = end - 0;
@@ -350,7 +348,7 @@ Struct.prototype.sortNeighbors = function (list) {
 	function f(aid) {
 		this.atomSortNeighbors(aid);
 	}
-	if (util.isNullOrUndefined(list))
+	if (!list)
 		this.atoms.each(f, this);
 	else
 		list.forEach(f, this);
@@ -369,7 +367,7 @@ Struct.prototype.updateHalfBonds = function (list) {
 	function f(aid) {
 		this.atomUpdateHalfBonds(aid);
 	}
-	if (util.isNullOrUndefined(list))
+	if (!list)
 		this.atoms.each(f, this);
 	else
 		list.forEach(f, this);
@@ -851,7 +849,7 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 	function f(aid) {
 		this.calcImplicitHydrogen(aid);
 	}
-	if (util.isNullOrUndefined(list))
+	if (!list)
 		this.atoms.each(f, this);
 	else
 		list.forEach(f, this);

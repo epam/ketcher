@@ -1,5 +1,4 @@
 var Set = require('../../util/set');
-var util = require('../../util');
 
 var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
@@ -27,16 +26,14 @@ Smiles._Atom = function (hСount) { // eslint-disable-line no-underscore-dangle
 
 // NB: only loops of length up to 6 are included here
 Smiles.prototype.isBondInRing = function (bid) {
-	if (util.isUndefined(this.inLoop) || util.isNull(this.inLoop))
-		throw new Error('Init this.inLoop prior to calling this method');
+	console.assert(this.inLoop, 'Init this.inLoop prior to calling this method');
 	return this.inLoop[bid];
 };
 
 Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-disable-line max-statements
 	var i, j, k;
 
-	if (!Object.isUndefined(ignoreErrors))
-		this.ignore_errors = ignoreErrors;
+	if (ignoreErrors) this.ignore_errors = ignoreErrors;
 
 	// [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
 	// TODO the fix is temporary, still need to implement error handling/reporting

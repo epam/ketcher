@@ -19,7 +19,7 @@ RGroup.prototype.getAttrs = function () {
 RGroup.findRGroupByFragment = function (rgroups, frid) {
 	var ret;
 	rgroups.each(function (rgid, rgroup) {
-		if (!Object.isUndefined(rgroup.frags.keyOf(frid))) ret = rgid;
+		if (rgroup.frags.keyOf(frid)) ret = rgid;
 	});
 	return ret;
 };

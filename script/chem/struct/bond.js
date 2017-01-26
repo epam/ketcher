@@ -1,8 +1,8 @@
 var Vec2 = require('../../util/vec2');
 
 function Bond(params) { // eslint-disable-line max-statements
-	if (!params || !('begin' in params) || !('end' in params) || !('type' in params))
-		throw new Error('\'begin\', \'end\' and \'type\' properties must be specified!');
+	console.assert(params && 'begin' in params && 'end' in params && 'type' in params,
+		'\'begin\', \'end\' and \'type\' properties must be specified!');
 
 	this.begin = params.begin;
 	this.end = params.end;
@@ -89,7 +89,7 @@ Bond.getAttrHash = function (bond) {
 Bond.attrGetDefault = function (attr) {
 	if (attr in Bond.attrlist)
 		return Bond.attrlist[attr];
-	throw new Error('Attribute unknown');
+	console.error('Attribute unknown');
 };
 
 Bond.prototype.hasRxnProps =  function () {
@@ -122,7 +122,7 @@ Bond.prototype.findOtherEnd = function (i) {
 		return this.end;
 	if (i == this.end)
 		return this.begin;
-	throw new Error('bond end not found');
+	console.error('bond end not found');
 };
 
 module.exports = Bond;

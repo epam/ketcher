@@ -1,8 +1,7 @@
 var element = require('../element');
 
 function AtomList(params) {
-	if (!params || !('notList' in params) || !('ids' in params))
-		throw new Error('\'notList\' and \'ids\' must be specified!');
+	console.assert(params && 'notList' in params && 'ids' in params, '\'notList\' and \'ids\' must be specified!');
 
 	this.notList = params.notList; /* boolean*/
 	this.ids = params.ids; /* Array of integers*/

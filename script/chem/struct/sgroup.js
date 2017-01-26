@@ -1,14 +1,12 @@
 var Box2Abs = require('../../util/box2abs');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
-var util = require('../../util');
 
 var Atom = require('./atom');
 var Bond = require('./bond');
 
 function SGroup(type) { // eslint-disable-line max-statements
-	if (!type || !(type in SGroup.TYPES))
-		throw new Error('Invalid or unsupported s-group type');
+	console.assert(type && type in SGroup.TYPES, 'Invalid or unsupported s-group type');
 
 	this.type = type;
 	this.id = -1;
@@ -148,16 +146,16 @@ SGroup.removeAtom = function (sgroup, aid) {
 			return;
 		}
 	}
-	throw new Error('The atom is not found in the given s-group');
+	console.error('The atom is not found in the given s-group');
 };
 
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	mol.bonds.each(function (bid, bond) {
 		if (Set.contains(parentAtomSet, bond.begin) && Set.contains(parentAtomSet, bond.end)) {
-			if (!util.isNull(inBonds))
+			if (inBonds != null)
 				inBonds.push(bid);
 		} else if (Set.contains(parentAtomSet, bond.begin) || Set.contains(parentAtomSet, bond.end)) {
-			if (!util.isNull(xBonds))
+			if (xBonds != null)
 				xBonds.push(bid);
 		}
 	}, this);
@@ -247,8 +245,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 };
 
 SGroup.getObjBBox = function (atoms, mol) {
-	if (atoms.length == 0)
-		throw new Error('Atom list is empty');
+	console.assert(atoms.length != 0, 'Atom list is empty');
 
 	var a0 = mol.atoms.get(atoms[0]).pp;
 	var bb = new Box2Abs(a0, a0);

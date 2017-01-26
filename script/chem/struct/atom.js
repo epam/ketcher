@@ -6,11 +6,10 @@ var AtomList = require('./atomlist');
 
 function Atom(params) { // eslint-disable-line max-statements
 	var def = Atom.attrGetDefault;
-	if (!params || !('label' in params))
-		throw new Error('label must be specified!');
+	console.assert(params || 'label' in params, 'label must be specified!');
 
 	this.label = params.label;
-	this.fragment = !Object.isUndefined(params.fragment) ? params.fragment : -1;
+	this.fragment = params.fragment || -1;
 
 	util.ifDef(this, params, 'isotope', def('isotope'));
 	util.ifDef(this, params, 'radical', def('radical'));
@@ -21,10 +20,7 @@ function Atom(params) { // eslint-disable-line max-statements
 
 	this.valence = 0;
 	this.implicitH = 0; // implicitH is not an attribute
-	if (!Object.isUndefined(params.pp))
-		this.pp = new Vec2(params.pp);
-	else
-		this.pp = new Vec2();
+	this.pp = params.pp ? new Vec2(params.pp) : new Vec2();
 
 	// sgs should only be set when an atom is added to an s-group by an appropriate method,
 	//   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
@@ -43,7 +39,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	util.ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
 	util.ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
-	this.atomList = !Object.isUndefined(params.atomList) && params.atomList != null ? new AtomList(params.atomList) : null;
+	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
 }
@@ -60,7 +56,7 @@ Atom.getAttrHash = function (atom) {
 Atom.attrGetDefault = function (attr) {
 	if (attr in Atom.attrlist)
 		return Atom.attrlist[attr];
-	throw new Error('Attribute unknown');
+	console.assert(false, 'Attribute unknown');
 };
 
 
@@ -102,7 +98,7 @@ function radicalElectrons(radical) {
 	else if (radical == Atom.PATTERN.RADICAL.SINGLET ||
 		radical == Atom.PATTERN.RADICAL.TRIPLET)
 		return 2;
-	throw new Error('Unknown radical value');
+	console.assert(false, 'Unknown radical value');
 }
 
 Atom.prototype.clone = function (fidMap) {
@@ -132,7 +128,7 @@ Atom.prototype.isPseudo =  function () {
 };
 
 Atom.prototype.hasRxnProps =  function () {
-	return !!(this.invRet || this.exactChangeFlag || !util.isNull(this.attpnt) || this.aam);
+	return !!(this.invRet || this.exactChangeFlag || this.attpnt != null || this.aam);
 };
 
 Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statements
@@ -362,7 +358,7 @@ Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line ma
 	var label = atom.label;
 	var elem = element.getElementByLabel(label);
 	if (elem == null)
-		throw new Error('Element ' + label + ' unknown');
+		console.assert('Element ' + label + ' unknown');
 	if (elem < 0) { // query atom, skip
 		this.implicitH = 0;
 		return null;

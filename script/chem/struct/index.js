@@ -145,10 +145,12 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 			fidMap[fid] = cp.frags.add(Object.clone(frag));
 	});
 
+	var rgroupsIds = [];
 	this.rgroups.each(function (rgid, rgroup) {
 		var keepGroup = keepAllRGroups;
 		if (!keepGroup) {
 			rgroup.frags.each(function (fnum, fid) {
+				rgroupsIds.push(fid);
 				if (fidMask[fid])
 					keepGroup = true;
 			});
@@ -158,6 +160,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		var rg = cp.rgroups.get(rgid);
 		if (rg) {
 			rgroup.frags.each(function (fnum, fid) {
+				rgroupsIds.push(fid);
 				if (fidMask[fid])
 					rg.frags.add(fidMap[fid]);
 			});
@@ -168,8 +171,14 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 
 	if (typeof aidMap === 'undefined' || aidMap === null)
 		aidMap = {};
+	// atoms in not RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid))
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) == -1)
+			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
+	});
+	// atoms in RGroup
+	this.atoms.each(function (aid, atom) {
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) != -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 

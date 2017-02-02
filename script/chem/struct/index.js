@@ -43,29 +43,24 @@ Struct.prototype.hasRxnArrow = function () {
 
 // returns a list of id's of s-groups, which contain only atoms in the given list
 Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
-	var sgroupCounts = new Hash();
+	var sgCounts = {};
 
 	atoms.forEach(function (aid) {
 		var sg = Set.list(this.atoms.get(aid).sgs);
 
 		sg.each(function (sid) {
-			var n = sgroupCounts.get(sid);
-			if (Object.isUndefined(n))
-				n = 1;
-			else
-				n++;
-			sgroupCounts.set(sid, n);
+			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		}, this);
 	}, this);
 
 	var sgroupList = [];
-	sgroupCounts.each(function (sg) {
-		var sid = parseInt(sg.key, 10);
+	for (var key in sgCounts) {
+		var sid = parseInt(key, 10);
 		var sgroup = this.sgroups.get(sid);
 		var sgAtoms = SGroup.getAtoms(this, sgroup);
-		if (sg.value == sgAtoms.length)
+		if (sgCounts[key] == sgAtoms.length)
 			sgroupList.push(sid);
-	}, this);
+	}
 	return sgroupList;
 };
 

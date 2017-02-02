@@ -1302,11 +1302,11 @@ function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statemen
 	var xBonds = [];
 	var atomSet = Set.fromList(sg.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
-	Struct.SGroup.bracketPos(sg, null, mol, xBonds);
+	Struct.SGroup.bracketPos(sg, mol, xBonds);
 	var bb = sg.bracketBox;
 	var d = sg.bracketDir;
 	var n = d.rotateSC(1, 0);
-	var brackets = Struct.SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n, null, sg.id);
+	var brackets = Struct.SGroup.getBracketParameters(mol, xBonds, atomSet, bb, d, n);
 	var lines = [];
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];

@@ -1,4 +1,5 @@
 var ReObject = require('./reobject');
+var scale = require('../../util/scale');
 
 function ReDataSGroupData(sgroup) {
 	this.init('sgroupData');
@@ -13,8 +14,8 @@ ReDataSGroupData.isSelectable = function () {
 
 ReDataSGroupData.prototype.highlightPath = function (render) {
 	var box = this.sgroup.dataArea;
-	var p0 = render.obj2scaled(box.p0);
-	var sz = render.obj2scaled(box.p1).sub(p0);
+	var p0 = scale.obj2scaled(box.p0, render.options);
+	var sz = scale.obj2scaled(box.p1, render.options).sub(p0);
 	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
 };
 

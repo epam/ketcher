@@ -11,7 +11,7 @@ function renderStruct(el, struct, options={}) {
 			el.innerHTML = struct.prerender;
 		else {
 			console.info('render!', el.clientWidth, el.clientWidth);
-			var rnd = new Render(el, 0, {
+			var rnd = new Render(el, {
 				autoScale: true,
 				...options
 			});

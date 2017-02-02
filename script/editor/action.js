@@ -64,34 +64,29 @@ Action.prototype.removeAtomFromSgroupIfNeeded = function (id) {
 Action.prototype.removeSgroupIfNeeded = function (atoms) {
 	var restruct = ui.render.ctab;
 	var struct = restruct.molecule;
-	var sgСounts = new Hash();
+	var sgCounts = {};
 
 	atoms.each(function (id) {
 		var sgroups = atomGetSGroups(restruct, id);
 
 		sgroups.each(function (sid) {
-			var n = sgСounts.get(sid);
-			if (Object.isUndefined(n))
-				n = 1;
-			else
-				n++;
-			sgСounts.set(sid, n);
+			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		}, this);
 	}, this);
 
-	sgСounts.each(function (sg) {
-		var sid = parseInt(sg.key);
+	for (var key in sgCounts) {
+		var sid = parseInt(key);
 		var sG = restruct.sgroups.get(sid).item;
 		var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
 
-		if (sgAtoms.length == sg.value) {
+		if (sgAtoms.length == sgCounts[sid]) {
 			// delete whole s-group
 			var sgroup = struct.sgroups.get(sid);
 			this.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
 			this.addOp(new op.SGroupRemoveFromHierarchy(sid));
 			this.addOp(new op.SGroupDelete(sid));
 		}
-	}, this);
+	}
 };
 
 function fromMultipleMove(lists, d) { // eslint-disable-line max-statements
@@ -199,12 +194,9 @@ function fromBondAttrs(id, attrs, flip, reset) {
 function fromSelectedBondsAttrs(attrs, flips) { // eslint-disable-line no-unused-vars
 	var action = new Action();
 
-	attrs = new Hash(attrs);
-
 	ui.editor.getSelection().bonds.each(function (id) {
-		attrs.each(function (attr) {
-			action.addOp(new op.BondAttr(id, attr.key, attr.value));
-		}, this);
+		for (var key in attrs)
+			action.addOp(new op.BondAttr(id, key, attrs[key]));
 	}, this);
 	if (flips) {
 		flips.each(function (id) {
@@ -653,12 +645,10 @@ function fromAtomMerge(srcId, dstId) {
 
 	var attrs = Struct.Atom.getAttrHash(ui.render.ctab.molecule.atoms.get(srcId));
 
-	if (atomGetDegree(ui.render.ctab, srcId) == 1 && attrs.get('label') == '*')
-		attrs.set('label', 'C');
-
-	attrs.each(function (attr) {
-		action.addOp(new op.AtomAttr(dstId, attr.key, attr.value));
-	}, this);
+	if (atomGetDegree(ui.render.ctab, srcId) == 1 && attrs['label'] == '*')
+		attrs['label'] = 'C';
+	for (var key in attrs)
+		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 
 	var sgChanged = action.removeAtomFromSgroupIfNeeded(srcId);
 
@@ -694,7 +684,7 @@ function fromTemplateOnCanvas(pos, angle, template) {
 	// Only template atom label matters for now
 	frag.atoms.each(function (aid, atom) {
 		var operation;
-		var attrs = Struct.Atom.getAttrHash(atom).toObject();
+		var attrs = Struct.Atom.getAttrHash(atom);
 		attrs.fragment = fragAction.frid;
 
 		action.addOp(
@@ -788,7 +778,7 @@ function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) { // esl
 	}
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
 		if (id == template.aid) {
 			action.mergeWith(fromAtomsAttrs(aid, attrs, true));
@@ -863,7 +853,7 @@ function fromTemplateOnBond(bid, template, calcAngle, flip) { // eslint-disable-
 	var scale = Vec2.dist(begin.pp, end.pp) / Vec2.dist(frBegin.pp, frEnd.pp);
 
 	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a).toObject();
+		var attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
 		if (id == frBond.begin || id == frBond.end) {
 			action.mergeWith(fromAtomsAttrs(map[id], attrs, true));
@@ -971,9 +961,8 @@ function fromSgroupType(id, type) {
 function fromSgroupAttrs(id, attrs) {
 	var action = new Action();
 
-	new Hash(attrs).each(function (attr) {
-		action.addOp(new op.SGroupAttr(id, attr.key, attr.value));
-	}, this);
+	for (var key in attrs)
+		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
 
 	return action.perform();
 }
@@ -981,9 +970,8 @@ function fromSgroupAttrs(id, attrs) {
 function sGroupAttributeAction(id, attrs) {
 	var action = new Action();
 
-	new Hash(attrs).each(function (attr) { // store the attribute assignment
-		action.addOp(new op.SGroupAttr(id, attr.key, attr.value));
-	}, this);
+	for (var key in attrs)
+		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
 
 	return action;
 }
@@ -1056,9 +1044,8 @@ function fromSgroupAddition(type, atoms, attrs, sgid, pp) { // eslint-disable-li
 
 function fromRGroupAttrs(id, attrs) {
 	var action = new Action();
-	new Hash(attrs).each(function (attr) {
-		action.addOp(new op.RGroupAttr(id, attr.key, attr.value));
-	}, this);
+	for (var key in attrs)
+		action.addOp(new op.RGroupAttr(id, key, attrs[key]));
 	return action.perform();
 }
 

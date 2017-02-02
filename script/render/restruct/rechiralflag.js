@@ -1,4 +1,5 @@
 var Box2Abs = require('../../util/box2abs');
+var scale = require('../../util/scale');
 var ReObject = require('./reobject');
 
 function ReChiralFlag(pos) {
@@ -14,7 +15,7 @@ ReChiralFlag.isSelectable = function () {
 ReChiralFlag.prototype.highlightPath = function (render) {
 	var box = Box2Abs.fromRelBox(this.path.getBBox());
 	var sz = box.p1.sub(box.p0);
-	var p0 = box.p0.sub(render.offset);
+	var p0 = box.p0.sub(render.options.offset);
 	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
 };
 
@@ -28,10 +29,12 @@ ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) 
 	return this.highlightPath(restruct.render).attr(options.selectionStyle);
 };
 
-ReChiralFlag.prototype.draw = function (render) {
+ReChiralFlag.prototype.show = function (restruct, id, options) {
+	var render = restruct.render;
+	if (restruct.chiralFlagsChanged[id] <= 0) return;
+
 	var paper = render.paper;
-	var options = render.options;
-	var ps = render.obj2scaled(this.pp);
+	var ps = scale.obj2scaled(this.pp, options);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
 		.attr({
 			'font': options.font,

@@ -1,5 +1,7 @@
-function defaultOptions(scale, opt) {
-	var scaleFactor = scale;
+var Vec2 = require('../util/vec2');
+
+function defaultOptions(opt) {
+	var scaleFactor = opt.scale || 100;
 
 	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
 	var subFontSize = Math.ceil(0.7 * labelFontSize);
@@ -27,7 +29,10 @@ function defaultOptions(scale, opt) {
 		// bonds
 		aromaticCircle: true,
 
-		scaleFactor: scaleFactor,
+		scale: scaleFactor,
+		zoom: 1.0,
+		offset: new Vec2(),
+
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,

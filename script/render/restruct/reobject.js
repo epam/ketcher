@@ -1,5 +1,6 @@
 var Visel = require('./visel');
 var util = require('../../util');
+var scale = require('../../util/scale');
 
 function ReObject() {
 }
@@ -18,9 +19,9 @@ ReObject.prototype.getVBoxObj = function (render) {
 	var vbox = this.visel.boundingBox;
 	if (util.isNull(vbox))
 		return null;
-	if (render.offset)
-		vbox = vbox.translate(render.offset.negated());
-	return vbox.transform(render.scaled2obj, render);
+	if (render.options.offset)
+		vbox = vbox.translate(render.options.offset.negated());
+	return vbox.transform(scale.scaled2obj, render.options);
 };
 
 ReObject.prototype.setHighlight = function (highLight, render) { // TODO render should be field

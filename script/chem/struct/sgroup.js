@@ -163,40 +163,24 @@ SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	}, this);
 };
 
-SGroup.bracketPos = function (sg, render, mol, xbonds) { // eslint-disable-line max-statements
+SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-statements
 	var atoms = sg.atoms;
 	if (!xbonds || xbonds.length !== 2) {
 		sg.bracketDir = new Vec2(1, 0);
 	} else {
-		var b1 = mol.bonds.get(xbonds[0]);
-		var b2 = mol.bonds.get(xbonds[1]);
-		var p1 = b1.getCenter(mol);
-		var p2 = b2.getCenter(mol);
+		var p1 = mol.bonds.get(xbonds[0]).getCenter(mol);
+		var p2 = mol.bonds.get(xbonds[1]).getCenter(mol);
 		sg.bracketDir = Vec2.diff(p2, p1).normalized();
 	}
 	var d = sg.bracketDir;
-	var n = d.rotateSC(1, 0);
 
 	var bb = null;
 	var contentBoxes = [];
 	atoms.forEach(function (aid) {
 		var atom = mol.atoms.get(aid);
-		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
 		var pos = new Vec2(atom.pp);
-		if (util.isNull(bba)) {
-			bba = new Box2Abs(pos, pos);
-			var ext = new Vec2(0.05 * 3, 0.05 * 3);
-			bba = bba.extend(ext, ext);
-		} else {
-			bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
-		}
-		contentBoxes.push(bba);
-	}, this);
-	mol.sGroupForest.children.get(sg.id).forEach(function (sgid) {
-		var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
-		if (util.isNull(bba))
-			return; // TODO: use object box instead
-		bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
+		var ext = new Vec2(0.05 * 3, 0.05 * 3);
+		var bba = new Box2Abs(pos, pos).extend(ext, ext);
 		contentBoxes.push(bba);
 	}, this);
 	contentBoxes.forEach(function (bba) {
@@ -204,19 +188,18 @@ SGroup.bracketPos = function (sg, render, mol, xbonds) { // eslint-disable-line 
 		[bba.p0.x, bba.p1.x].forEach(function (x) {
 			[bba.p0.y, bba.p1.y].forEach(function (y) {
 				var v = new Vec2(x, y);
-				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, n));
-				bbb = util.isNull(bbb) ? new Box2Abs(p, p) : bbb.include(p);
+				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
+				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
 			}, this);
 		}, this);
-		bb = util.isNull(bb) ? bbb : Box2Abs.union(bb, bbb);
+		bb = (bb === null) ? bbb : Box2Abs.union(bb, bbb);
 	}, this);
 	var vext = new Vec2(0.2, 0.4);
-	if (!util.isNull(bb))
-		bb = bb.extend(vext, vext);
+	if (bb !== null) bb = bb.extend(vext, vext);
 	sg.bracketBox = bb;
 };
 
-SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, id) { // eslint-disable-line max-params
+SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // eslint-disable-line max-params
 	function BracketParams(c, d, w, h) {
 		this.c = c;
 		this.d = d;
@@ -242,33 +225,13 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n, render, 
 			var b2 = mol.bonds.get(xbonds[1]);
 			var cl0 = b1.getCenter(mol);
 			var cr0 = b2.getCenter(mol);
-			var tl = -1;
-			var tr = -1;
-			var tt = -1;
-			var tb = -1;
-			var cc = Vec2.centre(cl0, cr0);
 			var dr = Vec2.diff(cr0, cl0).normalized();
 			var dl = dr.negated();
-			var dt = dr.rotateSC(1, 0);
-			var db = dt.negated();
 
-			mol.sGroupForest.children.get(id).forEach(function (sgid) {
-				var bba = render ? render.ctab.sgroups.get(sgid).visel.boundingBox : null;
-				if (util.isNull(bba))
-					return; // TODO: use object box instead
-				bba = bba.translate((render.offset || new Vec2()).negated()).transform(render.scaled2obj, render);
-				tl = Math.max(tl, Vec2.shiftRayBox(cl0, dl, bba));
-				tr = Math.max(tr, Vec2.shiftRayBox(cr0, dr, bba));
-				tt = Math.max(tt, Vec2.shiftRayBox(cc, dt, bba));
-				tb = Math.max(tb, Vec2.shiftRayBox(cc, db, bba));
-			}, this);
-			tl = Math.max(tl + 0.2, 0);
-			tr = Math.max(tr + 0.2, 0);
-			tt = Math.max(Math.max(tt, tb) + 0.1, 0);
 			var bracketWidth = 0.25;
-			var bracketHeight = 1.5 + tt;
-			brackets.push(new BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
-			new BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight));
+			var bracketHeight = 1.5;
+			brackets.push(new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
+			new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight));
 		})();
 	} else {
 		(function () {
@@ -407,10 +370,6 @@ SGroup.getMassCentre = function (mol, atoms) {
 	for (var i = 0; i < atoms.length; ++i)
 		c = c.addScaled(mol.atoms.get(atoms[i]).pp, 1.0 / atoms.length);
 	return c;
-};
-
-SGroup.setPos = function (remol, sg, pos) {
-	sg.pp = pos;
 };
 
 // Used to pack atoms to sgroup in old-server selective layout

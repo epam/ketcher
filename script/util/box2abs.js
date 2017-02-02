@@ -61,9 +61,9 @@ Box2Abs.prototype.translate = function (/* Vec2*/d) {
 	return new Box2Abs(this.p0.add(d), this.p1.add(d));
 };
 
-Box2Abs.prototype.transform = function (/* function(Vec2):Vec2*/f, context) {
+Box2Abs.prototype.transform = function (/* function(Vec2):Vec2*/f, options) {
 	util.assert(!util.isNullOrUndefined(f));
-	return new Box2Abs(f.call(context, this.p0), f.call(context, this.p1));
+	return new Box2Abs(f(this.p0, options), f(this.p1, options));
 };
 
 Box2Abs.prototype.sz = function () {

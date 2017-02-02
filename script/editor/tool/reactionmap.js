@@ -1,4 +1,5 @@
 var Set = require('../../util/set');
+var scale = require('../../util/scale');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
@@ -52,9 +53,10 @@ ReactionMapTool.prototype.updateLine = function (p1, p2) {
 	}
 	if (p1 && p2) {
 		var rnd = this.editor.render;
-		this.line = draw.selectionLine(rnd,
-		                               rnd.obj2scaled(p1).add(rnd.offset),
-		                               rnd.obj2scaled(p2).add(rnd.offset));
+		this.line = draw.selectionLine(rnd.paper,
+			scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
+			scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
+			rnd.options);
 	}
 };
 

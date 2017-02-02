@@ -1,5 +1,6 @@
 var locate = require('./locate');
 var draw = require('../../../render/draw');
+var scale = require('../../../util/scale');
 
 function LassoHelper(mode, editor, fragment) {
 	this.mode = mode;
@@ -48,11 +49,11 @@ LassoHelper.prototype.update = function () {
 	if (this.points && this.points.length > 1) {
 		var rnd = this.editor.render;
 		var dp = this.points.map(function (p) {
-			return rnd.obj2scaled(p).add(rnd.offset);
+			return scale.obj2scaled(p, rnd.options).add(rnd.options.offset);
 		});
 		this.selection = this.mode == 0 ?
-			draw.selectionPolygon(rnd, dp) :
-			draw.selectionRectangle(rnd, dp[0], dp[1]);
+			draw.selectionPolygon(rnd.paper, dp, rnd.options) :
+			draw.selectionRectangle(rnd.paper, dp[0], dp[1], rnd.options);
 	}
 };
 

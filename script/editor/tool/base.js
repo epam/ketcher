@@ -5,18 +5,14 @@ function EditorTool(editor) {
 }
 
 EditorTool.prototype.processEvent = function (name, event, action) {
-	if (!('touches' in event) || event.touches.length == 1) {
-		if (name + '0' in this)
-			return this[name + '0'](event, action);
-		else if (name in this)
-			return this[name](event, action);
-		console.log('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
-	} else if ('lastEvent' in this.OnMouseDown0) {
-		// here we finish previous MouseDown and MouseMoves with simulated MouseUp
-		// before gesture (canvas zoom, scroll, rotate) started
-		return this.OnMouseUp0(event, action); // eslint-disable-line new-cap
-	}
+	if (name + '0' in this)
+		return this[name + '0'](event, action);
+	else if (name in this)
+		return this[name](event, action);
+
+	console.warn('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
 };
+
 EditorTool.prototype.OnMouseDown = function () {};
 EditorTool.prototype.OnMouseMove = function () {};
 EditorTool.prototype.OnMouseUp = function () {};
@@ -64,6 +60,7 @@ EditorTool.prototype.calcAngle = function (pos0, pos1) {
 	angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
 	return angle;
 };
+
 EditorTool.prototype.calcNewAtomPos = function (pos0, pos1) {
 	var v = new Vec2(1, 0).rotate(this.calcAngle(pos0, pos1));
 	v.add_(pos0); // eslint-disable-line no-underscore-dangle

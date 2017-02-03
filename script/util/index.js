@@ -11,25 +11,6 @@ function relBox(box) {
 	};
 }
 
-function stopEventPropagation(event) {
-	if ('stopPropagation' in event) // Mozilla, Opera, Safari
-		event.stopPropagation();
-	 else if ('cancelBubble' in event) // IE
-		event.cancelBubble = true;
-	 else
-		throw Error('Browser unrecognized');
-}
-
-function preventDefault(event) {
-	if ('preventDefault' in event)
-		event.preventDefault();
-	if (Prototype.Browser.IE) {
-		event.returnValue = false;
-		event.keyCode = 0;
-	}
-	return false;
-}
-
 function unicodeLiteral(str) {
 	function fixedHex(number, length) {
 		var str = number.toString(16).toUpperCase();
@@ -79,8 +60,6 @@ function isObject(obj) {
 
 module.exports = {
 	tfx: tfx,
-	stopEventPropagation: stopEventPropagation,
-	preventDefault: preventDefault,
 	unicodeLiteral: unicodeLiteral,
 	ifDef: ifDef,
 	assert: assert,

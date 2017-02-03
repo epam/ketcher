@@ -92,7 +92,7 @@ function init (opts, apiServer) {
 	});
 	selectAction('select-lasso');
 
-	Event.observe(window, 'resize', function () {
+	addEventListener('resize', function () {
 		$$('menu').filter(function (menu) {
 			return parseFloat(menu.style.marginTop) < 0;
 		}).each(function (menu) {

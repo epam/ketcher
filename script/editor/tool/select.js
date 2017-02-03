@@ -69,7 +69,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			item: ci,
 			xy0: rnd.page2obj(event)
 		};
-		if (ci.map == 'atoms' && !ui.is_touch) {
+		if (ci.map == 'atoms') {
 			var self = this;
 			this.dragCtx.timeout = setTimeout(
 			function () {

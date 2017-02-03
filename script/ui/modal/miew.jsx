@@ -80,7 +80,7 @@ function queryOptions(options, sep='&') {
 
 function miewLoad(wnd, url, options={}) { // TODO: timeout
 	return new Promise(function (resolve, reject) {
-		window.addEventListener('message', function onload(event) {
+		addEventListener('message', function onload(event) {
 			if (event.origin == origin(url) && event.data == 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
 				let miew = wnd.MIEWS[0];
@@ -102,7 +102,7 @@ function miewLoad(wnd, url, options={}) { // TODO: timeout
 function miewSave(miew, url) {
 	miew.saveData();
 	return new Promise(function (resolve, reject) {
-		window.addEventListener('message', function onsave(event) {
+		addEventListener('message', function onsave(event) {
 			if (event.origin == origin(url) && event.data.startsWith('CML:')) {
 				window.removeEventListener('message', onsave);
 				resolve(atob(event.data.slice(4)));

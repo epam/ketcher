@@ -1,4 +1,3 @@
-var util = require('../util');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
@@ -82,114 +81,24 @@ Editor.prototype.zoom = function (value) {
 	return this.render.options.zoom;
 };
 
-// Events setup extracted from render
-Editor.prototype.setupEvents = function (clientArea) { // eslint-disable-line max-statements
+Editor.prototype.setupEvents = function (clientArea) {
 	var editor = this;
-	var render = this.render;
-
-	// rbalabanov: two-fingers scrolling & zooming for iPad
-	// TODO should be moved to touch.js module, re-factoring needed
-	// BEGIN
-	this.longTapFlag = false;
-	this.longTapTimeout = null;
-	this.longTapTouchstart = null;
-
-	editor.setLongTapTimeout = function (event) {
-		editor.longTapFlag = false;
-		editor.longTapTouchstart = event;
-		editor.longTapTimeout = setTimeout(function () {
-			editor.longTapFlag = true;
-			editor.longTapTimeout = null;
-		}, 500);
-	};
-
-	editor.resetLongTapTimeout = function (resetFlag) {
-		clearTimeout(editor.longTapTimeout);
-		editor.longTapTimeout = null;
-		if (resetFlag) {
-			editor.longTapTouchstart = null;
-			editor.longTapFlag = false;
-		}
-	};
-	// END
-
-	// [RB] KETCHER-396 (Main toolbar is grayed after the Shift-selection of some atoms/bonds)
-	// here we prevent that freaking "accelerators menu" on IE8
-	// BEGIN
-	clientArea.observe('selectstart', function (event) {
-		util.stopEventPropagation(event);
-		return util.preventDefault(event);
-	});
-	// END
-
-	/* eslint-disable no-underscore-dangle*/
-	var zoomStaticPoint = null;
-	clientArea.observe('touchstart', function (event) {
-		editor.resetLongTapTimeout(true);
-		if (event.touches.length == 2) {
-			this._tui = this._tui || {};
-			this._tui.center = {
-				pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
-				pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
-			};
-			// set the reference point for the "static point" zoom (in object coordinates)
-			zoomStaticPoint = new Vec2(render.page2obj(this._tui.center));
-		} else if (event.touches.length == 1) {
-			editor.setLongTapTimeout(event);
-		}
-	});
-	clientArea.observe('touchmove', function (event) {
-		editor.resetLongTapTimeout(true);
-		if ('_tui' in this && event.touches.length == 2) {
-			this._tui.center = {
-				pageX: (event.touches[0].pageX + event.touches[1].pageX) / 2,
-				pageY: (event.touches[0].pageY + event.touches[1].pageY) / 2
-			};
-		}
-	});
-	clientArea.observe('gesturestart', function (event) {
-		this._tui = this._tui || {};
-		this._tui.scale0 = render.options.zoom;
-		event.preventDefault();
-	});
-	clientArea.observe('gesturechange', function (event) {
-		render.setZoom(this._tui.scale0 * event.scale);
-		var offset = clientArea.cumulativeOffset();
-		var pp = new Vec2(this._tui.center.pageX - offset.left,
-						  this._tui.center.pageY - offset.top);
-		this.recoordinate(pp, zoomStaticPoint);
-		render.update();
-		event.preventDefault();
-	});
-	clientArea.observe('gestureend', function (event) {
-		delete this._tui;
-		event.preventDefault();
-	});
-	// END
-	/* eslint-enable no-underscore-dangle*/
-
-	clientArea.observe('onresize', function () {
-		console.info('resize');
-		// render.onResize();
-	});
+	// TODO: addEventListener('resize', ...);
 
 	// assign canvas events handlers
-	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].each(function (eventName) {
+	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].forEach(function (eventName) {
 		var bindEventName = eventName.toLowerCase();
-		clientArea.observe(bindEventName, function (event) {
+		clientArea.addEventListener(bindEventName, function (event) {
 			if (eventName != 'MouseLeave') {
-				if (!ui || !ui.is_touch) {
-					// TODO: karulin: fix this on touch devices if needed
-					var co = clientArea.cumulativeOffset();
-					co = new Vec2(co[0], co[1]);
-					var vp = new Vec2(event.clientX, event.clientY).sub(co);
-					var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
-					if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
-						if (eventName == 'MouseMove')
-							// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-							editor._tool.processEvent('OnMouseLeave', event); // eslint-disable-line no-underscore-dangle
-						return util.preventDefault(event);
-					}
+				var co = clientArea.cumulativeOffset();
+				co = new Vec2(co[0], co[1]);
+				var vp = new Vec2(event.clientX, event.clientY).sub(co);
+				var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
+				if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
+					if (eventName == 'MouseMove')
+						// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
+						editor._tool.processEvent('OnMouseLeave', event); // eslint-disable-line no-underscore-dangle
+					return event.preventDefault();
 				}
 			}
 
@@ -198,9 +107,8 @@ Editor.prototype.setupEvents = function (clientArea) { // eslint-disable-line ma
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.
 				// Do we really need total stop here?
-				util.stopEventPropagation(event);
-			if (bindEventName != 'touchstart' && (bindEventName != 'touchmove' || event.touches.length != 2))
-				return util.preventDefault(event);
+				event.stopPropagation();
+			return event.preventDefault();
 		});
 	}, this);
 };

@@ -3,6 +3,7 @@ var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
+var utils = require('./utils');
 
 var ui = global.ui;
 
@@ -58,12 +59,12 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 				dist = Vec2.dist(dragCtx.xy0, xy1);
 				if (p1) {
 					// rotation only, leght of bond = 1;
-					p2 = this.calcNewAtomPos(p1, xy1);
+					p2 = utils.calcNewAtomPos(p1, xy1);
 				} else {
 					// first mousedown event intersect with any atom and
 					// rotation only, leght of bond = 1;
 					var atom = rnd.ctab.molecule.atoms.get(i1);
-					p1 = this.calcNewAtomPos(atom.pp.get_xy0(), xy1);
+					p1 = utils.calcNewAtomPos(atom.pp.get_xy0(), xy1);
 				}
 			}
 			// don't rotate the bond if the distance between the start and end point is too small

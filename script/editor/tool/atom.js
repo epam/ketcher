@@ -2,6 +2,7 @@ var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
+var utils = require('./utils');
 
 var ui = global.ui;
 
@@ -32,7 +33,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
-		var newAtomPos = this.calcNewAtomPos(
+		var newAtomPos = utils.calcNewAtomPos(
 			atom.pp, rnd.page2obj(event)
 		);
 		if ('action' in dragCtx)

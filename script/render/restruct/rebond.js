@@ -284,7 +284,7 @@ function getBondSingleEitherPath(render, hb1, hb2) {
 	return draw.bondSingleEither(render.paper, hb1, d, nlines, step, options);
 }
 
-function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params
+function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
 	var cisTrans = bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS;
 
 	var a = hb1.p,

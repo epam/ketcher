@@ -1,6 +1,7 @@
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 var op = require('./op');
+var utils = require('./tool/utils');
 
 var Struct = require('../chem/struct');
 var closest = require('./closest');
@@ -721,7 +722,7 @@ function atomAddToSGroups(sgroups, aid) {
 	return action;
 }
 
-function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) { // eslint-disable-line max-params, max-statements
+function fromTemplateOnAtom(aid, angle, extraBond, template) { // eslint-disable-line max-statements
 	var action = new Action();
 	var frag = template.molecule;
 	var restruct = ui.render.ctab;
@@ -768,11 +769,11 @@ function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) { // esl
 
 		var atom0 = atom;
 		atom = struct.atoms.get(aid);
-		var delta = calcAngle(atom0.pp, atom.pp) - template.angle0;
+		var delta = utils.calcAngle(atom0.pp, atom.pp) - template.angle0;
 	} else {
 		if (angle == null) {
 			middleAtom = atomForNewBond(aid);
-			angle = calcAngle(atom.pp, middleAtom.pos);
+			angle = utils.calcAngle(atom.pp, middleAtom.pos);
 		}
 		delta = angle - template.angle0;
 	}
@@ -815,7 +816,7 @@ function fromTemplateOnAtom(aid, angle, extraBond, template, calcAngle) { // esl
 	return action;
 }
 
-function fromTemplateOnBond(bid, template, calcAngle, flip) { // eslint-disable-line max-statements
+function fromTemplateOnBond(bid, template, flip) { // eslint-disable-line max-statements
 	var action = new Action();
 	var frag = template.molecule;
 	var restruct = ui.render.ctab;
@@ -849,7 +850,7 @@ function fromTemplateOnBond(bid, template, calcAngle, flip) { // eslint-disable-
 	}
 
 	// calc angle
-	var angle = calcAngle(begin.pp, end.pp) - calcAngle(frBegin.pp, frEnd.pp);
+	var angle = utils.calcAngle(begin.pp, end.pp) - utils.calcAngle(frBegin.pp, frEnd.pp);
 	var scale = Vec2.dist(begin.pp, end.pp) / Vec2.dist(frBegin.pp, frEnd.pp);
 
 	frag.atoms.each(function (id, a) {

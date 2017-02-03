@@ -9,6 +9,7 @@ function ReactionArrowTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
+
 ReactionArrowTool.prototype = new EditorTool();
 ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
@@ -24,11 +25,12 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
+
 		this.dragCtx.action = Action.fromMultipleMove(
 			this.editor.selection,
-		rnd.page2obj(event).sub(this.dragCtx.xy0)
+			rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
-		rnd.render.update();
+		rnd.update();
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['rxnArrows']));
 	}

@@ -38,7 +38,7 @@ function bondSingleStereoBold(paper, a1, a2, a3, a4, options) { // eslint-disabl
 		});
 }
 
-function bondDoubleStereoBold(paper, sgBondPath, b1, b2, options) {
+function bondDoubleStereoBold(paper, sgBondPath, b1, b2, options) { // eslint-disable-line max-params
 	return paper.set([sgBondPath, paper.path('M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
 		.attr(options.lineattr)]);
 }
@@ -85,7 +85,7 @@ function bondDouble(paper, a1, a2, b1, b2, cisTrans, options) { // eslint-disabl
 		.attr(options.lineattr);
 }
 
-function bondSingleOrDouble(paper, hb1, hb2, nSect, options) { // eslint-disable-line max-statements
+function bondSingleOrDouble(paper, hb1, hb2, nSect, options) { // eslint-disable-line max-statements, max-params
 	var a = hb1.p,
 		b = hb2.p,
 		n = hb1.norm;

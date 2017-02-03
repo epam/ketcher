@@ -18,7 +18,7 @@ ReLoop.isSelectable = function () {
 	return false;
 };
 
-ReLoop.prototype.show = function (restruct, rlid, options) {
+ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-line max-statements
 	var render = restruct.render;
 	var paper = render.paper;
 	var molecule = restruct.molecule;

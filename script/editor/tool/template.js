@@ -3,6 +3,7 @@ var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
+var utils = require('./utils');
 
 var ui = global.ui;
 
@@ -24,7 +25,7 @@ function TemplateTool(editor, tmpl) {
 
 	this.template.molecule = frag; // preloaded struct
 	this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
-	this.template.angle0 = this.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
+	this.template.angle0 = utils.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
 
 	var bond = frag.bonds.get(this.template.bid);
 	this.template.sign = this.getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
@@ -121,14 +122,14 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				// undo previous action
 				if ('action' in dragCtx) dragCtx.action.perform();
 				dragCtx.sign2 = sign;
-				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, this.calcAngle, dragCtx.sign1 * dragCtx.sign2 > 0);
+				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 				rnd.update();
 			}
 
 			return true;
 		}
 
-		angle = this.calcAngle(pos0, pos1);
+		angle = utils.calcAngle(pos0, pos1);
 		var degrees = Math.round(180 / Math.PI * angle);
 		// check if anything changed since last time
 		if ('angle' in dragCtx && dragCtx.angle == degrees) {
@@ -154,8 +155,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				ci.id,
 				angle,
 				extraBond,
-				this.template,
-				this.calcAngle
+				this.template
 			);
 			dragCtx.extra_bond = extraBond;
 		}
@@ -185,8 +185,7 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 						ci.id,
 						null,
 						true,
-						this.template,
-						this.calcAngle
+						this.template
 					);
 				} else if (degree == 1) { // on chain end
 					var neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
@@ -195,22 +194,20 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 
 					dragCtx.action = Action.fromTemplateOnAtom(
 						ci.id,
-					this.calcAngle(nei.pp, atom.pp),
+						utils.calcAngle(nei.pp, atom.pp),
 						false,
-						this.template,
-						this.calcAngle
+						this.template
 					);
 				} else { // on single atom
 					dragCtx.action = Action.fromTemplateOnAtom(
 						ci.id,
 						0,
 						false,
-						this.template,
-						this.calcAngle
+						this.template
 					);
 				}
 			} else if (ci.map == 'bonds') {
-				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, this.calcAngle, dragCtx.sign1 * dragCtx.sign2 > 0);
+				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 
 			render.update();

@@ -3,6 +3,7 @@ var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var LassoHelper = require('./helper/lasso');
 var EditorTool = require('./base');
+var utils = require('./utils');
 
 var ui = global.ui;
 
@@ -71,7 +72,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 
 		this.dragCtx = {
 			xy0: xy0,
-			angle1: this.calcAngle(xy0, rnd.page2obj(event)),
+			angle1: utils.calcAngle(xy0, rnd.page2obj(event)),
 			all: rotAll
 		};
 	} else {
@@ -90,7 +91,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		var dragCtx = this.dragCtx;
 
 		var pos = rnd.page2obj(event);
-		var angle = this.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
+		var angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
 
 		var degrees = Math.round(angle / Math.PI * 180);
 

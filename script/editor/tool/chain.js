@@ -2,6 +2,7 @@ var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
+var utils = require('./utils');
 
 var ui = global.ui;
 
@@ -32,9 +33,9 @@ ChainTool.prototype.OnMouseMove = function (event) {
 		var pos1 = rnd.page2obj(event);
 		dragCtx.action = Action.fromChain(
 			pos0,
-		this.calcAngle(pos0, pos1),
-		Math.ceil(Vec2.diff(pos1, pos0).length()),
-				'item' in dragCtx ? dragCtx.item.id : null
+			utils.calcAngle(pos0, pos1),
+			Math.ceil(Vec2.diff(pos1, pos0).length()),
+			'item' in dragCtx ? dragCtx.item.id : null
 		);
 		rnd.update();
 		return true;

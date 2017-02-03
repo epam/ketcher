@@ -4,15 +4,6 @@ function EditorTool(editor) {
 	this.editor = editor;
 }
 
-EditorTool.prototype.processEvent = function (name, event, action) {
-	if (name + '0' in this)
-		return this[name + '0'](event, action);
-	else if (name in this)
-		return this[name](event, action);
-
-	console.warn('EditorTool.dispatchEvent: event \'' + name + '\' is not handled.');
-};
-
 EditorTool.prototype.OnMouseDown = function () {};
 EditorTool.prototype.OnMouseMove = function () {};
 EditorTool.prototype.OnMouseUp = function () {};
@@ -21,6 +12,7 @@ EditorTool.prototype.OnDblClick = function () {};
 EditorTool.prototype.OnMouseLeave = function () {
 	this.OnCancel(); // eslint-disable-line new-cap
 };
+
 EditorTool.prototype.OnCancel = function () {}; // called when we abandon the tool
 EditorTool.prototype.OnMouseDown0 = function (event) {
 	this.OnMouseDown0.lastEvent = event;

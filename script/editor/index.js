@@ -82,28 +82,22 @@ Editor.prototype.zoom = function (value) {
 };
 
 Editor.prototype.setupEvents = function (clientArea) {
-	var editor = this;
 	// TODO: addEventListener('resize', ...);
-
 	// assign canvas events handlers
-	['Click', 'DblClick', 'MouseDown', 'MouseMove', 'MouseUp', 'MouseLeave'].forEach(function (eventName) {
-		var bindEventName = eventName.toLowerCase();
-		clientArea.addEventListener(bindEventName, function (event) {
-			if (eventName != 'MouseLeave') {
-				var co = clientArea.cumulativeOffset();
-				co = new Vec2(co[0], co[1]);
-				var vp = new Vec2(event.clientX, event.clientY).sub(co);
-				var sz = new Vec2(clientArea.clientWidth, clientArea.clientHeight);
-				if (!(vp.x > 0 && vp.y > 0 && vp.x < sz.x && vp.y < sz.y)) { // ignore events on the hidden part of the canvas
-					if (eventName == 'MouseMove')
-						// [RB] here we alse emulate mouseleave when user drags mouse over toolbar (see KETCHER-433)
-						editor._tool.processEvent('OnMouseLeave', event); // eslint-disable-line no-underscore-dangle
-					return event.preventDefault();
-				}
-			}
-
-			editor._tool.processEvent('On' + eventName, event); // eslint-disable-line no-underscore-dangle
-			if (eventName != 'MouseUp')
+	['OnClick', 'OnDblClick', 'OnMouseDown', 'OnMouseMove',
+	 'OnMouseUp', 'OnMouseLeave'].forEach(function (method) {
+		var editor = this;
+		var eventName = method.slice(2).toLowerCase();
+		clientArea.addEventListener(eventName, function (event) {
+			/* eslint-disable no-underscore-dangle */
+			if (method + '0' in editor._tool)
+				editor._tool[method + '0'](event);
+			else if (method in editor._tool)
+				editor._tool[method](event);
+			else
+				console.warn("Can\'t process method");
+			/* eslint-enable no-underscore-dangle */
+			if (eventName != 'mouseup')
 				// [NK] do not stop mouseup propagation
 				// to maintain cliparea focus.
 				// Do we really need total stop here?

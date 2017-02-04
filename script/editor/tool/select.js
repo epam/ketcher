@@ -161,6 +161,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 };
 
 SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-statements
+	var editor = this.editor;
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event);
 	var struct = rnd.ctab.molecule;
@@ -234,20 +235,9 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	} else if (ci.map == 'bonds') {
 		this.editor.setSelection(ci);
 		var bond = rnd.ctab.bonds.get(ci.id).b;
-		var type = bond.type;
-		var stereo = bond.stereo;
-		ui.showBondProperties({
-			type: Struct.Bond.type2Caption(type, stereo),
-			topology: bond.topology || 0,
-			center: bond.reactingCenterStatus || 0,
-			onOk: function (res) {
-				var bond = Object.assign(Struct.Bond.caption2Type(res.type), {
-					topology: parseInt(res.topology, 10),
-					reactingCenterStatus: parseInt(res.center, 10)
-				});
-				ui.addUndoAction(Action.fromBondAttrs(ci.id, bond), true);
-				rnd.update();
-			}
+		var res = editor.event.bondEdit.dispatch(bond);
+		Promise.resolve(res).then(function (newbond) {
+			editor.event.change.dispatch(Action.fromBondAttrs(ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {
 		this.editor.setSelection(ci);

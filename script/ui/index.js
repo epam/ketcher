@@ -17,6 +17,7 @@ var utils = require('./utils');
 var modal = require('./modal');
 
 var structFormat = require('./structformat');
+var structConv = require('./structconv');
 
 var HISTORY_LENGTH = 32;
 
@@ -63,6 +64,7 @@ function init (opts, apiServer) {
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
+	initEditor();
 
 	updateHistoryButtons();
 	updateClipboardButtons();
@@ -102,6 +104,18 @@ function init (opts, apiServer) {
 		popAction(toolbar);
 	});
 };
+
+
+function initEditor() {
+	var editor = ui.editor;
+	editor.on('bondEdit', function (bond) {
+		var dlg = dialog(modal.bondProps,
+		                 structConv.fromBond(bond));
+		return dlg.then(function (res) {
+			return structConv.toBond(res);
+		});
+	});
+}
 
 function updateAtoms() {
 	if (addionalAtoms.storage.length > 0) {
@@ -875,7 +889,10 @@ function mapTool (id) {
 	} else if (id.startsWith('atom-')) {
 		return { tool: 'atom', opts: args[0] || atomLabel(id) };
 	} else if (id.startsWith('bond-')) {
-		return { tool: 'bond', opts: id.substr(5) };
+		return {
+			tool: 'bond',
+			opts: structConv.caption2BondType(id.substr(5))
+		};
 	} else if (id == 'chain') {
 		return { tool: 'chain' };
 	} else if (id.startsWith('template')) {
@@ -960,7 +977,6 @@ Object.assign(ui, {
 	showReaGenericsTable: modal.genericGroups,
 	showAtomAttachmentPoints: modal.attachmentPoints,
 	showAtomProperties: modal.atomProps,
-	showBondProperties: modal.bondProps,
 	showRLogicTable: modal.rgroupLogic,
 	showLabelEditor: function (val) {
 		return dialog(modal.labelEdit, val, true);

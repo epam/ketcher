@@ -7,14 +7,10 @@ var utils = require('./utils');
 
 var ui = global.ui;
 
-function BondTool(editor, bondCaption) {
+function BondTool(editor, bondProps) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
-	this.bondProps = Struct.Bond.caption2Type(bondCaption);
-	this.plainBondTypes = [
-		Struct.Bond.PATTERN.TYPE.SINGLE,
-		Struct.Bond.PATTERN.TYPE.DOUBLE,
-		Struct.Bond.PATTERN.TYPE.TRIPLE];
+	this.bondProps = bondProps;
 
 	this.hoverHelper = new HoverHelper(this);
 }
@@ -115,7 +111,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			) {
 				ui.addUndoAction(Action.fromBondFlipping(dragCtx.item.id));
 			} else {
-				var loop = this.plainBondTypes.indexOf(bondProps.type) >= 0 ? this.plainBondTypes : null;
+				var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
 				if (
 				bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
 				bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
@@ -143,5 +139,10 @@ function bondFlipRequired(struct, bond, attrs) {
 		   struct.atoms.get(bond.end).neighbors.length;
 }
 
+var plainBondTypes = [
+	Struct.Bond.PATTERN.TYPE.SINGLE,
+	Struct.Bond.PATTERN.TYPE.DOUBLE,
+	Struct.Bond.PATTERN.TYPE.TRIPLE
+];
 
 module.exports = BondTool;

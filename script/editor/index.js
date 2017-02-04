@@ -1,3 +1,5 @@
+var s = require('subscription');
+
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
@@ -33,7 +35,9 @@ function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({ atomColoring: true, scale: SCALE }, options));
 	this.selection = {};
 	this._tool = null; // eslint-disable-line
-	this.setupEvents(this.render.clientArea);
+
+	domEventSetup(this, clientArea);
+	eventSetup(this);
 }
 
 Editor.prototype.tool = function (name, opts) {
@@ -81,12 +85,11 @@ Editor.prototype.zoom = function (value) {
 	return this.render.options.zoom;
 };
 
-Editor.prototype.setupEvents = function (clientArea) {
+function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	// assign canvas events handlers
 	['OnClick', 'OnDblClick', 'OnMouseDown', 'OnMouseMove',
 	 'OnMouseUp', 'OnMouseLeave'].forEach(function (method) {
-		var editor = this;
 		var eventName = method.slice(2).toLowerCase();
 		clientArea.addEventListener(eventName, function (event) {
 			/* eslint-disable no-underscore-dangle */
@@ -104,7 +107,23 @@ Editor.prototype.setupEvents = function (clientArea) {
 				event.stopPropagation();
 			return event.preventDefault();
 		});
-	}, this);
+	});
+}
+
+function eventSetup(editor) {
+	var pass = -1;
+	editor.event = {
+		bondEdit: new s.PipelineSubscription(),
+		change: new s.Subscription()
+	};
+	editor.event.change.add(function (action) {
+		ui.addUndoAction(action, true);
+		editor.render.update();
+	}, pass);
+}
+
+Editor.prototype.on = function (eventName, handler) {
+	this.event[eventName].add(handler);
 };
 
 Editor.prototype.findItem = function (event, maps, skip) {

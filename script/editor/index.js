@@ -113,9 +113,12 @@ function domEventSetup(editor, clientArea) {
 function eventSetup(editor) {
 	var pass = -1;
 	editor.event = {
+		message: new s.Subscription(),
 		bondEdit: new s.PipelineSubscription(),
 		apointEdit: new s.PipelineSubscription(),
 		rgroupEdit: new s.PipelineSubscription(),
+		sgroupEdit: new s.PipelineSubscription(),
+		sdataEdit: new s.PipelineSubscription(),
 		change: new s.PipelineSubscription()
 	};
 	editor.event.change.add(function (action) {

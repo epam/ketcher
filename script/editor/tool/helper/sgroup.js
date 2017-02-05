@@ -2,68 +2,68 @@ var Action = require('../../action');
 var Struct = require('../../../chem/struct');
 var Set = require('../../../util/set');
 
-var ui = global.ui;
-
 function SGroupHelper(editor, type) {
 	this.editor = editor;
-	this.selection = null;
 	this.defaultType = type || null;
 }
 
 SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
-	this.selection = selection;
+	var editor = this.editor;
+	var struct = editor.render.ctab.molecule;
+	var sg = (id != null) && struct.sgroups.get(id);
+	var atoms = selection && selection.atoms;
+	var type = sg ? sg.type : this.defaultType;
+	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
-	var rnd = this.editor.render;
-	var sg = (id != null) && rnd.ctab.sgroups.get(id).item;
-	ui.showSGroupProperties({
-		type: sg ? sg.type : this.defaultType,
-		attrs: sg ? sg.getAttrs() : {},
-		onCancel: function () {
-			this.editor.setSelection(null);
-		}.bind(this),
-		onOk: function (params) {
-			if (id != null) {
-				ui.addUndoAction(Action.fromSgroupType(id, params.type)
-					.mergeWith(Action.fromSgroupAttrs(id, params.attrs)), true);
-			} else if (params.type != 'DAT' &&
-			           checkOverlapping(id, selection, rnd.ctab)) {
-				alert('Partial S-group overlapping is not allowed.');
-			} else {
-				id = rnd.ctab.molecule.sgroups.newId();
-				ui.addUndoAction(Action.fromSgroupAddition(params.type, this.selection.atoms,
-				                                           params.attrs, id), true);
-			}
-			this.editor.setSelection(null);
-			rnd.update();
-		}.bind(this)
+	editor.setSelection(null);
+	var res = editor.event[eventName].dispatch({
+		type: type,
+		attrs: sg ? sg.getAttrs() : {}
+	});
+
+	Promise.resolve(res).then(function (newSg) {
+		                           // TODO: check before signal
+		if (newSg.type != 'DAT' && // when data s-group separates
+		    checkOverlapping(struct, atoms || [])) {
+			editor.event.message.dispatch({
+				error: 'Partial S-group overlapping is not allowed.'
+			});
+		} else {
+			var action = (id != null) ?
+			    Action.fromSgroupType(id, newSg.type)
+			          .mergeWith(Action.fromSgroupAttrs(id, newSg.attrs)) :
+		        Action.fromSgroupAddition(newSg.type, atoms, newSg.attrs,
+		                                  struct.sgroups.newId());
+			editor.event.change.dispatch(action);
+		}
 	});
 };
 
-function checkOverlapping(id, selection, restruct) {
+function checkOverlapping(struct, atoms) {
 	var verified = {};
 	var atomsHash = {};
 
-	selection.atoms.each(function (id) {
+	atoms.each(function (id) {
 		atomsHash[id] = true;
 	});
 
-	return 0 <= selection.atoms.findIndex(function (id) {
-		var atom = restruct.atoms.get(id);
-		var sgroups = Set.list(atom.a.sgs);
+	return 0 <= atoms.findIndex(function (id) {
+		var atom = struct.atoms.get(id);
+		var sgroups = Set.list(atom.sgs);
 
 		return 0 <= sgroups.findIndex(function (sid) {
-			var sg = restruct.sgroups.get(sid).item;
+			var sg = struct.sgroups.get(sid);
 			if (sg.type == 'DAT' || sid in verified)
 				return false;
 
-			var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sg);
+			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
 
-			if (sgAtoms.length < selection.atoms.length) {
+			if (sgAtoms.length < atoms.length) {
 				if (0 <= sgAtoms.findIndex(function (aid) {
 					return !(aid in atomsHash);
 				}))
 					return true;
-			} else if (0 <= selection.atoms.findIndex(function (aid) {
+			} else if (0 <= atoms.findIndex(function (aid) {
 				return (sgAtoms.indexOf(aid) == -1);
 			})) {
 				return true;

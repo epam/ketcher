@@ -137,12 +137,26 @@ function initEditor(editor) {
 			});
 		}
 	});
+	editor.on('sgroupEdit', function (sgroup) {
+		return dialog(modal.sgroup, sgroup);
+	});
+	editor.on('sdataEdit', function (sgroup) {
+		return dialog(modal.sgroup, sgroup);
+	});
 	editor.on('apointEdit', function (ap) {
 		var dlg = dialog(modal.attachmentPoints,
 		                 structConv.fromApoint(ap));
 		return dlg.then(function (res) {
 			return structConv.toApoint(res);
 		});
+	});
+	editor.on('message', function (msg) {
+		if (msg.error)
+			alert(msg.error);
+		else {
+			var act = Object.keys(msg)[0];
+			console[act](msg[act]);
+		}
 	});
 }
 
@@ -1000,7 +1014,6 @@ Object.assign(ui, {
 	hideDialog: hideDialog,
 
 	// TODO: search a way to pass dialogs to editor
-	showSGroupProperties: modal.sgroup,
 	showRGroupTable: dialog.bind(null, modal.rgroup),
 	showElemTable: modal.periodTable,
 	showReaGenericsTable: modal.genericGroups,

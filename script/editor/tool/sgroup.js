@@ -3,10 +3,11 @@ var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 var SGroupHelper = require('./helper/sgroup');
 
+var sMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
+
 function SGroupTool(editor, type) {
 	this.editor = editor;
 
-	this.maps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(1, editor);
 	this.sGroupHelper = new SGroupHelper(editor, type);
@@ -19,19 +20,21 @@ function SGroupTool(editor, type) {
 		// otherwise, clear selection
 		this.editor.setSelection(null);
 }
+
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
-	var ci = this.editor.findItem(event, this.maps);
+	var ci = this.editor.findItem(event, sMaps);
 	if (!ci || ci.type == 'Canvas')
 		this.lassoHelper.begin(event);
 };
+
 SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running()) {
 		this.editor.setSelection(
-		this.lassoHelper.addPoint(event)
+			this.lassoHelper.addPoint(event)
 		);
 	} else {
-		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
+		this.hoverHelper.hover(this.editor.findItem(event, sMaps));
 	}
 };
 SGroupTool.prototype.OnMouseUp = function (event) {
@@ -40,7 +43,7 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		selection = this.lassoHelper.end(event);
 	} else {
-		var ci = this.editor.findItem(event, this.maps);
+		var ci = this.editor.findItem(event, sMaps);
 		if (!ci || ci.type == 'Canvas')
 			return;
 		this.hoverHelper.hover(null);

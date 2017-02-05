@@ -114,6 +114,7 @@ function eventSetup(editor) {
 	var pass = -1;
 	editor.event = {
 		bondEdit: new s.PipelineSubscription(),
+		apointEdit: new s.PipelineSubscription(),
 		change: new s.Subscription()
 	};
 	editor.event.change.add(function (action) {

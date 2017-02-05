@@ -2,33 +2,30 @@ var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
-var ui = global.ui;
-
 function APointTool(editor) {
 	this.editor = editor;
 
 	this.hoverHelper = new HoverHelper(this);
 }
+
 APointTool.prototype = new EditorTool();
+
 APointTool.prototype.OnMouseMove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
+
 APointTool.prototype.OnMouseUp = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms']);
+	var editor = this.editor;
+	var struct = editor.render.ctab.molecule;
+	var ci = editor.findItem(event, ['atoms']);
+
 	if (ci && ci.map == 'atoms') {
 		this.hoverHelper.hover(null);
-		var apOld = rnd.ctab.molecule.atoms.get(ci.id).attpnt;
-		ui.showAtomAttachmentPoints({
-			primary: ((apOld || 0) & 1) > 0,
-			secondary: ((apOld || 0) & 2) > 0,
-			onOk: function (res) {
-				var apNew = (res.primary && 1) + (res.secondary && 2);
-				if (apOld != apNew) {
-					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { attpnt: apNew }), true);
-					rnd.update();
-				}
-			}
+		var ap = struct.atoms.get(ci.id).attpnt;
+		var res = editor.event.apointEdit.dispatch(ap);
+		Promise.resolve(res).then(function (newAp) {
+			if (ap != newAp)
+				editor.event.change.dispatch(Action.fromAtomsAttrs(ci.id, { attpnt: newAp }));
 		});
 		return true;
 	}

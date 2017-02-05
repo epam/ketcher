@@ -64,7 +64,7 @@ function init (opts, apiServer) {
 	initDropdown(toolbar);
 	initCliparea(ketcherWindow);
 	initZoom();
-	initEditor();
+	initEditor(ui.editor);
 
 	updateHistoryButtons();
 	updateClipboardButtons();
@@ -106,13 +106,19 @@ function init (opts, apiServer) {
 };
 
 
-function initEditor() {
-	var editor = ui.editor;
+function initEditor(editor) {
 	editor.on('bondEdit', function (bond) {
 		var dlg = dialog(modal.bondProps,
 		                 structConv.fromBond(bond));
 		return dlg.then(function (res) {
 			return structConv.toBond(res);
+		});
+	});
+	editor.on('apointEdit', function (ap) {
+		var dlg = dialog(modal.attachmentPoints,
+		                 structConv.fromApoint(ap));
+		return dlg.then(function (res) {
+			return structConv.toApoint(res);
 		});
 	});
 }
@@ -975,7 +981,6 @@ Object.assign(ui, {
 	showRGroupTable: dialog.bind(null, modal.rgroup),
 	showElemTable: modal.periodTable,
 	showReaGenericsTable: modal.genericGroups,
-	showAtomAttachmentPoints: modal.attachmentPoints,
 	showAtomProperties: modal.atomProps,
 	showRLogicTable: modal.rgroupLogic,
 	showLabelEditor: function (val) {

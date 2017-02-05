@@ -1,8 +1,8 @@
-var Struct = require('../chem/struct');
+import Struct from '../chem/struct';
 
-function fromBond(sbond) {
-	var type = sbond.type;
-	var stereo = sbond.stereo;
+export function fromBond(sbond) {
+	const type = sbond.type;
+	const stereo = sbond.stereo;
 	return {
 		type: bondType2Caption(type, stereo),
 		topology: sbond.topology || 0,
@@ -10,11 +10,27 @@ function fromBond(sbond) {
 	};
 }
 
-function toBond(bond) {
-	return Object.assign(caption2BondType(bond.type), {
+export function toBond(bond) {
+	return {
 		topology: parseInt(bond.topology, 10),
-		reactingCenterStatus: parseInt(bond.center, 10)
-	});
+		reactingCenterStatus: parseInt(bond.center, 10),
+		...caption2BondType(bond.type)
+	};
+}
+
+export function fromApoint(sap) {
+	return {
+		primary: ((sap || 0) & 1) > 0,
+		secondary: ((sap || 0) & 2) > 0
+	};
+}
+
+export function toApoint(ap) {
+	return (ap.primary && 1) + (ap.secondary && 2);
+}
+
+export function caption2BondType(caption) {
+	return Object.assign({}, bondCaptionMap[caption]);
 }
 
 function bondType2Caption(type, stereo) {
@@ -26,11 +42,7 @@ function bondType2Caption(type, stereo) {
 	throw 'No such bond caption';
 }
 
-function caption2BondType(caption) {
-	return Object.assign({}, bondCaptionMap[caption]);
-}
-
-var bondCaptionMap = {
+const bondCaptionMap = {
 	single: {
 		type: Struct.Bond.PATTERN.TYPE.SINGLE,
 		stereo: Struct.Bond.PATTERN.STEREO.NONE
@@ -79,10 +91,4 @@ var bondCaptionMap = {
 		type: Struct.Bond.PATTERN.TYPE.ANY,
 		stereo: Struct.Bond.PATTERN.STEREO.NONE
 	}
-};
-
-module.exports = {
-	fromBond: fromBond,
-	toBond: toBond,
-	caption2BondType: caption2BondType
 };

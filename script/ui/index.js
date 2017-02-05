@@ -114,6 +114,29 @@ function initEditor(editor) {
 			return structConv.toBond(res);
 		});
 	});
+	editor.on('rgroupEdit', function (rgroup) {
+		if (Object.keys(rgroup).length > 1) {
+			var rgids = [];
+			editor.struct().rgroups.each(function (rgid) {
+				rgids.push(rgid);
+			});
+			return dialog(modal.rgroupLogic,
+			              Object.assign({ rgroupLabels: rgids },
+			                            rgroup));
+		} else {
+			var dlg = dialog(modal.rgroup, {
+				values: rgroup.label && ['R' + rgroup.label]
+			});
+			return dlg.then(function (res) {
+				console.assert(res.values.length <= 1,
+				               'Too much elements');
+				return {
+					label: res.values.length == 0 ? null :
+						res.values[0].substr(1) - 0
+				};
+			});
+		}
+	});
 	editor.on('apointEdit', function (ap) {
 		var dlg = dialog(modal.attachmentPoints,
 		                 structConv.fromApoint(ap));
@@ -982,7 +1005,6 @@ Object.assign(ui, {
 	showElemTable: modal.periodTable,
 	showReaGenericsTable: modal.genericGroups,
 	showAtomProperties: modal.atomProps,
-	showRLogicTable: modal.rgroupLogic,
 	showLabelEditor: function (val) {
 		return dialog(modal.labelEdit, val, true);
 	}

@@ -24,8 +24,10 @@ APointTool.prototype.OnMouseUp = function (event) {
 		var ap = struct.atoms.get(ci.id).attpnt;
 		var res = editor.event.apointEdit.dispatch(ap);
 		Promise.resolve(res).then(function (newAp) {
-			if (ap != newAp)
-				editor.event.change.dispatch(Action.fromAtomsAttrs(ci.id, { attpnt: newAp }));
+			if (ap != newAp) {
+				var action = Action.fromAtomsAttrs(ci.id, { attpnt: newAp });
+				editor.event.change.dispatch(action);
+			}
 		});
 		return true;
 	}

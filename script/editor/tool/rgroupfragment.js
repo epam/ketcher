@@ -4,8 +4,6 @@ var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
-var ui = global.ui;
-
 function RGroupFragmentTool(editor) {
 	this.editor = editor;
 
@@ -18,59 +16,25 @@ RGroupFragmentTool.prototype.OnMouseMove = function (event) {
 };
 
 RGroupFragmentTool.prototype.OnMouseUp = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['frags', 'rgroups']);
-	if (ci && ci.map == 'frags') {
+	var editor = this.editor;
+	var struct = editor.render.ctab.molecule;
+	var ci = editor.findItem(event, ['frags', 'rgroups']);
+	if (ci) {
 		this.hoverHelper.hover(null);
-		var rgOld = Struct.RGroup.findRGroupByFragment(rnd.ctab.molecule.rgroups, ci.id);
-		ui.showRGroupTable({
-			values: rgOld && ['R' + rgOld],
-			onOk: function (rgNew) {
-				console.assert(rgNew.values.length <= 1, 'Too much elements');
-				rgNew = rgNew.values.length ? rgNew.values[0].substr(1) - 0 : 0;
-				if (rgOld != rgNew) {
-					ui.addUndoAction(
-					Action.fromRGroupFragment(rgNew, ci.id),
-						true
-					);
-					rnd.update();
-				}
-			}.bind(this)
-		});
-		return true;
-	} else if (ci && ci.map == 'rgroups') {
-		this.hoverHelper.hover(null);
-		var rg = rnd.ctab.molecule.rgroups.get(ci.id);
-		var rgroupLabels = [];
-		rnd.ctab.molecule.rgroups.each(function (rgid) {
-			rgroupLabels.push(rgid);
-		});
-		ui.showRLogicTable({
-			label: ci.id,
-			rgroupLabels: rgroupLabels,
-			range: rg.range || '>0',
-			resth: rg.resth,
-			ifthen: rg.ifthen,
-			onOk: function (res) {
-				var props = {};
-				if (rg.range != res.range) {
-					var isValid = res.range.split(',').all(function (s) {
-						return s.match(/^[>,<,=]?[0-9]+$/g) || s.match(/^[0-9]+\-[0-9]+$/g);
-					});
-					if (!isValid) {
-						alert('Bad occurrence value');
-						return false;
-					}
-					props.range = res.range;
-				}
-				if (rg.resth != res.resth) props.resth = res.resth;
-				if (rg.ifthen != res.ifthen) props.ifthen = res.ifthen;
-				if ('range' in props || 'resth' in props || 'ifthen' in props) {
-					ui.addUndoAction(Action.fromRGroupAttrs(ci.id, props));
-					rnd.update();
-				}
-				return true;
-			}.bind(this)
+
+		var label = (ci.map == 'rgroups') ? ci.id :
+		    Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;
+		var rg = Object.assign({ label: label },
+		                       ci.map == 'frags' ? null :
+		                       struct.rgroups.get(ci.id));
+		var res = editor.event.rgroupEdit.dispatch(rg);
+
+		Promise.resolve(res).then(function (newRg) {
+			var action = ci.map == 'rgroups' ?
+			    Action.fromRGroupAttrs(ci.id, newRg) :
+			    Action.fromRGroupFragment(newRg.label, ci.id);
+
+			editor.event.change.dispatch(action);
 		});
 		return true;
 	}

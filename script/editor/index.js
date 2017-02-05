@@ -115,7 +115,8 @@ function eventSetup(editor) {
 	editor.event = {
 		bondEdit: new s.PipelineSubscription(),
 		apointEdit: new s.PipelineSubscription(),
-		change: new s.Subscription()
+		rgroupEdit: new s.PipelineSubscription(),
+		change: new s.PipelineSubscription()
 	};
 	editor.event.change.add(function (action) {
 		ui.addUndoAction(action, true);

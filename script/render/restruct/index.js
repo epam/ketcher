@@ -567,12 +567,13 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 };
 
 ReStruct.prototype.setSelection = function (selection) {
+	var redraw = (arguments.length == 0);  // render.update only
+
 	for (var map in ReStruct.maps) {
-		if (ReStruct.maps[map].isSelectable() && (!selection || selection[map])) {
-			// TODO: iterate over selection ids
+		if (ReStruct.maps[map].isSelectable()) {
 			this[map].each(function (id, item) {
-				var selected = selection ? selection[map].indexOf(id) > -1 :
-				                           item.selected; // for render.update only
+				var selected = redraw ? item.selected :
+				    selection && selection[map] && selection[map].indexOf(id) > -1;
 				this.showItemSelection(item, selected);
 			}, this);
 		}

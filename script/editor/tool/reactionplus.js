@@ -15,7 +15,7 @@ ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
 		this.hoverHelper.hover(null);
-		this.editor.setSelection(ci);
+		this.editor.setSelection({ rxnPluses: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
@@ -25,8 +25,8 @@ ReactionPlusTool.prototype.OnMouseMove = function (event) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform();
 		this.dragCtx.action = Action.fromMultipleMove(
-			this.editor.selection,
-		rnd.page2obj(event).sub(this.dragCtx.xy0)
+			this.editor.getSelection() || {},
+			rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
 		rnd.update();
 	} else {

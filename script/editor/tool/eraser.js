@@ -19,13 +19,10 @@ EraserTool.prototype.OnMouseDown = function (event) {
 		this.lassoHelper.begin(event);
 };
 EraserTool.prototype.OnMouseMove = function (event) {
-	if (this.lassoHelper.running()) {
-		this.editor.setSelection(
-		this.lassoHelper.addPoint(event)
-		);
-	} else {
+	if (this.lassoHelper.running())
+		this.editor.setSelection(this.lassoHelper.addPoint(event));
+	else
 		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
-	}
 };
 EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;

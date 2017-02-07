@@ -29,11 +29,9 @@ Action.prototype.mergeWith = function (action) {
 // Perform action and return inverted one
 Action.prototype.perform = function () {
 	var action = new Action();
-	var idx = 0; // eslint-disable-line no-unused-vars
 
 	this.operations.each(function (operation) {
 		action.addOp(operation.perform(ui.editor));
-		idx++;
 	}, this);
 
 	action.operations.reverse();
@@ -189,21 +187,6 @@ function fromBondAttrs(id, attrs, flip, reset) {
 	}
 	if (flip)
 		action.mergeWith(toBondFlipping(id));
-	return action.perform();
-}
-
-function fromSelectedBondsAttrs(attrs, flips) { // eslint-disable-line no-unused-vars
-	var action = new Action();
-
-	ui.editor.getSelection().bonds.each(function (id) {
-		for (var key in attrs)
-			action.addOp(new op.BondAttr(id, key, attrs[key]));
-	}, this);
-	if (flips) {
-		flips.each(function (id) {
-			action.mergeWith(toBondFlipping(id));
-		}, this);
-	}
 	return action.perform();
 }
 
@@ -496,64 +479,24 @@ function FromFragmentSplit(frid) { // TODO [RB] the thing is too tricky :) need 
 	return action;
 }
 
-function fromFragmentAddition(atoms, bonds, sgroups, rxnArrows, rxnPluses) {  // eslint-disable-line no-unused-vars, max-params
-	var action = new Action();
-
-	/*
-	 atoms.each(function (aid)
-	 {function fromFragmentSplit(frid)function fromFragmentSplit(frid)
-	 atomGetNeighbors(ui.render.ctab, aid).each(function (nei)
-	 {
-	 if (ui.selection.bonds.indexOf(nei.bid) == -1)
-	 ui.selection.bonds = ui.selection.bonds.concat([nei.bid]);
-	 }, this);
-	 }, this);
-	 */
-
-	// TODO: merge close atoms and bonds
-
-	sgroups.each(function (sid) {
-		action.addOp(new op.SGroupRemoveFromHierarchy(sid));
-		action.addOp(new op.SGroupDelete(sid));
-	}, this);
-
-
-	bonds.each(function (bid) {
-		action.addOp(new op.BondDelete(bid));
-	}, this);
-
-
-	atoms.each(function (aid) {
-		action.addOp(new op.AtomDelete(aid));
-	}, this);
-
-	rxnArrows.each(function (id) {
-		action.addOp(new op.RxnArrowDelete(id));
-	}, this);
-
-	rxnPluses.each(function (id) {
-		action.addOp(new op.RxnPlusDelete(id));
-	}, this);
-
-	action.mergeWith(new FromFragmentSplit(-1));
-
-	return action;
-}
-
 function fromFragmentDeletion(selection) { // eslint-disable-line max-statements
-	selection = selection || ui.editor.getSelection();
-
+	console.assert(!!selection);
 	var action = new Action();
 	var atomsToRemove = [];
-
 	var frids = [];
+	selection = {               // TODO: refactor me
+		atoms: selection.atoms || [],
+		bonds: selection.bonds || [],
+		rxnPluses: selection.rxnPluses || [],
+		rxnArrows: selection.rnxArrows || [],
+		sgroupData: selection.sgroupData || [],
+		chiralFlags: selection.chiralFlags || []
+	};
 
 	var actionRemoveDataSGroups = new Action();
-	if (selection.sgroupData) {
-		selection.sgroupData.each(function (id) {
-			actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(id));
-		}, this);
-	}
+	selection.sgroupData.each(function (id) {
+		actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(id));
+	}, this);
 
 	selection.atoms.each(function (aid) {
 		atomGetNeighbors(ui.render.ctab, aid).each(function (nei) {

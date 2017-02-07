@@ -13,12 +13,14 @@ function SGroupTool(editor, type) {
 	this.sGroupHelper = new SGroupHelper(editor, type);
 
 	var selection = this.editor.getSelection();
-	if (selection.atoms && selection.atoms.length > 0)
+	if (selection && selection.atoms) {
 		// if the selection contains atoms, create an s-group out of those
+		console.assert(selection.atoms.length > 0);
 		this.sGroupHelper.showPropertiesDialog(null, selection);
-	else
+	} else {
 		// otherwise, clear selection
 		this.editor.setSelection(null);
+	}
 }
 
 SGroupTool.prototype = new EditorTool();
@@ -29,14 +31,12 @@ SGroupTool.prototype.OnMouseDown = function (event) {
 };
 
 SGroupTool.prototype.OnMouseMove = function (event) {
-	if (this.lassoHelper.running()) {
-		this.editor.setSelection(
-			this.lassoHelper.addPoint(event)
-		);
-	} else {
+	if (this.lassoHelper.running())
+		this.editor.setSelection(this.lassoHelper.addPoint(event));
+	else
 		this.hoverHelper.hover(this.editor.findItem(event, sMaps));
-	}
 };
+
 SGroupTool.prototype.OnMouseUp = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group

@@ -413,10 +413,12 @@ function initHotKeys(toolbar) {
 
 function keyHandle(toolbar, hotKeys, event) {
 	var key = keyNorm(event);
-	var atomsSelected = ui.editor.getSelection().atoms;
+	var atomsSelected = ui.editor.getSelection() &&
+	                    ui.editor.getSelection().atoms;
 	var group;
 
-	if (key.length == 1 && atomsSelected.length > 0 && key.match(/\w/)) {
+	if (key.length == 1 && atomsSelected && key.match(/\w/)) {
+		console.assert(atomsSelected.length > 0);
 		dialog(modal.labelEdit, { letter: key }).then(function (res) {
 				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
 				ui.render.update();
@@ -560,7 +562,7 @@ function serverCall(method, options, struct) {
 	if (!struct) {
 		var aidMap = {};
 		struct = ui.editor.struct().clone(null, null, false, aidMap);
-		var selectedAtoms = ui.editor.getSelection(true).atoms || [];
+		var selectedAtoms = ui.editor.explicitSelected().atoms || [];
 		selectedAtoms = selectedAtoms.map(function (aid) {
 			return aidMap[aid];
 		});
@@ -669,7 +671,7 @@ function load(structStr, options) {
 }
 
 function removeSelected () {
-	addUndoAction(Action.fromFragmentDeletion());
+	addUndoAction(Action.fromFragmentDeletion(ui.editor.getSelection()));
 	ui.editor.setSelection(null);
 	ui.render.update();
 };
@@ -789,12 +791,12 @@ var actionMap = {
 		return serverTransform('calculateCip');
 	},
 	cut: function () {
-		var struct = ui.editor.selectedStruct();
+		var struct = ui.editor.structSelected();
 		removeSelected();
 		return struct.isBlank() ? null : struct;
 	},
 	copy: function () {
-		var struct = ui.editor.selectedStruct();
+		var struct = ui.editor.structSelected();
 		ui.editor.setSelection(null);
 		return struct.isBlank() ? null : struct;
 	},
@@ -813,7 +815,7 @@ var actionMap = {
 		});
 	},
 	'select-all': function () {
-		ui.editor.selectAll();
+		ui.editor.setSelection('all');
 		selectAction(null);
 	},
 	'deselect-all': function () {

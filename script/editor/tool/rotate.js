@@ -11,8 +11,8 @@ function RotateTool(editor) {
 	this.editor = editor;
 	this.lassoHelper = new LassoHelper(1, editor);
 
-	var selection = this.editor.selection;
-	if (!selection.atoms || !selection.atoms.length)
+	var selection = this.editor.getSelection();
+	if (!selection || !selection.atoms)
 		// otherwise, clear selection
 		this.editor.setSelection(null);
 }
@@ -20,8 +20,9 @@ function RotateTool(editor) {
 RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
-	var selection = this.editor.selection;
-	if (selection.atoms && selection.atoms.length) {
+	var selection = this.editor.getSelection();
+	if (selection && selection.atoms) {
+		console.assert(selection.atoms.length > 0);
 		var rnd = this.editor.render;
 		var molecule = rnd.ctab.molecule;
 		var xy0 = new Vec2();
@@ -82,9 +83,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 };
 RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	if (this.lassoHelper.running()) {
-		this.editor.setSelection(
-		this.lassoHelper.addPoint(event)
-		);
+		this.editor.setSelection(this.lassoHelper.addPoint(event));
 	} else if ('dragCtx' in this) {
 		var editor = this.editor;
 		var rnd = editor.render;
@@ -105,7 +104,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 
 		dragCtx.angle = degrees;
 		dragCtx.action = Action.fromRotate(
-			dragCtx.all ? rnd.ctab.molecule : this.editor.getSelection(),
+			dragCtx.all ? rnd.ctab.molecule : this.editor.getSelection() || {},
 			dragCtx.xy0,
 			angle
 		);

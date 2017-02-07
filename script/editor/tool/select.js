@@ -25,7 +25,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
-	this.hoverHelper.hover(null); // TODO review hovering for touch devices
+	this.hoverHelper.hover(null); // TODO review hovering for touch devicess
 	var selectFragment = (this.lassoHelper.fragment || event.ctrlKey);
 	var ci = this.editor.findItem(
 		event,
@@ -38,32 +38,29 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			this.lassoHelper.begin(event);
 	} else {
 		this.hoverHelper.hover(null);
-		if (!isSelected(rnd, this.editor.selection, ci)) {
+		if (!isSelected(rnd, this.editor.getSelection(), ci)) {
+			var sel = closestToSel(ci);
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
-				this.editor.setSelection({
+				sel = {
 					atoms: frag.fragGetAtoms(rnd, ci.id),
 					bonds: frag.fragGetBonds(rnd, ci.id)
-				},
-					event.shiftKey
-				);
+				};
 			} else if (ci.map == 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
-				this.editor.setSelection({
+				sel = {
 					atoms: Struct.SGroup.getAtoms(struct, sgroup),
 					bonds: Struct.SGroup.getBonds(struct, sgroup)
-				}, event.shiftKey
-				);
+				};
 			} else if (ci.map == 'rgroups') {
 				var rgroup = ctab.rgroups.get(ci.id);
-				this.editor.setSelection({
+				sel = {
 					atoms: rgroup.getAtoms(rnd),
 					bonds: rgroup.getBonds(rnd)
-				}, event.shiftKey
-				);
-			} else {
-				this.editor.setSelection(ci, event.shiftKey);
+				};
 			}
+			this.editor.setSelection(!event.shiftKey ? sel :
+			                         selMerge(sel, this.editor.getSelection()));
 		}
 		this.dragCtx = {
 			item: ci,
@@ -112,8 +109,8 @@ SelectTool.prototype.OnMouseMove = function (event) {
 			rnd.update(); // redraw the elements in unshifted position, lest the have different offset
 		}
 		this.dragCtx.action = Action.fromMultipleMove(
-		this.editor.getSelection(true),
-		rnd.page2obj(event).sub(this.dragCtx.xy0));
+			this.editor.explicitSelected(),
+			rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
@@ -122,11 +119,12 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		}
 		rnd.update();
 	} else if (this.lassoHelper.running()) {
-		this.editor.setSelection(this.lassoHelper.addPoint(event), event.shiftKey);
+		var sel = this.lassoHelper.addPoint(event);
+		this.editor.setSelection(!event.shiftKey ? sel :
+		                         selMerge(sel, this.editor.getSelection()));
 	} else {
 		this.hoverHelper.hover(
-		this.editor.findItem(
-			event,
+		this.editor.findItem(event,
 			(this.lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
@@ -143,7 +141,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
 				this.hoverHelper.hover(null);
-				this.editor.setSelection();
+				this.editor.setSelection(null);
 				this.dragCtx.action = this.dragCtx.action ?
 					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
 						Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
@@ -153,7 +151,9 @@ SelectTool.prototype.OnMouseUp = function (event) {
 		this.editor.render.update();
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		this.editor.setSelection(this.lassoHelper.end(), event.shiftKey);
+		var sel = this.lassoHelper.end();
+		this.editor.setSelection(!event.shiftKey ? sel :
+		                         selMerge(sel, this.editor.getSelection()));
 	} else if (this.lassoHelper.fragment) {
 		this.editor.setSelection(null);
 	}
@@ -166,7 +166,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	var ci = this.editor.findItem(event);
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
-		this.editor.setSelection(ci);
+		this.editor.setSelection(closestToSel(ci));
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = struct.atoms.get(ci.id);
 		if (atom.label == 'R#') {
@@ -233,14 +233,14 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 			});
 		}
 	} else if (ci.map == 'bonds') {
-		this.editor.setSelection(ci);
+		this.editor.setSelection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var res = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(res).then(function (newbond) {
 			editor.event.change.dispatch(Action.fromBondAttrs(ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {
-		this.editor.setSelection(ci);
+		this.editor.setSelection(closestToSel(ci));
 		this.sGroupHelper.showPropertiesDialog(ci.id);
 //    } else if (ci.map == 'sgroupData') {
 //        this.sGroupHelper.showPropertiesDialog(ci.sgid);
@@ -261,8 +261,38 @@ SelectTool.prototype.OnCancel = function () {
 	this.hoverHelper.hover(null);
 };
 
+function closestToSel(ci) {
+	var res = {};
+	res[ci.map] = [ci.id];
+	return res;
+}
+
+// TODO: deep-merge?
+function selMerge(selection, add) {
+	if (add) {
+		for (var item in add) {
+			if (!selection[item]) {
+				selection[item] = add[item].slice();
+			} else {
+				selection[item] = uniqArray(selection[item],
+				                            add[item]);
+			}
+		}
+	}
+	return selection;
+}
+
+function uniqArray(dest, add) {
+	for (var i = 0; i < add.length; i++) {
+		if (dest.indexOf(add[i]) < 0)
+			dest.push(add[i]);
+	}
+	return dest;
+}
 
 function isSelected(render, selection, item) {
+	if (!selection)
+		return false;
 	var ctab = render.ctab;
 	if (item.map == 'frags' || item.map == 'rgroups') {
 		var atoms = item.map == 'frags' ?

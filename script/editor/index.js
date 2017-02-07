@@ -4,7 +4,6 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var Render = require('../render');
-var ReStruct = require('../render/restruct');
 var closest = require('./closest');
 
 var toolMap = {
@@ -31,9 +30,12 @@ var toolMap = {
 var SCALE = 40;  // const
 var ui = global.ui;
 
+var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({ atomColoring: true, scale: SCALE }, options));
-	this.selection = {};
+
+	this.selection = null;
 	this._tool = null; // eslint-disable-line
 
 	domEventSetup(this, clientArea);
@@ -158,77 +160,70 @@ Editor.prototype.hasSelection = function (copyable) {
 	return false;
 };
 
-Editor.prototype.getSelection = function (explicit) {
-	var selection = {};
-	for (var map in this.selection)
-		selection[map] = this.selection[map].slice();
-
-	if (explicit) {
-		var struct = this.render.ctab.molecule;
-		// "auto-select" the atoms for the bonds in selection
-		if ('bonds' in selection) {
-			selection.bonds.each(
-			function (bid) {
-				var bond = struct.bonds.get(bid);
-				selection.atoms = selection.atoms || [];
-				if (selection.atoms.indexOf(bond.begin) < 0) selection.atoms.push(bond.begin);
-				if (selection.atoms.indexOf(bond.end) < 0) selection.atoms.push(bond.end);
-			});
-		}
-		// "auto-select" the bonds with both atoms selected
-		if ('atoms' in selection && 'bonds' in selection) {
-			struct.bonds.each(
-			function (bid) {
-				if (!('bonds' in selection) || selection.bonds.indexOf(bid) < 0) {
-					var bond = struct.bonds.get(bid);
-					if (selection.atoms.indexOf(bond.begin) >= 0 && selection.atoms.indexOf(bond.end) >= 0) {
-						selection.bonds = selection.bonds || [];
-						selection.bonds.push(bid);
-					}
-				}
-			});
-		}
-	}
-	return selection;
+Editor.prototype.getSelection = function () {
+	return this.selection;
 };
 
-Editor.prototype.setSelection = function (selection, add) {
-	if (!add) {
-		this.selection = {};
-		for (var map1 in ReStruct.maps)
-			this.selection[map1] = [];
+Editor.prototype.setSelection = function (selection) {
+	this.selection = null;
+	if (selection == 'all') {   // TODO: better way will be this.struct()
+		var restruct = this.render.ctab;
+		selection = structObjects.reduce(function (res, key) {
+			res[key] = restruct[key].ikeys();
+			return res;
+		}, {});
 	}
-
 	if (selection) {
-		if ('id' in selection && 'map' in selection)
-			(selection[selection.map] = selection[selection.map] || []).push(selection.id); // NK: WTF??
-
-		for (var map2 in this.selection) {
-			if (map2 in selection) {
-				for (var i = 0; i < selection[map2].length; i++) {
-					if (this.selection[map2].indexOf(selection[map2][i]) < 0) // eslint-disable-line max-depth
-						this.selection[map2].push(selection[map2][i]);
-				}
-			}
+		var res = {};
+		for (var key in selection) {
+			if (selection[key].length > 0) // TODO: deep merge
+				res[key] = selection[key].slice();
 		}
+		if (Object.keys(res) != 0)
+			this.selection = res;
 	}
-	console.assert(this.selection, 'Selection cannot be null');
+	console.info('setSelection', selection, this.selection);
 	this.render.ctab.setSelection(this.selection);
 	this.render.update();
 
 	ui.updateClipboardButtons(); // TODO notify ui about selection
 };
 
-Editor.prototype.selectAll = function () {
-	var selection = {};
-	for (var map in ReStruct.maps)
-		selection[map] = this.render.ctab[map].ikeys();
-	this.setSelection(selection);
+Editor.prototype.explicitSelected = function () {
+	var selection = this.getSelection() || {};
+	var res = structObjects.reduce(function (res, key) {
+		res[key] = selection[key] ? selection[key].slice() : [];
+		return res;
+	}, {});
+
+	var struct = this.render.ctab.molecule;
+	// "auto-select" the atoms for the bonds in selection
+	if ('bonds' in res) {
+		res.bonds.forEach(function (bid) {
+			var bond = struct.bonds.get(bid);
+			res.atoms = res.atoms || [];
+			if (res.atoms.indexOf(bond.begin) < 0) res.atoms.push(bond.begin);
+			if (res.atoms.indexOf(bond.end) < 0) res.atoms.push(bond.end);
+		});
+	}
+	// "auto-select" the bonds with both atoms selected
+	if ('atoms' in res && 'bonds' in res) {
+		struct.bonds.each(function (bid) {
+			if (!('bonds' in res) || res.bonds.indexOf(bid) < 0) {
+				var bond = struct.bonds.get(bid);
+				if (res.atoms.indexOf(bond.begin) >= 0 && res.atoms.indexOf(bond.end) >= 0) {
+					res.bonds = res.bonds || [];
+					res.bonds.push(bid);
+				}
+			}
+		});
+	}
+	return res;
 };
 
-Editor.prototype.selectedStruct = function () {
+Editor.prototype.structSelected = function () {
 	var struct = this.render.ctab.molecule;
-	var selection = this.getSelection(true);
+	var selection = this.explicitSelected();
 	var dst = struct.clone(Set.fromList(selection.atoms),
 						   Set.fromList(selection.bonds), true);
 
@@ -263,7 +258,7 @@ Editor.prototype.recoordinate = function (rp/* , vp*/) {
 };
 
 function getStructCenter(restruct, selection) {
-	var bb = restruct.getVBoxObj(selection);
+	var bb = restruct.getVBoxObj(selection || {});
 	return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 

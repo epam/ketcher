@@ -8,6 +8,14 @@ var utils = require('./utils');
 var ui = global.ui;
 
 function BondTool(editor, bondProps) {
+	if (!(this instanceof BondTool)) {
+		// Action.fromBondAttrs(editor.selection().bonds, {
+		// type: bondType(mode).type,
+		// stereo: Bond.PATTERN.STEREO.NONE })
+		editor.selection(null);
+		return new BondTool(editor, bondProps);
+	}
+
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
 	this.bondProps = bondProps;

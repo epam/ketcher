@@ -7,12 +7,24 @@ var utils = require('./utils');
 var ui = global.ui;
 
 function AtomTool(editor, atomProps) {
+	if (!(this instanceof AtomTool)) {
+		if (!editor.selection() || !editor.selection().atoms)
+			return new AtomTool(editor, atomProps);
+
+		var action = Action.fromAtomsAttrs(editor.selection().atoms,
+		                                   atomProps);
+		editor.event.change.dispatch(action);
+		editor.selection(null);
+		return null;
+	}
+
 	this.editor = editor;
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Struct.Bond.PATTERN.STEREO.NONE };
 
 	this.hoverHelper = new HoverHelper(this);
 }
+
 AtomTool.prototype = new EditorTool();
 AtomTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);

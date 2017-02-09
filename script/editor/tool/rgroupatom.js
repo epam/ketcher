@@ -6,6 +6,12 @@ var HoverHelper = require('./helper/hover');
 var ui = global.ui;
 
 function RGroupAtomTool(editor) {
+	if (!(this instanceof RGroupAtomTool)) {
+		// TODO: map atoms with labels
+		editor.selection(null);
+		return new RGroupAtomTool(editor);
+	}
+
 	this.editor = editor;
 
 	this.hoverHelper = new HoverHelper(this);

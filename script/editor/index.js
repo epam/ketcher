@@ -4,6 +4,8 @@ var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
 var Render = require('../render');
+var Action = require('./action');
+
 var closest = require('./closest');
 
 var toolMap = {
@@ -47,7 +49,10 @@ Editor.prototype.tool = function (name, opts) {
 		/* eslint-disable no-underscore-dangle*/
 		if (this._tool)
 			this._tool.OnCancel(); // eslint-disable-line new-cap
-		this._tool = new toolMap[name](this, opts);
+		var tool = toolMap[name](this, opts);
+		if (!tool)
+			return null;
+		this._tool = tool;
 	}
 	return this._tool;
 	/* eslint-enable no-underscore-dangle*/
@@ -56,9 +61,7 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.render.ctab.clearVisels(); // TODO: What is it?
-		this.render.setMolecule(value);
-		this.render.update();
+		this.event.change.dispatch(Action.fromNewCanvas(value));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;

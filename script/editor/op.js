@@ -723,12 +723,14 @@ function SGroupDataMove(id, d) {
 SGroupDataMove.prototype = new Base();
 
 function CanvasLoad(struct) {
-	this.data = { ctab: struct };
+	this.data = { struct: struct };
 	this.execute = function (editor) {
 		var rnd = editor.render;
-		var oldStruct = rnd.ctab.molecule;
-		editor.struct(this.data.ctab);
-		this.data.ctab = oldStruct;
+		var restruct = rnd.ctab;
+		var oldStruct = restruct.molecule;
+		restruct.clearVisels(); // TODO: What is it?
+		rnd.setMolecule(this.data.struct);
+		this.data.struct = oldStruct;
 	};
 
 	this.invert = function () {

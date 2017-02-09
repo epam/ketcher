@@ -3,7 +3,11 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
 function APointTool(editor) {
+	if (!(this instanceof APointTool))
+		return new APointTool(editor);
+
 	this.editor = editor;
+	this.editor.selection(null);
 
 	this.hoverHelper = new HoverHelper(this);
 }

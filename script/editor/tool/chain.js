@@ -7,10 +7,14 @@ var utils = require('./utils');
 var ui = global.ui;
 
 function ChainTool(editor) {
-	this.editor = editor;
+	if (!(this instanceof ChainTool))
+		return new ChainTool(editor);
 
+	this.editor = editor;
+	this.editor.selection(null);
 	this.hoverHelper = new HoverHelper(this);
 }
+
 ChainTool.prototype = new EditorTool();
 ChainTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;

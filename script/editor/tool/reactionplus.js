@@ -5,7 +5,11 @@ var EditorTool = require('./base');
 var ui = global.ui;
 
 function ReactionPlusTool(editor) {
+	if (!(this instanceof ReactionPlusTool))
+		return new ReactionPlusTool(editor);
+
 	this.editor = editor;
+	this.editor.selection(null);
 
 	this.hoverHelper = new HoverHelper(this);
 }

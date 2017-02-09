@@ -5,6 +5,12 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
 function RGroupFragmentTool(editor) {
+	if (!(this instanceof RGroupFragmentTool)) {
+		// TODO: check if it's a fragments already
+		editor.selection(null);
+		return new RGroupFragmentTool(editor);
+	}
+
 	this.editor = editor;
 
 	this.hoverHelper = new HoverHelper(this);

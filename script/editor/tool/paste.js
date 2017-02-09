@@ -4,7 +4,11 @@ var EditorTool = require('./base');
 var ui = global.ui;
 
 function PasteTool(editor, struct) {
+	if (!(this instanceof PasteTool))
+		return new PasteTool(editor, struct);
+
 	this.editor = editor;
+	this.editor.selection(null);
 	this.struct = struct;
 
 	var rnd = editor.render;

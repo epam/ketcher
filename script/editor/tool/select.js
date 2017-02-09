@@ -7,17 +7,20 @@ var Struct = require('../../chem/struct');
 var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
-var SGroupHelper = require('./helper/sgroup');
+
+var SGroup = require('./sgroup');
 var RGroupAtomTool = require('./rgroupatom');
 
 var ui = global.ui;
 
 function SelectTool(editor, mode) {
+	if (!(this instanceof SelectTool))
+		return new SelectTool(editor, mode);
+
 	this.editor = editor;
 
 	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
-	this.sGroupHelper = new SGroupHelper(editor);
 }
 
 SelectTool.prototype = new EditorTool();
@@ -241,9 +244,9 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		});
 	} else if (ci.map == 'sgroups') {
 		this.editor.selection(closestToSel(ci));
-		this.sGroupHelper.showPropertiesDialog(ci.id);
+		SGroup.dialog(this.editor, ci.id);
 //    } else if (ci.map == 'sgroupData') {
-//        this.sGroupHelper.showPropertiesDialog(ci.sgid);
+//        SGroup.dialog(this.editor, ci.sgid);
 	}
 	return true;
 };

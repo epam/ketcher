@@ -8,12 +8,13 @@ var draw = require('../../render/draw');
 var ui = global.ui;
 
 function ReactionMapTool(editor) {
+	if (!(this instanceof ReactionMapTool))
+		return new ReactionMapTool(editor);
+
 	this.editor = editor;
-
-	this.hoverHelper = new HoverHelper(this);
-
 	this.editor.selection(null);
 
+	this.hoverHelper = new HoverHelper(this);
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
 

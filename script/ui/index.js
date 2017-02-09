@@ -10,7 +10,6 @@ var smiles = require('../chem/smiles');
 
 var Editor = require('../editor');
 
-var Action = require('../editor/action.js');
 var templates = require('./templates');
 
 var utils = require('./utils');
@@ -243,7 +242,7 @@ function popAction(toolbar, action) {
 };
 
 function selectAction (action) {
-	// TODO: lastSelected -> prevtool_id
+    // TODO: lastSelected -> selected pool
 	action = action || lastSelected;
 	var el = $(action);
 	var args = [].slice.call(arguments, 1);
@@ -251,21 +250,21 @@ function selectAction (action) {
 
 	dropdownToggle(toolbar);
 
+	console.info('action', action);
 	if (clipActions.indexOf(action) != -1 && args.length == 0)
 		return delegateCliparea(action);
 
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
 		args.unshift(action);
-		var act = mapTool.apply(null, args);
-		if (act && act.tool) {
+		var act = mapAction.apply(null, args);
+		if (act && !act.then) {
 			var oldel = toolbar.select('.selected')[0];
 			//console.assert(!lastSelected || oldel,
 			//               "No last mode selected!");
 
 			if (el != oldel || !el) { // tool canceling needed when dialog opens
 				// if el.selected not changed
-				ui.editor.tool(act.tool, act.opts);
 				if (action.startsWith('select-')) {
 					lastSelected = action;
 				}
@@ -421,9 +420,7 @@ function keyHandle(toolbar, hotKeys, event) {
 	if (key.length == 1 && atomsSelected && key.match(/\w/)) {
 		console.assert(atomsSelected.length > 0);
 		dialog(modal.labelEdit, { letter: key }).then(function (res) {
-				addUndoAction(Action.fromAtomsAttrs(atomsSelected, res), true);
-				ui.render.update();
-				ui.editor.selection(null);
+			selectAction('atom', res);
 		});
 		event.preventDefault();
 	} else if (group = keyNorm.lookup(hotKeys, event)) {
@@ -543,8 +540,7 @@ function addUndoAction (action, check_dummy)
 function clear () {
 	selectAction(null);
 	if (!ui.editor.struct().isBlank())
-		addUndoAction(Action.fromNewCanvas(new Struct()));
-
+		ui.editor.struct(new Struct());
 }
 
 function open () {
@@ -666,18 +662,12 @@ function load(structStr, options) {
 		if (options.fragment)
 			selectAction('paste', struct);
 		else
-			addUndoAction(Action.fromNewCanvas(struct));
+			ui.editor.struct(struct);
 		return struct;
 	}, function (err) {
 		alert(err);
 	});
 }
-
-function removeSelected () {
-	addUndoAction(Action.fromFragmentDeletion(ui.editor.selection()));
-	ui.editor.selection(null);
-	ui.render.update();
-};
 
 function undo ()
 {
@@ -744,7 +734,7 @@ function genericsTable () {
 	modal.genericGroups({
 		onOk: function (res) {
 			var props = {label: res.values[0]};
-			selectAction('atom-reagenerics', props);
+			selectAction('atom-generics', props);
 			return true;
 		}
 	});
@@ -761,7 +751,7 @@ function templateLib () {
 
 	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (tmpl) {
 		// C doesn't conflict with menu id
-		selectAction('template-C', tmpl);
+		selectAction('template-custom', tmpl);
 		return true;
 	});
 };
@@ -795,7 +785,7 @@ var actionMap = {
 	},
 	cut: function () {
 		var struct = ui.editor.structSelected();
-		removeSelected();
+		selectAction('erase');
 		return struct.isBlank() ? null : struct;
 	},
 	copy: function () {
@@ -806,8 +796,7 @@ var actionMap = {
 	paste: function (struct) {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
-		ui.editor.selection(null);
-		return { tool: 'paste', opts: struct };
+		return ui.editor.tool('paste', struct);
 	},
 	about: function () {
 		var about = dialog.bind(null, modal.about);
@@ -884,48 +873,18 @@ var actionMap = {
 	}
 };
 
-// TODO: rewrite declaratively, merge to actionMap
-function mapTool (id) {
-
+function mapAction(id) {
 	console.assert(id, 'The null tool');
-
 	var args = [].slice.call(arguments, 1);
 	if (actionMap[id])
 		return actionMap[id].apply(null, args);
-	// special cases
-	if (ui.editor.selection()) {
-		if (id == 'erase') {
-			removeSelected();
-			return null;
-		}
-		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
-		if (id.startsWith('atom-')) {
-			addUndoAction(Action.fromAtomsAttrs(ui.editor.selection().atoms, args[0] || atomLabel(id)), true);
-			ui.render.update();
-			return null;
-		}
+	var mt = mapTool.apply(null, arguments);
+	return mt ? ui.editor.tool(mt.tool, mt.opts) : null;
+}
 
-		if (id.startsWith('transform-flip')) {
-			addUndoAction(Action.fromFlip(ui.editor.selection(), id.endsWith('h') ? 'horizontal' :
-			                              'vertical'), true);
-			ui.render.update();
-			return null;
-		}
-
-		/* BK: TODO: add this ability to change the bond under cursor to the editor tool
-		 else if (mode.startsWith('bond_')) {
-		 var cBond = ui.editor.findClosestBond(ui.render.page2obj(ui.cursorPos));
-		 if (cBond) {
-		 addUndoAction(Action.fromBondAttrs(cBond.id, { type: bondType(mode).type, stereo: Bond.PATTERN.STEREO.NONE }), true);
-		 ui.render.update();
-		 return;
-		 }
-		 } */
-	}
-
-	if (id != 'transform-rotate' && !id.startsWith('select-'))
-		ui.editor.selection(null);
-
+// TODO: rewrite declaratively, merge to actionMap
+function mapTool (id) {
+	var args = [].slice.call(arguments, 1);
 	if (id == 'select-lasso') {
 		return { tool: 'select', opts: 'lasso' };
 	} else if (id == 'select-rectangle') {
@@ -971,7 +930,13 @@ function mapTool (id) {
 		return { tool: 'rgroupfragment' };
 	} else if (id == 'rgroup-attpoints') {
 		return { tool: 'apoint' };
-	} else if (id.startsWith('transform-rotate')) {
+	} else if (id.startsWith('transform-')) {
+		if (/flip/.test(id))    // TODO: rename consistently
+			return {
+				tool: 'rotate',
+				opts: id.endsWith('h') ? 'horizontal' :
+					'vertical'
+			};
 		return { tool: 'rotate' };
 	}
 	return null;

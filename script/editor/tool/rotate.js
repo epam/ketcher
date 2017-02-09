@@ -7,12 +7,21 @@ var utils = require('./utils');
 
 var ui = global.ui;
 
-function RotateTool(editor) {
+function RotateTool(editor, dir) {
+	if (!(this instanceof RotateTool)) {
+		if (!dir)
+			return new RotateTool(editor);
+
+		var action = Action.fromFlip(editor.selection(), dir);
+		editor.event.change.dispatch(action);
+		editor.selection(null);
+		return null;
+	}
+
 	this.editor = editor;
 	this.lassoHelper = new LassoHelper(1, editor);
 
-	var selection = this.editor.selection();
-	if (!selection || !selection.atoms)
+	if (!editor.selection() || !editor.selection().atoms)
 		// otherwise, clear selection
 		this.editor.selection(null);
 }

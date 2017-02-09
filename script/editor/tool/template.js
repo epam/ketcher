@@ -8,7 +8,11 @@ var utils = require('./utils');
 var ui = global.ui;
 
 function TemplateTool(editor, tmpl) {
+	if (!(this instanceof TemplateTool))
+		return new TemplateTool(editor, tmpl);
+
 	this.editor = editor;
+	this.editor.selection(null);
 	this.template = {
 		aid: (tmpl.aid || 1) - 1,
 		bid: (tmpl.bid || 1) - 1

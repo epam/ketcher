@@ -6,12 +6,23 @@ var LassoHelper = require('./helper/lasso');
 var ui = global.ui;
 
 function EraserTool(editor, mode) {
+	if (!(this instanceof EraserTool)) {
+		if (!editor.selection())
+			return new EraserTool(editor, mode);
+
+		var action = Action.fromFragmentDeletion(editor.selection());
+		editor.event.change.dispatch(action);
+		editor.selection(null);
+		return null;
+	}
+
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
 	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
+
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, this.maps);

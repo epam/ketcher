@@ -5,11 +5,13 @@ var EditorTool = require('./base');
 var ui = global.ui;
 
 function ReactionUnmapTool(editor) {
+	if (!(this instanceof ReactionUnmapTool))
+		return new ReactionUnmapTool(editor);
+
 	this.editor = editor;
+	this.editor.selection(null);
 
 	this.hoverHelper = new HoverHelper(this);
-
-	this.editor.selection(null);
 }
 ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {

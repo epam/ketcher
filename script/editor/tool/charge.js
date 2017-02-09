@@ -5,8 +5,12 @@ var element = require('../../chem/element');
 
 var ui = global.ui;
 
-function ChargeTool(editor, charge) { // TODO [RB] should be "pluggable"
+function ChargeTool(editor, charge) {
+	if (!(this instanceof ChargeTool))
+		return new ChargeTool(editor, charge);
+
 	this.editor = editor;
+	this.editor.selection(null);
 	this.charge = charge;
 
 	this.hoverHelper = new HoverHelper(this);

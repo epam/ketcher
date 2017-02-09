@@ -5,7 +5,11 @@ var EditorTool = require('./base');
 var ui = global.ui;
 
 function ReactionArrowTool(editor) {
+	if (!(this instanceof ReactionArrowTool))
+		return new ReactionArrowTool(editor);
+
 	this.editor = editor;
+	this.editor.selection(null);
 
 	this.hoverHelper = new HoverHelper(this);
 }

@@ -15,7 +15,7 @@ SGroupHelper.prototype.showPropertiesDialog = function (id, selection) {
 	var type = sg ? sg.type : this.defaultType;
 	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
-	editor.setSelection(null);
+	editor.selection(null);
 	var res = editor.event[eventName].dispatch({
 		type: type,
 		attrs: sg ? sg.getAttrs() : {}

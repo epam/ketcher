@@ -9,7 +9,7 @@ function ReactionUnmapTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 
-	this.editor.setSelection(null);
+	this.editor.selection(null);
 }
 ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {

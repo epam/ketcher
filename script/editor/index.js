@@ -35,7 +35,7 @@ var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroup
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({ atomColoring: true, scale: SCALE }, options));
 
-	this.selection = null;
+	this._selection = null;
 	this._tool = null; // eslint-disable-line
 
 	domEventSetup(this, clientArea);
@@ -55,11 +55,11 @@ Editor.prototype.tool = function (name, opts) {
 
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
-		this.setSelection(null);
+		this.selection(null);
 		this.render.ctab.clearVisels(); // TODO: What is it?
 		this.render.setMolecule(value);
 		this.render.update();
-		this.recoordinate(getStructCenter(this.render.ctab));
+		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;
 };
@@ -80,11 +80,43 @@ Editor.prototype.options = function (value) {
 Editor.prototype.zoom = function (value) {
 	if (arguments.length > 0) {
 		this.render.setZoom(value);
-		this.recoordinate(getStructCenter(this.render.ctab,
-		                                  this.getSelection()));
+		recoordinate(this, getStructCenter(this.render.ctab,
+		                                   this.selection()));
 		this.render.update();
 	}
 	return this.render.options.zoom;
+};
+
+Editor.prototype.selection = function (selection) {
+	if (arguments.length > 0) {
+		this._selection = null;
+		if (selection == 'all') {   // TODO: better way will be this.struct()
+			var restruct = this.render.ctab;
+			selection = structObjects.reduce(function (res, key) {
+				res[key] = restruct[key].ikeys();
+				return res;
+			}, {});
+		}
+		if (selection) {
+			var res = {};
+			for (var key in selection) {
+				if (selection[key].length > 0) // TODO: deep merge
+					res[key] = selection[key].slice();
+			}
+			if (Object.keys(res) != 0)
+				this._selection = res;
+		}
+
+		this.render.ctab.setSelection(this._selection);
+		this.event.selectionChange.dispatch(this._selection);
+
+		this.render.update();
+	}
+	return this._selection;
+};
+
+Editor.prototype.on = function (eventName, handler) {
+	this.event[eventName].add(handler);
 };
 
 function domEventSetup(editor, clientArea) {
@@ -121,17 +153,14 @@ function eventSetup(editor) {
 		rgroupEdit: new s.PipelineSubscription(),
 		sgroupEdit: new s.PipelineSubscription(),
 		sdataEdit: new s.PipelineSubscription(),
-		change: new s.PipelineSubscription()
+		change: new s.PipelineSubscription(),
+		selectionChange: new s.PipelineSubscription()
 	};
 	editor.event.change.add(function (action) {
 		ui.addUndoAction(action, true);
 		editor.render.update();
 	}, pass);
 }
-
-Editor.prototype.on = function (eventName, handler) {
-	this.event[eventName].add(handler);
-};
 
 Editor.prototype.findItem = function (event, maps, skip) {
 	var pos = 'ui' in window ? new Vec2(this.render.page2obj(event)) :
@@ -151,46 +180,8 @@ Editor.prototype.findItem = function (event, maps, skip) {
 	return ci;
 };
 
-Editor.prototype.hasSelection = function (copyable) {
-	for (var map in this.selection) {
-		if (this.selection[map].length > 0 &&
-		    (!copyable || map !== 'sgroupData'))
-			return true;
-	}
-	return false;
-};
-
-Editor.prototype.getSelection = function () {
-	return this.selection;
-};
-
-Editor.prototype.setSelection = function (selection) {
-	this.selection = null;
-	if (selection == 'all') {   // TODO: better way will be this.struct()
-		var restruct = this.render.ctab;
-		selection = structObjects.reduce(function (res, key) {
-			res[key] = restruct[key].ikeys();
-			return res;
-		}, {});
-	}
-	if (selection) {
-		var res = {};
-		for (var key in selection) {
-			if (selection[key].length > 0) // TODO: deep merge
-				res[key] = selection[key].slice();
-		}
-		if (Object.keys(res) != 0)
-			this.selection = res;
-	}
-	console.info('setSelection', selection, this.selection);
-	this.render.ctab.setSelection(this.selection);
-	this.render.update();
-
-	ui.updateClipboardButtons(); // TODO notify ui about selection
-};
-
 Editor.prototype.explicitSelected = function () {
-	var selection = this.getSelection() || {};
+	var selection = this.selection() || {};
 	var res = structObjects.reduce(function (res, key) {
 		res[key] = selection[key] ? selection[key].slice() : [];
 		return res;
@@ -218,6 +209,7 @@ Editor.prototype.explicitSelected = function () {
 			}
 		});
 	}
+
 	return res;
 };
 
@@ -246,16 +238,16 @@ Editor.prototype.structSelected = function () {
 	return dst;
 };
 
-Editor.prototype.recoordinate = function (rp/* , vp*/) {
+function recoordinate(editor, rp/* , vp*/) {
 	// rp is a point in scaled coordinates, which will be positioned
 	// vp is the point where the reference point should now be (in view coordinates)
 	//    or the center if not set
 	console.assert(rp, 'Reference point not specified');
-	this.render.setScrollOffset(0, 0);
+	editor.render.setScrollOffset(0, 0);
 	// var avp = this.render.obj2view(rp);
 	// var so = avp.sub(vp || this.render.viewSz.scaled(0.5));
 	// this.render.setScrollOffset(so.x, so.y);
-};
+}
 
 function getStructCenter(restruct, selection) {
 	var bb = restruct.getVBoxObj(selection || {});

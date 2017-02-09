@@ -38,7 +38,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			this.lassoHelper.begin(event);
 	} else {
 		this.hoverHelper.hover(null);
-		if (!isSelected(rnd, this.editor.getSelection(), ci)) {
+		if (!isSelected(rnd, this.editor.selection(), ci)) {
 			var sel = closestToSel(ci);
 			if (ci.map == 'frags') {
 				var frag = ctab.frags.get(ci.id);
@@ -59,8 +59,8 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 					bonds: rgroup.getBonds(rnd)
 				};
 			}
-			this.editor.setSelection(!event.shiftKey ? sel :
-			                         selMerge(sel, this.editor.getSelection()));
+			this.editor.selection(!event.shiftKey ? sel :
+			                         selMerge(sel, this.editor.selection()));
 		}
 		this.dragCtx = {
 			item: ci,
@@ -71,7 +71,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			this.dragCtx.timeout = setTimeout(
 			function () {
 				delete self.dragCtx;
-				self.editor.setSelection(null);
+				self.editor.selection(null);
 				var atom = rnd.ctab.molecule.atoms.get(ci.id);
 				ui.showLabelEditor({
 					// pos: rnd.obj2view(atom.pp)
@@ -120,8 +120,8 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		rnd.update();
 	} else if (this.lassoHelper.running()) {
 		var sel = this.lassoHelper.addPoint(event);
-		this.editor.setSelection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.getSelection()));
+		this.editor.selection(!event.shiftKey ? sel :
+		                         selMerge(sel, this.editor.selection()));
 	} else {
 		this.hoverHelper.hover(
 		this.editor.findItem(event,
@@ -141,7 +141,7 @@ SelectTool.prototype.OnMouseUp = function (event) {
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
 				this.hoverHelper.hover(null);
-				this.editor.setSelection(null);
+				this.editor.selection(null);
 				this.dragCtx.action = this.dragCtx.action ?
 					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
 						Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
@@ -152,10 +152,10 @@ SelectTool.prototype.OnMouseUp = function (event) {
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		var sel = this.lassoHelper.end();
-		this.editor.setSelection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.getSelection()));
+		this.editor.selection(!event.shiftKey ? sel :
+		                         selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
-		this.editor.setSelection(null);
+		this.editor.selection(null);
 	}
 	return true;
 };
@@ -166,7 +166,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	var ci = this.editor.findItem(event);
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
-		this.editor.setSelection(closestToSel(ci));
+		this.editor.selection(closestToSel(ci));
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = struct.atoms.get(ci.id);
 		if (atom.label == 'R#') {
@@ -233,14 +233,14 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 			});
 		}
 	} else if (ci.map == 'bonds') {
-		this.editor.setSelection(closestToSel(ci));
+		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var res = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(res).then(function (newbond) {
 			editor.event.change.dispatch(Action.fromBondAttrs(ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {
-		this.editor.setSelection(closestToSel(ci));
+		this.editor.selection(closestToSel(ci));
 		this.sGroupHelper.showPropertiesDialog(ci.id);
 //    } else if (ci.map == 'sgroupData') {
 //        this.sGroupHelper.showPropertiesDialog(ci.sgid);
@@ -256,7 +256,7 @@ SelectTool.prototype.OnCancel = function () {
 		rnd.update();
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) {
-		this.editor.setSelection(this.lassoHelper.end());
+		this.editor.selection(this.lassoHelper.end());
 	}
 	this.hoverHelper.hover(null);
 };

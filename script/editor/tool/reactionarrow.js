@@ -16,7 +16,7 @@ ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
 		this.hoverHelper.hover(null);
-		this.editor.setSelection({ rxnArrows: [ci.id] });
+		this.editor.selection({ rxnArrows: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
@@ -27,7 +27,7 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 			this.dragCtx.action.perform();
 
 		this.dragCtx.action = Action.fromMultipleMove(
-			this.editor.getSelection() || {},
+			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
 		rnd.update();

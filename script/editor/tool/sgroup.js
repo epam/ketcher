@@ -12,14 +12,14 @@ function SGroupTool(editor, type) {
 	this.lassoHelper = new LassoHelper(1, editor);
 	this.sGroupHelper = new SGroupHelper(editor, type);
 
-	var selection = this.editor.getSelection();
+	var selection = this.editor.selection();
 	if (selection && selection.atoms) {
 		// if the selection contains atoms, create an s-group out of those
 		console.assert(selection.atoms.length > 0);
 		this.sGroupHelper.showPropertiesDialog(null, selection);
 	} else {
 		// otherwise, clear selection
-		this.editor.setSelection(null);
+		this.editor.selection(null);
 	}
 }
 
@@ -32,7 +32,7 @@ SGroupTool.prototype.OnMouseDown = function (event) {
 
 SGroupTool.prototype.OnMouseMove = function (event) {
 	if (this.lassoHelper.running())
-		this.editor.setSelection(this.lassoHelper.addPoint(event));
+		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
 		this.hoverHelper.hover(this.editor.findItem(event, sMaps));
 };

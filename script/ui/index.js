@@ -67,7 +67,7 @@ function init (opts, apiServer) {
 	initEditor(ui.editor);
 
 	updateHistoryButtons();
-	updateClipboardButtons();
+	updateClipboardButtons(null);
 	updateServerButtons(true);
 	server.then(function () {
 		updateServerButtons();
@@ -158,6 +158,7 @@ function initEditor(editor) {
 			console[act](msg[act]);
 		}
 	});
+	editor.on('selectionChange', updateClipboardButtons);
 }
 
 function updateAtoms() {
@@ -413,16 +414,16 @@ function initHotKeys(toolbar) {
 
 function keyHandle(toolbar, hotKeys, event) {
 	var key = keyNorm(event);
-	var atomsSelected = ui.editor.getSelection() &&
-	                    ui.editor.getSelection().atoms;
+	var atomsSelected = ui.editor.selection() &&
+	                    ui.editor.selection().atoms;
 	var group;
 
 	if (key.length == 1 && atomsSelected && key.match(/\w/)) {
 		console.assert(atomsSelected.length > 0);
 		dialog(modal.labelEdit, { letter: key }).then(function (res) {
-				addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, res), true);
+				addUndoAction(Action.fromAtomsAttrs(atomsSelected, res), true);
 				ui.render.update();
-				ui.editor.setSelection(null);
+				ui.editor.selection(null);
 		});
 		event.preventDefault();
 	} else if (group = keyNorm.lookup(hotKeys, event)) {
@@ -441,8 +442,10 @@ function keyHandle(toolbar, hotKeys, event) {
 	}
 }
 
-function updateClipboardButtons () {
-	var selected = ui.editor.hasSelection(true);
+function updateClipboardButtons (selection) {
+	var selected = selection &&  // if not only sgroupData selected
+	    (Object.keys(selection).length > 1 || !selection.sgroupData);
+	console.info('selected', selection, selected);
 	subEl('copy').disabled = subEl('cut').disabled = !selected;
 };
 
@@ -454,7 +457,7 @@ function updateHistoryButtons () {
 function updateServerButtons (standalone) {
 	serverActions.forEach(function (action) {
 		if ($(action))
-			subEl(action).disabled = ui.standalone;
+			subEl(action).disabled = !!standalone;
 	});
 };
 
@@ -671,8 +674,8 @@ function load(structStr, options) {
 }
 
 function removeSelected () {
-	addUndoAction(Action.fromFragmentDeletion(ui.editor.getSelection()));
-	ui.editor.setSelection(null);
+	addUndoAction(Action.fromFragmentDeletion(ui.editor.selection()));
+	ui.editor.selection(null);
 	ui.render.update();
 };
 
@@ -681,7 +684,7 @@ function undo ()
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
-	ui.editor.setSelection(null);
+	ui.editor.selection(null);
 	redoStack.push(undoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
@@ -692,7 +695,7 @@ function redo ()
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
-	ui.editor.setSelection(null);
+	ui.editor.selection(null);
 	undoStack.push(redoStack.pop().perform());
 	ui.render.update();
 	updateHistoryButtons();
@@ -797,13 +800,13 @@ var actionMap = {
 	},
 	copy: function () {
 		var struct = ui.editor.structSelected();
-		ui.editor.setSelection(null);
+		ui.editor.selection(null);
 		return struct.isBlank() ? null : struct;
 	},
 	paste: function (struct) {
 		if (struct.isBlank())
 			throw 'Not a valid structure to paste';
-		ui.editor.setSelection(null);
+		ui.editor.selection(null);
 		return { tool: 'paste', opts: struct };
 	},
 	about: function () {
@@ -815,11 +818,11 @@ var actionMap = {
 		});
 	},
 	'select-all': function () {
-		ui.editor.setSelection('all');
+		ui.editor.selection('all');
 		selectAction(null);
 	},
 	'deselect-all': function () {
-		ui.editor.setSelection(null);
+		ui.editor.selection(null);
 	},
 	'force-update': function () {
 		// original: for dev purposes
@@ -890,20 +893,20 @@ function mapTool (id) {
 	if (actionMap[id])
 		return actionMap[id].apply(null, args);
 	// special cases
-	if (ui.editor.hasSelection()) {
+	if (ui.editor.selection()) {
 		if (id == 'erase') {
 			removeSelected();
 			return null;
 		}
 		// BK: TODO: add this ability to mass-change atom labels to the keyboard handler
 		if (id.startsWith('atom-')) {
-			addUndoAction(Action.fromAtomsAttrs(ui.editor.getSelection().atoms, args[0] || atomLabel(id)), true);
+			addUndoAction(Action.fromAtomsAttrs(ui.editor.selection().atoms, args[0] || atomLabel(id)), true);
 			ui.render.update();
 			return null;
 		}
 
 		if (id.startsWith('transform-flip')) {
-			addUndoAction(Action.fromFlip(ui.editor.getSelection(), id.endsWith('h') ? 'horizontal' :
+			addUndoAction(Action.fromFlip(ui.editor.selection(), id.endsWith('h') ? 'horizontal' :
 			                              'vertical'), true);
 			ui.render.update();
 			return null;
@@ -921,7 +924,7 @@ function mapTool (id) {
 	}
 
 	if (id != 'transform-rotate' && !id.startsWith('select-'))
-		ui.editor.setSelection(null);
+		ui.editor.selection(null);
 
 	if (id == 'select-lasso') {
 		return { tool: 'select', opts: 'lasso' };
@@ -1008,7 +1011,6 @@ Object.assign(ui, {
 	render: null,
 	editor: null,
 
-	updateClipboardButtons: updateClipboardButtons,
 	selectAction: selectAction,
 	addUndoAction: addUndoAction,
 

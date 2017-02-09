@@ -11,16 +11,16 @@ function RotateTool(editor) {
 	this.editor = editor;
 	this.lassoHelper = new LassoHelper(1, editor);
 
-	var selection = this.editor.getSelection();
+	var selection = this.editor.selection();
 	if (!selection || !selection.atoms)
 		// otherwise, clear selection
-		this.editor.setSelection(null);
+		this.editor.selection(null);
 }
 
 RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
-	var selection = this.editor.getSelection();
+	var selection = this.editor.selection();
 	if (selection && selection.atoms) {
 		console.assert(selection.atoms.length > 0);
 		var rnd = this.editor.render;
@@ -83,7 +83,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 };
 RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	if (this.lassoHelper.running()) {
-		this.editor.setSelection(this.lassoHelper.addPoint(event));
+		this.editor.selection(this.lassoHelper.addPoint(event));
 	} else if ('dragCtx' in this) {
 		var editor = this.editor;
 		var rnd = editor.render;
@@ -104,7 +104,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 
 		dragCtx.angle = degrees;
 		dragCtx.action = Action.fromRotate(
-			dragCtx.all ? rnd.ctab.molecule : this.editor.getSelection() || {},
+			dragCtx.all ? rnd.ctab.molecule : this.editor.selection() || {},
 			dragCtx.xy0,
 			angle
 		);
@@ -126,7 +126,7 @@ RotateTool.prototype.OnMouseUp = function (event) {
 			ui.addUndoAction(this.dragCtx.action, true);
 			$('toolText').update('');
 		} else {
-			this.editor.setSelection();
+			this.editor.selection(null);
 		}
 		delete this.dragCtx;
 	}
@@ -143,7 +143,7 @@ RotateTool.prototype.OnCancel = function () {
 	}
 
 	// don't reset the selection when leaving the canvas, see KETCHER-632
-	// this.editor.setSelection();
+	// this.editor.selection(null);
 };
 
 module.exports = RotateTool;

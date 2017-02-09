@@ -488,7 +488,7 @@ function fromFragmentDeletion(selection) { // eslint-disable-line max-statements
 		atoms: selection.atoms || [],
 		bonds: selection.bonds || [],
 		rxnPluses: selection.rxnPluses || [],
-		rxnArrows: selection.rnxArrows || [],
+		rxnArrows: selection.rxnArrows || [],
 		sgroupData: selection.sgroupData || [],
 		chiralFlags: selection.chiralFlags || []
 	};

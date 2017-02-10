@@ -118,7 +118,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 			angle
 		);
 
-		$('toolText').update(degrees + 'º');
+		this.editor.event.message.dispatch({ info: degrees + 'º' });
 
 		rnd.update();
 	}
@@ -131,12 +131,11 @@ RotateTool.prototype.OnMouseUp = function (event) {
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		selection = this.lassoHelper.end(event);
 	} else if ('dragCtx' in this) {
-		if ('action' in this.dragCtx) {
+		if ('action' in this.dragCtx)
 			ui.addUndoAction(this.dragCtx.action, true);
-			$('toolText').update('');
-		} else {
+		else
 			this.editor.selection(null);
-		}
+
 		delete this.dragCtx;
 	}
 	return true;
@@ -144,15 +143,10 @@ RotateTool.prototype.OnMouseUp = function (event) {
 
 RotateTool.prototype.OnCancel = function () {
 	if ('dragCtx' in this) {
-		if ('action' in this.dragCtx) {
+		if ('action' in this.dragCtx)
 			ui.addUndoAction(this.dragCtx.action, true);
-			$('toolText').update('');
-		}
 		delete this.dragCtx;
 	}
-
-	// don't reset the selection when leaving the canvas, see KETCHER-632
-	// this.editor.selection(null);
 };
 
 module.exports = RotateTool;

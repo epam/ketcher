@@ -26,21 +26,26 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
 	return true;
 };
+
 ChainTool.prototype.OnMouseMove = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
-		if ('action' in dragCtx) dragCtx.action.perform();
+		if ('action' in dragCtx)
+			dragCtx.action.perform();
+
 		var atoms = rnd.ctab.molecule.atoms;
 		var pos0 = 'item' in dragCtx ? atoms.get(dragCtx.item.id).pp : dragCtx.xy0;
 		var pos1 = rnd.page2obj(event);
-		dragCtx.action = Action.fromChain(
-			pos0,
-			utils.calcAngle(pos0, pos1),
-			Math.ceil(Vec2.diff(pos1, pos0).length()),
-			'item' in dragCtx ? dragCtx.item.id : null
-		);
+		var sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+
+		dragCtx.action = Action.fromChain(pos0,
+		    utils.calcAngle(pos0, pos1), sectCount,
+		    'item' in dragCtx ? dragCtx.item.id : null);
+		editor.event.message.dispatch({
+			info: sectCount + " sectors"
+		});
 		rnd.update();
 		return true;
 	}

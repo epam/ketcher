@@ -1,11 +1,12 @@
 var Vec2 = require('../../util/vec2');
 
-function calcAngle(pos0, pos1) {
+function calcAngle(pos0, pos1, fracAngle) {
+	fracAngle = fracAngle || (Math.PI / 12);
 	var v = Vec2.diff(pos1, pos0);
 	var angle = Math.atan2(v.y, v.x);
 	var sign = angle < 0 ? -1 : 1;
-	var floor = Math.floor(Math.abs(angle) / (Math.PI / 12)) * (Math.PI / 12);
-	angle = sign * (floor + ((Math.abs(angle) - floor < Math.PI / 24) ? 0 : Math.PI / 12));
+	var floor = Math.floor(Math.abs(angle) / fracAngle) * fracAngle;
+	angle = sign * (floor + ((Math.abs(angle) - floor < fracAngle / 2) ? 0 : fracAngle));
 	return angle;
 }
 

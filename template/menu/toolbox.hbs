@@ -45,9 +45,9 @@
 		</li>
 		<li id="transform">
 			<menu>
-				<li id="transform-rotate"><button data-keys="Mod-r">Rotate Tool</button></li>
-				<li id="transform-flip-h"><button>Horizontal Flip</button></li>
-				<li id="transform-flip-v"><button>Vertical Flip</button></li>
+				<li id="transform-rotate"><button data-keys="Alt-r">Rotate Tool</button></li>
+				<li id="transform-flip-h"><button data-keys="Alt-h">Horizontal Flip</button></li>
+				<li id="transform-flip-v"><button data-keys="Alt-v">Vertical Flip</button></li>
 			</menu>
 		</li>
 		{{#unless no-sgroup}}
@@ -70,14 +70,11 @@
 		{{#unless no-rgroup}}
 			<li id="rgroup">
 				<menu>
-					<li id="rgroup-label"><button data-keys="Shift-r">R-Group Label Tool</button></li>
-					<li id="rgroup-fragment"><button data-keys="Shift-r">R-Group Fragment Tool</button></li>
-					<li id="rgroup-attpoints"><button data-keys="Shift-r">Attachment Point Tool</button></li>
+					<li id="rgroup-label"><button data-keys="r">R-Group Label Tool</button></li>
+					<li id="rgroup-fragment"><button data-keys="Mod-r, r">R-Group Fragment Tool</button></li>
+					<li id="rgroup-attpoints"><button data-keys="r">Attachment Point Tool</button></li>
 				</menu>
 			</li>
 		{{/unless}}
-		{{#if rgroup-label-only}}
-			<li id="rgroup-label"><button data-keys="Shift-r">R-Group Label Tool</button></li>
-		{{/if}}
 	</menu>
 </li>

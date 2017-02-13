@@ -10,7 +10,7 @@
 
 **Note** : Depending on the screen size, some tools on the _Tool palette_ can be displayed in expanded or collapsed forms.
 
-Using the _Tool palette,_ you can
+Using the _Tool palette_, you can
 
 - draw and edit a molecule or reaction by clicking on and dragging atoms, bonds, and other elements provided with the buttons on the _Atoms_ toolbar and _Tool palette_;
 - delete any element of the drawing (atom or bond) by clicking on it with the Erase tool;
@@ -254,9 +254,11 @@ Use the _Flip/Rotate_ tool ![](flipRotate.png) to change the structure display:
 
  ![](flipMenu.png)
 
-\*For the full screen format, the _Flip/Rotate_tool is split into separate buttons:
+For the full screen format, the _Flip/Rotate_ tool is split into separate buttons:
 
  ![](FlipFull.png)
+
+Press and hold `Ctrl` key for more gradual continuous rotation.
 
 # Drawing Reactions
 
@@ -279,7 +281,7 @@ To add a ring to the molecule, select a ring from the toolbar and click inside t
 
 Rules of using templates:
 
-?         Selecting a template and clicking on an atom in the existing structure adds the template to the structure connected with a single bond:
+- Selecting a template and clicking on an atom in the existing structure adds the template to the structure connected with a single bond:
 
  ![](fusion1.png)
 
@@ -335,12 +337,13 @@ You can use keyboard hotkeys (including Numeric keypad) for some features/comman
 | **Key** | **Action** |
 | --- | --- |
 | **Esc** | Switching between the Lasso/Rectangle/Fragment Selection tools |
+| **Del** | Delete the selected objects |
 | **0** | Draw Any bond. |
 | **1** | Single / Single Up / Single Down / Single Up/Down bond. Consecutive pressing switches between these types. |
 | **2** | Double / Double Cis/Trans bond |
 | **3** | Draw a triple bond. |
 | **4** | Draw an aromatic bond. |
-| **R** | Creates an R-Group label. Use &lt;Shift&gt;+R to change the R-Group label type (R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool). |
+| **5** | Charge Plus/Charge Minus |
 | **A** | Draw any atom |
 | **H** | Draw a hydrogen |
 | **C** | Draw a carbon |
@@ -352,10 +355,14 @@ You can use keyboard hotkeys (including Numeric keypad) for some features/comman
 | **Shift+C** | Draw a chlorine |
 | **Shift+B** | Draw a bromine |
 | **I** | Draw an iodine |
-| **Shift+T** | Drawing templates. Consecutive pressing switches between different templates |
-| **5** | Charge Plus/Charge Minus |
-| **Ctrl+R** | Rotate tool |
+| **T** | Basic templates. Consecutive pressing switches between different templates |
+| **Shift+T** | Open template library |
+| **Alt+R** | Rotate tool |
+| **Alt+V** | Flip vertically |
+| **Alt+H** | Flip horizontally |
 | **Ctrl+G** | S-Group tool / Data S-Group tool |
+| **R** | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
+| **Ctrl+R**  | R-Group Fragment Tool |
 | **Ctrl+N** | Clear canvas |
 | **Ctrl+O** | Open |
 | **Ctrl+S** | Save As |
@@ -366,9 +373,9 @@ You can use keyboard hotkeys (including Numeric keypad) for some features/comman
 | **Ctrl+V** | Paste selected objects |
 | **+** | Zoom In |
 | **-** | Zoom Out |
-| **Delete** | Delete the selected objects |
 | **Ctrl+L** | Clean Up |
-| **Alt+P** | Calculate CIP |
-| **?** | About |
+| **Ctrl+Shift+L** | Layout |
+| **Ctrl+P** | Calculate CIP |
+| **?** | Help |
 
 **Note** : Please, use **Ctrl+V** to paste the selected object in Google Chrome and Mozilla Firefox browsers.

@@ -203,6 +203,7 @@ gulp.task('serve', ['clean', 'style', 'html', 'script-watch', 'assets'], functio
 
 	gulp.watch('style/**.less', ['style']);
 	gulp.watch('template/**', ['html']);
+	gulp.watch('doc/**', ['help']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
 		server.emit('kill');
 		cp.spawn('gulp', process.argv.slice(2), {

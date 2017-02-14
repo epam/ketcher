@@ -32,21 +32,13 @@ function TemplateTool(editor, tmpl) {
 	this.template.angle0 = utils.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
 
 	var bond = frag.bonds.get(this.template.bid);
-	this.template.sign = this.getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+	this.template.sign = getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
 
 	this.hoverHelper = new HoverHelper(this);
 }
+
 TemplateTool.prototype = new EditorTool();
-TemplateTool.prototype.getSign = function (molecule, bond, v) {
-	var begin = molecule.atoms.get(bond.begin).pp;
-	var end = molecule.atoms.get(bond.end).pp;
 
-	var sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
-
-	if (sign > 0) return 1;
-	if (sign < 0) return -1;
-	return 0;
-};
 TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
@@ -88,7 +80,7 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 
 		dragCtx.v0 = xy0.scaled(1 / count);
 
-		var sign = this.getSign(molecule, bond, dragCtx.v0);
+		var sign = getSign(molecule, bond, dragCtx.v0);
 
 		// calculate default template flip
 		dragCtx.sign1 = sign || 1;
@@ -118,7 +110,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 			extraBond = Vec2.dist(pos0, pos1) > 1;
 		} else if (ci.map == 'bonds') {
 			var bond = struct.bonds.get(ci.id);
-			var sign = this.getSign(struct, bond, pos1);
+			var sign = getSign(struct, bond, pos1);
 
 			if (dragCtx.sign1 * this.template.sign > 0)
 				sign = -sign;
@@ -134,6 +126,9 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		}
 
 		angle = utils.calcAngle(pos0, pos1);
+		if (!event.ctrlKey)
+			angle = utils.fracAngle(angle);
+
 		var degrees = Math.round(180 / Math.PI * angle);
 		// check if anything changed since last time
 		if ('angle' in dragCtx && dragCtx.angle == degrees) {
@@ -169,7 +164,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
-TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-statements
+TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var render = editor.render;
 	if ('dragCtx' in this) {
@@ -195,10 +190,11 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 					var neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
 					var atom = struct.atoms.get(ci.id);
 					var nei = struct.atoms.get(neiId);
+					var angle = utils.calcAngle(nei.pp, atom.pp);
 
 					dragCtx.action = Action.fromTemplateOnAtom(
 						ci.id,
-						utils.calcAngle(nei.pp, atom.pp),
+						event.ctrlKey ? angle : utils.fracAngle(angle),
 						false,
 						this.template
 					);
@@ -227,5 +223,16 @@ TemplateTool.prototype.OnMouseUp = function () { // eslint-disable-line max-stat
 TemplateTool.prototype.OnCancel = function () {
 	this.OnMouseUp(); // eslint-disable-line new-cap
 };
+
+function getSign(molecule, bond, v) {
+	var begin = molecule.atoms.get(bond.begin).pp;
+	var end = molecule.atoms.get(bond.end).pp;
+
+	var sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
+
+	if (sign > 0) return 1;
+	if (sign < 0) return -1;
+	return 0;
+}
 
 module.exports = TemplateTool;

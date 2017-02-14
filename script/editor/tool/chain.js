@@ -27,7 +27,7 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-ChainTool.prototype.OnMouseMove = function (event) {
+ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
 	if ('dragCtx' in this) {
@@ -36,13 +36,15 @@ ChainTool.prototype.OnMouseMove = function (event) {
 			dragCtx.action.perform();
 
 		var atoms = rnd.ctab.molecule.atoms;
-		var pos0 = 'item' in dragCtx ? atoms.get(dragCtx.item.id).pp : dragCtx.xy0;
+		var pos0 = dragCtx.item ? atoms.get(dragCtx.item.id).pp :
+		                          dragCtx.xy0;
 		var pos1 = rnd.page2obj(event);
 		var sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+		var angle = event.ctrlKey ? utils.calcAngle(pos0, pos1) :
+		                            utils.fracAngle(pos0, pos1);
 
-		dragCtx.action = Action.fromChain(pos0,
-		    utils.calcAngle(pos0, pos1), sectCount,
-		    'item' in dragCtx ? dragCtx.item.id : null);
+		dragCtx.action = Action.fromChain(pos0, angle, sectCount,
+		                                  dragCtx.item ? dragCtx.item.id : null);
 		editor.event.message.dispatch({
 			info: sectCount + " sectors"
 		});

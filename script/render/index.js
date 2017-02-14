@@ -138,7 +138,7 @@ Render.prototype.setMolecule = function (ctab) {
 	DEBUG.logMethod('setMolecule');
 	this.paper.clear();
 	this.ctab = new ReStruct(ctab, this);
-	this.options.offset = null;
+	this.options.offset = new Vec2();
 	this.update(false);
 };
 

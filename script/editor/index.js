@@ -21,6 +21,7 @@ var toolMap = {
 	charge: require('./tool/charge'),
 	rgroupfragment: require('./tool/rgroupfragment'),
 	apoint: require('./tool/apoint'),
+	attach: require('./tool/attach'),
 	reactionarrow: require('./tool/reactionarrow'),
 	reactionplus: require('./tool/reactionplus'),
 	reactionmap: require('./tool/reactionmap'),
@@ -165,6 +166,7 @@ function eventSetup(editor) {
 		sgroupEdit: new s.PipelineSubscription(),
 		sdataEdit: new s.PipelineSubscription(),
 		quickEdit: new s.PipelineSubscription(),
+		attachEdit: new s.PipelineSubscription(),
 		change: new s.PipelineSubscription(),
 		selectionChange: new s.PipelineSubscription()
 	};

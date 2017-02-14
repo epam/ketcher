@@ -49,13 +49,12 @@ function init (opts, apiServer) {
 	clientArea = $('canvas');
 
 	server = apiServer || Promise.reject("Standalone mode!");
-	options = opts;
 
 	var currentOptions = JSON.parse(localStorage.getItem("ketcher-opts"));
 
 	// Init renderer
 	ui.editor = new Editor(clientArea,
-	                       Object.assign(options, currentOptions));
+	                       Object.assign(opts, currentOptions));
 	ui.render = ui.editor.render;
 
 	initDropdown(toolbar);
@@ -821,6 +820,16 @@ var actionMap = {
 				load(res.structStr);
 			});
 		});
+	},
+	'attach': function () {
+		fetch('library.sdf', {credentials: 'same-origin'}).then(function (resp) {
+			if (resp.ok)
+				return resp.text();
+			throw "Could not fetch " + url;
+		}).then(function (text) {
+				dialog(modal.attach, {userOpts: JSON.parse(localStorage.getItem("ketcher-opts")), struct: text});
+			}
+		);
 	}
 };
 

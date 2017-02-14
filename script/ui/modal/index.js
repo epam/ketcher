@@ -18,6 +18,7 @@ var calculatedValuesDialog = require('./analyse').default;
 var settingsDialog = require('./settings').default;
 var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
+var attachDialog = require('./attach').default;
 
 function periodTable (params) {
 	params.required = true;
@@ -162,5 +163,6 @@ module.exports = {
 	calculatedValues: calculatedValuesDialog,
 	settings: settingsDialog,
 	help: helpDialog,
-	miew: miewDialog
+	miew: miewDialog,
+	attach: attachDialog
 };

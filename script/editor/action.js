@@ -1028,12 +1028,7 @@ function getAnchorPosition(clipboard) {
 function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	console.assert(!struct.isBlank(), 'Empty struct');
 
-	var selection = {
-		atoms: struct.atoms.keys(),
-		bonds: struct.bonds.keys(),
-		rxnArrows: struct.rxnArrows.keys(),
-		rxnPluses: struct.rxnPluses.keys()
-	};
+	var selection = structSelection(struct);
 
 	var clipboard = {
 		atoms: [],
@@ -1191,13 +1186,8 @@ function fromFlip(selection, dir) { // eslint-disable-line max-statements
 	var i;
 	var fids = {};
 
-	if (!selection) {
-		selection = {       // TODO: generic method to get
-			                // selection from all the struct
-			atoms: struct.atoms.keys(),
-			bonds: struct.bonds.keys()
-		};
-	}
+	if (!selection)
+		selection = structSelection(struct);
 
 	if (selection.atoms) {
 		for (i = 0; i < selection.atoms.length; i++) {
@@ -1257,6 +1247,8 @@ function fromRotate(selection, pos, angle) { // eslint-disable-line max-statemen
 	var struct = restruct.molecule;
 
 	var action = new Action();
+	if (!selection)
+		selection = structSelection(struct);
 
 	if (selection.atoms) {
 		selection.atoms.each(function (aid) {
@@ -1313,12 +1305,19 @@ function fromBondAlign(bid, dir) {
 	return fromRotate({ atoms: atoms }, center, angle);
 }
 
+function structSelection(struct) {
+	return ['atoms', 'bonds', 'frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses'].reduce(function (res, key) {
+		res[key] = struct[key].keys();
+		return res;
+	}, {});
+}
+
 function getFragmentAtoms(struct, frid) {
 	var atoms = [];
 	struct.atoms.each(function (aid, atom) {
 		if (atom.fragment == frid)
 			atoms.push(aid);
-	}, this);
+	});
 	return atoms;
 }
 

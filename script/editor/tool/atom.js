@@ -53,11 +53,11 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		// TODO [RB] kludge fix for KETCHER-560. need to review
 		// BEGIN
 		/*
-		 var action_ret = Action.fromBondAddition(
+		 var action_ret = Action.fromBondAddition(rnd.ctab,
 		 this.bondProps, dragCtx.item.id, this.atomProps, newAtomPos, newAtomPos
 		 );
 		 */
-		var actionRet = Action.fromBondAddition(
+		var actionRet = Action.fromBondAddition(rnd.ctab,
 			this.bondProps, dragCtx.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
 		);
 		// END

@@ -118,7 +118,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				// undo previous action
 				if ('action' in dragCtx) dragCtx.action.perform();
 				dragCtx.sign2 = sign;
-				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
+				dragCtx.action = Action.fromTemplateOnBond(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 				rnd.update();
 			}
 
@@ -151,6 +151,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 			);
 		} else if (ci.map == 'atoms') {
 			dragCtx.action = Action.fromTemplateOnAtom(
+				rnd.ctab,
 				ci.id,
 				angle,
 				extraBond,
@@ -181,6 +182,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 
 				if (degree > 1) { // common case
 					dragCtx.action = Action.fromTemplateOnAtom(
+						restruct,
 						ci.id,
 						null,
 						true,
@@ -193,6 +195,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 					var angle = utils.calcAngle(nei.pp, atom.pp);
 
 					dragCtx.action = Action.fromTemplateOnAtom(
+						restruct,
 						ci.id,
 						event.ctrlKey ? angle : utils.fracAngle(angle),
 						false,
@@ -200,6 +203,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 					);
 				} else { // on single atom
 					dragCtx.action = Action.fromTemplateOnAtom(
+						restruct,
 						ci.id,
 						0,
 						false,
@@ -207,7 +211,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 					);
 				}
 			} else if (ci.map == 'bonds') {
-				dragCtx.action = Action.fromTemplateOnBond(ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
+				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 
 			render.update();

@@ -43,7 +43,7 @@ ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-
 		var angle = event.ctrlKey ? utils.calcAngle(pos0, pos1) :
 		                            utils.fracAngle(pos0, pos1);
 
-		dragCtx.action = Action.fromChain(pos0, angle, sectCount,
+		dragCtx.action = Action.fromChain(rnd.ctab, pos0, angle, sectCount,
 		                                  dragCtx.item ? dragCtx.item.id : null);
 		editor.event.message.dispatch({
 			info: sectCount + " sectors"

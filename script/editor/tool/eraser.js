@@ -10,7 +10,7 @@ function EraserTool(editor, mode) {
 		if (!editor.selection())
 			return new EraserTool(editor, mode);
 
-		var action = Action.fromFragmentDeletion(editor.selection());
+		var action = Action.fromFragmentDeletion(editor.render.ctab, editor.selection());
 		editor.event.change.dispatch(action);
 		editor.selection(null);
 		return null;
@@ -38,7 +38,7 @@ EraserTool.prototype.OnMouseMove = function (event) {
 EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		ui.addUndoAction(Action.fromFragmentDeletion(this.lassoHelper.end(event)));
+		ui.addUndoAction(Action.fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
 		this.editor.selection(null);
 		rnd.update();
 	} else {
@@ -46,11 +46,11 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 		if (ci && ci.type != 'Canvas') {
 			this.hoverHelper.hover(null);
 			if (ci.map == 'atoms') {
-				ui.addUndoAction(Action.fromAtomDeletion(ci.id));
+				ui.addUndoAction(Action.fromAtomDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'bonds') {
-				ui.addUndoAction(Action.fromBondDeletion(ci.id));
+				ui.addUndoAction(Action.fromBondDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'sgroups' || ci.map == 'sgroupData') {
-				ui.addUndoAction(Action.fromSgroupDeletion(ci.id));
+				ui.addUndoAction(Action.fromSgroupDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'rxnArrows') {
 				ui.addUndoAction(Action.fromArrowDeletion(ci.id));
 			} else if (ci.map == 'rxnPluses') {

@@ -9,7 +9,8 @@ var ui = global.ui;
 
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {
-		// Action.fromBondAttrs(editor.selection().bonds, {
+		// Action.fromBondAttrs(editor.render.ctab,
+		// editor.selection().bonds, {
 		// type: bondType(mode).type,
 		// stereo: Bond.PATTERN.STEREO.NONE })
 		editor.selection(null);
@@ -73,7 +74,7 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
 			if (dist > 0.3)
-				dragCtx.action = Action.fromBondAddition(this.bondProps, i1, i2, p1, p2)[0];
+				dragCtx.action = Action.fromBondAddition(rnd.ctab, this.bondProps, i1, i2, p1, p2)[0];
 			else
 				delete dragCtx.action;
 			rnd.update();
@@ -96,7 +97,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			var v = new Vec2(1.0 / 2, 0).rotate(
 				this.bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
-			var bondAddition = Action.fromBondAddition(
+			var bondAddition = Action.fromBondAddition(rnd.ctab,
 				this.bondProps,
 			{ label: 'C' },
 			{ label: 'C' },
@@ -106,7 +107,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			ui.addUndoAction(bondAddition[0]);
 		} else if (dragCtx.item.map == 'atoms') {
 			// when does it hapend?
-			ui.addUndoAction(Action.fromBondAddition(this.bondProps, dragCtx.item.id)[0]);
+			ui.addUndoAction(Action.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
 		} else if (dragCtx.item.map == 'bonds') {
 			var bondProps = Object.clone(this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
@@ -117,7 +118,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
 			bond.stereo == bondProps.stereo
 			) {
-				ui.addUndoAction(Action.fromBondFlipping(dragCtx.item.id));
+				ui.addUndoAction(Action.fromBondFlipping(rnd.ctab, dragCtx.item.id));
 			} else {
 				var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
 				if (
@@ -129,7 +130,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 					bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
 
 				ui.addUndoAction(
-					Action.fromBondAttrs(dragCtx.item.id, bondProps,
+					Action.fromBondAttrs(rnd.ctab, dragCtx.item.id, bondProps,
 					                     bondFlipRequired(struct, bond, bondProps)), true);
 			}
 		}

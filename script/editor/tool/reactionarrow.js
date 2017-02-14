@@ -31,6 +31,7 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 			this.dragCtx.action.perform();
 
 		this.dragCtx.action = Action.fromMultipleMove(
+			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
@@ -46,7 +47,7 @@ ReactionArrowTool.prototype.OnMouseUp = function (event) {
 		rnd.update();
 		delete this.dragCtx;
 	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
-		ui.addUndoAction(Action.fromArrowAddition(rnd.page2obj(event)));
+		ui.addUndoAction(Action.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 		rnd.update();
 	}
 };

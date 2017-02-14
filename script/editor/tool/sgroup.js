@@ -70,7 +70,8 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 };
 
 function propsDialog(editor, id, defaultType) {
-	var struct = editor.render.ctab.molecule;
+	var restruct = editor.render.ctab;
+	var struct = restruct.molecule;
 	var atoms = editor.selection() && editor.selection().atoms;
 	var sg = (id != null) && struct.sgroups.get(id);
 	var type = sg ? sg.type : defaultType;
@@ -90,9 +91,9 @@ function propsDialog(editor, id, defaultType) {
 			});
 		} else {
 			var action = (id != null) ?
-			    Action.fromSgroupType(id, newSg.type)
+			    Action.fromSgroupType(restruct, id, newSg.type)
 			          .mergeWith(Action.fromSgroupAttrs(id, newSg.attrs)) :
-		        Action.fromSgroupAddition(newSg.type, atoms, newSg.attrs,
+			    Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
 		                                  struct.sgroups.newId());
 			editor.event.change.dispatch(action);
 		}

@@ -112,6 +112,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 			rnd.update(); // redraw the elements in unshifted position, lest the have different offset
 		}
 		this.dragCtx.action = Action.fromMultipleMove(
+			rnd.ctab,
 			this.editor.explicitSelected(),
 			rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
@@ -143,11 +144,12 @@ SelectTool.prototype.OnMouseUp = function (event) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci.map == this.dragCtx.item.map) {
+				var restruct = this.editor.render.ctab;
 				this.hoverHelper.hover(null);
 				this.editor.selection(null);
 				this.dragCtx.action = this.dragCtx.action ?
-					Action.fromAtomMerge(this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
-						Action.fromAtomMerge(this.dragCtx.item.id, ci.id);
+					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
+					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id);
 			}
 		}
 		ui.addUndoAction(this.dragCtx.action, true);
@@ -240,7 +242,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var res = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(res).then(function (newbond) {
-			editor.event.change.dispatch(Action.fromBondAttrs(ci.id, newbond));
+			editor.event.change.dispatch(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {
 		this.editor.selection(closestToSel(ci));

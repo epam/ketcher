@@ -11,13 +11,14 @@ function RotateTool(editor, dir) {
 		if (!dir)
 			return new RotateTool(editor);
 
+		var restruct = editor.render.ctab;
 		var selection = editor.selection();
 		var singleBond = selection && selection.bonds &&
 		    Object.keys(selection).length == 1 &&
 		    selection.bonds.length == 1;
 
-		var action = !singleBond ? Action.fromFlip(selection, dir) :
-		    Action.fromBondAlign(selection.bonds[0], dir);
+		var action = !singleBond ? Action.fromFlip(restruct, selection, dir) :
+		    Action.fromBondAlign(restruct, selection.bonds[0], dir);
 		editor.event.change.dispatch(action);
 		return null;
 	}
@@ -111,7 +112,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		if ('action' in dragCtx) dragCtx.action.perform();
 
 		dragCtx.angle = degrees;
-		dragCtx.action = Action.fromRotate(this.editor.selection(), dragCtx.xy0, angle);
+		dragCtx.action = Action.fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
 		if (degrees > 180)
 			degrees -= 360;

@@ -1024,15 +1024,6 @@ function getAnchorPosition(clipboard) {
 	}
 }
 
-function getAtoms(struct, frid) {
-	var atoms = [];
-	struct.atoms.each(function (aid, atom) {
-		if (atom.fragment == frid)
-			atoms.push(aid);
-	}, this);
-	return atoms;
-}
-
 // TODO: merge to bellow
 function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	console.assert(!struct.isBlank(), 'Empty struct');
@@ -1111,7 +1102,7 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 
 	var rgids = Set.empty();
 	Set.each(fragments, function (frid) {
-		var atoms = getAtoms(struct, frid);
+		var atoms = getFragmentAtoms(struct, frid);
 		for (var i = 0; i < atoms.length; ++i) {
 			if (!Set.contains(atomFragments, atoms[i]))
 				return;
@@ -1192,7 +1183,7 @@ function fromPaste(struct, point) { // eslint-disable-line max-statements
 	return action;
 }
 
-function fromFlip(objects, flip) { // eslint-disable-line max-statements
+function fromFlip(selection, flip) { // eslint-disable-line max-statements
 	var restruct = ui.render.ctab;
 	var struct = restruct.molecule;
 
@@ -1200,9 +1191,17 @@ function fromFlip(objects, flip) { // eslint-disable-line max-statements
 	var i;
 	var fids = {};
 
-	if (objects.atoms) {
-		for (i = 0; i < objects.atoms.length; i++) {
-			var aid = objects.atoms[i];
+	if (!selection) {
+		selection = {       // TODO: generic method to get
+			                // selection from all the struct
+			atoms: struct.atoms.keys(),
+			bonds: struct.bonds.keys()
+		};
+	}
+
+	if (selection.atoms) {
+		for (i = 0; i < selection.atoms.length; i++) {
+			var aid = selection.atoms[i];
 			var atom = struct.atoms.get(aid);
 			if (!(atom.fragment in fids))
 				fids[atom.fragment] = [aid];
@@ -1235,9 +1234,9 @@ function fromFlip(objects, flip) { // eslint-disable-line max-statements
 			});
 		});
 
-		if (objects.bonds) {
-			for (i = 0; i < objects.bonds.length; i++) {
-				var bid = objects.bonds[i];
+		if (selection.bonds) {
+			for (i = 0; i < selection.bonds.length; i++) {
+				var bid = selection.bonds[i];
 				var bond = struct.bonds.get(bid);
 
 				if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE) {
@@ -1253,55 +1252,64 @@ function fromFlip(objects, flip) { // eslint-disable-line max-statements
 	return action.perform();
 }
 
-function fromRotate(objects, pos, angle) { // eslint-disable-line max-statements
+function fromRotate(selection, pos, angle) { // eslint-disable-line max-statements
 	var restruct = ui.render.ctab;
 	var struct = restruct.molecule;
 
 	var action = new Action();
 
-	function rotateDelta(v) {
-		var v1 = v.sub(pos);
-		v1 = v1.rotate(angle);
-		v1.add_(pos); // eslint-disable-line no-underscore-dangle
-		return v1.sub(v);
-	}
-
-	if (objects.atoms) {
-		objects.atoms.each(function (aid) {
+	if (selection.atoms) {
+		selection.atoms.each(function (aid) {
 			var atom = struct.atoms.get(aid);
-			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp)));
+			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
 		});
 	}
 
-	if (objects.rxnArrows) {
-		objects.rxnArrows.each(function (aid) {
+	if (selection.rxnArrows) {
+		selection.rxnArrows.each(function (aid) {
 			var arrow = struct.rxnArrows.get(aid);
-			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp)));
+			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, pos, angle)));
 		});
 	}
 
-	if (objects.rxnPluses) {
-		objects.rxnPluses.each(function (pid) {
+	if (selection.rxnPluses) {
+		selection.rxnPluses.each(function (pid) {
 			var plus = struct.rxnPluses.get(pid);
-			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp)));
+			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, pos, angle)));
 		});
 	}
 
-	if (objects.sgroupData) {
-		objects.sgroupData.each(function (did) {
+	if (selection.sgroupData) {
+		selection.sgroupData.each(function (did) {
 			var data = struct.sgroups.get(did);
-			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp)));
+			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, pos, angle)));
 		});
 	}
 
-	if (objects.chiralFlags) {
-		objects.chiralFlags.each(function (fid) {
+	if (selection.chiralFlags) {
+		selection.chiralFlags.each(function (fid) {
 			var flag = struct.chiralFlags.get(fid);
-			action.addOp(new op.ChiralFlagMove(fid, rotateDelta(flag.pp)));
+			action.addOp(new op.ChiralFlagMove(fid, rotateDelta(flag.pp, pos, angle)));
 		});
 	}
 
 	return action.perform();
+}
+
+function getFragmentAtoms(struct, frid) {
+	var atoms = [];
+	struct.atoms.each(function (aid, atom) {
+		if (atom.fragment == frid)
+			atoms.push(aid);
+	}, this);
+	return atoms;
+}
+
+function rotateDelta(v, pos, angle) {
+	var v1 = v.sub(pos);
+	v1 = v1.rotate(angle);
+	v1.add_(pos); // eslint-disable-line no-underscore-dangle
+	return v1.sub(v);
 }
 
 function atomGetAttr(restruct, aid, name) {

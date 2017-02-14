@@ -19,8 +19,13 @@ function calcNewAtomPos(pos0, pos1) {
 	return v;
 }
 
+function degrees(angle) {
+	return Math.round(angle / Math.PI * 180);
+}
+
 module.exports = {
 	calcAngle: calcAngle,
 	fracAngle: fracAngle,
-	calcNewAtomPos: calcNewAtomPos
+	calcNewAtomPos: calcNewAtomPos,
+	degrees: degrees
 };

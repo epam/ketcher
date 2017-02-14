@@ -12,7 +12,13 @@ function RotateTool(editor, dir) {
 		if (!dir)
 			return new RotateTool(editor);
 
-		var action = Action.fromFlip(editor.selection(), dir);
+		var selection = editor.selection();
+		var singleBond = selection && selection.bonds &&
+		    Object.keys(selection).length == 1 &&
+		    selection.bonds.length == 1;
+
+		var action = !singleBond ? Action.fromFlip(selection, dir) :
+		    Action.fromBondAlign(selection.bonds[0], dir);
 		editor.event.change.dispatch(action);
 		return null;
 	}
@@ -102,12 +108,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 		if (!event.ctrlKey)
 			angle = utils.fracAngle(angle);
 
-		var degrees = Math.round(angle / Math.PI * 180);
-
-		if (degrees > 180)
-			degrees -= 360;
-		else if (degrees <= -180)
-			degrees += 360;
+		var degrees = utils.degrees(angle);
 
 		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
 		if ('action' in dragCtx) dragCtx.action.perform();
@@ -117,6 +118,10 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 			dragCtx.all ? rnd.ctab.molecule : this.editor.selection() || {},
 			dragCtx.xy0, angle);
 
+		if (degrees > 180)
+			degrees -= 360;
+		else if (degrees <= -180)
+			degrees += 360;
 		this.editor.event.message.dispatch({ info: degrees + 'º' });
 
 		rnd.update();

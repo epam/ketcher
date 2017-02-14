@@ -129,7 +129,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		if (!event.ctrlKey)
 			angle = utils.fracAngle(angle);
 
-		var degrees = Math.round(180 / Math.PI * angle);
+		var degrees = utils.degrees(angle);
 		// check if anything changed since last time
 		if ('angle' in dragCtx && dragCtx.angle == degrees) {
 			if ('extra_bond' in dragCtx) {

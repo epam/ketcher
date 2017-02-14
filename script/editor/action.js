@@ -1183,7 +1183,7 @@ function fromPaste(struct, point) { // eslint-disable-line max-statements
 	return action;
 }
 
-function fromFlip(selection, flip) { // eslint-disable-line max-statements
+function fromFlip(selection, dir) { // eslint-disable-line max-statements
 	var restruct = ui.render.ctab;
 	var struct = restruct.molecule;
 
@@ -1224,7 +1224,7 @@ function fromFlip(selection, flip) { // eslint-disable-line max-statements
 				var d = new Vec2();
 
 				/* eslint-disable no-mixed-operators*/
-				if (flip == 'horizontal')
+				if (dir == 'horizontal')
 					d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
 				else // 'vertical'
 					d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
@@ -1294,6 +1294,23 @@ function fromRotate(selection, pos, angle) { // eslint-disable-line max-statemen
 	}
 
 	return action.perform();
+}
+
+function fromBondAlign(bid, dir) {
+	var struct = ui.render.ctab.molecule;
+	var bond = struct.bonds.get(bid);
+	var begin = struct.atoms.get(bond.begin);
+	var end = struct.atoms.get(bond.end);
+
+	var center = begin.pp.add(end.pp).scaled(0.5);
+	var angle = utils.calcAngle(begin.pp, end.pp);
+	var atoms = getFragmentAtoms(struct, begin.fragment);
+	angle = (dir == 'horizontal') ? -angle :
+		                            (Math.PI / 2 - angle);
+
+	// TODO: choose minimal angle
+	// console.info('single bond', utils.degrees(angle), atoms, dir);
+	return fromRotate({ atoms: atoms }, center, angle);
 }
 
 function getFragmentAtoms(struct, frid) {
@@ -1371,5 +1388,6 @@ module.exports = Object.assign(Action, {
 	fromRGroupAttrs: fromRGroupAttrs,
 	fromSgroupAddition: fromSgroupAddition,
 	fromFlip: fromFlip,
-	fromRotate: fromRotate
+	fromRotate: fromRotate,
+	fromBondAlign: fromBondAlign
 });

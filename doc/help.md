@@ -101,7 +101,7 @@ You can use the buttons of the _Main_ toolbar:
   * **Calculated Values** button (15) to display some properties of
   the structure:
 
-    ![](calculated.png "Calculated Values")
+    ![](analyse.png "Calculated Values")
 
   * **Recognize Molecule** button (16) to recognize a structure in the
   image file and load it to the canvas;
@@ -541,8 +541,8 @@ it will appear in brackets after the description of the button.
 | `Alt+V` | Flip vertically |
 | `Alt+H` | Flip horizontally |
 | `Ctrl+G` | S-Group tool / Data S-Group tool |
-| `R` | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
-| `Ctrl+R`  | R-Group Fragment Tool |
+| `Ctrl+R` | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
+| `Ctrl+Shift+R`  | R-Group Fragment Tool |
 | `Ctrl+N` | Clear canvas |
 | `Ctrl+O` | Open |
 | `Ctrl+S` | Save As |

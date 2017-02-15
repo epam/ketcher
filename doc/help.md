@@ -409,7 +409,24 @@ separate buttons:
 
  ![](rotate.png)
 
-Press and hold `Ctrl` key for more gradual continuous rotation.
+Rotate Tool
+
+This tool allows rotating objects.
+•	If some objects are selected, the tool rotates the selected objects.
+•	If no objects are selected, or all objects are selected, the tool rotates the whole canvas
+•	The default rotation step is 15 degrees. 
+•	Press and hold the Ctrl key for more gradual continuous rotation with 1 degree rotation step
+
+Select any bond on the structure and click Alt+H to rotate the structure so that the selected bond is placed horizontally.
+Select any bond on the structure and click Alt+V to rotate the structure so that the selected bond is placed vertically.
+
+Flip Tool
+
+This tool flips the objects horizontally or vertically.
+•	If some objects are selected, the Horizontal Flip tool (or Alt+H) flips the selected objects horizontally
+•	If no objects are selected, or all objects are selected, the Horizontal Flip tool (or Alt+H) flips the whole canvas horizontally
+•	If some objects are selected, the Vertical Flip tool (or Alt+V) flips the selected objects vertically
+•	If no objects are selected, or all objects are selected, the Vertical Flip tool (or Alt+V) flips the whole canvas vertically
 
 # Drawing Reactions
 

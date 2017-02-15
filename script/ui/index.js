@@ -149,6 +149,19 @@ function initEditor(editor) {
 			return structConv.toApoint(res);
 		});
 	});
+	editor.on('rlabelEdit', function (props) {
+		// props.label == 'R#'
+		var dlg = dialog(modal.rgroup, {
+			mode: 'multiple',
+			values: structConv.fromRlabel(props.rglabel)
+		});
+		return dlg.then(function (res) {
+			return {
+				label: 'R#',
+				rglabel: structConv.toRlabel(res)
+			};
+		});
+	});
 	editor.on('message', function (msg) {
 		if (msg.error)
 			alert(msg.error);
@@ -983,7 +996,6 @@ Object.assign(ui, {
 	hideDialog: hideDialog,
 
 	// TODO: search a way to pass dialogs to editor
-	showRGroupTable: dialog.bind(null, modal.rgroup),
 	showElemTable: modal.periodTable,
 	showReaGenericsTable: modal.genericGroups,
 	showAtomProperties: modal.atomProps,

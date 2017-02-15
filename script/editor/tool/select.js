@@ -175,7 +175,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = struct.atoms.get(ci.id);
 		if (atom.label == 'R#') {
-			RGroupAtomTool.prototype.OnMouseUp.call(this, event);
+			RGroupAtomTool.dialog(this.editor, ci.id);
 		} else if (atom.label == 'L#') {
 			ui.showElemTable({
 				selection: atom,

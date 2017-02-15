@@ -4,8 +4,6 @@ import {h, Component, render} from 'preact';
 import Dialog from '../component/dialog';
 import StructEditor from '../component/structeditor';
 
-import sdf from '../../chem/sdf';
-
 class Attach extends Component {
 	constructor(props) {
 		super(props);
@@ -22,7 +20,6 @@ class Attach extends Component {
 	result() {
 		let tmpl = this.tmpl;
 		tmpl.props = Object.assign(tmpl.props, this.state.attach);
-		// return sdf.stringify(tmpl);
 		return tmpl;
 	}
 
@@ -40,15 +37,11 @@ class Attach extends Component {
 					name="attach" result={() => this.result() }
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">
-				<label> Template name:
-					<input type="text"/>
-				</label>
-				<br/>
-				<label> Choose attachment atom and bond
+				<label> Choose attachment atom and bond:
+					&#123; atomid {attach.atomid || 0}; bondid: {attach.bondid || 0} &#125;</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
 							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
 							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }} />
-				</label>
 			</Dialog>
 		);
 	}

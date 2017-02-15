@@ -698,20 +698,20 @@ function genericsTable(elem) {
 };
 
 function templateLib () {
-	console.log('libTmpls: ', libTmpls);
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-	console.log('usverTmpls: ', store)
-	var userTmpls = store.map(function (structStr) {
+	var userTmpls = store.map(function (tmplStr) {
+		if (tmplStr.props == '') tmplStr.props = {};
+		tmplStr.props.group = 'User';
 		return {
-			struct: molfile.parse(structStr),
-			props: { group: 'User' }
+			struct: molfile.parse(tmplStr.struct),
+			props: tmplStr.props
 		};
 	});
 
 	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (res) {
 
 		if (res.event == 'attachEdit') {
-			attach(res.tmpl);
+			attach(res.tmpl, res.index);
 		} else if (res.event == 'chooseTmpl') {
 			// C doesn't conflict with menu id
 			selectAction('template-custom', res.tmpl);
@@ -720,12 +720,32 @@ function templateLib () {
 	});
 }
 
-function attach (tmpl) {
+function attach (tmpl, index) {
+	var tmplName = tmpl.struct.name;
+
 	dialog(modal.attach, {
 		userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
-		struct: tmpl}).then(function (newTmpl) {
+		struct: tmpl
+	}).then(function (newTmpl) {
+		var isUser = true;
+		libTmpls = libTmpls.map(function (item) {
+			if (item.struct.name == tmplName) {
+				isUser = false;
+				return newTmpl;
+			}
+			return item;
+		});
 
+		if (isUser) {
+			var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+			store[index] = {
+				struct: molfile.stringify(newTmpl.struct),
+				props: newTmpl.props
+			};
+			localStorage['ketcher-tmpl'] = JSON.stringify(store);
+		}
 
+		templateLib();
 	});
 }
 

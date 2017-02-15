@@ -118,20 +118,20 @@ class TemplateLib extends Component {
 	}
 
 	result() {
-		var tmpl = this.state.selected;
+		let tmpl = this.state.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return {
 			event: 'chooseTmpl',
 			tmpl: tmpl ? {
 					struct: tmpl.struct,
-					aid: parseInt(tmpl.props.atomid) || null,
-					bid: parseInt(tmpl.props.bondid) || null
+					aid: parseInt(tmpl.props.atomid) + 1 || null, // TODO: Why +1??
+					bid: parseInt(tmpl.props.bondid) + 1 || null
 				} : null
 		};
 	}
 
-	onAttach(tmpl) {
-		this.props.onOk({event: 'attachEdit', tmpl: tmpl});
+	onAttach(tmpl, index) {
+		this.props.onOk({event: 'attachEdit', tmpl: tmpl, index: index});
 	}
 
 	renderRow (row, index) {
@@ -141,7 +141,7 @@ class TemplateLib extends Component {
 				  <RenderTmpl tmpl={tmpl}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
-					<button style="float: right; position: relative;" onClick={() => this.onAttach(tmpl)}>Attach</button>
+					<button className="attach-button" onClick={() => this.onAttach(tmpl, index + i)}>Attach</button>
 				</div>
 			))}</div>
 		);

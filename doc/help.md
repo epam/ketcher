@@ -409,7 +409,7 @@ separate buttons:
 
  ![](rotate.png)
 
-Rotate Tool
+_Rotate Tool_
 
 This tool allows rotating objects.
 •	If some objects are selected, the tool rotates the selected objects.
@@ -420,13 +420,13 @@ This tool allows rotating objects.
 Select any bond on the structure and click Alt+H to rotate the structure so that the selected bond is placed horizontally.
 Select any bond on the structure and click Alt+V to rotate the structure so that the selected bond is placed vertically.
 
-Flip Tool
+_Flip Tool_
 
 This tool flips the objects horizontally or vertically.
 •	If some objects are selected, the Horizontal Flip tool (or Alt+H) flips the selected objects horizontally
-•	If no objects are selected, or all objects are selected, the Horizontal Flip tool (or Alt+H) flips the whole canvas horizontally
+•	If no objects are selected, or all objects are selected, the Horizontal Flip tool (or Alt+H) flips each structure horizontally
 •	If some objects are selected, the Vertical Flip tool (or Alt+V) flips the selected objects vertically
-•	If no objects are selected, or all objects are selected, the Vertical Flip tool (or Alt+V) flips the whole canvas vertically
+•	If no objects are selected, or all objects are selected, the Vertical Flip tool (or Alt+V) flips each structure vertically
 
 # Drawing Reactions
 

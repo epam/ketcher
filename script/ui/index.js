@@ -698,7 +698,9 @@ function genericsTable(elem) {
 };
 
 function templateLib () {
+	console.log('libTmpls: ', libTmpls);
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	console.log('usverTmpls: ', store)
 	var userTmpls = store.map(function (structStr) {
 		return {
 			struct: molfile.parse(structStr),
@@ -706,12 +708,26 @@ function templateLib () {
 		};
 	});
 
-	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (tmpl) {
-		// C doesn't conflict with menu id
-		selectAction('template-custom', tmpl);
+	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (res) {
+
+		if (res.event == 'attachEdit') {
+			attach(res.tmpl);
+		} else if (res.event == 'chooseTmpl') {
+			// C doesn't conflict with menu id
+			selectAction('template-custom', res.tmpl);
+		}
 		return true;
 	});
-};
+}
+
+function attach (tmpl) {
+	dialog(modal.attach, {
+		userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
+		struct: tmpl}).then(function (newTmpl) {
+
+
+	});
+}
 
 var actionMap = {
 	new: clear,
@@ -820,16 +836,6 @@ var actionMap = {
 				load(res.structStr);
 			});
 		});
-	},
-	'attach': function () {
-		fetch('library.sdf', {credentials: 'same-origin'}).then(function (resp) {
-			if (resp.ok)
-				return resp.text();
-			throw "Could not fetch " + url;
-		}).then(function (text) {
-				dialog(modal.attach, {userOpts: JSON.parse(localStorage.getItem("ketcher-opts")), struct: text});
-			}
-		);
 	}
 };
 

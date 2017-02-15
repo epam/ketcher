@@ -9,10 +9,8 @@ import sdf from '../../chem/sdf';
 class Attach extends Component {
 	constructor(props) {
 		super(props);
-		this.tmpl = sdf.parse(props.struct)[1];
+		this.tmpl = props.struct;
 
-		console.log("Attach:", this.tmpl);
-		debugger;
 		this.setState( {
 			attach: {
 				atomid: +this.tmpl.props.atomid || 0,
@@ -41,14 +39,16 @@ class Attach extends Component {
 			<Dialog caption="Attach"
 					name="attach" result={() => this.result() }
 					params={this.props}
-					buttons={["Cancel", "OK"]}>
-				<label>
+					buttons={["Cancel", "OK"]} className="attach">
+				<label> Template name:
 					<input type="text"/>
 				</label>
-				<StructEditor id="attachment" style="width: 500px;"
+				<br/>
+				<label> Choose attachment atom and bond
+				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
 							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
-							  struct={this.tmpl.struct} opts={userOpts}
 							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }} />
+				</label>
 			</Dialog>
 		);
 	}

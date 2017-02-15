@@ -17,6 +17,7 @@ function PasteTool(editor, struct) {
 			rnd.page2obj(this.OnMouseMove0.lastEvent) : undefined);
 	rnd.update();
 }
+
 PasteTool.prototype = new EditorTool();
 PasteTool.prototype.OnMouseMove = function (event) {
 	if ('action' in this)

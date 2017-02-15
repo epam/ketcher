@@ -95,7 +95,7 @@ function propsDialog(editor, id, defaultType) {
 			          .mergeWith(Action.fromSgroupAttrs(id, newSg.attrs)) :
 			    Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
 		                                  struct.sgroups.newId());
-			editor.event.change.dispatch(action);
+			editor.update(action);
 		}
 	});
 }

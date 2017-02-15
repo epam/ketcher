@@ -11,7 +11,7 @@ function EraserTool(editor, mode) {
 			return new EraserTool(editor, mode);
 
 		var action = Action.fromFragmentDeletion(editor.render.ctab, editor.selection());
-		editor.event.change.dispatch(action);
+		editor.update(action);
 		editor.selection(null);
 		return null;
 	}

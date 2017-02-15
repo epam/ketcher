@@ -19,7 +19,7 @@ function RotateTool(editor, dir) {
 
 		var action = !singleBond ? Action.fromFlip(restruct, selection, dir) :
 		    Action.fromBondAlign(restruct, selection.bonds[0], dir);
-		editor.event.change.dispatch(action);
+		editor.update(action);
 		return null;
 	}
 

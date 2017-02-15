@@ -242,7 +242,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var res = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(res).then(function (newbond) {
-			editor.event.change.dispatch(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
+			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {
 		this.editor.selection(closestToSel(ci));

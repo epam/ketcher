@@ -61,7 +61,7 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.event.change.dispatch(Action.fromNewCanvas(value));
+		this.update(Action.fromNewCanvas(value));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;
@@ -118,6 +118,12 @@ Editor.prototype.selection = function (selection) {
 	return this._selection;
 };
 
+Editor.prototype.update = function (action) {
+	this.event.change.dispatch(action); // TODO: stoppable here
+	ui.addUndoAction(action, true);
+	this.render.update();
+};
+
 Editor.prototype.on = function (eventName, handler) {
 	this.event[eventName].add(handler);
 };
@@ -148,7 +154,6 @@ function domEventSetup(editor, clientArea) {
 }
 
 function eventSetup(editor) {
-	var pass = -1;
 	editor.event = {
 		message: new s.Subscription(),
 		bondEdit: new s.PipelineSubscription(),
@@ -159,10 +164,6 @@ function eventSetup(editor) {
 		change: new s.PipelineSubscription(),
 		selectionChange: new s.PipelineSubscription()
 	};
-	editor.event.change.add(function (action) {
-		ui.addUndoAction(action, true);
-		editor.render.update();
-	}, pass);
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {

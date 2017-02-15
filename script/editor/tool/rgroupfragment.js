@@ -40,7 +40,7 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 			    Action.fromRGroupAttrs(ci.id, newRg) :
 			    Action.fromRGroupFragment(newRg.label, ci.id);
 
-			editor.event.change.dispatch(action);
+			editor.update(action);
 		});
 		return true;
 	}

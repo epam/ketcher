@@ -30,7 +30,7 @@ APointTool.prototype.OnMouseUp = function (event) {
 		Promise.resolve(res).then(function (newAp) {
 			if (ap != newAp) {
 				var action = Action.fromAtomsAttrs(ci.id, { attpnt: newAp });
-				editor.event.change.dispatch(action);
+				editor.update(action);
 			}
 		});
 		return true;

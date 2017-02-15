@@ -13,7 +13,7 @@ function AtomTool(editor, atomProps) {
 
 		var action = Action.fromAtomsAttrs(editor.selection().atoms,
 		                                   atomProps);
-		editor.event.change.dispatch(action);
+		editor.update(action);
 		editor.selection(null);
 		return null;
 	}

@@ -8,6 +8,7 @@ import VisibleView from '../component/visibleview';
 import StructRender from '../component/structrender';
 import SelectList from '../component/select';
 import Dialog from '../component/dialog';
+import SaveButton from '../component/savebutton';
 
 function tmplName(tmpl, i) {
 	console.assert(tmpl.props && tmpl.props.group, "No group");
@@ -147,6 +148,14 @@ class TemplateLib extends Component {
 		);
 	}
 
+	saveToSDF() {
+		let sdfStr = '';
+		this.props.lib.forEach(function (item) {
+			sdfStr += sdf.stringify(item.templates);
+		});
+		return sdfStr;
+	}
+
 	render () {
 		const COLS = 3;
 		let {group, filter} = this.state;
@@ -156,7 +165,13 @@ class TemplateLib extends Component {
 		return (
 			<Dialog caption="Template Library"
 					name="template-lib" params={this.props}
-					result={() => this.result()}>
+					result={() => this.result()}
+					buttons={[
+						<SaveButton className="save" data={this.saveToSDF()}
+									filename={'ketcher-tmpls.sdf'} >
+							Save To SDF…
+						</SaveButton>,
+						"OK", "Cancel"]} >
 				<label>
 					<input type="search" placeholder="Filter" value={filter}
 						   onInput={(ev) => this.setFilter(ev.target.value)} />

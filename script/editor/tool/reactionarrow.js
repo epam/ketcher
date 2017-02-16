@@ -2,8 +2,6 @@ var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
-var ui = global.ui;
-
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
 		return new ReactionArrowTool(editor);
@@ -42,13 +40,11 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 };
 ReactionArrowTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
-	if ('dragCtx' in this) {
-		ui.addUndoAction(this.dragCtx.action, false); // TODO investigate, subsequent undo/redo fails
-		rnd.update();
+	if (this.dragCtx) {
+		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
 	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
-		ui.addUndoAction(Action.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
-		rnd.update();
+		this.editor.update(Action.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 

@@ -163,6 +163,7 @@ function eventSetup(editor) {
 		rgroupEdit: new s.PipelineSubscription(),
 		sgroupEdit: new s.PipelineSubscription(),
 		sdataEdit: new s.PipelineSubscription(),
+		quickEdit: new s.PipelineSubscription(),
 		change: new s.PipelineSubscription(),
 		selectionChange: new s.PipelineSubscription()
 	};

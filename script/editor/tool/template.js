@@ -5,8 +5,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var utils = require('./utils');
 
-var ui = global.ui;
-
 function TemplateTool(editor, tmpl) {
 	if (!(this instanceof TemplateTool))
 		return new TemplateTool(editor, tmpl);
@@ -217,10 +215,9 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 			render.update();
 		}
 
-		if ('action' in this.dragCtx) {
-			if (!this.dragCtx.action.isDummy())
-				ui.addUndoAction(this.dragCtx.action);
-		}
+		if (this.dragCtx.action && !this.dragCtx.action.isDummy())
+			this.editor.update(this.dragCtx.action);
+
 		delete this.dragCtx;
 	}
 };

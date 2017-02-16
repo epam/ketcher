@@ -4,8 +4,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var utils = require('./utils');
 
-var ui = global.ui;
-
 function AtomTool(editor, atomProps) {
 	if (!(this instanceof AtomTool)) {
 		if (!editor.selection() || !editor.selection().atoms)
@@ -72,15 +70,11 @@ AtomTool.prototype.OnMouseUp = function (event) {
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var rnd = this.editor.render;
-		/* eslint-disable no-nested-ternary*/
-		ui.addUndoAction(
-				'action' in dragCtx ? dragCtx.action : 'item' in dragCtx ?
-					Action.fromAtomsAttrs(dragCtx.item.id, this.atomProps, true) :
-						Action.fromAtomAddition(rnd.page2obj(event), this.atomProps),
-			true
-		);
-		/* eslint-enable no-nested-ternary*/
-		rnd.update();
+		this.editor.update(dragCtx.action || (
+			dragCtx.item ?
+				Action.fromAtomsAttrs(dragCtx.item.id, this.atomProps, true) :
+				Action.fromAtomAddition(rnd.page2obj(event), this.atomProps)
+		));
 		delete this.dragCtx;
 	}
 };

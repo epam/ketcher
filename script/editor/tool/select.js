@@ -10,8 +10,6 @@ var LassoHelper = require('./helper/lasso');
 var SGroup = require('./sgroup');
 var RGroupAtomTool = require('./rgroupatom');
 
-var ui = global.ui;
-
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
 		return new SelectTool(editor, mode);
@@ -70,28 +68,19 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 		};
 		if (ci.map == 'atoms') {
 			var self = this;
-			this.dragCtx.timeout = setTimeout(
-			function () {
+			var editor = this.editor;
+			var atom = rnd.ctab.molecule.atoms.get(ci.id);
+			// TODO: longtab event
+			this.dragCtx.timeout = setTimeout(function () {
 				delete self.dragCtx;
-				self.editor.selection(null);
-				var atom = rnd.ctab.molecule.atoms.get(ci.id);
-				ui.showLabelEditor({
-					// pos: rnd.obj2view(atom.pp)
-					label: atom.label,
-					charge: atom.charge,
-					isotope: atom.isotope,
-					radical: atom.radical,
-
-					onOk: function (res) {
-						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, res), true);
-						rnd.update();
-					}
+				editor.selection(null);
+				var res = editor.event.quickEdit.dispatch(atom);
+				Promise.resolve(res).then(function (newatom) {
+					editor.update(Action.fromAtomsAttrs(ci.id, newatom));
 				});
-			},
-				750
-			);
+			}, 750);
 			this.dragCtx.stopTapping = function () {
-				if ('timeout' in self.dragCtx) {
+				if (self.dragCtx.timeout) {
 					clearTimeout(self.dragCtx.timeout);
 					delete self.dragCtx.timeout;
 				}
@@ -151,8 +140,7 @@ SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id);
 			}
 		}
-		ui.addUndoAction(this.dragCtx.action, true);
-		this.editor.render.update();
+		this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		var sel = this.lassoHelper.end();
@@ -200,11 +188,10 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 };
 
 SelectTool.prototype.OnCancel = function () {
-	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
-		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
-		ui.addUndoAction(this.dragCtx.action, true);
-		rnd.update();
+		if (this.dragCtx.stopTapping)
+			this.dragCtx.stopTapping();
+		this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) {
 		this.editor.selection(this.lassoHelper.end());

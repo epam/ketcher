@@ -4,8 +4,6 @@ var Action = require('../action');
 var EditorTool = require('./base');
 var utils = require('./utils');
 
-var ui = global.ui;
-
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {
 		if (!dir)
@@ -128,7 +126,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 RotateTool.prototype.OnMouseUp = function () {
 	if ('dragCtx' in this) {
 		if ('action' in this.dragCtx)
-			ui.addUndoAction(this.dragCtx.action, true);
+			this.editor.update(this.dragCtx.action);
 		else
 			this.editor.selection(null);
 		delete this.dragCtx;

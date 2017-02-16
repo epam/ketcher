@@ -5,8 +5,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var utils = require('./utils');
 
-var ui = global.ui;
-
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {
 		// Action.fromBondAttrs(editor.render.ctab,
@@ -91,23 +89,20 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 		var rnd = this.editor.render;
 		var struct = rnd.ctab.molecule;
 		if ('action' in dragCtx) {
-			ui.addUndoAction(dragCtx.action);
+			this.editor.update(dragCtx.action);
 		} else if (!('item' in dragCtx)) {
 			var xy = rnd.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
 				this.bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = Action.fromBondAddition(rnd.ctab,
-				this.bondProps,
-			{ label: 'C' },
-			{ label: 'C' },
-			Vec2.diff(xy, v),
-			Vec2.sum(xy, v)
-			);
-			ui.addUndoAction(bondAddition[0]);
+				this.bondProps, { label: 'C' }, { label: 'C' },
+			    Vec2.diff(xy, v), Vec2.sum(xy, v));
+
+			this.editor.update(bondAddition[0]);
 		} else if (dragCtx.item.map == 'atoms') {
 			// when does it hapend?
-			ui.addUndoAction(Action.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
+			this.editor.update(Action.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
 		} else if (dragCtx.item.map == 'bonds') {
 			var bondProps = Object.clone(this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
@@ -118,7 +113,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
 			bond.stereo == bondProps.stereo
 			) {
-				ui.addUndoAction(Action.fromBondFlipping(rnd.ctab, dragCtx.item.id));
+				this.editor.update(Action.fromBondFlipping(rnd.ctab, dragCtx.item.id));
 			} else {
 				var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
 				if (
@@ -129,12 +124,11 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 				)
 					bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
 
-				ui.addUndoAction(
+				this.editor.update(
 					Action.fromBondAttrs(rnd.ctab, dragCtx.item.id, bondProps,
-					                     bondFlipRequired(struct, bond, bondProps)), true);
+					                     bondFlipRequired(struct, bond, bondProps)));
 			}
 		}
-		rnd.update();
 		delete this.dragCtx;
 	}
 	return true;

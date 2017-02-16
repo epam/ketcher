@@ -5,8 +5,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var draw = require('../../render/draw');
 
-var ui = global.ui;
-
 function ReactionMapTool(editor) {
 	if (!(this instanceof ReactionMapTool))
 		return new ReactionMapTool(editor);
@@ -92,8 +90,7 @@ ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line 
 					action.mergeWith(Action.fromAtomsAttrs(this.dragCtx.item.id, { aam: aam + 1 }));
 					action.mergeWith(Action.fromAtomsAttrs(ci.id, { aam: aam + 1 }));
 				}
-				ui.addUndoAction(action, true);
-				rnd.update();
+				this.editor.update(action);
 			}
 		}
 		this.updateLine(null);

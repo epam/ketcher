@@ -27,10 +27,11 @@ PasteTool.prototype.OnMouseMove = function (event) {
 	rnd.update();
 };
 PasteTool.prototype.OnMouseUp = function () {
-	ui.addUndoAction(this.action);
-	delete this.action;
+	this.editor.update(this.action);
 	ui.selectAction(null);
+	delete this.action;
 };
+
 PasteTool.prototype.OnCancel = function () {
 	if ('action' in this) {
 		this.action.perform(this.editor);

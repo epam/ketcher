@@ -2,8 +2,6 @@ var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 
-var ui = global.ui;
-
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
 		return new ReactionUnmapTool(editor);
@@ -34,8 +32,7 @@ ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 		},
 			this
 		);
-		ui.addUndoAction(action, true);
-		this.editor.render.update();
+		this.editor.update(action);
 	}
 	this.hoverHelper.hover(null);
 };

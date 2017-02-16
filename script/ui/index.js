@@ -155,6 +155,9 @@ function initEditor(editor) {
 	editor.on('sdataEdit', function (sgroup) {
 		return dialog(modal.sgroup, sgroup);
 	});
+	editor.on('quickEdit', function (atom) {
+		return dialog(modal.labelEdit, atom);
+	});
 	editor.on('apointEdit', function (ap) {
 		var dlg = dialog(modal.attachmentPoints,
 		                 structConv.fromApoint(ap));
@@ -782,12 +785,12 @@ var actionMap = {
 	'zoom-out': zoomOut,
 	'period-table': function () {
 		elemTable().then(function (res) {
-			selectAction('atom-table', res);
+			selectAction('atom', res);
 		});
 	},
 	'generic-groups': function () {
 		genericsTable().then(function (res) {
-			selectAction('atom-generics', res);
+			selectAction('atom', res);
 		});
 	},
 	'template-lib': templateLib,
@@ -917,7 +920,7 @@ function mapTool (id) {
 		return { tool: 'select', opts:'fragment' };
 	} else if (id == 'erase') {
 		return { tool: 'eraser', opts: 1 }; // TODO last selector mode is better
-	} else if (id.startsWith('atom-')) {
+	} else if (id.startsWith('atom')) {
 		return { tool: 'atom', opts: args[0] || atomLabel(id) };
 	} else if (id.startsWith('bond-')) {
 		return {
@@ -1004,10 +1007,5 @@ Object.assign(ui, {
 	addUndoAction: addUndoAction,
 
 	showDialog: showDialog,
-	hideDialog: hideDialog,
-
-	// TODO: search a way to pass dialogs to editor
-	showLabelEditor: function (val) {
-		return dialog(modal.labelEdit, val, true);
-	}
+	hideDialog: hideDialog
 });

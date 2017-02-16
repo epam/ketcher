@@ -3,8 +3,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var element = require('../../chem/element');
 
-var ui = global.ui;
-
 function ChargeTool(editor, charge) {
 	if (!(this instanceof ChargeTool))
 		return new ChargeTool(editor, charge);
@@ -33,10 +31,9 @@ ChargeTool.prototype.OnMouseUp = function (event) {
 	var ci = editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) {
 		this.hoverHelper.hover(null);
-		ui.addUndoAction(
-		Action.fromAtomsAttrs(ci.id, { charge: struct.atoms.get(ci.id).charge + this.charge })
-		);
-		rnd.update();
+		this.editor.update(Action.fromAtomsAttrs(ci.id, {
+			charge: struct.atoms.get(ci.id).charge + this.charge
+		}));
 	}
 	return true;
 };

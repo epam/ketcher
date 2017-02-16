@@ -4,8 +4,6 @@ var HoverHelper = require('./helper/hover');
 var EditorTool = require('./base');
 var utils = require('./utils');
 
-var ui = global.ui;
-
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
 		return new ChainTool(editor);
@@ -55,9 +53,9 @@ ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-
 	return true;
 };
 ChainTool.prototype.OnMouseUp = function () {
-	if ('dragCtx' in this) {
-		if ('action' in this.dragCtx)
-			ui.addUndoAction(this.dragCtx.action);
+	if (this.dragCtx) {
+		if (this.dragCtx.action)
+			this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	}
 	return true;

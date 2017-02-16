@@ -1,11 +1,12 @@
 var Set = require('../../util/set');
-var Molfile = require('./molfile');
 
 var v2000 = require('./v2000');
 var v3000 = require('./v3000');
 
 var Struct = require('./../struct/index');
 var utils = require('./utils');
+
+var loadRGroupFragments = true; // TODO: set to load the fragments
 
 /* Parse Mol */
 function parseMol(/* string */ ctabLines) /* Struct */ {
@@ -25,7 +26,7 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 	if (version == 'V2000')
 		return v2000.parseCTabV2000(ctabLines, countsSplit);
 	else if (version == 'V3000')
-		return v3000.parseCTabV3000(ctabLines, !Molfile.loadRGroupFragments);
+		return v3000.parseCTabV3000(ctabLines, !loadRGroupFragments);
 	else
 		throw new Error('Molfile version unknown: ' + version); // eslint-disable-line no-else-return
 }

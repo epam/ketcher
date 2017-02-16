@@ -1,12 +1,13 @@
 var Vec2 = require('../../util/vec2');
 var Map = require('../../util/map');
-var Molfile = require('./molfile');
 
 var element = require('./../element');
 var Struct = require('./../struct/index');
 
 var sGroup = require('./parseSGroup');
 var utils = require('./utils');
+
+var loadRGroupFragments = true; // TODO: set to load the fragments
 
 function parseAtomLine(atomLine) {
 	/* reader */
@@ -306,7 +307,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 
 	var core = parseCTab(coreLines);
 	var frag = {};
-	if (Molfile.loadRGroupFragments) {
+	if (loadRGroupFragments) {
 		for (var id in fragmentLines) {
 			frag[id] = [];
 			for (var j = 0; j < fragmentLines[id].length; ++j)

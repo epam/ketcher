@@ -11,8 +11,6 @@ function Molfile(v3000) {
 	this.v3000 = v3000 || false;
 }
 
-Molfile.loadRGroupFragments = true; // TODO: set to load the fragments
-
 Molfile.prototype.parseCTFile = function (molfileLines) {
 	var ret = null;
 	if (molfileLines[0].search('\\$RXN') == 0)

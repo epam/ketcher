@@ -58,7 +58,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		 );
 		 */
 		var actionRet = Action.fromBondAddition(
-			this.bondProps, dragCtx.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
+			this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
 		);
 		// END
 		dragCtx.action = actionRet[0];

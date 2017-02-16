@@ -191,7 +191,7 @@ function fromBondAttrs(id, attrs, flip, reset) {
 }
 
 function fromAtomAddition(pos, atom) {
-	atom = Object.clone(atom);
+	atom = Object.assign({}, atom);
 	var action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(ui.editor));
@@ -1127,7 +1127,7 @@ function fromPaste(struct, point) { // eslint-disable-line max-statements
 	var fmap = {};
 	// atoms
 	for (var aid = 0; aid < clipboard.atoms.length; aid++) {
-		var atom = Object.clone(clipboard.atoms[aid]);
+		var atom = Object.assign({}, clipboard.atoms[aid]);
 		if (!(atom.fragment in fmap))
 			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 		atom.fragment = fmap[atom.fragment];
@@ -1149,7 +1149,7 @@ function fromPaste(struct, point) { // eslint-disable-line max-statements
 
 	// bonds
 	for (var bid = 0; bid < clipboard.bonds.length; bid++) {
-		var bond = Object.clone(clipboard.bonds[bid]);
+		var bond = Object.assign({}, clipboard.bonds[bid]);
 		action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(ui.editor));
 	}
 	// sgroups

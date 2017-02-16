@@ -113,6 +113,19 @@ function initEditor(editor) {
 			return structConv.toBond(res);
 		});
 	});
+	editor.on('elementEdit', function (atom) {
+		if (element.getElementByLabel(atom.label)) {
+			var dlg = dialog(modal.atomProps,
+			                 structConv.fromAtom(atom));
+			return dlg.then(function (res) {
+				return structConv.toAtom(res);
+			});
+		} else if (atom.label == 'L#') {
+			return elemTable(structConv.fromAtomList(atom));
+		} else {
+			return genericsTable(atom);
+		}
+	});
 	editor.on('rgroupEdit', function (rgroup) {
 		if (Object.keys(rgroup).length > 1) {
 			var rgids = [];
@@ -152,7 +165,7 @@ function initEditor(editor) {
 	editor.on('rlabelEdit', function (props) {
 		// props.label == 'R#'
 		var dlg = dialog(modal.rgroup, {
-			mode: 'multiple',
+			type: 'multiple',
 			values: structConv.fromRlabel(props.rglabel)
 		});
 		return dlg.then(function (res) {
@@ -704,52 +717,42 @@ function redo ()
 	updateHistoryButtons();
 };
 
-function addAtoms(res) {
+function addAtoms(label) {
 	var atoms = [];
 	for (var i = 0; i < 10; i++) {
 		var atomLabel = toolbar.select('#atom')[0].select('li')[i].id.substr(5);
 		atomLabel = atomLabel.charAt(0).toUpperCase() + atomLabel.slice(1);
 		atoms.push(atomLabel);
 	}
-	if (atoms.indexOf(element[res.values[0]].label) < 0) {
+	if (atoms.indexOf(label) < 0) {
 		if (addionalAtoms.current >= addionalAtoms.capacity)
 			addionalAtoms.current = 0;
-		addionalAtoms.storage[addionalAtoms.current] = element[res.values[0]].label;
+		addionalAtoms.storage[addionalAtoms.current] = label;
 		updateAtoms();
 		addionalAtoms.current++;
 	}
 }
 
-function elemTable () {
-	modal.periodTable({
-		onOk: function (res) {
-			var props;
-			if (res.mode == 'single') {
-				props = {
-					label: element[res.values[0]].label
-				};
-				addAtoms(res);
-			} else
-				props = {
-					label: 'L#',
-					atomList: new Struct.AtomList({
-						notList: res.mode == 'not-list',
-						ids: res.values
-					})
-				};
-			selectAction('atom-table', props);
-			return true;
-		}
+function elemTable(atom) {
+	// TODO: convertion ouside is not so good
+	return dialog(modal.periodTable, atom && atom.type ? atom : {
+		type: 'single',
+		values: atom && [element.getElementByLabel(atom.label)]
+	}).then(function (res) {
+		if (res.type != 'single')
+			return structConv.toAtomList(res);
+
+		var label = element[res.values[0]].label;
+		addAtoms(label);
+		return { label: label };
 	});
 };
 
-function genericsTable () {
-	modal.genericGroups({
-		onOk: function (res) {
-			var props = {label: res.values[0]};
-			selectAction('atom-generics', props);
-			return true;
-		}
+function genericsTable(atom) {
+	return dialog(modal.genericGroups, {
+		values: atom && [atom.label]
+	}).then(function (res) {
+		return { label: res.values[0] };
 	});
 };
 
@@ -777,8 +780,16 @@ var actionMap = {
 	redo: redo,
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
-	'period-table': elemTable,
-	'generic-groups': genericsTable,
+	'period-table': function () {
+		elemTable().then(function (res) {
+			selectAction('atom-table', res);
+		});
+	},
+	'generic-groups': function () {
+		genericsTable().then(function (res) {
+			selectAction('atom-generics', res);
+		});
+	},
 	'template-lib': templateLib,
 
 	layout: function () {
@@ -996,9 +1007,6 @@ Object.assign(ui, {
 	hideDialog: hideDialog,
 
 	// TODO: search a way to pass dialogs to editor
-	showElemTable: modal.periodTable,
-	showReaGenericsTable: modal.genericGroups,
-	showAtomProperties: modal.atomProps,
 	showLabelEditor: function (val) {
 		return dialog(modal.labelEdit, val, true);
 	}

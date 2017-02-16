@@ -1,4 +1,59 @@
 import Struct from '../chem/struct';
+import element from '../chem/element';
+
+export function fromAtom(satom) {
+	var charge = satom.charge - 0;
+	var isotope = satom.isotope - 0;
+	var explicitValence = satom.explicitValence - 0;
+	return {
+		label: satom.label,
+		charge: charge == 0 ? '' : charge,
+		isotope: isotope == 0 ? '' : isotope,
+		explicitValence: explicitValence < 0 ? '' : explicitValence,
+		radical: satom.radical,
+		invRet: satom.invRet,
+		exactChangeFlag: satom.exactChangeFlag,
+		ringBondCount: satom.ringBondCount,
+		substitutionCount: satom.substitutionCount,
+		unsaturatedAtom: satom.unsaturatedAtom,
+		hCount: satom.hCount
+	};
+}
+
+export function toAtom(atom) {
+	return {
+		label: atom.label,
+		charge: atom.charge == '' ? 0 : parseInt(atom.charge, 10),
+		isotope: atom.isotope == '' ? 0 : parseInt(atom.isotope, 10),
+		explicitValence: atom.explicitValence == '' ? -1 : parseInt(atom.explicitValence, 10),
+		radical: parseInt(atom.radical, 10),
+		// reaction flags
+		invRet: parseInt(atom.invRet, 10),
+		exactChangeFlag: atom.exactChangeFlag,
+		// query flags
+		ringBondCount: parseInt(atom.ringBondCount, 10),
+		substitutionCount: parseInt(atom.substitutionCount, 10),
+		unsaturatedAtom: atom.unsaturatedAtom,
+		hCount: parseInt(atom.hCount, 10)
+	};
+}
+
+export function fromAtomList(satom) {
+	return {
+		type: satom.atomList.notList ? 'not-list' : 'list',
+		values: satom.atomList.ids.map(id => id + '')
+	};
+}
+
+export function toAtomList(atom) {
+	return {
+		label: 'L#',
+		atomList: new Struct.AtomList({
+			notList: atom.type == 'not-list',
+			ids: atom.values.map(val => parseInt(val, 10))
+		})
+	};
+}
 
 export function fromBond(sbond) {
 	const type = sbond.type;

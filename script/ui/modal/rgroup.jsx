@@ -76,7 +76,7 @@ class RGroupAtom extends RGroupBase {
 
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
-	return render(params.mode == 'multiple' ? (
+	return render(params.type == 'multiple' ? (
 		<RGroupAtom params={params}/>
 	) : (
 		<RGroupFragment params={params}/>

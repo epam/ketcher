@@ -5,7 +5,7 @@ var ui = global.ui;
 function dialog (name, params) {
 	var dlg = ui.showDialog(name);
 	var okButton = dlg.select('input[value=OK]')[0];
-	var mode = params.mode || 'single';
+	var type = params.type || 'single';
 	var handlers = [];
 
 	function setSelected(values) {
@@ -38,7 +38,7 @@ function dialog (name, params) {
 	});
 
 	handlers[1] = dlg.on('click', 'button', function (event, button) {
-		if (mode === 'single') {
+		if (type === 'single') {
 			if (!button.hasClassName('selected')) {
 				setSelected(null);
 			} else if (params.required) {
@@ -53,12 +53,12 @@ function dialog (name, params) {
 		event.stop();
 	});
 
-	handlers[2] = dlg.on('click', 'input[name=mode]', function (_, radio) {
-		if (radio.value != mode) {
+	handlers[2] = dlg.on('click', 'input[name=type]', function (_, radio) {
+		if (radio.value != type) {
 			if (radio.value == 'single') {
 				setSelected(null);
 			}
-			mode = radio.value;
+			type = radio.value;
 		}
 	});
 	handlers[3] = dlg.on('keydown', function (ev) {
@@ -80,15 +80,15 @@ function dialog (name, params) {
 					   'No elements selected');
 		if (params && key in params) {
 			params[key]({
-				mode: mode,
+				type: type,
 				values: getSelected()
 			});
 		}
 	}
 
 	setSelected(params.values);
-	dlg.select('input[name=mode]').each(function (radio) {
-		if (radio.value == mode) {
+	dlg.select('input[name=type]').each(function (radio) {
+		if (radio.value == type) {
 			radio.checked = true;
 		}
 	});

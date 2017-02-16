@@ -157,6 +157,7 @@ function eventSetup(editor) {
 	editor.event = {
 		message: new s.Subscription(),
 		bondEdit: new s.PipelineSubscription(),
+		elementEdit: new s.PipelineSubscription(),
 		apointEdit: new s.PipelineSubscription(),
 		rlabelEdit: new s.PipelineSubscription(),
 		rgroupEdit: new s.PipelineSubscription(),

@@ -1,7 +1,6 @@
 var Set = require('../../util/set');
 
 var Action = require('../action');
-var element = require('../../chem/element');
 var Struct = require('../../chem/struct');
 
 var EditorTool = require('./base');
@@ -137,7 +136,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 	}
 	return true;
 };
-SelectTool.prototype.OnMouseUp = function (event) {
+SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
@@ -172,76 +171,23 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
 		this.editor.selection(closestToSel(ci));
-		// TODO [RB] re-factoring needed. we probably need to intoduce "custom" element sets, some of them might be "special" (lists, r-groups), some of them might be "pluggable" (reaxys generics)
 		var atom = struct.atoms.get(ci.id);
+
 		if (atom.label == 'R#') {
 			RGroupAtomTool.dialog(this.editor, ci.id);
-		} else if (atom.label == 'L#') {
-			ui.showElemTable({
-				selection: atom,
-				onOk: function (attrs) {
-					if (atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)) {
-						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, attrs));
-						rnd.update();
-					}
-					return true;
-				}
-			});
-		} else if (element.getElementByLabel(atom.label)) {
-			// TODO: the same as atom?
-			var atom2 = rnd.ctab.molecule.atoms.get(ci.id);
-			var charge = atom2.charge - 0;
-			var isotope = atom2.isotope - 0;
-			var explicitValence = atom2.explicitValence - 0;
-			ui.showAtomProperties({
-				label: atom2.label,
-				charge: charge == 0 ? '' : charge,
-				isotope: isotope == 0 ? '' : isotope,
-				explicitValence: explicitValence < 0 ? '' : explicitValence,
-				radical: atom2.radical,
-				invRet: atom2.invRet,
-				exactChangeFlag: atom2.exactChangeFlag,
-				ringBondCount: atom2.ringBondCount,
-				substitutionCount: atom2.substitutionCount,
-				unsaturatedAtom: atom2.unsaturatedAtom,
-				hCount: atom2.hCount,
-				onOk: function (res) {
-					ui.addUndoAction(Action.fromAtomsAttrs(ci.id, {
-						label: res.label,
-						charge: res.charge == '' ? 0 : parseInt(res.charge, 10),
-						isotope: res.isotope == '' ? 0 : parseInt(res.isotope, 10),
-						explicitValence: res.explicitValence == '' ? -1 : parseInt(res.explicitValence, 10),
-						radical: parseInt(res.radical, 10),
-						// reaction flags
-						invRet: parseInt(res.invRet, 10),
-						exactChangeFlag: res.exactChangeFlag,
-						// query flags
-						ringBondCount: parseInt(res.ringBondCount, 10),
-						substitutionCount: parseInt(res.substitutionCount, 10),
-						unsaturatedAtom: res.unsaturatedAtom,
-						hCount: parseInt(res.hCount, 10)
-					}), true);
-					rnd.update();
-				}
-			});
 		} else {
-			ui.showReaGenericsTable({
-				values: [atom.label],
-				onOk: function (res) {
-					var label = res.values[0];
-					if (atom.label != label) {
-						ui.addUndoAction(Action.fromAtomsAttrs(ci.id, { label: label }));
-						rnd.update();
-					}
-					return true;
-				}
+			var ra = editor.event.elementEdit.dispatch(atom);
+			Promise.resolve(ra).then(function (newatom) {
+				// TODO: deep compare to not produce dummy, e.g.
+				// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
+				editor.update(Action.fromAtomsAttrs(ci.id, newatom));
 			});
 		}
 	} else if (ci.map == 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
-		var res = editor.event.bondEdit.dispatch(bond);
-		Promise.resolve(res).then(function (newbond) {
+		var rb = editor.event.bondEdit.dispatch(bond);
+		Promise.resolve(rb).then(function (newbond) {
 			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map == 'sgroups') {

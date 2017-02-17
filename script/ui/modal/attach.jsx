@@ -9,6 +9,10 @@ class Attach extends Component {
 	constructor(props) {
 		super(props);
 		this.tmpl = props.normTmpl;
+		this.editorOpts = {
+			selectionStyle: { fill: '#47b3ec', stroke: 'none' },
+			highlightStyle: { 'stroke': '#304ff7', 'stroke-width': 1.2 }
+		};
 
 		this.setState( {
 			attach: {
@@ -42,7 +46,8 @@ class Attach extends Component {
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
 							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
-							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }} />
+							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }}
+							  options={this.editorOpts}/>
 				<label><b>&#123; atomid {attach.atomid || 0}; bondid: {attach.bondid || 0} &#125;</b></label>
 			</Dialog>
 		);

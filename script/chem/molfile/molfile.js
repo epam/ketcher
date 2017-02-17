@@ -232,11 +232,11 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (Object.isUndefined(atom.hCount))
+		if (typeof atom.hCount === "undefined")
 			atom.hCount = 0;
 		this.writePaddedNumber(atom.hCount, 3);
 
-		if (Object.isUndefined(atom.stereoCare))
+		if (typeof atom.stereoCare === "undefined")
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
 
@@ -246,15 +246,15 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (Object.isUndefined(atom.aam))
+		if (typeof atom.aam === "undefined")
 			atom.aam = 0;
 		this.writePaddedNumber(atom.aam, 3);
 
-		if (Object.isUndefined(atom.invRet))
+		if (typeof atom.invRet === "undefined")
 			atom.invRet = 0;
 		this.writePaddedNumber(atom.invRet, 3);
 
-		if (Object.isUndefined(atom.exactChangeFlag))
+		if (typeof atom.exactChangeFlag === "undefined")
 			atom.exactChangeFlag = 0;
 		this.writePaddedNumber(atom.exactChangeFlag, 3);
 
@@ -272,17 +272,17 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(this.mapping[bond.end], 3);
 		this.writePaddedNumber(bond.type, 3);
 
-		if (Object.isUndefined(bond.stereo))
+		if (typeof bond.stereo === "undefined")
 			bond.stereo = 0;
 		this.writePaddedNumber(bond.stereo, 3);
 
 		this.writeWhiteSpace(3);
 
-		if (Object.isUndefined(bond.topology))
+		if (typeof bond.topology === "undefined")
 			bond.topology = 0;
 		this.writePaddedNumber(bond.topology, 3);
 
-		if (Object.isUndefined(bond.reactingCenterStatus))
+		if (typeof bond.reactingCenterStatus === "undefined")
 			bond.reactingCenterStatus = 0;
 		this.writePaddedNumber(bond.reactingCenterStatus, 3);
 

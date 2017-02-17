@@ -199,9 +199,9 @@ function fromAtomAddition(pos, atom) {
 }
 
 function mergeFragments(action, frid, frid2) {
-	if (frid2 != frid && Object.isNumber(frid2)) {
+	if (frid2 != frid && (typeof frid2 === 'number')) {
 		var rgid = Struct.RGroup.findRGroupByFragment(ui.render.ctab.molecule.rgroups, frid2);
-		if (!Object.isUndefined(rgid))
+		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(null, frid2));
 		ui.render.ctab.molecule.atoms.each(function (aid, atom) {
 			if (atom.fragment == frid2)
@@ -311,12 +311,12 @@ function fromBondAddition(bond, begin, end, pos, pos2) { // eslint-disable-line 
 	var action = new Action();
 
 	var frid = null;
-	if (!Object.isNumber(begin)) {
-		if (Object.isNumber(end))
+	if (!(typeof begin === "number")) {
+		if (typeof end === "number")
 			frid = atomGetAttr(ui.render.ctab, end, 'fragment');
 	} else {
 		frid = atomGetAttr(ui.render.ctab, begin, 'fragment');
-		if (Object.isNumber(end)) {
+		if (typeof end === "number") {
 			var frid2 = atomGetAttr(ui.render.ctab, end, 'fragment');
 			mergeFragments(action, frid, frid2);
 		}
@@ -325,7 +325,7 @@ function fromBondAddition(bond, begin, end, pos, pos2) { // eslint-disable-line 
 	if (frid == null)
 		frid = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 
-	if (!Object.isNumber(begin)) {
+	if (!(typeof begin === "number")) {
 		begin.fragment = frid;
 		begin = action.addOp(new op.AtomAdd(begin, pos).perform(ui.editor)).data.aid;
 
@@ -335,11 +335,11 @@ function fromBondAddition(bond, begin, end, pos, pos2) { // eslint-disable-line 
 	}
 
 
-	if (!Object.isNumber(end)) {
+	if (!(typeof end === "number")) {
 		end.fragment = frid;
 		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(ui.editor)).data.aid;
-		if (Object.isNumber(begin)) {
+		if (typeof begin === "number") {
 			atomGetSGroups(ui.render.ctab, begin).each(function (sid) {
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(ui.editor));
 			}, this);

@@ -81,7 +81,7 @@ ReFrag.prototype.drawHighlight = function (render) { // eslint-disable-line no-u
 
 ReFrag.prototype.setHighlight = function (highLight, render) {
 	var fid = render.ctab.frags.keyOf(this);
-	if (!Object.isUndefined(fid)) {
+	if (!(typeof fid === "undefined")) {
 		render.ctab.atoms.each(function (aid, atom) {
 			if (atom.a.fragment == fid)
 				atom.setHighlight(highLight, render);

@@ -61,10 +61,10 @@ RotateTool.prototype.OnMouseDown = function (event) {
 				if (selection.atoms.indexOf(hb.end) == -1) {
 					if (hb.loop >= 0) {
 						var neiAtom = molecule.atoms.get(aid);
-						if (!Object.isUndefined(neiAtom.neighbors.find(function (neiNei) {
+						if (!neiAtom.neighbors.find(function (neiNei) {
 							var neiHb = molecule.halfBonds.get(neiNei);
 							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) != -1;
-						}))) {
+						})) {
 							rotAll = true;
 							return true;
 						}

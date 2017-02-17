@@ -30,7 +30,7 @@ function unicodeLiteral(str) {
 }
 
 function ifDef(dst, src, prop, def) {
-	dst[prop] = !Object.isUndefined(src[prop]) ? src[prop] : def;
+	dst[prop] = !(typeof src[prop] === 'undefined') ? src[prop] : def;
 }
 
 function assert(condition, comment) {
@@ -43,7 +43,7 @@ function assertDefined(v) {
 }
 
 function isUndefined(variable) {
-	return Object.isUndefined(variable); // use prototype.js method for now
+	return (typeof variable === 'undefined');
 }
 
 function isNull(variable) {

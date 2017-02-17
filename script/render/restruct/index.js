@@ -313,7 +313,7 @@ function scaleRPath(path, s) {
 		for (var i = 0; i < path.length; ++i)
 			scaleRPath(path[i], s);
 	} else {
-		if (!Object.isUndefined(path.attrs)) {
+		if (!(typeof path.attrs === 'undefined')) {
 			if ('font-size' in path.attrs)
 				path.attr('font-size', path.attrs['font-size'] * s);
 			else if ('stroke-width' in path.attrs)

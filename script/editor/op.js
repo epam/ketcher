@@ -46,7 +46,7 @@ function AtomAdd(atom, pos) {
 				pp[p] = this.data.atom[p];
 		}
 		pp.label = pp.label || 'C';
-		if (!Object.isNumber(this.data.aid))
+		if (!(typeof this.data.aid === "number"))
 			this.data.aid = struct.atoms.add(new Struct.Atom(pp));
 		else
 			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
@@ -370,7 +370,7 @@ function BondAdd(begin, end, bond) {
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
-		if (!Object.isNumber(this.data.bid))
+		if (!(typeof this.data.bid === "number"))
 			this.data.bid = struct.bonds.add(new Struct.Bond(pp));
 		else
 			struct.bonds.set(this.data.bid, new Struct.Bond(pp));
@@ -465,7 +465,7 @@ function BondAttr(bid, attribute, value) {
 BondAttr.prototype = new Base();
 
 function FragmentAdd(frid) {
-	this.frid = Object.isUndefined(frid) ? null : frid;
+	this.frid = (typeof frid === 'undefined') ? null : frid;
 	this.execute = function (editor) {
 		var restruct = editor.render.ctab;
 		var struct = restruct.molecule;
@@ -568,7 +568,7 @@ function RxnArrowAdd(pos) {
 		var rnd = editor.render;
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
-		if (!Object.isNumber(this.data.arid))
+		if (!(typeof this.data.arid === 'number'))
 			this.data.arid = struct.rxnArrows.add(new Struct.RxnArrow());
 		else
 			struct.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
@@ -640,7 +640,7 @@ function RxnPlusAdd(pos) {
 		var rnd = editor.render;
 		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
-		if (!Object.isNumber(this.data.plid))
+		if (!(typeof this.data.plid === 'number'))
 			this.data.plid = struct.rxnPluses.add(new Struct.RxnPlus());
 		else
 			struct.rxnPluses.set(this.data.plid, new Struct.RxnPlus());

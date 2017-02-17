@@ -222,7 +222,7 @@ function findClosestItem(restruct, pos, maps, skip) { // eslint-disable-line max
 	// TODO make it "map-independent", each object should be able to "report" its distance to point (something like ReAtom.dist(point))
 	if (!maps || maps.indexOf('atoms') >= 0) {
 		var atom = findClosestAtom(restruct,
-			pos, undefined, !Object.isUndefined(skip) && skip.map == 'atoms' ? skip.id : undefined
+			pos, undefined, !(typeof skip === 'undefined') && skip.map == 'atoms' ? skip.id : undefined
 		);
 		res = updret(res, 'Atom', atom);
 	}

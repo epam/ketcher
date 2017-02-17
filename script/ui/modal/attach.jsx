@@ -33,7 +33,7 @@ class Attach extends Component {
 		let {attach} = this.state;
 		let {userOpts} = this.props;
 		return (
-			<Dialog caption="Attach"
+			<Dialog caption="Template Edit"
 					name="attach" result={() => this.result() }
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">

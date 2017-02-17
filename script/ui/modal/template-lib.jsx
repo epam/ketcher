@@ -142,7 +142,7 @@ class TemplateLib extends Component {
 				  <RenderTmpl tmpl={tmpl}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
-					<button className="attach-button" onClick={() => this.onAttach(tmpl, index + i)}>Attach</button>
+					<button className="attach-button" onClick={() => this.onAttach(tmpl, index + i)}>Edit</button>
 				</div>
 			))}</div>
 		);

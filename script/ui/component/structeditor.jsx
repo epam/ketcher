@@ -13,7 +13,7 @@ function createEditor(el, tool, struct, options = {}) {
 			el.innerHTML = struct.prerender;
 		else {
 			let rnd = editor.render;
-			// rnd.options.autoScale = true;
+
 			rnd.setMolecule(struct);
 			rnd.update();
 		}

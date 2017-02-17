@@ -1,13 +1,14 @@
-import {h, Component, render} from 'preact';
+import { h, Component, render } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
 import StructEditor from '../component/structeditor';
+import Vec2 from '../../util/vec2'
 
 class Attach extends Component {
 	constructor(props) {
 		super(props);
-		this.tmpl = props.struct;
+		this.tmpl = props.normTmpl;
 
 		this.setState( {
 			attach: {
@@ -18,9 +19,7 @@ class Attach extends Component {
 	}
 
 	result() {
-		let tmpl = this.tmpl;
-		tmpl.props = Object.assign(tmpl.props, this.state.attach);
-		return tmpl;
+		return this.state.attach;
 	}
 
 	onAttach(attachPoints) {
@@ -37,19 +36,40 @@ class Attach extends Component {
 					name="attach" result={() => this.result() }
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">
-				<label> Choose attachment atom and bond:
-					&#123; atomid {attach.atomid || 0}; bondid: {attach.bondid || 0} &#125;</label>
+				<label>Template Name:
+					<input type="text" value={this.tmpl.struct.name || ''} placeholder="tmpl" disabled/>
+				</label>
+				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
 							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
 							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }} />
+				<label><b>&#123; atomid {attach.atomid || 0}; bondid: {attach.bondid || 0} &#125;</b></label>
 			</Dialog>
 		);
 	}
 }
 
+function structNormalization(struct) {
+	let offset = new Vec2(struct.atoms.get(0).pp);
+	struct.atoms.each(function (aid, atom) {
+		if (atom.pp.x < offset.x) offset.x = atom.pp.x;
+		if (atom.pp.y < offset.y) offset.y = atom.pp.y;
+	});
+	struct.atoms.each(function (aid, atom) {
+		atom.pp = Vec2.diff(atom.pp, offset);
+	});
+}
+
 export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
+	let overlay = $$('.overlay')[0];
+	let normTmpl = {
+		struct: params.tmpl.struct.clone(),
+		props: params.tmpl.props
+	};
+	normTmpl.struct.name = params.tmpl.struct.name;
+	structNormalization(normTmpl.struct);
+
 	return render((
-		<Attach {...params}/>
+		<Attach normTmpl={normTmpl} {...params}/>
 	), overlay);
 };

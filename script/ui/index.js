@@ -725,23 +725,20 @@ function attach (tmpl, index) {
 
 	dialog(modal.attach, {
 		userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
-		struct: tmpl
-	}).then(function (newTmpl) {
+		tmpl: tmpl
+	}).then(function (attachProps) {
 		var isUser = true;
 		libTmpls = libTmpls.map(function (item) {
 			if (item.struct.name == tmplName) {
+				item.props = Object.assign(item.props || {}, attachProps);
 				isUser = false;
-				return newTmpl;
 			}
 			return item;
 		});
 
 		if (isUser) {
 			var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-			store[index] = {
-				struct: molfile.stringify(newTmpl.struct),
-				props: newTmpl.props
-			};
+			store[index].props = Object.assign(store[index].props, attachProps);
 			localStorage['ketcher-tmpl'] = JSON.stringify(store);
 		}
 

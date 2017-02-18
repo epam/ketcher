@@ -156,10 +156,8 @@ function domEventSetup(editor, clientArea) {
 function eventSetup(editor) {
 	editor.event = {
 		message: new s.Subscription(),
-		bondEdit: new s.PipelineSubscription(),
 		elementEdit: new s.PipelineSubscription(),
-		apointEdit: new s.PipelineSubscription(),
-		rlabelEdit: new s.PipelineSubscription(),
+		bondEdit: new s.PipelineSubscription(),
 		rgroupEdit: new s.PipelineSubscription(),
 		sgroupEdit: new s.PipelineSubscription(),
 		sdataEdit: new s.PipelineSubscription(),

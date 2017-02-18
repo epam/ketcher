@@ -79,6 +79,21 @@ export const atom = {
 	}
 };
 
+export const attachmentPoints = {
+	title: "Attachment Points",
+	type: "object",
+	properties: {
+		primary: {
+			title: "Primary attachment point",
+			type: "boolean"
+		},
+		secondary: {
+			title: "Secondary attachment point",
+			type: "boolean"
+		}
+	}
+};
+
 export const bond = {
 	title: "Bond",
 	type: "object",
@@ -238,21 +253,6 @@ export const rgroup = {
 			title: "Condition",
 			type: "integer",
 			minium: 0
-		}
-	}
-};
-
-export const attachmentPoints = {
-	title: "Attachment Points",
-	type: "object",
-	properties: {
-		primary: {
-			title: "Primary attachment point",
-			type: "boolean"
-		},
-		secondary: {
-			title: "Secondary attachment point",
-			type: "boolean"
 		}
 	}
 };

@@ -42,7 +42,7 @@ function propsDialog(editor, id, pos) {
 	var rglabel = atom ? atom.rglabel : 0;
 	var label = atom ? atom.label : 'R#';
 
-	var res = editor.event.rlabelEdit.dispatch({
+	var res = editor.event.elementEdit.dispatch({
 		label: 'R#', rglabel: rglabel
 	});
 
@@ -59,6 +59,4 @@ function propsDialog(editor, id, pos) {
 	});
 }
 
-module.exports = Object.assign(RGroupAtomTool, {
-	dialog: propsDialog
-});
+module.exports = RGroupAtomTool;

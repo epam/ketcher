@@ -25,11 +25,13 @@ APointTool.prototype.OnMouseUp = function (event) {
 
 	if (ci && ci.map == 'atoms') {
 		this.hoverHelper.hover(null);
-		var ap = struct.atoms.get(ci.id).attpnt;
-		var res = editor.event.apointEdit.dispatch(ap);
-		Promise.resolve(res).then(function (newAp) {
-			if (ap != newAp) {
-				var action = Action.fromAtomsAttrs(ci.id, { attpnt: newAp });
+		var atom = struct.atoms.get(ci.id);
+		var res = editor.event.elementEdit.dispatch({
+			attpnt: atom.attpnt
+		});
+		Promise.resolve(res).then(function (newatom) {
+			if (atom.attpnt != newatom.attpnt) {
+				var action = Action.fromAtomsAttrs(ci.id, newatom);
 				editor.update(action);
 			}
 		});

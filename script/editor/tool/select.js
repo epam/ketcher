@@ -8,7 +8,6 @@ var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
 var SGroup = require('./sgroup');
-var RGroupAtomTool = require('./rgroupatom');
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -160,17 +159,12 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	if (ci.map == 'atoms') {
 		this.editor.selection(closestToSel(ci));
 		var atom = struct.atoms.get(ci.id);
-
-		if (atom.label == 'R#') {
-			RGroupAtomTool.dialog(this.editor, ci.id);
-		} else {
-			var ra = editor.event.elementEdit.dispatch(atom);
-			Promise.resolve(ra).then(function (newatom) {
-				// TODO: deep compare to not produce dummy, e.g.
-				// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-				editor.update(Action.fromAtomsAttrs(ci.id, newatom));
-			});
-		}
+		var ra = editor.event.elementEdit.dispatch(atom);
+		Promise.resolve(ra).then(function (newatom) {
+			// TODO: deep compare to not produce dummy, e.g.
+			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
+			editor.update(Action.fromAtomsAttrs(ci.id, newatom));
+		});
 	} else if (ci.map == 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;

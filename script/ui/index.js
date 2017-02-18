@@ -106,25 +106,42 @@ function init (opts, apiServer) {
 
 
 function initEditor(editor) {
+	editor.on('elementEdit', function (elem) {
+		if (element.getElementByLabel(elem.label)) {
+			var ad = dialog(modal.atomProps,
+			                structConv.fromAtom(elem));
+			return ad.then(function (res) {
+				return structConv.toAtom(res);
+			});
+		} else if (Object.keys(elem).length == 1 && 'attpnt' in elem) {
+			var dlg = dialog(modal.attachmentPoints,
+			                 structConv.fromApoint(elem.attpnt));
+			return dlg.then(function (res) {
+				return { attpnt: structConv.toApoint(res) };
+			});
+		} else if (elem.label == 'L#') {
+			return elemTable(structConv.fromAtomList(elem));
+		} else if (elem.label == 'R#') {
+			var rd = dialog(modal.rgroup, {
+				type: 'multiple',
+				values: structConv.fromRlabel(elem.rglabel)
+			});
+			return rd.then(function (res) {
+				return {
+					label: 'R#',
+					rglabel: structConv.toRlabel(res)
+				};
+			});
+		} else {
+			return genericsTable(elem);
+		}
+	});
 	editor.on('bondEdit', function (bond) {
 		var dlg = dialog(modal.bondProps,
 		                 structConv.fromBond(bond));
 		return dlg.then(function (res) {
 			return structConv.toBond(res);
 		});
-	});
-	editor.on('elementEdit', function (atom) {
-		if (element.getElementByLabel(atom.label)) {
-			var dlg = dialog(modal.atomProps,
-			                 structConv.fromAtom(atom));
-			return dlg.then(function (res) {
-				return structConv.toAtom(res);
-			});
-		} else if (atom.label == 'L#') {
-			return elemTable(structConv.fromAtomList(atom));
-		} else {
-			return genericsTable(atom);
-		}
 	});
 	editor.on('rgroupEdit', function (rgroup) {
 		if (Object.keys(rgroup).length > 1) {
@@ -157,26 +174,6 @@ function initEditor(editor) {
 	});
 	editor.on('quickEdit', function (atom) {
 		return dialog(modal.labelEdit, atom);
-	});
-	editor.on('apointEdit', function (ap) {
-		var dlg = dialog(modal.attachmentPoints,
-		                 structConv.fromApoint(ap));
-		return dlg.then(function (res) {
-			return structConv.toApoint(res);
-		});
-	});
-	editor.on('rlabelEdit', function (props) {
-		// props.label == 'R#'
-		var dlg = dialog(modal.rgroup, {
-			type: 'multiple',
-			values: structConv.fromRlabel(props.rglabel)
-		});
-		return dlg.then(function (res) {
-			return {
-				label: 'R#',
-				rglabel: structConv.toRlabel(res)
-			};
-		});
 	});
 	editor.on('message', function (msg) {
 		if (msg.error)

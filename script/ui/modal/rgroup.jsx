@@ -70,13 +70,13 @@ class RGroupAtom extends RGroupBase {
 		return this.state.values.includes(index);
 	}
 	result() {
-		return { values: this.state.values.map(i => this.name(i)) };
+		return { type: 'rlabel', values: this.state.values.map(i => this.name(i)) };
 	}
 }
 
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
-	return render(params.type == 'multiple' ? (
+	return render(params.type == 'rlabel' ? (
 		<RGroupAtom params={params}/>
 	) : (
 		<RGroupFragment params={params}/>

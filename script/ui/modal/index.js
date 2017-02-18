@@ -30,7 +30,9 @@ function genericGroups (params) {
 };
 
 function attachmentPoints (params) {
-	inputDialog('attachmentPoints', params);
+	inputDialog('attachmentPoints', Object.assign({
+		onOk: function (res) { params.onOk({ap: res}); }
+	}, params.ap));
 };
 
 function bondProps (params) {

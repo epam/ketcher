@@ -1,7 +1,38 @@
 import Struct from '../chem/struct';
 import element from '../chem/element';
 
-export function fromAtom(satom) {
+export function fromElement(selem) {
+	if (selem.label == 'R#')
+		return {
+			type: 'rlabel',
+			values: fromRlabel(selem.rglabel)
+		};
+	if (selem.label == 'L#')
+		return fromAtomList(selem);
+	if (element.getElementByLabel(selem.label))
+		return fromAtom(selem);
+	if (!selem.label && 'attpnt' in selem)
+		return { ap: fromApoint(selem.attpnt) };
+
+	return selem;   // probably generic
+}
+
+export function toElement(elem) {
+	if (elem.type == 'rlabel')
+		return {
+			label: elem.values.length ? 'R#' : 'C',
+			rglabel: toRlabel(elem.values)
+		};
+	if (elem.type == 'list' || elem.type == 'not-list')
+		return toAtomList(elem);
+	if (element.getElementByLabel(elem.label))
+		return toAtom(elem);
+	if (!elem.label && 'ap' in elem)
+		return { attpnt: toApoint(elem.ap) };
+	return elem;
+}
+
+function fromAtom(satom) {
 	var charge = satom.charge - 0;
 	var isotope = satom.isotope - 0;
 	var explicitValence = satom.explicitValence - 0;
@@ -20,32 +51,34 @@ export function fromAtom(satom) {
 	};
 }
 
-export function toAtom(atom) {
+function toAtom(atom) {
+	// TODO merge this to Struct.Atom.attrlist?
+	//      see ratomtool
 	return {
 		label: atom.label,
-		charge: atom.charge == '' ? 0 : parseInt(atom.charge, 10),
-		isotope: atom.isotope == '' ? 0 : parseInt(atom.isotope, 10),
-		explicitValence: atom.explicitValence == '' ? -1 : parseInt(atom.explicitValence, 10),
-		radical: parseInt(atom.radical, 10),
+		charge: !atom.charge ? 0 : parseInt(atom.charge, 10),
+		isotope: !atom.isotope ? 0 : parseInt(atom.isotope, 10),
+		explicitValence: !atom.explicitValence ? -1 : parseInt(atom.explicitValence, 10),
+		radical: parseInt(atom.radical, 10) || 0,
 		// reaction flags
-		invRet: parseInt(atom.invRet, 10),
-		exactChangeFlag: atom.exactChangeFlag,
+		invRet: parseInt(atom.invRet, 10) || 0,
+		exactChangeFlag: atom.exactChangeFlag || 0,
 		// query flags
-		ringBondCount: parseInt(atom.ringBondCount, 10),
-		substitutionCount: parseInt(atom.substitutionCount, 10),
-		unsaturatedAtom: atom.unsaturatedAtom,
-		hCount: parseInt(atom.hCount, 10)
+		ringBondCount: parseInt(atom.ringBondCount, 10) || 0,
+		substitutionCount: parseInt(atom.substitutionCount, 10) || 0,
+		unsaturatedAtom: atom.unsaturatedAtom || 0,
+		hCount: parseInt(atom.hCount, 10) || 0
 	};
 }
 
-export function fromAtomList(satom) {
+function fromAtomList(satom) {
 	return {
 		type: satom.atomList.notList ? 'not-list' : 'list',
 		values: satom.atomList.ids.map(id => id + '')
 	};
 }
 
-export function toAtomList(atom) {
+function toAtomList(atom) {
 	return {
 		label: 'L#',
 		atomList: new Struct.AtomList({
@@ -55,36 +88,18 @@ export function toAtomList(atom) {
 	};
 }
 
-export function fromBond(sbond) {
-	const type = sbond.type;
-	const stereo = sbond.stereo;
-	return {
-		type: bondType2Caption(type, stereo),
-		topology: sbond.topology || 0,
-		center: sbond.reactingCenterStatus || 0
-	};
-}
-
-export function toBond(bond) {
-	return {
-		topology: parseInt(bond.topology, 10),
-		reactingCenterStatus: parseInt(bond.center, 10),
-		...caption2BondType(bond.type)
-	};
-}
-
-export function fromApoint(sap) {
+function fromApoint(sap) {
 	return {
 		primary: ((sap || 0) & 1) > 0,
 		secondary: ((sap || 0) & 2) > 0
 	};
 }
 
-export function toApoint(ap) {
+function toApoint(ap) {
 	return (ap.primary && 1) + (ap.secondary && 2);
 }
 
-export function fromRlabel(rg) {
+function fromRlabel(rg) {
 	var res = [];
 	for (var rgi = 0; rgi < 32; rgi++) {
 		if (rg & (1 << rgi)) {
@@ -95,20 +110,38 @@ export function fromRlabel(rg) {
 	return res;
 }
 
-export function toRlabel(vals) {
+function toRlabel(values) {
 	var res = 0;
-	vals.values.forEach(function (val) {
+	values.forEach(function (val) {
 		var rgi = val.substr(1) - 1;
 		res |= 1 << rgi;
 	});
 	return res;
 }
 
-export function caption2BondType(caption) {
+export function fromBond(sbond) {
+	const type = sbond.type;
+	const stereo = sbond.stereo;
+	return {
+		type: fromBondType(type, stereo),
+		topology: sbond.topology || 0,
+		center: sbond.reactingCenterStatus || 0
+	};
+}
+
+export function toBond(bond) {
+	return {
+		topology: parseInt(bond.topology, 10),
+		reactingCenterStatus: parseInt(bond.center, 10),
+		...toBondType(bond.type)
+	};
+}
+
+export function toBondType(caption) {
 	return Object.assign({}, bondCaptionMap[caption]);
 }
 
-function bondType2Caption(type, stereo) {
+function fromBondType(type, stereo) {
 	for (var caption in bondCaptionMap) {
 		if (bondCaptionMap[caption].type == type &&
 		    bondCaptionMap[caption].stereo == stereo)

@@ -106,39 +106,28 @@ function init (opts, apiServer) {
 
 
 function initEditor(editor) {
-	editor.on('elementEdit', function (elem) {
+	editor.on('elementEdit', function (selem) {
+		var elem = structConv.fromElement(selem);
+		var dlg = null;
 		if (element.getElementByLabel(elem.label)) {
-			var ad = dialog(modal.atomProps,
-			                structConv.fromAtom(elem));
-			return ad.then(function (res) {
-				return structConv.toAtom(res);
-			});
-		} else if (Object.keys(elem).length == 1 && 'attpnt' in elem) {
-			var dlg = dialog(modal.attachmentPoints,
-			                 structConv.fromApoint(elem.attpnt));
-			return dlg.then(function (res) {
-				return { attpnt: structConv.toApoint(res) };
-			});
-		} else if (elem.label == 'L#') {
-			return elemTable(structConv.fromAtomList(elem));
-		} else if (elem.label == 'R#') {
-			var rd = dialog(modal.rgroup, {
-				type: 'multiple',
-				values: structConv.fromRlabel(elem.rglabel)
-			});
-			return rd.then(function (res) {
-				return {
-					label: 'R#',
-					rglabel: structConv.toRlabel(res)
-				};
-			});
+			dlg = dialog(modal.atomProps, elem);
+		} else if (Object.keys(elem).length == 1 && 'ap' in elem) {
+			dlg = dialog(modal.attachmentPoints, elem);
+		} else if (elem.type == 'list' || elem.type == 'not-list') {
+			dlg = elemTable(elem);
+		} else if (elem.type == 'rlabel') {
+			dlg = dialog(modal.rgroup, elem);
 		} else {
-			return genericsTable(elem);
+			dlg = genericsTable(elem);
 		}
+		return dlg.then(function (res) {
+			return structConv.toElement(res);
+		});
+
 	});
-	editor.on('bondEdit', function (bond) {
+	editor.on('bondEdit', function (sbond) {
 		var dlg = dialog(modal.bondProps,
-		                 structConv.fromBond(bond));
+		                 structConv.fromBond(sbond));
 		return dlg.then(function (res) {
 			return structConv.toBond(res);
 		});
@@ -733,24 +722,23 @@ function addAtoms(label) {
 	}
 }
 
-function elemTable(atom) {
+function elemTable(elem) {
 	// TODO: convertion ouside is not so good
-	return dialog(modal.periodTable, atom && atom.type ? atom : {
+	return dialog(modal.periodTable, elem && elem.type ? elem : {
 		type: 'single',
-		values: atom && [element.getElementByLabel(atom.label)]
+		values: elem && [element.getElementByLabel(elem.label)]
 	}).then(function (res) {
 		if (res.type != 'single')
-			return structConv.toAtomList(res);
-
+			return res;
 		var label = element[res.values[0]].label;
 		addAtoms(label);
 		return { label: label };
 	});
 };
 
-function genericsTable(atom) {
+function genericsTable(elem) {
 	return dialog(modal.genericGroups, {
-		values: atom && [atom.label]
+		values: elem && [elem.label]
 	}).then(function (res) {
 		return { label: res.values[0] };
 	});
@@ -782,7 +770,7 @@ var actionMap = {
 	'zoom-out': zoomOut,
 	'period-table': function () {
 		elemTable().then(function (res) {
-			selectAction('atom', res);
+			selectAction('atom', structConv.toElement(res));
 		});
 	},
 	'generic-groups': function () {
@@ -922,7 +910,7 @@ function mapTool (id) {
 	} else if (id.startsWith('bond-')) {
 		return {
 			tool: 'bond',
-			opts: structConv.caption2BondType(id.substr(5))
+			opts: structConv.toBondType(id.substr(5))
 		};
 	} else if (id == 'chain') {
 		return { tool: 'chain' };

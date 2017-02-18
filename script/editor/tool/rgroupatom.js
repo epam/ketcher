@@ -46,15 +46,13 @@ function propsDialog(editor, id, pos) {
 		label: 'R#', rglabel: rglabel
 	});
 
-	Promise.resolve(res).then(function (props) {
-		props = Object.assign({}, Struct.Atom.attrlist, props); // TODO review: using Atom.attrlist as a source of default property values
-		if (!id && props.rglabel) {
-			editor.update(Action.fromAtomAddition(pos, props));
-		} else if (rglabel != props.rglabel || label != 'R#') {
-			if (!props.rglabel)
-				props.label = 'C';
-			props.aam = atom.aam;
-			editor.update(Action.fromAtomsAttrs(id, props));
+	Promise.resolve(res).then(function (elem) {
+		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
+		if (!id && elem.rglabel) {
+			editor.update(Action.fromAtomAddition(pos, elem));
+		} else if (rglabel != elem.rglabel || label != 'R#') {
+			elem.aam = atom.aam; // WTF??
+			editor.update(Action.fromAtomsAttrs(id, elem));
 		}
 	});
 }

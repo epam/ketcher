@@ -948,7 +948,7 @@ function atomLabel (mode) {
 	case 'any':
 		return {label:'A'};
 	default:
-		label = label.capitalize();
+		label = label[0].toUpperCase()+label.slice(1).toLowerCase();
 		console.assert(element.getElementByLabel(label),
 		               "No such atom exist");
 		return {label: label};

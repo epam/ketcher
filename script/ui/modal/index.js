@@ -51,7 +51,7 @@ function atomProps (params) {
 
 	function atomChange(val) {
 		var change = (this == val.target);
-		var label = !change ? val : this.value.trim().capitalize();
+		var label = !change ? val : this.value.trim()[0].toUpperCase()+this.value.trim().slice(1).toLowerCase();
 		if (change)
 			this.value = label;
 		var elem = element.getElementByLabel(label);

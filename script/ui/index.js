@@ -235,7 +235,7 @@ function popAction(toolbar, action) {
 	var sel = action ? $(action) : toolbar.select('.selected')[0];
 	var dropdown = sel && hiddenAncestor(sel);
 	if (dropdown) {
-		// var index = sel[0].previousSiblings().size();
+		// var index = sel[0].previousSiblings().length;
 		var menu = subEl(dropdown);
 		menu.style.marginTop = (-sel.offsetTop + menu.offsetTop) + 'px';
 	}

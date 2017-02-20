@@ -369,8 +369,8 @@ Smiles.prototype.writeAtom = function (mol, idx, aromatic, lowercase, chirality)
 		 {
 			const Array<int> &rg = mol.getRGroups()->getSiteRGroups(idx);
 
-			if (rg.size() != 1)
-			   throw Error("rgroup count %d", rg.size());
+			if (rg.length != 1)
+			   throw Error("rgroup count %d", rg.length);
 
 			_output.printf("[&%d]", rg[0] + 1);
 		 }
@@ -681,7 +681,7 @@ Smiles.prototype.writeRadicals = function (mol) { // eslint-disable-line max-sta
 	var marked = new Array(this.writtenAtoms.length);
 	var i, j;
 
-	for (i = 0; i < this.writtenAtoms.size(); i++) {
+	for (i = 0; i < this.writtenAtoms.length; i++) {
 		if (marked[i])
 			continue; // eslint-disable-line no-continue
 

@@ -75,10 +75,10 @@ window.onload = function () {
 };
 
 var buildInfo = {
-	version: '2.0.0-alpha.7+r47',
-	apiPath: 'http://dp.itcwin.com:8082/v2',
-	buildDate: 'Fri Feb 17 2017 10:56:50 GMT+0300 (Russia TZ 2 Standard Time)',
-	buildNumber: '' || null,
+	version: '__VERSION__',
+	apiPath: '__API_PATH__',
+	buildDate: '__BUILD_DATE__',
+	buildNumber: '__BUILD_NUMBER__' || null,
 	buildOptions: '__BUILD_OPTIONS__'
 };
 

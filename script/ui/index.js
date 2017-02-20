@@ -521,7 +521,9 @@ function dialog(modal, params, noAnimate) {
 			open(resolve, reject);
 	});
 }
-
+function clr (str) {
+  return str.splice(0,str.length);
+}
 function addUndoAction (action, check_dummy)
 {
 	if (action == null)
@@ -530,7 +532,7 @@ function addUndoAction (action, check_dummy)
 	if (check_dummy != true || !action.isDummy())
 	{
 		undoStack.push(action);
-		redoStack.clear();
+		clr(redoStack);
 		if (undoStack.length > HISTORY_LENGTH)
 			undoStack.splice(0, 1);
 		updateHistoryButtons();
@@ -958,8 +960,8 @@ function atomLabel (mode) {
 function clean () {
 	// latter if (initialized)
 	ui.editor.struct(new Struct());
-	undoStack.clear();
-	redoStack.clear();
+	clr(undoStack);
+	clr(redoStack);
 	updateHistoryButtons();
 	selectAction(null);
 }

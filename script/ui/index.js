@@ -738,7 +738,7 @@ function attach (tmpl, index) {
 
 		if (isUser) {
 			var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-			store[index].props = Object.assign(store[index].props, attachProps);
+			store[index].props = Object.assign({}, store[index].props, attachProps);
 			localStorage['ketcher-tmpl'] = JSON.stringify(store);
 		}
 

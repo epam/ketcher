@@ -135,14 +135,14 @@ class TemplateLib extends Component {
 		this.props.onOk({event: 'attachEdit', tmpl: tmpl, index: index});
 	}
 
-	renderRow (row, index) {
+	renderRow (row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className="td" title={tmplName(tmpl, index + i)}>
+				<div className="td" title={tmplName(tmpl, index * COLS + i)}>
 				  <RenderTmpl tmpl={tmpl}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
-					<button className="attach-button" onClick={() => this.onAttach(tmpl, index + i)}>Edit</button>
+					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>Edit</button>
 				</div>
 			))}</div>
 		);
@@ -181,7 +181,7 @@ class TemplateLib extends Component {
 					value={group} options={ lib.map(g => g.name) } />
 				  <VisibleView data={libRows(lib, group, COLS)}
 							   rowHeight={120} className="table">
-					{ (row, i) => this.renderRow(row, i) }
+					{ (row, i) => this.renderRow(row, i, COLS) }
 				</VisibleView>
 			</Dialog>
 		);

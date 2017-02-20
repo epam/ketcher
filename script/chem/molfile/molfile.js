@@ -137,8 +137,8 @@ Molfile.prototype.writeHeader = function () {
 	this.writeWhiteSpace(2);
 	this.write('Ketcher');
 	this.writeWhiteSpace();
-	this.writeCR((date.getMonth() + 1).toPaddedString(2) + date.getDate().toPaddedString(2) + (date.getFullYear() % 100).toPaddedString(2) +
-	date.getHours().toPaddedString(2) + date.getMinutes().toPaddedString(2) + '2D 1   1.00000     0.00000     0');
+	this.writeCR(((date.getMonth() + 1) + '').padStart(2) + (date.getDate() + '').padStart(2) + ((date.getFullYear() % 100) + '').padStart(2) +
+	(date.getHours() + '').padStart(2) + (date.getMinutes() + '').padStart(2) + '2D 1   1.00000     0.00000     0');
 	this.writeCR();
 };
 

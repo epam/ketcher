@@ -51,7 +51,7 @@ function atomProps (params) {
 
 	function atomChange(val) {
 		var change = (this == val.target);
-		var label = !change ? val : this.value.strip().capitalize();
+		var label = !change ? val : this.value.trim().capitalize();
 		if (change)
 			this.value = label;
 		var elem = element.getElementByLabel(label);
@@ -80,7 +80,7 @@ function atomProps (params) {
 	}
 
 	handlers[0] = $(dlg.charge).on('change', function () {
-		if (this.value.strip() === '' || this.value == '0') {
+		if (this.value.trim() === '' || this.value == '0') {
 			this.value = '';
 		} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
 			this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
@@ -89,7 +89,7 @@ function atomProps (params) {
 		}
 	});
 	handlers[1] = $(dlg.isotope).on('change', function () {
-		if (this.value == numberInput.value || this.value.strip() == '' || this.value == '0') {
+		if (this.value == numberInput.value || this.value.trim() == '' || this.value == '0') {
 			this.value = '';
 		} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
 			this.value = params.isotope;

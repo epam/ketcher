@@ -12,9 +12,9 @@ function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 	split = spaceparsplit(line);
 	var params = {
 		pp: new Vec2(parseFloat(split[2]), -parseFloat(split[3]), parseFloat(split[4])),
-		aam: split[5].strip()
+		aam: split[5].trim()
 	};
-	var label = split[1].strip();
+	var label = split[1].trim();
 	if (label.charAt(0) == '"' && label.charAt(label.length - 1) == '"')
 		label = label.substr(1, label.length - 2); // strip qutation marks
 	if (label.charAt(label.length - 1) == ']') { // assume atom list
@@ -50,13 +50,13 @@ function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 			}
 			params[utils.fmtInfo.v30atomPropMap[key]] = ival;
 		} else if (key == 'RGROUPS') {
-			value = value.strip().substr(1, value.length - 2);
+			value = value.trim().substr(1, value.length - 2);
 			var rgrsplit = value.split(' ').slice(1);
 			params.rglabel = 0;
 			for (var j = 0; j < rgrsplit.length; ++j)
 				params.rglabel |= 1 << (rgrsplit[j] - 1);
 		} else if (key == 'ATTCHPT') {
-			params.attpnt = value.strip() - 0;
+			params.attpnt = value.trim() - 0;
 		}
 	}
 	return new Struct.Atom(params);
@@ -94,7 +94,7 @@ function parseBondLineV3000(line) {
 function v3000parseCollection(ctab, ctabLines, shift) {
 	/* reader */
 	shift++;
-	while (ctabLines[shift].strip() != 'M  V30 END COLLECTION')
+	while (ctabLines[shift].trim() != 'M  V30 END COLLECTION')
 		shift++;
 	shift++;
 	return shift;
@@ -105,11 +105,11 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) { // eslint-
 	var line = '';
 	shift++;
 	while (shift < ctabLines.length) {
-		line = stripV30(ctabLines[shift++]).strip();
-		if (line.strip() == 'END SGROUP')
+		line = stripV30(ctabLines[shift++]).trim();
+		if (line.trim() == 'END SGROUP')
 			return shift;
 		while (line.charAt(line.length - 1) == '-')
-			line = (line.substr(0, line.length - 1) + stripV30(ctabLines[shift++])).strip();
+			line = (line.substr(0, line.length - 1) + stripV30(ctabLines[shift++])).trim();
 		var split = splitSGroupDef(line);
 		var type = split[1];
 		var sg = new Struct.SGroup(type);
@@ -140,7 +140,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) { // eslint-
 		if (props['MULT'])
 			sg.data.subscript = props['MULT'][0] - 0;
 		if (props['LABEL'])
-			sg.data.subscript = props['LABEL'][0].strip();
+			sg.data.subscript = props['LABEL'][0].trim();
 		if (props['CONNECT'])
 			sg.data.connectivity = props['CONNECT'][0].toLowerCase();
 		if (props['FIELDDISP'])
@@ -163,7 +163,7 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 	var ctab = new Struct();
 
 	var shift = 0;
-	if (ctabLines[shift++].strip() != 'M  V30 BEGIN CTAB')
+	if (ctabLines[shift++].trim() != 'M  V30 BEGIN CTAB')
 		throw Error('CTAB V3000 invalid');
 	if (ctabLines[shift].slice(0, 13) != 'M  V30 COUNTS')
 		throw Error('CTAB V3000 invalid');
@@ -171,26 +171,26 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 	ctab.isChiral = (utils.parseDecimalInt(vals[4]) == 1);
 	shift++;
 
-	if (ctabLines[shift].strip() == 'M  V30 BEGIN ATOM') {
+	if (ctabLines[shift].trim() == 'M  V30 BEGIN ATOM') {
 		shift++;
 		var line;
 		while (shift < ctabLines.length) {
-			line = stripV30(ctabLines[shift++]).strip();
+			line = stripV30(ctabLines[shift++]).trim();
 			if (line == 'END ATOM')
 				break;
 			while (line.charAt(line.length - 1) == '-')
-				line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).strip();
+				line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).trim();
 			ctab.atoms.add(parseAtomLineV3000(line));
 		}
 
-		if (ctabLines[shift].strip() == 'M  V30 BEGIN BOND') {
+		if (ctabLines[shift].trim() == 'M  V30 BEGIN BOND') {
 			shift++;
 			while (shift < ctabLines.length) {
-				line = stripV30(ctabLines[shift++]).strip();
+				line = stripV30(ctabLines[shift++]).trim();
 				if (line == 'END BOND')
 					break;
 				while (line.charAt(line.length - 1) == '-')
-					line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).strip();
+					line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).trim();
 				ctab.bonds.add(parseBondLineV3000(line));
 			}
 		}
@@ -199,17 +199,17 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 		var sgroups = {};
 		var atomMap = {};
 
-		while (ctabLines[shift].strip() != 'M  V30 END CTAB') {
-			if (ctabLines[shift].strip() == 'M  V30 BEGIN COLLECTION')
+		while (ctabLines[shift].trim() != 'M  V30 END CTAB') {
+			if (ctabLines[shift].trim() == 'M  V30 BEGIN COLLECTION')
 			// TODO: read collection information
 				shift = v3000parseCollection(ctab, ctabLines, shift);
-			else if (ctabLines[shift].strip() == 'M  V30 BEGIN SGROUP')
+			else if (ctabLines[shift].trim() == 'M  V30 BEGIN SGROUP')
 				shift = v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift);
 			else
 				throw Error('CTAB V3000 invalid');
 		}
 	}
-	if (ctabLines[shift++].strip() != 'M  V30 END CTAB')
+	if (ctabLines[shift++].trim() != 'M  V30 END CTAB')
 		throw Error('CTAB V3000 invalid');
 
 	if (!norgroups)
@@ -228,10 +228,10 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 		rfrags[id] = [];
 		rLogic[id] = {};
 		while (true) { // eslint-disable-line no-constant-condition
-			var line = ctabLines[shift].strip();
+			var line = ctabLines[shift].trim();
 			if (line.search('M  V30 RLOGIC') == 0) {
 				line = line.slice(13);
-				var rlsplit = line.strip().split(/\s+/g);
+				var rlsplit = line.trim().split(/\s+/g);
 				var iii = utils.parseDecimalInt(rlsplit[0]);
 				var hhh = utils.parseDecimalInt(rlsplit[1]);
 				var ooo = rlsplit.slice(2).join(' ');
@@ -247,14 +247,14 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 			if (line != 'M  V30 BEGIN CTAB')
 				throw Error('CTAB V3000 invalid');
 			for (var i = 0; i < ctabLines.length; ++i) {
-				if (ctabLines[shift + i].strip() == 'M  V30 END CTAB')
+				if (ctabLines[shift + i].trim() == 'M  V30 END CTAB')
 					break;
 			}
 			var lines = ctabLines.slice(shift, shift + i + 1);
 			var rfrag = parseCTabV3000(lines, true);
 			rfrags[id].push(rfrag);
 			shift = shift + i + 1;
-			if (ctabLines[shift].strip() == 'M  V30 END RGROUP') {
+			if (ctabLines[shift].trim() == 'M  V30 END RGROUP') {
 				shift++;
 				break;
 			}
@@ -285,7 +285,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 
 	function findCtabEnd(i) {
 		for (var j = i; j < ctabLines.length; ++j) {
-			if (ctabLines[j].strip() == 'M  V30 END CTAB')
+			if (ctabLines[j].trim() == 'M  V30 END CTAB')
 				return j;
 		}
 		console.error('CTab format invalid');
@@ -293,7 +293,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 
 	function findRGroupEnd(i) {
 		for (var j = i; j < ctabLines.length; ++j) {
-			if (ctabLines[j].strip() == 'M  V30 END RGROUP')
+			if (ctabLines[j].trim() == 'M  V30 END RGROUP')
 				return j;
 		}
 		console.error('CTab format invalid');
@@ -304,7 +304,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 	var current = null;
 	var rGroups = [];
 	for (var i = 0; i < ctabLines.length; ++i) {
-		var line = ctabLines[i].strip();
+		var line = ctabLines[i].trim();
 		var j;
 
 		if (line.startsWith('M  V30 COUNTS')) {
@@ -414,7 +414,7 @@ function splitSGroupDef(line) { // eslint-disable-line max-statements
 				braceBalance--;
 			} else if (c == ' ' && braceBalance == 0) {
 				split.push(line.slice(0, i));
-				line = line.slice(i + 1).strip();
+				line = line.slice(i + 1).trim();
 				i = 0;
 			}
 		}
@@ -422,7 +422,7 @@ function splitSGroupDef(line) { // eslint-disable-line max-statements
 	if (braceBalance != 0)
 		throw new Error('Brace balance broken. S-group properies invalid!');
 	if (line.length > 0)
-		split.push(line.strip());
+		split.push(line.trim());
 	return split;
 }
 
@@ -431,7 +431,7 @@ function parseBracedNumberList(line, shift) {
 	if (!line)
 		return null;
 	var list = [];
-	line = line.strip();
+	line = line.trim();
 	line = line.substr(1, line.length - 2);
 	var split = line.split(' ');
 	shift = shift || 0;
@@ -451,7 +451,7 @@ function labelsListToIds(labels) {
 	/* reader */
 	var ids = [];
 	for (var i = 0; i < labels.length; ++i)
-		ids.push(element.getElementByLabel(labels[i].strip()));
+		ids.push(element.getElementByLabel(labels[i].trim()));
 	return ids;
 }
 

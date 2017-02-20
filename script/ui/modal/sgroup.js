@@ -107,8 +107,8 @@ function getValidateAttrs(dlg) {
 
 	switch (type) {
 	case 'SRU':
-		attrs.connectivity = dlg.connectivity.value.strip();
-		attrs.subscript = dlg.label.value.strip();
+		attrs.connectivity = dlg.connectivity.value.trim();
+		attrs.subscript = dlg.label.value.trim();
 		if (attrs.subscript.length != 1 || !attrs.subscript.match(/^[a-zA-Z]$/)) {
 			alert(attrs.subscript.length ?
 			      'SRU subscript should consist of a single letter.' :
@@ -120,15 +120,15 @@ function getValidateAttrs(dlg) {
 		attrs.mul = parseInt(dlg.label.value, 10);
 		break;
 	case 'SUP':
-		attrs.name = dlg.label.value.strip();
+		attrs.name = dlg.label.value.trim();
 		if (!attrs.name) {
 			alert('Please provide a name for the superatom.');
 			return null;
 		}
 		break;
 	case 'DAT':
-		attrs.fieldName = dlg.fieldName.value.strip();
-		attrs.fieldValue = dlg.fieldValue.value.strip();
+		attrs.fieldName = dlg.fieldName.value.trim();
+		attrs.fieldValue = dlg.fieldValue.value.trim();
 		var posValue = dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.checked; }).value;
 		attrs.absolute = posValue == 'absolute';
 		attrs.attached = posValue == 'attached';

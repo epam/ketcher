@@ -394,7 +394,7 @@ function initHotKeys(toolbar) {
 		if (!kd)
 			el.title = el.title || caption;
 		else {
-			var keys = kd.split(',').map(function (s) { return s.strip(); });
+			var keys = kd.split(',').map(function (s) { return s.trim(); });
 			var mk = shortcutStr(keys[0]);
 			var action = el.parentNode.id;
 			el.title = (el.title || caption) + ' (' + mk + ')';

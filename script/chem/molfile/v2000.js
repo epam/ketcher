@@ -15,7 +15,7 @@ function parseAtomLine(atomLine) {
 		{
 			// generic
 			pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
-			label: atomSplit[4].strip(),
+			label: atomSplit[4].trim(),
 			explicitValence: utils.fmtInfo.valenceMap[utils.parseDecimalInt(atomSplit[10])],
 
 			// obsolete
@@ -57,8 +57,8 @@ function parseAtomListLine(/* string */atomListLine) {
 	var split = utils.partitionLine(atomListLine, utils.fmtInfo.atomListHeaderPartition);
 
 	var number = utils.parseDecimalInt(split[0]) - 1;
-	var notList = (split[2].strip() == 'T');
-	var count = utils.parseDecimalInt(split[4].strip());
+	var notList = (split[2].trim() == 'T');
+	var count = utils.parseDecimalInt(split[4].trim());
 
 	var ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength);
 	var list = [];
@@ -125,10 +125,10 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				}
 			} else if (type == 'LOG') { // rgroup atom
 				propertyData = propertyData.slice(4);
-				var rgid = utils.parseDecimalInt(propertyData.slice(0, 3).strip());
-				var iii = utils.parseDecimalInt(propertyData.slice(4, 7).strip());
-				var hhh = utils.parseDecimalInt(propertyData.slice(8, 11).strip());
-				var ooo = propertyData.slice(12).strip();
+				var rgid = utils.parseDecimalInt(propertyData.slice(0, 3).trim());
+				var iii = utils.parseDecimalInt(propertyData.slice(4, 7).trim());
+				var hhh = utils.parseDecimalInt(propertyData.slice(8, 11).trim());
+				var ooo = propertyData.slice(12).trim();
 				var logic = {};
 				if (iii > 0)
 					logic.ifthen = iii;
@@ -168,7 +168,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
 			} else if (type == 'SMT') {
 				var sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
-				sGroups[sid].data.subscript = propertyData.slice(4).strip();
+				sGroups[sid].data.subscript = propertyData.slice(4).trim();
 			} else if (type == 'SDT') {
 				sGroup.applyDataSGroupDesc(sGroups, propertyData);
 			} else if (type == 'SDD') {
@@ -263,11 +263,11 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 
 function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	ctabLines = ctabLines.slice(7);
-	if (ctabLines[0].strip() != '$CTAB')
+	if (ctabLines[0].trim() != '$CTAB')
 		throw new Error('RGFile format invalid');
 	var i = 1;
 	while (ctabLines[i].charAt(0) != '$') i++;
-	if (ctabLines[i].strip() != '$END CTAB')
+	if (ctabLines[i].trim() != '$END CTAB')
 		throw new Error('RGFile format invalid');
 	var coreLines = ctabLines.slice(1, i);
 	ctabLines = ctabLines.slice(i + 1);
@@ -275,20 +275,20 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 	while (true) { // eslint-disable-line no-constant-condition
 		if (ctabLines.length == 0)
 			throw new Error('Unexpected end of file');
-		var line = ctabLines[0].strip();
+		var line = ctabLines[0].trim();
 		if (line == '$END MOL') {
 			ctabLines = ctabLines.slice(1);
 			break;
 		}
 		if (line != '$RGP')
 			throw new Error('RGFile format invalid');
-		var rgid = ctabLines[1].strip() - 0;
+		var rgid = ctabLines[1].trim() - 0;
 		fragmentLines[rgid] = [];
 		ctabLines = ctabLines.slice(2);
 		while (true) { // eslint-disable-line no-constant-condition
 			if (ctabLines.length == 0)
 				throw new Error('Unexpected end of file');
-			line = ctabLines[0].strip();
+			line = ctabLines[0].trim();
 			if (line == '$END RGP') {
 				ctabLines = ctabLines.slice(1);
 				break;
@@ -297,7 +297,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 				throw new Error('RGFile format invalid');
 			i = 1;
 			while (ctabLines[i].charAt(0) != '$') i++;
-			if (ctabLines[i].strip() != '$END CTAB')
+			if (ctabLines[i].trim() != '$END CTAB')
 				throw new Error('RGFile format invalid');
 			fragmentLines[rgid].push(ctabLines.slice(1, i));
 			ctabLines = ctabLines.slice(i + 1);
@@ -337,7 +337,7 @@ function parseRxn2000(/* string[] */ ctabLines) /* Struct */ {
 			struct = parseRg2000(lines);
 		} else {
 			struct = parseCTab(lines.slice(3));
-			struct.name = lines[0].strip();
+			struct.name = lines[0].trim();
 		}
 		mols.push(struct);
 		ctabLines = ctabLines.slice(n);
@@ -378,7 +378,7 @@ function labelsListToIds(labels) {
 	/* reader */
 	var ids = [];
 	for (var i = 0; i < labels.length; ++i)
-		ids.push(element.getElementByLabel(labels[i].strip()));
+		ids.push(element.getElementByLabel(labels[i].trim()));
 	return ids;
 }
 
@@ -386,7 +386,7 @@ function parsePropertyLineAtomList(hdr, lst) {
 	/* reader */
 	var aid = utils.parseDecimalInt(hdr[1]) - 1;
 	var count = utils.parseDecimalInt(hdr[2]);
-	var notList = hdr[4].strip() == 'T';
+	var notList = hdr[4].trim() == 'T';
 	var ids = labelsListToIds(lst.slice(0, count));
 	var ret = {};
 	ret[aid] = new Struct.AtomList({

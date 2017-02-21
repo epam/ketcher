@@ -7855,10 +7855,10 @@ Adenosine Monophosphate
  20 23  1  0  0  0  0
 M  END
 >  <atomid>
-23
+22
 
 >  <bondid>
-25
+24
 
 >  <group>
 Nucleobases
@@ -7929,10 +7929,10 @@ Adenosine diphosphate
  24 27  1  0  0  0  0
 M  END
 >  <atomid>
-27
+26
 
 >  <bondid>
-29
+28
 
 >  <group>
 Nucleobases
@@ -8011,10 +8011,10 @@ Adenosine triphosphate
  28 31  1  0  0  0  0
 M  END
 >  <atomid>
-31
+30
 
 >  <bondid>
-33
+32
 
 >  <group>
 Nucleobases

@@ -1,7 +1,6 @@
 // TODO: exclude from no-groups build
 var keyName = require('w3c-keyname');
 
-var util = require('../../util');
 var ui = global.ui;
 
 function dialog (params) {
@@ -120,7 +119,6 @@ function getValidateAttrs(dlg) {
 };
 
 function matchContext(field, value) {
-	console.info('search:', util.unicodeLiteral(field), util.unicodeLiteral(value));
 	var c = specialChoices.find(function(c) {
 		var f = c.value.find(function(f) {
 			return f.name == field;

@@ -25,7 +25,7 @@ export function toElement(elem) {
 		};
 	if (elem.type == 'list' || elem.type == 'not-list')
 		return toAtomList(elem);
-	if (element.getElementByLabel(elem.label))
+	if (element.getElementByLabel(capitalize(elem.label)))
 		return toAtom(elem);
 	if (!elem.label && 'ap' in elem)
 		return { attpnt: toApoint(elem.ap) };
@@ -55,7 +55,7 @@ function toAtom(atom) {
 	// TODO merge this to Struct.Atom.attrlist?
 	//      see ratomtool
 	return {
-		label: atom.label,
+		label: capitalize(atom.label),
 		charge: !atom.charge ? 0 : parseInt(atom.charge, 10),
 		isotope: !atom.isotope ? 0 : parseInt(atom.isotope, 10),
 		explicitValence: !atom.explicitValence ? -1 : parseInt(atom.explicitValence, 10),
@@ -148,6 +148,10 @@ function fromBondType(type, stereo) {
 			return caption;
 	}
 	throw 'No such bond caption';
+}
+
+function capitalize(str) {
+	return str[0].toUpperCase() + str.slice(1).toUpperCase();
 }
 
 const bondCaptionMap = {

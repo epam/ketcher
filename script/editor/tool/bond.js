@@ -40,7 +40,8 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		if (!('item' in dragCtx) || dragCtx.item.map == 'atoms') {
-			if ('action' in dragCtx) dragCtx.action.perform();
+			if ('action' in dragCtx)
+				dragCtx.action.perform();
 			var i1, i2, p1, p2;
 			if (('item' in dragCtx && dragCtx.item.map == 'atoms')) {
 				// first mousedown event intersect with any atom
@@ -107,21 +108,17 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			var bondProps = Object.clone(this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
 
-			if (
-			bondProps.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
-			bond.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
-			bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
-			bond.stereo == bondProps.stereo
-			) {
+			if (bondProps.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
+			    bond.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
+			    bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
+			    bond.stereo == bondProps.stereo) {
 				this.editor.update(Action.fromBondFlipping(rnd.ctab, dragCtx.item.id));
 			} else {
 				var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
-				if (
-				bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-				bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-				bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-				loop
-				)
+				if (bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+				    bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+				    bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+				    loop)
 					bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
 
 				this.editor.update(

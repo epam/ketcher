@@ -59,8 +59,8 @@ AtomTool.prototype.OnMouseMove = function (event) {
 			this.bondProps, dragCtx.item.id, Object.clone(this.atomProps), newAtomPos, newAtomPos
 		);
 		// END
+		// dragCtx.aid2 = actionRet[2];
 		dragCtx.action = actionRet[0];
-		dragCtx.aid2 = actionRet[2];
 		rnd.update();
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));

@@ -114,7 +114,8 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 				sign = -sign;
 			if (sign != dragCtx.sign2 || !dragCtx.action) {
 				// undo previous action
-				if ('action' in dragCtx) dragCtx.action.perform();
+				if ('action' in dragCtx)
+					dragCtx.action.perform();
 				dragCtx.sign2 = sign;
 				dragCtx.action = Action.fromTemplateOnBond(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 				rnd.update();
@@ -138,7 +139,8 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 			}
 		}
 		// undo previous action
-		if ('action' in dragCtx) dragCtx.action.perform();
+		if ('action' in dragCtx)
+			dragCtx.action.perform();
 		// create new action
 		dragCtx.angle = degrees;
 		if (!ci || ci.type == 'Canvas') {
@@ -165,11 +167,12 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 };
 TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
-	var render = editor.render;
+	var rnd = editor.render;
+
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
-		var restruct = render.ctab;
+		var restruct = rnd.ctab;
 		var struct = restruct.molecule;
 
 		if (!dragCtx.action) {
@@ -212,7 +215,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 
-			render.update();
+			rnd.update();
 		}
 
 		if (this.dragCtx.action && !this.dragCtx.action.isDummy())

@@ -30,7 +30,8 @@ BondTool.prototype.OnMouseDown = function (event) {
 		xy0: rnd.page2obj(event),
 		item: this.editor.findItem(event, ['atoms', 'bonds'])
 	};
-	if (!this.dragCtx.item || this.dragCtx.item.type == 'Canvas') delete this.dragCtx.item;
+	if (!this.dragCtx.item) // ci.type == 'Canvas'
+		delete this.dragCtx.item;
 	return true;
 };
 

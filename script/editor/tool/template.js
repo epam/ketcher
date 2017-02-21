@@ -47,7 +47,7 @@ TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line m
 	};
 	var dragCtx = this.dragCtx;
 	var ci = dragCtx.item;
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci) { //  ci.type == 'Canvas'
 		delete dragCtx.item;
 	} else if (ci.map == 'bonds') {
 		// calculate fragment center
@@ -101,7 +101,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 
 		var struct = rnd.ctab.molecule;
 		// calc initial pos and is extra bond needed
-		if (!ci || ci.type == 'Canvas') {
+		if (!ci) { //  ci.type == 'Canvas'
 			pos0 = dragCtx.xy0;
 		} else if (ci.map == 'atoms') {
 			pos0 = struct.atoms.get(ci.id).pp;
@@ -143,7 +143,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 			dragCtx.action.perform();
 		// create new action
 		dragCtx.angle = degrees;
-		if (!ci || ci.type == 'Canvas') {
+		if (!ci) { // ci.type == 'Canvas'
 			dragCtx.action = Action.fromTemplateOnCanvas(
 				pos0,
 				angle,
@@ -176,7 +176,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 		var struct = restruct.molecule;
 
 		if (!dragCtx.action) {
-			if (!ci || ci.type == 'Canvas') {
+			if (!ci) { //  ci.type == 'Canvas'
 				dragCtx.action = Action.fromTemplateOnCanvas(dragCtx.xy0, 0, this.template);
 			} else if (ci.map == 'atoms') {
 				var degree = restruct.atoms.get(ci.id).a.neighbors.length;

@@ -291,7 +291,7 @@ function atomForNewBond(restruct, id) { // eslint-disable-line max-statements
 
 	v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-	var a = closest.atom(restruct, v, 0.1);
+	var a = closest.atom(restruct, v, null, 0.1);
 
 	if (a == null)
 		a = { label: 'C' };
@@ -806,7 +806,7 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 
 		v = Vec2.diff(a.pp, frBegin.pp).rotate(angle).scaled(scale).add(begin.pp);
 
-		var mergeA = closest.atom(restruct, v, 0.1);
+		var mergeA = closest.atom(restruct, v, null, 0.1);
 
 		if (mergeA == null) {
 			var operation;
@@ -869,7 +869,7 @@ function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-line max-
 	nSect.times(function (i) {
 		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-		var a = closest.atom(restruct, pos, 0.1);
+		var a = closest.atom(restruct, pos, null, 0.1);
 
 		var ret = fromBondAddition(restruct, {}, id0, a ? a.id : {}, pos);
 		action = ret[0].mergeWith(action);

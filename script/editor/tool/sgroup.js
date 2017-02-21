@@ -30,7 +30,7 @@ function SGroupTool(editor, type) {
 SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, searchMaps);
-	if (!ci || ci.type == 'Canvas')
+	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
 
@@ -48,7 +48,7 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 		selection = this.lassoHelper.end(event);
 	} else {
 		var ci = this.editor.findItem(event, searchMaps);
-		if (!ci || ci.type == 'Canvas')
+		if (!ci) // ci.type == 'Canvas'
 			return;
 		this.hoverHelper.hover(null);
 

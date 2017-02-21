@@ -28,7 +28,7 @@ AtomTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci) { // ci.type == 'Canvas'
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	} else if (ci.map == 'atoms') {
 		this.dragCtx = {

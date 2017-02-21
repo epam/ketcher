@@ -3,11 +3,9 @@ function HoverHelper(editorTool) {
 }
 
 HoverHelper.prototype.hover = function (ci) {
-	if (ci && ci.type == 'Canvas')
-		ci = null;
 	// TODO add custom highlight style parameter, to be used when fusing atoms, sgroup children highlighting, etc
 	var rnd = this.editorTool.editor.render;
-	if ('ci' in this && (!ci || this.ci.type != ci.type || this.ci.id != ci.id)) {
+	if ('ci' in this && (!ci || this.ci.map != ci.map || this.ci.id != ci.id)) {
 		highlightObject(rnd, this.ci, false);
 		delete this.ci;
 	}

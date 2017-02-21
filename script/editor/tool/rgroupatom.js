@@ -24,7 +24,7 @@ RGroupAtomTool.prototype.OnMouseMove = function (event) {
 RGroupAtomTool.prototype.OnMouseUp = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci) { //  ci.type == 'Canvas'
 		this.hoverHelper.hover(null);
 		propsDialog(this.editor, null,
 		            rnd.page2obj(this.OnMouseMove0.lastEvent));

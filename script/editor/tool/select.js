@@ -32,7 +32,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 	);
-	if (!ci || ci.type == 'Canvas') {
+	if (!ci) { //  ci.type == 'Canvas'
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
 	} else {
@@ -92,7 +92,9 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 SelectTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
-		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
+		if ('stopTapping' in this.dragCtx)
+			this.dragCtx.stopTapping();
+
 		// moving selected objects
 		if (this.dragCtx.action) {
 			this.dragCtx.action.perform();
@@ -126,11 +128,13 @@ SelectTool.prototype.OnMouseMove = function (event) {
 };
 SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
-		if ('stopTapping' in this.dragCtx) this.dragCtx.stopTapping();
+		if ('stopTapping' in this.dragCtx)
+			this.dragCtx.stopTapping();
+
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			if (ci.map == this.dragCtx.item.map) {
+			if (ci && ci.map == this.dragCtx.item.map) {
 				var restruct = this.editor.render.ctab;
 				this.hoverHelper.hover(null);
 				this.editor.selection(null);

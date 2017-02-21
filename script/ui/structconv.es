@@ -151,7 +151,7 @@ function fromBondType(type, stereo) {
 }
 
 function capitalize(str) {
-	return str[0].toUpperCase() + str.slice(1).toUpperCase();
+	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 const bondCaptionMap = {

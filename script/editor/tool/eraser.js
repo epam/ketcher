@@ -24,7 +24,7 @@ function EraserTool(editor, mode) {
 EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, this.maps);
-	if (!ci || ci.type == 'Canvas')
+	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
 EraserTool.prototype.OnMouseMove = function (event) {
@@ -40,7 +40,7 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 		this.editor.selection(null);
 	} else {
 		var ci = this.editor.findItem(event, this.maps);
-		if (ci && ci.type != 'Canvas') {
+		if (ci) { //  ci.type != 'Canvas'
 			this.hoverHelper.hover(null);
 			if (ci.map == 'atoms') {
 				this.editor.update(Action.fromAtomDeletion(rnd.ctab, ci.id));

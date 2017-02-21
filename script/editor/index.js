@@ -35,7 +35,10 @@ var ui = global.ui;
 var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
 function Editor(clientArea, options) {
-	this.render = new Render(clientArea, Object.assign({ atomColoring: true, scale: SCALE }, options));
+	this.render = new Render(clientArea, Object.assign({
+		atomColoring: true,
+		scale: SCALE
+	}, options));
 
 	this._selection = null;
 	this._tool = null; // eslint-disable-line
@@ -170,19 +173,8 @@ function eventSetup(editor) {
 Editor.prototype.findItem = function (event, maps, skip) {
 	var pos = 'ui' in window ? new Vec2(this.render.page2obj(event)) :
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
-	var ci = closest.item(this.render.ctab, pos, maps, skip);
 
-	// rbalabanov: let it be this way at the moment
-	if (ci.type == 'Atom') ci.map = 'atoms';
-	else if (ci.type == 'Bond') ci.map = 'bonds';
-	else if (ci.type == 'SGroup') ci.map = 'sgroups';
-	else if (ci.type == 'DataSGroupData') ci.map = 'sgroupData';
-	else if (ci.type == 'RxnArrow') ci.map = 'rxnArrows';
-	else if (ci.type == 'RxnPlus') ci.map = 'rxnPluses';
-	else if (ci.type == 'Fragment') ci.map = 'frags';
-	else if (ci.type == 'RGroup') ci.map = 'rgroups';
-	else if (ci.type == 'ChiralFlag') ci.map = 'chiralFlags';
-	return ci;
+	return closest.item(this.render.ctab, pos, maps, skip);
 };
 
 Editor.prototype.explicitSelected = function () {

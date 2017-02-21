@@ -868,15 +868,13 @@ function fromChain(p0, v, nSect, atomId) {
 
 	action.operations.reverse();
 
-	nSect.times(function (i) {
+	for (var i = 0; i < nSect; i++) {
 		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
-
 		var a = closest.atom(ui.render.ctab, pos, 0.1);
-
 		var ret = fromBondAddition({}, id0, a ? a.id : {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
-	}, this);
+	}
 
 	return action;
 }

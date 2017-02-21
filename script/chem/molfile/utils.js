@@ -97,6 +97,9 @@ var FRAGMENT = {
 	AGENT: 3
 };
 
+var SHOULD_REACTION_FRAGMENT_RELAYOUT = false;
+var SHOULD_RESCALE_MOLECULES = false;
+
 function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	var ret = new Struct();
@@ -114,10 +117,12 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 		bondLengthData.cnt += bondLengthDataMol.cnt;
 		bondLengthData.totalLength += bondLengthDataMol.totalLength;
 	}
-	var avgBondLength = 1 / (bondLengthData.cnt == 0 ? 1 : bondLengthData.totalLength / bondLengthData.cnt);
-	for (j = 0; j < mols.length; ++j) {
-		mol = mols[j];
-		mol.scale(avgBondLength);
+	if (SHOULD_RESCALE_MOLECULES) {
+		var avgBondLength = 1 / (bondLengthData.cnt == 0 ? 1 : bondLengthData.totalLength / bondLengthData.cnt);
+		for (j = 0; j < mols.length; ++j) {
+			mol = mols[j];
+			mol.scale(avgBondLength);
+		}
 	}
 
 	for (j = 0; j < mols.length; ++j) {
@@ -145,8 +150,6 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 		});
 	}
 
-	// reaction fragment layout
-	var xorig = 0;
 	function shiftMol(ret, mol, bb, xorig, over) { // eslint-disable-line max-params
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
 		mol.atoms.each(function (aid, atom) {
@@ -162,15 +165,26 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 		return bb.max.x - bb.min.x;
 	}
 
-	for (j = 0; j < molReact.length; ++j)
-		xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
-	xorig += 2.0;
-	for (j = 0; j < molAgent.length; ++j)
-		xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
-	xorig += 2.0;
+	if (SHOULD_REACTION_FRAGMENT_RELAYOUT) {
+	// reaction fragment layout
+		var xorig = 0;
+		for (j = 0; j < molReact.length; ++j)
+			xorig += shiftMol(ret, molReact[j], bbReact[j], xorig, false) + 2.0;
+		xorig += 2.0;
+		for (j = 0; j < molAgent.length; ++j)
+			xorig += shiftMol(ret, molAgent[j], bbAgent[j], xorig, true) + 2.0;
+		xorig += 2.0;
 
-	for (j = 0; j < molProd.length; ++j)
-		xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+		for (j = 0; j < molProd.length; ++j)
+			xorig += shiftMol(ret, molProd[j], bbProd[j], xorig, false) + 2.0;
+	} else {
+		for (j = 0; j < molReact.length; ++j)
+			molReact[j].mergeInto(ret);
+		for (j = 0; j < molAgent.length; ++j)
+			molAgent[j].mergeInto(ret);
+		for (j = 0; j < molProd.length; ++j)
+			molProd[j].mergeInto(ret);
+	}
 
 	var bb1;
 	var bb2;

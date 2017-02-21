@@ -56,10 +56,10 @@ RotateTool.prototype.OnMouseDown = function (event) {
 				if (selection.atoms.indexOf(hb.end) == -1) {
 					if (hb.loop >= 0) {
 						var neiAtom = struct.atoms.get(aid);
-						if (!Object.isUndefined(neiAtom.neighbors.find(function (neiNei) {
+						if (!neiAtom.neighbors.find(function (neiNei) {
 							var neiHb = struct.halfBonds.get(neiNei);
 							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) != -1;
-						}))) {
+						})) {
 							rotAll = true;
 							return true;
 						}
@@ -75,7 +75,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 			});
 		});
 
-		if (!rotId && rotId != null)
+		if (!rotAll && rotId != null)
 			xy0 = struct.atoms.get(rotId).pp;
 		else
 			xy0 = xy0.scaled(1 / selection.atoms.length);

@@ -21,7 +21,7 @@ function getMolfile() {
 }
 
 function setMolecule(molString) {
-	if (!Object.isString(molString))
+	if (!(typeof molString === "string"))
 		return;
 	ui.load(molString, {
 		rescale: true
@@ -29,7 +29,7 @@ function setMolecule(molString) {
 }
 
 function addFragment(molString) {
-	if (!Object.isString(molString))
+	if (!(typeof molString === "string"))
 		return;
 	ui.load(molString, {
 		rescale: true,

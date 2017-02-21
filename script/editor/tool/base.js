@@ -30,7 +30,7 @@ EditorTool.prototype.OnMouseUp0 = function (event) {
 
 	if ('lastEvent' in this.OnMouseMove0) {
 		// this data is missing for 'touchend' event when last finger is out
-		event = Object.clone(event); // pageX & pageY properties are readonly in Opera
+		event = Object.assign({}, event); // pageX & pageY properties are readonly in Opera
 		event.pageX = this.OnMouseMove0.lastEvent.pageX;
 		event.pageY = this.OnMouseMove0.lastEvent.pageY;
 	}

@@ -291,7 +291,7 @@ function popAction(toolbar, action) {
 	var sel = action ? $(action) : toolbar.select('.selected')[0];
 	var dropdown = sel && hiddenAncestor(sel);
 	if (dropdown) {
-		// var index = sel[0].previousSiblings().size();
+		// var index = sel[0].previousSiblings().length;
 		var menu = subEl(dropdown);
 		menu.style.marginTop = (-sel.offsetTop + menu.offsetTop) + 'px';
 	}
@@ -362,7 +362,7 @@ function initHotKeys(toolbar) {
 		if (!kd)
 			el.title = el.title || caption;
 		else {
-			var keys = kd.split(',').map(function (s) { return s.strip(); });
+			var keys = kd.split(',').map(function (s) { return s.trim(); });
 			var mk = shortcutStr(keys[0]);
 			var action = el.parentNode.id;
 			el.title = (el.title || caption) + ' (' + mk + ')';
@@ -488,7 +488,9 @@ function dialog(modal, params, noAnimate) {
 			open(resolve, reject);
 	});
 }
-
+function clr (str) {
+  return str.splice(0,str.length);
+}
 function addUndoAction (action, check_dummy)
 {
 	if (action == null)
@@ -497,7 +499,7 @@ function addUndoAction (action, check_dummy)
 	if (check_dummy != true || !action.isDummy())
 	{
 		undoStack.push(action);
-		redoStack.clear();
+		clr(redoStack);
 		if (undoStack.length > HISTORY_LENGTH)
 			undoStack.splice(0, 1);
 		updateHistoryButtons();
@@ -899,7 +901,7 @@ function atomLabel (mode) {
 	case 'any':
 		return {label:'A'};
 	default:
-		label = label.capitalize();
+		label = label[0].toUpperCase()+label.slice(1).toLowerCase();
 		console.assert(element.getElementByLabel(label),
 		               "No such atom exist");
 		return {label: label};
@@ -909,8 +911,8 @@ function atomLabel (mode) {
 function clean () {
 	// latter if (initialized)
 	ui.editor.struct(new Struct());
-	undoStack.clear();
-	redoStack.clear();
+	clr(undoStack);
+	clr(redoStack);
 	updateHistoryButtons();
 	selectAction(null);
 }

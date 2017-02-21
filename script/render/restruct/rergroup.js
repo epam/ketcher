@@ -151,7 +151,7 @@ ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-li
 
 ReRGroup.prototype.drawHighlight = function (render) {
 	var rgid = render.ctab.rgroups.keyOf(this);
-	if (!Object.isUndefined(rgid)) {
+	if (!(typeof rgid === 'undefined')) {
 		var ret = this._draw(render, rgid, render.options.highlightStyle/* { 'fill' : 'red' }*/); // eslint-disable-line no-underscore-dangle
 		render.ctab.addReObjectPath('highlighting', this.visel, ret);
 		/*

@@ -106,7 +106,7 @@ BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-sta
 			// when does it hapend?
 			this.editor.update(Action.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
 		} else if (dragCtx.item.map == 'bonds') {
-			var bondProps = Object.clone(this.bondProps);
+			var bondProps = Object.assign({}, this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
 
 			if (bondProps.stereo != Struct.Bond.PATTERN.STEREO.NONE &&

@@ -135,8 +135,8 @@ Molfile.prototype.writeHeader = function () {
 	this.writeWhiteSpace(2);
 	this.write('Ketcher');
 	this.writeWhiteSpace();
-	this.writeCR((date.getMonth() + 1).toPaddedString(2) + date.getDate().toPaddedString(2) + (date.getFullYear() % 100).toPaddedString(2) +
-	date.getHours().toPaddedString(2) + date.getMinutes().toPaddedString(2) + '2D 1   1.00000     0.00000     0');
+	this.writeCR(((date.getMonth() + 1) + '').padStart(2) + (date.getDate() + '').padStart(2) + ((date.getFullYear() % 100) + '').padStart(2) +
+	(date.getHours() + '').padStart(2) + (date.getMinutes() + '').padStart(2) + '2D 1   1.00000     0.00000     0');
 	this.writeCR();
 };
 
@@ -159,9 +159,7 @@ Molfile.prototype.writeWhiteSpace = function (length) {
 	if (arguments.length == 0)
 		length = 1;
 
-	length.times(function () {
-		this.write(' ');
-	}, this);
+	this.write(' '.repeat(length));
 };
 
 Molfile.prototype.writePadded = function (str, width) {
@@ -230,11 +228,11 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (Object.isUndefined(atom.hCount))
+		if (typeof atom.hCount === "undefined")
 			atom.hCount = 0;
 		this.writePaddedNumber(atom.hCount, 3);
 
-		if (Object.isUndefined(atom.stereoCare))
+		if (typeof atom.stereoCare === "undefined")
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
 
@@ -244,15 +242,15 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (Object.isUndefined(atom.aam))
+		if (typeof atom.aam === "undefined")
 			atom.aam = 0;
 		this.writePaddedNumber(atom.aam, 3);
 
-		if (Object.isUndefined(atom.invRet))
+		if (typeof atom.invRet === "undefined")
 			atom.invRet = 0;
 		this.writePaddedNumber(atom.invRet, 3);
 
-		if (Object.isUndefined(atom.exactChangeFlag))
+		if (typeof atom.exactChangeFlag === "undefined")
 			atom.exactChangeFlag = 0;
 		this.writePaddedNumber(atom.exactChangeFlag, 3);
 
@@ -270,17 +268,17 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(this.mapping[bond.end], 3);
 		this.writePaddedNumber(bond.type, 3);
 
-		if (Object.isUndefined(bond.stereo))
+		if (typeof bond.stereo === "undefined")
 			bond.stereo = 0;
 		this.writePaddedNumber(bond.stereo, 3);
 
 		this.writeWhiteSpace(3);
 
-		if (Object.isUndefined(bond.topology))
+		if (typeof bond.topology === "undefined")
 			bond.topology = 0;
 		this.writePaddedNumber(bond.topology, 3);
 
-		if (Object.isUndefined(bond.reactingCenterStatus))
+		if (typeof bond.reactingCenterStatus === "undefined")
 			bond.reactingCenterStatus = 0;
 		this.writePaddedNumber(bond.reactingCenterStatus, 3);
 

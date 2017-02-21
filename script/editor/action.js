@@ -189,17 +189,18 @@ function fromBondAttrs(restruct, id, attrs, flip, reset) { // eslint-disable-lin
 }
 
 function fromAtomAddition(pos, atom) {
-	atom = Object.clone(atom);
+	atom = Object.assign({}, atom);
 	var action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(ui.editor));
 	return action;
 }
 
+
 function mergeFragments(action, struct, frid, frid2) {
-	if (frid2 != frid && Object.isNumber(frid2)) {
+	if (frid2 != frid && (typeof frid2 == 'number')) {
 		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid2);
-		if (!Object.isUndefined(rgid))
+		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(null, frid2));
 
 		struct.atoms.each(function (aid, atom) {
@@ -310,12 +311,13 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 	var action = new Action();
 
 	var frid = null;
-	if (!Object.isNumber(begin)) {
-		if (Object.isNumber(end))
+
+	if (!(typeof begin == "number")) {
+		if (typeof end == "number")
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (Object.isNumber(end)) {
+		if (typeof end == "number") {
 			var frid2 = atomGetAttr(restruct, end, 'fragment');
 			mergeFragments(action, restruct.molecule, frid, frid2);
 		}
@@ -324,7 +326,7 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 	if (frid == null)
 		frid = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 
-	if (!Object.isNumber(begin)) {
+	if (!(typeof begin === "number")) {
 		begin.fragment = frid;
 		begin = action.addOp(new op.AtomAdd(begin, pos).perform(ui.editor)).data.aid;
 
@@ -334,11 +336,11 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 	}
 
 
-	if (!Object.isNumber(end)) {
+	if (!(typeof end === "number")) {
 		end.fragment = frid;
 		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(ui.editor)).data.aid;
-		if (Object.isNumber(begin)) {
+		if (typeof begin === "number") {
 			atomGetSGroups(restruct, begin).each(function (sid) {
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(ui.editor));
 			}, this);
@@ -866,15 +868,14 @@ function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-line max-
 
 	action.operations.reverse();
 
-	nSect.times(function (i) {
+	for (var i = 0; i < nSect; i++) {
 		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
 		var a = closest.atom(restruct, pos, null, 0.1);
-
 		var ret = fromBondAddition(restruct, {}, id0, a ? a.id : {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
-	}, this);
+	}
 
 	return action;
 }
@@ -1117,7 +1118,7 @@ function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statem
 	var fmap = {};
 	// atoms
 	for (var aid = 0; aid < clipboard.atoms.length; aid++) {
-		var atom = Object.clone(clipboard.atoms[aid]);
+		var atom = Object.assign({}, clipboard.atoms[aid]);
 		if (!(atom.fragment in fmap))
 			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(ui.editor)).frid;
 		atom.fragment = fmap[atom.fragment];
@@ -1139,7 +1140,7 @@ function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statem
 
 	// bonds
 	for (var bid = 0; bid < clipboard.bonds.length; bid++) {
-		var bond = Object.clone(clipboard.bonds[bid]);
+		var bond = Object.assign({}, clipboard.bonds[bid]);
 		action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(ui.editor));
 	}
 	// sgroups

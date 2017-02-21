@@ -14,14 +14,14 @@ function parseMol(/* string */ ctabLines) /* Struct */ {
 	if (ctabLines[0].search('\\$MDL') == 0)
 		return v2000.parseRg2000(ctabLines);
 	var struct = parseCTab(ctabLines.slice(3));
-	struct.name = ctabLines[0].strip();
+	struct.name = ctabLines[0].trim();
 	return struct;
 }
 
 function parseCTab(/* string */ ctabLines) /* Struct */ {
 	/* reader */
 	var countsSplit = partitionLine(ctabLines[0], utils.fmtInfo.countsLinePartition);
-	var version = countsSplit[11].strip();
+	var version = countsSplit[11].trim();
 	ctabLines = ctabLines.slice(1);
 	if (version == 'V2000')
 		return v2000.parseCTabV2000(ctabLines, countsSplit);
@@ -34,7 +34,7 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 /* Parse Rxn */
 function parseRxn(/* string[] */ ctabLines) /* Struct */ {
 	/* reader */
-	var split = ctabLines[0].strip().split(' ');
+	var split = ctabLines[0].trim().split(' ');
 	if (split.length > 1 && split[1] == 'V3000')
 		return v3000.parseRxn3000(ctabLines);
 	else

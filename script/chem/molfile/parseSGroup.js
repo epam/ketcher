@@ -12,7 +12,7 @@ function readKeyValuePairs(str, /* bool */ valueString) {
 	for (var i = 0; i < count; ++i) {
 		/* eslint-disable no-mixed-operators*/
 		ret[utils.parseDecimalInt(partition[2 * i + 1]) - 1] =
-			valueString ? partition[2 * i + 2].strip() :
+			valueString ? partition[2 * i + 2].trim() :
 				utils.parseDecimalInt(partition[2 * i + 2]);
 		/* eslint-enable no-mixed-operators*/
 	}
@@ -28,7 +28,7 @@ function readKeyMultiValuePairs(str, /* bool */ valueString) {
 		ret.push([
 			/* eslint-disable no-mixed-operators*/
 			utils.parseDecimalInt(partition[2 * i + 1]) - 1,
-			valueString ? partition[2 * i + 2].strip() : utils.parseDecimalInt(partition[2 * i + 2])
+			valueString ? partition[2 * i + 2].trim() : utils.parseDecimalInt(partition[2 * i + 2])
 			/* eslint-enable no-mixed-operators*/
 		]);
 	}
@@ -88,11 +88,11 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 }
 
 function postLoadSru(sgroup) {
-	sgroup.data.connectivity = (sgroup.data.connectivity || 'EU').strip().toLowerCase();
+	sgroup.data.connectivity = (sgroup.data.connectivity || 'EU').trim().toLowerCase();
 }
 
 function postLoadSup(sgroup) {
-	sgroup.data.name = (sgroup.data.subscript || '').strip();
+	sgroup.data.name = (sgroup.data.subscript || '').trim();
 	sgroup.data.subscript = '';
 }
 
@@ -198,11 +198,11 @@ function applyDataSGroupDesc(sGroups, propData) {
 	/* reader */
 	var split = utils.partitionLine(propData, [4, 31, 2, 20, 2, 3], false);
 	var id = utils.parseDecimalInt(split[0]) - 1;
-	var fieldName = split[1].strip();
-	var fieldType = split[2].strip();
-	var units = split[3].strip();
-	var query = split[4].strip();
-	var queryOp = split[5].strip();
+	var fieldName = split[1].trim();
+	var fieldType = split[2].trim();
+	var units = split[3].trim();
+	var query = split[4].trim();
+	var queryOp = split[5].trim();
 	var sGroup = sGroups[id];
 	sGroup.data.fieldType = fieldType;
 	sGroup.data.fieldName = fieldName;
@@ -217,13 +217,13 @@ function applyDataSGroupInfo(sg, propData) { // eslint-disable-line max-statemen
 
 	var x = parseFloat(split[0]);
 	var y = parseFloat(split[1]);
-	var attached = split[3].strip() == 'A';
-	var absolute = split[4].strip() == 'A';
-	var showUnits = split[5].strip() == 'U';
-	var nCharsToDisplay = split[7].strip();
+	var attached = split[3].trim() == 'A';
+	var absolute = split[4].trim() == 'A';
+	var showUnits = split[5].trim() == 'U';
+	var nCharsToDisplay = split[7].trim();
 	nCharsToDisplay = nCharsToDisplay == 'ALL' ? -1 : utils.parseDecimalInt(nCharsToDisplay);
-	var tagChar = split[10].strip();
-	var daspPos = utils.parseDecimalInt(split[11].strip());
+	var tagChar = split[10].trim();
+	var daspPos = utils.parseDecimalInt(split[11].trim());
 
 	sg.pp = new Vec2(x, -y);
 	sg.data.attached = attached;

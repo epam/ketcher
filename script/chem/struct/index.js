@@ -141,7 +141,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	var fidMap = {};
 	this.frags.each(function (fid, frag) {
 		if (fidMask[fid])
-			fidMap[fid] = cp.frags.add(Object.clone(frag));
+			fidMap[fid] = cp.frags.add(Object.assign({}, frag));
 	});
 
 	var rgroupsIds = [];

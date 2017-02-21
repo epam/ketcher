@@ -103,8 +103,8 @@ function getValidateAttrs(dlg) {
 		subscript: ''
 	};
 
-	attrs.fieldName = dlg.fieldName.value.strip();
-	attrs.fieldValue = dlg.fieldValue.value.strip();
+	attrs.fieldName = dlg.fieldName.value.trim();
+	attrs.fieldValue = dlg.fieldValue.value.trim();
 
 	var posValue = dlg.getInputs('radio', 'fieldPos').find(function(r) { return r.checked; }).value;
 	attrs.absolute = posValue == 'absolute';

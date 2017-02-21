@@ -13,6 +13,12 @@ export const map = {
 		ext: ['.rxn'],
 		supportsCoords: true
 	},
+	'cml': {
+		name: 'CML',
+		mime: 'chemical/x-cml',
+		ext: ['.cml', '.mrv'],
+		supportsCoords: true
+	},
 	'smiles': {
 		name: 'Daylight SMILES',
 		mime: 'chemical/x-daylight-smiles',
@@ -22,12 +28,6 @@ export const map = {
 		name: 'Daylight SMARTS',
 		mime: 'chemical/x-daylight-smarts',
 		ext: ['.smarts']
-	},
-	'cml': {
-		name: 'CML',
-		mime: 'chemical/x-cml',
-		ext: ['.cml', '.mrv'],
-		supportsCoords: true
 	},
 	'inchi': {
 		name: 'InChI String',

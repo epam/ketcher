@@ -6,7 +6,6 @@ var element = require('../chem/element');
 var Struct = require('../chem/struct');
 
 var molfile = require('../chem/molfile');
-var smiles = require('../chem/smiles');
 
 var Editor = require('../editor');
 
@@ -14,6 +13,7 @@ var templates = require('./templates');
 
 var utils = require('./utils');
 var modal = require('./modal');
+var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
@@ -43,8 +43,6 @@ var addionalAtoms = {
 	current: 0
 };
 
-var clipActions = ['cut', 'copy', 'paste'];
-
 function init (opts, apiServer) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
@@ -61,9 +59,9 @@ function init (opts, apiServer) {
 	ui.render = ui.editor.render;
 
 	initDropdown(toolbar);
-	initCliparea(ketcherWindow);
 	initZoom();
 	initEditor(ui.editor);
+	initClipboard(ketcherWindow);
 
 	updateHistoryButtons();
 	updateClipboardButtons(null);
@@ -175,6 +173,49 @@ function initEditor(editor) {
 	editor.on('selectionChange', updateClipboardButtons);
 }
 
+function initClipboard(ketcherWindow) {
+	var formats = Object.keys(structFormat.map).map(function (fmt) {
+		return structFormat.map[fmt].mime;
+	});
+	return clipArea(ketcherWindow, {
+		formats: formats,
+		focused: function () {
+			return scope == 'editor';
+		},
+		onCut: function () {
+			var data = clipData(ui.editor);
+			selectAction('erase');
+			return data;
+		},
+		onCopy: function () {
+			var data = clipData(ui.editor);
+			ui.editor.selection(null);
+			return data;
+		},
+		onPaste: function (data) {
+			var structStr = data['chemical/x-mdl-molfile'] ||
+			    data['chemical/x-mdl-rxnfile'] ||
+			    data['text/plain'];
+			if (structStr)
+				load(structStr, { fragment: true });
+		}
+	});
+}
+
+function clipData(editor) {
+	var res = {};
+	var struct = editor.structSelected();
+	if (struct.isBlank())
+		return null;
+	var type = struct.isReaction ?
+	    'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile';
+	res['text/plain'] = res[type] = molfile.stringify(struct);
+	// res['chemical/x-daylight-smiles'] =
+	// smiles.stringify(struct);
+	return res;
+};
+
+
 function updateAtoms() {
 	if (addionalAtoms.storage.length > 0) {
 		var al = "<menu>" + addionalAtoms.storage.reduce(function (res, atom) {
@@ -266,8 +307,8 @@ function selectAction (action) {
 	dropdownToggle(toolbar);
 
 	console.info('action', action);
-	if (clipActions.indexOf(action) != -1 && args.length == 0)
-		return delegateCliparea(action);
+	if (clipArea.actions.indexOf(action) != -1 && args.length == 0)
+		return clipArea.exec(action) || dontClipMessage(action);
 
 	// TODO: refactor !el - case when there are no such id
 	if (!el || !subEl(el).disabled) {
@@ -297,99 +338,11 @@ function selectAction (action) {
 	return null;
 };
 
-function delegateCliparea(action) {
-	var enabled = document.queryCommandSupported(action);
-	if (enabled) try {
-		document.execCommand(action);
-	} catch (ex) {
-		// FF < 41
-		enabled = false;
-	}
-	if (!enabled) {
-		var el = subEl(action);
-		var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
-		alert('These action is unavailble via menu.\n' +
-			 'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
-	}
-	return null;
-}
-
-function initCliparea(parent) {
-	var cliparea = new Element('input', { type: 'text', 'class': 'cliparea', autofocus: true});
-	var ieCb = window.clipboardData;
-	var pasteFormats = [
-		'chemical/x-mdl-molfile',
-		'chemical/x-mdl-rxnfile',
-		'chemical/x-cml',
-		'text/plain',
-		'chemical/x-daylight-smiles',
-		'chemical/x-inchi'
-	];
-	var autofocus = function() {
-		if (scope == 'editor') {
-			cliparea.value = ' ';
-			cliparea.focus();
-			cliparea.select();
-			return true;
-		}
-		return false;
-	};
-	var copyCut = function (struct, cb) {
-		var moldata = molfile.stringify(struct);
-		if (!cb && ieCb) {
-			ieCb.setData('text', moldata);
-		} else {
-			cb.setData('text/plain', moldata);
-			try {
-				cb.setData(!struct.isReaction ?
-						   'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile',
-						   moldata);
-				// cb.setData('chemical/x-daylight-smiles',
-				// 		   smiles.stringify(struct));
-			} catch (ex) {
-				console.info('Could not write exact type', ex);
-			}
-		}
-	};
-	var paste = function (cb) {
-		var data = '';
-		if (!cb && ieCb) {
-			data = ieCb.getData('text');
-		} else {
-			for (var i = 0; i < pasteFormats.length; i++) {
-				data = cb.getData(pasteFormats[i]);
-				if (data)
-					break;
-			}
-		}
-		console.info('paste', i >= 0 && pasteFormats[i], data.slice(0, 50), '..');
-		return data;
-	};
-
-	parent.insert(cliparea);
-	parent.on('mouseup', autofocus);
-
-	// ? events should be attached to documen\t
-	['copy', 'cut'].forEach(function (action) {
-		parent.on(action, function (event) {
-			if (autofocus()) {
-				var struct = selectAction(action, true);
-				if (struct)
-					copyCut(struct, event.clipboardData);
-				event.preventDefault();
-			}
-		});
-	});
-	parent.on('paste', function (event) {
-		if (autofocus()) {
-			var structStr = paste(event.clipboardData);
-			if (structStr)
-				load(structStr, {
-					fragment: true
-				});
-			event.preventDefault();
-		}
-	});
+function dontClipMessage(action) {
+	var el = subEl(action);
+	var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
+	alert('These action is unavailble via menu.\n' +
+	      'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 }
 
 function initHotKeys(toolbar) {
@@ -446,7 +399,7 @@ function keyHandle(toolbar, hotKeys, event) {
 			group.index = index = (index + 1) % group.length;
 		}
 		var action = group[index];
-		if (clipActions.indexOf(action) == -1) {
+		if (clipArea.actions.indexOf(action) == -1) {
 			// else delegate to cliparea
 			selectAction(action);
 			event.preventDefault();
@@ -457,7 +410,6 @@ function keyHandle(toolbar, hotKeys, event) {
 function updateClipboardButtons (selection) {
 	var selected = selection &&  // if not only sgroupData selected
 	    (Object.keys(selection).length > 1 || !selection.sgroupData);
-	console.info('selected', selection, selected);
 	subEl('copy').disabled = subEl('cut').disabled = !selected;
 };
 
@@ -674,7 +626,7 @@ function load(structStr, options) {
 		console.assert(struct, 'No molecule to update');
 		if (options.rescale)
 			struct.rescale();   // TODO: move out parsing?
-		if (options.fragment)
+		if (options.fragment && !struct.isBlank())
 			selectAction('paste', struct);
 		else
 			ui.editor.struct(struct);
@@ -795,21 +747,6 @@ var actionMap = {
 	cip: function () {
 		return serverTransform('calculateCip');
 	},
-	cut: function () {
-		var struct = ui.editor.structSelected();
-		selectAction('erase');
-		return struct.isBlank() ? null : struct;
-	},
-	copy: function () {
-		var struct = ui.editor.structSelected();
-		ui.editor.selection(null);
-		return struct.isBlank() ? null : struct;
-	},
-	paste: function (struct) {
-		if (struct.isBlank())
-			throw 'Not a valid structure to paste';
-		return ui.editor.tool('paste', struct);
-	},
 	about: function () {
 		var about = dialog.bind(null, modal.about);
 		server.then(function (res) {
@@ -905,6 +842,8 @@ function mapTool (id) {
 		return { tool: 'select', opts:'fragment' };
 	} else if (id == 'erase') {
 		return { tool: 'eraser', opts: 1 }; // TODO last selector mode is better
+	} else if (id == 'paste') {
+		return { tool: 'paste', opts: args[0] };
 	} else if (id.startsWith('atom')) {
 		return { tool: 'atom', opts: args[0] || atomLabel(id) };
 	} else if (id.startsWith('bond-')) {

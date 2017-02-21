@@ -26,10 +26,11 @@ PasteTool.prototype.OnMouseMove = function (event) {
 	this.action = Action.fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
 	rnd.update();
 };
+
 PasteTool.prototype.OnMouseUp = function () {
 	this.editor.update(this.action);
-	ui.selectAction(null);
 	delete this.action;
+	ui.selectAction(null);
 };
 
 PasteTool.prototype.OnCancel = function () {

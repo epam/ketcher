@@ -1,7 +1,7 @@
 var ReObject = require('./reobject');
 var Box2Abs = require('../../util/box2abs');
 var draw = require('../draw');
-var util = require('../../util');
+var util = require('../util');
 var scale = require('../../util/scale');
 
 function ReRxnPlus(/* chem.RxnPlus*/plus) {

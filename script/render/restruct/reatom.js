@@ -4,7 +4,7 @@ var scale = require('../../util/scale');
 
 var element = require('../../chem/element');
 var draw = require('../draw');
-var util = require('../../util');
+var util = require('../util');
 var Vec2 = require('../../util/vec2');
 var Struct = require('../../chem/struct');
 

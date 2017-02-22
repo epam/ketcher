@@ -1,4 +1,3 @@
-var util = require('./index');
 var Vec2 = require('./vec2');
 
 function Box2Abs() {
@@ -25,7 +24,7 @@ Box2Abs.prototype.toString = function () {
 };
 
 Box2Abs.fromRelBox = function (relBox) {
-	util.assertDefined(relBox);
+	console.assert(!!relBox);
 	return new Box2Abs(relBox.x, relBox.y, relBox.x + relBox.width, relBox.y + relBox.height);
 };
 
@@ -34,35 +33,35 @@ Box2Abs.prototype.clone = function () {
 };
 
 Box2Abs.union = function (/* Box2Abs*/b1, /* Box2Abs*/b2) {
-	util.assertDefined(b1);
-	util.assertDefined(b2);
+	console.assert(!!b1);
+	console.assert(!!b2);
 	return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1));
 };
 
 Box2Abs.prototype.extend = function (/* Vec2*/lp, /* Vec2*/rb) {
-	util.assertDefined(lp);
+	console.assert(!!lp);
 	rb = rb || lp;
 	return new Box2Abs(this.p0.sub(lp), this.p1.add(rb));
 };
 
 Box2Abs.prototype.include = function (/* Vec2*/p) {
-	util.assertDefined(p);
+	console.assert(!!p);
 	return new Box2Abs(this.p0.min(p), this.p1.max(p));
 };
 
 Box2Abs.prototype.contains = function (/* Vec2*/p, /* float*/ext) {
 	ext = (ext || 0) - 0;
-	util.assertDefined(p);
+	console.assert(!!p);
 	return p.x >= this.p0.x - ext && p.x <= this.p1.x + ext && p.y >= this.p0.y - ext && p.y <= this.p1.y + ext;
 };
 
 Box2Abs.prototype.translate = function (/* Vec2*/d) {
-	util.assertDefined(d);
+	console.assert(!!d);
 	return new Box2Abs(this.p0.add(d), this.p1.add(d));
 };
 
 Box2Abs.prototype.transform = function (/* function(Vec2):Vec2*/f, options) {
-	util.assert(!util.isNullOrUndefined(f));
+	console.assert(!!f);
 	return new Box2Abs(f(this.p0, options), f(this.p1, options));
 };
 

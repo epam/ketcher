@@ -3,7 +3,7 @@ var ReObject = require('./reobject');
 var Struct = require('../../chem/struct');
 var draw = require('../draw');
 var Vec2 = require('../../util/vec2');
-var util = require('../../util');
+var util = require('../util');
 var scale = require('../../util/scale');
 
 function ReBond(/* chem.Bond*/bond) {
@@ -107,7 +107,7 @@ function findIncomingUpBonds(bid0, bond, restruct) {
 		var pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, this);
-	util.assert(halfbonds.length === 2);
+	console.assert(halfbonds.length === 2);
 	bond.neihbid1 = restruct.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
 	bond.neihbid2 = restruct.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
 }
@@ -118,7 +118,7 @@ function checkStereoBold(bid0, bond, restruct) {
 		var pos =  findIncomingStereoUpBond(atom, bid0, false, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, restruct);
-	util.assert(halfbonds.length === 2);
+	console.assert(halfbonds.length === 2);
 	bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
 }
 

@@ -1,5 +1,3 @@
-var util = require('./index');
-
 function Vec2(x, y, z) {
 	if (arguments.length == 0) {
 		this.x = 0;
@@ -42,17 +40,17 @@ Vec2.prototype.length = function () {
 };
 
 Vec2.prototype.equals = function (v) {
-	util.assertDefined(v);
+	console.assert(!!v);
 	return this.x == v.x && this.y == v.y;
 };
 
 Vec2.prototype.add = function (v) {
-	util.assertDefined(v);
+	console.assert(!!v);
 	return new Vec2(this.x + v.x, this.y + v.y, this.z + v.z);
 };
 
 Vec2.prototype.add_ = function (v) { // eslint-disable-line no-underscore-dangle
-	util.assertDefined(v);
+	console.assert(!!v);
 	this.x += v.x;
 	this.y += v.y;
 	this.z += v.z;
@@ -63,12 +61,12 @@ Vec2.prototype.get_xy0 = function () {
 };
 
 Vec2.prototype.sub = function (v) {
-	util.assertDefined(v);
+	console.assert(!!v);
 	return new Vec2(this.x - v.x, this.y - v.y, this.z - v.z);
 };
 
 Vec2.prototype.scaled = function (s) {
-	util.assertDefined(s);
+	console.assert(s == 0 || !!s);
 	return new Vec2(this.x * s, this.y * s, this.z * s);
 };
 
@@ -82,8 +80,8 @@ Vec2.prototype.yComplement = function (y1) {
 };
 
 Vec2.prototype.addScaled = function (v, f) {
-	util.assertDefined(v);
-	util.assertDefined(f);
+	console.assert(!!v);
+	console.assert(f == 0 || !!f);
 	/* eslint-disable no-mixed-operators*/
 	return new Vec2(this.x + v.x * f, this.y + v.y * f, this.z + v.z * f);
 	/* eslint-enable no-mixed-operators*/
@@ -118,30 +116,30 @@ Vec2.prototype.toString = function () {
 };
 
 Vec2.dist = function (a, b) {
-	util.assertDefined(a);
-	util.assertDefined(b);
+	console.assert(!!a);
+	console.assert(!!b);
 	return Vec2.diff(a, b).length();
 };
 
 Vec2.max = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	return new Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y), Math.max(v1.z, v2.z));
 };
 
 Vec2.min = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	return new Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y), Math.min(v1.z, v2.z));
 };
 
 Vec2.prototype.max = function (v) {
-	util.assertDefined(v);
+	console.assert(!!v);
 	return new Vec2.max(this, v); // eslint-disable-line new-cap
 };
 
 Vec2.prototype.min = function (v) {
-	util.assertDefined(v);
+	console.assert(!!v);
 	return new Vec2.min(this, v); // eslint-disable-line new-cap
 };
 
@@ -154,29 +152,29 @@ Vec2.prototype.floor = function () {
 };
 
 Vec2.sum = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	return new Vec2(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 };
 
 Vec2.dot = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	/* eslint-disable no-mixed-operators*/
 	return v1.x * v2.x + v1.y * v2.y;
 	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.cross = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	/* eslint-disable no-mixed-operators*/
 	return v1.x * v2.y - v1.y * v2.x;
 	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.prototype.rotate = function (angle) {
-	util.assertDefined(angle);
+	console.assert(angle == 0 || !!angle);
 	var si = Math.sin(angle);
 	var co = Math.cos(angle);
 
@@ -184,16 +182,16 @@ Vec2.prototype.rotate = function (angle) {
 };
 
 Vec2.prototype.rotateSC = function (si, co) {
-	util.assertDefined(si);
-	util.assertDefined(co);
+	console.assert(si == 0 || !!si);
+	console.assert(co == 0 || !!co);
 	/* eslint-disable no-mixed-operators*/
 	return new Vec2(this.x * co - this.y * si, this.x * si + this.y * co, this.z);
 	/* eslint-enable no-mixed-operators*/
 };
 
 Vec2.angle = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	return Math.atan2(Vec2.cross(v1, v2), Vec2.dot(v1, v2));
 };
 
@@ -202,8 +200,8 @@ Vec2.prototype.oxAngle = function () {
 };
 
 Vec2.diff = function (v1, v2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
+	console.assert(!!v1);
+	console.assert(!!v2);
 	return new Vec2(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 };
 
@@ -219,10 +217,10 @@ Vec2.lc = function () {
 };
 
 Vec2.lc2 = function (v1, f1, v2, f2) {
-	util.assertDefined(v1);
-	util.assertDefined(v2);
-	util.assertDefined(f1);
-	util.assertDefined(f2);
+	console.assert(!!v1);
+	console.assert(!!v2);
+	console.assert(f1 == 0 || !!f1);
+	console.assert(f2 == 0 || !!f2);
 	/* eslint-disable no-mixed-operators*/
 	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2);
 	/* eslint-enable no-mixed-operators*/
@@ -235,9 +233,9 @@ Vec2.centre = function (v1, v2) {
 // find intersection of a ray and a box and
 //  return the shift magnitude to avoid it
 Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) { // eslint-disable-line max-statements
-	util.assertDefined(p);
-	util.assertDefined(d);
-	util.assertDefined(bb);
+	console.assert(!!p);
+	console.assert(!!d);
+	console.assert(!!bb);
 	// four corner points of the box
 	var b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
 	         bb.p1, new Vec2(bb.p0.x, bb.p1.y)];

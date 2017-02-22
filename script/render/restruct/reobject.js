@@ -1,5 +1,4 @@
 var Visel = require('./visel');
-var util = require('../../util');
 var scale = require('../../util/scale');
 
 function ReObject() {
@@ -17,7 +16,7 @@ ReObject.prototype.init = function (viselType) {
 // returns the bounding box of a ReObject in the object coordinates
 ReObject.prototype.getVBoxObj = function (render) {
 	var vbox = this.visel.boundingBox;
-	if (util.isNull(vbox))
+	if (vbox === null)
 		return null;
 	if (render.options.offset)
 		vbox = vbox.translate(render.options.offset.negated());

@@ -1,7 +1,7 @@
 var Box2Abs = require('../../util/box2abs');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
-var util = require('../../util');
+var util = require('../util');
 var scale = require('../../util/scale');
 
 var Struct = require('../../chem/struct');

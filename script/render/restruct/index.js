@@ -6,7 +6,8 @@ var Pool = require('../../util/pool');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var scale = require('../../util/scale');
-var util = require('../../util');
+
+var util = require('../util');
 var Struct = require('../../chem/struct');
 
 var ReAtom = require('./reatom');

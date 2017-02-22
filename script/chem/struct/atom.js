@@ -1,5 +1,4 @@
 var Vec2 = require('../../util/vec2');
-var util = require('../../util');
 
 var element = require('../element');
 var AtomList = require('./atomlist');
@@ -11,12 +10,12 @@ function Atom(params) { // eslint-disable-line max-statements
 	this.label = params.label;
 	this.fragment = params.fragment || -1;
 
-	util.ifDef(this, params, 'isotope', def('isotope'));
-	util.ifDef(this, params, 'radical', def('radical'));
-	util.ifDef(this, params, 'charge', def('charge'));
-	util.ifDef(this, params, 'rglabel', def('rglabel')); // r-group index mask, i-th bit stands for i-th r-site
-	util.ifDef(this, params, 'attpnt', def('attpnt')); // attachment point
-	util.ifDef(this, params, 'explicitValence', def('explicitValence'));
+	ifDef(this, params, 'isotope', def('isotope'));
+	ifDef(this, params, 'radical', def('radical'));
+	ifDef(this, params, 'charge', def('charge'));
+	ifDef(this, params, 'rglabel', def('rglabel')); // r-group index mask, i-th bit stands for i-th r-site
+	ifDef(this, params, 'attpnt', def('attpnt')); // attachment point
+	ifDef(this, params, 'explicitValence', def('explicitValence'));
 
 	this.valence = 0;
 	this.implicitH = 0; // implicitH is not an attribute
@@ -28,16 +27,16 @@ function Atom(params) { // eslint-disable-line max-statements
 	this.sgs = {};
 
 	// query
-	util.ifDef(this, params, 'ringBondCount', def('ringBondCount'));
-	util.ifDef(this, params, 'substitutionCount', def('substitutionCount'));
-	util.ifDef(this, params, 'unsaturatedAtom', def('unsaturatedAtom'));
-	util.ifDef(this, params, 'hCount', def('hCount'));
+	ifDef(this, params, 'ringBondCount', def('ringBondCount'));
+	ifDef(this, params, 'substitutionCount', def('substitutionCount'));
+	ifDef(this, params, 'unsaturatedAtom', def('unsaturatedAtom'));
+	ifDef(this, params, 'hCount', def('hCount'));
 
 	// reaction
-	util.ifDef(this, params, 'aam', def('aam'));
-	util.ifDef(this, params, 'invRet', def('invRet'));
-	util.ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
-	util.ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
+	ifDef(this, params, 'aam', def('aam'));
+	ifDef(this, params, 'invRet', def('invRet'));
+	ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
+	ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
@@ -404,5 +403,9 @@ Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line ma
 
 	return rad + conn + Math.abs(charge);
 };
+
+function ifDef(dst, src, prop, def) {
+	dst[prop] = !(typeof src[prop] === 'undefined') ? src[prop] : def;
+}
 
 module.exports = Atom;

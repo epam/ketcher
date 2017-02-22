@@ -2,7 +2,7 @@ var ReObject = require('./reobject');
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
 var draw = require('../draw');
-var util = require('../../util');
+var util = require('../util');
 var scale = require('../../util/scale');
 
 function ReRxnArrow(/* chem.RxnArrow*/arrow) {

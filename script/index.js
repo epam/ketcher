@@ -1,6 +1,5 @@
 var queryString = require('query-string');
 
-var util = require('./util');
 var api = require('./api.js');
 var molfile = require('./chem/molfile');
 var smiles = require('./chem/smiles');
@@ -49,7 +48,6 @@ function showMolfile(clientArea, molString, options) {
 }
 
 function onStructChange(handler) {
-	util.assert(handler);
 	ui.render.addStructChangeHandler(handler);
 }
 

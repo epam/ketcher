@@ -2,7 +2,7 @@ var Vec2 = require('../../util/vec2');
 var Visel = require('./visel');
 var ReObject = require('./reobject');
 var scale = require('../../util/scale');
-var util = require('../../util');
+var util = require('../util');
 var Struct = require('../../chem/struct');
 
 var tfx = util.tfx;

@@ -1,4 +1,4 @@
-var util = require('../util');
+var util = require('./util');
 var Vec2 = require('../util/vec2');
 var Raphael = require('../raphael-ext');
 

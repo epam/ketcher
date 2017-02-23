@@ -4,7 +4,7 @@ import { h, Component, render } from 'preact';
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
 
-const checkScheckSchema = [
+const checkSchema = [
 	{ title: 'Valence', value: 'valence' },
 	{ title: 'Radical', value: 'radicals'},
 	{ title: 'Pseudoatom', value: 'pseudoatoms'},
@@ -24,7 +24,7 @@ class Check extends Component {
       	  data: {},
       	  checker: {}
       };
-      checkScheckSchema.forEach((item) => {
+      checkSchema.forEach((item) => {
 		  this.state.checker[item.value] = true;
 	  });
 	  this.onCheck();
@@ -54,7 +54,7 @@ class Check extends Component {
 				<Tabs className="tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
 				  <dl className="result">{
 						this.state.data == 'correct' ? <li><div className="error-name">No errors found</div></li> :
-							checkScheckSchema.filter(item => !!this.state.data[item.value]).map(item =>(
+							checkSchema.filter(item => !!this.state.data[item.value]).map(item =>(
 								<div>
 								  {/* A wrapper for react */}
 								  <dt>{item.title} error : </dt>
@@ -63,7 +63,7 @@ class Check extends Component {
 						))
 					}</dl>
 				<ul className="settings">{
-					checkScheckSchema.map((item) => (
+					checkSchema.map((item) => (
 						<li><label><input type="checkbox" checked={this.state.checker[item.value]}
 										  onClick={ev => this.checkItem(item.value)}/>
 							{item.title} check

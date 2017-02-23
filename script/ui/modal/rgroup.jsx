@@ -17,7 +17,7 @@ class RGroupBase extends Component {
 					name="rgroup" params={props.params}
 					result={() => this.result()}>
 				<ul>
-					{ Array.apply(null, { length: 32 }).map((_, i) => (
+				  { range(32).map(i => (
 						<li>
 							<button
 								className={ this.selected(i) ? 'selected' : ''}
@@ -25,7 +25,7 @@ class RGroupBase extends Component {
 								{this.name(i)}
 							</button>
 						</li>
-					)) }
+				  )) }
 				</ul>
 			</Dialog>
 		);
@@ -72,6 +72,11 @@ class RGroupAtom extends RGroupBase {
 	result() {
 		return { type: 'rlabel', values: this.state.values.map(i => this.name(i)) };
 	}
+}
+
+function range(n, start = 0) {
+	// see #574
+	return Array.apply(null, { length: n }).map((_, i) => i + start);
 }
 
 export default function dialog(params) {

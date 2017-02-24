@@ -106,7 +106,7 @@ function initEditor(editor) {
 	editor.on('elementEdit', function (selem) {
 		var elem = structConv.fromElement(selem);
 		var dlg = null;
-		if (element.getElementByLabel(elem.label)) {
+		if (element.map[elem.label]) {
 			dlg = dialog(modal.atomProps, elem);
 		} else if (Object.keys(elem).length == 1 && 'ap' in elem) {
 			dlg = dialog(modal.attachmentPoints, elem);
@@ -219,7 +219,7 @@ function updateAtoms() {
 	if (addionalAtoms.storage.length > 0) {
 		var al = "<menu>" + addionalAtoms.storage.reduce(function (res, atom) {
 			return res + "<li id=\"atom-" + atom.toLowerCase() +
-			           "\"><button data-number=\"" + element.getElementByLabel(atom) + "\">" +
+			           "\"><button data-number=\"" + element.map[atom] + "\">" +
 			            atom + "</button></li>";
 		}, "") + "</menu>";
 		var cont = toolbar.select('#freq-atoms')[0];
@@ -679,7 +679,7 @@ function elemTable(elem) {
 	// TODO: convertion ouside is not so good
 	return dialog(modal.periodTable, elem && elem.type ? elem : {
 		type: 'single',
-		values: elem && [element.getElementByLabel(elem.label)]
+		values: elem && [element.map[elem.label]]
 	}).then(function (res) {
 		if (res.type != 'single')
 			return res;
@@ -934,7 +934,7 @@ function atomLabel (mode) {
 		return {label:'A'};
 	default:
 		label = label[0].toUpperCase()+label.slice(1).toLowerCase();
-		console.assert(element.getElementByLabel(label),
+		console.assert(element.map[label],
 		               "No such atom exist");
 		return {label: label};
 	}

@@ -123,7 +123,7 @@ Atom.prototype.isPlainCarbon =  function () {
 
 Atom.prototype.isPseudo =  function () {
 	// TODO: handle reaxys generics separately
-	return !this.atomList && !this.rglabel && !element.getElementByLabel(this.label);
+	return !this.atomList && !this.rglabel && !element.map[this.label];
 };
 
 Atom.prototype.hasRxnProps =  function () {
@@ -138,7 +138,7 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 		this.implicitH = 0;
 		return true;
 	}
-	var elem = element.getElementByLabel(label);
+	var elem = element.map[label];
 	if (elem == null) {
 		this.implicitH = 0;
 		return true;
@@ -355,7 +355,7 @@ Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line ma
 	var atom = this;
 	var charge = atom.charge;
 	var label = atom.label;
-	var elem = element.getElementByLabel(label);
+	var elem = element.map[label];
 	if (elem == null)
 		console.assert('Element ' + label + ' unknown');
 	if (elem < 0) { // query atom, skip

@@ -36,7 +36,7 @@ function deserialize(value) {
 				charge = -charge;
 		}
 		// Not consistant
-		if (label == 'A' || label == 'Q' || label == 'X' || label == 'M' || element.getElementByLabel(label) != null)
+		if (label == 'A' || label == 'Q' || label == 'X' || label == 'M' || element.map[label])
 			return { label, charge, isotope, radical };
 	}
 	return null;

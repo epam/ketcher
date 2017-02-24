@@ -22,7 +22,7 @@ AttachTool.prototype.OnMouseMove = function (event) {
 
 	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
 	var struct = rnd.ctab.molecule;
-	if (ci && ((ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) || ci.map == 'bonds'))
+	if (ci && ((ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label]) || ci.map == 'bonds'))
 		this.hoverHelper.hover(ci);
 	else
 		this.hoverHelper.hover(null);
@@ -34,7 +34,7 @@ AttachTool.prototype.OnMouseUp = function (event) {
 	var struct = rnd.ctab.molecule;
 	var ci = editor.findItem(event, ['atoms', 'bonds']);
 
-	if (ci && ((ci.map == 'atoms' && element.getElementByLabel(struct.atoms.get(ci.id).label) != null) || ci.map == 'bonds')) {
+	if (ci && ((ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label]) || ci.map == 'bonds')) {
 		if (ci.map == 'atoms')
 			this.attach.atomid = ci.id;
 		else

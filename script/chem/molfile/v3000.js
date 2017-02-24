@@ -451,7 +451,7 @@ function labelsListToIds(labels) {
 	/* reader */
 	var ids = [];
 	for (var i = 0; i < labels.length; ++i)
-		ids.push(element.getElementByLabel(labels[i].trim()));
+		ids.push(element.map[labels[i].trim()]);
 	return ids;
 }
 

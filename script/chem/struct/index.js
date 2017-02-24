@@ -827,7 +827,7 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 		return;
 	}
 	if (atom.explicitValence >= 0) {
-		var elem = element.getElementByLabel(atom.label);
+		var elem = element.map[atom.label];
 		atom.implicitH = 0;
 		if (elem != null) {
 			atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);

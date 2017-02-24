@@ -9,6 +9,7 @@ var sgroupSpecialDialog = require('./sgroup-special');
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
 var labelEdit = require('./labeledit').default;
+var periodTable_ = require('./period-table').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var aboutDialog = require('./about').default;
@@ -21,8 +22,9 @@ var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
 function periodTable (params) {
-	params.required = true;
-	selectDialog('periodTable', params);
+	//params.required = true;
+	//selectDialog('periodTable', params);
+	periodTable_(params);
 };
 
 function genericGroups (params) {
@@ -57,7 +59,7 @@ function atomProps (params) {
 		var label = !change ? val : this.value.trim()[0].toUpperCase()+this.value.trim().slice(1).toLowerCase();
 		if (change)
 			this.value = label;
-		var elem = element.getElementByLabel(label);
+		var elem = element.map[label];
 		if (elem == null && label !== 'A' &&
 		    label !== '*' && label !== 'Q' &&
 		    label !== 'X' && label !== 'R') { // generics ?
@@ -66,7 +68,7 @@ function atomProps (params) {
 			label = this.value = params.label;
 
 			if (label !== 'A' && label !== '*') {
-				elem = element.getElementByLabel(label);
+				elem = element.map[label];
 			}
 		}
 

@@ -219,7 +219,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		if (atom.atomList != null) {
 			label = 'L';
 			atomList_list.push(id);
-		} else if (element.getElementByLabel(label) == null && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) { // search in generics?
+		} else if (!element.map[label] && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) { // search in generics?
 			label = 'C';
 			atomLabel_list.push(id);
 		}

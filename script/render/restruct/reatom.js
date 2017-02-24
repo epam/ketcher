@@ -213,7 +213,7 @@ function displayHydrogen(hydrogenLabels, atom) {
 function setHydrogenPos(struct, atom) {
 	// check where should the hydrogen be put on the left of the label
 	if (atom.a.neighbors.length == 0) {
-		var elem = element.getElementByLabel(atom.a.label);
+		var elem = element.map[atom.a.label];
 		if (elem != null)
 			atom.hydrogenOnTheLeft = !!element[elem].leftH;
 		return null;
@@ -249,9 +249,9 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 		if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
 	} else {
 		label.text = atom.a.label;
-		var elem = element.getElementByLabel(label.text);
+		var elem = element.map[label.text];
 		if (options.atomColoring && elem)
-			atom.color = element[elem].color;
+			atom.color = element[elem].color || '#000';
 	}
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({

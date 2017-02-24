@@ -31,11 +31,20 @@ function TypeChoise() {
 	);
 }
 
+const metPrefix = ['alkali', 'alkaline-earth', 'transition',
+				   'post-transition'];
+
+function atomClass(el) {
+	let own = `atom-${el.label.toLowerCase()}`;
+	let type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
+		(el.type || 'unknown-props');
+	return [own, type, el.state || 'unknown-state', el.origin];
+}
+
 function Atom({el}) {
-	let cls = `atom-${el.label.toLowerCase()}`;
 	return (
-		<button className={cls}
-				value={element.getElementByLabel(el.label)}>
+		<button title={el.title} className={atomClass(el).join(' ')}
+				value={element.map[el.label]}>
 		  {el.label}
 		</button>
 	);
@@ -90,25 +99,15 @@ class PeriodTable extends Component {
 								 ref={o => o == 1 && (i == 5 ? '*' : '**')}/>
 					))
 				}
-                <OutinerRow row={element.filter(isLanthanoid)}
+                <OutinerRow row={element.filter(el => el && el.type== 'lanthanide')}
                             caption="*"/>
-                <OutinerRow row={element.filter(isActinoid)}
+                <OutinerRow row={element.filter(el => el && el.type == 'actinide')}
                             caption="**"/>
 			  </table>
 			  <TypeChoise/>
 			</Dialog>
 		);
 	}
-}
-
-function isLanthanoid(el)  {
-    var index = el && element.getElementByLabel(el.label);
-    return 57 <= index && index <= 71;
-}
-
-function isActinoid(el) {
-    var index = el && element.getElementByLabel(el.label);
-    return 89 <= index && index <= 103;
 }
 
 const beforeSpan = {
@@ -121,7 +120,7 @@ const beforeSpan = {
 
 function partitionRows() {
 	return element.reduce(function (res, el, index) {
-		if (el && !isLanthanoid(el) && !isActinoid(el)) {
+		if (el && ['lanthanide', 'actinide'].indexOf(el.type) < 0) {
 			let row = res[el.period - 1];
 			if (!row)
 				res.push([el]);

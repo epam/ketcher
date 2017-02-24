@@ -1,134 +1,1303 @@
-function el(label, period, group, putHydrogenOnTheLeft, color) { // eslint-disable-line max-params
-	return {
-		label: label,
-		period: period,
-		group: group,
-		putHydrogenOnTheLeft: putHydrogenOnTheLeft,
-		color: color || '#000000'
-	};
-}
-
 var element = [
 	null,
-	el('H', 1, 1, false, '#000000'), // 1
-	el('He', 1, 8, false, '#d9ffff'), // 2
-	el('Li', 2, 1, false, '#cc80ff'), // 3
-	el('Be', 2, 2, false, '#c2ff00'), // 4
-	el('B', 2, 3, false, '#ffb5b5'), // 5
-	el('C', 2, 4, false, '#000000'), // 6
-	el('N', 2, 5, false, '#304ff7'), // 7
-	el('O', 2, 6, true, '#ff0d0d'), // 8
-	el('F', 2, 7, true, '#8fe04f'), // 9
-	el('Ne', 2, 8, false, '#b3e3f5'), // 10
-	el('Na', 3, 1, false, '#ab5cf2'), // 11
-	el('Mg', 3, 2, false, '#8aff00'), // 12
-	el('Al', 3, 3, false, '#bfa6a6'), // 13
-	el('Si', 3, 4, false, '#f0c7a1'), // 14
-	el('P', 3, 5, false, '#ff8000'), // 15
-	el('S', 3, 6, true, '#d9a61a'), // 16
-	el('Cl', 3, 7, true, '#1fd01f'), // 17
-	el('Ar', 3, 8, false, '#80d1e3'), // 18
-	el('K', 4, 1, false, '#8f40d4'), // 19
-	el('Ca', 4, 2, false, '#3dff00'), // 20
-	el('Sc', 4, 3, false, '#e6e6e6'), // 21
-	el('Ti', 4, 4, false, '#bfc2c7'), // 22
-	el('V', 4, 5, false, '#a6a6ab'), // 23
-	el('Cr', 4, 6, false, '#8a99c7'), // 24
-	el('Mn', 4, 7, false, '#9c7ac7'), // 25
-	el('Fe', 4, 8, false, '#e06633'), // 26
-	el('Co', 4, 8, false, '#f08fa1'), // 27
-	el('Ni', 4, 8, false, '#4fd14f'), // 28
-	el('Cu', 4, 1, false, '#c78033'), // 29
-	el('Zn', 4, 2, false, '#7d80b0'), // 30
-	el('Ga', 4, 3, false, '#c28f8f'), // 31
-	el('Ge', 4, 4, false, '#668f8f'), // 32
-	el('As', 4, 5, false, '#bd80e3'), // 33
-	el('Se', 4, 6, true, '#ffa100'), // 34
-	el('Br', 4, 7, true, '#a62929'), // 35
-	el('Kr', 4, 8, false, '#5cb8d1'), // 36
-	el('Rb', 5, 1, false, '#702eb0'), // 37
-	el('Sr', 5, 2, false, '#00ff00'), // 38
-	el('Y', 5, 3, false, '#94ffff'), // 39
-	el('Zr', 5, 4, false, '#94e0e0'), // 40
-	el('Nb', 5, 5, false, '#73c2c9'), // 41
-	el('Mo', 5, 6, false, '#54b5b5'), // 42
-	el('Tc', 5, 7, false, '#3b9e9e'), // 43
-	el('Ru', 5, 8, false, '#248f8f'), // 44
-	el('Rh', 5, 8, false, '#0a7d8c'), // 45
-	el('Pd', 5, 8, false, '#006985'), // 46
-	el('Ag', 5, 1, false, '#bfbfbf'), // 47
-	el('Cd', 5, 2, false, '#ffd98f'), // 48
-	el('In', 5, 3, false, '#a67573'), // 49
-	el('Sn', 5, 4, false, '#668080'), // 50
-	el('Sb', 5, 5, false, '#9e63b5'), // 51
-	el('Te', 5, 6, false, '#d47a00'), // 52
-	el('I', 5, 7, true, '#940094'), // 53
-	el('Xe', 5, 8, false, '#429eb0'), // 54
-	el('Cs', 6, 1, false, '#57178f'), // 55
-	el('Ba', 6, 2, false, '#00c900'), // 56
-	el('La', 6, 3, false, '#70d4ff'), // 57
-	el('Ce', 6, 3, false, '#ffffc7'), // 58
-	el('Pr', 6, 3, false, '#d9ffc7'), // 59
-	el('Nd', 6, 3, false, '#c7ffc7'), // 60
-	el('Pm', 6, 3, false, '#a3ffc7'), // 61
-	el('Sm', 6, 3, false, '#8fffc7'), // 62
-	el('Eu', 6, 3, false, '#61ffc7'), // 63
-	el('Gd', 6, 3, false, '#45ffc7'), // 64
-	el('Tb', 6, 3, false, '#30ffc7'), // 65
-	el('Dy', 6, 3, false, '#1fffc7'), // 66
-	el('Ho', 6, 3, false, '#00ff9c'), // 67
-	el('Er', 6, 3, false, '#00e675'), // 68
-	el('Tm', 6, 3, false, '#00d452'), // 69
-	el('Yb', 6, 3, false, '#00bf38'), // 70
-	el('Lu', 6, 3, false, '#00ab24'), // 71
-	el('Hf', 6, 4, false, '#4dc2ff'), // 72
-	el('Ta', 6, 5, false, '#4da6ff'), // 73
-	el('W', 6, 6, false, '#2194d6'), // 74
-	el('Re', 6, 7, false, '#267dab'), // 75
-	el('Os', 6, 8, false, '#266696'), // 76
-	el('Ir', 6, 8, false, '#175487'), // 77
-	el('Pt', 6, 8, false, '#d1d1e0'), // 78
-	el('Au', 6, 1, false, '#ffd124'), // 79
-	el('Hg', 6, 2, false, '#b8b8d1'), // 80
-	el('Tl', 6, 3, false, '#a6544d'), // 81
-	el('Pb', 6, 4, false, '#575961'), // 82
-	el('Bi', 6, 5, false, '#9e4fb5'), // 83
-	el('Po', 6, 6, false, '#ab5c00'), // 84
-	el('At', 6, 7, false, '#754f45'), // 85
-	el('Rn', 6, 8, false, '#428296'), // 86
-	el('Fr', 7, 1, false, '#420066'), // 87
-	el('Ra', 7, 2, false, '#007d00'), // 88
-	el('Ac', 7, 3, false, '#70abfa'), // 89
-	el('Th', 7, 3, false, '#00baff'), // 90
-	el('Pa', 7, 3, false, '#00a1ff'), // 91
-	el('U', 7, 3, false, '#008fff'), // 92
-	el('Np', 7, 3, false, '#0080ff'), // 93
-	el('Pu', 7, 3, false, '#006bff'), // 94
-	el('Am', 7, 3, false, '#545cf2'), // 95
-	el('Cm', 7, 3, false, '#785ce3'), // 96
-	el('Bk', 7, 3, false, '#8a4fe3'), // 97
-	el('Cf', 7, 3, false, '#a136d4'), // 98
-	el('Es', 7, 3, false, '#b31fd4'), // 99
-	// TODO need to fix colors for the elements below
-	el('Fm', 7, 3, false, '#000000'), // 100
-	el('Md', 7, 3, false, '#000000'), // 101
-	el('No', 7, 3, false, '#000000'), // 102
-	el('Lr', 7, 3, false, '#000000'), // 103
-	el('Rf', 7, 4, false, '#4dc2ff'), // 104
-	el('Db', 7, 5, false, '#4da6ff'), // 105
-	el('Sg', 7, 6, false, '#2194d6'), // 106
-	el('Bh', 7, 7, false, '#267dab'), // 107
-	el('Hs', 7, 8, false, '#266696'), // 108
-	el('Mt', 7, 8, false, '#175487'), // 109
-	el('Ds', 7, 8, false, '#d1d1e0'), // 110
-	el('Rg', 7, 1, false, '#ffd124'), // 111
-	el('Cn', 7, 2, false, '#b8b8d1'), // 112
-	el('Uut', 7, 3, false), // 113
-	el('Fl', 7, 4, false), // 114
-	el('Uup', 7, 5, false), // 115
-	el('Lv', 7, 6, false), // 116
-	el('Uus', 7, 7, false), // 117
-	el('Uuo', 7, 8, false) // 118
+	{
+		label: "H",             // 1
+		period: 1,
+		group: 1,
+		leftH: false,
+		color: "#000000",
+		title: "Hydrogen",
+		state: "gas",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "He",            // 2
+		period: 1,
+		group: 8,
+		leftH: false,
+		color: "#d9ffff",
+		title: "Helium",
+		state: "gas",
+		origin: "primordial",
+		type: "noble gas"
+	},
+	{
+		label: "Li",            // 3
+		period: 2,
+		group: 1,
+		leftH: false,
+		color: "#cc80ff",
+		title: "Lithium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkali metal"
+	},
+	{
+		label: "Be",            // 4
+		period: 2,
+		group: 2,
+		leftH: false,
+		color: "#c2ff00",
+		title: "Beryllium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "B",             // 5
+		period: 2,
+		group: 3,
+		leftH: false,
+		color: "#ffb5b5",
+		title: "Boron",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: "C",             // 6
+		period: 2,
+		group: 4,
+		leftH: false,
+		color: "#000000",
+		title: "Carbon",
+		state: "solid",
+		origin: "primordial",
+		type: "polyatomic nonmetal"
+	},
+	{
+		label: "N",             // 7
+		period: 2,
+		group: 5,
+		leftH: false,
+		color: "#304ff7",
+		title: "Nitrogen",
+		state: "gas",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "O",             // 8
+		period: 2,
+		group: 6,
+		leftH: true,
+		color: "#ff0d0d",
+		title: "Oxygen",
+		state: "gas",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "F",             // 9
+		period: 2,
+		group: 7,
+		leftH: true,
+		color: "#8fe04f",
+		title: "Fluorine",
+		state: "gas",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "Ne",            // 10
+		period: 2,
+		group: 8,
+		leftH: false,
+		color: "#b3e3f5",
+		title: "Neon",
+		state: "gas",
+		origin: "primordial",
+		type: "noble gas"
+	},
+	{
+		label: "Na",            // 11
+		period: 3,
+		group: 1,
+		leftH: false,
+		color: "#ab5cf2",
+		title: "Sodium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkali metal"
+	},
+	{
+		label: "Mg",            // 12
+		period: 3,
+		group: 2,
+		leftH: false,
+		color: "#8aff00",
+		title: "Magnesium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "Al",            // 13
+		period: 3,
+		group: 3,
+		leftH: false,
+		color: "#bfa6a6",
+		title: "Aluminium",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Si",            // 14
+		period: 3,
+		group: 4,
+		leftH: false,
+		color: "#f0c7a1",
+		title: "Silicon",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: "P",             // 15
+		period: 3,
+		group: 5,
+		leftH: false,
+		color: "#ff8000",
+		title: "Phosphorus",
+		state: "solid",
+		origin: "primordial",
+		type: "polyatomic nonmetal"
+	},
+	{
+		label: "S",             // 16
+		period: 3,
+		group: 6,
+		leftH: true,
+		color: "#d9a61a",
+		title: "Sulfur",
+		state: "solid",
+		origin: "primordial",
+		type: "polyatomic nonmetal"
+	},
+	{
+		label: "Cl",            // 17
+		period: 3,
+		group: 7,
+		leftH: true,
+		color: "#1fd01f",
+		title: "Chlorine",
+		state: "gas",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "Ar",            // 18
+		period: 3,
+		group: 8,
+		leftH: false,
+		color: "#80d1e3",
+		title: "Argon",
+		state: "gas",
+		origin: "primordial",
+		type: "noble gas"
+	},
+	{
+		label: "K",             // 19
+		period: 4,
+		group: 1,
+		leftH: false,
+		color: "#8f40d4",
+		title: "Potassium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkali metal"
+	},
+	{
+		label: "Ca",            // 20
+		period: 4,
+		group: 2,
+		leftH: false,
+		color: "#3dff00",
+		title: "Calcium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "Sc",            // 21
+		period: 4,
+		group: 3,
+		leftH: false,
+		color: "#e6e6e6",
+		title: "Scandium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ti",            // 22
+		period: 4,
+		group: 4,
+		leftH: false,
+		color: "#bfc2c7",
+		title: "Titanium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "V",             // 23
+		period: 4,
+		group: 5,
+		leftH: false,
+		color: "#a6a6ab",
+		title: "Vanadium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Cr",            // 24
+		period: 4,
+		group: 6,
+		leftH: false,
+		color: "#8a99c7",
+		title: "Chromium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Mn",            // 25
+		period: 4,
+		group: 7,
+		leftH: false,
+		color: "#9c7ac7",
+		title: "Manganese",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Fe",            // 26
+		period: 4,
+		group: 8,
+		leftH: false,
+		color: "#e06633",
+		title: "Iron",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Co",            // 27
+		period: 4,
+		group: 8,
+		leftH: false,
+		color: "#f08fa1",
+		title: "Cobalt",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ni",            // 28
+		period: 4,
+		group: 8,
+		leftH: false,
+		color: "#4fd14f",
+		title: "Nickel",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Cu",            // 29
+		period: 4,
+		group: 1,
+		leftH: false,
+		color: "#c78033",
+		title: "Copper",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Zn",            // 30
+		period: 4,
+		group: 2,
+		leftH: false,
+		color: "#7d80b0",
+		title: "Zinc",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ga",            // 31
+		period: 4,
+		group: 3,
+		leftH: false,
+		color: "#c28f8f",
+		title: "Gallium",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Ge",            // 32
+		period: 4,
+		group: 4,
+		leftH: false,
+		color: "#668f8f",
+		title: "Germanium",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: "As",            // 33
+		period: 4,
+		group: 5,
+		leftH: false,
+		color: "#bd80e3",
+		title: "Arsenic",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: "Se",            // 34
+		period: 4,
+		group: 6,
+		leftH: true,
+		color: "#ffa100",
+		title: "Selenium",
+		state: "solid",
+		origin: "primordial",
+		type: "polyatomic nonmetal"
+	},
+	{
+		label: "Br",            // 35
+		period: 4,
+		group: 7,
+		leftH: true,
+		color: "#a62929",
+		title: "Bromine",
+		state: "liquid",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "Kr",            // 36
+		period: 4,
+		group: 8,
+		leftH: false,
+		color: "#5cb8d1",
+		title: "Krypton",
+		state: "gas",
+		origin: "primordial",
+		type: "noble gas"
+	},
+	{
+		label: "Rb",            // 37
+		period: 5,
+		group: 1,
+		leftH: false,
+		color: "#702eb0",
+		title: "Rubidium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkali metal"
+	},
+	{
+		label: "Sr",            // 38
+		period: 5,
+		group: 2,
+		leftH: false,
+		color: "#00ff00",
+		title: "Strontium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "Y",             // 39
+		period: 5,
+		group: 3,
+		leftH: false,
+		color: "#94ffff",
+		title: "Yttrium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Zr",            // 40
+		period: 5,
+		group: 4,
+		leftH: false,
+		color: "#94e0e0",
+		title: "Zirconium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Nb",            // 41
+		period: 5,
+		group: 5,
+		leftH: false,
+		color: "#73c2c9",
+		title: "Niobium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Mo",            // 42
+		period: 5,
+		group: 6,
+		leftH: false,
+		color: "#54b5b5",
+		title: "Molybdenum",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Tc",            // 43
+		period: 5,
+		group: 7,
+		leftH: false,
+		color: "#3b9e9e",
+		title: "Technetium",
+		state: "solid",
+		origin: "from decay",
+		type: "transition metal"
+	},
+	{
+		label: "Ru",            // 44
+		period: 5,
+		group: 8,
+		leftH: false,
+		color: "#248f8f",
+		title: "Ruthenium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Rh",            // 45
+		period: 5,
+		group: 8,
+		leftH: false,
+		color: "#0a7d8c",
+		title: "Rhodium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Pd",            // 46
+		period: 5,
+		group: 8,
+		leftH: false,
+		color: "#006985",
+		title: "Palladium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ag",            // 47
+		period: 5,
+		group: 1,
+		leftH: false,
+		color: "#bfbfbf",
+		title: "Silver",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Cd",            // 48
+		period: 5,
+		group: 2,
+		leftH: false,
+		color: "#ffd98f",
+		title: "Cadmium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "In",            // 49
+		period: 5,
+		group: 3,
+		leftH: false,
+		color: "#a67573",
+		title: "Indium",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Sn",            // 50
+		period: 5,
+		group: 4,
+		leftH: false,
+		color: "#668080",
+		title: "Tin",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Sb",            // 51
+		period: 5,
+		group: 5,
+		leftH: false,
+		color: "#9e63b5",
+		title: "Antimony",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: "Te",            // 52
+		period: 5,
+		group: 6,
+		leftH: false,
+		color: "#d47a00",
+		title: "Tellurium",
+		state: "solid",
+		origin: "primordial",
+		type: "metalloid"
+	},
+	{
+		label: " I ",           // 53
+		period: 5,
+		group: 7,
+		leftH: true,
+		color: "#940094",
+		title: "Iodine",
+		state: "solid",
+		origin: "primordial",
+		type: "diatomic nonmetal"
+	},
+	{
+		label: "Xe",            // 54
+		period: 5,
+		group: 8,
+		leftH: false,
+		color: "#429eb0",
+		title: "Xenon",
+		state: "gas",
+		origin: "primordial",
+		type: "noble gas"
+	},
+	{
+		label: "Cs",            // 55
+		period: 6,
+		group: 1,
+		leftH: false,
+		color: "#57178f",
+		title: "Caesium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkali metal"
+	},
+	{
+		label: "Ba",            // 56
+		period: 6,
+		group: 2,
+		leftH: false,
+		color: "#00c900",
+		title: "Barium",
+		state: "solid",
+		origin: "primordial",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "La",            // 57
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#70d4ff",
+		title: "Lanthanum",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Ce",            // 58
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#ffffc7",
+		title: "Cerium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Pr",            // 59
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#d9ffc7",
+		title: "Praseodymium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Nd",            // 60
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#c7ffc7",
+		title: "Neodymium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Pm",            // 61
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#a3ffc7",
+		title: "Promethium",
+		state: "solid",
+		origin: "from decay",
+		type: "lanthanide"
+	},
+	{
+		label: "Sm",            // 62
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#8fffc7",
+		title: "Samarium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Eu",            // 63
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#61ffc7",
+		title: "Europium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Gd",            // 64
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#45ffc7",
+		title: "Gadolinium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Tb",            // 65
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#30ffc7",
+		title: "Terbium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Dy",            // 66
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#1fffc7",
+		title: "Dysprosium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Ho",            // 67
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#00ff9c",
+		title: "Holmium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Er",            // 68
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#00e675",
+		title: "Erbium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Tm",            // 69
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#00d452",
+		title: "Thulium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Yb",            // 70
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#00bf38",
+		title: "Ytterbium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Lu",            // 71
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#00ab24",
+		title: "Lutetium",
+		state: "solid",
+		origin: "primordial",
+		type: "lanthanide"
+	},
+	{
+		label: "Hf",            // 72
+		period: 6,
+		group: 4,
+		leftH: false,
+		color: "#4dc2ff",
+		title: "Hafnium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ta",            // 73
+		period: 6,
+		group: 5,
+		leftH: false,
+		color: "#4da6ff",
+		title: "Tantalum",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "W",             // 74
+		period: 6,
+		group: 6,
+		leftH: false,
+		color: "#2194d6",
+		title: "Tungsten",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Re",            // 75
+		period: 6,
+		group: 7,
+		leftH: false,
+		color: "#267dab",
+		title: "Rhenium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Os",            // 76
+		period: 6,
+		group: 8,
+		leftH: false,
+		color: "#266696",
+		title: "Osmium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Ir",            // 77
+		period: 6,
+		group: 8,
+		leftH: false,
+		color: "#175487",
+		title: "Iridium",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Pt",            // 78
+		period: 6,
+		group: 8,
+		leftH: false,
+		color: "#d1d1e0",
+		title: "Platinum",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Au",            // 79
+		period: 6,
+		group: 1,
+		leftH: false,
+		color: "#ffd124",
+		title: "Gold",
+		state: "solid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Hg",            // 80
+		period: 6,
+		group: 2,
+		leftH: false,
+		color: "#b8b8d1",
+		title: "Mercury (element)",
+		state: "liquid",
+		origin: "primordial",
+		type: "transition metal"
+	},
+	{
+		label: "Tl",            // 81
+		period: 6,
+		group: 3,
+		leftH: false,
+		color: "#a6544d",
+		title: "Thallium",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Pb",            // 82
+		period: 6,
+		group: 4,
+		leftH: false,
+		color: "#575961",
+		title: "Lead",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Bi",            // 83
+		period: 6,
+		group: 5,
+		leftH: false,
+		color: "#9e4fb5",
+		title: "Bismuth",
+		state: "solid",
+		origin: "primordial",
+		type: "post-transition metal"
+	},
+	{
+		label: "Po",            // 84
+		period: 6,
+		group: 6,
+		leftH: false,
+		color: "#ab5c00",
+		title: "Polonium",
+		state: "solid",
+		origin: "from decay",
+		type: "post-transition metal"
+	},
+	{
+		label: "At",            // 85
+		period: 6,
+		group: 7,
+		leftH: false,
+		color: "#754f45",
+		title: "Astatine",
+		state: "solid",
+		origin: "from decay",
+		type: "metalloid"
+	},
+	{
+		label: "Rn",            // 86
+		period: 6,
+		group: 8,
+		leftH: false,
+		color: "#428296",
+		title: "Radon",
+		state: "gas",
+		origin: "from decay",
+		type: "noble gas"
+	},
+	{
+		label: "Fr",            // 87
+		period: 7,
+		group: 1,
+		leftH: false,
+		color: "#420066",
+		title: "Francium",
+		state: "solid",
+		origin: "from decay",
+		type: "alkali metal"
+	},
+	{
+		label: "Ra",            // 88
+		period: 7,
+		group: 2,
+		leftH: false,
+		color: "#007d00",
+		title: "Radium",
+		state: "solid",
+		origin: "from decay",
+		type: "alkaline earth metal"
+	},
+	{
+		label: "Ac",            // 89
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#70abfa",
+		title: "Actinium",
+		state: "solid",
+		origin: "from decay",
+		type: "actinide"
+	},
+	{
+		label: "Th",            // 90
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#00baff",
+		title: "Thorium",
+		state: "solid",
+		origin: "primordial",
+		type: "actinide"
+	},
+	{
+		label: "Pa",            // 91
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#00a1ff",
+		title: "Protactinium",
+		state: "solid",
+		origin: "from decay",
+		type: "actinide"
+	},
+	{
+		label: "U",             // 92
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#008fff",
+		title: "Uranium",
+		state: "solid",
+		origin: "primordial",
+		type: "actinide"
+	},
+	{
+		label: "Np",            // 93
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#0080ff",
+		title: "Neptunium",
+		state: "solid",
+		origin: "from decay",
+		type: "actinide"
+	},
+	{
+		label: "Pu",            // 94
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#006bff",
+		title: "Plutonium",
+		state: "solid",
+		origin: "from decay",
+		type: "actinide"
+	},
+	{
+		label: "Am",            // 95
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#545cf2",
+		title: "Americium",
+		state: "solid",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Cm",            // 96
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#785ce3",
+		title: "Curium",
+		state: "solid",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Bk",            // 97
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#8a4fe3",
+		title: "Berkelium",
+		state: "solid",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Cf",            // 98
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#a136d4",
+		title: "Californium",
+		state: "solid",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Es",            // 99
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#b31fd4",
+		title: "Einsteinium",
+		state: "solid",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Fm",            // 100
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#000000",
+		title: "Fermium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Md",            // 101
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#000000",
+		title: "Mendelevium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "No",            // 102
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#000000",
+		title: "Nobelium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Lr",            // 103
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#000000",
+		title: "Lawrencium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "actinide"
+	},
+	{
+		label: "Rf",            // 104
+		period: 7,
+		group: 4,
+		leftH: false,
+		color: "#4dc2ff",
+		title: "Rutherfordium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Db",            // 105
+		period: 7,
+		group: 5,
+		leftH: false,
+		color: "#4da6ff",
+		title: "Dubnium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Sg",            // 106
+		period: 7,
+		group: 6,
+		leftH: false,
+		color: "#2194d6",
+		title: "Seaborgium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Bh",            // 107
+		period: 7,
+		group: 7,
+		leftH: false,
+		color: "#267dab",
+		title: "Bohrium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Hs",            // 108
+		period: 7,
+		group: 8,
+		leftH: false,
+		color: "#266696",
+		title: "Hassium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Mt",            // 109
+		period: 7,
+		group: 8,
+		leftH: false,
+		color: "#175487",
+		title: "Meitnerium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Ds",            // 110
+		period: 7,
+		group: 8,
+		leftH: false,
+		color: "#d1d1e0",
+		title: "Darmstadtium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Rg",            // 111
+		period: 7,
+		group: 1,
+		leftH: false,
+		color: "#ffd124",
+		title: "Roentgenium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Cn",            // 112
+		period: 7,
+		group: 2,
+		leftH: false,
+		color: "#b8b8d1",
+		title: "Copernicium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "transition metal"
+	},
+	{
+		label: "Nh",            // 113
+		period: 7,
+		group: 3,
+		leftH: false,
+		color: "#000000",
+		title: "Nihonium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Fl",            // 114
+		period: 7,
+		group: 4,
+		leftH: false,
+		color: "#000000",
+		title: "Flerovium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "post-transition metal"
+	},
+	{
+		label: "Mc",            // 115
+		period: 7,
+		group: 5,
+		leftH: false,
+		color: "#000000",
+		title: "Moscovium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Lv",            // 116
+		period: 7,
+		group: 6,
+		leftH: false,
+		color: "#000000",
+		title: "Livermorium",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Ts",            // 117
+		period: 7,
+		group: 7,
+		leftH: false,
+		color: "#000000",
+		title: "Tennessine",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	},
+	{
+		label: "Og",            // 118
+		period: 7,
+		group: 8,
+		leftH: false,
+		color: "#000000",
+		title: "Oganesson",
+		state: "unknown phase",
+		origin: "synthetic",
+		type: "unknown chemical properties"
+	}
 ];
 
 var labelMap = element.reduce(function (res, el, index) {

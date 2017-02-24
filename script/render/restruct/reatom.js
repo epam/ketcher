@@ -215,7 +215,7 @@ function setHydrogenPos(struct, atom) {
 	if (atom.a.neighbors.length == 0) {
 		var elem = element.getElementByLabel(atom.a.label);
 		if (elem != null)
-			atom.hydrogenOnTheLeft = element[elem].putHydrogenOnTheLeft;
+			atom.hydrogenOnTheLeft = !!element[elem].leftH;
 		return null;
 	}
 	var yl = 1,

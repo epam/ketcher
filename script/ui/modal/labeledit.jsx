@@ -20,7 +20,7 @@ function deserialize(value) {
 	var match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i); // TODO: radical on last place
 	if (match) {
 		console.info('match', match);
-		var label = match[2] == '*' ? 'A' : match[2][0].toUpperCase()+match[2].slice(1).toLowerCase();
+		var label = match[2] == '*' ? 'A' : capitalize(match[2]);
 		var charge = 0;
 		var isotope = 0;
 		var radical = 0;
@@ -68,6 +68,10 @@ class LabelEdit extends Component {
 			</Dialog>
 		);
 	}
+}
+
+function capitalize(str) {
+	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 export default function dialog(params) {

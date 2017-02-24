@@ -57,7 +57,7 @@ class RGroupAtom extends RGroupBase {
     }
 	select(index) {
 		var vals = this.state.values;
-    var i = vals.indexOf(index);
+		var i = vals.indexOf(index);
 		if (i < 0)
 			vals.push(index);
 		else

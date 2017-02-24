@@ -676,16 +676,10 @@ function addAtoms(label) {
 }
 
 function elemTable(elem) {
-	// TODO: convertion ouside is not so good
-	return dialog(modal.periodTable, elem && elem.type ? elem : {
-		type: 'single',
-		values: elem && [element.map[elem.label]]
-	}).then(function (res) {
-		if (res.type != 'single')
-			return res;
-		var label = element[res.values[0]].label;
-		addAtoms(label);
-		return { label: label };
+	return dialog(modal.periodTable, elem).then(function (res) {
+		if (!res.type || res.type == 'atom')
+			addAtoms(res.label);
+		return res;
 	});
 };
 

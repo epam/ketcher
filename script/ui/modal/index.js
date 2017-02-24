@@ -9,7 +9,7 @@ var sgroupSpecialDialog = require('./sgroup-special');
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
 var labelEdit = require('./labeledit').default;
-var periodTable_ = require('./period-table').default;
+var periodTable = require('./period-table').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var aboutDialog = require('./about').default;
@@ -20,12 +20,6 @@ var settingsDialog = require('./settings').default;
 var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
-
-function periodTable (params) {
-	//params.required = true;
-	//selectDialog('periodTable', params);
-	periodTable_(params);
-};
 
 function genericGroups (params) {
 	params.required = true;

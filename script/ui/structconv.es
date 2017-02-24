@@ -74,7 +74,7 @@ function toAtom(atom) {
 function fromAtomList(satom) {
 	return {
 		type: satom.atomList.notList ? 'not-list' : 'list',
-		values: satom.atomList.ids.map(id => id + '')
+		values: satom.atomList.ids.map(i => element[i].label)
 	};
 }
 
@@ -83,7 +83,7 @@ function toAtomList(atom) {
 		label: 'L#',
 		atomList: new Struct.AtomList({
 			notList: atom.type == 'not-list',
-			ids: atom.values.map(val => parseInt(val, 10))
+			ids: atom.values.map(el => element.map[el])
 		})
 	};
 }

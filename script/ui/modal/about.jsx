@@ -5,8 +5,8 @@ import Dialog from '../component/dialog';
 
 function About(props) {
 	return (
-		<Dialog caption="About"
-				name="about" params={props}
+		<Dialog title="About"
+				className="about" params={props}
 				buttons={["Close"]}>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
 				<img src="logo.jpg"/>
@@ -21,7 +21,8 @@ function About(props) {
 				{ props.buildNumber ? (
 					<dd>
 						build #<var>{props.buildNumber}</var>
-						at <time>props.buildDate}</time>
+						{ " at " }
+						<time>{props.buildDate}</time>
 					</dd> ) : null
 				}
 				{ props.indigoVersion ? (

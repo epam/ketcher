@@ -37,8 +37,8 @@ class Save extends Component {
 		console.assert(format, "Unknown chemical file type");
 
 		return (
-			<Dialog caption="Save Structure"
-					name="save" params={this.props}
+			<Dialog title="Save Structure"
+					className="save" params={this.props}
 					buttons={[(
 						<SaveButton className="save"
 									data={structStr}

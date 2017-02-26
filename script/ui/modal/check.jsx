@@ -48,8 +48,8 @@ class Check extends Component {
     render (props) {
     	var tabs = ['Check', 'Settings'];
         return (
-            <Dialog caption="Structure Check"
-                    name="check" params={props}
+            <Dialog title="Structure Check"
+                    className="check" params={props}
                     buttons={[ "Close"]}>
 				<Tabs className="tabs" captions={tabs} changeTab={index => this.changeTab(index)}>
 				  <dl className="result">{

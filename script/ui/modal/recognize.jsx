@@ -52,8 +52,8 @@ class Recognize extends Component {
     render () {
 		let { file, structStr, fragment } = this.state;
         return (
-            <Dialog caption="Import From Image"
-                name="recognize" result={() => this.result() }
+            <Dialog title="Import From Image"
+                className="recognize" result={() => this.result() }
                 params={this.props}
                 buttons={[
                     (

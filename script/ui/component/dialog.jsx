@@ -30,15 +30,14 @@ class Dialog extends Component {
 	}
 	render() {
 		console.info('dialog render');
-		let { children, caption, name, params={},
+		let { children, title, params={},
 			  result=() => null, valid=() => !!result(), // Hmm, dublicate.. No simple default props
-			  buttons=["Cancel", "OK"] } = this.props;   // see: https://git.io/v1KR6
+			  buttons=["Cancel", "OK"], ...props} = this.props;   // see: https://git.io/v1KR6
 		return (
-			<form role="dialog" className={name}
-			  onSubmit={ev => ev.preventDefault()}
-			  onKeyDown={ev => this.keyDown(ev)}>
-			  <header>{caption}
-				{ params.onCancel && caption && (
+			<form role="dialog" onSubmit={ev => ev.preventDefault()}
+			      onKeyDown={ev => this.keyDown(ev)} {...props}>
+			  <header>{title}
+				{ params.onCancel && title && (
 					<button className="close"
 							onClick={() => this.exit('Cancel')}>×
 					</button> )

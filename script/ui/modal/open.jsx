@@ -28,8 +28,8 @@ class Open extends Component {
 	render () {
 		let { structStr, fragment } = this.state;
 		return (
-			<Dialog caption="Open Structure"
-				name="open" result={() => this.result() }
+			<Dialog title="Open Structure"
+				className="open" result={() => this.result() }
 				params={this.props}
 				buttons={[(
 					<OpenButton className="open" server={this.props.server}

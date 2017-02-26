@@ -163,8 +163,8 @@ class TemplateLib extends Component {
 
 		console.info('all rerender');
 		return (
-			<Dialog caption="Template Library"
-					name="template-lib" params={this.props}
+			<Dialog title="Template Library"
+					className="template-lib" params={this.props}
 					result={() => this.result()}
 					buttons={[
 						<SaveButton className="save" data={this.saveToSDF()}

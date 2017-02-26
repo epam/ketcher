@@ -37,7 +37,9 @@ function addFragment(molString) {
 }
 
 function showMolfile(clientArea, molString, options) {
-	var render = new Render(clientArea, Object.assign({ scale: options.bondLength || 75 }, options));
+	var render = new Render(clientArea, Object.assign({
+		scale: options.bondLength || 75
+	}, options));
 	if (molString) {
 		var mol = molfile.parse(molString);
 		render.setMolecule(mol);

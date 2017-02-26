@@ -59,8 +59,8 @@ class Analyse extends Component {
 
 	render(props, state) {
 		return (
-			<Dialog caption="Calculated Values"
-					name="analyse" params={this.props}
+			<Dialog title="Calculated Values"
+					className="analyse" params={this.props}
 					buttons={["Close"]}>
 				<ul>{[
 					{name: 'Chemical Formula', key: 'gross'},

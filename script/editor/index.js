@@ -37,7 +37,6 @@ var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroup
 
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({
-		atomColoring: true,
 		scale: SCALE
 	}, options));
 

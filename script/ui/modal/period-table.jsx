@@ -42,7 +42,7 @@ function TypeChoise({value, onChange, ...props}) {
 			{
 				typeSchema.map(sc => (
 					<label>
-					  <input type="radio" value={sc.value} name="type"
+					  <input type="radio" value={sc.value}
 							 checked={sc.value == value}
 							 onClick={ev => onChange(sc.value) } {...props}/>
 						{sc.title}
@@ -135,8 +135,9 @@ class PeriodTable extends Component {
 	}
 	render () {
 		return (
-			<Dialog caption="Periodic table"
-					name="period-table" params={this.props}
+			<Dialog title="Periodic table"
+					className="period-table"
+					params={this.props}
 					result={() => this.result()}>
 			  <table summary="Periodic table of the chemical elements">
 				<Header/>

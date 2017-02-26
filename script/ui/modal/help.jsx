@@ -5,8 +5,8 @@ import Dialog from '../component/dialog';
 
 function Help(props) {
 	return (
-		<Dialog caption="Help"
-				name="help" params={props}
+		<Dialog title="Help"
+				className="help" params={props}
 				buttons={["Close"]}>
 			<iframe className="help" src="doc/help.html"></iframe>
 		</Dialog>

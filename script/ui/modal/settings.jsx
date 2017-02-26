@@ -113,10 +113,10 @@ class Settings extends Component {
     	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
     	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
         return (
-            <Dialog caption="Settings"
-                    name="settings" params={props.params}
+            <Dialog title="Settings"
+                    className="settings" params={props.params}
                     result={() => this.result()}
-                     buttons={[
+                    buttons={[
 						 <OpenButton className="open" server={this.props.server}
 									 onLoad={ newOpts => this.uploadSettings(newOpts) }>
 							 Open From File…

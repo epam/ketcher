@@ -109,8 +109,9 @@ class GenericGroups extends Component {
 	}
 	render () {
 		return (
-			<Dialog caption="Generic Groups"
-					name="generic-groups" params={this.props}
+			<Dialog title="Generic Groups"
+					className="generic-groups"
+					params={this.props}
 					result={() => this.result()}>
 			  <GenGroup gen={generics} key='atom'
 						selected={l => this.selected(l)}

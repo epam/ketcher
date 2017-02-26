@@ -5,8 +5,8 @@ import Dialog from '../component/dialog';
 
 function RGroup({ selected, onSelect, result, ...props }) {
 	return (
-		<Dialog caption="R-Group"
-				name="rgroup" params={props}
+		<Dialog title="R-Group"
+				className="rgroup" params={props}
 				result={() => result()}>
 		  <ul>
 			{ range(33, 1).map(i => (

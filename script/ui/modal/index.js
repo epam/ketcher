@@ -1,7 +1,6 @@
 var element = require('../../chem/element');
 
 var inputDialog = require('./input');
-var selectDialog = require('./select');
 
 var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');

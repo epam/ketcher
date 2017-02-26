@@ -59,7 +59,8 @@ class LabelEdit extends Component {
 	}
 	render (props) {
 		return (
-			<Dialog caption="" name="labeledit" params={props.params}
+			<Dialog className="labeledit"
+					params={props.params}
 					result={() => this.result()}>
 				<input type="text" maxlength="20" size="10"
 					   onInput={ev => this.type(ev.target.value)}

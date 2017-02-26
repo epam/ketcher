@@ -165,8 +165,8 @@ class Miew extends Component {
 	render(props) {
 		let {miew, structStr} = this.state;
 		return (
-			<Dialog caption="3D View"
-					name="miew" params={props}
+			<Dialog title="3D View"
+					className="miew" params={props}
 					buttons={[
 						"Close",
 						<button disabled={miew instanceof Promise || structStr instanceof Promise}

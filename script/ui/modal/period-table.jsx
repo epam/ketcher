@@ -53,7 +53,7 @@ function TypeChoise({value, onChange, ...props}) {
 	);
 }
 
-function MainRow({row, caption, ref, selected, onChange}) {
+function MainRow({row, caption, ref, selected, onSelect}) {
 	return (
 		<tr>
 		  <th>{caption}</th>
@@ -62,7 +62,7 @@ function MainRow({row, caption, ref, selected, onChange}) {
 				  <td>
 					<Atom el={el}
 					  className={selected(el.label) ? 'selected' : ''}
-					  onClick={ev => onChange(el.label)}/>
+					  onClick={ev => onSelect(el.label)}/>
 				  </td>
 			  ) : (
 				  ref(el) ? ( <td className="ref">{ref(el)}</td> ) :
@@ -73,7 +73,7 @@ function MainRow({row, caption, ref, selected, onChange}) {
 	);
 }
 
-function OutinerRow({row, caption, selected, onChange}) {
+function OutinerRow({row, caption, selected, onSelect}) {
 	return (
 		<tr>
 		  <th colspan="3" className="ref">{caption}</th>
@@ -82,7 +82,7 @@ function OutinerRow({row, caption, selected, onChange}) {
 				  <td>
 					<Atom el={el}
 					  className={selected(el.label) ? 'selected' : ''}
-					  onClick={ev => onChange(el.label)}/>
+					  onClick={ev => onSelect(el.label)}/>
 				  </td>
 			  ))
 		  }
@@ -113,7 +113,7 @@ class PeriodTable extends Component {
 		return (type == 'atom') ? value == label :
 			value.includes(label);
 	}
-	select(label) {
+	onSelect(label) {
 		let {type, value} = this.state;
 		if (type == 'atom')
 			this.setState({ value: label });
@@ -145,15 +145,15 @@ class PeriodTable extends Component {
 						<MainRow row={row} caption={i + 1}
 						  ref={o => o == 1 && (i == 5 ? '*' : '**')}
 						  selected={l => this.selected(l)}
-						  onChange={l => this.select(l)}/>
+						  onSelect={l => this.onSelect(l)}/>
 					))
 				}
 				<OutinerRow row={lanthanides} caption="*"
 						  selected={l => this.selected(l)}
-						  onChange={l => this.select(l)}/>
+						  onSelect={l => this.onSelect(l)}/>
 				<OutinerRow row={actinides} caption="**"
 						  selected={l => this.selected(l)}
-						  onChange={l => this.select(l)}/>
+						  onSelect={l => this.onSelect(l)}/>
 				</table>
 				<TypeChoise value={this.state.type}
 			                onChange={t => this.changeType(t) }/>
@@ -178,7 +178,9 @@ function rowPartition(elements) {
 
 function range(n, start = 0) {
 	// see #574
-	return Array.apply(null, { length: n }).map((_, i) => i + start);
+	return Array.apply(null, {
+		length: n - start
+	}).map((_, i) => i + start);
 }
 
 export default function dialog(params) {

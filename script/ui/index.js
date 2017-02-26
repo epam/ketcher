@@ -54,9 +54,10 @@ function init (opts, apiServer) {
 
 	// Init renderer
 	ui.editor = new Editor(clientArea,
-	                       Object.assign(opts, currentOptions));
+	                       Object.assign({}, opts, currentOptions));
 	ui.render = ui.editor.render;
 
+	options = opts;
 	initDropdown(toolbar);
 	initZoom();
 	initEditor(ui.editor);
@@ -139,17 +140,7 @@ function initEditor(editor) {
 			              Object.assign({ rgroupLabels: rgids },
 			                            rgroup));
 		} else {
-			var dlg = dialog(modal.rgroup, {
-				values: rgroup.label && ['R' + rgroup.label]
-			});
-			return dlg.then(function (res) {
-				console.assert(res.values.length <= 1,
-				               'Too much elements');
-				return {
-					label: res.values.length == 0 ? null :
-						res.values[0].substr(1) - 0
-				};
-			});
+			return dialog(modal.rgroup, rgroup);
 		}
 	});
 	editor.on('sgroupEdit', function (sgroup) {

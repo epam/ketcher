@@ -103,8 +103,10 @@ function roundOff(value, round) {
 }
 
 function range(n, start = 0) {
-	// not so widely known hack
-	return Array.apply(null, { length: n }).map((_, i) => i + start);
+	// see #574
+	return Array.apply(null, {
+		length: n - start
+	}).map((_, i) => i + start);
 }
 
 export default function dialog(params) {

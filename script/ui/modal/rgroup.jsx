@@ -3,87 +3,95 @@ import { h, Component, render } from 'preact';
 
 import Dialog from '../component/dialog';
 
-class RGroupBase extends Component {
-	constructor({params}) {
+function RGroup({ selected, onSelect, result, ...props }) {
+	return (
+		<Dialog caption="R-Group"
+				name="rgroup" params={props}
+				result={() => result()}>
+		  <ul>
+			{ range(33, 1).map(i => (
+				<li>
+				  <button
+					className={ selected(i) ? 'selected' : ''}
+					onClick={ev => onSelect(i)}>
+					{`R${i}`}
+				  </button>
+				</li>
+			)) }
+		  </ul>
+		</Dialog>
+	);
+}
+
+class RGroupFragment extends Component {
+	constructor({label}) {
 		super();
-		this.values = params.values ? params.values.map(v => parseInt(v.substr(1)) - 1) : [];
+		this.state.label = label || null;
     }
-	name (index) {
-		return `R${index + 1}`;
+	onSelect(label) {
+		this.setState({
+			label: label !== this.state.label ? label : null
+		});
 	}
-	render (props) {
+	selected(label) {
+		return label === this.state.label;
+	}
+	result() {
+		return { label: this.state.label };
+	}
+	render() {
 		return (
-			<Dialog caption="R-Group"
-					name="rgroup" params={props.params}
-					result={() => this.result()}>
-				<ul>
-				  { range(32).map(i => (
-						<li>
-							<button
-								className={ this.selected(i) ? 'selected' : ''}
-								onClick={ (ev) => { ev.preventDefault(); this.select(i); } }>
-								{this.name(i)}
-							</button>
-						</li>
-				  )) }
-				</ul>
-			</Dialog>
+			<RGroup selected={i => this.selected(i)}
+			  onSelect={i => this.onSelect(i)}
+			  result={() => this.result()} {...this.props}/>
 		);
 	}
 }
 
-class RGroupFragment extends RGroupBase {
-	constructor(props) {
-		super(props);
-		this.state.value = this.values.length ? this.values[0] : null;
+class RGroupAtom extends Component {
+	constructor({values}) {
+		super();
+		this.state.values = values || [];
     }
-	select(index) {
-		this.setState({
-			value: index !== this.state.value ? index : null
-		});
-	}
-	selected(index) {
-		return index === this.state.value;
-	}
-	result() {
-		return { values: this.state.value != null ? [this.name(this.state.value)] : [] };
-	}
-}
-
-class RGroupAtom extends RGroupBase {
-	constructor(props) {
-		super(props);
-		this.state.values = this.values;
-    }
-	select(index) {
-		var vals = this.state.values;
-		var i = vals.indexOf(index);
+	onSelect(index) {
+		var {values} = this.state;
+		var i = values.indexOf(index);
 		if (i < 0)
-			vals.push(index);
+			values.push(index);
 		else
-			vals.splice(i, 1);
-		this.setState({
-			values: vals
-		});
+			values.splice(i, 1);
+		this.setState({ values });
 	}
 	selected(index) {
 		return this.state.values.includes(index);
 	}
 	result() {
-		return { type: 'rlabel', values: this.state.values.map(i => this.name(i)) };
+		return {
+			type: 'rlabel',
+			values: this.state.values
+		};
+	}
+	render() {
+		return (
+			<RGroup selected={i => this.selected(i)}
+			  onSelect={i => this.onSelect(i)}
+			  result={() => this.result() } {...this.props}/>
+		);
 	}
 }
 
 function range(n, start = 0) {
 	// see #574
-	return Array.apply(null, { length: n }).map((_, i) => i + start);
+	return Array.apply(null, {
+		length: n - start
+	}).map((_, i) => i + start);
 }
 
 export default function dialog(params) {
 	var overlay = $$('.overlay')[0];
 	return render(params.type == 'rlabel' ? (
-		<RGroupAtom params={params}/>
+		<RGroupAtom {...params}/>
 	) : (
-		<RGroupFragment params={params}/>
+		<RGroupFragment {...params}/>
 	), overlay);
 };

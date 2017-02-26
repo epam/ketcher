@@ -996,6 +996,7 @@ var element = [
 		origin: 'synthetic',
 		type: 'actinide'
 	},
+	// TODO: fix colors for the elements below
 	{
 		label: 'Fm',            // 100
 		period: 7,

@@ -115,7 +115,7 @@ function initEditor(editor) {
 		} else if (elem.type == 'rlabel') {
 			dlg = dialog(modal.rgroup, elem);
 		} else {
-			dlg = genericsTable(elem);
+			dlg = dialog(modal.genericGroups, elem);
 		}
 		return dlg.then(function (res) {
 			return structConv.toElement(res);
@@ -681,17 +681,9 @@ function elemTable(elem) {
 			addAtoms(res.label);
 		return res;
 	});
-};
+}
 
-function genericsTable(elem) {
-	return dialog(modal.genericGroups, {
-		values: elem && [elem.label]
-	}).then(function (res) {
-		return { label: res.values[0] };
-	});
-};
-
-function templateLib () {
+function templateLib() {
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 	var userTmpls = store.map(function (tmplStr) {
 		if (tmplStr.props == '') tmplStr.props = {};
@@ -754,7 +746,7 @@ var actionMap = {
 		});
 	},
 	'generic-groups': function () {
-		genericsTable().then(function (res) {
+		dialog(modal.genericGroups).then(function (res) {
 			selectAction('atom', res);
 		});
 	},

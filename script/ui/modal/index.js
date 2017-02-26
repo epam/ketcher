@@ -10,6 +10,7 @@ var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
 var labelEdit = require('./labeledit').default;
 var periodTable = require('./period-table').default;
+var genericGroups = require('./generic-groups').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var aboutDialog = require('./about').default;
@@ -20,11 +21,6 @@ var settingsDialog = require('./settings').default;
 var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
-
-function genericGroups (params) {
-	params.required = true;
-	selectDialog('genericGroups', params);
-};
 
 function attachmentPoints (params) {
 	inputDialog('attachmentPoints', Object.assign({

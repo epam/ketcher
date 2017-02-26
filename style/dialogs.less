@@ -469,7 +469,7 @@ form[role=dialog] {
 		display: inline-block;
 		vertical-align: top;
 		&+fieldset {
-			margin-left: 0.3em;
+			margin-left: 0.4em;
 		}
 	}
 	.cyclic>fieldset, .carbo, .hetero  {
@@ -477,17 +477,17 @@ form[role=dialog] {
 	}
 	.carbo {
 		clear: both;
+		margin-right: 0.4em;
 	}
-	.hetero {
-		margin-left: 0.3em;
-	}
-	.cyclic>fieldset:first-of-type {
-		margin: 0 0.3em 0 0.8em; // smells like a hack
+	.cyclic>legend+fieldset { // a hack
+		margin: 0 0.4em 0 0.8em;
 	}
 	fieldset {
 		text-align: center;
 	}
-	.not, .atom>fieldset, .carbo>fieldset, .hetero>fieldset {
+	legend+fieldset,
+	.atom fieldset, .carbo fieldset, .hetero fieldset,
+	.no-carbon {
 		position: relative;
 		border: 0;
 		padding: 0 0 1em;

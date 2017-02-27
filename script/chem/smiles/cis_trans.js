@@ -52,7 +52,7 @@ CisTrans.prototype.sameside = function (beg, end, neiBeg, neiEnd) {
 	return (prodBeg * prodEnd > 0) ? 1 : -1;
 };
 
-CisTrans.prototype.sameside = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
+CisTrans.prototype.samesides = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
 	return this.sameside(this.molecule.atoms.get(iBeg).pp, this.molecule.atoms.get(iEnd).pp,
 		this.molecule.atoms.get(iNeiBeg).pp, this.molecule.atoms.get(iNeiEnd).pp);
 };
@@ -153,9 +153,9 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 			substituents[3] = nei.aid;
 	}
 
-	if (substituents[1] != -1 && this.sameside(bond.begin, bond.end, substituents[0], substituents[1]) != -1)
+	if (substituents[1] != -1 && this.samesides(bond.begin, bond.end, substituents[0], substituents[1]) != -1)
 		return false;
-	if (substituents[3] != -1 && this.sameside(bond.begin, bond.end, substituents[2], substituents[3]) != -1)
+	if (substituents[3] != -1 && this.samesides(bond.begin, bond.end, substituents[2], substituents[3]) != -1)
 		return false;
 
 	return true;
@@ -178,7 +178,7 @@ CisTrans.prototype.build = function (excludeBonds) {
 		if (!this.sortSubstituents(ct.substituents))
 			return;
 
-		var sign = this.sameside(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
+		var sign = this.samesides(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
 
 		if (sign == 1)
 			ct.parity = CisTrans.PARITY.CIS;

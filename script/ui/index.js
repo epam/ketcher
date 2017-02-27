@@ -827,7 +827,7 @@ var actionMap = {
 			properties: ['molecular-weight', 'most-abundant-mass',
 			             'monoisotopic-mass', 'gross', 'mass-composition']
 		}).then(function (values) {
-			return dialog(modal.calculatedValues, values, true);
+			return dialog(modal.analyse, values, true);
 		});
 	},
 	'settings': function () {

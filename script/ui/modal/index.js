@@ -15,20 +15,18 @@ var rgroupDialog = require('./rgroup').default;
 var aboutDialog = require('./about').default;
 var recognizeDialog = require('./recognize').default;
 var checkDialog = require('./check').default;
-var calculatedValuesDialog = require('./analyse').default;
+var analyseDialog = require('./analyse').default;
 var settingsDialog = require('./settings').default;
 var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
+var bondDialog = require('./bond').default;
+
 function attachmentPoints (params) {
 	inputDialog('attachmentPoints', Object.assign({
 		onOk: function (res) { params.onOk({ap: res}); }
 	}, params.ap));
-};
-
-function bondProps (params) {
-	inputDialog('bondProps', params);
 };
 
 function automap (params) {
@@ -141,7 +139,7 @@ module.exports = {
 	genericGroups: genericGroups,
 	attachmentPoints: attachmentPoints,
 	atomProps: atomProps,
-	bondProps: bondProps,
+	bondProps: bondDialog,
 	automap: automap,
 	rgroupLogic: rgroupLogic,
 	sgroup: sgroup,
@@ -152,7 +150,7 @@ module.exports = {
 	about: aboutDialog,
 	recognize: recognizeDialog,
 	check: checkDialog,
-	calculatedValues: calculatedValuesDialog,
+	analyse: analyseDialog,
 	settings: settingsDialog,
 	help: helpDialog,
 	miew: miewDialog,

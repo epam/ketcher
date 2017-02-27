@@ -192,7 +192,7 @@ form[role=dialog] {
 	}
 }
 
-.bond-props {
+form.bond {
 	label {
 		text-align: right;
 		display: block;
@@ -264,18 +264,20 @@ form[role=dialog] {
 		border: 0;
 		padding: 0;
 	}
-	.data label {
-		text-align: left;
-	}
-	.data textarea, select[name=fieldValue] {
-		display: block;
-		width: 20em;
-		height: 12em;
-		overflow: auto;
-	}
-	.data input[type=text], select[name=fieldName] {
-		width: 20em;
-		display: block;
+	.data {
+		label {
+			text-align: left;
+		}
+		textarea, select[name=fieldValue] {
+			display: block;
+			width: 20em;
+			height: 12em;
+			overflow: auto;
+		}
+		input[type=text], select[name=fieldName] {
+			width: 20em;
+			display: block;
+		}
 	}
 }
 

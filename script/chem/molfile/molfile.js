@@ -68,7 +68,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 	this.reaction = molecule.rxnArrows.count() > 0;
 	if (molecule.rxnArrows.count() > 1)
 		throw new Error('Reaction may not contain more than one arrow');
-	this.molfile = '';
+	this.molfile = '' + molecule.name;
 	if (this.reaction) {
 		if (molecule.rgroups.count() > 0)
 			throw new Error('Unable to save the structure - reactions with r-groups are not supported at the moment');

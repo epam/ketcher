@@ -33,7 +33,7 @@ Smiles.prototype.isBondInRing = function (bid) {
 Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-disable-line max-statements
 	var i, j, k;
 
-	if (ignoreErrors) this.ignore_errors = ignoreErrors;
+	if (!ignoreErrors) this.ignore_errors = ignoreErrors;
 
 	// [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
 	// TODO the fix is temporary, still need to implement error handling/reporting

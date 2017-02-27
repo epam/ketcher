@@ -699,23 +699,25 @@ function templateLib() {
 
 function attach (tmpl, index) {
 	var tmplName = tmpl.struct.name;
+	var group = tmpl.props.group;
 
 	dialog(modal.attach, {
 		userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
 		tmpl: tmpl
-	}).then(function (attachProps) {
-		var isUser = true;
-		libTmpls = libTmpls.map(function (item) {
-			if (item.struct.name == tmplName) {
-				item.props = Object.assign(item.props || {}, attachProps);
-				isUser = false;
-			}
-			return item;
-		});
-
-		if (isUser) {
+	}).then(function (tmplProps) {
+		if (group != 'User') {
+			libTmpls = libTmpls.map(function (item) {
+				if (item.struct.name == tmplName) {
+					item.struct.name = tmplProps.name;
+					item.props = Object.assign(item.props || {}, tmplProps.attach);
+				}
+				return item;
+			});
+		} else {
 			var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-			store[index].props = Object.assign({}, store[index].props, attachProps);
+			tmpl.struct.name = tmplProps.name;
+			store[index].struct = molfile.stringify(tmpl.struct);
+			store[index].props = Object.assign({}, store[index].props, tmplProps.attach);
 			localStorage['ketcher-tmpl'] = JSON.stringify(store);
 		}
 

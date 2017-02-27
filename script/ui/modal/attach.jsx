@@ -15,21 +15,28 @@ class Attach extends Component {
 			scale: (props.scale > 15) ? props.scale : 15
 		};
 
-		this.setState( {
+		this.state = {
+			name: this.tmpl.struct.name || '',
 			attach: {
 				atomid: +this.tmpl.props.atomid || 0,
 				bondid: +this.tmpl.props.bondid || 0
 			}
-		});
+		};
 	}
 
 	result() {
-		return this.state.attach;
+		return this.state;
 	}
 
 	onAttach(attachPoints) {
 		this.setState({
 			attach: attachPoints
+		});
+	}
+
+	changeName(newTmplName) {
+		this.setState({
+			name: newTmplName
 		});
 	}
 
@@ -42,7 +49,7 @@ class Attach extends Component {
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">
 				<label>Template Name:
-					<input type="text" value={this.tmpl.struct.name || ''} placeholder="tmpl" disabled/>
+					<input type="text" onChange={(ev) => this.changeName(ev.target.value)} value={this.state.name} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}

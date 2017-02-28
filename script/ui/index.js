@@ -512,8 +512,18 @@ function open () {
 }
 
 function save () {
-	dialog(modal.save, { server: server,
-	                     struct: ui.editor.struct() });
+	dialog(modal.save, { server: server, struct: ui.editor.struct() }).then(function (res) {
+
+		if (res.event == 'saveTmpl') {
+			var tmpl = {
+				struct: molfile.parse(res.tmpl),
+				props: { group: 'User' }
+			};
+			var userStorage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+			attach(tmpl, userStorage.length).then(function () { return true; });
+		}
+		return true;
+	});
 }
 
 function serverCall(method, options, struct) {
@@ -674,7 +684,7 @@ function elemTable(elem) {
 	});
 }
 
-function templateLib() {
+function templateLib(group) {
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 	var userTmpls = store.map(function (tmplStr) {
 		if (tmplStr.props == '') tmplStr.props = {};
@@ -685,15 +695,20 @@ function templateLib() {
 		};
 	});
 
-	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls }, true).then(function (res) {
+	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, group: group }, true).then(function (res) {
 
 		if (res.event == 'attachEdit') {
-			attach(res.tmpl, res.index);
+			attach(res.tmpl, res.index).then(function () {
+				templateLib(res.tmpl.props.group);
+				return true;
+			});
 		} else if (res.event == 'chooseTmpl') {
 			// C doesn't conflict with menu id
 			selectAction('template-custom', res.tmpl);
 		}
 		return true;
+	}, function () {
+		console.info("cancel");
 	});
 }
 
@@ -701,27 +716,33 @@ function attach (tmpl, index) {
 	var tmplName = tmpl.struct.name;
 	var group = tmpl.props.group;
 
-	dialog(modal.attach, {
-		userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
-		tmpl: tmpl
-	}).then(function (tmplProps) {
-		if (group != 'User') {
-			libTmpls = libTmpls.map(function (item) {
-				if (item.struct.name == tmplName) {
-					item.struct.name = tmplProps.name;
-					item.props = Object.assign(item.props || {}, tmplProps.attach);
-				}
-				return item;
-			});
-		} else {
-			var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-			tmpl.struct.name = tmplProps.name;
-			store[index].struct = molfile.stringify(tmpl.struct);
-			store[index].props = Object.assign({}, store[index].props, tmplProps.attach);
-			localStorage['ketcher-tmpl'] = JSON.stringify(store);
-		}
+	return new Promise(function (resolve) {
 
-		templateLib();
+		dialog(modal.attach, {
+			userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
+			tmpl: tmpl
+		}).then(function (res) {
+			if (group != 'User') {
+				libTmpls = libTmpls.map(function (item) {
+					if (item.struct.name == tmplName) {
+						item.struct.name = res.name;
+						item.props = Object.assign(item.props || {}, res.attach);
+					}
+					return item;
+				});
+			} else {
+				var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+				tmpl.struct.name = res.name;
+				if (!store[index]) store[index] = {};
+				store[index].struct = molfile.stringify(tmpl.struct);
+				store[index].props = Object.assign({}, store[index].props, res.attach);
+				localStorage['ketcher-tmpl'] = JSON.stringify(store);
+			}
+
+			resolve();
+		}, function () {
+			console.info("cancel");
+		});
 	});
 }
 

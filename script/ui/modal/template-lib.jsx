@@ -92,7 +92,7 @@ class TemplateLib extends Component {
 		this.state = {
 			selected: null,
 			filter: '',
-			group: this.props.lib[0].name
+			group: props.group || props.lib[0].name
 		};
 	}
 
@@ -248,6 +248,7 @@ export default function dialog(params) {
 		name: 'User Templates',
 		templates: params.userTmpls
 	});
+	if (params.group == 'User') params.group = 'User Templates';
 	return render((
 		<TemplateLib lib={lib} {...params}/>
 	), overlay);

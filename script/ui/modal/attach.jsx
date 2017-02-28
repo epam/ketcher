@@ -49,7 +49,7 @@ class Attach extends Component {
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">
 				<label>Template Name:
-					<input type="text" onChange={(ev) => this.changeName(ev.target.value)} value={this.state.name} placeholder="tmpl"/>
+					<input type="text" onInput={(ev) => this.changeName(ev.target.value)} value={this.state.name} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}

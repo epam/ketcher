@@ -75,7 +75,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 				editor.selection(null);
 				var res = editor.event.quickEdit.dispatch(atom);
 				Promise.resolve(res).then(function (newatom) {
-					editor.update(Action.fromAtomsAttrs(ci.id, newatom));
+					editor.update(Action.fromAtomsAttrs(ctab, ci.id, newatom));
 				});
 			}, 750);
 			this.dragCtx.stopTapping = function () {
@@ -97,7 +97,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 
 		// moving selected objects
 		if (this.dragCtx.action) {
-			this.dragCtx.action.perform();
+			this.dragCtx.action.perform(rnd.ctab);
 			rnd.update(); // redraw the elements in unshifted position, lest the have different offset
 		}
 		this.dragCtx.action = Action.fromMultipleMove(
@@ -167,7 +167,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 		Promise.resolve(ra).then(function (newatom) {
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-			editor.update(Action.fromAtomsAttrs(ci.id, newatom));
+			editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, newatom));
 		});
 	} else if (ci.map == 'bonds') {
 		this.editor.selection(closestToSel(ci));

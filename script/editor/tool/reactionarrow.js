@@ -26,7 +26,7 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
-			this.dragCtx.action.perform();
+			this.dragCtx.action.perform(rnd.ctab);
 
 		this.dragCtx.action = Action.fromMultipleMove(
 			rnd.ctab,

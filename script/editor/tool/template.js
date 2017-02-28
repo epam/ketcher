@@ -115,7 +115,7 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 			if (sign != dragCtx.sign2 || !dragCtx.action) {
 				// undo previous action
 				if ('action' in dragCtx)
-					dragCtx.action.perform();
+					dragCtx.action.perform(rnd.ctab);
 				dragCtx.sign2 = sign;
 				dragCtx.action = Action.fromTemplateOnBond(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 				rnd.update();
@@ -140,11 +140,12 @@ TemplateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line m
 		}
 		// undo previous action
 		if ('action' in dragCtx)
-			dragCtx.action.perform();
+			dragCtx.action.perform(rnd.ctab);
 		// create new action
 		dragCtx.angle = degrees;
 		if (!ci) { // ci.type == 'Canvas'
 			dragCtx.action = Action.fromTemplateOnCanvas(
+				rnd.ctab,
 				pos0,
 				angle,
 				this.template
@@ -177,7 +178,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 
 		if (!dragCtx.action) {
 			if (!ci) { //  ci.type == 'Canvas'
-				dragCtx.action = Action.fromTemplateOnCanvas(dragCtx.xy0, 0, this.template);
+				dragCtx.action = Action.fromTemplateOnCanvas(rnd.ctab, dragCtx.xy0, 0, this.template);
 			} else if (ci.map == 'atoms') {
 				var degree = restruct.atoms.get(ci.id).a.neighbors.length;
 

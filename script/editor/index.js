@@ -64,7 +64,7 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.update(Action.fromNewCanvas(value));
+		this.update(Action.fromNewCanvas(this.render.ctab, value));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;

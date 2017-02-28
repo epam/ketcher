@@ -25,7 +25,7 @@ ReactionPlusTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
-			this.dragCtx.action.perform();
+			this.dragCtx.action.perform(rnd.ctab);
 		this.dragCtx.action = Action.fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
@@ -42,7 +42,7 @@ ReactionPlusTool.prototype.OnMouseUp = function (event) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
 	} else {
-		this.editor.update(Action.fromPlusAddition(rnd.page2obj(event)));
+		this.editor.update(Action.fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 

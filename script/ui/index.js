@@ -634,7 +634,7 @@ function undo ()
 		ui.editor.tool().OnCancel();
 
 	ui.editor.selection(null);
-	redoStack.push(undoStack.pop().perform());
+	redoStack.push(undoStack.pop().perform(ui.render.ctab));
 	ui.render.update();
 	updateHistoryButtons();
 };
@@ -645,7 +645,7 @@ function redo ()
 		ui.editor.tool().OnCancel();
 
 	ui.editor.selection(null);
-	undoStack.push(redoStack.pop().perform());
+	undoStack.push(redoStack.pop().perform(ui.render.ctab));
 	ui.render.update();
 	updateHistoryButtons();
 };

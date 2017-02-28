@@ -37,8 +37,8 @@ RGroupFragmentTool.prototype.OnMouseUp = function (event) {
 
 		Promise.resolve(res).then(function (newRg) {
 			var action = ci.map == 'rgroups' ?
-			    Action.fromRGroupAttrs(ci.id, newRg) :
-			    Action.fromRGroupFragment(newRg.label, ci.id);
+			    Action.fromRGroupAttrs(editor.render.ctab, ci.id, newRg) :
+			    Action.fromRGroupFragment(editor.render.ctab, newRg.label, ci.id);
 
 			editor.update(action);
 		});

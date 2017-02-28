@@ -92,7 +92,7 @@ function propsDialog(editor, id, defaultType) {
 		} else {
 			var action = (id != null) ?
 			    Action.fromSgroupType(restruct, id, newSg.type)
-			          .mergeWith(Action.fromSgroupAttrs(id, newSg.attrs)) :
+			          .mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
 			    Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
 		                                  struct.sgroups.newId());
 			editor.update(action);

@@ -31,7 +31,7 @@ ChargeTool.prototype.OnMouseUp = function (event) {
 	var ci = editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label]) {
 		this.hoverHelper.hover(null);
-		this.editor.update(Action.fromAtomsAttrs(ci.id, {
+		this.editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, {
 			charge: struct.atoms.get(ci.id).charge + this.charge
 		}));
 	}

@@ -32,7 +32,7 @@ ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		if ('action' in dragCtx)
-			dragCtx.action.perform();
+			dragCtx.action.perform(rnd.ctab);
 
 		var atoms = rnd.ctab.molecule.atoms;
 		var pos0 = dragCtx.item ? atoms.get(dragCtx.item.id).pp :

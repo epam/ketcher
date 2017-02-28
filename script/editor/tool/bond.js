@@ -42,7 +42,7 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 		var dragCtx = this.dragCtx;
 		if (!('item' in dragCtx) || dragCtx.item.map == 'atoms') {
 			if ('action' in dragCtx)
-				dragCtx.action.perform();
+				dragCtx.action.perform(rnd.ctab);
 			var i1, i2, p1, p2;
 			if (('item' in dragCtx && dragCtx.item.map == 'atoms')) {
 				// first mousedown event intersect with any atom

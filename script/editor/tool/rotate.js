@@ -108,7 +108,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 
 		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
 		if ('action' in dragCtx)
-			dragCtx.action.perform();
+			dragCtx.action.perform(rnd.ctab);
 
 		dragCtx.angle = degrees;
 		dragCtx.action = Action.fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);

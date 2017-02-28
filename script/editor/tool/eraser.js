@@ -49,11 +49,11 @@ EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 			} else if (ci.map == 'sgroups' || ci.map == 'sgroupData') {
 				this.editor.update(Action.fromSgroupDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'rxnArrows') {
-				this.editor.update(Action.fromArrowDeletion(ci.id));
+				this.editor.update(Action.fromArrowDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'rxnPluses') {
-				this.editor.update(Action.fromPlusDeletion(ci.id));
+				this.editor.update(Action.fromPlusDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'chiralFlags') {
-				this.editor.update(Action.fromChiralFlagDeletion());
+				this.editor.update(Action.fromChiralFlagDeletion(rnd.ctab));
 			} else {
 				// TODO re-factoring needed - should be "map-independent"
 				console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');

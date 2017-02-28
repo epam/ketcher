@@ -31,7 +31,7 @@ APointTool.prototype.OnMouseUp = function (event) {
 		});
 		Promise.resolve(res).then(function (newatom) {
 			if (atom.attpnt != newatom.attpnt) {
-				var action = Action.fromAtomsAttrs(ci.id, newatom);
+				var action = Action.fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
 				editor.update(action);
 			}
 		});

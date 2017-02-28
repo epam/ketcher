@@ -28,7 +28,7 @@ ReactionUnmapTool.prototype.OnMouseUp = function (event) {
 		atoms.each(
 		function (aid, atom) {
 			if (atom.aam == aam)
-				action.mergeWith(Action.fromAtomsAttrs(aid, { aam: 0 }));
+				action.mergeWith(Action.fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
 		},
 			this
 		);

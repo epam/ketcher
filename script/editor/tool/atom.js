@@ -9,7 +9,7 @@ function AtomTool(editor, atomProps) {
 		if (!editor.selection() || !editor.selection().atoms)
 			return new AtomTool(editor, atomProps);
 
-		var action = Action.fromAtomsAttrs(editor.selection().atoms,
+		var action = Action.fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
 		                                   atomProps);
 		editor.update(action);
 		editor.selection(null);
@@ -47,7 +47,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 			atom.pp, rnd.page2obj(event)
 		);
 		if ('action' in dragCtx)
-			dragCtx.action.perform();
+			dragCtx.action.perform(rnd.ctab);
 		// TODO [RB] kludge fix for KETCHER-560. need to review
 		// BEGIN
 		/*
@@ -73,8 +73,8 @@ AtomTool.prototype.OnMouseUp = function (event) {
 		var rnd = this.editor.render;
 		this.editor.update(dragCtx.action || (
 			dragCtx.item ?
-				Action.fromAtomsAttrs(dragCtx.item.id, this.atomProps, true) :
-				Action.fromAtomAddition(rnd.page2obj(event), this.atomProps)
+				Action.fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
+				Action.fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
 		));
 		delete this.dragCtx;
 	}

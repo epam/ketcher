@@ -163,6 +163,9 @@ form[role=dialog] {
 			background-color: white;
 			content: attr(title);
 		}
+		&.selected .struct {
+			background-color: lighten(@form-selected-background, 15%);
+		}
 	}
 	.attach-button {
 		margin: 0 4px 2px 0;
@@ -182,9 +185,6 @@ form[role=dialog] {
 		border-radius: 5px;
 		&:hover {
 			background: @form-hover-background;
-		}
-		&.selected {
-			background-color: lighten(@form-selected-background, 15%);
 		}
 	}
 	div.struct {

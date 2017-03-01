@@ -138,9 +138,9 @@ class TemplateLib extends Component {
 	renderRow (row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className="td" title={tmplName(tmpl, index * COLS + i)}>
+				<div className={tmpl == this.state.selected ? 'td selected' : 'td'} title={tmplName(tmpl, index * COLS + i)}>
 				  <RenderTmpl tmpl={tmpl}
-							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
+							  className="struct"
 							  onClick={() => this.select(tmpl)} />
 					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>Edit</button>
 				</div>

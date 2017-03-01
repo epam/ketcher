@@ -121,14 +121,14 @@ class TemplateLib extends Component {
 	result() {
 		let tmpl = this.state.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
-		return {
-			event: 'chooseTmpl',
-			tmpl: tmpl ? {
+		return tmpl ? {
+				event: 'chooseTmpl',
+				tmpl: {
 					struct: tmpl.struct,
 					aid: parseInt(tmpl.props.atomid) + 1 || null, // TODO: Why +1??
 					bid: parseInt(tmpl.props.bondid) + 1 || null
-				} : null
-		};
+				}
+			} : null;
 	}
 
 	onAttach(tmpl, index) {

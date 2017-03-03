@@ -12,7 +12,7 @@ import SaveButton from '../component/savebutton';
 
 function tmplName(tmpl, i) {
 	console.assert(tmpl.props && tmpl.props.group, "No group");
-	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+	return tmpl.struct.name ? reGreekSymbols(tmpl.struct.name) : `${tmpl.props.group} template ${i + 1}`;
 }
 
 function tmplsLib(tmpls) {
@@ -38,6 +38,19 @@ function partition(n, array) {
 	return res;
 }
 
+const GREEK_SIMBOLS = {
+	'Alpha': 'A', 'alpha': 'α',
+	'Beta': 'B', 'beta': 'β',
+	'Gamma': 'Г', 'gamma': 'γ'
+};
+
+function reGreekSymbols(strName) {
+	for (let sym in GREEK_SIMBOLS) {
+		strName = strName.replace(new RegExp(sym, 'g'), GREEK_SIMBOLS[sym]);
+	}
+	return strName;
+}
+
 function reEscape(str) {
 	const reSpecial = ["-", "[", "]", "/", "{", "}", "(", ")", "*",
 					   "+", "?", ".", "\\", "^", "$", "|"];
@@ -49,7 +62,7 @@ function filterLib(lib, filter) {
 	console.warn('filter', filter);
 	if (!filter)
 		return lib;
-	var re = RegExp(reEscape(filter), 'i');
+	var re = RegExp(reGreekSymbols(reEscape(filter)), 'i');
 	return lib.reduce((res, group) => {
 		if (group.name.search(re) != -1 && group.templates.length > 0) {
 			res.push(group);

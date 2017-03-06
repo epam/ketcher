@@ -25,10 +25,10 @@ export function toElement(elem) {
 		};
 	if (elem.type == 'list' || elem.type == 'not-list')
 		return toAtomList(elem);
-	if (element.map[capitalize(elem.label)])
-		return toAtom(elem);
 	if (!elem.label && 'ap' in elem)
 		return { attpnt: toApoint(elem.ap) };
+	if (element.map[capitalize(elem.label)])
+		return toAtom(elem);
 	return elem;
 }
 

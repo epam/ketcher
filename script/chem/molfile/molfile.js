@@ -207,7 +207,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 
 	/* eslint-disable camelcase*/
 	var atomList_list = [];
-	var atomLabel_list = [];
+	var atomProps_list = [];
 	/* eslint-enable camel-case*/
 	this.molecule.atoms.each(function (id, atom) { // eslint-disable-line max-statements
 		this.writePaddedFloat(atom.pp.x, 10, 4);
@@ -219,9 +219,14 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		if (atom.atomList != null) {
 			label = 'L';
 			atomList_list.push(id);
+		} else if (atom['pseudo']) {
+			label = 'A';
+			atomProps_list.push({ id: id, value: atom['pseudo'] });
+		} else if (atom['alias']) {
+			atomProps_list.push({ id: id, value: atom['alias'] });
 		} else if (!element.map[label] && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) { // search in generics?
 			label = 'C';
-			atomLabel_list.push(id);
+			atomProps_list.push({ id: id, value: atom.label });
 		}
 		this.writePadded(label, 3);
 		this.writePaddedNumber(0, 2);
@@ -285,12 +290,12 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writeCR();
 	}, this);
 
-	while (atomLabel_list.length > 0) {
+	while (atomProps_list.length > 0) {
 		this.write('A  ');
-		this.writePaddedNumber(atomLabel_list[0] + 1, 3);
+		this.writePaddedNumber(atomProps_list[0].id + 1, 3);
 		this.writeCR();
-		this.writeCR(this.molecule.atoms.get(atomLabel_list[0]).label);
-		atomLabel_list.splice(0, 1);
+		this.writeCR(atomProps_list[0].value);
+		atomProps_list.splice(0, 1);
 	}
 
 	var chargeList = [];

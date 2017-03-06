@@ -10,6 +10,8 @@ function Atom(params) { // eslint-disable-line max-statements
 	this.label = params.label;
 	this.fragment = params.fragment || -1;
 
+	ifDef(this, params, 'pseudo', def('pseudo'));
+	ifDef(this, params, 'alias', def('alias'));
 	ifDef(this, params, 'isotope', def('isotope'));
 	ifDef(this, params, 'radical', def('radical'));
 	ifDef(this, params, 'charge', def('charge'));
@@ -71,6 +73,8 @@ Atom.PATTERN =
 };
 
 Atom.attrlist = {
+	alias: null,
+	pseudo: null,
 	label: 'C',
 	isotope: 0,
 	radical: 0,

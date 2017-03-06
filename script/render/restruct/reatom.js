@@ -240,6 +240,10 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 	this.color = 'black';
 	if (atom.a.atomList != null) {
 		label.text = atom.a.atomList.label();
+	} else if (atom.a.pseudo) {
+		label.text = atom.a.pseudo.replace(/'/g, '');
+	} else if (atom.a.alias) {
+		label.text = atom.a.alias;
 	} else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
 		label.text = '';
 		for (var rgi = 0; rgi < 32; rgi++) {
@@ -257,7 +261,8 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 		.attr({
 			'font': options.font,
 			'font-size': options.fontsz,
-			'fill': atom.color
+			'fill': atom.color,
+			'font-style': atom.a.pseudo ? 'italic' : ''
 		});
 	label.rbb = util.relBox(label.path.getBBox());
 	draw.recenterText(label.path, label.rbb);

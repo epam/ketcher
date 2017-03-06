@@ -82,9 +82,13 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 	while (shift < end) {
 		var line = ctabLines[shift];
 		if (line.charAt(0) == 'A') {
-			if (!props.get('label'))
-				props.set('label', new Map());
-			props.get('label').set(utils.parseDecimalInt(line.slice(3, 6)) - 1, ctabLines[++shift]);
+			var propValue = ctabLines[++shift];
+			var isPseudo = /'.+'/.test(propValue);
+			if (isPseudo && !props.get('pseudo'))
+				props.set('pseudo', new Map());
+			if (!isPseudo && !props.get('alias'))
+				props.set('alias', new Map());
+			props.get(isPseudo ? 'pseudo' : 'alias').set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue);
 		} else if (line.charAt(0) == 'M') {
 			var type = line.slice(3, 6);
 			var propertyData = line.slice(6);

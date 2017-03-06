@@ -12,7 +12,7 @@ import SaveButton from '../component/savebutton';
 
 function tmplName(tmpl, i) {
 	console.assert(tmpl.props && tmpl.props.group, "No group");
-	return tmpl.struct.name ? reGreekSymbols(tmpl.struct.name) : `${tmpl.props.group} template ${i + 1}`;
+	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
 function tmplsLib(tmpls) {
@@ -46,7 +46,16 @@ const GREEK_SIMBOLS = {
 
 function reGreekSymbols(strName) {
 	for (let sym in GREEK_SIMBOLS) {
-		strName = strName.replace(new RegExp(sym, 'g'), GREEK_SIMBOLS[sym]);
+		strName = strName.replace(new RegExp('\\b' + sym + '\\b', 'g'), GREEK_SIMBOLS[sym]);
+	}
+	return strName;
+}
+
+function reFromGreekSymbols(strName) {
+	for (let sym in GREEK_SIMBOLS) {
+		let re = /[A-Z]/.test(GREEK_SIMBOLS[sym])
+			? new RegExp('\\b' + GREEK_SIMBOLS[sym] + '\\b', 'g') : new RegExp(GREEK_SIMBOLS[sym], 'g');
+		strName = strName.replace(re, sym);
 	}
 	return strName;
 }
@@ -62,13 +71,14 @@ function filterLib(lib, filter) {
 	console.warn('filter', filter);
 	if (!filter)
 		return lib;
-	var re = RegExp(reGreekSymbols(reEscape(filter)), 'i');
+	let re = RegExp(reEscape(filter), 'i');
+	let reGreek = RegExp(reFromGreekSymbols(reEscape(filter)), 'i');
 	return lib.reduce((res, group) => {
-		if (group.name.search(re) != -1 && group.templates.length > 0) {
+		if ((group.name.search(re) != -1 || group.name.search(reGreek) != -1) && group.templates.length > 0) {
 			res.push(group);
 		} else {
 			let tmpls = group.templates.filter((tmpl, i) => (
-				tmplName(tmpl, i).search(re) != -1
+				tmplName(tmpl, i).search(re) != -1 || tmplName(tmpl, i).search(reGreek) != -1
 			));
 			if (tmpls.length > 0)
 				res.push({ name: group.name, templates: tmpls });
@@ -117,6 +127,7 @@ class TemplateLib extends Component {
 	}
 
 	selectGroup(group) {
+		group = reFromGreekSymbols(group);
 		if (this.state.group != group) // don't drop selection
 			this.setState({            // if not changed
 				group: group,
@@ -151,7 +162,7 @@ class TemplateLib extends Component {
 	renderRow (row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className="td" title={tmplName(tmpl, index * COLS + i)}>
+				<div className="td" title={reGreekSymbols(tmplName(tmpl, index * COLS + i))}>
 				  <RenderTmpl tmpl={tmpl}
 							  className={tmpl == this.state.selected ? 'struct selected' : 'struct'}
 							  onClick={() => this.select(tmpl)} />
@@ -191,7 +202,7 @@ class TemplateLib extends Component {
 				</label>
 				<SelectList className="groups"
 					onChange={g => this.selectGroup(g)}
-					value={group} options={ lib.map(g => g.name) } />
+					value={reGreekSymbols(group)} options={ lib.map(g => reGreekSymbols(g.name)) } />
 				  <VisibleView data={libRows(lib, group, COLS)}
 							   rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }

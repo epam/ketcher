@@ -66,7 +66,7 @@ SGroupTool.prototype.OnMouseUp = function (event) {
 	}
 	// TODO: handle click on an existing group?
 	if (id != null || (selection && selection.atoms))
-		propsDialog(this.editor, id, this.defaultType);
+		propsDialog(this.editor, id, this.type);
 };
 
 function propsDialog(editor, id, defaultType) {

@@ -94,7 +94,6 @@ SelectTool.prototype.OnMouseMove = function (event) {
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx)
 			this.dragCtx.stopTapping();
-
 		// moving selected objects
 		if (this.dragCtx.action) {
 			this.dragCtx.action.perform(rnd.ctab);
@@ -108,7 +107,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this.hoverHelper.hover(ci.map == this.dragCtx.item.map ? ci : null);
+			this.hoverHelper.hover((ci && ci.map == this.dragCtx.item.map) ? ci : null);
 		}
 		rnd.update();
 	} else if (this.lassoHelper.running()) {

@@ -54,7 +54,7 @@ function reGreekSymbols(strName) {
 function reFromGreekSymbols(strName) {
 	for (let sym in GREEK_SIMBOLS) {
 		let re = /[A-Z]/.test(GREEK_SIMBOLS[sym])
-			? new RegExp('\\b' + GREEK_SIMBOLS[sym] + '\\b', 'g') : new RegExp(GREEK_SIMBOLS[sym], 'g');
+			? new RegExp('\\b' + GREEK_SIMBOLS[sym] + '\\b\W', 'g') : new RegExp(GREEK_SIMBOLS[sym], 'g');
 		strName = strName.replace(re, sym);
 	}
 	return strName;

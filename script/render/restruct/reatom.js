@@ -237,7 +237,7 @@ function setHydrogenPos(struct, atom) {
 
 function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-statements
 	var label = {};
-	this.color = 'black';
+	atom.color = 'black';
 	if (atom.a.atomList != null) {
 		label.text = atom.a.atomList.label();
 	} else if (atom.a.pseudo) {

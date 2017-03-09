@@ -5,15 +5,16 @@ import Dialog from '../component/dialog';
 import StructEditor from '../component/structeditor';
 import Vec2 from '../../util/vec2'
 
+const EDITOR_STYLES = {
+	selectionStyle: { fill: '#47b3ec', stroke: 'none' },
+	highlightStyle: { 'stroke': '#304ff7', 'stroke-width': 1.2 }
+};
+
 class Attach extends Component {
 	constructor(props) {
 		super(props);
 		this.tmpl = props.normTmpl;
-		this.editorOpts = {
-			selectionStyle: { fill: '#47b3ec', stroke: 'none' },
-			highlightStyle: { 'stroke': '#304ff7', 'stroke-width': 1.2 },
-			scale: (props.scale > 15) ? props.scale : 15
-		};
+		this.editorOpts = Object.assign(EDITOR_STYLES, { scale: (props.scale > 15) ? props.scale : 15 });
 
 		this.state = {
 			name: this.tmpl.struct.name || '',
@@ -25,7 +26,11 @@ class Attach extends Component {
 	}
 
 	result() {
-		return this.state;
+		return (
+			this.state.name != this.tmpl.struct.name ||
+			this.state.attach.atomid != (this.tmpl.props.atomid || 0) ||
+			this.state.attach.bondid != (this.tmpl.props.bondid || 0)
+		) ? this.state : null;
 	}
 
 	onAttach(attachPoints) {
@@ -41,7 +46,7 @@ class Attach extends Component {
 	}
 
 	render() {
-		let {attach} = this.state;
+		let {name, attach} = this.state;
 		let {userOpts} = this.props;
 		return (
 			<Dialog title="Template Edit"
@@ -49,14 +54,14 @@ class Attach extends Component {
 					params={this.props}
 					buttons={["Cancel", "OK"]} className="attach">
 				<label>Template Name:
-					<input type="text" onInput={(ev) => this.changeName(ev.target.value)} value={this.state.name} placeholder="tmpl"/>
+					<input type="text" onInput={(ev) => this.changeName(ev.target.value)} value={name} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
 							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
 							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }}
 							  options={this.editorOpts}/>
-				<label><b>&#123; atomid: {attach.atomid || 0}; bondid: {attach.bondid || 0} &#125;</b></label>
+				<label><b>&#123; atomid: {attach.atomid}; bondid: {attach.bondid} &#125;</b></label>
 			</Dialog>
 		);
 	}

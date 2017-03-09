@@ -241,7 +241,7 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 	if (atom.a.atomList != null) {
 		label.text = atom.a.atomList.label();
 	} else if (atom.a.pseudo) {
-		label.text = atom.a.pseudo.replace(/'/g, '');
+		label.text = atom.a.pseudo;
 	} else if (atom.a.alias) {
 		label.text = atom.a.alias;
 	} else if (atom.a.label == 'R#' && atom.a.rglabel != null) {

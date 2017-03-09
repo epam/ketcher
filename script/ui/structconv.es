@@ -37,6 +37,8 @@ function fromAtom(satom) {
 	var isotope = satom.isotope - 0;
 	var explicitValence = satom.explicitValence - 0;
 	return {
+		alias: satom.alias,
+		pseudo: satom.pseudo,
 		label: satom.label,
 		charge: charge == 0 ? '' : charge,
 		isotope: isotope == 0 ? '' : isotope,
@@ -55,6 +57,8 @@ function toAtom(atom) {
 	// TODO merge this to Struct.Atom.attrlist?
 	//      see ratomtool
 	return {
+		alias: atom.alias,
+		pseudo: atom.pseudo,
 		label: capitalize(atom.label),
 		charge: !atom.charge ? 0 : parseInt(atom.charge, 10),
 		isotope: !atom.isotope ? 0 : parseInt(atom.isotope, 10),

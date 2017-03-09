@@ -17,6 +17,7 @@ function parseAtomLine(atomLine) {
 			// generic
 			pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
 			label: atomSplit[4].trim(),
+			pseudo: !element.map[atomSplit[4].trim()] ? atomSplit[4].trim() : null,
 			explicitValence: utils.fmtInfo.valenceMap[utils.parseDecimalInt(atomSplit[10])],
 
 			// obsolete
@@ -88,6 +89,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				props.set('pseudo', new Map());
 			if (!isPseudo && !props.get('alias'))
 				props.set('alias', new Map());
+			if (isPseudo) propValue = propValue.replace(/'/g, '');
 			props.get(isPseudo ? 'pseudo' : 'alias').set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue);
 		} else if (line.charAt(0) == 'M') {
 			var type = line.slice(3, 6);

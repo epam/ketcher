@@ -220,8 +220,10 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 			label = 'L';
 			atomList_list.push(id);
 		} else if (atom['pseudo']) {
-			label = 'A';
-			atomProps_list.push({ id: id, value: atom['pseudo'] });
+			if (atom['pseudo'].length > 3) {
+				label = 'A';
+				atomProps_list.push({ id: id, value: "'" + atom['pseudo'] + "'" });
+			}
 		} else if (atom['alias']) {
 			atomProps_list.push({ id: id, value: atom['alias'] });
 		} else if (!element.map[label] && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) { // search in generics?

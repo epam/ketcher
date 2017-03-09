@@ -105,7 +105,7 @@ class GenericGroups extends Component {
 	}
 	result() {
 		let { label } = this.state;
-		return label ? { label } : null;
+		return label ? { label, pseudo: label } : null;
 	}
 	render () {
 		return (

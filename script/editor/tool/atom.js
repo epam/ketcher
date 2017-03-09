@@ -10,7 +10,7 @@ function AtomTool(editor, atomProps) {
 			return new AtomTool(editor, atomProps);
 
 		var action = Action.fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
-		                                   atomProps);
+		                                   atomProps, true);
 		editor.update(action);
 		editor.selection(null);
 		return null;

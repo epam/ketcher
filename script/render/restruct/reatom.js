@@ -81,6 +81,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 			restruct.addReObjectPath('indices', this.visel, index.path, ps);
 		}
 		this.setHighlight(this.highlight, render);
+		if (this.a.alias || this.a.pseudo) return;
 
 		var hydroIndex = null;
 		if (isHydrogen && implh > 0) {

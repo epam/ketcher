@@ -37,7 +37,7 @@ function automap (params) {
 
 function atomProps (params) {
 	var dlg = inputDialog('atomProps', Object.assign({}, params, {
-		onOk: function (res) { stopHandlers(); params.onOk(res); },
+		onOk: function (res) { res.label = atomChange(res.label); stopHandlers(); params.onOk(res); },
 		onCancel: function (res) { stopHandlers(); }
 	}));
 	var numberInput = dlg.select('.number')[0];
@@ -53,7 +53,7 @@ function atomProps (params) {
 		    label !== '*' && label !== 'Q' &&
 		    label !== 'X' && label !== 'R') { // generics ?
 
-			console.assert(change, 'Incorrect input params label');
+			console.warn('Incorrect input params label:', label);
 			label = this.value = params.label;
 
 			if (label !== 'A' && label !== '*') {
@@ -68,6 +68,7 @@ function atomProps (params) {
 		} else {
 			numberInput.value = elem.toString();
 		}
+		return label;
 	}
 	function stopHandlers() {
 		handlers.forEach(function (h) { h.stop(); });

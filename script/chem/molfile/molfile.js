@@ -159,7 +159,7 @@ Molfile.prototype.writeWhiteSpace = function (length) {
 	if (arguments.length == 0)
 		length = 1;
 
-	this.write(' '.repeat(length));
+	this.write(' '.repeat(Math.max(length, 0)));
 };
 
 Molfile.prototype.writePadded = function (str, width) {

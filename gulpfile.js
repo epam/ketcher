@@ -5,7 +5,7 @@ var plugins = require('gulp-load-plugins')();
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
-var watchify = require('watchify');
+var budo = require('budo');
 
 var cp = require('child_process');
 var del = require('del');
@@ -27,19 +27,49 @@ var options = minimist(process.argv.slice(2), {
 	}
 });
 
-// banner: grunt.file.read('script/banner.js'),
-var polyfills = ['es5-shim', 'es6-shim',
-                 'es7-shim/dist/es7-shim', 'whatwg-fetch'];
-
 var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
                'demo.html', 'library.sdf', 'library.svg'];
+
+var bundleConfig = {
+	entries: 'script',
+	extensions: ['.jsx', '.es'],
+	debug: true,
+	standalone: pkg.name,
+	transform: [
+		['exposify', {
+			expose: {'raphael': 'Raphael' }
+		}],
+		['browserify-replace', {
+			replace: [
+				{ from: '__VERSION__', to: pkg.version },
+				{ from: '__API_PATH__', to: options['api-path'] },
+				{ from: '__BUILD_NUMBER__', to: options['build-number'] },
+				{ from: '__BUILD_DATE__', to: options['build-date'] },
+				{ from: '__MIEW_PATH__', to: options['miew-path'] },
+			]
+		}],
+		['babelify', {
+			presets: ["es2015", "react"],
+			plugins: ['transform-class-properties',
+			          'transform-object-rest-spread'],
+			extensions: ['.jsx', '.es'],
+			only: 'script/ui'
+		}]
+	],
+	plugin: [
+		[polyfillify, [
+		'es5-shim', 'es6-shim', //'./script/banner.js'
+		'es7-shim/dist/es7-shim', 'whatwg-fetch'
+		]]
+	]
+};
 
 var iconfont = null;
 
 gulp.task('script', ['patch-version'], function() {
-	return scriptBundle('script/index.js')
+	return browserify(bundleConfig).bundle()
 		// Don't transform, see: http://git.io/vcJlV
-		.pipe(source('ketcher.js')).pipe(buffer())
+		.pipe(source(`${pkg.name}.js`)).pipe(buffer())
 		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
 		.pipe(plugins.uglify({
 			compress: {
@@ -50,13 +80,6 @@ gulp.task('script', ['patch-version'], function() {
 		}}))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
-});
-
-gulp.task('script-watch', ['patch-version'], function () {
-	return scriptBundle('script/index.js', function (bundle) {
-		return bundle.pipe(source('ketcher.js'))
-			.pipe(gulp.dest(options.dist));
-	});
 });
 
 gulp.task('style', ['font'], function () {
@@ -110,8 +133,8 @@ gulp.task('font', function (cb) {
 });
 
 gulp.task('libs', function () {
-	return gulp.src(['raphael/raphael.min.js',
-	                 './script/prototype.js'].map(require.resolve))
+	return gulp.src(['./script/prototype.js',
+	                 'raphael'].map(require.resolve))
 		.pipe(gulp.dest(options.dist));
 });
 
@@ -159,17 +182,20 @@ gulp.task('check-epam-email', function(cb) {
 
 gulp.task('check-deps-exact', function (cb) {
 	var semver = require('semver'); // TODO: output corrupted packages
-	['dependencies', 'devDependencies'].forEach(d => {
+	var allValid = ['dependencies', 'devDependencies'].every(d => {
 		var dep = pkg[d];
-		Object.keys(dep).forEach(name => {
+		return Object.keys(dep).every(name => {
 			var ver = dep[name];
-			if (!semver.valid(ver) || !semver.clean(ver))
-				cb(new Error('check-deps-exact',
-				   'All top level dependencies should be installed' +
-				   'using `npm install --save-exact` command'));
+			return name == 'budo' ||
+				(semver.valid(ver) && semver.clean(ver));
 		});
 	});
-	cb();
+	if (!allValid) {
+		cb(new gutil.PluginError('check-deps-exact',
+		                         'All top level dependencies should be installed' +
+		                         'using `npm install --save-exact` command'));
+	} else
+		cb();
 });
 
 gulp.task('clean', function () {
@@ -187,25 +213,24 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('serve', ['clean', 'style', 'html', 'script-watch', 'assets'], function() {
-	var server = gulp.src(options.dist)
-	    .pipe(plugins.webserver({
-		    host: '0.0.0.0',
-			port: 9966,
-			livereload: {
-				enable: true,
-				filter: function (fn) {
-					return !fn.match(/.map$/);
-				}
-			},
-			fallback: 'ketcher.html'
-		}));
+gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
+	var server = budo(`${bundleConfig.entries}:${pkg.name}.js`, {
+		dir: options.dist,
+		browserify: bundleConfig,
+		stream: process.stdout,
+		host: '0.0.0.0',
+		live: true,
+		watchGlob: `${options.dist}/*.{html,css}`,
+		staticOptions: {
+			index: `ketcher.html`
+		}
+	}).on('exit', cb);
 
 	gulp.watch('style/**.less', ['style']);
 	gulp.watch('template/**', ['html']);
 	gulp.watch('doc/**', ['help']);
 	gulp.watch(['gulpfile.js', 'package.json'], function() {
-		server.emit('kill');
+	server.close();
 		cp.spawn('gulp', process.argv.slice(2), {
 			stdio: 'inherit'
 		});
@@ -215,48 +240,10 @@ gulp.task('serve', ['clean', 'style', 'html', 'script-watch', 'assets'], functio
 	return server;
 });
 
-function scriptBundle(src, watchUpdate) {
-	var build = browserify(src, {
-		standalone: pkg.name,
-		extensions: ['.jsx', '.es'],
-		cache: {}, packageCache: {},
-		debug: true
-	});
-	build.transform('exposify', { expose: {'raphael': 'Raphael' }})
-		.transform('browserify-replace', { replace: [
-			{ from: '__VERSION__', to: pkg.version },
-			{ from: '__API_PATH__', to: options['api-path'] },
-			{ from: '__BUILD_NUMBER__', to: options['build-number'] },
-			{ from: '__BUILD_DATE__', to: options['build-date'] },
-			{ from: '__MIEW_PATH__', to: options['miew-path'] },
-		]})
-		.transform('babelify', {
-			presets: ["es2015", "react"],
-			plugins: ['transform-class-properties',
-			          'transform-object-rest-spread'],
-			extensions: ['.jsx', '.es'],
-			only: 'script/ui'
-		});
-
-	polyfillify(build);
-	if (!watchUpdate)
-		return build.bundle();
-
-	var rebuild = function () {
-		return watchUpdate(build.bundle().on('error', function (err) {
-			gutil.log(err.message);
-		}));
-	};
-	build.plugin(watchify);
-	build.on('log', gutil.log.bind(null, 'Script update:'));
-	build.on('update', rebuild);
-	return rebuild();
-}
-
-function polyfillify(build) {
+function polyfillify(bundle, polyfills) {
 	var fs = require('fs');
 	var through = require('through2');
-	build.on('bundle', function() {
+	bundle.on('bundle', function() {
 		var firstChunk = true;
 		var polyfillData = polyfills.reduce(function (res, module) {
 			var data = fs.readFileSync(require.resolve(module));
@@ -271,7 +258,7 @@ function polyfillify(build) {
 			next();
 		});
 		stream.label = "prepend";
-		build.pipeline.get('wrap').push(stream);
+		bundle.pipeline.get('wrap').push(stream);
 	});
 }
 

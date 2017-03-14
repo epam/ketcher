@@ -185,7 +185,8 @@ function labelIsVisible(restruct, options, atom) {
 		atom.a.charge != 0 ||
 		atom.a.explicitValence >= 0 ||
 		atom.a.atomList != null ||
-		atom.a.rglabel != null)
+		atom.a.rglabel != null ||
+		atom.a.alias)
 		return true;
 	if (atom.a.neighbors.length == 2) {
 		var n1 = atom.a.neighbors[0];

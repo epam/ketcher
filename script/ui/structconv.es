@@ -29,6 +29,11 @@ export function toElement(elem) {
 		return { attpnt: toApoint(elem.ap) };
 	if (element.map[capitalize(elem.label)])
 		return toAtom(elem);
+	if (elem.label == 'A' || elem.label == '*' || elem.label == 'Q' ||
+		elem.label == 'X' || elem.label == 'R' ) {
+		elem.pseudo = elem.label;
+		return toAtom(elem);
+	}
 	return elem;
 }
 

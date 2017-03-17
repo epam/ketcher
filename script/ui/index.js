@@ -693,7 +693,7 @@ function elemTable(elem) {
 	});
 }
 
-function templateLib(group) {
+function templateLib(selTmpl, group, selId) {
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 	var userTmpls = store.map(function (tmplStr) {
 		if (tmplStr.props == '') tmplStr.props = {};
@@ -703,12 +703,13 @@ function templateLib(group) {
 			props: tmplStr.props
 		};
 	});
+	if (selId !== null)	selTmpl = userTmpls[selId];
 
-	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, group: group }, true).then(function (res) {
+	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, selected: selTmpl, group: group }, true).then(function (res) {
 
 		if (res.event == 'attachEdit') {
 			attach(res.tmpl, res.index).then(function () {
-				templateLib(res.tmpl.props.group);
+				templateLib(res.tmpl, res.tmpl.props.group, res.tmpl.props.group == 'User' ? res.index : null);
 				return true;
 			});
 		} else if (res.event == 'chooseTmpl') {

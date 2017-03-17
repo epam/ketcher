@@ -801,7 +801,7 @@ var element = [
 		period: 6,
 		group: 2,
 		color: '#b8b8d1',
-		title: "Mercury (element)",
+		title: "Mercury",
 		state: 'liquid',
 		origin: 'primordial',
 		type: 'transition'

@@ -8,13 +8,17 @@ export const atom = {
 			type: "string",     // TODO:should really be enum of elements
 			maxLength: 3
 		},
+		alias: {
+			title: "Alias",
+			type: "string"
+		},
 		charge: {
 			title: "Charge",
 			type: "integer",
 			minimum: -1000,
 			maximum: 1000
 		},
-		valency: {
+		explicitValence: {
 			title: "Valency",
 			enum: ['', 0, 1, 2, 3, 4, 5, 6, 7, 8],
 			enumNames: [
@@ -53,6 +57,7 @@ export const atom = {
 			]
 		},
 		substitutionCount: {
+			title: "Substitution count",
 			enum: [0, -2, -1, 1, 2, 3, 4, 5, 6],
 			enumNames: [
 				'', "As drawn",
@@ -147,15 +152,15 @@ export const sgroup = {
 	type: "object",
 	required: ["type"],
 	oneOf: [
-        {
+		{
 			title: "Generic",
 			properties: {
 				type: { enum: [ 'GEN' ] }
 			}
-        },
-        {
-	        title: "Multiple group",
-	        type: "object",
+		},
+		{
+			title: "Multiple group",
+			type: "object",
 			properties: {
 				type: { enum: [ "MUL" ] },
 				mul: {
@@ -167,8 +172,8 @@ export const sgroup = {
 				}
 			},
 			required: ["mul"]
-        },
-        {
+		},
+		{
 			title: "SRU polymer",
 			properties: {
 				type: { enum: [ "SRU" ] },
@@ -191,7 +196,7 @@ export const sgroup = {
 				}
 			},
 			required: ["subscript", "connectivity"]
-        },
+		},
 		{
 			title: 'Superatom',
 			properties: {
@@ -231,9 +236,9 @@ export const sgroup = {
 				}
 			},
 			required: ["fieldName", "fieldValue",
-					   "attached", "absolute"]
+			           "attached", "absolute"]
 		}
-    ]
+	]
 };
 
 export const rgroup = {

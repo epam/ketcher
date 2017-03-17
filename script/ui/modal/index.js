@@ -22,6 +22,7 @@ var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
 var bondDialog = require('./bond').default;
+var atomDialog = require('./atom').default;
 
 function attachmentPoints (params) {
 	inputDialog('attachmentPoints', Object.assign({
@@ -138,7 +139,7 @@ module.exports = {
 	rgroup: rgroupDialog,
 	genericGroups: genericGroups,
 	attachmentPoints: attachmentPoints,
-	atomProps: atomProps,
+	atomProps: atomDialog,
 	bondProps: bondDialog,
 	automap: automap,
 	rgroupLogic: rgroupLogic,

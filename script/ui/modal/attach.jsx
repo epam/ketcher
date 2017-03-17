@@ -14,7 +14,7 @@ class Attach extends Component {
 	constructor(props) {
 		super(props);
 		this.tmpl = props.normTmpl;
-		this.editorOpts = Object.assign(EDITOR_STYLES, { scale: (props.scale > 15) ? props.scale : 15 });
+		this.editorOpts = Object.assign(EDITOR_STYLES, { scale: props.scale});
 
 		this.state = {
 			name: this.tmpl.struct.name || '',
@@ -92,7 +92,7 @@ export default function dialog(params) {
 	};
 	normTmpl.struct.name = params.tmpl.struct.name;
 	let length = structNormalization(normTmpl.struct);
-	let scale = (2.7 / (length + 5.4 / length)) * 100;
+	let scale = (3.7 / (length + 5.4 / length)) * 100;
 
 	return render((
 		<Attach scale={scale} normTmpl={normTmpl} {...params}/>

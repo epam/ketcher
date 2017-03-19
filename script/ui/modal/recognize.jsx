@@ -1,8 +1,6 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import api from '../../api';
-
 import Dialog from '../component/dialog';
 import StructRender from '../component/structrender';
 import Spin from '../component/spin';

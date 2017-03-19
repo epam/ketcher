@@ -1,13 +1,13 @@
 import { h, Component } from 'preact';
 /** @jsx h */
 
-function TextLine({ value, onChange, type="text", ...props}) {
-	// maxLength
+function Generic({ value, onChange, type="text", ...props}) {
+	// maxLength, min, max
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
 }
-TextLine.val = (ev) => ev.target.value;
+Generic.val = (ev) => ev.target.value;
 
 function TextArea({ value, onChange, ...props }) {
 	return (
@@ -23,132 +23,152 @@ function CheckBox({ value, onChange, ...props}) {
 }
 CheckBox.val = (ev) => !!ev.target.checked;
 
-function Select({ items, value, selected, onSelect, ...props }) {
+function Select({ schema, value, selected, onSelect, ...props }) {
 	return (
 		<select onChange={onSelect} {...props}>
 		  {
-			  items.map(item => {
-				  let title = item.title || item;
-				  return (
-					  <option>{title}</option>
-				  );
-			  })
+			  enumSchema(schema, (title, val) => (
+				  <option selected={selected(val, value)}
+						  value={typeof val != 'object' && val}>
+					{title}
+				  </option>
+			  ))
 		  }
 		</select>
 	);
 }
 
-Select.index = function (ev) {
+Select.val = function (ev, schema) {
 	var select = ev.target;
-	return !select.multiple ? select.selectedIndex :
-		[].reduce.call(select.options, (res, o, i) =>
-					   o.selected ? [i, ...res] : res, []);
+	if (!select.multiple)
+		return enumSchema(schema, select.selectedIndex);
+	return [].reduce.call(select.options, function (res, o, i) {
+		return !o.selected ? res :
+			[enumSchema(schema, i), ...res];
+	}, []);
 };
 
-function SetBox({ items, value, selected, onSelect, type="radio", ...props}) {
+function FieldSet({ schema, value, selected, onSelect, type="radio", ...props}) {
 	return (
-		<fieldset>
+		<fieldset onClick={onSelect}>
 			{
-				items.map(item => (
+				enumSchema(schema, (title, val) => (
 					<label>
-					  <input type={type} value={item.value}
-							 checked={selected(value, item.value)}
-							 onClick={onSelect} {...props}/>
-						{item.title}
+					  <input type={type} checked={selected(val, value)}
+							 value={typeof val != 'object' && val}
+							 {...props}/>
+						{title}
 					</label>
 				))
 			}
 		</fieldset>
 	);
 }
-SetBox.index = function (ev) {
-	console.info(ev);
+
+FieldSet.val = function (ev, schema) {
+	if (ev.target.tagName != 'INPUT')
+		return undefined;
+	var input = ev.target;
+	var fieldset = input.parentNode.parentNode;
+	var res = [].reduce.call(fieldset.querySelectorAll('input'),
+				   function (res, inp, i) {
+					   return !inp.checked ? res :
+						   [enumSchema(schema, i), ...res];
+				   }, []);
+	return input.type == 'radio' ? res[0] : res;
 };
 
-function enumMap(items, cb) {
-	if (Array.isArray(items)) {
-		items.map(function (item) {
+function enumSchema(schema, cbOrIndex) {
+	var isTypeValue = Array.isArray(schema);
+	if (typeof cbOrIndex == 'function') {
+		return (isTypeValue ? schema : schema.enum).map((item, i) => {
+			var title = isTypeValue ? item.title :
+				schema.enumNames && schema.enumNames[i];
+			return cbOrIndex(title || item, item.value || item);
 		});
 	}
-	else {
-	}
+	return !isTypeValue ? schema.enum[cbOrIndex] :
+		(schema[cbOrIndex].value ||  schema[cbOrIndex]);
 }
 
-function Label({ labelPos, title, children }) {
-	return (
-		<label>{ labelPos != 'after' ? `${title}:` : '' }
-		  {children}
-		  { labelPos == 'after' ? title : '' }
-		</label>
-	);
-}
-
-function changeInput(component, onChange) {
+function inputCtrl(component, schema, onChange) {
 	return {
 		onChange: function(ev) {
-			if (!component.val)
-				onChange(ev);
-			ev.stopPropagation();
-			onChange(component.val(ev));
+			var value =  ev;
+			if (component.val) {
+				ev.stopPropagation();
+				value = component.val(ev, schema);
+			}
+			onChange(value);
 		}
 	};
 }
 
-function selectInput(component, onChange, items) {
+function singleSelectCtrl(component, schema, onChange) {
 	return {
-		selected: (value, testVal) => value == testVal,
-		onSelect: function (ev) {
-			if (!component.index)
-				onChange(ev);
-			ev.stopPropagation();
-			onChange(items[component.index(ev)]);
+		selected: (testVal, value) => (value === testVal),
+		onSelect: function (ev, value) {
+			var val =  ev;
+			if (component.val) {
+				ev.stopPropagation();
+				val = component.val(ev, schema);
+			}
+			console.info(val);
+			if (val !== undefined)
+				onChange(val);
 		}
 	};
 }
 
-function multipleInput(component, onChange, items) {
+function multipleSelectCtrl(component, schema, onChange) {
 	return {
 		multiple: true,
-		selected: (value, testVal) => value.indexOf(testVal) >= 0,
-		onSelect: function (ev) {
-			var val = ev;
-			if (component.index) {
+		selected: (testVal, values) => (values.indexOf(testVal) >= 0),
+		onSelect: function (ev, values) {
+			if (component.val) {
 				ev.stopPropagation();
-				val = items[component.index(ev)];
+				onChange(component.val(ev, schema));
+			} else {
 			}
-			console.info('val', val);
 		}
 	};
 }
 
-function mapInput(component, {value, items, multiple, onChange}) {
-	if (!items)
-		return changeInput(component, onChange);
-	if (multiple || Array.isArray(value))
-		return multipleInput(component, onChange, items);
-	return selectInput(component, onChange, items);
+function ctrlMap(component, {schema, value, multiple, onChange}) {
+	if (!schema || !schema.enum && !Array.isArray(schema))
+		return inputCtrl(component, schema, onChange);
+	if (multiple || schema.type == 'array' || Array.isArray(value))
+		return multipleSelectCtrl(component, schema, onChange);
+	return singleSelectCtrl(component, schema, onChange);
 }
 
-function mapComponent({value, type, items, multiple}) {
-	if (!items) {
+function componentMap({schema, value, type, multiple}) {
+	if (!schema || !schema.enum && !Array.isArray(schema)) {
 		if (type == 'checkbox' || typeof value == 'boolean')
 			return CheckBox;
-		return (type == 'textarea') ? TextArea : TextLine;
+		return (type == 'textarea') ? TextArea : Generic;
 	}
-	if (multiple || Array.isArray(value))
-		return (type == 'checkbox') ? SetBox : Select;
-	return (type == 'radio') ? SetBox : Select;
+	if (multiple || schema.type == 'array' || Array.isArray(value))
+		return (type == 'checkbox') ? FieldSet : Select;
+	return (type == 'radio') ? FieldSet : Select;
 };
 
 export default class Input extends Component {
 	constructor({component, ...props}) {
 		super(props);
-		this.component = component || mapComponent(props);
-		this.input = mapInput(this.component, props);
+		this.component = component || componentMap(props);
+		this.ctrl = ctrlMap(this.component, props);
 		console.info('initialized');
+	}
+	shouldComponentUpdate(props) {
+		for (let key in props)
+			if (props[key] !== this.props[key]) return true;
+		for (let key in this.props)
+			if (!(key in props)) return true;
+		return false;
 	}
 	render() {
 		var { children, onChange, ...props } = this.props;
-		return (<this.component {...this.input} {...props}/>);
+		return h(this.component, {...this.ctrl, ...props});
 	}
 }

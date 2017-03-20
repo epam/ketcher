@@ -1,14 +1,14 @@
+import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
 /** @jsx h */
-
-import Dialog from './dialog';
+import Input from './input';
 
 class Form extends Component {
 	constructor(props) {
 		super(props);
 		let {schema, init, stateStore=this} = this.props;
 		if (init)
-			stateStore.state = Object.assign({}, init);
+			stateStore.state = defaults(schema, init);
 	}
 	getChildContext() {
 		let {schema, stateStore} = this.props;
@@ -25,35 +25,62 @@ class Form extends Component {
 	}
 }
 
-class Input extends Component {
+function Label({ labelPos, title, children }) {
+	return (
+		<label>{ labelPos != 'after' ? `${title}:` : '' }
+		  {children}
+		  { labelPos == 'after' ? title : '' }
+		</label>
+	);
+}
+
+class Field extends Component {
 	render() {
-		let { prop, component, ...props} = this.props;
-		let desc = this.props.desc ||
-			       this.context.schema.properties[prop]; // oneOf, pointer
-		var Component = (!component || component == 'string') ?
-			mapWidget(desc, component) : component;
+		let { name, ...props} = this.props;
+		let { schema, stateStore } = this.context;
+		let desc = props.schema || schema.properties[name];
+
+		console.info(jsonschema.validate(stateStore.state[name],
+										 desc));
 		return (
-			<Component name={prop} desc={desc}
-					   {...inputargs(this.context.stateStore, prop)} {...props}/>
+			<Label title={props.title || desc.title}>
+			  <Input name={name} schema={desc}
+					 {...inputargs(stateStore, name)} {...props}/>
+			</Label>
 		);
 	}
 }
 
-function inputargs(ctrl, item) {
+function inputargs(comp, name) {
 	return {
-		value: ctrl.state[item],
-		onChange: function (ev) {
-			console.info('onChange', ctrl.state);
-			ctrl.state[item] = ev.target.value;
-			ctrl.setState(ctrl.state);
-			ev.stopPropagation();
+		value: comp.state[name],
+		onChange: (value) => {
+			comp.setState({ ...comp.state, [name]: value});
+			console.info('onChange', comp.state);
 		}
 	};
 }
 
 ////
 
-export function constant(schema, prop) {
+function defaults(schema, instance) {
+	var res = jsonschema.validate(instance, schema, {
+		rewrite: function strip (instance, schema) {
+			//console.info('ii', instance, schema);
+			var res = {};
+			if (typeof instance != 'object' || !schema.properties)
+				return instance;
+			for(var p in schema.properties){
+				if (p in instance)
+					res[p] = instance[p];
+			}
+			return res;
+		}
+	});
+	return res.instance;
+}
+
+function constant(schema, prop) {
 	let desc = schema.properties[prop];
 	return desc.constant || desc.enum[0]; // see https://git.io/v6hyP
 }
@@ -81,5 +108,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { mapOf, selectListOf,
-		 Form, Input };
+export { Form, Field };

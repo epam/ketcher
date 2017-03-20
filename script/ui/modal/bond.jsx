@@ -2,16 +2,16 @@ import { h, render } from 'preact';
 /** @jsx h */
 
 import { bond as bondSchema } from '../structschema';
-import { Form, DialogForm, Input } from '../component/form';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function Bond (props) {
 	return (
 		<Form component={Dialog} title="Bond Properties" className="bond"
 			  schema={bondSchema} init={props} params={props}>
-			<Input prop="type"/>
-			<Input prop="topology"/>
-			<Input prop="center"/>
+			<Field name="type"/>
+			<Field name="topology"/>
+			<Field name="center"/>
 		</Form>
 	);
 }

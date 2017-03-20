@@ -72,6 +72,7 @@
     "es7-shim": "6.0.0",
     "filesaver.js": "0.2.0",
     "font-face-observer": "1.0.0",
+    "jsonschema": "1.1.1",
     "lru-memoize": "1.0.1",
     "normalize.css": "4.2.0",
     "preact": "6.3.0",

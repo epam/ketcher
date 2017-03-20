@@ -97,11 +97,14 @@ function enumSchema(schema, cbOrIndex) {
 		return (isTypeValue ? schema : schema.enum).map((item, i) => {
 			var title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
-			return cbOrIndex(title || item, item.value || item);
+			return cbOrIndex(title !== undefined ? title : item,
+							 item.value !== undefined ? item.value : item);
 		});
 	}
-	return !isTypeValue ? schema.enum[cbOrIndex] :
-		(schema[cbOrIndex].value ||  schema[cbOrIndex]);
+	if (!isTypeValue)
+		return schema.enum[cbOrIndex];
+	var res = schema[cbOrIndex];
+    return res.value !== undefined ? res.value : res;
 }
 
 function inputCtrl(component, schema, onChange) {

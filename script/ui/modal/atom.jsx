@@ -21,14 +21,14 @@ function ElementNumber(props, {stateStore}) {
 function Atom(props) {
 	return (
 		<Form component={Dialog} title="Atom Properties" className="atom-props"
-			  schema={atomSchema} init={props} params={props}>
+			  schema={atomSchema} valid={{ label: l => l.startsWith('B')}} init={props} params={props}>
 		  <fieldset className="main">
 			<Field name="label"/>
 			<Field name="alias"/>
 			<ElementNumber/>
-			<Field name="charge" maxlength="5" type="text"/>
+			<Field name="charge" maxlength="5"/>
 			<Field name="explicitValence"/>
-			<Field name="isotope" type="text"/>
+			<Field name="isotope"/>
 			<Field name="radical"/>
 		  </fieldset>
 		  <fieldset className="query">

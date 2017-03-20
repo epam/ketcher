@@ -10,7 +10,7 @@ GenericInput.val = function (ev, schema) {
 	var input = ev.target;
 	var isNumber = (input.type == 'number' || input.type == 'range') ||
 		(schema && (schema.type == 'number' || schema.type == 'integer'));
-	return (isNumber && input.value - 0) || input.value ;
+	return (isNumber && !isNaN(input.value - 0)) ? input.value - 0 : input.value ;
 };
 
 function TextArea({ value, onChange, ...props }) {

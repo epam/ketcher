@@ -3,34 +3,38 @@ import { h, Component } from 'preact';
 /** @jsx h */
 import Input from './input';
 
-const noop = v => v.value;
+const noop = v => v;
 
 class Form extends Component {
-	constructor(props) {
-		super(props);
-		let {schema, init} = this.props;
-		this.state = defaults(schema, init || {});
+	constructor({schema, init, ...props}) {
+		super();
+		this.schema = propSchema(schema, props);
+		this.state = this.schema.serialize(init || {}).instance;
 		console.info(this.state);
 	}
 	getChildContext() {
 		let {schema} = this.props;
 		return {schema, stateStore: this};
 	}
-	field(name, {serialize=(value => { value }), deserialize=(v => v.value), validate}) {
-		var value = this.state[name].value;
+	field(name) {
+		var value = this.state[name];
 		var self = this;
 		return {
-			value,
+			value: this.state[name],
 			onChange(value) {
-				self.setState({ ...self.state,
-								[name]: {value, pristine: false}});
+				self.setState({ ...self.state, [name]: value });
 				console.info('onChange', self.state);
 			}
 		};
 	}
+	result() {
+		let {schema} = this.props;
+		return jsonschema.validate(this.state, schema);
+	}
 	render() {
 		var {children, component, ...props} = this.props;
 		let Component = component || 'form';
+		console.info('validate', this.result());
 		return (
 			<Component {...props}>
 			  {children}
@@ -65,26 +69,43 @@ class Field extends Component {
 
 ////
 
-function defaults(schema, instance) {
-	var res = jsonschema.validate(instance, schema, {
-		rewrite: function strip (instance, schema) {
-			console.info('ii', instance, schema);
-			var res = {};
-			if (typeof instance != 'object' || !schema.properties)
-				return {
-					pristine: true,
-					value: instance !== undefined ? instance :
-						schema.default
-				};
-			for(var p in schema.properties){
-				if (p in instance) {
-					res[p] = instance[p];
-				}
-			}
+function propSchema(schema, {valid, serialize={}, deserialize={}}) {
+	var v = new jsonschema.Validator();
+	if (valid) {
+		schema = Object.assign({}, schema); // copy
+		schema.properties = Object.keys(valid).reduce((res, prop) => {
+			v.customFormat = valid[prop];
+			res[prop] = { format: prop, ...res[prop] };
 			return res;
+		}, schema.properties);
+	}
+	return {
+		serialize: inst => v.validate(inst, schema, {
+			rewrite: serializeRewrite.bind(null, serialize)
+		}),
+		deserialize: inst => v.validate(inst, schema, {
+			rewrite: deserializeRewrite.bind(null, deserialize)
+		})
+	};
+}
+
+function serializeRewrite(serializeMap, instance, schema) {
+	var res = {};
+	if (typeof instance != 'object' || !schema.properties) {
+		return instance !== undefined ? instance :
+			schema.default;
+	}
+
+	for(var p in schema.properties){
+		if (p in instance) {
+			res[p] = instance[p];
 		}
-	});
-	return res.instance;
+	}
+	return res;
+}
+
+function deserializeRewrite(deserializeMap, instance, schema) {
+	return instance;
 }
 
 function constant(schema, prop) {

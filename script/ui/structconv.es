@@ -40,15 +40,15 @@ function fromAtom(satom) {
 		alias: satom.alias,
 		pseudo: satom.pseudo,
 		label: satom.label,
-		charge: charge == 0 ? '' : charge,
-		isotope: isotope == 0 ? '' : isotope,
-		explicitValence: explicitValence < 0 ? '' : explicitValence,
+		charge: charge,
+		isotope: isotope,
+		explicitValence: explicitValence,
 		radical: satom.radical,
 		invRet: satom.invRet,
-		exactChangeFlag: satom.exactChangeFlag,
+		exactChangeFlag: !!satom.exactChangeFlag,
 		ringBondCount: satom.ringBondCount,
 		substitutionCount: satom.substitutionCount,
-		unsaturatedAtom: satom.unsaturatedAtom,
+		unsaturatedAtom: !!satom.unsaturatedAtom,
 		hCount: satom.hCount
 	};
 }

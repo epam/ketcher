@@ -16,20 +16,23 @@ export const atom = {
 			title: "Charge",
 			type: "integer",
 			minimum: -1000,
-			maximum: 1000
+			maximum: 1000,
+			default: 0
 		},
 		explicitValence: {
 			title: "Valency",
-			enum: ['', 0, 1, 2, 3, 4, 5, 6, 7, 8],
+			enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
 			enumNames: [
 				'', "0", "I", "II", "III",
 				"IV", "V", "VI", "VII", "VIII"
-			]
+			],
+			default: -1
 		},
 		isotope: {
 			title: "Isotope",
-			type: "string",
-			maxLength: 3
+			type: "integer",
+			minimum: 0,
+			default: 0
 		},
 		radical: {
 			title: "Radical",
@@ -39,7 +42,8 @@ export const atom = {
 				"Monoradical",
 				"Diradical (singlet)",
 				"Diradical (triplet)"
-			]
+			],
+			default: 0
 		},
 		ringBondCount: {
 			title: "Ring bond count",
@@ -47,14 +51,16 @@ export const atom = {
 			enumNames: [
 				'', "As drawn",
 				"0", "2", "3", "4"
-			]
+			],
+			default: 0
 		},
 		hCount: {
 			title: "H count",
 			enum: [0, 1, 2, 3, 4, 5],
 			enumNames: [
 				'', "0", "1", "2", "3", "4"
-			]
+			],
+			default: 0
 		},
 		substitutionCount: {
 			title: "Substitution count",
@@ -62,7 +68,8 @@ export const atom = {
 			enumNames: [
 				'', "As drawn",
 				"0", "1", "2", "3", "4", "5", "6"
-			]
+			],
+			default: 0
 		},
 		unsaturatedAtom: {
 			title: "Unsaturated",
@@ -75,7 +82,8 @@ export const atom = {
 				'',
 				"Inverts",
 				"Retains"
-			]
+			],
+			default: 0
 		},
 		exactChangeFlag: {
 			title: "Exact change",
@@ -124,12 +132,14 @@ export const bond = {
 				"Single/Double",
 				"Single/Aromatic",
 				"Double/Aromatic"
-			]
+			],
+			default: "single"
 		},
 		topology: {
 			title: "Topology",
 			enum: [0, 1, 2],
-			enumNames: ["Either", "Ring", "Chain"]
+			enumNames: ["Either", "Ring", "Chain"],
+			default: 0
 		},
 		center: {
 			title: "Reacting Center",
@@ -142,7 +152,8 @@ export const bond = {
 				"Made/broken",
 				"Order changes",
 				"Made/broken and changes"
-			] // "Order changes" x 3
+			], // "Order changes" x 3
+			default: 0
 		}
 	}
 };

@@ -3,16 +3,30 @@ import { h, Component } from 'preact';
 /** @jsx h */
 import Input from './input';
 
+const noop = v => v.value;
+
 class Form extends Component {
 	constructor(props) {
 		super(props);
-		let {schema, init, stateStore=this} = this.props;
-		if (init)
-			stateStore.state = defaults(schema, init);
+		let {schema, init} = this.props;
+		this.state = defaults(schema, init || {});
+		console.info(this.state);
 	}
 	getChildContext() {
-		let {schema, stateStore} = this.props;
+		let {schema} = this.props;
 		return {schema, stateStore: this};
+	}
+	field(name, {serialize=(value => { value }), deserialize=(v => v.value), validate}) {
+		var value = this.state[name].value;
+		var self = this;
+		return {
+			value,
+			onChange(value) {
+				self.setState({ ...self.state,
+								[name]: {value, pristine: false}});
+				console.info('onChange', self.state);
+			}
+		};
 	}
 	render() {
 		var {children, component, ...props} = this.props;
@@ -40,25 +54,13 @@ class Field extends Component {
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
-		console.info(jsonschema.validate(stateStore.state[name],
-										 desc));
 		return (
 			<Label title={props.title || desc.title}>
 			  <Input name={name} schema={desc}
-					 {...inputargs(stateStore, name)} {...props}/>
+					 {...stateStore.field(name, props)} {...props}/>
 			</Label>
 		);
 	}
-}
-
-function inputargs(comp, name) {
-	return {
-		value: comp.state[name],
-		onChange: (value) => {
-			comp.setState({ ...comp.state, [name]: value});
-			console.info('onChange', comp.state);
-		}
-	};
 }
 
 ////
@@ -66,13 +68,18 @@ function inputargs(comp, name) {
 function defaults(schema, instance) {
 	var res = jsonschema.validate(instance, schema, {
 		rewrite: function strip (instance, schema) {
-			//console.info('ii', instance, schema);
+			console.info('ii', instance, schema);
 			var res = {};
 			if (typeof instance != 'object' || !schema.properties)
-				return instance;
+				return {
+					pristine: true,
+					value: instance !== undefined ? instance :
+						schema.default
+				};
 			for(var p in schema.properties){
-				if (p in instance)
+				if (p in instance) {
 					res[p] = instance[p];
+				}
 			}
 			return res;
 		}

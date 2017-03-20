@@ -26,9 +26,9 @@ function Atom(props) {
 			<Field name="label"/>
 			<Field name="alias"/>
 			<ElementNumber/>
-			<Field name="charge" maxlength="4" type="text"/>
+			<Field name="charge" maxlength="5" type="text"/>
 			<Field name="explicitValence"/>
-			<Field name="isotope"/>
+			<Field name="isotope" type="text"/>
 			<Field name="radical"/>
 		  </fieldset>
 		  <fieldset className="query">

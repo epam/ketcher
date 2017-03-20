@@ -1,13 +1,17 @@
 import { h, Component } from 'preact';
 /** @jsx h */
 
-function Generic({ value, onChange, type="text", ...props}) {
-	// maxLength, min, max
+function GenericInput({ value, onChange, type="text", ...props}) {
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
 }
-Generic.val = (ev) => ev.target.value;
+GenericInput.val = function (ev, schema) {
+	var input = ev.target;
+	var isNumber = (input.type == 'number' || input.type == 'range') ||
+		(schema && (schema.type == 'number' || schema.type == 'integer'));
+	return (isNumber && input.value - 0) || input.value ;
+};
 
 function TextArea({ value, onChange, ...props }) {
 	return (
@@ -21,7 +25,11 @@ function CheckBox({ value, onChange, ...props}) {
 		<input type="checkbox" checked={value} onClick={onChange} {...props} />
 	);
 }
-CheckBox.val = (ev) => !!ev.target.checked;
+
+CheckBox.val = function (ev) {
+	ev.stopPropagation();
+	return !!ev.target.checked;
+};
 
 function Select({ schema, value, selected, onSelect, ...props }) {
 	return (
@@ -66,9 +74,14 @@ function FieldSet({ schema, value, selected, onSelect, type="radio", ...props}) 
 }
 
 FieldSet.val = function (ev, schema) {
-	if (ev.target.tagName != 'INPUT')
-		return undefined;
 	var input = ev.target;
+	if (ev.target.tagName != 'INPUT') {
+		ev.preventDefault();
+		return undefined;
+	}
+	ev.stopPropagation();
+    // Hm.. looks like premature optimization
+	//      should we inline this?
 	var fieldset = input.parentNode.parentNode;
 	var res = [].reduce.call(fieldset.querySelectorAll('input'),
 				   function (res, inp, i) {
@@ -92,15 +105,19 @@ function enumSchema(schema, cbOrIndex) {
 }
 
 function inputCtrl(component, schema, onChange) {
+	var props = {};
+	if (schema) {
+		// TODO: infer maxLength, min, max, step, etc
+		if (schema.type == 'number' || schema.type == 'integer')
+			props = { type: 'number'};
+	}
 	return {
 		onChange: function(ev) {
-			var value =  ev;
-			if (component.val) {
-				ev.stopPropagation();
-				value = component.val(ev, schema);
-			}
-			onChange(value);
-		}
+			var val =  !component.val ? ev :
+				component.val(ev, schema);
+			onChange(val);
+		},
+		...props
 	};
 }
 
@@ -108,12 +125,8 @@ function singleSelectCtrl(component, schema, onChange) {
 	return {
 		selected: (testVal, value) => (value === testVal),
 		onSelect: function (ev, value) {
-			var val =  ev;
-			if (component.val) {
-				ev.stopPropagation();
-				val = component.val(ev, schema);
-			}
-			console.info(val);
+			var val = !component.val ? ev :
+				component.val(ev, schema);
 			if (val !== undefined)
 				onChange(val);
 		}
@@ -123,35 +136,49 @@ function singleSelectCtrl(component, schema, onChange) {
 function multipleSelectCtrl(component, schema, onChange) {
 	return {
 		multiple: true,
-		selected: (testVal, values) => (values.indexOf(testVal) >= 0),
+		selected: (testVal, values) =>
+			(values && values.indexOf(testVal) >= 0),
 		onSelect: function (ev, values) {
 			if (component.val) {
-				ev.stopPropagation();
-				onChange(component.val(ev, schema));
+				let val = component.val(ev, schema);
+				if (val !== undefined)
+					onChange(val);
 			} else {
+				var i = values ? values.indexOf(ev) : -1;
+				if (i < 0)
+					onChange(values ? [ev, ...values] : [ev]);
+				else
+					onChange([...values.slice(0, i),
+							  ...values.slice(i + 1)]);
 			}
 		}
 	};
 }
 
-function ctrlMap(component, {schema, value, multiple, onChange}) {
+function ctrlMap(component, {schema, multiple, onChange}) {
 	if (!schema || !schema.enum && !Array.isArray(schema))
 		return inputCtrl(component, schema, onChange);
-	if (multiple || schema.type == 'array' || Array.isArray(value))
+	if (multiple || schema.type == 'array')
 		return multipleSelectCtrl(component, schema, onChange);
 	return singleSelectCtrl(component, schema, onChange);
 }
 
-function componentMap({schema, value, type, multiple}) {
+function componentMap({schema, type, multiple}) {
 	if (!schema || !schema.enum && !Array.isArray(schema)) {
-		if (type == 'checkbox' || typeof value == 'boolean')
+		if (type == 'checkbox' || schema && schema.type == 'boolean')
 			return CheckBox;
-		return (type == 'textarea') ? TextArea : Generic;
+		return (type == 'textarea') ? TextArea : GenericInput;
 	}
-	if (multiple || schema.type == 'array' || Array.isArray(value))
+	if (multiple || schema.type == 'array')
 		return (type == 'checkbox') ? FieldSet : Select;
 	return (type == 'radio') ? FieldSet : Select;
 };
+
+function shallowCompare(a, b) {
+	for (let i in a) if (!(i in b)) return true;
+	for (let i in b) if (a[i] !== b[i]) { return true; }
+	return false;
+}
 
 export default class Input extends Component {
 	constructor({component, ...props}) {
@@ -160,12 +187,9 @@ export default class Input extends Component {
 		this.ctrl = ctrlMap(this.component, props);
 		console.info('initialized');
 	}
-	shouldComponentUpdate(props) {
-		for (let key in props)
-			if (props[key] !== this.props[key]) return true;
-		for (let key in this.props)
-			if (!(key in props)) return true;
-		return false;
+	shouldComponentUpdate({ children, onChange, ...nextProps }) {
+		var { children, onChange, ...oldProps} = this.props;
+		return shallowCompare(oldProps, nextProps);
 	}
 	render() {
 		var { children, onChange, ...props } = this.props;

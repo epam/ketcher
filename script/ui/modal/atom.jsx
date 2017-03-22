@@ -21,7 +21,7 @@ function ElementNumber(props, {stateStore}) {
 function Atom(props) {
 	return (
 		<Form component={Dialog} title="Atom Properties" className="atom-props"
-			  schema={atomSchema} customValid={{ label: l => l.startsWith('B') }} init={props} params={props}>
+			  schema={atomSchema} customValid={{ label: l => atomValid(l) }} init={props} params={props}>
 		  <fieldset className="main">
 			<Field name="label"/>
 			<Field name="alias"/>
@@ -45,6 +45,15 @@ function Atom(props) {
 		  </fieldset>
 		</Form>
 	);
+}
+
+function atomValid(l) {
+	if (!l) return false;
+	var label = l[0].toUpperCase() + l.slice(1).toLowerCase();
+	var elem = element.map[label];
+	return !(elem == null && label !== 'A' &&
+	label !== '*' && label !== 'Q' &&
+	label !== 'X' && label !== 'R');
 }
 
 export default function dialog(params) {

@@ -34,65 +34,6 @@ function automap (params) {
 	inputDialog('automap', params);
 };
 
-function atomProps (params) {
-	var dlg = inputDialog('atomProps', Object.assign({}, params, {
-		onOk: function (res) { res.label = atomChange(res.label); stopHandlers(); params.onOk(res); },
-		onCancel: function (res) { stopHandlers(); }
-	}));
-	var numberInput = dlg.select('.number')[0];
-	var handlers = [];
-
-	function atomChange(val) {
-		var change = (this == val.target);
-		var label = !change ? val : this.value.trim()[0].toUpperCase()+this.value.trim().slice(1).toLowerCase();
-		if (change)
-			this.value = label;
-		var elem = element.map[label];
-		if (elem == null && label !== 'A' &&
-		    label !== '*' && label !== 'Q' &&
-		    label !== 'X' && label !== 'R') { // generics ?
-
-			console.warn('Incorrect input params label:', label);
-			label = this.value = params.label;
-
-			if (label !== 'A' && label !== '*') {
-				elem = element.map[label];
-			}
-		}
-
-		if (label == 'A' || label == '*') {
-			numberInput.value = 'any';
-		} else if (!elem) {
-			numberInput.value = '';
-		} else {
-			numberInput.value = elem.toString();
-		}
-		return label;
-	}
-	function stopHandlers() {
-		handlers.forEach(function (h) { h.stop(); });
-	}
-
-	handlers[0] = $(dlg.charge).on('change', function () {
-		if (this.value.trim() === '' || this.value == '0') {
-			this.value = '';
-		} else if (this.value.match(/^[1-9][0-9]{0,1}[-+]$/)) {
-			this.value = (this.value.endsWith('-') ? '-' : '') + this.value.substr(0, this.value.length - 1);
-		} else if (!this.value.match(/^[+-]?[1-9][0-9]{0,1}$/)) {
-			this.value = params.charge;
-		}
-	});
-	handlers[1] = $(dlg.isotope).on('change', function () {
-		if (this.value == numberInput.value || this.value.trim() == '' || this.value == '0') {
-			this.value = '';
-		} else if (!this.value.match(/^[1-9][0-9]{0,2}$/)) {
-			this.value = params.isotope;
-		}
-	});
-	handlers[2] = $(dlg.label).on('change', atomChange);
-	atomChange(params.label);
-};
-
 function rgroupLogic (params) {
 	var dlg = inputDialog('rgroupLogic', Object.assign({}, params, {
 		range: params.range || '>0',  // structConv

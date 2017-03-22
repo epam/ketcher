@@ -36,8 +36,9 @@ function fromAtom(satom) {
 	var charge = satom.charge - 0;
 	var isotope = satom.isotope - 0;
 	var explicitValence = satom.explicitValence - 0;
+	var alias = satom.alias || '';
 	return {
-		alias: satom.alias,
+		alias: alias,
 		pseudo: satom.pseudo,
 		label: satom.label,
 		charge: charge,

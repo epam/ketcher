@@ -21,7 +21,7 @@ function ElementNumber(props, {stateStore}) {
 function Atom(props) {
 	return (
 		<Form component={Dialog} title="Atom Properties" className="atom-props"
-			  schema={atomSchema} valid={{ label: l => l.startsWith('B')}} init={props} params={props}>
+			  schema={atomSchema} customValid={{ label: l => l.startsWith('B') }} init={props} params={props}>
 		  <fieldset className="main">
 			<Field name="label"/>
 			<Field name="alias"/>

@@ -28,15 +28,16 @@ class Form extends Component {
 		};
 	}
 	result() {
-		let {schema} = this.props;
-		return jsonschema.validate(this.state, schema);
+		return this.schema.serialize(this.state).instance;
 	}
 	render() {
 		var {children, component, ...props} = this.props;
 		let Component = component || 'form';
 		console.info('validate', this.result());
 		return (
-			<Component {...props}>
+			<Component {...props}
+				result = {() => this.result()}
+				valid  = {() => this.schema.serialize(this.state).valid} >
 			  {children}
 			</Component>
 		);
@@ -69,12 +70,12 @@ class Field extends Component {
 
 ////
 
-function propSchema(schema, {valid, serialize={}, deserialize={}}) {
+function propSchema(schema, {customValid, serialize={}, deserialize={}}) {
 	var v = new jsonschema.Validator();
-	if (valid) {
+	if (customValid) {
 		schema = Object.assign({}, schema); // copy
-		schema.properties = Object.keys(valid).reduce((res, prop) => {
-			v.customFormat = valid[prop];
+		schema.properties = Object.keys(customValid).reduce((res, prop) => {
+			v.customFormats[prop] = customValid[prop];
 			res[prop] = { format: prop, ...res[prop] };
 			return res;
 		}, schema.properties);

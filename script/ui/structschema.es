@@ -20,7 +20,7 @@ export const atom = {
 			default: 0
 		},
 		explicitValence: {
-			title: "Valency",
+			title: "Valence",
 			enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
 			enumNames: [
 				'', "0", "I", "II", "III",
@@ -269,6 +269,20 @@ export const rgroup = {
 			title: "Condition",
 			type: "integer",
 			minium: 0
+		}
+	}
+};
+
+export const automap = {
+	title: "Reaction Auto-Mapping",
+	type: "object",
+	required: ["mode"],
+	properties: {
+		mode: {
+			title: "Mode",
+			enum: ["discard", "keep", "alter", "clear"],
+			enumNames: ["Discard", "Keep", "Alter", "Clear"],
+			default: "discard"
 		}
 	}
 };

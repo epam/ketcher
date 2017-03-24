@@ -603,13 +603,11 @@ function automap () {
 		// not a reaction explicit or implicit
 		alert('Auto-Mapping can only be applied to reactions');
 	else {
-		modal.automap({
-			onOk: function (res) {
-				return serverTransform('automap', res);
-			}
+		return dialog(modal.automap).then(function (res) {
+			serverTransform('automap', res);
 		});
 	}
-};
+}
 
 function load(structStr, options) {
 	options = options || {};

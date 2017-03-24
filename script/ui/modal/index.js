@@ -24,10 +24,7 @@ var attachDialog = require('./attach').default;
 var bondDialog = require('./bond').default;
 var atomDialog = require('./atom').default;
 var attachmentPointsDialog = require('./attach-points').default;
-
-function automap (params) {
-	inputDialog('automap', params);
-};
+var automapDialog = require('./automap').default;
 
 function rgroupLogic (params) {
 	var dlg = inputDialog('rgroupLogic', Object.assign({}, params, {
@@ -77,7 +74,7 @@ module.exports = {
 	attachmentPoints: attachmentPointsDialog,
 	atomProps: atomDialog,
 	bondProps: bondDialog,
-	automap: automap,
+	automap: automapDialog,
 	rgroupLogic: rgroupLogic,
 	sgroup: sgroup,
 	open: openDialog,

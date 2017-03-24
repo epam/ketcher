@@ -23,12 +23,7 @@ var attachDialog = require('./attach').default;
 
 var bondDialog = require('./bond').default;
 var atomDialog = require('./atom').default;
-
-function attachmentPoints (params) {
-	inputDialog('attachmentPoints', Object.assign({
-		onOk: function (res) { params.onOk({ap: res}); }
-	}, params.ap));
-};
+var attachmentPointsDialog = require('./attach-points').default;
 
 function automap (params) {
 	inputDialog('automap', params);
@@ -79,7 +74,7 @@ module.exports = {
 	periodTable: periodTable,
 	rgroup: rgroupDialog,
 	genericGroups: genericGroups,
-	attachmentPoints: attachmentPoints,
+	attachmentPoints: attachmentPointsDialog,
 	atomProps: atomDialog,
 	bondProps: bondDialog,
 	automap: automap,

@@ -110,7 +110,7 @@ function initEditor(editor) {
 		if (element.map[elem.label]) {
 			dlg = dialog(modal.atomProps, elem);
 		} else if (Object.keys(elem).length == 1 && 'ap' in elem) {
-			dlg = dialog(modal.attachmentPoints, elem);
+			dlg = dialog(modal.attachmentPoints, elem.ap).then(function (res) { return {ap: res}; });
 		} else if (elem.type == 'list' || elem.type == 'not-list') {
 			dlg = elemTable(elem);
 		} else if (elem.type == 'rlabel') {

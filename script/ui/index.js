@@ -136,6 +136,7 @@ function initEditor(editor) {
 			editor.struct().rgroups.each(function (rgid) {
 				rgids.push(rgid);
 			});
+			if (!rgroup.range) rgroup.range = '>0';
 			return dialog(modal.rgroupLogic,
 			              Object.assign({ rgroupLabels: rgids },
 			                            rgroup));

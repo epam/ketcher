@@ -20,7 +20,7 @@ class Form extends Component {
 		var value = this.state[name];
 		var self = this;
 		return {
-			value: this.state[name],
+			value: value,
 			onChange(value) {
 				self.setState({ ...self.state, [name]: value });
 				console.info('onChange', self.state);

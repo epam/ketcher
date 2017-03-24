@@ -25,39 +25,7 @@ var bondDialog = require('./bond').default;
 var atomDialog = require('./atom').default;
 var attachmentPointsDialog = require('./attach-points').default;
 var automapDialog = require('./automap').default;
-
-function rgroupLogic (params) {
-	var dlg = inputDialog('rgroupLogic', Object.assign({}, params, {
-		range: params.range || '>0',  // structConv
-		onOk: function (res) {
-			params.onOk({
-				range: rangeConv(res.range),
-				resth: res.resth == 1,
-				ifthen: parseInt(res.ifthen, 10)
-			});
-		}
-	}));
-	function rangeConv(range) { // structConv
-		var res = range.replace(/\s*/g, '').replace(/,+/g, ',')
-		    .replace(/^,/, '').replace(/,$/, '');
-		var isValid = res.split(',').all(function (s) {
-			return s.match(/^[>,<,=]?[0-9]+$/g) ||
-				   s.match(/^[0-9]+\-[0-9]+$/g);
-		});
-		if (!isValid)
-			throw 'Bad occurrence value';
-		return res;
-	}
-	var ifOpts = params.rgroupLabels.reduce(function (res, label) {
-		if (params.label == label)
-			return res;
-		return res + '<option value="' + label + '">' +
-			'IF R' + params.label + ' THEN R' + label + '</option>';
-	}, '<option value="0">Always</option>');
-
-	$(dlg.ifthen).update(ifOpts);
-	dlg.ifthen.value = params.ifthen;
-};
+var rgroupLogic = require('./rgroup-logic').default;
 
 function sgroup(params) {
 	if (sgroupSpecialDialog.match(params))

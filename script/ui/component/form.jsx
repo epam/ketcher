@@ -3,14 +3,11 @@ import { h, Component } from 'preact';
 /** @jsx h */
 import Input from './input';
 
-const noop = v => v;
-
 class Form extends Component {
-	constructor({schema, init, ...props}) {
+	constructor({schema, init={}, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		this.state = this.schema.serialize(init || {}).instance;
-		console.info(this.state);
+		this.state = this.schema.serialize(init).instance;
 	}
 	getChildContext() {
 		let {schema} = this.props;

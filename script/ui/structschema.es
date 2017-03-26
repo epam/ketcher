@@ -272,17 +272,3 @@ export const rgroup = {
 		}
 	}
 };
-
-export const automap = {
-	title: "Reaction Auto-Mapping",
-	type: "object",
-	required: ["mode"],
-	properties: {
-		mode: {
-			title: "Mode",
-			enum: ["discard", "keep", "alter", "clear"],
-			enumNames: ["Discard", "Keep", "Alter", "Clear"],
-			default: "discard"
-		}
-	}
-};

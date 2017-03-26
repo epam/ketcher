@@ -47,13 +47,12 @@ function Atom(props) {
 	);
 }
 
-function atomValid(l) {
-	if (!l) return false;
-	var label = l[0].toUpperCase() + l.slice(1).toLowerCase();
-	var elem = element.map[label];
-	return !(elem == null && label !== 'A' &&
-	label !== '*' && label !== 'Q' &&
-	label !== 'X' && label !== 'R');
+function capitalize(str) {
+	return str[0].toUpperCase() + str.slice(1).toLowerCase();
+}
+
+function atomValid(label) {
+	return label && !!element.map[capitalize(label)];
 }
 
 export default function dialog(params) {

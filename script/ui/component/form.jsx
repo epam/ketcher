@@ -13,13 +13,18 @@ class Form extends Component {
 		let {schema} = this.props;
 		return {schema, stateStore: this};
 	}
-	field(name) {
+	changeSchema(schema) {
+		this.schema = propSchema(schema, this.props);
+		this.setState(this.schema.serialize(this.state).instance);
+	}
+	field(name, props) {
 		var value = this.state[name];
 		var self = this;
 		return {
 			value: value,
 			onChange(value) {
 				self.setState({ ...self.state, [name]: value });
+				if (props.onChange) props.onChange(value);
 				console.info('onChange', self.state);
 			}
 		};
@@ -134,4 +139,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { Form, Field };
+export { Form, Field, mapOf, selectListOf };

@@ -1,6 +1,6 @@
 var element = require('../../chem/element');
 
-var sgroupDialog = require('./sgroup');
+// var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
 
 var openDialog = require('./open').default;
@@ -24,6 +24,7 @@ var atomDialog = require('./atom').default;
 var attachmentPointsDialog = require('./attach-points').default;
 var automapDialog = require('./automap').default;
 var rgroupLogic = require('./rgroup-logic').default;
+var sgroupDialog = require('./sgroup1').default;
 
 function sgroup(params) {
 	if (sgroupSpecialDialog.match(params))

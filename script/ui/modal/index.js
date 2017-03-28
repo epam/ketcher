@@ -1,4 +1,4 @@
-var sgroupSpecialDialog = require('./sgroup-special');
+var { sgroupSpecialDialog } = require('./sgroup-special');
 
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
@@ -24,12 +24,6 @@ var automapDialog = require('./automap').default;
 var rgroupLogicDialog = require('./rgroup-logic').default;
 var sgroupDialog = require('./sgroup').default;
 
-function sgroup(params) {
-	if (sgroupSpecialDialog.match(params))
-		return sgroupSpecialDialog(params);
-	return sgroupDialog(params);
-};
-
 templatesDialog.default.init = templatesDialog.init;
 
 module.exports = {
@@ -41,7 +35,8 @@ module.exports = {
 	bondProps: bondDialog,
 	automap: automapDialog,
 	rgroupLogic: rgroupLogicDialog,
-	sgroup: sgroup,
+	sgroup: sgroupDialog,
+	sgroupSpecial: sgroupSpecialDialog,
 	open: openDialog,
 	save: saveDialog,
 	templates: templatesDialog.default,

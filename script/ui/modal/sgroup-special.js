@@ -213,9 +213,12 @@ var specialChoices = [
 	  ]}
 ];
 
-dialog.match = function (params) {
+function match(params) {
 	return params.type == 'DAT' && (!params.attrs.fieldName ||
 		!!matchContext(params.attrs.fieldName, params.attrs.fieldValue));
 };
 
-module.exports = dialog;
+module.exports = {
+	sgroupSpecialDialog: dialog,
+	match: match
+};

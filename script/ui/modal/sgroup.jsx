@@ -32,8 +32,8 @@ class Sgroup extends Component {
 		this.state = { type: props.type }
 	}
 
-	content = (desc) => Object.keys(desc.properties).map(prop =>
-		 prop !== 'type' ? <Field name={prop} key={prop}/> : null
+	content = (type) => Object.keys(schemes[type].properties).map(prop =>
+		 prop !== 'type' ? <Field name={prop} key={`${type}-${prop}`} /> : null
  	);
 
 	render() {
@@ -43,7 +43,9 @@ class Sgroup extends Component {
 			<Form component={Dialog} title="S-Group Properties" className="sgroup"
 				  schema={desc} init={this.props} params={this.props}>
 				<SelectOneOf name="type" schemeUpdate={(type) => this.setState({type: type})}/>
-				{ this.content(desc) }
+				<fieldset class={type === 'DAT' ? 'data' : 'base'}>
+					{ this.content(type) }
+				</fieldset>
 			</Form>
 		);
 	}

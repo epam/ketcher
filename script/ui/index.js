@@ -17,6 +17,7 @@ var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
+var { match } = require('./modal/sgroup-special');
 
 var HISTORY_LENGTH = 32;
 
@@ -151,7 +152,13 @@ function initEditor(editor) {
 		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
-		return dialog(modal.sgroup, sgroup); // TODO: sdata convert not working
+		if (match(sgroup)) {
+			return dialog(modal.sgroupSpecial, sgroup);
+		}
+		var dlg = dialog(modal.sgroup, structConv.fromSgroup(sgroup));
+		return dlg.then(function (res) {
+			return structConv.toSgroup(res);
+		});
 	});
 	editor.on('quickEdit', function (atom) {
 		return dialog(modal.labelEdit, atom);

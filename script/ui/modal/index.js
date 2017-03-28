@@ -1,6 +1,3 @@
-var element = require('../../chem/element');
-
-// var sgroupDialog = require('./sgroup');
 var sgroupSpecialDialog = require('./sgroup-special');
 
 var openDialog = require('./open').default;
@@ -19,12 +16,13 @@ var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
+// schemify dialogs
 var bondDialog = require('./bond').default;
 var atomDialog = require('./atom').default;
 var attachmentPointsDialog = require('./attach-points').default;
 var automapDialog = require('./automap').default;
-var rgroupLogic = require('./rgroup-logic').default;
-var sgroupDialog = require('./sgroup1').default;
+var rgroupLogicDialog = require('./rgroup-logic').default;
+var sgroupDialog = require('./sgroup').default;
 
 function sgroup(params) {
 	if (sgroupSpecialDialog.match(params))
@@ -42,7 +40,7 @@ module.exports = {
 	atomProps: atomDialog,
 	bondProps: bondDialog,
 	automap: automapDialog,
-	rgroupLogic: rgroupLogic,
+	rgroupLogic: rgroupLogicDialog,
 	sgroup: sgroup,
 	open: openDialog,
 	save: saveDialog,

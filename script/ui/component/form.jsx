@@ -139,4 +139,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { Form, Field, mapOf, selectListOf };
+export { Form, Field, mapOf };

@@ -226,22 +226,26 @@ export const sgroup = {
 			properties: {
 				type: { enum: [ "DAT" ] },
 				fieldName: {
+					title: 'Field name',
 					type: "string",
 					default: "",
 					minLength: 1,
 					invalidMessage: "Please, specify field name"
 				},
 				fieldValue: {
+					title: 'Field value',
 					type: "string",
 					default: "",
 					minLength: 1,
 					invalidMessage: "Please, specify field value"
 				},
 				attached: {
+					title: 'Attached',
 					type: "boolean",
 					default: false
 				},
 				absolute: {
+					title: 'Absolute',
 					type: "boolean",
 					default: true
 				}

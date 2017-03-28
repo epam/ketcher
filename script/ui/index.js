@@ -145,10 +145,13 @@ function initEditor(editor) {
 		}
 	});
 	editor.on('sgroupEdit', function (sgroup) {
-		return dialog(modal.sgroup, sgroup);
+		var dlg = dialog(modal.sgroup, structConv.fromSgroup(sgroup));
+		return dlg.then(function (res) {
+			return structConv.toSgroup(res);
+		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
-		return dialog(modal.sgroup, sgroup);
+		return dialog(modal.sgroup, sgroup); // TODO: sdata convert not working
 	});
 	editor.on('quickEdit', function (atom) {
 		return dialog(modal.labelEdit, atom);

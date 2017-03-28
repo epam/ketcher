@@ -209,3 +209,16 @@ const bondCaptionMap = {
 		stereo: Struct.Bond.PATTERN.STEREO.NONE
 	}
 };
+
+export function fromSgroup(ssgroup) {
+	const type = ssgroup.type || 'GEN';
+	return Object.assign({ type: type }, ssgroup.attrs);
+}
+
+export function toSgroup(sgroup) {
+	let { type, ...props } = sgroup;
+	return {
+		type,
+		attrs: props
+	}
+}

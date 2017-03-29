@@ -13,6 +13,7 @@ function IfThenSelect(props, {schema, stateStore}) {
 		enum: [0],
 		enumNames: ['Always']
 	};
+
 	rgids.forEach((label) => {
 		if (props.label !== label) {
 			desc.enum.push(label);

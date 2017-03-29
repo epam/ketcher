@@ -7,13 +7,15 @@ import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
 import SaveButton from '../component/savebutton';
+import OpenButton from '../component/openbutton';
 import Input from '../component/input';
 
 function Settings(props) {
 	let tabs = ['Rendering customization options', '3D Viewer'];
 	let activeTabs = {'0': true, '1': false};
 	return (
-		<Form component={Dialog} buttons={[<SaveOpts/>, "OK", "Cancel"]}
+		<Form component={Dialog}
+			  buttons={[<OpenOpts server={props.server}/>, <SaveOpts/>, <Reset/>, "OK", "Cancel"]}
 			  title="Settings" className="settings-new"
 			  schema={settingsSchema} init={props} params={props}>
 			<Accordion className="accordion" captions={tabs} active={activeTabs}>
@@ -78,6 +80,30 @@ const SaveOpts = (props, {stateStore}) =>
 		Save To File…
 	</SaveButton>;
 
+const OpenOpts = (props, {stateStore}) =>
+	<OpenButton className="open" server={props.server}
+				onLoad={ newOpts => {
+					try {
+						stateStore.setState(JSON.parse(newOpts));
+					} catch (ex) {
+						console.info('Bad file');
+					}
+				} }>
+		Open From File…
+	</OpenButton>;
+
+const Reset = (props, {stateStore}) =>
+	<button onClick={() => stateStore.setState(defaultOpts())}>
+		Reset
+	</button>;
+
+function defaultOpts() {
+	return Object.keys(settingsSchema.properties).reduce((res, prop) => {
+		res[prop] = settingsSchema.properties[prop].default;
+		return res;
+	}, {});
+}
+
 function convertValue(value, measureFrom, measureTo) {
 	if (!value) return null;
 	var measureMap = {
@@ -87,7 +113,7 @@ function convertValue(value, measureFrom, measureTo) {
 		'inch': 96,
 	};
 	return (measureTo === 'px' || measureTo === 'pt')
-		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed() - 0
+		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed( ) - 0
 		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
 }
 

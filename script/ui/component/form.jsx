@@ -17,14 +17,14 @@ class Form extends Component {
 		this.schema = propSchema(schema, this.props);
 		this.setState(this.schema.serialize(this.state).instance);
 	}
-	field(name, props) {
+	field(name, onChange) {
 		var value = this.state[name];
 		var self = this;
 		return {
 			value: value,
 			onChange(value) {
 				self.setState({ ...self.state, [name]: value });
-				if (props.onChange) props.onChange(value);
+				if (onChange) onChange(value);
 				console.info('onChange', self.state);
 			}
 		};
@@ -57,14 +57,14 @@ function Label({ labelPos, title, children }) {
 
 class Field extends Component {
 	render() {
-		let { name, ...props} = this.props;
+		let { name, onChange, ...props} = this.props;
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
 		return (
 			<Label title={props.title || desc.title}>
 			  <Input name={name} schema={desc}
-					 {...stateStore.field(name, props)} {...props}/>
+					 {...stateStore.field(name, onChange)} {...props}/>
 			</Label>
 		);
 	}

@@ -8,6 +8,7 @@ import Dialog from '../component/dialog';
 const schemes = mapOf(sgroupSchema, 'type');
 
 function SelectOneOf(props, { stateStore }) {
+	let {name, onChange, ...prop} = props;
 	let selectDesc = {
 		title: 'Type',
 		enum: [],
@@ -18,12 +19,11 @@ function SelectOneOf(props, { stateStore }) {
 		selectDesc.enumNames.push(schemes[item].title);
 	});
 	const changeSchema = type => {
-		props.schemeUpdate(type);
+		onChange(type);
 		stateStore.changeSchema(schemes[type]);
 	};
 	return <Field schema={selectDesc}
-				  {...stateStore.field(props.name, { onChange: changeSchema })}
-				  {...props}/>;
+				  {...stateStore.field(name, changeSchema)} {...prop}/>;
 }
 
 class Sgroup extends Component {
@@ -42,7 +42,7 @@ class Sgroup extends Component {
 		return (
 			<Form component={Dialog} title="S-Group Properties" className="sgroup"
 				  schema={desc} init={this.props} params={this.props}>
-				<SelectOneOf name="type" schemeUpdate={(type) => this.setState({type: type})}/>
+				<SelectOneOf name="type" onChange={(type) => this.setState({type: type})}/>
 				<fieldset class={type === 'DAT' ? 'data' : 'base'}>
 					{ this.content(type) }
 				</fieldset>

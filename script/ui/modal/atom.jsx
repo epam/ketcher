@@ -2,7 +2,7 @@ import { h, render } from 'preact';
 /** @jsx h */
 
 import { atom as atomSchema } from '../structschema';
-import { Form, DialogForm, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 import element from '../../chem/element';

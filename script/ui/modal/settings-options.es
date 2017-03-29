@@ -6,17 +6,20 @@ export const settings = {
 		// Render
 		showValenceWarnings: {
 			title: "Show valence warnings",
-			type: "boolean",
+			enum: [true, false],
+			enumNames: ['on', 'off'],
 			default: true
 		},
 		atomColoring: {
 			title: "Atom coloring",
-			type: "boolean",
+			enum: [true, false],
+			enumNames: ['on', 'off'],
 			default: true
 		},
 		hideChiralFlag: {
 			title: "Do not show the Chiral flag",
-			type: "boolean",
+			enum: [true, false],
+			enumNames: ['on', 'off'],
 			default: false
 		},
 		font: {

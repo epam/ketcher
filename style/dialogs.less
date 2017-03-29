@@ -287,11 +287,29 @@ form.rgroup-logic {
 }
 
 form.settings-new {
+	width: 30em;
+	.save {
+		&:extend(button all);
+		cursor: default;
+		float: left;
+	}
+
 	label {
 		display: block;
 		text-align: right;
 		line-height: @input-height;
 		height: @input-height;
+		select, input {
+			width: 50%;
+		}
+	}
+	label.measure-field {
+		input {
+			width: 34%;
+		}
+		select {
+			width: 15%;
+		}
 	}
 }
 

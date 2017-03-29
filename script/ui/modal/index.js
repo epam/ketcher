@@ -1,4 +1,4 @@
-var { sgroupSpecialDialog } = require('./sgroup-special');
+var sgroupSpecialDialog = require('./sgroup-special').sgroupSpecialDialog;
 
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;

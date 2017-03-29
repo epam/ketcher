@@ -17,7 +17,7 @@ var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
-var { match } = require('./modal/sgroup-special');
+var match = require('./modal/sgroup-special').match;
 
 var HISTORY_LENGTH = 32;
 
@@ -840,11 +840,12 @@ var actionMap = {
 		});
 	},
 	'settings': function () {
-		dialog(modal.settings, { server: server }).then(function (res) {
-			if (!res.onlyCurrentSession)
-				localStorage.setItem("ketcher-opts",  JSON.stringify(res));
-			console.log("ketcher-opts", res.localStorageOpts);
-			ui.editor.options(res.opts);
+		var options = JSON.parse(localStorage.getItem("ketcher-opts"));
+		options['server'] = server;
+		dialog(modal.settings, options).then(function (res) {
+			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
+			console.log("ketcher-opts", res);
+			ui.editor.options(res);
 			ui.render = ui.editor.render;
 		});
 	},

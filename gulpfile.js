@@ -218,7 +218,7 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
 		dir: options.dist,
 		browserify: bundleConfig,
 		stream: process.stdout,
-		// host: '0.0.0.0',
+		host: '0.0.0.0',
 		live: true,
 		watchGlob: `${options.dist}/*.{html,css}`,
 		staticOptions: {

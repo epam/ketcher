@@ -842,7 +842,7 @@ var actionMap = {
 	'settings': function () {
 		dialog(modal.settings, { server: server }).then(function (res) {
 			if (!res.onlyCurrentSession)
-				localStorage.setItem("ketcher-opts",  JSON.stringify(res.localStorageOpts));
+				localStorage.setItem("ketcher-opts",  JSON.stringify(res));
 			console.log("ketcher-opts", res.localStorageOpts);
 			ui.editor.options(res.opts);
 			ui.render = ui.editor.render;

@@ -61,6 +61,12 @@ class Check extends Component {
 		};
 
 		this.checkOptsTypes = Object.keys(checkSchema.properties);
+
+		this.initState = this.checkOptsTypes.reduce((acc, key) => {
+			acc[key] = true;
+			return acc;
+		}, {});
+
 		this.checkMolecule(this.checkOptsTypes);
 	}
 
@@ -88,18 +94,13 @@ class Check extends Component {
 	render(props) {
 		var tabs = ['Check', 'Settings'];
 
-		const initState = this.checkOptsTypes.reduce((acc, key) => {
-			acc[key] = true;
-			return acc;
-		}, {});
-
 		const moleculeErrorsTypes = Object.keys(this.state.moleculeErrors);
 
 		const checkOptTitle = key => checkSchema.properties[key].title;
 
 		return (
 			<Form component={Dialog} title="Structure Check" className="check" params={props}
-				  schema={checkSchema} init={initState}
+				  schema={checkSchema} init={this.initState}
 			>
 				<Tabs className="tabs" captions={tabs}>
 					<dl className="result">{

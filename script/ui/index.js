@@ -152,7 +152,8 @@ function initEditor(editor) {
 		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
-		if (match(sgroup)) {
+		console.log("hello", sgroup)
+		if (sgroup.type === 'DAT') {
 			return dialog(modal.sgroupSpecial, sgroup);
 		}
 		var dlg = dialog(modal.sgroup, structConv.fromSgroup(sgroup));

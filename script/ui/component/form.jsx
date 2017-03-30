@@ -9,17 +9,20 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 		this.state = this.schema.serialize(init).instance;
 	}
+
 	getChildContext() {
 		let {schema} = this.props;
 		return {schema, stateStore: this};
 	}
+
 	changeSchema(schema) {
 		this.schema = propSchema(schema, this.props);
 		this.setState(this.schema.serialize(this.state).instance);
 	}
+
 	field(name, onChange) {
-		var value = this.state[name];
-		var self = this;
+		const value = this.state[name];
+		const self = this;
 
 		return {
 			value: value,
@@ -30,9 +33,11 @@ class Form extends Component {
 			}
 		};
 	}
+
 	result() {
 		return this.schema.serialize(this.state).instance;
 	}
+
 	render() {
 		var {children, component, ...props} = this.props;
 		let Component = component || 'form';
@@ -75,6 +80,7 @@ class Field extends Component {
 
 function propSchema(schema, {customValid, serialize={}, deserialize={}}) {
 	var v = new jsonschema.Validator();
+
 	if (customValid) {
 		schema = Object.assign({}, schema); // copy
 		schema.properties = Object.keys(customValid).reduce((res, prop) => {

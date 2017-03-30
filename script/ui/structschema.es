@@ -197,6 +197,7 @@ export const sgroup = {
 				},
 				connectivity: {
 					type: "string",
+					title: "", // TODO: add correct title
 					enum: ["ht", "hh", "eu"],
 					enumNames: [
 						'Head-to-tail',

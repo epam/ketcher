@@ -11,8 +11,8 @@ import OpenButton from '../component/openbutton';
 import Input from '../component/input';
 
 function Settings(props) {
-	let tabs = ['Rendering customization options', '3D Viewer'];
-	let activeTabs = {'0': true, '1': false};
+	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
+	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
 		<Form component={Dialog}
 			  buttons={[<OpenOpts server={props.server}/>, <SaveOpts/>, <Reset/>, "OK", "Cancel"]}
@@ -27,8 +27,28 @@ function Settings(props) {
 					<FieldMeasure name="fontsz"/>
 					<FieldMeasure name="fontszsub"/>
 				</fieldset>
-				<fieldset className="reaction">
+				<fieldset className="atoms">
+					<Field name="carbonExplicitly"/>
+					<Field name="showCharge"/>
+					<Field name="showValence"/>
+					<Field name="showHydrogenLabels"/>
+				</fieldset>
+				<fieldset className="bonds">
+					<Field name="aromaticCircle"/>
+					<FieldMeasure name="doubleBondWidth"/>
+					<FieldMeasure name="bondThickness"/>
+					<FieldMeasure name="stereoBondWidth"/>
+				</fieldset>
+				<fieldset className="3dView">
 					<Field name="miewMode"/>
+					<Field name="miewTheme"/>
+					<Field name="miewAtomLabel"/>
+				</fieldset>
+				<fieldset className="debug">
+					<Field name="showAtomIds"/>
+					<Field name="showBondIds"/>
+					<Field name="showHalfBondIds"/>
+					<Field name="showLoopIds"/>
 				</fieldset>
 			</Accordion>
 		</Form>

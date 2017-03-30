@@ -287,28 +287,39 @@ form.rgroup-logic {
 }
 
 form.settings-new {
-	width: 30em;
+	width: 35em;
 	.save {
+		margin-left: 10px;
 		&:extend(button all);
 		cursor: default;
 		float: left;
 	}
-
-	label {
-		display: block;
-		text-align: right;
-		line-height: @input-height;
-		height: @input-height;
-		select, input {
-			width: 50%;
-		}
+	.open {
+		&:extend(button all);
+		float: left;
 	}
-	label.measure-field {
-		input {
-			width: 34%;
+
+	.accordion {
+		&:extend(.-Accordion all);
+		fieldset {
+			border-radius: 0 0 6px 6px;
 		}
-		select {
-			width: 15%;
+		label {
+			display: block;
+			text-align: right;
+			line-height: @input-height;
+			height: @input-height;
+			select, input {
+				width: 50%;
+			}
+		}
+		label.measure-field {
+			input {
+				width: 34%;
+			}
+			select {
+				width: 15%;
+			}
 		}
 	}
 }

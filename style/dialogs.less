@@ -286,7 +286,7 @@ form.rgroup-logic {
 	}
 }
 
-form.settings-new {
+form.settings {
 	width: 35em;
 	.save {
 		margin-left: 10px;
@@ -640,66 +640,6 @@ form.settings-new {
 		width: 14em;
 		overflow: hidden;
 		white-space: nowrap;
-	}
-}
-
-.settings {
-	width: 42em;
-	height: auto;
-
-	.open {
-		&:extend(button all);
-		float: left;
-	}
-
-	.save {
-		&:extend(button all);
-		cursor: default;
-	}
-
-	.accordion-wrapper {
-		margin: 0;
-		.accordion {
-			&:extend(.-Accordion all);
-		}
-
-		.content {
-			display: block;
-			font-size: 16px;
-			ul {
-				border-collapse: collapse;
-				width: 100%;
-				li {
-					border: 1px solid #eee;
-					div {
-						padding-left: 3px;
-						display: inline-block;
-						margin: 0;
-						width: 49%;
-						input[type="number"] {
-							border: 1px solid #eee;
-							border-radius: 5px;
-							padding: 6px 2px;
-							width: 77%;
-						}
-						.measure {
-							width: 20%;
-						}
-						select {
-							border: 0;
-							margin: 0;
-							padding: 0;
-							width: 100%;
-						}
-					}
-				}
-			}
-		}
-		.current {
-			display: block;
-			padding: 5px;
-			font-size: 16px;
-		}
 	}
 }
 

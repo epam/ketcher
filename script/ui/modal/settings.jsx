@@ -1,190 +1,127 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
+import { settings as settingsSchema } from '../settings-options.es';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
-import OpenButton from '../component/openbutton';
-import SaveButton from '../component/savebutton';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
-import defaultOptions from './options';
+import SaveButton from '../component/savebutton';
+import OpenButton from '../component/openbutton';
+import Input from '../component/input';
 
-class Settings extends Component {
-     constructor(props) {
-        super(props);
-        this.defOpts = defaultOptions();
+function Settings(props) {
+	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
+	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
+	return (
+		<Form component={Dialog}
+			  buttons={[<OpenOpts server={props.server}/>, <SaveOpts/>, <Reset/>, "OK", "Cancel"]}
+			  title="Settings" className="settings"
+			  schema={settingsSchema} init={props} params={props}>
+			<Accordion className="accordion" captions={tabs} active={activeTabs}>
+				<fieldset className="render">
+					<Field name="showValenceWarnings"/>
+					<Field name="atomColoring"/>
+					<Field name="hideChiralFlag"/>
+					<SelectFont name="font"/>
+					<FieldMeasure name="fontsz"/>
+					<FieldMeasure name="fontszsub"/>
+				</fieldset>
+				<fieldset className="atoms">
+					<Field name="carbonExplicitly"/>
+					<Field name="showCharge"/>
+					<Field name="showValence"/>
+					<Field name="showHydrogenLabels"/>
+				</fieldset>
+				<fieldset className="bonds">
+					<Field name="aromaticCircle"/>
+					<FieldMeasure name="doubleBondWidth"/>
+					<FieldMeasure name="bondThickness"/>
+					<FieldMeasure name="stereoBondWidth"/>
+				</fieldset>
+				<fieldset className="3dView">
+					<Field name="miewMode"/>
+					<Field name="miewTheme"/>
+					<Field name="miewAtomLabel"/>
+				</fieldset>
+				<fieldset className="debug">
+					<Field name="showAtomIds"/>
+					<Field name="showBondIds"/>
+					<Field name="showHalfBondIds"/>
+					<Field name="showLoopIds"/>
+				</fieldset>
+			</Accordion>
+		</Form>
+	);
+}
 
-        this.state = {
-            onlyCurrentSession: false
-        };
+function SelectFont(props, {schema, stateStore}) {
+	let {name} = props;
+	let title = schema.properties[name].title;
+	return (
+		<label>
+			{title}:<SystemFonts {...stateStore.field(name)} />
+		</label>
+	);
+}
 
-        var opts = this.getDefOpts(this.defOpts);
-        opts = Object.assign(opts, props.opts, JSON.parse(localStorage.getItem("ketcher-opts")));
-        this.setState({opts: opts});
+class FieldMeasure extends Component {
+	constructor(props) {
+		super(props);
+		this.state = { meas: 'px' };
+	}
+	handleChange(value, onChange) {
+		let convValue = convertValue(value, this.state.meas, 'px');
+		onChange(convValue);
+	}
+	shouldComponentUpdate(nextProp, nextState) {
+		return nextState !== this.state;
+	}
 
-        this.changeState = this.changeState.bind(this);
-        this.createSelectList = this.createSelectList.bind(this);
-    }
-
-    getDefOpts(defOpts) {
-        var tmp = {};
-        for (var i = 0; i < defOpts.length; i++) {
-			if (defOpts[i].type == 'field') tmp[defOpts[i].name + "Measure"] = defOpts[i].defaultMeasure;
-            tmp[defOpts[i].name] = defOpts[i].defaultValue;
-        }
-        return tmp;
-    }
-
-    result () {
-        return {
-            opts: this.state.opts,
-            localStorageOpts: this.state.opts,
-            onlyCurrentSession: this.state.onlyCurrentSession
-        };
-    }
-
-    uploadSettings(newOpts) {
-    	try {
-			let userOpts = JSON.parse(newOpts);
-			let currentState = Object.assign(this.state.opts, userOpts);
-			this.setState({
-				opts: currentState
-			});
-		} catch (ex) {
-			console.info('Bad file');
-		}
-    }
-
-    changeState(name, value) {
-         var tmp = {};
-         tmp[name] = value;
-		 this.setState(Object.assign(this.state.opts, tmp));
-    }
-
-	createSelectList(elem) {
-		let change = this.changeState;
-		let {values, type, name, label} = elem;
-		let content = null;
-		switch (type) {
-			case 'font':
-				content = <div><SystemFonts current={this.state.opts.font}
-											onChange={ev => change(name, '30px ' + ev.target.value)}/></div>;
-				break;
-			case 'field':
-				content = <MeasureField name={ name } onChange={ change } values = { values }
-					value = { this.state.opts[name] } measureValue = { this.state.opts[name + "Measure"] } />;
-				break;
-			case 'boolean':
-				content = <div><SelectCheck name={ name } onChange={ change } value={ this.state.opts[name] }/></div>;
-				break;
-			default:
-				let listComponents = values.map(function (value) {
-					return ( <option value={value}> {value} </option>);
-				});
-				content = <div><select onChange={ ev => change(name, ev.target.value) }
-									   value={this.state.opts[name]}>{listComponents}</select></div>;
-		}
+	render() {
+		let { name, ...props } = this.props;
+		let { schema, stateStore } = this.context;
+		let { value, onChange } = stateStore.field(name);
+		let convValue = convertValue(value, 'px', this.state.meas);
 		return (
-			<li>
-				<div> { label } </div>
-				{ content }
-			</li>
+			<label {...props} class="measure-field">
+				{schema.properties[name].title}:
+				<Input type="number" value={convValue}
+					   onChange={(v) => this.handleChange(v, onChange)} />
+				<Input schema={{enum: ['cm', 'px', 'pt', 'inch']}}
+					   value={this.state.meas} onChange={(m) => this.setState({meas: m})}/>
+			</label>
 		);
 	}
-
-    draw(tab) {
-        var createSelectList = this.createSelectList;
-        var optsComponents = this.defOpts.map(function(elem) {
-            if (elem.tab === tab)
-                return createSelectList(elem);
-        });
-        return <ul> {optsComponents} </ul>;
-    }
-
-    reset(ev) {
-        var opts = this.getDefOpts (this.defOpts);
-        this.setState({opts: opts});
-    }
-
-    apply(ev) {
-        this.setState({onlyCurrentSession: true});
-    }
-
-    render (props, state) {
-    	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
-    	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
-        return (
-            <Dialog title="Settings"
-                    className="settings" params={props.params}
-                    result={() => this.result()}
-                    buttons={[
-						 <OpenButton className="open" server={this.props.server}
-									 onLoad={ newOpts => this.uploadSettings(newOpts) }>
-							 Open From File…
-						 </OpenButton>,
-						 <SaveButton className="save" data={JSON.stringify(this.state.opts)}
-									 filename={'ketcher-settings'} >
-							 Save To File…
-						 </SaveButton>,
-                     <button onClick={ ev => this.reset(ev) }>Reset</button>,
-                     "OK", "Cancel"]} >
-            <div className="accordion-wrapper">
-				<Accordion className="accordion" captions={tabs} active={activeTabs}>
-					<div className="content">
-						{ this.draw("render") }
-					</div>
-					<div className="content">
-						{ this.draw("atoms") }
-					</div>
-					<div className="content">
-						{ this.draw("bonds") }
-					</div>
-					<div className="content">
-						{ this.draw("miew") }
-					</div>
-					<div className="content">
-						{ this.draw("debug") }
-					</div>
-				</Accordion>
-				<label className="current">
-					<input type="checkbox" onChange={ ev => this.apply(ev) }></input>
-					Apply settings only for current session
-				</label>
-            </div>
-            </Dialog>
-        );
-    }
 }
 
-function SelectCheck({ name, value, onChange }) {
-	return (
-		<select onChange={ev => onChange(name, ev.target.value == "on") } value={value ? "on" : "off"}>
-			<option value="on">on</option>
-			<option value="off">off</option>
-		</select>
-	);
-}
+const SaveOpts = (props, {stateStore}) =>
+	<SaveButton className="save" data={JSON.stringify(stateStore.state)} filename={'ketcher-settings'}>
+		Save To File…
+	</SaveButton>;
 
-function MeasureField({ name, value, values, measureValue, onChange }) {
-	function setValue(ev) {
-		var valuepx = convertValue(ev.target.value, measureValue, 'px');
-		if (valuepx <= values[0] || valuepx > values[1]) {
-			ev.target.value = convertValue(value, 'px', measureValue);
-			return;
-		}
-		onChange(name, valuepx);
-	}
-	return (
-		<div>
-			<input type="number" min={ values[0] } max={ values[1] }
-				   onChange={ ev => setValue(ev) } value={ convertValue(value, 'px', measureValue) }/>
-			<select className="measure" value={measureValue || 'px'} onChange={ ev => onChange(name + "Measure", ev.target.value) }>
-				<option value="cm">cm</option>
-				<option value="px">px</option>
-				<option value="pt">pt</option>
-				<option value="inch">inch</option>
-			</select>
-		</div>
-	);
+const OpenOpts = (props, {stateStore}) =>
+	<OpenButton className="open" server={props.server}
+				onLoad={ newOpts => {
+					try {
+						stateStore.setState(JSON.parse(newOpts));
+					} catch (ex) {
+						console.info('Bad file');
+					}
+				} }>
+		Open From File…
+	</OpenButton>;
+
+const Reset = (props, {stateStore}) =>
+	<button onClick={() => stateStore.setState(defaultOpts())}>
+		Reset
+	</button>;
+
+function defaultOpts() {
+	return Object.keys(settingsSchema.properties).reduce((res, prop) => {
+		res[prop] = settingsSchema.properties[prop].default;
+		return res;
+	}, {});
 }
 
 function convertValue(value, measureFrom, measureTo) {
@@ -195,14 +132,14 @@ function convertValue(value, measureFrom, measureTo) {
 		'pt': 1.333333,
 		'inch': 96,
 	};
-	return (measureTo == 'px' || measureTo == 'pt')
-		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed()
-		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3);
+	return (measureTo === 'px' || measureTo === 'pt')
+		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed( ) - 0
+		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
 }
 
 export default function dialog(params) {
-    var overlay = $$('.overlay')[0];
-    return render((
-        <Settings params={params}/>
-    ), overlay);
+	var overlay = $$('.overlay')[0];
+	return render((
+		<Settings {...params}/>
+	), overlay);
 };

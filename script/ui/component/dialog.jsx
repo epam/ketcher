@@ -26,7 +26,7 @@ class Dialog extends Component {
 			                            '[contenteditable]'].join(',')) ||
 			     this.base.querySelector(['select', 'button:not(.close)', 'input'].join(','));
 		console.assert(fe, 'No active buttons');
-		fe.focus();
+		if (fe.focus) fe.focus();
 	}
 	render() {
 		console.info('dialog render');

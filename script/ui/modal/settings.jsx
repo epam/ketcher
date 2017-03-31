@@ -69,13 +69,17 @@ class FieldMeasure extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { meas: 'px' };
+		this.isUpdate = true;
 	}
 	handleChange(value, onChange) {
 		let convValue = convertValue(value, this.state.meas, 'px');
 		onChange(convValue);
+		this.isUpdate = false;
 	}
-	shouldComponentUpdate(nextProp, nextState) {
-		return nextState !== this.state;
+	shouldComponentUpdate() {
+		if (this.isUpdate) return true;
+		this.isUpdate = true;
+		return false;
 	}
 
 	render() {
@@ -84,9 +88,9 @@ class FieldMeasure extends Component {
 		let { value, onChange } = stateStore.field(name);
 		let convValue = convertValue(value, 'px', this.state.meas);
 		return (
-			<label {...props} class="measure-field">
+			<label {...props} className="measure-field">
 				{schema.properties[name].title}:
-				<Input type="number" value={convValue}
+				<Input type="number" value={convValue} focus={false}
 					   onChange={(v) => this.handleChange(v, onChange)} />
 				<Input schema={{enum: ['cm', 'px', 'pt', 'inch']}}
 					   value={this.state.meas} onChange={(m) => this.setState({meas: m})}/>

@@ -725,9 +725,7 @@ function attach (tmpl, index) {
 	var tmplName = tmpl.struct.name;
 	var group = tmpl.props.group;
 
-	return new Promise(function (resolve) {
-
-		dialog(modal.attach, {
+	return dialog(modal.attach, {
 			userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
 			tmpl: tmpl
 		}).then(function (res) {
@@ -747,12 +745,9 @@ function attach (tmpl, index) {
 				store[index].props = Object.assign({}, store[index].props, res.attach);
 				localStorage['ketcher-tmpl'] = JSON.stringify(store);
 			}
-
-			resolve();
 		}, function () {
 			console.info("cancel");
 		});
-	});
 }
 
 var actionMap = {

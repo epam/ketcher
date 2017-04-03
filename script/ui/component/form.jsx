@@ -1,51 +1,60 @@
 import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 import Input from './input';
+import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
-	constructor({schema, init={}, ...props}) {
+	constructor({dispatch, storeName,
+					schema, init={}, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		this.state = this.schema.serialize(init).instance;
+		dispatch(updateFormState(storeName, init));
 	}
 	getChildContext() {
 		let {schema} = this.props;
 		return {schema, stateStore: this};
 	}
 	changeSchema(schema) {
+		let {dispatch, storeName, stateForm} = this.props;
 		this.schema = propSchema(schema, this.props);
-		this.setState(this.schema.serialize(this.state).instance);
+		dispatch(updateFormState(storeName, this.schema.serialize(stateForm).instance));
 	}
 	field(name, onChange) {
-		var value = this.state[name];
+		let {dispatch, storeName, stateForm} = this.props;
+		var value = stateForm[name];
 		var self = this;
-
 		return {
 			value: value,
 			onChange(value) {
-				self.setState({ ...self.state, [name]: value });
+				dispatch(updateFormState(storeName, { ...self.props.stateForm, [name]: value }));
 				if (onChange) onChange(value);
-				console.info('onChange', self.state);
 			}
 		};
 	}
 	result() {
-		return this.schema.serialize(this.state).instance;
+		return this.schema.serialize(this.props.stateForm).instance;
 	}
-	render() {
-		var {children, component, ...props} = this.props;
+	render() { // TODO: bug - render +1 after each open modal ...
+		var {children, component, stateForm, ...props} = this.props;
 		let Component = component || 'form';
 		console.info('validate', this.result());
 		return (
 			<Component {...props}
 				result = {() => this.result()}
-				valid  = {() => this.schema.serialize(this.state).valid} >
+				valid  = {() => this.schema.serialize(stateForm).valid} >
 			  {children}
 			</Component>
 		);
 	}
 }
+const form = connect((store, ownProps ) => {
+	let { storeName } = ownProps;
+	return {
+		stateForm: store[storeName].stateForm
+	};
+})(Form);
 
 function Label({ labelPos, title, children }) {
 	return (
@@ -140,4 +149,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { Form, Field, mapOf };
+export { form, Field, mapOf };

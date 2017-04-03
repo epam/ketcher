@@ -76,6 +76,8 @@
     "lru-memoize": "1.0.1",
     "normalize.css": "4.2.0",
     "preact": "6.3.0",
+    "preact-redux": "2.0.1",
+    "redux": "3.6.0",
     "query-string": "2.4.2",
     "raphael": "2.2.7",
     "subscription": "3.0.0",

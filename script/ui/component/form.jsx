@@ -8,6 +8,8 @@ class Form extends Component {
 		super();
 		this.schema = propSchema(schema, props);
 		this.state = this.schema.serialize(init).instance;
+
+		console.info('serialize', this.schema.serialize(init).instance);
 	}
 
 	getChildContext() {
@@ -42,6 +44,9 @@ class Form extends Component {
 		var {children, component, ...props} = this.props;
 		let Component = component || 'form';
 		console.info('validate', this.result());
+
+		console.info('state', this.state);
+
 		return (
 			<Component {...props}
 				result = {() => this.result()}

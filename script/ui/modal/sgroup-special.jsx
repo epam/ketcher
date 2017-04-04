@@ -34,6 +34,16 @@ const sgroupSchema = {
 								'S(p)'
 							],
 							default: 'abs'
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -47,6 +57,16 @@ const sgroupSchema = {
 							type: 'string',
 							enum: [],
 							default: ''
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -60,6 +80,16 @@ const sgroupSchema = {
 							type: 'string',
 							enum: [],
 							default: ''
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -73,10 +103,20 @@ const sgroupSchema = {
 							type: 'string',
 							enum: [],
 							default: ''
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
-				}
+				},
 			]
 		},
 		{
@@ -103,6 +143,16 @@ const sgroupSchema = {
 								'STG'
 							],
 							default: 'erythro'
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -118,6 +168,16 @@ const sgroupSchema = {
 								'Value=4'
 							],
 							default: 'Value=4'
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -160,6 +220,16 @@ const sgroupSchema = {
 								'HB-9'
 							],
 							default: 'RS'
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
@@ -182,12 +252,22 @@ const sgroupSchema = {
 								'trans'
 							],
 							default: 'cis'
+						},
+						buttons: {
+							title: 'Buttons',
+							type: 'string',
+							enum: [
+								'Absolute',
+								'Relative',
+								'Attached'
+							],
+							default: 'Absolute'
 						}
 					},
 					required: ['fieldValue']
 				}
 			]
-		},
+		}
 	]
 };
 
@@ -202,22 +282,9 @@ const schemes = sgroupSchema.oneOf
 		}, {}
 	);
 
-console.info('schemsw', schemes);
+console.info('schemes', schemes);
 
-
-const SelectOneOf = (props, { stateStore }) => {
-	const { name, title, schema, onChange, ...prop } = props;
-
-	const selectDesc = toEnumSchema(title, schema);
-
-	const changeSchema = type => {
-		onChange(type);
-		stateStore.changeSchema(schema[type]);
-	};
-
-	return <Field name={name} schema={selectDesc}
-				  {...stateStore.field(name, changeSchema)} {...prop}/>;
-};
+const defaultContext = 'Fragment';
 
 function toEnumSchema(title, schema) {
 	return Object.keys(schema).reduce((acc, propt) => {
@@ -233,7 +300,29 @@ function toEnumSchema(title, schema) {
 	);
 }
 
-const defaultContext = 'Fragment';
+const SelectContext = (props, { stateStore }) => {
+	const { onChange, ...prop } = props;
+	const name = 'context';
+	const selectDesc = toEnumSchema('Context', schemes);
+
+	const changeSchema = type => {
+		onChange(type);
+		stateStore.changeSchema(schemes[type]);
+	};
+
+	return <Field name={name} schema={selectDesc}
+				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+};
+
+const SelectOneOf = (props, { stateStore }) => {
+	const { context, onChange, ...prop } = props;
+	const name = 'fieldName';
+	const selectDesc = toEnumSchema('Field name', schemes[context]);
+
+	return <Field name='fieldName' schema={selectDesc}
+				  {...stateStore.field(name, onChange)} {...prop}/>;
+};
+
 const objFirstPropKey = obj => Object.keys(obj)[0];
 
 class SgroupSpecial extends Component {
@@ -247,28 +336,34 @@ class SgroupSpecial extends Component {
 	}
 
 	content = (context, fieldName) => Object.keys(schemes[context][fieldName].properties)
-		.map(prop => prop !== 'type' ?
-			<Field name={prop} size={10} key={`${context}-${fieldName}-${prop}`}/> :
-			null
-		);
+		.filter(prop => prop !== 'type')
+		.map(prop => prop === 'buttons' ?
+			<Field name={prop} className='pos' type='radio' key={`${context}-${fieldName}-${prop}`}/> :
+			<Field name={prop} size={10} key={`${context}-${fieldName}-${prop}`}/>);
 
 	render(props) {
 		const { context, fieldName } = this.state;
 		const desc = schemes[context][fieldName];
 
+		const initState = {
+			context: context,
+			fieldName: fieldName
+		};
+
 		return (
-			<Form component={Dialog} title={'S-Group Properties'} className="sgroup"
-				  schema={desc} init={props} params={props}
+			<Form component={Dialog} title={'S-Group Properties'} className='sgroup'
+				  schema={desc} init={initState} params={props}
 			>
-				<SelectOneOf name='context' title='Context' schema={schemes}
-							 onChange={context => this.setState({
-								 context: context,
-								 fieldName: objFirstPropKey(schemes[context])
-							 })}
+				<SelectContext
+					onChange={context => this.setState({
+						context: context,
+						fieldName: objFirstPropKey(schemes[context])
+					})}
 				/>
-				<fieldset key={`${context}-${fieldName}`} className='data'>
-					<SelectOneOf name='fieldName' title='Field name' schema={schemes[context]}
-								 onChange={field => this.setState({ fieldName: field })}
+				<fieldset key={`${context}-${fieldName}-data`} className={'data'}>
+					<SelectOneOf
+						context={context}
+						onChange={field => this.setState({ fieldName: field })}
 					/>
 					{
 						this.content(context, fieldName)
@@ -280,7 +375,7 @@ class SgroupSpecial extends Component {
 }
 
 function dialog(params) {
-	var overlay = $$('.overlay')[0];
+	const overlay = $$('.overlay')[0];
 	return render((
 		<SgroupSpecial {...params}/>
 	), overlay);

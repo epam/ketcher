@@ -69,31 +69,29 @@ class FieldMeasure extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { meas: 'px' };
-		this.isUpdate = true;
 	}
 	handleChange(value, onChange) {
 		let convValue = convertValue(value, this.state.meas, 'px');
+		this.state.cust = value;
 		onChange(convValue);
-		this.isUpdate = false;
 	}
-	shouldComponentUpdate() {
-		if (this.isUpdate) return true;
-		this.isUpdate = true;
-		return false;
-	}
-
 	render() {
+		let { meas, cust } = this.state;
 		let { name, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let { value, onChange } = stateStore.field(name);
-		let convValue = convertValue(value, 'px', this.state.meas);
+		let convValue = (!cust || value === schema.properties[name].default)
+			? convertValue(value, 'px', meas)
+			: cust;
 		return (
 			<label {...props} className="measure-field">
 				{schema.properties[name].title}:
-				<Input type="number" value={convValue} focus={false}
+				<Input schema={schema.properties[name]} value={convValue} focus={false}
+					   step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}
 					   onChange={(v) => this.handleChange(v, onChange)} />
 				<Input schema={{enum: ['cm', 'px', 'pt', 'inch']}}
-					   value={this.state.meas} onChange={(m) => this.setState({meas: m})}/>
+					   value={meas}
+					   onChange={(m) => this.setState({ meas: m, cust: convertValue(cust, 'px', m)})}/>
 			</label>
 		);
 	}

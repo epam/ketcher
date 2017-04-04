@@ -1,4 +1,5 @@
 var ui = global.ui = {};
+var preact = require('preact');
 
 var keyNorm = require('./keynorm');
 
@@ -467,10 +468,8 @@ function dialog(modal, params, noAnimate) {
 	function close(fn, res) {
 		scope = 'editor';
 		cover.style.display = 'none';
-		// var node = this.getDOMNode();
-		// React.unmountComponentAtNode(node);
 		var dialog = cover.lastChild;
-		dialog.remove();
+		preact.render('', cover, dialog); // Unmount Dialog !!
 		console.info('output', res);
 		if (fn) fn(res);
 	}

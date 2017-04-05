@@ -7,10 +7,10 @@ import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
 	constructor({dispatch, storeName,
-					schema, init={}, ...props}) {
+					schema, init, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		dispatch(updateFormState(storeName, init));
+		if (init) dispatch(updateFormState(storeName, init));
 	}
 	getChildContext() {
 		let {schema} = this.props;

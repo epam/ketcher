@@ -1,7 +1,7 @@
 import { h, render } from 'preact';
 /** @jsx h */
 
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 export const automapSchema = {
@@ -20,16 +20,11 @@ export const automapSchema = {
 
 function Automap (props) {
 	return (
-		<Form component={Dialog} title="Reaction Auto-Mapping" className="automap"
-			  schema={automapSchema} init={props} params={props}>
+		<Form storeName="automap" component={Dialog} title="Reaction Auto-Mapping" className="automap"
+			  schema={automapSchema} params={props}>
 			<Field name="mode"/>
 		</Form>
 	);
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Automap {...params}/>
-	), overlay);
-};
+export default Automap;

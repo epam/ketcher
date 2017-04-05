@@ -16,11 +16,11 @@ var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
 // schemify dialogs
-var bondDialog = require('./bond').default;
+var Bond = require('./bond').default;
 var Atom = require('./atom').default;
-var attachmentPointsDialog = require('./attach-points').default;
-var automapDialog = require('./automap').default;
-var rgroupLogicDialog = require('./rgroup-logic').default;
+var AttachPoints = require('./attach-points').default;
+var Automap = require('./automap').default;
+var RgroupLogic = require('./rgroup-logic').default;
 var sgroupDialog = require('./sgroup').default;
 var checkDialog = require('./check').default;
 var settingsDialog = require('./settings').default;
@@ -31,11 +31,11 @@ module.exports = {
 	periodTable: periodTable,
 	rgroup: rgroupDialog,
 	genericGroups: genericGroups,
-	attachmentPoints: attachmentPointsDialog,
+	attachmentPoints: modal(AttachPoints),
 	atomProps: modal(Atom),
-	bondProps: bondDialog,
-	automap: automapDialog,
-	rgroupLogic: rgroupLogicDialog,
+	bondProps: modal(Bond),
+	automap: modal(Automap),
+	rgroupLogic: modal(RgroupLogic),
 	sgroup: sgroupDialog,
 	sgroupSpecial: sgroupSpecialDialog,
 	open: openDialog,

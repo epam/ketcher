@@ -1,5 +1,9 @@
 const dumpTypes = {
-	atom: 'UPDATE_ATOM_FORM'
+	'attach-points': 'UPDATE_ATTACH_POINTS_FORM',
+	atom: 'UPDATE_ATOM_FORM',
+	automap: 'UPDATE_AUTOMAP_FORM',
+	bond: 'UPDATE_BOND_FORM',
+	'rgroup-logic': 'UPDATE_RGROUP_LOGIC_FORM'
 };
 
 export function updateFormState(storeName, data) {

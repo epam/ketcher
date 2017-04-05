@@ -1,5 +1,15 @@
 const initState = {
-	stateForm: {}
+	stateForm: {
+		label: '',
+		charge: 0,
+		explicitValence: -1,
+		hCount: 0,
+		invRet: 0,
+		isotope: 0,
+		radical: 0,
+		ringBondCount: 0,
+		substitutionCount: 0
+	}
 };
 
 const dumbActions = [
@@ -7,10 +17,11 @@ const dumbActions = [
 ];
 
 export default function atomReducer(state = initState, action) {
-	console.log('atomReducer', action);
 
-	if (dumbActions.includes(action.type))
+	if (dumbActions.includes(action.type)) {
+		console.log('atomReducer', action);
 		return Object.assign({}, state, action.payload);
+	}
 
 	return state;
 }

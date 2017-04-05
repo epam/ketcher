@@ -22,7 +22,7 @@ var AttachPoints = require('./attach-points').default;
 var Automap = require('./automap').default;
 var RgroupLogic = require('./rgroup-logic').default;
 var sgroupDialog = require('./sgroup').default;
-var checkDialog = require('./check').default;
+var Check = require('./check').default;
 var settingsDialog = require('./settings').default;
 
 templatesDialog.default.init = templatesDialog.init;
@@ -44,7 +44,7 @@ module.exports = {
 	labelEdit: labelEdit,
 	about: aboutDialog,
 	recognize: recognizeDialog,
-	check: checkDialog,
+	check: modal(Check),
 	analyse: analyseDialog,
 	settings: settingsDialog,
 	help: helpDialog,

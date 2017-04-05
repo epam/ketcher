@@ -5,11 +5,13 @@ import attachPointsReducer from './attach-points-reducer.es';
 import automapReducer from './automap-reducer.es';
 import bondReducer from './bond-reducer.es';
 import rgroupLodicReducer from './rgroup-logic-reducer.es';
+import checkReducer from './check-reducer.es';
 
 export default combineReducers({
 	'attach-points': attachPointsReducer,
 	atom: atomReducer,
 	automap: automapReducer,
 	bond: bondReducer,
+	check: checkReducer,
 	'rgroup-logic': rgroupLodicReducer
 });

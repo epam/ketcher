@@ -13,8 +13,8 @@ class Form extends Component {
 		if (init) dispatch(updateFormState(storeName, init));
 	}
 	getChildContext() {
-		let {schema} = this.props;
-		return {schema, stateStore: this};
+		let { schema } = this.props;
+		return { schema, stateStore: this };
 	}
 	changeSchema(schema) {
 		let {dispatch, storeName, stateForm} = this.props;
@@ -36,7 +36,7 @@ class Form extends Component {
 	result() {
 		return this.schema.serialize(this.props.stateForm).instance;
 	}
-	render() { // TODO: bug - render +1 after each open modal ...
+	render() {
 		var {children, component, stateForm, ...props} = this.props;
 		let Component = component || 'form';
 		console.info('validate', this.result());
@@ -67,14 +67,14 @@ function Label({ labelPos, title, children }) {
 
 class Field extends Component {
 	render() {
-		let { name, onChange, ...props} = this.props;
+		let { name, onChange, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
 		return (
-			<Label title={props.title || desc.title}>
-			  <Input name={name} schema={desc}
-					 {...stateStore.field(name, onChange)} {...props}/>
+			<Label title={props.title || desc.title} >
+				<Input name={name} schema={desc}
+					   {...stateStore.field(name, onChange)} {...props}/>
 			</Label>
 		);
 	}
@@ -82,7 +82,7 @@ class Field extends Component {
 
 ////
 
-function propSchema(schema, {customValid, serialize={}, deserialize={}}) {
+function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 	var v = new jsonschema.Validator();
 	if (customValid) {
 		schema = Object.assign({}, schema); // copy
@@ -109,7 +109,7 @@ function serializeRewrite(serializeMap, instance, schema) {
 			schema.default;
 	}
 
-	for(var p in schema.properties){
+	for (var p in schema.properties) {
 		if (p in instance) {
 			res[p] = instance[p];
 		}
@@ -139,7 +139,7 @@ function selectListOf(schema, prop) {
 	if (desc)
 		return desc.enum.map((value, i) => {
 			let title = desc.enumNames && desc.enumNames[i];
-			return title ? {title, value} : value;
+			return title ? { title, value } : value;
 		});
 	return schema.oneOf.map(desc => (
 		!desc.title ? constant(desc, prop) : {

@@ -221,6 +221,8 @@ export function fromSgroup(ssgroup) {
 
 	const { absolute, attached } = ssgroup.attrs;
 
+	console.info('attr', ssgroup);
+
 	if (!absolute && !attached)
 		ssgroup.attrs.radiobuttons = 'Relative';
 	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
@@ -232,18 +234,21 @@ export function toSgroup(sgroup) {
 	let { type, radiobuttons, ...props } = sgroup;
 	let attrs = { ...props };
 
+	const absolute = 'absolute';
+	const attached = 'attached';
+
 	switch (radiobuttons) {
 	case 'Absolute':
-		attrs['absolute'] = true;
-		attrs['attached'] = false;
+		attrs[absolute] = true;
+		attrs[attached] = false;
 		break;
 	case 'Attached':
-		attrs['absolute'] = false;
-		attrs['attached'] = true;
+		attrs[absolute] = false;
+		attrs[attached] = true;
 		break;
 	case 'Relative':
-		attrs['aboslute'] = false;
-		attrs['attached'] = false;
+		attrs[absolute] = false;
+		attrs[attached] = false;
 		break;
 	}
 

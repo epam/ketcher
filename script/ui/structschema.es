@@ -243,10 +243,11 @@ export const sgroup = {
 				radiobuttons: {
 					type: 'string',
 					enum: [
-						'Attached',
 						'Absolute',
-						'Relative'
-					]
+						'Relative',
+						'Attached',
+					],
+					default: 'Absolute'
 				}
 			},
 			required: ["fieldName", "fieldValue", "radiobuttons"]

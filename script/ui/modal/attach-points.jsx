@@ -1,4 +1,4 @@
-import { h, render } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
 import { attachmentPoints as attachmentPointsSchema } from '../structschema';

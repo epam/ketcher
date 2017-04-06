@@ -4,7 +4,8 @@ const initState = {
 
 const dumbActions = [
 	'SET_DEFAULT_SETTINGS',
-	'UPDATE_SETTINGS_FORM'
+	'UPDATE_SETTINGS_FORM',
+	'CANCEL_SETTINGS'
 ];
 
 export default function settingsReducer(state = initState, action) {

@@ -2,7 +2,7 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 import { updateFormState } from '../actions/form-action.es';
-import { setDefaultSettings } from '../actions/settings-action.es';
+import { setDefaultSettings, cancelChanges } from '../actions/settings-action.es';
 
 import { settings as settingsSchema } from '../settings-options.es';
 import { form as Form, Field } from '../component/form';
@@ -23,7 +23,7 @@ function Settings(props) {
 				  <OpenOpts server={server} dispatch={dispatch}/>,
 				  <SaveOpts opts={stateForm}/>,
 				  <Reset dispatch={dispatch}/>,
-				  "OK", "Cancel"]}
+				  "OK", <Cancel dispatch={dispatch} onCancel={prop.onCancel}/>]}
 			  schema={settingsSchema} params={prop}>
 			<Accordion className="accordion" captions={tabs} active={activeTabs}>
 				<fieldset className="render">
@@ -87,18 +87,16 @@ class FieldMeasure extends Component {
 		let { name, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let { value, onChange } = stateStore.field(name);
-		let convValue = (!cust || value === schema.properties[name].default)
-			? convertValue(value, 'px', meas)
-			: cust;
+		if (convertValue(cust, meas, 'px') !== value) this.setState({ meas: 'px', cust: value }); // Hack: New store (RESET)
 		return (
 			<label {...props} className="measure-field">
 				{schema.properties[name].title}:
-				<Input schema={schema.properties[name]} value={convValue} focus={false}
+				<Input schema={schema.properties[name]} value={cust}
 					   step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}
 					   onChange={(v) => this.handleChange(v, onChange)} />
 				<Input schema={{enum: ['cm', 'px', 'pt', 'inch']}}
 					   value={meas}
-					   onChange={(m) => this.setState({ meas: m, cust: convertValue(cust, 'px', m)})}/>
+					   onChange={(m) => this.setState({ meas: m, cust: convertValue(this.state.cust, this.state.meas, m)})}/>
 			</label>
 		);
 	}
@@ -126,8 +124,16 @@ const Reset = ({dispatch}) =>
 		Reset
 	</button>;
 
+const Cancel = ({dispatch, onCancel}) =>
+	<button onClick={() => {
+		dispatch(cancelChanges());
+		onCancel();
+	}}>
+		Cancel
+	</button>;
+
 function convertValue(value, measureFrom, measureTo) {
-	if (!value) return null;
+	if (!value && value !== 0) return null;
 	var measureMap = {
 		'px': 1,
 		'cm': 37.795278,

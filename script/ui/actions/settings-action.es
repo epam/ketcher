@@ -11,7 +11,17 @@ export function setDefaultSettings() {
 	return {
 		type: 'SET_DEFAULT_SETTINGS',
 		payload: {
-			stateForm: defaultOpts()
+			stateForm: defaultOpts(),
+			measurePx: true
+		}
+	};
+}
+
+export function cancelChanges() {
+	return {
+		type: 'CANCEL_SETTINGS',
+		payload: {
+			stateForm: JSON.parse(localStorage.getItem("ketcher-opts"))
 		}
 	};
 }

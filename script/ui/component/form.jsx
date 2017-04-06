@@ -39,7 +39,6 @@ class Form extends Component {
 	render() {
 		var {children, component, stateForm, ...props} = this.props;
 		let Component = component || 'form';
-		console.info('validate', this.result());
 		return (
 			<Component {...props}
 				result = {() => this.result()}

@@ -835,9 +835,7 @@ var actionMap = {
 		});
 	},
 	'settings': function () {
-		var options = JSON.parse(localStorage.getItem("ketcher-opts")) || {};
-		options['server'] = server;
-		dialog(modal.settings, options).then(function (res) {
+		dialog(modal.settings, {server: server}).then(function (res) {
 			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
 			console.log("ketcher-opts", res);
 			ui.editor.options(res);

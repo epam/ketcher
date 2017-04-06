@@ -23,7 +23,7 @@ var Automap = require('./automap').default;
 var RgroupLogic = require('./rgroup-logic').default;
 var sgroupDialog = require('./sgroup').default;
 var Check = require('./check').default;
-var settingsDialog = require('./settings').default;
+var Settings = require('./settings').default;
 
 templatesDialog.default.init = templatesDialog.init;
 
@@ -46,7 +46,7 @@ module.exports = {
 	recognize: recognizeDialog,
 	check: modal(Check),
 	analyse: analyseDialog,
-	settings: settingsDialog,
+	settings: modal(Settings),
 	help: helpDialog,
 	miew: miewDialog,
 	attach: attachDialog

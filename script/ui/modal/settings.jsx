@@ -1,8 +1,11 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
+import { updateFormState } from '../actions/form-action.es';
+import { setDefaultSettings } from '../actions/settings-action.es';
 
 import { settings as settingsSchema } from '../settings-options.es';
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
@@ -11,13 +14,17 @@ import OpenButton from '../component/openbutton';
 import Input from '../component/input';
 
 function Settings(props) {
+	let { server, stateForm, dispatch, ...prop } = props;
 	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
-		<Form component={Dialog}
-			  buttons={[<OpenOpts server={props.server}/>, <SaveOpts/>, <Reset/>, "OK", "Cancel"]}
-			  title="Settings" className="settings"
-			  schema={settingsSchema} init={props} params={props}>
+		<Form storeName="settings" component={Dialog} title="Settings" className="settings"
+			  buttons={[
+				  <OpenOpts server={server} dispatch={dispatch}/>,
+				  <SaveOpts opts={stateForm}/>,
+				  <Reset dispatch={dispatch}/>,
+				  "OK", "Cancel"]}
+			  schema={settingsSchema} params={prop}>
 			<Accordion className="accordion" captions={tabs} active={activeTabs}>
 				<fieldset className="render">
 					<Field name="showValenceWarnings"/>
@@ -97,16 +104,16 @@ class FieldMeasure extends Component {
 	}
 }
 
-const SaveOpts = (props, {stateStore}) =>
-	<SaveButton className="save" data={JSON.stringify(stateStore.state)} filename={'ketcher-settings'}>
+const SaveOpts = ({opts}) =>
+	<SaveButton className="save" data={JSON.stringify(opts)} filename={'ketcher-settings'}>
 		Save To File…
 	</SaveButton>;
 
-const OpenOpts = (props, {stateStore}) =>
-	<OpenButton className="open" server={props.server}
+const OpenOpts = ({server, dispatch}) =>
+	<OpenButton className="open" server={server}
 				onLoad={ newOpts => {
 					try {
-						stateStore.setState(JSON.parse(newOpts));
+						dispatch(updateFormState('settings', JSON.parse(newOpts)));
 					} catch (ex) {
 						console.info('Bad file');
 					}
@@ -114,17 +121,10 @@ const OpenOpts = (props, {stateStore}) =>
 		Open From File…
 	</OpenButton>;
 
-const Reset = (props, {stateStore}) =>
-	<button onClick={() => stateStore.setState(defaultOpts())}>
+const Reset = ({dispatch}) =>
+	<button onClick={() => dispatch(setDefaultSettings())}>
 		Reset
 	</button>;
-
-function defaultOpts() {
-	return Object.keys(settingsSchema.properties).reduce((res, prop) => {
-		res[prop] = settingsSchema.properties[prop].default;
-		return res;
-	}, {});
-}
 
 function convertValue(value, measureFrom, measureTo) {
 	if (!value) return null;
@@ -139,9 +139,8 @@ function convertValue(value, measureFrom, measureTo) {
 		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Settings {...params}/>
-	), overlay);
-};
+export default connect((store) => {
+	return {
+		stateForm: store.settings.stateForm
+	};
+})(Settings);

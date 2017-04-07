@@ -1,7 +1,8 @@
-import { h, Component, render } from 'preact';
+import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 const sgroupSchema = {
@@ -341,12 +342,13 @@ const SelectContext = (props, { stateStore }) => {
 	const { name, onChange, ...prop } = props;
 	const selectDesc = toEnumSchema('Context', schemes);
 
+	console.info('statestore', stateStore);
+
 	const changeSchema = context => {
 		const defaultField = defaultFieldName(context);
 		onChange(context);
 		stateStore.pushState('fieldName', defaultField);
 		stateStore.pushState('fieldValue', defaultFieldValue(context, defaultField));
-		stateStore.changeSchema(schemes[context]);
 	};
 
 	return <Field name={name} schema={selectDesc} key='context-value'
@@ -360,72 +362,68 @@ const SelectOneOf = (props, { stateStore }) => {
 	const changeSchema = fieldName => {
 		onChange(fieldName);
 		stateStore.pushState('fieldValue', defaultFieldValue(context, fieldName));
-		stateStore.changeSchema(schemes[context][fieldName]);
 	};
 
 	return <Field name={name} schema={selectDesc} key={`${context}-fn`}
 				  {...stateStore.field(name, changeSchema)} {...prop}/>;
 };
 
-class SgroupSpecial extends Component {
-	constructor(props) {
-		super(props);
+function SgroupSpecial(props) {
+	// constructor(props) {
+	// 	super(props);
+	//
+	// 	this.state = {};
+	// 	this.state.context = props.context || defaultContext();
+	// 	this.state.fieldName = props.fieldName || defaultFieldName(this.state.context);
+	// }
+	//
+	// componentDidMount() {
+	// 	document.querySelector("select[name='context']").value = this.state.context;
+	// 	document.querySelector("select[name='fieldName']").value = this.state.fieldName;
+	// }
 
-		this.state = {};
-		this.state.context = props.context || defaultContext();
-		this.state.fieldName = props.fieldName || defaultFieldName(this.state.context);
-	}
 
-	content = (context, fieldName) => Object.keys(schemes[context][fieldName].properties)
-		.filter(prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName')
-		.map(prop => prop === 'radiobuttons' ?
-			<Field name={prop} type='radio' key={`${context}-${fieldName}-${prop}-radio`}/> :
-			<Field name={prop} size='10' key={`${context}-${fieldName}-${prop}-select`}/>);
 
-	componentDidMount() {
-		document.querySelector("select[name='context']").value = this.state.context;
-		document.querySelector("select[name='fieldName']").value = this.state.fieldName;
-	}
+	console.info('props', props);
 
-	render(props) {
-		const { context, fieldName } = this.state;
-		const desc = schemes[context][fieldName];
+	const desc = schemes['asf'][fieldName];
 
-		return (
-			<Form component={Dialog} title={'S-Group Properties'} className='sgroup'
-				  schema={desc} init={props} params={props}
-			>
-				<SelectContext key={`${context}-context`}
-							   name='context'
-							   onChange={context => this.setState({
-								   context: context,
-								   fieldName: defaultFieldName(context)
-							   })}
+	return (
+		<Form component={Dialog} title={'S-Group Properties'} className='sgroup'
+			  schema={desc} init={props} params={props}
+		>
+			<SelectContext key={`${context}-context`}
+						   name='context'
+						   onChange={context => this.setState({
+							   context: context,
+							   fieldName: defaultFieldName(context)
+						   })}
+			/>
+			<fieldset className={'data'} key={`${context}-${fieldName}-fieldset`}>
+				<SelectOneOf key={`${context}-${fieldName}-fieldName`}
+							 name={`fieldName`}
+							 context={context}
+							 onChange={fieldName => this.setState({
+								 fieldName: fieldName
+							 })}
 				/>
-				<fieldset className={'data'} key={`${context}-${fieldName}-fieldset`}>
-					<SelectOneOf key={`${context}-${fieldName}-fieldName`}
-								 name={`fieldName`}
-								 context={context}
-								 onChange={fieldName => this.setState({
-									 fieldName: fieldName
-								 })}
-					/>
-					{
-						this.content(context, fieldName)
-					}
-				</fieldset>
-			</Form>
-		);
-	}
+				{
+					content(context, fieldName)
+				}
+			</fieldset>
+		</Form>
+	);
 }
 
-function dialog(params) {
-	const overlay = $$('.overlay')[0];
-	return render((
-		<SgroupSpecial {...params}/>
-	), overlay);
-}
+const content = (context, fieldName) => Object.keys(schemes[context][fieldName].properties)
+	.filter(prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName')
+	.map(prop => prop === 'radiobuttons' ?
+		<Field name={prop} type='radio' key={`${context}-${fieldName}-${prop}-radio`}/> :
+		<Field name={prop} size='10' key={`${context}-${fieldName}-${prop}-select`}/>
+	);
 
-module.exports = {
-	sgroupSpecialDialog: dialog
-};
+export default connect((store) => {
+	return {
+		stateForm: store.sgroupSpecial.stateForm
+	};
+})(SgroupSpecial);

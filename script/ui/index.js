@@ -1,4 +1,5 @@
 var ui = global.ui = {};
+var preact = require('preact');
 
 var keyNorm = require('./keynorm');
 
@@ -17,7 +18,6 @@ var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
-var { match } = require('./modal/sgroup-special');
 
 var HISTORY_LENGTH = 32;
 
@@ -154,6 +154,8 @@ function initEditor(editor) {
 		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
+		console.info('sdataedit', modal);
+
 		const dlg = dialog(sgroup.type === 'DAT' ? modal.sgroupSpecial : modal.sgroup, structConv.fromSgroup(sgroup));
 		return dlg.then(res => structConv.toSgroup(res));
 	});
@@ -466,10 +468,8 @@ function dialog(modal, params, noAnimate) {
 	function close(fn, res) {
 		scope = 'editor';
 		cover.style.display = 'none';
-		// var node = this.getDOMNode();
-		// React.unmountComponentAtNode(node);
 		var dialog = cover.lastChild;
-		dialog.remove();
+		preact.render('', cover, dialog); // Unmount Dialog !!
 		console.info('output', res);
 		if (fn) fn(res);
 	}
@@ -697,7 +697,7 @@ function elemTable(elem) {
 	});
 }
 
-function templateLib(group) {
+function templateLib(selTmpl, group, selId) {
 	var store = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
 	var userTmpls = store.map(function (tmplStr) {
 		if (tmplStr.props == '') tmplStr.props = {};
@@ -707,12 +707,13 @@ function templateLib(group) {
 			props: tmplStr.props
 		};
 	});
+	if (selId !== null)	selTmpl = userTmpls[selId];
 
-	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, group: group }, true).then(function (res) {
+	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, selected: selTmpl, group: group }, true).then(function (res) {
 
 		if (res.event == 'attachEdit') {
 			attach(res.tmpl, res.index).then(function () {
-				templateLib(res.tmpl.props.group);
+				templateLib(res.tmpl, res.tmpl.props.group, res.tmpl.props.group == 'User' ? res.index : null);
 				return true;
 			});
 		} else if (res.event == 'chooseTmpl') {
@@ -729,9 +730,7 @@ function attach(tmpl, index) {
 	var tmplName = tmpl.struct.name;
 	var group = tmpl.props.group;
 
-	return new Promise(function (resolve) {
-
-		dialog(modal.attach, {
+	return dialog(modal.attach, {
 			userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
 			tmpl: tmpl
 		}).then(function (res) {
@@ -751,12 +750,9 @@ function attach(tmpl, index) {
 				store[index].props = Object.assign({}, store[index].props, res.attach);
 				localStorage['ketcher-tmpl'] = JSON.stringify(store);
 			}
-
-			resolve();
 		}, function () {
 			console.info("cancel");
 		});
-	});
 }
 
 var actionMap = {
@@ -844,11 +840,11 @@ var actionMap = {
 		});
 	},
 	'settings': function () {
-		dialog(modal.settings, { server: server }).then(function (res) {
-			if (!res.onlyCurrentSession)
-				localStorage.setItem("ketcher-opts", JSON.stringify(res.localStorageOpts));
-			console.log("ketcher-opts", res.localStorageOpts);
-			ui.editor.options(res.opts);
+
+		dialog(modal.settings, {server: server}).then(function (res) {
+			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
+			console.log("ketcher-opts", res);
+			ui.editor.options(res);
 			ui.render = ui.editor.render;
 		});
 	},

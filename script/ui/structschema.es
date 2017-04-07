@@ -197,7 +197,7 @@ export const sgroup = {
 				},
 				connectivity: {
 					type: "string",
-					title: "", // TODO: add correct title
+					title: 'Repeat Pattern',
 					enum: ["ht", "hh", "eu"],
 					enumNames: [
 						'Head-to-tail',
@@ -240,19 +240,17 @@ export const sgroup = {
 					minLength: 1,
 					invalidMessage: "Please, specify field value"
 				},
-				attached: {
-					title: 'Attached',
-					type: "boolean",
-					default: false
-				},
-				absolute: {
-					title: 'Absolute',
-					type: "boolean",
-					default: true
+				radiobuttons: {
+					type: 'string',
+					enum: [
+						'Absolute',
+						'Relative',
+						'Attached',
+					],
+					default: 'Absolute'
 				}
 			},
-			required: ["fieldName", "fieldValue",
-			           "attached", "absolute"]
+			required: ["fieldName", "fieldValue", "radiobuttons"]
 		}
 	]
 };

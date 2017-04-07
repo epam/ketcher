@@ -1,26 +1,26 @@
-import { h, render } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
 import { atom as atomSchema } from '../structschema';
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 import element from '../../chem/element';
 
 function ElementNumber(props, {stateStore}) {
-	let {state} = stateStore;
+	let {stateForm} = stateStore.props;
 	return (
 		<label>Number:
 		  <input className="number" type="text"
 				 readonly="readonly"
-				 value={element.map[state.label] || ''}/>
+				 value={element.map[stateForm.label] || ''}/>
 		</label>
 	);
 }
 
 function Atom(props) {
 	return (
-		<Form component={Dialog} title="Atom Properties" className="atom-props"
+		<Form storeName="atom" component={Dialog} title="Atom Properties" className="atom-props"
 			  schema={atomSchema} customValid={{ label: l => atomValid(l) }} init={props} params={props}>
 		  <fieldset className="main">
 			<Field name="label"/>
@@ -55,9 +55,4 @@ function atomValid(label) {
 	return label && !!element.map[capitalize(label)];
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Atom {...params}/>
-	), overlay);
-};
+export default Atom;

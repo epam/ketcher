@@ -220,8 +220,6 @@ export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
 	const { absolute, attached } = ssgroup.attrs;
 
-	console.info('from sgroup', ssgroup);
-
 	if (!absolute && !attached)
 		ssgroup.attrs.radiobuttons = 'Relative';
 	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';

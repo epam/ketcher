@@ -123,7 +123,7 @@ form[role=dialog] {
 		height: 27em;
 		width: 11em;
 		float: left;
-		li:nth-child(15) { // TODO: probably temp hack
+		li:nth-child(14) { // TODO: probably temp hack
 			               // User tmpls shoudn't be at 15th place
 			margin-top: 12px;
 			&:before {
@@ -224,7 +224,7 @@ form.atom-props {
 }
 
 form.attach-points {
-	width: 18em;
+	min-width: 18em;
 	label {
 		margin: 0 20px;
 		display: block;
@@ -257,6 +257,7 @@ form.rgroup-logic {
 }
 
 .sgroup, .sgroup-special {
+	width: 20.1em;
 	label {
 		display: block;
 		text-align: right;
@@ -275,13 +276,51 @@ form.rgroup-logic {
 		}
 		textarea, select[name=fieldValue] {
 			display: block;
-			width: 20em;
+			width: 19em;
 			height: 12em;
 			overflow: auto;
 		}
 		input[type=text], select[name=fieldName] {
-			width: 20em;
+			width: 19em;
 			display: block;
+		}
+	}
+}
+
+form.settings {
+	width: 35em;
+	.save {
+		margin-left: 10px;
+		&:extend(button all);
+		cursor: default;
+		float: left;
+	}
+	.open {
+		&:extend(button all);
+		float: left;
+	}
+
+	.accordion {
+		&:extend(.-Accordion all);
+		fieldset {
+			border-radius: 0 0 6px 6px;
+		}
+		label {
+			display: block;
+			text-align: right;
+			line-height: @input-height;
+			height: @input-height;
+			select, input {
+				width: 50%;
+			}
+		}
+		label.measure-field {
+			input {
+				width: 34%;
+			}
+			select {
+				width: 15%;
+			}
 		}
 	}
 }
@@ -605,66 +644,6 @@ form.rgroup-logic {
 	}
 }
 
-.settings {
-	width: 42em;
-	height: auto;
-
-	.open {
-		&:extend(button all);
-		float: left;
-	}
-
-	.save {
-		&:extend(button all);
-		cursor: default;
-	}
-
-	.accordion-wrapper {
-		margin: 0;
-		.accordion {
-			&:extend(.-Accordion all);
-		}
-
-		.content {
-			display: block;
-			font-size: 16px;
-			ul {
-				border-collapse: collapse;
-				width: 100%;
-				li {
-					border: 1px solid #eee;
-					div {
-						padding-left: 3px;
-						display: inline-block;
-						margin: 0;
-						width: 49%;
-						input[type="number"] {
-							border: 1px solid #eee;
-							border-radius: 5px;
-							padding: 6px 2px;
-							width: 77%;
-						}
-						.measure {
-							width: 20%;
-						}
-						select {
-							border: 0;
-							margin: 0;
-							padding: 0;
-							width: 100%;
-						}
-					}
-				}
-			}
-		}
-		.current {
-			display: block;
-			padding: 5px;
-			font-size: 16px;
-		}
-	}
-}
-
 .open {
 	// constrain dialog resizebility
 	// max-width: 50%;
@@ -732,7 +711,7 @@ form.rgroup-logic {
 }
 
 .attach {
-	width: 25em;
+	width: 35em;
 	label {
 		display: block;
 		padding: 5px;
@@ -740,10 +719,11 @@ form.rgroup-logic {
 	}
 
 	.struct-editor {
+		padding: 10px;
 		border: 1px solid @border-color;
 		border-radius: 5px;
 		position: relative;
 		height: 27em;
-		overflow: auto;
+		overflow: hidden;
 	}
 }

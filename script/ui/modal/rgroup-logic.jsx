@@ -2,7 +2,7 @@ import { h, render } from 'preact';
 /** @jsx h */
 
 import { rgroup as rgroupSchema } from '../structschema';
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 
@@ -32,7 +32,7 @@ function IfThenSelect(props, {schema, stateStore}) {
 function RgroupLogic (props) {
 	let { label, rgroupLabels } = props;
 	return (
-		<Form component={Dialog} title="R-Group Logic" className="rgroup-logic"
+		<Form storeName="rgroup-logic" component={Dialog} title="R-Group Logic" className="rgroup-logic"
 			  schema={rgroupSchema} customValid={{ range: r => rangeConv(r) }} init={props} params={props}>
 			<Field name="range"/>
 			<Field name="resth"/>
@@ -50,9 +50,4 @@ function rangeConv(range) { // structConv
 	});
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<RgroupLogic {...params}/>
-	), overlay);
-};
+export default RgroupLogic;

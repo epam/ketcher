@@ -1,5 +1,6 @@
 import { h, Component } from 'preact';
 import FontFaceObserver from "font-face-observer";
+import Input from './input';
 /** @jsx h */
 
 let commonFonts = [
@@ -32,9 +33,7 @@ let cache = null;
 class SystemFonts extends Component {
 	constructor(props) {
 		super(props);
-		var opts = JSON.parse(localStorage.getItem("ketcher-opts"));
-		var currentFont = opts ? opts['font'].substring(opts['font'].indexOf('px ') + 3) : 'Arial';
-		this.state = { availableFonts: [currentFont] };
+		this.state = { availableFonts: [subfontname(props.value)] };
 		this.setAvailableFonts();
 	}
 	setAvailableFonts() {
@@ -45,16 +44,23 @@ class SystemFonts extends Component {
 			});
 	}
 	render() {
-		let {current, ...props} = this.props;
-		let content = this.state.availableFonts.map((fontName) =>
-			('30px ' + fontName) == current ? <option value={fontName} selected>{fontName}</option> :
-					<option value={fontName}>{fontName}</option>);
-		return (
-			<select {...props}>
-				{content}
-			</select>
-		);
+		let {...props} = this.props;
+		let desc = {
+			enum: [],
+			enumNames: []
+		};
+		this.state.availableFonts.forEach((font) => {
+				desc.enum.push(`30px ${font}`);
+				desc.enumNames.push(font);
+		});
+		return desc.enum.length !== 1
+			? <Input schema={desc} {...props} />
+			: <select><option>{desc.enumNames[0]}</option></select>;
 	}
+}
+
+function subfontname(name) {
+	return name.substring(name.indexOf('px ') + 3);
 }
 
 export default SystemFonts;

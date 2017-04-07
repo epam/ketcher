@@ -1,15 +1,17 @@
-import { h, Component, render } from 'preact';
+import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { sgroup as sgroupSchema } from '../structschema';
-import { Form, Field, mapOf } from '../component/form';
+import { form as Form, Field, mapOf } from '../component/form';
 import Dialog from '../component/dialog';
 
 const schemes = mapOf(sgroupSchema, 'type');
 
 function SelectOneOf(props, { stateStore }) {
-	let {name, onChange, ...prop} = props;
-	let selectDesc = {
+	const { name, ...prop } = props;
+
+	const selectDesc = {
 		title: 'Type',
 		enum: [],
 		enumNames: []
@@ -20,43 +22,38 @@ function SelectOneOf(props, { stateStore }) {
 		selectDesc.enumNames.push(schemes[item].title);
 	});
 
-	const changeSchema = type => {
-		onChange(type);
-		stateStore.changeSchema(schemes[type]);
-	};
-
-	return <Field schema={selectDesc}
-				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+	return <Field schema={selectDesc} {...stateStore.field(name)} {...prop}/>;
 }
 
-class Sgroup extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { type: props.type }
-	}
-
-	content = (type) => Object.keys(schemes[type].properties).map(prop =>
-		 prop !== 'type' ? <Field name={prop} key={`${type}-${prop}`} /> : null
- 	);
-
-	render(props) {
-		const { type } = this.state;
-		const desc = schemes[type];
-		return (
-			<Form component={Dialog} title="S-Group Properties" className="sgroup"
-				  schema={desc} init={props} params={props}>
-				<SelectOneOf name="type" onChange={(type) => this.setState({type: type})}/>
-				<fieldset class={type === 'DAT' ? 'data' : 'base'}>
-					{ this.content(type) }
-				</fieldset>
-			</Form>
-		);
-	}
+function Sgroup(props) {
+	let { stateForm, ...prop } = props;
+	let type = stateForm.type;
+	return (
+		<Form storeName="sgroup" component={Dialog} title="S-Group Properties" className="sgroup"
+			  schema={schemes[type]} init={prop} params={prop}>
+			<SelectOneOf name="type"/>
+			<fieldset class={type === 'DAT' ? 'data' : 'base'}>
+				{ content(type) }
+			</fieldset>
+		</Form>
+	);
 }
 
-export default function dialog(params) {
-	const overlay = $$('.overlay')[0];
-	return render((
-		<Sgroup {...params}/>
-	), overlay);
+const content = type => Object.keys(schemes[type].properties)
+	.filter(prop => prop !== 'type')
+	.map(prop => {
+			const fieldType = prop === 'radiobuttons' ? 'radio' :
+				prop === 'fieldValue' ? 'textarea' : 'text';
+
+			return <Field name={prop} type={fieldType} key={`${type}-${prop}`}/>;
+		}
+	);
+
+module.exports = {
+	sgroupSpecialDialog: connect((store) => {
+		return {
+			stateForm: store.sgroup.stateForm
+		};
+	})(Sgroup)
 };
+

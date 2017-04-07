@@ -1,13 +1,16 @@
 import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 import Input from './input';
+import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
-	constructor({ schema, init = {}, ...props }) {
+	constructor({dispatch, storeName,
+					schema, init, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		this.state = this.schema.serialize(init).instance;
+		if (init) dispatch(updateFormState(storeName, init));
 	}
 
 	getChildContext() {
@@ -15,21 +18,15 @@ class Form extends Component {
 		return { schema, stateStore: this };
 	}
 
-	changeSchema(schema) {
-		this.schema = propSchema(schema, this.props);
-		this.setState(this.schema.serialize(this.state).instance);
-	}
-
 	field(name, onChange) {
-		var value = this.state[name];
+		let {dispatch, storeName, stateForm} = this.props;
+		var value = stateForm[name];
 		var self = this;
-
 		return {
 			value: value,
 			onChange(value) {
-				self.setState({ ...self.state, [name]: value });
+				dispatch(updateFormState(storeName, { ...self.props.stateForm, [name]: value }));
 				if (onChange) onChange(value);
-				console.info('onChange', self.state);
 			}
 		};
 	}
@@ -39,23 +36,28 @@ class Form extends Component {
 	}
 
 	result() {
-		return this.schema.serialize(this.state).instance;
+		return this.schema.serialize(this.props.stateForm).instance;
 	}
 
 	render() {
-		var { children, component, ...props } = this.props;
+		var {children, component, stateForm, schema, ...props} = this.props;
+		if (schema.title !== this.schema.title) this.schema = propSchema(schema, props);
 		let Component = component || 'form';
-		console.info('validate', this.result());
-
 		return (
 			<Component {...props}
-					   result={() => this.result()}
-					   valid={() => this.schema.serialize(this.state).valid}>
-				{children}
+				result = {() => this.result()}
+				valid  = {() => this.schema.serialize(stateForm).valid} >
+			  {children}
 			</Component>
 		);
 	}
 }
+const form = connect((store, ownProps ) => {
+	let { storeName } = ownProps;
+	return {
+		stateForm: store[storeName].stateForm
+	};
+})(Form);
 
 function Label({ labelPos, title, children }) {
 	return title ?
@@ -79,7 +81,7 @@ class Field extends Component {
 		let desc = props.schema || schema.properties[name];
 
 		return (
-			<Label title={props.title || desc.title}>
+			<Label title={props.title || desc.title} >
 				<Input name={name} schema={desc}
 					   {...stateStore.field(name, onChange)} {...props}/>
 			</Label>
@@ -100,6 +102,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 		}, schema.properties);
 	}
 	return {
+		title: schema.title || '',
 		serialize: inst => v.validate(inst, schema, {
 			rewrite: serializeRewrite.bind(null, serialize)
 		}),
@@ -156,4 +159,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { Form, Field, mapOf };
+export { form, Field, mapOf };

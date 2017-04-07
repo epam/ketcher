@@ -17,7 +17,6 @@ function parseAtomLine(atomLine) {
 			// generic
 			pp: new Vec2(parseFloat(atomSplit[0]), -parseFloat(atomSplit[1]), parseFloat(atomSplit[2])),
 			label: atomSplit[4].trim(),
-			pseudo: !element.map[atomSplit[4].trim()] ? atomSplit[4].trim() : null,
 			explicitValence: utils.fmtInfo.valenceMap[utils.parseDecimalInt(atomSplit[10])],
 
 			// obsolete

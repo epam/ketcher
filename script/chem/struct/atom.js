@@ -9,8 +9,8 @@ function Atom(params) { // eslint-disable-line max-statements
 
 	this.label = params.label;
 	this.fragment = params.fragment || -1;
+	this.pseudo = checkPseudo(params.label);
 
-	ifDef(this, params, 'pseudo', def('pseudo'));
 	ifDef(this, params, 'alias', def('alias'));
 	ifDef(this, params, 'isotope', def('isotope'));
 	ifDef(this, params, 'radical', def('radical'));
@@ -74,7 +74,6 @@ Atom.PATTERN =
 
 Atom.attrlist = {
 	alias: null,
-	pseudo: null,
 	label: 'C',
 	isotope: 0,
 	radical: 0,
@@ -410,6 +409,11 @@ Atom.prototype.calcValenceMinusHyd = function (conn) { // eslint-disable-line ma
 
 function ifDef(dst, src, prop, def) {
 	dst[prop] = !(typeof src[prop] === 'undefined') ? src[prop] : def;
+}
+
+function checkPseudo(label) {
+	return !element.map[label] && label !== 'L' && label !== 'L#' &&
+			label !== 'R' && label !== 'R#' ?	label : null;
 }
 
 module.exports = Atom;

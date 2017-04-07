@@ -22,11 +22,11 @@ class Dialog extends Component {
 		ev.stopPropagation();
 	}
 	componentDidMount() {
-		var fe = this.base.querySelector(['input:not([type=button])', 'textarea',
-			                            '[contenteditable]'].join(',')) ||
-			     this.base.querySelector(['select', 'button:not(.close)', 'input'].join(','));
+		var fe = this.base.querySelector(['input:not([type=checkbox]):not([type=button])', 'textarea',
+			                            '[contenteditable]','select'].join(',')) ||
+			     this.base.querySelector(['button.close'].join(','));
 		console.assert(fe, 'No active buttons');
-		fe.focus();
+		if (fe.focus) fe.focus();
 	}
 	render() {
 		console.info('dialog render');

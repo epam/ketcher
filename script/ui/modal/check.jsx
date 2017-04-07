@@ -1,9 +1,9 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
-import { Form, Field } from '../component/form';
+import { form as Form, Field } from '../component/form';
 
 const checkSchema = {
 	title: 'Check',
@@ -52,88 +52,62 @@ const checkSchema = {
 	}
 };
 
-class Check extends Component {
-	constructor(props) {
+function Check(props) {
+	const tabs = ['Check', 'Settings'];
+	let { check, ...prop } = props;
+
+	return (
+		<Form storeName="check" component={Dialog} title="Structure Check" className="check"
+			  schema={checkSchema} params={prop}>
+			<Tabs className="tabs" captions={tabs}>
+				<ErrorsCheck className="result" check={check}/>
+				<ul className="settings">  {
+					Object.keys(checkSchema.properties).map(type => (
+						<li><Field name={type}/></li>
+					))
+				}</ul>
+			</Tabs>
+		</Form>
+	);
+}
+
+class ErrorsCheck extends Component {
+	constructor(props, { stateStore }) {
 		super(props);
+		let { stateForm } = stateStore.props;
+		let optsTypes = Object.keys(stateForm).filter((type) => stateForm[type]);
 
 		this.state = {
 			moleculeErrors: {}
 		};
 
-		this.checkOptsTypes = Object.keys(checkSchema.properties);
-
-		this.initState = this.checkOptsTypes.reduce((acc, key) => {
-			acc[key] = true;
-			return acc;
-		}, {});
-
-		this.checkMolecule(this.checkOptsTypes);
+		this.checkMolecule(optsTypes)
 	}
 
 	checkMolecule(optsTypes) {
 		this.props.check({ 'types': optsTypes })
-			.then(res => {
-				this.setState({
-					moleculeErrors: Object.assign(this.state.moleculeErrors, res)
-				});
-			})
+			.then(res => this.setState({ moleculeErrors: res }))
 			.catch(console.error);
 	}
 
-	onCheck(optType, value) {
-		if (!value) {
-			const moleculeErrors = this.state.moleculeErrors;
-			delete moleculeErrors[optType];
-			this.setState({ moleculeErrors: moleculeErrors });
-			return;
-		}
-
-		this.checkMolecule([optType]);
-	};
-
 	render(props) {
-		var tabs = ['Check', 'Settings'];
-
-		const moleculeErrorsTypes = Object.keys(this.state.moleculeErrors);
-
-		const checkOptTitle = key => checkSchema.properties[key].title;
-
+		let { moleculeErrors } = this.state;
+		let moleculeErrorsTypes = Object.keys(moleculeErrors);
 		return (
-			<Form component={Dialog} title="Structure Check" className="check" params={props}
-				  schema={checkSchema} init={this.initState}
-			>
-				<Tabs className="tabs" captions={tabs}>
-					<dl className="result">{
-						moleculeErrorsTypes.length === 0 ?
-							<li>
-								<div className="error-name">No errors found</div>
-							</li> :
-							moleculeErrorsTypes.map(type => (
-								<div>
-									{/* A wrapper for react */}
-									<dt>{checkOptTitle(type)} error :</dt>
-									<dd>{this.state.moleculeErrors[type]}</dd>
-								</div>
-							))
-					}</dl>
-					<ul className="settings">{
-						this.checkOptsTypes.map(optType => (
-							<li>
-								<Field title={checkOptTitle(optType)} name={optType}
-									   onChange={value => this.onCheck(optType, value)}
-								/>
-							</li>
-						))
-					}</ul>
-				</Tabs>
-			</Form>
+			<dl {...props}>
+				{moleculeErrorsTypes.length === 0 ?
+					<li>
+						<div className="error-name">No errors found</div>
+					</li> :
+					moleculeErrorsTypes.map((type) => (
+						<div>
+							<dt>{checkSchema.properties[type].title} error :</dt>
+							<dd>{moleculeErrors[type]}</dd>
+						</div>
+					))}
+			</dl>
 		);
 	}
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Check {...params}/>
-	), overlay);
-};
+export default Check;

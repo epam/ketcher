@@ -1,7 +1,7 @@
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
-import { Form, Field, mapOf } from '../component/form';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 const sgroupSchema = {
@@ -17,7 +17,7 @@ const sgroupSchema = {
 				{
 					title: 'MDLBG_FRAGMENT_STEREO',
 					properties: {
-						type: { enum: ["STR"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
@@ -35,8 +35,7 @@ const sgroupSchema = {
 							],
 							default: 'abs'
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -46,20 +45,19 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				},
 				{
 					title: 'MDLBG_FRAGMENT_COEFFICIENT',
 					properties: {
-						type: { enum: ["COEF"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [],
+							enum: [''],
 							default: ''
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -69,20 +67,19 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				},
 				{
 					title: 'MDLBG_FRAGMENT_CHARGE',
 					properties: {
-						type: { enum: ["CHRG"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [],
+							enum: [''],
 							default: ''
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -92,20 +89,19 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				},
 				{
 					title: 'MDLBG_FRAGMENT_RADICALS',
 					properties: {
-						type: { enum: ["RAD"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [],
+							enum: [''],
 							default: ''
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -115,7 +111,7 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				},
 			]
 		},
@@ -126,7 +122,7 @@ const sgroupSchema = {
 				{
 					title: 'MDLBG_STEREO_KEY',
 					properties: {
-						type: { enum: ["STRKEY"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
@@ -144,8 +140,7 @@ const sgroupSchema = {
 							],
 							default: 'erythro'
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -155,12 +150,12 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				},
 				{
 					title: 'MDLBG_BOND_KEY',
 					properties: {
-						type: { enum: ["BNDKEY"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
@@ -169,8 +164,7 @@ const sgroupSchema = {
 							],
 							default: 'Value=4'
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -180,7 +174,7 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				}
 			]
 		},
@@ -191,7 +185,7 @@ const sgroupSchema = {
 				{
 					title: 'MDLBG_STEREO_KEY',
 					properties: {
-						type: { enum: ["STRKEY"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
@@ -209,20 +203,17 @@ const sgroupSchema = {
 								'TB-5',
 								'TB-5-PI',
 								'OC-6',
-								'TB-5-PI',
 								'TP-6',
 								'PB-7',
 								'CU-8',
 								'SA-8',
 								'DD-8',
 								'HB-9',
-								'TPS-9',
-								'HB-9'
+								'TPS-9'
 							],
 							default: 'RS'
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -232,7 +223,7 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				}
 			]
 		},
@@ -243,7 +234,7 @@ const sgroupSchema = {
 				{
 					title: 'MDLBG_STEREO_KEY',
 					properties: {
-						type: { enum: ["STRKEY"] },
+						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
@@ -253,8 +244,7 @@ const sgroupSchema = {
 							],
 							default: 'cis'
 						},
-						buttons: {
-							title: 'Buttons',
+						radiobuttons: {
 							type: 'string',
 							enum: [
 								'Absolute',
@@ -264,113 +254,168 @@ const sgroupSchema = {
 							default: 'Absolute'
 						}
 					},
-					required: ['fieldValue']
+					required: ['fieldValue', 'radiobuttons']
 				}
 			]
 		}
 	]
 };
 
-const schemes = sgroupSchema.oneOf
-	.map(schema => ({
-		title: schema.title,
-		properties: mapOf(schema, 'type')
-	}))
-	.reduce((acc, item) => {
-			acc[item.title] = item.properties;
-			return acc;
-		}, {}
-	);
+const contextSchema = {
+	title: 'Context',
+	type: 'string',
+	enum: [
+		'Fragment',
+		'Single Bond',
+		'Atom',
+		'Group'
+	],
+	default: 'Fragment'
+};
 
-console.info('schemes', schemes);
+const fieldNameSchema = {
+	title: 'Field name',
+	type: 'string',
+	enum: [
+		'MDLBG_FRAGMENT_STEREO',
+		'MDLBG_FRAGMENT_COEFFICIENT',
+		'MDLBG_FRAGMENT_CHARGE',
+		'MDLBG_FRAGMENT_RADICALS',
+		'MDLBG_STEREO_KEY',
+		'MDLBG_BOND_KEY'
+	],
+	default: 'MDLBG_FRAGMENT_STEREO'
+};
 
-const defaultContext = 'Fragment';
+function transformSchema(source) {
+	const injectSchemes = (dest, schemes) => {
+		schemes.forEach(schema => {
+			dest.properties[schema.title] = schema.schema
+		});
+
+		return dest;
+	};
+
+	return source.oneOf
+		.map(schema => ({
+			title: schema.title,
+			properties: schema.oneOf.reduce((acc, item) => {
+				acc[item.title] = injectSchemes(item, [
+						{ title: 'context', schema: contextSchema },
+						{ title: 'fieldName', schema: fieldNameSchema }
+					]
+				);
+				return acc;
+			}, {})
+		}))
+		.reduce((acc, item) => {
+				acc[item.title] = item.properties;
+				return acc;
+			}, {}
+		);
+}
 
 function toEnumSchema(title, schema) {
 	return Object.keys(schema).reduce((acc, propt) => {
 			acc.enum.push(propt);
-			acc.enumNames.push(schema[propt].title);
+			acc.enumNames.push(schema[propt].title || propt);
 			return acc;
 		},
 		{
 			title: title,
+			type: 'string',
 			enum: [],
 			enumNames: []
 		}
 	);
 }
 
+const objFirstPropKey = obj => Object.keys(obj)[0];
+const defaultContext = () => objFirstPropKey(schemes);
+const defaultFieldName = context => objFirstPropKey(schemes[context]);
+const defaultFieldValue = (context, fieldName) => schemes[context][fieldName].properties.fieldValue.default;
+
+const schemes = transformSchema(sgroupSchema);
+
 const SelectContext = (props, { stateStore }) => {
-	const { onChange, ...prop } = props;
-	const name = 'context';
+	const { name, onChange, ...prop } = props;
 	const selectDesc = toEnumSchema('Context', schemes);
 
-	const changeSchema = type => {
-		onChange(type);
-		stateStore.changeSchema(schemes[type]);
+	const changeSchema = context => {
+		const defaultField = defaultFieldName(context);
+		onChange(context);
+		stateStore.pushState('fieldName', defaultField);
+		stateStore.pushState('fieldValue', defaultFieldValue(context, defaultField));
+		stateStore.changeSchema(schemes[context]);
 	};
 
-	return <Field name={name} schema={selectDesc}
+	return <Field name={name} schema={selectDesc} key='context-value'
 				  {...stateStore.field(name, changeSchema)} {...prop}/>;
 };
 
 const SelectOneOf = (props, { stateStore }) => {
-	const { context, onChange, ...prop } = props;
-	const name = 'fieldName';
+	const { name, context, onChange, ...prop } = props;
 	const selectDesc = toEnumSchema('Field name', schemes[context]);
 
-	return <Field name='fieldName' schema={selectDesc}
-				  {...stateStore.field(name, onChange)} {...prop}/>;
-};
+	const changeSchema = fieldName => {
+		onChange(fieldName);
+		stateStore.pushState('fieldValue', defaultFieldValue(context, fieldName));
+		stateStore.changeSchema(schemes[context][fieldName]);
+	};
 
-const objFirstPropKey = obj => Object.keys(obj)[0];
+	return <Field name={name} schema={selectDesc} key={`${context}-fn`}
+				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+};
 
 class SgroupSpecial extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			context: defaultContext,
-			fieldName: objFirstPropKey(schemes[defaultContext])
-		};
+		this.state = {};
+		this.state.context = props.context || defaultContext();
+		this.state.fieldName = props.fieldName || defaultFieldName(this.state.context);
 	}
 
 	content = (context, fieldName) => Object.keys(schemes[context][fieldName].properties)
-		.filter(prop => prop !== 'type')
-		.map(prop => prop === 'buttons' ?
-			<Field name={prop} className='pos' type='radio' key={`${context}-${fieldName}-${prop}`}/> :
-			<Field name={prop} size={10} key={`${context}-${fieldName}-${prop}`}/>);
+		.filter(prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName')
+		.map(prop => prop === 'radiobuttons' ?
+			<Field name={prop} type='radio' key={`${context}-${fieldName}-${prop}-radio`}/> :
+			<Field name={prop} size='10' key={`${context}-${fieldName}-${prop}-select`}/>);
+
+	componentDidMount() {
+		document.querySelector("select[name='context']").value = this.state.context;
+		document.querySelector("select[name='fieldName']").value = this.state.fieldName;
+	}
 
 	render(props) {
 		const { context, fieldName } = this.state;
 		const desc = schemes[context][fieldName];
 
-		const initState = {
-			context: context,
-			fieldName: fieldName
-		};
-
 		return (
 			<Form component={Dialog} title={'S-Group Properties'} className='sgroup'
-				  schema={desc} init={initState} params={props}
+				  schema={desc} init={props} params={props}
 			>
-				<SelectContext
-					onChange={context => this.setState({
-						context: context,
-						fieldName: objFirstPropKey(schemes[context])
-					})}
+				<SelectContext key={`${context}-context`}
+							   name='context'
+							   onChange={context => this.setState({
+								   context: context,
+								   fieldName: defaultFieldName(context)
+							   })}
 				/>
-				<fieldset key={`${context}-${fieldName}-data`} className={'data'}>
-					<SelectOneOf
-						context={context}
-						onChange={field => this.setState({ fieldName: field })}
+				<fieldset className={'data'} key={`${context}-${fieldName}-fieldset`}>
+					<SelectOneOf key={`${context}-${fieldName}-fieldName`}
+								 name={`fieldName`}
+								 context={context}
+								 onChange={fieldName => this.setState({
+									 fieldName: fieldName
+								 })}
 					/>
 					{
 						this.content(context, fieldName)
 					}
 				</fieldset>
 			</Form>
-		)
+		);
 	}
 }
 

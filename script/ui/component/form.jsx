@@ -4,17 +4,15 @@ import { h, Component } from 'preact';
 import Input from './input';
 
 class Form extends Component {
-	constructor({schema, init={}, ...props}) {
+	constructor({ schema, init = {}, ...props }) {
 		super();
 		this.schema = propSchema(schema, props);
 		this.state = this.schema.serialize(init).instance;
-
-		console.info('serialize', this.schema.serialize(init).instance);
 	}
 
 	getChildContext() {
-		let {schema} = this.props;
-		return {schema, stateStore: this};
+		let { schema } = this.props;
+		return { schema, stateStore: this };
 	}
 
 	changeSchema(schema) {
@@ -23,8 +21,8 @@ class Form extends Component {
 	}
 
 	field(name, onChange) {
-		const value = this.state[name];
-		const self = this;
+		var value = this.state[name];
+		var self = this;
 
 		return {
 			value: value,
@@ -36,46 +34,54 @@ class Form extends Component {
 		};
 	}
 
+	pushState(name, value) {
+		this.setState({ ...this.state, [name]: value });
+	}
+
 	result() {
 		return this.schema.serialize(this.state).instance;
 	}
 
 	render() {
-		var {children, component, ...props} = this.props;
+		var { children, component, ...props } = this.props;
 		let Component = component || 'form';
 		console.info('validate', this.result());
 
-		console.info('state', this.state);
-
 		return (
 			<Component {...props}
-				result = {() => this.result()}
-				valid  = {() => this.schema.serialize(this.state).valid} >
-			  {children}
+					   result={() => this.result()}
+					   valid={() => this.schema.serialize(this.state).valid}>
+				{children}
 			</Component>
 		);
 	}
 }
 
 function Label({ labelPos, title, children }) {
-	return (
-		<label>{ labelPos != 'after' ? `${title}:` : '' }
-		  {children}
-		  { labelPos == 'after' ? title : '' }
-		</label>
-	);
+	return title ?
+		(
+			<label>{ labelPos != 'after' ? `${title}:` : '' }
+				{children}
+				{ labelPos == 'after' ? title : '' }
+			</label>
+		) :
+		(
+			<label>
+				{children}
+			</label>
+		)
 }
 
 class Field extends Component {
 	render() {
-		let { name, onChange, ...props} = this.props;
+		let { name, onChange, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
 		return (
 			<Label title={props.title || desc.title}>
-			  <Input name={name} schema={desc}
-					 {...stateStore.field(name, onChange)} {...props}/>
+				<Input name={name} schema={desc}
+					   {...stateStore.field(name, onChange)} {...props}/>
 			</Label>
 		);
 	}
@@ -83,9 +89,8 @@ class Field extends Component {
 
 ////
 
-function propSchema(schema, {customValid, serialize={}, deserialize={}}) {
+function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 	var v = new jsonschema.Validator();
-
 	if (customValid) {
 		schema = Object.assign({}, schema); // copy
 		schema.properties = Object.keys(customValid).reduce((res, prop) => {
@@ -111,7 +116,7 @@ function serializeRewrite(serializeMap, instance, schema) {
 			schema.default;
 	}
 
-	for(var p in schema.properties){
+	for (var p in schema.properties) {
 		if (p in instance) {
 			res[p] = instance[p];
 		}
@@ -141,7 +146,7 @@ function selectListOf(schema, prop) {
 	if (desc)
 		return desc.enum.map((value, i) => {
 			let title = desc.enumNames && desc.enumNames[i];
-			return title ? {title, value} : value;
+			return title ? { title, value } : value;
 		});
 	return schema.oneOf.map(desc => (
 		!desc.title ? constant(desc, prop) : {

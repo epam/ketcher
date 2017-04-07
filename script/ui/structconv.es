@@ -29,6 +29,12 @@ export function toElement(elem) {
 		return { attpnt: toApoint(elem.ap) };
 	if (element.map[capitalize(elem.label)])
 		return toAtom(elem);
+	if (elem.label == 'A' || elem.label == '*' || elem.label == 'Q' ||
+		elem.label == 'X' || elem.label == 'R') {
+		elem.pseudo = elem.label;
+		return toAtom(elem);
+	}
+
 	return elem;
 }
 
@@ -149,7 +155,7 @@ export function toBondType(caption) {
 function fromBondType(type, stereo) {
 	for (var caption in bondCaptionMap) {
 		if (bondCaptionMap[caption].type == type &&
-		    bondCaptionMap[caption].stereo == stereo)
+			bondCaptionMap[caption].stereo == stereo)
 			return caption;
 	}
 	throw 'No such bond caption';
@@ -212,13 +218,41 @@ const bondCaptionMap = {
 
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
+	const { absolute, attached } = ssgroup.attrs;
+
+	console.info('from sgroup', ssgroup);
+
+	if (!absolute && !attached)
+		ssgroup.attrs.radiobuttons = 'Relative';
+	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
+
 	return Object.assign({ type: type }, ssgroup.attrs);
 }
 
 export function toSgroup(sgroup) {
-	let { type, ...props } = sgroup;
+	let { type, radiobuttons, ...props } = sgroup;
+	let attrs = { ...props };
+
+	const absolute = 'absolute';
+	const attached = 'attached';
+
+	switch (radiobuttons) {
+	case 'Absolute':
+		attrs[absolute] = true;
+		attrs[attached] = false;
+		break;
+	case 'Attached':
+		attrs[absolute] = false;
+		attrs[attached] = true;
+		break;
+	case 'Relative':
+		attrs[absolute] = false;
+		attrs[attached] = false;
+		break;
+	}
+
 	return {
 		type,
-		attrs: props
+		attrs
 	}
 }

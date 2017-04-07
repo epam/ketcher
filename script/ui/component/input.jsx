@@ -58,7 +58,7 @@ Select.val = function (ev, schema) {
 
 function FieldSet({ schema, value, selected, onSelect, type="radio", ...props}) {
 	return (
-		<fieldset onClick={onSelect}>
+		<fieldset onClick={onSelect} className="radio">
 			{
 				enumSchema(schema, (title, val) => (
 					<label>
@@ -75,11 +75,12 @@ function FieldSet({ schema, value, selected, onSelect, type="radio", ...props}) 
 
 FieldSet.val = function (ev, schema) {
 	var input = ev.target;
-	if (ev.target.tagName != 'INPUT') {
-		ev.preventDefault();
-		return undefined;
-	}
-	ev.stopPropagation();
+	// if (ev.target.tagName != 'INPUT') {
+	// 	ev.preventDefault();
+	// 	return undefined;
+	// }
+	// ev.stopPropagation();
+	// TODO: do we need that?
     // Hm.. looks like premature optimization
 	//      should we inline this?
 	var fieldset = input.parentNode.parentNode;

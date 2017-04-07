@@ -257,13 +257,12 @@ form.rgroup-logic {
 }
 
 .sgroup, .sgroup-special {
-	width: 20.1em;
+	width: 20em;
 	label {
 		display: block;
 		text-align: right;
-		&.pos {
-			margin: 0.3em 0 0;
-			display: inline-block;
+		input, select {
+			width: 10em;
 		}
 	}
 	fieldset {
@@ -273,6 +272,15 @@ form.rgroup-logic {
 	.data {
 		label {
 			text-align: left;
+			fieldset.radio {
+				label {
+					margin: .4em;
+					display: inline-block;
+				}
+				input[type=radio] {
+					width: auto;
+				}
+			}
 		}
 		textarea, select[name=fieldValue] {
 			display: block;

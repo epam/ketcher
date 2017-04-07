@@ -43,10 +43,13 @@ function Sgroup(props) {
 const content = type => Object.keys(schemes[type].properties)
 	.filter(prop => prop !== 'type')
 	.map(prop => {
-			const fieldType = prop === 'radiobuttons' ? 'radio' :
-				prop === 'fieldValue' ? 'textarea' : 'text';
+			let props = {};
+			if (prop === 'name') props.maxlength = 15;
+			if (prop === 'fieldName') props.maxlength = 30;
+			if (prop === 'fieldValue') props.type = 'textarea';
+			if (prop === 'radiobuttons') props.type = 'radio';
 
-			return <Field name={prop} type={fieldType} key={`${type}-${prop}`}/>;
+			return <Field name={prop} key={`${type}-${prop}`} {...props}/>;
 		}
 	);
 

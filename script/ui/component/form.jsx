@@ -34,6 +34,7 @@ class Form extends Component {
 	render() {
 		var {children, component, stateForm, schema, ...props} = this.props;
 		if (schema.title !== this.schema.title) this.schema = propSchema(schema, props);
+		this.schema.serialize(stateForm); // hack: valid first state
 		let Component = component || 'form';
 		return (
 			<Component {...props}

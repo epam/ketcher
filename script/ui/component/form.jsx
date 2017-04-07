@@ -16,9 +16,6 @@ class Form extends Component {
 		let { schema } = this.props;
 		return { schema, stateStore: this };
 	}
-	changeSchema(schema) {
-		this.schema = propSchema(schema, this.props);
-	}
 	field(name, onChange) {
 		let {dispatch, storeName, stateForm} = this.props;
 		var value = stateForm[name];
@@ -35,7 +32,8 @@ class Form extends Component {
 		return this.schema.serialize(this.props.stateForm).instance;
 	}
 	render() {
-		var {children, component, stateForm, ...props} = this.props;
+		var {children, component, stateForm, schema, ...props} = this.props;
+		if (schema.title !== this.schema.title) this.schema = propSchema(schema, props);
 		let Component = component || 'form';
 		return (
 			<Component {...props}
@@ -90,6 +88,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 		}, schema.properties);
 	}
 	return {
+		title: schema.title || '',
 		serialize: inst => v.validate(inst, schema, {
 			rewrite: serializeRewrite.bind(null, serialize)
 		}),

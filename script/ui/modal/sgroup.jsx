@@ -22,10 +22,8 @@ function SelectOneOf(props, {stateStore}) {
 		selectDesc.enumNames.push(schemes[item].title);
 	});
 
-	const changeSchema = type => stateStore.changeSchema(schemes[type]);
-
 	return <Field name={name} schema={selectDesc}
-				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+				  {...stateStore.field(name)} {...prop}/>;
 }
 
 function Sgroup(props) {

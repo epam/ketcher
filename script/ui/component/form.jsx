@@ -17,9 +17,7 @@ class Form extends Component {
 		return { schema, stateStore: this };
 	}
 	changeSchema(schema) {
-		let {dispatch, storeName, stateForm} = this.props;
 		this.schema = propSchema(schema, this.props);
-		dispatch(updateFormState(storeName, this.schema.serialize(stateForm).instance));
 	}
 	field(name, onChange) {
 		let {dispatch, storeName, stateForm} = this.props;
@@ -57,9 +55,9 @@ const form = connect((store, ownProps ) => {
 
 function Label({ labelPos, title, children }) {
 	return (
-		<label>{ labelPos != 'after' ? `${title}:` : '' }
+		<label>{ title && labelPos != 'after' ? `${title}:` : '' }
 		  {children}
-		  { labelPos == 'after' ? title : '' }
+		  { title && labelPos == 'after' ? title : '' }
 		</label>
 	);
 }

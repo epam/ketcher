@@ -21,7 +21,7 @@ var Atom = require('./atom').default;
 var AttachPoints = require('./attach-points').default;
 var Automap = require('./automap').default;
 var RgroupLogic = require('./rgroup-logic').default;
-var sgroupDialog = require('./sgroup').default;
+var Sgroup = require('./sgroup').default;
 var Check = require('./check').default;
 var Settings = require('./settings').default;
 
@@ -36,7 +36,7 @@ module.exports = {
 	bondProps: modal(Bond),
 	automap: modal(Automap),
 	rgroupLogic: modal(RgroupLogic),
-	sgroup: sgroupDialog,
+	sgroup: modal(Sgroup),
 	sgroupSpecial: sgroupSpecialDialog,
 	open: openDialog,
 	save: saveDialog,

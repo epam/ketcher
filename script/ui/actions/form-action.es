@@ -5,7 +5,8 @@ const dumpTypes = {
 	bond: 'UPDATE_BOND_FORM',
 	check: 'UPDATE_CHECK_FORM',
 	'rgroup-logic': 'UPDATE_RGROUP_LOGIC_FORM',
-	settings: 'UPDATE_SETTINGS_FORM'
+	settings: 'UPDATE_SETTINGS_FORM',
+	sgroup: 'UPDATE_SGROUP_FORM'
 };
 
 export function updateFormState(storeName, data) {

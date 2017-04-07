@@ -7,6 +7,7 @@ import bondReducer from './bond-reducer.es';
 import checkReducer from './check-reducer.es';
 import rgroupLodicReducer from './rgroup-logic-reducer.es';
 import settingsReducer from './settings-reducer.es';
+import sgroupReducer from './sgroup-reducer.es';
 
 export default combineReducers({
 	'attach-points': attachPointsReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
 	bond: bondReducer,
 	check: checkReducer,
 	'rgroup-logic': rgroupLodicReducer,
-	settings: settingsReducer
+	settings: settingsReducer,
+	sgroup: sgroupReducer
 });

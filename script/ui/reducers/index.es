@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 
+import analyseReducer from './analyse-reducer.es';
 import atomReducer from './atom-props-reducer.es';
 import attachPointsReducer from './attach-points-reducer.es';
 import automapReducer from './automap-reducer.es';
@@ -10,6 +11,7 @@ import settingsReducer from './settings-reducer.es';
 import sgroupReducer from './sgroup-reducer.es';
 
 export default combineReducers({
+	analyse: analyseReducer,
 	'attach-points': attachPointsReducer,
 	atom: atomReducer,
 	automap: automapReducer,

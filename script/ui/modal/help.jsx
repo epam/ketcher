@@ -1,4 +1,4 @@
-import { h, render } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
@@ -13,9 +13,4 @@ function Help(props) {
 	);
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Help {...params}/>
-	), overlay);
-};
+export default Help;

@@ -8,22 +8,23 @@ var periodTable = require('./period-table').default;
 var genericGroups = require('./generic-groups').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
-var aboutDialog = require('./about').default;
 var recognizeDialog = require('./recognize').default;
-var analyseDialog = require('./analyse').default;
-var helpDialog = require('./help').default;
 var miewDialog = require('./miew').default;
 var attachDialog = require('./attach').default;
 
+var About = require('./about').default;
+var Analyse = require('./analyse').default;
+var Help = require('./help').default;
+
 // schemify dialogs
-var Bond = require('./bond').default;
 var Atom = require('./atom').default;
 var AttachPoints = require('./attach-points').default;
 var Automap = require('./automap').default;
-var RgroupLogic = require('./rgroup-logic').default;
-var Sgroup = require('./sgroup').default;
+var Bond = require('./bond').default;
 var Check = require('./check').default;
+var RgroupLogic = require('./rgroup-logic').default;
 var Settings = require('./settings').default;
+var Sgroup = require('./sgroup').default;
 
 templatesDialog.default.init = templatesDialog.init;
 
@@ -42,12 +43,12 @@ module.exports = {
 	save: saveDialog,
 	templates: templatesDialog.default,
 	labelEdit: labelEdit,
-	about: aboutDialog,
+	about: modal(About),
 	recognize: recognizeDialog,
 	check: modal(Check),
-	analyse: analyseDialog,
+	analyse: modal(Analyse),
 	settings: modal(Settings),
-	help: helpDialog,
+	help: modal(Help),
 	miew: miewDialog,
 	attach: attachDialog
 };

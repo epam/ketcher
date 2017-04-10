@@ -1,21 +1,11 @@
-import { h, Component, render } from 'preact';
+import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import keyName from 'w3c-keyname';
-
+import { changeRound } from '../actions/analyse-action.es';
 import Dialog from '../component/dialog';
-
-function SelectRound({value, onChange}) {
-	return (
-		<select value={value} onChange={ev => onChange(ev.target.value)}>
-		  {
-			  range(8).map(i => (
-				  <option value={i}>{i + ' decimal places'}</option>
-			  ))
-		  }
-		</select>
-	);
-}
+import Input from '../component/input';
 
 function FrozenInput({value}) {
 	return (
@@ -42,60 +32,45 @@ function FormulaInput({value}) {
 	);
 }
 
-class Analyse extends Component {
-	constructor() {
-		super();
-		this.state = {
-			roundWeight: 3,
-			roundMass: 3
-		};
-	}
-
-	changeRound(name, value) {
-		let newState = {};
-		newState[name] = +value;
-		this.setState(newState);
-	}
-
-	render(props, state) {
-		return (
-			<Dialog title="Calculated Values"
-					className="analyse" params={this.props}
-					buttons={["Close"]}>
-				<ul>{[
-					{name: 'Chemical Formula', key: 'gross'},
-					{name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight'},
-					{name: 'Exact Mass', key: 'monoisotopic-mass', round: 'roundMass'},
-					{name: 'Elemental Analysis', key: 'mass-composition'}
-				].map(item => (
-					<li>
-						<label>{item.name}:</label>
-						{ item.key == 'gross'
-							? <FormulaInput value={ props[item.key] }/>
-							: <FrozenInput value={ item.round ? roundOff(props[item.key], state[item.round]) : props[item.key] }/>
-						}
-						{ item.round
-							? <SelectRound value={state[item.round]} onChange={val => this.changeRound(item.round, val)}/>
-						 	: null
-						}
-					</li>
-				))
-				}</ul>
-			</Dialog>
-		);
-	}
+function Analyse(props) {
+	return (
+		<Dialog title="Calculated Values" className="analyse"
+				buttons={["Close"]} params={props}>
+			<ul>{[
+				{name: 'Chemical Formula', key: 'gross'},
+				{name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight'},
+				{name: 'Exact Mass', key: 'monoisotopic-mass', round: 'roundMass'},
+				{name: 'Elemental Analysis', key: 'mass-composition'}
+			].map(item => (
+				<li>
+					<label>{item.name}:</label>
+					{ item.key === 'gross'
+						? <FormulaInput value={ props[item.key] }/>
+						: <FrozenInput value={ roundOff(props[item.key], props[item.round]) }/>
+					}
+					{ item.round
+						? <Input schema={{
+							enum: range(8),
+							enumNames: range(8).map(i => `${i} decimal places`)
+						}} value={props[item.round]} onChange={val => props.dispatch(changeRound(item.round, val))}/>
+						: null
+					}
+				</li>
+			))
+			}</ul>
+		</Dialog>
+	);
 }
 
 function allowMovement(event) {
-	var movementKeys =  ['Tab', 'ArrowLeft', 'ArrowRight',
-						 'Home', 'End'];
+	const movementKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
 	var key = keyName(event);
-	if (movementKeys.indexOf(key) == -1)
+	if (movementKeys.indexOf(key) === -1)
 		event.preventDefault();
 }
 
 function roundOff(value, round) {
-	if (typeof value == 'number')
+	if (typeof value === 'number')
 		return value.toFixed(round);
 	return value.replace(/[0-9]*\.[0-9]+/g, (str) => (
 		(+str).toFixed(round)
@@ -109,9 +84,9 @@ function range(n, start = 0) {
 	}).map((_, i) => i + start);
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Analyse {...params}/>
-	), overlay);
-};
+export default connect((store) => {
+	return {
+		roundWeight: store.analyse.roundWeight,
+		roundMass: store.analyse.roundMass
+	};
+})(Analyse);

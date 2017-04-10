@@ -1,6 +1,4 @@
 var modal = require('./render-modal').default;
-var sgroupSpecialDialog = require('./sgroup-special').sgroupSpecialDialog;
-
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
 var labelEdit = require('./labeledit').default;
@@ -22,6 +20,7 @@ var AttachPoints = require('./attach-points').default;
 var Automap = require('./automap').default;
 var RgroupLogic = require('./rgroup-logic').default;
 var Sgroup = require('./sgroup').default;
+var SgroupSpecial = require('./sgroup-special').default;
 var Check = require('./check').default;
 var Settings = require('./settings').default;
 
@@ -37,7 +36,7 @@ module.exports = {
 	automap: modal(Automap),
 	rgroupLogic: modal(RgroupLogic),
 	sgroup: modal(Sgroup),
-	sgroupSpecial: sgroupSpecialDialog,
+	sgroupSpecial: modal(SgroupSpecial),
 	open: openDialog,
 	save: saveDialog,
 	templates: templatesDialog.default,

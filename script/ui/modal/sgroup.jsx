@@ -2,13 +2,13 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { sgroup as sgroupSchema } from '../structschema';
-import { form as Form, Field, mapOf } from '../component/form';
+import {sgroup as sgroupSchema} from '../structschema';
+import {form as Form, Field, mapOf} from '../component/form';
 import Dialog from '../component/dialog';
 
 const schemes = mapOf(sgroupSchema, 'type');
 
-function SelectOneOf(props, { stateStore }) {
+function SelectOneOf(props, {stateStore}) {
 	const { name, ...prop } = props;
 
 	const selectDesc = {
@@ -26,8 +26,9 @@ function SelectOneOf(props, { stateStore }) {
 }
 
 function Sgroup(props) {
-	let { stateForm, ...prop } = props;
+	let {stateForm, ...prop} = props;
 	let type = stateForm.type;
+
 	return (
 		<Form storeName="sgroup" component={Dialog} title="S-Group Properties" className="sgroup"
 			  schema={schemes[type]} init={prop} params={prop}>
@@ -49,11 +50,8 @@ const content = type => Object.keys(schemes[type].properties)
 		}
 	);
 
-module.exports = {
-	sgroupSpecialDialog: connect((store) => {
-		return {
-			stateForm: store.sgroup.stateForm
-		};
-	})(Sgroup)
-};
-
+export default connect((store) => {
+	return {
+		stateForm: store.sgroup.stateForm
+	};
+})(Sgroup);

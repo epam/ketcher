@@ -154,8 +154,6 @@ function initEditor(editor) {
 		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
-		console.info('sdataedit', modal);
-
 		const dlg = dialog(sgroup.type === 'DAT' ? modal.sgroupSpecial : modal.sgroup, structConv.fromSgroup(sgroup));
 		return dlg.then(res => structConv.toSgroup(res));
 	});

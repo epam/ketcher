@@ -17,11 +17,11 @@ const sgroupSchema = {
 			oneOf: [
 				{
 					title: 'MDLBG_FRAGMENT_STEREO',
+					key: 'FRG_STR',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
-							type: 'string',
 							enum: [
 								'abs',
 								'(+)-enantiomer',
@@ -37,7 +37,6 @@ const sgroupSchema = {
 							default: 'abs'
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -50,16 +49,15 @@ const sgroupSchema = {
 				},
 				{
 					title: 'MDLBG_FRAGMENT_COEFFICIENT',
+					key: 'FRG_COEFF',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [''],
 							default: ''
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -72,16 +70,15 @@ const sgroupSchema = {
 				},
 				{
 					title: 'MDLBG_FRAGMENT_CHARGE',
+					key: 'FRG_CHRG',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [''],
 							default: ''
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -94,16 +91,15 @@ const sgroupSchema = {
 				},
 				{
 					title: 'MDLBG_FRAGMENT_RADICALS',
+					key: 'FRG_RAD',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
 							type: 'string',
-							enum: [''],
 							default: ''
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -122,11 +118,11 @@ const sgroupSchema = {
 			oneOf: [
 				{
 					title: 'MDLBG_STEREO_KEY',
+					key: 'SB_STR',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
-							type: 'string',
 							enum: [
 								'erythro',
 								'threo',
@@ -142,7 +138,6 @@ const sgroupSchema = {
 							default: 'erythro'
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -155,18 +150,17 @@ const sgroupSchema = {
 				},
 				{
 					title: 'MDLBG_BOND_KEY',
+					key: 'SB_BND',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
-							type: 'string',
 							enum: [
 								'Value=4'
 							],
 							default: 'Value=4'
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -185,11 +179,11 @@ const sgroupSchema = {
 			oneOf: [
 				{
 					title: 'MDLBG_STEREO_KEY',
+					key: 'AT_STR',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
-							type: 'string',
 							enum: [
 								'RS',
 								'SR',
@@ -215,7 +209,6 @@ const sgroupSchema = {
 							default: 'RS'
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -234,11 +227,11 @@ const sgroupSchema = {
 			oneOf: [
 				{
 					title: 'MDLBG_STEREO_KEY',
+					key: 'GRP_STR',
 					properties: {
 						type: { enum: ['DAT'] },
 						fieldValue: {
 							title: 'Field value',
-							type: 'string',
 							enum: [
 								'cis',
 								'trans'
@@ -246,7 +239,6 @@ const sgroupSchema = {
 							default: 'cis'
 						},
 						radiobuttons: {
-							type: 'string',
 							enum: [
 								'Absolute',
 								'Relative',
@@ -264,7 +256,6 @@ const sgroupSchema = {
 
 const contextSchema = {
 	title: 'Context',
-	type: 'string',
 	enum: [
 		'Fragment',
 		'Single Bond',
@@ -276,14 +267,13 @@ const contextSchema = {
 
 const fieldNameSchema = {
 	title: 'Field name',
-	type: 'string',
 	enum: [
 		'MDLBG_FRAGMENT_STEREO',
 		'MDLBG_FRAGMENT_COEFFICIENT',
 		'MDLBG_FRAGMENT_CHARGE',
 		'MDLBG_FRAGMENT_RADICALS',
 		'MDLBG_STEREO_KEY',
-		'MDLBG_BOND_KEY'
+		'MDLBG_BOND_KEY',
 	],
 	default: 'MDLBG_FRAGMENT_STEREO'
 };
@@ -339,74 +329,53 @@ const defaultFieldValue = (context, fieldName) => schemes[context][fieldName].pr
 const schemes = transformSchema(sgroupSchema);
 
 const SelectContext = (props, { stateStore }) => {
-	const { name, onChange, ...prop } = props;
+	const { name, context, ...prop } = props;
 	const selectDesc = toEnumSchema('Context', schemes);
 
-	console.info('statestore', stateStore);
+	const onChange = context => {
+		const data = {
+			context
+		};
 
-	const changeSchema = context => {
-		const defaultField = defaultFieldName(context);
-		onChange(context);
-		stateStore.pushState('fieldName', defaultField);
-		stateStore.pushState('fieldValue', defaultFieldValue(context, defaultField));
+		data.fieldName = defaultFieldName(context);
+		data.fieldValue = defaultFieldValue(context, data.fieldName);
+
+		stateStore.forceUpdateFormState(data);
 	};
 
-	return <Field name={name} schema={selectDesc} key='context-value'
-				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+	return <Field schema={selectDesc} key={`context-${context}-select`} {...stateStore.field(name, onChange)} {...prop}/>;
 };
 
 const SelectOneOf = (props, { stateStore }) => {
-	const { name, context, onChange, ...prop } = props;
+	const { name, context, ...prop } = props;
 	const selectDesc = toEnumSchema('Field name', schemes[context]);
 
-	const changeSchema = fieldName => {
-		onChange(fieldName);
-		stateStore.pushState('fieldValue', defaultFieldValue(context, fieldName));
+    const onChange = fieldName => {
+    	const data = {
+    		context,
+			fieldName
+		};
+
+    	data.fieldValue = defaultFieldValue(context, fieldName);
+
+		stateStore.forceUpdateFormState(data);
 	};
 
-	return <Field name={name} schema={selectDesc} key={`${context}-fn`}
-				  {...stateStore.field(name, changeSchema)} {...prop}/>;
+	return <Field schema={selectDesc} key={`${context}-fn`} {...stateStore.field(name, onChange)} {...prop}/>;
 };
 
 function SgroupSpecial(props) {
-	// constructor(props) {
-	// 	super(props);
-	//
-	// 	this.state = {};
-	// 	this.state.context = props.context || defaultContext();
-	// 	this.state.fieldName = props.fieldName || defaultFieldName(this.state.context);
-	// }
-	//
-	// componentDidMount() {
-	// 	document.querySelector("select[name='context']").value = this.state.context;
-	// 	document.querySelector("select[name='fieldName']").value = this.state.fieldName;
-	// }
-
-
-
-	console.info('props', props);
-
-	const desc = schemes['asf'][fieldName];
+	const { stateForm, ...prop } = props;
+	const context = stateForm.context || defaultContext();
+	const fieldName = stateForm.fieldName || defaultFieldName(context);
 
 	return (
-		<Form component={Dialog} title={'S-Group Properties'} className='sgroup'
-			  schema={desc} init={props} params={props}
+		<Form storeName='sgroupSpecial' component={Dialog} title={'S-Group Properties'} className='sgroup'
+			  schema={schemes[context][fieldName]} init={prop} params={prop}
 		>
-			<SelectContext key={`${context}-context`}
-						   name='context'
-						   onChange={context => this.setState({
-							   context: context,
-							   fieldName: defaultFieldName(context)
-						   })}
-			/>
+			<SelectContext key={`${context}-context`} name='context' context={context}/>
 			<fieldset className={'data'} key={`${context}-${fieldName}-fieldset`}>
-				<SelectOneOf key={`${context}-${fieldName}-fieldName`}
-							 name={`fieldName`}
-							 context={context}
-							 onChange={fieldName => this.setState({
-								 fieldName: fieldName
-							 })}
-				/>
+				<SelectOneOf key={`${context}-${fieldName}-fieldName`} name={`fieldName`} context={context}/>
 				{
 					content(context, fieldName)
 				}
@@ -419,7 +388,7 @@ const content = (context, fieldName) => Object.keys(schemes[context][fieldName].
 	.filter(prop => prop !== 'type' && prop !== 'context' && prop !== 'fieldName')
 	.map(prop => prop === 'radiobuttons' ?
 		<Field name={prop} type='radio' key={`${context}-${fieldName}-${prop}-radio`}/> :
-		<Field name={prop} size='10' key={`${context}-${fieldName}-${prop}-select`}/>
+		<Field name={prop} type='textarea' size='10' key={`${context}-${fieldName}-${prop}-select`}/>
 	);
 
 export default connect((store) => {

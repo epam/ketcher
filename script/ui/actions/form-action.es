@@ -4,6 +4,7 @@ const dumpTypes = {
 	automap: 'UPDATE_AUTOMAP_FORM',
 	bond: 'UPDATE_BOND_FORM',
 	check: 'UPDATE_CHECK_FORM',
+	'label-edit': 'UPDATE_LABEL_EDIT_FORM',
 	'rgroup-logic': 'UPDATE_RGROUP_LOGIC_FORM',
 	settings: 'UPDATE_SETTINGS_FORM',
 	sgroup: 'UPDATE_SGROUP_FORM'

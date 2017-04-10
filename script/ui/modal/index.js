@@ -3,7 +3,6 @@ var sgroupSpecialDialog = require('./sgroup-special').sgroupSpecialDialog;
 
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
-var labelEdit = require('./labeledit').default;
 var periodTable = require('./period-table').default;
 var genericGroups = require('./generic-groups').default;
 var templatesDialog = require('./template-lib');
@@ -15,6 +14,7 @@ var attachDialog = require('./attach').default;
 var About = require('./about').default;
 var Analyse = require('./analyse').default;
 var Help = require('./help').default;
+var LabelEdit = require('./labeledit').default;
 
 // schemify dialogs
 var Atom = require('./atom').default;
@@ -42,7 +42,7 @@ module.exports = {
 	open: openDialog,
 	save: saveDialog,
 	templates: templatesDialog.default,
-	labelEdit: labelEdit,
+	labelEdit: modal(LabelEdit),
 	about: modal(About),
 	recognize: recognizeDialog,
 	check: modal(Check),

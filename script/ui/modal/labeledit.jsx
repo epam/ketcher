@@ -1,10 +1,22 @@
-import { h, Component, render } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
 import element from '../../chem/element';
-import generics from '../../chem/generics';
 
 import Dialog from '../component/dialog';
+import { form as Form, Field } from '../component/form';
+
+export const labelEditSchema = {
+	title: "Label Edit",
+	type: "object",
+	required: ["label"],
+	properties: {
+		label: {
+			title: "Atom",
+			default: ''
+		}
+	}
+};
 
 function serialize(lc) {
 	var charge = Math.abs(lc.charge);
@@ -19,7 +31,6 @@ function serialize(lc) {
 function deserialize(value) {
 	var match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i); // TODO: radical on last place
 	if (match) {
-		console.info('match', match);
 		var label = match[2] == '*' ? 'A' : capitalize(match[2]);
 		var charge = 0;
 		var isotope = 0;
@@ -42,42 +53,21 @@ function deserialize(value) {
 	return null;
 }
 
-class LabelEdit extends Component {
-	constructor({params}) {
-		super();
-		this.state = {
-			input: params.letter || serialize(params)
-		};
-    }
-	result() {
-		return deserialize(this.state.input);
-	}
-	type(value) {
-		this.setState({
-			input: value
-		});
-	}
-	render (props) {
-		return (
-			<Dialog className="labeledit"
-					params={props.params}
-					result={() => this.result()}>
-				<input type="text" maxlength="20" size="10"
-					   onInput={ev => this.type(ev.target.value)}
-					   value={this.state.input}
-					/>
-			</Dialog>
-		);
-	}
+function LabelEdit(props) {
+	let init = { label: props.letter || serialize(props) };
+
+	return (
+		<Form storeName="label-edit" component={Dialog} className="labeledit" ref={el => this.form = el}
+			  schema={labelEditSchema} customValid={{label: l => deserialize(l)}}
+			  init={init} params={props}
+			  result={() => deserialize(this.form.props.stateForm.label)}>
+			<Field name="label" maxlength="20" size="10"/>
+		</Form>
+	);
 }
 
 function capitalize(str) {
 	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<LabelEdit params={params}/>
-	), overlay);
-};
+export default LabelEdit;

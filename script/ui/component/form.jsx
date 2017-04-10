@@ -37,10 +37,9 @@ class Form extends Component {
 		this.schema.serialize(stateForm); // hack: valid first state
 		let Component = component || 'form';
 		return (
-			<Component {...props}
-				result = {() => this.result()}
-				valid  = {() => this.schema.serialize(stateForm).valid} >
-			  {children}
+			<Component result = {() => this.result()}
+					   valid  = {() => this.schema.serialize(stateForm).valid} {...props}>
+			  	{children}
 			</Component>
 		);
 	}

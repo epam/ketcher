@@ -7,6 +7,7 @@ import automapReducer from './automap-reducer.es';
 import bondReducer from './bond-reducer.es';
 import checkReducer from './check-reducer.es';
 import labelEditReducer from './label-edit-reducer.es';
+import recognizeReducer from './recognize-reducer.es';
 import rgroupLodicReducer from './rgroup-logic-reducer.es';
 import settingsReducer from './settings-reducer.es';
 import sgroupReducer from './sgroup-reducer.es';
@@ -19,6 +20,7 @@ export default combineReducers({
 	bond: bondReducer,
 	check: checkReducer,
 	'label-edit': labelEditReducer,
+	recognize: recognizeReducer,
 	'rgroup-logic': rgroupLodicReducer,
 	settings: settingsReducer,
 	sgroup: sgroupReducer

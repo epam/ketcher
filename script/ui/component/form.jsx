@@ -21,20 +21,19 @@ class Form extends Component {
 	field(name, onChange) {
 		let {dispatch, storeName, stateForm} = this.props;
 		var value = stateForm[name];
-		var self = this;
 
 		return {
 			value: value,
 			onChange(value) {
-				dispatch(updateFormState(storeName, { ...self.props.stateForm, [name]: value }));
+				dispatch(updateFormState(storeName, { [name]: value }));
 				if (onChange) onChange(value);
 			}
 		};
 	}
 
 	forceUpdateFormState(data) {
-		const { dispatch, storeName, stateForm } = this.props;
-		dispatch(updateFormState(storeName, Object.assign({}, stateForm, data)));
+		const { dispatch, storeName } = this.props;
+		dispatch(updateFormState(storeName, data));
 	}
 
 	result() {
@@ -44,7 +43,7 @@ class Form extends Component {
 	render() {
 		var {children, component, stateForm, schema, ...props} = this.props;
 
-		if (schema.title !== this.schema.title || schema.key !== this.schema.key)
+		if (schema.title !== this.schema.title)
 			this.schema = propSchema(schema, props);
 
 		let Component = component || 'form';

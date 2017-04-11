@@ -2,26 +2,9 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { form as Form, Field } from '../component/form';
+import { form as Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import { sgroupSpecial as schemes } from '../structschema.es'
-
-const SelectOneOf = (props) => {
-	const { title, name, schema, onChange, ...prop } = props;
-
-	const selectDesc = {
-		title: title,
-		enum: [],
-		enumNames: []
-	};
-
-	Object.keys(schema).forEach(item => {
-		selectDesc.enum.push(item);
-		selectDesc.enumNames.push(item);
-	});
-
-	return <Field name={name} schema={selectDesc} onChange={onChange} {...prop}/>;
-};
 
 function SgroupSpecial(props) {
 	const { stateForm, ...prop } = props;

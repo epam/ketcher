@@ -90,6 +90,23 @@ class Field extends Component {
 	}
 }
 
+const SelectOneOf = (props) => {
+	const { title, name, schema, onChange, ...prop } = props;
+
+	const selectDesc = {
+		title: title,
+		enum: [],
+		enumNames: []
+	};
+
+	Object.keys(schema).forEach(item => {
+		selectDesc.enum.push(item);
+		selectDesc.enumNames.push(schema[item].title || item);
+	});
+
+	return <Field name={name} schema={selectDesc} onChange={onChange} {...prop}/>;
+};
+
 ////
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
@@ -160,4 +177,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { form, Field, mapOf };
+export { form, Field, SelectOneOf, mapOf };

@@ -13,8 +13,6 @@ const dumpTypes = {
 export function updateFormState(storeName, data) {
 	return {
 		type: dumpTypes[storeName],
-		payload: {
-			stateForm: data
-		}
+		payload: data
 	};
 }

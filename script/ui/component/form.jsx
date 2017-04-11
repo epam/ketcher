@@ -9,6 +9,7 @@ class Form extends Component {
 	constructor({dispatch, storeName,
 					schema, init, ...props}) {
 		super();
+
 		this.schema = propSchema(schema, props);
 		if (init) dispatch(updateFormState(storeName, init));
 	}
@@ -29,11 +30,6 @@ class Form extends Component {
 				if (onChange) onChange(value);
 			}
 		};
-	}
-
-	forceUpdateFormState(data) {
-		const { dispatch, storeName } = this.props;
-		dispatch(updateFormState(storeName, data));
 	}
 
 	result() {

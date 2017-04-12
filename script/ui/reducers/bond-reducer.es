@@ -14,7 +14,10 @@ export default function bondReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('bondReducer', action);
-		return Object.assign({}, state, action.payload);
+		return {
+        	...state,
+        	stateForm: Object.assign({}, state.stateForm, action.payload)
+        }
 	}
 
 	return state;

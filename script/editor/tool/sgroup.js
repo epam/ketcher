@@ -77,8 +77,8 @@ function propsDialog(editor, id, defaultType) {
 	var type = sg ? sg.type : defaultType;
 	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
-	if (!editor.selection()) {
-		console.info('No selection');
+	if (!atoms && !sg) {
+		console.info('Nothing for props');
 		return;
 	}
 

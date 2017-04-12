@@ -425,39 +425,6 @@ function updateServerButtons(standalone) {
 	});
 };
 
-function createDialog(name, container) {
-	var dn = name.replace(/([A-Z])/g, function (l) {
-		return '-' + l.toLowerCase();
-	});
-	var tmpl = $(dn + '-tmpl').innerHTML;
-	var dialog = new Element('form', { role: 'dialog', className: dn });
-	container.insert(dialog);
-	return dialog.update(tmpl);
-}
-
-function showDialog(name) {
-	var cover = $$('.overlay')[0];
-	var dialog = createDialog(name, cover);
-	scope = 'modal';
-	cover.style.display = '';
-
-	utils.animate(cover, 'show');
-	utils.animate(dialog, 'show');
-	return dialog;
-};
-
-function hideDialog(name) {
-	var cover = $$('.overlay')[0];
-	var dialog = cover.lastChild;
-
-	utils.animate(cover, 'hide');
-	utils.animate(dialog, 'hide').then(function () {
-		cover.style.display = 'none';
-		dialog.remove();
-		scope = 'editor';
-	});
-};
-
 function dialog(modal, params, noAnimate) {
 	var cover = $$('.overlay')[0];
 	cover.style.display = '';
@@ -970,8 +937,5 @@ Object.assign(ui, {
 	editor: null,
 
 	selectAction: selectAction,
-	addUndoAction: addUndoAction,
-
-	showDialog: showDialog,
-	hideDialog: hideDialog
+	addUndoAction: addUndoAction
 });

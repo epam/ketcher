@@ -8,7 +8,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	console.assert(params || 'label' in params, 'label must be specified!');
 
 	this.label = params.label;
-	this.fragment = params.fragment || -1;
+	this.fragment = ('fragment' in params) ? params.fragment : -1;
 	this.pseudo = checkPseudo(params.label);
 
 	ifDef(this, params, 'alias', def('alias'));

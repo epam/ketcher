@@ -15,9 +15,7 @@ function Sgroup(props) {
 	return (
 		<Form storeName="sgroup" component={Dialog} title="S-Group Properties" className="sgroup"
 			  schema={schemes[type]} params={prop}>
-			<SelectOneOf title="Type" name="type"
-						 schema={schemes} key={`${type}-type`}
-			/>
+			<SelectOneOf title="Type" name="type" schema={schemes} />
 			<fieldset class={type === 'DAT' ? 'data' : 'base'}>
 				{ content(type) }
 			</fieldset>

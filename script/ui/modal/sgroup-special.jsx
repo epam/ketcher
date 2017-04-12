@@ -20,10 +20,8 @@ function SgroupSpecial(props) {
 		<Form storeName="sgroupSpecial" component={Dialog} title={"S-Group Properties"} className="sgroup"
 			  schema={schemes[context][fieldName]} init={prop} params={prop}
 		>
-			<SelectOneOf title="Context" name="context"
-						 schema={schemes} key={`${context}-context`}
-			/>
-			<fieldset className={"data"} key={`${context}-${fieldName}-fieldset`}>
+			<SelectOneOf title="Context" name="context" schema={schemes} />
+			<fieldset className={"data"} >
 				<SelectOneOf title="Field name" name="fieldName"
 							 schema={schemes[context]} key={`${context}-${fieldName}-fieldName`}/>
 				{

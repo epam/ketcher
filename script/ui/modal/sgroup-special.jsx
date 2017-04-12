@@ -2,9 +2,14 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { form as Form, Field, SelectOneOf } from '../component/form';
+import { form as Form, Field, SelectOneOf, mapOf } from '../component/form';
 import Dialog from '../component/dialog';
-import { sgroupSpecial as schemes } from '../structschema.es'
+import { sgroupSpecial as sgroupSchema } from '../structschema.es'
+
+const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
+	acc[title] = mapOf(sgroupSchema[title], 'fieldName');
+	return acc;
+}, {});
 
 function SgroupSpecial(props) {
 	const { stateForm, ...prop } = props;
@@ -13,7 +18,7 @@ function SgroupSpecial(props) {
 
 	return (
 		<Form storeName="sgroupSpecial" component={Dialog} title={"S-Group Properties"} className="sgroup"
-			  schema={schemes[context][fieldName]} params={prop}
+			  schema={schemes[context][fieldName]} init={prop} params={prop}
 		>
 			<SelectOneOf title="Context" name="context"
 						 schema={schemes} key={`${context}-context`}

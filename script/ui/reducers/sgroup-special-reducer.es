@@ -1,4 +1,10 @@
-import { sgroupSpecial as schemes } from '../structschema.es'
+import { mapOf } from '../component/form';
+import { sgroupSpecial as sgroupSchema } from '../structschema.es'
+
+const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
+	acc[title] = mapOf(sgroupSchema[title], 'fieldName');
+	return acc;
+}, {});
 
 const firstObjKey = obj => Object.keys(obj)[0];
 const defaultContext = () => firstObjKey(schemes);

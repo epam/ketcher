@@ -114,11 +114,11 @@ export const bond = {
 	properties: {
 		type: {
 			title: "Type",
-			enum: [ "single", "up", "down",
-			        "updown", "double", "crossed",
-			        "triple", "aromatic", "any",
-			        "singledouble", "singlearomatic",
-			        "doublearomatic"],
+			enum: ["single", "up", "down",
+				"updown", "double", "crossed",
+				"triple", "aromatic", "any",
+				"singledouble", "singlearomatic",
+				"doublearomatic"],
 			enumNames: [
 				"Single",
 				"Single Up",
@@ -164,16 +164,18 @@ export const sgroup = {
 	required: ["type"],
 	oneOf: [
 		{
+			key: 'GEN',
 			title: "Generic",
 			properties: {
-				type: { enum: [ 'GEN' ] }
+				type: { enum: ['GEN'] }
 			}
 		},
 		{
+			key: 'MUL',
 			title: "Multiple group",
 			type: "object",
 			properties: {
-				type: { enum: [ "MUL" ] },
+				type: { enum: ["MUL"] },
 				mul: {
 					title: "Repeat count",
 					type: "integer",
@@ -185,9 +187,10 @@ export const sgroup = {
 			required: ["mul"]
 		},
 		{
+			key: 'SRU',
 			title: "SRU polymer",
 			properties: {
-				type: { enum: [ "SRU" ] },
+				type: { enum: ["SRU"] },
 				subscript: {
 					title: "Polymer label",
 					type: "string",
@@ -210,9 +213,10 @@ export const sgroup = {
 			required: ["subscript", "connectivity"]
 		},
 		{
+			key: 'SUP',
 			title: 'Superatom',
 			properties: {
-				type: { enum: [ "SUP" ] },
+				type: { enum: ["SUP"] },
 				name: {
 					title: "Name",
 					type: "string",
@@ -223,9 +227,10 @@ export const sgroup = {
 			}
 		},
 		{
+			key: 'DAT',
 			title: "Data",
 			properties: {
-				type: { enum: [ "DAT" ] },
+				type: { enum: ["DAT"] },
 				fieldName: {
 					title: 'Field name',
 					type: "string",
@@ -278,307 +283,251 @@ export const rgroup = {
 
 export const sgroupSpecial = {
 	Fragment: {
-		MDLBG_FRAGMENT_STEREO: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+		title: 'Context',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'FRG_STR',
+				title: 'MDLBG_FRAGMENT_STEREO',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_FRAGMENT_STEREO"] },
+					fieldValue: {
+						title: "Field value",
+						enum: [
+							"abs",
+							"(+)-enantiomer",
+							"(-)-enantiomer",
+							"racemate",
+							"steric",
+							"rel",
+							"R(a)",
+							"S(a)",
+							"R(p)",
+							"S(p)"
+						],
+						default: "abs"
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					enum: [
-						"abs",
-						"(+)-enantiomer",
-						"(-)-enantiomer",
-						"racemate",
-						"steric",
-						"rel",
-						"R(a)",
-						"S(a)",
-						"R(p)",
-						"S(p)"
-					],
-					default: "abs"
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		},
-		MDLBG_FRAGMENT_COEFFICIENT: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+			{
+				key: 'FRG_COEFF',
+				title: 'MDLBG_FRAGMENT_COEFFICIENT',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_FRAGMENT_COEFFICIENT"] },
+					fieldValue: {
+						title: "Field value",
+						type: "string",
+						default: ""
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					type: "string",
-					default: ""
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		},
-		MDLBG_FRAGMENT_CHARGE: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+			{
+				key: 'FRG_CHRG',
+				title: 'MDLBG_FRAGMENT_CHARGE',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_FRAGMENT_CHARGE"] },
+					fieldValue: {
+						title: "Field value",
+						type: "string",
+						default: ""
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					type: "string",
-					default: ""
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		},
-		MDLBG_FRAGMENT_RADICALS: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+			{
+				key: 'FRG_RAD',
+				title: 'MDLBG_FRAGMENT_RADICALS',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_FRAGMENT_RADICALS"] },
+					fieldValue: {
+						title: "Field value",
+						type: "string",
+						default: ""
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					type: "string",
-					default: ""
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		},
+		]
 	},
 	"Single Bond": {
-		MDLBG_STEREO_KEY: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+		title: 'Context',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'SB_STR',
+				title: 'MDLBG_STEREO_KEY',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldValue: {
+						title: "Field value",
+						enum: [
+							"erythro",
+							"threo",
+							"alpha",
+							"beta",
+							"endo",
+							"exo",
+							"anti",
+							"syn",
+							"ECL",
+							"STG"
+						],
+						default: "erythro"
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					enum: [
-						"erythro",
-						"threo",
-						"alpha",
-						"beta",
-						"endo",
-						"exo",
-						"anti",
-						"syn",
-						"ECL",
-						"STG"
-					],
-					default: "erythro"
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		},
-		MDLBG_BOND_KEY: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+			{
+				key: 'SB_BND',
+				title: 'MDLBG_BOND_KEY',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_BOND_KEY"] },
+					fieldValue: {
+						title: "Field value",
+						enum: [
+							"Value=4"
+						],
+						default: "Value=4"
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					enum: [
-						"Value=4"
-					],
-					default: "Value=4"
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
-			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
+			}
+		]
 	},
 	Atom: {
-		MDLBG_STEREO_KEY: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+		title: 'Context',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'AT_STR',
+				title: 'MDLBG_STEREO_KEY',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldValue: {
+						title: "Field value",
+						enum: [
+							"RS",
+							"SR",
+							"P-3",
+							"P-3-PI",
+							"SP-4",
+							"SP-4-PI",
+							"T-4",
+							"T-4-PI",
+							"SP-5",
+							"SP-5-PI",
+							"TB-5",
+							"TB-5-PI",
+							"OC-6",
+							"TP-6",
+							"PB-7",
+							"CU-8",
+							"SA-8",
+							"DD-8",
+							"HB-9",
+							"TPS-9"
+						],
+						default: "RS"
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					enum: [
-						"RS",
-						"SR",
-						"P-3",
-						"P-3-PI",
-						"SP-4",
-						"SP-4-PI",
-						"T-4",
-						"T-4-PI",
-						"SP-5",
-						"SP-5-PI",
-						"TB-5",
-						"TB-5-PI",
-						"OC-6",
-						"TP-6",
-						"PB-7",
-						"CU-8",
-						"SA-8",
-						"DD-8",
-						"HB-9",
-						"TPS-9"
-					],
-					default: "RS"
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
-			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
+			}
+		]
 	},
 	Group: {
-		MDLBG_STEREO_KEY: {
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: "Field name",
-					enum: [
-						"MDLBG_FRAGMENT_STEREO",
-						"MDLBG_FRAGMENT_COEFFICIENT",
-						"MDLBG_FRAGMENT_CHARGE",
-						"MDLBG_FRAGMENT_RADICALS",
-						"MDLBG_STEREO_KEY",
-						"MDLBG_BOND_KEY",
-					],
-					default: "MDLBG_FRAGMENT_STEREO"
+		title: 'Context',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'GRP_STR',
+				title: 'MDLBG_STEREO_KEY',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldValue: {
+						title: "Field value",
+						enum: [
+							"cis",
+							"trans"
+						],
+						default: "cis"
+					},
+					radiobuttons: {
+						enum: [
+							"Absolute",
+							"Relative",
+							"Attached"
+						],
+						default: "Absolute"
+					}
 				},
-				fieldValue: {
-					title: "Field value",
-					enum: [
-						"cis",
-						"trans"
-					],
-					default: "cis"
-				},
-				radiobuttons: {
-					enum: [
-						"Absolute",
-						"Relative",
-						"Attached"
-					],
-					default: "Absolute"
-				}
-			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
-		}
+				required: ["fieldName", "fieldValue", "radiobuttons"]
+			}
+		]
 	}
 };

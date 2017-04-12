@@ -39,8 +39,10 @@ class Form extends Component {
 	render() {
 		var {children, component, stateForm, schema, ...props} = this.props;
 
-		if (schema.title !== this.schema.title)
+		if (schema.key !== this.schema.key)
 			this.schema = propSchema(schema, props);
+
+		this.schema.serialize(stateForm); // hack: valid first state
 
 		let Component = component || 'form';
 
@@ -91,7 +93,7 @@ class Field extends Component {
 }
 
 const SelectOneOf = (props) => {
-	const { title, name, schema, onChange, ...prop } = props;
+	const { title, name, schema, ...prop } = props;
 
 	const selectDesc = {
 		title: title,
@@ -104,7 +106,7 @@ const SelectOneOf = (props) => {
 		selectDesc.enumNames.push(schema[item].title || item);
 	});
 
-	return <Field name={name} schema={selectDesc} onChange={onChange} {...prop}/>;
+	return <Field name={name} schema={selectDesc} {...prop}/>;
 };
 
 ////
@@ -120,7 +122,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 		}, schema.properties);
 	}
 	return {
-		title: schema.title || '',
+		key: schema.key || '',
 		serialize: inst => v.validate(inst, schema, {
 			rewrite: serializeRewrite.bind(null, serialize)
 		}),

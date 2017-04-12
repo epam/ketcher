@@ -155,7 +155,7 @@ function initEditor(editor) {
 	});
 	editor.on('sdataEdit', function (sgroup) {
 		const dlg = dialog(sgroup.type === 'DAT' ? modal.sgroupSpecial : modal.sgroup, structConv.fromSgroup(sgroup));
-		return dlg.then(res => structConv.toSgroup(res));
+		return dlg.then(structConv.toSgroup);
 	});
 	editor.on('quickEdit', function (atom) {
 		return dialog(modal.labelEdit, atom);

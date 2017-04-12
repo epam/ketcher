@@ -19,11 +19,11 @@ class Form extends Component {
 	field(name, onChange) {
 		let {dispatch, storeName, stateForm} = this.props;
 		var value = stateForm[name];
-		var self = this;
+
 		return {
 			value: value,
 			onChange(value) {
-				dispatch(updateFormState(storeName, { ...self.props.stateForm, [name]: value }));
+				dispatch(updateFormState(storeName, { [name]: value }));
 				if (onChange) onChange(value);
 			}
 		};
@@ -33,8 +33,9 @@ class Form extends Component {
 	}
 	render() {
 		var {children, component, stateForm, schema, ...props} = this.props;
-		if (schema.title !== this.schema.title) this.schema = propSchema(schema, props);
+		if (schema.key !== this.schema.key)	this.schema = propSchema(schema, props);
 		this.schema.serialize(stateForm); // hack: valid first state
+
 		let Component = component || 'form';
 		return (
 			<Component result = {() => this.result()}
@@ -75,6 +76,23 @@ class Field extends Component {
 	}
 }
 
+const SelectOneOf = (props) => {
+	const { title, name, schema, ...prop } = props;
+
+	const selectDesc = {
+		title: title,
+		enum: [],
+		enumNames: []
+	};
+
+	Object.keys(schema).forEach(item => {
+		selectDesc.enum.push(item);
+		selectDesc.enumNames.push(schema[item].title || item);
+	});
+
+	return <Field name={name} schema={selectDesc} {...prop}/>;
+};
+
 ////
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
@@ -88,7 +106,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 		}, schema.properties);
 	}
 	return {
-		title: schema.title || '',
+		key: schema.key || '',
 		serialize: inst => v.validate(inst, schema, {
 			rewrite: serializeRewrite.bind(null, serialize)
 		}),
@@ -145,4 +163,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { form, Field, mapOf };
+export { form, Field, SelectOneOf, mapOf };

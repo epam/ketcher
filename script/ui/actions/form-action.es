@@ -7,14 +7,13 @@ const dumpTypes = {
 	'label-edit': 'UPDATE_LABEL_EDIT_FORM',
 	'rgroup-logic': 'UPDATE_RGROUP_LOGIC_FORM',
 	settings: 'UPDATE_SETTINGS_FORM',
-	sgroup: 'UPDATE_SGROUP_FORM'
+	sgroup: 'UPDATE_SGROUP_FORM',
+	sgroupSpecial: 'UPDATE_SGROUPSPEC_FORM'
 };
 
 export function updateFormState(storeName, data) {
 	return {
 		type: dumpTypes[storeName],
-		payload: {
-			stateForm: data
-		}
+		payload: data
 	};
 }

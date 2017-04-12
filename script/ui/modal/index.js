@@ -1,5 +1,4 @@
 var modal = require('./render-modal').default;
-var sgroupSpecialDialog = require('./sgroup-special').sgroupSpecialDialog;
 
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
@@ -25,6 +24,7 @@ var LabelEdit = require('./labeledit').default;
 var RgroupLogic = require('./rgroup-logic').default;
 var Settings = require('./settings').default;
 var Sgroup = require('./sgroup').default;
+var SgroupSpecial = require('./sgroup-special').default;
 
 templatesDialog.default.init = templatesDialog.init;
 
@@ -38,7 +38,7 @@ module.exports = {
 	automap: modal(Automap),
 	rgroupLogic: modal(RgroupLogic),
 	sgroup: modal(Sgroup),
-	sgroupSpecial: sgroupSpecialDialog,
+	sgroupSpecial: modal(SgroupSpecial),
 	open: openDialog,
 	save: saveDialog,
 	templates: templatesDialog.default,

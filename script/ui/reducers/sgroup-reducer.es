@@ -4,15 +4,12 @@ const initState = {
 	}
 };
 
-const dumbActions = [
-	'UPDATE_SGROUP_FORM',
-];
-
 export default function sgroupReducer(state = initState, action) {
-
-	if (dumbActions.includes(action.type)) {
-		console.log('sgroupReducer', action);
-		return Object.assign({}, state, action.payload);
+	if (action.type === 'UPDATE_SGROUP_FORM') {
+		return {
+			...state,
+			stateForm: Object.assign({}, state.stateForm, action.payload)
+		}
 	}
 
 	return state;

@@ -216,10 +216,45 @@ const bondCaptionMap = {
 	}
 };
 
+import { mapOf } from './component/form';
+import { sgroupSpecial as sgroupSpecialSchema } from './structschema.es';
+
+const schemes = Object.keys(sgroupSpecialSchema).reduce((acc, title) => {
+	acc[title] = mapOf(sgroupSpecialSchema[title], 'fieldName');
+	return acc;
+}, {});
+
+const defineContext = (fieldName, fieldValue) =>
+	Object.keys(schemes)
+		.find(context => {
+			if (schemes[context][fieldName]) {
+				return schemes[context][fieldName].properties.fieldValue.enum ?
+					schemes[context][fieldName].properties.fieldValue.enum.filter(value => value === fieldValue).length > 0 :
+					true;
+			}
+
+			return false;
+		});
+
+
+const firstObjKey = obj => Object.keys(obj)[0];
+const defaultContext = () => firstObjKey(schemes);
+const defaultFieldName = context => firstObjKey(schemes[context]);
+const defaultFieldValue = (context, fieldName) => schemes[context][fieldName].properties.fieldValue.default;
+
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
+	const { fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
-	const { absolute, attached } = ssgroup.attrs;
+	if (type === 'DAT') {
+		if (fieldName && fieldValue) {
+			ssgroup.attrs.context = defineContext(fieldName, fieldValue);
+		} else {
+			ssgroup.attrs.context = defaultContext();
+			ssgroup.attrs.fieldName = defaultFieldName(ssgroup.attrs.context);
+			ssgroup.attrs.fieldValue = defaultFieldValue(ssgroup.attrs.context, ssgroup.attrs.fieldName);
+		}
+	}
 
 	if (absolute === false && attached === false)
 		ssgroup.attrs.radiobuttons = 'Relative';

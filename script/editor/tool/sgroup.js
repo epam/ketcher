@@ -77,26 +77,35 @@ function propsDialog(editor, id, defaultType) {
 	var type = sg ? sg.type : defaultType;
 	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
+	if (!editor.selection()) {
+		console.info('No selection');
+		return;
+	}
+
 	var res = editor.event[eventName].dispatch({
 		type: type,
 		attrs: sg ? sg.getAttrs() : {}
 	});
 
 	Promise.resolve(res).then(function (newSg) {
-		                           // TODO: check before signal
+		// TODO: check before signal
+
 		if (newSg.type != 'DAT' && // when data s-group separates
-		    checkOverlapping(struct, atoms || [])) {
+			checkOverlapping(struct, atoms || [])) {
 			editor.event.message.dispatch({
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
 			var action = (id != null) ?
-			    Action.fromSgroupType(restruct, id, newSg.type)
-			          .mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
-			    Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
-		                                  struct.sgroups.newId());
+				Action.fromSgroupType(restruct, id, newSg.type)
+					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
+				Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
+					struct.sgroups.newId());
+
 			editor.update(action);
 		}
+	}).catch(function (result) {
+		console.info('rejected', result);
 	});
 }
 
@@ -129,7 +138,6 @@ function checkOverlapping(struct, atoms) {
 			})) {
 				return true;
 			}
-
 			return false;
 		});
 	});

@@ -11,6 +11,7 @@ import recognizeReducer from './recognize-reducer.es';
 import rgroupLodicReducer from './rgroup-logic-reducer.es';
 import settingsReducer from './settings-reducer.es';
 import sgroupReducer from './sgroup-reducer.es';
+import sgroupSpecialReducer from './sgroup-special-reducer.es';
 
 export default combineReducers({
 	analyse: analyseReducer,
@@ -23,5 +24,6 @@ export default combineReducers({
 	recognize: recognizeReducer,
 	'rgroup-logic': rgroupLodicReducer,
 	settings: settingsReducer,
-	sgroup: sgroupReducer
+	sgroup: sgroupReducer,
+	sgroupSpecial: sgroupSpecialReducer
 });

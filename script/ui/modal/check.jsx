@@ -3,7 +3,7 @@ import { h, Component } from 'preact';
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
-import {form as Form, Field} from '../component/form';
+import { form as Form, Field } from '../component/form';
 
 const checkSchema = {
 	title: 'Check',
@@ -54,7 +54,7 @@ const checkSchema = {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let {check, ...prop} = props;
+	let { check, ...prop } = props;
 
 	return (
 		<Form storeName="check" component={Dialog} title="Structure Check" className="check"
@@ -72,9 +72,9 @@ function Check(props) {
 }
 
 class ErrorsCheck extends Component {
-	constructor(props, {stateStore}) {
+	constructor(props, { stateStore }) {
 		super(props);
-		let {stateForm} = stateStore.props;
+		let { stateForm } = stateStore.props;
 		let optsTypes = Object.keys(stateForm).filter((type) => stateForm[type]);
 
 		this.state = {
@@ -85,13 +85,13 @@ class ErrorsCheck extends Component {
 	}
 
 	checkMolecule(optsTypes) {
-		this.props.check({'types': optsTypes})
-			.then(res => this.setState({moleculeErrors: res}))
+		this.props.check({ 'types': optsTypes })
+			.then(res => this.setState({ moleculeErrors: res }))
 			.catch(console.error);
 	}
 
 	render(props) {
-		let {moleculeErrors} = this.state;
+		let { moleculeErrors } = this.state;
 		let moleculeErrorsTypes = Object.keys(moleculeErrors);
 		return (
 			<dl {...props}>

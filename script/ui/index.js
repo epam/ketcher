@@ -18,7 +18,6 @@ var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
-var match = require('./modal/sgroup-special').match;
 
 var HISTORY_LENGTH = 32;
 
@@ -36,8 +35,8 @@ var scope;
 var libTmpls = null;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
-                     'reaction-automap', 'recognize', 'check',
-                     'analyse', 'miew'];
+	'reaction-automap', 'recognize', 'check',
+	'analyse', 'miew'];
 
 var addionalAtoms = {
 	storage: [],
@@ -45,7 +44,7 @@ var addionalAtoms = {
 	current: 0
 };
 
-function init (opts, apiServer) {
+function init(opts, apiServer) {
 	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 	clientArea = $('canvas');
@@ -56,7 +55,7 @@ function init (opts, apiServer) {
 
 	// Init renderer
 	ui.editor = new Editor(clientArea,
-	                       Object.assign({}, opts, currentOptions));
+		Object.assign({}, opts, currentOptions));
 	ui.render = ui.editor.render;
 
 	options = opts;
@@ -112,7 +111,9 @@ function initEditor(editor) {
 		if (element.map[elem.label]) {
 			dlg = dialog(modal.atomProps, elem);
 		} else if (Object.keys(elem).length == 1 && 'ap' in elem) {
-			dlg = dialog(modal.attachmentPoints, elem.ap).then(function (res) { return {ap: res}; });
+			dlg = dialog(modal.attachmentPoints, elem.ap).then(function (res) {
+				return { ap: res };
+			});
 		} else if (elem.type == 'list' || elem.type == 'not-list') {
 			dlg = elemTable(elem);
 		} else if (elem.type == 'rlabel') {
@@ -127,7 +128,7 @@ function initEditor(editor) {
 	});
 	editor.on('bondEdit', function (sbond) {
 		var dlg = dialog(modal.bondProps,
-		                 structConv.fromBond(sbond));
+			structConv.fromBond(sbond));
 		return dlg.then(function (res) {
 			return structConv.toBond(res);
 		});
@@ -140,8 +141,8 @@ function initEditor(editor) {
 			});
 			if (!rgroup.range) rgroup.range = '>0';
 			return dialog(modal.rgroupLogic,
-			              Object.assign({ rgroupLabels: rgids },
-			                            rgroup));
+				Object.assign({ rgroupLabels: rgids },
+					rgroup));
 		} else {
 			return dialog(modal.rgroup, rgroup);
 		}
@@ -153,13 +154,8 @@ function initEditor(editor) {
 		});
 	});
 	editor.on('sdataEdit', function (sgroup) {
-		if (match(sgroup)) {
-			return dialog(modal.sgroupSpecial, sgroup);
-		}
-		var dlg = dialog(modal.sgroup, structConv.fromSgroup(sgroup));
-		return dlg.then(function (res) {
-			return structConv.toSgroup(res);
-		});
+		const dlg = dialog(sgroup.type === 'DAT' ? modal.sgroupSpecial : modal.sgroup, structConv.fromSgroup(sgroup));
+		return dlg.then(res => structConv.toSgroup(res));
 	});
 	editor.on('quickEdit', function (atom) {
 		return dialog(modal.labelEdit, atom);
@@ -196,8 +192,8 @@ function initClipboard(ketcherWindow) {
 		},
 		onPaste: function (data) {
 			var structStr = data['chemical/x-mdl-molfile'] ||
-			    data['chemical/x-mdl-rxnfile'] ||
-			    data['text/plain'];
+				data['chemical/x-mdl-rxnfile'] ||
+				data['text/plain'];
 			if (structStr)
 				load(structStr, { fragment: true });
 		}
@@ -210,7 +206,7 @@ function clipData(editor) {
 	if (struct.isBlank())
 		return null;
 	var type = struct.isReaction ?
-	    'chemical/x-mdl-molfile': 'chemical/x-mdl-rxnfile';
+		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 	res['text/plain'] = res[type] = molfile.stringify(struct);
 	// res['chemical/x-daylight-smiles'] =
 	// smiles.stringify(struct);
@@ -221,10 +217,10 @@ function clipData(editor) {
 function updateAtoms() {
 	if (addionalAtoms.storage.length > 0) {
 		var al = "<menu>" + addionalAtoms.storage.reduce(function (res, atom) {
-			return res + "<li id=\"atom-" + atom.toLowerCase() +
-			           "\"><button data-number=\"" + element.map[atom] + "\">" +
-			            atom + "</button></li>";
-		}, "") + "</menu>";
+				return res + "<li id=\"atom-" + atom.toLowerCase() +
+					"\"><button data-number=\"" + element.map[atom] + "\">" +
+					atom + "</button></li>";
+			}, "") + "</menu>";
 		var cont = toolbar.select('#freq-atoms')[0];
 		if (!cont) {
 			var sa = toolbar.select('#atom')[0];
@@ -246,7 +242,7 @@ function shortcutStr(key) {
 		});
 }
 
-function subEl (id) {
+function subEl(id) {
 	return $(id).children[0];
 };
 
@@ -265,7 +261,7 @@ function initDropdown(toolbar) {
 	toolbar.select('li').each(function (el) {
 		el.on('click', function (event) {
 			if (event.target.tagName == 'BUTTON' &&
-			    event.target.parentNode == this) {
+				event.target.parentNode == this) {
 				if (!this.hasClassName('selected')) {
 					event.stop();
 				}
@@ -299,8 +295,8 @@ function popAction(toolbar, action) {
 	}
 };
 
-function selectAction (action) {
-    // TODO: lastSelected -> selected pool
+function selectAction(action) {
+	// TODO: lastSelected -> selected pool
 	action = action || lastSelected;
 	var el = $(action);
 	var args = [].slice.call(arguments, 1);
@@ -344,7 +340,7 @@ function dontClipMessage(action) {
 	var el = subEl(action);
 	var key = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 	alert('These action is unavailble via menu.\n' +
-	      'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
+		'Instead, use ' + shortcutStr(key) + ' to ' + action + '.');
 }
 
 function initHotKeys(toolbar) {
@@ -359,12 +355,14 @@ function initHotKeys(toolbar) {
 
 	toolbar.select('button').each(function (el) {
 		// window.status onhover?
-		var caption =  el.textContent || el.innerText;
+		var caption = el.textContent || el.innerText;
 		var kd = el.dataset ? el.dataset.keys : el.getAttribute('data-keys');
 		if (!kd)
 			el.title = el.title || caption;
 		else {
-			var keys = kd.split(',').map(function (s) { return s.trim(); });
+			var keys = kd.split(',').map(function (s) {
+				return s.trim();
+			});
 			var mk = shortcutStr(keys[0]);
 			var action = el.parentNode.id;
 			el.title = (el.title || caption) + ' (' + mk + ')';
@@ -384,7 +382,7 @@ function initHotKeys(toolbar) {
 function keyHandle(toolbar, hotKeys, event) {
 	var key = keyNorm(event);
 	var atomsSelected = ui.editor.selection() &&
-	                    ui.editor.selection().atoms;
+		ui.editor.selection().atoms;
 	var group;
 
 	if (key.length == 1 && atomsSelected && key.match(/\w/)) {
@@ -409,18 +407,18 @@ function keyHandle(toolbar, hotKeys, event) {
 	}
 }
 
-function updateClipboardButtons (selection) {
+function updateClipboardButtons(selection) {
 	var selected = selection &&  // if not only sgroupData selected
-	    (Object.keys(selection).length > 1 || !selection.sgroupData);
+		(Object.keys(selection).length > 1 || !selection.sgroupData);
 	subEl('copy').disabled = subEl('cut').disabled = !selected;
 };
 
-function updateHistoryButtons () {
+function updateHistoryButtons() {
 	subEl('undo').disabled = (undoStack.length == 0);
 	subEl('redo').disabled = (redoStack.length == 0);
 };
 
-function updateServerButtons (standalone) {
+function updateServerButtons(standalone) {
 	serverActions.forEach(function (action) {
 		if ($(action))
 			subEl(action).disabled = !!standalone;
@@ -437,7 +435,7 @@ function createDialog(name, container) {
 	return dialog.update(tmpl);
 }
 
-function showDialog (name) {
+function showDialog(name) {
 	var cover = $$('.overlay')[0];
 	var dialog = createDialog(name, cover);
 	scope = 'modal';
@@ -448,7 +446,7 @@ function showDialog (name) {
 	return dialog;
 };
 
-function hideDialog (name) {
+function hideDialog(name) {
 	var cover = $$('.overlay')[0];
 	var dialog = cover.lastChild;
 
@@ -476,10 +474,17 @@ function dialog(modal, params, noAnimate) {
 
 	function open(resolve, reject) {
 		modal(Object.assign({}, params, {
-			onOk: function (res) { close(params && params.onOk, res); resolve(res); },
-			onCancel: function (res) { close(params && params.onCancel, res); reject(res); }
+			onOk: function (res) {
+				close(params && params.onOk, res);
+				resolve(res);
+			},
+			onCancel: function (res) {
+				close(params && params.onCancel, res);
+				reject(res);
+			}
 		}));
 	}
+
 	return new Promise(function (resolve, reject) {
 		console.info('input', params);
 		if (noAnimate === false)
@@ -488,16 +493,14 @@ function dialog(modal, params, noAnimate) {
 			open(resolve, reject);
 	});
 }
-function clr (str) {
-  return str.splice(0,str.length);
+function clr(str) {
+	return str.splice(0, str.length);
 }
-function addUndoAction (action, check_dummy)
-{
+function addUndoAction(action, check_dummy) {
 	if (action == null)
 		return;
 
-	if (check_dummy != true || !action.isDummy())
-	{
+	if (check_dummy != true || !action.isDummy()) {
 		undoStack.push(action);
 		clr(redoStack);
 		if (undoStack.length > HISTORY_LENGTH)
@@ -506,13 +509,13 @@ function addUndoAction (action, check_dummy)
 	}
 };
 
-function clear () {
+function clear() {
 	selectAction(null);
 	if (!ui.editor.struct().isBlank())
 		ui.editor.struct(new Struct());
 }
 
-function open () {
+function open() {
 	dialog(modal.open).then(function (res) {
 		load(res.structStr, {
 			badHeaderRecover: true,
@@ -521,7 +524,7 @@ function open () {
 	});
 }
 
-function save () {
+function save() {
 	dialog(modal.save, { server: server, struct: ui.editor.struct() }).then(function (res) {
 
 		if (res.event == 'saveTmpl') {
@@ -530,7 +533,9 @@ function save () {
 				props: { group: 'User' }
 			};
 			var userStorage = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
-			attach(tmpl, userStorage.length).then(function () { return true; });
+			attach(tmpl, userStorage.length).then(function () {
+				return true;
+			});
 		}
 		return true;
 	});
@@ -584,17 +589,17 @@ function initZoom() {
 	updateZoom();
 }
 
-function zoomIn () {
+function zoomIn() {
 	subEl('zoom-list').selectedIndex++;
 	updateZoom(true);
 }
 
-function zoomOut () {
+function zoomOut() {
 	subEl('zoom-list').selectedIndex--;
 	updateZoom(true);
 };
 
-function updateZoom (refresh) {
+function updateZoom(refresh) {
 	var zoomSelect = subEl('zoom-list');
 	var i = zoomSelect.selectedIndex,
 		len = zoomSelect.length;
@@ -608,9 +613,9 @@ function updateZoom (refresh) {
 		ui.editor.zoom(value);
 }
 
-function automap () {
+function automap() {
 	if (!ui.editor.struct().hasRxnArrow())
-		// not a reaction explicit or implicit
+	// not a reaction explicit or implicit
 		alert('Auto-Mapping can only be applied to reactions');
 	else {
 		return dialog(modal.automap).then(function (res) {
@@ -624,7 +629,7 @@ function load(structStr, options) {
 	// TODO: check if structStr is parsed already
 	//utils.loading('show');
 	var parsed = structFormat.fromString(structStr,
-	                                     options, server);
+		options, server);
 
 	parsed.catch(function (err) {
 		//utils.loading('hide');
@@ -646,8 +651,7 @@ function load(structStr, options) {
 	});
 }
 
-function undo ()
-{
+function undo() {
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
@@ -657,8 +661,7 @@ function undo ()
 	updateHistoryButtons();
 };
 
-function redo ()
-{
+function redo() {
 	if (ui.editor.tool())
 		ui.editor.tool().OnCancel();
 
@@ -721,7 +724,7 @@ function templateLib(selTmpl, group, selId) {
 	});
 }
 
-function attach (tmpl, index) {
+function attach(tmpl, index) {
 	var tmplName = tmpl.struct.name;
 	var group = tmpl.props.group;
 
@@ -776,7 +779,7 @@ var actionMap = {
 	clean: function () {
 		return serverTransform('clean');
 	},
-	arom:  function () {
+	arom: function () {
 		return serverTransform('aromatize');
 	},
 	dearom: function () {
@@ -810,7 +813,7 @@ var actionMap = {
 		var qs = document.location.search;
 		document.location.search = !qs ? '?' + molQs :
 			qs.search('mol=') == -1 ? qs + '&' + molQs :
-			qs.replace(/mol=[^&$]*/, molQs);
+				qs.replace(/mol=[^&$]*/, molQs);
 	},
 	'reaction-automap': automap,
 	'recognize': function () {
@@ -829,12 +832,13 @@ var actionMap = {
 	'analyse': function () {
 		serverCall('calculate', {
 			properties: ['molecular-weight', 'most-abundant-mass',
-			             'monoisotopic-mass', 'gross', 'mass-composition']
+				'monoisotopic-mass', 'gross', 'mass-composition']
 		}).then(function (values) {
 			return dialog(modal.analyse, values, true);
 		});
 	},
 	'settings': function () {
+
 		dialog(modal.settings, {server: server}).then(function (res) {
 			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
 			console.log("ketcher-opts", res);
@@ -845,15 +849,15 @@ var actionMap = {
 	'help': function () {
 		dialog(modal.help);
 	},
-	'miew': function() {
+	'miew': function () {
 		var convert = structFormat.toString(ui.editor.struct(),
-		                                    'cml', server);
+			'cml', server);
 		convert.then(function (cml) {
 			dialog(modal.miew, {
 				structStr: cml
-			}, true).then(function(res) {
-			if (res.structStr)
-				load(res.structStr);
+			}, true).then(function (res) {
+				if (res.structStr)
+					load(res.structStr);
 			});
 		});
 	}
@@ -869,14 +873,14 @@ function mapAction(id) {
 }
 
 // TODO: rewrite declaratively, merge to actionMap
-function mapTool (id) {
+function mapTool(id) {
 	var args = [].slice.call(arguments, 1);
 	if (id == 'select-lasso') {
 		return { tool: 'select', opts: 'lasso' };
 	} else if (id == 'select-rectangle') {
 		return { tool: 'select', opts: 'rectangle' };
 	} else if (id == 'select-fragment') {
-		return { tool: 'select', opts:'fragment' };
+		return { tool: 'select', opts: 'fragment' };
 	} else if (id == 'erase') {
 		return { tool: 'eraser', opts: 1 }; // TODO last selector mode is better
 	} else if (id == 'paste') {
@@ -891,11 +895,12 @@ function mapTool (id) {
 	} else if (id == 'chain') {
 		return { tool: 'chain' };
 	} else if (id.startsWith('template')) {
-		return { tool: 'template',
-		         opts: args[0] || {
-			         struct: molfile.parse(templates[parseInt(id.split('-')[1])])
-		         }
-		       };
+		return {
+			tool: 'template',
+			opts: args[0] || {
+				struct: molfile.parse(templates[parseInt(id.split('-')[1])])
+			}
+		};
 	} else if (id == 'charge-plus') {
 		return { tool: 'charge', opts: 1 };
 	} else if (id == 'charge-minus') {
@@ -930,20 +935,20 @@ function mapTool (id) {
 	return null;
 };
 
-function atomLabel (mode) {
+function atomLabel(mode) {
 	var label = mode.substr(5);
 	switch (label) {
 	case 'any':
-		return {label:'A'};
+		return { label: 'A' };
 	default:
-		label = label[0].toUpperCase()+label.slice(1).toLowerCase();
+		label = label[0].toUpperCase() + label.slice(1).toLowerCase();
 		console.assert(element.map[label],
-		               "No such atom exist");
-		return {label: label};
+			"No such atom exist");
+		return { label: label };
 	}
 };
 
-function clean () {
+function clean() {
 	// latter if (initialized)
 	ui.editor.struct(new Struct());
 	clr(undoStack);

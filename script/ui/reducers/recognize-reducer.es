@@ -14,10 +14,7 @@ export default function recognizeReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('recognizeReducer', action);
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload)
 	}
 
 	return state;

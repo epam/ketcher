@@ -328,6 +328,7 @@ export const sgroupSpecial = {
 					fieldValue: {
 						title: "Field value",
 						type: "string",
+						minLength: 1,
 						default: ""
 					},
 					radiobuttons: {
@@ -350,6 +351,7 @@ export const sgroupSpecial = {
 					fieldValue: {
 						title: "Field value",
 						type: "string",
+						minLength: 1,
 						default: ""
 					},
 					radiobuttons: {
@@ -372,6 +374,7 @@ export const sgroupSpecial = {
 					fieldValue: {
 						title: "Field value",
 						type: "string",
+						minLength: 1,
 						default: ""
 					},
 					radiobuttons: {

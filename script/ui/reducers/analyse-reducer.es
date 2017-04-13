@@ -11,10 +11,7 @@ export default function analyseReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('analyseReducer', action);
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

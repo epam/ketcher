@@ -7,9 +7,9 @@ var genericGroups = require('./generic-groups').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var miewDialog = require('./miew').default;
-var attachDialog = require('./attach').default;
 
 var About = require('./about').default;
+var Attach = require('./attach').default;
 var Analyse = require('./analyse').default;
 var Help = require('./help').default;
 var Recognize = require('./recognize').default;
@@ -50,5 +50,5 @@ module.exports = {
 	settings: modal(Settings),
 	help: modal(Help),
 	miew: miewDialog,
-	attach: attachDialog
+	attach: modal(Attach)
 };

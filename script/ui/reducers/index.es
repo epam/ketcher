@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import analyseReducer from './analyse-reducer.es';
 import atomReducer from './atom-props-reducer.es';
+import attachReducer from './attach-reducer.es';
 import attachPointsReducer from './attach-points-reducer.es';
 import automapReducer from './automap-reducer.es';
 import bondReducer from './bond-reducer.es';
@@ -15,6 +16,7 @@ import sgroupSpecialReducer from './sgroup-special-reducer.es';
 
 export default combineReducers({
 	analyse: analyseReducer,
+	attach: attachReducer,
 	'attach-points': attachPointsReducer,
 	atom: atomReducer,
 	automap: automapReducer,

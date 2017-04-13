@@ -1,9 +1,13 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
+import Input from '../component/input';
 import StructEditor from '../component/structeditor';
-import Vec2 from '../../util/vec2'
+import Vec2 from '../../util/vec2';
+
+import { initAttach, setAttachPoints, setTmplName } from '../actions/attach-action.es';
 
 const EDITOR_STYLES = {
 	selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -11,60 +15,51 @@ const EDITOR_STYLES = {
 };
 
 class Attach extends Component {
-	constructor(props) {
+	constructor({dispatch, ...props}) {
 		super(props);
-		this.tmpl = props.normTmpl;
-		this.editorOpts = Object.assign(EDITOR_STYLES, { scale: props.scale});
 
-		this.state = {
-			name: this.tmpl.struct.name || '',
-			attach: {
-				atomid: +this.tmpl.props.atomid || 0,
-				bondid: +this.tmpl.props.bondid || 0
-			}
-		};
-	}
-
-	result() {
-		return (
-			this.state.name != this.tmpl.struct.name ||
-			this.state.attach.atomid != (this.tmpl.props.atomid || 0) ||
-			this.state.attach.bondid != (this.tmpl.props.bondid || 0)
-		) ? this.state : null;
-	}
-
-	onAttach(attachPoints) {
-		this.setState({
-			attach: attachPoints
-		});
-	}
-
-	changeName(newTmplName) {
-		this.setState({
-			name: newTmplName
-		});
+		this.tmpl = initTmpl(props.tmpl);
+		dispatch(initAttach(this.tmpl.struct.name, this.tmpl.props));
 	}
 
 	render() {
-		let {name, attach} = this.state;
-		let {userOpts} = this.props;
+		let { name, atomid, bondid, userOpts, dispatch, ...prop} = this.props;
+		let editorOpts = Object.assign(EDITOR_STYLES, { scale: this.tmpl.scale });
+
+		const result = () => (
+			name !== this.tmpl.struct.name ||
+			atomid !== this.tmpl.props.atomid ||
+			bondid !== this.tmpl.props.bondid
+		) ? { name, attach: { atomid, bondid } } : null;
+
 		return (
-			<Dialog title="Template Edit"
-					result={() => this.result() }
-					params={this.props}
-					buttons={["Cancel", "OK"]} className="attach">
+			<Dialog title="Template Edit" className="attach"
+					result={result} params={prop} buttons={['Cancel', 'OK']}>
 				<label>Template Name:
-					<input type="text" onInput={(ev) => this.changeName(ev.target.value)} value={name} placeholder="tmpl"/>
+					<Input type="text" value={name} onChange={v => dispatch(setTmplName(v))} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
-							  onEvent={ (eName, ap) =>  (eName == 'attachEdit') ? this.onAttach(ap) : null }
-							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: attach }}
-							  options={this.editorOpts}/>
-				<label><b>&#123; atomid: {attach.atomid}; bondid: {attach.bondid} &#125;</b></label>
+							  onEvent={(eName, ap) =>  (eName === 'attachEdit') ? dispatch(setAttachPoints(ap)) : null}
+							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: this.tmpl.props }}
+							  options={editorOpts}/>
+				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>
 			</Dialog>
 		);
 	}
+}
+
+function initTmpl(tmpl) {
+	let normTmpl = {
+		struct: tmpl.struct.clone(),
+		props: { atomid: +tmpl.props.atomid || 0, bondid: +tmpl.props.bondid || 0 }
+	};
+	normTmpl.struct.name = tmpl.struct.name;
+
+	let length = structNormalization(normTmpl.struct);
+	let scale = (3.7 / (length + 5.4 / length)) * 100;
+
+	return Object.assign(normTmpl, { scale });
 }
 
 function structNormalization(struct) {
@@ -84,17 +79,10 @@ function structNormalization(struct) {
 	return (max.x > max.y) ? max.x : max.y;
 }
 
-export default function dialog(params) {
-	let overlay = $$('.overlay')[0];
-	let normTmpl = {
-		struct: params.tmpl.struct.clone(),
-		props: params.tmpl.props
+export default connect((store) => {
+	return {
+		name: store.attach.name,
+		atomid: store.attach.atomid,
+		bondid: store.attach.bondid
 	};
-	normTmpl.struct.name = params.tmpl.struct.name;
-	let length = structNormalization(normTmpl.struct);
-	let scale = (3.7 / (length + 5.4 / length)) * 100;
-
-	return render((
-		<Attach scale={scale} normTmpl={normTmpl} {...params}/>
-	), overlay);
-};
+})(Attach);

@@ -18,7 +18,7 @@ function createEditor(el, tool, struct, options = {}) {
 			rnd.update();
 		}
 
-		editor.tool(tool.name, tool.opts);
+		editor.tool(tool.name, Object.assign({}, tool.opts));
 		return editor;
 	} else
 		return null;

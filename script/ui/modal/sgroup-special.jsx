@@ -22,8 +22,7 @@ function SgroupSpecial(props) {
 		>
 			<SelectOneOf title="Context" name="context" schema={schemes} />
 			<fieldset className={"data"} >
-				<SelectOneOf title="Field name" name="fieldName"
-							 schema={schemes[context]} key={`${context}-${fieldName}-fieldName`}/>
+				<SelectOneOf title="Field name" name="fieldName" schema={schemes[context]} />
 				{
 					content(context, fieldName)
 				}

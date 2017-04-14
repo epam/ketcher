@@ -313,7 +313,10 @@ function showRadical(atom, render) {
 		radical.path.attr('fill', atom.color);
 		break;
 	case 2:
-		radical.path = draw.radicalBullet(paper, ps, options).attr('fill', this.color);
+		radical.path = paper.set();
+		radical.path.push(
+			draw.radicalBullet(paper, ps, options));
+		radical.path.attr('fill', atom.color);
 		break;
 	case 3:
 		radical.path = paper.set();
@@ -326,7 +329,7 @@ function showRadical(atom, render) {
 	}
 	radical.rbb = util.relBox(radical.path.getBBox());
 	var vshift = -0.5 * (atom.label.rbb.height + radical.rbb.height);
-	if (atom.a.radical == 3)
+	if (atom.a.radical === 3)
 		vshift -= options.lineWidth / 2;
 	pathAndRBoxTranslate(radical.path, radical.rbb,
 		0, vshift);

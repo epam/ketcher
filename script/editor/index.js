@@ -31,7 +31,7 @@ var toolMap = {
 };
 
 var SCALE = 40;  // const
-var ui = global.ui;
+var HISTORY_SIZE = 32; // put me to options
 
 var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
@@ -42,6 +42,8 @@ function Editor(clientArea, options) {
 
 	this._selection = null;
 	this._tool = null; // eslint-disable-line
+	this.historyStack = [];
+	this.historyPtr = 0;
 
 	domEventSetup(this, clientArea);
 	eventSetup(this);
@@ -121,10 +123,53 @@ Editor.prototype.selection = function (selection) {
 	return this._selection;
 };
 
-Editor.prototype.update = function (action) {
-	this.event.change.dispatch(action); // TODO: stoppable here
-	ui.addUndoAction(action, true);
-	this.render.update();
+Editor.prototype.update = function (action, ignoreHistory) {
+	if (action === true) {
+		this.render.update(true); // force
+	} else {
+		if (!ignoreHistory && !action.isDummy()) {
+			this.historyStack.splice(this.historyPtr,
+			                         HISTORY_SIZE + 1, action);
+			if (this.historyStack.length > HISTORY_SIZE)
+				this.historyStack.shift();
+			this.historyPtr = this.historyStack.length;
+		}
+		this.event.change.dispatch(action); // TODO: stoppable here
+		this.render.update();
+	}
+};
+
+Editor.prototype.historySize = function () {
+	return {
+		undo: this.historyPtr,
+		redo: this.historyStack.length - this.historyPtr
+	};
+};
+
+Editor.prototype.undo = function () {
+	if (this.historyPtr == 0)
+		throw new Error('Undo stack is empty');
+
+	if (this.tool())
+		this.tool().OnCancel();  // eslint-disable-line new-cap
+	this.selection(null);
+	this.historyPtr--;
+	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
+	this.historyStack[this.historyPtr] = action;
+	this.update(action, true);
+};
+
+Editor.prototype.redo = function () {
+	if (this.historyPtr == this.historyStack.length)
+		throw new Error('Redo stack is empty');
+
+	if (this.tool())
+		this.tool().OnCancel();  // eslint-disable-line new-cap
+	this.selection(null);
+	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
+	this.historyStack[this.historyPtr] = action;
+	this.historyPtr++;
+	this.update(action, true);
 };
 
 Editor.prototype.on = function (eventName, handler) {

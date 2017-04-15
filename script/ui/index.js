@@ -19,11 +19,6 @@ var clipArea = require('./cliparea');
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
 
-var HISTORY_LENGTH = 32;
-
-var undoStack = [];
-var redoStack = [];
-
 var ketcherWindow;
 var toolbar;
 var lastSelected;
@@ -167,11 +162,12 @@ function initEditor(editor) {
 			console[act](msg[act]);
 		}
 	});
-	editor.on('selectionChange', updateClipboardButtons);
 	editor.on('change', function () {
 		if (options.resetToSelect)
 			selectAction(null);
+		updateHistoryButtons();
 	});
+	editor.on('selectionChange', updateClipboardButtons);
 }
 
 function initClipboard(ketcherWindow) {
@@ -417,8 +413,8 @@ function updateClipboardButtons(selection) {
 };
 
 function updateHistoryButtons() {
-	subEl('undo').disabled = (undoStack.length == 0);
-	subEl('redo').disabled = (redoStack.length == 0);
+	subEl('undo').disabled = (ui.editor.historySize().undo == 0);
+	subEl('redo').disabled = (ui.editor.historySize().redo == 0);
 };
 
 function updateServerButtons(standalone) {
@@ -463,21 +459,6 @@ function dialog(modal, params, noAnimate) {
 			open(resolve, reject);
 	});
 }
-function clr(str) {
-	return str.splice(0, str.length);
-}
-function addUndoAction(action, check_dummy) {
-	if (action == null)
-		return;
-
-	if (check_dummy != true || !action.isDummy()) {
-		undoStack.push(action);
-		clr(redoStack);
-		if (undoStack.length > HISTORY_LENGTH)
-			undoStack.splice(0, 1);
-		updateHistoryButtons();
-	}
-};
 
 function clear() {
 	selectAction(null);
@@ -621,26 +602,6 @@ function load(structStr, options) {
 	});
 }
 
-function undo() {
-	if (ui.editor.tool())
-		ui.editor.tool().OnCancel();
-
-	ui.editor.selection(null);
-	redoStack.push(undoStack.pop().perform(ui.render.ctab));
-	ui.render.update();
-	updateHistoryButtons();
-};
-
-function redo() {
-	if (ui.editor.tool())
-		ui.editor.tool().OnCancel();
-
-	ui.editor.selection(null);
-	undoStack.push(redoStack.pop().perform(ui.render.ctab));
-	ui.render.update();
-	updateHistoryButtons();
-};
-
 function addAtoms(label) {
 	var atoms = [];
 	for (var i = 0; i < 10; i++) {
@@ -727,8 +688,12 @@ var actionMap = {
 	new: clear,
 	open: open,
 	save: save,
-	undo: undo,
-	redo: redo,
+	undo: function () {
+		ui.editor.undo();
+	},
+	redo: function () {
+		ui.editor.redo();
+	},
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
 	'period-table': function () {
@@ -775,7 +740,7 @@ var actionMap = {
 	},
 	'force-update': function () {
 		// original: for dev purposes
-		ui.render.update(true);
+		ui.editor.update(true);
 	},
 	'qs-serialize': function () {
 		var molStr = molfile.stringify(ui.editor.struct());
@@ -918,15 +883,6 @@ function atomLabel(mode) {
 	}
 };
 
-function clean() {
-	// latter if (initialized)
-	ui.editor.struct(new Struct());
-	clr(undoStack);
-	clr(redoStack);
-	updateHistoryButtons();
-	selectAction(null);
-}
-
 // The expose guts two way
 module.exports = {
 	init: init,
@@ -937,7 +893,5 @@ Object.assign(ui, module.exports);
 
 Object.assign(ui, {
 	render: null,
-	editor: null,
-
-	addUndoAction: addUndoAction
+	editor: null
 });

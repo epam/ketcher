@@ -47,10 +47,6 @@ function showMolfile(clientArea, molString, options) {
 	return render;
 }
 
-function onStructChange(handler) {
-	ketcher.editor.render.addStructChangeHandler(handler);
-}
-
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
 window.onload = function () {
@@ -87,6 +83,5 @@ var ketcher = module.exports = Object.assign({
 	getMolfile: getMolfile,
 	setMolecule: setMolecule,
 	addFragment: addFragment,
-	showMolfile: showMolfile,
-	onStructChange: onStructChange
+	showMolfile: showMolfile
 }, buildInfo);

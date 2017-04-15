@@ -96,7 +96,7 @@
           });
 
           ketcher.setMolecule(initialMolecule);
-          ketcher.onStructChange(function() {
+          ketcher.editor.on('change', function() {
             source.val(ketcher.getMolfile());
           });
         });

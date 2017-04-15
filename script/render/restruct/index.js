@@ -385,8 +385,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 			}
 		}
 	}).call(this);
-	if (this.structChanged)
-		this.render.structChangeHandlers.forEach(function (handler) { handler.call(); });
 
 	// TODO: when to update sgroup?
 	this.sgroups.each(function (sid, sgroup) {

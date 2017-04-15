@@ -20,18 +20,11 @@ function Render(clientArea, opt) {
 	this.clientArea = clientArea = $(clientArea);
 	this.paper = new Raphael(clientArea);
 	this.dirty = true;
-	this.structChangeHandlers = [];
 
 	this.ctab = new ReStruct(new Struct(), this);
 
 	this.options = defaultOptions(this.userOpts);
 }
-
-Render.prototype.addStructChangeHandler = function (handler) {
-	if (handler in this.structChangeHandlers)
-		throw new Error('handler already present');
-	this.structChangeHandlers.push(handler);
-};
 
 Render.prototype.view2obj = function (p, isRelative) {
 	var scroll = this.scrollPos();

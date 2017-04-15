@@ -216,9 +216,7 @@ function setHydrogenPos(struct, atom) {
 	// check where should the hydrogen be put on the left of the label
 	if (atom.a.neighbors.length === 0) {
 		var elem = element.map[atom.a.label];
-		if (elem !== null)
-			return !!element[elem].leftH;
-		return false;
+		return !elem || !!element[elem].leftH;
 	}
 	var yl = 1,
 		yr = 1,

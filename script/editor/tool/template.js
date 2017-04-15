@@ -170,7 +170,7 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 	var editor = this.editor;
 	var rnd = editor.render;
 
-	if ('dragCtx' in this) {
+	if (this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
 		var restruct = rnd.ctab;
@@ -218,11 +218,11 @@ TemplateTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max
 
 			rnd.update();
 		}
-
-		if (this.dragCtx.action && !this.dragCtx.action.isDummy())
-			this.editor.update(this.dragCtx.action);
-
+		var action = this.dragCtx.action;
 		delete this.dragCtx;
+
+		if (action && !action.isDummy())
+			this.editor.update(action);
 	}
 };
 TemplateTool.prototype.OnCancel = function () {

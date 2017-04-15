@@ -51,14 +51,13 @@ function init(opts, apiServer) {
 
 	server = apiServer || Promise.reject("Standalone mode!");
 
-	var currentOptions = JSON.parse(localStorage.getItem("ketcher-opts"));
+	options = Object.assign({},
+	                        JSON.parse(localStorage.getItem("ketcher-opts")), opts);
 
 	// Init renderer
-	ui.editor = new Editor(clientArea,
-		Object.assign({}, opts, currentOptions));
+	ui.editor = new Editor(clientArea, options);
 	ui.render = ui.editor.render;
 
-	options = opts;
 	initDropdown(toolbar);
 	initZoom();
 	initEditor(ui.editor);
@@ -169,6 +168,10 @@ function initEditor(editor) {
 		}
 	});
 	editor.on('selectionChange', updateClipboardButtons);
+	editor.on('change', function () {
+		if (options.resetToSelect)
+			selectAction(null);
+	});
 }
 
 function initClipboard(ketcherWindow) {
@@ -808,8 +811,8 @@ var actionMap = {
 
 		dialog(modal.settings, {server: server}).then(function (res) {
 			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
-			console.log("ketcher-opts", res);
-			ui.editor.options(res);
+			options = Object.assign(options, res);
+			ui.editor.options(options);
 			ui.render = ui.editor.render;
 		});
 	},
@@ -936,6 +939,5 @@ Object.assign(ui, {
 	render: null,
 	editor: null,
 
-	selectAction: selectAction,
 	addUndoAction: addUndoAction
 });

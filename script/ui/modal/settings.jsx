@@ -6,6 +6,7 @@ import { setDefaultSettings, cancelChanges } from '../actions/settings-action.es
 
 import { settings as settingsSchema } from '../settings-options.es';
 import { form as Form, Field } from '../component/form';
+
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
@@ -26,7 +27,8 @@ function Settings(props) {
 				  "OK", <Cancel dispatch={dispatch} onCancel={prop.onCancel}/>]}
 			  schema={settingsSchema} params={prop}>
 			<Accordion className="accordion" captions={tabs} active={activeTabs}>
-				<fieldset className="render">
+				 <fieldset className="render">
+					<Field name="resetToSelect"/>
 					<Field name="showValenceWarnings"/>
 					<Field name="atomColoring"/>
 					<Field name="hideChiralFlag"/>

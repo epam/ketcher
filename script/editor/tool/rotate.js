@@ -125,12 +125,13 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 };
 
 RotateTool.prototype.OnMouseUp = function () {
-	if ('dragCtx' in this) {
-		if ('action' in this.dragCtx)
-			this.editor.update(this.dragCtx.action);
+	if (this.dragCtx) {
+		var action = this.dragCtx.action;
+		delete this.dragCtx;
+		if (action)
+			this.editor.update(action);
 		else
 			this.editor.selection(null);
-		delete this.dragCtx;
 	}
 	return true;
 };

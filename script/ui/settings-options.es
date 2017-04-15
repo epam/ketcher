@@ -3,6 +3,12 @@ export const settings = {
 	type: "object",
 	required: [],
 	properties: {
+		resetToSelect: {
+			title: "Reset to Select Tool",
+			enum: [true, false],
+			enumNames: ['on', 'off'],
+			default: false
+		},
 		// Render
 		showValenceWarnings: {
 			title: "Show valence warnings",

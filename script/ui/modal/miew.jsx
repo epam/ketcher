@@ -18,6 +18,7 @@ const MIEW_OPTIONS = {
 		selector: 'all'
 	}]
 };
+
 const MIEW_WINDOW = {
 	location: 'no',
 	menubar: 'no',
@@ -26,6 +27,7 @@ const MIEW_WINDOW = {
 	modal: 'yes',
 	alwaysRaised: 'yes'
 };
+
 const MIEW_MODES = {
 	'lines': 'LN',
 	'ballsAndSticks': 'BS',

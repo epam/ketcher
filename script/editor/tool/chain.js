@@ -55,9 +55,10 @@ ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-
 };
 ChainTool.prototype.OnMouseUp = function () {
 	if (this.dragCtx) {
-		if (this.dragCtx.action)
-			this.editor.update(this.dragCtx.action);
+		var action = this.dragCtx.action;
 		delete this.dragCtx;
+		if (action)
+			this.editor.update(action);
 	}
 	return true;
 };

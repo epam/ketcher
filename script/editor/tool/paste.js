@@ -1,8 +1,6 @@
 var Action = require('../action');
 var EditorTool = require('./base');
 
-var ui = global.ui;
-
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
 		return new PasteTool(editor, struct);
@@ -28,15 +26,17 @@ PasteTool.prototype.OnMouseMove = function (event) {
 };
 
 PasteTool.prototype.OnMouseUp = function () {
-	this.editor.update(this.action);
-	delete this.action;
-	ui.selectAction(null);
+	if (this.action) {
+		var action = this.action;
+		delete this.action;
+		this.editor.update(action);
+	}
 };
 
 PasteTool.prototype.OnCancel = function () {
 	var rnd = this.editor.render;
-	if ('action' in this) {
-		this.action.perform(rnd.ctab);
+	if (this.action) {
+		this.action.perform(rnd.ctab); // revert the action
 		delete this.action;
 	}
 };

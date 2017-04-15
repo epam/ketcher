@@ -188,8 +188,9 @@ SelectTool.prototype.OnCancel = function () {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.stopTapping)
 			this.dragCtx.stopTapping();
-		this.editor.update(this.dragCtx.action);
+		var action = this.dragCtx.action;
 		delete this.dragCtx;
+		this.editor.update(action);
 	} else if (this.lassoHelper.running()) {
 		this.editor.selection(this.lassoHelper.end());
 	}

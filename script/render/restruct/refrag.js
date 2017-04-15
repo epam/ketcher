@@ -3,8 +3,6 @@ var Vec2 = require('../../util/vec2');
 var ReObject = require('./reobject');
 var scale = require('../../util/scale');
 
-var ui = global.ui;
-
 function ReFrag(/* Struct.Fragment = {}*/frag) {
 	this.init('frag');
 
@@ -47,7 +45,7 @@ ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to r
 			} else {
 				if (!render) {
 					console.warn('No boundingBox fragment precalc');
-					render = ui.render;
+					render = global._ui_editor.render;
 				}
 
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);

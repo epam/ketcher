@@ -9,7 +9,6 @@ var Action = require('./action');
 var closest = require('./closest');
 
 var toolMap = {
-	base: require('./tool/base'),
 	rgroupatom: require('./tool/rgroupatom'),
 	select: require('./tool/select'),
 	sgroup: require('./tool/sgroup'),
@@ -217,7 +216,7 @@ function eventSetup(editor) {
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {
-	var pos = 'ui' in window ? new Vec2(this.render.page2obj(event)) :
+	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) :
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 
 	return closest.item(this.render.ctab, pos, maps, skip);

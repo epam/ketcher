@@ -4,25 +4,23 @@ var api = require('./api.js');
 var molfile = require('./chem/molfile');
 var smiles = require('./chem/smiles');
 
-require('./ui');
-var ui = global.ui;
-
+var ui = require('./ui');
 var Render = require('./render');
 
 function getSmiles() {
-	return smiles.stringify(ui.editor.struct(),
+	return smiles.stringify(ketcher.editor.struct(),
 	                        { ignoreErrors: true });
 }
 
 function getMolfile() {
-	return molfile.stringify(ui.editor.struct(),
+	return molfile.stringify(ketcher.editor.struct(),
 	                         { ignoreErrors: true });
 }
 
 function setMolecule(molString) {
 	if (!(typeof molString === "string"))
 		return;
-	ui.load(molString, {
+	ketcher.ui.load(molString, {
 		rescale: true
 	});
 }
@@ -30,7 +28,7 @@ function setMolecule(molString) {
 function addFragment(molString) {
 	if (!(typeof molString === "string"))
 		return;
-	ui.load(molString, {
+	ketcher.ui.load(molString, {
 		rescale: true,
 		fragment: true
 	});
@@ -50,7 +48,7 @@ function showMolfile(clientArea, molString, options) {
 }
 
 function onStructChange(handler) {
-	ui.render.addStructChangeHandler(handler);
+	ketcher.editor.render.addStructChangeHandler(handler);
 }
 
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
@@ -59,19 +57,21 @@ window.onload = function () {
 	var params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.apiPath = params.api_path;
-	var server = ketcher.server = api(ketcher.apiPath, {
+	ketcher.server = api(ketcher.apiPath, {
 		'smart-layout': true,
 		'ignore-stereochemistry-errors': true,
 		'mass-skip-error-on-pseudoatoms': false,
 		'gross-formula-add-rsites': true
 	});
-	server.then(function () {
+	ketcher.ui = ui(Object.assign({}, params, buildInfo),
+	                ketcher.server);
+	ketcher.editor = ketcher.ui.editor;
+	ketcher.server.then(function () {
 		if (params.mol)
-			ui.load(params.mol);
+			ketcher.ui.load(params.mol);
 	}, function () {
 		document.title += ' (standalone)';
 	});
-	ui.init(Object.assign({}, params, buildInfo), server);
 };
 
 var buildInfo = {

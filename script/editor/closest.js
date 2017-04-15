@@ -1,7 +1,6 @@
 var Vec2 = require('../util/vec2');
 
 var SELECTION_DISTANCE_COEFFICIENT = 0.4;
-var ui = global.ui;
 
 function findClosestAtom(restruct, pos, skip, minDist) {
 	var closestAtom = null;
@@ -210,12 +209,13 @@ function findClosestSGroup(restruct, pos) {
 var findMaps = {
 	atoms: findClosestAtom,
 	bonds: function (restruct, pos) {
+		var options = global._ui_editor.render.options;
 		var bond = findClosestBond(restruct, pos);
 		var res = null;
 		if (bond) {
 			if (bond.cid !== null)
 				res = { id: bond.cid, dist: bond.cdist };
-			if (res == null || res.dist > 0.4 * ui.render.options.scale) // hack (ported from old code)
+			if (res == null || res.dist > 0.4 * options.scale) // hack (ported from old code)
 				res = bond;
 		}
 		return res;

@@ -142,7 +142,8 @@ SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id);
 			}
 		}
-		this.editor.update(this.dragCtx.action);
+		if (this.dragCtx.action)
+			this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		var sel = this.lassoHelper.end();

@@ -1,4 +1,3 @@
-var ui = global.ui = {};
 var preact = require('preact');
 
 var keyNorm = require('./keynorm');
@@ -26,6 +25,7 @@ var clientArea = null;
 var server;
 var options;
 var scope;
+var editor;
 
 var libTmpls = null;
 
@@ -50,12 +50,11 @@ function init(opts, apiServer) {
 	                        JSON.parse(localStorage.getItem("ketcher-opts")), opts);
 
 	// Init renderer
-	ui.editor = new Editor(clientArea, options);
-	ui.render = ui.editor.render;
+	editor = global._ui_editor = new Editor(clientArea, options);
 
 	initDropdown(toolbar);
 	initZoom();
-	initEditor(ui.editor);
+	initEditor(editor);
 	initClipboard(ketcherWindow);
 
 	updateHistoryButtons();
@@ -95,6 +94,11 @@ function init(opts, apiServer) {
 		// TODO: pop all active
 		popAction(toolbar);
 	});
+
+	return {
+		editor: editor,
+		load: load
+	};
 };
 
 
@@ -180,13 +184,13 @@ function initClipboard(ketcherWindow) {
 			return scope == 'editor';
 		},
 		onCut: function () {
-			var data = clipData(ui.editor);
+			var data = clipData(editor);
 			selectAction('erase');
 			return data;
 		},
 		onCopy: function () {
-			var data = clipData(ui.editor);
-			ui.editor.selection(null);
+			var data = clipData(editor);
+			editor.selection(null);
 			return data;
 		},
 		onPaste: function (data) {
@@ -380,8 +384,8 @@ function initHotKeys(toolbar) {
 
 function keyHandle(toolbar, hotKeys, event) {
 	var key = keyNorm(event);
-	var atomsSelected = ui.editor.selection() &&
-		ui.editor.selection().atoms;
+	var atomsSelected = editor.selection() &&
+		editor.selection().atoms;
 	var group;
 
 	if (key.length == 1 && atomsSelected && key.match(/\w/)) {
@@ -413,8 +417,8 @@ function updateClipboardButtons(selection) {
 };
 
 function updateHistoryButtons() {
-	subEl('undo').disabled = (ui.editor.historySize().undo == 0);
-	subEl('redo').disabled = (ui.editor.historySize().redo == 0);
+	subEl('undo').disabled = (editor.historySize().undo == 0);
+	subEl('redo').disabled = (editor.historySize().redo == 0);
 };
 
 function updateServerButtons(standalone) {
@@ -462,8 +466,8 @@ function dialog(modal, params, noAnimate) {
 
 function clear() {
 	selectAction(null);
-	if (!ui.editor.struct().isBlank())
-		ui.editor.struct(new Struct());
+	if (!editor.struct().isBlank())
+		editor.struct(new Struct());
 }
 
 function open() {
@@ -476,7 +480,7 @@ function open() {
 }
 
 function save() {
-	dialog(modal.save, { server: server, struct: ui.editor.struct() }).then(function (res) {
+	dialog(modal.save, { server: server, struct: editor.struct() }).then(function (res) {
 
 		if (res.event == 'saveTmpl') {
 			var tmpl = {
@@ -495,8 +499,8 @@ function save() {
 function serverCall(method, options, struct) {
 	if (!struct) {
 		var aidMap = {};
-		struct = ui.editor.struct().clone(null, null, false, aidMap);
-		var selectedAtoms = ui.editor.explicitSelected().atoms || [];
+		struct = editor.struct().clone(null, null, false, aidMap);
+		var selectedAtoms = editor.explicitSelected().atoms || [];
 		selectedAtoms = selectedAtoms.map(function (aid) {
 			return aidMap[aid];
 		});
@@ -561,11 +565,11 @@ function updateZoom(refresh) {
 
 	var value = parseFloat(zoomSelect.value) / 100;
 	if (refresh)
-		ui.editor.zoom(value);
+		editor.zoom(value);
 }
 
 function automap() {
-	if (!ui.editor.struct().hasRxnArrow())
+	if (!editor.struct().hasRxnArrow())
 	// not a reaction explicit or implicit
 		alert('Auto-Mapping can only be applied to reactions');
 	else {
@@ -595,7 +599,7 @@ function load(structStr, options) {
 		if (options.fragment && !struct.isBlank())
 			selectAction('paste', struct);
 		else
-			ui.editor.struct(struct);
+			editor.struct(struct);
 		return struct;
 	}, function (err) {
 		alert(err);
@@ -689,10 +693,10 @@ var actionMap = {
 	open: open,
 	save: save,
 	undo: function () {
-		ui.editor.undo();
+		editor.undo();
 	},
 	redo: function () {
-		ui.editor.redo();
+		editor.redo();
 	},
 	'zoom-in': zoomIn,
 	'zoom-out': zoomOut,
@@ -732,18 +736,18 @@ var actionMap = {
 		});
 	},
 	'select-all': function () {
-		ui.editor.selection('all');
+		editor.selection('all');
 		selectAction(null);
 	},
 	'deselect-all': function () {
-		ui.editor.selection(null);
+		editor.selection(null);
 	},
 	'force-update': function () {
 		// original: for dev purposes
-		ui.editor.update(true);
+		editor.update(true);
 	},
 	'qs-serialize': function () {
-		var molStr = molfile.stringify(ui.editor.struct());
+		var molStr = molfile.stringify(editor.struct());
 		var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
 		var qs = document.location.search;
 		document.location.search = !qs ? '?' + molQs :
@@ -777,15 +781,14 @@ var actionMap = {
 		dialog(modal.settings, {server: server}).then(function (res) {
 			localStorage.setItem("ketcher-opts",  JSON.stringify(res));
 			options = Object.assign(options, res);
-			ui.editor.options(options);
-			ui.render = ui.editor.render;
+			editor.options(options);
 		});
 	},
 	'help': function () {
 		dialog(modal.help);
 	},
 	'miew': function () {
-		var convert = structFormat.toString(ui.editor.struct(),
+		var convert = structFormat.toString(editor.struct(),
 			'cml', server);
 		convert.then(function (cml) {
 			dialog(modal.miew, {
@@ -804,7 +807,7 @@ function mapAction(id) {
 	if (actionMap[id])
 		return actionMap[id].apply(null, args);
 	var mt = mapTool.apply(null, arguments);
-	return mt ? ui.editor.tool(mt.tool, mt.opts) : null;
+	return mt ? editor.tool(mt.tool, mt.opts) : null;
 }
 
 // TODO: rewrite declaratively, merge to actionMap
@@ -883,15 +886,4 @@ function atomLabel(mode) {
 	}
 };
 
-// The expose guts two way
-module.exports = {
-	init: init,
-	load: load
-};
-
-Object.assign(ui, module.exports);
-
-Object.assign(ui, {
-	render: null,
-	editor: null
-});
+module.exports = init;

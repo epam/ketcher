@@ -180,15 +180,12 @@ function domEventSetup(editor, clientArea) {
 	// assign canvas events handlers
 	['OnClick', 'OnDblClick', 'OnMouseDown', 'OnMouseMove',
 	 'OnMouseUp', 'OnMouseLeave'].forEach(function (method) {
-		var eventName = method.slice(2).toLowerCase();
-		clientArea.addEventListener(eventName, function (event) {
+		 var eventName = method.slice(2).toLowerCase();
+		 clientArea.addEventListener(eventName, function (event) {
+			 editor.lastEvent = event;
 			/* eslint-disable no-underscore-dangle */
-			if (method + '0' in editor._tool)
-				editor._tool[method + '0'](event);
-			else if (method in editor._tool)
+			if (method in editor._tool)
 				editor._tool[method](event);
-			else
-				console.warn("Can\'t process method");
 			/* eslint-enable no-underscore-dangle */
 			if (eventName != 'mouseup')
 				// [NK] do not stop mouseup propagation

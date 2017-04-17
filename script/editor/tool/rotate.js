@@ -1,7 +1,6 @@
 var Vec2 = require('../../util/vec2');
 
 var Action = require('../action');
-var EditorTool = require('./base');
 var utils = require('./utils');
 
 function RotateTool(editor, dir) {
@@ -27,8 +26,6 @@ function RotateTool(editor, dir) {
 		// otherwise, clear selection
 		this.editor.selection(null);
 }
-
-RotateTool.prototype = new EditorTool();
 
 RotateTool.prototype.OnMouseDown = function (event) {
 	var xy0 = new Vec2();

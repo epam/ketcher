@@ -1,7 +1,6 @@
 var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var utils = require('./utils');
 
 function ChainTool(editor) {
@@ -13,7 +12,6 @@ function ChainTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-ChainTool.prototype = new EditorTool();
 ChainTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	this.hoverHelper.hover(null);

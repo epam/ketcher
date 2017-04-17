@@ -1,6 +1,5 @@
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var element = require('../../chem/element');
 
 function ChargeTool(editor, charge) {
@@ -13,7 +12,7 @@ function ChargeTool(editor, charge) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-ChargeTool.prototype = new EditorTool();
+
 ChargeTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);

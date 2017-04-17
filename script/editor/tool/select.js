@@ -3,7 +3,6 @@ var Set = require('../../util/set');
 var Action = require('../action');
 var Struct = require('../../chem/struct');
 
-var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
@@ -19,7 +18,6 @@ function SelectTool(editor, mode) {
 	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 }
 
-SelectTool.prototype = new EditorTool();
 SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;

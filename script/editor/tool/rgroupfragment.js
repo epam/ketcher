@@ -2,7 +2,6 @@ var Struct = require('../../chem/struct');
 
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 
 function RGroupFragmentTool(editor) {
 	if (!(this instanceof RGroupFragmentTool)) {
@@ -16,7 +15,6 @@ function RGroupFragmentTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-RGroupFragmentTool.prototype = new EditorTool();
 RGroupFragmentTool.prototype.OnMouseMove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };

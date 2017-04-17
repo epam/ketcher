@@ -1,6 +1,5 @@
 var Struct = require('../../chem/struct');
 var Action = require('../action');
-var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
 
 function RGroupAtomTool(editor) {
@@ -15,8 +14,6 @@ function RGroupAtomTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-RGroupAtomTool.prototype = new EditorTool();
-
 RGroupAtomTool.prototype.OnMouseMove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
@@ -26,10 +23,9 @@ RGroupAtomTool.prototype.OnMouseUp = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci) { //  ci.type == 'Canvas'
 		this.hoverHelper.hover(null);
-		propsDialog(this.editor, null,
-		            rnd.page2obj(this.OnMouseMove0.lastEvent));
+		propsDialog(this.editor, null, rnd.page2obj(event));
 		return true;
-	} else if (ci && ci.map == 'atoms') {
+	} else if (ci.map == 'atoms') {
 		this.hoverHelper.hover(null);
 		propsDialog(this.editor, ci.id);
 		return true;

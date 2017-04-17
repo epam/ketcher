@@ -1,6 +1,5 @@
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -12,7 +11,6 @@ function ReactionArrowTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-ReactionArrowTool.prototype = new EditorTool();
 ReactionArrowTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnArrows']);

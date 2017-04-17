@@ -2,7 +2,6 @@ var Vec2 = require('../../util/vec2');
 var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var utils = require('./utils');
 
 function BondTool(editor, bondProps) {
@@ -21,7 +20,6 @@ function BondTool(editor, bondProps) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-BondTool.prototype = new EditorTool();
 
 BondTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;

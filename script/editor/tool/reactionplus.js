@@ -1,6 +1,5 @@
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 
 function ReactionPlusTool(editor) {
 	if (!(this instanceof ReactionPlusTool))
@@ -11,7 +10,6 @@ function ReactionPlusTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-ReactionPlusTool.prototype = new EditorTool();
 ReactionPlusTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnPluses']);

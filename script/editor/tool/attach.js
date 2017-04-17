@@ -1,5 +1,4 @@
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var element = require('../../chem/element');
 
 function AttachTool(editor, attachPoints) {
@@ -16,7 +15,6 @@ function AttachTool(editor, attachPoints) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-AttachTool.prototype = new EditorTool();
 AttachTool.prototype.OnMouseMove = function (event) {
 	var rnd = this.editor.render;
 

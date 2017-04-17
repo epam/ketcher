@@ -2,7 +2,6 @@ var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var utils = require('./utils');
 
 function TemplateTool(editor, tmpl) {
@@ -34,8 +33,6 @@ function TemplateTool(editor, tmpl) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-
-TemplateTool.prototype = new EditorTool();
 
 TemplateTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;

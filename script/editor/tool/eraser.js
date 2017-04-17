@@ -1,5 +1,4 @@
 var Action = require('../action');
-var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
@@ -21,7 +20,6 @@ function EraserTool(editor, mode) {
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 
-EraserTool.prototype = new EditorTool();
 EraserTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, this.maps);
 	if (!ci) //  ci.type == 'Canvas'

@@ -1,7 +1,6 @@
 var Struct = require('../../chem/struct');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var utils = require('./utils');
 
 function AtomTool(editor, atomProps) {
@@ -23,7 +22,6 @@ function AtomTool(editor, atomProps) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-AtomTool.prototype = new EditorTool();
 AtomTool.prototype.OnMouseDown = function (event) {
 	this.hoverHelper.hover(null);
 	var rnd = this.editor.render;

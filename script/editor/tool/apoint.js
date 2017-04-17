@@ -1,6 +1,5 @@
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 
 function APointTool(editor) {
 	if (!(this instanceof APointTool))
@@ -11,8 +10,6 @@ function APointTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-
-APointTool.prototype = new EditorTool();
 
 APointTool.prototype.OnMouseMove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));

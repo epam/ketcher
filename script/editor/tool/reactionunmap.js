@@ -1,6 +1,5 @@
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
@@ -11,7 +10,6 @@ function ReactionUnmapTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-ReactionUnmapTool.prototype = new EditorTool();
 ReactionUnmapTool.prototype.OnMouseMove = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms')

@@ -2,7 +2,6 @@ var Set = require('../../util/set');
 var scale = require('../../util/scale');
 var Action = require('../action');
 var HoverHelper = require('./helper/hover');
-var EditorTool = require('./base');
 var draw = require('../../render/draw');
 
 function ReactionMapTool(editor) {
@@ -16,7 +15,6 @@ function ReactionMapTool(editor) {
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
 
-ReactionMapTool.prototype = new EditorTool();
 ReactionMapTool.prototype.OnMouseDown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);

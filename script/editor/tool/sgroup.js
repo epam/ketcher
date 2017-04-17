@@ -1,4 +1,3 @@
-var EditorTool = require('./base');
 var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
@@ -27,7 +26,6 @@ function SGroupTool(editor, type) {
 	this.editor.selection(null);
 }
 
-SGroupTool.prototype = new EditorTool();
 SGroupTool.prototype.OnMouseDown = function (event) {
 	var ci = this.editor.findItem(event, searchMaps);
 	if (!ci) //  ci.type == 'Canvas'

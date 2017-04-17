@@ -15,7 +15,7 @@ function AttachTool(editor, attachPoints) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-AttachTool.prototype.OnMouseMove = function (event) {
+AttachTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 
 	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
@@ -26,7 +26,7 @@ AttachTool.prototype.OnMouseMove = function (event) {
 		this.hoverHelper.hover(null);
 	return true;
 };
-AttachTool.prototype.OnMouseUp = function (event) {
+AttachTool.prototype.mouseup = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;

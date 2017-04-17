@@ -20,18 +20,18 @@ function EraserTool(editor, mode) {
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 
-EraserTool.prototype.OnMouseDown = function (event) {
+EraserTool.prototype.mousedown = function (event) {
 	var ci = this.editor.findItem(event, this.maps);
 	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
-EraserTool.prototype.OnMouseMove = function (event) {
+EraserTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running())
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
 		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
 };
-EraserTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
+EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		this.editor.update(Action.fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));

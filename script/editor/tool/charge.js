@@ -13,7 +13,7 @@ function ChargeTool(editor, charge) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-ChargeTool.prototype.OnMouseMove = function (event) {
+ChargeTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	var struct = rnd.ctab.molecule;
@@ -23,7 +23,7 @@ ChargeTool.prototype.OnMouseMove = function (event) {
 		this.hoverHelper.hover(null);
 	return true;
 };
-ChargeTool.prototype.OnMouseUp = function (event) {
+ChargeTool.prototype.mouseup = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;

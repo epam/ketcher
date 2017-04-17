@@ -22,7 +22,7 @@ function AtomTool(editor, atomProps) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-AtomTool.prototype.OnMouseDown = function (event) {
+AtomTool.prototype.mousedown = function (event) {
 	this.hoverHelper.hover(null);
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
@@ -35,7 +35,7 @@ AtomTool.prototype.OnMouseDown = function (event) {
 		};
 	}
 };
-AtomTool.prototype.OnMouseMove = function (event) {
+AtomTool.prototype.mousemove = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
@@ -65,7 +65,7 @@ AtomTool.prototype.OnMouseMove = function (event) {
 		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	}
 };
-AtomTool.prototype.OnMouseUp = function (event) {
+AtomTool.prototype.mouseup = function (event) {
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var rnd = this.editor.render;

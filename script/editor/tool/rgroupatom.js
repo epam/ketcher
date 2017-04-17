@@ -14,11 +14,11 @@ function RGroupAtomTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-RGroupAtomTool.prototype.OnMouseMove = function (event) {
+RGroupAtomTool.prototype.mousemove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
 
-RGroupAtomTool.prototype.OnMouseUp = function (event) {
+RGroupAtomTool.prototype.mouseup = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci) { //  ci.type == 'Canvas'

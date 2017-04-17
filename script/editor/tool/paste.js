@@ -15,7 +15,7 @@ function PasteTool(editor, struct) {
 	rnd.update();
 }
 
-PasteTool.prototype.OnMouseMove = function (event) {
+PasteTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if (this.action)
 		this.action.perform(rnd.ctab);
@@ -23,7 +23,7 @@ PasteTool.prototype.OnMouseMove = function (event) {
 	rnd.update();
 };
 
-PasteTool.prototype.OnMouseUp = function () {
+PasteTool.prototype.mouseup = function () {
 	if (this.action) {
 		var action = this.action;
 		delete this.action;
@@ -31,7 +31,7 @@ PasteTool.prototype.OnMouseUp = function () {
 	}
 };
 
-PasteTool.prototype.OnCancel = function () {
+PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
 	var rnd = this.editor.render;
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action

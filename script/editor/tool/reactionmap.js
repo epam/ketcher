@@ -15,7 +15,7 @@ function ReactionMapTool(editor) {
 	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
 
-ReactionMapTool.prototype.OnMouseDown = function (event) {
+ReactionMapTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms') {
@@ -26,7 +26,7 @@ ReactionMapTool.prototype.OnMouseDown = function (event) {
 		};
 	}
 };
-ReactionMapTool.prototype.OnMouseMove = function (event) {
+ReactionMapTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
@@ -57,7 +57,7 @@ ReactionMapTool.prototype.updateLine = function (p1, p2) {
 	}
 };
 
-ReactionMapTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
+ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);

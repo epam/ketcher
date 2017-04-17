@@ -12,7 +12,7 @@ function ChainTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-ChainTool.prototype.OnMouseDown = function (event) {
+ChainTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
@@ -24,7 +24,7 @@ ChainTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
+ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
 	if ('dragCtx' in this) {
@@ -51,7 +51,8 @@ ChainTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	return true;
 };
-ChainTool.prototype.OnMouseUp = function () {
+
+ChainTool.prototype.mouseup = function () {
 	if (this.dragCtx) {
 		var action = this.dragCtx.action;
 		delete this.dragCtx;
@@ -60,8 +61,8 @@ ChainTool.prototype.OnMouseUp = function () {
 	}
 	return true;
 };
-ChainTool.prototype.OnCancel = function () {
-	this.OnMouseUp(); // eslint-disable-line new-cap
-};
+
+ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
+	ChainTool.prototype.mouseup;
 
 module.exports = ChainTool;

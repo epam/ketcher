@@ -10,7 +10,7 @@ function ReactionPlusTool(editor) {
 
 	this.hoverHelper = new HoverHelper(this);
 }
-ReactionPlusTool.prototype.OnMouseDown = function (event) {
+ReactionPlusTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
@@ -19,7 +19,7 @@ ReactionPlusTool.prototype.OnMouseDown = function (event) {
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
-ReactionPlusTool.prototype.OnMouseMove = function (event) {
+ReactionPlusTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
@@ -34,7 +34,7 @@ ReactionPlusTool.prototype.OnMouseMove = function (event) {
 		this.hoverHelper.hover(this.editor.findItem(event, ['rxnPluses']));
 	}
 };
-ReactionPlusTool.prototype.OnMouseUp = function (event) {
+ReactionPlusTool.prototype.mouseup = function (event) {
 	var rnd = this.editor.render;
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails

@@ -11,11 +11,11 @@ function APointTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-APointTool.prototype.OnMouseMove = function (event) {
+APointTool.prototype.mousemove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 };
 
-APointTool.prototype.OnMouseUp = function (event) {
+APointTool.prototype.mouseup = function (event) {
 	var editor = this.editor;
 	var struct = editor.render.ctab.molecule;
 	var ci = editor.findItem(event, ['atoms']);

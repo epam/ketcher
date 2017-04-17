@@ -51,8 +51,8 @@ function Editor(clientArea, options) {
 Editor.prototype.tool = function (name, opts) {
 	if (arguments.length > 0) {
 		/* eslint-disable no-underscore-dangle*/
-		if (this._tool)
-			this._tool.OnCancel(); // eslint-disable-line new-cap
+		if (this._tool && this._tool.cancel)
+			this._tool.cancel();
 		var tool = toolMap[name](this, opts);
 		if (!tool)
 			return null;
@@ -149,8 +149,8 @@ Editor.prototype.undo = function () {
 	if (this.historyPtr == 0)
 		throw new Error('Undo stack is empty');
 
-	if (this.tool())
-		this.tool().OnCancel();  // eslint-disable-line new-cap
+	if (this.tool() && this.tool().cancel)
+		this.tool().cancel();
 	this.selection(null);
 	this.historyPtr--;
 	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
@@ -162,8 +162,8 @@ Editor.prototype.redo = function () {
 	if (this.historyPtr == this.historyStack.length)
 		throw new Error('Redo stack is empty');
 
-	if (this.tool())
-		this.tool().OnCancel();  // eslint-disable-line new-cap
+	if (this.tool() && this.tool().cancel)
+		this.tool().cancel();
 	this.selection(null);
 	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
 	this.historyStack[this.historyPtr] = action;
@@ -178,14 +178,14 @@ Editor.prototype.on = function (eventName, handler) {
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	// assign canvas events handlers
-	['OnClick', 'OnDblClick', 'OnMouseDown', 'OnMouseMove',
-	 'OnMouseUp', 'OnMouseLeave'].forEach(function (method) {
-		 var eventName = method.slice(2).toLowerCase();
+	// no onclick, mouseleave
+	['click', 'dblclick', 'mousedown', 'mousemove',
+	 'mouseup', 'mouseleave'].forEach(function (eventName) {
 		 clientArea.addEventListener(eventName, function (event) {
 			 editor.lastEvent = event;
 			/* eslint-disable no-underscore-dangle */
-			if (method in editor._tool)
-				editor._tool[method](event);
+			if (eventName in editor._tool)
+				editor._tool[eventName](event);
 			/* eslint-enable no-underscore-dangle */
 			if (eventName != 'mouseup')
 				// [NK] do not stop mouseup propagation

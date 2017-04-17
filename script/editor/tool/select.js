@@ -18,7 +18,7 @@ function SelectTool(editor, mode) {
 	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 }
 
-SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max-statements
+SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
@@ -87,7 +87,7 @@ SelectTool.prototype.OnMouseDown = function (event) { // eslint-disable-line max
 	return true;
 };
 
-SelectTool.prototype.OnMouseMove = function (event) {
+SelectTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx)
@@ -123,7 +123,7 @@ SelectTool.prototype.OnMouseMove = function (event) {
 	}
 	return true;
 };
-SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
+SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		if ('stopTapping' in this.dragCtx)
 			this.dragCtx.stopTapping();
@@ -153,7 +153,7 @@ SelectTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-s
 	return true;
 };
 
-SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-statements
+SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups']);
@@ -183,7 +183,7 @@ SelectTool.prototype.OnDblClick = function (event) { // eslint-disable-line max-
 	return true;
 };
 
-SelectTool.prototype.OnCancel = function () {
+SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.stopTapping)
 			this.dragCtx.stopTapping();

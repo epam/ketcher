@@ -27,7 +27,7 @@ function RotateTool(editor, dir) {
 		this.editor.selection(null);
 }
 
-RotateTool.prototype.OnMouseDown = function (event) {
+RotateTool.prototype.mousedown = function (event) {
 	var xy0 = new Vec2();
 	var selection = this.editor.selection();
 	var rnd = this.editor.render;
@@ -90,7 +90,7 @@ RotateTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
+RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var editor = this.editor;
 		var rnd = editor.render;
@@ -121,7 +121,7 @@ RotateTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max
 	return true;
 };
 
-RotateTool.prototype.OnMouseUp = function () {
+RotateTool.prototype.mouseup = function () {
 	if (this.dragCtx) {
 		var action = this.dragCtx.action;
 		delete this.dragCtx;
@@ -133,8 +133,7 @@ RotateTool.prototype.OnMouseUp = function () {
 	return true;
 };
 
-RotateTool.prototype.OnCancel = function () {
-	this.OnMouseUp(); // eslint-disable-line new-cap
-};
+RotateTool.prototype.cancel = RotateTool.prototype.mouseleave =
+	RotateTool.prototype.mouseup;
 
 module.exports = RotateTool;

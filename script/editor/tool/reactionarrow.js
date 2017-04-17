@@ -11,7 +11,7 @@ function ReactionArrowTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-ReactionArrowTool.prototype.OnMouseDown = function (event) {
+ReactionArrowTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
@@ -20,7 +20,7 @@ ReactionArrowTool.prototype.OnMouseDown = function (event) {
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
-ReactionArrowTool.prototype.OnMouseMove = function (event) {
+ReactionArrowTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
@@ -36,7 +36,7 @@ ReactionArrowTool.prototype.OnMouseMove = function (event) {
 		this.hoverHelper.hover(this.editor.findItem(event, ['rxnArrows']));
 	}
 };
-ReactionArrowTool.prototype.OnMouseUp = function (event) {
+ReactionArrowTool.prototype.mouseup = function (event) {
 	var rnd = this.editor.render;
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails

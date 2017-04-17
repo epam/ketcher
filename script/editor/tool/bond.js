@@ -21,7 +21,7 @@ function BondTool(editor, bondProps) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-BondTool.prototype.OnMouseDown = function (event) {
+BondTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
@@ -33,7 +33,7 @@ BondTool.prototype.OnMouseDown = function (event) {
 	return true;
 };
 
-BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-statements
+BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
 	if ('dragCtx' in this) {
@@ -83,7 +83,7 @@ BondTool.prototype.OnMouseMove = function (event) { // eslint-disable-line max-s
 	return true;
 };
 
-BondTool.prototype.OnMouseUp = function (event) { // eslint-disable-line max-statements
+BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
 		var rnd = this.editor.render;

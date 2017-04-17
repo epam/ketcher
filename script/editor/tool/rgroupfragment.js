@@ -15,11 +15,11 @@ function RGroupFragmentTool(editor) {
 	this.hoverHelper = new HoverHelper(this);
 }
 
-RGroupFragmentTool.prototype.OnMouseMove = function (event) {
+RGroupFragmentTool.prototype.mousemove = function (event) {
 	this.hoverHelper.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };
 
-RGroupFragmentTool.prototype.OnMouseUp = function (event) {
+RGroupFragmentTool.prototype.mouseup = function (event) {
 	var editor = this.editor;
 	var struct = editor.render.ctab.molecule;
 	var ci = editor.findItem(event, ['frags', 'rgroups']);

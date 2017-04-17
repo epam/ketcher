@@ -26,20 +26,20 @@ function SGroupTool(editor, type) {
 	this.editor.selection(null);
 }
 
-SGroupTool.prototype.OnMouseDown = function (event) {
+SGroupTool.prototype.mousedown = function (event) {
 	var ci = this.editor.findItem(event, searchMaps);
 	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
 
-SGroupTool.prototype.OnMouseMove = function (event) {
+SGroupTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running())
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
 		this.hoverHelper.hover(this.editor.findItem(event, searchMaps));
 };
 
-SGroupTool.prototype.OnMouseUp = function (event) {
+SGroupTool.prototype.mouseup = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored

@@ -1,7 +1,7 @@
 import { h, Component } from 'preact';
 /** @jsx h */
 
-function GenericInput({ value, onChange, type="text", ...props}) {
+function GenericInput({ value, onChange, type = "text", ...props }) {
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
@@ -10,7 +10,7 @@ GenericInput.val = function (ev, schema) {
 	var input = ev.target;
 	var isNumber = (input.type == 'number' || input.type == 'range') ||
 		(schema && (schema.type == 'number' || schema.type == 'integer'));
-	return (isNumber && !isNaN(input.value - 0)) ? input.value - 0 : input.value ;
+	return (isNumber && !isNaN(input.value - 0)) ? input.value - 0 : input.value;
 };
 
 function TextArea({ value, onChange, ...props }) {
@@ -20,7 +20,7 @@ function TextArea({ value, onChange, ...props }) {
 }
 TextArea.val = (ev) => ev.target.value;
 
-function CheckBox({ value, onChange, ...props}) {
+function CheckBox({ value, onChange, ...props }) {
 	return (
 		<input type="checkbox" checked={value} onClick={onChange} {...props} />
 	);
@@ -34,14 +34,14 @@ CheckBox.val = function (ev) {
 function Select({ schema, value, selected, onSelect, ...props }) {
 	return (
 		<select onChange={onSelect} {...props}>
-		  {
-			  enumSchema(schema, (title, val) => (
-				  <option selected={selected(val, value)}
-						  value={typeof val != 'object' && val}>
-					{title}
-				  </option>
-			  ))
-		  }
+			{
+				enumSchema(schema, (title, val) => (
+					<option selected={selected(val, value)}
+							value={typeof val != 'object' && val}>
+						{title}
+					</option>
+				))
+			}
 		</select>
 	);
 }
@@ -56,15 +56,15 @@ Select.val = function (ev, schema) {
 	}, []);
 };
 
-function FieldSet({ schema, value, selected, onSelect, type="radio", ...props}) {
+function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props }) {
 	return (
 		<fieldset onClick={onSelect} className="radio">
 			{
 				enumSchema(schema, (title, val) => (
 					<label>
-					  <input type={type} checked={selected(val, value)}
-							 value={typeof val != 'object' && val}
-							 {...props}/>
+						<input type={type} checked={selected(val, value)}
+							   value={typeof val != 'object' && val}
+							   {...props}/>
 						{title}
 					</label>
 				))
@@ -81,15 +81,77 @@ FieldSet.val = function (ev, schema) {
 	// }
 	// ev.stopPropagation();
 	// TODO: do we need that?
-    // Hm.. looks like premature optimization
+	// Hm.. looks like premature optimization
 	//      should we inline this?
 	var fieldset = input.parentNode.parentNode;
 	var res = [].reduce.call(fieldset.querySelectorAll('input'),
-				   function (res, inp, i) {
-					   return !inp.checked ? res :
-						   [enumSchema(schema, i), ...res];
-				   }, []);
+		function (res, inp, i) {
+			return !inp.checked ? res :
+				[enumSchema(schema, i), ...res];
+		}, []);
 	return input.type == 'radio' ? res[0] : res;
+};
+
+class SelectInput extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			suggestsHidden: true
+		};
+
+		this.onClick = this.onClick.bind(this);
+	}
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextState.suggestsHidden !== this.state.suggestsHidden ||
+			   nextProps.value !== this.props.value;
+	}
+
+	onClick(event) {
+		this.setState({ suggestsHidden: true });
+		this.props.onChange(event);
+	}
+
+	render(props) {
+		const { suggestsHidden } = this.state;
+		const { value, type = 'text', schema, ...prop } = props;
+
+		const suggestList = schema.enumNames
+			.filter(item => item !== value)
+			.map(item => <li onClick={this.onClick}>{item}</li>);
+
+		return (
+			<div>
+				<input type={type} value={value}
+					   onInput={() => this.setState({ suggestsHidden: true })}
+					   onFocus={() => this.setState({ suggestsHidden: false })}
+					   {...prop} />
+				{
+					suggestList.length != 0 ?
+						(
+							<div className='suggestList-wrapper'
+								 style={`display: ${suggestsHidden ? 'none' : 'block'}`}>
+								<ui className='suggestList'>
+									{
+										suggestList
+									}
+								</ui>
+							</div>
+						) : ''
+				}
+			</div>
+		);
+	}
+}
+
+SelectInput.val = function (ev, schema) {
+	const input = ev.target;
+	const value = input.value || input.textContent;
+
+	const isNumber = (input.type == 'number' || input.type == 'range') ||
+		(schema && (schema.type == 'number' || schema.type == 'integer'));
+	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
 };
 
 function enumSchema(schema, cbOrIndex) {
@@ -99,13 +161,13 @@ function enumSchema(schema, cbOrIndex) {
 			var title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
 			return cbOrIndex(title !== undefined ? title : item,
-							 item.value !== undefined ? item.value : item);
+				item.value !== undefined ? item.value : item);
 		});
 	}
 	if (!isTypeValue)
 		return schema.enum[cbOrIndex];
 	var res = schema[cbOrIndex];
-    return res.value !== undefined ? res.value : res;
+	return res.value !== undefined ? res.value : res;
 }
 
 function inputCtrl(component, schema, onChange) {
@@ -113,16 +175,33 @@ function inputCtrl(component, schema, onChange) {
 	if (schema) {
 		// TODO: infer maxLength, min, max, step, etc
 		if (schema.type == 'number' || schema.type == 'integer')
-			props = { type: 'number'};
+			props = { type: 'number' };
 	}
 	return {
-		onChange: function(ev) {
-			var val =  !component.val ? ev :
+		onChange: function (ev) {
+			var val = !component.val ? ev :
 				component.val(ev, schema);
 			onChange(val);
 		},
 		...props
 	};
+}
+
+function selectInputCtrl(component, schema, onChange) {
+	var props = {};
+	if (schema) {
+		// TODO: infer maxLength, min, max, step, etc
+		if (schema.type == 'number' || schema.type == 'integer')
+			props = { type: 'number' };
+	}
+	return {
+		onChange: function (ev) {
+			const value = !component.val ? ev :
+				component.val(ev, schema);
+			onChange(value);
+		},
+		...props
+	}
 }
 
 function singleSelectCtrl(component, schema, onChange) {
@@ -153,30 +232,34 @@ function multipleSelectCtrl(component, schema, onChange) {
 					onChange(values ? [ev, ...values] : [ev]);
 				else
 					onChange([...values.slice(0, i),
-							  ...values.slice(i + 1)]);
+						...values.slice(i + 1)]);
 			}
 		}
 	};
 }
 
-function ctrlMap(component, {schema, multiple, onChange}) {
+function ctrlMap(component, { schema, multiple, onChange }) {
 	if (!schema || !schema.enum && !Array.isArray(schema))
 		return inputCtrl(component, schema, onChange);
+	if (schema.type === 'string')
+		return selectInputCtrl(component, schema, onChange);
 	if (multiple || schema.type == 'array')
 		return multipleSelectCtrl(component, schema, onChange);
 	return singleSelectCtrl(component, schema, onChange);
 }
 
-function componentMap({schema, type, multiple}) {
+function componentMap({ schema, type, multiple }) {
 	if (!schema || !schema.enum && !Array.isArray(schema)) {
 		if (type == 'checkbox' || schema && schema.type == 'boolean')
 			return CheckBox;
 		return (type == 'textarea') ? TextArea : GenericInput;
 	}
+	if (schema.type === 'string')
+		return SelectInput;
 	if (multiple || schema.type == 'array')
 		return (type == 'checkbox') ? FieldSet : Select;
 	return (type == 'radio') ? FieldSet : Select;
-};
+}
 
 function shallowCompare(a, b) {
 	for (let i in a) if (!(i in b)) return true;
@@ -185,18 +268,20 @@ function shallowCompare(a, b) {
 }
 
 export default class Input extends Component {
-	constructor({component, ...props}) {
+	constructor({ component, ...props }) {
 		super(props);
 		this.component = component || componentMap(props);
 		this.ctrl = ctrlMap(this.component, props);
 		console.info('initialized');
 	}
+
 	shouldComponentUpdate({ children, onChange, ...nextProps }) {
-		var { children, onChange, ...oldProps} = this.props;
+		var { children, onChange, ...oldProps } = this.props;
 		return shallowCompare(oldProps, nextProps);
 	}
+
 	render() {
 		var { children, onChange, ...props } = this.props;
-		return h(this.component, {...this.ctrl, ...props});
+		return h(this.component, { ...this.ctrl, ...props });
 	}
 }

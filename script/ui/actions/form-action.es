@@ -11,6 +11,13 @@ const dumpTypes = {
 	sgroupSpecial: 'UPDATE_SGROUPSPEC_FORM'
 };
 
+export function setInitState(data) {
+	return {
+		type: 'SET_SGROUPSPEC_INIT_STATE',
+		payload: data
+	}
+}
+
 export function updateFormState(storeName, data) {
 	return {
 		type: dumpTypes[storeName],

@@ -201,7 +201,6 @@ export const sgroup = {
 					invalidMessage: "SRU subscript should consist of a single letter"
 				},
 				connectivity: {
-					type: "string",
 					title: 'Repeat Pattern',
 					enum: ["ht", "hh", "eu"],
 					enumNames: [
@@ -227,37 +226,6 @@ export const sgroup = {
 					invalidMessage: "Please, provide a name for the superatom"
 				}
 			}
-		},
-		{
-			key: 'DAT',
-			title: "Data",
-			properties: {
-				type: { enum: ["DAT"] },
-				fieldName: {
-					title: 'Field name',
-					type: "string",
-					default: "",
-					minLength: 1,
-					invalidMessage: "Please, specify field name"
-				},
-				fieldValue: {
-					title: 'Field value',
-					type: "string",
-					default: "",
-					minLength: 1,
-					invalidMessage: "Please, specify field value"
-				},
-				radiobuttons: {
-					type: 'string',
-					enum: [
-						'Absolute',
-						'Relative',
-						'Attached',
-					],
-					default: 'Absolute'
-				}
-			},
-			required: ["fieldName", "fieldValue", "radiobuttons"]
 		}
 	]
 };

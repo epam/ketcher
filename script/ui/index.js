@@ -18,10 +18,8 @@ var clipArea = require('./cliparea');
 var structFormat = require('./structformat');
 var structConv = require('./structconv');
 
-var ketcherWindow;
 var toolbar;
 var lastSelected;
-var clientArea = null;
 var server;
 var options;
 var scope;
@@ -40,9 +38,8 @@ var addionalAtoms = {
 };
 
 function init(opts, apiServer) {
-	ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
+	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
-	clientArea = $('canvas');
 
 	server = apiServer || Promise.reject("Standalone mode!");
 
@@ -50,7 +47,7 @@ function init(opts, apiServer) {
 	                        JSON.parse(localStorage.getItem("ketcher-opts")), opts);
 
 	// Init renderer
-	editor = global._ui_editor = new Editor(clientArea, options);
+	editor = global._ui_editor = new Editor($('canvas'), options);
 
 	initDropdown(toolbar);
 	initZoom();
@@ -77,11 +74,6 @@ function init(opts, apiServer) {
 	ketcherWindow.on('keydown', function (event) {
 		if (scope == 'editor')
 			keyHandle(toolbar, hotKeys, event);
-	});
-	clientArea.on('mousedown', function (event) {
-		if (dropdownToggle(toolbar))
-			event.stop();       // TODO: don't delegate to editor
-		scope = 'editor';
 	});
 	selectAction('select-lasso');
 
@@ -172,6 +164,11 @@ function initEditor(editor) {
 		updateHistoryButtons();
 	});
 	editor.on('selectionChange', updateClipboardButtons);
+	editor.on('mousedown', function (event) {
+		scope = 'editor';
+		if (dropdownToggle(toolbar))
+			return true;
+	});
 }
 
 function initClipboard(ketcherWindow) {

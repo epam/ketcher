@@ -44,8 +44,20 @@ function Editor(clientArea, options) {
 	this.historyStack = [];
 	this.historyPtr = 0;
 
+	this.event = {
+		message: new s.Subscription(),
+		elementEdit: new s.PipelineSubscription(),
+		bondEdit: new s.PipelineSubscription(),
+		rgroupEdit: new s.PipelineSubscription(),
+		sgroupEdit: new s.PipelineSubscription(),
+		sdataEdit: new s.PipelineSubscription(),
+		quickEdit: new s.PipelineSubscription(),
+		attachEdit: new s.PipelineSubscription(),
+		change: new s.PipelineSubscription(),
+		selectionChange: new s.PipelineSubscription()
+	};
+
 	domEventSetup(this, clientArea);
-	eventSetup(this);
 }
 
 Editor.prototype.tool = function (name, opts) {
@@ -177,39 +189,17 @@ Editor.prototype.on = function (eventName, handler) {
 
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
-	// assign canvas events handlers
-	// no onclick, mouseleave
 	['click', 'dblclick', 'mousedown', 'mousemove',
 	 'mouseup', 'mouseleave'].forEach(function (eventName) {
-		 clientArea.addEventListener(eventName, function (event) {
+		 var subs = editor.event[eventName] = new s.DOMSubscription();
+		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
+		 subs.add(function (event) {
 			 editor.lastEvent = event;
-			/* eslint-disable no-underscore-dangle */
-			if (eventName in editor._tool)
-				editor._tool[eventName](event);
-			/* eslint-enable no-underscore-dangle */
-			if (eventName != 'mouseup')
-				// [NK] do not stop mouseup propagation
-				// to maintain cliparea focus.
-				// Do we really need total stop here?
-				event.stopPropagation();
-			return event.preventDefault();
-		});
+			 if (eventName in editor.tool())
+				 editor.tool()[eventName](event);
+			 return true;
+		 }, -1);
 	});
-}
-
-function eventSetup(editor) {
-	editor.event = {
-		message: new s.Subscription(),
-		elementEdit: new s.PipelineSubscription(),
-		bondEdit: new s.PipelineSubscription(),
-		rgroupEdit: new s.PipelineSubscription(),
-		sgroupEdit: new s.PipelineSubscription(),
-		sdataEdit: new s.PipelineSubscription(),
-		quickEdit: new s.PipelineSubscription(),
-		attachEdit: new s.PipelineSubscription(),
-		change: new s.PipelineSubscription(),
-		selectionChange: new s.PipelineSubscription()
-	};
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {

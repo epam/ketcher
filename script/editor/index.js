@@ -205,8 +205,9 @@ function domEventSetup(editor, clientArea) {
 Editor.prototype.findItem = function (event, maps, skip) {
 	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) :
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
+	var options = this.render.options;
 
-	return closest.item(this.render.ctab, pos, maps, skip);
+	return closest.item(this.render.ctab, pos, maps, skip, options.scale);
 };
 
 Editor.prototype.explicitSelected = function () {

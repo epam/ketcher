@@ -17,7 +17,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 			}
 		}
 	});
-	if (closestAtom != null) {
+	if (closestAtom !== null) {
 		return {
 			id: closestAtom,
 			dist: minDist
@@ -26,7 +26,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 	return null;
 }
 
-function findClosestBond(restruct, pos, skip, minDist) {
+function findClosestBond(restruct, pos, skip, minDist, scale) {
 	var closestBond = null;
 	var closestBondCenter = null;
 	var maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
@@ -59,12 +59,17 @@ function findClosestBond(restruct, pos, skip, minDist) {
 			}
 		}
 	});
-	if (closestBond !== null || closestBondCenter !== null) {
+	if (closestBondCenter !== null) {
+		return {
+			id: closestBondCenter,
+			dist: minCDist
+		};
+	}
+	if (closestBond !== null &&
+		minDist > SELECTION_DISTANCE_COEFFICIENT * scale) { // hack (ported from old code)
 		return {
 			id: closestBond,
-			dist: minDist,
-			cid: closestBondCenter,
-			cdist: minCDist
+			dist: minDist
 		};
 	}
 	return null;
@@ -72,8 +77,7 @@ function findClosestBond(restruct, pos, skip, minDist) {
 
 function findClosestChiralFlag(restruct, pos) {
 	var minDist;
-	var ret;
-
+	var ret = null;
 	// there is only one chiral flag, but we treat it as a "map" for convenience
 	restruct.chiralFlags.each(function (id, item) {
 		var p = item.pp;
@@ -91,7 +95,6 @@ function findClosestChiralFlag(restruct, pos) {
 function findClosestDataSGroupData(restruct, pos) {
 	var minDist = null;
 	var ret = null;
-
 	restruct.sgroupData.each(function (id, item) {
 		if (item.sgroup.type != 'DAT')
 			throw new Error('Data group expected');
@@ -111,7 +114,7 @@ function findClosestDataSGroupData(restruct, pos) {
 function findClosestFrag(restruct, pos, skip, minDist) {
 	minDist = Math.min(minDist || SELECTION_DISTANCE_COEFFICIENT,
 	                   SELECTION_DISTANCE_COEFFICIENT);
-	var ret;
+	var ret = null;
 	var skipId = skip && skip.map == 'frags' ? skip.id : null;
 	restruct.frags.each(function (fid, frag) {
 		if (fid != skipId) {
@@ -131,7 +134,7 @@ function findClosestFrag(restruct, pos, skip, minDist) {
 function findClosestRGroup(restruct, pos, skip, minDist) {
 	minDist = Math.min(minDist || SELECTION_DISTANCE_COEFFICIENT,
 	                   SELECTION_DISTANCE_COEFFICIENT);
-	var ret;
+	var ret = null;
 	restruct.rgroups.each(function (rgid, rgroup) {
 		if (rgid != skip) {
 			if (rgroup.labelBox) { // should be true at this stage, as the label is visible
@@ -150,8 +153,7 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
 
 function findClosestRxnArrow(restruct, pos) {
 	var minDist;
-	var ret;
-
+	var ret = null;
 	restruct.rxnArrows.each(function (id, arrow) {
 		var p = arrow.item.pp;
 		if (Math.abs(pos.x - p.x) < 1.0) {
@@ -167,12 +169,11 @@ function findClosestRxnArrow(restruct, pos) {
 
 function findClosestRxnPlus(restruct, pos) {
 	var minDist;
-	var ret;
-
+	var ret = null;
 	restruct.rxnPluses.each(function (id, plus) {
 		var p = plus.item.pp;
 		var dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
-		if (dist < 0.5 && (!ret || dist < minDist)) {
+		if (dist < 0.3 && (!ret || dist < minDist)) {
 			minDist = dist;
 			ret = { id: id, dist: minDist };
 		}
@@ -208,18 +209,7 @@ function findClosestSGroup(restruct, pos) {
 
 var findMaps = {
 	atoms: findClosestAtom,
-	bonds: function (restruct, pos) {
-		var options = global._ui_editor.render.options;
-		var bond = findClosestBond(restruct, pos);
-		var res = null;
-		if (bond) {
-			if (bond.cid !== null)
-				res = { id: bond.cid, dist: bond.cdist };
-			if (res == null || res.dist > 0.4 * options.scale) // hack (ported from old code)
-				res = bond;
-		}
-		return res;
-	},
+	bonds: findClosestBond,
 	chiralFlags: findClosestChiralFlag,
 	sgroupData: findClosestDataSGroupData,
 	sgroups: findClosestSGroup,
@@ -229,11 +219,12 @@ var findMaps = {
 	rgroups: findClosestRGroup
 };
 
-function findClosestItem(restruct, pos, maps, skip) {
+function findClosestItem(restruct, pos, maps, skip, scale) {
 	maps = maps || Object.keys(findMaps);
 	return maps.reduce(function (res, mp) {
-		var item = findMaps[mp](restruct, pos, skip);
-		if (item != null && (res == null || res.dist > item.dist)) {
+		var minDist = res ? res.dist : null;
+		var item = findMaps[mp](restruct, pos, skip, minDist, scale);
+		if (item !== null && (res === null || item.dist < res.dist)) {
 			return {
 				map: mp,
 				id: item.id,

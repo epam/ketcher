@@ -101,7 +101,9 @@ function init(opts, apiServer) {
 function init2() {
 	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	ketcherWindow.innerHTML = '';
-	preact.render(preact.h(Toolbar), ketcherWindow);
+	var atoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I'];
+	preact.render(preact.h(Toolbar, { atoms: atoms }),
+	              ketcherWindow);
 };
 
 function initEditor(editor) {

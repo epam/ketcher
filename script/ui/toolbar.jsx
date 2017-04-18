@@ -1,7 +1,10 @@
 import { h } from 'preact';
 /** @jsx h */
 
+import element from '../chem/element';
+import Atom from './component/atom';
 import acts from './acts';
+import keymap from './keymap';
 
 const mainmenu = [
 	{
@@ -27,7 +30,7 @@ const mainmenu = [
 		menu: [
 			"zoom-in",
 			"zoom-out",
-			//"zoom-list"
+			ZoomList
 		]
 	},
 	{
@@ -151,29 +154,53 @@ const template = [
 ];
 
 const elements = [
-	{
-		id: "atom",
-		menu: [
-			"atom-h",
-			"atom-c",
-			"atom-n",
-			"atom-o",
-			"atom-s",
-			"atom-p",
-			"atom-f",
-			"atom-cl",
-			"atom-br",
-			"atom-i"
-		]
-	},
+	AtomsList,
 	"period-table",
 	"generic-groups"
 ];
 
-function ToolButton({item}) {
-	console.info(acts, item, acts[item]);
+function shortcutStr(key) {
+	var isMac = /Mac/.test(navigator.platform);
+	return key.replace(/Mod/g, isMac ? '⌘' : 'Ctrl')
+		.replace(/-(?!$)/g, '+')
+		.replace(/\+?([^+]+)$/, function (key) {
+			return key.length == 1 ? key.toUpperCase() : key;
+		});
+}
+
+const zoomList = [
+	0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
+	1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2, 2.5, 3, 3.5, 4
+];
+
+function ZoomList() {
 	return (
-		<button title={acts[item].title}>
+		<select>
+		  {
+			  zoomList.map(val => (
+				  <option value={val}>{`${Math.round(val * 100)}%`}</option>
+			  ))
+		  }
+		</select>
+	);
+}
+
+function AtomsList({atoms, ...props}) {
+	return (
+		<menu id="atom">
+		  {
+			  atoms.map(label => {
+				  let index = element.map[label];
+				  return ( <Atom el={element[index]}/> );
+			  })
+		  }
+		</menu>
+	);
+}
+
+function ToolButton({item, ...props}) {
+	return (
+		<button title={keymap[item] ? shortcutStr(acts[item].title}>
 		  {acts[item].title}
 		</button>
 	)
@@ -184,7 +211,7 @@ function ToolBar({menu, ...props}) {
 		<menu>
 		{
 		  menu.map(item => (
-			  typeof item == 'function' ? item() : (
+			  typeof item == 'function' ? item(props) : (
 				  <li id={item.id || item}>
 					{ typeof item == 'object' ?
 						( <ToolBar menu={item.menu}/> ) :
@@ -201,10 +228,10 @@ function ToolBar({menu, ...props}) {
 export default function (props) {
 	return (
 		<menu role="toolbar">
-		  <li id="mainmenu"><ToolBar menu={mainmenu}/></li>
-		  <li id="toolbox"><ToolBar menu={toolbox}/></li>
-		  <li id="template"><ToolBar menu={template}/></li>
-		  <li id="elements"><ToolBar menu={elements}/></li>
+		  <li id="mainmenu"><ToolBar menu={mainmenu} {...props}/></li>
+		  <li id="toolbox"><ToolBar menu={toolbox} {...props}/></li>
+		  <li id="template"><ToolBar menu={template} {...props}/></li>
+		  <li id="elements"><ToolBar menu={elements} {...props}/></li>
 		</menu>
 	)
 };

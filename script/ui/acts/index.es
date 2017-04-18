@@ -175,36 +175,6 @@ export default Object.assign({
   "template-lib": {
     "title": "Custom Templates"
   },
-  "atom-h": {
-    "title": "H"
-  },
-  "atom-c": {
-    "title": "C"
-  },
-  "atom-n": {
-    "title": "N"
-  },
-  "atom-o": {
-    "title": "O"
-  },
-  "atom-s": {
-    "title": "S"
-  },
-  "atom-p": {
-    "title": "P"
-  },
-  "atom-f": {
-    "title": "F"
-  },
-  "atom-cl": {
-    "title": "Cl"
-  },
-  "atom-br": {
-    "title": "Br"
-  },
-  "atom-i": {
-    "title": "I"
-  },
   "period-table": {
     "title": "Periodic Table"
   },

@@ -13,6 +13,7 @@ export default {
 	"clean": "Mod-Shift-l",
 	"cip": "Mod-p",
 	"help": ["?", "Shift-/"],
+
 	"select-lasso": [
 		"Esc",
 		"Escape"
@@ -45,23 +46,22 @@ export default {
 	"rgroup-label": "Mod-r",
 	"rgroup-fragment": ["Mod-Shift-r", "Mod-r"],
 	"rgroup-attpoints": "Mod-r",
-	"template-0": "t",
-	"template-1": "t",
-	"template-2": "t",
-	"template-3": "t",
-	"template-4": "t",
-	"template-5": "t",
-	"template-6": "t",
-	"template-7": "t",
+	"template": "t",
 	"template-lib": "Shift-t",
-	"atom-h": "h",
-	"atom-c": "c",
-	"atom-n": "n",
-	"atom-o": "o",
-	"atom-s": "s",
-	"atom-p": "p",
-	"atom-f": "f",
-	"atom-cl": "Shift-c",
-	"atom-br": "Shift-b",
-	"atom-i": "i"
+	"select-all": 'Mod-a',
+	"deselect-all": 'Mod-Shift-a',
+	"force-update": 'Ctrl-Shift-r',
+	"qs-serialize": 'Alt-Shift-r',
+	"atom": {
+		"H": "h",
+		"C": "c",
+		"N": "n",
+		"O": "o",
+		"S": "s",
+		"P": "p",
+		"F": "f",
+		"Cl": "Shift-c",
+		"Br": "Shift-b",
+		"I": "i"
+	}
 }

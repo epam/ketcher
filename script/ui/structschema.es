@@ -73,7 +73,8 @@ export const atom = {
 		},
 		unsaturatedAtom: {
 			title: "Unsaturated",
-			type: "boolean"
+			type: "boolean",
+			default: false
 		},
 		invRet: {
 			title: "Inversion",
@@ -87,7 +88,8 @@ export const atom = {
 		},
 		exactChangeFlag: {
 			title: "Exact change",
-			type: "boolean"
+			type: "boolean",
+			default: false
 		}
 	}
 };

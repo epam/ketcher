@@ -39,17 +39,13 @@ export function toElement(elem) {
 }
 
 function fromAtom(satom) {
-	var charge = satom.charge - 0;
-	var isotope = satom.isotope - 0;
-	var explicitValence = satom.explicitValence - 0;
 	var alias = satom.alias || '';
 	return {
 		alias: alias,
-		pseudo: satom.pseudo,
 		label: satom.label,
-		charge: charge,
-		isotope: isotope,
-		explicitValence: explicitValence,
+		charge: satom.charge,
+		isotope: satom.isotope,
+		explicitValence: satom.explicitValence,
 		radical: satom.radical,
 		invRet: satom.invRet,
 		exactChangeFlag: !!satom.exactChangeFlag,
@@ -63,23 +59,9 @@ function fromAtom(satom) {
 function toAtom(atom) {
 	// TODO merge this to Struct.Atom.attrlist?
 	//      see ratomtool
-	return {
-		alias: atom.alias,
-		pseudo: atom.pseudo,
-		label: capitalize(atom.label),
-		charge: !atom.charge ? 0 : parseInt(atom.charge, 10),
-		isotope: !atom.isotope ? 0 : parseInt(atom.isotope, 10),
-		explicitValence: !atom.explicitValence ? -1 : parseInt(atom.explicitValence, 10),
-		radical: parseInt(atom.radical, 10) || 0,
-		// reaction flags
-		invRet: parseInt(atom.invRet, 10) || 0,
-		exactChangeFlag: atom.exactChangeFlag || 0,
-		// query flags
-		ringBondCount: parseInt(atom.ringBondCount, 10) || 0,
-		substitutionCount: parseInt(atom.substitutionCount, 10) || 0,
-		unsaturatedAtom: atom.unsaturatedAtom || 0,
-		hCount: parseInt(atom.hCount, 10) || 0
-	};
+	return Object.assign({}, atom, {
+		label: capitalize(atom.label)
+	});
 }
 
 function fromAtomList(satom) {
@@ -142,8 +124,8 @@ export function fromBond(sbond) {
 
 export function toBond(bond) {
 	return {
-		topology: parseInt(bond.topology, 10),
-		reactingCenterStatus: parseInt(bond.center, 10),
+		topology: bond.topology,
+		reactingCenterStatus: bond.center,
 		...toBondType(bond.type)
 	};
 }

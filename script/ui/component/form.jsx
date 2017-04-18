@@ -3,13 +3,13 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 import Input from './input';
-import { setInitState, updateFormState } from '../actions/form-action.es';
+import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
-	constructor({dispatch, schema, init, ...props}) {
+	constructor({dispatch, schema, init, storeName, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		if (init) dispatch(setInitState(init));
+		if (init) dispatch(updateFormState(storeName, init));
 	}
 	getChildContext() {
 		let { schema } = this.props;

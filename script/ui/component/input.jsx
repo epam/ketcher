@@ -96,21 +96,37 @@ class SelectInput extends Component {
 	constructor(props) {
 		super(props);
 		this.state = { suggestsHidden: true };
+
+		this.click = this.click.bind(this);
+		this.blur = this.blur.bind(this);
+		this.updateInput = this.updateInput.bind(this);
+	}
+
+	updateInput(event) {
+		this.setState({ suggestsHidden: true });
+		this.props.onChange(event);
+	}
+
+	click(event) {
+		if (event.detail !== 0) // difference between real click on input and click after value updated
+			this.setState({ suggestsHidden: false });
+	}
+
+	blur() {
+		this.setState({ suggestsHidden: true });
 	}
 
 	render(props) {
-		const { value, onChange, type = 'text', schema, ...prop } = props;
+		const { value, type = 'text', schema, ...prop } = props;
 
 		const suggestList = schema.enumNames
 			.filter(item => item !== value)
-			.map(item => <li onClick={onChange}>{item}</li>);
+			.map(item => <li onMouseDown={this.updateInput}>{item}</li>);
 
 		return (
 			<div>
-				<input type={type} value={value}
-					   onFocus={() => this.setState({ suggestsHidden: false })}
-					   onChange={onChange}
-					   {...prop} />
+				<input type={type} value={value} onClick={this.click}
+					   onBlur={this.blur} onInput={this.updateInput} {...prop} autocomplete="off"/>
 				{
 					suggestList.length != 0 ?
 						(
@@ -171,23 +187,6 @@ function inputCtrl(component, schema, onChange) {
 	};
 }
 
-function selectInputCtrl(component, schema, onChange) {
-	var props = { };
-	if (schema) {
-		// TODO: infer maxLength, min, max, step, etc
-		if (schema.type == 'number' || schema.type == 'integer')
-			props = { type: 'number' };
-	}
-	return {
-		onChange: function (ev) {
-			const value = !component.val ? ev :
-				component.val(ev, schema);
-			onChange(value);
-		},
-		...props
-	}
-}
-
 function singleSelectCtrl(component, schema, onChange) {
 	return {
 		selected: (testVal, value) => (value === testVal),
@@ -223,10 +222,8 @@ function multipleSelectCtrl(component, schema, onChange) {
 }
 
 function ctrlMap(component, { schema, multiple, onChange }) {
-	if (!schema || !schema.enum && !Array.isArray(schema))
+	if (!schema || !schema.enum && !Array.isArray(schema) || schema.type === 'string')
 		return inputCtrl(component, schema, onChange);
-	if (schema.type === 'string')
-		return selectInputCtrl(component, schema, onChange);
 	if (multiple || schema.type == 'array')
 		return multipleSelectCtrl(component, schema, onChange);
 	return singleSelectCtrl(component, schema, onChange);

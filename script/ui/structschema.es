@@ -298,8 +298,9 @@ export const sgroupSpecial = {
 					fieldValue: {
 						title: "Field value",
 						type: "string",
+						default: "",
 						minLength: 1,
-						default: ""
+						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: {
 						enum: [
@@ -322,7 +323,8 @@ export const sgroupSpecial = {
 						title: "Field value",
 						type: "string",
 						minLength: 1,
-						default: ""
+						default: "",
+						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: {
 						enum: [
@@ -345,7 +347,8 @@ export const sgroupSpecial = {
 						title: "Field value",
 						type: "string",
 						minLength: 1,
-						default: ""
+						default: "",
+						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: {
 						enum: [

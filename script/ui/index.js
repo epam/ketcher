@@ -37,7 +37,12 @@ var addionalAtoms = {
 	current: 0
 };
 
+var Toolbar = require('./toolbar').default;
+
 function init(opts, apiServer) {
+	if ('new' in opts)
+		return init2(opts, apiServer);
+
 	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
 	toolbar = ketcherWindow.select('[role=toolbar]')[0];
 
@@ -93,6 +98,11 @@ function init(opts, apiServer) {
 	};
 };
 
+function init2() {
+	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
+	ketcherWindow.innerHTML = '';
+	preact.render(preact.h(Toolbar), ketcherWindow);
+};
 
 function initEditor(editor) {
 	editor.on('elementEdit', function (selem) {

@@ -19,6 +19,7 @@ export function setInitState(data) {
 }
 
 export function updateFormState(storeName, data) {
+	console.info('upate!!!');
 	return {
 		type: dumpTypes[storeName],
 		payload: data

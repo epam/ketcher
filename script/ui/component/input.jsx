@@ -95,43 +95,27 @@ FieldSet.val = function (ev, schema) {
 class SelectInput extends Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			suggestsHidden: true
-		};
-
-		this.onClick = this.onClick.bind(this);
-	}
-
-	shouldComponentUpdate(nextProps, nextState) {
-		return nextState.suggestsHidden !== this.state.suggestsHidden ||
-			   nextProps.value !== this.props.value;
-	}
-
-	onClick(event) {
-		this.setState({ suggestsHidden: true });
-		this.props.onChange(event);
+		this.state = { suggestsHidden: true };
 	}
 
 	render(props) {
-		const { suggestsHidden } = this.state;
-		const { value, type = 'text', schema, ...prop } = props;
+		const { value, onChange, type = 'text', schema, ...prop } = props;
 
 		const suggestList = schema.enumNames
 			.filter(item => item !== value)
-			.map(item => <li onClick={this.onClick}>{item}</li>);
+			.map(item => <li onClick={onChange}>{item}</li>);
 
 		return (
 			<div>
 				<input type={type} value={value}
-					   onInput={() => this.setState({ suggestsHidden: true })}
 					   onFocus={() => this.setState({ suggestsHidden: false })}
+					   onChange={onChange}
 					   {...prop} />
 				{
 					suggestList.length != 0 ?
 						(
 							<div className='suggestList-wrapper'
-								 style={`display: ${suggestsHidden ? 'none' : 'block'}`}>
+								 style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}>
 								<ui className='suggestList'>
 									{
 										suggestList
@@ -188,7 +172,7 @@ function inputCtrl(component, schema, onChange) {
 }
 
 function selectInputCtrl(component, schema, onChange) {
-	var props = {};
+	var props = { };
 	if (schema) {
 		// TODO: infer maxLength, min, max, step, etc
 		if (schema.type == 'number' || schema.type == 'integer')

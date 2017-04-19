@@ -1,52 +1,53 @@
 import tools from './tools';
+import atoms from './atoms';
 
-export default Object.assign({
+export default {
 	"new": {
-		shortcut: "Mod-n",
+		shortcut: "Mod+n",
 		title: "Clear Canvas"
 	},
 	"open": {
-		shortcut: "Mod-o",
+		shortcut: "Mod+o",
 		title: "Open…"
 	},
 	"save": {
-		shortcut: "Mod-s",
+		shortcut: "Mod+s",
 		title: "Save As…"
 	},
 	"undo": {
-		shortcut: "Mod-z",
+		shortcut: "Mod+z",
 		title: "Undo"
 	},
 	"redo": {
-		shortcut: ["Mod-Shift-z", "Mod-y"],
+		shortcut: ["Mod+Shift+z", "Mod+y"],
 		title: "Redo"
 	},
 	"cut": {
-		shortcut: "Mod-x",
+		shortcut: "Mod+x",
 		title: "Cut"
 	},
 	"copy": {
-		shortcut: "Mod-c",
+		shortcut: "Mod+c",
 		title: "Copy"
 	},
 	"paste": {
-		shortcut: "Mod-v",
+		shortcut: "Mod+v",
 		title: "Paste"
 	},
 	"zoom-in": {
-		shortcut: ["+", "=", "Shift-="],
+		shortcut: ["+", "=", "Shift+="],
 		title: "Zoom In"
 	},
 	"zoom-out": {
-		shortcut: ["-", "_", "Shift--"],
+		shortcut: ["-", "_", "Shift+-"],
 		title: "Zoom Out"
 	},
 	"layout": {
-		shortcut: "Mod-l",
+		shortcut: "Mod+l",
 		title: "Layout"
 	},
 	"clean": {
-		shortcut: "Mod-Shift-l",
+		shortcut: "Mod+Shift+l",
 		title: "Clean Up"
 	},
 	"arom": {
@@ -56,7 +57,7 @@ export default Object.assign({
 		title: "Dearomatize"
 	},
 	"cip": {
-		shortcut: "Mod-p",
+		shortcut: "Mod+p",
 		title: "Calculate CIP"
 	},
 	"check": {
@@ -72,7 +73,7 @@ export default Object.assign({
 		title: "Settings"
 	},
 	"help": {
-		shortcut: ["?", "Shift-/"],
+		shortcut: ["?", "Shift+/"],
 		title: "Help"
 	},
 	"about": {
@@ -86,7 +87,7 @@ export default Object.assign({
 		title: "Switch Basic Templates"
 	},
 	"template-lib": {
-		shortcut: "Shift-t",
+		shortcut: "Shift+t",
 		title: "Custom Templates"
 	},
 	"period-table": {
@@ -97,16 +98,18 @@ export default Object.assign({
 	},
 	"select-all": {
 		title: "Select All",
-		shortcut: "Mod-a"
+		shortcut: "Mod+a"
 	},
 	"deselect-all": {
 		title: "Deselect All",
-		shortcut: "Mod-Shift-a"
+		shortcut: "Mod+Shift+a"
 	},
 	"force-update": {
-		shortcut: "Ctrl-Shift-r"
+		shortcut: "Ctrl+Shift+r"
 	},
 	"qs-serialize": {
-		shortcut: "Alt-Shift-r"
-	}
-}, tools);
+		shortcut: "Alt+Shift+r"
+	},
+	...tools,
+	...atoms
+};

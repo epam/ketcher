@@ -4,22 +4,22 @@ import { toBondType } from '../structconv';
 const toolActions = {
 	"select-lasso": {
 		title: "Lasso Selection",
-		shortcut: ["Esc", "Escape"],
+		shortcut: "Escape",
 		action: { tool: 'select', opts: 'lasso' }
 	},
 	"select-rectangle": {
 		title: "Rectangle Selection",
-		shortcut: ["Esc", "Escape"],
+		shortcut: "Escape",
 		action: { tool: 'select', opts: 'lasso' }
 	},
 	"select-fragment": {
 		title: "Fragment Selection",
-		shortcut: ["Esc", "Escape"],
+		shortcut: "Escape",
 		action: { tool: 'select', opts: 'fragment' }
 	},
 	"erase": {
 		title: "Erase",
-		shortcut: ["Del", "Delete", "Backspace"],
+		shortcut: ["Delete", "Backspace"],
 		action: { tool: 'eraser', opts: 1 } // TODO last selector mode is better
 	},
 	"chain": {
@@ -37,27 +37,27 @@ const toolActions = {
 		action: { tool: 'charge', opts: -1 }
 	},
 	"transform-rotate": {
-		shortcut: "Alt-r",
+		shortcut: "Alt+r",
 		title: "Rotate Tool",
 		action: { tool: 'rotate' }
 	},
 	"transform-flip-h": {
-		shortcut: "Alt-h",
+		shortcut: "Alt+h",
 		title: "Horizontal Flip",
 		action: { tool: 'rotate', opts: 'horizontal' }
 	},
 	"transform-flip-v": {
-		shortcut: "Alt-v",
+		shortcut: "Alt+v",
 		title: "Vertical Flip",
 		action: { tool: 'rotate', opts: 'vertical' }
 	},
 	"sgroup": {
-		shortcut: "Mod-g",
+		shortcut: "Mod+g",
 		title: "S-Group",
 		action: { tool: 'sgroup' }
 	},
 	"sgroup-data": {
-		shortcut: "Mod-g",
+		shortcut: "Mod+g",
 		title: "Data S-Group",
 		action: { tool: 'sgroup', opts: 'DAT' }
 	},
@@ -78,17 +78,17 @@ const toolActions = {
 		action: { tool: 'reactionmap' }
 	},
 	"rgroup-label": {
-		shortcut: "Mod-r",
+		shortcut: "Mod+r",
 		title: "R-Group Label Tool",
 		action: { tool: 'rgroupatom' }
 	},
 	"rgroup-fragment": {
-		shortcut: ["Mod-Shift-r", "Mod-r"],
+		shortcut: ["Mod+Shift+r", "Mod+r"],
 		title: "R-Group Fragment Tool",
 		action: { tool: 'rgroupfragment' }
 	},
 	"rgroup-attpoints": {
-		shortcut: "Mod-r",
+		shortcut: "Mod+r",
 		title: "Attachment Point Tool",
 		action: { tool: 'apoint' }
 	}

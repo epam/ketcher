@@ -15,7 +15,7 @@ class Dialog extends Component {
 		let key = keyName(ev);
 		let active = document.activeElement;
 		let activeTextarea = active && active.tagName == 'TEXTAREA';
-		if (key.startsWith('Esc') || key == 'Enter' && !activeTextarea) {
+		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
 			this.exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}

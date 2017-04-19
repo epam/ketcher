@@ -4,8 +4,8 @@ import { h } from 'preact';
 import element from '../chem/element';
 import Atom from './component/atom';
 import acts from './acts';
+import { atomCuts } from './acts/atoms';
 import templates from './templates';
-import keymap from './keymap';
 
 const mainmenu = [
 	{
@@ -149,13 +149,16 @@ const elements = [
 ];
 
 const isMac = /Mac/.test(navigator.platform);
+const shortcutAliasMap = {
+	'Escape': 'Esc',
+	'Delete': 'Del',
+	'Mod': isMac ? '⌘' : 'Ctrl'
+};
 function shortcutStr(shortcut) {
 	var key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-	return key.replace(/Mod/g, isMac ? '⌘' : 'Ctrl')
-		.replace(/-(?!$)/g, '+')
-		.replace(/\+?([^+]+)$/, function (key) {
-			return key.length == 1 ? key.toUpperCase() : key;
-		});
+	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (key) {
+		return shortcutAliasMap[key] || key.toUpperCase();
+	});
 }
 
 const zoomList = [
@@ -177,14 +180,17 @@ function ZoomList() {
 
 function AtomsList({atoms, ...props}) {
 	return (
-		<menu id="atom">
+		<li id="atom">
+		<menu>
 		  {
 			  atoms.map(label => {
 				  let index = element.map[label];
-				  return ( <Atom el={element[index]}/> );
+				  let shortcut = shortcutStr(atomCuts[label]);
+				  return ( <Atom el={element[index]} shortcut={shortcut}/> );
 			  })
 		  }
 		</menu>
+		</li>
 	);
 }
 

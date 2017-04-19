@@ -3,7 +3,7 @@ import keyName from "w3c-keyname";
 const mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
 
 function normalizeKeyName(name) {
-	let parts = name.split(/-(?!$)/), result = parts[parts.length - 1];
+	let parts = name.split(/\+(?!$)/), result = parts[parts.length - 1];
 	if (result == "Space") result = " ";
 	let alt, ctrl, shift, meta;
 	for (let i = 0; i < parts.length - 1; i++) {
@@ -15,24 +15,25 @@ function normalizeKeyName(name) {
 		else if (/^mod$/i.test(mod)) { if (mac) meta = true; else ctrl = true; }
 		else throw new Error("Unrecognized modifier name: " + mod);
 	}
-	if (alt) result = "Alt-" + result;
-	if (ctrl) result = "Ctrl-" + result;
-	if (meta) result = "Meta-" + result;
-	if (shift) result = "Shift-" + result;
+	if (alt) result = "Alt+" + result;
+	if (ctrl) result = "Ctrl+" + result;
+	if (meta) result = "Meta+" + result;
+	if (shift) result = "Shift+" + result;
 	return result;
 }
 
 function normalizeKeyMap(map) {
 	let copy = Object.create(null);
-	for (let prop in map) copy[normalizeKeyName(prop)] = map[prop];
+	for (let prop in map)
+		copy[normalizeKeyName(prop)] = map[prop];
 	return copy;
 }
 
 function modifiers(name, event, shift) {
-	if (event.altKey) name = "Alt-" + name;
-	if (event.ctrlKey) name = "Ctrl-" + name;
-	if (event.metaKey) name = "Meta-" + name;
-	if (shift !== false && event.shiftKey) name = "Shift-" + name;
+	if (event.altKey) name = "Alt+" + name;
+	if (event.ctrlKey) name = "Ctrl+" + name;
+	if (event.metaKey) name = "Meta+" + name;
+	if (shift !== false && event.shiftKey) name = "Shift+" + name;
 	return name;
 }
 

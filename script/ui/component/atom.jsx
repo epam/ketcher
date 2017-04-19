@@ -12,9 +12,9 @@ function atomClass(el) {
 	return [own, type, el.state || 'unknown-state', el.origin];
 }
 
-function Atom({el, className, ...props}) {
+function Atom({el, shortcut, className, ...props}) {
 	return (
-		<button title={el.title}
+		<button title={shortcut ? `${el.title} (${shortcut})` : el.title}
 				className={[...atomClass(el), className].join(' ')}
 				value={element.map[el.label]} {...props}>
 		  {el.label}

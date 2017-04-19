@@ -225,7 +225,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		ctab.bonds.add(bonds[i]);
 
 	var atomLists = atomListLines.map(parseAtomListLine);
-	atomLists.each(function (pair) {
+	atomLists.forEach(function (pair) {
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 		ctab.atoms.get(pair.aid).label = 'L#';
 	});

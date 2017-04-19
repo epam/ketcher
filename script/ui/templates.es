@@ -1,6 +1,6 @@
-/* eslint-disable */
+import molfile from '../chem/molfile';
 
-module.exports = [
+export default [
 		'Benzene\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
@@ -135,4 +135,4 @@ module.exports = [
 			'  2  3  1  0     0  0\n' +
 			'  1  2  1  0     0  0\n' +
 		'M  END\n'
-];
+].map(structStr => molfile.parse(structStr));

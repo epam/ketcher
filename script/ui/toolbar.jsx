@@ -4,6 +4,7 @@ import { h } from 'preact';
 import element from '../chem/element';
 import Atom from './component/atom';
 import acts from './acts';
+import templates from './templates';
 import keymap from './keymap';
 
 const mainmenu = [
@@ -137,19 +138,7 @@ const toolbox = [
 ];
 
 const template = [
-	{
-		id: "template-common",
-		menu: [
-			"template-0",
-			"template-1",
-			"template-2",
-			"template-3",
-			"template-4",
-			"template-5",
-			"template-6",
-			"template-7"
-		]
-	},
+	TemplatesList,
 	"template-lib"
 ];
 
@@ -159,8 +148,9 @@ const elements = [
 	"generic-groups"
 ];
 
-function shortcutStr(key) {
-	var isMac = /Mac/.test(navigator.platform);
+const isMac = /Mac/.test(navigator.platform);
+function shortcutStr(shortcut) {
+	var key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
 	return key.replace(/Mod/g, isMac ? '⌘' : 'Ctrl')
 		.replace(/-(?!$)/g, '+')
 		.replace(/\+?([^+]+)$/, function (key) {
@@ -198,10 +188,33 @@ function AtomsList({atoms, ...props}) {
 	);
 }
 
-function ToolButton({item, ...props}) {
+function TemplatesList({...props}) {
+	let shortcut = shortcutStr(acts.templates.shortcut);
 	return (
-		<button title={keymap[item] ? shortcutStr(acts[item].title}>
-		  {acts[item].title}
+		<li id="template-common">
+		  <menu>
+		  {
+			  templates.map((struct, i) => (
+				  <li id={`template-${i}`}>
+				  <button title={`${struct.name} (${shortcut})`}>
+					{struct.name}
+				  </button>
+				  </li>
+			  ))
+		  }
+		  </menu>
+		</li>
+	);
+}
+
+function ToolButton({item, ...props}) {
+	let act = acts[item];
+	let shortcut = act.shortcut && shortcutStr(act.shortcut);
+	return (
+		<button
+		  title={shortcut ? `${act.title} (${shortcut})` :
+		                    act.title}>
+		  {act.title}
 		</button>
 	)
 }

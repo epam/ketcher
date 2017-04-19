@@ -9,7 +9,7 @@ var molfile = require('../chem/molfile');
 
 var Editor = require('../editor');
 
-var templates = require('./templates');
+var templates = require('./templates').default;
 
 var utils = require('./utils');
 var modal = require('./modal');
@@ -846,7 +846,7 @@ function mapTool(id) {
 		return {
 			tool: 'template',
 			opts: args[0] || {
-				struct: molfile.parse(templates[parseInt(id.split('-')[1])])
+				struct: templates[parseInt(id.split('-')[1])]
 			}
 		};
 	} else if (id == 'charge-plus') {

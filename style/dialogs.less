@@ -403,6 +403,9 @@ form.settings {
 }
 
 .period-table {
+	table {
+		position: relative;
+	}
 	td, th {
 		padding: 0;
 		margin: 0;
@@ -421,6 +424,20 @@ form.settings {
 	}
 	tr:nth-of-type(8) {
 		border-bottom: 1em solid transparent;
+	}
+
+	.atom-info {
+		position: absolute;
+		padding: 0.75em 2em;
+		left: 9em; top: 3em;
+		width: 22.5em;
+		.highlight-shadow(black);
+		opacity: 1;
+		transition: opacity 1s, visibility 0s;
+		&.none {
+			opacity: 0;
+			transition: opacity 2s, visibility 2s;
+		}
 	}
 
 	button {

@@ -53,16 +53,16 @@ function TypeChoise({value, onChange, ...props}) {
 	);
 }
 
-function MainRow({row, caption, ref, selected, onSelect}) {
+function MainRow({row, caption, ref, selected, onSelect, curEvents}) {
 	return (
 		<tr>
 		  <th>{caption}</th>
 		  {
 			  row.map(el => (typeof el != 'number') ? (
 				  <td>
-					<Atom el={el}
-					  className={selected(el.label) ? 'selected' : ''}
-					  onClick={ev => onSelect(el.label)}/>
+					  <Atom el={el}
+							className={selected(el.label) ? 'selected' : ''}
+							onClick={ev => onSelect(el.label)} {...curEvents(el)}/>
 				  </td>
 			  ) : (
 				  ref(el) ? ( <td className="ref">{ref(el)}</td> ) :
@@ -73,16 +73,16 @@ function MainRow({row, caption, ref, selected, onSelect}) {
 	);
 }
 
-function OutinerRow({row, caption, selected, onSelect}) {
+function OutinerRow({row, caption, selected, onSelect, curEvents}) {
 	return (
 		<tr>
 		  <th colspan="3" className="ref">{caption}</th>
 		  {
 			  row.map(el => (
 				  <td>
-					<Atom el={el}
-					  className={selected(el.label) ? 'selected' : ''}
-					  onClick={ev => onSelect(el.label)}/>
+					  <Atom el={el}
+							className={selected(el.label) ? 'selected' : ''}
+							onClick={ev => onSelect(el.label)} {...curEvents(el)}/>
 				  </td>
 			  ))
 		  }
@@ -91,11 +91,23 @@ function OutinerRow({row, caption, selected, onSelect}) {
 	);
 }
 
+function AtomInfo({el, isInfo}) {
+	return (
+		<div className={`atom-info ${isInfo ? '' : 'none'}`}>
+			<span style={{color: el.color, 'font-weight': 'bold'}}>{el.label}</span>&emsp;({el.title})<br/><br/>
+			State: {el.state} <br/>
+			Type : {el.type} <br/>
+		</div>
+	);
+}
+
 class PeriodTable extends Component {
 	constructor(props) {
 		super(props);
 		this.state.type = props.type || 'atom';
 		this.state.value = props.values || props.label || null;
+		this.state.cur = element[2];
+		this.state.isInfo = false;
 	}
 	changeType(type) {
 		let pl = this.state.type == 'atom';
@@ -133,28 +145,38 @@ class PeriodTable extends Component {
 		else
 			return value.length ? { type, values: value } : null;
 	}
+	curEvents = (el) => {
+		return {
+			onMouseEnter: () => this.setState({ cur: el, isInfo: true }),
+			onMouseLeave: () => this.setState({ isInfo: false })
+		};
+	};
 	render () {
 		return (
 			<Dialog title="Periodic table"
 					className="period-table"
 					params={this.props}
 					result={() => this.result()}>
-			  <table summary="Periodic table of the chemical elements">
-				<Header/>
-				{
-					main.map((row, i) => (
-						<MainRow row={row} caption={i + 1}
-						  ref={o => o == 1 && (i == 5 ? '*' : '**')}
-						  selected={l => this.selected(l)}
-						  onSelect={l => this.onSelect(l)}/>
-					))
-				}
-				<OutinerRow row={lanthanides} caption="*"
-						  selected={l => this.selected(l)}
-						  onSelect={l => this.onSelect(l)}/>
-				<OutinerRow row={actinides} caption="**"
-						  selected={l => this.selected(l)}
-						  onSelect={l => this.onSelect(l)}/>
+				<table summary="Periodic table of the chemical elements">
+					<Header/>
+					<AtomInfo el={this.state.cur} isInfo={this.state.isInfo}/>
+					{
+						main.map((row, i) => (
+							<MainRow row={row} caption={i + 1}
+									 ref={o => o == 1 && (i == 5 ? '*' : '**')}
+									 curEvents={this.curEvents}
+									 selected={l => this.selected(l)}
+									 onSelect={l => this.onSelect(l)}/>
+						))
+					}
+					<OutinerRow row={lanthanides} caption="*"
+								curEvents={this.curEvents}
+								selected={l => this.selected(l)}
+								onSelect={l => this.onSelect(l)}/>
+					<OutinerRow row={actinides} caption="**"
+								curEvents={this.curEvents}
+								selected={l => this.selected(l)}
+								onSelect={l => this.onSelect(l)}/>
 				</table>
 				<TypeChoise value={this.state.type}
 			                onChange={t => this.changeType(t) }/>

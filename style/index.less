@@ -16,12 +16,12 @@ li, ul, menu { // move to reset
 
 .set-size(large);
 
-html {
+html, body {
 	height: 100%;
 	width: 100%;
 }
 
-body {
+body, main[role=application] {
 	height: 100%;
 	position: relative;
 	font: @base-size FreeSans, Arimo, "Droid Sans", Helvetica,
@@ -33,7 +33,7 @@ body {
 	min-height: 400px;
 }
 
-main {
+#canvas {
 	.canvas;
 	user-select: none;
 }
@@ -218,7 +218,7 @@ select {
 	body, select {
 		font-size: @base-size;
 	}
-	main {
+	#canvas {
 		.canvas-size(small);
 	}
 	#mainmenu, #template {

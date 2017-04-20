@@ -1,57 +1,42 @@
 import { h, Component } from 'preact';
 /** @jsx h */
 
-import Struct from '../../chem/struct';
-import molfile from '../../chem/molfile';
 import Editor from '../../editor'
 
-function createEditor(el, tool, struct, options = {}) {
-	if (el) {
-		let editor = new Editor(el, { ...options });
-
-		if (struct.prerender)
-			el.innerHTML = struct.prerender;
-		else {
-			let rnd = editor.render;
-
-			rnd.setMolecule(struct);
-			rnd.update();
-		}
-
-		editor.tool(tool.name, Object.assign({}, tool.opts));
-		return editor;
-	} else
-		return null;
-}
-
 class StructEditor extends Component {
-	constructor(props) {
-		super(props);
-		if (!(props.struct instanceof Struct)) try {
-			this.props.struct = molfile.parse(props.struct);
-		} catch (e) {
-			alert("Could not parse structure\n" + e);
-			this.props.struct = null;
-		}
-	}
 	shouldComponentUpdate() {
 		return false;
 	}
 	componentDidMount() {
 		let el = this.refs ? this.refs.base : this.base;
-		let { struct, tool, options } = this.props;
-		this.editor = createEditor(el, tool, struct, options);
+		console.assert(el, "No element");
 
-		for (let event in this.editor.event) {
-			this.editor.on(event, (opts) => this.props.onEvent(event, opts));
+		let { struct, tool, options } = this.props;
+		let editor = new Editor(el, { ...options });
+		if (struct)
+			editor.struct(struct);
+		if (tool)
+			editor.tool(tool.name, Object.assign({}, tool.opts));
+
+		for (let name in editor.event) {
+			let eventName = `on${capitalize(name)}`;
+			if (this.props[eventName])
+				editor.event[name].add(this.props[eventName]);
 		}
+		this.instance = editor;
+		if (this.props.onInit)
+			this.props.onInit(editor);
 	}
 	render () {
-		let { struct, Tag="div", ...props } = this.props;
+		let { Tag="div", ...props } = this.props;
 		return (
-			<Tag /*ref="el"*/ {...props}>{ struct ? null :  'No molecule' }</Tag>
+			<Tag /*ref="el"*/ {...props}/>
 		);
 	}
+}
+
+function capitalize(str) {
+	return str[0].toUpperCase() + str.slice(1);
 }
 
 export default StructEditor;

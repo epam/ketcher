@@ -39,9 +39,10 @@ class Attach extends Component {
 					<Input type="text" value={name} onChange={v => dispatch(setTmplName(v))} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
-				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
-							  onEvent={(eName, ap) =>  (eName === 'attachEdit') ? dispatch(setAttachPoints(ap)) : null}
-							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: this.tmpl.props }}
+				<StructEditor className="editor"
+							  struct={this.tmpl.struct}
+							  onAttachEdit={ap => dispatch(setAttachPoints(ap))}
+							  tool={{ name: 'attach', opts: this.tmpl.props }}
 							  options={editorOpts}/>
 				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>
 			</Dialog>
@@ -52,7 +53,10 @@ class Attach extends Component {
 function initTmpl(tmpl) {
 	let normTmpl = {
 		struct: tmpl.struct.clone(),
-		props: { atomid: +tmpl.props.atomid || 0, bondid: +tmpl.props.bondid || 0 }
+		props: {
+			atomid: +tmpl.props.atomid || 0,
+			bondid: +tmpl.props.bondid || 0
+		}
 	};
 	normTmpl.struct.name = tmpl.struct.name;
 

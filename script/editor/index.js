@@ -229,7 +229,7 @@ function domEventSetup(editor, clientArea) {
 		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 		 subs.add(function (event) {
 			 editor.lastEvent = event;
-			 if (eventName in editor.tool())
+			 if (editor.tool() && eventName in editor.tool())
 				 editor.tool()[eventName](event);
 			 return true;
 		 }, -1);

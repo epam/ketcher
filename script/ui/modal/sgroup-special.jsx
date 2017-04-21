@@ -110,7 +110,6 @@ const content = (schema, context, fieldName) => Object.keys(schema.properties)
 	);
 
 export default connect((store) => {
-	console.info('store', store.sgroupSpecial);
 	return {
 		schema: store.sgroupSpecial.schema,
 		stateForm: store.sgroupSpecial.stateForm

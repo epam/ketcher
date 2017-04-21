@@ -18,8 +18,6 @@ const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
 	return acc;
 }, {});
 
-console.info('schemes', schemes);
-
 const firstObjKey = obj => Object.keys(obj)[0];
 const defaultContext = () => firstObjKey(schemes);
 const defaultFieldName = context => firstObjKey(schemes[context]);

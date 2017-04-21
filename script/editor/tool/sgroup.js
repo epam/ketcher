@@ -62,6 +62,7 @@ SGroupTool.prototype.mouseup = function (event) {
 			return;
 		}
 	}
+
 	// TODO: handle click on an existing group?
 	if (id != null || (selection && selection.atoms))
 		propsDialog(this.editor, id, this.type);
@@ -76,7 +77,7 @@ function propsDialog(editor, id, defaultType) {
 	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
 	if (!atoms && !sg) {
-		console.info('Nothing for props');
+		console.info('There is no selection or sgroup');
 		return;
 	}
 
@@ -87,24 +88,89 @@ function propsDialog(editor, id, defaultType) {
 
 	Promise.resolve(res).then(function (newSg) {
 		// TODO: check before signal
-
 		if (newSg.type != 'DAT' && // when data s-group separates
 			checkOverlapping(struct, atoms || [])) {
 			editor.event.message.dispatch({
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			var action = (id != null) ?
+			var action = (id != null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
-				Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs,
-					struct.sgroups.newId());
+				chooseAction(id, editor, newSg);
 
 			editor.update(action);
 		}
 	}).catch(function (result) {
 		console.info('rejected', result);
 	});
+}
+
+// TODO: fix switch between single bond & atom
+function chooseAction(id, editor, newSg) {
+	var restruct = editor.render.ctab;
+	var struct = editor.render.ctab.molecule;
+	var sg = (id != null) && struct.sgroups.get(id);
+	var context = newSg.attrs.context;
+
+	struct.sgroups.clear();
+
+	switch (context) {
+	case 'Fragment':
+		return onFragmentAction();
+	case 'Single Bond':
+		return onSingleBondAction();
+	case 'Atom':
+		return onAtomAction();
+	case 'Group':
+		return onGroupAction();
+	default:
+		console.assert('Invalid context');
+		return new Action();
+	}
+
+	function onGroupAction() {
+		var atoms = sg.atoms || editor.selection().atoms;
+		return sgroupAddAction(atoms);
+	}
+
+	function onFragmentAction() {
+		var bonds = struct.bonds.ikeys();
+		var atoms = struct.atoms.ikeys();
+		editor.selection({ atoms: atoms, bonds: bonds });
+		return sgroupAddAction(atoms);
+	}
+
+	function onAtomAction() {
+		var atoms = sg.atoms || editor.selection().atoms;
+		editor.selection({ atoms: atoms, bonds: [] });
+
+		return atoms.reduce(function (acc, atom) {
+			return acc.mergeWith(sgroupAddAction([atom]));
+		}, new Action());
+	}
+
+	function onSingleBondAction() {
+		var bonds = editor.selection().bonds.map(function (id) { return restruct.bonds.get(id); });
+
+		var atoms = bonds.reduce(function (acc, bond) {
+			var lastAtom = acc[acc.length - 1];
+			if (lastAtom !== bond.b.begin)
+				acc.push(bond.b.begin);
+			acc.push(bond.b.end);
+			return acc;
+		}, []);
+
+		editor.selection({ atoms: atoms, bonds: editor.selection().bonds });
+
+		return bonds.reduce(function (acc, bond) {
+			return acc.mergeWith(sgroupAddAction([bond.b.begin, bond.b.end]));
+		}, new Action());
+	}
+
+	function sgroupAddAction(atoms) {
+		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId());
+	}
 }
 
 function checkOverlapping(struct, atoms) {

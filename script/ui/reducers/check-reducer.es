@@ -1,4 +1,5 @@
 const initState = {
+	valid: true,
 	stateForm: {
 		valence: true,
 		radicals: true,
@@ -21,10 +22,7 @@ export default function checkReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('checkReducer', action);
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

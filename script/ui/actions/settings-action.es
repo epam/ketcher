@@ -10,13 +10,13 @@ function defaultOpts() {
 export function setDefaultSettings() {
 	return {
 		type: 'SET_DEFAULT_SETTINGS',
-		payload: defaultOpts()
+		payload: { stateForm: defaultOpts() }
 	};
 }
 
 export function cancelChanges() {
 	return {
 		type: 'CANCEL_SETTINGS',
-		payload: JSON.parse(localStorage.getItem("ketcher-opts"))
+		payload: { stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) }
 	};
 }

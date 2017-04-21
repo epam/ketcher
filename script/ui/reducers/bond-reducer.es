@@ -1,4 +1,5 @@
 const initState = {
+	valid: true,
 	stateForm: {
 		type: 'single',
 		topology: 0,
@@ -14,10 +15,7 @@ export default function bondReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('bondReducer', action);
-		return {
-        	...state,
-        	stateForm: Object.assign({}, state.stateForm, action.payload)
-        }
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

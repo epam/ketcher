@@ -1,4 +1,5 @@
 const initState = {
+	valid: false,
 	stateForm: {
 		label: '',
 	}
@@ -12,10 +13,7 @@ export default function labelEditReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('labelEditReducer', action);
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

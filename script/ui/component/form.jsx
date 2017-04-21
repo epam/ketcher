@@ -10,7 +10,11 @@ class Form extends Component {
 					schema, init, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
-		if (init) dispatch(updateFormState(storeName, init));
+		if (init) this.updateState(dispatch, storeName, init);
+	}
+	updateState(dispatch, storeName, newstate) {
+		let { instance, valid } = this.schema.serialize(newstate);
+		dispatch(updateFormState(storeName, { stateForm: instance, valid: valid }));
 	}
 	getChildContext() {
 		let { schema } = this.props;
@@ -19,29 +23,28 @@ class Form extends Component {
 	field(name, onChange) {
 		let {dispatch, storeName, stateForm} = this.props;
 		var value = stateForm[name];
-
+		var self = this;
 		return {
 			value: value,
 			onChange(value) {
-				dispatch(updateFormState(storeName, { [name]: value }));
+				let newstate = Object.assign(self.props.stateForm, { [name]: value });
+				self.updateState(dispatch, storeName, newstate);
 				if (onChange) onChange(value);
 			}
 		};
 	}
-	result() {
-		return this.schema.serialize(this.props.stateForm).instance;
-	}
 	render() {
-		var {children, component, stateForm, schema, ...props} = this.props;
-		if (schema.key !== this.schema.key)	this.schema = propSchema(schema, props);
-		this.schema.serialize(stateForm); // hack: valid first state
+		var {dispatch, storeName, stateForm, children, schema, ...props } = this.props;
+		if (schema.key && schema.key !== this.schema.key) {
+			this.schema = propSchema(schema, props);
+			this.schema.serialize(stateForm); // hack: valid first state
+			this.updateState(dispatch, storeName, stateForm);
+		}
 
-		let Component = component || 'form';
 		return (
-			<Component result = {() => this.result()}
-					   valid  = {() => this.schema.serialize(stateForm).valid} {...props}>
+			<form {...props}>
 			  	{children}
-			</Component>
+			</form>
 		);
 	}
 }

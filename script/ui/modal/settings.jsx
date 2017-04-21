@@ -15,52 +15,54 @@ import OpenButton from '../component/openbutton';
 import Input from '../component/input';
 
 function Settings(props) {
-	let { server, stateForm, dispatch, ...prop } = props;
+	let { server, stateForm, valid, dispatch, ...prop } = props;
 	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
-		<Form storeName="settings" component={Dialog} title="Settings" className="settings"
-			  buttons={[
-				  <OpenOpts server={server} dispatch={dispatch}/>,
-				  <SaveOpts opts={stateForm}/>,
-				  <Reset dispatch={dispatch}/>,
-				  "OK", <Cancel dispatch={dispatch} onCancel={prop.onCancel}/>]}
-			  schema={settingsSchema} params={prop}>
-			<Accordion className="accordion" captions={tabs} active={activeTabs}>
-				 <fieldset className="render">
-					<Field name="resetToSelect"/>
-					<Field name="showValenceWarnings"/>
-					<Field name="atomColoring"/>
-					<Field name="hideChiralFlag"/>
-					<SelectFont name="font"/>
-					<FieldMeasure name="fontsz"/>
-					<FieldMeasure name="fontszsub"/>
-				</fieldset>
-				<fieldset className="atoms">
-					<Field name="carbonExplicitly"/>
-					<Field name="showCharge"/>
-					<Field name="showValence"/>
-					<Field name="showHydrogenLabels"/>
-				</fieldset>
-				<fieldset className="bonds">
-					<Field name="aromaticCircle"/>
-					<FieldMeasure name="doubleBondWidth"/>
-					<FieldMeasure name="bondThickness"/>
-					<FieldMeasure name="stereoBondWidth"/>
-				</fieldset>
-				<fieldset className="3dView">
-					<Field name="miewMode"/>
-					<Field name="miewTheme"/>
-					<Field name="miewAtomLabel"/>
-				</fieldset>
-				<fieldset className="debug">
-					<Field name="showAtomIds"/>
-					<Field name="showBondIds"/>
-					<Field name="showHalfBondIds"/>
-					<Field name="showLoopIds"/>
-				</fieldset>
-			</Accordion>
-		</Form>
+		<Dialog title="Settings" className="settings"
+				result={() => stateForm} valid={() => valid} params={prop}
+				buttons={[
+					<OpenOpts server={server} dispatch={dispatch}/>,
+					<SaveOpts opts={stateForm}/>,
+					<Reset dispatch={dispatch}/>,
+					"OK", <Cancel dispatch={dispatch} onCancel={prop.onCancel}/>]} >
+			<Form storeName="settings" schema={settingsSchema}>
+				<Accordion className="accordion" captions={tabs} active={activeTabs}>
+					<fieldset className="render">
+						<Field name="resetToSelect"/>
+						<Field name="showValenceWarnings"/>
+						<Field name="atomColoring"/>
+						<Field name="hideChiralFlag"/>
+						<SelectFont name="font"/>
+						<FieldMeasure name="fontsz"/>
+						<FieldMeasure name="fontszsub"/>
+					</fieldset>
+					<fieldset className="atoms">
+						<Field name="carbonExplicitly"/>
+						<Field name="showCharge"/>
+						<Field name="showValence"/>
+						<Field name="showHydrogenLabels"/>
+					</fieldset>
+					<fieldset className="bonds">
+						<Field name="aromaticCircle"/>
+						<FieldMeasure name="doubleBondWidth"/>
+						<FieldMeasure name="bondThickness"/>
+						<FieldMeasure name="stereoBondWidth"/>
+					</fieldset>
+					<fieldset className="3dView">
+						<Field name="miewMode"/>
+						<Field name="miewTheme"/>
+						<Field name="miewAtomLabel"/>
+					</fieldset>
+					<fieldset className="debug">
+						<Field name="showAtomIds"/>
+						<Field name="showBondIds"/>
+						<Field name="showHalfBondIds"/>
+						<Field name="showLoopIds"/>
+					</fieldset>
+				</Accordion>
+			</Form>
+		</Dialog>
 	);
 }
 
@@ -113,7 +115,7 @@ const OpenOpts = ({server, dispatch}) =>
 	<OpenButton className="open" server={server}
 				onLoad={ newOpts => {
 					try {
-						dispatch(updateFormState('settings', JSON.parse(newOpts)));
+						dispatch(updateFormState('settings', { stateFrom: JSON.parse(newOpts) }));
 					} catch (ex) {
 						console.info('Bad file');
 					}
@@ -149,6 +151,7 @@ function convertValue(value, measureFrom, measureTo) {
 
 export default connect((store) => {
 	return {
-		stateForm: store.settings.stateForm
+		stateForm: store.settings.stateForm,
+		valid: store.settings.valid
 	};
 })(Settings);

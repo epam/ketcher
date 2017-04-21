@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { atom as atomSchema } from '../structschema';
@@ -19,31 +20,35 @@ function ElementNumber(props, {stateStore}) {
 }
 
 function Atom(props) {
+	let { result, valid, ...prop} = props;
 	return (
-		<Form storeName="atom" component={Dialog} title="Atom Properties" className="atom-props"
-			  schema={atomSchema} customValid={{ label: l => atomValid(l) }} init={props} params={props}>
-		  <fieldset className="main">
-			<Field name="label"/>
-			<Field name="alias"/>
-			<ElementNumber/>
-			<Field name="charge" maxlength="5"/>
-			<Field name="explicitValence"/>
-			<Field name="isotope"/>
-			<Field name="radical"/>
-		  </fieldset>
-		  <fieldset className="query">
-			<legend>Query specific</legend>
-			<Field name="ringBondCount"/>
-			<Field name="hCount"/>
-			<Field name="substitutionCount"/>
-			<Field name="unsaturatedAtom"/>
-		  </fieldset>
-		  <fieldset className="reaction">
-			<legend>Reaction flags</legend>
-			<Field name="invRet"/>
-			<Field name="exactChangeFlag"/>
-		  </fieldset>
-		</Form>
+		<Dialog title="Atom Properties" className="atom-props"
+				result={() => result} valid={() => valid} params={prop}>
+			<Form storeName="atom" schema={atomSchema}
+				  customValid={{ label: l => atomValid(l) }} init={prop} >
+			  <fieldset className="main">
+				<Field name="label"/>
+				<Field name="alias"/>
+				<ElementNumber/>
+				<Field name="charge" maxlength="5"/>
+				<Field name="explicitValence"/>
+				<Field name="isotope"/>
+				<Field name="radical"/>
+			  </fieldset>
+			  <fieldset className="query">
+				<legend>Query specific</legend>
+				<Field name="ringBondCount"/>
+				<Field name="hCount"/>
+				<Field name="substitutionCount"/>
+				<Field name="unsaturatedAtom"/>
+			  </fieldset>
+			  <fieldset className="reaction">
+				<legend>Reaction flags</legend>
+				<Field name="invRet"/>
+				<Field name="exactChangeFlag"/>
+			  </fieldset>
+			</Form>
+		</Dialog>
 	);
 }
 
@@ -55,4 +60,9 @@ function atomValid(label) {
 	return label && !!element.map[capitalize(label)];
 }
 
-export default Atom;
+export default connect((store) => {
+	return {
+		result: store.atom.stateForm,
+		valid: store.atom.valid
+	};
+})(Atom);

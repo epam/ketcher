@@ -1,4 +1,5 @@
 const initState = {
+	valid: true,
 	stateForm: {
 		primary: false,
 		secondary: false
@@ -13,10 +14,7 @@ export default function attachPointsReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
 		console.log('attachPointsReducer', action);
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

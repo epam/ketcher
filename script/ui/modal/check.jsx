@@ -1,4 +1,5 @@
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
@@ -54,20 +55,22 @@ const checkSchema = {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { check, ...prop } = props;
+	let { result, valid, check, ...prop } = props;
 
 	return (
-		<Form storeName="check" component={Dialog} title="Structure Check" className="check"
-			  schema={checkSchema} params={prop}>
-			<Tabs className="tabs" captions={tabs}>
-				<ErrorsCheck className="result" check={check}/>
-				<ul className="settings">  {
-					Object.keys(checkSchema.properties).map(type => (
-						<li><Field name={type}/></li>
-					))
-				}</ul>
-			</Tabs>
-		</Form>
+		<Dialog title="Structure Check" className="check"
+				result={() => result} valid={() => valid} params={prop}>
+			<Form storeName="check" schema={checkSchema} params={prop}>
+				<Tabs className="tabs" captions={tabs}>
+					<ErrorsCheck className="result" check={check}/>
+					<ul className="settings">  {
+						Object.keys(checkSchema.properties).map(type => (
+							<li><Field name={type}/></li>
+						))
+					}</ul>
+				</Tabs>
+			</Form>
+		</Dialog>
 	);
 }
 
@@ -110,4 +113,10 @@ class ErrorsCheck extends Component {
 	}
 }
 
-export default Check;
+export default connect((store) => {
+	return {
+		result: store.check.stateForm,
+		valid: store.check.valid
+	};
+})(Check);
+

@@ -12,22 +12,23 @@ const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
 }, {});
 
 function SgroupSpecial(props) {
-	const { stateForm, ...prop } = props;
+	const { stateForm, valid, ...prop } = props;
 	const context = stateForm.context;
 	const fieldName = stateForm.fieldName;
 
 	return (
-		<Form storeName="sgroupSpecial" component={Dialog} title={"S-Group Properties"} className="sgroup"
-			  schema={schemes[context][fieldName]} init={prop} params={prop}
-		>
-			<SelectOneOf title="Context" name="context" schema={schemes} />
-			<fieldset className={"data"} >
-				<SelectOneOf title="Field name" name="fieldName" schema={schemes[context]} />
-				{
-					content(context, fieldName)
-				}
-			</fieldset>
-		</Form>
+		<Dialog title={"S-Group Properties"} className="sgroup"
+				result={() => stateForm} valid={() => valid} params={prop}>
+			<Form storeName="sgroupSpecial" schema={schemes[context][fieldName]} init={prop}>
+				<SelectOneOf title="Context" name="context" schema={schemes}/>
+				<fieldset className={"data"}>
+					<SelectOneOf title="Field name" name="fieldName" schema={schemes[context]}/>
+					{
+						content(context, fieldName)
+					}
+				</fieldset>
+			</Form>
+		</Dialog>
 	);
 }
 
@@ -40,6 +41,7 @@ const content = (context, fieldName) => Object.keys(schemes[context][fieldName].
 
 export default connect((store) => {
 	return {
-		stateForm: store.sgroupSpecial.stateForm
+		stateForm: store.sgroupSpecial.stateForm,
+		valid: store.sgroupSpecial.valid,
 	};
 })(SgroupSpecial);

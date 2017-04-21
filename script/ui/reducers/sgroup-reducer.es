@@ -1,4 +1,5 @@
 const initState = {
+	valid: true,
 	stateForm: {
 		type: 'GEN'
 	}
@@ -6,10 +7,7 @@ const initState = {
 
 export default function sgroupReducer(state = initState, action) {
 	if (action.type === 'UPDATE_SGROUP_FORM') {
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		}
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

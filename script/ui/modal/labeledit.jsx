@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import element from '../../chem/element';
@@ -55,14 +56,15 @@ function deserialize(value) {
 
 function LabelEdit(props) {
 	let init = { label: props.letter || serialize(props) };
-
+	let { result, valid, ...prop} = props;
 	return (
-		<Form storeName="label-edit" component={Dialog} className="labeledit" ref={el => this.form = el}
-			  schema={labelEditSchema} customValid={{label: l => deserialize(l)}}
-			  init={init} params={props}
-			  result={() => deserialize(this.form.props.stateForm.label)}>
-			<Field name="label" maxlength="20" size="10"/>
-		</Form>
+		<Dialog className="labeledit" valid={() => valid}
+				result={() => deserialize(result.label)} params={prop}>
+			<Form storeName="label-edit" schema={labelEditSchema}
+				  customValid={{label: l => deserialize(l)}} init={init}>
+				<Field name="label" maxlength="20" size="10"/>
+			</Form>
+		</Dialog>
 	);
 }
 
@@ -70,4 +72,9 @@ function capitalize(str) {
 	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
-export default LabelEdit;
+export default connect((store) => {
+	return {
+		result: store['label-edit'].stateForm,
+		valid: store['label-edit'].valid
+	};
+})(LabelEdit);

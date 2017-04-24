@@ -1,9 +1,12 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
 /** @jsx h */
 
 import element from '../../chem/element';
 import Dialog from '../component/dialog';
 import Atom from '../component/atom';
+import Tabs from '../component/tabs';
+
+import GenericGroups from './generic-groups';
 
 const typeSchema = [
 	{ title: 'Single', value: 'atom' },
@@ -104,30 +107,31 @@ function AtomInfo({el, isInfo}) {
 class PeriodTable extends Component {
 	constructor(props) {
 		super(props);
-		this.state.type = props.type || 'atom';
+		let genType = props.label && !element.map[props.label] ? 'gen' : null; // TODO after repair pseudo: !!this.props.pseudo
+		this.state.type = props.type || genType || 'atom';
 		this.state.value = props.values || props.label || null;
 		this.state.cur = element[2];
 		this.state.isInfo = false;
 	}
 	changeType(type) {
-		let pl = this.state.type == 'atom';
-		let l = type == 'atom';
-		if (l && pl || !l && !pl)
+		let pl = this.state.type === 'list' || this.state.type === 'not-list';
+		let l = type === 'list' || type === 'not-list';
+		if (l && pl)
 			this.setState({type});
 		else
 			this.setState({
 				type,
-				value: type == 'atom' ? null : []
+				value: type === 'atom' || type === 'gen' ? null : []
 			});
 	}
 	selected(label) {
 		let {type, value} = this.state;
-		return (type == 'atom') ? value == label :
+		return (type === 'atom' || type === 'gen') ? value == label :
 			value.includes(label);
 	}
 	onSelect(label) {
 		let {type, value} = this.state;
-		if (type == 'atom')
+		if (type === 'atom' || type === 'gen')
 			this.setState({ value: label });
 		else {
 			var i = value.indexOf(label);
@@ -140,8 +144,10 @@ class PeriodTable extends Component {
 	}
 	result() {
 		let {type, value} = this.state;
-		if (type == 'atom')
+		if (type === 'atom')
 			return value ? { label: value } : null;
+		else if (type === 'gen')
+			return value ? { type, label: value, pseudo: value} : null;
 		else
 			return value.length ? { type, values: value } : null;
 	}
@@ -152,34 +158,42 @@ class PeriodTable extends Component {
 		};
 	};
 	render () {
+		const tabs = ['Table', 'Generics'];
+		let { type } = this.state;
 		return (
-			<Dialog title="Periodic table"
-					className="period-table"
-					params={this.props}
-					result={() => this.result()}>
-				<table summary="Periodic table of the chemical elements">
-					<Header/>
-					<AtomInfo el={this.state.cur} isInfo={this.state.isInfo}/>
-					{
-						main.map((row, i) => (
-							<MainRow row={row} caption={i + 1}
-									 ref={o => o == 1 && (i == 5 ? '*' : '**')}
-									 curEvents={this.curEvents}
-									 selected={l => this.selected(l)}
-									 onSelect={l => this.onSelect(l)}/>
-						))
-					}
-					<OutinerRow row={lanthanides} caption="*"
-								curEvents={this.curEvents}
-								selected={l => this.selected(l)}
-								onSelect={l => this.onSelect(l)}/>
-					<OutinerRow row={actinides} caption="**"
-								curEvents={this.curEvents}
-								selected={l => this.selected(l)}
-								onSelect={l => this.onSelect(l)}/>
-				</table>
-				<TypeChoise value={this.state.type}
-			                onChange={t => this.changeType(t) }/>
+			<Dialog title="Periodic table" className="elements-table"
+					params={this.props} result={() => this.result()}>
+				<Tabs className="tabs" captions={tabs} tabIndex={type !== 'gen' ? 0 : 1}
+					  changeTab={(i) => this.changeType(i === 0 ? 'atom' : 'gen')}>
+					<div className="period-table">
+						<table summary="Periodic table of the chemical elements">
+							<Header/>
+							<AtomInfo el={this.state.cur} isInfo={this.state.isInfo}/>
+							{
+								main.map((row, i) => (
+									<MainRow row={row} caption={i + 1}
+											 ref={o => o == 1 && (i == 5 ? '*' : '**')}
+											 curEvents={this.curEvents}
+											 selected={l => this.selected(l)}
+											 onSelect={l => this.onSelect(l)}/>
+								))
+							}
+							<OutinerRow row={lanthanides} caption="*"
+										curEvents={this.curEvents}
+										selected={l => this.selected(l)}
+										onSelect={l => this.onSelect(l)}/>
+							<OutinerRow row={actinides} caption="**"
+										curEvents={this.curEvents}
+										selected={l => this.selected(l)}
+										onSelect={l => this.onSelect(l)}/>
+						</table>
+						<TypeChoise value={type}
+									onChange={t => this.changeType(t) }/>
+					</div>
+					<GenericGroups className="generic-groups"
+								   selected={this.selected.bind(this)}
+								   onSelect={this.onSelect.bind(this)}/>
+				</Tabs>
 			</Dialog>
 		);
 	}
@@ -206,9 +220,4 @@ function range(n, start = 0) {
 	}).map((_, i) => i + start);
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<PeriodTable {...params}/>
-	), overlay);
-};
+export default PeriodTable;

@@ -60,7 +60,7 @@ function Check(props) {
 	return (
 		<Dialog title="Structure Check" className="check"
 				result={() => result} valid={() => valid} params={prop}>
-			<Form storeName="check" schema={checkSchema} params={prop}>
+			<Form storeName="check" schema={checkSchema}>
 				<Tabs className="tabs" captions={tabs}>
 					<ErrorsCheck className="result" check={check}/>
 					<ul className="settings">  {

@@ -2,8 +2,6 @@ var modal = require('./render-modal').default;
 
 var openDialog = require('./open').default;
 var saveDialog = require('./save').default;
-var periodTable = require('./period-table').default;
-var genericGroups = require('./generic-groups').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var miewDialog = require('./miew').default;
@@ -12,6 +10,7 @@ var About = require('./about').default;
 var Attach = require('./attach').default;
 var Analyse = require('./analyse').default;
 var Help = require('./help').default;
+var PeriodTable = require('./period-table').default;
 var Recognize = require('./recognize').default;
 
 // schemify dialogs
@@ -29,9 +28,8 @@ var SgroupSpecial = require('./sgroup-special').default;
 templatesDialog.default.init = templatesDialog.init;
 
 module.exports = {
-	periodTable: periodTable,
+	periodTable: modal(PeriodTable),
 	rgroup: rgroupDialog,
-	genericGroups: genericGroups,
 	attachmentPoints: modal(AttachPoints),
 	atomProps: modal(Atom),
 	bondProps: modal(Bond),

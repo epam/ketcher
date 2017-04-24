@@ -1,8 +1,7 @@
-import { h, Component, render } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
 import generics from '../../chem/generics';
-import Dialog from '../component/dialog';
 
 var viewSchema = {
 	'atom': {
@@ -92,41 +91,17 @@ function GenGroup({gen, key, path, selected, onSelect}) {
 	);
 }
 
-class GenericGroups extends Component {
-	constructor({label=null}) {
-		super();
-		this.state.label = label;
-	}
-	onSelect(label) {
-		this.setState({ label });
-	}
-	selected(label) {
-		return label == this.state.label;
-	}
-	result() {
-		let { label } = this.state;
-		return label ? { label, pseudo: label } : null;
-	}
-	render () {
-		return (
-			<Dialog title="Generic Groups"
-					className="generic-groups"
-					params={this.props}
-					result={() => this.result()}>
-			  <GenGroup gen={generics} key='atom'
-						selected={l => this.selected(l)}
-				        onSelect={l => this.onSelect(l)}/>
-			  <GenGroup gen={generics} key='group'
-					    selected={l => this.selected(l)}
-			            onSelect={l => this.onSelect(l)}/>
-			</Dialog>
-		);
-	}
+function GenericGroups({ selected, onSelect, ...props }) {
+	return (
+		<div summary="Generic Groups" {...props}>
+			<GenGroup gen={generics} key='atom'
+					  selected={l => selected(l)}
+					  onSelect={l => onSelect(l)}/>
+			<GenGroup gen={generics} key='group'
+					  selected={l => selected(l)}
+					  onSelect={l => onSelect(l)}/>
+		</div>
+	);
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<GenericGroups {...params}/>
-	), overlay);
-};
+export default GenericGroups;

@@ -109,7 +109,7 @@ function initEditor(editor) {
 		} else if (elem.type == 'rlabel') {
 			dlg = dialog(modal.rgroup, elem);
 		} else {
-			dlg = dialog(modal.genericGroups, elem);
+			dlg = dialog(modal.periodTable, elem);
 		}
 		return dlg.then(function (res) {
 			return structConv.toElement(res);
@@ -700,11 +700,6 @@ var actionMap = {
 	'period-table': function () {
 		elemTable().then(function (res) {
 			selectAction('atom', structConv.toElement(res));
-		});
-	},
-	'generic-groups': function () {
-		dialog(modal.genericGroups).then(function (res) {
-			selectAction('atom', res);
 		});
 	},
 	'template-lib': templateLib,

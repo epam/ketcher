@@ -4,7 +4,7 @@ import {h, Component} from 'preact';
 class Tabs extends Component {
 	constructor(props) {
 		super(props);
-		this.state.tabIndex = 0;
+		this.state.tabIndex = props.tabIndex || 0;
 	}
 	changeTab(ev, index) {
 		this.setState({	tabIndex: index });

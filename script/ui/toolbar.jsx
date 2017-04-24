@@ -1,165 +1,171 @@
+import { connect } from 'preact-redux';
 import { h } from 'preact';
 /** @jsx h */
 
 import element from '../chem/element';
 import Atom from './component/atom';
+import ActionMenu, { shortcutStr } from './component/actionmenu';
+
 import acts from './acts';
-import { atomCuts } from './acts/atoms';
+import { atomCuts, basic as basicAtoms } from './acts/atoms';
 import templates from './templates';
 
 const mainmenu = [
 	{
-		id: "document",
+		id: 'document',
 		menu: [
-			"new",
-			"open",
-			"save"
+			'new',
+			'open',
+			'save'
 		]
 	},
 	{
-		id: "edit",
+		id: 'edit',
 		menu: [
-			"undo",
-			"redo",
-			"cut",
-			"copy",
-			"paste"
+			'undo',
+			'redo',
+			'cut',
+			'copy',
+			'paste'
 		]
 	},
 	{
-		id: "zoom",
+		id: 'zoom',
 		menu: [
-			"zoom-in",
-			"zoom-out",
-			ZoomList
+			'zoom-in',
+			'zoom-out',
+			{
+				id: 'zoom-list',
+				component: ZoomList
+			}
 		]
 	},
 	{
-		id: "process",
+		id: 'process',
 		menu: [
-			"layout",
-			"clean",
-			"arom",
-			"dearom",
-			"cip",
-			"check",
-			"analyse",
-			"recognize"
+			'layout',
+			'clean',
+			'arom',
+			'dearom',
+			'cip',
+			'check',
+			'analyse',
+			'recognize'
 		]
 	},
 	{
-		id: "meta",
+		id: 'meta',
 		menu: [
-			"settings",
-			"help",
-			"about"
+			'settings',
+			'help',
+			'about'
 		]
 	}
 ]
 
 const toolbox = [
 	{
-		id: "select",
+		id: 'select',
 		menu: [
-			"select-lasso",
-			"select-rectangle",
-			"select-fragment"
+			'select-lasso',
+			'select-rectangle',
+			'select-fragment'
 		]
 	},
-	"erase",
+	'erase',
 	{
-		id: "bond",
+		id: 'bond',
 		menu: [
 			{
-				id: "bond-common",
+				id: 'bond-common',
 				menu: [
-					"bond-single",
-					"bond-double",
-					"bond-triple"
+					'bond-single',
+					'bond-double',
+					'bond-triple'
 				]
 			},
 			{
-				id: "bond-stereo",
+				id: 'bond-stereo',
 				menu: [
-					"bond-up",
-					"bond-down",
-					"bond-updown",
-					"bond-crossed"
+					'bond-up',
+					'bond-down',
+					'bond-updown',
+					'bond-crossed'
 				]
 			},
 			{
-				id: "bond-query",
+				id: 'bond-query',
 				menu: [
-					"bond-any",
-					"bond-aromatic",
-					"bond-singledouble",
-					"bond-singlearomatic",
-					"bond-doublearomatic"
+					'bond-any',
+					'bond-aromatic',
+					'bond-singledouble',
+					'bond-singlearomatic',
+					'bond-doublearomatic'
 				]
 			}
 		]
 	},
-	"chain",
+	'chain',
 	{
-		id: "charge",
+		id: 'charge',
 		menu: [
-			"charge-plus",
-			"charge-minus"
+			'charge-plus',
+			'charge-minus'
 		]
 	},
 	{
-		id: "transform",
+		id: 'transform',
 		menu: [
-			"transform-rotate",
-			"transform-flip-h",
-			"transform-flip-v"
+			'transform-rotate',
+			'transform-flip-h',
+			'transform-flip-v'
 		]
 	},
-	"sgroup",
-	"sgroup-data",
+	'sgroup',
+	'sgroup-data',
 	{
-		id: "reaction",
+		id: 'reaction',
 		menu: [
-			"reaction-arrow",
-			"reaction-plus",
-			"reaction-automap",
-			"reaction-map",
-			"reaction-unmap"
+			'reaction-arrow',
+			'reaction-plus',
+			'reaction-automap',
+			'reaction-map',
+			'reaction-unmap'
 		]
 	},
 	{
-		id: "rgroup",
+		id: 'rgroup',
 		menu: [
-			"rgroup-label",
-			"rgroup-fragment",
-			"rgroup-attpoints"
+			'rgroup-label',
+			'rgroup-fragment',
+			'rgroup-attpoints'
 		]
 	}
 ];
 
 const template = [
-	TemplatesList,
-	"template-lib"
+	{
+		id: 'template-common',
+		component: TemplatesList
+	},
+	'template-lib'
 ];
 
 const elements = [
-	AtomsList,
-	"period-table",
-	"generic-groups"
+	{
+		id: 'atom',
+		component: AtomsList
+	},
+	'period-table',
+	'generic-groups'
 ];
 
-const isMac = /Mac/.test(navigator.platform);
-const shortcutAliasMap = {
-	'Escape': 'Esc',
-	'Delete': 'Del',
-	'Mod': isMac ? '⌘' : 'Ctrl'
-};
-function shortcutStr(shortcut) {
-	var key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (key) {
-		return shortcutAliasMap[key] || key.toUpperCase();
-	});
-}
+const toolbar = [
+	{ id: 'mainmenu', menu: mainmenu },
+	{ id: 'toolbox', menu: toolbox },
+	{ id: 'template', menu: template },
+	{ id: 'elements', menu: elements }
+];
 
 const zoomList = [
 	0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
@@ -180,25 +186,26 @@ function ZoomList() {
 
 function AtomsList({atoms, ...props}) {
 	return (
-		<li id="atom">
 		<menu>
 		  {
 			  atoms.map(label => {
 				  let index = element.map[label];
 				  let shortcut = shortcutStr(atomCuts[label]);
-				  return ( <Atom el={element[index]} shortcut={shortcut}/> );
+				  return (
+					  <li>
+						<Atom el={element[index]} shortcut={shortcut}/>
+					  </li>
+				  );
 			  })
 		  }
 		</menu>
-		</li>
 	);
 }
 
 function TemplatesList({...props}) {
 	let shortcut = shortcutStr(acts.templates.shortcut);
 	return (
-		<li id="template-common">
-		  <menu>
+		<menu>
 		  {
 			  templates.map((struct, i) => (
 				  <li id={`template-${i}`}>
@@ -208,49 +215,14 @@ function TemplatesList({...props}) {
 				  </li>
 			  ))
 		  }
-		  </menu>
-		</li>
-	);
-}
-
-function ToolButton({item, ...props}) {
-	let act = acts[item];
-	let shortcut = act.shortcut && shortcutStr(act.shortcut);
-	return (
-		<button
-		  title={shortcut ? `${act.title} (${shortcut})` :
-		                    act.title}>
-		  {act.title}
-		</button>
-	)
-}
-
-function ToolBar({menu, ...props}) {
-	return (
-		<menu>
-		{
-		  menu.map(item => (
-			  typeof item == 'function' ? item(props) : (
-				  <li id={item.id || item}>
-					{ typeof item == 'object' ?
-						( <ToolBar menu={item.menu}/> ) :
-					    ( <ToolButton item={item} /> )
-					}
-				  </li>
-			  )
-		  ))
-		}
 		</menu>
 	);
 }
 
-export default function (props) {
-	return (
-		<menu role="toolbar">
-		  <li id="mainmenu"><ToolBar menu={mainmenu} {...props}/></li>
-		  <li id="toolbox"><ToolBar menu={toolbox} {...props}/></li>
-		  <li id="template"><ToolBar menu={template} {...props}/></li>
-		  <li id="elements"><ToolBar menu={elements} {...props}/></li>
-		</menu>
-	)
-};
+export default connect(
+	(state, props) => ({
+		atoms: basicAtoms.concat(state.freqAtoms)
+	}),
+)(props => (console.info('render'),
+	<ActionMenu menu={toolbar} role="toolbar" {...props}/>
+));

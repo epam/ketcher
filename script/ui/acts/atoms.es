@@ -1,3 +1,6 @@
+export const basic = ['H', 'C', 'N', 'O', 'S', 'P',
+ 'F', 'Cl', 'Br', 'I'];
+
 export const atomCuts = {
 	"H": "h",
 	"C": "c",

@@ -12,9 +12,16 @@ function SGroupTool(editor, type) {
 		if (!editor.selection() || !editor.selection().atoms)
 			return new SGroupTool(editor, type);
 
-		// TODO: handle case when it's a sgroup already
-		propsDialog(editor, null, type);
-		editor.selection(null);
+		var sgroups = editor.render.ctab.molecule.sgroups;
+
+		var selectedAtoms = JSON.stringify(editor.selection().atoms);
+
+		var id = sgroups.find(function (index, sgroup) {
+			return JSON.stringify(sgroup.atoms) === selectedAtoms;
+		}, this);
+
+		propsDialog(editor, id !== undefined ? id : null, type);
+		// editor.selection(null);
 		return null;
 	}
 
@@ -86,6 +93,8 @@ function propsDialog(editor, id, defaultType) {
 		attrs: sg ? sg.getAttrs() : {}
 	});
 
+	var currSelection = editor.selection();
+
 	Promise.resolve(res).then(function (newSg) {
 		// TODO: check before signal
 		if (newSg.type != 'DAT' && // when data s-group separates
@@ -97,7 +106,7 @@ function propsDialog(editor, id, defaultType) {
 			var action = (id != null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
-				chooseAction(id, editor, newSg);
+				chooseAction(id, editor, newSg, currSelection);
 
 			editor.update(action);
 		}
@@ -106,7 +115,7 @@ function propsDialog(editor, id, defaultType) {
 	});
 }
 
-function chooseAction(id, editor, newSg) {
+function chooseAction(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
 	var struct = editor.render.ctab.molecule;
 	var sg = (id != null) && struct.sgroups.get(id);
@@ -134,42 +143,66 @@ function chooseAction(id, editor, newSg) {
 	return (id === null || !action) ? action : action.mergeWith(Action.fromSgroupDeletion(restruct, id));
 
 	function onGroupAction() {
-		var atoms = sg.atoms || editor.selection().atoms;
-		return sgroupAddAction(atoms);
+		var atoms = sg.atoms || currSelection.atoms;
+		var bonds = sg.bonds || currSelection.bonds;
+		return sgroupAddAction(atoms, bonds);
 	}
 
 	function onFragmentAction() {
-		var bonds = struct.bonds.ikeys();
-		var atoms = struct.atoms.ikeys();
+		console.info('restruct', restruct);
+		var atoms = restruct.connectedComponents.values()
+			.filter(function (component) {
+				for (var i = 0; i < currSelection.atoms.length; ++i) {
+					var value = currSelection.atoms[i];
+					if (component[value]) return true;
+				}
+
+				return false;
+			})
+			.reduce(function (acc, atoms) {
+				return acc.concat(Object.keys(atoms).map(Number));
+			}, []);
+
+		var bonds = restruct.bonds.keys()
+			.filter(function (id) {
+				var bond = restruct.bonds.get(id);
+				return atoms.includes(bond.b.begin) &&
+					atoms.includes(bond.b.end);
+			})
+			.map(Number);
+
 		editor.selection({ atoms: atoms, bonds: bonds });
-		return sgroupAddAction(atoms);
+		return sgroupAddAction(atoms, bonds);
 	}
 
 	function onAtomAction() {
-		var currSelection = editor.selection();
+		console.info('currselec', currSelection);
+		console.info('sgg', sg);
 
-		if (currSelection === null) {
-			console.error('There is no selection');
+		if (!sg && currSelection === null) {
+			console.error('There is no selection or sgroup');
 			return new Action();
 		}
 
 		var atoms = sg.atoms || currSelection.atoms;
+        //
+		// var bonds = (currSelection.bonds || [])
+		// 	.map(function (id) {
+		// 		return {
+		// 			id: id,
+		// 			bond: restruct.bonds.get(id)
+		// 		};
+		// 	})
+		// 	.filter(
+		// 		function (obj) {
+		// 			return !atoms.includes(obj.bond.b.begin) ||
+		// 				!atoms.includes(obj.bond.b.end);
+		// 		})
+		// 	.map(function (bond) {
+		// 		return bond.id;
+		// 	});
 
-		var bonds = currSelection.bonds
-			.map(function (id) {
-				return  {
-					id: id,
-					bond: restruct.bonds.get(id)
-				};
-			})
-			.filter(
-				function (obj) {
-					return !atoms.includes(obj.bond.b.begin) ||
-						   !atoms.includes(obj.bond.b.end);
-				})
-			.map(function (bond) { return bond.id; });
-
-		editor.selection({ atoms: currSelection.atoms, bonds: bonds });
+		editor.selection({ atoms: currSelection.atoms });
 
 		return atoms.reduce(function (acc, atom) {
 			return acc.mergeWith(sgroupAddAction([atom]));
@@ -177,10 +210,8 @@ function chooseAction(id, editor, newSg) {
 	}
 
 	function onSingleBondAction() {
-		var currSelection = editor.selection();
-
-		if (currSelection === null) {
-			console.error('There is no selection');
+		if (!sg && currSelection === null) {
+			console.error('There is no selection or sgroup');
 			return;
 		}
 
@@ -189,9 +220,11 @@ function chooseAction(id, editor, newSg) {
 			return;
 		}
 
-		var bonds = currSelection.bonds.map(function (id) { return restruct.bonds.get(id); });
+		var bonds = currSelection.bonds.map(function (id) {
+			return restruct.bonds.get(id);
+		});
 
-		var atoms = bonds.reduce(function (acc, bond) {
+		var atoms = sg && sg.atoms || bonds.reduce(function (acc, bond) {
 			var lastAtom = acc[acc.length - 1];
 			if (lastAtom !== bond.b.begin)
 				acc.push(bond.b.begin);
@@ -206,8 +239,8 @@ function chooseAction(id, editor, newSg) {
 		}, new Action());
 	}
 
-	function sgroupAddAction(atoms) {
-		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId());
+	function sgroupAddAction(atoms, bonds) {
+		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId(), undefined, bonds);
 	}
 }
 

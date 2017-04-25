@@ -21,7 +21,7 @@ function SGroupTool(editor, type) {
 		}, this);
 
 		propsDialog(editor, id !== undefined ? id : null, type);
-		// editor.selection(null);
+		editor.selection(null);
 		return null;
 	}
 
@@ -88,6 +88,8 @@ function propsDialog(editor, id, defaultType) {
 		return;
 	}
 
+	console.info('rest', restruct);
+
 	var res = editor.event[eventName].dispatch({
 		type: type,
 		attrs: sg ? sg.getAttrs() : {}
@@ -121,6 +123,8 @@ function chooseAction(id, editor, newSg, currSelection) {
 	var sg = (id != null) && struct.sgroups.get(id);
 	var context = newSg.attrs.context;
 
+	var sourceAtoms = sg.atoms || currSelection.atoms;
+
 	var action;
 	switch (context) {
 	case 'Fragment':
@@ -149,60 +153,53 @@ function chooseAction(id, editor, newSg, currSelection) {
 	}
 
 	function onFragmentAction() {
-		console.info('restruct', restruct);
-		var atoms = restruct.connectedComponents.values()
-			.filter(function (component) {
-				for (var i = 0; i < currSelection.atoms.length; ++i) {
-					var value = currSelection.atoms[i];
-					if (component[value]) return true;
-				}
+		var fragment = sourceAtoms
+			.map(function (aid) { return restruct.atoms.get(aid).a.fragment; })
+			.filter(function (fragId, index, self) { return self.indexOf(fragId) === index; })
+			.reduce(function (acc, fragId) {
+				var atoms = getFragmentAtoms(fragId);
+				var bonds = getFragmentBonds(fragId);
 
-				return false;
-			})
-			.reduce(function (acc, atoms) {
-				return acc.concat(Object.keys(atoms).map(Number));
-			}, []);
+				acc.action.mergeWith(sgroupAddAction(atoms));
+				acc.atoms = acc.atoms.concat(atoms);
+				acc.bonds = acc.bonds.concat(bonds);
 
-		var bonds = restruct.bonds.keys()
-			.filter(function (id) {
-				var bond = restruct.bonds.get(id);
-				return atoms.includes(bond.b.begin) &&
-					atoms.includes(bond.b.end);
-			})
-			.map(Number);
+				return acc;
+			}, {
+				action: new Action(),
+				atoms: [],
+				bonds: []
+			});
 
-		editor.selection({ atoms: atoms, bonds: bonds });
-		return sgroupAddAction(atoms, bonds);
+		editor.selection({ atoms: fragment.atoms, bonds: fragment.bonds });
+		return fragment.action;
 	}
 
 	function onAtomAction() {
-		console.info('currselec', currSelection);
-		console.info('sgg', sg);
-
 		if (!sg && currSelection === null) {
 			console.error('There is no selection or sgroup');
 			return new Action();
 		}
 
 		var atoms = sg.atoms || currSelection.atoms;
-        //
-		// var bonds = (currSelection.bonds || [])
-		// 	.map(function (id) {
-		// 		return {
-		// 			id: id,
-		// 			bond: restruct.bonds.get(id)
-		// 		};
-		// 	})
-		// 	.filter(
-		// 		function (obj) {
-		// 			return !atoms.includes(obj.bond.b.begin) ||
-		// 				!atoms.includes(obj.bond.b.end);
-		// 		})
-		// 	.map(function (bond) {
-		// 		return bond.id;
-		// 	});
 
-		editor.selection({ atoms: currSelection.atoms });
+		var bonds = (currSelection.bonds || [])
+			.map(function (id) {
+				return {
+					id: id,
+					bond: restruct.bonds.get(id)
+				};
+			})
+			.filter(
+				function (obj) {
+					return !atoms.includes(obj.bond.b.begin) ||
+						!atoms.includes(obj.bond.b.end);
+				})
+			.map(function (bond) {
+				return bond.id;
+			});
+
+		editor.selection({ atoms: currSelection.atoms, bonds: bonds });
 
 		return atoms.reduce(function (acc, atom) {
 			return acc.mergeWith(sgroupAddAction([atom]));
@@ -239,8 +236,27 @@ function chooseAction(id, editor, newSg, currSelection) {
 		}, new Action());
 	}
 
-	function sgroupAddAction(atoms, bonds) {
-		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId(), undefined, bonds);
+	function sgroupAddAction(atoms) {
+		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId());
+	}
+
+	function getFragmentAtoms(fragId) {
+		return restruct.atoms.keys()
+			.filter(function (aid) {
+				var atom = restruct.atoms.get(aid).a;
+				return fragId === atom.fragment;
+			})
+			.map(Number);
+	}
+
+	function getFragmentBonds(fragId) {
+		return restruct.bonds.keys()
+			.filter(function (bondid) {
+				var bond = restruct.bonds.get(bondid).b;
+				var atom = restruct.atoms.get(bond.begin).a;
+				return fragId === atom.fragment;
+			})
+			.map(Number);
 	}
 }
 

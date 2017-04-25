@@ -12,6 +12,10 @@ var viewSchema = {
 		caption: 'Group Generics',
 		order: ['acyclic', 'cyclic']
 	},
+	'special': {
+		caption: 'Special Nodes',
+		order: []
+	},
 	'group/acyclic': {
 		caption: 'Acyclic',
 		order: ['carbo', 'hetero']
@@ -94,12 +98,19 @@ function GenGroup({gen, key, path, selected, onSelect}) {
 function GenericGroups({ selected, onSelect, ...props }) {
 	return (
 		<div summary="Generic Groups" {...props}>
-			<GenGroup gen={generics} key='atom'
-					  selected={l => selected(l)}
-					  onSelect={l => onSelect(l)}/>
-			<GenGroup gen={generics} key='group'
-					  selected={l => selected(l)}
-					  onSelect={l => onSelect(l)}/>
+			<div className="col">
+				<GenGroup gen={generics} key='atom'
+						  selected={l => selected(l)}
+						  onSelect={l => onSelect(l)}/>
+				<GenGroup gen={generics} key='special'
+						  selected={l => selected(l)}
+						  onSelect={l => onSelect(l)}/>
+			</div>
+			<div className="col">
+				<GenGroup gen={generics} key='group'
+						  selected={l => selected(l)}
+						  onSelect={l => onSelect(l)}/>
+			</div>
 		</div>
 	);
 }

@@ -403,10 +403,11 @@ form.settings {
 }
 
 .elements-table {
+	width: 57em;
 	.tabs {
 		&:extend(.-Tabs all);
 		.tabs-content {
-			height: 33em;
+			height: 31em;
 		}
 	}
 
@@ -436,9 +437,9 @@ form.settings {
 
 		.atom-info {
 			position: absolute;
-			padding: 0.75em 2em;
-			left: 9em; top: 3em;
-			width: 22.5em;
+			padding: 0.75em 0.75em;
+			left: 18em; top: 2em;
+			width: 7em;
 			.highlight-shadow(black);
 			opacity: 1;
 			transition: opacity 1s, visibility 0s;
@@ -496,7 +497,7 @@ form.settings {
 		fieldset {
 			border: 0;
 			padding: 0.5em;
-			margin: 1em 0 0 1.5em;
+			margin: 0.5em 0 0 1.5em;
 		}
 
 		.diatomic {
@@ -544,6 +545,18 @@ form.settings {
 	}
 
 	.generic-groups {
+		display: flex;
+		justify-content: space-around;
+		padding: 1.5em 0;
+		.col {
+			&:first-child {
+				width: 40%;
+			}
+			&>fieldset {
+				margin: 1em;
+				padding: 1em 0.5em;
+			}
+		}
 		.atom>fieldset, .acyclic, .cyclic {
 			display: inline-block;
 			vertical-align: top;

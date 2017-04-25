@@ -60,6 +60,9 @@ var generics = {
 				}
 			}
 		}
+	},
+	special: {
+		labels: ['H+', 'D', 'T', 'R', 'Pol']
 	}
 };
 

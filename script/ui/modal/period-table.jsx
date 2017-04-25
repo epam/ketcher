@@ -95,11 +95,14 @@ function OutinerRow({row, caption, selected, onSelect, curEvents}) {
 }
 
 function AtomInfo({el, isInfo}) {
+	const numberStyle = { color: el.color || 'black', 'font-size': '1.2em' };
+	const elemStyle = { color: el.color || 'black', 'font-weight': 'bold', 'font-size': '2em' };
 	return (
 		<div className={`atom-info ${isInfo ? '' : 'none'}`}>
-			<span style={{color: el.color, 'font-weight': 'bold'}}>{el.label}</span>&emsp;({el.title})<br/><br/>
-			State: {el.state} <br/>
-			Type : {el.type} <br/>
+			<div style={numberStyle}>{element.map[el.label]}</div>
+			<span style={elemStyle}>{el.label}</span><br/>
+			{el.title}<br/>
+			{el.atomic_mass}
 		</div>
 	);
 }
@@ -158,7 +161,7 @@ class PeriodTable extends Component {
 		};
 	};
 	render () {
-		const tabs = ['Table', 'Generics'];
+		const tabs = ['Table', 'Extended'];
 		let { type } = this.state;
 		return (
 			<Dialog title="Periodic table" className="elements-table"

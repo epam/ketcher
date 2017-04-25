@@ -9,7 +9,8 @@ var searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 
 function SGroupTool(editor, type) {
 	if (!(this instanceof SGroupTool)) {
-		if (!editor.selection() || !editor.selection().atoms)
+		var selection = editor.selection() || {};
+		if (!selection.atoms && !selection.bonds)
 			return new SGroupTool(editor, type);
 
 		var sgroups = editor.render.ctab.molecule.sgroups;
@@ -78,29 +79,25 @@ SGroupTool.prototype.mouseup = function (event) {
 function propsDialog(editor, id, defaultType) {
 	var restruct = editor.render.ctab;
 	var struct = restruct.molecule;
-	var atoms = editor.selection() && editor.selection().atoms;
+	var selection = editor.selection() || {};
 	var sg = (id != null) && struct.sgroups.get(id);
 	var type = sg ? sg.type : defaultType;
 	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
-	if (!atoms && !sg) {
+	if (!selection.atoms && !selection.bonds && !sg) {
 		console.info('There is no selection or sgroup');
 		return;
 	}
-
-	console.info('rest', restruct);
 
 	var res = editor.event[eventName].dispatch({
 		type: type,
 		attrs: sg ? sg.getAttrs() : {}
 	});
 
-	var currSelection = editor.selection();
-
 	Promise.resolve(res).then(function (newSg) {
 		// TODO: check before signal
 		if (newSg.type != 'DAT' && // when data s-group separates
-			checkOverlapping(struct, atoms || [])) {
+			checkOverlapping(struct, selection.atoms || [])) {
 			editor.event.message.dispatch({
 				error: 'Partial S-group overlapping is not allowed.'
 			});
@@ -108,7 +105,7 @@ function propsDialog(editor, id, defaultType) {
 			var action = (id != null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
-				chooseAction(id, editor, newSg, currSelection);
+				chooseAction(id, editor, newSg, selection);
 
 			editor.update(action);
 		}
@@ -121,23 +118,23 @@ function chooseAction(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
 	var struct = editor.render.ctab.molecule;
 	var sg = (id != null) && struct.sgroups.get(id);
+
+	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
+
 	var context = newSg.attrs.context;
-
-	var sourceAtoms = sg.atoms || currSelection.atoms;
-
 	var action;
 	switch (context) {
 	case 'Fragment':
-		action = onFragmentAction();
+		action = onGroupAction(restruct.atoms.keys());
+		break;
+	case 'Group':
+		action = onGroupAction(sourceAtoms);
 		break;
 	case 'Single Bond':
 		action = onSingleBondAction();
 		break;
 	case 'Atom':
 		action = onAtomAction();
-		break;
-	case 'Group':
-		action = onGroupAction();
 		break;
 	default:
 		console.error('Invalid context');
@@ -146,93 +143,77 @@ function chooseAction(id, editor, newSg, currSelection) {
 
 	return (id === null || !action) ? action : action.mergeWith(Action.fromSgroupDeletion(restruct, id));
 
-	function onGroupAction() {
-		var atoms = sg.atoms || currSelection.atoms;
-		var bonds = sg.bonds || currSelection.bonds;
-		return sgroupAddAction(atoms, bonds);
-	}
-
-	function onFragmentAction() {
-		var fragment = sourceAtoms
-			.map(function (aid) { return restruct.atoms.get(aid).a.fragment; })
-			.filter(function (fragId, index, self) { return self.indexOf(fragId) === index; })
-			.reduce(function (acc, fragId) {
-				var atoms = getFragmentAtoms(fragId);
-				var bonds = getFragmentBonds(fragId);
-
-				acc.action.mergeWith(sgroupAddAction(atoms));
-				acc.atoms = acc.atoms.concat(atoms);
-				acc.bonds = acc.bonds.concat(bonds);
-
-				return acc;
-			}, {
-				action: new Action(),
-				atoms: [],
-				bonds: []
-			});
-
-		editor.selection({ atoms: fragment.atoms, bonds: fragment.bonds });
-		return fragment.action;
-	}
-
 	function onAtomAction() {
-		if (!sg && currSelection === null) {
-			console.error('There is no selection or sgroup');
-			return new Action();
-		}
+		editor.selection({ atoms: sourceAtoms });
 
-		var atoms = sg.atoms || currSelection.atoms;
-
-		var bonds = (currSelection.bonds || [])
-			.map(function (id) {
-				return {
-					id: id,
-					bond: restruct.bonds.get(id)
-				};
-			})
-			.filter(
-				function (obj) {
-					return !atoms.includes(obj.bond.b.begin) ||
-						!atoms.includes(obj.bond.b.end);
-				})
-			.map(function (bond) {
-				return bond.id;
-			});
-
-		editor.selection({ atoms: currSelection.atoms, bonds: bonds });
-
-		return atoms.reduce(function (acc, atom) {
+		return sourceAtoms.reduce(function (acc, atom) {
 			return acc.mergeWith(sgroupAddAction([atom]));
 		}, new Action());
 	}
 
-	function onSingleBondAction() {
-		if (!sg && currSelection === null) {
-			console.error('There is no selection or sgroup');
-			return;
-		}
+	function onGroupAction(targetAtoms) {
+		var fragIds = sourceAtoms
+			.map(function (aid) { return restruct.atoms.get(aid).a.fragment; })
+			.filter(function (fragId, index, self) { return self.indexOf(fragId) === index; });
 
-		if (sg && sg.atoms.length === 1 || !currSelection.bonds) {
+		var result = fragIds.reduce(function (acc, fragId) {
+			var atoms = targetAtoms
+				.filter(function (aid) {
+					var atom = restruct.atoms.get(aid).a;
+					return fragId === atom.fragment;
+				})
+				.map(Number);
+
+			var bonds = getAtomsBondIds(atoms);
+
+			acc.action.mergeWith(sgroupAddAction(atoms));
+			acc.selection.atoms = acc.selection.atoms.concat(atoms);
+			acc.selection.bonds = acc.selection.bonds.concat(bonds);
+
+			return acc;
+		}, {
+			action: new Action(),
+			selection: {
+				atoms: [],
+				bonds: []
+			}
+		});
+
+		editor.selection(result.selection);
+		return result.action;
+	}
+
+	function onSingleBondAction() {
+		if (sourceAtoms.length === 1 && !currSelection.bonds) {
 			console.error('Cannot transform single atom to single bond');
 			return;
 		}
 
-		var bonds = currSelection.bonds.map(function (id) {
-			return restruct.bonds.get(id);
-		});
+		if (currSelection.bonds) {
+			var selectedBondAtoms = currSelection.bonds.reduce(function (acc, bondid) {
+				var bond = restruct.bonds.get(bondid).b;
 
-		var atoms = sg && sg.atoms || bonds.reduce(function (acc, bond) {
-			var lastAtom = acc[acc.length - 1];
-			if (lastAtom !== bond.b.begin)
-				acc.push(bond.b.begin);
-			acc.push(bond.b.end);
-			return acc;
-		}, []);
+				if (bond.type !== 1 && bond.stereo === 0)
+					return acc;
 
-		editor.selection({ atoms: atoms, bonds: currSelection.bonds });
+				acc = acc.concat([bond.begin, bond.end]);
+				return acc;
+			}, []);
 
-		return bonds.reduce(function (acc, bond) {
-			return acc.mergeWith(sgroupAddAction([bond.b.begin, bond.b.end]));
+			sourceAtoms = sourceAtoms.concat(selectedBondAtoms);
+		}
+
+		var bonds = getAtomsBondIds(sourceAtoms)
+			.filter(function (bondid) {
+				var bond = restruct.bonds.get(bondid).b;
+				return bond.type === 1 && bond.stereo === 0;
+			});
+
+		editor.selection({ atoms: sourceAtoms, bonds: bonds });
+
+		return bonds.reduce(function (acc, bondid) {
+			var bond = restruct.bonds.get(bondid).b;
+			return acc.mergeWith(sgroupAddAction([bond.begin, bond.end]));
 		}, new Action());
 	}
 
@@ -240,21 +221,11 @@ function chooseAction(id, editor, newSg, currSelection) {
 		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId());
 	}
 
-	function getFragmentAtoms(fragId) {
-		return restruct.atoms.keys()
-			.filter(function (aid) {
-				var atom = restruct.atoms.get(aid).a;
-				return fragId === atom.fragment;
-			})
-			.map(Number);
-	}
-
-	function getFragmentBonds(fragId) {
+	function getAtomsBondIds(atoms) {
 		return restruct.bonds.keys()
 			.filter(function (bondid) {
 				var bond = restruct.bonds.get(bondid).b;
-				var atom = restruct.atoms.get(bond.begin).a;
-				return fragId === atom.fragment;
+				return atoms.includes(bond.begin) && atoms.includes(bond.end);
 			})
 			.map(Number);
 	}

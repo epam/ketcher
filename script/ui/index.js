@@ -479,7 +479,7 @@ function open() {
 function save() {
 	dialog(modal.save, { server: server, struct: editor.struct() }).then(function (res) {
 
-		if (res.event == 'saveTmpl') {
+		if (res && res.event === 'saveTmpl') {
 			var tmpl = {
 				struct: molfile.parse(res.tmpl),
 				props: { group: 'User' }

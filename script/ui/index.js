@@ -439,6 +439,8 @@ function dialog(modal, params, noAnimate) {
 		if (fn) fn(res);
 	}
 
+	console.info('dialog param', params);
+
 	function open(resolve, reject) {
 		modal(Object.assign({}, params, {
 			onOk: function (res) {

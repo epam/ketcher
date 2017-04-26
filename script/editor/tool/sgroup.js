@@ -91,7 +91,9 @@ function propsDialog(editor, id, defaultType) {
 
 	var res = editor.event[eventName].dispatch({
 		type: type,
-		attrs: sg ? sg.getAttrs() : {}
+		attrs: sg ? sg.getAttrs() : {
+			context: defineContext(restruct, selection)
+		}
 	});
 
 	Promise.resolve(res).then(function (newSg) {
@@ -102,7 +104,7 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			var action = (id != null) && sg.getAttrs().context === newSg.attrs.context ?
+			var action = (id !== null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
 				chooseAction(id, editor, newSg, selection);
@@ -114,12 +116,40 @@ function propsDialog(editor, id, defaultType) {
 	});
 }
 
+function defineContext(restruct, selection) {
+	if (selection.atoms && !selection.bonds)
+		return 'Atom';
+
+	if (selection.bonds && !selection.atoms) {
+		var allSingle = selection.bonds.every(function (bondid) {
+			var bond = restruct.bonds.get(bondid).b;
+			return (bond.type !== 1 && bond.stereo === 0);
+		});
+
+		if (allSingle)
+			return 'Single Bonds';
+	}
+
+	var componentAtoms = restruct.connectedComponents.keys()
+		.reduce(function (acc, componentId) {
+			var component = restruct.connectedComponents.get(componentId);
+			var intersects = selection.atoms.find(function (atomid) { return component.hasOwnProperty(atomid); });
+			return intersects ? acc.concat(Object.values(component)) : acc;
+		}, []);
+
+	var componentBonds = getAtomsBondIds(restruct, componentAtoms);
+
+	return componentAtoms.length === selection.atoms.length && componentBonds.length === selection.bonds.length ? 'Fragment' : 'Group';
+}
+
 function chooseAction(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
 	var struct = editor.render.ctab.molecule;
 	var sg = (id != null) && struct.sgroups.get(id);
 
 	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
+
+	console.info('rest', restruct);
 
 	var context = newSg.attrs.context;
 	var action;
@@ -164,7 +194,7 @@ function chooseAction(id, editor, newSg, currSelection) {
 				})
 				.map(Number);
 
-			var bonds = getAtomsBondIds(atoms);
+			var bonds = getAtomsBondIds(restruct, atoms);
 
 			acc.action.mergeWith(sgroupAddAction(atoms));
 			acc.selection.atoms = acc.selection.atoms.concat(atoms);
@@ -203,7 +233,7 @@ function chooseAction(id, editor, newSg, currSelection) {
 			sourceAtoms = sourceAtoms.concat(selectedBondAtoms);
 		}
 
-		var bonds = getAtomsBondIds(sourceAtoms)
+		var bonds = getAtomsBondIds(restruct, sourceAtoms)
 			.filter(function (bondid) {
 				var bond = restruct.bonds.get(bondid).b;
 				return bond.type === 1 && bond.stereo === 0;
@@ -220,15 +250,15 @@ function chooseAction(id, editor, newSg, currSelection) {
 	function sgroupAddAction(atoms) {
 		return Action.fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, struct.sgroups.newId());
 	}
+}
 
-	function getAtomsBondIds(atoms) {
-		return restruct.bonds.keys()
-			.filter(function (bondid) {
-				var bond = restruct.bonds.get(bondid).b;
-				return atoms.includes(bond.begin) && atoms.includes(bond.end);
-			})
-			.map(Number);
-	}
+function getAtomsBondIds(restruct, atoms) {
+	return restruct.bonds.keys()
+		.filter(function (bondid) {
+			var bond = restruct.bonds.get(bondid).b;
+			return atoms.includes(bond.begin) && atoms.includes(bond.end);
+		})
+		.map(Number);
 }
 
 function checkOverlapping(struct, atoms) {

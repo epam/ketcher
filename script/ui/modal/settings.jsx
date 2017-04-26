@@ -29,22 +29,22 @@ function Settings(props) {
 			<Form storeName="settings" schema={settingsSchema}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
-						<Field name="resetToSelect"/>
-						<Field name="showValenceWarnings"/>
-						<Field name="atomColoring"/>
-						<Field name="hideChiralFlag"/>
+						<SelectCheckbox name="resetToSelect"/>
+						<SelectCheckbox name="showValenceWarnings"/>
+						<SelectCheckbox name="atomColoring"/>
+						<SelectCheckbox name="hideChiralFlag"/>
 						<SelectFont name="font"/>
 						<FieldMeasure name="fontsz"/>
 						<FieldMeasure name="fontszsub"/>
 					</fieldset>
 					<fieldset className="atoms">
-						<Field name="carbonExplicitly"/>
-						<Field name="showCharge"/>
-						<Field name="showValence"/>
+						<SelectCheckbox name="carbonExplicitly"/>
+						<SelectCheckbox name="showCharge"/>
+						<SelectCheckbox name="showValence"/>
 						<Field name="showHydrogenLabels"/>
 					</fieldset>
 					<fieldset className="bonds">
-						<Field name="aromaticCircle"/>
+						<SelectCheckbox name="aromaticCircle"/>
 						<FieldMeasure name="doubleBondWidth"/>
 						<FieldMeasure name="bondThickness"/>
 						<FieldMeasure name="stereoBondWidth"/>
@@ -55,14 +55,25 @@ function Settings(props) {
 						<Field name="miewAtomLabel"/>
 					</fieldset>
 					<fieldset className="debug">
-						<Field name="showAtomIds"/>
-						<Field name="showBondIds"/>
-						<Field name="showHalfBondIds"/>
-						<Field name="showLoopIds"/>
+						<SelectCheckbox name="showAtomIds"/>
+						<SelectCheckbox name="showBondIds"/>
+						<SelectCheckbox name="showHalfBondIds"/>
+						<SelectCheckbox name="showLoopIds"/>
 					</fieldset>
 				</Accordion>
 			</Form>
 		</Dialog>
+	);
+}
+
+function SelectCheckbox(props, {schema}) {
+	let desc = {
+		title: schema.properties[props.name].title,
+		enum: [true, false],
+		enumNames: ['on', 'off'],
+	};
+	return (
+		<Field schema={desc} {...props}/>
 	);
 }
 

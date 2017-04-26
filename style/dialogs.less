@@ -648,20 +648,24 @@ form.settings {
 	.tabs {
 		&:extend(.-Tabs all);
 	}
-	.settings, .result {
+	fieldset {
 		margin: 0;
 		overflow-y: auto;
-		height: 28em;
+		height: 25em;
 		width: 25em;
-		li, dt {
-		    margin: 1.1em 0 0.3em 0.3em;
+		border-color: #ddd;
+		border-radius: 0 4px 4px 4px;
+		label {
+			display: block;
+			margin: 1.1em 0 0.3em 0.3em;
 		}
-	}
-	dt {
-		font-weight: bold;
-	}
-	dd {
-		margin-left: 1.5em;
+		dt {
+			font-weight: bold;
+			margin: 1.1em 0 0.3em 0.3em;
+		}
+		dd {
+			margin-left: 1.5em;
+		}
 	}
 }
 

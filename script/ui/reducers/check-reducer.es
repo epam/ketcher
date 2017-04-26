@@ -1,21 +1,14 @@
 const initState = {
-	valid: true,
+	moleculeErrors: {},
 	stateForm: {
-		valence: true,
-		radicals: true,
-		pseudoatoms: true,
-		stereo: true,
-		query: true,
-		overlapping_atoms: true,
-		overlapping_bonds: true,
-		rgroups: true,
-		chiral: true,
-		'3d': true
+		checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
+			'overlapping_bonds', 'rgroups', 'chiral', '3d']
 	}
 };
 
 const dumbActions = [
-	'UPDATE_CHECK_FORM'
+	'UPDATE_CHECK_FORM',
+	'CHECK_ERRORS'
 ];
 
 export default function checkReducer(state = initState, action) {

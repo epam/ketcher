@@ -1,122 +1,68 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
 import { form as Form, Field } from '../component/form';
+import { checkErrors } from '../actions/check-action.es';
 
 const checkSchema = {
 	title: 'Check',
 	type: 'object',
 	properties: {
-		valence: {
-			title: 'Valence',
-			type: 'boolean'
-		},
-		radicals: {
-			title: 'Radical',
-			type: 'boolean'
-		},
-		pseudoatoms: {
-			title: 'Pseudoatom',
-			type: 'boolean'
-		},
-		stereo: {
-			title: 'Stereochemistry',
-			type: 'boolean'
-		},
-		query: {
-			title: 'Query',
-			type: 'boolean'
-		},
-		overlapping_atoms: {
-			title: 'Overlapping Atoms',
-			type: 'boolean'
-		},
-		overlapping_bonds: {
-			title: 'Overlapping Bonds',
-			type: 'boolean'
-		},
-		rgroups: {
-			title: 'R-Groups',
-			type: 'boolean'
-		},
-		chiral: {
-			title: 'Chirality',
-			type: 'boolean'
-		},
-		'3d': {
-			title: '3D Structure',
-			type: 'boolean'
+		checkOptions: {
+			enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
+				'overlapping_bonds', 'rgroups', 'chiral', '3d'],
+			enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
+				'Overlapping Bonds', 'R-Groups', 'Chirality', '3D Structure']
 		}
 	}
 };
+function getOptionName(opt) {
+	let d = checkSchema.properties.checkOptions;
+	return d.enumNames[d.enum.indexOf(opt)];
+}
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { result, valid, check, ...prop } = props;
+	let { result, moleculeErrors, check, ...prop } = props;
 
 	return (
 		<Dialog title="Structure Check" className="check"
-				result={() => result} valid={() => valid} params={prop}>
+				result={() => result} params={prop}>
 			<Form storeName="check" schema={checkSchema}>
-				<Tabs className="tabs" captions={tabs}>
-					<ErrorsCheck className="result" check={check}/>
-					<ul className="settings">  {
-						Object.keys(checkSchema.properties).map(type => (
-							<li><Field name={type}/></li>
-						))
-					}</ul>
+				<Tabs className="tabs" captions={tabs}
+					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, result.checkOptions) : null}>
+					<ErrorsCheck check={check} moleculeErrors={moleculeErrors}/>
+					<Field name="checkOptions" multiple={true} type="checkbox"/>
 				</Tabs>
 			</Form>
 		</Dialog>
 	);
 }
 
-class ErrorsCheck extends Component {
-	constructor(props, { stateStore }) {
-		super(props);
-		let { stateForm } = stateStore.props;
-		let optsTypes = Object.keys(stateForm).filter((type) => stateForm[type]);
-
-		this.state = {
-			moleculeErrors: {}
-		};
-
-		this.checkMolecule(optsTypes)
-	}
-
-	checkMolecule(optsTypes) {
-		this.props.check({ 'types': optsTypes })
-			.then(res => this.setState({ moleculeErrors: res }))
-			.catch(console.error);
-	}
-
-	render(props) {
-		let { moleculeErrors } = this.state;
-		let moleculeErrorsTypes = Object.keys(moleculeErrors);
-		return (
-			<dl {...props}>
-				{moleculeErrorsTypes.length === 0 ?
-					<li>
-						<div className="error-name">No errors found</div>
-					</li> :
-					moleculeErrorsTypes.map((type) => (
-						<div>
-							<dt>{checkSchema.properties[type].title} error :</dt>
-							<dd>{moleculeErrors[type]}</dd>
-						</div>
-					))}
-			</dl>
-		);
-	}
+function ErrorsCheck(props) {
+	let { moleculeErrors } = props;
+	let moleculeErrorsTypes = Object.keys(moleculeErrors);
+	return (
+		<fieldset {...props}>
+			{moleculeErrorsTypes.length === 0 ?
+				<dt>No errors found</dt> :
+				moleculeErrorsTypes.map(type => (
+					<div>
+						<dt>{getOptionName(type)} error :</dt>
+						<dd>{moleculeErrors[type]}</dd>
+					</div>
+				))}
+		</fieldset>
+	);
 }
 
 export default connect((store) => {
 	return {
 		result: store.check.stateForm,
-		valid: store.check.valid
+		moleculeErrors: store.check.moleculeErrors
 	};
 })(Check);
 

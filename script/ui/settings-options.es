@@ -5,27 +5,23 @@ export const settings = {
 	properties: {
 		resetToSelect: {
 			title: "Reset to Select Tool",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		// Render
 		showValenceWarnings: {
 			title: "Show valence warnings",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: true
 		},
 		atomColoring: {
 			title: "Atom coloring",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: true
 		},
 		hideChiralFlag: {
 			title: "Do not show the Chiral flag",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		font: {
@@ -50,20 +46,17 @@ export const settings = {
 		// Atom
 		carbonExplicitly: {
 			title: "Display carbon explicitly",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		showCharge: {
 			title: "Display charge",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: true
 		},
 		showValence: {
 			title: "Display valence",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: true
 		},
 		showHydrogenLabels: {
@@ -74,8 +67,7 @@ export const settings = {
 		// Bonds
 		aromaticCircle: {
 			title: "Aromatic Bonds as circle",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: true
 		},
 		doubleBondWidth: {
@@ -121,26 +113,22 @@ export const settings = {
 		// Debug
 		showAtomIds: {
 			title: "Show atom Ids",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		showBondIds: {
 			title: "Show bonds Ids",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		showHalfBondIds: {
 			title: "Show half bonds Ids",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 		showLoopIds: {
 			title: "Show loop Ids",
-			enum: [true, false],
-			enumNames: ['on', 'off'],
+			type: "boolean",
 			default: false
 		},
 	}

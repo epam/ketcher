@@ -45,39 +45,25 @@ const initState = () => {
 
 export default function sgroupSpecialReducer(state = initState(), action) {
 	if (action.type === 'UPDATE_SGROUPSPEC_FORM') {
-		if (action.payload.type && Object.keys(action.payload).length >= 1) {
-			return initFormState(action.payload);
-		}
+		if (action.payload['context'] && action.payload['context'] !== state.stateForm.context)
+			return onContextChange(state, action.payload['context']);
 
-		const name = firstObjKey(action.payload);
+		if (action.payload['fieldName'] && action.payload['fieldName'] !== state.stateForm.fieldName)
+			return onFieldNameChange(state, action.payload['fieldName']);
 
-		switch (name) {
-		case 'context':
-			return onContextChange(state, action.payload[name]);
-		case 'fieldName':
-			return onFieldNameChange(state, action.payload[name]);
-		default:
-			return {
-				...state,
-				stateForm: Object.assign({}, state.stateForm, action.payload)
-			};
-		}
+		return {
+			...state,
+			stateForm: Object.assign({}, state.stateForm, action.payload)
+		};
 	}
 
 	return state;
 }
 
-const initFormState = payload => {
-	const init = initState();
-	return {
-		schema: init.schema,
-		stateForm: Object.assign({}, init.stateForm, payload)
-	};
-};
-
 const onContextChange = (state, context) => {
 	const fieldName = defaultFieldName(context);
 	const fieldValue = defaultFieldValue(context, fieldName);
+
 
 	return {
 		...state,

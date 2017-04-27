@@ -123,11 +123,10 @@ function defineContext(restruct, selection) {
 	if (selection.bonds && !selection.atoms) {
 		var allSingle = selection.bonds.every(function (bondid) {
 			var bond = restruct.bonds.get(bondid).b;
-			return (bond.type !== 1 && bond.stereo === 0);
+			return (bond.type === 1 && bond.stereo === 0);
 		});
 
-		if (allSingle)
-			return 'Single Bonds';
+		return allSingle ? 'Single Bond' : 'Group';
 	}
 
 	var componentAtoms = restruct.connectedComponents.keys()
@@ -148,8 +147,6 @@ function chooseAction(id, editor, newSg, currSelection) {
 	var sg = (id != null) && struct.sgroups.get(id);
 
 	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
-
-	console.info('rest', restruct);
 
 	var context = newSg.attrs.context;
 	var action;
@@ -223,7 +220,7 @@ function chooseAction(id, editor, newSg, currSelection) {
 			var selectedBondAtoms = currSelection.bonds.reduce(function (acc, bondid) {
 				var bond = restruct.bonds.get(bondid).b;
 
-				if (bond.type !== 1 && bond.stereo === 0)
+				if (bond.type !== 1 || bond.stereo !== 0)
 					return acc;
 
 				acc = acc.concat([bond.begin, bond.end]);
@@ -236,7 +233,7 @@ function chooseAction(id, editor, newSg, currSelection) {
 		var bonds = getAtomsBondIds(restruct, sourceAtoms)
 			.filter(function (bondid) {
 				var bond = restruct.bonds.get(bondid).b;
-				return bond.type === 1 && bond.stereo === 0;
+				return bond.type === 1 || bond.stereo !== 0;
 			});
 
 		editor.selection({ atoms: sourceAtoms, bonds: bonds });

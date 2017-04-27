@@ -1,4 +1,5 @@
 const initState = {
+	errors: {},
 	moleculeErrors: {},
 	stateForm: {
 		checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',

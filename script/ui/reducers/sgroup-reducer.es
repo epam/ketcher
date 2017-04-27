@@ -1,4 +1,5 @@
 const initState = {
+	errors: {},
 	valid: true,
 	stateForm: {
 		type: 'GEN'

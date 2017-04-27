@@ -13,18 +13,20 @@ class Form extends Component {
 		if (init) this.updateState(dispatch, storeName, init);
 	}
 	updateState(dispatch, storeName, newstate) {
-		let { instance, valid } = this.schema.serialize(newstate);
-		dispatch(updateFormState(storeName, { stateForm: instance, valid: valid }));
+		let { instance, valid, errors } = this.schema.serialize(newstate);
+		let errs = getErrorsObj(errors);
+		dispatch(updateFormState(storeName, { stateForm: instance, valid, errors: errs }));
 	}
 	getChildContext() {
 		let { schema } = this.props;
 		return { schema, stateStore: this };
 	}
 	field(name, onChange) {
-		let {dispatch, storeName, stateForm} = this.props;
+		let {dispatch, storeName, stateForm, errors} = this.props;
 		var value = stateForm[name];
 		var self = this;
 		return {
+			'data-error': errors[name] || false,
 			value: value,
 			onChange(value) {
 				let newstate = Object.assign(self.props.stateForm, { [name]: value });
@@ -51,7 +53,8 @@ class Form extends Component {
 const form = connect((store, ownProps ) => {
 	let { storeName } = ownProps;
 	return {
-		stateForm: store[storeName].stateForm
+		stateForm: store[storeName].stateForm,
+		errors: store[storeName].errors,
 	};
 })(Form);
 
@@ -136,6 +139,16 @@ function serializeRewrite(serializeMap, instance, schema) {
 
 function deserializeRewrite(deserializeMap, instance, schema) {
 	return instance;
+}
+
+function getErrorsObj(errors) {
+	let errs = {};
+	let field;
+	errors.forEach(item => {
+		field = item.property.split('.')[1];
+		if (!errs[field]) errs[field] = item.message;
+	});
+	return errs;
 }
 
 function constant(schema, prop) {

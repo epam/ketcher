@@ -58,6 +58,13 @@ input[type=text], input[type=number], input[type=search] {
 		.highlight-shadow(black);
 	}
 
+	&[data-error] {
+		border: 1px solid @error-color;
+		&:hover, &:focus {
+			.highlight-shadow(@error-color);
+		}
+	}
+
 	&[disabled],
 	&[readonly],
 	fieldset[disabled] & {

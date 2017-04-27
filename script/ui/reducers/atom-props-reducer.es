@@ -1,4 +1,5 @@
 const initState = {
+	errors: {},
 	valid: false,
 	stateForm: {
 		label: '',

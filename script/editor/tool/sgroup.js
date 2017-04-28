@@ -164,8 +164,7 @@ function chooseAction(id, editor, newSg, currSelection) {
 		action = onAtomAction();
 		break;
 	default:
-		console.error('Invalid context');
-		return new Action();
+		return sgroupAddAction(sourceAtoms);
 	}
 
 	return (id === null || !action) ? action : action.mergeWith(Action.fromSgroupDeletion(restruct, id));

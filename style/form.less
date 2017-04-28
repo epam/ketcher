@@ -80,10 +80,11 @@ label[data-error] {
 		}
 	}
 
-	&:hover:before {
+	&:hover:after {
 		content: attr(data-error);
+		display: block;
 		position: absolute;
-		margin-top: @input-height;
+		margin-right: 0.5em;
 		padding: 0.35em;
 		background: lighten(@error-color, 30%);
 		border: 1px solid @error-color;

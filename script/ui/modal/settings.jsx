@@ -101,10 +101,10 @@ class FieldMeasure extends Component {
 		let { meas, cust } = this.state;
 		let { name, ...props } = this.props;
 		let { schema, stateStore } = this.context;
-		let { value, onChange } = stateStore.field(name);
+		let { value, onChange, dataError } = stateStore.field(name);
 		if (convertValue(cust, meas, 'px') !== value) this.setState({ meas: 'px', cust: value }); // Hack: New store (RESET)
 		return (
-			<label {...props} className="measure-field">
+			<label {...props} className="measure-field" data-error={dataError}>
 				{schema.properties[name].title}:
 				<Input schema={schema.properties[name]} value={cust}
 					   step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}

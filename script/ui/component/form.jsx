@@ -26,7 +26,7 @@ class Form extends Component {
 		var value = stateForm[name];
 		var self = this;
 		return {
-			'data-error': errors[name] || false,
+			dataError: errors[name] || false,
 			value: value,
 			onChange(value) {
 				let newstate = Object.assign(self.props.stateForm, { [name]: value });
@@ -58,25 +58,26 @@ const form = connect((store, ownProps ) => {
 	};
 })(Form);
 
-function Label({ labelPos, title, children }) {
+function Label({ labelPos, title, children, ...props }) {
 	return (
-		<label>{ title && labelPos != 'after' ? `${title}:` : '' }
-		  {children}
-		  { title && labelPos == 'after' ? title : '' }
+		<label {...props}>{ title && labelPos != 'after' ? `${title}:` : '' }
+			{children}
+			{ title && labelPos == 'after' ? title : '' }
 		</label>
 	);
 }
 
 class Field extends Component {
 	render() {
-		let { name, onChange, ...props } = this.props;
+		let { name, onChange, className, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
+		let { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 		return (
-			<Label title={props.title || desc.title} >
+			<Label className={className} data-error={dataError} title={props.title || desc.title} >
 				<Input name={name} schema={desc}
-					   {...stateStore.field(name, onChange)} {...props}/>
+					   {...fieldOpts} {...props}/>
 			</Label>
 		);
 	}

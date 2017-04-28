@@ -5,12 +5,11 @@ import { connect } from 'preact-redux';
 import { rgroup as rgroupSchema } from '../structschema';
 import { form as Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
-import Input from '../component/input';
 
-function IfThenSelect(props, {schema, stateStore}) {
+function IfThenSelect(props, { schema }) {
 	let { name, rgids } = props;
-	let title = schema.properties[name].title;
 	let desc = {
+		title: schema.properties[name].title,
 		enum: [0],
 		enumNames: ['Always']
 	};
@@ -22,12 +21,7 @@ function IfThenSelect(props, {schema, stateStore}) {
 		}
 	});
 
-	return (
-		<label {...props}>
-			{title}:
-			<Input name={name} schema={desc} {...stateStore.field(name)} />
-		</label>
-	);
+	return <Field name={name} schema={desc} {...props}/>;
 }
 
 function RgroupLogic (props) {

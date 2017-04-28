@@ -1,7 +1,8 @@
+import { defaultOpts } from '../actions/settings-action.es';
 const initState = {
 	errors: {},
 	valid: true,
-	stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || {}
+	stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || defaultOpts()
 };
 
 const dumbActions = [

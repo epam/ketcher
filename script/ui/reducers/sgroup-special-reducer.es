@@ -45,16 +45,14 @@ const initState = () => {
 
 export default function sgroupSpecialReducer(state = initState(), action) {
 	if (action.type === 'UPDATE_SGROUPSPEC_FORM') {
-		if (action.payload['context'] && action.payload['context'] !== state.stateForm.context)
-			return onContextChange(state, action.payload['context']);
+		if (action.payload.stateForm['context'] && action.payload.stateForm['context'] !== state.stateForm.context
+			|| !action.payload.stateForm['fieldName'])
+			return onContextChange(state, action.payload.stateForm['context']);
 
-		if (action.payload['fieldName'] && action.payload['fieldName'] !== state.stateForm.fieldName)
-			return onFieldNameChange(state, action.payload['fieldName']);
+		if (action.payload.stateForm['fieldName'] && action.payload.stateForm['fieldName'] !== state.stateForm.fieldName)
+			return onFieldNameChange(state, action.payload.stateForm['fieldName']);
 
-		return {
-			...state,
-			stateForm: Object.assign({}, state.stateForm, action.payload)
-		};
+		return Object.assign({}, state, action.payload);
 	}
 
 	return state;

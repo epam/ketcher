@@ -28,7 +28,7 @@ class Form extends Component {
 			dataError: errors[name] || false,
 			value: value,
 			onChange(value) {
-				let newstate = Object.assign(self.props.stateForm, { [name]: value });
+				let newstate = Object.assign({}, self.props.stateForm, { [name]: value });
 				self.updateState(dispatch, storeName, newstate);
 				if (onChange) onChange(value);
 			}

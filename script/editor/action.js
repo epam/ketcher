@@ -1350,6 +1350,95 @@ function atomGetPos(restruct, id) {
 	return restruct.molecule.atoms.get(id).pp;
 }
 
+function fromAtomAction(restruct, newSg, sourceAtoms) {
+	return sourceAtoms.reduce(function (acc, atom) {
+		acc.action = acc.action.mergeWith(
+			fromSgroupAddition(restruct, newSg.type, [atom], newSg.attrs, restruct.molecule.sgroups.newId())
+		);
+		return acc;
+	}, {
+		action: new Action(),
+		selection: {
+			atoms: sourceAtoms,
+			bonds: []
+		}
+	});
+}
+
+function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
+	var fragIds = Object.keys(
+		sourceAtoms.reduce(function (acc, aid) {
+			var fragId = restruct.atoms.get(aid).a.fragment;
+			acc[fragId] = true;
+			return acc;
+		}, {})
+	)
+		.map(Number);
+
+	return fragIds.reduce(function (acc, fragId) {
+		var atoms = targetAtoms
+			.filter(function (aid) {
+				var atom = restruct.atoms.get(aid).a;
+				return fragId === atom.fragment;
+			})
+			.map(Number);
+
+		var bonds = getAtomsBondIds(restruct, atoms);
+
+		acc.action = acc.action.mergeWith(
+			fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, restruct.molecule.sgroups.newId())
+		);
+		acc.selection.atoms = acc.selection.atoms.concat(atoms);
+		acc.selection.bonds = acc.selection.bonds.concat(bonds);
+
+		return acc;
+	}, {
+		action: new Action(),
+		selection: {
+			atoms: [],
+			bonds: []
+		}
+	});
+}
+
+function fromSBAction(restruct, newSg, sourceAtoms, currSelection) {
+	var bonds = getAtomsBondIds(restruct, sourceAtoms);
+
+	if (currSelection.bonds)
+		bonds.concat(currSelection.bonds);
+
+	return bonds.reduce(function (acc, bondid) {
+		var bond = restruct.bonds.get(bondid).b;
+
+		var singleBond = bond.type === 1 && bond.stereo === 0;
+
+		if (singleBond) {
+			acc.action = acc.action
+				.mergeWith(
+					fromSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs, restruct.molecule.sgroups.newId())
+				);
+			acc.selection.bonds.push(bondid);
+		}
+
+		return acc;
+	}, {
+		action: new Action(),
+		selection: {
+			atoms: sourceAtoms,
+			bonds: []
+		}
+	});
+}
+
+function getAtomsBondIds(restruct, atoms) {
+	return restruct.bonds.keys()
+		.filter(function (bondid) {
+			var bond = restruct.bonds.get(bondid).b;
+			return atoms.includes(bond.begin) && atoms.includes(bond.end);
+		})
+		.map(Number);
+}
+
 module.exports = Object.assign(Action, {
 	fromMultipleMove: fromMultipleMove,
 	fromAtomAddition: fromAtomAddition,
@@ -1380,5 +1469,8 @@ module.exports = Object.assign(Action, {
 	fromSgroupAddition: fromSgroupAddition,
 	fromFlip: fromFlip,
 	fromRotate: fromRotate,
-	fromBondAlign: fromBondAlign
+	fromBondAlign: fromBondAlign,
+	fromAtomAction: fromAtomAction,
+	fromGroupAction: fromGroupAction,
+	fromSBAction: fromSBAction
 });

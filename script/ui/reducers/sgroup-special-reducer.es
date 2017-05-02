@@ -50,7 +50,6 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 
 		if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
 			return onContextChange(state, actionContext);
-
 		if (actionFieldName !== state.stateForm.fieldName)
 			return onFieldNameChange(state, actionFieldName);
 
@@ -63,7 +62,6 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 const onContextChange = (state, context) => {
 	const fieldName = defaultFieldName(context);
 	const fieldValue = defaultFieldValue(context, fieldName);
-
 
 	return {
 		...state,

@@ -25,7 +25,7 @@ class Form extends Component {
 		var value = stateForm[name];
 		var self = this;
 		return {
-			dataError: errors[name] || false,
+			dataError: errors && errors[name] || false,
 			value: value,
 			onChange(value) {
 				let newstate = Object.assign({}, self.props.stateForm, { [name]: value });

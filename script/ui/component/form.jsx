@@ -53,7 +53,7 @@ const form = connect((store, ownProps ) => {
 	let { storeName } = ownProps;
 	return {
 		stateForm: store[storeName].stateForm,
-		errors: store[storeName].errors,
+		errors: store[storeName].errors
 	};
 })(Form);
 
@@ -68,15 +68,19 @@ function Label({ labelPos, title, children, ...props }) {
 
 class Field extends Component {
 	render() {
-		let { name, onChange, className, ...props } = this.props;
+		let { name, onChange, className, component, ...props } = this.props;
 		let { schema, stateStore } = this.context;
 		let desc = props.schema || schema.properties[name];
 
 		let { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 		return (
 			<Label className={className} data-error={dataError} title={props.title || desc.title} >
-				<Input name={name} schema={desc}
-					   {...fieldOpts} {...props}/>
+				{
+					component ?
+						h(component, { ...fieldOpts, ...props }) :
+						<Input name={name} schema={desc}
+							   {...fieldOpts} {...props}/>
+				}
 			</Label>
 		);
 	}

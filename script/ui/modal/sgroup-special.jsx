@@ -2,6 +2,7 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 import { form as Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
+import ComboBox from '../component/combobox';
 /** @jsx h */
 
 function SelectInput({ title, name, schema, ...prop }) {
@@ -20,7 +21,7 @@ function SelectInput({ title, name, schema, ...prop }) {
 		}
 	);
 
-	return <Field name={name} schema={inputSelect} {...prop} />
+	return <Field name={name} schema={inputSelect} component={ComboBox} {...prop} />
 }
 
 const customFieldNameSchema = {

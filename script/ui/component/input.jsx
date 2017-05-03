@@ -92,68 +92,6 @@ FieldSet.val = function (ev, schema) {
 	return input.type == 'radio' ? res[0] : res;
 };
 
-class SelectInput extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { suggestsHidden: true };
-
-		this.click = this.click.bind(this);
-		this.blur = this.blur.bind(this);
-		this.updateInput = this.updateInput.bind(this);
-	}
-
-	updateInput(event) {
-		this.setState({ suggestsHidden: true });
-		this.props.onChange(event);
-	}
-
-	click(event) {
-		if (event.detail !== 0) // difference between real click on input and click after value updated
-			this.setState({ suggestsHidden: false });
-	}
-
-	blur() {
-		this.setState({ suggestsHidden: true });
-	}
-
-	render(props) {
-		const { value, type = 'text', schema, ...prop } = props;
-
-		const suggestList = schema.enumNames
-			.filter(item => item !== value)
-			.map(item => <li onMouseDown={this.updateInput}>{item}</li>);
-
-		return (
-			<div>
-				<input type={type} value={value} onClick={this.click}
-					   onBlur={this.blur} onInput={this.updateInput} {...prop} autocomplete="off"/>
-				{
-					suggestList.length != 0 ?
-						(
-							<div className='suggestList-wrapper'
-								 style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}>
-								<ui className='suggestList'>
-									{
-										suggestList
-									}
-								</ui>
-							</div>
-						) : ''
-				}
-			</div>
-		);
-	}
-}
-
-SelectInput.val = function (ev, schema) {
-	const input = ev.target;
-	const value = input.value || input.textContent;
-
-	const isNumber = (input.type == 'number' || input.type == 'range') ||
-		(schema && (schema.type == 'number' || schema.type == 'integer'));
-	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
-};
-
 function enumSchema(schema, cbOrIndex) {
 	var isTypeValue = Array.isArray(schema);
 	if (typeof cbOrIndex == 'function') {
@@ -235,8 +173,6 @@ function componentMap({ schema, type, multiple }) {
 			return CheckBox;
 		return (type == 'textarea') ? TextArea : GenericInput;
 	}
-	if (schema.type === 'string')
-		return SelectInput;
 	if (multiple || schema.type == 'array')
 		return (type == 'checkbox') ? FieldSet : Select;
 	return (type == 'radio') ? FieldSet : Select;

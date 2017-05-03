@@ -4,17 +4,18 @@ import { h, Component } from 'preact';
 class ComboBox extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { suggestsHidden: true };
+		this.state = {
+			suggestsHidden: true
+		};
 
 		this.click = this.click.bind(this);
 		this.blur = this.blur.bind(this);
 		this.updateInput = this.updateInput.bind(this);
-		this.val = this.val.bind(this);
 	}
 
 	updateInput(event) {
+		const value = (event.target.value || event.target.textContent);
 		this.setState({ suggestsHidden: true });
-		const value = this.val(event, this.props.schema);
 		this.props.onChange(value);
 	}
 
@@ -25,15 +26,6 @@ class ComboBox extends Component {
 
 	blur() {
 		this.setState({ suggestsHidden: true });
-	}
-
-	val(event, schema) {
-		const input = event.target;
-		const value = input.value || input.textContent;
-
-		const isNumber = (input.type == 'number' || input.type == 'range') ||
-			(schema && (schema.type == 'number' || schema.type == 'integer'));
-		return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
 	}
 
 	render(props) {

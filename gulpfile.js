@@ -132,14 +132,10 @@ gulp.task('font', function (cb) {
 		.pipe(gulp.dest(options.dist));
 });
 
-gulp.task('libs', function () {
+gulp.task('copy', function () {
 	return gulp.src(['./script/prototype.js',
-	                 'raphael'].map(require.resolve))
-		.pipe(gulp.dest(options.dist));
-});
-
-gulp.task('distrib', function () {
-	return gulp.src(distrib)
+	                 'raphael'].map(require.resolve)
+	                .concat(distrib))
 		.pipe(gulp.dest(options.dist));
 });
 
@@ -186,8 +182,7 @@ gulp.task('check-deps-exact', function (cb) {
 		var dep = pkg[d];
 		return Object.keys(dep).every(name => {
 			var ver = dep[name];
-			return name == 'budo' ||
-				(semver.valid(ver) && semver.clean(ver));
+			return (semver.valid(ver) && semver.clean(ver));
 		});
 	});
 	if (!allValid) {
@@ -284,6 +279,6 @@ function glyphReduce(glyphs) {
 
 gulp.task('pre-commit', ['lint', 'check-epam-email',
                          'check-deps-exact']);
-gulp.task('assets', ['libs', 'distrib', 'help']);
+gulp.task('assets', ['copy', 'help']);
 gulp.task('code', ['style', 'script', 'html']);
 gulp.task('build', ['clean', 'code', 'assets']);

@@ -6,8 +6,7 @@ import Input from './input';
 import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
-	constructor({dispatch, storeName,
-					schema, init, ...props}) {
+	constructor({dispatch, schema, init, storeName, ...props}) {
 		super();
 		this.schema = propSchema(schema, props);
 		if (init) this.updateState(dispatch, storeName, init);

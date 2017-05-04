@@ -78,6 +78,13 @@ Map.prototype.ikeys = function () {
 	return keys;
 };
 
+Map.prototype.values = function () {
+	var values = [];
+	for (var v in this._obj)
+		values.push(this._obj[v]);
+	return values;
+};
+
 Map.prototype.set = function (key, value) {
 	var val;
 	this._count += (typeof value !== 'undefined' ? 1 : 0) - (typeof this._obj[key] !== 'undefined' ? 1 : 0);

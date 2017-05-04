@@ -45,6 +45,10 @@ Pool.prototype.ikeys = function () {
 	return this._map.ikeys();
 };
 
+Pool.prototype.values = function () {
+	return this._map.values();
+};
+
 Pool.prototype.each = function (func, context) {
 	this._map.each(func, context);
 };

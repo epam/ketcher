@@ -653,13 +653,21 @@ function templateLib(selTmpl, group, selId) {
 			props: tmplStr.props
 		};
 	});
-	if (selId !== null)	selTmpl = userTmpls[selId];
 
-	dialog(modal.templates, { tmpls: libTmpls, userTmpls: userTmpls, selected: selTmpl, group: group }, true).then(function (res) {
+	if (selId !== null)
+		selTmpl = userTmpls[selId];
+
+	dialog(modal.templates, {
+		tmpls: libTmpls,
+		userTmpls: userTmpls,
+		selected: selTmpl,
+		group: group
+	}, true).then(function (res) {
 
 		if (res.event == 'attachEdit') {
 			attach(res.tmpl, res.index).then(function () {
-				templateLib(res.tmpl, res.tmpl.props.group, res.tmpl.props.group == 'User' ? res.index : null);
+				templateLib(res.tmpl, res.tmpl.props.group,
+				            res.tmpl.props.group == 'User' ? res.index : null);
 				return true;
 			});
 		} else if (res.event == 'chooseTmpl') {
@@ -675,7 +683,6 @@ function templateLib(selTmpl, group, selId) {
 function attach(tmpl, index) {
 	var tmplName = tmpl.struct.name;
 	var group = tmpl.props.group;
-
 	return dialog(modal.attach, {
 			userOpts: JSON.parse(localStorage.getItem("ketcher-opts")),
 			tmpl: tmpl

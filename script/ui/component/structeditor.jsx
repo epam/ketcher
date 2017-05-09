@@ -3,34 +3,46 @@ import { h, Component } from 'preact';
 
 import Editor from '../../editor'
 
+function setupEditor(editor, props, oldProps = {}) {
+	let { struct, tool, toolOpts, options } = props;
+	if (struct != oldProps.struct)
+		console.info('update s'), editor.struct(struct);
+	if (tool != oldProps.tool || toolOpts != oldProps.toolOpts)
+		console.info('update t'), editor.tool(tool, toolOpts);
+	if (oldProps.options && options != oldProps.options)
+		console.info('update o'), editor.options(options);
+
+	// update handlers
+	for (let name in editor.event) {
+		let eventName = `on${capitalize(name)}`;
+		if (props[eventName] != oldProps[eventName]) {
+			console.info('update editor handler', eventName);
+			if (oldProps[eventName])
+				editor.event[name].remove(oldProps[eventName]);
+			if (props[eventName])
+				editor.event[name].add(props[eventName]);
+		}
+	}
+}
+
 class StructEditor extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}
+	componentWillReceiveProps(props) {
+		setupEditor(this.instance, props, this.props);
+	}
 	componentDidMount() {
-		let el = this.refs ? this.refs.base : this.base;
-		console.assert(el, "No element");
-
-		let { struct, tool, options } = this.props;
-		let editor = new Editor(el, { ...options });
-		if (struct)
-			editor.struct(struct);
-		if (tool)
-			editor.tool(tool.name, Object.assign({}, tool.opts));
-
-		for (let name in editor.event) {
-			let eventName = `on${capitalize(name)}`;
-			if (this.props[eventName])
-				editor.event[name].add(this.props[eventName]);
-		}
-		this.instance = editor;
+		console.assert(this.base, "No backing element");
+		this.instance = new Editor(this.base, { ...this.props.options });
+		setupEditor(this.instance, this.props);
 		if (this.props.onInit)
-			this.props.onInit(editor);
+			this.props.onInit(this.instance);
 	}
 	render () {
 		let { Tag="div", ...props } = this.props;
 		return (
-			<Tag /*ref="el"*/ {...props}/>
+			<Tag {...props}/>
 		);
 	}
 }

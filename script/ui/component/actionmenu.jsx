@@ -17,11 +17,12 @@ export function shortcutStr(shortcut) {
 	});
 }
 
-function ActionButton({item, ...props}) {
+function ActionButton({item, onAction, ...props}) {
 	let act = acts[item];
 	let shortcut = act.shortcut && shortcutStr(act.shortcut);
 	return (
 		<button
+		  onClick={ev => onAction(act.action)}
 		  title={shortcut ? `${act.title} (${shortcut})` :
 		                    act.title}>
 		  {act.title}

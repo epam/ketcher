@@ -8,8 +8,9 @@ import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 
 const AppEditor = connect(
-	(state, props) => ({
-		tool: state.tool
+	(state) => ({
+		tool: state.active.tool,
+		toolOpts: state.active.opts
 	}),
 	(dispatch, props) => ({
 		onInit: function (editor) {
@@ -20,14 +21,22 @@ const AppEditor = connect(
 	})
 )(StructEditor);
 
-function App() {
-	return (
-		<main role="application">
-		  <AppEditor id="canvas"/>
-		  <Toolbar/>
-		</main>
-	)
-};
+const App = connect(
+	null,
+	dispatch => ({
+		onAction: function (action) {
+			console.info('action', action);
+			dispatch({ type: 'UPDATE',
+					   data: { active: action }});
+		}
+	})
+)(props => (
+   <main role="application">
+   <AppEditor id="canvas"/>
+   <Toolbar {...props}/>
+   </main>
+))
+
 
 function init(el, options, server) {
 	var store = state(options, server);

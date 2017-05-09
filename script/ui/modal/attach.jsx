@@ -15,15 +15,16 @@ const EDITOR_STYLES = {
 };
 
 class Attach extends Component {
-	constructor({dispatch, ...props}) {
+	constructor({onInit, ...props}) {
 		super(props);
 
 		this.tmpl = initTmpl(props.tmpl);
-		dispatch(initAttach(this.tmpl.struct.name, this.tmpl.props));
+		onInit(this.tmpl.struct.name, this.tmpl.props);
 	}
 
 	render() {
-		let { name, atomid, bondid, userOpts, dispatch, ...prop} = this.props;
+		let { name, atomid, bondid, onNameEdit,
+			  onAttachEdit, ...prop} = this.props;
 		let editorOpts = Object.assign(EDITOR_STYLES, { scale: this.tmpl.scale });
 
 		const result = () => (
@@ -36,13 +37,14 @@ class Attach extends Component {
 			<Dialog title="Template Edit" className="attach"
 					result={result} params={prop} buttons={['Cancel', 'OK']}>
 				<label>Template Name:
-					<Input type="text" value={name} onChange={v => dispatch(setTmplName(v))} placeholder="tmpl"/>
+				  <Input type="text" value={name}
+						 onChange={onNameEdit} placeholder="tmpl"/>
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="editor"
 							  struct={this.tmpl.struct}
-							  onAttachEdit={ap => dispatch(setAttachPoints(ap))}
-							  tool={{ name: 'attach', opts: this.tmpl.props }}
+							  onAttachEdit={onAttachEdit}
+				              tool="attach" toolOpts={ this.tmpl.props }
 							  options={editorOpts}/>
 				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>
 			</Dialog>
@@ -83,10 +85,15 @@ function structNormalization(struct) {
 	return (max.x > max.y) ? max.x : max.y;
 }
 
-export default connect((store) => {
-	return {
+export default connect(
+	store => ({
 		name: store.attach.name,
 		atomid: store.attach.atomid,
 		bondid: store.attach.bondid
-	};
-})(Attach);
+	}),
+	dispatch => ({
+		onInit:  (name, ap) => dispatch(initAttach(name, ap)),
+		onAttachEdit: ap => dispatch(setAttachPoints(ap)),
+		onNameEdit: name => dispatch(setTmplName(name))
+	})
+)(Attach);

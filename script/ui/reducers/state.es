@@ -14,7 +14,7 @@ export default function(options, server) {
 	var initState = {
 		options,
 		server: server || Promise.reject("Standalone mode!"),
-		tool: { name: 'chain' }, //{ name: 'select', opts: 'lasso' },
+		active: { tool: 'chain' }, //{ name: 'select', opts: 'lasso' },
 		freqAtoms: [],
 		editor: null,
 		modal: null,

@@ -1,4 +1,4 @@
-import { escapeRegExp } from 'lodash/fp';
+import { escapeRegExp, chunk } from 'lodash/fp';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -11,6 +11,12 @@ import StructRender from '../component/structrender';
 import SelectList from '../component/select';
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
+
+const GREEK_SIMBOLS = {
+	'Alpha': 'A', 'alpha': 'α',
+	'Beta': 'B', 'beta': 'β',
+	'Gamma': 'Г', 'gamma': 'γ'
+};
 
 function tmplName(tmpl, i) {
 	console.assert(tmpl.props && tmpl.props.group, "No group");
@@ -34,23 +40,14 @@ function tmplsLib(tmpls) {
 
 function partition(n, array) {
 	console.warn('partition', n);
-	var res = [];
-	for (var i = 0; i < array.length; i += n)
-		res.push(array.slice(i, i + n));
-	return res;
+	return chunk(n)(array);
 }
 
-const GREEK_SIMBOLS = {
-	'Alpha': 'A', 'alpha': 'α',
-	'Beta': 'B', 'beta': 'β',
-	'Gamma': 'Г', 'gamma': 'γ'
-};
-
-function reGreekSymbols(strName) {
-	for (let sym in GREEK_SIMBOLS) {
-		strName = strName.replace(new RegExp('\\b' + sym + '\\b', 'g'), GREEK_SIMBOLS[sym]);
-	}
-	return strName;
+const greekRe = new RegExp('\\b' +
+						   Object.keys(GREEK_SIMBOLS).join('\\b|\\b') +
+						   '\\b', 'g');
+function greekify(str) {
+	return str.replace(greekRe, sym => GREEK_SIMBOLS[sym]);
 }
 
 function reFromGreekSymbols(strName) {
@@ -157,7 +154,7 @@ class TemplateLib extends Component {
 	renderRow (row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className={tmpl == this.state.selected ? 'td selected' : 'td'} title={reGreekSymbols(tmplName(tmpl, index * COLS + i))}>
+				<div className={tmpl == this.state.selected ? 'td selected' : 'td'} title={greekify(tmplName(tmpl, index * COLS + i))}>
 				  <RenderTmpl tmpl={tmpl}
 							  className="struct"
 							  onClick={() => this.select(tmpl)} />
@@ -197,7 +194,7 @@ class TemplateLib extends Component {
 				</label>
 				<SelectList className="groups"
 					onChange={g => this.selectGroup(g)}
-					value={reGreekSymbols(group)} options={ lib.map(g => reGreekSymbols(g.name)) } />
+					value={greekify(group)} options={ lib.map(g => greekify(g.name)) } />
 				  <VisibleView data={libRows(lib, group, COLS)}
 							   rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }

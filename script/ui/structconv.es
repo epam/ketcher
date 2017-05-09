@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash/fp';
+
 import Struct from '../chem/struct';
 import element from '../chem/element';
 
@@ -142,10 +144,6 @@ function fromBondType(type, stereo) {
 			return caption;
 	}
 	throw 'No such bond caption';
-}
-
-function capitalize(str) {
-	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 const bondCaptionMap = {

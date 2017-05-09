@@ -1,3 +1,5 @@
+import { range } from 'lodash/fp';
+
 import { h, Component } from 'preact';
 /** @jsx h */
 
@@ -31,7 +33,7 @@ function Header() {
 	return (
 		<tr>
 		  {
-			  range(19).map(i => (
+			  range(0, 19).map(i => (
 				  <th>{i || ''}</th>
 			  ))
 		  }
@@ -219,13 +221,6 @@ function rowPartition(elements) {
 		}
 		return res;
 	}, []);
-}
-
-function range(n, start = 0) {
-	// see #574
-	return Array.apply(null, {
-		length: n - start
-	}).map((_, i) => i + start);
 }
 
 export default PeriodTable;

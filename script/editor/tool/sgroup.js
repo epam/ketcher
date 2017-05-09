@@ -1,3 +1,5 @@
+var isEqual = require('lodash/fp/isEqual');
+
 var LassoHelper = require('./helper/lasso');
 
 var Action = require('../action');
@@ -13,12 +15,11 @@ function SGroupTool(editor, type) {
 			return new SGroupTool(editor, type);
 
 		var sgroups = editor.render.ctab.molecule.sgroups;
+		var selectedAtoms = editor.selection().atoms;
 
-		var selectedAtoms = JSON.stringify(editor.selection().atoms);
-
-		var id = sgroups.find(function (index, sgroup) {
-			return JSON.stringify(sgroup.atoms) === selectedAtoms;
-		}, this);
+		var id = sgroups.find(function (_, sgroup) {
+			return isEqual(sgroup.atoms, selectedAtoms);
+		});
 
 		propsDialog(editor, id !== undefined ? id : null, type);
 		editor.selection(null);

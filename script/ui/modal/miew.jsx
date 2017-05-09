@@ -1,3 +1,4 @@
+import { camelCase } from 'lodash/fp';
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
@@ -36,11 +37,15 @@ const MIEW_MODES = {
 
 function getLocalMiewOpts() {
 	let userOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
-	if (!userOpts) return MIEW_OPTIONS;
+	if (!userOpts)
+		return MIEW_OPTIONS;
 	let opts = MIEW_OPTIONS;
-	if (userOpts.miewTheme) 	opts.settings.theme = camelCase(userOpts.miewTheme);
-	if (userOpts.miewAtomLabel) opts.settings.atomLabel = camelCase(userOpts.miewAtomLabel);
-	if (userOpts.miewMode) 		opts.reps[0].mode = MIEW_MODES[camelCase(userOpts.miewMode)];
+	if (userOpts.miewTheme)
+		opts.settings.theme = camelCase(userOpts.miewTheme);
+	if (userOpts.miewAtomLabel)
+		opts.settings.atomLabel = camelCase(userOpts.miewAtomLabel);
+	if (userOpts.miewMode)
+		opts.reps[0].mode = MIEW_MODES[camelCase(userOpts.miewMode)];
 	return opts;
 }
 
@@ -187,13 +192,6 @@ class Miew extends Component {
 			</Dialog>
 		);
 	}
-}
-
-function camelCase(str) {
-	return str
-		.replace(/\s(.)/g, function($1) { return $1.toUpperCase(); })
-		.replace(/\s/g, '')
-		.replace(/^(.)/, function($1) { return $1.toLowerCase(); });
 }
 
 export default function dialog(params) {

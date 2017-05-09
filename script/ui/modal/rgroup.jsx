@@ -1,3 +1,5 @@
+import { range } from 'lodash/fp';
+
 import { h, Component, render } from 'preact';
 /** @jsx h */
 
@@ -9,7 +11,7 @@ function RGroup({ selected, onSelect, result, ...props }) {
 				className="rgroup" params={props}
 				result={() => result()}>
 		  <ul>
-			{ range(33, 1).map(i => (
+			{ range(1, 33).map(i => (
 				<li>
 				  <button
 					className={ selected(i) ? 'selected' : ''}
@@ -78,13 +80,6 @@ class RGroupAtom extends Component {
 			  result={() => this.result() } {...this.props}/>
 		);
 	}
-}
-
-function range(n, start = 0) {
-	// see #574
-	return Array.apply(null, {
-		length: n - start
-	}).map((_, i) => i + start);
 }
 
 export default function dialog(params) {

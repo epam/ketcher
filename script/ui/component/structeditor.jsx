@@ -1,3 +1,4 @@
+import { capitalize } from 'lodash/fp';
 import { h, Component } from 'preact';
 /** @jsx h */
 
@@ -45,10 +46,6 @@ class StructEditor extends Component {
 			<Tag {...props}/>
 		);
 	}
-}
-
-function capitalize(str) {
-	return str[0].toUpperCase() + str.slice(1);
 }
 
 export default StructEditor;

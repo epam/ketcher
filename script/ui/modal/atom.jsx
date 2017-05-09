@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash/fp';
+
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
@@ -50,10 +52,6 @@ function Atom(props) {
 			</Form>
 		</Dialog>
 	);
-}
-
-function capitalize(str) {
-	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 function atomValid(label) {

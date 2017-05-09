@@ -1,3 +1,5 @@
+import { range } from 'lodash/fp';
+
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
@@ -50,9 +52,9 @@ function Analyse(props) {
 					}
 					{ item.round
 						? <Input schema={{
-							enum: range(8),
-							enumNames: range(8).map(i => `${i} decimal places`)
-						}} value={props[item.round]} onChange={val => props.dispatch(changeRound(item.round, val))}/>
+									 enum: range(0, 8),
+									 enumNames: range(0, 8).map(i => `${i} decimal places`)
+						  }} value={props[item.round]} onChange={val => props.dispatch(changeRound(item.round, val))}/>
 						: null
 					}
 				</li>
@@ -75,13 +77,6 @@ function roundOff(value, round) {
 	return value.replace(/[0-9]*\.[0-9]+/g, (str) => (
 		(+str).toFixed(round)
 	));
-}
-
-function range(n, start = 0) {
-	// see #574
-	return Array.apply(null, {
-		length: n - start
-	}).map((_, i) => i + start);
 }
 
 export default connect((store) => {

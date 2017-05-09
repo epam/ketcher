@@ -1,3 +1,5 @@
+import { capitalize } from 'lodash/fp';
+
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
@@ -66,10 +68,6 @@ function LabelEdit(props) {
 			</Form>
 		</Dialog>
 	);
-}
-
-function capitalize(str) {
-	return str[0].toUpperCase() + str.slice(1).toLowerCase();
 }
 
 export default connect((store) => {

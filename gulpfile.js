@@ -50,8 +50,11 @@ var bundleConfig = {
 		}],
 		['babelify', {
 			presets: ["es2015", "react"],
-			plugins: ['transform-class-properties',
-			          'transform-object-rest-spread'],
+			plugins: [
+				'lodash',
+				'transform-class-properties',
+				'transform-object-rest-spread'
+			],
 			extensions: ['.jsx', '.es'],
 			only: 'script/ui'
 		}]

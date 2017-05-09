@@ -1,3 +1,5 @@
+import { escapeRegExp } from 'lodash/fp';
+
 import { h, Component, render } from 'preact';
 /** @jsx h */
 import memoize from 'lru-memoize';
@@ -60,19 +62,12 @@ function reFromGreekSymbols(strName) {
 	return strName;
 }
 
-function reEscape(str) {
-	const reSpecial = ["-", "[", "]", "/", "{", "}", "(", ")", "*",
-					   "+", "?", ".", "\\", "^", "$", "|"];
-	const reFilter = RegExp('[' + reSpecial.join('\\') + ']', 'g');
-	return str.replace(reFilter, "\\$&");
-}
-
 function filterLib(lib, filter) {
 	console.warn('filter', filter);
 	if (!filter)
 		return lib;
-	let re = RegExp(reEscape(filter), 'i');
-	let reGreek = RegExp(reFromGreekSymbols(reEscape(filter)), 'i');
+	let re = RegExp(escapeRegExp(filter), 'i');
+	let reGreek = RegExp(reFromGreekSymbols(escapeRegExp(filter)), 'i');
 	return lib.reduce((res, group) => {
 		if ((group.name.search(re) != -1 || group.name.search(reGreek) != -1) && group.templates.length > 0) {
 			res.push(group);

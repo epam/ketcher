@@ -6,11 +6,11 @@ import Editor from '../../editor'
 function setupEditor(editor, props, oldProps = {}) {
 	let { struct, tool, toolOpts, options } = props;
 	if (struct != oldProps.struct)
-		console.info('update s'), editor.struct(struct);
+		editor.struct(struct);
 	if (tool != oldProps.tool || toolOpts != oldProps.toolOpts)
-		console.info('update t'), editor.tool(tool, toolOpts);
+		editor.tool(tool, toolOpts);
 	if (oldProps.options && options != oldProps.options)
-		console.info('update o'), editor.options(options);
+		editor.options(options);
 
 	// update handlers
 	for (let name in editor.event) {

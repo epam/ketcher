@@ -94,16 +94,16 @@ label[data-error] {
 	}
 
 	&:hover:after {
-		content: attr(data-error);
+		content: "Error: " attr(data-error);
 		display: block;
-		position: absolute;
-		margin-right: 0.5em;
+		position: fixed;
+		white-space: pre;
 		padding: 0.35em;
 		background: lighten(@error-color, 30%);
 		border: 1px solid @error-color;
 		border-radius: 4px;
-		text-align: center;
-		line-height: 1.35em;
+		line-height: 1em;
+		font-size: 0.9em;
 		z-index: 2;
 	}
 }

@@ -33,14 +33,14 @@ export const settings = {
 			title: "Font size",
 			type: "integer",
 			default: 13,
-			minimum: 0,
+			minimum: 1,
 			maximum: 96
 		},
 		fontszsub: {
 			title: "Sub font size",
 			type: "integer",
 			default: 13,
-			minimum: 0,
+			minimum: 1,
 			maximum: 96
 		},
 		// Atom
@@ -74,21 +74,21 @@ export const settings = {
 			title: "Double bond width",
 			type: "integer",
 			default: 6,
-			minimum: 0,
+			minimum: 1,
 			maximum: 96
 		},
 		bondThickness: {
 			title: "Bond thickness",
 			type: "integer",
 			default: 2,
-			minimum: 0,
+			minimum: 1,
 			maximum: 96
 		},
 		stereoBondWidth: {
 			title: "Stereo (Wedge) bond width",
 			type: "integer",
 			default: 6,
-			minimum: 0,
+			minimum: 1,
 			maximum: 96
 		},
 		// 3D View

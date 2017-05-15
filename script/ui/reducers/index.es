@@ -1,31 +1,24 @@
 import { combineReducers } from 'redux';
 
+import { createNamedFormReducer } from './form-reducer.es';
+
 import analyseReducer from './analyse-reducer.es';
-import atomReducer from './atom-props-reducer.es';
 import attachReducer from './attach-reducer.es';
-import attachPointsReducer from './attach-points-reducer.es';
-import automapReducer from './automap-reducer.es';
-import bondReducer from './bond-reducer.es';
-import checkReducer from './check-reducer.es';
-import labelEditReducer from './label-edit-reducer.es';
 import recognizeReducer from './recognize-reducer.es';
-import rgroupLodicReducer from './rgroup-logic-reducer.es';
-import settingsReducer from './settings-reducer.es';
-import sgroupReducer from './sgroup-reducer.es';
 import sgroupSpecialReducer from './sgroup-special-reducer.es';
 
 export default combineReducers({
 	analyse: analyseReducer,
 	attach: attachReducer,
-	'attach-points': attachPointsReducer,
-	atom: atomReducer,
-	automap: automapReducer,
-	bond: bondReducer,
-	check: checkReducer,
-	'label-edit': labelEditReducer,
+	'attach-points': createNamedFormReducer('attach-points'),
+	atom: createNamedFormReducer('atom'),
+	automap: createNamedFormReducer('automap'),
+	bond: createNamedFormReducer('bond'),
+	check: createNamedFormReducer('check'),
+	'label-edit': createNamedFormReducer('label-edit'),
 	recognize: recognizeReducer,
-	'rgroup-logic': rgroupLodicReducer,
-	settings: settingsReducer,
-	sgroup: sgroupReducer,
+	'rgroup-logic': createNamedFormReducer('rgroup-logic'),
+	settings: createNamedFormReducer('settings'),
+	sgroup: createNamedFormReducer('sgroup'),
 	sgroupSpecial: sgroupSpecialReducer
 });

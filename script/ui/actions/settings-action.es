@@ -9,7 +9,7 @@ export function defaultOpts() {
 
 export function setDefaultSettings() {
 	return {
-		type: 'SET_DEFAULT_SETTINGS',
+		type: 'UPDATE_SETTINGS_FORM',
 		payload: {
 			stateForm: defaultOpts(),
 			valid: true,
@@ -20,7 +20,7 @@ export function setDefaultSettings() {
 
 export function cancelChanges() {
 	return {
-		type: 'CANCEL_SETTINGS',
+		type: 'UPDATE_SETTINGS_FORM',
 		payload: {
 			stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || defaultOpts(),
 			valid: true,

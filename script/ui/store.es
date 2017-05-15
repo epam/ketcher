@@ -1,4 +1,7 @@
-import { createStore } from 'redux';
-import reducer from './reducers/index.es';
+import { createStore, applyMiddleware } from 'redux';
+import { logger } from 'redux-logger';
 
-export default createStore(reducer);
+import formsState from './reducers/forms-state.es';
+import reducers from './reducers/index.es';
+
+export default createStore(reducers, formsState, applyMiddleware(logger));

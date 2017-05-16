@@ -1,7 +1,15 @@
 import { createStore, applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
+import formsState from './forms-state.es';
+import formReducer from './index.es';
+
 function mainReducer(state, action) {
+	if (action.type.endsWith('FORM')) {
+		let formState = formReducer(state.form, action);
+		return { ...state, form: formState }
+	}
+
 	switch (action.type) {
 	case 'UPDATE':
 		return { ...state, ...action.data };
@@ -18,7 +26,8 @@ export default function(options, server) {
 		freqAtoms: [],
 		editor: null,
 		modal: null,
-		scope: 'editor'
+		scope: 'editor',
+		form: formsState
 	};
 
 	return createStore(mainReducer, initState,

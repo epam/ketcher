@@ -64,7 +64,7 @@ export default {
 			resth: false
 		}
 	},
-	'settings': {
+	settings: {
 		errors: {},
 		valid: true,
 		stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || defaultOpts()

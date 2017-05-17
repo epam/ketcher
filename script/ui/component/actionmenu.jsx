@@ -17,12 +17,12 @@ export function shortcutStr(shortcut) {
 	});
 }
 
-function ActionButton({item, onAction, ...props}) {
+function ActionButton({item, onAction, onDialog, ...props}) {
 	let act = acts[item];
 	let shortcut = act.shortcut && shortcutStr(act.shortcut);
 	return (
 		<button
-		  onClick={ev => onAction(act.action)}
+		  onClick={ev => act.action ? onAction(act.action) : onDialog(item, act.title)}
 		  title={shortcut ? `${act.title} (${shortcut})` :
 		                    act.title}>
 		  {act.title}

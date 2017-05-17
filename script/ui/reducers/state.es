@@ -13,6 +13,10 @@ function mainReducer(state, action) {
 	switch (action.type) {
 	case 'UPDATE':
 		return { ...state, ...action.data };
+	case 'OPEN_DIALOG':
+		return { ...state, ...action.data };
+	case 'CLOSE_DIALOG':
+		return { ...state, modal: null }
 	}
 	return state;
 }

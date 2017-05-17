@@ -49,6 +49,7 @@ class Form extends Component {
 		);
 	}
 }
+
 const form = connect((store, props) => ({
 		stateForm: store[props.storeName].stateForm,
 		errors: store[props.storeName].errors

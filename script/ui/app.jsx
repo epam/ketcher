@@ -7,6 +7,8 @@ import { h, Component, render } from 'preact';
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 
+import Settings from './modal/settings';
+
 const AppEditor = connect(
 	(state) => ({
 		tool: state.active.tool,
@@ -21,21 +23,43 @@ const AppEditor = connect(
 	})
 )(StructEditor);
 
-const App = connect(
+const SettingDialog = connect(
 	null,
+	(dispatch, props) => ({
+		onOk: function (res) {
+			console.log('output:', res);
+			dispatch({ type: 'CLOSE_DIALOG' })
+		},
+		onCancel: function () {
+			dispatch({ type: 'CLOSE_DIALOG' })
+		}
+	})
+)(Settings);
+
+const App = connect(
+	(state) => ({
+		modal: state.modal
+	}),
 	dispatch => ({
 		onAction: function (action) {
 			console.info('action', action);
 			dispatch({ type: 'UPDATE',
 					   data: { active: action }});
+		},
+		onDialog: function (name, title) {
+			dispatch({
+				type: 'OPEN_DIALOG',
+				data: { modal: { name, title } }
+			})
 		}
 	})
 )(props => (
    <main role="application">
    <AppEditor id="canvas"/>
    <Toolbar {...props}/>
+	   {props.modal ? <SettingDialog title={props.modal.title} /> : null}
    </main>
-))
+));
 
 
 function init(el, options, server) {

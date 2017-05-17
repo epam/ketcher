@@ -45,7 +45,7 @@ module.exports = {
 	recognize: modal(Recognize),
 	check: modal(Check),
 	analyse: modal(Analyse),
-	settings: modal(Settings),
+	settings: Settings,
 	help: modal(Help),
 	miew: miewDialog,
 	attach: modal(Attach)

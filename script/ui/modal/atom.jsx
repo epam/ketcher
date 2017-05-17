@@ -16,7 +16,7 @@ function ElementNumber(props, {stateStore}) {
 		<label>Number:
 		  <input className="number" type="text"
 				 readonly="readonly"
-				 value={element.map[stateForm.label] || ''}/>
+				 value={element.map[capitalize(stateForm.label)] || ''}/>
 		</label>
 	);
 }

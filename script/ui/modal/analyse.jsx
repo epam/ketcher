@@ -81,7 +81,7 @@ function roundOff(value, round) {
 
 export default connect((store) => {
 	return {
-		roundWeight: store.analyse.roundWeight,
-		roundMass: store.analyse.roundMass
+		roundWeight: store.form.analyse.roundWeight,
+		roundMass: store.form.analyse.roundMass
 	};
 })(Analyse);

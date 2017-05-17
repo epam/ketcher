@@ -7,7 +7,7 @@ import { h, Component, render } from 'preact';
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 
-import Settings from './modal/settings';
+import modals from './modal';
 
 const AppEditor = connect(
 	(state) => ({
@@ -23,18 +23,23 @@ const AppEditor = connect(
 	})
 )(StructEditor);
 
-const SettingDialog = connect(
+const AppDialog = connect(
 	null,
 	(dispatch, props) => ({
 		onOk: function (res) {
 			console.log('output:', res);
-			dispatch({ type: 'CLOSE_DIALOG' })
+			dispatch({ type: 'CLOSE_DIALOG' });
 		},
 		onCancel: function () {
-			dispatch({ type: 'CLOSE_DIALOG' })
+			dispatch({ type: 'CLOSE_DIALOG' });
 		}
 	})
-)(Settings);
+)(props => {
+	let Modal = modals[props.modal];
+	return <div className="overlay">
+		<Modal {...props}/>
+	</div>
+});
 
 const App = connect(
 	(state) => ({
@@ -54,11 +59,11 @@ const App = connect(
 		}
 	})
 )(props => (
-   <main role="application">
-   <AppEditor id="canvas"/>
-   <Toolbar {...props}/>
-	   {props.modal ? <SettingDialog title={props.modal.title} /> : null}
-   </main>
+	<main role="application">
+		<AppEditor id="canvas"/>
+		<Toolbar {...props}/>
+		{props.modal ? <AppDialog modal={props.modal.name}/> : null}
+	</main>
 ));
 
 

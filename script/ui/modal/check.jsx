@@ -65,8 +65,9 @@ function ErrorsCheck(props) {
 
 export default connect((store) => {
 	return {
-		result: store.check.stateForm,
-		moleculeErrors: store.check.moleculeErrors
+		check: store.server.check,
+		result: store.form.check.stateForm,
+		moleculeErrors: store.form.check.moleculeErrors
 	};
 })(Check);
 

@@ -78,8 +78,8 @@ function url(file) {
 
 export default connect(store => {
 	return {
-		file: store.recognize.file,
-		structStr: store.recognize.structStr,
-		fragment: store.recognize.fragment
+		file: store.form.recognize.file,
+		structStr: store.form.recognize.structStr,
+		fragment: store.form.recognize.fragment
 	};
 })(Recognize);

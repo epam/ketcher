@@ -1,7 +1,7 @@
 var modal = require('./render-modal').default;
 
-var openDialog = require('./open').default;
-var saveDialog = require('./save').default;
+var Open = require('./open').default;
+var Save = require('./save').default;
 var templatesDialog = require('./template-lib');
 var rgroupDialog = require('./rgroup').default;
 var miewDialog = require('./miew').default;
@@ -28,7 +28,16 @@ var SgroupSpecial = require('./sgroup-special').default;
 templatesDialog.default.init = templatesDialog.init;
 
 module.exports = {
-	periodTable: modal(PeriodTable),
+	about: About,
+	analyse: Analyse,
+	cip: Check,
+	help: Help,
+	'period-table': PeriodTable,
+	recognize: Recognize,
+	settings: Settings,
+	open: Open,
+	save: Save,
+
 	rgroup: rgroupDialog,
 	attachmentPoints: modal(AttachPoints),
 	atomProps: modal(Atom),
@@ -37,16 +46,8 @@ module.exports = {
 	rgroupLogic: modal(RgroupLogic),
 	sgroup: modal(Sgroup),
 	sgroupSpecial: modal(SgroupSpecial),
-	open: openDialog,
-	save: saveDialog,
 	templates: templatesDialog.default,
 	labelEdit: modal(LabelEdit),
-	about: modal(About),
-	recognize: modal(Recognize),
-	check: modal(Check),
-	analyse: modal(Analyse),
-	settings: Settings,
-	help: modal(Help),
 	miew: miewDialog,
 	attach: modal(Attach)
 };

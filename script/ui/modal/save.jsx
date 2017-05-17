@@ -64,9 +64,4 @@ class Save extends Component {
 	}
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render((
-		<Save {...params} />
-	), overlay);
-};
+export default Save;

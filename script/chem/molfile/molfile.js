@@ -279,7 +279,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 			bond.stereo = 0;
 		this.writePaddedNumber(bond.stereo, 3);
 
-		this.writeWhiteSpace(3);
+		this.writePadded(bond.xxx, 3);
 
 		if (typeof bond.topology === "undefined")
 			bond.topology = 0;

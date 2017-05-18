@@ -7,6 +7,7 @@ function Bond(params) { // eslint-disable-line max-statements
 	this.begin = params.begin;
 	this.end = params.end;
 	this.type = params.type;
+	this.xxx = params.xxx || '';
 	this.stereo = Bond.PATTERN.STEREO.NONE;
 	this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
 	this.reactingCenterStatus = 0;

@@ -46,6 +46,7 @@ function parseBondLine(bondLine) {
 			end: utils.parseDecimalInt(bondSplit[1]) - 1,
 			type: utils.fmtInfo.bondTypeMap[utils.parseDecimalInt(bondSplit[2])],
 			stereo: utils.fmtInfo.bondStereoMap[utils.parseDecimalInt(bondSplit[3])],
+			xxx: bondSplit[4],
 			topology: utils.fmtInfo.bondTopologyMap[utils.parseDecimalInt(bondSplit[5])],
 			reactingCenterStatus: utils.parseDecimalInt(bondSplit[6])
 		};

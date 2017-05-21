@@ -1,5 +1,6 @@
 import tools from './tools';
 import atoms from './atoms';
+import zoom from './zoom';
 
 export default {
 	"new": {
@@ -16,31 +17,40 @@ export default {
 	},
 	"undo": {
 		shortcut: "Mod+z",
-		title: "Undo"
+		title: "Undo",
+		action: editor => {
+			editor.undo();
+		},
+		disabled: editor => (
+			editor.historySize().undo == 0
+		)
 	},
 	"redo": {
 		shortcut: ["Mod+Shift+z", "Mod+y"],
-		title: "Redo"
+		title: "Redo",
+		action: editor => {
+			editor.redo();
+		},
+		disabled: editor => (
+			editor.historySize().redo == 0
+		)
 	},
 	"cut": {
 		shortcut: "Mod+x",
-		title: "Cut"
+		title: "Cut",
+		disabled: editor => !hasSelection(editor)
 	},
 	"copy": {
 		shortcut: "Mod+c",
-		title: "Copy"
+		title: "Copy",
+		disabled: editor => !hasSelection(editor)
 	},
 	"paste": {
 		shortcut: "Mod+v",
-		title: "Paste"
-	},
-	"zoom-in": {
-		shortcut: ["+", "=", "Shift+="],
-		title: "Zoom In"
-	},
-	"zoom-out": {
-		shortcut: ["-", "_", "Shift+-"],
-		title: "Zoom Out"
+		title: "Paste",
+		selected: ({ actions }) => (
+			actions.active && actions.active.tool == 'paste'
+		)
 	},
 	"layout": {
 		shortcut: "Mod+l",
@@ -111,5 +121,12 @@ export default {
 		shortcut: "Alt+Shift+r"
 	},
 	...tools,
-	...atoms
+	...atoms,
+	...zoom
+};
+
+function hasSelection(editor) {
+	let selection = editor.selection();
+	return selection &&  // if not only sgroupData selected
+		(Object.keys(selection).length > 1 || !selection.sgroupData);
 };

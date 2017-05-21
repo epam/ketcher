@@ -11,14 +11,11 @@ import modals from './modal';
 
 const AppEditor = connect(
 	(state) => ({
-		tool: state.active.tool,
-		toolOpts: state.active.opts
+		options: state.options
 	}),
 	(dispatch, props) => ({
 		onInit: function (editor) {
-			console.info('init');
-			global._ui_editor = editor;
-			dispatch({ type: 'UPDATE', data: { editor }});
+			dispatch({ type: 'INIT', data: { editor }});
 		}
 	})
 )(StructEditor);
@@ -47,9 +44,8 @@ const App = connect(
 	}),
 	dispatch => ({
 		onAction: function (action) {
-			console.info('action', action);
-			dispatch({ type: 'UPDATE',
-					   data: { active: action }});
+			dispatch({ type: 'ACTION',
+					   data: { action }});
 		},
 		onDialog: function (name, title) {
 			dispatch({

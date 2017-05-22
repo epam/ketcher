@@ -1,6 +1,6 @@
 import { Provider, connect } from 'preact-redux';
 
-import state from './reducers/state';
+import state, { onAction } from './reducers/state';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -22,13 +22,13 @@ const AppEditor = connect(
 
 const AppDialog = connect(
 	null,
-	(dispatch, props) => ({
+	(dispatch) => ({
 		onOk: function (res) {
 			console.log('output:', res);
-			dispatch({ type: 'CLOSE_DIALOG' });
+			dispatch({ tyape: 'MODAL_CLOSE' });
 		},
 		onCancel: function () {
-			dispatch({ type: 'CLOSE_DIALOG' });
+			dispatch({ type: 'MODAL_CLOSE' });
 		}
 	})
 )(props => {
@@ -44,21 +44,14 @@ const App = connect(
 	}),
 	dispatch => ({
 		onAction: function (action) {
-			dispatch({ type: 'ACTION',
-					   data: { action }});
+			dispatch(onAction(action));
 		},
-		onDialog: function (name, title) {
-			dispatch({
-				type: 'OPEN_DIALOG',
-				data: { modal: { name, title } }
-			})
-		}
 	})
-)(props => (
+)(({modal, ...props}) => (
 	<main role="application">
 		<AppEditor id="canvas"/>
 		<Toolbar {...props}/>
-		{props.modal ? <AppDialog modal={props.modal.name}/> : null}
+		{modal ? <AppDialog modal={modal.name}/> : null}
 	</main>
 ));
 

@@ -1,45 +1,65 @@
-import { createStore, applyMiddleware } from 'redux';
+import { pick } from 'lodash/fp';
+
+import { createStore, combineReducers,
+         applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
 import formsState from './forms-state.es';
 import formReducer from './index.es';
 import actstate from './actstate';
+import toolbar from './toolbar';
 
-function mainReducer(state, action) {
-	let {type, data} = action;
-
+function modal(state = null, { type, data }) {
 	if (type.endsWith('FORM')) {
 		let formState = formReducer(state.form, action);
 		return { ...state, form: formState }
 	}
 
 	switch (type) {
-	case 'UPDATE':
-		return { ...state, ...data };
-	case 'OPEN_DIALOG':
-		return { ...state, ...data };
-	case 'CLOSE_DIALOG':
-		return { ...state, modal: null }
-	case 'INIT':
-		global._ui_editor = data.editor;
-		return {...state, ...{
-			editor: data.editor,
-			actionState: actstate({}, {
-				action: { tool: 'chain' },
-				editor: data.editor,
-				server: state.server
-			})
-		}}
-	case 'ACTION':
-		return {...state, ...{
-			actionState: actstate(state.actionState, {
-				action: data.action,
-				editor: state.editor,
-				server: state.server
-			})
-		}}
+	case 'MODAL_CLOSE':
+		return null;
+	case 'MODAL_OPEN':
+		return { name: data.name }
 	}
 	return state;
+}
+
+const shared = combineReducers({
+	actionState: actstate,
+	toolbar,
+	modal
+});
+
+export function onAction(action) {
+	if (action && action.dialog)
+		return {
+			type: 'MODAL_OPEN',
+			data: { name: action.dialog }
+		};
+	return {
+		type: 'ACTION',
+		action
+	};
+}
+
+function root(state, action) {
+	let {type, data} = action;
+
+	switch (type) {
+	case 'UPDATE':
+		return { ...state, ...data };
+	case 'INIT':
+		global._ui_editor = data.editor;
+		state = {...state, ...data };
+	}
+
+	let sh = shared(state, {
+		...action,
+		...pick(['editor', 'server'], state)
+	});
+	return (sh === state.shared) ? state : {
+		...state, ...sh
+	};
 }
 
 export default function(options, server) {
@@ -47,13 +67,11 @@ export default function(options, server) {
 	var initState = {
 		options,
 		server: null, //server || Promise.reject("Standalone mode!"),
-		freqAtoms: [],
 		editor: null,
 		modal: null,
-		scope: 'editor',
 		form: formsState
 	};
 
-	return createStore(mainReducer, initState,
+	return createStore(root, initState,
 					   applyMiddleware(logger));
 };

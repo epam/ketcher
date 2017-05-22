@@ -229,8 +229,8 @@ function TemplatesList({active, onAction, ...props}) {
 }
 
 export default connect(
-	(state, props) => ({
-		atoms: basicAtoms.concat(state.freqAtoms),
+	(state, props) => (console.info(state), {
+		atoms: basicAtoms.concat(state.toolbar.freqAtoms),
 		active: state.actionState && state.actionState.activeTool,
 		status: state.actionState || {}
 	}),

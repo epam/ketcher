@@ -1,6 +1,7 @@
 import tools from './tools';
 import atoms from './atoms';
 import zoom from './zoom';
+import server from './server';
 import debug from './debug';
 
 export default {
@@ -14,11 +15,13 @@ export default {
 	},
 	"open": {
 		shortcut: "Mod+o",
-		title: "Open…"
+		title: "Open…",
+		action: { dialog: 'open' }
 	},
 	"save": {
 		shortcut: "Mod+s",
-		title: "Save As…"
+		title: "Save As…",
+		action: { dialog: 'save' }
 	},
 	"undo": {
 		shortcut: "Mod+z",
@@ -58,42 +61,30 @@ export default {
 				actions.active && actions.active.tool == 'paste'
 		)
 	},
-	"layout": {
-		shortcut: "Mod+l",
-		title: "Layout"
-	},
-	"clean": {
-		shortcut: "Mod+Shift+l",
-		title: "Clean Up"
-	},
-	"arom": {
-		title: "Aromatize"
-	},
-	"dearom": {
-		title: "Dearomatize"
-	},
-	"cip": {
-		shortcut: "Mod+p",
-		title: "Calculate CIP"
-	},
 	"check": {
-		title: "Check Structure"
+		title: "Check Structure",
+		action: { dialog: 'check' }
 	},
 	"analyse": {
-		title: "Calculated Values"
+		title: "Calculated Values",
+		action: { dialog: 'analyse' }
 	},
 	"recognize": {
-		title: "Recognize Molecule"
+		title: "Recognize Molecule",
+		action: { dialog: 'recognize' }
 	},
 	"settings": {
-		title: "Settings"
+		title: "Settings",
+		action: { dialog: 'settings' }
 	},
 	"help": {
 		shortcut: ["?", "Shift+/"],
-		title: "Help"
+		title: "Help",
+		action: { dialog: 'help' }
 	},
 	"about": {
-		title: "About"
+		title: "About",
+		action: { dialog: 'about' }
 	},
 	"reaction-automap": {
 		title: "Reaction Auto-Mapping Tool"
@@ -107,7 +98,8 @@ export default {
 		title: "Custom Templates"
 	},
 	"period-table": {
-		title: "Periodic Table"
+		title: "Periodic Table",
+		action: { dialog: 'period-table' }
 	},
 	"select-all": {
 		title: "Select All",
@@ -124,6 +116,7 @@ export default {
 			editor.selection(null);
 		}
 	},
+	...server,
 	...debug,
 	...tools,
 	...atoms,

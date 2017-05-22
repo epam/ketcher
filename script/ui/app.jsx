@@ -14,44 +14,48 @@ const AppEditor = connect(
 		options: state.options
 	}),
 	(dispatch, props) => ({
-		onInit: function (editor) {
-			dispatch({ type: 'INIT', data: { editor }});
+		onInit: editor => {
+			dispatch({ type: 'INIT', editor });
+		},
+		onChange: () => {
+			dispatch({ type: 'UPDATE' });
+		},
+		onSelectionChange: () => {
+			dispatch({ type: 'UPDATE' });
 		}
 	})
 )(StructEditor);
 
-const AppDialog = connect(
-	null,
+const AppModal = connect(
+	(state) => ({
+		modal: state.modal
+	}),
 	(dispatch) => ({
 		onOk: function (res) {
 			console.log('output:', res);
-			dispatch({ tyape: 'MODAL_CLOSE' });
+			dispatch({ type: 'MODAL_CLOSE' });
 		},
 		onCancel: function () {
 			dispatch({ type: 'MODAL_CLOSE' });
 		}
 	})
-)(props => {
-	let Modal = modals[props.modal];
+)(({modal, ...props}) => {
+	if (!modal)
+		return null;
+	let Modal = modals[modal.name];
 	return <div className="overlay">
 		<Modal {...props}/>
 	</div>
 });
 
 const App = connect(
-	(state) => ({
-		modal: state.modal
-	}),
-	dispatch => ({
-		onAction: function (action) {
-			dispatch(onAction(action));
-		},
-	})
-)(({modal, ...props}) => (
+	null,
+	{ onAction }
+)(props => (
 	<main role="application">
 		<AppEditor id="canvas"/>
 		<Toolbar {...props}/>
-		{modal ? <AppDialog modal={modal.name}/> : null}
+		<AppModal/>
 	</main>
 ));
 

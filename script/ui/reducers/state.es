@@ -43,14 +43,13 @@ export function onAction(action) {
 }
 
 function root(state, action) {
-	let {type, data} = action;
-
-	switch (type) {
-	case 'UPDATE':
-		return { ...state, ...data };
+	switch (action.type) {
 	case 'INIT':
-		global._ui_editor = data.editor;
-		state = {...state, ...data };
+		global._ui_editor = action.editor;
+	case 'UPDATE':
+		let {type, ...data} = action;
+		if (data)
+			state = { ...state, ...data };
 	}
 
 	let sh = shared(state, {

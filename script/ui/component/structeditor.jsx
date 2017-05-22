@@ -1,4 +1,4 @@
-import { capitalize } from 'lodash/fp';
+import { upperFirst } from 'lodash/fp';
 import { h, Component } from 'preact';
 /** @jsx h */
 
@@ -15,7 +15,7 @@ function setupEditor(editor, props, oldProps = {}) {
 
 	// update handlers
 	for (let name in editor.event) {
-		let eventName = `on${capitalize(name)}`;
+		let eventName = `on${upperFirst(name)}`;
 		if (props[eventName] != oldProps[eventName]) {
 			console.info('update editor handler', eventName);
 			if (oldProps[eventName])

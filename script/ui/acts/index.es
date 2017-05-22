@@ -1,11 +1,16 @@
 import tools from './tools';
 import atoms from './atoms';
 import zoom from './zoom';
+import debug from './debug';
 
 export default {
 	"new": {
 		shortcut: "Mod+n",
-		title: "Clear Canvas"
+		title: "Clear Canvas",
+		action: editor => {
+			if (!editor.struct().isBlank())
+				editor.struct(null);
+		}
 	},
 	"open": {
 		shortcut: "Mod+o",
@@ -49,7 +54,8 @@ export default {
 		shortcut: "Mod+v",
 		title: "Paste",
 		selected: ({ actions }) => (
-			actions.active && actions.active.tool == 'paste'
+			actions && // TMP
+				actions.active && actions.active.tool == 'paste'
 		)
 	},
 	"layout": {
@@ -103,23 +109,22 @@ export default {
 	"period-table": {
 		title: "Periodic Table"
 	},
-	"generic-groups": {
-		title: "Generic Groups"
-	},
 	"select-all": {
 		title: "Select All",
-		shortcut: "Mod+a"
+		shortcut: "Mod+a",
+		action: editor => {
+			editor.selection('all');
+			//selectAction(null);
+		}
 	},
 	"deselect-all": {
 		title: "Deselect All",
-		shortcut: "Mod+Shift+a"
+		shortcut: "Mod+Shift+a",
+		action: editor => {
+			editor.selection(null);
+		}
 	},
-	"force-update": {
-		shortcut: "Ctrl+Shift+r"
-	},
-	"qs-serialize": {
-		shortcut: "Alt+Shift+r"
-	},
+	...debug,
 	...tools,
 	...atoms,
 	...zoom

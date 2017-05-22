@@ -2,6 +2,8 @@ import { connect } from 'preact-redux';
 import { h } from 'preact';
 /** @jsx h */
 
+import classNames from 'classnames';
+
 import element from '../chem/element';
 import Atom from './component/atom';
 import ActionMenu, { shortcutStr } from './component/actionmenu';
@@ -157,8 +159,7 @@ const elements = [
 		id: 'atom',
 		component: AtomsList
 	},
-	'period-table',
-	'generic-groups'
+	'period-table'
 ];
 
 const toolbar = [
@@ -168,19 +169,22 @@ const toolbar = [
 	{ id: 'elements', menu: elements }
 ];
 
-function ZoomList() {
+function ZoomList({status, onAction}) {
+	let zoom = status.zoom && status.zoom.selected; // TMP
 	return (
-		<select>
+		<select value={zoom}
+				onChange={ev => onAction(editor => editor.zoom(parseFloat(ev.target.value)))}>
 		  {
 			  zoomList.map(val => (
-				  <option value={val}>{`${Math.round(val * 100)}%`}</option>
+				  <option value={val}>{`${(val * 100).toFixed()}%`}</option>
 			  ))
 		  }
 		</select>
 	);
 }
 
-function AtomsList({atoms, ...props}) {
+function AtomsList({atoms, active, onAction, ...props}) {
+	let isAtom = active && active.tool == 'atom';
 	return (
 		<menu>
 		  {
@@ -188,8 +192,12 @@ function AtomsList({atoms, ...props}) {
 				  let index = element.map[label];
 				  let shortcut = shortcutStr(atomCuts[label]);
 				  return (
-					  <li>
-						<Atom el={element[index]} shortcut={shortcut}/>
+					  <li className={classNames({
+							  selected: isAtom && active.opts.label == label
+						  })}>
+						<Atom el={element[index]}
+							  shortcut={shortcut}
+							  onClick={() => onAction({ tool: 'atom', opts: { label } })}/>
 					  </li>
 				  );
 			  })
@@ -198,14 +206,19 @@ function AtomsList({atoms, ...props}) {
 	);
 }
 
-function TemplatesList({...props}) {
+function TemplatesList({active, onAction, ...props}) {
 	let shortcut = shortcutStr(acts.templates.shortcut);
+	let isTmpl = active && active.tool == 'template';
 	return (
 		<menu>
 		  {
 			  templates.map((struct, i) => (
-				  <li id={`template-${i}`}>
-				  <button title={`${struct.name} (${shortcut})`}>
+				  <li id={`template-${i}`}
+					  className={classNames({
+						  selected: isTmpl && active.opts.struct == struct
+					  })}>
+					<button title={`${struct.name} (${shortcut})`}
+							onClick={() => onAction({ tool: 'template', opts: { struct } })}>
 					{struct.name}
 				  </button>
 				  </li>
@@ -217,8 +230,10 @@ function TemplatesList({...props}) {
 
 export default connect(
 	(state, props) => ({
-		atoms: basicAtoms.concat(state.freqAtoms)
+		atoms: basicAtoms.concat(state.freqAtoms),
+		active: state.actionState && state.actionState.activeTool,
+		status: state.actionState || {}
 	}),
-)(props => (console.info('render'),
+)(props => (console.info('menu render'),
 	<ActionMenu menu={toolbar} role="toolbar" {...props}/>
 ));

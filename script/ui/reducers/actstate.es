@@ -1,5 +1,5 @@
 import acts from '../acts';
-import { isEqual } from 'lodash/fp';
+import { isEqual, isEmpty, pickBy } from 'lodash/fp';
 
 function execute(activeTool, action, { editor, server }) {
 	if (action.tool) {
@@ -16,33 +16,31 @@ function execute(activeTool, action, { editor, server }) {
 function selected(actObj, activeTool, { editor, server }) {
 	if (typeof actObj.selected == 'function')
 		return actObj.selected(editor, server);
-	else if (actObj.action.tool)
+	else if (actObj.action && actObj.action.tool)
 		return isEqual(activeTool, actObj.action);
-	return null;
+	return false;
 }
 
 function disabled(actObj, { editor, server }) {
 	if (typeof actObj.disabled == 'function')
 		return actObj.disabled(editor, server);
-	return null;
+	return false;
 }
 
 function status(key, activeTool, params) {
 	let actObj = acts[key];
-	let selected = selected(actObj, activeTool, params);
-	let disabled = disabled(actObj, params);
-	return (selected == null && disabled == null) ? null : {
-		selected,
-		disabled
-	};
+	return pickBy(x => x, {
+		selected: selected(actObj, activeTool, params),
+		disabled: disabled(actObj, params)
+	});
 }
 
 export default function (state, { action, ...params }) {
 	var activeTool = execute(state.activeTool, action, params);
 	var res = Object.keys(acts).reduce((res, key) => {
-		var st = status(key, activeTool, params);
-		if (st)
-			res[key] = st;
+		var value = status(key, activeTool, params);
+		if (!isEmpty(value))
+			res[key] = value;
 		return res;
 	}, { activeTool });
 	return res;

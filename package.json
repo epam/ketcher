@@ -68,6 +68,7 @@
     "postinstall": "guppy pre-commit || exit 0"
   },
   "dependencies": {
+    "classnames": "2.2.5",
     "es5-shim": "4.5.9",
     "es6-shim": "0.35.1",
     "es7-shim": "6.0.0",

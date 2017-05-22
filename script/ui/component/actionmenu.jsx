@@ -1,5 +1,6 @@
 import { h } from 'preact';
 /** @jsx h */
+import classNames from 'classnames';
 
 import acts from '../acts';
 
@@ -17,15 +18,14 @@ export function shortcutStr(shortcut) {
 	});
 }
 
-function ActionButton({item, onAction, onDialog, ...props}) {
-	let act = acts[item];
-	let shortcut = act.shortcut && shortcutStr(act.shortcut);
+function ActionButton({action, status={}, onAction, ...props}) {
+	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
-		<button
-		  onClick={ev => act.action ? onAction(act.action) : onDialog(item, act.title)}
-		  title={shortcut ? `${act.title} (${shortcut})` :
-		                    act.title}>
-		  {act.title}
+		<button disabled={status.disabled}
+				onClick={() => onAction(action.action)}
+		  title={shortcut ? `${action.title} (${shortcut})` :
+		                    action.title}>
+		  {action.title}
 		</button>
 	)
 }
@@ -35,11 +35,12 @@ function ActionMenu({menu, className, role, ...props}) {
 		<menu className={className} role={role}>
 		{
 		  menu.map(item => (
-			  <li id={item.id || item}>
+			  <li id={item.id || item} className={classNames(props.status[item])}>
 				{ typeof item != 'object' ?
-					( <ActionButton item={item} {...props}/> ) :
+					( <ActionButton {...props} action={acts[item]}
+									status={props.status[item]} /> ) :
 						item.menu ?
-				  ( <ActionMenu menu={item.menu} {...props}/> ) :
+				  ( <ActionMenu {...props} menu={item.menu} /> ) :
 							item.component(props)
 				}
 			  </li>

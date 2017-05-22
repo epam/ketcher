@@ -3,6 +3,8 @@ var s = require('subscription');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
+var Struct = require('../chem/struct');
+
 var Render = require('../render');
 var Action = require('./action');
 
@@ -77,7 +79,8 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.update(Action.fromNewCanvas(this.render.ctab, value));
+		this.update(Action.fromNewCanvas(this.render.ctab,
+		                                 value || new Struct()));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;

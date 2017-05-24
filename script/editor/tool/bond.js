@@ -107,28 +107,37 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 			var bondProps = Object.assign({}, this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
 
-			if (bondProps.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
-			    bond.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
-			    bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
-			    bond.stereo == bondProps.stereo) {
-				this.editor.update(Action.fromBondFlipping(rnd.ctab, dragCtx.item.id));
-			} else {
-				var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
-				if (bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-				    bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-				    bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-				    loop)
-					bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-
-				this.editor.update(
-					Action.fromBondAttrs(rnd.ctab, dragCtx.item.id, bondProps,
-					                     bondFlipRequired(struct, bond, bondProps)));
-			}
+			this.editor.update(bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps));
 		}
 		delete this.dragCtx;
 	}
 	return true;
 };
+
+/**
+ * @param itemID - bond id in structure
+ * @param bond - bond for change
+ * @param bondProps - bondTool properties
+ * @returns Action
+ */
+function bondChangingAction(restruct, itemID, bond, bondProps) {
+	if (bondProps.stereo !== Struct.Bond.PATTERN.STEREO.NONE && //
+		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+		bond.type === bondProps.type && bond.stereo === bondProps.stereo)
+	// if bondTool is stereo and equal to bond for change
+		return Action.fromBondFlipping(restruct, itemID);
+
+	var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
+	if (bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+		bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+		loop)
+	// if `Single bond` tool is chosen and bond for change in `plainBondTypes`
+		bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
+
+	return Action.fromBondAttrs(restruct, itemID, bondProps,
+		bondFlipRequired(restruct.molecule, bond, bondProps));
+}
 
 function bondFlipRequired(struct, bond, attrs) {
 	return attrs.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
@@ -144,4 +153,6 @@ var plainBondTypes = [
 	Struct.Bond.PATTERN.TYPE.TRIPLE
 ];
 
-module.exports = BondTool;
+module.exports = Object.assign(BondTool, {
+	bondChangingAction: bondChangingAction
+});

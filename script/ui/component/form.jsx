@@ -6,22 +6,22 @@ import Input from './input';
 import { updateFormState } from '../actions/form-action.es';
 
 class Form extends Component {
-	constructor({dispatch, schema, init, storeName, ...props}) {
+	constructor({ onUpdate, schema, init, ...props }) {
 		super();
 		this.schema = propSchema(schema, props);
-		if (init) this.updateState(dispatch, storeName, init);
+		if (init) onUpdate(init, true, {});
 	}
-	updateState(dispatch, storeName, newstate) {
+	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);
 		let errs = getErrorsObj(errors);
-		dispatch(updateFormState(storeName, { stateForm: instance, valid, errors: errs }));
+		this.props.onUpdate(instance, valid, errs);
 	}
 	getChildContext() {
 		let { schema } = this.props;
 		return { schema, stateStore: this };
 	}
 	field(name, onChange) {
-		let {dispatch, storeName, stateForm, errors} = this.props;
+		let { stateForm, errors } = this.props;
 		var value = stateForm[name];
 		var self = this;
 		return {
@@ -29,17 +29,17 @@ class Form extends Component {
 			value: value,
 			onChange(value) {
 				let newstate = Object.assign({}, self.props.stateForm, { [name]: value });
-				self.updateState(dispatch, storeName, newstate);
+				self.updateState(newstate);
 				if (onChange) onChange(value);
 			}
 		};
 	}
 	render() {
-		var {dispatch, storeName, stateForm, children, schema, ...props } = this.props;
+		var { stateForm, children, schema, ...props } = this.props;
 		if (schema.key && schema.key !== this.schema.key) {
 			this.schema = propSchema(schema, props);
 			this.schema.serialize(stateForm); // hack: valid first state
-			this.updateState(dispatch, storeName, stateForm);
+			this.updateState(stateForm);
 		}
 
 		return (
@@ -49,13 +49,15 @@ class Form extends Component {
 		);
 	}
 }
-const form = connect((store, ownProps ) => {
-	let { storeName } = ownProps;
-	return {
-		stateForm: store[storeName].stateForm,
-		errors: store[storeName].errors
-	};
-})(Form);
+const form = connect((store, props) => ({
+		stateForm: store[props.storeName].stateForm,
+		errors: store[props.storeName].errors
+	}),
+	(dispatch, props) => ({
+		onUpdate: function (stateForm, valid, errors) {
+			dispatch(updateFormState(props.storeName, { stateForm, valid, errors }));
+		}
+	}))(Form);
 
 function Label({ labelPos, title, children, ...props }) {
 	return (

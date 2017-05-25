@@ -4,7 +4,7 @@ var Action = require('../action');
 var HoverHelper = require('./helper/hover');
 var utils = require('./utils');
 
-var BondTool = require('./bond');
+var Bond = require('./bond');
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -17,11 +17,17 @@ function ChainTool(editor) {
 
 ChainTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
+	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
 	this.hoverHelper.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
-		item: this.editor.findItem(event, ['atoms', 'bonds'])
+		item: ci
 	};
+	if (ci && ci.map === 'atoms') {
+		this.editor.selection({ atoms: [ci.id] }); // for change atom
+		// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+		atomLongtapEvent(this, rnd, ci.id);
+	}
 	if (!this.dragCtx.item) // ci.type == 'Canvas'
 		delete this.dragCtx.item;
 	return true;
@@ -31,6 +37,9 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 	var editor = this.editor;
 	var rnd = editor.render;
 	if (this.dragCtx) {
+		if ('stopTapping' in this.dragCtx)
+			this.dragCtx.stopTapping();
+		this.editor.selection(null);
 		var dragCtx = this.dragCtx;
 		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
 			if ('action' in dragCtx)
@@ -61,13 +70,15 @@ ChainTool.prototype.mouseup = function () {
 	var rnd = this.editor.render;
 	var struct = rnd.ctab.molecule;
 	if (this.dragCtx) {
+		if ('stopTapping' in this.dragCtx)
+			this.dragCtx.stopTapping();
 		var dragCtx = this.dragCtx;
 
 		var action = dragCtx.action;
-		if (!action && dragCtx.item.map === 'bonds') {
+		if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
 			var bond = struct.bonds.get(dragCtx.item.id);
 
-			action = BondTool.bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
+			action = Bond.bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
 				type: Struct.Bond.PATTERN.TYPE.SINGLE,
 				stereo: Struct.Bond.PATTERN.STEREO.NONE
 			});
@@ -79,7 +90,29 @@ ChainTool.prototype.mouseup = function () {
 	return true;
 };
 
+function atomLongtapEvent(tool, render, itemID) {
+	var editor = tool.editor;
+	var atom = render.ctab.molecule.atoms.get(itemID);
+	// TODO: longtab event
+	tool.dragCtx.timeout = setTimeout(function () {
+		delete tool.dragCtx;
+		editor.selection(null);
+		var res = editor.event.quickEdit.dispatch(atom);
+		Promise.resolve(res).then(function (newatom) {
+			editor.update(Action.fromAtomsAttrs(render.ctab, itemID, newatom));
+		});
+	}, 750);
+	tool.dragCtx.stopTapping = function () {
+		if (tool.dragCtx.timeout) {
+			clearTimeout(tool.dragCtx.timeout);
+			delete tool.dragCtx.timeout;
+		}
+	};
+}
+
 ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
 	ChainTool.prototype.mouseup;
 
-module.exports = ChainTool;
+module.exports = Object.assign(ChainTool, {
+	atomLongtapEvent: atomLongtapEvent
+});

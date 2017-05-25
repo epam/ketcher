@@ -7,6 +7,7 @@ var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
 var SGroup = require('./sgroup');
+var Chain = require('./chain');
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -63,26 +64,9 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 			item: ci,
 			xy0: rnd.page2obj(event)
 		};
-		if (ci.map == 'atoms') {
-			var self = this;
-			var editor = this.editor;
-			var atom = rnd.ctab.molecule.atoms.get(ci.id);
-			// TODO: longtab event
-			this.dragCtx.timeout = setTimeout(function () {
-				delete self.dragCtx;
-				editor.selection(null);
-				var res = editor.event.quickEdit.dispatch(atom);
-				Promise.resolve(res).then(function (newatom) {
-					editor.update(Action.fromAtomsAttrs(ctab, ci.id, newatom));
-				});
-			}, 750);
-			this.dragCtx.stopTapping = function () {
-				if (self.dragCtx.timeout) {
-					clearTimeout(self.dragCtx.timeout);
-					delete self.dragCtx.timeout;
-				}
-			};
-		}
+		if (ci.map === 'atoms')
+			// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+			Chain.atomLongtapEvent(this, rnd, ci.id);
 	}
 	return true;
 };

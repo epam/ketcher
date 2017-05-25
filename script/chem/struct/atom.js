@@ -75,6 +75,7 @@ Atom.PATTERN =
 Atom.attrlist = {
 	alias: null,
 	label: 'C',
+	pseudo: null,
 	isotope: 0,
 	radical: 0,
 	charge: 0,

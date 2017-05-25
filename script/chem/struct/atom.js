@@ -9,7 +9,7 @@ function Atom(params) { // eslint-disable-line max-statements
 
 	this.label = params.label;
 	this.fragment = ('fragment' in params) ? params.fragment : -1;
-	this.pseudo = checkPseudo(params.label);
+	this.pseudo = params.pseudo || checkPseudo(params.label);
 
 	ifDef(this, params, 'alias', def('alias'));
 	ifDef(this, params, 'isotope', def('isotope'));

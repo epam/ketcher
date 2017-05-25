@@ -73,6 +73,7 @@ function fromAtomList(satom) {
 
 function toAtomList(atom) {
 	return {
+		pseudo: null,
 		label: 'L#',
 		atomList: new Struct.AtomList({
 			notList: atom.type == 'not-list',

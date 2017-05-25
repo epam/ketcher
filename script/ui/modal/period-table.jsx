@@ -110,13 +110,18 @@ function AtomInfo({el, isInfo}) {
 class PeriodTable extends Component {
 	constructor(props) {
 		super(props);
-		let genType = props.label && !element.map[props.label] ? 'gen' : null; // TODO after repair pseudo: !!this.props.pseudo
-		this.state.type = props.type || genType || 'atom';
-		this.state.value = props.values || props.label || null;
-		this.state.cur = element[2];
-		this.state.isInfo = false;
+		let genType = !!this.props.pseudo ? 'gen' : null;
+		this.state = {
+			type: props.type || genType || 'atom',
+			value: props.values || props.label || null,
+			cur: element[2],
+			isInfo: false
+		};
+		this.firstType = true;
 	}
 	changeType(type) {
+		if (this.firstType)
+			return this.firstType = false;
 		let pl = this.state.type === 'list' || this.state.type === 'not-list';
 		let l = type === 'list' || type === 'not-list';
 		if (l && pl)
@@ -148,7 +153,7 @@ class PeriodTable extends Component {
 	result() {
 		let {type, value} = this.state;
 		if (type === 'atom')
-			return value ? { label: value } : null;
+			return value ? { label: value, pseudo: null } : null;
 		else if (type === 'gen')
 			return value ? { type, label: value, pseudo: value} : null;
 		else

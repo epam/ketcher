@@ -151,10 +151,11 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	// we render them together to avoid possible collisions
 	aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
 	if (aamText.length > 0) {
+		var elem = element.map[this.a.label];
 		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
 			'font': options.font,
 			'font-size': options.fontszsub,
-			'fill': '#000000'
+			'fill': (options.atomColoring && elem) ? element[elem].color : '#000'
 		});
 		var aamBox = util.relBox(aamPath.getBBox());
 		draw.recenterText(aamPath, aamBox);

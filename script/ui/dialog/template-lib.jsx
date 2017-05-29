@@ -26,9 +26,7 @@ function tmplName(tmpl, i) {
 function tmplsLib(tmpls) {
 	return tmpls.reduce((res, tmpl) => {
 		var name = tmpl.props.group || 'Ungroupt';
-		var group = res.find(group => (
-			group.name == name
-		));
+		var group = res.find(group => group.name === name);
 		if (!group) {
 			group = { name: name, templates: [] };
 			res.push(group);
@@ -43,34 +41,22 @@ function partition(n, array) {
 	return chunk(n)(array);
 }
 
-const greekRe = new RegExp('\\b' +
-						   Object.keys(GREEK_SIMBOLS).join('\\b|\\b') +
-						   '\\b', 'g');
+const greekRe = new RegExp('\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b', 'g');
 function greekify(str) {
 	return str.replace(greekRe, sym => GREEK_SIMBOLS[sym]);
-}
-
-function reFromGreekSymbols(strName) {
-	for (let sym in GREEK_SIMBOLS) {
-		let re = /[A-Z]/.test(GREEK_SIMBOLS[sym])
-			? new RegExp('\\b' + GREEK_SIMBOLS[sym] + '\\b\W', 'g') : new RegExp(GREEK_SIMBOLS[sym], 'g');
-		strName = strName.replace(re, sym);
-	}
-	return strName;
 }
 
 function filterLib(lib, filter) {
 	console.warn('filter', filter);
 	if (!filter)
 		return lib;
-	let re = RegExp(escapeRegExp(filter), 'i');
-	let reGreek = RegExp(reFromGreekSymbols(escapeRegExp(filter)), 'i');
+	let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
 	return lib.reduce((res, group) => {
-		if ((group.name.search(re) != -1 || group.name.search(reGreek) != -1) && group.templates.length > 0) {
+		if (greekify(group.name).search(re) !== -1 && group.templates.length > 0) {
 			res.push(group);
 		} else {
 			let tmpls = group.templates.filter((tmpl, i) => (
-				tmplName(tmpl, i).search(re) != -1 || tmplName(tmpl, i).search(reGreek) != -1
+				greekify(tmplName(tmpl, i)).search(re) !== -1
 			));
 			if (tmpls.length > 0)
 				res.push({ name: group.name, templates: tmpls });
@@ -81,9 +67,7 @@ function filterLib(lib, filter) {
 
 function groupTemplates(lib, groupName) {
 	console.warn('group', groupName);
-	var group = lib.find(function (group) {
-		return group.name == groupName;
-	});
+	var group = lib.find((group) => group.name === groupName);
 	return group ? group.templates : lib.reduce((res, group) => (
 		res.concat(...group.templates)
 	), []);
@@ -112,15 +96,14 @@ class TemplateLib extends Component {
 	}
 
 	select(tmpl) {
-		if (tmpl == this.state.selected)
+		if (tmpl === this.state.selected)
 			this.props.onOk(this.result());
 		else
 			this.setState({ selected: tmpl });
 	}
 
 	selectGroup(group) {
-		group = reFromGreekSymbols(group);
-		if (this.state.group != group) // don't drop selection
+		if (this.state.group !== group) // don't drop selection
 			this.setState({            // if not changed
 				group: group,
 				selected: null
@@ -194,7 +177,7 @@ class TemplateLib extends Component {
 				</label>
 				<SelectList className="groups"
 					onChange={g => this.selectGroup(g)}
-					value={greekify(group)} options={ lib.map(g => greekify(g.name)) } />
+					value={ group } options={ lib.map(g => greekify(g.name)) } />
 				  <VisibleView data={libRows(lib, group, COLS)}
 							   rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }

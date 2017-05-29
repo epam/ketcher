@@ -5,7 +5,7 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import keyName from 'w3c-keyname';
-import { changeRound } from '../actions/analyse-action.es';
+import { changeRound } from '../state/analyse';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 

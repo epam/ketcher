@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { setStruct, changeImage, shouldFragment } from '../actions/recognize-action.es';
+import { setStruct, changeImage, shouldFragment } from '../state/recognize';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructRender from '../component/structrender';

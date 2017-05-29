@@ -1,10 +1,10 @@
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
-import { updateFormState } from '../actions/form-action.es';
-import { setDefaultSettings, cancelChanges } from '../actions/settings-action.es';
+import { updateFormState } from '../state/form';
+import { setDefaultSettings, cancelChanges } from '../state/options';
 
-import { settings as settingsSchema } from '../settings-options.es';
+import { settings as settingsSchema } from '../data/options-schema';
 import { form as Form, Field } from '../component/form';
 
 import Dialog from '../component/dialog';

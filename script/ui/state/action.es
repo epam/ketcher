@@ -1,4 +1,4 @@
-import acts from '../acts';
+import acts from '../action';
 import { isEqual, isEmpty, pickBy } from 'lodash/fp';
 
 function execute(activeTool, { action, editor, server }) {

@@ -9,10 +9,10 @@ var molfile = require('../chem/molfile');
 
 var Editor = require('../editor');
 
-var templates = require('./templates').default;
+var templates = require('./data/templates').default;
 
 var utils = require('./utils');
-var modal = require('./modal');
+var modal = require('./dialog');
 var clipArea = require('./cliparea');
 
 var structFormat = require('./structformat');

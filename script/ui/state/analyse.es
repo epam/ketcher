@@ -7,6 +7,13 @@ const dumbActions = [
 	'CHANGE_ANALYSE_ROUND'
 ];
 
+export function changeRound(roundName, value) {
+	return {
+		type: 'CHANGE_ANALYSE_ROUND',
+		payload: { [roundName]: value }
+	};
+}
+
 export default function analyseReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {

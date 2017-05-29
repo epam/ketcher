@@ -1,4 +1,4 @@
-import molfile from '../chem/molfile';
+import molfile from '../../chem/molfile';
 
 export default [
 		'Benzene\n' +

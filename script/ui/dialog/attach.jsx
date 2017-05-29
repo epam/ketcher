@@ -7,7 +7,7 @@ import Input from '../component/input';
 import StructEditor from '../component/structeditor';
 import Vec2 from '../../util/vec2';
 
-import { initAttach, setAttachPoints, setTmplName } from '../actions/attach-action.es';
+import { initAttach, setAttachPoints, setTmplName } from '../state/template-attach';
 
 const EDITOR_STYLES = {
 	selectionStyle: { fill: '#47b3ec', stroke: 'none' },

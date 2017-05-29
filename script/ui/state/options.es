@@ -1,4 +1,4 @@
-import { settings as settingsSchema } from '../settings-options.es';
+import { settings as settingsSchema } from '../data/options-schema';
 
 export function defaultOpts() {
 	return Object.keys(settingsSchema.properties).reduce((res, prop) => {

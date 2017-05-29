@@ -4,9 +4,9 @@ import { createStore, combineReducers,
          applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
-import formsState from './forms-state.es';
+import formsState from './form.es';
 import formReducer from './index.es';
-import actstate from './actstate';
+import action from './action';
 import toolbar from './toolbar';
 
 function modal(state = null, { type, data }) {
@@ -25,7 +25,7 @@ function modal(state = null, { type, data }) {
 }
 
 const shared = combineReducers({
-	actionState: actstate,
+	actionState: action,
 	toolbar,
 	modal
 });

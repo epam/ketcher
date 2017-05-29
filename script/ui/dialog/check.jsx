@@ -5,7 +5,7 @@ import { connect } from 'preact-redux';
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
 import { form as Form, Field } from '../component/form';
-import { checkErrors } from '../actions/check-action.es';
+import { checkErrors } from '../state/check';
 
 const checkSchema = {
 	title: 'Check',
@@ -70,4 +70,3 @@ export default connect((store) => {
 		moleculeErrors: store.form.check.moleculeErrors
 	};
 })(Check);
-

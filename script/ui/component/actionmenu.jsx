@@ -2,7 +2,7 @@ import { h } from 'preact';
 /** @jsx h */
 import classNames from 'classnames';
 
-import acts from '../acts';
+import action from '../action';
 
 const isMac = /Mac/.test(navigator.platform);
 const shortcutAliasMap = {
@@ -37,7 +37,7 @@ function ActionMenu({menu, className, role, ...props}) {
 		  menu.map(item => (
 			  <li id={item.id || item} className={classNames(props.status[item])}>
 				{ typeof item != 'object' ?
-					( <ActionButton {...props} action={acts[item]}
+					( <ActionButton {...props} action={action[item]}
 									status={props.status[item]} /> ) :
 						item.menu ?
 				  ( <ActionMenu {...props} menu={item.menu} /> ) :

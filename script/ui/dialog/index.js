@@ -1,5 +1,3 @@
-var modal = require('./render-modal').default;
-
 var Open = require('./open').default;
 var Save = require('./save').default;
 var templatesDialog = require('./template-lib');
@@ -15,15 +13,15 @@ var Recognize = require('./recognize').default;
 
 // schemify dialogs
 var Atom = require('./atom').default;
-var AttachPoints = require('./attach-points').default;
+var AttachPoints = require('./template-attach').default;
 var Automap = require('./automap').default;
 var Bond = require('./bond').default;
 var Check = require('./check').default;
 var LabelEdit = require('./labeledit').default;
 var RgroupLogic = require('./rgroup-logic').default;
-var Settings = require('./settings').default;
+var Settings = require('./options').default;
 var Sgroup = require('./sgroup').default;
-var SgroupSpecial = require('./sgroup-special').default;
+var SgroupSpecial = require('./sdata').default;
 
 templatesDialog.default.init = templatesDialog.init;
 
@@ -39,15 +37,16 @@ module.exports = {
 	save: Save,
 
 	rgroup: rgroupDialog,
-	attachmentPoints: modal(AttachPoints),
-	atomProps: modal(Atom),
-	bondProps: modal(Bond),
-	automap: modal(Automap),
-	rgroupLogic: modal(RgroupLogic),
-	sgroup: modal(Sgroup),
-	sgroupSpecial: modal(SgroupSpecial),
+	// render-modal
+	attachmentPoints: AttachPoints,
+	atomProps: Atom,
+	bondProps: Bond,
+	automap: Automap,
+	rgroupLogic: RgroupLogic,
+	sgroup: Sgroup,
+	sgroupSpecial: SgroupSpecial,
 	templates: templatesDialog.default,
-	labelEdit: modal(LabelEdit),
-	miew: miewDialog,
-	attach: modal(Attach)
+	labelEdit: LabelEdit,
+	attach: Attach,
+	miew: miewDialog
 };

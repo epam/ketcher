@@ -3,7 +3,7 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 import Input from './input';
-import { updateFormState } from '../actions/form-action.es';
+import { updateFormState } from '../state/form';
 
 class Form extends Component {
 	constructor({ onUpdate, schema, init, ...props }) {

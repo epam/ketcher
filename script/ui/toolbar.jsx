@@ -8,10 +8,10 @@ import element from '../chem/element';
 import Atom from './component/atom';
 import ActionMenu, { shortcutStr } from './component/actionmenu';
 
-import acts from './acts';
-import { atomCuts, basic as basicAtoms } from './acts/atoms';
-import { zoomList } from './acts/zoom';
-import templates from './templates';
+import action from './action';
+import { atomCuts, basic as basicAtoms } from './action/atoms';
+import { zoomList } from './action/zoom';
+import templates from './data/templates';
 
 const mainmenu = [
 	{
@@ -207,7 +207,7 @@ function AtomsList({atoms, active, onAction, ...props}) {
 }
 
 function TemplatesList({active, onAction, ...props}) {
-	let shortcut = shortcutStr(acts.templates.shortcut);
+	let shortcut = shortcutStr(action.templates.shortcut);
 	let isTmpl = active && active.tool == 'template';
 	return (
 		<menu>

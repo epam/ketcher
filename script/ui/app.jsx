@@ -1,19 +1,19 @@
 import { Provider, connect } from 'preact-redux';
 
-import state, { onAction } from './reducers/state';
+import state, { onAction } from './state';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 
-import modals from './modal';
+import modals from './dialog';
 
 const AppEditor = connect(
 	(state) => ({
 		options: state.options
 	}),
-	(dispatch, props) => ({
+	(dispatch) => ({
 		onInit: editor => {
 			dispatch({ type: 'INIT', editor });
 		},

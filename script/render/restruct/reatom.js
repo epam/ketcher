@@ -155,7 +155,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
 			'font': options.font,
 			'font-size': options.fontszsub,
-			'fill': (options.atomColoring && elem) ? element[elem].color : '#000'
+			'fill': (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
 		});
 		var aamBox = util.relBox(aamPath.getBBox());
 		draw.recenterText(aamPath, aamBox);

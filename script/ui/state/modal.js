@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 
-import { createNamedFormReducer } from './form-reducer.es';
+import { createNamedFormReducer } from './form';
 
-import analyseReducer from './analyse-reducer.es';
-import attachReducer from './attach-reducer.es';
-import recognizeReducer from './recognize-reducer.es';
-import sgroupSpecialReducer from './sgroup-special-reducer.es';
+import analyseReducer from './analyse';
+import attachReducer from './template-attach';
+import recognizeReducer from './recognize';
+import sgroupSpecialReducer from './sdata';
 
 export default combineReducers({
 	analyse: analyseReducer,

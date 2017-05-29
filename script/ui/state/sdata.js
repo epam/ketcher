@@ -1,5 +1,5 @@
 import { mapOf } from '../component/form';
-import { sgroupSpecial as sgroupSchema } from '../sgroupSpecialSchema.es'
+import { sgroupSpecial as sgroupSchema } from '../data/sdata-schema'
 
 const contextSchema = {
 	title: 'Context',

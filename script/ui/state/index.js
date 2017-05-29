@@ -4,8 +4,8 @@ import { createStore, combineReducers,
          applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
-import formsState from './form.es';
-import formReducer from './index.es';
+import formsState from './form';
+import formReducer from './index';
 import action from './action';
 import toolbar from './toolbar';
 

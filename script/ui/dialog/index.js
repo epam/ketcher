@@ -1,31 +1,31 @@
-var Open = require('./open').default;
-var Save = require('./save').default;
-var templatesDialog = require('./template-lib');
-var rgroupDialog = require('./rgroup').default;
-var miewDialog = require('./miew').default;
-
-var About = require('./about').default;
-var Attach = require('./attach').default;
-var Analyse = require('./analyse').default;
-var Help = require('./help').default;
-var PeriodTable = require('./period-table').default;
-var Recognize = require('./recognize').default;
+import Open from './open';
+import Save from './save';
+import templatesDialog, { init as templateInit } from './template-lib';
+import rgroupDialog from './rgroup';
+import miewDialog from './miew';
+import About from './about';
+import Attach from './attach';
+import Analyse from './analyse';
+import Help from './help';
+import PeriodTable from './period-table';
+import Recognize from './recognize';
 
 // schemify dialogs
-var Atom = require('./atom').default;
-var AttachPoints = require('./template-attach').default;
-var Automap = require('./automap').default;
-var Bond = require('./bond').default;
-var Check = require('./check').default;
-var LabelEdit = require('./labeledit').default;
-var RgroupLogic = require('./rgroup-logic').default;
-var Settings = require('./options').default;
-var Sgroup = require('./sgroup').default;
-var SgroupSpecial = require('./sdata').default;
+import Atom from './atom';
 
-templatesDialog.default.init = templatesDialog.init;
+import AttachPoints from './template-attach';
+import Automap from './automap';
+import Bond from './bond';
+import Check from './check';
+import LabelEdit from './labeledit';
+import RgroupLogic from './rgroup-logic';
+import Settings from './options';
+import Sgroup from './sgroup';
+import SgroupSpecial from './sdata';
 
-module.exports = {
+templatesDialog.init = templateInit;
+
+export default {
 	about: About,
 	analyse: Analyse,
 	cip: Check,

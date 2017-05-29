@@ -55,7 +55,6 @@ var bundleConfig = {
 				'transform-class-properties',
 				'transform-object-rest-spread'
 			],
-			extensions: ['.jsx', '.es'],
 			only: 'script/ui'
 		}]
 	],

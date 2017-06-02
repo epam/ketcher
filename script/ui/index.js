@@ -439,7 +439,8 @@ function dialog(modal, params, noAnimate) {
 		scope = 'editor';
 		cover.style.display = 'none';
 		var dialog = cover.lastChild;
-		preact.render('', cover, dialog); // Unmount Dialog !!
+		// preact.render('', cover, dialog); // unmount dialog
+		dialog.remove();
 		console.info('output', res);
 		if (fn) fn(res);
 	}

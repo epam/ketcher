@@ -1,45 +1,85 @@
 import sdf from '../../chem/sdf';
+import molfile from '../../chem/molfile';
 
 export function selectTmpl(tmpl) {
 	return {
 		type: 'TMPL_SELECT',
-		payload: { selected: tmpl }
+		data: { selected: tmpl }
 	}
 }
 
 export function changeGroup(group) {
 	return {
 		type: 'TMPL_CHANGE_GROUP',
-		payload: { group: group, selected: null }
+		data: { group: group, selected: null }
 	}
 }
 
 export function changeFilter(filter) {
 	return {
 		type: 'TMPL_CHANGE_FILTER',
-		payload: { filter: filter.trim(), selected: null } // TODO: change this
+		data: { filter: filter.trim(), selected: null } // TODO: change this
 	}
 }
 
-const initState = {
+export const initTmplState = {
+	lib: [],
 	selected: null,
 	filter: '',
 	group: null
 };
 
 const dumbActions = [
+	'TMPL_INIT',
 	'TMPL_SELECT',
 	'TMPL_CHANGE_GROUP',
 	'TMPL_CHANGE_FILTER'
 ];
 
-export default function templatesReducer(state = initState, action) {
+export function templatesReducer(state = initTmplState, action) {
 
 	if (dumbActions.includes(action.type)) {
-		return Object.assign({}, state, action.payload);
+		return Object.assign({}, state, action.data);
 	}
 
 	return state;
+}
+
+function initLib(lib) {
+	return {
+		type: 'TMPL_INIT',
+		data: { lib: lib }
+	}
+}
+
+export function initTmplLib(dispatch, baseUrl, cacheEl) {
+	prefetchStatic(baseUrl + 'library.sdf').then(text => {
+		let tmpls = sdf.parse(text);
+		let prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
+		return prefetch.then(cachedFiles => (
+			tmpls.map(tmpl => {
+				let pr = prefetchSplit(tmpl);
+				if (pr.file)
+					tmpl.props.prerender = cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
+				return tmpl;
+			})
+		));
+	}).then(res => {
+		let lib = res.concat(userTmpls());
+		dispatch(initLib(lib))
+	});
+}
+
+function userTmpls() {
+	var userLib = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	return userLib.map((tmpl) => {
+		if (tmpl.props === '') tmpl.props = {};
+		tmpl.props.group = 'User';
+		return {
+			struct: molfile.parse(tmpl.struct),
+			props: tmpl.props
+		};
+	});
 }
 
 function prefetchStatic(url) {
@@ -79,19 +119,4 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
 		));
 	});
 
-}
-
-export function init(baseUrl, cacheEl) {
-	return prefetchStatic(baseUrl + 'library.sdf').then(text => {
-		let tmpls = sdf.parse(text);
-		let prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
-		return prefetch.then(cachedFiles => (
-			tmpls.map(tmpl => {
-				let pr = prefetchSplit(tmpl);
-				if (pr.file)
-					tmpl.props.prerender = cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
-				return tmpl;
-			})
-		));
-	});
 }

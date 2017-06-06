@@ -95,7 +95,8 @@ export default {
 	},
 	"template-lib": {
 		shortcut: "Shift+t",
-		title: "Custom Templates"
+		title: "Custom Templates",
+		action: { dialog: 'templates' }
 	},
 	"period-table": {
 		title: "Periodic Table",

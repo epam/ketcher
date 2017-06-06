@@ -38,22 +38,22 @@ function greekify(str) {
 }
 
 const filterLibSelector = createSelector(
+	(props) => props.lib,
 	(props) => props.filter,
-	(props) => props.tmpls,
-	(props) => props.userTmpls,
-	(filter, tmpls, userTmpls) => {
-		let lib = tmpls.concat(userTmpls);
-		console.warn('Filter', filter);
-		let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
-		return flow(
-			_filter(item => !filter || greekify(item.struct.name).search(re) !== -1 || greekify(item.props.group).search(re) !== -1),
-			reduce((res, item) => {
-				!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
-				return res;
-			}, {})
-		)(lib)
-	}
+	filterLib
 );
+
+function filterLib(lib, filter) {
+	console.warn('Filter', filter);
+	let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
+	return flow(
+		_filter(item => !filter || re.test(greekify(item.struct.name)) || re.test(greekify(item.props.group))),
+		reduce((res, item) => {
+			!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
+			return res;
+		}, {})
+	)(lib)
+}
 
 var libRows = memoize(5)((lib, group, n) => {
 	console.warn("Group", group);
@@ -117,7 +117,7 @@ class TemplateLib extends Component {
 					result={() => this.result()}
 					buttons={[
 						<SaveButton className="save"
-									data={ sdf.stringify(this.props.tmpls.concat(this.props.userTmpls)) }
+									data={ sdf.stringify(this.props.lib) }
 									filename={'ketcher-tmpls.sdf'}>
 							Save To SDF…
 						</SaveButton>,
@@ -142,6 +142,7 @@ class TemplateLib extends Component {
 }
 
 export default connect(store => ({
+	lib: store.templates.lib,
 	selected: store.templates.selected,
 	filter: store.templates.filter,
 	group: store.templates.group

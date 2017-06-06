@@ -33,6 +33,7 @@ export default {
 	settings: Settings,
 	open: Open,
 	save: Save,
+	templates: TemplatesLib,
 
 	rgroup: rgroupDialog,
 	// render-modal
@@ -43,7 +44,6 @@ export default {
 	rgroupLogic: RgroupLogic,
 	sgroup: Sgroup,
 	sgroupSpecial: SgroupSpecial,
-	templates: TemplatesLib,
 	labelEdit: LabelEdit,
 	attach: Attach,
 	miew: miewDialog

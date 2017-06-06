@@ -1,6 +1,7 @@
 import { Provider, connect } from 'preact-redux';
 
 import state, { onAction } from './state';
+import { initTmplLib } from './state/templates';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -48,6 +49,18 @@ const AppModal = connect(
 	</div>
 });
 
+const AppTemplates = connect(
+	null,
+	(dispatch) => ({
+		onInitTmpls: (cacheEl) => initTmplLib(dispatch, '', cacheEl)
+	})
+)(class extends Component {
+	componentDidMount() {
+		this.props.onInitTmpls(this.cacheEl);
+	}
+	render = () => (<div ref={c => this.cacheEl = c}></div>)
+});
+
 const App = connect(
 	null,
 	{ onAction }
@@ -56,6 +69,7 @@ const App = connect(
 		<AppEditor id="canvas"/>
 		<Toolbar {...props}/>
 		<AppModal/>
+		<AppTemplates/>
 	</main>
 ));
 

@@ -6,6 +6,7 @@ import { logger } from 'redux-logger';
 
 import formsState from './form';
 import formReducer from './index';
+import { templatesReducer, initTmplState } from './templates';
 import action from './action';
 import toolbar from './toolbar';
 
@@ -27,7 +28,8 @@ function modal(state = null, { type, data }) {
 const shared = combineReducers({
 	actionState: action,
 	toolbar,
-	modal
+	modal,
+	templates: templatesReducer
 });
 
 export function onAction(action) {
@@ -68,7 +70,8 @@ export default function(options, server) {
 		server: null, //server || Promise.reject("Standalone mode!"),
 		editor: null,
 		modal: null,
-		form: formsState
+		form: formsState,
+		templates: initTmplState
 	};
 
 	return createStore(root, initState,

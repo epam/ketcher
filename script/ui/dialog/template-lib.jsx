@@ -1,4 +1,4 @@
-import { escapeRegExp, chunk } from 'lodash/fp';
+import { escapeRegExp, chunk, flow, filter as _filter, reduce } from 'lodash/fp';
 
 import { h, Component, render } from 'preact';
 import { connect } from 'preact-redux';
@@ -26,19 +26,6 @@ function tmplName(tmpl, i) {
 	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
-function tmplsLib(tmpls) {
-	return tmpls.reduce((res, tmpl) => {
-		var name = tmpl.props.group || 'Ungroupt';
-		var group = res.find(group => group.name === name);
-		if (!group) {
-			group = { name: name, templates: [] };
-			res.push(group);
-		}
-		group.templates.push(tmpl);
-		return res;
-	}, []);
-}
-
 function partition(n, array) {
 	console.warn('partition', n);
 	return chunk(n)(array);
@@ -50,36 +37,21 @@ function greekify(str) {
 }
 
 function filterLib(lib, filter) {
-	console.warn('filter', filter);
-	if (!filter)
-		return lib;
-	let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
-	return lib.reduce((res, group) => {
-		if (greekify(group.name).search(re) !== -1 && group.templates.length > 0) {
-			res.push(group);
-		} else {
-			let tmpls = group.templates.filter((tmpl, i) => (
-				greekify(tmplName(tmpl, i)).search(re) !== -1
-			));
-			if (tmpls.length > 0)
-				res.push({ name: group.name, templates: tmpls });
-		}
-		return res;
-	}, []);
-}
-
-function groupTemplates(lib, groupName) {
-	console.warn('group', groupName);
-	var group = lib.find((group) => group.name === groupName);
-	return group ? group.templates : lib.reduce((res, group) => (
-		res.concat(...group.templates)
-	), []);
+	filter = greekify(filter);
+	return flow(
+		_filter(item => !filter || greekify(item.struct.name).search(filter) !== -1 || greekify(item.props.group).search(filter) !== -1),
+		reduce((res, item) => {
+			!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
+			return res;
+		}, {})
+	)(lib);
 }
 
 var libFilter = memoize(30)((lib, filter) => filterLib(lib, filter));
-var libRows = memoize(5)((lib, group, n) =>
-	partition(n, groupTemplates(lib, group))
-);
+var libRows = memoize(5)((lib, group, n) => {
+	console.warn("Group", group);
+	return partition(n, lib[group])
+});
 
 function RenderTmpl({ tmpl, ...props }) {
 	return tmpl.props && tmpl.props.prerender ?
@@ -126,25 +98,18 @@ class TemplateLib extends Component {
 		);
 	}
 
-	saveToSDF() {
-		let sdfStr = '';
-		this.props.lib.forEach(function (item) {
-			sdfStr += sdf.stringify(item.templates);
-		});
-		return sdfStr;
-	}
-
 	render() {
 		const COLS = 3;
-		let { group, filter, onFilter, onChangeGroup, ...props } = this.props;
+		let { filter, onFilter, onChangeGroup, ...props } = this.props;
 		let lib = libFilter(this.props.lib, filter);
+		let group = lib[this.props.group] ? this.props.group : Object.keys(lib)[0];
 
 		return (
 			<Dialog title="Template Library"
 					className="template-lib" params={props}
 					result={() => this.result()}
 					buttons={[
-						<SaveButton className="save" data={this.saveToSDF()}
+						<SaveButton className="save" data={ sdf.stringify(this.props.lib) }
 									filename={'ketcher-tmpls.sdf'}>
 							Save To SDF…
 						</SaveButton>,
@@ -153,11 +118,11 @@ class TemplateLib extends Component {
 					<Input type="search" placeholder="Filter" value={ filter }
 						   onChange={value => onFilter(value)}/>
 				</label>
-				<Input className="groups" value={ group } onChange={g => onChangeGroup(g)}
+				<Input className="groups" value={ group } onChange={g => onChangeGroup(g)} key={filter}
 					   schema={{
-						   enum: lib.map(g => g.name),
-						   enumNames: lib.map(g => greekify(g.name))
-					   }} size={this.props.lib.length} key={lib}/>
+						   enum: Object.keys(lib),
+						   enumNames: Object.keys(lib).map(g => greekify(g))
+					   }} size={15}/>
 
 				<VisibleView data={libRows(lib, group, COLS)}
 							 rowHeight={120} className="table">
@@ -168,19 +133,12 @@ class TemplateLib extends Component {
 	}
 }
 
-export default connect((store, props) => {
-	let lib = tmplsLib(props.tmpls).concat({
-		name: 'User Templates',
-		templates: props.userTmpls
-	});
-	if (props.group === 'User') props.group = 'User Templates';
-	return {
-		lib: lib,
-		selected: store.templates.selected,
-		filter: store.templates.filter,
-		group: store.templates.group || lib[0].name
-	};
-}, dispatch => ({
+export default connect((store, props) => ({
+	lib: props.tmpls.concat(props.userTmpls),
+	selected: store.templates.selected,
+	filter: store.templates.filter,
+	group: store.templates.group
+}), dispatch => ({
 	onFilter: filter => dispatch(changeFilter(filter)),
 	onSelect: tmpl => dispatch(selectTmpl(tmpl)),
 	onChangeGroup: group => dispatch(changeGroup(group))

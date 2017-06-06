@@ -4,7 +4,6 @@ import { createSelector } from 'reselect';
 import { h, Component, render } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
-import memoize from 'lru-memoize';
 
 import sdf from '../../chem/sdf';
 
@@ -55,10 +54,17 @@ function filterLib(lib, filter) {
 	)(lib)
 }
 
-var libRows = memoize(5)((lib, group, n) => {
+const libRowsSelector = createSelector(
+	(props) => props.lib,
+	(props) => props.group,
+	(props) => props.COLS,
+	libRows
+);
+
+function libRows(lib, group, COLS) {
 	console.warn("Group", group);
-	return partition(n, lib[group])
-});
+	return partition(COLS, _filter(item => item.props.group === group, lib))
+}
 
 function RenderTmpl({ tmpl, ...props }) {
 	return tmpl.props && tmpl.props.prerender ?
@@ -132,7 +138,7 @@ class TemplateLib extends Component {
 						   enumNames: Object.keys(lib).map(g => greekify(g))
 					   }} size={15}/>
 
-				<VisibleView data={libRows(lib, group, COLS)}
+				<VisibleView data={libRowsSelector({ ...this.props, group, COLS })}
 							 rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }
 				</VisibleView>

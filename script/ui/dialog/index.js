@@ -1,6 +1,6 @@
 import Open from './open';
 import Save from './save';
-import templatesDialog, { init as templateInit } from './template-lib';
+import TemplatesLib from './template-lib';
 import rgroupDialog from './rgroup';
 import miewDialog from './miew';
 import About from './about';
@@ -23,8 +23,6 @@ import Settings from './options';
 import Sgroup from './sgroup';
 import SgroupSpecial from './sdata';
 
-templatesDialog.init = templateInit;
-
 export default {
 	about: About,
 	analyse: Analyse,
@@ -45,7 +43,7 @@ export default {
 	rgroupLogic: RgroupLogic,
 	sgroup: Sgroup,
 	sgroupSpecial: SgroupSpecial,
-	templates: templatesDialog.default,
+	templates: TemplatesLib,
 	labelEdit: LabelEdit,
 	attach: Attach,
 	miew: miewDialog

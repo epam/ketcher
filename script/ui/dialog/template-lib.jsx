@@ -1,6 +1,7 @@
 import { escapeRegExp, chunk } from 'lodash/fp';
 
 import { h, Component, render } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 import memoize from 'lru-memoize';
 
@@ -11,6 +12,8 @@ import StructRender from '../component/structrender';
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
 import Input from '../component/input';
+
+import { changeFilter, changeGroup, selectTmpl } from '../state/templates';
 
 const GREEK_SIMBOLS = {
 	'Alpha': 'A', 'alpha': 'α',
@@ -78,47 +81,22 @@ var libRows = memoize(5)((lib, group, n) =>
 	partition(n, groupTemplates(lib, group))
 );
 
-function RenderTmpl({tmpl, ...props}) {
+function RenderTmpl({ tmpl, ...props }) {
 	return tmpl.props && tmpl.props.prerender ?
 		( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
-		( <StructRender struct={tmpl.struct} options={{autoScaleMargin: 15 }} {...props}/> );
+		( <StructRender struct={tmpl.struct} options={{ autoScaleMargin: 15 }} {...props}/> );
 }
 
 class TemplateLib extends Component {
-	constructor(props) {
-		console.info('lib constructor');
-		super(props);
-		this.state = {
-			selected: props.selected || null,
-			filter: '',
-			group: props.group || props.lib[0].name
-		};
-	}
-
 	select(tmpl) {
-		if (tmpl === this.state.selected)
+		if (tmpl === this.props.selected)
 			this.props.onOk(this.result());
 		else
-			this.setState({ selected: tmpl });
-	}
-
-	selectGroup(group) {
-		if (this.state.group !== group) // don't drop selection
-			this.setState({            // if not changed
-				group: group,
-				selected: null
-			});
-	}
-
-	setFilter(filter) {
-		this.setState({
-			filter: filter.trim(),
-			selected: null           // TODO: change this
-		});
+			this.props.onSelect(tmpl);
 	}
 
 	result() {
-		let tmpl = this.state.selected;
+		let tmpl = this.props.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
 			event: 'chooseTmpl',
@@ -131,17 +109,18 @@ class TemplateLib extends Component {
 	}
 
 	onAttach(tmpl, index) {
-		this.props.onOk({event: 'attachEdit', tmpl: tmpl, index: index});
+		this.props.onOk({ event: 'attachEdit', tmpl: tmpl, index: index });
 	}
 
-	renderRow (row, index, COLS) {
+	renderRow(row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className={tmpl == this.state.selected ? 'td selected' : 'td'} title={greekify(tmplName(tmpl, index * COLS + i))}>
-					<RenderTmpl tmpl={tmpl}
-								className="struct"
-								onClick={() => this.select(tmpl)} />
-					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>Edit</button>
+				<div className={tmpl === this.props.selected ? 'td selected' : 'td'}
+					 title={greekify(tmplName(tmpl, index * COLS + i))}>
+					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)}/>
+					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>
+						Edit
+					</button>
 				</div>
 			))}</div>
 		);
@@ -155,30 +134,30 @@ class TemplateLib extends Component {
 		return sdfStr;
 	}
 
-	render () {
+	render() {
 		const COLS = 3;
-		let {group, filter} = this.state;
+		let { group, filter, onFilter, onChangeGroup, ...props } = this.props;
 		let lib = libFilter(this.props.lib, filter);
 
-		console.info('all rerender');
 		return (
 			<Dialog title="Template Library"
-					className="template-lib" params={this.props}
+					className="template-lib" params={props}
 					result={() => this.result()}
 					buttons={[
 						<SaveButton className="save" data={this.saveToSDF()}
-									filename={'ketcher-tmpls.sdf'} >
+									filename={'ketcher-tmpls.sdf'}>
 							Save To SDF…
 						</SaveButton>,
-						"OK", "Cancel"]} >
+						"OK", "Cancel"]}>
 				<label>
 					<Input type="search" placeholder="Filter" value={ filter }
-						   onChange={value => this.setFilter(value)}/>
+						   onChange={value => onFilter(value)}/>
 				</label>
-				<Input className="groups" value={ group } onChange={g => this.selectGroup(g)}
+				<Input className="groups" value={ group } onChange={g => onChangeGroup(g)}
 					   schema={{
-						   enum: lib.map(g => greekify(g.name))
-					   }} size={lib.length} />
+						   enum: lib.map(g => g.name),
+						   enumNames: lib.map(g => greekify(g.name))
+					   }} size={this.props.lib.length} key={lib}/>
 
 				<VisibleView data={libRows(lib, group, COLS)}
 							 rowHeight={120} className="table">
@@ -189,68 +168,20 @@ class TemplateLib extends Component {
 	}
 }
 
-function prefetchStatic(url) {
-	return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
-		if (resp.ok)
-			return resp.text();
-		throw "Could not fetch " + url;
-	});
-}
-
-function prefetchSplit(tmpl) {
-	var pr = tmpl.props.prerender;
-	var res = pr && pr.split('#', 2);
-	return {
-		file: pr && res[0],
-		id: pr && res[1]
-	};
-}
-
-function prefetchRender(tmpls, baseUrl, cacheEl) {
-	var files = tmpls.reduce((res, tmpl) => {
-		let file = prefetchSplit(tmpl).file;
-		if (file && res.indexOf(file) == -1)
-			res.push(file);
-		return res;
-	}, []);
-	var fetch = Promise.all(files.map(fn => (
-		prefetchStatic(baseUrl + fn).catch(() => null)
-	)));
-	return fetch.then(svgs => {
-		svgs.forEach(svgContent => {
-			if (svgContent)
-				cacheEl.innerHTML += svgContent;
-		});
-		return files.filter((file, i) => (
-			!!svgs[i]
-		));
-	});
-
-}
-
-export function init(baseUrl, cacheEl) {
-	return prefetchStatic(baseUrl + 'library.sdf').then(text => {
-		var tmpls = sdf.parse(text);
-		var prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
-		return prefetch.then(cachedFiles => (
-			tmpls.map(tmpl => {
-				let pr = prefetchSplit(tmpl);
-				if (pr.file)
-					tmpl.props.prerender = cachedFiles.indexOf(pr.file) != -1 ? `#${pr.id}` : '';
-				return tmpl;
-			})
-		));
-	});
-}
-
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	var lib = tmplsLib(params.tmpls).concat({
+export default connect((store, props) => {
+	let lib = tmplsLib(props.tmpls).concat({
 		name: 'User Templates',
-		templates: params.userTmpls
+		templates: props.userTmpls
 	});
-	if (params.group == 'User') params.group = 'User Templates';
-	return render((
-		<TemplateLib lib={lib} {...params}/>
-	), overlay);
-};
+	if (props.group === 'User') props.group = 'User Templates';
+	return {
+		lib: lib,
+		selected: store.templates.selected,
+		filter: store.templates.filter,
+		group: store.templates.group || lib[0].name
+	};
+}, dispatch => ({
+	onFilter: filter => dispatch(changeFilter(filter)),
+	onSelect: tmpl => dispatch(selectTmpl(tmpl)),
+	onChangeGroup: group => dispatch(changeGroup(group))
+}))(TemplateLib);

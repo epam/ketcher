@@ -6,6 +6,7 @@ import analyseReducer from './analyse';
 import attachReducer from './template-attach';
 import recognizeReducer from './recognize';
 import sgroupSpecialReducer from './sdata';
+import templatesReducer from './templates';
 
 export default combineReducers({
 	analyse: analyseReducer,
@@ -20,5 +21,6 @@ export default combineReducers({
 	'rgroup-logic': createNamedFormReducer('rgroup-logic'),
 	settings: createNamedFormReducer('settings'),
 	sgroup: createNamedFormReducer('sgroup'),
-	sgroupSpecial: sgroupSpecialReducer
+	sgroupSpecial: sgroupSpecialReducer,
+	templates: templatesReducer
 });

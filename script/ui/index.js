@@ -25,6 +25,7 @@ var options;
 var scope;
 var editor;
 
+var initTmpls = require('./state/templates').init;
 var libTmpls = null;
 
 var serverActions = ['layout', 'clean', 'arom', 'dearom', 'cip',
@@ -69,7 +70,7 @@ function init(opts, apiServer) {
 	});
 
 	subEl('template-lib').disabled = true;
-	modal.templates.init('', $$('.cellar')[0]).then(function (res) {
+	initTmpls('', $$('.cellar')[0]).then(function (res) {
 		libTmpls = res;
 		subEl('template-lib').disabled = false;
 	});

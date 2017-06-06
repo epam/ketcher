@@ -1,4 +1,5 @@
 import { escapeRegExp, chunk, flow, filter as _filter, reduce } from 'lodash/fp';
+import { createSelector } from 'reselect';
 
 import { h, Component, render } from 'preact';
 import { connect } from 'preact-redux';
@@ -36,18 +37,24 @@ function greekify(str) {
 	return str.replace(greekRe, sym => GREEK_SIMBOLS[sym]);
 }
 
-function filterLib(lib, filter) {
-	filter = greekify(filter);
-	return flow(
-		_filter(item => !filter || greekify(item.struct.name).search(filter) !== -1 || greekify(item.props.group).search(filter) !== -1),
-		reduce((res, item) => {
-			!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
-			return res;
-		}, {})
-	)(lib);
-}
+const filterLibSelector = createSelector(
+	(props) => props.filter,
+	(props) => props.tmpls,
+	(props) => props.userTmpls,
+	(filter, tmpls, userTmpls) => {
+		let lib = tmpls.concat(userTmpls);
+		console.warn('Filter', filter);
+		let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
+		return flow(
+			_filter(item => !filter || greekify(item.struct.name).search(re) !== -1 || greekify(item.props.group).search(re) !== -1),
+			reduce((res, item) => {
+				!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
+				return res;
+			}, {})
+		)(lib)
+	}
+);
 
-var libFilter = memoize(30)((lib, filter) => filterLib(lib, filter));
 var libRows = memoize(5)((lib, group, n) => {
 	console.warn("Group", group);
 	return partition(n, lib[group])
@@ -100,16 +107,17 @@ class TemplateLib extends Component {
 
 	render() {
 		const COLS = 3;
-		let { filter, onFilter, onChangeGroup, ...props } = this.props;
-		let lib = libFilter(this.props.lib, filter);
-		let group = lib[this.props.group] ? this.props.group : Object.keys(lib)[0];
+		let { group, filter, onFilter, onChangeGroup, ...props } = this.props;
+		let lib = filterLibSelector(this.props);
+		group = lib[group] ? group : Object.keys(lib)[0];
 
 		return (
 			<Dialog title="Template Library"
 					className="template-lib" params={props}
 					result={() => this.result()}
 					buttons={[
-						<SaveButton className="save" data={ sdf.stringify(this.props.lib) }
+						<SaveButton className="save"
+									data={ sdf.stringify(this.props.tmpls.concat(this.props.userTmpls)) }
 									filename={'ketcher-tmpls.sdf'}>
 							Save To SDF…
 						</SaveButton>,
@@ -133,8 +141,7 @@ class TemplateLib extends Component {
 	}
 }
 
-export default connect((store, props) => ({
-	lib: props.tmpls.concat(props.userTmpls),
+export default connect(store => ({
 	selected: store.templates.selected,
 	filter: store.templates.filter,
 	group: store.templates.group

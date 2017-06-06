@@ -110,9 +110,9 @@ form[role=dialog] {
 		position: absolute;
 		right: 0;
 		left: 0;
-	}
-	input[type=search] {
-		width: 100%;
+		input[type=search] {
+			width: 100%;
+		}
 	}
 	.save {
 		&:extend(button all);
@@ -120,13 +120,23 @@ form[role=dialog] {
 		float: left;
 	}
 	.groups {
-		&:extend(.-Select all);
 		margin-top: 3.5em;
 		height: 27em;
 		width: 11em;
 		float: left;
-		li:nth-child(14) { // TODO: probably temp hack
-			               // User tmpls shoudn't be at 15th place
+		overflow: hidden;
+		option {
+			padding: 2px 0;
+			&:hover {
+				background-color: @form-hover-background;
+			}
+			&:checked {
+				color: white;
+				background-color: @form-selected-background;
+			}
+		}
+		option:nth-child(14) { // TODO: probably temp hack
+			// User tmpls shoudn't be at 15th place
 			margin-top: 12px;
 			&:before {
 				display: block;
@@ -678,7 +688,7 @@ form.settings {
 }
 
 .analyse {
-    label {
+	label {
 		width: 10em;
 		display: inline-block;
 		vertical-align: middle;
@@ -757,7 +767,7 @@ form.settings {
 
 .miew {
 	iframe {
-        //position: absolute;
+		//position: absolute;
 		border: 0;
 		width: 85em;
 		height: 40em;

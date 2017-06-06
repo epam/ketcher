@@ -8,9 +8,9 @@ import sdf from '../../chem/sdf';
 
 import VisibleView from '../component/visibleview';
 import StructRender from '../component/structrender';
-import SelectList from '../component/select';
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
+import Input from '../component/input';
 
 const GREEK_SIMBOLS = {
 	'Alpha': 'A', 'alpha': 'α',
@@ -80,8 +80,8 @@ var libRows = memoize(5)((lib, group, n) =>
 
 function RenderTmpl({tmpl, ...props}) {
 	return tmpl.props && tmpl.props.prerender ?
-	    ( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
-	    ( <StructRender struct={tmpl.struct} options={{autoScaleMargin: 15 }} {...props}/> );
+		( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
+		( <StructRender struct={tmpl.struct} options={{autoScaleMargin: 15 }} {...props}/> );
 }
 
 class TemplateLib extends Component {
@@ -121,13 +121,13 @@ class TemplateLib extends Component {
 		let tmpl = this.state.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
-				event: 'chooseTmpl',
-				tmpl: {
-					struct: tmpl.struct,
-					aid: parseInt(tmpl.props.atomid) + 1 || null, // TODO: Why +1??
-					bid: parseInt(tmpl.props.bondid) + 1 || null
-				}
-			} : null;
+			event: 'chooseTmpl',
+			tmpl: {
+				struct: tmpl.struct,
+				aid: parseInt(tmpl.props.atomid) + 1 || null, // TODO: Why +1??
+				bid: parseInt(tmpl.props.bondid) + 1 || null
+			}
+		} : null;
 	}
 
 	onAttach(tmpl, index) {
@@ -138,9 +138,9 @@ class TemplateLib extends Component {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
 				<div className={tmpl == this.state.selected ? 'td selected' : 'td'} title={greekify(tmplName(tmpl, index * COLS + i))}>
-				  <RenderTmpl tmpl={tmpl}
-							  className="struct"
-							  onClick={() => this.select(tmpl)} />
+					<RenderTmpl tmpl={tmpl}
+								className="struct"
+								onClick={() => this.select(tmpl)} />
 					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>Edit</button>
 				</div>
 			))}</div>
@@ -172,14 +172,16 @@ class TemplateLib extends Component {
 						</SaveButton>,
 						"OK", "Cancel"]} >
 				<label>
-					<input type="search" placeholder="Filter" value={filter}
-						   onInput={(ev) => this.setFilter(ev.target.value)} />
+					<Input type="search" placeholder="Filter" value={ filter }
+						   onChange={value => this.setFilter(value)}/>
 				</label>
-				<SelectList className="groups"
-					onChange={g => this.selectGroup(g)}
-					value={ group } options={ lib.map(g => greekify(g.name)) } />
-				  <VisibleView data={libRows(lib, group, COLS)}
-							   rowHeight={120} className="table">
+				<Input className="groups" value={ group } onChange={g => this.selectGroup(g)}
+					   schema={{
+						   enum: lib.map(g => greekify(g.name))
+					   }} size={lib.length} />
+
+				<VisibleView data={libRows(lib, group, COLS)}
+							 rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }
 				</VisibleView>
 			</Dialog>

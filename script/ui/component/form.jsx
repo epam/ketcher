@@ -9,7 +9,7 @@ class Form extends Component {
 	constructor({ onUpdate, schema, init, ...props }) {
 		super();
 		this.schema = propSchema(schema, props);
-		if (init) onUpdate(init, true, {});
+		if (init) onUpdate(this.schema.serialize(init).instance, true, {});
 	}
 	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);

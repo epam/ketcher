@@ -75,7 +75,7 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 				dragCtx.action = Action.fromBondAddition(rnd.ctab, this.bondProps, i1, i2, p1, p2)[0];
 			else
 				delete dragCtx.action;
-			rnd.update();
+			this.editor.update(dragCtx.action, true);
 			return true;
 		}
 	}

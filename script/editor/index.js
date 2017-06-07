@@ -144,8 +144,8 @@ Editor.prototype.update = function (action, ignoreHistory) {
 			if (this.historyStack.length > HISTORY_SIZE)
 				this.historyStack.shift();
 			this.historyPtr = this.historyStack.length;
+			this.event.change.dispatch(action); // TODO: stoppable here
 		}
-		this.event.change.dispatch(action); // TODO: stoppable here
 		this.render.update();
 	}
 };
@@ -167,7 +167,8 @@ Editor.prototype.undo = function () {
 	this.historyPtr--;
 	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
 	this.historyStack[this.historyPtr] = action;
-	this.update(action, true);
+	this.event.change.dispatch(action);
+	this.render.update();
 };
 
 Editor.prototype.redo = function () {
@@ -180,7 +181,8 @@ Editor.prototype.redo = function () {
 	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
 	this.historyStack[this.historyPtr] = action;
 	this.historyPtr++;
-	this.update(action, true);
+	this.event.change.dispatch(action);
+	this.render.update();
 };
 
 Editor.prototype.on = function (eventName, handler) {

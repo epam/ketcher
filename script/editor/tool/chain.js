@@ -58,7 +58,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 			editor.event.message.dispatch({
 				info: sectCount + " sectors"
 			});
-			rnd.update();
+			this.editor.update(dragCtx.action, true);
 			return true;
 		}
 	}

@@ -79,7 +79,7 @@ SelectTool.prototype.mousemove = function (event) {
 		// moving selected objects
 		if (this.dragCtx.action) {
 			this.dragCtx.action.perform(rnd.ctab);
-			rnd.update(); // redraw the elements in unshifted position, lest the have different offset
+			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
 		this.dragCtx.action = Action.fromMultipleMove(
 			rnd.ctab,
@@ -91,7 +91,7 @@ SelectTool.prototype.mousemove = function (event) {
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			this.hoverHelper.hover((ci && ci.map == this.dragCtx.item.map) ? ci : null);
 		}
-		rnd.update();
+		this.editor.update(this.dragCtx.action, true);
 	} else if (this.lassoHelper.running()) {
 		var sel = this.lassoHelper.addPoint(event);
 		this.editor.selection(!event.shiftKey ? sel :

@@ -36,8 +36,7 @@ AtomTool.prototype.mousedown = function (event) {
 	}
 };
 AtomTool.prototype.mousemove = function (event) {
-	var editor = this.editor;
-	var rnd = editor.render;
+	var rnd = this.editor.render;
 	if ('dragCtx' in this && 'item' in this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
@@ -60,7 +59,7 @@ AtomTool.prototype.mousemove = function (event) {
 		// END
 		// dragCtx.aid2 = actionRet[2];
 		dragCtx.action = actionRet[0];
-		rnd.update();
+		this.editor.update(dragCtx.action, true);
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
 	}

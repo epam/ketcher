@@ -115,7 +115,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 					dragCtx.action.perform(rnd.ctab);
 				dragCtx.sign2 = sign;
 				dragCtx.action = Action.fromTemplateOnBond(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
-				rnd.update();
+				this.editor.update(dragCtx.action, true);
 			}
 
 			return true;
@@ -157,7 +157,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 			);
 			dragCtx.extra_bond = extraBond;
 		}
-		rnd.update();
+		this.editor.update(dragCtx.action, true);
 		return true;
 	}
 	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
@@ -214,7 +214,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 
-			rnd.update();
+			this.editor.update(dragCtx.action, true);
 		}
 		var action = this.dragCtx.action;
 		delete this.dragCtx;

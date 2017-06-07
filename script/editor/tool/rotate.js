@@ -92,8 +92,7 @@ RotateTool.prototype.mousedown = function (event) {
 
 RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	if ('dragCtx' in this) {
-		var editor = this.editor;
-		var rnd = editor.render;
+		var rnd = this.editor.render;
 		var dragCtx = this.dragCtx;
 
 		var pos = rnd.page2obj(event);
@@ -116,7 +115,7 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 			degrees += 360;
 		this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-		rnd.update();
+		this.editor.update(dragCtx.action, true);
 	}
 	return true;
 };

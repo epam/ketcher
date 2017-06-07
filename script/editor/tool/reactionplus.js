@@ -29,7 +29,7 @@ ReactionPlusTool.prototype.mousemove = function (event) {
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
 		);
-		rnd.update();
+		this.editor.update(this.dragCtx.action, true);
 	} else {
 		this.hoverHelper.hover(this.editor.findItem(event, ['rxnPluses']));
 	}

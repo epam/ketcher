@@ -12,7 +12,7 @@ function PasteTool(editor, struct) {
 	var point = editor.lastEvent ?
 	    rnd.page2obj(editor.lastEvent) : null;
 	this.action = Action.fromPaste(rnd.ctab, this.struct, point);
-	rnd.update();
+	this.editor.update(this.action, true);
 }
 
 PasteTool.prototype.mousemove = function (event) {
@@ -20,7 +20,7 @@ PasteTool.prototype.mousemove = function (event) {
 	if (this.action)
 		this.action.perform(rnd.ctab);
 	this.action = Action.fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
-	rnd.update();
+	this.editor.update(this.action, true);
 };
 
 PasteTool.prototype.mouseup = function () {

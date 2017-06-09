@@ -12,7 +12,7 @@ import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';
 import SaveButton from '../component/savebutton';
 import OpenButton from '../component/openbutton';
-import Input from '../component/input';
+import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
 	let { server, stateForm, valid, onOpenFile, onReset, ...prop } = props;
@@ -79,47 +79,8 @@ function SelectCheckbox(props, {schema}) {
 	return <Field schema={desc} {...props}/>;
 }
 
-class FieldMeasure extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { meas: 'px' };
-	}
-	handleChange(value, onChange) {
-		let convValue = convertValue(value, this.state.meas, 'px');
-		this.state.cust = value;
-		onChange(convValue);
-	}
-	render() {
-		let { meas, cust } = this.state;
-		let { name, ...props } = this.props;
-		let { schema, stateStore } = this.context;
-		let { value, onChange, dataError } = stateStore.field(name);
-		if (convertValue(cust, meas, 'px') !== value) this.setState({ meas: 'px', cust: value }); // Hack: New store (RESET)
-		return (
-			<label {...props} className="measure-field" data-error={dataError}>
-				{schema.properties[name].title}:
-				<Input schema={schema.properties[name]} value={cust}
-					   step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}
-					   onChange={(v) => this.handleChange(v, onChange)} />
-				<Input schema={{enum: ['cm', 'px', 'pt', 'inch']}}
-					   value={meas}
-					   onChange={(m) => this.setState({ meas: m, cust: convertValue(this.state.cust, this.state.meas, m)})}/>
-			</label>
-		);
-	}
-}
-
-function convertValue(value, measureFrom, measureTo) {
-	if (!value && value !== 0) return null;
-	var measureMap = {
-		'px': 1,
-		'cm': 37.795278,
-		'pt': 1.333333,
-		'inch': 96,
-	};
-	return (measureTo === 'px' || measureTo === 'pt')
-		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed( ) - 0
-		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
+function FieldMeasure(props, {schema}) {
+	return <Field schema={schema.properties[props.name]} component={MeasureInput} {...props}/>
 }
 
 export default connect(store => ({

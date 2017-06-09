@@ -15,17 +15,21 @@ import OpenButton from '../component/openbutton';
 import Input from '../component/input';
 
 function Settings(props) {
-	let { server, stateForm, valid, dispatch, ...prop } = props;
-	let tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
+	let { server, stateForm, valid, onOpenFile, onReset, ...prop } = props;
+	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
 		<Dialog title="Settings" className="settings"
 				result={() => stateForm} valid={() => valid} params={prop}
 				buttons={[
-					<OpenOpts server={server} dispatch={dispatch}/>,
-					<SaveOpts opts={stateForm}/>,
-					<Reset dispatch={dispatch}/>,
-					"OK", <Cancel dispatch={dispatch} onCancel={prop.onCancel}/>]} >
+					<OpenButton className="open" server={ server } onLoad={ onOpenFile }>
+						Open From File…
+					</OpenButton>,
+					<SaveButton className="save" data={JSON.stringify(stateForm)} filename={'ketcher-settings'}>
+						Save To File…
+					</SaveButton>,
+					<button onClick={ onReset }>Reset</button>,
+					"OK", "Cancel"]} >
 			<Form storeName="settings" schema={settingsSchema}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
@@ -33,7 +37,7 @@ function Settings(props) {
 						<SelectCheckbox name="showValenceWarnings"/>
 						<SelectCheckbox name="atomColoring"/>
 						<SelectCheckbox name="hideChiralFlag"/>
-						<SelectFont name="font"/>
+						<Field name="font" component={SystemFonts}/>
 						<FieldMeasure name="fontsz"/>
 						<FieldMeasure name="fontszsub"/>
 					</fieldset>
@@ -72,19 +76,7 @@ function SelectCheckbox(props, {schema}) {
 		enum: [true, false],
 		enumNames: ['on', 'off'],
 	};
-	return (
-		<Field schema={desc} {...props}/>
-	);
-}
-
-function SelectFont(props, {schema, stateStore}) {
-	let {name} = props;
-	let title = schema.properties[name].title;
-	return (
-		<label>
-			{title}:<SystemFonts {...stateStore.field(name)} />
-		</label>
-	);
+	return <Field schema={desc} {...props}/>;
 }
 
 class FieldMeasure extends Component {
@@ -117,36 +109,6 @@ class FieldMeasure extends Component {
 	}
 }
 
-const SaveOpts = ({opts}) =>
-	<SaveButton className="save" data={JSON.stringify(opts)} filename={'ketcher-settings'}>
-		Save To File…
-	</SaveButton>;
-
-const OpenOpts = ({server, dispatch}) =>
-	<OpenButton className="open" server={server}
-				onLoad={ newOpts => {
-					try {
-						dispatch(updateFormState('settings', { stateFrom: JSON.parse(newOpts) }));
-					} catch (ex) {
-						console.info('Bad file');
-					}
-				} }>
-		Open From File…
-	</OpenButton>;
-
-const Reset = ({dispatch}) =>
-	<button onClick={() => dispatch(setDefaultSettings())}>
-		Reset
-	</button>;
-
-const Cancel = ({dispatch, onCancel}) =>
-	<button onClick={() => {
-		dispatch(cancelChanges());
-		onCancel();
-	}}>
-		Cancel
-	</button>;
-
 function convertValue(value, measureFrom, measureTo) {
 	if (!value && value !== 0) return null;
 	var measureMap = {
@@ -160,9 +122,20 @@ function convertValue(value, measureFrom, measureTo) {
 		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
 }
 
-export default connect((store) => {
-	return {
-		stateForm: store.settings.stateForm,
-		valid: store.settings.valid
-	};
-})(Settings);
+export default connect(store => ({
+	stateForm: store.settings.stateForm,
+	valid: store.settings.valid
+}), (dispatch, props) => ({
+	onOpenFile: newOpts => {
+		try {
+			dispatch(updateFormState('settings', { stateForm: JSON.parse(newOpts) }));
+		} catch (ex) {
+			console.info('Bad file');
+		}
+	},
+	onReset: () => dispatch(setDefaultSettings()),
+	onCancel: () => {
+		dispatch(cancelChanges());
+		props.onCancel();
+	}
+}))(Settings);

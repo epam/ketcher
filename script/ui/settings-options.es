@@ -107,7 +107,7 @@ export const settings = {
 		miewAtomLabel: {
 			title: "Label coloring",
 			enum: ['no', 'bright', 'inverse', 'black and white', 'black'],
-			enumNames: ['no', 'Bright', 'Inverse', 'Black and White', 'Black'],
+			enumNames: ['No', 'Bright', 'Inverse', 'Black and White', 'Black'],
 			default: 'bright'
 		},
 		// Debug

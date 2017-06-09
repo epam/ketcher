@@ -106,21 +106,21 @@ Editor.prototype.zoom = function (value) {
 	return this.render.options.zoom;
 };
 
-Editor.prototype.selection = function (selection) {
+Editor.prototype.selection = function (ci) {
 	if (arguments.length > 0) {
 		this._selection = null;
-		if (selection == 'all') {   // TODO: better way will be this.struct()
+		if (ci == 'all') {   // TODO: better way will be this.struct()
 			var restruct = this.render.ctab;
-			selection = structObjects.reduce(function (res, key) {
+			ci = structObjects.reduce(function (res, key) {
 				res[key] = restruct[key].ikeys();
 				return res;
 			}, {});
 		}
-		if (selection) {
+		if (ci) {
 			var res = {};
-			for (var key in selection) {
-				if (selection[key].length > 0) // TODO: deep merge
-					res[key] = selection[key].slice();
+			for (var key in ci) {
+				if (ci[key].length > 0) // TODO: deep merge
+					res[key] = ci[key].slice();
 			}
 			if (Object.keys(res) != 0)
 				this._selection = res;
@@ -134,13 +134,45 @@ Editor.prototype.selection = function (selection) {
 	return this._selection;
 };
 
+Editor.prototype.hover = function (ci) {
+	var tool = this._tool;
+	if ('ci' in tool && (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)) {
+		this.highlight(tool.ci, false);
+		delete tool.ci;
+	}
+	if (ci && this.highlight(ci, true))
+		tool.ci = ci;
+};
+
+Editor.prototype.highlight = function (ci, visible) {
+	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags',
+			'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
+		return false;
+
+	var rnd = this.render;
+	var item = rnd.ctab[ci.map].get(ci.id);
+	if (item === null)
+		return true; // TODO: fix, attempt to highlight a deleted item
+	if ((ci.map === 'sgroups' && item.item.type === 'DAT') || ci.map === 'sgroupData') {
+		// set highlight for both the group and the data item
+		var item1 = rnd.ctab.sgroups.get(ci.id);
+		var item2 = rnd.ctab.sgroupData.get(ci.id);
+		if (item1 !== null)
+			item1.setHighlight(visible, rnd);
+		if (item2 !== null)
+			item2.setHighlight(visible, rnd);
+	} else {
+		item.setHighlight(visible, rnd);
+	}
+	return true;
+};
+
 Editor.prototype.update = function (action, ignoreHistory) {
 	if (action === true) {
 		this.render.update(true); // force
 	} else {
 		if (!ignoreHistory && !action.isDummy()) {
-			this.historyStack.splice(this.historyPtr,
-			                         HISTORY_SIZE + 1, action);
+			this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
 			if (this.historyStack.length > HISTORY_SIZE)
 				this.historyStack.shift();
 			this.historyPtr = this.historyStack.length;

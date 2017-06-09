@@ -1,5 +1,4 @@
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
 function EraserTool(editor, mode) {
@@ -16,7 +15,6 @@ function EraserTool(editor, mode) {
 	this.editor = editor;
 
 	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
-	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 
@@ -29,7 +27,7 @@ EraserTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running())
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
-		this.hoverHelper.hover(this.editor.findItem(event, this.maps));
+		this.editor.hover(this.editor.findItem(event, this.maps));
 };
 EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
@@ -39,7 +37,7 @@ EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 	} else {
 		var ci = this.editor.findItem(event, this.maps);
 		if (ci) { //  ci.type != 'Canvas'
-			this.hoverHelper.hover(null);
+			this.editor.hover(null);
 			if (ci.map == 'atoms') {
 				this.editor.update(Action.fromAtomDeletion(rnd.ctab, ci.id));
 			} else if (ci.map == 'bonds') {

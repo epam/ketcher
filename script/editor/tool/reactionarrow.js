@@ -1,5 +1,4 @@
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -7,15 +6,13 @@ function ReactionArrowTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 ReactionArrowTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnArrows']);
 	if (ci && ci.map == 'rxnArrows') {
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 		this.editor.selection({ rxnArrows: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
@@ -33,7 +30,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 		);
 		this.editor.update(this.dragCtx.action, true);
 	} else {
-		this.hoverHelper.hover(this.editor.findItem(event, ['rxnArrows']));
+		this.editor.hover(this.editor.findItem(event, ['rxnArrows']));
 	}
 };
 ReactionArrowTool.prototype.mouseup = function (event) {

@@ -1,5 +1,4 @@
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
@@ -7,15 +6,13 @@ function ReactionUnmapTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.hoverHelper = new HoverHelper(this);
 }
 ReactionUnmapTool.prototype.mousemove = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map == 'atoms')
-		this.hoverHelper.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
+		this.editor.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
 	else
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 };
 ReactionUnmapTool.prototype.mouseup = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
@@ -32,7 +29,7 @@ ReactionUnmapTool.prototype.mouseup = function (event) {
 		);
 		this.editor.update(action);
 	}
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 };
 
 module.exports = ReactionUnmapTool;

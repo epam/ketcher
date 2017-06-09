@@ -1,5 +1,4 @@
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 
 function APointTool(editor) {
 	if (!(this instanceof APointTool))
@@ -7,12 +6,10 @@ function APointTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 APointTool.prototype.mousemove = function (event) {
-	this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
+	this.editor.hover(this.editor.findItem(event, ['atoms']));
 };
 
 APointTool.prototype.mouseup = function (event) {
@@ -21,7 +18,7 @@ APointTool.prototype.mouseup = function (event) {
 	var ci = editor.findItem(event, ['atoms']);
 
 	if (ci && ci.map == 'atoms') {
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 		var atom = struct.atoms.get(ci.id);
 		var res = editor.event.elementEdit.dispatch({
 			attpnt: atom.attpnt

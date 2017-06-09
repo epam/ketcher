@@ -1,7 +1,6 @@
 var Vec2 = require('../../util/vec2');
 var Struct = require('../../chem/struct');
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 var utils = require('./utils');
 
 var Bond = require('./bond');
@@ -12,13 +11,12 @@ function ChainTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-	this.hoverHelper = new HoverHelper(this);
 }
 
 ChainTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: ci
@@ -62,7 +60,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 			return true;
 		}
 	}
-	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 

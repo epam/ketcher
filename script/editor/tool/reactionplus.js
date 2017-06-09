@@ -1,5 +1,4 @@
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 
 function ReactionPlusTool(editor) {
 	if (!(this instanceof ReactionPlusTool))
@@ -7,14 +6,12 @@ function ReactionPlusTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.hoverHelper = new HoverHelper(this);
 }
 ReactionPlusTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnPluses']);
 	if (ci && ci.map == 'rxnPluses') {
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 		this.editor.selection({ rxnPluses: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
@@ -31,7 +28,7 @@ ReactionPlusTool.prototype.mousemove = function (event) {
 		);
 		this.editor.update(this.dragCtx.action, true);
 	} else {
-		this.hoverHelper.hover(this.editor.findItem(event, ['rxnPluses']));
+		this.editor.hover(this.editor.findItem(event, ['rxnPluses']));
 	}
 };
 ReactionPlusTool.prototype.mouseup = function (event) {

@@ -1,4 +1,3 @@
-var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
 var Action = require('../action');
@@ -29,7 +28,6 @@ function SGroupTool(editor, type) {
 	this.editor = editor;
 	this.type = type;
 
-	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(1, editor);
 	this.editor.selection(null);
 }
@@ -44,7 +42,7 @@ SGroupTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running())
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
-		this.hoverHelper.hover(this.editor.findItem(event, searchMaps));
+		this.editor.hover(this.editor.findItem(event, searchMaps));
 };
 
 SGroupTool.prototype.mouseup = function (event) {
@@ -56,7 +54,7 @@ SGroupTool.prototype.mouseup = function (event) {
 		var ci = this.editor.findItem(event, searchMaps);
 		if (!ci) // ci.type == 'Canvas'
 			return;
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 
 		if (ci.map == 'atoms') {
 			// if we click the SGroup tool on a single atom or bond, make a group out of those

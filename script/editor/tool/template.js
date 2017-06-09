@@ -1,7 +1,6 @@
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 var utils = require('./utils');
 
 function TemplateTool(editor, tmpl) {
@@ -30,14 +29,12 @@ function TemplateTool(editor, tmpl) {
 
 	var bond = frag.bonds.get(this.template.bid);
 	this.template.sign = getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: editor.findItem(event, ['atoms', 'bonds'])
@@ -160,7 +157,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		this.editor.update(dragCtx.action, true);
 		return true;
 	}
-	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 

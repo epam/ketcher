@@ -1,6 +1,5 @@
 var Struct = require('../../chem/struct');
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 var utils = require('./utils');
 
 function AtomTool(editor, atomProps) {
@@ -18,12 +17,10 @@ function AtomTool(editor, atomProps) {
 	this.editor = editor;
 	this.atomProps = atomProps;
 	this.bondProps = { type: 1, stereo: Struct.Bond.PATTERN.STEREO.NONE };
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 AtomTool.prototype.mousedown = function (event) {
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci) { // ci.type == 'Canvas'
@@ -61,7 +58,7 @@ AtomTool.prototype.mousemove = function (event) {
 		dragCtx.action = actionRet[0];
 		this.editor.update(dragCtx.action, true);
 	} else {
-		this.hoverHelper.hover(this.editor.findItem(event, ['atoms']));
+		this.editor.hover(this.editor.findItem(event, ['atoms']));
 	}
 };
 AtomTool.prototype.mouseup = function (event) {

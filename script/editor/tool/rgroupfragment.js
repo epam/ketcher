@@ -1,7 +1,6 @@
 var Struct = require('../../chem/struct');
 
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 
 function RGroupFragmentTool(editor) {
 	if (!(this instanceof RGroupFragmentTool)) {
@@ -11,12 +10,10 @@ function RGroupFragmentTool(editor) {
 	}
 
 	this.editor = editor;
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 RGroupFragmentTool.prototype.mousemove = function (event) {
-	this.hoverHelper.hover(this.editor.findItem(event, ['frags', 'rgroups']));
+	this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };
 
 RGroupFragmentTool.prototype.mouseup = function (event) {
@@ -24,7 +21,7 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 	var struct = editor.render.ctab.molecule;
 	var ci = editor.findItem(event, ['frags', 'rgroups']);
 	if (ci) {
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 
 		var label = (ci.map == 'rgroups') ? ci.id :
 		    Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;

@@ -1,4 +1,3 @@
-var HoverHelper = require('./helper/hover');
 var element = require('../../chem/element');
 
 function AttachTool(editor, attachPoints) {
@@ -12,8 +11,6 @@ function AttachTool(editor, attachPoints) {
 		atoms: [this.attach.atomid] || [],
 		bonds: [this.attach.bondid] || []
 	});
-
-	this.hoverHelper = new HoverHelper(this);
 }
 AttachTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
@@ -21,9 +18,9 @@ AttachTool.prototype.mousemove = function (event) {
 	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
 	var struct = rnd.ctab.molecule;
 	if (ci && ((ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label]) || ci.map == 'bonds'))
-		this.hoverHelper.hover(ci);
+		this.editor.hover(ci);
 	else
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 	return true;
 };
 AttachTool.prototype.mouseup = function (event) {

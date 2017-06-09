@@ -3,7 +3,6 @@ var Set = require('../../util/set');
 var Action = require('../action');
 var Struct = require('../../chem/struct');
 
-var HoverHelper = require('./helper/hover');
 var LassoHelper = require('./helper/lasso');
 
 var SGroup = require('./sgroup');
@@ -15,7 +14,6 @@ function SelectTool(editor, mode) {
 
 	this.editor = editor;
 
-	this.hoverHelper = new HoverHelper(this);
 	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
 }
 
@@ -23,7 +21,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	var rnd = this.editor.render;
 	var ctab = rnd.ctab;
 	var struct = ctab.molecule;
-	this.hoverHelper.hover(null); // TODO review hovering for touch devicess
+	this.editor.hover(null); // TODO review hovering for touch devicess
 	var selectFragment = (this.lassoHelper.fragment || event.ctrlKey);
 	var ci = this.editor.findItem(
 		event,
@@ -35,7 +33,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
 	} else {
-		this.hoverHelper.hover(null);
+		this.editor.hover(null);
 		if (!isSelected(rnd, this.editor.selection(), ci)) {
 			var sel = closestToSel(ci);
 			if (ci.map == 'frags') {
@@ -89,7 +87,7 @@ SelectTool.prototype.mousemove = function (event) {
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this.hoverHelper.hover((ci && ci.map == this.dragCtx.item.map) ? ci : null);
+			this.editor.hover((ci && ci.map == this.dragCtx.item.map) ? ci : null);
 		}
 		this.editor.update(this.dragCtx.action, true);
 	} else if (this.lassoHelper.running()) {
@@ -97,7 +95,7 @@ SelectTool.prototype.mousemove = function (event) {
 		this.editor.selection(!event.shiftKey ? sel :
 		                         selMerge(sel, this.editor.selection()));
 	} else {
-		this.hoverHelper.hover(
+		this.editor.hover(
 		this.editor.findItem(event,
 			(this.lassoHelper.fragment || event.ctrlKey) ?
 				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
@@ -117,7 +115,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
 			if (ci && ci.map == this.dragCtx.item.map) {
 				var restruct = this.editor.render.ctab;
-				this.hoverHelper.hover(null);
+				this.editor.hover(null);
 				this.editor.selection(null);
 				this.dragCtx.action = this.dragCtx.action ?
 					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
@@ -177,7 +175,7 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	} else if (this.lassoHelper.running()) {
 		this.editor.selection(this.lassoHelper.end());
 	}
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 };
 
 function closestToSel(ci) {

@@ -1,7 +1,6 @@
 var Vec2 = require('../../util/vec2');
 var Struct = require('../../chem/struct');
 var Action = require('../action');
-var HoverHelper = require('./helper/hover');
 var utils = require('./utils');
 
 function BondTool(editor, bondProps) {
@@ -17,13 +16,11 @@ function BondTool(editor, bondProps) {
 	this.editor = editor;
 	this.atomProps = { label: 'C' };
 	this.bondProps = bondProps;
-
-	this.hoverHelper = new HoverHelper(this);
 }
 
 BondTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
-	this.hoverHelper.hover(null);
+	this.editor.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: this.editor.findItem(event, ['atoms', 'bonds'])
@@ -79,7 +76,7 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 			return true;
 		}
 	}
-	this.hoverHelper.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 

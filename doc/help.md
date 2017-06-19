@@ -67,6 +67,7 @@ selects several structures.
 
 You can use the buttons of the _Main_ toolbar:
 
+
  ![](toolbar.png "Tolbar")
 
   * **Clear Canvas** (1) button to start drawing a new molecule; this
@@ -109,11 +110,15 @@ You can use the buttons of the _Main_ toolbar:
   * **3D Viewer** button (17) to open the structure in the
   three-dimensional Viewer;
 
-  * **About** button (18) to display version and copyright information
-  of the program;
+  * **Settings** button (18) to make some settings for molecular
+    files:
+    
+    ![](settings.png "Settings")
 
-  * **Settings** button (19) to make some settings for molecular
-    files.
+  * **Help** button (19) to view Help;
+    
+  * **About** button (20) to display version and copyright information
+  of the program.
 
 **Note** : **Layout,** **Clean Up,** **Aromatize** / **Dearomatize,**
 **Calculate CIP,** **Check Structure,** **Calculated Values,**
@@ -131,26 +136,12 @@ You can perform the following actions:
 
   * Rotate the structure holding the left mouse button;
 
-  * Move the structure tapping on keyboard arrows;
-
   * Zoom In/Out the structure;
 
-Menu in top left corner of the window allows to:
+Ketcher Settings allow to change the appearance of the structure and background coloring.
 
-  * Change the appearance of the structure and background coloring;
-
-  * Load a new structure;
-
-  * Save the position of the structure.
-
-    ![](miew-menu.png "3D Viewer Menu")
-
-"Lines" drawing method, "Atom name" coloring
-method, "Low" resolution, "Colored" atom names and
-"White" background coloring are default.
-
-"Colored" atom names changes to "No", which
-becomes default when the number of atoms is more than 100.
+"Lines" drawing method, "Bright" atom name coloring
+method and "Light" background coloring are default.
 
 # Drawing Atoms
 
@@ -197,10 +188,10 @@ To draw/edit atoms you can:
 
     ![](atom-dialog.png "Atom Properties")
 
-  * click on Generic Groups to invoke the Generic Groups dialog and
-  select a corresponding Reaxys generic group:
+  * click on the Periodic Table button, open the Extended table and
+  select a corresponding Generic group or Special Node:
 
-    ![](generic-groups.png "Generic Groups")
+    ![](periodic-dialog-ext.png "Generic Groups")
 
 # Drawing Bonds
 
@@ -230,7 +221,7 @@ To draw/edit bonds you can:
   * change the bond type by clicking on it;
 
   * use the Chain Tool ![](chain.png) to draw consecutive single
-  bonds; you can use hotkeys to change atom types.
+  bonds;
 
   * change a bond or its properties by double-clicking on the bond to
   invoke the Bond Properties dialog:
@@ -239,7 +230,7 @@ To draw/edit bonds you can:
 
   * clicking on a drawn stereo bond changes its direction.
 
-  * clicking with the Single Bond tool switches the bond type
+  * clicking with the Single Bond tool or Chain tool switches the bond type
   cyclically: Single-Double-Triple-Single.
 
 # Drawing R-Groups
@@ -342,9 +333,12 @@ Available S-Group types:
 
 _Generic_
 
-Multiple group is a pair of brackets without any labels that
-represents a fixed number of identical repeating units in condensed
-form.
+Generic is a pair of brackets without any labels.
+
+_Multiple group_
+
+A Multiple group indicates a number of replications of a fragment or a part of a
+structure in contracted form.
 
 _SRU Polymer_
 
@@ -360,24 +354,6 @@ label. Structures that you abbreviate keep their chemical
 significance, but their underlying structure is hidden. The current
 version can&#39;t display contracted structures but correctly
 saves/reads them into/from files.
-
-_Data_
-
-Attached data is numeric or text data that you can associate with all
-or part of a structure. You can attach data to an atom, a bond, a
-fragment, the entire structure or to any collection of atoms and
-bonds. For this type of S-Groups the S-Group Properties dialog changes
-into:
-
- ![](sgroup-data-dialog.png)
-
-  * Add the appropriate S-Group Field Name. If you enter a wrong
-  value, the attached data can be saved to a molfile but cannot be
-  registered to the target database or used in a search.
-
-  * Type the appropriate Field Value.
-
-  * Labels can be specified as Absolute, Relative or Attached.
 
 # Data S-Groups
 
@@ -488,12 +464,22 @@ Rules of using templates:
 **Note** : The added template will be fused by the default attachment
 atom or bond preset in the program.
 
+**Note** : User is able to define the attachment atom and bond by clicking
+the Edit button for template structure.
+
+
 The _Custom Templates_ button ![](template-lib.png)invokes the scrolling
 list of templates available in the program; both built-in and created
 by user:
 
  ![](template-dialog.png)
 
+
+To create a user template:
+* draw a structure.
+* click the Save as button.
+* click the Save to Templates button.
+* enter a name and define the attachment atom and bond.
 
 # Working with Files
 
@@ -503,6 +489,8 @@ either manually or from files:
   * MDL Molfile or RXN file;
 
   * Daylight SMILES (Server mode only);
+
+  * Daylight SMARTS (Server mode only);
 
   * InChi string (Server mode only);
 
@@ -521,7 +509,7 @@ The _Save Structure_ dialog enables one to save the molecular file:
  ![](save.png)
 
 **Note** : In the standalone version only mol/rxn are supported for
-Open and mol/SMILES for Save.
+Open and mol/rxn/SMILES for Save.
 
 
 # Hotkeys
@@ -549,30 +537,28 @@ it will appear in brackets after the description of the button.
 | `S` | Draw a sulfur |
 | `F` | Draw a fluorine |
 | `P` | Draw a phosphorus |
-| `Shift+C` | Draw a chlorine |
-| `Shift+B` | Draw a bromine |
 | `I` | Draw an iodine |
 | `T` | Basic templates. Consecutive pressing switches between different templates |
-| `Shift+T` | Open template library |
-| `Alt+R` | Rotate tool |
-| `Alt+V` | Flip vertically |
-| `Alt+H` | Flip horizontally |
-| `Ctrl+G` | S-Group tool / Data S-Group tool |
-| `Ctrl+R` | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
-| `Ctrl+Shift+R`  | R-Group Fragment Tool |
-| `Ctrl+N` | Clear canvas |
-| `Ctrl+O` | Open |
-| `Ctrl+S` | Save As |
-| `Ctrl+Z` | Undo |
-| `Ctrl+Shift+Z` | Redo |
-| `Ctrl+X` | Cut selected objects |
-| `Ctrl+C` | Copy selected objects |
-| `Ctrl+V` | Paste selected objects |
+| `Shift+t` | Open template library |
+| `Alt+r` | Rotate tool |
+| `Alt+v` | Flip vertically |
+| `Alt+h` | Flip horizontally |
+| `Ctrl+g` | S-Group tool / Data S-Group tool |
+| `Ctrl+r` | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
+| `Ctrl+Shift+r`  | R-Group Fragment Tool |
+| `Ctrl+Del` | Clear canvas |
+| `Ctrl+o` | Open |
+| `Ctrl+s` | Save As |
+| `Ctrl+z` | Undo |
+| `Ctrl+Shift+z` | Redo |
+| `Ctrl+x` | Cut selected objects |
+| `Ctrl+c` | Copy selected objects |
+| `Ctrl+v` | Paste selected objects |
 | `+` | Zoom In |
 | `-` | Zoom Out |
-| `Ctrl+L` | Clean Up |
-| `Ctrl+Shift+L` | Layout |
-| `Ctrl+P` | Calculate CIP |
+| `Ctrl+l` | Layout |
+| `Ctrl+Shift+l` | Clean Up |
+| `Ctrl+p` | Calculate CIP |
 | `?` | Help |
 
 **Note** : Please, use `Ctrl+V` to paste the selected object in

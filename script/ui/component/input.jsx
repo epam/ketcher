@@ -75,12 +75,10 @@ function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props 
 
 FieldSet.val = function (ev, schema) {
 	var input = ev.target;
-	// if (ev.target.tagName != 'INPUT') {
-	// 	ev.preventDefault();
-	// 	return undefined;
-	// }
-	// ev.stopPropagation();
-	// TODO: do we need that?
+	if (ev.target.tagName !== 'INPUT') {
+		ev.stopPropagation();
+		return undefined;
+	}
 	// Hm.. looks like premature optimization
 	//      should we inline this?
 	var fieldset = input.parentNode.parentNode;
@@ -94,7 +92,9 @@ FieldSet.val = function (ev, schema) {
 
 function enumSchema(schema, cbOrIndex) {
 	var isTypeValue = Array.isArray(schema);
-	if (typeof cbOrIndex == 'function') {
+	if (!isTypeValue && schema.items)
+		schema = schema.items;
+	if (typeof cbOrIndex === 'function') {
 		return (isTypeValue ? schema : schema.enum).map((item, i) => {
 			var title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
@@ -160,7 +160,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 }
 
 function ctrlMap(component, { schema, multiple, onChange }) {
-	if (!schema || !schema.enum && !Array.isArray(schema) || schema.type === 'string')
+	if (!schema || !schema.enum && !schema.items && !Array.isArray(schema) || schema.type === 'string')
 		return inputCtrl(component, schema, onChange);
 	if (multiple || schema.type == 'array')
 		return multipleSelectCtrl(component, schema, onChange);
@@ -168,7 +168,7 @@ function ctrlMap(component, { schema, multiple, onChange }) {
 }
 
 function componentMap({ schema, type, multiple }) {
-	if (!schema || !schema.enum && !Array.isArray(schema)) {
+	if (!schema || !schema.enum && !schema.items && !Array.isArray(schema)) {
 		if (type == 'checkbox' || schema && schema.type == 'boolean')
 			return CheckBox;
 		return (type == 'textarea') ? TextArea : GenericInput;

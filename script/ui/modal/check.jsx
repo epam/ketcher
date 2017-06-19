@@ -12,15 +12,19 @@ const checkSchema = {
 	type: 'object',
 	properties: {
 		checkOptions: {
-			enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
-				'overlapping_bonds', 'rgroups', 'chiral', '3d'],
-			enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
-				'Overlapping Bonds', 'R-Groups', 'Chirality', '3D Structure']
+			type: 'array',
+			items: {
+				type: "string",
+				enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
+					'overlapping_bonds', 'rgroups', 'chiral', '3d'],
+				enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
+					'Overlapping Bonds', 'R-Groups', 'Chirality', '3D Structure']
+			}
 		}
 	}
 };
 function getOptionName(opt) {
-	let d = checkSchema.properties.checkOptions;
+	let d = checkSchema.properties.checkOptions.items;
 	return d.enumNames[d.enum.indexOf(opt)];
 }
 
@@ -34,7 +38,7 @@ function Check(props) {
 			<Form storeName="check" schema={checkSchema}>
 				<Tabs className="tabs" captions={tabs}
 					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, result.checkOptions) : null}>
-					<ErrorsCheck check={check} moleculeErrors={moleculeErrors}/>
+					<ErrorsCheck moleculeErrors={moleculeErrors}/>
 					<Field name="checkOptions" multiple={true} type="checkbox"/>
 				</Tabs>
 			</Form>

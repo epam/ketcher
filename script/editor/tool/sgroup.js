@@ -128,32 +128,30 @@ function defineContext(restruct, selection) {
 		return allSingle ? 'Single Bond' : 'Group';
 	}
 
-	var componentAtoms = restruct.connectedComponents.keys()
-		.reduce(function (acc, componentId) {
-			var component = restruct.connectedComponents.get(componentId);
-			var intersects = selection.atoms.find(function (atomid) { return component.hasOwnProperty(atomid); });
-			return intersects ? acc.concat(Object.keys(component).map(function (key) { return component[key]; })) : acc;
-		}, []);
+	var atomSelectMap = selection.atoms.reduce(function (acc, atom) {
+		acc[atom] = atom;
+		return acc;
+	}, {});
 
-	var componentBonds = getAtomsBondIds(restruct, componentAtoms);
+	var allComponentsSelected = restruct.connectedComponents.values()
+		.every(function (component) {
+			var componentAtoms = Object.keys(component);
+			var count = componentAtoms
+				.reduce(function (acc, atom) { return acc + (atomSelectMap[atom] === undefined); }, 0);
 
-	return componentAtoms.length === selection.atoms.length &&
-	       componentBonds.length === selection.bonds.length ? 'Fragment' : 'Group';
-}
+			console.info('count', count);
+			console.info('component', componentAtoms.length);
 
-function getAtomsBondIds(restruct, atoms) {
-	return restruct.bonds.keys()
-		.filter(function (bondid) {
-			var bond = restruct.bonds.get(bondid).b;
-			return atoms.includes(bond.begin) && atoms.includes(bond.end);
-		})
-		.map(Number);
+			return count === 0 || count === componentAtoms.length;
+		});
+
+	return allComponentsSelected ? 'Fragment' : 'Group';
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
 	var struct = restruct.molecule;
-	var sg = (id != null) && struct.sgroups.get(id);
+	var sg = (id !== null) && struct.sgroups.get(id);
 
 	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
 

@@ -145,8 +145,7 @@ Editor.prototype.hover = function (ci) {
 };
 
 Editor.prototype.highlight = function (ci, visible) {
-	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags',
-			'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
+	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
 		return false;
 
 	var rnd = this.render;
@@ -157,9 +156,9 @@ Editor.prototype.highlight = function (ci, visible) {
 		// set highlight for both the group and the data item
 		var item1 = rnd.ctab.sgroups.get(ci.id);
 		var item2 = rnd.ctab.sgroupData.get(ci.id);
-		if (item1 !== null)
+		if (item1)
 			item1.setHighlight(visible, rnd);
-		if (item2 !== null)
+		if (item2)
 			item2.setHighlight(visible, rnd);
 	} else {
 		item.setHighlight(visible, rnd);

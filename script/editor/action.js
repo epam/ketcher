@@ -1405,7 +1405,7 @@ function fromSBAction(restruct, newSg, sourceAtoms, currSelection) {
 	var bonds = getAtomsBondIds(restruct, sourceAtoms);
 
 	if (currSelection.bonds)
-		bonds.concat(currSelection.bonds);
+		bonds = bonds.concat(currSelection.bonds);
 
 	return bonds.reduce(function (acc, bondid) {
 		var bond = restruct.bonds.get(bondid).b;

@@ -158,6 +158,7 @@ function fromContextType(id, editor, newSg, currSelection) {
 	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
 
 	var context = newSg.attrs.context;
+
 	var result;
 	switch (context) {
 	case 'Fragment':

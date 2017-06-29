@@ -83,6 +83,6 @@
     "redux": "3.6.0",
     "subscription": "3.0.0",
     "w3c-keyname": "1.1.1",
-    "whatwg-fetch": "1.0.0"
+    "whatwg-fetch": "2.0.3"
   }
 }

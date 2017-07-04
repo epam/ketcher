@@ -34,6 +34,7 @@ function Settings(props) {
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
 						<SelectCheckbox name="resetToSelect"/>
+						<Field name="rotationStep"/>
 						<SelectCheckbox name="showValenceWarnings"/>
 						<SelectCheckbox name="atomColoring"/>
 						<SelectCheckbox name="hideChiralFlag"/>

@@ -2,6 +2,10 @@ var Vec2 = require('../../util/vec2');
 
 var FRAC = Math.PI / 12; // '15º'
 
+function setFracAngle(angle) {
+	FRAC = Math.PI / 180 * angle;
+}
+
 function calcAngle(pos0, pos1) {
 	var v = Vec2.diff(pos1, pos0);
 	return Math.atan2(v.y, v.x);
@@ -27,5 +31,6 @@ module.exports = {
 	calcAngle: calcAngle,
 	fracAngle: fracAngle,
 	calcNewAtomPos: calcNewAtomPos,
-	degrees: degrees
+	degrees: degrees,
+	setFracAngle: setFracAngle
 };

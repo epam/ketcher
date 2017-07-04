@@ -145,7 +145,8 @@ Editor.prototype.hover = function (ci) {
 };
 
 Editor.prototype.highlight = function (ci, visible) {
-	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
+	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags',
+		'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
 		return false;
 
 	var rnd = this.render;

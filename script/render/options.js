@@ -1,7 +1,11 @@
+var utils = require('../editor/tool/utils');
 var Vec2 = require('../util/vec2');
 
 function defaultOptions(opt) {
 	var scaleFactor = opt.scale || 100;
+
+	if (opt.rotationStep)
+		utils.setFracAngle(opt.rotationStep);
 
 	var labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
 	var subFontSize = Math.ceil(0.7 * labelFontSize);

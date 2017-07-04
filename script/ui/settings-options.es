@@ -8,6 +8,13 @@ export const settings = {
 			type: "boolean",
 			default: false
 		},
+		rotationStep: {
+			title: "Rotation Step, º",
+			type: "integer",
+			minimum: 1,
+			maximum: 90,
+			default: 15
+		},
 		// Render
 		showValenceWarnings: {
 			title: "Show valence warnings",

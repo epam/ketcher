@@ -26,7 +26,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 	return null;
 }
 
-function findClosestBond(restruct, pos, skip, minDist, scale) {
+function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disable-line max-params
 	var closestBond = null;
 	var closestBondCenter = null;
 	var maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
@@ -219,7 +219,7 @@ var findMaps = {
 	rgroups: findClosestRGroup
 };
 
-function findClosestItem(restruct, pos, maps, skip, scale) {
+function findClosestItem(restruct, pos, maps, skip, scale) { // eslint-disable-line max-params
 	maps = maps || Object.keys(findMaps);
 	return maps.reduce(function (res, mp) {
 		var minDist = res ? res.dist : null;

@@ -846,9 +846,8 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 }
 
 function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-line max-params
-	var angle = Math.PI / 6;
-	var dx = Math.cos(angle);
-	var dy = Math.sin(angle);
+	var dx = Math.cos(Math.PI / 6);
+	var dy = Math.sin(Math.PI / 6);
 
 	var action = new Action();
 
@@ -1289,8 +1288,7 @@ function fromBondAlign(restruct, bid, dir) {
 	var center = begin.pp.add(end.pp).scaled(0.5);
 	var angle = utils.calcAngle(begin.pp, end.pp);
 	var atoms = getFragmentAtoms(struct, begin.fragment);
-	angle = (dir == 'horizontal') ? -angle :
-		                            (Math.PI / 2 - angle);
+	angle = (dir == 'horizontal') ? -angle : ((Math.PI / 2) - angle);
 
 	// TODO: choose minimal angle
 	// console.info('single bond', utils.degrees(angle), atoms, dir);

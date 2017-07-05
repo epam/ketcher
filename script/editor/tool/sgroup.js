@@ -153,7 +153,7 @@ function fromContextType(id, editor, newSg, currSelection) {
 	var struct = restruct.molecule;
 	var sg = (id !== null) && struct.sgroups.get(id);
 
-	var sourceAtoms = sg && sg.atoms || currSelection.atoms || [];
+	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
 
 	var context = newSg.attrs.context;
 

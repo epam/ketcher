@@ -323,7 +323,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 	return rgMerge(core, frag);
 }
 
-function parseRxn2000(/* string[] */ ctabLines) /* Struct */ {
+function parseRxn2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = utils.partitionLine(ctabLines[0], utils.fmtInfo.rxnItemsPartition);

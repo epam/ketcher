@@ -45,7 +45,7 @@ ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to r
 			} else {
 				if (!render) {
 					console.warn('No boundingBox fragment precalc');
-					render = global._ui_editor.render;
+					render = global._ui_editor.render; // eslint-disable-line
 				}
 
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);

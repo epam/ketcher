@@ -39,7 +39,7 @@ function Editor(clientArea, options) {
 		scale: SCALE
 	}, options));
 
-	this._selection = null;
+	this._selection = null; // eslint-disable-line
 	this._tool = null; // eslint-disable-line
 	this.historyStack = [];
 	this.historyPtr = 0;
@@ -108,7 +108,7 @@ Editor.prototype.zoom = function (value) {
 
 Editor.prototype.selection = function (ci) {
 	if (arguments.length > 0) {
-		this._selection = null;
+		this._selection = null; // eslint-disable-line
 		if (ci == 'all') {   // TODO: better way will be this.struct()
 			var restruct = this.render.ctab;
 			ci = structObjects.reduce(function (res, key) {
@@ -123,19 +123,19 @@ Editor.prototype.selection = function (ci) {
 					res[key] = ci[key].slice();
 			}
 			if (Object.keys(res) != 0)
-				this._selection = res;
+				this._selection = res; // eslint-disable-line
 		}
 
-		this.render.ctab.setSelection(this._selection);
-		this.event.selectionChange.dispatch(this._selection);
+		this.render.ctab.setSelection(this._selection); // eslint-disable-line
+		this.event.selectionChange.dispatch(this._selection); // eslint-disable-line
 
 		this.render.update();
 	}
-	return this._selection;
+	return this._selection; // eslint-disable-line
 };
 
 Editor.prototype.hover = function (ci) {
-	var tool = this._tool;
+	var tool = this._tool; // eslint-disable-line
 	if ('ci' in tool && (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)) {
 		this.highlight(tool.ci, false);
 		delete tool.ci;
@@ -237,7 +237,7 @@ function domEventSetup(editor, clientArea) {
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {
-	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) :
+	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 	var options = this.render.options;
 

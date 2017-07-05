@@ -67,13 +67,13 @@ function GenSet({labels, caption='', selected, onSelect, ...props}) {
 	);
 }
 
-function GenGroup({gen, key, path, selected, onSelect}) {
-	let group = gen[key];
-	let pk = path ? `${path}/${key}` : key;
+function GenGroup({gen, name, path, selected, onSelect}) {
+	let group = gen[name];
+	let pk = path ? `${path}/${name}` : name;
 	let schema = viewSchema[pk];
 
 	return (schema && schema.caption) ? (
-		<fieldset className={key}>
+		<fieldset className={name}>
 		  <legend>{schema.caption}</legend>
 		  {
 			  group.labels ? (
@@ -83,14 +83,14 @@ function GenGroup({gen, key, path, selected, onSelect}) {
 		  }
 		  {
 			  schema.order.map(child => ( // TODO:order = Object.keys ifndef
-				  <GenGroup gen={group} key={child} path={pk}
+				  <GenGroup gen={group} name={child} path={pk}
 						    selected={selected} onSelect={onSelect}/>
 			  ))
 	      }
 		</fieldset>
 	) : (
 		<GenSet labels={group.labels}
-				caption={schema || key} className={key}
+				caption={schema || name} className={name}
 				selected={selected} onSelect={onSelect} />
 	);
 }
@@ -99,15 +99,15 @@ function GenericGroups({ selected, onSelect, ...props }) {
 	return (
 		<div summary="Generic Groups" {...props}>
 			<div className="col">
-				<GenGroup gen={generics} key='atom'
+				<GenGroup gen={generics} name='atom'
 						  selected={l => selected(l)}
 						  onSelect={l => onSelect(l)}/>
-				<GenGroup gen={generics} key='special'
+				<GenGroup gen={generics} name='special'
 						  selected={l => selected(l)}
 						  onSelect={l => onSelect(l)}/>
 			</div>
 			<div className="col">
-				<GenGroup gen={generics} key='group'
+				<GenGroup gen={generics} name='group'
 						  selected={l => selected(l)}
 						  onSelect={l => onSelect(l)}/>
 			</div>

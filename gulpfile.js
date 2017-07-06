@@ -32,7 +32,7 @@ var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
 
 var bundleConfig = {
 	entries: 'script',
-	extensions: ['.jsx', '.es'],
+	extensions: ['.js', '.jsx', '.es'],
 	debug: true,
 	standalone: pkg.name,
 	transform: [
@@ -49,18 +49,17 @@ var bundleConfig = {
 			]
 		}],
 		['babelify', {
-			presets: ["es2015", "react"],
-			plugins: ['transform-class-properties',
-			          'transform-object-rest-spread'],
-			extensions: ['.jsx', '.es'],
-			only: 'script/ui'
+			presets: [
+				["env", {
+					"targets": {
+						"browsers": ["last 2 versions", "safari > 8", "chrome > 52"]
+					},
+					"modules": false,
+					"useBuiltIns": true
+				}],
+				"es2015", "react"],
+			plugins: ['transform-class-properties',	'transform-object-rest-spread']
 		}]
-	],
-	plugin: [
-		[polyfillify, [
-		'es5-shim', 'es6-shim', //'./script/banner.js'
-		'es7-shim/dist/es7-shim', 'whatwg-fetch'
-		]]
 	]
 };
 
@@ -234,29 +233,6 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
 
 	return server;
 });
-
-function polyfillify(bundle, polyfills) {
-	var fs = require('fs');
-	var through = require('through2');
-
-	bundle.on('bundle', function() {
-		var firstChunk = true;
-		var polyfillData = polyfills.reduce(function (res, module) {
-			var data = fs.readFileSync(require.resolve(module));
-			return res + data + '\n';
-		}, '');
-		var stream = through.obj(function (buf, enc, next) {
-			if (firstChunk) {
-				this.push(polyfillData);
-				firstChunk = false;
-			}
-			this.push(buf);
-			next();
-		});
-		stream.label = "prepend";
-		bundle.pipeline.get('wrap').push(stream);
-	});
-}
 
 function markdownify (options) {
 	var header = '<!DOCTYPE html>';

@@ -1,3 +1,5 @@
+import 'babel-polyfill';
+import 'whatwg-fetch';
 var queryString = require('query-string');
 
 var api = require('./api.js');

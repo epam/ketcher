@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { sgroup as sgroupSchema } from '../structschema';
+import { sgroup as sgroupSchema } from '../structschema.es';
 import { form as Form, Field, SelectOneOf, mapOf } from '../component/form';
 import Dialog from '../component/dialog';
 

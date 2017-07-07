@@ -11,6 +11,13 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 		if (init) onUpdate(this.schema.serialize(init).instance, true, {});
 	}
+
+	componentDidMount() {
+		this.schema.serialize(this.props.stateForm); // hack: valid default state
+		this.updateState(this.props.stateForm);
+		this.updateState(this.props.init);
+	}
+
 	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);
 		let errs = getErrorsObj(errors);
@@ -24,6 +31,7 @@ class Form extends Component {
 		let { stateForm, errors } = this.props;
 		var value = stateForm[name];
 		var self = this;
+
 		return {
 			dataError: errors && errors[name] || false,
 			value: value,
@@ -36,6 +44,7 @@ class Form extends Component {
 	}
 	render() {
 		var { stateForm, children, schema, ...props } = this.props;
+
 		if (schema.key && schema.key !== this.schema.key) {
 			this.schema = propSchema(schema, props);
 			this.schema.serialize(stateForm); // hack: valid first state

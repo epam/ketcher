@@ -21,48 +21,43 @@ function AtomTool(editor, atomProps) {
 
 AtomTool.prototype.mousedown = function (event) {
 	this.editor.hover(null);
-	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	if (!ci) { // ci.type == 'Canvas'
-		this.dragCtx = { xy0: rnd.page2obj(event) };
-	} else if (ci.map == 'atoms') {
-		this.dragCtx = {
-			item: ci,
-			xy0: rnd.page2obj(event)
-		};
+		this.dragCtx = {};
+	} else if (ci.map === 'atoms') {
+		this.dragCtx = { item: ci };
 	}
 };
 AtomTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
-	if ('dragCtx' in this && 'item' in this.dragCtx) {
-		var dragCtx = this.dragCtx;
-		var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
-		var newAtomPos = utils.calcNewAtomPos(
-			atom.pp, rnd.page2obj(event)
-		);
-		if ('action' in dragCtx)
-			dragCtx.action.perform(rnd.ctab);
-		// TODO [RB] kludge fix for KETCHER-560. need to review
-		// BEGIN
-		/*
-		 var action_ret = Action.fromBondAddition(rnd.ctab,
-		 this.bondProps, dragCtx.item.id, this.atomProps, newAtomPos, newAtomPos
-		 );
-		 */
-
-		var actionRet = Action.fromBondAddition(rnd.ctab,
-			this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
-		);
-		// END
-		// dragCtx.aid2 = actionRet[2];
-		dragCtx.action = actionRet[0];
-		this.editor.update(dragCtx.action, true);
-	} else {
+	if (!this.dragCtx || !this.dragCtx.item) {
 		this.editor.hover(this.editor.findItem(event, ['atoms']));
+		return;
 	}
+
+	var dragCtx = this.dragCtx;
+	var ci = this.editor.findItem(event, ['atoms']);
+
+	if (ci && ci.map === 'atoms' && ci.id === dragCtx.item.id) {
+		// fromAtomsAttrs
+		this.editor.hover(this.editor.findItem(event, ['atoms']));
+		return;
+	}
+
+	// fromAtomAddition
+	var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
+
+	var newAtomPos = utils.calcNewAtomPos(atom.pp, rnd.page2obj(event));
+	if (dragCtx.action)
+		dragCtx.action.perform(rnd.ctab);
+
+	dragCtx.action = Action.fromBondAddition(rnd.ctab,
+		this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
+	)[0];
+	this.editor.update(dragCtx.action, true);
 };
 AtomTool.prototype.mouseup = function (event) {
-	if ('dragCtx' in this) {
+	if (this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var rnd = this.editor.render;
 		this.editor.update(dragCtx.action || (

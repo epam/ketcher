@@ -11,13 +11,6 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 		if (init) onUpdate(this.schema.serialize(init).instance, true, {});
 	}
-
-	componentDidMount() {
-		this.schema.serialize(this.props.stateForm); // hack: valid default state
-		this.updateState(this.props.stateForm);
-		this.updateState(this.props.init);
-	}
-
 	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);
 		let errs = getErrorsObj(errors);

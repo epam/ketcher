@@ -52,6 +52,7 @@
     "guppy-cli": "1.0.1",
     "markdown-it": "8.3.1",
     "minimist": "1.2.0",
+    "redux-logger": "3.0.6",
     "semver": "5.3.0",
     "through2": "2.0.3",
     "vinyl-buffer": "1.0.0",

@@ -49,9 +49,9 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 		const actionFieldName = action.payload.stateForm['fieldName'];
 
 		if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
-			return onContextChange(state, actionContext);
+			return onContextChange(state, action.payload, actionContext);
 		if (actionFieldName !== state.stateForm.fieldName)
-			return onFieldNameChange(state, actionFieldName);
+			return onFieldNameChange(state, action.payload, actionFieldName);
 
 		return Object.assign({}, state, action.payload);
 	}
@@ -59,12 +59,13 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 	return state;
 }
 
-const onContextChange = (state, context) => {
+const onContextChange = (state, payload, context) => {
 	const fieldName = defaultFieldName(context);
 	const fieldValue = defaultFieldValue(context, fieldName);
 
 	return {
 		...state,
+		...payload,
 		stateForm: {
 			...state.stateForm,
 			context,
@@ -74,12 +75,15 @@ const onContextChange = (state, context) => {
 	}
 };
 
-const onFieldNameChange = (state, fieldName) => {
+const onFieldNameChange = (state, payload, fieldName) => {
 	const context = state.stateForm.context;
 	const fieldValue = defaultFieldValue(context, fieldName);
+	if (!fieldValue) payload.errors.fieldValue = "does not meet minimum length of 1";
 
 	return {
 		...state,
+		valid: !fieldValue ? false : payload.valid,
+		errors: payload.errors,
 		stateForm: {
 			...state.stateForm,
 			fieldName,

@@ -431,16 +431,10 @@ function dialog(modal, params, noAnimate) {
 	scope = 'modal';
 
 	function close(fn, res) {
-		// if (res.fieldName)
-		// 	res.fieldName = res.fieldName.replace(/^\s+|\s+$/g, '');
-		// if (res.fieldValue)
-		// 	res.fieldValue = res.fieldValue.replace(/^\s+|\s+$/g, '');
-
 		scope = 'editor';
 		cover.style.display = 'none';
 		var dialog = cover.lastChild;
-		// preact.render('', cover, dialog); // unmount dialog
-		dialog.remove();
+		preact.render(null, cover, dialog); // unmount dialog
 		console.info('output', res);
 		if (fn) fn(res);
 	}

@@ -213,7 +213,7 @@ ReStruct.prototype.initLayers = function () {
 };
 
 ReStruct.prototype.addReObjectPath = function (group, visel, path, pos, visible) { // eslint-disable-line max-params
-	if (!path)
+	if (!path || !this.layers[LAYER_MAP[group]].node.parentNode)
 		return;
 	var offset = this.render.options.offset;
 	var bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;

@@ -40,7 +40,7 @@ class Attach extends Component {
 				</label>
 				<label>Choose attachment atom and bond:</label>
 				<StructEditor className="struct-editor" struct={this.tmpl.struct} opts={userOpts}
-							  onEvent={(eName, ap) =>  (eName === 'attachEdit') ? dispatch(setAttachPoints(ap)) : null}
+							  onEvent={(eName, ap) => (eName === 'attachEdit') ? dispatch(setAttachPoints(ap)) : null}
 							  /* tool = {name: .. , opts: ..} */ tool={{ name: 'attach', opts: this.tmpl.props }}
 							  options={editorOpts}/>
 				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>

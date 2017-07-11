@@ -4,7 +4,7 @@ import { connect } from 'preact-redux';
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 import { checkErrors } from '../actions/check-action.es';
 
 const checkSchema = {
@@ -30,14 +30,14 @@ function getOptionName(opt) {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { result, moleculeErrors, check, ...prop } = props;
-
+	let { stateForm, moleculeErrors, errors, check, ...prop } = props;
+	let formProps = { stateForm, errors };
 	return (
 		<Dialog title="Structure Check" className="check"
-				result={() => result} params={prop}>
-			<Form storeName="check" schema={checkSchema}>
+				result={() => stateForm} params={prop}>
+			<Form storeName="check" schema={checkSchema} {...formProps}>
 				<Tabs className="tabs" captions={tabs}
-					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, result.checkOptions) : null}>
+					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, stateForm.checkOptions) : null}>
 					<ErrorsCheck moleculeErrors={moleculeErrors}/>
 					<Field name="checkOptions" multiple={true} type="checkbox"/>
 				</Tabs>
@@ -65,8 +65,10 @@ function ErrorsCheck(props) {
 
 export default connect((store) => {
 	return {
-		result: store.check.stateForm,
-		moleculeErrors: store.check.moleculeErrors
+		stateForm: store.check.stateForm,
+		moleculeErrors: store.check.moleculeErrors,
+		valid: store.check.valid,
+		errors: store.check.errors
 	};
 })(Check);
 

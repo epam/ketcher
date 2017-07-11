@@ -47,7 +47,7 @@ class StructEditor extends Component {
 		}
 	}
 	render () {
-		let { struct, Tag="div", ...props } = this.props;
+		let { struct, Tag="div", options, tool, ...props } = this.props;
 		return (
 			<Tag /*ref="el"*/ {...props}>{ struct ? null :  'No molecule' }</Tag>
 		);

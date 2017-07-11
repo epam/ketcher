@@ -5,7 +5,7 @@ import { updateFormState } from '../actions/form-action.es';
 import { setDefaultSettings, cancelChanges } from '../actions/settings-action.es';
 
 import { settings as settingsSchema } from '../settings-options.es';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
@@ -15,7 +15,8 @@ import OpenButton from '../component/openbutton';
 import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
-	let { server, stateForm, valid, onOpenFile, onReset, ...prop } = props;
+	let { server, stateForm, valid, errors, onOpenFile, onReset, ...prop } = props;
+	let formProps = { stateForm, errors };
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
@@ -30,7 +31,7 @@ function Settings(props) {
 					</SaveButton>,
 					<button onClick={ onReset }>Reset</button>,
 					"OK", "Cancel"]} >
-			<Form storeName="settings" schema={settingsSchema}>
+			<Form storeName="settings" schema={settingsSchema} {...formProps}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
 						<SelectCheckbox name="resetToSelect"/>
@@ -86,7 +87,8 @@ function FieldMeasure(props, {schema}) {
 
 export default connect(store => ({
 	stateForm: store.settings.stateForm,
-	valid: store.settings.valid
+	valid: store.settings.valid,
+	errors: store.sgroup.errors
 }), (dispatch, props) => ({
 	onOpenFile: newOpts => {
 		try {

@@ -1,6 +1,6 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { form as Form, Field, SelectOneOf } from '../component/form';
+import { Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
 /** @jsx h */
@@ -65,7 +65,8 @@ const customFieldNameSchema = {
 };
 
 function SgroupSpecial(props) {
-	const { stateForm, schema, valid, ...prop } = props;
+	const { stateForm, schema, valid, errors, ...prop } = props;
+	const formProps = { stateForm, errors };
 
 	const context = stateForm.context;
 	const fieldName = stateForm.fieldName;
@@ -75,7 +76,7 @@ function SgroupSpecial(props) {
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
 				result={() => stateForm} valid={() => valid} params={prop}>
-            <Form storeName="sgroupSpecial" schema={formSchema} init={prop}>
+            <Form storeName="sgroupSpecial" schema={formSchema} init={prop} {...formProps}>
                 <SelectOneOf title="Context" name="context" schema={schema}/>
                 <fieldset className={"data"}>
                     <SelectInput title="Field name" name="fieldName" schema={schema[context]}/>
@@ -99,6 +100,7 @@ export default connect((store) => {
 	return {
 		schema: store.sgroupSpecial.schema,
 		stateForm: store.sgroupSpecial.stateForm,
-		valid: store.sgroupSpecial.valid
+		valid: store.sgroupSpecial.valid,
+		errors: store.sgroupSpecial.errors
 	};
 })(SgroupSpecial);

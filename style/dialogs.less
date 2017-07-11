@@ -120,32 +120,12 @@ form[role=dialog] {
 		float: left;
 	}
 	.groups {
+		&:extend(.-SelectList all);
 		margin-top: 3.5em;
 		height: 27em;
 		width: 11em;
 		float: left;
 		overflow: hidden;
-		option {
-			padding: 2px 0;
-			&:hover {
-				background-color: @form-hover-background;
-			}
-			&:checked {
-				color: white;
-				background-color: @form-selected-background;
-			}
-		}
-		option:nth-child(14) { // TODO: probably temp hack
-			// User tmpls shoudn't be at 15th place
-			margin-top: 12px;
-			&:before {
-				display: block;
-				position: relative;
-				content: '';
-				top: -7px;
-				border-top: 1px @border-color solid;
-			}
-		}
 	}
 	.table {
 		margin-top: 3.5em;

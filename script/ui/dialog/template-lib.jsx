@@ -1,7 +1,7 @@
 import { escapeRegExp, chunk, flow, filter as _filter, reduce } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
@@ -12,6 +12,7 @@ import StructRender from '../component/structrender';
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
 import Input from '../component/input';
+import SelectList from '../component/select';
 
 import { changeFilter, changeGroup, selectTmpl } from '../state/templates';
 
@@ -63,7 +64,7 @@ const libRowsSelector = createSelector(
 
 function libRows(lib, group, COLS) {
 	console.warn("Group", group);
-	return partition(COLS, _filter(item => item.props.group === group, lib))
+	return partition(COLS, lib[group])
 }
 
 function RenderTmpl({ tmpl, ...props }) {
@@ -87,7 +88,7 @@ class TemplateLib extends Component {
 			event: 'chooseTmpl',
 			tmpl: {
 				struct: tmpl.struct,
-				aid: parseInt(tmpl.props.atomid) + 1 || null, // TODO: Why +1??
+				aid: parseInt(tmpl.props.atomid) + 1 || null, // In TemplateTool: -1
 				bid: parseInt(tmpl.props.bondid) + 1 || null
 			}
 		} : null;
@@ -129,16 +130,17 @@ class TemplateLib extends Component {
 						</SaveButton>,
 						"OK", "Cancel"]}>
 				<label>
-					<Input type="search" placeholder="Filter" value={ filter }
-						   onChange={value => onFilter(value)}/>
+					<Input type="search" placeholder="Filter"
+						   value={ filter } onChange={value => onFilter(value)}/>
 				</label>
-				<Input className="groups" value={ group } onChange={g => onChangeGroup(g)} key={filter}
+				<Input className="groups" component={SelectList}
+					   splitIndexes={[Object.keys(lib).indexOf('User')]}
+					   value={ group } onChange={g => onChangeGroup(g)}
 					   schema={{
 						   enum: Object.keys(lib),
 						   enumNames: Object.keys(lib).map(g => greekify(g))
-					   }} size={15}/>
-
-				<VisibleView data={libRowsSelector({ ...this.props, group, COLS })}
+					   }}/>
+				<VisibleView data={libRowsSelector({ lib, group, COLS })}
 							 rowHeight={120} className="table">
 					{ (row, i) => this.renderRow(row, i, COLS) }
 				</VisibleView>
@@ -147,13 +149,11 @@ class TemplateLib extends Component {
 	}
 }
 
-export default connect(store => ({
-	lib: store.templates.lib,
-	selected: store.templates.selected,
-	filter: store.templates.filter,
-	group: store.templates.group
-}), dispatch => ({
-	onFilter: filter => dispatch(changeFilter(filter)),
-	onSelect: tmpl => dispatch(selectTmpl(tmpl)),
-	onChangeGroup: group => dispatch(changeGroup(group))
-}))(TemplateLib);
+export default connect(
+	store => ({ ...store.templates }),
+	dispatch => ({
+		onFilter: filter => dispatch(changeFilter(filter)),
+		onSelect: tmpl => dispatch(selectTmpl(tmpl)),
+		onChangeGroup: group => dispatch(changeGroup(group))
+	})
+)(TemplateLib);

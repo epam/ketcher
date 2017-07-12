@@ -17,7 +17,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_FRAGMENT_STEREO',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_FRAGMENT_STEREO"] },
+					fieldName: {
+						title: 'Field name',
+						enum: ["MDLBG_FRAGMENT_STEREO"],
+						default: "MDLBG_FRAGMENT_STEREO"
+					},
 					fieldValue: {
 						title: "Field value",
 						enum: [
@@ -43,7 +47,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_FRAGMENT_COEFFICIENT',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_FRAGMENT_COEFFICIENT"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_FRAGMENT_COEFFICIENT"],
+						default: "MDLBG_FRAGMENT_COEFFICIENT"
+					},
 					fieldValue: {
 						title: "Field value",
 						type: "string",
@@ -60,7 +68,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_FRAGMENT_CHARGE',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_FRAGMENT_CHARGE"] },
+					fieldName: {
+						title: 'Field name',
+						enum: ["MDLBG_FRAGMENT_CHARGE"],
+						default: "MDLBG_FRAGMENT_CHARGE"
+					},
 					fieldValue: {
 						title: "Field value",
 						type: "string",
@@ -77,7 +89,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_FRAGMENT_RADICALS',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_FRAGMENT_RADICALS"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_FRAGMENT_RADICALS"],
+						default: "MDLBG_FRAGMENT_RADICALS"
+					},
 					fieldValue: {
 						title: "Field value",
 						type: "string",
@@ -100,7 +116,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_STEREO_KEY"],
+						default: "MDLBG_STEREO_KEY"
+					},
 					fieldValue: {
 						title: "Field value",
 						enum: [
@@ -126,7 +146,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_BOND_KEY',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_BOND_KEY"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_BOND_KEY"],
+						default: "MDLBG_BOND_KEY"
+					},
 					fieldValue: {
 						title: "Field value",
 						enum: [
@@ -149,7 +173,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_STEREO_KEY"],
+						default: "MDLBG_STEREO_KEY"
+					},
 					fieldValue: {
 						title: "Field value",
 						enum: [
@@ -191,7 +219,11 @@ export const sgroupSpecial = {
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
 					type: { enum: ["DAT"] },
-					fieldName: { enum: ["MDLBG_STEREO_KEY"] },
+					fieldName: {
+						title: "Field name",
+						enum: ["MDLBG_STEREO_KEY"],
+						default: "MDLBG_STEREO_KEY"
+					},
 					fieldValue: {
 						title: "Field value",
 						enum: [

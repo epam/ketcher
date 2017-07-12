@@ -61,16 +61,13 @@ const customFieldNameSchema = {
 			default: "Absolute"
 		}
 	},
-	required: ["fieldName", "fieldValue", "radiobuttons"]
+	required: ["context", "fieldName", "fieldValue", "radiobuttons"]
 };
 
 function SgroupSpecial(props) {
 	const { stateForm, schema, valid, ...prop } = props;
 
-	const context = stateForm.context;
-	const fieldName = stateForm.fieldName;
-
-	const formSchema = schema[context][fieldName] || customFieldNameSchema;
+	const formSchema = schema[stateForm.context][stateForm.fieldName] || customFieldNameSchema;
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
@@ -78,9 +75,9 @@ function SgroupSpecial(props) {
             <Form storeName="sgroupSpecial" schema={formSchema} init={prop}>
                 <SelectOneOf title="Context" name="context" schema={schema}/>
                 <fieldset className={"data"}>
-                    <SelectInput title="Field name" name="fieldName" schema={schema[context]}/>
+                    <SelectInput title="Field name" name="fieldName" schema={schema[stateForm.context]}/>
                     {
-                        content(formSchema, context, fieldName)
+                        content(formSchema, stateForm.context, stateForm.fieldName)
                     }
                 </fieldset>
             </Form>

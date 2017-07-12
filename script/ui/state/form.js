@@ -1,4 +1,6 @@
-export const defaultOpts = {
+import { defaultOpts } from './options';
+
+export const formsState = {
 	'atom': {
 		errors: {},
 		valid: true,
@@ -65,7 +67,7 @@ export const defaultOpts = {
 	settings: {
 		errors: {},
 		valid: true,
-		stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || defaultOpts()
+		stateForm: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
 	},
 	sgroup: {
 		errors: {},
@@ -74,7 +76,7 @@ export const defaultOpts = {
 			type: 'GEN'
 		}
 	}
-}
+};
 
 const dumpTypes = {
 	'attach-points': 'UPDATE_ATTACH-POINTS_FORM',

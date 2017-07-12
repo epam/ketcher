@@ -4,13 +4,15 @@ import { createStore, combineReducers,
          applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
-import formsState from './form';
-import formReducer from './index';
+import { formsState } from './form';
+import formReducer from './modal';
 import { templatesReducer, initTmplState } from './templates';
 import action from './action';
 import toolbar from './toolbar';
 
-function modal(state = null, { type, data }) {
+function modal(state = null, action) {
+	let { type, data } = action;
+
 	if (type.endsWith('FORM')) {
 		let formState = formReducer(state.form, action);
 		return { ...state, form: formState }

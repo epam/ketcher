@@ -1,6 +1,6 @@
 import { range } from 'lodash/fp';
 
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
@@ -82,11 +82,4 @@ class RGroupAtom extends Component {
 	}
 }
 
-export default function dialog(params) {
-	var overlay = $$('.overlay')[0];
-	return render(params.type == 'rlabel' ? (
-		<RGroupAtom {...params}/>
-	) : (
-		<RGroupFragment {...params}/>
-	), overlay);
-};
+export default params => params.type === 'rlabel' ? (<RGroupAtom {...params}/>) : (<RGroupFragment {...params}/>);

@@ -1,19 +1,18 @@
 import Open from './open';
 import Save from './save';
-import TemplatesLib from './template-lib';
-import rgroupDialog from './rgroup';
-import miewDialog from './miew';
-import About from './about';
-import Attach from './attach';
 import Analyse from './analyse';
-import Help from './help';
-import PeriodTable from './period-table';
 import Recognize from './recognize';
+import PeriodTable from './period-table';
+import Rgroup from './rgroup';
+import TemplateAttach from './template-attach';
+import TemplatesLib from './template-lib';
+import About from './about';
+import Help from './help';
+import Miew from './miew';
 
 // schemify dialogs
 import Atom from './atom';
-
-import AttachPoints from './template-attach';
+import AttachPoints from './attach';
 import Automap from './automap';
 import Bond from './bond';
 import Check from './check';
@@ -24,27 +23,26 @@ import Sgroup from './sgroup';
 import SgroupSpecial from './sdata';
 
 export default {
-	about: About,
-	analyse: Analyse,
-	cip: Check,
-	help: Help,
-	'period-table': PeriodTable,
-	recognize: Recognize,
-	settings: Settings,
 	open: Open,
 	save: Save,
+	analyse: Analyse,
+	recognize: Recognize,
+	'period-table': PeriodTable,
+	rgroup: Rgroup,
+	attach: TemplateAttach,
 	templates: TemplatesLib,
+	about: About,
+	help: Help,
+	miew: Miew,
 
-	rgroup: rgroupDialog,
-	// render-modal
-	attachmentPoints: AttachPoints,
 	atomProps: Atom,
-	bondProps: Bond,
+	attachmentPoints: AttachPoints,
 	automap: Automap,
-	rgroupLogic: RgroupLogic,
-	sgroup: Sgroup,
-	sgroupSpecial: SgroupSpecial,
+	bondProps: Bond,
+	check: Check,
 	labelEdit: LabelEdit,
-	attach: Attach,
-	miew: miewDialog
+	rgroupLogic: RgroupLogic,
+	settings: Settings,
+	sgroup: Sgroup,
+	sgroupSpecial: SgroupSpecial
 };

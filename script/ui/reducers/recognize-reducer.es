@@ -13,7 +13,6 @@ const dumbActions = [
 export default function recognizeReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
-		console.log('recognizeReducer', action);
 		return Object.assign({}, state, action.payload)
 	}
 

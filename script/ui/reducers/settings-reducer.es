@@ -2,7 +2,7 @@ import { defaultOpts } from '../actions/settings-action.es';
 const initState = {
 	errors: {},
 	valid: true,
-	stateForm: JSON.parse(localStorage.getItem("ketcher-opts")) || defaultOpts()
+	stateForm: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
 };
 
 const dumbActions = [
@@ -14,7 +14,6 @@ const dumbActions = [
 export default function settingsReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
-		console.log('settingsReducer', action);
 		return Object.assign({}, state, action.payload);
 	}
 

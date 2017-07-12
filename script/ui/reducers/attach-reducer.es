@@ -13,7 +13,6 @@ const dumbActions = [
 export default function attachReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
-		console.log('attachReducer', action);
 		return Object.assign({}, state, action.payload);
 	}
 

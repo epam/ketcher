@@ -15,7 +15,6 @@ const dumbActions = [
 export default function checkReducer(state = initState, action) {
 
 	if (dumbActions.includes(action.type)) {
-		console.log('checkReducer', action);
 		return Object.assign({}, state, action.payload);
 	}
 

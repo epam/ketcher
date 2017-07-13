@@ -7,7 +7,7 @@ import { connect } from 'preact-redux';
 import element from '../../chem/element';
 
 import Dialog from '../component/dialog';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 
 export const labelEditSchema = {
 	title: "Label Edit",
@@ -58,21 +58,23 @@ function deserialize(value) {
 
 function LabelEdit(props) {
 	let init = { label: props.letter || serialize(props) };
-	let { result, valid, ...prop} = props;
+	let { stateForm, valid, errors, ...prop} = props;
+	let formProps = { stateForm, errors };
+
 	return (
 		<Dialog title="Label Edit" className="labeledit" valid={() => valid}
-				result={() => deserialize(result.label)} params={prop}>
+				result={() => deserialize(stateForm.label)} params={prop}>
 			<Form storeName="label-edit" schema={labelEditSchema}
-				  customValid={{label: l => deserialize(l)}} init={init}>
+				  customValid={{label: l => deserialize(l)}} init={init} {...formProps}>
 				<Field name="label" maxlength="20" size="10"/>
 			</Form>
 		</Dialog>
 	);
 }
 
-export default connect((store) => {
-	return {
-		result: store['label-edit'].stateForm,
-		valid: store['label-edit'].valid
-	};
-})(LabelEdit);
+export default connect((store) => ({
+		stateForm: store.modal.form.stateForm,
+		valid: store.modal.form.valid,
+		errors: store.modal.form.errors
+	})
+)(LabelEdit);

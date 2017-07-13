@@ -1,4 +1,4 @@
-import { mapOf } from '../component/form';
+import { mapOf } from '../utils';
 import { sgroupSpecial as sgroupSchema } from '../data/sdata-schema'
 
 const contextSchema = {
@@ -25,7 +25,7 @@ const defaultFieldValue = (context, fieldName) => schemes[context][fieldName] ?
 	schemes[context][fieldName].properties.fieldValue.default :
 	'';
 
-const initState = () => {
+export const initSdata = () => {
 	const context = defaultContext();
 	const fieldName = defaultFieldName(context);
 	const fieldValue = defaultFieldValue(context, fieldName);
@@ -33,6 +33,7 @@ const initState = () => {
 
 	return {
 		schema: schemes,
+		valid: true,
 		stateForm: {
 			context,
 			fieldName,
@@ -43,20 +44,16 @@ const initState = () => {
 	}
 };
 
-export default function sgroupSpecialReducer(state = initState(), action) {
-	if (action.type === 'UPDATE_SGROUPSPEC_FORM') {
-		const actionContext = action.payload.stateForm['context'];
-		const actionFieldName = action.payload.stateForm['fieldName'];
+export function sgroupSpecialReducer(state, action) {
+	const actionContext = action.data.stateForm['context'];
+	const actionFieldName = action.data.stateForm['fieldName'];
 
-		if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
-			return onContextChange(state, actionContext);
-		if (actionFieldName !== state.stateForm.fieldName)
-			return onFieldNameChange(state, actionFieldName);
+	if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
+		return onContextChange(state, actionContext);
+	if (actionFieldName !== state.stateForm.fieldName)
+		return onFieldNameChange(state, actionFieldName);
 
-		return Object.assign({}, state, action.payload);
-	}
-
-	return state;
+	return Object.assign({}, state, action.data);
 }
 
 const onContextChange = (state, context) => {

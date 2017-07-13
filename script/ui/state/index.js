@@ -1,11 +1,11 @@
 import { pick } from 'lodash/fp';
 
-import { createStore, combineReducers,
-         applyMiddleware } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { logger } from 'redux-logger';
 
-import { formsState } from './form';
-import formReducer from './modal';
+import { formsState, formReducer } from './form';
+import { optionsState, optionsReducer } from './options';
+
 import { templatesReducer, initTmplState } from './templates';
 import action from './action';
 import toolbar from './toolbar';
@@ -13,8 +13,8 @@ import toolbar from './toolbar';
 function modal(state = null, action) {
 	let { type, data } = action;
 
-	if (type.endsWith('FORM')) {
-		let formState = formReducer(state.form, action);
+	if (type === 'UPDATE_FORM') {
+		let formState = formReducer(state.form, action, state.name);
 		return { ...state, form: formState }
 	}
 
@@ -22,7 +22,10 @@ function modal(state = null, action) {
 	case 'MODAL_CLOSE':
 		return null;
 	case 'MODAL_OPEN':
-		return { name: data.name }
+		return {
+			name: data.name,
+			form: formsState[data.name] || null // TODO Settings init BAD
+		}
 	}
 	return state;
 }
@@ -31,6 +34,7 @@ const shared = combineReducers({
 	actionState: action,
 	toolbar,
 	modal,
+	options: optionsReducer,
 	templates: templatesReducer
 });
 
@@ -68,14 +72,12 @@ function root(state, action) {
 export default function(options, server) {
 	// TODO: redux localStorage here
 	var initState = {
-		options,
+		options: Object.assign(options, optionsState),
 		server: null, //server || Promise.reject("Standalone mode!"),
 		editor: null,
 		modal: null,
-		form: formsState,
 		templates: initTmplState
 	};
 
-	return createStore(root, initState,
-					   applyMiddleware(logger));
+	return createStore(root, initState, applyMiddleware(logger));
 };

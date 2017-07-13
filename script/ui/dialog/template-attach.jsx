@@ -7,7 +7,7 @@ import Input from '../component/input';
 import StructEditor from '../component/structeditor';
 import Vec2 from '../../util/vec2';
 
-import { initAttach, setAttachPoints, setTmplName } from '../state/template-attach';
+import { initAttach, setAttachPoints, setTmplName } from '../state/templates';
 
 const EDITOR_STYLES = {
 	selectionStyle: { fill: '#47b3ec', stroke: 'none' },
@@ -18,8 +18,10 @@ class Attach extends Component {
 	constructor({onInit, ...props}) {
 		super(props);
 
+
 		this.tmpl = initTmpl(props.tmpl);
 		onInit(this.tmpl.struct.name, this.tmpl.props);
+		console.log("??????!!!!!!!!!!!!!!!", this.tmpl, props.tmpl, this.tmpl === props.tmpl)
 	}
 
 	render() {
@@ -87,12 +89,13 @@ function structNormalization(struct) {
 
 export default connect(
 	store => ({
-		name: store.attach.name,
-		atomid: store.attach.atomid,
-		bondid: store.attach.bondid
+		tmpl: store.templates.selected, // TODO: return to templates, OK disabled =(
+		name: store.templates.attach.name,
+		atomid: store.templates.attach.atomid,
+		bondid: store.templates.attach.bondid
 	}),
 	dispatch => ({
-		onInit:  (name, ap) => dispatch(initAttach(name, ap)),
+		onInit: (name, ap) => dispatch(initAttach(name, ap)),
 		onAttachEdit: ap => dispatch(setAttachPoints(ap)),
 		onNameEdit: name => dispatch(setTmplName(name))
 	})

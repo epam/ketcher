@@ -3,15 +3,16 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { attachmentPoints as attachmentPointsSchema } from '../structschema';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function AttachmentPoints (props) {
-	let { result, valid, ...prop} = props;
+	let { stateForm, valid, errors, ...prop} = props;
+	let formProps = { stateForm, errors };
 	return (
 		<Dialog title="Attachment Points" className="attach-points"
-				result={() => result} valid={() => valid} params={prop}>
-			<Form storeName="attach-points" schema={attachmentPointsSchema} init={prop}>
+				result={() => stateForm} valid={() => valid} params={prop}>
+			<Form storeName="attach-points" schema={attachmentPointsSchema} init={prop} {...formProps}>
 				<Field name="primary"/>
 				<Field name="secondary"/>
 			</Form>
@@ -19,9 +20,9 @@ function AttachmentPoints (props) {
 	);
 }
 
-export default connect((store) => {
-	return {
-		result: store['attach-points'].stateForm,
-		valid: store['attach-points'].valid
-	};
-})(AttachmentPoints);
+export default connect((store) => ({
+		stateForm: store.modal.form.stateForm,
+		valid: store.modal.form.valid,
+		errors: store.modal.form.errors
+	})
+)(AttachmentPoints);

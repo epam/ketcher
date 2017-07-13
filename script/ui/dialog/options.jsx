@@ -1,11 +1,11 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
-import { updateFormState } from '../state/form';
-import { setDefaultSettings, cancelChanges } from '../state/options';
+import { updateFormState, setDefaultSettings } from '../state/form';
+import { saveSettings } from '../state/options';
 
 import { settings as settingsSchema } from '../data/options-schema';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
@@ -15,7 +15,8 @@ import OpenButton from '../component/openbutton';
 import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
-	let { server, stateForm, valid, onOpenFile, onReset, ...prop } = props;
+	let { server, stateForm, valid, errors, onOpenFile, onReset, ...prop } = props;
+	let formProps = { stateForm, errors };
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
@@ -30,7 +31,7 @@ function Settings(props) {
 					</SaveButton>,
 					<button onClick={ onReset }>Reset</button>,
 					"OK", "Cancel"]} >
-			<Form storeName="settings" schema={settingsSchema}>
+			<Form storeName="settings" schema={settingsSchema} {...formProps}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
 						<SelectCheckbox name="resetToSelect"/>
@@ -85,19 +86,20 @@ function FieldMeasure(props, {schema}) {
 }
 
 export default connect(store => ({
-	stateForm: store.settings.stateForm,
-	valid: store.settings.valid
+	stateForm: store.modal.form.stateForm,
+	valid: store.modal.form.valid,
+	errors: store.modal.form.errors,
 }), (dispatch, props) => ({
 	onOpenFile: newOpts => {
 		try {
-			dispatch(updateFormState('settings', { stateForm: JSON.parse(newOpts) }));
+			dispatch(updateFormState({ stateForm: JSON.parse(newOpts) }));
 		} catch (ex) {
 			console.info('Bad file');
 		}
 	},
 	onReset: () => dispatch(setDefaultSettings()),
-	onCancel: () => {
-		dispatch(cancelChanges());
-		props.onCancel();
+	onOk: (res) => {
+		dispatch(saveSettings(res));
+		props.onOk(res);
 	}
 }))(Settings);

@@ -2,7 +2,7 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { setStruct, changeImage, shouldFragment } from '../state/recognize';
+import { setStruct, changeImage, shouldFragment } from '../state/options';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructRender from '../component/structrender';
@@ -78,8 +78,8 @@ function url(file) {
 
 export default connect(store => {
 	return {
-		file: store.form.recognize.file,
-		structStr: store.form.recognize.structStr,
-		fragment: store.form.recognize.fragment
+		file: store.options.recognize.file,
+		structStr: store.options.recognize.structStr,
+		fragment: store.options.recognize.fragment
 	};
 })(Recognize);

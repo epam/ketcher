@@ -1,4 +1,5 @@
 import { defaultOpts } from './options';
+import { initSdata, sgroupSpecialReducer } from './sdata';
 
 export const formsState = {
 	'atom': {
@@ -75,37 +76,41 @@ export const formsState = {
 		stateForm: {
 			type: 'GEN'
 		}
-	}
+	},
+	'sgroup-data': initSdata()
 };
 
-const dumpTypes = {
-	'attach-points': 'UPDATE_ATTACH-POINTS_FORM',
-	atom: 'UPDATE_ATOM_FORM',
-	automap: 'UPDATE_AUTOMAP_FORM',
-	bond: 'UPDATE_BOND_FORM',
-	check: 'UPDATE_CHECK_FORM',
-	'label-edit': 'UPDATE_LABEL-EDIT_FORM',
-	'rgroup-logic': 'UPDATE_RGROUP-LOGIC_FORM',
-	settings: 'UPDATE_SETTINGS_FORM',
-	sgroup: 'UPDATE_SGROUP_FORM',
-	sgroupSpecial: 'UPDATE_SGROUPSPEC_FORM'
-};
-
-export function updateFormState(storeName, data) {
+export function updateFormState(data) {
 	return {
-		type: dumpTypes[storeName],
-		payload: data
+		type: 'UPDATE_FORM',
+		data: data
 	};
 }
 
+export function checkErrors(dispatch, check, optsTypes) {
+	check({ 'types': optsTypes })
+		.then(res => dispatch({
+			type: 'UPDATE_FORM',
+			data: { moleculeErrors: res }
+		}))
+		.catch(console.error);
+}
 
-export function createNamedFormReducer(storeName = '') {
-	return function formReducer(state = {}, action) {
-
-		if (action.type !== `UPDATE_${storeName.toUpperCase()}_FORM`) {
-			return state;
+export function setDefaultSettings() {
+	return {
+		type: 'UPDATE_FORM',
+		data: {
+			stateForm: defaultOpts(),
+			valid: true,
+			errors: {}
 		}
+	};
+}
 
-		return Object.assign({}, state, action.payload);
-	}
+export function formReducer(state, action, formName) {
+
+	if (formName === 'sgroup-data')
+		return sgroupSpecialReducer(state, action);
+
+	return Object.assign({}, state, action.data);
 }

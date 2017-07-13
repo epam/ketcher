@@ -95,7 +95,7 @@ class TemplateLib extends Component {
 	}
 
 	onAttach(tmpl, index) {
-		this.props.onOk({ event: 'attachEdit', tmpl: tmpl, index: index });
+		this.props.onAttach(tmpl);
 	}
 
 	renderRow(row, index, COLS) {
@@ -154,6 +154,10 @@ export default connect(
 	dispatch => ({
 		onFilter: filter => dispatch(changeFilter(filter)),
 		onSelect: tmpl => dispatch(selectTmpl(tmpl)),
-		onChangeGroup: group => dispatch(changeGroup(group))
+		onChangeGroup: group => dispatch(changeGroup(group)),
+		onAttach: tmpl => {
+			dispatch(selectTmpl(tmpl));
+			dispatch({ type: 'MODAL_OPEN', data: { name: 'attach' } });
+		}
 	})
 )(TemplateLib);

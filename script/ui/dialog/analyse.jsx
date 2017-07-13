@@ -5,7 +5,7 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import keyName from 'w3c-keyname';
-import { changeRound } from '../state/analyse';
+import { changeRound } from '../state/options';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 
@@ -54,7 +54,7 @@ function Analyse(props) {
 						? <Input schema={{
 									 enum: range(0, 8),
 									 enumNames: range(0, 8).map(i => `${i} decimal places`)
-						  }} value={props[item.round]} onChange={val => props.dispatch(changeRound(item.round, val))}/>
+						  }} value={props[item.round]} onChange={val => props.onChangeRound(item.round, val)}/>
 						: null
 					}
 				</li>
@@ -79,9 +79,12 @@ function roundOff(value, round) {
 	));
 }
 
-export default connect((store) => {
-	return {
-		roundWeight: store.form.analyse.roundWeight,
-		roundMass: store.form.analyse.roundMass
-	};
-})(Analyse);
+export default connect(
+	store => ({
+		roundWeight: store.options.analyse.roundWeight,
+		roundMass: store.options.analyse.roundMass
+	}),
+	dispatch => ({
+		onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
+	})
+)(Analyse);

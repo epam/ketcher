@@ -3,19 +3,21 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { sgroup as sgroupSchema } from '../structschema';
-import { form as Form, Field, SelectOneOf, mapOf } from '../component/form';
+import { Form, Field, SelectOneOf } from '../component/form';
+import { mapOf } from '../utils';
 import Dialog from '../component/dialog';
 
 const schemes = mapOf(sgroupSchema, 'type');
 
 function Sgroup(props) {
-	const { stateForm, valid, ...prop } = props;
+	const { stateForm, valid, errors, ...prop } = props;
 	const type = stateForm.type;
+	let formProps = { stateForm, errors };
 
 	return (
 		<Dialog title="S-Group Properties" className="sgroup"
 				result={() => stateForm} valid={() => valid} params={prop}>
-			<Form storeName="sgroup" schema={schemes[type]} init={prop} params={prop}>
+			<Form storeName="sgroup" schema={schemes[type]} init={prop} {...formProps}>
 				<SelectOneOf title="Type" name="type" schema={schemes}/>
 				<fieldset class={type === 'DAT' ? 'data' : 'base'}>
 					{ content(type) }
@@ -38,9 +40,9 @@ const content = type => Object.keys(schemes[type].properties)
 		}
 	);
 
-export default connect((store) => {
-	return {
-		stateForm: store.sgroup.stateForm,
-		valid: store.sgroup.valid
-	};
-})(Sgroup);
+export default connect((store) => ({
+		stateForm: store.modal.form.stateForm,
+		valid: store.modal.form.valid,
+		errors: store.modal.form.errors
+	})
+)(Sgroup);

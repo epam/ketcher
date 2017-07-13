@@ -1,6 +1,7 @@
 import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
 
+/* TEMPLATES */
 export function selectTmpl(tmpl) {
 	return {
 		type: 'TMPL_SELECT',
@@ -22,29 +23,71 @@ export function changeFilter(filter) {
 	}
 }
 
+/* TEMPLATE-ATTACH-EDIT */
+export function initAttach(name, attach) {
+	return {
+		type: 'INIT_ATTACH',
+		data: {
+			name,
+			atomid: attach.atomid,
+			bondid: attach.bondid
+		}
+	};
+}
+
+export function setAttachPoints(attach) {
+	return {
+		type: 'SET_ATTACH_POINTS',
+		data: {
+			atomid: attach.atomid,
+			bondid: attach.bondid
+		}
+	};
+}
+
+export function setTmplName(name) {
+	return {
+		type: 'SET_TMPL_NAME',
+		data: { name }
+	};
+}
+
+/* REDUCER */
 export const initTmplState = {
 	lib: [],
 	selected: null,
 	filter: '',
-	group: null
+	group: null,
+	attach: {}
 };
 
-const dumbActions = [
+const tmplActions = [
 	'TMPL_INIT',
 	'TMPL_SELECT',
 	'TMPL_CHANGE_GROUP',
 	'TMPL_CHANGE_FILTER'
 ];
 
+const attachActions = [
+	'INIT_ATTACH',
+	'SET_ATTACH_POINTS',
+	'SET_TMPL_NAME'
+];
+
 export function templatesReducer(state = initTmplState, action) {
 
-	if (dumbActions.includes(action.type)) {
+	if (tmplActions.includes(action.type)) {
 		return Object.assign({}, state, action.data);
+	}
+	if (attachActions.includes(action.type)) {
+		let attach = Object.assign({}, state.attach, action.data);
+		return { ...state, attach };
 	}
 
 	return state;
 }
 
+/* INIT TEMPLATES LIBRARY */
 function initLib(lib) {
 	return {
 		type: 'TMPL_INIT',

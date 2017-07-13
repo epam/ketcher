@@ -35,14 +35,14 @@ function api(base, defaultOptions) {
 	});
 
 	function request(method, url, data, headers) {
-		if (data && method == 'GET')
+		if (data && method === 'GET')
 			url = parametrizeUrl(url, data);
 		return fetch(baseUrl + url, {
 			method: method,
 			headers: Object.assign({
 				Accept: 'application/json'
 			}, headers),
-			body: method != 'GET' ? data : null,
+			body: method !== 'GET' ? data : undefined,
 			credentials: 'same-origin'
 		}).then(function (response) {
 			return response.json().then(function (res) {

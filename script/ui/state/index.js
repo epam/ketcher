@@ -24,7 +24,7 @@ function modal(state = null, action) {
 	case 'MODAL_OPEN':
 		return {
 			name: data.name,
-			form: formsState[data.name] || null // TODO Settings init BAD
+			form: formsState[data.name] || null
 		}
 	}
 	return state;

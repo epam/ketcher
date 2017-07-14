@@ -25,13 +25,12 @@ function IfThenSelect(props, { schema }) {
 }
 
 function RgroupLogic (props) {
-	let { stateForm, valid, errors, label, rgroupLabels, ...prop } = props;
-	let formProps = { stateForm, errors };
+	let { formState, label, rgroupLabels, ...prop } = props;
 	return (
 		<Dialog title="R-Group Logic" className="rgroup-logic"
-				result={() => stateForm} valid={() => valid} params={prop}>
+				result={() => formState.result} valid={() => formState.valid} params={prop}>
 			<Form storeName="rgroup-logic" schema={rgroupSchema}
-				  customValid={{range: r => rangeConv(r)}} init={props} {...formProps}>
+				  customValid={{range: r => rangeConv(r)}} init={props} {...formState}>
 				<Field name="range"/>
 				<Field name="resth"/>
 				<IfThenSelect name="ifthen" className="cond" label={label} rgids={rgroupLabels}/>
@@ -49,9 +48,6 @@ function rangeConv(range) { // structConv
 	});
 }
 
-export default connect((store) => ({
-		stateForm: store.modal.form.stateForm,
-		valid: store.modal.form.valid,
-		errors: store.modal.form.errors
-	})
+export default connect(
+	(store) => ({ formState: store.modal.form })
 )(RgroupLogic);

@@ -5,7 +5,7 @@ export const formsState = {
 	'atom': {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			label: '',
 			charge: 0,
 			explicitValence: -1,
@@ -20,7 +20,7 @@ export const formsState = {
 	'attach-points': {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			primary: false,
 			secondary: false
 		}
@@ -28,14 +28,14 @@ export const formsState = {
 	automap: {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			mode: "discard"
 		}
 	},
 	bond: {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			type: 'single',
 			topology: 0,
 			center: 0
@@ -44,7 +44,7 @@ export const formsState = {
 	check: {
 		errors: {},
 		moleculeErrors: {},
-		stateForm: {
+		result: {
 			checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
 				'overlapping_bonds', 'rgroups', 'chiral', '3d']
 		}
@@ -52,14 +52,14 @@ export const formsState = {
 	'label-edit': {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			label: '',
 		}
 	},
 	'rgroup-logic': {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			ifthen: 0,
 			range: '>0',
 			resth: false
@@ -68,12 +68,12 @@ export const formsState = {
 	settings: {
 		errors: {},
 		valid: true,
-		stateForm: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
+		result: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
 	},
 	sgroup: {
 		errors: {},
 		valid: true,
-		stateForm: {
+		result: {
 			type: 'GEN'
 		}
 	},
@@ -100,7 +100,7 @@ export function setDefaultSettings() {
 	return {
 		type: 'UPDATE_FORM',
 		data: {
-			stateForm: defaultOpts(),
+			result: defaultOpts(),
 			valid: true,
 			errors: {}
 		}

@@ -15,23 +15,22 @@ import OpenButton from '../component/openbutton';
 import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
-	let { server, stateForm, valid, errors, onOpenFile, onReset, ...prop } = props;
-	let formProps = { stateForm, errors };
+	let { initState, formState, server, onOpenFile, onReset, ...prop } = props;
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
 	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
 	return (
 		<Dialog title="Settings" className="settings"
-				result={() => stateForm} valid={() => valid} params={prop}
+				result={() => formState.result} valid={() => formState.valid} params={prop}
 				buttons={[
 					<OpenButton className="open" server={ server } onLoad={ onOpenFile }>
 						Open From File…
 					</OpenButton>,
-					<SaveButton className="save" data={JSON.stringify(stateForm)} filename={'ketcher-settings'}>
+					<SaveButton className="save" data={JSON.stringify(formState.result)} filename={'ketcher-settings'}>
 						Save To File…
 					</SaveButton>,
 					<button onClick={ onReset }>Reset</button>,
 					"OK", "Cancel"]} >
-			<Form storeName="settings" schema={settingsSchema} {...formProps}>
+			<Form storeName="settings" schema={settingsSchema} init={initState} {...formState}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
 						<SelectCheckbox name="resetToSelect"/>
@@ -86,13 +85,12 @@ function FieldMeasure(props, {schema}) {
 }
 
 export default connect(store => ({
-	stateForm: store.modal.form.stateForm,
-	valid: store.modal.form.valid,
-	errors: store.modal.form.errors,
+	initState: store.options.settings,
+	formState: store.modal.form
 }), (dispatch, props) => ({
 	onOpenFile: newOpts => {
 		try {
-			dispatch(updateFormState({ stateForm: JSON.parse(newOpts) }));
+			dispatch(updateFormState({ result: JSON.parse(newOpts) }));
 		} catch (ex) {
 			console.info('Bad file');
 		}

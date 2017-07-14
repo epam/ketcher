@@ -11,24 +11,23 @@ import Dialog from '../component/dialog';
 import element from '../../chem/element';
 
 function ElementNumber(props, {stateStore}) {
-	let {stateForm} = stateStore.props;
+	let { result } = stateStore.props;
 	return (
 		<label>Number:
 		  <input className="number" type="text"
 				 readonly="readonly"
-				 value={element.map[capitalize(stateForm.label)] || ''}/>
+				 value={element.map[capitalize(result.label)] || ''}/>
 		</label>
 	);
 }
 
 function Atom(props) {
-	let { stateForm, valid, errors, ...prop} = props;
-	let formProps = { stateForm, errors };
+	let { formState, ...prop } = props;
 	return (
 		<Dialog title="Atom Properties" className="atom-props"
-				result={() => stateForm} valid={() => valid} params={prop}>
+				result={() => formState.result} valid={() => formState.valid} params={prop}>
 			<Form storeName="atom" schema={atomSchema}
-				  customValid={{ label: l => atomValid(l) }} init={prop} {...formProps}>
+				  customValid={{ label: l => atomValid(l) }} init={prop} {...formState}>
 			  <fieldset className="main">
 				<Field name="label"/>
 				<Field name="alias"/>
@@ -59,9 +58,6 @@ function atomValid(label) {
 	return label && !!element.map[capitalize(label)];
 }
 
-export default connect((store) => ({
-		stateForm: store.modal.form.stateForm,
-		valid: store.modal.form.valid,
-		errors: store.modal.form.errors
-	})
+export default connect(
+	(store) => ({ formState: store.modal.form })
 )(Atom);

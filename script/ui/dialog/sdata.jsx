@@ -65,18 +65,18 @@ const customFieldNameSchema = {
 };
 
 function SgroupSpecial(props) {
-	const { stateForm, schema, valid, errors, ...prop } = props;
-	let formProps = { stateForm, errors };
+	const { formState, schema, ...prop } = props;
+	let { result, valid } = formState;
 
-	const context = stateForm.context;
-	const fieldName = stateForm.fieldName;
+	const context = result.context;
+	const fieldName = result.fieldName;
 
 	const formSchema = schema[context][fieldName] || customFieldNameSchema;
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
-				result={() => stateForm} valid={() => valid} params={prop}>
-            <Form storeName="sgroupSpecial" schema={formSchema} init={prop} {...formProps}>
+				result={() => result} valid={() => valid} params={prop}>
+            <Form storeName="sgroupSpecial" schema={formSchema} init={prop} {...formState}>
                 <SelectOneOf title="Context" name="context" schema={schema}/>
                 <fieldset className={"data"}>
                     <SelectInput title="Field name" name="fieldName" schema={schema[context]}/>
@@ -96,9 +96,6 @@ const content = (schema, context, fieldName) => Object.keys(schema.properties)
 		<Field name={prop} type="textarea" size="10" key={`${context}-${fieldName}-${prop}-select`}/>
 	);
 
-export default connect((store) => ({
-		stateForm: store.modal.form.stateForm,
-		valid: store.modal.form.valid,
-		errors: store.modal.form.errors
-	})
+export default connect(
+	(store) => ({ formState: store.modal.form })
 )(SgroupSpecial);

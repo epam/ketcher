@@ -7,12 +7,11 @@ import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function AttachmentPoints (props) {
-	let { stateForm, valid, errors, ...prop} = props;
-	let formProps = { stateForm, errors };
+	let { formState, ...prop} = props;
 	return (
 		<Dialog title="Attachment Points" className="attach-points"
-				result={() => stateForm} valid={() => valid} params={prop}>
-			<Form storeName="attach-points" schema={attachmentPointsSchema} init={prop} {...formProps}>
+				result={() => formState.result} valid={() => formState.valid} params={prop}>
+			<Form storeName="attach-points" schema={attachmentPointsSchema} init={prop} {...formState}>
 				<Field name="primary"/>
 				<Field name="secondary"/>
 			</Form>
@@ -20,9 +19,6 @@ function AttachmentPoints (props) {
 	);
 }
 
-export default connect((store) => ({
-		stateForm: store.modal.form.stateForm,
-		valid: store.modal.form.valid,
-		errors: store.modal.form.errors
-	})
+export default connect(
+	(store) => ({ formState: store.modal.form })
 )(AttachmentPoints);

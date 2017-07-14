@@ -21,25 +21,25 @@ class Form extends Component {
 		return { schema, stateStore: this };
 	}
 	field(name, onChange) {
-		let { stateForm, errors } = this.props;
-		var value = stateForm[name];
+		let { result, errors } = this.props;
+		var value = result[name];
 		var self = this;
 		return {
 			dataError: errors && errors[name] || false,
 			value: value,
 			onChange(value) {
-				let newstate = Object.assign({}, self.props.stateForm, { [name]: value });
+				let newstate = Object.assign({}, self.props.result, { [name]: value });
 				self.updateState(newstate);
 				if (onChange) onChange(value);
 			}
 		};
 	}
 	render() {
-		var { stateForm, children, schema, ...props } = this.props;
+		var { result, children, schema, ...props } = this.props;
 		if (schema.key && schema.key !== this.schema.key) {
 			this.schema = propSchema(schema, props);
-			this.schema.serialize(stateForm); // hack: valid first state
-			this.updateState(stateForm);
+			this.schema.serialize(result); // hack: valid first state
+			this.updateState(result);
 		}
 
 		return (
@@ -52,8 +52,8 @@ class Form extends Component {
 Form = connect(
 	null,
 	(dispatch, props) => ({
-		onUpdate: function (stateForm, valid, errors) {
-			dispatch(updateFormState({ stateForm, valid, errors }));
+		onUpdate: function (result, valid, errors) {
+			dispatch(updateFormState({ result, valid, errors }));
 		}
 	})
 )(Form);

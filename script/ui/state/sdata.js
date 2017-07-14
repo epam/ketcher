@@ -34,7 +34,7 @@ export const initSdata = () => {
 	return {
 		schema: schemes,
 		valid: true,
-		stateForm: {
+		result: {
 			context,
 			fieldName,
 			fieldValue,
@@ -45,12 +45,12 @@ export const initSdata = () => {
 };
 
 export function sgroupSpecialReducer(state, action) {
-	const actionContext = action.data.stateForm['context'];
-	const actionFieldName = action.data.stateForm['fieldName'];
+	const actionContext = action.data.result['context'];
+	const actionFieldName = action.data.result['fieldName'];
 
-	if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
+	if (actionContext !== undefined && actionContext !== state.result.context || actionFieldName === undefined)
 		return onContextChange(state, actionContext);
-	if (actionFieldName !== state.stateForm.fieldName)
+	if (actionFieldName !== state.result.fieldName)
 		return onFieldNameChange(state, actionFieldName);
 
 	return Object.assign({}, state, action.data);
@@ -62,8 +62,8 @@ const onContextChange = (state, context) => {
 
 	return {
 		...state,
-		stateForm: {
-			...state.stateForm,
+		result: {
+			...state.result,
 			context,
 			fieldName,
 			fieldValue
@@ -72,13 +72,13 @@ const onContextChange = (state, context) => {
 };
 
 const onFieldNameChange = (state, fieldName) => {
-	const context = state.stateForm.context;
+	const context = state.result.context;
 	const fieldValue = defaultFieldValue(context, fieldName);
 
 	return {
 		...state,
-		stateForm: {
-			...state.stateForm,
+		result: {
+			...state.result,
 			fieldName,
 			fieldValue
 		}

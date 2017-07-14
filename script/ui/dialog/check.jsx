@@ -30,15 +30,15 @@ function getOptionName(opt) {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { stateForm, moleculeErrors, errors, check, ...prop } = props;
-	let formProps = { stateForm, errors };
+	let { formState, check, ...prop } = props;
+	let { result, moleculeErrors } = formState;
 
 	return (
 		<Dialog title="Structure Check" className="check"
-				result={() => stateForm} params={prop}>
-			<Form storeName="check" schema={checkSchema} {...formProps}>
+				result={() => result} params={prop}>
+			<Form storeName="check" schema={checkSchema} {...formState}>
 				<Tabs className="tabs" captions={tabs}
-					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, stateForm.checkOptions) : null}>
+					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, result.checkOptions) : null}>
 					<ErrorsCheck moleculeErrors={moleculeErrors}/>
 					<Field name="checkOptions" multiple={true} type="checkbox"/>
 				</Tabs>
@@ -64,9 +64,9 @@ function ErrorsCheck(props) {
 	);
 }
 
-export default connect((store) => ({
+export default connect(
+	(store) => ({
 		check: store.server.check,
-		result: store.modal.form.stateForm,
-		moleculeErrors: store.modal.form.moleculeErrors
+		formState: store.modal.form
 	})
 )(Check);

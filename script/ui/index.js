@@ -72,7 +72,7 @@ function init(opts, apiServer) {
 	scope = 'editor';
 	var hotKeys = initHotKeys(toolbar);
 	ketcherWindow.on('keydown', function (event) {
-		if (scope == 'editor')
+		if (scope === 'editor')
 			keyHandle(toolbar, hotKeys, event);
 	});
 	selectAction('select-lasso');
@@ -399,11 +399,11 @@ function keyHandle(toolbar, hotKeys, event) {
 			group.index = index = (index + 1) % group.length;
 		}
 		var action = group[index];
-		if (clipArea.actions.indexOf(action) == -1) {
-			// else delegate to cliparea
+		if (clipArea.actions.indexOf(action) === -1) {
 			selectAction(action);
 			event.preventDefault();
-		}
+		} else if (window.clipboardData) // IE support
+			clipArea.exec(event);
 	}
 }
 

@@ -12,7 +12,7 @@ import modals from './dialog';
 
 const AppEditor = connect(
 	(state) => ({
-		options: state.options
+		options: state.options.settings
 	}),
 	(dispatch) => ({
 		onInit: editor => {
@@ -58,7 +58,7 @@ const AppTemplates = connect(
 	componentDidMount() {
 		this.props.onInitTmpls(this.cacheEl);
 	}
-	render = () => (<div ref={c => this.cacheEl = c}></div>)
+	render = () => (<div className="cellar" ref={c => this.cacheEl = c}></div>)
 });
 
 const App = connect(

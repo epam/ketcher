@@ -1,4 +1,4 @@
-import { settings as settingsSchema } from '../data/options-schema';
+import settingsSchema from '../data/options-schema';
 
 export const optionsState = {
 
@@ -23,10 +23,9 @@ export function defaultOpts() {
 }
 
 export function saveSettings(newSettings) {
-	localStorage.setItem("ketcher-opts", JSON.stringify(newSettings));
-	return {
-		type: 'SAVE_SETTINGS',
-		data: newSettings
+	return dispatch => {
+		localStorage.setItem("ketcher-opts", JSON.stringify(newSettings));
+		dispatch({ type: 'SAVE_SETTINGS', data: newSettings });
 	};
 }
 

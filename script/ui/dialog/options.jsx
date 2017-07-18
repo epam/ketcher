@@ -4,7 +4,7 @@ import { connect } from 'preact-redux';
 import { updateFormState, setDefaultSettings } from '../state/form';
 import { saveSettings } from '../state/options';
 
-import { settings as settingsSchema } from '../data/options-schema';
+import settingsSchema from '../data/options-schema';
 import { Form, Field } from '../component/form';
 
 import Dialog from '../component/dialog';
@@ -16,8 +16,8 @@ import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
 	let { initState, formState, server, onOpenFile, onReset, ...prop } = props;
-	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', '3D Viewer', 'Options for debugging'];
-	let activeTabs = {'0': true, '1': false, '2': false, '3': false, '4': false};
+	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Server', '3D Viewer', 'Options for debugging'];
+	let activeTabs = { 0: true, 1: false, 2: false, 3: false, 4: false, 5: false };
 	return (
 		<Dialog title="Settings" className="settings"
 				result={() => formState.result} valid={() => formState.valid} params={prop}
@@ -53,6 +53,12 @@ function Settings(props) {
 						<FieldMeasure name="doubleBondWidth"/>
 						<FieldMeasure name="bondThickness"/>
 						<FieldMeasure name="stereoBondWidth"/>
+					</fieldset>
+					<fieldset className="server">
+						<SelectCheckbox name="smart-layout"/>
+						<SelectCheckbox name="ignore-stereochemistry-errors"/>
+						<SelectCheckbox name="mass-skip-error-on-pseudoatoms"/>
+						<SelectCheckbox name="gross-formula-add-rsites"/>
 					</fieldset>
 					<fieldset className="3dView">
 						<Field name="miewMode"/>

@@ -63,7 +63,8 @@ function root(state, action) {
 
 	let sh = shared(state, {
 		...action,
-		...pick(['editor', 'server'], state)
+		...pick(['editor', 'server'], state),
+		options: state.options.settings
 	});
 	return (sh === state.shared) ? state : {
 		...state, ...sh

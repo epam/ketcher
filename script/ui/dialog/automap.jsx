@@ -4,6 +4,7 @@ import { connect } from 'preact-redux';
 
 import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
+import { automap } from '../state/server';
 
 export const automapSchema = {
 	title: "Reaction Auto-Mapping",
@@ -32,5 +33,11 @@ function Automap (props) {
 }
 
 export default connect(
-	(store) => ({ formState: store.modal.form })
+	(store) => ({ formState: store.modal.form }),
+	(dispatch, props) => ({
+		onOk: (res) => {
+			dispatch(automap(res));
+			props.onOk(res);
+		}
+	})
 )(Automap);

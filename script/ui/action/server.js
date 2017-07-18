@@ -1,6 +1,7 @@
+import { pick, omit } from 'lodash/fp';
 import molfile from '../../chem/molfile';
 
-function serverCall(editor, server, method, options, struct) {
+export function serverCall(editor, server, method, options, struct) {
 	if (!struct) {
 		var aidMap = {};
 		struct = editor.struct().clone(null, null, false, aidMap);
@@ -15,7 +16,7 @@ function serverCall(editor, server, method, options, struct) {
 			struct: molfile.stringify(struct, { ignoreErrors: true })
 		}, selectedAtoms && selectedAtoms.length > 0 ? {
 			selected: selectedAtoms
-		} : null, options));
+		} : null, options.data), omit('data', options));
 	});
 	//utils.loading('show');
 	request.catch(function (err) {
@@ -26,31 +27,50 @@ function serverCall(editor, server, method, options, struct) {
 	return request;
 }
 
-function serverTransform(method, options, struct) {
-	return serverCall(method, options, struct).then(function (res) {
-		return load(res.struct, {       // Let it be an exception
-			rescale: method == 'layout' // for now as layout does not
-		});                             // preserve bond lengths
+export const SERVER_OPTIONS = ['smart-layout', 'ignore-stereochemistry-errors',
+	'mass-skip-error-on-pseudoatoms', 'gross-formula-add-rsites'];
+
+export function serverTransform(editor, server, method, options, struct) {
+	let opts = pick(SERVER_OPTIONS.concat('data'), options);
+	return serverCall(editor, server, method, opts, struct).then(function (res) {
+		return load(res.struct, {        // Let it be an exception
+			rescale: method === 'layout' // for now as layout does not
+		});                              // preserve bond lengths
 	});
 }
 
 export default {
 	"layout": {
 		shortcut: "Mod+l",
-		title: "Layout"
+		title: "Layout",
+		action: (editor, server, options) => {
+			serverTransform(editor, server, 'layout', options);
+		}
 	},
 	"clean": {
 		shortcut: "Mod+Shift+l",
-		title: "Clean Up"
+		title: "Clean Up",
+		action: (editor, server, options) => {
+			serverTransform(editor, server, 'clean', options);
+		}
 	},
 	"arom": {
-		title: "Aromatize"
+		title: "Aromatize",
+		action: (editor, server, options) => {
+			serverTransform(editor, server, 'aromatize', options);
+		}
 	},
 	"dearom": {
-		title: "Dearomatize"
+		title: "Dearomatize",
+		action: (editor, server, options) => {
+			serverTransform(editor, server, 'dearomatize', options);
+		}
 	},
 	"cip": {
 		shortcut: "Mod+p",
-		title: "Calculate CIP"
+		title: "Calculate CIP",
+		action: (editor, server, options) => {
+			serverTransform(editor, server, 'calculateCip', options);
+		}
 	}
 };

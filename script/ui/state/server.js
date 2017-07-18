@@ -1,28 +1,14 @@
+import { pick } from 'lodash/fp';
+
 import { setStruct } from './options';
 import { checkErrors } from './form';
-
-const DEFAULT_OPTIONS = {
-	'smart-layout': true,
-	'ignore-stereochemistry-errors': true,
-	'mass-skip-error-on-pseudoatoms': false,
-	'gross-formula-add-rsites': true
-};
-
-function mergeDiffOptions(userOpts) {
-	let diff = {};
-	for (let opt in DEFAULT_OPTIONS) {
-		if (userOpts[opt] !== DEFAULT_OPTIONS[opt])
-			diff[opt] = userOpts[opt];
-	}
-	return diff;
-}
+import { serverCall, serverTransform, SERVER_OPTIONS } from '../action/server';
 
 export function recognize(file) {
 	return (dispatch, getState) => {
 		const recognize = getState().server.recognize;
-		const userOpts = mergeDiffOptions(getState().options.settings);
 
-		let process = recognize(file, userOpts).then(res => {
+		let process = recognize(file).then(res => {
 			dispatch(setStruct(res.struct));
 		}, err => {
 			dispatch(setStruct(null));
@@ -34,10 +20,23 @@ export function recognize(file) {
 
 export function check(optsTypes) {
 	return (dispatch, getState) => {
-		const check = getState().server.check;
-		const userOpts = mergeDiffOptions(getState().options.settings);
+		const { editor, server } = getState();
+		const options = pick(SERVER_OPTIONS, getState().options.settings);
+		options.data = { 'types': optsTypes };
 
-		check({ 'types': optsTypes }, userOpts)
+		serverCall(editor, server, 'check', options)
+			.then(res => dispatch(checkErrors(res)))
+			.catch(console.error);
+	}
+}
+
+export function automap(res) {
+	return (dispatch, getState) => {
+		const { editor, server } = getState();
+		const options = pick(SERVER_OPTIONS, getState().options.settings);
+		options.data = res;
+
+		serverTransform(editor, server, 'automap', options)
 			.then(res => dispatch(checkErrors(res)))
 			.catch(console.error);
 	}

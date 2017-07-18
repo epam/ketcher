@@ -1,13 +1,13 @@
 import acts from '../action';
 import { isEqual, isEmpty, pickBy } from 'lodash/fp';
 
-function execute(activeTool, { action, editor, server }) {
+function execute(activeTool, { action, editor, server, options }) {
 	if (action.tool) {
 		if (editor.tool(action.tool, action.opts))
 			return action;
 	}
 	else if (typeof action == 'function')
-		action(editor, server);
+		action(editor, server, options);
 	else
 		console.info('no action');
 	return activeTool;

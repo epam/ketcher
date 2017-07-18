@@ -1,12 +1,13 @@
 import { pick } from 'lodash/fp';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk'
 import { logger } from 'redux-logger';
 
 import { formsState, formReducer } from './form';
 import { optionsState, optionsReducer } from './options';
+import { initTmplState, templatesReducer } from './templates';
 
-import { templatesReducer, initTmplState } from './templates';
 import action from './action';
 import toolbar from './toolbar';
 
@@ -72,12 +73,17 @@ function root(state, action) {
 export default function(options, server) {
 	// TODO: redux localStorage here
 	var initState = {
+		actionState: null,
 		options: Object.assign(options, optionsState),
-		server: null, //server || Promise.reject("Standalone mode!"),
+		server: server || Promise.reject("Standalone mode!"),
 		editor: null,
 		modal: null,
 		templates: initTmplState
 	};
 
-	return createStore(root, initState, applyMiddleware(logger));
+	const middleware = [ thunk ];
+	if (process.env.NODE_ENV !== 'production')
+		middleware.push(logger);
+
+	return createStore(root, initState, applyMiddleware(...middleware));
 };

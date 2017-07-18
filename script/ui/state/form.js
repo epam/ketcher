@@ -87,13 +87,11 @@ export function updateFormState(data) {
 	};
 }
 
-export function checkErrors(dispatch, check, optsTypes) {
-	check({ 'types': optsTypes })
-		.then(res => dispatch({
-			type: 'UPDATE_FORM',
-			data: { moleculeErrors: res }
-		}))
-		.catch(console.error);
+export function checkErrors(errors) {
+	return {
+		type: 'UPDATE_FORM',
+		data: { moleculeErrors: errors }
+	};
 }
 
 export function setDefaultSettings() {

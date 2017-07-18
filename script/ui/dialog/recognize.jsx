@@ -2,24 +2,15 @@ import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 
-import { setStruct, changeImage, shouldFragment } from '../state/options';
+import { changeImage, shouldFragment } from '../state/options';
+import { recognize } from '../state/server';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructRender from '../component/structrender';
 import Spin from '../component/spin';
 
-function recognize(server, file, dispatch) {
-	var process = server.recognize(file).then(res => {
-		dispatch(setStruct(res.struct));
-	}, err => {
-		dispatch(setStruct(null));
-		setTimeout(() => alert("Error! The picture isn't recognized.") , 200); // TODO: remove me...
-	});
-	dispatch(setStruct(process));
-}
-
 function Recognize(prop) {
-	let {file, structStr, fragment, dispatch, ...props} = prop;
+	let {file, structStr, fragment, onRecognize, isFragment, onImage, ...props} = prop;
 
 	const result = () =>
 		structStr && !(structStr instanceof Promise) ? {structStr, fragment} : null;
@@ -31,13 +22,13 @@ function Recognize(prop) {
 					(
 						<label className="open">
 							Choose file…
-							<input type="file" onChange={ (ev) => dispatch(changeImage(ev.target.files[0])) }
+							<input type="file" onChange={ (ev) => onImage(ev.target.files[0]) }
 								   accept="image/*"/>
 						</label>
 					),
 					<span className="open-filename">{file ? file.name : null}</span>,
 					file && !structStr ? (
-						<button onClick={() => recognize(props.server, file, dispatch) }>Recognize</button>
+						<button onClick={() => onRecognize(file) }>Recognize</button>
 					) : null,
 					"Cancel",
 					"OK"
@@ -47,7 +38,7 @@ function Recognize(prop) {
 					file ? (
 						<img id="pic" src={url(file) || ""}
 							 onError={() => {
-								 dispatch(changeImage(null));
+								 onImage(null);
 								 alert("Error, it isn't a picture");
 							 }}/>
 					) : null
@@ -63,7 +54,7 @@ function Recognize(prop) {
 				}
 			</div>
 			<label>
-				<Input type="checkbox" value={fragment} onChange={v => dispatch(shouldFragment(v))}/>
+				<Input type="checkbox" value={fragment} onChange={v => isFragment(v)}/>
 				Load as a fragment
 			</label>
 		</Dialog>
@@ -76,10 +67,15 @@ function url(file) {
 	return URL ? URL.createObjectURL(file) : "No preview";
 }
 
-export default connect(store => {
-	return {
+export default connect(
+	store => ({
 		file: store.options.recognize.file,
 		structStr: store.options.recognize.structStr,
 		fragment: store.options.recognize.fragment
-	};
-})(Recognize);
+	}),
+	dispatch => ({
+		isFragment: (v) => dispatch(shouldFragment(v)),
+		onImage: (file) => dispatch(changeImage(file)),
+		onRecognize: (file) => dispatch(recognize(file))
+	})
+)(Recognize);

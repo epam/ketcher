@@ -5,7 +5,7 @@ import { connect } from 'preact-redux';
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
 import { Form, Field } from '../component/form';
-import { checkErrors } from '../state/form';
+import { check } from '../state/server';
 
 const checkSchema = {
 	title: 'Check',
@@ -30,7 +30,7 @@ function getOptionName(opt) {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { formState, check, ...prop } = props;
+	let { formState, onCheck, ...prop } = props;
 	let { result, moleculeErrors } = formState;
 
 	return (
@@ -38,7 +38,7 @@ function Check(props) {
 				result={() => result} params={prop}>
 			<Form storeName="check" schema={checkSchema} {...formState}>
 				<Tabs className="tabs" captions={tabs}
-					  changeTab={(i) => i === 0 ? checkErrors(props.dispatch, check, result.checkOptions) : null}>
+					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}>
 					<ErrorsCheck moleculeErrors={moleculeErrors}/>
 					<Field name="checkOptions" multiple={true} type="checkbox"/>
 				</Tabs>
@@ -65,8 +65,10 @@ function ErrorsCheck(props) {
 }
 
 export default connect(
-	(store) => ({
-		check: store.server.check,
+	store => ({
 		formState: store.modal.form
+	}),
+	dispatch => ({
+		onCheck: (opts) => dispatch(check(opts))
 	})
 )(Check);

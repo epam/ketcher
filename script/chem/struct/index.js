@@ -329,9 +329,10 @@ Struct.prototype.atomAddNeighbor = function (hbid) {
 
 Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
-	atom.neighbors = atom.neighbors.sortBy(function (nei) {
-		return this.halfBonds.get(nei).ang;
-	}, this);
+	var halfBonds = this.halfBonds;
+	atom.neighbors = atom.neighbors.sort(function (nei, nei2) {
+		return halfBonds.get(nei).ang < halfBonds.get(nei2).ang;
+	});
 
 	var i;
 	for (i = 0; i < atom.neighbors.length; ++i) {

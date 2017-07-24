@@ -362,18 +362,17 @@ function spaceparsplit(line) { // eslint-disable-line max-statements
 	var c;
 	var i;
 	var i0 = -1;
-	var lineArray = line.toArray(); // IE7 doesn't support line[i]
 	var quoted = false;
 
 	for (i = 0; i < line.length; ++i) {
-		c = lineArray[i];
+		c = line[i];
 		if (c == '(')
 			pc++;
 		else if (c == ')')
 			pc--;
 		if (c == '"')
 			quoted = !quoted;
-		if (!quoted && lineArray[i] == ' ' && pc == 0) {
+		if (!quoted && line[i] == ' ' && pc == 0) {
 			if (i > i0 + 1)
 				split.push(line.slice(i0 + 1, i));
 			i0 = i;
@@ -381,7 +380,6 @@ function spaceparsplit(line) { // eslint-disable-line max-statements
 	}
 	if (i > i0 + 1)
 		split.push(line.slice(i0 + 1, i));
-	i0 = i;
 	return split;
 }
 

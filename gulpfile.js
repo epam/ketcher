@@ -6,6 +6,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var budo = require('budo');
+var istanbul = require('browserify-babel-istanbul');
 
 var cp = require('child_process');
 var del = require('del');
@@ -79,6 +80,24 @@ gulp.task('script', ['patch-version'], function() {
 		}}))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
+});
+
+gulp.task('test-render', function() {
+	return browserify({
+		entries: 'test/render/render-test.js',
+		debug: true,
+		transform: [
+			istanbul,
+			['exposify', {
+				expose: {
+					raphael: 'Raphael',
+					resemblejs: 'resemble'
+				}
+			}]
+		]
+	}).bundle()
+		.pipe(source('render-test.js'))
+		.pipe(gulp.dest('./test/dist'));
 });
 
 gulp.task('style', ['font'], function () {

@@ -3,6 +3,7 @@ import { connect } from 'preact-redux';
 import { form as Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
+import { getSchemaDefault } from '../utils';
 /** @jsx h */
 
 function SelectInput({ title, name, schema, ...prop }) {
@@ -65,22 +66,31 @@ const customFieldNameSchema = {
 };
 
 function SgroupSpecial(props) {
-	const { stateForm, schema, valid, ...prop } = props;
+	const { context, fieldName, fieldValue, type, radiobuttons, stateForm, schema, valid, ...prop } = props;
+
+	const init = {
+		context,
+		fieldName: fieldName || getSchemaDefault(schema, context),
+		type,
+		radiobuttons
+	};
+
+	init.fieldValue = fieldValue || getSchemaDefault(schema, context, init.fieldName);
 
 	const formSchema = schema[stateForm.context][stateForm.fieldName] || customFieldNameSchema;
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
 				result={() => stateForm} valid={() => valid} params={prop}>
-            <Form storeName="sgroupSpecial" schema={formSchema} init={prop}>
-                <SelectOneOf title="Context" name="context" schema={schema}/>
-                <fieldset className={"data"}>
-                    <SelectInput title="Field name" name="fieldName" schema={schema[stateForm.context]}/>
-                    {
-                        content(formSchema, stateForm.context, stateForm.fieldName)
-                    }
-                </fieldset>
-            </Form>
+			<Form storeName="sgroupSpecial" schema={formSchema} init={init}>
+				<SelectOneOf title="Context" name="context" schema={schema}/>
+				<fieldset className={"data"}>
+					<SelectInput title="Field name" name="fieldName" schema={schema[stateForm.context]}/>
+					{
+						content(formSchema, stateForm.context, stateForm.fieldName)
+					}
+				</fieldset>
+			</Form>
 		</Dialog>
 	);
 }

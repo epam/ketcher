@@ -1,5 +1,6 @@
 import { mapOf } from '../component/form';
-import { sgroupSpecial as sgroupSchema } from '../sgroupSpecialSchema.es'
+import { sgroupSpecial as sgroupSchema } from '../sgroupSpecialSchema.es';
+import { getSchemaDefault } from '../utils';
 
 const contextSchema = {
 	title: 'Context',
@@ -18,17 +19,10 @@ const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
 	return acc;
 }, {});
 
-const firstObjKey = obj => Object.keys(obj)[0];
-const defaultContext = () => firstObjKey(schemes);
-const defaultFieldName = context => firstObjKey(schemes[context]);
-const defaultFieldValue = (context, fieldName) => schemes[context][fieldName] ?
-	schemes[context][fieldName].properties.fieldValue.default :
-	'';
-
 const initState = () => {
-	const context = defaultContext();
-	const fieldName = defaultFieldName(context);
-	const fieldValue = defaultFieldValue(context, fieldName);
+	const context = getSchemaDefault(schemes);
+	const fieldName = getSchemaDefault(schemes, context);
+	const fieldValue = getSchemaDefault(schemes, context, fieldName);
 	const radiobuttons = 'Absolute';
 
 	return {
@@ -40,21 +34,23 @@ const initState = () => {
 			radiobuttons,
 			type: 'DAT'
 		}
-	}
+	};
 };
 
 export default function sgroupSpecialReducer(state = initState(), action) {
 	if (action.type === 'UPDATE_SGROUPSPEC_FORM') {
-		const actionContext = action.payload.stateForm['context'];
-		const actionFieldName = action.payload.stateForm['fieldName'];
+		const actionContext = action.payload.stateForm.context;
+		const actionFieldName = action.payload.stateForm.fieldName;
 
 		let newstate = null;
-		if (actionContext !== undefined && actionContext !== state.stateForm.context || actionFieldName === undefined)
-			newstate = onContextChange(state, actionContext);
+
+		if (actionContext !== state.stateForm.context)
+			newstate = onContextChange(state, action.payload.stateForm);
 		else if (actionFieldName !== state.stateForm.fieldName)
-			newstate = onFieldNameChange(state, actionFieldName);
+			newstate = onFieldNameChange(state, action.payload.stateForm);
 
 		newstate = newstate || Object.assign({}, state, action.payload);
+
 		return correctErrors(newstate, action.payload);
 	}
 
@@ -72,34 +68,48 @@ const correctErrors = (state, payload) => {
 		...state,
 		valid: valid && fieldName && fieldValue,
 		errors: errors,
-	}
+	};
 };
 
-const onContextChange = (state, context) => {
-	const fieldName = defaultFieldName(context);
-	const fieldValue = defaultFieldValue(context, fieldName);
+const onContextChange = (state, payload) => {
+	const { context, fieldValue } = payload;
+
+	const fieldName = getSchemaDefault(schemes, context);
+
+	let fValue = fieldValue;
+	if (fieldValue === state.stateForm.fieldValue)
+		fValue = getSchemaDefault(schemes, context, fieldName);
 
 	return {
-		...state,
+		schema: state.schema,
 		stateForm: {
-			...state.stateForm,
+			...payload,
 			context,
 			fieldName,
-			fieldValue
+			fieldValue: fValue
 		}
-	}
+	};
 };
 
-const onFieldNameChange = (state, fieldName) => {
+const onFieldNameChange = (state, payload) => {
+	const { fieldName } = payload;
+
 	const context = state.stateForm.context;
-	const fieldValue = defaultFieldValue(context, fieldName);
+
+	let fieldValue = payload.fieldValue;
+
+	if (schemes[context][fieldName])
+		fieldValue = fieldValue || getSchemaDefault(schemes, context, fieldName);
+
+	if (fieldValue === state.stateForm.fieldValue)
+		fieldValue = '';
 
 	return {
-		...state,
+		schema: state.schema,
 		stateForm: {
-			...state.stateForm,
+			...payload,
 			fieldName,
 			fieldValue
 		}
-	}
+	};
 };

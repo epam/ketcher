@@ -44,6 +44,7 @@ const customFieldNameSchema = {
 			type: "string",
 			default: "",
 			minLength: 1,
+			pattern: "^(?!\\s+).*\\S$",
 			invalidMessage: "Please, specify field name"
 		},
 		fieldValue: {
@@ -51,6 +52,7 @@ const customFieldNameSchema = {
 			type: "string",
 			default: "",
 			minLength: 1,
+			pattern: "^(?!\\s+)(.|\\n)*\\S$",
 			invalidMessage: "Please, specify field value"
 		},
 		radiobuttons: {
@@ -77,7 +79,7 @@ function SgroupSpecial(props) {
 
 	init.fieldValue = fieldValue || getSchemaDefault(schema, context, init.fieldName);
 
-	const formSchema = schema[stateForm.context][stateForm.fieldName] || customFieldNameSchema;
+	const formSchema = schema[stateForm.context][stateForm.fieldName.trim()] || customFieldNameSchema;
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"

@@ -57,6 +57,7 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
+						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema
@@ -78,6 +79,7 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
+						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema
@@ -99,6 +101,7 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
+						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema

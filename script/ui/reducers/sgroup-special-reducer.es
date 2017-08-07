@@ -46,7 +46,7 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 
 		if (actionContext !== state.stateForm.context)
 			newstate = onContextChange(state, action.payload.stateForm);
-		else if (actionFieldName !== state.stateForm.fieldName)
+		else if (actionFieldName.trim() !== state.stateForm.fieldName.trim())
 			newstate = onFieldNameChange(state, action.payload.stateForm);
 
 		newstate = newstate || Object.assign({}, state, action.payload);
@@ -61,8 +61,11 @@ const correctErrors = (state, payload) => {
 	let { valid, errors } = payload;
 	let { fieldName, fieldValue } = state.stateForm;
 
-	if (!fieldName) errors.fieldName = "does not meet minimum length of 1";
-	if (!fieldValue) errors.fieldValue = "does not meet minimum length of 1";
+	fieldName = fieldName;
+	fieldValue = fieldValue;
+
+	if (!fieldName || fieldName === '') errors.fieldName = "does not meet minimum length of 1";
+	if (!fieldValue || fieldValue === '') errors.fieldValue = "does not meet minimum length of 1";
 
 	return {
 		...state,
@@ -77,7 +80,7 @@ const onContextChange = (state, payload) => {
 	const fieldName = getSchemaDefault(schemes, context);
 
 	let fValue = fieldValue;
-	if (fieldValue === state.stateForm.fieldValue)
+	if (fValue === state.stateForm.fieldValue)
 		fValue = getSchemaDefault(schemes, context, fieldName);
 
 	return {
@@ -92,7 +95,7 @@ const onContextChange = (state, payload) => {
 };
 
 const onFieldNameChange = (state, payload) => {
-	const { fieldName } = payload;
+	let { fieldName } = payload;
 
 	const context = state.stateForm.context;
 
@@ -109,7 +112,7 @@ const onFieldNameChange = (state, payload) => {
 		stateForm: {
 			...payload,
 			fieldName,
-			fieldValue
+			fieldValue,
 		}
 	};
 };

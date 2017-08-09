@@ -128,24 +128,28 @@ function defineContext(restruct, selection) {
 		return allSingle ? 'Single Bond' : 'Group';
 	}
 
-	var atomSelectMap = selection.atoms.reduce(function (acc, atom) {
-		acc[atom] = atom;
+	var atomSelectMap = selection.atoms.reduce(function (acc, atomid) {
+		acc[atomid] = atomid;
 		return acc;
 	}, {});
+
+	var allBondsSelected = selection.bonds.every(function (bondid) {
+		var bond = restruct.bonds.get(bondid).b;
+		return atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined;
+	});
 
 	var allComponentsSelected = restruct.connectedComponents.values()
 		.every(function (component) {
 			var componentAtoms = Object.keys(component);
 			var count = componentAtoms
-				.reduce(function (acc, atom) { return acc + (atomSelectMap[atom] === undefined); }, 0);
-
-			console.info('count', count);
-			console.info('component', componentAtoms.length);
+				.reduce(function (acc, atom) {
+					return acc + (atomSelectMap[atom] === undefined);
+				}, 0);
 
 			return count === 0 || count === componentAtoms.length;
 		});
 
-	return allComponentsSelected ? 'Fragment' : 'Group';
+	return allComponentsSelected && allBondsSelected ? 'Fragment' : 'Group';
 }
 
 function fromContextType(id, editor, newSg, currSelection) {

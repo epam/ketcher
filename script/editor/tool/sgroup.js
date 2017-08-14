@@ -87,11 +87,19 @@ function propsDialog(editor, id, defaultType) {
 		return;
 	}
 
+	var attrs = null;
+	if (sg) {
+		attrs = sg.getAttrs();
+		attrs.context = getContextBySgroup(restruct, sg.atoms);
+	} else {
+		attrs = {
+			context: getContextBySelection(restruct, selection)
+		};
+	}
+
 	var res = editor.event[eventName].dispatch({
 		type: type,
-		attrs: sg ? sg.getAttrs() : {
-			context: defineContext(restruct, selection)
-		}
+		attrs: attrs
 	});
 
 	Promise.resolve(res).then(function (newSg) {
@@ -114,76 +122,85 @@ function propsDialog(editor, id, defaultType) {
 	});
 }
 
-function defineContext(restruct, selection) {
-	if (selection.atoms && !selection.bonds)
+function getContextBySgroup(restruct, sgAtoms) {
+	var struct = restruct.molecule;
+
+	if (sgAtoms.length === 1)
 		return 'Atom';
 
-	if (!selection.atoms && selection.bonds) {
-		var allSingle = selection.bonds.every(function (bondid) {
-			var bond = restruct.bonds.get(bondid).b;
-			var singleBond = bond.type === 1 && bond.stereo === 0;
-			return singleBond;
-		});
+	if (allComponentsSelected(restruct, sgAtoms))
+		return 'Fragment';
 
-		return allSingle ? 'Single Bond' : 'Group';
-	}
+	if (sgAtoms.length % 2 !== 0)
+		return false;
 
-	var atomSelectMap = selection.atoms.reduce(function (acc, atomid) {
-		acc[atomid] = atomid;
+	var atomMap = sgAtoms.reduce(function (acc, aid) {
+		acc[aid] = true;
 		return acc;
 	}, {});
 
+	var sgBonds = struct.bonds
+		.values()
+		.filter(function (bond) { return atomMap[bond.begin] && atomMap[bond.end]; });
+
+	return anyContinuousBonds(sgBonds) ? 'Group' : 'Bond';
+}
+
+function getContextBySelection(restruct, selection) {
+	var struct = restruct.molecule;
+
+	if (selection.atoms && !selection.bonds)
+		return 'Atom';
+
+	var bonds = selection.bonds.map(function (bondid) { return struct.bonds.get(bondid); });
+
+	if (!anyContinuousBonds(bonds))
+		return 'Bond';
+
+	selection.atoms = selection.atoms || [];
+
+	var atomSelectMap = atomMap(selection.atoms);
+
 	var allBondsSelected = selection.bonds.every(function (bondid) {
-		var bond = restruct.bonds.get(bondid).b;
+		var bond = struct.bonds.get(bondid);
 		return atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined;
 	});
 
-	var allComponentsSelected = restruct.connectedComponents.values()
-		.every(function (component) {
-			var componentAtoms = Object.keys(component);
-			var count = componentAtoms
-				.reduce(function (acc, atom) {
-					return acc + (atomSelectMap[atom] === undefined);
-				}, 0);
-
-			return count === 0 || count === componentAtoms.length;
-		});
-
-	return allComponentsSelected && allBondsSelected ? 'Fragment' : 'Group';
+	return allComponentsSelected(restruct, selection.atoms) && allBondsSelected ? 'Fragment' : 'Group';
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
-	var struct = restruct.molecule;
-	var sg = (id !== null) && struct.sgroups.get(id);
-
+	var sg = (id !== null) && restruct.molecule.sgroups.get(id);
 	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
-
 	var context = newSg.attrs.context;
 
-	var result;
-	switch (context) {
-	case 'Fragment':
-		result = Action.fromGroupAction(restruct, newSg, sourceAtoms, restruct.atoms.keys());
-		break;
-	case 'Group':
-		result = Action.fromGroupAction(restruct, newSg, sourceAtoms, sourceAtoms);
-		break;
-	case 'Single Bond':
-		result = Action.fromSBAction(restruct, newSg, sourceAtoms, currSelection);
-		break;
-	case 'Atom':
-		result = Action.fromAtomAction(restruct, newSg, sourceAtoms);
-		break;
-	default:
-		return Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, struct.sgroups.newId());
-	}
+	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 
 	editor.selection(result.selection);
 
 	return id === null ?
 		result.action :
 		result.action.mergeWith(Action.fromSgroupDeletion(restruct, id));
+}
+
+function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
+	if (context === 'Bond')
+		return Action.fromBondAction(restruct, newSg, sourceAtoms, selection);
+
+	var atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
+	sourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
+
+	if (context === 'Fragment')
+		return Action.fromGroupAction(restruct, newSg, sourceAtoms, restruct.atoms.keys());
+
+	if (context === 'Group')
+		return Action.fromGroupAction(restruct, newSg, sourceAtoms, sourceAtoms);
+
+	if (context === 'Atom')
+		return Action.fromAtomAction(restruct, newSg, sourceAtoms);
+
+	return Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId());
 }
 
 function checkOverlapping(struct, atoms) {
@@ -218,6 +235,69 @@ function checkOverlapping(struct, atoms) {
 			return false;
 		});
 	});
+}
+
+// tools
+function atomMap(atoms) {
+	atoms = atoms || [];
+	return atoms.reduce(function (acc, atomid) {
+		acc[atomid] = atomid;
+		return acc;
+	}, {});
+}
+
+function anyContinuousBonds(bonds) {
+	if (bonds.length === 0)
+		return true;
+
+	var i, j;
+	for (i = 0; i < bonds.length; ++i) {
+		var fixedBond = bonds[i];
+		for (j = 0; j < bonds.length; ++j) {
+			if (i === j)
+				continue;
+
+			var bond = bonds[j];
+
+			if (fixedBond.end === bond.begin || fixedBond.end === bond.end)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+function allComponentsSelected(restruct, atoms) {
+	var atomSelectMap = atomMap(atoms);
+
+	return restruct.connectedComponents.values()
+		.every(function (component) {
+			var componentAtoms = Object.keys(component);
+			var count = componentAtoms
+				.reduce(function (acc, atom) {
+					return acc + (atomSelectMap[atom] === undefined);
+				}, 0);
+
+			return count === 0 || count === componentAtoms.length;
+		});
+}
+
+function unique(source) {
+	return Object.keys(
+		source.reduce(function (acc, item) {
+			acc[item] = item;
+			return acc;
+		}, {})
+	).map(function (item) { return parseInt(item); });
+}
+
+function getAtomsFromBonds(struct, bonds) {
+	bonds = bonds || [];
+	return bonds.reduce(function (acc, bondid) {
+		var bond = struct.bonds.get(bondid);
+		acc = acc.concat([bond.begin, bond.end]);
+		return acc;
+	}, []);
 }
 
 module.exports = Object.assign(SGroupTool, {

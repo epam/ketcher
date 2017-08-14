@@ -6,7 +6,7 @@ const contextSchema = {
 	title: 'Context',
 	enum: [
 		'Fragment',
-		'Single Bond',
+		'Bond',
 		'Atom',
 		'Group'
 	],
@@ -39,6 +39,9 @@ const initState = () => {
 
 export default function sgroupSpecialReducer(state = initState(), action) {
 	if (action.type === 'UPDATE_SGROUPSPEC_FORM') {
+		if (action.payload.stateForm.init)
+			return correctErrors(Object.assign({}, state, action.payload), action.payload);
+
 		const actionContext = action.payload.stateForm.context;
 		const actionFieldName = action.payload.stateForm.fieldName;
 
@@ -61,11 +64,8 @@ const correctErrors = (state, payload) => {
 	let { valid, errors } = payload;
 	let { fieldName, fieldValue } = state.stateForm;
 
-	fieldName = fieldName;
-	fieldValue = fieldValue;
-
-	if (!fieldName || fieldName === '') errors.fieldName = "does not meet minimum length of 1";
-	if (!fieldValue || fieldValue === '') errors.fieldValue = "does not meet minimum length of 1";
+	if (!fieldName) errors.fieldName = "does not meet minimum length of 1";
+	if (!fieldValue) errors.fieldValue = "does not meet minimum length of 1";
 
 	return {
 		...state,

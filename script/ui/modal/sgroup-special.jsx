@@ -33,7 +33,7 @@ const customFieldNameSchema = {
 			title: 'Context',
 			enum: [
 				'Fragment',
-				'Single Bond',
+				'Bond',
 				'Atom',
 				'Group'
 			],

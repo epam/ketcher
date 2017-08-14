@@ -10,7 +10,8 @@ export const atom = {
 		},
 		alias: {
 			title: "Alias",
-			type: "string"
+			type: "string",
+			invalidMessage: "Leading and trailing spaces are not allowed"
 		},
 		charge: {
 			title: "Charge",
@@ -225,7 +226,8 @@ export const sgroup = {
 					minLength: 1,
 					invalidMessage: "Please, provide a name for the superatom"
 				}
-			}
+			},
+			required: ["name"]
 		}
 	]
 };

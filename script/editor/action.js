@@ -1381,7 +1381,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 			})
 			.map(Number);
 
-		var bonds = getAtomsBondIds(restruct, atoms);
+		var bonds = getAtomsBondIds(restruct.molecule, atoms);
 
 		acc.action = acc.action.mergeWith(
 			fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, restruct.molecule.sgroups.newId())
@@ -1399,24 +1399,21 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 	});
 }
 
-function fromSBAction(restruct, newSg, sourceAtoms, currSelection) {
-	var bonds = getAtomsBondIds(restruct, sourceAtoms);
+function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
+	var struct = restruct.molecule;
+	var bonds = getAtomsBondIds(struct, sourceAtoms);
 
 	if (currSelection.bonds)
 		bonds = bonds.concat(currSelection.bonds);
 
 	return bonds.reduce(function (acc, bondid) {
-		var bond = restruct.bonds.get(bondid).b;
+		var bond = struct.bonds.get(bondid);
 
-		var singleBond = bond.type === 1 && bond.stereo === 0;
-
-		if (singleBond) {
-			acc.action = acc.action
-				.mergeWith(
-					fromSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs, restruct.molecule.sgroups.newId())
-				);
-			acc.selection.bonds.push(bondid);
-		}
+		acc.action = acc.action
+			.mergeWith(
+				fromSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs, struct.sgroups.newId())
+			);
+		acc.selection.bonds.push(bondid);
 
 		return acc;
 	}, {
@@ -1428,13 +1425,16 @@ function fromSBAction(restruct, newSg, sourceAtoms, currSelection) {
 	});
 }
 
-function getAtomsBondIds(restruct, atoms) {
-	return restruct.bonds.keys()
-		.filter(function (bondid) {
-			var bond = restruct.bonds.get(bondid).b;
-			return atoms.includes(bond.begin) && atoms.includes(bond.end);
-		})
-		.map(Number);
+function getAtomsBondIds(struct, atoms) {
+	return struct.bonds.keys()
+		.reduce(function (acc, bondid) {
+			var bond = struct.bonds.get(bondid);
+
+			if (atoms.includes(bond.begin) && atoms.includes(bond.end))
+				acc.push(parseInt(bondid));
+
+			return acc;
+		}, []);
 }
 
 module.exports = Object.assign(Action, {
@@ -1470,5 +1470,5 @@ module.exports = Object.assign(Action, {
 	fromBondAlign: fromBondAlign,
 	fromAtomAction: fromAtomAction,
 	fromGroupAction: fromGroupAction,
-	fromSBAction: fromSBAction
+	fromBondAction: fromBondAction
 });

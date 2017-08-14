@@ -57,7 +57,6 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
-						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema
@@ -79,7 +78,6 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
-						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema
@@ -101,7 +99,6 @@ export const sgroupSpecial = {
 						type: "string",
 						default: "",
 						minLength: 1,
-						pattern: "^(?!\\s+)(.|\\n)*\\S$",
 						invalidMessage: "Please, specify field name"
 					},
 					radiobuttons: radioButtonsSchema
@@ -110,8 +107,8 @@ export const sgroupSpecial = {
 			},
 		]
 	},
-	"Single Bond": {
-		title: 'Context',
+	Bond: {
+		title: 'Bond',
 		type: 'Object',
 		oneOf: [
 			{
@@ -168,7 +165,7 @@ export const sgroupSpecial = {
 		]
 	},
 	Atom: {
-		title: 'Context',
+		title: 'Atom',
 		type: 'Object',
 		oneOf: [
 			{
@@ -214,7 +211,7 @@ export const sgroupSpecial = {
 		]
 	},
 	Group: {
-		title: 'Context',
+		title: 'Group',
 		type: 'Object',
 		oneOf: [
 			{

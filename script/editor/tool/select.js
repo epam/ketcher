@@ -139,6 +139,8 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	var editor = this.editor;
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups']);
+	if (!ci) return;
+
 	var struct = rnd.ctab.molecule;
 	if (ci.map == 'atoms') {
 		this.editor.selection(closestToSel(ci));

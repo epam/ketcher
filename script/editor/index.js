@@ -61,8 +61,8 @@ function Editor(clientArea, options) {
 }
 
 Editor.prototype.tool = function (name, opts) {
+	/* eslint-disable no-underscore-dangle */
 	if (arguments.length > 0) {
-		/* eslint-disable no-underscore-dangle*/
 		if (this._tool && this._tool.cancel)
 			this._tool.cancel();
 		var tool = toolMap[name](this, opts);
@@ -71,7 +71,7 @@ Editor.prototype.tool = function (name, opts) {
 		this._tool = tool;
 	}
 	return this._tool;
-	/* eslint-enable no-underscore-dangle*/
+	/* eslint-enable no-underscore-dangle */
 };
 
 Editor.prototype.struct = function (value) {
@@ -293,7 +293,7 @@ Editor.prototype.structSelected = function () {
 		if (selection.rxnPluses.indexOf(id) != -1)
 			dst.rxnPluses.add(item.clone());
 	});
-	dst.isChiral = (selection.chiralFlags.length > 0);
+	dst.isChiral = struct.isChiral;
 
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&

@@ -36,6 +36,7 @@ PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action
 		delete this.action;
+		rnd.update();
 	}
 };
 

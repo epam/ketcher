@@ -15,6 +15,7 @@ class OpenButton extends Component {
 		if (this.state.opener && files.length) {
 			this.state.opener(files[0]).then(onLoad, onError);
 		}
+		ev.target.value = null;
 		ev.preventDefault();
 	}
 	render() {

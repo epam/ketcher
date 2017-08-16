@@ -19,9 +19,8 @@ class ComboBox extends Component {
 		this.props.onChange(value);
 	}
 
-	click(event) {
-		if (event.detail !== 0) // difference between real click on input and click after value updated
-			this.setState({ suggestsHidden: false });
+	click() {
+		this.setState({ suggestsHidden: false });
 	}
 
 	blur() {

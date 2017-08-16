@@ -75,6 +75,10 @@ function init(opts, apiServer) {
 		if (scope === 'editor')
 			keyHandle(toolbar, hotKeys, event);
 	});
+	ketcherWindow.on('mousedown', function (event) {
+		if (scope === 'editor')
+			event.preventDefault();
+	});
 	selectAction('select-lasso');
 
 	addEventListener('resize', function () {

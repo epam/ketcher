@@ -1160,13 +1160,13 @@ function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statem
 	// reaction pluses
 	for (var rpid = 0; rpid < clipboard.rxnPluses.length; rpid++)
 		action.addOp(new op.RxnPlusAdd(clipboard.rxnPluses[rpid].pp.add(offset)).perform(restruct));
-	// thats all
+	// chiral flag
 	if (pstruct.isChiral) {
-		// mimic Restruct initialization
 		var bb = pstruct.getCoordBoundingBox();
 		var pp = new Vec2(bb.max.x, bb.min.y - 1);
-		action.addOp(new op.ChiralFlagAdd(pp.add(offset))).perform(restruct);
+		action.mergeWith(fromChiralFlagAddition(restruct, pp.add(offset)));
 	}
+	// thats all
 	action.operations.reverse();
 	return action;
 }

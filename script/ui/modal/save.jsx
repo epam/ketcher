@@ -58,7 +58,7 @@ class Save extends Component {
 				}</select>
 				</label>
 				<textarea className={type} value={structStr} readonly
-			              ref={ el => el && el.select() }/>
+			              ref={ el => el && setTimeout(() => el.select(), 0) }/>
 			</Dialog>
 		);
 	}

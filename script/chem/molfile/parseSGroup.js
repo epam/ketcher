@@ -245,7 +245,7 @@ function applyDataSGroupData(sg, data, finalize) {
 	/* reader */
 	sg.data.fieldValue = (sg.data.fieldValue || '') + data;
 	if (finalize) {
-		sg.data.fieldValue = sg.data.fieldValue.trimRight();
+		sg.data.fieldValue = trimRight(sg.data.fieldValue);
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
 		// Partially revert f556e8, from KETCHER-457 and RB with love
@@ -268,6 +268,10 @@ function toIntArray(strArray) {
 	for (var j = 0; j < strArray.length; ++j)
 		ret[j] = utils.parseDecimalInt(strArray[j]);
 	return ret;
+}
+
+function trimRight(str) {
+	return str.replace(/\s+$/, '');
 }
 
 function identityMap(array) {

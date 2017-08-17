@@ -33,7 +33,7 @@ class MeasureInput extends Component {
 }
 
 function convertValue(value, measureFrom, measureTo) {
-	if (!value && value !== 0) return null;
+	if (!value && value !== 0 || isNaN(value)) return null;
 	var measureMap = {
 		'px': 1,
 		'cm': 37.795278,

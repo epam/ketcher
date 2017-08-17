@@ -1,4 +1,4 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 import { updateFormState } from '../actions/form-action.es';
@@ -88,7 +88,7 @@ function FieldMeasure(props, {schema}) {
 export default connect(store => ({
 	stateForm: store.settings.stateForm,
 	valid: store.settings.valid,
-	errors: store.sgroup.errors
+	errors: store.settings.errors
 }), (dispatch, props) => ({
 	onOpenFile: newOpts => {
 		try {

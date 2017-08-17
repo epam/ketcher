@@ -110,7 +110,6 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			console.info('from sgroup type', newSg);
 			var action = (id !== null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
@@ -173,12 +172,12 @@ function fromContextType(id, editor, newSg, currSelection) {
 	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
 	var context = newSg.attrs.context;
 
-	if (!newSg.attrs.fieldName || !newSg.attrs.fieldValue)
+	if (newSg.attrs.fieldName === '' || newSg.attrs.fieldValue === '')
 		return new Action();
 
 	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 
-	editor.selection(result.selection);
+	editor.selection(result.selection || currSelection);
 
 	return id === null ?
 		result.action :
@@ -190,16 +189,16 @@ function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
 		return Action.fromBondAction(restruct, newSg, sourceAtoms, selection);
 
 	var atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-	sourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
+	var newSourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
 
 	if (context === 'Fragment')
-		return Action.fromGroupAction(restruct, newSg, sourceAtoms, restruct.atoms.keys());
+		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
 
 	if (context === 'Group')
-		return Action.fromGroupAction(restruct, newSg, sourceAtoms, sourceAtoms);
+		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
 
 	if (context === 'Atom')
-		return Action.fromAtomAction(restruct, newSg, sourceAtoms);
+		return Action.fromAtomAction(restruct, newSg, newSourceAtoms);
 
 	return Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId());
 }

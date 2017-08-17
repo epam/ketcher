@@ -10,7 +10,9 @@ GenericInput.val = function (ev, schema) {
 	var input = ev.target;
 	var isNumber = (input.type == 'number' || input.type == 'range') ||
 		(schema && (schema.type == 'number' || schema.type == 'integer'));
-	return (isNumber && !isNaN(input.value - 0)) ? input.value - 0 : input.value;
+	var value = isNumber ? input.value.replace(/,/g, '.') : input.value;
+
+	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
 };
 
 function TextArea({ value, onChange, ...props }) {
@@ -113,7 +115,7 @@ function inputCtrl(component, schema, onChange) {
 	if (schema) {
 		// TODO: infer maxLength, min, max, step, etc
 		if (schema.type == 'number' || schema.type == 'integer')
-			props = { type: 'number' };
+			props = { type: 'text' };
 	}
 	return {
 		onChange: function (ev) {

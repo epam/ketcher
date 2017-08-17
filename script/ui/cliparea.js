@@ -13,7 +13,7 @@ function delegateCliparea(action) {
 }
 
 function initCliparea(parent, options) {
-	var cliparea = new Element('div', {
+	var cliparea = new Element('textarea', {
 		'contenteditable': true,
 		'class': 'cliparea',
 		autofocus: true
@@ -71,7 +71,7 @@ function copy(cb, data) {
 			console.info('Could not write exact type', ex);
 		}
 	}
-};
+}
 
 function paste(cb, formats) {
 	var data = {};
@@ -87,7 +87,7 @@ function paste(cb, formats) {
 		}, data);
 	}
 	return data;
-};
+}
 
 
 module.exports = Object.assign(initCliparea, {

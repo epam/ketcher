@@ -55,15 +55,14 @@ class Form extends Component {
 		);
 	}
 }
-const form = connect((store, props) => ({
-		stateForm: store[props.storeName].stateForm,
-		errors: store[props.storeName].errors
-	}),
+Form = connect(
+	null,
 	(dispatch, props) => ({
 		onUpdate: function (stateForm, valid, errors) {
 			dispatch(updateFormState(props.storeName, { stateForm, valid, errors }));
 		}
-	}))(Form);
+	})
+)(Form);
 
 function Label({ labelPos, title, children, ...props }) {
 	return (
@@ -194,4 +193,4 @@ function selectListOf(schema, prop) {
 	));
 }
 
-export { form, Field, SelectOneOf, mapOf };
+export { Form, Field, SelectOneOf, mapOf };

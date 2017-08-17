@@ -72,8 +72,12 @@ function init(opts, apiServer) {
 	scope = 'editor';
 	var hotKeys = initHotKeys(toolbar);
 	ketcherWindow.on('keydown', function (event) {
-		if (scope == 'editor')
+		if (scope === 'editor')
 			keyHandle(toolbar, hotKeys, event);
+	});
+	ketcherWindow.on('mousedown', function (event) {
+		if (scope === 'editor')
+			event.preventDefault();
 	});
 	selectAction('select-lasso');
 
@@ -399,11 +403,11 @@ function keyHandle(toolbar, hotKeys, event) {
 			group.index = index = (index + 1) % group.length;
 		}
 		var action = group[index];
-		if (clipArea.actions.indexOf(action) == -1) {
-			// else delegate to cliparea
+		if (clipArea.actions.indexOf(action) === -1) {
 			selectAction(action);
 			event.preventDefault();
-		}
+		} else if (window.clipboardData) // IE support
+			clipArea.exec(event);
 	}
 }
 
@@ -431,16 +435,10 @@ function dialog(modal, params, noAnimate) {
 	scope = 'modal';
 
 	function close(fn, res) {
-		// if (res.fieldName)
-		// 	res.fieldName = res.fieldName.replace(/^\s+|\s+$/g, '');
-		// if (res.fieldValue)
-		// 	res.fieldValue = res.fieldValue.replace(/^\s+|\s+$/g, '');
-
 		scope = 'editor';
 		cover.style.display = 'none';
 		var dialog = cover.lastChild;
-		// preact.render('', cover, dialog); // unmount dialog
-		dialog.remove();
+		preact.render(null, cover, dialog); // unmount dialog
 		console.info('output', res);
 		if (fn) fn(res);
 	}

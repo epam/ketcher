@@ -56,7 +56,7 @@ function TypeChoise({value, onChange, ...props}) {
 	);
 }
 
-function MainRow({row, caption, ref, selected, onSelect, curEvents}) {
+function MainRow({row, caption, refer, selected, onSelect, curEvents}) {
 	return (
 		<tr>
 		  <th>{caption}</th>
@@ -68,7 +68,7 @@ function MainRow({row, caption, ref, selected, onSelect, curEvents}) {
 							onClick={ev => onSelect(el.label)} {...curEvents(el)}/>
 				  </td>
 			  ) : (
-				  ref(el) ? ( <td className="ref">{ref(el)}</td> ) :
+				  refer(el) ? ( <td className="ref">{refer(el)}</td> ) :
 				  ( <td colspan={el}/> )
 			  ))
 		  }
@@ -180,7 +180,7 @@ class PeriodTable extends Component {
 							{
 								main.map((row, i) => (
 									<MainRow row={row} caption={i + 1}
-											 ref={o => o == 1 && (i == 5 ? '*' : '**')}
+											 refer={o => o == 1 && (i == 5 ? '*' : '**')}
 											 curEvents={this.curEvents}
 											 selected={l => this.selected(l)}
 											 onSelect={l => this.onSelect(l)}/>

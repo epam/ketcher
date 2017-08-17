@@ -125,7 +125,7 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 				flag1 = true;
 			}
 		}
-		if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2(w0, n) >= 0) // eslint-disable-line new-cap
+		if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0)
 			flag1 = false;
 		if (flag1)
 			counter++;

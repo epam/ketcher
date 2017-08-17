@@ -2,10 +2,12 @@
   "env": {
     "browser": true,
     "commonjs": true,
+    "es6": true,
     "prototypejs": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }

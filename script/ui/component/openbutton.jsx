@@ -21,11 +21,13 @@ class OpenButton extends Component {
 	render() {
 		let { children, type, ...props } = this.props;
 		return (
-			<label disabled={ !this.state.opener } { ...props }>
-				{ children }
-				<input onChange={ ev => this.open(ev) }
-				       accept={ type } type="file"/>
-			</label>
+			<div { ...props }>
+				<input id="input-file" onChange={ ev => this.open(ev) }
+					   accept={ type } type="file"/>
+				<label for="input-file" disabled={ !this.state.opener }>
+					{ children }
+				</label>
+			</div>
 		);
 	}
 }

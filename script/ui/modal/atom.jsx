@@ -3,7 +3,7 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { atom as atomSchema } from '../structschema';
-import { form as Form, Field } from '../component/form';
+import { Form, Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 import element from '../../chem/element';
@@ -20,12 +20,13 @@ function ElementNumber(props, {stateStore}) {
 }
 
 function Atom(props) {
-	let { result, valid, ...prop} = props;
+	let { stateForm, valid, errors, ...prop} = props;
+	let formProps = { stateForm, errors };
 	return (
 		<Dialog title="Atom Properties" className="atom-props"
-				result={() => result} valid={() => valid} params={prop}>
+				result={() => stateForm} valid={() => valid} params={prop}>
 			<Form storeName="atom" schema={atomSchema}
-				  customValid={{ label: l => atomValid(l) }} init={prop} >
+				  customValid={{ label: l => atomValid(l) }} init={prop} {...formProps}>
 			  <fieldset className="main">
 				<Field name="label"/>
 				<Field name="alias"/>
@@ -62,7 +63,8 @@ function atomValid(label) {
 
 export default connect((store) => {
 	return {
-		result: store.atom.stateForm,
-		valid: store.atom.valid
+		stateForm: store.atom.stateForm,
+		valid: store.atom.valid,
+		errors: store.atom.errors
 	};
 })(Atom);

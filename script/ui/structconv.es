@@ -210,8 +210,6 @@ export function fromSgroup(ssgroup) {
 	return Object.assign({ type: type }, ssgroup.attrs);
 }
 
-const spacesRegex = /^[\s\n\r]+$/g;
-
 export function toSgroup(sgroup) {
 	let { type, radiobuttons, ...props } = sgroup;
 	let attrs = { ...props };
@@ -235,10 +233,10 @@ export function toSgroup(sgroup) {
 	}
 
 	if (attrs.fieldName)
-		attrs.fieldName = attrs.fieldName.replace(spacesRegex, '');
+		attrs.fieldName = attrs.fieldName.trim();
 
 	if (attrs.fieldValue)
-		attrs.fieldValue = attrs.fieldValue.replace(spacesRegex, '');
+		attrs.fieldValue = attrs.fieldValue.trim();
 
 	return {
 		type,

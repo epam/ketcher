@@ -110,6 +110,7 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
+			console.info('from sgroup type', newSg);
 			var action = (id !== null) && sg.getAttrs().context === newSg.attrs.context ?
 				Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
@@ -130,9 +131,6 @@ function getContextBySgroup(restruct, sgAtoms) {
 
 	if (allComponentsSelected(restruct, sgAtoms))
 		return 'Fragment';
-
-	if (sgAtoms.length % 2 !== 0)
-		return false;
 
 	var atomMap = sgAtoms.reduce(function (acc, aid) {
 		acc[aid] = true;
@@ -174,6 +172,9 @@ function fromContextType(id, editor, newSg, currSelection) {
 	var sg = (id !== null) && restruct.molecule.sgroups.get(id);
 	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
 	var context = newSg.attrs.context;
+
+	if (!newSg.attrs.fieldName || !newSg.attrs.fieldValue)
+		return new Action();
 
 	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 

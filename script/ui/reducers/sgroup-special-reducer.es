@@ -49,7 +49,7 @@ export default function sgroupSpecialReducer(state = initState(), action) {
 
 		if (actionContext !== state.stateForm.context)
 			newstate = onContextChange(state, action.payload.stateForm);
-		else if (actionFieldName.trim() !== state.stateForm.fieldName.trim())
+		else if (actionFieldName !== state.stateForm.fieldName)
 			newstate = onFieldNameChange(state, action.payload.stateForm);
 
 		newstate = newstate || Object.assign({}, state, action.payload);

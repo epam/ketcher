@@ -44,7 +44,6 @@ const customFieldNameSchema = {
 			type: "string",
 			default: "",
 			minLength: 1,
-			pattern: "^(?!\\s+).*\\S$",
 			invalidMessage: "Please, specify field name"
 		},
 		fieldValue: {
@@ -52,7 +51,6 @@ const customFieldNameSchema = {
 			type: "string",
 			default: "",
 			minLength: 1,
-			pattern: "^(?!\\s+)(.|\\n)*\\S$",
 			invalidMessage: "Please, specify field value"
 		},
 		radiobuttons: {
@@ -79,12 +77,18 @@ function SgroupSpecial(props) {
 
 	init.fieldValue = fieldValue || getSchemaDefault(schema, context, init.fieldName);
 
-	const formSchema = schema[stateForm.context][stateForm.fieldName.trim()] || customFieldNameSchema;
+	const formSchema = schema[stateForm.context][stateForm.fieldName] || customFieldNameSchema;
+
+	const serialize = {
+		context: stateForm.context.trim(),
+		fieldName: stateForm.fieldName.trim(),
+		fieldValue: stateForm.fieldValue.trim()
+	};
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
 				result={() => stateForm} valid={() => valid} params={prop}>
-			<Form storeName="sgroupSpecial" schema={formSchema} init={init}>
+			<Form storeName="sgroupSpecial" schema={formSchema} init={init} serialize={serialize}>
 				<SelectOneOf title="Context" name="context" schema={schema}/>
 				<fieldset className={"data"}>
 					<SelectInput title="Field name" name="fieldName" schema={schema[stateForm.context]}/>

@@ -3,7 +3,7 @@ import { connect } from 'preact-redux';
 import { form as Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
-import { getSchemaDefault } from '../utils';
+import { getSchemaDefault } from '../sgroupSpecialSchema.es';
 /** @jsx h */
 
 function SelectInput({ title, name, schema, ...prop }) {

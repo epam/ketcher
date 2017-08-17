@@ -7,7 +7,7 @@ const radioButtonsSchema =  {
 	default: "Absolute"
 };
 
-export const sgroupSpecial = {
+const sgroupSpecial = {
 	Fragment: {
 		title: 'Context',
 		type: 'Object',
@@ -238,4 +238,40 @@ export const sgroupSpecial = {
 			}
 		]
 	}
+};
+
+
+/**
+ * Returns first key of passed object
+ * @param obj { object }
+ */
+function firstKeyOf(obj) {
+	return Object.keys(obj)[0];
+}
+
+/**
+ * Returns schema default values. Depends on passed arguments:
+ * pass schema only -> returns default context
+ * pass schema & context -> returns default fieldName
+ * pass schema & context & fieldName -> returns default fieldValue
+ * @param schema { object }
+ * @param context? { string }
+ * @param fieldName? { string }
+ * @returns { string }
+ */
+function getSchemaDefault(schema, context, fieldName) {
+	if (!context && !fieldName)
+		return firstKeyOf(schema);
+
+	if (!fieldName)
+		return firstKeyOf(schema[context]);
+
+	return schema[context][fieldName] ?
+		schema[context][fieldName].properties.fieldValue.default :
+		'';
+}
+
+module.exports = {
+	sgroupSpecial: sgroupSpecial,
+	getSchemaDefault: getSchemaDefault
 };

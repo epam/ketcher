@@ -1,6 +1,5 @@
 import { mapOf } from '../component/form';
-import { sgroupSpecial as sgroupSchema } from '../sgroupSpecialSchema.es';
-import { getSchemaDefault } from '../utils';
+import { getSchemaDefault, sgroupSpecial as sgroupSchema } from '../sgroupSpecialSchema.es';
 
 const contextSchema = {
 	title: 'Context',
@@ -98,8 +97,9 @@ const onFieldNameChange = (state, payload) => {
 
 	let fieldValue = payload.fieldValue;
 
-	if (schemes[context][fieldName])
+	if (schemes[context][fieldName]) {
 		fieldValue = fieldValue || getSchemaDefault(schemes, context, fieldName);
+	}
 
 	if (fieldValue === state.stateForm.fieldValue)
 		fieldValue = '';

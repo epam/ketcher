@@ -64,9 +64,6 @@ const correctErrors = (state, payload) => {
 	let { valid, errors } = payload;
 	let { fieldName, fieldValue } = state.stateForm;
 
-	if (!fieldName) errors.fieldName = "does not meet minimum length of 1";
-	if (!fieldValue) errors.fieldValue = "does not meet minimum length of 1";
-
 	return {
 		...state,
 		valid: valid && fieldName && fieldValue,

@@ -6,7 +6,8 @@ export const atom = {
 		label: {
 			title: "Label",
 			type: "string",     // TODO:should really be enum of elements
-			maxLength: 3
+			maxLength: 3,
+			invalidMessage: "Wrong label"
 		},
 		alias: {
 			title: "Alias",
@@ -184,7 +185,8 @@ export const sgroup = {
 					type: "integer",
 					default: 1,
 					minimum: 1,
-					maximum: 1000
+					maximum: 1000,
+					invalidMessage: 'Value out of range: must be between 1 and 1000'
 				}
 			},
 			required: ["mul"]

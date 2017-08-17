@@ -159,8 +159,10 @@ function getErrorsObj(errors) {
 	let field;
 	errors.forEach(item => {
 		field = item.property.split('.')[1];
-		if (!errs[field]) errs[field] = item.message;
+		if (!errs[field])
+			errs[field] = item.schema.invalidMessage || item.message;
 	});
+
 	return errs;
 }
 

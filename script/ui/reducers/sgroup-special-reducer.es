@@ -98,10 +98,10 @@ const onFieldNameChange = (state, payload) => {
 	let fieldValue = payload.fieldValue;
 
 	if (schemes[context][fieldName]) {
-		fieldValue = fieldValue || getSchemaDefault(schemes, context, fieldName);
+		fieldValue = getSchemaDefault(schemes, context, fieldName);
 	}
 
-	if (fieldValue === state.stateForm.fieldValue)
+	if (fieldValue === state.stateForm.fieldValue && schemes[context][state.stateForm.fieldName])
 		fieldValue = '';
 
 	return {

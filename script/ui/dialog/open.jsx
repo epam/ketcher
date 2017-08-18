@@ -1,4 +1,5 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { map as formatMap } from '../structformat';
@@ -57,4 +58,6 @@ function structAcceptMimes() {
 }
 
 
-export default Open;
+export default connect(
+	store => ({	server: store.server })
+)(Open);

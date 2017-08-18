@@ -1,8 +1,9 @@
-import settingsSchema from '../data/options-schema';
+import { pick } from 'lodash/fp';
+import settingsSchema, { SERVER_OPTIONS } from '../data/options-schema';
 
 export const optionsState = {
-
 	analyse: {
+		values: null,
 		roundWeight: 3,
 		roundMass: 3
 	},
@@ -11,7 +12,10 @@ export const optionsState = {
 		structStr: null,
 		fragment: false
 	},
-	settings: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
+	settings: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts"))),
+	getServerSettings: function() {
+		return pick(SERVER_OPTIONS, this.settings);
+	}
 };
 
 /* SETTINGS */
@@ -32,7 +36,7 @@ export function saveSettings(newSettings) {
 /* ANALYZE */
 export function changeRound(roundName, value) {
 	return {
-		type: 'CHANGE_ANALYSE_ROUND',
+		type: 'CHANGE_ANALYSE',
 		data: { [roundName]: value }
 	};
 }
@@ -74,7 +78,7 @@ export function optionsReducer(state = {}, action) {
 	if (type === 'SAVE_SETTINGS')
 		return {...state, settings: data};
 
-	if (type === 'CHANGE_ANALYSE_ROUND')
+	if (type === 'CHANGE_ANALYSE')
 		return {...state, analyse: { ...state.analyse, ...data }};
 
 	if (recognizeActions.includes(type)) {

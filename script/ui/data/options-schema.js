@@ -1,7 +1,8 @@
 const editor = {
 	resetToSelect: {
 		title: "Reset to Select Tool",
-		type: "boolean",
+		enum: [true, 'paste', false],
+		enumNames: ['on', 'After Paste', 'off'],
 		default: false
 	},
 	rotationStep: {
@@ -118,6 +119,9 @@ const render = {
 		maximum: 96
 	}
 };
+
+export const SERVER_OPTIONS = ['smart-layout', 'ignore-stereochemistry-errors',
+	'mass-skip-error-on-pseudoatoms', 'gross-formula-add-rsites'];
 
 const server = {
 	'smart-layout': {

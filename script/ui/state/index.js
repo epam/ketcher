@@ -35,6 +35,8 @@ const shared = combineReducers({
 	actionState: action,
 	toolbar,
 	modal,
+	server: (store=null) => store,
+	editor: (store=null) => store,
 	options: optionsReducer,
 	templates: templatesReducer
 });
@@ -63,8 +65,7 @@ function root(state, action) {
 
 	let sh = shared(state, {
 		...action,
-		...pick(['editor', 'server'], state),
-		options: state.options.settings
+		...pick(['editor', 'server', 'options'], state)
 	});
 	return (sh === state.shared) ? state : {
 		...state, ...sh

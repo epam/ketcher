@@ -58,7 +58,7 @@ export function guess (structStr, strict) {
 	return strict ? null : 'mol';
 };
 
-export function toString (struct, format, server) {
+export function toString (struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
 
 	return new Promise((resolve, reject) => {
@@ -70,14 +70,14 @@ export function toString (struct, format, server) {
 				server.convert({
 					struct: moldata,
 					output_format: map[format].mime
-				})
+				}, serverOpts)
 			), () => {
 				throw Error(map[format].name + ' is not supported in the standalone mode');
 			}).then(res => res.struct));
 	});
 };
 
-export function fromString (structStr, opts, server) {
+export function fromString (structStr, opts, server, serverOpts) {
 	return new Promise(function (resolve, reject) {
 		var format = guess(structStr);
 		console.assert(map[format], 'No such format');
@@ -91,10 +91,10 @@ export function fromString (structStr, opts, server) {
 				withCoords ? server.convert({
 					struct: structStr,
 					output_format: map['mol'].mime
-				}) : server.layout({
+				}, serverOpts) : server.layout({
 					struct: structStr.trim(),
 					output_format: map['mol'].mime
-				})
+				}, serverOpts)
 			), () => {
 				throw Error(map[format].name + ' is not supported in the standalone mode');
 			}).then(res => {

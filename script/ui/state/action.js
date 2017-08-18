@@ -35,6 +35,17 @@ function status(key, activeTool, params) {
 	});
 }
 
+export function resetToSelect() {
+	return (dispatch, getState) => {
+		const resetToSelect = getState().options.settings.resetToSelect;
+		const activeTool = getState().actionState.activeTool.tool;
+		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
+			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
+		else
+			dispatch({ type: 'UPDATE' });
+	}
+}
+
 export default function (state=null, { type, action, ...params }) {
 	switch(type) {
 	case 'INIT':
@@ -49,7 +60,7 @@ export default function (state=null, { type, action, ...params }) {
 			if (!isEmpty(value))
 				res[key] = value;
 			return res;
-		}, { activeTool });
+		}, { activeTool: activeTool || state.activeTool });
 		return res;
 	}
 	return state;

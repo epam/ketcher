@@ -1,4 +1,5 @@
-import { h, Component, render } from 'preact';
+import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 import * as structFormat from '../structformat';
 
@@ -18,7 +19,7 @@ class Save extends Component {
 			type = ev.target.value;
 			ev.preventDefault();
 		}
-		let converted = structFormat.toString(this.props.struct, type, this.props.server);
+		let converted = structFormat.toString(this.props.struct, type, this.props.server, this.props.options);
 		return converted.then(structStr => this.setState({ type, structStr }),
 							  e => { alert(e); });
 	}
@@ -64,4 +65,10 @@ class Save extends Component {
 	}
 }
 
-export default Save;
+export default connect(
+	store => ({
+		server: store.server,
+		struct: store.editor.struct(),
+		options: store.options.getServerSettings()
+	})
+)(Save);

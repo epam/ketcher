@@ -27,11 +27,9 @@ export function serverCall(editor, server, method, options, struct) {
 	return request;
 }
 
-export const SERVER_OPTIONS = ['smart-layout', 'ignore-stereochemistry-errors',
-	'mass-skip-error-on-pseudoatoms', 'gross-formula-add-rsites'];
-
 export function serverTransform(editor, server, method, options, struct) {
-	let opts = pick(SERVER_OPTIONS.concat('data'), options);
+	let opts = options.getServerSettings();
+	opts.data = options.data;
 	return serverCall(editor, server, method, opts, struct).then(function (res) {
 		return load(res.struct, {        // Let it be an exception
 			rescale: method === 'layout' // for now as layout does not

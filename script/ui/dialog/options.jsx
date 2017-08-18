@@ -33,7 +33,7 @@ function Settings(props) {
 			<Form storeName="settings" schema={settingsSchema} init={initState} {...formState}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">
-						<SelectCheckbox name="resetToSelect"/>
+						<Field name="resetToSelect"/>
 						<Field name="rotationStep"/>
 						<SelectCheckbox name="showValenceWarnings"/>
 						<SelectCheckbox name="atomColoring"/>

@@ -2,6 +2,7 @@ import { Provider, connect } from 'preact-redux';
 
 import state, { onAction } from './state';
 import { initTmplLib } from './state/templates';
+import { resetToSelect } from './state/action';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -19,10 +20,10 @@ const AppEditor = connect(
 			dispatch({ type: 'INIT', editor });
 		},
 		onChange: () => {
-			dispatch({ type: 'UPDATE' });
+			dispatch(resetToSelect());
 		},
 		onSelectionChange: () => {
-			dispatch({ type: 'UPDATE' });
+			// dispatch({ type: 'UPDATE' });
 		}
 	})
 )(StructEditor);

@@ -23,12 +23,19 @@ EraserTool.prototype.mousedown = function (event) {
 	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
+
 EraserTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running())
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
 		this.editor.hover(this.editor.findItem(event, this.maps));
 };
+
+EraserTool.prototype.mouseleave = function (event) {
+	if (this.lassoHelper.running(event))
+		this.lassoHelper.end(event);
+};
+
 EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored

@@ -39,16 +39,21 @@ SGroupTool.prototype.mousedown = function (event) {
 };
 
 SGroupTool.prototype.mousemove = function (event) {
-	if (this.lassoHelper.running())
+	if (this.lassoHelper.running(event))
 		this.editor.selection(this.lassoHelper.addPoint(event));
 	else
 		this.editor.hover(this.editor.findItem(event, searchMaps));
 };
 
+SGroupTool.prototype.mouseleave = function (event) {
+	if (this.lassoHelper.running(event))
+		this.lassoHelper.end(event);
+};
+
 SGroupTool.prototype.mouseup = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group
-	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+	if (this.lassoHelper.running(event)) { // TODO it catches more events than needed, to be re-factored
 		selection = this.lassoHelper.end(event);
 	} else {
 		var ci = this.editor.findItem(event, searchMaps);

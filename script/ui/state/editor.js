@@ -28,11 +28,7 @@ export function initEditor(dispatch) {
 				dlg = openDialog(dispatch, 'attachmentPoints', elem.ap)
 					.then((res) => ({ ap: res }));
 			} else if (elem.type === 'list' || elem.type === 'not-list') {
-				dlg = openDialog(dispatch, 'period-table', elem)
-					.then((res) => {
-						// if (!res.type || res.type === 'atom') addAtoms(res.label); // TODO: add atom to toolbar
-						return res;
-					});
+				dlg = openDialog(dispatch, 'period-table', elem);
 			} else if (elem.type === 'rlabel') {
 				dlg = openDialog(dispatch, 'rgroup', elem);
 			} else {

@@ -13,6 +13,7 @@ import GenericGroups from './generic-groups';
 
 import { fromElement, toElement } from '../structconv';
 import { onAction } from '../state';
+import { addAtoms } from '../state/toolbar';
 
 const typeSchema = [
 	{ title: 'Single', value: 'atom' },
@@ -245,6 +246,7 @@ export default connect(
 	},
 	(dispatch, props) => ({
 		onOk: (res) => {
+			if (!res.type || res.type === 'atom') dispatch(addAtoms(res.label));
 			dispatch(onAction({ tool: 'atom', opts: toElement(res) }));
 			props.onOk(res);
 		}

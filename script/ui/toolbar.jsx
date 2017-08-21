@@ -157,7 +157,12 @@ const template = [
 const elements = [
 	{
 		id: 'atom',
-		component: AtomsList
+		component: props => AtomsList(basicAtoms, props)
+	},
+	{
+		id: 'freq-atoms',
+		component: props => AtomsList(props['freqAtoms'], props)
+
 	},
 	'period-table'
 ];
@@ -183,14 +188,14 @@ function ZoomList({status, onAction}) {
 	);
 }
 
-function AtomsList({atoms, active, onAction, ...props}) {
-	let isAtom = active && active.tool == 'atom';
+function AtomsList(atoms, {active, onAction, ...props}) {
+	let isAtom = active && active.tool === 'atom';
 	return (
 		<menu>
 		  {
 			  atoms.map(label => {
 				  let index = element.map[label];
-				  let shortcut = shortcutStr(atomCuts[label]);
+				  let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
 				  return (
 					  <li className={classNames({
 							  selected: isAtom && active.opts.label == label
@@ -230,7 +235,7 @@ function TemplatesList({active, onAction, ...props}) {
 
 export default connect(
 	(state, props) => (console.info(state), {
-		atoms: basicAtoms.concat(state.toolbar.freqAtoms),
+		freqAtoms: state.toolbar.freqAtoms,
 		active: state.actionState && state.actionState.activeTool,
 		status: state.actionState || {}
 	}),

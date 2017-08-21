@@ -31,7 +31,7 @@ RGroupAtomTool.prototype.mouseup = function (event) {
 
 function propsDialog(editor, id, pos) {
 	var struct = editor.render.ctab.molecule;
-	var atom = id ? struct.atoms.get(id) : null;
+	var atom = (id || id === 0) ? struct.atoms.get(id) : null;
 	var rglabel = atom ? atom.rglabel : 0;
 	var label = atom ? atom.label : 'R#';
 
@@ -41,7 +41,7 @@ function propsDialog(editor, id, pos) {
 
 	Promise.resolve(res).then(function (elem) {
 		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
-		if (!id && elem.rglabel) {
+		if (!id && id !== 0 && elem.rglabel) {
 			editor.update(Action.fromAtomAddition(editor.render.ctab, pos, elem));
 		} else if (rglabel != elem.rglabel || label != 'R#') {
 			elem.aam = atom.aam; // WTF??

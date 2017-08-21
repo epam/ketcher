@@ -65,8 +65,8 @@ const customFieldNameSchema = {
 };
 
 function SgroupSpecial(props) {
-	const { formState, schema, ...prop } = props;
-	let { result, valid } = formState;
+	const { formState, ...prop } = props;
+	let { result, valid, schema } = formState;
 
 	const context = result.context;
 	const fieldName = result.fieldName;

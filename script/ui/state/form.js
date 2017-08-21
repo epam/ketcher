@@ -17,7 +17,7 @@ export const formsState = {
 			substitutionCount: 0
 		}
 	} ,
-	'attach-points': {
+	attachmentPoints: {
 		errors: {},
 		valid: true,
 		result: {
@@ -49,14 +49,14 @@ export const formsState = {
 				'overlapping_bonds', 'rgroups', 'chiral', '3d']
 		}
 	},
-	'label-edit': {
+	labelEdit: {
 		errors: {},
 		valid: true,
 		result: {
 			label: '',
 		}
 	},
-	'rgroup-logic': {
+	rgroupLogic: {
 		errors: {},
 		valid: true,
 		result: {
@@ -77,7 +77,7 @@ export const formsState = {
 			type: 'GEN'
 		}
 	},
-	'sgroup-data': initSdata()
+	sgroupSpecial: initSdata()
 };
 
 export function updateFormState(data) {

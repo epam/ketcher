@@ -11,7 +11,7 @@ const schemes = mapOf(sgroupSchema, 'type');
 
 function Sgroup(props) {
 	const { formState, ...prop } = props;
-	const type = result.type;
+	const type = formState.result.type;
 
 	return (
 		<Dialog title="S-Group Properties" className="sgroup"

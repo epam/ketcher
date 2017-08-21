@@ -1,7 +1,8 @@
 import { debounce } from 'lodash/fp';
 
+import element from '../../chem/element';
 import acts from '../action';
-import { fromBond, toBond } from '../structconv';
+import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 
 export function initEditor(dispatch) {
 
@@ -18,10 +19,61 @@ export function initEditor(dispatch) {
 		onSelectionChange: () => {
 			updateAction();
 		},
+		onElementEdit: selem => {
+			let elem = fromElement(selem);
+			let dlg = null;
+			if (element.map[elem.label]) {
+				dlg = openDialog(dispatch, 'atomProps', elem);
+			} else if (Object.keys(elem).length === 1 && 'ap' in elem) {
+				dlg = openDialog(dispatch, 'attachmentPoints', elem.ap)
+					.then((res) => ({ ap: res }));
+			} else if (elem.type === 'list' || elem.type === 'not-list') {
+				dlg = openDialog(dispatch, 'periodTable', elem)
+					.then((res) => {
+						// if (!res.type || res.type === 'atom') addAtoms(res.label); // TODO: add atom to toolbar
+						return res;
+					});
+			} else if (elem.type === 'rlabel') {
+				dlg = openDialog(dispatch, 'rgroup', elem);
+			} else {
+				dlg = openDialog(dispatch, 'periodTable', elem);
+			}
+			return dlg.then((res) => toElement(res));
+		},
+		onQuickEdit: atom => {
+			return openDialog(dispatch, 'labelEdit', atom)
+		},
 		onBondEdit: bond => {
 			return openDialog(dispatch, 'bondProps', fromBond(bond))
 				.then((res) => toBond(res));
-		}
+		},
+		onRgroupEdit: rgroup => {
+			if (Object.keys(rgroup).length > 1) {
+				let rgids = [];
+				// editor.struct().rgroups.each((rgid) => rgids.push(rgid)); // TODO: get Editor ??
+				if (!rgroup.range) rgroup.range = '>0';
+				return openDialog(dispatch, 'rgroupLogic',
+					Object.assign({ rgroupLabels: rgids }, rgroup));
+			}
+			return openDialog(dispatch, 'rgroup', rgroup);
+		},
+		onSgroupEdit: sgroup => {
+			return openDialog(dispatch, 'sgroup', fromSgroup(sgroup))
+				.then((res) => toSgroup(res));
+		},
+		onSdataEdit: sgroup => {
+			return openDialog(dispatch, sgroup.type === 'DAT' ? 'sgroupSpecial' : 'sgroup', fromSgroup(sgroup))
+				.then((res) => toSgroup(res));
+		},
+		onMessage: msg => {
+			if (msg.error)
+				alert(msg.error);
+			else {
+				let act = Object.keys(msg)[0];
+				console[act](msg[act]);
+			}
+		},
+		omMouseDown: event => {}
 	};
 }
 

@@ -29,7 +29,6 @@ class Dialog extends Component {
 		if (fe.focus) fe.focus();
 	}
 	render() {
-		console.info('dialog render');
 		let { children, title, params={},
 			  result=() => null, valid=() => !!result(), // Hmm, dublicate.. No simple default props
 			  buttons=["Cancel", "OK"], ...props} = this.props;   // see: https://git.io/v1KR6

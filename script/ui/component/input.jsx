@@ -189,7 +189,6 @@ export default class Input extends Component {
 		super(props);
 		this.component = component || componentMap(props);
 		this.ctrl = ctrlMap(this.component, props);
-		console.info('initialized');
 	}
 
 	shouldComponentUpdate({ children, onChange, ...nextProps }) {

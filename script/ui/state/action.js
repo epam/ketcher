@@ -35,17 +35,6 @@ function status(key, activeTool, params) {
 	});
 }
 
-export function resetToSelect() {
-	return (dispatch, getState) => {
-		const resetToSelect = getState().options.settings.resetToSelect;
-		const activeTool = getState().actionState.activeTool.tool;
-		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
-			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
-		else
-			dispatch({ type: 'UPDATE' });
-	}
-}
-
 export default function (state=null, { type, action, ...params }) {
 	switch(type) {
 	case 'INIT':
@@ -56,7 +45,7 @@ export default function (state=null, { type, action, ...params }) {
 		});
 	case 'UPDATE':
 		var res = Object.keys(acts).reduce((res, key) => {
-			var value = status(key, activeTool, params);
+			var value = status(key, res.activeTool, params);
 			if (!isEmpty(value))
 				res[key] = value;
 			return res;

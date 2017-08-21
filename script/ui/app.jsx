@@ -1,8 +1,9 @@
 import { Provider, connect } from 'preact-redux';
+import { omit } from 'lodash/fp';
 
 import state, { onAction } from './state';
 import { initTmplLib } from './state/templates';
-import { resetToSelect } from './state/action';
+import { initEditor } from './state/editor';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -15,17 +16,9 @@ const AppEditor = connect(
 	(state) => ({
 		options: state.options.settings
 	}),
-	(dispatch) => ({
-		onInit: editor => {
-			dispatch({ type: 'INIT', editor });
-		},
-		onChange: () => {
-			dispatch(resetToSelect());
-		},
-		onSelectionChange: () => {
-			// dispatch({ type: 'UPDATE' });
-		}
-	})
+	(dispatch) => (
+		initEditor(dispatch)
+	)
 )(StructEditor);
 
 const AppModal = connect(
@@ -34,13 +27,29 @@ const AppModal = connect(
 	}),
 	(dispatch) => ({
 		onOk: function (res) {
-			console.log('output:', res);
+			console.info('Output:', res);
 			dispatch({ type: 'MODAL_CLOSE' });
 		},
 		onCancel: function () {
 			dispatch({ type: 'MODAL_CLOSE' });
 		}
-	})
+	}),
+	(stateProps, dispatchProps) => {
+		let prop = stateProps.modal && stateProps.modal.prop;
+		let initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
+		return {
+			modal: stateProps.modal,
+			...initProps,
+			onOk: function (res) {
+				if (prop && prop.onResult) prop.onResult(res);
+				dispatchProps.onOk(res);
+			},
+			onCancel: function () {
+				if (prop && prop.onCancel) prop.onCancel();
+				dispatchProps.onCancel();
+			}
+		};
+	}
 )(({modal, ...props}) => {
 	if (!modal)
 		return null;

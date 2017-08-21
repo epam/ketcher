@@ -25,7 +25,8 @@ function modal(state = null, action) {
 	case 'MODAL_OPEN':
 		return {
 			name: data.name,
-			form: formsState[data.name] || null
+			form: formsState[data.name] || null,
+			prop: data.prop || null
 		}
 	}
 	return state;

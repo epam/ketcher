@@ -2,7 +2,7 @@ import { defaultOpts } from './options';
 import { initSdata, sgroupSpecialReducer } from './sdata';
 
 export const formsState = {
-	'atom': {
+	atomProps: {
 		errors: {},
 		valid: true,
 		result: {
@@ -32,7 +32,7 @@ export const formsState = {
 			mode: "discard"
 		}
 	},
-	bond: {
+	bondProps: {
 		errors: {},
 		valid: true,
 		result: {

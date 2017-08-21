@@ -1,6 +1,7 @@
 import { range } from 'lodash/fp';
 
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import element from '../../chem/element';
@@ -9,6 +10,9 @@ import Atom from '../component/atom';
 import Tabs from '../component/tabs';
 
 import GenericGroups from './generic-groups';
+
+import { fromElement, toElement } from '../structconv';
+import { onAction } from '../state';
 
 const typeSchema = [
 	{ title: 'Single', value: 'atom' },
@@ -223,4 +227,26 @@ function rowPartition(elements) {
 	}, []);
 }
 
-export default PeriodTable;
+function mapSelectionToProps(editor) {
+	let selection = editor.selection();
+	if (selection && Object.keys(selection).length === 1 &&
+		selection.atoms && Object.keys(selection.atoms).length === 1) {
+		let struct = editor.struct();
+		let atom = struct.atoms.get(selection.atoms[0]);
+		return { ...fromElement(atom) }
+	}
+	return {};
+}
+
+export default connect(
+	(store, props) => {
+		if (props.values || props.label) return {};
+		return mapSelectionToProps(store.editor);
+	},
+	(dispatch, props) => ({
+		onOk: (res) => {
+			dispatch(onAction({ tool: 'atom', opts: toElement(res) }));
+			props.onOk(res);
+		}
+	})
+)(PeriodTable);

@@ -87,7 +87,9 @@ export default {
 		action: { dialog: 'about' }
 	},
 	"reaction-automap": {
-		title: "Reaction Auto-Mapping Tool"
+		title: "Reaction Auto-Mapping Tool",
+		action: { dialog: 'automap' },
+		disabled: editor => !editor.struct().hasRxnArrow()
 	},
 	"templates": {
 		shortcut: "t",

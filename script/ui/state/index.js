@@ -54,6 +54,22 @@ export function onAction(action) {
 	};
 }
 
+export function openDialog(dispatch, dialogName, props) {
+	return new Promise(function (resolve, reject) {
+		dispatch({
+			type: 'MODAL_OPEN',
+			data: {
+				name: dialogName,
+				prop: {
+					...props,
+					onResult: (res) => resolve(res),
+					onCancel: () => reject()
+				}
+			}
+		})
+	});
+}
+
 function root(state, action) {
 	switch (action.type) {
 	case 'INIT':

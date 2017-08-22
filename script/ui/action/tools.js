@@ -10,7 +10,7 @@ const toolActions = {
 	"select-rectangle": {
 		title: "Rectangle Selection",
 		shortcut: "Escape",
-		action: { tool: 'select', opts: 'lasso' }
+		action: { tool: 'select', opts: 'rectangle' }
 	},
 	"select-fragment": {
 		title: "Fragment Selection",
@@ -104,7 +104,7 @@ const bondCuts = {
 	"crossed": "2",
 	"any": "0",
 	"aromatic": "4",
-}
+};
 
 let typeSchema = bondSchema.properties.type;
 export default typeSchema.enum.reduce((res, type, i) => {

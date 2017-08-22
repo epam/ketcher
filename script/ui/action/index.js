@@ -3,6 +3,7 @@ import atoms from './atoms';
 import zoom from './zoom';
 import server from './server';
 import debug from './debug';
+import templates from './templates';
 
 export default {
 	"new": {
@@ -94,16 +95,6 @@ export default {
 		action: { dialog: 'automap' },
 		disabled: (editor, server, options) => !options.app.server || !editor.struct().hasRxnArrow()
 	},
-	"templates": {
-		shortcut: "t",
-		title: "Switch Basic Templates"
-	},
-	"template-lib": {
-		shortcut: "Shift+t",
-		title: "Custom Templates",
-		action: { dialog: 'templates' },
-		disabled: (editor, server, options) => !options.app.templates
-	},
 	"period-table": {
 		title: "Periodic Table",
 		action: { dialog: 'period-table' }
@@ -127,7 +118,8 @@ export default {
 	...debug,
 	...tools,
 	...atoms,
-	...zoom
+	...zoom,
+	...templates
 };
 
 function hasSelection(editor) {

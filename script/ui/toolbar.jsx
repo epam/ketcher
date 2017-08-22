@@ -212,8 +212,8 @@ function AtomsList(atoms, {active, onAction, ...props}) {
 }
 
 function TemplatesList({active, onAction, ...props}) {
-	let shortcut = shortcutStr(action.templates.shortcut);
-	let isTmpl = active && active.tool == 'template';
+	let shortcut = shortcutStr(action[`template-0`].shortcut);
+	let isTmpl = active && active.tool === 'template';
 	return (
 		<menu>
 		  {

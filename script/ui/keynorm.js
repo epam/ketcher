@@ -63,4 +63,4 @@ function lookup(map, event) {
 };
 
 keyNorm.lookup = lookup;
-module.exports = keyNorm;
+export default keyNorm;

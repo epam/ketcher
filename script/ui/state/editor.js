@@ -2,6 +2,7 @@ import { debounce } from 'lodash/fp';
 
 import element from '../../chem/element';
 import acts from '../action';
+import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 
 export function initEditor(dispatch) {
@@ -71,22 +72,6 @@ export function initEditor(dispatch) {
 		},
 		omMouseDown: event => {}
 	};
-}
-
-function openDialog(dispatch, dialogName, props) {
-	return new Promise(function (resolve, reject) {
-		dispatch({
-			type: 'MODAL_OPEN',
-			data: {
-				name: dialogName,
-				prop: {
-					...props,
-					onResult: (res) => resolve(res),
-					onCancel: () => reject()
-				}
-			}
-		})
-	});
 }
 
 function resetToSelect() {

@@ -21,7 +21,7 @@ export default Object.keys(atomCuts).reduce((res, label) => {
 		shortcut: atomCuts[label],
 		action: {
 			tool: 'atom',
-			opts: label
+			opts: { label }
 		}
 	};
 	return res;

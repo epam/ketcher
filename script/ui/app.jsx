@@ -5,6 +5,7 @@ import state, { onAction } from './state';
 import { initTmplLib } from './state/templates';
 import { initEditor } from './state/editor';
 import { checkServer } from './state/server';
+import { initKeydownListener } from './state/hotkeys';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -92,6 +93,8 @@ const App = connect(
 
 function init(el, options, server) {
 	var store = state(options, server);
+	store.dispatch(initKeydownListener(el));
+
 	return render((
 		<Provider store={store}>
 		  <App/>

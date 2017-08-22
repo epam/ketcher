@@ -2,6 +2,10 @@ import { pick } from 'lodash/fp';
 import settingsSchema, { SERVER_OPTIONS } from '../data/options-schema';
 
 export const optionsState = {
+	app: {
+		server: false,
+		templates: false
+	},
 	analyse: {
 		values: null,
 		roundWeight: 3,
@@ -17,6 +21,13 @@ export const optionsState = {
 		return pick(SERVER_OPTIONS, this.settings);
 	}
 };
+
+export function appUpdate(data) {
+	return dispatch => {
+		dispatch({ type: 'APP_OPTIONS', data });
+		dispatch({ type: 'UPDATE' })
+	}
+}
 
 /* SETTINGS */
 export function defaultOpts() {
@@ -74,6 +85,9 @@ export function shouldFragment(isFrag) {
 
 export function optionsReducer(state = {}, action) {
 	let { type, data } = action;
+
+	if (type === 'APP_OPTIONS')
+		return {...state, app: { ...state.app, ...data }};
 
 	if (type === 'SAVE_SETTINGS')
 		return {...state, settings: data};

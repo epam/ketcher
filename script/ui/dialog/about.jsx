@@ -1,4 +1,5 @@
 import { h } from 'preact';
+import { connect } from 'preact-redux';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
@@ -45,4 +46,6 @@ function About(props) {
 	);
 }
 
-export default About;
+export default connect(
+	store => ({ ...store.options.app })
+)(About);

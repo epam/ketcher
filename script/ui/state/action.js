@@ -21,9 +21,9 @@ function selected(actObj, activeTool, { editor, server }) {
 	return false;
 }
 
-function disabled(actObj, { editor, server }) {
+function disabled(actObj, { editor, server, options }) {
 	if (typeof actObj.disabled == 'function')
-		return actObj.disabled(editor, server);
+		return actObj.disabled(editor, server, options);
 	return false;
 }
 

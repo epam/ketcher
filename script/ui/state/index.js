@@ -77,7 +77,7 @@ export default function(options, server) {
 	// TODO: redux localStorage here
 	var initState = {
 		actionState: null,
-		options: Object.assign(options, optionsState),
+		options: Object.assign(optionsState, { app: options }),
 		server: server || Promise.reject("Standalone mode!"),
 		editor: null,
 		modal: null,

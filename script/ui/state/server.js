@@ -1,8 +1,22 @@
 import { pick } from 'lodash/fp';
 
-import { setStruct } from './options';
+import { setStruct, appUpdate } from './options';
 import { checkErrors } from './form';
 import { serverCall, serverTransform } from '../action/server';
+
+export function checkServer() {
+	return (dispatch, getState) => {
+		const server = getState().server;
+
+		server.then(
+			(res) => dispatch(appUpdate({
+				indigoVersion: res.indigoVersion,
+				server: true
+			})),
+			(err) => alert(err)
+		);
+	}
+}
 
 export function recognize(file) {
 	return (dispatch, getState) => {

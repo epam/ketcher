@@ -4,6 +4,7 @@ import { omit } from 'lodash/fp';
 import state, { onAction } from './state';
 import { initTmplLib } from './state/templates';
 import { initEditor } from './state/editor';
+import { checkServer } from './state/server';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
@@ -73,15 +74,20 @@ const AppTemplates = connect(
 
 const App = connect(
 	null,
-	{ onAction }
-)(props => (
-	<main role="application">
-		<AppEditor id="canvas"/>
-		<Toolbar {...props}/>
-		<AppModal/>
-		<AppTemplates/>
-	</main>
-));
+	{ onAction, checkServer }
+)(class extends Component {
+	componentDidMount() {
+		this.props.checkServer();
+	}
+	render = props => (
+		<main role="application">
+			<AppEditor id="canvas"/>
+			<Toolbar {...props}/>
+			<AppModal/>
+			<AppTemplates/>
+		</main>
+	)
+});
 
 
 function init(el, options, server) {

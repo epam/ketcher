@@ -43,32 +43,37 @@ export default {
 		title: "Layout",
 		action: (editor, server, options) => {
 			serverTransform(editor, server, 'layout', options);
-		}
+		},
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"clean": {
 		shortcut: "Mod+Shift+l",
 		title: "Clean Up",
 		action: (editor, server, options) => {
 			serverTransform(editor, server, 'clean', options);
-		}
+		},
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"arom": {
 		title: "Aromatize",
 		action: (editor, server, options) => {
 			serverTransform(editor, server, 'aromatize', options);
-		}
+		},
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"dearom": {
 		title: "Dearomatize",
 		action: (editor, server, options) => {
 			serverTransform(editor, server, 'dearomatize', options);
-		}
+		},
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"cip": {
 		shortcut: "Mod+p",
 		title: "Calculate CIP",
 		action: (editor, server, options) => {
 			serverTransform(editor, server, 'calculateCip', options);
-		}
+		},
+		disabled: (editor, server, options) => !options.app.server
 	}
 };

@@ -63,15 +63,18 @@ export default {
 	},
 	"check": {
 		title: "Check Structure",
-		action: { dialog: 'check' }
+		action: { dialog: 'check' },
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"analyse": {
 		title: "Calculated Values",
-		action: { dialog: 'analyse' }
+		action: { dialog: 'analyse' },
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"recognize": {
 		title: "Recognize Molecule",
-		action: { dialog: 'recognize' }
+		action: { dialog: 'recognize' },
+		disabled: (editor, server, options) => !options.app.server
 	},
 	"settings": {
 		title: "Settings",
@@ -89,7 +92,7 @@ export default {
 	"reaction-automap": {
 		title: "Reaction Auto-Mapping Tool",
 		action: { dialog: 'automap' },
-		disabled: editor => !editor.struct().hasRxnArrow()
+		disabled: (editor, server, options) => !options.app.server || !editor.struct().hasRxnArrow()
 	},
 	"templates": {
 		shortcut: "t",
@@ -98,7 +101,8 @@ export default {
 	"template-lib": {
 		shortcut: "Shift+t",
 		title: "Custom Templates",
-		action: { dialog: 'templates' }
+		action: { dialog: 'templates' },
+		disabled: (editor, server, options) => !options.app.templates
 	},
 	"period-table": {
 		title: "Periodic Table",

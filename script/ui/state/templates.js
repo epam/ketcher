@@ -1,5 +1,6 @@
 import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
+import { appUpdate } from './options';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -109,7 +110,8 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 		));
 	}).then(res => {
 		let lib = res.concat(userTmpls());
-		dispatch(initLib(lib))
+		dispatch(initLib(lib));
+		dispatch(appUpdate({ templates: true }));
 	});
 }
 

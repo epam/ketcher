@@ -3,6 +3,7 @@ import { connect } from 'preact-redux';
 /** @jsx h */
 
 import { changeImage, shouldFragment } from '../state/options';
+import { load } from '../state';
 import { recognize } from '../state/server';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
@@ -73,9 +74,18 @@ export default connect(
 		structStr: store.options.recognize.structStr,
 		fragment: store.options.recognize.fragment
 	}),
-	dispatch => ({
+	(dispatch, props) => ({
 		isFragment: (v) => dispatch(shouldFragment(v)),
 		onImage: (file) => dispatch(changeImage(file)),
-		onRecognize: (file) => dispatch(recognize(file))
+		onRecognize: (file) => dispatch(recognize(file)),
+		onOk: (res) => {
+			dispatch(
+				load(res.structStr, {
+					rescale: true,
+					fragment: res.fragment
+				})
+			);
+			props.onOk(res);
+		}
 	})
 )(Recognize);

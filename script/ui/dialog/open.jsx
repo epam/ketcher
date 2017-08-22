@@ -6,6 +6,8 @@ import { map as formatMap } from '../structformat';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
 
+import { load } from '../state';
+
 class Open extends Component {
 	constructor(props) {
 		super(props);
@@ -59,5 +61,16 @@ function structAcceptMimes() {
 
 
 export default connect(
-	store => ({	server: store.server })
+	store => ({	server: store.server }),
+	(dispatch, props) => ({
+		onOk: (res) => {
+			dispatch(
+				load(res.structStr, {
+					badHeaderRecover: true,
+					fragment: res.fragment
+				})
+			);
+			props.onOk(res);
+		}
+	})
 )(Open);

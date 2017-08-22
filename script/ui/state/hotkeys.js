@@ -6,7 +6,7 @@ import actions from '../action';
 
 import clipArea from '../cliparea';
 import * as structFormat from '../structformat';
-import { onAction, openDialog } from './';
+import { onAction, openDialog, load } from './';
 
 export function initKeydownListener(element) {
 	return function (dispatch, getState) {
@@ -104,7 +104,7 @@ function initClipboard(dispatch, getState, element) {
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
 			if (structStr)
-				load(structStr, { fragment: true });
+				dispatch( load(structStr, { fragment: true }) );
 		}
 	});
 }

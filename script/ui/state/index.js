@@ -4,6 +4,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk'
 import { logger } from 'redux-logger';
 
+import * as structFormat from '../structformat';
 import { formsState, formReducer } from './form';
 import { optionsState, optionsReducer } from './options';
 import { initTmplState, templatesReducer } from './templates';
@@ -48,6 +49,8 @@ export function onAction(action) {
 			type: 'MODAL_OPEN',
 			data: { name: action.dialog }
 		};
+	if (action && action.thunk)
+		return action.thunk;
 	return {
 		type: 'ACTION',
 		action
@@ -68,6 +71,39 @@ export function openDialog(dispatch, dialogName, props) {
 			}
 		})
 	});
+}
+
+export function load(structStr, options) {
+	return (dispatch, getState) => {
+		const state = getState();
+		let editor = state.editor;
+		let server = state.server;
+
+		options = options || {};
+		// TODO: check if structStr is parsed already
+		//utils.loading('show');
+		var parsed = structFormat.fromString(structStr,
+			options, server);
+
+		parsed.catch(function (err) {
+			//utils.loading('hide');
+			alert("Can't parse molecule!");
+		});
+
+		return parsed.then(function (struct) {
+			//utils.loading('hide');
+			console.assert(struct, 'No molecule to update');
+			if (options.rescale)
+				struct.rescale();   // TODO: move out parsing?
+			if (options.fragment && !struct.isBlank())
+				dispatch(onAction({ tool: 'paste', opts: struct }));
+			else
+				editor.struct(struct);
+			return struct;
+		}, function (err) {
+			alert(err);
+		});
+	}
 }
 
 function root(state, action) {

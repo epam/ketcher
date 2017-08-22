@@ -1,16 +1,20 @@
 import { isEqual } from 'lodash/fp';
 
+import molfile from '../../chem/molfile';
 import keyNorm from '../keynorm';
 import actions from '../action';
 
 import clipArea from '../cliparea';
+import * as structFormat from '../structformat';
 import { onAction, openDialog } from './';
 
 export function initKeydownListener(element) {
 	return function (dispatch, getState) {
-		const hotKeys = initHotKeys();
 
+		const hotKeys = initHotKeys();
 		element.on('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
+
+		initClipboard(dispatch, getState, element);
 	}
 }
 
@@ -34,10 +38,11 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 		index = (index + 1) % group.length;
 
 		let newAction = actions[group[index]].action;
-		if (clipArea.actions.indexOf(newAction) === -1) {
+		if (newAction && clipArea.actions.indexOf(newAction) === -1) {
 			dispatch(onAction(newAction));
 			event.preventDefault();
-		} // else delegate to cliparea
+		} else if (window.clipboardData) // IE support
+			clipArea.exec(event);
 	}
 }
 
@@ -72,4 +77,47 @@ function checkGroupOnTool(group, actionTool) {
 		if (isEqual(actions[actName].action, actionTool)) index = i;
 	});
 	return index;
+}
+
+function initClipboard(dispatch, getState, element) {
+	const formats = Object.keys(structFormat.map).map(function (fmt) {
+		return structFormat.map[fmt].mime;
+	});
+	return clipArea(element, {
+		formats: formats,
+		focused: function () {
+			return !getState().modal;
+		},
+		onCut: function () {
+			let data = clipData(getState().editor);
+			dispatch(onAction({ tool: 'eraser', opts: 1 }));
+			return data;
+		},
+		onCopy: function () {
+			let editor = getState().editor;
+			let data = clipData(editor);
+			editor.selection(null);
+			return data;
+		},
+		onPaste: function (data) {
+			var structStr = data['chemical/x-mdl-molfile'] ||
+				data['chemical/x-mdl-rxnfile'] ||
+				data['text/plain'];
+			if (structStr)
+				load(structStr, { fragment: true });
+		}
+	});
+}
+
+function clipData(editor) {
+	let res = {};
+	let struct = editor.structSelected();
+	if (struct.isBlank())
+		return null;
+	let type = struct.isReaction ?
+		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
+	res['text/plain'] = res[type] = molfile.stringify(struct);
+	// res['chemical/x-daylight-smiles'] =
+	// smiles.stringify(struct);
+	return res;
 }

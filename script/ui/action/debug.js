@@ -1,3 +1,5 @@
+import molfile from '../../chem/molfile';
+
 export default {
 	// original: for dev purposes
 	"force-update": {
@@ -13,7 +15,7 @@ export default {
 			var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
 			var qs = document.location.search;
 			document.location.search = !qs ? '?' + molQs :
-				qs.search('mol=') == -1 ? qs + '&' + molQs :
+				qs.search('mol=') === -1 ? qs + '&' + molQs :
 				qs.replace(/mol=[^&$]*/, molQs);
 		}
 	}

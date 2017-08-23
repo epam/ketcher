@@ -502,8 +502,11 @@ function serverCall(method, options, struct) {
 		var aidMap = {};
 		struct = editor.struct().clone(null, null, false, aidMap);
 		var selectedAtoms = editor.explicitSelected().atoms || [];
+
+		var reindexMap = getReindexMap(struct.getComponents());
+
 		selectedAtoms = selectedAtoms.map(function (aid) {
-			return aidMap[aid];
+			return reindexMap[aidMap[aid]];
 		});
 	}
 
@@ -523,10 +526,35 @@ function serverCall(method, options, struct) {
 	return request;
 }
 
+function getReindexMap(components) {
+	return flatten(components.reactants)
+		.concat(flatten(components.products))
+		.reduce(function (acc, item, index) {
+			acc[item] = index;
+			return acc;
+		}, {});
+}
+
+/**
+ * Flats passed object
+ * Ex: [ [1, 2], [3, [4, 5] ] ] -> [1, 2, 3, 4, 5]
+ *     { a: 1, b: { c: 2, d: 3 } } -> [1, 2, 3]
+ * @param source { object }
+ */
+function flatten(source) {
+	if (typeof source !== 'object')
+		return source;
+
+	return Object.keys(source).reduce(function (acc, key) {
+		var item = source[key];
+		return acc.concat(flatten(item));
+	}, []);
+}
+
 function serverTransform(method, options, struct) {
 	return serverCall(method, options, struct).then(function (res) {
 		return load(res.struct, {       // Let it be an exception
-			rescale: method == 'layout' // for now as layout does not
+			rescale: method === 'layout' // for now as layout does not
 		});                             // preserve bond lengths
 	});
 }
@@ -867,7 +895,7 @@ function mapTool(id) {
 		return { tool: 'rotate' };
 	}
 	return null;
-};
+}
 
 function atomLabel(mode) {
 	var label = mode.substr(5);
@@ -880,6 +908,6 @@ function atomLabel(mode) {
 			"No such atom exist");
 		return { label: label };
 	}
-};
+}
 
 module.exports = init;

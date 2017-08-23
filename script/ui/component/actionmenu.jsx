@@ -22,10 +22,15 @@ function ActionButton({action, status={}, onAction, ...props}) {
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button disabled={status.disabled}
-				onClick={() => onAction(action.action)}
-		  title={shortcut ? `${action.title} (${shortcut})` :
-		                    action.title}>
-		  {action.title}
+				onClick={(ev) => {
+					if (!status.selected) {
+						onAction(action.action);
+						props.onOpen(null);
+						ev.stopPropagation();
+					}
+				}}
+				title={shortcut ? `${action.title} (${shortcut})` :	action.title}>
+			{action.title}
 		</button>
 	)
 }
@@ -35,8 +40,10 @@ function ActionMenu({menu, className, role, ...props}) {
 		<menu className={className} role={role}>
 		{
 		  menu.map(item => (
-			  <li id={item.id || item} className={classNames(props.status[item])}>
-				{ typeof item != 'object' ?
+			  <li id={item.id || item}
+				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
+				  onClick={(ev) => openHandle(ev, props.onOpen) }>
+				{ typeof item !== 'object' ?
 					( <ActionButton {...props} action={action[item]}
 									status={props.status[item]} /> ) :
 						item.menu ?
@@ -48,6 +55,16 @@ function ActionMenu({menu, className, role, ...props}) {
 		}
 		</menu>
 	);
+}
+
+function openHandle(event, onOpen) {
+	let target = event.currentTarget;
+	if (!target) return event.stopPropagation();
+
+	if (window.getComputedStyle(target).overflow !== 'hidden') return;
+
+	onOpen(target.id);
+	event.stopPropagation();
 }
 
 export default ActionMenu;

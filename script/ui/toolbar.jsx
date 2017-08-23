@@ -64,7 +64,7 @@ const mainmenu = [
 			'about'
 		]
 	}
-]
+];
 
 const toolbox = [
 	{
@@ -234,11 +234,13 @@ function TemplatesList({active, onAction, ...props}) {
 }
 
 export default connect(
-	(state, props) => (console.info(state), {
+	(state, props) => ({
 		freqAtoms: state.toolbar.freqAtoms,
 		active: state.actionState && state.actionState.activeTool,
-		status: state.actionState || {}
+		status: state.actionState || {},
+		opened: state.toolbar.opened
 	}),
+	{ onOpen: menuName => ({ type: 'OPENED', data: menuName }) }
 )(props => (console.info('menu render'),
 	<ActionMenu menu={toolbar} role="toolbar" {...props}/>
 ));

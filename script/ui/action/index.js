@@ -4,6 +4,7 @@ import zoom from './zoom';
 import server from './server';
 import debug from './debug';
 import templates from './templates';
+import clipArea from '../cliparea';
 
 export default {
 	"new": {
@@ -47,16 +48,25 @@ export default {
 	"cut": {
 		shortcut: "Mod+x",
 		title: "Cut",
+		action: () => {
+			clipArea.exec('cut') || dontClipMessage('Cut');
+		},
 		disabled: editor => !hasSelection(editor)
 	},
 	"copy": {
 		shortcut: "Mod+c",
 		title: "Copy",
+		action: () => {
+			clipArea.exec('copy') || dontClipMessage('Copy');
+		},
 		disabled: editor => !hasSelection(editor)
 	},
 	"paste": {
 		shortcut: "Mod+v",
 		title: "Paste",
+		action: () => {
+			clipArea.exec('paste') || dontClipMessage('Paste')
+		},
 		selected: ({ actions }) => (
 			actions && // TMP
 				actions.active && actions.active.tool == 'paste'
@@ -127,3 +137,8 @@ function hasSelection(editor) {
 	return selection &&  // if not only sgroupData selected
 		(Object.keys(selection).length > 1 || !selection.sgroupData);
 };
+
+function dontClipMessage(title) {
+	alert('These action is unavailble via menu.\n' +
+		'Instead, use shortcut to ' + title + '.');
+}

@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash/fp';
+import { isEqual, debounce } from 'lodash/fp';
 
 import molfile from '../../chem/molfile';
 import keyNorm from '../keynorm';
@@ -37,8 +37,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
 		index = (index + 1) % group.length;
 
-		let newAction = actions[group[index]].action;
-		if (newAction && clipArea.actions.indexOf(newAction) === -1) {
+		let actName = group[index];
+		if (clipArea.actions.indexOf(actName) === -1) {
+			let newAction = actions[actName].action;
 			dispatch(onAction(newAction));
 			event.preventDefault();
 		} else if (window.clipboardData) // IE support
@@ -83,6 +84,9 @@ function initClipboard(dispatch, getState, element) {
 	const formats = Object.keys(structFormat.map).map(function (fmt) {
 		return structFormat.map[fmt].mime;
 	});
+	const debAction  = debounce(0, (action) => dispatch( onAction(action) ));
+	const loadStruct = debounce(0, (structStr, opts) => dispatch( load(structStr, opts) ));
+
 	return clipArea(element, {
 		formats: formats,
 		focused: function () {
@@ -90,7 +94,7 @@ function initClipboard(dispatch, getState, element) {
 		},
 		onCut: function () {
 			let data = clipData(getState().editor);
-			dispatch(onAction({ tool: 'eraser', opts: 1 }));
+			debAction({ tool: 'eraser', opts: 1 });
 			return data;
 		},
 		onCopy: function () {
@@ -104,7 +108,7 @@ function initClipboard(dispatch, getState, element) {
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
 			if (structStr)
-				dispatch( load(structStr, { fragment: true }) );
+				loadStruct(structStr, { fragment: true });
 		}
 	});
 }

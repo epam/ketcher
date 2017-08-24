@@ -10,10 +10,10 @@ class Form extends Component {
 		super();
 		this.schema = propSchema(schema, props);
 
-		let instance = this.schema.serialize(init).instance;
-		instance = instance ? Object.assign({}, instance, { init: true }) : { init: true };
-
-		if (init) onUpdate(instance, true, {});
+		if (init) {
+			init = Object.assign({}, init, { init: true });
+			onUpdate(init, true, {});
+		}
 	}
 	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);

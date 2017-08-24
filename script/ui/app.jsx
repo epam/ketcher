@@ -19,9 +19,7 @@ const AppEditor = connect(
 	(state) => ({
 		options: state.options.settings
 	}),
-	(dispatch) => (
-		initEditor(dispatch)
-	)
+	(dispatch) => dispatch(initEditor)
 )(StructEditor);
 
 const AppModal = connect(

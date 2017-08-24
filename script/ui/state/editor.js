@@ -5,7 +5,7 @@ import acts from '../action';
 import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 
-export function initEditor(dispatch) {
+export function initEditor(dispatch, getState) {
 
 	const changeAction = debounce(100, () => dispatch(resetToSelect()));
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
@@ -47,7 +47,7 @@ export function initEditor(dispatch) {
 		onRgroupEdit: rgroup => {
 			if (Object.keys(rgroup).length > 1) {
 				let rgids = [];
-				// editor.struct().rgroups.each((rgid) => rgids.push(rgid)); // TODO: get Editor ??
+				getState().editor.struct().rgroups.each((rgid) => rgids.push(rgid));
 				if (!rgroup.range) rgroup.range = '>0';
 				return openDialog(dispatch, 'rgroupLogic',
 					Object.assign({ rgroupLabels: rgids }, rgroup));

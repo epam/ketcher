@@ -59,6 +59,7 @@ function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 			params.attpnt = value.trim() - 0;
 		}
 	}
+
 	return new Struct.Atom(params);
 }
 
@@ -435,8 +436,13 @@ function parseBracedNumberList(line, shift) {
 	line = line.substr(1, line.length - 2);
 	var split = line.split(' ');
 	shift = shift || 0;
-	for (var i = 1; i < split.length; ++i) // skip the first element
-		list.push(split[i] - 0 + shift);
+
+	for (var i = 1; i < split.length; ++i) {
+		var value = parseInt(split[i]);
+		if (!isNaN(value))
+			list.push(value + shift);
+	}
+
 	return list;
 }
 

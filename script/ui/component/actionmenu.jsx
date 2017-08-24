@@ -3,6 +3,7 @@ import { h } from 'preact';
 import classNames from 'classnames';
 
 import action from '../action';
+import { hiddenAncestor } from '../state/toolbar';
 
 const isMac = /Mac/.test(navigator.platform);
 const shortcutAliasMap = {
@@ -25,19 +26,19 @@ function ActionButton({action, status={}, onAction, ...props}) {
 				onClick={(ev) => {
 					if (!status.selected) {
 						onAction(action.action);
-						props.onOpen(null);
 						ev.stopPropagation();
 					}
-				}}
+				} }
 				title={shortcut ? `${action.title} (${shortcut})` :	action.title}>
 			{action.title}
 		</button>
 	)
 }
 
-function ActionMenu({menu, className, role, ...props}) {
+function ActionMenu({name, menu, className, role, ...props}) {
 	return (
-		<menu className={className} role={role}>
+		<menu className={className} role={role}
+			  style={toolMargin(name, menu, props.visibleTools)}>
 		{
 		  menu.map(item => (
 			  <li id={item.id || item}
@@ -47,7 +48,7 @@ function ActionMenu({menu, className, role, ...props}) {
 					( <ActionButton {...props} action={action[item]}
 									status={props.status[item]} /> ) :
 						item.menu ?
-				  ( <ActionMenu {...props} menu={item.menu} /> ) :
+				  ( <ActionMenu {...props} name={item.id} menu={item.menu} /> ) :
 							item.component(props)
 				}
 			  </li>
@@ -57,13 +58,25 @@ function ActionMenu({menu, className, role, ...props}) {
 	);
 }
 
+function toolMargin(menuName, menu, visibleTools) {
+	if (!visibleTools[menuName]) return {};
+	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40;
+																		// now not found better way
+	let index = menu.indexOf(visibleTools[menuName]); // first level
+
+	if (index === -1) {
+		let tools = [];
+		menu.forEach(item => tools = tools.concat(item.menu));
+		index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
+	}
+
+	return (index !== -1) ? { marginTop: -(iconHeight * index) + 'px' } : {};
+}
+
 function openHandle(event, onOpen) {
-	let target = event.currentTarget;
-	if (!target) return event.stopPropagation();
+	let hiddenEl = hiddenAncestor(event.currentTarget);
 
-	if (window.getComputedStyle(target).overflow !== 'hidden') return;
-
-	onOpen(target.id);
+	if (hiddenEl) onOpen(hiddenEl.id);
 	event.stopPropagation();
 }
 

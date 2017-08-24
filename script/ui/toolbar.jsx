@@ -235,12 +235,14 @@ function TemplatesList({active, onAction, ...props}) {
 
 export default connect(
 	(state, props) => ({
-		freqAtoms: state.toolbar.freqAtoms,
 		active: state.actionState && state.actionState.activeTool,
 		status: state.actionState || {},
-		opened: state.toolbar.opened
-	}),
-	{ onOpen: menuName => ({ type: 'OPENED', data: menuName }) }
+		freqAtoms: state.toolbar.freqAtoms,
+		opened: state.toolbar.opened,
+		visibleTools: state.toolbar.visibleTools
+	}),	{
+		onOpen: menuName => ({ type: 'OPENED', data: menuName })
+	}
 )(props => (console.info('menu render'),
 	<ActionMenu menu={toolbar} role="toolbar" {...props}/>
 ));

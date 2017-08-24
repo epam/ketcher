@@ -22,6 +22,7 @@ unstable:
     - deploy www ketcher-*.zip
   only:
     - master
+    - next
     - /^task-.*$/
 
 standalone:

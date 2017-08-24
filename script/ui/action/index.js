@@ -10,9 +10,13 @@ export default {
 	"new": {
 		shortcut: "Mod+n",
 		title: "Clear Canvas",
-		action: editor => {
-			if (!editor.struct().isBlank())
-				editor.struct(null);
+		action: {
+			thunk: (dispatch, getState) => {
+				let editor = getState().editor;
+				if (!editor.struct().isBlank())
+					editor.struct(null);
+				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+			}
 		}
 	},
 	"open": {
@@ -32,7 +36,7 @@ export default {
 			editor.undo();
 		},
 		disabled: editor => (
-			editor.historySize().undo == 0
+			editor.historySize().undo === 0
 		)
 	},
 	"redo": {
@@ -42,7 +46,7 @@ export default {
 			editor.redo();
 		},
 		disabled: editor => (
-			editor.historySize().redo == 0
+			editor.historySize().redo === 0
 		)
 	},
 	"cut": {
@@ -69,7 +73,7 @@ export default {
 		},
 		selected: ({ actions }) => (
 			actions && // TMP
-				actions.active && actions.active.tool == 'paste'
+				actions.active && actions.active.tool === 'paste'
 		)
 	},
 	"check": {
@@ -112,9 +116,11 @@ export default {
 	"select-all": {
 		title: "Select All",
 		shortcut: "Mod+a",
-		action: editor => {
-			editor.selection('all');
-			//selectAction(null);
+		action: {
+			thunk: (dispatch, getState) => {
+				getState().editor.selection('all');
+				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+			}
 		}
 	},
 	"deselect-all": {

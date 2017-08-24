@@ -41,7 +41,7 @@ var addionalAtoms = {
 var app = require('./app').default;
 
 function init(opts, apiServer) {
-	if ('new' in opts)
+	// if ('new' in opts)
 		return initNew(opts, apiServer);
 
 	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];

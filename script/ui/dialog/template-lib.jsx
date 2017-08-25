@@ -1,4 +1,4 @@
-import { escapeRegExp, chunk, flow, filter as _filter, reduce } from 'lodash/fp';
+import { escapeRegExp, chunk, flow, filter as _filter, reduce, omit } from 'lodash/fp';
 import { createSelector } from 'reselect';
 
 import { h, Component } from 'preact';
@@ -14,7 +14,8 @@ import SaveButton from '../component/savebutton';
 import Input from '../component/input';
 import SelectList from '../component/select';
 
-import { changeFilter, changeGroup, selectTmpl } from '../state/templates';
+import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templates';
+import { onAction } from "../state/";
 
 const GREEK_SIMBOLS = {
 	'Alpha': 'A', 'alpha': 'α',
@@ -85,17 +86,10 @@ class TemplateLib extends Component {
 		let tmpl = this.props.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
-			event: 'chooseTmpl',
-			tmpl: {
-				struct: tmpl.struct,
-				aid: parseInt(tmpl.props.atomid) + 1 || null, // In TemplateTool: -1
-				bid: parseInt(tmpl.props.bondid) + 1 || null
-			}
+			struct: tmpl.struct,
+			aid: parseInt(tmpl.props.atomid) + 1 || null, // In TemplateTool: -1
+			bid: parseInt(tmpl.props.bondid) + 1 || null
 		} : null;
-	}
-
-	onAttach(tmpl, index) {
-		this.props.onAttach(tmpl);
 	}
 
 	renderRow(row, index, COLS) {
@@ -104,7 +98,7 @@ class TemplateLib extends Component {
 				<div className={tmpl === this.props.selected ? 'td selected' : 'td'}
 					 title={greekify(tmplName(tmpl, index * COLS + i))}>
 					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)}/>
-					<button className="attach-button" onClick={() => this.onAttach(tmpl, index * COLS + i)}>
+					<button className="attach-button" onClick={() => this.props.onAttach(tmpl)}>
 						Edit
 					</button>
 				</div>
@@ -134,7 +128,7 @@ class TemplateLib extends Component {
 						   value={ filter } onChange={value => onFilter(value)}/>
 				</label>
 				<Input className="groups" component={SelectList}
-					   splitIndexes={[Object.keys(lib).indexOf('User')]}
+					   splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
 					   value={ group } onChange={g => onChangeGroup(g)}
 					   schema={{
 						   enum: Object.keys(lib),
@@ -150,14 +144,15 @@ class TemplateLib extends Component {
 }
 
 export default connect(
-	store => ({ ...store.templates }),
-	dispatch => ({
+	store => ({ ...omit(['attach'], store.templates) }),
+	(dispatch, props) => ({
 		onFilter: filter => dispatch(changeFilter(filter)),
 		onSelect: tmpl => dispatch(selectTmpl(tmpl)),
 		onChangeGroup: group => dispatch(changeGroup(group)),
-		onAttach: tmpl => {
-			dispatch(selectTmpl(tmpl));
-			dispatch({ type: 'MODAL_OPEN', data: { name: 'attach' } });
+		onAttach: tmpl => dispatch(editTmpl(tmpl)),
+		onOk: res => {
+			dispatch(onAction({	tool: 'template', opts: res	}));
+			props.onOk(res);
 		}
 	})
 )(TemplateLib);

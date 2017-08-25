@@ -2,6 +2,7 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 /** @jsx h */
 import * as structFormat from '../structformat';
+import { saveUserTmpl } from '../state/templates';
 
 import Dialog from '../component/dialog';
 import SaveButton from '../component/savebutton';
@@ -24,10 +25,6 @@ class Save extends Component {
 							  e => { alert(e); });
 	}
 
-	saveTemplate(ev) {
-		this.props.onOk({ event: 'saveTmpl', tmpl: this.state.structStr });
-	}
-
 	render () {
 	    // $('[value=inchi]').disabled = ui.standalone;
 		let { type, structStr } = this.state;
@@ -48,7 +45,7 @@ class Save extends Component {
 						</SaveButton>
 					), (
 						<button className="save-tmpl"
-								onClick={ ev => this.saveTemplate(ev) }>
+								onClick={ () => this.props.onTmplSave(structStr) }>
 							Save to Templates</button>
 					), "Close"]}>
 				<label>Format:
@@ -70,5 +67,8 @@ export default connect(
 		server: store.server,
 		struct: store.editor.struct(),
 		options: store.options.getServerSettings()
+	}),
+	dispatch => ({
+		onTmplSave: struct => dispatch(saveUserTmpl(struct))
 	})
 )(Save);

@@ -18,10 +18,8 @@ class Attach extends Component {
 	constructor({onInit, ...props}) {
 		super(props);
 
-
 		this.tmpl = initTmpl(props.tmpl);
 		onInit(this.tmpl.struct.name, this.tmpl.props);
-		console.log("??????!!!!!!!!!!!!!!!", this.tmpl, props.tmpl, this.tmpl === props.tmpl)
 	}
 
 	render() {
@@ -30,9 +28,11 @@ class Attach extends Component {
 		let editorOpts = Object.assign(EDITOR_STYLES, { scale: this.tmpl.scale });
 
 		const result = () => (
-			name !== this.tmpl.struct.name ||
-			atomid !== this.tmpl.props.atomid ||
-			bondid !== this.tmpl.props.bondid
+			name && (
+				name !== this.tmpl.struct.name ||
+				atomid !== this.tmpl.props.atomid ||
+				bondid !== this.tmpl.props.bondid
+			)
 		) ? { name, attach: { atomid, bondid } } : null;
 
 		return (
@@ -46,7 +46,7 @@ class Attach extends Component {
 				<StructEditor className="editor"
 							  struct={this.tmpl.struct}
 							  onAttachEdit={onAttachEdit}
-				              tool="attach" toolOpts={ this.tmpl.props }
+				              tool="attach" toolOpts={ { atomid, bondid } }
 							  options={editorOpts}/>
 				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>
 			</Dialog>
@@ -88,12 +88,7 @@ function structNormalization(struct) {
 }
 
 export default connect(
-	store => ({
-		tmpl: store.templates.selected, // TODO: return to templates, OK disabled =(
-		name: store.templates.attach.name,
-		atomid: store.templates.attach.atomid,
-		bondid: store.templates.attach.bondid
-	}),
+	store => ({ ...store.templates.attach }),
 	dispatch => ({
 		onInit: (name, ap) => dispatch(initAttach(name, ap)),
 		onAttachEdit: ap => dispatch(setAttachPoints(ap)),

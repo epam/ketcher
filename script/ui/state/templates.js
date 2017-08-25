@@ -1,6 +1,8 @@
+import { omit } from 'lodash/fp';
 import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
 import { appUpdate } from './options';
+import { openDialog } from './';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -51,6 +53,50 @@ export function setTmplName(name) {
 		type: 'SET_TMPL_NAME',
 		data: { name }
 	};
+}
+
+export function editTmpl(tmpl) {
+	return (dispatch, getState) => {
+		openDialog(dispatch, 'attach', { tmpl }).then(
+			({ name, attach }) => {
+				tmpl.struct.name = name;
+				tmpl.props = Object.assign({}, tmpl.props, attach);
+
+				if (tmpl.props.group === 'User Templates')
+					updateLocalStore(getState().templates.lib);
+				openDialog(dispatch, 'templates');
+			}, () => {
+				openDialog(dispatch, 'templates');
+			}
+		);
+	}
+}
+
+/* SAVE */
+export function saveUserTmpl(structStr) {
+	let tmpl = { struct: molfile.parse(structStr), props: {} };
+	return (dispatch, getState) => {
+		openDialog(dispatch, 'attach', { tmpl }).then(
+			({ name, attach }) => {
+				tmpl.struct.name = name;
+				tmpl.props = { ...attach, group: 'User Templates' };
+
+				let lib = getState().templates.lib.concat(tmpl);
+				dispatch(initLib(lib));
+				updateLocalStore(lib);
+			}
+		);
+	}
+}
+
+function updateLocalStore(lib) {
+	let userLib = lib.filter(item => item.props.group === 'User Templates').map(item => {
+		return {
+			struct: molfile.stringify(item.struct),
+			props: Object.assign({}, omit(['group'], item.props))
+		};
+	});
+	localStorage.setItem('ketcher-tmpls', JSON.stringify(userLib));
 }
 
 /* REDUCER */
@@ -116,10 +162,10 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 function userTmpls() {
-	var userLib = JSON.parse(localStorage['ketcher-tmpl'] || 'null') || [];
+	let userLib = JSON.parse(localStorage['ketcher-tmpls'] || 'null') || [];
 	return userLib.map((tmpl) => {
 		if (tmpl.props === '') tmpl.props = {};
-		tmpl.props.group = 'User';
+		tmpl.props.group = 'User Templates';
 		return {
 			struct: molfile.parse(tmpl.struct),
 			props: tmpl.props

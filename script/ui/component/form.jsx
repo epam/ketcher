@@ -11,8 +11,11 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 
 		if (init) {
+			const { valid, errors } = this.schema.serialize(init);
+			const errs = getErrorsObj(errors);
+
 			init = Object.assign({}, init, { init: true });
-			onUpdate(init, true, {});
+			onUpdate(init, valid, errs);
 		}
 	}
 	updateState(newstate) {

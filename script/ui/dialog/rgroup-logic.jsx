@@ -42,7 +42,7 @@ function RgroupLogic (props) {
 function rangeConv(range) { // structConv
 	let res = range.replace(/\s*/g, '').replace(/,+/g, ',')
 		.replace(/^,/, '').replace(/,$/, '');
-	return res.split(',').all(function (s) {
+	return res.split(',').every(function (s) {
 		return s.match(/^[>,<,=]?[0-9]+$/g) ||
 			s.match(/^[0-9]+\-[0-9]+$/g);
 	});

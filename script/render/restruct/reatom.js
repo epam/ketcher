@@ -495,7 +495,7 @@ function showWarning(atom, render, leftMargin, rightMargin) {
 }
 
 function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line max-statements
-	var asterisk = Prototype.Browser.IE ? '*' : '∗';
+	var asterisk = '∗';
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var tfx = util.tfx;
@@ -592,7 +592,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom, struct) {
 	var angles = [];
-	atom.a.neighbors.each(function (hbid) {
+	atom.a.neighbors.forEach(function (hbid) {
 		var hb = struct.halfBonds.get(hbid);
 		angles.push(hb.ang);
 	});

@@ -59,7 +59,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 
 		if (loop >= 0) {
 			var loopHbs = molecule.loops.get(loop).hbs;
-			loopHbs.each(function (hb) {
+			loopHbs.forEach(function (hb) {
 				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});

@@ -135,8 +135,7 @@ gulp.task('font', function (cb) {
 });
 
 gulp.task('copy', function () {
-	return gulp.src(['./script/prototype.js',
-	                 'raphael'].map(require.resolve)
+	return gulp.src(['raphael'].map(require.resolve)
 	                .concat(distrib))
 		.pipe(gulp.dest(options.dist));
 });

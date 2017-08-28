@@ -47,7 +47,7 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 	atoms.forEach(function (aid) {
 		var sg = Set.list(this.atoms.get(aid).sgs);
 
-		sg.each(function (sid) {
+		sg.forEach(function (sid) {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		}, this);
 	}, this);
@@ -534,7 +534,7 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.aromatic = true;
 	this.convex = convex || false;
 
-	hbs.each(function (hb) {
+	hbs.forEach(function (hb) {
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
 		if (bond.type != Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
@@ -748,7 +748,7 @@ Struct.prototype.findLoops = function () {
 						} else {
 							loopId = -2;
 						}
-						loop.each(function (hbid) {
+						loop.forEach(function (hbid) {
 							this.halfBonds.get(hbid).loop = loopId;
 							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
 						}, this);

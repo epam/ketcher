@@ -13,19 +13,19 @@ function delegateCliparea(action) {
 }
 
 function initCliparea(parent, options) {
-	var cliparea = new Element('div', {
-		'contenteditable': true,
-		'class': 'cliparea',
-		autofocus: true
-	});
-	parent.insert(cliparea);
+	let cliparea = document.createElement('textarea');
+	cliparea.contentEditable = true;
+	cliparea.className = 'cliparea';
+	cliparea.autofocus = true;
 
-	parent.on('mouseup', function (event) {
+	parent.appendChild(cliparea);
+
+	parent.addEventListener('mouseup', function (event) {
 		if (options.focused())
 			autofocus(cliparea);
 	});
 
-	parent.on('copy', function (event) {
+	parent.addEventListener('copy', function (event) {
 		if (options.focused()) {
 			var data = options.onCopy();
 			if (data)
@@ -33,7 +33,7 @@ function initCliparea(parent, options) {
 			event.preventDefault();
 		}
 	});
-	parent.on('cut', function (event) {
+	parent.addEventListener('cut', function (event) {
 		if (options.focused()) {
 			var data = options.onCut();
 			if (data)
@@ -41,7 +41,7 @@ function initCliparea(parent, options) {
 			event.preventDefault();
 		}
 	});
-	parent.on('paste', function (event) {
+	parent.addEventListener('paste', function (event) {
 		if (options.focused()) {
 			var data = paste(event.clipboardData, options.formats);
 			if (data)
@@ -51,7 +51,7 @@ function initCliparea(parent, options) {
 	});
 }
 
-var autofocus = function(cliparea) {
+let autofocus = function(cliparea) {
 	cliparea.value = ' ';
 	cliparea.focus();
 	cliparea.select();

@@ -12,7 +12,7 @@ export function initKeydownListener(element) {
 	return function (dispatch, getState) {
 
 		const hotKeys = initHotKeys();
-		element.on('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
+		element.addEventListener('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
 
 		initClipboard(dispatch, getState, element);
 	}

@@ -100,10 +100,9 @@ function init(opts, apiServer) {
 };
 
 function initNew(opts, apiServer) {
-	var ketcherWindow = $$('[role=application]')[0] || $$('body')[0];
-	ketcherWindow.innerHTML = '';
+	const ketcherWindow = document.querySelector('[role=application]') || document.body;
 	return app(ketcherWindow, opts, apiServer);
-};
+}
 
 function initEditor(editor) {
 	editor.on('elementEdit', function (selem) {

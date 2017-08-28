@@ -166,7 +166,7 @@ CisTrans.prototype.build = function (excludeBonds) {
 		var ct = this.bonds.set(bid,
 			{
 				parity: 0,
-				substituents: new Array(4)
+				substituents: []
 			});
 
 		if (Object.isArray(excludeBonds) && excludeBonds[bid])

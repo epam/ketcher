@@ -1,8 +1,7 @@
 {
   "env": {
     "browser": true,
-    "commonjs": true,
-    "prototypejs": true
+    "commonjs": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {

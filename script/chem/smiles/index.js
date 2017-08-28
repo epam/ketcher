@@ -171,7 +171,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				}
 				*/
 
-			var pyramidMapping = new Array(4);
+			var pyramidMapping = [];
 			var counter = 0;
 
 			var atom = this.atoms[atomIdx];

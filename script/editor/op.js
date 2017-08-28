@@ -378,7 +378,7 @@ function BondDelete(bid) {
 
 		// notifyBondRemoved
 		var rebond = restruct.bonds.get(this.data.bid);
-		[rebond.b.hb1, rebond.b.hb2].each(function (hbid) {
+		[rebond.b.hb1, rebond.b.hb2].forEach(function (hbid) {
 			var hb = restruct.molecule.halfBonds.get(hbid);
 			if (hb.loop >= 0)
 				restruct.loopRemove(hb.loop);
@@ -388,7 +388,7 @@ function BondDelete(bid) {
 		restruct.markItemRemoved();
 
 		var bond = struct.bonds.get(this.data.bid);
-		[bond.hb1, bond.hb2].each(function (hbid) {
+		[bond.hb1, bond.hb2].forEach(function (hbid) {
 			var hb = struct.halfBonds.get(hbid);
 			var atom = struct.atoms.get(hb.begin);
 			var pos = atom.neighbors.indexOf(hbid);

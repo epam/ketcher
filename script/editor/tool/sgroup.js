@@ -122,8 +122,7 @@ function defineContext(restruct, selection) {
 	if (!selection.atoms && selection.bonds) {
 		var allSingle = selection.bonds.every(function (bondid) {
 			var bond = restruct.bonds.get(bondid).b;
-			var singleBond = bond.type === 1 && bond.stereo === 0;
-			return singleBond;
+			return bond.type === 1 && bond.stereo === 0;
 		});
 
 		return allSingle ? 'Single Bond' : 'Group';
@@ -187,7 +186,7 @@ function checkOverlapping(struct, atoms) {
 	var verified = {};
 	var atomsHash = {};
 
-	atoms.each(function (id) {
+	atoms.forEach(function (id) {
 		atomsHash[id] = true;
 	});
 

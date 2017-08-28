@@ -39,7 +39,7 @@ RotateTool.prototype.mousedown = function (event) {
 		var rotId = null;
 		var rotAll = false;
 
-		selection.atoms.each(function (aid) {
+		selection.atoms.forEach(function (aid) {
 			var atom = struct.atoms.get(aid);
 
 			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle

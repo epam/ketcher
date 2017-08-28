@@ -75,7 +75,7 @@ const toolActions = {
 	},
 	"reaction-unmap": {
 		title: "Reaction Unmapping Tool",
-		action: { tool: 'reactionmap' }
+		action: { tool: 'reactionunmap' }
 	},
 	"rgroup-label": {
 		shortcut: "Mod+r",

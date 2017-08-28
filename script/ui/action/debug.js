@@ -11,9 +11,9 @@ export default {
 	"qs-serialize": {
 		shortcut: "Alt+Shift+r",
 		action: editor => {
-			var molStr = molfile.stringify(editor.struct());
-			var molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
-			var qs = document.location.search;
+			const molStr = molfile.stringify(editor.struct());
+			const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
+			const qs = document.location.search;
 			document.location.search = !qs ? '?' + molQs :
 				qs.search('mol=') === -1 ? qs + '&' + molQs :
 				qs.replace(/mol=[^&$]*/, molQs);

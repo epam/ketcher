@@ -9,9 +9,11 @@ class SaveButton extends Component {
 			this.setState({saver});
 		});
 	}
+
 	save(ev) {
-		let noop = () => null;
-		let { filename, data, type, onSave=noop, onError=noop } = this.props;
+		const noop = () => null;
+		const { filename, data, type, onSave = noop, onError = noop } = this.props;
+
 		if (this.state.saver && data)
 			try {
 				this.state.saver(data, filename, type);
@@ -20,12 +22,16 @@ class SaveButton extends Component {
 			catch(e) {
 				onError(e);
 			}
+
 		ev.preventDefault();
 	}
+
 	render() {
 		let { children, filename, data, className, ...props } = this.props;
+
 		if (!this.state.saver || !data)
 			className = `disabled ${className}`;
+
 		return (
 			<a download={filename} onClick={ev => this.save(ev)}
 			   className={className} {...props}>
@@ -39,7 +45,7 @@ function fileSaver(server) {
 	return new Promise((resolve, reject) => {
 		if (global.Blob && fs.saveAs) {
 			resolve((data, fn, type) => {
-				let blob = new Blob([data], { type });
+				const blob = new Blob([data], { type });
 				fs.saveAs(blob, fn);
 			});
 		} else if (server) {

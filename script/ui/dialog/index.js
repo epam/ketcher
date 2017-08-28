@@ -20,7 +20,7 @@ import LabelEdit from './labeledit';
 import RgroupLogic from './rgroup-logic';
 import Settings from './options';
 import Sgroup from './sgroup';
-import SgroupSpecial from './sdata';
+import Sdata from './sdata';
 
 export default {
 	open: Open,
@@ -44,5 +44,5 @@ export default {
 	rgroupLogic: RgroupLogic,
 	settings: Settings,
 	sgroup: Sgroup,
-	sgroupSpecial: SgroupSpecial
+	sdata: Sdata
 };

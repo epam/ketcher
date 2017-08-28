@@ -11,7 +11,7 @@ import StructRender from '../component/structrender';
 import Spin from '../component/spin';
 
 function Recognize(prop) {
-	let {file, structStr, fragment, onRecognize, isFragment, onImage, ...props} = prop;
+	const {file, structStr, fragment, onRecognize, isFragment, onImage, ...props} = prop;
 
 	const result = () =>
 		structStr && !(structStr instanceof Promise) ? {structStr, fragment} : null;
@@ -64,7 +64,7 @@ function Recognize(prop) {
 
 function url(file) {
 	if (!file) return null;
-	var URL = window.URL || window.webkitURL;
+	const URL = window.URL || window.webkitURL;
 	return URL ? URL.createObjectURL(file) : "No preview";
 }
 

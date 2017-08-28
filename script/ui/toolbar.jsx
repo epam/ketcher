@@ -199,7 +199,7 @@ function AtomsList(atoms, {active, onAction, ...props}) {
 				  let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
 				  return (
 					  <li className={classNames({
-							  selected: isAtom && active.opts.label == label
+							  selected: isAtom && active.opts.label === label
 						  })}>
 						<Atom el={element[index]}
 							  shortcut={shortcut}
@@ -221,7 +221,7 @@ function TemplatesList({active, onAction, ...props}) {
 			  templates.map((struct, i) => (
 				  <li id={`template-${i}`}
 					  className={classNames({
-						  selected: isTmpl && active.opts.struct == struct
+						  selected: isTmpl && active.opts.struct === struct
 					  })}>
 					<button title={`${struct.name} (${shortcut})`}
 							onClick={() => onAction({ tool: 'template', opts: { struct } })}>

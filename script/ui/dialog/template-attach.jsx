@@ -55,7 +55,7 @@ class Attach extends Component {
 }
 
 function initTmpl(tmpl) {
-	let normTmpl = {
+	const normTmpl = {
 		struct: tmpl.struct.clone(),
 		props: {
 			atomid: +tmpl.props.atomid || 0,
@@ -64,8 +64,8 @@ function initTmpl(tmpl) {
 	};
 	normTmpl.struct.name = tmpl.struct.name;
 
-	let length = structNormalization(normTmpl.struct);
-	let scale = (3.7 / (length + 5.4 / length)) * 100;
+	const length = structNormalization(normTmpl.struct);
+	const scale = (3.7 / (length + 5.4 / length)) * 100;
 
 	return Object.assign(normTmpl, { scale });
 }
@@ -73,15 +73,18 @@ function initTmpl(tmpl) {
 function structNormalization(struct) {
 	let min = new Vec2(struct.atoms.get(0).pp);
 	let max = new Vec2(struct.atoms.get(0).pp);
+
 	struct.atoms.each(function (aid, atom) {
 		if (atom.pp.x < min.x) min.x = atom.pp.x;
 		if (atom.pp.y < min.y) min.y = atom.pp.y;
 		if (atom.pp.x > max.x) max.x = atom.pp.x;
 		if (atom.pp.y > max.y) max.y = atom.pp.y;
 	});
+
 	struct.atoms.each(function (aid, atom) {
 		atom.pp = Vec2.diff(atom.pp, min);
 	});
+
 	max = Vec2.diff(max, min);
 
 	return (max.x > max.y) ? max.x : max.y;

@@ -106,7 +106,8 @@ const bondCuts = {
 	"aromatic": "4",
 };
 
-let typeSchema = bondSchema.properties.type;
+const typeSchema = bondSchema.properties.type;
+
 export default typeSchema.enum.reduce((res, type, i) => {
 	res[`bond-${type}`] = {
 		title: `${typeSchema.enumNames[i]} Bond`,

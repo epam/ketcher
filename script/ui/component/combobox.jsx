@@ -41,7 +41,7 @@ class ComboBox extends Component {
 					   onBlur={this.blur} onInput={this.updateInput} autocomplete="off"
 				/>
 				{
-					suggestList.length != 0 ?
+					suggestList.length !== 0 ?
 						(
 							<ui className='suggestList'
 								style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}

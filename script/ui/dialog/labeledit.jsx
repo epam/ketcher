@@ -22,9 +22,9 @@ export const labelEditSchema = {
 };
 
 function serialize(lc) {
-	var charge = Math.abs(lc.charge);
-	var radical = ['', ':', '.', '^^'][lc.radical] || '';
-	var sign = '';
+	const charge = Math.abs(lc.charge);
+	const radical = ['', ':', '.', '^^'][lc.radical] || '';
+	let sign = '';
 	if (charge)
 		sign = lc.charge < 0 ? '-' : '+';
 	return (lc.isotope || '') + lc.label + radical +
@@ -32,16 +32,19 @@ function serialize(lc) {
 }
 
 function deserialize(value) {
-	var match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i); // TODO: radical on last place
+	const match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i); // TODO: radical on last place
 	if (match) {
-		var label = match[2] == '*' ? 'A' : capitalize(match[2]);
-		var charge = 0;
-		var isotope = 0;
-		var radical = 0;
+		const label = match[2] === '*' ? 'A' : capitalize(match[2]);
+		let charge = 0;
+		let isotope = 0;
+		let radical = 0;
+
 		if (match[1])
 			isotope = parseInt(match[1]);
+
 		if (match[3])
 			radical = { ':': 1, '.': 2, '^^': 3 }[match[3]];
+
 		if (match[4]) {
 			charge = parseInt(match[4]);
 			if (isNaN(charge)) // NaN => [-+]
@@ -50,16 +53,16 @@ function deserialize(value) {
 				charge = -charge;
 		}
 		// Not consistant
-		if (label == 'A' || label == 'Q' || label == 'X' || label == 'M' || element.map[label])
+		if (label === 'A' || label === 'Q' || label === 'X' || label === 'M' || element.map[label])
 			return { label, charge, isotope, radical };
 	}
 	return null;
 }
 
 function LabelEdit(props) {
-	let init = { label: props.letter || serialize(props) };
-	let { formState, ...prop} = props;
-	let { result, valid } = formState;
+	const init = { label: props.letter || serialize(props) };
+	const { formState, ...prop} = props;
+	const { result, valid } = formState;
 
 	return (
 		<Dialog title="Label Edit" className="labeledit" valid={() => valid}

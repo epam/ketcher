@@ -1,5 +1,5 @@
 import { mapOf } from '../utils';
-import { sgroupSpecial as sgroupSchema } from '../data/sdata-schema'
+import { sdataSchema } from '../data/sdata-schema'
 
 const contextSchema = {
 	title: 'Context',
@@ -12,8 +12,8 @@ const contextSchema = {
 	default: 'Fragment'
 };
 
-const schemes = Object.keys(sgroupSchema).reduce((acc, title) => {
-	acc[title] = mapOf(sgroupSchema[title], 'fieldName');
+const schemes = Object.keys(sdataSchema).reduce((acc, title) => {
+	acc[title] = mapOf(sdataSchema[title], 'fieldName');
 	Object.keys(acc[title]).forEach(fieldName => acc[title][fieldName].properties.context = contextSchema);
 	return acc;
 }, {});
@@ -44,7 +44,7 @@ export const initSdata = () => {
 	}
 };
 
-export function sgroupSpecialReducer(state, action) {
+export function sdataReducer(state, action) {
 	const actionContext = action.data.result['context'];
 	const actionFieldName = action.data.result['fieldName'];
 

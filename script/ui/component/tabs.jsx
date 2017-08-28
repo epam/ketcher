@@ -7,6 +7,7 @@ class Tabs extends Component {
 		this.state.tabIndex = props.tabIndex || 0;
 		this.props.changeTab(this.state.tabIndex);
 	}
+
 	changeTab(ev, index) {
 		this.setState({ tabIndex: index });
 		if (this.props.changeTab)
@@ -14,7 +15,7 @@ class Tabs extends Component {
 	}
 
 	render() {
-		let {children, captions, ...props} = this.props;
+		const {children, captions, ...props} = this.props;
 		return (
 			<ul {...props}>
 				<li className="tabs">

@@ -20,7 +20,7 @@ class Accordion extends Component {
 				{ captions.map((caption, index) => (
 					<li className="tab">
 						<a className={this.state.active[index]  ? 'active' : ''}
-							onClick={ () => this.onActive(index)}>
+							onClick={() => this.onActive(index)}>
 							{caption}
 						</a>
 						{this.state.active[index] ? children[index] : null }

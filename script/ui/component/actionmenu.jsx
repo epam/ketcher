@@ -13,7 +13,7 @@ const shortcutAliasMap = {
 };
 
 export function shortcutStr(shortcut) {
-	var key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
+	const key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
 	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (key) {
 		return shortcutAliasMap[key] || key.toUpperCase();
 	});

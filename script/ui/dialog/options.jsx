@@ -15,9 +15,10 @@ import OpenButton from '../component/openbutton';
 import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
-	let { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;
+	const { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Server', '3D Viewer', 'Options for debugging'];
-	let activeTabs = { 0: true, 1: false, 2: false, 3: false, 4: false, 5: false };
+	const activeTabs = { 0: true, 1: false, 2: false, 3: false, 4: false, 5: false };
+
 	return (
 		<Dialog title="Settings" className="settings"
 				result={() => formState.result} valid={() => formState.valid} params={prop}
@@ -78,7 +79,7 @@ function Settings(props) {
 }
 
 function SelectCheckbox(props, {schema}) {
-	let desc = {
+	const desc = {
 		title: schema.properties[props.name].title,
 		enum: [true, false],
 		enumNames: ['on', 'off'],

@@ -83,7 +83,7 @@ class TemplateLib extends Component {
 	}
 
 	result() {
-		let tmpl = this.props.selected;
+		const tmpl = this.props.selected;
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
 			struct: tmpl.struct,
@@ -109,7 +109,7 @@ class TemplateLib extends Component {
 	render() {
 		const COLS = 3;
 		let { group, filter, onFilter, onChangeGroup, ...props } = this.props;
-		let lib = filterLibSelector(this.props);
+		const lib = filterLibSelector(this.props);
 		group = lib[group] ? group : Object.keys(lib)[0];
 
 		return (

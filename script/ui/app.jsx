@@ -16,17 +16,17 @@ import StructEditor from './component/structeditor';
 import modals from './dialog';
 
 const AppEditor = connect(
-	(state) => ({
+	state => ({
 		options: state.options.settings
 	}),
-	(dispatch) => dispatch(initEditor)
+	dispatch => dispatch(initEditor)
 )(StructEditor);
 
 const AppModal = connect(
-	(state) => ({
+	state => ({
 		modal: state.modal
 	}),
-	(dispatch) => ({
+	dispatch => ({
 		onOk: function (res) {
 			console.info('Output:', res);
 			dispatch({ type: 'MODAL_CLOSE' });
@@ -54,22 +54,29 @@ const AppModal = connect(
 )(({modal, ...props}) => {
 	if (!modal)
 		return null;
+
 	let Modal = modals[modal.name];
-	return <div className="overlay">
-		<Modal {...props}/>
-	</div>
+
+	if (!Modal)
+		throw new Error(`There is no modal window named ${modal.name}`);
+
+	return (
+		<div className="overlay">
+			<Modal {...props}/>
+		</div>
+	);
 });
 
 const AppTemplates = connect(
 	null,
-	(dispatch) => ({
+	dispatch => ({
 		onInitTmpls: (cacheEl) => initTmplLib(dispatch, '', cacheEl)
 	})
 )(class extends Component {
 	componentDidMount() {
 		this.props.onInitTmpls(this.cacheEl);
 	}
-	render = () => (<div className="cellar" ref={c => this.cacheEl = c}></div>)
+	render = () => (<div className="cellar" ref={c => this.cacheEl = c} />)
 });
 
 const App = connect(
@@ -89,9 +96,8 @@ const App = connect(
 	)
 });
 
-
 function init(el, options, server) {
-	var store = state(options, server);
+	const store = state(options, server);
 	store.dispatch(initKeydownListener(el));
 	store.dispatch(initResize());
 

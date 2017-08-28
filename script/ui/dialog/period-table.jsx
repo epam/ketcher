@@ -29,10 +29,10 @@ const beforeSpan = {
 	'Rf': 1
 };
 
-const main = rowPartition(element.filter(el => el && el.type != 'actinide' &&
-						                 el.type != 'lanthanide'));
-const lanthanides = element.filter(el => el && el.type == 'lanthanide');
-const actinides = element.filter(el => el && el.type == 'actinide');
+const main = rowPartition(element.filter(el => el && el.type !== 'actinide' &&
+						                 el.type !== 'lanthanide'));
+const lanthanides = element.filter(el => el && el.type === 'lanthanide');
+const actinides = element.filter(el => el && el.type === 'actinide');
 
 function Header() {
 	return (
@@ -53,7 +53,7 @@ function TypeChoise({value, onChange, ...props}) {
 				typeSchema.map(sc => (
 					<label>
 					  <input type="radio" value={sc.value}
-							 checked={sc.value == value}
+							 checked={sc.value === value}
 							 onClick={ev => onChange(sc.value) } {...props}/>
 						{sc.title}
 					</label>
@@ -141,7 +141,7 @@ class PeriodTable extends Component {
 	}
 	selected(label) {
 		let {type, value} = this.state;
-		return (type === 'atom' || type === 'gen') ? value == label :
+		return (type === 'atom' || type === 'gen') ? value === label :
 			value.includes(label);
 	}
 	onSelect(label) {
@@ -149,7 +149,7 @@ class PeriodTable extends Component {
 		if (type === 'atom' || type === 'gen')
 			this.setState({ value: label });
 		else {
-			var i = value.indexOf(label);
+			let i = value.indexOf(label);
 			if (i < 0)
 				value.push(label);
 			else
@@ -187,7 +187,7 @@ class PeriodTable extends Component {
 							{
 								main.map((row, i) => (
 									<MainRow row={row} caption={i + 1}
-											 ref={o => o == 1 && (i == 5 ? '*' : '**')}
+											 ref={o => o === 1 && (i === 5 ? '*' : '**')}
 											 curEvents={this.curEvents}
 											 selected={l => this.selected(l)}
 											 onSelect={l => this.onSelect(l)}/>
@@ -229,13 +229,15 @@ function rowPartition(elements) {
 }
 
 function mapSelectionToProps(editor) {
-	let selection = editor.selection();
+	const selection = editor.selection();
+
 	if (selection && Object.keys(selection).length === 1 &&
 		selection.atoms && Object.keys(selection.atoms).length === 1) {
 		let struct = editor.struct();
 		let atom = struct.atoms.get(selection.atoms[0]);
 		return { ...fromElement(atom) }
 	}
+
 	return {};
 }
 

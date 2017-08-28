@@ -60,9 +60,12 @@ export function addAtoms(atomLabel) {
 
 function getToolFromAction(action) {
 	let tool = null;
+
 	for (let toolName in tools) {
-		if (isEqual(action, tools[toolName].action)) tool = toolName;
+		if (tools.hasOwnProperty(toolName) && isEqual(action, tools[toolName].action))
+			tool = toolName;
 	}
+
 	return tool;
 }
 
@@ -78,9 +81,11 @@ function toolInMenu(action) {
 export function hiddenAncestor(el, base) {
 	base = base || document.body;
 	let findEl = el;
+
 	while (window.getComputedStyle(findEl).overflow !== 'hidden' && !findEl.classList.contains('opened')) {
 		if (findEl === base) return null;
 		findEl = findEl.parentNode;
 	}
+
 	return findEl;
 }

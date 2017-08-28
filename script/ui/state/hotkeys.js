@@ -10,7 +10,6 @@ import { onAction, openDialog, load } from './';
 
 export function initKeydownListener(element) {
 	return function (dispatch, getState) {
-
 		const hotKeys = initHotKeys();
 		element.addEventListener('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
 
@@ -19,12 +18,13 @@ export function initKeydownListener(element) {
 }
 
 function keyHandle(dispatch, getState, hotKeys, event) {
-	let editor = getState().editor;
-	let actionTool = getState().actionState.activeTool;
+	const editor = getState().editor;
+	const actionTool = getState().actionState.activeTool;
 
-	let key = keyNorm(event);
-	let atomsSelected = editor.selection() && editor.selection().atoms;
-	let group;
+	const key = keyNorm(event);
+	const atomsSelected = editor.selection() && editor.selection().atoms;
+
+	let group = null;
 
 	if (key.length === 1 && atomsSelected && key.match(/\w/)) {
 		console.assert(atomsSelected.length > 0);
@@ -32,7 +32,6 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 			dispatch(onAction({ tool: 'atom', opts: res }));
 		});
 		event.preventDefault();
-
 	} else if (group = keyNorm.lookup(hotKeys, event)) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
 		index = (index + 1) % group.length;
@@ -47,25 +46,25 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 	}
 }
 
-function initHotKeys() {
-	let hotKeys = {};
-	let act;
+function setHotKey(key, actName, hotKeys) {
+	if (Array.isArray(hotKeys[key]))
+		hotKeys[key].push(actName);
+	else
+		hotKeys[key] = [actName];
+}
 
-	function setHotKey(key, actName) {
-		if (Array.isArray(hotKeys[key]))
-			hotKeys[key].push(actName);
-		else
-			hotKeys[key] = [actName];
-	}
+function initHotKeys() {
+	const hotKeys = {};
+	let act;
 
 	for (let actName in actions) {
 		act = actions[actName];
 		if (!act.shortcut) continue;
 
 		if (Array.isArray(act.shortcut))
-			act.shortcut.forEach(key => setHotKey(key, actName));
+			act.shortcut.forEach(key => setHotKey(key, actName, hotKeys));
 		else
-			setHotKey(act.shortcut, actName);
+			setHotKey(act.shortcut, actName, hotKeys);
 	}
 
 	return keyNorm(hotKeys);
@@ -75,8 +74,10 @@ function checkGroupOnTool(group, actionTool) {
 	let index = group.indexOf(actionTool.tool);
 
 	group.forEach((actName, i) => {
-		if (isEqual(actions[actName].action, actionTool)) index = i;
+		if (isEqual(actions[actName].action, actionTool))
+			index = i;
 	});
+
 	return index;
 }
 
@@ -84,6 +85,7 @@ function initClipboard(dispatch, getState, element) {
 	const formats = Object.keys(structFormat.map).map(function (fmt) {
 		return structFormat.map[fmt].mime;
 	});
+
 	const debAction  = debounce(0, (action) => dispatch( onAction(action) ));
 	const loadStruct = debounce(0, (structStr, opts) => dispatch( load(structStr, opts) ));
 
@@ -104,9 +106,10 @@ function initClipboard(dispatch, getState, element) {
 			return data;
 		},
 		onPaste: function (data) {
-			var structStr = data['chemical/x-mdl-molfile'] ||
+			const structStr = data['chemical/x-mdl-molfile'] ||
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
+
 			if (structStr)
 				loadStruct(structStr, { fragment: true });
 		}
@@ -114,12 +117,15 @@ function initClipboard(dispatch, getState, element) {
 }
 
 function clipData(editor) {
-	let res = {};
-	let struct = editor.structSelected();
+	const res = {};
+	const struct = editor.structSelected();
+
 	if (struct.isBlank())
 		return null;
-	let type = struct.isReaction ?
+
+	const type = struct.isReaction ?
 		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
+
 	res['text/plain'] = res[type] = molfile.stringify(struct);
 	// res['chemical/x-daylight-smiles'] =
 	// smiles.stringify(struct);

@@ -8,17 +8,22 @@ class OpenButton extends Component {
 			this.setState({opener});
 		});
 	}
+
 	open(ev) {
-		let files = ev.target.files;
-		let noop = () => null;
-		let { onLoad=noop, onError=noop } = this.props;
+		const files = ev.target.files;
+		const noop = () => null;
+		const { onLoad = noop, onError = noop } = this.props;
+
 		if (this.state.opener && files.length) {
 			this.state.opener(files[0]).then(onLoad, onError);
 		}
+
 		ev.preventDefault();
 	}
+
 	render() {
-		let { children, type, ...props } = this.props;
+		const { children, type, ...props } = this.props;
+
 		return (
 			<label disabled={ !this.state.opener } { ...props }>
 				{ children }
@@ -37,7 +42,7 @@ function fileOpener (server) {
 
 		else if (global.ActiveXObject) {
 			try {
-				var fso = new ActiveXObject('Scripting.FileSystemObject');
+				const fso = new ActiveXObject('Scripting.FileSystemObject');
 				resolve(file => Promise.resolve(throughFileSystemObject(fso, file)));
 			} catch (e) {
 				reject(e);
@@ -55,23 +60,26 @@ function fileOpener (server) {
 
 function throughFileReader(file) {
 	return new Promise((resolve, reject) => {
-		var rd = new FileReader();
+		const rd = new FileReader();
+
 		rd.onload = event => {
-			var content = rd.result;
+			const content = rd.result;
 			if (file.msClose)
 				file.msClose();
 			resolve(content);
 		};
+
 		rd.onerror = event => {
 			reject(event);
 		};
+
 		rd.readAsText(file, 'UTF-8');
 	});
 }
 
 function throughFileSystemObject(fso, file) {
 	// IE9 and below
-	var fd =  fso.OpenTextFile(file.name, 1),
+	const fd =  fso.OpenTextFile(file.name, 1),
 	content = fd.ReadAll();
 	fd.Close();
 	return content;

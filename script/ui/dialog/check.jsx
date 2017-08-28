@@ -24,14 +24,14 @@ const checkSchema = {
 	}
 };
 function getOptionName(opt) {
-	let d = checkSchema.properties.checkOptions.items;
+	const d = checkSchema.properties.checkOptions.items;
 	return d.enumNames[d.enum.indexOf(opt)];
 }
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	let { formState, onCheck, ...prop } = props;
-	let { result, moleculeErrors } = formState;
+	const { formState, onCheck, ...prop } = props;
+	const { result, moleculeErrors } = formState;
 
 	return (
 		<Dialog title="Structure Check" className="check"
@@ -48,8 +48,9 @@ function Check(props) {
 }
 
 function ErrorsCheck(props) {
-	let { moleculeErrors } = props;
-	let moleculeErrorsTypes = Object.keys(moleculeErrors);
+	const { moleculeErrors } = props;
+	const moleculeErrorsTypes = Object.keys(moleculeErrors);
+
 	return (
 		<fieldset {...props}>
 			{moleculeErrorsTypes.length === 0 ?

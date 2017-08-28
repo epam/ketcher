@@ -8,7 +8,7 @@ import { load } from './';
 
 function serverCall(editor, server, method, options, struct) {
 	if (!struct) {
-		var aidMap = {};
+		const aidMap = {};
 		struct = editor.struct().clone(null, null, false, aidMap);
 		var selectedAtoms = editor.explicitSelected().atoms || [];
 		selectedAtoms = selectedAtoms.map(function (aid) {

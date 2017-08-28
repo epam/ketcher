@@ -13,10 +13,10 @@ import action from './action';
 import toolbar from './toolbar';
 
 function modal(state = null, action) {
-	let { type, data } = action;
+	const { type, data } = action;
 
 	if (type === 'UPDATE_FORM') {
-		let formState = formReducer(state.form, action, state.name);
+		const formState = formReducer(state.form, action, state.name);
 		return { ...state, form: formState }
 	}
 
@@ -44,13 +44,17 @@ const shared = combineReducers({
 });
 
 export function onAction(action) {
+	console.info('on action', action);
+
 	if (action && action.dialog)
 		return {
 			type: 'MODAL_OPEN',
 			data: { name: action.dialog }
 		};
+
 	if (action && action.thunk)
 		return action.thunk;
+
 	return {
 		type: 'ACTION',
 		action
@@ -58,15 +62,15 @@ export function onAction(action) {
 }
 
 export function openDialog(dispatch, dialogName, props) {
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		dispatch({
 			type: 'MODAL_OPEN',
 			data: {
 				name: dialogName,
 				prop: {
 					...props,
-					onResult: (res) => resolve(res),
-					onCancel: () => reject()
+					onResult: resolve,
+					onCancel: reject
 				}
 			}
 		})
@@ -76,13 +80,13 @@ export function openDialog(dispatch, dialogName, props) {
 export function load(structStr, options) {
 	return (dispatch, getState) => {
 		const state = getState();
-		let editor = state.editor;
-		let server = state.server;
+		const editor = state.editor;
+		const server = state.server;
 
 		options = options || {};
 		// TODO: check if structStr is parsed already
 		//utils.loading('show');
-		var parsed = structFormat.fromString(structStr,
+		const parsed = structFormat.fromString(structStr,
 			options, server);
 
 		parsed.catch(function (err) {
@@ -95,10 +99,12 @@ export function load(structStr, options) {
 			console.assert(struct, 'No molecule to update');
 			if (options.rescale)
 				struct.rescale();   // TODO: move out parsing?
+
 			if (options.fragment && !struct.isBlank())
 				dispatch(onAction({ tool: 'paste', opts: struct }));
 			else
 				editor.struct(struct);
+
 			return struct;
 		}, function (err) {
 			alert(err);
@@ -116,10 +122,11 @@ function root(state, action) {
 			state = { ...state, ...data };
 	}
 
-	let sh = shared(state, {
+	const sh = shared(state, {
 		...action,
 		...pick(['editor', 'server', 'options'], state)
 	});
+
 	return (sh === state.shared) ? state : {
 		...state, ...sh
 	};
@@ -127,7 +134,7 @@ function root(state, action) {
 
 export default function(options, server) {
 	// TODO: redux localStorage here
-	var initState = {
+	const initState = {
 		actionState: null,
 		options: Object.assign(optionsState, { app: options }),
 		server: server || Promise.reject("Standalone mode!"),
@@ -137,6 +144,7 @@ export default function(options, server) {
 	};
 
 	const middleware = [ thunk ];
+
 	if (process.env.NODE_ENV !== 'production')
 		middleware.push(logger);
 

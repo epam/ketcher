@@ -7,10 +7,11 @@ class ClipArea extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}
+
 	componentDidMount() {
-		let el = this.refs ? this.refs.base : this.base;
-		let target = this.props.target || el.parentNode;
-		let self = this;
+		const el = this.refs ? this.refs.base : this.base;
+		const target = this.props.target || el.parentNode;
+		const self = this;
 
 		// TODO: remove event listeners on unmount or
 		//       target change
@@ -23,7 +24,7 @@ class ClipArea extends Component {
 			let cb = (en === 'copy') ? 'onCopy' : 'onPaste';
 			target.addEventListener(en, event => {
 				if (!self.props.disabled && self.props[cb]) {
-					var data = self.props[cb]();
+					const data = self.props[cb]();
 					if (data)
 						copy(event.clipboardData, data);
 					event.preventDefault();
@@ -33,7 +34,7 @@ class ClipArea extends Component {
 
 		target.addEventListener('paste', event => {
 			if (!self.props.disabled && self.props.onPaste) {
-				var data = paste(event.clipboardData,
+				const data = paste(event.clipboardData,
 								 self.props.formats);
 				if (data)
 					self.props.onPaste(data);
@@ -41,6 +42,7 @@ class ClipArea extends Component {
 			}
 		});
 	}
+
 	render () {
 		return (
 			<i className="cliparea" contentEditable="true"
@@ -53,7 +55,7 @@ function autofocus(cliparea) {
 	cliparea.value = ' ';
 	cliparea.focus();
 	cliparea.select();
-};
+}
 
 function copy(cb, data) {
 	if (!cb && ieCb) {
@@ -68,25 +70,26 @@ function copy(cb, data) {
 			console.info('Could not write exact type', ex);
 		}
 	}
-};
+}
 
 function paste(cb, formats) {
-	var data = {};
+	let data = {};
 	if (!cb && ieCb) {
 		data['text/plain'] = ieCb.getData('text');
 	} else {
 		data['text/plain'] = cb.getData('text/plain');
 		data = formats.reduce(function (data, fmt) {
-			var d = cb.getData(fmt);
+			const d = cb.getData(fmt);
 			if (d)
 				data[fmt] = d;
 			return data;
 		}, data);
 	}
 	return data;
-};
+}
 
 export const actions = ['cut', 'copy', 'paste'];
+
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
 	if (enabled) try {

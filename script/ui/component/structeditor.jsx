@@ -5,21 +5,29 @@ import { h, Component } from 'preact';
 import Editor from '../../editor'
 
 function setupEditor(editor, props, oldProps = {}) {
-	let { struct, tool, toolOpts, options } = props;
-	if (struct != oldProps.struct)
+	const { struct, tool, toolOpts, options } = props;
+
+	if (struct !== oldProps.struct)
 		editor.struct(struct);
-	if (tool != oldProps.tool || toolOpts != oldProps.toolOpts)
+
+	if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts)
 		editor.tool(tool, toolOpts);
-	if (oldProps.options && options != oldProps.options)
+
+	if (oldProps.options && options !== oldProps.options)
 		editor.options(options);
 
 	// update handlers
 	for (let name in editor.event) {
+		if (!editor.event.hasOwnProperty(name))
+			continue;
+
 		let eventName = `on${upperFirst(name)}`;
-		if (props[eventName] != oldProps[eventName]) {
+
+		if (props[eventName] !== oldProps[eventName]) {
 			console.info('update editor handler', eventName);
 			if (oldProps[eventName])
 				editor.event[name].remove(oldProps[eventName]);
+
 			if (props[eventName])
 				editor.event[name].add(props[eventName]);
 		}
@@ -30,9 +38,11 @@ class StructEditor extends Component {
 	shouldComponentUpdate() {
 		return false;
 	}
+
 	componentWillReceiveProps(props) {
 		setupEditor(this.instance, props, this.props);
 	}
+
 	componentDidMount() {
 		console.assert(this.base, "No backing element");
 		this.instance = new Editor(this.base, { ...this.props.options });
@@ -40,6 +50,7 @@ class StructEditor extends Component {
 		if (this.props.onInit)
 			this.props.onInit(this.instance);
 	}
+
 	render () {
 		let { Tag="div", ...props } = this.props;
 		return (

@@ -1,5 +1,5 @@
 import { defaultOpts } from './options';
-import { initSdata, sgroupSpecialReducer } from './sdata';
+import { initSdata, sdataReducer } from './sdata';
 
 export const formsState = {
 	atomProps: {
@@ -77,7 +77,7 @@ export const formsState = {
 			type: 'GEN'
 		}
 	},
-	sgroupSpecial: initSdata()
+	sdata: initSdata()
 };
 
 export function updateFormState(data) {
@@ -106,9 +106,8 @@ export function setDefaultSettings() {
 }
 
 export function formReducer(state, action, formName) {
-
-	if (formName === 'sgroup-data')
-		return sgroupSpecialReducer(state, action);
+	if (formName === 'sdata')
+		return sdataReducer(state, action);
 
 	return Object.assign({}, state, action.data);
 }

@@ -7,7 +7,7 @@ const radioButtonsSchema =  {
 	default: "Absolute"
 };
 
-export const sgroupSpecial = {
+export const sdataSchema = {
 	Fragment: {
 		title: 'Context',
 		type: 'Object',

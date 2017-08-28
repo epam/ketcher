@@ -71,7 +71,7 @@ SGroupTool.prototype.mouseup = function (event) {
 	}
 
 	// TODO: handle click on an existing group?
-	if (id != null || (selection && selection.atoms))
+	if (id !== null || (selection && selection.atoms))
 		propsDialog(this.editor, id, this.type);
 };
 
@@ -79,7 +79,7 @@ function propsDialog(editor, id, defaultType) {
 	var restruct = editor.render.ctab;
 	var struct = restruct.molecule;
 	var selection = editor.selection() || {};
-	var sg = (id != null) && struct.sgroups.get(id);
+	var sg = (id !== null) && struct.sgroups.get(id);
 	var type = sg ? sg.type : defaultType;
 	var eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
@@ -138,9 +138,6 @@ function defineContext(restruct, selection) {
 			var componentAtoms = Object.keys(component);
 			var count = componentAtoms
 				.reduce(function (acc, atom) { return acc + (atomSelectMap[atom] === undefined); }, 0);
-
-			console.info('count', count);
-			console.info('component', componentAtoms.length);
 
 			return count === 0 || count === componentAtoms.length;
 		});
@@ -202,16 +199,13 @@ function checkOverlapping(struct, atoms) {
 			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
 
 			if (sgAtoms.length < atoms.length) {
-				if (0 <= sgAtoms.findIndex(function (aid) {
-					return !(aid in atomsHash);
-				}))
+				if (0 <= sgAtoms.findIndex(function (aid) { return !(aid in atomsHash); }))
 					return true;
-			} else if (0 <= atoms.findIndex(function (aid) {
-				return (sgAtoms.indexOf(aid) === -1);
-			})) {
-				return true;
 			}
-			return false;
+
+			return 0 <= atoms.findIndex(function (aid) {
+				return (sgAtoms.indexOf(aid) === -1);
+			});
 		});
 	});
 }

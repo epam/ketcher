@@ -4,15 +4,17 @@ import Struct from '../chem/struct';
 import element from '../chem/element';
 
 export function fromElement(selem) {
-	if (selem.label == 'R#')
+	if (selem.label === 'R#')
 		return {
 			type: 'rlabel',
 			values: fromRlabel(selem.rglabel)
 		};
-	if (selem.label == 'L#')
+	if (selem.label === 'L#')
 		return fromAtomList(selem);
+
 	if (element.map[selem.label])
 		return fromAtom(selem);
+
 	if (!selem.label && 'attpnt' in selem)
 		return { ap: fromApoint(selem.attpnt) };
 
@@ -20,19 +22,23 @@ export function fromElement(selem) {
 }
 
 export function toElement(elem) {
-	if (elem.type == 'rlabel')
+	if (elem.type === 'rlabel')
 		return {
 			label: elem.values.length ? 'R#' : 'C',
 			rglabel: toRlabel(elem.values)
 		};
-	if (elem.type == 'list' || elem.type == 'not-list')
+
+	if (elem.type === 'list' || elem.type === 'not-list')
 		return toAtomList(elem);
+
 	if (!elem.label && 'ap' in elem)
 		return { attpnt: toApoint(elem.ap) };
+
 	if (element.map[capitalize(elem.label)])
 		return toAtom(elem);
-	if (elem.label == 'A' || elem.label == '*' || elem.label == 'Q' ||
-		elem.label == 'X' || elem.label == 'R') {
+
+	if (elem.label === 'A' || elem.label === '*' || elem.label === 'Q' ||
+		elem.label === 'X' || elem.label === 'R') {
 		elem.pseudo = elem.label;
 		return toAtom(elem);
 	}
@@ -41,7 +47,8 @@ export function toElement(elem) {
 }
 
 function fromAtom(satom) {
-	var alias = satom.alias || '';
+	const alias = satom.alias || '';
+
 	return {
 		alias: alias,
 		label: satom.label,
@@ -78,7 +85,7 @@ function toAtomList(atom) {
 		pseudo: null,
 		label: 'L#',
 		atomList: new Struct.AtomList({
-			notList: atom.type == 'not-list',
+			notList: atom.type === 'not-list',
 			ids: atom.values.map(el => element.map[el])
 		})
 	};
@@ -138,9 +145,9 @@ export function toBondType(caption) {
 }
 
 function fromBondType(type, stereo) {
-	for (var caption in bondCaptionMap) {
-		if (bondCaptionMap[caption].type == type &&
-			bondCaptionMap[caption].stereo == stereo)
+	for (let caption in bondCaptionMap) {
+		if (bondCaptionMap[caption].type === type &&
+			bondCaptionMap[caption].stereo === stereo)
 			return caption;
 	}
 	throw 'No such bond caption';

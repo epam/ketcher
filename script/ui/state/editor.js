@@ -6,7 +6,6 @@ import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 
 export function initEditor(dispatch, getState) {
-
 	const changeAction = debounce(100, () => dispatch(resetToSelect()));
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
 
@@ -21,8 +20,9 @@ export function initEditor(dispatch, getState) {
 			updateAction();
 		},
 		onElementEdit: selem => {
-			let elem = fromElement(selem);
+			const elem = fromElement(selem);
 			let dlg = null;
+
 			if (element.map[elem.label]) {
 				dlg = openDialog(dispatch, 'atomProps', elem);
 			} else if (Object.keys(elem).length === 1 && 'ap' in elem) {
@@ -35,6 +35,7 @@ export function initEditor(dispatch, getState) {
 			} else {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
+
 			return dlg.then((res) => toElement(res));
 		},
 		onQuickEdit: atom => {
@@ -46,9 +47,11 @@ export function initEditor(dispatch, getState) {
 		},
 		onRgroupEdit: rgroup => {
 			if (Object.keys(rgroup).length > 1) {
-				let rgids = [];
+				const rgids = [];
 				getState().editor.struct().rgroups.each((rgid) => rgids.push(rgid));
+
 				if (!rgroup.range) rgroup.range = '>0';
+
 				return openDialog(dispatch, 'rgroupLogic',
 					Object.assign({ rgroupLabels: rgids }, rgroup));
 			}
@@ -56,11 +59,11 @@ export function initEditor(dispatch, getState) {
 		},
 		onSgroupEdit: sgroup => {
 			return openDialog(dispatch, 'sgroup', fromSgroup(sgroup))
-				.then((res) => toSgroup(res));
+				.then(toSgroup);
 		},
 		onSdataEdit: sgroup => {
-			return openDialog(dispatch, sgroup.type === 'DAT' ? 'sgroupSpecial' : 'sgroup', fromSgroup(sgroup))
-				.then((res) => toSgroup(res));
+			return openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup))
+				.then(toSgroup);
 		},
 		onMessage: msg => {
 			if (msg.error)

@@ -3,7 +3,7 @@ import { h } from 'preact';
 
 import generics from '../../chem/generics';
 
-var viewSchema = {
+const viewSchema = {
 	'atom': {
 		caption: 'Atom Generics',
 		order: ['any', 'no-carbon', 'metal', 'halogen']
@@ -68,9 +68,9 @@ function GenSet({labels, caption='', selected, onSelect, ...props}) {
 }
 
 function GenGroup({gen, key, path, selected, onSelect}) {
-	let group = gen[key];
-	let pk = path ? `${path}/${key}` : key;
-	let schema = viewSchema[pk];
+	const group = gen[key];
+	const pk = path ? `${path}/${key}` : key;
+	const schema = viewSchema[pk];
 
 	return (schema && schema.caption) ? (
 		<fieldset className={key}>

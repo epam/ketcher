@@ -17,10 +17,12 @@ export default class VirtualList extends Component {
 	}
 
 	resize = (ev, reset) => {
-		var height = this.base.offsetHeight;
+		const height = this.base.offsetHeight;
+
 		if (this.state.height !== height) {
 			this.setState({ height });
 		}
+
 		if (reset) {
 			this.setState({offset: 0});
 			this.base.scrollTop = 0;
@@ -33,8 +35,9 @@ export default class VirtualList extends Component {
 	};
 
 	componentDidUpdate({data}) {
-		var equal = (data.length == this.props.data.length &&
-					 this.props.data.every((v,i)=> v === data[i]));
+		const equal = (data.length === this.props.data.length &&
+					 this.props.data.every((v, i)=> v === data[i]));
+
 		this.resize(null, !equal);
 	}
 
@@ -48,12 +51,12 @@ export default class VirtualList extends Component {
 	}
 
 	render() {
-		var { data, rowHeight, children, Tag="div", overscanCount=1, sync, ...props } = this.props;
-		var { offset, height } = this.state;
+		const { data, rowHeight, children, Tag="div", overscanCount=1, sync, ...props } = this.props;
+		const { offset, height } = this.state;
 		//console.info('offset', offset);
 		// first visible row index
 		let start = (offset / rowHeight) || 0;
-		let renderRow = children[0];
+		const renderRow = children[0];
 
 		// actual number of visible rows (without overscan)
 		let visibleRowCount = (height / rowHeight) || 0;
@@ -66,7 +69,7 @@ export default class VirtualList extends Component {
 		}
 
 		// last visible + overscan row index
-		let end = start + 1 + visibleRowCount;
+		const end = start + 1 + visibleRowCount;
 
 		// data slice currently in viewport plus overscan items
 		let selection = data.slice(start, end);

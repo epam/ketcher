@@ -56,8 +56,8 @@ class RGroupAtom extends Component {
 		this.state.values = values || [];
     }
 	onSelect(index) {
-		var {values} = this.state;
-		var i = values.indexOf(index);
+		const {values} = this.state;
+		const i = values.indexOf(index);
 		if (i < 0)
 			values.push(index);
 		else

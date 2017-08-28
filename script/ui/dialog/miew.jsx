@@ -39,26 +39,35 @@ function getLocalMiewOpts() {
 	let userOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
 	if (!userOpts)
 		return MIEW_OPTIONS;
-	let opts = MIEW_OPTIONS;
+
+	const opts = MIEW_OPTIONS;
+
 	if (userOpts.miewTheme)
 		opts.settings.theme = camelCase(userOpts.miewTheme);
+
 	if (userOpts.miewAtomLabel)
 		opts.settings.atomLabel = camelCase(userOpts.miewAtomLabel);
+
 	if (userOpts.miewMode)
 		opts.reps[0].mode = MIEW_MODES[camelCase(userOpts.miewMode)];
+
 	return opts;
 }
 
 function origin (url) {
-	var loc = url;
+	let loc = url;
+
 	if (!loc.href) {
 		loc = document.createElement('a');
 		loc.href = url;
 	}
+
 	if (loc.origin)
 		return loc.origin;
+
 	if (!loc.hostname) // relative url, IE
 		loc = document.location;
+
 	return loc.protocol  + '//' + loc.hostname +
 		   (!loc.port ? '' : ':' + loc.port);
 }
@@ -71,10 +80,10 @@ function queryOptions(options, sep='&') {
 				res.push(value);
 			return res;
 		}, []).join(sep);
-	} else if (typeof options == 'object') {
+	} else if (typeof options === 'object') {
 		return Object.keys(options).reduce((res, item) => {
 			let value = options[item];
-			res.push(typeof value == 'object' ?
+			res.push(typeof value === 'object' ?
 					 queryOptions(value) :
 					 encodeURIComponent(item) + '=' +
 					 encodeURIComponent(value));
@@ -88,7 +97,7 @@ function queryOptions(options, sep='&') {
 function miewLoad(wnd, url, options={}) { // TODO: timeout
 	return new Promise(function (resolve, reject) {
 		addEventListener('message', function onload(event) {
-			if (event.origin == origin(url) && event.data == 'miewLoadComplete') {
+			if (event.origin === origin(url) && event.data === 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
 				let miew = wnd.MIEWS[0];
 				miew._opts.load = false; // setOptions({ load: '' })
@@ -110,7 +119,7 @@ function miewSave(miew, url) {
 	miew.saveData();
 	return new Promise(function (resolve, reject) {
 		addEventListener('message', function onsave(event) {
-			if (event.origin == origin(url) && event.data.startsWith('CML:')) {
+			if (event.origin === origin(url) && event.data.startsWith('CML:')) {
 				window.removeEventListener('message', onsave);
 				resolve(atob(event.data.slice(4)));
 			}
@@ -143,7 +152,7 @@ class Miew extends Component {
 			this.state.structStr.then(structStr => {
 				this.props.onOk({ structStr });
 			});
-		};
+		}
 	}
 	window() {
 		let opts = {
@@ -167,7 +176,7 @@ class Miew extends Component {
 			wnd.onload = function () {
 				console.info('windowed');
 			};
-		};
+		}
 	}
 	render(props) {
 		let {miew, structStr} = this.state;

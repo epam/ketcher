@@ -11,31 +11,37 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 		if (init) onUpdate(this.schema.serialize(init).instance, true, {});
 	}
+
 	updateState(newstate) {
 		let { instance, valid, errors } = this.schema.serialize(newstate);
 		let errs = getErrorsObj(errors);
 		this.props.onUpdate(instance, valid, errs);
 	}
+
 	getChildContext() {
-		let { schema } = this.props;
+		const { schema } = this.props;
 		return { schema, stateStore: this };
 	}
+
 	field(name, onChange) {
-		let { result, errors } = this.props;
-		var value = result[name];
-		var self = this;
+		const { result, errors } = this.props;
+		const value = result[name];
+		const self = this;
+
 		return {
 			dataError: errors && errors[name] || false,
 			value: value,
 			onChange(value) {
-				let newstate = Object.assign({}, self.props.result, { [name]: value });
+				const newstate = Object.assign({}, self.props.result, { [name]: value });
 				self.updateState(newstate);
 				if (onChange) onChange(value);
 			}
 		};
 	}
+
 	render() {
-		var { result, children, schema, ...props } = this.props;
+		const { result, children, schema, ...props } = this.props;
+
 		if (schema.key && schema.key !== this.schema.key) {
 			this.schema = propSchema(schema, props);
 			this.schema.serialize(result); // hack: valid first state
@@ -49,6 +55,7 @@ class Form extends Component {
 		);
 	}
 }
+
 Form = connect(
 	null,
 	(dispatch, props) => ({
@@ -60,20 +67,21 @@ Form = connect(
 
 function Label({ labelPos, title, children, ...props }) {
 	return (
-		<label {...props}>{ title && labelPos != 'after' ? `${title}:` : '' }
+		<label {...props}>{ title && labelPos !== 'after' ? `${title}:` : '' }
 			{children}
-			{ title && labelPos == 'after' ? title : '' }
+			{ title && labelPos === 'after' ? title : '' }
 		</label>
 	);
 }
 
 class Field extends Component {
 	render() {
-		let { name, onChange, className, component, ...props } = this.props;
-		let { schema, stateStore } = this.context;
-		let desc = props.schema || schema.properties[name];
+		const { name, onChange, className, component, ...props } = this.props;
+		const { schema, stateStore } = this.context;
+		const desc = props.schema || schema.properties[name];
 
-		let { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+		const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+
 		return (
 			<Label className={className} data-error={dataError} title={props.title || desc.title} >
 				{
@@ -107,7 +115,8 @@ const SelectOneOf = (props) => {
 ////
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-	var v = new jsonschema.Validator();
+	const v = new jsonschema.Validator();
+
 	if (customValid) {
 		schema = Object.assign({}, schema); // copy
 		schema.properties = Object.keys(customValid).reduce((res, prop) => {
@@ -116,6 +125,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 			return res;
 		}, schema.properties);
 	}
+
 	return {
 		key: schema.key || '',
 		serialize: inst => v.validate(inst, schema, {
@@ -128,17 +138,18 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 }
 
 function serializeRewrite(serializeMap, instance, schema) {
-	var res = {};
+	const res = {};
 	if (typeof instance !== 'object' || !schema.properties) {
 		return instance !== undefined ? instance :
 			schema.default;
 	}
 
-	for (var p in schema.properties) {
-		if (p in instance) {
+	for (let p in schema.properties) {
+		if (schema.properties.hasOwnProperty(p) && p in instance) {
 			res[p] = instance[p];
 		}
 	}
+
 	return res;
 }
 
@@ -149,10 +160,12 @@ function deserializeRewrite(deserializeMap, instance, schema) {
 function getErrorsObj(errors) {
 	let errs = {};
 	let field;
+
 	errors.forEach(item => {
 		field = item.property.split('.')[1];
 		if (!errs[field]) errs[field] = item.message;
 	});
+
 	return errs;
 }
 

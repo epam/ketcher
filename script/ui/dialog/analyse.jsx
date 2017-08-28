@@ -19,8 +19,8 @@ function FrozenInput({value}) {
 }
 
 function FormulaInput({value}) {
-	var content = [];
-	var regExp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
+	const content = [];
+	const regExp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
 	var cnd;
 	var pos = 0;
 	while (cnd = regExp.exec(value)) {
@@ -28,7 +28,7 @@ function FormulaInput({value}) {
 		if (cnd[2].length > 0) content.push(<sub>{cnd[2]}</sub>);
 		pos = cnd.index + cnd[0].length;
 	}
-	if (pos == 0) content.push(value);
+	if (pos === 0) content.push(value);
 	else content.push(value.substring(pos, value.length));
 	return (
 		<div className="chem-input" spellcheck="false" contenteditable="true"
@@ -77,7 +77,8 @@ class Analyse extends Component {
 
 function allowMovement(event) {
 	const movementKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
-	var key = keyName(event);
+	const key = keyName(event);
+
 	if (movementKeys.indexOf(key) === -1)
 		event.preventDefault();
 }
@@ -85,6 +86,7 @@ function allowMovement(event) {
 function roundOff(value, round) {
 	if (typeof value === 'number')
 		return value.toFixed(round);
+
 	return value.replace(/[0-9]*\.[0-9]+/g, (str) => (
 		(+str).toFixed(round)
 	));

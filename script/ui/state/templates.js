@@ -74,7 +74,8 @@ export function editTmpl(tmpl) {
 
 /* SAVE */
 export function saveUserTmpl(structStr) {
-	let tmpl = { struct: molfile.parse(structStr), props: {} };
+	const tmpl = { struct: molfile.parse(structStr), props: {} };
+
 	return (dispatch, getState) => {
 		openDialog(dispatch, 'attach', { tmpl }).then(
 			({ name, attach }) => {
@@ -90,12 +91,15 @@ export function saveUserTmpl(structStr) {
 }
 
 function updateLocalStore(lib) {
-	let userLib = lib.filter(item => item.props.group === 'User Templates').map(item => {
-		return {
-			struct: molfile.stringify(item.struct),
-			props: Object.assign({}, omit(['group'], item.props))
-		};
-	});
+	const userLib = lib
+		.filter(item => item.props.group === 'User Templates')
+		.map(item => {
+			return {
+				struct: molfile.stringify(item.struct),
+				props: Object.assign({}, omit(['group'], item.props))
+			};
+		});
+
 	localStorage.setItem('ketcher-tmpls', JSON.stringify(userLib));
 }
 
@@ -122,12 +126,12 @@ const attachActions = [
 ];
 
 export function templatesReducer(state = initTmplState, action) {
-
 	if (tmplActions.includes(action.type)) {
 		return Object.assign({}, state, action.data);
 	}
+
 	if (attachActions.includes(action.type)) {
-		let attach = Object.assign({}, state.attach, action.data);
+		const attach = Object.assign({}, state.attach, action.data);
 		return { ...state, attach };
 	}
 
@@ -144,28 +148,32 @@ function initLib(lib) {
 
 export function initTmplLib(dispatch, baseUrl, cacheEl) {
 	prefetchStatic(baseUrl + 'library.sdf').then(text => {
-		let tmpls = sdf.parse(text);
-		let prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
+		const tmpls = sdf.parse(text);
+		const prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
+
 		return prefetch.then(cachedFiles => (
 			tmpls.map(tmpl => {
-				let pr = prefetchSplit(tmpl);
+				const pr = prefetchSplit(tmpl);
 				if (pr.file)
 					tmpl.props.prerender = cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
+
 				return tmpl;
 			})
 		));
 	}).then(res => {
-		let lib = res.concat(userTmpls());
+		const lib = res.concat(userTmpls());
 		dispatch(initLib(lib));
 		dispatch(appUpdate({ templates: true }));
 	});
 }
 
 function userTmpls() {
-	let userLib = JSON.parse(localStorage['ketcher-tmpls'] || 'null') || [];
+	const userLib = JSON.parse(localStorage['ketcher-tmpls'] || 'null') || [];
+
 	return userLib.map((tmpl) => {
 		if (tmpl.props === '') tmpl.props = {};
 		tmpl.props.group = 'User Templates';
+
 		return {
 			struct: molfile.parse(tmpl.struct),
 			props: tmpl.props
@@ -182,8 +190,9 @@ function prefetchStatic(url) {
 }
 
 function prefetchSplit(tmpl) {
-	let pr = tmpl.props.prerender;
-	let res = pr && pr.split('#', 2);
+	const pr = tmpl.props.prerender;
+	const res = pr && pr.split('#', 2);
+
 	return {
 		file: pr && res[0],
 		id: pr && res[1]
@@ -191,23 +200,27 @@ function prefetchSplit(tmpl) {
 }
 
 function prefetchRender(tmpls, baseUrl, cacheEl) {
-	let files = tmpls.reduce((res, tmpl) => {
-		let file = prefetchSplit(tmpl).file;
+	const files = tmpls.reduce((res, tmpl) => {
+		const file = prefetchSplit(tmpl).file;
+
 		if (file && res.indexOf(file) === -1)
 			res.push(file);
+
 		return res;
 	}, []);
-	let fetch = Promise.all(files.map(fn => (
+
+	const fetch = Promise.all(files.map(fn => (
 		prefetchStatic(baseUrl + fn).catch(() => null)
 	)));
+
 	return fetch.then(svgs => {
 		svgs.forEach(svgContent => {
 			if (svgContent)
 				cacheEl.innerHTML += svgContent;
 		});
+
 		return files.filter((file, i) => (
 			!!svgs[i]
 		));
 	});
-
 }

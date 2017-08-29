@@ -4,7 +4,7 @@ var api = require('./api.js');
 var molfile = require('./chem/molfile');
 var smiles = require('./chem/smiles');
 
-var ui = require('./ui');
+var ui = require('./ui').default;
 var Render = require('./render');
 
 function getSmiles() {

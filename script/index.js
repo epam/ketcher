@@ -61,7 +61,7 @@ window.onload = function () {
 	});
 	ketcher.ui = ui(Object.assign({}, params, buildInfo),
 	                ketcher.server);
-	// ketcher.editor = ketcher.ui.editor;
+	ketcher.editor = global._ui_editor;
 	ketcher.server.then(function () {
 		if (params.mol)
 			ketcher.ui.load(params.mol);

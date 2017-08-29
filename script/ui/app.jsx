@@ -1,7 +1,7 @@
 import { Provider, connect } from 'preact-redux';
 import { omit } from 'lodash/fp';
 
-import state, { onAction } from './state';
+import state, { onAction, load } from './state';
 import { initTmplLib } from './state/templates';
 import { initEditor } from './state/editor';
 import { checkServer } from './state/server';
@@ -95,11 +95,15 @@ function init(el, options, server) {
 	store.dispatch(initKeydownListener(el));
 	store.dispatch(initResize());
 
-	return render((
+	render((
 		<Provider store={store}>
 		  <App/>
 		</Provider>
 	), el);
+
+	return {
+		load: (structStr, options) => store.dispatch(load(structStr, options))
+	}
 }
 
 export default init;

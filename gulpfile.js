@@ -21,7 +21,7 @@ var options = minimist(process.argv.slice(2), {
 	default: {
 		'dist': 'dist',
 		'api-path': '',
-		'miew-path': null,
+		'miew-path': '',
 		'build-number': '',
 		'build-date': new Date() // TODO: format me
 	}

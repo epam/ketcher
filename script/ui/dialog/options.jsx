@@ -15,7 +15,7 @@ import OpenButton from '../component/openbutton';
 import MeasureInput from '../component/measure-input';
 
 function Settings(props) {
-	let { initState, formState, server, onOpenFile, onReset, ...prop } = props;
+	let { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Server', '3D Viewer', 'Options for debugging'];
 	let activeTabs = { 0: true, 1: false, 2: false, 3: false, 4: false, 5: false };
 	return (
@@ -54,13 +54,13 @@ function Settings(props) {
 						<FieldMeasure name="bondThickness"/>
 						<FieldMeasure name="stereoBondWidth"/>
 					</fieldset>
-					<fieldset className="server">
+					<fieldset className="server" disabled={!appOpts.server}>
 						<SelectCheckbox name="smart-layout"/>
 						<SelectCheckbox name="ignore-stereochemistry-errors"/>
 						<SelectCheckbox name="mass-skip-error-on-pseudoatoms"/>
 						<SelectCheckbox name="gross-formula-add-rsites"/>
 					</fieldset>
-					<fieldset className="3dView">
+					<fieldset className="3dView" disabled={!appOpts.miewPath}>
 						<Field name="miewMode"/>
 						<Field name="miewTheme"/>
 						<Field name="miewAtomLabel"/>
@@ -91,6 +91,7 @@ function FieldMeasure(props, {schema}) {
 }
 
 export default connect(store => ({
+	appOpts: store.options.app,
 	initState: store.options.settings,
 	formState: store.modal.form
 }), (dispatch, props) => ({

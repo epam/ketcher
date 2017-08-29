@@ -5,6 +5,7 @@ import server from './server';
 import debug from './debug';
 import templates from './templates';
 import clipArea from '../cliparea';
+import { miewAction } from '../state/miew';
 
 export default {
 	"new": {
@@ -91,6 +92,11 @@ export default {
 		action: { dialog: 'recognize' },
 		disabled: (editor, server, options) => !options.app.server
 	},
+	"miew": {
+		title: "3D Viewer",
+		action: { thunk: miewAction	},
+		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
+	},
 	"settings": {
 		title: "Settings",
 		action: { dialog: 'settings' }
@@ -142,7 +148,7 @@ function hasSelection(editor) {
 	let selection = editor.selection();
 	return selection &&  // if not only sgroupData selected
 		(Object.keys(selection).length > 1 || !selection.sgroupData);
-};
+}
 
 function dontClipMessage(title) {
 	alert('These action is unavailble via menu.\n' +

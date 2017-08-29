@@ -53,7 +53,8 @@ const mainmenu = [
 			'cip',
 			'check',
 			'analyse',
-			'recognize'
+			'recognize',
+			'miew'
 		]
 	},
 	{

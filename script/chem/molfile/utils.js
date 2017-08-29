@@ -97,8 +97,8 @@ var FRAGMENT = {
 	AGENT: 3
 };
 
-var SHOULD_REACTION_FRAGMENT_RELAYOUT = false;
-var SHOULD_RESCALE_MOLECULES = false;
+var SHOULD_REACTION_FRAGMENT_RELAYOUT = true;
+var SHOULD_RESCALE_MOLECULES = true;
 
 function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */

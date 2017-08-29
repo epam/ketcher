@@ -172,12 +172,12 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		aidMap = {};
 	// atoms in not RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) == -1)
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) === -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 	// atoms in RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) != -1)
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
@@ -199,7 +199,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		for (i = 0; i < sg.atoms.length; ++i)
 			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 
-		if (sg.type == 'DAT')
+		if (sg.type === 'DAT')
 			cp.sGroupForest.insert(sg.id, -1, []);
 		else
 			cp.sGroupForest.insert(sg.id);
@@ -233,7 +233,7 @@ Struct.prototype.findBondId = function (begin, end) {
 };
 
 function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
-	console.assert(arguments.length == 3, 'Invalid parameter number!');
+	console.assert(arguments.length === 3, 'Invalid parameter number!');
 
 	this.begin = begin - 0;
 	this.end = end - 0;
@@ -436,7 +436,7 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 		}
 	}
 
-	var global = typeof (atomSet) == 'undefined';
+	var global = typeof (atomSet) === 'undefined';
 
 	this.atoms.each(function (aid, atom) {
 		if (global || Set.contains(atomSet, aid))
@@ -844,7 +844,7 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 
 Struct.prototype.setImplicitHydrogen = function (list) {
 	this.sgroups.each(function (id, item) {
-		if (item.data.fieldName == "MRV_IMPLICIT_H")
+		if (item.data.fieldName === "MRV_IMPLICIT_H")
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
 	}, this);
 	function f(aid) {

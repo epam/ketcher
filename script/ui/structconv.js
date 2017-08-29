@@ -228,6 +228,8 @@ export function toSgroup(sgroup) {
 		attrs[absolute] = false;
 		attrs[attached] = false;
 		break;
+	default:
+		break;
 	}
 
 	return {

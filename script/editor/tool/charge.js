@@ -14,7 +14,7 @@ ChargeTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
 	var struct = rnd.ctab.molecule;
-	if (ci && ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label])
+	if (ci && ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label])
 		this.editor.hover(ci);
 	else
 		this.editor.hover(null);
@@ -25,7 +25,7 @@ ChargeTool.prototype.mouseup = function (event) {
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;
 	var ci = editor.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms' && element.map[struct.atoms.get(ci.id).label]) {
+	if (ci && ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) {
 		this.editor.hover(null);
 		this.editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, {
 			charge: struct.atoms.get(ci.id).charge + this.charge

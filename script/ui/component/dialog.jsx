@@ -14,7 +14,7 @@ class Dialog extends Component {
 	keyDown(ev) {
 		let key = keyName(ev);
 		let active = document.activeElement;
-		let activeTextarea = active && active.tagName == 'TEXTAREA';
+		let activeTextarea = active && active.tagName === 'TEXTAREA';
 		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
 			this.exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
@@ -45,7 +45,7 @@ class Dialog extends Component {
 				{ children }
 				<footer>{
 					buttons.map(b => (
-						typeof b != 'string' ? b :
+						typeof b !== 'string' ? b :
 							<input type="button" value={b}
 						           disabled={ b == 'OK' && !valid() }
 						           onClick={() => this.exit(b)} />

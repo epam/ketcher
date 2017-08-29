@@ -38,17 +38,17 @@ EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		var ci = this.editor.findItem(event, this.maps);
 		if (ci) { //  ci.type != 'Canvas'
 			this.editor.hover(null);
-			if (ci.map == 'atoms') {
+			if (ci.map === 'atoms') {
 				this.editor.update(Action.fromAtomDeletion(rnd.ctab, ci.id));
-			} else if (ci.map == 'bonds') {
+			} else if (ci.map === 'bonds') {
 				this.editor.update(Action.fromBondDeletion(rnd.ctab, ci.id));
-			} else if (ci.map == 'sgroups' || ci.map == 'sgroupData') {
+			} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 				this.editor.update(Action.fromSgroupDeletion(rnd.ctab, ci.id));
-			} else if (ci.map == 'rxnArrows') {
+			} else if (ci.map === 'rxnArrows') {
 				this.editor.update(Action.fromArrowDeletion(rnd.ctab, ci.id));
-			} else if (ci.map == 'rxnPluses') {
+			} else if (ci.map === 'rxnPluses') {
 				this.editor.update(Action.fromPlusDeletion(rnd.ctab, ci.id));
-			} else if (ci.map == 'chiralFlags') {
+			} else if (ci.map === 'chiralFlags') {
 				this.editor.update(Action.fromChiralFlagDeletion(rnd.ctab));
 			} else {
 				// TODO re-factoring needed - should be "map-independent"

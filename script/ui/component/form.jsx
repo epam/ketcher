@@ -129,7 +129,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 
 function serializeRewrite(serializeMap, instance, schema) {
 	var res = {};
-	if (typeof instance != 'object' || !schema.properties) {
+	if (typeof instance !== 'object' || !schema.properties) {
 		return instance !== undefined ? instance :
 			schema.default;
 	}

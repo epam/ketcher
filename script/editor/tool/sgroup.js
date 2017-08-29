@@ -57,13 +57,13 @@ SGroupTool.prototype.mouseup = function (event) {
 			return;
 		this.editor.hover(null);
 
-		if (ci.map == 'atoms') {
+		if (ci.map === 'atoms') {
 			// if we click the SGroup tool on a single atom or bond, make a group out of those
 			selection = { atoms: [ci.id] };
-		} else if (ci.map == 'bonds') {
+		} else if (ci.map === 'bonds') {
 			var bond = this.editor.render.ctab.bonds.get(ci.id);
 			selection = { atoms: [bond.b.begin, bond.b.end] };
-		} else if (ci.map == 'sgroups') {
+		} else if (ci.map === 'sgroups') {
 			id = ci.id;
 		} else {
 			return;
@@ -81,7 +81,7 @@ function propsDialog(editor, id, defaultType) {
 	var selection = editor.selection() || {};
 	var sg = (id != null) && struct.sgroups.get(id);
 	var type = sg ? sg.type : defaultType;
-	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
+	var eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
 	if (!selection.atoms && !selection.bonds && !sg) {
 		console.info('There is no selection or sgroup');
@@ -97,7 +97,7 @@ function propsDialog(editor, id, defaultType) {
 
 	Promise.resolve(res).then(function (newSg) {
 		// TODO: check before signal
-		if (newSg.type != 'DAT' && // when data s-group separates
+		if (newSg.type !== 'DAT' && // when data s-group separates
 			checkOverlapping(struct, selection.atoms || [])) {
 			editor.event.message.dispatch({
 				error: 'Partial S-group overlapping is not allowed.'
@@ -196,7 +196,7 @@ function checkOverlapping(struct, atoms) {
 
 		return 0 <= sgroups.findIndex(function (sid) {
 			var sg = struct.sgroups.get(sid);
-			if (sg.type == 'DAT' || sid in verified)
+			if (sg.type === 'DAT' || sid in verified)
 				return false;
 
 			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
@@ -207,7 +207,7 @@ function checkOverlapping(struct, atoms) {
 				}))
 					return true;
 			} else if (0 <= atoms.findIndex(function (aid) {
-				return (sgAtoms.indexOf(aid) == -1);
+				return (sgAtoms.indexOf(aid) === -1);
 			})) {
 				return true;
 			}

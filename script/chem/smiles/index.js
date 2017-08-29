@@ -109,9 +109,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	var walk = new Dfs(molecule, this.atoms, componentsAll, components.reactants.length);
 
 	walk.walk();
-
-	this.atoms.each(function (atom) {
-		atom.neighbours.clear();
+	this.atoms.forEach(function (atom) {
+		atom.neighbours = [];
 	}, this);
 
 	// fill up neighbor lists for the stereocenters calculation

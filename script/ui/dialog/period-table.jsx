@@ -68,7 +68,7 @@ function MainRow({row, caption, ref, selected, onSelect, curEvents}) {
 		<tr>
 		  <th>{caption}</th>
 		  {
-			  row.map(el => (typeof el != 'number') ? (
+			  row.map(el => (typeof el !== 'number') ? (
 				  <td>
 					  <Atom el={el}
 							className={selected(el.label) ? 'selected' : ''}
@@ -215,7 +215,7 @@ class PeriodTable extends Component {
 }
 
 function rowPartition(elements) {
-	return elements.reduce(function (res, el, index) {
+	return elements.reduce(function (res, el) {
 		let row = res[el.period - 1];
 		if (!row)
 			res.push([el]);

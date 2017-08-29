@@ -31,8 +31,8 @@ var toolMap = {
 	rotate: require('./tool/rotate')
 };
 
-var SCALE = 40;  // const
-var HISTORY_SIZE = 32; // put me to options
+const SCALE = 40;  // const
+const HISTORY_SIZE = 32; // put me to options
 
 var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 

@@ -39,7 +39,7 @@ Action.prototype.perform = function (restruct) {
 Action.prototype.isDummy = function (restruct) {
 	return this.operations.find(function (operation) {
 		return restruct ? !operation.isDummy(restruct) : true; // TODO [RB] the condition is always true for op.* operations
-	}) == null;
+	}) === undefined;
 };
 
 // Add action operation to remove atom from s-group if needed
@@ -151,7 +151,7 @@ function fromMultipleMove(restruct, lists, d) { // eslint-disable-line max-state
 
 function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	var action = new Action();
-	(typeof (ids) == 'number' ? [ids] : ids).forEach(function (id) {
+	(typeof (ids) === 'number' ? [ids] : ids).forEach(function (id) {
 		for (var key in Struct.Atom.attrlist) {
 			var value;
 			if (key in attrs)
@@ -162,7 +162,7 @@ function fromAtomsAttrs(restruct, ids, attrs, reset) {
 				continue; // eslint-disable-line no-continue
 			action.addOp(new op.AtomAttr(id, key, value));
 		}
-		if (!reset && 'label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList'])
+		if (!reset && 'label' in attrs && attrs.label != null && attrs.label !== 'L#' && !attrs['atomList'])
 			action.addOp(new op.AtomAttr(id, 'atomList', null));
 	}, this);
 	return action.perform(restruct);
@@ -196,7 +196,7 @@ function fromAtomAddition(resctruct, pos, atom) {
 
 function mergeFragments(action, restruct, frid, frid2) {
 	var struct = restruct.molecule;
-	if (frid2 != frid && (typeof frid2 == 'number')) {
+	if (frid2 != frid && (typeof frid2 === 'number')) {
 		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid2);
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));
@@ -310,12 +310,12 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 
 	var frid = null;
 
-	if (!(typeof begin == "number")) {
-		if (typeof end == "number")
+	if (!(typeof begin === "number")) {
+		if (typeof end === "number")
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (typeof end == "number") {
+		if (typeof end === "number") {
 			var frid2 = atomGetAttr(restruct, end, 'fragment');
 			mergeFragments(action, restruct, frid, frid2);
 		}
@@ -589,7 +589,7 @@ function fromAtomMerge(restruct, srcId, dstId) {
 
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
 
-	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] == '*')
+	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
 		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));

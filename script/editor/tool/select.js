@@ -36,19 +36,19 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		this.editor.hover(null);
 		if (!isSelected(rnd, this.editor.selection(), ci)) {
 			var sel = closestToSel(ci);
-			if (ci.map == 'frags') {
+			if (ci.map === 'frags') {
 				var frag = ctab.frags.get(ci.id);
 				sel = {
 					atoms: frag.fragGetAtoms(rnd, ci.id),
 					bonds: frag.fragGetBonds(rnd, ci.id)
 				};
-			} else if (ci.map == 'sgroups') {
+			} else if (ci.map === 'sgroups') {
 				var sgroup = ctab.sgroups.get(ci.id).item;
 				sel = {
 					atoms: Struct.SGroup.getAtoms(struct, sgroup),
 					bonds: Struct.SGroup.getBonds(struct, sgroup)
 				};
-			} else if (ci.map == 'rgroups') {
+			} else if (ci.map === 'rgroups') {
 				var rgroup = ctab.rgroups.get(ci.id);
 				sel = {
 					atoms: rgroup.getAtoms(rnd),
@@ -140,7 +140,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups']);
 	var struct = rnd.ctab.molecule;
-	if (ci.map == 'atoms') {
+	if (ci.map === 'atoms') {
 		this.editor.selection(closestToSel(ci));
 		var atom = struct.atoms.get(ci.id);
 		var ra = editor.event.elementEdit.dispatch(atom);
@@ -149,14 +149,14 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
 			editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, newatom));
 		});
-	} else if (ci.map == 'bonds') {
+	} else if (ci.map === 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(rb).then(function (newbond) {
 			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
-	} else if (ci.map == 'sgroups') {
+	} else if (ci.map === 'sgroups') {
 		this.editor.selection(closestToSel(ci));
 		SGroup.dialog(this.editor, ci.id);
 //    } else if (ci.map == 'sgroupData') {
@@ -211,8 +211,8 @@ function isSelected(render, selection, item) {
 	if (!selection)
 		return false;
 	var ctab = render.ctab;
-	if (item.map == 'frags' || item.map == 'rgroups') {
-		var atoms = item.map == 'frags' ?
+	if (item.map === 'frags' || item.map === 'rgroups') {
+		var atoms = item.map === 'frags' ?
 			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
 		    ctab.rgroups.get(item.id).getAtoms(render);
 

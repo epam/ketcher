@@ -35,11 +35,11 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 	var rnd = editor.render;
 	if ('dragCtx' in this) {
 		var dragCtx = this.dragCtx;
-		if (!('item' in dragCtx) || dragCtx.item.map == 'atoms') {
+		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
 			if ('action' in dragCtx)
 				dragCtx.action.perform(rnd.ctab);
 			var i1, i2, p1, p2;
-			if (('item' in dragCtx && dragCtx.item.map == 'atoms')) {
+			if (('item' in dragCtx && dragCtx.item.map === 'atoms')) {
 				// first mousedown event intersect with any atom
 				i1 = dragCtx.item.id;
 				i2 = editor.findItem(event, ['atoms'], dragCtx.item);
@@ -50,7 +50,7 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 				i2 = editor.findItem(event, ['atoms']);
 			}
 			var dist = Number.MAX_VALUE;
-			if (i2 && i2.map == 'atoms') {
+			if (i2 && i2.map === 'atoms') {
 				// after mousedown events is appered, cursor is moved and then cursor intersects any atoms
 				i2 = i2.id;
 			} else {
@@ -97,10 +97,10 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 			    Vec2.diff(xy, v), Vec2.sum(xy, v));
 
 			this.editor.update(bondAddition[0]);
-		} else if (dragCtx.item.map == 'atoms') {
+		} else if (dragCtx.item.map === 'atoms') {
 			// when does it hapend?
 			this.editor.update(Action.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
-		} else if (dragCtx.item.map == 'bonds') {
+		} else if (dragCtx.item.map === 'bonds') {
 			var bondProps = Object.assign({}, this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
 

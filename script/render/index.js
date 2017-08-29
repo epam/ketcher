@@ -196,13 +196,9 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 			var marg = this.options.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
 			var csz = viewSz;
-			 /* eslint-disable no-mixed-operators*/
-			if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)
-				/* eslint-enable no-mixed-operators*/
+			if (csz.x < (2 * marg) + 1 || csz.y < (2 * marg) + 1)
 				throw new Error('View box too small for the given margin');
-				/* eslint-disable no-mixed-operators*/
-			var rescale = Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-			/* eslint-enable no-mixed-operators*/
+			var rescale = Math.max(sz1.x / (csz.x - (2 * marg)), sz1.y / (csz.y - (2 * marg)));
 			if (this.options.maxBondLength / rescale > 1.0)
 				rescale = 1.0;
 			var sz2 = sz1.add(mv.scaled(2 * rescale));

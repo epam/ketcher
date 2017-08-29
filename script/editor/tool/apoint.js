@@ -17,7 +17,7 @@ APointTool.prototype.mouseup = function (event) {
 	var struct = editor.render.ctab.molecule;
 	var ci = editor.findItem(event, ['atoms']);
 
-	if (ci && ci.map == 'atoms') {
+	if (ci && ci.map === 'atoms') {
 		this.editor.hover(null);
 		var atom = struct.atoms.get(ci.id);
 		var res = editor.event.elementEdit.dispatch({

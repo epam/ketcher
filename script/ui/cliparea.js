@@ -20,7 +20,7 @@ function initCliparea(parent, options) {
 
 	parent.appendChild(cliparea);
 
-	parent.addEventListener('mouseup', function (event) {
+	parent.addEventListener('mouseup', function () {
 		if (options.focused())
 			autofocus(cliparea);
 	});
@@ -71,7 +71,7 @@ function copy(cb, data) {
 			console.info('Could not write exact type', ex);
 		}
 	}
-};
+}
 
 function paste(cb, formats) {
 	var data = {};
@@ -87,7 +87,7 @@ function paste(cb, formats) {
 		}, data);
 	}
 	return data;
-};
+}
 
 
 module.exports = Object.assign(initCliparea, {

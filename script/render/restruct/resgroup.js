@@ -54,6 +54,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	case 'DAT':
 		set = drawGroupDat(remol, sgroup);
 		break;
+	default: break;
 	}
 	return set;
 };

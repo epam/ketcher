@@ -268,7 +268,7 @@ function SGroupDelete(sgid) {
 		var sg = restruct.sgroups.get(sgid);
 		this.data.type = sg.item.type;
 		this.data.pp = sg.item.pp;
-		if (sg.item.type == 'DAT' && restruct.sgroupData.has(sgid)) {
+		if (sg.item.type === 'DAT' && restruct.sgroupData.has(sgid)) {
 			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
 			restruct.sgroupData.unset(sgid);
 		}

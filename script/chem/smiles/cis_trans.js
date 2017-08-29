@@ -169,7 +169,7 @@ CisTrans.prototype.build = function (excludeBonds) {
 				substituents: []
 			});
 
-		if (Object.isArray(excludeBonds) && excludeBonds[bid])
+		if (Array.isArray(excludeBonds) && excludeBonds[bid])
 			return;
 
 		if (!this.isGeomStereoBond(bid, ct.substituents))

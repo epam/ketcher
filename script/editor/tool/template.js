@@ -43,7 +43,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 	var ci = dragCtx.item;
 	if (!ci) { //  ci.type == 'Canvas'
 		delete dragCtx.item;
-	} else if (ci.map == 'bonds') {
+	} else if (ci.map === 'bonds') {
 		// calculate fragment center
 		var molecule = rnd.ctab.molecule;
 		var xy0 = new Vec2();
@@ -97,10 +97,10 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		// calc initial pos and is extra bond needed
 		if (!ci) { //  ci.type == 'Canvas'
 			pos0 = dragCtx.xy0;
-		} else if (ci.map == 'atoms') {
+		} else if (ci.map === 'atoms') {
 			pos0 = struct.atoms.get(ci.id).pp;
 			extraBond = Vec2.dist(pos0, pos1) > 1;
-		} else if (ci.map == 'bonds') {
+		} else if (ci.map === 'bonds') {
 			var bond = struct.bonds.get(ci.id);
 			var sign = getSign(struct, bond, pos1);
 
@@ -144,7 +144,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 				angle,
 				this.template
 			);
-		} else if (ci.map == 'atoms') {
+		} else if (ci.map === 'atoms') {
 			dragCtx.action = Action.fromTemplateOnAtom(
 				rnd.ctab,
 				ci.id,
@@ -174,7 +174,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 		if (!dragCtx.action) {
 			if (!ci) { //  ci.type == 'Canvas'
 				dragCtx.action = Action.fromTemplateOnCanvas(rnd.ctab, dragCtx.xy0, 0, this.template);
-			} else if (ci.map == 'atoms') {
+			} else if (ci.map === 'atoms') {
 				var degree = restruct.atoms.get(ci.id).a.neighbors.length;
 
 				if (degree > 1) { // common case
@@ -207,7 +207,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 						this.template
 					);
 				}
-			} else if (ci.map == 'bonds') {
+			} else if (ci.map === 'bonds') {
 				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
 

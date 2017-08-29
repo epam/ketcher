@@ -85,7 +85,7 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 
 	molecule.sgroups.each(function (id, item) {
 		this.sgroups.set(id, new ReSGroup(item));
-		if (item.type == 'DAT' && !item.data.attached)
+		if (item.type === 'DAT' && !item.data.attached)
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	}, this);
 
@@ -115,7 +115,7 @@ ReStruct.prototype.clearConnectedComponents = function () {
 };
 
 ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
-	var list = (typeof (aid['length']) == 'number') ? [].slice.call(aid) : [aid];
+	var list = (typeof (aid['length']) === 'number') ? [].slice.call(aid) : [aid];
 	var ids = Set.empty();
 
 	while (list.length > 0) {
@@ -339,27 +339,23 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	force = force || !this.initialized;
 
 	// check items to update
-	var id;
+	var id, map, mapChanged;
 	if (force) {
-		(function () {
-			for (var map in ReStruct.maps) {
-				var mapChanged = this[map + 'Changed'];
-				this[map].each(function (id) {
-					mapChanged[id] = 1;
-				}, this);
-			}
-		}).call(this);
+		for (map in ReStruct.maps) {
+			mapChanged = this[map + 'Changed'];
+			this[map].each(function (id) {
+				mapChanged[id] = 1;
+			}, this);
+		}
 	} else {
 		// check if some of the items marked are already gone
-		(function () {
-			for (var map in ReStruct.maps) {
-				var mapChanged = this[map + 'Changed'];
-				for (id in mapChanged) {
-					if (!this[map].has(id))
-						delete mapChanged[id];
-				}
+		for (map in ReStruct.maps) {
+			mapChanged = this[map + 'Changed'];
+			for (id in mapChanged) {
+				if (!this[map].has(id))
+					delete mapChanged[id];
 			}
-		}).call(this);
+		}
 	}
 	for (id in this.atomsChanged)
 		this.connectedComponentRemoveAtom(id);
@@ -376,15 +372,13 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 		this.molecule.frags.remove(fid);
 	}
 
-	(function () {
-		for (var map in ReStruct.maps) {
-			var mapChanged = this[map + 'Changed'];
-			for (id in mapChanged) {
-				this.clearVisel(this[map].get(id).visel);
-				this.structChanged |= mapChanged[id] > 0;
-			}
+	for (map in ReStruct.maps) {
+		mapChanged = this[map + 'Changed'];
+		for (id in mapChanged) {
+			this.clearVisel(this[map].get(id).visel);
+			this.structChanged |= mapChanged[id] > 0;
 		}
-	}).call(this);
+	}
 
 	// TODO: when to update sgroup?
 	this.sgroups.each(function (sid, sgroup) {
@@ -525,13 +519,13 @@ ReStruct.prototype.loopRemove = function (loopId) {
 	var bondlist = [];
 	for (var i = 0; i < reloop.loop.hbs.length; ++i) {
 		var hbid = reloop.loop.hbs[i];
-		if (!this.molecule.halfBonds.has(hbid))
-			continue;// eslint-disable-line no-continue
-		var hb = this.molecule.halfBonds.get(hbid);
-		hb.loop = -1;
-		this.markBond(hb.bid, 1);
-		this.markAtom(hb.begin, 1);
-		bondlist.push(hb.bid);
+		if (this.molecule.halfBonds.has(hbid)) {
+			var hb = this.molecule.halfBonds.get(hbid);
+			hb.loop = -1;
+			this.markBond(hb.bid, 1);
+			this.markAtom(hb.begin, 1);
+			bondlist.push(hb.bid);
+		}
 	}
 	this.reloops.unset(loopId);
 	this.molecule.loops.remove(loopId);
@@ -566,7 +560,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 };
 
 ReStruct.prototype.setSelection = function (selection) {
-	var redraw = (arguments.length == 0);  // render.update only
+	var redraw = (arguments.length === 0);  // render.update only
 
 	for (var map in ReStruct.maps) {
 		if (ReStruct.maps[map].isSelectable()) {

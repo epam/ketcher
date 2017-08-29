@@ -1,11 +1,11 @@
 var Vec2 = require('../util/vec2');
 
-var SELECTION_DISTANCE_COEFFICIENT = 0.4;
+const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
 function findClosestAtom(restruct, pos, skip, minDist) {
 	var closestAtom = null;
 	var maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-	var skipId = skip && skip.map == 'atoms' ? skip.id : null;
+	var skipId = skip && skip.map === 'atoms' ? skip.id : null;
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	restruct.atoms.each(function (aid, atom) {
@@ -96,9 +96,9 @@ function findClosestDataSGroupData(restruct, pos) {
 	var minDist = null;
 	var ret = null;
 	restruct.sgroupData.each(function (id, item) {
-		if (item.sgroup.type != 'DAT')
+		if (item.sgroup.type !== 'DAT')
 			throw new Error('Data group expected');
-		if (item.sgroup.data.fieldName != "MRV_IMPLICIT_H") {
+		if (item.sgroup.data.fieldName !== "MRV_IMPLICIT_H") {
 			var box = item.sgroup.dataArea;
 			var inBox = box.p0.y < pos.y && box.p1.y > pos.y && box.p0.x < pos.x && box.p1.x > pos.x;
 			var xDist = Math.min(Math.abs(box.p0.x - pos.x), Math.abs(box.p1.x - pos.x));
@@ -115,7 +115,7 @@ function findClosestFrag(restruct, pos, skip, minDist) {
 	minDist = Math.min(minDist || SELECTION_DISTANCE_COEFFICIENT,
 	                   SELECTION_DISTANCE_COEFFICIENT);
 	var ret = null;
-	var skipId = skip && skip.map == 'frags' ? skip.id : null;
+	var skipId = skip && skip.map === 'frags' ? skip.id : null;
 	restruct.frags.each(function (fid, frag) {
 		if (fid != skipId) {
 			var bb = frag.calcBBox(restruct, fid); // TODO any faster way to obtain bb?

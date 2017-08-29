@@ -51,6 +51,7 @@ export default function (state=null, { type, action, ...params }) {
 			return res;
 		}, { activeTool: activeTool || state.activeTool });
 		return res;
+	default:
+		return state;
 	}
-	return state;
 }

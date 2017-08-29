@@ -8,7 +8,7 @@ function parse(str, options) {
 		chunk = m[0].replace(/\r/g, ''); // TODO: normalize newline?
 		chunk = chunk.trim();
 		var end = chunk.indexOf('M  END');
-		if (end != -1) {
+		if (end !== -1) {
 			var item = {};
 			var propChunks = chunk.substr(end + 7).trim().split(/^$\n?/m);
 

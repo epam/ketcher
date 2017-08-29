@@ -22,7 +22,7 @@ RGroupAtomTool.prototype.mouseup = function (event) {
 		this.editor.hover(null);
 		propsDialog(this.editor, null, rnd.page2obj(event));
 		return true;
-	} else if (ci.map == 'atoms') {
+	} else if (ci.map === 'atoms') {
 		this.editor.hover(null);
 		propsDialog(this.editor, ci.id);
 		return true;
@@ -43,7 +43,7 @@ function propsDialog(editor, id, pos) {
 		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
 		if (!id && elem.rglabel) {
 			editor.update(Action.fromAtomAddition(editor.render.ctab, pos, elem));
-		} else if (rglabel != elem.rglabel || label != 'R#') {
+		} else if (rglabel != elem.rglabel || label !== 'R#') {
 			elem.aam = atom.aam; // WTF??
 			editor.update(Action.fromAtomsAttrs(editor.render.ctab, id, elem));
 		}

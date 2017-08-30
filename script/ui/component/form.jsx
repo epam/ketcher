@@ -50,7 +50,7 @@ class Form extends Component {
 
 		return (
 			<form {...props}>
-			  	{children}
+				{children}
 			</form>
 		);
 	}
@@ -75,11 +75,11 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 class Field extends Component {
-	render() {
-		const { name, onChange, className, component, ...props } = this.props;
+	render(props) {
+		const { name, onChange, className, component, ...prop } = props;
 		const { schema, stateStore } = this.context;
-		const desc = props.schema || schema.properties[name];
 
+		const desc = prop.schema || schema.properties[name];
 		const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 
 		return (
@@ -163,7 +163,8 @@ function getErrorsObj(errors) {
 
 	errors.forEach(item => {
 		field = item.property.split('.')[1];
-		if (!errs[field]) errs[field] = item.message;
+		if (!errs[field])
+			errs[field] = item.schema.invalidMessage || item.message;
 	});
 
 	return errs;

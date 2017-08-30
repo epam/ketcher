@@ -44,8 +44,6 @@ const shared = combineReducers({
 });
 
 export function onAction(action) {
-	console.info('on action', action);
-
 	if (action && action.dialog)
 		return {
 			type: 'MODAL_OPEN',

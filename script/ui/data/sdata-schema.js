@@ -1,3 +1,5 @@
+import { mapOf } from '../utils';
+
 const radioButtonsSchema =  {
 	enum: [
 		"Absolute",
@@ -7,7 +9,18 @@ const radioButtonsSchema =  {
 	default: "Absolute"
 };
 
-export const sdataSchema = {
+const contextSchema = {
+	title: 'Context',
+	enum: [
+		'Fragment',
+		'Bond',
+		'Atom',
+		'Group'
+	],
+	default: 'Fragment'
+};
+
+const sData = {
 	Fragment: {
 		title: 'Context',
 		type: 'Object',
@@ -207,3 +220,34 @@ export const sdataSchema = {
 		]
 	}
 };
+
+export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
+	acc[title] = mapOf(sData[title], 'fieldName');
+	Object.keys(acc[title]).forEach(fieldName => acc[title][fieldName].properties.context = contextSchema);
+	return acc;
+}, {});
+
+const defaultContext = 'Fragment';
+const defaultFieldName = 'MDLBG_FRAGMENT_STEREO';
+
+/**
+ * Returns schema default values. Depends on passed arguments:
+ * pass schema only -> returns default context
+ * pass schema & context -> returns default fieldName
+ * pass schema & context & fieldName -> returns default fieldValue
+ * @param context? { string }
+ * @param fieldName? { string }
+ * @returns { string }
+ */
+export function getSdataDefault(context, fieldName) {
+	console.info('sdatascheadsfasdfdf', sdataSchema);
+	if (!context && !fieldName)
+		return defaultContext;
+
+	if (!fieldName)
+		return defaultFieldName;
+
+	return sdataSchema[context][fieldName] ?
+		sdataSchema[context][fieldName].properties.fieldValue.default :
+		'';
+}

@@ -9,16 +9,17 @@ import Dialog from '../component/dialog';
 
 const schemes = mapOf(sgroupSchema, 'type');
 
-function Sgroup(props) {
-	const { formState, ...prop } = props;
-	const type = formState.result.type;
+function Sgroup({ formState, ...prop }) {
+	const { result, valid } = formState;
+
+	const type = result.type;
 
 	return (
 		<Dialog title="S-Group Properties" className="sgroup"
-				result={() => formState.result} valid={() => formState.valid} params={prop}>
+				result={() => result} valid={() => valid} params={prop}>
 			<Form storeName="sgroup" schema={schemes[type]} init={prop} {...formState}>
 				<SelectOneOf title="Type" name="type" schema={schemes}/>
-				<fieldset class={type === 'DAT' ? 'data' : 'base'}>
+				<fieldset className={type === 'DAT' ? 'data' : 'base'}>
 					{ content(type) }
 				</fieldset>
 			</Form>

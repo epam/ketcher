@@ -1,38 +1,12 @@
-import { mapOf } from '../utils';
-import { sdataSchema } from '../data/sdata-schema'
-
-const contextSchema = {
-	title: 'Context',
-	enum: [
-		'Fragment',
-		'Single Bond',
-		'Atom',
-		'Group'
-	],
-	default: 'Fragment'
-};
-
-const schemes = Object.keys(sdataSchema).reduce((acc, title) => {
-	acc[title] = mapOf(sdataSchema[title], 'fieldName');
-	Object.keys(acc[title]).forEach(fieldName => acc[title][fieldName].properties.context = contextSchema);
-	return acc;
-}, {});
-
-const firstObjKey = obj => Object.keys(obj)[0];
-const defaultContext = () => firstObjKey(schemes);
-const defaultFieldName = context => firstObjKey(schemes[context]);
-const defaultFieldValue = (context, fieldName) => schemes[context][fieldName] ?
-	schemes[context][fieldName].properties.fieldValue.default :
-	'';
+import { sdataSchema, getSdataDefault } from '../data/sdata-schema'
 
 export const initSdata = () => {
-	const context = defaultContext();
-	const fieldName = defaultFieldName(context);
-	const fieldValue = defaultFieldValue(context, fieldName);
+	const context = getSdataDefault();
+	const fieldName = getSdataDefault(context);
+	const fieldValue = getSdataDefault(context, fieldName);
 	const radiobuttons = 'Absolute';
 
 	return {
-		schema: schemes,
 		valid: true,
 		result: {
 			context,
@@ -45,42 +19,71 @@ export const initSdata = () => {
 };
 
 export function sdataReducer(state, action) {
-	const actionContext = action.data.result['context'];
-	const actionFieldName = action.data.result['fieldName'];
+	const actionContext = action.data.result.context;
+	const actionFieldName = action.data.result.fieldName;
 
-	if (actionContext !== undefined && actionContext !== state.result.context || actionFieldName === undefined)
-		return onContextChange(state, actionContext);
-	if (actionFieldName !== state.result.fieldName)
-		return onFieldNameChange(state, actionFieldName);
+	let newstate = null;
 
-	return Object.assign({}, state, action.data);
+	if (actionContext !== state.result.context)
+		newstate = onContextChange(state, action.data.result);
+	else  if (actionFieldName !== state.result.fieldName)
+		newstate = onFieldNameChange(state, action.data.result);
+
+	newstate = newstate || Object.assign({}, state, action.data.result);
+
+	return correctErrors(newstate, action.data.result);
+
 }
 
-const onContextChange = (state, context) => {
-	const fieldName = defaultFieldName(context);
-	const fieldValue = defaultFieldValue(context, fieldName);
+const correctErrors = (state, payload) => {
+	const { valid, errors } = payload;
+	const { fieldName, fieldValue } = state.result;
 
 	return {
 		...state,
-		result: {
-			...state.result,
-			context,
-			fieldName,
-			fieldValue
-		}
-	}
+		valid: valid && fieldName && fieldValue,
+		errors: errors,
+	};
 };
 
-const onFieldNameChange = (state, fieldName) => {
-	const context = state.result.context;
-	const fieldValue = defaultFieldValue(context, fieldName);
+const onContextChange = (state, payload) => {
+	const { context, fieldValue } = payload;
+
+	const fieldName = getSdataDefault(context);
+
+	let fValue = fieldValue;
+	if (fValue === state.result.fieldValue)
+		fValue = getSdataDefault(context, fieldName);
 
 	return {
-		...state,
 		result: {
-			...state.result,
+			...payload,
+			context,
 			fieldName,
-			fieldValue
+			fieldValue: fValue
 		}
+	};
+};
+
+const onFieldNameChange = (state, payload) => {
+	let { fieldName } = payload;
+
+	const context = state.result.context;
+
+	let fieldValue = payload.fieldValue;
+
+	if (sdataSchema[context][fieldName]) {
+		fieldValue = getSdataDefault(context, fieldName);
 	}
+
+	if (fieldValue === state.result.fieldValue && sdataSchema[context][state.result.fieldName])
+		fieldValue = '';
+
+	return {
+		result: {
+			...payload,
+			fieldName,
+			fieldValue,
+		}
+	};
 };

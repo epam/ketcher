@@ -19,7 +19,8 @@ export function initKeydownListener(element) {
 
 function keyHandle(dispatch, getState, hotKeys, event) {
 	const editor = getState().editor;
-	const actionTool = getState().actionState.activeTool;
+	const actionState = getState().actionState;
+	const actionTool = actionState.activeTool;
 
 	const key = keyNorm(event);
 	const atomsSelected = editor.selection() && editor.selection().atoms;
@@ -37,6 +38,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 		index = (index + 1) % group.length;
 
 		let actName = group[index];
+		if (actionState[actName] && actionState[actName].disabled === true)
+			return event.preventDefault();
+
 		if (clipArea.actions.indexOf(actName) === -1) {
 			let newAction = actions[actName].action;
 			dispatch(onAction(newAction));

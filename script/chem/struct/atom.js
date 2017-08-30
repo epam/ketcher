@@ -143,7 +143,7 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 		return true;
 	}
 	var elem = element.map[label];
-	if (elem === null) {
+	if (elem === undefined) {
 		this.implicitH = 0;
 		return true;
 	}

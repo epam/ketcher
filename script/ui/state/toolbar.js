@@ -4,6 +4,7 @@ import tools from '../action/tools';
 
 const initial = {
 	freqAtoms: [],
+	currentAtom: 0,
 	opened: null,
 	visibleTools: {}
 };
@@ -27,8 +28,8 @@ export default function (state=initial, action) {
 				? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
 				: state;
 		case 'ADD_ATOMS':
-			let atoms = addFreqAtom(data, state.freqAtoms);
-			return { ...state, freqAtoms: atoms };
+			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
+			return { ...state, ...newState };
 		case 'CLEAR_VISIBLE':
 			return { ...state, opened: null, visibleTools: {} };
 		case 'OPENED':
@@ -40,15 +41,14 @@ export default function (state=initial, action) {
 	}
 }
 
-function addFreqAtom(label, freqAtoms) {
+function addFreqAtom(label, freqAtoms, index) {
 	label = capitalize(label);
-	if (basicAtoms.indexOf(label) > -1 || freqAtoms.indexOf(label) !== -1) return freqAtoms;
+	if (basicAtoms.indexOf(label) > -1 || freqAtoms.indexOf(label) !== -1) return { freqAtoms };
 
-	freqAtoms.push(label);
-	if (freqAtoms.length > MAX_ATOMS)
-		return freqAtoms.slice(1);
+	freqAtoms[index] = label;
+	index = (index + 1) % MAX_ATOMS;
 
-	return freqAtoms;
+	return { freqAtoms, currentAtom: index };
 }
 
 export function addAtoms(atomLabel) {

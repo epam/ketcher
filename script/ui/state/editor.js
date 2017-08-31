@@ -6,15 +6,24 @@ import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 
 export function initEditor(dispatch, getState) {
-	const changeAction = debounce(100, () => dispatch(resetToSelect()));
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
+	const sleep = (time) => new Promise(resolve => setTimeout(resolve, time));
+
+	function resetToSelect(dispatch, getState) {
+		const resetToSelect = getState().options.settings.resetToSelect;
+		const activeTool = getState().actionState.activeTool.tool;
+		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
+			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
+		else
+			updateAction();
+	}
 
 	return {
 		onInit: editor => {
 			dispatch({ type: 'INIT', editor });
 		},
 		onChange: () => {
-			changeAction();
+			dispatch(resetToSelect);
 		},
 		onSelectionChange: () => {
 			updateAction();
@@ -58,11 +67,13 @@ export function initEditor(dispatch, getState) {
 			return openDialog(dispatch, 'rgroup', rgroup);
 		},
 		onSgroupEdit: sgroup => {
-			return openDialog(dispatch, 'sgroup', fromSgroup(sgroup))
+			return sleep(0)		// huck to open dialog after dispatch sgroup tool action
+				.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
 				.then(toSgroup);
 		},
 		onSdataEdit: sgroup => {
-			return openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup))
+			return sleep(0)
+				.then(() => openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup)))
 				.then(toSgroup);
 		},
 		onMessage: msg => {
@@ -75,15 +86,4 @@ export function initEditor(dispatch, getState) {
 		},
 		omMouseDown: event => {}
 	};
-}
-
-function resetToSelect() {
-	return (dispatch, getState) => {
-		const resetToSelect = getState().options.settings.resetToSelect;
-		const activeTool = getState().actionState.activeTool.tool;
-		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
-			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
-		else
-			dispatch({ type: 'UPDATE' });
-	}
 }

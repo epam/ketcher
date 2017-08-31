@@ -96,7 +96,7 @@ SGroup.filterAtoms = function (atoms, map) {
 	var newAtoms = [];
 	for (var i = 0; i < atoms.length; ++i) {
 		var aid = atoms[i];
-		if (typeof (map[aid]) != 'number')
+		if (typeof (map[aid]) !== 'number')
 			newAtoms.push(aid);
 		else if (map[aid] >= 0)
 			newAtoms.push(map[aid]);

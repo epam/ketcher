@@ -21,7 +21,7 @@ var options = minimist(process.argv.slice(2), {
 	default: {
 		'dist': 'dist',
 		'api-path': '',
-		'miew-path': null,
+		'miew-path': '',
 		'build-number': '',
 		'build-date': new Date() // TODO: format me
 	}
@@ -58,7 +58,7 @@ var bundleConfig = {
 					"useBuiltIns": true
 				}],
 				"es2015", "react"],
-			plugins: ['transform-class-properties',	'transform-object-rest-spread']
+			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
 		}]
 	]
 };
@@ -132,8 +132,7 @@ gulp.task('font', function (cb) {
 });
 
 gulp.task('copy', function () {
-	return gulp.src(['./script/prototype.js',
-	                 'raphael'].map(require.resolve)
+	return gulp.src(['raphael'].map(require.resolve)
 	                .concat(distrib))
 		.pipe(gulp.dest(options.dist));
 });

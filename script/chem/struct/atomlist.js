@@ -22,7 +22,7 @@ AtomList.prototype.label = function () {
 };
 
 AtomList.prototype.equals = function (x) {
-	return this.notList == x.notList && (this.ids || []).sort().toString() == (x.ids || []).sort().toString();
+	return this.notList == x.notList && (this.ids || []).sort().toString() === (x.ids || []).sort().toString();
 };
 
 module.exports = AtomList;

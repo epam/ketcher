@@ -28,9 +28,9 @@ Action.prototype.mergeWith = function (action) {
 Action.prototype.perform = function (restruct) {
 	var action = new Action();
 
-	this.operations.each(function (operation) {
+	this.operations.forEach(function (operation) {
 		action.addOp(operation.perform(restruct));
-	}, this);
+	});
 
 	action.operations.reverse();
 	return action;
@@ -39,7 +39,7 @@ Action.prototype.perform = function (restruct) {
 Action.prototype.isDummy = function (restruct) {
 	return this.operations.find(function (operation) {
 		return restruct ? !operation.isDummy(restruct) : true; // TODO [RB] the condition is always true for op.* operations
-	}) == null;
+	}) === undefined;
 };
 
 // Add action operation to remove atom from s-group if needed
@@ -47,7 +47,7 @@ function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 	var sgroups = atomGetSGroups(restruct, id);
 
 	if (sgroups.length > 0) {
-		sgroups.each(function (sid) {
+		sgroups.forEach(function (sid) {
 			action.addOp(new op.SGroupAtomRemove(sid, id));
 		});
 
@@ -62,10 +62,10 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 	var struct = restruct.molecule;
 	var sgCounts = {};
 
-	atoms.each(function (id) {
+	atoms.forEach(function (id) {
 		var sgroups = atomGetSGroups(restruct, id);
 
-		sgroups.each(function (sid) {
+		sgroups.forEach(function (sid) {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		});
 	});
@@ -151,7 +151,7 @@ function fromMultipleMove(restruct, lists, d) { // eslint-disable-line max-state
 
 function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	var action = new Action();
-	(typeof (ids) == 'number' ? [ids] : ids).each(function (id) {
+	(typeof (ids) === 'number' ? [ids] : ids).forEach(function (id) {
 		for (var key in Struct.Atom.attrlist) {
 			var value;
 			if (key in attrs)
@@ -162,7 +162,7 @@ function fromAtomsAttrs(restruct, ids, attrs, reset) {
 				continue; // eslint-disable-line no-continue
 			action.addOp(new op.AtomAttr(id, key, value));
 		}
-		if (!reset && 'label' in attrs && attrs.label != null && attrs.label != 'L#' && !attrs['atomList'])
+		if (!reset && 'label' in attrs && attrs.label != null && attrs.label !== 'L#' && !attrs['atomList'])
 			action.addOp(new op.AtomAttr(id, 'atomList', null));
 	}, this);
 	return action.perform(restruct);
@@ -196,7 +196,7 @@ function fromAtomAddition(resctruct, pos, atom) {
 
 function mergeFragments(action, restruct, frid, frid2) {
 	var struct = restruct.molecule;
-	if (frid2 != frid && (typeof frid2 == 'number')) {
+	if (frid2 != frid && (typeof frid2 === 'number')) {
 		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid2);
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));
@@ -214,7 +214,7 @@ function atomForNewBond(restruct, id) { // eslint-disable-line max-statements
 	var neighbours = [];
 	var pos = atomGetPos(restruct, id);
 
-	atomGetNeighbors(restruct, id).each(function (nei) {
+	atomGetNeighbors(restruct, id).forEach(function (nei) {
 		var neiPos = atomGetPos(restruct, nei.aid);
 
 		if (Vec2.dist(pos, neiPos) < 0.1)
@@ -260,7 +260,7 @@ function atomForNewBond(restruct, id) { // eslint-disable-line max-statements
 				var neiV = Vec2.diff(pos, neiPos);
 				var neiAngle = Math.atan2(neiV.y, neiV.x);
 
-				atomGetNeighbors(restruct, nei.aid).each(function (neiNei) {
+				atomGetNeighbors(restruct, nei.aid).forEach(function (neiNei) {
 					var neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
 					if (neiNei.bid == nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
@@ -310,12 +310,12 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 
 	var frid = null;
 
-	if (!(typeof begin == "number")) {
-		if (typeof end == "number")
+	if (!(typeof begin === "number")) {
+		if (typeof end === "number")
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (typeof end == "number") {
+		if (typeof end === "number") {
 			var frid2 = atomGetAttr(restruct, end, 'fragment');
 			mergeFragments(action, restruct, frid, frid2);
 		}
@@ -339,7 +339,7 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(restruct)).data.aid;
 		if (typeof begin === "number") {
-			atomGetSGroups(restruct, begin).each(function (sid) {
+			atomGetSGroups(restruct, begin).forEach(function (sid) {
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(restruct));
 			}, this);
 		}
@@ -398,7 +398,7 @@ function fromAtomDeletion(restruct, id) {
 
 	var frid = restruct.molecule.atoms.get(id).fragment;
 
-	atomGetNeighbors(restruct, id).each(function (nei) {
+	atomGetNeighbors(restruct, id).forEach(function (nei) {
 		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
 		if (atomGetDegree(restruct, nei.aid) == 1) {
 			if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
@@ -461,7 +461,7 @@ function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too trick
 			var newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 			var processAtom = function (aid1) { // eslint-disable-line func-style
 				action.addOp(new op.AtomAttr(aid1, 'fragment', newfrid).perform(restruct));
-				atomGetNeighbors(restruct, aid1).each(function (nei) {
+				atomGetNeighbors(restruct, aid1).forEach(function (nei) {
 					if (restruct.molecule.atoms.get(nei.aid).fragment == frid)
 						processAtom(nei.aid);
 				});
@@ -493,18 +493,18 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 	};
 
 	var actionRemoveDataSGroups = new Action();
-	selection.sgroupData.each(function (id) {
+	selection.sgroupData.forEach(function (id) {
 		actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
 	}, this);
 
-	selection.atoms.each(function (aid) {
-		atomGetNeighbors(restruct, aid).each(function (nei) {
+	selection.atoms.forEach(function (aid) {
+		atomGetNeighbors(restruct, aid).forEach(function (nei) {
 			if (selection.bonds.indexOf(nei.bid) == -1)
 				selection.bonds = selection.bonds.concat([nei.bid]);
 		}, this);
 	}, this);
 
-	selection.bonds.each(function (bid) {
+	selection.bonds.forEach(function (bid) {
 		action.addOp(new op.BondDelete(bid));
 
 		var bond = restruct.molecule.bonds.get(bid);
@@ -527,7 +527,7 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 	}, this);
 
 
-	selection.atoms.each(function (aid) {
+	selection.atoms.forEach(function (aid) {
 		var frid3 = restruct.molecule.atoms.get(aid).fragment;
 		if (frids.indexOf(frid3) < 0)
 			frids.push(frid3);
@@ -540,15 +540,15 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
 
-	selection.rxnArrows.each(function (id) {
+	selection.rxnArrows.forEach(function (id) {
 		action.addOp(new op.RxnArrowDelete(id));
 	}, this);
 
-	selection.rxnPluses.each(function (id) {
+	selection.rxnPluses.forEach(function (id) {
 		action.addOp(new op.RxnPlusDelete(id));
 	}, this);
 
-	selection.chiralFlags.each(function (id) {
+	selection.chiralFlags.forEach(function (id) {
 		action.addOp(new op.ChiralFlagDelete(id));
 	}, this);
 
@@ -571,7 +571,7 @@ function fromAtomMerge(restruct, srcId, dstId) {
 
 	var action = new Action();
 
-	atomGetNeighbors(restruct, srcId).each(function (nei) {
+	atomGetNeighbors(restruct, srcId).forEach(function (nei) {
 		var bond = restruct.molecule.bonds.get(nei.bid);
 		var begin, end;
 
@@ -589,7 +589,7 @@ function fromAtomMerge(restruct, srcId, dstId) {
 
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
 
-	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] == '*')
+	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
 		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
@@ -924,7 +924,7 @@ function fromSgroupDeletion(restruct, id) { // eslint-disable-line max-statement
 		struct.sGroupsRecalcCrossBonds();
 		var neiAtoms = sG.neiAtoms;
 
-		neiAtoms.each(function (aid) {
+		neiAtoms.forEach(function (aid) {
 			if (atomGetAttr(restruct, aid, 'label') == '*')
 				action.addOp(new op.AtomAttr(aid, 'label', 'C'));
 		}, this);
@@ -965,7 +965,7 @@ function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-
 	if (type == 'SRU') {
 		restruct.molecule.sGroupsRecalcCrossBonds();
 		var asteriskAction = new Action();
-		restruct.sgroups.get(sgid).item.neiAtoms.each(function (aid) {
+		restruct.sgroups.get(sgid).item.neiAtoms.forEach(function (aid) {
 			var plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
 			if (atomGetDegree(restruct, aid) == 1 && plainCarbon)
 				asteriskAction.addOp(new op.AtomAttr(aid, 'label', '*'));
@@ -1035,13 +1035,13 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	};
 
 	var mapping = {};
-	selection.atoms.each(function (id) {
+	selection.atoms.forEach(function (id) {
 		var newAtom = new Struct.Atom(struct.atoms.get(id));
 		newAtom.pos = newAtom.pp;
 		mapping[id] = clipboard.atoms.push(new Struct.Atom(newAtom)) - 1;
 	});
 
-	selection.bonds.each(function (id) {
+	selection.bonds.forEach(function (id) {
 		var newBond = new Struct.Bond(struct.bonds.get(id));
 		newBond.begin = mapping[newBond.begin];
 		newBond.end = mapping[newBond.end];
@@ -1066,13 +1066,13 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 		clipboard.sgroups.push(sgroupInfo);
 	}, this);
 
-	selection.rxnArrows.each(function (id) {
+	selection.rxnArrows.forEach(function (id) {
 		var arrow = new Struct.RxnArrow(struct.rxnArrows.get(id));
 		arrow.pos = arrow.pp;
 		clipboard.rxnArrows.push(arrow);
 	});
 
-	selection.rxnPluses.each(function (id) {
+	selection.rxnPluses.forEach(function (id) {
 		var plus = new Struct.RxnPlus(struct.rxnPluses.get(id));
 		plus.pos = plus.pp;
 		clipboard.rxnPluses.push(plus);
@@ -1081,7 +1081,7 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	// r-groups
 	var atomFragments = {};
 	var fragments = Set.empty();
-	selection.atoms.each(function (id) {
+	selection.atoms.forEach(function (id) {
 		var atom = struct.atoms.get(id);
 		var frag = atom.fragment;
 		atomFragments[id] = frag;
@@ -1242,35 +1242,35 @@ function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line ma
 		selection = structSelection(struct);
 
 	if (selection.atoms) {
-		selection.atoms.each(function (aid) {
+		selection.atoms.forEach(function (aid) {
 			var atom = struct.atoms.get(aid);
 			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
 		});
 	}
 
 	if (selection.rxnArrows) {
-		selection.rxnArrows.each(function (aid) {
+		selection.rxnArrows.forEach(function (aid) {
 			var arrow = struct.rxnArrows.get(aid);
 			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, pos, angle)));
 		});
 	}
 
 	if (selection.rxnPluses) {
-		selection.rxnPluses.each(function (pid) {
+		selection.rxnPluses.forEach(function (pid) {
 			var plus = struct.rxnPluses.get(pid);
 			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, pos, angle)));
 		});
 	}
 
 	if (selection.sgroupData) {
-		selection.sgroupData.each(function (did) {
+		selection.sgroupData.forEach(function (did) {
 			var data = struct.sgroups.get(did);
 			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, pos, angle)));
 		});
 	}
 
 	if (selection.chiralFlags) {
-		selection.chiralFlags.each(function (fid) {
+		selection.chiralFlags.forEach(function (fid) {
 			var flag = struct.chiralFlags.get(fid);
 			action.addOp(new op.ChiralFlagMove(fid, rotateDelta(flag.pp, pos, angle)));
 		});

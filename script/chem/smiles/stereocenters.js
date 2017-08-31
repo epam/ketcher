@@ -134,11 +134,11 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		{
 			group: 0, // = group;
 			type: 0, // = type;
-			pyramid: new Array(4)
+			pyramid: []
 		};
 
 	var neiIdx = 0;
-	var edgeIds = new Array(4);
+	var edgeIds = [];
 
 	var lastAtomDir = 0;
 	var nDoubleBonds = 0;
@@ -481,7 +481,7 @@ Stereocenters.sign = function (v1, v2, v3) {
 };
 
 Stereocenters.isPyramidMappingRigid = function (mapping) {
-	var arr = mapping.clone();
+	var arr = mapping.slice();
 	var rigid = true;
 
 	if (arr[0] > arr[1])

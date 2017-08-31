@@ -355,7 +355,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 			this.write(propId);
 			this.writePaddedNumber(part.length, 3);
 
-			part.each(function (value) {
+			part.forEach(function (value) {
 				this.writeWhiteSpace();
 				this.writePaddedNumber(this.mapping[value[0]], 3);
 				this.writeWhiteSpace();

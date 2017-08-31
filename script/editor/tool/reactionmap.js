@@ -16,7 +16,7 @@ function ReactionMapTool(editor) {
 ReactionMapTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms') {
+	if (ci && ci.map === 'atoms') {
 		this.editor.hover(null);
 		this.dragCtx = {
 			item: ci,
@@ -29,7 +29,7 @@ ReactionMapTool.prototype.mousemove = function (event) {
 	if ('dragCtx' in this) {
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
 		var atoms = rnd.ctab.molecule.atoms;
-		if (ci && ci.map == 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
+		if (ci && ci.map === 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
 			this.editor.hover(ci);
 			this.updateLine(atoms.get(this.dragCtx.item.id).pp, atoms.get(ci.id).pp);
 		} else {
@@ -59,7 +59,7 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 	if ('dragCtx' in this) {
 		var rnd = this.editor.render;
 		var ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item);
-		if (ci && ci.map == 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
+		if (ci && ci.map === 'atoms' && isValidMap(this.rcs, this.dragCtx.item.id, ci.id)) {
 			var action = new Action();
 			var atoms = rnd.ctab.molecule.atoms;
 			var atom1 = atoms.get(this.dragCtx.item.id);

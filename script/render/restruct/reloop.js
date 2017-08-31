@@ -24,7 +24,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 	var molecule = restruct.molecule;
 	var loop = this.loop;
 	this.centre = new Vec2();
-	loop.hbs.each(function (hbid) {
+	loop.hbs.forEach(function (hbid) {
 		var hb = molecule.halfBonds.get(hbid);
 		var bond = restruct.bonds.get(hb.bid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
@@ -45,7 +45,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 
 	this.centre = this.centre.scaled(1.0 / loop.hbs.length);
 	this.radius = -1;
-	loop.hbs.each(function (hbid) {
+	loop.hbs.forEach(function (hbid) {
 		var hb = molecule.halfBonds.get(hbid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
 		var bpos = scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options);
@@ -98,7 +98,7 @@ ReLoop.prototype.isValid = function (struct, rlid) {
 	var halfBonds = struct.halfBonds;
 	var loop = this.loop;
 	var bad = false;
-	loop.hbs.each(function (hbid) {
+	loop.hbs.forEach(function (hbid) {
 		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid)
 			bad = true;
 	}, this);

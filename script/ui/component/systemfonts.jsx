@@ -3,7 +3,7 @@ import FontFaceObserver from "font-face-observer";
 import Input from './input';
 /** @jsx h */
 
-let commonFonts = [
+const commonFonts = [
 	"Arial",
 	"Arial Black",
 	"Comic Sans MS",
@@ -21,10 +21,11 @@ let commonFonts = [
 ];
 
 function checkInSystem() {
-	let availableFontsPromises = commonFonts.map((fontName) => {
-		let observer = new FontFaceObserver(fontName);
+	const availableFontsPromises = commonFonts.map((fontName) => {
+		const observer = new FontFaceObserver(fontName);
 		return observer.check().then(() => fontName, () => null);
 	});
+
 	return Promise.all(availableFontsPromises);
 }
 
@@ -36,6 +37,7 @@ class SystemFonts extends Component {
 		this.state = { availableFonts: [subfontname(props.value)] };
 		this.setAvailableFonts();
 	}
+
 	setAvailableFonts() {
 		cache ? this.setState({ availableFonts: cache }) :
 			checkInSystem().then((results) => {
@@ -43,16 +45,20 @@ class SystemFonts extends Component {
 				this.setState({ availableFonts: cache });
 			});
 	}
+
 	render() {
-		let {...props} = this.props;
-		let desc = {
+		const {...props} = this.props;
+
+		const desc = {
 			enum: [],
 			enumNames: []
 		};
+
 		this.state.availableFonts.forEach((font) => {
 				desc.enum.push(`30px ${font}`);
 				desc.enumNames.push(font);
 		});
+
 		return desc.enum.length !== 1
 			? <Input schema={desc} {...props} />
 			: <select><option>{desc.enumNames[0]}</option></select>;

@@ -63,7 +63,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		var rightMargin = label.rbb.width / 2;
 		var leftMargin = -label.rbb.width / 2;
 		var implh = Math.floor(this.a.implicitH);
-		var isHydrogen = label.text == 'H';
+		var isHydrogen = label.text === 'H';
 		restruct.addReObjectPath('data', this.visel, label.path, ps, true);
 
 		var index = null;
@@ -207,10 +207,10 @@ function labelIsVisible(restruct, options, atom) {
 }
 
 function displayHydrogen(hydrogenLabels, atom) {
-	return !!((hydrogenLabels == 'on') ||
-	(hydrogenLabels == 'Terminal' && atom.a.neighbors.length < 2) ||
-	(hydrogenLabels == 'Hetero' && atom.label.text.toLowerCase() != 'c') ||
-	(hydrogenLabels == 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() != 'c')));
+	return ((hydrogenLabels === 'on') ||
+	(hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
+	(hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
+	(hydrogenLabels === 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c')));
 }
 
 function setHydrogenPos(struct, atom) {
@@ -324,6 +324,8 @@ function showRadical(atom, render) {
 			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
 			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options));
 		radical.path.attr('stroke', atom.color);
+		break;
+	default:
 		break;
 	}
 	radical.rbb = util.relBox(radical.path.getBBox());
@@ -495,7 +497,7 @@ function showWarning(atom, render, leftMargin, rightMargin) {
 }
 
 function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line max-statements
-	var asterisk = Prototype.Browser.IE ? '*' : '∗';
+	var asterisk = '∗';
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var tfx = util.tfx;
@@ -592,7 +594,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom, struct) {
 	var angles = [];
-	atom.a.neighbors.each(function (hbid) {
+	atom.a.neighbors.forEach(function (hbid) {
 		var hb = struct.halfBonds.get(hbid);
 		angles.push(hb.ang);
 	});
@@ -602,17 +604,13 @@ function bisectLargestSector(atom, struct) {
 	var da = [];
 	for (var i = 0; i < angles.length - 1; ++i)
 		da.push(angles[(i + 1) % angles.length] - angles[i]);
-	/* eslint-disable no-mixed-operators*/
-	da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-	/* eslint-enable no-mixed-operators*/
+	da.push(angles[0] - angles[angles.length - 1] + (2 * Math.PI));
 	var daMax = 0;
 	var ang = -Math.PI / 2;
 	for (i = 0; i < angles.length; ++i) {
 		if (da[i] > daMax) {
 			daMax = da[i];
-			/* eslint-disable no-mixed-operators*/
-			ang = angles[i] + da[i] / 2;
-			/* eslint-enable no-mixed-operators*/
+			ang = angles[i] + (da[i] / 2);
 		}
 	}
 	return new Vec2(Math.cos(ang), Math.sin(ang));

@@ -11,9 +11,8 @@ function SGroupForest(molecule) {
 // returns an array or s-group ids in the order of breadth-first search
 SGroupForest.prototype.getSGroupsBFS = function () {
 	var order = [];
-	var queue = [];
 	var id = -1;
-	queue = [].slice.call(this.children.get(-1));
+	var queue = [].slice.call(this.children.get(-1));
 	while (queue.length > 0) {
 		id = queue.shift();
 		queue = queue.concat(this.children.get(id));

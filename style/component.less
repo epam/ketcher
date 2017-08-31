@@ -19,11 +19,11 @@
 	// transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
-.-Select {
+.-SelectList {
 	&:extend(select all);
 	li {
 		display: block;
-		padding: 0px 2px 1px;
+		padding: 0 2px 1px;
 		cursor: default;
 		&:hover {
 			background-color: @form-hover-background;
@@ -32,6 +32,12 @@
 		&.selected {
 			color: white;
 			background-color: @form-selected-background;
+		}
+
+		&.split {
+			margin-top: 2px;
+			padding-top: 2px;
+			border-top: 1px @border-color solid;
 		}
 	}
 }

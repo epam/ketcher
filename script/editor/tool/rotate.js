@@ -11,7 +11,7 @@ function RotateTool(editor, dir) {
 		var restruct = editor.render.ctab;
 		var selection = editor.selection();
 		var singleBond = selection && selection.bonds &&
-		    Object.keys(selection).length == 1 &&
+		    Object.keys(selection).length === 1 &&
 		    selection.bonds.length == 1;
 
 		var action = !singleBond ? Action.fromFlip(restruct, selection, dir) :
@@ -39,7 +39,7 @@ RotateTool.prototype.mousedown = function (event) {
 		var rotId = null;
 		var rotAll = false;
 
-		selection.atoms.each(function (aid) {
+		selection.atoms.forEach(function (aid) {
 			var atom = struct.atoms.get(aid);
 
 			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
@@ -50,12 +50,12 @@ RotateTool.prototype.mousedown = function (event) {
 			atom.neighbors.find(function (nei) {
 				var hb = struct.halfBonds.get(nei);
 
-				if (selection.atoms.indexOf(hb.end) == -1) {
+				if (selection.atoms.indexOf(hb.end) === -1) {
 					if (hb.loop >= 0) {
 						var neiAtom = struct.atoms.get(aid);
 						if (!neiAtom.neighbors.find(function (neiNei) {
 							var neiHb = struct.halfBonds.get(neiNei);
-							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) != -1;
+							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1;
 						})) {
 							rotAll = true;
 							return true;

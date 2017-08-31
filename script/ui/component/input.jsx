@@ -6,11 +6,12 @@ function GenericInput({ value, onChange, type = "text", ...props }) {
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
 }
+
 GenericInput.val = function (ev, schema) {
-	var input = ev.target;
-	var isNumber = (input.type == 'number' || input.type == 'range') ||
-		(schema && (schema.type == 'number' || schema.type == 'integer'));
-	var value = isNumber ? input.value.replace(/,/g, '.') : input.value;
+	const input = ev.target;
+	const isNumber = (input.type === 'number' || input.type === 'range') ||
+		(schema && (schema.type === 'number' || schema.type === 'integer'));
+	const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
 	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
 };
@@ -20,6 +21,7 @@ function TextArea({ value, onChange, ...props }) {
 		<textarea value={value} onInput={onChange} {...props}/>
 	);
 }
+
 TextArea.val = (ev) => ev.target.value;
 
 function CheckBox({ value, onChange, ...props }) {
@@ -39,7 +41,7 @@ function Select({ schema, value, selected, onSelect, ...props }) {
 			{
 				enumSchema(schema, (title, val) => (
 					<option selected={selected(val, value)}
-							value={typeof val != 'object' && val}>
+							value={typeof val !== 'object' && val}>
 						{title}
 					</option>
 				))
@@ -49,9 +51,10 @@ function Select({ schema, value, selected, onSelect, ...props }) {
 }
 
 Select.val = function (ev, schema) {
-	var select = ev.target;
+	const select = ev.target;
 	if (!select.multiple)
 		return enumSchema(schema, select.selectedIndex);
+
 	return [].reduce.call(select.options, function (res, o, i) {
 		return !o.selected ? res :
 			[enumSchema(schema, i), ...res];
@@ -65,7 +68,7 @@ function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props 
 				enumSchema(schema, (title, val) => (
 					<label>
 						<input type={type} checked={selected(val, value)}
-							   value={typeof val != 'object' && val}
+							   value={typeof val !== 'object' && val}
 							   {...props}/>
 						{title}
 					</label>
@@ -76,50 +79,54 @@ function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props 
 }
 
 FieldSet.val = function (ev, schema) {
-	var input = ev.target;
+	const input = ev.target;
 	if (ev.target.tagName !== 'INPUT') {
 		ev.stopPropagation();
 		return undefined;
 	}
 	// Hm.. looks like premature optimization
 	//      should we inline this?
-	var fieldset = input.parentNode.parentNode;
-	var res = [].reduce.call(fieldset.querySelectorAll('input'),
+	const fieldset = input.parentNode.parentNode;
+	const res = [].reduce.call(fieldset.querySelectorAll('input'),
 		function (res, inp, i) {
 			return !inp.checked ? res :
 				[enumSchema(schema, i), ...res];
 		}, []);
-	return input.type == 'radio' ? res[0] : res;
+	return input.type === 'radio' ? res[0] : res;
 };
 
 function enumSchema(schema, cbOrIndex) {
-	var isTypeValue = Array.isArray(schema);
+	const isTypeValue = Array.isArray(schema);
 	if (!isTypeValue && schema.items)
 		schema = schema.items;
+
 	if (typeof cbOrIndex === 'function') {
 		return (isTypeValue ? schema : schema.enum).map((item, i) => {
-			var title = isTypeValue ? item.title :
+			const title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
 			return cbOrIndex(title !== undefined ? title : item,
 				item.value !== undefined ? item.value : item);
 		});
 	}
+
 	if (!isTypeValue)
 		return schema.enum[cbOrIndex];
-	var res = schema[cbOrIndex];
+
+	const res = schema[cbOrIndex];
 	return res.value !== undefined ? res.value : res;
 }
 
 function inputCtrl(component, schema, onChange) {
-	var props = {};
+	let props = {};
 	if (schema) {
 		// TODO: infer maxLength, min, max, step, etc
-		if (schema.type == 'number' || schema.type == 'integer')
+		if (schema.type === 'number' || schema.type === 'integer')
 			props = { type: 'text' };
 	}
+
 	return {
 		onChange: function (ev) {
-			var val = !component.val ? ev :
+			const val = !component.val ? ev :
 				component.val(ev, schema);
 			onChange(val);
 		},
@@ -131,7 +138,7 @@ function singleSelectCtrl(component, schema, onChange) {
 	return {
 		selected: (testVal, value) => (value === testVal),
 		onSelect: function (ev, value) {
-			var val = !component.val ? ev :
+			const val = !component.val ? ev :
 				component.val(ev, schema);
 			if (val !== undefined)
 				onChange(val);
@@ -150,7 +157,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 				if (val !== undefined)
 					onChange(val);
 			} else {
-				var i = values ? values.indexOf(ev) : -1;
+				const i = values ? values.indexOf(ev) : -1;
 				if (i < 0)
 					onChange(values ? [ev, ...values] : [ev]);
 				else
@@ -164,20 +171,24 @@ function multipleSelectCtrl(component, schema, onChange) {
 function ctrlMap(component, { schema, multiple, onChange }) {
 	if (!schema || !schema.enum && !schema.items && !Array.isArray(schema) || schema.type === 'string')
 		return inputCtrl(component, schema, onChange);
-	if (multiple || schema.type == 'array')
+
+	if (multiple || schema.type === 'array')
 		return multipleSelectCtrl(component, schema, onChange);
+
 	return singleSelectCtrl(component, schema, onChange);
 }
 
 function componentMap({ schema, type, multiple }) {
 	if (!schema || !schema.enum && !schema.items && !Array.isArray(schema)) {
-		if (type == 'checkbox' || schema && schema.type == 'boolean')
+		if (type === 'checkbox' || schema && schema.type === 'boolean')
 			return CheckBox;
-		return (type == 'textarea') ? TextArea : GenericInput;
+
+		return (type === 'textarea') ? TextArea : GenericInput;
 	}
-	if (multiple || schema.type == 'array')
-		return (type == 'checkbox') ? FieldSet : Select;
-	return (type == 'radio') ? FieldSet : Select;
+	if (multiple || schema.type === 'array')
+		return (type === 'checkbox') ? FieldSet : Select;
+
+	return (type === 'radio') ? FieldSet : Select;
 }
 
 function shallowCompare(a, b) {

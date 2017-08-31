@@ -47,7 +47,7 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 	atoms.forEach(function (aid) {
 		var sg = Set.list(this.atoms.get(aid).sgs);
 
-		sg.each(function (sid) {
+		sg.forEach(function (sid) {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		}, this);
 	}, this);
@@ -172,12 +172,12 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		aidMap = {};
 	// atoms in not RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) == -1)
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) === -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 	// atoms in RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) != -1)
+		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
@@ -199,7 +199,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		for (i = 0; i < sg.atoms.length; ++i)
 			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
 
-		if (sg.type == 'DAT')
+		if (sg.type === 'DAT')
 			cp.sGroupForest.insert(sg.id, -1, []);
 		else
 			cp.sGroupForest.insert(sg.id);
@@ -233,7 +233,7 @@ Struct.prototype.findBondId = function (begin, end) {
 };
 
 function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
-	console.assert(arguments.length == 3, 'Invalid parameter number!');
+	console.assert(arguments.length === 3, 'Invalid parameter number!');
 
 	this.begin = begin - 0;
 	this.end = end - 0;
@@ -329,9 +329,10 @@ Struct.prototype.atomAddNeighbor = function (hbid) {
 
 Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
-	atom.neighbors = atom.neighbors.sortBy(function (nei) {
-		return this.halfBonds.get(nei).ang;
-	}, this);
+	var halfBonds = this.halfBonds;
+	atom.neighbors = atom.neighbors.sort(function (nei, nei2) {
+		return halfBonds.get(nei).ang < halfBonds.get(nei2).ang;
+	});
 
 	var i;
 	for (i = 0; i < atom.neighbors.length; ++i) {
@@ -435,7 +436,7 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 		}
 	}
 
-	var global = typeof (atomSet) == 'undefined';
+	var global = typeof (atomSet) === 'undefined';
 
 	this.atoms.each(function (aid, atom) {
 		if (global || Set.contains(atomSet, aid))
@@ -533,7 +534,7 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.aromatic = true;
 	this.convex = convex || false;
 
-	hbs.each(function (hb) {
+	hbs.forEach(function (hb) {
 		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
 		if (bond.type != Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
@@ -747,7 +748,7 @@ Struct.prototype.findLoops = function () {
 						} else {
 							loopId = -2;
 						}
-						loop.each(function (hbid) {
+						loop.forEach(function (hbid) {
 							this.halfBonds.get(hbid).loop = loopId;
 							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
 						}, this);
@@ -843,7 +844,7 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 
 Struct.prototype.setImplicitHydrogen = function (list) {
 	this.sgroups.each(function (id, item) {
-		if (item.data.fieldName == "MRV_IMPLICIT_H")
+		if (item.data.fieldName === "MRV_IMPLICIT_H")
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
 	}, this);
 	function f(aid) {

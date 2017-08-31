@@ -6,7 +6,7 @@ var api = require('./api.js');
 var molfile = require('./chem/molfile');
 var smiles = require('./chem/smiles');
 
-var ui = require('./ui');
+var ui = require('./ui').default;
 var Render = require('./render');
 
 function getSmiles() {
@@ -63,7 +63,7 @@ window.onload = function () {
 	});
 	ketcher.ui = ui(Object.assign({}, params, buildInfo),
 	                ketcher.server);
-	ketcher.editor = ketcher.ui.editor;
+	ketcher.editor = global._ui_editor;
 	ketcher.server.then(function () {
 		if (params.mol)
 			ketcher.ui.load(params.mol);
@@ -77,7 +77,8 @@ var buildInfo = {
 	apiPath: '__API_PATH__',
 	buildDate: '__BUILD_DATE__',
 	buildNumber: '__BUILD_NUMBER__' || null,
-	buildOptions: '__BUILD_OPTIONS__'
+	buildOptions: '__BUILD_OPTIONS__',
+	miewPath: '__MIEW_PATH__' || null
 };
 
 var ketcher = module.exports = Object.assign({

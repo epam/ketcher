@@ -14,8 +14,8 @@ class Dialog extends Component {
 	keyDown(ev) {
 		let key = keyName(ev);
 		let active = document.activeElement;
-		let activeTextarea = active && active.tagName == 'TEXTAREA';
-		if (key.startsWith('Esc') || key == 'Enter' && !activeTextarea) {
+		let activeTextarea = active && active.tagName === 'TEXTAREA';
+		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
 			this.exit(key == 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}
@@ -29,7 +29,6 @@ class Dialog extends Component {
 		if (fe.focus) fe.focus();
 	}
 	render() {
-		console.info('dialog render');
 		let { children, title, params={},
 			  result=() => null, valid=() => !!result(), // Hmm, dublicate.. No simple default props
 			  buttons=["Cancel", "OK"], ...props} = this.props;   // see: https://git.io/v1KR6
@@ -46,7 +45,7 @@ class Dialog extends Component {
 				{ children }
 				<footer>{
 					buttons.map(b => (
-						typeof b != 'string' ? b :
+						typeof b !== 'string' ? b :
 							<input type="button" value={b}
 						           disabled={ b == 'OK' && !valid() }
 						           onClick={() => this.exit(b)} />

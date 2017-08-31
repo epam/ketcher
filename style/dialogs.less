@@ -110,9 +110,9 @@ form[role=dialog] {
 		position: absolute;
 		right: 0;
 		left: 0;
-	}
-	input[type=search] {
-		width: 100%;
+		input[type=search] {
+			width: 100%;
+		}
 	}
 	.save {
 		&:extend(button all);
@@ -120,22 +120,12 @@ form[role=dialog] {
 		float: left;
 	}
 	.groups {
-		&:extend(.-Select all);
+		&:extend(.-SelectList all);
 		margin-top: 3.5em;
 		height: 27em;
 		width: 11em;
 		float: left;
-		li:nth-child(14) { // TODO: probably temp hack
-			               // User tmpls shoudn't be at 15th place
-			margin-top: 12px;
-			&:before {
-				display: block;
-				position: relative;
-				content: '';
-				top: -7px;
-				border-top: 1px @border-color solid;
-			}
-		}
+		overflow: hidden;
 	}
 	.table {
 		margin-top: 3.5em;
@@ -681,7 +671,7 @@ form.settings {
 }
 
 .analyse {
-    label {
+	label {
 		width: 10em;
 		display: inline-block;
 		vertical-align: middle;
@@ -760,7 +750,7 @@ form.settings {
 
 .miew {
 	iframe {
-        //position: absolute;
+		//position: absolute;
 		border: 0;
 		width: 85em;
 		height: 40em;
@@ -781,7 +771,7 @@ form.settings {
 		font-size: 16px;
 	}
 
-	.struct-editor {
+	.editor {
 		padding: 10px;
 		border: 1px solid @border-color;
 		border-radius: 5px;

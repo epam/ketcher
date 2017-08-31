@@ -9,7 +9,7 @@ function ReactionUnmapTool(editor) {
 }
 ReactionUnmapTool.prototype.mousemove = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
-	if (ci && ci.map == 'atoms')
+	if (ci && ci.map === 'atoms')
 		this.editor.hover(this.editor.render.ctab.molecule.atoms.get(ci.id).aam ? ci : null);
 	else
 		this.editor.hover(null);
@@ -17,7 +17,7 @@ ReactionUnmapTool.prototype.mousemove = function (event) {
 ReactionUnmapTool.prototype.mouseup = function (event) {
 	var ci = this.editor.findItem(event, ['atoms']);
 	var atoms = this.editor.render.ctab.molecule.atoms;
-	if (ci && ci.map == 'atoms' && atoms.get(ci.id).aam) {
+	if (ci && ci.map === 'atoms' && atoms.get(ci.id).aam) {
 		var action = new Action();
 		var aam = atoms.get(ci.id).aam;
 		atoms.each(

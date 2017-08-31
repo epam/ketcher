@@ -3,6 +3,8 @@ var s = require('subscription');
 var Set = require('../util/set');
 var Vec2 = require('../util/vec2');
 
+var Struct = require('../chem/struct');
+
 var Render = require('../render');
 var Action = require('./action');
 
@@ -29,8 +31,8 @@ var toolMap = {
 	rotate: require('./tool/rotate')
 };
 
-var SCALE = 40;  // const
-var HISTORY_SIZE = 32; // put me to options
+const SCALE = 40;  // const
+const HISTORY_SIZE = 32; // put me to options
 
 var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
@@ -77,7 +79,8 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.update(Action.fromNewCanvas(this.render.ctab, value));
+		this.update(Action.fromNewCanvas(this.render.ctab,
+		                                 value || new Struct()));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;
@@ -229,7 +232,7 @@ function domEventSetup(editor, clientArea) {
 		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 		 subs.add(function (event) {
 			 editor.lastEvent = event;
-			 if (eventName in editor.tool())
+			 if (editor.tool() && eventName in editor.tool())
 				 editor.tool()[eventName](event);
 			 return true;
 		 }, -1);

@@ -54,6 +54,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	case 'DAT':
 		set = drawGroupDat(remol, sgroup);
 		break;
+	default: break;
 	}
 	return set;
 };
@@ -288,10 +289,10 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 		.attr(options.highlightStyle);
 	set.push(sg.highlighting);
 
-	Struct.SGroup.getAtoms(render.ctab.molecule, sg).each(function (aid) {
+	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach(function (aid) {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	Struct.SGroup.getBonds(render.ctab.molecule, sg).each(function (bid) {
+	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach(function (bid) {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);

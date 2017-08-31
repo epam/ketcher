@@ -10,7 +10,7 @@ function ReactionPlusTool(editor) {
 ReactionPlusTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnPluses']);
-	if (ci && ci.map == 'rxnPluses') {
+	if (ci && ci.map === 'rxnPluses') {
 		this.editor.hover(null);
 		this.editor.selection({ rxnPluses: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };

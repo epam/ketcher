@@ -1,55 +1,60 @@
+import { upperFirst } from 'lodash/fp';
 import { h, Component } from 'preact';
 /** @jsx h */
 
-import Struct from '../../chem/struct';
-import molfile from '../../chem/molfile';
 import Editor from '../../editor'
 
-function createEditor(el, tool, struct, options = {}) {
-	if (el) {
-		let editor = new Editor(el, { ...options });
+function setupEditor(editor, props, oldProps = {}) {
+	const { struct, tool, toolOpts, options } = props;
 
-		if (struct.prerender)
-			el.innerHTML = struct.prerender;
-		else {
-			let rnd = editor.render;
+	if (struct !== oldProps.struct)
+		editor.struct(struct);
 
-			rnd.setMolecule(struct);
-			rnd.update();
+	if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts)
+		editor.tool(tool, toolOpts);
+
+	if (oldProps.options && options !== oldProps.options)
+		editor.options(options);
+
+	// update handlers
+	for (let name in editor.event) {
+		if (!editor.event.hasOwnProperty(name))
+			continue;
+
+		let eventName = `on${upperFirst(name)}`;
+
+		if (props[eventName] !== oldProps[eventName]) {
+			console.info('update editor handler', eventName);
+			if (oldProps[eventName])
+				editor.event[name].remove(oldProps[eventName]);
+
+			if (props[eventName])
+				editor.event[name].add(props[eventName]);
 		}
-
-		editor.tool(tool.name, Object.assign({}, tool.opts));
-		return editor;
-	} else
-		return null;
+	}
 }
 
 class StructEditor extends Component {
-	constructor(props) {
-		super(props);
-		if (!(props.struct instanceof Struct)) try {
-			this.props.struct = molfile.parse(props.struct);
-		} catch (e) {
-			alert("Could not parse structure\n" + e);
-			this.props.struct = null;
-		}
-	}
 	shouldComponentUpdate() {
 		return false;
 	}
-	componentDidMount() {
-		let el = this.refs ? this.refs.base : this.base;
-		let { struct, tool, options } = this.props;
-		this.editor = createEditor(el, tool, struct, options);
 
-		for (let event in this.editor.event) {
-			this.editor.on(event, (opts) => this.props.onEvent(event, opts));
-		}
+	componentWillReceiveProps(props) {
+		setupEditor(this.instance, props, this.props);
 	}
+
+	componentDidMount() {
+		console.assert(this.base, "No backing element");
+		this.instance = new Editor(this.base, { ...this.props.options });
+		setupEditor(this.instance, this.props);
+		if (this.props.onInit)
+			this.props.onInit(this.instance);
+	}
+
 	render () {
-		let { struct, Tag="div", options, tool, ...props } = this.props;
+		let { Tag="div", ...props } = this.props;
 		return (
-			<Tag /*ref="el"*/ {...props}>{ struct ? null :  'No molecule' }</Tag>
+			<Tag {...props}/>
 		);
 	}
 }

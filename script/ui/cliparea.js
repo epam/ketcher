@@ -1,8 +1,9 @@
-var ieCb = window.clipboardData;
-var clipActions = ['cut', 'copy', 'paste'];
+const ieCb = window.clipboardData;
+const clipActions = ['cut', 'copy', 'paste'];
 
 function delegateCliparea(action) {
-	var enabled = document.queryCommandSupported(action);
+	let enabled = document.queryCommandSupported(action);
+
 	if (enabled) try {
 		enabled = document.execCommand(action);
 	} catch (ex) {
@@ -13,37 +14,39 @@ function delegateCliparea(action) {
 }
 
 function initCliparea(parent, options) {
-	var cliparea = new Element('textarea', {
-		'contenteditable': true,
-		'class': 'cliparea',
-		autofocus: true
-	});
-	parent.insert(cliparea);
+	const cliparea = document.createElement('textarea');
+	cliparea.contentEditable = true;
+	cliparea.className = 'cliparea';
+	cliparea.autofocus = true;
 
-	parent.on('mouseup', function (event) {
+	parent.appendChild(cliparea);
+
+	parent.addEventListener('mouseup', function () {
 		if (options.focused())
 			autofocus(cliparea);
 	});
 
-	parent.on('copy', function (event) {
+	parent.addEventListener('copy', function (event) {
 		if (options.focused()) {
-			var data = options.onCopy();
+			const data = options.onCopy();
 			if (data)
 				copy(event.clipboardData, data);
 			event.preventDefault();
 		}
 	});
-	parent.on('cut', function (event) {
+
+	parent.addEventListener('cut', function (event) {
 		if (options.focused()) {
-			var data = options.onCut();
+			const data = options.onCut();
 			if (data)
 				copy(event.clipboardData, data);
 			event.preventDefault();
 		}
 	});
-	parent.on('paste', function (event) {
+
+	parent.addEventListener('paste', function (event) {
 		if (options.focused()) {
-			var data = paste(event.clipboardData, options.formats);
+			const data = paste(event.clipboardData, options.formats);
 			if (data)
 				options.onPaste(data);
 			event.preventDefault();
@@ -51,7 +54,7 @@ function initCliparea(parent, options) {
 	});
 }
 
-var autofocus = function(cliparea) {
+const autofocus = function(cliparea) {
 	cliparea.value = ' ';
 	cliparea.focus();
 	cliparea.select();
@@ -74,13 +77,13 @@ function copy(cb, data) {
 }
 
 function paste(cb, formats) {
-	var data = {};
+	let data = {};
 	if (!cb && ieCb) {
 		data['text/plain'] = ieCb.getData('text');
 	} else {
 		data['text/plain'] = cb.getData('text/plain');
 		data = formats.reduce(function (data, fmt) {
-			var d = cb.getData(fmt);
+			const d = cb.getData(fmt);
 			if (d)
 				data[fmt] = d;
 			return data;
@@ -88,7 +91,6 @@ function paste(cb, formats) {
 	}
 	return data;
 }
-
 
 module.exports = Object.assign(initCliparea, {
 	exec: delegateCliparea,

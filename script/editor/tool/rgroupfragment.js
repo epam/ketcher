@@ -23,15 +23,15 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 	if (ci) {
 		this.editor.hover(null);
 
-		var label = (ci.map == 'rgroups') ? ci.id :
+		var label = (ci.map === 'rgroups') ? ci.id :
 		    Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;
 		var rg = Object.assign({ label: label },
-		                       ci.map == 'frags' ? null :
+		                       ci.map === 'frags' ? null :
 		                       struct.rgroups.get(ci.id));
 		var res = editor.event.rgroupEdit.dispatch(rg);
 
 		Promise.resolve(res).then(function (newRg) {
-			var action = ci.map == 'rgroups' ?
+			var action = ci.map === 'rgroups' ?
 			    Action.fromRGroupAttrs(editor.render.ctab, ci.id, newRg) :
 			    Action.fromRGroupFragment(editor.render.ctab, newRg.label, ci.id);
 

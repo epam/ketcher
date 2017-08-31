@@ -1,3 +1,5 @@
+var isEqual = require('lodash/fp/isEqual');
+
 var LassoHelper = require('./helper/lasso');
 
 var Action = require('../action');
@@ -13,12 +15,11 @@ function SGroupTool(editor, type) {
 			return new SGroupTool(editor, type);
 
 		var sgroups = editor.render.ctab.molecule.sgroups;
+		var selectedAtoms = editor.selection().atoms;
 
-		var selectedAtoms = JSON.stringify(editor.selection().atoms);
-
-		var id = sgroups.find(function (index, sgroup) {
-			return JSON.stringify(sgroup.atoms) === selectedAtoms;
-		}, this);
+		var id = sgroups.find(function (_, sgroup) {
+			return isEqual(sgroup.atoms, selectedAtoms);
+		});
 
 		propsDialog(editor, id !== undefined ? id : null, type);
 		editor.selection(null);
@@ -61,13 +62,13 @@ SGroupTool.prototype.mouseup = function (event) {
 			return;
 		this.editor.hover(null);
 
-		if (ci.map == 'atoms') {
+		if (ci.map === 'atoms') {
 			// if we click the SGroup tool on a single atom or bond, make a group out of those
 			selection = { atoms: [ci.id] };
-		} else if (ci.map == 'bonds') {
+		} else if (ci.map === 'bonds') {
 			var bond = this.editor.render.ctab.bonds.get(ci.id);
 			selection = { atoms: [bond.b.begin, bond.b.end] };
-		} else if (ci.map == 'sgroups') {
+		} else if (ci.map === 'sgroups') {
 			id = ci.id;
 		} else {
 			return;
@@ -75,7 +76,7 @@ SGroupTool.prototype.mouseup = function (event) {
 	}
 
 	// TODO: handle click on an existing group?
-	if (id != null || (selection && selection.atoms))
+	if (id !== null || (selection && selection.atoms))
 		propsDialog(this.editor, id, this.type);
 };
 
@@ -83,9 +84,9 @@ function propsDialog(editor, id, defaultType) {
 	var restruct = editor.render.ctab;
 	var struct = restruct.molecule;
 	var selection = editor.selection() || {};
-	var sg = (id != null) && struct.sgroups.get(id);
+	var sg = (id !== null) && struct.sgroups.get(id);
 	var type = sg ? sg.type : defaultType;
-	var eventName = type == 'DAT' ? 'sdataEdit' : 'sgroupEdit';
+	var eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
 	if (!selection.atoms && !selection.bonds && !sg) {
 		console.info('There is no selection or sgroup');
@@ -109,7 +110,7 @@ function propsDialog(editor, id, defaultType) {
 
 	Promise.resolve(res).then(function (newSg) {
 		// TODO: check before signal
-		if (newSg.type != 'DAT' && // when data s-group separates
+		if (newSg.type !== 'DAT' && // when data s-group separates
 			checkOverlapping(struct, selection.atoms || [])) {
 			editor.event.message.dispatch({
 				error: 'Partial S-group overlapping is not allowed.'
@@ -212,7 +213,7 @@ function checkOverlapping(struct, atoms) {
 	var verified = {};
 	var atomsHash = {};
 
-	atoms.each(function (id) {
+	atoms.forEach(function (id) {
 		atomsHash[id] = true;
 	});
 
@@ -222,22 +223,19 @@ function checkOverlapping(struct, atoms) {
 
 		return 0 <= sgroups.findIndex(function (sid) {
 			var sg = struct.sgroups.get(sid);
-			if (sg.type == 'DAT' || sid in verified)
+			if (sg.type === 'DAT' || sid in verified)
 				return false;
 
 			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
 
 			if (sgAtoms.length < atoms.length) {
-				if (0 <= sgAtoms.findIndex(function (aid) {
-					return !(aid in atomsHash);
-				}))
+				if (0 <= sgAtoms.findIndex(function (aid) { return !(aid in atomsHash); }))
 					return true;
-			} else if (0 <= atoms.findIndex(function (aid) {
-				return (sgAtoms.indexOf(aid) == -1);
-			})) {
-				return true;
 			}
-			return false;
+
+			return 0 <= atoms.findIndex(function (aid) {
+				return (sgAtoms.indexOf(aid) === -1);
+			});
 		});
 	});
 }

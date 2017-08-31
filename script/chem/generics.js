@@ -68,7 +68,7 @@ var generics = {
 
 function mapify(tree, path, res) {
 	return Object.keys(tree).reduce(function (res, key) {
-		if (key == 'labels') {
+		if (key === 'labels') {
 			return tree.labels.reduce(function (res, label) {
 				res[label] = path || true;
 				return res;

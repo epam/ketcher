@@ -15,9 +15,7 @@ DEBUG.logMethod = function () { };
 function Render(clientArea, opt) {
 	this.userOpts = opt;
 
-	this.useOldZoom = Prototype.Browser.IE;
-
-	this.clientArea = clientArea = $(clientArea);
+	this.clientArea = clientArea;
 	this.paper = new Raphael(clientArea);
 	this.dirty = true;
 
@@ -48,8 +46,21 @@ Render.prototype.scrollPos = function () {
 	return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
 };
 
+function cumulativeOffset(el) {
+	var curtop = 0;
+	var curleft = 0;
+	if (el.parentNode) {
+		do {
+			curtop += el.offsetTop || 0;
+			curleft += el.offsetLeft || 0;
+			el = el.offsetParent;
+		} while (el);
+	}
+	return { left: curleft, top: curtop };
+}
+
 Render.prototype.page2obj = function (pagePos) {
-	var offset = this.clientArea.cumulativeOffset();
+	var offset = cumulativeOffset(this.clientArea);
 	var pp = new Vec2(pagePos.pageX - offset.left, pagePos.pageY - offset.top);
 	return this.view2obj(pp);
 };
@@ -139,7 +150,6 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 	viewSz = viewSz || new Vec2(this.clientArea.clientWidth || 100,
 	                            this.clientArea.clientHeight || 100);
 
-	console.info('update');
 	if (this.dirty) {
 		if (this.options.autoScale) {
 			var cbb = this.ctab.molecule.getCoordBoundingBox();
@@ -156,12 +166,8 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 		force = true;
 	}
 
-	var start = (new Date()).getTime();
 	var changes = this.ctab.update(force);
 	this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-	var time = (new Date()).getTime() - start;
-	if (force && $('log'))
-		$('log').innerHTML = time.toString() + '\n';
 	if (changes) {
 		var sf = this.options.scale;
 		var bb = this.ctab.getVBoxObj().transform(scale.obj2scaled, this.options).translate(this.options.offset || new Vec2());
@@ -190,13 +196,9 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 			var marg = this.options.autoScaleMargin;
 			var mv = new Vec2(marg, marg);
 			var csz = viewSz;
-			 /* eslint-disable no-mixed-operators*/
-			if (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)
-				/* eslint-enable no-mixed-operators*/
+			if (csz.x < (2 * marg) + 1 || csz.y < (2 * marg) + 1)
 				throw new Error('View box too small for the given margin');
-				/* eslint-disable no-mixed-operators*/
-			var rescale = Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-			/* eslint-enable no-mixed-operators*/
+			var rescale = Math.max(sz1.x / (csz.x - (2 * marg)), sz1.y / (csz.y - (2 * marg)));
 			if (this.options.maxBondLength / rescale > 1.0)
 				rescale = 1.0;
 			var sz2 = sz1.add(mv.scaled(2 * rescale));

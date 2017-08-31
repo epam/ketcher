@@ -1,16 +1,24 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 /** @jsx h */
 
-function SelectList ({ children, options, onChange, value, ...props}) {
-  return (
-    <ul {...props} tabindex="0">{
-        options.map((opt, index) => (
-          <li onClick={() => onChange(opt, index) }
-              className={opt == value ? 'selected' : ''}>
-            {opt}</li>
-        ))
-    }</ul>
-  );
+function SelectList({ schema, value, onSelect, splitIndexes, ...props }) {
+	return (
+		<ul {...props}>{
+			schema.enum.map((opt, index) => (
+				<li onClick={() => onSelect(opt, index) }
+					className={
+						(opt === value ? 'selected ' : '') +
+						(isSplitIndex(index, splitIndexes) ? 'split' : '')
+					}>
+					{schema.enumNames ? schema.enumNames[index] : opt}
+				</li>
+			))
+		}</ul>
+	);
+}
+
+function isSplitIndex(index, splitIndexes) {
+	return index > 0 && splitIndexes && splitIndexes.includes(index);
 }
 
 export default SelectList;

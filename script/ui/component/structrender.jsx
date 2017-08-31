@@ -11,7 +11,7 @@ function renderStruct(el, struct, options={}) {
 			el.innerHTML = struct.prerender;
 		else {
 			console.info('render!', el.clientWidth, el.clientWidth);
-			var rnd = new Render(el, {
+			const rnd = new Render(el, {
 				autoScale: true,
 				...options
 			});
@@ -33,14 +33,17 @@ class StructRender extends Component {
 			this.props.struct = null;
 		}
 	}
+
 	shouldComponentUpdate() {
 		return false;
 	}
+
 	componentDidMount() {
-		let el = this.refs ? this.refs.base : this.base;
-		let { struct, options } = this.props;
+		const el = this.refs ? this.refs.base : this.base;
+		const { struct, options } = this.props;
 		renderStruct(el, struct, options);
 	}
+
 	render () {
 		let { struct, Tag="div", ...props } = this.props;
 		return (

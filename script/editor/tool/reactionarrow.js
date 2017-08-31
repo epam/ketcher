@@ -11,7 +11,7 @@ function ReactionArrowTool(editor) {
 ReactionArrowTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnArrows']);
-	if (ci && ci.map == 'rxnArrows') {
+	if (ci && ci.map === 'rxnArrows') {
 		this.editor.hover(null);
 		this.editor.selection({ rxnArrows: [ci.id] });
 		this.dragCtx = { xy0: rnd.page2obj(event) };

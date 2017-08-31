@@ -1,12 +1,12 @@
 {
   "env": {
     "browser": true,
-    "commonjs": true,
     "es6": true,
-    "prototypejs": true
+    "commonjs": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
+    "ecmaVersion": 6,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -41,7 +41,7 @@
     }],
     "keyword-spacing": ["error", {
       "before": true,
-      "after": true,
+      "after": true
     }],
     "linebreak-style": ["error", "unix"],
     "max-depth": ["error", 4],
@@ -74,7 +74,7 @@
     "object-curly-newline": "off",
     "object-curly-spacing": ["error", "always"],
     "object-property-newline": ["error", {
-      "allowMultiplePropertiesPerLine": true,
+      "allowMultiplePropertiesPerLine": true
     }],
     "one-var-declaration-per-line": ["error", "initializations"],
     "operator-assignment": ["error", "always"],

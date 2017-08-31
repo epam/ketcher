@@ -206,7 +206,9 @@ function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
 	if (context === 'Atom')
 		return Action.fromAtomAction(restruct, newSg, newSourceAtoms);
 
-	return Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId());
+	return {
+		action: Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId())
+	};
 }
 
 function checkOverlapping(struct, atoms) {

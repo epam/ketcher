@@ -193,7 +193,7 @@ Editor.prototype.historySize = function () {
 };
 
 Editor.prototype.undo = function () {
-	if (this.historyPtr == 0)
+	if (this.historyPtr === 0)
 		throw new Error('Undo stack is empty');
 
 	if (this.tool() && this.tool().cancel)
@@ -207,7 +207,7 @@ Editor.prototype.undo = function () {
 };
 
 Editor.prototype.redo = function () {
-	if (this.historyPtr == this.historyStack.length)
+	if (this.historyPtr === this.historyStack.length)
 		throw new Error('Redo stack is empty');
 
 	if (this.tool() && this.tool().cancel)

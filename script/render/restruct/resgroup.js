@@ -158,6 +158,7 @@ function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
 
 function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statements
 	var atoms = sg.atoms;
+
 	if (!xbonds || xbonds.length !== 2) {
 		sg.bracketDir = new Vec2(1, 0);
 	} else {
@@ -169,6 +170,7 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 
 	var bb = null;
 	var contentBoxes = [];
+
 	atoms.forEach(function (aid) {
 		var atom = mol.atoms.get(aid);
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;

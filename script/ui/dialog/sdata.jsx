@@ -3,7 +3,7 @@ import { connect } from 'preact-redux';
 import { Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
-import { sdataSchema, getSdataDefault } from '../data/sdata-schema'
+import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../data/sdata-schema'
 /** @jsx h */
 
 function SelectInput({ title, name, schema, ...prop }) {
@@ -25,51 +25,8 @@ function SelectInput({ title, name, schema, ...prop }) {
 	return <Field name={name} schema={inputSelect} component={ComboBox} {...prop} />
 }
 
-const customFieldNameSchema = {
-	key: 'Custom',
-	properties: {
-		type: { enum: ["DAT"] },
-		context: {
-			title: 'Context',
-			enum: [
-				'Fragment',
-				'Bond',
-				'Atom',
-				'Group'
-			],
-			default: 'Fragment'
-		},
-		fieldName: {
-			title: 'Field name',
-			type: "string",
-			default: "",
-			minLength: 1,
-			invalidMessage: "Please, specify field name"
-		},
-		fieldValue: {
-			title: 'Field value',
-			type: "string",
-			default: "",
-			minLength: 1,
-			invalidMessage: "Please, specify field value"
-		},
-		radiobuttons: {
-			enum: [
-				"Absolute",
-				"Relative",
-				"Attached"
-			],
-			default: "Absolute"
-		}
-	},
-	required: ["context", "fieldName", "fieldValue", "radiobuttons"]
-};
-
-function SData({ formState, ...prop }) {
+function SData({ context, fieldName, fieldValue, type, radiobuttons, formState, ...prop }) {
 	const { result, valid } = formState;
-
-	const context = result.context;
-	const fieldName = result.fieldName;
 
 	const init = {
 		context,
@@ -80,23 +37,23 @@ function SData({ formState, ...prop }) {
 
 	init.fieldValue = fieldValue || getSdataDefault(context, init.fieldName);
 
-	const formSchema = sdataSchema[context][fieldName] || customFieldNameSchema;
+	const formSchema = sdataSchema[result.context][result.fieldName] || sdataCustomSchema;
 
 	const serialize = {
-		context: context.trim(),
-		fieldName: fieldName.trim(),
+		context: result.context.trim(),
+		fieldName: result.fieldName.trim(),
 		fieldValue: result.fieldValue.trim()
 	};
 
 	return (
 		<Dialog title={"S-Group Properties"} className="sgroup"
 				result={() => result} valid={() => valid} params={prop}>
-            <Form {...formState} serialize={serialize} schema={formSchema} init={init} >
+            <Form serialize={serialize} schema={formSchema} init={init} {...formState}>
                 <SelectOneOf title="Context" name="context" schema={sdataSchema}/>
                 <fieldset className={"data"}>
-                    <SelectInput title="Field name" name="fieldName" schema={sdataSchema[context]}/>
+                    <SelectInput title="Field name" name="fieldName" schema={sdataSchema[result.context]}/>
                     {
-                        content(formSchema, context, fieldName)
+                        content(formSchema, result.context, result.fieldName)
                     }
                 </fieldset>
             </Form>
@@ -112,5 +69,5 @@ const content = (schema, context, fieldName) => Object.keys(schema.properties)
 	);
 
 export default connect(
-	(store) => ({ formState: store.modal.form })
+	store => ({ formState: store.modal.form })
 )(SData);

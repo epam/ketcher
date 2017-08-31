@@ -253,6 +253,46 @@ const sData = {
 	}
 };
 
+export const sdataCustomSchema = {
+	key: 'Custom',
+	properties: {
+		type: { enum: ["DAT"] },
+		context: {
+			title: 'Context',
+			enum: [
+				'Fragment',
+				'Bond',
+				'Atom',
+				'Group'
+			],
+			default: 'Fragment'
+		},
+		fieldName: {
+			title: 'Field name',
+			type: "string",
+			default: "",
+			minLength: 1,
+			invalidMessage: "Please, specify field name"
+		},
+		fieldValue: {
+			title: 'Field value',
+			type: "string",
+			default: "",
+			minLength: 1,
+			invalidMessage: "Please, specify field value"
+		},
+		radiobuttons: {
+			enum: [
+				"Absolute",
+				"Relative",
+				"Attached"
+			],
+			default: "Absolute"
+		}
+	},
+	required: ["context", "fieldName", "fieldValue", "radiobuttons"]
+};
+
 export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
 	acc[title] = mapOf(sData[title], 'fieldName');
 	Object.keys(acc[title]).forEach(fieldName => acc[title][fieldName].properties.context = contextSchema);

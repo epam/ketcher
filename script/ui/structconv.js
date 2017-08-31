@@ -216,8 +216,8 @@ export function fromSgroup(ssgroup) {
 }
 
 export function toSgroup(sgroup) {
-	let { type, radiobuttons, ...props } = sgroup;
-	let attrs = { ...props };
+	const { type, radiobuttons, ...props } = sgroup;
+	const attrs = { ...props };
 
 	const absolute = 'absolute';
 	const attached = 'attached';

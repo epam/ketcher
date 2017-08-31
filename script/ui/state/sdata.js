@@ -7,6 +7,7 @@ export const initSdata = () => {
 	const radiobuttons = 'Absolute';
 
 	return {
+		errors: {},
 		valid: true,
 		result: {
 			context,
@@ -19,6 +20,12 @@ export const initSdata = () => {
 };
 
 export function sdataReducer(state, action) {
+	if (action.data.result.init)
+		return correctErrors({
+			...state,
+			result: Object.assign({}, state.result, action.data.result)
+		}, action.data);
+
 	const actionContext = action.data.result.context;
 	const actionFieldName = action.data.result.fieldName;
 
@@ -29,10 +36,12 @@ export function sdataReducer(state, action) {
 	else  if (actionFieldName !== state.result.fieldName)
 		newstate = onFieldNameChange(state, action.data.result);
 
-	newstate = newstate || Object.assign({}, state, action.data.result);
+	newstate = newstate || {
+		...state,
+		result: Object.assign({}, state.result, action.data.result)
+	};
 
-	return correctErrors(newstate, action.data.result);
-
+	return correctErrors(newstate, action.data);
 }
 
 const correctErrors = (state, payload) => {
@@ -40,8 +49,8 @@ const correctErrors = (state, payload) => {
 	const { fieldName, fieldValue } = state.result;
 
 	return {
-		...state,
-		valid: valid && fieldName && fieldValue,
+		result: state.result,
+		valid: valid && !!fieldName && !!fieldValue,
 		errors: errors,
 	};
 };

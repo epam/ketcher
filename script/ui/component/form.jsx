@@ -11,7 +11,7 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 
 		if (init) {
-			const { valid, errors } = this.schema.serialize(init);
+			let { valid, errors } = this.schema.serialize(init);
 			const errs = getErrorsObj(errors);
 
 			init = Object.assign({}, init, { init: true });
@@ -20,8 +20,8 @@ class Form extends Component {
 	}
 
 	updateState(newstate) {
-		let { instance, valid, errors } = this.schema.serialize(newstate);
-		let errs = getErrorsObj(errors);
+		const { instance, valid, errors } = this.schema.serialize(newstate);
+		const errs = getErrorsObj(errors);
 		this.props.onUpdate(instance, valid, errs);
 	}
 
@@ -46,17 +46,17 @@ class Form extends Component {
 		};
 	}
 
-	render() {
-		const { result, children, schema, ...props } = this.props;
+	render(props) {
+		const { result, children, schema, ...prop } = props;
 
 		if (schema.key && schema.key !== this.schema.key) {
-			this.schema = propSchema(schema, props);
+			this.schema = propSchema(schema, prop);
 			this.schema.serialize(result); // hack: valid first state
 			this.updateState(result);
 		}
 
 		return (
-			<form {...props}>
+			<form {...prop}>
 				{children}
 			</form>
 		);
@@ -152,7 +152,7 @@ function serializeRewrite(serializeMap, instance, schema) {
 	}
 
 	for (let p in schema.properties) {
-		if (schema.properties.hasOwnProperty(p) && p in instance) {
+		if (schema.properties.hasOwnProperty(p) && (p in instance)) {
 			res[p] = instance[serializeMap[p]] || instance[p];
 		}
 	}

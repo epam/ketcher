@@ -13,7 +13,7 @@ import { analyse } from '../state/server';
 
 function FrozenInput({value}) {
 	return (
-		<input type="text" spellcheck="false" value={value}
+		<input type="text" spellCheck={false} value={value}
 			   onKeyDown={ev => allowMovement(ev)}/>
 	);
 }
@@ -31,7 +31,7 @@ function FormulaInput({value}) {
 	if (pos === 0) content.push(value);
 	else content.push(value.substring(pos, value.length));
 	return (
-		<div className="chem-input" spellcheck="false" contenteditable="true"
+		<div className="chem-input" spellCheck={false} contentEditable={true}
 			 onKeyDown={ev => allowMovement(ev)}>{content}</div>
 	);
 }

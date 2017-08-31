@@ -84,6 +84,6 @@ export function initEditor(dispatch, getState) {
 				console[act](msg[act]);
 			}
 		},
-		omMouseDown: event => {}
+		onMouseDown: event => {}
 	};
 }

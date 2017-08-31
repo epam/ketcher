@@ -14,8 +14,7 @@ function ElementNumber(props, {stateStore}) {
 	let { result } = stateStore.props;
 	return (
 		<label>Number:
-		  <input className="number" type="text"
-				 readonly="readonly"
+		  <input className="number" type="text" readOnly={true}
 				 value={element.map[capitalize(result.label)] || ''}/>
 		</label>
 	);
@@ -26,8 +25,8 @@ function Atom(props) {
 	return (
 		<Dialog title="Atom Properties" className="atom-props"
 				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form storeName="atom" schema={atomSchema}
-				  customValid={{ label: l => atomValid(l) }} init={prop} {...formState}>
+			<Form schema={atomSchema} customValid={{ label: l => atomValid(l) }}
+				  init={prop} {...formState}>
 			  <fieldset className="main">
 				<Field name="label"/>
 				<Field name="alias"/>

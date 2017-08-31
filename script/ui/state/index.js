@@ -28,9 +28,10 @@ function modal(state = null, action) {
 			name: data.name,
 			form: formsState[data.name] || null,
 			prop: data.prop || null
-		}
+		};
+	default:
+		return state;
 	}
-	return state;
 }
 
 const shared = combineReducers({

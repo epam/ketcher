@@ -50,7 +50,7 @@ export default function (state=null, { type, action, ...params }) {
 				res[key] = value;
 			return res;
 		}, { activeTool: activeTool || state.activeTool });
+	default:
+		return state;
 	}
-
-	return state;
 }

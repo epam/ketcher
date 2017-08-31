@@ -1,8 +1,6 @@
 import { h, Component } from 'preact';
 /** @jsx h */
 
-//import { Component, React } from 'react';
-
 const STYLE_INNER = 'position:relative; overflow:hidden; width:100%; min-height:100%;';
 
 const STYLE_CONTENT = 'position:absolute; top:0; left:0; height:100%; width:100%; overflow:visible;';
@@ -53,7 +51,7 @@ export default class VirtualList extends Component {
 	render() {
 		const { data, rowHeight, children, Tag="div", overscanCount=1, sync, ...props } = this.props;
 		const { offset, height } = this.state;
-		//console.info('offset', offset);
+
 		// first visible row index
 		let start = (offset / rowHeight) || 0;
 		const renderRow = children[0];

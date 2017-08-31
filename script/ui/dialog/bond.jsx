@@ -11,7 +11,7 @@ function Bond(props) {
 	return (
 		<Dialog title="Bond Properties" className="bond"
 				result={() => formState.result} valid={() => formState.valid} params={prop} >
-			<Form storeName="bond" schema={bondSchema} init={prop} {...formState}>
+			<Form schema={bondSchema} init={prop} {...formState}>
 				<Field name="type"/>
 				<Field name="topology"/>
 				<Field name="center"/>

@@ -36,7 +36,7 @@ function Check(props) {
 	return (
 		<Dialog title="Structure Check" className="check"
 				result={() => result} params={prop}>
-			<Form storeName="check" schema={checkSchema} {...formState}>
+			<Form schema={checkSchema} {...formState}>
 				<Tabs className="tabs" captions={tabs}
 					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}>
 					<ErrorsCheck moleculeErrors={moleculeErrors}/>
@@ -66,9 +66,7 @@ function ErrorsCheck(props) {
 }
 
 export default connect(
-	store => ({
-		formState: store.modal.form
-	}),
+	store => ({	formState: store.modal.form }),
 	dispatch => ({
 		onCheck: (opts) => dispatch(check(opts))
 	})

@@ -67,8 +67,8 @@ function LabelEdit(props) {
 	return (
 		<Dialog title="Label Edit" className="labeledit" valid={() => valid}
 				result={() => deserialize(result.label)} params={prop}>
-			<Form storeName="label-edit" schema={labelEditSchema}
-				  customValid={{label: l => deserialize(l)}} init={init} {...formState}>
+			<Form schema={labelEditSchema} customValid={{label: l => deserialize(l)}}
+				  init={init} {...formState}>
 				<Field name="label" maxlength="20" size="10"/>
 			</Form>
 		</Dialog>

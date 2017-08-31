@@ -90,12 +90,12 @@ class Field extends Component {
 		const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 
 		return (
-			<Label className={className} data-error={dataError} title={props.title || desc.title} >
+			<Label className={className} data-error={dataError} title={prop.title || desc.title} >
 				{
 					component ?
-						h(component, { ...fieldOpts, ...props }) :
+						h(component, { ...fieldOpts, ...prop }) :
 						<Input name={name} schema={desc}
-							   {...fieldOpts} {...props}/>
+							   {...fieldOpts} {...prop}/>
 				}
 			</Label>
 		);

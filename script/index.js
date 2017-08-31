@@ -1,13 +1,13 @@
 import 'babel-polyfill';
 import 'whatwg-fetch';
-var queryString = require('query-string');
+import queryString from 'query-string';
 
-var api = require('./api.js');
-var molfile = require('./chem/molfile');
-var smiles = require('./chem/smiles');
+import api from './api.js';
+import * as molfile from './chem/molfile';
+import * as smiles from './chem/smiles';
 
-var ui = require('./ui').default;
-var Render = require('./render');
+import ui from './ui';
+import Render from './render';
 
 function getSmiles() {
 	return smiles.stringify(ketcher.editor.struct(),
@@ -37,11 +37,11 @@ function addFragment(molString) {
 }
 
 function showMolfile(clientArea, molString, options) {
-	var render = new Render(clientArea, Object.assign({
+	const render = new Render(clientArea, Object.assign({
 		scale: options.bondLength || 75
 	}, options));
 	if (molString) {
-		var mol = molfile.parse(molString);
+		const mol = molfile.parse(molString);
 		render.setMolecule(mol);
 	}
 	render.update();
@@ -72,7 +72,7 @@ window.onload = function () {
 	});
 };
 
-var buildInfo = {
+const buildInfo = {
 	version: '__VERSION__',
 	apiPath: '__API_PATH__',
 	buildDate: '__BUILD_DATE__',
@@ -81,7 +81,7 @@ var buildInfo = {
 	miewPath: '__MIEW_PATH__' || null
 };
 
-var ketcher = module.exports = Object.assign({
+const ketcher = module.exports = Object.assign({
 	getSmiles: getSmiles,
 	getMolfile: getMolfile,
 	setMolecule: setMolecule,

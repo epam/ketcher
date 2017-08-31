@@ -3,7 +3,7 @@ const editor = {
 		title: "Reset to Select Tool",
 		enum: [true, 'paste', false],
 		enumNames: ['on', 'After Paste', 'off'],
-		default: false
+		default: 'paste'
 	},
 	rotationStep: {
 		title: "Rotation Step, º",

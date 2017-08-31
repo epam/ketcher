@@ -29,7 +29,7 @@ function RgroupLogic (props) {
 	return (
 		<Dialog title="R-Group Logic" className="rgroup-logic"
 				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form storeName="rgroup-logic" schema={rgroupSchema}
+			<Form schema={rgroupSchema}
 				  customValid={{range: r => rangeConv(r)}} init={props} {...formState}>
 				<Field name="range"/>
 				<Field name="resth"/>

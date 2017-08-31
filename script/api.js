@@ -96,4 +96,4 @@ function api(base, defaultOptions) {
 	});
 }
 
-module.exports = api;
+export default api;

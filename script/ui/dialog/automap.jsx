@@ -25,7 +25,7 @@ function Automap (props) {
 	return (
 		<Dialog title="Reaction Auto-Mapping" className="automap"
 				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form storeName="automap" schema={automapSchema} {...formState}>
+			<Form schema={automapSchema} {...formState}>
 				<Field name="mode"/>
 			</Form>
 		</Dialog>

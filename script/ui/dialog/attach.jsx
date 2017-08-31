@@ -11,7 +11,7 @@ function AttachmentPoints (props) {
 	return (
 		<Dialog title="Attachment Points" className="attach-points"
 				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form storeName="attach-points" schema={attachmentPointsSchema} init={prop} {...formState}>
+			<Form schema={attachmentPointsSchema} init={prop} {...formState}>
 				<Field name="primary"/>
 				<Field name="secondary"/>
 			</Form>

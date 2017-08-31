@@ -244,6 +244,6 @@ export default connect(
 	}),	{
 		onOpen: menuName => ({ type: 'OPENED', data: menuName })
 	}
-)(props => (console.info('menu render'),
+)(props => (
 	<ActionMenu menu={toolbar} role="toolbar" {...props}/>
 ));

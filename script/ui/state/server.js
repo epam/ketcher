@@ -6,44 +6,6 @@ import { setStruct, appUpdate } from './options';
 import { checkErrors } from './form';
 import { load } from './';
 
-function serverCall(editor, server, method, options, struct) {
-	if (!struct) {
-		const aidMap = {};
-		struct = editor.struct().clone(null, null, false, aidMap);
-		var selectedAtoms = editor.explicitSelected().atoms || [];
-		selectedAtoms = selectedAtoms.map(function (aid) {
-			return aidMap[aid];
-		});
-	}
-
-	let request = server.then(function () {
-		return server[method](Object.assign({
-			struct: molfile.stringify(struct, { ignoreErrors: true })
-		}, selectedAtoms && selectedAtoms.length > 0 ? {
-			selected: selectedAtoms
-		} : null, options.data), omit('data', options));
-	});
-	//utils.loading('show');
-	request.catch(function (err) {
-		alert(err);
-	}).then(function (er) {
-		//utils.loading('hide');
-	});
-	return request;
-}
-
-export function serverTransform(method, data, struct) {
-	return (dispatch, getState) => {
-		const state = getState();
-		let opts = state.options.getServerSettings();
-		opts.data = data;
-
-		serverCall(state.editor, state.server, method, opts, struct).then(function (res) {
-			dispatch( load(res.struct, { rescale: method === 'layout' }) );
-		});
-	};
-}
-
 export function checkServer() {
 	return (dispatch, getState) => {
 		const server = getState().server;
@@ -104,4 +66,70 @@ export function analyse() {
 			});
 		});
 	}
+}
+
+export function serverTransform(method, data, struct) {
+	return (dispatch, getState) => {
+		const state = getState();
+		let opts = state.options.getServerSettings();
+		opts.data = data;
+
+		serverCall(state.editor, state.server, method, opts, struct).then(function (res) {
+			dispatch( load(res.struct, { rescale: method === 'layout' }) );
+		});
+	};
+}
+
+function serverCall(editor, server, method, options, struct) {
+	let selectedAtoms = null;
+	if (!struct) {
+		const aidMap = {};
+		struct = editor.struct().clone(null, null, false, aidMap);
+		selectedAtoms = editor.explicitSelected().atoms || [];
+		const reindexMap = getReindexMap(struct.getComponents());
+
+		selectedAtoms = selectedAtoms.map(function (aid) {
+			return reindexMap[aidMap[aid]];
+		});
+	}
+
+	let request = server.then(function () {
+		return server[method](Object.assign({
+			struct: molfile.stringify(struct, { ignoreErrors: true })
+		}, selectedAtoms && selectedAtoms.length > 0 ? {
+			selected: selectedAtoms
+		} : null, options.data), omit('data', options));
+	});
+	//utils.loading('show');
+	request.catch(function (err) {
+		alert(err);
+	}).then(function (er) {
+		//utils.loading('hide');
+	});
+	return request;
+}
+
+function getReindexMap(components) {
+	return flatten(components.reactants)
+		.concat(flatten(components.products))
+		.reduce(function (acc, item, index) {
+			acc[item] = index;
+			return acc;
+		}, {});
+}
+
+/**
+ * Flats passed object
+ * Ex: [ [1, 2], [3, [4, 5] ] ] -> [1, 2, 3, 4, 5]
+ *     { a: 1, b: { c: 2, d: 3 } } -> [1, 2, 3]
+ * @param source { object }
+ */
+function flatten(source) {
+	if (typeof source !== 'object')
+		return source;
+
+	return Object.keys(source).reduce(function (acc, key) {
+		const item = source[key];
+		return acc.concat(flatten(item));
+	}, []);
 }

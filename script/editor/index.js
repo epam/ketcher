@@ -154,7 +154,7 @@ Editor.prototype.highlight = function (ci, visible) {
 
 	var rnd = this.render;
 	var item = rnd.ctab[ci.map].get(ci.id);
-	if (item === null)
+	if (!item)
 		return true; // TODO: fix, attempt to highlight a deleted item
 	if ((ci.map === 'sgroups' && item.item.type === 'DAT') || ci.map === 'sgroupData') {
 		// set highlight for both the group and the data item

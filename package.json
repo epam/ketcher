@@ -43,6 +43,7 @@
     "gulp-clean-css": "3.1.1",
     "gulp-eslint": "3.0.1",
     "gulp-hb": "5.1.4",
+    "gulp-header": "1.8.9",
     "gulp-iconfont": "8.0.1",
     "gulp-less": "3.3.0",
     "gulp-load-plugins": "1.5.0",

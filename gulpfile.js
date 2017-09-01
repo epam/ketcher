@@ -8,6 +8,7 @@ var buffer = require('vinyl-buffer');
 var budo = require('budo');
 var istanbul = require('browserify-babel-istanbul');
 
+var fs = require('fs');
 var cp = require('child_process');
 var del = require('del');
 var minimist = require('minimist');
@@ -78,6 +79,7 @@ gulp.task('script', ['patch-version'], function() {
 				},
 				dead_code: true
 		}}))
+		.pipe(plugins.header(fs.readFileSync('script/banner.js', 'utf8')))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
 });
@@ -97,6 +99,7 @@ gulp.task('test-render', function() {
 		]
 	}).bundle()
 		.pipe(source('render-test.js'))
+		.pipe(plugins.header(fs.readFileSync('script/banner.js', 'utf8')))
 		.pipe(gulp.dest('./test/dist'));
 });
 

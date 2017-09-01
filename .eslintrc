@@ -94,9 +94,6 @@
       "words": true,
       "nonwords": false
     }],
-    "spaced-comment": ["error", "always", {
-      "markers": ["!"]
-    }],
     "unicode-bom": ["error", "never"]
   }
 }

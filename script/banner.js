@@ -1,11 +1,8 @@
-/** **************************************************************************
- * Copyright (C) 2009-<%= grunt.template.today("yyyy") %>. EPAM Systems.
+/****************************************************************************
+ * Copyright (C) 2017 EPAM Systems
  *
- * This file may be distributed and/or modified under the terms of the
- * GNU Affero General Public License version 3 as published by the Free
- * Software Foundation and appearing in the file LICENSE included in
- * the packaging of this file.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * This file is part of the Ketcher
+ * The contents are covered by the terms of the BSD 3-Clause license
+ * which is included in the file LICENSE.md, found at the root
+ * of the Ketcher source tree.
  ***************************************************************************/

@@ -176,10 +176,10 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 function labelIsVisible(restruct, options, atom) {
 	var isVisibleTerminal = options.showHydrogenLabels !== 'off' &&
 		                    options.showHydrogenLabels !== 'Hetero';
-	if (atom.a.neighbors.length == 0 ||
+	if (atom.a.neighbors.length === 0 ||
 		(atom.a.neighbors.length < 2 && isVisibleTerminal) ||
 		(options.carbonExplicitly) ||
-		atom.a.label.toLowerCase() != 'c' ||
+		atom.a.label.toLowerCase() !== 'c' ||
 		(atom.a.badConn && options.showValenceWarnings) ||
 		atom.a.isotope != 0 ||
 		atom.a.radical != 0 ||
@@ -245,7 +245,7 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 		label.text = atom.a.pseudo;
 	} else if (atom.a.alias) {
 		label.text = atom.a.alias;
-	} else if (atom.a.label == 'R#' && atom.a.rglabel != null) {
+	} else if (atom.a.label === 'R#' && atom.a.rglabel != null) {
 		label.text = '';
 		for (var rgi = 0; rgi < 32; rgi++) {
 			if (atom.a.rglabel & (1 << rgi)) // eslint-disable-line max-depth

@@ -13,15 +13,13 @@ function parseCTFile(str, options) {
 				// check whether there's an extra empty line on top
 				// this often happens when molfile text is pasted into the dialog window
 				return molfile.parseCTFile(lines.slice(1));
-			} catch (ex1) {
-				// console.log(exc1.message);
+			} catch (ex1) {	//
 			}
 			try {
 				// check for a missing first line
 				// this sometimes happens when pasting
 				return molfile.parseCTFile([''].concat(lines));
-			} catch (ex2) {
-				// console.log(exc1.message);
+			} catch (ex2) {	//
 			}
 		}
 		throw ex;

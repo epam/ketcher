@@ -303,7 +303,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 ReSGroup.prototype.show = function (restruct) {
 	var render = restruct.render;
 	var sgroup = this.item;
-	if (sgroup.data.fieldName != "MRV_IMPLICIT_H") {
+	if (sgroup.data.fieldName !== "MRV_IMPLICIT_H") {
 		var remol = render.ctab;
 		var path = this.draw(remol, sgroup);
 		restruct.addReObjectPath('data', this.visel, path, null, true);

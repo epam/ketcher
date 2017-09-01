@@ -112,7 +112,7 @@ Editor.prototype.zoom = function (value) {
 Editor.prototype.selection = function (ci) {
 	if (arguments.length > 0) {
 		this._selection = null; // eslint-disable-line
-		if (ci == 'all') {   // TODO: better way will be this.struct()
+		if (ci === 'all') {   // TODO: better way will be this.struct()
 			var restruct = this.render.ctab;
 			ci = structObjects.reduce(function (res, key) {
 				res[key] = restruct[key].ikeys();
@@ -122,7 +122,7 @@ Editor.prototype.selection = function (ci) {
 		if (ci) {
 			var res = {};
 			for (var key in ci) {
-				if (ci[key].length > 0) // TODO: deep merge
+				if (ci.hasOwnProperty(key) && ci[key].length > 0) // TODO: deep merge
 					res[key] = ci[key].slice();
 			}
 			if (Object.keys(res) != 0)
@@ -311,9 +311,6 @@ function recoordinate(editor, rp/* , vp*/) {
 	//    or the center if not set
 	console.assert(rp, 'Reference point not specified');
 	editor.render.setScrollOffset(0, 0);
-	// var avp = this.render.obj2view(rp);
-	// var so = avp.sub(vp || this.render.viewSz.scaled(0.5));
-	// this.render.setScrollOffset(so.x, so.y);
 }
 
 function getStructCenter(restruct, selection) {

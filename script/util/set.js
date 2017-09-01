@@ -26,10 +26,8 @@ var Set = {
 
 	subset: function (subset, superset) {
 		for (var id in subset) {
-			if (subset[id] !== Object.prototype[id]) {
-				if (superset[id] !== subset[id])
-					return false;
-			}
+			if (subset[id] !== Object.prototype[id] && superset[id] !== subset[id])
+				return false;
 		}
 		return true;
 	},
@@ -37,20 +35,16 @@ var Set = {
 	intersection: function (set1, set2) {
 		var set = {};
 		for (var id in set1) {
-			if (set1[id] !== Object.prototype[id]) {
-				if (set2[id] === set1[id])
-					Set.add(set, id);
-			}
+			if (set1[id] !== Object.prototype[id] && set2[id] === set1[id])
+				Set.add(set, id);
 		}
 		return set;
 	},
 
 	disjoint: function (set1, set2) {
 		for (var id in set1) {
-			if (set1[id] !== Object.prototype[id]) {
-				if (set2[id] === set1[id])
-					return false;
-			}
+			if (set1[id] !== Object.prototype[id] && set2[id] === set1[id])
+				return false;
 		}
 		return true;
 	},
@@ -69,10 +63,8 @@ var Set = {
 	filter: function (set, func, context) {
 		var subset = {};
 		for (var v in set) {
-			if (set[v] !== Object.prototype[v]) {
-				if (func.call(context, set[v]))
-					subset[set[v]] = set[v];
-			}
+			if (set[v] !== Object.prototype[v] && func.call(context, set[v]))
+				subset[set[v]] = set[v];
 		}
 		return subset;
 	},
@@ -135,10 +127,8 @@ var Set = {
 
 	find: function (set, func, context) {
 		for (var v in set) {
-			if (set[v] !== Object.prototype[v]) {
-				if (func.call(context, set[v]))
-					return v;
-			}
+			if (set[v] !== Object.prototype[v] && func.call(context, set[v]))
+				return v;
 		}
 		return null;
 	}

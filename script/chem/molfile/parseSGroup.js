@@ -50,7 +50,6 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 				continue; // eslint-disable-line no-continue
 			if (sgroup.patoms[m] < 0)
 				throw new Error('parent atom missing');
-			//                mol.atoms.get(raid).pp.y -= 3*k; // for debugging purposes
 			atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
 		}
 	}
@@ -102,17 +101,6 @@ function postLoadGen(sgroup, mol, atomMap) { // eslint-disable-line no-unused-va
 function postLoadDat(sgroup, mol) {
 	if (!sgroup.data.absolute)
 		sgroup.pp = sgroup.pp.add(Struct.SGroup.getMassCentre(mol, sgroup.atoms));
-	// [NK] Temporary comment incoplete 'allAtoms' behavior
-	// TODO: need ether remove 'allAtoms' flag or hadle it
-	// consistently (other flags: *_KEY, *_RADICAL?)
-	// var allAtomsInGroup = this.atoms.length == mol.atoms.count();
-	// if (allAtomsInGroup &&
-	//     (this.data.fieldName == 'MDLBG_FRAGMENT_STEREO' ||
-	//      this.data.fieldName == 'MDLBG_FRAGMENT_COEFFICIENT' ||
-	//      this.data.fieldName == 'MDLBG_FRAGMENT_CHARGE')) {
-	// 	this.atoms = [];
-	// 	this.allAtoms = true;
-	// }
 }
 
 function loadSGroup(mol, sg, atomMap) {
@@ -248,8 +236,6 @@ function applyDataSGroupData(sg, data, finalize) {
 		sg.data.fieldValue = trimRight(sg.data.fieldValue);
 		if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"'))
 			sg.data.fieldValue = sg.data.fieldValue.substr(1, sg.data.fieldValue.length - 2);
-		// Partially revert f556e8, from KETCHER-457 and RB with love
-		// sg.data.fieldValue += '\n';
 	}
 }
 

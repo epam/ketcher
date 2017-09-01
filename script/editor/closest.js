@@ -136,15 +136,11 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
 	                   SELECTION_DISTANCE_COEFFICIENT);
 	var ret = null;
 	restruct.rgroups.each(function (rgid, rgroup) {
-		if (rgid != skip) {
-			if (rgroup.labelBox) { // should be true at this stage, as the label is visible
-				if (rgroup.labelBox.contains(pos, 0.5)) { // inside the box or within 0.5 units from the edge
-					var dist = Vec2.dist(rgroup.labelBox.centre(), pos);
-					if (!ret || dist < minDist) {
-						minDist = dist;
-						ret = { id: rgid, dist: minDist };
-					}
-				}
+		if (rgid != skip && rgroup.labelBox && rgroup.labelBox.contains(pos, 0.5)) {
+			var dist = Vec2.dist(rgroup.labelBox.centre(), pos);
+			if (!ret || dist < minDist) {
+				minDist = dist;
+				ret = { id: rgid, dist: minDist };
 			}
 		}
 	});

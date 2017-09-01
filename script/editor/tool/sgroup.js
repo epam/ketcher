@@ -155,7 +155,9 @@ function getContextBySelection(restruct, selection) {
 	if (selection.atoms && !selection.bonds)
 		return 'Atom';
 
-	var bonds = selection.bonds.map(function (bondid) { return struct.bonds.get(bondid); });
+	var bonds = selection.bonds.map(function (bondid) {
+		return struct.bonds.get(bondid);
+	});
 
 	if (!anyContinuousBonds(bonds))
 		return 'Bond';
@@ -231,8 +233,10 @@ function checkOverlapping(struct, atoms) {
 			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
 
 			if (sgAtoms.length < atoms.length) {
-				if (0 <= sgAtoms.findIndex(function (aid) { return !(aid in atomsHash); }))
-					return true;
+				var ind = sgAtoms.findIndex(function (aid) {
+					return !(aid in atomsHash);
+				});
+				if (0 <= ind) return true;
 			}
 
 			return 0 <= atoms.findIndex(function (aid) {

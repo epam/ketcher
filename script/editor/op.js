@@ -41,7 +41,7 @@ function AtomAdd(atom, pos) {
 		var pp = {};
 		if (this.data.atom) {
 			for (var p in this.data.atom)
-				pp[p] = this.data.atom[p];
+				if (this.data.atom.hasOwnProperty(p)) pp[p] = this.data.atom[p];
 		}
 		pp.label = pp.label || 'C';
 		if (!(typeof this.data.aid === "number"))
@@ -222,7 +222,7 @@ function SGroupAttr(sgid, attr, value) {
 		var struct = restruct.molecule;
 		var sgid = this.data.sgid;
 		var sg = struct.sgroups.get(sgid);
-		if (sg.type == 'DAT' && restruct.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
+		if (sg.type === 'DAT' && restruct.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
 			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
 			restruct.sgroupData.unset(sgid);
 		}
@@ -338,7 +338,7 @@ function BondAdd(begin, end, bond) {
 		var pp = {};
 		if (this.data.bond) {
 			for (var p in this.data.bond)
-				pp[p] = this.data.bond[p];
+				if (this.data.bond.hasOwnProperty(p)) pp[p] = this.data.bond[p];
 		}
 		pp.type = pp.type || Struct.Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
@@ -421,7 +421,7 @@ function BondAttr(bid, attribute, value) {
 		bond[this.data.attribute] = this.data.value;
 
 		invalidateBond(restruct, this.data.bid);
-		if (this.data.attribute == 'type')
+		if (this.data.attribute === 'type')
 			invalidateLoop(restruct, this.data.bid);
 	};
 	this._isDummy = function (restruct) { // eslint-disable-line no-underscore-dangle
@@ -504,7 +504,7 @@ function RGroupFragment(rgid, frid, rg) {
 		if (this.rg_old) {
 			this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
 			restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
-			if (this.rg_old.frags.count() == 0) {
+			if (this.rg_old.frags.count() === 0) {
 				restruct.rgroups.unset(this.rgid_old);
 				struct.rgroups.unset(this.rgid_old);
 				restruct.markItemRemoved();
@@ -785,9 +785,9 @@ function invalidateBond(restruct, bid) {
 }
 
 function invalidateItem(restruct, map, id, level) {
-	if (map == 'atoms') {
+	if (map === 'atoms') {
 		invalidateAtom(restruct, id, level);
-	} else if (map == 'bonds') {
+	} else if (map === 'bonds') {
 		invalidateBond(restruct, id);
 		if (level > 0)
 			invalidateLoop(restruct, id);

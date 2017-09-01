@@ -7,16 +7,16 @@ class Dialog extends Component {
 	exit(mode) {
 		let { params, result=() => null,
 			  valid=() => !!result() } = this.props;
-		var key = (mode == 'OK') ? 'onOk' : 'onCancel';
-		if (params && key in params && (key != 'onOk' || valid()) )
+		let key = (mode === 'OK') ? 'onOk' : 'onCancel';
+		if (params && key in params && (key !== 'onOk' || valid()) )
 			params[key](result());
 	}
 	keyDown(ev) {
 		let key = keyName(ev);
 		let active = document.activeElement;
 		let activeTextarea = active && active.tagName === 'TEXTAREA';
-		if (key == 'Escape' || key == 'Enter' && !activeTextarea) {
-			this.exit(key == 'Enter' ? 'OK': 'Cancel');
+		if (key === 'Escape' || key === 'Enter' && !activeTextarea) {
+			this.exit(key === 'Enter' ? 'OK': 'Cancel');
 			ev.preventDefault();
 		}
 		ev.stopPropagation();
@@ -47,13 +47,13 @@ class Dialog extends Component {
 					buttons.map(b => (
 						typeof b !== 'string' ? b :
 							<input type="button" value={b}
-						           disabled={ b == 'OK' && !valid() }
+						           disabled={ b === 'OK' && !valid() }
 						           onClick={() => this.exit(b)} />
 					))
 				}</footer>
 			</form>
 		);
 	}
-};
+}
 
 export default Dialog;

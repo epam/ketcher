@@ -329,7 +329,7 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 		begin = action.addOp(new op.AtomAdd(begin, pos).perform(restruct)).data.aid;
 
 		pos = pos2;
-	} else if (atomGetAttr(restruct, begin, 'label') == '*') {
+	} else if (atomGetAttr(restruct, begin, 'label') === '*') {
 		action.addOp(new op.AtomAttr(begin, 'label', 'C').perform(restruct));
 	}
 
@@ -343,7 +343,7 @@ function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-dis
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(restruct));
 			}, this);
 		}
-	} else if (atomGetAttr(restruct, end, 'label') == '*') {
+	} else if (atomGetAttr(restruct, end, 'label') === '*') {
 		action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct));
 	}
 
@@ -592,7 +592,7 @@ function fromAtomMerge(restruct, srcId, dstId) {
 	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
-		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
+		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 
 	var sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
@@ -901,7 +901,7 @@ function fromSgroupAttrs(restruct, id, attrs) {
 	var action = new Action();
 
 	for (var key in attrs)
-		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+		if (attrs.hasOwnProperty(key)) action.addOp(new op.SGroupAttr(id, key, attrs[key]));
 
 	return action.perform(restruct);
 }
@@ -910,7 +910,7 @@ function sGroupAttributeAction(id, attrs) {
 	var action = new Action();
 
 	for (var key in attrs)
-		action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+		if (attrs.hasOwnProperty(key)) action.addOp(new op.SGroupAttr(id, key, attrs[key]));
 
 	return action;
 }
@@ -920,12 +920,12 @@ function fromSgroupDeletion(restruct, id) { // eslint-disable-line max-statement
 	var struct = restruct.molecule;
 
 	var sG = restruct.sgroups.get(id).item;
-	if (sG.type == 'SRU') {
+	if (sG.type === 'SRU') {
 		struct.sGroupsRecalcCrossBonds();
 		var neiAtoms = sG.neiAtoms;
 
 		neiAtoms.forEach(function (aid) {
-			if (atomGetAttr(restruct, aid, 'label') == '*')
+			if (atomGetAttr(restruct, aid, 'label') === '*')
 				action.addOp(new op.AtomAttr(aid, 'label', 'C'));
 		}, this);
 	}
@@ -962,7 +962,7 @@ function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-
 
 	action = action.perform(restruct);
 
-	if (type == 'SRU') {
+	if (type === 'SRU') {
 		restruct.molecule.sGroupsRecalcCrossBonds();
 		var asteriskAction = new Action();
 		restruct.sgroups.get(sgid).item.neiAtoms.forEach(function (aid) {
@@ -982,7 +982,7 @@ function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-
 function fromRGroupAttrs(restruct, id, attrs) {
 	var action = new Action();
 	for (var key in attrs)
-		action.addOp(new op.RGroupAttr(id, key, attrs[key]));
+		if (attrs.hasOwnProperty(key)) action.addOp(new op.RGroupAttr(id, key, attrs[key]));
 	return action.perform(restruct);
 }
 
@@ -1124,13 +1124,15 @@ function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statem
 
 	var rgnew = [];
 	for (var rgid in clipboard.rgroups) {
-		if (!restruct.molecule.rgroups.has(rgid))
+		if (clipboard.rgroups.hasOwnProperty(rgid) && !restruct.molecule.rgroups.has(rgid))
 			rgnew.push(rgid);
 	}
 
 	// assign fragments to r-groups
-	for (var frid in clipboard.rgmap)
-		action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(restruct));
+	for (var frid in clipboard.rgmap) {
+		if (clipboard.rgmap.hasOwnProperty(frid))
+			action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(restruct));
+	}
 
 	for (var i = 0; i < rgnew.length; ++i)
 		action.mergeWith(fromRGroupAttrs(restruct, rgnew[i], clipboard.rgroups[rgnew[i]]));
@@ -1206,7 +1208,7 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 				var d = new Vec2();
 
 				/* eslint-disable no-mixed-operators*/
-				if (dir == 'horizontal')
+				if (dir === 'horizontal')
 					d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
 				else // 'vertical'
 					d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
@@ -1288,7 +1290,7 @@ function fromBondAlign(restruct, bid, dir) {
 	var center = begin.pp.add(end.pp).scaled(0.5);
 	var angle = utils.calcAngle(begin.pp, end.pp);
 	var atoms = getFragmentAtoms(struct, begin.fragment);
-	angle = (dir == 'horizontal') ? -angle : ((Math.PI / 2) - angle);
+	angle = (dir === 'horizontal') ? -angle : ((Math.PI / 2) - angle);
 
 	// TODO: choose minimal angle
 	// console.info('single bond', utils.degrees(angle), atoms, dir);

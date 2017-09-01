@@ -171,8 +171,10 @@ ReRGroup.prototype.drawHighlight = function (render) {
 ReRGroup.prototype.show = function (restruct, id, options) {
 	var drawing = this.draw(restruct.render, options);
 	for (var group in drawing) {
-		while (drawing[group].length > 0)
-			restruct.addReObjectPath(group, this.visel, drawing[group].shift(), null, true);
+		if (drawing.hasOwnProperty(group)) {
+			while (drawing[group].length > 0)
+				restruct.addReObjectPath(group, this.visel, drawing[group].shift(), null, true);
+		}
 	}
 	// TODO rgroup selection & highlighting
 };

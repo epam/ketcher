@@ -246,7 +246,7 @@ ReStruct.prototype.markAtom = function (aid, mark) {
 
 ReStruct.prototype.markItem = function (map, id, mark) {
 	var mapChanged = this[map + 'Changed'];
-	mapChanged[id] = (typeof (mapChanged[id]) != 'undefined') ?
+	mapChanged[id] = (typeof (mapChanged[id]) !== 'undefined') ?
 		Math.max(mark, mapChanged[id]) : mark;
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
@@ -270,11 +270,11 @@ ReStruct.prototype.getVBoxObj = function (selection) {
 	selection = selection || {};
 	if (isSelectionEmpty(selection)) {
 		for (var map in ReStruct.maps)
-			selection[map] = this[map].keys();
+			if (ReStruct.maps.hasOwnProperty(map)) selection[map] = this[map].keys();
 	}
 	var vbox = null;
 	for (map in ReStruct.maps) {
-		if (selection[map]) {
+		if (ReStruct.maps.hasOwnProperty(map) && selection[map]) {
 			selection[map].forEach(function (id) {
 				var box = this[map].get(id).getVBoxObj(this.render);
 				if (box)
@@ -289,7 +289,7 @@ ReStruct.prototype.getVBoxObj = function (selection) {
 function isSelectionEmpty(selection) {
 	if (selection) {
 		for (var map in ReStruct.maps) {
-			if (selection[map] && selection[map].length > 0)
+			if (ReStruct.maps.hasOwnProperty(map) && selection[map] && selection[map].length > 0)
 				return false;
 		}
 	}
@@ -342,18 +342,22 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	var id, map, mapChanged;
 	if (force) {
 		for (map in ReStruct.maps) {
-			mapChanged = this[map + 'Changed'];
-			this[map].each(function (id) {
-				mapChanged[id] = 1;
-			}, this);
+			if (ReStruct.maps.hasOwnProperty(map)) {
+				mapChanged = this[map + 'Changed'];
+				this[map].each(function (id) {
+					mapChanged[id] = 1;
+				}, this);
+			}
 		}
 	} else {
 		// check if some of the items marked are already gone
 		for (map in ReStruct.maps) {
-			mapChanged = this[map + 'Changed'];
-			for (id in mapChanged) {
-				if (!this[map].has(id))
-					delete mapChanged[id];
+			if (ReStruct.maps.hasOwnProperty(map)) {
+				mapChanged = this[map + 'Changed'];
+				for (id in mapChanged) {
+					if (!this[map].has(id)) // eslint-disable-line max-depth
+						delete mapChanged[id];
+				}
 			}
 		}
 	}
@@ -563,7 +567,7 @@ ReStruct.prototype.setSelection = function (selection) {
 	var redraw = (arguments.length === 0);  // render.update only
 
 	for (var map in ReStruct.maps) {
-		if (ReStruct.maps[map].isSelectable()) {
+		if (ReStruct.maps.hasOwnProperty(map) && ReStruct.maps[map].isSelectable()) {
 			this[map].each(function (id, item) {
 				var selected = redraw ? item.selected :
 				    selection && selection[map] && selection[map].indexOf(id) > -1;

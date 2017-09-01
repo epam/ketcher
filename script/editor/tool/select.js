@@ -14,7 +14,7 @@ function SelectTool(editor, mode) {
 
 	this.editor = editor;
 
-	this.lassoHelper = new LassoHelper(mode == 'lasso' ? 0 : 1, editor, mode == 'fragment');
+	this.lassoHelper = new LassoHelper(mode === 'lasso' ? 0 : 1, editor, mode === 'fragment');
 }
 
 SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-statements
@@ -190,11 +190,13 @@ function closestToSel(ci) {
 function selMerge(selection, add) {
 	if (add) {
 		for (var item in add) {
-			if (!selection[item]) {
-				selection[item] = add[item].slice();
-			} else {
-				selection[item] = uniqArray(selection[item],
-				                            add[item]);
+			if (add.hasOwnProperty(item)) {
+				if (!selection[item]) {
+					selection[item] = add[item].slice();
+				} else {
+					selection[item] = uniqArray(selection[item],
+						add[item]);
+				}
 			}
 		}
 	}

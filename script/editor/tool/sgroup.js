@@ -84,7 +84,7 @@ function propsDialog(editor, id, defaultType) {
 	var restruct = editor.render.ctab;
 	var struct = restruct.molecule;
 	var selection = editor.selection() || {};
-	var sg = (id !== null) && struct.sgroups.get(id);
+	var sg = id !== null ? struct.sgroups.get(id) : null;
 	var type = sg ? sg.type : defaultType;
 	var eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
@@ -116,12 +116,30 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			var action = (id !== null) && sg.getAttrs().context === newSg.attrs.context ?
-				Action.fromSgroupType(restruct, id, newSg.type)
-					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs)) :
-				fromContextType(id, editor, newSg, selection);
+			var action;
+			if (!sg) {
+				if (!selection.atoms || selection.atoms.length === 0)
+					return;
 
-			editor.update(action);
+				action = Action.fromSgroupAddition(restruct, newSg.type, selection.atoms, newSg.attrs, restruct.molecule.sgroups.newId());
+				editor.update(action);
+				editor.selection(selection);
+				return;
+			}
+
+			var isDataSg = sg.getAttrs().context && sg.getAttrs().context === newSg.attrs.context;
+
+			if (isDataSg) {
+				action = Action.fromSgroupType(restruct, id, newSg.type)
+					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs));
+				editor.update(action);
+				editor.selection(selection);
+				return;
+			}
+
+			var result = fromContextType(id, editor, newSg, selection);
+			editor.update(result.action);
+			editor.selection(result.selection);
 		}
 	}).catch(function (result) {
 		console.info('rejected', result);
@@ -176,20 +194,18 @@ function getContextBySelection(restruct, selection) {
 
 function fromContextType(id, editor, newSg, currSelection) {
 	var restruct = editor.render.ctab;
-	var sg = (id !== null) && restruct.molecule.sgroups.get(id);
+	var sg = restruct.molecule.sgroups.get(id);
 	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
 	var context = newSg.attrs.context;
-
-	if (newSg.attrs.fieldName === '' || newSg.attrs.fieldValue === '')
-		return new Action();
 
 	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 
 	editor.selection(result.selection || currSelection);
 
-	return id === null ?
-		result.action :
-		result.action.mergeWith(Action.fromSgroupDeletion(restruct, id));
+	return {
+		action: result.action.mergeWith(Action.fromSgroupDeletion(restruct, id)),
+		selection: result.selection || currSelection
+	};
 }
 
 function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {

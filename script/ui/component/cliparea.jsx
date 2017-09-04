@@ -25,14 +25,14 @@ class ClipArea extends Component {
 		// TODO: remove event listeners on unmount or
 		//       target change
 		target.addEventListener('mouseup', () => {
-			if (!self.props.disabled)
+			if (self.props.focused())
 				autofocus(el);
 		});
 
 		['copy', 'cut'].forEach(en => {
-			let cb = (en === 'copy') ? 'onCopy' : 'onPaste';
+			let cb = (en === 'copy') ? 'onCopy' : 'onCut';
 			target.addEventListener(en, event => {
-				if (!self.props.disabled && self.props[cb]) {
+				if (self.props.focused() && self.props[cb]) {
 					const data = self.props[cb]();
 					if (data)
 						copy(event.clipboardData, data);
@@ -42,7 +42,7 @@ class ClipArea extends Component {
 		});
 
 		target.addEventListener('paste', event => {
-			if (!self.props.disabled && self.props.onPaste) {
+			if (self.props.focused() && self.props.onPaste) {
 				const data = paste(event.clipboardData,
 								 self.props.formats);
 				if (data)
@@ -54,8 +54,8 @@ class ClipArea extends Component {
 
 	render () {
 		return (
-			<i className="cliparea" contentEditable="true"
-			   autoFocus="true" {...this.props}/>
+			<textarea className="cliparea" contentEditable={true}
+			   autoFocus={true}/>
 		);
 	}
 }

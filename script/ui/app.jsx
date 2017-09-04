@@ -14,13 +14,14 @@ import state, { onAction, load } from './state';
 import { initTmplLib } from './state/templates';
 import { initEditor } from './state/editor';
 import { checkServer } from './state/server';
-import { initKeydownListener } from './state/hotkeys';
+import { initKeydownListener, initClipboard } from './state/hotkeys';
 import { initResize } from './state/toolbar';
 
 import { h, Component, render } from 'preact';
 /** @jsx h */
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
+import ClipArea from './component/cliparea';
 
 import modals from './dialog';
 
@@ -88,6 +89,11 @@ const AppTemplates = connect(
 	render = () => (<div className="cellar" ref={c => this.cacheEl = c} />)
 });
 
+const AppCliparea = connect(
+	null,
+	dispatch => (dispatch(initClipboard))
+)(ClipArea);
+
 const App = connect(
 	null,
 	{ onAction, checkServer }
@@ -99,6 +105,7 @@ const App = connect(
 		<main role="application">
 			<AppEditor id="canvas"/>
 			<Toolbar {...props}/>
+			<AppCliparea/>
 			<AppModal/>
 			<AppTemplates/>
 		</main>

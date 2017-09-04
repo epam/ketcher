@@ -13,7 +13,7 @@ import molfile from '../../chem/molfile';
 import keyNorm from '../keynorm';
 import actions from '../action';
 
-import clipArea from '../cliparea';
+import * as clipArea from '../component/cliparea';
 import * as structFormat from '../structformat';
 import { onAction, openDialog, load } from './';
 
@@ -21,14 +21,16 @@ export function initKeydownListener(element) {
 	return function (dispatch, getState) {
 		const hotKeys = initHotKeys();
 		element.addEventListener('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
-
-		initClipboard(dispatch, getState, element);
 	}
 }
 
+/* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event) {
-	const editor = getState().editor;
-	const actionState = getState().actionState;
+	const state = getState();
+	if (state.modal) return;
+
+	const editor = state.editor;
+	const actionState = state.actionState;
 	const actionTool = actionState.activeTool;
 
 	const key = keyNorm(event);
@@ -94,7 +96,8 @@ function checkGroupOnTool(group, actionTool) {
 	return index;
 }
 
-function initClipboard(dispatch, getState, element) {
+/* ClipArea */
+export function initClipboard(dispatch, getState) {
 	const formats = Object.keys(structFormat.map).map(function (fmt) {
 		return structFormat.map[fmt].mime;
 	});
@@ -102,7 +105,7 @@ function initClipboard(dispatch, getState, element) {
 	const debAction  = debounce(0, (action) => dispatch( onAction(action) ));
 	const loadStruct = debounce(0, (structStr, opts) => dispatch( load(structStr, opts) ));
 
-	return clipArea(element, {
+	return {
 		formats: formats,
 		focused: function () {
 			return !getState().modal;
@@ -126,7 +129,7 @@ function initClipboard(dispatch, getState, element) {
 			if (structStr)
 				loadStruct(structStr, { fragment: true });
 		}
-	});
+	};
 }
 
 function clipData(editor) {

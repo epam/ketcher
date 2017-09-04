@@ -13,7 +13,7 @@ import zoom from './zoom';
 import server from './server';
 import debug from './debug';
 import templates from './templates';
-import clipArea from '../cliparea';
+import { exec } from '../component/cliparea';
 import { miewAction } from '../state/miew';
 
 export default {
@@ -63,7 +63,7 @@ export default {
 		shortcut: "Mod+x",
 		title: "Cut",
 		action: () => {
-			clipArea.exec('cut') || dontClipMessage('Cut');
+			exec('cut') || dontClipMessage('Cut');
 		},
 		disabled: editor => !hasSelection(editor)
 	},
@@ -71,7 +71,7 @@ export default {
 		shortcut: "Mod+c",
 		title: "Copy",
 		action: () => {
-			clipArea.exec('copy') || dontClipMessage('Copy');
+			exec('copy') || dontClipMessage('Copy');
 		},
 		disabled: editor => !hasSelection(editor)
 	},
@@ -79,7 +79,7 @@ export default {
 		shortcut: "Mod+v",
 		title: "Paste",
 		action: () => {
-			clipArea.exec('paste') || dontClipMessage('Paste')
+			exec('paste') || dontClipMessage('Paste')
 		},
 		selected: ({ actions }) => (
 			actions && // TMP

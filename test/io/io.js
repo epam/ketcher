@@ -1,3 +1,4 @@
+#!/usr/bin/nodejs
 /****************************************************************************
  * Copyright (C) 2017 EPAM Systems
  *
@@ -7,7 +8,6 @@
  * of the Ketcher source tree.
  ***************************************************************************/
 
-#!/usr/bin/nodejs
 /* eslint-env node */
 
 const path = require('path');

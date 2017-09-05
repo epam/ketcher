@@ -31,8 +31,8 @@ class ClipArea extends Component {
 
 		// TODO: remove event listeners on unmount or
 		//       target change
-		target.addEventListener('mouseup', () => {
-			if (self.props.focused())
+		target.addEventListener('mouseup', event => {
+			if (self.props.focused() && event.target.tagName !== 'SELECT')
 				autofocus(el);
 		});
 

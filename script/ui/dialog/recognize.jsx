@@ -24,6 +24,7 @@ import { recognize } from '../state/server';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructRender from '../component/structrender';
+import OpenButton from '../component/openbutton';
 import Spin from '../component/spin';
 
 function Recognize(prop) {
@@ -36,13 +37,9 @@ function Recognize(prop) {
 		<Dialog title="Import From Image" className="recognize"
 				params={props} result={() => result(structStr, fragment) }
 				buttons={[
-					(
-						<label className="open">
-							Choose file…
-							<input type="file" onChange={ (ev) => onImage(ev.target.files[0]) }
-								   accept="image/*"/>
-						</label>
-					),
+					<OpenButton className="open" onLoad={onImage} type="image/*">
+						Choose file…
+					</OpenButton>,
 					<span className="open-filename">{file ? file.name : null}</span>,
 					file && !structStr ? (
 						<button onClick={() => onRecognize(file) }>Recognize</button>

@@ -61,8 +61,8 @@ function Recognize(prop) {
 			<div className="output">
 				{
 					structStr ? (
-						structStr instanceof Promise ?
-							( <Spin/> ) :
+						structStr instanceof Promise || typeof structStr !== 'string' ? // in Edge 38:
+							( <Spin/> ) :											// instanceof Promise always `false`
 							( <StructRender className="struct" struct={structStr}/> )
 					) : null
 				}

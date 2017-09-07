@@ -109,7 +109,7 @@ export const actions = ['cut', 'copy', 'paste'];
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
 	if (enabled) try {
-		enabled = document.execCommand(action);
+		enabled = document.execCommand(action) || ieCb;
 	} catch (ex) {
 		// FF < 41
 		enabled = false;

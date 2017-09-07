@@ -38,33 +38,35 @@ class Dialog extends Component {
 		ev.stopPropagation();
 	}
 	componentDidMount() {
-		var fe = this.base.querySelector(['input:not([type=checkbox]):not([type=button])', 'textarea',
+		const fe = this.base.querySelector(['input:not([type=checkbox]):not([type=button])', 'textarea',
 			                            '[contenteditable]','select'].join(',')) ||
 			     this.base.querySelector(['button.close'].join(','));
 		console.assert(fe, 'No active buttons');
 		if (fe.focus) fe.focus();
 	}
 	render() {
-		let { children, title, params={},
-			  result=() => null, valid=() => !!result(), // Hmm, dublicate.. No simple default props
-			  buttons=["Cancel", "OK"], ...props} = this.props;   // see: https://git.io/v1KR6
+		let {
+			children, title, params = {},
+			result = () => null, valid = () => !!result(), // Hmm, dublicate.. No simple default props
+			buttons = ["Cancel", "OK"], ...props
+		} = this.props;   // see: https://git.io/v1KR6
 		return (
 			<form role="dialog" onSubmit={ev => ev.preventDefault()}
-			      onKeyDown={ev => this.keyDown(ev)} {...props}>
-			  <header>{title}
-				{ params.onCancel && title && (
-					<button className="close"
-							onClick={() => this.exit('Cancel')}>×
-					</button> )
-				}
-			</header>
-				{ children }
+				  onKeyDown={ev => this.keyDown(ev)} tabIndex="-1" {...props}>
+				<header>{title}
+					{params.onCancel && title && (
+						<button className="close"
+								onClick={() => this.exit('Cancel')}>×
+						</button> )
+					}
+				</header>
+				{children}
 				<footer>{
 					buttons.map(b => (
 						typeof b !== 'string' ? b :
 							<input type="button" value={b}
-						           disabled={ b === 'OK' && !valid() }
-						           onClick={() => this.exit(b)} />
+								   disabled={b === 'OK' && !valid()}
+								   onClick={() => this.exit(b)}/>
 					))
 				}</footer>
 			</form>

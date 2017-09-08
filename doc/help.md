@@ -563,3 +563,7 @@ it will appear in brackets after the description of the button.
 
 **Note** : Please, use `Ctrl+V` to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.
+
+**Note 2** : Probably, you have forbidden access to the local storage.
+If you are using IE10 or IE11 and didn't forbid access to local storage 
+intentionally, you can pay attention here: https://stackoverflow.com/a/20848924

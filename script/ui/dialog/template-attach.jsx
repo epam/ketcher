@@ -22,6 +22,7 @@ import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructEditor from '../component/structeditor';
 import Vec2 from '../../util/vec2';
+import { storage } from '../utils';
 
 import { initAttach, setAttachPoints, setTmplName } from '../state/templates';
 
@@ -65,6 +66,7 @@ class Attach extends Component {
 							  tool="attach" toolOpts={{ atomid, bondid }}
 							  options={editorOpts}/>
 				<label><b>&#123; atomid: {atomid}; bondid: {bondid} &#125;</b></label>
+				{ !storage.isAvailable() ? <div className="warning">{storage.warningMessage}</div> : null }
 			</Dialog>
 		);
 	}

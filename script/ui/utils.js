@@ -16,6 +16,14 @@
 
 /* local storage */
 const storage = {
+	warningMessage: "Your changes will be lost after the tab closing. See Help (Note 2).",
+	isAvailable: function () {
+		try {
+			return localStorage;
+		} catch (ex) {
+			return false;
+		}
+	},
 	getItem: function (key) {
 		let item = null;
 		try {

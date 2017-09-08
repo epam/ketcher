@@ -271,6 +271,13 @@ select {
 	display: none;
 }
 
+.warning {
+	color: @error-color;
+	&:before {
+		content: '⚠ ';
+	}
+}
+
 .monochrome-icons(arom bond-any bond-aromatic bond-crossed bond-double
                   bond-doublearomatic bond-down bond-single
                   bond-singlearomatic bond-singledouble bond-triple bond-up

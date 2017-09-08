@@ -19,6 +19,7 @@ import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
 import { appUpdate } from './options';
 import { openDialog } from './';
+import { storage } from '../utils';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -116,7 +117,7 @@ function updateLocalStore(lib) {
 			};
 		});
 
-	localStorage.setItem('ketcher-tmpls', JSON.stringify(userLib));
+	storage.setItem("ketcher-tmpls", userLib);
 }
 
 /* REDUCER */
@@ -184,7 +185,7 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 function userTmpls() {
-	const userLib = JSON.parse(localStorage['ketcher-tmpls'] || 'null') || [];
+	const userLib = storage.getItem("ketcher-tmpls") || [];
 
 	return userLib.map((tmpl) => {
 		if (tmpl.props === '') tmpl.props = {};

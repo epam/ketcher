@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { defaultOpts } from './options';
+import { getDefaultOptions } from '../data/options-schema';
 import { initSdata, sdataReducer } from './sdata';
 
 export const formsState = {
@@ -84,7 +84,7 @@ export const formsState = {
 	settings: {
 		errors: {},
 		valid: true,
-		result: Object.assign(defaultOpts(), JSON.parse(localStorage.getItem("ketcher-opts")))
+		result: getDefaultOptions()
 	},
 	sgroup: {
 		errors: {},
@@ -114,7 +114,7 @@ export function setDefaultSettings() {
 	return {
 		type: 'UPDATE_FORM',
 		data: {
-			result: defaultOpts(),
+			result: getDefaultOptions(),
 			valid: true,
 			errors: {}
 		}

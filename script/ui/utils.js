@@ -14,6 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* local storage */
+const storage = {
+	getItem: function (key) {
+		let item = null;
+		try {
+			item = JSON.parse(localStorage.getItem(key));
+		} catch (ex) {
+			console.info('LocalStorage:', ex.name);
+		}
+		return item;
+	},
+	setItem: function (key, data) {
+		let isSet = null;
+		try {
+			localStorage.setItem(key, JSON.stringify(data));
+			isSet = true;
+		} catch (ex) {
+			console.info('LocalStorage:', ex.name);
+			isSet = false;
+		}
+		return isSet;
+	}
+};
+
 /* schema utils */
 function constant(schema, prop) {
 	let desc = schema.properties[prop];
@@ -45,5 +69,6 @@ function selectListOf(schema, prop) {
 
 module.exports = {
 	mapOf: mapOf,
-	selectListOf: selectListOf
+	selectListOf: selectListOf,
+	storage: storage
 };

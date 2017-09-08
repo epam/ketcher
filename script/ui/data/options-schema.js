@@ -136,9 +136,6 @@ const render = {
 	}
 };
 
-export const SERVER_OPTIONS = ['smart-layout', 'ignore-stereochemistry-errors',
-	'mass-skip-error-on-pseudoatoms', 'gross-formula-add-rsites'];
-
 const server = {
 	'smart-layout': {
 		title: "Smart-layout",
@@ -161,6 +158,8 @@ const server = {
 		default: true
 	}
 };
+
+export const SERVER_OPTIONS = Object.keys(server);
 
 const debug = {
 	showAtomIds: {
@@ -185,7 +184,7 @@ const debug = {
 	}
 };
 
-export default {
+const optionsSchema = {
 	title: "Settings",
 	type: "object",
 	required: [],
@@ -197,3 +196,12 @@ export default {
 		...debug
 	}
 };
+
+export default optionsSchema;
+
+export function getDefaultOptions() {
+	return Object.keys(optionsSchema.properties).reduce((res, prop) => {
+		res[prop] = optionsSchema.properties[prop].default;
+		return res;
+	}, {});
+}

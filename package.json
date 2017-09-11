@@ -18,7 +18,7 @@
     "chemistry"
   ],
   "license": {
-    "type": "GNU AGPLv3",
+    "type": "ALv2",
     "url": "https://raw.github.com/epam/ketcher/master/LICENSE"
   },
   "bugs": {

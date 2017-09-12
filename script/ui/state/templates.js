@@ -185,17 +185,24 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 function userTmpls() {
-	const userLib = storage.getItem("ketcher-tmpls") || [];
+	const userLib = storage.getItem("ketcher-tmpls");
+	if (!Array.isArray(userLib) || userLib.length === 0) return [];
 
-	return userLib.map((tmpl) => {
-		if (tmpl.props === '') tmpl.props = {};
-		tmpl.props.group = 'User Templates';
+	return userLib
+		.map(tmpl => {
+			try {
+				if (tmpl.props === '') tmpl.props = {};
+				tmpl.props.group = 'User Templates';
 
-		return {
-			struct: molfile.parse(tmpl.struct),
-			props: tmpl.props
-		};
-	});
+				return {
+					struct: molfile.parse(tmpl.struct),
+					props: tmpl.props
+				};
+			} catch (ex) {
+				return null;
+			}
+		})
+		.filter(tmpl => tmpl !== null);
 }
 
 function prefetchStatic(url) {

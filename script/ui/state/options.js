@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { pick } from 'lodash/fp';
-import { SERVER_OPTIONS, getDefaultOptions } from '../data/options-schema';
+import { SERVER_OPTIONS, getDefaultOptions, validation } from '../data/options-schema';
 import { storage } from '../utils';
 
 export const optionsState = {
@@ -33,7 +33,7 @@ export const optionsState = {
 		structStr: null,
 		fragment: false
 	},
-	settings: Object.assign(getDefaultOptions(), storage.getItem("ketcher-opts")),
+	settings: Object.assign(getDefaultOptions(), validation(storage.getItem("ketcher-opts"))),
 	getServerSettings: function() {
 		return pick(SERVER_OPTIONS, this.settings);
 	}

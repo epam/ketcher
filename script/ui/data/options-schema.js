@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import jsonschema from 'jsonschema';
+
 const editor = {
 	resetToSelect: {
 		title: "Reset to Select Tool",
@@ -202,6 +204,20 @@ export default optionsSchema;
 export function getDefaultOptions() {
 	return Object.keys(optionsSchema.properties).reduce((res, prop) => {
 		res[prop] = optionsSchema.properties[prop].default;
+		return res;
+	}, {});
+}
+
+export function validation(settings) {
+	if (typeof settings !== 'object' || settings === null) return null;
+
+	const v = new jsonschema.Validator();
+	const { errors } = v.validate(settings, optionsSchema);
+	const errProps = errors.map(err => err.property.split('.')[1]);
+
+	return Object.keys(settings).reduce((res, prop) => {
+		if (optionsSchema.properties[prop] && errProps.indexOf(prop) === -1)
+			res[prop] = settings[prop];
 		return res;
 	}, {});
 }

@@ -772,7 +772,6 @@ form.settings {
 }
 
 .attach {
-	width: 35em;
 	label {
 		display: block;
 		padding: 0 5px;
@@ -783,11 +782,11 @@ form.settings {
 	}
 
 	.editor {
-		padding: 10px;
 		border: 1px solid @border-color;
 		border-radius: 5px;
 		position: relative;
-		height: 27em;
-		overflow: hidden;
+		max-height: 30em;
+		max-width: 30em;
+		overflow: auto;
 	}
 }

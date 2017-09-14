@@ -103,8 +103,8 @@ class TemplateLib extends Component {
 		console.assert(!tmpl || tmpl.props, 'Incorrect SDF parse');
 		return tmpl ? {
 			struct: tmpl.struct,
-			aid: parseInt(tmpl.props.atomid) + 1 || null, // In TemplateTool: -1
-			bid: parseInt(tmpl.props.bondid) + 1 || null
+			aid: parseInt(tmpl.props.atomid) || null,
+			bid: parseInt(tmpl.props.bondid) || null
 		} : null;
 	}
 

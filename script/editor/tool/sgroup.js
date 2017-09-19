@@ -132,22 +132,15 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			var action;
-			if (!sg) {
-				if (!selection.atoms || selection.atoms.length === 0)
-					return;
-
-				action = Action.fromSgroupAddition(restruct, newSg.type, selection.atoms, newSg.attrs, restruct.molecule.sgroups.newId());
-				editor.update(action);
-				editor.selection(selection);
+			if (!sg && (!selection.atoms || selection.atoms.length === 0))
 				return;
-			}
 
-			var isDataSg = sg.getAttrs().context && sg.getAttrs().context === newSg.attrs.context;
+			var isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
 
 			if (isDataSg) {
-				action = Action.fromSgroupType(restruct, id, newSg.type)
+				var action = Action.fromSgroupType(restruct, id, newSg.type)
 					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs));
+
 				editor.update(action);
 				editor.selection(selection);
 				return;
@@ -216,12 +209,14 @@ function fromContextType(id, editor, newSg, currSelection) {
 
 	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 
-	editor.selection(result.selection || currSelection);
+	result.selection = result.selection || currSelection;
 
-	return {
-		action: result.action.mergeWith(Action.fromSgroupDeletion(restruct, id)),
-		selection: result.selection || currSelection
-	};
+	if (id !== null && id !== undefined)
+		result.action = result.action.mergeWith(Action.fromSgroupDeletion(restruct, id));
+
+	editor.selection(result.selection);
+
+	return result;
 }
 
 function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {

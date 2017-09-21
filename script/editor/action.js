@@ -1289,8 +1289,8 @@ function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line ma
 
 	if (selection.chiralFlags) {
 		selection.chiralFlags.forEach(function (fid) {
-			var flag = struct.chiralFlags.get(fid);
-			action.addOp(new op.ChiralFlagMove(fid, rotateDelta(flag.pp, pos, angle)));
+			var flag = restruct.chiralFlags.get(fid);
+			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, pos, angle)));
 		});
 	}
 

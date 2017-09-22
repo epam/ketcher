@@ -59,8 +59,7 @@ class Analyse extends Component {
 	}
 
 	render() {
-		let { values, round, onAnalyse, onChangeRound, ...props } = this.props;
-
+		const { values, round, onAnalyse, onChangeRound, ...props } = this.props;
 		return (
 			<Dialog title="Calculated Values" className="analyse"
 					buttons={["Close"]} params={props}>

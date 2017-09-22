@@ -168,7 +168,8 @@ const template = [
 		id: 'template-common',
 		component: TemplatesList
 	},
-	'template-lib'
+	'template-lib',
+	'chiral-flag'
 ];
 
 const elements = [

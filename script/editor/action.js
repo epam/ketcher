@@ -1495,6 +1495,7 @@ module.exports = Object.assign(Action, {
 	fromAtomAddition: fromAtomAddition,
 	fromArrowAddition: fromArrowAddition,
 	fromArrowDeletion: fromArrowDeletion,
+	fromChiralFlagAddition: fromChiralFlagAddition,
 	fromChiralFlagDeletion: fromChiralFlagDeletion,
 	fromPlusAddition: fromPlusAddition,
 	fromPlusDeletion: fromPlusDeletion,

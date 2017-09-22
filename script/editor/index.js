@@ -34,6 +34,7 @@ var toolMap = {
 	atom: require('./tool/atom'),
 	bond: require('./tool/bond'),
 	chain: require('./tool/chain'),
+	chiralFlag: require('./tool/chiral-flag'),
 	template: require('./tool/template'),
 	charge: require('./tool/charge'),
 	rgroupfragment: require('./tool/rgroupfragment'),

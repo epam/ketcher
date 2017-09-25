@@ -32,7 +32,7 @@ class ClipArea extends Component {
 		// TODO: remove event listeners on unmount or
 		//       target change
 		target.addEventListener('mouseup', event => {
-			if (self.props.focused() && event.target.tagName !== 'SELECT')
+			if (self.props.focused() && !isFormElement(event.target))
 				autofocus(el);
 		});
 
@@ -65,6 +65,10 @@ class ClipArea extends Component {
 			   autoFocus={true}/>
 		);
 	}
+}
+
+function isFormElement(el) {
+	return ['INPUT', 'SELECT', 'TEXTAREA'].indexOf(el.tagName) > -1;
 }
 
 function autofocus(cliparea) {

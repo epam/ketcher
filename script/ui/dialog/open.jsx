@@ -21,6 +21,7 @@ import { connect } from 'preact-redux';
 import { map as formatMap } from '../structformat';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
+import ClipArea, { exec } from '../component/cliparea';
 
 import { load } from '../state';
 
@@ -48,22 +49,24 @@ class Open extends Component {
 		let { structStr, fragment } = this.state;
 		return (
 			<Dialog title="Open Structure"
-				className="open" result={() => this.result() }
-				params={this.props}
-				buttons={[(
-					<OpenButton className="open" server={this.props.server}
-								type={structAcceptMimes()}
-								onLoad={ s => this.changeStructStr(s) }>
-						Open From File…
-					</OpenButton>
-				), "Cancel", "OK"]}>
+					className="open" result={() => this.result()}
+					params={this.props}
+					buttons={[(
+						<OpenButton className="open" server={this.props.server}
+									type={structAcceptMimes()}
+									onLoad={s => this.changeStructStr(s)}>
+							Open From File…
+						</OpenButton>
+					), "Cancel", "OK"]}>
 				<textarea value={structStr}
-			              onInput={ ev => this.changeStructStr(ev.target.value) } />
+						  onChange={ev => this.changeStructStr(ev.target.value)}/>
 				<label>
-				<input type="checkbox" checked={fragment}
-			           onClick={ev => this.changeFragment(ev.target)} />
-				    Load as a fragment
-			    </label>
+					<input type="checkbox" checked={fragment}
+						   onClick={ev => this.changeFragment(ev.target)}/>
+					Load as a fragment and copy to the Clipboard
+				</label>
+				<ClipArea focused={() => true}
+						  onCopy={() => ({ 'text/plain': structStr })}/>
 			</Dialog>
 		);
 	}
@@ -75,11 +78,11 @@ function structAcceptMimes() {
 	), []).join(',');
 }
 
-
 export default connect(
 	store => ({	server: store.server }),
 	(dispatch, props) => ({
 		onOk: (res) => {
+			if (res.fragment) exec('copy');
 			dispatch(
 				load(res.structStr, {
 					badHeaderRecover: true,

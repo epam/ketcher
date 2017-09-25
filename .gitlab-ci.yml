@@ -18,17 +18,17 @@ variables:
 unstable:
   stage: build
   script:
-    - npm run archive -- --sgroup-data-special --api-path=$API_PATH --miew-path=$MIEW_PATH
+    - npm run archive -- --api-path=$API_PATH --miew-path=$MIEW_PATH
     - deploy www ketcher-*.zip
   only:
     - master
-    - next
+    - dev
     - /^task-.*$/
 
 standalone:
   stage: build
   script:
-    - npm run archive -- --sgroup-data-special
+    - npm run archive
     - BUILD=standalone deploy www ketcher-*.zip
     - deploy artifact ketcher-*.zip
   only:
@@ -37,7 +37,7 @@ standalone:
 stable:
   stage: build
   script:
-    - npm run archive -- --sgroup-data-special --api-path="$SERVER:8082/v2" --miew-path=$MIEW_PATH
+    - npm run archive -- --api-path="$SERVER:8082/v2" --miew-path=$MIEW_PATH
     - deploy www ketcher-*.zip
   only:
     - /^test-.*$/
@@ -45,8 +45,10 @@ stable:
 frozen:
   stage: build
   script:
-    - npm run archive -- --sgroup-data-special --api-path="$SERVER:8083/v2" --miew-path=$MIEW_PATH
+    - npm run archive -- --api-path="$SERVER:8083/v2" --miew-path=$MIEW_PATH
     - deploy www ketcher-*.zip
   only:
     - demo
     - /^2.0.0-.*$/
+    - 2.0.0-alpha.6
+    - 2.0.0-alpha.7

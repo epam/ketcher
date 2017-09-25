@@ -158,7 +158,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups']);
+	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups', 'sgroupData']);
 	if (!ci) return;
 
 	var struct = rnd.ctab.molecule;
@@ -178,7 +178,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		Promise.resolve(rb).then(function (newbond) {
 			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
-	} else if (ci.map === 'sgroups') {
+	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));
 		SGroup.dialog(this.editor, ci.id);
 //    } else if (ci.map == 'sgroupData') {

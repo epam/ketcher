@@ -507,16 +507,23 @@ function RGroupAttr(rgid, attribute, value) {
 }
 RGroupAttr.prototype = new Base();
 
-function RGroupFragment(rgid, frid, rg) {
+function RGroupFragment(rgid, frid, rg, oldIfThenValues) {
 	this.rgid_new = rgid;
 	this.rg_new = rg;
 	this.rgid_old = null;
 	this.rg_old = null;
 	this.frid = frid;
+
+	// used for restore ifThen value after undo action performed
+	this.oldIfThenValues = oldIfThenValues || {};
+
 	this.execute = function (restruct) { // eslint-disable-line max-statements
 		var struct = restruct.molecule;
 		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(struct.rgroups, this.frid);
 		this.rg_old = (this.rgid_old ? struct.rgroups.get(this.rgid_old) : null);
+
+		var oldIfThen = this.oldIfThenValues;
+
 		if (this.rg_old) {
 			this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
 			restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
@@ -527,7 +534,24 @@ function RGroupFragment(rgid, frid, rg) {
 			} else {
 				restruct.markItem('rgroups', this.rgid_old, 1);
 			}
+
+			var oldId = this.rgid_old;
+			var newId = this.rgid_new;
+
+			struct.rgroups.keys().forEach(function (rgKey) {
+				var rgValue = struct.rgroups.get(rgKey);
+
+				if (rgValue.ifthen === oldId) {
+					rgValue.ifthen = newId;
+
+					if (!newId)
+						oldIfThen[rgKey] = oldId;
+
+					struct.rgroups.set(rgKey, rgValue);
+				}
+			});
 		}
+
 		if (this.rgid_new) {
 			var rgNew = struct.rgroups.get(this.rgid_new);
 			if (!rgNew) {
@@ -538,10 +562,16 @@ function RGroupFragment(rgid, frid, rg) {
 				restruct.markItem('rgroups', this.rgid_new, 1);
 			}
 			rgNew.frags.add(this.frid);
+
+			Object.keys(oldIfThen).forEach(function (rgid) {
+				var rgValue = struct.rgroups.get(rgid);
+				rgValue.ifthen = oldIfThen[rgid];
+				struct.rgroups.set(rgid, rgValue);
+			});
 		}
 	};
 	this.invert = function () {
-		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
+		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old, this.oldIfThenValues);
 	};
 }
 RGroupFragment.prototype = new Base();

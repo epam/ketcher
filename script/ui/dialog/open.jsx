@@ -59,7 +59,7 @@ class Open extends Component {
 						</OpenButton>
 					), "Cancel", "OK"]}>
 				<textarea value={structStr}
-						  onChange={ev => this.changeStructStr(ev.target.value)}/>
+						  onInput={ev => this.changeStructStr(ev.target.value)}/>
 				<label>
 					<input type="checkbox" checked={fragment}
 						   onClick={ev => this.changeFragment(ev.target)}/>

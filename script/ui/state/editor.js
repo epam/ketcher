@@ -61,25 +61,26 @@ export function initEditor(dispatch, getState) {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
 
-			return dlg.then((res) => toElement(res));
+			return dlg.then(toElement);
 		},
 		onQuickEdit: atom => {
 			return openDialog(dispatch, 'labelEdit', atom)
 		},
 		onBondEdit: bond => {
 			return openDialog(dispatch, 'bondProps', fromBond(bond))
-				.then((res) => toBond(res));
+				.then(toBond);
 		},
 		onRgroupEdit: rgroup => {
 			if (Object.keys(rgroup).length > 1) {
 				const rgids = [];
-				getState().editor.struct().rgroups.each((rgid) => rgids.push(rgid));
+				getState().editor.struct().rgroups.each(rgid => rgids.push(rgid));
 
 				if (!rgroup.range) rgroup.range = '>0';
 
 				return openDialog(dispatch, 'rgroupLogic',
 					Object.assign({ rgroupLabels: rgids }, rgroup));
 			}
+
 			return openDialog(dispatch, 'rgroup', rgroup);
 		},
 		onSgroupEdit: sgroup => {

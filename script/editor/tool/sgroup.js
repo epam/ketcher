@@ -84,7 +84,7 @@ SGroupTool.prototype.mouseup = function (event) {
 		} else if (ci.map === 'bonds') {
 			var bond = this.editor.render.ctab.bonds.get(ci.id);
 			selection = { atoms: [bond.b.begin, bond.b.end] };
-		} else if (ci.map === 'sgroups') {
+		} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 			id = ci.id;
 		} else {
 			return;

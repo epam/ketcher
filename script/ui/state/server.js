@@ -97,11 +97,14 @@ export function serverTransform(method, data, struct) {
 }
 
 function serverCall(editor, server, method, options, struct) {
-	let selectedAtoms = null;
+	const selection = editor.selection();
+	let selectedAtoms = [];
+	if (selection)
+		selectedAtoms = selection.atoms;
+
 	if (!struct) {
 		const aidMap = {};
 		struct = editor.struct().clone(null, null, false, aidMap);
-		selectedAtoms = editor.explicitSelected().atoms || [];
 		const reindexMap = getReindexMap(struct.getComponents());
 
 		selectedAtoms = selectedAtoms.map(function (aid) {

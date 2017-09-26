@@ -295,8 +295,7 @@ SGroup.getBonds = function (mol, sg) {
 };
 
 SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max-statements
-	var j;
-	sgroup.atoms.sort();
+	sgroup.atoms.sort((a, b) => a - b);
 	sgroup.atomSet = Set.fromList(sgroup.atoms);
 	sgroup.parentAtomSet = Set.clone(sgroup.atomSet);
 	var inBonds = [];
@@ -308,7 +307,7 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 		else if (Set.contains(sgroup.parentAtomSet, bond.begin) || Set.contains(sgroup.parentAtomSet, bond.end))
 			xBonds.push(bid);
 	}, sgroup);
-	if (xBonds.length != 0 && xBonds.length != 2) {
+	if (xBonds.length !== 0 && xBonds.length !== 2) {
 		throw {
 			'id': sgroup.id,
 			'error-type': 'cross-bond-number',
@@ -316,28 +315,23 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 		};
 	}
 
-	var xAtom1 = -1,
-		xAtom2 = -1;
+	var xAtom1 = -1;
+	var xAtom2 = -1;
 	var crossBond = null;
-	if (xBonds.length == 2) {
+	if (xBonds.length === 2) {
 		var bond1 = mol.bonds.get(xBonds[0]);
-		if (Set.contains(sgroup.parentAtomSet, bond1.begin))
-			xAtom1 = bond1.begin;
-		else
-			xAtom1 = bond1.end;
+		xAtom1 = Set.contains(sgroup.parentAtomSet, bond1.begin) ? bond1.begin : bond1.end;
+
 		var bond2 = mol.bonds.get(xBonds[1]);
-		if (Set.contains(sgroup.parentAtomSet, bond2.begin))
-			xAtom2 = bond2.begin;
-		else
-			xAtom2 = bond2.end;
+		xAtom2 = Set.contains(sgroup.parentAtomSet, bond2.begin) ? bond2.begin : bond2.end;
 		crossBond = bond2;
 	}
 
 	var amap = null;
-	var tailAtom = xAtom1;
+	var tailAtom = xAtom2;
 
 	var newAtoms = [];
-	for (j = 0; j < sgroup.data.mul - 1; ++j) {
+	for (var j = 0; j < sgroup.data.mul - 1; j++) {
 		amap = {};
 		sgroup.atoms.forEach(function (aid) {
 			var atom = mol.atoms.get(aid);
@@ -353,29 +347,28 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 			newBond.end = amap[newBond.end];
 			mol.bonds.add(newBond);
 		});
-		if (crossBond != null) {
+		if (crossBond !== null) {
 			var newCrossBond = new Bond(crossBond);
 			newCrossBond.begin = tailAtom;
-			newCrossBond.end = amap[xAtom2];
+			newCrossBond.end = amap[xAtom1];
 			mol.bonds.add(newCrossBond);
-			tailAtom = amap[xAtom1];
+			tailAtom = amap[xAtom2];
 		}
 	}
+	if (tailAtom >= 0) {
+		var xBond2 = mol.bonds.get(xBonds[1]);
+		if (xBond2.begin === xAtom2)
+			xBond2.begin = tailAtom;
+		else
+			xBond2.end = tailAtom;
+	}
+	sgroup.bonds = xBonds;
 
 	newAtoms.forEach(function (aid) {
 		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach(function (sgid) {
 			mol.atomAddToSGroup(sgid, aid);
 		});
 	});
-	if (tailAtom >= 0) {
-		var xBond2 = mol.bonds.get(xBonds[0]);
-		if (xBond2.begin == xAtom1)
-			xBond2.begin = tailAtom;
-		else
-			xBond2.end = tailAtom;
-	}
-
-	sgroup.bonds = xBonds;
 };
 
 SGroup.getMassCentre = function (mol, atoms) {

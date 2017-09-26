@@ -83,8 +83,8 @@ function lookup(map, event) {
 	let res = map[modifiers(name, event, !isChar)];
 	let baseName;
 
-	if (!res && event.shiftKey && isChar && (baseName = keyName.base[event.keyCode])) {
-		res = map[modifiers(baseName, event, true)];
+	if (event.shiftKey && isChar && (baseName = keyName.base[event.keyCode])) {
+		res = map[modifiers(baseName, event, true)] || res;
 	}
 
 	return res;

@@ -19,6 +19,7 @@ var Struct = require('../../chem/struct');
 var Action = require('../action');
 var utils = require('./utils');
 
+var Atom = require('./atom');
 var Bond = require('./bond');
 
 function ChainTool(editor) {
@@ -40,7 +41,7 @@ ChainTool.prototype.mousedown = function (event) {
 	if (ci && ci.map === 'atoms') {
 		this.editor.selection({ atoms: [ci.id] }); // for change atom
 		// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-		atomLongtapEvent(this, rnd, ci.id);
+		Atom.atomLongtapEvent(this, rnd);
 	}
 	if (!this.dragCtx.item) // ci.type == 'Canvas'
 		delete this.dragCtx.item;
@@ -104,29 +105,7 @@ ChainTool.prototype.mouseup = function () {
 	return true;
 };
 
-function atomLongtapEvent(tool, render, itemID) {
-	var editor = tool.editor;
-	var atom = render.ctab.molecule.atoms.get(itemID);
-	// TODO: longtab event
-	tool.dragCtx.timeout = setTimeout(function () {
-		delete tool.dragCtx;
-		editor.selection(null);
-		var res = editor.event.quickEdit.dispatch(atom);
-		Promise.resolve(res).then(function (newatom) {
-			editor.update(Action.fromAtomsAttrs(render.ctab, itemID, newatom));
-		});
-	}, 750);
-	tool.dragCtx.stopTapping = function () {
-		if (tool.dragCtx.timeout) {
-			clearTimeout(tool.dragCtx.timeout);
-			delete tool.dragCtx.timeout;
-		}
-	};
-}
-
 ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
 	ChainTool.prototype.mouseup;
 
-module.exports = Object.assign(ChainTool, {
-	atomLongtapEvent: atomLongtapEvent
-});
+module.exports = ChainTool;

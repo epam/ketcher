@@ -30,7 +30,10 @@ ReactionArrowTool.prototype.mousedown = function (event) {
 	if (ci && ci.map === 'rxnArrows') {
 		this.editor.hover(null);
 		this.editor.selection({ rxnArrows: [ci.id] });
-		this.dragCtx = { xy0: rnd.page2obj(event) };
+		this.dragCtx = {
+			xy0: rnd.page2obj(event),
+			action: new Action()
+		};
 	}
 };
 ReactionArrowTool.prototype.mousemove = function (event) {

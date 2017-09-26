@@ -22,6 +22,7 @@ import { saveSettings } from '../state/options';
 
 import settingsSchema from '../data/options-schema';
 import { Form, Field } from '../component/form';
+import { storage } from '../utils';
 
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
@@ -89,6 +90,7 @@ function Settings(props) {
 						<SelectCheckbox name="showLoopIds"/>
 					</fieldset>
 				</Accordion>
+				{ !storage.isAvailable() ? <div className="warning">{storage.warningMessage}</div> : null }
 			</Form>
 		</Dialog>
 	);

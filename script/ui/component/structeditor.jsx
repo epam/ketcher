@@ -68,9 +68,9 @@ class StructEditor extends Component {
 	}
 
 	render () {
-		let { Tag="div", ...props } = this.props;
+		let { Tag="div", struct, tool, toolOpts, options, ...props } = this.props;
 		return (
-			<Tag {...props}/>
+			<Tag onMouseDown={ev => ev.preventDefault()} {...props}	/>
 		);
 	}
 }

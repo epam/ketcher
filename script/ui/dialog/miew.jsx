@@ -19,6 +19,7 @@ import { h, Component } from 'preact';
 /** @jsx h */
 
 import Dialog from '../component/dialog';
+import { storage } from '../utils';
 
 const MIEW_PATH = '__MIEW_PATH__';
 const MIEW_OPTIONS = {
@@ -52,7 +53,7 @@ const MIEW_MODES = {
 };
 
 function getLocalMiewOpts() {
-	let userOpts = JSON.parse(localStorage.getItem("ketcher-opts"));
+	let userOpts = storage.getItem("ketcher-opts");
 	if (!userOpts)
 		return MIEW_OPTIONS;
 

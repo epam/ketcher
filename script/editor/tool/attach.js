@@ -20,14 +20,15 @@ function AttachTool(editor, attachPoints) {
 	if (!(this instanceof AttachTool))
 		return new AttachTool(editor, attachPoints);
 
-	this.attach = attachPoints || {}; // { atomid: .. , bondid: .. }
+	this.attach = attachPoints || { atomid: 0, bondid: 0 };
 	this.editor = editor;
 
 	this.editor.selection({
-		atoms: [this.attach.atomid] || [],
-		bonds: [this.attach.bondid] || []
+		atoms: [this.attach.atomid],
+		bonds: [this.attach.bondid]
 	});
 }
+
 AttachTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 
@@ -39,6 +40,7 @@ AttachTool.prototype.mousemove = function (event) {
 		this.editor.hover(null);
 	return true;
 };
+
 AttachTool.prototype.mouseup = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;

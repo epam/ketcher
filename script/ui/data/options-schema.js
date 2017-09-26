@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import jsonschema from 'jsonschema';
+
 const editor = {
 	resetToSelect: {
 		title: "Reset to Select Tool",
@@ -136,9 +138,6 @@ const render = {
 	}
 };
 
-export const SERVER_OPTIONS = ['smart-layout', 'ignore-stereochemistry-errors',
-	'mass-skip-error-on-pseudoatoms', 'gross-formula-add-rsites'];
-
 const server = {
 	'smart-layout': {
 		title: "Smart-layout",
@@ -161,6 +160,8 @@ const server = {
 		default: true
 	}
 };
+
+export const SERVER_OPTIONS = Object.keys(server);
 
 const debug = {
 	showAtomIds: {
@@ -185,7 +186,7 @@ const debug = {
 	}
 };
 
-export default {
+const optionsSchema = {
 	title: "Settings",
 	type: "object",
 	required: [],
@@ -197,3 +198,26 @@ export default {
 		...debug
 	}
 };
+
+export default optionsSchema;
+
+export function getDefaultOptions() {
+	return Object.keys(optionsSchema.properties).reduce((res, prop) => {
+		res[prop] = optionsSchema.properties[prop].default;
+		return res;
+	}, {});
+}
+
+export function validation(settings) {
+	if (typeof settings !== 'object' || settings === null) return null;
+
+	const v = new jsonschema.Validator();
+	const { errors } = v.validate(settings, optionsSchema);
+	const errProps = errors.map(err => err.property.split('.')[1]);
+
+	return Object.keys(settings).reduce((res, prop) => {
+		if (optionsSchema.properties[prop] && errProps.indexOf(prop) === -1)
+			res[prop] = settings[prop];
+		return res;
+	}, {});
+}

@@ -31,8 +31,8 @@ class ClipArea extends Component {
 
 		// TODO: remove event listeners on unmount or
 		//       target change
-		target.addEventListener('mouseup', () => {
-			if (self.props.focused())
+		target.addEventListener('mouseup', event => {
+			if (self.props.focused() && !isFormElement(event.target))
 				autofocus(el);
 		});
 
@@ -65,6 +65,11 @@ class ClipArea extends Component {
 			   autoFocus={true}/>
 		);
 	}
+}
+
+function isFormElement(el) {
+	if (el.tagName === 'INPUT' && el.type === 'button') return false;
+	return ['INPUT', 'SELECT', 'TEXTAREA'].indexOf(el.tagName) > -1;
 }
 
 function autofocus(cliparea) {
@@ -109,7 +114,7 @@ export const actions = ['cut', 'copy', 'paste'];
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
 	if (enabled) try {
-		enabled = document.execCommand(action);
+		enabled = document.execCommand(action) || ieCb;
 	} catch (ex) {
 		// FF < 41
 		enabled = false;

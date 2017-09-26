@@ -68,6 +68,12 @@ var bundleConfig = {
 var iconfont = null;
 
 gulp.task('script', ['patch-version'], function() {
+	bundleConfig.transform.push(
+		['loose-envify', {
+			NODE_ENV: 'production',
+			global: true
+		}]
+	);
 	return browserify(bundleConfig).bundle()
 		// Don't transform, see: http://git.io/vcJlV
 		.pipe(source(`${pkg.name}.js`)).pipe(buffer())

@@ -25,7 +25,7 @@ import { miewAction } from '../state/miew';
 
 export default {
 	"new": {
-		shortcut: "Mod+n",
+		shortcut: "Mod+Delete",
 		title: "Clear Canvas",
 		action: {
 			thunk: (dispatch, getState) => {

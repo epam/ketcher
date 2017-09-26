@@ -26,25 +26,33 @@ function TemplateTool(editor, tmpl) {
 	this.editor = editor;
 	this.editor.selection(null);
 	this.template = {
-		aid: (tmpl.aid || 1) - 1,
-		bid: (tmpl.bid || 1) - 1
+		aid: parseInt(tmpl.aid) || 0,
+		bid: parseInt(tmpl.bid) || 0
 	};
 
 	var frag = tmpl.struct;
 	frag.rescale();
 
 	var xy0 = new Vec2();
-
 	frag.atoms.each(function (aid, atom) {
 		xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 	});
 
 	this.template.molecule = frag; // preloaded struct
-	this.template.xy0 = xy0.scaled(1 / frag.atoms.count()); // template center
-	this.template.angle0 = utils.calcAngle(frag.atoms.get(this.template.aid).pp, this.template.xy0); // center tilt
+	this.findItems = [];
+	this.template.xy0 = xy0.scaled(1 / (frag.atoms.count() || 1)); // template center
+
+	var atom = frag.atoms.get(this.template.aid);
+	if (atom) {
+		this.template.angle0 = utils.calcAngle(atom.pp, this.template.xy0); // center tilt
+		this.findItems.push('atoms');
+	}
 
 	var bond = frag.bonds.get(this.template.bid);
-	this.template.sign = getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+	if (bond) {
+		this.template.sign = getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+		this.findItems.push('bonds');
+	}
 }
 
 TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max-statements
@@ -53,7 +61,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 	this.editor.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
-		item: editor.findItem(event, ['atoms', 'bonds'])
+		item: editor.findItem(event, this.findItems)
 	};
 	var dragCtx = this.dragCtx;
 	var ci = dragCtx.item;
@@ -99,7 +107,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	var editor = this.editor;
 	var rnd = editor.render;
-	if ('dragCtx' in this) {
+	if (this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
 		var pos0;
@@ -140,16 +148,12 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 
 		var degrees = utils.degrees(angle);
 		// check if anything changed since last time
-		if ('angle' in dragCtx && dragCtx.angle == degrees) {
-			if ('extra_bond' in dragCtx) {
-				if (dragCtx.extra_bond == extraBond)
-					return true;
-			} else {
+		if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees) {
+			if (!dragCtx.hasOwnProperty('extra_bond') || dragCtx.extra_bond === extraBond)
 				return true;
-			}
 		}
 		// undo previous action
-		if ('action' in dragCtx)
+		if (dragCtx.action)
 			dragCtx.action.perform(rnd.ctab);
 		// create new action
 		dragCtx.angle = degrees;
@@ -173,7 +177,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		this.editor.update(dragCtx.action, true);
 		return true;
 	}
-	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	this.editor.hover(this.editor.findItem(event, this.findItems));
 	return true;
 };
 

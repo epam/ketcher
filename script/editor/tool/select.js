@@ -22,7 +22,7 @@ var Struct = require('../../chem/struct');
 var LassoHelper = require('./helper/lasso');
 
 var SGroup = require('./sgroup');
-var Chain = require('./chain');
+var Atom = require('./atom');
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -45,7 +45,14 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
 	);
+	this.dragCtx = {
+		item: ci,
+		xy0: rnd.page2obj(event)
+	};
 	if (!ci) { //  ci.type == 'Canvas'
+		Atom.atomLongtapEvent(this, rnd);
+		delete this.dragCtx.item;
+
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
 	} else {
@@ -74,22 +81,19 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 			this.editor.selection(!event.shiftKey ? sel :
 			                         selMerge(sel, this.editor.selection()));
 		}
-		this.dragCtx = {
-			item: ci,
-			xy0: rnd.page2obj(event)
-		};
 		if (ci.map === 'atoms')
 			// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-			Chain.atomLongtapEvent(this, rnd, ci.id);
+			Atom.atomLongtapEvent(this, rnd);
 	}
 	return true;
 };
 
 SelectTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
-	if ('dragCtx' in this) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
+	if (this.dragCtx && this.dragCtx.stopTapping)
+		this.dragCtx.stopTapping();
+
+	if (this.dragCtx && this.dragCtx.item) {
 		// moving selected objects
 		if (this.dragCtx.action) {
 			this.dragCtx.action.perform(rnd.ctab);
@@ -122,10 +126,10 @@ SelectTool.prototype.mousemove = function (event) {
 	return true;
 };
 SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	if ('dragCtx' in this) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
+	if (this.dragCtx && this.dragCtx.stopTapping)
+		this.dragCtx.stopTapping();
 
+	if (this.dragCtx && this.dragCtx.item) {
 		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
 			// TODO add bond-to-bond fusing
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
@@ -184,15 +188,18 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 };
 
 SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
-	if ('dragCtx' in this) {
-		if (this.dragCtx.stopTapping)
-			this.dragCtx.stopTapping();
+	if (this.dragCtx && this.dragCtx.stopTapping)
+		this.dragCtx.stopTapping();
+
+	if (this.dragCtx && this.dragCtx.action) {
 		var action = this.dragCtx.action;
-		delete this.dragCtx;
 		this.editor.update(action);
-	} else if (this.lassoHelper.running()) {
-		this.editor.selection(this.lassoHelper.end());
 	}
+	if (this.lassoHelper.running())
+		this.editor.selection(this.lassoHelper.end());
+
+	delete this.dragCtx;
+
 	this.editor.hover(null);
 };
 

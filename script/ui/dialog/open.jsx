@@ -21,49 +21,60 @@ import { connect } from 'preact-redux';
 import { map as formatMap } from '../structformat';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
+import ClipArea, { exec } from '../component/cliparea';
 
 import { load } from '../state';
 
 class Open extends Component {
-	constructor(props) {
-		super(props);
+	constructor() {
+		super();
 		this.state = {
 			structStr: '',
 			fragment: false
 		};
+		this.onCopy = this.onCopy.bind(this);
 	}
-	result() {
-		let { structStr, fragment } = this.state;
-		return structStr ? { structStr, fragment } : null;
-	}
+
 	changeStructStr(structStr) {
 		this.setState({ structStr });
 	}
+
 	changeFragment(target) {
-		this.setState({
-			fragment: target.checked
-		});
+		this.setState({ fragment: target.checked });
 	}
-	render () {
+
+	result() {
+		let { structStr, fragment } = this.state;
+		return structStr ? { structStr, copy: fragment } : null;
+	}
+
+	onCopy() {
+		let { structStr, fragment } = this.state;
+		this.props.onOk({ structStr, fragment, copy: false });
+		return { 'text/plain': structStr }
+	}
+
+	render() {
 		let { structStr, fragment } = this.state;
 		return (
 			<Dialog title="Open Structure"
-				className="open" result={() => this.result() }
-				params={this.props}
-				buttons={[(
-					<OpenButton className="open" server={this.props.server}
-								type={structAcceptMimes()}
-								onLoad={ s => this.changeStructStr(s) }>
-						Open From File…
-					</OpenButton>
-				), "Cancel", "OK"]}>
+					className="open" result={() => this.result()}
+					params={this.props}
+					buttons={[(
+						<OpenButton className="open" server={this.props.server}
+									type={structAcceptMimes()}
+									onLoad={s => this.changeStructStr(s)}>
+							Open From File…
+						</OpenButton>
+					), "Cancel", "OK"]}>
 				<textarea value={structStr}
-			              onInput={ ev => this.changeStructStr(ev.target.value) } />
+						  onInput={ev => this.changeStructStr(ev.target.value)}/>
 				<label>
-				<input type="checkbox" checked={fragment}
-			           onClick={ev => this.changeFragment(ev.target)} />
-				    Load as a fragment
-			    </label>
+					<input type="checkbox" checked={fragment}
+						   onClick={ev => this.changeFragment(ev.target)}/>
+					Load as a fragment and copy to the Clipboard
+				</label>
+				<ClipArea focused={() => true} onCopy={this.onCopy}/>
 			</Dialog>
 		);
 	}
@@ -75,11 +86,14 @@ function structAcceptMimes() {
 	), []).join(',');
 }
 
-
 export default connect(
-	store => ({	server: store.server }),
+	store => ({ server: store.server }),
 	(dispatch, props) => ({
-		onOk: (res) => {
+		onOk: res => {
+			if (res.copy) {
+				exec('copy');
+				return;
+			}
 			dispatch(
 				load(res.structStr, {
 					badHeaderRecover: true,

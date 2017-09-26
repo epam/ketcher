@@ -85,4 +85,35 @@ AtomTool.prototype.mouseup = function (event) {
 	}
 };
 
-module.exports = AtomTool;
+function atomLongtapEvent(tool, render) {
+	const dragCtx = tool.dragCtx;
+	const editor = tool.editor;
+
+	const atomid = dragCtx.item && dragCtx.item.id;
+	const atom = atomid ? // edit atom or add atom
+		render.ctab.molecule.atoms.get(atomid) :
+		new Struct.Atom({ label: '' });
+
+	// TODO: longtab event
+	dragCtx.timeout = setTimeout(function () {
+		delete tool.dragCtx;
+		editor.selection(null);
+		const res = editor.event.quickEdit.dispatch(atom);
+		Promise.resolve(res).then(function (newatom) {
+			const action = atomid ?
+				Action.fromAtomsAttrs(render.ctab, atomid, newatom) :
+				Action.fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
+			editor.update(action);
+		});
+	}, 750);
+	dragCtx.stopTapping = function () {
+		if (dragCtx.timeout) {
+			clearTimeout(dragCtx.timeout);
+			delete tool.dragCtx.timeout;
+		}
+	};
+}
+
+module.exports = Object.assign(AtomTool, {
+	atomLongtapEvent: atomLongtapEvent
+});

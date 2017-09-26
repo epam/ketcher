@@ -33,6 +33,7 @@
 	}
 
 	form[role=dialog] {
+		outline: 0;
 		display: inline-block;
 		position: relative;
 		vertical-align: middle;
@@ -302,6 +303,9 @@ form.settings {
 	.open {
 		&:extend(button all);
 		float: left;
+	}
+	.warning {
+		margin: 0.3em;
 	}
 
 	.accordion {
@@ -642,6 +646,10 @@ form.settings {
 		display: inline-block;
 		float: left;
 		padding: 6px;
+		max-width: 200px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -764,19 +772,21 @@ form.settings {
 }
 
 .attach {
-	width: 35em;
 	label {
 		display: block;
-		padding: 5px;
+		padding: 0 5px;
 		font-size: 16px;
+	}
+	.warning {
+		padding: 0 5px;
 	}
 
 	.editor {
-		padding: 10px;
 		border: 1px solid @border-color;
 		border-radius: 5px;
 		position: relative;
-		height: 27em;
-		overflow: hidden;
+		max-height: 30em;
+		max-width: 30em;
+		overflow: auto;
 	}
 }

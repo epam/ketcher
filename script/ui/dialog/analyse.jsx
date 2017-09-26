@@ -34,22 +34,36 @@ function FrozenInput({value}) {
 	);
 }
 
+const formulaRegexp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
+const errorRegexp = /error:.*/g;
+
+function formulaInputMarkdown(value) {
+	return (
+		<div className="chem-input" spellCheck={false} contentEditable={true}
+			 onKeyDown={ev => allowMovement(ev)}>{value}</div>
+	);
+}
+
 function FormulaInput({value}) {
+	if (errorRegexp.test(value)) {
+		return formulaInputMarkdown(value);
+	}
+
 	const content = [];
-	const regExp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
+
 	var cnd;
 	var pos = 0;
-	while (cnd = regExp.exec(value)) {
+
+	while (cnd = formulaRegexp.exec(value)) {
 		content.push(value.substring(pos, cnd.index) + cnd[1]);
 		if (cnd[2].length > 0) content.push(<sub>{cnd[2]}</sub>);
 		pos = cnd.index + cnd[0].length;
 	}
+
 	if (pos === 0) content.push(value);
 	else content.push(value.substring(pos, value.length));
-	return (
-		<div className="chem-input" spellCheck={false} contentEditable={true}
-			 onKeyDown={ev => allowMovement(ev)}>{content}</div>
-	);
+
+	return formulaInputMarkdown(content);
 }
 
 class Analyse extends Component {

@@ -26,26 +26,35 @@ import ClipArea, { exec } from '../component/cliparea';
 import { load } from '../state';
 
 class Open extends Component {
-	constructor(props) {
-		super(props);
+	constructor() {
+		super();
 		this.state = {
 			structStr: '',
 			fragment: false
 		};
+		this.onCopy = this.onCopy.bind(this);
 	}
-	result() {
-		let { structStr, fragment } = this.state;
-		return structStr ? { structStr, fragment } : null;
-	}
+
 	changeStructStr(structStr) {
 		this.setState({ structStr });
 	}
+
 	changeFragment(target) {
-		this.setState({
-			fragment: target.checked
-		});
+		this.setState({ fragment: target.checked });
 	}
-	render () {
+
+	result() {
+		let { structStr, fragment } = this.state;
+		return structStr ? { structStr, copy: fragment } : null;
+	}
+
+	onCopy() {
+		let { structStr, fragment } = this.state;
+		this.props.onOk({ structStr, fragment, copy: false });
+		return { 'text/plain': structStr }
+	}
+
+	render() {
 		let { structStr, fragment } = this.state;
 		return (
 			<Dialog title="Open Structure"
@@ -59,14 +68,13 @@ class Open extends Component {
 						</OpenButton>
 					), "Cancel", "OK"]}>
 				<textarea value={structStr}
-						  onChange={ev => this.changeStructStr(ev.target.value)}/>
+						  onInput={ev => this.changeStructStr(ev.target.value)}/>
 				<label>
 					<input type="checkbox" checked={fragment}
 						   onClick={ev => this.changeFragment(ev.target)}/>
 					Load as a fragment and copy to the Clipboard
 				</label>
-				<ClipArea focused={() => true}
-						  onCopy={() => ({ 'text/plain': structStr })}/>
+				<ClipArea focused={() => true} onCopy={this.onCopy}/>
 			</Dialog>
 		);
 	}
@@ -79,10 +87,13 @@ function structAcceptMimes() {
 }
 
 export default connect(
-	store => ({	server: store.server }),
+	store => ({ server: store.server }),
 	(dispatch, props) => ({
-		onOk: (res) => {
-			if (res.fragment) exec('copy');
+		onOk: res => {
+			if (res.copy) {
+				exec('copy');
+				return;
+			}
 			dispatch(
 				load(res.structStr, {
 					badHeaderRecover: true,

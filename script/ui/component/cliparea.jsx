@@ -68,6 +68,7 @@ class ClipArea extends Component {
 }
 
 function isFormElement(el) {
+	if (el.tagName === 'INPUT' && el.type === 'button') return false;
 	return ['INPUT', 'SELECT', 'TEXTAREA'].indexOf(el.tagName) > -1;
 }
 

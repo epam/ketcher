@@ -150,7 +150,9 @@ gulp.task('font', function (cb) {
 		.pipe(plugins.iconfont({
 			fontName: pkg.name,
 			formats: ['ttf', 'svg', 'eot', 'woff'],
-			timestamp: options['build-date']
+			timestamp: options['build-date'],
+			fontHeight: 1000,
+			normalize: true
 		}))
 		.on('glyphs', function(glyphs) {
 			iconfont = glyphReduce(glyphs);

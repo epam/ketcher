@@ -132,7 +132,7 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			if (!sg && (!selection.atoms || selection.atoms.length === 0))
+			if (!sg && newSg.type !== 'DAT' && (!selection.atoms || selection.atoms.length === 0))
 				return;
 
 			var isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;

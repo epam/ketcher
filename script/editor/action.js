@@ -22,6 +22,8 @@ var utils = require('./tool/utils');
 var Struct = require('../chem/struct');
 var closest = require('./closest');
 
+var _ = require('lodash');
+
 //
 // Undo/redo actions
 //
@@ -1444,9 +1446,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 	var bonds = getAtomsBondIds(struct, sourceAtoms);
 
 	if (currSelection.bonds)
-		bonds = bonds.concat(currSelection.bonds);
-
-	console.info('bond attrs', newSg.attrs);
+		bonds = _.uniq(bonds.concat(currSelection.bonds));
 
 	return bonds.reduce(function (acc, bondid) {
 		var bond = struct.bonds.get(bondid);

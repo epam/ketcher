@@ -83,8 +83,10 @@ SGroup.prototype.getAttr = function (attr) {
 // TODO: should be group-specific
 SGroup.prototype.getAttrs = function () {
 	var attrs = {};
-	for (var attr in this.data)
-		attrs[attr] = this.data[attr];
+	for (var attr in this.data) {
+		if (this.data.hasOwnProperty(attr))
+			attrs[attr] = this.data[attr];
+	}
 	return attrs;
 };
 

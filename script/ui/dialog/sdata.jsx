@@ -58,7 +58,7 @@ function SData({ context, fieldName, fieldValue, type, radiobuttons, formState, 
 	const serialize = {
 		context: result.context.trim(),
 		fieldName: result.fieldName.trim(),
-		fieldValue: result.fieldValue.trim()
+		fieldValue: typeof (result.fieldValue) === 'string' ? result.fieldValue.trim() : result.fieldValue
 	};
 
 	return (
@@ -81,7 +81,7 @@ const content = (schema, context, fieldName) => Object.keys(schema.properties)
 	.filter(prop => prop !== "type" && prop !== "context" && prop !== "fieldName")
 	.map(prop => prop === "radiobuttons" ?
 		<Field name={prop} type="radio" key={`${context}-${fieldName}-${prop}-radio`}/> :
-		<Field name={prop} type="textarea" size="10" key={`${context}-${fieldName}-${prop}-select`}/>
+		<Field name={prop} type="textarea" multiple={true} size="10" key={`${context}-${fieldName}-${prop}-select`}/>
 	);
 
 export default connect(

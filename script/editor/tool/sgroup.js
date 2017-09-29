@@ -138,8 +138,8 @@ function propsDialog(editor, id, defaultType) {
 			var isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
 
 			if (isDataSg) {
-				var action = Action.fromSgroupType(restruct, id, newSg.type)
-					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs));
+				var action = Action.fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
+					.mergeWith(Action.fromSgroupDeletion(restruct, id));
 
 				editor.update(action);
 				editor.selection(selection);
@@ -236,7 +236,7 @@ function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
 		return Action.fromAtomAction(restruct, newSg, newSourceAtoms);
 
 	return {
-		action: Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId())
+		action: Action.fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
 	};
 }
 

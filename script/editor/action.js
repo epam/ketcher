@@ -913,6 +913,28 @@ function fromSgroupType(restruct, id, type) {
 	return new Action();
 }
 
+/**
+ * Creates fromSgroupAddition actions
+ */
+function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
+	var descriptors = attrs.fieldValue;
+
+	if (typeof descriptors === 'string')
+		return Action.fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
+
+	var action = new Action();
+
+	descriptors.forEach(function (fValue) {
+		var localAttrs = JSON.parse(JSON.stringify(attrs));
+		localAttrs.fieldValue = fValue;
+
+		action = action
+			.mergeWith(Action.fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId()));
+	});
+
+	return action;
+}
+
 function fromSgroupAttrs(restruct, id, attrs) {
 	var action = new Action();
 
@@ -1369,7 +1391,7 @@ function atomGetPos(restruct, id) {
 function fromAtomAction(restruct, newSg, sourceAtoms) {
 	return sourceAtoms.reduce(function (acc, atom) {
 		acc.action = acc.action.mergeWith(
-			fromSgroupAddition(restruct, newSg.type, [atom], newSg.attrs, restruct.molecule.sgroups.newId())
+			fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs)
 		);
 		return acc;
 	}, {
@@ -1402,7 +1424,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 		var bonds = getAtomsBondIds(restruct.molecule, atoms);
 
 		acc.action = acc.action.mergeWith(
-			fromSgroupAddition(restruct, newSg.type, atoms, newSg.attrs, restruct.molecule.sgroups.newId())
+			fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs)
 		);
 		acc.selection.atoms = acc.selection.atoms.concat(atoms);
 		acc.selection.bonds = acc.selection.bonds.concat(bonds);
@@ -1424,12 +1446,14 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 	if (currSelection.bonds)
 		bonds = bonds.concat(currSelection.bonds);
 
+	console.info('bond attrs', newSg.attrs);
+
 	return bonds.reduce(function (acc, bondid) {
 		var bond = struct.bonds.get(bondid);
 
 		acc.action = acc.action
 			.mergeWith(
-				fromSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs, struct.sgroups.newId())
+				fromSeveralSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs)
 			);
 		acc.selection.bonds.push(bondid);
 
@@ -1488,5 +1512,6 @@ module.exports = Object.assign(Action, {
 	fromBondAlign: fromBondAlign,
 	fromAtomAction: fromAtomAction,
 	fromGroupAction: fromGroupAction,
-	fromBondAction: fromBondAction
+	fromBondAction: fromBondAction,
+	fromSeveralSgroupAddition: fromSeveralSgroupAddition
 });

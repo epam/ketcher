@@ -220,13 +220,19 @@ const bondCaptionMap = {
 	}
 };
 
+import { sdataSchema } from './data/sdata-schema'
+
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
-	const { absolute, attached } = ssgroup.attrs;
+	const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
 	if (absolute === false && attached === false)
 		ssgroup.attrs.radiobuttons = 'Relative';
 	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
+
+	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items) {
+		ssgroup.attrs.fieldValue = fieldValue.split('\n');
+	}
 
 	return Object.assign({ type: type }, ssgroup.attrs);
 }
@@ -258,8 +264,11 @@ export function toSgroup(sgroup) {
 	if (attrs.fieldName)
 		attrs.fieldName = attrs.fieldName.trim();
 
-	if (attrs.fieldValue)
-		attrs.fieldValue = attrs.fieldValue.trim();
+	if (attrs.fieldValue) {
+		attrs.fieldValue = typeof (attrs.fieldValue) === 'string' ?
+			attrs.fieldValue.trim() :
+			attrs.fieldValue;
+	}
 
 	return {
 		type,

@@ -44,6 +44,11 @@ class Dialog extends Component {
 		console.assert(fe, 'No active buttons');
 		if (fe.focus) fe.focus();
 	}
+
+	componentWillUnmount() {
+		(document.querySelector('[role=application]') || document.body).focus();
+	}
+
 	render() {
 		let {
 			children, title, params = {},

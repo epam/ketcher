@@ -152,6 +152,16 @@ export default {
 			editor.selection(null);
 		}
 	},
+	"select-descriptors": {
+		title: "Select descriptors",
+		shortcut: "Ctrl+d",
+		action: {
+			thunk: (dispatch, getState) => {
+				getState().editor.selection('descriptors');
+				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+			}
+		}
+	},
 	...server,
 	...debug,
 	...tools,

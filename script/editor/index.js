@@ -135,6 +135,10 @@ Editor.prototype.selection = function (ci) {
 				return res;
 			}, {});
 		}
+		if (ci === 'descriptors') {
+			restruct = this.render.ctab;
+			ci = { sgroupData: restruct['sgroupData'].ikeys() };
+		}
 		if (ci) {
 			var res = {};
 			for (var key in ci) {

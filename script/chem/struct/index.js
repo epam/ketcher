@@ -73,7 +73,7 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
 		var sid = parseInt(key, 10);
 		var sgroup = this.sgroups.get(sid);
 		var sgAtoms = SGroup.getAtoms(this, sgroup);
-		if (sgCounts[key] == sgAtoms.length)
+		if (sgCounts[key] === sgAtoms.length)
 			sgroupList.push(sid);
 	}
 	return sgroupList;
@@ -120,7 +120,7 @@ Struct.prototype.getScaffold = function () {
 	this.rgroups.each(function (rgid, rg) {
 		rg.frags.each(function (fnum, fid) {
 			this.atoms.each(function (aid, atom) {
-				if (atom.fragment == fid)
+				if (atom.fragment === fid)
 					Set.remove(atomSet, aid);
 			}, this);
 		}, this);
@@ -131,7 +131,7 @@ Struct.prototype.getScaffold = function () {
 Struct.prototype.getFragmentIds = function (fid) {
 	var atomSet = Set.empty();
 	this.atoms.each(function (aid, atom) {
-		if (atom.fragment == fid)
+		if (atom.fragment === fid)
 			Set.add(atomSet, aid);
 	}, this);
 	return atomSet;
@@ -237,8 +237,8 @@ Struct.prototype.findBondId = function (begin, end) {
 	var id = -1;
 
 	this.bonds.find(function (bid, bond) {
-		if ((bond.begin == begin && bond.end == end) ||
-		(bond.begin == end && bond.end == begin)) {
+		if ((bond.begin === begin && bond.end === end) ||
+		(bond.begin === end && bond.end === begin)) {
 			id = bid;
 			return true;
 		}
@@ -739,45 +739,55 @@ Struct.prototype.findLoops = function () {
 	var newLoops = [];
 	var bondsToMark = Set.empty();
 
-	// Starting from each half-bond not known to be in a loop yet,
-	//  follow the 'next' links until the initial half-bond is reached or
-	//  the length of the sequence exceeds the number of half-bonds available.
-	// In a planar graph, as long as every bond is a part of some "loop" -
-	//  either an outer or an inner one - every iteration either yields a loop
-	//  or doesn't start at all. Thus this has linear complexity in the number
-	//  of bonds for planar graphs.
-	var j, c, loop, loopId;
-	this.halfBonds.each(function (i, hb) {
-		if (hb.loop == -1) {
-			for (j = i, c = 0, loop = [];
-				c <= this.halfBonds.count();
-				j = this.halfBonds.get(j).next, ++c) {
-				if (c > 0 && j == i) { // loop found
-					var subloops = this.partitionLoop(loop);
-					subloops.forEach(function (loop) {
-						if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) { // loop is internal
-							// use lowest half-bond id in the loop as the loop id
-							// this ensures that the loop gets the same id if it is discarded and then recreated,
-							// which in turn is required to enable redrawing while dragging, as actions store item id's
-							loopId = Math.min.apply(Math, loop);
-							this.loops.set(loopId, new Loop(loop, this, this.loopIsConvex(loop)));
-						} else {
-							loopId = -2;
-						}
-						loop.forEach(function (hbid) {
-							this.halfBonds.get(hbid).loop = loopId;
-							Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
-						}, this);
-						if (loopId >= 0)
-							newLoops.push(loopId);
-					}, this);
-					break;
-				} else {
-					loop.push(j);
-				}
+	/*
+	 	Starting from each half-bond not known to be in a loop yet,
+	 	follow the 'next' links until the initial half-bond is reached or
+	 	the length of the sequence exceeds the number of half-bonds available.
+	 	In a planar graph, as long as every bond is a part of some "loop" -
+	 	either an outer or an inner one - every iteration either yields a loop
+	 	or doesn't start at all. Thus this has linear complexity in the number
+	 	of bonds for planar graphs.
+	 */
+
+	var hbIdNext, c, loop, loopId;
+	this.halfBonds.each(function (hbId, hb) {
+		if (hb.loop !== -1)
+			return;
+
+		for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.count(); hbIdNext = this.halfBonds.get(hbIdNext).next, ++c) {
+			if (!(c > 0 && hbIdNext === hbId)) {
+				loop.push(hbIdNext);
+				continue;
 			}
+
+			// loop found
+			var subloops = this.partitionLoop(loop);
+			subloops.forEach(function (loop) {
+				if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) {
+					/*
+                        loop is internal
+                        use lowest half-bond id in the loop as the loop id
+                        this ensures that the loop gets the same id if it is discarded and then recreated,
+                        which in turn is required to enable redrawing while dragging, as actions store item id's
+                     */
+					loopId = Math.min.apply(Math, loop);
+					this.loops.set(loopId, new Loop(loop, this, this.loopIsConvex(loop)));
+				} else {
+					loopId = -2;
+				}
+
+				loop.forEach(function (hbid) {
+					this.halfBonds.get(hbid).loop = loopId;
+					Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
+				}, this);
+
+				if (loopId >= 0)
+					newLoops.push(loopId);
+			}, this);
+			break;
 		}
 	}, this);
+
 	return {
 		newLoops: newLoops,
 		bondsToMark: Set.list(bondsToMark)

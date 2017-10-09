@@ -154,7 +154,7 @@ export default {
 	},
 	"select-descriptors": {
 		title: "Select descriptors",
-		shortcut: "Ctrl+d",
+		shortcut: "Mod+d",
 		action: {
 			thunk: (dispatch, getState) => {
 				getState().editor.selection('descriptors');

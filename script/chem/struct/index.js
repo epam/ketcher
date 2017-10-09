@@ -347,7 +347,7 @@ Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
 	var halfBonds = this.halfBonds;
 	atom.neighbors = atom.neighbors.sort(function (nei, nei2) {
-		return halfBonds.get(nei).ang < halfBonds.get(nei2).ang ? -1 : 1;
+		return halfBonds.get(nei).ang - halfBonds.get(nei2).ang;
 	});
 
 	var i;

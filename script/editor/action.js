@@ -22,7 +22,7 @@ var utils = require('./tool/utils');
 var Struct = require('../chem/struct');
 var closest = require('./closest');
 
-var _ = require('lodash');
+var uniq = require('lodash').uniq;
 
 //
 // Undo/redo actions
@@ -915,33 +915,28 @@ function fromSgroupType(restruct, id, type) {
 	return new Action();
 }
 
-/**
- * Creates fromSgroupAddition actions
- */
 function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
-	var descriptors = attrs.fieldValue;
+	const descriptors = attrs.fieldValue;
 
 	if (typeof descriptors === 'string')
 		return Action.fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
 
-	var action = new Action();
-
-	descriptors.forEach(function (fValue) {
-		var localAttrs = JSON.parse(JSON.stringify(attrs));
+	return descriptors.reduce((acc, fValue) => {
+		const localAttrs = Object.assign({}, attrs);
 		localAttrs.fieldValue = fValue;
 
-		action = action
+		return acc
 			.mergeWith(Action.fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId()));
-	});
-
-	return action;
+	}, new Action());
 }
 
 function fromSgroupAttrs(restruct, id, attrs) {
 	var action = new Action();
 
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+	for (let key in attrs) {
+		if (attrs.hasOwnProperty(key))
+			action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+	}
 
 	return action.perform(restruct);
 }
@@ -1446,7 +1441,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 	var bonds = getAtomsBondIds(struct, sourceAtoms);
 
 	if (currSelection.bonds)
-		bonds = _.uniq(bonds.concat(currSelection.bonds));
+		bonds = uniq(bonds.concat(currSelection.bonds));
 
 	return bonds.reduce(function (acc, bondid) {
 		var bond = struct.bonds.get(bondid);

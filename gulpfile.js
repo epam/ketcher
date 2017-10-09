@@ -56,10 +56,9 @@ var bundleConfig = {
 					"targets": {
 						"browsers": ["last 2 versions", "safari > 8", "chrome > 52"]
 					},
-					"modules": false,
 					"useBuiltIns": true
 				}],
-				"es2015", "react"],
+				"react"],
 			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
 		}]
 	]

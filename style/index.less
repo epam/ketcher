@@ -63,13 +63,9 @@ body, main[role=application] {
 	overflow: hidden;
 	position: absolute;
 	right: 0;
-}
-
-#chiral-flag button {
-	width: 62px;
-	height: 29px;
-	margin-top: 6px;
-	padding: 5px;
+	& > button {
+		.toolbutton-horizontal(large, 2);
+	}
 }
 
 [role='toolbar'] {
@@ -242,6 +238,9 @@ select {
 
 	[role='toolbar'] button {
 		.toolbutton-size(small);
+	}
+	#chiral-flag button {
+		.toolbutton-horizontal(small, 2);
 	}
 
 	#select, #reaction {

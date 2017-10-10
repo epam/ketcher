@@ -151,7 +151,6 @@ gulp.task('font', function (cb) {
 			fontName: pkg.name,
 			formats: ['ttf', 'svg', 'eot', 'woff'],
 			timestamp: options['build-date'],
-			fontHeight: 1000,
 			normalize: true
 		}))
 		.on('glyphs', function(glyphs) {

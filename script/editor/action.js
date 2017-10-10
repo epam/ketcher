@@ -386,8 +386,15 @@ function fromArrowDeletion(restruct, id) {
 
 function fromChiralFlagAddition(restruct, pos) {  // eslint-disable-line no-unused-vars
 	var action = new Action();
-	if (restruct.chiralFlags.count() < 1)
+	var struct = restruct.molecule;
+	if (restruct.chiralFlags.count() < 1) {
+		if (!pos) {
+			var bb = struct.getCoordBoundingBox();
+			var posY = !struct.isBlank() ? bb.min.y - 1 : bb.min.y + 1;
+			pos = new Vec2(bb.max.x, posY);
+		}
 		action.addOp(new op.ChiralFlagAdd(pos).perform(restruct));
+	}
 	return action;
 }
 

@@ -44,7 +44,8 @@ const toolActions = {
 	},
 	"chiral-flag": {
 		title: "Chiral Flag",
-		action: { tool: 'chiralFlag' }
+		action: { tool: 'chiralFlag' },
+		selected: editor => editor.struct().isChiral
 	},
 	"charge-plus": {
 		shortcut: "5",

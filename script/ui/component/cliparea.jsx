@@ -26,43 +26,54 @@ class ClipArea extends Component {
 
 	componentDidMount() {
 		const el = this.refs ? this.refs.base : this.base;
-		const target = this.props.target || el.parentNode;
-		const self = this;
+		this.target = this.props.target || el.parentNode;
 
-		// TODO: remove event listeners on unmount or
-		//       target change
-		target.addEventListener('mouseup', event => {
-			if (self.props.focused() && !isFormElement(event.target))
-				autofocus(el);
-		});
-
-		['copy', 'cut'].forEach(en => {
-			let cb = (en === 'copy') ? 'onCopy' : 'onCut';
-			target.addEventListener(en, event => {
-				if (self.props.focused() && self.props[cb]) {
-					const data = self.props[cb]();
+		this.listeners = {
+			'mouseup': event => {
+				if (this.props.focused() && !isFormElement(event.target))
+					autofocus(el);
+			},
+			'copy': event => {
+				if (this.props.focused() && this.props.onCopy) {
+					const data = this.props.onCopy();
 					if (data)
 						copy(event.clipboardData, data);
 					event.preventDefault();
 				}
-			});
-		});
-
-		target.addEventListener('paste', event => {
-			if (self.props.focused() && self.props.onPaste) {
-				const data = paste(event.clipboardData,
-								 self.props.formats);
-				if (data)
-					self.props.onPaste(data);
-				event.preventDefault();
+			},
+			'cut': event => {
+				if (this.props.focused() && this.props.onCut) {
+					const data = this.props.onCut();
+					if (data)
+						copy(event.clipboardData, data);
+					event.preventDefault();
+				}
+			},
+			'paste': event => {
+				if (this.props.focused() && this.props.onPaste) {
+					const data = paste(event.clipboardData, this.props.formats);
+					if (data)
+						this.props.onPaste(data);
+					event.preventDefault();
+				}
 			}
+		};
+
+		Object.keys(this.listeners).forEach(en => {
+			this.target.addEventListener(en, this.listeners[en]);
 		});
 	}
 
-	render () {
+	componentWillUnmount() {
+		Object.keys(this.listeners).forEach(en => {
+			this.target.removeEventListener(en, this.listeners[en]);
+		});
+	}
+
+	render() {
 		return (
 			<textarea className="cliparea" contentEditable={true}
-			   autoFocus={true}/>
+					  autoFocus={true}/>
 		);
 	}
 }

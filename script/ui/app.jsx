@@ -109,7 +109,7 @@ const App = connect(
 		this.props.checkServer();
 	}
 	render = props => (
-		<main role="application" tabIndex="-1">
+		<main role="application">
 			<AppEditor id="canvas" />
 			<Toolbar {...props}/>
 			<AppCliparea/>

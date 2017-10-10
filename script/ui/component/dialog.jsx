@@ -46,7 +46,7 @@ class Dialog extends Component {
 	}
 
 	componentWillUnmount() {
-		(document.querySelector('[role=application]') || document.body).focus();
+		(document.querySelector('.cliparea') || document.body).focus();
 	}
 
 	render() {

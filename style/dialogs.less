@@ -339,8 +339,10 @@ form.settings {
 }
 
 .about {
-	>a, img {
+	width: 25em;
+	&>a {
 		display: block;
+		margin: 2em 1em;
 	}
 	var {
 		font-style: normal;
@@ -350,7 +352,10 @@ form.settings {
 		font-style: italic;
 	}
 	a {
-		// ASK DESIGNER: to style generic links
+		color: @active-color;
+		&:hover {
+			color: @hover-color;
+		}
 	}
 
 	@line-height: 1.4em;

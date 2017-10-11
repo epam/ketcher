@@ -26,7 +26,7 @@ function About(props) {
 				className="about" params={props}
 				buttons={["Close"]}>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-				<img src="logo.jpg"/>
+				<img src="images/ketcher-logo.svg"/>
 			</a>
 			<dl>
 				<dt>
@@ -35,29 +35,32 @@ function About(props) {
 				<dd>
 					version <var>{props.version}</var>
 				</dd>
-				{ props.buildNumber ? (
-					<dd>
-						build #<var>{props.buildNumber}</var>
-						{ " at " }
-						<time>{props.buildDate}</time>
-					</dd> ) : null
+				{
+					props.buildNumber ? (
+						<dd>
+							build #<var>{props.buildNumber}</var>
+							{" at "}
+							<time>{props.buildDate}</time>
+						</dd> ) : null
 				}
-				{ props.indigoVersion ? (
-				<div><dt>
-				<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo Toolkit</a>
+				{
+					props.indigoVersion ? (
+						<div>
+							<dt>
+								<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo
+									Toolkit</a>
+							</dt>
+							<dd>version <var>{props.indigoVersion}</var></dd>
+						</div>
+					) : ( <dd>standalone</dd> )
+				}
+				<dt>
+					<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>
 				</dt>
-					<dd>version <var>{props.indigoVersion}</var></dd></div>
-				) : (
-				 <dd>standalone</dd>
-				 )
-				}
-		<dt>
-		<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>
-		</dt>
-		<dd>
-		<a href="http://lifescience.opensource.epam.com/ketcher/#feedback" target="_blank">Feedback</a>
-		</dd>
-		</dl>
+				<dd>
+					<a href="http://lifescience.opensource.epam.com/ketcher/#feedback" target="_blank">Feedback</a>
+				</dd>
+			</dl>
 		</Dialog>
 	);
 }

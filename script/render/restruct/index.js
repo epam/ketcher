@@ -105,7 +105,7 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	}, this);
 
-	if (molecule.isChiral && !this.render.options.hideChiralFlag) {
+	if (molecule.isChiral) {
 		var bb = molecule.getCoordBoundingBox();
 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
 	}
@@ -444,9 +444,11 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	this.showSGroups();
 	this.showFragments();
 	this.showRGroups();
-	this.chiralFlags.each(function (id, item) {
-		item.show(this, id, this.render.options);
-	}, this);
+	if (this.render.options.hideChiralFlag !== true) {
+		this.chiralFlags.each(function (id, item) {
+			item.show(this, id, this.render.options);
+		}, this);
+	}
 	this.clearMarks();
 	return true;
 };

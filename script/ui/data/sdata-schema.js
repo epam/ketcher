@@ -146,23 +146,33 @@ const sData = {
 		oneOf: [
 			{
 				key: 'MLT_FRG',
-				title: 'Mixture',
+				title: 'KETCHER_MULTIPLE_FRAGMENT',
 				properties: {
 					type: { enum: ["DAT"] },
 					fieldName: {
 						title: 'Field name',
-						enum: ["Mixture"],
-						default: "Mixture"
+						enum: ["KETCHER_MULTIPLE_FRAGMENT"],
+						default: "KETCHER_MULTIPLE_FRAGMENT"
 					},
 					fieldValue: {
 						title: "Field value",
 						type: 'array',
 						items: {
 							enum: [
-								"Complex",
+								"aerosol",
+								"alloy",
+								"catenane",
+								"complex",
+								"composite",
+								"co-polymer",
+								"emulsion",
+								"host-guest complex",
+								"mixture",
+								"rotaxane",
+								"suspension"
 							]
 						},
-						default: ["Complex"]
+						default: ["aerosol"]
 					},
 					radiobuttons: radioButtonsSchema
 				},

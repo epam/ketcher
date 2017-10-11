@@ -1485,6 +1485,17 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 	});
 }
 
+function fromMultiFragmentAction(restruct, newSg, atoms) {
+	const bonds = getAtomsBondIds(restruct.molecule, atoms);
+	return {
+		action: fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
+		selection: {
+			atoms,
+			bonds
+		}
+	};
+}
+
 function getAtomsBondIds(struct, atoms) {
 	return struct.bonds.keys()
 		.reduce(function (acc, bondid) {
@@ -1533,5 +1544,6 @@ module.exports = Object.assign(Action, {
 	fromGroupAction: fromGroupAction,
 	fromBondAction: fromBondAction,
 	fromSeveralSgroupAddition: fromSeveralSgroupAddition,
-	fromUpdateIfThen: fromUpdateIfThen
+	fromUpdateIfThen: fromUpdateIfThen,
+	fromMultiFragmentAction: fromMultiFragmentAction
 });

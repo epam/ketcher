@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 var Struct = require('../../chem/struct');
-
 var Action = require('../action');
 
 function RGroupFragmentTool(editor) {
@@ -33,26 +32,38 @@ RGroupFragmentTool.prototype.mousemove = function (event) {
 };
 
 RGroupFragmentTool.prototype.mouseup = function (event) {
-	var editor = this.editor;
-	var struct = editor.render.ctab.molecule;
-	var ci = editor.findItem(event, ['frags', 'rgroups']);
+	const editor = this.editor;
+	const struct = editor.render.ctab.molecule;
+	const ci = editor.findItem(event, ['frags', 'rgroups']);
+
 	if (ci) {
 		this.editor.hover(null);
 
-		var label = (ci.map === 'rgroups') ? ci.id :
+		const label = (ci.map === 'rgroups') ? ci.id :
 		    Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;
-		var rg = Object.assign({ label: label },
+
+		const rg = Object.assign({ label: label },
 		                       ci.map === 'frags' ? null :
 		                       struct.rgroups.get(ci.id));
-		var res = editor.event.rgroupEdit.dispatch(rg);
 
-		Promise.resolve(res).then(function (newRg) {
-			var action = ci.map === 'rgroups' ?
-			    Action.fromRGroupAttrs(editor.render.ctab, ci.id, newRg) :
-			    Action.fromRGroupFragment(editor.render.ctab, newRg.label, ci.id);
+		const res = editor.event.rgroupEdit.dispatch(rg);
+
+		Promise.resolve(res).then(newRg => {
+			const restruct = editor.render.ctab;
+
+			let action = null;
+			if (ci.map !== 'rgroups') {
+				const rgidOld = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
+
+				action = Action.fromRGroupFragment(restruct, newRg.label, ci.id)
+					.mergeWith(Action.fromUpdateIfThen(restruct, newRg.label, rgidOld));
+			} else {
+				action = Action.fromRGroupAttrs(restruct, ci.id, newRg);
+			}
 
 			editor.update(action);
 		});
+
 		return true;
 	}
 };

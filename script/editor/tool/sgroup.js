@@ -156,49 +156,55 @@ function propsDialog(editor, id, defaultType) {
 }
 
 function getContextBySgroup(restruct, sgAtoms) {
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
 	if (sgAtoms.length === 1)
 		return 'Atom';
 
 	if (allComponentsSelected(restruct, sgAtoms))
+		return 'Multifragment';
+
+	console.error('fail');
+
+	if (oneComponentSelected(restruct, sgAtoms))
 		return 'Fragment';
 
-	var atomMap = sgAtoms.reduce(function (acc, aid) {
+	const atomMap = sgAtoms.reduce((acc, aid) => {
 		acc[aid] = true;
 		return acc;
 	}, {});
 
-	var sgBonds = struct.bonds
+	const sgBonds = struct.bonds
 		.values()
-		.filter(function (bond) { return atomMap[bond.begin] && atomMap[bond.end]; });
+		.filter(bond => atomMap[bond.begin] && atomMap[bond.end]);
 
 	return anyContinuousBonds(sgBonds) ? 'Group' : 'Bond';
 }
 
 function getContextBySelection(restruct, selection) {
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
 	if (selection.atoms && !selection.bonds)
 		return 'Atom';
 
-	var bonds = selection.bonds.map(function (bondid) {
-		return struct.bonds.get(bondid);
-	});
+	const bonds = selection.bonds.map(bondid => struct.bonds.get(bondid));
 
 	if (!anyContinuousBonds(bonds))
 		return 'Bond';
 
 	selection.atoms = selection.atoms || [];
 
-	var atomSelectMap = atomMap(selection.atoms);
+	const atomSelectMap = atomMap(selection.atoms);
 
-	var allBondsSelected = selection.bonds.every(function (bondid) {
-		var bond = struct.bonds.get(bondid);
+	const allBondsSelected = selection.bonds.every(bondid => {
+		const bond = struct.bonds.get(bondid);
 		return atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined;
 	});
 
-	return allComponentsSelected(restruct, selection.atoms) && allBondsSelected ? 'Fragment' : 'Group';
+	if (allComponentsSelected(restruct, selection.atoms) && allBondsSelected)
+		return 'Multifragment';
+
+	return oneComponentSelected(restruct, selection.atoms) ? 'Fragment' : 'Group';
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
@@ -223,13 +229,14 @@ function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
 	if (context === 'Bond')
 		return Action.fromBondAction(restruct, newSg, sourceAtoms, selection);
 
-	var atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-	var newSourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
+	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
+	const newSourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
 
 	if (context === 'Fragment')
 		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
 
-	if (context === 'Group')
+	//TODO: fix group creating fragment && fix miltifragment
+	if (context === 'Group' || context === 'Multifragment')
 		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
 
 	if (context === 'Atom')
@@ -304,12 +311,29 @@ function anyContinuousBonds(bonds) {
 }
 
 function allComponentsSelected(restruct, atoms) {
-	var atomSelectMap = atomMap(atoms);
+	const atomSelectMap = atomMap(atoms);
 
 	return restruct.connectedComponents.values()
 		.every(function (component) {
-			var componentAtoms = Object.keys(component);
-			var count = componentAtoms
+			const componentAtoms = Object.keys(component);
+
+			const count = componentAtoms
+				.reduce(function (acc, atom) {
+					return acc + (atomSelectMap[atom] === undefined);
+				}, 0);
+
+			return count === 0 || count === componentAtoms.length;
+		});
+}
+
+function oneComponentSelected(restruct, atoms) {
+	const atomSelectMap = atomMap(atoms);
+
+	return restruct.connectedComponents.values()
+		.some(component => {
+			const componentAtoms = Object.keys(component);
+
+			const count = componentAtoms
 				.reduce(function (acc, atom) {
 					return acc + (atomSelectMap[atom] === undefined);
 				}, 0);

@@ -21,7 +21,6 @@ var utils = require('./tool/utils');
 
 var Struct = require('../chem/struct');
 var closest = require('./closest');
-
 var uniq = require('lodash').uniq;
 
 //
@@ -474,13 +473,14 @@ function fromBondDeletion(restruct, id) {
 function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+
 	restruct.molecule.atoms.each(function (aid, atom) {
-		if (atom.fragment == frid) {
+		if (atom.fragment === frid) {
 			var newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 			var processAtom = function (aid1) { // eslint-disable-line func-style
 				action.addOp(new op.AtomAttr(aid1, 'fragment', newfrid).perform(restruct));
 				atomGetNeighbors(restruct, aid1).forEach(function (nei) {
-					if (restruct.molecule.atoms.get(nei.aid).fragment == frid)
+					if (restruct.molecule.atoms.get(nei.aid).fragment === frid)
 						processAtom(nei.aid);
 				});
 			};
@@ -489,10 +489,13 @@ function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too trick
 				action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
 		}
 	});
-	if (frid != -1) {
+
+	if (frid !== -1) {
 		action.mergeWith(fromRGroupFragment(restruct, 0, frid));
 		action.addOp(new op.FragmentDelete(frid).perform(restruct));
+		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid));
 	}
+
 	return action;
 }
 
@@ -1016,14 +1019,26 @@ function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-
 
 function fromRGroupAttrs(restruct, id, attrs) {
 	var action = new Action();
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.RGroupAttr(id, key, attrs[key]));
+	for (var key in attrs) {
+		if (attrs.hasOwnProperty(key))
+			action.addOp(new op.RGroupAttr(id, key, attrs[key]));
+	}
+
 	return action.perform(restruct);
 }
 
 function fromRGroupFragment(restruct, rgidNew, frid) {
-	var action = new Action();
+	const action = new Action();
 	action.addOp(new op.RGroupFragment(rgidNew, frid));
+	return action.perform(restruct);
+}
+
+function fromUpdateIfThen(restruct, rgidNew, rgidOld) {
+	const action = new Action();
+
+	if (!restruct.molecule.rgroups.get(rgidOld))
+		action.addOp(new op.UpdateIfThen(rgidNew, rgidOld));
+
 	return action.perform(restruct);
 }
 
@@ -1401,28 +1416,29 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-	var fragIds = Object.keys(
-		sourceAtoms.reduce(function (acc, aid) {
-			var fragId = restruct.atoms.get(aid).a.fragment;
+	const fragIds = Object.keys(
+		sourceAtoms.reduce((acc, aid) => {
+			const fragId = restruct.atoms.get(aid).a.fragment;
 			acc[fragId] = true;
 			return acc;
 		}, {})
 	)
 		.map(Number);
 
-	return fragIds.reduce(function (acc, fragId) {
-		var atoms = targetAtoms
-			.filter(function (aid) {
-				var atom = restruct.atoms.get(aid).a;
+	return fragIds.reduce((acc, fragId) => {
+		const atoms = targetAtoms
+			.filter(aid => {
+				const atom = restruct.atoms.get(aid).a;
 				return fragId === atom.fragment;
 			})
 			.map(Number);
 
-		var bonds = getAtomsBondIds(restruct.molecule, atoms);
+		const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
 		acc.action = acc.action.mergeWith(
 			fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs)
 		);
+
 		acc.selection.atoms = acc.selection.atoms.concat(atoms);
 		acc.selection.bonds = acc.selection.bonds.concat(bonds);
 
@@ -1508,5 +1524,6 @@ module.exports = Object.assign(Action, {
 	fromAtomAction: fromAtomAction,
 	fromGroupAction: fromGroupAction,
 	fromBondAction: fromBondAction,
-	fromSeveralSgroupAddition: fromSeveralSgroupAddition
+	fromSeveralSgroupAddition: fromSeveralSgroupAddition,
+	fromUpdateIfThen: fromUpdateIfThen
 });

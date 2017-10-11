@@ -29,6 +29,7 @@ const contextSchema = {
 	title: 'Context',
 	enum: [
 		'Fragment',
+		'Multifragment',
 		'Bond',
 		'Atom',
 		'Group'
@@ -38,7 +39,7 @@ const contextSchema = {
 
 const sData = {
 	Fragment: {
-		title: 'Context',
+		title: 'Fragment',
 		type: 'Object',
 		oneOf: [
 			{
@@ -137,6 +138,36 @@ const sData = {
 				},
 				required: ["fieldName", "fieldValue", "radiobuttons"]
 			},
+		]
+	},
+	Multifragment: {
+		title: 'Multifragment',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'MLT_FRG',
+				title: 'Mixture',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: {
+						title: 'Field name',
+						enum: ["Mixture"],
+						default: "Mixture"
+					},
+					fieldValue: {
+						title: "Field value",
+						type: 'array',
+						items: {
+							enum: [
+								"Complex",
+							]
+						},
+						default: ["Complex"]
+					},
+					radiobuttons: radioButtonsSchema
+				},
+				required: ["fieldName", "fieldValue", "radiobuttons"]
+			}
 		]
 	},
 	Bond: {
@@ -292,6 +323,7 @@ export const sdataCustomSchema = {
 			title: 'Context',
 			enum: [
 				'Fragment',
+				'Multifragment',
 				'Bond',
 				'Atom',
 				'Group'

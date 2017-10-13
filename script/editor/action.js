@@ -918,7 +918,7 @@ function fromSgroupType(restruct, id, type) {
 function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 	const descriptors = attrs.fieldValue;
 
-	if (typeof descriptors === 'string')
+	if (typeof descriptors === 'string' || type !== 'DAT')
 		return Action.fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
 
 	return descriptors.reduce((acc, fValue) => {

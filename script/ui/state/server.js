@@ -31,7 +31,7 @@ export function checkServer() {
 				indigoVersion: res.indigoVersion,
 				server: true
 			})),
-			(err) => alert(err)
+			(err) => console.info(err)
 		);
 	}
 }

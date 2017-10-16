@@ -23,6 +23,7 @@ var LassoHelper = require('./helper/lasso');
 
 var SGroup = require('./sgroup');
 var Atom = require('./atom');
+var utils = require('./utils');
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -90,6 +91,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 
 SelectTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
+	var restruct = rnd.ctab;
 	if (this.dragCtx && this.dragCtx.stopTapping)
 		this.dragCtx.stopTapping();
 
@@ -104,10 +106,18 @@ SelectTool.prototype.mousemove = function (event) {
 			this.editor.explicitSelected(),
 			rnd.page2obj(event).sub(this.dragCtx.xy0));
 		// finding & highlighting object to stick to
-		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
-			// TODO add bond-to-bond fusing
-			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this.editor.hover((ci && ci.map == this.dragCtx.item.map) ? ci : null);
+		if (['atoms', 'bonds'].indexOf(this.dragCtx.item.map) >= 0) {
+			const ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+
+			if (ci && ci.map === 'bonds' && ci.map === this.dragCtx.item.map) {
+				// bond-to-bond fusing
+				const bond = restruct.molecule.bonds.get(this.dragCtx.item.id);
+				const bondCI = restruct.molecule.bonds.get(ci.id);
+
+				this.editor.hover(utils.mergeBondsParams(restruct, bond, bondCI) ? ci : null);
+			} else {
+				this.editor.hover((ci && ci.map === this.dragCtx.item.map) ? ci : null);
+			}
 		}
 		this.editor.update(this.dragCtx.action, true);
 	} else if (this.lassoHelper.running()) {
@@ -130,16 +140,18 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.dragCtx.stopTapping();
 
 	if (this.dragCtx && this.dragCtx.item) {
-		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
-			// TODO add bond-to-bond fusing
+		if (['atoms', 'bonds'].indexOf(this.dragCtx.item.map) >= 0) {
+			var restruct = this.editor.render.ctab;
 			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			if (ci && ci.map == this.dragCtx.item.map) {
-				var restruct = this.editor.render.ctab;
+
+			if (ci && ci.map === this.dragCtx.item.map) {
+				const mergeAction = (ci.map === 'atoms') ? Action.fromAtomMerge : Action.fromBondMerge;
+
 				this.editor.hover(null);
 				this.editor.selection(null);
 				this.dragCtx.action = this.dragCtx.action ?
-					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
-					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id);
+					mergeAction(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
+					mergeAction(restruct, this.dragCtx.item.id, ci.id);
 			}
 		}
 		if (this.dragCtx.action)

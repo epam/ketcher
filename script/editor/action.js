@@ -594,7 +594,7 @@ function fromAtomMerge(restruct, srcId, dstId) {
 	var fragAction = new Action();
 	var srcFrid = atomGetAttr(restruct, srcId, 'fragment');
 	var dstFrid = atomGetAttr(restruct, dstId, 'fragment');
-	if (srcFrid != dstFrid)
+	if (srcFrid !== dstFrid)
 		mergeFragments(fragAction, restruct, srcFrid, dstFrid);
 
 	var action = new Action();
@@ -603,21 +603,20 @@ function fromAtomMerge(restruct, srcId, dstId) {
 		var bond = restruct.molecule.bonds.get(nei.bid);
 		var begin, end;
 
-		if (bond.begin == nei.aid) {
+		if (bond.begin === nei.aid) {
 			begin = nei.aid;
 			end = dstId;
 		} else {
 			begin = dstId;
 			end = nei.aid;
 		}
-		if (dstId != bond.begin && dstId != bond.end && restruct.molecule.findBondId(begin, end) == -1) // TODO: improve this {
+		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end) === -1) // TODO: improve this {
 			action.addOp(new op.BondAdd(begin, end, bond));
 		action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
-
-	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
+	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
 		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
@@ -630,6 +629,28 @@ function fromAtomMerge(restruct, srcId, dstId) {
 		removeSgroupIfNeeded(action, restruct, [srcId]);
 
 	return action.perform(restruct).mergeWith(fragAction);
+}
+
+function fromBondMerge(restruct, srcId, dstId) {
+	const bond = restruct.molecule.bonds.get(srcId);
+	const bondCI = restruct.molecule.bonds.get(dstId);
+
+	let action = new Action();
+
+	const params = utils.mergeBondsParams(restruct, bond, bondCI);
+	if (!params) return action;
+
+	const attrs = Struct.Bond.getAttrHash(bond);
+	for (let key in attrs) {
+		if (attrs.hasOwnProperty(key))
+			action.addOp(new op.BondAttr(dstId, key, attrs[key]));
+	}
+	action.addOp(new op.BondDelete(srcId));
+	action = action.perform(restruct);
+
+	return fromAtomMerge(restruct, bond.begin, !params.cross ? bondCI.begin : bondCI.end)
+		.mergeWith(fromAtomMerge(restruct, bond.end, !params.cross ? bondCI.end : bondCI.begin))
+		.mergeWith(action);
 }
 
 function toBondFlipping(struct, id) {
@@ -1510,6 +1531,7 @@ module.exports = Object.assign(Action, {
 	fromBondDeletion: fromBondDeletion,
 	fromFragmentDeletion: fromFragmentDeletion,
 	fromAtomMerge: fromAtomMerge,
+	fromBondMerge: fromBondMerge,
 	fromBondFlipping: fromBondFlipping,
 	fromTemplateOnCanvas: fromTemplateOnCanvas,
 	fromTemplateOnAtom: fromTemplateOnAtom,

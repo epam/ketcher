@@ -46,10 +46,13 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 	var closestBond = null;
 	var closestBondCenter = null;
 	var maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+	var skipId = skip && skip.map === 'bonds' ? skip.id : null;
+
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var minCDist = minDist;
 	restruct.bonds.each(function (bid, bond) {
+		if (bid === skipId) return;
 		var p1 = restruct.atoms.get(bond.b.begin).a.pp,
 			p2 = restruct.atoms.get(bond.b.end).a.pp;
 		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
@@ -60,6 +63,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 		}
 	});
 	restruct.bonds.each(function (bid, bond) {
+		if (bid === skipId) return;
 		var hb = restruct.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;

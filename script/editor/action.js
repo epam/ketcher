@@ -591,6 +591,7 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 }
 
 function fromAtomMerge(restruct, srcId, dstId) {
+	if (srcId === dstId) return new Action();
 	var fragAction = new Action();
 	var srcFrid = atomGetAttr(restruct, srcId, 'fragment');
 	var dstFrid = atomGetAttr(restruct, dstId, 'fragment');

@@ -223,7 +223,7 @@ function findClosestSGroup(restruct, pos) {
 	return null;
 }
 
-var findMaps = {
+const findMaps = {
 	atoms: findClosestAtom,
 	bonds: findClosestBond,
 	chiralFlags: findClosestChiralFlag,
@@ -251,7 +251,34 @@ function findClosestItem(restruct, pos, maps, skip, scale) { // eslint-disable-l
 	}, null);
 }
 
+function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
+	const pos = { atoms: {}, bonds: {} }; // id->pos map
+	const struct = restruct.molecule;
+
+	selected.atoms.forEach(aid => pos.atoms[aid] = struct.atoms.get(aid).pp);
+	selected.bonds.forEach(bid => {
+		const bond = struct.bonds.get(bid);
+		pos.bonds[bid] = Vec2.lc2(
+			pos.atoms[bond.begin], 0.5,
+			pos.atoms[bond.end], 0.5);
+	});
+
+	const result = {};
+	maps.forEach(mp => {
+		result[mp] = Object.keys(pos[mp]).reduce((res, srcId) => {
+			const skip = { map: mp, id: +srcId };
+			const item = findMaps[mp](restruct, pos[mp][srcId], skip, null, scale);
+
+			if (item) res[srcId] = item.id;
+			return res;
+		}, {});
+	});
+
+	return result; // { atoms: { srcID: dstID, ... }, bonds: { srcID: dstID, ... }, ... }
+}
+
 module.exports = {
 	atom: findClosestAtom, // used in Actions
-	item: findClosestItem
+	item: findClosestItem,
+	merge: findCloseMerge
 };

@@ -80,10 +80,9 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 				};
 			}
 			this.editor.selection(!event.shiftKey ? sel :
-			                         selMerge(sel, this.editor.selection()));
+				selMerge(sel, this.editor.selection()));
 		}
 		if (ci.map === 'atoms')
-			// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
 			Atom.atomLongtapEvent(this, rnd);
 	}
 	return true;
@@ -98,39 +97,41 @@ SelectTool.prototype.mousemove = function (event) {
 	if (this.dragCtx && this.dragCtx.item) {
 		// moving selected objects
 		if (this.dragCtx.action) {
-			this.dragCtx.action.perform(rnd.ctab);
+			this.dragCtx.action.perform(restruct);
 			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
+		var expSel = this.editor.explicitSelected();
 		this.dragCtx.action = Action.fromMultipleMove(
-			rnd.ctab,
-			this.editor.explicitSelected(),
+			restruct,
+			expSel,
 			rnd.page2obj(event).sub(this.dragCtx.xy0));
+
 		// finding & highlighting object to stick to
-		if (['atoms', 'bonds'].indexOf(this.dragCtx.item.map) >= 0) {
-			const ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+		this.dragCtx.mergeItems =
+			closestToMerge(restruct, this.editor.findMerge(expSel, ['atoms', 'bonds']));
 
-			if (ci && ci.map === 'bonds' && ci.map === this.dragCtx.item.map) {
-				// bond-to-bond fusing
-				const bond = restruct.molecule.bonds.get(this.dragCtx.item.id);
-				const bondCI = restruct.molecule.bonds.get(ci.id);
-
-				this.editor.hover(utils.mergeBondsParams(restruct, bond, bondCI) ? ci : null);
-			} else {
-				this.editor.hover((ci && ci.map === this.dragCtx.item.map) ? ci : null);
-			}
+		if (this.dragCtx.mergeItems) {
+			const hoverMerge = {
+				atoms: Object.values(this.dragCtx.mergeItems.atoms),
+				bonds: Object.values(this.dragCtx.mergeItems.bonds)
+			};
+			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
+		} else {
+			this.editor.hover(null);
 		}
+
 		this.editor.update(this.dragCtx.action, true);
 	} else if (this.lassoHelper.running()) {
 		var sel = this.lassoHelper.addPoint(event);
 		this.editor.selection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.selection()));
+			selMerge(sel, this.editor.selection()));
 	} else {
 		this.editor.hover(
-		this.editor.findItem(event,
-			(this.lassoHelper.fragment || event.ctrlKey) ?
-				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
-				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
-		)
+			this.editor.findItem(event,
+				(this.lassoHelper.fragment || event.ctrlKey) ?
+					['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
+					['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags']
+			)
 		);
 	}
 	return true;
@@ -140,27 +141,30 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.dragCtx.stopTapping();
 
 	if (this.dragCtx && this.dragCtx.item) {
-		if (['atoms', 'bonds'].indexOf(this.dragCtx.item.map) >= 0) {
-			var restruct = this.editor.render.ctab;
-			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
+		var restruct = this.editor.render.ctab;
 
-			if (ci && ci.map === this.dragCtx.item.map) {
-				const mergeAction = (ci.map === 'atoms') ? Action.fromAtomMerge : Action.fromBondMerge;
+		if (this.dragCtx.mergeItems) {
+			this.editor.selection(null);
 
-				this.editor.hover(null);
-				this.editor.selection(null);
-				this.dragCtx.action = this.dragCtx.action ?
-					mergeAction(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
-					mergeAction(restruct, this.dragCtx.item.id, ci.id);
-			}
+			['atoms', 'bonds'].forEach(mp => {
+				const mergeMap = this.dragCtx.mergeItems[mp];
+				const mergeAction = mp === 'atoms' ? Action.fromAtomMerge : Action.fromBondMerge;
+				Object.entries(mergeMap).forEach(pair => {
+					this.dragCtx.action = this.dragCtx.action ?
+						mergeAction(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
+						mergeAction(restruct, +pair[0], +pair[1]);
+				});
+			});
 		}
+		this.editor.hover(null);
+
 		if (this.dragCtx.action)
 			this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		var sel = this.lassoHelper.end();
+		const sel = this.lassoHelper.end();
 		this.editor.selection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.selection()));
+			selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
 		this.editor.selection(null);
 	}
@@ -215,6 +219,28 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	this.editor.hover(null);
 };
 
+function closestToMerge(restruct, closestMap) {
+	const struct = restruct.molecule;
+	const mergeMap = Object.assign({}, closestMap);
+
+	Object.entries(closestMap.bonds).forEach(([srcId, dstId]) => {
+		const bond = struct.bonds.get(srcId);
+		const bondCI = struct.bonds.get(dstId);
+
+		if (utils.mergeBondsParams(restruct, bond, bondCI)) {
+			delete mergeMap.atoms[bond.begin];
+			delete mergeMap.atoms[bond.end];
+		} else {
+			delete mergeMap.bonds[srcId];
+		}
+	});
+
+	if (Object.keys(mergeMap.atoms).length === 0 &&
+		Object.keys(mergeMap.bonds).length === 0) return null;
+
+	return mergeMap;
+}
+
 function closestToSel(ci) {
 	var res = {};
 	res[ci.map] = [ci.id];
@@ -253,7 +279,7 @@ function isSelected(render, selection, item) {
 	if (item.map === 'frags' || item.map === 'rgroups') {
 		var atoms = item.map === 'frags' ?
 			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
-		    ctab.rgroups.get(item.id).getAtoms(render);
+			ctab.rgroups.get(item.id).getAtoms(render);
 
 		return !!selection['atoms'] &&
 			Set.subset(Set.fromList(atoms), Set.fromList(selection['atoms']));

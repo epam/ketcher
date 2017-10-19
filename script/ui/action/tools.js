@@ -42,6 +42,11 @@ const toolActions = {
 		title: "Chain",
 		action: { tool: 'chain' }
 	},
+	"chiral-flag": {
+		title: "Chiral Flag",
+		action: { tool: 'chiralFlag' },
+		selected: editor => editor.struct().isChiral
+	},
 	"charge-plus": {
 		shortcut: "5",
 		title: "Charge Plus",
@@ -107,7 +112,7 @@ const toolActions = {
 		shortcut: "Mod+r",
 		title: "Attachment Point Tool",
 		action: { tool: 'apoint' }
-	}
+	},
 };
 
 const bondCuts = {

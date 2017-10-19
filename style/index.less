@@ -59,10 +59,13 @@ body, main[role=application] {
 	right: 0;
 }
 
-#generic-groups {
+#chiral-flag {
+	overflow: hidden;
 	position: absolute;
-	bottom: 0;
-	left: 0;
+	right: 0;
+	& > button {
+		.toolbutton-horizontal(large, 2);
+	}
 }
 
 [role='toolbar'] {
@@ -236,6 +239,9 @@ select {
 	[role='toolbar'] button {
 		.toolbutton-size(small);
 	}
+	#chiral-flag button {
+		.toolbutton-horizontal(small, 2);
+	}
 
 	#select, #reaction {
 		.collapsed-size(small);
@@ -290,7 +296,8 @@ select {
                   template-1 template-2 template-3 template-4 template-5
                   template-6 template-7 template-lib transform-flip-h
                   transform-flip-v transform-rotate undo zoom-in zoom-out
-                  sgroup-data rgroup-label clean check analyse cip recognize miew);
+                  sgroup-data rgroup-label clean check analyse cip recognize miew
+				  chiral-flag);
 
 .atom-sketching(h he li be b c n o f ne na mg al si p s cl ar k ca sc ti v
                 cr mn fe co ni cu zn ga ge as se br kr rb sr y zr nb mo tc

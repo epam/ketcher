@@ -139,8 +139,9 @@ function bondTriple(paper, hb1, hb2, options) {
 function bondAromatic(paper, paths, bondShift, options) {
 	var l1 = paper.path(paths[0]).attr(options.lineattr);
 	var l2 = paper.path(paths[1]).attr(options.lineattr);
-	if (bondShift)
+	if (bondShift !== undefined && bondShift !== null)
 		(bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' });
+
 	return paper.set([l1, l2]);
 }
 

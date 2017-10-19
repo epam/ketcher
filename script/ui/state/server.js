@@ -99,8 +99,9 @@ export function serverTransform(method, data, struct) {
 function serverCall(editor, server, method, options, struct) {
 	const selection = editor.selection();
 	let selectedAtoms = [];
+
 	if (selection)
-		selectedAtoms = selection.atoms;
+		selectedAtoms = selection.atoms ? selection.atoms : editor.explicitSelected().atoms;
 
 	if (!struct) {
 		const aidMap = {};

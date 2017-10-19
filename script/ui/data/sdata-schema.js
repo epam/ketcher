@@ -29,6 +29,7 @@ const contextSchema = {
 	title: 'Context',
 	enum: [
 		'Fragment',
+		'Multifragment',
 		'Bond',
 		'Atom',
 		'Group'
@@ -38,7 +39,7 @@ const contextSchema = {
 
 const sData = {
 	Fragment: {
-		title: 'Context',
+		title: 'Fragment',
 		type: 'Object',
 		oneOf: [
 			{
@@ -53,19 +54,22 @@ const sData = {
 					},
 					fieldValue: {
 						title: "Field value",
-						enum: [
-							"abs",
-							"(+)-enantiomer",
-							"(-)-enantiomer",
-							"racemate",
-							"steric",
-							"rel",
-							"R(a)",
-							"S(a)",
-							"R(p)",
-							"S(p)"
-						],
-						default: "abs"
+						type: 'array',
+						items: {
+							enum: [
+								"abs",
+								"(+)-enantiomer",
+								"(-)-enantiomer",
+								"racemate",
+								"steric",
+								"rel",
+								"R(a)",
+								"S(a)",
+								"R(p)",
+								"S(p)"
+							]
+						},
+						default: ["abs"]
 					},
 					radiobuttons: radioButtonsSchema
 				},
@@ -136,6 +140,46 @@ const sData = {
 			},
 		]
 	},
+	Multifragment: {
+		title: 'Multifragment',
+		type: 'Object',
+		oneOf: [
+			{
+				key: 'MLT_FRG',
+				title: 'KETCHER_MULTIPLE_FRAGMENT',
+				properties: {
+					type: { enum: ["DAT"] },
+					fieldName: {
+						title: 'Field name',
+						enum: ["KETCHER_MULTIPLE_FRAGMENT"],
+						default: "KETCHER_MULTIPLE_FRAGMENT"
+					},
+					fieldValue: {
+						title: "Field value",
+						type: 'array',
+						items: {
+							enum: [
+								"aerosol",
+								"alloy",
+								"catenane",
+								"complex",
+								"composite",
+								"co-polymer",
+								"emulsion",
+								"host-guest complex",
+								"mixture",
+								"rotaxane",
+								"suspension"
+							]
+						},
+						default: ["aerosol"]
+					},
+					radiobuttons: radioButtonsSchema
+				},
+				required: ["fieldName", "fieldValue", "radiobuttons"]
+			}
+		]
+	},
 	Bond: {
 		title: 'Bond',
 		type: 'Object',
@@ -152,19 +196,22 @@ const sData = {
 					},
 					fieldValue: {
 						title: "Field value",
-						enum: [
-							"erythro",
-							"threo",
-							"alpha",
-							"beta",
-							"endo",
-							"exo",
-							"anti",
-							"syn",
-							"ECL",
-							"STG"
-						],
-						default: "erythro"
+						type: 'array',
+						items: {
+							enum: [
+								"erythro",
+								"threo",
+								"alpha",
+								"beta",
+								"endo",
+								"exo",
+								"anti",
+								"syn",
+								"ECL",
+								"STG"
+							]
+						},
+						default: ["erythro"]
 					},
 					radiobuttons: radioButtonsSchema
 				},
@@ -182,10 +229,13 @@ const sData = {
 					},
 					fieldValue: {
 						title: "Field value",
-						enum: [
-							"Value=4"
-						],
-						default: "Value=4"
+						type: 'array',
+						items: {
+							enum: [
+								"Value=4"
+							]
+						},
+						default: ["Value=4"]
 					},
 					radiobuttons: radioButtonsSchema
 				},
@@ -209,29 +259,32 @@ const sData = {
 					},
 					fieldValue: {
 						title: "Field value",
-						enum: [
-							"RS",
-							"SR",
-							"P-3",
-							"P-3-PI",
-							"SP-4",
-							"SP-4-PI",
-							"T-4",
-							"T-4-PI",
-							"SP-5",
-							"SP-5-PI",
-							"TB-5",
-							"TB-5-PI",
-							"OC-6",
-							"TP-6",
-							"PB-7",
-							"CU-8",
-							"SA-8",
-							"DD-8",
-							"HB-9",
-							"TPS-9"
-						],
-						default: "RS"
+						type: 'array',
+						items: {
+							enum: [
+								"RS",
+								"SR",
+								"P-3",
+								"P-3-PI",
+								"SP-4",
+								"SP-4-PI",
+								"T-4",
+								"T-4-PI",
+								"SP-5",
+								"SP-5-PI",
+								"TB-5",
+								"TB-5-PI",
+								"OC-6",
+								"TP-6",
+								"PB-7",
+								"CU-8",
+								"SA-8",
+								"DD-8",
+								"HB-9",
+								"TPS-9"
+							],
+						},
+						default: ["RS"]
 					},
 					radiobuttons: radioButtonsSchema
 				},
@@ -255,11 +308,14 @@ const sData = {
 					},
 					fieldValue: {
 						title: "Field value",
-						enum: [
-							"cis",
-							"trans"
-						],
-						default: "cis"
+						type: 'array',
+						items: {
+							enum: [
+								"cis",
+								"trans"
+							]
+						},
+						default: ["cis"]
 					},
 					radiobuttons: radioButtonsSchema
 				},
@@ -277,6 +333,7 @@ export const sdataCustomSchema = {
 			title: 'Context',
 			enum: [
 				'Fragment',
+				'Multifragment',
 				'Bond',
 				'Atom',
 				'Group'

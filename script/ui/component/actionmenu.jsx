@@ -40,7 +40,7 @@ function ActionButton({action, status={}, onAction, ...props}) {
 	return (
 		<button disabled={status.disabled}
 				onClick={(ev) => {
-					if (!status.selected) {
+					if (!status.selected || action.action.tool === 'chiralFlag') {
 						onAction(action.action);
 						ev.stopPropagation();
 					}

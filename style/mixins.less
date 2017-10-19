@@ -108,6 +108,12 @@
 	}
 }
 
+.toolbutton-horizontal(@dim, @width-cells: 1) {
+	.set-size(@dim);
+	width: @button-size * @width-cells;
+	margin-left: @button-grow * @width-cells;
+	margin-right: @button-grow * @width-cells;
+}
 ////////////////////
 
 .collapsed(@dim: inherit) when not (@dim = none) {

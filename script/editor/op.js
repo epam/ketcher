@@ -507,26 +507,23 @@ function RGroupAttr(rgid, attribute, value) {
 }
 RGroupAttr.prototype = new Base();
 
-function RGroupFragment(rgid, frid, rg, oldIfThenValues) {
+function RGroupFragment(rgid, frid, rg) {
+	this.type = 'OpAddOrDeleteRGFragment';
 	this.rgid_new = rgid;
 	this.rg_new = rg;
 	this.rgid_old = null;
 	this.rg_old = null;
 	this.frid = frid;
 
-	// used for restore ifThen value after undo action performed
-	this.oldIfThenValues = oldIfThenValues || {};
-
 	this.execute = function (restruct) { // eslint-disable-line max-statements
-		var struct = restruct.molecule;
+		const struct = restruct.molecule;
 		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(struct.rgroups, this.frid);
 		this.rg_old = (this.rgid_old ? struct.rgroups.get(this.rgid_old) : null);
-
-		var oldIfThen = this.oldIfThenValues;
 
 		if (this.rg_old) {
 			this.rg_old.frags.remove(this.rg_old.frags.keyOf(this.frid));
 			restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
+
 			if (this.rg_old.frags.count() === 0) {
 				restruct.rgroups.unset(this.rgid_old);
 				struct.rgroups.unset(this.rgid_old);
@@ -534,26 +531,10 @@ function RGroupFragment(rgid, frid, rg, oldIfThenValues) {
 			} else {
 				restruct.markItem('rgroups', this.rgid_old, 1);
 			}
-
-			var oldId = this.rgid_old;
-			var newId = this.rgid_new;
-
-			struct.rgroups.keys().forEach(function (rgKey) {
-				var rgValue = struct.rgroups.get(rgKey);
-
-				if (rgValue.ifthen === oldId) {
-					rgValue.ifthen = newId;
-
-					if (!newId)
-						oldIfThen[rgKey] = oldId;
-
-					struct.rgroups.set(rgKey, rgValue);
-				}
-			});
 		}
 
 		if (this.rgid_new) {
-			var rgNew = struct.rgroups.get(this.rgid_new);
+			let rgNew = struct.rgroups.get(this.rgid_new);
 			if (!rgNew) {
 				rgNew = this.rg_new || new Struct.RGroup();
 				struct.rgroups.set(this.rgid_new, rgNew);
@@ -562,19 +543,62 @@ function RGroupFragment(rgid, frid, rg, oldIfThenValues) {
 				restruct.markItem('rgroups', this.rgid_new, 1);
 			}
 			rgNew.frags.add(this.frid);
-
-			Object.keys(oldIfThen).forEach(function (rgid) {
-				var rgValue = struct.rgroups.get(rgid);
-				rgValue.ifthen = oldIfThen[rgid];
-				struct.rgroups.set(rgid, rgValue);
-			});
 		}
 	};
+
 	this.invert = function () {
-		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old, this.oldIfThenValues);
+		return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
 	};
 }
 RGroupFragment.prototype = new Base();
+
+function UpdateIfThen(rgNew, rgOld) {
+	this.type = 'OpUpdateIfThenValues';
+	this.rgid_new = rgNew;
+	this.rgid_old = rgOld;
+	this.ifThenHistory = {};
+
+	this.execute = function (restruct) {
+		const struct = restruct.molecule;
+
+		struct.rgroups.keys().forEach(rgKey => {
+			const rgValue = struct.rgroups.get(rgKey);
+
+			if (rgValue.ifthen === this.rgid_old) {
+				rgValue.ifthen = this.rgid_new;
+				this.ifThenHistory[rgKey] = this.rgid_old;
+				struct.rgroups.set(rgKey, rgValue);
+			}
+		});
+	};
+
+	this.invert = function () {
+		return new RestoreIfThen(this.rgid_new, this.rgid_old, this.ifThenHistory);
+	};
+}
+UpdateIfThen.prototype = new Base();
+
+function RestoreIfThen(rgNew, rgOld, history) {
+	this.type = 'OpRestoreIfThenValues';
+	this.rgid_new = rgNew;
+	this.rgid_old = rgOld;
+	this.ifThenHistory = history || {};
+
+	this.execute = function (restruct) {
+		const struct = restruct.molecule;
+
+		Object.keys(this.ifThenHistory).forEach(rgid => {
+			const rgValue = struct.rgroups.get(rgid);
+			rgValue.ifthen = this.ifThenHistory[rgid];
+			struct.rgroups.set(rgid, rgValue);
+		});
+	};
+
+	this.invert = function () {
+		return new UpdateIfThen(this.rgid_old, this.rgid_new);
+	};
+}
+RestoreIfThen.prototype = new Base();
 
 function RxnArrowAdd(pos) {
 	this.data = { arid: null, pos: pos };
@@ -873,5 +897,6 @@ module.exports = {
 	CanvasLoad: CanvasLoad,
 	ChiralFlagAdd: ChiralFlagAdd,
 	ChiralFlagDelete: ChiralFlagDelete,
-	ChiralFlagMove: ChiralFlagMove
+	ChiralFlagMove: ChiralFlagMove,
+	UpdateIfThen: UpdateIfThen
 };

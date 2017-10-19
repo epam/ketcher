@@ -45,8 +45,7 @@ var options = minimist(process.argv.slice(2), {
 	}
 });
 
-var distrib = ['LICENSE', 'favicon.ico', 'logo.jpg',
-               'demo.html', 'library.sdf', 'library.svg'];
+var distrib = ['LICENSE', 'demo.html', 'library.sdf', 'library.svg'];
 
 var bundleConfig = {
 	entries: 'script',
@@ -72,10 +71,9 @@ var bundleConfig = {
 					"targets": {
 						"browsers": ["last 2 versions", "safari > 8", "chrome > 52"]
 					},
-					"modules": false,
 					"useBuiltIns": true
 				}],
-				"es2015", "react"],
+				"react"],
 			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
 		}]
 	]
@@ -167,7 +165,8 @@ gulp.task('font', function (cb) {
 		.pipe(plugins.iconfont({
 			fontName: pkg.name,
 			formats: ['ttf', 'svg', 'eot', 'woff'],
-			timestamp: options['build-date']
+			timestamp: options['build-date'],
+			normalize: true
 		}))
 		.on('glyphs', function(glyphs) {
 			iconfont = glyphReduce(glyphs);
@@ -175,7 +174,12 @@ gulp.task('font', function (cb) {
 		.pipe(gulp.dest(options.dist));
 });
 
-gulp.task('copy', function () {
+gulp.task('images', function () {
+	return gulp.src('images/*')
+		.pipe(gulp.dest(options.dist + '/images'));
+});
+
+gulp.task('copy', ['images'], function () {
 	return gulp.src(['raphael'].map(require.resolve)
 	                .concat(distrib))
 		.pipe(gulp.dest(options.dist));

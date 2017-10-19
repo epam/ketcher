@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-var isEqual = require('lodash/fp/isEqual');
+const isEqual = require('lodash/fp/isEqual');
+const uniq = require('lodash/fp/uniq');
+const LassoHelper = require('./helper/lasso');
+const Action = require('../action');
+const Struct = require('../../chem/struct');
+const Set = require('../../util/set');
+const Contexts = require('../../util/constants').SgContexts;
 
-var LassoHelper = require('./helper/lasso');
-
-var Action = require('../action');
-var Struct = require('../../chem/struct');
-var Set = require('../../util/set');
-
-var searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
+const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 
 function SGroupTool(editor, type) {
 	if (!(this instanceof SGroupTool)) {
@@ -97,19 +97,19 @@ SGroupTool.prototype.mouseup = function (event) {
 };
 
 function propsDialog(editor, id, defaultType) {
-	var restruct = editor.render.ctab;
-	var struct = restruct.molecule;
-	var selection = editor.selection() || {};
-	var sg = id !== null ? struct.sgroups.get(id) : null;
-	var type = sg ? sg.type : defaultType;
-	var eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
+	const restruct = editor.render.ctab;
+	const struct = restruct.molecule;
+	const selection = editor.selection() || {};
+	const sg = id !== null ? struct.sgroups.get(id) : null;
+	const type = sg ? sg.type : defaultType;
+	const eventName = type === 'DAT' ? 'sdataEdit' : 'sgroupEdit';
 
 	if (!selection.atoms && !selection.bonds && !sg) {
 		console.info('There is no selection or sgroup');
 		return;
 	}
 
-	var attrs = null;
+	let attrs = null;
 	if (sg) {
 		attrs = sg.getAttrs();
 		attrs.context = getContextBySgroup(restruct, sg.atoms);
@@ -119,12 +119,12 @@ function propsDialog(editor, id, defaultType) {
 		};
 	}
 
-	var res = editor.event[eventName].dispatch({
+	const res = editor.event[eventName].dispatch({
 		type: type,
 		attrs: attrs
 	});
 
-	Promise.resolve(res).then(function (newSg) {
+	Promise.resolve(res).then(newSg => {
 		// TODO: check before signal
 		if (newSg.type !== 'DAT' && // when data s-group separates
 			checkOverlapping(struct, selection.atoms || [])) {
@@ -132,82 +132,85 @@ function propsDialog(editor, id, defaultType) {
 				error: 'Partial S-group overlapping is not allowed.'
 			});
 		} else {
-			if (!sg && (!selection.atoms || selection.atoms.length === 0))
+			if (!sg && newSg.type !== 'DAT' && (!selection.atoms || selection.atoms.length === 0))
 				return;
 
-			var isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
+			const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
 
 			if (isDataSg) {
-				var action = Action.fromSgroupType(restruct, id, newSg.type)
-					.mergeWith(Action.fromSgroupAttrs(restruct, id, newSg.attrs));
+				const action = Action.fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
+					.mergeWith(Action.fromSgroupDeletion(restruct, id));
 
 				editor.update(action);
 				editor.selection(selection);
 				return;
 			}
 
-			var result = fromContextType(id, editor, newSg, selection);
+			const result = fromContextType(id, editor, newSg, selection);
 			editor.update(result.action);
 			editor.selection(result.selection);
 		}
-	}).catch(function (result) {
+	}).catch(result => {
 		console.info('rejected', result);
 	});
 }
 
 function getContextBySgroup(restruct, sgAtoms) {
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
 	if (sgAtoms.length === 1)
-		return 'Atom';
+		return Contexts.Atom;
 
-	if (allComponentsSelected(restruct, sgAtoms))
-		return 'Fragment';
+	if (manyComponentsSelected(restruct, sgAtoms))
+		return Contexts.Multifragment;
 
-	var atomMap = sgAtoms.reduce(function (acc, aid) {
+	if (singleComponentSelected(restruct, sgAtoms))
+		return Contexts.Fragment;
+
+	const atomMap = sgAtoms.reduce((acc, aid) => {
 		acc[aid] = true;
 		return acc;
 	}, {});
 
-	var sgBonds = struct.bonds
+	const sgBonds = struct.bonds
 		.values()
-		.filter(function (bond) { return atomMap[bond.begin] && atomMap[bond.end]; });
+		.filter(bond => atomMap[bond.begin] && atomMap[bond.end]);
 
-	return anyContinuousBonds(sgBonds) ? 'Group' : 'Bond';
+	return anyChainedBonds(sgBonds) ? Contexts.Group : Contexts.Bond;
 }
 
 function getContextBySelection(restruct, selection) {
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
 	if (selection.atoms && !selection.bonds)
-		return 'Atom';
+		return Contexts.Atom;
 
-	var bonds = selection.bonds.map(function (bondid) {
-		return struct.bonds.get(bondid);
-	});
+	const bonds = selection.bonds.map(bondid => struct.bonds.get(bondid));
 
-	if (!anyContinuousBonds(bonds))
-		return 'Bond';
+	if (!anyChainedBonds(bonds))
+		return Contexts.Bond;
 
 	selection.atoms = selection.atoms || [];
 
-	var atomSelectMap = atomMap(selection.atoms);
+	const atomSelectMap = atomMap(selection.atoms);
 
-	var allBondsSelected = selection.bonds.every(function (bondid) {
-		var bond = struct.bonds.get(bondid);
-		return atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined;
-	});
+	const allBondsSelected = bonds.every(bond =>
+		atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined
+	);
 
-	return allComponentsSelected(restruct, selection.atoms) && allBondsSelected ? 'Fragment' : 'Group';
+	if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
+		return Contexts.Fragment;
+
+	return manyComponentsSelected(restruct, selection.atoms) ? Contexts.Multifragment : Contexts.Group;
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
-	var restruct = editor.render.ctab;
-	var sg = restruct.molecule.sgroups.get(id);
-	var sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
-	var context = newSg.attrs.context;
+	const restruct = editor.render.ctab;
+	const sg = restruct.molecule.sgroups.get(id);
+	const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
+	const context = newSg.attrs.context;
 
-	var result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
+	const result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
 
 	result.selection = result.selection || currSelection;
 
@@ -220,25 +223,90 @@ function fromContextType(id, editor, newSg, currSelection) {
 }
 
 function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
-	if (context === 'Bond')
+	if (context === Contexts.Bond)
 		return Action.fromBondAction(restruct, newSg, sourceAtoms, selection);
 
-	var atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-	var newSourceAtoms = unique(sourceAtoms.concat(atomsFromBonds));
+	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
+	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
 
-	if (context === 'Fragment')
+	if (context === Contexts.Fragment)
 		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
 
-	if (context === 'Group')
+	if (context === Contexts.Multifragment)
+		return Action.fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
+
+	if (context === Contexts.Group)
 		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
 
-	if (context === 'Atom')
+	if (context === Contexts.Atom)
 		return Action.fromAtomAction(restruct, newSg, newSourceAtoms);
 
 	return {
-		action: Action.fromSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs, restruct.molecule.sgroups.newId())
+		action: Action.fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
 	};
 }
+
+// tools
+function atomMap(atoms) {
+	atoms = atoms || [];
+
+	return atoms.reduce((acc, atomid) => {
+		acc[atomid] = atomid;
+		return acc;
+	}, {});
+}
+
+function anyChainedBonds(bonds) {
+	if (bonds.length === 0)
+		return true;
+
+	for (let i = 0; i < bonds.length; ++i) {
+		const fixedBond = bonds[i];
+		for (let j = 0; j < bonds.length; ++j) {
+			if (i === j)
+				continue;
+
+			const bond = bonds[j];
+
+			if (fixedBond.end === bond.begin || fixedBond.end === bond.end)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+function singleComponentSelected(restruct, atoms) {
+	return countOfSelectedComponents(restruct, atoms) === 1;
+}
+
+function manyComponentsSelected(restruct, atoms) {
+	return countOfSelectedComponents(restruct, atoms) > 1;
+}
+
+function countOfSelectedComponents(restruct, atoms) {
+	const atomSelectMap = atomMap(atoms);
+
+	return restruct.connectedComponents.values()
+		.reduce((acc, component) => {
+			const componentAtoms = Object.keys(component);
+
+			const count = componentAtoms
+				.reduce((acc, atom) => acc + (atomSelectMap[atom] === undefined), 0);
+
+			return acc + (count === 0 ? 1 : 0);
+		}, 0);
+}
+
+function getAtomsFromBonds(struct, bonds) {
+	bonds = bonds || [];
+	return bonds.reduce((acc, bondid) => {
+		const bond = struct.bonds.get(bondid);
+		acc = acc.concat([bond.begin, bond.end]);
+		return acc;
+	}, []);
+}
+
 
 function checkOverlapping(struct, atoms) {
 	var verified = {};
@@ -271,69 +339,6 @@ function checkOverlapping(struct, atoms) {
 			});
 		});
 	});
-}
-
-// tools
-function atomMap(atoms) {
-	atoms = atoms || [];
-	return atoms.reduce(function (acc, atomid) {
-		acc[atomid] = atomid;
-		return acc;
-	}, {});
-}
-
-function anyContinuousBonds(bonds) {
-	if (bonds.length === 0)
-		return true;
-
-	var i, j;
-	for (i = 0; i < bonds.length; ++i) {
-		var fixedBond = bonds[i];
-		for (j = 0; j < bonds.length; ++j) {
-			if (i === j)
-				continue;
-
-			var bond = bonds[j];
-
-			if (fixedBond.end === bond.begin || fixedBond.end === bond.end)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-function allComponentsSelected(restruct, atoms) {
-	var atomSelectMap = atomMap(atoms);
-
-	return restruct.connectedComponents.values()
-		.every(function (component) {
-			var componentAtoms = Object.keys(component);
-			var count = componentAtoms
-				.reduce(function (acc, atom) {
-					return acc + (atomSelectMap[atom] === undefined);
-				}, 0);
-
-			return count === 0 || count === componentAtoms.length;
-		});
-}
-
-function unique(source) {
-	return Object.keys(
-		source.reduce(function (acc, item) {
-			acc[item] = item;
-			return acc;
-		}, {})
-	).map(function (item) { return parseInt(item); });
-}
-
-function getAtomsFromBonds(struct, bonds) {
-	bonds = bonds || [];
-	return bonds.reduce(function (acc, bondid) {
-		var bond = struct.bonds.get(bondid);
-		acc = acc.concat([bond.begin, bond.end]);
-		return acc;
-	}, []);
 }
 
 module.exports = Object.assign(SGroupTool, {

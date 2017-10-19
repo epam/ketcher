@@ -34,6 +34,7 @@ var toolMap = {
 	atom: require('./tool/atom'),
 	bond: require('./tool/bond'),
 	chain: require('./tool/chain'),
+	chiralFlag: require('./tool/chiral-flag'),
 	template: require('./tool/template'),
 	charge: require('./tool/charge'),
 	rgroupfragment: require('./tool/rgroupfragment'),
@@ -126,22 +127,28 @@ Editor.prototype.zoom = function (value) {
 };
 
 Editor.prototype.selection = function (ci) {
+	var restruct = this.render.ctab;
 	if (arguments.length > 0) {
 		this._selection = null; // eslint-disable-line
 		if (ci === 'all') {   // TODO: better way will be this.struct()
-			var restruct = this.render.ctab;
 			ci = structObjects.reduce(function (res, key) {
 				res[key] = restruct[key].ikeys();
 				return res;
 			}, {});
 		}
+
+		if (ci === 'descriptors') {
+			restruct = this.render.ctab;
+			ci = { sgroupData: restruct['sgroupData'].ikeys() };
+		}
+
 		if (ci) {
 			var res = {};
 			for (var key in ci) {
 				if (ci.hasOwnProperty(key) && ci[key].length > 0) // TODO: deep merge
 					res[key] = ci[key].slice();
 			}
-			if (Object.keys(res) != 0)
+			if (Object.keys(res) !== 0)
 				this._selection = res; // eslint-disable-line
 		}
 

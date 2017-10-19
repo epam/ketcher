@@ -110,7 +110,7 @@ const App = connect(
 	}
 	render = props => (
 		<main role="application">
-			<AppEditor id="canvas"/>
+			<AppEditor id="canvas" />
 			<Toolbar {...props}/>
 			<AppCliparea/>
 			<AppModal/>

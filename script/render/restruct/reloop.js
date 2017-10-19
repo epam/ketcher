@@ -44,7 +44,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 		var hb = molecule.halfBonds.get(hbid);
 		var bond = restruct.bonds.get(hb.bid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
-		if (bond.b.type != Struct.Bond.PATTERN.TYPE.AROMATIC)
+		if (bond.b.type !== Struct.Bond.PATTERN.TYPE.AROMATIC)
 			loop.aromatic = false;
 		this.centre.add_(apos); // eslint-disable-line no-underscore-dangle
 	}, this);
@@ -96,7 +96,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 				sin = sin * minSin / Math.abs(sin);
 			var offset = options.bondSpace / sin;
 			var qi = pi.addScaled(dir, -offset);
-			pathStr += (k == 0 ? 'M' : 'L');
+			pathStr += (k === 0 ? 'M' : 'L');
 			pathStr += tfx(qi.x) + ',' + tfx(qi.y);
 		}
 		pathStr += 'Z';

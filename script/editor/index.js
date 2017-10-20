@@ -328,6 +328,13 @@ Editor.prototype.structSelected = function () {
 	return dst;
 };
 
+Editor.prototype.alignDescriptors = function () {
+	this.selection(null);
+	const action = Action.fromDescriptorsAlign(this.render.ctab);
+	this.update(action);
+	this.render.update(true);
+};
+
 function recoordinate(editor, rp/* , vp*/) {
 	// rp is a point in scaled coordinates, which will be positioned
 	// vp is the point where the reference point should now be (in view coordinates)

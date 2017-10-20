@@ -1496,6 +1496,12 @@ function fromMultiFragmentAction(restruct, newSg, atoms) {
 	};
 }
 
+function fromDescriptorsAlign(restruct) {
+	const action = new Action();
+	action.addOp(new op.AlignDescriptors(restruct));
+	return action.perform(restruct);
+}
+
 function getAtomsBondIds(struct, atoms) {
 	return struct.bonds.keys()
 		.reduce(function (acc, bondid) {
@@ -1545,5 +1551,6 @@ module.exports = Object.assign(Action, {
 	fromBondAction: fromBondAction,
 	fromSeveralSgroupAddition: fromSeveralSgroupAddition,
 	fromUpdateIfThen: fromUpdateIfThen,
-	fromMultiFragmentAction: fromMultiFragmentAction
+	fromMultiFragmentAction: fromMultiFragmentAction,
+	fromDescriptorsAlign: fromDescriptorsAlign
 });

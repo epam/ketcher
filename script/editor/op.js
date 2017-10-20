@@ -821,6 +821,50 @@ function ChiralFlagMove(d) {
 }
 ChiralFlagMove.prototype = new Base();
 
+function AlignDescriptors() {
+	this.type = 'OpAlignDescriptors';
+	this.history = {};
+
+	this.execute = function (restruct) {
+		const sgroups = restruct.molecule.sgroups.values().reverse();
+
+		let alignPoint = sgroups.reduce((acc, sg) => Vec2.max(sg.bracketBox.p1, acc), Vec2.ZERO);
+
+		alignPoint = alignPoint.add(new Vec2(0.5, 0.5));
+
+		sgroups.forEach(sg => {
+			this.history[sg.id] = sg.pp;
+			alignPoint = alignPoint.add(new Vec2(0.0, 0.5));
+			sg.pp = alignPoint;
+			restruct.molecule.sgroups.set(sg.id, sg);
+		});
+	};
+
+	this.invert = function () {
+		return new RestoreDescriptorsPosition(this.history);
+	};
+}
+AlignDescriptors.prototype = new Base();
+
+function RestoreDescriptorsPosition(history) {
+	this.type = 'OpRestoreDescriptorsPosition';
+	this.history = history;
+
+	this.execute = function (restruct) {
+		const sgroups = restruct.molecule.sgroups.values();
+
+		sgroups.forEach(sg => {
+			sg.pp = this.history[sg.id];
+			restruct.molecule.sgroups.set(sg.id, sg);
+		});
+	};
+
+	this.invert = function () {
+		return new AlignDescriptors();
+	};
+}
+RestoreDescriptorsPosition.prototype = new Base();
+
 function invalidateAtom(restruct, aid, level) {
 	var atom = restruct.atoms.get(aid);
 	restruct.markAtom(aid, level ? 1 : 0);
@@ -898,5 +942,7 @@ module.exports = {
 	ChiralFlagAdd: ChiralFlagAdd,
 	ChiralFlagDelete: ChiralFlagDelete,
 	ChiralFlagMove: ChiralFlagMove,
-	UpdateIfThen: UpdateIfThen
+	UpdateIfThen: UpdateIfThen,
+	AlignDescriptors: AlignDescriptors,
+	RestoreDescriptorsPosition: RestoreDescriptorsPosition
 };

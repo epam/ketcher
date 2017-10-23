@@ -141,20 +141,22 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.dragCtx.stopTapping();
 
 	if (this.dragCtx && this.dragCtx.item) {
-		var restruct = this.editor.render.ctab;
+		const restruct = this.editor.render.ctab;
 
 		if (this.dragCtx.mergeItems) {
 			this.editor.selection(null);
 
-			['atoms', 'bonds'].forEach(mp => {
-				const mergeMap = this.dragCtx.mergeItems[mp];
-				const mergeAction = mp === 'atoms' ? Action.fromAtomMerge : Action.fromBondMerge;
-				Object.entries(mergeMap).forEach(pair => {
-					this.dragCtx.action = this.dragCtx.action ?
-						mergeAction(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
-						mergeAction(restruct, +pair[0], +pair[1]);
-				});
+			// merge single atoms
+			Object.entries(this.dragCtx.mergeItems.atoms).forEach(pair => {
+				this.dragCtx.action = this.dragCtx.action ?
+					Action.fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
+					Action.fromAtomMerge(restruct, +pair[0], +pair[1]);
 			});
+
+			// merge bonds
+			this.dragCtx.action = this.dragCtx.action ?
+				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
+				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 		}
 		this.editor.hover(null);
 

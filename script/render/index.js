@@ -30,13 +30,10 @@ DEBUG.logMethod = function () { };
 
 function Render(clientArea, opt) {
 	this.userOpts = opt;
-
 	this.clientArea = clientArea;
-	this.paper = new Raphael(clientArea);
-	this.dirty = true;
-
+	this.paper = new Raphael(clientArea, 0, 0);
+	this.sz = Vec2.ZERO;
 	this.ctab = new ReStruct(new Struct(), this);
-
 	this.options = defaultOptions(this.userOpts);
 }
 
@@ -165,22 +162,6 @@ Render.prototype.setMolecule = function (ctab) {
 Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-statements
 	viewSz = viewSz || new Vec2(this.clientArea.clientWidth || 100,
 	                            this.clientArea.clientHeight || 100);
-
-	if (this.dirty) {
-		if (this.options.autoScale) {
-			var cbb = this.ctab.molecule.getCoordBoundingBox();
-			// this is only an approximation to select some scale that's close enough to the target one
-			var sy = cbb.max.y - cbb.min.y > 0 ? 0.8 * viewSz.y / (cbb.max.y - cbb.min.y) : 100;
-			var sx = cbb.max.x - cbb.min.x > 0 ? 0.8 * viewSz.x / (cbb.max.x - cbb.min.x) : 100;
-			this.userOpts.scale = Math.min(sy, sx);
-			if (this.options.maxBondLength > 0 && this.userOpts.scale > this.options.maxBondLength)
-				this.userOpts.scale = this.options.maxBondLength;
-		}
-		// TODO: remove me. Hack to update scaleFactor while autoscale
-		this.options = defaultOptions(this.userOpts);
-		this.dirty = false;
-		force = true;
-	}
 
 	var changes = this.ctab.update(force);
 	this.ctab.setSelection(); // [MK] redraw the selection bits where necessary

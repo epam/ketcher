@@ -30,7 +30,7 @@ export function initResize() {
 	return function (dispatch, getState) {
 		const onResize = debounce(100, () => {
 			getState().editor.render.update();
-			dispatch({ type: 'CLEAR_VISIBLE' })
+			dispatch({ type: 'CLEAR_VISIBLE' });
 		});
 
 		addEventListener('resize', onResize);

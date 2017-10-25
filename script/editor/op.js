@@ -133,22 +133,27 @@ function AtomAttr(aid, attribute, value) {
 AtomAttr.prototype = new Base();
 
 function AtomMove(aid, d, noinvalidate) {
-	this.data = { aid: aid, d: d, noinvalidate: noinvalidate };
+	this.data = { aid, d, noinvalidate };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var aid = this.data.aid;
-		var d = this.data.d;
+		const struct = restruct.molecule;
+		const aid = this.data.aid;
+		const d = this.data.d;
 		struct.atoms.get(aid).pp.add_(d); // eslint-disable-line no-underscore-dangle
 		restruct.atoms.get(aid).visel.translate(scale.obj2scaled(d, restruct.render.options));
+
 		this.data.d = d.negated();
+
 		if (!this.data.noinvalidate)
 			invalidateAtom(restruct, aid, 1);
 	};
-	this._isDummy = function () { // eslint-disable-line no-underscore-dangle
-		return this.data.d.x == 0 && this.data.d.y == 0;
+
+	this._isDummy = function () {
+		return this.data.d.x === 0 && this.data.d.y === 0;
 	};
+
 	this.invert = function () {
-		var ret = new AtomMove();
+		const ret = new AtomMove();
 		ret.data = this.data;
 		return ret;
 	};

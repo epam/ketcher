@@ -828,9 +828,13 @@ function AlignDescriptors() {
 	this.execute = function (restruct) {
 		const sgroups = restruct.molecule.sgroups.values().reverse();
 
-		let alignPoint = sgroups.reduce((acc, sg) => Vec2.max(sg.bracketBox.p1, acc), Vec2.ZERO);
-
-		alignPoint = alignPoint.add(new Vec2(0.5, 0.5));
+		let alignPoint = sgroups.reduce(
+			(acc, sg) => new Vec2(
+				Math.max(sg.bracketBox.p1.x, acc.x),
+				Math.min(sg.bracketBox.p0.y, acc.y)
+			), new Vec2(0.0, Infinity)
+		)
+			.add(new Vec2(0.5, -0.5));
 
 		sgroups.forEach(sg => {
 			this.history[sg.id] = sg.pp;

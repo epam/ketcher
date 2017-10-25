@@ -27,8 +27,11 @@ const initial = {
 const MAX_ATOMS = 7;
 
 export function initResize() {
-	return function (dispatch) {
-		const onResize = debounce(100, () => dispatch({ type: 'CLEAR_VISIBLE' }));
+	return function (dispatch, getState) {
+		const onResize = debounce(100, () => {
+			getState().editor.render.update();
+			dispatch({ type: 'CLEAR_VISIBLE' })
+		});
 
 		addEventListener('resize', onResize);
 	}

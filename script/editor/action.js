@@ -941,21 +941,19 @@ function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 }
 
 function fromSgroupAttrs(restruct, id, attrs) {
-	var action = new Action();
+	const action = new Action();
 
-	for (let key in attrs) {
-		if (attrs.hasOwnProperty(key))
-			action.addOp(new op.SGroupAttr(id, key, attrs[key]));
-	}
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.SGroupAttr(id, key, attrs[key])));
 
 	return action.perform(restruct);
 }
 
 function sGroupAttributeAction(id, attrs) {
-	var action = new Action();
+	const action = new Action();
 
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.SGroupAttr(id, key, attrs[key])));
 
 	return action;
 }
@@ -1496,6 +1494,12 @@ function fromMultiFragmentAction(restruct, newSg, atoms) {
 	};
 }
 
+function fromDescriptorsAlign(restruct) {
+	const action = new Action();
+	action.addOp(new op.AlignDescriptors(restruct));
+	return action.perform(restruct);
+}
+
 function getAtomsBondIds(struct, atoms) {
 	return struct.bonds.keys()
 		.reduce(function (acc, bondid) {
@@ -1545,5 +1549,6 @@ module.exports = Object.assign(Action, {
 	fromBondAction: fromBondAction,
 	fromSeveralSgroupAddition: fromSeveralSgroupAddition,
 	fromUpdateIfThen: fromUpdateIfThen,
-	fromMultiFragmentAction: fromMultiFragmentAction
+	fromMultiFragmentAction: fromMultiFragmentAction,
+	fromDescriptorsAlign: fromDescriptorsAlign
 });

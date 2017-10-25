@@ -544,6 +544,7 @@ it will appear in brackets after the description of the button.
 | `Alt+v` | Flip vertically |
 | `Alt+h` | Flip horizontally |
 | `Ctrl+g` | S-Group tool / Data S-Group tool |
+| `Ctrl+d` | Align and select all S-Group data
 | `Ctrl+r` | Switching between the R-Group Label Tool/R-Group Fragment Tool/Attachment Point Tool |
 | `Ctrl+Shift+r`  | R-Group Fragment Tool |
 | `Ctrl+Del` | Clear canvas |

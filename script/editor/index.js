@@ -250,10 +250,11 @@ Editor.prototype.on = function (eventName, handler) {
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
-	 'mouseup', 'mouseleave'].forEach(function (eventName) {
-		 var subs = editor.event[eventName] = new s.DOMSubscription();
+	 'mouseup', 'mouseleave'].forEach(eventName => {
+		 const subs = editor.event[eventName] = new s.DOMSubscription();
 		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
-		 subs.add(function (event) {
+
+		 subs.add(event => {
 			 editor.lastEvent = event;
 			 if (editor.tool() && eventName in editor.tool())
 				 editor.tool()[eventName](event);
@@ -326,6 +327,13 @@ Editor.prototype.structSelected = function () {
 		(dst.rxnArrows.count() || dst.rxnPluses.count());
 
 	return dst;
+};
+
+Editor.prototype.alignDescriptors = function () {
+	this.selection(null);
+	const action = Action.fromDescriptorsAlign(this.render.ctab);
+	this.update(action);
+	this.render.update(true);
 };
 
 function recoordinate(editor, rp/* , vp*/) {

@@ -188,22 +188,27 @@ LoopMove.prototype = new Base();
 
 function SGroupAtomAdd(sgid, aid) {
 	this.type = 'OpSGroupAtomAdd';
-	this.data = { aid: aid, sgid: sgid };
+	this.data = { sgid, aid };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var aid = this.data.aid;
-		var sgid = this.data.sgid;
-		var atom = struct.atoms.get(aid);
-		var sg = struct.sgroups.get(sgid);
+		const struct = restruct.molecule;
+		const aid = this.data.aid;
+		const sgid = this.data.sgid;
+		const atom = struct.atoms.get(aid);
+		const sg = struct.sgroups.get(sgid);
+
 		if (sg.atoms.indexOf(aid) >= 0)
 			throw new Error('The same atom cannot be added to an S-group more than once');
+
 		if (!atom)
 			throw new Error('OpSGroupAtomAdd: Atom ' + aid + ' not found');
+
 		struct.atomAddToSGroup(sgid, aid);
 		invalidateAtom(restruct, aid);
 	};
+
 	this.invert = function () {
-		var ret = new SGroupAtomRemove();
+		const ret = new SGroupAtomRemove();
 		ret.data = this.data;
 		return ret;
 	};
@@ -212,19 +217,22 @@ SGroupAtomAdd.prototype = new Base();
 
 function SGroupAtomRemove(sgid, aid) {
 	this.type = 'OpSGroupAtomRemove';
-	this.data = { aid: aid, sgid: sgid };
+	this.data = { sgid, aid };
+
 	this.execute = function (restruct) {
-		var aid = this.data.aid;
-		var sgid = this.data.sgid;
-		var struct = restruct.molecule;
-		var atom = struct.atoms.get(aid);
-		var sg = struct.sgroups.get(sgid);
+		const aid = this.data.aid;
+		const sgid = this.data.sgid;
+		const struct = restruct.molecule;
+		const atom = struct.atoms.get(aid);
+		const sg = struct.sgroups.get(sgid);
+
 		Struct.SGroup.removeAtom(sg, aid);
 		Set.remove(atom.sgs, sgid);
 		invalidateAtom(restruct, aid);
 	};
+
 	this.invert = function () {
-		var ret = new SGroupAtomAdd();
+		const ret = new SGroupAtomAdd();
 		ret.data = this.data;
 		return ret;
 	};
@@ -233,20 +241,24 @@ SGroupAtomRemove.prototype = new Base();
 
 function SGroupAttr(sgid, attr, value) {
 	this.type = 'OpSGroupAttr';
-	this.data = { sgid: sgid, attr: attr, value: value };
+	this.data = { sgid, attr, value };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var sgid = this.data.sgid;
-		var sg = struct.sgroups.get(sgid);
-		if (sg.type === 'DAT' && restruct.sgroupData.has(sgid)) { // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
+		const struct = restruct.molecule;
+		const sgid = this.data.sgid;
+		const sg = struct.sgroups.get(sgid);
+
+		if (sg.type === 'DAT' && restruct.sgroupData.has(sgid)) {
+			// clean the stuff here, else it might be left behind if the sgroups is set to "attached"
 			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
 			restruct.sgroupData.unset(sgid);
 		}
 
 		this.data.value = sg.setAttr(this.data.attr, this.data.value);
 	};
+
 	this.invert = function () {
-		var ret = new SGroupAttr();
+		const ret = new SGroupAttr();
 		ret.data = this.data;
 		return ret;
 	};
@@ -255,20 +267,25 @@ SGroupAttr.prototype = new Base();
 
 function SGroupCreate(sgid, type, pp) {
 	this.type = 'OpSGroupCreate';
-	this.data = { sgid: sgid, type: type, pp: pp };
+	this.data = { sgid, type, pp };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var sg = new Struct.SGroup(this.data.type);
-		var sgid = this.data.sgid;
+		const struct = restruct.molecule;
+		const sg = new Struct.SGroup(this.data.type);
+		const sgid = this.data.sgid;
+
 		sg.id = sgid;
 		struct.sgroups.set(sgid, sg);
+
 		if (this.data.pp)
 			struct.sgroups.get(sgid).pp = new Vec2(this.data.pp);
+
 		restruct.sgroups.set(sgid, new ReStruct.SGroup(struct.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
+
 	this.invert = function () {
-		var ret = new SGroupDelete();
+		const ret = new SGroupDelete();
 		ret.data = this.data;
 		return ret;
 	};
@@ -277,26 +294,31 @@ SGroupCreate.prototype = new Base();
 
 function SGroupDelete(sgid) {
 	this.type = 'OpSGroupDelete';
-	this.data = { sgid: sgid };
+	this.data = { sgid };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var sgid = this.data.sgid;
-		var sg = restruct.sgroups.get(sgid);
+		const struct = restruct.molecule;
+		const sgid = this.data.sgid;
+		const sg = restruct.sgroups.get(sgid);
+
 		this.data.type = sg.item.type;
 		this.data.pp = sg.item.pp;
+
 		if (sg.item.type === 'DAT' && restruct.sgroupData.has(sgid)) {
 			restruct.clearVisel(restruct.sgroupData.get(sgid).visel);
 			restruct.sgroupData.unset(sgid);
 		}
 
 		restruct.clearVisel(sg.visel);
-		if (sg.item.atoms.length != 0)
+		if (sg.item.atoms.length !== 0)
 			throw new Error('S-Group not empty!');
+
 		restruct.sgroups.unset(sgid);
 		struct.sgroups.remove(sgid);
 	};
+
 	this.invert = function () {
-		var ret = new SGroupCreate();
+		const ret = new SGroupCreate();
 		ret.data = this.data;
 		return ret;
 	};
@@ -305,16 +327,19 @@ SGroupDelete.prototype = new Base();
 
 function SGroupAddToHierarchy(sgid, parent, children) {
 	this.type = 'OpSGroupAddToHierarchy';
-	this.data = { sgid: sgid, parent: parent, children: children };
+	this.data = { sgid, parent, children };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var sgid = this.data.sgid;
-		var relations = struct.sGroupForest.insert(sgid, parent, children);
+		const struct = restruct.molecule;
+		const sgid = this.data.sgid;
+		const relations = struct.sGroupForest.insert(sgid, parent, children);
+
 		this.data.parent = relations.parent;
 		this.data.children = relations.children;
 	};
+
 	this.invert = function () {
-		var ret = new SGroupRemoveFromHierarchy();
+		const ret = new SGroupRemoveFromHierarchy();
 		ret.data = this.data;
 		return ret;
 	};
@@ -323,16 +348,19 @@ SGroupAddToHierarchy.prototype = new Base();
 
 function SGroupRemoveFromHierarchy(sgid) {
 	this.type = 'OpSGroupRemoveFromHierarchy';
-	this.data = { sgid: sgid };
+	this.data = { sgid };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var sgid = this.data.sgid;
+		const struct = restruct.molecule;
+		const sgid = this.data.sgid;
+
 		this.data.parent = struct.sGroupForest.parent.get(sgid);
 		this.data.children = struct.sGroupForest.children.get(sgid);
 		struct.sGroupForest.remove(sgid);
 	};
+
 	this.invert = function () {
-		var ret = new SGroupAddToHierarchy();
+		const ret = new SGroupAddToHierarchy();
 		ret.data = this.data;
 		return ret;
 	};
@@ -821,6 +849,54 @@ function ChiralFlagMove(d) {
 }
 ChiralFlagMove.prototype = new Base();
 
+function AlignDescriptors() {
+	this.type = 'OpAlignDescriptors';
+	this.history = {};
+
+	this.execute = function (restruct) {
+		const sgroups = restruct.molecule.sgroups.values().reverse();
+
+		let alignPoint = sgroups.reduce(
+			(acc, sg) => new Vec2(
+				Math.max(sg.bracketBox.p1.x, acc.x),
+				Math.min(sg.bracketBox.p0.y, acc.y)
+			), new Vec2(0.0, Infinity)
+		)
+			.add(new Vec2(0.5, -0.5));
+
+		sgroups.forEach(sg => {
+			this.history[sg.id] = sg.pp;
+			alignPoint = alignPoint.add(new Vec2(0.0, 0.5));
+			sg.pp = alignPoint;
+			restruct.molecule.sgroups.set(sg.id, sg);
+		});
+	};
+
+	this.invert = function () {
+		return new RestoreDescriptorsPosition(this.history);
+	};
+}
+AlignDescriptors.prototype = new Base();
+
+function RestoreDescriptorsPosition(history) {
+	this.type = 'OpRestoreDescriptorsPosition';
+	this.history = history;
+
+	this.execute = function (restruct) {
+		const sgroups = restruct.molecule.sgroups.values();
+
+		sgroups.forEach(sg => {
+			sg.pp = this.history[sg.id];
+			restruct.molecule.sgroups.set(sg.id, sg);
+		});
+	};
+
+	this.invert = function () {
+		return new AlignDescriptors();
+	};
+}
+RestoreDescriptorsPosition.prototype = new Base();
+
 function invalidateAtom(restruct, aid, level) {
 	var atom = restruct.atoms.get(aid);
 	restruct.markAtom(aid, level ? 1 : 0);
@@ -898,5 +974,7 @@ module.exports = {
 	ChiralFlagAdd: ChiralFlagAdd,
 	ChiralFlagDelete: ChiralFlagDelete,
 	ChiralFlagMove: ChiralFlagMove,
-	UpdateIfThen: UpdateIfThen
+	UpdateIfThen: UpdateIfThen,
+	AlignDescriptors: AlignDescriptors,
+	RestoreDescriptorsPosition: RestoreDescriptorsPosition
 };

@@ -128,47 +128,95 @@ function showValue(paper, pos, sg, options) {
 	return st;
 }
 
-function drawGroupDat(remol, sgroup) { // eslint-disable-line max-statements
-	var render = remol.render;
-	var options = render.options;
-	var paper = render.paper;
-	var set = paper.set();
-	var atoms = Struct.SGroup.getAtoms(remol, sgroup);
-	var i;
-	bracketPos(sgroup, render, remol.molecule);
-	sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
-	if (sgroup.pp == null)
-		// NB: we did not pass xbonds parameter to the backetPos method above,
-		//  so the result will be in the regular coordinate system
-		sgroup.pp = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5));
-	var ps = sgroup.pp.scaled(options.scale);
+function drawGroupDat(restruct, sgroup) {
+	const render = restruct.render;
 
-	if (sgroup.data.attached) {
-		for (i = 0; i < atoms.length; ++i) {
-			var atom = remol.atoms.get(atoms[i]);
-			var p = scale.obj2scaled(atom.a.pp, options);
-			var bb = atom.visel.boundingBox;
-			if (bb != null)
-				p.x = Math.max(p.x, bb.p1.x);
-			p.x += options.lineWidth; // shift a bit to the right
-			var nameI = showValue(paper, p, sgroup, options);
-			var boxI = util.relBox(nameI.getBBox());
-			nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
-			set.push(nameI);
-			var sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
-			sboxI = sboxI.transform(scale.scaled2obj, render.options);
-			sgroup.areas.push(sboxI);
-		}
-	} else {
-		var name = showValue(paper, ps, sgroup, options);
-		var box = util.relBox(name.getBBox());
-		name.translateAbs(0.5 * box.width, -0.5 * box.height);
-		set.push(name);
-		var sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
-		sgroup.dataArea = sbox.transform(scale.scaled2obj, render.options);
-		if (!remol.sgroupData.has(sgroup.id))
-			remol.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
+	// NB: we did not pass xbonds parameter to the backetPos method above,
+	//  so the result will be in the regular coordinate system
+
+	bracketPos(sgroup, render, restruct.molecule);
+	sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
+
+	if (sgroup.pp === null)
+		sgroup.pp = definePP(restruct, sgroup);
+
+	return sgroup.data.attached ? drawAttachedDat(restruct, sgroup) : drawAbsoluteDat(restruct, sgroup);
+}
+
+function definePP(restruct, sgroup) {
+	let topLeftPoint = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5));
+	const sgroups = restruct.molecule.sgroups.values();
+	for (let i = 0; i < restruct.molecule.sgroups.count(); ++i) {
+		if (!descriptorIntersects(sgroups, topLeftPoint))
+			break;
+
+		topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
 	}
+
+	return topLeftPoint;
+}
+
+function descriptorIntersects(sgroups, topLeftPoint) {
+	return sgroups.some(sg => {
+		if (!sg.pp)
+			return false;
+
+		const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5));
+		const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5));
+
+		return Vec2.segmentIntersection(sg.pp, sgBottomRightPoint, topLeftPoint, bottomRightPoint);
+	});
+}
+
+function drawAbsoluteDat(restruct, sgroup) {
+	const render = restruct.render;
+	const options = render.options;
+	const paper = render.paper;
+	const set = paper.set();
+
+	const ps = sgroup.pp.scaled(options.scale);
+	const name = showValue(paper, ps, sgroup, options);
+	const box = util.relBox(name.getBBox());
+
+	name.translateAbs(0.5 * box.width, -0.5 * box.height);
+	set.push(name);
+
+	const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
+	sgroup.dataArea = sbox.transform(scale.scaled2obj, render.options);
+
+	if (!restruct.sgroupData.has(sgroup.id))
+		restruct.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
+
+	return set;
+}
+
+function drawAttachedDat(restruct, sgroup) {
+	const render = restruct.render;
+	const options = render.options;
+	const paper = render.paper;
+	const set = paper.set();
+
+	Struct.SGroup.getAtoms(restruct, sgroup).forEach(aid => {
+		const atom = restruct.atoms.get(aid);
+		const p = scale.obj2scaled(atom.a.pp, options);
+		const bb = atom.visel.boundingBox;
+
+		if (bb !== null)
+			p.x = Math.max(p.x, bb.p1.x);
+
+		p.x += options.lineWidth; // shift a bit to the right
+
+		const nameI = showValue(paper, p, sgroup, options);
+		const boxI = util.relBox(nameI.getBBox());
+
+		nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
+		set.push(nameI);
+
+		let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
+		sboxI = sboxI.transform(scale.scaled2obj, render.options);
+		sgroup.areas.push(sboxI);
+	});
+
 	return set;
 }
 

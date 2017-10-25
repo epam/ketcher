@@ -157,7 +157,9 @@ export default {
 		shortcut: "Mod+d",
 		action: {
 			thunk: (dispatch, getState) => {
-				getState().editor.selection('descriptors');
+				const editor = getState().editor;
+				editor.alignDescriptors();
+				editor.selection('descriptors');
 				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
 			}
 		}

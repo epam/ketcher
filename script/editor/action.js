@@ -941,21 +941,19 @@ function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 }
 
 function fromSgroupAttrs(restruct, id, attrs) {
-	var action = new Action();
+	const action = new Action();
 
-	for (let key in attrs) {
-		if (attrs.hasOwnProperty(key))
-			action.addOp(new op.SGroupAttr(id, key, attrs[key]));
-	}
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.SGroupAttr(id, key, attrs[key])));
 
 	return action.perform(restruct);
 }
 
 function sGroupAttributeAction(id, attrs) {
-	var action = new Action();
+	const action = new Action();
 
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.SGroupAttr(id, key, attrs[key]));
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.SGroupAttr(id, key, attrs[key])));
 
 	return action;
 }

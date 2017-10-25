@@ -146,14 +146,12 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 	var degree = neiList.length;
 	var implicitDegree = -1;
 
-	var stereocenter =
-		{
-			group: 0, // = group;
-			type: 0, // = type;
-			pyramid: []
-		};
+	var stereocenter = {
+		group: 0, // = group;
+		type: 0, // = type;
+		pyramid: []
+	};
 
-	var neiIdx = 0;
 	var edgeIds = [];
 
 	var lastAtomDir = 0;
@@ -169,12 +167,10 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 	if (degree > 4)
 		throw new Error('stereocenter with %d bonds are not supported' + degree);
 
-	neiList.each(function (nei) {
+	neiList.forEach(function (nei, neiIdx) {
 		var neiAtom = this.molecule.atoms.get(nei.aid);
 		var bond = this.molecule.bonds.get(nei.bid);
-
-		edgeIds[neiIdx] =
-		{
+		edgeIds[neiIdx] = {
 			edge_idx: nei.bid,
 			nei_idx: nei.aid,
 			rank: nei.aid,
@@ -184,21 +180,19 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		if (neiAtom.pureHydrogen()) {
 			nPureHydrogens++;
 			edgeIds[neiIdx].rank = 10000;
-		} else if (neiAtom.label == 'H') {
+		} else if (neiAtom.label === 'H') {
 			edgeIds[neiIdx].rank = 5000;
 		}
 
 		if (!edgeIds[neiIdx].vec.normalize())
 			throw new Error('zero bond length');
 
-		if (bond.type == Struct.Bond.PATTERN.TYPE.TRIPLE)
+		if (bond.type === Struct.Bond.PATTERN.TYPE.TRIPLE)
 			throw new Error('non-single bonds not allowed near stereocenter');
-		else if (bond.type == Struct.Bond.PATTERN.TYPE.AROMATIC)
+		else if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
 			throw new Error('aromatic bonds not allowed near stereocenter');
-		else if (bond.type == Struct.Bond.PATTERN.TYPE.DOUBLE)
+		else if (bond.type === Struct.Bond.PATTERN.TYPE.DOUBLE)
 			nDoubleBonds++;
-
-		neiIdx++;
 	}, this);
 
 	Stereocenters.allowed_stereocenters.find(function (as) {
@@ -210,13 +204,13 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		return false;
 	}, this);
 
-	if (implicitDegree == -1)
+	if (implicitDegree === -1)
 		throw new Error('unknown stereocenter configuration: ' + atom.label + ', charge ' + atom.charge + ', ' + degree + ' bonds (' + nDoubleBonds + ' double)');
 
-	if (degree == 4 && nPureHydrogens > 1)
+	if (degree === 4 && nPureHydrogens > 1)
 		throw new Error(nPureHydrogens + ' hydrogens near stereocenter');
 
-	if (degree == 3 && implicitDegree == 4 && nPureHydrogens > 0)
+	if (degree === 3 && implicitDegree == 4 && nPureHydrogens > 0)
 		throw new Error('have hydrogen(s) besides implicit hydrogen near stereocenter');
 
 	/*
@@ -227,7 +221,7 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
    }
    */
 
-	if (degree == 4) {
+	if (degree === 4) {
 		// sort by neighbor atom index (ascending)
 		if (edgeIds[0].rank > edgeIds[1].rank)
 			swap(edgeIds, 0, 1);
@@ -248,7 +242,7 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		var side2 = -1;
 		var mainDir = 0;
 
-		for (neiIdx = 0; neiIdx < 4; neiIdx++) {
+		for (var neiIdx = 0; neiIdx < 4; neiIdx++) {
 			var stereo = this.getBondStereo(atomIdx, edgeIds[neiIdx].edge_idx);
 
 			if (stereo == Struct.Bond.PATTERN.STEREO.UP || stereo == Struct.Bond.PATTERN.STEREO.DOWN) {
@@ -327,7 +321,7 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		}
 
 		stereocenter.pyramid[3] = edgeIds[3].nei_idx;
-	} else if (degree == 3) {
+	} else if (degree === 3) {
 		// sort by neighbor atom index (ascending)
 		if (edgeIds[0].rank > edgeIds[1].rank)
 			swap(edgeIds, 0, 1);
@@ -336,20 +330,20 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 		if (edgeIds[0].rank > edgeIds[1].rank)
 			swap(edgeIds, 0, 1);
 
-		var stereo0 = this.getBondStereo(atomIdx, atomIdx[0].edge_idx);
-		var stereo1 = this.getBondStereo(atomIdx, atomIdx[1].edge_idx);
-		var stereo2 = this.getBondStereo(atomIdx, atomIdx[2].edge_idx);
+		var stereo0 = this.getBondStereo(atomIdx, edgeIds[0].edge_idx);
+		var stereo1 = this.getBondStereo(atomIdx, edgeIds[1].edge_idx);
+		var stereo2 = this.getBondStereo(atomIdx, edgeIds[2].edge_idx);
 
 		var nUp = 0;
 		var nDown = 0;
 
-		nUp += ((stereo0 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
-		nUp += ((stereo1 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
-		nUp += ((stereo2 == Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0);
+		nUp += (stereo0 === Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0;
+		nUp += (stereo1 === Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0;
+		nUp += (stereo2 === Struct.Bond.PATTERN.STEREO.UP) ? 1 : 0;
 
-		nDown += ((stereo0 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
-		nDown += ((stereo1 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
-		nDown += ((stereo2 == Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0);
+		nDown += (stereo0 === Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0;
+		nDown += (stereo1 === Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0;
+		nDown += (stereo2 === Struct.Bond.PATTERN.STEREO.DOWN) ? 1 : 0;
 
 		if (implicitDegree == 4) { // have implicit hydrogen
 			if (nUp == 3)
@@ -425,9 +419,9 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 			else
 				dir = -1;
 
-			if (Stereocenters.xyzzy(edgeIds[0].vec, edgeIds[1].vec, edgeIds[2].vec) == 1 ||
-			Stereocenters.xyzzy(edgeIds[0].vec, edgeIds[2].vec, edgeIds[1].vec) == 1 ||
-			Stereocenters.xyzzy(edgeIds[2].vec, edgeIds[1].vec, edgeIds[0].vec) == 1)
+			if (Stereocenters.xyzzy(edgeIds[0].vec, edgeIds[1].vec, edgeIds[2].vec) === 1 ||
+			Stereocenters.xyzzy(edgeIds[0].vec, edgeIds[2].vec, edgeIds[1].vec) === 1 ||
+			Stereocenters.xyzzy(edgeIds[2].vec, edgeIds[1].vec, edgeIds[0].vec) === 1)
 				// all bonds belong to the same half-plane
 				dir = -dir;
 

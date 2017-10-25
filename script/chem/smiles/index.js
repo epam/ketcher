@@ -54,8 +54,6 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	// [RB]: KETCHER-498 (Incorrect smile-string for multiple Sgroup)
 	// TODO the fix is temporary, still need to implement error handling/reporting
 	// BEGIN
-//    if (molecule.sgroups.count() > 0 && !this.ignore_errors)
-//        throw new Error("SMILES doesn't support s-groups");
 	molecule = molecule.clone();
 	molecule.initHalfBonds();
 	molecule.initNeighbors();
@@ -68,9 +66,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			} catch (ex) {
 				throw { message: 'Bad s-group (' + ex.message + ')' };
 			}
-		} else if (!this.ignore_errors) {
-			throw new Error('SMILES data format doesn\'t support s-groups');
 		}
+		// 'SMILES data format doesn\'t support s-groups'
 	}, this);
 	// END
 
@@ -332,8 +329,10 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				writeAtom = false;
 			}
 		} else {
-			if (!firstComponent)
-				this.smiles += (this.writtenComponents == walk.nComponentsInReactants) ? '>>' : '.';
+			if (!firstComponent) {
+				this.smiles += (this.writtenComponents === walk.nComponentsInReactants &&
+					walk.nReactants !== 0) ? '>>' : '.'; // when walk.nReactants === 0 - not reaction
+			}
 			firstComponent = false;
 			this.writtenComponents++;
 		}
@@ -529,35 +528,33 @@ Smiles.prototype.markCisTrans = function (mol) {
 			var aromFailBeg = true;
 			var aromFailEnd = true;
 
-			neiBeg.each(function (nei) {
-				if (nei.bid != bid && mol.bonds.get(nei.bid).type == Struct.Bond.PATTERN.TYPE.SINGLE)
+			neiBeg.forEach(function (nei) {
+				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailBeg = false;
 			}, this);
 
-			neiEnd.each(function (nei) {
-				if (nei.bid != bid && mol.bonds.get(nei.bid).type == Struct.Bond.PATTERN.TYPE.SINGLE)
+			neiEnd.forEach(function (nei) {
+				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailEnd = false;
 			}, this);
 
 			if (aromFailBeg || aromFailEnd)
 				return;
 
-			neiBeg.each(function (nei) {
-				if (nei.bid != bid) {
-					if (mol.bonds.get(nei.bid).begin == bond.begin)
-						this.dbonds[nei.bid].ctbond_beg = bid;
-					else
-						this.dbonds[nei.bid].ctbond_end = bid;
-				}
+			neiBeg.forEach(function (nei) {
+				if (nei.bid === bid) return;
+				if (mol.bonds.get(nei.bid).begin === bond.begin)
+					this.dbonds[nei.bid].ctbond_beg = bid;
+				else
+					this.dbonds[nei.bid].ctbond_end = bid;
 			}, this);
 
-			neiEnd.each(function (nei) {
-				if (nei.bid != bid) {
-					if (mol.bonds.get(nei.bid).begin == bond.end)
-						this.dbonds[nei.bid].ctbond_beg = bid;
-					else
-						this.dbonds[nei.bid].ctbond_end = bid;
-				}
+			neiEnd.forEach(function (nei) {
+				if (nei.bid === bid) return;
+				if (mol.bonds.get(nei.bid).begin === bond.end)
+					this.dbonds[nei.bid].ctbond_beg = bid;
+				else
+					this.dbonds[nei.bid].ctbond_end = bid;
 			}, this);
 		}
 	}, this);

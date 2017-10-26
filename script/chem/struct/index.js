@@ -129,11 +129,13 @@ Struct.prototype.getScaffold = function () {
 };
 
 Struct.prototype.getFragmentIds = function (fid) {
-	var atomSet = Set.empty();
-	this.atoms.each(function (aid, atom) {
+	const atomSet = Set.empty();
+
+	this.atoms.each((aid, atom) => {
 		if (atom.fragment === fid)
 			Set.add(atomSet, aid);
-	}, this);
+	});
+
 	return atomSet;
 };
 

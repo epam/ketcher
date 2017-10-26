@@ -1229,63 +1229,69 @@ function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statem
 }
 
 function fromFlip(restruct, selection, dir) { // eslint-disable-line max-statements
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
-	var action = new Action();
-	var i;
-	var fids = {};
+	const action = new Action();
 
 	if (!selection)
 		selection = structSelection(struct);
 
-	if (selection.atoms) {
-		for (i = 0; i < selection.atoms.length; i++) {
-			var aid = selection.atoms[i];
-			var atom = struct.atoms.get(aid);
-			if (!(atom.fragment in fids))
-				fids[atom.fragment] = [aid];
-			else
-				fids[atom.fragment].push(aid);
-		}
+	if (!selection.atoms)
+		return action.perform(restruct);
 
-		if (Object.keys(fids).find(function (frag) {
-			return !Set.eq(struct.getFragmentIds(frag), Set.fromList(fids[frag]));
-		}))
-			return action; // empty action
+	const fids = selection.atoms.reduce((acc, aid) => {
+		const atom = struct.atoms.get(aid);
 
-		Object.keys(fids).forEach(function (frag) {
-			var fragment = Set.fromList(fids[frag]);
-			// var x1 = 100500, x2 = -100500, y1 = 100500, y2 = -100500;
-			var bbox = struct.getCoordBoundingBox(fragment);
+		if (!acc[atom.fragment])
+			acc[atom.fragment] = [];
 
-			Set.each(fragment, function (aid) {
-				var atom = struct.atoms.get(aid);
-				var d = new Vec2();
+		acc[atom.fragment].push(aid);
+		return acc;
+	}, {});
 
-				/* eslint-disable no-mixed-operators*/
-				if (dir === 'horizontal')
-					d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
-				else // 'vertical'
-					d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
-				/* eslint-enable no-mixed-operators*/
+	const isFragFound = Object.keys(fids).find(frag => {
+		frag = parseInt(frag, 10);
+		return !Set.eq(struct.getFragmentIds(frag), Set.fromList(fids[frag]));
+	});
 
-				action.addOp(new op.AtomMove(aid, d));
-			});
+	if (isFragFound)
+		return action; // empty action
+
+	Object.keys(fids).forEach(frag => {
+		const fragment = Set.fromList(fids[frag]);
+
+		const bbox = struct.getCoordBoundingBox(fragment);
+
+		Set.each(fragment, aid => {
+			const atom = struct.atoms.get(aid);
+			const d = new Vec2();
+
+			/* eslint-disable no-mixed-operators*/
+			if (dir === 'horizontal')
+				d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
+			else // 'vertical'
+				d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
+			/* eslint-enable no-mixed-operators*/
+
+			action.addOp(new op.AtomMove(aid, d));
 		});
+	});
 
-		if (selection.bonds) {
-			for (i = 0; i < selection.bonds.length; i++) {
-				var bid = selection.bonds[i];
-				var bond = struct.bonds.get(bid);
+	if (selection.bonds) {
+		selection.bonds.forEach(bid => {
+			const bond = struct.bonds.get(bid);
 
-				if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE) {
-					if (bond.stereo == Struct.Bond.PATTERN.STEREO.UP) // eslint-disable-line max-depth
-						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.DOWN));
-					else if (bond.stereo == Struct.Bond.PATTERN.STEREO.DOWN)
-						action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.UP));
-				}
+			if (bond.type !== Struct.Bond.PATTERN.TYPE.SINGLE)
+				return;
+
+			if (bond.stereo === Struct.Bond.PATTERN.STEREO.UP) {
+				action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.DOWN));
+				return;
 			}
-		}
+
+			if (bond.stereo === Struct.Bond.PATTERN.STEREO.DOWN)
+				action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.UP));
+		});
 	}
 
 	return action.perform(restruct);

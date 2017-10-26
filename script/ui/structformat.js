@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import molfile from '../chem/molfile';
+import smiles from '../chem/smiles';
 
 export const map = {
 	'mol': {
@@ -94,8 +95,10 @@ export function toString (struct, format, server, serverOpts) {
 					output_format: map[format].mime
 				}, serverOpts)
 			), () => {
+				if (format === 'smiles')
+					return smiles.stringify(struct);
 				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then(res => res.struct));
+			}).then(res => res.struct || res));
 	});
 }
 

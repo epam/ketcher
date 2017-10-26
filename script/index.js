@@ -21,18 +21,24 @@ import queryString from 'query-string';
 import api from './api.js';
 import * as molfile from './chem/molfile';
 import * as smiles from './chem/smiles';
+import * as structformat from './ui/structformat';
 
 import ui from './ui';
 import Render from './render';
 
 function getSmiles() {
 	return smiles.stringify(ketcher.editor.struct(),
-	                        { ignoreErrors: true });
+		{ ignoreErrors: true });
+}
+
+function saveSmiles() {
+	const struct = ketcher.editor.struct();
+	return structformat.toString(struct, 'smiles', ketcher.server);
 }
 
 function getMolfile() {
 	return molfile.stringify(ketcher.editor.struct(),
-	                         { ignoreErrors: true });
+		{ ignoreErrors: true });
 }
 
 function setMolecule(molString) {
@@ -77,8 +83,7 @@ window.onload = function () {
 		'mass-skip-error-on-pseudoatoms': false,
 		'gross-formula-add-rsites': true
 	});
-	ketcher.ui = ui(Object.assign({}, params, buildInfo),
-	                ketcher.server);
+	ketcher.ui = ui(Object.assign({}, params, buildInfo), ketcher.server);
 	ketcher.editor = global._ui_editor;
 	ketcher.server.then(function () {
 		if (params.mol)
@@ -98,9 +103,10 @@ const buildInfo = {
 };
 
 const ketcher = module.exports = Object.assign({
-	getSmiles: getSmiles,
-	getMolfile: getMolfile,
-	setMolecule: setMolecule,
-	addFragment: addFragment,
-	showMolfile: showMolfile
+	getSmiles,
+	saveSmiles,
+	getMolfile,
+	setMolecule,
+	addFragment,
+	showMolfile
 }, buildInfo);

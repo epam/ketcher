@@ -21,7 +21,7 @@ const utils = require('./tool/utils');
 
 const Struct = require('../chem/struct');
 const closest = require('./closest');
-const uniq = require('lodash').uniq;
+const { uniq, difference } = require('lodash');
 
 //
 // Undo/redo actions
@@ -103,17 +103,34 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 	}
 }
 
+function fromSgroupMove(restruct, selectedAtoms, d) {
+	const action = new Action();
+
+	const sgroups = restruct.molecule.sgroups.values()
+		.filter(sg => !sg.data.attached && !sg.data.absolute);
+
+	if (sgroups.length === 0)
+		return action;
+
+	return sgroups.reduce((acc, sg) => {
+		if (difference(sg.atoms, selectedAtoms).length === 0)
+			acc.addOp(new op.SGroupDataMove(sg.id, d));
+
+		return acc;
+	}, action);
+}
+
 function fromMultipleMove(restruct, lists, d) {
 	d = new Vec2(d);
 
 	const action = new Action();
 	const struct = restruct.molecule;
-	const bondlist = [];
 	const loops = Set.empty();
 	const atomsToInvalidate = Set.empty();
 
 	if (lists.atoms) {
 		const atomSet = Set.fromList(lists.atoms);
+		const bondlist = [];
 
 		restruct.bonds.each((bid, bond) => {
 			if (Set.contains(atomSet, bond.b.begin) && Set.contains(atomSet, bond.b.end)) {
@@ -145,6 +162,9 @@ function fromMultipleMove(restruct, lists, d) {
 		}, this);
 
 		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid))));
+
+		if (lists.sgroupData.length === 0)
+			action.mergeWith(fromSgroupMove(restruct, lists.atoms, d));
 	}
 
 	if (lists.rxnArrows)
@@ -1294,15 +1314,16 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 }
 
 function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line max-statements
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
-	var action = new Action();
+	const action = new Action();
+
 	if (!selection)
 		selection = structSelection(struct);
 
 	if (selection.atoms) {
-		selection.atoms.forEach(function (aid) {
-			var atom = struct.atoms.get(aid);
+		selection.atoms.forEach(aid => {
+			const atom = struct.atoms.get(aid);
 			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
 		});
 	}

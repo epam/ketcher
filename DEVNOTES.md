@@ -15,6 +15,19 @@ You could also build only the style with command
 
     npm run style
 
+## Indigo Service
+
+Ketcher uses Indigo Service for server operations.
+You can use `--api-path` parameter to start with it:
+
+    npm start -- --api-path=<server-url>
+For production build:
+
+    npm run build -- --api-path=<server-url>
+
+You can find the instruction for service installation
+[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+
 ## Tests instructions
 
 You can start tests for input/output `.mol`-files and render.

@@ -102,23 +102,6 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 	}
 }
 
-function fromSgroupMove(restruct, selectedAtoms, d) {
-	const action = new Action();
-
-	const sgroups = restruct.molecule.sgroups.values()
-		.filter(sg => !sg.data.attached && !sg.data.absolute);
-
-	if (sgroups.length === 0)
-		return action;
-
-	return sgroups.reduce((acc, sg) => {
-		if (difference(sg.atoms, selectedAtoms).length === 0)
-			acc.addOp(new op.SGroupDataMove(sg.id, d));
-
-		return acc;
-	}, action);
-}
-
 function fromMultipleMove(restruct, lists, d) {
 	d = new Vec2(d);
 
@@ -162,8 +145,12 @@ function fromMultipleMove(restruct, lists, d) {
 
 		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid))));
 
-		if (lists.sgroupData.length === 0)
-			action.mergeWith(fromSgroupMove(restruct, lists.atoms, d));
+		if (lists.sgroupData.length === 0) {
+			const sgroups = getRelSgroupsBySelection(restruct, lists.atoms);
+			sgroups.forEach(sg => {
+				action.addOp(new op.SGroupDataMove(sg.id, d));
+			});
+		}
 	}
 
 	if (lists.rxnArrows)
@@ -1353,6 +1340,21 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 
 			action.addOp(new op.AtomMove(aid, d));
 		});
+
+		if (!selection.sgroupData) {
+			const sgroups = getRelSgroupsBySelection(restruct, Set.list(fragment));
+
+			sgroups.forEach(sg => {
+				const d = new Vec2();
+
+				if (dir === 'horizontal')
+					d.x = bbox.min.x + bbox.max.x - 2 * sg.pp.x;
+				else // 'vertical'
+					d.y = bbox.min.y + bbox.max.y - 2 * sg.pp.y;
+
+				action.addOp(new op.SGroupDataMove(sg.id, d));
+			});
+		}
 	});
 
 	if (selection.bonds) {
@@ -1375,7 +1377,7 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 	return action.perform(restruct);
 }
 
-function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line max-statements
+function fromRotate(restruct, selection, center, angle) { // eslint-disable-line max-statements
 	const struct = restruct.molecule;
 
 	const action = new Action();
@@ -1386,35 +1388,43 @@ function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line ma
 	if (selection.atoms) {
 		selection.atoms.forEach(aid => {
 			const atom = struct.atoms.get(aid);
-			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
+			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, center, angle)));
 		});
+
+		if (!selection.sgroupData) {
+			const sgroups = getRelSgroupsBySelection(restruct, selection.atoms);
+
+			sgroups.forEach(sg => {
+				action.addOp(new op.SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)));
+			});
+		}
 	}
 
 	if (selection.rxnArrows) {
 		selection.rxnArrows.forEach(function (aid) {
 			var arrow = struct.rxnArrows.get(aid);
-			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, pos, angle)));
+			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle)));
 		});
 	}
 
 	if (selection.rxnPluses) {
 		selection.rxnPluses.forEach(function (pid) {
 			var plus = struct.rxnPluses.get(pid);
-			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, pos, angle)));
+			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
 		});
 	}
 
 	if (selection.sgroupData) {
 		selection.sgroupData.forEach(function (did) {
 			var data = struct.sgroups.get(did);
-			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, pos, angle)));
+			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, center, angle)));
 		});
 	}
 
 	if (selection.chiralFlags) {
 		selection.chiralFlags.forEach(function (fid) {
 			var flag = restruct.chiralFlags.get(fid);
-			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, pos, angle)));
+			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, center, angle)));
 		});
 	}
 
@@ -1453,10 +1463,10 @@ function getFragmentAtoms(struct, frid) {
 	return atoms;
 }
 
-function rotateDelta(v, pos, angle) {
-	var v1 = v.sub(pos);
+function rotateDelta(v, center, angle) {
+	var v1 = v.sub(center);
 	v1 = v1.rotate(angle);
-	v1.add_(pos); // eslint-disable-line no-underscore-dangle
+	v1.add_(center); // eslint-disable-line no-underscore-dangle
 	return v1.sub(v);
 }
 
@@ -1595,6 +1605,13 @@ function getAtomsBondIds(struct, atoms) {
 
 			return acc;
 		}, []);
+}
+
+function getRelSgroupsBySelection(restruct, selectedAtoms) {
+	selectedAtoms = selectedAtoms.map(aid => parseInt(aid, 10));
+
+	return restruct.molecule.sgroups.values()
+		.filter(sg => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }
 
 module.exports = Object.assign(Action, {

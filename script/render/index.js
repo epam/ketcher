@@ -29,9 +29,14 @@ DEBUG.logMethod = function () { };
 // DEBUG.logMethod = function (method) {addionalAtoms("METHOD: " + method);
 
 function Render(clientArea, opt) {
+	let renderWidth = clientArea.clientWidth - 10;
+	let renderHeight = clientArea.clientHeight - 10;
+	renderWidth = renderWidth > 0 ? renderWidth : 0;
+	renderHeight = renderHeight > 0 ? renderHeight : 0;
+
 	this.userOpts = opt;
 	this.clientArea = clientArea;
-	this.paper = new Raphael(clientArea, 0, 0);
+	this.paper = new Raphael(clientArea, renderWidth, renderHeight);
 	this.sz = Vec2.ZERO;
 	this.ctab = new ReStruct(new Struct(), this);
 	this.options = defaultOptions(this.userOpts);

@@ -128,21 +128,22 @@ SelectTool.prototype.mousemove = function (event) {
 		}
 
 		this.editor.update(this.dragCtx.action, true);
-	return true;
-	} if (this.lassoHelper.running()) {
+		return true;
+	}
+
+	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
 		this.editor.selection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.selection())
-	);
-
+			selMerge(sel, this.editor.selection())
+		);
 		return true;
-			}
+	}
 
-	const maps =(this.lassoHelper.fragment || event.ctrlKey) ?
-				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
-				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+	const maps = (this.lassoHelper.fragment || event.ctrlKey) ?
+		['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
+		['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
-		this.editor.hover(this.editor.findItem(event, maps));
+	this.editor.hover(this.editor.findItem(event, maps));
 
 	return true;
 };

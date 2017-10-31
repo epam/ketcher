@@ -148,7 +148,7 @@ Editor.prototype.selection = function (ci) {
 				if (ci.hasOwnProperty(key) && ci[key].length > 0) // TODO: deep merge
 					res[key] = ci[key].slice();
 			}
-			if (Object.keys(res) !== 0)
+			if (Object.keys(res).length !== 0)
 				this._selection = res; // eslint-disable-line
 		}
 
@@ -171,12 +171,21 @@ Editor.prototype.hover = function (ci) {
 };
 
 Editor.prototype.highlight = function (ci, visible) {
-	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags',
+	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'merge',
 		'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
 		return false;
-
 	var rnd = this.render;
-	var item = rnd.ctab[ci.map].get(ci.id);
+	var item = null;
+	if (ci.map === 'merge') {
+		Object.keys(ci.items).forEach(mp => {
+			ci.items[mp].forEach(dstId => {
+				item = rnd.ctab[mp].get(dstId);
+				item.setHighlight(visible, rnd);
+			});
+		});
+		return true;
+	}
+	item = rnd.ctab[ci.map].get(ci.id);
 	if (!item)
 		return true; // TODO: fix, attempt to highlight a deleted item
 	if ((ci.map === 'sgroups' && item.item.type === 'DAT') || ci.map === 'sgroupData') {
@@ -266,9 +275,12 @@ function domEventSetup(editor, clientArea) {
 Editor.prototype.findItem = function (event, maps, skip) {
 	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
-	var options = this.render.options;
 
-	return closest.item(this.render.ctab, pos, maps, skip, options.scale);
+	return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
+};
+
+Editor.prototype.findMerge = function (srcItems, maps) {
+	return closest.merge(this.render.ctab, srcItems, maps, this.render.options);
 };
 
 Editor.prototype.explicitSelected = function () {

@@ -606,11 +606,12 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 	return action;
 }
 
-function fromAtomMerge(restruct, srcId, dstId) {
+function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAtomDel) {
+	if (srcId === dstId) return new Action();
 	var fragAction = new Action();
 	var srcFrid = atomGetAttr(restruct, srcId, 'fragment');
 	var dstFrid = atomGetAttr(restruct, dstId, 'fragment');
-	if (srcFrid != dstFrid)
+	if (srcFrid !== dstFrid)
 		mergeFragments(fragAction, restruct, srcFrid, dstFrid);
 
 	var action = new Action();
@@ -619,33 +620,74 @@ function fromAtomMerge(restruct, srcId, dstId) {
 		var bond = restruct.molecule.bonds.get(nei.bid);
 		var begin, end;
 
-		if (bond.begin == nei.aid) {
+		if (bond.begin === nei.aid) {
 			begin = nei.aid;
 			end = dstId;
 		} else {
 			begin = dstId;
 			end = nei.aid;
 		}
-		if (dstId != bond.begin && dstId != bond.end && restruct.molecule.findBondId(begin, end) == -1) // TODO: improve this {
+		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end) === -1) // TODO: improve this {
 			action.addOp(new op.BondAdd(begin, end, bond));
-		action.addOp(new op.BondDelete(nei.bid));
+
+		if (!skipBondsDel.includes('' + nei.bid))
+			action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
-
-	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
+	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
 		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 
 	var sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
-	action.addOp(new op.AtomDelete(srcId));
+	if (!skipAtomDel) action.addOp(new op.AtomDelete(srcId));
 
 	if (sgChanged)
 		removeSgroupIfNeeded(action, restruct, [srcId]);
 
 	return action.perform(restruct).mergeWith(fragAction);
+}
+
+function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
+	let action = new Action();
+	const atomsToDelete = [];
+	const srcBonds = Object.keys(mergeMap);
+
+	Object.entries(mergeMap).forEach(([srcId, dstId]) => {
+		const bond = restruct.molecule.bonds.get(+srcId);
+		const bondCI = restruct.molecule.bonds.get(+dstId);
+
+		// copy bond src attr and delete
+		let bondAttrAction = new Action();
+		const params = utils.mergeBondsParams(restruct, bond, bondCI);
+		if (!params) return;
+
+		const attrs = Struct.Bond.getAttrHash(bond);
+		for (let key in attrs) {
+			if (attrs.hasOwnProperty(key))
+				bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
+		}
+		bondAttrAction.addOp(new op.BondDelete(+srcId));
+		bondAttrAction = bondAttrAction.perform(restruct);
+
+		// old src atoms
+		if (!atomsToDelete.includes(bond.begin)) atomsToDelete.push(bond.begin);
+		if (!atomsToDelete.includes(bond.end)) atomsToDelete.push(bond.end);
+
+		action = fromAtomMerge(restruct, bond.begin, !params.cross ? bondCI.begin : bondCI.end, srcBonds, true)
+			.mergeWith(fromAtomMerge(restruct, bond.end, !params.cross ? bondCI.end : bondCI.begin, srcBonds, true))
+			.mergeWith(bondAttrAction)
+			.mergeWith(action);
+	});
+
+	// delete atoms
+	let delAtomsAction = new Action();
+	atomsToDelete.forEach(aid => delAtomsAction.addOp(new op.AtomDelete(aid)));
+	delAtomsAction = delAtomsAction.perform(restruct);
+
+	return delAtomsAction.mergeWith(action);
 }
 
 function toBondFlipping(struct, id) {
@@ -1548,6 +1590,7 @@ module.exports = Object.assign(Action, {
 	fromBondDeletion: fromBondDeletion,
 	fromFragmentDeletion: fromFragmentDeletion,
 	fromAtomMerge: fromAtomMerge,
+	fromBondsMerge: fromBondsMerge,
 	fromBondFlipping: fromBondFlipping,
 	fromTemplateOnCanvas: fromTemplateOnCanvas,
 	fromTemplateOnAtom: fromTemplateOnAtom,

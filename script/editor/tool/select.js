@@ -20,6 +20,7 @@ const Struct = require('../../chem/struct');
 const LassoHelper = require('./helper/lasso');
 const SGroup = require('./sgroup');
 const Atom = require('./atom');
+const utils = require('./utils');
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -55,7 +56,6 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
-
 		return true;
 	}
 
@@ -96,6 +96,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 
 SelectTool.prototype.mousemove = function (event) {
 	const render = this.editor.render;
+	const restruct = render.ctab;
 
 	if (this.dragCtx && this.dragCtx.stopTapping)
 		this.dragCtx.stopTapping();
@@ -103,41 +104,45 @@ SelectTool.prototype.mousemove = function (event) {
 	if (this.dragCtx && this.dragCtx.item) {
 		// moving selected objects
 		if (this.dragCtx.action) {
-			this.dragCtx.action.perform(render.ctab);
+			this.dragCtx.action.perform(restruct);
 			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
-
+		const expSel = this.editor.explicitSelected();
 		this.dragCtx.action = Action.fromMultipleMove(
-			render.ctab,
-			this.editor.explicitSelected(),
-			render.page2obj(event).sub(this.dragCtx.xy0)
-		);
+			restruct,
+			expSel,
+			render.page2obj(event).sub(this.dragCtx.xy0));
 
 		// finding & highlighting object to stick to
-		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
-			// TODO add bond-to-bond fusing
-			const ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			this.editor.hover((ci && ci.map === this.dragCtx.item.map) ? ci : null);
+		this.dragCtx.mergeItems =
+			closestToMerge(restruct, this.editor.findMerge(expSel, ['atoms', 'bonds']));
+
+		if (this.dragCtx.mergeItems) {
+			const hoverMerge = {
+				atoms: Object.values(this.dragCtx.mergeItems.atoms),
+				bonds: Object.values(this.dragCtx.mergeItems.bonds)
+			};
+			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
+		} else {
+			this.editor.hover(null);
 		}
 
 		this.editor.update(this.dragCtx.action, true);
-		return true;
-	}
-
-	if (this.lassoHelper.running()) {
+	return true;
+	} if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
-		this.editor.selection(
-			!event.shiftKey ? sel : selMerge(sel, this.editor.selection())
-		);
+		this.editor.selection(!event.shiftKey ? sel :
+		                         selMerge(sel, this.editor.selection())
+	);
 
 		return true;
-	}
+			}
 
-	const maps = (this.lassoHelper.fragment || event.ctrlKey) ?
-		['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
-		['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+	const maps =(this.lassoHelper.fragment || event.ctrlKey) ?
+				['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
+				['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
-	this.editor.hover(this.editor.findItem(event, maps));
+		this.editor.hover(this.editor.findItem(event, maps));
 
 	return true;
 };
@@ -147,25 +152,32 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.dragCtx.stopTapping();
 
 	if (this.dragCtx && this.dragCtx.item) {
-		if (['atoms'/* , 'bonds'*/].indexOf(this.dragCtx.item.map) >= 0) {
-			// TODO add bond-to-bond fusing
-			var ci = this.editor.findItem(event, [this.dragCtx.item.map], this.dragCtx.item);
-			if (ci && ci.map === this.dragCtx.item.map) {
-				var restruct = this.editor.render.ctab;
-				this.editor.hover(null);
-				this.editor.selection(null);
+		const restruct = this.editor.render.ctab;
+
+		if (this.dragCtx.mergeItems) {
+			this.editor.selection(null);
+
+			// merge single atoms
+			Object.entries(this.dragCtx.mergeItems.atoms).forEach(pair => {
 				this.dragCtx.action = this.dragCtx.action ?
-					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id).mergeWith(this.dragCtx.action) :
-					Action.fromAtomMerge(restruct, this.dragCtx.item.id, ci.id);
-			}
+					Action.fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
+					Action.fromAtomMerge(restruct, +pair[0], +pair[1]);
+			});
+
+			// merge bonds
+			this.dragCtx.action = this.dragCtx.action ?
+				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
+				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 		}
+		this.editor.hover(null);
+
 		if (this.dragCtx.action)
 			this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		var sel = this.lassoHelper.end();
+		const sel = this.lassoHelper.end();
 		this.editor.selection(!event.shiftKey ? sel :
-		                         selMerge(sel, this.editor.selection()));
+			selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
 		this.editor.selection(null);
 	}
@@ -218,6 +230,28 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	this.editor.hover(null);
 };
 
+function closestToMerge(restruct, closestMap) {
+	const struct = restruct.molecule;
+	const mergeMap = Object.assign({}, closestMap);
+
+	Object.entries(closestMap.bonds).forEach(([srcId, dstId]) => {
+		const bond = struct.bonds.get(srcId);
+		const bondCI = struct.bonds.get(dstId);
+
+		if (utils.mergeBondsParams(restruct, bond, bondCI)) {
+			delete mergeMap.atoms[bond.begin];
+			delete mergeMap.atoms[bond.end];
+		} else {
+			delete mergeMap.bonds[srcId];
+		}
+	});
+
+	if (Object.keys(mergeMap.atoms).length === 0 &&
+		Object.keys(mergeMap.bonds).length === 0) return null;
+
+	return mergeMap;
+}
+
 function closestToSel(ci) {
 	var res = {};
 	res[ci.map] = [ci.id];
@@ -256,7 +290,7 @@ function isSelected(render, selection, item) {
 	if (item.map === 'frags' || item.map === 'rgroups') {
 		var atoms = item.map === 'frags' ?
 			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
-		    ctab.rgroups.get(item.id).getAtoms(render);
+			ctab.rgroups.get(item.id).getAtoms(render);
 
 		return !!selection['atoms'] &&
 			Set.subset(Set.fromList(atoms), Set.fromList(selection['atoms']));

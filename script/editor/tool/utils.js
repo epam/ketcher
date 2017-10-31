@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 var Vec2 = require('../../util/vec2');
+var inRange = require('lodash').inRange;
 
 var FRAC = Math.PI / 12; // '15º'
 
@@ -43,10 +44,34 @@ function degrees(angle) {
 	return Math.round(angle / Math.PI * 180);
 }
 
+const BONDS_MERGE_ANGLE = 10; // 'º'
+const BONDS_MERGE_SCALE = 0.2;
+
+function mergeBondsParams(restruct, bond1, bond2) {
+	const atoms = restruct.molecule.atoms;
+
+	const begin1 = atoms.get(bond1.begin);
+	const begin2 = atoms.get(bond2.begin);
+	const end1 = atoms.get(bond1.end);
+	const end2 = atoms.get(bond2.end);
+
+	const angle = degrees(calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp));
+	const mergeAngle = Math.abs(angle % 180);
+
+	const scale = Vec2.dist(begin1.pp, end1.pp) / Vec2.dist(begin2.pp, end2.pp);
+
+	if (inRange(mergeAngle, BONDS_MERGE_ANGLE, 180 - BONDS_MERGE_ANGLE) ||
+		!inRange(scale, 1 - BONDS_MERGE_SCALE, 1 + BONDS_MERGE_SCALE))
+		return null;
+
+	return { angle: mergeAngle, scale, cross: Math.abs(angle) > 90 };
+}
+
 module.exports = {
 	calcAngle: calcAngle,
 	fracAngle: fracAngle,
 	calcNewAtomPos: calcNewAtomPos,
 	degrees: degrees,
-	setFracAngle: setFracAngle
+	setFracAngle: setFracAngle,
+	mergeBondsParams: mergeBondsParams
 };

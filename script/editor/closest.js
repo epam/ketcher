@@ -46,10 +46,13 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 	var closestBond = null;
 	var closestBondCenter = null;
 	var maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+	var skipId = skip && skip.map === 'bonds' ? skip.id : null;
+
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 	var minCDist = minDist;
 	restruct.bonds.each(function (bid, bond) {
+		if (bid === skipId) return;
 		var p1 = restruct.atoms.get(bond.b.begin).a.pp,
 			p2 = restruct.atoms.get(bond.b.end).a.pp;
 		var mid = Vec2.lc2(p1, 0.5, p2, 0.5);
@@ -60,6 +63,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 		}
 	});
 	restruct.bonds.each(function (bid, bond) {
+		if (bid === skipId) return;
 		var hb = restruct.molecule.halfBonds.get(bond.b.hb1);
 		var d = hb.dir;
 		var n = hb.norm;
@@ -219,7 +223,7 @@ function findClosestSGroup(restruct, pos) {
 	return null;
 }
 
-var findMaps = {
+const findMaps = {
 	atoms: findClosestAtom,
 	bonds: findClosestBond,
 	chiralFlags: findClosestChiralFlag,
@@ -247,7 +251,34 @@ function findClosestItem(restruct, pos, maps, skip, scale) { // eslint-disable-l
 	}, null);
 }
 
+function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
+	const pos = { atoms: {}, bonds: {} }; // id->pos map
+	const struct = restruct.molecule;
+
+	selected.atoms.forEach(aid => pos.atoms[aid] = struct.atoms.get(aid).pp);
+	selected.bonds.forEach(bid => {
+		const bond = struct.bonds.get(bid);
+		pos.bonds[bid] = Vec2.lc2(
+			pos.atoms[bond.begin], 0.5,
+			pos.atoms[bond.end], 0.5);
+	});
+
+	const result = {};
+	maps.forEach(mp => {
+		result[mp] = Object.keys(pos[mp]).reduce((res, srcId) => {
+			const skip = { map: mp, id: +srcId };
+			const item = findMaps[mp](restruct, pos[mp][srcId], skip, null, scale);
+
+			if (item) res[srcId] = item.id;
+			return res;
+		}, {});
+	});
+
+	return result; // { atoms: { srcID: dstID, ... }, bonds: { srcID: dstID, ... }, ... }
+}
+
 module.exports = {
 	atom: findClosestAtom, // used in Actions
-	item: findClosestItem
+	item: findClosestItem,
+	merge: findCloseMerge
 };

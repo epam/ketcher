@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
-var op = require('./op');
-var utils = require('./tool/utils');
+const Set = require('../util/set');
+const Vec2 = require('../util/vec2');
+const op = require('./op');
+const utils = require('./tool/utils');
 
-var Struct = require('../chem/struct');
-var closest = require('./closest');
-var uniq = require('lodash').uniq;
+const Struct = require('../chem/struct');
+const closest = require('./closest');
+const { uniq, difference } = require('lodash');
 
 //
 // Undo/redo actions
@@ -33,6 +33,7 @@ function Action() {
 Action.prototype.addOp = function (operation, restruct) {
 	if (!restruct || !operation.isDummy(restruct))
 		this.operations.push(operation);
+
 	return operation;
 };
 
@@ -43,7 +44,7 @@ Action.prototype.mergeWith = function (action) {
 
 // Perform action and return inverted one
 Action.prototype.perform = function (restruct) {
-	var action = new Action();
+	const action = new Action();
 
 	this.operations.forEach(function (operation) {
 		action.addOp(operation.perform(restruct));
@@ -92,7 +93,7 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 		var sG = restruct.sgroups.get(sid).item;
 		var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
 
-		if (sgAtoms.length == sgCounts[sid]) {
+		if (sgAtoms.length === sgCounts[sid]) {
 			// delete whole s-group
 			var sgroup = struct.sgroups.get(sid);
 			action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
@@ -102,66 +103,81 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 	}
 }
 
-function fromMultipleMove(restruct, lists, d) { // eslint-disable-line max-statements
+function fromSgroupMove(restruct, selectedAtoms, d) {
+	const action = new Action();
+
+	const sgroups = restruct.molecule.sgroups.values()
+		.filter(sg => !sg.data.attached && !sg.data.absolute);
+
+	if (sgroups.length === 0)
+		return action;
+
+	return sgroups.reduce((acc, sg) => {
+		if (difference(sg.atoms, selectedAtoms).length === 0)
+			acc.addOp(new op.SGroupDataMove(sg.id, d));
+
+		return acc;
+	}, action);
+}
+
+function fromMultipleMove(restruct, lists, d) {
 	d = new Vec2(d);
 
-	var action = new Action();
-	var i;
-
-	var struct = restruct.molecule;
-	var bondlist = [];
-	var loops = Set.empty();
-	var atomsToInvalidate = Set.empty();
+	const action = new Action();
+	const struct = restruct.molecule;
+	const loops = Set.empty();
+	const atomsToInvalidate = Set.empty();
 
 	if (lists.atoms) {
-		var atomSet = Set.fromList(lists.atoms);
-		restruct.bonds.each(function (bid, bond) {
+		const atomSet = Set.fromList(lists.atoms);
+		const bondlist = [];
+
+		restruct.bonds.each((bid, bond) => {
 			if (Set.contains(atomSet, bond.b.begin) && Set.contains(atomSet, bond.b.end)) {
 				bondlist.push(bid);
 				// add all adjacent loops
 				// those that are not completely inside the structure will get redrawn anyway
-				['hb1', 'hb2'].forEach(function (hb) {
-					var loop = struct.halfBonds.get(bond.b[hb]).loop;
+				['hb1', 'hb2'].forEach(hb => {
+					const loop = struct.halfBonds.get(bond.b[hb]).loop;
 					if (loop >= 0)
 						Set.add(loops, loop);
-				}, this);
-			} else if (Set.contains(atomSet, bond.b.begin)) {
-				Set.add(atomsToInvalidate, bond.b.begin);
-			} else if (Set.contains(atomSet, bond.b.end)) {
-				Set.add(atomsToInvalidate, bond.b.end);
+				});
+				return;
 			}
+
+			if (Set.contains(atomSet, bond.b.begin)) {
+				Set.add(atomsToInvalidate, bond.b.begin);
+				return;
+			}
+
+			if (Set.contains(atomSet, bond.b.end))
+				Set.add(atomsToInvalidate, bond.b.end);
 		}, this);
-		for (i = 0; i < bondlist.length; ++i)
-			action.addOp(new op.BondMove(bondlist[i], d));
-		Set.each(loops, function (loopId) {
+
+		bondlist.forEach(bond => action.addOp(new op.BondMove(bond, d)));
+
+		Set.each(loops, loopId => {
 			if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) // hack
 				action.addOp(new op.LoopMove(loopId, d));
 		}, this);
-		for (i = 0; i < lists.atoms.length; ++i) {
-			var aid = lists.atoms[i];
-			action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid)));
-		}
+
+		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid))));
+
+		if (lists.sgroupData.length === 0)
+			action.mergeWith(fromSgroupMove(restruct, lists.atoms, d));
 	}
 
-	if (lists.rxnArrows) {
-		for (i = 0; i < lists.rxnArrows.length; ++i)
-			action.addOp(new op.RxnArrowMove(lists.rxnArrows[i], d, true));
-	}
+	if (lists.rxnArrows)
+		lists.rxnArrows.forEach(rxnArrow => action.addOp(new op.RxnArrowMove(rxnArrow, d, true)));
 
-	if (lists.rxnPluses) {
-		for (i = 0; i < lists.rxnPluses.length; ++i)
-			action.addOp(new op.RxnPlusMove(lists.rxnPluses[i], d, true));
-	}
+	if (lists.rxnPluses)
+		lists.rxnPluses.forEach(rxnPulse => action.addOp(new op.RxnPlusMove(rxnPulse, d, true)));
 
-	if (lists.sgroupData) {
-		for (i = 0; i < lists.sgroupData.length; ++i)
-			action.addOp(new op.SGroupDataMove(lists.sgroupData[i], d));
-	}
+	if (lists.sgroupData)
+		lists.sgroupData.forEach(sgData => action.addOp(new op.SGroupDataMove(sgData, d)));
 
-	if (lists.chiralFlags) {
-		for (i = 0; i < lists.chiralFlags.length; ++i)
-			action.addOp(new op.ChiralFlagMove(d));
-	}
+	if (lists.chiralFlags)
+		lists.chiralFlags.forEach(() => action.addOp(new op.ChiralFlagMove(d)));
 
 	return action.perform(restruct);
 }
@@ -590,11 +606,12 @@ function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-
 	return action;
 }
 
-function fromAtomMerge(restruct, srcId, dstId) {
+function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAtomDel) {
+	if (srcId === dstId) return new Action();
 	var fragAction = new Action();
 	var srcFrid = atomGetAttr(restruct, srcId, 'fragment');
 	var dstFrid = atomGetAttr(restruct, dstId, 'fragment');
-	if (srcFrid != dstFrid)
+	if (srcFrid !== dstFrid)
 		mergeFragments(fragAction, restruct, srcFrid, dstFrid);
 
 	var action = new Action();
@@ -603,33 +620,74 @@ function fromAtomMerge(restruct, srcId, dstId) {
 		var bond = restruct.molecule.bonds.get(nei.bid);
 		var begin, end;
 
-		if (bond.begin == nei.aid) {
+		if (bond.begin === nei.aid) {
 			begin = nei.aid;
 			end = dstId;
 		} else {
 			begin = dstId;
 			end = nei.aid;
 		}
-		if (dstId != bond.begin && dstId != bond.end && restruct.molecule.findBondId(begin, end) == -1) // TODO: improve this {
+		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end) === -1) // TODO: improve this {
 			action.addOp(new op.BondAdd(begin, end, bond));
-		action.addOp(new op.BondDelete(nei.bid));
+
+		if (!skipBondsDel.includes('' + nei.bid))
+			action.addOp(new op.BondDelete(nei.bid));
 	}, this);
 
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
-
-	if (atomGetDegree(restruct, srcId) == 1 && attrs['label'] === '*')
+	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
 	for (var key in attrs)
 		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 
 	var sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
-	action.addOp(new op.AtomDelete(srcId));
+	if (!skipAtomDel) action.addOp(new op.AtomDelete(srcId));
 
 	if (sgChanged)
 		removeSgroupIfNeeded(action, restruct, [srcId]);
 
 	return action.perform(restruct).mergeWith(fragAction);
+}
+
+function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
+	let action = new Action();
+	const atomsToDelete = [];
+	const srcBonds = Object.keys(mergeMap);
+
+	Object.entries(mergeMap).forEach(([srcId, dstId]) => {
+		const bond = restruct.molecule.bonds.get(+srcId);
+		const bondCI = restruct.molecule.bonds.get(+dstId);
+
+		// copy bond src attr and delete
+		let bondAttrAction = new Action();
+		const params = utils.mergeBondsParams(restruct, bond, bondCI);
+		if (!params) return;
+
+		const attrs = Struct.Bond.getAttrHash(bond);
+		for (let key in attrs) {
+			if (attrs.hasOwnProperty(key))
+				bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
+		}
+		bondAttrAction.addOp(new op.BondDelete(+srcId));
+		bondAttrAction = bondAttrAction.perform(restruct);
+
+		// old src atoms
+		if (!atomsToDelete.includes(bond.begin)) atomsToDelete.push(bond.begin);
+		if (!atomsToDelete.includes(bond.end)) atomsToDelete.push(bond.end);
+
+		action = fromAtomMerge(restruct, bond.begin, !params.cross ? bondCI.begin : bondCI.end, srcBonds, true)
+			.mergeWith(fromAtomMerge(restruct, bond.end, !params.cross ? bondCI.end : bondCI.begin, srcBonds, true))
+			.mergeWith(bondAttrAction)
+			.mergeWith(action);
+	});
+
+	// delete atoms
+	let delAtomsAction = new Action();
+	atomsToDelete.forEach(aid => delAtomsAction.addOp(new op.AtomDelete(aid)));
+	delAtomsAction = delAtomsAction.perform(restruct);
+
+	return delAtomsAction.mergeWith(action);
 }
 
 function toBondFlipping(struct, id) {
@@ -1298,15 +1356,16 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 }
 
 function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line max-statements
-	var struct = restruct.molecule;
+	const struct = restruct.molecule;
 
-	var action = new Action();
+	const action = new Action();
+
 	if (!selection)
 		selection = structSelection(struct);
 
 	if (selection.atoms) {
-		selection.atoms.forEach(function (aid) {
-			var atom = struct.atoms.get(aid);
+		selection.atoms.forEach(aid => {
+			const atom = struct.atoms.get(aid);
 			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
 		});
 	}
@@ -1531,6 +1590,7 @@ module.exports = Object.assign(Action, {
 	fromBondDeletion: fromBondDeletion,
 	fromFragmentDeletion: fromFragmentDeletion,
 	fromAtomMerge: fromAtomMerge,
+	fromBondsMerge: fromBondsMerge,
 	fromBondFlipping: fromBondFlipping,
 	fromTemplateOnCanvas: fromTemplateOnCanvas,
 	fromTemplateOnAtom: fromTemplateOnAtom,

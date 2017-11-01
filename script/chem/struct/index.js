@@ -552,31 +552,28 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.aromatic = true;
 	this.convex = convex || false;
 
-	hbs.forEach(function (hb) {
-		var bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
-		if (bond.type != Bond.PATTERN.TYPE.AROMATIC)
+	hbs.forEach(hb => {
+		const bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
+		if (bond.type !== Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
-		if (bond.type == Bond.PATTERN.TYPE.DOUBLE)
+		if (bond.type === Bond.PATTERN.TYPE.DOUBLE)
 			this.dblBonds++;
-	}, this);
+	});
 }
 
-Struct.prototype.findConnectedComponent = function (aid) {
-	var map = {};
-	var list = [aid];
-	var ids = Set.empty();
+Struct.prototype.findConnectedComponent = function (firstaid) {
+	const map = {};
+	const list = [firstaid];
+	const ids = Set.empty();
 	while (list.length > 0) {
-		(function () {
-			var aid = list.pop();
-			map[aid] = 1;
-			Set.add(ids, aid);
-			var atom = this.atoms.get(aid);
-			for (var i = 0; i < atom.neighbors.length; ++i) {
-				var neiId = this.halfBonds.get(atom.neighbors[i]).end;
-				if (!Set.contains(ids, neiId))
-					list.push(neiId);
-			}
-		}).apply(this);
+		const aid = list.pop();
+		map[aid] = 1;
+		Set.add(ids, aid);
+		const atom = this.atoms.get(aid);
+		atom.neighbors.forEach(nei => {
+			const neiId = this.halfBonds.get(nei).end;
+			if (!Set.contains(ids, neiId)) list.push(neiId);
+		});
 	}
 	return ids;
 };
@@ -621,13 +618,12 @@ Struct.prototype.markFragmentByAtomId = function (aid) {
 };
 
 Struct.prototype.markFragments = function () {
-	var components = this.findConnectedComponents();
-	for (var i = 0; i < components.length; ++i)
-		this.markFragment(components[i]);
+	const components = this.findConnectedComponents();
+	components.forEach(comp => this.markFragment(comp));
 };
 
 Struct.prototype.scale = function (scale) {
-	if (scale != 1) {
+	if (scale !== 1) {
 		this.atoms.each(function (aid, atom) {
 			atom.pp = atom.pp.scaled(scale);
 		}, this);
@@ -679,67 +675,64 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 // partition a cycle into simple cycles
 // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
 Struct.prototype.partitionLoop = function (loop) { // eslint-disable-line max-statements
-	var subloops = [];
-	var continueFlag = true;
-	search: while (continueFlag) { // eslint-disable-line no-restricted-syntax
-		var atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-		for (var l = 0; l < loop.length; ++l) {
-			var hbid = loop[l];
-			var aid1 = this.halfBonds.get(hbid).begin;
-			var aid2 = this.halfBonds.get(hbid).end;
+	const subloops = [];
+	let continueFlag = true;
+	while (continueFlag) {
+		const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+		continueFlag = false;
+
+		for (let l = 0; l < loop.length; ++l) {
+			const hbid = loop[l];
+			const aid1 = this.halfBonds.get(hbid).begin;
+			const aid2 = this.halfBonds.get(hbid).end;
 			if (aid2 in atomToHalfBond) { // subloop found
-				var s = atomToHalfBond[aid2]; // where the subloop begins
-				var subloop = loop.slice(s, l + 1);
+				const s = atomToHalfBond[aid2]; // where the subloop begins
+				const subloop = loop.slice(s, l + 1);
 				subloops.push(subloop);
 				if (l < loop.length) // remove half-bonds corresponding to the subloop
 					loop.splice(s, l - s + 1);
-				continue search; // eslint-disable-line no-continue
+				continueFlag = true;
+				break;
 			}
 			atomToHalfBond[aid1] = l;
 		}
-		continueFlag = false; // we're done, no more subloops found
-		subloops.push(loop);
+		if (!continueFlag) subloops.push(loop); // we're done, no more subloops found
 	}
 	return subloops;
 };
 
 Struct.prototype.halfBondAngle = function (hbid1, hbid2) {
-	var hba = this.halfBonds.get(hbid1);
-	var hbb = this.halfBonds.get(hbid2);
+	const hba = this.halfBonds.get(hbid1);
+	const hbb = this.halfBonds.get(hbid2);
 	return Math.atan2(
-	Vec2.cross(hba.dir, hbb.dir),
-	Vec2.dot(hba.dir, hbb.dir));
+		Vec2.cross(hba.dir, hbb.dir),
+		Vec2.dot(hba.dir, hbb.dir)
+	);
 };
 
 Struct.prototype.loopIsConvex = function (loop) {
-	for (var k = 0; k < loop.length; ++k) {
-		var angle = this.halfBondAngle(loop[k], loop[(k + 1) % loop.length]);
-		if (angle > 0)
-			return false;
-	}
-	return true;
+	return loop.every((item, k, loopArr) => {
+		const angle = this.halfBondAngle(item, loopArr[(k + 1) % loopArr.length]);
+		return angle <= 0;
+	});
 };
 
 // check whether a loop is on the inner or outer side of the polygon
 //  by measuring the total angle between bonds
 Struct.prototype.loopIsInner = function (loop) {
-	var totalAngle = 2 * Math.PI;
-	for (var k = 0; k < loop.length; ++k) {
-		var hbida = loop[k];
-		var hbidb = loop[(k + 1) % loop.length];
-		var hbb = this.halfBonds.get(hbidb);
-		var angle = this.halfBondAngle(hbida, hbidb);
-		if (hbb.contra == loop[k]) // back and forth along the same edge
-			totalAngle += Math.PI;
-		else
-			totalAngle += angle;
-	}
+	let totalAngle = 2 * Math.PI;
+	loop.forEach((hbida, k, loopArr) => {
+		const hbidb = loopArr[(k + 1) % loopArr.length];
+		const hbb = this.halfBonds.get(hbidb);
+		const angle = this.halfBondAngle(hbida, hbidb);
+		totalAngle += (hbb.contra === hbida) ? Math.PI : angle; // back and forth along the same edge
+	});
 	return Math.abs(totalAngle) < Math.PI;
 };
 
 Struct.prototype.findLoops = function () {
-	var newLoops = [];
-	var bondsToMark = Set.empty();
+	const newLoops = [];
+	const bondsToMark = Set.empty();
 
 	/*
 	 	Starting from each half-bond not known to be in a loop yet,
@@ -751,7 +744,7 @@ Struct.prototype.findLoops = function () {
 	 	of bonds for planar graphs.
 	 */
 
-	var hbIdNext, c, loop, loopId;
+	let hbIdNext, c, loop, loopId;
 	this.halfBonds.each(function (hbId, hb) {
 		if (hb.loop !== -1)
 			return;
@@ -759,12 +752,12 @@ Struct.prototype.findLoops = function () {
 		for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.count(); hbIdNext = this.halfBonds.get(hbIdNext).next, ++c) {
 			if (!(c > 0 && hbIdNext === hbId)) {
 				loop.push(hbIdNext);
-				continue;
+				continue; // eslint-disable-line no-continue
 			}
 
 			// loop found
-			var subloops = this.partitionLoop(loop);
-			subloops.forEach(function (loop) {
+			const subloops = this.partitionLoop(loop);
+			subloops.forEach(loop => {
 				if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) {
 					/*
                         loop is internal
@@ -778,14 +771,14 @@ Struct.prototype.findLoops = function () {
 					loopId = -2;
 				}
 
-				loop.forEach(function (hbid) {
+				loop.forEach(hbid => {
 					this.halfBonds.get(hbid).loop = loopId;
 					Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
-				}, this);
+				});
 
 				if (loopId >= 0)
 					newLoops.push(loopId);
-			}, this);
+			});
 			break;
 		}
 	}, this);
@@ -848,22 +841,19 @@ Struct.prototype.calcConn = function (aid) {
 };
 
 Struct.prototype.calcImplicitHydrogen = function (aid) {
-	var conn = this.calcConn(aid);
-	var atom = this.atoms.get(aid);
+	const conn = this.calcConn(aid);
+	const atom = this.atoms.get(aid);
 	atom.badConn = false;
 	if (conn < 0 || atom.isQuery()) {
 		atom.implicitH = 0;
 		return;
 	}
 	if (atom.explicitValence >= 0) {
-		var elem = element.map[atom.label];
-		atom.implicitH = 0;
-		if (elem != null) {
-			atom.implicitH = atom.explicitValence - atom.calcValenceMinusHyd(conn);
-			if (atom.implicitH < 0) {
-				atom.implicitH = 0;
-				atom.badConn = true;
-			}
+		const elem = element.map[atom.label];
+		atom.implicitH = elem !== null ? atom.explicitValence - atom.calcValenceMinusHyd(conn) : 0;
+		if (atom.implicitH < 0) {
+			atom.implicitH = 0;
+			atom.badConn = true;
 		}
 	} else {
 		atom.calcValence(conn);
@@ -875,13 +865,10 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 		if (item.data.fieldName === "MRV_IMPLICIT_H")
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
 	}, this);
-	function f(aid) {
-		this.calcImplicitHydrogen(aid);
-	}
 	if (!list)
-		this.atoms.each(f, this);
+		this.atoms.each(aid => this.calcImplicitHydrogen(aid), this);
 	else
-		list.forEach(f, this);
+		list.forEach(aid => this.calcImplicitHydrogen(aid));
 };
 
 Struct.prototype.getComponents = function () { // eslint-disable-line max-statements

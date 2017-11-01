@@ -105,8 +105,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 	return true;
 };
 TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
-	var editor = this.editor;
-	var rnd = editor.render;
+	var rnd = this.editor.render;
 	if (this.dragCtx) {
 		var dragCtx = this.dragCtx;
 		var ci = dragCtx.item;
@@ -182,8 +181,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 };
 
 TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	var editor = this.editor;
-	var rnd = editor.render;
+	var rnd = this.editor.render;
 
 	if (this.dragCtx) {
 		var dragCtx = this.dragCtx;
@@ -230,8 +228,6 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 			} else if (ci.map === 'bonds') {
 				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 			}
-
-			this.editor.update(dragCtx.action, true);
 		}
 		var action = this.dragCtx.action;
 		delete this.dragCtx;

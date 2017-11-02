@@ -707,10 +707,15 @@ function fromTemplateOnCanvas(restruct, pos, angle, template) {
 	const action = new Action();
 	const frag = template.molecule;
 	const fragAction = new op.FragmentAdd().perform(restruct);
+
+	const fmap = {};
 	const map = {};
 
 	// Only template atom label matters for now
 	frag.atoms.each((aid, atom) => {
+		if (!(atom.fragment in fmap))
+			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+
 		const attrs = Struct.Atom.getAttrHash(atom);
 		attrs.fragment = fragAction.frid;
 
@@ -728,15 +733,26 @@ function fromTemplateOnCanvas(restruct, pos, angle, template) {
 
 	frag.sgroups.each((sgid, sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();
-		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms, sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
+		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms.map(aid => map[aid]), sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
 		sgAction.operations.reverse().forEach(op => action.addOp(op));
+	});
+
+	const atomFragments = {};
+	const fragments = Set.empty();
+
+	frag.atoms.each((aid, atom) => {
+		const frag = atom.fragment;
+		atomFragments[aid] = frag;
+		Set.add(fragments, frag);
 	});
 
 	//TODO: add rgroups
 
 	// reaction arrows
-	frag.rxnArrows.values()
-		.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
+	if (restruct.rxnArrows.count() < 1) {
+		frag.rxnArrows.values()
+			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
+	}
 
 	// reaction pluses
 	frag.rxnPluses.values()

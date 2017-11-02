@@ -855,7 +855,8 @@ function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) { // esli
 	return action;
 }
 
-function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-line max-statements
+// TODO refactor
+function fromTemplateOnBond(restruct, bid, template, flip) {
 	var action = new Action();
 	var frag = template.molecule;
 	var struct = restruct.molecule;
@@ -864,8 +865,8 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 	var begin = struct.atoms.get(bond.begin);
 	var end = struct.atoms.get(bond.end);
 	var sgroups = Set.list(Set.intersection(
-	Set.fromList(atomGetSGroups(restruct, bond.begin)),
-	Set.fromList(atomGetSGroups(restruct, bond.end))));
+		Set.fromList(atomGetSGroups(restruct, bond.begin)),
+		Set.fromList(atomGetSGroups(restruct, bond.end))));
 
 	var frBond = frag.bonds.get(template.bid);
 	var frBegin;
@@ -925,20 +926,18 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 
 	frag.bonds.each(function (id, bond) {
 		var existId = struct.findBondId(map[bond.begin], map[bond.end]);
-		if (existId == -1) {
+		if (existId === -1) {
 			action.addOp(
-			new op.BondAdd(
-				map[bond.begin],
-				map[bond.end],
-				bond
-			).perform(restruct));
+				new op.BondAdd(
+					map[bond.begin],
+					map[bond.end],
+					bond
+				).perform(restruct));
 		} else {
 			action.mergeWith(fromBondAttrs(restruct, existId, frBond, false, true));
 		}
 	});
-
 	action.operations.reverse();
-
 	return action;
 }
 

@@ -18,6 +18,7 @@ var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var Action = require('../action');
 var utils = require('./utils');
+import { fromTemplateOnBondAction } from '../actions/aromatic-fusing';
 
 function TemplateTool(editor, tmpl) {
 	if (!(this instanceof TemplateTool))
@@ -134,7 +135,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 				if ('action' in dragCtx)
 					dragCtx.action.perform(rnd.ctab);
 				dragCtx.sign2 = sign;
-				dragCtx.action = Action.fromTemplateOnBond(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
+				dragCtx.action = fromTemplateOnBondAction(rnd.ctab, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, false);
 				this.editor.update(dragCtx.action, true);
 			}
 
@@ -226,9 +227,25 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 					);
 				}
 			} else if (ci.map === 'bonds') {
-				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
+				fromTemplateOnBondAction(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, true)
+					.then(action => {
+						this.editor.update(action);
+						delete this.dragCtx;
+					});
+
+				return true;
 			}
+		} else if (ci && ci.map === 'bonds') { /* TODO refactor */
+			this.dragCtx.action.perform(restruct);
+			fromTemplateOnBondAction(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, true)
+				.then(action => {
+					this.editor.update(action);
+					delete this.dragCtx;
+				});
+			return true;
 		}
+		/* .... TMP. */
+
 		var action = this.dragCtx.action;
 		delete this.dragCtx;
 

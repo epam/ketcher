@@ -330,8 +330,7 @@ Struct.prototype.halfBondSetAngle = function (hbid, left) {
 Struct.prototype.atomAddNeighbor = function (hbid) {
 	var hb = this.halfBonds.get(hbid);
 	var atom = this.atoms.get(hb.begin);
-	var i = 0;
-	for (i = 0; i < atom.neighbors.length; ++i) {
+	for (var i = 0; i < atom.neighbors.length; ++i) {
 		if (this.halfBonds.get(atom.neighbors[i]).ang > hb.ang)
 			break;
 	}
@@ -364,13 +363,10 @@ Struct.prototype.atomSortNeighbors = function (aid) {
 };
 
 Struct.prototype.sortNeighbors = function (list) {
-	function f(aid) {
-		this.atomSortNeighbors(aid);
-	}
 	if (!list)
-		this.atoms.each(f, this);
+		this.atoms.each(aid => this.atomSortNeighbors(aid), this);
 	else
-		list.forEach(f, this);
+		list.forEach(aid => this.atomSortNeighbors(aid), this);
 };
 
 Struct.prototype.atomUpdateHalfBonds = function (aid) {
@@ -383,13 +379,10 @@ Struct.prototype.atomUpdateHalfBonds = function (aid) {
 };
 
 Struct.prototype.updateHalfBonds = function (list) {
-	function f(aid) {
-		this.atomUpdateHalfBonds(aid);
-	}
 	if (!list)
-		this.atoms.each(f, this);
+		this.atoms.each(aid => this.atomUpdateHalfBonds(aid), this);
 	else
-		list.forEach(f, this);
+		list.forEach(aid => this.atomUpdateHalfBonds(aid), this);
 };
 
 Struct.prototype.sGroupsRecalcCrossBonds = function () {
@@ -827,7 +820,7 @@ Struct.prototype.calcConn = function (aid) {
 			conn += 1;
 			hasAromatic = true;
 			this.loops.each(function (id, item) {
-				if (item.hbs.indexOf(atom.neighbors[i]) != -1 && item.hbs.length % 2 == 1)
+				if (item.hbs.includes(atom.neighbors[i]) && item.hbs.length % 2 === 1)
 					oddLoop = true;
 			}, this);
 			break;
@@ -919,6 +912,11 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 		reactants: reactants,
 		products: products
 	};
+};
+
+Struct.prototype.getBondFragment = function (bid) {
+	const aid = this.bonds.get(bid).begin;
+	return this.atoms.get(aid).fragment;
 };
 
 // Other struct objects

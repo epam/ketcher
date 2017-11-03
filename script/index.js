@@ -98,7 +98,6 @@ const buildInfo = {
 	apiPath: '__API_PATH__',
 	buildDate: '__BUILD_DATE__',
 	buildNumber: '__BUILD_NUMBER__' || null,
-	buildOptions: '__BUILD_OPTIONS__',
 	miewPath: '__MIEW_PATH__' || null
 };
 

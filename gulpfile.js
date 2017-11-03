@@ -25,20 +25,20 @@ var options = minimist(process.argv.slice(2), {
 		'api-path': '',
 		'miew-path': '',
 		'build-number': '',
-		'build-date': new Date() // TODO: format me
+		'build-date': new Date().toISOString().slice(0, 19)
 	}
 });
 
 var distrib = ['LICENSE', 'demo.html', 'library.sdf', 'library.svg'];
 
-var bundleConfig = {
+const createBundleConfig = () => ({
 	entries: 'script',
-	extensions: ['.js', '.jsx', '.es'],
+	extensions: ['.js', '.jsx'],
 	debug: true,
 	standalone: pkg.name,
 	transform: [
 		['exposify', {
-			expose: {'raphael': 'Raphael' }
+			expose: { 'raphael': 'Raphael' }
 		}],
 		['browserify-replace', {
 			replace: [
@@ -61,11 +61,12 @@ var bundleConfig = {
 			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
 		}]
 	]
-};
+});
 
 var iconfont = null;
 
 gulp.task('script', ['patch-version'], function() {
+	const bundleConfig = createBundleConfig();
 	bundleConfig.transform.push(
 		['loose-envify', {
 			NODE_ENV: 'production',
@@ -178,8 +179,8 @@ gulp.task('patch-version', function (cb) {
 			             'Please git tag the package version.'));
 		}
 		else if (!err && stdout > 0) {
-			pkg.rev =  stdout.toString().trim();
-			pkg.version += ('+r' + pkg.rev);
+			pkg.rev = stdout.toString().trim();
+			options['build-number'] = pkg.rev;
 		}
 		cb();
 	});
@@ -239,7 +240,8 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 });
 
 gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
-	var server = budo(`${bundleConfig.entries}:${pkg.name}.js`, {
+	const bundleConfig = createBundleConfig();
+	const server = budo(`${bundleConfig.entries}:${pkg.name}.js`, {
 		dir: options.dist,
 		browserify: bundleConfig,
 		stream: process.stdout,

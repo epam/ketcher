@@ -182,63 +182,65 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 };
 
 TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	var editor = this.editor;
-	var rnd = editor.render;
+	const editor = this.editor;
+	const rnd = editor.render;
 
-	if (this.dragCtx) {
-		var dragCtx = this.dragCtx;
-		var ci = dragCtx.item;
-		var restruct = rnd.ctab;
-		var struct = restruct.molecule;
+	if (!this.dragCtx)
+		return;
 
-		if (!dragCtx.action) {
-			if (!ci) { //  ci.type == 'Canvas'
-				dragCtx.action = Action.fromTemplateOnCanvas(rnd.ctab, dragCtx.xy0, 0, this.template);
-			} else if (ci.map === 'atoms') {
-				var degree = restruct.atoms.get(ci.id).a.neighbors.length;
+	const dragCtx = this.dragCtx;
+	const ci = dragCtx.item;
+	const restruct = rnd.ctab;
+	const struct = restruct.molecule;
 
-				if (degree > 1) { // common case
-					dragCtx.action = Action.fromTemplateOnAtom(
-						restruct,
-						ci.id,
-						null,
-						true,
-						this.template
-					);
-				} else if (degree == 1) { // on chain end
-					var neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
-					var atom = struct.atoms.get(ci.id);
-					var nei = struct.atoms.get(neiId);
-					var angle = utils.calcAngle(nei.pp, atom.pp);
+	if (!dragCtx.action) {
+		if (!ci) { //  ci.type == 'Canvas'
+			dragCtx.action = Action.fromTemplateOnCanvas(rnd.ctab, dragCtx.xy0, 0, this.template);
+		} else if (ci.map === 'atoms') {
+			const degree = restruct.atoms.get(ci.id).a.neighbors.length;
 
-					dragCtx.action = Action.fromTemplateOnAtom(
-						restruct,
-						ci.id,
-						event.ctrlKey ? angle : utils.fracAngle(angle),
-						false,
-						this.template
-					);
-				} else { // on single atom
-					dragCtx.action = Action.fromTemplateOnAtom(
-						restruct,
-						ci.id,
-						0,
-						false,
-						this.template
-					);
-				}
-			} else if (ci.map === 'bonds') {
-				dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
+			if (degree > 1) { // common case
+				dragCtx.action = Action.fromTemplateOnAtom(
+					restruct,
+					ci.id,
+					null,
+					true,
+					this.template
+				);
+			} else if (degree === 1) { // on chain end
+				const neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
+				const atom = struct.atoms.get(ci.id);
+				const nei = struct.atoms.get(neiId);
+				const angle = utils.calcAngle(nei.pp, atom.pp);
+
+				dragCtx.action = Action.fromTemplateOnAtom(
+					restruct,
+					ci.id,
+					event.ctrlKey ? angle : utils.fracAngle(angle),
+					false,
+					this.template
+				);
+			} else { // on single atom
+				dragCtx.action = Action.fromTemplateOnAtom(
+					restruct,
+					ci.id,
+					0,
+					false,
+					this.template
+				);
 			}
-
-			this.editor.update(dragCtx.action, true);
+		} else if (ci.map === 'bonds') {
+			dragCtx.action = Action.fromTemplateOnBond(restruct, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0);
 		}
-		var action = this.dragCtx.action;
-		delete this.dragCtx;
 
-		if (action && !action.isDummy())
-			this.editor.update(action);
+		this.editor.update(dragCtx.action, true);
 	}
+
+	const action = this.dragCtx.action;
+	delete this.dragCtx;
+
+	if (action && !action.isDummy())
+		this.editor.update(action);
 };
 
 TemplateTool.prototype.cancel = TemplateTool.prototype.mouseleave =

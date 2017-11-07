@@ -18,7 +18,6 @@ const Set = require('../util/set');
 const Vec2 = require('../util/vec2');
 const op = require('./op');
 const utils = require('./tool/utils');
-
 const Struct = require('../chem/struct');
 const closest = require('./closest');
 const { uniq, difference } = require('lodash');
@@ -219,11 +218,11 @@ function fromBondAttrs(restruct, id, attrs, flip, reset) { // eslint-disable-lin
 	return action.perform(restruct);
 }
 
-function fromAtomAddition(resctruct, pos, atom) {
+function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
 	var action = new Action();
-	atom.fragment = action.addOp(new op.FragmentAdd().perform(resctruct)).frid;
-	action.addOp(new op.AtomAdd(atom, pos).perform(resctruct));
+	atom.fragment = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+	action.addOp(new op.AtomAdd(atom, pos).perform(restruct));
 	return action;
 }
 
@@ -706,49 +705,36 @@ function fromBondFlipping(restruct, bid) {
 function fromTemplateOnCanvas(restruct, pos, angle, template) {
 	const action = new Action();
 	const frag = template.molecule;
-	const fragAction = new op.FragmentAdd().perform(restruct);
+	const fridMap = {};
+	const fragOps = [];
 
-	const fmap = {};
-	const map = {};
+	frag.frags.each(frid => {
+		const fragAction = new op.FragmentAdd().perform(restruct);
+		fridMap[frid] = fragAction.frid;
+		fragOps.push(fragAction);
+	});
+
+	const aidMap = {};
 
 	// Only template atom label matters for now
 	frag.atoms.each((aid, atom) => {
-		if (!(atom.fragment in fmap))
-			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
-
 		const attrs = Struct.Atom.getAttrHash(atom);
-		attrs.fragment = fragAction.frid;
+		attrs.fragment = fridMap[atom.fragment];
 
-		const operation = new op.AtomAdd(attrs, Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos))
-			.perform(restruct);
-
+		const operation = new op.AtomAdd(attrs, Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)).perform(restruct);
 		action.addOp(operation);
-
-		map[aid] = operation.data.aid;
+		aidMap[aid] = operation.data.aid;
 	});
 
-	frag.bonds.each((bid, bond) =>
-		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct))
-	);
+	frag.bonds
+		.each((bid, bond) => action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct)));
 
 	frag.sgroups.each((sgid, sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();
-		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms.map(aid => map[aid]), sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
+		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms.map(aid => aidMap[aid]), sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
 		sgAction.operations.reverse().forEach(op => action.addOp(op));
 	});
 
-	const atomFragments = {};
-	const fragments = Set.empty();
-
-	frag.atoms.each((aid, atom) => {
-		const frag = atom.fragment;
-		atomFragments[aid] = frag;
-		Set.add(fragments, frag);
-	});
-
-	//TODO: add rgroups
-
-	// reaction arrows
 	if (restruct.rxnArrows.count() < 1) {
 		frag.rxnArrows.values()
 			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
@@ -765,9 +751,19 @@ function fromTemplateOnCanvas(restruct, pos, angle, template) {
 		action.mergeWith(fromChiralFlagAddition(restruct, pp));
 	}
 
-	action.operations.reverse();
-	action.addOp(fragAction);
+	frag.rgroups.each((rgid, rg) => {
+		rg.frags.each((frid, frag) => action.mergeWith(fromRGroupFragment(restruct, rgid, fridMap[frag])));
+		const attrs = {
+			ifthen: rg.ifthen,
+			range: rg.range,
+			resth: rg.resth
+		};
 
+		action.mergeWith(fromRGroupAttrs(restruct, rgid, attrs));
+	});
+
+	action.operations.reverse();
+	fragOps.forEach(op => action.addOp(op));
 	return action;
 }
 

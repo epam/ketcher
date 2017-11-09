@@ -51,30 +51,39 @@ function Base() {
 }
 
 function AtomAdd(atom, pos) {
-	this.data = { aid: null, atom: atom, pos: pos };
+	this.data = { atom, pos, aid: null };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var pp = {};
-		if (this.data.atom) {
-			for (var p in this.data.atom)
-				if (this.data.atom.hasOwnProperty(p)) pp[p] = this.data.atom[p];
-		}
+		const struct = restruct.molecule;
+
+		const pp = {};
+		if (this.data.atom)
+			Object.keys(this.data.atom).forEach(p => pp[p] = this.data.atom[p]);
+
 		pp.label = pp.label || 'C';
+
 		if (!(typeof this.data.aid === "number"))
 			this.data.aid = struct.atoms.add(new Struct.Atom(pp));
 		else
 			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
 
 		// notifyAtomAdded
-		var atomData = new ReStruct.Atom(restruct.molecule.atoms.get(this.data.aid));
+		const atomData = new ReStruct.Atom(struct.atoms.get(this.data.aid));
 		atomData.component = restruct.connectedComponents.add(Set.single(this.data.aid));
 		restruct.atoms.set(this.data.aid, atomData);
 		restruct.markAtom(this.data.aid, 1);
 
 		struct.atomSetPos(this.data.aid, new Vec2(this.data.pos));
+
+		const arrow = struct.rxnArrows.values()[0];
+		if (arrow) {
+			const atom = struct.atoms.get(this.data.aid);
+			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(Set.single(this.data.aid), arrow.pp.x);
+		}
 	};
+
 	this.invert = function () {
-		var ret = new AtomDelete();
+		const ret = new AtomDelete();
 		ret.data = this.data;
 		return ret;
 	};
@@ -111,20 +120,24 @@ function AtomDelete(aid) {
 AtomDelete.prototype = new Base();
 
 function AtomAttr(aid, attribute, value) {
-	this.data = { aid: aid, attribute: attribute, value: value };
+	this.data = { aid, attribute, value };
 	this.data2 = null;
+
 	this.execute = function (restruct) {
-		var atom = restruct.molecule.atoms.get(this.data.aid);
+		const atom = restruct.molecule.atoms.get(this.data.aid);
 		if (!this.data2)
 			this.data2 = { aid: this.data.aid, attribute: this.data.attribute, value: atom[this.data.attribute] };
+
 		atom[this.data.attribute] = this.data.value;
 		invalidateAtom(restruct, this.data.aid);
 	};
+
 	this._isDummy = function (restruct) { // eslint-disable-line no-underscore-dangle
-		return restruct.molecule.atoms.get(this.data.aid)[this.data.attribute] == this.data.value;
+		return restruct.molecule.atoms.get(this.data.aid)[this.data.attribute] === this.data.value;
 	};
+
 	this.invert = function () {
-		var ret = new AtomAttr();
+		const ret = new AtomAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
 		return ret;
@@ -638,9 +651,11 @@ function RestoreIfThen(rgNew, rgOld, history) {
 RestoreIfThen.prototype = new Base();
 
 function RxnArrowAdd(pos) {
-	this.data = { arid: null, pos: pos };
+	this.data = { pos, arid: null };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
+		const struct = restruct.molecule;
+
 		if (!(typeof this.data.arid === 'number'))
 			this.data.arid = struct.rxnArrows.add(new Struct.RxnArrow());
 		else
@@ -651,10 +666,26 @@ function RxnArrowAdd(pos) {
 
 		struct.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
+		let { reactants, products } = struct.getComponents();
+
+		reactants = reactants.reduce((acc, item) => ({ ...acc, ...item }), {});
+		products = products.reduce((acc, item) => ({ ...acc, ...item }), {});
+
+		Object.keys(reactants).forEach(aid => {
+			const atom = struct.atoms.get(aid);
+			atom.rxnFragmentType = 1;
+		});
+
+		Object.keys(products).forEach(aid => {
+			const atom = struct.atoms.get(aid);
+			atom.rxnFragmentType = 2;
+		});
+
 		invalidateItem(restruct, 'rxnArrows', this.data.arid, 1);
 	};
+
 	this.invert = function () {
-		var ret = new RxnArrowDelete();
+		const ret = new RxnArrowDelete();
 		ret.data = this.data;
 		return ret;
 	};
@@ -662,9 +693,11 @@ function RxnArrowAdd(pos) {
 RxnArrowAdd.prototype = new Base();
 
 function RxnArrowDelete(arid) {
-	this.data = { arid: arid, pos: null };
+	this.data = { arid, pos: null };
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
+		const struct = restruct.molecule;
+
 		if (!this.data.pos)
 			this.data.pos = struct.rxnArrows.get(this.data.arid).pp;
 
@@ -674,9 +707,14 @@ function RxnArrowDelete(arid) {
 		restruct.rxnArrows.unset(this.data.arid);
 
 		struct.rxnArrows.remove(this.data.arid);
+
+		struct.atoms.each((aid, atom) => {
+			atom.rxnFragmentType = -1;
+		});
 	};
+
 	this.invert = function () {
-		var ret = new RxnArrowAdd();
+		const ret = new RxnArrowAdd();
 		ret.data = this.data;
 		return ret;
 	};

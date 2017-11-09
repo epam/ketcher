@@ -161,11 +161,8 @@ ReStruct.prototype.addConnectedComponent = function (ids) {
 	Set.each(atomIds, function (aid) {
 		var atom = this.atoms.get(aid);
 		atom.component = compId;
-		if (atom.a.rxnFragmentType != -1) {
-			if (type != -1 && atom.a.rxnFragmentType != type)
-				throw new Error('reaction fragment type mismatch');
+		if (atom.a.rxnFragmentType !== -1)
 			type = atom.a.rxnFragmentType;
-		}
 	}, this);
 
 	this.ccFragmentType.set(compId, type);

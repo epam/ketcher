@@ -20,6 +20,7 @@ import element from '../../chem/element';
 import acts from '../action';
 import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
+import { serverCall } from './server';
 
 export function initEditor(dispatch, getState) {
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
@@ -100,6 +101,16 @@ export function initEditor(dispatch, getState) {
 				let act = Object.keys(msg)[0];
 				console[act](msg[act]);
 			}
+		},
+		onAromatizeStruct: struct => {
+			const state = getState();
+			const serverOpts = state.options.getServerSettings();
+			return serverCall(state.editor, state.server, 'aromatize', serverOpts, struct);
+		},
+		onDearomatizeStruct: struct => {
+			const state = getState();
+			const serverOpts = state.options.getServerSettings();
+			return serverCall(state.editor, state.server, 'dearomatize', serverOpts, struct);
 		},
 		onMouseDown: event => {}
 	};

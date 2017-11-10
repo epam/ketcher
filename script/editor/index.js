@@ -73,7 +73,9 @@ function Editor(clientArea, options) {
 		quickEdit: new s.PipelineSubscription(),
 		attachEdit: new s.PipelineSubscription(),
 		change: new s.PipelineSubscription(),
-		selectionChange: new s.PipelineSubscription()
+		selectionChange: new s.PipelineSubscription(),
+		aromatizeStruct: new s.PipelineSubscription(),
+		dearomatizeStruct: new s.PipelineSubscription()
 	};
 
 	domEventSetup(this, clientArea);

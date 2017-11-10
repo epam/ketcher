@@ -96,7 +96,7 @@ export function serverTransform(method, data, struct) {
 	};
 }
 
-function serverCall(editor, server, method, options, struct) {
+export function serverCall(editor, server, method, options, struct) {
 	const selection = editor.selection();
 	let selectedAtoms = [];
 
@@ -122,7 +122,7 @@ function serverCall(editor, server, method, options, struct) {
 	});
 	//utils.loading('show');
 	request.catch(function (err) {
-		alert(err);
+		// alert(err);
 	}).then(function (er) {
 		//utils.loading('hide');
 	});

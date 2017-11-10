@@ -16,29 +16,21 @@
 
 import * as molfile from '../../chem/molfile';
 
-/*TMP*/
-import api from '../../api';
-const serv = api('http://dp.itcwin.com:8081/v2', {
-	'smart-layout': true,
-	'ignore-stereochemistry-errors': true,
-	'mass-skip-error-on-pseudoatoms': false,
-	'gross-formula-add-rsites': true
-});
-
-const op = require('../op');
+import op from '../op';
 import Action from '../action';
-const Struct = require('../../chem/struct');
+import Struct from '../../chem/struct';
 
 // TODO move to actions
-function fromTemplateOnBondAction(restruct, bid, template, flip, force) {
+function fromTemplateOnBondAction(restruct, events, bid, template, flip, force) {
 	if (!force)
 		return Action.fromTemplateOnBond(restruct, bid, template, flip);
 
-	console.log("HARDD!!!");
-	return fromAromaticBondFusing(restruct, bid, template, flip);
+	/* aromatic merge */
+	return fromAromaticBondFusing(restruct, events, bid, template, flip);
 }
 
-function fromAromaticBondFusing(restruct, bid, template, flip) {
+// TODO remove editor
+function fromAromaticBondFusing(restruct, events, bid, template, flip) {
 	const tmpl = template.molecule;
 	const struct = restruct.molecule;
 
@@ -55,8 +47,8 @@ function fromAromaticBondFusing(restruct, bid, template, flip) {
 	let action = new Action();
 
 	return Promise.all([
-		serv.aromatize({ struct: molfile.stringify(beforeMerge.frag) }),	// TODO editor.event dispatch
-		serv.aromatize({ struct: molfile.stringify(tmpl) })
+		events.aromatizeStruct.dispatch(beforeMerge.frag),
+		events.aromatizeStruct.dispatch(tmpl)
 	]).then(([res1, res2]) => {
 		const astruct = molfile.parse(res1.struct);
 		const atmpl = molfile.parse(res2.struct);
@@ -69,12 +61,13 @@ function fromAromaticBondFusing(restruct, bid, template, flip) {
 
 		afterMerge = getFragmentWithBondMap(restruct.molecule, frid);
 
-		return serv.dearomatize({ struct: molfile.stringify(afterMerge.frag) });
+		return events.dearomatizeStruct.dispatch(afterMerge.frag);
 	}).then(res => {
 		const destruct = molfile.parse(res.struct);
 
 		destruct.bonds.each((id, bond) => {
-			if (bond.type === 4) throw 'Bad dearomatize';
+			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
+				throw Error('Bad dearomatize');
 		});
 
 		const dearomatizeAction = fromDearomatize(restruct, destruct, afterMerge.bondMap);  // DEAROMATIZE
@@ -82,7 +75,7 @@ function fromAromaticBondFusing(restruct, bid, template, flip) {
 
 		return action;
 	}).catch(err => {
-		console.info(err);
+		console.info(err.message);
 		action.perform(restruct); // revert actions if error
 		action = Action.fromTemplateOnBond(restruct, bid, template,  flip);
 

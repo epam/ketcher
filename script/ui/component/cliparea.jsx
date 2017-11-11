@@ -33,6 +33,10 @@ class ClipArea extends Component {
 				if (this.props.focused() && !isFormElement(event.target))
 					autofocus(el);
 			},
+			'mousedown': event => {
+				if (event.shiftKey === true && !isFormElement(event.target))
+					event.preventDefault();
+			},
 			'copy': event => {
 				if (this.props.focused() && this.props.onCopy) {
 					const data = this.props.onCopy();

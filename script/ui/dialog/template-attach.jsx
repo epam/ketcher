@@ -97,9 +97,23 @@ function initTmpl(tmpl) {
 function structNormalization(struct) {
 	const normStruct = struct.clone();
 	const cbb = normStruct.getCoordBoundingBox();
-	normStruct.atoms.each(function (aid, atom) { // only atoms ?? mb arrow etc ...
+
+	normStruct.atoms.each((aid, atom) => {
 		atom.pp = atom.pp.sub(cbb.min);
 	});
+
+	normStruct.sgroups.each((sgid, sg) => {
+		sg.pp = sg.pp.sub(cbb.min);
+	});
+
+	normStruct.rxnArrows.each((rxid, rxnArrow) => {
+		rxnArrow.pp = rxnArrow.pp.sub(cbb.min);
+	});
+
+	normStruct.rxnPluses.each((rxid, rxnPlus) => {
+		rxnPlus.pp = rxnPlus.pp.sub(cbb.min);
+	});
+
 	return normStruct;
 }
 

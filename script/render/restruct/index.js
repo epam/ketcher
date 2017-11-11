@@ -355,42 +355,34 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	force = force || !this.initialized;
 
 	// check items to update
-	var id, map, mapChanged;
-	if (force) {
-		for (map in ReStruct.maps) {
-			if (ReStruct.maps.hasOwnProperty(map)) {
-				mapChanged = this[map + 'Changed'];
-				this[map].each(function (id) {
-					mapChanged[id] = 1;
-				}, this);
-			}
+	let id, map, mapChanged;
+	Object.keys(ReStruct.maps).forEach(map => {
+		mapChanged = this[map + 'Changed'];
+
+		if (force) {
+			this[map].each(id => mapChanged[id] = 1, this);
+		} else {
+			// check if some of the items marked are already gone
+			Object.keys(mapChanged).forEach(id => {
+				if (!this[map].has(id))
+					delete mapChanged[id];
+			});
 		}
-	} else {
-		// check if some of the items marked are already gone
-		for (map in ReStruct.maps) {
-			if (ReStruct.maps.hasOwnProperty(map)) {
-				mapChanged = this[map + 'Changed'];
-				for (id in mapChanged) {
-					if (!this[map].has(id)) // eslint-disable-line max-depth
-						delete mapChanged[id];
-				}
-			}
-		}
-	}
+	});
+
 	for (id in this.atomsChanged)
 		this.connectedComponentRemoveAtom(id);
 
 	// clean up empty fragments
 	// TODO: fragment removal should be triggered by the action responsible for the fragment contents removal and form an operation of its own
-	var emptyFrags = this.frags.findAll(function (fid, frag) {
-		return !frag.calcBBox(this.render.ctab, fid, this.render);
-	}, this);
-	for (var j = 0; j < emptyFrags.length; ++j) {
-		var fid = emptyFrags[j];
+	const emptyFrags = this.frags.findAll((fid, frag) =>
+		!frag.calcBBox(this.render.ctab, fid, this.render), this);
+
+	emptyFrags.forEach(fid => {
 		this.clearVisel(this.frags.get(fid).visel);
 		this.frags.unset(fid);
 		this.molecule.frags.remove(fid);
-	}
+	});
 
 	for (map in ReStruct.maps) {
 		mapChanged = this[map + 'Changed'];
@@ -444,11 +436,8 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	this.showSGroups();
 	this.showFragments();
 	this.showRGroups();
-	if (this.render.options.hideChiralFlag !== true) {
-		this.chiralFlags.each(function (id, item) {
-			item.show(this, id, this.render.options);
-		}, this);
-	}
+	if (this.render.options.hideChiralFlag !== true)
+		this.chiralFlags.each((id, item) =>	item.show(this, id, this.render.options));
 	this.clearMarks();
 	return true;
 };
@@ -554,13 +543,10 @@ ReStruct.prototype.loopRemove = function (loopId) {
 };
 
 ReStruct.prototype.verifyLoops = function () {
-	var toRemove = [];
 	this.reloops.each(function (rlid, reloop) {
 		if (!reloop.isValid(this.molecule, rlid))
-			toRemove.push(rlid);
+			this.loopRemove(rlid);
 	}, this);
-	for (var i = 0; i < toRemove.length; ++i)
-		this.loopRemove(toRemove[i]);
 };
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements

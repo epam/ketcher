@@ -487,15 +487,19 @@ BondAttr.prototype = new Base();
 
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
+
 	this.execute = function (restruct) {
-		var struct = restruct.molecule;
-		var frag = {};
-		if (this.frid == null)
+		const struct = restruct.molecule;
+		const frag = {};
+
+		if (this.frid === null)
 			this.frid = struct.frags.add(frag);
 		else
 			struct.frags.set(this.frid, frag);
+
 		restruct.frags.set(this.frid, new ReStruct.Frag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
+
 	this.invert = function () {
 		return new FragmentDelete(this.frid);
 	};

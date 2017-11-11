@@ -90,7 +90,8 @@ function atomLongtapEvent(tool, render) {
 	const editor = tool.editor;
 
 	const atomid = dragCtx.item && dragCtx.item.id;
-	const atom = atomid ? // edit atom or add atom
+
+	const atom = (atomid !== undefined && atomid !== null) ? // edit atom or add atom
 		render.ctab.molecule.atoms.get(atomid) :
 		new Struct.Atom({ label: '' });
 

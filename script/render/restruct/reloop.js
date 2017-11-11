@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Visel = require('./visel');
-var ReObject = require('./reobject');
-var scale = require('../../util/scale');
-var util = require('../util');
-var Struct = require('../../chem/struct');
+const Vec2 = require('../../util/vec2');
+const Visel = require('./visel');
+const ReObject = require('./reobject');
+const scale = require('../../util/scale');
+const util = require('../util');
+const Struct = require('../../chem/struct');
 
-var tfx = util.tfx;
+const tfx = util.tfx;
 
 function ReLoop(loop) {
 	this.loop = loop;
@@ -111,14 +111,10 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 };
 
 ReLoop.prototype.isValid = function (struct, rlid) {
-	var halfBonds = struct.halfBonds;
-	var loop = this.loop;
-	var bad = false;
-	loop.hbs.forEach(function (hbid) {
-		if (!halfBonds.has(hbid) || halfBonds.get(hbid).loop !== rlid)
-			bad = true;
-	}, this);
-	return !bad;
+	const halfBonds = struct.halfBonds;
+	return this.loop.hbs.every(hbid =>
+		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
+	);
 };
 
 module.exports = ReLoop;

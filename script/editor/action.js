@@ -18,7 +18,6 @@ const Set = require('../util/set');
 const Vec2 = require('../util/vec2');
 const op = require('./op');
 const utils = require('./tool/utils');
-
 const Struct = require('../chem/struct');
 const closest = require('./closest');
 const { uniq, difference } = require('lodash');
@@ -103,23 +102,6 @@ function removeSgroupIfNeeded(action, restruct, atoms) {
 	}
 }
 
-function fromSgroupMove(restruct, selectedAtoms, d) {
-	const action = new Action();
-
-	const sgroups = restruct.molecule.sgroups.values()
-		.filter(sg => !sg.data.attached && !sg.data.absolute);
-
-	if (sgroups.length === 0)
-		return action;
-
-	return sgroups.reduce((acc, sg) => {
-		if (difference(sg.atoms, selectedAtoms).length === 0)
-			acc.addOp(new op.SGroupDataMove(sg.id, d));
-
-		return acc;
-	}, action);
-}
-
 function fromMultipleMove(restruct, lists, d) {
 	d = new Vec2(d);
 
@@ -163,8 +145,12 @@ function fromMultipleMove(restruct, lists, d) {
 
 		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid))));
 
-		if (lists.sgroupData.length === 0)
-			action.mergeWith(fromSgroupMove(restruct, lists.atoms, d));
+		if (lists.sgroupData.length === 0) {
+			const sgroups = getRelSgroupsBySelection(restruct, lists.atoms);
+			sgroups.forEach(sg => {
+				action.addOp(new op.SGroupDataMove(sg.id, d));
+			});
+		}
 	}
 
 	if (lists.rxnArrows)
@@ -219,11 +205,11 @@ function fromBondAttrs(restruct, id, attrs, flip, reset) { // eslint-disable-lin
 	return action.perform(restruct);
 }
 
-function fromAtomAddition(resctruct, pos, atom) {
+function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
 	var action = new Action();
-	atom.fragment = action.addOp(new op.FragmentAdd().perform(resctruct)).frid;
-	action.addOp(new op.AtomAdd(atom, pos).perform(resctruct));
+	atom.fragment = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+	action.addOp(new op.AtomAdd(atom, pos).perform(restruct));
 	return action;
 }
 
@@ -704,42 +690,67 @@ function fromBondFlipping(restruct, bid) {
 }
 
 function fromTemplateOnCanvas(restruct, pos, angle, template) {
-	var action = new Action();
-	var frag = template.molecule;
+	const action = new Action();
+	const frag = template.molecule;
+	const fridMap = {};
+	const fragOps = [];
 
-	var fragAction = new op.FragmentAdd().perform(restruct);
-
-	var map = {};
-
-	// Only template atom label matters for now
-	frag.atoms.each(function (aid, atom) {
-		var operation;
-		var attrs = Struct.Atom.getAttrHash(atom);
-		attrs.fragment = fragAction.frid;
-
-		action.addOp(
-			operation = new op.AtomAdd(
-				attrs,
-			Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)
-			).perform(restruct)
-		);
-
-		map[aid] = operation.data.aid;
+	frag.frags.each(frid => {
+		const fragAction = new op.FragmentAdd().perform(restruct);
+		fridMap[frid] = fragAction.frid;
+		fragOps.push(fragAction);
 	});
 
-	frag.bonds.each(function (bid, bond) {
-		action.addOp(
-		new op.BondAdd(
-			map[bond.begin],
-			map[bond.end],
-			bond
-		).perform(restruct)
-		);
+	const aidMap = {};
+
+	// Only template atom label matters for now
+	frag.atoms.each((aid, atom) => {
+		const attrs = Struct.Atom.getAttrHash(atom);
+		attrs.fragment = fridMap[atom.fragment];
+
+		const operation = new op.AtomAdd(attrs, Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)).perform(restruct);
+		action.addOp(operation);
+		aidMap[aid] = operation.data.aid;
+	});
+
+	frag.bonds
+		.each((bid, bond) => action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct)));
+
+	frag.sgroups.each((sgid, sg) => {
+		const newsgid = restruct.molecule.sgroups.newId();
+		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms.map(aid => aidMap[aid]), sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
+		sgAction.operations.reverse().forEach(op => action.addOp(op));
+	});
+
+	if (restruct.rxnArrows.count() < 1) {
+		frag.rxnArrows.values()
+			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
+	}
+
+	// reaction pluses
+	frag.rxnPluses.values()
+		.forEach(plus => action.addOp(new op.RxnPlusAdd(Vec2.diff(plus.pp, template.xy0).add(pos)).perform(restruct)));
+
+	// chiral flag
+	if (frag.isChiral) {
+		const bb = frag.getCoordBoundingBox();
+		const pp = Vec2.diff(new Vec2(bb.max.x, bb.min.y - 1), template.xy0).add(pos);
+		action.mergeWith(fromChiralFlagAddition(restruct, pp));
+	}
+
+	frag.rgroups.each((rgid, rg) => {
+		rg.frags.each((frid, frag) => action.mergeWith(fromRGroupFragment(restruct, rgid, fridMap[frag])));
+		const attrs = {
+			ifthen: rg.ifthen,
+			range: rg.range,
+			resth: rg.resth
+		};
+
+		action.mergeWith(fromRGroupAttrs(restruct, rgid, attrs));
 	});
 
 	action.operations.reverse();
-	action.addOp(fragAction);
-
+	fragOps.forEach(op => action.addOp(op));
 	return action;
 }
 
@@ -844,7 +855,8 @@ function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) { // esli
 	return action;
 }
 
-function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-line max-statements
+// TODO refactor
+function fromTemplateOnBond(restruct, bid, template, flip) {
 	var action = new Action();
 	var frag = template.molecule;
 	var struct = restruct.molecule;
@@ -853,8 +865,8 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 	var begin = struct.atoms.get(bond.begin);
 	var end = struct.atoms.get(bond.end);
 	var sgroups = Set.list(Set.intersection(
-	Set.fromList(atomGetSGroups(restruct, bond.begin)),
-	Set.fromList(atomGetSGroups(restruct, bond.end))));
+		Set.fromList(atomGetSGroups(restruct, bond.begin)),
+		Set.fromList(atomGetSGroups(restruct, bond.end))));
 
 	var frBond = frag.bonds.get(template.bid);
 	var frBegin;
@@ -914,20 +926,18 @@ function fromTemplateOnBond(restruct, bid, template, flip) { // eslint-disable-l
 
 	frag.bonds.each(function (id, bond) {
 		var existId = struct.findBondId(map[bond.begin], map[bond.end]);
-		if (existId == -1) {
+		if (existId === -1) {
 			action.addOp(
-			new op.BondAdd(
-				map[bond.begin],
-				map[bond.end],
-				bond
-			).perform(restruct));
+				new op.BondAdd(
+					map[bond.begin],
+					map[bond.end],
+					bond
+				).perform(restruct));
 		} else {
 			action.mergeWith(fromBondAttrs(restruct, existId, frBond, false, true));
 		}
 	});
-
 	action.operations.reverse();
-
 	return action;
 }
 
@@ -1016,27 +1026,29 @@ function sGroupAttributeAction(id, attrs) {
 	return action;
 }
 
-function fromSgroupDeletion(restruct, id) { // eslint-disable-line max-statements
-	var action = new Action();
-	var struct = restruct.molecule;
+function fromSgroupDeletion(restruct, id) {
+	let action = new Action();
+	const struct = restruct.molecule;
 
-	var sG = restruct.sgroups.get(id).item;
+	const sG = restruct.sgroups.get(id).item;
+
 	if (sG.type === 'SRU') {
 		struct.sGroupsRecalcCrossBonds();
-		var neiAtoms = sG.neiAtoms;
 
-		neiAtoms.forEach(function (aid) {
+		sG.neiAtoms.forEach(aid => {
 			if (atomGetAttr(restruct, aid, 'label') === '*')
 				action.addOp(new op.AtomAttr(aid, 'label', 'C'));
-		}, this);
+		});
 	}
 
-	var sg = struct.sgroups.get(id);
-	var atoms = Struct.SGroup.getAtoms(struct, sg);
-	var attrs = sg.getAttrs();
+	const sg = struct.sgroups.get(id);
+	const atoms = Struct.SGroup.getAtoms(struct, sg);
+	const attrs = sg.getAttrs();
+
 	action.addOp(new op.SGroupRemoveFromHierarchy(id));
-	for (var i = 0; i < atoms.length; ++i)
-		action.addOp(new op.SGroupAtomRemove(id, atoms[i]));
+
+	atoms.forEach(atom => action.addOp(new op.SGroupAtomRemove(id, atom)));
+
 	action.addOp(new op.SGroupDelete(id));
 
 	action = action.perform(restruct);
@@ -1047,30 +1059,34 @@ function fromSgroupDeletion(restruct, id) { // eslint-disable-line max-statement
 }
 
 function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-disable-line max-params, max-statements
-	var action = new Action();
-	var i;
+	let action = new Action();
 
 	// TODO: shoud the id be generated when OpSGroupCreate is executed?
 	//      if yes, how to pass it to the following operations?
 	sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
 
 	action.addOp(new op.SGroupCreate(sgid, type, pp));
-	for (i = 0; i < atoms.length; i++)
-		action.addOp(new op.SGroupAtomAdd(sgid, atoms[i]));
-	action.addOp(type != 'DAT' ?
-	             new op.SGroupAddToHierarchy(sgid) :
-	             new op.SGroupAddToHierarchy(sgid, -1, []));
+
+	atoms.forEach(atom => action.addOp(new op.SGroupAtomAdd(sgid, atom)));
+
+	action.addOp(
+		type !== 'DAT' ?
+			new op.SGroupAddToHierarchy(sgid) :
+			new op.SGroupAddToHierarchy(sgid, -1, [])
+	);
 
 	action = action.perform(restruct);
 
 	if (type === 'SRU') {
 		restruct.molecule.sGroupsRecalcCrossBonds();
-		var asteriskAction = new Action();
-		restruct.sgroups.get(sgid).item.neiAtoms.forEach(function (aid) {
-			var plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
-			if (atomGetDegree(restruct, aid) == 1 && plainCarbon)
+		let asteriskAction = new Action();
+
+		restruct.sgroups.get(sgid).item.neiAtoms.forEach(aid => {
+			const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
+
+			if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
 				asteriskAction.addOp(new op.AtomAttr(aid, 'label', '*'));
-		}, this);
+		});
 
 		asteriskAction = asteriskAction.perform(restruct);
 		asteriskAction.mergeWith(action);
@@ -1081,11 +1097,10 @@ function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-
 }
 
 function fromRGroupAttrs(restruct, id, attrs) {
-	var action = new Action();
-	for (var key in attrs) {
-		if (attrs.hasOwnProperty(key))
-			action.addOp(new op.RGroupAttr(id, key, attrs[key]));
-	}
+	const action = new Action();
+
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.RGroupAttr(id, key, attrs[key])));
 
 	return action.perform(restruct);
 }
@@ -1220,67 +1235,58 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 	return clipboard;
 }
 
-function fromPaste(restruct, pstruct, point) { // eslint-disable-line max-statements
-	var clipboard = struct2Clipboard(pstruct);
-	var offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
-	var action = new Action();
-	var amap = {};
-	var fmap = {};
+function fromPaste(restruct, pstruct, point) {
+	const clipboard = struct2Clipboard(pstruct);
+	const offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
+	const action = new Action();
+
+	const amap = {};
+	const fmap = {};
+
 	// atoms
-	for (var aid = 0; aid < clipboard.atoms.length; aid++) {
-		var atom = Object.assign({}, clipboard.atoms[aid]);
+	clipboard.atoms.forEach((atom, aid) => {
 		if (!(atom.fragment in fmap))
 			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+
 		atom.fragment = fmap[atom.fragment];
 		amap[aid] = action.addOp(new op.AtomAdd(atom, atom.pp.add(offset)).perform(restruct)).data.aid;
-	}
-
-	var rgnew = [];
-	for (var rgid in clipboard.rgroups) {
-		if (clipboard.rgroups.hasOwnProperty(rgid) && !restruct.molecule.rgroups.has(rgid))
-			rgnew.push(rgid);
-	}
+	});
 
 	// assign fragments to r-groups
-	for (var frid in clipboard.rgmap) {
-		if (clipboard.rgmap.hasOwnProperty(frid))
-			action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(restruct));
-	}
+	Object.keys(clipboard.rgmap)
+		.forEach(frid => action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(restruct)));
 
-	for (var i = 0; i < rgnew.length; ++i)
-		action.mergeWith(fromRGroupAttrs(restruct, rgnew[i], clipboard.rgroups[rgnew[i]]));
+	Object.keys(clipboard.rgroups)
+		.filter(rgid => !restruct.molecule.rgroups.has(rgid))
+		.forEach(rg => action.mergeWith(fromRGroupAttrs(restruct, rg, clipboard.rgroups[rg])));
 
 	// bonds
-	for (var bid = 0; bid < clipboard.bonds.length; bid++) {
-		var bond = Object.assign({}, clipboard.bonds[bid]);
-		action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(restruct));
-	}
+	clipboard.bonds
+		.forEach(bond => action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(restruct)));
+
 	// sgroups
-	for (var sgid = 0; sgid < clipboard.sgroups.length; sgid++) {
-		var sgroupInfo = clipboard.sgroups[sgid];
-		var atoms = sgroupInfo.atoms;
-		var sgatoms = [];
-		for (var sgaid = 0; sgaid < atoms.length; sgaid++)
-			sgatoms.push(amap[atoms[sgaid]]);
-		var newsgid = restruct.molecule.sgroups.newId();
-		var sgaction = fromSgroupAddition(restruct, sgroupInfo.type, sgatoms, sgroupInfo.attrs, newsgid, sgroupInfo.pp ? sgroupInfo.pp.add(offset) : null);
-		for (var iop = sgaction.operations.length - 1; iop >= 0; iop--)
-			action.addOp(sgaction.operations[iop]);
-	}
+	clipboard.sgroups.forEach(sgroupInfo => {
+		const sgatoms = sgroupInfo.atoms.map(atom => amap[atom]);
+		const newsgid = restruct.molecule.sgroups.newId();
+
+		const sgAction = fromSgroupAddition(restruct, sgroupInfo.type, sgatoms, sgroupInfo.attrs, newsgid, sgroupInfo.pp ? sgroupInfo.pp.add(offset) : null);
+		sgAction.operations.reverse().forEach(op => action.addOp(op));
+	});
+
 	// reaction arrows
-	if (restruct.rxnArrows.count() < 1) {
-		for (var raid = 0; raid < clipboard.rxnArrows.length; raid++)
-			action.addOp(new op.RxnArrowAdd(clipboard.rxnArrows[raid].pp.add(offset)).perform(restruct));
-	}
+	if (restruct.rxnArrows.count() < 1)
+		clipboard.rxnArrows.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct)));
+
 	// reaction pluses
-	for (var rpid = 0; rpid < clipboard.rxnPluses.length; rpid++)
-		action.addOp(new op.RxnPlusAdd(clipboard.rxnPluses[rpid].pp.add(offset)).perform(restruct));
+	clipboard.rxnPluses.forEach(plus => action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct)));
+
 	// chiral flag
 	if (pstruct.isChiral) {
-		var bb = pstruct.getCoordBoundingBox();
-		var pp = new Vec2(bb.max.x, bb.min.y - 1);
+		const bb = pstruct.getCoordBoundingBox();
+		const pp = new Vec2(bb.max.x, bb.min.y - 1);
 		action.mergeWith(fromChiralFlagAddition(restruct, pp.add(offset)));
 	}
+
 	// thats all
 	action.operations.reverse();
 	return action;
@@ -1333,6 +1339,21 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 
 			action.addOp(new op.AtomMove(aid, d));
 		});
+
+		if (!selection.sgroupData) {
+			const sgroups = getRelSgroupsBySelection(restruct, Set.list(fragment));
+
+			sgroups.forEach(sg => {
+				const d = new Vec2();
+
+				if (dir === 'horizontal')
+					d.x = bbox.min.x + bbox.max.x - 2 * sg.pp.x;
+				else // 'vertical'
+					d.y = bbox.min.y + bbox.max.y - 2 * sg.pp.y;
+
+				action.addOp(new op.SGroupDataMove(sg.id, d));
+			});
+		}
 	});
 
 	if (selection.bonds) {
@@ -1355,7 +1376,7 @@ function fromFlip(restruct, selection, dir) { // eslint-disable-line max-stateme
 	return action.perform(restruct);
 }
 
-function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line max-statements
+function fromRotate(restruct, selection, center, angle) { // eslint-disable-line max-statements
 	const struct = restruct.molecule;
 
 	const action = new Action();
@@ -1366,35 +1387,43 @@ function fromRotate(restruct, selection, pos, angle) { // eslint-disable-line ma
 	if (selection.atoms) {
 		selection.atoms.forEach(aid => {
 			const atom = struct.atoms.get(aid);
-			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, pos, angle)));
+			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, center, angle)));
 		});
+
+		if (!selection.sgroupData) {
+			const sgroups = getRelSgroupsBySelection(restruct, selection.atoms);
+
+			sgroups.forEach(sg => {
+				action.addOp(new op.SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)));
+			});
+		}
 	}
 
 	if (selection.rxnArrows) {
 		selection.rxnArrows.forEach(function (aid) {
 			var arrow = struct.rxnArrows.get(aid);
-			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, pos, angle)));
+			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle)));
 		});
 	}
 
 	if (selection.rxnPluses) {
 		selection.rxnPluses.forEach(function (pid) {
 			var plus = struct.rxnPluses.get(pid);
-			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, pos, angle)));
+			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
 		});
 	}
 
 	if (selection.sgroupData) {
 		selection.sgroupData.forEach(function (did) {
 			var data = struct.sgroups.get(did);
-			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, pos, angle)));
+			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, center, angle)));
 		});
 	}
 
 	if (selection.chiralFlags) {
 		selection.chiralFlags.forEach(function (fid) {
 			var flag = restruct.chiralFlags.get(fid);
-			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, pos, angle)));
+			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, center, angle)));
 		});
 	}
 
@@ -1433,10 +1462,10 @@ function getFragmentAtoms(struct, frid) {
 	return atoms;
 }
 
-function rotateDelta(v, pos, angle) {
-	var v1 = v.sub(pos);
+function rotateDelta(v, center, angle) {
+	var v1 = v.sub(center);
 	v1 = v1.rotate(angle);
-	v1.add_(pos); // eslint-disable-line no-underscore-dangle
+	v1.add_(center); // eslint-disable-line no-underscore-dangle
 	return v1.sub(v);
 }
 
@@ -1575,6 +1604,13 @@ function getAtomsBondIds(struct, atoms) {
 
 			return acc;
 		}, []);
+}
+
+function getRelSgroupsBySelection(restruct, selectedAtoms) {
+	selectedAtoms = selectedAtoms.map(aid => parseInt(aid, 10));
+
+	return restruct.molecule.sgroups.values()
+		.filter(sg => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }
 
 module.exports = Object.assign(Action, {

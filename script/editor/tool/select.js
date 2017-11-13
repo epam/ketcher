@@ -70,8 +70,8 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		if (ci.map === 'frags') {
 			const frag = ctab.frags.get(ci.id);
 			sel = {
-				atoms: frag.fragGetAtoms(rnd, ci.id),
-				bonds: frag.fragGetBonds(rnd, ci.id)
+				atoms: frag.fragGetAtoms(ctab, ci.id),
+				bonds: frag.fragGetBonds(ctab, ci.id)
 			};
 		} else if (ci.map === 'sgroups') {
 			const sgroup = ctab.sgroups.get(ci.id).item;
@@ -293,7 +293,7 @@ function isSelected(render, selection, item) {
 	var ctab = render.ctab;
 	if (item.map === 'frags' || item.map === 'rgroups') {
 		var atoms = item.map === 'frags' ?
-			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
+			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 
 		return !!selection['atoms'] &&

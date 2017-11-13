@@ -38,7 +38,7 @@ ReRGroup.isSelectable = function () {
 ReRGroup.prototype.getAtoms = function (render) {
 	var ret = [];
 	this.item.frags.each(function (fnum, fid) {
-		ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render, fid));
+		ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid));
 	});
 	return ret;
 };
@@ -46,7 +46,7 @@ ReRGroup.prototype.getAtoms = function (render) {
 ReRGroup.prototype.getBonds = function (render) {
 	var ret = [];
 	this.item.frags.each(function (fnum, fid) {
-		ret = ret.concat(render.ctab.frags.get(fid).fragGetBonds(render, fid));
+		ret = ret.concat(render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid));
 	});
 	return ret;
 };

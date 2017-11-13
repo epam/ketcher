@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { debounce } from 'lodash/fp';
+import { debounce, flatten } from 'lodash/fp';
 
 import element from '../../chem/element';
 import acts from '../action';
@@ -57,7 +57,21 @@ export function initEditor(dispatch, getState) {
 			} else if (elem.type === 'list' || elem.type === 'not-list') {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			} else if (elem.type === 'rlabel') {
-				dlg = openDialog(dispatch, 'rgroup', elem);
+				const rgroups = getState().editor.struct().rgroups;
+
+				const params = {
+					...elem,
+					disabledIds: rgroups.keys()
+						.reduce((acc, rgid) => {
+							const rg = rgroups.get(rgid);
+
+							if (rg.frags.values().includes(elem.fragId))
+								acc.push(parseInt(rgid, 10));
+
+							return acc;
+						}, [])
+				};
+				dlg = openDialog(dispatch, 'rgroup', params);
 			} else {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
@@ -72,17 +86,30 @@ export function initEditor(dispatch, getState) {
 				.then(toBond);
 		},
 		onRgroupEdit: rgroup => {
-			if (Object.keys(rgroup).length > 1) {
-				const rgids = [];
-				getState().editor.struct().rgroups.each(rgid => rgids.push(rgid));
+			const struct = getState().editor.struct();
 
+			if (Object.keys(rgroup).length > 2) {
+				const rgroupLabels = struct.rgroups.keys().map(rgid => parseInt(rgid, 10));
 				if (!rgroup.range) rgroup.range = '>0';
 
 				return openDialog(dispatch, 'rgroupLogic',
-					Object.assign({ rgroupLabels: rgids }, rgroup));
+					Object.assign({ rgroupLabels }, rgroup));
 			}
 
-			return openDialog(dispatch, 'rgroup', rgroup);
+			const disabledIds = struct.atoms.values()
+				.reduce((acc, atom) => {
+					if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
+						return acc.concat(fromElement(atom).values);
+
+					return acc;
+				}, []);
+
+			const params = {
+				label: rgroup.label,
+				disabledIds
+			};
+
+			return openDialog(dispatch, 'rgroup', params);
 		},
 		onSgroupEdit: sgroup => {
 			return sleep(0)		// huck to open dialog after dispatch sgroup tool action

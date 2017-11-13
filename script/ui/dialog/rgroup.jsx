@@ -21,22 +21,32 @@ import { h, Component } from 'preact';
 
 import Dialog from '../component/dialog';
 
-function RGroup({ selected, onSelect, result, ...props }) {
+function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
 	return (
 		<Dialog title="R-Group"
 				className="rgroup" params={props}
 				result={() => result()}>
-		  <ul>
-			{ range(1, 33).map(i => (
-				<li>
-				  <button
-					className={ selected(i) ? 'selected' : ''}
-					onClick={ev => onSelect(i)}>
-					{`R${i}`}
-				  </button>
-				</li>
-			)) }
-		  </ul>
+			<ul>
+				{
+					range(1, 33).map(i => {
+						const invalidId = disabledIds.includes(i);
+
+						let className = invalidId ? 'disabled' : '';
+						if (className === '')
+							className = selected(i) ? 'selected' : '';
+
+						return (
+							<li>
+								<button
+									className={className}
+									onClick={ev => invalidId ? null : onSelect(i) }>
+									{`R${i}`}
+								</button>
+							</li>
+						);
+					})
+				}
+			</ul>
 		</Dialog>
 	);
 }

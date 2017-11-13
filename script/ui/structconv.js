@@ -23,7 +23,8 @@ export function fromElement(selem) {
 	if (selem.label === 'R#')
 		return {
 			type: 'rlabel',
-			values: fromRlabel(selem.rglabel)
+			values: fromRlabel(selem.rglabel),
+			...selem
 		};
 	if (selem.label === 'L#')
 		return fromAtomList(selem);

@@ -16,7 +16,7 @@
 
 const Set = require('../../util/set');
 const Vec2 = require('../../util/vec2');
-const Action = require('../action');
+const Actions = require('../actions');
 const utils = require('./utils');
 const { fromTemplateOnBondAction } = require('../actions/aromatic-fusing');
 
@@ -157,14 +157,14 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		// create new action
 		dragCtx.angle = degrees;
 		if (!ci) { // ci.type == 'Canvas'
-			dragCtx.action = Action.fromTemplateOnCanvas(
+			dragCtx.action = Actions.fromTemplateOnCanvas(
 				restruct,
 				pos0,
 				angle,
 				this.template
 			);
 		} else if (ci.map === 'atoms') {
-			dragCtx.action = Action.fromTemplateOnAtom(
+			dragCtx.action = Actions.fromTemplateOnAtom(
 				restruct,
 				ci.id,
 				angle,
@@ -190,12 +190,12 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (!dragCtx.action) {
 		if (!ci) { //  ci.type == 'Canvas'
-			dragCtx.action = Action.fromTemplateOnCanvas(restruct, dragCtx.xy0, 0, this.template);
+			dragCtx.action = Actions.fromTemplateOnCanvas(restruct, dragCtx.xy0, 0, this.template);
 		} else if (ci.map === 'atoms') {
 			const degree = restruct.atoms.get(ci.id).a.neighbors.length;
 
 			if (degree > 1) { // common case
-				dragCtx.action = Action.fromTemplateOnAtom(
+				dragCtx.action = Actions.fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					null,
@@ -208,7 +208,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				const nei = struct.atoms.get(neiId);
 				const angle = utils.calcAngle(nei.pp, atom.pp);
 
-				dragCtx.action = Action.fromTemplateOnAtom(
+				dragCtx.action = Actions.fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					event.ctrlKey ? angle : utils.fracAngle(angle),
@@ -216,7 +216,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 					this.template
 				);
 			} else { // on single atom
-				dragCtx.action = Action.fromTemplateOnAtom(
+				dragCtx.action = Actions.fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					0,

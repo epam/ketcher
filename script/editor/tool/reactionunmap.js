@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+const Action = require('../shared/action');
+const Actions = require('../actions');
 
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
@@ -39,7 +40,7 @@ ReactionUnmapTool.prototype.mouseup = function (event) {
 		atoms.each(
 		function (aid, atom) {
 			if (atom.aam == aam)
-				action.mergeWith(Action.fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
+				action.mergeWith(Actions.fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
 		},
 			this
 		);

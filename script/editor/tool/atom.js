@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 var Struct = require('../../chem/struct');
-var Action = require('../action');
+var Actions = require('../actions');
 var utils = require('./utils');
 
 function AtomTool(editor, atomProps) {
@@ -23,7 +23,7 @@ function AtomTool(editor, atomProps) {
 		if (!editor.selection() || !editor.selection().atoms)
 			return new AtomTool(editor, atomProps);
 
-		var action = Action.fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
+		var action = Actions.fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
 		                                   atomProps, true);
 		editor.update(action);
 		editor.selection(null);
@@ -67,7 +67,7 @@ AtomTool.prototype.mousemove = function (event) {
 	if (dragCtx.action)
 		dragCtx.action.perform(rnd.ctab);
 
-	dragCtx.action = Action.fromBondAddition(rnd.ctab,
+	dragCtx.action = Actions.fromBondAddition(rnd.ctab,
 		this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
 	)[0];
 	this.editor.update(dragCtx.action, true);
@@ -78,8 +78,8 @@ AtomTool.prototype.mouseup = function (event) {
 		var rnd = this.editor.render;
 		this.editor.update(dragCtx.action || (
 			dragCtx.item ?
-				Action.fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
-				Action.fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
+				Actions.fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
+				Actions.fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
 		));
 		delete this.dragCtx;
 	}
@@ -102,8 +102,8 @@ function atomLongtapEvent(tool, render) {
 		const res = editor.event.quickEdit.dispatch(atom);
 		Promise.resolve(res).then(function (newatom) {
 			const action = atomid ?
-				Action.fromAtomsAttrs(render.ctab, atomid, newatom) :
-				Action.fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
+				Actions.fromAtomsAttrs(render.ctab, atomid, newatom) :
+				Actions.fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
 			editor.update(action);
 		});
 	}, 750);

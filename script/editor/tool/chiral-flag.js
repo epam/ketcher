@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+var Actions = require('../actions');
 
 function ChiralFlagTool(editor) {
 	if (!(this instanceof ChiralFlagTool)) {
@@ -23,9 +23,9 @@ function ChiralFlagTool(editor) {
 
 		let action = null;
 		if (rnd.ctab.molecule.isChiral === false)
-			action = Action.fromChiralFlagAddition(rnd.ctab);
+			action = Actions.fromChiralFlagAddition(rnd.ctab);
 		else
-			action = Action.fromChiralFlagDeletion(rnd.ctab);
+			action = Actions.fromChiralFlagDeletion(rnd.ctab);
 
 		this.editor.update(action);
 	}

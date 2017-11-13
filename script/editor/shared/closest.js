@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../util/vec2');
+var Vec2 = require('../../util/vec2');
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 

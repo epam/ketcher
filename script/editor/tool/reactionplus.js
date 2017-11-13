@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+var Actions = require('../actions');
 
 function ReactionPlusTool(editor) {
 	if (!(this instanceof ReactionPlusTool))
@@ -37,7 +37,7 @@ ReactionPlusTool.prototype.mousemove = function (event) {
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform(rnd.ctab);
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = Actions.fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
@@ -53,7 +53,7 @@ ReactionPlusTool.prototype.mouseup = function (event) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
 	} else {
-		this.editor.update(Action.fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
+		this.editor.update(Actions.fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 

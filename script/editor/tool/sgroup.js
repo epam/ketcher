@@ -17,7 +17,7 @@
 const isEqual = require('lodash/fp/isEqual');
 const uniq = require('lodash/fp/uniq');
 const LassoHelper = require('./helper/lasso');
-const Action = require('../action');
+const Actions = require('../actions');
 const Struct = require('../../chem/struct');
 const Set = require('../../util/set');
 const Contexts = require('../../util/constants').SgContexts;
@@ -138,8 +138,8 @@ function propsDialog(editor, id, defaultType) {
 			const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
 
 			if (isDataSg) {
-				const action = Action.fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
-					.mergeWith(Action.fromSgroupDeletion(restruct, id));
+				const action = Actions.fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
+					.mergeWith(Actions.fromSgroupDeletion(restruct, id));
 
 				editor.update(action);
 				editor.selection(selection);
@@ -215,7 +215,7 @@ function fromContextType(id, editor, newSg, currSelection) {
 	result.selection = result.selection || currSelection;
 
 	if (id !== null && id !== undefined)
-		result.action = result.action.mergeWith(Action.fromSgroupDeletion(restruct, id));
+		result.action = result.action.mergeWith(Actions.fromSgroupDeletion(restruct, id));
 
 	editor.selection(result.selection);
 
@@ -224,25 +224,25 @@ function fromContextType(id, editor, newSg, currSelection) {
 
 function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
 	if (context === Contexts.Bond)
-		return Action.fromBondAction(restruct, newSg, sourceAtoms, selection);
+		return Actions.fromBondAction(restruct, newSg, sourceAtoms, selection);
 
 	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
 	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
 
 	if (context === Contexts.Fragment)
-		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
+		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
 
 	if (context === Contexts.Multifragment)
-		return Action.fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
+		return Actions.fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
 
 	if (context === Contexts.Group)
-		return Action.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
+		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
 
 	if (context === Contexts.Atom)
-		return Action.fromAtomAction(restruct, newSg, newSourceAtoms);
+		return Actions.fromAtomAction(restruct, newSg, newSourceAtoms);
 
 	return {
-		action: Action.fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
+		action: Actions.fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
 	};
 }
 

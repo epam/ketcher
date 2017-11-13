@@ -16,7 +16,8 @@
 
 var Set = require('../../util/set');
 var scale = require('../../util/scale');
-var Action = require('../action');
+const Action = require('../shared/action');
+var Actions = require('../actions');
 var draw = require('../../render/draw');
 
 function ReactionMapTool(editor) {
@@ -87,20 +88,20 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 					atoms.each(
 					function (aid, atom) {
 						if (aid != this.dragCtx.item.id && (aam1 && atom.aam == aam1 || aam2 && atom.aam == aam2)) // eslint-disable-line no-mixed-operators
-							action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
+							action.mergeWith(Actions.fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
 					},
 						this
 					);
 				}
 				if (aam1) {
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }));
+					action.mergeWith(Actions.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }));
 				} else {
 					var aam = 0;
 					atoms.each(function (aid, atom) {
 						aam = Math.max(aam, atom.aam || 0);
 					});
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, this.dragCtx.item.id, { aam: aam + 1 }));
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }));
+					action.mergeWith(Actions.fromAtomsAttrs(rnd.ctab, this.dragCtx.item.id, { aam: aam + 1 }));
+					action.mergeWith(Actions.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }));
 				}
 				this.editor.update(action);
 			}

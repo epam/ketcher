@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../util/vec2');
-var Set = require('../util/set');
-var scale = require('../util/scale');
+var Vec2 = require('../../util/vec2');
+var Set = require('../../util/set');
+var scale = require('../../util/scale');
 
-var Struct = require('../chem/struct');
-var ReStruct = require('../render/restruct');
+var Struct = require('../../chem/struct/index');
+var ReStruct = require('../../render/restruct/index');
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };

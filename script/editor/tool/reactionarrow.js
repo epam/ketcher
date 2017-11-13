@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+const Actions = require('../actions');
+const Action = require('../shared/action');
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -42,7 +43,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform(rnd.ctab);
 
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = Actions.fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
@@ -58,7 +59,7 @@ ReactionArrowTool.prototype.mouseup = function (event) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
 	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
-		this.editor.update(Action.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
+		this.editor.update(Actions.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 

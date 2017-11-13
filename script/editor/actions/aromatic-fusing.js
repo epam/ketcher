@@ -16,14 +16,15 @@
 
 import * as molfile from '../../chem/molfile';
 
-import op from '../op';
-import Action from '../action';
+import op from '../shared/op';
+import Action from '../shared/action';
+import Actions from './';
 import Struct from '../../chem/struct';
 
 // TODO move to actions
 function fromTemplateOnBondAction(restruct, events, bid, template, flip, force) {
 	if (!force)
-		return Action.fromTemplateOnBond(restruct, bid, template, flip);
+		return Actions.fromTemplateOnBond(restruct, bid, template, flip);
 
 	/* aromatic merge */
 	return fromAromaticBondFusing(restruct, events, bid, template, flip);
@@ -40,7 +41,7 @@ function fromAromaticBondFusing(restruct, events, bid, template, flip) {
 
 	if (!canBeAromatized(beforeMerge.frag) || !canBeAromatized(tmpl)) {
 		return Promise.resolve(
-			Action.fromTemplateOnBond(restruct, bid, template, flip)
+			Actions.fromTemplateOnBond(restruct, bid, template, flip)
 		);
 	}
 
@@ -54,7 +55,7 @@ function fromAromaticBondFusing(restruct, events, bid, template, flip) {
 		const atmpl = molfile.parse(res2.struct);
 
 		const aromatizeAction = fromAromatize(restruct, astruct, beforeMerge.bondMap);  	// AROMATIZE
-		const templateFusingAction = Action.fromTemplateOnBond(								// TMPL ON BOND
+		const templateFusingAction = Actions.fromTemplateOnBond(								// TMPL ON BOND
 			restruct, bid, { bid: template.bid, molecule: atmpl }, flip
 		);
 		action = templateFusingAction.mergeWith(aromatizeAction);

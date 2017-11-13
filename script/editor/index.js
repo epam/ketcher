@@ -22,9 +22,9 @@ var Vec2 = require('../util/vec2');
 var Struct = require('../chem/struct');
 
 var Render = require('../render');
-var Action = require('./action');
+const { fromNewCanvas, fromDescriptorsAlign } = require('./actions');
 
-var closest = require('./closest');
+var closest = require('./shared/closest');
 
 var toolMap = {
 	rgroupatom: require('./tool/rgroupatom'),
@@ -98,7 +98,7 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.update(Action.fromNewCanvas(this.render.ctab,
+		this.update(fromNewCanvas(this.render.ctab,
 		                                 value || new Struct()));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
@@ -345,7 +345,7 @@ Editor.prototype.structSelected = function () {
 
 Editor.prototype.alignDescriptors = function () {
 	this.selection(null);
-	const action = Action.fromDescriptorsAlign(this.render.ctab);
+	const action = fromDescriptorsAlign(this.render.ctab);
 	this.update(action);
 	this.render.update(true);
 };

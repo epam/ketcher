@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 const Set = require('../../util/set');
-const Action = require('../action');
+const Actions = require('../actions');
 const Struct = require('../../chem/struct');
 const LassoHelper = require('./helper/lasso');
 const SGroup = require('./sgroup');
@@ -108,7 +108,7 @@ SelectTool.prototype.mousemove = function (event) {
 			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
 		const expSel = this.editor.explicitSelected();
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = Actions.fromMultipleMove(
 			restruct,
 			expSel,
 			render.page2obj(event).sub(this.dragCtx.xy0));
@@ -161,14 +161,14 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			// merge single atoms
 			Object.entries(this.dragCtx.mergeItems.atoms).forEach(pair => {
 				this.dragCtx.action = this.dragCtx.action ?
-					Action.fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
-					Action.fromAtomMerge(restruct, +pair[0], +pair[1]);
+					Actions.fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
+					Actions.fromAtomMerge(restruct, +pair[0], +pair[1]);
 			});
 
 			// merge bonds
 			this.dragCtx.action = this.dragCtx.action ?
-				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
-				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
+				Actions.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
+				Actions.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 		}
 		this.editor.hover(null);
 
@@ -199,14 +199,14 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		Promise.resolve(ra).then(function (newatom) {
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-			editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, newatom));
+			editor.update(Actions.fromAtomsAttrs(rnd.ctab, ci.id, newatom));
 		});
 	} else if (ci.map === 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(rb).then(function (newbond) {
-			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
+			editor.update(Actions.fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));

@@ -14,50 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Set = require('../util/set');
-const Vec2 = require('../util/vec2');
-const op = require('./op');
-const utils = require('./tool/utils');
-const Struct = require('../chem/struct');
-const closest = require('./closest');
+const Set = require('../../util/set');
+const Vec2 = require('../../util/vec2');
+const op = require('../shared/op');
+const utils = require('../tool/utils');
+const Struct = require('../../chem/struct/index');
+const closest = require('../shared/closest');
 const { uniq, difference } = require('lodash');
 
-//
-// Undo/redo actions
-//
-function Action() {
-	this.operations = [];
-}
-
-Action.prototype.addOp = function (operation, restruct) {
-	if (!restruct || !operation.isDummy(restruct))
-		this.operations.push(operation);
-
-	return operation;
-};
-
-Action.prototype.mergeWith = function (action) {
-	this.operations = this.operations.concat(action.operations);
-	return this;
-};
-
-// Perform action and return inverted one
-Action.prototype.perform = function (restruct) {
-	const action = new Action();
-
-	this.operations.forEach(function (operation) {
-		action.addOp(operation.perform(restruct));
-	});
-
-	action.operations.reverse();
-	return action;
-};
-
-Action.prototype.isDummy = function (restruct) {
-	return this.operations.find(function (operation) {
-		return restruct ? !operation.isDummy(restruct) : true; // TODO [RB] the condition is always true for op.* operations
-	}) === undefined;
-};
+const Action = require('../shared/action');
 
 // Add action operation to remove atom from s-group if needed
 function removeAtomFromSgroupIfNeeded(action, restruct, id) {
@@ -997,14 +962,14 @@ function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 	const descriptors = attrs.fieldValue;
 
 	if (typeof descriptors === 'string' || type !== 'DAT')
-		return Action.fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
+		return fromSgroupAddition(restruct, type, atoms, attrs, restruct.molecule.sgroups.newId());
 
 	return descriptors.reduce((acc, fValue) => {
 		const localAttrs = Object.assign({}, attrs);
 		localAttrs.fieldValue = fValue;
 
 		return acc
-			.mergeWith(Action.fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId()));
+			.mergeWith(fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId()));
 	}, new Action());
 }
 
@@ -1613,7 +1578,7 @@ function getRelSgroupsBySelection(restruct, selectedAtoms) {
 		.filter(sg => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }
 
-module.exports = Object.assign(Action, {
+module.exports = {
 	fromMultipleMove: fromMultipleMove,
 	fromAtomAddition: fromAtomAddition,
 	fromArrowAddition: fromArrowAddition,
@@ -1653,4 +1618,4 @@ module.exports = Object.assign(Action, {
 	fromUpdateIfThen: fromUpdateIfThen,
 	fromMultiFragmentAction: fromMultiFragmentAction,
 	fromDescriptorsAlign: fromDescriptorsAlign
-});
+};

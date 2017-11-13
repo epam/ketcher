@@ -16,7 +16,7 @@
 
 var Vec2 = require('../../util/vec2');
 
-var Action = require('../action');
+var Actions = require('../actions');
 var utils = require('./utils');
 
 function RotateTool(editor, dir) {
@@ -30,8 +30,8 @@ function RotateTool(editor, dir) {
 		    Object.keys(selection).length === 1 &&
 		    selection.bonds.length == 1;
 
-		var action = !singleBond ? Action.fromFlip(restruct, selection, dir) :
-		    Action.fromBondAlign(restruct, selection.bonds[0], dir);
+		var action = !singleBond ? Actions.fromFlip(restruct, selection, dir) :
+		    Actions.fromBondAlign(restruct, selection.bonds[0], dir);
 		editor.update(action);
 		return null;
 	}
@@ -123,7 +123,7 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 			dragCtx.action.perform(rnd.ctab);
 
 		dragCtx.angle = degrees;
-		dragCtx.action = Action.fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
+		dragCtx.action = Actions.fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
 		if (degrees > 180)
 			degrees -= 360;

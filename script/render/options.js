@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var utils = require('../editor/tool/utils');
+var utils = require('../editor/tool/utils').default;
 var Vec2 = require('../util/vec2');
 
 function defaultOptions(opt) {

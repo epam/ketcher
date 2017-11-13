@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
+import Vec2 from '../../util/vec2';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 
@@ -277,7 +277,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 	return result; // { atoms: { srcID: dstID, ... }, bonds: { srcID: dstID, ... }, ... }
 }
 
-module.exports = {
+export default {
 	atom: findClosestAtom, // used in Actions
 	item: findClosestItem,
 	merge: findCloseMerge

@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Set = require('../../util/set');
-const Actions = require('../actions');
-const Struct = require('../../chem/struct');
-const LassoHelper = require('./helper/lasso');
-const SGroup = require('./sgroup');
-const Atom = require('./atom');
-const utils = require('./utils');
+import Set from '../../util/set';
+import utils from './utils';
+
+import Struct from '../../chem/struct';
+import LassoHelper from './helper/lasso';
+import { sgroupDialog } from './sgroup';
+import { atomLongtapEvent } from './atom';
+import * as Actions from '../actions';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -51,7 +52,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	};
 
 	if (!ci) { //  ci.type == 'Canvas'
-		Atom.atomLongtapEvent(this, rnd);
+		atomLongtapEvent(this, rnd);
 		delete this.dragCtx.item;
 
 		if (!this.lassoHelper.fragment)
@@ -89,7 +90,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	}
 
 	if (ci.map === 'atoms')
-		Atom.atomLongtapEvent(this, rnd); // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+		atomLongtapEvent(this, rnd); // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
 
 	return true;
 };
@@ -210,7 +211,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));
-		SGroup.dialog(this.editor, ci.id);
+		sgroupDialog(this.editor, ci.id);
 	}
 	return true;
 };
@@ -301,4 +302,4 @@ function isSelected(render, selection, item) {
 		selection[item.map].indexOf(item.id) > -1;
 }
 
-module.exports = SelectTool;
+export default SelectTool;

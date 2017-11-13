@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-var locate = require('./locate');
-var draw = require('../../../render/draw');
-var scale = require('../../../util/scale');
+import locate from './locate';
+import draw from '../../../render/draw';
+import scale from '../../../util/scale';
 
 function LassoHelper(mode, editor, fragment) {
 	this.mode = mode;
@@ -80,4 +80,4 @@ LassoHelper.prototype.end = function () {
 	return ret;
 };
 
-module.exports = LassoHelper;
+export default LassoHelper;

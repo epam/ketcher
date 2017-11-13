@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-var scale = require('../../util/scale');
-const Action = require('../shared/action');
-var Actions = require('../actions');
-var draw = require('../../render/draw');
+import Set from '../../util/set';
+import scale from '../../util/scale';
+import Action from '../shared/action';
+import * as Actions from '../actions';
+import draw from '../../render/draw';
 
 function ReactionMapTool(editor) {
 	if (!(this instanceof ReactionMapTool))
@@ -127,4 +127,4 @@ function isValidMap(rcs, aid1, aid2) {
 	return t1 && t2 && t1 != t2;
 }
 
-module.exports = ReactionMapTool;
+export default ReactionMapTool;

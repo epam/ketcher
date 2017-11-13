@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Set = require('../../util/set');
-var scale = require('../../util/scale');
+import Vec2 from '../../util/vec2';
+import Set from '../../util/set';
+import scale from '../../util/scale';
 
-var Struct = require('../../chem/struct/index');
-var ReStruct = require('../../render/restruct/index');
+import Struct from '../../chem/struct';
+import ReStruct from '../../render/restruct';
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
@@ -951,39 +951,39 @@ function invalidateItem(restruct, map, id, level) {
 	}
 }
 
-module.exports = {
-	AtomAdd: AtomAdd,
-	AtomDelete: AtomDelete,
-	AtomAttr: AtomAttr,
-	AtomMove: AtomMove,
-	BondMove: BondMove,
-	LoopMove: LoopMove,
-	SGroupAtomAdd: SGroupAtomAdd,
-	SGroupAtomRemove: SGroupAtomRemove,
-	SGroupAttr: SGroupAttr,
-	SGroupCreate: SGroupCreate,
-	SGroupDelete: SGroupDelete,
-	SGroupAddToHierarchy: SGroupAddToHierarchy,
-	SGroupRemoveFromHierarchy: SGroupRemoveFromHierarchy,
-	BondAdd: BondAdd,
-	BondDelete: BondDelete,
-	BondAttr: BondAttr,
-	FragmentAdd: FragmentAdd,
-	FragmentDelete: FragmentDelete,
-	RGroupAttr: RGroupAttr,
-	RGroupFragment: RGroupFragment,
-	RxnArrowAdd: RxnArrowAdd,
-	RxnArrowDelete: RxnArrowDelete,
-	RxnArrowMove: RxnArrowMove,
-	RxnPlusAdd: RxnPlusAdd,
-	RxnPlusDelete: RxnPlusDelete,
-	RxnPlusMove: RxnPlusMove,
-	SGroupDataMove: SGroupDataMove,
-	CanvasLoad: CanvasLoad,
-	ChiralFlagAdd: ChiralFlagAdd,
-	ChiralFlagDelete: ChiralFlagDelete,
-	ChiralFlagMove: ChiralFlagMove,
-	UpdateIfThen: UpdateIfThen,
-	AlignDescriptors: AlignDescriptors,
-	RestoreDescriptorsPosition: RestoreDescriptorsPosition
+export default {
+	AtomAdd,
+	AtomDelete,
+	AtomAttr,
+	AtomMove,
+	BondMove,
+	LoopMove,
+	SGroupAtomAdd,
+	SGroupAtomRemove,
+	SGroupAttr,
+	SGroupCreate,
+	SGroupDelete,
+	SGroupAddToHierarchy,
+	SGroupRemoveFromHierarchy,
+	BondAdd,
+	BondDelete,
+	BondAttr,
+	FragmentAdd,
+	FragmentDelete,
+	RGroupAttr,
+	RGroupFragment,
+	RxnArrowAdd,
+	RxnArrowDelete,
+	RxnArrowMove,
+	RxnPlusAdd,
+	RxnPlusDelete,
+	RxnPlusMove,
+	SGroupDataMove,
+	CanvasLoad,
+	ChiralFlagAdd,
+	ChiralFlagDelete,
+	ChiralFlagMove,
+	UpdateIfThen,
+	AlignDescriptors,
+	RestoreDescriptorsPosition
 };

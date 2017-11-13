@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Struct = require('../../chem/struct');
-var Actions = require('../actions');
+import Struct from '../../chem/struct';
+import * as Actions from '../actions';
 
 function RGroupFragmentTool(editor) {
 	if (!(this instanceof RGroupFragmentTool)) {
@@ -68,4 +68,4 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 	}
 };
 
-module.exports = RGroupFragmentTool;
+export default RGroupFragmentTool;

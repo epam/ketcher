@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Actions = require('../actions');
+import * as Actions from '../actions';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -56,4 +56,4 @@ PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
 	}
 };
 
-module.exports = PasteTool;
+export default PasteTool;

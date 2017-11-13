@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Struct = require('../../chem/struct');
-var Actions = require('../actions');
-var utils = require('./utils');
+import Vec2 from '../../util/vec2';
+import Struct from '../../chem/struct';
+import * as Actions from '../actions';
+import utils from './utils';
 
-var Atom = require('./atom');
-var Bond = require('./bond');
+import { atomLongtapEvent } from './atom';
+import { bondChangingAction } from './bond';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -41,7 +41,7 @@ ChainTool.prototype.mousedown = function (event) {
 	if (ci && ci.map === 'atoms') {
 		this.editor.selection({ atoms: [ci.id] }); // for change atom
 		// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-		Atom.atomLongtapEvent(this, rnd);
+		atomLongtapEvent(this, rnd);
 	}
 	if (!this.dragCtx.item) // ci.type == 'Canvas'
 		delete this.dragCtx.item;
@@ -93,7 +93,7 @@ ChainTool.prototype.mouseup = function () {
 		if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
 			var bond = struct.bonds.get(dragCtx.item.id);
 
-			action = Bond.bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
+			action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
 				type: Struct.Bond.PATTERN.TYPE.SINGLE,
 				stereo: Struct.Bond.PATTERN.STEREO.NONE
 			});
@@ -108,4 +108,4 @@ ChainTool.prototype.mouseup = function () {
 ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
 	ChainTool.prototype.mouseup;
 
-module.exports = ChainTool;
+export default ChainTool;

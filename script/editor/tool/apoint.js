@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Actions = require('../actions');
+import { fromAtomsAttrs } from '../actions';
 
 function APointTool(editor) {
 	if (!(this instanceof APointTool))
@@ -41,7 +41,7 @@ APointTool.prototype.mouseup = function (event) {
 		});
 		Promise.resolve(res).then(function (newatom) {
 			if (atom.attpnt != newatom.attpnt) {
-				var action = Actions.fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
+				var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
 				editor.update(action);
 			}
 		});
@@ -49,4 +49,4 @@ APointTool.prototype.mouseup = function (event) {
 	}
 };
 
-module.exports = APointTool;
+export default APointTool;

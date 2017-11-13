@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Action = require('../shared/action');
-const Actions = require('../actions');
+import Action from '../shared/action';
+import * as Actions from '../actions';
 
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
@@ -49,4 +49,4 @@ ReactionUnmapTool.prototype.mouseup = function (event) {
 	this.editor.hover(null);
 };
 
-module.exports = ReactionUnmapTool;
+export default ReactionUnmapTool;

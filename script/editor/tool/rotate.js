@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
+import Vec2 from '../../util/vec2';
 
-var Actions = require('../actions');
-var utils = require('./utils');
+import * as Actions from '../actions';
+import utils from './utils';
 
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {
@@ -151,4 +151,4 @@ RotateTool.prototype.mouseup = function () {
 RotateTool.prototype.cancel = RotateTool.prototype.mouseleave =
 	RotateTool.prototype.mouseup;
 
-module.exports = RotateTool;
+export default RotateTool;

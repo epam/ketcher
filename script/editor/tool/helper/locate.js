@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../../util/vec2');
+import Vec2 from '../../../util/vec2';
 
 function getElementsInRectangle(restruct, p0, p1) {
 	var bondList = [];
@@ -154,7 +154,7 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 	return (counter % 2) != 0;
 }
 
-module.exports = {
+export default {
 	inRectangle: getElementsInRectangle,
 	inPolygon: getElementsInPolygon
 };

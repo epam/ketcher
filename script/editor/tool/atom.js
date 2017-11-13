@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Struct = require('../../chem/struct');
-var Actions = require('../actions');
-var utils = require('./utils');
+import Struct from '../../chem/struct';
+import * as Actions from '../actions';
+import utils from './utils';
 
 function AtomTool(editor, atomProps) {
 	if (!(this instanceof AtomTool)) {
@@ -85,7 +85,7 @@ AtomTool.prototype.mouseup = function (event) {
 	}
 };
 
-function atomLongtapEvent(tool, render) {
+export function atomLongtapEvent(tool, render) {
 	const dragCtx = tool.dragCtx;
 	const editor = tool.editor;
 
@@ -115,6 +115,4 @@ function atomLongtapEvent(tool, render) {
 	};
 }
 
-module.exports = Object.assign(AtomTool, {
-	atomLongtapEvent: atomLongtapEvent
-});
+export default AtomTool;

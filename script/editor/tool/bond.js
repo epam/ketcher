@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Struct = require('../../chem/struct');
-var Actions = require('../actions');
-var utils = require('./utils');
+import Vec2 from '../../util/vec2';
+import Struct from '../../chem/struct';
+import * as Actions from '../actions';
+import utils from './utils';
 
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {
@@ -133,7 +133,7 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
  * @param bondProps - bondTool properties
  * @returns Action
  */
-function bondChangingAction(restruct, itemID, bond, bondProps) {
+export function bondChangingAction(restruct, itemID, bond, bondProps) {
 	if (bondProps.stereo !== Struct.Bond.PATTERN.STEREO.NONE && //
 		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
 		bond.type === bondProps.type && bond.stereo === bondProps.stereo)
@@ -166,6 +166,4 @@ var plainBondTypes = [
 	Struct.Bond.PATTERN.TYPE.TRIPLE
 ];
 
-module.exports = Object.assign(BondTool, {
-	bondChangingAction: bondChangingAction
-});
+export default BondTool;

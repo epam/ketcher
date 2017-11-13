@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Set = require('../../util/set');
-const Vec2 = require('../../util/vec2');
-const Actions = require('../actions');
-const utils = require('./utils');
-const { fromTemplateOnBondAction } = require('../actions/aromatic-fusing');
+import Set from '../../util/set';
+import Vec2 from '../../util/vec2';
+import * as Actions from '../actions';
+import utils from './utils';
+import { fromTemplateOnBondAction } from '../actions/aromatic-fusing';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -266,4 +266,4 @@ function getSign(molecule, bond, v) {
 	return 0;
 }
 
-module.exports = TemplateTool;
+export default TemplateTool;

@@ -14,15 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Set = require('../../util/set');
-const Vec2 = require('../../util/vec2');
-const op = require('../shared/op');
-const utils = require('../tool/utils');
-const Struct = require('../../chem/struct/index');
-const closest = require('../shared/closest');
-const { uniq, difference } = require('lodash');
+import Set from '../../util/set';
+import Vec2 from '../../util/vec2';
+import utils from '../tool/utils';
 
-const Action = require('../shared/action');
+import Struct from '../../chem/struct';
+import { uniq, difference } from 'lodash';
+
+import op from '../shared/op';
+import Action from '../shared/action';
+import closest from '../shared/closest';
 
 // Add action operation to remove atom from s-group if needed
 function removeAtomFromSgroupIfNeeded(action, restruct, id) {
@@ -1578,44 +1579,44 @@ function getRelSgroupsBySelection(restruct, selectedAtoms) {
 		.filter(sg => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }
 
-module.exports = {
-	fromMultipleMove: fromMultipleMove,
-	fromAtomAddition: fromAtomAddition,
-	fromArrowAddition: fromArrowAddition,
-	fromArrowDeletion: fromArrowDeletion,
-	fromChiralFlagAddition: fromChiralFlagAddition,
-	fromChiralFlagDeletion: fromChiralFlagDeletion,
-	fromPlusAddition: fromPlusAddition,
-	fromPlusDeletion: fromPlusDeletion,
-	fromAtomDeletion: fromAtomDeletion,
-	fromBondDeletion: fromBondDeletion,
-	fromFragmentDeletion: fromFragmentDeletion,
-	fromAtomMerge: fromAtomMerge,
-	fromBondsMerge: fromBondsMerge,
-	fromBondFlipping: fromBondFlipping,
-	fromTemplateOnCanvas: fromTemplateOnCanvas,
-	fromTemplateOnAtom: fromTemplateOnAtom,
-	fromTemplateOnBond: fromTemplateOnBond,
-	fromAtomsAttrs: fromAtomsAttrs,
-	fromBondAttrs: fromBondAttrs,
-	fromChain: fromChain,
-	fromBondAddition: fromBondAddition,
-	fromNewCanvas: fromNewCanvas,
-	fromSgroupType: fromSgroupType,
-	fromSgroupDeletion: fromSgroupDeletion,
-	fromSgroupAttrs: fromSgroupAttrs,
-	fromRGroupFragment: fromRGroupFragment,
-	fromPaste: fromPaste,
-	fromRGroupAttrs: fromRGroupAttrs,
-	fromSgroupAddition: fromSgroupAddition,
-	fromFlip: fromFlip,
-	fromRotate: fromRotate,
-	fromBondAlign: fromBondAlign,
-	fromAtomAction: fromAtomAction,
-	fromGroupAction: fromGroupAction,
-	fromBondAction: fromBondAction,
-	fromSeveralSgroupAddition: fromSeveralSgroupAddition,
-	fromUpdateIfThen: fromUpdateIfThen,
-	fromMultiFragmentAction: fromMultiFragmentAction,
-	fromDescriptorsAlign: fromDescriptorsAlign
+export {
+	fromMultipleMove,
+	fromAtomAddition,
+	fromArrowAddition,
+	fromArrowDeletion,
+	fromChiralFlagAddition,
+	fromChiralFlagDeletion,
+	fromPlusAddition,
+	fromPlusDeletion,
+	fromAtomDeletion,
+	fromBondDeletion,
+	fromFragmentDeletion,
+	fromAtomMerge,
+	fromBondsMerge,
+	fromBondFlipping,
+	fromTemplateOnCanvas,
+	fromTemplateOnAtom,
+	fromTemplateOnBond,
+	fromAtomsAttrs,
+	fromBondAttrs,
+	fromChain,
+	fromBondAddition,
+	fromNewCanvas,
+	fromSgroupType,
+	fromSgroupDeletion,
+	fromSgroupAttrs,
+	fromRGroupFragment,
+	fromPaste,
+	fromRGroupAttrs,
+	fromSgroupAddition,
+	fromFlip,
+	fromRotate,
+	fromBondAlign,
+	fromAtomAction,
+	fromGroupAction,
+	fromBondAction,
+	fromSeveralSgroupAddition,
+	fromUpdateIfThen,
+	fromMultiFragmentAction,
+	fromDescriptorsAlign
 };

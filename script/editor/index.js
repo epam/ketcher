@@ -14,44 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-var s = require('subscription');
+import s from 'subscription';
 
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
+import Set from '../util/set';
+import Vec2 from '../util/vec2';
 
-var Struct = require('../chem/struct');
+import Struct from '../chem/struct';
+import Render from '../render';
 
-var Render = require('../render');
-const { fromNewCanvas, fromDescriptorsAlign } = require('./actions');
+import { fromNewCanvas, fromDescriptorsAlign } from './actions';
+import closest from './shared/closest';
 
-var closest = require('./shared/closest');
-
-var toolMap = {
-	rgroupatom: require('./tool/rgroupatom'),
-	select: require('./tool/select'),
-	sgroup: require('./tool/sgroup'),
-	eraser: require('./tool/eraser'),
-	atom: require('./tool/atom'),
-	bond: require('./tool/bond'),
-	chain: require('./tool/chain'),
-	chiralFlag: require('./tool/chiral-flag'),
-	template: require('./tool/template'),
-	charge: require('./tool/charge'),
-	rgroupfragment: require('./tool/rgroupfragment'),
-	apoint: require('./tool/apoint'),
-	attach: require('./tool/attach'),
-	reactionarrow: require('./tool/reactionarrow'),
-	reactionplus: require('./tool/reactionplus'),
-	reactionmap: require('./tool/reactionmap'),
-	reactionunmap: require('./tool/reactionunmap'),
-	paste: require('./tool/paste'),
-	rotate: require('./tool/rotate')
-};
+import toolMap from './tool';
 
 const SCALE = 40;  // const
 const HISTORY_SIZE = 32; // put me to options
 
-var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({
@@ -375,4 +354,4 @@ function elementOffset(element) {
 	return new Vec2(left, top);
 }
 
-module.exports = Editor;
+export default Editor;

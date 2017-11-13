@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Actions = require('../actions');
-const Action = require('../shared/action');
+import Action from '../shared/action';
+import * as Actions from '../actions';
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -63,4 +63,4 @@ ReactionArrowTool.prototype.mouseup = function (event) {
 	}
 };
 
-module.exports = ReactionArrowTool;
+export default ReactionArrowTool;

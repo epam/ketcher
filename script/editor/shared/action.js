@@ -51,4 +51,4 @@ Action.prototype.isDummy = function (restruct) {
 	}) === undefined;
 };
 
-module.exports = Action;
+export default Action;

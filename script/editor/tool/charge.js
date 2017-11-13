@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Actions = require('../actions');
-var element = require('../../chem/element');
+import { fromAtomsAttrs } from '../actions';
+import element from '../../chem/element';
 
 function ChargeTool(editor, charge) {
 	if (!(this instanceof ChargeTool))
@@ -43,11 +43,11 @@ ChargeTool.prototype.mouseup = function (event) {
 	var ci = editor.findItem(event, ['atoms']);
 	if (ci && ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) {
 		this.editor.hover(null);
-		this.editor.update(Actions.fromAtomsAttrs(rnd.ctab, ci.id, {
+		this.editor.update(fromAtomsAttrs(rnd.ctab, ci.id, {
 			charge: struct.atoms.get(ci.id).charge + this.charge
 		}));
 	}
 	return true;
 };
 
-module.exports = ChargeTool;
+export default ChargeTool;

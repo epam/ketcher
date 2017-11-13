@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var element = require('../../chem/element');
+import element from '../../chem/element';
 
 function AttachTool(editor, attachPoints) {
 	if (!(this instanceof AttachTool))
@@ -62,4 +62,4 @@ AttachTool.prototype.mouseup = function (event) {
 	return true;
 };
 
-module.exports = AttachTool;
+export default AttachTool;

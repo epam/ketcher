@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Actions = require('../actions');
+import * as Actions from '../actions';
 
 function ReactionPlusTool(editor) {
 	if (!(this instanceof ReactionPlusTool))
@@ -57,4 +57,4 @@ ReactionPlusTool.prototype.mouseup = function (event) {
 	}
 };
 
-module.exports = ReactionPlusTool;
+export default ReactionPlusTool;

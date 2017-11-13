@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Struct = require('../../chem/struct');
-var Actions = require('../actions');
+import Struct from '../../chem/struct';
+import { fromAtomAddition, fromAtomsAttrs } from '../actions';
 
 function RGroupAtomTool(editor) {
 	if (!(this instanceof RGroupAtomTool)) {
@@ -58,12 +58,12 @@ function propsDialog(editor, id, pos) {
 	Promise.resolve(res).then(function (elem) {
 		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
 		if (!id && id !== 0 && elem.rglabel) {
-			editor.update(Actions.fromAtomAddition(editor.render.ctab, pos, elem));
+			editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
 		} else if (rglabel != elem.rglabel || label !== 'R#') {
 			elem.aam = atom.aam; // WTF??
-			editor.update(Actions.fromAtomsAttrs(editor.render.ctab, id, elem));
+			editor.update(fromAtomsAttrs(editor.render.ctab, id, elem));
 		}
 	});
 }
 
-module.exports = RGroupAtomTool;
+export default RGroupAtomTool;

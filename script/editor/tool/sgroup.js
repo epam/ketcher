@@ -14,13 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-const isEqual = require('lodash/fp/isEqual');
-const uniq = require('lodash/fp/uniq');
-const LassoHelper = require('./helper/lasso');
-const Actions = require('../actions');
-const Struct = require('../../chem/struct');
-const Set = require('../../util/set');
-const Contexts = require('../../util/constants').SgContexts;
+import isEqual from 'lodash/fp/isEqual';
+import uniq from 'lodash/fp/uniq';
+
+import Set from '../../util/set';
+import { SgContexts } from '../../util/constants';
+
+import Struct from '../../chem/struct';
+import LassoHelper from './helper/lasso';
+import * as Actions from '../actions';
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 
@@ -37,7 +39,7 @@ function SGroupTool(editor, type) {
 			return isEqual(sgroup.atoms, selectedAtoms);
 		});
 
-		propsDialog(editor, id !== undefined ? id : null, type);
+		sgroupDialog(editor, id !== undefined ? id : null, type);
 		editor.selection(null);
 		return null;
 	}
@@ -93,10 +95,10 @@ SGroupTool.prototype.mouseup = function (event) {
 
 	// TODO: handle click on an existing group?
 	if (id !== null || (selection && selection.atoms))
-		propsDialog(this.editor, id, this.type);
+		sgroupDialog(this.editor, id, this.type);
 };
 
-function propsDialog(editor, id, defaultType) {
+export function sgroupDialog(editor, id, defaultType) {
 	const restruct = editor.render.ctab;
 	const struct = restruct.molecule;
 	const selection = editor.selection() || {};
@@ -159,13 +161,13 @@ function getContextBySgroup(restruct, sgAtoms) {
 	const struct = restruct.molecule;
 
 	if (sgAtoms.length === 1)
-		return Contexts.Atom;
+		return SgContexts.Atom;
 
 	if (manyComponentsSelected(restruct, sgAtoms))
-		return Contexts.Multifragment;
+		return SgContexts.Multifragment;
 
 	if (singleComponentSelected(restruct, sgAtoms))
-		return Contexts.Fragment;
+		return SgContexts.Fragment;
 
 	const atomMap = sgAtoms.reduce((acc, aid) => {
 		acc[aid] = true;
@@ -176,19 +178,19 @@ function getContextBySgroup(restruct, sgAtoms) {
 		.values()
 		.filter(bond => atomMap[bond.begin] && atomMap[bond.end]);
 
-	return anyChainedBonds(sgBonds) ? Contexts.Group : Contexts.Bond;
+	return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
 }
 
 function getContextBySelection(restruct, selection) {
 	const struct = restruct.molecule;
 
 	if (selection.atoms && !selection.bonds)
-		return Contexts.Atom;
+		return SgContexts.Atom;
 
 	const bonds = selection.bonds.map(bondid => struct.bonds.get(bondid));
 
 	if (!anyChainedBonds(bonds))
-		return Contexts.Bond;
+		return SgContexts.Bond;
 
 	selection.atoms = selection.atoms || [];
 
@@ -199,9 +201,9 @@ function getContextBySelection(restruct, selection) {
 	);
 
 	if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
-		return Contexts.Fragment;
+		return SgContexts.Fragment;
 
-	return manyComponentsSelected(restruct, selection.atoms) ? Contexts.Multifragment : Contexts.Group;
+	return manyComponentsSelected(restruct, selection.atoms) ? SgContexts.Multifragment : SgContexts.Group;
 }
 
 function fromContextType(id, editor, newSg, currSelection) {
@@ -223,22 +225,22 @@ function fromContextType(id, editor, newSg, currSelection) {
 }
 
 function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
-	if (context === Contexts.Bond)
+	if (context === SgContexts.Bond)
 		return Actions.fromBondAction(restruct, newSg, sourceAtoms, selection);
 
 	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
 	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
 
-	if (context === Contexts.Fragment)
+	if (context === SgContexts.Fragment)
 		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
 
-	if (context === Contexts.Multifragment)
+	if (context === SgContexts.Multifragment)
 		return Actions.fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
 
-	if (context === Contexts.Group)
+	if (context === SgContexts.Group)
 		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
 
-	if (context === Contexts.Atom)
+	if (context === SgContexts.Atom)
 		return Actions.fromAtomAction(restruct, newSg, newSourceAtoms);
 
 	return {
@@ -341,6 +343,4 @@ function checkOverlapping(struct, atoms) {
 	});
 }
 
-module.exports = Object.assign(SGroupTool, {
-	dialog: propsDialog
-});
+export default SGroupTool;

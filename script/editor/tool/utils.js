@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var inRange = require('lodash').inRange;
+import Vec2 from '../../util/vec2';
+import { inRange } from 'lodash';
 
 var FRAC = Math.PI / 12; // '15º'
 
@@ -67,11 +67,11 @@ function mergeBondsParams(restruct, bond1, bond2) {
 	return { angle: mergeAngle, scale, cross: Math.abs(angle) > 90 };
 }
 
-module.exports = {
-	calcAngle: calcAngle,
-	fracAngle: fracAngle,
-	calcNewAtomPos: calcNewAtomPos,
-	degrees: degrees,
-	setFracAngle: setFracAngle,
-	mergeBondsParams: mergeBondsParams
+export default {
+	calcAngle,
+	fracAngle,
+	calcNewAtomPos,
+	degrees,
+	setFracAngle,
+	mergeBondsParams
 };

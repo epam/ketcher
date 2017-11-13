@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Actions = require('../actions');
-var LassoHelper = require('./helper/lasso');
+import * as Actions from '../actions';
+import LassoHelper from './helper/lasso';
 
 function EraserTool(editor, mode) {
 	if (!(this instanceof EraserTool)) {
@@ -83,4 +83,4 @@ EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 	}
 };
 
-module.exports = EraserTool;
+export default EraserTool;

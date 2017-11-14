@@ -21,6 +21,10 @@ import { connect } from 'preact-redux';
 import Dialog from '../component/dialog';
 
 function About(props) {
+
+	//Indigo version and build info
+	const [version, build] = props.indigoVersion.split('.r');
+
 	return (
 		<Dialog title="About"
 				className="about" params={props}
@@ -33,12 +37,14 @@ function About(props) {
 					<a href="http://lifescience.opensource.epam.com/ketcher/help.html" target="_blank">Ketcher</a>
 				</dt>
 				<dd>
-					version <var>{props.version}</var>
+					version
+					<var>{props.version}</var>
 				</dd>
 				{
 					props.buildNumber ? (
 						<dd>
-							build #<var>{props.buildNumber}</var>
+							build #
+							<var className="build-number">{props.buildNumber}</var>
 							{" at "}
 							<time>{props.buildDate}</time>
 						</dd> ) : null
@@ -50,7 +56,13 @@ function About(props) {
 								<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo
 									Toolkit</a>
 							</dt>
-							<dd>version <var>{props.indigoVersion}</var></dd>
+							<dd>version
+								<var>{version}</var>
+							</dd>
+							<dd>
+								build #
+								<var className="build-number">{build}</var>
+							</dd>
 						</div>
 					) : ( <dd>standalone</dd> )
 				}

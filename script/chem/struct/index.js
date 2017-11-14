@@ -866,52 +866,65 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 
 Struct.prototype.getComponents = function () { // eslint-disable-line max-statements
 	/* saver */
-	var ccs = this.findConnectedComponents(true);
-	var barriers = [];
-	var arrowPos = null;
-	this.rxnArrows.each(function (id, item) { // there's just one arrow
+	const connectedComponents = this.findConnectedComponents(true);
+	const barriers = [];
+	let arrowPos = null;
+
+	this.rxnArrows.each((id, item) => { // there's just one arrow
 		arrowPos = item.pp.x;
 	});
-	this.rxnPluses.each(function (id, item) {
+
+	this.rxnPluses.each((id, item) => {
 		barriers.push(item.pp.x);
 	});
-	if (arrowPos != null)
-		barriers.push(arrowPos);
-	barriers.sort(function (a, b) {
-		return a - b;
-	});
-	var components = [];
 
-	var i;
-	for (i = 0; i < ccs.length; ++i) {
-		var bb = this.getCoordBoundingBox(ccs[i]);
-		var c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-		var j = 0;
+	if (arrowPos !== null)
+		barriers.push(arrowPos);
+
+	barriers.sort((a, b) => a - b);
+
+	const components = [];
+
+	connectedComponents.forEach(component => {
+		const bb = this.getCoordBoundingBox(component);
+		const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+		let j = 0;
+
 		while (c.x > barriers[j])
 			++j;
+
 		components[j] = components[j] || {};
-		Set.mergeIn(components[j], ccs[i]);
-	}
-	var submolTexts = [];
-	var reactants = [];
-	var products = [];
-	for (i = 0; i < components.length; ++i) {
-		if (!components[i]) {
+		Set.mergeIn(components[j], component);
+	});
+
+	const submolTexts = [];
+	const reactants = [];
+	const products = [];
+
+	components.forEach(component => {
+		if (!component) {
 			submolTexts.push('');
-			continue; // eslint-disable-line no-continue
+			return; // eslint-disable-line no-continue
 		}
-		bb = this.getCoordBoundingBox(components[i]);
-		c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-		if (c.x < arrowPos)
-			reactants.push(components[i]);
+
+		const rxnFragmentType = this.defineRxnFragmentTypeForAtomset(component, arrowPos);
+
+		if (rxnFragmentType === 1)
+			reactants.push(component);
 		else
-			products.push(components[i]);
-	}
+			products.push(component);
+	});
 
 	return {
 		reactants: reactants,
 		products: products
 	};
+};
+
+Struct.prototype.defineRxnFragmentTypeForAtomset = function (atomset, arrowpos) {
+	const bb = this.getCoordBoundingBox(atomset);
+	const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
+	return c.x < arrowpos ? 1 : 2;
 };
 
 Struct.prototype.getBondFragment = function (bid) {

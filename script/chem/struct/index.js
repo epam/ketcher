@@ -18,6 +18,7 @@ var Map = require('../../util/map');
 var Pool = require('../../util/pool');
 var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
+var Box2Abs = require('../../util/box2abs');
 
 var element = require('../element');
 
@@ -658,7 +659,7 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 				/* eslint-enable no-continue*/
 			var aj = this.atoms.get(hbj.begin).pp;
 			var bj = this.atoms.get(hbj.end).pp;
-			if (Vec2.segmentIntersection(ai, bi, aj, bj))
+			if (Box2Abs.segmentIntersection(ai, bi, aj, bj))
 				return true;
 		}
 	}

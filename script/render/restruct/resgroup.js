@@ -164,7 +164,7 @@ function descriptorIntersects(sgroups, topLeftPoint) {
 		const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5));
 		const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5));
 
-		return Vec2.segmentIntersection(sg.pp, sgBottomRightPoint, topLeftPoint, bottomRightPoint);
+		return Box2Abs.segmentIntersection(sg.pp, sgBottomRightPoint, topLeftPoint, bottomRightPoint);
 	});
 }
 

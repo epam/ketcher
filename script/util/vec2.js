@@ -39,15 +39,6 @@ function Vec2(x, y, z) {
 Vec2.ZERO = new Vec2(0, 0);
 Vec2.UNIT = new Vec2(1, 1);
 
-Vec2.segmentIntersection = function (a, b, c, d) {
-	const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
-	const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
-	const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
-	const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
-
-	return dc * dd <= 0 && da * db <= 0;
-};
-
 Vec2.prototype.length = function () {
 	return Math.sqrt((this.x * this.x) + (this.y * this.y));
 };

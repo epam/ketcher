@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
-
+import Set from '../../util/set';
 import op from '../shared/op';
 import Action from '../shared/action';
 import utils from '../shared/utils';

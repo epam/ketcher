@@ -179,6 +179,6 @@ function hasSelection(editor) {
 }
 
 function dontClipMessage(title) {
-	alert('These action is unavailble via menu.\n' +
+	alert('This action is unavailable via menu.\n' +
 		'Instead, use shortcut to ' + title + '.');
 }

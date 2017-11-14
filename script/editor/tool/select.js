@@ -59,6 +59,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
+
 		return true;
 	}
 
@@ -183,7 +184,8 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.editor.selection(!event.shiftKey ? sel :
 			selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
-		this.editor.selection(null);
+		if (!event.shiftKey)
+			this.editor.selection(null);
 	}
 	return true;
 };

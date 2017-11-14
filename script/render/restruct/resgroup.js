@@ -99,7 +99,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
 		var indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
-		var t = Math.max(Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
+		var t = Math.max(util.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
 		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
 		set.push(indexPath);
 	}
@@ -308,10 +308,10 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			mol.sGroupForest.children.get(id).forEach(function (sgid) {
 				var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
-				tl = Math.max(tl, Vec2.shiftRayBox(cl0, dl, bba));
-				tr = Math.max(tr, Vec2.shiftRayBox(cr0, dr, bba));
-				tt = Math.max(tt, Vec2.shiftRayBox(cc, dt, bba));
-				tb = Math.max(tb, Vec2.shiftRayBox(cc, db, bba));
+				tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba));
+				tr = Math.max(tr, util.shiftRayBox(cr0, dr, bba));
+				tt = Math.max(tt, util.shiftRayBox(cc, dt, bba));
+				tb = Math.max(tb, util.shiftRayBox(cc, db, bba));
 			}, this);
 			tl = Math.max(tl + 0.2, 0);
 			tr = Math.max(tr + 0.2, 0);

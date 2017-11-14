@@ -549,7 +549,7 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
 		var box = visel.exts[k].translate(pos0);
-		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+		t = Math.max(t, util.shiftRayBox(pos0, dir, box));
 	}
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);

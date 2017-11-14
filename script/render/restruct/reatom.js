@@ -180,9 +180,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		var t = 3;
 		// estimate the shift to clear the atom label
 		for (var i = 0; i < visel.exts.length; ++i)
-			t = Math.max(t, Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+			t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
 		// estimate the shift backwards to account for the size of the aam/query text box itself
-		t += Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+		t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
 		dir = dir.scaled(8 + t);
 		pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
 		restruct.addReObjectPath('data', this.visel, aamPath, ps, true);
@@ -540,7 +540,7 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 
 			var lsbn = lsb.negated();
 			/* eslint-disable no-mixed-operators*/
-			pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
+			pos1 = pos1.addScaled(lsbn, util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
 			/* eslint-enable no-mixed-operators*/
 			pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth);
 			var n = lsb.rotateSC(1, 0);
@@ -637,7 +637,7 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
 		var box = visel.exts[k].translate(pos0);
-		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+		t = Math.max(t, util.shiftRayBox(pos0, dir, box));
 	}
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);

@@ -57,7 +57,7 @@
     "no-array-constructor": "error",
     "no-continue": "warn",
     "no-lonely-if": "error",
-    "no-mixed-operators": "warn",
+//    "no-mixed-operators": "warn",
     "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
     "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1 }],
     "no-nested-ternary": "error",

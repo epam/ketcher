@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
 import * as Actions from '../actions';
-import utils from './utils';
+import utils from '../shared/utils';
 
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {

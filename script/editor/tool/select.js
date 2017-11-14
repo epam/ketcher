@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Set from '../../util/set';
-import utils from './utils';
+import utils from '../shared/utils';
 
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';

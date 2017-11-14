@@ -16,14 +16,16 @@
 
 import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
-import utils from '../tool/utils';
 
 import Struct from '../../chem/struct';
 import { uniq, difference } from 'lodash';
 
 import op from '../shared/op';
+import utils from '../shared/utils';
 import Action from '../shared/action';
 import closest from '../shared/closest';
+
+import { fromAromaticTemplateOnBond } from './aromatic-fusing';
 
 // Add action operation to remove atom from s-group if needed
 function removeAtomFromSgroupIfNeeded(action, restruct, id) {
@@ -821,6 +823,15 @@ function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) { // esli
 	return action;
 }
 
+function fromTemplateOnBondAction(restruct, events, bid, template, flip, force) {
+	if (!force)
+		return fromTemplateOnBond(restruct, bid, template, flip);
+
+	const simpleFusing = (restruct, bid, template) => fromTemplateOnBond(restruct, bid, template, flip);
+	/* aromatic merge (Promise)*/
+	return fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing);
+}
+
 // TODO refactor
 function fromTemplateOnBond(restruct, bid, template, flip) {
 	var action = new Action();
@@ -1597,6 +1608,7 @@ export {
 	fromTemplateOnCanvas,
 	fromTemplateOnAtom,
 	fromTemplateOnBond,
+	fromTemplateOnBondAction,
 	fromAtomsAttrs,
 	fromBondAttrs,
 	fromChain,

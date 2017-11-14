@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
 import * as Actions from '../actions';
-import utils from './utils';
+import utils from '../shared/utils';
 
 import { atomLongtapEvent } from './atom';
 import { bondChangingAction } from './bond';

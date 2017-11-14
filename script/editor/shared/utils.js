@@ -17,14 +17,14 @@
 import Vec2 from '../../util/vec2';
 import { inRange } from 'lodash';
 
-var FRAC = Math.PI / 12; // '15º'
+let FRAC = Math.PI / 12; // '15º'
 
 function setFracAngle(angle) {
 	FRAC = Math.PI / 180 * angle;
 }
 
 function calcAngle(pos0, pos1) {
-	var v = Vec2.diff(pos1, pos0);
+	const v = Vec2.diff(pos1, pos0);
 	return Math.atan2(v.y, v.x);
 }
 
@@ -35,7 +35,7 @@ function fracAngle(angle) {
 }
 
 function calcNewAtomPos(pos0, pos1) {
-	var v = new Vec2(1, 0).rotate(fracAngle(pos0, pos1));
+	const v = new Vec2(1, 0).rotate(fracAngle(pos0, pos1));
 	v.add_(pos0); // eslint-disable-line no-underscore-dangle
 	return v;
 }

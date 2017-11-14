@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 
 import * as Actions from '../actions';
-import utils from './utils';
+import utils from '../shared/utils';
 
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {

@@ -17,8 +17,7 @@
 import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
 import * as Actions from '../actions';
-import utils from './utils';
-import { fromTemplateOnBondAction } from '../actions/aromatic-fusing';
+import utils from '../shared/utils';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -135,7 +134,11 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 				if ('action' in dragCtx)
 					dragCtx.action.perform(restruct); // undo previous action
 				dragCtx.sign2 = sign;
-				dragCtx.action = fromTemplateOnBondAction(restruct, this.editor.event, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, false);
+				dragCtx.action = Actions.fromTemplateOnBondAction(
+					restruct, this.editor.event,
+					ci.id, this.template,
+					dragCtx.sign1 * dragCtx.sign2 > 0, false
+				);
 				this.editor.update(dragCtx.action, true);
 			}
 			return true;
@@ -225,7 +228,11 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				);
 			}
 		} else if (ci.map === 'bonds') {
-			fromTemplateOnBondAction(restruct, this.editor.event, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, true)
+			Actions.fromTemplateOnBondAction(
+				restruct, this.editor.event,
+				ci.id, this.template,
+				dragCtx.sign1 * dragCtx.sign2 > 0, true
+			)
 				.then(action => {
 					this.editor.update(action);
 					delete this.dragCtx;
@@ -237,7 +244,11 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (dragCtx.action && ci && ci.map === 'bonds') {
 		this.dragCtx.action.perform(restruct); // revert drag action
-		fromTemplateOnBondAction(restruct, this.editor.event, ci.id, this.template, dragCtx.sign1 * dragCtx.sign2 > 0, true)
+		Actions.fromTemplateOnBondAction(
+			restruct, this.editor.event,
+			ci.id, this.template,
+			dragCtx.sign1 * dragCtx.sign2 > 0, true
+		)
 			.then(action => {
 				this.editor.update(action);
 				delete this.dragCtx;

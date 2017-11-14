@@ -16,7 +16,7 @@
 
 import Struct from '../../chem/struct';
 import * as Actions from '../actions';
-import utils from './utils';
+import utils from '../shared/utils';
 
 function AtomTool(editor, atomProps) {
 	if (!(this instanceof AtomTool)) {

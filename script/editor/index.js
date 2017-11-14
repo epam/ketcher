@@ -24,7 +24,6 @@ import Render from '../render';
 
 import { fromNewCanvas, fromDescriptorsAlign } from './actions';
 import closest from './shared/closest';
-
 import toolMap from './tool';
 
 const SCALE = 40;  // const

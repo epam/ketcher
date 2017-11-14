@@ -59,11 +59,7 @@ ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to r
 				var ext = new Vec2(0.05 * 3, 0.05 * 3);
 				bba = bba.extend(ext, ext);
 			} else {
-				if (!render) {
-					console.warn('No boundingBox fragment precalc');
-					render = global._ui_editor.render; // eslint-disable-line
-				}
-
+				if (!render) render = global._ui_editor.render; // eslint-disable-line
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 			}
 			ret = (ret ? Box2Abs.union(ret, bba) : bba);

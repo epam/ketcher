@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Struct from '../../chem/struct';
-import { fromAtomAddition, fromAtomsAttrs } from '../actions';
+import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom';
 
 function RGroupAtomTool(editor) {
 	if (!(this instanceof RGroupAtomTool)) {

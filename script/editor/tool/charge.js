@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from '../actions';
 import element from '../../chem/element';
+import { fromAtomsAttrs } from '../actions/atom';
 
 function ChargeTool(editor, charge) {
 	if (!(this instanceof ChargeTool))

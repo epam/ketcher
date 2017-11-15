@@ -16,8 +16,9 @@
 
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
-import * as Actions from '../actions';
 import utils from '../shared/utils';
+
+import { fromBondAddition, bondChangingAction } from '../actions/bond';
 
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {
@@ -85,7 +86,7 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
 			if (dist > 0.3)
-				dragCtx.action = Actions.fromBondAddition(rnd.ctab, this.bondProps, i1, i2, p1, p2)[0];
+				dragCtx.action = fromBondAddition(rnd.ctab, this.bondProps, i1, i2, p1, p2)[0];
 			else
 				delete dragCtx.action;
 			this.editor.update(dragCtx.action, true);
@@ -108,14 +109,14 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 			var v = new Vec2(1.0 / 2, 0).rotate(
 				this.bondProps.type == Struct.Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
-			var bondAddition = Actions.fromBondAddition(rnd.ctab,
+			var bondAddition = fromBondAddition(rnd.ctab,
 				this.bondProps, { label: 'C' }, { label: 'C' },
 			    Vec2.diff(xy, v), Vec2.sum(xy, v));
 
 			this.editor.update(bondAddition[0]);
 		} else if (dragCtx.item.map === 'atoms') {
 			// when does it hapend?
-			this.editor.update(Actions.fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
+			this.editor.update(fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id)[0]);
 		} else if (dragCtx.item.map === 'bonds') {
 			var bondProps = Object.assign({}, this.bondProps);
 			var bond = struct.bonds.get(dragCtx.item.id);
@@ -126,44 +127,5 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 	}
 	return true;
 };
-
-/**
- * @param itemID - bond id in structure
- * @param bond - bond for change
- * @param bondProps - bondTool properties
- * @returns Action
- */
-export function bondChangingAction(restruct, itemID, bond, bondProps) {
-	if (bondProps.stereo !== Struct.Bond.PATTERN.STEREO.NONE && //
-		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-		bond.type === bondProps.type && bond.stereo === bondProps.stereo)
-	// if bondTool is stereo and equal to bond for change
-		return Actions.fromBondFlipping(restruct, itemID);
-
-	var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
-	if (bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-		bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-		loop)
-	// if `Single bond` tool is chosen and bond for change in `plainBondTypes`
-		bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
-
-	return Actions.fromBondAttrs(restruct, itemID, bondProps,
-		bondFlipRequired(restruct.molecule, bond, bondProps));
-}
-
-function bondFlipRequired(struct, bond, attrs) {
-	return attrs.type == Struct.Bond.PATTERN.TYPE.SINGLE &&
-		   bond.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
-		   attrs.stereo != Struct.Bond.PATTERN.STEREO.NONE &&
-		   struct.atoms.get(bond.begin).neighbors.length <
-		   struct.atoms.get(bond.end).neighbors.length;
-}
-
-var plainBondTypes = [
-	Struct.Bond.PATTERN.TYPE.SINGLE,
-	Struct.Bond.PATTERN.TYPE.DOUBLE,
-	Struct.Bond.PATTERN.TYPE.TRIPLE
-];
 
 export default BondTool;

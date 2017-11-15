@@ -22,7 +22,7 @@ import Vec2 from '../util/vec2';
 import Struct from '../chem/struct';
 import Render from '../render';
 
-import { fromNewCanvas, fromDescriptorsAlign } from './actions';
+import { fromNewCanvas, fromDescriptorsAlign } from './actions/basic';
 import closest from './shared/closest';
 import toolMap from './tool';
 

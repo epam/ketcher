@@ -15,14 +15,13 @@
  ***************************************************************************/
 
 import isEqual from 'lodash/fp/isEqual';
-import uniq from 'lodash/fp/uniq';
 
 import Set from '../../util/set';
-import { SgContexts } from '../../util/constants';
+import { SgContexts } from '../shared/constants';
 
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';
-import * as Actions from '../actions';
+import { fromSgroupDeletion, fromSeveralSgroupAddition, fromSgroupAction } from '../actions/sgroup';
 
 const searchMaps = ['atoms', 'bonds', 'sgroups', 'sgroupData'];
 
@@ -140,8 +139,8 @@ export function sgroupDialog(editor, id, defaultType) {
 			const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
 
 			if (isDataSg) {
-				const action = Actions.fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
-					.mergeWith(Actions.fromSgroupDeletion(restruct, id));
+				const action = fromSeveralSgroupAddition(restruct, newSg.type, sg.atoms, newSg.attrs)
+					.mergeWith(fromSgroupDeletion(restruct, id));
 
 				editor.update(action);
 				editor.selection(selection);
@@ -212,40 +211,16 @@ function fromContextType(id, editor, newSg, currSelection) {
 	const sourceAtoms = (sg && sg.atoms) || currSelection.atoms || [];
 	const context = newSg.attrs.context;
 
-	const result = getActionForContext(context, restruct, newSg, sourceAtoms, currSelection);
+	const result = fromSgroupAction(context, restruct, newSg, sourceAtoms, currSelection);
 
 	result.selection = result.selection || currSelection;
 
 	if (id !== null && id !== undefined)
-		result.action = result.action.mergeWith(Actions.fromSgroupDeletion(restruct, id));
+		result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id));
 
 	editor.selection(result.selection);
 
 	return result;
-}
-
-function getActionForContext(context, restruct, newSg, sourceAtoms, selection) {
-	if (context === SgContexts.Bond)
-		return Actions.fromBondAction(restruct, newSg, sourceAtoms, selection);
-
-	const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
-
-	if (context === SgContexts.Fragment)
-		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
-
-	if (context === SgContexts.Multifragment)
-		return Actions.fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
-
-	if (context === SgContexts.Group)
-		return Actions.fromGroupAction(restruct, newSg, newSourceAtoms, newSourceAtoms);
-
-	if (context === SgContexts.Atom)
-		return Actions.fromAtomAction(restruct, newSg, newSourceAtoms);
-
-	return {
-		action: Actions.fromSeveralSgroupAddition(restruct, newSg.type, sourceAtoms, newSg.attrs)
-	};
 }
 
 // tools
@@ -299,16 +274,6 @@ function countOfSelectedComponents(restruct, atoms) {
 			return acc + (count === 0 ? 1 : 0);
 		}, 0);
 }
-
-function getAtomsFromBonds(struct, bonds) {
-	bonds = bonds || [];
-	return bonds.reduce((acc, bondid) => {
-		const bond = struct.bonds.get(bondid);
-		acc = acc.concat([bond.begin, bond.end]);
-		return acc;
-	}, []);
-}
-
 
 function checkOverlapping(struct, atoms) {
 	var verified = {};

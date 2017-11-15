@@ -14,14 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-const SgContexts = {
-	Fragment: 'Fragment',
-	Multifragment: 'Multifragment',
-	Bond: 'Bond',
-	Atom: 'Atom',
-	Group: 'Group'
-};
+import op from '../shared/op';
+import Action from '../shared/action';
 
-module.exports = {
-	SgContexts
-};
+export function fromRGroupAttrs(restruct, id, attrs) {
+	const action = new Action();
+
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.RGroupAttr(id, key, attrs[key])));
+
+	return action.perform(restruct);
+}
+
+export function fromRGroupFragment(restruct, rgidNew, frid) {
+	const action = new Action();
+	action.addOp(new op.RGroupFragment(rgidNew, frid));
+	return action.perform(restruct);
+}
+
+export function fromUpdateIfThen(restruct, rgidNew, rgidOld) {
+	const action = new Action();
+
+	if (!restruct.molecule.rgroups.get(rgidOld))
+		action.addOp(new op.UpdateIfThen(rgidNew, rgidOld));
+
+	return action.perform(restruct);
+}

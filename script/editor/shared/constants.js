@@ -14,21 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromChiralFlagAddition, fromChiralFlagDeletion } from '../actions/chiral-flag';
-
-function ChiralFlagTool(editor) {
-	if (!(this instanceof ChiralFlagTool)) {
-		this.editor = editor;
-		const rnd = this.editor.render;
-
-		let action = null;
-		if (rnd.ctab.molecule.isChiral === false)
-			action = fromChiralFlagAddition(rnd.ctab);
-		else
-			action = fromChiralFlagDeletion(rnd.ctab);
-
-		this.editor.update(action);
-	}
-}
-
-export default ChiralFlagTool;
+export const SgContexts = {
+	Fragment: 'Fragment',
+	Multifragment: 'Multifragment',
+	Bond: 'Bond',
+	Atom: 'Atom',
+	Group: 'Group'
+};

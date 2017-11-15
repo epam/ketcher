@@ -16,11 +16,11 @@
 
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
-import * as Actions from '../actions';
 import utils from '../shared/utils';
 
 import { atomLongtapEvent } from './atom';
-import { bondChangingAction } from './bond';
+import { bondChangingAction } from '../actions/bond';
+import { fromChain } from '../actions/chain';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -68,7 +68,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 			var angle = event.ctrlKey ? utils.calcAngle(pos0, pos1) :
 				utils.fracAngle(pos0, pos1);
 
-			dragCtx.action = Actions.fromChain(rnd.ctab, pos0, angle, sectCount,
+			dragCtx.action = fromChain(rnd.ctab, pos0, angle, sectCount,
 				dragCtx.item ? dragCtx.item.id : null);
 			editor.event.message.dispatch({
 				info: sectCount + " sectors"

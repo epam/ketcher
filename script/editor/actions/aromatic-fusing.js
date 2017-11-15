@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import * as molfile from '../../chem/molfile';
+import Struct from '../../chem/struct';
 
 import op from '../shared/op';
 import Action from '../shared/action';
-import Struct from '../../chem/struct';
 
 export function fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) {
 	const tmpl = template.molecule;

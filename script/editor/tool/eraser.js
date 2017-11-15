@@ -14,15 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as Actions from '../actions';
 import LassoHelper from './helper/lasso';
+import { fromFragmentDeletion } from '../actions/fragment';
+import { fromAtomDeletion } from '../actions/atom';
+import { fromBondDeletion } from '../actions/bond';
+import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction';
+import { fromSgroupDeletion } from '../actions/sgroup';
+import { fromChiralFlagDeletion } from '../actions/chiral-flag';
 
 function EraserTool(editor, mode) {
 	if (!(this instanceof EraserTool)) {
 		if (!editor.selection())
 			return new EraserTool(editor, mode);
 
-		var action = Actions.fromFragmentDeletion(editor.render.ctab, editor.selection());
+		var action = fromFragmentDeletion(editor.render.ctab, editor.selection());
 		editor.update(action);
 		editor.selection(null);
 		return null;
@@ -55,24 +60,24 @@ EraserTool.prototype.mouseleave = function (event) {
 EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	var rnd = this.editor.render;
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
-		this.editor.update(Actions.fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
+		this.editor.update(fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
 		this.editor.selection(null);
 	} else {
 		var ci = this.editor.findItem(event, this.maps);
 		if (ci) { //  ci.type != 'Canvas'
 			this.editor.hover(null);
 			if (ci.map === 'atoms') {
-				this.editor.update(Actions.fromAtomDeletion(rnd.ctab, ci.id));
+				this.editor.update(fromAtomDeletion(rnd.ctab, ci.id));
 			} else if (ci.map === 'bonds') {
-				this.editor.update(Actions.fromBondDeletion(rnd.ctab, ci.id));
+				this.editor.update(fromBondDeletion(rnd.ctab, ci.id));
 			} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-				this.editor.update(Actions.fromSgroupDeletion(rnd.ctab, ci.id));
+				this.editor.update(fromSgroupDeletion(rnd.ctab, ci.id));
 			} else if (ci.map === 'rxnArrows') {
-				this.editor.update(Actions.fromArrowDeletion(rnd.ctab, ci.id));
+				this.editor.update(fromArrowDeletion(rnd.ctab, ci.id));
 			} else if (ci.map === 'rxnPluses') {
-				this.editor.update(Actions.fromPlusDeletion(rnd.ctab, ci.id));
+				this.editor.update(fromPlusDeletion(rnd.ctab, ci.id));
 			} else if (ci.map === 'chiralFlags') {
-				this.editor.update(Actions.fromChiralFlagDeletion(rnd.ctab));
+				this.editor.update(fromChiralFlagDeletion(rnd.ctab));
 			} else {
 				// TODO re-factoring needed - should be "map-independent"
 				console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');

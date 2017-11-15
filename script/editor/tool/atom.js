@@ -15,15 +15,18 @@
  ***************************************************************************/
 
 import Struct from '../../chem/struct';
-import * as Actions from '../actions';
+
 import utils from '../shared/utils';
+
+import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom';
+import { fromBondAddition } from '../actions/bond';
 
 function AtomTool(editor, atomProps) {
 	if (!(this instanceof AtomTool)) {
 		if (!editor.selection() || !editor.selection().atoms)
 			return new AtomTool(editor, atomProps);
 
-		var action = Actions.fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
+		var action = fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
 		                                   atomProps, true);
 		editor.update(action);
 		editor.selection(null);
@@ -67,7 +70,7 @@ AtomTool.prototype.mousemove = function (event) {
 	if (dragCtx.action)
 		dragCtx.action.perform(rnd.ctab);
 
-	dragCtx.action = Actions.fromBondAddition(rnd.ctab,
+	dragCtx.action = fromBondAddition(rnd.ctab,
 		this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
 	)[0];
 	this.editor.update(dragCtx.action, true);
@@ -78,8 +81,8 @@ AtomTool.prototype.mouseup = function (event) {
 		var rnd = this.editor.render;
 		this.editor.update(dragCtx.action || (
 			dragCtx.item ?
-				Actions.fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
-				Actions.fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
+				fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
+				fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
 		));
 		delete this.dragCtx;
 	}
@@ -102,8 +105,8 @@ export function atomLongtapEvent(tool, render) {
 		const res = editor.event.quickEdit.dispatch(atom);
 		Promise.resolve(res).then(function (newatom) {
 			const action = atomid ?
-				Actions.fromAtomsAttrs(render.ctab, atomid, newatom) :
-				Actions.fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
+				fromAtomsAttrs(render.ctab, atomid, newatom) :
+				fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
 			editor.update(action);
 		});
 	}, 750);

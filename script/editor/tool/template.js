@@ -16,8 +16,8 @@
 
 import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
-import * as Actions from '../actions';
 import utils from '../shared/utils';
+import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -134,7 +134,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 				if ('action' in dragCtx)
 					dragCtx.action.perform(restruct); // undo previous action
 				dragCtx.sign2 = sign;
-				dragCtx.action = Actions.fromTemplateOnBondAction(
+				dragCtx.action = fromTemplateOnBondAction(
 					restruct, this.editor.event,
 					ci.id, this.template,
 					dragCtx.sign1 * dragCtx.sign2 > 0, false
@@ -160,14 +160,14 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		// create new action
 		dragCtx.angle = degrees;
 		if (!ci) { // ci.type == 'Canvas'
-			dragCtx.action = Actions.fromTemplateOnCanvas(
+			dragCtx.action = fromTemplateOnCanvas(
 				restruct,
 				pos0,
 				angle,
 				this.template
 			);
 		} else if (ci.map === 'atoms') {
-			dragCtx.action = Actions.fromTemplateOnAtom(
+			dragCtx.action = fromTemplateOnAtom(
 				restruct,
 				ci.id,
 				angle,
@@ -193,12 +193,12 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (!dragCtx.action) {
 		if (!ci) { //  ci.type == 'Canvas'
-			dragCtx.action = Actions.fromTemplateOnCanvas(restruct, dragCtx.xy0, 0, this.template);
+			dragCtx.action = fromTemplateOnCanvas(restruct, dragCtx.xy0, 0, this.template);
 		} else if (ci.map === 'atoms') {
 			const degree = restruct.atoms.get(ci.id).a.neighbors.length;
 
 			if (degree > 1) { // common case
-				dragCtx.action = Actions.fromTemplateOnAtom(
+				dragCtx.action = fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					null,
@@ -211,7 +211,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				const nei = struct.atoms.get(neiId);
 				const angle = utils.calcAngle(nei.pp, atom.pp);
 
-				dragCtx.action = Actions.fromTemplateOnAtom(
+				dragCtx.action = fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					event.ctrlKey ? angle : utils.fracAngle(angle),
@@ -219,7 +219,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 					this.template
 				);
 			} else { // on single atom
-				dragCtx.action = Actions.fromTemplateOnAtom(
+				dragCtx.action = fromTemplateOnAtom(
 					restruct,
 					ci.id,
 					0,
@@ -228,7 +228,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				);
 			}
 		} else if (ci.map === 'bonds') {
-			Actions.fromTemplateOnBondAction(
+			fromTemplateOnBondAction(
 				restruct, this.editor.event,
 				ci.id, this.template,
 				dragCtx.sign1 * dragCtx.sign2 > 0, true
@@ -244,7 +244,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (dragCtx.action && ci && ci.map === 'bonds') {
 		this.dragCtx.action.perform(restruct); // revert drag action
-		Actions.fromTemplateOnBondAction(
+		fromTemplateOnBondAction(
 			restruct, this.editor.event,
 			ci.id, this.template,
 			dragCtx.sign1 * dragCtx.sign2 > 0, true

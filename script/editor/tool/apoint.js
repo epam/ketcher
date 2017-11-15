@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs } from '../actions';
+import { fromAtomsAttrs } from '../actions/atom';
 
 function APointTool(editor) {
 	if (!(this instanceof APointTool))

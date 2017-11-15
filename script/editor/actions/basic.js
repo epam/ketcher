@@ -14,21 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromChiralFlagAddition, fromChiralFlagDeletion } from '../actions/chiral-flag';
+import op from '../shared/op';
+import Action from '../shared/action';
 
-function ChiralFlagTool(editor) {
-	if (!(this instanceof ChiralFlagTool)) {
-		this.editor = editor;
-		const rnd = this.editor.render;
+export function fromNewCanvas(restruct, struct) {
+	var action = new Action();
 
-		let action = null;
-		if (rnd.ctab.molecule.isChiral === false)
-			action = fromChiralFlagAddition(rnd.ctab);
-		else
-			action = fromChiralFlagDeletion(rnd.ctab);
-
-		this.editor.update(action);
-	}
+	action.addOp(new op.CanvasLoad(struct));
+	return action.perform(restruct);
 }
 
-export default ChiralFlagTool;
+export function fromDescriptorsAlign(restruct) {
+	const action = new Action();
+	action.addOp(new op.AlignDescriptors(restruct));
+	return action.perform(restruct);
+}

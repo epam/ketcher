@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Action from '../shared/action';
-import * as Actions from '../actions';
+import { fromAtomsAttrs } from '../actions/atom';
 
 function ReactionUnmapTool(editor) {
 	if (!(this instanceof ReactionUnmapTool))
@@ -40,7 +40,7 @@ ReactionUnmapTool.prototype.mouseup = function (event) {
 		atoms.each(
 		function (aid, atom) {
 			if (atom.aam == aam)
-				action.mergeWith(Actions.fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
+				action.mergeWith(fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
 		},
 			this
 		);

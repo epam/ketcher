@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Struct from '../../chem/struct';
-import * as Actions from '../actions';
+import { fromRGroupAttrs, fromRGroupFragment, fromUpdateIfThen } from '../actions/rgroup';
 
 function RGroupFragmentTool(editor) {
 	if (!(this instanceof RGroupFragmentTool)) {
@@ -55,10 +55,10 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 			if (ci.map !== 'rgroups') {
 				const rgidOld = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
 
-				action = Actions.fromRGroupFragment(restruct, newRg.label, ci.id)
-					.mergeWith(Actions.fromUpdateIfThen(restruct, newRg.label, rgidOld));
+				action = fromRGroupFragment(restruct, newRg.label, ci.id)
+					.mergeWith(fromUpdateIfThen(restruct, newRg.label, rgidOld));
 			} else {
-				action = Actions.fromRGroupAttrs(restruct, ci.id, newRg);
+				action = fromRGroupAttrs(restruct, ci.id, newRg);
 			}
 
 			editor.update(action);

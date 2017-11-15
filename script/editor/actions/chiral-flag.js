@@ -14,21 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromChiralFlagAddition, fromChiralFlagDeletion } from '../actions/chiral-flag';
+import Vec2 from '../../util/vec2';
 
-function ChiralFlagTool(editor) {
-	if (!(this instanceof ChiralFlagTool)) {
-		this.editor = editor;
-		const rnd = this.editor.render;
+import op from '../shared/op';
+import Action from '../shared/action';
 
-		let action = null;
-		if (rnd.ctab.molecule.isChiral === false)
-			action = fromChiralFlagAddition(rnd.ctab);
-		else
-			action = fromChiralFlagDeletion(rnd.ctab);
-
-		this.editor.update(action);
+export function fromChiralFlagAddition(restruct, pos) {  // eslint-disable-line no-unused-vars
+	var action = new Action();
+	var struct = restruct.molecule;
+	if (restruct.chiralFlags.count() < 1) {
+		if (!pos) {
+			var bb = struct.getCoordBoundingBox();
+			var posY = !struct.isBlank() ? bb.min.y - 1 : bb.min.y + 1;
+			pos = new Vec2(bb.max.x, posY);
+		}
+		action.addOp(new op.ChiralFlagAdd(pos).perform(restruct));
 	}
+	return action;
 }
 
-export default ChiralFlagTool;
+export function fromChiralFlagDeletion(restruct) {
+	var action = new Action();
+	action.addOp(new op.ChiralFlagDelete());
+	return action.perform(restruct);
+}

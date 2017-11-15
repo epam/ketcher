@@ -14,21 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromChiralFlagAddition, fromChiralFlagDeletion } from '../actions/chiral-flag';
+import op from '../shared/op';
+import Action from '../shared/action';
 
-function ChiralFlagTool(editor) {
-	if (!(this instanceof ChiralFlagTool)) {
-		this.editor = editor;
-		const rnd = this.editor.render;
-
-		let action = null;
-		if (rnd.ctab.molecule.isChiral === false)
-			action = fromChiralFlagAddition(rnd.ctab);
-		else
-			action = fromChiralFlagDeletion(rnd.ctab);
-
-		this.editor.update(action);
-	}
+export function fromArrowAddition(restruct, pos) {
+	var action = new Action();
+	if (restruct.molecule.rxnArrows.count() < 1)
+		action.addOp(new op.RxnArrowAdd(pos).perform(restruct));
+	return action;
 }
 
-export default ChiralFlagTool;
+export function fromArrowDeletion(restruct, id) {
+	var action = new Action();
+	action.addOp(new op.RxnArrowDelete(id));
+	return action.perform(restruct);
+}
+
+export function fromPlusAddition(restruct, pos) {
+	var action = new Action();
+	action.addOp(new op.RxnPlusAdd(pos).perform(restruct));
+	return action;
+}
+
+export function fromPlusDeletion(restruct, id) {
+	var action = new Action();
+	action.addOp(new op.RxnPlusDelete(id));
+	return action.perform(restruct);
+}

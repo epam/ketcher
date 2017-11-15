@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import Action from '../shared/action';
-import * as Actions from '../actions';
+import { fromArrowAddition } from '../actions/reaction';
+import { fromMultipleMove } from '../actions/fragment';
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -43,7 +44,7 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform(rnd.ctab);
 
-		this.dragCtx.action = Actions.fromMultipleMove(
+		this.dragCtx.action = fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
@@ -59,7 +60,7 @@ ReactionArrowTool.prototype.mouseup = function (event) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
 	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
-		this.editor.update(Actions.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
+		this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 

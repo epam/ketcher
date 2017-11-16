@@ -244,7 +244,7 @@ function closestToMerge(restruct, closestMap) {
 		const bond = struct.bonds.get(srcId);
 		const bondCI = struct.bonds.get(dstId);
 
-		if (utils.mergeBondsParams(restruct, bond, bondCI)) {
+		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
 			delete mergeMap.atoms[bond.begin];
 			delete mergeMap.atoms[bond.end];
 		} else {

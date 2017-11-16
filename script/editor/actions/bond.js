@@ -132,15 +132,16 @@ export function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
 	let action = new Action();
 	const atomsToDelete = [];
 	const srcBonds = Object.keys(mergeMap);
+	const struct = restruct.molecule;
 
 	Object.entries(mergeMap).forEach(([srcId, dstId]) => {
-		const bond = restruct.molecule.bonds.get(+srcId);
-		const bondCI = restruct.molecule.bonds.get(+dstId);
+		const bond = struct.bonds.get(+srcId);
+		const bondCI = struct.bonds.get(+dstId);
 
 		// copy bond src attr and delete
 		let bondAttrAction = new Action();
-		const params = utils.mergeBondsParams(restruct, bond, bondCI);
-		if (!params) return;
+		const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
+		if (!params.merged) return;
 
 		const attrs = Struct.Bond.getAttrHash(bond);
 		for (let key in attrs) {

@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { intersection } from 'lodash';
+
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
-import Set from '../../util/set';
 import op from '../shared/op';
 import Action from '../shared/action';
 import utils from '../shared/utils';
@@ -63,10 +64,8 @@ export function fromTemplateOnCanvas(restruct, pos, angle, template) {
 		sgAction.operations.reverse().forEach(op => action.addOp(op));
 	});
 
-	if (restruct.rxnArrows.count() < 1) {
-		frag.rxnArrows.values()
-			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
-	}
+	frag.rxnArrows.values()
+		.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
 
 	// reaction pluses
 	frag.rxnPluses.values()
@@ -95,96 +94,86 @@ export function fromTemplateOnCanvas(restruct, pos, angle, template) {
 	return action;
 }
 
-export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) { // eslint-disable-line max-statements, max-params
-	var action = new Action();
-	var frag = template.molecule;
-	var struct = restruct.molecule;
-	var atom = struct.atoms.get(aid);
-	var aid0 = aid; // the atom that was clicked on
-	var aid1 = null; // the atom on the other end of the extra bond, if any
-	var sgroups = atomGetSGroups(restruct, aid);
+function extraBondAction(restruct, aid, angle, sgroups) {
+	let action = new Action();
+	const frid = atomGetAttr(restruct, aid, 'fragment');
+	let additionalAtom = null;
 
-	var frid = atomGetAttr(restruct, aid, 'fragment');
+	if (angle === null) {
+		const middleAtom = atomForNewBond(restruct, aid);
+		const actionRes = fromBondAddition(restruct, { type: 1 }, aid, middleAtom.atom, middleAtom.pos.get_xy0());
+		action = actionRes[0];
+		action.operations.reverse();
+		additionalAtom = actionRes[2];
+	} else {
+		const operation = new op.AtomAdd(
+			{ label: 'C', fragment: frid },
+			(new Vec2(1, 0)).rotate(angle).add(restruct.molecule.atoms.get(aid).pp).get_xy0()
+		).perform(restruct);
 
-	var map = {};
-	var xy0 = frag.atoms.get(template.aid).pp;
+		action.addOp(operation);
+		action.addOp(
+			new op.BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
+		);
+
+		additionalAtom = operation.data.aid;
+		action.mergeWith(atomAddToSGroups(restruct, sgroups, aid));
+	}
+
+	return { action, aid1: additionalAtom };
+}
+
+export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
+	let action = new Action();
+
+	const tmpl = template.molecule;
+	const struct = restruct.molecule;
+
+	let atom = struct.atoms.get(aid); // aid - the atom that was clicked on
+	let aid1 = aid; // aid1 - the atom on the other end of the extra bond || aid
+
+	const sgroups = atomGetSGroups(restruct, aid);
+	let delta = null;
 
 	if (extraBond) {
 		// create extra bond after click on atom
-		if (angle == null) {
-			var middleAtom = atomForNewBond(restruct, aid);
-			var actionRes = fromBondAddition(restruct, { type: 1 }, aid, middleAtom.atom, middleAtom.pos.get_xy0());
-			action = actionRes[0];
-			action.operations.reverse();
-			aid1 = aid = actionRes[2];
-		} else {
-			var operation;
+		const extraRes = extraBondAction(restruct, aid, angle, sgroups);
+		action = extraRes.action;
+		aid1 = extraRes.aid1;
 
-			action.addOp(
-				operation = new op.AtomAdd(
-					{ label: 'C', fragment: frid },
-					(new Vec2(1, 0)).rotate(angle).add(atom.pp).get_xy0()
-				).perform(restruct)
-			);
-
-			action.addOp(
-				new op.BondAdd(
-					aid,
-					operation.data.aid,
-					{ type: 1 }
-				).perform(restruct)
-			);
-
-			aid1 = aid = operation.data.aid;
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, aid));
-		}
-
-		var atom0 = atom;
-		atom = struct.atoms.get(aid);
-		var delta = utils.calcAngle(atom0.pp, atom.pp) - template.angle0;
+		atom = struct.atoms.get(aid1);
+		delta = utils.calcAngle(struct.atoms.get(aid).pp, atom.pp) - template.angle0;
 	} else {
-		if (angle == null) {
-			middleAtom = atomForNewBond(restruct, aid);
-			angle = utils.calcAngle(atom.pp, middleAtom.pos);
-		}
+		if (angle === null)
+			angle = utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos);
 		delta = angle - template.angle0;
 	}
 
-	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a);
+	const map = {};
+	const xy0 = tmpl.atoms.get(template.aid).pp;
+	const frid = atomGetAttr(restruct, aid, 'fragment');
+
+	tmpl.atoms.each((id, a) => {
+		const attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
-		if (id == template.aid) {
-			action.mergeWith(fromAtomsAttrs(restruct, aid, attrs, true));
-			map[id] = aid;
+		if (id === template.aid) {
+			action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true));
+			map[id] = aid1;
 		} else {
-			var v;
+			const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
-			v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
-
-			action.addOp(
-				operation = new op.AtomAdd(
-					attrs,
-					v.get_xy0()
-				).perform(restruct)
-			);
+			const operation = new op.AtomAdd(attrs, v.get_xy0()).perform(restruct);
+			action.addOp(operation);
 			map[id] = operation.data.aid;
 		}
-		if (map[id] - 0 !== aid0 - 0 && map[id] - 0 !== aid1 - 0)
+		if (map[id] !== aid && map[id] !== aid1)
 			action.mergeWith(atomAddToSGroups(restruct, sgroups, map[id]));
 	});
 
-	frag.bonds.each(function (bid, bond) {
-		action.addOp(
-			new op.BondAdd(
-				map[bond.begin],
-				map[bond.end],
-				bond
-			).perform(restruct)
-		);
-	});
-
+	tmpl.bonds.each((bid, bond) =>
+		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct))
+	);
 	action.operations.reverse();
-
 	return action;
 }
 
@@ -197,97 +186,77 @@ export function fromTemplateOnBondAction(restruct, events, bid, template, flip, 
 	return fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing);
 }
 
-// TODO refactor
 function fromTemplateOnBond(restruct, bid, template, flip) {
-	var action = new Action();
-	var frag = template.molecule;
-	var struct = restruct.molecule;
+	const action = new Action();
 
-	var bond = struct.bonds.get(bid);
-	var begin = struct.atoms.get(bond.begin);
-	var end = struct.atoms.get(bond.end);
-	var sgroups = Set.list(Set.intersection(
-		Set.fromList(atomGetSGroups(restruct, bond.begin)),
-		Set.fromList(atomGetSGroups(restruct, bond.end))));
+	const tmpl = template.molecule;
+	const struct = restruct.molecule;
 
-	var frBond = frag.bonds.get(template.bid);
-	var frBegin;
-	var frEnd;
+	const bond = struct.bonds.get(bid);
+	const tmplBond = tmpl.bonds.get(template.bid);
 
-	var frid = atomGetAttr(restruct, bond.begin, 'fragment');
+	const sgroups = intersection(
+		atomGetSGroups(restruct, bond.begin),
+		atomGetSGroups(restruct, bond.end)
+	);
 
-	var map = {};
-
-	if (flip) {
-		frBegin = frag.atoms.get(frBond.end);
-		frEnd = frag.atoms.get(frBond.begin);
-		map[frBond.end] = bond.begin;
-		map[frBond.begin] = bond.end;
-	} else {
-		frBegin = frag.atoms.get(frBond.begin);
-		frEnd = frag.atoms.get(frBond.end);
-		map[frBond.begin] = bond.begin;
-		map[frBond.end] = bond.end;
-	}
+	const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
+	const atomsMap = {
+		[tmplBond.begin]: flip ? bond.end : bond.begin,
+		[tmplBond.end]: flip ? bond.begin : bond.end
+	};
 
 	// calc angle
-	var angle = utils.calcAngle(begin.pp, end.pp) - utils.calcAngle(frBegin.pp, frEnd.pp);
-	var scale = Vec2.dist(begin.pp, end.pp) / Vec2.dist(frBegin.pp, frEnd.pp);
+	const bondAtoms = {
+		begin: flip ? tmplBond.end : tmplBond.begin,
+		end: flip ? tmplBond.begin : tmplBond.end
+	};
+	const { angle, scale } = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
 
-	frag.atoms.each(function (id, a) {
-		var attrs = Struct.Atom.getAttrHash(a);
+	const frid = struct.getBondFragment(bid);
+
+	tmpl.atoms.each((id, atom) => {
+		const attrs = Struct.Atom.getAttrHash(atom);
 		attrs.fragment = frid;
-		if (id == frBond.begin || id == frBond.end) {
-			action.mergeWith(fromAtomsAttrs(restruct, map[id], attrs, true));
+		if (id === tmplBond.begin || id === tmplBond.end) {
+			action.mergeWith(fromAtomsAttrs(restruct, atomsMap[id], attrs, true));
 			return;
 		}
 
-		var v;
+		const v = Vec2.diff(atom.pp, tmplBegin.pp)
+			.rotate(angle)
+			.scaled(scale)
+			.add(struct.atoms.get(bond.begin).pp);
+		const mergeA = closest.atom(restruct, v, null, 0.1);
 
-		v = Vec2.diff(a.pp, frBegin.pp).rotate(angle).scaled(scale).add(begin.pp);
+		if (mergeA === null) {
+			const operation = new op.AtomAdd(attrs,	v).perform(restruct);
+			action.addOp(operation);
 
-		var mergeA = closest.atom(restruct, v, null, 0.1);
-
-		if (mergeA == null) {
-			var operation;
-			action.addOp(
-				operation = new op.AtomAdd(
-					attrs,
-					v
-				).perform(restruct)
-			);
-
-			map[id] = operation.data.aid;
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, map[id]));
+			atomsMap[id] = operation.data.aid;
+			action.mergeWith(atomAddToSGroups(restruct, sgroups, atomsMap[id]));
 		} else {
-			map[id] = mergeA.id;
-			action.mergeWith(fromAtomsAttrs(restruct, map[id], attrs, true));
+			atomsMap[id] = mergeA.id;
+			action.mergeWith(fromAtomsAttrs(restruct, atomsMap[id], attrs, true));
 			// TODO [RB] need to merge fragments?
 		}
 	});
 
-	frag.bonds.each(function (id, bond) {
-		var existId = struct.findBondId(map[bond.begin], map[bond.end]);
-		if (existId === -1) {
-			action.addOp(
-				new op.BondAdd(
-					map[bond.begin],
-					map[bond.end],
-					bond
-				).perform(restruct));
-		} else {
-			action.mergeWith(fromBondAttrs(restruct, existId, frBond, false, true));
-		}
+	tmpl.bonds.each((id, bond) => {
+		const existId = struct.findBondId(atomsMap[bond.begin], atomsMap[bond.end]);
+		if (existId === -1)
+			action.addOp(new op.BondAdd(atomsMap[bond.begin], atomsMap[bond.end], bond).perform(restruct));
+		else
+			action.mergeWith(fromBondAttrs(restruct, existId, tmplBond, false, true));
 	});
 	action.operations.reverse();
 	return action;
 }
 
-
 function atomAddToSGroups(restruct, sgroups, aid) {
-	var action = new Action();
-	sgroups.forEach(function (sid) {
-		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct));
-	}, this);
+	const action = new Action();
+	sgroups.forEach((sid) =>
+		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct))
+	);
 	return action;
 }

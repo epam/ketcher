@@ -47,24 +47,23 @@ function degrees(angle) {
 const BONDS_MERGE_ANGLE = 10; // 'º'
 const BONDS_MERGE_SCALE = 0.2;
 
-function mergeBondsParams(restruct, bond1, bond2) {
-	const atoms = restruct.molecule.atoms;
+function mergeBondsParams(struct1, bond1, struct2, bond2) {
+	const begin1 = struct1.atoms.get(bond1.begin);
+	const begin2 = struct2.atoms.get(bond2.begin);
+	const end1 = struct1.atoms.get(bond1.end);
+	const end2 = struct2.atoms.get(bond2.end);
 
-	const begin1 = atoms.get(bond1.begin);
-	const begin2 = atoms.get(bond2.begin);
-	const end1 = atoms.get(bond1.end);
-	const end2 = atoms.get(bond2.end);
-
-	const angle = degrees(calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp));
-	const mergeAngle = Math.abs(angle % 180);
+	const angle = calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp);
+	const mergeAngle = Math.abs(degrees(angle) % 180);
 
 	const scale = Vec2.dist(begin1.pp, end1.pp) / Vec2.dist(begin2.pp, end2.pp);
 
+	let merged = true;
 	if (inRange(mergeAngle, BONDS_MERGE_ANGLE, 180 - BONDS_MERGE_ANGLE) ||
 		!inRange(scale, 1 - BONDS_MERGE_SCALE, 1 + BONDS_MERGE_SCALE))
-		return null;
+		merged = false;
 
-	return { angle: mergeAngle, scale, cross: Math.abs(angle) > 90 };
+	return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }
 
 export default {

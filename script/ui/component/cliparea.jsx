@@ -34,7 +34,7 @@ class ClipArea extends Component {
 					autofocus(el);
 			},
 			'mousedown': event => {
-				if (event.shiftKey === true && !isFormElement(event.target))
+				if (event.shiftKey && !isFormElement(event.target))
 					event.preventDefault();
 			},
 			'copy': event => {
@@ -84,7 +84,7 @@ class ClipArea extends Component {
 
 function isFormElement(el) {
 	if (el.tagName === 'INPUT' && el.type === 'button') return false;
-	return ['INPUT', 'SELECT', 'TEXTAREA'].indexOf(el.tagName) > -1;
+	return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION'].indexOf(el.tagName) > -1;
 }
 
 function autofocus(cliparea) {

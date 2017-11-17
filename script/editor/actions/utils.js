@@ -16,7 +16,6 @@
 
 import { difference } from 'lodash';
 import Vec2 from '../../util/vec2';
-import Set from '../../util/set';
 
 import closest from '../shared/closest';
 
@@ -43,7 +42,7 @@ export function atomGetNeighbors(restruct, aid) {
 
 export function atomGetSGroups(restruct, aid) {
 	var atom = restruct.atoms.get(aid);
-	return Set.list(atom.a.sgs);
+	return Array.from(atom.a.sgs);
 }
 
 export function atomGetPos(restruct, id) {

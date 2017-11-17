@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 var Box2Abs = require('../../util/box2abs');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var util = require('../util');
 var scale = require('../../util/scale');
@@ -43,7 +42,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [],
 		xBonds = [];
-	var atomSet = Set.fromList(sgroup.atoms);
+	var atomSet = new Set(sgroup.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 	bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
@@ -326,7 +325,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			for (var i = 0; i < xbonds.length; ++i) {
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
-				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
+				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
 		})();

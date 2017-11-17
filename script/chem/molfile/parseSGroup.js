@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('./../struct/index');
@@ -136,7 +135,7 @@ function loadSGroup(mol, sg, atomMap) {
 	// mark atoms in the group as belonging to it
 	for (var s = 0; s < sg.atoms.length; ++s) {
 		if (mol.atoms.has(sg.atoms[s]))
-			Set.add(mol.atoms.get(sg.atoms[s]).sgs, sg.id);
+			mol.atoms.get(sg.atoms[s]).sgs.add(sg.id);
 	}
 
 	if (sg.type == 'DAT')

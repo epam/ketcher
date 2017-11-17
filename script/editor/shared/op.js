@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import Set from '../../util/set';
 import scale from '../../util/scale';
 
 import Struct from '../../chem/struct';
@@ -69,7 +68,8 @@ function AtomAdd(atom, pos) {
 
 		// notifyAtomAdded
 		const atomData = new ReStruct.Atom(struct.atoms.get(this.data.aid));
-		atomData.component = restruct.connectedComponents.add(Set.single(this.data.aid));
+
+		atomData.component = restruct.connectedComponents.add(new Set([this.data.aid]));
 		restruct.atoms.set(this.data.aid, atomData);
 		restruct.markAtom(this.data.aid, 1);
 
@@ -78,7 +78,7 @@ function AtomAdd(atom, pos) {
 		const arrow = struct.rxnArrows.values()[0];
 		if (arrow) {
 			const atom = struct.atoms.get(this.data.aid);
-			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(Set.single(this.data.aid), arrow.pp.x);
+			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(new Set([this.data.aid]), arrow.pp.x);
 		}
 	};
 
@@ -102,8 +102,8 @@ function AtomDelete(aid) {
 		// notifyAtomRemoved(this.data.aid);
 		var atom = restruct.atoms.get(this.data.aid);
 		var set = restruct.connectedComponents.get(atom.component);
-		Set.remove(set, this.data.aid);
-		if (Set.size(set) == 0)
+		set.delete(this.data.aid);
+		if (set.size === 0)
 			restruct.connectedComponents.remove(atom.component);
 		restruct.clearVisel(atom.visel);
 		restruct.atoms.unset(this.data.aid);
@@ -245,7 +245,7 @@ function SGroupAtomRemove(sgid, aid) {
 		const sg = struct.sgroups.get(sgid);
 
 		Struct.SGroup.removeAtom(sg, aid);
-		Set.remove(atom.sgs, sgid);
+		atom.sgs.delete(sgid);
 		invalidateAtom(restruct, aid);
 	};
 

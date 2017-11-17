@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import scale from '../../util/scale';
 import Action from '../shared/action';
 import draw from '../../render/draw';
@@ -116,16 +115,16 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 function isValidMap(rcs, aid1, aid2) {
 	var t1, t2;
 	for (var ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
-		var ro = Set.list(rcs.reactants[ri]);
+		var ro = Array.from(rcs.reactants[ri]);
 		if (!t1 && ro.indexOf(aid1) >= 0) t1 = 'r';
 		if (!t2 && ro.indexOf(aid2) >= 0) t2 = 'r';
 	}
 	for (var pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
-		var po = Set.list(rcs.products[pi]);
+		var po = Array.from(rcs.products[pi]);
 		if (!t1 && po.indexOf(aid1) >= 0) t1 = 'p';
 		if (!t2 && po.indexOf(aid2) >= 0) t2 = 'p';
 	}
-	return t1 && t2 && t1 != t2;
+	return t1 && t2 && t1 !== t2;
 }
 
 export default ReactionMapTool;

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
 
 import Struct from '../../chem/struct';
@@ -31,43 +30,43 @@ export function fromMultipleMove(restruct, lists, d) {
 
 	const action = new Action();
 	const struct = restruct.molecule;
-	const loops = Set.empty();
-	const atomsToInvalidate = Set.empty();
+	const loops = new Set();
+	const atomsToInvalidate = new Set();
 
 	if (lists.atoms) {
-		const atomSet = Set.fromList(lists.atoms);
+		const atomSet = new Set(lists.atoms);
 		const bondlist = [];
 
 		restruct.bonds.each((bid, bond) => {
-			if (Set.contains(atomSet, bond.b.begin) && Set.contains(atomSet, bond.b.end)) {
+			if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
 				bondlist.push(bid);
 				// add all adjacent loops
 				// those that are not completely inside the structure will get redrawn anyway
 				['hb1', 'hb2'].forEach(hb => {
 					const loop = struct.halfBonds.get(bond.b[hb]).loop;
 					if (loop >= 0)
-						Set.add(loops, loop);
+						loops.add(loop);
 				});
 				return;
 			}
 
-			if (Set.contains(atomSet, bond.b.begin)) {
-				Set.add(atomsToInvalidate, bond.b.begin);
+			if (atomSet.has(bond.b.begin)) {
+				atomsToInvalidate.add(bond.b.begin);
 				return;
 			}
 
-			if (Set.contains(atomSet, bond.b.end))
-				Set.add(atomsToInvalidate, bond.b.end);
+			if (atomSet.has(bond.b.end))
+				atomsToInvalidate.add(bond.b.end);
 		}, this);
 
 		bondlist.forEach(bond => action.addOp(new op.BondMove(bond, d)));
 
-		Set.each(loops, loopId => {
+		loops.forEach(loopId => {
 			if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) // hack
 				action.addOp(new op.LoopMove(loopId, d));
 		}, this);
 
-		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !Set.contains(atomsToInvalidate, aid))));
+		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !atomsToInvalidate.has(aid))));
 
 		if (lists.sgroupData.length === 0) {
 			const sgroups = getRelSgroupsBySelection(restruct, lists.atoms);

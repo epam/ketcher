@@ -19,9 +19,7 @@
 var Box2Abs = require('../../util/box2abs');
 var Map = require('../../util/map');
 var Pool = require('../../util/pool');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
-var scale = require('../../util/scale');
 
 var util = require('../util');
 var Struct = require('../../chem/struct');
@@ -111,13 +109,19 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	}
 }
 
+/**
+ * @param aid { number }
+ * @param atom { Atom }
+ */
 ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
+	aid = parseInt(aid, 10);
 	atom = atom || this.atoms.get(aid);
 	if (atom.component < 0)
 		return;
 	var cc = this.connectedComponents.get(atom.component);
-	Set.remove(cc, aid);
-	if (Set.size(cc) < 1)
+
+	cc.delete(aid);
+	if (cc.size < 1)
 		this.connectedComponents.remove(atom.component);
 
 	atom.component = -1;
@@ -130,87 +134,80 @@ ReStruct.prototype.clearConnectedComponents = function () {
 	});
 };
 
+/**
+ * @param aid { Array<number>|number }
+ * @param adjacentComponents { Set }
+ * @returns { Set }
+ */
 ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
-	var list = (typeof (aid['length']) === 'number') ? [].slice.call(aid) : [aid];
-	var ids = Set.empty();
+	const list = Array.isArray(aid) ? Array.from(aid) : [aid];
+	const ids = new Set();
 
 	while (list.length > 0) {
-		(function () {
-			var aid = list.pop();
-			Set.add(ids, aid);
-			var atom = this.atoms.get(aid);
-			if (atom.component >= 0)
-				Set.add(adjacentComponents, atom.component);
-			for (var i = 0; i < atom.a.neighbors.length; ++i) {
-				var neiId = this.molecule.halfBonds.get(atom.a.neighbors[i]).end;
-				if (!Set.contains(ids, neiId))
-					list.push(neiId);
-			}
-		}).apply(this);
+		const aid = list.pop();
+		ids.add(aid);
+		const atom = this.atoms.get(aid);
+
+		if (atom.component >= 0)
+			adjacentComponents.add(atom.component);
+
+		atom.a.neighbors.forEach(neighbor => {
+			const neiId = this.molecule.halfBonds.get(neighbor).end;
+			if (!ids.has(neiId))
+				list.push(neiId);
+		});
 	}
 
 	return ids;
 };
 
-ReStruct.prototype.addConnectedComponent = function (ids) {
-	var compId = this.connectedComponents.add(ids);
-	var adjacentComponents = Set.empty();
-	var atomIds = this.getConnectedComponent(Set.list(ids), adjacentComponents);
-	Set.remove(adjacentComponents, compId);
+/**
+ * @param idSet { Set<number> }
+ * @returns { number }
+ */
+ReStruct.prototype.addConnectedComponent = function (idSet) {
+	var compId = this.connectedComponents.add(idSet);
+	var adjacentComponents = new Set();
+	var atomIds = this.getConnectedComponent(Array.from(idSet), adjacentComponents);
+
+	adjacentComponents.delete(compId);
+
 	var type = -1;
-	Set.each(atomIds, function (aid) {
+	atomIds.forEach(aid => {
 		var atom = this.atoms.get(aid);
 		atom.component = compId;
 		if (atom.a.rxnFragmentType !== -1)
 			type = atom.a.rxnFragmentType;
-	}, this);
+	});
 
 	this.ccFragmentType.set(compId, type);
 	return compId;
 };
 
+/**
+ * @param ccid { number }
+ * @returns { number }
+ */
 ReStruct.prototype.removeConnectedComponent = function (ccid) {
-	Set.each(this.connectedComponents.get(ccid), function (aid) {
+	this.connectedComponents.get(ccid).forEach(aid => {
 		this.atoms.get(aid).component = -1;
-	}, this);
-	return this.connectedComponents.remove(ccid);
-};
+	});
 
-//	TODO: remove? not used
-ReStruct.prototype.connectedComponentMergeIn = function (ccid, set) {
-	Set.each(set, function (aid) {
-		this.atoms.get(aid).component = ccid;
-	}, this);
-	Set.mergeIn(this.connectedComponents.get(ccid), set);
+	return this.connectedComponents.remove(ccid);
 };
 
 ReStruct.prototype.assignConnectedComponents = function () {
 	this.atoms.each(function (aid, atom) {
 		if (atom.component >= 0)
 			return;
-		var adjacentComponents = Set.empty();
-		var ids = this.getConnectedComponent(aid, adjacentComponents);
-		Set.each(adjacentComponents, function (ccid) {
+		var adjacentComponents = new Set();
+		var idSet = this.getConnectedComponent(aid, adjacentComponents);
+		adjacentComponents.forEach(ccid => {
 			this.removeConnectedComponent(ccid);
-		}, this);
-		this.addConnectedComponent(ids);
-	}, this);
-};
+		});
 
-//	TODO: remove? not used
-ReStruct.prototype.connectedComponentGetBoundingBox = function (ccid, cc, bb) {
-	cc = cc || this.connectedComponents.get(ccid);
-	bb = bb || { min: null, max: null };
-	Set.each(cc, function (aid) {
-		var ps = scale.obj2scaled(this.atoms.get(aid).a.pp, this.render.options);
-		if (bb.min == null) {
-			bb.min = bb.max = ps;
-		} else {
-			bb.min = bb.min.min(ps);
-			bb.max = bb.max.max(ps);
-		}
+		this.addConnectedComponent(idSet);
 	}, this);
-	return bb;
 };
 
 ReStruct.prototype.initLayers = function () {
@@ -501,17 +498,6 @@ ReStruct.prototype.eachCC = function (func, type, context) {
 		if (!type || this.ccFragmentType.get(ccid) == type)
 			func.call(context || this, ccid, cc);
 	}, this);
-};
-
-//	TODO: remove? not used
-ReStruct.prototype.getGroupBB = function (type) {
-	var bb = { min: null, max: null };
-
-	this.eachCC(function (ccid, cc) {
-		bb = this.connectedComponentGetBoundingBox(ccid, cc, bb);
-	}, type, this);
-
-	return bb;
 };
 
 ReStruct.prototype.setImplicitHydrogen = function () {

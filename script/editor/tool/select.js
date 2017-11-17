@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import utils from '../shared/utils';
 
 import Struct from '../../chem/struct';
@@ -292,14 +291,18 @@ function uniqArray(dest, add) {
 function isSelected(render, selection, item) {
 	if (!selection)
 		return false;
-	var ctab = render.ctab;
+
+	const ctab = render.ctab;
+
 	if (item.map === 'frags' || item.map === 'rgroups') {
-		var atoms = item.map === 'frags' ?
+		const atoms = item.map === 'frags' ?
 			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 
-		return !!selection['atoms'] &&
-			Set.subset(Set.fromList(atoms), Set.fromList(selection['atoms']));
+		const selectionSet = new Set(selection['atoms']);
+		const atomSet = new Set(atoms);
+
+		return !!selection['atoms'] && selectionSet.isSuperset(atomSet);
 	}
 
 	return !!selection[item.map] &&

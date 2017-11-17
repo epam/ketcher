@@ -15,8 +15,6 @@
  ***************************************************************************/
 
 import s from 'subscription';
-
-import Set from '../util/set';
 import Vec2 from '../util/vec2';
 
 import Struct from '../chem/struct';
@@ -299,8 +297,7 @@ Editor.prototype.explicitSelected = function () {
 Editor.prototype.structSelected = function () {
 	var struct = this.render.ctab.molecule;
 	var selection = this.explicitSelected();
-	var dst = struct.clone(Set.fromList(selection.atoms),
-						   Set.fromList(selection.bonds), true);
+	var dst = struct.clone(new Set(selection.atoms), new Set(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets

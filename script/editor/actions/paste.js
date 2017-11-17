@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
 
@@ -171,29 +170,29 @@ function struct2Clipboard(struct) { // eslint-disable-line max-statements
 
 	// r-groups
 	var atomFragments = {};
-	var fragments = Set.empty();
+	var fragments = new Set();
 	selection.atoms.forEach(function (id) {
 		var atom = struct.atoms.get(id);
 		var frag = atom.fragment;
 		atomFragments[id] = frag;
-		Set.add(fragments, frag);
+		fragments.add(frag);
 	});
 
-	var rgids = Set.empty();
-	Set.each(fragments, function (frid) {
+	var rgids = new Set();
+	fragments.forEach(frid => {
 		var atoms = getFragmentAtoms(struct, frid);
 		for (var i = 0; i < atoms.length; ++i) {
-			if (!Set.contains(atomFragments, atoms[i]))
+			if (!atomFragments.has(atoms[i]))
 				return;
 		}
 		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
 		clipboard.rgmap[frid] = rgid;
-		Set.add(rgids, rgid);
+		rgids.add(rgid);
 	}, this);
 
-	Set.each(rgids, function (id) {
+	rgids.forEach(id => {
 		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
-	}, this);
+	});
 
 	return clipboard;
 }

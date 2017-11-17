@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 var Map = require('../../util/map');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('../struct');
@@ -35,10 +34,13 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	var atoms = this.molecule.atoms;
 	var bonds = this.molecule.bonds;
 
-	// this is a set of atoms that are likely to belong to allene structures and
-	//  therefore should not be considered as potential stereocenters in the code below,
-	//  as allenes cannot be encoded in the SMILES notation
-	var alleneMask = Set.empty();
+	/*
+		this is a set of atoms that are likely to belong to allene structures and
+		therefore should not be considered as potential stereocenters in the code below,
+		as allenes cannot be encoded in the SMILES notation
+	*/
+
+	var alleneMask = new Set();
 	atoms.each(function (aid) {
 		var neiList = this.getNeighbors.call(this.context, aid);
 		if (neiList.length != 2)
@@ -76,15 +78,14 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 			return bonds.get(nei.bid).stereo == Struct.Bond.PATTERN.STEREO.EITHER;
 		}, this) >= 0)
 			return false;
-		Set.add(alleneMask, nei1.aid);
-		Set.add(alleneMask, nei2.aid);
+		alleneMask.add(nei1.aid).add(nei2.aid);
 	}, this);
 
-	if (Set.size(alleneMask) > 0)
+	if (alleneMask.size > 0)
 		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
 
 	atoms.each(function (aid) {
-		if (Set.contains(alleneMask, aid))
+		if (alleneMask.has(aid))
 			return;
 		/*
       if (atom_types[atom_idx] == 0)

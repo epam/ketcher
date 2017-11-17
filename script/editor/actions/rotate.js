@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
 
 import Struct from '../../chem/struct';
@@ -48,18 +47,18 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 
 	const isFragFound = Object.keys(fids).find(frag => {
 		frag = parseInt(frag, 10);
-		return !Set.eq(struct.getFragmentIds(frag), Set.fromList(fids[frag]));
+		return !struct.getFragmentIds(frag).equals(new Set(fids[frag]));
 	});
 
 	if (isFragFound)
 		return action; // empty action
 
 	Object.keys(fids).forEach(frag => {
-		const fragment = Set.fromList(fids[frag]);
+		const fragment = new Set(fids[frag]);
 
 		const bbox = struct.getCoordBoundingBox(fragment);
 
-		Set.each(fragment, aid => {
+		fragment.forEach(aid => {
 			const atom = struct.atoms.get(aid);
 			const d = new Vec2();
 
@@ -74,7 +73,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 		});
 
 		if (!selection.sgroupData) {
-			const sgroups = getRelSgroupsBySelection(restruct, Set.list(fragment));
+			const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment));
 
 			sgroups.forEach(sg => {
 				const d = new Vec2();

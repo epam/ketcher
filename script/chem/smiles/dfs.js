@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-
 function Dfs(mol, atomData, components, nReactants) {
 	this.molecule = mol;
 	this.atom_data = atomData;
@@ -77,7 +75,7 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 			};
 
 			while (cid < this.components.length && selected == -1) {
-				selected = Set.find(this.components[cid], findFunc, this);
+				selected = this.components[cid].find(findFunc);
 				if (selected === null) {
 					selected = -1;
 					cid++;

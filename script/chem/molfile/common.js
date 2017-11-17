@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-
 var v2000 = require('./v2000');
 var v3000 = require('./v3000');
 
@@ -72,8 +70,8 @@ function prepareSruForSaving(sgroup, mol) {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
-		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
-			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+		if (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id) ||
+			a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
@@ -90,8 +88,8 @@ function prepareSupForSaving(sgroup, mol) {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
-		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
-			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+		if (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id) ||
+			a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
@@ -219,7 +217,7 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statements
 	var inBonds = [];
 	var xBonds = [];
-	var atomSet = Set.fromList(sg.atoms);
+	var atomSet = new Set(sg.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
 	Struct.SGroup.bracketPos(sg, mol, xBonds);
 	var bb = sg.bracketBox;

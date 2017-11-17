@@ -16,7 +16,6 @@
 
 var Map = require('../../util/map');
 var Pool = require('../../util/pool');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 var Box2Abs = require('../../util/box2abs');
 
@@ -57,12 +56,16 @@ Struct.prototype.hasRxnArrow = function () {
 	return this.rxnArrows.count() > 0;
 };
 
-// returns a list of id's of s-groups, which contain only atoms in the given list
-Struct.prototype.getSGroupsInAtomSet = function (atoms/* Array*/) {
+/**
+ * Returns a list of id's of s-groups, which contain only atoms in the given list
+ * @param atoms { Array<number> }
+ * @returns { Array<number> }
+ */
+Struct.prototype.getSGroupsInAtomSet = function (atoms) {
 	var sgCounts = {};
 
 	atoms.forEach(function (aid) {
-		var sg = Set.list(this.atoms.get(aid).sgs);
+		var sg = Array.from(this.atoms.get(aid).sgs);
 
 		sg.forEach(function (sid) {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
@@ -114,15 +117,15 @@ Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
 };
 
 Struct.prototype.getScaffold = function () {
-	var atomSet = Set.empty();
+	var atomSet = new Set();
 	this.atoms.each(function (aid) {
-		Set.add(atomSet, aid);
+		atomSet.add(aid);
 	}, this);
 	this.rgroups.each(function (rgid, rg) {
 		rg.frags.each(function (fnum, fid) {
 			this.atoms.each(function (aid, atom) {
 				if (atom.fragment === fid)
-					Set.remove(atomSet, aid);
+					atomSet.delete(aid);
 			}, this);
 		}, this);
 	}, this);
@@ -130,11 +133,11 @@ Struct.prototype.getScaffold = function () {
 };
 
 Struct.prototype.getFragmentIds = function (fid) {
-	const atomSet = Set.empty();
+	const atomSet = new Set();
 
 	this.atoms.each((aid, atom) => {
 		if (atom.fragment === fid)
-			Set.add(atomSet, aid);
+			atomSet.add(aid);
 	});
 
 	return atomSet;
@@ -145,16 +148,16 @@ Struct.prototype.getFragment = function (fid) {
 };
 
 Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) { // eslint-disable-line max-params, max-statements
-	atomSet = atomSet || Set.keySetInt(this.atoms);
-	bondSet = bondSet || Set.keySetInt(this.bonds);
-	bondSet = Set.filter(bondSet, function (bid) {
+	atomSet = atomSet || new Set(this.atoms.keys().map(key => parseInt(key, 10)));
+	bondSet = bondSet || new Set(this.bonds.keys().map(key => parseInt(key, 10)));
+	bondSet = bondSet.filter(bid => {
 		var bond = this.bonds.get(bid);
-		return Set.contains(atomSet, bond.begin) && Set.contains(atomSet, bond.end);
-	}, this);
+		return atomSet.has(bond.begin) && atomSet.has(bond.end);
+	});
 
 	var fidMask = {};
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid))
+		if (atomSet.has(aid))
 			fidMask[atom.fragment] = 1;
 	});
 	var fidMap = {};
@@ -191,32 +194,32 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		aidMap = {};
 	// atoms in not RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) === -1)
+		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 	// atoms in RGroup
 	this.atoms.each(function (aid, atom) {
-		if (Set.contains(atomSet, aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
+		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
 	var bidMap = {};
 	this.bonds.each(function (bid, bond) {
-		if (Set.contains(bondSet, bid))
+		if (bondSet.has(bid))
 			bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
 	});
 
 	this.sgroups.each(function (sid, sg) {
 		var i;
 		for (i = 0; i < sg.atoms.length; ++i) {
-			if (!Set.contains(atomSet, sg.atoms[i]))
+			if (!atomSet.has(sg.atoms[i]))
 				return;
 		}
 		sg = SGroup.clone(sg, aidMap, bidMap);
 		var id = cp.sgroups.add(sg);
 		sg.id = id;
 		for (i = 0; i < sg.atoms.length; ++i)
-			Set.add(cp.atoms.get(sg.atoms[i]).sgs, id);
+			cp.atoms.get(sg.atoms[i]).sgs.add(id);
 
 		if (sg.type === 'DAT')
 			cp.sGroupForest.insert(sg.id, -1, []);
@@ -394,15 +397,15 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 	this.bonds.each(function (bid, bond) {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
-		Set.each(a1.sgs, function (sgid) {
-			if (!Set.contains(a2.sgs, sgid)) {
+		a1.sgs.forEach(sgid => {
+			if (!a2.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
 		}, this);
-		Set.each(a2.sgs, function (sgid) {
-			if (!Set.contains(a1.sgs, sgid)) {
+		a2.sgs.forEach(sgid => {
+			if (!a1.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.begin);
@@ -414,7 +417,7 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 Struct.prototype.sGroupDelete = function (sgid) {
 	var sg = this.sgroups.get(sgid);
 	for (var i = 0; i < sg.atoms.length; ++i)
-		Set.remove(this.atoms.get(sg.atoms[i]).sgs, sgid);
+		this.atoms.get(sg.atoms[i]).sgs.delete(sgid);
 	this.sGroupForest.remove(sgid);
 	this.sgroups.remove(sgid);
 };
@@ -434,6 +437,10 @@ Struct.prototype.rxnArrowSetPos = function (id, pp) {
 	itemId.pp = pp;
 };
 
+/**
+ * @param atomSet { Set<number> }
+ * @returns {*}
+ */
 Struct.prototype.getCoordBoundingBox = function (atomSet) {
 	var bb = null;
 	function extend(pp) {
@@ -448,10 +455,10 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 		}
 	}
 
-	var global = typeof (atomSet) === 'undefined';
+	var global = !atomSet || atomSet.size === 0;
 
 	this.atoms.each(function (aid, atom) {
-		if (global || Set.contains(atomSet, aid))
+		if (global || atomSet.has(aid))
 			extend(atom.pp);
 	});
 	if (global) {
@@ -555,18 +562,23 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	});
 }
 
+/**
+ * @param firstaid { number }
+ * @returns { Set<number> }
+ */
 Struct.prototype.findConnectedComponent = function (firstaid) {
 	const map = {};
 	const list = [firstaid];
-	const ids = Set.empty();
+	const ids = new Set();
 	while (list.length > 0) {
 		const aid = list.pop();
 		map[aid] = 1;
-		Set.add(ids, aid);
+		ids.add(aid);
 		const atom = this.atoms.get(aid);
 		atom.neighbors.forEach(nei => {
 			const neiId = this.halfBonds.get(nei).end;
-			if (!Set.contains(ids, neiId)) list.push(neiId);
+			if (!ids.has(neiId))
+				list.push(neiId);
 		});
 	}
 	return ids;
@@ -591,22 +603,28 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
 			var component = this.findConnectedComponent(aid);
 			components.push(component);
-			Set.each(component, function (aid) {
+			component.forEach(aid => {
 				map[aid] = 1;
-			}, this);
+			});
 		}
 	}, this);
 	return components;
 };
 
-Struct.prototype.markFragment = function (ids) {
+/**
+ * @param idSet { Set<number> }
+ */
+Struct.prototype.markFragment = function (idSet) {
 	var frag = {};
 	var fid = this.frags.add(frag);
-	Set.each(ids, function (aid) {
+	idSet.forEach(aid => {
 		this.atoms.get(aid).fragment = fid;
-	}, this);
+	});
 };
 
+/**
+ * @param aid { number }
+ */
 Struct.prototype.markFragmentByAtomId = function (aid) {
 	this.markFragment(this.findConnectedComponent(aid));
 };
@@ -650,10 +668,10 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 		var hbi = this.halfBonds.get(hbs[i]);
 		var ai = this.atoms.get(hbi.begin).pp;
 		var bi = this.atoms.get(hbi.end).pp;
-		var set = Set.fromList([hbi.begin, hbi.end]);
+		var set = new Set([hbi.begin, hbi.end]);
 		for (var j = i + 2; j < hbs.length; ++j) {
 			var hbj = this.halfBonds.get(hbs[j]);
-			if (Set.contains(set, hbj.begin) || Set.contains(set, hbj.end))
+			if (set.has(hbj.begin) || set.has(hbj.end))
 				/* eslint-disable no-continue*/
 				continue; // skip edges sharing an atom
 				/* eslint-enable no-continue*/
@@ -726,7 +744,7 @@ Struct.prototype.loopIsInner = function (loop) {
 
 Struct.prototype.findLoops = function () {
 	const newLoops = [];
-	const bondsToMark = Set.empty();
+	const bondsToMark = new Set();
 
 	/*
 	 	Starting from each half-bond not known to be in a loop yet,
@@ -767,7 +785,7 @@ Struct.prototype.findLoops = function () {
 
 				loop.forEach(hbid => {
 					this.halfBonds.get(hbid).loop = loopId;
-					Set.add(bondsToMark, this.halfBonds.get(hbid).bid);
+					bondsToMark.add(this.halfBonds.get(hbid).bid);
 				});
 
 				if (loopId >= 0)
@@ -779,7 +797,7 @@ Struct.prototype.findLoops = function () {
 
 	return {
 		newLoops: newLoops,
-		bondsToMark: Set.list(bondsToMark)
+		bondsToMark: Array.from(bondsToMark)
 	};
 };
 
@@ -793,10 +811,14 @@ Struct.prototype.prepareLoopStructure = function () {
 	this.findLoops();
 };
 
+/**
+ * @param sgid { number }
+ * @param aid { number }
+ */
 Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	// TODO: [MK] make sure the addition does not break the hierarchy?
 	SGroup.addAtom(this.sgroups.get(sgid), aid);
-	Set.add(this.atoms.get(aid).sgs, sgid);
+	this.atoms.get(aid).sgs.add(sgid);
 };
 
 Struct.prototype.calcConn = function (aid) {
@@ -894,8 +916,8 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 		while (c.x > barriers[j])
 			++j;
 
-		components[j] = components[j] || {};
-		Set.mergeIn(components[j], component);
+		components[j] = components[j] || new Set();
+		components[j].union(component);
 	});
 
 	const submolTexts = [];
@@ -922,6 +944,11 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 	};
 };
 
+/**
+ * @param atomset { Set<number> }
+ * @param arrowpos { number }
+ * @returns { number }
+ */
 Struct.prototype.defineRxnFragmentTypeForAtomset = function (atomset, arrowpos) {
 	const bb = this.getCoordBoundingBox(atomset);
 	const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);

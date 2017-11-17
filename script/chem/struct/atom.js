@@ -42,7 +42,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	// sgs should only be set when an atom is added to an s-group by an appropriate method,
 	//   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
 	// TODO: make a consistency check on atom/s-group assignments
-	this.sgs = {};
+	this.sgs = new Set();
 
 	// query
 	ifDef(this, params, 'ringBondCount', def('ringBondCount'));

@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 var Box2Abs = require('../../util/box2abs');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
 
 var Atom = require('./atom');
@@ -167,13 +166,19 @@ SGroup.removeAtom = function (sgroup, aid) {
 	console.error('The atom is not found in the given s-group');
 };
 
+/**
+ * @param inBonds
+ * @param xBonds
+ * @param mol
+ * @param parentAtomSet { Set<number> }
+ */
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	mol.bonds.each(function (bid, bond) {
-		if (Set.contains(parentAtomSet, bond.begin) && Set.contains(parentAtomSet, bond.end)) {
-			if (inBonds != null)
+		if (parentAtomSet.has(bond.begin) && parentAtomSet.has(bond.end)) {
+			if (inBonds !== null)
 				inBonds.push(bid);
-		} else if (Set.contains(parentAtomSet, bond.begin) || Set.contains(parentAtomSet, bond.end)) {
-			if (xBonds != null)
+		} else if (parentAtomSet.has(bond.begin) || parentAtomSet.has(bond.end)) {
+			if (xBonds !== null)
 				xBonds.push(bid);
 		}
 	}, this);
@@ -215,6 +220,15 @@ SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-stat
 	sg.bracketBox = bb;
 };
 
+/**
+ * @param mol
+ * @param xbonds
+ * @param atomSet { Set<number> }
+ * @param bb
+ * @param d
+ * @param n
+ * @returns { Array }
+ */
 SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // eslint-disable-line max-params
 	function BracketParams(c, d, w, h) {
 		this.c = c;
@@ -254,7 +268,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 			for (var i = 0; i < xbonds.length; ++i) {
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
-				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
+				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
 		})();
@@ -298,15 +312,15 @@ SGroup.getBonds = function (mol, sg) {
 
 SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max-statements
 	sgroup.atoms.sort((a, b) => a - b);
-	sgroup.atomSet = Set.fromList(sgroup.atoms);
-	sgroup.parentAtomSet = Set.clone(sgroup.atomSet);
+	sgroup.atomSet = new Set(sgroup.atoms);
+	sgroup.parentAtomSet = new Set(sgroup.atomSet);
 	var inBonds = [];
 	var xBonds = [];
 
 	mol.bonds.each(function (bid, bond) {
-		if (Set.contains(sgroup.parentAtomSet, bond.begin) && Set.contains(sgroup.parentAtomSet, bond.end))
+		if (sgroup.parentAtomSet.has(bond.begin) && sgroup.parentAtomSet.has(bond.end))
 			inBonds.push(bid);
-		else if (Set.contains(sgroup.parentAtomSet, bond.begin) || Set.contains(sgroup.parentAtomSet, bond.end))
+		else if (sgroup.parentAtomSet.has(bond.begin) || sgroup.parentAtomSet.has(bond.end))
 			xBonds.push(bid);
 	}, sgroup);
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
@@ -322,10 +336,10 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var crossBond = null;
 	if (xBonds.length === 2) {
 		var bond1 = mol.bonds.get(xBonds[0]);
-		xAtom1 = Set.contains(sgroup.parentAtomSet, bond1.begin) ? bond1.begin : bond1.end;
+		xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end;
 
 		var bond2 = mol.bonds.get(xBonds[1]);
-		xAtom2 = Set.contains(sgroup.parentAtomSet, bond2.begin) ? bond2.begin : bond2.end;
+		xAtom2 = sgroup.parentAtomSet.has(bond2.begin) ? bond2.begin : bond2.end;
 		crossBond = bond2;
 	}
 

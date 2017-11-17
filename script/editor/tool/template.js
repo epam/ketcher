@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Set from '../../util/set';
 import Vec2 from '../../util/vec2';
 import utils from '../shared/utils';
 import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
@@ -89,7 +88,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 				count++;
 			});
 		} else {
-			Set.each(frIds, function (id) {
+			frIds.forEach(id => {
 				xy0.add_(molecule.atoms.get(id).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});

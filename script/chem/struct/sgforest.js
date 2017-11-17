@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 var Map = require('../../util/map');
-var Set = require('../../util/set');
 
 function SGroupForest(molecule) {
 	this.parent = new Map(); // child id -> parent id
@@ -38,20 +37,24 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 };
 
 SGroupForest.prototype.getAtomSets = function () {
-	return this.molecule.sgroups.map(function (sgid, sgroup) {
-		return Set.fromList(sgroup.atoms);
-	});
+	return this.molecule.sgroups
+		.map((sgid, sgroup) => new Set(sgroup.atoms));
 };
 
-SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
+/**
+ * @param newId { number }
+ * @param atoms { Set<number> }
+ * @returns { { children, parent: number } }
+ */
+SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 	// find the lowest superset in the hierarchy
 	var isStrictSuperset = new Map();
 	var isSubset = new Map();
 	var atomSets = this.getAtomSets();
 	atomSets.unset(newId);
 	atomSets.each(function (id, atomSet) {
-		isSubset.set(id, Set.subset(atoms, atomSet));
-		isStrictSuperset.set(id, Set.subset(atomSet, atoms) && !Set.eq(atomSet, atoms));
+		isSubset.set(id, atomSet.isSuperset(atoms));
+		isStrictSuperset.set(id, atoms.isSuperset(atomSet) && !atomSet.equals(atoms));
 	}, this);
 	var parents = atomSets.findAll(function (id) {
 		if (!isSubset.get(id))
@@ -91,7 +94,7 @@ SGroupForest.prototype.validate = function () {
 	var valid = true;
 	// 1) child group's atom set is a subset of the parent one's
 	this.parent.each(function (id, parentId) {
-		if (parentId >= 0 && !Set.subset(atomSets.get(id), atomSets.get(parentId)))
+		if (parentId >= 0 && !atomSets.get(parentId).isSuperset(atomSets.get(id)))
 			valid = false;
 	}, this);
 
@@ -104,7 +107,7 @@ SGroupForest.prototype.validate = function () {
 				var id2 = list[j];
 				var sg1 = this.molecule.sgroups.get(id1);
 				var sg2 = this.molecule.sgroups.get(id2);
-				if (!Set.disjoint(atomSets.get(id1), atomSets.get(id2)) && sg1.type != 'DAT' && sg2.type != 'DAT')
+				if (atomSets.get(id1).intersection(atomSets.get(id2)).size !== 0 && sg1.type !== 'DAT' && sg2.type !== 'DAT')
 					valid = false;
 			}
 		}
@@ -118,7 +121,7 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	console.assert(this.validate(), 's-group forest invalid');
 
 	var atomSets = this.getAtomSets();
-	var atoms = Set.fromList(this.molecule.sgroups.get(id).atoms);
+	var atoms = new Set(this.molecule.sgroups.get(id).atoms);
 	if (!parent || !children) { // if these are not provided, deduce automatically
 		var guess = this.getAtomSetRelations(id, atoms, atomSets);
 		parent = guess.parent;

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-
 var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
@@ -98,18 +96,17 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 	this.inLoop = (function () {
 		molecule.prepareLoopStructure();
-		var bondsInLoops = Set.empty();
+		var bondsInLoops = new Set();
 		molecule.loops.each(function (lid, loop) {
 			if (loop.hbs.length <= 6) {
-				Set.mergeIn(bondsInLoops, Set.fromList(loop.hbs.map(function (hbid) {
-					return molecule.halfBonds.get(hbid).bid;
-				})));
+				const hbids = loop.hbs.map(hbid => molecule.halfBonds.get(hbid).bid);
+				bondsInLoops = bondsInLoops.union(new Set(hbids));
 			}
 		});
 		var inLoop = {};
-		Set.each(bondsInLoops, function (bid) {
+		bondsInLoops.forEach(bid => {
 			inLoop[bid] = 1;
-		}, this);
+		});
 		return inLoop;
 	})();
 

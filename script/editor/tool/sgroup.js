@@ -16,7 +16,6 @@
 
 import isEqual from 'lodash/fp/isEqual';
 
-import Set from '../../util/set';
 import { SgContexts } from '../shared/constants';
 
 import Struct from '../../chem/struct';
@@ -168,14 +167,10 @@ function getContextBySgroup(restruct, sgAtoms) {
 	if (singleComponentSelected(restruct, sgAtoms))
 		return SgContexts.Fragment;
 
-	const atomMap = sgAtoms.reduce((acc, aid) => {
-		acc[aid] = true;
-		return acc;
-	}, {});
+	const atomSet = new Set(sgAtoms);
 
-	const sgBonds = struct.bonds
-		.values()
-		.filter(bond => atomMap[bond.begin] && atomMap[bond.end]);
+	const sgBonds = struct.bonds.values()
+		.filter(bond => atomSet.has(bond.begin) && atomSet.has(bond.end));
 
 	return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
 }
@@ -193,11 +188,8 @@ function getContextBySelection(restruct, selection) {
 
 	selection.atoms = selection.atoms || [];
 
-	const atomSelectMap = atomMap(selection.atoms);
-
-	const allBondsSelected = bonds.every(bond =>
-		atomSelectMap[bond.begin] !== undefined && atomSelectMap[bond.end] !== undefined
-	);
+	const atomSet = new Set(selection.atoms);
+	const allBondsSelected = bonds.every(bond => atomSet.has(bond.begin) && atomSet.has(bond.end));
 
 	if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
 		return SgContexts.Fragment;
@@ -221,16 +213,6 @@ function fromContextType(id, editor, newSg, currSelection) {
 	editor.selection(result.selection);
 
 	return result;
-}
-
-// tools
-function atomMap(atoms) {
-	atoms = atoms || [];
-
-	return atoms.reduce((acc, atomid) => {
-		acc[atomid] = atomid;
-		return acc;
-	}, {});
 }
 
 function anyChainedBonds(bonds) {
@@ -262,17 +244,10 @@ function manyComponentsSelected(restruct, atoms) {
 }
 
 function countOfSelectedComponents(restruct, atoms) {
-	const atomSelectMap = atomMap(atoms);
+	const atomSet = new Set(atoms);
 
 	return restruct.connectedComponents.values()
-		.reduce((acc, component) => {
-			const componentAtoms = Object.keys(component);
-
-			const count = componentAtoms
-				.reduce((acc, atom) => acc + (atomSelectMap[atom] === undefined), 0);
-
-			return acc + (count === 0 ? 1 : 0);
-		}, 0);
+		.reduce((acc, component) => acc + (atomSet.isSuperset(component) ? 1 : 0), 0);
 }
 
 function checkOverlapping(struct, atoms) {
@@ -285,7 +260,7 @@ function checkOverlapping(struct, atoms) {
 
 	return 0 <= atoms.findIndex(function (id) {
 		var atom = struct.atoms.get(id);
-		var sgroups = Set.list(atom.sgs);
+		var sgroups = Array.from(atom.sgs);
 
 		return 0 <= sgroups.findIndex(function (sid) {
 			var sg = struct.sgroups.get(sid);

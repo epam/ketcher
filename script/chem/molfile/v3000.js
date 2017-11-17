@@ -284,7 +284,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
 			var frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
-			rg.atoms.each(function (aid, atom) {
+			rg.atoms.each((aid, atom) => {
 				atom.fragment = frid;
 			});
 			rg.mergeInto(ctab);

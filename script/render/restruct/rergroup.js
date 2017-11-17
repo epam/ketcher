@@ -37,7 +37,7 @@ ReRGroup.isSelectable = function () {
 
 ReRGroup.prototype.getAtoms = function (render) {
 	var ret = [];
-	this.item.frags.each(function (fnum, fid) {
+	this.item.frags.each((fnum, fid) => {
 		ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid));
 	});
 	return ret;
@@ -45,7 +45,7 @@ ReRGroup.prototype.getAtoms = function (render) {
 
 ReRGroup.prototype.getBonds = function (render) {
 	var ret = [];
-	this.item.frags.each(function (fnum, fid) {
+	this.item.frags.each((fnum, fid) => {
 		ret = ret.concat(render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid));
 	});
 	return ret;
@@ -53,7 +53,7 @@ ReRGroup.prototype.getBonds = function (render) {
 
 ReRGroup.prototype.calcBBox = function (render) {
 	var ret;
-	this.item.frags.each(function (fnum, fid) {
+	this.item.frags.each((fnum, fid) => {
 		var bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render);
 		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
@@ -175,9 +175,9 @@ ReRGroup.prototype.drawHighlight = function (render) {
 		 render.ctab.atoms.get(aid).drawHighlight(render);
 		 }, this);
 		 */
-		this.item.frags.each(function (fnum, fid) {
+		this.item.frags.each((fnum, fid) => {
 			render.ctab.frags.get(fid).drawHighlight(render);
-		}, this);
+		});
 		return ret;
 	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, fragment does not belong to the render

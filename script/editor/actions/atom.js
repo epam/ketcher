@@ -132,8 +132,8 @@ export function mergeFragments(action, restruct, frid, frid2) {
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));
 
-		struct.atoms.each(function (aid, atom) {
-			if (atom.fragment == frid2)
+		struct.atoms.each((aid, atom) => {
+			if (atom.fragment === frid2)
 				action.addOp(new op.AtomAttr(aid, 'fragment', frid).perform(restruct));
 		});
 		action.addOp(new op.FragmentDelete(frid2).perform(restruct));

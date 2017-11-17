@@ -59,7 +59,7 @@ export function structSelection(struct) {
 
 export function getFragmentAtoms(struct, frid) {
 	var atoms = [];
-	struct.atoms.each(function (aid, atom) {
+	struct.atoms.each((aid, atom) => {
 		if (atom.fragment == frid)
 			atoms.push(aid);
 	});

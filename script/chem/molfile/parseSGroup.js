@@ -73,7 +73,7 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 	var patomsMap = identityMap(sgroup.patoms);
 
 	var bondsToRemove = [];
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.each((bid, bond) => {
 		var beginIn = bond.begin in atomReductionMap;
 		var endIn = bond.end in atomReductionMap;
 		// if both adjacent atoms of a bond are to be merged, remove it

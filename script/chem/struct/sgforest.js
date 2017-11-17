@@ -37,8 +37,7 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 };
 
 SGroupForest.prototype.getAtomSets = function () {
-	return this.molecule.sgroups
-		.map((sgid, sgroup) => new Set(sgroup.atoms));
+	return Array.from(this.molecule.sgroups, (sgid, sgroup) => new Set(sgroup.atoms));
 };
 
 /**
@@ -51,25 +50,31 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 	var isStrictSuperset = new Map();
 	var isSubset = new Map();
 	var atomSets = this.getAtomSets();
+
+	console.error('atomset', atomSets);
+
 	atomSets.unset(newId);
-	atomSets.each(function (id, atomSet) {
+
+	atomSets.each((id, atomSet) => {
 		isSubset.set(id, atomSet.isSuperset(atoms));
 		isStrictSuperset.set(id, atoms.isSuperset(atomSet) && !atomSet.equals(atoms));
-	}, this);
-	var parents = atomSets.findAll(function (id) {
+	});
+
+	var parents = atomSets.findAll(id => {
 		if (!isSubset.get(id))
 			return false;
-		if (this.children.get(id).findIndex(function (childId) {
-			return isSubset.get(childId);
-		}, this) >= 0)
+
+		if (this.children.get(id).findIndex(childId => isSubset.get(childId)) >= 0)
 			return false;
+
 		return true;
-	}, this);
+	});
+
 	console.assert(parents.length <= 1, "We are here"); // there should be only one parent
 
-	var children = atomSets.findAll(function (id) {
-		return isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id));
-	}, this);
+	var children = atomSets
+		.findAll(id => isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)));
+
 	return {
 		children: children,
 		parent: parents.length === 0 ? -1 : parents[0]

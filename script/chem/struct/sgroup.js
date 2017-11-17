@@ -173,7 +173,7 @@ SGroup.removeAtom = function (sgroup, aid) {
  * @param parentAtomSet { Set<number> }
  */
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.each((bid, bond) => {
 		if (parentAtomSet.has(bond.begin) && parentAtomSet.has(bond.end)) {
 			if (inBonds !== null)
 				inBonds.push(bid);
@@ -181,7 +181,7 @@ SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 			if (xBonds !== null)
 				xBonds.push(bid);
 		}
-	}, this);
+	});
 };
 
 SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-statements
@@ -295,17 +295,16 @@ SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
-	mol.atoms.each(function (aid) {
-		atoms.push(aid);
-	});
+	mol.atoms.each(aid => { atoms.push(aid); });
 	return atoms;
 };
 
 SGroup.getBonds = function (mol, sg) {
 	var atoms = SGroup.getAtoms(mol, sg);
 	var bonds = [];
-	mol.bonds.each(function (bid, bond) {
-		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) bonds.push(bid);
+	mol.bonds.each((bid, bond) => {
+		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0)
+			bonds.push(bid);
 	});
 	return bonds;
 };
@@ -317,12 +316,13 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var inBonds = [];
 	var xBonds = [];
 
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.each((bid, bond) => {
 		if (sgroup.parentAtomSet.has(bond.begin) && sgroup.parentAtomSet.has(bond.end))
 			inBonds.push(bid);
 		else if (sgroup.parentAtomSet.has(bond.begin) || sgroup.parentAtomSet.has(bond.end))
 			xBonds.push(bid);
-	}, sgroup);
+	});
+
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
 		throw {
 			'id': sgroup.id,

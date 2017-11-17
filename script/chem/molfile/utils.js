@@ -161,7 +161,7 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 			molProd.push(mol);
 		}
 
-		mol.atoms.each(function (aid, atom) {
+		mol.atoms.each((aid, atom) => {
 			atom.rxnFragmentType = fragmentType;
 		});
 	}

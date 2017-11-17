@@ -69,39 +69,25 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	this.structChanged = false;
 
 	// TODO: eachItem ?
-	molecule.atoms.each(function (aid, atom) {
-		this.atoms.set(aid, new ReAtom(atom));
-	}, this);
+	molecule.atoms.each((aid, atom) => { this.atoms.set(aid, new ReAtom(atom)); });
 
-	molecule.bonds.each(function (bid, bond) {
-		this.bonds.set(bid, new ReBond(bond));
-	}, this);
+	molecule.bonds.each((bid, bond) => { this.bonds.set(bid, new ReBond(bond)); });
 
-	molecule.loops.each(function (lid, loop) {
-		this.reloops.set(lid, new ReLoop(loop));
-	}, this);
+	molecule.loops.each((lid, loop) => { this.reloops.set(lid, new ReLoop(loop)); });
 
-	molecule.rxnPluses.each(function (id, item) {
-		this.rxnPluses.set(id, new ReRxnPlus(item));
-	}, this);
+	molecule.rxnPluses.each((id, item) => { this.rxnPluses.set(id, new ReRxnPlus(item)); });
 
-	molecule.rxnArrows.each(function (id, item) {
-		this.rxnArrows.set(id, new ReRxnArrow(item));
-	}, this);
+	molecule.rxnArrows.each((id, item) => { this.rxnArrows.set(id, new ReRxnArrow(item)); });
 
-	molecule.frags.each(function (id, item) {
-		this.frags.set(id, new ReFrag(item));
-	}, this);
+	molecule.frags.each((id, item) => { this.frags.set(id, new ReFrag(item)); });
 
-	molecule.rgroups.each(function (id, item) {
-		this.rgroups.set(id, new ReRGroup(item));
-	}, this);
+	molecule.rgroups.each((id, item) => { this.rgroups.set(id, new ReRGroup(item)); });
 
-	molecule.sgroups.each(function (id, item) {
+	molecule.sgroups.each((id, item) => {
 		this.sgroups.set(id, new ReSGroup(item));
 		if (item.type === 'DAT' && !item.data.attached)
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
-	}, this);
+	});
 
 	if (molecule.isChiral) {
 		var bb = molecule.getCoordBoundingBox();
@@ -129,9 +115,7 @@ ReStruct.prototype.connectedComponentRemoveAtom = function (aid, atom) {
 
 ReStruct.prototype.clearConnectedComponents = function () {
 	this.connectedComponents.clear();
-	this.atoms.each(function (aid, atom) {
-		atom.component = -1;
-	});
+	this.atoms.each((aid, atom) => { atom.component = -1; });
 };
 
 /**
@@ -197,7 +181,7 @@ ReStruct.prototype.removeConnectedComponent = function (ccid) {
 };
 
 ReStruct.prototype.assignConnectedComponents = function () {
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if (atom.component >= 0)
 			return;
 		var adjacentComponents = new Set();
@@ -207,7 +191,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 		});
 
 		this.addConnectedComponent(idSet);
-	}, this);
+	});
 };
 
 ReStruct.prototype.initLayers = function () {
@@ -270,7 +254,7 @@ ReStruct.prototype.clearVisel = function (visel) {
 
 ReStruct.prototype.eachItem = function (func, context) {
 	for (var map in ReStruct.maps) {
-		this[map].each(function (id, item) {
+		this[map].each((id, item) => {
 			func.call(context, item);
 		});
 	}
@@ -387,19 +371,20 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	}
 
 	// TODO: when to update sgroup?
-	this.sgroups.each(function (sid, sgroup) {
+	this.sgroups.each((sid, sgroup) => {
 		this.clearVisel(sgroup.visel);
 		sgroup.highlighting = null;
 		sgroup.selectionPlate = null;
-	}, this);
+	});
 
 	// TODO [RB] need to implement update-on-demand for fragments and r-groups
-	this.frags.each(function (frid, frag) {
+	this.frags.each((frid, frag) => {
 		this.clearVisel(frag.visel);
-	}, this);
-	this.rgroups.each(function (rgid, rgroup) {
+	});
+
+	this.rgroups.each((rgid, rgroup) => {
 		this.clearVisel(rgroup.visel);
-	}, this);
+	});
 
 	if (force) { // clear and recreate all half-bonds
 		this.clearConnectedComponents();
@@ -408,12 +393,16 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	}
 
 	// only update half-bonds adjacent to atoms that have moved
-	this.molecule.updateHalfBonds(new Map(this.atomsChanged).findAll(function (aid, status) {
-		return status >= 0;
-	}, this));
-	this.molecule.sortNeighbors(new Map(this.atomsChanged).findAll(function (aid, status) {
-		return status >= 1;
-	}, this));
+	this.molecule.updateHalfBonds(
+		new Map(this.atomsChanged)
+			.findAll((aid, status) => status >= 0)
+	);
+
+	this.molecule.sortNeighbors(
+		new Map(this.atomsChanged)
+			.findAll((aid, status) => status >= 1)
+	);
+
 	this.assignConnectedComponents();
 	this.initialized = true;
 
@@ -437,13 +426,13 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 };
 
 ReStruct.prototype.updateLoops = function () {
-	this.reloops.each(function (rlid, reloop) {
+	this.reloops.each((rlid, reloop) => {
 		this.clearVisel(reloop.visel);
-	}, this);
+	});
 	var ret = this.molecule.findLoops();
-	ret.bondsToMark.forEach(function (bid) {
+	ret.bondsToMark.forEach(bid => {
 		this.markBond(bid, 1);
-	}, this);
+	});
 	ret.newLoops.forEach(function (loopId) {
 		this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
 	}, this);
@@ -451,9 +440,9 @@ ReStruct.prototype.updateLoops = function () {
 
 ReStruct.prototype.showLoops = function () {
 	var options = this.render.options;
-	this.reloops.each(function (rlid, reloop) {
+	this.reloops.each((rlid, reloop) => {
 		reloop.show(this, rlid, options);
-	}, this);
+	});
 };
 
 ReStruct.prototype.showReactionSymbols = function () {
@@ -479,25 +468,25 @@ ReStruct.prototype.showSGroups = function () {
 };
 
 ReStruct.prototype.showFragments = function () {
-	this.frags.each(function (id, frag) {
+	this.frags.each((id, frag) => {
 		var path = frag.draw(this.render, id);
 		if (path) this.addReObjectPath('data', frag.visel, path, null, true);
 		// TODO fragment selection & highlighting
-	}, this);
+	});
 };
 
 ReStruct.prototype.showRGroups = function () {
 	var options = this.render.options;
-	this.rgroups.each(function (id, rgroup) {
+	this.rgroups.each((id, rgroup) => {
 		rgroup.show(this, id, options);
-	}, this);
+	});
 };
 
 ReStruct.prototype.eachCC = function (func, type, context) {
-	this.connectedComponents.each(function (ccid, cc) {
-		if (!type || this.ccFragmentType.get(ccid) == type)
+	this.connectedComponents.each((ccid, cc) => {
+		if (!type || this.ccFragmentType.get(ccid) === type)
 			func.call(context || this, ccid, cc);
-	}, this);
+	});
 };
 
 ReStruct.prototype.setImplicitHydrogen = function () {
@@ -526,10 +515,10 @@ ReStruct.prototype.loopRemove = function (loopId) {
 };
 
 ReStruct.prototype.verifyLoops = function () {
-	this.reloops.each(function (rlid, reloop) {
+	this.reloops.each((rlid, reloop) => {
 		if (!reloop.isValid(this.molecule, rlid))
 			this.loopRemove(rlid);
-	}, this);
+	});
 };
 
 ReStruct.prototype.showLabels = function () { // eslint-disable-line max-statements
@@ -555,17 +544,17 @@ ReStruct.prototype.setSelection = function (selection) {
 
 	for (var map in ReStruct.maps) {
 		if (ReStruct.maps.hasOwnProperty(map) && ReStruct.maps[map].isSelectable()) {
-			this[map].each(function (id, item) {
+			this[map].each((id, item) => {
 				var selected = redraw ? item.selected :
 				    selection && selection[map] && selection[map].indexOf(id) > -1;
 				this.showItemSelection(item, selected);
-			}, this);
+			});
 		}
 	}
 };
 
 ReStruct.prototype.showItemSelection = function (item, selected) {
-	var exists = item.selectionPlate != null && !item.selectionPlate.removed;
+	var exists = item.selectionPlate !== null && !item.selectionPlate.removed;
 	// TODO: simplify me, who sets `removed`?
 	item.selected = selected;
 	if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;

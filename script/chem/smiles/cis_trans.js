@@ -178,7 +178,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 };
 
 CisTrans.prototype.build = function (excludeBonds) {
-	this.molecule.bonds.each(function (bid, bond) {
+	this.molecule.bonds.each((bid, bond) => {
 		var ct = this.bonds.set(bid,
 			{
 				parity: 0,
@@ -200,7 +200,7 @@ CisTrans.prototype.build = function (excludeBonds) {
 			ct.parity = CisTrans.PARITY.CIS;
 		else if (sign == -1)
 			ct.parity = CisTrans.PARITY.TRANS;
-	}, this);
+	});
 };
 
 function swap(arr, i1, i2) {

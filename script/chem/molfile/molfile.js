@@ -114,16 +114,16 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 			this.molfile = '$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n';
 			this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
-			molecule.rgroups.each(function (rgid, rg) {
+			molecule.rgroups.each((rgid, rg) => {
 				this.molfile += '$RGP\n';
 				this.writePaddedNumber(rgid, 3);
 				this.molfile += '\n';
-				rg.frags.each(function (fnum, fid) {
+				rg.frags.each((fnum, fid) => {
 					var group = new Molfile(false).getCTab(molecule.getFragment(fid));
 					this.molfile += '$CTAB\n' + group + '$END CTAB\n';
-				}, this);
+				});
 				this.molfile += '$END RGP\n';
-			}, this);
+			});
 			this.molfile += '$END MOL\n';
 
 			return this.molfile;
@@ -225,7 +225,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var atomList_list = [];
 	var atomProps_list = [];
 	/* eslint-enable camel-case*/
-	this.molecule.atoms.each(function (id, atom) { // eslint-disable-line max-statements
+	this.molecule.atoms.each((id, atom) => {
 		this.writePaddedFloat(atom.pp.x, 10, 4);
 		this.writePaddedFloat(-atom.pp.y, 10, 4);
 		this.writePaddedFloat(atom.pp.z, 10, 4);
@@ -285,7 +285,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 
 	this.bondMapping = {};
 	i = 1;
-	this.molecule.bonds.each(function (id, bond) {
+	this.molecule.bonds.each((id, bond) => {
 		this.bondMapping[id] = i++;
 		this.writePaddedNumber(this.mapping[bond.begin], 3);
 		this.writePaddedNumber(this.mapping[bond.end], 3);
@@ -326,7 +326,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var unsaturatedList = [];
 	var substcountList = [];
 
-	this.molecule.atoms.each(function (id, atom) {
+	this.molecule.atoms.each((id, atom) => {
 		if (atom.charge != 0)
 			chargeList.push([id, atom.charge]);
 		if (atom.isotope != 0)
@@ -348,7 +348,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	});
 
 	if (rgroups) {
-		rgroups.each(function (rgid, rg) {
+		rgroups.each((rgid, rg) => {
 			if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
 				var line = '  1 ' +
 					utils.paddedNum(rgid, 3) + ' ' +
@@ -417,10 +417,10 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var cnt = 1;
 	var sgmapback = {};
 	var sgorder = this.molecule.sGroupForest.getSGroupsBFS();
-	sgorder.forEach(function (id) {
+	sgorder.forEach(id => {
 		sgmapback[cnt] = id;
 		sgmap[id] = cnt++;
-	}, this);
+	});
 	for (var q = 1; q < cnt; ++q) { // each group on its own
 		var id = sgmapback[q];
 		var sgroup = this.molecule.sgroups.get(id);

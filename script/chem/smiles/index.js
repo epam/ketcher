@@ -57,8 +57,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	molecule.initNeighbors();
 	molecule.sortNeighbors();
 	molecule.setImplicitHydrogen();
-	molecule.sgroups.each(function (sgid, sg) {
-		if (sg.type == 'MUL') {
+	molecule.sgroups.each((sgid, sg) => {
+		if (sg.type === 'MUL') {
 			try {
 				Struct.SGroup.prepareMulForSaving(sg, molecule);
 			} catch (ex) {
@@ -66,14 +66,14 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			}
 		}
 		// 'SMILES data format doesn\'t support s-groups'
-	}, this);
+	});
 	// END
 
 	this.atoms = new Array(molecule.atoms.count());
 
-	molecule.atoms.each(function (aid, atom) {
+	molecule.atoms.each((aid, atom) => {
 		this.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
-	}, this);
+	});
 
 	// From the SMILES specification:
 	// Please note that only atoms on the following list
@@ -81,23 +81,23 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	var allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As'];
 
 	// Detect atoms that have aromatic bonds and count neighbours
-	molecule.bonds.each(function (bid, bond) {
-		if (bond.type == Struct.Bond.PATTERN.TYPE.AROMATIC) {
+	molecule.bonds.each((bid, bond) => {
+		if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC) {
 			this.atoms[bond.begin].aromatic = true;
-			if (allowedLowercase.indexOf(molecule.atoms.get(bond.begin).label) != -1)
+			if (allowedLowercase.indexOf(molecule.atoms.get(bond.begin).label) !== -1)
 				this.atoms[bond.begin].lowercase = true;
 			this.atoms[bond.end].aromatic = true;
-			if (allowedLowercase.indexOf(molecule.atoms.get(bond.end).label) != -1)
+			if (allowedLowercase.indexOf(molecule.atoms.get(bond.end).label) !== -1)
 				this.atoms[bond.end].lowercase = true;
 		}
 		this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid: bid });
 		this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid: bid });
-	}, this);
+	});
 
 	this.inLoop = (function () {
 		molecule.prepareLoopStructure();
 		var bondsInLoops = new Set();
-		molecule.loops.each(function (lid, loop) {
+		molecule.loops.each((lid, loop) => {
 			if (loop.hbs.length <= 6) {
 				const hbids = loop.hbs.map(hbid => molecule.halfBonds.get(hbid).bid);
 				bondsInLoops = bondsInLoops.union(new Set(hbids));
@@ -163,7 +163,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 		}, this);
 		stereocenters.buildFromBonds(this.ignore_errors);
 
-		stereocenters.each(function (atomIdx, sc) { // eslint-disable-line max-statements
+		stereocenters.each((atomIdx, sc) => { // eslint-disable-line max-statements
 			// if (sc.type < MoleculeStereocenters::ATOM_AND)
 			//    continue;
 
@@ -226,7 +226,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				this.atoms[atomIdx].chirality = 1;
 			else
 				this.atoms[atomIdx].chirality = 2;
-		}, this);
+		});
 	} catch (ex) {
 		alert('Warning: ' + ex.message);
 	}
@@ -507,54 +507,54 @@ Smiles.prototype.markCisTrans = function (mol) {
 	this.cis_trans.build();
 	this.dbonds = new Array(mol.bonds.count());
 
-	mol.bonds.each(function (bid) {
+	mol.bonds.each((bid) => {
 		this.dbonds[bid] =
 		{
 			ctbond_beg: -1,
 			ctbond_end: -1,
 			saved: 0
 		};
-	}, this);
+	});
 
-	this.cis_trans.each(function (bid, ct) {
+	this.cis_trans.each((bid, ct) => {
 		var bond = mol.bonds.get(bid);
 
-		if (ct.parity != 0 && !this.isBondInRing(bid)) {
+		if (ct.parity !== 0 && !this.isBondInRing(bid)) {
 			var neiBeg = this.atoms[bond.begin].neighbours;
 			var neiEnd = this.atoms[bond.end].neighbours;
 			var aromFailBeg = true;
 			var aromFailEnd = true;
 
-			neiBeg.forEach(function (nei) {
+			neiBeg.forEach(nei => {
 				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailBeg = false;
-			}, this);
+			});
 
-			neiEnd.forEach(function (nei) {
+			neiEnd.forEach(nei => {
 				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailEnd = false;
-			}, this);
+			});
 
 			if (aromFailBeg || aromFailEnd)
 				return;
 
-			neiBeg.forEach(function (nei) {
+			neiBeg.forEach(nei => {
 				if (nei.bid === bid) return;
 				if (mol.bonds.get(nei.bid).begin === bond.begin)
 					this.dbonds[nei.bid].ctbond_beg = bid;
 				else
 					this.dbonds[nei.bid].ctbond_end = bid;
-			}, this);
+			});
 
-			neiEnd.forEach(function (nei) {
+			neiEnd.forEach(nei => {
 				if (nei.bid === bid) return;
 				if (mol.bonds.get(nei.bid).begin === bond.end)
 					this.dbonds[nei.bid].ctbond_beg = bid;
 				else
 					this.dbonds[nei.bid].ctbond_end = bid;
-			}, this);
+			});
 		}
-	}, this);
+	});
 };
 
 Smiles.prototype.updateSideBonds = function (mol, bondIdx) { // eslint-disable-line max-statements
@@ -665,19 +665,19 @@ Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 
 	while (true) { // eslint-disable-line no-constant-condition
 		ntouched = 0;
-		this.cis_trans.each(function (bid, ct) {
-			if (ct.parity != 0 && !this.isBondInRing(bid)) {
+		this.cis_trans.each((bid, ct) => {
+			if (ct.parity !== 0 && !this.isBondInRing(bid)) {
 				if (this.updateSideBonds(mol, bid))
 					ntouched++;
 			}
-		}, this);
-		if (ntouched == this.touchedCistransbonds)
+		});
+		if (ntouched === this.touchedCistransbonds)
 			break;
 		this.touchedCistransbonds = ntouched;
 	}
 
-	if (this.dbonds[idx].saved == 0) {
-		if (vprev == mol.bonds.get(idx).begin)
+	if (this.dbonds[idx].saved === 0) {
+		if (vprev === mol.bonds.get(idx).begin)
 			this.dbonds[idx].saved = 1;
 		else
 			this.dbonds[idx].saved = 2;

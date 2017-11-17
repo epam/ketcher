@@ -95,7 +95,7 @@ export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is to
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
-	restruct.molecule.atoms.each(function (aid, atom) {
+	restruct.molecule.atoms.each((aid, atom) => {
 		if (atom.fragment === frid) {
 			var newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 			var processAtom = function (aid1) { // eslint-disable-line func-style

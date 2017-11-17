@@ -33,7 +33,7 @@ function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	frag.rescale();
 
 	var xy0 = new Vec2();
-	frag.atoms.each(function (aid, atom) {
+	frag.atoms.each((aid, atom) => {
 		xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 	});
 

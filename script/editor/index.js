@@ -110,14 +110,14 @@ Editor.prototype.selection = function (ci) {
 		this._selection = null; // eslint-disable-line
 		if (ci === 'all') {   // TODO: better way will be this.struct()
 			ci = structObjects.reduce(function (res, key) {
-				res[key] = restruct[key].ikeys();
+				res[key] = restruct[key].keys();
 				return res;
 			}, {});
 		}
 
 		if (ci === 'descriptors') {
 			restruct = this.render.ctab;
-			ci = { sgroupData: restruct['sgroupData'].ikeys() };
+			ci = { sgroupData: restruct['sgroupData'].keys() };
 		}
 
 		if (ci) {
@@ -280,7 +280,7 @@ Editor.prototype.explicitSelected = function () {
 	}
 	// "auto-select" the bonds with both atoms selected
 	if ('atoms' in res && 'bonds' in res) {
-		struct.bonds.each(function (bid) {
+		struct.bonds.each(bid => {
 			if (!('bonds' in res) || res.bonds.indexOf(bid) < 0) {
 				var bond = struct.bonds.get(bid);
 				if (res.atoms.indexOf(bond.begin) >= 0 && res.atoms.indexOf(bond.end) >= 0) {
@@ -301,12 +301,12 @@ Editor.prototype.structSelected = function () {
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets
-	struct.rxnArrows.each(function (id, item) {
-		if (selection.rxnArrows.indexOf(id) != -1)
+	struct.rxnArrows.each((id, item) => {
+		if (selection.rxnArrows.indexOf(id) !== -1)
 			dst.rxnArrows.add(item.clone());
 	});
-	struct.rxnPluses.each(function (id, item) {
-		if (selection.rxnPluses.indexOf(id) != -1)
+	struct.rxnPluses.each((id, item) => {
+		if (selection.rxnPluses.indexOf(id) !== -1)
 			dst.rxnPluses.add(item.clone());
 	});
 	dst.isChiral = struct.isChiral;

@@ -34,7 +34,7 @@ RGroup.prototype.getAttrs = function () {
 
 RGroup.findRGroupByFragment = function (rgroups, frid) {
 	var ret;
-	rgroups.each(function (rgid, rgroup) {
+	rgroups.each((rgid, rgroup) => {
 		if (rgroup.frags.keyOf(frid)) ret = rgid;
 	});
 	return ret;
@@ -42,7 +42,7 @@ RGroup.findRGroupByFragment = function (rgroups, frid) {
 
 RGroup.prototype.clone = function (fidMap) {
 	var ret = new RGroup(this);
-	this.frags.each(function (fnum, fid) {
+	this.frags.each((fnum, fid) => {
 		ret.frags.add(fidMap ? fidMap[fid] : fid);
 	});
 	return ret;

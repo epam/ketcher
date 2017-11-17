@@ -209,7 +209,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 
 function applyAtomProp(atoms /* Pool */, values /* Map */, propId /* string */) {
 	/* reader */
-	values.each(function (aid, propVal) {
+	values.each((aid, propVal) => {
 		atoms.get(aid)[propId] = propVal;
 	});
 }
@@ -250,7 +250,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	var rLogic = {};
 	var props = parsePropertyLines(ctab, ctabLines, shift,
 		Math.min(ctabLines.length, shift + propertyLinesCount), sGroups, rLogic);
-	props.each(function (propId, values) {
+	props.each((propId, values) => {
 		applyAtomProp(ctab.atoms, values, propId);
 	});
 
@@ -387,7 +387,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 			var frag = {};
 			var frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
-			ctab.atoms.each(function (aid, atom) {
+			ctab.atoms.each((aid, atom) => {
 				atom.fragment = frid;
 			});
 			ctab.mergeInto(ret);

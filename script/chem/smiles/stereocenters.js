@@ -41,9 +41,9 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	*/
 
 	var alleneMask = new Set();
-	atoms.each(function (aid) {
+	atoms.each(aid => {
 		var neiList = this.getNeighbors.call(this.context, aid);
-		if (neiList.length != 2)
+		if (neiList.length !== 2)
 			return false;
 		var nei1 = neiList[0];
 		var nei2 = neiList[1];
@@ -55,7 +55,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 
 		// check adjacent bond types
 		if ([nei1.bid, nei2.bid].findIndex(function (bid) {
-			return bonds.get(bid).type != Struct.Bond.PATTERN.TYPE.DOUBLE;
+			return bonds.get(bid).type !== Struct.Bond.PATTERN.TYPE.DOUBLE;
 		}, this) >= 0)
 			return false;
 
@@ -79,12 +79,12 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 		}, this) >= 0)
 			return false;
 		alleneMask.add(nei1.aid).add(nei2.aid);
-	}, this);
+	});
 
 	if (alleneMask.size > 0)
 		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
 
-	atoms.each(function (aid) {
+	atoms.each(aid => {
 		if (alleneMask.has(aid))
 			return;
 		/*
@@ -119,7 +119,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 //         }
 		else
 			this.buildOneCenter(aid/* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
-	}, this);
+	});
 };
 
 Stereocenters.allowed_stereocenters =

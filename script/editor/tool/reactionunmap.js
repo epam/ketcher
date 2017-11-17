@@ -37,13 +37,10 @@ ReactionUnmapTool.prototype.mouseup = function (event) {
 	if (ci && ci.map === 'atoms' && atoms.get(ci.id).aam) {
 		var action = new Action();
 		var aam = atoms.get(ci.id).aam;
-		atoms.each(
-		function (aid, atom) {
-			if (atom.aam == aam)
+		atoms.each((aid, atom) => {
+			if (atom.aam === aam)
 				action.mergeWith(fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }));
-		},
-			this
-		);
+		});
 		this.editor.update(action);
 	}
 	this.editor.hover(null);

@@ -16,8 +16,6 @@
 
 /* eslint-disable no-underscore-dangle*/
 
-var Map = require('./map.js');
-
 function Pool() {
 	this._map = new Map();
 	this._nextId = 0;
@@ -34,19 +32,25 @@ Pool.prototype.add = function (obj) {
 };
 
 Pool.prototype.set = function (id, obj) {
+	id = parseInt(id, 10);
 	this._map.set(id, obj);
 };
 
 Pool.prototype.get = function (id) {
+	id = parseInt(id, 10);
 	return this._map.get(id);
 };
 
 Pool.prototype.has = function (id) {
+	id = parseInt(id, 10);
 	return this._map.has(id);
 };
 
 Pool.prototype.remove = function (id) {
-	return this._map.unset(id);
+	id = parseInt(id, 10);
+	const value = this._map.get(id);
+	this._map.delete(id);
+	return value;
 };
 
 Pool.prototype.clear = function () {
@@ -54,35 +58,31 @@ Pool.prototype.clear = function () {
 };
 
 Pool.prototype.keys = function () {
-	return this._map.keys();
-};
-
-Pool.prototype.ikeys = function () {
-	return this._map.ikeys();
+	return Array.from(this._map.keys());
 };
 
 Pool.prototype.values = function () {
-	return this._map.values();
+	return Array.from(this._map.values());
 };
 
-Pool.prototype.each = function (func, context) {
-	this._map.each(func, context);
-};
-
-Pool.prototype.map = function (func, context) {
-	return this._map.map(func, context);
-};
-
-Pool.prototype.find = function (func, context) {
-	return this._map.find(func, context);
+Pool.prototype.each = function (func) {
+	const fn = (value, key) => func(key, value);
+	this._map.forEach(fn);
 };
 
 Pool.prototype.count = function () {
-	return this._map.count();
+	return this._map.size;
+};
+
+Pool.prototype.entries = function () {
+	return this._map.entries();
 };
 
 Pool.prototype.keyOf = function (value) {
-	return this._map.keyOf(value);
+	for (let [key, val] of this._map.entries()) {
+		if (val === value)
+			return key;
+	}
 };
 
 module.exports = Pool;

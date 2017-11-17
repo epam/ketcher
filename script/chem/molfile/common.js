@@ -66,7 +66,7 @@ var prepareForSaving = {
 
 function prepareSruForSaving(sgroup, mol) {
 	var xBonds = [];
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.each((bid, bond) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
@@ -75,7 +75,7 @@ function prepareSruForSaving(sgroup, mol) {
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
-	if (xBonds.length != 0 && xBonds.length != 2)
+	if (xBonds.length !== 0 && xBonds.length !== 2)
 		throw { 'id': sgroup.id, 'error-type': 'cross-bond-number', 'message': 'Unsupported cross-bonds number' };
 	sgroup.bonds = xBonds;
 }
@@ -84,7 +84,7 @@ function prepareSupForSaving(sgroup, mol) {
 	// This code is also used for GroupSru and should be moved into a separate common method
 	// It seems that such code should be used for any sgroup by this this should be checked
 	var xBonds = [];
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.each((bid, bond) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/

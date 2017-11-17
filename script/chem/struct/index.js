@@ -92,13 +92,13 @@ Struct.prototype.isBlank = function () {
 Struct.prototype.toLists = function () {
 	var aidMap = {};
 	var atomList = [];
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		aidMap[aid] = atomList.length;
 		atomList.push(atom);
 	});
 
 	var bondList = [];
-	this.bonds.each(function (bid, bond) {
+	this.bonds.each((bid, bond) => {
 		var b = new Bond(bond);
 		b.begin = aidMap[bond.begin];
 		b.end = aidMap[bond.end];
@@ -118,17 +118,17 @@ Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
 
 Struct.prototype.getScaffold = function () {
 	var atomSet = new Set();
-	this.atoms.each(function (aid) {
-		atomSet.add(aid);
-	}, this);
-	this.rgroups.each(function (rgid, rg) {
-		rg.frags.each(function (fnum, fid) {
-			this.atoms.each(function (aid, atom) {
+	this.atoms.each(aid => { atomSet.add(aid); });
+
+	this.rgroups.each((rgid, rg) => {
+		rg.frags.each((fnum, fid) => {
+			this.atoms.each((aid, atom) => {
 				if (atom.fragment === fid)
 					atomSet.delete(aid);
-			}, this);
-		}, this);
-	}, this);
+			});
+		});
+	});
+
 	return this.clone(atomSet);
 };
 
@@ -156,21 +156,21 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	});
 
 	var fidMask = {};
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if (atomSet.has(aid))
 			fidMask[atom.fragment] = 1;
 	});
 	var fidMap = {};
-	this.frags.each(function (fid, frag) {
+	this.frags.each((fid, frag) => {
 		if (fidMask[fid])
 			fidMap[fid] = cp.frags.add(Object.assign({}, frag));
 	});
 
 	var rgroupsIds = [];
-	this.rgroups.each(function (rgid, rgroup) {
+	this.rgroups.each((rgid, rgroup) => {
 		var keepGroup = keepAllRGroups;
 		if (!keepGroup) {
-			rgroup.frags.each(function (fnum, fid) {
+			rgroup.frags.each((fnum, fid) => {
 				rgroupsIds.push(fid);
 				if (fidMask[fid])
 					keepGroup = true;
@@ -180,7 +180,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		}
 		var rg = cp.rgroups.get(rgid);
 		if (rg) {
-			rgroup.frags.each(function (fnum, fid) {
+			rgroup.frags.each((fnum, fid) => {
 				rgroupsIds.push(fid);
 				if (fidMask[fid])
 					rg.frags.add(fidMap[fid]);
@@ -193,23 +193,23 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	if (typeof aidMap === 'undefined' || aidMap === null)
 		aidMap = {};
 	// atoms in not RGroup
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 	// atoms in RGroup
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
 			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
 	});
 
 	var bidMap = {};
-	this.bonds.each(function (bid, bond) {
+	this.bonds.each((bid, bond) => {
 		if (bondSet.has(bid))
 			bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
 	});
 
-	this.sgroups.each(function (sid, sg) {
+	this.sgroups.each((sid, sg) => {
 		var i;
 		for (i = 0; i < sg.atoms.length; ++i) {
 			if (!atomSet.has(sg.atoms[i]))
@@ -229,10 +229,10 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	cp.isChiral = this.isChiral;
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;
-		this.rxnArrows.each(function (id, item) {
+		this.rxnArrows.each((id, item) => {
 			cp.rxnArrows.add(item.clone());
 		});
-		this.rxnPluses.each(function (id, item) {
+		this.rxnPluses.each((id, item) => {
 			cp.rxnPluses.add(item.clone());
 		});
 	}
@@ -240,18 +240,9 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 };
 
 Struct.prototype.findBondId = function (begin, end) {
-	var id = -1;
-
-	this.bonds.find(function (bid, bond) {
-		if ((bond.begin === begin && bond.end === end) ||
-		(bond.begin === end && bond.end === begin)) {
-			id = bid;
-			return true;
-		}
-		return false;
-	}, this);
-
-	return id;
+	return Array.from(this.bonds.entries()).find((bid, bond) =>
+		(bond.begin === begin && bond.end === end) || (bond.begin === end && bond.end === begin)
+	);
 };
 
 function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
@@ -278,18 +269,19 @@ function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-l
 }
 
 Struct.prototype.initNeighbors = function () {
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		atom.neighbors = [];
 	});
-	this.bonds.each(function (bid, bond) {
+
+	this.bonds.each((bid, bond) => {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
 		a1.neighbors.push(bond.hb1);
 		a2.neighbors.push(bond.hb2);
-	}, this);
+	});
 };
 
-Struct.prototype.bondInitHalfBonds = function (bid, /* opt*/ bond) {
+Struct.prototype.bondInitHalfBonds = function (bid, bond) {
 	bond = bond || this.bonds.get(bid);
 	bond.hb1 = 2 * bid;
 	bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
@@ -315,7 +307,7 @@ Struct.prototype.halfBondUpdate = function (hbid) {
 
 Struct.prototype.initHalfBonds = function () {
 	this.halfBonds.clear();
-	this.bonds.each(this.bondInitHalfBonds, this);
+	this.bonds.each((bid, bond) => this.bondInitHalfBonds(bid, bond));
 };
 
 Struct.prototype.setHbNext = function (hbid, next) {
@@ -390,28 +382,31 @@ Struct.prototype.updateHalfBonds = function (list) {
 };
 
 Struct.prototype.sGroupsRecalcCrossBonds = function () {
-	this.sgroups.each(function (sgid, sg) {
+	this.sgroups.each((sgid, sg) => {
 		sg.xBonds = [];
 		sg.neiAtoms = [];
-	}, this);
-	this.bonds.each(function (bid, bond) {
+	});
+
+	this.bonds.each((bid, bond) => {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
+
 		a1.sgs.forEach(sgid => {
 			if (!a2.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
-		}, this);
+		});
+
 		a2.sgs.forEach(sgid => {
 			if (!a1.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
-		}, this);
-	}, this);
+		});
+	});
 };
 
 Struct.prototype.sGroupDelete = function (sgid) {
@@ -457,15 +452,15 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 
 	var global = !atomSet || atomSet.size === 0;
 
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if (global || atomSet.has(aid))
 			extend(atom.pp);
 	});
 	if (global) {
-		this.rxnPluses.each(function (id, item) {
+		this.rxnPluses.each((id, item) => {
 			extend(item.pp);
 		});
-		this.rxnArrows.each(function (id, item) {
+		this.rxnArrows.each((id, item) => {
 			extend(item.pp);
 		});
 	}
@@ -492,7 +487,7 @@ Struct.prototype.getCoordBoundingBoxObj = function () {
 		}
 	}
 
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		extend(atom.pp);
 	});
 	return bb;
@@ -501,7 +496,7 @@ Struct.prototype.getCoordBoundingBoxObj = function () {
 Struct.prototype.getBondLengthData = function () {
 	var totalLength = 0;
 	var cnt = 0;
-	this.bonds.each(function (bid, bond) {
+	this.bonds.each((bid, bond) => {
 		totalLength += Vec2.dist(
 			this.atoms.get(bond.begin).pp,
 			this.atoms.get(bond.end).pp);
@@ -539,11 +534,11 @@ Struct.prototype.getAvgClosestAtomDistance = function () {
 
 Struct.prototype.checkBondExists = function (begin, end) {
 	var bondExists = false;
-	this.bonds.each(function (bid, bond) {
+	this.bonds.each((bid, bond) => {
 		if ((bond.begin == begin && bond.end == end) ||
 		(bond.end == begin && bond.begin == end))
 			bondExists = true;
-	}, this);
+	});
 	return bondExists;
 };
 
@@ -595,11 +590,10 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 	}
 
 	var map = {};
-	this.atoms.each(function (aid) {
-		map[aid] = -1;
-	}, this);
+	this.atoms.each(aid => { map[aid] = -1; });
+
 	var components = [];
-	this.atoms.each(function (aid, atom) {
+	this.atoms.each((aid, atom) => {
 		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
 			var component = this.findConnectedComponent(aid);
 			components.push(component);
@@ -607,7 +601,8 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 				map[aid] = 1;
 			});
 		}
-	}, this);
+	});
+
 	return components;
 };
 
@@ -636,18 +631,21 @@ Struct.prototype.markFragments = function () {
 
 Struct.prototype.scale = function (scale) {
 	if (scale !== 1) {
-		this.atoms.each(function (aid, atom) {
+		this.atoms.each((aid, atom) => {
 			atom.pp = atom.pp.scaled(scale);
-		}, this);
-		this.rxnPluses.each(function (id, item) {
+		});
+
+		this.rxnPluses.each((id, item) => {
 			item.pp = item.pp.scaled(scale);
-		}, this);
-		this.rxnArrows.each(function (id, item) {
+		});
+
+		this.rxnArrows.each((id, item) => {
 			item.pp = item.pp.scaled(scale);
-		}, this);
-		this.sgroups.each(function (id, item) {
+		});
+
+		this.sgroups.each((id, item) => {
 			item.pp = item.pp ? item.pp.scaled(scale) : null;
-		}, this);
+		});
 	}
 };
 
@@ -757,7 +755,7 @@ Struct.prototype.findLoops = function () {
 	 */
 
 	let hbIdNext, c, loop, loopId;
-	this.halfBonds.each(function (hbId, hb) {
+	this.halfBonds.each((hbId, hb) => {
 		if (hb.loop !== -1)
 			return;
 
@@ -793,7 +791,7 @@ Struct.prototype.findLoops = function () {
 			});
 			break;
 		}
-	}, this);
+	});
 
 	return {
 		newLoops: newLoops,
@@ -842,10 +840,10 @@ Struct.prototype.calcConn = function (aid) {
 		case Bond.PATTERN.TYPE.AROMATIC:
 			conn += 1;
 			hasAromatic = true;
-			this.loops.each(function (id, item) {
+			this.loops.each((id, item) => {
 				if (item.hbs.includes(atom.neighbors[i]) && item.hbs.length % 2 === 1)
 					oddLoop = true;
-			}, this);
+			});
 			break;
 		default:
 			return -1;
@@ -877,10 +875,11 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
-	this.sgroups.each(function (id, item) {
+	this.sgroups.each((id, item) => {
 		if (item.data.fieldName === "MRV_IMPLICIT_H")
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
-	}, this);
+	});
+
 	if (!list)
 		this.atoms.each(aid => this.calcImplicitHydrogen(aid), this);
 	else

@@ -153,7 +153,7 @@ function findClosestDataSGroupData(restruct, pos) {
 	let minDist = null;
 	let ret = null;
 
-	restruct.sgroupData.each(function (id, item) {
+	restruct.sgroupData.each((id, item) => {
 		if (item.sgroup.type !== 'DAT')
 			throw new Error('Data group expected');
 

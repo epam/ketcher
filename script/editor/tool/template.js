@@ -161,9 +161,9 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		if (!ci) { // ci.type == 'Canvas'
 			dragCtx.action = fromTemplateOnCanvas(
 				restruct,
+				this.template,
 				pos0,
-				angle,
-				this.template
+				angle
 			);
 		} else if (ci.map === 'atoms') {
 			dragCtx.action = fromTemplateOnAtom(
@@ -192,7 +192,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (!dragCtx.action) {
 		if (!ci) { //  ci.type == 'Canvas'
-			dragCtx.action = fromTemplateOnCanvas(restruct, dragCtx.xy0, 0, this.template);
+			dragCtx.action = fromTemplateOnCanvas(restruct, this.template, dragCtx.xy0, 0);
 		} else if (ci.map === 'atoms') {
 			const degree = restruct.atoms.get(ci.id).a.neighbors.length;
 

@@ -15,184 +15,84 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import Struct from '../../chem/struct';
 
 import op from '../shared/op';
 import Action from '../shared/action';
 
-import { structSelection, getFragmentAtoms } from './utils';
 import { fromChiralFlagAddition } from './chiral-flag';
 import { fromRGroupAttrs } from './rgroup';
 import { fromSgroupAddition } from './sgroup';
 
-export function fromPaste(restruct, pstruct, point) {
-	const clipboard = struct2Clipboard(pstruct);
-	const offset = point ? Vec2.diff(point, getAnchorPosition(clipboard)) : new Vec2();
+export function fromPaste(restruct, pstruct, point, angle = 0) {
+	const xy0 = getStructCenter(pstruct);
+	const offset = Vec2.diff(point, xy0);
+
 	const action = new Action();
 
-	const amap = {};
-	const fmap = {};
+	const aidMap = {};
+	const fridMap = {};
 
-	// atoms
-	clipboard.atoms.forEach((atom, aid) => {
-		if (!(atom.fragment in fmap))
-			fmap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+	pstruct.atoms.each((aid, atom) => {
+		if (!(atom.fragment in fridMap))
+			fridMap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
-		atom.fragment = fmap[atom.fragment];
-		amap[aid] = action.addOp(new op.AtomAdd(atom, atom.pp.add(offset)).perform(restruct)).data.aid;
+		const tmpAtom = Object.assign(atom.clone(), { fragment: fridMap[atom.fragment] });
+		const operation = new op.AtomAdd(tmpAtom, Vec2.diff(atom.pp, xy0).rotate(angle).add(point)).perform(restruct);
+		action.addOp(operation);
+		aidMap[aid] = operation.data.aid;
 	});
 
-	// assign fragments to r-groups
-	Object.keys(clipboard.rgmap)
-		.forEach(frid => action.addOp(new op.RGroupFragment(clipboard.rgmap[frid], fmap[frid]).perform(restruct)));
+	pstruct.bonds.each((bid, bond) =>
+		action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct))
+	);
 
-	Object.keys(clipboard.rgroups)
-		.filter(rgid => !restruct.molecule.rgroups.has(rgid))
-		.forEach(rg => action.mergeWith(fromRGroupAttrs(restruct, rg, clipboard.rgroups[rg])));
-
-	// bonds
-	clipboard.bonds
-		.forEach(bond => action.addOp(new op.BondAdd(amap[bond.begin], amap[bond.end], bond).perform(restruct)));
-
-	// sgroups
-	clipboard.sgroups.forEach(sgroupInfo => {
-		const sgatoms = sgroupInfo.atoms.map(atom => amap[atom]);
+	pstruct.sgroups.each((sgid, sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();
-
-		const sgAction = fromSgroupAddition(restruct, sgroupInfo.type, sgatoms, sgroupInfo.attrs, newsgid, sgroupInfo.pp ? sgroupInfo.pp.add(offset) : null);
+		const sgAtoms = sg.atoms.map(aid => aidMap[aid]);
+		const sgAction = fromSgroupAddition(restruct, sg.type, sgAtoms, sg.data, newsgid, sg.pp ? sg.pp.add(offset) : null);
 		sgAction.operations.reverse().forEach(op => action.addOp(op));
 	});
 
-	// reaction arrows
-	if (restruct.rxnArrows.count() < 1)
-		clipboard.rxnArrows.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct)));
+	if (restruct.rxnArrows.count() < 1) {
+		pstruct.rxnArrows.values()
+			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct)));
+	}
 
-	// reaction pluses
-	clipboard.rxnPluses.forEach(plus => action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct)));
+	pstruct.rxnPluses.values()
+		.forEach(plus => action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct)));
 
-	// chiral flag
 	if (pstruct.isChiral) {
 		const bb = pstruct.getCoordBoundingBox();
 		const pp = new Vec2(bb.max.x, bb.min.y - 1);
 		action.mergeWith(fromChiralFlagAddition(restruct, pp.add(offset)));
 	}
 
-	// thats all
+	pstruct.rgroups.each((rgid, rg) => {
+		rg.frags.each(frid => action.addOp(new op.RGroupFragment(rgid, fridMap[frid]).perform(restruct)));
+		action.mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()));
+	});
+
 	action.operations.reverse();
 	return action;
 }
 
-// Should it be named structCenter?
-function getAnchorPosition(clipboard) {
-	if (clipboard.atoms.length) {
-		var xmin = 1e50;
-		var ymin = xmin;
-		var xmax = -xmin;
-		var ymax = -ymin;
-		for (var i = 0; i < clipboard.atoms.length; i++) {
-			xmin = Math.min(xmin, clipboard.atoms[i].pp.x);
-			ymin = Math.min(ymin, clipboard.atoms[i].pp.y);
-			xmax = Math.max(xmax, clipboard.atoms[i].pp.x);
-			ymax = Math.max(ymax, clipboard.atoms[i].pp.y);
-		}
+function getStructCenter(struct) {
+	if (struct.atoms.count() > 0) {
+		let xmin = 1e50;
+		let ymin = xmin;
+		let xmax = -xmin;
+		let ymax = -ymin;
+
+		struct.atoms.each((aid, atom) => {
+			xmin = Math.min(xmin, atom.pp.x);
+			ymin = Math.min(ymin, atom.pp.y);
+			xmax = Math.max(xmax, atom.pp.x);
+			ymax = Math.max(ymax, atom.pp.y);
+		});
 		return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
-	} else if (clipboard.rxnArrows.length) {
-		return clipboard.rxnArrows[0].pp;
-	} else if (clipboard.rxnPluses.length) {
-		return clipboard.rxnPluses[0].pp;
-	} else if (clipboard.chiralFlags.length) {
-		return clipboard.chiralFlags[0].pp;
-	} else { // eslint-disable-line no-else-return
-		return null;
 	}
-}
+	if (struct.rxnArrows.count() > 0) return struct.rxnArrows.get(0).pp;
+	if (struct.rxnPluses.count() > 0) return struct.rxnPluses.get(0).pp;
 
-// TODO: merge to bellow
-function struct2Clipboard(struct) { // eslint-disable-line max-statements
-	console.assert(!struct.isBlank(), 'Empty struct');
-
-	var selection = structSelection(struct);
-
-	var clipboard = {
-		atoms: [],
-		bonds: [],
-		sgroups: [],
-		rxnArrows: [],
-		rxnPluses: [],
-		chiralFlags: [],
-		rgmap: {},
-		rgroups: {}
-	};
-
-	var mapping = {};
-	selection.atoms.forEach(function (id) {
-		var newAtom = new Struct.Atom(struct.atoms.get(id));
-		newAtom.pos = newAtom.pp;
-		mapping[id] = clipboard.atoms.push(new Struct.Atom(newAtom)) - 1;
-	});
-
-	selection.bonds.forEach(function (id) {
-		var newBond = new Struct.Bond(struct.bonds.get(id));
-		newBond.begin = mapping[newBond.begin];
-		newBond.end = mapping[newBond.end];
-		clipboard.bonds.push(new Struct.Bond(newBond));
-	});
-
-	var sgroupList = struct.getSGroupsInAtomSet(selection.atoms);
-
-	sgroupList.forEach(function (sid) {
-		var sgroup = struct.sgroups.get(sid);
-		var sgAtoms = Struct.SGroup.getAtoms(struct, sgroup);
-		var sgroupInfo = {
-			type: sgroup.type,
-			attrs: sgroup.getAttrs(),
-			atoms: [].slice.call(sgAtoms),
-			pp: sgroup.pp
-		};
-
-		for (var i = 0; i < sgroupInfo.atoms.length; i++)
-			sgroupInfo.atoms[i] = mapping[sgroupInfo.atoms[i]];
-
-		clipboard.sgroups.push(sgroupInfo);
-	}, this);
-
-	selection.rxnArrows.forEach(function (id) {
-		var arrow = new Struct.RxnArrow(struct.rxnArrows.get(id));
-		arrow.pos = arrow.pp;
-		clipboard.rxnArrows.push(arrow);
-	});
-
-	selection.rxnPluses.forEach(function (id) {
-		var plus = new Struct.RxnPlus(struct.rxnPluses.get(id));
-		plus.pos = plus.pp;
-		clipboard.rxnPluses.push(plus);
-	});
-
-	// r-groups
-	var atomFragments = {};
-	var fragments = new Set();
-	selection.atoms.forEach(function (id) {
-		var atom = struct.atoms.get(id);
-		var frag = atom.fragment;
-		atomFragments[id] = frag;
-		fragments.add(frag);
-	});
-
-	var rgids = new Set();
-	fragments.forEach(frid => {
-		var atoms = getFragmentAtoms(struct, frid);
-		for (var i = 0; i < atoms.length; ++i) {
-			if (!atomFragments.has(atoms[i]))
-				return;
-		}
-		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid);
-		clipboard.rgmap[frid] = rgid;
-		rgids.add(rgid);
-	}, this);
-
-	rgids.forEach(id => {
-		clipboard.rgroups[id] = struct.rgroups.get(id).getAttrs();
-	});
-
-	return clipboard;
+	return struct.isChiral ? new Vec2(1, -1) : null;
 }

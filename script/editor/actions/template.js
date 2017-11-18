@@ -27,71 +27,10 @@ import { atomGetAttr, atomGetSGroups, atomForNewBond } from './utils';
 import { fromAtomsAttrs } from './atom';
 import { fromBondAddition, fromBondAttrs } from './bond';
 import { fromAromaticTemplateOnBond } from './aromatic-fusing';
-import { fromRGroupAttrs, fromRGroupFragment } from './rgroup';
-import { fromChiralFlagAddition } from './chiral-flag';
-import { fromSgroupAddition } from './sgroup';
+import { fromPaste } from './paste';
 
-export function fromTemplateOnCanvas(restruct, pos, angle, template) {
-	const action = new Action();
-	const frag = template.molecule;
-	const fridMap = {};
-	const fragOps = [];
-
-	frag.frags.each(frid => {
-		const fragAction = new op.FragmentAdd().perform(restruct);
-		fridMap[frid] = fragAction.frid;
-		fragOps.push(fragAction);
-	});
-
-	const aidMap = {};
-
-	// Only template atom label matters for now
-	frag.atoms.each((aid, atom) => {
-		const attrs = Struct.Atom.getAttrHash(atom);
-		attrs.fragment = fridMap[atom.fragment];
-
-		const operation = new op.AtomAdd(attrs, Vec2.diff(atom.pp, template.xy0).rotate(angle).add(pos)).perform(restruct);
-		action.addOp(operation);
-		aidMap[aid] = operation.data.aid;
-	});
-
-	frag.bonds
-		.each((bid, bond) => action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct)));
-
-	frag.sgroups.each((sgid, sg) => {
-		const newsgid = restruct.molecule.sgroups.newId();
-		const sgAction = fromSgroupAddition(restruct, sg.type, sg.atoms.map(aid => aidMap[aid]), sg.data, newsgid, Vec2.diff(sg.pp, template.xy0).add(pos));
-		sgAction.operations.reverse().forEach(op => action.addOp(op));
-	});
-
-	frag.rxnArrows.values()
-		.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(Vec2.diff(rxnArrow.pp, template.xy0).add(pos)).perform(restruct)));
-
-	// reaction pluses
-	frag.rxnPluses.values()
-		.forEach(plus => action.addOp(new op.RxnPlusAdd(Vec2.diff(plus.pp, template.xy0).add(pos)).perform(restruct)));
-
-	// chiral flag
-	if (frag.isChiral) {
-		const bb = frag.getCoordBoundingBox();
-		const pp = Vec2.diff(new Vec2(bb.max.x, bb.min.y - 1), template.xy0).add(pos);
-		action.mergeWith(fromChiralFlagAddition(restruct, pp));
-	}
-
-	frag.rgroups.each((rgid, rg) => {
-		rg.frags.each((frid, frag) => action.mergeWith(fromRGroupFragment(restruct, rgid, fridMap[frag])));
-		const attrs = {
-			ifthen: rg.ifthen,
-			range: rg.range,
-			resth: rg.resth
-		};
-
-		action.mergeWith(fromRGroupAttrs(restruct, rgid, attrs));
-	});
-
-	action.operations.reverse();
-	fragOps.forEach(op => action.addOp(op));
-	return action;
+export function fromTemplateOnCanvas(restruct, template, pos, angle) {
+	return fromPaste(restruct, template.molecule, pos, angle);
 }
 
 function extraBondAction(restruct, aid, angle, sgroups) {

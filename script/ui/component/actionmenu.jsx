@@ -35,17 +35,45 @@ export function shortcutStr(shortcut) {
 	});
 }
 
-function ActionButton({action, status={}, onAction, ...props}) {
+function isMenuOpened(currentNode) {
+	let parentNode = hiddenAncestor(currentNode);
+	if (parentNode.classList.contains('opened')) return true;
+}
+
+export function showMenuOrButton(action, item, status, props) {
+	if (typeof item !== 'object') {
+		return (
+			<ActionButton
+				{...props}
+				action={action[item]}
+				status={status}
+			/>
+		);
+	}
+	if (item.menu) {
+		return (
+			<ActionMenu
+				{...props}
+				name={item.id}
+				menu={item.menu}
+			/>
+		);
+	}
+	return (item.component(props));
+}
+
+function ActionButton({action, status = {}, onAction, ...props}) {
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button disabled={status.disabled}
 				onClick={(ev) => {
-					if (!status.selected || action.action.tool === 'chiralFlag') {
+					if (!status.selected || action.action.tool === 'chiralFlag' ||
+						(status.selected && isMenuOpened(this.base))) {
 						onAction(action.action);
 						ev.stopPropagation();
 					}
-				} }
-				title={shortcut ? `${action.title} (${shortcut})` :	action.title}>
+				}}
+				title={shortcut ? `${action.title} (${shortcut})` : action.title}>
 			{action.title}
 		</button>
 	)
@@ -60,13 +88,7 @@ function ActionMenu({name, menu, className, role, ...props}) {
 			  <li id={item.id || item}
 				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
 				  onClick={(ev) => openHandle(ev, props.onOpen) }>
-				{ typeof item !== 'object' ?
-					( <ActionButton {...props} action={action[item]}
-									status={props.status[item]} /> ) :
-						item.menu ?
-				  ( <ActionMenu {...props} name={item.id} menu={item.menu} /> ) :
-							item.component(props)
-				}
+				  { showMenuOrButton(action, item, props.status[item], props) }
 			  </li>
 		  ))
 		}

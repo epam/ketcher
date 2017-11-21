@@ -26,7 +26,7 @@ export const map = {
 	},
 	'rxn': {
 		name: 'MDL Rxnfile',
-		mime:'chemical/x-mdl-rxnfile',
+		mime: 'chemical/x-mdl-rxnfile',
 		ext: ['.rxn'],
 		supportsCoords: true
 	},

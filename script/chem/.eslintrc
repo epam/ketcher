@@ -1,0 +1,6 @@
+{
+  "rules": { // TODO: remove file after refactor chem/
+    "eqeqeq": 0,
+    "no-sequences": 0
+  }
+}

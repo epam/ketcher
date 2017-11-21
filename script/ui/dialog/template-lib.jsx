@@ -34,9 +34,12 @@ import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templa
 import { onAction } from "../state/";
 
 const GREEK_SIMBOLS = {
-	'Alpha': 'A', 'alpha': 'α',
-	'Beta': 'B', 'beta': 'β',
-	'Gamma': 'Г', 'gamma': 'γ'
+	'Alpha': 'A',
+	'alpha': 'α',
+	'Beta': 'B',
+	'beta': 'β',
+	'Gamma': 'Г',
+	'gamma': 'γ'
 };
 
 function tmplName(tmpl, i) {

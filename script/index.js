@@ -19,7 +19,7 @@ import 'whatwg-fetch';
 import './set-ext';
 import queryString from 'query-string';
 
-import api from './api.js';
+import api from './api';
 import * as molfile from './chem/molfile';
 import * as smiles from './chem/smiles';
 import * as structformat from './ui/structformat';

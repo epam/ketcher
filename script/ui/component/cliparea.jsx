@@ -77,7 +77,7 @@ class ClipArea extends Component {
 	render() {
 		return (
 			<textarea className="cliparea" contentEditable={true}
-					  autoFocus={true}/>
+					  autoFocus={true}/> // eslint-disable-line jsx-a11y/no-autofocus
 		);
 	}
 }

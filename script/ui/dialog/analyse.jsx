@@ -59,7 +59,7 @@ function FormulaInput({ value }) {
 	let cnd;
 	let pos = 0;
 
-	while (cnd = formulaRegexp.exec(value)) {
+	while ((cnd = formulaRegexp.exec(value)) !== null) {
 		content.push(value.substring(pos, cnd.index) + cnd[1]);
 		if (cnd[2].length > 0) content.push(<sub>{cnd[2]}</sub>);
 		pos = cnd.index + cnd[0].length;
@@ -130,7 +130,7 @@ function roundOff(value, round) {
 	if (typeof value === 'number')
 		return value.toFixed(round);
 
-	return value.replace(/[0-9]*\.[0-9]+/g, (str) => (
+	return value.replace(/[0-9]*\.[0-9]+/g, str => (
 		(+str).toFixed(round)
 	));
 }

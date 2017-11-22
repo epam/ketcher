@@ -41,22 +41,24 @@ export default function (state=initial, action) {
 	let { type, data } = action;
 
 	switch (type) {
-		case 'ACTION':
-			let visibleTool = toolInMenu(action.action);
-			return visibleTool
-				? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-				: state;
-		case 'ADD_ATOMS':
-			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
-			return { ...state, ...newState };
-		case 'CLEAR_VISIBLE':
-			return { ...state, opened: null, visibleTools: {} };
-		case 'OPENED':
-			return { ...state, opened: data };
-		case 'UPDATE':
-			return { ...state, opened: null };
-		default:
-			return state;
+	case 'ACTION': {
+		let visibleTool = toolInMenu(action.action);
+		return visibleTool
+			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
+			: state;
+	}
+	case 'ADD_ATOMS': {
+		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
+		return { ...state, ...newState };
+	}
+	case 'CLEAR_VISIBLE':
+		return { ...state, opened: null, visibleTools: {} };
+	case 'OPENED':
+		return { ...state, opened: data };
+	case 'UPDATE':
+		return { ...state, opened: null };
+	default:
+		return state;
 	}
 }
 

@@ -142,7 +142,7 @@ function AtomInfo({ el, isInfo }) {
 class PeriodTable extends Component {
 	constructor(props) {
 		super(props);
-		let genType = !!this.props.pseudo ? 'gen' : null;
+		let genType = !this.props.pseudo ? null : 'gen';
 		this.state = {
 			type: props.type || genType || 'atom',
 			value: props.values || props.label || null,
@@ -152,8 +152,10 @@ class PeriodTable extends Component {
 		this.firstType = true;
 	}
 	changeType(type) {
-		if (this.firstType)
-			return this.firstType = false;
+		if (this.firstType) {
+			this.firstType = false;
+			return;
+		}
 		let pl = this.state.type === 'list' || this.state.type === 'not-list';
 		let l = type === 'list' || type === 'not-list';
 		if (l && pl) {
@@ -191,12 +193,10 @@ class PeriodTable extends Component {
 			return value ? { type, label: value, pseudo: value } : null;
 		return value.length ? { type, values: value } : null;
 	}
-	curEvents = (el) => {
-		return {
-			onMouseEnter: () => this.setState({ cur: el, isInfo: true }),
-			onMouseLeave: () => this.setState({ isInfo: false })
-		};
-	};
+	curEvents = el => ({
+		onMouseEnter: () => this.setState({ cur: el, isInfo: true }),
+		onMouseLeave: () => this.setState({ isInfo: false })
+	});
 	render () {
 		const tabs = ['Table', 'Extended'];
 		let { type } = this.state;
@@ -211,7 +211,7 @@ class PeriodTable extends Component {
 					className="tabs"
 					captions={tabs}
 					tabIndex={type !== 'gen' ? 0 : 1}
-					  changeTab={(i) => this.changeType(i === 0 ? 'atom' : 'gen')}
+					  changeTab={i => this.changeType(i === 0 ? 'atom' : 'gen')}
 				>
 					<div className="period-table">
 						<table summary="Periodic table of the chemical elements">

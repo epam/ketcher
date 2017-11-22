@@ -20,7 +20,7 @@ class OpenButton extends Component {
 	constructor(props) {
 		super(props);
 		if (props.server) {
-			fileOpener(props.server).then(opener => {
+			fileOpener(props.server).then((opener) => {
 				this.setState({ opener });
 			});
 		}
@@ -73,7 +73,7 @@ function fileOpener (server) {
 			}
 		} else if (server) {
 			resolve(server.then(() => {
-				throw "Server doesn't still support echo method";
+				throw Error("Server doesn't still support echo method");
 				//return resolve(throughForm2IframePosting);
 			}));
 		} else {
@@ -93,7 +93,7 @@ function throughFileReader(file) {
 			resolve(content);
 		};
 
-		rd.onerror = event => {
+		rd.onerror = (event) => {
 			reject(event);
 		};
 
@@ -103,8 +103,8 @@ function throughFileReader(file) {
 
 function throughFileSystemObject(fso, file) {
 	// IE9 and below
-	const fd =  fso.OpenTextFile(file.name, 1),
-	content = fd.ReadAll();
+	const fd = fso.OpenTextFile(file.name, 1);
+	const content = fd.ReadAll();
 	fd.Close();
 	return content;
 }

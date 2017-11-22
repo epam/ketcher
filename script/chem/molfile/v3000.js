@@ -278,7 +278,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 		}
 	}
 
-	for (var rgid in rfrags) {
+	Object.keys(rfrags).forEach((rgid) => {
 		for (var j = 0; j < rfrags[rgid].length; ++j) {
 			var rg = rfrags[rgid][j];
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
@@ -289,7 +289,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 			});
 			rg.mergeInto(ctab);
 		}
-	}
+	});
 }
 
 function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
@@ -305,7 +305,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 			if (ctabLines[j].trim() == 'M  V30 END CTAB')
 				return j;
 		}
-		console.error('CTab format invalid');
+		return console.error('CTab format invalid');
 	}
 
 	function findRGroupEnd(i) {
@@ -313,7 +313,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 			if (ctabLines[j].trim() == 'M  V30 END RGROUP')
 				return j;
 		}
-		console.error('CTab format invalid');
+		return console.error('CTab format invalid');
 	}
 
 	var molLinesReactants = [];
@@ -361,12 +361,12 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 	}
 	var ctab = utils.rxnMerge(mols, nReactants, nProducts, nAgents);
 
-	readRGroups3000(ctab, function (array) {
+	readRGroups3000(ctab, (function (array) {
 		var res = [];
 		for (var k = 0; k < array.length; ++k)
 			res = res.concat(array[k]);
 		return res;
-	}(rGroups));
+	}(rGroups)));
 
 	return ctab;
 }

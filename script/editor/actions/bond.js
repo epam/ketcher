@@ -113,16 +113,15 @@ export function fromBondDeletion(restruct, id) {
 export function fromBondAttrs(restruct, id, attrs, flip, reset) { // eslint-disable-line max-params
 	var action = new Action();
 
-	for (var key in Struct.Bond.attrlist) {
+	Object.keys(Struct.Bond.attrlist).forEach((key) => {
 		var value;
 		if (key in attrs)
 			value = attrs[key];
 		else if (reset)
 			value = Struct.Bond.attrGetDefault(key);
-		else
-			continue; // eslint-disable-line no-continue
+		else return;
 		action.addOp(new op.BondAttr(id, key, value));
-	}
+	});
 	if (flip)
 		action.mergeWith(toBondFlipping(restruct.molecule, id));
 	return action.perform(restruct);
@@ -144,10 +143,9 @@ export function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
 		if (!params.merged) return;
 
 		const attrs = Struct.Bond.getAttrHash(bond);
-		for (let key in attrs) {
-			if (attrs.hasOwnProperty(key))
-				bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
-		}
+		Object.keys(attrs).forEach((key) => {
+			bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
+		});
 		bondAttrAction.addOp(new op.BondDelete(+srcId));
 		bondAttrAction = bondAttrAction.perform(restruct);
 

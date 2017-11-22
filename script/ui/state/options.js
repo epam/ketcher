@@ -40,7 +40,7 @@ export const optionsState = {
 };
 
 export function appUpdate(data) {
-	return dispatch => {
+	return (dispatch) => {
 		dispatch({ type: 'APP_OPTIONS', data });
 		dispatch({ type: 'UPDATE' });
 	};

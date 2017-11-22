@@ -517,7 +517,9 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var tfx = util.tfx;
-	var i, c, j; // eslint-disable-line no-unused-vars
+	var i,
+		c,
+		j;
 	for (i = 0, c = 0; i < 4; ++i) {
 		var attpntText = '';
 		if (atom.a.attpnt & (1 << i)) {

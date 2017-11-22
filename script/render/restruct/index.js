@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable guard-for-in */
+
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
 var Box2Abs = require('../../util/box2abs');
@@ -135,7 +137,7 @@ ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 		if (atom.component >= 0)
 			adjacentComponents.add(atom.component);
 
-		atom.a.neighbors.forEach(neighbor => {
+		atom.a.neighbors.forEach((neighbor) => {
 			const neiId = this.molecule.halfBonds.get(neighbor).end;
 			if (!ids.has(neiId))
 				list.push(neiId);
@@ -157,7 +159,7 @@ ReStruct.prototype.addConnectedComponent = function (idSet) {
 	adjacentComponents.delete(compId);
 
 	var type = -1;
-	atomIds.forEach(aid => {
+	atomIds.forEach((aid) => {
 		var atom = this.atoms.get(aid);
 		atom.component = compId;
 		if (atom.a.rxnFragmentType !== -1)
@@ -173,7 +175,7 @@ ReStruct.prototype.addConnectedComponent = function (idSet) {
  * @returns { number }
  */
 ReStruct.prototype.removeConnectedComponent = function (ccid) {
-	this.connectedComponents.get(ccid).forEach(aid => {
+	this.connectedComponents.get(ccid).forEach((aid) => {
 		this.atoms.get(aid).component = -1;
 	});
 
@@ -186,7 +188,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 			return;
 		var adjacentComponents = new Set();
 		var idSet = this.getConnectedComponent(aid, adjacentComponents);
-		adjacentComponents.forEach(ccid => {
+		adjacentComponents.forEach((ccid) => {
 			this.removeConnectedComponent(ccid);
 		});
 
@@ -269,11 +271,11 @@ ReStruct.prototype.getVBoxObj = function (selection) {
 	var vbox = null;
 	for (map in ReStruct.maps) {
 		if (ReStruct.maps.hasOwnProperty(map) && selection[map]) {
-			selection[map].forEach(function (id) {
+			selection[map].forEach((id) => { // eslint-disable-line no-loop-func
 				var box = this[map].get(id).getVBoxObj(this.render);
 				if (box)
 					vbox = vbox ? Box2Abs.union(vbox, box) : box.clone();
-			}, this);
+			});
 		}
 	}
 	vbox = vbox || new Box2Abs(0, 0, 0, 0);
@@ -333,15 +335,17 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	force = force || !this.initialized;
 
 	// check items to update
-	let id, map, mapChanged;
-	Object.keys(ReStruct.maps).forEach(map => {
+	let id,
+		map,
+		mapChanged;
+	Object.keys(ReStruct.maps).forEach((map) => {
 		mapChanged = this[map + 'Changed'];
 
 		if (force) {
-			this[map].each(id => mapChanged[id] = 1, this);
+			this[map].each((id) => { mapChanged[id] = 1; });
 		} else {
 			// check if some of the items marked are already gone
-			Object.keys(mapChanged).forEach(id => {
+			Object.keys(mapChanged).forEach((id) => {
 				if (!this[map].has(id))
 					delete mapChanged[id];
 			});
@@ -356,7 +360,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	const emptyFrags = this.frags.findAll((fid, frag) =>
 		!frag.calcBBox(this.render.ctab, fid, this.render), this);
 
-	emptyFrags.forEach(fid => {
+	emptyFrags.forEach((fid) => {
 		this.clearVisel(this.frags.get(fid).visel);
 		this.frags.unset(fid);
 		this.molecule.frags.remove(fid);
@@ -430,7 +434,7 @@ ReStruct.prototype.updateLoops = function () {
 		this.clearVisel(reloop.visel);
 	});
 	var ret = this.molecule.findLoops();
-	ret.bondsToMark.forEach(bid => {
+	ret.bondsToMark.forEach((bid) => {
 		this.markBond(bid, 1);
 	});
 	ret.newLoops.forEach(function (loopId) {
@@ -544,7 +548,7 @@ ReStruct.prototype.setSelection = function (selection) {
 
 	for (var map in ReStruct.maps) {
 		if (ReStruct.maps.hasOwnProperty(map) && ReStruct.maps[map].isSelectable()) {
-			this[map].each((id, item) => {
+			this[map].each((id, item) => { // eslint-disable-line no-loop-func
 				var selected = redraw ? item.selected :
 				    selection && selection[map] && selection[map].indexOf(id) > -1;
 				this.showItemSelection(item, selected);

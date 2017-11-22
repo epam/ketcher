@@ -65,16 +65,15 @@ export function fromAtomDeletion(restruct, id) {
 export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	var action = new Action();
 	(typeof (ids) === 'number' ? [ids] : ids).forEach(function (id) {
-		for (var key in Struct.Atom.attrlist) {
+		Object.keys(Struct.Atom.attrlist).forEach((key) => {
 			var value;
 			if (key in attrs)
 				value = attrs[key];
 			else if (reset)
 				value = Struct.Atom.attrGetDefault(key);
-			else
-				continue; // eslint-disable-line no-continue
+			else return;
 			action.addOp(new op.AtomAttr(id, key, value));
-		}
+		});
 		if (!reset && 'label' in attrs && attrs.label != null && attrs.label !== 'L#' && !attrs['atomList'])
 			action.addOp(new op.AtomAttr(id, 'atomList', null));
 	}, this);
@@ -93,7 +92,8 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 
 	atomGetNeighbors(restruct, srcId).forEach(function (nei) {
 		var bond = restruct.molecule.bonds.get(nei.bid);
-		var begin, end;
+		var begin;
+		var end;
 
 		if (bond.begin === nei.aid) {
 			begin = nei.aid;

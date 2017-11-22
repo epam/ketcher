@@ -32,7 +32,7 @@ export const formsState = {
 			ringBondCount: 0,
 			substitutionCount: 0
 		}
-	} ,
+	},
 	attachmentPoints: {
 		errors: {},
 		valid: true,

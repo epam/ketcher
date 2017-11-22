@@ -37,7 +37,7 @@ class Save extends Component {
 			ev.preventDefault();
 		}
 		let converted = structFormat.toString(this.props.struct, type, this.props.server, this.props.options);
-		return converted.then(structStr => this.setState({ type, structStr }), e => { alert(e); });
+		return converted.then(structStr => this.setState({ type, structStr }), (e) => { alert(e); });
 	}
 
 	render() {
@@ -73,9 +73,8 @@ class Save extends Component {
 			>
 				<label>Format:
 					<select value={type} onChange={ev => this.changeType(ev)}>{
-						[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'smarts', 'cml', 'inchi'].map(type => (
-							<option value={type}>{structFormat.map[type].name}</option>
-						))
+						[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'smarts', 'cml', 'inchi']
+							.map(t => (<option value={t}>{structFormat.map[t].name}</option>))
 					}
 					</select>
 				</label>

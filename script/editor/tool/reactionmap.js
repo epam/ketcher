@@ -110,7 +110,8 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 };
 
 function isValidMap(rcs, aid1, aid2) {
-	var t1, t2;
+	var t1;
+	var	t2;
 	for (var ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
 		var ro = Array.from(rcs.reactants[ri]);
 		if (!t1 && ro.indexOf(aid1) >= 0) t1 = 'r';

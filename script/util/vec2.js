@@ -210,10 +210,10 @@ Vec2.diff = function (v1, v2) {
 
 // assume arguments v1, f1, v2, f2, v3, f3, etc.
 // where v[i] are vectors and f[i] are corresponding coefficients
-Vec2.lc = function () {
+Vec2.lc = function (...args) {
 	let v = new Vec2();
 	for (let i = 0; i < arguments.length / 2; ++i)
-		v = v.addScaled(arguments[2 * i], arguments[(2 * i) + 1]);
+		v = v.addScaled(args[2 * i], args[(2 * i) + 1]);
 	return v;
 };
 

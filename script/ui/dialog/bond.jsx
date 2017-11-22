@@ -41,5 +41,5 @@ function Bond(props) {
 }
 
 export default connect(
-	(store) => ({ formState: store.modal.form })
+	store => ({ formState: store.modal.form })
 )(Bond);

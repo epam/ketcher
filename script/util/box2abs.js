@@ -16,23 +16,23 @@
 
 import Vec2 from './vec2';
 
-function Box2Abs() {
-	if (arguments.length === 1 && 'min' in arguments[0] && 'max' in arguments[0]) {
-		this.p0 = arguments[0].min;
-		this.p1 = arguments[0].max;
+function Box2Abs(...args) {
+	if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+		this.p0 = args[0].min;
+		this.p1 = args[0].max;
 	}
 
-	if (arguments.length === 2) {
-		this.p0 = arguments[0];
-		this.p1 = arguments[1];
-	} else if (arguments.length === 4) {
-		this.p0 = new Vec2(arguments[0], arguments[1]);
-		this.p1 = new Vec2(arguments[2], arguments[3]);
-	} else if (arguments.length === 0) {
+	if (args.length === 2) {
+		this.p0 = args[0];
+		this.p1 = args[1];
+	} else if (args.length === 4) {
+		this.p0 = new Vec2(args[0], args[1]);
+		this.p1 = new Vec2(args[2], args[3]);
+	} else if (args.length === 0) {
 		this.p0 = new Vec2();
 		this.p1 = new Vec2();
 	} else {
-		new Error('Box2Abs constructor only accepts 4 numbers or 2 vectors or no arguments!');
+		return new Error('Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!');
 	}
 }
 

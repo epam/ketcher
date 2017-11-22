@@ -56,7 +56,7 @@ class SystemFonts extends Component {
 	setAvailableFonts() {
 		cache ? this.setState({ availableFonts: cache }) :
 			checkInSystem().then((results) => {
-				cache = results.filter((i) => i !== null);
+				cache = results.filter(i => i !== null);
 				this.setState({ availableFonts: cache });
 			});
 	}

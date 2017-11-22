@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable guard-for-in */ // todo
+
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('./../struct/index');

@@ -42,7 +42,7 @@ export function fromMultipleMove(restruct, lists, d) {
 				bondlist.push(bid);
 				// add all adjacent loops
 				// those that are not completely inside the structure will get redrawn anyway
-				['hb1', 'hb2'].forEach(hb => {
+				['hb1', 'hb2'].forEach((hb) => {
 					const loop = struct.halfBonds.get(bond.b[hb]).loop;
 					if (loop >= 0)
 						loops.add(loop);
@@ -61,7 +61,7 @@ export function fromMultipleMove(restruct, lists, d) {
 
 		bondlist.forEach(bond => action.addOp(new op.BondMove(bond, d)));
 
-		loops.forEach(loopId => {
+		loops.forEach((loopId) => {
 			if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) // hack
 				action.addOp(new op.LoopMove(loopId, d));
 		}, this);
@@ -70,7 +70,7 @@ export function fromMultipleMove(restruct, lists, d) {
 
 		if (lists.sgroupData.length === 0) {
 			const sgroups = getRelSgroupsBySelection(restruct, lists.atoms);
-			sgroups.forEach(sg => {
+			sgroups.forEach((sg) => {
 				action.addOp(new op.SGroupDataMove(sg.id, d));
 			});
 		}

@@ -139,8 +139,9 @@ SGroup.filter = function (mol, sg, atomMap) {
 SGroup.clone = function (sgroup, aidMap) {
 	var cp = new SGroup(sgroup.type);
 
-	for (var field in sgroup.data) // TODO: remove all non-primitive properties from 'data'
-		cp.data[field] = sgroup.data[field];
+	Object.keys(sgroup.data).forEach((field) => { cp.data[field] = sgroup.data[field]; });
+	// TODO: remove all non-primitive properties from 'data'
+
 	cp.atoms = sgroup.atoms.map(function (elem) {
 		return aidMap[elem];
 	});
@@ -248,7 +249,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 			var bracketHeight = bb.sz().y;
 
 			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else if (xbonds.length === 2) {
 		(function () { // eslint-disable-line max-statements
 			var b1 = mol.bonds.get(xbonds[0]);
@@ -262,7 +263,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 			var bracketHeight = 1.5;
 			brackets.push(new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
 			new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else {
 		(function () {
 			for (var i = 0; i < xbonds.length; ++i) {
@@ -271,7 +272,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
-		})();
+		}());
 	}
 	return brackets;
 };
@@ -295,7 +296,7 @@ SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
-	mol.atoms.each(aid => { atoms.push(aid); });
+	mol.atoms.each((aid) => { atoms.push(aid); });
 	return atoms;
 };
 
@@ -324,7 +325,7 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	});
 
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
-		throw {
+		throw { // eslint-disable-line no-throw-literal
 			'id': sgroup.id,
 			'error-type': 'cross-bond-number',
 			'message': 'Unsupported cross-bonds number'

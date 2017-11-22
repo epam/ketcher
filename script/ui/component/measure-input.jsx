@@ -44,13 +44,13 @@ class MeasureInput extends Component {
 					step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}
 					style={{ width: '75%' }}
 					value={cust}
-					onChange={(v) => this.handleChange(v, onChange)}
+					onChange={v => this.handleChange(v, onChange)}
 				/>
 				<Input
 					schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}
 					style={{ width: '25%' }}
 					value={meas}
-					onChange={(m) => this.setState({
+					onChange={m => this.setState({
 						meas: m,
 						cust: convertValue(this.state.cust, this.state.meas, m)
 					})}

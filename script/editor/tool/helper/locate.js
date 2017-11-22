@@ -20,10 +20,10 @@ function getElementsInRectangle(restruct, p0, p1) {
 	var bondList = [];
 	var atomList = [];
 
-	var x0 = Math.min(p0.x, p1.x),
-		x1 = Math.max(p0.x, p1.x),
-		y0 = Math.min(p0.y, p1.y),
-		y1 = Math.max(p0.y, p1.y);
+	var x0 = Math.min(p0.x, p1.x);
+	var x1 = Math.max(p0.x, p1.x);
+	var y0 = Math.min(p0.y, p1.y);
+	var y1 = Math.max(p0.y, p1.y);
 	restruct.bonds.each((bid, bond) => {
 		var centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
 			restruct.atoms.get(bond.b.end).a.pp, 0.5);
@@ -122,8 +122,8 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 	var w0 = null;
 	var counter = 0;
 	var eps = 1e-5;
-	var flag1 = false,
-		flag0 = false;
+	var flag1 = false;
+	var flag0 = false;
 
 	for (var i = 0; i < r.length; ++i) {
 		var v1 = Vec2.diff(r[i], p);

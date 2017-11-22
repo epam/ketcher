@@ -47,6 +47,7 @@ APointTool.prototype.mouseup = function (event) {
 		});
 		return true;
 	}
+	return true;
 };
 
 export default APointTool;

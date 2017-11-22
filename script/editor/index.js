@@ -155,8 +155,8 @@ Editor.prototype.highlight = function (ci, visible) {
 	var rnd = this.render;
 	var item = null;
 	if (ci.map === 'merge') {
-		Object.keys(ci.items).forEach(mp => {
-			ci.items[mp].forEach(dstId => {
+		Object.keys(ci.items).forEach((mp) => {
+			ci.items[mp].forEach((dstId) => {
 				item = rnd.ctab[mp].get(dstId);
 				item.setHighlight(visible, rnd);
 			});
@@ -237,11 +237,11 @@ Editor.prototype.on = function (eventName, handler) {
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
-	 'mouseup', 'mouseleave'].forEach(eventName => {
+	 'mouseup', 'mouseleave'].forEach((eventName) => {
 		 const subs = editor.event[eventName] = new s.DOMSubscription();
 		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
-		 subs.add(event => {
+		 subs.add((event) => {
 			 editor.lastEvent = event;
 			 if (editor.tool() && eventName in editor.tool())
 				 editor.tool()[eventName](event);
@@ -263,9 +263,9 @@ Editor.prototype.findMerge = function (srcItems, maps) {
 
 Editor.prototype.explicitSelected = function () {
 	var selection = this.selection() || {};
-	var res = structObjects.reduce(function (res, key) {
-		res[key] = selection[key] ? selection[key].slice() : [];
-		return res;
+	var res = structObjects.reduce(function (result, key) {
+		result[key] = selection[key] ? selection[key].slice() : [];
+		return result;
 	}, {});
 
 	var struct = this.render.ctab.molecule;
@@ -280,7 +280,7 @@ Editor.prototype.explicitSelected = function () {
 	}
 	// "auto-select" the bonds with both atoms selected
 	if ('atoms' in res && 'bonds' in res) {
-		struct.bonds.each(bid => {
+		struct.bonds.each((bid) => {
 			if (!('bonds' in res) || res.bonds.indexOf(bid) < 0) {
 				var bond = struct.bonds.get(bid);
 				if (res.atoms.indexOf(bond.begin) >= 0 && res.atoms.indexOf(bond.end) >= 0) {
@@ -340,8 +340,8 @@ function getStructCenter(restruct, selection) {
 
 // TODO: find DOM shorthand
 function elementOffset(element) {
-	var top = 0,
-		left = 0;
+	let top = 0;
+	let left = 0;
 	do {
 		top += element.offsetTop  || 0;
 		left += element.offsetLeft || 0;

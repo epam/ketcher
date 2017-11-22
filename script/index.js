@@ -16,8 +16,8 @@
 
 import 'babel-polyfill';
 import 'whatwg-fetch';
-import './set-ext';
 import queryString from 'query-string';
+import './set-ext';
 
 import api from './api';
 import * as molfile from './chem/molfile';
@@ -75,7 +75,7 @@ function showMolfile(clientArea, molString, options) {
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
 window.onload = function () {
-	var params = queryString.parse(document.location.search);
+	const params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.apiPath = params.api_path;
 	ketcher.server = api(ketcher.apiPath, {

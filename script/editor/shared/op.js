@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable no-shadow */
+
 import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 
@@ -57,7 +59,7 @@ function AtomAdd(atom, pos) {
 
 		const pp = {};
 		if (this.data.atom)
-			Object.keys(this.data.atom).forEach(p => pp[p] = this.data.atom[p]);
+			Object.keys(this.data.atom).forEach((p) => { pp[p] = this.data.atom[p]; });
 
 		pp.label = pp.label || 'C';
 
@@ -611,7 +613,7 @@ function UpdateIfThen(rgNew, rgOld) {
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
 
-		struct.rgroups.keys().forEach(rgKey => {
+		struct.rgroups.keys().forEach((rgKey) => {
 			const rgValue = struct.rgroups.get(rgKey);
 
 			if (rgValue.ifthen === this.rgid_old) {
@@ -637,7 +639,7 @@ function RestoreIfThen(rgNew, rgOld, history) {
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
 
-		Object.keys(this.ifThenHistory).forEach(rgid => {
+		Object.keys(this.ifThenHistory).forEach((rgid) => {
 			const rgValue = struct.rgroups.get(rgid);
 			rgValue.ifthen = this.ifThenHistory[rgid];
 			struct.rgroups.set(rgid, rgValue);
@@ -671,12 +673,12 @@ function RxnArrowAdd(pos) {
 		reactants = reactants.reduce((acc, item) => ({ ...acc, ...item }), {});
 		products = products.reduce((acc, item) => ({ ...acc, ...item }), {});
 
-		Object.keys(reactants).forEach(aid => {
+		Object.keys(reactants).forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			atom.rxnFragmentType = 1;
 		});
 
-		Object.keys(products).forEach(aid => {
+		Object.keys(products).forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			atom.rxnFragmentType = 2;
 		});
@@ -911,7 +913,7 @@ function AlignDescriptors() {
 		)
 			.add(new Vec2(0.5, -0.5));
 
-		sgroups.forEach(sg => {
+		sgroups.forEach((sg) => {
 			this.history[sg.id] = sg.pp;
 			alignPoint = alignPoint.add(new Vec2(0.0, 0.5));
 			sg.pp = alignPoint;
@@ -932,7 +934,7 @@ function RestoreDescriptorsPosition(history) {
 	this.execute = function (restruct) {
 		const sgroups = restruct.molecule.sgroups.values();
 
-		sgroups.forEach(sg => {
+		sgroups.forEach((sg) => {
 			sg.pp = this.history[sg.id];
 			restruct.molecule.sgroups.set(sg.id, sg);
 		});

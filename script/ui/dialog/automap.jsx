@@ -53,7 +53,7 @@ function Automap (props) {
 }
 
 export default connect(
-	(store) => ({ formState: store.modal.form }),
+	store => ({ formState: store.modal.form }),
 	(dispatch, props) => ({
 		onOk: (res) => {
 			dispatch(automap(res));

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import acts from '../action';
 import { isEqual, isEmpty, pickBy } from 'lodash/fp';
+import acts from '../action';
 
 function execute(activeTool, { action, editor, server, options }) {
 	if (action.tool) {
@@ -53,10 +53,10 @@ function status(key, activeTool, params) {
 }
 
 export default function (state=null, { type, action, ...params }) {
-	switch(type) {
+	switch (type) {
 	case 'INIT':
 		action = acts['select-lasso'].action;
-	case 'ACTION':
+	case 'ACTION': // eslint-disable-line no-case-declarations
 		const activeTool = execute(state && state.activeTool, {
 			...params, action
 		});

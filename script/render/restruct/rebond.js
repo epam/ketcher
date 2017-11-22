@@ -507,7 +507,8 @@ function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) { //
 /* ----- */
 
 function setDoubleBondShift(bond, struct) {
-	var loop1, loop2;
+	var loop1,
+		loop2;
 	loop1 = struct.halfBonds.get(bond.b.hb1).loop;
 	loop2 = struct.halfBonds.get(bond.b.hb2).loop;
 	if (loop1 >= 0 && loop2 >= 0) {

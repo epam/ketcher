@@ -30,12 +30,12 @@ const shortcutAliasMap = {
 
 export function shortcutStr(shortcut) {
 	const key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (key) {
-		return shortcutAliasMap[key] || key.toUpperCase();
+	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (k) {
+		return shortcutAliasMap[k] || k.toUpperCase();
 	});
 }
 
-function ActionButton({ action, status={}, onAction, ...props }) {
+function ActionButton({ action, status={}, onAction, ...props }) { // eslint-disable-line no-shadow
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button
@@ -65,7 +65,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 			  <li
 				id={item.id || item}
 				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
-				  onClick={(ev) => openHandle(ev, props.onOpen)}
+				  onClick={ev => openHandle(ev, props.onOpen)}
 			  >
 				{ typeof item !== 'object' ?  // eslint-disable-line
 					( <ActionButton
@@ -92,7 +92,7 @@ function toolMargin(menuName, menu, visibleTools) {
 
 	if (index === -1) {
 		let tools = [];
-		menu.forEach(item => tools = tools.concat(item.menu));
+		menu.forEach((item) => { tools = tools.concat(item.menu); });
 		index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
 	}
 

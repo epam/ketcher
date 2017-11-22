@@ -49,7 +49,7 @@ function Sgroup({ formState, ...prop }) {
 
 const content = type => Object.keys(schemes[type].properties)
 	.filter(prop => prop !== 'type')
-	.map(prop => {
+	.map((prop) => {
 			let props = {};
 			if (prop === 'name') props.maxlength = 15;
 			if (prop === 'fieldName') props.maxlength = 30;
@@ -61,5 +61,5 @@ const content = type => Object.keys(schemes[type].properties)
 	);
 
 export default connect(
-	(store) => ({ formState: store.modal.form })
+	store => ({ formState: store.modal.form })
 )(Sgroup);

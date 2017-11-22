@@ -19,9 +19,13 @@ import keyName from "w3c-keyname";
 const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false;
 
 function normalizeKeyName(name) {
-	let parts = name.split(/\+(?!$)/), result = parts[parts.length - 1];
+	let parts = name.split(/\+(?!$)/);
+	let result = parts[parts.length - 1];
 	if (result === "Space") result = " ";
-	let alt, ctrl, shift, meta;
+	let alt;
+	let	ctrl;
+	let	shift;
+	let	meta;
 
 	for (let i = 0; i < parts.length - 1; i++) {
 		let mod = parts[i];
@@ -71,7 +75,7 @@ function normalizeKeyEvent(event, base=false) {
 
 function keyNorm(obj) {
 	if (obj instanceof KeyboardEvent)
-		return normalizeKeyEvent(...arguments);
+		return normalizeKeyEvent(...arguments); // eslint-disable-line prefer-rest-params
 
 	return typeof obj === 'object' ? normalizeKeyMap(obj) :
 		normalizeKeyName(obj);

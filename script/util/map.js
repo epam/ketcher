@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-underscore-dangle*/
+/* eslint-disable */
 
 function Map(obj) {
 	if (typeof (obj) !== 'undefined' && obj.constructor !== Object)
@@ -46,7 +46,7 @@ Map.prototype.map = function (func, context) {
 	return ret;
 };
 
-Map.prototype.find = function (func, context) {
+Map.prototype.find = function (func, context) { // eslint-disable-line
 	var v,
 		vInt,
 		value;
@@ -147,7 +147,7 @@ Map.prototype.idList = function () {
 	return Object.keys(this._obj);
 };
 
-Map.prototype.keyOf = function (value) {
+Map.prototype.keyOf = function (value) { // eslint-disable-line
 	for (var key in this._obj) {
 		if (this._obj[key] === value)
 			return key;

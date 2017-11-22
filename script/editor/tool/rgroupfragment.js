@@ -36,8 +36,7 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 	const struct = editor.render.ctab.molecule;
 	const ci = editor.findItem(event, ['frags', 'rgroups']);
 
-	if (!ci)
-		return;
+	if (!ci) return true;
 
 	this.editor.hover(null);
 
@@ -51,7 +50,7 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 
 	const res = editor.event.rgroupEdit.dispatch(rg);
 
-	Promise.resolve(res).then(newRg => {
+	Promise.resolve(res).then((newRg) => {
 		const restruct = editor.render.ctab;
 
 		let action = null;

@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable no-shadow */
+
 import tools from './tools';
 import atoms from './atoms';
 import zoom from './zoom';
@@ -49,7 +51,7 @@ export default {
 	"undo": {
 		shortcut: "Mod+z",
 		title: "Undo",
-		action: editor => {
+		action: (editor) => {
 			editor.undo();
 		},
 		disabled: editor => (
@@ -59,7 +61,7 @@ export default {
 	"redo": {
 		shortcut: ["Mod+Shift+z", "Mod+y"],
 		title: "Redo",
-		action: editor => {
+		action: (editor) => {
 			editor.redo();
 		},
 		disabled: editor => (
@@ -148,7 +150,7 @@ export default {
 	"deselect-all": {
 		title: "Deselect All",
 		shortcut: "Mod+Shift+a",
-		action: editor => {
+		action: (editor) => {
 			editor.selection(null);
 		}
 	},

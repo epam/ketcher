@@ -162,7 +162,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			this.editor.selection(null);
 
 			// merge single atoms
-			Object.entries(this.dragCtx.mergeItems.atoms).forEach(pair => {
+			Object.entries(this.dragCtx.mergeItems.atoms).forEach((pair) => {
 				this.dragCtx.action = this.dragCtx.action ?
 					fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
 					fromAtomMerge(restruct, +pair[0], +pair[1]);
@@ -193,7 +193,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	var editor = this.editor;
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups', 'sgroupData']);
-	if (!ci) return;
+	if (!ci) return true;
 
 	var struct = rnd.ctab.molecule;
 	if (ci.map === 'atoms') {

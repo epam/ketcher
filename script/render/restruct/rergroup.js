@@ -163,6 +163,7 @@ ReRGroup.prototype._draw = function (render, rgid, attrs) { // eslint-disable-li
 		var p1 = scale.obj2scaled(bb.p1, render.options);
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
 	}
+	return null;
 };
 
 ReRGroup.prototype.drawHighlight = function (render) {
@@ -181,6 +182,7 @@ ReRGroup.prototype.drawHighlight = function (render) {
 		return ret;
 	} else { // eslint-disable-line no-else-return
 		// TODO abnormal situation, fragment does not belong to the render
+		return null;
 	}
 };
 

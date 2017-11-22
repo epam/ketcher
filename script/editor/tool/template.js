@@ -88,7 +88,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 				count++;
 			});
 		} else {
-			frIds.forEach(id => {
+			frIds.forEach((id) => {
 				xy0.add_(molecule.atoms.get(id).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});
@@ -110,7 +110,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		const dragCtx = this.dragCtx;
 		const ci = dragCtx.item;
 		let pos0;
-		let pos1 = this.editor.render.page2obj(event);
+		const pos1 = this.editor.render.page2obj(event);
 		let angle;
 		let extraBond;
 
@@ -232,7 +232,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				ci.id, this.template,
 				dragCtx.sign1 * dragCtx.sign2 > 0, true
 			)
-				.then(action => {
+				.then((action) => {
 					this.editor.update(action);
 					delete this.dragCtx;
 				});
@@ -248,7 +248,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 			ci.id, this.template,
 			dragCtx.sign1 * dragCtx.sign2 > 0, true
 		)
-			.then(action => {
+			.then((action) => {
 				this.editor.update(action);
 				delete this.dragCtx;
 			});
@@ -260,6 +260,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 	if (action && !action.isDummy())
 		this.editor.update(action);
+	return true;
 };
 
 TemplateTool.prototype.cancel = TemplateTool.prototype.mouseleave =

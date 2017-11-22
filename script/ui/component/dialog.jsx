@@ -38,7 +38,7 @@ class Dialog extends Component {
 	}
 	componentDidMount() {
 		const fe = this.base.querySelector(['input:not([type=checkbox]):not([type=button])', 'textarea',
-			                            '[contenteditable]','select'].join(',')) ||
+			                            '[contenteditable]', 'select'].join(',')) ||
 			     this.base.querySelector(['button.close'].join(','));
 		console.assert(fe, 'No active buttons');
 		if (fe.focus) fe.focus();

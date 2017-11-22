@@ -45,7 +45,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 		return acc;
 	}, {});
 
-	const isFragFound = Object.keys(fids).find(frag => {
+	const isFragFound = Object.keys(fids).find((frag) => {
 		frag = parseInt(frag, 10);
 		return !struct.getFragmentIds(frag).equals(new Set(fids[frag]));
 	});
@@ -53,12 +53,12 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 	if (isFragFound)
 		return action; // empty action
 
-	Object.keys(fids).forEach(frag => {
+	Object.keys(fids).forEach((frag) => {
 		const fragment = new Set(fids[frag]);
 
 		const bbox = struct.getCoordBoundingBox(fragment);
 
-		fragment.forEach(aid => {
+		fragment.forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			const d = new Vec2();
 
@@ -75,7 +75,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 		if (!selection.sgroupData) {
 			const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment));
 
-			sgroups.forEach(sg => {
+			sgroups.forEach((sg) => {
 				const d = new Vec2();
 
 				if (dir === 'horizontal')
@@ -89,7 +89,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 	});
 
 	if (selection.bonds) {
-		selection.bonds.forEach(bid => {
+		selection.bonds.forEach((bid) => {
 			const bond = struct.bonds.get(bid);
 
 			if (bond.type !== Struct.Bond.PATTERN.TYPE.SINGLE)
@@ -117,7 +117,7 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 		selection = structSelection(struct);
 
 	if (selection.atoms) {
-		selection.atoms.forEach(aid => {
+		selection.atoms.forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			action.addOp(new op.AtomMove(aid, rotateDelta(atom.pp, center, angle)));
 		});
@@ -125,7 +125,7 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 		if (!selection.sgroupData) {
 			const sgroups = getRelSgroupsBySelection(restruct, selection.atoms);
 
-			sgroups.forEach(sg => {
+			sgroups.forEach((sg) => {
 				action.addOp(new op.SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)));
 			});
 		}

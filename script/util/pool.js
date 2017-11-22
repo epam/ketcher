@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-underscore-dangle*/
+/* eslint-disable */
 
 function Pool() {
 	this._map = new Map();
@@ -78,7 +78,7 @@ Pool.prototype.entries = function () {
 	return this._map.entries();
 };
 
-Pool.prototype.keyOf = function (value) {
+Pool.prototype.keyOf = function (value) { // eslint-disable-line
 	for (let [key, val] of this._map.entries()) {
 		if (val === value)
 			return key;

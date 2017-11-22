@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable */
+
 // TODO: it's used only in dfs.js in one place in some strange way. Should be removed after dfs.js refactoring
 Set.prototype.find = function (findFunc) {
 	for (let item of this) {

@@ -37,7 +37,7 @@ function TextArea({ value, onChange, ...props }) {
 	);
 }
 
-TextArea.val = (ev) => ev.target.value;
+TextArea.val = ev => ev.target.value;
 
 function CheckBox({ value, onChange, ...props }) {
 	return (
@@ -107,12 +107,12 @@ FieldSet.val = function (ev, schema) {
 	// Hm.. looks like premature optimization
 	//      should we inline this?
 	const fieldset = input.parentNode.parentNode;
-	const res = [].reduce.call(fieldset.querySelectorAll('input'),
+	const result = [].reduce.call(fieldset.querySelectorAll('input'),
 		function (res, inp, i) {
 			return !inp.checked ? res :
 				[enumSchema(schema, i), ...res];
 		}, []);
-	return input.type === 'radio' ? res[0] : res;
+	return input.type === 'radio' ? result[0] : result;
 };
 
 function enumSchema(schema, cbOrIndex) {
@@ -224,12 +224,12 @@ export default class Input extends Component {
 	}
 
 	shouldComponentUpdate({ children, onChange, ...nextProps }) {
-		var { children, onChange, ...oldProps } = this.props;
+		const { children, onChange, ...oldProps } = this.props; // eslint-disable-line no-redeclare
 		return shallowCompare(oldProps, nextProps);
 	}
 
 	render() {
-		var { children, onChange, ...props } = this.props;
+		const { children, onChange, ...props } = this.props;
 		return h(this.component, { ...this.ctrl, ...props });
 	}
 }

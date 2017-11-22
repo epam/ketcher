@@ -95,9 +95,9 @@ export default connect(
 		fragment: store.options.recognize.fragment
 	}),
 	(dispatch, props) => ({
-		isFragment: (v) => dispatch(shouldFragment(v)),
-		onImage: (file) => dispatch(changeImage(file)),
-		onRecognize: (file) => dispatch(recognize(file)),
+		isFragment: v => dispatch(shouldFragment(v)),
+		onImage: file => dispatch(changeImage(file)),
+		onRecognize: file => dispatch(recognize(file)),
 		onOk: (res) => {
 			dispatch(
 				load(res.structStr, {

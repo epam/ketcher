@@ -50,7 +50,7 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 		afterMerge = getFragmentWithBondMap(restruct.molecule, frid);
 
 		return events.dearomatizeStruct.dispatch(afterMerge.frag).then(res => molfile.parse(res.struct));
-	}).then(destruct => {
+	}).then((destruct) => {
 		destruct.bonds.each((id, bond) => {
 			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
 				throw Error('Bad dearomatize');
@@ -61,7 +61,7 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 		action = dearomatizeAction.mergeWith(action);
 
 		return action;
-	}).catch(err => {
+	}).catch((err) => {
 		console.info(err.message);
 		action.perform(restruct); // revert actions if error
 		action = simpleFusing(restruct, bid, template);

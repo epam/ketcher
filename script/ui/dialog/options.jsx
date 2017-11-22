@@ -119,7 +119,7 @@ export default connect(store => ({
 	initState: store.options.settings,
 	formState: store.modal.form
 }), (dispatch, props) => ({
-	onOpenFile: newOpts => {
+	onOpenFile: (newOpts) => {
 		try {
 			dispatch(updateFormState({ result: JSON.parse(newOpts) }));
 		} catch (ex) {

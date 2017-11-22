@@ -50,7 +50,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		const newsgid = restruct.molecule.sgroups.newId();
 		const sgAtoms = sg.atoms.map(aid => aidMap[aid]);
 		const sgAction = fromSgroupAddition(restruct, sg.type, sgAtoms, sg.data, newsgid, sg.pp ? sg.pp.add(offset) : null);
-		sgAction.operations.reverse().forEach(op => action.addOp(op));
+		sgAction.operations.reverse().forEach(oper => action.addOp(oper));
 	});
 
 	if (restruct.rxnArrows.count() < 1) {

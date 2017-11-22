@@ -19,8 +19,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
 		function iterate() {
 			process().then(function (val) {
 				try {
-					var finish = complete(val);
-					if (finish)
+					if (complete(val))
 						resolve(val);
 					else
 						setTimeout(iterate, timeGap);
@@ -42,9 +41,9 @@ function parametrizeUrl(url, params) {
 }
 
 function api(base, defaultOptions) {
-	var baseUrl = !base || /\/$/.test(base) ? base : base + '/';
+	const baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
-	var info = request('GET', 'indigo/info').then(function (res) {
+	const info = request('GET', 'indigo/info').then(function (res) {
 		return { indigoVersion: res.Indigo.version };
 	}).catch(function () {
 		throw Error('Server is not compatible');
@@ -65,13 +64,13 @@ function api(base, defaultOptions) {
 				return response.ok ? res : Promise.reject(res.error);
 			});
 		}).catch(function (err) {
-			throw 'Cannot parse result\n' + err;
+			throw Error('Cannot parse result\n' + err);
 		});
 	}
 
 	function indigoCall(method, url, defaultData) {
 		return function (data, options) {
-			var body = Object.assign({}, defaultData, data);
+			const body = Object.assign({}, defaultData, data);
 			body.options = Object.assign(body.options || {},
 			                             defaultOptions, options);
 			return info.then(function () {
@@ -93,13 +92,13 @@ function api(base, defaultOptions) {
 		check: indigoCall('POST', 'indigo/check'),
 		calculate: indigoCall('POST', 'indigo/calculate'),
 		recognize: function (blob) {
-			var req = request('POST', 'imago/uploads', blob, {
+			const req = request('POST', 'imago/uploads', blob, {
 				'Content-Type': blob.type || 'application/octet-stream'
 			});
-			var status = request.bind(null, 'GET', 'imago/uploads/:id');
-			return req.then(function (res) {
+			const status = request.bind(null, 'GET', 'imago/uploads/:id');
+			return req.then(function (data) {
 				return pollDeferred(
-					status.bind(null, { id: res.upload_id }),
+					status.bind(null, { id: data.upload_id }),
 					function complete(res) {
 						if (res.state === 'FAILURE')
 							throw res;

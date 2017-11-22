@@ -106,7 +106,7 @@ Bond.getAttrHash = function (bond) {
 Bond.attrGetDefault = function (attr) {
 	if (attr in Bond.attrlist)
 		return Bond.attrlist[attr];
-	console.error('Attribute unknown');
+	return console.error('Attribute unknown');
 };
 
 Bond.prototype.hasRxnProps =  function () {
@@ -139,7 +139,7 @@ Bond.prototype.findOtherEnd = function (i) {
 		return this.end;
 	if (i == this.end)
 		return this.begin;
-	console.error('bond end not found');
+	return console.error('bond end not found');
 };
 
 module.exports = Bond;

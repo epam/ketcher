@@ -417,7 +417,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var cnt = 1;
 	var sgmapback = {};
 	var sgorder = this.molecule.sGroupForest.getSGroupsBFS();
-	sgorder.forEach(id => {
+	sgorder.forEach((id) => {
 		sgmapback[cnt] = id;
 		sgmap[id] = cnt++;
 	});

@@ -73,13 +73,13 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms) {
 	}, this);
 
 	var sgroupList = [];
-	for (var key in sgCounts) {
+	Object.keys(sgCounts).forEach((key) => {
 		var sid = parseInt(key, 10);
 		var sgroup = this.sgroups.get(sid);
 		var sgAtoms = SGroup.getAtoms(this, sgroup);
 		if (sgCounts[key] === sgAtoms.length)
 			sgroupList.push(sid);
-	}
+	});
 	return sgroupList;
 };
 
@@ -118,7 +118,7 @@ Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
 
 Struct.prototype.getScaffold = function () {
 	var atomSet = new Set();
-	this.atoms.each(aid => { atomSet.add(aid); });
+	this.atoms.each((aid) => { atomSet.add(aid); });
 
 	this.rgroups.each((rgid, rg) => {
 		rg.frags.each((fnum, fid) => {
@@ -150,7 +150,7 @@ Struct.prototype.getFragment = function (fid) {
 Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) { // eslint-disable-line max-params, max-statements
 	atomSet = atomSet || new Set(this.atoms.keys().map(key => parseInt(key, 10)));
 	bondSet = bondSet || new Set(this.bonds.keys().map(key => parseInt(key, 10)));
-	bondSet = bondSet.filter(bid => {
+	bondSet = bondSet.filter((bid) => {
 		var bond = this.bonds.get(bid);
 		return atomSet.has(bond.begin) && atomSet.has(bond.end);
 	});
@@ -391,7 +391,7 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 		var a1 = this.atoms.get(bond.begin);
 		var a2 = this.atoms.get(bond.end);
 
-		a1.sgs.forEach(sgid => {
+		a1.sgs.forEach((sgid) => {
 			if (!a2.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
@@ -399,7 +399,7 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 			}
 		});
 
-		a2.sgs.forEach(sgid => {
+		a2.sgs.forEach((sgid) => {
 			if (!a1.sgs.has(sgid)) {
 				var sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
@@ -548,7 +548,7 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 	this.aromatic = true;
 	this.convex = convex || false;
 
-	hbs.forEach(hb => {
+	hbs.forEach((hb) => {
 		const bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
 		if (bond.type !== Bond.PATTERN.TYPE.AROMATIC)
 			this.aromatic = false;
@@ -570,7 +570,7 @@ Struct.prototype.findConnectedComponent = function (firstaid) {
 		map[aid] = 1;
 		ids.add(aid);
 		const atom = this.atoms.get(aid);
-		atom.neighbors.forEach(nei => {
+		atom.neighbors.forEach((nei) => {
 			const neiId = this.halfBonds.get(nei).end;
 			if (!ids.has(neiId))
 				list.push(neiId);
@@ -590,14 +590,14 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 	}
 
 	var map = {};
-	this.atoms.each(aid => { map[aid] = -1; });
+	this.atoms.each((aid) => { map[aid] = -1; });
 
 	var components = [];
 	this.atoms.each((aid, atom) => {
 		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
 			var component = this.findConnectedComponent(aid);
 			components.push(component);
-			component.forEach(aid => {
+			component.forEach((aid) => {
 				map[aid] = 1;
 			});
 		}
@@ -612,7 +612,7 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 Struct.prototype.markFragment = function (idSet) {
 	var frag = {};
 	var fid = this.frags.add(frag);
-	idSet.forEach(aid => {
+	idSet.forEach((aid) => {
 		this.atoms.get(aid).fragment = fid;
 	});
 };
@@ -767,7 +767,7 @@ Struct.prototype.findLoops = function () {
 
 			// loop found
 			const subloops = this.partitionLoop(loop);
-			subloops.forEach(loop => {
+			subloops.forEach((loop) => {
 				if (this.loopIsInner(loop) && !this.loopHasSelfIntersections(loop)) {
 					/*
                         loop is internal
@@ -775,13 +775,13 @@ Struct.prototype.findLoops = function () {
                         this ensures that the loop gets the same id if it is discarded and then recreated,
                         which in turn is required to enable redrawing while dragging, as actions store item id's
                      */
-					loopId = Math.min.apply(Math, loop);
+					loopId = Math.min(...loop);
 					this.loops.set(loopId, new Loop(loop, this, this.loopIsConvex(loop)));
 				} else {
 					loopId = -2;
 				}
 
-				loop.forEach(hbid => {
+				loop.forEach((hbid) => {
 					this.halfBonds.get(hbid).loop = loopId;
 					bondsToMark.add(this.halfBonds.get(hbid).bid);
 				});
@@ -907,7 +907,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 
 	const components = [];
 
-	connectedComponents.forEach(component => {
+	connectedComponents.forEach((component) => {
 		const bb = this.getCoordBoundingBox(component);
 		const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
 		let j = 0;
@@ -923,7 +923,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 	const reactants = [];
 	const products = [];
 
-	components.forEach(component => {
+	components.forEach((component) => {
 		if (!component) {
 			submolTexts.push('');
 			return; // eslint-disable-line no-continue

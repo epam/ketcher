@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { uniq } from 'lodash';
+
 import Struct from '../../chem/struct';
 
 import op from '../shared/op';
@@ -21,8 +23,6 @@ import Action from '../shared/action';
 import { SgContexts } from '../shared/constants';
 
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
-
-import { uniq } from 'lodash';
 
 export function fromSgroupType(restruct, id, type) {
 	var sg = restruct.sgroups.get(id).item;
@@ -79,7 +79,7 @@ export function fromSgroupDeletion(restruct, id) {
 	if (sG.type === 'SRU') {
 		struct.sGroupsRecalcCrossBonds();
 
-		sG.neiAtoms.forEach(aid => {
+		sG.neiAtoms.forEach((aid) => {
 			if (atomGetAttr(restruct, aid, 'label') === '*')
 				action.addOp(new op.AtomAttr(aid, 'label', 'C'));
 		});
@@ -125,7 +125,7 @@ export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // 
 		restruct.molecule.sGroupsRecalcCrossBonds();
 		let asteriskAction = new Action();
 
-		restruct.sgroups.get(sgid).item.neiAtoms.forEach(aid => {
+		restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
 			const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
 
 			if (atomGetDegree(restruct, aid) === 1 && plainCarbon)
@@ -191,7 +191,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 
 	return fragIds.reduce((acc, fragId) => {
 		const atoms = targetAtoms
-			.filter(aid => {
+			.filter((aid) => {
 				const atom = restruct.atoms.get(aid).a;
 				return fragId === atom.fragment;
 			})
@@ -281,7 +281,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 		});
 	});
 
-	for (var key in sgCounts) {
+	Object.keys(sgCounts).forEach((key) => {
 		var sid = parseInt(key);
 		var sG = restruct.sgroups.get(sid).item;
 		var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
@@ -293,7 +293,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 			action.addOp(new op.SGroupRemoveFromHierarchy(sid));
 			action.addOp(new op.SGroupDelete(sid));
 		}
-	}
+	});
 }
 
 function getAtomsBondIds(struct, atoms) {

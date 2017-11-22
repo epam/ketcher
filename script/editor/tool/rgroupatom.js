@@ -44,6 +44,7 @@ RGroupAtomTool.prototype.mouseup = function (event) {
 		propsDialog(this.editor, ci.id);
 		return true;
 	}
+	return true;
 };
 
 function propsDialog(editor, id, pos) {
@@ -58,7 +59,7 @@ function propsDialog(editor, id, pos) {
 		fragId: atom.fragment
 	});
 
-	Promise.resolve(res).then(elem => {
+	Promise.resolve(res).then((elem) => {
 		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
 
 		if (!id && id !== 0 && elem.rglabel) {

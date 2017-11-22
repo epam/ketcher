@@ -75,8 +75,13 @@ function prepareSruForSaving(sgroup, mol) {
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
-	if (xBonds.length !== 0 && xBonds.length !== 2)
-		throw { 'id': sgroup.id, 'error-type': 'cross-bond-number', 'message': 'Unsupported cross-bonds number' };
+	if (xBonds.length !== 0 && xBonds.length !== 2) {
+		throw { // eslint-disable-line no-throw-literal
+			id: sgroup.id,
+			'error-type': 'cross-bond-number',
+			message: 'Unsupported cross-bonds number'
+		};
+	}
 	sgroup.bonds = xBonds;
 }
 

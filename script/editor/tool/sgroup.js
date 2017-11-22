@@ -124,7 +124,7 @@ export function sgroupDialog(editor, id, defaultType) {
 		attrs: attrs
 	});
 
-	Promise.resolve(res).then(newSg => {
+	Promise.resolve(res).then((newSg) => {
 		// TODO: check before signal
 		if (newSg.type !== 'DAT' && // when data s-group separates
 			checkOverlapping(struct, selection.atoms || [])) {
@@ -150,7 +150,7 @@ export function sgroupDialog(editor, id, defaultType) {
 			editor.update(result.action);
 			editor.selection(result.selection);
 		}
-	}).catch(result => {
+	}).catch((result) => {
 		console.info('rejected', result);
 	});
 }
@@ -258,11 +258,11 @@ function checkOverlapping(struct, atoms) {
 		atomsHash[id] = true;
 	});
 
-	return 0 <= atoms.findIndex(function (id) {
+	return atoms.findIndex(function (id) {
 		var atom = struct.atoms.get(id);
 		var sgroups = Array.from(atom.sgs);
 
-		return 0 <= sgroups.findIndex(function (sid) {
+		return sgroups.findIndex(function (sid) {
 			var sg = struct.sgroups.get(sid);
 			if (sg.type === 'DAT' || sid in verified)
 				return false;
@@ -273,14 +273,14 @@ function checkOverlapping(struct, atoms) {
 				var ind = sgAtoms.findIndex(function (aid) {
 					return !(aid in atomsHash);
 				});
-				if (0 <= ind) return true;
+				if (ind >= 0) return true;
 			}
 
-			return 0 <= atoms.findIndex(function (aid) {
+			return atoms.findIndex(function (aid) {
 				return (sgAtoms.indexOf(aid) === -1);
-			});
-		});
-	});
+			}) >= 0;
+		}) >= 0;
+	}) >= 0;
 }
 
 export default SGroupTool;

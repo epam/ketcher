@@ -30,7 +30,7 @@ function IfThenSelect(props, { schema }) {
 		enumNames: ['Always']
 	};
 
-	rgids.forEach(label => {
+	rgids.forEach((label) => {
 		if (props.label !== label) {
 			desc.enum.push(label);
 			desc.enumNames.push(`IF R${props.label} THEN R${label}`);

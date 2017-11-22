@@ -54,10 +54,10 @@ class Form extends Component {
 		return {
 			dataError: errors && errors[name] || false,
 			value: value,
-			onChange(value) {
-				const newstate = Object.assign({}, self.props.result, { [name]: value });
+			onChange(val) {
+				const newstate = Object.assign({}, self.props.result, { [name]: val });
 				self.updateState(newstate);
-				if (onChange) onChange(value);
+				if (onChange) onChange(val);
 			}
 		};
 	}
@@ -129,7 +129,7 @@ const SelectOneOf = (props) => {
 		enumNames: []
 	};
 
-	Object.keys(schema).forEach(item => {
+	Object.keys(schema).forEach((item) => {
 		selectDesc.enum.push(item);
 		selectDesc.enumNames.push(schema[item].title || item);
 	});
@@ -185,7 +185,7 @@ function getErrorsObj(errors) {
 	let errs = {};
 	let field;
 
-	errors.forEach(item => {
+	errors.forEach((item) => {
 		field = item.property.split('.')[1];
 		if (!errs[field])
 			errs[field] = item.schema.invalidMessage || item.message;

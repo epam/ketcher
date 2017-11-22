@@ -25,7 +25,7 @@ import { formsState, formReducer } from './form';
 import { optionsState, optionsReducer } from './options';
 import { initTmplState, templatesReducer } from './templates';
 
-import action from './action';
+import actionState from './action';
 import toolbar from './toolbar';
 
 function modal(state = null, action) {
@@ -51,7 +51,7 @@ function modal(state = null, action) {
 }
 
 const shared = combineReducers({
-	actionState: action,
+	actionState,
 	toolbar,
 	modal,
 	server: (store=null) => store,
@@ -128,10 +128,10 @@ export function load(structStr, options) {
 }
 
 function root(state, action) {
-	switch (action.type) {
+	switch (action.type) { // eslint-disable-line default-case
 	case 'INIT':
 		global._ui_editor = action.editor;
-	case 'UPDATE':
+	case 'UPDATE': // eslint-disable-line no-case-declarations
 		let { type, ...data } = action;
 		if (data)
 			state = { ...state, ...data };

@@ -27,22 +27,22 @@ export function checkServer() {
 		const server = getState().server;
 
 		server.then(
-			(res) => dispatch(appUpdate({
+			res => dispatch(appUpdate({
 				indigoVersion: res.indigoVersion,
 				server: true
 			})),
-			(err) => alert(err)
+			err => alert(err)
 		);
 	};
 }
 
 export function recognize(file) {
 	return (dispatch, getState) => {
-		const recognize = getState().server.recognize;
+		const rec = getState().server.recognize;
 
-		let process = recognize(file).then(res => {
+		let process = rec(file).then((res) => {
 			dispatch(setStruct(res.struct));
-		}, err => {
+		}, (err) => {
 			dispatch(setStruct(null));
 			setTimeout(() => alert("Error! The picture isn't recognized."), 200); // TODO: remove me...
 		});

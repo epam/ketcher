@@ -68,10 +68,10 @@ function selectListOf(schema, prop) {
 			return title ? { title, value } : value;
 		});
 	}
-	return schema.oneOf.map(desc => (
-		!desc.title ? constant(desc, prop) : {
-			title: desc.title,
-			value: constant(desc, prop)
+	return schema.oneOf.map(ds => (
+		!ds.title ? constant(ds, prop) : {
+			title: ds.title,
+			value: constant(ds, prop)
 		}
 	));
 }

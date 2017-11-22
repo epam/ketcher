@@ -212,7 +212,7 @@ function AtomsList(atoms, { active, onAction, ...props }) {
 	return (
 		<menu>
 			{
-			  atoms.map(label => {
+			  atoms.map((label) => {
 				  let index = element.map[label];
 				  let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
 				  return (

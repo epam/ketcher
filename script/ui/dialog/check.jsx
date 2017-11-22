@@ -59,7 +59,7 @@ function Check(props) {
 				<Tabs
 					className="tabs"
 					captions={tabs}
-					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}
+					  changeTab={i => i === 0 ? onCheck(result.checkOptions) : null}
 				>
 					<ErrorsCheck moleculeErrors={moleculeErrors} />
 					<Field name="checkOptions" multiple type="checkbox" />
@@ -90,6 +90,6 @@ function ErrorsCheck(props) {
 export default connect(
 	store => ({	formState: store.modal.form }),
 	dispatch => ({
-		onCheck: (opts) => dispatch(check(opts))
+		onCheck: opts => dispatch(check(opts))
 	})
 )(Check);

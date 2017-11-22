@@ -153,20 +153,20 @@ class Miew extends Component {
 		let miew = miewLoad(ev.target.contentWindow,
 							MIEW_PATH, this.opts);
 		this.setState({ miew });
-		this.state.miew.then(miew => {
-			miew.parse(this.props.structStr, {
+		this.state.miew.then((res) => {
+			res.parse(this.props.structStr, {
 				fileType: 'cml',
 				loaded: true
 			});
-			this.setState({ miew });
+			this.setState({ miew: res });
 		});
 	}
 	save(ev) {
 		if (this.props.onOk) {
 			let structStr = miewSave(this.state.miew, MIEW_PATH);
 			this.setState({ structStr });
-			this.state.structStr.then(structStr => {
-				this.props.onOk({ structStr });
+			this.state.structStr.then((str) => {
+				this.props.onOk({ structStr: str });
 			});
 		}
 	}

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Vec2 from '../../util/vec2';
 import { inRange } from 'lodash';
+import Vec2 from '../../util/vec2';
 
 let FRAC = Math.PI / 12; // '15º'
 
@@ -28,9 +28,9 @@ function calcAngle(pos0, pos1) {
 	return Math.atan2(v.y, v.x);
 }
 
-function fracAngle(angle) {
-	if (arguments.length > 1)
-		angle = calcAngle(arguments[0], arguments[1]);
+function fracAngle(angle, angle2) {
+	if (angle2)
+		angle = calcAngle(angle, angle2);
 	return Math.round(angle / FRAC) * FRAC;
 }
 

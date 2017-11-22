@@ -14,17 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { h, Component, render } from 'preact';
 import { Provider, connect } from 'preact-redux';
 import { omit } from 'lodash/fp';
 
-import state, { onAction, load } from './state';
+import createStore, { onAction, load } from './state';
 import { initTmplLib } from './state/templates';
-import { initEditor } from './state/editor';
+import initEditor from './state/editor';
 import { checkServer } from './state/server';
 import { initKeydownListener, initClipboard } from './state/hotkeys';
 import { initResize } from './state/toolbar';
-
-import { h, Component, render } from 'preact';
 
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
@@ -87,13 +86,13 @@ const AppModal = connect(
 const AppTemplates = connect(
 	null,
 	dispatch => ({
-		onInitTmpls: (cacheEl) => initTmplLib(dispatch, '', cacheEl)
+		onInitTmpls: cacheEl => initTmplLib(dispatch, '', cacheEl)
 	})
 )(class extends Component {
 	componentDidMount() {
 		this.props.onInitTmpls(this.cacheEl);
 	}
-	render = () => (<div className="cellar" ref={c => this.cacheEl = c} />)
+	render = () => (<div className="cellar" ref={(c) => { this.cacheEl = c; }} />)
 });
 
 const AppCliparea = connect(
@@ -120,7 +119,7 @@ const App = connect(
 });
 
 function init(el, options, server) {
-	const store = state(options, server);
+	const store = createStore(options, server);
 	store.dispatch(initKeydownListener(el));
 	store.dispatch(initResize());
 
@@ -131,7 +130,7 @@ function init(el, options, server) {
 	), el);
 
 	return {
-		load: (structStr, options) => store.dispatch(load(structStr, options))
+		load: (structStr, opts) => store.dispatch(load(structStr, opts))
 	};
 }
 

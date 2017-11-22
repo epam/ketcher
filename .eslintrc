@@ -9,18 +9,20 @@
   },
   "globals": {
     "fetch": true,
-    "document": true,
+    "document": true
   },
   "rules": {
     "comma-dangle": ["error", "never"],
     "curly": ["error", "multi-or-nest", "consistent"],
     "dot-notation": "off",
     "indent": ["off", "tab"], // TODO !!
+    "import/prefer-default-export": "off",
     "func-names": "off",
     "key-spacing": ["error", { "beforeColon": false, "afterColon": true }],
 
     "no-alert": "off", // TODO warn!!
     "no-bitwise": "off",
+    "no-cond-assign": ["error", "except-parens"],
     "no-console": "off", // TODO warn!!
     "no-continue": "off", // TODO warn!!
     "no-debugger": "error",
@@ -29,6 +31,7 @@
     "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1 }],
     "no-plusplus": "off",
     "no-tabs": "off",
+    "no-use-before-define": "off",
     "no-useless-escape": "off",
     "no-underscore-dangle": "off", // TODO warn
     "no-unneeded-ternary": "error",
@@ -43,53 +46,20 @@
     "prefer-promise-reject-errors": "off",
     "prefer-template": "off",
     "radix": "off",
+    "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "spaced-comment": ["off", "always", { "exceptions": ["*"] }], // TODO !!!
     "unicode-bom": ["error", "never"],
 
     /* remove below */
 
-    "no-extend-native": "off", // TODO !!!!!!!!!!!!!!!!!!! SET
-    "prefer-spread": "off", // TODO !!!
-    "no-return-assign": "off", // TODO !!
-    "no-regex-spaces": "off", // TODO ???
-    "consistent-return": "off", // TODO !!!!!
-    "prefer-rest-params": "off", // TODO !
-
     "no-prototype-builtins": "off", // TODO ???
     "no-undef": "off", // TODO !!!
-    "no-redeclare": "off", // TODO!!
-    "no-extra-boolean-cast": "off", // TODO !!!!
 
-    "comma-spacing": "off", // TODO !!
-    "keyword-spacing": "off", // TODO !!
-    "default-case": "off", // TODO !!
-    "no-throw-literal": "off", // TODO !!
+    "prefer-destructuring": "off", // TODO 200 errs ! DO IT
+    "function-paren-newline": "off", // TODO 190 ..!!!
+    "no-param-reassign": "off", // TODO 281 !!!
 
-    "no-case-declarations": "off", // TODO ???
-    "guard-for-in": "off", // TODO ??
-    "no-cond-assign": "off", // TODO !!!
-
-    "arrow-parens": "off", // TODO !!!
-    "prefer-destructuring": "off", // TODO !!!!!
-    "wrap-iife": "off", // TODO !!!!
-    "no-new": "off", // TODO !!!!
-    "vars-on-top": "off", // TODO !!!
-    "one-var-declaration-per-line": "off", // TODO !!!
-    "no-loop-func": "off", // TODO !!
-    "yoda": "off", // TODO !!!
-
-    "block-scoped-var": "off", // TODO ??
-    "no-shadow": "off", // TODO !!!!
-    "eqeqeq": "off", // TODO !!!
-    "prefer-const": "off", // TODO !!!
-    "no-param-reassign": "off", // TODO !!!
-    "no-restricted-syntax": "off", // TODO !!!
-    "no-use-before-define": "off", // TODO !!!
-    "function-paren-newline": "off", // TODO !!!
-    "no-var": "off", // TODO !!!
-    "one-var": "off", // TODO !!!
-
-    "arrow-body-style": "off", // TODO !!
+    //
     "object-shorthand": "off", // TODO !!
     "quotes": "off", // TODO ???
     "no-unused-vars": "off", // TODO !!!
@@ -105,11 +75,6 @@
     "no-confusing-arrow": "off", // TODO !!
     "quote-props": "off", // TODO !!!
     "brace-style": "off", // TODO !!!
-    "import/first": "off", // TODO !!!
-    "import/prefer-default-export": "off", // TODO !!
-    "import/no-extraneous-dependencies": "off", // TODO !!
-    "import/no-named-as-default-member": "off", // TODO !!
-    "import/no-named-as-default": "off", // TODO !!
     "no-unused-expressions": "off" // TODO !!!
   }
 }

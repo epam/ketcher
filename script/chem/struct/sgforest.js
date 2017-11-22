@@ -60,7 +60,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 		isStrictSuperset.set(id, atoms.isSuperset(atomSet) && !atomSet.equals(atoms));
 	});
 
-	var parents = atomSets.findAll(id => {
+	var parents = atomSets.findAll((id) => {
 		if (!isSubset.get(id))
 			return false;
 

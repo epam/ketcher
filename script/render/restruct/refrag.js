@@ -92,7 +92,7 @@ ReFrag.prototype._draw = function (render, fid, attrs) { // eslint-disable-line 
 	}
 
 	// TODO abnormal situation, empty fragments must be destroyed by tools
-	console.assert(null, 'Empty fragment');
+	return console.assert(null, 'Empty fragment');
 };
 
 ReFrag.prototype.draw = function (render) { // eslint-disable-line no-unused-vars

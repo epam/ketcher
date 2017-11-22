@@ -18,6 +18,7 @@ import { capitalize } from 'lodash/fp';
 
 import Struct from '../chem/struct';
 import element from '../chem/element';
+import { sdataSchema } from './data/sdata-schema';
 
 export function fromElement(selem) {
 	if (selem.label === 'R#') {
@@ -121,10 +122,12 @@ function toApoint(ap) {
 }
 
 function fromRlabel(rg) {
-	var res = [];
-	for (var rgi = 0; rgi < 32; rgi++) {
+	const res = [];
+	let rgi;
+	let val;
+	for (rgi = 0; rgi < 32; rgi++) {
 		if (rg & (1 << rgi)) {
-			var val = rgi + 1;
+			val = rgi + 1;
 			res.push(val); // push the string
 		}
 	}
@@ -132,9 +135,9 @@ function fromRlabel(rg) {
 }
 
 function toRlabel(values) {
-	var res = 0;
+	let res = 0;
 	values.forEach(function (val) {
-		var rgi = val - 1;
+		let rgi = val - 1;
 		res |= 1 << rgi;
 	});
 	return res;
@@ -168,7 +171,7 @@ function fromBondType(type, stereo) {
 			bondCaptionMap[caption].stereo === stereo)
 			return caption;
 	}
-	throw 'No such bond caption';
+	throw Error('No such bond caption');
 }
 
 const bondCaptionMap = {
@@ -221,8 +224,6 @@ const bondCaptionMap = {
 		stereo: Struct.Bond.PATTERN.STEREO.NONE
 	}
 };
-
-import { sdataSchema } from './data/sdata-schema';
 
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';

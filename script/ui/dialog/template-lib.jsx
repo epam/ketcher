@@ -57,8 +57,8 @@ function greekify(str) {
 }
 
 const filterLibSelector = createSelector(
-	(props) => props.lib,
-	(props) => props.filter,
+	props => props.lib,
+	props => props.filter,
 	filterLib
 );
 
@@ -75,9 +75,9 @@ function filterLib(lib, filter) {
 }
 
 const libRowsSelector = createSelector(
-	(props) => props.lib,
-	(props) => props.group,
-	(props) => props.COLS,
+	props => props.lib,
+	props => props.group,
+	props => props.COLS,
 	libRows
 );
 
@@ -187,7 +187,7 @@ export default connect(
 		onSelect: tmpl => dispatch(selectTmpl(tmpl)),
 		onChangeGroup: group => dispatch(changeGroup(group)),
 		onAttach: tmpl => dispatch(editTmpl(tmpl)),
-		onOk: res => {
+		onOk: (res) => {
 			dispatch(onAction({	tool: 'template', opts: res	}));
 			props.onOk(res);
 		}

@@ -41,7 +41,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	*/
 
 	var alleneMask = new Set();
-	atoms.each(aid => {
+	atoms.each((aid) => {
 		var neiList = this.getNeighbors.call(this.context, aid);
 		if (neiList.length !== 2)
 			return false;
@@ -79,12 +79,13 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 		}, this) >= 0)
 			return false;
 		alleneMask.add(nei1.aid).add(nei2.aid);
+		return true;
 	});
 
 	if (alleneMask.size > 0)
 		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
 
-	atoms.each(aid => {
+	atoms.each((aid) => {
 		if (alleneMask.has(aid))
 			return;
 		/*

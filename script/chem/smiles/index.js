@@ -62,7 +62,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			try {
 				Struct.SGroup.prepareMulForSaving(sg, molecule);
 			} catch (ex) {
-				throw { message: 'Bad s-group (' + ex.message + ')' };
+				throw Error('Bad s-group (' + ex.message + ')');
 			}
 		}
 		// 'SMILES data format doesn\'t support s-groups'
@@ -104,11 +104,11 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			}
 		});
 		var inLoop = {};
-		bondsInLoops.forEach(bid => {
+		bondsInLoops.forEach((bid) => {
 			inLoop[bid] = 1;
 		});
 		return inLoop;
-	})();
+	}());
 
 	this.touchedCistransbonds = 0;
 	this.markCisTrans(molecule);
@@ -525,12 +525,12 @@ Smiles.prototype.markCisTrans = function (mol) {
 			var aromFailBeg = true;
 			var aromFailEnd = true;
 
-			neiBeg.forEach(nei => {
+			neiBeg.forEach((nei) => {
 				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailBeg = false;
 			});
 
-			neiEnd.forEach(nei => {
+			neiEnd.forEach((nei) => {
 				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
 					aromFailEnd = false;
 			});
@@ -538,7 +538,7 @@ Smiles.prototype.markCisTrans = function (mol) {
 			if (aromFailBeg || aromFailEnd)
 				return;
 
-			neiBeg.forEach(nei => {
+			neiBeg.forEach((nei) => {
 				if (nei.bid === bid) return;
 				if (mol.bonds.get(nei.bid).begin === bond.begin)
 					this.dbonds[nei.bid].ctbond_beg = bid;
@@ -546,7 +546,7 @@ Smiles.prototype.markCisTrans = function (mol) {
 					this.dbonds[nei.bid].ctbond_end = bid;
 			});
 
-			neiEnd.forEach(nei => {
+			neiEnd.forEach((nei) => {
 				if (nei.bid === bid) return;
 				if (mol.bonds.get(nei.bid).begin === bond.end)
 					this.dbonds[nei.bid].ctbond_beg = bid;

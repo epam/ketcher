@@ -20,7 +20,7 @@ import fs from 'filesaver.js';
 class SaveButton extends Component {
 	constructor({ filename="unnamed", type="text/plain", className='', ...props }) {
 		super({ filename, type, className, ...props });
-		fileSaver(props.server).then(saver => {
+		fileSaver(props.server).then((saver) => {
 			this.setState({ saver });
 		});
 	}
@@ -29,14 +29,14 @@ class SaveButton extends Component {
 		const noop = () => null;
 		const { filename, data, type, onSave = noop, onError = noop } = this.props;
 
-		if (this.state.saver && data)
-			{ try {
+		if (this.state.saver && data) {
+			try {
 				this.state.saver(data, filename, type);
 				onSave();
-			}
-			catch(e) {
+			} catch (e) {
 				onError(e);
-			} }
+			}
+		}
 
 		ev.preventDefault();
 	}
@@ -69,7 +69,7 @@ function fileSaver(server) {
 			});
 		} else if (server) {
 			resolve(server.then(() => {
-				throw "Server doesn't still support echo method";
+				throw Error("Server doesn't still support echo method");
 			}));
 		} else {
 			reject(new Error("Your browser does not support opening files locally"));

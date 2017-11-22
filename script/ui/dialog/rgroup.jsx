@@ -30,7 +30,7 @@ function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
 		>
 			<ul>
 				{
-					range(1, 33).map(i => {
+					range(1, 33).map((i) => {
 						const invalidId = disabledIds.includes(i);
 
 						let className = invalidId ? 'disabled' : '';

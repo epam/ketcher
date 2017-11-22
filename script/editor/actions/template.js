@@ -120,7 +120,7 @@ export function fromTemplateOnBondAction(restruct, events, bid, template, flip, 
 	if (!force)
 		return fromTemplateOnBond(restruct, bid, template, flip);
 
-	const simpleFusing = (restruct, bid, template) => fromTemplateOnBond(restruct, bid, template, flip);
+	const simpleFusing = (restruct, bid, template) => fromTemplateOnBond(restruct, bid, template, flip); // eslint-disable-line
 	/* aromatic merge (Promise)*/
 	return fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing);
 }
@@ -181,7 +181,7 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 		}
 	});
 
-	tmpl.bonds.each((id, bond) => {
+	tmpl.bonds.each((id, bond) => { // eslint-disable-line no-shadow
 		const existId = struct.findBondId(atomsMap[bond.begin], atomsMap[bond.end]);
 		if (existId === -1)
 			action.addOp(new op.BondAdd(atomsMap[bond.begin], atomsMap[bond.end], bond).perform(restruct));
@@ -194,7 +194,7 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 function atomAddToSGroups(restruct, sgroups, aid) {
 	const action = new Action();
-	sgroups.forEach((sid) =>
+	sgroups.forEach(sid =>
 		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct))
 	);
 	return action;

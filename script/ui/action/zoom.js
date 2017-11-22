@@ -31,7 +31,7 @@ export default {
 		disabled: editor => (
 			editor.zoom() <= zoomList[0] // unsave
 		),
-		action: editor => {
+		action: (editor) => {
 			let zoom = editor.zoom();
 			let i = findIndex(z => z >= zoom, zoomList);
 			editor.zoom(
@@ -45,7 +45,7 @@ export default {
 		disabled: editor => (
 			zoomList[zoomList.length - 1] <= editor.zoom()
 		),
-		action: editor => {
+		action: (editor) => {
 			let zoom = editor.zoom();
 			let i = findLastIndex(z => z <= zoom, zoomList);
 			editor.zoom(

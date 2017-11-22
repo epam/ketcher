@@ -267,7 +267,7 @@ function findClosestSGroup(restruct, pos) {
 		const n = d.rotateSC(1, 0);
 		const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 
-		sg.areas.forEach(box => {
+		sg.areas.forEach((box) => {
 			const inBox = box.p0.y < pg.y && box.p1.y > pg.y && box.p0.x < pg.x && box.p1.x > pg.x;
 			const xDist = Math.min(Math.abs(box.p0.x - pg.x), Math.abs(box.p1.x - pg.x));
 
@@ -311,9 +311,9 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 	const pos = { atoms: {}, bonds: {} }; // id->pos map
 	const struct = restruct.molecule;
 
-	selected.atoms.forEach(aid => pos.atoms[aid] = struct.atoms.get(aid).pp);
+	selected.atoms.forEach((aid) => { pos.atoms[aid] = struct.atoms.get(aid).pp; });
 
-	selected.bonds.forEach(bid => {
+	selected.bonds.forEach((bid) => {
 		const bond = struct.bonds.get(bid);
 		pos.bonds[bid] = Vec2.lc2(
 			pos.atoms[bond.begin], 0.5,
@@ -321,7 +321,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 	});
 
 	const result = {};
-	maps.forEach(mp => {
+	maps.forEach((mp) => {
 		result[mp] = Object.keys(pos[mp]).reduce((res, srcId) => {
 			const skip = { map: mp, id: +srcId };
 			const item = findMaps[mp](restruct, pos[mp][srcId], skip, null, scale);

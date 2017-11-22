@@ -49,10 +49,10 @@ function stringify(items, options) {
 	return items.reduce(function (res, item) {
 		res += molfile.stringify(item.struct, options);
 
-		for (var prop in item.props) {
+		Object.keys(item.props).forEach((prop) => {
 			res += "> <" + prop + ">\n";
 			res += item.props[prop] + "\n\n";
-		}
+		});
 
 		return res + '\$\$\$\$';
 	}, '');

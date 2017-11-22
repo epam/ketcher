@@ -73,7 +73,7 @@ Atom.getAttrHash = function (atom) {
 Atom.attrGetDefault = function (attr) {
 	if (attr in Atom.attrlist)
 		return Atom.attrlist[attr];
-	console.assert(false, 'Attribute unknown');
+	return console.assert(false, 'Attribute unknown');
 };
 
 
@@ -117,7 +117,7 @@ function radicalElectrons(radical) {
 	else if (radical === Atom.PATTERN.RADICAL.SINGLET ||
 		radical === Atom.PATTERN.RADICAL.TRIPLET)
 		return 2;
-	console.assert(false, 'Unknown radical value');
+	return console.assert(false, 'Unknown radical value');
 }
 
 Atom.prototype.clone = function (fidMap) {

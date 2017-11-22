@@ -110,12 +110,10 @@ export function saveUserTmpl(structStr) {
 function updateLocalStore(lib) {
 	const userLib = lib
 		.filter(item => item.props.group === 'User Templates')
-		.map(item => {
-			return {
-				struct: molfile.stringify(item.struct),
-				props: Object.assign({}, omit(['group'], item.props))
-			};
-		});
+		.map(item => ({
+			struct: molfile.stringify(item.struct),
+			props: Object.assign({}, omit(['group'], item.props))
+		}));
 
 	storage.setItem("ketcher-tmpls", userLib);
 }
@@ -163,12 +161,12 @@ function initLib(lib) {
 }
 
 export function initTmplLib(dispatch, baseUrl, cacheEl) {
-	prefetchStatic(baseUrl + 'library.sdf').then(text => {
+	prefetchStatic(baseUrl + 'library.sdf').then((text) => {
 		const tmpls = sdf.parse(text);
 		const prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
 
 		return prefetch.then(cachedFiles => (
-			tmpls.map(tmpl => {
+			tmpls.map((tmpl) => {
 				const pr = prefetchSplit(tmpl);
 				if (pr.file)
 					tmpl.props.prerender = cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
@@ -176,7 +174,7 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 				return tmpl;
 			})
 		));
-	}).then(res => {
+	}).then((res) => {
 		const lib = res.concat(userTmpls());
 		dispatch(initLib(lib));
 		dispatch(appUpdate({ templates: true }));
@@ -188,7 +186,7 @@ function userTmpls() {
 	if (!Array.isArray(userLib) || userLib.length === 0) return [];
 
 	return userLib
-		.map(tmpl => {
+		.map((tmpl) => {
 			try {
 				if (tmpl.props === '') tmpl.props = {};
 				tmpl.props.group = 'User Templates';
@@ -208,7 +206,7 @@ function prefetchStatic(url) {
 	return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
 		if (resp.ok)
 			return resp.text();
-		throw "Could not fetch " + url;
+		throw Error("Could not fetch " + url);
 	});
 }
 
@@ -236,8 +234,8 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
 		prefetchStatic(baseUrl + fn).catch(() => null)
 	)));
 
-	return fetch.then(svgs => {
-		svgs.forEach(svgContent => {
+	return fetch.then((svgs) => {
+		svgs.forEach((svgContent) => {
 			if (svgContent)
 				cacheEl.innerHTML += svgContent;
 		});

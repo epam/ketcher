@@ -22,21 +22,21 @@ import { openDialog } from './';
 import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
 import { serverCall } from './server';
 
-export function initEditor(dispatch, getState) {
+export default function initEditor(dispatch, getState) {
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
-	const sleep = (time) => new Promise(resolve => setTimeout(resolve, time));
+	const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
-	function resetToSelect(dispatch, getState) {
-		const resetToSelect = getState().options.settings.resetToSelect;
+	function resetToSelect(dispatch, getState) { // eslint-disable-line no-shadow
+		const resetOption = getState().options.settings.resetToSelect;
 		const activeTool = getState().actionState.activeTool.tool;
-		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
+		if (resetOption === true || resetOption === activeTool) // example: 'paste'
 			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
 		else
 			updateAction();
 	}
 
 	return {
-		onInit: editor => {
+		onInit: (editor) => {
 			dispatch({ type: 'INIT', editor });
 		},
 		onChange: () => {
@@ -45,7 +45,7 @@ export function initEditor(dispatch, getState) {
 		onSelectionChange: () => {
 			updateAction();
 		},
-		onElementEdit: selem => {
+		onElementEdit: (selem) => {
 			const elem = fromElement(selem);
 			let dlg = null;
 
@@ -53,7 +53,7 @@ export function initEditor(dispatch, getState) {
 				dlg = openDialog(dispatch, 'atomProps', elem);
 			} else if (Object.keys(elem).length === 1 && 'ap' in elem) {
 				dlg = openDialog(dispatch, 'attachmentPoints', elem.ap)
-					.then((res) => ({ ap: res }));
+					.then(res => ({ ap: res }));
 			} else if (elem.type === 'list' || elem.type === 'not-list') {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			} else if (elem.type === 'rlabel') {
@@ -78,14 +78,10 @@ export function initEditor(dispatch, getState) {
 
 			return dlg.then(toElement);
 		},
-		onQuickEdit: atom => {
-			return openDialog(dispatch, 'labelEdit', atom);
-		},
-		onBondEdit: bond => {
-			return openDialog(dispatch, 'bondProps', fromBond(bond))
-				.then(toBond);
-		},
-		onRgroupEdit: rgroup => {
+		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
+		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))
+			.then(toBond),
+		onRgroupEdit: (rgroup) => {
 			const struct = getState().editor.struct();
 
 			if (Object.keys(rgroup).length > 2) {
@@ -111,17 +107,13 @@ export function initEditor(dispatch, getState) {
 
 			return openDialog(dispatch, 'rgroup', params);
 		},
-		onSgroupEdit: sgroup => {
-			return sleep(0)		// huck to open dialog after dispatch sgroup tool action
+		onSgroupEdit: sgroup => sleep(0)		// huck to open dialog after dispatch sgroup tool action
 				.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
-				.then(toSgroup);
-		},
-		onSdataEdit: sgroup => {
-			return sleep(0)
+				.then(toSgroup),
+		onSdataEdit: sgroup => sleep(0)
 				.then(() => openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup)))
-				.then(toSgroup);
-		},
-		onMessage: msg => {
+				.then(toSgroup),
+		onMessage: (msg) => {
 			if (msg.error) {
 				alert(msg.error);
 			} else {
@@ -129,16 +121,16 @@ export function initEditor(dispatch, getState) {
 				console[act](msg[act]);
 			}
 		},
-		onAromatizeStruct: struct => {
+		onAromatizeStruct: (struct) => {
 			const state = getState();
 			const serverOpts = state.options.getServerSettings();
 			return serverCall(state.editor, state.server, 'aromatize', serverOpts, struct);
 		},
-		onDearomatizeStruct: struct => {
+		onDearomatizeStruct: (struct) => {
 			const state = getState();
 			const serverOpts = state.options.getServerSettings();
 			return serverCall(state.editor, state.server, 'dearomatize', serverOpts, struct);
 		},
-		onMouseDown: event => {}
+		onMouseDown: (event) => {}
 	};
 }

@@ -51,20 +51,20 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 
 	switch (sgroup.type) {
 	case 'MUL':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
 		break;
 	case 'SRU':
 		var connectivity = sgroup.data.connectivity || 'eu';
 		if (connectivity == 'ht')
 			connectivity = '';
 		var subscript = sgroup.data.subscript || 'n';
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
 		break;
 	case 'SUP':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
 		break;
 	case 'GEN':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
 		break;
 	case 'DAT':
 		set = drawGroupDat(remol, sgroup);
@@ -156,7 +156,7 @@ function definePP(restruct, sgroup) {
 }
 
 function descriptorIntersects(sgroups, topLeftPoint) {
-	return sgroups.some(sg => {
+	return sgroups.some((sg) => {
 		if (!sg.pp)
 			return false;
 
@@ -195,7 +195,7 @@ function drawAttachedDat(restruct, sgroup) {
 	const paper = render.paper;
 	const set = paper.set();
 
-	Struct.SGroup.getAtoms(restruct, sgroup).forEach(aid => {
+	Struct.SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
 		const atom = restruct.atoms.get(aid);
 		const p = scale.obj2scaled(atom.a.pp, options);
 		const bb = atom.visel.boundingBox;
@@ -287,7 +287,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var bracketHeight = bb.sz().y;
 
 			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else if (xbonds.length === 2) {
 		(function () { // eslint-disable-line max-statements
 			var b1 = mol.bonds.get(xbonds[0]);
@@ -319,7 +319,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var bracketHeight = 1.5 + tt;
 			brackets.push(new BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
 				new BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else {
 		(function () {
 			for (var i = 0; i < xbonds.length; ++i) {
@@ -328,7 +328,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
-		})();
+		}());
 	}
 	return brackets;
 }

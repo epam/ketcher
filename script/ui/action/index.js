@@ -86,7 +86,7 @@ export default {
 		shortcut: "Mod+v",
 		title: "Paste",
 		action: () => {
-			exec('paste') || dontClipMessage('Paste')
+			exec('paste') || dontClipMessage('Paste');
 		},
 		selected: ({ actions }) => (
 			actions && // TMP

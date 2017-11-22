@@ -16,10 +16,9 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import { rgroup as rgroupSchema } from '../structschema';
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function IfThenSelect(props, { schema }) {
@@ -38,20 +37,29 @@ function IfThenSelect(props, { schema }) {
 		}
 	});
 
-	return <Field name={name} schema={desc} {...props}/>;
+	return <Field name={name} schema={desc} {...props} />;
 }
 
 function RgroupLogic (props) {
 	const { formState, label, rgroupLabels, ...prop } = props;
 
 	return (
-		<Dialog title="R-Group Logic" className="rgroup-logic"
-				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form schema={rgroupSchema}
-				  customValid={{range: r => rangeConv(r)}} init={prop} {...formState}>
-				<Field name="range"/>
-				<Field name="resth"/>
-				<IfThenSelect name="ifthen" className="cond" label={label} rgids={rgroupLabels}/>
+		<Dialog
+			title="R-Group Logic"
+			className="rgroup-logic"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
+		>
+			<Form
+				schema={rgroupSchema}
+				  customValid={{ range: r => rangeConv(r) }}
+				init={prop}
+				{...formState}
+			>
+				<Field name="range" />
+				<Field name="resth" />
+				<IfThenSelect name="ifthen" className="cond" label={label} rgids={rgroupLabels} />
 			</Form>
 		</Dialog>
 	);

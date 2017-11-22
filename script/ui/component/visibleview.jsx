@@ -33,12 +33,11 @@ export default class VirtualList extends Component {
 	resize = (ev, reset) => {
 		const height = this.base.offsetHeight;
 
-		if (this.state.height !== height) {
+		if (this.state.height !== height)
 			this.setState({ height });
-		}
 
 		if (reset) {
-			this.setState({offset: 0});
+			this.setState({ offset: 0 });
 			this.base.scrollTop = 0;
 		}
 	};
@@ -48,7 +47,7 @@ export default class VirtualList extends Component {
 		if (this.props.sync) this.forceUpdate();
 	};
 
-	componentDidUpdate({data}) {
+	componentDidUpdate({ data }) {
 		const equal = (data.length === this.props.data.length &&
 					 this.props.data.every((v, i) => v === data[i]));
 
@@ -57,11 +56,11 @@ export default class VirtualList extends Component {
 
 	componentDidMount() {
 		this.resize();
-		addEventListener('resize', this.resize);
+		addEventListener('resize', this.resize); // eslint-disable-line
 	}
 
 	componentWillUnmount() {
-		removeEventListener('resize', this.resize);
+		removeEventListener('resize', this.resize); // eslint-disable-line
 	}
 
 	render() {

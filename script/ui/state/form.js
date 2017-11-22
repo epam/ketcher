@@ -69,7 +69,7 @@ export const formsState = {
 		errors: {},
 		valid: true,
 		result: {
-			label: '',
+			label: ''
 		}
 	},
 	rgroupLogic: {

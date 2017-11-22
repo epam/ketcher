@@ -58,7 +58,12 @@ const createBundleConfig = () => ({
 					"useBuiltIns": true
 				}],
 				"react"],
-			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
+			plugins: [
+				'lodash',
+				'transform-class-properties',
+				'transform-object-rest-spread',
+				['transform-react-jsx', { pragma: 'h' }]
+			]
 		}]
 	]
 });
@@ -197,9 +202,9 @@ gulp.task('check-epam-email', function(cb) {
 	// TODO: should be pre-push and check remote origin
 	try {
 		var email = cp.execSync('git config user.email').toString().trim();
-		if (/@epam.com$/.test(email))
+		if (/@epam.com$/.test(email)) {
 			cb();
-		else {
+		} else {
 			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
 			gutil.log('To check git project\'s settings run `git config --list`');
 			gutil.log('Could not continue. Bye!');
@@ -220,8 +225,9 @@ gulp.task('check-deps-exact', function (cb) {
 		cb(new gutil.PluginError('check-deps-exact',
 		                         'All top level dependencies should be installed' +
 		                         'using `npm install --save-exact` command'));
-	} else
+	} else {
 		cb();
+	}
 });
 
 gulp.task('clean', function () {

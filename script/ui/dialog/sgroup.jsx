@@ -16,7 +16,6 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import { sgroup as sgroupSchema } from '../structschema';
 import { Form, Field, SelectOneOf } from '../component/form';
@@ -31,10 +30,15 @@ function Sgroup({ formState, ...prop }) {
 	const type = result.type;
 
 	return (
-		<Dialog title="S-Group Properties" className="sgroup"
-				result={() => result} valid={() => valid} params={prop}>
+		<Dialog
+			title="S-Group Properties"
+			className="sgroup"
+			result={() => result}
+			valid={() => valid}
+			params={prop}
+		>
 			<Form schema={schemes[type]} init={prop} {...formState}>
-				<SelectOneOf title="Type" name="type" schema={schemes}/>
+				<SelectOneOf title="Type" name="type" schema={schemes} />
 				<fieldset className={type === 'DAT' ? 'data' : 'base'}>
 					{ content(type) }
 				</fieldset>
@@ -52,7 +56,7 @@ const content = type => Object.keys(schemes[type].properties)
 			if (prop === 'fieldValue') props.type = 'textarea';
 			if (prop === 'radiobuttons') props.type = 'radio';
 
-			return <Field name={prop} key={`${type}-${prop}`} {...props}/>;
+			return <Field name={prop} key={`${type}-${prop}`} {...props} />;
 		}
 	);
 

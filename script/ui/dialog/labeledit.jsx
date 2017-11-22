@@ -15,15 +15,13 @@
  ***************************************************************************/
 
 import { capitalize } from 'lodash/fp';
-
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import element from '../../chem/element';
 
 import Dialog from '../component/dialog';
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 
 export const labelEditSchema = {
 	title: "Label Edit",
@@ -63,7 +61,7 @@ function deserialize(value) {
 
 		if (match[4]) {
 			charge = parseInt(match[4]);
-			if (isNaN(charge)) // NaN => [-+]
+			if (isNaN(charge)) // eslint-disable-line
 				charge = 1;
 			if (match[4].endsWith('-'))
 				charge = -charge;
@@ -77,20 +75,29 @@ function deserialize(value) {
 
 function LabelEdit(props) {
 	const init = { label: props.letter || serialize(props) };
-	const { formState, ...prop} = props;
+	const { formState, ...prop } = props;
 	const { result, valid } = formState;
 
 	return (
-		<Dialog title="Label Edit" className="labeledit" valid={() => valid}
-				result={() => deserialize(result.label)} params={prop}>
-			<Form schema={labelEditSchema} customValid={{label: l => deserialize(l)}}
-				  init={init} {...formState}>
-				<Field name="label" maxlength="20" size="10"/>
+		<Dialog
+			title="Label Edit"
+			className="labeledit"
+			valid={() => valid}
+			result={() => deserialize(result.label)}
+			params={prop}
+		>
+			<Form
+				schema={labelEditSchema}
+				customValid={{ label: l => deserialize(l) }}
+				  init={init}
+				{...formState}
+			>
+				<Field name="label" maxlength="20" size="10" />
 			</Form>
 		</Dialog>
 	);
 }
 
 export default connect(
-	(store) => ({ formState: store.modal.form })
+	store => ({ formState: store.modal.form })
 )(LabelEdit);

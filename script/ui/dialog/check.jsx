@@ -16,11 +16,10 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 import { check } from '../state/server';
 
 const checkSchema = {
@@ -50,13 +49,20 @@ function Check(props) {
 	const { result, moleculeErrors } = formState;
 
 	return (
-		<Dialog title="Structure Check" className="check"
-				result={() => result} params={prop}>
+		<Dialog
+			title="Structure Check"
+			className="check"
+			result={() => result}
+			params={prop}
+		>
 			<Form schema={checkSchema} {...formState}>
-				<Tabs className="tabs" captions={tabs}
-					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}>
-					<ErrorsCheck moleculeErrors={moleculeErrors}/>
-					<Field name="checkOptions" multiple={true} type="checkbox"/>
+				<Tabs
+					className="tabs"
+					captions={tabs}
+					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}
+				>
+					<ErrorsCheck moleculeErrors={moleculeErrors} />
+					<Field name="checkOptions" multiple type="checkbox" />
 				</Tabs>
 			</Form>
 		</Dialog>

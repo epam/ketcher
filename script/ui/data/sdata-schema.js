@@ -137,7 +137,7 @@ const sData = {
 					radiobuttons: radioButtonsSchema
 				},
 				required: ["fieldName", "fieldValue", "radiobuttons"]
-			},
+			}
 		]
 	},
 	Multifragment: {
@@ -282,7 +282,7 @@ const sData = {
 								"DD-8",
 								"HB-9",
 								"TPS-9"
-							],
+							]
 						},
 						default: ["RS"]
 					},

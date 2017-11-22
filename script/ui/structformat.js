@@ -86,9 +86,9 @@ export function toString (struct, format, server, serverOpts) {
 
 	return new Promise((resolve, reject) => {
 		var moldata = molfile.stringify(struct);
-		if (format === 'mol' || format === 'rxn')
+		if (format === 'mol' || format === 'rxn') {
 			resolve(moldata);
-		else
+		} else {
 			resolve(server.then(() => (
 				server.convert({
 					struct: moldata,
@@ -98,7 +98,9 @@ export function toString (struct, format, server, serverOpts) {
 				if (format === 'smiles')
 					return smiles.stringify(struct);
 				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then(res => res.struct || res));
+			})
+				.then(res => res.struct || res));
+		}
 	});
 }
 

@@ -62,11 +62,12 @@ function mapOf(schema, prop) {
 
 function selectListOf(schema, prop) {
 	let desc = schema.properties && schema.properties[prop];
-	if (desc)
+	if (desc) {
 		return desc.enum.map((value, i) => {
 			let title = desc.enumNames && desc.enumNames[i];
 			return title ? { title, value } : value;
 		});
+	}
 	return schema.oneOf.map(desc => (
 		!desc.title ? constant(desc, prop) : {
 			title: desc.title,

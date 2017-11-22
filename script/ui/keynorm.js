@@ -29,7 +29,7 @@ function normalizeKeyName(name) {
 		else if (/^a(lt)?$/i.test(mod)) alt = true;
 		else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;
 		else if (/^s(hift)?$/i.test(mod)) shift = true;
-		else if (/^mod$/i.test(mod)) { if (mac) meta = true; else ctrl = true; }
+		else if (/^mod$/i.test(mod)) if (mac) meta = true; else ctrl = true;
 		else throw new Error("Unrecognized modifier name: " + mod);
 	}
 
@@ -83,9 +83,8 @@ function lookup(map, event) {
 	let res = map[modifiers(name, event, !isChar)];
 	let baseName;
 
-	if (event.shiftKey && isChar && (baseName = keyName.base[event.keyCode])) {
+	if (event.shiftKey && isChar && (baseName = keyName.base[event.keyCode]))
 		res = map[modifiers(baseName, event, true)] || res;
-	}
 
 	return res;
 }

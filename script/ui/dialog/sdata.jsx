@@ -19,8 +19,7 @@ import { connect } from 'preact-redux';
 import { Form, Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
-import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../data/sdata-schema'
-/** @jsx h */
+import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../data/sdata-schema';
 
 function SelectInput({ title, name, schema, ...prop }) {
 	const inputSelect = Object.keys(schema).reduce((acc, item) => {
@@ -38,7 +37,7 @@ function SelectInput({ title, name, schema, ...prop }) {
 		}
 	);
 
-	return <Field name={name} schema={inputSelect} component={ComboBox} {...prop} />
+	return <Field name={name} schema={inputSelect} component={ComboBox} {...prop} />;
 }
 
 function SData({ context, fieldName, fieldValue, type, radiobuttons, formState, ...prop }) {
@@ -62,17 +61,22 @@ function SData({ context, fieldName, fieldValue, type, radiobuttons, formState, 
 	};
 
 	return (
-		<Dialog title={"S-Group Properties"} className="sgroup"
-				result={() => result} valid={() => valid} params={prop}>
-            <Form serialize={serialize} schema={formSchema} init={init} {...formState}>
-                <SelectOneOf title="Context" name="context" schema={sdataSchema}/>
-                <fieldset className={"data"}>
-                    <SelectInput title="Field name" name="fieldName" schema={sdataSchema[result.context]}/>
-                    {
+		<Dialog
+			title="S-Group Properties"
+			className="sgroup"
+			result={() => result}
+			valid={() => valid}
+			params={prop}
+		>
+			<Form serialize={serialize} schema={formSchema} init={init} {...formState}>
+				<SelectOneOf title="Context" name="context" schema={sdataSchema} />
+				<fieldset className="data">
+					<SelectInput title="Field name" name="fieldName" schema={sdataSchema[result.context]} />
+					{
                         content(formSchema, result.context, result.fieldName)
                     }
-                </fieldset>
-            </Form>
+				</fieldset>
+			</Form>
 		</Dialog>
 	);
 }
@@ -80,8 +84,8 @@ function SData({ context, fieldName, fieldValue, type, radiobuttons, formState, 
 const content = (schema, context, fieldName) => Object.keys(schema.properties)
 	.filter(prop => prop !== "type" && prop !== "context" && prop !== "fieldName")
 	.map(prop => prop === "radiobuttons" ?
-		<Field name={prop} type="radio" key={`${context}-${fieldName}-${prop}-radio`}/> :
-		<Field name={prop} type="textarea" multiple={true} size="10" key={`${context}-${fieldName}-${prop}-select`}/>
+		<Field name={prop} type="radio" key={`${context}-${fieldName}-${prop}-radio`} /> :
+		<Field name={prop} type="textarea" multiple size="10" key={`${context}-${fieldName}-${prop}-select`} />
 	);
 
 export default connect(

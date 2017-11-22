@@ -5,17 +5,11 @@
   },
   "extends": "airbnb",
   "settings": {
-    "react": {
-      "pragma": "h"
-    }
+    "react": { "pragma": "h" }
   },
   "globals": {
     "fetch": true,
-    "window": true, // TODO DISABLE !!!
-    "navigator": true, // TODO DISABLE !!!
     "document": true,
-    "alert": true, // TODO DISABLE !!!
-    "addEventListener": true // TODO DISABLE !!
   },
   "rules": {
     "comma-dangle": ["error", "never"],
@@ -54,7 +48,6 @@
 
     /* remove below */
 
-    "no-restricted-globals": "off", // TODO !!!!!!!!!! <>
     "no-extend-native": "off", // TODO !!!!!!!!!!!!!!!!!!! SET
     "prefer-spread": "off", // TODO !!!
     "no-return-assign": "off", // TODO !!

@@ -16,17 +16,19 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 
 function About(props) {
 	return (
-		<Dialog title="About"
-				className="about" params={props}
-				buttons={["Close"]}>
+		<Dialog
+			title="About"
+			className="about"
+			params={props}
+			buttons={["Close"]}
+		>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-				<img src="images/ketcher-logo.svg"/>
+				<img alt="Ketcher" src="images/ketcher-logo.svg" />
 			</a>
 			<dl>
 				<dt>
@@ -48,7 +50,8 @@ function About(props) {
 						<div>
 							<dt>
 								<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo
-									Toolkit</a>
+									Toolkit
+								</a>
 							</dt>
 							<dd>version <var>{props.indigoVersion}</var></dd>
 						</div>

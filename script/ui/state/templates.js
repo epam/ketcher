@@ -26,21 +26,21 @@ export function selectTmpl(tmpl) {
 	return {
 		type: 'TMPL_SELECT',
 		data: { selected: tmpl }
-	}
+	};
 }
 
 export function changeGroup(group) {
 	return {
 		type: 'TMPL_CHANGE_GROUP',
 		data: { group: group, selected: null }
-	}
+	};
 }
 
 export function changeFilter(filter) {
 	return {
 		type: 'TMPL_CHANGE_FILTER',
 		data: { filter: filter.trim(), selected: null } // TODO: change this
-	}
+	};
 }
 
 /* TEMPLATE-ATTACH-EDIT */
@@ -86,7 +86,7 @@ export function editTmpl(tmpl) {
 				openDialog(dispatch, 'templates');
 			}
 		);
-	}
+	};
 }
 
 /* SAVE */
@@ -104,7 +104,7 @@ export function saveUserTmpl(structStr) {
 				updateLocalStore(lib);
 			}
 		);
-	}
+	};
 }
 
 function updateLocalStore(lib) {
@@ -143,9 +143,8 @@ const attachActions = [
 ];
 
 export function templatesReducer(state = initTmplState, action) {
-	if (tmplActions.includes(action.type)) {
+	if (tmplActions.includes(action.type))
 		return Object.assign({}, state, action.data);
-	}
 
 	if (attachActions.includes(action.type)) {
 		const attach = Object.assign({}, state.attach, action.data);
@@ -160,7 +159,7 @@ function initLib(lib) {
 	return {
 		type: 'TMPL_INIT',
 		data: { lib: lib }
-	}
+	};
 }
 
 export function initTmplLib(dispatch, baseUrl, cacheEl) {

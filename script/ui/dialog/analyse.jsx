@@ -15,10 +15,8 @@
  ***************************************************************************/
 
 import { range } from 'lodash/fp';
-
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import keyName from 'w3c-keyname';
 import Dialog from '../component/dialog';
@@ -27,10 +25,14 @@ import Input from '../component/input';
 import { changeRound } from '../state/options';
 import { analyse } from '../state/server';
 
-function FrozenInput({value}) {
+function FrozenInput({ value }) {
 	return (
-		<input type="text" spellCheck={false} value={value}
-			   onKeyDown={ev => allowMovement(ev)}/>
+		<input
+			type="text"
+			spellCheck={false}
+			value={value}
+			   onKeyDown={ev => allowMovement(ev)}
+		/>
 	);
 }
 
@@ -39,20 +41,23 @@ const errorRegexp = /error:.*/g;
 
 function formulaInputMarkdown(value) {
 	return (
-		<div className="chem-input" spellCheck={false} contentEditable={true}
-			 onKeyDown={ev => allowMovement(ev)}>{value}</div>
+		<div
+			className="chem-input"
+			spellCheck={false}
+			contentEditable
+			 onKeyDown={ev => allowMovement(ev)}
+		>{value}
+		</div>
 	);
 }
 
-function FormulaInput({value}) {
-	if (errorRegexp.test(value)) {
+function FormulaInput({ value }) {
+	if (errorRegexp.test(value))
 		return formulaInputMarkdown(value);
-	}
 
 	const content = [];
-
-	var cnd;
-	var pos = 0;
+	let cnd;
+	let pos = 0;
 
 	while (cnd = formulaRegexp.exec(value)) {
 		content.push(value.substring(pos, cnd.index) + cnd[1]);
@@ -75,8 +80,12 @@ class Analyse extends Component {
 	render() {
 		const { values, round, onAnalyse, onChangeRound, ...props } = this.props;
 		return (
-			<Dialog title="Calculated Values" className="analyse"
-					buttons={["Close"]} params={props}>
+			<Dialog
+				title="Calculated Values"
+				className="analyse"
+				buttons={["Close"]}
+				params={props}
+			>
 				<ul>{[
 					{ name: 'Chemical Formula', key: 'gross' },
 					{ name: 'Molecular Weight', key: 'molecular-weight', round: 'roundWeight' },
@@ -85,20 +94,25 @@ class Analyse extends Component {
 				].map(item => (
 					<li>
 						<label>{item.name}:</label>
-						{item.key === 'gross'
-							? <FormulaInput value={values ? values[item.key] : 0}/>
-							: <FrozenInput value={values ? roundOff(values[item.key], round[item.round]) : 0}/>
+						{ item.key === 'gross'
+							? <FormulaInput value={values ? values[item.key] : 0} />
+							: <FrozenInput value={values ? roundOff(values[item.key], round[item.round]) : 0} />
 						}
-						{item.round
-							? <Input schema={{
+						{ item.round
+							? <Input
+								schema={{
 								enum: range(0, 8),
 								enumNames: range(0, 8).map(i => `${i} decimal places`)
-							}} value={round[item.round]} onChange={val => onChangeRound(item.round, val)}/>
+							}}
+								value={round[item.round]}
+								onChange={val => onChangeRound(item.round, val)}
+							/>
 							: null
 						}
 					</li>
 				))
-				}</ul>
+				}
+				</ul>
 			</Dialog>
 		);
 	}

@@ -42,8 +42,8 @@ export const optionsState = {
 export function appUpdate(data) {
 	return dispatch => {
 		dispatch({ type: 'APP_OPTIONS', data });
-		dispatch({ type: 'UPDATE' })
-	}
+		dispatch({ type: 'UPDATE' });
+	};
 }
 
 /* SETTINGS */
@@ -98,17 +98,16 @@ export function optionsReducer(state = {}, action) {
 	let { type, data } = action;
 
 	if (type === 'APP_OPTIONS')
-		return {...state, app: { ...state.app, ...data }};
+		return { ...state, app: { ...state.app, ...data } };
 
 	if (type === 'SAVE_SETTINGS')
-		return {...state, settings: data};
+		return { ...state, settings: data };
 
 	if (type === 'CHANGE_ANALYSE')
-		return {...state, analyse: { ...state.analyse, ...data }};
+		return { ...state, analyse: { ...state.analyse, ...data } };
 
-	if (recognizeActions.includes(type)) {
-		return {...state, recognize: { ...state.recognize, ...data }}
-	}
+	if (recognizeActions.includes(type))
+		return { ...state, recognize: { ...state.recognize, ...data } };
 
 	return state;
 }

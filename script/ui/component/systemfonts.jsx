@@ -17,7 +17,6 @@
 import { h, Component } from 'preact';
 import FontFaceObserver from "font-face-observer";
 import Input from './input';
-/** @jsx h */
 
 const commonFonts = [
 	"Arial",
@@ -63,7 +62,7 @@ class SystemFonts extends Component {
 	}
 
 	render() {
-		const {...props} = this.props;
+		const { ...props } = this.props;
 
 		const desc = {
 			enum: [],

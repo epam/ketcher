@@ -33,8 +33,8 @@ export function initResize() {
 			dispatch({ type: 'CLEAR_VISIBLE' });
 		});
 
-		addEventListener('resize', onResize);
-	}
+		addEventListener('resize', onResize); // eslint-disable-line
+	};
 }
 
 export default function (state=initial, action) {

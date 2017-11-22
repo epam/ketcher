@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-/** @jsx h */
+
 import classNames from 'classnames';
 
 import action from '../action';
@@ -35,34 +35,44 @@ export function shortcutStr(shortcut) {
 	});
 }
 
-function ActionButton({action, status={}, onAction, ...props}) {
+function ActionButton({ action, status={}, onAction, ...props }) {
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
-		<button disabled={status.disabled}
-				onClick={(ev) => {
+		<button
+			disabled={status.disabled}
+			onClick={(ev) => {
 					if (!status.selected || action.action.tool === 'chiralFlag') {
 						onAction(action.action);
 						ev.stopPropagation();
 					}
-				} }
-				title={shortcut ? `${action.title} (${shortcut})` :	action.title}>
+				}}
+			title={shortcut ? `${action.title} (${shortcut})` :	action.title}
+		>
 			{action.title}
 		</button>
-	)
+	);
 }
 
-function ActionMenu({name, menu, className, role, ...props}) {
+function ActionMenu({ name, menu, className, role, ...props }) {
 	return (
-		<menu className={className} role={role}
-			  style={toolMargin(name, menu, props.visibleTools)}>
-		{
+		<menu
+			className={className}
+			role={role}
+			  style={toolMargin(name, menu, props.visibleTools)}
+		>
+			{
 		  menu.map(item => (
-			  <li id={item.id || item}
+			  <li
+				id={item.id || item}
 				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
-				  onClick={(ev) => openHandle(ev, props.onOpen) }>
-				{ typeof item !== 'object' ?
-					( <ActionButton {...props} action={action[item]}
-									status={props.status[item]} /> ) :
+				  onClick={(ev) => openHandle(ev, props.onOpen)}
+			  >
+				{ typeof item !== 'object' ?  // eslint-disable-line
+					( <ActionButton
+						{...props}
+						action={action[item]}
+						status={props.status[item]}
+					/> ) :
 						item.menu ?
 				  ( <ActionMenu {...props} name={item.id} menu={item.menu} /> ) :
 							item.component(props)

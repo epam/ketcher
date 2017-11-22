@@ -15,17 +15,12 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 const ieCb = window.clipboardData;
 
 class ClipArea extends Component {
-	shouldComponentUpdate() {
-		return false;
-	}
-
 	componentDidMount() {
-		const el = this.refs ? this.refs.base : this.base;
+		const el = this.base;
 		this.target = this.props.target || el.parentNode;
 
 		this.listeners = {
@@ -68,6 +63,10 @@ class ClipArea extends Component {
 		});
 	}
 
+	shouldComponentUpdate() {
+		return false;
+	}
+
 	componentWillUnmount() {
 		Object.keys(this.listeners).forEach(en => {
 			this.target.removeEventListener(en, this.listeners[en]);
@@ -76,8 +75,11 @@ class ClipArea extends Component {
 
 	render() {
 		return (
-			<textarea className="cliparea" contentEditable={true}
-					  autoFocus={true}/> // eslint-disable-line jsx-a11y/no-autofocus
+			<textarea
+				className="cliparea"
+				contentEditable
+				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+			/>
 		);
 	}
 }
@@ -128,12 +130,12 @@ export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
-	if (enabled) try {
+	if (enabled) { try {
 		enabled = document.execCommand(action) || ieCb;
 	} catch (ex) {
 		// FF < 41
 		enabled = false;
-	}
+	} }
 	return enabled;
 }
 

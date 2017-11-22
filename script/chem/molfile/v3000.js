@@ -453,7 +453,7 @@ function parseBracedNumberList(line, shift) {
 
 	for (var i = 1; i < split.length; ++i) {
 		var value = parseInt(split[i]);
-		if (!isNaN(value))
+		if (!isNaN(value)) // eslint-disable-line
 			list.push(value + shift);
 	}
 

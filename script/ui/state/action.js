@@ -22,10 +22,11 @@ function execute(activeTool, { action, editor, server, options }) {
 		if (editor.tool(action.tool, action.opts))
 			return action;
 	}
-	else if (typeof action === 'function')
+	else if (typeof action === 'function') {
 		action(editor, server, options);
-	else
+	} else {
 		console.info('no action');
+	}
 	return activeTool;
 }
 

@@ -16,9 +16,8 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 import { automap } from '../state/server';
 
@@ -37,12 +36,17 @@ export const automapSchema = {
 };
 
 function Automap (props) {
-	let { formState, ...prop} = props;
+	let { formState, ...prop } = props;
 	return (
-		<Dialog title="Reaction Auto-Mapping" className="automap"
-				result={() => formState.result} valid={() => formState.valid} params={prop}>
+		<Dialog
+			title="Reaction Auto-Mapping"
+			className="automap"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
+		>
 			<Form schema={automapSchema} {...formState}>
-				<Field name="mode"/>
+				<Field name="mode" />
 			</Form>
 		</Dialog>
 	);

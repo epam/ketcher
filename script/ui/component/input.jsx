@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 function GenericInput({ value, onChange, type = "text", ...props }) {
 	return (
@@ -29,12 +28,12 @@ GenericInput.val = function (ev, schema) {
 		(schema && (schema.type === 'number' || schema.type === 'integer'));
 	const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
+	return (isNumber && !isNaN(value - 0)) ? value - 0 : value; // eslint-disable-line
 };
 
 function TextArea({ value, onChange, ...props }) {
 	return (
-		<textarea value={value} onInput={onChange} {...props}/>
+		<textarea value={value} onInput={onChange} {...props} />
 	);
 }
 
@@ -56,8 +55,10 @@ function Select({ schema, value, selected, onSelect, ...props }) {
 		<select onChange={onSelect} {...props}>
 			{
 				enumSchema(schema, (title, val) => (
-					<option selected={selected(val, value)}
-							value={typeof val !== 'object' && val}>
+					<option
+						selected={selected(val, value)}
+						value={typeof val !== 'object' && val}
+					>
 						{title}
 					</option>
 				))
@@ -83,9 +84,12 @@ function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props 
 			{
 				enumSchema(schema, (title, val) => (
 					<label>
-						<input type={type} checked={selected(val, value)}
-							   value={typeof val !== 'object' && val}
-							   {...props}/>
+						<input
+							type={type}
+							checked={selected(val, value)}
+							value={typeof val !== 'object' && val}
+							{...props}
+						/>
 						{title}
 					</label>
 				))
@@ -177,8 +181,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 				if (i < 0)
 					onChange(values ? [ev, ...values] : [ev]);
 				else
-					onChange([...values.slice(0, i),
-						...values.slice(i + 1)]);
+					onChange([...values.slice(0, i), ...values.slice(i + 1)]);
 			}
 		}
 	};
@@ -209,7 +212,7 @@ function componentMap({ schema, type, multiple }) {
 
 function shallowCompare(a, b) {
 	for (let i in a) if (!(i in b)) return true;
-	for (let i in b) if (a[i] !== b[i]) { return true; }
+	for (let i in b) if (a[i] !== b[i])  return true;
 	return false;
 }
 

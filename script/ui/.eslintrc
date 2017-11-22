@@ -1,73 +1,23 @@
 { // TODO: move rules to parent config after correct ui/
   "rules": {
-    "react/jsx-first-prop-new-line": ["off", "multiline"], // TODO !!
-    "react/jsx-indent": ["off", "tab"], // TODO !!
-    "react/jsx-indent-props": ["off", "tab"], // TODO !!
-    "react/jsx-no-bind": ["off", { // TODO !!!!
+    "react/jsx-first-prop-new-line": ["error", "multiline"],
+    "react/jsx-indent": ["error", "tab"],
+    "react/jsx-indent-props": ["error", "tab"],
+    "react/jsx-no-bind": ["error", {
       "allowArrowFunctions": true,
       "allowBind": false,
       "ignoreRefs": true
     }],
+    "react/jsx-no-target-blank": "off", // todo: correct About
     "react/no-did-update-set-state": "error",
-    "react/react-in-jsx-scope": "error",
     "react/prop-types": "off",
+    "react/react-in-jsx-scope": "error",
+    "react/sort-comp": "off",
 
     "jsx-a11y/no-static-element-interactions": "off",
     "jsx-a11y/label-has-for": "off",
     "jsx-a11y/iframe-has-title": "off",
-
-    /* remove below */
-
-
-    "react/jsx-no-target-blank": "off", // TODO !!
-    "react/jsx-closing-tag-location": "off", // TODO !!
-    "react/jsx-closing-bracket-location": "off", // TODO !!
-    "react/jsx-max-props-per-line": "off", // TODO !!
-    "react/jsx-tag-spacing": "off", // TODO !!
-    "react/jsx-curly-spacing": "off", // TODO !!
-    "react/jsx-boolean-value": "off", // TODO !!
-    "react/jsx-curly-brace-presence": "off", // TODO !!
-    "no-nested-ternary": "off", // TODO !!
-    "react/no-unknown-property": "off", // TODO !!!
-    "react/self-closing-comp": "off", // TODO !!
-    "react/no-string-refs": "off", // TODO !!!!!
-
-    "react/prefer-stateless-function": "off", // TODO !!
-    "react/sort-comp": "off", // TODO ???
-    "react/no-multi-comp": "off",
-
-    "react/style-prop-object": "off", // TODO !!
-
-    "jsx-a11y/alt-text": "off", // TODO !!
-
-    "jsx-a11y/anchor-is-valid": "off", // TODO ???
-    "jsx-a11y/click-events-have-key-events": "off", // TODO ?!!
-    "jsx-a11y/no-noninteractive-element-interactions": "off", // TODO ???
-
-    "jsx-quotes": "off", // TODO !!
-    "no-var": "off", // todo !!!!!!!!!!!!!!!!!!!
-    "vars-on-top": "off", // ToDO !!!!!!!!!!!!!!!!!!!!!!!!
-
-    "semi": "off", // TODO !!!!
-    "no-extra-semi": "off", // TODO !!
-    "no-shadow": "off", // TODO !!!
-    "arrow-parens": "off", // TODO !!!
-    "prefer-destructuring": "off", // TODO !!
-
-    "operator-linebreak": "off", // TODO !!!
-
-    "curly": "off", // TODO !!!
-    "comma-dangle": "off", // TODO !!
-
-    "object-curly-spacing": "off", // TODO !!
-    "array-bracket-spacing": "off", // TODO !!
-
-    "no-else-return": "off", // TODO !!
-    "consistent-return": "off", // TODO ??
-
-    "no-trailing-spaces": "off", // TODO !!!!
-    "no-return-assign": "off", // TODO !!
-
-    "no-class-assign": "off" // TODO !!!
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off"
   }
 }

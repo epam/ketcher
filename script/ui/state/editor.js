@@ -79,7 +79,7 @@ export function initEditor(dispatch, getState) {
 			return dlg.then(toElement);
 		},
 		onQuickEdit: atom => {
-			return openDialog(dispatch, 'labelEdit', atom)
+			return openDialog(dispatch, 'labelEdit', atom);
 		},
 		onBondEdit: bond => {
 			return openDialog(dispatch, 'bondProps', fromBond(bond))
@@ -122,9 +122,9 @@ export function initEditor(dispatch, getState) {
 				.then(toSgroup);
 		},
 		onMessage: msg => {
-			if (msg.error)
+			if (msg.error) {
 				alert(msg.error);
-			else {
+			} else {
 				let act = Object.keys(msg)[0];
 				console[act](msg[act]);
 			}

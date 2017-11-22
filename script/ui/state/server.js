@@ -33,7 +33,7 @@ export function checkServer() {
 			})),
 			(err) => alert(err)
 		);
-	}
+	};
 }
 
 export function recognize(file) {
@@ -59,7 +59,7 @@ export function check(optsTypes) {
 		serverCall(editor, server, 'check', options)
 			.then(res => dispatch(checkErrors(res)))
 			.catch(console.error);
-	}
+	};
 }
 
 export function automap(res) {
@@ -81,7 +81,7 @@ export function analyse() {
 				data: { values }
 			});
 		});
-	}
+	};
 }
 
 export function serverTransform(method, data, struct) {

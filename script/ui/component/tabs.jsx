@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {h, Component} from 'preact';
-/** @jsx h */
+import { h, Component } from 'preact';
 
 class Tabs extends Component {
 	constructor(props) {
@@ -31,13 +30,15 @@ class Tabs extends Component {
 	}
 
 	render() {
-		const {children, captions, ...props} = this.props;
+		const { children, captions, ...props } = this.props;
 		return (
 			<ul {...props}>
 				<li className="tabs">
 					{ captions.map((caption, index) => (
-						<a className={this.state.tabIndex === index ? 'active' : ''}
-							 onClick={ ev => this.changeTab(ev, index)}>
+						<a // eslint-disable-line
+							className={this.state.tabIndex === index ? 'active' : ''}
+							onClick={ev => this.changeTab(ev, index)}
+						>
 							{caption}
 						</a>
 					)) }

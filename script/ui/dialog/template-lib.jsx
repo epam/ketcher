@@ -19,7 +19,6 @@ import { createSelector } from 'reselect';
 
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import sdf from '../../chem/sdf';
 
@@ -72,7 +71,7 @@ function filterLib(lib, filter) {
 			!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
 			return res;
 		}, {})
-	)(lib)
+	)(lib);
 }
 
 const libRowsSelector = createSelector(
@@ -84,13 +83,13 @@ const libRowsSelector = createSelector(
 
 function libRows(lib, group, COLS) {
 	console.warn("Group", group);
-	return partition(COLS, lib[group])
+	return partition(COLS, lib[group]);
 }
 
 function RenderTmpl({ tmpl, ...props }) {
 	return tmpl.props && tmpl.props.prerender ?
-		( <svg {...props}><use xlinkHref={tmpl.props.prerender}/></svg> ) :
-		( <StructRender struct={tmpl.struct} options={{ autoScaleMargin: 15 }} {...props}/> );
+		( <svg {...props}><use xlinkHref={tmpl.props.prerender} /></svg> ) :
+		( <StructRender struct={tmpl.struct} options={{ autoScaleMargin: 15 }} {...props} /> );
 }
 
 class TemplateLib extends Component {
@@ -114,14 +113,17 @@ class TemplateLib extends Component {
 	renderRow(row, index, COLS) {
 		return (
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
-				<div className={tmpl === this.props.selected ? 'td selected' : 'td'}
-					 title={greekify(tmplName(tmpl, index * COLS + i))}>
-					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)}/>
+				<div
+					className={tmpl === this.props.selected ? 'td selected' : 'td'}
+					 title={greekify(tmplName(tmpl, index * COLS + i))}
+				>
+					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)} />
 					<button className="attach-button" onClick={() => this.props.onAttach(tmpl)}>
 						Edit
 					</button>
 				</div>
-			))}</div>
+			))}
+			</div>
 		);
 	}
 
@@ -132,29 +134,45 @@ class TemplateLib extends Component {
 		group = lib[group] ? group : Object.keys(lib)[0];
 
 		return (
-			<Dialog title="Template Library"
-					className="template-lib" params={props}
-					result={() => this.result()}
-					buttons={[
-						<SaveButton className="save"
-									data={ sdf.stringify(this.props.lib) }
-									filename={'ketcher-tmpls.sdf'}>
-							Save To SDF…
-						</SaveButton>,
-						"OK", "Cancel"]}>
+			<Dialog
+				title="Template Library"
+				className="template-lib"
+				params={props}
+				result={() => this.result()}
+				buttons={[
+					<SaveButton
+						className="save"
+						data={sdf.stringify(this.props.lib)}
+						filename="ketcher-tmpls.sdf"
+					>
+						Save To SDF…
+					</SaveButton>,
+						"OK", "Cancel"]}
+			>
 				<label>
-					<Input type="search" placeholder="Filter"
-						   value={ filter } onChange={value => onFilter(value)}/>
+					<Input
+						type="search"
+						placeholder="Filter"
+						value={filter}
+						onChange={value => onFilter(value)}
+					/>
 				</label>
-				<Input className="groups" component={SelectList}
-					   splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
-					   value={ group } onChange={g => onChangeGroup(g)}
-					   schema={{
-						   enum: Object.keys(lib),
-						   enumNames: Object.keys(lib).map(g => greekify(g))
-					   }}/>
-				<VisibleView data={libRowsSelector({ lib, group, COLS })}
-							 rowHeight={120} className="table">
+				<Input
+					className="groups"
+					component={SelectList}
+					splitIndexes={[Object.keys(lib).indexOf('User Templates')]}
+					value={group}
+					onChange={g => onChangeGroup(g)}
+					schema={{
+						enum: Object.keys(lib),
+						enumNames: Object.keys(lib).map(g => greekify(g))
+					}}
+				/>
+				<VisibleView
+					data={libRowsSelector({ lib, group, COLS })}
+					rowHeight={120}
+					className="table"
+				>
 					{ (row, i) => this.renderRow(row, i, COLS) }
 				</VisibleView>
 			</Dialog>

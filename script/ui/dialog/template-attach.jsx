@@ -16,7 +16,6 @@
 
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 import Input from '../component/input';
@@ -56,17 +55,24 @@ class Attach extends Component {
 		const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) });
 
 		return (
-			<Dialog title="Template Edit" className="attach"
-					result={this.onResult} params={prop}>
+			<Dialog
+				title="Template Edit"
+				className="attach"
+				result={this.onResult}
+				params={prop}
+			>
 				<label>Template name:
-					<Input value={name} onChange={onNameEdit}/>
+					<Input value={name} onChange={onNameEdit} />
 				</label>
 				<label>Choose attachment atom and bond:</label>
-				<StructEditor className="editor"
-							  struct={struct}
-							  onAttachEdit={onAttachEdit}
-							  tool="attach" toolOpts={{ atomid, bondid }}
-							  options={options}/>
+				<StructEditor
+					className="editor"
+					struct={struct}
+					onAttachEdit={onAttachEdit}
+					tool="attach"
+					toolOpts={{ atomid, bondid }}
+					options={options}
+				/>
 				{!storage.isAvailable() ? <div className="warning">{storage.warningMessage}</div> : null}
 			</Dialog>
 		);

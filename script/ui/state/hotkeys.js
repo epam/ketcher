@@ -28,7 +28,7 @@ export function initKeydownListener(element) {
 	return function (dispatch, getState) {
 		const hotKeys = initHotKeys();
 		element.addEventListener('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
-	}
+	};
 }
 
 /* HotKeys */
@@ -44,7 +44,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 	const atomsSelected = editor.selection() && editor.selection().atoms;
 
 	let group = null;
- 
+
 	if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
 		console.assert(atomsSelected.length > 0);
 		openDialog(dispatch, 'labelEdit', { letter: key }).then(res => {
@@ -63,8 +63,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 			let newAction = actions[actName].action;
 			dispatch(onAction(newAction));
 			event.preventDefault();
-		} else if (window.clipboardData) // IE support
+		} else if (window.clipboardData) { // IE support
 			clipArea.exec(event);
+		}
 	}
 }
 

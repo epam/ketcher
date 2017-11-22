@@ -106,14 +106,13 @@ function queryOptions(options, sep='&') {
 					 encodeURIComponent(value));
 			return res;
 		}, []).join(sep);
-	} else {
-		return null;
 	}
+	return null;
 }
 
 function miewLoad(wnd, url, options={}) { // TODO: timeout
 	return new Promise(function (resolve, reject) {
-		addEventListener('message', function onload(event) {
+		addEventListener('message', function onload(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data === 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
 				let miew = wnd.MIEWS[0];
@@ -135,7 +134,7 @@ function miewLoad(wnd, url, options={}) { // TODO: timeout
 function miewSave(miew, url) {
 	miew.saveData();
 	return new Promise(function (resolve, reject) {
-		addEventListener('message', function onsave(event) {
+		addEventListener('message', function onsave(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data.startsWith('CML:')) {
 				window.removeEventListener('message', onsave);
 				resolve(atob(event.data.slice(4)));
@@ -196,25 +195,34 @@ class Miew extends Component {
 		}
 	}
 	render(props) {
-		let {miew, structStr} = this.state;
+		let { miew, structStr } = this.state;
 		return (
-			<Dialog title="3D View"
-					className="miew" params={props}
-					buttons={[
+			<Dialog
+				title="3D View"
+				className="miew"
+				params={props}
+				buttons={[
 						"Close",
-						<button disabled={miew instanceof Promise || structStr instanceof Promise}
-								onClick={ ev => this.save(ev) }>
-						  Apply
-						</button>,
-						<button className="window"
-								disabled={/MSIE|rv:11/i.test(navigator.userAgent)}
-								onClick={ ev => this.window() }>
-							Detach to new window
-						</button>
-					]}>
-				<iframe id="miew-iframe"
-						src={MIEW_PATH}
-						onLoad={ev => this.load(ev) }></iframe>
+					<button
+						disabled={miew instanceof Promise || structStr instanceof Promise}
+						onClick={ev => this.save(ev)}
+					>
+						Apply
+					</button>,
+					<button
+						className="window"
+						disabled={/MSIE|rv:11/i.test(navigator.userAgent)}
+						onClick={ev => this.window()}
+					>
+						Detach to new window
+					</button>
+					]}
+			>
+				<iframe
+					id="miew-iframe"
+					src={MIEW_PATH}
+					onLoad={ev => this.load(ev)}
+				/>
 			</Dialog>
 		);
 	}

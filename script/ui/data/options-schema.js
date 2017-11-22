@@ -29,7 +29,7 @@ const editor = {
 		minimum: 1,
 		maximum: 90,
 		default: 15
-	},
+	}
 };
 
 const miew = {
@@ -50,7 +50,7 @@ const miew = {
 		enum: ['no', 'bright', 'inverse', 'black and white', 'black'],
 		enumNames: ['No', 'Bright', 'Inverse', 'Black and White', 'Black'],
 		default: 'bright'
-	},
+	}
 };
 
 const render = {
@@ -107,7 +107,7 @@ const render = {
 	showHydrogenLabels: {
 		title: "Show hydrogen labels",
 		enum: ['off', 'Hetero', 'Terminal', 'Terminal and Hetero', 'on'],
-		default: 'on',
+		default: 'on'
 	},
 	// Bonds
 	aromaticCircle: {

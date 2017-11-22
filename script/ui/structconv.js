@@ -20,12 +20,13 @@ import Struct from '../chem/struct';
 import element from '../chem/element';
 
 export function fromElement(selem) {
-	if (selem.label === 'R#')
+	if (selem.label === 'R#') {
 		return {
 			type: 'rlabel',
 			values: fromRlabel(selem.rglabel),
 			...selem
 		};
+	}
 	if (selem.label === 'L#')
 		return fromAtomList(selem);
 
@@ -39,12 +40,12 @@ export function fromElement(selem) {
 }
 
 export function toElement(elem) {
-	if (elem.type === 'rlabel')
+	if (elem.type === 'rlabel') {
 		return {
 			label: elem.values.length ? 'R#' : 'C',
 			rglabel: toRlabel(elem.values)
 		};
-
+	}
 	if (elem.type === 'list' || elem.type === 'not-list')
 		return toAtomList(elem);
 
@@ -221,7 +222,7 @@ const bondCaptionMap = {
 	}
 };
 
-import { sdataSchema } from './data/sdata-schema'
+import { sdataSchema } from './data/sdata-schema';
 
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
@@ -231,9 +232,8 @@ export function fromSgroup(ssgroup) {
 		ssgroup.attrs.radiobuttons = 'Relative';
 	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
 
-	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items) {
+	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items)
 		ssgroup.attrs.fieldValue = fieldValue.split('\n');
-	}
 
 	return Object.assign({ type: type }, ssgroup.attrs);
 }

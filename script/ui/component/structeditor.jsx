@@ -16,9 +16,8 @@
 
 import { upperFirst } from 'lodash/fp';
 import { h, Component } from 'preact';
-/** @jsx h */
 
-import Editor from '../../editor'
+import Editor from '../../editor';
 
 function setupEditor(editor, props, oldProps = {}) {
 	const { struct, tool, toolOpts, options } = props;

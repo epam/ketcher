@@ -32,7 +32,7 @@ Map.prototype.each = function (func, context) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
 
-		if (!isNaN(vInt))
+		if (!isNaN(vInt)) // eslint-disable-line
 			v = vInt;
 		func.call(context, v, value);
 	}
@@ -55,7 +55,7 @@ Map.prototype.find = function (func, context) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
 
-		if (!isNaN(vInt))
+		if (!isNaN(vInt)) // eslint-disable-line
 			v = vInt;
 		if (func.call(context, v, value))
 			return v;
@@ -71,7 +71,7 @@ Map.prototype.findAll = function (func, context) {
 	for (v in this._obj) {
 		vInt = parseInt(v, 10);
 		value = this._obj[v];
-		if (!isNaN(vInt))
+		if (!isNaN(vInt)) // eslint-disable-line
 			v = vInt;
 		if (func.call(context, v, value))
 			vv.push(v);

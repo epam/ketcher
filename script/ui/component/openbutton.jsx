@@ -15,14 +15,13 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 class OpenButton extends Component {
 	constructor(props) {
 		super(props);
 		if (props.server) {
 			fileOpener(props.server).then(opener => {
-				this.setState({opener});
+				this.setState({ opener });
 			});
 		}
 	}
@@ -32,9 +31,9 @@ class OpenButton extends Component {
 		const noop = () => null;
 		const { onLoad = noop, onError = noop } = this.props;
 
-		if (this.state.opener && files.length) {
+		if (this.state.opener && files.length)
 			this.state.opener(files[0]).then(onLoad, onError);
-		} else if (files.length)
+		else if (files.length)
 			onLoad(files[0]);
 		ev.target.value = null;
 		ev.preventDefault();
@@ -44,10 +43,14 @@ class OpenButton extends Component {
 		const { children, type, ...props } = this.props;
 
 		return (
-			<div { ...props }>
-				<input id="input-file" onChange={ ev => this.open(ev) }
-					   accept={ type } type="file"/>
-				<label for="input-file">
+			<div {...props}>
+				<input
+					id="input-file"
+					onChange={ev => this.open(ev)}
+					   accept={type}
+					type="file"
+				/>
+				<label htmlFor="input-file">
 					{ children }
 				</label>
 			</div>
@@ -59,7 +62,7 @@ function fileOpener (server) {
 	return new Promise((resolve, reject) => {
 		// TODO: refactor return
 		if (global.FileReader)
-			resolve(throughFileReader);
+			{ resolve(throughFileReader); }
 
 		else if (global.ActiveXObject) {
 			try {
@@ -73,9 +76,9 @@ function fileOpener (server) {
 				throw "Server doesn't still support echo method";
 				//return resolve(throughForm2IframePosting);
 			}));
-		} else
-			reject(new Error("Your browser does not support "  +
-							 "opening files locally"));
+		} else {
+			reject(new Error("Your browser does not support opening files locally"));
+		}
 	});
 }
 

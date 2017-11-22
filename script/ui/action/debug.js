@@ -30,9 +30,9 @@ export default {
 			const molStr = molfile.stringify(editor.struct());
 			const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
 			const qs = document.location.search;
-			document.location.search = !qs ? '?' + molQs :
+			document.location.search = !qs ? '?' + molQs : // eslint-disable-line
 				qs.search('mol=') === -1 ? qs + '&' + molQs :
 				qs.replace(/mol=[^&$]*/, molQs);
 		}
 	}
-}
+};

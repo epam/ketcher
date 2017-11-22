@@ -112,7 +112,7 @@ const toolActions = {
 		shortcut: "Mod+r",
 		title: "Attachment Point Tool",
 		action: { tool: 'apoint' }
-	},
+	}
 };
 
 const bondCuts = {
@@ -124,7 +124,7 @@ const bondCuts = {
 	"updown": "1",
 	"crossed": "2",
 	"any": "0",
-	"aromatic": "4",
+	"aromatic": "4"
 };
 
 const typeSchema = bondSchema.properties.type;

@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 import keyName from 'w3c-keyname';
 
@@ -56,12 +55,19 @@ class Dialog extends Component {
 			buttons = ["Cancel", "OK"], ...props
 		} = this.props;   // see: https://git.io/v1KR6
 		return (
-			<form role="dialog" onSubmit={ev => ev.preventDefault()}
-				  onKeyDown={ev => this.keyDown(ev)} tabIndex="-1" {...props}>
+			<form
+				role="dialog"
+				onSubmit={ev => ev.preventDefault()}
+				onKeyDown={ev => this.keyDown(ev)}
+				tabIndex="-1"
+				{...props}
+			>
 				<header>{title}
 					{params.onCancel && title && (
-						<button className="close"
-								onClick={() => this.exit('Cancel')}>×
+						<button
+							className="close"
+							onClick={() => this.exit('Cancel')}
+						>×
 						</button> )
 					}
 				</header>
@@ -69,11 +75,15 @@ class Dialog extends Component {
 				<footer>{
 					buttons.map(b => (
 						typeof b !== 'string' ? b :
-							<input type="button" value={b}
-								   disabled={b === 'OK' && !valid()}
-								   onClick={() => this.exit(b)}/>
+						<input
+							type="button"
+							value={b}
+							disabled={b === 'OK' && !valid()}
+							onClick={() => this.exit(b)}
+						/>
 					))
-				}</footer>
+				}
+				</footer>
 			</form>
 		);
 	}

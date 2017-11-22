@@ -17,7 +17,7 @@
 import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
+
 import Input from './input';
 import { updateFormState } from '../state/form';
 
@@ -79,7 +79,7 @@ class Form extends Component {
 	}
 }
 
-Form = connect(
+export default connect(
 	null,
 	dispatch => ({
 		onUpdate: function (result, valid, errors) {
@@ -97,25 +97,27 @@ function Label({ labelPos, title, children, ...props }) {
 	);
 }
 
-class Field extends Component {
-	render(props) {
-		const { name, onChange, className, component, ...prop } = props;
-		const { schema, stateStore } = this.context;
+function Field(props) {
+	const { name, onChange, className, component, ...prop } = props;
+	const { schema, stateStore } = this.context;
 
-		const desc = prop.schema || schema.properties[name];
-		const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+	const desc = prop.schema || schema.properties[name];
+	const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 
-		return (
-			<Label className={className} data-error={dataError} title={prop.title || desc.title} >
-				{
-					component ?
-						h(component, { ...fieldOpts, ...prop }) :
-						<Input name={name} schema={desc}
-							   {...fieldOpts} {...prop}/>
-				}
-			</Label>
-		);
-	}
+	return (
+		<Label className={className} data-error={dataError} title={prop.title || desc.title} >
+			{
+				component ?
+					h(component, { ...fieldOpts, ...prop }) :
+					<Input
+						name={name}
+						schema={desc}
+						{...fieldOpts}
+						{...prop}
+					/>
+			}
+		</Label>
+	);
 }
 
 const SelectOneOf = (props) => {
@@ -132,7 +134,7 @@ const SelectOneOf = (props) => {
 		selectDesc.enumNames.push(schema[item].title || item);
 	});
 
-	return <Field name={name} schema={selectDesc} {...prop}/>;
+	return <Field name={name} schema={selectDesc} {...prop} />;
 };
 
 ////
@@ -168,9 +170,8 @@ function serializeRewrite(serializeMap, instance, schema) {
 	}
 
 	for (let p in schema.properties) {
-		if (schema.properties.hasOwnProperty(p) && (p in instance)) {
+		if (schema.properties.hasOwnProperty(p) && (p in instance))
 			res[p] = instance[serializeMap[p]] || instance[p];
-		}
 	}
 
 	return res;
@@ -193,4 +194,4 @@ function getErrorsObj(errors) {
 	return errs;
 }
 
-export { Form, Field, SelectOneOf };
+export { Field, SelectOneOf };

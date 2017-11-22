@@ -28,7 +28,7 @@ function parseDecimalInt(str) {
 	/* reader */
 	var val = parseInt(str, 10);
 
-	return isNaN(val) ? 0 : val;
+	return isNaN(val) ? 0 : val; // eslint-disable-line
 }
 
 function partitionLine(/* string*/ str, /* array of int*/ parts, /* bool*/ withspace) {

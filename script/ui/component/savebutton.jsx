@@ -15,14 +15,13 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 import fs from 'filesaver.js';
 
 class SaveButton extends Component {
-	constructor({filename="unnamed", type="text/plain", className='', ...props}) {
-		super({filename, type, className, ...props});
+	constructor({ filename="unnamed", type="text/plain", className='', ...props }) {
+		super({ filename, type, className, ...props });
 		fileSaver(props.server).then(saver => {
-			this.setState({saver});
+			this.setState({ saver });
 		});
 	}
 
@@ -31,13 +30,13 @@ class SaveButton extends Component {
 		const { filename, data, type, onSave = noop, onError = noop } = this.props;
 
 		if (this.state.saver && data)
-			try {
+			{ try {
 				this.state.saver(data, filename, type);
 				onSave();
 			}
 			catch(e) {
 				onError(e);
-			}
+			} }
 
 		ev.preventDefault();
 	}
@@ -49,8 +48,12 @@ class SaveButton extends Component {
 			className = `disabled ${className}`;
 
 		return (
-			<a download={filename} onClick={ev => this.save(ev)}
-			   className={className} {...props}>
+			<a
+				download={filename}
+				onClick={ev => this.save(ev)}
+				className={className}
+				{...props}
+			>
 				{ children }
 			</a>
 		);
@@ -68,9 +71,9 @@ function fileSaver(server) {
 			resolve(server.then(() => {
 				throw "Server doesn't still support echo method";
 			}));
-		} else
-			reject(new Error("Your browser does not support "  +
-							 "opening files locally"));
+		} else {
+			reject(new Error("Your browser does not support opening files locally"));
+		}
 	});
 }
 

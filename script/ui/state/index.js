@@ -17,7 +17,7 @@
 import { pick } from 'lodash/fp';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'
+import thunk from 'redux-thunk';
 import { logger } from 'redux-logger';
 
 import * as structFormat from '../structformat';
@@ -33,7 +33,7 @@ function modal(state = null, action) {
 
 	if (type === 'UPDATE_FORM') {
 		const formState = formReducer(state.form, action, state.name);
-		return { ...state, form: formState }
+		return { ...state, form: formState };
 	}
 
 	switch (type) {
@@ -61,12 +61,12 @@ const shared = combineReducers({
 });
 
 export function onAction(action) {
-	if (action && action.dialog)
+	if (action && action.dialog) {
 		return {
 			type: 'MODAL_OPEN',
 			data: { name: action.dialog }
 		};
-
+	}
 	if (action && action.thunk)
 		return action.thunk;
 
@@ -88,7 +88,7 @@ export function openDialog(dispatch, dialogName, props) {
 					onCancel: reject
 				}
 			}
-		})
+		});
 	});
 }
 
@@ -124,7 +124,7 @@ export function load(structStr, options) {
 		}, function (err) {
 			alert(err);
 		});
-	}
+	};
 }
 
 function root(state, action) {
@@ -132,7 +132,7 @@ function root(state, action) {
 	case 'INIT':
 		global._ui_editor = action.editor;
 	case 'UPDATE':
-		let {type, ...data} = action;
+		let { type, ...data } = action;
 		if (data)
 			state = { ...state, ...data };
 	}
@@ -158,10 +158,10 @@ export default function(options, server) {
 		templates: initTmplState
 	};
 
-	const middleware = [ thunk ];
+	const middleware = [thunk];
 
 	if (process.env.NODE_ENV !== 'production')
 		middleware.push(logger);
 
 	return createStore(root, initState, applyMiddleware(...middleware));
-};
+}

@@ -25,7 +25,7 @@ import { initKeydownListener, initClipboard } from './state/hotkeys';
 import { initResize } from './state/toolbar';
 
 import { h, Component, render } from 'preact';
-/** @jsx h */
+
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 import ClipArea from './component/cliparea';
@@ -68,7 +68,7 @@ const AppModal = connect(
 			}
 		};
 	}
-)(({modal, ...props}) => {
+)(({ modal, ...props }) => {
 	if (!modal)
 		return null;
 
@@ -79,7 +79,7 @@ const AppModal = connect(
 
 	return (
 		<div className="overlay">
-			<Modal {...props}/>
+			<Modal {...props} />
 		</div>
 	);
 });
@@ -104,17 +104,17 @@ const AppCliparea = connect(
 const App = connect(
 	null,
 	{ onAction, checkServer }
-)(class extends Component {
+)(class extends Component { // eslint-disable-line
 	componentDidMount() {
 		this.props.checkServer();
 	}
 	render = props => (
 		<main role="application">
 			<AppEditor id="canvas" />
-			<Toolbar {...props}/>
-			<AppCliparea/>
-			<AppModal/>
-			<AppTemplates/>
+			<Toolbar {...props} />
+			<AppCliparea />
+			<AppModal />
+			<AppTemplates />
 		</main>
 	)
 });
@@ -126,13 +126,13 @@ function init(el, options, server) {
 
 	render((
 		<Provider store={store}>
-		  <App/>
+			<App />
 		</Provider>
 	), el);
 
 	return {
 		load: (structStr, options) => store.dispatch(load(structStr, options))
-	}
+	};
 }
 
 export default init;

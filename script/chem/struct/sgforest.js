@@ -70,13 +70,13 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 		return true;
 	});
 
-	console.assert(parents.length <= 1, "We are here"); // there should be only one parent
+	console.assert(parents.length <= 1, 'We are here'); // there should be only one parent
 
 	var children = atomSets
 		.findAll(id => isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)));
 
 	return {
-		children: children,
+		children,
 		parent: parents.length === 0 ? -1 : parents[0]
 	};
 };
@@ -98,7 +98,7 @@ SGroupForest.prototype.validate = function () {
 
 	var valid = true;
 	// 1) child group's atom set is a subset of the parent one's
-	this.parent.each(function (id, parentId) {
+	this.parent.each((id, parentId) => {
 		if (parentId >= 0 && !atomSets.get(parentId).isSuperset(atomSets.get(id)))
 			valid = false;
 	}, this);
@@ -145,7 +145,7 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	this.parent.set(id, parent);
 	this.children.get(parent).push(id);
 	console.assert(this.validate(), 's-group forest invalid');
-	return { parent: parent, children: children };
+	return { parent, children };
 };
 
 SGroupForest.prototype.remove = function (id) {

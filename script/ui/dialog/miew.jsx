@@ -53,7 +53,7 @@ const MIEW_MODES = {
 };
 
 function getLocalMiewOpts() {
-	let userOpts = storage.getItem("ketcher-opts");
+	let userOpts = storage.getItem('ketcher-opts');
 	if (!userOpts)
 		return MIEW_OPTIONS;
 
@@ -71,7 +71,7 @@ function getLocalMiewOpts() {
 	return opts;
 }
 
-function origin (url) {
+function origin(url) {
 	let loc = url;
 
 	if (!loc.href) {
@@ -85,11 +85,11 @@ function origin (url) {
 	if (!loc.hostname) // relative url, IE
 		loc = document.location;
 
-	return loc.protocol  + '//' + loc.hostname +
+	return loc.protocol + '//' + loc.hostname +
 		   (!loc.port ? '' : ':' + loc.port);
 }
 
-function queryOptions(options, sep='&') {
+function queryOptions(options, sep = '&') {
 	if (Array.isArray(options)) {
 		return options.reduce((res, item) => {
 			let value = queryOptions(item);
@@ -110,8 +110,8 @@ function queryOptions(options, sep='&') {
 	return null;
 }
 
-function miewLoad(wnd, url, options={}) { // TODO: timeout
-	return new Promise(function (resolve, reject) {
+function miewLoad(wnd, url, options = {}) { // TODO: timeout
+	return new Promise((resolve) => {
 		addEventListener('message', function onload(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data === 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
@@ -133,7 +133,7 @@ function miewLoad(wnd, url, options={}) { // TODO: timeout
 
 function miewSave(miew, url) {
 	miew.saveData();
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve) => {
 		addEventListener('message', function onsave(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data.startsWith('CML:')) {
 				window.removeEventListener('message', onsave);
@@ -161,7 +161,7 @@ class Miew extends Component {
 			this.setState({ miew: res });
 		});
 	}
-	save(ev) {
+	save() {
 		if (this.props.onOk) {
 			let structStr = miewSave(this.state.miew, MIEW_PATH);
 			this.setState({ structStr });
@@ -188,7 +188,7 @@ class Miew extends Component {
 		let wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
 		                      'miew', queryOptions(wndProps, ','));
 		if (wnd) {
-			this.props.onCancel && this.props.onCancel();
+			this.props.onCancel();
 			wnd.onload = function () {
 				console.info('windowed');
 			};
@@ -202,7 +202,7 @@ class Miew extends Component {
 				className="miew"
 				params={props}
 				buttons={[
-						"Close",
+					'Close',
 					<button
 						disabled={miew instanceof Promise || structStr instanceof Promise}
 						onClick={ev => this.save(ev)}
@@ -212,7 +212,7 @@ class Miew extends Component {
 					<button
 						className="window"
 						disabled={/MSIE|rv:11/i.test(navigator.userAgent)}
-						onClick={ev => this.window()}
+						onClick={() => this.window()}
 					>
 						Detach to new window
 					</button>

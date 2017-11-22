@@ -25,7 +25,7 @@ function About(props) {
 			title="About"
 			className="about"
 			params={props}
-			buttons={["Close"]}
+			buttons={['Close']}
 		>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
 				<img alt="Ketcher" src="images/ketcher-logo.svg" />
@@ -41,9 +41,9 @@ function About(props) {
 					props.buildNumber ? (
 						<dd>
 							build #<var>{props.buildNumber}</var>
-							{" at "}
+							{' at '}
 							<time>{props.buildDate}</time>
-						</dd> ) : null
+						</dd>) : null
 				}
 				{
 					props.indigoVersion ? (
@@ -55,7 +55,7 @@ function About(props) {
 							</dt>
 							<dd>version <var>{props.indigoVersion}</var></dd>
 						</div>
-					) : ( <dd>standalone</dd> )
+					) : (<dd>standalone</dd>)
 				}
 				<dt>
 					<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>

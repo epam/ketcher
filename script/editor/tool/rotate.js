@@ -55,7 +55,7 @@ RotateTool.prototype.mousedown = function (event) {
 		var rotId = null;
 		var rotAll = false;
 
-		selection.atoms.forEach(function (aid) {
+		selection.atoms.forEach((aid) => {
 			var atom = struct.atoms.get(aid);
 
 			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
@@ -63,13 +63,13 @@ RotateTool.prototype.mousedown = function (event) {
 			if (rotAll)
 				return;
 
-			atom.neighbors.find(function (nei) {
+			atom.neighbors.find((nei) => {
 				var hb = struct.halfBonds.get(nei);
 
 				if (selection.atoms.indexOf(hb.end) === -1) {
 					if (hb.loop >= 0) {
 						var neiAtom = struct.atoms.get(aid);
-						if (!neiAtom.neighbors.find(function (neiNei) {
+						if (!neiAtom.neighbors.find((neiNei) => {
 							var neiHb = struct.halfBonds.get(neiNei);
 							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1;
 						})) {
@@ -98,7 +98,7 @@ RotateTool.prototype.mousedown = function (event) {
 		xy0 = xy0.scaled(1 / struct.atoms.count());
 	}
 	this.dragCtx = {
-		xy0: xy0,
+		xy0,
 		angle1: utils.calcAngle(xy0, rnd.page2obj(event))
 	};
 	return true;
@@ -146,7 +146,7 @@ RotateTool.prototype.mouseup = function () {
 	return true;
 };
 
-RotateTool.prototype.cancel = RotateTool.prototype.mouseleave =
+RotateTool.prototype.cancel = RotateTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
 	RotateTool.prototype.mouseup;
 
 export default RotateTool;

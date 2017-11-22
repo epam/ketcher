@@ -32,7 +32,7 @@ export function selectTmpl(tmpl) {
 export function changeGroup(group) {
 	return {
 		type: 'TMPL_CHANGE_GROUP',
-		data: { group: group, selected: null }
+		data: { group, selected: null }
 	};
 }
 
@@ -115,7 +115,7 @@ function updateLocalStore(lib) {
 			props: Object.assign({}, omit(['group'], item.props))
 		}));
 
-	storage.setItem("ketcher-tmpls", userLib);
+	storage.setItem('ketcher-tmpls', userLib);
 }
 
 /* REDUCER */
@@ -156,7 +156,7 @@ export function templatesReducer(state = initTmplState, action) {
 function initLib(lib) {
 	return {
 		type: 'TMPL_INIT',
-		data: { lib: lib }
+		data: { lib }
 	};
 }
 
@@ -182,7 +182,7 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 function userTmpls() {
-	const userLib = storage.getItem("ketcher-tmpls");
+	const userLib = storage.getItem('ketcher-tmpls');
 	if (!Array.isArray(userLib) || userLib.length === 0) return [];
 
 	return userLib
@@ -203,10 +203,10 @@ function userTmpls() {
 }
 
 function prefetchStatic(url) {
-	return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
+	return fetch(url, { credentials: 'same-origin' }).then((resp) => {
 		if (resp.ok)
 			return resp.text();
-		throw Error("Could not fetch " + url);
+		throw Error('Could not fetch ' + url);
 	});
 }
 

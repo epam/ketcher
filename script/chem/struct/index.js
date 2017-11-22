@@ -45,11 +45,7 @@ function Struct() {
 }
 
 Struct.prototype.hasRxnProps = function () {
-	return this.atoms.find(function (aid, atom) {
-		return atom.hasRxnProps();
-	}, this) >= 0 || this.bonds.find(function (bid, bond) {
-		return bond.hasRxnProps();
-	}, this) >= 0;
+	return this.atoms.find((aid, atom) => atom.hasRxnProps(), this) >= 0 || this.bonds.find((bid, bond) => bond.hasRxnProps(), this) >= 0;
 };
 
 Struct.prototype.hasRxnArrow = function () {
@@ -67,7 +63,7 @@ Struct.prototype.getSGroupsInAtomSet = function (atoms) {
 	atoms.forEach(function (aid) {
 		var sg = Array.from(this.atoms.get(aid).sgs);
 
-		sg.forEach(function (sid) {
+		sg.forEach((sid) => {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		}, this);
 	}, this);
@@ -317,8 +313,10 @@ Struct.prototype.setHbNext = function (hbid, next) {
 Struct.prototype.halfBondSetAngle = function (hbid, left) {
 	var hb = this.halfBonds.get(hbid);
 	var hbl = this.halfBonds.get(left);
-	hbl.rightCos = hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
-	hbl.rightSin = hb.leftSin = Vec2.cross(hbl.dir, hb.dir);
+	hbl.rightCos = Vec2.dot(hbl.dir, hb.dir);
+	hbl.rightSin = Vec2.cross(hbl.dir, hb.dir);
+	hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
+	hb.leftSin = Vec2.cross(hbl.dir, hb.dir);
 	hb.leftNeighbor = left;
 	hbl.rightNeighbor = hbid;
 };
@@ -343,9 +341,7 @@ Struct.prototype.atomAddNeighbor = function (hbid) {
 Struct.prototype.atomSortNeighbors = function (aid) {
 	var atom = this.atoms.get(aid);
 	var halfBonds = this.halfBonds;
-	atom.neighbors = atom.neighbors.sort(function (nei, nei2) {
-		return halfBonds.get(nei).ang - halfBonds.get(nei2).ang;
-	});
+	atom.neighbors = atom.neighbors.sort((nei, nei2) => halfBonds.get(nei).ang - halfBonds.get(nei2).ang);
 
 	var i;
 	for (i = 0; i < atom.neighbors.length; ++i) {
@@ -502,7 +498,7 @@ Struct.prototype.getBondLengthData = function () {
 			this.atoms.get(bond.end).pp);
 		cnt++;
 	}, this);
-	return { cnt: cnt, totalLength: totalLength };
+	return { cnt, totalLength };
 };
 
 Struct.prototype.getAvgBondLength = function () {
@@ -794,7 +790,7 @@ Struct.prototype.findLoops = function () {
 	});
 
 	return {
-		newLoops: newLoops,
+		newLoops,
 		bondsToMark: Array.from(bondsToMark)
 	};
 };
@@ -876,7 +872,7 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 
 Struct.prototype.setImplicitHydrogen = function (list) {
 	this.sgroups.each((id, item) => {
-		if (item.data.fieldName === "MRV_IMPLICIT_H")
+		if (item.data.fieldName === 'MRV_IMPLICIT_H')
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
 	});
 
@@ -938,8 +934,8 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 	});
 
 	return {
-		reactants: reactants,
-		products: products
+		reactants,
+		products
 	};
 };
 
@@ -990,11 +986,11 @@ function arrayAddIfMissing(array, item) {
 
 
 module.exports = Object.assign(Struct, {
-	Atom: Atom,
-	AtomList: AtomList,
-	Bond: Bond,
-	SGroup: SGroup,
-	RGroup: RGroup,
-	RxnPlus: RxnPlus,
-	RxnArrow: RxnArrow
+	Atom,
+	AtomList,
+	Bond,
+	SGroup,
+	RGroup,
+	RxnPlus,
+	RxnArrow
 });

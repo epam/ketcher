@@ -59,15 +59,15 @@ class StructEditor extends Component {
 	}
 
 	componentDidMount() {
-		console.assert(this.base, "No backing element");
+		console.assert(this.base, 'No backing element');
 		this.instance = new Editor(this.base, { ...this.props.options });
 		setupEditor(this.instance, this.props);
 		if (this.props.onInit)
 			this.props.onInit(this.instance);
 	}
 
-	render () {
-		let { Tag="div", struct, tool, toolOpts, options, ...props } = this.props;
+	render() {
+		let { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
 		return (
 			<Tag onMouseDown={ev => ev.preventDefault()} {...props}	/>
 		);

@@ -53,7 +53,7 @@ export const map = {
 	}
 };
 
-export function guess (structStr, strict) {
+export function guess(structStr, strict) {
 	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
 	const molStr = structStr.trim();
 
@@ -81,10 +81,10 @@ export function guess (structStr, strict) {
 	return strict ? null : 'mol';
 }
 
-export function toString (struct, format, server, serverOpts) {
+export function toString(struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
 
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		const moldata = molfile.stringify(struct);
 		if (format === 'mol' || format === 'rxn') {
 			resolve(moldata);
@@ -104,8 +104,8 @@ export function toString (struct, format, server, serverOpts) {
 	});
 }
 
-export function fromString (structStr, opts, server, serverOpts) {
-	return new Promise(function (resolve, reject) {
+export function fromString(structStr, opts, server, serverOpts) {
+	return new Promise((resolve) => {
 		const format = guess(structStr);
 		console.assert(map[format], 'No such format');
 

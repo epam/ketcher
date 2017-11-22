@@ -43,12 +43,12 @@ function parseCTFile(str, options) {
 }
 
 module.exports = {
-	stringify: function (struct, options) {
+	stringify(struct, options) {
 		var opts = options || {};
 		return new Molfile(opts.v3000).saveMolecule(struct, opts.ignoreErrors,
 			opts.noRgroups, opts.preserveIndigoDesc);
 	},
-	parse: function (str, options) {
+	parse(str, options) {
 		return parseCTFile(str, options || {});
 	}
 };

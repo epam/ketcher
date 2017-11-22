@@ -62,13 +62,13 @@ const viewSchema = {
 	'group/cyclic/hetero/aryl': 'hetero aryl'
 };
 
-function GenSet({ labels, caption='', selected, onSelect, ...props }) {
+function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
 	return (
 		<fieldset {...props}>
 			{
 			  labels.map(label => (
 				  <button
-					onClick={e => onSelect(label)}
+					onClick={() => onSelect(label)}
 					      className={selected(label) ? 'selected' : ''}
 				  >
 					{label}

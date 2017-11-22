@@ -16,7 +16,7 @@
 
 import { h, Component } from 'preact';
 
-function GenericInput({ value, onChange, type = "text", ...props }) {
+function GenericInput({ value, onChange, type = 'text', ...props }) {
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
@@ -72,13 +72,11 @@ Select.val = function (ev, schema) {
 	if (!select.multiple)
 		return enumSchema(schema, select.selectedIndex);
 
-	return [].reduce.call(select.options, function (res, o, i) {
-		return !o.selected ? res :
-			[enumSchema(schema, i), ...res];
-	}, []);
+	return [].reduce.call(select.options, (res, o, i) => (!o.selected ? res :
+			[enumSchema(schema, i), ...res]), []);
 };
 
-function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props }) {
+function FieldSet({ schema, value, selected, onSelect, type = 'radio', ...props }) {
 	return (
 		<fieldset onClick={onSelect} className="radio">
 			{
@@ -108,10 +106,8 @@ FieldSet.val = function (ev, schema) {
 	//      should we inline this?
 	const fieldset = input.parentNode.parentNode;
 	const result = [].reduce.call(fieldset.querySelectorAll('input'),
-		function (res, inp, i) {
-			return !inp.checked ? res :
-				[enumSchema(schema, i), ...res];
-		}, []);
+		(res, inp, i) => (!inp.checked ? res :
+				[enumSchema(schema, i), ...res]), []);
 	return input.type === 'radio' ? result[0] : result;
 };
 
@@ -145,7 +141,7 @@ function inputCtrl(component, schema, onChange) {
 	}
 
 	return {
-		onChange: function (ev) {
+		onChange: (ev) => {
 			const val = !component.val ? ev :
 				component.val(ev, schema);
 			onChange(val);
@@ -157,7 +153,7 @@ function inputCtrl(component, schema, onChange) {
 function singleSelectCtrl(component, schema, onChange) {
 	return {
 		selected: (testVal, value) => (value === testVal),
-		onSelect: function (ev, value) {
+		onSelect: (ev) => {
 			const val = !component.val ? ev :
 				component.val(ev, schema);
 			if (val !== undefined)
@@ -171,7 +167,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 		multiple: true,
 		selected: (testVal, values) =>
 			(values && values.indexOf(testVal) >= 0),
-		onSelect: function (ev, values) {
+		onSelect: (ev, values) => {
 			if (component.val) {
 				let val = component.val(ev, schema);
 				if (val !== undefined)
@@ -212,7 +208,7 @@ function componentMap({ schema, type, multiple }) {
 
 function shallowCompare(a, b) {
 	for (let i in a) if (!(i in b)) return true;
-	for (let i in b) if (a[i] !== b[i])  return true;
+	for (let i in b) if (a[i] !== b[i]) return true;
 	return false;
 }
 

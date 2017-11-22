@@ -33,9 +33,7 @@ function SGroupTool(editor, type) {
 		var sgroups = editor.render.ctab.molecule.sgroups;
 		var selectedAtoms = editor.selection().atoms;
 
-		var id = sgroups.find(function (_, sgroup) {
-			return isEqual(sgroup.atoms, selectedAtoms);
-		});
+		var id = sgroups.find((_, sgroup) => isEqual(sgroup.atoms, selectedAtoms));
 
 		sgroupDialog(editor, id !== undefined ? id : null, type);
 		editor.selection(null);
@@ -120,8 +118,8 @@ export function sgroupDialog(editor, id, defaultType) {
 	}
 
 	const res = editor.event[eventName].dispatch({
-		type: type,
-		attrs: attrs
+		type,
+		attrs
 	});
 
 	Promise.resolve(res).then((newSg) => {
@@ -254,15 +252,15 @@ function checkOverlapping(struct, atoms) {
 	var verified = {};
 	var atomsHash = {};
 
-	atoms.forEach(function (id) {
+	atoms.forEach((id) => {
 		atomsHash[id] = true;
 	});
 
-	return atoms.findIndex(function (id) {
+	return atoms.findIndex((id) => {
 		var atom = struct.atoms.get(id);
 		var sgroups = Array.from(atom.sgs);
 
-		return sgroups.findIndex(function (sid) {
+		return sgroups.findIndex((sid) => {
 			var sg = struct.sgroups.get(sid);
 			if (sg.type === 'DAT' || sid in verified)
 				return false;
@@ -270,15 +268,11 @@ function checkOverlapping(struct, atoms) {
 			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
 
 			if (sgAtoms.length < atoms.length) {
-				var ind = sgAtoms.findIndex(function (aid) {
-					return !(aid in atomsHash);
-				});
+				var ind = sgAtoms.findIndex(aid => !(aid in atomsHash));
 				if (ind >= 0) return true;
 			}
 
-			return atoms.findIndex(function (aid) {
-				return (sgAtoms.indexOf(aid) === -1);
-			}) >= 0;
+			return atoms.findIndex(aid => (sgAtoms.indexOf(aid) === -1)) >= 0;
 		}) >= 0;
 	}) >= 0;
 }

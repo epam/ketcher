@@ -293,14 +293,14 @@ function isSelectionEmpty(selection) {
 }
 
 ReStruct.prototype.translate = function (d) {
-	this.eachItem(function (item) {
+	this.eachItem((item) => {
 		item.visel.translate(d);
 	});
 };
 
 ReStruct.prototype.scale = function (s) {
 	// NOTE: bounding boxes are not valid after scaling
-	this.eachItem(function (item) {
+	this.eachItem((item) => {
 		scaleVisel(item.visel, s);
 	});
 };
@@ -544,7 +544,7 @@ ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statemen
 };
 
 ReStruct.prototype.setSelection = function (selection) {
-	var redraw = (arguments.length === 0);  // render.update only
+	var redraw = (arguments.length === 0); // render.update only
 
 	for (var map in ReStruct.maps) {
 		if (ReStruct.maps.hasOwnProperty(map) && ReStruct.maps[map].isSelectable()) {

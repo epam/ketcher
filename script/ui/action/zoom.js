@@ -22,12 +22,12 @@ export const zoomList = [
 ];
 
 export default {
-	"zoom": {
+	'zoom': {
 		selected: editor => editor.zoom()
 	},
-	"zoom-out": {
-		shortcut: ["-", "_", "Shift+-"],
-		title: "Zoom Out",
+	'zoom-out': {
+		shortcut: ['-', '_', 'Shift+-'],
+		title: 'Zoom Out',
 		disabled: editor => (
 			editor.zoom() <= zoomList[0] // unsave
 		),
@@ -39,9 +39,9 @@ export default {
 			);
 		}
 	},
-	"zoom-in": {
-		shortcut: ["+", "=", "Shift+="],
-		title: "Zoom In",
+	'zoom-in': {
+		shortcut: ['+', '=', 'Shift+='],
+		title: 'Zoom In',
 		disabled: editor => (
 			zoomList[zoomList.length - 1] <= editor.zoom()
 		),

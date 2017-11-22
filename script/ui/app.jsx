@@ -43,11 +43,11 @@ const AppModal = connect(
 		modal: state.modal
 	}),
 	dispatch => ({
-		onOk: function (res) {
+		onOk: (res) => {
 			console.info('Output:', res);
 			dispatch({ type: 'MODAL_CLOSE' });
 		},
-		onCancel: function () {
+		onCancel: () => {
 			dispatch({ type: 'MODAL_CLOSE' });
 		}
 	}),
@@ -57,11 +57,11 @@ const AppModal = connect(
 		return {
 			modal: stateProps.modal,
 			...initProps,
-			onOk: function (res) {
+			onOk: (res) => {
 				if (prop && prop.onResult) prop.onResult(res);
 				dispatchProps.onOk(res);
 			},
-			onCancel: function () {
+			onCancel: () => {
 				if (prop && prop.onCancel) prop.onCancel();
 				dispatchProps.onCancel();
 			}

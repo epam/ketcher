@@ -37,7 +37,7 @@ export function fromElement(selem) {
 	if (!selem.label && 'attpnt' in selem)
 		return { ap: fromApoint(selem.attpnt) };
 
-	return selem;   // probably generic
+	return selem; // probably generic
 }
 
 export function toElement(elem) {
@@ -69,7 +69,7 @@ function fromAtom(satom) {
 	const alias = satom.alias || '';
 
 	return {
-		alias: alias,
+		alias,
 		label: satom.label,
 		charge: satom.charge,
 		isotope: satom.isotope,
@@ -136,7 +136,7 @@ function fromRlabel(rg) {
 
 function toRlabel(values) {
 	let res = 0;
-	values.forEach(function (val) {
+	values.forEach((val) => {
 		let rgi = val - 1;
 		res |= 1 << rgi;
 	});
@@ -236,7 +236,7 @@ export function fromSgroup(ssgroup) {
 	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items)
 		ssgroup.attrs.fieldValue = fieldValue.split('\n');
 
-	return Object.assign({ type: type }, ssgroup.attrs);
+	return Object.assign({ type }, ssgroup.attrs);
 }
 
 export function toSgroup(sgroup) {

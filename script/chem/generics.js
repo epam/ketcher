@@ -83,9 +83,9 @@ var generics = {
 };
 
 function mapify(tree, path, res) {
-	return Object.keys(tree).reduce(function (res, key) {
+	return Object.keys(tree).reduce((res, key) => {
 		if (key === 'labels') {
-			return tree.labels.reduce(function (res, label) {
+			return tree.labels.reduce((res, label) => {
 				res[label] = path || true;
 				return res;
 			}, res);
@@ -96,9 +96,7 @@ function mapify(tree, path, res) {
 }
 
 function traverse(tree, path) {
-	return path.reduce(function (res, cur) {
-		return (res && res[cur]) || null;
-	}, tree);
+	return path.reduce((res, cur) => (res && res[cur]) || null, tree);
 }
 
 generics.map = mapify(generics);

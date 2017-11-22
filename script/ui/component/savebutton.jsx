@@ -18,7 +18,7 @@ import { h, Component } from 'preact';
 import fs from 'filesaver.js';
 
 class SaveButton extends Component {
-	constructor({ filename="unnamed", type="text/plain", className='', ...props }) {
+	constructor({ filename = 'unnamed', type = 'text/plain', className = '', ...props }) {
 		super({ filename, type, className, ...props });
 		fileSaver(props.server).then((saver) => {
 			this.setState({ saver });
@@ -72,7 +72,7 @@ function fileSaver(server) {
 				throw Error("Server doesn't still support echo method");
 			}));
 		} else {
-			reject(new Error("Your browser does not support opening files locally"));
+			reject(new Error('Your browser does not support opening files locally'));
 		}
 	});
 }

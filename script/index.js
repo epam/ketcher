@@ -43,7 +43,7 @@ function getMolfile() {
 }
 
 function setMolecule(molString) {
-	if (!(typeof molString === "string"))
+	if (!(typeof molString === 'string'))
 		return;
 	ketcher.ui.load(molString, {
 		rescale: true
@@ -51,7 +51,7 @@ function setMolecule(molString) {
 }
 
 function addFragment(molString) {
-	if (!(typeof molString === "string"))
+	if (!(typeof molString === 'string'))
 		return;
 	ketcher.ui.load(molString, {
 		rescale: true,
@@ -86,10 +86,10 @@ window.onload = function () {
 	});
 	ketcher.ui = ui(Object.assign({}, params, buildInfo), ketcher.server);
 	ketcher.editor = global._ui_editor;
-	ketcher.server.then(function () {
+	ketcher.server.then(() => {
 		if (params.mol)
 			ketcher.ui.load(params.mol);
-	}, function () {
+	}, () => {
 		document.title += ' (standalone)';
 	});
 };
@@ -102,7 +102,7 @@ const buildInfo = {
 	miewPath: '__MIEW_PATH__' || null
 };
 
-const ketcher = module.exports = Object.assign({
+const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi-assign
 	getSmiles,
 	saveSmiles,
 	getMolfile,

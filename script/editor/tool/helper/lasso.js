@@ -64,9 +64,7 @@ LassoHelper.prototype.update = function () {
 	}
 	if (this.points && this.points.length > 1) {
 		var rnd = this.editor.render;
-		var dp = this.points.map(function (p) {
-			return scale.obj2scaled(p, rnd.options).add(rnd.options.offset);
-		});
+		var dp = this.points.map(p => scale.obj2scaled(p, rnd.options).add(rnd.options.offset));
 		this.selection = this.mode == 0 ?
 			draw.selectionPolygon(rnd.paper, dp, rnd.options) :
 			draw.selectionRectangle(rnd.paper, dp[0], dp[1], rnd.options);

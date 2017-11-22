@@ -44,7 +44,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 	var toRemove = [];
 	var errors = 0;
 
-	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach(function (id) {
+	this.molecule.sGroupForest.getSGroupsBFS().reverse().forEach((id) => {
 		var sgroup = mol.sgroups.get(id);
 		var errorIgnore = false;
 
@@ -238,24 +238,24 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		} else if (atom['pseudo']) {
 			if (atom['pseudo'].length > 3) {
 				label = 'A';
-				atomProps_list.push({ id: id, value: "'" + atom['pseudo'] + "'" });
+				atomProps_list.push({ id, value: '\'' + atom['pseudo'] + '\'' });
 			}
 		} else if (atom['alias']) {
-			atomProps_list.push({ id: id, value: atom['alias'] });
+			atomProps_list.push({ id, value: atom['alias'] });
 		} else if (!element.map[label] && ['A', 'Q', 'X', '*', 'R#'].indexOf(label) == -1) { // search in generics?
 			label = 'C';
-			atomProps_list.push({ id: id, value: atom.label });
+			atomProps_list.push({ id, value: atom.label });
 		}
 		this.writePadded(label, 3);
 		this.writePaddedNumber(0, 2);
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (typeof atom.hCount === "undefined")
+		if (typeof atom.hCount === 'undefined')
 			atom.hCount = 0;
 		this.writePaddedNumber(atom.hCount, 3);
 
-		if (typeof atom.stereoCare === "undefined")
+		if (typeof atom.stereoCare === 'undefined')
 			atom.stereoCare = 0;
 		this.writePaddedNumber(atom.stereoCare, 3);
 
@@ -265,15 +265,15 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(0, 3);
 		this.writePaddedNumber(0, 3);
 
-		if (typeof atom.aam === "undefined")
+		if (typeof atom.aam === 'undefined')
 			atom.aam = 0;
 		this.writePaddedNumber(atom.aam, 3);
 
-		if (typeof atom.invRet === "undefined")
+		if (typeof atom.invRet === 'undefined')
 			atom.invRet = 0;
 		this.writePaddedNumber(atom.invRet, 3);
 
-		if (typeof atom.exactChangeFlag === "undefined")
+		if (typeof atom.exactChangeFlag === 'undefined')
 			atom.exactChangeFlag = 0;
 		this.writePaddedNumber(atom.exactChangeFlag, 3);
 
@@ -291,17 +291,17 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(this.mapping[bond.end], 3);
 		this.writePaddedNumber(bond.type, 3);
 
-		if (typeof bond.stereo === "undefined")
+		if (typeof bond.stereo === 'undefined')
 			bond.stereo = 0;
 		this.writePaddedNumber(bond.stereo, 3);
 
 		this.writePadded(bond.xxx, 3);
 
-		if (typeof bond.topology === "undefined")
+		if (typeof bond.topology === 'undefined')
 			bond.topology = 0;
 		this.writePaddedNumber(bond.topology, 3);
 
-		if (typeof bond.reactingCenterStatus === "undefined")
+		if (typeof bond.reactingCenterStatus === 'undefined')
 			bond.reactingCenterStatus = 0;
 		this.writePaddedNumber(bond.reactingCenterStatus, 3);
 

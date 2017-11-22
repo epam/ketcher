@@ -24,7 +24,7 @@ import { fromNewCanvas, fromDescriptorsAlign } from './actions/basic';
 import closest from './shared/closest';
 import toolMap from './tool';
 
-const SCALE = 40;  // const
+const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
 
 const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
@@ -108,8 +108,8 @@ Editor.prototype.selection = function (ci) {
 	var restruct = this.render.ctab;
 	if (arguments.length > 0) {
 		this._selection = null; // eslint-disable-line
-		if (ci === 'all') {   // TODO: better way will be this.struct()
-			ci = structObjects.reduce(function (res, key) {
+		if (ci === 'all') { // TODO: better way will be this.struct()
+			ci = structObjects.reduce((res, key) => {
 				res[key] = restruct[key].keys();
 				return res;
 			}, {});
@@ -238,7 +238,8 @@ function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
 	 'mouseup', 'mouseleave'].forEach((eventName) => {
-		 const subs = editor.event[eventName] = new s.DOMSubscription();
+		 editor.event[eventName] = new s.DOMSubscription();
+		 const subs = editor.event[eventName];
 		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
 		 subs.add((event) => {
@@ -263,7 +264,7 @@ Editor.prototype.findMerge = function (srcItems, maps) {
 
 Editor.prototype.explicitSelected = function () {
 	var selection = this.selection() || {};
-	var res = structObjects.reduce(function (result, key) {
+	var res = structObjects.reduce((result, key) => {
 		result[key] = selection[key] ? selection[key].slice() : [];
 		return result;
 	}, {});
@@ -271,7 +272,7 @@ Editor.prototype.explicitSelected = function () {
 	var struct = this.render.ctab.molecule;
 	// "auto-select" the atoms for the bonds in selection
 	if ('bonds' in res) {
-		res.bonds.forEach(function (bid) {
+		res.bonds.forEach((bid) => {
 			var bond = struct.bonds.get(bid);
 			res.atoms = res.atoms || [];
 			if (res.atoms.indexOf(bond.begin) < 0) res.atoms.push(bond.begin);
@@ -343,7 +344,7 @@ function elementOffset(element) {
 	let top = 0;
 	let left = 0;
 	do {
-		top += element.offsetTop  || 0;
+		top += element.offsetTop || 0;
 		left += element.offsetLeft || 0;
 		element = element.offsetParent;
 	} while (element);

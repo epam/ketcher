@@ -35,25 +35,25 @@ function Dfs(mol, atomData, components, nReactants) {
 }
 
 Dfs.VertexDesc = function () {
-	this.dfs_state = 0;       // 0 -- not on stack
+	this.dfs_state = 0; // 0 -- not on stack
 	// 1 -- on stack
 	// 2 -- removed from stack
-	this.parent_vertex = 0;   // parent vertex in DFS tree
-	this.parent_edge = 0;     // edge to parent vertex
-	this.branches = 0;    // how many DFS branches go out from this vertex}
+	this.parent_vertex = 0; // parent vertex in DFS tree
+	this.parent_edge = 0; // edge to parent vertex
+	this.branches = 0; // how many DFS branches go out from this vertex}
 };
 
 Dfs.EdgeDesc = function () {
 	this.opening_cycles = 0; // how many cycles are
 	// (i) starting with this edge
 	// and (ii) ending in this edge's first vertex
-	this.closing_cycle = 0;  // 1 if this edge closes a cycle
+	this.closing_cycle = 0; // 1 if this edge closes a cycle
 };
 
 Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
-	this.idx = vIdx;                // index of vertex in _graph
+	this.idx = vIdx; // index of vertex in _graph
 	this.parent_vertex = parVertex; // parent vertex in DFS tree
-	this.parent_edge = parEdge;     // edge to parent vertex
+	this.parent_edge = parEdge; // edge to parent vertex
 };
 
 Dfs.prototype.walk = function () { // eslint-disable-line max-statements

@@ -35,12 +35,12 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 
 	var frid = null;
 
-	if (!(typeof begin === "number")) {
-		if (typeof end === "number")
+	if (!(typeof begin === 'number')) {
+		if (typeof end === 'number')
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (typeof end === "number") {
+		if (typeof end === 'number') {
 			var frid2 = atomGetAttr(restruct, end, 'fragment');
 			mergeFragments(action, restruct, frid, frid2);
 		}
@@ -49,7 +49,7 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	if (frid == null)
 		frid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
-	if (!(typeof begin === "number")) {
+	if (!(typeof begin === 'number')) {
 		begin.fragment = frid;
 		begin = action.addOp(new op.AtomAdd(begin, pos).perform(restruct)).data.aid;
 
@@ -59,12 +59,12 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	}
 
 
-	if (!(typeof end === "number")) {
+	if (!(typeof end === 'number')) {
 		end.fragment = frid;
 		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(restruct)).data.aid;
-		if (typeof begin === "number") {
-			atomGetSGroups(restruct, begin).forEach(function (sid) {
+		if (typeof begin === 'number') {
+			atomGetSGroups(restruct, begin).forEach((sid) => {
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(restruct));
 			}, this);
 		}

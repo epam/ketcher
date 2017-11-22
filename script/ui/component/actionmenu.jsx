@@ -30,12 +30,10 @@ const shortcutAliasMap = {
 
 export function shortcutStr(shortcut) {
 	const key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (k) {
-		return shortcutAliasMap[k] || k.toUpperCase();
-	});
+	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, k => shortcutAliasMap[k] || k.toUpperCase());
 }
 
-function ActionButton({ action, status={}, onAction, ...props }) { // eslint-disable-line no-shadow
+function ActionButton({ action, status = {}, onAction }) { // eslint-disable-line no-shadow
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button
@@ -68,13 +66,13 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 				  onClick={ev => openHandle(ev, props.onOpen)}
 			  >
 				{ typeof item !== 'object' ?  // eslint-disable-line
-					( <ActionButton
+					(<ActionButton
 						{...props}
 						action={action[item]}
 						status={props.status[item]}
-					/> ) :
+					/>) :
 						item.menu ?
-				  ( <ActionMenu {...props} name={item.id} menu={item.menu} /> ) :
+				  (<ActionMenu {...props} name={item.id} menu={item.menu} />) :
 							item.component(props)
 				}
 			  </li>

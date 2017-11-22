@@ -20,10 +20,10 @@ import keyName from 'w3c-keyname';
 
 class Dialog extends Component {
 	exit(mode) {
-		let { params, result=() => null,
-			  valid=() => !!result() } = this.props;
+		let { params, result = () => null,
+			  valid = () => !!result() } = this.props;
 		let key = (mode === 'OK') ? 'onOk' : 'onCancel';
-		if (params && key in params && (key !== 'onOk' || valid()) )
+		if (params && key in params && (key !== 'onOk' || valid()))
 			params[key](result());
 	}
 	keyDown(ev) {
@@ -31,7 +31,7 @@ class Dialog extends Component {
 		let active = document.activeElement;
 		let activeTextarea = active && active.tagName === 'TEXTAREA';
 		if (key === 'Escape' || key === 'Enter' && !activeTextarea) {
-			this.exit(key === 'Enter' ? 'OK': 'Cancel');
+			this.exit(key === 'Enter' ? 'OK' : 'Cancel');
 			ev.preventDefault();
 		}
 		ev.stopPropagation();
@@ -52,8 +52,8 @@ class Dialog extends Component {
 		let {
 			children, title, params = {},
 			result = () => null, valid = () => !!result(), // Hmm, dublicate.. No simple default props
-			buttons = ["Cancel", "OK"], ...props
-		} = this.props;   // see: https://git.io/v1KR6
+			buttons = ['Cancel', 'OK'], ...props
+		} = this.props; // see: https://git.io/v1KR6
 		return (
 			<form
 				role="dialog"
@@ -68,7 +68,7 @@ class Dialog extends Component {
 							className="close"
 							onClick={() => this.exit('Cancel')}
 						>×
-						</button> )
+						</button>)
 					}
 				</header>
 				{children}

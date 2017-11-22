@@ -234,7 +234,7 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 	var bb = null;
 	var contentBoxes = [];
 
-	atoms.forEach(function (aid) {
+	atoms.forEach((aid) => {
 		var atom = mol.atoms.get(aid);
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
 		if (!bba) {
@@ -246,7 +246,7 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 		}
 		contentBoxes.push(bba);
 	}, this);
-	mol.sGroupForest.children.get(sg.id).forEach(function (sgid) {
+	mol.sGroupForest.children.get(sg.id).forEach((sgid) => {
 		var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 		bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		contentBoxes.push(bba);
@@ -254,7 +254,7 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 	contentBoxes.forEach(function (bba) {
 		var bbb = null;
 		[bba.p0.x, bba.p1.x].forEach(function (x) {
-			[bba.p0.y, bba.p1.y].forEach(function (y) {
+			[bba.p0.y, bba.p1.y].forEach((y) => {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
 				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
@@ -304,7 +304,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var dt = dr.rotateSC(1, 0);
 			var db = dt.negated();
 
-			mol.sGroupForest.children.get(id).forEach(function (sgid) {
+			mol.sGroupForest.children.get(id).forEach((sgid) => {
 				var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 				tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba));
@@ -354,10 +354,10 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 		.attr(options.highlightStyle);
 	set.push(sg.highlighting);
 
-	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach(function (aid) {
+	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach((aid) => {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach(function (bid) {
+	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach((bid) => {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
@@ -366,7 +366,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 ReSGroup.prototype.show = function (restruct) {
 	var render = restruct.render;
 	var sgroup = this.item;
-	if (sgroup.data.fieldName !== "MRV_IMPLICIT_H") {
+	if (sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
 		var remol = render.ctab;
 		var path = this.draw(remol, sgroup);
 		restruct.addReObjectPath('data', this.visel, path, null, true);

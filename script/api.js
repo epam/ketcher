@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
-	return new Promise(function (resolve, reject) {
+	return new Promise((resolve, reject) => {
 		function iterate() {
-			process().then(function (val) {
+			process().then((val) => {
 				try {
 					if (complete(val))
 						resolve(val);
@@ -26,26 +26,20 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
 				} catch (e) {
 					reject(e);
 				}
-			}, function (err) {
-				return reject(err);
-			});
+			}, err => reject(err));
 		}
 		setTimeout(iterate, startTimeGap || 0);
 	});
 }
 
 function parametrizeUrl(url, params) {
-	return url.replace(/:(\w+)/g, function (_, val) {
-		return params[val];
-	});
+	return url.replace(/:(\w+)/g, (_, val) => params[val]);
 }
 
 function api(base, defaultOptions) {
 	const baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
-	const info = request('GET', 'indigo/info').then(function (res) {
-		return { indigoVersion: res.Indigo.version };
-	}).catch(function () {
+	const info = request('GET', 'indigo/info').then(res => ({ indigoVersion: res.Indigo.version })).catch(() => {
 		throw Error('Server is not compatible');
 	});
 
@@ -53,19 +47,18 @@ function api(base, defaultOptions) {
 		if (data && method === 'GET')
 			url = parametrizeUrl(url, data);
 		return fetch(baseUrl + url, {
-			method: method,
+			method,
 			headers: Object.assign({
 				Accept: 'application/json'
 			}, headers),
 			body: method !== 'GET' ? data : undefined,
 			credentials: 'same-origin'
-		}).then(function (response) {
-			return response.json().then(function (res) {
-				return response.ok ? res : Promise.reject(res.error);
+		})
+			.then(response => response.json()
+				.then(res => (response.ok ? res : Promise.reject(res.error))))
+			.catch((err) => {
+				throw Error('Cannot parse result\n' + err);
 			});
-		}).catch(function (err) {
-			throw Error('Cannot parse result\n' + err);
-		});
 	}
 
 	function indigoCall(method, url, defaultData) {
@@ -73,11 +66,9 @@ function api(base, defaultOptions) {
 			const body = Object.assign({}, defaultData, data);
 			body.options = Object.assign(body.options || {},
 			                             defaultOptions, options);
-			return info.then(function () {
-				return request(method, url, JSON.stringify(body), {
+			return info.then(() => request(method, url, JSON.stringify(body), {
 					'Content-Type': 'application/json'
-				});
-			});
+				}));
 		};
 	}
 
@@ -91,22 +82,18 @@ function api(base, defaultOptions) {
 		automap: indigoCall('POST', 'indigo/automap'),
 		check: indigoCall('POST', 'indigo/check'),
 		calculate: indigoCall('POST', 'indigo/calculate'),
-		recognize: function (blob) {
+		recognize(blob) {
 			const req = request('POST', 'imago/uploads', blob, {
 				'Content-Type': blob.type || 'application/octet-stream'
 			});
 			const status = request.bind(null, 'GET', 'imago/uploads/:id');
-			return req.then(function (data) {
-				return pollDeferred(
+			return req.then(data => pollDeferred(
 					status.bind(null, { id: data.upload_id }),
-					function complete(res) {
+					(res) => {
 						if (res.state === 'FAILURE')
 							throw res;
 						return res.state === 'SUCCESS';
-					}, 500, 300);
-			}).then(function correct(res) {
-				return { struct: res.metadata.mol_str };
-			});
+					}, 500, 300)).then(res => ({ struct: res.metadata.mol_str }));
 		}
 	});
 }

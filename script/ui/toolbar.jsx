@@ -207,7 +207,7 @@ function ZoomList({ status, onAction }) {
 	);
 }
 
-function AtomsList(atoms, { active, onAction, ...props }) {
+function AtomsList(atoms, { active, onAction }) {
 	let isAtom = active && active.tool === 'atom';
 	return (
 		<menu>
@@ -234,8 +234,8 @@ function AtomsList(atoms, { active, onAction, ...props }) {
 	);
 }
 
-function TemplatesList({ active, onAction, ...props }) {
-	let shortcut = shortcutStr(action[`template-0`].shortcut);
+function TemplatesList({ active, onAction }) {
+	let shortcut = shortcutStr(action['template-0'].shortcut);
 	let isTmpl = active && active.tool === 'template';
 	return (
 		<menu>
@@ -261,7 +261,7 @@ function TemplatesList({ active, onAction, ...props }) {
 }
 
 export default connect(
-	(state, props) => ({
+	state => ({
 		active: state.actionState && state.actionState.activeTool,
 		status: state.actionState || {},
 		freqAtoms: state.toolbar.freqAtoms,

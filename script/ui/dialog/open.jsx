@@ -44,7 +44,7 @@ class Open extends Component {
 			fragment: target.checked
 		});
 	}
-	render () {
+	render() {
 		let { structStr, fragment } = this.state;
 		return (
 			<Dialog
@@ -61,7 +61,7 @@ class Open extends Component {
 					>
 						Open From File…
 					</OpenButton>
-					), "Cancel", "OK"]}
+					), 'Cancel', 'OK']}
 			>
 				<textarea
 					value={structStr}

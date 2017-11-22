@@ -29,7 +29,7 @@ function parse(str, options) {
 			var propChunks = chunk.substr(end + 7).trim().split(/^$\n?/m);
 
 			item.struct = molfile.parse(chunk.substring(0, end + 6), options);
-			item.props = propChunks.reduce(function (props, pc) {
+			item.props = propChunks.reduce((props, pc) => {
 				var m = pc.match(/^> [ \d]*<(\S+)>/);
 				if (m) {
 					var field = m[1];
@@ -46,12 +46,12 @@ function parse(str, options) {
 }
 
 function stringify(items, options) {
-	return items.reduce(function (res, item) {
+	return items.reduce((res, item) => {
 		res += molfile.stringify(item.struct, options);
 
 		Object.keys(item.props).forEach((prop) => {
-			res += "> <" + prop + ">\n";
-			res += item.props[prop] + "\n\n";
+			res += '> <' + prop + '>\n';
+			res += item.props[prop] + '\n\n';
 		});
 
 		return res + '\$\$\$\$';
@@ -59,6 +59,6 @@ function stringify(items, options) {
 }
 
 module.exports = {
-	stringify: stringify,
-	parse: parse
+	stringify,
+	parse
 };

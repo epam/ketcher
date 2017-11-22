@@ -165,7 +165,7 @@ export function fromSgroupAction(context, restruct, newSg, sourceAtoms, selectio
 }
 
 function fromAtomAction(restruct, newSg, sourceAtoms) {
-	return sourceAtoms.reduce(function (acc, atom) {
+	return sourceAtoms.reduce((acc, atom) => {
 		acc.action = acc.action.mergeWith(
 			fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs)
 		);
@@ -223,7 +223,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
 	if (currSelection.bonds)
 		bonds = uniq(bonds.concat(currSelection.bonds));
 
-	return bonds.reduce(function (acc, bondid) {
+	return bonds.reduce((acc, bondid) => {
 		var bond = struct.bonds.get(bondid);
 
 		acc.action = acc.action
@@ -258,7 +258,7 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 	var sgroups = atomGetSGroups(restruct, id);
 
 	if (sgroups.length > 0) {
-		sgroups.forEach(function (sid) {
+		sgroups.forEach((sid) => {
 			action.addOp(new op.SGroupAtomRemove(sid, id));
 		});
 
@@ -273,10 +273,10 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 	var struct = restruct.molecule;
 	var sgCounts = {};
 
-	atoms.forEach(function (id) {
+	atoms.forEach((id) => {
 		var sgroups = atomGetSGroups(restruct, id);
 
-		sgroups.forEach(function (sid) {
+		sgroups.forEach((sid) => {
 			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
 		});
 	});
@@ -298,7 +298,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 
 function getAtomsBondIds(struct, atoms) {
 	return struct.bonds.keys()
-		.reduce(function (acc, bondid) {
+		.reduce((acc, bondid) => {
 			var bond = struct.bonds.get(bondid);
 
 			if (atoms.includes(bond.begin) && atoms.includes(bond.end))

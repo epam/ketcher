@@ -38,7 +38,7 @@ export function fromAtomDeletion(restruct, id) {
 
 	var frid = restruct.molecule.atoms.get(id).fragment;
 
-	atomGetNeighbors(restruct, id).forEach(function (nei) {
+	atomGetNeighbors(restruct, id).forEach((nei) => {
 		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
 		if (atomGetDegree(restruct, nei.aid) == 1) {
 			if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
@@ -64,7 +64,7 @@ export function fromAtomDeletion(restruct, id) {
 
 export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	var action = new Action();
-	(typeof (ids) === 'number' ? [ids] : ids).forEach(function (id) {
+	(typeof (ids) === 'number' ? [ids] : ids).forEach((id) => {
 		Object.keys(Struct.Atom.attrlist).forEach((key) => {
 			var value;
 			if (key in attrs)
@@ -90,7 +90,7 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 
 	var action = new Action();
 
-	atomGetNeighbors(restruct, srcId).forEach(function (nei) {
+	atomGetNeighbors(restruct, srcId).forEach((nei) => {
 		var bond = restruct.molecule.bonds.get(nei.bid);
 		var begin;
 		var end;

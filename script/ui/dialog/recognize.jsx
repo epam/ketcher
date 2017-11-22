@@ -30,7 +30,7 @@ function Recognize(prop) {
 	const { file, structStr, fragment, onRecognize, isFragment, onImage, ...props } = prop;
 
 	const result = () =>
-		structStr && !(structStr instanceof Promise) ? { structStr, fragment } : null;
+		(structStr && !(structStr instanceof Promise) ? { structStr, fragment } : null);
 
 	return (
 		<Dialog
@@ -46,8 +46,8 @@ function Recognize(prop) {
 					file && !structStr ? (
 						<button onClick={() => onRecognize(file)}>Recognize</button>
 					) : null,
-					"Cancel",
-					"OK"
+					'Cancel',
+					'OK'
 				]}
 		>
 			<div className="picture">
@@ -56,7 +56,7 @@ function Recognize(prop) {
 						<img
 							alt=""
 							id="pic"
-							src={url(file) || ""}
+							src={url(file) || ''}
 							onError={() => {
 								onImage(null);
 								alert("Error, it isn't a picture");
@@ -69,8 +69,8 @@ function Recognize(prop) {
 				{
 					structStr && (
 						structStr instanceof Promise || typeof structStr !== 'string' ? // in Edge 38:
-							( <Spin /> ) :											// instanceof Promise always `false`
-							( <StructRender className="struct" struct={structStr} /> )
+							(<Spin />) :											// instanceof Promise always `false`
+							(<StructRender className="struct" struct={structStr} />)
 					)
 				}
 			</div>
@@ -85,7 +85,7 @@ function Recognize(prop) {
 function url(file) {
 	if (!file) return null;
 	const URL = window.URL || window.webkitURL;
-	return URL ? URL.createObjectURL(file) : "No preview";
+	return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
 export default connect(

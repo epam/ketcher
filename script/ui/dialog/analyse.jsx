@@ -83,7 +83,7 @@ class Analyse extends Component {
 			<Dialog
 				title="Calculated Values"
 				className="analyse"
-				buttons={["Close"]}
+				buttons={['Close']}
 				params={props}
 			>
 				<ul>{[

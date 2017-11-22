@@ -168,10 +168,10 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 
 	function shiftMol(ret, mol, bb, xorig, over) { // eslint-disable-line max-params
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
-		mol.atoms.each(function (aid, atom) {
+		mol.atoms.each((aid, atom) => {
 			atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
-		mol.sgroups.each(function (id, item) {
+		mol.sgroups.each((id, item) => {
 			if (item.pp)
 				item.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
@@ -265,10 +265,10 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 }
 
 module.exports = {
-	fmtInfo: fmtInfo,
-	paddedNum: paddedNum,
-	parseDecimalInt: parseDecimalInt,
-	partitionLine: partitionLine,
-	partitionLineFixed: partitionLineFixed,
-	rxnMerge: rxnMerge
+	fmtInfo,
+	paddedNum,
+	parseDecimalInt,
+	partitionLine,
+	partitionLineFixed,
+	rxnMerge
 };

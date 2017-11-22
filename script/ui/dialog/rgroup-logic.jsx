@@ -40,7 +40,7 @@ function IfThenSelect(props, { schema }) {
 	return <Field name={name} schema={desc} {...props} />;
 }
 
-function RgroupLogic (props) {
+function RgroupLogic(props) {
 	const { formState, label, rgroupLabels, ...prop } = props;
 
 	return (
@@ -69,10 +69,8 @@ function rangeConv(range) { // structConv
 	const res = range.replace(/\s*/g, '').replace(/,+/g, ',')
 		.replace(/^,/, '').replace(/,$/, '');
 
-	return res.split(',').every(function (s) {
-		return s.match(/^[>,<=]?[0-9]+$/g) ||
-			s.match(/^[0-9]+-[0-9]+$/g);
-	});
+	return res.split(',').every(s => s.match(/^[>,<=]?[0-9]+$/g) ||
+			s.match(/^[0-9]+-[0-9]+$/g));
 }
 
 export default connect(

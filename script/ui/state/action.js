@@ -21,8 +21,7 @@ function execute(activeTool, { action, editor, server, options }) {
 	if (action.tool) {
 		if (editor.tool(action.tool, action.opts))
 			return action;
-	}
-	else if (typeof action === 'function') {
+	} else if (typeof action === 'function') {
 		action(editor, server, options);
 	} else {
 		console.info('no action');
@@ -52,7 +51,7 @@ function status(key, activeTool, params) {
 	});
 }
 
-export default function (state=null, { type, action, ...params }) {
+export default function (state = null, { type, action, ...params }) {
 	switch (type) {
 	case 'INIT':
 		action = acts['select-lasso'].action;

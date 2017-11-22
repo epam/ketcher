@@ -132,28 +132,28 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 	}
 
 	if (selection.rxnArrows) {
-		selection.rxnArrows.forEach(function (aid) {
+		selection.rxnArrows.forEach((aid) => {
 			var arrow = struct.rxnArrows.get(aid);
 			action.addOp(new op.RxnArrowMove(aid, rotateDelta(arrow.pp, center, angle)));
 		});
 	}
 
 	if (selection.rxnPluses) {
-		selection.rxnPluses.forEach(function (pid) {
+		selection.rxnPluses.forEach((pid) => {
 			var plus = struct.rxnPluses.get(pid);
 			action.addOp(new op.RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
 		});
 	}
 
 	if (selection.sgroupData) {
-		selection.sgroupData.forEach(function (did) {
+		selection.sgroupData.forEach((did) => {
 			var data = struct.sgroups.get(did);
 			action.addOp(new op.SGroupDataMove(did, rotateDelta(data.pp, center, angle)));
 		});
 	}
 
 	if (selection.chiralFlags) {
-		selection.chiralFlags.forEach(function (fid) {
+		selection.chiralFlags.forEach((fid) => {
 			var flag = restruct.chiralFlags.get(fid);
 			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, center, angle)));
 		});
@@ -175,7 +175,7 @@ export function fromBondAlign(restruct, bid, dir) {
 
 	// TODO: choose minimal angle
 	// console.info('single bond', utils.degrees(angle), atoms, dir);
-	return fromRotate(restruct, { atoms: atoms }, center, angle);
+	return fromRotate(restruct, { atoms }, center, angle);
 }
 
 function rotateDelta(v, center, angle) {

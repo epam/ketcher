@@ -16,15 +16,15 @@
 
 /* local storage */
 const storage = {
-	warningMessage: "Your changes will be lost after the tab closing. See Help (Note 2).",
-	isAvailable: function () {
+	warningMessage: 'Your changes will be lost after the tab closing. See Help (Note 2).',
+	isAvailable() {
 		try {
 			return localStorage;
 		} catch (ex) {
 			return false;
 		}
 	},
-	getItem: function (key) {
+	getItem(key) {
 		let item = null;
 		try {
 			item = JSON.parse(localStorage.getItem(key));
@@ -33,7 +33,7 @@ const storage = {
 		}
 		return item;
 	},
-	setItem: function (key, data) {
+	setItem(key, data) {
 		let isSet = null;
 		try {
 			localStorage.setItem(key, JSON.stringify(data));
@@ -77,7 +77,7 @@ function selectListOf(schema, prop) {
 }
 
 module.exports = {
-	mapOf: mapOf,
-	selectListOf: selectListOf,
-	storage: storage
+	mapOf,
+	selectListOf,
+	storage
 };

@@ -89,7 +89,7 @@ function parseAtomListLine(/* string */atomListLine) {
 	return {
 		aid: number,
 		atomList: new Struct.AtomList({
-			notList: notList,
+			notList,
 			ids: list
 		})
 	};
@@ -243,7 +243,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		ctab.bonds.add(bonds[i]);
 
 	var atomLists = atomListLines.map(parseAtomListLine);
-	atomLists.forEach(function (pair) {
+	atomLists.forEach((pair) => {
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 		ctab.atoms.get(pair.aid).label = 'L#';
 	});
@@ -415,14 +415,14 @@ function parsePropertyLineAtomList(hdr, lst) {
 	var ids = labelsListToIds(lst.slice(0, count));
 	var ret = {};
 	ret[aid] = new Struct.AtomList({
-		notList: notList,
-		ids: ids
+		notList,
+		ids
 	});
 	return ret;
 }
 
 module.exports = {
-	parseCTabV2000: parseCTabV2000,
-	parseRg2000: parseRg2000,
-	parseRxn2000: parseRxn2000
+	parseCTabV2000,
+	parseRg2000,
+	parseRxn2000
 };

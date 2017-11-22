@@ -1,4 +1,5 @@
 /****************************************************************************
+/****************************************************************************
  * Copyright 2017 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,20 +23,20 @@ import Dialog from '../component/dialog';
 import { automap } from '../state/server';
 
 export const automapSchema = {
-	title: "Reaction Auto-Mapping",
-	type: "object",
-	required: ["mode"],
+	title: 'Reaction Auto-Mapping',
+	type: 'object',
+	required: ['mode'],
 	properties: {
 		mode: {
-			title: "Mode",
-			enum: ["discard", "keep", "alter", "clear"],
-			enumNames: ["Discard", "Keep", "Alter", "Clear"],
-			default: "discard"
+			title: 'Mode',
+			enum: ['discard', 'keep', 'alter', 'clear'],
+			enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
+			default: 'discard'
 		}
 	}
 };
 
-function Automap (props) {
+function Automap(props) {
 	let { formState, ...prop } = props;
 	return (
 		<Dialog

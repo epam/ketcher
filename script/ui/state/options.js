@@ -33,8 +33,8 @@ export const optionsState = {
 		structStr: null,
 		fragment: false
 	},
-	settings: Object.assign(getDefaultOptions(), validation(storage.getItem("ketcher-opts"))),
-	getServerSettings: function() {
+	settings: Object.assign(getDefaultOptions(), validation(storage.getItem('ketcher-opts'))),
+	getServerSettings() {
 		return pick(SERVER_OPTIONS, this.settings);
 	}
 };
@@ -48,7 +48,7 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-	storage.setItem("ketcher-opts", newSettings);
+	storage.setItem('ketcher-opts', newSettings);
 	return {
 		type: 'SAVE_SETTINGS',
 		data: newSettings
@@ -81,7 +81,7 @@ export function changeImage(file) {
 	return {
 		type: 'CHANGE_RECOGNIZE_FILE',
 		data: {
-			file: file,
+			file,
 			structStr: null
 		}
 	};

@@ -142,9 +142,7 @@ SGroup.clone = function (sgroup, aidMap) {
 	Object.keys(sgroup.data).forEach((field) => { cp.data[field] = sgroup.data[field]; });
 	// TODO: remove all non-primitive properties from 'data'
 
-	cp.atoms = sgroup.atoms.map(function (elem) {
-		return aidMap[elem];
-	});
+	cp.atoms = sgroup.atoms.map(elem => aidMap[elem]);
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
@@ -198,7 +196,7 @@ SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-stat
 
 	var bb = null;
 	var contentBoxes = [];
-	atoms.forEach(function (aid) {
+	atoms.forEach((aid) => {
 		var atom = mol.atoms.get(aid);
 		var pos = new Vec2(atom.pp);
 		var ext = new Vec2(0.05 * 3, 0.05 * 3);
@@ -208,7 +206,7 @@ SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-stat
 	contentBoxes.forEach(function (bba) {
 		var bbb = null;
 		[bba.p0.x, bba.p1.x].forEach(function (x) {
-			[bba.p0.y, bba.p1.y].forEach(function (y) {
+			[bba.p0.y, bba.p1.y].forEach((y) => {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
 				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
@@ -350,14 +348,14 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var newAtoms = [];
 	for (var j = 0; j < sgroup.data.mul - 1; j++) {
 		amap = {};
-		sgroup.atoms.forEach(function (aid) {
+		sgroup.atoms.forEach((aid) => {
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new Atom(atom));
 			newAtoms.push(aid2);
 			sgroup.atomSet[aid2] = 1;
 			amap[aid] = aid2;
 		});
-		inBonds.forEach(function (bid) {
+		inBonds.forEach((bid) => {
 			var bond = mol.bonds.get(bid);
 			var newBond = new Bond(bond);
 			newBond.begin = amap[newBond.begin];
@@ -381,8 +379,8 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	}
 	sgroup.bonds = xBonds;
 
-	newAtoms.forEach(function (aid) {
-		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach(function (sgid) {
+	newAtoms.forEach((aid) => {
+		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach((sgid) => {
 			mol.atomAddToSGroup(sgid, aid);
 		});
 	});

@@ -200,7 +200,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		this.editor.selection(closestToSel(ci));
 		var atom = struct.atoms.get(ci.id);
 		var ra = editor.event.elementEdit.dispatch(atom);
-		Promise.resolve(ra).then(function (newatom) {
+		Promise.resolve(ra).then((newatom) => {
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
 			editor.update(fromAtomsAttrs(rnd.ctab, ci.id, newatom));
@@ -209,7 +209,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
-		Promise.resolve(rb).then(function (newbond) {
+		Promise.resolve(rb).then((newbond) => {
 			editor.update(fromBondAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
@@ -219,7 +219,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	return true;
 };
 
-SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
+SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
 	if (this.dragCtx && this.dragCtx.stopTapping)
 		this.dragCtx.stopTapping();
 

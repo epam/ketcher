@@ -24,7 +24,7 @@ function Help(props) {
 			title="Help"
 			className="help"
 			params={props}
-			buttons={["Close"]}
+			buttons={['Close']}
 		>
 			<iframe className="help" src="doc/help.html" />
 		</Dialog>

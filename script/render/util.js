@@ -57,7 +57,7 @@ function shiftRayBox(p, d, bb) {
 	let nid = -1;
 
 	for (let i = 0; i < 4; ++i) {
-		if (rc[i] > 0)  {
+		if (rc[i] > 0) {
 			if (pid < 0 || rd[pid] < rd[i])
 				pid = i;
 		} else if (nid < 0 || rd[nid] < rd[i]) {

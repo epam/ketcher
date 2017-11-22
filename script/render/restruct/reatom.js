@@ -118,9 +118,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		if (!isHydrogen && implh > 0 && displayHydrogen(options.showHydrogenLabels, this)) {
 			var data = showHydrogen(this, render, implh, {
 				hydrogen: {},
-				hydroIndex: hydroIndex,
-				rightMargin: rightMargin,
-				leftMargin: leftMargin
+				hydroIndex,
+				rightMargin,
+				leftMargin
 			});
 			var hydrogen = data.hydrogen;
 			hydroIndex = data.hydroIndex;
@@ -496,7 +496,7 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 			data.leftMargin - (0.5 * hydrogen.rbb.width) - delta, 0);
 		data.leftMargin -= hydrogen.rbb.width + delta;
 	}
-	return Object.assign(data, { hydrogen: hydrogen, hydroIndex: hydroIndex });
+	return Object.assign(data, { hydrogen, hydroIndex });
 }
 
 function showWarning(atom, render, leftMargin, rightMargin) {
@@ -518,9 +518,8 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 	var options = render.options;
 	var tfx = util.tfx;
 	var i,
-		c,
 		j;
-	for (i = 0, c = 0; i < 4; ++i) {
+	for (i = 0; i < 4; ++i) {
 		var attpntText = '';
 		if (atom.a.attpnt & (1 << i)) {
 			if (attpntText.length > 0)
@@ -562,15 +561,15 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 
 function getAamText(atom) {
 	var aamText = '';
-	if (atom.a.aam > 0)    aamText += atom.a.aam;
+	if (atom.a.aam > 0) aamText += atom.a.aam;
 	if (atom.a.invRet > 0) {
-		if (aamText.length > 0)    aamText += ',';
-		if (atom.a.invRet == 1)    aamText += 'Inv';
+		if (aamText.length > 0) aamText += ',';
+		if (atom.a.invRet == 1) aamText += 'Inv';
 		else if (atom.a.invRet == 2) aamText += 'Ret';
 		else throw new Error('Invalid value for the invert/retain flag');
 	}
 	if (atom.a.exactChangeFlag > 0) {
-		if (aamText.length > 0)    aamText += ',';
+		if (aamText.length > 0) aamText += ',';
 		if (atom.a.exactChangeFlag == 1) aamText += 'ext';
 		else throw new Error('Invalid value for the exact change flag');
 	}
@@ -612,13 +611,11 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom, struct) {
 	var angles = [];
-	atom.a.neighbors.forEach(function (hbid) {
+	atom.a.neighbors.forEach((hbid) => {
 		var hb = struct.halfBonds.get(hbid);
 		angles.push(hb.ang);
 	});
-	angles = angles.sort(function (a, b) {
-		return a - b;
-	});
+	angles = angles.sort((a, b) => a - b);
 	var da = [];
 	for (var i = 0; i < angles.length - 1; ++i)
 		da.push(angles[(i + 1) % angles.length] - angles[i]);

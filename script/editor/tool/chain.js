@@ -71,7 +71,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 			dragCtx.action = fromChain(rnd.ctab, pos0, angle, sectCount,
 				dragCtx.item ? dragCtx.item.id : null);
 			editor.event.message.dispatch({
-				info: sectCount + " sectors"
+				info: sectCount + ' sectors'
 			});
 			this.editor.update(dragCtx.action, true);
 			return true;
@@ -105,7 +105,7 @@ ChainTool.prototype.mouseup = function () {
 	return true;
 };
 
-ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
+ChainTool.prototype.cancel = ChainTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
 	ChainTool.prototype.mouseup;
 
 export default ChainTool;

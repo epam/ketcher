@@ -54,8 +54,8 @@ const shared = combineReducers({
 	actionState,
 	toolbar,
 	modal,
-	server: (store=null) => store,
-	editor: (store=null) => store,
+	server: (store = null) => store,
+	editor: (store = null) => store,
 	options: optionsReducer,
 	templates: templatesReducer
 });
@@ -104,16 +104,16 @@ export function load(structStr, options) {
 		const parsed = structFormat.fromString(structStr,
 			options, server);
 
-		parsed.catch(function (err) {
+		parsed.catch(() => {
 			//utils.loading('hide');
-			alert("Can't parse molecule!");
+			alert('Can\'t parse molecule!');
 		});
 
-		return parsed.then(function (struct) {
+		return parsed.then((struct) => {
 			//utils.loading('hide');
 			console.assert(struct, 'No molecule to update');
 			if (options.rescale)
-				struct.rescale();   // TODO: move out parsing?
+				struct.rescale(); // TODO: move out parsing?
 
 			if (options.fragment && !struct.isBlank())
 				dispatch(onAction({ tool: 'paste', opts: struct }));
@@ -121,7 +121,7 @@ export function load(structStr, options) {
 				editor.struct(struct);
 
 			return struct;
-		}, function (err) {
+		}, (err) => {
 			alert(err);
 		});
 	};
@@ -147,12 +147,12 @@ function root(state, action) {
 	};
 }
 
-export default function(options, server) {
+export default function (options, server) {
 	// TODO: redux localStorage here
 	const initState = {
 		actionState: null,
 		options: Object.assign(optionsState, { app: options }),
-		server: server || Promise.reject("Standalone mode!"),
+		server: server || Promise.reject('Standalone mode!'),
 		editor: null,
 		modal: null,
 		templates: initTmplState

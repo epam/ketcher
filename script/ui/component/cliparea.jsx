@@ -101,7 +101,7 @@ function copy(cb, data) {
 	} else {
 		cb.setData('text/plain', data['text/plain']);
 		try {
-			Object.keys(data).forEach(function (fmt) {
+			Object.keys(data).forEach((fmt) => {
 				cb.setData(fmt, data[fmt]);
 			});
 		} catch (ex) {
@@ -116,7 +116,7 @@ function paste(cb, formats) {
 		data['text/plain'] = ieCb.getData('text');
 	} else {
 		data['text/plain'] = cb.getData('text/plain');
-		data = formats.reduce(function (res, fmt) {
+		data = formats.reduce((res, fmt) => {
 			const d = cb.getData(fmt);
 			if (d)
 				res[fmt] = d;
@@ -130,12 +130,14 @@ export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
-	if (enabled) { try {
-		enabled = document.execCommand(action) || ieCb;
-	} catch (ex) {
-		// FF < 41
-		enabled = false;
-	} }
+	if (enabled) {
+		try {
+			enabled = document.execCommand(action) || ieCb;
+		} catch (ex) {
+			// FF < 41
+			enabled = false;
+		}
+	}
 	return enabled;
 }
 

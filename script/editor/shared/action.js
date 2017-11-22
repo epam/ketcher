@@ -37,7 +37,7 @@ Action.prototype.mergeWith = function (action) {
 Action.prototype.perform = function (restruct) {
 	const action = new Action();
 
-	this.operations.forEach(function (operation) {
+	this.operations.forEach((operation) => {
 		action.addOp(operation.perform(restruct));
 	});
 
@@ -46,9 +46,9 @@ Action.prototype.perform = function (restruct) {
 };
 
 Action.prototype.isDummy = function (restruct) {
-	return this.operations.find(function (operation) {
-		return restruct ? !operation.isDummy(restruct) : true; // TODO [RB] the condition is always true for op.* operations
-	}) === undefined;
+	return this.operations.find(operation =>
+		 (restruct ? !operation.isDummy(restruct) : true) // TODO [RB] the condition is always true for op.* operations
+	) === undefined;
 };
 
 export default Action;

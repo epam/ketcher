@@ -30,7 +30,7 @@ import Input from '../component/input';
 import SelectList from '../component/select';
 
 import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templates';
-import { onAction } from "../state/";
+import { onAction } from '../state/';
 
 const GREEK_SIMBOLS = {
 	'Alpha': 'A',
@@ -42,7 +42,7 @@ const GREEK_SIMBOLS = {
 };
 
 function tmplName(tmpl, i) {
-	console.assert(tmpl.props && tmpl.props.group, "No group");
+	console.assert(tmpl.props && tmpl.props.group, 'No group');
 	return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
@@ -68,7 +68,8 @@ function filterLib(lib, filter) {
 	return flow(
 		_filter(item => !filter || re.test(greekify(item.struct.name)) || re.test(greekify(item.props.group))),
 		reduce((res, item) => {
-			!res[item.props.group] ? res[item.props.group] = [item] : res[item.props.group].push(item);
+			if (!res[item.props.group]) res[item.props.group] = [item];
+			else res[item.props.group].push(item);
 			return res;
 		}, {})
 	)(lib);
@@ -82,14 +83,14 @@ const libRowsSelector = createSelector(
 );
 
 function libRows(lib, group, COLS) {
-	console.warn("Group", group);
+	console.warn('Group', group);
 	return partition(COLS, lib[group]);
 }
 
 function RenderTmpl({ tmpl, ...props }) {
 	return tmpl.props && tmpl.props.prerender ?
-		( <svg {...props}><use xlinkHref={tmpl.props.prerender} /></svg> ) :
-		( <StructRender struct={tmpl.struct} options={{ autoScaleMargin: 15 }} {...props} /> );
+		(<svg {...props}><use xlinkHref={tmpl.props.prerender} /></svg>) :
+		(<StructRender struct={tmpl.struct} options={{ autoScaleMargin: 15 }} {...props} />);
 }
 
 class TemplateLib extends Component {
@@ -147,7 +148,7 @@ class TemplateLib extends Component {
 					>
 						Save To SDF…
 					</SaveButton>,
-						"OK", "Cancel"]}
+						'OK', 'Cancel']}
 			>
 				<label>
 					<Input

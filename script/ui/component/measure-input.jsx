@@ -71,7 +71,7 @@ function convertValue(value, measureFrom, measureTo) {
 	if (!value && value !== 0 || isNaN(value)) return null; // eslint-disable-line
 
 	return (measureTo === 'px' || measureTo === 'pt')
-		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed( ) - 0
+		? (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed() - 0
 		: (value * measureMap[measureFrom] / measureMap[measureTo]).toFixed(3) - 0;
 }
 

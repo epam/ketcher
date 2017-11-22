@@ -166,7 +166,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 		(data.units || '').padEnd(20) +
 		(data.query || '').padStart(2);
 
-	if (data.queryOp)    // see gitlab #184
+	if (data.queryOp) // see gitlab #184
 		sdtLine += data.queryOp.padEnd(80 - 65);
 
 	lines.push(sdtLine);
@@ -185,7 +185,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 	lines.push(sddLine);
 	var val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
 	var charsPerLine = 69;
-	val.split('\n').forEach(function (chars) {
+	val.split('\n').forEach((chars) => {
 		while (chars.length > charsPerLine) {
 			lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
 			chars = chars.slice(charsPerLine);
@@ -264,9 +264,9 @@ function partitionLine(/* string*/ str, /* array of int*/ parts, /* bool*/ withs
 }
 
 module.exports = {
-	parseCTab: parseCTab,
-	parseMol: parseMol,
-	parseRxn: parseRxn,
-	prepareForSaving: prepareForSaving,
-	saveToMolfile: saveToMolfile
+	parseCTab,
+	parseMol,
+	parseRxn,
+	prepareForSaving,
+	saveToMolfile
 };

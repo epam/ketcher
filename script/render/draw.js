@@ -261,7 +261,7 @@ function aromaticBondPaths(a2, a3, b2, b3, mask, dash) { // eslint-disable-line 
 function recenterText(path, rbb) {
 	// TODO: find a better way
 	if (Raphael.vml) { // dirty hack
-		console.assert(null, "Souldn't go here!");
+		console.assert(null, 'Souldn\'t go here!');
 		var gap = rbb.height * 0.16;
 		path.translateAbs(0, gap);
 		rbb.y += gap;
@@ -269,27 +269,27 @@ function recenterText(path, rbb) {
 }
 
 module.exports = {
-	recenterText: recenterText,
-	arrow: arrow,
-	plus: plus,
-	aromaticBondPaths: aromaticBondPaths,
-	bondSingle: bondSingle,
-	bondSingleUp: bondSingleUp,
-	bondSingleStereoBold: bondSingleStereoBold,
-	bondDoubleStereoBold: bondDoubleStereoBold,
-	bondSingleDown: bondSingleDown,
-	bondSingleEither: bondSingleEither,
-	bondDouble: bondDouble,
-	bondSingleOrDouble: bondSingleOrDouble,
-	bondTriple: bondTriple,
-	bondAromatic: bondAromatic,
-	bondAny: bondAny,
-	reactingCenter: reactingCenter,
-	topologyMark: topologyMark,
-	radicalCap: radicalCap,
-	radicalBullet: radicalBullet,
-	bracket: bracket,
-	selectionRectangle: selectionRectangle,
-	selectionPolygon: selectionPolygon,
-	selectionLine: selectionLine
+	recenterText,
+	arrow,
+	plus,
+	aromaticBondPaths,
+	bondSingle,
+	bondSingleUp,
+	bondSingleStereoBold,
+	bondDoubleStereoBold,
+	bondSingleDown,
+	bondSingleEither,
+	bondDouble,
+	bondSingleOrDouble,
+	bondTriple,
+	bondAromatic,
+	bondAny,
+	reactingCenter,
+	topologyMark,
+	radicalCap,
+	radicalBullet,
+	bracket,
+	selectionRectangle,
+	selectionPolygon,
+	selectionLine
 };

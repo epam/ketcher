@@ -44,7 +44,7 @@ class Save extends Component {
 		// $('[value=inchi]').disabled = ui.standalone;
 		let { type, structStr } = this.state;
 		let format = structFormat.map[type];
-		console.assert(format, "Unknown chemical file type");
+		console.assert(format, 'Unknown chemical file type');
 
 		return (
 			<Dialog
@@ -69,7 +69,7 @@ class Save extends Component {
 					>
 						Save to Templates
 					</button>
-				), "Close"]}
+				), 'Close']}
 			>
 				<label>Format:
 					<select value={type} onChange={ev => this.changeType(ev)}>{

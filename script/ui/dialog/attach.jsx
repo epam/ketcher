@@ -21,7 +21,7 @@ import { attachmentPoints as attachmentPointsSchema } from '../structschema';
 import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 
-function AttachmentPoints (props) {
+function AttachmentPoints(props) {
 	let { formState, ...prop } = props;
 	return (
 		<Dialog

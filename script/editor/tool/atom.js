@@ -99,11 +99,11 @@ export function atomLongtapEvent(tool, render) {
 		new Struct.Atom({ label: '' });
 
 	// TODO: longtab event
-	dragCtx.timeout = setTimeout(function () {
+	dragCtx.timeout = setTimeout(() => {
 		delete tool.dragCtx;
 		editor.selection(null);
 		const res = editor.event.quickEdit.dispatch(atom);
-		Promise.resolve(res).then(function (newatom) {
+		Promise.resolve(res).then((newatom) => {
 			const action = atomid ?
 				fromAtomsAttrs(render.ctab, atomid, newatom) :
 				fromAtomAddition(render.ctab, dragCtx.xy0, newatom);

@@ -37,7 +37,7 @@ export function initResize() {
 	};
 }
 
-export default function (state=initial, action) {
+export default function (state = initial, action) {
 	let { type, data } = action;
 
 	switch (type) {

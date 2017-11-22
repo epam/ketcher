@@ -48,35 +48,23 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 		var nei1 = neiList[0];
 		var nei2 = neiList[1];
 		// check atom labels
-		if ([aid, nei1.aid, nei2.aid].findIndex(function (aid) {
-			return ['C', 'Si'].indexOf(atoms.get(aid).label) < 0;
-		}, this) >= 0)
+		if ([aid, nei1.aid, nei2.aid].findIndex(aid => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0, this) >= 0)
 			return false;
 
 		// check adjacent bond types
-		if ([nei1.bid, nei2.bid].findIndex(function (bid) {
-			return bonds.get(bid).type !== Struct.Bond.PATTERN.TYPE.DOUBLE;
-		}, this) >= 0)
+		if ([nei1.bid, nei2.bid].findIndex(bid => bonds.get(bid).type !== Struct.Bond.PATTERN.TYPE.DOUBLE, this) >= 0)
 			return false;
 
 		// get the other neighbors of the two adjacent atoms except for the central atom
-		var nei1nei = this.getNeighbors.call(this.context, nei1.aid).filter(function (nei) {
-			return nei.aid != aid;
-		});
-		var nei2nei = this.getNeighbors.call(this.context, nei2.aid).filter(function (nei) {
-			return nei.aid != aid;
-		});
+		var nei1nei = this.getNeighbors.call(this.context, nei1.aid).filter(nei => nei.aid != aid);
+		var nei2nei = this.getNeighbors.call(this.context, nei2.aid).filter(nei => nei.aid != aid);
 		if (nei1nei.length < 1 || nei1nei.length > 2 || nei2nei.length < 1 || nei2nei.length > 2)
 			return false;
 
-		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
-			return bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE;
-		}, this) >= 0)
+		if (nei1nei.concat(nei2nei).findIndex(nei => bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE, this) >= 0)
 			return false;
 
-		if (nei1nei.concat(nei2nei).findIndex(function (nei) {
-			return bonds.get(nei.bid).stereo == Struct.Bond.PATTERN.STEREO.EITHER;
-		}, this) >= 0)
+		if (nei1nei.concat(nei2nei).findIndex(nei => bonds.get(nei.bid).stereo == Struct.Bond.PATTERN.STEREO.EITHER, this) >= 0)
 			return false;
 		alleneMask.add(nei1.aid).add(nei2.aid);
 		return true;
@@ -125,19 +113,19 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 
 Stereocenters.allowed_stereocenters =
 [
-	{ elem: 'C',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
-	{ elem: 'C',  charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'C', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'C', charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
 	{ elem: 'Si', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
 	{ elem: 'Si', charge: 0, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
-	{ elem: 'N',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
-	{ elem: 'N',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
-	{ elem: 'N',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
-	{ elem: 'S',  charge: 0, degree: 4, n_double_bonds: 2, implicit_degree: 4 },
-	{ elem: 'S',  charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
-	{ elem: 'S',  charge: 0, degree: 3, n_double_bonds: 1, implicit_degree: 3 },
-	{ elem: 'P',  charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
-	{ elem: 'P',  charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
-	{ elem: 'P',  charge: 0, degree: 4, n_double_bonds: 1, implicit_degree: 4 }
+	{ elem: 'N', charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'N', charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'N', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'S', charge: 0, degree: 4, n_double_bonds: 2, implicit_degree: 4 },
+	{ elem: 'S', charge: 1, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'S', charge: 0, degree: 3, n_double_bonds: 1, implicit_degree: 3 },
+	{ elem: 'P', charge: 0, degree: 3, n_double_bonds: 0, implicit_degree: 3 },
+	{ elem: 'P', charge: 1, degree: 4, n_double_bonds: 0, implicit_degree: 4 },
+	{ elem: 'P', charge: 0, degree: 4, n_double_bonds: 1, implicit_degree: 4 }
 ];
 
 
@@ -197,7 +185,7 @@ Stereocenters.prototype.buildOneCenter = function (atomIdx/* , int group, int ty
 			nDoubleBonds++;
 	}, this);
 
-	Stereocenters.allowed_stereocenters.find(function (as) {
+	Stereocenters.allowed_stereocenters.find((as) => {
 		if (as.elem == atom.label && as.charge == atom.charge &&
 		as.degree == degree && as.n_double_bonds == nDoubleBonds) {
 			implicitDegree = as.implicit_degree;
@@ -496,18 +484,30 @@ Stereocenters.isPyramidMappingRigid = function (mapping) {
 	var arr = mapping.slice();
 	var rigid = true;
 
-	if (arr[0] > arr[1])
-		swap(arr, 0, 1), rigid = !rigid;
-	if (arr[1] > arr[2])
-		swap(arr, 1, 2), rigid = !rigid;
-	if (arr[2] > arr[3])
-		swap(arr, 2, 3), rigid = !rigid;
-	if (arr[1] > arr[2])
-		swap(arr, 1, 2), rigid = !rigid;
-	if (arr[0] > arr[1])
-		swap(arr, 0, 1), rigid = !rigid;
-	if (arr[1] > arr[2])
-		swap(arr, 1, 2), rigid = !rigid;
+	if (arr[0] > arr[1]) {
+		swap(arr, 0, 1);
+		rigid = !rigid;
+	}
+	if (arr[1] > arr[2]) {
+		swap(arr, 1, 2);
+		rigid = !rigid;
+	}
+	if (arr[2] > arr[3]) {
+		swap(arr, 2, 3);
+		rigid = !rigid;
+	}
+	if (arr[1] > arr[2]) {
+		swap(arr, 1, 2);
+		rigid = !rigid;
+	}
+	if (arr[0] > arr[1]) {
+		swap(arr, 0, 1);
+		rigid = !rigid;
+	}
+	if (arr[1] > arr[2]) {
+		swap(arr, 1, 2);
+		rigid = !rigid;
+	}
 
 	return rigid;
 };

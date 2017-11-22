@@ -157,13 +157,13 @@ function findClosestDataSGroupData(restruct, pos) {
 		if (item.sgroup.type !== 'DAT')
 			throw new Error('Data group expected');
 
-		if (item.sgroup.data.fieldName !== "MRV_IMPLICIT_H") {
+		if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
 			const box = item.sgroup.dataArea;
 			const inBox = box.p0.y < pos.y && box.p1.y > pos.y && box.p0.x < pos.x && box.p1.x > pos.x;
 			const xDist = Math.min(Math.abs(box.p0.x - pos.x), Math.abs(box.p1.x - pos.x));
 
 			if (inBox && (ret === null || xDist < minDist)) {
-				ret = { id: id, dist: xDist };
+				ret = { id, dist: xDist };
 				minDist = xDist;
 			}
 		}

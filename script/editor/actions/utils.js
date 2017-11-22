@@ -71,7 +71,7 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 	var neighbours = [];
 	var pos = atomGetPos(restruct, id);
 
-	atomGetNeighbors(restruct, id).forEach(function (nei) {
+	atomGetNeighbors(restruct, id).forEach((nei) => {
 		var neiPos = atomGetPos(restruct, nei.aid);
 
 		if (Vec2.dist(pos, neiPos) < 0.1)
@@ -80,9 +80,7 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 		neighbours.push({ id: nei.aid, v: Vec2.diff(neiPos, pos) });
 	});
 
-	neighbours.sort(function (nei1, nei2) {
-		return Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x);
-	});
+	neighbours.sort((nei1, nei2) => Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x));
 
 	var i;
 	var maxI = 0;
@@ -117,7 +115,7 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 				var neiV = Vec2.diff(pos, neiPos);
 				var neiAngle = Math.atan2(neiV.y, neiV.x);
 
-				atomGetNeighbors(restruct, nei.aid).forEach(function (neiNei) {
+				atomGetNeighbors(restruct, nei.aid).forEach((neiNei) => {
 					var neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
 					if (neiNei.bid == nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
@@ -131,9 +129,7 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 
 					neiNeighbours.push(ang);
 				});
-				neiNeighbours.sort(function (nei1, nei2) {
-					return nei1 - nei2;
-				});
+				neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
 
 				if (neiNeighbours[0] <= Math.PI * 1.01 && neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI)
 					maxAngle *= -1;

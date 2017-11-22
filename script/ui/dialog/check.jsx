@@ -29,7 +29,7 @@ const checkSchema = {
 		checkOptions: {
 			type: 'array',
 			items: {
-				type: "string",
+				type: 'string',
 				enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
 					'overlapping_bonds', 'rgroups', 'chiral', '3d'],
 				enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
@@ -59,7 +59,7 @@ function Check(props) {
 				<Tabs
 					className="tabs"
 					captions={tabs}
-					  changeTab={i => i === 0 ? onCheck(result.checkOptions) : null}
+					  changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
 				>
 					<ErrorsCheck moleculeErrors={moleculeErrors} />
 					<Field name="checkOptions" multiple type="checkbox" />

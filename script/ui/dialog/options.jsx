@@ -50,7 +50,7 @@ function Settings(props) {
 						Save To File…
 				</SaveButton>,
 				<button onClick={onReset}>Reset</button>,
-				"OK", "Cancel"
+				'OK', 'Cancel'
 			]}
 		>
 			<Form schema={settingsSchema} init={initState} {...formState}>

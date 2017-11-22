@@ -109,7 +109,7 @@ Bond.attrGetDefault = function (attr) {
 	return console.error('Attribute unknown');
 };
 
-Bond.prototype.hasRxnProps =  function () {
+Bond.prototype.hasRxnProps = function () {
 	return !!this.reactingCenterStatus;
 };
 

@@ -68,7 +68,7 @@ const correctErrors = (state, payload) => {
 	return {
 		result: state.result,
 		valid: valid && !!fieldName && !!fieldValue,
-		errors: errors
+		errors
 	};
 };
 

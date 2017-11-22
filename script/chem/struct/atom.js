@@ -127,26 +127,26 @@ Atom.prototype.clone = function (fidMap) {
 	return ret;
 };
 
-Atom.prototype.isQuery =  function () {
+Atom.prototype.isQuery = function () {
 	return this.atomList != null || this.label === 'A' || this.attpnt || this.hCount;
 };
 
-Atom.prototype.pureHydrogen =  function () {
+Atom.prototype.pureHydrogen = function () {
 	return this.label === 'H' && this.isotope === 0;
 };
 
-Atom.prototype.isPlainCarbon =  function () {
+Atom.prototype.isPlainCarbon = function () {
 	return this.label === 'C' && this.isotope === 0 && this.radical == 0 && this.charge == 0 &&
 		this.explicitValence < 0 && this.ringBondCount == 0 && this.substitutionCount == 0 &&
 		this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
 };
 
-Atom.prototype.isPseudo =  function () {
+Atom.prototype.isPseudo = function () {
 	// TODO: handle reaxys generics separately
 	return !this.atomList && !this.rglabel && !element.map[this.label];
 };
 
-Atom.prototype.hasRxnProps =  function () {
+Atom.prototype.hasRxnProps = function () {
 	return !!(this.invRet || this.exactChangeFlag || this.attpnt != null || this.aam);
 };
 
@@ -327,7 +327,7 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 			valence = 1;
 			hyd = 1 - rad - conn - absCharge;
 		} else if (label === 'Cl' || label === 'Br' ||
-			label === 'I'  || label === 'At') {
+			label === 'I' || label === 'At') {
 			if (charge === 1) {
 				if (conn <= 2) {
 					valence = 2;

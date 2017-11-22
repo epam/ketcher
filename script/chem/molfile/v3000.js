@@ -476,7 +476,7 @@ function labelsListToIds(labels) {
 }
 
 module.exports = {
-	parseCTabV3000: parseCTabV3000,
-	readRGroups3000: readRGroups3000,
-	parseRxn3000: parseRxn3000
+	parseCTabV3000,
+	readRGroups3000,
+	parseRxn3000
 };

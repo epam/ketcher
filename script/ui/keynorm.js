@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import keyName from "w3c-keyname";
+import keyName from 'w3c-keyname';
 
-const mac = typeof navigator !== "undefined" ? /Mac/.test(navigator.platform) : false;
+const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
 
 function normalizeKeyName(name) {
 	let parts = name.split(/\+(?!$)/);
 	let result = parts[parts.length - 1];
-	if (result === "Space") result = " ";
+	if (result === 'Space') result = ' ';
 	let alt;
 	let	ctrl;
 	let	shift;
@@ -34,13 +34,13 @@ function normalizeKeyName(name) {
 		else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;
 		else if (/^s(hift)?$/i.test(mod)) shift = true;
 		else if (/^mod$/i.test(mod)) if (mac) meta = true; else ctrl = true;
-		else throw new Error("Unrecognized modifier name: " + mod);
+		else throw new Error('Unrecognized modifier name: ' + mod);
 	}
 
-	if (alt) result = "Alt+" + result;
-	if (ctrl) result = "Ctrl+" + result;
-	if (meta) result = "Meta+" + result;
-	if (shift) result = "Shift+" + result;
+	if (alt) result = 'Alt+' + result;
+	if (ctrl) result = 'Ctrl+' + result;
+	if (meta) result = 'Meta+' + result;
+	if (shift) result = 'Shift+' + result;
 
 	return result;
 }
@@ -57,17 +57,17 @@ function normalizeKeyMap(map) {
 }
 
 function modifiers(name, event, shift) {
-	if (event.altKey) name = "Alt+" + name;
-	if (event.ctrlKey) name = "Ctrl+" + name;
-	if (event.metaKey) name = "Meta+" + name;
-	if (shift !== false && event.shiftKey) name = "Shift+" + name;
+	if (event.altKey) name = 'Alt+' + name;
+	if (event.ctrlKey) name = 'Ctrl+' + name;
+	if (event.metaKey) name = 'Meta+' + name;
+	if (shift !== false && event.shiftKey) name = 'Shift+' + name;
 
 	return name;
 }
 
-function normalizeKeyEvent(event, base=false) {
+function normalizeKeyEvent(event, base = false) {
 	const name = keyName(event);
-	const isChar = name.length === 1 && name !== " ";
+	const isChar = name.length === 1 && name !== ' ';
 
 	return isChar && !base ? modifiers(name, event, !isChar) :
 	    modifiers(keyName.base[event.keyCode], event, true);
@@ -83,7 +83,7 @@ function keyNorm(obj) {
 
 function lookup(map, event) {
 	const name = keyName(event);
-	const isChar = name.length === 1 && name !== " ";
+	const isChar = name.length === 1 && name !== ' ';
 	let res = map[modifiers(name, event, !isChar)];
 	let baseName;
 

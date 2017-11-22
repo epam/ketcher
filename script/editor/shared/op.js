@@ -63,7 +63,7 @@ function AtomAdd(atom, pos) {
 
 		pp.label = pp.label || 'C';
 
-		if (!(typeof this.data.aid === "number"))
+		if (!(typeof this.data.aid === 'number'))
 			this.data.aid = struct.atoms.add(new Struct.Atom(pp));
 		else
 			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
@@ -93,7 +93,7 @@ function AtomAdd(atom, pos) {
 AtomAdd.prototype = new Base();
 
 function AtomDelete(aid) {
-	this.data = { aid: aid, atom: null, pos: null };
+	this.data = { aid, atom: null, pos: null };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		if (!this.data.atom) {
@@ -176,7 +176,7 @@ function AtomMove(aid, d, noinvalidate) {
 AtomMove.prototype = new Base();
 
 function BondMove(bid, d) {
-	this.data = { bid: bid, d: d };
+	this.data = { bid, d };
 	this.execute = function (restruct) {
 		restruct.bonds.get(this.data.bid).visel.translate(scale.obj2scaled(this.data.d, restruct.render.options));
 		this.data.d = this.data.d.negated();
@@ -190,7 +190,7 @@ function BondMove(bid, d) {
 BondMove.prototype = new Base();
 
 function LoopMove(id, d) {
-	this.data = { id: id, d: d };
+	this.data = { id, d };
 	this.execute = function (restruct) {
 		// not sure if there should be an action to move a loop in the first place
 		// but we have to somehow move the aromatic ring, which is associated with the loop, rather than with any of the bonds
@@ -388,7 +388,7 @@ function SGroupRemoveFromHierarchy(sgid) {
 SGroupRemoveFromHierarchy.prototype = new Base();
 
 function BondAdd(begin, end, bond) {
-	this.data = { bid: null, bond: bond, begin: begin, end: end };
+	this.data = { bid: null, bond, begin, end };
 	this.execute = function (restruct) { // eslint-disable-line max-statements
 		var struct = restruct.molecule;
 		if (this.data.begin == this.data.end)
@@ -408,7 +408,7 @@ function BondAdd(begin, end, bond) {
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
-		if (!(typeof this.data.bid === "number"))
+		if (!(typeof this.data.bid === 'number'))
 			this.data.bid = struct.bonds.add(new Struct.Bond(pp));
 		else
 			struct.bonds.set(this.data.bid, new Struct.Bond(pp));
@@ -429,8 +429,8 @@ function BondAdd(begin, end, bond) {
 BondAdd.prototype = new Base();
 
 function BondDelete(bid) {
-	this.data = { bid: bid, bond: null, begin: null, end: null };
-	this.execute = function (restruct) {  // eslint-disable-line max-statements
+	this.data = { bid, bond: null, begin: null, end: null };
+	this.execute = function (restruct) { // eslint-disable-line max-statements
 		var struct = restruct.molecule;
 		if (!this.data.bond) {
 			this.data.bond = struct.bonds.get(this.data.bid);
@@ -442,7 +442,7 @@ function BondDelete(bid) {
 
 		// notifyBondRemoved
 		var rebond = restruct.bonds.get(this.data.bid);
-		[rebond.b.hb1, rebond.b.hb2].forEach(function (hbid) {
+		[rebond.b.hb1, rebond.b.hb2].forEach((hbid) => {
 			var hb = restruct.molecule.halfBonds.get(hbid);
 			if (hb.loop >= 0)
 				restruct.loopRemove(hb.loop);
@@ -452,7 +452,7 @@ function BondDelete(bid) {
 		restruct.markItemRemoved();
 
 		var bond = struct.bonds.get(this.data.bid);
-		[bond.hb1, bond.hb2].forEach(function (hbid) {
+		[bond.hb1, bond.hb2].forEach((hbid) => {
 			var hb = struct.halfBonds.get(hbid);
 			var atom = struct.atoms.get(hb.begin);
 			var pos = atom.neighbors.indexOf(hbid);
@@ -475,7 +475,7 @@ function BondDelete(bid) {
 BondDelete.prototype = new Base();
 
 function BondAttr(bid, attribute, value) {
-	this.data = { bid: bid, attribute: attribute, value: value };
+	this.data = { bid, attribute, value };
 	this.data2 = null;
 	this.execute = function (restruct) {
 		var bond = restruct.molecule.bonds.get(this.data.bid);
@@ -536,7 +536,7 @@ function FragmentDelete(frid) {
 FragmentDelete.prototype = new Base();
 
 function RGroupAttr(rgid, attribute, value) {
-	this.data = { rgid: rgid, attribute: attribute, value: value };
+	this.data = { rgid, attribute, value };
 	this.data2 = null;
 	this.execute = function (restruct) {
 		var rgp = restruct.molecule.rgroups.get(this.data.rgid);
@@ -724,7 +724,7 @@ function RxnArrowDelete(arid) {
 RxnArrowDelete.prototype = new Base();
 
 function RxnArrowMove(id, d, noinvalidate) {
-	this.data = { id: id, d: d, noinvalidate: noinvalidate };
+	this.data = { id, d, noinvalidate };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		var id = this.data.id;
@@ -744,7 +744,7 @@ function RxnArrowMove(id, d, noinvalidate) {
 RxnArrowMove.prototype = new Base();
 
 function RxnPlusAdd(pos) {
-	this.data = { plid: null, pos: pos };
+	this.data = { plid: null, pos };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		if (!(typeof this.data.plid === 'number'))
@@ -768,7 +768,7 @@ function RxnPlusAdd(pos) {
 RxnPlusAdd.prototype = new Base();
 
 function RxnPlusDelete(plid) {
-	this.data = { plid: plid, pos: null };
+	this.data = { plid, pos: null };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		if (!this.data.pos)
@@ -790,7 +790,7 @@ function RxnPlusDelete(plid) {
 RxnPlusDelete.prototype = new Base();
 
 function RxnPlusMove(id, d, noinvalidate) {
-	this.data = { id: id, d: d, noinvalidate: noinvalidate };
+	this.data = { id, d, noinvalidate };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		var id = this.data.id;
@@ -810,7 +810,7 @@ function RxnPlusMove(id, d, noinvalidate) {
 RxnPlusMove.prototype = new Base();
 
 function SGroupDataMove(id, d) {
-	this.data = { id: id, d: d };
+	this.data = { id, d };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		struct.sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
@@ -826,7 +826,7 @@ function SGroupDataMove(id, d) {
 SGroupDataMove.prototype = new Base();
 
 function CanvasLoad(struct) {
-	this.data = { struct: struct };
+	this.data = { struct };
 	this.execute = function (restruct) {
 		var oldStruct = restruct.molecule;
 		restruct.clearVisels(); // TODO: What is it?
@@ -843,7 +843,7 @@ function CanvasLoad(struct) {
 CanvasLoad.prototype = new Base();
 
 function ChiralFlagAdd(pos) {
-	this.data = { pos: pos };
+	this.data = { pos };
 	this.execute = function (restruct) {
 		var struct = restruct.molecule;
 		if (restruct.chiralFlags.count() > 0) {
@@ -884,7 +884,7 @@ function ChiralFlagDelete() {
 ChiralFlagDelete.prototype = new Base();
 
 function ChiralFlagMove(d) {
-	this.data = { d: d };
+	this.data = { d };
 	this.execute = function (restruct) {
 		restruct.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();

@@ -176,11 +176,9 @@ function applySGroupArrayProp(sGroups, propName, propData, shift) {
 
 	if (part.length != num)
 		throw new Error('File format invalid');
-	if (shift) {
-		part = part.map(function (v) {
-			return v + shift;
-		});
-	}
+	if (shift)
+		part = part.map(v => v + shift);
+
 	sGroups[sid][propName] = sGroups[sid][propName].concat(part);
 }
 
@@ -285,18 +283,18 @@ function identityMap(array) {
 }
 
 module.exports = {
-	readKeyValuePairs: readKeyValuePairs,
-	readKeyMultiValuePairs: readKeyMultiValuePairs,
-	loadSGroup: loadSGroup,
-	initSGroup: initSGroup,
-	applySGroupProp: applySGroupProp,
-	applySGroupArrayProp: applySGroupArrayProp,
-	applyDataSGroupName: applyDataSGroupName,
-	applyDataSGroupQuery: applyDataSGroupQuery,
-	applyDataSGroupQueryOp: applyDataSGroupQueryOp,
-	applyDataSGroupDesc: applyDataSGroupDesc,
-	applyDataSGroupInfo: applyDataSGroupInfo,
-	applyDataSGroupData: applyDataSGroupData,
-	applyDataSGroupInfoLine: applyDataSGroupInfoLine,
-	applyDataSGroupDataLine: applyDataSGroupDataLine
+	readKeyValuePairs,
+	readKeyMultiValuePairs,
+	loadSGroup,
+	initSGroup,
+	applySGroupProp,
+	applySGroupArrayProp,
+	applyDataSGroupName,
+	applyDataSGroupQuery,
+	applyDataSGroupQueryOp,
+	applyDataSGroupDesc,
+	applyDataSGroupInfo,
+	applyDataSGroupData,
+	applyDataSGroupInfoLine,
+	applyDataSGroupDataLine
 };

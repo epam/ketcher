@@ -45,7 +45,7 @@ export const formsState = {
 		errors: {},
 		valid: true,
 		result: {
-			mode: "discard"
+			mode: 'discard'
 		}
 	},
 	bondProps: {
@@ -99,7 +99,7 @@ export const formsState = {
 export function updateFormState(data) {
 	return {
 		type: 'UPDATE_FORM',
-		data: data
+		data
 	};
 }
 

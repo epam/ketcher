@@ -47,7 +47,7 @@ PasteTool.prototype.mouseup = function () {
 	}
 };
 
-PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
+PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
 	var rnd = this.editor.render;
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action

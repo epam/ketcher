@@ -71,7 +71,7 @@ function TypeChoise({ value, onChange, ...props }) {
 							type="radio"
 							value={sc.value}
 							checked={sc.value === value}
-							onClick={ev => onChange(sc.value)}
+							onClick={() => onChange(sc.value)}
 							{...props}
 						/>
 						{sc.title}
@@ -92,13 +92,13 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
 					  <Atom
 						el={el}
 						className={selected(el.label) ? 'selected' : ''}
-						onClick={ev => onSelect(el.label)}
+						onClick={() => onSelect(el.label)}
 						{...curEvents(el)}
 					  />
 				  </td>
 			  ) : (
-				  refer(el) ? ( <td className="ref">{refer(el)}</td> ) :
-				  ( <td colSpan={el} /> )
+				  refer(el) ? (<td className="ref">{refer(el)}</td>) :
+				  (<td colSpan={el} />)
 			  ))
 		  }
 		</tr>
@@ -115,7 +115,7 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
 					  <Atom
 						el={el}
 						className={selected(el.label) ? 'selected' : ''}
-						onClick={ev => onSelect(el.label)}
+						onClick={() => onSelect(el.label)}
 						{...curEvents(el)}
 					  />
 				  </td>
@@ -174,9 +174,9 @@ class PeriodTable extends Component {
 	}
 	onSelect(label) {
 		let { type, value } = this.state;
-		if (type === 'atom' || type === 'gen')
-			{ this.setState({ value: label }); }
-		else {
+		if (type === 'atom' || type === 'gen') {
+			this.setState({ value: label });
+		} else {
 			let i = value.indexOf(label);
 			if (i < 0)
 				value.push(label);
@@ -197,7 +197,7 @@ class PeriodTable extends Component {
 		onMouseEnter: () => this.setState({ cur: el, isInfo: true }),
 		onMouseLeave: () => this.setState({ isInfo: false })
 	});
-	render () {
+	render() {
 		const tabs = ['Table', 'Extended'];
 		let { type } = this.state;
 		return (
@@ -261,11 +261,11 @@ class PeriodTable extends Component {
 }
 
 function rowPartition(elements) {
-	return elements.reduce(function (res, el) {
+	return elements.reduce((res, el) => {
 		let row = res[el.period - 1];
-		if (!row)
-			{ res.push([el]); }
-		else {
+		if (!row) {
+			res.push([el]);
+		} else {
 			if (beforeSpan[el.label])
 				row.push(beforeSpan[el.label]);
 			row.push(el);

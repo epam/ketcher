@@ -19,7 +19,7 @@ import Vec2 from '../../util/vec2';
 import op from '../shared/op';
 import Action from '../shared/action';
 
-export function fromChiralFlagAddition(restruct, pos) {  // eslint-disable-line no-unused-vars
+export function fromChiralFlagAddition(restruct, pos) { // eslint-disable-line no-unused-vars
 	var action = new Action();
 	var struct = restruct.molecule;
 	if (restruct.chiralFlags.count() < 1) {

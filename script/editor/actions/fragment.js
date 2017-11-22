@@ -100,7 +100,7 @@ export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is to
 			var newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 			var processAtom = function (aid1) { // eslint-disable-line func-style
 				action.addOp(new op.AtomAttr(aid1, 'fragment', newfrid).perform(restruct));
-				atomGetNeighbors(restruct, aid1).forEach(function (nei) {
+				atomGetNeighbors(restruct, aid1).forEach((nei) => {
 					if (restruct.molecule.atoms.get(nei.aid).fragment === frid)
 						processAtom(nei.aid);
 				});
@@ -125,7 +125,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	var action = new Action();
 	var atomsToRemove = [];
 	var frids = [];
-	selection = {               // TODO: refactor me
+	selection = { // TODO: refactor me
 		atoms: selection.atoms || [],
 		bonds: selection.bonds || [],
 		rxnPluses: selection.rxnPluses || [],
@@ -135,18 +135,18 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	};
 
 	var actionRemoveDataSGroups = new Action();
-	selection.sgroupData.forEach(function (id) {
+	selection.sgroupData.forEach((id) => {
 		actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
 	}, this);
 
 	selection.atoms.forEach(function (aid) {
-		atomGetNeighbors(restruct, aid).forEach(function (nei) {
+		atomGetNeighbors(restruct, aid).forEach((nei) => {
 			if (selection.bonds.indexOf(nei.bid) == -1)
 				selection.bonds = selection.bonds.concat([nei.bid]);
 		}, this);
 	}, this);
 
-	selection.bonds.forEach(function (bid) {
+	selection.bonds.forEach((bid) => {
 		action.addOp(new op.BondDelete(bid));
 
 		var bond = restruct.molecule.bonds.get(bid);
@@ -169,7 +169,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	}, this);
 
 
-	selection.atoms.forEach(function (aid) {
+	selection.atoms.forEach((aid) => {
 		var frid3 = restruct.molecule.atoms.get(aid).fragment;
 		if (frids.indexOf(frid3) < 0)
 			frids.push(frid3);
@@ -182,15 +182,15 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
 
-	selection.rxnArrows.forEach(function (id) {
+	selection.rxnArrows.forEach((id) => {
 		action.addOp(new op.RxnArrowDelete(id));
 	}, this);
 
-	selection.rxnPluses.forEach(function (id) {
+	selection.rxnPluses.forEach((id) => {
 		action.addOp(new op.RxnPlusDelete(id));
 	}, this);
 
-	selection.chiralFlags.forEach(function (id) {
+	selection.chiralFlags.forEach((id) => {
 		action.addOp(new op.ChiralFlagDelete(id));
 	}, this);
 

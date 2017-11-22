@@ -24,12 +24,12 @@ import Dialog from '../component/dialog';
 import Form, { Field } from '../component/form';
 
 export const labelEditSchema = {
-	title: "Label Edit",
-	type: "object",
-	required: ["label"],
+	title: 'Label Edit',
+	type: 'object',
+	required: ['label'],
 	properties: {
 		label: {
-			title: "Atom",
+			title: 'Atom',
 			default: ''
 		}
 	}
@@ -42,7 +42,7 @@ function serialize(lc) {
 	if (charge)
 		sign = lc.charge < 0 ? '-' : '+';
 	return (lc.isotope || '') + lc.label + radical +
-		   (charge > 1 ? charge: '') + sign;
+		   (charge > 1 ? charge : '') + sign;
 }
 
 function deserialize(value) {

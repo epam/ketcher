@@ -56,7 +56,7 @@ function defaultOptions(opt) {
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
-		subFontSize: subFontSize,
+		subFontSize,
 		font: '30px Arial',
 		fontsz: labelFontSize,
 		fontszsub: subFontSize,

@@ -105,7 +105,7 @@ ReBond.prototype.show = function (restruct, bid, options) { // eslint-disable-li
 };
 
 function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
-	return atom.neighbors.findIndex(function (hbid) {
+	return atom.neighbors.findIndex((hbid) => {
 		var hb = restruct.molecule.halfBonds.get(hbid);
 		var bid = hb.bid;
 		if (bid === bid0)
@@ -118,7 +118,7 @@ function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
 }
 
 function findIncomingUpBonds(bid0, bond, restruct) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
+	var halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
 		var atom = restruct.molecule.atoms.get(aid);
 		var pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
@@ -129,9 +129,9 @@ function findIncomingUpBonds(bid0, bond, restruct) {
 }
 
 function checkStereoBold(bid0, bond, restruct) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
+	var halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
 		var atom = restruct.molecule.atoms.get(aid);
-		var pos =  findIncomingStereoUpBond(atom, bid0, false, restruct);
+		var pos = findIncomingStereoUpBond(atom, bid0, false, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
 	}, restruct);
 	console.assert(halfbonds.length === 2);
@@ -358,15 +358,11 @@ function getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint
 
 	if (bond.b.type == Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
 		mark = bondShift > 0 ? 1 : 2;
-		dash = dashdotPattern.map(function (v) {
-			return v * options.scale;
-		});
+		dash = dashdotPattern.map(v => v * options.scale);
 	}
 	if (bond.b.type == Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
 		mark = 3;
-		dash = dashdotPattern.map(function (v) {
-			return v * options.scale;
-		});
+		dash = dashdotPattern.map(v => v * options.scale);
 	}
 	var paths = getAromaticBondPaths(hb1, hb2, bondShift, shiftA, shiftB, options.bondSpace, mark, dash);
 	return draw.bondAromatic(render.paper, paths, bondShift, options);
@@ -430,7 +426,7 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
 		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER:  // #
+	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER: // #
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
@@ -540,7 +536,7 @@ function bondRecalc(bond, restruct, options) {
 	bond.b.len = Vec2.dist(p1, p2);
 	bond.b.sb = options.lineWidth * 5;
 	/* eslint-disable no-mixed-operators*/
-	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - options.lineWidth * 2);
+	bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
 	/* eslint-enable no-mixed-operators*/
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 }

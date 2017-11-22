@@ -53,7 +53,7 @@ class Form extends Component {
 
 		return {
 			dataError: errors && errors[name] || false,
-			value: value,
+			value,
 			onChange(val) {
 				const newstate = Object.assign({}, self.props.result, { [name]: val });
 				self.updateState(newstate);
@@ -82,7 +82,7 @@ class Form extends Component {
 export default connect(
 	null,
 	dispatch => ({
-		onUpdate: function (result, valid, errors) {
+		onUpdate: (result, valid, errors) => {
 			dispatch(updateFormState({ result, valid, errors }));
 		}
 	})
@@ -124,7 +124,7 @@ const SelectOneOf = (props) => {
 	const { title, name, schema, ...prop } = props;
 
 	const selectDesc = {
-		title: title,
+		title,
 		enum: [],
 		enumNames: []
 	};
@@ -177,7 +177,7 @@ function serializeRewrite(serializeMap, instance, schema) {
 	return res;
 }
 
-function deserializeRewrite(deserializeMap, instance, schema) {
+function deserializeRewrite(deserializeMap, instance) {
 	return instance;
 }
 

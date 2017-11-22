@@ -58,23 +58,8 @@
     "prefer-destructuring": "off", // TODO 200 errs ! DO IT
     "function-paren-newline": "off", // TODO 190 ..!!!
     "no-param-reassign": "off", // TODO 281 !!!
-
-    //
-    "object-shorthand": "off", // TODO !!
-    "quotes": "off", // TODO ???
-    "no-unused-vars": "off", // TODO !!!
-    "space-before-function-paren": "off", // TODO !!!
-    "no-mixed-spaces-and-tabs": "off", // TODO !!!
-    "no-multi-spaces": "off", // TODO !!!!
-    "space-in-parens": "off", // TODO !!!
-    "no-multi-assign": "off", // TODO !!
-
-    "space-infix-ops": "off", // TODO !!!
-    "max-len": "off", // TODO !!!
-    "prefer-arrow-callback": "off", // TODO !!!
-    "no-confusing-arrow": "off", // TODO !!
-    "quote-props": "off", // TODO !!!
-    "brace-style": "off", // TODO !!!
-    "no-unused-expressions": "off" // TODO !!!
+    "no-mixed-spaces-and-tabs": "off", // TODO 146 !!!
+    "max-len": "off", // TODO many!!!
+    "quote-props": "off", // TODO 125!!!
   }
 }

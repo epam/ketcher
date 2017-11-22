@@ -41,7 +41,7 @@ function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
 							<li>
 								<button
 									className={className}
-									onClick={ev => invalidId ? null : onSelect(i)}
+									onClick={() => (invalidId ? null : onSelect(i))}
 								>
 									{`R${i}`}
 								</button>
@@ -117,4 +117,4 @@ class RGroupAtom extends Component { // eslint-disable-line
 	}
 }
 
-export default params => params.type === 'rlabel' ? (<RGroupAtom {...params} />) : (<RGroupFragment {...params} />);
+export default params => (params.type === 'rlabel' ? (<RGroupAtom {...params} />) : (<RGroupFragment {...params} />));

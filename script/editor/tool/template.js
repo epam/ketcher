@@ -83,7 +83,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 
 		if (loop >= 0) {
 			const loopHbs = molecule.loops.get(loop).hbs;
-			loopHbs.forEach(function (hb) {
+			loopHbs.forEach((hb) => {
 				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp); // eslint-disable-line no-underscore-dangle
 				count++;
 			});
@@ -263,7 +263,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	return true;
 };
 
-TemplateTool.prototype.cancel = TemplateTool.prototype.mouseleave =
+TemplateTool.prototype.cancel = TemplateTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
 	TemplateTool.prototype.mouseup;
 
 function getSign(molecule, bond, v) {

@@ -20,7 +20,7 @@ import Struct from '../../chem/struct';
 import molfile from '../../chem/molfile';
 import Render from '../../render';
 
-function renderStruct(el, struct, options={}) {
+function renderStruct(el, struct, options = {}) {
 	if (el) {
 		if (struct.prerender) { // Should it sit here?
 			el.innerHTML = struct.prerender;
@@ -41,12 +41,14 @@ function renderStruct(el, struct, options={}) {
 class StructRender extends Component {
 	constructor(props) {
 		super(props);
-		if (!(props.struct instanceof Struct)) { try {
-			this.props.struct = molfile.parse(props.struct);
-		} catch (e) {
-			alert("Could not parse structure\n" + e);
-			this.props.struct = null;
-		} }
+		if (!(props.struct instanceof Struct)) {
+			try {
+				this.props.struct = molfile.parse(props.struct);
+			} catch (e) {
+				alert('Could not parse structure\n' + e);
+				this.props.struct = null;
+			}
+		}
 	}
 
 	shouldComponentUpdate() {
@@ -59,8 +61,8 @@ class StructRender extends Component {
 		renderStruct(el, struct, options);
 	}
 
-	render () {
-		let { struct, Tag="div", ...props } = this.props;
+	render() {
+		let { struct, Tag = 'div', ...props } = this.props;
 		return (
 			<Tag /*ref="el"*/ {...props}>{ struct ? null : 'No molecule' }</Tag>
 		);

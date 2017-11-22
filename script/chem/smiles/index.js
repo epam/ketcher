@@ -28,11 +28,11 @@ function Smiles() {
 }
 
 Smiles._Atom = function (hСount) { // eslint-disable-line no-underscore-dangle
-	this.neighbours = [];  // Array of integer pairs {a, b}
-	this.aromatic = false;          // has aromatic bond
-	this.lowercase = false;         // aromatic and has to be written lowercase
-	this.chirality = 0;             // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
-	this.branch_cnt = 0;            // runs from 0 to (branches - 1)
+	this.neighbours = []; // Array of integer pairs {a, b}
+	this.aromatic = false; // has aromatic bond
+	this.lowercase = false; // aromatic and has to be written lowercase
+	this.chirality = 0; // 0 means no chirality, 1 means CCW pyramid, 2 means CW pyramid
+	this.branch_cnt = 0; // runs from 0 to (branches - 1)
 	this.paren_written = false;
 	this.h_count = hСount;
 	this.parent = -1;
@@ -90,8 +90,8 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 			if (allowedLowercase.indexOf(molecule.atoms.get(bond.end).label) !== -1)
 				this.atoms[bond.end].lowercase = true;
 		}
-		this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid: bid });
-		this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid: bid });
+		this.atoms[bond.begin].neighbours.push({ aid: bond.end, bid });
+		this.atoms[bond.end].neighbours.push({ aid: bond.begin, bid });
 	});
 
 	this.inLoop = (function () {
@@ -119,7 +119,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	var walk = new Dfs(molecule, this.atoms, componentsAll, components.reactants.length);
 
 	walk.walk();
-	this.atoms.forEach(function (atom) {
+	this.atoms.forEach((atom) => {
 		atom.neighbours = [];
 	}, this);
 
@@ -725,7 +725,7 @@ Smiles.prototype.writeRadicals = function (mol) { // eslint-disable-line max-sta
 };
 
 module.exports = {
-	stringify: function (struct, options) {
+	stringify(struct, options) {
 		var opts = options || {};
 		return new Smiles().saveMolecule(struct, opts.ignoreErrors);
 	}

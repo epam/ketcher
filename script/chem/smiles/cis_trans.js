@@ -158,7 +158,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 		nei = neiЕnd[i];
 
 		if (nei.bid == bondIdx)
-			continue;  // eslint-disable-line no-continue
+			continue; // eslint-disable-line no-continue
 
 		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
 			return false;

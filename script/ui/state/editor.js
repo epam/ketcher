@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { debounce, flatten } from 'lodash/fp';
+import { debounce } from 'lodash/fp';
 
 import element from '../../chem/element';
 import acts from '../action';
@@ -131,6 +131,6 @@ export default function initEditor(dispatch, getState) {
 			const serverOpts = state.options.getServerSettings();
 			return serverCall(state.editor, state.server, 'dearomatize', serverOpts, struct);
 		},
-		onMouseDown: (event) => {}
+		onMouseDown: () => {}
 	};
 }

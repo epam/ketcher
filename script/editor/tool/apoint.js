@@ -39,7 +39,7 @@ APointTool.prototype.mouseup = function (event) {
 		var res = editor.event.elementEdit.dispatch({
 			attpnt: atom.attpnt
 		});
-		Promise.resolve(res).then(function (newatom) {
+		Promise.resolve(res).then((newatom) => {
 			if (atom.attpnt != newatom.attpnt) {
 				var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
 				editor.update(action);

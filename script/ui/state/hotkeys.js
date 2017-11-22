@@ -107,30 +107,28 @@ function checkGroupOnTool(group, actionTool) {
 
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
-	const formats = Object.keys(structFormat.map).map(function (fmt) {
-		return structFormat.map[fmt].mime;
-	});
+	const formats = Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].mime);
 
-	const debAction  = debounce(0, action => dispatch( onAction(action) ));
-	const loadStruct = debounce(0, (structStr, opts) => dispatch( load(structStr, opts) ));
+	const debAction = debounce(0, action => dispatch(onAction(action)));
+	const loadStruct = debounce(0, (structStr, opts) => dispatch(load(structStr, opts)));
 
 	return {
-		formats: formats,
-		focused: function () {
+		formats,
+		focused() {
 			return !getState().modal;
 		},
-		onCut: function () {
+		onCut() {
 			let data = clipData(getState().editor);
 			debAction({ tool: 'eraser', opts: 1 });
 			return data;
 		},
-		onCopy: function () {
+		onCopy() {
 			let editor = getState().editor;
 			let data = clipData(editor);
 			editor.selection(null);
 			return data;
 		},
-		onPaste: function (data) {
+		onPaste(data) {
 			const structStr = data['chemical/x-mdl-molfile'] ||
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
@@ -151,7 +149,9 @@ function clipData(editor) {
 	const type = struct.isReaction ?
 		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 
-	res['text/plain'] = res[type] = molfile.stringify(struct);
+	const data = molfile.stringify(struct);
+	res['text/plain'] = data;
+	res[type] = data;
 	// res['chemical/x-daylight-smiles'] =
 	// smiles.stringify(struct);
 	return res;

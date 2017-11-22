@@ -58,13 +58,12 @@ class OpenButton extends Component {
 	}
 }
 
-function fileOpener (server) {
+function fileOpener(server) {
 	return new Promise((resolve, reject) => {
 		// TODO: refactor return
-		if (global.FileReader)
-			{ resolve(throughFileReader); }
-
-		else if (global.ActiveXObject) {
+		if (global.FileReader) {
+			resolve(throughFileReader);
+		} else if (global.ActiveXObject) {
 			try {
 				const fso = new ActiveXObject('Scripting.FileSystemObject');
 				resolve(file => Promise.resolve(throughFileSystemObject(fso, file)));
@@ -77,7 +76,7 @@ function fileOpener (server) {
 				//return resolve(throughForm2IframePosting);
 			}));
 		} else {
-			reject(new Error("Your browser does not support opening files locally"));
+			reject(new Error('Your browser does not support opening files locally'));
 		}
 	});
 }

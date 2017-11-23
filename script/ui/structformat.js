@@ -135,10 +135,10 @@ export function fromString (structStr, opts, server, serverOpts) {
 // Pretty stupid Inchi check (extract from save)
 export function couldBeSaved(struct, format) {
 	if (format === 'inchi') {
-		if (struct.rgroups.count() !== 0)
+		if (struct.rgroups.size !== 0)
 			throw 'R-group fragments are not supported and will be discarded';
 		struct = struct.clone(); // need this: .getScaffold()
-		struct.sgroups.each((sgid, sg) => {
+		struct.sgroups.forEach(sg => {
 			// ? Not sure we should check it client side
 			if (sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
 				throw Error('InChi data format doesn\'t support s-groups');

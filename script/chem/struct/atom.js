@@ -120,25 +120,29 @@ function radicalElectrons(radical) {
 	console.assert(false, 'Unknown radical value');
 }
 
+/**
+ * @param fidMap { Map<number, number> }
+ * @returns { Atom }
+ */
 Atom.prototype.clone = function (fidMap) {
-	var ret = new Atom(this);
-	if (fidMap && this.fragment in fidMap)
-		ret.fragment = fidMap[this.fragment];
+	const ret = new Atom(this);
+	if (fidMap && fidMap.has(this.fragment))
+		ret.fragment = fidMap.get(this.fragment);
 	return ret;
 };
 
-Atom.prototype.isQuery =  function () {
-	return this.atomList != null || this.label === 'A' || this.attpnt || this.hCount;
+Atom.prototype.isQuery = function () {
+	return this.atomList !== null || this.label === 'A' || this.attpnt || this.hCount;
 };
 
 Atom.prototype.pureHydrogen =  function () {
 	return this.label === 'H' && this.isotope === 0;
 };
 
-Atom.prototype.isPlainCarbon =  function () {
-	return this.label === 'C' && this.isotope === 0 && this.radical == 0 && this.charge == 0 &&
-		this.explicitValence < 0 && this.ringBondCount == 0 && this.substitutionCount == 0 &&
-		this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
+Atom.prototype.isPlainCarbon = function () {
+	return this.label === 'C' && this.isotope === 0 && this.radical === 0 && this.charge === 0 &&
+		this.explicitValence < 0 && this.ringBondCount === 0 && this.substitutionCount === 0 &&
+		this.unsaturatedAtom === 0 && this.hCount === 0 && !this.atomList;
 };
 
 Atom.prototype.isPseudo =  function () {
@@ -147,7 +151,7 @@ Atom.prototype.isPseudo =  function () {
 };
 
 Atom.prototype.hasRxnProps =  function () {
-	return !!(this.invRet || this.exactChangeFlag || this.attpnt != null || this.aam);
+	return !!(this.invRet || this.exactChangeFlag || this.attpnt !== null || this.aam);
 };
 
 Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statements

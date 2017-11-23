@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Map = require('../../util/map');
+var Pool = require('../../util/pool');
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('../struct');
 
 function CisTrans(mol, neighborsFunc, context) {
 	this.molecule = mol;
-	this.bonds = new Map();
+	this.bonds = new Pool();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
 }
@@ -32,8 +32,8 @@ CisTrans.PARITY = {
 	TRANS: 2
 };
 
-CisTrans.prototype.each = function (func, context) {
-	this.bonds.each(func, context);
+CisTrans.prototype.each = function (func) {
+	this.bonds.forEach(func);
 };
 
 CisTrans.prototype.getParity = function (idx) {
@@ -178,7 +178,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 };
 
 CisTrans.prototype.build = function (excludeBonds) {
-	this.molecule.bonds.each((bid, bond) => {
+	this.molecule.bonds.forEach((bid, bond) => {
 		var ct = this.bonds.set(bid,
 			{
 				parity: 0,

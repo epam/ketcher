@@ -169,7 +169,7 @@ function getContextBySgroup(restruct, sgAtoms) {
 
 	const atomSet = new Set(sgAtoms);
 
-	const sgBonds = struct.bonds.values()
+	const sgBonds = Array.from(struct.bonds.values())
 		.filter(bond => atomSet.has(bond.begin) && atomSet.has(bond.end));
 
 	return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
@@ -246,7 +246,7 @@ function manyComponentsSelected(restruct, atoms) {
 function countOfSelectedComponents(restruct, atoms) {
 	const atomSet = new Set(atoms);
 
-	return restruct.connectedComponents.values()
+	return Array.from(restruct.connectedComponents.values())
 		.reduce((acc, component) => acc + (atomSet.isSuperset(component) ? 1 : 0), 0);
 }
 

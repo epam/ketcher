@@ -144,8 +144,8 @@ function drawGroupDat(restruct, sgroup) {
 
 function definePP(restruct, sgroup) {
 	let topLeftPoint = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5));
-	const sgroups = restruct.molecule.sgroups.values();
-	for (let i = 0; i < restruct.molecule.sgroups.count(); ++i) {
+	const sgroups = Array.from(restruct.molecule.sgroups.values());
+	for (let i = 0; i < restruct.molecule.sgroups.size; ++i) {
 		if (!descriptorIntersects(sgroups, topLeftPoint))
 			break;
 

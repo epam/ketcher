@@ -38,7 +38,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 	minDist = minDist || maxMinDist;
 	minDist = Math.min(minDist, maxMinDist);
 
-	restruct.atoms.each((aid, atom) => {
+	restruct.atoms.forEach((atom, aid) => {
 		if (aid === skipId)
 			return;
 
@@ -71,7 +71,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 
 	let minCDist = minDist;
 
-	restruct.bonds.each((bid, bond) => {
+	restruct.bonds.forEach((bond, bid) => {
 		if (bid === skipId)
 			return;
 
@@ -87,7 +87,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 		}
 	});
 
-	restruct.bonds.each((bid, bond) => {
+	restruct.bonds.forEach((bond, bid) => {
 		if (bid === skipId)
 			return;
 
@@ -132,7 +132,7 @@ function findClosestChiralFlag(restruct, pos) {
 	var ret = null;
 
 	// there is only one chiral flag, but we treat it as a "map" for convenience
-	restruct.chiralFlags.each((id, item) => {
+	restruct.chiralFlags.forEach((item, id) => {
 		const p = item.pp;
 
 		if (Math.abs(pos.x - p.x) >= 1.0)
@@ -153,7 +153,7 @@ function findClosestDataSGroupData(restruct, pos) {
 	let minDist = null;
 	let ret = null;
 
-	restruct.sgroupData.each((id, item) => {
+	restruct.sgroupData.forEach((item, id) => {
 		if (item.sgroup.type !== 'DAT')
 			throw new Error('Data group expected');
 
@@ -206,7 +206,7 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
 
 	let ret = null;
 
-	restruct.rgroups.each((rgid, rgroup) => {
+	restruct.rgroups.forEach((rgroup, rgid) => {
 		if (rgid !== skip && rgroup.labelBox && rgroup.labelBox.contains(pos, 0.5)) {
 			const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
@@ -224,7 +224,7 @@ function findClosestRxnArrow(restruct, pos) {
 	let minDist = null;
 	let ret = null;
 
-	restruct.rxnArrows.each((id, arrow) => {
+	restruct.rxnArrows.forEach((arrow, id) => {
 		const p = arrow.item.pp;
 
 		if (Math.abs(pos.x - p.x) >= 1.0)
@@ -245,7 +245,7 @@ function findClosestRxnPlus(restruct, pos) {
 	let minDist = null;
 	let ret = null;
 
-	restruct.rxnPluses.each((id, plus) => {
+	restruct.rxnPluses.forEach((plus, id) => {
 		const p = plus.item.pp;
 		const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
 
@@ -262,7 +262,7 @@ function findClosestSGroup(restruct, pos) {
 	let ret = null;
 	let minDist = SELECTION_DISTANCE_COEFFICIENT;
 
-	restruct.molecule.sgroups.each((sgid, sg) => {
+	restruct.molecule.sgroups.forEach((sg, sgid) => {
 		const d = sg.bracketDir;
 		const n = d.rotateSC(1, 0);
 		const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
@@ -307,31 +307,45 @@ function findClosestItem(restruct, pos, maps, skip, scale) { // eslint-disable-l
 	}, null);
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param selected { object }
+ * @param maps { Array<string> }
+ * @param scale { number }
+ * @return {{
+ * 		atoms: Map<number, number>?
+ * 		bonds: Map<number, number>?
+ * }}
+ */
 function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
-	const pos = { atoms: {}, bonds: {} }; // id->pos map
+	const pos = {
+		atoms: new Map(), // aid -> position
+		bonds: new Map() // bid -> position
+	};
+
 	const struct = restruct.molecule;
 
-	selected.atoms.forEach(aid => pos.atoms[aid] = struct.atoms.get(aid).pp);
+	selected.atoms.forEach(aid => pos.atoms.set(aid, struct.atoms.get(aid).pp));
 
 	selected.bonds.forEach(bid => {
 		const bond = struct.bonds.get(bid);
-		pos.bonds[bid] = Vec2.lc2(
-			pos.atoms[bond.begin], 0.5,
-			pos.atoms[bond.end], 0.5);
+		pos.bonds.set(bid, Vec2.lc2(pos.atoms.get(bond.begin), 0.5, pos.atoms.get(bond.end), 0.5));
 	});
 
 	const result = {};
 	maps.forEach(mp => {
-		result[mp] = Object.keys(pos[mp]).reduce((res, srcId) => {
-			const skip = { map: mp, id: +srcId };
-			const item = findMaps[mp](restruct, pos[mp][srcId], skip, null, scale);
+		result[mp] = Array.from(pos[mp].keys()).reduce((res, srcId) => {
+			const skip = { map: mp, id: srcId };
+			const item = findMaps[mp](restruct, pos[mp].get(srcId), skip, null, scale);
 
-			if (item) res[srcId] = item.id;
+			if (item)
+				res.set(srcId, item.id);
+
 			return res;
-		}, {});
+		}, new Map());
 	});
 
-	return result; // { atoms: { srcID: dstID, ... }, bonds: { srcID: dstID, ... }, ... }
+	return result;
 }
 
 export default {

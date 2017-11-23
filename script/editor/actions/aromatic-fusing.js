@@ -20,6 +20,14 @@ import Struct from '../../chem/struct';
 import op from '../shared/op';
 import Action from '../shared/action';
 
+/**
+ * @param restruct { ReStruct }
+ * @param events { Array<PipelineSubscription> }
+ * @param bid { number }
+ * @param template { Struct }
+ * @param simpleFusing { Function }
+ * @returns { Promise }
+ */
 export function fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) {
 	const tmpl = template.molecule;
 	const struct = restruct.molecule;
@@ -51,7 +59,7 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 
 		return events.dearomatizeStruct.dispatch(afterMerge.frag).then(res => molfile.parse(res.struct));
 	}).then(destruct => {
-		destruct.bonds.each((id, bond) => {
+		destruct.bonds.forEach(bond => {
 			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
 				throw Error('Bad dearomatize');
 		});
@@ -73,7 +81,7 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 function fromAromatize(restruct, astruct, bondMap) {
 	const action = new Action();
 
-	astruct.bonds.each((bid, bond) => {
+	astruct.bonds.forEach((bond, bid) => {
 		if (bond.type !== Struct.Bond.PATTERN.TYPE.AROMATIC) return;
 		action.addOp(
 			new op.BondAttr(bondMap[bid], 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
@@ -84,12 +92,18 @@ function fromAromatize(restruct, astruct, bondMap) {
 	return action;
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param dastruct { ReStruct }
+ * @param bondMap { Map<number, number> }
+ * @returns { Action }
+ */
 function fromDearomatize(restruct, dastruct, bondMap) {
 	const action = new Action();
 
-	dastruct.bonds.each((bid, bond) => {
+	dastruct.bonds.forEach((bond, bid) => {
 		action.addOp(
-			new op.BondAttr(bondMap[bid], 'type', bond.type)
+			new op.BondAttr(bondMap.get(bid), 'type', bond.type)
 				.perform(restruct)
 		);
 	});
@@ -100,10 +114,10 @@ function fromDearomatize(restruct, dastruct, bondMap) {
 /* UTILS */
 
 function canBeAromatized(struct) { // TODO correct this checking && move to chem.Struct ??
-	if (struct.loops.count() === 0) struct.prepareLoopStructure();
+	if (struct.loops.size === 0) struct.prepareLoopStructure();
 
 	const hasAromLoop = struct.loops.find((id, loop) => loop.aromatic);
-	if (struct.loops.count() === 0 || hasAromLoop) return false;
+	if (struct.loops.size === 0 || hasAromLoop) return false;
 
 	const correctDblBonds = struct.loops.find((id, loop) =>
 		loop.dblBonds === (loop.hbs.length / 2)
@@ -111,14 +125,22 @@ function canBeAromatized(struct) { // TODO correct this checking && move to chem
 	return correctDblBonds !== undefined;
 }
 
+/**
+ * @param struct { Struct }
+ * @param frid { number }
+ * @returns {{
+ * 		frag: Struct,
+ * 		bondMap: Map<number, number>
+ *  }}
+ */
 function getFragmentWithBondMap(struct, frid) {
 	const atomSet = struct.getFragmentIds(frid);
-	const atomsInStruct = Object.values(atomSet);
+	const atomsInStruct = Array.from(atomSet);
 
 	const frag = struct.clone(atomSet);
-	const bondMap = {};
-	frag.bonds.each((bid, bond) => {
-		bondMap[bid] = struct.findBondId(atomsInStruct[bond.begin], atomsInStruct[bond.end]);
+	const bondMap = new Map();
+	frag.bonds.forEach((bond, bid) => {
+		bondMap.set(bid, struct.findBondId(atomsInStruct[bond.begin], atomsInStruct[bond.end]));
 	});
 
 	return { frag, bondMap };

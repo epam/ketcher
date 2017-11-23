@@ -14,20 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Map = require('../../util/map');
 var Vec2 = require('../../util/vec2');
-
+var Pool = require('../../util/pool');
 var Struct = require('../struct');
 
 function Stereocenters(mol, neighborsFunc, context) {
 	this.molecule = mol;
-	this.atoms = new Map();
+	this.atoms = new Pool();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
 }
 
 Stereocenters.prototype.each = function (func, context) {
-	this.atoms.each(func, context);
+	this.atoms.forEach(func, context);
 };
 
 Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, const int *atom_groups, const int *bond_orientations, */ignoreErrors) {
@@ -41,7 +40,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	*/
 
 	var alleneMask = new Set();
-	atoms.each(aid => {
+	atoms.forEach((atom, aid) => {
 		var neiList = this.getNeighbors.call(this.context, aid);
 		if (neiList.length !== 2)
 			return false;
@@ -84,7 +83,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	if (alleneMask.size > 0)
 		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
 
-	atoms.each(aid => {
+	atoms.forEach((atom, aid) => {
 		if (alleneMask.has(aid))
 			return;
 		/*

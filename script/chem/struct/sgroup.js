@@ -136,14 +136,18 @@ SGroup.filter = function (mol, sg, atomMap) {
 	sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
 };
 
+/**
+ * @param sgroup
+ * @param aidMap < Map<number, number> }
+ * @returns { SGroup }
+ */
 SGroup.clone = function (sgroup, aidMap) {
-	var cp = new SGroup(sgroup.type);
+	const cp = new SGroup(sgroup.type);
 
 	for (var field in sgroup.data) // TODO: remove all non-primitive properties from 'data'
 		cp.data[field] = sgroup.data[field];
-	cp.atoms = sgroup.atoms.map(function (elem) {
-		return aidMap[elem];
-	});
+
+	cp.atoms = sgroup.atoms.map(elem => aidMap.get(elem));
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
@@ -173,7 +177,7 @@ SGroup.removeAtom = function (sgroup, aid) {
  * @param parentAtomSet { Set<number> }
  */
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		if (parentAtomSet.has(bond.begin) && parentAtomSet.has(bond.end)) {
 			if (inBonds !== null)
 				inBonds.push(bid);
@@ -295,14 +299,14 @@ SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
-	mol.atoms.each(aid => { atoms.push(aid); });
+	mol.atoms.forEach((atom, aid) => { atoms.push(aid); });
 	return atoms;
 };
 
 SGroup.getBonds = function (mol, sg) {
 	var atoms = SGroup.getAtoms(mol, sg);
 	var bonds = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0)
 			bonds.push(bid);
 	});
@@ -316,7 +320,7 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var inBonds = [];
 	var xBonds = [];
 
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		if (sgroup.parentAtomSet.has(bond.begin) && sgroup.parentAtomSet.has(bond.end))
 			inBonds.push(bid);
 		else if (sgroup.parentAtomSet.has(bond.begin) || sgroup.parentAtomSet.has(bond.end))

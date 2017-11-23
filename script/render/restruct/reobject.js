@@ -63,7 +63,6 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 	this.highlight = highLight;
 };
 
-
 ReObject.prototype.drawHighlight = function () {
 	console.assert('ReObject.drawHighlight is not overridden'); // eslint-disable-line no-console
 };

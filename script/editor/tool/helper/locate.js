@@ -24,33 +24,33 @@ function getElementsInRectangle(restruct, p0, p1) {
 		x1 = Math.max(p0.x, p1.x),
 		y0 = Math.min(p0.y, p1.y),
 		y1 = Math.max(p0.y, p1.y);
-	restruct.bonds.each((bid, bond) => {
+	restruct.bonds.forEach((bond, bid) => {
 		var centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
 			restruct.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
 	});
-	restruct.atoms.each((aid, atom) => {
+	restruct.atoms.forEach((atom, aid) => {
 		if (atom.a.pp.x > x0 && atom.a.pp.x < x1 && atom.a.pp.y > y0 && atom.a.pp.y < y1)
 			atomList.push(aid);
 	});
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	restruct.rxnArrows.each((id, item) => {
+	restruct.rxnArrows.forEach((item, id) => {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	});
-	restruct.rxnPluses.each((id, item) => {
+	restruct.rxnPluses.forEach((item, id) => {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	});
 	var chiralFlagList = [];
-	restruct.chiralFlags.each((id, item) => {
+	restruct.chiralFlags.forEach((item, id) => {
 		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
 			chiralFlagList.push(id);
 	});
 	var sgroupDataList = [];
-	restruct.sgroupData.each((id, item) => {
+	restruct.sgroupData.forEach((item, id) => {
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
 			sgroupDataList.push(id);
 	});
@@ -70,33 +70,33 @@ function getElementsInPolygon(restruct, rr) { // eslint-disable-line max-stateme
 	var r = [];
 	for (var i = 0; i < rr.length; ++i)
 		r[i] = new Vec2(rr[i].x, rr[i].y);
-	restruct.bonds.each((bid, bond) => {
+	restruct.bonds.forEach((bond, bid) => {
 		var centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
 			restruct.atoms.get(bond.b.end).a.pp, 0.5);
 		if (isPointInPolygon(r, centre))
 			bondList.push(bid);
 	});
-	restruct.atoms.each((aid, atom) => {
+	restruct.atoms.forEach((atom, aid) => {
 		if (isPointInPolygon(r, atom.a.pp))
 			atomList.push(aid);
 	});
 	var rxnArrowsList = [];
 	var rxnPlusesList = [];
-	restruct.rxnArrows.each((id, item) => {
+	restruct.rxnArrows.forEach((item, id) => {
 		if (isPointInPolygon(r, item.item.pp))
 			rxnArrowsList.push(id);
 	});
-	restruct.rxnPluses.each((id, item) => {
+	restruct.rxnPluses.forEach((item, id) => {
 		if (isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	});
 	var chiralFlagList = [];
-	restruct.chiralFlags.each((id, item) => {
+	restruct.chiralFlags.forEach((item, id) => {
 		if (isPointInPolygon(r, item.pp))
 			chiralFlagList.push(id);
 	});
 	var sgroupDataList = [];
-	restruct.sgroupData.each((id, item) => {
+	restruct.sgroupData.forEach((item, id) => {
 		if (isPointInPolygon(r, item.sgroup.pp))
 			sgroupDataList.push(id);
 	});

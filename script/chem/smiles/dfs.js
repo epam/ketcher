@@ -22,12 +22,12 @@ function Dfs(mol, atomData, components, nReactants) {
 	this.nReactants = nReactants;
 
 	this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
-	this.molecule.atoms.each(function (aid) {
+	this.molecule.atoms.forEach((atom, aid) => {
 		this.vertices[aid] = new Dfs.VertexDesc();
 	}, this);
 
 	this.edges = new Array(this.molecule.bonds.count()); // Minimum size
-	this.molecule.bonds.each(function (bid) {
+	this.molecule.bonds.forEach((bond, bid) => {
 		this.edges[bid] = new Dfs.EdgeDesc();
 	}, this);
 
@@ -165,7 +165,7 @@ Dfs.prototype.numOpeningCycles = function (eIdx) {
 
 Dfs.prototype.toString = function () {
 	var str = '';
-	this.v_seq.each((seqElem) => {
+	this.v_seq.forEach(seqElem => {
 		str += seqElem.idx + ' -> ';
 	});
 	str += '*';

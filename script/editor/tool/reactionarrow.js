@@ -59,7 +59,7 @@ ReactionArrowTool.prototype.mouseup = function (event) {
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
-	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
+	} else if (rnd.ctab.molecule.rxnArrows.size < 1) {
 		this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };

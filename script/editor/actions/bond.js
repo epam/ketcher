@@ -110,28 +110,40 @@ export function fromBondDeletion(restruct, id) {
 	return action;
 }
 
-export function fromBondAttrs(restruct, id, attrs, flip, reset) { // eslint-disable-line max-params
-	var action = new Action();
+/**
+ * @param restruct { ReStruct }
+ * @param id { number }
+ * @param bond { Bond }
+ * @param flip { boolean }
+ * @param reset { boolean }
+ */
+export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disable-line max-params
+	const action = new Action();
 
-	for (var key in Struct.Bond.attrlist) {
-		var value;
-		if (key in attrs)
-			value = attrs[key];
-		else if (reset)
-			value = Struct.Bond.attrGetDefault(key);
-		else
-			continue; // eslint-disable-line no-continue
+	console.error('bonattr', Struct.Bond.attrlist);
+
+	Object.keys(Struct.Bond.attrlist).forEach(key => {
+		if (!bond[key])
+			return;
+
+		const value = reset ? Struct.Bond.attrGetDefault(key) : bond[key];
 		action.addOp(new op.BondAttr(id, key, value));
-	}
+	});
+
 	if (flip)
 		action.mergeWith(toBondFlipping(restruct.molecule, id));
+
 	return action.perform(restruct);
 }
 
+/**
+ * @param restruct
+ * @param mergeMap
+ */
 export function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
 	let action = new Action();
 	const atomsToDelete = [];
-	const srcBonds = Object.keys(mergeMap);
+	const srcBonds = Object.keys(mergeMap).map(id => parseInt(id, 10));
 	const struct = restruct.molecule;
 
 	Object.entries(mergeMap).forEach(([srcId, dstId]) => {

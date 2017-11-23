@@ -81,12 +81,12 @@ Molfile.prototype.getCTab = function (molecule, rgroups) {
 
 Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups, preserveIndigoDesc) { // eslint-disable-line max-statements
 	/* saver */
-	this.reaction = molecule.rxnArrows.count() > 0;
-	if (molecule.rxnArrows.count() > 1)
+	this.reaction = molecule.rxnArrows.size > 0;
+	if (molecule.rxnArrows.size > 1)
 		throw new Error('Reaction may not contain more than one arrow');
 	this.molfile = '' + molecule.name;
 	if (this.reaction) {
-		if (molecule.rgroups.count() > 0)
+		if (molecule.rgroups.size > 0)
 			throw new Error('Unable to save the structure - reactions with r-groups are not supported at the moment');
 		var components = molecule.getComponents();
 
@@ -106,7 +106,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 		return this.molfile;
 	}
 
-	if (molecule.rgroups.count() > 0) {
+	if (molecule.rgroups.size > 0) {
 		if (norgroups) {
 			molecule = molecule.getScaffold();
 		} else {
@@ -114,12 +114,12 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 			this.molfile = '$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n';
 			this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
-			molecule.rgroups.each((rgid, rg) => {
+			molecule.rgroups.forEach((rg, rgid) => {
 				this.molfile += '$RGP\n';
 				this.writePaddedNumber(rgid, 3);
 				this.molfile += '\n';
-				rg.frags.each((fnum, fid) => {
-					var group = new Molfile(false).getCTab(molecule.getFragment(fid));
+				rg.frags.forEach(fid => {
+					const group = new Molfile(false).getCTab(molecule.getFragment(fid));
 					this.molfile += '$CTAB\n' + group + '$END CTAB\n';
 				});
 				this.molfile += '$END RGP\n';
@@ -202,8 +202,8 @@ Molfile.prototype.writePaddedFloat = function (number, width, precision) {
 Molfile.prototype.writeCTab2000Header = function () {
 	/* saver */
 
-	this.writePaddedNumber(this.molecule.atoms.count(), 3);
-	this.writePaddedNumber(this.molecule.bonds.count(), 3);
+	this.writePaddedNumber(this.molecule.atoms.size, 3);
+	this.writePaddedNumber(this.molecule.bonds.size, 3);
 
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(3);
@@ -225,7 +225,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var atomList_list = [];
 	var atomProps_list = [];
 	/* eslint-enable camel-case*/
-	this.molecule.atoms.each((id, atom) => {
+	this.molecule.atoms.forEach((atom, id) => {
 		this.writePaddedFloat(atom.pp.x, 10, 4);
 		this.writePaddedFloat(-atom.pp.y, 10, 4);
 		this.writePaddedFloat(atom.pp.z, 10, 4);
@@ -285,7 +285,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 
 	this.bondMapping = {};
 	i = 1;
-	this.molecule.bonds.each((id, bond) => {
+	this.molecule.bonds.forEach((bond, id) => {
 		this.bondMapping[id] = i++;
 		this.writePaddedNumber(this.mapping[bond.begin], 3);
 		this.writePaddedNumber(this.mapping[bond.end], 3);
@@ -326,7 +326,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	var unsaturatedList = [];
 	var substcountList = [];
 
-	this.molecule.atoms.each((id, atom) => {
+	this.molecule.atoms.forEach((atom, id) => {
 		if (atom.charge != 0)
 			chargeList.push([id, atom.charge]);
 		if (atom.isotope != 0)
@@ -348,7 +348,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	});
 
 	if (rgroups) {
-		rgroups.each((rgid, rg) => {
+		rgroups.forEach((rg, rgid) => {
 			if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
 				var line = '  1 ' +
 					utils.paddedNum(rgid, 3) + ' ' +

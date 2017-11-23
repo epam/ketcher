@@ -235,6 +235,11 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	this.editor.hover(null);
 };
 
+/**
+ * @param restruct { ReStruct }
+ * @param closestMap { Map<number, number> }
+ * @return { Map<number, number> }
+ */
 function closestToMerge(restruct, closestMap) {
 	const struct = restruct.molecule;
 	const mergeMap = Object.assign({}, closestMap);

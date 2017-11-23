@@ -42,7 +42,7 @@ RGroupFragmentTool.prototype.mouseup = function (event) {
 	this.editor.hover(null);
 
 	const label = (ci.map === 'rgroups') ? ci.id :
-		Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;
+		Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id);
 
 	const rg = Object.assign(
 		{ label },

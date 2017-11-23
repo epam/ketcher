@@ -68,11 +68,11 @@ ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 };
 
 ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-line max-statements
-	var render = restruct.render;
-	var ps = scale.obj2scaled(this.a.pp, render.options);
+	const render = restruct.render;
+	const ps = scale.obj2scaled(this.a.pp, render.options);
 
 	this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
-	this.showLabel = labelIsVisible(restruct, render.options, this);
+	this.showLabel = isLabelVisible(restruct, render.options, this);
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
 		var delta = 0.5 * options.lineWidth;
@@ -189,58 +189,71 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	}
 };
 
-function labelIsVisible(restruct, options, atom) {
-	var isVisibleTerminal = options.showHydrogenLabels !== 'off' &&
-		                    options.showHydrogenLabels !== 'Hetero';
-	if (atom.a.neighbors.length === 0 ||
-		(atom.a.neighbors.length < 2 && isVisibleTerminal) ||
-		(options.carbonExplicitly) ||
-		atom.a.label.toLowerCase() !== 'c' ||
-		(atom.a.badConn && options.showValenceWarnings) ||
-		atom.a.isotope != 0 ||
-		atom.a.radical != 0 ||
-		atom.a.charge != 0 ||
+function isLabelVisible(restruct, options, atom) {
+	const visibleTerminal = options.showHydrogenLabels !== 'off' &&
+		options.showHydrogenLabels !== 'Hetero';
+
+	const neighborsLength = atom.a.neighbors.length === 0 || (atom.a.neighbors.length < 2 && visibleTerminal);
+
+	const shouldBeVisible =
+		neighborsLength ||
+		options.carbonExplicitly ||
+		atom.a.alias ||
+		atom.a.isotope !== 0 ||
+		atom.a.radical !== 0 ||
+		atom.a.charge !== 0 ||
 		atom.a.explicitValence >= 0 ||
-		atom.a.atomList != null ||
-		atom.a.rglabel != null ||
-		atom.a.alias)
+		atom.a.atomList !== null ||
+		atom.a.rglabel !== null ||
+		atom.a.badConn && options.showValenceWarnings ||
+		atom.a.label.toLowerCase() !== 'c';
+
+	if (shouldBeVisible)
 		return true;
-	if (atom.a.neighbors.length == 2) {
-		var n1 = atom.a.neighbors[0];
-		var n2 = atom.a.neighbors[1];
-		var hb1 = restruct.molecule.halfBonds.get(n1);
-		var hb2 = restruct.molecule.halfBonds.get(n2);
-		var b1 = restruct.bonds.get(hb1.bid);
-		var b2 = restruct.bonds.get(hb2.bid);
-		if (b1.b.type == b2.b.type &&
-			b1.b.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
-			b2.b.stereo == Struct.Bond.PATTERN.STEREO.NONE) {
-			if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
-				return true;
-		}
+
+	if (atom.a.neighbors.length === 2) {
+		const nei1 = atom.a.neighbors[0];
+		const nei2 = atom.a.neighbors[1];
+		const hb1 = restruct.molecule.halfBonds.get(nei1);
+		const hb2 = restruct.molecule.halfBonds.get(nei2);
+		const bond1 = restruct.bonds.get(hb1.bid);
+		const bond2 = restruct.bonds.get(hb2.bid);
+
+		const sameNotStereo = bond1.b.type === bond2.b.type &&
+			bond1.b.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+			bond2.b.stereo === Struct.Bond.PATTERN.STEREO.NONE;
+
+		if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+			return true;
 	}
+
 	return false;
 }
 
 function displayHydrogen(hydrogenLabels, atom) {
-	return ((hydrogenLabels === 'on') ||
-	(hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
-	(hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
-	(hydrogenLabels === 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c')));
+	return (
+		(hydrogenLabels === 'on') ||
+		(hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
+		(hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
+		(hydrogenLabels === 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c'))
+	);
 }
 
 function setHydrogenPos(struct, atom) {
 	// check where should the hydrogen be put on the left of the label
 	if (atom.a.neighbors.length === 0) {
-		var elem = element.map[atom.a.label];
-		return !elem || !!element[elem].leftH;
+		const elem = element.map[atom.a.label];
+		return !elem || element[elem].leftH;
 	}
-	var yl = 1,
-		yr = 1,
-		nl = 0,
-		nr = 0;
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var d = struct.halfBonds.get(atom.a.neighbors[i]).dir;
+
+	let yl = 1;
+	let yr = 1;
+	let nl = 0;
+	let nr = 0;
+
+	atom.a.neighbors.forEach(nei => {
+		const d = struct.halfBonds.get(nei).dir;
+
 		if (d.x <= 0) {
 			yl = Math.min(yl, Math.abs(d.y));
 			nl++;
@@ -248,32 +261,25 @@ function setHydrogenPos(struct, atom) {
 			yr = Math.min(yr, Math.abs(d.y));
 			nr++;
 		}
-	}
+	});
+
 	return (yl < 0.51 || yr < 0.51) ? yr < yl : nr > nl;
 }
 
 function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-statements
-	var label = {};
+	let label = {};
 	atom.color = 'black';
-	if (atom.a.atomList != null) {
-		label.text = atom.a.atomList.label();
-	} else if (atom.a.pseudo) {
-		label.text = atom.a.pseudo;
-	} else if (atom.a.alias) {
-		label.text = atom.a.alias;
-	} else if (atom.a.label === 'R#' && atom.a.rglabel != null) {
-		label.text = '';
-		for (var rgi = 0; rgi < 32; rgi++) {
-			if (atom.a.rglabel & (1 << rgi)) // eslint-disable-line max-depth
-				label.text += ('R' + (rgi + 1).toString());
-		}
-		if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
-	} else {
-		label.text = atom.a.label;
-		var elem = element.map[label.text];
+	label.text = getLabelText(atom.a);
+
+	if (label.text === '')
+		label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+
+	if (label.text === atom.a.label) {
+		const elem = element.map[label.text];
 		if (options.atomColoring && elem)
 			atom.color = element[elem].color || '#000';
 	}
+
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({
 			'font': options.font,
@@ -281,12 +287,39 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 			'fill': atom.color,
 			'font-style': atom.a.pseudo ? 'italic' : ''
 		});
+
 	label.rbb = util.relBox(label.path.getBBox());
 	draw.recenterText(label.path, label.rbb);
-	if (atom.a.atomList != null)
+
+	if (atom.a.atomList !== null)
 		pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
+
 	atom.label = label;
 	return label;
+}
+
+function getLabelText(atom) {
+	if (atom.atomList !== null)
+		return atom.atomList.label();
+
+	if (atom.pseudo)
+		return atom.pseudo;
+
+	if (atom.alias)
+		return atom.alias;
+
+	if (atom.label === 'R#' && atom.rglabel !== null) {
+		let text = '';
+
+		for (let rgi = 0; rgi < 32; rgi++) {
+			if (atom.rglabel & (1 << rgi)) // eslint-disable-line max-depth
+				text += ('R' + (rgi + 1).toString());
+		}
+
+		return text;
+	}
+
+	return atom.label;
 }
 
 function showHydroIndex(atom, render, implh, rightMargin) {

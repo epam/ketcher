@@ -66,7 +66,7 @@ var prepareForSaving = {
 
 function prepareSruForSaving(sgroup, mol) {
 	var xBonds = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
@@ -84,7 +84,7 @@ function prepareSupForSaving(sgroup, mol) {
 	// This code is also used for GroupSru and should be moved into a separate common method
 	// It seems that such code should be used for any sgroup by this this should be checked
 	var xBonds = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/

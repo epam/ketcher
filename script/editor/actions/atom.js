@@ -26,27 +26,29 @@ import { FromFragmentSplit } from './fragment';
 
 export function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
-	var action = new Action();
+	const action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(restruct));
 	return action;
 }
 
 export function fromAtomDeletion(restruct, id) {
-	var action = new Action();
-	var atomsToRemove = [];
+	let action = new Action();
+	const atomsToRemove = [];
 
-	var frid = restruct.molecule.atoms.get(id).fragment;
+	const frid = restruct.molecule.atoms.get(id).fragment;
 
-	atomGetNeighbors(restruct, id).forEach(function (nei) {
+	atomGetNeighbors(restruct, id).forEach(nei => {
 		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
-		if (atomGetDegree(restruct, nei.aid) == 1) {
-			if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
-				atomsToRemove.push(nei.aid);
 
-			action.addOp(new op.AtomDelete(nei.aid));
-		}
-	}, this);
+		if (atomGetDegree(restruct, nei.aid) !== 1)
+			return;
+
+		if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
+			atomsToRemove.push(nei.aid);
+
+		action.addOp(new op.AtomDelete(nei.aid));
+	});
 
 	if (removeAtomFromSgroupIfNeeded(action, restruct, id))
 		atomsToRemove.push(id);
@@ -62,62 +64,76 @@ export function fromAtomDeletion(restruct, id) {
 	return action;
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param ids { Array<number>|number }
+ * @param attrs { object }
+ * @param reset { boolean? }
+ */
 export function fromAtomsAttrs(restruct, ids, attrs, reset) {
-	var action = new Action();
-	(typeof (ids) === 'number' ? [ids] : ids).forEach(function (id) {
-		for (var key in Struct.Atom.attrlist) {
-			var value;
-			if (key in attrs)
-				value = attrs[key];
-			else if (reset)
-				value = Struct.Atom.attrGetDefault(key);
-			else
-				continue; // eslint-disable-line no-continue
-			action.addOp(new op.AtomAttr(id, key, value));
-		}
-		if (!reset && 'label' in attrs && attrs.label != null && attrs.label !== 'L#' && !attrs['atomList'])
-			action.addOp(new op.AtomAttr(id, 'atomList', null));
-	}, this);
+	const action = new Action();
+	const aids = Array.isArray(ids) ? ids : [ids];
+
+	aids.forEach(aid => {
+		Object.keys(Struct.Atom.attrlist).forEach(key => {
+			const value = attrs[key];
+			if (value || reset)
+				action.addOp(new op.AtomAttr(aid, key, value || Struct.Atom.attrGetDefault(key)));
+		});
+
+		if (!reset && 'label' in attrs && attrs.label !== null && attrs.label !== 'L#' && !attrs['atomList'])
+			action.addOp(new op.AtomAttr(aid, 'atomList', null));
+	});
+
 	return action.perform(restruct);
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param srcId
+ * @param dstId
+ * @param skipBondsDel
+ * @param skipAtomDel
+ * @return { Action }
+ */
 export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAtomDel) {
-	if (srcId === dstId) return new Action();
-	var fragAction = new Action();
-	var srcFrid = atomGetAttr(restruct, srcId, 'fragment');
-	var dstFrid = atomGetAttr(restruct, dstId, 'fragment');
+	if (srcId === dstId)
+		return new Action();
+
+	const fragAction = new Action();
+	const srcFrid = atomGetAttr(restruct, srcId, 'fragment');
+	const dstFrid = atomGetAttr(restruct, dstId, 'fragment');
+
 	if (srcFrid !== dstFrid)
 		mergeFragments(fragAction, restruct, srcFrid, dstFrid);
 
-	var action = new Action();
+	const action = new Action();
 
-	atomGetNeighbors(restruct, srcId).forEach(function (nei) {
-		var bond = restruct.molecule.bonds.get(nei.bid);
-		var begin, end;
+	atomGetNeighbors(restruct, srcId).forEach(nei => {
+		const bond = restruct.molecule.bonds.get(nei.bid);
 
-		if (bond.begin === nei.aid) {
-			begin = nei.aid;
-			end = dstId;
-		} else {
-			begin = dstId;
-			end = nei.aid;
-		}
-		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end) === -1) // TODO: improve this {
+		const begin = bond.begin === nei.aid ? nei.aid : dstId;
+		const end = bond.begin === nei.aid ? dstId : nei.aid;
+
+		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end)) // TODO: improve this {
 			action.addOp(new op.BondAdd(begin, end, bond));
 
 		if (!skipBondsDel.includes('' + nei.bid))
 			action.addOp(new op.BondDelete(nei.bid));
-	}, this);
+	});
 
-	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
+	const attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
+
 	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 
-	var sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
+	Object.keys(attrs)
+		.forEach(key => action.addOp(new op.AtomAttr(dstId, key, attrs[key])));
 
-	if (!skipAtomDel) action.addOp(new op.AtomDelete(srcId));
+	if (!skipAtomDel)
+		action.addOp(new op.AtomDelete(srcId));
+
+	const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
 	if (sgChanged)
 		removeSgroupIfNeeded(action, restruct, [srcId]);
@@ -132,7 +148,7 @@ export function mergeFragments(action, restruct, frid, frid2) {
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));
 
-		struct.atoms.each((aid, atom) => {
+		struct.atoms.forEach((atom, aid) => {
 			if (atom.fragment === frid2)
 				action.addOp(new op.AtomAttr(aid, 'fragment', frid).perform(restruct));
 		});

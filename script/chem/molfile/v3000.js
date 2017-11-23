@@ -278,18 +278,15 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 		}
 	}
 
-	for (var rgid in rfrags) {
-		for (var j = 0; j < rfrags[rgid].length; ++j) {
-			var rg = rfrags[rgid][j];
+	Object.keys(rfrags).forEach(rgid => {
+		rfrags[rgid].forEach(rg => {
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
-			var frid = rg.frags.add({});
+			const frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
-			rg.atoms.each((aid, atom) => {
-				atom.fragment = frid;
-			});
+			rg.atoms.forEach(atom => atom.fragment = frid);
 			rg.mergeInto(ctab);
-		}
-	}
+		});
+	});
 }
 
 function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements

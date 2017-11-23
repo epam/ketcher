@@ -37,7 +37,7 @@ export function fromMultipleMove(restruct, lists, d) {
 		const atomSet = new Set(lists.atoms);
 		const bondlist = [];
 
-		restruct.bonds.each((bid, bond) => {
+		restruct.bonds.forEach((bond, bid) => {
 			if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
 				bondlist.push(bid);
 				// add all adjacent loops
@@ -57,14 +57,14 @@ export function fromMultipleMove(restruct, lists, d) {
 
 			if (atomSet.has(bond.b.end))
 				atomsToInvalidate.add(bond.b.end);
-		}, this);
+		});
 
 		bondlist.forEach(bond => action.addOp(new op.BondMove(bond, d)));
 
 		loops.forEach(loopId => {
 			if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) // hack
 				action.addOp(new op.LoopMove(loopId, d));
-		}, this);
+		});
 
 		lists.atoms.forEach(aid => action.addOp(new op.AtomMove(aid, d, !atomsToInvalidate.has(aid))));
 
@@ -91,21 +91,41 @@ export function fromMultipleMove(restruct, lists, d) {
 	return action.perform(restruct);
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param aid { number }
+ * @param frid { number }
+ * @param newfrid { number }
+ * @returns { Action }
+ */
+function processAtom(restruct, aid, frid, newfrid) {
+	const action = new Action();
+	const queue = [aid];
+
+	while (queue.length > 0) {
+		action.addOp(new op.AtomAttr(aid, 'fragment', newfrid).perform(restruct));
+
+		atomGetNeighbors(restruct, aid).forEach(nei => {
+			if (restruct.molecule.atoms.get(nei.aid).fragment === frid)
+				queue.push(restruct, nei.aid, frid, newfrid);
+		});
+
+		queue.shift();
+	}
+
+	return action;
+}
+
 export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
-	restruct.molecule.atoms.each((aid, atom) => {
+	restruct.molecule.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid) {
-			var newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
-			var processAtom = function (aid1) { // eslint-disable-line func-style
-				action.addOp(new op.AtomAttr(aid1, 'fragment', newfrid).perform(restruct));
-				atomGetNeighbors(restruct, aid1).forEach(function (nei) {
-					if (restruct.molecule.atoms.get(nei.aid).fragment === frid)
-						processAtom(nei.aid);
-				});
-			};
-			processAtom(aid);
+			const newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+
+			action.mergeWith(processAtom(restruct, aid, frid, newfrid));
+
 			if (rgid)
 				action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
 		}

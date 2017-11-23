@@ -98,19 +98,19 @@ function structNormalization(struct) {
 	const normStruct = struct.clone();
 	const cbb = normStruct.getCoordBoundingBox();
 
-	normStruct.atoms.each((aid, atom) => {
+	normStruct.atoms.forEach(atom => {
 		atom.pp = atom.pp.sub(cbb.min);
 	});
 
-	normStruct.sgroups.each((sgid, sg) => {
+	normStruct.sgroups.forEach(sg => {
 		sg.pp = sg.pp.sub(cbb.min);
 	});
 
-	normStruct.rxnArrows.each((rxid, rxnArrow) => {
+	normStruct.rxnArrows.forEach(rxnArrow => {
 		rxnArrow.pp = rxnArrow.pp.sub(cbb.min);
 	});
 
-	normStruct.rxnPluses.each((rxid, rxnPlus) => {
+	normStruct.rxnPluses.forEach(rxnPlus => {
 		rxnPlus.pp = rxnPlus.pp.sub(cbb.min);
 	});
 

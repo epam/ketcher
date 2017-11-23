@@ -24,19 +24,6 @@ import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { uniq } from 'lodash';
 
-export function fromSgroupType(restruct, id, type) {
-	var sg = restruct.sgroups.get(id).item;
-	var curType = sg.type;
-	if (type && type != curType) {
-		var atoms = [].slice.call(Struct.SGroup.getAtoms(restruct.molecule, sg));
-		var attrs = sg.getAttrs();
-		var actionDeletion = fromSgroupDeletion(restruct, id); // [MK] order of execution is important, first delete then recreate
-		var actionAddition = fromSgroupAddition(restruct, type, atoms, attrs, id);
-		return actionAddition.mergeWith(actionDeletion); // the actions are already performed and reversed, so we merge them backwards
-	}
-	return new Action();
-}
-
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 	const descriptors = attrs.fieldValue;
 
@@ -148,7 +135,7 @@ export function fromSgroupAction(context, restruct, newSg, sourceAtoms, selectio
 	const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
 
 	if (context === SgContexts.Fragment)
-		return fromGroupAction(restruct, newSg, newSourceAtoms, restruct.atoms.keys());
+		return fromGroupAction(restruct, newSg, newSourceAtoms, Array.from(restruct.atoms.keys()));
 
 	if (context === SgContexts.Multifragment)
 		return fromMultiFragmentAction(restruct, newSg, newSourceAtoms);
@@ -180,22 +167,19 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-	const fragIds = Object.keys(
-		sourceAtoms.reduce((acc, aid) => {
-			const fragId = restruct.atoms.get(aid).a.fragment;
-			acc[fragId] = true;
-			return acc;
-		}, {})
-	)
-		.map(Number);
+	const allFragments = new Set(
+		sourceAtoms.map(aid => restruct.atoms.get(aid).a.fragment)
+	);
 
-	return fragIds.reduce((acc, fragId) => {
+	return Array.from(allFragments).reduce((acc, fragId) => {
 		const atoms = targetAtoms
-			.filter(aid => {
+			.reduce((acc, aid) => {
 				const atom = restruct.atoms.get(aid).a;
-				return fragId === atom.fragment;
-			})
-			.map(Number);
+				if (fragId === atom.fragment)
+					acc.push(aid);
+
+				return acc;
+			}, []);
 
 		const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
@@ -217,19 +201,20 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
 }
 
 function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
-	var struct = restruct.molecule;
-	var bonds = getAtomsBondIds(struct, sourceAtoms);
+	const struct = restruct.molecule;
+	let bonds = getAtomsBondIds(struct, sourceAtoms);
 
 	if (currSelection.bonds)
 		bonds = uniq(bonds.concat(currSelection.bonds));
 
-	return bonds.reduce(function (acc, bondid) {
-		var bond = struct.bonds.get(bondid);
+	return bonds.reduce((acc, bondid) => {
+		const bond = struct.bonds.get(bondid);
 
 		acc.action = acc.action
 			.mergeWith(
 				fromSeveralSgroupAddition(restruct, newSg.type, [bond.begin, bond.end], newSg.attrs)
 			);
+
 		acc.selection.bonds.push(bondid);
 
 		return acc;
@@ -255,13 +240,10 @@ function fromMultiFragmentAction(restruct, newSg, atoms) {
 
 // Add action operation to remove atom from s-group if needed
 export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
-	var sgroups = atomGetSGroups(restruct, id);
+	const sgroups = atomGetSGroups(restruct, id);
 
 	if (sgroups.length > 0) {
-		sgroups.forEach(function (sid) {
-			action.addOp(new op.SGroupAtomRemove(sid, id));
-		});
-
+		sgroups.forEach(sid => action.addOp(new op.SGroupAtomRemove(sid, id)));
 		return true;
 	}
 
@@ -297,15 +279,12 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 }
 
 function getAtomsBondIds(struct, atoms) {
-	return struct.bonds.keys()
-		.reduce(function (acc, bondid) {
-			var bond = struct.bonds.get(bondid);
+	const atomSet = new Set(atoms);
 
-			if (atoms.includes(bond.begin) && atoms.includes(bond.end))
-				acc.push(parseInt(bondid));
-
-			return acc;
-		}, []);
+	return Array.from(struct.bonds.keys()).filter(bid => {
+		const bond = struct.bonds.get(bid);
+		return atomSet.has(bond.begin) && atomSet.has(bond.end);
+	});
 }
 
 function getAtomsFromBonds(struct, bonds) {

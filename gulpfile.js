@@ -58,7 +58,9 @@ const createBundleConfig = () => ({
 					"useBuiltIns": true
 				}],
 				"react"],
-			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
+			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread',
+				["babel-plugin-transform-builtin-extend", { globals: ["Set", "Map"] }]
+			]
 		}]
 	]
 });

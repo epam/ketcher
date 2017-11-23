@@ -73,7 +73,7 @@ function fileOpener(server) {
 		} else if (server) {
 			resolve(server.then(() => {
 				throw Error("Server doesn't still support echo method");
-				//return resolve(throughForm2IframePosting);
+				// return resolve(throughForm2IframePosting);
 			}));
 		} else {
 			reject(new Error('Your browser does not support opening files locally'));

@@ -108,11 +108,11 @@ export default function initEditor(dispatch, getState) {
 			return openDialog(dispatch, 'rgroup', params);
 		},
 		onSgroupEdit: sgroup => sleep(0)		// huck to open dialog after dispatch sgroup tool action
-				.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
-				.then(toSgroup),
+			.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
+			.then(toSgroup),
 		onSdataEdit: sgroup => sleep(0)
-				.then(() => openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup)))
-				.then(toSgroup),
+			.then(() => openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup)))
+			.then(toSgroup),
 		onMessage: (msg) => {
 			if (msg.error) {
 				alert(msg.error);

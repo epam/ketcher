@@ -50,15 +50,14 @@ function Sgroup({ formState, ...prop }) {
 const content = type => Object.keys(schemes[type].properties)
 	.filter(prop => prop !== 'type')
 	.map((prop) => {
-			let props = {};
-			if (prop === 'name') props.maxlength = 15;
-			if (prop === 'fieldName') props.maxlength = 30;
-			if (prop === 'fieldValue') props.type = 'textarea';
-			if (prop === 'radiobuttons') props.type = 'radio';
+		let props = {};
+		if (prop === 'name') props.maxlength = 15;
+		if (prop === 'fieldName') props.maxlength = 30;
+		if (prop === 'fieldValue') props.type = 'textarea';
+		if (prop === 'radiobuttons') props.type = 'radio';
 
-			return <Field name={prop} key={`${type}-${prop}`} {...props} />;
-		}
-	);
+		return <Field name={prop} key={`${type}-${prop}`} {...props} />;
+	});
 
 export default connect(
 	store => ({ formState: store.modal.form })

@@ -100,17 +100,17 @@ export function load(structStr, options) {
 
 		options = options || {};
 		// TODO: check if structStr is parsed already
-		//utils.loading('show');
+		// utils.loading('show');
 		const parsed = structFormat.fromString(structStr,
 			options, server);
 
 		parsed.catch(() => {
-			//utils.loading('hide');
+			// utils.loading('hide');
 			alert('Can\'t parse molecule!');
 		});
 
 		return parsed.then((struct) => {
-			//utils.loading('hide');
+			// utils.loading('hide');
 			console.assert(struct, 'No molecule to update');
 			if (options.rescale)
 				struct.rescale(); // TODO: move out parsing?

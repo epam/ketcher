@@ -73,8 +73,8 @@ class SystemFonts extends Component {
 		};
 
 		this.state.availableFonts.forEach((font) => {
-				desc.enum.push(`30px ${font}`);
-				desc.enumNames.push(font);
+			desc.enum.push(`30px ${font}`);
+			desc.enumNames.push(font);
 		});
 
 		return desc.enum.length !== 1

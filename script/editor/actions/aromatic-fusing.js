@@ -105,8 +105,8 @@ function canBeAromatized(struct) { // TODO correct this checking && move to chem
 	const hasAromLoop = struct.loops.find((id, loop) => loop.aromatic);
 	if (struct.loops.count() === 0 || hasAromLoop) return false;
 
-	const correctDblBonds = struct.loops.find((id, loop) =>
-		loop.dblBonds === (loop.hbs.length / 2)
+	const correctDblBonds = struct.loops.find(
+		(id, loop) => loop.dblBonds === (loop.hbs.length / 2)
 	);
 	return correctDblBonds !== undefined;
 }

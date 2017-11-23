@@ -149,8 +149,8 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 
 		const degrees = utils.degrees(angle);
 		// check if anything changed since last time
-		if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees &&
-			(!dragCtx.hasOwnProperty('extra_bond') || dragCtx.extra_bond === extraBond))
+		if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees && // eslint-disable-line no-prototype-builtins
+			(!dragCtx.hasOwnProperty('extra_bond') || dragCtx.extra_bond === extraBond)) // eslint-disable-line no-prototype-builtins
 			return true;
 
 		// undo previous action

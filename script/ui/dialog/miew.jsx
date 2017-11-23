@@ -150,8 +150,7 @@ class Miew extends Component {
 		this.opts = getLocalMiewOpts();
 	}
 	load(ev) {
-		let miew = miewLoad(ev.target.contentWindow,
-							MIEW_PATH, this.opts);
+		let miew = miewLoad(ev.target.contentWindow, MIEW_PATH, this.opts);
 		this.setState({ miew });
 		this.state.miew.then((res) => {
 			res.parse(this.props.structStr, {
@@ -216,7 +215,7 @@ class Miew extends Component {
 					>
 						Detach to new window
 					</button>
-					]}
+				]}
 			>
 				<iframe
 					id="miew-iframe"

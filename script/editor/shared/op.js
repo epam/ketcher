@@ -400,10 +400,8 @@ function BondAdd(begin, end, bond) {
 		invalidateAtom(restruct, this.data.end, 1);
 
 		var pp = {};
-		if (this.data.bond) {
-			for (var p in this.data.bond)
-				if (this.data.bond.hasOwnProperty(p)) pp[p] = this.data.bond[p];
-		}
+		if (this.data.bond)
+			Object.keys(this.data.bond).forEach((p) => { pp[p] = this.data.bond[p]; });
 		pp.type = pp.type || Struct.Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;

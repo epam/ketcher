@@ -112,15 +112,15 @@ export function serverCall(editor, server, method, options, struct) {
 	}
 
 	let request = server.then(() => server[method](Object.assign({
-			struct: molfile.stringify(struct, { ignoreErrors: true })
-		}, selectedAtoms && selectedAtoms.length > 0 ? {
-			selected: selectedAtoms
-		} : null, options.data), omit('data', options)));
-	//utils.loading('show');
+		struct: molfile.stringify(struct, { ignoreErrors: true })
+	}, selectedAtoms && selectedAtoms.length > 0 ? {
+		selected: selectedAtoms
+	} : null, options.data), omit('data', options)));
+	// utils.loading('show');
 	request.catch(() => {
 		// alert(err);
 	}).then(() => {
-		//utils.loading('hide');
+		// utils.loading('hide');
 	});
 	return request;
 }

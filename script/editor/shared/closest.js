@@ -317,7 +317,8 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 		const bond = struct.bonds.get(bid);
 		pos.bonds[bid] = Vec2.lc2(
 			pos.atoms[bond.begin], 0.5,
-			pos.atoms[bond.end], 0.5);
+			pos.atoms[bond.end], 0.5
+		);
 	});
 
 	const result = {};

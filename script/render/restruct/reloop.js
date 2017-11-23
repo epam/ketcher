@@ -54,7 +54,8 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 		var hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 		var angle = Math.atan2(
 			Vec2.cross(hba.dir, hbb.dir),
-			Vec2.dot(hba.dir, hbb.dir));
+			Vec2.dot(hba.dir, hbb.dir)
+		);
 		if (angle > 0)
 			loop.convex = false;
 	}
@@ -86,7 +87,8 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 			hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 			angle = Math.atan2(
 				Vec2.cross(hba.dir, hbb.dir),
-				Vec2.dot(hba.dir, hbb.dir));
+				Vec2.dot(hba.dir, hbb.dir)
+			);
 			var halfAngle = (Math.PI - angle) / 2;
 			var dir = hbb.dir.rotate(halfAngle);
 			var pi = scale.obj2scaled(restruct.atoms.get(hbb.begin).a.pp, options);
@@ -113,8 +115,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 ReLoop.prototype.isValid = function (struct, rlid) {
 	const halfBonds = struct.halfBonds;
 	return this.loop.hbs.every(hbid =>
-		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
-	);
+		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid);
 };
 
 module.exports = ReLoop;

@@ -236,8 +236,8 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 };
 
 Struct.prototype.findBondId = function (begin, end) {
-	return Array.from(this.bonds.entries()).find((bid, bond) =>
-		(bond.begin === begin && bond.end === end) || (bond.begin === end && bond.end === begin)
+	return Array.from(this.bonds.entries()).find(
+		(bid, bond) => (bond.begin === begin && bond.end === end) || (bond.begin === end && bond.end === begin)
 	);
 };
 
@@ -495,7 +495,8 @@ Struct.prototype.getBondLengthData = function () {
 	this.bonds.each((bid, bond) => {
 		totalLength += Vec2.dist(
 			this.atoms.get(bond.begin).pp,
-			this.atoms.get(bond.end).pp);
+			this.atoms.get(bond.end).pp
+		);
 		cnt++;
 	}, this);
 	return { cnt, totalLength };
@@ -668,7 +669,7 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 			if (set.has(hbj.begin) || set.has(hbj.end))
 				/* eslint-disable no-continue*/
 				continue; // skip edges sharing an atom
-				/* eslint-enable no-continue*/
+			/* eslint-enable no-continue*/
 			var aj = this.atoms.get(hbj.begin).pp;
 			var bj = this.atoms.get(hbj.end).pp;
 			if (Box2Abs.segmentIntersection(ai, bi, aj, bj))

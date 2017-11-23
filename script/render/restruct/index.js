@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable guard-for-in */
+/* eslint-disable guard-for-in,no-prototype-builtins */ // todo
 
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
@@ -200,11 +200,12 @@ ReStruct.prototype.initLayers = function () {
 	for (var group in LAYER_MAP) {
 		this.layers[LAYER_MAP[group]] =
 			this.render.paper.rect(0, 0, 10, 10)
-			.attr({
-				class: group + 'Layer',
-				fill: '#000',
-				opacity: '0.0'
-			}).toFront();
+				.attr({
+					class: group + 'Layer',
+					fill: '#000',
+					opacity: '0.0'
+				})
+				.toFront();
 	}
 };
 
@@ -573,10 +574,9 @@ ReStruct.prototype.showItemSelection = function (item, selected) {
 		}
 		if (item.selectionPlate)
 			item.selectionPlate.show(); // TODO [RB] review
-	} else
-		if (exists && item.selectionPlate) {
-			item.selectionPlate.hide(); // TODO [RB] review
-		}
+	} else if (exists && item.selectionPlate) {
+		item.selectionPlate.hide(); // TODO [RB] review
+	}
 };
 
 ReStruct.maps = {

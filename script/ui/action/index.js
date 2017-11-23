@@ -72,7 +72,7 @@ export default {
 		shortcut: 'Mod+x',
 		title: 'Cut',
 		action: () => {
-			exec('cut') || dontClipMessage('Cut'); //eslint-disable-line no-unused-expressions
+			exec('cut') || dontClipMessage('Cut'); // eslint-disable-line no-unused-expressions
 		},
 		disabled: editor => !hasSelection(editor)
 	},
@@ -80,7 +80,7 @@ export default {
 		shortcut: 'Mod+c',
 		title: 'Copy',
 		action: () => {
-			exec('copy') || dontClipMessage('Copy'); //eslint-disable-line no-unused-expressions
+			exec('copy') || dontClipMessage('Copy'); // eslint-disable-line no-unused-expressions
 		},
 		disabled: editor => !hasSelection(editor)
 	},
@@ -88,7 +88,7 @@ export default {
 		shortcut: 'Mod+v',
 		title: 'Paste',
 		action: () => {
-			exec('paste') || dontClipMessage('Paste'); //eslint-disable-line no-unused-expressions
+			exec('paste') || dontClipMessage('Paste'); // eslint-disable-line no-unused-expressions
 		},
 		selected: ({ actions }) => (
 			actions && // TMP

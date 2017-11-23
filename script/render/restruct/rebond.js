@@ -436,9 +436,7 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
 		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
 		break;
-//	case Bond.PATTERN.REACTING_CENTER.UNCHANGED:  // o
-//		//draw a circle
-//		break;
+		// case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
 	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
 		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));

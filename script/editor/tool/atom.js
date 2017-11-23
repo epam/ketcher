@@ -70,7 +70,8 @@ AtomTool.prototype.mousemove = function (event) {
 	if (dragCtx.action)
 		dragCtx.action.perform(rnd.ctab);
 
-	dragCtx.action = fromBondAddition(rnd.ctab,
+	dragCtx.action = fromBondAddition(
+		rnd.ctab,
 		this.bondProps, dragCtx.item.id, Object.assign({}, this.atomProps), newAtomPos, newAtomPos
 	)[0];
 	this.editor.update(dragCtx.action, true);
@@ -95,7 +96,7 @@ export function atomLongtapEvent(tool, render) {
 	const atomid = dragCtx.item && dragCtx.item.id;
 
 	const atom = (atomid !== undefined && atomid !== null) ? // edit atom or add atom
-		render.ctab.molecule.atoms.get(atomid) :
+	render.ctab.molecule.atoms.get(atomid) :
 		new Struct.Atom({ label: '' });
 
 	// TODO: longtab event

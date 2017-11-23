@@ -51,7 +51,7 @@ class Save extends Component {
 				title="Save Structure"
 				className="save"
 				params={this.props}
-				buttons={[(
+				buttons={[
 					<SaveButton
 						className="save"
 						data={structStr}
@@ -61,15 +61,15 @@ class Save extends Component {
 						onSave={() => this.props.onOk()}
 					>
 						Save To File…
-					</SaveButton>
-				), (
+					</SaveButton>,
 					<button
 						className="save-tmpl"
 						onClick={() => this.props.onTmplSave(structStr)}
 					>
 						Save to Templates
-					</button>
-				), 'Close']}
+					</button>,
+					'Close'
+				]}
 			>
 				<label>Format:
 					<select value={type} onChange={ev => this.changeType(ev)}>{

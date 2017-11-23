@@ -148,7 +148,7 @@ class TemplateLib extends Component {
 					>
 						Save To SDF…
 					</SaveButton>,
-						'OK', 'Cancel']}
+					'OK', 'Cancel']}
 			>
 				<label>
 					<Input

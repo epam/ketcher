@@ -1,25 +1,5 @@
-{ // TODO: move rules to parent config after correct ui/
+{
   "rules": {
-    "react/jsx-first-prop-new-line": ["error", "multiline"],
-    "react/jsx-indent": ["error", "tab"],
-    "react/jsx-indent-props": ["error", "tab"],
-    "react/jsx-no-bind": ["error", {
-      "allowArrowFunctions": true,
-      "allowBind": false,
-      "ignoreRefs": true
-    }],
-    "react/jsx-no-target-blank": "off", // todo: correct About
-    "react/no-did-update-set-state": "error",
-    "react/prop-types": "off",
-    "react/react-in-jsx-scope": "error",
-    "react/sort-comp": "off",
-
-    "jsx-a11y/no-static-element-interactions": "off",
-    "jsx-a11y/label-has-for": "off",
-    "jsx-a11y/iframe-has-title": "off",
-    "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-noninteractive-element-interactions": "off",
-
     "prefer-const": 0 // todo !!
   }
 }

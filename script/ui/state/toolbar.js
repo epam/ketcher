@@ -83,7 +83,7 @@ function getToolFromAction(action) {
 	let tool = null;
 
 	for (let toolName in tools) {
-		if (tools.hasOwnProperty(toolName) && isEqual(action, tools[toolName].action))
+		if (tools.hasOwnProperty(toolName) && isEqual(action, tools[toolName].action)) // eslint-disable-line no-prototype-builtins
 			tool = toolName;
 	}
 

@@ -58,7 +58,7 @@ class RGroupFragment extends Component {
 	constructor({ label }) {
 		super();
 		this.state.label = label || null;
-    }
+	}
 	onSelect(label) {
 		this.setState({
 			label: label !== this.state.label ? label : null
@@ -86,7 +86,7 @@ class RGroupAtom extends Component { // eslint-disable-line
 	constructor({ values }) {
 		super();
 		this.state.values = values || [];
-    }
+	}
 	onSelect(index) {
 		const { values } = this.state;
 		const i = values.indexOf(index);

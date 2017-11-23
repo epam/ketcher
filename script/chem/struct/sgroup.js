@@ -82,10 +82,9 @@ SGroup.prototype.getAttr = function (attr) {
 // TODO: should be group-specific
 SGroup.prototype.getAttrs = function () {
 	var attrs = {};
-	for (var attr in this.data) {
-		if (this.data.hasOwnProperty(attr))
-			attrs[attr] = this.data[attr];
-	}
+	Object.keys(this.data).forEach((attr) => {
+		attrs[attr] = this.data[attr];
+	});
 	return attrs;
 };
 
@@ -259,8 +258,10 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 
 			var bracketWidth = 0.25;
 			var bracketHeight = 1.5;
-			brackets.push(new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
-			new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight));
+			brackets.push(
+				new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
+				new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight)
+			);
 		}());
 	} else {
 		(function () {

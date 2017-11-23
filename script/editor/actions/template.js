@@ -109,9 +109,9 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 			action.mergeWith(atomAddToSGroups(restruct, sgroups, map[id]));
 	});
 
-	tmpl.bonds.each((bid, bond) =>
-		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct))
-	);
+	tmpl.bonds.each((bid, bond) => {
+		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct));
+	});
 	action.operations.reverse();
 	return action;
 }
@@ -194,8 +194,8 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 function atomAddToSGroups(restruct, sgroups, aid) {
 	const action = new Action();
-	sgroups.forEach(sid =>
-		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct))
-	);
+	sgroups.forEach((sid) => {
+		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct));
+	});
 	return action;
 }

@@ -32,7 +32,7 @@ export default {
 			const qs = document.location.search;
 			document.location.search = !qs ? '?' + molQs : // eslint-disable-line
 				qs.search('mol=') === -1 ? qs + '&' + molQs :
-				qs.replace(/mol=[^&$]*/, molQs);
+					qs.replace(/mol=[^&$]*/, molQs);
 		}
 	}
 };

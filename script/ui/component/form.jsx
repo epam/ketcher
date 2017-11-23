@@ -137,7 +137,7 @@ const SelectOneOf = (props) => {
 	return <Field name={name} schema={selectDesc} {...prop} />;
 };
 
-////
+//
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 	const v = new jsonschema.Validator();
@@ -169,10 +169,10 @@ function serializeRewrite(serializeMap, instance, schema) {
 			schema.default;
 	}
 
-	for (let p in schema.properties) {
-		if (schema.properties.hasOwnProperty(p) && (p in instance))
+	Object.keys(schema.properties).forEach((p) => {
+		if (p in instance)
 			res[p] = instance[serializeMap[p]] || instance[p];
-	}
+	});
 
 	return res;
 }

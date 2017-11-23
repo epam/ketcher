@@ -114,7 +114,8 @@ SelectTool.prototype.mousemove = function (event) {
 		this.dragCtx.action = fromMultipleMove(
 			restruct,
 			expSel,
-			render.page2obj(event).sub(this.dragCtx.xy0));
+			render.page2obj(event).sub(this.dragCtx.xy0)
+		);
 
 		// finding & highlighting object to stick to
 		this.dragCtx.mergeItems =
@@ -137,8 +138,7 @@ SelectTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
 		this.editor.selection(!event.shiftKey ? sel :
-			selMerge(sel, this.editor.selection())
-		);
+			selMerge(sel, this.editor.selection()));
 		return true;
 	}
 
@@ -266,16 +266,12 @@ function closestToSel(ci) {
 // TODO: deep-merge?
 function selMerge(selection, add) {
 	if (add) {
-		for (var item in add) {
-			if (add.hasOwnProperty(item)) {
-				if (!selection[item]) {
-					selection[item] = add[item].slice();
-				} else {
-					selection[item] = uniqArray(selection[item],
-						add[item]);
-				}
-			}
-		}
+		Object.keys(add).forEach((item) => {
+			if (!selection[item])
+				selection[item] = add[item].slice();
+			else
+				selection[item] = uniqArray(selection[item], add[item]);
+		});
 	}
 	return selection;
 }

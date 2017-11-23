@@ -87,19 +87,18 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
 		<tr>
 			<th>{caption}</th>
 			{
-			  row.map(el => (typeof el !== 'number') ? ( // eslint-disable-line
-				  <td>
-					  <Atom
-						el={el}
-						className={selected(el.label) ? 'selected' : ''}
-						onClick={() => onSelect(el.label)}
-						{...curEvents(el)}
-					  />
-				  </td>
-			  ) : (
-				  refer(el) ? (<td className="ref">{refer(el)}</td>) :
-				  (<td colSpan={el} />)
-			  ))
+				row.map(el => (typeof el !== 'number') ? (  // eslint-disable-line
+					<td>
+						<Atom
+							el={el}
+							className={selected(el.label) ? 'selected' : ''}
+							onClick={() => onSelect(el.label)}
+							{...curEvents(el)}
+						/>
+					</td>
+				) : (
+					refer(el) ? <td className="ref">{refer(el)}</td> : <td colSpan={el} />
+				))
 		  }
 		</tr>
 	);
@@ -110,17 +109,17 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
 		<tr>
 			<th colSpan="3" className="ref">{caption}</th>
 			{
-			  row.map(el => (
-				  <td>
-					  <Atom
-						el={el}
-						className={selected(el.label) ? 'selected' : ''}
-						onClick={() => onSelect(el.label)}
-						{...curEvents(el)}
-					  />
-				  </td>
-			  ))
-		  }
+				row.map(el => (
+					<td>
+						<Atom
+							el={el}
+							className={selected(el.label) ? 'selected' : ''}
+							onClick={() => onSelect(el.label)}
+							{...curEvents(el)}
+						/>
+					</td>
+				))
+		  	}
 			<td />
 		</tr>
 	);

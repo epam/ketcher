@@ -55,10 +55,9 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 			this.drawHighlight(render);
 			this.highlighting = render.paper.setFinish();
 		}
-	} else
-		if (this.highlighting) {
-			this.highlighting.hide();
-		}
+	} else if (this.highlighting) {
+		this.highlighting.hide();
+	}
 
 	this.highlight = highLight;
 };

@@ -95,8 +95,8 @@ function bondSingleEither(paper, hb1, d, nlines, step, options) { // eslint-disa
 
 function bondDouble(paper, a1, a2, b1, b2, cisTrans, options) { // eslint-disable-line max-params
 	return paper.path(cisTrans ?
-			'M{0},{1}L{6},{7}M{4},{5}L{2},{3}' :
-			'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
+		'M{0},{1}L{6},{7}M{4},{5}L{2},{3}' :
+		'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
 	tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(a2.x), tfx(a2.y), tfx(b2.x), tfx(b2.y))
 		.attr(options.lineattr);
 }
@@ -176,7 +176,7 @@ function radicalCap(paper, p, options) {
 	var dw = s,
 		dh = 2 * s;
 	return paper.path('M{0},{1}L{2},{3}L{4},{5}',
-	tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
+		tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
 		.attr({
 			'stroke': '#000',
 			'stroke-width': options.lineWidth * 0.7,

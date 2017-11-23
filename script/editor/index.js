@@ -122,10 +122,10 @@ Editor.prototype.selection = function (ci) {
 
 		if (ci) {
 			var res = {};
-			for (var key in ci) {
-				if (ci.hasOwnProperty(key) && ci[key].length > 0) // TODO: deep merge
+			Object.keys(ci).forEach((key) => {
+				if (ci[key].length > 0) // TODO: deep merge
 					res[key] = ci[key].slice();
-			}
+			});
 			if (Object.keys(res).length !== 0)
 				this._selection = res; // eslint-disable-line
 		}

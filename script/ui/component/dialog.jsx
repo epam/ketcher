@@ -73,15 +73,15 @@ class Dialog extends Component {
 				</header>
 				{children}
 				<footer>{
-					buttons.map(b => (
-						typeof b !== 'string' ? b :
-						<input
-							type="button"
-							value={b}
-							disabled={b === 'OK' && !valid()}
-							onClick={() => this.exit(b)}
-						/>
-					))
+					buttons.map(b => (typeof b !== 'string' ?
+						b : (
+							<input
+								type="button"
+								value={b}
+								disabled={b === 'OK' && !valid()}
+								onClick={() => this.exit(b)}
+							/>
+						)))
 				}
 				</footer>
 			</form>

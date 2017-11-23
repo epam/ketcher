@@ -66,20 +66,20 @@ function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
 	return (
 		<fieldset {...props}>
 			{
-			  labels.map(label => (
-				  <button
-					onClick={() => onSelect(label)}
-					      className={selected(label) ? 'selected' : ''}
-				  >
-					{label}
-				  </button>
-			  ))
-		  }
+				labels.map(label => (
+					<button
+						onClick={() => onSelect(label)}
+						className={selected(label) ? 'selected' : ''}
+					>
+						{label}
+					</button>
+				))
+			}
 			{
-			caption ? (
-				<legend>{caption}</legend>
-			) : null
-		  }
+				caption ? (
+					<legend>{caption}</legend>
+				) : null
+			}
 		</fieldset>
 	);
 }
@@ -93,25 +93,25 @@ function GenGroup({ gen, name, path, selected, onSelect }) {
 		<fieldset className={name}>
 			<legend>{schema.caption}</legend>
 			{
-			  group.labels ? (
-				  <GenSet
-					labels={group.labels}
-					selected={selected}
-					onSelect={onSelect}
-				  />
-			  ) : null
-		  	}
+				group.labels ? (
+					<GenSet
+						labels={group.labels}
+						selected={selected}
+						onSelect={onSelect}
+					/>
+				) : null
+			}
 			{
-			  schema.order.map(child => ( // TODO:order = Object.keys ifndef
-				  <GenGroup
-					gen={group}
-					name={child}
-					path={pk}
-					selected={selected}
-					onSelect={onSelect}
-				  />
-			  ))
-	      	}
+				schema.order.map(child => ( // TODO:order = Object.keys ifndef
+					<GenGroup
+						gen={group}
+						name={child}
+						path={pk}
+						selected={selected}
+						onSelect={onSelect}
+					/>
+				))
+			}
 		</fieldset>
 	) : (
 		<GenSet

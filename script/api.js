@@ -67,8 +67,8 @@ function api(base, defaultOptions) {
 			body.options = Object.assign(body.options || {},
 			                             defaultOptions, options);
 			return info.then(() => request(method, url, JSON.stringify(body), {
-					'Content-Type': 'application/json'
-				}));
+				'Content-Type': 'application/json'
+			}));
 		};
 	}
 
@@ -87,13 +87,15 @@ function api(base, defaultOptions) {
 				'Content-Type': blob.type || 'application/octet-stream'
 			});
 			const status = request.bind(null, 'GET', 'imago/uploads/:id');
-			return req.then(data => pollDeferred(
+			return req
+				.then(data => pollDeferred(
 					status.bind(null, { id: data.upload_id }),
 					(res) => {
-						if (res.state === 'FAILURE')
-							throw res;
+						if (res.state === 'FAILURE') throw res;
 						return res.state === 'SUCCESS';
-					}, 500, 300)).then(res => ({ struct: res.metadata.mol_str }));
+					}, 500, 300
+				))
+				.then(res => ({ struct: res.metadata.mol_str }));
 		}
 	});
 }

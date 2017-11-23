@@ -101,9 +101,9 @@ class Analyse extends Component {
 						{ item.round
 							? <Input
 								schema={{
-								enum: range(0, 8),
-								enumNames: range(0, 8).map(i => `${i} decimal places`)
-							}}
+									enum: range(0, 8),
+									enumNames: range(0, 8).map(i => `${i} decimal places`)
+								}}
 								value={round[item.round]}
 								onChange={val => onChangeRound(item.round, val)}
 							/>

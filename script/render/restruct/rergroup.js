@@ -125,8 +125,8 @@ ReRGroup.prototype.draw = function (render, options) { // eslint-disable-line ma
 			'R' + key.toString() +
 			/* eslint-disable no-nested-ternary */
 			(this.item.range.length > 0 ?
-			this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=') ?
-			this.item.range : '=' + this.item.range : '>0') +
+				this.item.range.startsWith('>') || this.item.range.startsWith('<') || this.item.range.startsWith('=') ?
+					this.item.range : '=' + this.item.range : '>0') +
 			(this.item.resth ? ' (RestH)' : '') +
 			(this.item.ifthen > 0 ? '\nTHEN R' + this.item.ifthen.toString() : '')
 			/* eslint-enable no-nested-ternary */
@@ -188,12 +188,10 @@ ReRGroup.prototype.drawHighlight = function (render) {
 
 ReRGroup.prototype.show = function (restruct, id, options) {
 	var drawing = this.draw(restruct.render, options);
-	for (var group in drawing) {
-		if (drawing.hasOwnProperty(group)) {
-			while (drawing[group].length > 0)
-				restruct.addReObjectPath(group, this.visel, drawing[group].shift(), null, true);
-		}
-	}
+	Object.keys(drawing).forEach((group) => {
+		while (drawing[group].length > 0)
+			restruct.addReObjectPath(group, this.visel, drawing[group].shift(), null, true);
+	});
 	// TODO rgroup selection & highlighting
 };
 

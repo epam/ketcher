@@ -39,11 +39,11 @@ function ActionButton({ action, status = {}, onAction }) { // eslint-disable-lin
 		<button
 			disabled={status.disabled}
 			onClick={(ev) => {
-					if (!status.selected || action.action.tool === 'chiralFlag') {
-						onAction(action.action);
-						ev.stopPropagation();
-					}
-				}}
+				if (!status.selected || action.action.tool === 'chiralFlag') {
+					onAction(action.action);
+					ev.stopPropagation();
+				}
+			}}
 			title={shortcut ? `${action.title} (${shortcut})` :	action.title}
 		>
 			{action.title}
@@ -56,36 +56,35 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 		<menu
 			className={className}
 			role={role}
-			  style={toolMargin(name, menu, props.visibleTools)}
+			style={toolMargin(name, menu, props.visibleTools)}
 		>
 			{
-		  menu.map(item => (
-			  <li
-				id={item.id || item}
-				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
-				  onClick={ev => openHandle(ev, props.onOpen)}
-			  >
-				{ typeof item !== 'object' ?  // eslint-disable-line
-					(<ActionButton
-						{...props}
-						action={action[item]}
-						status={props.status[item]}
-					/>) :
-						item.menu ?
-				  (<ActionMenu {...props} name={item.id} menu={item.menu} />) :
-							item.component(props)
-				}
-			  </li>
-		  ))
-		}
+			  menu.map(item => (
+				  <li
+					  id={item.id || item}
+					  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
+					  onClick={ev => openHandle(ev, props.onOpen)}
+				  >
+					  {typeof item !== 'object' ?  // eslint-disable-line
+						  (<ActionButton
+							  {...props}
+							  action={action[item]}
+							  status={props.status[item]}
+						  />) :
+						  item.menu ?
+							  (<ActionMenu {...props} name={item.id} menu={item.menu} />) :
+							  item.component(props)
+					  }
+				  </li>
+			  ))
+			}
 		</menu>
 	);
 }
 
 function toolMargin(menuName, menu, visibleTools) {
 	if (!visibleTools[menuName]) return {};
-	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40;
-																		// now not found better way
+	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40; // now not found better way
 	let index = menu.indexOf(visibleTools[menuName]); // first level
 
 	if (index === -1) {

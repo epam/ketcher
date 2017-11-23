@@ -126,8 +126,8 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 	var neiЕnd = this.getNeighbors.call(this.context, bond.end);
 
 	if (
-	neiBegin.length < 2 || neiBegin.length > 3 ||
-	neiЕnd.length < 2 || neiЕnd.length > 3
+		neiBegin.length < 2 || neiBegin.length > 3 ||
+		neiЕnd.length < 2 || neiЕnd.length > 3
 	)
 		return false;
 

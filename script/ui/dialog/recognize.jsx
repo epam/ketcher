@@ -43,12 +43,12 @@ function Recognize(prop) {
 						Choose file…
 				</OpenButton>,
 				<span className="open-filename">{file ? file.name : null}</span>,
-					file && !structStr ? (
-						<button onClick={() => onRecognize(file)}>Recognize</button>
-					) : null,
-					'Cancel',
-					'OK'
-				]}
+				file && !structStr ? (
+					<button onClick={() => onRecognize(file)}>Recognize</button>
+				) : null,
+				'Cancel',
+				'OK'
+			]}
 		>
 			<div className="picture">
 				{
@@ -68,9 +68,10 @@ function Recognize(prop) {
 			<div className="output">
 				{
 					structStr && (
-						structStr instanceof Promise || typeof structStr !== 'string' ? // in Edge 38:
-							(<Spin />) :											// instanceof Promise always `false`
-							(<StructRender className="struct" struct={structStr} />)
+						// in Edge 38: instanceof Promise always `false`
+						structStr instanceof Promise || typeof structStr !== 'string' ?
+							<Spin /> :
+							<StructRender className="struct" struct={structStr} />
 					)
 				}
 			</div>

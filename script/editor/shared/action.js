@@ -46,8 +46,8 @@ Action.prototype.perform = function (restruct) {
 };
 
 Action.prototype.isDummy = function (restruct) {
-	return this.operations.find(operation =>
-		 (restruct ? !operation.isDummy(restruct) : true) // TODO [RB] the condition is always true for op.* operations
+	return this.operations.find(
+		operation => (restruct ? !operation.isDummy(restruct) : true) // TODO [RB] the condition is always true for op.* operations
 	) === undefined;
 };
 

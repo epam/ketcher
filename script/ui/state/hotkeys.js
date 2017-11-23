@@ -51,7 +51,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 			dispatch(onAction({ tool: 'atom', opts: res }));
 		});
 		event.preventDefault();
-	} else if ((group = keyNorm.lookup(hotKeys, event)) !== null) {
+	} else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
 		index = (index + 1) % group.length;
 

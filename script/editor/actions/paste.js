@@ -42,9 +42,9 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		aidMap[aid] = operation.data.aid;
 	});
 
-	pstruct.bonds.each((bid, bond) =>
-		action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct))
-	);
+	pstruct.bonds.each((bid, bond) => {
+		action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct));
+	});
 
 	pstruct.sgroups.each((sgid, sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();

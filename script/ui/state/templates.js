@@ -74,18 +74,20 @@ export function setTmplName(name) {
 
 export function editTmpl(tmpl) {
 	return (dispatch, getState) => {
-		openDialog(dispatch, 'attach', { tmpl }).then(
-			({ name, attach }) => {
-				tmpl.struct.name = name;
-				tmpl.props = Object.assign({}, tmpl.props, attach);
+		openDialog(dispatch, 'attach', { tmpl })
+			.then(
+				({ name, attach }) => {
+					tmpl.struct.name = name;
+					tmpl.props = Object.assign({}, tmpl.props, attach);
 
-				if (tmpl.props.group === 'User Templates')
-					updateLocalStore(getState().templates.lib);
-				openDialog(dispatch, 'templates');
-			}, () => {
-				openDialog(dispatch, 'templates');
-			}
-		);
+					if (tmpl.props.group === 'User Templates')
+						updateLocalStore(getState().templates.lib);
+
+					openDialog(dispatch, 'templates');
+				}, () => {
+					openDialog(dispatch, 'templates');
+				}
+			);
 	};
 }
 

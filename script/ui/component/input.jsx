@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
+import { omit } from 'lodash';
 
 function GenericInput({ value, onChange, type = 'text', ...props }) {
 	return (
@@ -73,7 +74,7 @@ Select.val = function (ev, schema) {
 		return enumSchema(schema, select.selectedIndex);
 
 	return [].reduce.call(select.options, (res, o, i) => (!o.selected ? res :
-			[enumSchema(schema, i), ...res]), []);
+		[enumSchema(schema, i), ...res]), []);
 };
 
 function FieldSet({ schema, value, selected, onSelect, type = 'radio', ...props }) {
@@ -107,7 +108,7 @@ FieldSet.val = function (ev, schema) {
 	const fieldset = input.parentNode.parentNode;
 	const result = [].reduce.call(fieldset.querySelectorAll('input'),
 		(res, inp, i) => (!inp.checked ? res :
-				[enumSchema(schema, i), ...res]), []);
+			[enumSchema(schema, i), ...res]), []);
 	return input.type === 'radio' ? result[0] : result;
 };
 
@@ -220,7 +221,7 @@ export default class Input extends Component {
 	}
 
 	shouldComponentUpdate({ children, onChange, ...nextProps }) {
-		const { children, onChange, ...oldProps } = this.props; // eslint-disable-line no-redeclare
+		const oldProps = omit(this.props, ['children', 'onChange']);
 		return shallowCompare(oldProps, nextProps);
 	}
 

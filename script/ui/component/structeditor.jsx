@@ -32,10 +32,7 @@ function setupEditor(editor, props, oldProps = {}) {
 		editor.options(options);
 
 	// update handlers
-	for (let name in editor.event) {
-		if (!editor.event.hasOwnProperty(name))
-			continue;
-
+	Object.keys(editor.event).forEach((name) => {
 		let eventName = `on${upperFirst(name)}`;
 
 		if (props[eventName] !== oldProps[eventName]) {
@@ -46,7 +43,7 @@ function setupEditor(editor, props, oldProps = {}) {
 			if (props[eventName])
 				editor.event[name].add(props[eventName]);
 		}
-	}
+	});
 }
 
 class StructEditor extends Component {

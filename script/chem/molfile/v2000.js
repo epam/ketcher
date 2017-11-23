@@ -169,9 +169,9 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 					props.set('atomList', new Map());
 				var list = parsePropertyLineAtomList(
 					utils.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
-					utils.partitionLineFixed(propertyData.slice(10), 4, false));
-				props.get('atomList').update(
-					list);
+					utils.partitionLineFixed(propertyData.slice(10), 4, false)
+				);
+				props.get('atomList').update(list);
 				if (!props.get('label'))
 					props.set('label', new Map());
 				for (var aid in list) props.get('label').set(aid, 'L#');

@@ -52,7 +52,7 @@ class Open extends Component {
 				className="open"
 				result={() => this.result()}
 				params={this.props}
-				buttons={[(
+				buttons={[
 					<OpenButton
 						className="open"
 						server={this.props.server}
@@ -60,8 +60,9 @@ class Open extends Component {
 						onLoad={s => this.changeStructStr(s)}
 					>
 						Open From File…
-					</OpenButton>
-					), 'Cancel', 'OK']}
+					</OpenButton>,
+					'Cancel', 'OK'
+				]}
 			>
 				<textarea
 					value={structStr}

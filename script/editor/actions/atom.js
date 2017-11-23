@@ -112,8 +112,9 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 	var attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
 	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
-	for (var key in attrs)
-		if (attrs.hasOwnProperty(key)) action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
+	Object.keys(attrs).forEach((key) => {
+		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
+	});
 
 	var sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 

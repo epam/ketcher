@@ -120,12 +120,12 @@ Vec2.prototype.toString = function () {
 
 Vec2.prototype.max = function (v) {
 	console.assert(!!v);
-	return new Vec2.max(this, v); //eslint-disable-line new-cap
+	return new Vec2.max(this, v); // eslint-disable-line new-cap
 };
 
 Vec2.prototype.min = function (v) {
 	console.assert(!!v);
-	return new Vec2.min(this, v); //eslint-disable-line new-cap
+	return new Vec2.min(this, v); // eslint-disable-line new-cap
 };
 
 Vec2.prototype.ceil = function () {
@@ -227,7 +227,7 @@ Vec2.lc2 = function (v1, f1, v2, f2) {
 };
 
 Vec2.centre = function (v1, v2) {
-	return new Vec2.lc2(v1, 0.5, v2, 0.5); //eslint-disable-line new-cap
+	return new Vec2.lc2(v1, 0.5, v2, 0.5); // eslint-disable-line new-cap
 };
 
 module.exports = Vec2;

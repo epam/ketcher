@@ -99,13 +99,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 			return;
 
 		if (ignoreErrors)
-//         try
-//         {
 			this.buildOneCenter(aid/* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
-//         }
-//         catch (er)
-//         {
-//         }
 		else
 			this.buildOneCenter(aid/* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations*/);
 	});

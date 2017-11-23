@@ -17,7 +17,7 @@
 import molfile from '../../chem/molfile';
 
 export default [
-		'Benzene\n' +
+	'Benzene\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -34,7 +34,7 @@ export default [
 			'  5  6  1  0     0  0\n' +
 			'  6  1  2  0     0  0\n' +
 			'M  END\n',
-		'Cyclopentadiene\n' +
+	'Cyclopentadiene\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -50,7 +50,7 @@ export default [
 			'  5  1  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cyclohexane\n' +
+	'Cyclohexane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  6  6  0     0  0            999 V2000\n' +
@@ -68,7 +68,7 @@ export default [
 			'  6  1  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cyclopentane\n' +
+	'Cyclopentane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  5  5  0     0  0            999 V2000\n' +
@@ -84,7 +84,7 @@ export default [
 			'  5  1  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cyclopropane\n' +
+	'Cyclopropane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  3  3  0     0  0            999 V2000\n' +
@@ -96,7 +96,7 @@ export default [
 			'  1  3  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cyclobutane\n' +
+	'Cyclobutane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  4  4  0     0  0            999 V2000\n' +
@@ -110,7 +110,7 @@ export default [
 			'  4  2  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cycloheptane\n' +
+	'Cycloheptane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  7  7  0     0  0            999 V2000\n' +
@@ -130,7 +130,7 @@ export default [
 			'  1  2  1  0     0  0\n' +
 		'M  END\n',
 
-		'Cyclooctane\n' +
+	'Cyclooctane\n' +
 			'  Ketcher 11161218352D 1   1.00000     0.00000     0\n' +
 			'\n' +
 			'  8  8  0     0  0            999 V2000\n' +

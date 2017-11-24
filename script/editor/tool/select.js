@@ -16,6 +16,7 @@
 
 import utils from '../shared/utils';
 
+import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { sgroupDialog } from './sgroup';
@@ -304,8 +305,8 @@ function isSelected(render, selection, item) {
 			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 
-		const selectionSet = new Set(selection['atoms']);
-		const atomSet = new Set(atoms);
+		const selectionSet = new Pile(selection['atoms']);
+		const atomSet = new Pile(atoms);
 
 		return !!selection['atoms'] && selectionSet.isSuperset(atomSet);
 	}

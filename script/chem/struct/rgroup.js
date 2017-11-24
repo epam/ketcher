@@ -14,9 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import Pile from '../../util/pile';
+
 function RGroup(logic) {
 	logic = logic || {};
-	this.frags = new Set();
+	this.frags = new Pile();
 	this.resth = logic.resth || false;
 	this.range = logic.range || '';
 	this.ifthen = logic.ifthen || 0;

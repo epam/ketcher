@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+var Pile = require('../../util/pile');
 var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
@@ -69,7 +70,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	});
 	// END
 
-	this.atoms = new Array(molecule.atoms.count());
+	this.atoms = new Array(molecule.atoms.size);
 
 	molecule.atoms.forEach((atom, aid) => {
 		this.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
@@ -96,11 +97,11 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 	this.inLoop = (function () {
 		molecule.prepareLoopStructure();
-		var bondsInLoops = new Set();
+		var bondsInLoops = new Pile();
 		molecule.loops.forEach(loop => {
 			if (loop.hbs.length <= 6) {
 				const hbids = loop.hbs.map(hbid => molecule.halfBonds.get(hbid).bid);
-				bondsInLoops = bondsInLoops.union(new Set(hbids));
+				bondsInLoops = bondsInLoops.union(new Pile(hbids));
 			}
 		});
 		var inLoop = {};
@@ -505,7 +506,7 @@ Smiles.prototype.markCisTrans = function (mol) {
 		return this.atoms[idx].neighbours;
 	}, this);
 	this.cis_trans.build();
-	this.dbonds = new Array(mol.bonds.count());
+	this.dbonds = new Array(mol.bonds.size);
 
 	mol.bonds.forEach((bond, bid) => {
 		this.dbonds[bid] =

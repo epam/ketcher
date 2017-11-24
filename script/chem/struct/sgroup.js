@@ -16,6 +16,7 @@
 
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
+var Pile = require('../../util/pile').default;
 
 var Atom = require('./atom');
 var Bond = require('./bond');
@@ -174,7 +175,7 @@ SGroup.removeAtom = function (sgroup, aid) {
  * @param inBonds
  * @param xBonds
  * @param mol
- * @param parentAtomSet { Set<number> }
+ * @param parentAtomSet { Pile<number> }
  */
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
 	mol.bonds.forEach((bond, bid) => {
@@ -227,7 +228,7 @@ SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-stat
 /**
  * @param mol
  * @param xbonds
- * @param atomSet { Set<number> }
+ * @param atomSet { Pile<number> }
  * @param bb
  * @param d
  * @param n
@@ -315,8 +316,8 @@ SGroup.getBonds = function (mol, sg) {
 
 SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max-statements
 	sgroup.atoms.sort((a, b) => a - b);
-	sgroup.atomSet = new Set(sgroup.atoms);
-	sgroup.parentAtomSet = new Set(sgroup.atomSet);
+	sgroup.atomSet = new Pile(sgroup.atoms);
+	sgroup.parentAtomSet = new Pile(sgroup.atomSet);
 	var inBonds = [];
 	var xBonds = [];
 

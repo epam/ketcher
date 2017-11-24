@@ -16,6 +16,7 @@
 
 import Struct from '../../chem/struct';
 
+import Pile from '../../util/pile';
 import op from '../shared/op';
 import Action from '../shared/action';
 import { SgContexts } from '../shared/constants';
@@ -167,7 +168,7 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
-	const allFragments = new Set(
+	const allFragments = new Pile(
 		sourceAtoms.map(aid => restruct.atoms.get(aid).a.fragment)
 	);
 
@@ -279,7 +280,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 }
 
 function getAtomsBondIds(struct, atoms) {
-	const atomSet = new Set(atoms);
+	const atomSet = new Pile(atoms);
 
 	return Array.from(struct.bonds.keys()).filter(bid => {
 		const bond = struct.bonds.get(bid);

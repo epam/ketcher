@@ -95,7 +95,7 @@ RotateTool.prototype.mousedown = function (event) {
 	} else {
 		struct.atoms.forEach(atom => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle
 		// poor man struct center (without chiral, sdata, etc)
-		xy0 = xy0.scaled(1 / struct.atoms.count());
+		xy0 = xy0.scaled(1 / struct.atoms.size);
 	}
 	this.dragCtx = {
 		xy0: xy0,

@@ -15,8 +15,10 @@
  ***************************************************************************/
 
 var Vec2 = require('../../util/vec2');
-var Pool = require('../../util/pool');
+var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 var Struct = require('../struct');
+
 
 function Stereocenters(mol, neighborsFunc, context) {
 	this.molecule = mol;
@@ -39,7 +41,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 		as allenes cannot be encoded in the SMILES notation
 	*/
 
-	var alleneMask = new Set();
+	var alleneMask = new Pile();
 	atoms.forEach((atom, aid) => {
 		var neiList = this.getNeighbors.call(this.context, aid);
 		if (neiList.length !== 2)

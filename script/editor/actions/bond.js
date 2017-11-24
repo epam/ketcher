@@ -120,8 +120,6 @@ export function fromBondDeletion(restruct, id) {
 export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disable-line max-params
 	const action = new Action();
 
-	console.error('bonattr', Struct.Bond.attrlist);
-
 	Object.keys(Struct.Bond.attrlist).forEach(key => {
 		if (!bond[key])
 			return;

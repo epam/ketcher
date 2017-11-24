@@ -21,12 +21,12 @@ function Dfs(mol, atomData, components, nReactants) {
 	this.nComponentsInReactants = -1;
 	this.nReactants = nReactants;
 
-	this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
+	this.vertices = new Array(this.molecule.atoms.size); // Minimum size
 	this.molecule.atoms.forEach((atom, aid) => {
 		this.vertices[aid] = new Dfs.VertexDesc();
 	}, this);
 
-	this.edges = new Array(this.molecule.bonds.count()); // Minimum size
+	this.edges = new Array(this.molecule.bonds.size); // Minimum size
 	this.molecule.bonds.forEach((bond, bid) => {
 		this.edges[bid] = new Dfs.EdgeDesc();
 	}, this);

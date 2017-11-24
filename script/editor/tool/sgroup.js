@@ -18,6 +18,7 @@ import isEqual from 'lodash/fp/isEqual';
 
 import { SgContexts } from '../shared/constants';
 
+import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { fromSgroupDeletion, fromSeveralSgroupAddition, fromSgroupAction } from '../actions/sgroup';
@@ -167,7 +168,7 @@ function getContextBySgroup(restruct, sgAtoms) {
 	if (singleComponentSelected(restruct, sgAtoms))
 		return SgContexts.Fragment;
 
-	const atomSet = new Set(sgAtoms);
+	const atomSet = new Pile(sgAtoms);
 
 	const sgBonds = Array.from(struct.bonds.values())
 		.filter(bond => atomSet.has(bond.begin) && atomSet.has(bond.end));
@@ -188,7 +189,7 @@ function getContextBySelection(restruct, selection) {
 
 	selection.atoms = selection.atoms || [];
 
-	const atomSet = new Set(selection.atoms);
+	const atomSet = new Pile(selection.atoms);
 	const allBondsSelected = bonds.every(bond => atomSet.has(bond.begin) && atomSet.has(bond.end));
 
 	if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
@@ -244,7 +245,7 @@ function manyComponentsSelected(restruct, atoms) {
 }
 
 function countOfSelectedComponents(restruct, atoms) {
-	const atomSet = new Set(atoms);
+	const atomSet = new Pile(atoms);
 
 	return Array.from(restruct.connectedComponents.values())
 		.reduce((acc, component) => acc + (atomSet.isSuperset(component) ? 1 : 0), 0);

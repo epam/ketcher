@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 
 function SGroupForest(molecule) {
 	this.parent = new Pool(); // child id -> parent id
@@ -37,19 +38,19 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 };
 
 /**
- * @returns { Map< number, Set<number> > }
+ * @returns { Map< number, Pile<number> > }
  */
 SGroupForest.prototype.getAtomSets = function () {
 	const map = new Map();
 	this.molecule.sgroups.forEach((sg, sgid) => {
-		map.set(sgid, new Set(sg.atoms));
+		map.set(sgid, new Pile(sg.atoms));
 	});
 	return map;
 };
 
 /**
  * @param newId { number }
- * @param atoms { Set<number> }
+ * @param atoms { Pile<number> }
  * @returns { { children, parent: number } }
  */
 SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
@@ -128,14 +129,14 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	console.assert(!this.children.has(id), 'sgid already present in the forest');
 	console.assert(this.validate(), 's-group forest invalid');
 
-	var atoms = new Set(this.molecule.sgroups.get(id).atoms);
+	var atoms = new Pile(this.molecule.sgroups.get(id).atoms);
 	if (!parent || !children) { // if these are not provided, deduce automatically
 		var guess = this.getAtomSetRelations(id, atoms);
 		parent = guess.parent;
 		children = guess.children;
 	}
 
-	// TODO: make children Map<int, Set> instead of Map<int, []>?
+	// TODO: make children Map<int, Pile> instead of Map<int, []>?
 	children.forEach(childId => { // reset parent links
 		var childs = this.children.get(this.parent.get(childId));
 		var i = childs.indexOf(childId);

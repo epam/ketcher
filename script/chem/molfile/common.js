@@ -17,6 +17,8 @@
 var v2000 = require('./v2000');
 var v3000 = require('./v3000');
 
+var Pile = require('../../util/pile').default;
+
 var Struct = require('./../struct/index');
 var utils = require('./utils');
 
@@ -217,7 +219,7 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statements
 	var inBonds = [];
 	var xBonds = [];
-	var atomSet = new Set(sg.atoms);
+	var atomSet = new Pile(sg.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
 	Struct.SGroup.bracketPos(sg, mol, xBonds);
 	var bb = sg.bracketBox;

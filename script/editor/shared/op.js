@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
-
+import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import ReStruct from '../../render/restruct';
 
@@ -69,7 +69,7 @@ function AtomAdd(atom, pos) {
 		// notifyAtomAdded
 		const atomData = new ReStruct.Atom(struct.atoms.get(this.data.aid));
 
-		atomData.component = restruct.connectedComponents.add(new Set([this.data.aid]));
+		atomData.component = restruct.connectedComponents.add(new Pile([this.data.aid]));
 		restruct.atoms.set(this.data.aid, atomData);
 		restruct.markAtom(this.data.aid, 1);
 
@@ -78,7 +78,7 @@ function AtomAdd(atom, pos) {
 		const arrow = struct.rxnArrows.get(0);
 		if (arrow) {
 			const atom = struct.atoms.get(this.data.aid);
-			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(new Set([this.data.aid]), arrow.pp.x);
+			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(new Pile([this.data.aid]), arrow.pp.x);
 		}
 	};
 

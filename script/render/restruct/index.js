@@ -18,6 +18,7 @@
 //  Struct while rendering
 var Box2Abs = require('../../util/box2abs');
 var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 var Vec2 = require('../../util/vec2');
 
 var util = require('../util');
@@ -119,12 +120,12 @@ ReStruct.prototype.clearConnectedComponents = function () {
 
 /**
  * @param aid { Array<number>|number }
- * @param adjacentComponents { Set }
- * @returns { Set }
+ * @param adjacentComponents { Pile }
+ * @returns { Pile }
  */
 ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 	const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-	const ids = new Set();
+	const ids = new Pile();
 
 	while (list.length > 0) {
 		const aid = list.pop();
@@ -145,12 +146,12 @@ ReStruct.prototype.getConnectedComponent = function (aid, adjacentComponents) {
 };
 
 /**
- * @param idSet { Set<number> }
+ * @param idSet { Pile<number> }
  * @returns { number }
  */
 ReStruct.prototype.addConnectedComponent = function (idSet) {
 	const compId = this.connectedComponents.add(idSet);
-	const adjacentComponents = new Set();
+	const adjacentComponents = new Pile();
 	const aidSet = this.getConnectedComponent(Array.from(idSet), adjacentComponents);
 
 	adjacentComponents.delete(compId);
@@ -184,7 +185,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 		if (atom.component >= 0)
 			return;
 
-		const adjacentComponents = new Set();
+		const adjacentComponents = new Pile();
 		const idSet = this.getConnectedComponent(aid, adjacentComponents);
 		adjacentComponents.forEach(ccid => {
 			this.removeConnectedComponent(ccid);

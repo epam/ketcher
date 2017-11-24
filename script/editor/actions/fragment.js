@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-
+import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 
 import op from '../shared/op';
@@ -30,11 +30,11 @@ export function fromMultipleMove(restruct, lists, d) {
 
 	const action = new Action();
 	const struct = restruct.molecule;
-	const loops = new Set();
-	const atomsToInvalidate = new Set();
+	const loops = new Pile();
+	const atomsToInvalidate = new Pile();
 
 	if (lists.atoms) {
-		const atomSet = new Set(lists.atoms);
+		const atomSet = new Pile(lists.atoms);
 		const bondlist = [];
 
 		restruct.bonds.forEach((bond, bid) => {

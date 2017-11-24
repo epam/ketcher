@@ -16,7 +16,6 @@
 
 import 'babel-polyfill';
 import 'whatwg-fetch';
-import './set-ext';
 import queryString from 'query-string';
 
 import api from './api.js';

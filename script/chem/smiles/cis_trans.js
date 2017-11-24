@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pool = require('../../util/pool');
+var Pool = require('../../util/pool').default;
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('../struct');

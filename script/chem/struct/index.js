@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 var Vec2 = require('../../util/vec2');
 var Box2Abs = require('../../util/box2abs');
 
@@ -59,8 +60,8 @@ Struct.prototype.isBlank = function () {
 };
 
 /**
- * @param atomSet { Set<number>? }
- * @param bondSet { Set<number>? }
+ * @param atomSet { Pile<number>? }
+ * @param bondSet { Pile<number>? }
  * @param dropRxnSymbols { boolean? }
  * @param aidMap { Map<number, number>? }
  * @returns { Struct }
@@ -70,7 +71,7 @@ Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
 };
 
 Struct.prototype.getScaffold = function () {
-	const atomSet = new Set();
+	const atomSet = new Pile();
 	this.atoms.forEach((atom, aid) => { atomSet.add(aid); });
 
 	this.rgroups.forEach(rg => {
@@ -86,7 +87,7 @@ Struct.prototype.getScaffold = function () {
 };
 
 Struct.prototype.getFragmentIds = function (fid) {
-	const atomSet = new Set();
+	const atomSet = new Pile();
 
 	this.atoms.forEach((atom, aid) => {
 		if (atom.fragment === fid)
@@ -102,16 +103,16 @@ Struct.prototype.getFragment = function (fid) {
 
 /**
  * @param cp { Struct } - container for merging
- * @param atomSet { Set<number>? }
- * @param bondSet { Set<number>? }
+ * @param atomSet { Pile<number>? }
+ * @param bondSet { Pile<number>? }
  * @param dropRxnSymbols { boolean? }
  * @param keepAllRGroups { boolean? }
  * @param aidMap { Map<number, number>? }
  * @returns { Struct }
  */
 Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) { // eslint-disable-line max-params, max-statements
-	atomSet = atomSet || new Set(this.atoms.keys());
-	bondSet = bondSet || new Set(this.bonds.keys());
+	atomSet = atomSet || new Pile(this.atoms.keys());
+	bondSet = bondSet || new Pile(this.bonds.keys());
 	aidMap = aidMap || new Map();
 
 	bondSet = bondSet.filter(bid => {
@@ -119,7 +120,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		return atomSet.has(bond.begin) && atomSet.has(bond.end);
 	});
 
-	const fidMask = new Set();
+	const fidMask = new Pile();
 
 	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid))
@@ -406,7 +407,7 @@ Struct.prototype.rxnArrowSetPos = function (id, pp) {
 };
 
 /**
- * @param atomSet { Set<number> }
+ * @param atomSet { Pile<number> }
  * @returns {*}
  */
 Struct.prototype.getCoordBoundingBox = function (atomSet) {
@@ -537,11 +538,11 @@ function Loop(hbs, struct, isConvex) {
 
 /**
  * @param firstaid { number }
- * @returns { Set<number> }
+ * @returns { Pile<number> }
  */
 Struct.prototype.findConnectedComponent = function (firstaid) {
 	const list = [firstaid];
-	const ids = new Set();
+	const ids = new Pile();
 	while (list.length > 0) {
 		const aid = list.pop();
 		ids.add(aid);
@@ -566,7 +567,7 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 		this.sortNeighbors(Array.from(this.atoms.keys()));
 	}
 
-	let addedAtoms = new Set();
+	let addedAtoms = new Pile();
 
 	const components = [];
 	this.atoms.forEach((atom, aid) => {
@@ -581,7 +582,7 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 };
 
 /**
- * @param idSet { Set<number> }
+ * @param idSet { Pile<number> }
  */
 Struct.prototype.markFragment = function (idSet) {
 	const frag = {};
@@ -636,7 +637,7 @@ Struct.prototype.loopHasSelfIntersections = function (hbs) {
 		const hbi = this.halfBonds.get(hbs[i]);
 		const ai = this.atoms.get(hbi.begin).pp;
 		const bi = this.atoms.get(hbi.end).pp;
-		const set = new Set([hbi.begin, hbi.end]);
+		const set = new Pile([hbi.begin, hbi.end]);
 
 		for (let j = i + 2; j < hbs.length; ++j) {
 			const hbj = this.halfBonds.get(hbs[j]);
@@ -720,7 +721,7 @@ Struct.prototype.loopIsInner = function (loop) {
  */
 Struct.prototype.findLoops = function () {
 	const newLoops = [];
-	const bondsToMark = new Set();
+	const bondsToMark = new Pile();
 
 	/*
 	 	Starting from each half-bond not known to be in a loop yet,
@@ -865,7 +866,7 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 };
 
 /**
- * @return {{reactants: Array<Set<number>>, products: Array<Set<number>>}}
+ * @return {{reactants: Array<Pile<number>>, products: Array<Pile<number>>}}
  */
 Struct.prototype.getComponents = function () { // eslint-disable-line max-statements
 	/* saver */
@@ -896,7 +897,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 		while (c.x > barriers[j])
 			++j;
 
-		components[j] = components[j] || new Set();
+		components[j] = components[j] || new Pile();
 		components[j] = components[j].union(component);
 	});
 
@@ -925,7 +926,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 };
 
 /**
- * @param atomset { Set<number> }
+ * @param atomset { Pile<number> }
  * @param arrowpos { number }
  * @returns { number }
  */

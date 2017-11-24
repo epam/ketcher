@@ -16,6 +16,7 @@
 
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
+var Pile = require('../../util/pile');
 var util = require('../util');
 var scale = require('../../util/scale');
 
@@ -42,7 +43,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [],
 		xBonds = [];
-	var atomSet = new Set(sgroup.atoms);
+	var atomSet = new Pile(sgroup.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 	bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;

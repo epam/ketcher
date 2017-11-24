@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { omit } from 'lodash/fp';
+import Pool from '../../util/pool';
 
 import molfile from '../../chem/molfile';
 
@@ -104,21 +105,24 @@ export function serverCall(editor, server, method, options, struct) {
 		selectedAtoms = selection.atoms ? selection.atoms : editor.explicitSelected().atoms;
 
 	if (!struct) {
-		const aidMap = {};
+		const aidMap = new Map();
 		struct = editor.struct().clone(null, null, false, aidMap);
+
 		const reindexMap = getReindexMap(struct.getComponents());
 
-		selectedAtoms = selectedAtoms.map(aid => reindexMap[aidMap[aid]]);
+		selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aidMap.get(aid)));
 	}
 
-	let request = server.then(() => server[method](Object.assign({
-		struct: molfile.stringify(struct, { ignoreErrors: true })
-	}, selectedAtoms && selectedAtoms.length > 0 ? {
-		selected: selectedAtoms
-	} : null, options.data), omit('data', options)));
+	let request = server.then(() =>
+		server[method](Object.assign({
+			struct: molfile.stringify(struct, { ignoreErrors: true })
+		}, selectedAtoms && selectedAtoms.length > 0 ? {
+			selected: selectedAtoms
+		} : null, options.data), omit('data', options)));
+
 	// utils.loading('show');
-	request.catch(() => {
-		// alert(err);
+	request.catch((err) => {
+		console.error(err);
 	}).then(() => {
 		// utils.loading('hide');
 	});
@@ -126,26 +130,13 @@ export function serverCall(editor, server, method, options, struct) {
 }
 
 function getReindexMap(components) {
-	return flatten(components.reactants)
-		.concat(flatten(components.products))
-		.reduce((acc, item, index) => {
-			acc[item] = index;
+	return components.reactants
+		.concat(components.products)
+		.reduce((acc, item) => {
+			Array.from(item).forEach((aid) => {
+				acc.add(aid);
+			});
+
 			return acc;
-		}, {});
-}
-
-/**
- * Flats passed object
- * Ex: [ [1, 2], [3, [4, 5] ] ] -> [1, 2, 3, 4, 5]
- *     { a: 1, b: { c: 2, d: 3 } } -> [1, 2, 3]
- * @param source { object }
- */
-function flatten(source) {
-	if (typeof source !== 'object')
-		return source;
-
-	return Object.keys(source).reduce((acc, key) => {
-		const item = source[key];
-		return acc.concat(flatten(item));
-	}, []);
+		}, new Pool());
 }

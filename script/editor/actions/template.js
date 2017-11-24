@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { intersection } from 'lodash';
-
 import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
 import op from '../shared/op';
@@ -92,7 +90,7 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 	const xy0 = tmpl.atoms.get(template.aid).pp;
 	const frid = atomGetAttr(restruct, aid, 'fragment');
 
-	tmpl.atoms.each((id, a) => {
+	tmpl.atoms.forEach((a, id) => {
 		const attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
 		if (id === template.aid) {
@@ -109,9 +107,10 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 			action.mergeWith(atomAddToSGroups(restruct, sgroups, map[id]));
 	});
 
-	tmpl.bonds.each((bid, bond) => {
+	tmpl.bonds.forEach((bond) => {
 		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct));
 	});
+
 	action.operations.reverse();
 	return action;
 }
@@ -134,16 +133,17 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 	const bond = struct.bonds.get(bid);
 	const tmplBond = tmpl.bonds.get(template.bid);
 
-	const sgroups = intersection(
-		atomGetSGroups(restruct, bond.begin),
-		atomGetSGroups(restruct, bond.end)
-	);
+	const atomBeginSgs = restruct.atoms.get(bond.begin).a.sgs;
+	const atomEndSgs = restruct.atoms.get(bond.end).a.sgs;
+
+	const sgroups = Array.from(atomBeginSgs.intersection(atomEndSgs));
 
 	const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
-	const atomsMap = {
-		[tmplBond.begin]: flip ? bond.end : bond.begin,
-		[tmplBond.end]: flip ? bond.begin : bond.end
-	};
+
+	const atomsMap = new Map([
+		[tmplBond.begin, flip ? bond.end : bond.begin],
+		[tmplBond.end, flip ? bond.begin : bond.end]
+	]);
 
 	// calc angle
 	const bondAtoms = {
@@ -154,11 +154,11 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 	const frid = struct.getBondFragment(bid);
 
-	tmpl.atoms.each((id, atom) => {
+	tmpl.atoms.forEach((atom, id) => {
 		const attrs = Struct.Atom.getAttrHash(atom);
 		attrs.fragment = frid;
 		if (id === tmplBond.begin || id === tmplBond.end) {
-			action.mergeWith(fromAtomsAttrs(restruct, atomsMap[id], attrs, true));
+			action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
 			return;
 		}
 
@@ -172,19 +172,19 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 			const operation = new op.AtomAdd(attrs,	v).perform(restruct);
 			action.addOp(operation);
 
-			atomsMap[id] = operation.data.aid;
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, atomsMap[id]));
+			atomsMap.set(id, operation.data.aid);
+			action.mergeWith(atomAddToSGroups(restruct, sgroups, atomsMap.get(id)));
 		} else {
-			atomsMap[id] = mergeA.id;
-			action.mergeWith(fromAtomsAttrs(restruct, atomsMap[id], attrs, true));
+			atomsMap.set(id, mergeA.id);
+			action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
 			// TODO [RB] need to merge fragments?
 		}
 	});
 
-	tmpl.bonds.each((id, bond) => { // eslint-disable-line no-shadow
-		const existId = struct.findBondId(atomsMap[bond.begin], atomsMap[bond.end]);
-		if (existId === -1)
-			action.addOp(new op.BondAdd(atomsMap[bond.begin], atomsMap[bond.end], bond).perform(restruct));
+	tmpl.bonds.forEach((tBond) => {
+		const existId = struct.findBondId(atomsMap.get(tBond.begin), atomsMap.get(tBond.end));
+		if (!existId)
+			action.addOp(new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct));
 		else
 			action.mergeWith(fromBondAttrs(restruct, existId, tmplBond, false, true));
 	});

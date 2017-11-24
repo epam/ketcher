@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+var Pile = require('../../util/pile').default;
 var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');
@@ -57,7 +58,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	molecule.initNeighbors();
 	molecule.sortNeighbors();
 	molecule.setImplicitHydrogen();
-	molecule.sgroups.each((sgid, sg) => {
+	molecule.sgroups.forEach((sg) => {
 		if (sg.type === 'MUL') {
 			try {
 				Struct.SGroup.prepareMulForSaving(sg, molecule);
@@ -69,9 +70,9 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	});
 	// END
 
-	this.atoms = new Array(molecule.atoms.count());
+	this.atoms = new Array(molecule.atoms.size);
 
-	molecule.atoms.each((aid, atom) => {
+	molecule.atoms.forEach((atom, aid) => {
 		this.atoms[aid] = new Smiles._Atom(atom.implicitH); // eslint-disable-line no-underscore-dangle
 	});
 
@@ -81,7 +82,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	var allowedLowercase = ['B', 'C', 'N', 'O', 'P', 'S', 'Se', 'As'];
 
 	// Detect atoms that have aromatic bonds and count neighbours
-	molecule.bonds.each((bid, bond) => {
+	molecule.bonds.forEach((bond, bid) => {
 		if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC) {
 			this.atoms[bond.begin].aromatic = true;
 			if (allowedLowercase.indexOf(molecule.atoms.get(bond.begin).label) !== -1)
@@ -96,14 +97,14 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 	this.inLoop = (function () {
 		molecule.prepareLoopStructure();
-		var bondsInLoops = new Set();
-		molecule.loops.each((lid, loop) => {
+		let bondsInLoops = new Pile();
+		molecule.loops.forEach((loop) => {
 			if (loop.hbs.length <= 6) {
 				const hbids = loop.hbs.map(hbid => molecule.halfBonds.get(hbid).bid);
-				bondsInLoops = bondsInLoops.union(new Set(hbids));
+				bondsInLoops = bondsInLoops.union(new Pile(hbids));
 			}
 		});
-		var inLoop = {};
+		const inLoop = {};
 		bondsInLoops.forEach((bid) => {
 			inLoop[bid] = 1;
 		});
@@ -121,7 +122,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	walk.walk();
 	this.atoms.forEach((atom) => {
 		atom.neighbours = [];
-	}, this);
+	});
 
 	// fill up neighbor lists for the stereocenters calculation
 	for (i = 0; i < walk.v_seq.length; i++) {
@@ -140,13 +141,13 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 			if (walk.edgeClosingCycle(eIdx)) {
 				for (k = 0; k < atom.neighbours.length; k++) {
-					if (atom.neighbours[k].aid == -1) { // eslint-disable-line max-depth
+					if (atom.neighbours[k].aid === -1) { // eslint-disable-line max-depth
 						atom.neighbours[k].aid = vPrevIdx;
 						atom.neighbours[k].bid = eIdx;
 						break;
 					}
 				}
-				if (k == atom.neighbours.length)
+				if (k === atom.neighbours.length)
 					throw new Error('internal: can not put closing bond to its place');
 			} else {
 				atom.neighbours.push({ aid: vPrevIdx, bid: eIdx });
@@ -163,7 +164,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 		}, this);
 		stereocenters.buildFromBonds(this.ignore_errors);
 
-		stereocenters.each((atomIdx, sc) => { // eslint-disable-line max-statements
+		stereocenters.forEach((sc, atomIdx) => { // eslint-disable-line max-statements
 			// if (sc.type < MoleculeStereocenters::ATOM_AND)
 			//    continue;
 
@@ -505,9 +506,9 @@ Smiles.prototype.markCisTrans = function (mol) {
 		return this.atoms[idx].neighbours;
 	}, this);
 	this.cis_trans.build();
-	this.dbonds = new Array(mol.bonds.count());
+	this.dbonds = new Array(mol.bonds.size);
 
-	mol.bonds.each((bid) => {
+	mol.bonds.forEach((bond, bid) => {
 		this.dbonds[bid] =
 		{
 			ctbond_beg: -1,
@@ -516,7 +517,7 @@ Smiles.prototype.markCisTrans = function (mol) {
 		};
 	});
 
-	this.cis_trans.each((bid, ct) => {
+	this.cis_trans.forEach((ct, bid) => {
 		var bond = mol.bonds.get(bid);
 
 		if (ct.parity !== 0 && !this.isBondInRing(bid)) {
@@ -665,7 +666,7 @@ Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 
 	while (true) { // eslint-disable-line no-constant-condition
 		ntouched = 0;
-		this.cis_trans.each((bid, ct) => {
+		this.cis_trans.forEach((ct, bid) => {
 			if (ct.parity !== 0 && !this.isBondInRing(bid)) {
 				if (this.updateSideBonds(mol, bid))
 					ntouched++;

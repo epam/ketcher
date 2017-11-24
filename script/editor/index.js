@@ -16,6 +16,7 @@
 
 import s from 'subscription';
 import Vec2 from '../util/vec2';
+import Pile from '../util/pile';
 
 import Struct from '../chem/struct';
 import Render from '../render';
@@ -105,19 +106,19 @@ Editor.prototype.zoom = function (value) {
 };
 
 Editor.prototype.selection = function (ci) {
-	var restruct = this.render.ctab;
+	let restruct = this.render.ctab;
 	if (arguments.length > 0) {
 		this._selection = null; // eslint-disable-line
 		if (ci === 'all') { // TODO: better way will be this.struct()
 			ci = structObjects.reduce((res, key) => {
-				res[key] = restruct[key].keys();
+				res[key] = Array.from(restruct[key].keys());
 				return res;
 			}, {});
 		}
 
 		if (ci === 'descriptors') {
 			restruct = this.render.ctab;
-			ci = { sgroupData: restruct['sgroupData'].keys() };
+			ci = { sgroupData: Array.from(restruct['sgroupData'].keys()) };
 		}
 
 		if (ci) {
@@ -252,7 +253,7 @@ function domEventSetup(editor, clientArea) {
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {
-	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
+	const pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
 	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 
 	return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
@@ -263,27 +264,29 @@ Editor.prototype.findMerge = function (srcItems, maps) {
 };
 
 Editor.prototype.explicitSelected = function () {
-	var selection = this.selection() || {};
-	var res = structObjects.reduce((result, key) => {
-		result[key] = selection[key] ? selection[key].slice() : [];
-		return result;
+	const selection = this.selection() || {};
+	const res = structObjects.reduce((acc, key) => {
+		acc[key] = selection[key] ? selection[key].slice() : [];
+		return acc;
 	}, {});
 
-	var struct = this.render.ctab.molecule;
+	const struct = this.render.ctab.molecule;
 	// "auto-select" the atoms for the bonds in selection
-	if ('bonds' in res) {
+	if (res.bonds) {
 		res.bonds.forEach((bid) => {
-			var bond = struct.bonds.get(bid);
+			const bond = struct.bonds.get(bid);
 			res.atoms = res.atoms || [];
-			if (res.atoms.indexOf(bond.begin) < 0) res.atoms.push(bond.begin);
-			if (res.atoms.indexOf(bond.end) < 0) res.atoms.push(bond.end);
+			if (res.atoms.indexOf(bond.begin) < 0)
+				res.atoms.push(bond.begin);
+
+			if (res.atoms.indexOf(bond.end) < 0)
+				res.atoms.push(bond.end);
 		});
 	}
 	// "auto-select" the bonds with both atoms selected
-	if ('atoms' in res && 'bonds' in res) {
-		struct.bonds.each((bid) => {
-			if (!('bonds' in res) || res.bonds.indexOf(bid) < 0) {
-				var bond = struct.bonds.get(bid);
+	if (res.atoms && res.bonds) {
+		struct.bonds.forEach((bond, bid) => {
+			if (!res.bonds.indexOf(bid) < 0) {
 				if (res.atoms.indexOf(bond.begin) >= 0 && res.atoms.indexOf(bond.end) >= 0) {
 					res.bonds = res.bonds || [];
 					res.bonds.push(bid);
@@ -296,17 +299,17 @@ Editor.prototype.explicitSelected = function () {
 };
 
 Editor.prototype.structSelected = function () {
-	var struct = this.render.ctab.molecule;
-	var selection = this.explicitSelected();
-	var dst = struct.clone(new Set(selection.atoms), new Set(selection.bonds), true);
+	const struct = this.render.ctab.molecule;
+	const selection = this.explicitSelected();
+	const dst = struct.clone(new Pile(selection.atoms), new Pile(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets
-	struct.rxnArrows.each((id, item) => {
+	struct.rxnArrows.forEach((item, id) => {
 		if (selection.rxnArrows.indexOf(id) !== -1)
 			dst.rxnArrows.add(item.clone());
 	});
-	struct.rxnPluses.each((id, item) => {
+	struct.rxnPluses.forEach((item, id) => {
 		if (selection.rxnPluses.indexOf(id) !== -1)
 			dst.rxnPluses.add(item.clone());
 	});
@@ -314,7 +317,7 @@ Editor.prototype.structSelected = function () {
 
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&
-		(dst.rxnArrows.count() || dst.rxnPluses.count());
+		(dst.rxnArrows.size || dst.rxnPluses.size);
 
 	return dst;
 };

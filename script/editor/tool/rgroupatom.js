@@ -56,7 +56,7 @@ function propsDialog(editor, id, pos) {
 	const res = editor.event.elementEdit.dispatch({
 		label: 'R#',
 		rglabel,
-		fragId: atom.fragment
+		fragId: atom ? atom.fragment : null
 	});
 
 	Promise.resolve(res).then((elem) => {

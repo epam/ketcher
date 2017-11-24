@@ -85,10 +85,13 @@ function initHotKeys() {
 		act = actions[actName];
 		if (!act.shortcut) return;
 
-		if (Array.isArray(act.shortcut))
-			act.shortcut.forEach(key => setHotKey(key, actName, hotKeys));
-		else
+		if (Array.isArray(act.shortcut)) {
+			act.shortcut.forEach((key) => {
+				setHotKey(key, actName, hotKeys);
+			});
+		} else {
 			setHotKey(act.shortcut, actName, hotKeys);
+		}
 	});
 
 	return keyNorm(hotKeys);

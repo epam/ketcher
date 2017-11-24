@@ -29,37 +29,43 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
 	const action = new Action();
 
-	const aidMap = {};
-	const fridMap = {};
+	const aidMap = new Map();
+	const fridMap = new Map();
 
-	pstruct.atoms.each((aid, atom) => {
-		if (!(atom.fragment in fridMap))
-			fridMap[atom.fragment] = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+	pstruct.atoms.forEach((atom, aid) => {
+		if (!fridMap.has(atom.fragment))
+			fridMap.set(atom.fragment, action.addOp(new op.FragmentAdd().perform(restruct)).frid);
 
-		const tmpAtom = Object.assign(atom.clone(), { fragment: fridMap[atom.fragment] });
+		const tmpAtom = Object.assign(atom.clone(), { fragment: fridMap.get(atom.fragment) });
 		const operation = new op.AtomAdd(tmpAtom, Vec2.diff(atom.pp, xy0).rotate(angle).add(point)).perform(restruct);
 		action.addOp(operation);
-		aidMap[aid] = operation.data.aid;
+		aidMap.set(aid, operation.data.aid);
 	});
 
-	pstruct.bonds.each((bid, bond) => {
-		action.addOp(new op.BondAdd(aidMap[bond.begin], aidMap[bond.end], bond).perform(restruct));
+	pstruct.bonds.forEach((bond) => {
+		action.addOp(new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond).perform(restruct));
 	});
 
-	pstruct.sgroups.each((sgid, sg) => {
+	pstruct.sgroups.forEach((sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();
-		const sgAtoms = sg.atoms.map(aid => aidMap[aid]);
+		const sgAtoms = sg.atoms.map(aid => aidMap.get(aid));
 		const sgAction = fromSgroupAddition(restruct, sg.type, sgAtoms, sg.data, newsgid, sg.pp ? sg.pp.add(offset) : null);
-		sgAction.operations.reverse().forEach(oper => action.addOp(oper));
+		sgAction.operations.reverse().forEach((oper) => {
+			action.addOp(oper);
+		});
 	});
 
-	if (restruct.rxnArrows.count() < 1) {
-		pstruct.rxnArrows.values()
-			.forEach(rxnArrow => action.addOp(new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct)));
+	if (restruct.rxnArrows.size < 1) {
+		pstruct.rxnArrows
+			.forEach((rxnArrow) => {
+				action.addOp(new op.RxnArrowAdd(rxnArrow.pp.add(offset)).perform(restruct));
+			});
 	}
 
-	pstruct.rxnPluses.values()
-		.forEach(plus => action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct)));
+	pstruct.rxnPluses
+		.forEach((plus) => {
+			action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct));
+		});
 
 	if (pstruct.isChiral) {
 		const bb = pstruct.getCoordBoundingBox();
@@ -67,8 +73,10 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		action.mergeWith(fromChiralFlagAddition(restruct, pp.add(offset)));
 	}
 
-	pstruct.rgroups.each((rgid, rg) => {
-		rg.frags.each(frid => action.addOp(new op.RGroupFragment(rgid, fridMap[frid]).perform(restruct)));
+	pstruct.rgroups.forEach((rg, rgid) => {
+		rg.frags.forEach((frag, frid) => {
+			action.addOp(new op.RGroupFragment(rgid, fridMap.get(frid)).perform(restruct));
+		});
 		action.mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()));
 	});
 
@@ -77,13 +85,13 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 }
 
 function getStructCenter(struct) {
-	if (struct.atoms.count() > 0) {
+	if (struct.atoms.size > 0) {
 		let xmin = 1e50;
 		let ymin = xmin;
 		let xmax = -xmin;
 		let ymax = -ymin;
 
-		struct.atoms.each((aid, atom) => {
+		struct.atoms.forEach((atom) => {
 			xmin = Math.min(xmin, atom.pp.x);
 			ymin = Math.min(ymin, atom.pp.y);
 			xmax = Math.max(xmax, atom.pp.x);
@@ -91,8 +99,8 @@ function getStructCenter(struct) {
 		});
 		return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
 	}
-	if (struct.rxnArrows.count() > 0) return struct.rxnArrows.get(0).pp;
-	if (struct.rxnPluses.count() > 0) return struct.rxnPluses.get(0).pp;
+	if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).pp;
+	if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp;
 
 	return struct.isChiral ? new Vec2(1, -1) : null;
 }

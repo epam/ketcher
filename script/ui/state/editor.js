@@ -61,12 +61,10 @@ export default function initEditor(dispatch, getState) {
 
 				const params = {
 					...elem,
-					disabledIds: rgroups.keys()
-						.reduce((acc, rgid) => {
-							const rg = rgroups.get(rgid);
-
-							if (rg.frags.values().includes(elem.fragId))
-								acc.push(parseInt(rgid, 10));
+					disabledIds: Array.from(rgroups.entries())
+						.reduce((acc, [rgid, rg]) => {
+							if (rg.frags.has(elem.fragId))
+								acc.push(rgid);
 
 							return acc;
 						}, [])
@@ -85,14 +83,14 @@ export default function initEditor(dispatch, getState) {
 			const struct = getState().editor.struct();
 
 			if (Object.keys(rgroup).length > 2) {
-				const rgroupLabels = struct.rgroups.keys().map(rgid => parseInt(rgid, 10));
+				const rgroupLabels = Array.from(struct.rgroups.keys());
 				if (!rgroup.range) rgroup.range = '>0';
 
 				return openDialog(dispatch, 'rgroupLogic',
 					Object.assign({ rgroupLabels }, rgroup));
 			}
 
-			const disabledIds = struct.atoms.values()
+			const disabledIds = Array.from(struct.atoms.values())
 				.reduce((acc, atom) => {
 					if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
 						return acc.concat(fromElement(atom).values);

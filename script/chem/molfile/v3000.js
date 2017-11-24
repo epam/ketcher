@@ -279,16 +279,15 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 	}
 
 	Object.keys(rfrags).forEach((rgid) => {
-		for (var j = 0; j < rfrags[rgid].length; ++j) {
-			var rg = rfrags[rgid][j];
+		rfrags[rgid].forEach((rg) => {
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
-			var frid = rg.frags.add({});
+			const frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
-			rg.atoms.each((aid, atom) => {
+			rg.atoms.forEach((atom) => {
 				atom.fragment = frid;
 			});
 			rg.mergeInto(ctab);
-		}
+		});
 	});
 }
 
@@ -305,6 +304,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 			if (ctabLines[j].trim() == 'M  V30 END CTAB')
 				return j;
 		}
+
 		return console.error('CTab format invalid');
 	}
 

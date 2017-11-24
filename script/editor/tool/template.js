@@ -33,13 +33,13 @@ function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	frag.rescale();
 
 	var xy0 = new Vec2();
-	frag.atoms.each((aid, atom) => {
+	frag.atoms.forEach((atom) => {
 		xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 	});
 
 	this.template.molecule = frag; // preloaded struct
 	this.findItems = [];
-	this.template.xy0 = xy0.scaled(1 / (frag.atoms.count() || 1)); // template center
+	this.template.xy0 = xy0.scaled(1 / (frag.atoms.size || 1)); // template center
 
 	const atom = frag.atoms.get(this.template.aid);
 	if (atom) {

@@ -62,7 +62,8 @@ const createBundleConfig = () => ({
 				'lodash',
 				'transform-class-properties',
 				'transform-object-rest-spread',
-				['transform-react-jsx', { pragma: 'h' }]
+				['transform-react-jsx', { pragma: 'h' }],
+				["babel-plugin-transform-builtin-extend", { globals: ["Set", "Map"] }]
 			]
 		}]
 	]

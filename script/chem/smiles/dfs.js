@@ -21,13 +21,13 @@ function Dfs(mol, atomData, components, nReactants) {
 	this.nComponentsInReactants = -1;
 	this.nReactants = nReactants;
 
-	this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
-	this.molecule.atoms.each(function (aid) {
+	this.vertices = new Array(this.molecule.atoms.size); // Minimum size
+	this.molecule.atoms.forEach((atom, aid) => {
 		this.vertices[aid] = new Dfs.VertexDesc();
 	}, this);
 
-	this.edges = new Array(this.molecule.bonds.count()); // Minimum size
-	this.molecule.bonds.each(function (bid) {
+	this.edges = new Array(this.molecule.bonds.size); // Minimum size
+	this.molecule.bonds.forEach((bond, bid) => {
 		this.edges[bid] = new Dfs.EdgeDesc();
 	}, this);
 
@@ -152,7 +152,7 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 };
 
 Dfs.prototype.edgeClosingCycle = function (eIdx) {
-	return this.edges[eIdx].closing_cycle != 0;
+	return this.edges[eIdx].closing_cycle !== 0;
 };
 
 Dfs.prototype.numBranches = function (vIdx) {
@@ -165,7 +165,7 @@ Dfs.prototype.numOpeningCycles = function (eIdx) {
 
 Dfs.prototype.toString = function () {
 	var str = '';
-	this.v_seq.each((seqElem) => {
+	this.v_seq.forEach((seqElem) => {
 		str += seqElem.idx + ' -> ';
 	});
 	str += '*';

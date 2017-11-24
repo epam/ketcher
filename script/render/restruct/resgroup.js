@@ -16,6 +16,7 @@
 
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
+var Pile = require('../../util/pile').default;
 var util = require('../util');
 var scale = require('../../util/scale');
 
@@ -42,7 +43,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [],
 		xBonds = [];
-	var atomSet = new Set(sgroup.atoms);
+	var atomSet = new Pile(sgroup.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 	bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
@@ -144,8 +145,8 @@ function drawGroupDat(restruct, sgroup) {
 
 function definePP(restruct, sgroup) {
 	let topLeftPoint = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5));
-	const sgroups = restruct.molecule.sgroups.values();
-	for (let i = 0; i < restruct.molecule.sgroups.count(); ++i) {
+	const sgroups = Array.from(restruct.molecule.sgroups.values());
+	for (let i = 0; i < restruct.molecule.sgroups.size; ++i) {
 		if (!descriptorIntersects(sgroups, topLeftPoint))
 			break;
 
@@ -245,23 +246,23 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 			bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		}
 		contentBoxes.push(bba);
-	}, this);
+	});
 	mol.sGroupForest.children.get(sg.id).forEach((sgid) => {
 		var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 		bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		contentBoxes.push(bba);
-	}, this);
-	contentBoxes.forEach(function (bba) {
+	});
+	contentBoxes.forEach((bba) => {
 		var bbb = null;
-		[bba.p0.x, bba.p1.x].forEach(function (x) {
+		[bba.p0.x, bba.p1.x].forEach((x) => {
 			[bba.p0.y, bba.p1.y].forEach((y) => {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
 				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
-			}, this);
-		}, this);
+			});
+		});
 		bb = (bb === null) ? bbb : Box2Abs.union(bb, bbb);
-	}, this);
+	});
 	var vext = new Vec2(0.2, 0.4);
 	if (bb !== null) bb = bb.extend(vext, vext);
 	sg.bracketBox = bb;

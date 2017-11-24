@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
+import Pile from '../../util/pile';
 
 import Struct from '../../chem/struct';
 
@@ -47,14 +48,14 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 
 	const isFragFound = Object.keys(fids).find((frag) => {
 		frag = parseInt(frag, 10);
-		return !struct.getFragmentIds(frag).equals(new Set(fids[frag]));
+		return !struct.getFragmentIds(frag).equals(new Pile(fids[frag]));
 	});
 
 	if (isFragFound)
 		return action; // empty action
 
 	Object.keys(fids).forEach((frag) => {
-		const fragment = new Set(fids[frag]);
+		const fragment = new Pile(fids[frag]);
 
 		const bbox = struct.getCoordBoundingBox(fragment);
 

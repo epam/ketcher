@@ -22,7 +22,7 @@ import Action from '../shared/action';
 export function fromChiralFlagAddition(restruct, pos) { // eslint-disable-line no-unused-vars
 	var action = new Action();
 	var struct = restruct.molecule;
-	if (restruct.chiralFlags.count() < 1) {
+	if (restruct.chiralFlags.size < 1) {
 		if (!pos) {
 			var bb = struct.getCoordBoundingBox();
 			var posY = !struct.isBlank() ? bb.min.y - 1 : bb.min.y + 1;

@@ -217,6 +217,13 @@ Vec2.lc = function (...args) {
 	return v;
 };
 
+/**
+ * @param v1 { Vec2 }
+ * @param f1 { number }
+ * @param v2 { Vec2 }
+ * @param f2 { number }
+ * @return { Vec2 }
+ */
 Vec2.lc2 = function (v1, f1, v2, f2) {
 	console.assert(!!v1);
 	console.assert(!!v2);

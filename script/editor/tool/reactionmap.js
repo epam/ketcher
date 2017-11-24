@@ -85,7 +85,7 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 			var aam2 = atom2.aam;
 			if (!aam1 || aam1 !== aam2) {
 				if (aam1 && aam1 !== aam2 || !aam1 && aam2) { // eslint-disable-line no-mixed-operators
-					atoms.each((aid, atom) => {
+					atoms.forEach((atom, aid) => {
 						if (aid !== this.dragCtx.item.id && (aam1 && atom.aam === aam1 || aam2 && atom.aam === aam2)) // eslint-disable-line no-mixed-operators
 							action.mergeWith(fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
 					});
@@ -94,7 +94,7 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 					action.mergeWith(fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }));
 				} else {
 					var aam = 0;
-					atoms.each((aid, atom) => {
+					atoms.forEach((atom) => {
 						aam = Math.max(aam, atom.aam || 0);
 					});
 					action.mergeWith(fromAtomsAttrs(rnd.ctab, this.dragCtx.item.id, { aam: aam + 1 }));

@@ -17,7 +17,6 @@
 import 'babel-polyfill';
 import 'whatwg-fetch';
 import queryString from 'query-string';
-import './set-ext';
 
 import api from './api';
 import * as molfile from './chem/molfile';

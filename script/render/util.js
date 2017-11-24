@@ -17,7 +17,7 @@
 import Vec2 from '../util/vec2';
 
 function tfx(v) {
-	return (v - 0).toFixed(8);
+	return parseFloat(v).toFixed(8);
 }
 
 function relBox(box) {

@@ -19,7 +19,7 @@ import Action from '../shared/action';
 
 export function fromArrowAddition(restruct, pos) {
 	var action = new Action();
-	if (restruct.molecule.rxnArrows.count() < 1)
+	if (restruct.molecule.rxnArrows.size < 1)
 		action.addOp(new op.RxnArrowAdd(pos).perform(restruct));
 	return action;
 }

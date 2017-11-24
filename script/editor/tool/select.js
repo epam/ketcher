@@ -16,6 +16,7 @@
 
 import utils from '../shared/utils';
 
+import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { sgroupDialog } from './sgroup';
@@ -235,6 +236,11 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { //
 	this.editor.hover(null);
 };
 
+/**
+ * @param restruct { ReStruct }
+ * @param closestMap { Map<number, number> }
+ * @return { Map<number, number> }
+ */
 function closestToMerge(restruct, closestMap) {
 	const struct = restruct.molecule;
 	const mergeMap = Object.assign({}, closestMap);
@@ -295,8 +301,8 @@ function isSelected(render, selection, item) {
 			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 
-		const selectionSet = new Set(selection['atoms']);
-		const atomSet = new Set(atoms);
+		const selectionSet = new Pile(selection['atoms']);
+		const atomSet = new Pile(atoms);
 
 		return !!selection['atoms'] && selectionSet.isSuperset(atomSet);
 	}

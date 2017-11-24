@@ -14,75 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable */
+class Pool extends Map {
+	constructor(arg) {
+		super(arg);
+		this._nextId = 0;
+	}
 
-function Pool() {
-	this._map = new Map();
-	this._nextId = 0;
+	add(item) {
+		const id = this._nextId++;
+		super.set(id, item);
+		return id;
+	}
+
+	newId() {
+		return this._nextId++;
+	}
+
+	keyOf(item) {
+		for (const [key, value] of this.entries()) {
+			if (value === item)
+				return key;
+		}
+
+		return null;
+	}
+
+	find(predicate) {
+		for (const [key, value] of this.entries()) {
+			if (predicate(key, value))
+				return key;
+		}
+
+		return null;
+	}
+
+	filter(predicate) {
+		return new Pool(Array.from(this).filter(([key, value]) => predicate(key, value)));
+	}
 }
 
-Pool.prototype.newId = function () {
-	return this._nextId++;
-};
-
-Pool.prototype.add = function (obj) {
-	var id = this._nextId++;
-	this._map.set(id, obj);
-	return id;
-};
-
-Pool.prototype.set = function (id, obj) {
-	id = parseInt(id, 10);
-	this._map.set(id, obj);
-};
-
-Pool.prototype.get = function (id) {
-	id = parseInt(id, 10);
-	return this._map.get(id);
-};
-
-Pool.prototype.has = function (id) {
-	id = parseInt(id, 10);
-	return this._map.has(id);
-};
-
-Pool.prototype.remove = function (id) {
-	id = parseInt(id, 10);
-	const value = this._map.get(id);
-	this._map.delete(id);
-	return value;
-};
-
-Pool.prototype.clear = function () {
-	this._map.clear();
-};
-
-Pool.prototype.keys = function () {
-	return Array.from(this._map.keys());
-};
-
-Pool.prototype.values = function () {
-	return Array.from(this._map.values());
-};
-
-Pool.prototype.each = function (func) {
-	const fn = (value, key) => func(key, value);
-	this._map.forEach(fn);
-};
-
-Pool.prototype.count = function () {
-	return this._map.size;
-};
-
-Pool.prototype.entries = function () {
-	return this._map.entries();
-};
-
-Pool.prototype.keyOf = function (value) { // eslint-disable-line
-	for (let [key, val] of this._map.entries()) {
-		if (val === value)
-			return key;
-	}
-};
-
-module.exports = Pool;
+export default Pool;

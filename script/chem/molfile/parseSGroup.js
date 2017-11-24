@@ -17,26 +17,38 @@
 /* eslint-disable guard-for-in */ // todo
 
 var Vec2 = require('../../util/vec2');
-
+var Pool = require('../../util/pool').default;
 var Struct = require('./../struct/index');
 var utils = require('./utils');
 
-function readKeyValuePairs(str, /* bool */ valueString) {
-	/* reader */
-	var ret = {};
-	var partition = utils.partitionLineFixed(str, 3, true);
-	var count = utils.parseDecimalInt(partition[0]);
-	for (var i = 0; i < count; ++i) {
-		/* eslint-disable no-mixed-operators*/
-		ret[utils.parseDecimalInt(partition[2 * i + 1]) - 1] =
-			valueString ? partition[2 * i + 2].trim() :
-				utils.parseDecimalInt(partition[2 * i + 2]);
-		/* eslint-enable no-mixed-operators*/
+/**
+ * @param str { string }
+ * @param valueString { boolean }
+ * @returns { Pool }
+ */
+function readKeyValuePairs(str, valueString) {
+	const ret = new Pool();
+	const partition = utils.partitionLineFixed(str, 3, true);
+	const count = utils.parseDecimalInt(partition[0]);
+
+	for (let i = 0; i < count; ++i) {
+		const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
+		const value = valueString ?
+			partition[2 * i + 2].trim() :
+			utils.parseDecimalInt(partition[2 * i + 2]);
+
+		ret.set(key, value);
 	}
+
 	return ret;
 }
 
-function readKeyMultiValuePairs(str, /* bool */ valueString) {
+/**
+ * @param str { string }
+ * @param valueString { boolean }
+ * @returns { Array }
+ */
+function readKeyMultiValuePairs(str, valueString) {
 	/* reader */
 	var ret = [];
 	var partition = utils.partitionLineFixed(str, 3, true);
@@ -75,7 +87,7 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 	var patomsMap = identityMap(sgroup.patoms);
 
 	var bondsToRemove = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		var beginIn = bond.begin in atomReductionMap;
 		var endIn = bond.end in atomReductionMap;
 		// if both adjacent atoms of a bond are to be merged, remove it
@@ -94,9 +106,9 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 
 	// apply removal lists
 	for (var b = 0; b < bondsToRemove.length; ++b)
-		mol.bonds.remove(bondsToRemove[b]);
+		mol.bonds.delete(bondsToRemove[b]);
 	for (var a in atomReductionMap) {
-		mol.atoms.remove(a);
+		mol.atoms.delete(a);
 		atomMap[a] = -1;
 	}
 	sgroup.atoms = sgroup.patoms;
@@ -135,12 +147,12 @@ function loadSGroup(mol, sg, atomMap) {
 	// apply type-specific post-processing
 	postLoadMap[sg.type](sg, mol, atomMap);
 	// mark atoms in the group as belonging to it
-	for (var s = 0; s < sg.atoms.length; ++s) {
+	for (let s = 0; s < sg.atoms.length; ++s) {
 		if (mol.atoms.has(sg.atoms[s]))
 			mol.atoms.get(sg.atoms[s]).sgs.add(sg.id);
 	}
 
-	if (sg.type == 'DAT')
+	if (sg.type === 'DAT')
 		mol.sGroupForest.insert(sg.id, -1, []);
 	else
 		mol.sGroupForest.insert(sg.id);
@@ -150,31 +162,31 @@ function loadSGroup(mol, sg, atomMap) {
 
 function initSGroup(sGroups, propData) {
 	/* reader */
-	var kv = readKeyValuePairs(propData, true);
-	for (var key in kv) {
-		var type = kv[key];
+	const kv = readKeyValuePairs(propData, true);
+	for (const [key, type] of kv) {
 		if (!(type in Struct.SGroup.TYPES))
 			throw new Error('Unsupported S-group type');
-		var sg = new Struct.SGroup(type);
+
+		const sg = new Struct.SGroup(type);
 		sg.number = key;
 		sGroups[key] = sg;
 	}
 }
 
 function applySGroupProp(sGroups, propName, propData, numeric, core) { // eslint-disable-line max-params
-	var kv = readKeyValuePairs(propData, !(numeric));
-	for (var key in kv)
+	const kv = readKeyValuePairs(propData, !(numeric));
+	for (const key of kv.keys())
 		// "core" properties are stored directly in an sgroup, not in sgroup.data
 		(core ? sGroups[key] : sGroups[key].data)[propName] = kv[key];
 }
 
 function applySGroupArrayProp(sGroups, propName, propData, shift) {
 	/* reader */
-	var sid = utils.parseDecimalInt(propData.slice(1, 4)) - 1;
-	var num = utils.parseDecimalInt(propData.slice(4, 8));
-	var part = toIntArray(utils.partitionLineFixed(propData.slice(8), 3, true));
+	const sid = utils.parseDecimalInt(propData.slice(1, 4)) - 1;
+	const num = utils.parseDecimalInt(propData.slice(4, 8));
+	let part = toIntArray(utils.partitionLineFixed(propData.slice(8), 3, true));
 
-	if (part.length != num)
+	if (part.length !== num)
 		throw new Error('File format invalid');
 	if (shift)
 		part = part.map(v => v + shift);

@@ -88,14 +88,14 @@ RotateTool.prototype.mousedown = function (event) {
 			});
 		});
 
-		if (!rotAll && rotId != null)
+		if (!rotAll && rotId !== null)
 			xy0 = struct.atoms.get(rotId).pp;
 		else
 			xy0 = xy0.scaled(1 / selection.atoms.length);
 	} else {
-		struct.atoms.each((id, atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle
+		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle
 		// poor man struct center (without chiral, sdata, etc)
-		xy0 = xy0.scaled(1 / struct.atoms.count());
+		xy0 = xy0.scaled(1 / struct.atoms.size);
 	}
 	this.dragCtx = {
 		xy0,

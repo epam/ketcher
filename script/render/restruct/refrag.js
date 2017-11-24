@@ -31,33 +31,25 @@ ReFrag.isSelectable = function () {
 };
 
 ReFrag.prototype.fragGetAtoms = function (restruct, fid) {
-	return restruct.atoms.keys().reduce((acc, aid) => {
-		const fragment = restruct.atoms.get(aid).a.fragment;
-
-		if (fragment === fid)
-			acc.push(parseInt(aid, 10));
-
-		return acc;
-	}, []);
+	return Array.from(restruct.atoms.keys())
+		.filter(aid => restruct.atoms.get(aid).a.fragment === fid);
 };
 
 ReFrag.prototype.fragGetBonds = function (restruct, fid) {
-	return restruct.bonds.keys().reduce((acc, bid) => {
-		const bond = restruct.bonds.get(bid).b;
+	return Array.from(restruct.bonds.keys())
+		.filter((bid) => {
+			const bond = restruct.bonds.get(bid).b;
 
-		const firstFrag = restruct.atoms.get(bond.begin).a.fragment;
-		const secondFrag = restruct.atoms.get(bond.end).a.fragment;
+			const firstFrag = restruct.atoms.get(bond.begin).a.fragment;
+			const secondFrag = restruct.atoms.get(bond.end).a.fragment;
 
-		if (firstFrag === fid && secondFrag === fid)
-			acc.push(parseInt(bid, 10));
-
-		return acc;
-	}, []);
+			return firstFrag === fid && secondFrag === fid;
+		});
 };
 
 ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to review parameter list
 	var ret;
-	restruct.atoms.each((aid, atom) => {
+	restruct.atoms.forEach((atom) => {
 		if (atom.a.fragment !== fid)
 			return;
 
@@ -113,12 +105,12 @@ ReFrag.prototype.setHighlight = function (highLight, render) {
 
 	fid = parseInt(fid, 10);
 
-	render.ctab.atoms.each((aid, atom) => {
+	render.ctab.atoms.forEach((atom) => {
 		if (atom.a.fragment === fid)
 			atom.setHighlight(highLight, render);
 	});
 
-	render.ctab.bonds.each((bid, bond) => {
+	render.ctab.bonds.forEach((bond) => {
 		if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid)
 			bond.setHighlight(highLight, render);
 	});

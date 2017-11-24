@@ -28,21 +28,17 @@ export function atomGetDegree(restruct, aid) {
 }
 
 export function atomGetNeighbors(restruct, aid) {
-	var atom = restruct.atoms.get(aid);
-	var neiAtoms = [];
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var hb = restruct.molecule.halfBonds.get(atom.a.neighbors[i]);
-		neiAtoms.push({
-			aid: hb.end - 0,
-			bid: hb.bid - 0
+	return restruct.atoms.get(aid).a.neighbors.map((nei) => {
+		const hb = restruct.molecule.halfBonds.get(nei);
+		return ({
+			aid: hb.end,
+			bid: hb.bid
 		});
-	}
-	return neiAtoms;
+	});
 }
 
 export function atomGetSGroups(restruct, aid) {
-	var atom = restruct.atoms.get(aid);
-	return Array.from(atom.a.sgs);
+	return Array.from(restruct.atoms.get(aid).a.sgs);
 }
 
 export function atomGetPos(restruct, id) {
@@ -52,27 +48,23 @@ export function atomGetPos(restruct, id) {
 export function structSelection(struct) {
 	return ['atoms', 'bonds', 'frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses']
 		.reduce((res, key) => {
-			res[key] = struct[key].keys();
+			res[key] = Array.from(struct[key].keys());
 			return res;
 		}, {});
 }
 
 export function getFragmentAtoms(struct, frid) {
-	var atoms = [];
-	struct.atoms.each((aid, atom) => {
-		if (atom.fragment == frid)
-			atoms.push(aid);
-	});
-	return atoms;
+	return Array.from(struct.atoms.keys())
+		.filter(aid => struct.atoms.get(aid).fragment === frid);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
 export function atomForNewBond(restruct, id) { // eslint-disable-line max-statements
-	var neighbours = [];
-	var pos = atomGetPos(restruct, id);
+	const neighbours = [];
+	const pos = atomGetPos(restruct, id);
 
 	atomGetNeighbors(restruct, id).forEach((nei) => {
-		var neiPos = atomGetPos(restruct, nei.aid);
+		const neiPos = atomGetPos(restruct, nei.aid);
 
 		if (Vec2.dist(pos, neiPos) < 0.1)
 			return;
@@ -101,28 +93,28 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 		}
 	}
 
-	var v = new Vec2(1, 0);
+	let v = new Vec2(1, 0);
 
 	if (neighbours.length > 0) {
-		if (neighbours.length == 1) {
+		if (neighbours.length === 1) {
 			maxAngle = -(4 * Math.PI / 3);
 
 			// zig-zag
-			var nei = atomGetNeighbors(restruct, id)[0];
+			const nei = atomGetNeighbors(restruct, id)[0];
 			if (atomGetDegree(restruct, nei.aid) > 1) {
-				var neiNeighbours = [];
-				var neiPos = atomGetPos(restruct, nei.aid);
-				var neiV = Vec2.diff(pos, neiPos);
-				var neiAngle = Math.atan2(neiV.y, neiV.x);
+				const neiNeighbours = [];
+				const neiPos = atomGetPos(restruct, nei.aid);
+				const neiV = Vec2.diff(pos, neiPos);
+				const neiAngle = Math.atan2(neiV.y, neiV.x);
 
 				atomGetNeighbors(restruct, nei.aid).forEach((neiNei) => {
-					var neiNeiPos = atomGetPos(restruct, neiNei.aid);
+					const neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
-					if (neiNei.bid == nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
+					if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1)
 						return;
 
-					var vDiff = Vec2.diff(neiNeiPos, neiPos);
-					var ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle;
+					const vDiff = Vec2.diff(neiNeiPos, neiPos);
+					let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle;
 
 					if (ang < 0)
 						ang += 2 * Math.PI;
@@ -143,19 +135,13 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 
 	v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-	var a = closest.atom(restruct, v, null, 0.1);
-
-	if (a == null)
-		a = { label: 'C' };
-	else
-		a = a.id;
+	let a = closest.atom(restruct, v, null, 0.1);
+	a = a === null ? ({ label: 'C' }) : a.id;
 
 	return { atom: a, pos: v };
 }
 
 export function getRelSgroupsBySelection(restruct, selectedAtoms) {
-	selectedAtoms = selectedAtoms.map(aid => parseInt(aid, 10));
-
-	return restruct.molecule.sgroups.values()
-		.filter(sg => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
+	return restruct.molecule.sgroups
+		.filter((sgid, sg) => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }

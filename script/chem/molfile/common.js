@@ -17,6 +17,8 @@
 var v2000 = require('./v2000');
 var v3000 = require('./v3000');
 
+var Pile = require('../../util/pile').default;
+
 var Struct = require('./../struct/index');
 var utils = require('./utils');
 
@@ -66,7 +68,7 @@ var prepareForSaving = {
 
 function prepareSruForSaving(sgroup, mol) {
 	var xBonds = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
@@ -89,7 +91,7 @@ function prepareSupForSaving(sgroup, mol) {
 	// This code is also used for GroupSru and should be moved into a separate common method
 	// It seems that such code should be used for any sgroup by this this should be checked
 	var xBonds = [];
-	mol.bonds.each((bid, bond) => {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
@@ -222,7 +224,7 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statements
 	var inBonds = [];
 	var xBonds = [];
-	var atomSet = new Set(sg.atoms);
+	var atomSet = new Pile(sg.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
 	Struct.SGroup.bracketPos(sg, mol, xBonds);
 	var bb = sg.bracketBox;

@@ -89,7 +89,10 @@ function toolMargin(menuName, menu, visibleTools) {
 
 	if (index === -1) {
 		let tools = [];
-		menu.forEach((item) => { tools = tools.concat(item.menu); });
+		menu.forEach((item) => {
+			tools = tools.concat(item.menu);
+		});
+
 		index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
 	}
 

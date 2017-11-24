@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Map = require('../../util/map');
-var Pool = require('../../util/pool');
+var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 var Vec2 = require('../../util/vec2');
 var Box2Abs = require('../../util/box2abs');
 
@@ -32,93 +32,51 @@ function Struct() {
 	this.atoms = new Pool();
 	this.bonds = new Pool();
 	this.sgroups = new Pool();
-	this.halfBonds = new Map();
+	this.halfBonds = new Pool();
 	this.loops = new Pool();
 	this.isChiral = false;
 	this.isReaction = false;
 	this.rxnArrows = new Pool();
 	this.rxnPluses = new Pool();
 	this.frags = new Pool();
-	this.rgroups = new Map();
+	this.rgroups = new Pool();
 	this.name = '';
 	this.sGroupForest = new SGroupForest(this);
 }
 
 Struct.prototype.hasRxnProps = function () {
-	return this.atoms.find((aid, atom) => atom.hasRxnProps(), this) >= 0 || this.bonds.find((bid, bond) => bond.hasRxnProps(), this) >= 0;
+	return this.atoms.find((aid, atom) => atom.hasRxnProps()) ||
+		   this.bonds.find((bid, bond) => bond.hasRxnProps());
 };
 
 Struct.prototype.hasRxnArrow = function () {
-	return this.rxnArrows.count() > 0;
-};
-
-/**
- * Returns a list of id's of s-groups, which contain only atoms in the given list
- * @param atoms { Array<number> }
- * @returns { Array<number> }
- */
-Struct.prototype.getSGroupsInAtomSet = function (atoms) {
-	var sgCounts = {};
-
-	atoms.forEach(function (aid) {
-		var sg = Array.from(this.atoms.get(aid).sgs);
-
-		sg.forEach((sid) => {
-			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
-		}, this);
-	}, this);
-
-	var sgroupList = [];
-	Object.keys(sgCounts).forEach((key) => {
-		var sid = parseInt(key, 10);
-		var sgroup = this.sgroups.get(sid);
-		var sgAtoms = SGroup.getAtoms(this, sgroup);
-		if (sgCounts[key] === sgAtoms.length)
-			sgroupList.push(sid);
-	});
-	return sgroupList;
+	return this.rxnArrows.size > 0;
 };
 
 Struct.prototype.isBlank = function () {
-	return this.atoms.count() === 0 &&
-	this.rxnArrows.count() === 0 &&
-	this.rxnPluses.count() === 0 && !this.isChiral;
+	return this.atoms.size === 0 &&
+	this.rxnArrows.size === 0 &&
+	this.rxnPluses.size === 0 && !this.isChiral;
 };
 
-Struct.prototype.toLists = function () {
-	var aidMap = {};
-	var atomList = [];
-	this.atoms.each((aid, atom) => {
-		aidMap[aid] = atomList.length;
-		atomList.push(atom);
-	});
-
-	var bondList = [];
-	this.bonds.each((bid, bond) => {
-		var b = new Bond(bond);
-		b.begin = aidMap[bond.begin];
-		b.end = aidMap[bond.end];
-		bondList.push(b);
-	});
-
-	return {
-		atoms: atomList,
-		bonds: bondList
-	};
-};
-
+/**
+ * @param atomSet { Pile<number>? }
+ * @param bondSet { Pile<number>? }
+ * @param dropRxnSymbols { boolean? }
+ * @param aidMap { Map<number, number>? }
+ * @returns { Struct }
+ */
 Struct.prototype.clone = function (atomSet, bondSet, dropRxnSymbols, aidMap) {
-	var cp = new Struct();
-	return this.mergeInto(cp, atomSet, bondSet, dropRxnSymbols, false, aidMap);
+	return this.mergeInto(new Struct(), atomSet, bondSet, dropRxnSymbols, false, aidMap);
 };
 
 Struct.prototype.getScaffold = function () {
-	var atomSet = new Set();
-	this.atoms.each((aid) => { atomSet.add(aid); });
+	const atomSet = new Pile();
+	this.atoms.forEach((atom, aid) => { atomSet.add(aid); });
 
-	this.rgroups.each((rgid, rg) => {
-		rg.frags.each((fnum, fid) => {
-			this.atoms.each((aid, atom) => {
+	this.rgroups.forEach((rg) => {
+		rg.frags.forEach((fnum, fid) => {
+			this.atoms.forEach((atom, aid) => {
 				if (atom.fragment === fid)
 					atomSet.delete(aid);
 			});
@@ -129,9 +87,9 @@ Struct.prototype.getScaffold = function () {
 };
 
 Struct.prototype.getFragmentIds = function (fid) {
-	const atomSet = new Set();
+	const atomSet = new Pile();
 
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom, aid) => {
 		if (atom.fragment === fid)
 			atomSet.add(aid);
 	});
@@ -143,110 +101,136 @@ Struct.prototype.getFragment = function (fid) {
 	return this.clone(this.getFragmentIds(fid));
 };
 
+/**
+ * @param cp { Struct } - container for merging
+ * @param atomSet { Pile<number>? }
+ * @param bondSet { Pile<number>? }
+ * @param dropRxnSymbols { boolean? }
+ * @param keepAllRGroups { boolean? }
+ * @param aidMap { Map<number, number>? }
+ * @returns { Struct }
+ */
 Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, keepAllRGroups, aidMap) { // eslint-disable-line max-params, max-statements
-	atomSet = atomSet || new Set(this.atoms.keys().map(key => parseInt(key, 10)));
-	bondSet = bondSet || new Set(this.bonds.keys().map(key => parseInt(key, 10)));
+	atomSet = atomSet || new Pile(this.atoms.keys());
+	bondSet = bondSet || new Pile(this.bonds.keys());
+	aidMap = aidMap || new Map();
+
 	bondSet = bondSet.filter((bid) => {
-		var bond = this.bonds.get(bid);
+		const bond = this.bonds.get(bid);
 		return atomSet.has(bond.begin) && atomSet.has(bond.end);
 	});
 
-	var fidMask = {};
-	this.atoms.each((aid, atom) => {
+	const fidMask = new Pile();
+
+	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid))
-			fidMask[atom.fragment] = 1;
-	});
-	var fidMap = {};
-	this.frags.each((fid, frag) => {
-		if (fidMask[fid])
-			fidMap[fid] = cp.frags.add(Object.assign({}, frag));
+			fidMask.add(atom.fragment);
 	});
 
-	var rgroupsIds = [];
-	this.rgroups.each((rgid, rgroup) => {
-		var keepGroup = keepAllRGroups;
+	const fidMap = new Map();
+	this.frags.forEach((frag, fid) => {
+		if (fidMask.has(fid))
+			fidMap.set(fid, cp.frags.add(Object.assign({}, frag)));
+	});
+
+	const rgroupsIds = [];
+	this.rgroups.forEach((rgroup, rgid) => {
+		let keepGroup = keepAllRGroups;
 		if (!keepGroup) {
-			rgroup.frags.each((fnum, fid) => {
+			rgroup.frags.forEach((fnum, fid) => {
 				rgroupsIds.push(fid);
-				if (fidMask[fid])
+				if (fidMask.has(fid))
 					keepGroup = true;
 			});
+
 			if (!keepGroup)
 				return;
 		}
-		var rg = cp.rgroups.get(rgid);
+
+		const rg = cp.rgroups.get(rgid);
 		if (rg) {
-			rgroup.frags.each((fnum, fid) => {
+			rgroup.frags.forEach((fnum, fid) => {
 				rgroupsIds.push(fid);
-				if (fidMask[fid])
-					rg.frags.add(fidMap[fid]);
+				if (fidMask.has(fid))
+					rg.frags.add(fidMap.get(fid));
 			});
 		} else {
 			cp.rgroups.set(rgid, rgroup.clone(fidMap));
 		}
 	});
 
-	if (typeof aidMap === 'undefined' || aidMap === null)
-		aidMap = {};
 	// atoms in not RGroup
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1)
-			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
+			aidMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
 	});
 	// atoms in RGroup
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
-			aidMap[aid] = cp.atoms.add(atom.clone(fidMap));
+			aidMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
 	});
 
-	var bidMap = {};
-	this.bonds.each((bid, bond) => {
+	const bidMap = new Map();
+	this.bonds.forEach((bond, bid) => {
 		if (bondSet.has(bid))
-			bidMap[bid] = cp.bonds.add(bond.clone(aidMap));
+			bidMap.set(bid, cp.bonds.add(bond.clone(aidMap)));
 	});
 
-	this.sgroups.each((sid, sg) => {
-		var i;
-		for (i = 0; i < sg.atoms.length; ++i) {
-			if (!atomSet.has(sg.atoms[i]))
-				return;
-		}
-		sg = SGroup.clone(sg, aidMap, bidMap);
-		var id = cp.sgroups.add(sg);
+	this.sgroups.forEach((sg) => {
+		if (sg.atoms.some(aid => !atomSet.has(aid)))
+			return;
+
+		sg = SGroup.clone(sg, aidMap);
+		const id = cp.sgroups.add(sg);
 		sg.id = id;
-		for (i = 0; i < sg.atoms.length; ++i)
-			cp.atoms.get(sg.atoms[i]).sgs.add(id);
+
+		sg.atoms.forEach((aid) => {
+			cp.atoms.get(aid).sgs.add(id);
+		});
 
 		if (sg.type === 'DAT')
 			cp.sGroupForest.insert(sg.id, -1, []);
 		else
 			cp.sGroupForest.insert(sg.id);
 	});
+
 	cp.isChiral = this.isChiral;
+
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;
-		this.rxnArrows.each((id, item) => {
+		this.rxnArrows.forEach((item) => {
 			cp.rxnArrows.add(item.clone());
 		});
-		this.rxnPluses.each((id, item) => {
+		this.rxnPluses.forEach((item) => {
 			cp.rxnPluses.add(item.clone());
 		});
 	}
+
 	return cp;
 };
 
+/**
+ * @param begin { number }
+ * @param end { number }
+ * @return { number|null }
+ */
 Struct.prototype.findBondId = function (begin, end) {
-	return Array.from(this.bonds.entries()).find(
-		(bid, bond) => (bond.begin === begin && bond.end === end) || (bond.begin === end && bond.end === begin)
-	);
+	return this.bonds.find((bid, bond) =>
+		(bond.begin === begin && bond.end === end) || (bond.begin === end && bond.end === begin));
 };
 
-function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-line max-params, max-statements
+/**
+ * @param begin [ number }
+ * @param end { number }
+ * @param bid { number }
+ * @constructor
+ */
+function HalfBond(begin, end, bid) {
 	console.assert(arguments.length === 3, 'Invalid parameter number!');
 
-	this.begin = begin - 0;
-	this.end = end - 0;
-	this.bid = bid - 0;
+	this.begin = begin;
+	this.end = end;
+	this.bid = bid;
 
 	// rendering properties
 	this.dir = new Vec2(); // direction
@@ -265,13 +249,13 @@ function HalfBond(/* num*/begin, /* num*/end, /* num*/bid) { // eslint-disable-l
 }
 
 Struct.prototype.initNeighbors = function () {
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom) => {
 		atom.neighbors = [];
 	});
 
-	this.bonds.each((bid, bond) => {
-		var a1 = this.atoms.get(bond.begin);
-		var a2 = this.atoms.get(bond.end);
+	this.bonds.forEach((bond) => {
+		const a1 = this.atoms.get(bond.begin);
+		const a2 = this.atoms.get(bond.end);
 		a1.neighbors.push(bond.hb1);
 		a2.neighbors.push(bond.hb2);
 	});
@@ -283,17 +267,17 @@ Struct.prototype.bondInitHalfBonds = function (bid, bond) {
 	bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
 	this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
 	this.halfBonds.set(bond.hb2, new HalfBond(bond.end, bond.begin, bid));
-	var hb1 = this.halfBonds.get(bond.hb1);
-	var hb2 = this.halfBonds.get(bond.hb2);
+	const hb1 = this.halfBonds.get(bond.hb1);
+	const hb2 = this.halfBonds.get(bond.hb2);
 	hb1.contra = bond.hb2;
 	hb2.contra = bond.hb1;
 };
 
 Struct.prototype.halfBondUpdate = function (hbid) {
-	var hb = this.halfBonds.get(hbid);
-	var p1 = this.atoms.get(hb.begin).pp;
-	var p2 = this.atoms.get(hb.end).pp;
-	var d = Vec2.diff(p2, p1).normalized();
+	const hb = this.halfBonds.get(hbid);
+	const p1 = this.atoms.get(hb.begin).pp;
+	const p2 = this.atoms.get(hb.end).pp;
+	const d = Vec2.diff(p2, p1).normalized();
 	hb.dir = Vec2.dist(p2, p1) > 1e-4 ? d : new Vec2(1, 0);
 	hb.norm = hb.dir.turnLeft();
 	hb.ang = hb.dir.oxAngle();
@@ -303,7 +287,9 @@ Struct.prototype.halfBondUpdate = function (hbid) {
 
 Struct.prototype.initHalfBonds = function () {
 	this.halfBonds.clear();
-	this.bonds.each((bid, bond) => this.bondInitHalfBonds(bid, bond));
+	this.bonds.forEach((bond, bid) => {
+		this.bondInitHalfBonds(bid, bond);
+	});
 };
 
 Struct.prototype.setHbNext = function (hbid, next) {
@@ -311,19 +297,23 @@ Struct.prototype.setHbNext = function (hbid, next) {
 };
 
 Struct.prototype.halfBondSetAngle = function (hbid, left) {
-	var hb = this.halfBonds.get(hbid);
-	var hbl = this.halfBonds.get(left);
+	const hb = this.halfBonds.get(hbid);
+	const hbl = this.halfBonds.get(left);
+
 	hbl.rightCos = Vec2.dot(hbl.dir, hb.dir);
-	hbl.rightSin = Vec2.cross(hbl.dir, hb.dir);
 	hb.leftCos = Vec2.dot(hbl.dir, hb.dir);
+
+	hbl.rightSin = Vec2.cross(hbl.dir, hb.dir);
 	hb.leftSin = Vec2.cross(hbl.dir, hb.dir);
+
 	hb.leftNeighbor = left;
 	hbl.rightNeighbor = hbid;
 };
 
 Struct.prototype.atomAddNeighbor = function (hbid) {
-	var hb = this.halfBonds.get(hbid);
-	var atom = this.atoms.get(hb.begin);
+	const hb = this.halfBonds.get(hbid);
+	const atom = this.atoms.get(hb.begin);
+
 	for (var i = 0; i < atom.neighbors.length; ++i) {
 		if (this.halfBonds.get(atom.neighbors[i]).ang > hb.ang)
 			break;
@@ -339,57 +329,62 @@ Struct.prototype.atomAddNeighbor = function (hbid) {
 };
 
 Struct.prototype.atomSortNeighbors = function (aid) {
-	var atom = this.atoms.get(aid);
-	var halfBonds = this.halfBonds;
-	atom.neighbors = atom.neighbors.sort((nei, nei2) => halfBonds.get(nei).ang - halfBonds.get(nei2).ang);
+	const atom = this.atoms.get(aid);
+	const halfBonds = this.halfBonds;
 
-	var i;
-	for (i = 0; i < atom.neighbors.length; ++i) {
-		this.halfBonds.get(this.halfBonds.get(atom.neighbors[i]).contra).next =
-			atom.neighbors[(i + 1) % atom.neighbors.length];
-	}
-	for (i = 0; i < atom.neighbors.length; ++i) {
-		this.halfBondSetAngle(atom.neighbors[(i + 1) % atom.neighbors.length],
-			atom.neighbors[i]);
-	}
+	atom.neighbors
+		.sort((nei, nei2) => halfBonds.get(nei).ang - halfBonds.get(nei2).ang)
+		.forEach((nei, i) => {
+			const nextNei = atom.neighbors[(i + 1) % atom.neighbors.length];
+			this.halfBonds.get(this.halfBonds.get(nei).contra).next = nextNei;
+			this.halfBondSetAngle(nextNei, nei);
+		});
 };
 
 Struct.prototype.sortNeighbors = function (list) {
-	if (!list)
-		this.atoms.each(aid => this.atomSortNeighbors(aid), this);
-	else
-		list.forEach(aid => this.atomSortNeighbors(aid), this);
-};
-
-Struct.prototype.atomUpdateHalfBonds = function (aid) {
-	var nei = this.atoms.get(aid).neighbors;
-	for (var i = 0; i < nei.length; ++i) {
-		var hbid = nei[i];
-		this.halfBondUpdate(hbid);
-		this.halfBondUpdate(this.halfBonds.get(hbid).contra);
+	if (!list) {
+		this.atoms.forEach((atom, aid) => {
+			this.atomSortNeighbors(aid);
+		});
+	} else {
+		list.forEach((aid) => {
+			this.atomSortNeighbors(aid);
+		});
 	}
 };
 
+Struct.prototype.atomUpdateHalfBonds = function (aid) {
+	this.atoms.get(aid).neighbors.forEach((hbid) => {
+		this.halfBondUpdate(hbid);
+		this.halfBondUpdate(this.halfBonds.get(hbid).contra);
+	});
+};
+
 Struct.prototype.updateHalfBonds = function (list) {
-	if (!list)
-		this.atoms.each(aid => this.atomUpdateHalfBonds(aid), this);
-	else
-		list.forEach(aid => this.atomUpdateHalfBonds(aid), this);
+	if (!list) {
+		this.atoms.forEach((atom, aid) => {
+			this.atomUpdateHalfBonds(aid);
+		});
+	} else {
+		list.forEach((aid) => {
+			this.atomUpdateHalfBonds(aid);
+		});
+	}
 };
 
 Struct.prototype.sGroupsRecalcCrossBonds = function () {
-	this.sgroups.each((sgid, sg) => {
+	this.sgroups.forEach((sg) => {
 		sg.xBonds = [];
 		sg.neiAtoms = [];
 	});
 
-	this.bonds.each((bid, bond) => {
-		var a1 = this.atoms.get(bond.begin);
-		var a2 = this.atoms.get(bond.end);
+	this.bonds.forEach((bond, bid) => {
+		const a1 = this.atoms.get(bond.begin);
+		const a2 = this.atoms.get(bond.end);
 
 		a1.sgs.forEach((sgid) => {
 			if (!a2.sgs.has(sgid)) {
-				var sg = this.sgroups.get(sgid);
+				const sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.end);
 			}
@@ -397,7 +392,7 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 
 		a2.sgs.forEach((sgid) => {
 			if (!a1.sgs.has(sgid)) {
-				var sg = this.sgroups.get(sgid);
+				const sg = this.sgroups.get(sgid);
 				sg.xBonds.push(bid);
 				arrayAddIfMissing(sg.neiAtoms, bond.begin);
 			}
@@ -406,30 +401,31 @@ Struct.prototype.sGroupsRecalcCrossBonds = function () {
 };
 
 Struct.prototype.sGroupDelete = function (sgid) {
-	var sg = this.sgroups.get(sgid);
-	for (var i = 0; i < sg.atoms.length; ++i)
-		this.atoms.get(sg.atoms[i]).sgs.delete(sgid);
-	this.sGroupForest.remove(sgid);
-	this.sgroups.remove(sgid);
+	this.sgroups.get(sgid).atoms.forEach((atom) => {
+		this.atoms.get(atom).sgs.delete(sgid);
+	});
+
+	this.sGroupForest.delete(sgid);
+	this.sgroups.delete(sgid);
 };
 
 Struct.prototype.atomSetPos = function (id, pp) {
-	var itemId = this['atoms'].get(id);
-	itemId.pp = pp;
+	const item = this.atoms.get(id);
+	item.pp = pp;
 };
 
 Struct.prototype.rxnPlusSetPos = function (id, pp) {
-	var itemId = this['rxnPluses'].get(id);
-	itemId.pp = pp;
+	const item = this.rxnPluses.get(id);
+	item.pp = pp;
 };
 
 Struct.prototype.rxnArrowSetPos = function (id, pp) {
-	var itemId = this['rxnArrows'].get(id);
-	itemId.pp = pp;
+	const item = this.rxnArrows.get(id);
+	item.pp = pp;
 };
 
 /**
- * @param atomSet { Set<number> }
+ * @param atomSet { Pile<number> }
  * @returns {*}
  */
 Struct.prototype.getCoordBoundingBox = function (atomSet) {
@@ -448,15 +444,15 @@ Struct.prototype.getCoordBoundingBox = function (atomSet) {
 
 	var global = !atomSet || atomSet.size === 0;
 
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom, aid) => {
 		if (global || atomSet.has(aid))
 			extend(atom.pp);
 	});
 	if (global) {
-		this.rxnPluses.each((id, item) => {
+		this.rxnPluses.forEach((item) => {
 			extend(item.pp);
 		});
-		this.rxnArrows.each((id, item) => {
+		this.rxnArrows.forEach((item) => {
 			extend(item.pp);
 		});
 	}
@@ -483,27 +479,27 @@ Struct.prototype.getCoordBoundingBoxObj = function () {
 		}
 	}
 
-	this.atoms.each((aid, atom) => {
+	this.atoms.forEach((atom) => {
 		extend(atom.pp);
 	});
 	return bb;
 };
 
 Struct.prototype.getBondLengthData = function () {
-	var totalLength = 0;
-	var cnt = 0;
-	this.bonds.each((bid, bond) => {
+	let totalLength = 0;
+	let cnt = 0;
+	this.bonds.forEach((bond) => {
 		totalLength += Vec2.dist(
 			this.atoms.get(bond.begin).pp,
 			this.atoms.get(bond.end).pp
 		);
 		cnt++;
-	}, this);
+	});
 	return { cnt, totalLength };
 };
 
 Struct.prototype.getAvgBondLength = function () {
-	var bld = this.getBondLengthData();
+	const bld = this.getBondLengthData();
 	return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
 };
 
@@ -530,20 +526,24 @@ Struct.prototype.getAvgClosestAtomDistance = function () {
 };
 
 Struct.prototype.checkBondExists = function (begin, end) {
-	var bondExists = false;
-	this.bonds.each((bid, bond) => {
-		if ((bond.begin == begin && bond.end == end) ||
-		(bond.end == begin && bond.begin == end))
-			bondExists = true;
-	});
-	return bondExists;
+	const key = this.bonds.find((bid, bond) =>
+		(bond.begin === begin && bond.end === end) ||
+		(bond.end === begin && bond.begin === end));
+
+	return key !== undefined;
 };
 
-function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
+/**
+ * @param hbs { Array<number> }
+ * @param struct < Struct }
+ * @param isConvex { boolean }
+ * @constructor
+ */
+function Loop(hbs, struct, isConvex) {
 	this.hbs = hbs; // set of half-bonds involved
 	this.dblBonds = 0; // number of double bonds in the loop
 	this.aromatic = true;
-	this.convex = convex || false;
+	this.convex = isConvex || false;
 
 	hbs.forEach((hb) => {
 		const bond = struct.bonds.get(struct.halfBonds.get(hb).bid);
@@ -556,15 +556,13 @@ function Loop(/* Array of num*/hbs, /* Struct*/struct, /* bool*/convex) {
 
 /**
  * @param firstaid { number }
- * @returns { Set<number> }
+ * @returns { Pile<number> }
  */
 Struct.prototype.findConnectedComponent = function (firstaid) {
-	const map = {};
 	const list = [firstaid];
-	const ids = new Set();
+	const ids = new Pile();
 	while (list.length > 0) {
 		const aid = list.pop();
-		map[aid] = 1;
 		ids.add(aid);
 		const atom = this.atoms.get(aid);
 		atom.neighbors.forEach((nei) => {
@@ -573,30 +571,28 @@ Struct.prototype.findConnectedComponent = function (firstaid) {
 				list.push(neiId);
 		});
 	}
+
 	return ids;
 };
 
 Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 	// NB: this is a hack
 	// TODO: need to maintain half-bond and neighbor structure permanently
-	if (!this.halfBonds.count()) {
+	if (!this.halfBonds.size) {
 		this.initHalfBonds();
 		this.initNeighbors();
-		this.updateHalfBonds(this.atoms.keys());
-		this.sortNeighbors(this.atoms.keys());
+		this.updateHalfBonds(Array.from(this.atoms.keys()));
+		this.sortNeighbors(Array.from(this.atoms.keys()));
 	}
 
-	var map = {};
-	this.atoms.each((aid) => { map[aid] = -1; });
+	let addedAtoms = new Pile();
 
-	var components = [];
-	this.atoms.each((aid, atom) => {
-		if ((discardExistingFragments || atom.fragment < 0) && map[aid] < 0) {
-			var component = this.findConnectedComponent(aid);
+	const components = [];
+	this.atoms.forEach((atom, aid) => {
+		if ((discardExistingFragments || atom.fragment < 0) && !addedAtoms.has(aid)) {
+			const component = this.findConnectedComponent(aid);
 			components.push(component);
-			component.forEach((aid) => {
-				map[aid] = 1;
-			});
+			addedAtoms = addedAtoms.union(component);
 		}
 	});
 
@@ -604,78 +600,78 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
 };
 
 /**
- * @param idSet { Set<number> }
+ * @param idSet { Pile<number> }
  */
 Struct.prototype.markFragment = function (idSet) {
-	var frag = {};
-	var fid = this.frags.add(frag);
+	const frag = {};
+	const fid = this.frags.add(frag);
+
 	idSet.forEach((aid) => {
 		this.atoms.get(aid).fragment = fid;
 	});
 };
 
-/**
- * @param aid { number }
- */
-Struct.prototype.markFragmentByAtomId = function (aid) {
-	this.markFragment(this.findConnectedComponent(aid));
-};
-
 Struct.prototype.markFragments = function () {
 	const components = this.findConnectedComponents();
-	components.forEach(comp => this.markFragment(comp));
+	components.forEach((comp) => {
+		this.markFragment(comp);
+	});
 };
 
 Struct.prototype.scale = function (scale) {
-	if (scale !== 1) {
-		this.atoms.each((aid, atom) => {
-			atom.pp = atom.pp.scaled(scale);
-		});
+	if (scale === 1)
+		return;
 
-		this.rxnPluses.each((id, item) => {
-			item.pp = item.pp.scaled(scale);
-		});
+	this.atoms.forEach((atom) => {
+		atom.pp = atom.pp.scaled(scale);
+	});
 
-		this.rxnArrows.each((id, item) => {
-			item.pp = item.pp.scaled(scale);
-		});
+	this.rxnPluses.forEach((item) => {
+		item.pp = item.pp.scaled(scale);
+	});
 
-		this.sgroups.each((id, item) => {
-			item.pp = item.pp ? item.pp.scaled(scale) : null;
-		});
-	}
+	this.rxnArrows.forEach((item) => {
+		item.pp = item.pp.scaled(scale);
+	});
+
+	this.sgroups.forEach((item) => {
+		item.pp = item.pp ? item.pp.scaled(scale) : null;
+	});
 };
 
 Struct.prototype.rescale = function () {
-	var avg = this.getAvgBondLength();
+	let avg = this.getAvgBondLength();
 	if (avg < 0 && !this.isReaction) // TODO [MK] this doesn't work well for reactions as the distances between
 		// the atoms in different components are generally larger than those between atoms of a single component
 		// (KETCHER-341)
 		avg = this.getAvgClosestAtomDistance();
 	if (avg < 1e-3)
 		avg = 1;
-	var scale = 1 / avg;
+
+	const scale = 1 / avg;
 	this.scale(scale);
 };
 
 Struct.prototype.loopHasSelfIntersections = function (hbs) {
-	for (var i = 0; i < hbs.length; ++i) {
-		var hbi = this.halfBonds.get(hbs[i]);
-		var ai = this.atoms.get(hbi.begin).pp;
-		var bi = this.atoms.get(hbi.end).pp;
-		var set = new Set([hbi.begin, hbi.end]);
-		for (var j = i + 2; j < hbs.length; ++j) {
-			var hbj = this.halfBonds.get(hbs[j]);
+	for (let i = 0; i < hbs.length; ++i) {
+		const hbi = this.halfBonds.get(hbs[i]);
+		const ai = this.atoms.get(hbi.begin).pp;
+		const bi = this.atoms.get(hbi.end).pp;
+		const set = new Pile([hbi.begin, hbi.end]);
+
+		for (let j = i + 2; j < hbs.length; ++j) {
+			const hbj = this.halfBonds.get(hbs[j]);
 			if (set.has(hbj.begin) || set.has(hbj.end))
-				/* eslint-disable no-continue*/
 				continue; // skip edges sharing an atom
-			/* eslint-enable no-continue*/
-			var aj = this.atoms.get(hbj.begin).pp;
-			var bj = this.atoms.get(hbj.end).pp;
+
+			const aj = this.atoms.get(hbj.begin).pp;
+			const bj = this.atoms.get(hbj.end).pp;
+
 			if (Box2Abs.segmentIntersection(ai, bi, aj, bj))
 				return true;
 		}
 	}
+
 	return false;
 };
 
@@ -737,9 +733,15 @@ Struct.prototype.loopIsInner = function (loop) {
 	return Math.abs(totalAngle) < Math.PI;
 };
 
+/**
+ * @returns { {
+ * 		newLoops: Array <number>,
+ * 		bondsToMark: Array<number>
+ *   } }
+ */
 Struct.prototype.findLoops = function () {
 	const newLoops = [];
-	const bondsToMark = new Set();
+	const bondsToMark = new Pile();
 
 	/*
 	 	Starting from each half-bond not known to be in a loop yet,
@@ -752,11 +754,11 @@ Struct.prototype.findLoops = function () {
 	 */
 
 	let hbIdNext, c, loop, loopId;
-	this.halfBonds.each((hbId, hb) => {
+	this.halfBonds.forEach((hb, hbId) => {
 		if (hb.loop !== -1)
 			return;
 
-		for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.count(); hbIdNext = this.halfBonds.get(hbIdNext).next, ++c) {
+		for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.size; hbIdNext = this.halfBonds.get(hbIdNext).next, ++c) {
 			if (!(c > 0 && hbIdNext === hbId)) {
 				loop.push(hbIdNext);
 				continue; // eslint-disable-line no-continue
@@ -801,8 +803,8 @@ Struct.prototype.findLoops = function () {
 Struct.prototype.prepareLoopStructure = function () {
 	this.initHalfBonds();
 	this.initNeighbors();
-	this.updateHalfBonds(this.atoms.keys());
-	this.sortNeighbors(this.atoms.keys());
+	this.updateHalfBonds(Array.from(this.atoms.keys()));
+	this.sortNeighbors(Array.from(this.atoms.keys()));
 	this.findLoops();
 };
 
@@ -837,7 +839,7 @@ Struct.prototype.calcConn = function (aid) {
 		case Bond.PATTERN.TYPE.AROMATIC:
 			conn += 1;
 			hasAromatic = true;
-			this.loops.each((id, item) => {
+			this.loops.forEach((item) => {
 				if (item.hbs.includes(atom.neighbors[i]) && item.hbs.length % 2 === 1)
 					oddLoop = true;
 			});
@@ -855,10 +857,12 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 	const conn = this.calcConn(aid);
 	const atom = this.atoms.get(aid);
 	atom.badConn = false;
+
 	if (conn < 0 || atom.isQuery()) {
 		atom.implicitH = 0;
 		return;
 	}
+
 	if (atom.explicitValence >= 0) {
 		const elem = element.map[atom.label];
 		atom.implicitH = elem !== null ? atom.explicitValence - atom.calcValenceMinusHyd(conn) : 0;
@@ -872,28 +876,36 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 };
 
 Struct.prototype.setImplicitHydrogen = function (list) {
-	this.sgroups.each((id, item) => {
+	this.sgroups.forEach((item) => {
 		if (item.data.fieldName === 'MRV_IMPLICIT_H')
 			this.atoms.get(item.atoms[0]).hasImplicitH = true;
 	});
 
-	if (!list)
-		this.atoms.each(aid => this.calcImplicitHydrogen(aid), this);
-	else
-		list.forEach(aid => this.calcImplicitHydrogen(aid));
+	if (!list) {
+		this.atoms.forEach((aid) => {
+			this.calcImplicitHydrogen(aid);
+		});
+	} else {
+		list.forEach((aid) => {
+			this.calcImplicitHydrogen(aid);
+		});
+	}
 };
 
+/**
+ * @return {{reactants: Array<Pile<number>>, products: Array<Pile<number>>}}
+ */
 Struct.prototype.getComponents = function () { // eslint-disable-line max-statements
 	/* saver */
 	const connectedComponents = this.findConnectedComponents(true);
 	const barriers = [];
 	let arrowPos = null;
 
-	this.rxnArrows.each((id, item) => { // there's just one arrow
+	this.rxnArrows.forEach((item) => { // there's just one arrow
 		arrowPos = item.pp.x;
 	});
 
-	this.rxnPluses.each((id, item) => {
+	this.rxnPluses.forEach((item) => {
 		barriers.push(item.pp.x);
 	});
 
@@ -912,8 +924,8 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 		while (c.x > barriers[j])
 			++j;
 
-		components[j] = components[j] || new Set();
-		components[j].union(component);
+		components[j] = components[j] || new Pile();
+		components[j] = components[j].union(component);
 	});
 
 	const submolTexts = [];
@@ -941,7 +953,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 };
 
 /**
- * @param atomset { Set<number> }
+ * @param atomset { Pile<number> }
  * @param arrowpos { number }
  * @returns { number }
  */
@@ -951,6 +963,10 @@ Struct.prototype.defineRxnFragmentTypeForAtomset = function (atomset, arrowpos) 
 	return c.x < arrowpos ? 1 : 2;
 };
 
+/**
+ * @param bid { number }
+ * @returns { number }
+ */
 Struct.prototype.getBondFragment = function (bid) {
 	const aid = this.bonds.get(bid).begin;
 	return this.atoms.get(aid).fragment;
@@ -984,7 +1000,6 @@ function arrayAddIfMissing(array, item) {
 	array.push(item);
 	return true;
 }
-
 
 module.exports = Object.assign(Struct, {
 	Atom,

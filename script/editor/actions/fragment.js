@@ -101,21 +101,29 @@ export function fromMultipleMove(restruct, lists, d) {
 function processAtom(restruct, aid, frid, newfrid) {
 	const action = new Action();
 	const queue = [aid];
+	const usedIds = new Pile(queue);
 
 	while (queue.length > 0) {
-		action.addOp(new op.AtomAttr(aid, 'fragment', newfrid).perform(restruct));
+		const id = queue.shift();
+		action.addOp(new op.AtomAttr(id, 'fragment', newfrid).perform(restruct));
 
-		atomGetNeighbors(restruct, aid).forEach(nei => {
-			if (restruct.molecule.atoms.get(nei.aid).fragment === frid)
-				queue.push(restruct, nei.aid, frid, newfrid);
+		atomGetNeighbors(restruct, id).forEach(nei => {
+			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {
+				usedIds.add(nei.aid);
+				queue.push(nei.aid);
+			}
 		});
-
-		queue.shift();
 	}
 
 	return action;
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param frid { number }
+ * @return { Action }
+ * @constructor
+ */
 export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
@@ -155,18 +163,18 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	};
 
 	var actionRemoveDataSGroups = new Action();
-	selection.sgroupData.forEach(function (id) {
+	selection.sgroupData.forEach(id => {
 		actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
-	}, this);
+	});
 
-	selection.atoms.forEach(function (aid) {
-		atomGetNeighbors(restruct, aid).forEach(function (nei) {
-			if (selection.bonds.indexOf(nei.bid) == -1)
+	selection.atoms.forEach(aid => {
+		atomGetNeighbors(restruct, aid).forEach(nei => {
+			if (selection.bonds.indexOf(nei.bid) === -1)
 				selection.bonds = selection.bonds.concat([nei.bid]);
-		}, this);
-	}, this);
+		});
+	});
 
-	selection.bonds.forEach(function (bid) {
+	selection.bonds.forEach(bid => {
 		action.addOp(new op.BondDelete(bid));
 
 		var bond = restruct.molecule.bonds.get(bid);
@@ -174,22 +182,21 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 		if (frids.indexOf(frid) < 0)
 			frids.push(frid);
 
-		if (selection.atoms.indexOf(bond.begin) == -1 && atomGetDegree(restruct, bond.begin) == 1) {
+		if (selection.atoms.indexOf(bond.begin) === -1 && atomGetDegree(restruct, bond.begin) === 1) {
 			if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
 				atomsToRemove.push(bond.begin);
 
 			action.addOp(new op.AtomDelete(bond.begin));
 		}
-		if (selection.atoms.indexOf(bond.end) == -1 && atomGetDegree(restruct, bond.end) == 1) {
+		if (selection.atoms.indexOf(bond.end) === -1 && atomGetDegree(restruct, bond.end) === 1) {
 			if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
 				atomsToRemove.push(bond.end);
 
 			action.addOp(new op.AtomDelete(bond.end));
 		}
-	}, this);
+	});
 
-
-	selection.atoms.forEach(function (aid) {
+	selection.atoms.forEach(aid => {
 		var frid3 = restruct.molecule.atoms.get(aid).fragment;
 		if (frids.indexOf(frid3) < 0)
 			frids.push(frid3);
@@ -198,21 +205,15 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 			atomsToRemove.push(aid);
 
 		action.addOp(new op.AtomDelete(aid));
-	}, this);
+	});
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
 
-	selection.rxnArrows.forEach(function (id) {
-		action.addOp(new op.RxnArrowDelete(id));
-	}, this);
+	selection.rxnArrows.forEach(id => action.addOp(new op.RxnArrowDelete(id)));
 
-	selection.rxnPluses.forEach(function (id) {
-		action.addOp(new op.RxnPlusDelete(id));
-	}, this);
+	selection.rxnPluses.forEach(id => action.addOp(new op.RxnPlusDelete(id)));
 
-	selection.chiralFlags.forEach(function (id) {
-		action.addOp(new op.ChiralFlagDelete(id));
-	}, this);
+	selection.chiralFlags.forEach(id =>action.addOp(new op.ChiralFlagDelete(id)));
 
 	action = action.perform(restruct);
 

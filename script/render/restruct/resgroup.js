@@ -16,7 +16,7 @@
 
 var Box2Abs = require('../../util/box2abs');
 var Vec2 = require('../../util/vec2');
-var Pile = require('../../util/pile');
+var Pile = require('../../util/pile').default;
 var util = require('../util');
 var scale = require('../../util/scale');
 

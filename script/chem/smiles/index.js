@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pile = require('../../util/pile');
+var Pile = require('../../util/pile').default;
 var Struct = require('../struct');
 var CisTrans = require('./cis_trans');
 var Dfs = require('./dfs');

@@ -21,6 +21,7 @@ import classNames from 'classnames';
 
 import element from '../chem/element';
 import Atom from './component/atom';
+import Icon from './component/icon';
 import ActionMenu, { shortcutStr } from './component/actionmenu';
 
 import action from './action';
@@ -251,7 +252,7 @@ function TemplatesList({ active, onAction }) {
 							title={`${struct.name} (${shortcut})`}
 							onClick={() => onAction({ tool: 'template', opts: { struct } })}
 						>
-							{struct.name}
+							<Icon name={`template-${i}`} />{struct.name}
 						</button>
 					</li>
 				))

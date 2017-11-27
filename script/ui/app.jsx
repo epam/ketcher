@@ -23,7 +23,7 @@ import { initTmplLib } from './state/templates';
 import initEditor from './state/editor';
 import { checkServer } from './state/server';
 import { initKeydownListener, initClipboard } from './state/hotkeys';
-import { initResize } from './state/toolbar';
+import { initResize, initIcons } from './state/toolbar';
 
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
@@ -83,7 +83,7 @@ const AppModal = connect(
 	);
 });
 
-const AppTemplates = connect(
+const AppHidden = connect(
 	null,
 	dispatch => ({
 		onInitTmpls: cacheEl => initTmplLib(dispatch, '', cacheEl)
@@ -91,6 +91,7 @@ const AppTemplates = connect(
 )(class extends Component {
 	componentDidMount() {
 		this.props.onInitTmpls(this.cacheEl);
+		initIcons(this.cacheEl);
 	}
 	render = () => (<div className="cellar" ref={(c) => { this.cacheEl = c; }} />)
 });
@@ -109,11 +110,11 @@ const App = connect(
 	}
 	render = props => (
 		<main role="application">
+			<AppHidden />
 			<AppEditor id="canvas" />
 			<Toolbar {...props} />
 			<AppCliparea />
 			<AppModal />
-			<AppTemplates />
 		</main>
 	)
 });

@@ -53,6 +53,14 @@ export function initResize() {
 	};
 }
 
+export function initIcons(cacheEl) {
+	const iconpath = 'ketcher.svg';
+	fetch(iconpath, { credentials: 'same-origin' }).then(function (resp) {
+		if (resp.ok) resp.text().then(svg => cacheEl.innerHTML += svg);
+		else throw Error(`Could not fetch ${iconpath}`);
+	});
+}
+
 export default function (state = initial, action) {
 	const { type, data } = action;
 

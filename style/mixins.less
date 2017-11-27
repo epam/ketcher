@@ -77,7 +77,6 @@
 	&:before, &:after {
 		display: inline-block;
 		vertical-align: middle;
-		font-family: 'ketcher';
 	}
 	&:after {
 		position: absolute;
@@ -100,11 +99,15 @@
 	width: @button-size;
 	height: @button-size;
 	margin: @button-grow;
-	//line-height: @toolbar-size;
 
-	&:before, &:after {
+	&>svg {
+		position: absolute; // TODO fix it
+		top: 0.1em;
+		left: 0.1em;
 		font-size: @icon-size;
-		//padding: @icon-padding;
+		width: @icon-size;
+		height: @icon-size;
+		fill: @main-color;
 	}
 }
 
@@ -113,6 +116,13 @@
 	width: @button-size * @width-cells;
 	margin-left: @button-grow * @width-cells;
 	margin-right: @button-grow * @width-cells;
+
+	&>svg {
+		position: static;
+		left: 0;
+		top: 0;
+		width: @icon-size * @width-cells;
+	}
 }
 ////////////////////
 
@@ -128,10 +138,13 @@
 	overflow: visible;
 	height: auto;
 	width: auto;
+
+	&>svg { // dropdown
+		display: none;
+	}
 	// &> menu {
 	// 	margin: 0 !important;  // TODO: fix me in js
 	// }
-	.collapsed-icon(none);
 }
 
 .collapsed-size(@dim) {
@@ -148,27 +161,17 @@
 }
 
 .collapsed-icon() {
-	&:after {
-		font-size: 7px;
+	&>svg {
+		display: block;
 		width: 7px;
 		height: 7px;
-		display: block;
-		font-family: 'ketcher';
-		content: @icon-dropdown;
 		position: absolute;
-		z-index: 10;
 		right: 0;
 		bottom: 0;
 	}
-	&:hover:after {
+	&:hover>svg {
 		//.scale-highlight;
-		color: @active-color;
-	}
-}
-
-.collapsed-icon(none) {
-	&:after {
-		content: none;
+		fill: @active-color;
 	}
 }
 
@@ -214,7 +217,7 @@
 		display: block;
 		width: 100%;
 		margin: 1px 0;
-		padding: 0.3em 4.5em 0.3em 0.3em; // 4.5em - place for kbd
+		padding: 0.3em 4.5em 0.3em 2em; // 4.5em - place for kbd
 		height: 1.7em;
 
 		font-size: @menu-font-size;
@@ -317,6 +320,9 @@
 .highlight-invert() {
 	background: #444;
 	color: white;
+	&>svg {
+		fill: white;
+	}
 }
 
 .highlight-invert(disabled) {
@@ -352,13 +358,6 @@
 
 .colorize(@color) when not (@color = inherit)  {
 	color: @color;
-}
-
-.monochrome-icons(@names, @color: inherit, @i: 1) when (@i <= length(@names)) {
-	@item: extract(@names, @i);
-	@icon: 'icon-@{item}';
-	#@{item} button:before { content: @@icon; .colorize(@color); }
-	.monochrome-icons(@names, @color, (@i + 1));
 }
 
 .atom-sketching(@names, @i: 1) when (@i <= length(@names)) {

@@ -117,7 +117,7 @@ gulp.task('test-render', function () {
 		.pipe(gulp.dest('./test/dist'));
 });
 
-gulp.task('style', ['font'], function () {
+gulp.task('style', ['icons-svg'], function () {
 	return gulp.src('style/index.less')
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rename(pkg.name))
@@ -126,17 +126,30 @@ gulp.task('style', ['font'], function () {
 			modifyVars: iconfont
 		}))
 	    // don't use less plugins due http://git.io/vqVDy bug
-		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
-		.pipe(plugins.cleanCss({ compatibility: 'ie8' }))
+		.pipe(plugins.autoprefixer({ browsers: 'last 2 versions' }))
+		.pipe(plugins.cleanCss())
 		.pipe(plugins.sourcemaps.write('./'))
+		.pipe(gulp.dest(options.dist));
+});
+
+gulp.task('icons-svg', function () {
+	return gulp.src(['icons/*.svg'])
+		.pipe(plugins.svgSprite({
+			shape: {
+				id: { generator: "icon-" }
+			},
+			svg: { xmlDeclaration: false },
+			mode: {
+				symbol: { dest: './' }
+			}
+		}))
+		.pipe(plugins.rename('ketcher.svg'))
 		.pipe(gulp.dest(options.dist));
 });
 
 gulp.task('html', ['patch-version'], function () {
 	const hbs = plugins.hb()
-	    .partials('template/menu/*.hbs')
-	    .partials('template/dialog/*.hbs')
-	    .data(Object.assign({ pkg }, options));
+	    .data(Object.assign({ pkg: pkg }, options));
 	return gulp.src('template/index.hbs')
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))

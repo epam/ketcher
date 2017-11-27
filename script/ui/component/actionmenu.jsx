@@ -20,6 +20,7 @@ import classNames from 'classnames';
 
 import action from '../action';
 import { hiddenAncestor } from '../state/toolbar';
+import Icon from '../component/icon';
 
 const isMac = /Mac/.test(navigator.platform); // eslint-disable-line no-undef
 const shortcutAliasMap = {
@@ -43,6 +44,7 @@ export function showMenuOrButton(action, item, status, props) { // eslint-disabl
 		return (
 			<ActionButton
 				{...props}
+				name={item}
 				action={action[item]}
 				status={status}
 			/>
@@ -60,7 +62,7 @@ export function showMenuOrButton(action, item, status, props) { // eslint-disabl
 	return (item.component(props));
 }
 
-function ActionButton({ action, status = {}, onAction }) { // eslint-disable-line no-shadow
+function ActionButton({ name, action, status = {}, onAction }) { // eslint-disable-line no-shadow
 	const shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button
@@ -74,7 +76,7 @@ function ActionButton({ action, status = {}, onAction }) { // eslint-disable-lin
 			}}
 			title={shortcut ? `${action.title} (${shortcut})` : action.title}
 		>
-			{action.title}
+			<Icon name={name}/>{action.title}
 		</button>
 	);
 }
@@ -94,6 +96,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 						onClick={ev => openHandle(ev, props.onOpen)}
 					>
 						{ showMenuOrButton(action, item, props.status[item], props) }
+						{ item.menu && <Icon name={`dropdown`} /> }
 					</li>
 				))
 			}

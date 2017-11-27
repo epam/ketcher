@@ -16,7 +16,7 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { Form, Field, SelectOneOf } from '../component/form';
+import Form, { Field, SelectOneOf } from '../component/form';
 import Dialog from '../component/dialog';
 import ComboBox from '../component/combobox';
 import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../data/sdata-schema';

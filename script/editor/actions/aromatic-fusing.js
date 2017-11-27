@@ -24,7 +24,10 @@ import Action from '../shared/action';
  * @param restruct { ReStruct }
  * @param events { Array<PipelineSubscription> }
  * @param bid { number }
- * @param template { Struct }
+ * @param template {{
+ * 		molecule: Struct,
+ * 		bid: number
+ *  }}
  * @param simpleFusing { Function }
  * @returns { Promise }
  */
@@ -84,7 +87,7 @@ function fromAromatize(restruct, astruct, bondMap) {
 	astruct.bonds.forEach((bond, bid) => {
 		if (bond.type !== Struct.Bond.PATTERN.TYPE.AROMATIC) return;
 		action.addOp(
-			new op.BondAttr(bondMap[bid], 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
+			new op.BondAttr(bondMap.get(bid), 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
 				.perform(restruct)
 		);
 	});

@@ -115,10 +115,10 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 		const begin = bond.begin === nei.aid ? nei.aid : dstId;
 		const end = bond.begin === nei.aid ? dstId : nei.aid;
 
-		if (dstId !== bond.begin && dstId !== bond.end && restruct.molecule.findBondId(begin, end)) // TODO: improve this {
+		if (dstId !== bond.begin && dstId !== bond.end && !restruct.molecule.findBondId(begin, end)) // TODO: improve this {
 			action.addOp(new op.BondAdd(begin, end, bond));
 
-		if (!skipBondsDel.includes('' + nei.bid))
+		if (!skipBondsDel.includes(nei.bid))
 			action.addOp(new op.BondDelete(nei.bid));
 	});
 

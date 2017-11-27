@@ -124,8 +124,8 @@ SelectTool.prototype.mousemove = function (event) {
 
 		if (this.dragCtx.mergeItems) {
 			const hoverMerge = {
-				atoms: Object.values(this.dragCtx.mergeItems.atoms),
-				bonds: Object.values(this.dragCtx.mergeItems.bonds)
+				atoms: Array.from(this.dragCtx.mergeItems.atoms.values()),
+				bonds: Array.from(this.dragCtx.mergeItems.bonds.values())
 			};
 			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
 		} else {
@@ -163,10 +163,10 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			this.editor.selection(null);
 
 			// merge single atoms
-			Object.entries(this.dragCtx.mergeItems.atoms).forEach((pair) => {
+			this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
 				this.dragCtx.action = this.dragCtx.action ?
-					fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
-					fromAtomMerge(restruct, +pair[0], +pair[1]);
+					fromAtomMerge(restruct, src, dst).mergeWith(this.dragCtx.action) :
+					fromAtomMerge(restruct, src, dst);
 			});
 
 			// merge bonds
@@ -238,27 +238,35 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { //
 
 /**
  * @param restruct { ReStruct }
- * @param closestMap { Map<number, number> }
- * @return { Map<number, number> }
+ * @param closestMap {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ * @return {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
  */
 function closestToMerge(restruct, closestMap) {
 	const struct = restruct.molecule;
-	const mergeMap = Object.assign({}, closestMap);
+	const mergeMap = {
+		atoms: new Map(closestMap.atoms),
+		bonds: new Map(closestMap.bonds)
+	};
 
-	Object.entries(closestMap.bonds).forEach(([srcId, dstId]) => {
+	closestMap.bonds.forEach((dstId, srcId) => {
 		const bond = struct.bonds.get(srcId);
 		const bondCI = struct.bonds.get(dstId);
 
 		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
-			delete mergeMap.atoms[bond.begin];
-			delete mergeMap.atoms[bond.end];
+			mergeMap.atoms.delete(bond.begin);
+			mergeMap.atoms.delete(bond.end);
 		} else {
-			delete mergeMap.bonds[srcId];
+			mergeMap.bonds.delete(srcId);
 		}
 	});
 
-	if (Object.keys(mergeMap.atoms).length === 0 &&
-		Object.keys(mergeMap.bonds).length === 0) return null;
+	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null;
 
 	return mergeMap;
 }

@@ -135,18 +135,18 @@ export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disab
 }
 
 /**
- * @param restruct
- * @param mergeMap
+ * @param restruct { ReStruct }
+ * @param mergeMap { Map<number, number> }
  */
-export function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
+export function fromBondsMerge(restruct, mergeMap) {
 	let action = new Action();
 	const atomsToDelete = [];
-	const srcBonds = Object.keys(mergeMap).map(id => parseInt(id, 10));
+	const srcBonds = Array.from(mergeMap.keys()).map(id => parseInt(id, 10));
 	const struct = restruct.molecule;
 
-	Object.entries(mergeMap).forEach(([srcId, dstId]) => {
-		const bond = struct.bonds.get(+srcId);
-		const bondCI = struct.bonds.get(+dstId);
+	mergeMap.forEach((dstId, srcId) => {
+		const bond = struct.bonds.get(srcId);
+		const bondCI = struct.bonds.get(dstId);
 
 		// copy bond src attr and delete
 		let bondAttrAction = new Action();
@@ -157,7 +157,7 @@ export function fromBondsMerge(restruct, /* { srcId: dstId, ... } */ mergeMap) {
 		Object.keys(attrs).forEach((key) => {
 			bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
 		});
-		bondAttrAction.addOp(new op.BondDelete(+srcId));
+		bondAttrAction.addOp(new op.BondDelete(srcId));
 		bondAttrAction = bondAttrAction.perform(restruct);
 
 		// old src atoms

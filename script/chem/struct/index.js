@@ -405,7 +405,7 @@ Struct.prototype.sGroupDelete = function (sgid) {
 		this.atoms.get(atom).sgs.delete(sgid);
 	});
 
-	this.sGroupForest.delete(sgid);
+	this.sGroupForest.remove(sgid);
 	this.sgroups.delete(sgid);
 };
 

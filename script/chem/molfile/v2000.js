@@ -231,7 +231,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	var atomCount = utils.parseDecimalInt(countsSplit[0]);
 	var bondCount = utils.parseDecimalInt(countsSplit[1]);
 	var atomListCount = utils.parseDecimalInt(countsSplit[2]);
-	ctab.isChiral = utils.parseDecimalInt(countsSplit[4]) != 0;
+	ctab.isChiral = utils.parseDecimalInt(countsSplit[4]) !== 0;
 	var stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
 	var propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
 
@@ -286,7 +286,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 			emptyGroups.push(sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
-		ctab.sGroupForest.delete(emptyGroups[i]);
+		ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.delete(emptyGroups[i]);
 	}
 	for (var rgid in rLogic)

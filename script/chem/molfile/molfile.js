@@ -306,7 +306,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 		this.writePaddedNumber(bond.reactingCenterStatus, 3);
 
 		this.writeCR();
-	}, this);
+	});
 
 	while (atomProps_list.length > 0) {
 		this.write('A  ');

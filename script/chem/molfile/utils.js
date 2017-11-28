@@ -23,6 +23,7 @@ function paddedNum(number, width, precision) {
 	var numStr = number.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
 	if (numStr.length > width)
 		throw new Error('number does not fit');
+
 	return numStr.padStart(width);
 }
 

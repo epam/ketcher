@@ -109,7 +109,7 @@ function structNormalization(struct) {
 	});
 
 	normStruct.sgroups.forEach((sg) => {
-		sg.pp = sg.pp.sub(cbb.min);
+		sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min;
 	});
 
 	normStruct.rxnArrows.forEach((rxnArrow) => {

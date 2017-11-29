@@ -16,16 +16,16 @@
 
 var generics = {
 	atom: {
-		'any': {
+		any: {
 			labels: ['A', 'AH']
 		},
 		'no-carbon': {
 			labels: ['Q', 'QH']
 		},
-		'metal': {
+		metal: {
 			labels: ['M', 'MH']
 		},
-		'halogen': {
+		halogen: {
 			labels: ['X', 'XH']
 		}
 	},
@@ -53,11 +53,11 @@ var generics = {
 			}
 		},
 		cyclic: {
-			'labels': ['CYC', 'CYH'],
+			labels: ['CYC', 'CYH'],
 			'no-carbon': {
 				labels: ['CXX', 'CXH']
 			},
-			'carbo': {
+			carbo: {
 				labels: ['CBC', 'CBH'],
 				aryl: {
 					labels: ['ARY', 'ARH']
@@ -69,7 +69,7 @@ var generics = {
 					labels: ['CEL', 'CEH']
 				}
 			},
-			'hetero': {
+			hetero: {
 				labels: ['CHC', 'CHH'],
 				aryl: {
 					labels: ['HAR', 'HAH']
@@ -91,7 +91,7 @@ function mapify(tree, path, res) {
 			}, res);
 		}
 		return mapify(tree[key],
-		              path ? path.concat(key) : [key], res);
+			path ? path.concat(key) : [key], res);
 	}, res || {});
 }
 

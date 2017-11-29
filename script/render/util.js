@@ -43,7 +43,7 @@ function shiftRayBox(p, d, bb) {
 
 	// four corner points of the box
 	const b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
-		       bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
+		bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
 
 	const r = b.map(v => v.sub(p)); // b relative to p
 

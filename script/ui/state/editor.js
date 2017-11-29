@@ -113,7 +113,7 @@ export default function initEditor(dispatch, getState) {
 			.then(toSgroup),
 		onMessage: (msg) => {
 			if (msg.error) {
-				alert(msg.error);
+				alert(msg.error); // eslint-disable-line no-undef
 			} else {
 				let act = Object.keys(msg)[0];
 				console[act](msg[act]);

@@ -9,7 +9,9 @@
   },
   "globals": {
     "fetch": true,
-    "document": true
+    "document": true,
+    "window": true,
+    "localStorage": true
   },
   "rules": {
     "comma-dangle": ["error", "never"],
@@ -73,11 +75,8 @@
     "jsx-a11y/no-noninteractive-element-interactions": "off",
 
     /* remove below */ // TODO !!!
-    "no-undef": "off",
     "prefer-destructuring": "off", // TODO 200 errs ! DO IT
     "no-param-reassign": "off", // TODO 281 !!!
-    "no-mixed-spaces-and-tabs": "off", // TODO 146 !!!
-    "max-len": "off", // TODO many!!!
-    "quote-props": "off" // TODO 125!!!
+    "max-len": "off" // TODO many!!!
   }
 }

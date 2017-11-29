@@ -59,7 +59,7 @@ function Check(props) {
 				<Tabs
 					className="tabs"
 					captions={tabs}
-					  changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
+					changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
 				>
 					<ErrorsCheck moleculeErrors={moleculeErrors} />
 					<Field name="checkOptions" multiple type="checkbox" />

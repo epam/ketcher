@@ -17,7 +17,7 @@
 import { serverTransform } from '../state/server';
 
 export default {
-	'layout': {
+	layout: {
 		shortcut: 'Mod+l',
 		title: 'Layout',
 		action: {
@@ -25,7 +25,7 @@ export default {
 		},
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'clean': {
+	clean: {
 		shortcut: 'Mod+Shift+l',
 		title: 'Clean Up',
 		action: {
@@ -33,21 +33,21 @@ export default {
 		},
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'arom': {
+	arom: {
 		title: 'Aromatize',
 		action: {
 			thunk: serverTransform('aromatize')
 		},
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'dearom': {
+	dearom: {
 		title: 'Dearomatize',
 		action: {
 			thunk: serverTransform('dearomatize')
 		},
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'cip': {
+	cip: {
 		shortcut: 'Mod+p',
 		title: 'Calculate CIP',
 		action: {

@@ -26,7 +26,7 @@ function PasteTool(editor, struct) {
 
 	var rnd = editor.render;
 	var point = editor.lastEvent ?
-	    rnd.page2obj(editor.lastEvent) : null;
+		rnd.page2obj(editor.lastEvent) : null;
 	this.action = fromPaste(rnd.ctab, this.struct, point);
 	this.editor.update(this.action, true);
 }

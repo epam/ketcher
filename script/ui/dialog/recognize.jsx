@@ -59,7 +59,7 @@ function Recognize(prop) {
 							src={url(file) || ''}
 							onError={() => {
 								onImage(null);
-								alert("Error, it isn't a picture");
+								alert("Error, it isn't a picture"); // eslint-disable-line no-undef
 							}}
 						/>
 					)

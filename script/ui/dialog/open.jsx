@@ -72,7 +72,7 @@ class Open extends Component {
 					<input
 						type="checkbox"
 						checked={fragment}
-						   onClick={ev => this.changeFragment(ev.target)}
+						onClick={ev => this.changeFragment(ev.target)}
 					/>
 					Load as a fragment and copy to the Clipboard
 				</label>

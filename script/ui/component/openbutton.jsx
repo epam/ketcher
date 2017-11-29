@@ -47,7 +47,7 @@ class OpenButton extends Component {
 				<input
 					id="input-file"
 					onChange={ev => this.open(ev)}
-					   accept={type}
+					accept={type}
 					type="file"
 				/>
 				<label htmlFor="input-file">
@@ -65,7 +65,7 @@ function fileOpener(server) {
 			resolve(throughFileReader);
 		} else if (global.ActiveXObject) {
 			try {
-				const fso = new ActiveXObject('Scripting.FileSystemObject');
+				const fso = new ActiveXObject('Scripting.FileSystemObject'); // eslint-disable-line no-undef
 				resolve(file => Promise.resolve(throughFileSystemObject(fso, file)));
 			} catch (e) {
 				reject(e);
@@ -83,7 +83,7 @@ function fileOpener(server) {
 
 function throughFileReader(file) {
 	return new Promise((resolve, reject) => {
-		const rd = new FileReader();
+		const rd = new FileReader(); // eslint-disable-line no-undef
 
 		rd.onload = () => {
 			const content = rd.result;

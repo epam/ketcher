@@ -229,7 +229,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 				this.atoms[atomIdx].chirality = 2;
 		});
 	} catch (ex) {
-		alert('Warning: ' + ex.message);
+		alert('Warning: ' + ex.message); // eslint-disable-line no-undef
 	}
 
 	// write the SMILES itself

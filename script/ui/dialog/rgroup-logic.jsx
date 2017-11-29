@@ -53,7 +53,7 @@ function RgroupLogic(props) {
 		>
 			<Form
 				schema={rgroupSchema}
-				  customValid={{ range: r => rangeConv(r) }}
+				customValid={{ range: r => rangeConv(r) }}
 				init={prop}
 				{...formState}
 			>

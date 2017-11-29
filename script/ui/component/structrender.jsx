@@ -45,7 +45,7 @@ class StructRender extends Component {
 			try {
 				this.props.struct = molfile.parse(props.struct);
 			} catch (e) {
-				alert('Could not parse structure\n' + e);
+				alert('Could not parse structure\n' + e); // eslint-disable-line no-undef
 				this.props.struct = null;
 			}
 		}

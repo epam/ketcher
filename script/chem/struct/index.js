@@ -46,7 +46,7 @@ function Struct() {
 
 Struct.prototype.hasRxnProps = function () {
 	return this.atoms.find((aid, atom) => atom.hasRxnProps()) ||
-		   this.bonds.find((bid, bond) => bond.hasRxnProps());
+		this.bonds.find((bid, bond) => bond.hasRxnProps());
 };
 
 Struct.prototype.hasRxnArrow = function () {

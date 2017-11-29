@@ -16,7 +16,7 @@
 
 import keyName from 'w3c-keyname';
 
-const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
+const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
 
 function normalizeKeyName(name) {
 	let parts = name.split(/\+(?!$)/);
@@ -69,11 +69,11 @@ function normalizeKeyEvent(event, base = false) {
 	const isChar = name.length === 1 && name !== ' ';
 
 	return isChar && !base ? modifiers(name, event, !isChar) :
-	    modifiers(keyName.base[event.keyCode], event, true);
+		modifiers(keyName.base[event.keyCode], event, true);
 }
 
 function keyNorm(obj) {
-	if (obj instanceof KeyboardEvent)
+	if (obj instanceof KeyboardEvent) // eslint-disable-line no-undef
 		return normalizeKeyEvent(...arguments); // eslint-disable-line prefer-rest-params
 
 	return typeof obj === 'object' ? normalizeKeyMap(obj) :

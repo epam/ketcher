@@ -123,7 +123,7 @@ function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
 		const neibond = restruct.bonds.get(bid);
 
 		const singleUp = neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-						 neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP;
+			neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP;
 
 		if (singleUp)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);

@@ -61,10 +61,10 @@ class MeasureInput extends Component {
 }
 
 const measureMap = {
-	'px': 1,
-	'cm': 37.795278,
-	'pt': 1.333333,
-	'inch': 96
+	px: 1,
+	cm: 37.795278,
+	pt: 1.333333,
+	inch: 96
 };
 
 function convertValue(value, measureFrom, measureTo) {

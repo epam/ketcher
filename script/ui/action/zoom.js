@@ -22,7 +22,7 @@ export const zoomList = [
 ];
 
 export default {
-	'zoom': {
+	zoom: {
 		selected: editor => editor.zoom()
 	},
 	'zoom-out': {

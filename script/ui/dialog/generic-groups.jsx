@@ -18,15 +18,15 @@ import { h } from 'preact';
 import generics from '../../chem/generics';
 
 const viewSchema = {
-	'atom': {
+	atom: {
 		caption: 'Atom Generics',
 		order: ['any', 'no-carbon', 'metal', 'halogen']
 	},
-	'group': {
+	group: {
 		caption: 'Group Generics',
 		order: ['acyclic', 'cyclic']
 	},
-	'special': {
+	special: {
 		caption: 'Special Nodes',
 		order: []
 	},

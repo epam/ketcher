@@ -106,7 +106,7 @@ export function load(structStr, options) {
 
 		parsed.catch(() => {
 			// utils.loading('hide');
-			alert('Can\'t parse molecule!');
+			alert('Can\'t parse molecule!'); // eslint-disable-line no-undef
 		});
 
 		return parsed.then((struct) => {
@@ -122,7 +122,7 @@ export function load(structStr, options) {
 
 			return struct;
 		}, (err) => {
-			alert(err);
+			alert(err); // eslint-disable-line no-undef
 		});
 	};
 }

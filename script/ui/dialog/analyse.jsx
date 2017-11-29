@@ -31,7 +31,7 @@ function FrozenInput({ value }) {
 			type="text"
 			spellCheck={false}
 			value={value}
-			   onKeyDown={ev => allowMovement(ev)}
+			onKeyDown={ev => allowMovement(ev)}
 		/>
 	);
 }
@@ -45,7 +45,7 @@ function formulaInputMarkdown(value) {
 			className="chem-input"
 			spellCheck={false}
 			contentEditable
-			 onKeyDown={ev => allowMovement(ev)}
+			onKeyDown={ev => allowMovement(ev)}
 		>{value}
 		</div>
 	);

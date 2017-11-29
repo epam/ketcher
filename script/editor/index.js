@@ -76,7 +76,7 @@ Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
 		this.update(fromNewCanvas(this.render.ctab,
-		                                 value || new Struct()));
+			value || new Struct()));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;
@@ -99,7 +99,7 @@ Editor.prototype.zoom = function (value) {
 	if (arguments.length > 0) {
 		this.render.setZoom(value);
 		recoordinate(this, getStructCenter(this.render.ctab,
-		                                   this.selection()));
+			this.selection()));
 		this.render.update();
 	}
 	return this.render.options.zoom;
@@ -238,23 +238,23 @@ Editor.prototype.on = function (eventName, handler) {
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
-	 'mouseup', 'mouseleave'].forEach((eventName) => {
-		 editor.event[eventName] = new s.DOMSubscription();
-		 const subs = editor.event[eventName];
-		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
+		'mouseup', 'mouseleave'].forEach((eventName) => {
+		editor.event[eventName] = new s.DOMSubscription();
+		const subs = editor.event[eventName];
+		clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
-		 subs.add((event) => {
-			 editor.lastEvent = event;
-			 if (editor.tool() && eventName in editor.tool())
-				 editor.tool()[eventName](event);
-			 return true;
-		 }, -1);
+		subs.add((event) => {
+			editor.lastEvent = event;
+			if (editor.tool() && eventName in editor.tool())
+				editor.tool()[eventName](event);
+			return true;
+		}, -1);
 	});
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {
 	const pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
-	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
+		new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 
 	return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
 };

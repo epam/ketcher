@@ -21,7 +21,7 @@ import keyName from 'w3c-keyname';
 class Dialog extends Component {
 	exit(mode) {
 		let { params, result = () => null,
-			  valid = () => !!result() } = this.props;
+			valid = () => !!result() } = this.props;
 		let key = (mode === 'OK') ? 'onOk' : 'onCancel';
 		if (params && key in params && (key !== 'onOk' || valid()))
 			params[key](result());
@@ -38,8 +38,8 @@ class Dialog extends Component {
 	}
 	componentDidMount() {
 		const fe = this.base.querySelector(['input:not([type=checkbox]):not([type=button])', 'textarea',
-			                            '[contenteditable]', 'select'].join(',')) ||
-			     this.base.querySelector(['button.close'].join(','));
+			'[contenteditable]', 'select'].join(',')) ||
+			this.base.querySelector(['button.close'].join(','));
 		console.assert(fe, 'No active buttons');
 		if (fe.focus) fe.focus();
 	}

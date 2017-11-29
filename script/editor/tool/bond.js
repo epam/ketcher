@@ -114,7 +114,7 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 			);
 			var bondAddition = fromBondAddition(rnd.ctab,
 				this.bondProps, { label: 'C' }, { label: 'C' },
-			    Vec2.diff(xy, v), Vec2.sum(xy, v));
+				Vec2.diff(xy, v), Vec2.sum(xy, v));
 
 			this.editor.update(bondAddition[0]);
 		} else if (dragCtx.item.map === 'atoms') {

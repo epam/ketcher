@@ -88,9 +88,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 			index.text = aid.toString();
 			index.path = render.paper.text(ps.x, ps.y, index.text)
 				.attr({
-					'font': options.font,
+					font: options.font,
 					'font-size': options.fontszsub,
-					'fill': '#070'
+					fill: '#070'
 				});
 			index.rbb = util.relBox(index.path.getBBox());
 			draw.recenterText(index.path, index.rbb);
@@ -169,9 +169,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	if (aamText.length > 0) {
 		var elem = element.map[this.a.label];
 		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
+			fill: (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
 		});
 		var aamBox = util.relBox(aamPath.getBBox());
 		draw.recenterText(aamPath, aamBox);
@@ -282,9 +282,9 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontsz,
-			'fill': atom.color,
+			fill: atom.color,
 			'font-style': atom.a.pseudo ? 'italic' : ''
 		});
 
@@ -331,9 +331,9 @@ function showHydroIndex(atom, render, implh, rightMargin) {
 	hydroIndex.path =
 		render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': options.font,
+				font: options.font,
 				'font-size': options.fontszsub,
-				'fill': atom.color
+				fill: atom.color
 			});
 	hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 	draw.recenterText(hydroIndex.path, hydroIndex.rbb);
@@ -397,9 +397,9 @@ function showIsotope(atom, render, leftMargin) {
 	isotope.text = atom.a.isotope.toString();
 	isotope.path = render.paper.text(ps.x, ps.y, isotope.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	isotope.rbb = util.relBox(isotope.path.getBBox());
 	draw.recenterText(isotope.path, isotope.rbb);
@@ -427,9 +427,9 @@ function showCharge(atom, render, rightMargin) {
 
 	charge.path = render.paper.text(ps.x, ps.y, charge.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	charge.rbb = util.relBox(charge.path.getBBox());
 	draw.recenterText(charge.path, charge.rbb);
@@ -469,9 +469,9 @@ function showExplicitValence(atom, render, rightMargin) {
 	valence.text = '(' + valence.text + ')';
 	valence.path = render.paper.text(ps.x, ps.y, valence.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	valence.rbb = util.relBox(valence.path.getBBox());
 	draw.recenterText(valence.path, valence.rbb);
@@ -492,9 +492,9 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 	var hydrogen = data.hydrogen;
 	hydrogen.text = 'H';
 	hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
-		'font': options.font,
+		font: options.font,
 		'font-size': options.fontsz,
-		'fill': atom.color
+		fill: atom.color
 	});
 	hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
 	draw.recenterText(hydrogen.path, hydrogen.rbb);
@@ -508,9 +508,9 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 		hydroIndex.text = implh.toString();
 		hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': options.font,
+				font: options.font,
 				'font-size': options.fontszsub,
-				'fill': atom.color
+				fill: atom.color
 			});
 		hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 		draw.recenterText(hydroIndex.path, hydroIndex.rbb);
@@ -568,9 +568,9 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 
 			var attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText)
 				.attr({
-					'font': options.font,
+					font: options.font,
 					'font-size': options.fontsz,
-					'fill': atom.color
+					fill: atom.color
 				});
 			var attpntRbb = util.relBox(attpntPath1.getBBox());
 			draw.recenterText(attpntPath1, attpntRbb);

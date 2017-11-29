@@ -65,7 +65,7 @@ function api(base, defaultOptions) {
 		return function (data, options) {
 			const body = Object.assign({}, defaultData, data);
 			body.options = Object.assign(body.options || {},
-			                             defaultOptions, options);
+				defaultOptions, options);
 			return info.then(() => request(method, url, JSON.stringify(body), {
 				'Content-Type': 'application/json'
 			}));

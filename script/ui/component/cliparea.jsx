@@ -24,15 +24,15 @@ class ClipArea extends Component {
 		this.target = this.props.target || el.parentNode;
 
 		this.listeners = {
-			'mouseup': (event) => {
+			mouseup: (event) => {
 				if (this.props.focused() && !isFormElement(event.target))
 					autofocus(el);
 			},
-			'mousedown': (event) => {
+			mousedown: (event) => {
 				if (event.shiftKey === true && !isFormElement(event.target))
 					event.preventDefault();
 			},
-			'copy': (event) => {
+			copy: (event) => {
 				if (this.props.focused() && this.props.onCopy) {
 					const data = this.props.onCopy();
 					if (data)
@@ -40,7 +40,7 @@ class ClipArea extends Component {
 					event.preventDefault();
 				}
 			},
-			'cut': (event) => {
+			cut: (event) => {
 				if (this.props.focused() && this.props.onCut) {
 					const data = this.props.onCut();
 					if (data)
@@ -48,7 +48,7 @@ class ClipArea extends Component {
 					event.preventDefault();
 				}
 			},
-			'paste': (event) => {
+			paste: (event) => {
 				if (this.props.focused() && this.props.onPaste) {
 					const data = paste(event.clipboardData, this.props.formats);
 					if (data)

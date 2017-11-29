@@ -72,7 +72,7 @@ Stereocenters.prototype.buildFromBonds = function (/* const int *atom_types, con
 	});
 
 	if (alleneMask.size > 0)
-		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.');
+		alert('This structure may contain allenes, which cannot be represented in the SMILES notation. Relevant stereo-information will be discarded.'); // eslint-disable-line no-undef
 
 	atoms.forEach((atom, aid) => {
 		if (alleneMask.has(aid))

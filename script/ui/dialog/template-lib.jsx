@@ -33,12 +33,12 @@ import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templa
 import { onAction } from '../state/';
 
 const GREEK_SIMBOLS = {
-	'Alpha': 'A',
-	'alpha': 'α',
-	'Beta': 'B',
-	'beta': 'β',
-	'Gamma': 'Г',
-	'gamma': 'γ'
+	Alpha: 'A',
+	alpha: 'α',
+	Beta: 'B',
+	beta: 'β',
+	Gamma: 'Г',
+	gamma: 'γ'
 };
 
 function tmplName(tmpl, i) {
@@ -116,7 +116,7 @@ class TemplateLib extends Component {
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
 				<div
 					className={tmpl === this.props.selected ? 'td selected' : 'td'}
-					 title={greekify(tmplName(tmpl, index * COLS + i))}
+					title={greekify(tmplName(tmpl, index * COLS + i))}
 				>
 					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)} />
 					<button className="attach-button" onClick={() => this.props.onAttach(tmpl)}>

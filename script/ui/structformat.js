@@ -18,35 +18,35 @@ import molfile from '../chem/molfile';
 import smiles from '../chem/smiles';
 
 export const map = {
-	'mol': {
+	mol: {
 		name: 'MDL Molfile',
 		mime: 'chemical/x-mdl-molfile',
 		ext: ['.mol'],
 		supportsCoords: true
 	},
-	'rxn': {
+	rxn: {
 		name: 'MDL Rxnfile',
 		mime: 'chemical/x-mdl-rxnfile',
 		ext: ['.rxn'],
 		supportsCoords: true
 	},
-	'cml': {
+	cml: {
 		name: 'CML',
 		mime: 'chemical/x-cml',
 		ext: ['.cml', '.mrv'],
 		supportsCoords: true
 	},
-	'smiles': {
+	smiles: {
 		name: 'Daylight SMILES',
 		mime: 'chemical/x-daylight-smiles',
 		ext: ['.smi', '.smiles']
 	},
-	'smarts': {
+	smarts: {
 		name: 'Daylight SMARTS',
 		mime: 'chemical/x-daylight-smarts',
 		ext: ['.smarts']
 	},
-	'inchi': {
+	inchi: {
 		name: 'InChI String',
 		mime: 'chemical/x-inchi',
 		ext: ['.inchi']

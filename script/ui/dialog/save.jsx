@@ -37,7 +37,7 @@ class Save extends Component {
 			ev.preventDefault();
 		}
 		let converted = structFormat.toString(this.props.struct, type, this.props.server, this.props.options);
-		return converted.then(structStr => this.setState({ type, structStr }), (e) => { alert(e); });
+		return converted.then(structStr => this.setState({ type, structStr }), (e) => { alert(e); }); // eslint-disable-line no-undef
 	}
 
 	render() {

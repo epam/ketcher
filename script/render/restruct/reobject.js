@@ -45,7 +45,7 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 		if (noredraw) {
 			if (this.highlighting.type == 'set')
 				noredraw = !this.highlighting[0].removed;
-			 else
+			else
 				noredraw = !this.highlighting.removed;
 		}
 		if (noredraw) {

@@ -212,24 +212,24 @@ function AtomsList(atoms, { active, onAction }) {
 	return (
 		<menu>
 			{
-			  atoms.map((label) => {
-				  let index = element.map[label];
-				  let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
-				  return (
-					  <li
-						  className={classNames({
-							  selected: isAtom && active.opts.label === label
-						  })}
-					  >
-						  <Atom
-							  el={element[index]}
-							  shortcut={shortcut}
-							  onClick={() => onAction({ tool: 'atom', opts: { label } })}
-						  />
-					  </li>
-				  );
-			  })
-		  }
+				atoms.map((label) => {
+					let index = element.map[label];
+					let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
+					return (
+						<li
+							className={classNames({
+								selected: isAtom && active.opts.label === label
+							})}
+						>
+							<Atom
+								el={element[index]}
+								shortcut={shortcut}
+								onClick={() => onAction({ tool: 'atom', opts: { label } })}
+							/>
+						</li>
+					);
+				})
+			}
 		</menu>
 	);
 }
@@ -240,22 +240,22 @@ function TemplatesList({ active, onAction }) {
 	return (
 		<menu>
 			{
-			  templates.map((struct, i) => (
-				  <li
-					  id={`template-${i}`}
-					  className={classNames({
-						  selected: isTmpl && active.opts.struct === struct
-					  })}
-				  >
-					  <button
-						  title={`${struct.name} (${shortcut})`}
-						  onClick={() => onAction({ tool: 'template', opts: { struct } })}
-					  >
-						  {struct.name}
-					  </button>
-				  </li>
-			  ))
-		  }
+				templates.map((struct, i) => (
+					<li
+						id={`template-${i}`}
+						className={classNames({
+							selected: isTmpl && active.opts.struct === struct
+						})}
+					>
+						<button
+							title={`${struct.name} (${shortcut})`}
+							onClick={() => onAction({ tool: 'template', opts: { struct } })}
+						>
+							{struct.name}
+						</button>
+					</li>
+				))
+			}
 		</menu>
 	);
 }

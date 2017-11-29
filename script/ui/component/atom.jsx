@@ -18,7 +18,7 @@ import { h } from 'preact';
 import element from '../../chem/element';
 
 const metPrefix = ['alkali', 'alkaline-earth', 'transition',
-				   'post-transition']; // 'lanthanide', 'actinide'
+	'post-transition']; // 'lanthanide', 'actinide'
 
 function atomClass(el) {
 	let own = `atom-${el.label.toLowerCase()}`;

@@ -47,9 +47,9 @@ const MIEW_WINDOW = {
 };
 
 const MIEW_MODES = {
-	'lines': 'LN',
-	'ballsAndSticks': 'BS',
-	'licorice': 'LC'
+	lines: 'LN',
+	ballsAndSticks: 'BS',
+	licorice: 'LC'
 };
 
 function getLocalMiewOpts() {
@@ -85,8 +85,7 @@ function origin(url) {
 	if (!loc.hostname) // relative url, IE
 		loc = document.location;
 
-	return loc.protocol + '//' + loc.hostname +
-		   (!loc.port ? '' : ':' + loc.port);
+	return loc.protocol + '//' + loc.hostname + (!loc.port ? '' : ':' + loc.port);
 }
 
 function queryOptions(options, sep = '&') {
@@ -101,9 +100,9 @@ function queryOptions(options, sep = '&') {
 		return Object.keys(options).reduce((res, item) => {
 			let value = options[item];
 			res.push(typeof value === 'object' ?
-					 queryOptions(value) :
-					 encodeURIComponent(item) + '=' +
-					 encodeURIComponent(value));
+				queryOptions(value) :
+				encodeURIComponent(item) + '=' +
+				encodeURIComponent(value));
 			return res;
 		}, []).join(sep);
 	}
@@ -137,7 +136,7 @@ function miewSave(miew, url) {
 		addEventListener('message', function onsave(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data.startsWith('CML:')) {
 				window.removeEventListener('message', onsave);
-				resolve(atob(event.data.slice(4)));
+				resolve(atob(event.data.slice(4))); // eslint-disable-line no-undef
 			}
 		});
 	});
@@ -172,11 +171,11 @@ class Miew extends Component {
 	window() {
 		let opts = {
 			...this.opts,
-			load: `CML:${btoa(this.props.structStr)}`,
+			load: `CML:${btoa(this.props.structStr)}`, // eslint-disable-line no-undef
 			sourceType: 'message'
 		};
-		let br = this.base.getBoundingClientRect(); // Preact specifiec
-		                                            // see: epa.ms/1NAYWp
+		let br = this.base.getBoundingClientRect(); // Preact specifiec see: epa.ms/1NAYWp
+
 		let wndProps = {
 			...MIEW_WINDOW,
 			top: Math.round(br.top),
@@ -185,7 +184,7 @@ class Miew extends Component {
 			height: Math.round(br.height)
 		};
 		let wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
-		                      'miew', queryOptions(wndProps, ','));
+			'miew', queryOptions(wndProps, ','));
 		if (wnd) {
 			this.props.onCancel();
 			wnd.onload = function () {
@@ -210,7 +209,7 @@ class Miew extends Component {
 					</button>,
 					<button
 						className="window"
-						disabled={/MSIE|rv:11/i.test(navigator.userAgent)}
+						disabled={/MSIE|rv:11/i.test(navigator.userAgent)} // eslint-disable-line no-undef
 						onClick={() => this.window()}
 					>
 						Detach to new window

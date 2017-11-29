@@ -49,7 +49,7 @@ export default class VirtualList extends Component {
 
 	componentDidUpdate({ data }) {
 		const equal = (data.length === this.props.data.length &&
-					 this.props.data.every((v, i) => v === data[i]));
+			this.props.data.every((v, i) => v === data[i]));
 
 		this.resize(null, !equal);
 	}

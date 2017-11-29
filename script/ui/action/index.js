@@ -26,7 +26,7 @@ import { exec } from '../component/cliparea';
 import { miewAction } from '../state/miew';
 
 export default {
-	'new': {
+	new: {
 		shortcut: 'Mod+Delete',
 		title: 'Clear Canvas',
 		action: {
@@ -38,17 +38,17 @@ export default {
 			}
 		}
 	},
-	'open': {
+	open: {
 		shortcut: 'Mod+o',
 		title: 'Open…',
 		action: { dialog: 'open' }
 	},
-	'save': {
+	save: {
 		shortcut: 'Mod+s',
 		title: 'Save As…',
 		action: { dialog: 'save' }
 	},
-	'undo': {
+	undo: {
 		shortcut: 'Mod+z',
 		title: 'Undo',
 		action: (editor) => {
@@ -58,7 +58,7 @@ export default {
 			editor.historySize().undo === 0
 		)
 	},
-	'redo': {
+	redo: {
 		shortcut: ['Mod+Shift+z', 'Mod+y'],
 		title: 'Redo',
 		action: (editor) => {
@@ -68,7 +68,7 @@ export default {
 			editor.historySize().redo === 0
 		)
 	},
-	'cut': {
+	cut: {
 		shortcut: 'Mod+x',
 		title: 'Cut',
 		action: () => {
@@ -76,7 +76,7 @@ export default {
 		},
 		disabled: editor => !hasSelection(editor)
 	},
-	'copy': {
+	copy: {
 		shortcut: 'Mod+c',
 		title: 'Copy',
 		action: () => {
@@ -84,7 +84,7 @@ export default {
 		},
 		disabled: editor => !hasSelection(editor)
 	},
-	'paste': {
+	paste: {
 		shortcut: 'Mod+v',
 		title: 'Paste',
 		action: () => {
@@ -95,36 +95,36 @@ export default {
 				actions.active && actions.active.tool === 'paste'
 		)
 	},
-	'check': {
+	check: {
 		title: 'Check Structure',
 		action: { dialog: 'check' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'analyse': {
+	analyse: {
 		title: 'Calculated Values',
 		action: { dialog: 'analyse' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'recognize': {
+	recognize: {
 		title: 'Recognize Molecule',
 		action: { dialog: 'recognize' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	'miew': {
+	miew: {
 		title: '3D Viewer',
 		action: { thunk: miewAction	},
 		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
 	},
-	'settings': {
+	settings: {
 		title: 'Settings',
 		action: { dialog: 'settings' }
 	},
-	'help': {
+	help: {
 		shortcut: ['?', 'Shift+/'],
 		title: 'Help',
 		action: { dialog: 'help' }
 	},
-	'about': {
+	about: {
 		title: 'About',
 		action: { dialog: 'about' }
 	},
@@ -181,6 +181,6 @@ function hasSelection(editor) {
 }
 
 function dontClipMessage(title) {
-	alert('This action is unavailable via menu.\n' +
+	alert('This action is unavailable via menu.\n' + // eslint-disable-line no-undef
 		'Instead, use shortcut to ' + title + '.');
 }

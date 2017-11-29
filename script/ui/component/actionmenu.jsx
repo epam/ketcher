@@ -21,11 +21,11 @@ import classNames from 'classnames';
 import action from '../action';
 import { hiddenAncestor } from '../state/toolbar';
 
-const isMac = /Mac/.test(navigator.platform);
+const isMac = /Mac/.test(navigator.platform); // eslint-disable-line no-undef
 const shortcutAliasMap = {
-	'Escape': 'Esc',
-	'Delete': 'Del',
-	'Mod': isMac ? '⌘' : 'Ctrl'
+	Escape: 'Esc',
+	Delete: 'Del',
+	Mod: isMac ? '⌘' : 'Ctrl'
 };
 
 export function shortcutStr(shortcut) {
@@ -50,7 +50,7 @@ function ActionButton({ action, status = {}, onAction }) { // eslint-disable-lin
 		</button>
 	);
 }
-
+/* eslint-disable no-mixed-spaces-and-tabs */
 function ActionMenu({ name, menu, className, role, ...props }) {
 	return (
 		<menu

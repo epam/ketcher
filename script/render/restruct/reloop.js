@@ -77,7 +77,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 	if (loop.convex && options.aromaticCircle) {
 		path = paper.circle(this.centre.x, this.centre.y, this.radius)
 			.attr({
-				'stroke': '#000',
+				stroke: '#000',
 				'stroke-width': options.lineattr['stroke-width']
 			});
 	} else {
@@ -104,7 +104,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 		pathStr += 'Z';
 		path = paper.path(pathStr)
 			.attr({
-				'stroke': '#000',
+				stroke: '#000',
 				'stroke-width': options.lineattr['stroke-width'],
 				'stroke-dasharray': '- '
 			});

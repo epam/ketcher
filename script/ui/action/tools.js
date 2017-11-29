@@ -33,12 +33,12 @@ const toolActions = {
 		shortcut: 'Escape',
 		action: { tool: 'select', opts: 'fragment' }
 	},
-	'erase': {
+	erase: {
 		title: 'Erase',
 		shortcut: ['Delete', 'Backspace'],
 		action: { tool: 'eraser', opts: 1 } // TODO last selector mode is better
 	},
-	'chain': {
+	chain: {
 		title: 'Chain',
 		action: { tool: 'chain' }
 	},
@@ -72,7 +72,7 @@ const toolActions = {
 		title: 'Vertical Flip',
 		action: { tool: 'rotate', opts: 'vertical' }
 	},
-	'sgroup': {
+	sgroup: {
 		shortcut: 'Mod+g',
 		title: 'S-Group',
 		action: { tool: 'sgroup' }
@@ -116,15 +116,15 @@ const toolActions = {
 };
 
 const bondCuts = {
-	'single': '1',
-	'double': '2',
-	'triple': '3',
-	'up': '1',
-	'down': '1',
-	'updown': '1',
-	'crossed': '2',
-	'any': '0',
-	'aromatic': '4'
+	single: '1',
+	double: '2',
+	triple: '3',
+	up: '1',
+	down: '1',
+	updown: '1',
+	crossed: '2',
+	any: '0',
+	aromatic: '4'
 };
 
 const typeSchema = bondSchema.properties.type;

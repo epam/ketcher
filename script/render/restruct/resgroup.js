@@ -81,9 +81,9 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
 		var path = draw.bracket(render.paper, scale.obj2scaled(bracket.d, render.options),
-		                        scale.obj2scaled(bracket.n, render.options),
-		                        scale.obj2scaled(bracket.c, render.options),
-		                        bracket.w, bracket.h, render.options);
+			scale.obj2scaled(bracket.n, render.options),
+			scale.obj2scaled(bracket.c, render.options),
+			bracket.w, bracket.h, render.options);
 		set.push(path);
 		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
 			ir = i;
@@ -93,7 +93,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 		var indexPos = scale.obj2scaled(bracketR.c.addScaled(bracketR.n, shift * bracketR.h), render.options);
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
 			.attr({
-				'font': render.options.font,
+				font: render.options.font,
 				'font-size': render.options.fontszsub
 			});
 		if (indexAttribute)
@@ -112,7 +112,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 function showValue(paper, pos, sg, options) {
 	var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontsz
 		});
 	var box = text.getBBox();
@@ -343,7 +343,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);
 	var d = sg.bracketDir,
-		 n = d.rotateSC(1, 0);
+		n = d.rotateSC(1, 0);
 	var a0 = Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
 	var a1 = Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
 	var b0 = Vec2.lc2(d, bb.p1.x, n, bb.p0.y);

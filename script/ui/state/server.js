@@ -32,7 +32,7 @@ export function checkServer() {
 				indigoVersion: res.indigoVersion,
 				server: true
 			})),
-			err => alert(err)
+			err => alert(err) // eslint-disable-line no-undef
 		);
 	};
 }
@@ -45,7 +45,8 @@ export function recognize(file) {
 			dispatch(setStruct(res.struct));
 		}, () => {
 			dispatch(setStruct(null));
-			setTimeout(() => alert('Error! The picture isn\'t recognized.'), 200); // TODO: remove me...
+			// TODO: remove me...
+			setTimeout(() => alert('Error! The picture isn\'t recognized.'), 200); // eslint-disable-line no-undef
 		});
 		dispatch(setStruct(process));
 	};
@@ -55,7 +56,7 @@ export function check(optsTypes) {
 	return (dispatch, getState) => {
 		const { editor, server } = getState();
 		const options = getState().options.getServerSettings();
-		options.data = { 'types': optsTypes };
+		options.data = { types: optsTypes };
 
 		serverCall(editor, server, 'check', options)
 			.then(res => dispatch(checkErrors(res)))

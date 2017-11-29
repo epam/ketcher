@@ -37,26 +37,22 @@ const typeSchema = [
 ];
 
 const beforeSpan = {
-	'He': 16,
-	'B': 10,
-	'Al': 10,
-	'Hf': 1,
-	'Rf': 1
+	He: 16,
+	B: 10,
+	Al: 10,
+	Hf: 1,
+	Rf: 1
 };
 
 const main = rowPartition(element.filter(el => el && el.type !== 'actinide' &&
-						                 el.type !== 'lanthanide'));
+	el.type !== 'lanthanide'));
 const lanthanides = element.filter(el => el && el.type === 'lanthanide');
 const actinides = element.filter(el => el && el.type === 'actinide');
 
 function Header() {
 	return (
 		<tr>
-			{
-			  range(0, 19).map(i => (
-				  <th>{i || ''}</th>
-			  ))
-		  	}
+			{ range(0, 19).map(i => (<th>{i || ''}</th>)) }
 		</tr>
 	);
 }
@@ -99,7 +95,7 @@ function MainRow({ row, caption, refer, selected, onSelect, curEvents }) {
 				) : (
 					refer(el) ? <td className="ref">{refer(el)}</td> : <td colSpan={el} />
 				))
-		  }
+			}
 		</tr>
 	);
 }
@@ -119,7 +115,7 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
 						/>
 					</td>
 				))
-		  	}
+			}
 			<td />
 		</tr>
 	);
@@ -210,7 +206,7 @@ class PeriodTable extends Component {
 					className="tabs"
 					captions={tabs}
 					tabIndex={type !== 'gen' ? 0 : 1}
-					  changeTab={i => this.changeType(i === 0 ? 'atom' : 'gen')}
+					changeTab={i => this.changeType(i === 0 ? 'atom' : 'gen')}
 				>
 					<div className="period-table">
 						<table summary="Periodic table of the chemical elements">

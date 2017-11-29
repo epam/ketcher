@@ -27,11 +27,11 @@ function RotateTool(editor, dir) {
 		var restruct = editor.render.ctab;
 		var selection = editor.selection();
 		var singleBond = selection && selection.bonds &&
-		    Object.keys(selection).length === 1 &&
-		    selection.bonds.length == 1;
+			Object.keys(selection).length === 1 &&
+			selection.bonds.length == 1;
 
 		var action = !singleBond ? fromFlip(restruct, selection, dir) :
-		    fromBondAlign(restruct, selection.bonds[0], dir);
+			fromBondAlign(restruct, selection.bonds[0], dir);
 		editor.update(action);
 		return null;
 	}

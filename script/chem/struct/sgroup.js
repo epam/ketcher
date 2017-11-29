@@ -332,9 +332,9 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
 		throw { // eslint-disable-line no-throw-literal
-			'id': sgroup.id,
+			id: sgroup.id,
 			'error-type': 'cross-bond-number',
-			'message': 'Unsupported cross-bonds number'
+			message: 'Unsupported cross-bonds number'
 		};
 	}
 

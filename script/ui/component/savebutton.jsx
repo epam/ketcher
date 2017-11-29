@@ -64,7 +64,7 @@ function fileSaver(server) {
 	return new Promise((resolve, reject) => {
 		if (global.Blob && fs.saveAs) {
 			resolve((data, fn, type) => {
-				const blob = new Blob([data], { type });
+				const blob = new Blob([data], { type }); // eslint-disable-line no-undef
 				fs.saveAs(blob, fn);
 			});
 		} else if (server) {

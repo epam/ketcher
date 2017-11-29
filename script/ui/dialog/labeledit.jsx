@@ -41,8 +41,7 @@ function serialize(lc) {
 	let sign = '';
 	if (charge)
 		sign = lc.charge < 0 ? '-' : '+';
-	return (lc.isotope || '') + lc.label + radical +
-		   (charge > 1 ? charge : '') + sign;
+	return (lc.isotope || '') + lc.label + radical + (charge > 1 ? charge : '') + sign;
 }
 
 function deserialize(value) {
@@ -89,7 +88,7 @@ function LabelEdit(props) {
 			<Form
 				schema={labelEditSchema}
 				customValid={{ label: l => deserialize(l) }}
-				  init={init}
+				init={init}
 				{...formState}
 			>
 				<Field name="label" maxlength="20" size="10" />

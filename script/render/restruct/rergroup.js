@@ -69,13 +69,13 @@ function rGroupdrawBrackets(set, render, bb, d) {
 	var cy = 0.5 * (bb.p1.y + bb.p0.y);
 
 	var leftBracket = draw.bracket(render.paper, d.negated(),
-	                               d.negated().rotateSC(1, 0),
-	                               scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
-	                               bracketWidth, bracketHeight, render.options);
+		d.negated().rotateSC(1, 0),
+		scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
+		bracketWidth, bracketHeight, render.options);
 
 	var rightBracket = draw.bracket(render.paper, d, d.rotateSC(1, 0),
-	                                scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
-	                                bracketWidth, bracketHeight, render.options);
+		scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
+		bracketWidth, bracketHeight, render.options);
 
 	return set.push(leftBracket, rightBracket);
 }
@@ -102,9 +102,9 @@ ReRGroup.prototype.draw = function (render, options) { // eslint-disable-line ma
 	const label = render.paper
 		.text(p0.x, (p0.y + p1.y) / 2, 'R' + key + '=')
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontRLabel,
-			'fill': 'black'
+			fill: 'black'
 		});
 
 	const labelBox = util.relBox(label.getBBox());
@@ -112,9 +112,9 @@ ReRGroup.prototype.draw = function (render, options) { // eslint-disable-line ma
 
 	labelSet.push(label);
 	const logicStyle = {
-		'font': options.font,
+		font: options.font,
 		'font-size': options.fontRLogic,
-		'fill': 'black'
+		fill: 'black'
 	};
 
 	const logic = [rLogicToString(key, this.item)];

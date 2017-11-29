@@ -162,9 +162,9 @@ function reactingCenter(paper, p, options) {
 function topologyMark(paper, p, mark, options) {
 	var path = paper.text(p.x, p.y, mark)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': '#000'
+			fill: '#000'
 		});
 	var rbb = util.relBox(path.getBBox());
 	recenterText(path, rbb);
@@ -178,7 +178,7 @@ function radicalCap(paper, p, options) {
 	return paper.path('M{0},{1}L{2},{3}L{4},{5}',
 		tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
 		.attr({
-			'stroke': '#000',
+			stroke: '#000',
 			'stroke-width': options.lineWidth * 0.7,
 			'stroke-linecap': 'square',
 			'stroke-linejoin': 'miter'
@@ -202,16 +202,15 @@ function bracket(paper, d, n, c, bracketWidth, bracketHeight, options) { // esli
 	var b1 = a1.addScaled(d, -bracketWidth);
 
 	return paper.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-	                  tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
-	                  tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y))
-		.attr(options.sgroupBracketStyle);
+		tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
+		tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y)).attr(options.sgroupBracketStyle);
 }
 
 function selectionRectangle(paper, p0, p1, options) {
 	return paper.rect(tfx(Math.min(p0.x, p1.x)),
-	                  tfx(Math.min(p0.y, p1.y)),
-	                  tfx(Math.abs(p1.x - p0.x)),
-	                  tfx(Math.abs(p1.y - p0.y))).attr(options.lassoStyle);
+		tfx(Math.min(p0.y, p1.y)),
+		tfx(Math.abs(p1.x - p0.x)),
+		tfx(Math.abs(p1.y - p0.y))).attr(options.lassoStyle);
 }
 
 function selectionPolygon(paper, r, options) {

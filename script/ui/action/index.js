@@ -141,7 +141,8 @@ export default {
 		action: {
 			thunk: (dispatch, getState) => {
 				getState().editor.selection('all');
-				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+				const selectionTool = getState().toolbar.visibleTools.select;
+				dispatch({ type: 'ACTION', action: tools[selectionTool].action });
 			}
 		}
 	},
@@ -157,10 +158,11 @@ export default {
 		shortcut: "Mod+d",
 		action: {
 			thunk: (dispatch, getState) => {
+				const selectionTool = getState().toolbar.visibleTools.select;
 				const editor = getState().editor;
 				editor.alignDescriptors();
 				editor.selection('descriptors');
-				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+				dispatch({ type: 'ACTION', action: tools[selectionTool].action });
 			}
 		}
 	},

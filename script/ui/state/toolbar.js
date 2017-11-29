@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize, debounce, isEqual } from 'lodash/fp';
+import { capitalize, throttle, isEqual } from 'lodash/fp';
 import { basic as basicAtoms } from '../action/atoms';
 import tools from '../action/tools';
 
@@ -26,20 +26,34 @@ const initial = {
 };
 const MAX_ATOMS = 7;
 
+function changeBondName(visibleTool, activeTool) {
+	let	visibleTools;
+	const regExp = /(bond)(-)(common|stereo|query)/;
+	const menuHeight = window.innerHeight;
+	visibleTools = Object.keys(visibleTool).reduce((res, key) => {
+		if (key === 'bond' && menuHeight > 700) return res; // TODO remove me after update styles
+		if (key === 'transform' && menuHeight > 800) return res;
+		if (key === 'rgroup' && menuHeight > 850) return res;
+		if (!key.match(regExp) || menuHeight > 700)
+			res[key] = visibleTool[key];
+		return res;
+	}, { ...activeTool });
+	return visibleTools;
+}
+
 export function initResize() {
 	return function (dispatch, getState) {
-		const onResize = debounce(100, () => {
-			getState().editor.render.update();
-			dispatch({ type: 'CLEAR_VISIBLE' });
+		const onResize = throttle(250, () => {
+			const state = getState();
+			state.editor.render.update();
+			dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
 		});
-
 		addEventListener('resize', onResize);
 	}
 }
 
 export default function (state=initial, action) {
 	let { type, data } = action;
-
 	switch (type) {
 		case 'ACTION':
 			let visibleTool = toolInMenu(action.action);
@@ -50,7 +64,9 @@ export default function (state=initial, action) {
 			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
 			return { ...state, ...newState };
 		case 'CLEAR_VISIBLE':
-			return { ...state, opened: null, visibleTools: {} };
+			const activeTool = toolInMenu(action.data);
+			const correctTools = changeBondName(state.visibleTools, activeTool);
+			return { ...state, opened: null, visibleTools: { ...correctTools } };
 		case 'OPENED':
 			return { ...state, opened: data };
 		case 'UPDATE':
@@ -77,24 +93,13 @@ export function addAtoms(atomLabel) {
 	};
 }
 
-function getToolFromAction(action) {
-	let tool = null;
-
-	for (let toolName in tools) {
-		if (tools.hasOwnProperty(toolName) && isEqual(action, tools[toolName].action))
-			tool = toolName;
-	}
-
-	return tool;
-}
-
 function toolInMenu(action) {
-	let tool = getToolFromAction(action);
+	let tool = Object.keys(tools).find(toolName => isEqual(action, tools[toolName].action));
 
 	let sel = document.getElementById(tool);
 	let dropdown = sel && hiddenAncestor(sel);
 
-	return dropdown ? { [dropdown.id]: sel.id } : null;
+	return (dropdown && dropdown.id !== '') ? { [dropdown.id]: sel.id } : null;
 }
 
 export function hiddenAncestor(el, base) {

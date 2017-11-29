@@ -27,10 +27,12 @@ export function initEditor(dispatch, getState) {
 	const sleep = (time) => new Promise(resolve => setTimeout(resolve, time));
 
 	function resetToSelect(dispatch, getState) {
-		const resetToSelect = getState().options.settings.resetToSelect;
-		const activeTool = getState().actionState.activeTool.tool;
+		const state = getState();
+		const selectionTool = state.toolbar.visibleTools.select;
+		const resetToSelect = state.options.settings.resetToSelect;
+		const activeTool = state.actionState.activeTool.tool;
 		if (resetToSelect === true || resetToSelect === activeTool) // example: 'paste'
-			dispatch({ type: 'ACTION', action: acts['select-lasso'].action });
+			dispatch({ type: 'ACTION', action: acts[selectionTool].action });
 		else
 			updateAction();
 	}

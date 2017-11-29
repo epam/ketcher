@@ -70,8 +70,7 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 		.filter((sgid) => {
 			if (!isSubset.get(sgid))
 				return false;
-
-			return this.children.get(sgid).find(childId => isSubset.get(childId));
+			return this.children.get(sgid).findIndex(childId => isSubset.get(childId)) < 0;
 		});
 
 	console.assert(parents.length <= 1, 'We are here'); // there should be only one parent
@@ -96,6 +95,7 @@ SGroupForest.prototype.getPathToRoot = function (sgid) {
 
 SGroupForest.prototype.validate = function () {
 	const atomSets = this.getAtomSets();
+
 	this.molecule.sgroups.forEach((sg, sgid) => {
 		this.getPathToRoot(sgid); // this will throw an exception if there is a loop in the path to root
 	});

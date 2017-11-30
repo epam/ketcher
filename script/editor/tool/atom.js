@@ -26,8 +26,7 @@ function AtomTool(editor, atomProps) {
 		if (!editor.selection() || !editor.selection().atoms)
 			return new AtomTool(editor, atomProps);
 
-		var action = fromAtomsAttrs(editor.render.ctab, editor.selection().atoms,
-			atomProps, true);
+		const action = fromAtomsAttrs(editor.render.ctab, editor.selection().atoms, atomProps, true);
 		editor.update(action);
 		editor.selection(null);
 		return null;
@@ -40,22 +39,24 @@ function AtomTool(editor, atomProps) {
 
 AtomTool.prototype.mousedown = function (event) {
 	this.editor.hover(null);
-	var ci = this.editor.findItem(event, ['atoms']);
+	const ci = this.editor.findItem(event, ['atoms']);
+
 	if (!ci) { // ci.type == 'Canvas'
 		this.dragCtx = {};
 	} else if (ci.map === 'atoms') {
 		this.dragCtx = { item: ci };
 	}
 };
+
 AtomTool.prototype.mousemove = function (event) {
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
 	if (!this.dragCtx || !this.dragCtx.item) {
 		this.editor.hover(this.editor.findItem(event, ['atoms']));
 		return;
 	}
 
-	var dragCtx = this.dragCtx;
-	var ci = this.editor.findItem(event, ['atoms']);
+	const dragCtx = this.dragCtx;
+	const ci = this.editor.findItem(event, ['atoms']);
 
 	if (ci && ci.map === 'atoms' && ci.id === dragCtx.item.id) {
 		// fromAtomsAttrs
@@ -64,9 +65,9 @@ AtomTool.prototype.mousemove = function (event) {
 	}
 
 	// fromAtomAddition
-	var atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
+	const atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
 
-	var newAtomPos = utils.calcNewAtomPos(atom.pp, rnd.page2obj(event));
+	const newAtomPos = utils.calcNewAtomPos(atom.pp, rnd.page2obj(event));
 	if (dragCtx.action)
 		dragCtx.action.perform(rnd.ctab);
 
@@ -76,15 +77,18 @@ AtomTool.prototype.mousemove = function (event) {
 	)[0];
 	this.editor.update(dragCtx.action, true);
 };
+
 AtomTool.prototype.mouseup = function (event) {
 	if (this.dragCtx) {
-		var dragCtx = this.dragCtx;
-		var rnd = this.editor.render;
+		const dragCtx = this.dragCtx;
+		const rnd = this.editor.render;
+
 		this.editor.update(dragCtx.action || (
 			dragCtx.item ?
 				fromAtomsAttrs(rnd.ctab, dragCtx.item.id, this.atomProps, true) :
 				fromAtomAddition(rnd.ctab, rnd.page2obj(event), this.atomProps)
 		));
+
 		delete this.dragCtx;
 	}
 };
@@ -95,9 +99,19 @@ export function atomLongtapEvent(tool, render) {
 
 	const atomid = dragCtx.item && dragCtx.item.id;
 
-	const atom = (atomid !== undefined && atomid !== null) ? // edit atom or add atom
-	render.ctab.molecule.atoms.get(atomid) :
+	// edit atom or add atom
+	const atom = (atomid !== undefined && atomid !== null) ?
+		render.ctab.molecule.atoms.get(atomid) :
 		new Struct.Atom({ label: '' });
+
+	const lastEvent = tool.editor.lastEvent;
+
+	const shouldBeFired =
+		lastEvent.offsetX === lastEvent.layerX &&
+		lastEvent.offsetY === lastEvent.layerY;
+
+	if (!shouldBeFired)
+		return;
 
 	// TODO: longtab event
 	dragCtx.timeout = setTimeout(() => {
@@ -111,6 +125,7 @@ export function atomLongtapEvent(tool, render) {
 			editor.update(action);
 		});
 	}, 750);
+
 	dragCtx.stopTapping = function () {
 		if (dragCtx.timeout) {
 			clearTimeout(dragCtx.timeout);

@@ -62,30 +62,34 @@ EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		this.editor.update(fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
 		this.editor.selection(null);
-	} else {
-		var ci = this.editor.findItem(event, this.maps);
-		if (ci) { //  ci.type != 'Canvas'
-			this.editor.hover(null);
-			if (ci.map === 'atoms') {
-				this.editor.update(fromAtomDeletion(rnd.ctab, ci.id));
-			} else if (ci.map === 'bonds') {
-				this.editor.update(fromBondDeletion(rnd.ctab, ci.id));
-			} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-				this.editor.update(fromSgroupDeletion(rnd.ctab, ci.id));
-			} else if (ci.map === 'rxnArrows') {
-				this.editor.update(fromArrowDeletion(rnd.ctab, ci.id));
-			} else if (ci.map === 'rxnPluses') {
-				this.editor.update(fromPlusDeletion(rnd.ctab, ci.id));
-			} else if (ci.map === 'chiralFlags') {
-				this.editor.update(fromChiralFlagDeletion(rnd.ctab));
-			} else {
-				// TODO re-factoring needed - should be "map-independent"
-				console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');
-				return;
-			}
-			this.editor.selection(null);
-		}
 	}
+};
+
+EraserTool.prototype.click = function (event) {
+	const restruct = this.editor.render.ctab;
+	const ci = this.editor.findItem(event, this.maps);
+
+	if (!ci) return; // ci.type == 'Canvas'
+
+	this.editor.hover(null);
+	if (ci.map === 'atoms') {
+		this.editor.update(fromAtomDeletion(restruct, ci.id));
+	} else if (ci.map === 'bonds') {
+		this.editor.update(fromBondDeletion(restruct, ci.id));
+	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
+		this.editor.update(fromSgroupDeletion(restruct, ci.id));
+	} else if (ci.map === 'rxnArrows') {
+		this.editor.update(fromArrowDeletion(restruct, ci.id));
+	} else if (ci.map === 'rxnPluses') {
+		this.editor.update(fromPlusDeletion(restruct, ci.id));
+	} else if (ci.map === 'chiralFlags') {
+		this.editor.update(fromChiralFlagDeletion(restruct));
+	} else {
+		// TODO re-factoring needed - should be "map-independent"
+		console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');
+		return;
+	}
+	this.editor.selection(null);
 };
 
 export default EraserTool;

@@ -235,6 +235,11 @@ Editor.prototype.on = function (eventName, handler) {
 	this.event[eventName].add(handler);
 };
 
+function isMouseRight(event) {
+	return (event.which && event.which === 3) ||
+		(event.button && event.button === 2);
+}
+
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
@@ -244,9 +249,12 @@ function domEventSetup(editor, clientArea) {
 		clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
 		subs.add((event) => {
+			if (eventName !== 'mouseup' && isMouseRight(event)) // mouseup to complete drag actions
+				return true;
+			const EditorTool = editor.tool();
 			editor.lastEvent = event;
-			if (editor.tool() && eventName in editor.tool())
-				editor.tool()[eventName](event);
+			if (EditorTool && eventName in EditorTool)
+				EditorTool[eventName](event);
 			return true;
 		}, -1);
 	});

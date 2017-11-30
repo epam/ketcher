@@ -41,7 +41,7 @@ AttachTool.prototype.mousemove = function (event) {
 	return true;
 };
 
-AttachTool.prototype.mouseup = function (event) {
+AttachTool.prototype.click = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;

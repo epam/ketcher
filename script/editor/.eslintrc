@@ -1,7 +1,6 @@
 {
   "rules": { // TODO: remove file after refactor editor/
     "vars-on-top": 0,
-    "no-var": 0,
-    "eqeqeq": 0
+    "no-var": 0
   }
 }

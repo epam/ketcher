@@ -36,7 +36,8 @@ ChargeTool.prototype.mousemove = function (event) {
 		this.editor.hover(null);
 	return true;
 };
-ChargeTool.prototype.mouseup = function (event) {
+
+ChargeTool.prototype.click = function (event) {
 	var editor = this.editor;
 	var rnd = editor.render;
 	var struct = rnd.ctab.molecule;

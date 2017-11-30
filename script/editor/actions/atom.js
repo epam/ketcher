@@ -144,7 +144,7 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 
 export function mergeFragments(action, restruct, frid, frid2) {
 	var struct = restruct.molecule;
-	if (frid2 != frid && (typeof frid2 === 'number')) {
+	if (frid2 !== frid && (typeof frid2 === 'number')) {
 		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid2);
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));

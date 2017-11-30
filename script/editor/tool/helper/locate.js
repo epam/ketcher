@@ -167,7 +167,7 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 		w0 = w1;
 		flag0 = flag1;
 	}
-	return (counter % 2) != 0;
+	return (counter % 2) !== 0;
 }
 
 export default {

@@ -31,7 +31,7 @@ RGroupAtomTool.prototype.mousemove = function (event) {
 	this.editor.hover(this.editor.findItem(event, ['atoms']));
 };
 
-RGroupAtomTool.prototype.mouseup = function (event) {
+RGroupAtomTool.prototype.click = function (event) {
 	const rnd = this.editor.render;
 	const ci = this.editor.findItem(event, ['atoms']);
 

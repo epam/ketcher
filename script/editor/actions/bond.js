@@ -87,14 +87,14 @@ export function fromBondDeletion(restruct, id) {
 
 	action.addOp(new op.BondDelete(id));
 
-	if (atomGetDegree(restruct, bond.begin) == 1) {
+	if (atomGetDegree(restruct, bond.begin) === 1) {
 		if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
 			atomsToRemove.push(bond.begin);
 
 		action.addOp(new op.AtomDelete(bond.begin));
 	}
 
-	if (atomGetDegree(restruct, bond.end) == 1) {
+	if (atomGetDegree(restruct, bond.end) === 1) {
 		if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
 			atomsToRemove.push(bond.end);
 

@@ -31,7 +31,7 @@ RGroupFragmentTool.prototype.mousemove = function (event) {
 	this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };
 
-RGroupFragmentTool.prototype.mouseup = function (event) {
+RGroupFragmentTool.prototype.click = function (event) {
 	const editor = this.editor;
 	const struct = editor.render.ctab.molecule;
 	const ci = editor.findItem(event, ['frags', 'rgroups']);

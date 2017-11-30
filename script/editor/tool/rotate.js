@@ -28,7 +28,7 @@ function RotateTool(editor, dir) {
 		var selection = editor.selection();
 		var singleBond = selection && selection.bonds &&
 			Object.keys(selection).length === 1 &&
-			selection.bonds.length == 1;
+			selection.bonds.length === 1;
 
 		var action = !singleBond ? fromFlip(restruct, selection, dir) :
 			fromBondAlign(restruct, selection.bonds[0], dir);
@@ -79,7 +79,7 @@ RotateTool.prototype.mousedown = function (event) {
 					}
 					if (rotId == null) {
 						rotId = aid;
-					} else if (rotId != aid) {
+					} else if (rotId !== aid) {
 						rotAll = true;
 						return true;
 					}
@@ -116,7 +116,7 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 
 		var degrees = utils.degrees(angle);
 
-		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
+		if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
 		if ('action' in dragCtx)
 			dragCtx.action.perform(rnd.ctab);
 

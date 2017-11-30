@@ -38,6 +38,7 @@ ReactionArrowTool.prototype.mousedown = function (event) {
 		};
 	}
 };
+
 ReactionArrowTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
@@ -54,14 +55,18 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 		this.editor.hover(this.editor.findItem(event, ['rxnArrows']));
 	}
 };
-ReactionArrowTool.prototype.mouseup = function (event) {
-	var rnd = this.editor.render;
+
+ReactionArrowTool.prototype.mouseup = function () {
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
-	} else if (rnd.ctab.molecule.rxnArrows.size < 1) {
-		this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
+};
+
+ReactionArrowTool.prototype.click = function (event) {
+	const rnd = this.editor.render;
+	if (rnd.ctab.molecule.rxnArrows.size < 1)
+		this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 };
 
 export default ReactionArrowTool;

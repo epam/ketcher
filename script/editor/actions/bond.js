@@ -23,7 +23,7 @@ import Action from '../shared/action';
 import { atomGetAttr, atomForNewBond, atomGetDegree, atomGetSGroups } from './utils';
 import { fromAtomMerge, mergeFragments } from './atom';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
-import { FromFragmentSplit } from './fragment';
+import { fromFragmentSplit } from './fragment';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line max-params, max-statements
 	if (end === undefined) {
@@ -105,7 +105,7 @@ export function fromBondDeletion(restruct, id) {
 
 	action = action.perform(restruct);
 
-	action.mergeWith(new FromFragmentSplit(restruct, frid));
+	action.mergeWith(fromFragmentSplit(restruct, frid));
 
 	return action;
 }

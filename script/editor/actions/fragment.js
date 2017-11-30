@@ -140,7 +140,7 @@ function processAtom(restruct, aid, frid, newfrid) {
  * @return { Action }
  * @constructor
  */
-export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
+export function fromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
@@ -160,6 +160,9 @@ export function FromFragmentSplit(restruct, frid) { // TODO [RB] the thing is to
 		action.addOp(new op.FragmentDelete(frid).perform(restruct));
 		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid));
 	}
+
+	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
+		action.addOp(new op.ChiralFlagDelete().perform(restruct));
 
 	return action;
 }
@@ -241,7 +244,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	action = action.perform(restruct);
 
 	while (frids.length > 0)
-		action.mergeWith(new FromFragmentSplit(restruct, frids.pop()));
+		action.mergeWith(fromFragmentSplit(restruct, frids.pop()));
 
 	action.mergeWith(actionRemoveDataSGroups);
 

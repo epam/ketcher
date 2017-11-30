@@ -22,7 +22,7 @@ import Action from '../shared/action';
 import { atomGetAttr, atomGetDegree, atomGetNeighbors } from './utils';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromRGroupFragment } from './rgroup';
-import { FromFragmentSplit } from './fragment';
+import { fromFragmentSplit } from './fragment';
 
 export function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
@@ -59,7 +59,7 @@ export function fromAtomDeletion(restruct, id) {
 
 	action = action.perform(restruct);
 
-	action.mergeWith(new FromFragmentSplit(restruct, frid));
+	action.mergeWith(fromFragmentSplit(restruct, frid));
 
 	return action;
 }

@@ -177,7 +177,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				if (!props.get('label'))
 					props.set('label', new Pool());
 
-				pool.forEach((atom, aid) => props.get('label').set(aid, 'L#'));
+				pool.forEach((atomList, aid) => props.get('label').set(aid, 'L#'));
 			} else if (type == 'STY') { // introduce s-group
 				sGroup.initSGroup(sGroups, propertyData);
 			} else if (type == 'SST') {
@@ -219,7 +219,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
  */
 function applyAtomProp(atoms, values, propId) {
 	/* reader */
-	values.forEach((aid, propVal) => {
+	values.forEach((propVal, aid) => {
 		atoms.get(aid)[propId] = propVal;
 	});
 }
@@ -426,11 +426,11 @@ function parsePropertyLineAtomList(hdr, lst) {
 	var count = utils.parseDecimalInt(hdr[2]);
 	var notList = hdr[4].trim() == 'T';
 	var ids = labelsListToIds(lst.slice(0, count));
-	var ret = {};
-	ret[aid] = new Struct.AtomList({
+	var ret = new Pool();
+	ret.set(aid, new Struct.AtomList({
 		notList,
 		ids
-	});
+	}));
 	return ret;
 }
 

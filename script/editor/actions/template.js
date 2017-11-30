@@ -183,7 +183,7 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 	tmpl.bonds.forEach((tBond) => {
 		const existId = struct.findBondId(atomsMap.get(tBond.begin), atomsMap.get(tBond.end));
-		if (!existId)
+		if (existId === null)
 			action.addOp(new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct));
 		else
 			action.mergeWith(fromBondAttrs(restruct, existId, tmplBond, false, true));

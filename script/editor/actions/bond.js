@@ -121,10 +121,10 @@ export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disab
 	const action = new Action();
 
 	Object.keys(Struct.Bond.attrlist).forEach((key) => {
-		if (!bond[key])
+		if (!bond[key] && !reset)
 			return;
 
-		const value = reset ? Struct.Bond.attrGetDefault(key) : bond[key];
+		const value = bond[key] || Struct.Bond.attrGetDefault(key);
 		action.addOp(new op.BondAttr(id, key, value));
 	});
 

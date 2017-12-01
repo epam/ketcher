@@ -76,9 +76,11 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
 	aids.forEach((aid) => {
 		Object.keys(Struct.Atom.attrlist).forEach((key) => {
-			const value = attrs[key];
-			if (value || reset)
-				action.addOp(new op.AtomAttr(aid, key, value || Struct.Atom.attrGetDefault(key)));
+			if (!(key in attrs) && !reset)
+				return;
+
+			const value = (key in attrs) ? attrs[key] : Struct.Atom.attrGetDefault(key);
+			action.addOp(new op.AtomAttr(aid, key, value));
 		});
 
 		if (!reset && 'label' in attrs && attrs.label !== null && attrs.label !== 'L#' && !attrs['atomList'])

@@ -34,7 +34,7 @@ function parse(str, options) {
 				if (m) {
 					var field = m[1];
 					var value = pc.split('\n')[1].trim();
-					props[field] = isFinite(value) ? +value : value;
+					props[field] = isFinite(value) ? +value : value; // eslint-disable-line
 				}
 				return props;
 			}, {});

@@ -72,7 +72,8 @@ function ActionButton({ action, status = {}, onAction }) { // eslint-disable-lin
 					ev.stopPropagation();
 				}
 			}}
-			title={shortcut ? `${action.title} (${shortcut})` : action.title}>
+			title={shortcut ? `${action.title} (${shortcut})` : action.title}
+		>
 			{action.title}
 		</button>
 	);

@@ -331,11 +331,11 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	});
 
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
-		throw { // eslint-disable-line no-throw-literal
+		throw Error({
 			id: sgroup.id,
 			'error-type': 'cross-bond-number',
 			message: 'Unsupported cross-bonds number'
-		};
+		});
 	}
 
 	var xAtom1 = -1;
@@ -360,7 +360,7 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new Atom(atom));
 			newAtoms.push(aid2);
-			sgroup.atomSet[aid2] = 1;
+			sgroup.atomSet.add(aid2);
 			amap[aid] = aid2;
 		});
 		inBonds.forEach((bid) => {

@@ -286,7 +286,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	for (sid in sGroups) { // TODO: why do we need that?
 		Struct.SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
-			emptyGroups.push(sid);
+			emptyGroups.push(+sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
 		ctab.sGroupForest.remove(emptyGroups[i]);

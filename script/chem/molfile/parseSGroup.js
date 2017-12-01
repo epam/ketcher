@@ -108,7 +108,7 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 	for (var b = 0; b < bondsToRemove.length; ++b)
 		mol.bonds.delete(bondsToRemove[b]);
 	for (var a in atomReductionMap) {
-		mol.atoms.delete(a);
+		mol.atoms.delete(+a);
 		atomMap[a] = -1;
 	}
 	sgroup.atoms = sgroup.patoms;
@@ -177,7 +177,7 @@ function applySGroupProp(sGroups, propName, propData, numeric, core) { // eslint
 	const kv = readKeyValuePairs(propData, !(numeric));
 	for (const key of kv.keys())
 		// "core" properties are stored directly in an sgroup, not in sgroup.data
-		(core ? sGroups[key] : sGroups[key].data)[propName] = kv[key];
+		(core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
 }
 
 function applySGroupArrayProp(sGroups, propName, propData, shift) {

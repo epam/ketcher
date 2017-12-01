@@ -123,8 +123,8 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disa
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
-	lines = lines.concat(makeAtomBondLines('SAL', idstr, Object.keys(sgroup.atomSet), atomMap)); // TODO: check atomSet
-	lines = lines.concat(makeAtomBondLines('SPA', idstr, Object.keys(sgroup.parentAtomSet), atomMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, Array.from(sgroup.atomSet.values()), atomMap)); // TODO: check atomSet
+	lines = lines.concat(makeAtomBondLines('SPA', idstr, Array.from(sgroup.parentAtomSet.values()), atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 	var smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
 	lines.push(smtLine);

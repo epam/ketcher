@@ -138,7 +138,7 @@ class TemplateLib extends Component {
 									filename={'ketcher-tmpls.sdf'}>
 							Save To SDF…
 						</SaveButton>,
-						"OK", "Cancel"]}>
+						"Cancel","OK"]}>
 				<label>
 					<Input type="search" placeholder="Filter"
 						   value={ filter } onChange={value => onFilter(value)}/>

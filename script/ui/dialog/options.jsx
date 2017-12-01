@@ -47,7 +47,7 @@ function Settings(props) {
 						Save To File…
 					</SaveButton>,
 					<button onClick={ onReset }>Reset</button>,
-					"OK", "Cancel"]} >
+					"Cancel","OK"]} >
 			<Form schema={settingsSchema} init={initState} {...formState}>
 				<Accordion className="accordion" captions={tabs} active={activeTabs}>
 					<fieldset className="render">

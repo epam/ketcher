@@ -14,46 +14,54 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../../util/vec2');
+import Vec2 from '../../../util/vec2';
 
 function getElementsInRectangle(restruct, p0, p1) {
-	var bondList = [];
-	var atomList = [];
+	const bondList = [];
+	const atomList = [];
 
-	var x0 = Math.min(p0.x, p1.x),
-		x1 = Math.max(p0.x, p1.x),
-		y0 = Math.min(p0.y, p1.y),
-		y1 = Math.max(p0.y, p1.y);
-	restruct.bonds.each(function (bid, bond) {
-		var centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
+	const x0 = Math.min(p0.x, p1.x);
+	const x1 = Math.max(p0.x, p1.x);
+	const y0 = Math.min(p0.y, p1.y);
+	const y1 = Math.max(p0.y, p1.y);
+
+	restruct.bonds.forEach((bond, bid) => {
+		const centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
 			restruct.atoms.get(bond.b.end).a.pp, 0.5);
 		if (centre.x > x0 && centre.x < x1 && centre.y > y0 && centre.y < y1)
 			bondList.push(bid);
 	});
-	restruct.atoms.each(function (aid, atom) {
+
+	restruct.atoms.forEach((atom, aid) => {
 		if (atom.a.pp.x > x0 && atom.a.pp.x < x1 && atom.a.pp.y > y0 && atom.a.pp.y < y1)
 			atomList.push(aid);
 	});
-	var rxnArrowsList = [];
-	var rxnPlusesList = [];
-	restruct.rxnArrows.each(function (id, item) {
+
+	const rxnArrowsList = [];
+	const rxnPlusesList = [];
+
+	restruct.rxnArrows.forEach((item, id) => {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnArrowsList.push(id);
 	});
-	restruct.rxnPluses.each(function (id, item) {
+
+	restruct.rxnPluses.forEach((item, id) => {
 		if (item.item.pp.x > x0 && item.item.pp.x < x1 && item.item.pp.y > y0 && item.item.pp.y < y1)
 			rxnPlusesList.push(id);
 	});
-	var chiralFlagList = [];
-	restruct.chiralFlags.each(function (id, item) {
+
+	const chiralFlagList = [];
+	restruct.chiralFlags.forEach((item, id) => {
 		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
 			chiralFlagList.push(id);
 	});
-	var sgroupDataList = [];
-	restruct.sgroupData.each(function (id, item) {
+
+	const sgroupDataList = [];
+	restruct.sgroupData.forEach((item, id) => {
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
 			sgroupDataList.push(id);
 	});
+
 	return {
 		atoms: atomList,
 		bonds: bondList,
@@ -65,38 +73,46 @@ function getElementsInRectangle(restruct, p0, p1) {
 }
 
 function getElementsInPolygon(restruct, rr) { // eslint-disable-line max-statements
-	var bondList = [];
-	var atomList = [];
-	var r = [];
-	for (var i = 0; i < rr.length; ++i)
+	const bondList = [];
+	const atomList = [];
+	const r = [];
+
+	for (let i = 0; i < rr.length; ++i)
 		r[i] = new Vec2(rr[i].x, rr[i].y);
-	restruct.bonds.each(function (bid, bond) {
-		var centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
+
+	restruct.bonds.forEach((bond, bid) => {
+		const centre = Vec2.lc2(restruct.atoms.get(bond.b.begin).a.pp, 0.5,
 			restruct.atoms.get(bond.b.end).a.pp, 0.5);
 		if (isPointInPolygon(r, centre))
 			bondList.push(bid);
 	});
-	restruct.atoms.each(function (aid, atom) {
+
+	restruct.atoms.forEach((atom, aid) => {
 		if (isPointInPolygon(r, atom.a.pp))
 			atomList.push(aid);
 	});
-	var rxnArrowsList = [];
-	var rxnPlusesList = [];
-	restruct.rxnArrows.each(function (id, item) {
+
+	const rxnArrowsList = [];
+	const rxnPlusesList = [];
+
+	restruct.rxnArrows.forEach((item, id) => {
 		if (isPointInPolygon(r, item.item.pp))
 			rxnArrowsList.push(id);
 	});
-	restruct.rxnPluses.each(function (id, item) {
+
+	restruct.rxnPluses.forEach((item, id) => {
 		if (isPointInPolygon(r, item.item.pp))
 			rxnPlusesList.push(id);
 	});
-	var chiralFlagList = [];
-	restruct.chiralFlags.each(function (id, item) {
+
+	const chiralFlagList = [];
+	restruct.chiralFlags.forEach((item, id) => {
 		if (isPointInPolygon(r, item.pp))
 			chiralFlagList.push(id);
 	});
-	var sgroupDataList = [];
-	restruct.sgroupData.each(function (id, item) {
+
+	const sgroupDataList = [];
+	restruct.sgroupData.forEach((item, id) => {
 		if (isPointInPolygon(r, item.sgroup.pp))
 			sgroupDataList.push(id);
 	});
@@ -122,8 +138,8 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 	var w0 = null;
 	var counter = 0;
 	var eps = 1e-5;
-	var flag1 = false,
-		flag0 = false;
+	var flag1 = false;
+	var flag0 = false;
 
 	for (var i = 0; i < r.length; ++i) {
 		var v1 = Vec2.diff(r[i], p);
@@ -151,10 +167,10 @@ function isPointInPolygon(r, p) { // eslint-disable-line max-statements
 		w0 = w1;
 		flag0 = flag1;
 	}
-	return (counter % 2) != 0;
+	return (counter % 2) !== 0;
 }
 
-module.exports = {
+export default {
 	inRectangle: getElementsInRectangle,
 	inPolygon: getElementsInPolygon
 };

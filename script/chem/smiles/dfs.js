@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-
 function Dfs(mol, atomData, components, nReactants) {
 	this.molecule = mol;
 	this.atom_data = atomData;
@@ -23,13 +21,13 @@ function Dfs(mol, atomData, components, nReactants) {
 	this.nComponentsInReactants = -1;
 	this.nReactants = nReactants;
 
-	this.vertices = new Array(this.molecule.atoms.count()); // Minimum size
-	this.molecule.atoms.each(function (aid) {
+	this.vertices = new Array(this.molecule.atoms.size); // Minimum size
+	this.molecule.atoms.forEach((atom, aid) => {
 		this.vertices[aid] = new Dfs.VertexDesc();
 	}, this);
 
-	this.edges = new Array(this.molecule.bonds.count()); // Minimum size
-	this.molecule.bonds.each(function (bid) {
+	this.edges = new Array(this.molecule.bonds.size); // Minimum size
+	this.molecule.bonds.forEach((bond, bid) => {
 		this.edges[bid] = new Dfs.EdgeDesc();
 	}, this);
 
@@ -37,25 +35,25 @@ function Dfs(mol, atomData, components, nReactants) {
 }
 
 Dfs.VertexDesc = function () {
-	this.dfs_state = 0;       // 0 -- not on stack
+	this.dfs_state = 0; // 0 -- not on stack
 	// 1 -- on stack
 	// 2 -- removed from stack
-	this.parent_vertex = 0;   // parent vertex in DFS tree
-	this.parent_edge = 0;     // edge to parent vertex
-	this.branches = 0;    // how many DFS branches go out from this vertex}
+	this.parent_vertex = 0; // parent vertex in DFS tree
+	this.parent_edge = 0; // edge to parent vertex
+	this.branches = 0; // how many DFS branches go out from this vertex}
 };
 
 Dfs.EdgeDesc = function () {
 	this.opening_cycles = 0; // how many cycles are
 	// (i) starting with this edge
 	// and (ii) ending in this edge's first vertex
-	this.closing_cycle = 0;  // 1 if this edge closes a cycle
+	this.closing_cycle = 0; // 1 if this edge closes a cycle
 };
 
 Dfs.SeqElem = function (vIdx, parVertex, parEdge) {
-	this.idx = vIdx;                // index of vertex in _graph
+	this.idx = vIdx; // index of vertex in _graph
 	this.parent_vertex = parVertex; // parent vertex in DFS tree
-	this.parent_edge = parEdge;     // edge to parent vertex
+	this.parent_edge = parEdge; // edge to parent vertex
 };
 
 Dfs.prototype.walk = function () { // eslint-disable-line max-statements
@@ -77,7 +75,7 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 			};
 
 			while (cid < this.components.length && selected == -1) {
-				selected = Set.find(this.components[cid], findFunc, this);
+				selected = this.components[cid].find(findFunc);
 				if (selected === null) {
 					selected = -1;
 					cid++;
@@ -154,7 +152,7 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 };
 
 Dfs.prototype.edgeClosingCycle = function (eIdx) {
-	return this.edges[eIdx].closing_cycle != 0;
+	return this.edges[eIdx].closing_cycle !== 0;
 };
 
 Dfs.prototype.numBranches = function (vIdx) {
@@ -167,7 +165,7 @@ Dfs.prototype.numOpeningCycles = function (eIdx) {
 
 Dfs.prototype.toString = function () {
 	var str = '';
-	this.v_seq.each(function (seqElem) {
+	this.v_seq.forEach((seqElem) => {
 		str += seqElem.idx + ' -> ';
 	});
 	str += '*';

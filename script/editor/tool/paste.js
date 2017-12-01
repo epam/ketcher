@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+import { fromPaste } from '../actions/paste';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -26,8 +26,8 @@ function PasteTool(editor, struct) {
 
 	var rnd = editor.render;
 	var point = editor.lastEvent ?
-	    rnd.page2obj(editor.lastEvent) : null;
-	this.action = Action.fromPaste(rnd.ctab, this.struct, point);
+		rnd.page2obj(editor.lastEvent) : null;
+	this.action = fromPaste(rnd.ctab, this.struct, point);
 	this.editor.update(this.action, true);
 }
 
@@ -35,7 +35,7 @@ PasteTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if (this.action)
 		this.action.perform(rnd.ctab);
-	this.action = Action.fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
+	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
 	this.editor.update(this.action, true);
 };
 
@@ -47,7 +47,7 @@ PasteTool.prototype.mouseup = function () {
 	}
 };
 
-PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
+PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
 	var rnd = this.editor.render;
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action
@@ -56,4 +56,4 @@ PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () {
 	}
 };
 
-module.exports = PasteTool;
+export default PasteTool;

@@ -48,31 +48,35 @@ export function initResize() {
 			state.editor.render.update();
 			dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
 		});
-		addEventListener('resize', onResize);
-	}
+		addEventListener('resize', onResize); // eslint-disable-line
+	};
 }
 
-export default function (state=initial, action) {
+export default function (state = initial, action) {
 	let { type, data } = action;
+
 	switch (type) {
-		case 'ACTION':
-			let visibleTool = toolInMenu(action.action);
-			return visibleTool
-				? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-				: state;
-		case 'ADD_ATOMS':
-			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
-			return { ...state, ...newState };
-		case 'CLEAR_VISIBLE':
-			const activeTool = toolInMenu(action.data);
-			const correctTools = changeBondName(state.visibleTools, activeTool);
-			return { ...state, opened: null, visibleTools: { ...correctTools } };
-		case 'OPENED':
-			return { ...state, opened: data };
-		case 'UPDATE':
-			return { ...state, opened: null };
-		default:
-			return state;
+	case 'ACTION': {
+		let visibleTool = toolInMenu(action.action);
+		return visibleTool
+			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
+			: state;
+	}
+	case 'ADD_ATOMS': {
+		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
+		return { ...state, ...newState };
+	}
+	case 'CLEAR_VISIBLE': {
+		const activeTool = toolInMenu(action.data);
+		const correctTools = changeBondName(state.visibleTools, activeTool);
+		return { ...state, opened: null, visibleTools: { ...correctTools } };
+	}
+	case 'OPENED':
+		return { ...state, opened: data };
+	case 'UPDATE':
+		return { ...state, opened: null };
+	default:
+		return state;
 	}
 }
 

@@ -14,71 +14,73 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var Vec2 = require('../../util/vec2');
-var ReObject = require('./reobject');
-var scale = require('../../util/scale');
+const Box2Abs = require('../../util/box2abs');
+const Vec2 = require('../../util/vec2');
+const ReObject = require('./reobject');
+const scale = require('../../util/scale');
 
 function ReFrag(/* Struct.Fragment = {}*/frag) {
 	this.init('frag');
-
 	this.item = frag;
 }
+
 ReFrag.prototype = new ReObject();
+
 ReFrag.isSelectable = function () {
 	return false;
 };
 
-ReFrag.prototype.fragGetAtoms = function (render, fid) {
-	var ret = [];
-	render.ctab.atoms.each(function (aid, atom) {
-		if (atom.a.fragment == fid)
-			ret.push(aid);
-	}, this);
-	return ret;
+ReFrag.prototype.fragGetAtoms = function (restruct, fid) {
+	return Array.from(restruct.atoms.keys())
+		.filter(aid => restruct.atoms.get(aid).a.fragment === fid);
 };
 
-ReFrag.prototype.fragGetBonds = function (render, fid) {
-	var ret = [];
-	render.ctab.bonds.each(function (bid, bond) {
-		if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid &&
-		render.ctab.atoms.get(bond.b.end).a.fragment == fid)
-			ret.push(bid);
-	}, this);
-	return ret;
+ReFrag.prototype.fragGetBonds = function (restruct, fid) {
+	return Array.from(restruct.bonds.keys())
+		.filter((bid) => {
+			const bond = restruct.bonds.get(bid).b;
+
+			const firstFrag = restruct.atoms.get(bond.begin).a.fragment;
+			const secondFrag = restruct.atoms.get(bond.end).a.fragment;
+
+			return firstFrag === fid && secondFrag === fid;
+		});
 };
 
 ReFrag.prototype.calcBBox = function (restruct, fid, render) { // TODO need to review parameter list
 	var ret;
-	restruct.atoms.each(function (aid, atom) {
-		if (atom.a.fragment == fid) {
-			// TODO ReObject.calcBBox to be used instead
-			var bba = atom.visel.boundingBox;
-			if (!bba) {
-				bba = new Box2Abs(atom.a.pp, atom.a.pp);
-				var ext = new Vec2(0.05 * 3, 0.05 * 3);
-				bba = bba.extend(ext, ext);
-			} else {
-				if (!render) render = global._ui_editor.render; // eslint-disable-line
-				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
-			}
-			ret = (ret ? Box2Abs.union(ret, bba) : bba);
+	restruct.atoms.forEach((atom) => {
+		if (atom.a.fragment !== fid)
+			return;
+
+		// TODO ReObject.calcBBox to be used instead
+		let bba = atom.visel.boundingBox;
+		if (!bba) {
+			bba = new Box2Abs(atom.a.pp, atom.a.pp);
+			const ext = new Vec2(0.05 * 3, 0.05 * 3);
+			bba = bba.extend(ext, ext);
+		} else {
+			if (!render) render = global._ui_editor.render; // eslint-disable-line
+			bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		}
+		ret = (ret ? Box2Abs.union(ret, bba) : bba);
 	});
+
 	return ret;
 };
 
 // TODO need to review parameter list
 ReFrag.prototype._draw = function (render, fid, attrs) { // eslint-disable-line no-underscore-dangle
-	var bb = this.calcBBox(render.ctab, fid, render);
+	const bb = this.calcBBox(render.ctab, fid, render);
+
 	if (bb) {
-		var p0 = scale.obj2scaled(new Vec2(bb.p0.x, bb.p0.y), render.options);
-		var p1 = scale.obj2scaled(new Vec2(bb.p1.x, bb.p1.y), render.options);
+		const p0 = scale.obj2scaled(new Vec2(bb.p0.x, bb.p0.y), render.options);
+		const p1 = scale.obj2scaled(new Vec2(bb.p1.x, bb.p1.y), render.options);
 		return render.paper.rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0).attr(attrs);
-	} else { // eslint-disable-line no-else-return
-		// TODO abnormal situation, empty fragments must be destroyed by tools
-		console.assert(null, 'Empty fragment');
 	}
+
+	// TODO abnormal situation, empty fragments must be destroyed by tools
+	return console.assert(null, 'Empty fragment');
 };
 
 ReFrag.prototype.draw = function (render) { // eslint-disable-line no-unused-vars
@@ -90,19 +92,24 @@ ReFrag.prototype.drawHighlight = function (render) { // eslint-disable-line no-u
 };
 
 ReFrag.prototype.setHighlight = function (highLight, render) {
-	var fid = render.ctab.frags.keyOf(this);
-	if (!(typeof fid === "undefined")) {
-		render.ctab.atoms.each(function (aid, atom) {
-			if (atom.a.fragment == fid)
-				atom.setHighlight(highLight, render);
-		}, this);
-		render.ctab.bonds.each(function (bid, bond) {
-			if (render.ctab.atoms.get(bond.b.begin).a.fragment == fid)
-				bond.setHighlight(highLight, render);
-		}, this);
-	} else {
-		// TODO abnormal situation, fragment does not belong to the render
+	let fid = render.ctab.frags.keyOf(this);
+
+	if (!fid && fid !== 0) {
+		console.warn('Fragment does not belong to the render');
+		return;
 	}
+
+	fid = parseInt(fid, 10);
+
+	render.ctab.atoms.forEach((atom) => {
+		if (atom.a.fragment === fid)
+			atom.setHighlight(highLight, render);
+	});
+
+	render.ctab.bonds.forEach((bond) => {
+		if (render.ctab.atoms.get(bond.b.begin).a.fragment === fid)
+			bond.setHighlight(highLight, render);
+	});
 };
 
 module.exports = ReFrag;

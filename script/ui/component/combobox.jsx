@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 class ComboBox extends Component {
 	constructor(props) {
@@ -52,13 +51,19 @@ class ComboBox extends Component {
 
 		return (
 			<div>
-				<input type={type} value={value} onClick={this.click}
-					   onBlur={this.blur} onInput={this.updateInput} autocomplete="off"
+				<input
+					type={type}
+					value={value}
+					onClick={this.click}
+					onBlur={this.blur}
+					onInput={this.updateInput}
+					autoComplete="off"
 				/>
 				{
 					suggestList.length !== 0 ?
 						(
-							<ui className='suggestList'
+							<ui
+								className="suggestList"
 								style={`display: ${this.state.suggestsHidden ? 'none' : 'block'}`}
 							>
 								{

@@ -95,8 +95,8 @@ function bondSingleEither(paper, hb1, d, nlines, step, options) { // eslint-disa
 
 function bondDouble(paper, a1, a2, b1, b2, cisTrans, options) { // eslint-disable-line max-params
 	return paper.path(cisTrans ?
-			'M{0},{1}L{6},{7}M{4},{5}L{2},{3}' :
-			'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
+		'M{0},{1}L{6},{7}M{4},{5}L{2},{3}' :
+		'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
 	tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y), tfx(a2.x), tfx(a2.y), tfx(b2.x), tfx(b2.y))
 		.attr(options.lineattr);
 }
@@ -162,9 +162,9 @@ function reactingCenter(paper, p, options) {
 function topologyMark(paper, p, mark, options) {
 	var path = paper.text(p.x, p.y, mark)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': '#000'
+			fill: '#000'
 		});
 	var rbb = util.relBox(path.getBBox());
 	recenterText(path, rbb);
@@ -176,9 +176,9 @@ function radicalCap(paper, p, options) {
 	var dw = s,
 		dh = 2 * s;
 	return paper.path('M{0},{1}L{2},{3}L{4},{5}',
-	tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
+		tfx(p.x - dw), tfx(p.y + dh), tfx(p.x), tfx(p.y), tfx(p.x + dw), tfx(p.y + dh))
 		.attr({
-			'stroke': '#000',
+			stroke: '#000',
 			'stroke-width': options.lineWidth * 0.7,
 			'stroke-linecap': 'square',
 			'stroke-linejoin': 'miter'
@@ -202,16 +202,15 @@ function bracket(paper, d, n, c, bracketWidth, bracketHeight, options) { // esli
 	var b1 = a1.addScaled(d, -bracketWidth);
 
 	return paper.path('M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-	                  tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
-	                  tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y))
-		.attr(options.sgroupBracketStyle);
+		tfx(b0.x), tfx(b0.y), tfx(a0.x), tfx(a0.y),
+		tfx(a1.x), tfx(a1.y), tfx(b1.x), tfx(b1.y)).attr(options.sgroupBracketStyle);
 }
 
 function selectionRectangle(paper, p0, p1, options) {
 	return paper.rect(tfx(Math.min(p0.x, p1.x)),
-	                  tfx(Math.min(p0.y, p1.y)),
-	                  tfx(Math.abs(p1.x - p0.x)),
-	                  tfx(Math.abs(p1.y - p0.y))).attr(options.lassoStyle);
+		tfx(Math.min(p0.y, p1.y)),
+		tfx(Math.abs(p1.x - p0.x)),
+		tfx(Math.abs(p1.y - p0.y))).attr(options.lassoStyle);
 }
 
 function selectionPolygon(paper, r, options) {
@@ -261,7 +260,7 @@ function aromaticBondPaths(a2, a3, b2, b3, mask, dash) { // eslint-disable-line 
 function recenterText(path, rbb) {
 	// TODO: find a better way
 	if (Raphael.vml) { // dirty hack
-		console.assert(null, "Souldn't go here!");
+		console.assert(null, 'Souldn\'t go here!');
 		var gap = rbb.height * 0.16;
 		path.translateAbs(0, gap);
 		rbb.y += gap;
@@ -269,27 +268,27 @@ function recenterText(path, rbb) {
 }
 
 module.exports = {
-	recenterText: recenterText,
-	arrow: arrow,
-	plus: plus,
-	aromaticBondPaths: aromaticBondPaths,
-	bondSingle: bondSingle,
-	bondSingleUp: bondSingleUp,
-	bondSingleStereoBold: bondSingleStereoBold,
-	bondDoubleStereoBold: bondDoubleStereoBold,
-	bondSingleDown: bondSingleDown,
-	bondSingleEither: bondSingleEither,
-	bondDouble: bondDouble,
-	bondSingleOrDouble: bondSingleOrDouble,
-	bondTriple: bondTriple,
-	bondAromatic: bondAromatic,
-	bondAny: bondAny,
-	reactingCenter: reactingCenter,
-	topologyMark: topologyMark,
-	radicalCap: radicalCap,
-	radicalBullet: radicalBullet,
-	bracket: bracket,
-	selectionRectangle: selectionRectangle,
-	selectionPolygon: selectionPolygon,
-	selectionLine: selectionLine
+	recenterText,
+	arrow,
+	plus,
+	aromaticBondPaths,
+	bondSingle,
+	bondSingleUp,
+	bondSingleStereoBold,
+	bondDoubleStereoBold,
+	bondSingleDown,
+	bondSingleEither,
+	bondDouble,
+	bondSingleOrDouble,
+	bondTriple,
+	bondAromatic,
+	bondAny,
+	reactingCenter,
+	topologyMark,
+	radicalCap,
+	radicalBullet,
+	bracket,
+	selectionRectangle,
+	selectionPolygon,
+	selectionLine
 };

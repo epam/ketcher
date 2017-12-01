@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Map = require('../../util/map');
+/* eslint-disable guard-for-in */ // todo
 
+var Vec2 = require('../../util/vec2');
+var Pool = require('../../util/pool').default;
 var element = require('./../element');
 var Struct = require('./../struct/index');
 
@@ -87,24 +88,34 @@ function parseAtomListLine(/* string */atomListLine) {
 	return {
 		aid: number,
 		atomList: new Struct.AtomList({
-			notList: notList,
+			notList,
 			ids: list
 		})
 	};
 }
 
+/**
+ * @param ctab
+ * @param ctabLines
+ * @param shift
+ * @param end
+ * @param sGroups
+ * @param rLogic
+ * @returns { Pool }
+ */
 function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // eslint-disable-line max-statements, max-params
 	/* reader */
-	var props = new Map();
+	const props = new Pool();
+
 	while (shift < end) {
 		var line = ctabLines[shift];
 		if (line.charAt(0) == 'A') {
 			var propValue = ctabLines[++shift];
 			var isPseudo = /'.+'/.test(propValue);
 			if (isPseudo && !props.get('pseudo'))
-				props.set('pseudo', new Map());
+				props.set('pseudo', new Pool());
 			if (!isPseudo && !props.get('alias'))
-				props.set('alias', new Map());
+				props.set('alias', new Pool());
 			if (isPseudo) propValue = propValue.replace(/'/g, '');
 			props.get(isPseudo ? 'pseudo' : 'alias').set(utils.parseDecimalInt(line.slice(3, 6)) - 1, propValue);
 		} else if (line.charAt(0) == 'M') {
@@ -114,32 +125,26 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				break;
 			} else if (type == 'CHG') {
 				if (!props.get('charge'))
-					props.set('charge', new Map());
-				props.get('charge').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('charge', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'RAD') {
 				if (!props.get('radical'))
-					props.set('radical', new Map());
-				props.get('radical').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('radical', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'ISO') {
 				if (!props.get('isotope'))
-					props.set('isotope', new Map());
-				props.get('isotope').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('isotope', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'RBC') {
 				if (!props.get('ringBondCount'))
-					props.set('ringBondCount', new Map());
-				props.get('ringBondCount').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('ringBondCount', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'SUB') {
 				if (!props.get('substitutionCount'))
-					props.set('substitutionCount', new Map());
-				props.get('substitutionCount').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('substitutionCount', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'UNS') {
 				if (!props.get('unsaturatedAtom'))
-					props.set('unsaturatedAtom', new Map());
-				props.get('unsaturatedAtom').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('unsaturatedAtom', sGroup.readKeyValuePairs(propertyData));
 				// else if (type == "LIN") // link atom
 			} else if (type == 'RGP') { // rgroup atom
 				if (!props.get('rglabel'))
-					props.set('rglabel', new Map());
+					props.set('rglabel', new Pool());
 				var rglabels = props.get('rglabel');
 				var a2rs = sGroup.readKeyMultiValuePairs(propertyData);
 				for (var a2ri = 0; a2ri < a2rs.length; a2ri++) {
@@ -160,19 +165,22 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				rLogic[rgid] = logic;
 			} else if (type == 'APO') {
 				if (!props.get('attpnt'))
-					props.set('attpnt', new Map());
-				props.get('attpnt').update(sGroup.readKeyValuePairs(propertyData));
+					props.set('attpnt', sGroup.readKeyValuePairs(propertyData));
 			} else if (type == 'ALS') { // atom list
-				if (!props.get('atomList'))
-					props.set('atomList', new Map());
-				var list = parsePropertyLineAtomList(
+				const pool = parsePropertyLineAtomList(
 					utils.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
-					utils.partitionLineFixed(propertyData.slice(10), 4, false));
-				props.get('atomList').update(
-					list);
+					utils.partitionLineFixed(propertyData.slice(10), 4, false)
+				);
+
+				if (!props.get('atomList'))
+					props.set('atomList', new Pool());
 				if (!props.get('label'))
-					props.set('label', new Map());
-				for (var aid in list) props.get('label').set(aid, 'L#');
+					props.set('label', new Pool());
+
+				pool.forEach((atomList, aid) => {
+					props.get('label').set(aid, 'L#');
+					props.get('atomList').set(aid, atomList);
+				});
 			} else if (type == 'STY') { // introduce s-group
 				sGroup.initSGroup(sGroups, propertyData);
 			} else if (type == 'SST') {
@@ -207,9 +215,14 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 	return props;
 }
 
-function applyAtomProp(atoms /* Pool */, values /* Map */, propId /* string */) {
+/**
+ * @param atoms { Pool }
+ * @param values { Pool }
+ * @param propId { string }
+ */
+function applyAtomProp(atoms, values, propId) {
 	/* reader */
-	values.each(function (aid, propVal) {
+	values.forEach((propVal, aid) => {
 		atoms.get(aid)[propId] = propVal;
 	});
 }
@@ -221,7 +234,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	var atomCount = utils.parseDecimalInt(countsSplit[0]);
 	var bondCount = utils.parseDecimalInt(countsSplit[1]);
 	var atomListCount = utils.parseDecimalInt(countsSplit[2]);
-	ctab.isChiral = utils.parseDecimalInt(countsSplit[4]) != 0;
+	ctab.isChiral = utils.parseDecimalInt(countsSplit[4]) !== 0;
 	var stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
 	var propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
 
@@ -241,7 +254,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		ctab.bonds.add(bonds[i]);
 
 	var atomLists = atomListLines.map(parseAtomListLine);
-	atomLists.forEach(function (pair) {
+	atomLists.forEach((pair) => {
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 		ctab.atoms.get(pair.aid).label = 'L#';
 	});
@@ -250,7 +263,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	var rLogic = {};
 	var props = parsePropertyLines(ctab, ctabLines, shift,
 		Math.min(ctabLines.length, shift + propertyLinesCount), sGroups, rLogic);
-	props.each(function (propId, values) {
+	props.forEach((values, propId) => {
 		applyAtomProp(ctab.atoms, values, propId);
 	});
 
@@ -273,11 +286,11 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	for (sid in sGroups) { // TODO: why do we need that?
 		Struct.SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
-			emptyGroups.push(sid);
+			emptyGroups.push(+sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
 		ctab.sGroupForest.remove(emptyGroups[i]);
-		ctab.sgroups.remove(emptyGroups[i]);
+		ctab.sgroups.delete(emptyGroups[i]);
 	}
 	for (var rgid in rLogic)
 		ctab.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
@@ -387,7 +400,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 			var frag = {};
 			var frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
-			ctab.atoms.each(function (aid, atom) {
+			ctab.atoms.forEach((atom) => {
 				atom.fragment = frid;
 			});
 			ctab.mergeInto(ret);
@@ -405,22 +418,27 @@ function labelsListToIds(labels) {
 	return ids;
 }
 
+/**
+ * @param hdr
+ * @param lst
+ * @returns { Pool }
+ */
 function parsePropertyLineAtomList(hdr, lst) {
 	/* reader */
 	var aid = utils.parseDecimalInt(hdr[1]) - 1;
 	var count = utils.parseDecimalInt(hdr[2]);
 	var notList = hdr[4].trim() == 'T';
 	var ids = labelsListToIds(lst.slice(0, count));
-	var ret = {};
-	ret[aid] = new Struct.AtomList({
-		notList: notList,
-		ids: ids
-	});
+	var ret = new Pool();
+	ret.set(aid, new Struct.AtomList({
+		notList,
+		ids
+	}));
 	return ret;
 }
 
 module.exports = {
-	parseCTabV2000: parseCTabV2000,
-	parseRg2000: parseRg2000,
-	parseRxn2000: parseRxn2000
+	parseCTabV2000,
+	parseRg2000,
+	parseRxn2000
 };

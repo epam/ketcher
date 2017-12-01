@@ -16,11 +16,10 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 import Tabs from '../component/tabs';
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 import { check } from '../state/server';
 
 const checkSchema = {
@@ -30,7 +29,7 @@ const checkSchema = {
 		checkOptions: {
 			type: 'array',
 			items: {
-				type: "string",
+				type: 'string',
 				enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
 					'overlapping_bonds', 'rgroups', 'chiral', '3d'],
 				enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
@@ -50,13 +49,20 @@ function Check(props) {
 	const { result, moleculeErrors } = formState;
 
 	return (
-		<Dialog title="Structure Check" className="check"
-				result={() => result} params={prop}>
+		<Dialog
+			title="Structure Check"
+			className="check"
+			result={() => result}
+			params={prop}
+		>
 			<Form schema={checkSchema} {...formState}>
-				<Tabs className="tabs" captions={tabs}
-					  changeTab={(i) => i === 0 ? onCheck(result.checkOptions) : null}>
-					<ErrorsCheck moleculeErrors={moleculeErrors}/>
-					<Field name="checkOptions" multiple={true} type="checkbox"/>
+				<Tabs
+					className="tabs"
+					captions={tabs}
+					changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
+				>
+					<ErrorsCheck moleculeErrors={moleculeErrors} />
+					<Field name="checkOptions" multiple type="checkbox" />
 				</Tabs>
 			</Form>
 		</Dialog>
@@ -84,6 +90,6 @@ function ErrorsCheck(props) {
 export default connect(
 	store => ({	formState: store.modal.form }),
 	dispatch => ({
-		onCheck: (opts) => dispatch(check(opts))
+		onCheck: opts => dispatch(check(opts))
 	})
 )(Check);

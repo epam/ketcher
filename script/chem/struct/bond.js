@@ -93,7 +93,6 @@ Bond.attrlist = {
 	reactingCenterStatus: 0
 };
 
-// TODO: not used
 Bond.getAttrHash = function (bond) {
 	var attrs = {};
 	for (var attr in Bond.attrlist) {
@@ -106,10 +105,10 @@ Bond.getAttrHash = function (bond) {
 Bond.attrGetDefault = function (attr) {
 	if (attr in Bond.attrlist)
 		return Bond.attrlist[attr];
-	console.error('Attribute unknown');
+	return console.error('Attribute unknown');
 };
 
-Bond.prototype.hasRxnProps =  function () {
+Bond.prototype.hasRxnProps = function () {
 	return !!this.reactingCenterStatus;
 };
 
@@ -125,21 +124,17 @@ Bond.prototype.getDir = function (struct) {
 	return p2.sub(p1).normalized();
 };
 
+/**
+ * @param aidMap { Map<number, number> }
+ * @returns {Bond}
+ */
 Bond.prototype.clone = function (aidMap) {
-	var cp = new Bond(this);
+	const cp = new Bond(this);
 	if (aidMap) {
-		cp.begin = aidMap[cp.begin];
-		cp.end = aidMap[cp.end];
+		cp.begin = aidMap.get(cp.begin);
+		cp.end = aidMap.get(cp.end);
 	}
 	return cp;
-};
-
-Bond.prototype.findOtherEnd = function (i) {
-	if (i == this.begin)
-		return this.end;
-	if (i == this.end)
-		return this.begin;
-	console.error('bond end not found');
 };
 
 module.exports = Bond;

@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Struct = require('../../chem/struct');
-var Action = require('../action');
-var utils = require('./utils');
+import Vec2 from '../../util/vec2';
+import Struct from '../../chem/struct';
+import utils from '../shared/utils';
 
-var Atom = require('./atom');
-var Bond = require('./bond');
+import { atomLongtapEvent } from './atom';
+import { bondChangingAction } from '../actions/bond';
+import { fromChain } from '../actions/chain';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -31,8 +31,8 @@ function ChainTool(editor) {
 }
 
 ChainTool.prototype.mousedown = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
+	const rnd = this.editor.render;
+	const ci = this.editor.findItem(event, ['atoms', 'bonds']);
 	this.editor.hover(null);
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
@@ -41,7 +41,7 @@ ChainTool.prototype.mousedown = function (event) {
 	if (ci && ci.map === 'atoms') {
 		this.editor.selection({ atoms: [ci.id] }); // for change atom
 		// this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-		Atom.atomLongtapEvent(this, rnd);
+		atomLongtapEvent(this, rnd);
 	}
 	if (!this.dragCtx.item) // ci.type == 'Canvas'
 		delete this.dragCtx.item;
@@ -49,63 +49,81 @@ ChainTool.prototype.mousedown = function (event) {
 };
 
 ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
-	var editor = this.editor;
-	var rnd = editor.render;
+	const editor = this.editor;
+	const rnd = editor.render;
+
 	if (this.dragCtx) {
 		if ('stopTapping' in this.dragCtx)
 			this.dragCtx.stopTapping();
+
 		this.editor.selection(null);
-		var dragCtx = this.dragCtx;
+
+		const dragCtx = this.dragCtx;
+
 		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
 			if ('action' in dragCtx)
 				dragCtx.action.perform(rnd.ctab);
 
-			var atoms = rnd.ctab.molecule.atoms;
-			var pos0 = dragCtx.item ? atoms.get(dragCtx.item.id).pp :
+			const atoms = rnd.ctab.molecule.atoms;
+
+			const pos0 = dragCtx.item ?
+				atoms.get(dragCtx.item.id).pp :
 				dragCtx.xy0;
-			var pos1 = rnd.page2obj(event);
-			var sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
-			var angle = event.ctrlKey ? utils.calcAngle(pos0, pos1) :
+
+			const pos1 = rnd.page2obj(event);
+			const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+
+			const angle = event.ctrlKey ?
+				utils.calcAngle(pos0, pos1) :
 				utils.fracAngle(pos0, pos1);
 
-			dragCtx.action = Action.fromChain(rnd.ctab, pos0, angle, sectCount,
+			dragCtx.action = fromChain(rnd.ctab, pos0, angle, sectCount,
 				dragCtx.item ? dragCtx.item.id : null);
+
 			editor.event.message.dispatch({
-				info: sectCount + " sectors"
+				info: sectCount + ' sectors'
 			});
+
 			this.editor.update(dragCtx.action, true);
 			return true;
 		}
 	}
+
 	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 
 ChainTool.prototype.mouseup = function () {
-	var rnd = this.editor.render;
-	var struct = rnd.ctab.molecule;
+	const rnd = this.editor.render;
+	const struct = rnd.ctab.molecule;
+
 	if (this.dragCtx) {
 		if ('stopTapping' in this.dragCtx)
 			this.dragCtx.stopTapping();
-		var dragCtx = this.dragCtx;
 
-		var action = dragCtx.action;
+		const dragCtx = this.dragCtx;
+
+		let action = dragCtx.action;
+
 		if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
-			var bond = struct.bonds.get(dragCtx.item.id);
+			const bond = struct.bonds.get(dragCtx.item.id);
 
-			action = Bond.bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
+			action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
 				type: Struct.Bond.PATTERN.TYPE.SINGLE,
 				stereo: Struct.Bond.PATTERN.STEREO.NONE
 			});
 		}
+
 		delete this.dragCtx;
 		if (action)
 			this.editor.update(action);
 	}
+
 	return true;
 };
 
-ChainTool.prototype.cancel = ChainTool.prototype.mouseleave =
-	ChainTool.prototype.mouseup;
+ChainTool.prototype.cancel = ChainTool.prototype.mouseup;
 
-module.exports = ChainTool;
+ChainTool.prototype.mouseleave = ChainTool.prototype.mouseup;
+
+export default ChainTool;

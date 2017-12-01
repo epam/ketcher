@@ -18,49 +18,49 @@ import molfile from '../chem/molfile';
 import smiles from '../chem/smiles';
 
 export const map = {
-	'mol': {
+	mol: {
 		name: 'MDL Molfile',
 		mime: 'chemical/x-mdl-molfile',
 		ext: ['.mol'],
 		supportsCoords: true
 	},
-	'rxn': {
+	rxn: {
 		name: 'MDL Rxnfile',
-		mime:'chemical/x-mdl-rxnfile',
+		mime: 'chemical/x-mdl-rxnfile',
 		ext: ['.rxn'],
 		supportsCoords: true
 	},
-	'cml': {
+	cml: {
 		name: 'CML',
 		mime: 'chemical/x-cml',
 		ext: ['.cml', '.mrv'],
 		supportsCoords: true
 	},
-	'smiles': {
+	smiles: {
 		name: 'Daylight SMILES',
 		mime: 'chemical/x-daylight-smiles',
 		ext: ['.smi', '.smiles']
 	},
-	'smarts': {
+	smarts: {
 		name: 'Daylight SMARTS',
 		mime: 'chemical/x-daylight-smarts',
 		ext: ['.smarts']
 	},
-	'inchi': {
+	inchi: {
 		name: 'InChI String',
 		mime: 'chemical/x-inchi',
 		ext: ['.inchi']
 	}
 };
 
-export function guess (structStr, strict) {
+export function guess(structStr, strict) {
 	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
 	const molStr = structStr.trim();
 
 	if (molStr.indexOf('$RXN') !== -1)
 		return 'rxn';
 
-	const molMatch = molStr.match(/^(M  END|\$END MOL)$/m);
+	const molMatch = molStr.match(/^(M {2}END|\$END MOL)$/m);
 
 	if (molMatch) {
 		const end = molMatch.index + molMatch[0].length;
@@ -81,14 +81,14 @@ export function guess (structStr, strict) {
 	return strict ? null : 'mol';
 }
 
-export function toString (struct, format, server, serverOpts) {
+export function toString(struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
 
-	return new Promise((resolve, reject) => {
-		var moldata = molfile.stringify(struct);
-		if (format === 'mol' || format === 'rxn')
+	return new Promise((resolve) => {
+		const moldata = molfile.stringify(struct);
+		if (format === 'mol' || format === 'rxn') {
 			resolve(moldata);
-		else
+		} else {
 			resolve(server.then(() => (
 				server.convert({
 					struct: moldata,
@@ -98,12 +98,14 @@ export function toString (struct, format, server, serverOpts) {
 				if (format === 'smiles')
 					return smiles.stringify(struct);
 				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then(res => res.struct || res));
+			})
+				.then(res => res.struct || res));
+		}
 	});
 }
 
-export function fromString (structStr, opts, server, serverOpts) {
-	return new Promise(function (resolve, reject) {
+export function fromString(structStr, opts, server, serverOpts) {
+	return new Promise((resolve) => {
 		const format = guess(structStr);
 		console.assert(map[format], 'No such format');
 
@@ -122,7 +124,7 @@ export function fromString (structStr, opts, server, serverOpts) {
 				}, serverOpts)
 			), () => {
 				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then(res => {
+			}).then((res) => {
 				let struct = molfile.parse(res.struct);
 				if (!withCoords)
 					struct.rescale();
@@ -135,10 +137,10 @@ export function fromString (structStr, opts, server, serverOpts) {
 // Pretty stupid Inchi check (extract from save)
 export function couldBeSaved(struct, format) {
 	if (format === 'inchi') {
-		if (struct.rgroups.count() !== 0)
-			throw 'R-group fragments are not supported and will be discarded';
+		if (struct.rgroups.size !== 0)
+			throw new Error('R-group fragments are not supported and will be discarded');
 		struct = struct.clone(); // need this: .getScaffold()
-		struct.sgroups.each((sgid, sg) => {
+		struct.sgroups.forEach((sg) => {
 			// ? Not sure we should check it client side
 			if (sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
 				throw Error('InChi data format doesn\'t support s-groups');

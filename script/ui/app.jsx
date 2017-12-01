@@ -14,18 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { h, Component, render } from 'preact';
 import { Provider, connect } from 'preact-redux';
 import { omit } from 'lodash/fp';
 
-import state, { onAction, load } from './state';
+import createStore, { onAction, load } from './state';
 import { initTmplLib } from './state/templates';
-import { initEditor } from './state/editor';
+import initEditor from './state/editor';
 import { checkServer } from './state/server';
 import { initKeydownListener, initClipboard } from './state/hotkeys';
 import { initResize } from './state/toolbar';
 
-import { h, Component, render } from 'preact';
-/** @jsx h */
 import Toolbar from './toolbar';
 import StructEditor from './component/structeditor';
 import ClipArea from './component/cliparea';
@@ -44,11 +43,11 @@ const AppModal = connect(
 		modal: state.modal
 	}),
 	dispatch => ({
-		onOk: function (res) {
+		onOk: (res) => {
 			console.info('Output:', res);
 			dispatch({ type: 'MODAL_CLOSE' });
 		},
-		onCancel: function () {
+		onCancel: () => {
 			dispatch({ type: 'MODAL_CLOSE' });
 		}
 	}),
@@ -58,17 +57,17 @@ const AppModal = connect(
 		return {
 			modal: stateProps.modal,
 			...initProps,
-			onOk: function (res) {
+			onOk: (res) => {
 				if (prop && prop.onResult) prop.onResult(res);
 				dispatchProps.onOk(res);
 			},
-			onCancel: function () {
+			onCancel: () => {
 				if (prop && prop.onCancel) prop.onCancel();
 				dispatchProps.onCancel();
 			}
 		};
 	}
-)(({modal, ...props}) => {
+)(({ modal, ...props }) => {
 	if (!modal)
 		return null;
 
@@ -79,7 +78,7 @@ const AppModal = connect(
 
 	return (
 		<div className="overlay">
-			<Modal {...props}/>
+			<Modal {...props} />
 		</div>
 	);
 });
@@ -87,13 +86,13 @@ const AppModal = connect(
 const AppTemplates = connect(
 	null,
 	dispatch => ({
-		onInitTmpls: (cacheEl) => initTmplLib(dispatch, '', cacheEl)
+		onInitTmpls: cacheEl => initTmplLib(dispatch, '', cacheEl)
 	})
 )(class extends Component {
 	componentDidMount() {
 		this.props.onInitTmpls(this.cacheEl);
 	}
-	render = () => (<div className="cellar" ref={c => this.cacheEl = c} />)
+	render = () => (<div className="cellar" ref={(c) => { this.cacheEl = c; }} />)
 });
 
 const AppCliparea = connect(
@@ -104,35 +103,35 @@ const AppCliparea = connect(
 const App = connect(
 	null,
 	{ onAction, checkServer }
-)(class extends Component {
+)(class extends Component { // eslint-disable-line
 	componentDidMount() {
 		this.props.checkServer();
 	}
 	render = props => (
 		<main role="application">
 			<AppEditor id="canvas" />
-			<Toolbar {...props}/>
-			<AppCliparea/>
-			<AppModal/>
-			<AppTemplates/>
+			<Toolbar {...props} />
+			<AppCliparea />
+			<AppModal />
+			<AppTemplates />
 		</main>
 	)
 });
 
 function init(el, options, server) {
-	const store = state(options, server);
+	const store = createStore(options, server);
 	store.dispatch(initKeydownListener(el));
 	store.dispatch(initResize());
 
 	render((
 		<Provider store={store}>
-		  <App/>
+			<App />
 		</Provider>
 	), el);
 
 	return {
-		load: (structStr, options) => store.dispatch(load(structStr, options))
-	}
+		load: (structStr, opts) => store.dispatch(load(structStr, opts))
+	};
 }
 
 export default init;

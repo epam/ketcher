@@ -22,10 +22,10 @@ export function miewAction(dispatch, getState) {
 	const server = getState().server;
 	let convert = structFormat.toString(editor.struct(),
 		'cml', server);
-	convert.then(function (cml) {
+	convert.then((cml) => {
 		openDialog(dispatch, 'miew', {
 			structStr: cml
-		}).then(function (res) {
+		}).then((res) => {
 			if (res.structStr)
 				dispatch(load(res.structStr));
 		});

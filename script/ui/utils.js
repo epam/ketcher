@@ -16,15 +16,15 @@
 
 /* local storage */
 const storage = {
-	warningMessage: "Your changes will be lost after the tab closing. See Help (Note 2).",
-	isAvailable: function () {
+	warningMessage: 'Your changes will be lost after the tab closing. See Help (Note 2).',
+	isAvailable() {
 		try {
 			return localStorage;
 		} catch (ex) {
 			return false;
 		}
 	},
-	getItem: function (key) {
+	getItem(key) {
 		let item = null;
 		try {
 			item = JSON.parse(localStorage.getItem(key));
@@ -33,7 +33,7 @@ const storage = {
 		}
 		return item;
 	},
-	setItem: function (key, data) {
+	setItem(key, data) {
 		let isSet = null;
 		try {
 			localStorage.setItem(key, JSON.stringify(data));
@@ -62,21 +62,22 @@ function mapOf(schema, prop) {
 
 function selectListOf(schema, prop) {
 	let desc = schema.properties && schema.properties[prop];
-	if (desc)
+	if (desc) {
 		return desc.enum.map((value, i) => {
 			let title = desc.enumNames && desc.enumNames[i];
 			return title ? { title, value } : value;
 		});
-	return schema.oneOf.map(desc => (
-		!desc.title ? constant(desc, prop) : {
-			title: desc.title,
-			value: constant(desc, prop)
+	}
+	return schema.oneOf.map(ds => (
+		!ds.title ? constant(ds, prop) : {
+			title: ds.title,
+			value: constant(ds, prop)
 		}
 	));
 }
 
 module.exports = {
-	mapOf: mapOf,
-	selectListOf: selectListOf,
-	storage: storage
+	mapOf,
+	selectListOf,
+	storage
 };

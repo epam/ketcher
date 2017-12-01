@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 var Box2Abs = require('../../util/box2abs');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
+var Pile = require('../../util/pile').default;
 var util = require('../util');
 var scale = require('../../util/scale');
 
@@ -43,7 +43,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	var set = render.paper.set();
 	var inBonds = [],
 		xBonds = [];
-	var atomSet = Set.fromList(sgroup.atoms);
+	var atomSet = new Pile(sgroup.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 	bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
@@ -52,20 +52,20 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 
 	switch (sgroup.type) {
 	case 'MUL':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
 		break;
 	case 'SRU':
 		var connectivity = sgroup.data.connectivity || 'eu';
 		if (connectivity == 'ht')
 			connectivity = '';
 		var subscript = sgroup.data.subscript || 'n';
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
 		break;
 	case 'SUP':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
 		break;
 	case 'GEN':
-		new SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
+		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
 		break;
 	case 'DAT':
 		set = drawGroupDat(remol, sgroup);
@@ -81,9 +81,9 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 	for (var i = 0; i < brackets.length; ++i) {
 		var bracket = brackets[i];
 		var path = draw.bracket(render.paper, scale.obj2scaled(bracket.d, render.options),
-		                        scale.obj2scaled(bracket.n, render.options),
-		                        scale.obj2scaled(bracket.c, render.options),
-		                        bracket.w, bracket.h, render.options);
+			scale.obj2scaled(bracket.n, render.options),
+			scale.obj2scaled(bracket.c, render.options),
+			bracket.w, bracket.h, render.options);
 		set.push(path);
 		if (ir < 0 || brackets[ir].d.x < bracket.d.x || (brackets[ir].d.x == bracket.d.x && brackets[ir].d.y > bracket.d.y))
 			ir = i;
@@ -93,13 +93,13 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 		var indexPos = scale.obj2scaled(bracketR.c.addScaled(bracketR.n, shift * bracketR.h), render.options);
 		var indexPath = render.paper.text(indexPos.x, indexPos.y, text)
 			.attr({
-				'font': render.options.font,
+				font: render.options.font,
 				'font-size': render.options.fontszsub
 			});
 		if (indexAttribute)
 			indexPath.attr(indexAttribute);
 		var indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
-		var t = Math.max(Vec2.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
+		var t = Math.max(util.shiftRayBox(indexPos, bracketR.d.negated(), indexBox), 3) + 2;
 		indexPath.translateAbs(t * bracketR.d.x, t * bracketR.d.y);
 		set.push(indexPath);
 	}
@@ -112,7 +112,7 @@ function SGroupdrawBrackets(set, render, sg, xbonds, atomSet, bb, d, lowerIndexT
 function showValue(paper, pos, sg, options) {
 	var text = paper.text(pos.x, pos.y, sg.data.fieldValue)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontsz
 		});
 	var box = text.getBBox();
@@ -145,8 +145,8 @@ function drawGroupDat(restruct, sgroup) {
 
 function definePP(restruct, sgroup) {
 	let topLeftPoint = sgroup.bracketBox.p1.add(new Vec2(0.5, 0.5));
-	const sgroups = restruct.molecule.sgroups.values();
-	for (let i = 0; i < restruct.molecule.sgroups.count(); ++i) {
+	const sgroups = Array.from(restruct.molecule.sgroups.values());
+	for (let i = 0; i < restruct.molecule.sgroups.size; ++i) {
 		if (!descriptorIntersects(sgroups, topLeftPoint))
 			break;
 
@@ -157,14 +157,14 @@ function definePP(restruct, sgroup) {
 }
 
 function descriptorIntersects(sgroups, topLeftPoint) {
-	return sgroups.some(sg => {
+	return sgroups.some((sg) => {
 		if (!sg.pp)
 			return false;
 
 		const sgBottomRightPoint = sg.pp.add(new Vec2(0.5, 0.5));
 		const bottomRightPoint = topLeftPoint.add(new Vec2(0.5, 0.5));
 
-		return Vec2.segmentIntersection(sg.pp, sgBottomRightPoint, topLeftPoint, bottomRightPoint);
+		return Box2Abs.segmentIntersection(sg.pp, sgBottomRightPoint, topLeftPoint, bottomRightPoint);
 	});
 }
 
@@ -196,7 +196,7 @@ function drawAttachedDat(restruct, sgroup) {
 	const paper = render.paper;
 	const set = paper.set();
 
-	Struct.SGroup.getAtoms(restruct, sgroup).forEach(aid => {
+	Struct.SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
 		const atom = restruct.atoms.get(aid);
 		const p = scale.obj2scaled(atom.a.pp, options);
 		const bb = atom.visel.boundingBox;
@@ -235,7 +235,7 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 	var bb = null;
 	var contentBoxes = [];
 
-	atoms.forEach(function (aid) {
+	atoms.forEach((aid) => {
 		var atom = mol.atoms.get(aid);
 		var bba = render ? render.ctab.atoms.get(aid).visel.boundingBox : null;
 		if (!bba) {
@@ -246,23 +246,23 @@ function bracketPos(sg, render, mol, xbonds) { // eslint-disable-line max-statem
 			bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		}
 		contentBoxes.push(bba);
-	}, this);
-	mol.sGroupForest.children.get(sg.id).forEach(function (sgid) {
+	});
+	mol.sGroupForest.children.get(sg.id).forEach((sgid) => {
 		var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 		bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
 		contentBoxes.push(bba);
-	}, this);
-	contentBoxes.forEach(function (bba) {
+	});
+	contentBoxes.forEach((bba) => {
 		var bbb = null;
-		[bba.p0.x, bba.p1.x].forEach(function (x) {
-			[bba.p0.y, bba.p1.y].forEach(function (y) {
+		[bba.p0.x, bba.p1.x].forEach((x) => {
+			[bba.p0.y, bba.p1.y].forEach((y) => {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
 				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
-			}, this);
-		}, this);
+			});
+		});
 		bb = (bb === null) ? bbb : Box2Abs.union(bb, bbb);
-	}, this);
+	});
 	var vext = new Vec2(0.2, 0.4);
 	if (bb !== null) bb = bb.extend(vext, vext);
 	sg.bracketBox = bb;
@@ -288,7 +288,7 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var bracketHeight = bb.sz().y;
 
 			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else if (xbonds.length === 2) {
 		(function () { // eslint-disable-line max-statements
 			var b1 = mol.bonds.get(xbonds[0]);
@@ -305,13 +305,13 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var dt = dr.rotateSC(1, 0);
 			var db = dt.negated();
 
-			mol.sGroupForest.children.get(id).forEach(function (sgid) {
+			mol.sGroupForest.children.get(id).forEach((sgid) => {
 				var bba = render.ctab.sgroups.get(sgid).visel.boundingBox;
 				bba = bba.translate((render.options.offset || new Vec2()).negated()).transform(scale.scaled2obj, render.options);
-				tl = Math.max(tl, Vec2.shiftRayBox(cl0, dl, bba));
-				tr = Math.max(tr, Vec2.shiftRayBox(cr0, dr, bba));
-				tt = Math.max(tt, Vec2.shiftRayBox(cc, dt, bba));
-				tb = Math.max(tb, Vec2.shiftRayBox(cc, db, bba));
+				tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba));
+				tr = Math.max(tr, util.shiftRayBox(cr0, dr, bba));
+				tt = Math.max(tt, util.shiftRayBox(cc, dt, bba));
+				tb = Math.max(tb, util.shiftRayBox(cc, db, bba));
 			}, this);
 			tl = Math.max(tl + 0.2, 0);
 			tr = Math.max(tr + 0.2, 0);
@@ -320,16 +320,16 @@ function getBracketParameters(mol, xbonds, atomSet, bb, d, render, id) { // esli
 			var bracketHeight = 1.5 + tt;
 			brackets.push(new BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
 				new BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else {
 		(function () {
 			for (var i = 0; i < xbonds.length; ++i) {
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
-				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
+				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
-		})();
+		}());
 	}
 	return brackets;
 }
@@ -343,7 +343,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 	var vext = new Vec2(lw * 4, lw * 6);
 	bb = bb.extend(vext, vext);
 	var d = sg.bracketDir,
-		 n = d.rotateSC(1, 0);
+		n = d.rotateSC(1, 0);
 	var a0 = Vec2.lc2(d, bb.p0.x, n, bb.p0.y);
 	var a1 = Vec2.lc2(d, bb.p0.x, n, bb.p1.y);
 	var b0 = Vec2.lc2(d, bb.p1.x, n, bb.p0.y);
@@ -355,10 +355,10 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 		.attr(options.highlightStyle);
 	set.push(sg.highlighting);
 
-	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach(function (aid) {
+	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach((aid) => {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach(function (bid) {
+	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach((bid) => {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
@@ -367,7 +367,7 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 ReSGroup.prototype.show = function (restruct) {
 	var render = restruct.render;
 	var sgroup = this.item;
-	if (sgroup.data.fieldName !== "MRV_IMPLICIT_H") {
+	if (sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
 		var remol = render.ctab;
 		var path = this.draw(remol, sgroup);
 		restruct.addReObjectPath('data', this.visel, path, null, true);

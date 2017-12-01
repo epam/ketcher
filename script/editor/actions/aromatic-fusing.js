@@ -15,22 +15,23 @@
  ***************************************************************************/
 
 import * as molfile from '../../chem/molfile';
-
-import op from '../op';
-import Action from '../action';
 import Struct from '../../chem/struct';
 
-// TODO move to actions
-function fromTemplateOnBondAction(restruct, events, bid, template, flip, force) {
-	if (!force)
-		return Action.fromTemplateOnBond(restruct, bid, template, flip);
+import op from '../shared/op';
+import Action from '../shared/action';
 
-	/* aromatic merge */
-	return fromAromaticBondFusing(restruct, events, bid, template, flip);
-}
-
-// TODO remove editor
-function fromAromaticBondFusing(restruct, events, bid, template, flip) {
+/**
+ * @param restruct { ReStruct }
+ * @param events { Array<PipelineSubscription> }
+ * @param bid { number }
+ * @param template {{
+ * 		molecule: Struct,
+ * 		bid: number
+ *  }}
+ * @param simpleFusing { Function }
+ * @returns { Promise }
+ */
+export function fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) {
 	const tmpl = template.molecule;
 	const struct = restruct.molecule;
 
@@ -38,46 +39,43 @@ function fromAromaticBondFusing(restruct, events, bid, template, flip) {
 	const beforeMerge = getFragmentWithBondMap(struct, frid);
 	let afterMerge = null;
 
-	if (!canBeAromatized(beforeMerge.frag) || !canBeAromatized(tmpl)) {
-		return Promise.resolve(
-			Action.fromTemplateOnBond(restruct, bid, template, flip)
-		);
-	}
-
 	let action = new Action();
 
-	return Promise.all([
-		events.aromatizeStruct.dispatch(beforeMerge.frag),
-		events.aromatizeStruct.dispatch(tmpl)
-	]).then(([res1, res2]) => {
-		const astruct = molfile.parse(res1.struct);
-		const atmpl = molfile.parse(res2.struct);
+	if (!canBeAromatized(beforeMerge.frag) || !canBeAromatized(tmpl)) {
+		action = simpleFusing(restruct, bid, template);
+		return Promise.resolve(action);
+	}
 
-		const aromatizeAction = fromAromatize(restruct, astruct, beforeMerge.bondMap);  	// AROMATIZE
-		const templateFusingAction = Action.fromTemplateOnBond(								// TMPL ON BOND
-			restruct, bid, { bid: template.bid, molecule: atmpl }, flip
-		);
+	return Promise.all([
+		events.aromatizeStruct.dispatch(beforeMerge.frag).then(res => molfile.parse(res.struct)),
+		events.aromatizeStruct.dispatch(tmpl).then(res => molfile.parse(res.struct))
+	]).then(([astruct, atmpl]) => {
+		// aromatize restruct fragment
+		const aromatizeAction = fromAromatize(restruct, astruct, beforeMerge.bondMap);
+		// merge template with fragment
+		const aromTemplate = { bid: template.bid, molecule: atmpl };
+		const templateFusingAction = simpleFusing(restruct, bid, aromTemplate);
+
 		action = templateFusingAction.mergeWith(aromatizeAction);
 
 		afterMerge = getFragmentWithBondMap(restruct.molecule, frid);
 
-		return events.dearomatizeStruct.dispatch(afterMerge.frag);
-	}).then(res => {
-		const destruct = molfile.parse(res.struct);
-
-		destruct.bonds.each((id, bond) => {
+		return events.dearomatizeStruct.dispatch(afterMerge.frag).then(res => molfile.parse(res.struct));
+	}).then((destruct) => {
+		destruct.bonds.forEach((bond) => {
 			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
 				throw Error('Bad dearomatize');
 		});
 
-		const dearomatizeAction = fromDearomatize(restruct, destruct, afterMerge.bondMap);  // DEAROMATIZE
+		// dearomatize restruct fragment
+		const dearomatizeAction = fromDearomatize(restruct, destruct, afterMerge.bondMap);
 		action = dearomatizeAction.mergeWith(action);
 
 		return action;
-	}).catch(err => {
+	}).catch((err) => {
 		console.info(err.message);
 		action.perform(restruct); // revert actions if error
-		action = Action.fromTemplateOnBond(restruct, bid, template,  flip);
+		action = simpleFusing(restruct, bid, template);
 
 		return action;
 	});
@@ -86,10 +84,10 @@ function fromAromaticBondFusing(restruct, events, bid, template, flip) {
 function fromAromatize(restruct, astruct, bondMap) {
 	const action = new Action();
 
-	astruct.bonds.each((bid, bond) => {
+	astruct.bonds.forEach((bond, bid) => {
 		if (bond.type !== Struct.Bond.PATTERN.TYPE.AROMATIC) return;
 		action.addOp(
-			new op.BondAttr(bondMap[bid], 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
+			new op.BondAttr(bondMap.get(bid), 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
 				.perform(restruct)
 		);
 	});
@@ -97,12 +95,18 @@ function fromAromatize(restruct, astruct, bondMap) {
 	return action;
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param dastruct { ReStruct }
+ * @param bondMap { Map<number, number> }
+ * @returns { Action }
+ */
 function fromDearomatize(restruct, dastruct, bondMap) {
 	const action = new Action();
 
-	dastruct.bonds.each((bid, bond) => {
+	dastruct.bonds.forEach((bond, bid) => {
 		action.addOp(
-			new op.BondAttr(bondMap[bid], 'type', bond.type)
+			new op.BondAttr(bondMap.get(bid), 'type', bond.type)
 				.perform(restruct)
 		);
 	});
@@ -113,32 +117,34 @@ function fromDearomatize(restruct, dastruct, bondMap) {
 /* UTILS */
 
 function canBeAromatized(struct) { // TODO correct this checking && move to chem.Struct ??
-	if (struct.loops.count() === 0) struct.prepareLoopStructure();
+	if (struct.loops.size === 0) struct.prepareLoopStructure();
 
 	const hasAromLoop = struct.loops.find((id, loop) => loop.aromatic);
-	if (struct.loops.count() === 0 || hasAromLoop) return false;
+	if (struct.loops.size === 0 || hasAromLoop) return false;
 
 	const correctDblBonds = struct.loops.find((id, loop) =>
-		loop.dblBonds === (loop.hbs.length / 2)
-	);
+		loop.dblBonds === (loop.hbs.length / 2));
+
 	return correctDblBonds !== undefined;
 }
 
+/**
+ * @param struct { Struct }
+ * @param frid { number }
+ * @returns {{
+ * 		frag: Struct,
+ * 		bondMap: Map<number, number>
+ *  }}
+ */
 function getFragmentWithBondMap(struct, frid) {
 	const atomSet = struct.getFragmentIds(frid);
-	const atomsInStruct = Object.values(atomSet);
+	const atomsInStruct = Array.from(atomSet);
 
 	const frag = struct.clone(atomSet);
-	const bondMap = {};
-	frag.bonds.each((bid, bond) => {
-		bondMap[bid] = struct.findBondId(atomsInStruct[bond.begin], atomsInStruct[bond.end]);
+	const bondMap = new Map();
+	frag.bonds.forEach((bond, bid) => {
+		bondMap.set(bid, struct.findBondId(atomsInStruct[bond.begin], atomsInStruct[bond.end]));
 	});
 
 	return { frag, bondMap };
 }
-
-module.exports = {
-	fromTemplateOnBondAction,
-	fromAromaticBondFusing,
-	canBeAromatized
-};

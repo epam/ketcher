@@ -18,13 +18,16 @@ import { capitalize } from 'lodash/fp';
 
 import Struct from '../chem/struct';
 import element from '../chem/element';
+import { sdataSchema } from './data/sdata-schema';
 
 export function fromElement(selem) {
-	if (selem.label === 'R#')
+	if (selem.label === 'R#') {
 		return {
 			type: 'rlabel',
-			values: fromRlabel(selem.rglabel)
+			values: fromRlabel(selem.rglabel),
+			...selem
 		};
+	}
 	if (selem.label === 'L#')
 		return fromAtomList(selem);
 
@@ -34,16 +37,16 @@ export function fromElement(selem) {
 	if (!selem.label && 'attpnt' in selem)
 		return { ap: fromApoint(selem.attpnt) };
 
-	return selem;   // probably generic
+	return selem; // probably generic
 }
 
 export function toElement(elem) {
-	if (elem.type === 'rlabel')
+	if (elem.type === 'rlabel') {
 		return {
 			label: elem.values.length ? 'R#' : 'C',
 			rglabel: toRlabel(elem.values)
 		};
-
+	}
 	if (elem.type === 'list' || elem.type === 'not-list')
 		return toAtomList(elem);
 
@@ -66,7 +69,7 @@ function fromAtom(satom) {
 	const alias = satom.alias || '';
 
 	return {
-		alias: alias,
+		alias,
 		label: satom.label,
 		charge: satom.charge,
 		isotope: satom.isotope,
@@ -119,10 +122,12 @@ function toApoint(ap) {
 }
 
 function fromRlabel(rg) {
-	var res = [];
-	for (var rgi = 0; rgi < 32; rgi++) {
+	const res = [];
+	let rgi;
+	let val;
+	for (rgi = 0; rgi < 32; rgi++) {
 		if (rg & (1 << rgi)) {
-			var val = rgi + 1;
+			val = rgi + 1;
 			res.push(val); // push the string
 		}
 	}
@@ -130,9 +135,9 @@ function fromRlabel(rg) {
 }
 
 function toRlabel(values) {
-	var res = 0;
-	values.forEach(function (val) {
-		var rgi = val - 1;
+	let res = 0;
+	values.forEach((val) => {
+		let rgi = val - 1;
 		res |= 1 << rgi;
 	});
 	return res;
@@ -166,7 +171,7 @@ function fromBondType(type, stereo) {
 			bondCaptionMap[caption].stereo === stereo)
 			return caption;
 	}
-	throw 'No such bond caption';
+	throw Error('No such bond caption');
 }
 
 const bondCaptionMap = {
@@ -220,8 +225,6 @@ const bondCaptionMap = {
 	}
 };
 
-import { sdataSchema } from './data/sdata-schema'
-
 export function fromSgroup(ssgroup) {
 	const type = ssgroup.type || 'GEN';
 	const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
@@ -230,11 +233,10 @@ export function fromSgroup(ssgroup) {
 		ssgroup.attrs.radiobuttons = 'Relative';
 	else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
 
-	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items) {
+	if (sdataSchema[context][fieldName] && sdataSchema[context][fieldName].properties.fieldValue.items)
 		ssgroup.attrs.fieldValue = fieldValue.split('\n');
-	}
 
-	return Object.assign({ type: type }, ssgroup.attrs);
+	return Object.assign({ type }, ssgroup.attrs);
 }
 
 export function toSgroup(sgroup) {

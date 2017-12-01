@@ -15,17 +15,16 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 import Struct from '../../chem/struct';
 import molfile from '../../chem/molfile';
 import Render from '../../render';
 
-function renderStruct(el, struct, options={}) {
+function renderStruct(el, struct, options = {}) {
 	if (el) {
-		if (struct.prerender)           // Should it sit here?
+		if (struct.prerender) { // Should it sit here?
 			el.innerHTML = struct.prerender;
-		else {
+		} else {
 			console.info('render!', el.clientWidth, el.clientWidth);
 			const rnd = new Render(el, {
 				autoScale: true,
@@ -42,11 +41,13 @@ function renderStruct(el, struct, options={}) {
 class StructRender extends Component {
 	constructor(props) {
 		super(props);
-		if (!(props.struct instanceof Struct)) try {
-			this.props.struct = molfile.parse(props.struct);
-		} catch (e) {
-			alert("Could not parse structure\n" + e);
-			this.props.struct = null;
+		if (!(props.struct instanceof Struct)) {
+			try {
+				this.props.struct = molfile.parse(props.struct);
+			} catch (e) {
+				alert('Could not parse structure\n' + e); // eslint-disable-line no-undef
+				this.props.struct = null;
+			}
 		}
 	}
 
@@ -55,15 +56,15 @@ class StructRender extends Component {
 	}
 
 	componentDidMount() {
-		const el = this.refs ? this.refs.base : this.base;
+		const el = this.base;
 		const { struct, options } = this.props;
 		renderStruct(el, struct, options);
 	}
 
-	render () {
-		let { struct, Tag="div", ...props } = this.props;
+	render() {
+		let { struct, Tag = 'div', ...props } = this.props;
 		return (
-			<Tag /*ref="el"*/ {...props}>{ struct ? null :  'No molecule' }</Tag>
+			<Tag /* ref="el" */ {...props}>{ struct ? null : 'No molecule' }</Tag>
 		);
 	}
 }

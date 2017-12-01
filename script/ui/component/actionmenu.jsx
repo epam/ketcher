@@ -15,32 +15,30 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-/** @jsx h */
+
 import classNames from 'classnames';
 
 import action from '../action';
 import { hiddenAncestor } from '../state/toolbar';
 
-const isMac = /Mac/.test(navigator.platform);
+const isMac = /Mac/.test(navigator.platform); // eslint-disable-line no-undef
 const shortcutAliasMap = {
-	'Escape': 'Esc',
-	'Delete': 'Del',
-	'Mod': isMac ? '⌘' : 'Ctrl'
+	Escape: 'Esc',
+	Delete: 'Del',
+	Mod: isMac ? '⌘' : 'Ctrl'
 };
 
 export function shortcutStr(shortcut) {
 	const key = Array.isArray(shortcut) ? shortcut[0] : shortcut;
-	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, function (key) {
-		return shortcutAliasMap[key] || key.toUpperCase();
-	});
+	return key.replace(/(\b[a-z]\b$|Mod|Escape|Delete)/g, k => shortcutAliasMap[k] || k.toUpperCase());
 }
 
 function isMenuOpened(currentNode) {
 	let parentNode = hiddenAncestor(currentNode);
-	if (parentNode.classList.contains('opened')) return true;
+	return parentNode.classList.contains('opened');
 }
 
-export function showMenuOrButton(action, item, status, props) {
+export function showMenuOrButton(action, item, status, props) { // eslint-disable-line no-shadow
 	if (typeof item !== 'object') {
 		return (
 			<ActionButton
@@ -62,49 +60,57 @@ export function showMenuOrButton(action, item, status, props) {
 	return (item.component(props));
 }
 
-function ActionButton({action, status = {}, onAction, ...props}) {
+function ActionButton({ action, status = {}, onAction }) { // eslint-disable-line no-shadow
 	let shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
-		<button disabled={status.disabled}
-				onClick={(ev) => {
-					if (!status.selected || action.action.tool === 'chiralFlag' ||
-						(status.selected && isMenuOpened(this.base))) {
-						onAction(action.action);
-						ev.stopPropagation();
-					}
-				}}
-				title={shortcut ? `${action.title} (${shortcut})` : action.title}>
+		<button
+			disabled={status.disabled}
+			onClick={(ev) => {
+				if (!status.selected || action.action.tool === 'chiralFlag' ||
+					(status.selected && isMenuOpened(this.base))) {
+					onAction(action.action);
+					ev.stopPropagation();
+				}
+			}}
+			title={shortcut ? `${action.title} (${shortcut})` : action.title}>
 			{action.title}
 		</button>
-	)
+	);
 }
 
-function ActionMenu({name, menu, className, role, ...props}) {
+function ActionMenu({ name, menu, className, role, ...props }) {
 	return (
-		<menu className={className} role={role}
-			  style={toolMargin(name, menu, props.visibleTools)}>
-		{
-		  menu.map(item => (
-			  <li id={item.id || item}
-				  className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
-				  onClick={(ev) => openHandle(ev, props.onOpen) }>
-				  { showMenuOrButton(action, item, props.status[item], props) }
-			  </li>
-		  ))
-		}
+		<menu
+			className={className}
+			role={role}
+			style={toolMargin(name, menu, props.visibleTools)}
+		>
+			{
+				menu.map(item => (
+					<li
+						id={item.id || item}
+						className={classNames(props.status[item]) + ` ${item.id === props.opened ? 'opened' : ''}`}
+						onClick={ev => openHandle(ev, props.onOpen)}
+					>
+						{ showMenuOrButton(action, item, props.status[item], props) }
+					</li>
+				))
+			}
 		</menu>
 	);
 }
 
 function toolMargin(menuName, menu, visibleTools) {
 	if (!visibleTools[menuName]) return {};
-	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40;
-																		// now not found better way
+	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40; // now not found better way
 	let index = menu.indexOf(visibleTools[menuName]); // first level
 
 	if (index === -1) {
 		let tools = [];
-		menu.forEach(item => tools = tools.concat(item.menu));
+		menu.forEach((item) => {
+			tools = tools.concat(item.menu);
+		});
+
 		index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
 	}
 

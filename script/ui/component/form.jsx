@@ -17,7 +17,7 @@
 import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
+
 import Input from './input';
 import { updateFormState } from '../state/form';
 
@@ -53,11 +53,11 @@ class Form extends Component {
 
 		return {
 			dataError: errors && errors[name] || false,
-			value: value,
-			onChange(value) {
-				const newstate = Object.assign({}, self.props.result, { [name]: value });
+			value,
+			onChange(val) {
+				const newstate = Object.assign({}, self.props.result, { [name]: val });
 				self.updateState(newstate);
-				if (onChange) onChange(value);
+				if (onChange) onChange(val);
 			}
 		};
 	}
@@ -79,10 +79,10 @@ class Form extends Component {
 	}
 }
 
-Form = connect(
+export default connect(
 	null,
 	dispatch => ({
-		onUpdate: function (result, valid, errors) {
+		onUpdate: (result, valid, errors) => {
 			dispatch(updateFormState({ result, valid, errors }));
 		}
 	})
@@ -97,45 +97,47 @@ function Label({ labelPos, title, children, ...props }) {
 	);
 }
 
-class Field extends Component {
-	render(props) {
-		const { name, onChange, className, component, ...prop } = props;
-		const { schema, stateStore } = this.context;
+function Field(props) {
+	const { name, onChange, className, component, ...prop } = props;
+	const { schema, stateStore } = this.context;
 
-		const desc = prop.schema || schema.properties[name];
-		const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+	const desc = prop.schema || schema.properties[name];
+	const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
 
-		return (
-			<Label className={className} data-error={dataError} title={prop.title || desc.title} >
-				{
-					component ?
-						h(component, { ...fieldOpts, ...prop }) :
-						<Input name={name} schema={desc}
-							   {...fieldOpts} {...prop}/>
-				}
-			</Label>
-		);
-	}
+	return (
+		<Label className={className} data-error={dataError} title={prop.title || desc.title} >
+			{
+				component ?
+					h(component, { ...fieldOpts, ...prop }) :
+					<Input
+						name={name}
+						schema={desc}
+						{...fieldOpts}
+						{...prop}
+					/>
+			}
+		</Label>
+	);
 }
 
 const SelectOneOf = (props) => {
 	const { title, name, schema, ...prop } = props;
 
 	const selectDesc = {
-		title: title,
+		title,
 		enum: [],
 		enumNames: []
 	};
 
-	Object.keys(schema).forEach(item => {
+	Object.keys(schema).forEach((item) => {
 		selectDesc.enum.push(item);
 		selectDesc.enumNames.push(schema[item].title || item);
 	});
 
-	return <Field name={name} schema={selectDesc} {...prop}/>;
+	return <Field name={name} schema={selectDesc} {...prop} />;
 };
 
-////
+//
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
 	const v = new jsonschema.Validator();
@@ -167,16 +169,15 @@ function serializeRewrite(serializeMap, instance, schema) {
 			schema.default;
 	}
 
-	for (let p in schema.properties) {
-		if (schema.properties.hasOwnProperty(p) && (p in instance)) {
+	Object.keys(schema.properties).forEach((p) => {
+		if (p in instance)
 			res[p] = instance[serializeMap[p]] || instance[p];
-		}
-	}
+	});
 
 	return res;
 }
 
-function deserializeRewrite(deserializeMap, instance, schema) {
+function deserializeRewrite(deserializeMap, instance) {
 	return instance;
 }
 
@@ -184,7 +185,7 @@ function getErrorsObj(errors) {
 	let errs = {};
 	let field;
 
-	errors.forEach(item => {
+	errors.forEach((item) => {
 		field = item.property.split('.')[1];
 		if (!errs[field])
 			errs[field] = item.schema.invalidMessage || item.message;
@@ -193,4 +194,4 @@ function getErrorsObj(errors) {
 	return errs;
 }
 
-export { Form, Field, SelectOneOf };
+export { Field, SelectOneOf };

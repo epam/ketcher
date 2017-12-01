@@ -14,24 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('./vec2');
+import Vec2 from './vec2';
 
-function Box2Abs() {
-	if (arguments.length == 1 && 'min' in arguments[0] && 'max' in arguments[0]) {
-		this.p0 = arguments[0].min;
-		this.p1 = arguments[0].max;
+function Box2Abs(...args) {
+	if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
+		this.p0 = args[0].min;
+		this.p1 = args[0].max;
 	}
-	if (arguments.length == 2) {
-		this.p0 = arguments[0];
-		this.p1 = arguments[1];
-	} else if (arguments.length == 4) {
-		this.p0 = new Vec2(arguments[0], arguments[1]);
-		this.p1 = new Vec2(arguments[2], arguments[3]);
-	} else if (arguments.length == 0) {
+
+	if (args.length === 2) {
+		this.p0 = args[0];
+		this.p1 = args[1];
+	} else if (args.length === 4) {
+		this.p0 = new Vec2(args[0], args[1]);
+		this.p1 = new Vec2(args[2], args[3]);
+	} else if (args.length === 0) {
 		this.p0 = new Vec2();
 		this.p1 = new Vec2();
 	} else {
-		new Error('Box2Abs constructor only accepts 4 numbers or 2 vectors or no arguments!');
+		return new Error('Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!');
 	}
 }
 
@@ -39,44 +40,55 @@ Box2Abs.prototype.toString = function () {
 	return this.p0.toString() + ' ' + this.p1.toString();
 };
 
-Box2Abs.fromRelBox = function (relBox) {
-	console.assert(!!relBox);
-	return new Box2Abs(relBox.x, relBox.y, relBox.x + relBox.width, relBox.y + relBox.height);
-};
-
 Box2Abs.prototype.clone = function () {
 	return new Box2Abs(this.p0, this.p1);
 };
 
-Box2Abs.union = function (/* Box2Abs*/b1, /* Box2Abs*/b2) {
-	console.assert(!!b1);
-	console.assert(!!b2);
-	return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1));
-};
-
-Box2Abs.prototype.extend = function (/* Vec2*/lp, /* Vec2*/rb) {
+/**
+ * @param lp { Vec2 }
+ * @param rb [ Vec2 }
+ * @returns { Box2Abs }
+ */
+Box2Abs.prototype.extend = function (lp, rb) {
 	console.assert(!!lp);
 	rb = rb || lp;
 	return new Box2Abs(this.p0.sub(lp), this.p1.add(rb));
 };
 
-Box2Abs.prototype.include = function (/* Vec2*/p) {
+/**
+ * @param p { Vec2 }
+ * @returns { Box2Abs }
+ */
+Box2Abs.prototype.include = function (p) {
 	console.assert(!!p);
 	return new Box2Abs(this.p0.min(p), this.p1.max(p));
 };
 
-Box2Abs.prototype.contains = function (/* Vec2*/p, /* float*/ext) {
-	ext = (ext || 0) - 0;
+/**
+ * @param p { Vec2 }
+ * @param ext { number }
+ * @returns { boolean }
+ */
+Box2Abs.prototype.contains = function (p, ext = 0.0) {
 	console.assert(!!p);
 	return p.x >= this.p0.x - ext && p.x <= this.p1.x + ext && p.y >= this.p0.y - ext && p.y <= this.p1.y + ext;
 };
 
-Box2Abs.prototype.translate = function (/* Vec2*/d) {
+/**
+ * @param d { Vec2 }
+ * @returns { Box2Abs }
+ */
+Box2Abs.prototype.translate = function (d) {
 	console.assert(!!d);
 	return new Box2Abs(this.p0.add(d), this.p1.add(d));
 };
 
-Box2Abs.prototype.transform = function (/* function(Vec2):Vec2*/f, options) {
+/**
+ * @param f { function(Vec2, object): Vec2 }
+ * @param options { object }
+ * @returns { Box2Abs }
+ */
+Box2Abs.prototype.transform = function (f, options) {
 	console.assert(!!f);
 	return new Box2Abs(f(this.p0, options), f(this.p1, options));
 };
@@ -91,6 +103,38 @@ Box2Abs.prototype.centre = function () {
 
 Box2Abs.prototype.pos = function () {
 	return this.p0;
+};
+
+Box2Abs.fromRelBox = function (relBox) {
+	console.assert(!!relBox);
+	return new Box2Abs(relBox.x, relBox.y, relBox.x + relBox.width, relBox.y + relBox.height);
+};
+
+/**
+ * @param b1 { Box2Abs }
+ * @param b2 { Box2Abs }
+ * @returns { Box2Abs }
+ */
+Box2Abs.union = function (b1, b2) {
+	console.assert(!!b1);
+	console.assert(!!b2);
+	return new Box2Abs(Vec2.min(b1.p0, b2.p0), Vec2.max(b1.p1, b2.p1));
+};
+
+/**
+ * @param a { Vec2 }
+ * @param b { Vec2 }
+ * @param c { Vec2 }
+ * @param d { Vec2 }
+ * @returns { boolean }
+ */
+Box2Abs.segmentIntersection = function (a, b, c, d) {
+	const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
+	const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
+	const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
+	const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
+
+	return dc * dd <= 0 && da * db <= 0;
 };
 
 module.exports = Box2Abs;

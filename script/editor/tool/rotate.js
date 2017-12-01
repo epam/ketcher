@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
+import Vec2 from '../../util/vec2';
 
-var Action = require('../action');
-var utils = require('./utils');
+import utils from '../shared/utils';
+import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate';
 
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {
@@ -27,11 +27,11 @@ function RotateTool(editor, dir) {
 		var restruct = editor.render.ctab;
 		var selection = editor.selection();
 		var singleBond = selection && selection.bonds &&
-		    Object.keys(selection).length === 1 &&
-		    selection.bonds.length == 1;
+			Object.keys(selection).length === 1 &&
+			selection.bonds.length === 1;
 
-		var action = !singleBond ? Action.fromFlip(restruct, selection, dir) :
-		    Action.fromBondAlign(restruct, selection.bonds[0], dir);
+		var action = !singleBond ? fromFlip(restruct, selection, dir) :
+			fromBondAlign(restruct, selection.bonds[0], dir);
 		editor.update(action);
 		return null;
 	}
@@ -55,7 +55,7 @@ RotateTool.prototype.mousedown = function (event) {
 		var rotId = null;
 		var rotAll = false;
 
-		selection.atoms.forEach(function (aid) {
+		selection.atoms.forEach((aid) => {
 			var atom = struct.atoms.get(aid);
 
 			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
@@ -63,13 +63,13 @@ RotateTool.prototype.mousedown = function (event) {
 			if (rotAll)
 				return;
 
-			atom.neighbors.find(function (nei) {
+			atom.neighbors.find((nei) => {
 				var hb = struct.halfBonds.get(nei);
 
 				if (selection.atoms.indexOf(hb.end) === -1) {
 					if (hb.loop >= 0) {
 						var neiAtom = struct.atoms.get(aid);
-						if (!neiAtom.neighbors.find(function (neiNei) {
+						if (!neiAtom.neighbors.find((neiNei) => {
 							var neiHb = struct.halfBonds.get(neiNei);
 							return neiHb.loop >= 0 && selection.atoms.indexOf(neiHb.end) !== -1;
 						})) {
@@ -79,7 +79,7 @@ RotateTool.prototype.mousedown = function (event) {
 					}
 					if (rotId == null) {
 						rotId = aid;
-					} else if (rotId != aid) {
+					} else if (rotId !== aid) {
 						rotAll = true;
 						return true;
 					}
@@ -88,19 +88,17 @@ RotateTool.prototype.mousedown = function (event) {
 			});
 		});
 
-		if (!rotAll && rotId != null)
+		if (!rotAll && rotId !== null)
 			xy0 = struct.atoms.get(rotId).pp;
 		else
 			xy0 = xy0.scaled(1 / selection.atoms.length);
 	} else {
-		struct.atoms.each(function (id, atom) {
-			xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
-		});
+		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle
 		// poor man struct center (without chiral, sdata, etc)
-		xy0 = xy0.scaled(1 / struct.atoms.count());
+		xy0 = xy0.scaled(1 / struct.atoms.size);
 	}
 	this.dragCtx = {
-		xy0: xy0,
+		xy0,
 		angle1: utils.calcAngle(xy0, rnd.page2obj(event))
 	};
 	return true;
@@ -118,12 +116,12 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 
 		var degrees = utils.degrees(angle);
 
-		if ('angle' in dragCtx && dragCtx.angle == degrees) return true;
+		if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
 		if ('action' in dragCtx)
 			dragCtx.action.perform(rnd.ctab);
 
 		dragCtx.angle = degrees;
-		dragCtx.action = Action.fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
+		dragCtx.action = fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
 		if (degrees > 180)
 			degrees -= 360;
@@ -148,7 +146,7 @@ RotateTool.prototype.mouseup = function () {
 	return true;
 };
 
-RotateTool.prototype.cancel = RotateTool.prototype.mouseleave =
+RotateTool.prototype.cancel = RotateTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
 	RotateTool.prototype.mouseup;
 
-module.exports = RotateTool;
+export default RotateTool;

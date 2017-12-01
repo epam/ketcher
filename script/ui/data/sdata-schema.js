@@ -16,13 +16,13 @@
 
 import { mapOf } from '../utils';
 
-const radioButtonsSchema =  {
+const radioButtonsSchema = {
 	enum: [
-		"Absolute",
-		"Relative",
-		"Attached"
+		'Absolute',
+		'Relative',
+		'Attached'
 	],
-	default: "Absolute"
+	default: 'Absolute'
 };
 
 const contextSchema = {
@@ -46,98 +46,98 @@ const sData = {
 				key: 'FRG_STR',
 				title: 'MDLBG_FRAGMENT_STEREO',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
 						title: 'Field name',
-						enum: ["MDLBG_FRAGMENT_STEREO"],
-						default: "MDLBG_FRAGMENT_STEREO"
+						enum: ['MDLBG_FRAGMENT_STEREO'],
+						default: 'MDLBG_FRAGMENT_STEREO'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"abs",
-								"(+)-enantiomer",
-								"(-)-enantiomer",
-								"racemate",
-								"steric",
-								"rel",
-								"R(a)",
-								"S(a)",
-								"R(p)",
-								"S(p)"
+								'abs',
+								'(+)-enantiomer',
+								'(-)-enantiomer',
+								'racemate',
+								'steric',
+								'rel',
+								'R(a)',
+								'S(a)',
+								'R(p)',
+								'S(p)'
 							]
 						},
-						default: ["abs"]
+						default: ['abs']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			},
 			{
 				key: 'FRG_COEFF',
 				title: 'MDLBG_FRAGMENT_COEFFICIENT',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_FRAGMENT_COEFFICIENT"],
-						default: "MDLBG_FRAGMENT_COEFFICIENT"
+						title: 'Field name',
+						enum: ['MDLBG_FRAGMENT_COEFFICIENT'],
+						default: 'MDLBG_FRAGMENT_COEFFICIENT'
 					},
 					fieldValue: {
-						title: "Field value",
-						type: "string",
-						default: "",
+						title: 'Field value',
+						type: 'string',
+						default: '',
 						minLength: 1,
-						invalidMessage: "Please, specify field name"
+						invalidMessage: 'Please, specify field name'
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			},
 			{
 				key: 'FRG_CHRG',
 				title: 'MDLBG_FRAGMENT_CHARGE',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
 						title: 'Field name',
-						enum: ["MDLBG_FRAGMENT_CHARGE"],
-						default: "MDLBG_FRAGMENT_CHARGE"
+						enum: ['MDLBG_FRAGMENT_CHARGE'],
+						default: 'MDLBG_FRAGMENT_CHARGE'
 					},
 					fieldValue: {
-						title: "Field value",
-						type: "string",
-						default: "",
+						title: 'Field value',
+						type: 'string',
+						default: '',
 						minLength: 1,
-						invalidMessage: "Please, specify field name"
+						invalidMessage: 'Please, specify field name'
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			},
 			{
 				key: 'FRG_RAD',
 				title: 'MDLBG_FRAGMENT_RADICALS',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_FRAGMENT_RADICALS"],
-						default: "MDLBG_FRAGMENT_RADICALS"
+						title: 'Field name',
+						enum: ['MDLBG_FRAGMENT_RADICALS'],
+						default: 'MDLBG_FRAGMENT_RADICALS'
 					},
 					fieldValue: {
-						title: "Field value",
-						type: "string",
-						default: "",
+						title: 'Field value',
+						type: 'string',
+						default: '',
 						minLength: 1,
-						invalidMessage: "Please, specify field name"
+						invalidMessage: 'Please, specify field name'
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
-			},
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
+			}
 		]
 	},
 	Multifragment: {
@@ -148,35 +148,35 @@ const sData = {
 				key: 'MLT_FRG',
 				title: 'KETCHER_MULTIPLE_FRAGMENT',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
 						title: 'Field name',
-						enum: ["KETCHER_MULTIPLE_FRAGMENT"],
-						default: "KETCHER_MULTIPLE_FRAGMENT"
+						enum: ['KETCHER_MULTIPLE_FRAGMENT'],
+						default: 'KETCHER_MULTIPLE_FRAGMENT'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"aerosol",
-								"alloy",
-								"catenane",
-								"complex",
-								"composite",
-								"co-polymer",
-								"emulsion",
-								"host-guest complex",
-								"mixture",
-								"rotaxane",
-								"suspension"
+								'aerosol',
+								'alloy',
+								'catenane',
+								'complex',
+								'composite',
+								'co-polymer',
+								'emulsion',
+								'host-guest complex',
+								'mixture',
+								'rotaxane',
+								'suspension'
 							]
 						},
-						default: ["aerosol"]
+						default: ['aerosol']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			}
 		]
 	},
@@ -188,58 +188,58 @@ const sData = {
 				key: 'SB_STR',
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_STEREO_KEY"],
-						default: "MDLBG_STEREO_KEY"
+						title: 'Field name',
+						enum: ['MDLBG_STEREO_KEY'],
+						default: 'MDLBG_STEREO_KEY'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"erythro",
-								"threo",
-								"alpha",
-								"beta",
-								"endo",
-								"exo",
-								"anti",
-								"syn",
-								"ECL",
-								"STG"
+								'erythro',
+								'threo',
+								'alpha',
+								'beta',
+								'endo',
+								'exo',
+								'anti',
+								'syn',
+								'ECL',
+								'STG'
 							]
 						},
-						default: ["erythro"]
+						default: ['erythro']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			},
 			{
 				key: 'SB_BND',
 				title: 'MDLBG_BOND_KEY',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_BOND_KEY"],
-						default: "MDLBG_BOND_KEY"
+						title: 'Field name',
+						enum: ['MDLBG_BOND_KEY'],
+						default: 'MDLBG_BOND_KEY'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"Value=4"
+								'Value=4'
 							]
 						},
-						default: ["Value=4"]
+						default: ['Value=4']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			}
 		]
 	},
@@ -251,44 +251,44 @@ const sData = {
 				key: 'AT_STR',
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_STEREO_KEY"],
-						default: "MDLBG_STEREO_KEY"
+						title: 'Field name',
+						enum: ['MDLBG_STEREO_KEY'],
+						default: 'MDLBG_STEREO_KEY'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"RS",
-								"SR",
-								"P-3",
-								"P-3-PI",
-								"SP-4",
-								"SP-4-PI",
-								"T-4",
-								"T-4-PI",
-								"SP-5",
-								"SP-5-PI",
-								"TB-5",
-								"TB-5-PI",
-								"OC-6",
-								"TP-6",
-								"PB-7",
-								"CU-8",
-								"SA-8",
-								"DD-8",
-								"HB-9",
-								"TPS-9"
-							],
+								'RS',
+								'SR',
+								'P-3',
+								'P-3-PI',
+								'SP-4',
+								'SP-4-PI',
+								'T-4',
+								'T-4-PI',
+								'SP-5',
+								'SP-5-PI',
+								'TB-5',
+								'TB-5-PI',
+								'OC-6',
+								'TP-6',
+								'PB-7',
+								'CU-8',
+								'SA-8',
+								'DD-8',
+								'HB-9',
+								'TPS-9'
+							]
 						},
-						default: ["RS"]
+						default: ['RS']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			}
 		]
 	},
@@ -300,26 +300,26 @@ const sData = {
 				key: 'GRP_STR',
 				title: 'MDLBG_STEREO_KEY',
 				properties: {
-					type: { enum: ["DAT"] },
+					type: { enum: ['DAT'] },
 					fieldName: {
-						title: "Field name",
-						enum: ["MDLBG_STEREO_KEY"],
-						default: "MDLBG_STEREO_KEY"
+						title: 'Field name',
+						enum: ['MDLBG_STEREO_KEY'],
+						default: 'MDLBG_STEREO_KEY'
 					},
 					fieldValue: {
-						title: "Field value",
+						title: 'Field value',
 						type: 'array',
 						items: {
 							enum: [
-								"cis",
-								"trans"
+								'cis',
+								'trans'
 							]
 						},
-						default: ["cis"]
+						default: ['cis']
 					},
 					radiobuttons: radioButtonsSchema
 				},
-				required: ["fieldName", "fieldValue", "radiobuttons"]
+				required: ['fieldName', 'fieldValue', 'radiobuttons']
 			}
 		]
 	}
@@ -328,7 +328,7 @@ const sData = {
 export const sdataCustomSchema = {
 	key: 'Custom',
 	properties: {
-		type: { enum: ["DAT"] },
+		type: { enum: ['DAT'] },
 		context: {
 			title: 'Context',
 			enum: [
@@ -342,33 +342,35 @@ export const sdataCustomSchema = {
 		},
 		fieldName: {
 			title: 'Field name',
-			type: "string",
-			default: "",
+			type: 'string',
+			default: '',
 			minLength: 1,
-			invalidMessage: "Please, specify field name"
+			invalidMessage: 'Please, specify field name'
 		},
 		fieldValue: {
 			title: 'Field value',
-			type: "string",
-			default: "",
+			type: 'string',
+			default: '',
 			minLength: 1,
-			invalidMessage: "Please, specify field value"
+			invalidMessage: 'Please, specify field value'
 		},
 		radiobuttons: {
 			enum: [
-				"Absolute",
-				"Relative",
-				"Attached"
+				'Absolute',
+				'Relative',
+				'Attached'
 			],
-			default: "Absolute"
+			default: 'Absolute'
 		}
 	},
-	required: ["context", "fieldName", "fieldValue", "radiobuttons"]
+	required: ['context', 'fieldName', 'fieldValue', 'radiobuttons']
 };
 
 export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
 	acc[title] = mapOf(sData[title], 'fieldName');
-	Object.keys(acc[title]).forEach(fieldName => acc[title][fieldName].properties.context = contextSchema);
+	Object.keys(acc[title]).forEach((fieldName) => {
+		acc[title][fieldName].properties.context = contextSchema;
+	});
 	return acc;
 }, {});
 

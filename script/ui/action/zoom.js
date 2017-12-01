@@ -22,16 +22,16 @@ export const zoomList = [
 ];
 
 export default {
-	"zoom": {
+	zoom: {
 		selected: editor => editor.zoom()
 	},
-	"zoom-out": {
-		shortcut: ["-", "_", "Shift+-"],
-		title: "Zoom Out",
+	'zoom-out': {
+		shortcut: ['-', '_', 'Shift+-'],
+		title: 'Zoom Out',
 		disabled: editor => (
 			editor.zoom() <= zoomList[0] // unsave
 		),
-		action: editor => {
+		action: (editor) => {
 			let zoom = editor.zoom();
 			let i = findIndex(z => z >= zoom, zoomList);
 			editor.zoom(
@@ -39,13 +39,13 @@ export default {
 			);
 		}
 	},
-	"zoom-in": {
-		shortcut: ["+", "=", "Shift+="],
-		title: "Zoom In",
+	'zoom-in': {
+		shortcut: ['+', '=', 'Shift+='],
+		title: 'Zoom In',
 		disabled: editor => (
 			zoomList[zoomList.length - 1] <= editor.zoom()
 		),
-		action: editor => {
+		action: (editor) => {
 			let zoom = editor.zoom();
 			let i = findLastIndex(z => z <= zoom, zoomList);
 			editor.zoom(
@@ -53,4 +53,4 @@ export default {
 			);
 		}
 	}
-}
+};

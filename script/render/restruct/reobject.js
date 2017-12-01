@@ -45,7 +45,7 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 		if (noredraw) {
 			if (this.highlighting.type == 'set')
 				noredraw = !this.highlighting[0].removed;
-			 else
+			else
 				noredraw = !this.highlighting.removed;
 		}
 		if (noredraw) {
@@ -55,14 +55,12 @@ ReObject.prototype.setHighlight = function (highLight, render) { // TODO render 
 			this.drawHighlight(render);
 			this.highlighting = render.paper.setFinish();
 		}
-	} else
-		if (this.highlighting) {
-			this.highlighting.hide();
-		}
+	} else if (this.highlighting) {
+		this.highlighting.hide();
+	}
 
 	this.highlight = highLight;
 };
-
 
 ReObject.prototype.drawHighlight = function () {
 	console.assert('ReObject.drawHighlight is not overridden'); // eslint-disable-line no-console

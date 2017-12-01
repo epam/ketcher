@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+import { fromAtomsAttrs } from '../actions/atom';
 
 function APointTool(editor) {
 	if (!(this instanceof APointTool))
@@ -28,7 +28,7 @@ APointTool.prototype.mousemove = function (event) {
 	this.editor.hover(this.editor.findItem(event, ['atoms']));
 };
 
-APointTool.prototype.mouseup = function (event) {
+APointTool.prototype.click = function (event) {
 	var editor = this.editor;
 	var struct = editor.render.ctab.molecule;
 	var ci = editor.findItem(event, ['atoms']);
@@ -39,14 +39,15 @@ APointTool.prototype.mouseup = function (event) {
 		var res = editor.event.elementEdit.dispatch({
 			attpnt: atom.attpnt
 		});
-		Promise.resolve(res).then(function (newatom) {
-			if (atom.attpnt != newatom.attpnt) {
-				var action = Action.fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
+		Promise.resolve(res).then((newatom) => {
+			if (atom.attpnt !== newatom.attpnt) {
+				var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
 				editor.update(action);
 			}
 		});
 		return true;
 	}
+	return true;
 };
 
-module.exports = APointTool;
+export default APointTool;

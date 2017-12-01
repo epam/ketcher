@@ -26,21 +26,21 @@ export function selectTmpl(tmpl) {
 	return {
 		type: 'TMPL_SELECT',
 		data: { selected: tmpl }
-	}
+	};
 }
 
 export function changeGroup(group) {
 	return {
 		type: 'TMPL_CHANGE_GROUP',
-		data: { group: group, selected: null }
-	}
+		data: { group, selected: null }
+	};
 }
 
 export function changeFilter(filter) {
 	return {
 		type: 'TMPL_CHANGE_FILTER',
 		data: { filter: filter.trim(), selected: null } // TODO: change this
-	}
+	};
 }
 
 /* TEMPLATE-ATTACH-EDIT */
@@ -74,19 +74,21 @@ export function setTmplName(name) {
 
 export function editTmpl(tmpl) {
 	return (dispatch, getState) => {
-		openDialog(dispatch, 'attach', { tmpl }).then(
-			({ name, attach }) => {
-				tmpl.struct.name = name;
-				tmpl.props = Object.assign({}, tmpl.props, attach);
+		openDialog(dispatch, 'attach', { tmpl })
+			.then(
+				({ name, attach }) => {
+					tmpl.struct.name = name;
+					tmpl.props = Object.assign({}, tmpl.props, attach);
 
-				if (tmpl.props.group === 'User Templates')
-					updateLocalStore(getState().templates.lib);
-				openDialog(dispatch, 'templates');
-			}, () => {
-				openDialog(dispatch, 'templates');
-			}
-		);
-	}
+					if (tmpl.props.group === 'User Templates')
+						updateLocalStore(getState().templates.lib);
+
+					openDialog(dispatch, 'templates');
+				}, () => {
+					openDialog(dispatch, 'templates');
+				}
+			);
+	};
 }
 
 /* SAVE */
@@ -104,20 +106,18 @@ export function saveUserTmpl(structStr) {
 				updateLocalStore(lib);
 			}
 		);
-	}
+	};
 }
 
 function updateLocalStore(lib) {
 	const userLib = lib
 		.filter(item => item.props.group === 'User Templates')
-		.map(item => {
-			return {
-				struct: molfile.stringify(item.struct),
-				props: Object.assign({}, omit(['group'], item.props))
-			};
-		});
+		.map(item => ({
+			struct: molfile.stringify(item.struct),
+			props: Object.assign({}, omit(['group'], item.props))
+		}));
 
-	storage.setItem("ketcher-tmpls", userLib);
+	storage.setItem('ketcher-tmpls', userLib);
 }
 
 /* REDUCER */
@@ -143,9 +143,8 @@ const attachActions = [
 ];
 
 export function templatesReducer(state = initTmplState, action) {
-	if (tmplActions.includes(action.type)) {
+	if (tmplActions.includes(action.type))
 		return Object.assign({}, state, action.data);
-	}
 
 	if (attachActions.includes(action.type)) {
 		const attach = Object.assign({}, state.attach, action.data);
@@ -159,17 +158,17 @@ export function templatesReducer(state = initTmplState, action) {
 function initLib(lib) {
 	return {
 		type: 'TMPL_INIT',
-		data: { lib: lib }
-	}
+		data: { lib }
+	};
 }
 
 export function initTmplLib(dispatch, baseUrl, cacheEl) {
-	prefetchStatic(baseUrl + 'library.sdf').then(text => {
+	prefetchStatic(baseUrl + 'library.sdf').then((text) => {
 		const tmpls = sdf.parse(text);
 		const prefetch = prefetchRender(tmpls, baseUrl, cacheEl);
 
 		return prefetch.then(cachedFiles => (
-			tmpls.map(tmpl => {
+			tmpls.map((tmpl) => {
 				const pr = prefetchSplit(tmpl);
 				if (pr.file)
 					tmpl.props.prerender = cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
@@ -177,7 +176,7 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 				return tmpl;
 			})
 		));
-	}).then(res => {
+	}).then((res) => {
 		const lib = res.concat(userTmpls());
 		dispatch(initLib(lib));
 		dispatch(appUpdate({ templates: true }));
@@ -185,11 +184,11 @@ export function initTmplLib(dispatch, baseUrl, cacheEl) {
 }
 
 function userTmpls() {
-	const userLib = storage.getItem("ketcher-tmpls");
+	const userLib = storage.getItem('ketcher-tmpls');
 	if (!Array.isArray(userLib) || userLib.length === 0) return [];
 
 	return userLib
-		.map(tmpl => {
+		.map((tmpl) => {
 			try {
 				if (tmpl.props === '') tmpl.props = {};
 				tmpl.props.group = 'User Templates';
@@ -206,10 +205,10 @@ function userTmpls() {
 }
 
 function prefetchStatic(url) {
-	return fetch(url, { credentials: 'same-origin' }).then(function (resp) {
+	return fetch(url, { credentials: 'same-origin' }).then((resp) => {
 		if (resp.ok)
 			return resp.text();
-		throw "Could not fetch " + url;
+		throw Error('Could not fetch ' + url);
 	});
 }
 
@@ -237,8 +236,8 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
 		prefetchStatic(baseUrl + fn).catch(() => null)
 	)));
 
-	return fetch.then(svgs => {
-		svgs.forEach(svgContent => {
+	return fetch.then((svgs) => {
+		svgs.forEach((svgContent) => {
 			if (svgContent)
 				cacheEl.innerHTML += svgContent;
 		});

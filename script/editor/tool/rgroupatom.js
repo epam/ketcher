@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Struct = require('../../chem/struct');
-var Action = require('../action');
+import Struct from '../../chem/struct';
+import { fromAtomAddition, fromAtomsAttrs } from '../actions/atom';
 
 function RGroupAtomTool(editor) {
 	if (!(this instanceof RGroupAtomTool)) {
@@ -31,9 +31,10 @@ RGroupAtomTool.prototype.mousemove = function (event) {
 	this.editor.hover(this.editor.findItem(event, ['atoms']));
 };
 
-RGroupAtomTool.prototype.mouseup = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms']);
+RGroupAtomTool.prototype.click = function (event) {
+	const rnd = this.editor.render;
+	const ci = this.editor.findItem(event, ['atoms']);
+
 	if (!ci) { //  ci.type == 'Canvas'
 		this.editor.hover(null);
 		propsDialog(this.editor, null, rnd.page2obj(event));
@@ -43,27 +44,31 @@ RGroupAtomTool.prototype.mouseup = function (event) {
 		propsDialog(this.editor, ci.id);
 		return true;
 	}
+	return true;
 };
 
 function propsDialog(editor, id, pos) {
-	var struct = editor.render.ctab.molecule;
-	var atom = (id || id === 0) ? struct.atoms.get(id) : null;
-	var rglabel = atom ? atom.rglabel : 0;
-	var label = atom ? atom.label : 'R#';
+	const struct = editor.render.ctab.molecule;
+	const atom = (id || id === 0) ? struct.atoms.get(id) : null;
+	const rglabel = atom ? atom.rglabel : 0;
+	const label = atom ? atom.label : 'R#';
 
-	var res = editor.event.elementEdit.dispatch({
-		label: 'R#', rglabel: rglabel
+	const res = editor.event.elementEdit.dispatch({
+		label: 'R#',
+		rglabel,
+		fragId: atom ? atom.fragment : null
 	});
 
-	Promise.resolve(res).then(function (elem) {
+	Promise.resolve(res).then((elem) => {
 		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
+
 		if (!id && id !== 0 && elem.rglabel) {
-			editor.update(Action.fromAtomAddition(editor.render.ctab, pos, elem));
-		} else if (rglabel != elem.rglabel || label !== 'R#') {
+			editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
+		} else if (rglabel !== elem.rglabel || label !== 'R#') {
 			elem.aam = atom.aam; // WTF??
-			editor.update(Action.fromAtomsAttrs(editor.render.ctab, id, elem));
+			editor.update(fromAtomsAttrs(editor.render.ctab, id, elem));
 		}
 	});
 }
 
-module.exports = RGroupAtomTool;
+export default RGroupAtomTool;

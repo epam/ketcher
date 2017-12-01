@@ -15,20 +15,18 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-/** @jsx h */
-
 import generics from '../../chem/generics';
 
 const viewSchema = {
-	'atom': {
+	atom: {
 		caption: 'Atom Generics',
 		order: ['any', 'no-carbon', 'metal', 'halogen']
 	},
-	'group': {
+	group: {
 		caption: 'Group Generics',
 		order: ['acyclic', 'cyclic']
 	},
-	'special': {
+	special: {
 		caption: 'Special Nodes',
 		order: []
 	},
@@ -64,50 +62,65 @@ const viewSchema = {
 	'group/cyclic/hetero/aryl': 'hetero aryl'
 };
 
-function GenSet({labels, caption='', selected, onSelect, ...props}) {
+function GenSet({ labels, caption = '', selected, onSelect, ...props }) {
 	return (
 		<fieldset {...props}>
-		  {
-			  labels.map(label => (
-				  <button onClick={e => onSelect(label)}
-					      className={selected(label) ? 'selected' : ''}>
-					{label}</button>
-			  ))
-		  }
-		  {
-			caption ? (
-				<legend>{caption}</legend>
-			) : null
-		  }
+			{
+				labels.map(label => (
+					<button
+						onClick={() => onSelect(label)}
+						className={selected(label) ? 'selected' : ''}
+					>
+						{label}
+					</button>
+				))
+			}
+			{
+				caption ? (
+					<legend>{caption}</legend>
+				) : null
+			}
 		</fieldset>
 	);
 }
 
-function GenGroup({gen, name, path, selected, onSelect}) {
+function GenGroup({ gen, name, path, selected, onSelect }) {
 	const group = gen[name];
 	const pk = path ? `${path}/${name}` : name;
 	const schema = viewSchema[pk];
 
 	return (schema && schema.caption) ? (
 		<fieldset className={name}>
-		  <legend>{schema.caption}</legend>
-		  {
-			  group.labels ? (
-				  <GenSet labels={group.labels}
-						  selected={selected} onSelect={onSelect} />
-			  ) : null
-		  }
-		  {
-			  schema.order.map(child => ( // TODO:order = Object.keys ifndef
-				  <GenGroup gen={group} name={child} path={pk}
-						    selected={selected} onSelect={onSelect}/>
-			  ))
-	      }
+			<legend>{schema.caption}</legend>
+			{
+				group.labels ? (
+					<GenSet
+						labels={group.labels}
+						selected={selected}
+						onSelect={onSelect}
+					/>
+				) : null
+			}
+			{
+				schema.order.map(child => ( // TODO:order = Object.keys ifndef
+					<GenGroup
+						gen={group}
+						name={child}
+						path={pk}
+						selected={selected}
+						onSelect={onSelect}
+					/>
+				))
+			}
 		</fieldset>
 	) : (
-		<GenSet labels={group.labels}
-				caption={schema || name} className={name}
-				selected={selected} onSelect={onSelect} />
+		<GenSet
+			labels={group.labels}
+			caption={schema || name}
+			className={name}
+			selected={selected}
+			onSelect={onSelect}
+		/>
 	);
 }
 
@@ -115,17 +128,26 @@ function GenericGroups({ selected, onSelect, ...props }) {
 	return (
 		<div summary="Generic Groups" {...props}>
 			<div className="col">
-				<GenGroup gen={generics} name='atom'
-						  selected={l => selected(l)}
-						  onSelect={l => onSelect(l)}/>
-				<GenGroup gen={generics} name='special'
-						  selected={l => selected(l)}
-						  onSelect={l => onSelect(l)}/>
+				<GenGroup
+					gen={generics}
+					name="atom"
+					selected={l => selected(l)}
+					onSelect={l => onSelect(l)}
+				/>
+				<GenGroup
+					gen={generics}
+					name="special"
+					selected={l => selected(l)}
+					onSelect={l => onSelect(l)}
+				/>
 			</div>
 			<div className="col">
-				<GenGroup gen={generics} name='group'
-						  selected={l => selected(l)}
-						  onSelect={l => onSelect(l)}/>
+				<GenGroup
+					gen={generics}
+					name="group"
+					selected={l => selected(l)}
+					onSelect={l => onSelect(l)}
+				/>
 			</div>
 		</div>
 	);

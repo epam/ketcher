@@ -33,22 +33,22 @@ export const optionsState = {
 		structStr: null,
 		fragment: false
 	},
-	settings: Object.assign(getDefaultOptions(), validation(storage.getItem("ketcher-opts"))),
-	getServerSettings: function() {
+	settings: Object.assign(getDefaultOptions(), validation(storage.getItem('ketcher-opts'))),
+	getServerSettings() {
 		return pick(SERVER_OPTIONS, this.settings);
 	}
 };
 
 export function appUpdate(data) {
-	return dispatch => {
+	return (dispatch) => {
 		dispatch({ type: 'APP_OPTIONS', data });
-		dispatch({ type: 'UPDATE' })
-	}
+		dispatch({ type: 'UPDATE' });
+	};
 }
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-	storage.setItem("ketcher-opts", newSettings);
+	storage.setItem('ketcher-opts', newSettings);
 	return {
 		type: 'SAVE_SETTINGS',
 		data: newSettings
@@ -81,7 +81,7 @@ export function changeImage(file) {
 	return {
 		type: 'CHANGE_RECOGNIZE_FILE',
 		data: {
-			file: file,
+			file,
 			structStr: null
 		}
 	};
@@ -98,17 +98,16 @@ export function optionsReducer(state = {}, action) {
 	let { type, data } = action;
 
 	if (type === 'APP_OPTIONS')
-		return {...state, app: { ...state.app, ...data }};
+		return { ...state, app: { ...state.app, ...data } };
 
 	if (type === 'SAVE_SETTINGS')
-		return {...state, settings: data};
+		return { ...state, settings: data };
 
 	if (type === 'CHANGE_ANALYSE')
-		return {...state, analyse: { ...state.analyse, ...data }};
+		return { ...state, analyse: { ...state.analyse, ...data } };
 
-	if (recognizeActions.includes(type)) {
-		return {...state, recognize: { ...state.recognize, ...data }}
-	}
+	if (recognizeActions.includes(type))
+		return { ...state, recognize: { ...state.recognize, ...data } };
 
 	return state;
 }

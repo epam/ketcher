@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pool = require('../../util/pool');
+import Pile from '../../util/pile';
 
 function RGroup(logic) {
 	logic = logic || {};
-	this.frags = new Pool();
+	this.frags = new Pile();
 	this.resth = logic.resth || false;
 	this.range = logic.range || '';
 	this.ifthen = logic.ifthen || 0;
@@ -32,18 +32,22 @@ RGroup.prototype.getAttrs = function () {
 	};
 };
 
+/**
+ * @param rgroups { Pool<number, RGroup> }
+ * @param frid { number }
+ */
 RGroup.findRGroupByFragment = function (rgroups, frid) {
-	var ret;
-	rgroups.each(function (rgid, rgroup) {
-		if (rgroup.frags.keyOf(frid)) ret = rgid;
-	});
-	return ret;
+	return rgroups.find((rgid, rgroup) => rgroup.frags.has(frid));
 };
 
+/**
+ * @param fidMap { Map<number, number> }
+ * @returns { RGroup }
+ */
 RGroup.prototype.clone = function (fidMap) {
-	var ret = new RGroup(this);
-	this.frags.each(function (fnum, fid) {
-		ret.frags.add(fidMap ? fidMap[fid] : fid);
+	const ret = new RGroup(this);
+	this.frags.forEach((fid) => {
+		ret.frags.add(fidMap ? fidMap.get(fid) : fid);
 	});
 	return ret;
 };

@@ -15,19 +15,19 @@
  ***************************************************************************/
 
 function Vec2(x, y, z) {
-	if (arguments.length == 0) {
+	if (arguments.length === 0) {
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
-	} else if (arguments.length == 1) {
+	} else if (arguments.length === 1) {
 		this.x = parseFloat(x.x || 0);
 		this.y = parseFloat(x.y || 0);
 		this.z = parseFloat(x.z || 0);
-	} else if (arguments.length == 2) {
+	} else if (arguments.length === 2) {
 		this.x = parseFloat(x || 0);
 		this.y = parseFloat(y || 0);
 		this.z = 0;
-	} else if (arguments.length == 3) {
+	} else if (arguments.length === 3) {
 		this.x = parseFloat(x);
 		this.y = parseFloat(y);
 		this.z = parseFloat(z);
@@ -39,25 +39,13 @@ function Vec2(x, y, z) {
 Vec2.ZERO = new Vec2(0, 0);
 Vec2.UNIT = new Vec2(1, 1);
 
-Vec2.segmentIntersection = function (a, b, c, d) {
-	/* eslint-disable no-mixed-operators*/
-	var dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
-	var dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
-	var da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
-	var db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
-	/* eslint-enable no-mixed-operators*/
-	return dc * dd <= 0 && da * db <= 0;
-};
-
 Vec2.prototype.length = function () {
-	/* eslint-disable no-mixed-operators*/
-	return Math.sqrt(this.x * this.x + this.y * this.y);
-	/* eslint-enable no-mixed-operators*/
+	return Math.sqrt((this.x * this.x) + (this.y * this.y));
 };
 
 Vec2.prototype.equals = function (v) {
 	console.assert(!!v);
-	return this.x == v.x && this.y == v.y;
+	return this.x === v.x && this.y === v.y;
 };
 
 Vec2.prototype.add = function (v) {
@@ -82,7 +70,7 @@ Vec2.prototype.sub = function (v) {
 };
 
 Vec2.prototype.scaled = function (s) {
-	console.assert(s == 0 || !!s);
+	console.assert(s === 0 || !!s);
 	return new Vec2(this.x * s, this.y * s, this.z * s);
 };
 
@@ -97,10 +85,9 @@ Vec2.prototype.yComplement = function (y1) {
 
 Vec2.prototype.addScaled = function (v, f) {
 	console.assert(!!v);
-	console.assert(f == 0 || !!f);
-	/* eslint-disable no-mixed-operators*/
-	return new Vec2(this.x + v.x * f, this.y + v.y * f, this.z + v.z * f);
-	/* eslint-enable no-mixed-operators*/
+	console.assert(f === 0 || !!f);
+
+	return new Vec2(this.x + (v.x * f), this.y + (v.y * f), this.z + (v.z * f));
 };
 
 Vec2.prototype.normalized = function () {
@@ -108,7 +95,7 @@ Vec2.prototype.normalized = function () {
 };
 
 Vec2.prototype.normalize = function () {
-	var l = this.length();
+	const l = this.length();
 
 	if (l < 0.000001)
 		return false;
@@ -131,24 +118,6 @@ Vec2.prototype.toString = function () {
 	return '(' + this.x.toFixed(2) + ',' + this.y.toFixed(2) + ')';
 };
 
-Vec2.dist = function (a, b) {
-	console.assert(!!a);
-	console.assert(!!b);
-	return Vec2.diff(a, b).length();
-};
-
-Vec2.max = function (v1, v2) {
-	console.assert(!!v1);
-	console.assert(!!v2);
-	return new Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y), Math.max(v1.z, v2.z));
-};
-
-Vec2.min = function (v1, v2) {
-	console.assert(!!v1);
-	console.assert(!!v2);
-	return new Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y), Math.min(v1.z, v2.z));
-};
-
 Vec2.prototype.max = function (v) {
 	console.assert(!!v);
 	return new Vec2.max(this, v); // eslint-disable-line new-cap
@@ -167,6 +136,44 @@ Vec2.prototype.floor = function () {
 	return new Vec2(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z));
 };
 
+Vec2.prototype.rotate = function (angle) {
+	console.assert(angle === 0 || !!angle);
+
+	const si = Math.sin(angle);
+	const co = Math.cos(angle);
+
+	return this.rotateSC(si, co);
+};
+
+Vec2.prototype.rotateSC = function (si, co) {
+	console.assert(si === 0 || !!si);
+	console.assert(co === 0 || !!co);
+
+	return new Vec2((this.x * co) - (this.y * si), (this.x * si) + (this.y * co), this.z);
+};
+
+Vec2.prototype.oxAngle = function () {
+	return Math.atan2(this.y, this.x);
+};
+
+Vec2.dist = function (a, b) {
+	console.assert(!!a);
+	console.assert(!!b);
+	return Vec2.diff(a, b).length();
+};
+
+Vec2.max = function (v1, v2) {
+	console.assert(!!v1);
+	console.assert(!!v2);
+	return new Vec2(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y), Math.max(v1.z, v2.z));
+};
+
+Vec2.min = function (v1, v2) {
+	console.assert(!!v1);
+	console.assert(!!v2);
+	return new Vec2(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y), Math.min(v1.z, v2.z));
+};
+
 Vec2.sum = function (v1, v2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
@@ -176,122 +183,58 @@ Vec2.sum = function (v1, v2) {
 Vec2.dot = function (v1, v2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
-	/* eslint-disable no-mixed-operators*/
-	return v1.x * v2.x + v1.y * v2.y;
-	/* eslint-enable no-mixed-operators*/
+
+	return (v1.x * v2.x) + (v1.y * v2.y);
 };
 
 Vec2.cross = function (v1, v2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
-	/* eslint-disable no-mixed-operators*/
-	return v1.x * v2.y - v1.y * v2.x;
-	/* eslint-enable no-mixed-operators*/
-};
 
-Vec2.prototype.rotate = function (angle) {
-	console.assert(angle == 0 || !!angle);
-	var si = Math.sin(angle);
-	var co = Math.cos(angle);
-
-	return this.rotateSC(si, co);
-};
-
-Vec2.prototype.rotateSC = function (si, co) {
-	console.assert(si == 0 || !!si);
-	console.assert(co == 0 || !!co);
-	/* eslint-disable no-mixed-operators*/
-	return new Vec2(this.x * co - this.y * si, this.x * si + this.y * co, this.z);
-	/* eslint-enable no-mixed-operators*/
+	return (v1.x * v2.y) - (v1.y * v2.x);
 };
 
 Vec2.angle = function (v1, v2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
-	return Math.atan2(Vec2.cross(v1, v2), Vec2.dot(v1, v2));
-};
 
-Vec2.prototype.oxAngle = function () {
-	return Math.atan2(this.y, this.x);
+	return Math.atan2(Vec2.cross(v1, v2), Vec2.dot(v1, v2));
 };
 
 Vec2.diff = function (v1, v2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
+
 	return new Vec2(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
 };
 
 // assume arguments v1, f1, v2, f2, v3, f3, etc.
 // where v[i] are vectors and f[i] are corresponding coefficients
-Vec2.lc = function () {
-	var v = new Vec2();
-	for (var i = 0; i < arguments.length / 2; ++i)
-		/* eslint-disable no-mixed-operators*/
-		v = v.addScaled(arguments[2 * i], arguments[2 * i + 1]);
-		/* eslint-enable no-mixed-operators*/
+Vec2.lc = function (...args) {
+	let v = new Vec2();
+	for (let i = 0; i < arguments.length / 2; ++i)
+		v = v.addScaled(args[2 * i], args[(2 * i) + 1]);
 	return v;
 };
 
+/**
+ * @param v1 { Vec2 }
+ * @param f1 { number }
+ * @param v2 { Vec2 }
+ * @param f2 { number }
+ * @return { Vec2 }
+ */
 Vec2.lc2 = function (v1, f1, v2, f2) {
 	console.assert(!!v1);
 	console.assert(!!v2);
-	console.assert(f1 == 0 || !!f1);
-	console.assert(f2 == 0 || !!f2);
-	/* eslint-disable no-mixed-operators*/
-	return new Vec2(v1.x * f1 + v2.x * f2, v1.y * f1 + v2.y * f2, v1.z * f1 + v2.z * f2);
-	/* eslint-enable no-mixed-operators*/
+	console.assert(f1 === 0 || !!f1);
+	console.assert(f2 === 0 || !!f2);
+
+	return new Vec2((v1.x * f1) + (v2.x * f2), (v1.y * f1) + (v2.y * f2), (v1.z * f1) + (v2.z * f2));
 };
 
 Vec2.centre = function (v1, v2) {
 	return new Vec2.lc2(v1, 0.5, v2, 0.5); // eslint-disable-line new-cap
-};
-
-// find intersection of a ray and a box and
-//  return the shift magnitude to avoid it
-Vec2.shiftRayBox = function (/* Vec2*/p, /* Vec2*/d, /* Box2Abs*/bb) { // eslint-disable-line max-statements
-	console.assert(!!p);
-	console.assert(!!d);
-	console.assert(!!bb);
-	// four corner points of the box
-	var b = [bb.p0, new Vec2(bb.p1.x, bb.p0.y),
-	         bb.p1, new Vec2(bb.p0.x, bb.p1.y)];
-	var r = b.map(function (v) {
-		return v.sub(p);
-	}); // b relative to p
-	d = d.normalized();
-	var rc = r.map(function (v) {
-		return Vec2.cross(v, d);
-	}); // cross prods
-	var rd = r.map(function (v) {
-		return Vec2.dot(v, d);
-	}); // dot prods
-
-	// find foremost points on the right and on the left of the ray
-	var pid = -1,
-		nid = -1;
-	for (var i = 0; i < 4; ++i) {
-		if (rc[i] > 0)  {
-			if (pid < 0 || rd[pid] < rd[i]) pid = i;
-		} else
-		if (nid < 0 || rd[nid] < rd[i]) {
-			nid = i;
-		}
-	}
-	if (nid < 0 || pid < 0) // no intersection, no shift
-		return 0;
-
-	// check the order
-	var id0, id1;
-	if (rd[pid] > rd[nid])
-		id0 = nid, id1 = pid;
-	else
-		id0 = pid, id1 = nid;
-
-	// simple proportion to calculate the shift
-	/* eslint-disable no-mixed-operators*/
-	return rd[id0] + Math.abs(rc[id0]) * (rd[id1] - rd[id0]) /
-		(Math.abs(rc[id0]) + Math.abs(rc[id1]));
-		 /* eslint-enable no-mixed-operators*/
 };
 
 module.exports = Vec2;

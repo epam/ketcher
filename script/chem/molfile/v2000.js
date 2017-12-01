@@ -173,11 +173,14 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) { // e
 				);
 
 				if (!props.get('atomList'))
-					props.set('atomList', pool);
+					props.set('atomList', new Pool());
 				if (!props.get('label'))
 					props.set('label', new Pool());
 
-				pool.forEach((atomList, aid) => props.get('label').set(aid, 'L#'));
+				pool.forEach((atomList, aid) => {
+					props.get('label').set(aid, 'L#');
+					props.get('atomList').set(aid, atomList);
+				});
 			} else if (type == 'STY') { // introduce s-group
 				sGroup.initSGroup(sGroups, propertyData);
 			} else if (type == 'SST') {

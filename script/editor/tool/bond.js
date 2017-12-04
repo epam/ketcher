@@ -18,16 +18,17 @@ import Vec2 from '../../util/vec2';
 import Struct from '../../chem/struct';
 import utils from '../shared/utils';
 
-import { fromBondAddition, bondChangingAction } from '../actions/bond';
+import { fromBondAddition, bondChangingAction, fromBondsAttrs } from '../actions/bond';
 
 function BondTool(editor, bondProps) {
 	if (!(this instanceof BondTool)) {
-		// Actions.fromBondAttrs(editor.render.ctab,
-		// editor.selection().bonds, {
-		// type: bondType(mode).type,
-		// stereo: Bond.PATTERN.STEREO.NONE })
+		if (!editor.selection() || !editor.selection().bonds)
+			return new BondTool(editor, bondProps);
+
+		const action = fromBondsAttrs(editor.render.ctab, editor.selection().bonds, bondProps);
+		editor.update(action);
 		editor.selection(null);
-		return new BondTool(editor, bondProps);
+		return null;
 	}
 
 	this.editor = editor;

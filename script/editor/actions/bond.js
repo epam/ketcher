@@ -112,24 +112,23 @@ export function fromBondDeletion(restruct, id) {
 
 /**
  * @param restruct { ReStruct }
- * @param id { number }
- * @param bond { Bond }
- * @param flip { boolean }
- * @param reset { boolean }
+ * @param ids { Array<number>|number }
+ * @param attrs { Bond }
+ * @param reset? { boolean }
  */
-export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disable-line max-params
+export function fromBondsAttrs(restruct, ids, attrs, reset) {
 	const action = new Action();
+	const bids = Array.isArray(ids) ? ids : [ids];
 
-	Object.keys(Struct.Bond.attrlist).forEach((key) => {
-		if (!(key in bond) && !reset)
-			return;
+	bids.forEach((bid) => {
+		Object.keys(Struct.Bond.attrlist).forEach((key) => {
+			if (!(key in attrs) && !reset)
+				return;
 
-		const value = (key in bond) ? bond[key] : Struct.Bond.attrGetDefault(key);
-		action.addOp(new op.BondAttr(id, key, value));
+			const value = (key in attrs) ? attrs[key] : Struct.Bond.attrGetDefault(key);
+			action.addOp(new op.BondAttr(bid, key, value));
+		});
 	});
-
-	if (flip)
-		action.mergeWith(toBondFlipping(restruct.molecule, id));
 
 	return action.perform(restruct);
 }
@@ -161,20 +160,17 @@ export function fromBondsMerge(restruct, mergeMap) {
 	return action;
 }
 
-export function toBondFlipping(struct, id) {
-	const bond = struct.bonds.get(id);
+function fromBondFlipping(restruct, id) {
+	const bond = restruct.molecule.bonds.get(id);
 
 	const action = new Action();
 	action.addOp(new op.BondDelete(id));
 	action.addOp(new op.BondAdd(bond.end, bond.begin, bond)).data.bid = id;
-	return action;
-}
-
-function fromBondFlipping(restruct, bid) {
-	return toBondFlipping(restruct.molecule, bid).perform(restruct);
+	return action.perform(restruct);
 }
 
 /**
+ * @param restruct { ReStruct }
  * @param itemID - bond id in structure
  * @param bond - bond for change
  * @param bondProps - bondTool properties
@@ -187,7 +183,7 @@ export function bondChangingAction(restruct, itemID, bond, bondProps) {
 	// if bondTool is stereo and equal to bond for change
 		return fromBondFlipping(restruct, itemID);
 
-	var loop = plainBondTypes.indexOf(bondProps.type) >= 0 ? plainBondTypes : null;
+	const loop = plainBondTypes.includes(bondProps.type) ? plainBondTypes : null;
 	if (bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
 		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
 		bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
@@ -195,8 +191,10 @@ export function bondChangingAction(restruct, itemID, bond, bondProps) {
 	// if `Single bond` tool is chosen and bond for change in `plainBondTypes`
 		bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
 
-	return fromBondAttrs(restruct, itemID, bondProps,
-		bondFlipRequired(restruct.molecule, bond, bondProps));
+	const isFlip = bondFlipRequired(restruct.molecule, bond, bondProps);
+	const action = isFlip ? fromBondFlipping(restruct, itemID) : new Action();
+
+	return fromBondsAttrs(restruct, itemID, bondProps).mergeWith(action);
 }
 
 function bondFlipRequired(struct, bond, attrs) {

@@ -23,7 +23,7 @@ import closest from '../shared/closest';
 
 import { atomGetAttr, atomGetSGroups, atomForNewBond } from './utils';
 import { fromAtomsAttrs } from './atom';
-import { fromBondAddition, fromBondAttrs } from './bond';
+import { fromBondAddition, fromBondsAttrs } from './bond';
 import { fromAromaticTemplateOnBond } from './aromatic-fusing';
 import { fromPaste } from './paste';
 
@@ -186,7 +186,7 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 		if (existId === null)
 			action.addOp(new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct));
 		else
-			action.mergeWith(fromBondAttrs(restruct, existId, tmplBond, false, true));
+			action.mergeWith(fromBondsAttrs(restruct, existId, tmplBond, true));
 	});
 	action.operations.reverse();
 	return action;

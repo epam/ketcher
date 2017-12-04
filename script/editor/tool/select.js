@@ -23,7 +23,7 @@ import { sgroupDialog } from './sgroup';
 import { atomLongtapEvent } from './atom';
 import { fromMultipleMove } from '../actions/fragment';
 import { fromAtomsAttrs, fromAtomMerge } from '../actions/atom';
-import { fromBondAttrs, fromBondsMerge } from '../actions/bond';
+import { fromBondsAttrs, fromBondsMerge } from '../actions/bond';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -211,7 +211,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(rb).then((newbond) => {
-			editor.update(fromBondAttrs(rnd.ctab, ci.id, newbond));
+			editor.update(fromBondsAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));

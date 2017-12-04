@@ -94,11 +94,9 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
  * @param restruct { ReStruct }
  * @param srcId
  * @param dstId
- * @param skipBondsDel
- * @param skipAtomDel
  * @return { Action }
  */
-export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAtomDel) {
+export function fromAtomMerge(restruct, srcId, dstId) {
 	if (srcId === dstId)
 		return new Action();
 
@@ -114,14 +112,26 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 	atomGetNeighbors(restruct, srcId).forEach((nei) => {
 		const bond = restruct.molecule.bonds.get(nei.bid);
 
+		if (dstId === bond.begin || dstId === bond.end) { // src & dst have one nei
+			action.addOp(new op.BondDelete(nei.bid));
+			return;
+		}
+
 		const begin = bond.begin === nei.aid ? nei.aid : dstId;
 		const end = bond.begin === nei.aid ? dstId : nei.aid;
 
-		if (dstId !== bond.begin && dstId !== bond.end && !restruct.molecule.findBondId(begin, end)) // TODO: improve this {
-			action.addOp(new op.BondAdd(begin, end, bond));
+		const mergeBondId = restruct.molecule.findBondId(begin, end);
 
-		if (!skipBondsDel.includes(nei.bid))
-			action.addOp(new op.BondDelete(nei.bid));
+		if (mergeBondId === null) {
+			action.addOp(new op.BondAdd(begin, end, bond));
+		} else { // replace old bond with new bond
+			const attrs = Struct.Bond.getAttrHash(bond);
+			Object.keys(attrs).forEach((key) => {
+				action.addOp(new op.BondAttr(mergeBondId, key, attrs[key]));
+			});
+		}
+
+		action.addOp(new op.BondDelete(nei.bid));
 	});
 
 	const attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
@@ -133,8 +143,7 @@ export function fromAtomMerge(restruct, srcId, dstId, skipBondsDel = [], skipAto
 		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 	});
 
-	if (!skipAtomDel)
-		action.addOp(new op.AtomDelete(srcId));
+	action.addOp(new op.AtomDelete(srcId));
 
 	const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 

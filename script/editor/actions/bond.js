@@ -139,45 +139,26 @@ export function fromBondAttrs(restruct, id, bond, flip, reset) { // eslint-disab
  * @param mergeMap { Map<number, number> }
  */
 export function fromBondsMerge(restruct, mergeMap) {
-	let action = new Action();
-	const atomsToDelete = [];
-	const srcBonds = Array.from(mergeMap.keys()).map(id => parseInt(id, 10));
 	const struct = restruct.molecule;
+
+	const atomPairs = new Map();
+	let action = new Action();
 
 	mergeMap.forEach((dstId, srcId) => {
 		const bond = struct.bonds.get(srcId);
 		const bondCI = struct.bonds.get(dstId);
 
-		// copy bond src attr and delete
-		let bondAttrAction = new Action();
 		const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
 		if (!params.merged) return;
 
-		const attrs = Struct.Bond.getAttrHash(bond);
-		Object.keys(attrs).forEach((key) => {
-			bondAttrAction.addOp(new op.BondAttr(dstId, key, attrs[key]));
-		});
-		bondAttrAction.addOp(new op.BondDelete(srcId));
-		bondAttrAction = bondAttrAction.perform(restruct);
-
-		// old src atoms
-		if (!atomsToDelete.includes(bond.begin)) atomsToDelete.push(bond.begin);
-		if (!atomsToDelete.includes(bond.end)) atomsToDelete.push(bond.end);
-
-		action = fromAtomMerge(restruct, bond.begin, !params.cross ? bondCI.begin : bondCI.end, srcBonds, true)
-			.mergeWith(fromAtomMerge(restruct, bond.end, !params.cross ? bondCI.end : bondCI.begin, srcBonds, true))
-			.mergeWith(bondAttrAction)
-			.mergeWith(action);
+		atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);
+		atomPairs.set(bond.end, !params.cross ? bondCI.end : bondCI.begin);
 	});
 
-	// delete atoms
-	let delAtomsAction = new Action();
-	atomsToDelete.forEach((aid) => {
-		delAtomsAction.addOp(new op.AtomDelete(aid));
+	atomPairs.forEach((dst, src) => {
+		action = fromAtomMerge(restruct, src, dst).mergeWith(action);
 	});
-	delAtomsAction = delAtomsAction.perform(restruct);
-
-	return delAtomsAction.mergeWith(action);
+	return action;
 }
 
 export function toBondFlipping(struct, id) {

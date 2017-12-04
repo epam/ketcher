@@ -71,8 +71,6 @@ const createBundleConfig = () => ({
 	]
 });
 
-let iconfont = null;
-
 gulp.task('script', ['patch-version'], function () {
 	const bundleConfig = createBundleConfig();
 	bundleConfig.transform.push(
@@ -122,8 +120,7 @@ gulp.task('style', ['icons-svg'], function () {
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rename(pkg.name))
 		.pipe(plugins.less({
-			paths: ['node_modules/normalize.css'],
-			modifyVars: iconfont
+			paths: ['node_modules/normalize.css']
 		}))
 	    // don't use less plugins due http://git.io/vqVDy bug
 		.pipe(plugins.autoprefixer({ browsers: 'last 2 versions' }))
@@ -165,20 +162,6 @@ gulp.task('help', ['doc'], function () {
 	return gulp.src('doc/help.md')
 		.pipe(plugins.tap(markdownify()))
 		.pipe(gulp.dest(options.dist + '/doc'));
-});
-
-gulp.task('font', function (cb) {
-	return iconfont ? cb() : gulp.src(['icons/*.svg'])
-		.pipe(plugins.iconfont({
-			fontName: pkg.name,
-			formats: ['ttf', 'svg', 'eot', 'woff'],
-			timestamp: options['build-date'],
-			normalize: true
-		}))
-		.on('glyphs', function (glyphs) {
-			iconfont = glyphReduce(glyphs);
-		})
-		.pipe(gulp.dest(options.dist));
 });
 
 gulp.task('images', function () {
@@ -301,13 +284,6 @@ function markdownify(options) {
 		file.contents = new Buffer(header + data + footer);
 		file.path = gutil.replaceExtension(file.path, '.html');
 	};
-}
-
-function glyphReduce(glyphs) {
-	return glyphs.reduce(function (res, glyph) {
-		res['icon-' + glyph.name] = "'" + glyph.unicode[0] + "'";
-		return res;
-	}, {});
 }
 
 gulp.task('pre-commit', ['lint', 'check-epam-email', 'check-deps-exact']);

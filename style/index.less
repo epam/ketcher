@@ -62,7 +62,10 @@ body, main[role=application] {
 	overflow-y: hidden;
 	position: absolute;
 	right: 0;
-	& > button {
+	&>button {
+		&>svg {
+			stroke-width: 0;
+		}
 		.toolbutton-horizontal(large, 2);
 	}
 }

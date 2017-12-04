@@ -76,7 +76,7 @@ function ActionButton({ name, action, status = {}, onAction }) { // eslint-disab
 			}}
 			title={shortcut ? `${action.title} (${shortcut})` : action.title}
 		>
-			<Icon name={name}/>{action.title}
+			<Icon name={name} />{action.title}
 		</button>
 	);
 }
@@ -96,7 +96,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 						onClick={ev => openHandle(ev, props.onOpen)}
 					>
 						{ showMenuOrButton(action, item, props.status[item], props) }
-						{ item.menu && <Icon name={`dropdown`} /> }
+						{ item.menu && <Icon name="dropdown" /> }
 					</li>
 				))
 			}

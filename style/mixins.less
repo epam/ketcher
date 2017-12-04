@@ -1,6 +1,8 @@
 // Workaround less issue:
 // https://github.com/less/less.js/issues/2004
 
+@import 'variables';
+
 .set-size(inherit) {
 }
 .set-size(small) {
@@ -322,6 +324,8 @@
 	color: white;
 	&>svg {
 		fill: white;
+		stroke: white;
+		stroke-width: 5;
 	}
 }
 

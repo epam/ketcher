@@ -57,7 +57,7 @@ function api(base, defaultOptions) {
 			.then(response => response.json()
 				.then(res => (response.ok ? res : Promise.reject(res.error))))
 			.catch((err) => {
-				throw Error('Cannot parse result\n' + err);
+				throw Error(err);
 			});
 	}
 

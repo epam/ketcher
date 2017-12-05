@@ -33,7 +33,8 @@ function getSmiles() {
 
 function saveSmiles() {
 	const struct = ketcher.editor.struct();
-	return structformat.toString(struct, 'smiles', ketcher.server);
+	return structformat.toString(struct, 'smiles-ext', ketcher.server)
+		.catch(() => smiles.stringify(struct));
 }
 
 function getMolfile() {

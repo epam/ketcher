@@ -41,6 +41,11 @@ export const map = {
 		mime: 'chemical/x-daylight-smiles',
 		ext: ['.smi', '.smiles']
 	},
+	'smiles-ext': {
+		name: 'Extended SMILES',
+		mime: 'chemical/x-daylight-smiles',
+		ext: ['.cxsmi']
+	},
 	smarts: {
 		name: 'Daylight SMARTS',
 		mime: 'chemical/x-daylight-smarts',
@@ -88,18 +93,19 @@ export function toString(struct, format, server, serverOpts) {
 		const moldata = molfile.stringify(struct);
 		if (format === 'mol' || format === 'rxn') {
 			resolve(moldata);
+		} else if (format === 'smiles') {
+			resolve(smiles.stringify(struct));
 		} else {
-			resolve(server.then(() => (
-				server.convert({
+			const converting = server
+				.then(() => server.convert({
 					struct: moldata,
 					output_format: map[format].mime
-				}, serverOpts)
-			), () => {
-				if (format === 'smiles')
-					return smiles.stringify(struct);
-				throw Error(map[format].name + ' is not supported in the standalone mode');
-			})
-				.then(res => res.struct || res));
+				}, serverOpts))
+				.catch((err) => {
+					throw Error(`Convert error:\n${err.message}`);
+				})
+				.then(res => res.struct);
+			resolve(converting);
 		}
 	});
 }
@@ -114,22 +120,25 @@ export function fromString(structStr, opts, server, serverOpts) {
 			resolve(struct);
 		} else {
 			let withCoords = map[format].supportsCoords;
-			resolve(server.then(() => (
-				withCoords ? server.convert({
-					struct: structStr,
-					output_format: map['mol'].mime
-				}, serverOpts) : server.layout({
-					struct: structStr.trim(),
-					output_format: map['mol'].mime
-				}, serverOpts)
-			), () => {
-				throw Error(map[format].name + ' is not supported in the standalone mode');
-			}).then((res) => {
-				let struct = molfile.parse(res.struct);
-				if (!withCoords)
-					struct.rescale();
-				return struct;
-			}));
+			const converting = server
+				.then(() => (
+					withCoords ? server.convert({
+						struct: structStr,
+						output_format: map['mol'].mime
+					}, serverOpts) : server.layout({
+						struct: structStr.trim(),
+						output_format: map['mol'].mime
+					}, serverOpts)
+				))
+				.catch((err) => {
+					throw Error(`Convert error:\n${err.message}`);
+				})
+				.then((res) => {
+					let struct = molfile.parse(res.struct);
+					if (!withCoords) struct.rescale();
+					return struct;
+				});
+			resolve(converting);
 		}
 	});
 }

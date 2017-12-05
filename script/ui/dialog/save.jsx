@@ -32,16 +32,22 @@ class Save extends Component {
 
 	changeType(ev) {
 		let { type } = this.state;
+		const { struct, server, options } = this.props;
 		if (ev) {
 			type = ev.target.value;
 			ev.preventDefault();
 		}
-		let converted = structFormat.toString(this.props.struct, type, this.props.server, this.props.options);
-		return converted.then(structStr => this.setState({ type, structStr }), (e) => { alert(e); }); // eslint-disable-line no-undef
+		let converted = structFormat.toString(struct, type, server, options);
+		return converted.then(
+			structStr => this.setState({ type, structStr }),
+			(e) => {
+				this.setState(null);
+				alert(e); // eslint-disable-line no-undef
+			}
+		);
 	}
 
 	render() {
-		// $('[value=inchi]').disabled = ui.standalone;
 		let { type, structStr } = this.state;
 		let format = structFormat.map[type];
 		console.assert(format, 'Unknown chemical file type');
@@ -72,10 +78,15 @@ class Save extends Component {
 				]}
 			>
 				<label>Format:
-					<select value={type} onChange={ev => this.changeType(ev)}>{
-						[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles', 'smarts', 'cml', 'inchi']
-							.map(t => (<option value={t}>{structFormat.map[t].name}</option>))
-					}
+					<select value={type} onChange={ev => this.changeType(ev)}>
+						{
+							[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles']
+								.map(t => (<option value={t}>{structFormat.map[t].name}</option>))
+						}
+						{
+							['smiles-ext', 'smarts', 'cml', 'inchi']
+								.map(t => (<option disabled={!this.props.server} value={t}>{structFormat.map[t].name}</option>))
+						}
 					</select>
 				</label>
 				<textarea
@@ -91,7 +102,7 @@ class Save extends Component {
 
 export default connect(
 	store => ({
-		server: store.server,
+		server: store.options.app.server ? store.server : null,
 		struct: store.editor.struct(),
 		options: store.options.getServerSettings()
 	}),

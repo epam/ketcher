@@ -178,12 +178,12 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 };
 
 CisTrans.prototype.build = function (excludeBonds) {
-	this.molecule.bonds.forEach((bid, bond) => {
-		var ct = this.bonds.set(bid,
-			{
-				parity: 0,
-				substituents: []
-			});
+	this.molecule.bonds.forEach((bond, bid) => {
+		const ct = {
+			parity: 0,
+			substituents: []
+		};
+		this.bonds.set(bid, ct);
 
 		if (Array.isArray(excludeBonds) && excludeBonds[bid])
 			return;
@@ -194,11 +194,11 @@ CisTrans.prototype.build = function (excludeBonds) {
 		if (!this.sortSubstituents(ct.substituents))
 			return;
 
-		var sign = this.samesides(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
+		const sign = this.samesides(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
 
-		if (sign == 1)
+		if (sign === 1)
 			ct.parity = CisTrans.PARITY.CIS;
-		else if (sign == -1)
+		else if (sign === -1)
 			ct.parity = CisTrans.PARITY.TRANS;
 	});
 };

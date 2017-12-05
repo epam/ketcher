@@ -66,16 +66,14 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 		if (vStack.length < 1) {
 			var selected = -1;
 
-			var findFunc = function (aid) { // eslint-disable-line func-style
-				if (this.vertices[aid].dfs_state == 0) {
-					selected = aid;
-					return true;
-				}
-				return false;
-			};
-
 			while (cid < this.components.length && selected == -1) {
-				selected = this.components[cid].find(findFunc);
+				selected = this.components[cid].find((aid) => {
+					if (this.vertices[aid].dfs_state === 0) {
+						selected = aid;
+						return true;
+					}
+					return false;
+				});
 				if (selected === null) {
 					selected = -1;
 					cid++;
@@ -83,8 +81,15 @@ Dfs.prototype.walk = function () { // eslint-disable-line max-statements
 				if (cid == this.nReactants)
 					this.nComponentsInReactants = component;
 			}
-			if (selected < -1)
-				this.molecule.atoms.find(findFunc, this);
+			if (selected < -1) {
+				this.molecule.atoms.find((aid) => {
+					if (this.vertices[aid].dfs_state === 0) {
+						selected = aid;
+						return true;
+					}
+					return false;
+				});
+			}
 			if (selected == -1)
 				break;
 			this.vertices[selected].parent_vertex = -1;

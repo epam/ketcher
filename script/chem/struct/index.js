@@ -882,7 +882,7 @@ Struct.prototype.setImplicitHydrogen = function (list) {
 	});
 
 	if (!list) {
-		this.atoms.forEach((aid) => {
+		this.atoms.forEach((atom, aid) => {
 			this.calcImplicitHydrogen(aid);
 		});
 	} else {

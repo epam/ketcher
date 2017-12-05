@@ -164,7 +164,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 		}, this);
 		stereocenters.buildFromBonds(this.ignore_errors);
 
-		stereocenters.forEach((sc, atomIdx) => { // eslint-disable-line max-statements
+		stereocenters.each((sc, atomIdx) => { // eslint-disable-line max-statements
 			// if (sc.type < MoleculeStereocenters::ATOM_AND)
 			//    continue;
 
@@ -517,7 +517,7 @@ Smiles.prototype.markCisTrans = function (mol) {
 		};
 	});
 
-	this.cis_trans.forEach((ct, bid) => {
+	this.cis_trans.each((ct, bid) => {
 		var bond = mol.bonds.get(bid);
 
 		if (ct.parity !== 0 && !this.isBondInRing(bid)) {
@@ -666,7 +666,7 @@ Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 
 	while (true) { // eslint-disable-line no-constant-condition
 		ntouched = 0;
-		this.cis_trans.forEach((ct, bid) => {
+		this.cis_trans.each((ct, bid) => {
 			if (ct.parity !== 0 && !this.isBondInRing(bid)) {
 				if (this.updateSideBonds(mol, bid))
 					ntouched++;

@@ -58,11 +58,18 @@ EraserTool.prototype.mouseleave = function (event) {
 };
 
 EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
+
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		this.editor.update(fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
-		this.editor.selection(null);
+	} else {
+		const selection = this.editor.selection();
+
+		if (selection && (selection.atoms.length !== 0 || selection.bonds.length !== 0))
+			this.editor.update(fromFragmentDeletion(rnd.ctab, selection));
 	}
+
+	this.editor.selection(null);
 };
 
 EraserTool.prototype.click = function (event) {

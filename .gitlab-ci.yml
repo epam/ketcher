@@ -29,10 +29,10 @@ standalone:
   stage: build
   script:
     - npm run archive -- --sgroup-data-special
-    - BUILD=standalone deploy www ketcher-*.zip
+    - BUILD=standalone-smiles-ext deploy www ketcher-*.zip
     - deploy artifact ketcher-*.zip
   only:
-    - master
+    - task-smiles-ext
 
 stable:
   stage: build

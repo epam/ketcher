@@ -262,25 +262,24 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 
 // Add action operations to remove whole s-group if needed
 export function removeSgroupIfNeeded(action, restruct, atoms) {
-	var struct = restruct.molecule;
-	var sgCounts = {};
+	const struct = restruct.molecule;
+	const sgCounts = new Map();
 
 	atoms.forEach((id) => {
-		var sgroups = atomGetSGroups(restruct, id);
+		const sgroups = atomGetSGroups(restruct, id);
 
 		sgroups.forEach((sid) => {
-			sgCounts[sid] = sgCounts[sid] ? (sgCounts[sid] + 1) : 1;
+			sgCounts.set(sid, sgCounts.has(sid) ? (sgCounts.get(sid) + 1) : 1);
 		});
 	});
 
-	Object.keys(sgCounts).forEach((key) => {
-		var sid = parseInt(key);
-		var sG = restruct.sgroups.get(sid).item;
-		var sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
+	sgCounts.forEach((count, sid) => {
+		const sG = restruct.sgroups.get(sid).item;
+		const sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
 
-		if (sgAtoms.length === sgCounts[sid]) {
+		if (sgAtoms.length === count) {
 			// delete whole s-group
-			var sgroup = struct.sgroups.get(sid);
+			const sgroup = struct.sgroups.get(sid);
 			action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
 			action.addOp(new op.SGroupRemoveFromHierarchy(sid));
 			action.addOp(new op.SGroupDelete(sid));

@@ -27,7 +27,7 @@ function EraserTool(editor, mode) {
 		if (!editor.selection())
 			return new EraserTool(editor, mode);
 
-		var action = fromFragmentDeletion(editor.render.ctab, editor.selection());
+		const action = fromFragmentDeletion(editor.render.ctab, editor.selection());
 		editor.update(action);
 		editor.selection(null);
 		return null;
@@ -40,7 +40,7 @@ function EraserTool(editor, mode) {
 }
 
 EraserTool.prototype.mousedown = function (event) {
-	var ci = this.editor.findItem(event, this.maps);
+	const ci = this.editor.findItem(event, this.maps);
 	if (!ci) //  ci.type == 'Canvas'
 		this.lassoHelper.begin(event);
 };
@@ -52,24 +52,13 @@ EraserTool.prototype.mousemove = function (event) {
 		this.editor.hover(this.editor.findItem(event, this.maps));
 };
 
-EraserTool.prototype.mouseleave = function (event) {
-	if (this.lassoHelper.running(event))
-		this.lassoHelper.end(event);
-};
-
 EraserTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
 	const rnd = this.editor.render;
 
 	if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		this.editor.update(fromFragmentDeletion(rnd.ctab, this.lassoHelper.end(event)));
-	} else {
-		const selection = this.editor.selection();
-
-		if (selection && (selection.atoms.length !== 0 || selection.bonds.length !== 0))
-			this.editor.update(fromFragmentDeletion(rnd.ctab, selection));
+		this.editor.selection(null);
 	}
-
-	this.editor.selection(null);
 };
 
 EraserTool.prototype.click = function (event) {
@@ -98,5 +87,7 @@ EraserTool.prototype.click = function (event) {
 	}
 	this.editor.selection(null);
 };
+
+EraserTool.prototype.mouseleave = EraserTool.prototype.mouseup;
 
 export default EraserTool;

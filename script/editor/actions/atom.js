@@ -92,8 +92,8 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
 /**
  * @param restruct { ReStruct }
- * @param srcId
- * @param dstId
+ * @param srcId { number }
+ * @param dstId { number }
  * @return { Action }
  */
 export function fromAtomMerge(restruct, srcId, dstId) {
@@ -143,12 +143,12 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 		action.addOp(new op.AtomAttr(dstId, key, attrs[key]));
 	});
 
-	action.addOp(new op.AtomDelete(srcId));
-
 	const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
 	if (sgChanged)
 		removeSgroupIfNeeded(action, restruct, [srcId]);
+
+	action.addOp(new op.AtomDelete(srcId));
 
 	return action.perform(restruct).mergeWith(fragAction);
 }

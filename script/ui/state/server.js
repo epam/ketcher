@@ -32,7 +32,8 @@ export function checkServer() {
 				indigoVersion: res.indigoVersion,
 				server: true
 			})),
-			err => alert(err) // eslint-disable-line no-undef
+			err => console.info(err)
+			// TODO: notification info
 		);
 	};
 }
@@ -61,6 +62,7 @@ export function check(optsTypes) {
 		serverCall(editor, server, 'check', options)
 			.then(res => dispatch(checkErrors(res)))
 			.catch(console.error);
+		// TODO: notification
 	};
 }
 
@@ -77,12 +79,13 @@ export function analyse() {
 				'monoisotopic-mass', 'gross', 'mass-composition']
 		};
 
-		serverCall(editor, server, 'calculate', options).then((values) => {
-			dispatch({
+		serverCall(editor, server, 'calculate', options)
+			.then(values => dispatch({
 				type: 'CHANGE_ANALYSE',
 				data: { values }
-			});
-		});
+			}))
+			.catch(alert); // eslint-disable-line no-undef
+		// TODO: notification
 	};
 }
 
@@ -92,9 +95,10 @@ export function serverTransform(method, data, struct) {
 		let opts = state.options.getServerSettings();
 		opts.data = data;
 
-		serverCall(state.editor, state.server, method, opts, struct).then((res) => {
-			dispatch(load(res.struct, { rescale: method === 'layout' }));
-		});
+		serverCall(state.editor, state.server, method, opts, struct)
+			.then(res => dispatch(load(res.struct, { rescale: method === 'layout' })))
+			.catch(alert); // eslint-disable-line no-undef
+		// TODO: notification
 	};
 }
 
@@ -114,20 +118,12 @@ export function serverCall(editor, server, method, options, struct) {
 		selectedAtoms = selectedAtoms.map(aid => reindexMap.get(aidMap.get(aid)));
 	}
 
-	let request = server.then(() =>
+	return server.then(() =>
 		server[method](Object.assign({
 			struct: molfile.stringify(struct, { ignoreErrors: true })
 		}, selectedAtoms && selectedAtoms.length > 0 ? {
 			selected: selectedAtoms
 		} : null, options.data), omit('data', options)));
-
-	// utils.loading('show');
-	request.catch((err) => {
-		console.error(err);
-	}).then(() => {
-		// utils.loading('hide');
-	});
-	return request;
 }
 
 function getReindexMap(components) {

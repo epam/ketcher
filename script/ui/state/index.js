@@ -101,8 +101,7 @@ export function load(structStr, options) {
 		options = options || {};
 		// TODO: check if structStr is parsed already
 		// utils.loading('show');
-		const parsed = structFormat.fromString(structStr,
-			options, server);
+		const parsed = structFormat.fromString(structStr, options, server);
 
 		parsed.catch(() => {
 			// utils.loading('hide');
@@ -123,6 +122,7 @@ export function load(structStr, options) {
 			return struct;
 		}, (err) => {
 			alert(err); // eslint-disable-line no-undef
+			// TODO: notification
 		});
 	};
 }

@@ -137,7 +137,7 @@ function fromRlabel(rg) {
 function toRlabel(values) {
 	let res = 0;
 	values.forEach((val) => {
-		let rgi = val - 1;
+		const rgi = val - 1;
 		res |= 1 << rgi;
 	});
 	return res;
@@ -166,7 +166,7 @@ export function toBondType(caption) {
 }
 
 function fromBondType(type, stereo) {
-	for (let caption in bondCaptionMap) {
+	for (const caption in bondCaptionMap) {
 		if (bondCaptionMap[caption].type === type &&
 			bondCaptionMap[caption].stereo === stereo)
 			return caption;

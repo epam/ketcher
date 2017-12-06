@@ -34,7 +34,7 @@ export function shortcutStr(shortcut) {
 }
 
 function isMenuOpened(currentNode) {
-	let parentNode = hiddenAncestor(currentNode);
+	const parentNode = hiddenAncestor(currentNode);
 	return parentNode.classList.contains('opened');
 }
 
@@ -61,7 +61,7 @@ export function showMenuOrButton(action, item, status, props) { // eslint-disabl
 }
 
 function ActionButton({ action, status = {}, onAction }) { // eslint-disable-line no-shadow
-	let shortcut = action.shortcut && shortcutStr(action.shortcut);
+	const shortcut = action.shortcut && shortcutStr(action.shortcut);
 	return (
 		<button
 			disabled={status.disabled}
@@ -103,7 +103,7 @@ function ActionMenu({ name, menu, className, role, ...props }) {
 
 function toolMargin(menuName, menu, visibleTools) {
 	if (!visibleTools[menuName]) return {};
-	let iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40; // now not found better way
+	const iconHeight = (window.innerHeight < 600 || window.innerWidth < 1040) ? 32 : 40; // now not found better way
 	let index = menu.indexOf(visibleTools[menuName]); // first level
 
 	if (index === -1) {
@@ -119,7 +119,7 @@ function toolMargin(menuName, menu, visibleTools) {
 }
 
 function openHandle(event, onOpen) {
-	let hiddenEl = hiddenAncestor(event.currentTarget);
+	const hiddenEl = hiddenAncestor(event.currentTarget);
 
 	if (hiddenEl) onOpen(hiddenEl.id);
 	event.stopPropagation();

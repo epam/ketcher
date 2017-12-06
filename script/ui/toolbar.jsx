@@ -192,7 +192,7 @@ const toolbar = [
 ];
 
 function ZoomList({ status, onAction }) {
-	let zoom = status.zoom && status.zoom.selected; // TMP
+	const zoom = status.zoom && status.zoom.selected; // TMP
 	return (
 		<select
 			value={zoom}
@@ -208,13 +208,13 @@ function ZoomList({ status, onAction }) {
 }
 
 function AtomsList(atoms, { active, onAction }) {
-	let isAtom = active && active.tool === 'atom';
+	const isAtom = active && active.tool === 'atom';
 	return (
 		<menu>
 			{
 				atoms.map((label) => {
-					let index = element.map[label];
-					let shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
+					const index = element.map[label];
+					const shortcut = basicAtoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
 					return (
 						<li
 							className={classNames({
@@ -235,8 +235,8 @@ function AtomsList(atoms, { active, onAction }) {
 }
 
 function TemplatesList({ active, onAction }) {
-	let shortcut = shortcutStr(action['template-0'].shortcut);
-	let isTmpl = active && active.tool === 'template';
+	const shortcut = shortcutStr(action['template-0'].shortcut);
+	const isTmpl = active && active.tool === 'template';
 	return (
 		<menu>
 			{

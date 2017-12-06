@@ -132,7 +132,7 @@ function root(state, action) {
 	case 'INIT':
 		global._ui_editor = action.editor;
 	case 'UPDATE': // eslint-disable-line no-case-declarations
-		let { type, ...data } = action;
+		const { type, ...data } = action;
 		if (data)
 			state = { ...state, ...data };
 	}

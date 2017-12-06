@@ -92,7 +92,7 @@ const onContextChange = (state, payload) => {
 };
 
 const onFieldNameChange = (state, payload) => {
-	let { fieldName } = payload;
+	const { fieldName } = payload;
 
 	const context = state.result.context;
 

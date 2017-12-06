@@ -37,7 +37,7 @@ export const automapSchema = {
 };
 
 function Automap(props) {
-	let { formState, ...prop } = props;
+	const { formState, ...prop } = props;
 	return (
 		<Dialog
 			title="Reaction Auto-Mapping"

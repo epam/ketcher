@@ -33,7 +33,7 @@ class Open extends Component {
 		};
 	}
 	result() {
-		let { structStr, fragment } = this.state;
+		const { structStr, fragment } = this.state;
 		return structStr ? { structStr, fragment } : null;
 	}
 	changeStructStr(structStr) {
@@ -45,7 +45,7 @@ class Open extends Component {
 		});
 	}
 	render() {
-		let { structStr, fragment } = this.state;
+		const { structStr, fragment } = this.state;
 		return (
 			<Dialog
 				title="Open Structure"

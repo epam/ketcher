@@ -52,8 +52,8 @@ const AppModal = connect(
 		}
 	}),
 	(stateProps, dispatchProps) => {
-		let prop = stateProps.modal && stateProps.modal.prop;
-		let initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
+		const prop = stateProps.modal && stateProps.modal.prop;
+		const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
 		return {
 			modal: stateProps.modal,
 			...initProps,
@@ -71,7 +71,7 @@ const AppModal = connect(
 	if (!modal)
 		return null;
 
-	let Modal = modals[modal.name];
+	const Modal = modals[modal.name];
 
 	if (!Modal)
 		throw new Error(`There is no modal window named ${modal.name}`);

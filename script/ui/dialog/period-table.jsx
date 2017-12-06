@@ -137,7 +137,7 @@ function AtomInfo({ el, isInfo }) {
 class PeriodTable extends Component {
 	constructor(props) {
 		super(props);
-		let genType = !this.props.pseudo ? null : 'gen';
+		const genType = !this.props.pseudo ? null : 'gen';
 		this.state = {
 			type: props.type || genType || 'atom',
 			value: props.values || props.label || null,
@@ -151,8 +151,8 @@ class PeriodTable extends Component {
 			this.firstType = false;
 			return;
 		}
-		let pl = this.state.type === 'list' || this.state.type === 'not-list';
-		let l = type === 'list' || type === 'not-list';
+		const pl = this.state.type === 'list' || this.state.type === 'not-list';
+		const l = type === 'list' || type === 'not-list';
 		if (l && pl) {
 			this.setState({ type });
 		} else {
@@ -163,16 +163,16 @@ class PeriodTable extends Component {
 		}
 	}
 	selected(label) {
-		let { type, value } = this.state;
+		const { type, value } = this.state;
 		return (type === 'atom' || type === 'gen') ? value === label :
 			value.includes(label);
 	}
 	onSelect(label) {
-		let { type, value } = this.state;
+		const { type, value } = this.state;
 		if (type === 'atom' || type === 'gen') {
 			this.setState({ value: label });
 		} else {
-			let i = value.indexOf(label);
+			const i = value.indexOf(label);
 			if (i < 0)
 				value.push(label);
 			else
@@ -181,7 +181,7 @@ class PeriodTable extends Component {
 		}
 	}
 	result() {
-		let { type, value } = this.state;
+		const { type, value } = this.state;
 		if (type === 'atom')
 			return value ? { label: value, pseudo: null } : null;
 		else if (type === 'gen')
@@ -194,7 +194,7 @@ class PeriodTable extends Component {
 	});
 	render() {
 		const tabs = ['Table', 'Extended'];
-		let { type } = this.state;
+		const { type } = this.state;
 		return (
 			<Dialog
 				title="Periodic table"
@@ -257,7 +257,7 @@ class PeriodTable extends Component {
 
 function rowPartition(elements) {
 	return elements.reduce((res, el) => {
-		let row = res[el.period - 1];
+		const row = res[el.period - 1];
 		if (!row) {
 			res.push([el]);
 		} else {
@@ -274,8 +274,8 @@ function mapSelectionToProps(editor) {
 
 	if (selection && Object.keys(selection).length === 1 &&
 		selection.atoms && Object.keys(selection.atoms).length === 1) {
-		let struct = editor.struct();
-		let atom = struct.atoms.get(selection.atoms[0]);
+		const struct = editor.struct();
+		const atom = struct.atoms.get(selection.atoms[0]);
 		return { ...fromElement(atom) };
 	}
 

@@ -62,7 +62,7 @@ class StructRender extends Component {
 	}
 
 	render() {
-		let { struct, Tag = 'div', ...props } = this.props;
+		const { struct, Tag = 'div', ...props } = this.props;
 		return (
 			<Tag /* ref="el" */ {...props}>{ struct ? null : 'No molecule' }</Tag>
 		);

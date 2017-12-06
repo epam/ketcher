@@ -44,7 +44,7 @@ function disabled(actObj, { editor, server, options }) {
 }
 
 function status(key, activeTool, params) {
-	let actObj = acts[key];
+	const actObj = acts[key];
 	return pickBy(x => x, {
 		selected: selected(actObj, activeTool, params),
 		disabled: disabled(actObj, params)

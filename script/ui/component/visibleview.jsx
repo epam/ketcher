@@ -85,7 +85,7 @@ export default class VirtualList extends Component {
 		const end = start + 1 + visibleRowCount;
 
 		// data slice currently in viewport plus overscan items
-		let selection = data.slice(start, end);
+		const selection = data.slice(start, end);
 
 		return (
 			<div onScroll={this.handleScroll} {...props}>

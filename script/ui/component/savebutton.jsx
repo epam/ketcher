@@ -42,16 +42,13 @@ class SaveButton extends Component {
 	}
 
 	render() {
-		let { children, filename, data, className, ...props } = this.props;
-
-		if (!this.state.saver || !data)
-			className = `disabled ${className}`;
+		const { children, filename, data, className, ...props } = this.props;
 
 		return (
 			<a
 				download={filename}
 				onClick={ev => this.save(ev)}
-				className={className}
+				className={(!this.state.saver || !data) ? `disabled ${className}` : className}
 				{...props}
 			>
 				{ children }

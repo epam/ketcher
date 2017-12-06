@@ -26,7 +26,7 @@ import Dialog from '../component/dialog';
 import element from '../../chem/element';
 
 function ElementNumber(props, { stateStore }) {
-	let { result } = stateStore.props;
+	const { result } = stateStore.props;
 	return (
 		<label>Number:
 			<input
@@ -40,7 +40,7 @@ function ElementNumber(props, { stateStore }) {
 }
 
 function Atom(props) {
-	let { formState, ...prop } = props;
+	const { formState, ...prop } = props;
 	return (
 		<Dialog
 			title="Atom Properties"

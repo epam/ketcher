@@ -64,7 +64,7 @@ const filterLibSelector = createSelector(
 
 function filterLib(lib, filter) {
 	console.warn('Filter', filter);
-	let re = new RegExp(escapeRegExp(greekify(filter)), 'i');
+	const re = new RegExp(escapeRegExp(greekify(filter)), 'i');
 	return flow(
 		_filter(item => !filter || re.test(greekify(item.struct.name)) || re.test(greekify(item.props.group))),
 		reduce((res, item) => {
@@ -116,7 +116,7 @@ class TemplateLib extends Component {
 			<div className="tr" key={index}>{ row.map((tmpl, i) => (
 				<div
 					className={tmpl === this.props.selected ? 'td selected' : 'td'}
-					title={greekify(tmplName(tmpl, index * COLS + i))}
+					title={greekify(tmplName(tmpl, (index * COLS) + i))}
 				>
 					<RenderTmpl tmpl={tmpl} className="struct" onClick={() => this.select(tmpl)} />
 					<button className="attach-button" onClick={() => this.props.onAttach(tmpl)}>
@@ -130,7 +130,8 @@ class TemplateLib extends Component {
 
 	render() {
 		const COLS = 3;
-		let { group, filter, onFilter, onChangeGroup, ...props } = this.props;
+		const { filter, onFilter, onChangeGroup, ...props } = this.props;
+		let group = props.group;
 		const lib = filterLibSelector(this.props);
 		group = lib[group] ? group : Object.keys(lib)[0];
 
@@ -138,7 +139,7 @@ class TemplateLib extends Component {
 			<Dialog
 				title="Template Library"
 				className="template-lib"
-				params={props}
+				params={omit(['group'], props)}
 				result={() => this.result()}
 				buttons={[
 					<SaveButton

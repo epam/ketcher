@@ -21,8 +21,8 @@ const metPrefix = ['alkali', 'alkaline-earth', 'transition',
 	'post-transition']; // 'lanthanide', 'actinide'
 
 function atomClass(el) {
-	let own = `atom-${el.label.toLowerCase()}`;
-	let type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
+	const own = `atom-${el.label.toLowerCase()}`;
+	const type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
 		(el.type || 'unknown-props');
 	return [own, type, el.state || 'unknown-state', el.origin];
 }

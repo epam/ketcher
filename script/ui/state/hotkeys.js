@@ -55,13 +55,13 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
 		index = (index + 1) % group.length;
 
-		let actName = group[index];
+		const actName = group[index];
 		if (actionState[actName] && actionState[actName].disabled === true) {
 			event.preventDefault();
 			return;
 		}
 		if (clipArea.actions.indexOf(actName) === -1) {
-			let newAction = actions[actName].action;
+			const newAction = actions[actName].action;
 			dispatch(onAction(newAction));
 			event.preventDefault();
 		} else if (window.clipboardData) { // IE support
@@ -121,13 +121,13 @@ export function initClipboard(dispatch, getState) {
 			return !getState().modal;
 		},
 		onCut() {
-			let data = clipData(getState().editor);
+			const data = clipData(getState().editor);
 			debAction({ tool: 'eraser', opts: 1 });
 			return data;
 		},
 		onCopy() {
-			let editor = getState().editor;
-			let data = clipData(editor);
+			const editor = getState().editor;
+			const data = clipData(editor);
 			editor.selection(null);
 			return data;
 		},

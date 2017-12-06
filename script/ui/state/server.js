@@ -42,7 +42,7 @@ export function recognize(file) {
 	return (dispatch, getState) => {
 		const rec = getState().server.recognize;
 
-		let process = rec(file).then((res) => {
+		const process = rec(file).then((res) => {
 			dispatch(setStruct(res.struct));
 		}, () => {
 			dispatch(setStruct(null));
@@ -92,7 +92,7 @@ export function analyse() {
 export function serverTransform(method, data, struct) {
 	return (dispatch, getState) => {
 		const state = getState();
-		let opts = state.options.getServerSettings();
+		const opts = state.options.getServerSettings();
 		opts.data = data;
 
 		serverCall(state.editor, state.server, method, opts, struct)

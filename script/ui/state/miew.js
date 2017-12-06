@@ -20,8 +20,8 @@ import * as structFormat from '../structformat';
 export function miewAction(dispatch, getState) {
 	const editor = getState().editor;
 	const server = getState().server;
-	let convert = structFormat.toString(editor.struct(),
-		'cml', server);
+
+	const convert = structFormat.toString(editor.struct(), 'cml', server);
 	convert.then((cml) => {
 		openDialog(dispatch, 'miew', {
 			structStr: cml

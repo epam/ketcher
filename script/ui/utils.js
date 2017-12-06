@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 /* local storage */
-const storage = {
+export const storage = {
 	warningMessage: 'Your changes will be lost after the tab closing. See Help (Note 2).',
 	isAvailable() {
 		try {
@@ -48,11 +48,11 @@ const storage = {
 
 /* schema utils */
 function constant(schema, prop) {
-	let desc = schema.properties[prop];
+	const desc = schema.properties[prop];
 	return desc.constant || desc.enum[0]; // see https://git.io/v6hyP
 }
 
-function mapOf(schema, prop) {
+export function mapOf(schema, prop) {
 	console.assert(schema.oneOf);
 	return schema.oneOf.reduce((res, desc) => {
 		res[constant(desc, prop)] = desc;
@@ -60,11 +60,11 @@ function mapOf(schema, prop) {
 	}, {});
 }
 
-function selectListOf(schema, prop) {
-	let desc = schema.properties && schema.properties[prop];
+export function selectListOf(schema, prop) {
+	const desc = schema.properties && schema.properties[prop];
 	if (desc) {
 		return desc.enum.map((value, i) => {
-			let title = desc.enumNames && desc.enumNames[i];
+			const title = desc.enumNames && desc.enumNames[i];
 			return title ? { title, value } : value;
 		});
 	}
@@ -75,9 +75,3 @@ function selectListOf(schema, prop) {
 		}
 	));
 }
-
-module.exports = {
-	mapOf,
-	selectListOf,
-	storage
-};

@@ -119,7 +119,7 @@ export function fromString(structStr, opts, server, serverOpts) {
 			const struct = molfile.parse(structStr, opts);
 			resolve(struct);
 		} else {
-			let withCoords = map[format].supportsCoords;
+			const withCoords = map[format].supportsCoords;
 			const converting = server
 				.then(() => (
 					withCoords ? server.convert({
@@ -134,7 +134,7 @@ export function fromString(structStr, opts, server, serverOpts) {
 					throw Error(`Convert error:\n${err.message}`);
 				})
 				.then((res) => {
-					let struct = molfile.parse(res.struct);
+					const struct = molfile.parse(res.struct);
 					if (!withCoords) struct.rescale();
 					return struct;
 				});

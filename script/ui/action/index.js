@@ -31,7 +31,7 @@ export default {
 		title: 'Clear Canvas',
 		action: {
 			thunk: (dispatch, getState) => {
-				let editor = getState().editor;
+				const editor = getState().editor;
 				if (!editor.struct().isBlank())
 					editor.struct(null);
 				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
@@ -177,7 +177,7 @@ export default {
 };
 
 function hasSelection(editor) {
-	let selection = editor.selection();
+	const selection = editor.selection();
 	return selection && // if not only sgroupData selected
 		(Object.keys(selection).length > 1 || !selection.sgroupData);
 }

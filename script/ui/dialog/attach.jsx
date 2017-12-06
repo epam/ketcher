@@ -22,7 +22,7 @@ import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function AttachmentPoints(props) {
-	let { formState, ...prop } = props;
+	const { formState, ...prop } = props;
 	return (
 		<Dialog
 			title="Attachment Points"

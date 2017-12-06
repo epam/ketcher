@@ -26,11 +26,11 @@ const initial = {
 };
 const MAX_ATOMS = 7;
 
-function changeBondName(visibleTool, activeTool) {
-	let	visibleTools;
+function updateVisibleTools(visibleTool, activeTool) {
 	const regExp = /(bond)(-)(common|stereo|query)/;
 	const menuHeight = window.innerHeight;
-	visibleTools = Object.keys(visibleTool).reduce((res, key) => {
+
+	return Object.keys(visibleTool).reduce((res, key) => {
 		if (key === 'bond' && menuHeight > 700) return res; // TODO remove me after update styles
 		if (key === 'transform' && menuHeight > 800) return res;
 		if (key === 'rgroup' && menuHeight > 850) return res;
@@ -38,7 +38,6 @@ function changeBondName(visibleTool, activeTool) {
 			res[key] = visibleTool[key];
 		return res;
 	}, { ...activeTool });
-	return visibleTools;
 }
 
 export function initResize() {
@@ -53,11 +52,11 @@ export function initResize() {
 }
 
 export default function (state = initial, action) {
-	let { type, data } = action;
+	const { type, data } = action;
 
 	switch (type) {
 	case 'ACTION': {
-		let visibleTool = toolInMenu(action.action);
+		const visibleTool = toolInMenu(action.action);
 		return visibleTool
 			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
 			: state;
@@ -68,7 +67,7 @@ export default function (state = initial, action) {
 	}
 	case 'CLEAR_VISIBLE': {
 		const activeTool = toolInMenu(action.data);
-		const correctTools = changeBondName(state.visibleTools, activeTool);
+		const correctTools = updateVisibleTools(state.visibleTools, activeTool);
 		return { ...state, opened: null, visibleTools: { ...correctTools } };
 	}
 	case 'OPENED':
@@ -98,10 +97,10 @@ export function addAtoms(atomLabel) {
 }
 
 function toolInMenu(action) {
-	let tool = Object.keys(tools).find(toolName => isEqual(action, tools[toolName].action));
+	const tool = Object.keys(tools).find(toolName => isEqual(action, tools[toolName].action));
 
-	let sel = document.getElementById(tool);
-	let dropdown = sel && hiddenAncestor(sel);
+	const sel = document.getElementById(tool);
+	const dropdown = sel && hiddenAncestor(sel);
 
 	return (dropdown && dropdown.id !== '') ? { [dropdown.id]: sel.id } : null;
 }

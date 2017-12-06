@@ -19,7 +19,7 @@ import keyName from 'w3c-keyname';
 const mac = typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
 
 function normalizeKeyName(name) {
-	let parts = name.split(/\+(?!$)/);
+	const parts = name.split(/\+(?!$)/);
 	let result = parts[parts.length - 1];
 	if (result === 'Space') result = ' ';
 	let alt;
@@ -28,7 +28,7 @@ function normalizeKeyName(name) {
 	let	meta;
 
 	for (let i = 0; i < parts.length - 1; i++) {
-		let mod = parts[i];
+		const mod = parts[i];
 		if (/^(cmd|meta|m)$/i.test(mod)) meta = true;
 		else if (/^a(lt)?$/i.test(mod)) alt = true;
 		else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;

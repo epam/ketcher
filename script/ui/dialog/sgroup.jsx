@@ -50,7 +50,7 @@ function Sgroup({ formState, ...prop }) {
 const content = type => Object.keys(schemes[type].properties)
 	.filter(prop => prop !== 'type')
 	.map((prop) => {
-		let props = {};
+		const props = {};
 		if (prop === 'name') props.maxlength = 15;
 		if (prop === 'fieldName') props.maxlength = 30;
 		if (prop === 'fieldValue') props.type = 'textarea';

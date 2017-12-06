@@ -33,7 +33,7 @@ function setupEditor(editor, props, oldProps = {}) {
 
 	// update handlers
 	Object.keys(editor.event).forEach((name) => {
-		let eventName = `on${upperFirst(name)}`;
+		const eventName = `on${upperFirst(name)}`;
 
 		if (props[eventName] !== oldProps[eventName]) {
 			console.info('update editor handler', eventName);
@@ -64,7 +64,7 @@ class StructEditor extends Component {
 	}
 
 	render() {
-		let { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
+		const { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
 		return (
 			<Tag onMouseDown={ev => ev.preventDefault()} {...props}	/>
 		);

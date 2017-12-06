@@ -22,14 +22,14 @@ class Accordion extends Component {
 		this.state.active = props.active ? props.active : {};
 	}
 	onActive(index) {
-		let newActive = {};
+		const newActive = {};
 		newActive[index] = !this.state.active[index];
 		this.setState({ active: Object.assign(this.state.active, newActive) });
 		if (this.props.onActive) this.props.onActive();
 	}
 
 	render() {
-		let { children, captions, ...props } = this.props;
+		const { children, captions, ...props } = this.props;
 		return (
 			<ul {...props}>
 				{ captions.map((caption, index) => (

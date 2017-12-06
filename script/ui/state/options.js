@@ -95,7 +95,7 @@ export function shouldFragment(isFrag) {
 }
 
 export function optionsReducer(state = {}, action) {
-	let { type, data } = action;
+	const { type, data } = action;
 
 	if (type === 'APP_OPTIONS')
 		return { ...state, app: { ...state.app, ...data } };

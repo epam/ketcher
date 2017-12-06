@@ -16,7 +16,6 @@
 
 import { camelCase } from 'lodash/fp';
 import { h, Component } from 'preact';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 import { storage } from '../utils';
@@ -53,7 +52,7 @@ const MIEW_MODES = {
 };
 
 function getLocalMiewOpts() {
-	let userOpts = storage.getItem('ketcher-opts');
+	const userOpts = storage.getItem('ketcher-opts');
 	if (!userOpts)
 		return MIEW_OPTIONS;
 
@@ -91,14 +90,14 @@ function origin(url) {
 function queryOptions(options, sep = '&') {
 	if (Array.isArray(options)) {
 		return options.reduce((res, item) => {
-			let value = queryOptions(item);
+			const value = queryOptions(item);
 			if (value !== null)
 				res.push(value);
 			return res;
 		}, []).join(sep);
 	} else if (typeof options === 'object') {
 		return Object.keys(options).reduce((res, item) => {
-			let value = options[item];
+			const value = options[item];
 			res.push(typeof value === 'object' ?
 				queryOptions(value) :
 				encodeURIComponent(item) + '=' +
@@ -114,7 +113,7 @@ function miewLoad(wnd, url, options = {}) { // TODO: timeout
 		addEventListener('message', function onload(event) { // eslint-disable-line
 			if (event.origin === origin(url) && event.data === 'miewLoadComplete') {
 				window.removeEventListener('message', onload);
-				let miew = wnd.MIEWS[0];
+				const miew = wnd.MIEWS[0];
 				miew._opts.load = false; // setOptions({ load: '' })
 				miew._menuDisabled = true; // no way to disable menu after constructor return
 				if (miew.init()) {
@@ -149,7 +148,7 @@ class Miew extends Component {
 		this.opts = getLocalMiewOpts();
 	}
 	load(ev) {
-		let miew = miewLoad(ev.target.contentWindow, MIEW_PATH, this.opts);
+		const miew = miewLoad(ev.target.contentWindow, MIEW_PATH, this.opts);
 		this.setState({ miew });
 		this.state.miew.then((res) => {
 			res.parse(this.props.structStr, {
@@ -161,7 +160,7 @@ class Miew extends Component {
 	}
 	save() {
 		if (this.props.onOk) {
-			let structStr = miewSave(this.state.miew, MIEW_PATH);
+			const structStr = miewSave(this.state.miew, MIEW_PATH);
 			this.setState({ structStr });
 			this.state.structStr.then((str) => {
 				this.props.onOk({ structStr: str });
@@ -169,21 +168,21 @@ class Miew extends Component {
 		}
 	}
 	window() {
-		let opts = {
+		const opts = {
 			...this.opts,
 			load: `CML:${btoa(this.props.structStr)}`, // eslint-disable-line no-undef
 			sourceType: 'message'
 		};
-		let br = this.base.getBoundingClientRect(); // Preact specifiec see: epa.ms/1NAYWp
+		const br = this.base.getBoundingClientRect(); // Preact specifiec see: epa.ms/1NAYWp
 
-		let wndProps = {
+		const wndProps = {
 			...MIEW_WINDOW,
 			top: Math.round(br.top),
 			left: Math.round(br.left),
 			width: Math.round(br.width),
 			height: Math.round(br.height)
 		};
-		let wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
+		const wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
 			'miew', queryOptions(wndProps, ','));
 		if (wnd) {
 			this.props.onCancel();
@@ -193,7 +192,7 @@ class Miew extends Component {
 		}
 	}
 	render(props) {
-		let { miew, structStr } = this.state;
+		const { miew, structStr } = this.state;
 		return (
 			<Dialog
 				title="3D View"

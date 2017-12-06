@@ -27,7 +27,7 @@ class Form extends Component {
 		this.schema = propSchema(schema, props);
 
 		if (init) {
-			let { valid, errors } = this.schema.serialize(init);
+			const { valid, errors } = this.schema.serialize(init);
 			const errs = getErrorsObj(errors);
 
 			init = Object.assign({}, init, { init: true });
@@ -52,7 +52,7 @@ class Form extends Component {
 		const self = this;
 
 		return {
-			dataError: errors && errors[name] || false,
+			dataError: (errors && errors[name]) || false,
 			value,
 			onChange(val) {
 				const newstate = Object.assign({}, self.props.result, { [name]: val });
@@ -182,7 +182,7 @@ function deserializeRewrite(deserializeMap, instance) {
 }
 
 function getErrorsObj(errors) {
-	let errs = {};
+	const errs = {};
 	let field;
 
 	errors.forEach((item) => {

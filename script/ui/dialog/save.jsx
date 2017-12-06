@@ -37,7 +37,7 @@ class Save extends Component {
 			type = ev.target.value;
 			ev.preventDefault();
 		}
-		let converted = structFormat.toString(struct, type, server, options);
+		const converted = structFormat.toString(struct, type, server, options);
 		return converted.then(
 			structStr => this.setState({ type, structStr }),
 			(e) => {
@@ -48,8 +48,8 @@ class Save extends Component {
 	}
 
 	render() {
-		let { type, structStr } = this.state;
-		let format = structFormat.map[type];
+		const { type, structStr } = this.state;
+		const format = structFormat.map[type];
 		console.assert(format, 'Unknown chemical file type');
 
 		return (

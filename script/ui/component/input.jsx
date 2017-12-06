@@ -170,7 +170,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 			(values && values.indexOf(testVal) >= 0),
 		onSelect: (ev, values) => {
 			if (component.val) {
-				let val = component.val(ev, schema);
+				const val = component.val(ev, schema);
 				if (val !== undefined)
 					onChange(val);
 			} else {
@@ -208,8 +208,8 @@ function componentMap({ schema, type, multiple }) {
 }
 
 function shallowCompare(a, b) {
-	for (let i in a) if (!(i in b)) return true;
-	for (let i in b) if (a[i] !== b[i]) return true;
+	for (const i in a) if (!(i in b)) return true;
+	for (const i in b) if (a[i] !== b[i]) return true;
 	return false;
 }
 

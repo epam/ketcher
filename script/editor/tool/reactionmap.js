@@ -26,13 +26,13 @@ function ReactionMapTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
 
 ReactionMapTool.prototype.mousedown = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms']);
+	const rnd = this.editor.render;
+	this.rcs = rnd.ctab.molecule.getComponents();
+
+	const ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map === 'atoms') {
 		this.editor.hover(null);
 		this.dragCtx = {

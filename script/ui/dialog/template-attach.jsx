@@ -125,10 +125,10 @@ function structNormalization(struct) {
 
 function getScale(struct) {
 	const cbb = struct.getCoordBoundingBox();
-	const VIEW_SIZE = 200;
+	const VIEW_SIZE = 220;
 	let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x);
 
 	if (scale < 35) scale = 35;
-	if (scale > 75) scale = 75;
+	if (scale > 60) scale = 60;
 	return scale;
 }

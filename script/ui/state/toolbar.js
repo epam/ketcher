@@ -22,7 +22,9 @@ const initial = {
 	freqAtoms: [],
 	currentAtom: 0,
 	opened: null,
-	visibleTools: {}
+	visibleTools: {
+		select: 'select-lasso'
+	}
 };
 const MAX_ATOMS = 7;
 

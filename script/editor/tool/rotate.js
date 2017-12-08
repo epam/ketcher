@@ -143,6 +143,9 @@ RotateTool.prototype.mouseup = function () {
 		else
 			this.editor.selection(null);
 	}
+	this.editor.event.message.dispatch({
+		info: false
+	});
 	return true;
 };
 

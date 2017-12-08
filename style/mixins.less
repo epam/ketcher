@@ -23,6 +23,9 @@
 	// svg {
 	//		display: block;
 	// }
+	.measure-log {
+		position: fixed;
+	}
 }
 
 .canvas-size(@dim) {
@@ -31,6 +34,11 @@
 	left: @canvas-padding;
 	right: @canvas-padding;
 	bottom: @canvas-padding;
+
+	.measure-log {
+		top: @canvas-padding;
+		right: @canvas-padding;
+	}
 }
 
 /////////////////////

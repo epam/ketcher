@@ -118,7 +118,9 @@ ChainTool.prototype.mouseup = function () {
 		if (action)
 			this.editor.update(action);
 	}
-
+	this.editor.event.message.dispatch({
+		info: false
+	});
 	return true;
 };
 

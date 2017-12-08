@@ -17,6 +17,7 @@
 import { upperFirst } from 'lodash/fp';
 import { h, Component } from 'preact';
 
+import MeasureLog from './measurelog';
 import Editor from '../../editor';
 
 function setupEditor(editor, props, oldProps = {}) {
@@ -66,7 +67,10 @@ class StructEditor extends Component {
 	render() {
 		const { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
 		return (
-			<Tag onMouseDown={ev => ev.preventDefault()} {...props}	/>
+			<Tag onMouseDown={ev => ev.preventDefault()} {...props}>
+				{/* svg here */}
+				<MeasureLog />
+			</Tag>
 		);
 	}
 }

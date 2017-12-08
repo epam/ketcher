@@ -3,6 +3,7 @@
 @import 'variables';
 @import 'mixins';
 @import 'dialogs';
+@import (reference) 'component';
 
 li, ul, menu { // move to reset
 	list-style: none;
@@ -35,6 +36,13 @@ body, main[role=application] {
 #canvas {
 	.canvas;
 	user-select: none;
+
+	.measure-log {
+		&:extend(.-Measure);
+		&.visible {
+			opacity: 1;
+		}
+	}
 }
 
 #mainmenu {
@@ -273,7 +281,6 @@ select {
 		right: @toolbar-gap;
 	}
 }
-
 
 #template-common {
 	.separate-item(horizontal, 15px);

@@ -249,6 +249,8 @@ function domEventSetup(editor, clientArea) {
 		clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
 		subs.add((event) => {
+			if (!event.target || event.target.nodeName === 'DIV') // click on scroll
+				return true;
 			if (eventName !== 'mouseup' && isMouseRight(event)) // mouseup to complete drag actions
 				return true;
 			const EditorTool = editor.tool();

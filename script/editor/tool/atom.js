@@ -104,18 +104,10 @@ export function atomLongtapEvent(tool, render) {
 		render.ctab.molecule.atoms.get(atomid) :
 		new Struct.Atom({ label: '' });
 
-	const lastEvent = tool.editor.lastEvent;
-
-	const shouldBeFired =
-		lastEvent.offsetX === lastEvent.layerX &&
-		lastEvent.offsetY === lastEvent.layerY;
-
-	if (!shouldBeFired)
-		return;
-
 	// TODO: longtab event
 	dragCtx.timeout = setTimeout(() => {
 		delete tool.dragCtx;
+		if (tool.lassoHelper) tool.lassoHelper.end();
 		editor.selection(null);
 		const res = editor.event.quickEdit.dispatch(atom);
 		Promise.resolve(res).then((newatom) => {

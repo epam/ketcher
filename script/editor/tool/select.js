@@ -123,10 +123,19 @@ SelectTool.prototype.mousemove = function (event) {
 			closestToMerge(restruct, this.editor.findMerge(expSel, ['atoms', 'bonds']));
 
 		if (this.dragCtx.mergeItems) {
+			const atomMap = this.dragCtx.mergeItems.atoms;
+
+			// if we have entry a -> b, we should remove entry b -> a
+			this.dragCtx.mergeItems.atoms.forEach((dst) => {
+				if (atomMap.has(dst))
+					atomMap.delete(dst);
+			});
+
 			const hoverMerge = {
-				atoms: Array.from(this.dragCtx.mergeItems.atoms.values()),
-				bonds: Array.from(this.dragCtx.mergeItems.bonds.values())
+				atoms: Array.from(this.dragCtx.mergeItems.atoms.keys()),
+				bonds: Array.from(this.dragCtx.mergeItems.bonds.keys())
 			};
+
 			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
 		} else {
 			this.editor.hover(null);
@@ -138,8 +147,7 @@ SelectTool.prototype.mousemove = function (event) {
 
 	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
-		this.editor.selection(!event.shiftKey ? sel :
-			selMerge(sel, this.editor.selection()));
+		this.editor.selection(!event.shiftKey ? sel : selMerge(sel, this.editor.selection()));
 		return true;
 	}
 
@@ -174,6 +182,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
 				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 		}
+
 		this.editor.hover(null);
 
 		if (this.dragCtx.action)
@@ -181,8 +190,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		const sel = this.lassoHelper.end();
-		this.editor.selection(!event.shiftKey ? sel :
-			selMerge(sel, this.editor.selection()));
+		this.editor.selection(!event.shiftKey ? sel : selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
 		if (!event.shiftKey)
 			this.editor.selection(null);
@@ -249,6 +257,7 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { //
  */
 function closestToMerge(restruct, closestMap) {
 	const struct = restruct.molecule;
+
 	const mergeMap = {
 		atoms: new Map(closestMap.atoms),
 		bonds: new Map(closestMap.bonds)

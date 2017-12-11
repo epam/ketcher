@@ -140,28 +140,37 @@ Editor.prototype.selection = function (ci) {
 };
 
 Editor.prototype.hover = function (ci) {
-	var tool = this._tool; // eslint-disable-line
+	const tool = this._tool; // eslint-disable-line
+
 	if ('ci' in tool && (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)) {
 		this.highlight(tool.ci, false);
 		delete tool.ci;
 	}
+
 	if (ci && this.highlight(ci, true))
 		tool.ci = ci;
 };
 
+const highlightTargets = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses',
+	'chiralFlags', 'frags', 'merge', 'rgroups', 'sgroups', 'sgroupData'];
+
 Editor.prototype.highlight = function (ci, visible) {
-	if (['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'frags', 'merge',
-		'rgroups', 'sgroups', 'sgroupData'].indexOf(ci.map) === -1)
+	if (highlightTargets.indexOf(ci.map) === -1)
 		return false;
+
 	var rnd = this.render;
 	var item = null;
+
 	if (ci.map === 'merge') {
 		Object.keys(ci.items).forEach((mp) => {
 			ci.items[mp].forEach((dstId) => {
 				item = rnd.ctab[mp].get(dstId);
-				item.setHighlight(visible, rnd);
+
+				if (item)
+					item.setHighlight(visible, rnd);
 			});
 		});
+
 		return true;
 	}
 	item = rnd.ctab[ci.map].get(ci.id);

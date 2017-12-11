@@ -138,7 +138,6 @@ function processAtom(restruct, aid, frid, newfrid) {
  * @param restruct { ReStruct }
  * @param frid { number }
  * @return { Action }
- * @constructor
  */
 export function fromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
 	var action = new Action();
@@ -183,8 +182,12 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	};
 
 	const actionRemoveDataSGroups = new Action();
-	selection.sgroupData.forEach((id) => {
-		actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
+	restruct.molecule.sgroups.forEach((sg, id) => {
+		if (
+			selection.sgroupData.includes(id) ||
+			new Pile(selection.atoms).isSuperset(new Pile(sg.atoms))
+		)
+			actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
 	});
 
 	selection.atoms.forEach((aid) => {

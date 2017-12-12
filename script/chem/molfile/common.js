@@ -48,13 +48,13 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 }
 
 /* Parse Rxn */
-function parseRxn(/* string[] */ ctabLines) /* Struct */ {
+function parseRxn(/* string[] */ ctabLines, shouldReactionRelayout) /* Struct */ {
 	/* reader */
 	var split = ctabLines[0].trim().split(' ');
 	if (split.length > 1 && split[1] == 'V3000')
-		return v3000.parseRxn3000(ctabLines);
+		return v3000.parseRxn3000(ctabLines, shouldReactionRelayout);
 	else
-		return v2000.parseRxn2000(ctabLines); // eslint-disable-line no-else-return
+		return v2000.parseRxn2000(ctabLines, shouldReactionRelayout); // eslint-disable-line no-else-return
 }
 
 /* Prepare For Saving */

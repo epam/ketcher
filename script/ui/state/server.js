@@ -99,7 +99,10 @@ export function serverTransform(method, data, struct) {
 		opts.data = data;
 
 		serverCall(state.editor, state.server, method, opts, struct)
-			.then(res => dispatch(load(res.struct, { rescale: method === 'layout' })))
+			.then(res => dispatch(load(res.struct, {
+				rescale: method === 'layout',
+				reactionRelayout: method === 'clean'
+			})))
 			.catch(alert); // eslint-disable-line no-undef
 		// TODO: notification
 	};

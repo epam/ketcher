@@ -116,10 +116,9 @@ var FRAGMENT = {
 	AGENT: 3
 };
 
-var SHOULD_REACTION_FRAGMENT_RELAYOUT = true;
 var SHOULD_RESCALE_MOLECULES = true;
 
-function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-line max-statements
+function rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	var ret = new Struct();
 	var bbReact = [],
@@ -185,7 +184,7 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 		return bb.max.x - bb.min.x;
 	}
 
-	if (SHOULD_REACTION_FRAGMENT_RELAYOUT) {
+	if (shouldReactionRelayout) {
 	// reaction fragment layout
 		var xorig = 0;
 		for (j = 0; j < molReact.length; ++j)

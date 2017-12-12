@@ -22,19 +22,19 @@ function parseCTFile(str, options) {
 	var molfile = new Molfile();
 	var lines = str.split(/\r\n|[\n\r]/g);
 	try {
-		return molfile.parseCTFile(lines);
+		return molfile.parseCTFile(lines, options.reactionRelayout);
 	} catch (ex) {
 		if (options.badHeaderRecover) {
 			try {
 				// check whether there's an extra empty line on top
 				// this often happens when molfile text is pasted into the dialog window
-				return molfile.parseCTFile(lines.slice(1));
+				return molfile.parseCTFile(lines.slice(1), options.reactionRelayout);
 			} catch (ex1) {	//
 			}
 			try {
 				// check for a missing first line
 				// this sometimes happens when pasting
-				return molfile.parseCTFile([''].concat(lines));
+				return molfile.parseCTFile([''].concat(lines), options.reactionRelayout);
 			} catch (ex2) {	//
 			}
 		}

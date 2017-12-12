@@ -27,10 +27,10 @@ function Molfile(v3000) {
 	this.v3000 = v3000 || false;
 }
 
-Molfile.prototype.parseCTFile = function (molfileLines) {
+Molfile.prototype.parseCTFile = function (molfileLines, shouldReactionRelayout) {
 	var ret = null;
 	if (molfileLines[0].search('\\$RXN') == 0)
-		ret = common.parseRxn(molfileLines);
+		ret = common.parseRxn(molfileLines, shouldReactionRelayout);
 	else
 		ret = common.parseMol(molfileLines);
 	ret.initHalfBonds();

@@ -291,7 +291,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 	});
 }
 
-function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
+function parseRxn3000(/* string[] */ ctabLines, shouldReactionRelayout) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = ctabLines[0].split(/\s+/g).slice(3);
@@ -359,7 +359,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 		var mol = parseCTabV3000(molLines[j], countsSplit);
 		mols.push(mol);
 	}
-	var ctab = utils.rxnMerge(mols, nReactants, nProducts, nAgents);
+	var ctab = utils.rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout);
 
 	readRGroups3000(ctab, (function (array) {
 		var res = [];

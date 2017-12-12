@@ -352,7 +352,7 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 	return rgMerge(core, frag);
 }
 
-function parseRxn2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
+function parseRxn2000(/* string[] */ ctabLines, shouldReactionRelayout) /* Struct */ { // eslint-disable-line max-statements
 	/* reader */
 	ctabLines = ctabLines.slice(4);
 	var countsSplit = utils.partitionLine(ctabLines[0], utils.fmtInfo.rxnItemsPartition);
@@ -378,7 +378,8 @@ function parseRxn2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 		mols.push(struct);
 		ctabLines = ctabLines.slice(n);
 	}
-	return utils.rxnMerge(mols, nReactants, nProducts, nAgents);
+
+	return utils.rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout);
 }
 
 function parseCTab(/* string */ ctabLines) /* Struct */ {

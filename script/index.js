@@ -18,7 +18,7 @@ import 'babel-polyfill';
 import 'whatwg-fetch';
 import queryString from 'query-string';
 
-import api from './api.js';
+import api from './api';
 import * as molfile from './chem/molfile';
 import * as smiles from './chem/smiles';
 import * as structformat from './ui/structformat';
@@ -33,7 +33,8 @@ function getSmiles() {
 
 function saveSmiles() {
 	const struct = ketcher.editor.struct();
-	return structformat.toString(struct, 'smiles', ketcher.server);
+	return structformat.toString(struct, 'smiles-ext', ketcher.server)
+		.catch(() => smiles.stringify(struct));
 }
 
 function getMolfile() {
@@ -42,7 +43,7 @@ function getMolfile() {
 }
 
 function setMolecule(molString) {
-	if (!(typeof molString === "string"))
+	if (!(typeof molString === 'string'))
 		return;
 	ketcher.ui.load(molString, {
 		rescale: true
@@ -50,7 +51,7 @@ function setMolecule(molString) {
 }
 
 function addFragment(molString) {
-	if (!(typeof molString === "string"))
+	if (!(typeof molString === 'string'))
 		return;
 	ketcher.ui.load(molString, {
 		rescale: true,
@@ -74,7 +75,7 @@ function showMolfile(clientArea, molString, options) {
 // TODO: replace window.onload with something like <https://github.com/ded/domready>
 // to start early
 window.onload = function () {
-	var params = queryString.parse(document.location.search);
+	const params = queryString.parse(document.location.search);
 	if (params.api_path)
 		ketcher.apiPath = params.api_path;
 	ketcher.server = api(ketcher.apiPath, {
@@ -85,10 +86,10 @@ window.onload = function () {
 	});
 	ketcher.ui = ui(Object.assign({}, params, buildInfo), ketcher.server);
 	ketcher.editor = global._ui_editor;
-	ketcher.server.then(function () {
+	ketcher.server.then(() => {
 		if (params.mol)
 			ketcher.ui.load(params.mol);
-	}, function () {
+	}, () => {
 		document.title += ' (standalone)';
 	});
 };
@@ -101,7 +102,7 @@ const buildInfo = {
 	miewPath: '__MIEW_PATH__' || null
 };
 
-const ketcher = module.exports = Object.assign({
+const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi-assign
 	getSmiles,
 	saveSmiles,
 	getMolfile,

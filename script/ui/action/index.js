@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+/* eslint-disable no-shadow */
+
 import tools from './tools';
 import atoms from './atoms';
 import zoom from './zoom';
@@ -24,143 +26,145 @@ import { exec } from '../component/cliparea';
 import { miewAction } from '../state/miew';
 
 export default {
-	"new": {
-		shortcut: "Mod+Delete",
-		title: "Clear Canvas",
+	new: {
+		shortcut: 'Mod+Delete',
+		title: 'Clear Canvas',
 		action: {
 			thunk: (dispatch, getState) => {
-				let editor = getState().editor;
+				const editor = getState().editor;
 				if (!editor.struct().isBlank())
 					editor.struct(null);
 				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
 			}
 		}
 	},
-	"open": {
-		shortcut: "Mod+o",
-		title: "Open…",
+	open: {
+		shortcut: 'Mod+o',
+		title: 'Open…',
 		action: { dialog: 'open' }
 	},
-	"save": {
-		shortcut: "Mod+s",
-		title: "Save As…",
+	save: {
+		shortcut: 'Mod+s',
+		title: 'Save As…',
 		action: { dialog: 'save' }
 	},
-	"undo": {
-		shortcut: "Mod+z",
-		title: "Undo",
-		action: editor => {
+	undo: {
+		shortcut: 'Mod+z',
+		title: 'Undo',
+		action: (editor) => {
 			editor.undo();
 		},
 		disabled: editor => (
 			editor.historySize().undo === 0
 		)
 	},
-	"redo": {
-		shortcut: ["Mod+Shift+z", "Mod+y"],
-		title: "Redo",
-		action: editor => {
+	redo: {
+		shortcut: ['Mod+Shift+z', 'Mod+y'],
+		title: 'Redo',
+		action: (editor) => {
 			editor.redo();
 		},
 		disabled: editor => (
 			editor.historySize().redo === 0
 		)
 	},
-	"cut": {
-		shortcut: "Mod+x",
-		title: "Cut",
+	cut: {
+		shortcut: 'Mod+x',
+		title: 'Cut',
 		action: () => {
-			exec('cut') || dontClipMessage('Cut');
+			exec('cut') || dontClipMessage('Cut'); // eslint-disable-line no-unused-expressions
 		},
 		disabled: editor => !hasSelection(editor)
 	},
-	"copy": {
-		shortcut: "Mod+c",
-		title: "Copy",
+	copy: {
+		shortcut: 'Mod+c',
+		title: 'Copy',
 		action: () => {
-			exec('copy') || dontClipMessage('Copy');
+			exec('copy') || dontClipMessage('Copy'); // eslint-disable-line no-unused-expressions
 		},
 		disabled: editor => !hasSelection(editor)
 	},
-	"paste": {
-		shortcut: "Mod+v",
-		title: "Paste",
+	paste: {
+		shortcut: 'Mod+v',
+		title: 'Paste',
 		action: () => {
-			exec('paste') || dontClipMessage('Paste')
+			exec('paste') || dontClipMessage('Paste'); // eslint-disable-line no-unused-expressions
 		},
 		selected: ({ actions }) => (
 			actions && // TMP
 				actions.active && actions.active.tool === 'paste'
 		)
 	},
-	"check": {
-		title: "Check Structure",
+	check: {
+		title: 'Check Structure',
 		action: { dialog: 'check' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	"analyse": {
-		title: "Calculated Values",
+	analyse: {
+		title: 'Calculated Values',
 		action: { dialog: 'analyse' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	"recognize": {
-		title: "Recognize Molecule",
+	recognize: {
+		title: 'Recognize Molecule',
 		action: { dialog: 'recognize' },
 		disabled: (editor, server, options) => !options.app.server
 	},
-	"miew": {
-		title: "3D Viewer",
+	miew: {
+		title: '3D Viewer',
 		action: { thunk: miewAction	},
 		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
 	},
-	"settings": {
-		title: "Settings",
+	settings: {
+		title: 'Settings',
 		action: { dialog: 'settings' }
 	},
-	"help": {
-		shortcut: ["?", "Shift+/"],
-		title: "Help",
+	help: {
+		shortcut: ['?', 'Shift+/'],
+		title: 'Help',
 		action: { dialog: 'help' }
 	},
-	"about": {
-		title: "About",
+	about: {
+		title: 'About',
 		action: { dialog: 'about' }
 	},
-	"reaction-automap": {
-		title: "Reaction Auto-Mapping Tool",
+	'reaction-automap': {
+		title: 'Reaction Auto-Mapping Tool',
 		action: { dialog: 'automap' },
 		disabled: (editor, server, options) => !options.app.server || !editor.struct().hasRxnArrow()
 	},
-	"period-table": {
-		title: "Periodic Table",
+	'period-table': {
+		title: 'Periodic Table',
 		action: { dialog: 'period-table' }
 	},
-	"select-all": {
-		title: "Select All",
-		shortcut: "Mod+a",
+	'select-all': {
+		title: 'Select All',
+		shortcut: 'Mod+a',
 		action: {
 			thunk: (dispatch, getState) => {
 				getState().editor.selection('all');
-				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+				const selectionTool = getState().toolbar.visibleTools.select;
+				dispatch({ type: 'ACTION', action: tools[selectionTool].action });
 			}
 		}
 	},
-	"deselect-all": {
-		title: "Deselect All",
-		shortcut: "Mod+Shift+a",
-		action: editor => {
+	'deselect-all': {
+		title: 'Deselect All',
+		shortcut: 'Mod+Shift+a',
+		action: (editor) => {
 			editor.selection(null);
 		}
 	},
-	"select-descriptors": {
-		title: "Select descriptors",
-		shortcut: "Mod+d",
+	'select-descriptors': {
+		title: 'Select descriptors',
+		shortcut: 'Mod+d',
 		action: {
 			thunk: (dispatch, getState) => {
+				const selectionTool = getState().toolbar.visibleTools.select;
 				const editor = getState().editor;
 				editor.alignDescriptors();
 				editor.selection('descriptors');
-				dispatch({ type: 'ACTION', action: tools['select-lasso'].action });
+				dispatch({ type: 'ACTION', action: tools[selectionTool].action });
 			}
 		}
 	},
@@ -173,12 +177,12 @@ export default {
 };
 
 function hasSelection(editor) {
-	let selection = editor.selection();
-	return selection &&  // if not only sgroupData selected
+	const selection = editor.selection();
+	return selection && // if not only sgroupData selected
 		(Object.keys(selection).length > 1 || !selection.sgroupData);
 }
 
 function dontClipMessage(title) {
-	alert('These action is unavailble via menu.\n' +
+	alert('This action is unavailable via menu.\n' + // eslint-disable-line no-undef
 		'Instead, use shortcut to ' + title + '.');
 }

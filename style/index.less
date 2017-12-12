@@ -1,5 +1,4 @@
 @import (less) 'normalize.css';
-@import 'font';
 
 @import 'variables';
 @import 'mixins';
@@ -60,10 +59,13 @@ body, main[role=application] {
 }
 
 #chiral-flag {
-	overflow: hidden;
+	overflow-y: hidden;
 	position: absolute;
 	right: 0;
-	& > button {
+	&>button {
+		&>svg {
+			stroke-width: 0;
+		}
 		.toolbutton-horizontal(large, 2);
 	}
 }
@@ -76,6 +78,10 @@ body, main[role=application] {
 	li {
 		display: inline-block;
 		vertical-align: top;
+		&>svg {
+			fill: @main-color;
+			display: none; // dropdown
+		}
 	}
 	button {
 		.toolbutton;
@@ -283,21 +289,6 @@ select {
 		content: '⚠ ';
 	}
 }
-
-.monochrome-icons(arom bond-any bond-aromatic bond-crossed bond-double
-                  bond-doublearomatic bond-down bond-single
-                  bond-singlearomatic bond-singledouble bond-triple bond-up
-                  bond-updown chain charge-minus charge-plus layout copy
-                  cut dearom dropdown erase generic-groups about new open
-                  paste period-table reaction-arrow reaction-automap
-                  reaction-map reaction-plus reaction-unmap redo
-                  rgroup-attpoints rgroup-fragment save select-fragment
-                  select-lasso select-rectangle settings help sgroup template-0
-                  template-1 template-2 template-3 template-4 template-5
-                  template-6 template-7 template-lib transform-flip-h
-                  transform-flip-v transform-rotate undo zoom-in zoom-out
-                  sgroup-data rgroup-label clean check analyse cip recognize miew
-				  chiral-flag);
 
 .atom-sketching(h he li be b c n o f ne na mg al si p s cl ar k ca sc ti v
                 cr mn fe co ni cu zn ga ge as se br kr rb sr y zr nb mo tc

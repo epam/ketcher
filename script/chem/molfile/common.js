@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-
 var v2000 = require('./v2000');
 var v3000 = require('./v3000');
+
+var Pile = require('../../util/pile').default;
 
 var Struct = require('./../struct/index');
 var utils = require('./utils');
@@ -68,17 +68,22 @@ var prepareForSaving = {
 
 function prepareSruForSaving(sgroup, mol) {
 	var xBonds = [];
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
-		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
-			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+		if (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id) ||
+			a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
-	if (xBonds.length != 0 && xBonds.length != 2)
-		throw { 'id': sgroup.id, 'error-type': 'cross-bond-number', 'message': 'Unsupported cross-bonds number' };
+	if (xBonds.length !== 0 && xBonds.length !== 2) {
+		throw { // eslint-disable-line no-throw-literal
+			id: sgroup.id,
+			'error-type': 'cross-bond-number',
+			message: 'Unsupported cross-bonds number'
+		};
+	}
 	sgroup.bonds = xBonds;
 }
 
@@ -86,12 +91,12 @@ function prepareSupForSaving(sgroup, mol) {
 	// This code is also used for GroupSru and should be moved into a separate common method
 	// It seems that such code should be used for any sgroup by this this should be checked
 	var xBonds = [];
-	mol.bonds.each(function (bid, bond) {
+	mol.bonds.forEach((bond, bid) => {
 		var a1 = mol.atoms.get(bond.begin);
 		var a2 = mol.atoms.get(bond.end);
 		/* eslint-disable no-mixed-operators*/
-		if (Set.contains(a1.sgs, sgroup.id) && !Set.contains(a2.sgs, sgroup.id) ||
-			Set.contains(a2.sgs, sgroup.id) && !Set.contains(a1.sgs, sgroup.id))
+		if (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id) ||
+			a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
 		/* eslint-enable no-mixed-operators*/
 			xBonds.push(bid);
 	}, sgroup);
@@ -118,8 +123,8 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) { // eslint-disa
 	var idstr = (sgMap[sgroup.id] + '').padStart(3);
 
 	var lines = [];
-	lines = lines.concat(makeAtomBondLines('SAL', idstr, Object.keys(sgroup.atomSet), atomMap)); // TODO: check atomSet
-	lines = lines.concat(makeAtomBondLines('SPA', idstr, Object.keys(sgroup.parentAtomSet), atomMap));
+	lines = lines.concat(makeAtomBondLines('SAL', idstr, Array.from(sgroup.atomSet.values()), atomMap)); // TODO: check atomSet
+	lines = lines.concat(makeAtomBondLines('SPA', idstr, Array.from(sgroup.parentAtomSet.values()), atomMap));
 	lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 	var smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
 	lines.push(smtLine);
@@ -163,7 +168,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 		(data.units || '').padEnd(20) +
 		(data.query || '').padStart(2);
 
-	if (data.queryOp)    // see gitlab #184
+	if (data.queryOp) // see gitlab #184
 		sdtLine += data.queryOp.padEnd(80 - 65);
 
 	lines.push(sdtLine);
@@ -182,7 +187,7 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
 	lines.push(sddLine);
 	var val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
 	var charsPerLine = 69;
-	val.split('\n').forEach(function (chars) {
+	val.split('\n').forEach((chars) => {
 		while (chars.length > charsPerLine) {
 			lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
 			chars = chars.slice(charsPerLine);
@@ -219,7 +224,7 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
 function bracketsToMolfile(mol, sg, idstr) { // eslint-disable-line max-statements
 	var inBonds = [];
 	var xBonds = [];
-	var atomSet = Set.fromList(sg.atoms);
+	var atomSet = new Pile(sg.atoms);
 	Struct.SGroup.getCrossBonds(inBonds, xBonds, mol, atomSet);
 	Struct.SGroup.bracketPos(sg, mol, xBonds);
 	var bb = sg.bracketBox;
@@ -261,9 +266,9 @@ function partitionLine(/* string*/ str, /* array of int*/ parts, /* bool*/ withs
 }
 
 module.exports = {
-	parseCTab: parseCTab,
-	parseMol: parseMol,
-	parseRxn: parseRxn,
-	prepareForSaving: prepareForSaving,
-	saveToMolfile: saveToMolfile
+	parseCTab,
+	parseMol,
+	parseRxn,
+	prepareForSaving,
+	saveToMolfile
 };

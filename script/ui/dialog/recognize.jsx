@@ -16,7 +16,6 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import { changeImage, shouldFragment } from '../state/options';
 import { load } from '../state';
@@ -28,47 +27,56 @@ import OpenButton from '../component/openbutton';
 import Spin from '../component/spin';
 
 function Recognize(prop) {
-	const {file, structStr, fragment, onRecognize, isFragment, onImage, ...props} = prop;
+	const { file, structStr, fragment, onRecognize, isFragment, onImage, ...props } = prop;
 
 	const result = () =>
-		structStr && !(structStr instanceof Promise) ? {structStr, fragment} : null;
+		(structStr && !(structStr instanceof Promise) ? { structStr, fragment } : null);
 
 	return (
-		<Dialog title="Import From Image" className="recognize"
-				params={props} result={() => result(structStr, fragment) }
-				buttons={[
-					<OpenButton className="open" onLoad={onImage} type="image/*">
+		<Dialog
+			title="Import From Image"
+			className="recognize"
+			params={props}
+			result={() => result(structStr, fragment)}
+			buttons={[
+				<OpenButton className="open" onLoad={onImage} type="image/*">
 						Choose file…
-					</OpenButton>,
-					<span className="open-filename">{file ? file.name : null}</span>,
-					file && !structStr ? (
-						<button onClick={() => onRecognize(file) }>Recognize</button>
-					) : null,
-					"Cancel",
-					"OK"
-				]}>
+				</OpenButton>,
+				<span className="open-filename">{file ? file.name : null}</span>,
+				file && !structStr ? (
+					<button onClick={() => onRecognize(file)}>Recognize</button>
+				) : null,
+				'Cancel',
+				'OK'
+			]}
+		>
 			<div className="picture">
 				{
-					file ? (
-						<img id="pic" src={url(file) || ""}
-							 onError={() => {
-								 onImage(null);
-								 alert("Error, it isn't a picture");
-							 }}/>
-					) : null
+					file && (
+						<img
+							alt=""
+							id="pic"
+							src={url(file) || ''}
+							onError={() => {
+								onImage(null);
+								alert("Error, it isn't a picture"); // eslint-disable-line no-undef
+							}}
+						/>
+					)
 				}
 			</div>
 			<div className="output">
 				{
-					structStr ? (
-						structStr instanceof Promise || typeof structStr !== 'string' ? // in Edge 38:
-							( <Spin/> ) :											// instanceof Promise always `false`
-							( <StructRender className="struct" struct={structStr}/> )
-					) : null
+					structStr && (
+						// in Edge 38: instanceof Promise always `false`
+						structStr instanceof Promise || typeof structStr !== 'string' ?
+							<Spin /> :
+							<StructRender className="struct" struct={structStr} />
+					)
 				}
 			</div>
 			<label>
-				<Input type="checkbox" value={fragment} onChange={v => isFragment(v)}/>
+				<Input type="checkbox" value={fragment} onChange={v => isFragment(v)} />
 				Load as a fragment
 			</label>
 		</Dialog>
@@ -78,7 +86,7 @@ function Recognize(prop) {
 function url(file) {
 	if (!file) return null;
 	const URL = window.URL || window.webkitURL;
-	return URL ? URL.createObjectURL(file) : "No preview";
+	return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
 export default connect(
@@ -88,9 +96,9 @@ export default connect(
 		fragment: store.options.recognize.fragment
 	}),
 	(dispatch, props) => ({
-		isFragment: (v) => dispatch(shouldFragment(v)),
-		onImage: (file) => dispatch(changeImage(file)),
-		onRecognize: (file) => dispatch(recognize(file)),
+		isFragment: v => dispatch(shouldFragment(v)),
+		onImage: file => dispatch(changeImage(file)),
+		onRecognize: file => dispatch(recognize(file)),
 		onOk: (res) => {
 			dispatch(
 				load(res.structStr, {

@@ -23,7 +23,7 @@ function obj2scaled(v, options) {
 }
 
 module.exports = {
-	scaled2obj: scaled2obj,
-	obj2scaled: obj2scaled
+	scaled2obj,
+	obj2scaled
 };
 

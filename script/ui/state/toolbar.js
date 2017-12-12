@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { capitalize, debounce, isEqual } from 'lodash/fp';
+import { capitalize, throttle, isEqual } from 'lodash/fp';
 import { basic as basicAtoms } from '../action/atoms';
 import tools from '../action/tools';
 
@@ -22,41 +22,70 @@ const initial = {
 	freqAtoms: [],
 	currentAtom: 0,
 	opened: null,
-	visibleTools: {}
+	visibleTools: {
+		select: 'select-lasso'
+	}
 };
 const MAX_ATOMS = 7;
 
-export function initResize() {
-	return function (dispatch, getState) {
-		const onResize = debounce(100, () => {
-			getState().editor.render.update();
-			dispatch({ type: 'CLEAR_VISIBLE' });
-		});
+function updateVisibleTools(visibleTool, activeTool) {
+	const regExp = /(bond)(-)(common|stereo|query)/;
+	const menuHeight = window.innerHeight;
 
-		addEventListener('resize', onResize);
-	}
+	return Object.keys(visibleTool).reduce((res, key) => {
+		if (key === 'bond' && menuHeight > 700) return res; // TODO remove me after update styles
+		if (key === 'transform' && menuHeight > 800) return res;
+		if (key === 'rgroup' && menuHeight > 850) return res;
+		if (!key.match(regExp) || menuHeight > 700)
+			res[key] = visibleTool[key];
+		return res;
+	}, { ...activeTool });
 }
 
-export default function (state=initial, action) {
-	let { type, data } = action;
+export function initResize() {
+	return function (dispatch, getState) {
+		const onResize = throttle(250, () => {
+			const state = getState();
+			state.editor.render.update();
+			dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
+		});
+		addEventListener('resize', onResize); // eslint-disable-line
+	};
+}
+
+export function initIcons(cacheEl) {
+	const iconpath = 'ketcher.svg';
+	fetch(iconpath, { credentials: 'same-origin' }).then((resp) => {
+		if (resp.ok) resp.text().then((svg) => { cacheEl.innerHTML += svg; });
+		else throw Error(`Could not fetch ${iconpath}`);
+	});
+}
+
+export default function (state = initial, action) {
+	const { type, data } = action;
 
 	switch (type) {
-		case 'ACTION':
-			let visibleTool = toolInMenu(action.action);
-			return visibleTool
-				? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-				: state;
-		case 'ADD_ATOMS':
-			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
-			return { ...state, ...newState };
-		case 'CLEAR_VISIBLE':
-			return { ...state, opened: null, visibleTools: {} };
-		case 'OPENED':
-			return { ...state, opened: data };
-		case 'UPDATE':
-			return { ...state, opened: null };
-		default:
-			return state;
+	case 'ACTION': {
+		const visibleTool = toolInMenu(action.action);
+		return visibleTool
+			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
+			: state;
+	}
+	case 'ADD_ATOMS': {
+		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
+		return { ...state, ...newState };
+	}
+	case 'CLEAR_VISIBLE': {
+		const activeTool = toolInMenu(action.data);
+		const correctTools = updateVisibleTools(state.visibleTools, activeTool);
+		return { ...state, opened: null, visibleTools: { ...correctTools } };
+	}
+	case 'OPENED':
+		return { ...state, opened: data };
+	case 'UPDATE':
+		return { ...state, opened: null };
+	default:
+		return state;
 	}
 }
 
@@ -77,24 +106,13 @@ export function addAtoms(atomLabel) {
 	};
 }
 
-function getToolFromAction(action) {
-	let tool = null;
-
-	for (let toolName in tools) {
-		if (tools.hasOwnProperty(toolName) && isEqual(action, tools[toolName].action))
-			tool = toolName;
-	}
-
-	return tool;
-}
-
 function toolInMenu(action) {
-	let tool = getToolFromAction(action);
+	const tool = Object.keys(tools).find(toolName => isEqual(action, tools[toolName].action));
 
-	let sel = document.getElementById(tool);
-	let dropdown = sel && hiddenAncestor(sel);
+	const sel = document.getElementById(tool);
+	const dropdown = sel && hiddenAncestor(sel);
 
-	return dropdown ? { [dropdown.id]: sel.id } : null;
+	return (dropdown && dropdown.id !== '') ? { [dropdown.id]: sel.id } : null;
 }
 
 export function hiddenAncestor(el, base) {

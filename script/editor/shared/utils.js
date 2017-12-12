@@ -14,28 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var inRange = require('lodash').inRange;
+import { inRange } from 'lodash';
+import Vec2 from '../../util/vec2';
 
-var FRAC = Math.PI / 12; // '15º'
+let FRAC = Math.PI / 12; // '15º'
 
 function setFracAngle(angle) {
 	FRAC = Math.PI / 180 * angle;
 }
 
 function calcAngle(pos0, pos1) {
-	var v = Vec2.diff(pos1, pos0);
+	const v = Vec2.diff(pos1, pos0);
 	return Math.atan2(v.y, v.x);
 }
 
-function fracAngle(angle) {
-	if (arguments.length > 1)
-		angle = calcAngle(arguments[0], arguments[1]);
+function fracAngle(angle, angle2) {
+	if (angle2)
+		angle = calcAngle(angle, angle2);
 	return Math.round(angle / FRAC) * FRAC;
 }
 
 function calcNewAtomPos(pos0, pos1) {
-	var v = new Vec2(1, 0).rotate(fracAngle(pos0, pos1));
+	const v = new Vec2(1, 0).rotate(fracAngle(pos0, pos1));
 	v.add_(pos0); // eslint-disable-line no-underscore-dangle
 	return v;
 }
@@ -47,31 +47,30 @@ function degrees(angle) {
 const BONDS_MERGE_ANGLE = 10; // 'º'
 const BONDS_MERGE_SCALE = 0.2;
 
-function mergeBondsParams(restruct, bond1, bond2) {
-	const atoms = restruct.molecule.atoms;
+function mergeBondsParams(struct1, bond1, struct2, bond2) {
+	const begin1 = struct1.atoms.get(bond1.begin);
+	const begin2 = struct2.atoms.get(bond2.begin);
+	const end1 = struct1.atoms.get(bond1.end);
+	const end2 = struct2.atoms.get(bond2.end);
 
-	const begin1 = atoms.get(bond1.begin);
-	const begin2 = atoms.get(bond2.begin);
-	const end1 = atoms.get(bond1.end);
-	const end2 = atoms.get(bond2.end);
-
-	const angle = degrees(calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp));
-	const mergeAngle = Math.abs(angle % 180);
+	const angle = calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp);
+	const mergeAngle = Math.abs(degrees(angle) % 180);
 
 	const scale = Vec2.dist(begin1.pp, end1.pp) / Vec2.dist(begin2.pp, end2.pp);
 
+	let merged = true;
 	if (inRange(mergeAngle, BONDS_MERGE_ANGLE, 180 - BONDS_MERGE_ANGLE) ||
 		!inRange(scale, 1 - BONDS_MERGE_SCALE, 1 + BONDS_MERGE_SCALE))
-		return null;
+		merged = false;
 
-	return { angle: mergeAngle, scale, cross: Math.abs(angle) > 90 };
+	return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }
 
-module.exports = {
-	calcAngle: calcAngle,
-	fracAngle: fracAngle,
-	calcNewAtomPos: calcNewAtomPos,
-	degrees: degrees,
-	setFracAngle: setFracAngle,
-	mergeBondsParams: mergeBondsParams
+export default {
+	calcAngle,
+	fracAngle,
+	calcNewAtomPos,
+	degrees,
+	setFracAngle,
+	mergeBondsParams
 };

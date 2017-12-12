@@ -44,7 +44,7 @@ Visel.prototype.clear = function () {
 };
 
 Visel.prototype.translate = function (x, y) {
-	if (arguments.length > 2)    // TODO: replace to debug time assert
+	if (arguments.length > 2) // TODO: replace to debug time assert
 		throw new Error('One vector or two scalar arguments expected');
 	if (y === undefined) {
 		this.translate(x.x, x.y);

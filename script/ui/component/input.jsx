@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
+import { omit } from 'lodash';
 
-function GenericInput({ value, onChange, type = "text", ...props }) {
+function GenericInput({ value, onChange, type = 'text', ...props }) {
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
@@ -29,16 +29,16 @@ GenericInput.val = function (ev, schema) {
 		(schema && (schema.type === 'number' || schema.type === 'integer'));
 	const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-	return (isNumber && !isNaN(value - 0)) ? value - 0 : value;
+	return (isNumber && !isNaN(value - 0)) ? value - 0 : value; // eslint-disable-line
 };
 
 function TextArea({ value, onChange, ...props }) {
 	return (
-		<textarea value={value} onInput={onChange} {...props}/>
+		<textarea value={value} onInput={onChange} {...props} />
 	);
 }
 
-TextArea.val = (ev) => ev.target.value;
+TextArea.val = ev => ev.target.value;
 
 function CheckBox({ value, onChange, ...props }) {
 	return (
@@ -56,8 +56,10 @@ function Select({ schema, value, selected, onSelect, ...props }) {
 		<select onChange={onSelect} {...props}>
 			{
 				enumSchema(schema, (title, val) => (
-					<option selected={selected(val, value)}
-							value={typeof val !== 'object' && val}>
+					<option
+						selected={selected(val, value)}
+						value={typeof val !== 'object' && val}
+					>
 						{title}
 					</option>
 				))
@@ -71,21 +73,22 @@ Select.val = function (ev, schema) {
 	if (!select.multiple)
 		return enumSchema(schema, select.selectedIndex);
 
-	return [].reduce.call(select.options, function (res, o, i) {
-		return !o.selected ? res :
-			[enumSchema(schema, i), ...res];
-	}, []);
+	return [].reduce.call(select.options, (res, o, i) => (!o.selected ? res :
+		[enumSchema(schema, i), ...res]), []);
 };
 
-function FieldSet({ schema, value, selected, onSelect, type = "radio", ...props }) {
+function FieldSet({ schema, value, selected, onSelect, type = 'radio', ...props }) {
 	return (
 		<fieldset onClick={onSelect} className="radio">
 			{
 				enumSchema(schema, (title, val) => (
 					<label>
-						<input type={type} checked={selected(val, value)}
-							   value={typeof val !== 'object' && val}
-							   {...props}/>
+						<input
+							type={type}
+							checked={selected(val, value)}
+							value={typeof val !== 'object' && val}
+							{...props}
+						/>
 						{title}
 					</label>
 				))
@@ -103,12 +106,10 @@ FieldSet.val = function (ev, schema) {
 	// Hm.. looks like premature optimization
 	//      should we inline this?
 	const fieldset = input.parentNode.parentNode;
-	const res = [].reduce.call(fieldset.querySelectorAll('input'),
-		function (res, inp, i) {
-			return !inp.checked ? res :
-				[enumSchema(schema, i), ...res];
-		}, []);
-	return input.type === 'radio' ? res[0] : res;
+	const result = [].reduce.call(fieldset.querySelectorAll('input'),
+		(res, inp, i) => (!inp.checked ? res :
+			[enumSchema(schema, i), ...res]), []);
+	return input.type === 'radio' ? result[0] : result;
 };
 
 function enumSchema(schema, cbOrIndex) {
@@ -141,7 +142,7 @@ function inputCtrl(component, schema, onChange) {
 	}
 
 	return {
-		onChange: function (ev) {
+		onChange: (ev) => {
 			const val = !component.val ? ev :
 				component.val(ev, schema);
 			onChange(val);
@@ -153,7 +154,7 @@ function inputCtrl(component, schema, onChange) {
 function singleSelectCtrl(component, schema, onChange) {
 	return {
 		selected: (testVal, value) => (value === testVal),
-		onSelect: function (ev, value) {
+		onSelect: (ev) => {
 			const val = !component.val ? ev :
 				component.val(ev, schema);
 			if (val !== undefined)
@@ -167,9 +168,9 @@ function multipleSelectCtrl(component, schema, onChange) {
 		multiple: true,
 		selected: (testVal, values) =>
 			(values && values.indexOf(testVal) >= 0),
-		onSelect: function (ev, values) {
+		onSelect: (ev, values) => {
 			if (component.val) {
-				let val = component.val(ev, schema);
+				const val = component.val(ev, schema);
 				if (val !== undefined)
 					onChange(val);
 			} else {
@@ -177,8 +178,7 @@ function multipleSelectCtrl(component, schema, onChange) {
 				if (i < 0)
 					onChange(values ? [ev, ...values] : [ev]);
 				else
-					onChange([...values.slice(0, i),
-						...values.slice(i + 1)]);
+					onChange([...values.slice(0, i), ...values.slice(i + 1)]);
 			}
 		}
 	};
@@ -208,8 +208,8 @@ function componentMap({ schema, type, multiple }) {
 }
 
 function shallowCompare(a, b) {
-	for (let i in a) if (!(i in b)) return true;
-	for (let i in b) if (a[i] !== b[i]) { return true; }
+	for (const i in a) if (!(i in b)) return true;
+	for (const i in b) if (a[i] !== b[i]) return true;
 	return false;
 }
 
@@ -221,12 +221,12 @@ export default class Input extends Component {
 	}
 
 	shouldComponentUpdate({ children, onChange, ...nextProps }) {
-		var { children, onChange, ...oldProps } = this.props;
+		const oldProps = omit(this.props, ['children', 'onChange']);
 		return shallowCompare(oldProps, nextProps);
 	}
 
 	render() {
-		var { children, onChange, ...props } = this.props;
+		const { children, onChange, ...props } = this.props;
 		return h(this.component, { ...this.ctrl, ...props });
 	}
 }

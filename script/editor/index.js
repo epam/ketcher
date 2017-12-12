@@ -14,44 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-var s = require('subscription');
+import s from 'subscription';
+import Vec2 from '../util/vec2';
+import Pile from '../util/pile';
 
-var Set = require('../util/set');
-var Vec2 = require('../util/vec2');
+import Struct from '../chem/struct';
+import Render from '../render';
 
-var Struct = require('../chem/struct');
+import { fromNewCanvas, fromDescriptorsAlign } from './actions/basic';
+import closest from './shared/closest';
+import toolMap from './tool';
 
-var Render = require('../render');
-var Action = require('./action');
-
-var closest = require('./closest');
-
-var toolMap = {
-	rgroupatom: require('./tool/rgroupatom'),
-	select: require('./tool/select'),
-	sgroup: require('./tool/sgroup'),
-	eraser: require('./tool/eraser'),
-	atom: require('./tool/atom'),
-	bond: require('./tool/bond'),
-	chain: require('./tool/chain'),
-	chiralFlag: require('./tool/chiral-flag'),
-	template: require('./tool/template'),
-	charge: require('./tool/charge'),
-	rgroupfragment: require('./tool/rgroupfragment'),
-	apoint: require('./tool/apoint'),
-	attach: require('./tool/attach'),
-	reactionarrow: require('./tool/reactionarrow'),
-	reactionplus: require('./tool/reactionplus'),
-	reactionmap: require('./tool/reactionmap'),
-	reactionunmap: require('./tool/reactionunmap'),
-	paste: require('./tool/paste'),
-	rotate: require('./tool/rotate')
-};
-
-const SCALE = 40;  // const
+const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
 
-var structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({
@@ -98,8 +75,8 @@ Editor.prototype.tool = function (name, opts) {
 Editor.prototype.struct = function (value) {
 	if (arguments.length > 0) {
 		this.selection(null);
-		this.update(Action.fromNewCanvas(this.render.ctab,
-		                                 value || new Struct()));
+		this.update(fromNewCanvas(this.render.ctab,
+			value || new Struct()));
 		recoordinate(this, getStructCenter(this.render.ctab));
 	}
 	return this.render.ctab.molecule;
@@ -122,34 +99,34 @@ Editor.prototype.zoom = function (value) {
 	if (arguments.length > 0) {
 		this.render.setZoom(value);
 		recoordinate(this, getStructCenter(this.render.ctab,
-		                                   this.selection()));
+			this.selection()));
 		this.render.update();
 	}
 	return this.render.options.zoom;
 };
 
 Editor.prototype.selection = function (ci) {
-	var restruct = this.render.ctab;
+	let restruct = this.render.ctab;
 	if (arguments.length > 0) {
 		this._selection = null; // eslint-disable-line
-		if (ci === 'all') {   // TODO: better way will be this.struct()
-			ci = structObjects.reduce(function (res, key) {
-				res[key] = restruct[key].ikeys();
+		if (ci === 'all') { // TODO: better way will be this.struct()
+			ci = structObjects.reduce((res, key) => {
+				res[key] = Array.from(restruct[key].keys());
 				return res;
 			}, {});
 		}
 
 		if (ci === 'descriptors') {
 			restruct = this.render.ctab;
-			ci = { sgroupData: restruct['sgroupData'].ikeys() };
+			ci = { sgroupData: Array.from(restruct['sgroupData'].keys()) };
 		}
 
 		if (ci) {
 			var res = {};
-			for (var key in ci) {
-				if (ci.hasOwnProperty(key) && ci[key].length > 0) // TODO: deep merge
+			Object.keys(ci).forEach((key) => {
+				if (ci[key].length > 0) // TODO: deep merge
 					res[key] = ci[key].slice();
-			}
+			});
 			if (Object.keys(res).length !== 0)
 				this._selection = res; // eslint-disable-line
 		}
@@ -179,8 +156,8 @@ Editor.prototype.highlight = function (ci, visible) {
 	var rnd = this.render;
 	var item = null;
 	if (ci.map === 'merge') {
-		Object.keys(ci.items).forEach(mp => {
-			ci.items[mp].forEach(dstId => {
+		Object.keys(ci.items).forEach((mp) => {
+			ci.items[mp].forEach((dstId) => {
 				item = rnd.ctab[mp].get(dstId);
 				item.setHighlight(visible, rnd);
 			});
@@ -258,25 +235,34 @@ Editor.prototype.on = function (eventName, handler) {
 	this.event[eventName].add(handler);
 };
 
+function isMouseRight(event) {
+	return (event.which && event.which === 3) ||
+		(event.button && event.button === 2);
+}
+
 function domEventSetup(editor, clientArea) {
 	// TODO: addEventListener('resize', ...);
 	['click', 'dblclick', 'mousedown', 'mousemove',
-	 'mouseup', 'mouseleave'].forEach(eventName => {
-		 const subs = editor.event[eventName] = new s.DOMSubscription();
-		 clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
+		'mouseup', 'mouseleave'].forEach((eventName) => {
+		editor.event[eventName] = new s.DOMSubscription();
+		const subs = editor.event[eventName];
+		clientArea.addEventListener(eventName, subs.dispatch.bind(subs));
 
-		 subs.add(event => {
-			 editor.lastEvent = event;
-			 if (editor.tool() && eventName in editor.tool())
-				 editor.tool()[eventName](event);
-			 return true;
-		 }, -1);
+		subs.add((event) => {
+			if (eventName !== 'mouseup' && isMouseRight(event)) // mouseup to complete drag actions
+				return true;
+			const EditorTool = editor.tool();
+			editor.lastEvent = event;
+			if (EditorTool && eventName in EditorTool)
+				EditorTool[eventName](event);
+			return true;
+		}, -1);
 	});
 }
 
 Editor.prototype.findItem = function (event, maps, skip) {
-	var pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
-	    new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
+	const pos = global._ui_editor ? new Vec2(this.render.page2obj(event)) : // eslint-disable-line
+		new Vec2(event.pageX, event.pageY).sub(elementOffset(this.render.clientArea));
 
 	return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
 };
@@ -286,27 +272,29 @@ Editor.prototype.findMerge = function (srcItems, maps) {
 };
 
 Editor.prototype.explicitSelected = function () {
-	var selection = this.selection() || {};
-	var res = structObjects.reduce(function (res, key) {
-		res[key] = selection[key] ? selection[key].slice() : [];
-		return res;
+	const selection = this.selection() || {};
+	const res = structObjects.reduce((acc, key) => {
+		acc[key] = selection[key] ? selection[key].slice() : [];
+		return acc;
 	}, {});
 
-	var struct = this.render.ctab.molecule;
+	const struct = this.render.ctab.molecule;
 	// "auto-select" the atoms for the bonds in selection
-	if ('bonds' in res) {
-		res.bonds.forEach(function (bid) {
-			var bond = struct.bonds.get(bid);
+	if (res.bonds) {
+		res.bonds.forEach((bid) => {
+			const bond = struct.bonds.get(bid);
 			res.atoms = res.atoms || [];
-			if (res.atoms.indexOf(bond.begin) < 0) res.atoms.push(bond.begin);
-			if (res.atoms.indexOf(bond.end) < 0) res.atoms.push(bond.end);
+			if (res.atoms.indexOf(bond.begin) < 0)
+				res.atoms.push(bond.begin);
+
+			if (res.atoms.indexOf(bond.end) < 0)
+				res.atoms.push(bond.end);
 		});
 	}
 	// "auto-select" the bonds with both atoms selected
-	if ('atoms' in res && 'bonds' in res) {
-		struct.bonds.each(function (bid) {
-			if (!('bonds' in res) || res.bonds.indexOf(bid) < 0) {
-				var bond = struct.bonds.get(bid);
+	if (res.atoms && res.bonds) {
+		struct.bonds.forEach((bond, bid) => {
+			if (!res.bonds.indexOf(bid) < 0) {
 				if (res.atoms.indexOf(bond.begin) >= 0 && res.atoms.indexOf(bond.end) >= 0) {
 					res.bonds = res.bonds || [];
 					res.bonds.push(bid);
@@ -319,33 +307,32 @@ Editor.prototype.explicitSelected = function () {
 };
 
 Editor.prototype.structSelected = function () {
-	var struct = this.render.ctab.molecule;
-	var selection = this.explicitSelected();
-	var dst = struct.clone(Set.fromList(selection.atoms),
-						   Set.fromList(selection.bonds), true);
+	const struct = this.render.ctab.molecule;
+	const selection = this.explicitSelected();
+	const dst = struct.clone(new Pile(selection.atoms), new Pile(selection.bonds), true);
 
 	// Copy by its own as Struct.clone doesn't support
 	// arrows/pluses id sets
-	struct.rxnArrows.each(function (id, item) {
-		if (selection.rxnArrows.indexOf(id) != -1)
+	struct.rxnArrows.forEach((item, id) => {
+		if (selection.rxnArrows.indexOf(id) !== -1)
 			dst.rxnArrows.add(item.clone());
 	});
-	struct.rxnPluses.each(function (id, item) {
-		if (selection.rxnPluses.indexOf(id) != -1)
+	struct.rxnPluses.forEach((item, id) => {
+		if (selection.rxnPluses.indexOf(id) !== -1)
 			dst.rxnPluses.add(item.clone());
 	});
 	dst.isChiral = struct.isChiral;
 
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&
-		(dst.rxnArrows.count() || dst.rxnPluses.count());
+		(dst.rxnArrows.size || dst.rxnPluses.size);
 
 	return dst;
 };
 
 Editor.prototype.alignDescriptors = function () {
 	this.selection(null);
-	const action = Action.fromDescriptorsAlign(this.render.ctab);
+	const action = fromDescriptorsAlign(this.render.ctab);
 	this.update(action);
 	this.render.update(true);
 };
@@ -365,14 +352,14 @@ function getStructCenter(restruct, selection) {
 
 // TODO: find DOM shorthand
 function elementOffset(element) {
-	var top = 0,
-		left = 0;
+	let top = 0;
+	let left = 0;
 	do {
-		top += element.offsetTop  || 0;
+		top += element.offsetTop || 0;
 		left += element.offsetLeft || 0;
 		element = element.offsetParent;
 	} while (element);
 	return new Vec2(left, top);
 }
 
-module.exports = Editor;
+export default Editor;

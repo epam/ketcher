@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Struct = require('../../chem/struct');
-var Action = require('../action');
+import Struct from '../../chem/struct';
+import { fromRGroupAttrs, fromRGroupFragment, fromUpdateIfThen } from '../actions/rgroup';
 
 function RGroupFragmentTool(editor) {
 	if (!(this instanceof RGroupFragmentTool)) {
@@ -31,41 +31,42 @@ RGroupFragmentTool.prototype.mousemove = function (event) {
 	this.editor.hover(this.editor.findItem(event, ['frags', 'rgroups']));
 };
 
-RGroupFragmentTool.prototype.mouseup = function (event) {
+RGroupFragmentTool.prototype.click = function (event) {
 	const editor = this.editor;
 	const struct = editor.render.ctab.molecule;
 	const ci = editor.findItem(event, ['frags', 'rgroups']);
 
-	if (ci) {
-		this.editor.hover(null);
+	if (!ci) return true;
 
-		const label = (ci.map === 'rgroups') ? ci.id :
-		    Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id) || null;
+	this.editor.hover(null);
 
-		const rg = Object.assign({ label: label },
-		                       ci.map === 'frags' ? null :
-		                       struct.rgroups.get(ci.id));
+	const label = (ci.map === 'rgroups') ? ci.id :
+		Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id);
 
-		const res = editor.event.rgroupEdit.dispatch(rg);
+	const rg = Object.assign(
+		{ label },
+		ci.map === 'frags' ? { fragId: ci.id } : struct.rgroups.get(ci.id)
+	);
 
-		Promise.resolve(res).then(newRg => {
-			const restruct = editor.render.ctab;
+	const res = editor.event.rgroupEdit.dispatch(rg);
 
-			let action = null;
-			if (ci.map !== 'rgroups') {
-				const rgidOld = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
+	Promise.resolve(res).then((newRg) => {
+		const restruct = editor.render.ctab;
 
-				action = Action.fromRGroupFragment(restruct, newRg.label, ci.id)
-					.mergeWith(Action.fromUpdateIfThen(restruct, newRg.label, rgidOld));
-			} else {
-				action = Action.fromRGroupAttrs(restruct, ci.id, newRg);
-			}
+		let action = null;
+		if (ci.map !== 'rgroups') {
+			const rgidOld = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
 
-			editor.update(action);
-		});
+			action = fromRGroupFragment(restruct, newRg.label, ci.id)
+				.mergeWith(fromUpdateIfThen(restruct, newRg.label, rgidOld));
+		} else {
+			action = fromRGroupAttrs(restruct, ci.id, newRg);
+		}
 
-		return true;
-	}
+		editor.update(action);
+	});
+
+	return true;
 };
 
-module.exports = RGroupFragmentTool;
+export default RGroupFragmentTool;

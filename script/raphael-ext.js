@@ -16,8 +16,8 @@
 
 // Single entry point to Raphaël library
 
-var Raphael = require('raphael');
-var Vec2 = require('./util/vec2');
+const Raphael = require('raphael');
+const Vec2 = require('./util/vec2');
 
 // TODO: refactor ugly prototype extensions to plain old functions
 Raphael.el.translateAbs = function (x, y) {
@@ -28,7 +28,7 @@ Raphael.el.translateAbs = function (x, y) {
 };
 
 Raphael.st.translateAbs = function (x, y) {
-	this.forEach(function (el) {
+	this.forEach((el) => {
 		el.translateAbs(x, y);
 	});
 };

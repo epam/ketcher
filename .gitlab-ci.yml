@@ -2,6 +2,7 @@ image: node:6
 
 stages:
   - build
+  - test
 
 before_script:
   - npm prune
@@ -14,6 +15,8 @@ cache:
 variables:
   API_PATH: "$SERVER:8081/v2"
   MIEW_PATH: "/static/miew/"
+  BRANCHE_NAME_SOURCE: "$CI_COMMIT_REF_NAME"
+  TEST_TYPE_SOURCE: "KetcherSmokeSuite.xml"
 
 unstable:
   stage: build
@@ -50,5 +53,13 @@ frozen:
   only:
     - demo
     - /^2.0.0-.*$/
-    - 2.0.0-alpha.6
-    - 2.0.0-alpha.7
+
+test:
+  stage: test
+  script:
+    - NAME_REPORT_SOURCE=${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8}
+    - eval $EXECUTE
+  only:
+    - master
+    - dev
+    - /^2.0.0-.*$/

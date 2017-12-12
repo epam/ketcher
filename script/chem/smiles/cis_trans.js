@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Map = require('../../util/map');
+var Pool = require('../../util/pool').default;
 var Vec2 = require('../../util/vec2');
 
 var Struct = require('../struct');
 
 function CisTrans(mol, neighborsFunc, context) {
 	this.molecule = mol;
-	this.bonds = new Map();
+	this.bonds = new Pool();
 	this.getNeighbors = neighborsFunc;
 	this.context = context;
 }
@@ -32,8 +32,8 @@ CisTrans.PARITY = {
 	TRANS: 2
 };
 
-CisTrans.prototype.each = function (func, context) {
-	this.bonds.each(func, context);
+CisTrans.prototype.each = function (func) {
+	this.bonds.forEach(func);
 };
 
 CisTrans.prototype.getParity = function (idx) {
@@ -126,8 +126,8 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 	var neiЕnd = this.getNeighbors.call(this.context, bond.end);
 
 	if (
-	neiBegin.length < 2 || neiBegin.length > 3 ||
-	neiЕnd.length < 2 || neiЕnd.length > 3
+		neiBegin.length < 2 || neiBegin.length > 3 ||
+		neiЕnd.length < 2 || neiЕnd.length > 3
 	)
 		return false;
 
@@ -158,7 +158,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 		nei = neiЕnd[i];
 
 		if (nei.bid == bondIdx)
-			continue;  // eslint-disable-line no-continue
+			continue; // eslint-disable-line no-continue
 
 		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
 			return false;
@@ -178,12 +178,12 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 };
 
 CisTrans.prototype.build = function (excludeBonds) {
-	this.molecule.bonds.each(function (bid, bond) {
-		var ct = this.bonds.set(bid,
-			{
-				parity: 0,
-				substituents: []
-			});
+	this.molecule.bonds.forEach((bond, bid) => {
+		const ct = {
+			parity: 0,
+			substituents: []
+		};
+		this.bonds.set(bid, ct);
 
 		if (Array.isArray(excludeBonds) && excludeBonds[bid])
 			return;
@@ -194,13 +194,13 @@ CisTrans.prototype.build = function (excludeBonds) {
 		if (!this.sortSubstituents(ct.substituents))
 			return;
 
-		var sign = this.samesides(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
+		const sign = this.samesides(bond.begin, bond.end, ct.substituents[0], ct.substituents[2]);
 
-		if (sign == 1)
+		if (sign === 1)
 			ct.parity = CisTrans.PARITY.CIS;
-		else if (sign == -1)
+		else if (sign === -1)
 			ct.parity = CisTrans.PARITY.TRANS;
-	}, this);
+	});
 };
 
 function swap(arr, i1, i2) {

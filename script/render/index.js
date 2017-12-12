@@ -123,11 +123,12 @@ Render.prototype.setScrollOffset = function (x, y) {
 	var cx = clientArea.clientWidth;
 	var cy = clientArea.clientHeight;
 	var e = calcExtend(this.sz.scaled(this.options.zoom), x, y,
-	                   cx + x, cy + y).scaled(1 / this.options.zoom);
+		cx + x, cy + y)
+		.scaled(1 / this.options.zoom);
 	if (e.x > 0 || e.y > 0) {
 		this.setPaperSize(this.sz.add(e));
 		var d = new Vec2((x < 0) ? -x : 0,
-		                 (y < 0) ? -y : 0).scaled(1 / this.options.zoom);
+			(y < 0) ? -y : 0).scaled(1 / this.options.zoom);
 		if (d.x > 0 || d.y > 0) {
 			this.ctab.translate(d);
 			this.setOffset(this.options.offset.add(d));
@@ -135,7 +136,7 @@ Render.prototype.setScrollOffset = function (x, y) {
 	}
 	clientArea.scrollLeft = x;
 	clientArea.scrollTop = y;
-	 // TODO: store drag position in scaled systems
+	// TODO: store drag position in scaled systems
 	// scrollLeft = clientArea.scrollLeft;
 	// scrollTop = clientArea.scrollTop;
 	this.update(false);
@@ -166,7 +167,7 @@ Render.prototype.setMolecule = function (ctab) {
 
 Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-statements
 	viewSz = viewSz || new Vec2(this.clientArea.clientWidth || 100,
-	                            this.clientArea.clientHeight || 100);
+		this.clientArea.clientHeight || 100);
 
 	var changes = this.ctab.update(force);
 	this.ctab.setSelection(); // [MK] redraw the selection bits where necessary

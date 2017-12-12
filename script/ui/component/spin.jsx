@@ -15,11 +15,10 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-/** @jsx h */
 
-function Spin({...props}) {
+function Spin({ ...props }) {
 	return (
-		<div className="spinner" {...props}></div>
+		<div className="spinner" {...props} />
 	);
 }
 

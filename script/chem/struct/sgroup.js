@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 var Box2Abs = require('../../util/box2abs');
-var Set = require('../../util/set');
 var Vec2 = require('../../util/vec2');
+var Pile = require('../../util/pile').default;
 
 var Atom = require('./atom');
 var Bond = require('./bond');
@@ -83,10 +83,9 @@ SGroup.prototype.getAttr = function (attr) {
 // TODO: should be group-specific
 SGroup.prototype.getAttrs = function () {
 	var attrs = {};
-	for (var attr in this.data) {
-		if (this.data.hasOwnProperty(attr))
-			attrs[attr] = this.data[attr];
-	}
+	Object.keys(this.data).forEach((attr) => {
+		attrs[attr] = this.data[attr];
+	});
 	return attrs;
 };
 
@@ -137,14 +136,19 @@ SGroup.filter = function (mol, sg, atomMap) {
 	sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
 };
 
+/**
+ * @param sgroup
+ * @param aidMap < Map<number, number> }
+ * @returns { SGroup }
+ */
 SGroup.clone = function (sgroup, aidMap) {
-	var cp = new SGroup(sgroup.type);
+	const cp = new SGroup(sgroup.type);
 
-	for (var field in sgroup.data) // TODO: remove all non-primitive properties from 'data'
+	Object.keys(sgroup.data).forEach((field) => {
 		cp.data[field] = sgroup.data[field];
-	cp.atoms = sgroup.atoms.map(function (elem) {
-		return aidMap[elem];
 	});
+
+	cp.atoms = sgroup.atoms.map(elem => aidMap.get(elem));
 	cp.pp = sgroup.pp;
 	cp.bracketBox = sgroup.bracketBox;
 	cp.patoms = null;
@@ -167,16 +171,22 @@ SGroup.removeAtom = function (sgroup, aid) {
 	console.error('The atom is not found in the given s-group');
 };
 
+/**
+ * @param inBonds
+ * @param xBonds
+ * @param mol
+ * @param parentAtomSet { Pile<number> }
+ */
 SGroup.getCrossBonds = function (inBonds, xBonds, mol, parentAtomSet) {
-	mol.bonds.each(function (bid, bond) {
-		if (Set.contains(parentAtomSet, bond.begin) && Set.contains(parentAtomSet, bond.end)) {
-			if (inBonds != null)
+	mol.bonds.forEach((bond, bid) => {
+		if (parentAtomSet.has(bond.begin) && parentAtomSet.has(bond.end)) {
+			if (inBonds !== null)
 				inBonds.push(bid);
-		} else if (Set.contains(parentAtomSet, bond.begin) || Set.contains(parentAtomSet, bond.end)) {
-			if (xBonds != null)
+		} else if (parentAtomSet.has(bond.begin) || parentAtomSet.has(bond.end)) {
+			if (xBonds !== null)
 				xBonds.push(bid);
 		}
-	}, this);
+	});
 };
 
 SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-statements
@@ -192,29 +202,38 @@ SGroup.bracketPos = function (sg, mol, xbonds) { // eslint-disable-line max-stat
 
 	var bb = null;
 	var contentBoxes = [];
-	atoms.forEach(function (aid) {
+	atoms.forEach((aid) => {
 		var atom = mol.atoms.get(aid);
 		var pos = new Vec2(atom.pp);
 		var ext = new Vec2(0.05 * 3, 0.05 * 3);
 		var bba = new Box2Abs(pos, pos).extend(ext, ext);
 		contentBoxes.push(bba);
-	}, this);
-	contentBoxes.forEach(function (bba) {
+	});
+	contentBoxes.forEach((bba) => {
 		var bbb = null;
-		[bba.p0.x, bba.p1.x].forEach(function (x) {
-			[bba.p0.y, bba.p1.y].forEach(function (y) {
+		[bba.p0.x, bba.p1.x].forEach((x) => {
+			[bba.p0.y, bba.p1.y].forEach((y) => {
 				var v = new Vec2(x, y);
 				var p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
 				bbb = (bbb === null) ? new Box2Abs(p, p) : bbb.include(p);
-			}, this);
-		}, this);
+			});
+		});
 		bb = (bb === null) ? bbb : Box2Abs.union(bb, bbb);
-	}, this);
+	});
 	var vext = new Vec2(0.2, 0.4);
 	if (bb !== null) bb = bb.extend(vext, vext);
 	sg.bracketBox = bb;
 };
 
+/**
+ * @param mol
+ * @param xbonds
+ * @param atomSet { Pile<number> }
+ * @param bb
+ * @param d
+ * @param n
+ * @returns { Array }
+ */
 SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // eslint-disable-line max-params
 	function BracketParams(c, d, w, h) {
 		this.c = c;
@@ -234,7 +253,7 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 			var bracketHeight = bb.sz().y;
 
 			brackets.push(new BracketParams(cl, d.negated(), bracketWidth, bracketHeight), new BracketParams(cr, d, bracketWidth, bracketHeight));
-		})();
+		}());
 	} else if (xbonds.length === 2) {
 		(function () { // eslint-disable-line max-statements
 			var b1 = mol.bonds.get(xbonds[0]);
@@ -246,18 +265,20 @@ SGroup.getBracketParameters = function (mol, xbonds, atomSet, bb, d, n) { // esl
 
 			var bracketWidth = 0.25;
 			var bracketHeight = 1.5;
-			brackets.push(new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
-			new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight));
-		})();
+			brackets.push(
+				new BracketParams(cl0.addScaled(dl, 0), dl, bracketWidth, bracketHeight),
+				new BracketParams(cr0.addScaled(dr, 0), dr, bracketWidth, bracketHeight)
+			);
+		}());
 	} else {
 		(function () {
 			for (var i = 0; i < xbonds.length; ++i) {
 				var b = mol.bonds.get(xbonds[i]);
 				var c = b.getCenter(mol);
-				var d = Set.contains(atomSet, b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
+				var d = atomSet.has(b.begin) ? b.getDir(mol) : b.getDir(mol).negated();
 				brackets.push(new BracketParams(c, d, 0.2, 1.0));
 			}
-		})();
+		}());
 	}
 	return brackets;
 };
@@ -281,40 +302,40 @@ SGroup.getAtoms = function (mol, sg) {
 	if (!sg.allAtoms)
 		return sg.atoms;
 	var atoms = [];
-	mol.atoms.each(function (aid) {
-		atoms.push(aid);
-	});
+	mol.atoms.forEach((atom, aid) => { atoms.push(aid); });
 	return atoms;
 };
 
 SGroup.getBonds = function (mol, sg) {
 	var atoms = SGroup.getAtoms(mol, sg);
 	var bonds = [];
-	mol.bonds.each(function (bid, bond) {
-		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) bonds.push(bid);
+	mol.bonds.forEach((bond, bid) => {
+		if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0)
+			bonds.push(bid);
 	});
 	return bonds;
 };
 
 SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max-statements
 	sgroup.atoms.sort((a, b) => a - b);
-	sgroup.atomSet = Set.fromList(sgroup.atoms);
-	sgroup.parentAtomSet = Set.clone(sgroup.atomSet);
+	sgroup.atomSet = new Pile(sgroup.atoms);
+	sgroup.parentAtomSet = new Pile(sgroup.atomSet);
 	var inBonds = [];
 	var xBonds = [];
 
-	mol.bonds.each(function (bid, bond) {
-		if (Set.contains(sgroup.parentAtomSet, bond.begin) && Set.contains(sgroup.parentAtomSet, bond.end))
+	mol.bonds.forEach((bond, bid) => {
+		if (sgroup.parentAtomSet.has(bond.begin) && sgroup.parentAtomSet.has(bond.end))
 			inBonds.push(bid);
-		else if (Set.contains(sgroup.parentAtomSet, bond.begin) || Set.contains(sgroup.parentAtomSet, bond.end))
+		else if (sgroup.parentAtomSet.has(bond.begin) || sgroup.parentAtomSet.has(bond.end))
 			xBonds.push(bid);
-	}, sgroup);
+	});
+
 	if (xBonds.length !== 0 && xBonds.length !== 2) {
-		throw {
-			'id': sgroup.id,
+		throw Error({
+			id: sgroup.id,
 			'error-type': 'cross-bond-number',
-			'message': 'Unsupported cross-bonds number'
-		};
+			message: 'Unsupported cross-bonds number'
+		});
 	}
 
 	var xAtom1 = -1;
@@ -322,10 +343,10 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var crossBond = null;
 	if (xBonds.length === 2) {
 		var bond1 = mol.bonds.get(xBonds[0]);
-		xAtom1 = Set.contains(sgroup.parentAtomSet, bond1.begin) ? bond1.begin : bond1.end;
+		xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end;
 
 		var bond2 = mol.bonds.get(xBonds[1]);
-		xAtom2 = Set.contains(sgroup.parentAtomSet, bond2.begin) ? bond2.begin : bond2.end;
+		xAtom2 = sgroup.parentAtomSet.has(bond2.begin) ? bond2.begin : bond2.end;
 		crossBond = bond2;
 	}
 
@@ -335,14 +356,14 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	var newAtoms = [];
 	for (var j = 0; j < sgroup.data.mul - 1; j++) {
 		amap = {};
-		sgroup.atoms.forEach(function (aid) {
+		sgroup.atoms.forEach((aid) => {
 			var atom = mol.atoms.get(aid);
 			var aid2 = mol.atoms.add(new Atom(atom));
 			newAtoms.push(aid2);
-			sgroup.atomSet[aid2] = 1;
+			sgroup.atomSet.add(aid2);
 			amap[aid] = aid2;
 		});
-		inBonds.forEach(function (bid) {
+		inBonds.forEach((bid) => {
 			var bond = mol.bonds.get(bid);
 			var newBond = new Bond(bond);
 			newBond.begin = amap[newBond.begin];
@@ -366,8 +387,8 @@ SGroup.prepareMulForSaving = function (sgroup, mol) { // eslint-disable-line max
 	}
 	sgroup.bonds = xBonds;
 
-	newAtoms.forEach(function (aid) {
-		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach(function (sgid) {
+	newAtoms.forEach((aid) => {
+		mol.sGroupForest.getPathToRoot(sgroup.id).reverse().forEach((sgid) => {
 			mol.atomAddToSGroup(sgid, aid);
 		});
 	});

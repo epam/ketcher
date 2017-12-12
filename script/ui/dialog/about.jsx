@@ -16,43 +16,56 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 
 function About(props) {
+	const [version, build] = props.indigoVersion.split('.r'); // Indigo version and build info
+
 	return (
-		<Dialog title="About"
-				className="about" params={props}
-				buttons={["Close"]}>
+		<Dialog
+			title="About"
+			className="about"
+			params={props}
+			buttons={['Close']}
+		>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-				<img src="images/ketcher-logo.svg"/>
+				<img alt="Ketcher" src="images/ketcher-logo.svg" />
 			</a>
 			<dl>
 				<dt>
 					<a href="http://lifescience.opensource.epam.com/ketcher/help.html" target="_blank">Ketcher</a>
 				</dt>
 				<dd>
-					version <var>{props.version}</var>
+					version
+					<var>{props.version}</var>
 				</dd>
 				{
 					props.buildNumber ? (
 						<dd>
-							build #<var>{props.buildNumber}</var>
-							{" at "}
+							build #
+							<var className="build-number">{props.buildNumber}</var>
+							{' at '}
 							<time>{props.buildDate}</time>
-						</dd> ) : null
+						</dd>) : null
 				}
 				{
 					props.indigoVersion ? (
 						<div>
 							<dt>
 								<a href="http://lifescience.opensource.epam.com/indigo/" target="_blank">Indigo
-									Toolkit</a>
+									Toolkit
+								</a>
 							</dt>
-							<dd>version <var>{props.indigoVersion}</var></dd>
+							<dd>version
+								<var>{version}</var>
+							</dd>
+							<dd>
+								build #
+								<var className="build-number">{build}</var>
+							</dd>
 						</div>
-					) : ( <dd>standalone</dd> )
+					) : (<dd>standalone</dd>)
 				}
 				<dt>
 					<a href="http://lifescience.opensource.epam.com/" target="_blank">EPAM Life Sciences</a>

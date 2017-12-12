@@ -18,9 +18,12 @@ var Vec2 = require('../../util/vec2');
 var Struct = require('./../struct/index');
 
 function paddedNum(number, width, precision) {
+	number = parseFloat(number);
+
 	var numStr = number.toFixed(precision || 0).replace(',', '.'); // Really need to replace?
 	if (numStr.length > width)
 		throw new Error('number does not fit');
+
 	return numStr.padStart(width);
 }
 
@@ -28,7 +31,7 @@ function parseDecimalInt(str) {
 	/* reader */
 	var val = parseInt(str, 10);
 
-	return isNaN(val) ? 0 : val;
+	return isNaN(val) ? 0 : val; // eslint-disable-line
 }
 
 function partitionLine(/* string*/ str, /* array of int*/ parts, /* bool*/ withspace) {
@@ -161,17 +164,18 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 			molProd.push(mol);
 		}
 
-		mol.atoms.each(function (aid, atom) {
+		mol.atoms.forEach((atom) => {
 			atom.rxnFragmentType = fragmentType;
 		});
 	}
 
 	function shiftMol(ret, mol, bb, xorig, over) { // eslint-disable-line max-params
 		var d = new Vec2(xorig - bb.min.x, over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2);
-		mol.atoms.each(function (aid, atom) {
+		mol.atoms.forEach((atom) => {
 			atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
-		mol.sgroups.each(function (id, item) {
+
+		mol.sgroups.forEach((item) => {
 			if (item.pp)
 				item.pp.add_(d); // eslint-disable-line no-underscore-dangle
 		});
@@ -265,10 +269,10 @@ function rxnMerge(mols, nReactants, nProducts) /* Struct */ { // eslint-disable-
 }
 
 module.exports = {
-	fmtInfo: fmtInfo,
-	paddedNum: paddedNum,
-	parseDecimalInt: parseDecimalInt,
-	partitionLine: partitionLine,
-	partitionLineFixed: partitionLineFixed,
-	rxnMerge: rxnMerge
+	fmtInfo,
+	paddedNum,
+	parseDecimalInt,
+	partitionLine,
+	partitionLineFixed,
+	rxnMerge
 };

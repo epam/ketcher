@@ -16,16 +16,16 @@
 
 var generics = {
 	atom: {
-		'any': {
+		any: {
 			labels: ['A', 'AH']
 		},
 		'no-carbon': {
 			labels: ['Q', 'QH']
 		},
-		'metal': {
+		metal: {
 			labels: ['M', 'MH']
 		},
-		'halogen': {
+		halogen: {
 			labels: ['X', 'XH']
 		}
 	},
@@ -53,11 +53,11 @@ var generics = {
 			}
 		},
 		cyclic: {
-			'labels': ['CYC', 'CYH'],
+			labels: ['CYC', 'CYH'],
 			'no-carbon': {
 				labels: ['CXX', 'CXH']
 			},
-			'carbo': {
+			carbo: {
 				labels: ['CBC', 'CBH'],
 				aryl: {
 					labels: ['ARY', 'ARH']
@@ -69,7 +69,7 @@ var generics = {
 					labels: ['CEL', 'CEH']
 				}
 			},
-			'hetero': {
+			hetero: {
 				labels: ['CHC', 'CHH'],
 				aryl: {
 					labels: ['HAR', 'HAH']
@@ -83,22 +83,20 @@ var generics = {
 };
 
 function mapify(tree, path, res) {
-	return Object.keys(tree).reduce(function (res, key) {
+	return Object.keys(tree).reduce((res, key) => {
 		if (key === 'labels') {
-			return tree.labels.reduce(function (res, label) {
+			return tree.labels.reduce((res, label) => {
 				res[label] = path || true;
 				return res;
 			}, res);
 		}
 		return mapify(tree[key],
-		              path ? path.concat(key) : [key], res);
+			path ? path.concat(key) : [key], res);
 	}, res || {});
 }
 
 function traverse(tree, path) {
-	return path.reduce(function (res, cur) {
-		return (res && res[cur]) || null;
-	}, tree);
+	return path.reduce((res, cur) => (res && res[cur]) || null, tree);
 }
 
 generics.map = mapify(generics);

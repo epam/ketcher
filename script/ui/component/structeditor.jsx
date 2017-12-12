@@ -16,9 +16,8 @@
 
 import { upperFirst } from 'lodash/fp';
 import { h, Component } from 'preact';
-/** @jsx h */
 
-import Editor from '../../editor'
+import Editor from '../../editor';
 
 function setupEditor(editor, props, oldProps = {}) {
 	const { struct, tool, toolOpts, options } = props;
@@ -33,11 +32,8 @@ function setupEditor(editor, props, oldProps = {}) {
 		editor.options(options);
 
 	// update handlers
-	for (let name in editor.event) {
-		if (!editor.event.hasOwnProperty(name))
-			continue;
-
-		let eventName = `on${upperFirst(name)}`;
+	Object.keys(editor.event).forEach((name) => {
+		const eventName = `on${upperFirst(name)}`;
 
 		if (props[eventName] !== oldProps[eventName]) {
 			console.info('update editor handler', eventName);
@@ -47,7 +43,7 @@ function setupEditor(editor, props, oldProps = {}) {
 			if (props[eventName])
 				editor.event[name].add(props[eventName]);
 		}
-	}
+	});
 }
 
 class StructEditor extends Component {
@@ -60,15 +56,15 @@ class StructEditor extends Component {
 	}
 
 	componentDidMount() {
-		console.assert(this.base, "No backing element");
+		console.assert(this.base, 'No backing element');
 		this.instance = new Editor(this.base, { ...this.props.options });
 		setupEditor(this.instance, this.props);
 		if (this.props.onInit)
 			this.props.onInit(this.instance);
 	}
 
-	render () {
-		let { Tag="div", struct, tool, toolOpts, options, ...props } = this.props;
+	render() {
+		const { Tag = 'div', struct, tool, toolOpts, options, ...props } = this.props;
 		return (
 			<Tag onMouseDown={ev => ev.preventDefault()} {...props}	/>
 		);

@@ -14,13 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Set = require('../../util/set');
-const Action = require('../action');
-const Struct = require('../../chem/struct');
-const LassoHelper = require('./helper/lasso');
-const SGroup = require('./sgroup');
-const Atom = require('./atom');
-const utils = require('./utils');
+import utils from '../shared/utils';
+
+import Pile from '../../util/pile';
+import Struct from '../../chem/struct';
+import LassoHelper from './helper/lasso';
+import { sgroupDialog } from './sgroup';
+import { atomLongtapEvent } from './atom';
+import { fromMultipleMove } from '../actions/fragment';
+import { fromAtomsAttrs, fromAtomMerge } from '../actions/atom';
+import { fromBondsAttrs, fromBondsMerge } from '../actions/bond';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -51,11 +54,12 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	};
 
 	if (!ci) { //  ci.type == 'Canvas'
-		Atom.atomLongtapEvent(this, rnd);
+		atomLongtapEvent(this, rnd);
 		delete this.dragCtx.item;
 
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
+
 		return true;
 	}
 
@@ -67,8 +71,8 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		if (ci.map === 'frags') {
 			const frag = ctab.frags.get(ci.id);
 			sel = {
-				atoms: frag.fragGetAtoms(rnd, ci.id),
-				bonds: frag.fragGetBonds(rnd, ci.id)
+				atoms: frag.fragGetAtoms(ctab, ci.id),
+				bonds: frag.fragGetBonds(ctab, ci.id)
 			};
 		} else if (ci.map === 'sgroups') {
 			const sgroup = ctab.sgroups.get(ci.id).item;
@@ -89,7 +93,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	}
 
 	if (ci.map === 'atoms')
-		Atom.atomLongtapEvent(this, rnd); // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+		atomLongtapEvent(this, rnd); // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
 
 	return true;
 };
@@ -108,10 +112,11 @@ SelectTool.prototype.mousemove = function (event) {
 			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
 		const expSel = this.editor.explicitSelected();
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = fromMultipleMove(
 			restruct,
 			expSel,
-			render.page2obj(event).sub(this.dragCtx.xy0));
+			render.page2obj(event).sub(this.dragCtx.xy0)
+		);
 
 		// finding & highlighting object to stick to
 		this.dragCtx.mergeItems =
@@ -119,8 +124,8 @@ SelectTool.prototype.mousemove = function (event) {
 
 		if (this.dragCtx.mergeItems) {
 			const hoverMerge = {
-				atoms: Object.values(this.dragCtx.mergeItems.atoms),
-				bonds: Object.values(this.dragCtx.mergeItems.bonds)
+				atoms: Array.from(this.dragCtx.mergeItems.atoms.values()),
+				bonds: Array.from(this.dragCtx.mergeItems.bonds.values())
 			};
 			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
 		} else {
@@ -134,8 +139,7 @@ SelectTool.prototype.mousemove = function (event) {
 	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
 		this.editor.selection(!event.shiftKey ? sel :
-			selMerge(sel, this.editor.selection())
-		);
+			selMerge(sel, this.editor.selection()));
 		return true;
 	}
 
@@ -159,16 +163,16 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			this.editor.selection(null);
 
 			// merge single atoms
-			Object.entries(this.dragCtx.mergeItems.atoms).forEach(pair => {
+			this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
 				this.dragCtx.action = this.dragCtx.action ?
-					Action.fromAtomMerge(restruct, +pair[0], +pair[1]).mergeWith(this.dragCtx.action) :
-					Action.fromAtomMerge(restruct, +pair[0], +pair[1]);
+					fromAtomMerge(restruct, src, dst).mergeWith(this.dragCtx.action) :
+					fromAtomMerge(restruct, src, dst);
 			});
 
 			// merge bonds
 			this.dragCtx.action = this.dragCtx.action ?
-				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
-				Action.fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
+				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
+				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 		}
 		this.editor.hover(null);
 
@@ -180,7 +184,8 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		this.editor.selection(!event.shiftKey ? sel :
 			selMerge(sel, this.editor.selection()));
 	} else if (this.lassoHelper.fragment) {
-		this.editor.selection(null);
+		if (!event.shiftKey)
+			this.editor.selection(null);
 	}
 	return true;
 };
@@ -189,33 +194,33 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	var editor = this.editor;
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['atoms', 'bonds', 'sgroups', 'sgroupData']);
-	if (!ci) return;
+	if (!ci) return true;
 
 	var struct = rnd.ctab.molecule;
 	if (ci.map === 'atoms') {
 		this.editor.selection(closestToSel(ci));
 		var atom = struct.atoms.get(ci.id);
 		var ra = editor.event.elementEdit.dispatch(atom);
-		Promise.resolve(ra).then(function (newatom) {
+		Promise.resolve(ra).then((newatom) => {
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-			editor.update(Action.fromAtomsAttrs(rnd.ctab, ci.id, newatom));
+			editor.update(fromAtomsAttrs(rnd.ctab, ci.id, newatom));
 		});
 	} else if (ci.map === 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
-		Promise.resolve(rb).then(function (newbond) {
-			editor.update(Action.fromBondAttrs(rnd.ctab, ci.id, newbond));
+		Promise.resolve(rb).then((newbond) => {
+			editor.update(fromBondsAttrs(rnd.ctab, ci.id, newbond));
 		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));
-		SGroup.dialog(this.editor, ci.id);
+		sgroupDialog(this.editor, ci.id);
 	}
 	return true;
 };
 
-SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
+SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
 	if (this.dragCtx && this.dragCtx.stopTapping)
 		this.dragCtx.stopTapping();
 
@@ -231,24 +236,37 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () {
 	this.editor.hover(null);
 };
 
+/**
+ * @param restruct { ReStruct }
+ * @param closestMap {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ * @return {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ */
 function closestToMerge(restruct, closestMap) {
 	const struct = restruct.molecule;
-	const mergeMap = Object.assign({}, closestMap);
+	const mergeMap = {
+		atoms: new Map(closestMap.atoms),
+		bonds: new Map(closestMap.bonds)
+	};
 
-	Object.entries(closestMap.bonds).forEach(([srcId, dstId]) => {
+	closestMap.bonds.forEach((dstId, srcId) => {
 		const bond = struct.bonds.get(srcId);
 		const bondCI = struct.bonds.get(dstId);
 
-		if (utils.mergeBondsParams(restruct, bond, bondCI)) {
-			delete mergeMap.atoms[bond.begin];
-			delete mergeMap.atoms[bond.end];
+		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+			mergeMap.atoms.delete(bond.begin);
+			mergeMap.atoms.delete(bond.end);
 		} else {
-			delete mergeMap.bonds[srcId];
+			mergeMap.bonds.delete(srcId);
 		}
 	});
 
-	if (Object.keys(mergeMap.atoms).length === 0 &&
-		Object.keys(mergeMap.bonds).length === 0) return null;
+	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null;
 
 	return mergeMap;
 }
@@ -262,16 +280,12 @@ function closestToSel(ci) {
 // TODO: deep-merge?
 function selMerge(selection, add) {
 	if (add) {
-		for (var item in add) {
-			if (add.hasOwnProperty(item)) {
-				if (!selection[item]) {
-					selection[item] = add[item].slice();
-				} else {
-					selection[item] = uniqArray(selection[item],
-						add[item]);
-				}
-			}
-		}
+		Object.keys(add).forEach((item) => {
+			if (!selection[item])
+				selection[item] = add[item].slice();
+			else
+				selection[item] = uniqArray(selection[item], add[item]);
+		});
 	}
 	return selection;
 }
@@ -287,18 +301,22 @@ function uniqArray(dest, add) {
 function isSelected(render, selection, item) {
 	if (!selection)
 		return false;
-	var ctab = render.ctab;
+
+	const ctab = render.ctab;
+
 	if (item.map === 'frags' || item.map === 'rgroups') {
-		var atoms = item.map === 'frags' ?
-			ctab.frags.get(item.id).fragGetAtoms(render, item.id) :
+		const atoms = item.map === 'frags' ?
+			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
 			ctab.rgroups.get(item.id).getAtoms(render);
 
-		return !!selection['atoms'] &&
-			Set.subset(Set.fromList(atoms), Set.fromList(selection['atoms']));
+		const selectionSet = new Pile(selection['atoms']);
+		const atomSet = new Pile(atoms);
+
+		return !!selection['atoms'] && selectionSet.isSuperset(atomSet);
 	}
 
 	return !!selection[item.map] &&
 		selection[item.map].indexOf(item.id) > -1;
 }
 
-module.exports = SelectTool;
+export default SelectTool;

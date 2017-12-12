@@ -15,21 +15,23 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-/** @jsx h */
 
 function SelectList({ schema, value, onSelect, splitIndexes, ...props }) {
 	return (
 		<ul {...props}>{
 			schema.enum.map((opt, index) => (
-				<li onClick={() => onSelect(opt, index) }
+				<li
+					onClick={() => onSelect(opt, index)}
 					className={
 						(opt === value ? 'selected ' : '') +
 						(isSplitIndex(index, splitIndexes) ? 'split' : '')
-					}>
+					}
+				>
 					{schema.enumNames ? schema.enumNames[index] : opt}
 				</li>
 			))
-		}</ul>
+		}
+		</ul>
 	);
 }
 

@@ -40,35 +40,36 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 	var molecule = restruct.molecule;
 	var loop = this.loop;
 	this.centre = new Vec2();
-	loop.hbs.forEach(function (hbid) {
+	loop.hbs.forEach((hbid) => {
 		var hb = molecule.halfBonds.get(hbid);
 		var bond = restruct.bonds.get(hb.bid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
 		if (bond.b.type !== Struct.Bond.PATTERN.TYPE.AROMATIC)
 			loop.aromatic = false;
 		this.centre.add_(apos); // eslint-disable-line no-underscore-dangle
-	}, this);
+	});
 	loop.convex = true;
 	for (var k = 0; k < this.loop.hbs.length; ++k) {
 		var hba = molecule.halfBonds.get(loop.hbs[k]);
 		var hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 		var angle = Math.atan2(
 			Vec2.cross(hba.dir, hbb.dir),
-			Vec2.dot(hba.dir, hbb.dir));
+			Vec2.dot(hba.dir, hbb.dir)
+		);
 		if (angle > 0)
 			loop.convex = false;
 	}
 
 	this.centre = this.centre.scaled(1.0 / loop.hbs.length);
 	this.radius = -1;
-	loop.hbs.forEach(function (hbid) {
+	loop.hbs.forEach((hbid) => {
 		var hb = molecule.halfBonds.get(hbid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
 		var bpos = scale.obj2scaled(restruct.atoms.get(hb.end).a.pp, options);
 		var n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
 		var dist = Vec2.dot(Vec2.diff(apos, this.centre), n);
 		this.radius = (this.radius < 0) ? dist : Math.min(this.radius, dist);
-	}, this);
+	});
 	this.radius *= 0.7;
 	if (!loop.aromatic)
 		return;
@@ -76,7 +77,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 	if (loop.convex && options.aromaticCircle) {
 		path = paper.circle(this.centre.x, this.centre.y, this.radius)
 			.attr({
-				'stroke': '#000',
+				stroke: '#000',
 				'stroke-width': options.lineattr['stroke-width']
 			});
 	} else {
@@ -86,7 +87,8 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 			hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
 			angle = Math.atan2(
 				Vec2.cross(hba.dir, hbb.dir),
-				Vec2.dot(hba.dir, hbb.dir));
+				Vec2.dot(hba.dir, hbb.dir)
+			);
 			var halfAngle = (Math.PI - angle) / 2;
 			var dir = hbb.dir.rotate(halfAngle);
 			var pi = scale.obj2scaled(restruct.atoms.get(hbb.begin).a.pp, options);
@@ -102,7 +104,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 		pathStr += 'Z';
 		path = paper.path(pathStr)
 			.attr({
-				'stroke': '#000',
+				stroke: '#000',
 				'stroke-width': options.lineattr['stroke-width'],
 				'stroke-dasharray': '- '
 			});
@@ -113,8 +115,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 ReLoop.prototype.isValid = function (struct, rlid) {
 	const halfBonds = struct.halfBonds;
 	return this.loop.hbs.every(hbid =>
-		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
-	);
+		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid);
 };
 
 module.exports = ReLoop;

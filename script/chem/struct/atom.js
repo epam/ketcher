@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 var Vec2 = require('../../util/vec2');
-
+var Pile = require('../../util/pile').default;
 var element = require('../element');
 var AtomList = require('./atomlist');
 
@@ -42,7 +42,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	// sgs should only be set when an atom is added to an s-group by an appropriate method,
 	//   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
 	// TODO: make a consistency check on atom/s-group assignments
-	this.sgs = {};
+	this.sgs = new Pile();
 
 	// query
 	ifDef(this, params, 'ringBondCount', def('ringBondCount'));
@@ -73,7 +73,7 @@ Atom.getAttrHash = function (atom) {
 Atom.attrGetDefault = function (attr) {
 	if (attr in Atom.attrlist)
 		return Atom.attrlist[attr];
-	console.assert(false, 'Attribute unknown');
+	return console.assert(false, 'Attribute unknown');
 };
 
 
@@ -117,37 +117,41 @@ function radicalElectrons(radical) {
 	else if (radical === Atom.PATTERN.RADICAL.SINGLET ||
 		radical === Atom.PATTERN.RADICAL.TRIPLET)
 		return 2;
-	console.assert(false, 'Unknown radical value');
+	return console.assert(false, 'Unknown radical value');
 }
 
+/**
+ * @param fidMap { Map<number, number> }
+ * @returns { Atom }
+ */
 Atom.prototype.clone = function (fidMap) {
-	var ret = new Atom(this);
-	if (fidMap && this.fragment in fidMap)
-		ret.fragment = fidMap[this.fragment];
+	const ret = new Atom(this);
+	if (fidMap && fidMap.has(this.fragment))
+		ret.fragment = fidMap.get(this.fragment);
 	return ret;
 };
 
-Atom.prototype.isQuery =  function () {
-	return this.atomList != null || this.label === 'A' || this.attpnt || this.hCount;
+Atom.prototype.isQuery = function () {
+	return this.atomList !== null || this.label === 'A' || this.attpnt || this.hCount;
 };
 
-Atom.prototype.pureHydrogen =  function () {
+Atom.prototype.pureHydrogen = function () {
 	return this.label === 'H' && this.isotope === 0;
 };
 
-Atom.prototype.isPlainCarbon =  function () {
-	return this.label === 'C' && this.isotope === 0 && this.radical == 0 && this.charge == 0 &&
-		this.explicitValence < 0 && this.ringBondCount == 0 && this.substitutionCount == 0 &&
-		this.unsaturatedAtom == 0 && this.hCount == 0 && !this.atomList;
+Atom.prototype.isPlainCarbon = function () {
+	return this.label === 'C' && this.isotope === 0 && this.radical === 0 && this.charge === 0 &&
+		this.explicitValence < 0 && this.ringBondCount === 0 && this.substitutionCount === 0 &&
+		this.unsaturatedAtom === 0 && this.hCount === 0 && !this.atomList;
 };
 
-Atom.prototype.isPseudo =  function () {
+Atom.prototype.isPseudo = function () {
 	// TODO: handle reaxys generics separately
 	return !this.atomList && !this.rglabel && !element.map[this.label];
 };
 
-Atom.prototype.hasRxnProps =  function () {
-	return !!(this.invRet || this.exactChangeFlag || this.attpnt != null || this.aam);
+Atom.prototype.hasRxnProps = function () {
+	return !!(this.invRet || this.exactChangeFlag || this.attpnt !== null || this.aam);
 };
 
 Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statements
@@ -327,7 +331,7 @@ Atom.prototype.calcValence = function (conn) { // eslint-disable-line max-statem
 			valence = 1;
 			hyd = 1 - rad - conn - absCharge;
 		} else if (label === 'Cl' || label === 'Br' ||
-			label === 'I'  || label === 'At') {
+			label === 'I' || label === 'At') {
 			if (charge === 1) {
 				if (conn <= 2) {
 					valence = 2;

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+import Action from '../shared/action';
+import { fromArrowAddition } from '../actions/reaction';
+import { fromMultipleMove } from '../actions/fragment';
 
 function ReactionArrowTool(editor) {
 	if (!(this instanceof ReactionArrowTool))
@@ -36,13 +38,14 @@ ReactionArrowTool.prototype.mousedown = function (event) {
 		};
 	}
 };
+
 ReactionArrowTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform(rnd.ctab);
 
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
@@ -52,14 +55,18 @@ ReactionArrowTool.prototype.mousemove = function (event) {
 		this.editor.hover(this.editor.findItem(event, ['rxnArrows']));
 	}
 };
-ReactionArrowTool.prototype.mouseup = function (event) {
-	var rnd = this.editor.render;
+
+ReactionArrowTool.prototype.mouseup = function () {
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
-	} else if (rnd.ctab.molecule.rxnArrows.count() < 1) {
-		this.editor.update(Action.fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 
-module.exports = ReactionArrowTool;
+ReactionArrowTool.prototype.click = function (event) {
+	const rnd = this.editor.render;
+	if (rnd.ctab.molecule.rxnArrows.size < 1)
+		this.editor.update(fromArrowAddition(rnd.ctab, rnd.page2obj(event)));
+};
+
+export default ReactionArrowTool;

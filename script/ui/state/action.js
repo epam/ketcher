@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import acts from '../action';
 import { isEqual, isEmpty, pickBy } from 'lodash/fp';
+import acts from '../action';
 
 function execute(activeTool, { action, editor, server, options }) {
 	if (action.tool) {
 		if (editor.tool(action.tool, action.opts))
 			return action;
-	}
-	else if (typeof action === 'function')
+	} else if (typeof action === 'function') {
 		action(editor, server, options);
-	else
+	} else {
 		console.info('no action');
+	}
 	return activeTool;
 }
 
@@ -44,18 +44,18 @@ function disabled(actObj, { editor, server, options }) {
 }
 
 function status(key, activeTool, params) {
-	let actObj = acts[key];
+	const actObj = acts[key];
 	return pickBy(x => x, {
 		selected: selected(actObj, activeTool, params),
 		disabled: disabled(actObj, params)
 	});
 }
 
-export default function (state=null, { type, action, ...params }) {
-	switch(type) {
+export default function (state = null, { type, action, ...params }) {
+	switch (type) {
 	case 'INIT':
 		action = acts['select-lasso'].action;
-	case 'ACTION':
+	case 'ACTION': // eslint-disable-line no-case-declarations
 		const activeTool = execute(state && state.activeTool, {
 			...params, action
 		});

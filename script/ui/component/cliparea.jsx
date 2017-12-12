@@ -15,29 +15,24 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 const ieCb = window.clipboardData;
 
 class ClipArea extends Component {
-	shouldComponentUpdate() {
-		return false;
-	}
-
 	componentDidMount() {
-		const el = this.refs ? this.refs.base : this.base;
+		const el = this.base;
 		this.target = this.props.target || el.parentNode;
 
 		this.listeners = {
-			'mouseup': event => {
+			mouseup: (event) => {
 				if (this.props.focused() && !isFormElement(event.target))
 					autofocus(el);
 			},
-			'mousedown': event => {
+			mousedown: (event) => {
 				if (event.shiftKey && !isFormElement(event.target))
 					event.preventDefault();
 			},
-			'copy': event => {
+			copy: (event) => {
 				if (this.props.focused() && this.props.onCopy) {
 					const data = this.props.onCopy();
 					if (data)
@@ -45,7 +40,7 @@ class ClipArea extends Component {
 					event.preventDefault();
 				}
 			},
-			'cut': event => {
+			cut: (event) => {
 				if (this.props.focused() && this.props.onCut) {
 					const data = this.props.onCut();
 					if (data)
@@ -53,7 +48,7 @@ class ClipArea extends Component {
 					event.preventDefault();
 				}
 			},
-			'paste': event => {
+			paste: (event) => {
 				if (this.props.focused() && this.props.onPaste) {
 					const data = paste(event.clipboardData, this.props.formats);
 					if (data)
@@ -63,21 +58,28 @@ class ClipArea extends Component {
 			}
 		};
 
-		Object.keys(this.listeners).forEach(en => {
+		Object.keys(this.listeners).forEach((en) => {
 			this.target.addEventListener(en, this.listeners[en]);
 		});
 	}
 
+	shouldComponentUpdate() {
+		return false;
+	}
+
 	componentWillUnmount() {
-		Object.keys(this.listeners).forEach(en => {
+		Object.keys(this.listeners).forEach((en) => {
 			this.target.removeEventListener(en, this.listeners[en]);
 		});
 	}
 
 	render() {
 		return (
-			<textarea className="cliparea" contentEditable={true}
-					  autoFocus={true}/>
+			<textarea
+				className="cliparea"
+				contentEditable
+				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+			/>
 		);
 	}
 }
@@ -99,7 +101,7 @@ function copy(cb, data) {
 	} else {
 		cb.setData('text/plain', data['text/plain']);
 		try {
-			Object.keys(data).forEach(function (fmt) {
+			Object.keys(data).forEach((fmt) => {
 				cb.setData(fmt, data[fmt]);
 			});
 		} catch (ex) {
@@ -114,11 +116,11 @@ function paste(cb, formats) {
 		data['text/plain'] = ieCb.getData('text');
 	} else {
 		data['text/plain'] = cb.getData('text/plain');
-		data = formats.reduce(function (data, fmt) {
+		data = formats.reduce((res, fmt) => {
 			const d = cb.getData(fmt);
 			if (d)
-				data[fmt] = d;
-			return data;
+				res[fmt] = d;
+			return res;
 		}, data);
 	}
 	return data;
@@ -128,11 +130,13 @@ export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
-	if (enabled) try {
-		enabled = document.execCommand(action) || ieCb;
-	} catch (ex) {
-		// FF < 41
-		enabled = false;
+	if (enabled) {
+		try {
+			enabled = document.execCommand(action) || ieCb;
+		} catch (ex) {
+			// FF < 41
+			enabled = false;
+		}
 	}
 	return enabled;
 }

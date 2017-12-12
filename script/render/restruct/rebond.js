@@ -22,7 +22,11 @@ var Vec2 = require('../../util/vec2');
 var util = require('../util');
 var scale = require('../../util/scale');
 
-function ReBond(/* chem.Bond*/bond) {
+/**
+ * @param bond { Bond }
+ * @constructor
+ */
+function ReBond(bond) {
 	this.init('bond');
 
 	this.b = bond; // TODO rename b to item
@@ -55,6 +59,11 @@ ReBond.prototype.makeSelectionPlate = function (restruct, paper, options) {
 		.attr(options.selectionStyle);
 };
 
+/**
+ * @param restruct { ReStruct }
+ * @param bid { number }
+ * @param options { object }
+ */
 ReBond.prototype.show = function (restruct, bid, options) { // eslint-disable-line max-statements
 	var render = restruct.render;
 	var struct = restruct.molecule;
@@ -105,39 +114,56 @@ ReBond.prototype.show = function (restruct, bid, options) { // eslint-disable-li
 };
 
 function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
-	return atom.neighbors.findIndex(function (hbid) {
-		var hb = restruct.molecule.halfBonds.get(hbid);
-		var bid = hb.bid;
+	return atom.neighbors.findIndex((hbid) => {
+		const hb = restruct.molecule.halfBonds.get(hbid);
+		const bid = hb.bid;
 		if (bid === bid0)
 			return false;
-		var neibond = restruct.bonds.get(bid);
-		if (neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP)
+
+		const neibond = restruct.bonds.get(bid);
+
+		const singleUp = neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+			neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP;
+
+		if (singleUp)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
-		return !!(neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE && neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && includeBoldStereoBond && neibond.boldStereo);
+
+		return !!(
+			neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE &&
+			neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+			includeBoldStereoBond && neibond.boldStereo
+		);
 	});
 }
 
 function findIncomingUpBonds(bid0, bond, restruct) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
-		var atom = restruct.molecule.atoms.get(aid);
-		var pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
+	const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
+		const atom = restruct.molecule.atoms.get(aid);
+		const pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
-	}, this);
+	});
 	console.assert(halfbonds.length === 2);
 	bond.neihbid1 = restruct.atoms.get(bond.b.begin).showLabel ? -1 : halfbonds[0];
 	bond.neihbid2 = restruct.atoms.get(bond.b.end).showLabel ? -1 : halfbonds[1];
 }
 
 function checkStereoBold(bid0, bond, restruct) {
-	var halfbonds = [bond.b.begin, bond.b.end].map(function (aid) {
+	var halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
 		var atom = restruct.molecule.atoms.get(aid);
-		var pos =  findIncomingStereoUpBond(atom, bid0, false, restruct);
+		var pos = findIncomingStereoUpBond(atom, bid0, false, restruct);
 		return pos < 0 ? -1 : atom.neighbors[pos];
-	}, restruct);
+	});
 	console.assert(halfbonds.length === 2);
 	bond.boldStereo = halfbonds[0] >= 0 && halfbonds[1] >= 0;
 }
 
+/**
+ * @param restruct { ReStruct }
+ * @param bond { ReBond }
+ * @param hb1 { HalfBond }
+ * @param hb2 { HalfBond }
+ * @return {*}
+ */
 function getBondPath(restruct, bond, hb1, hb2) {
 	var path = null;
 	var render = restruct.render;
@@ -301,20 +327,22 @@ function getBondSingleEitherPath(render, hb1, hb2) {
 }
 
 function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
-	var cisTrans = bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS;
+	const cisTrans = bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS;
 
-	var a = hb1.p,
-		b = hb2.p,
-		n = hb1.norm,
-		shift = cisTrans ? 0 : bond.doubleBondShift;
-	var options = render.options;
-	var bsp = options.bondSpace / 2;
-	var s1 = bsp + (shift * bsp),
-		s2 = -bsp + (shift * bsp);
-	var a1 = a.addScaled(n, s1);
-	var b1 = b.addScaled(n, s1);
-	var a2 = a.addScaled(n, s2);
-	var b2 = b.addScaled(n, s2);
+	const a = hb1.p;
+	const b = hb2.p;
+	const n = hb1.norm;
+	const shift = cisTrans ? 0 : bond.doubleBondShift;
+
+	const options = render.options;
+	const bsp = options.bondSpace / 2;
+	const s1 = bsp + (shift * bsp);
+	const s2 = -bsp + (shift * bsp);
+
+	let a1 = a.addScaled(n, s1);
+	let b1 = b.addScaled(n, s1);
+	let a2 = a.addScaled(n, s2);
+	let b2 = b.addScaled(n, s2);
 
 	if (shift > 0) {
 		if (shiftA) {
@@ -335,6 +363,7 @@ function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-d
 				getBondLineShift(hb2.rightCos, hb2.rightSin));
 		}
 	}
+
 	return draw.bondDouble(render.paper, a1, a2, b1, b2, cisTrans, options);
 }
 
@@ -356,17 +385,13 @@ function getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint
 	var options = render.options;
 	var bondShift = bond.doubleBondShift;
 
-	if (bond.b.type == Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
+	if (bond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
 		mark = bondShift > 0 ? 1 : 2;
-		dash = dashdotPattern.map(function (v) {
-			return v * options.scale;
-		});
+		dash = dashdotPattern.map(v => v * options.scale);
 	}
-	if (bond.b.type == Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
+	if (bond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
 		mark = 3;
-		dash = dashdotPattern.map(function (v) {
-			return v * options.scale;
-		});
+		dash = dashdotPattern.map(v => v * options.scale);
 	}
 	var paths = getAromaticBondPaths(hb1, hb2, bondShift, shiftA, shiftB, options.bondSpace, mark, dash);
 	return draw.bondAromatic(render.paper, paths, bondShift, options);
@@ -430,7 +455,7 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
 		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER:  // #
+	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER: // #
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
@@ -440,9 +465,7 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
 		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
 		break;
-//	case Bond.PATTERN.REACTING_CENTER.UNCHANGED:  // o
-//		//draw a circle
-//		break;
+		// case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
 	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
 		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
@@ -471,9 +494,9 @@ function getTopologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-st
 	var options = render.options;
 	var mark = null;
 
-	if (bond.b.topology == Struct.Bond.PATTERN.TOPOLOGY.RING)
+	if (bond.b.topology === Struct.Bond.PATTERN.TOPOLOGY.RING)
 		mark = 'rng';
-	else if (bond.b.topology == Struct.Bond.PATTERN.TOPOLOGY.CHAIN)
+	else if (bond.b.topology === Struct.Bond.PATTERN.TOPOLOGY.CHAIN)
 		mark = 'chn';
 	else
 		return null;
@@ -507,7 +530,8 @@ function getIdsPath(bid, paper, hb1, hb2, bondIdxOff, param1, param2, norm) { //
 /* ----- */
 
 function setDoubleBondShift(bond, struct) {
-	var loop1, loop2;
+	var loop1,
+		loop2;
 	loop1 = struct.halfBonds.get(bond.b.hb1).loop;
 	loop2 = struct.halfBonds.get(bond.b.hb2).loop;
 	if (loop1 >= 0 && loop2 >= 0) {
@@ -539,7 +563,7 @@ function bondRecalc(bond, restruct, options) {
 	bond.b.len = Vec2.dist(p1, p2);
 	bond.b.sb = options.lineWidth * 5;
 	/* eslint-disable no-mixed-operators*/
-	bond.b.sa = Math.max(bond.b.sb,  bond.b.len / 2 - options.lineWidth * 2);
+	bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
 	/* eslint-enable no-mixed-operators*/
 	bond.b.angle = Math.atan2(hb1.dir.y, hb1.dir.x) * 180 / Math.PI;
 }
@@ -549,7 +573,7 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
 		var box = visel.exts[k].translate(pos0);
-		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+		t = Math.max(t, util.shiftRayBox(pos0, dir, box));
 	}
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);

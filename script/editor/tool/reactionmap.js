@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Set = require('../../util/set');
-var scale = require('../../util/scale');
-var Action = require('../action');
-var draw = require('../../render/draw');
+import scale from '../../util/scale';
+import Action from '../shared/action';
+import draw from '../../render/draw';
+
+import { fromAtomsAttrs } from '../actions/atom';
 
 function ReactionMapTool(editor) {
 	if (!(this instanceof ReactionMapTool))
@@ -25,13 +26,13 @@ function ReactionMapTool(editor) {
 
 	this.editor = editor;
 	this.editor.selection(null);
-
-	this.rcs = this.editor.render.ctab.molecule.getComponents();
 }
 
 ReactionMapTool.prototype.mousedown = function (event) {
-	var rnd = this.editor.render;
-	var ci = this.editor.findItem(event, ['atoms']);
+	const rnd = this.editor.render;
+	this.rcs = rnd.ctab.molecule.getComponents();
+
+	const ci = this.editor.findItem(event, ['atoms']);
 	if (ci && ci.map === 'atoms') {
 		this.editor.hover(null);
 		this.dragCtx = {
@@ -82,25 +83,22 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 			var atom2 = atoms.get(ci.id);
 			var aam1 = atom1.aam;
 			var aam2 = atom2.aam;
-			if (!aam1 || aam1 != aam2) {
-				if (aam1 && aam1 != aam2 || !aam1 && aam2) { // eslint-disable-line no-mixed-operators
-					atoms.each(
-					function (aid, atom) {
-						if (aid != this.dragCtx.item.id && (aam1 && atom.aam == aam1 || aam2 && atom.aam == aam2)) // eslint-disable-line no-mixed-operators
-							action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
-					},
-						this
-					);
+			if (!aam1 || aam1 !== aam2) {
+				if (aam1 && aam1 !== aam2 || !aam1 && aam2) { // eslint-disable-line no-mixed-operators
+					atoms.forEach((atom, aid) => {
+						if (aid !== this.dragCtx.item.id && (aam1 && atom.aam === aam1 || aam2 && atom.aam === aam2)) // eslint-disable-line no-mixed-operators
+							action.mergeWith(fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
+					});
 				}
 				if (aam1) {
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }));
+					action.mergeWith(fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }));
 				} else {
 					var aam = 0;
-					atoms.each(function (aid, atom) {
+					atoms.forEach((atom) => {
 						aam = Math.max(aam, atom.aam || 0);
 					});
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, this.dragCtx.item.id, { aam: aam + 1 }));
-					action.mergeWith(Action.fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }));
+					action.mergeWith(fromAtomsAttrs(rnd.ctab, this.dragCtx.item.id, { aam: aam + 1 }));
+					action.mergeWith(fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }));
 				}
 				this.editor.update(action);
 			}
@@ -112,18 +110,19 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 };
 
 function isValidMap(rcs, aid1, aid2) {
-	var t1, t2;
+	var t1;
+	var	t2;
 	for (var ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
-		var ro = Set.list(rcs.reactants[ri]);
+		var ro = Array.from(rcs.reactants[ri]);
 		if (!t1 && ro.indexOf(aid1) >= 0) t1 = 'r';
 		if (!t2 && ro.indexOf(aid2) >= 0) t2 = 'r';
 	}
 	for (var pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
-		var po = Set.list(rcs.products[pi]);
+		var po = Array.from(rcs.products[pi]);
 		if (!t1 && po.indexOf(aid1) >= 0) t1 = 'p';
 		if (!t2 && po.indexOf(aid2) >= 0) t2 = 'p';
 	}
-	return t1 && t2 && t1 != t2;
+	return t1 && t2 && t1 !== t2;
 }
 
-module.exports = ReactionMapTool;
+export default ReactionMapTool;

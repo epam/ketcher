@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { sdataSchema, getSdataDefault } from '../data/sdata-schema'
+import { sdataSchema, getSdataDefault } from '../data/sdata-schema';
 
 export const initSdata = () => {
 	const context = getSdataDefault();
@@ -32,15 +32,16 @@ export const initSdata = () => {
 			radiobuttons,
 			type: 'DAT'
 		}
-	}
+	};
 };
 
 export function sdataReducer(state, action) {
-	if (action.data.result.init)
+	if (action.data.result.init) {
 		return correctErrors({
 			...state,
 			result: Object.assign({}, state.result, action.data.result)
 		}, action.data);
+	}
 
 	const actionContext = action.data.result.context;
 	const actionFieldName = action.data.result.fieldName;
@@ -67,7 +68,7 @@ const correctErrors = (state, payload) => {
 	return {
 		result: state.result,
 		valid: valid && !!fieldName && !!fieldValue,
-		errors: errors,
+		errors
 	};
 };
 
@@ -91,15 +92,14 @@ const onContextChange = (state, payload) => {
 };
 
 const onFieldNameChange = (state, payload) => {
-	let { fieldName } = payload;
+	const { fieldName } = payload;
 
 	const context = state.result.context;
 
 	let fieldValue = payload.fieldValue;
 
-	if (sdataSchema[context][fieldName]) {
+	if (sdataSchema[context][fieldName])
 		fieldValue = getSdataDefault(context, fieldName);
-	}
 
 	if (fieldValue === state.result.fieldValue && sdataSchema[context][state.result.fieldName])
 		fieldValue = '';
@@ -108,7 +108,7 @@ const onFieldNameChange = (state, payload) => {
 		result: {
 			...payload,
 			fieldName,
-			fieldValue,
+			fieldValue
 		}
 	};
 };

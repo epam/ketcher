@@ -278,18 +278,17 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 		}
 	}
 
-	for (var rgid in rfrags) {
-		for (var j = 0; j < rfrags[rgid].length; ++j) {
-			var rg = rfrags[rgid][j];
+	Object.keys(rfrags).forEach((rgid) => {
+		rfrags[rgid].forEach((rg) => {
 			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
-			var frid = rg.frags.add({});
+			const frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
-			rg.atoms.each(function (aid, atom) {
+			rg.atoms.forEach((atom) => {
 				atom.fragment = frid;
 			});
 			rg.mergeInto(ctab);
-		}
-	}
+		});
+	});
 }
 
 function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
@@ -305,7 +304,8 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 			if (ctabLines[j].trim() == 'M  V30 END CTAB')
 				return j;
 		}
-		console.error('CTab format invalid');
+
+		return console.error('CTab format invalid');
 	}
 
 	function findRGroupEnd(i) {
@@ -313,7 +313,7 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 			if (ctabLines[j].trim() == 'M  V30 END RGROUP')
 				return j;
 		}
-		console.error('CTab format invalid');
+		return console.error('CTab format invalid');
 	}
 
 	var molLinesReactants = [];
@@ -361,12 +361,12 @@ function parseRxn3000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable
 	}
 	var ctab = utils.rxnMerge(mols, nReactants, nProducts, nAgents);
 
-	readRGroups3000(ctab, function (array) {
+	readRGroups3000(ctab, (function (array) {
 		var res = [];
 		for (var k = 0; k < array.length; ++k)
 			res = res.concat(array[k]);
 		return res;
-	}(rGroups));
+	}(rGroups)));
 
 	return ctab;
 }
@@ -453,7 +453,7 @@ function parseBracedNumberList(line, shift) {
 
 	for (var i = 1; i < split.length; ++i) {
 		var value = parseInt(split[i]);
-		if (!isNaN(value))
+		if (!isNaN(value)) // eslint-disable-line
 			list.push(value + shift);
 	}
 
@@ -476,7 +476,7 @@ function labelsListToIds(labels) {
 }
 
 module.exports = {
-	parseCTabV3000: parseCTabV3000,
-	readRGroups3000: readRGroups3000,
-	parseRxn3000: parseRxn3000
+	parseCTabV3000,
+	readRGroups3000,
+	parseRxn3000
 };

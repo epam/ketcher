@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var utils = require('../editor/tool/utils');
+var utils = require('../editor/shared/utils').default;
 var Vec2 = require('../util/vec2');
 
 function defaultOptions(opt) {
@@ -56,7 +56,7 @@ function defaultOptions(opt) {
 		lineWidth: scaleFactor / 20,
 		bondSpace: opt.doubleBondWidth || scaleFactor / 7,
 		stereoBond: opt.stereoBondWidth || scaleFactor / 7,
-		subFontSize: subFontSize,
+		subFontSize,
 		font: '30px Arial',
 		fontsz: labelFontSize,
 		fontszsub: subFontSize,
@@ -65,7 +65,7 @@ function defaultOptions(opt) {
 
 		/* styles */
 		lineattr: {
-			'stroke': '#000',
+			stroke: '#000',
 			'stroke-width': opt.bondThickness || scaleFactor / 20,
 			'stroke-linecap': 'round',
 			'stroke-linejoin': 'round'
@@ -76,15 +76,15 @@ function defaultOptions(opt) {
 			stroke: 'none'
 		},
 		highlightStyle: {
-			'stroke': '#0c0',
+			stroke: '#0c0',
 			'stroke-width': 0.6 * scaleFactor / 20
 		},
 		sgroupBracketStyle: {
-			'stroke': 'darkgray',
+			stroke: 'darkgray',
 			'stroke-width': 0.5 * scaleFactor / 20
 		},
 		lassoStyle: {
-			'stroke': 'gray',
+			stroke: 'gray',
 			'stroke-width': '1px'
 		},
 		atomSelectionPlateRadius: labelFontSize * 1.2

@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Action = require('../action');
+import { fromPlusAddition } from '../actions/reaction';
+import { fromMultipleMove } from '../actions/fragment';
 
 function ReactionPlusTool(editor) {
 	if (!(this instanceof ReactionPlusTool))
@@ -23,6 +24,7 @@ function ReactionPlusTool(editor) {
 	this.editor = editor;
 	this.editor.selection(null);
 }
+
 ReactionPlusTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	var ci = this.editor.findItem(event, ['rxnPluses']);
@@ -32,12 +34,13 @@ ReactionPlusTool.prototype.mousedown = function (event) {
 		this.dragCtx = { xy0: rnd.page2obj(event) };
 	}
 };
+
 ReactionPlusTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
 	if ('dragCtx' in this) {
 		if (this.dragCtx.action)
 			this.dragCtx.action.perform(rnd.ctab);
-		this.dragCtx.action = Action.fromMultipleMove(
+		this.dragCtx.action = fromMultipleMove(
 			rnd.ctab,
 			this.editor.selection() || {},
 			rnd.page2obj(event).sub(this.dragCtx.xy0)
@@ -47,14 +50,17 @@ ReactionPlusTool.prototype.mousemove = function (event) {
 		this.editor.hover(this.editor.findItem(event, ['rxnPluses']));
 	}
 };
-ReactionPlusTool.prototype.mouseup = function (event) {
-	var rnd = this.editor.render;
+
+ReactionPlusTool.prototype.mouseup = function () {
 	if (this.dragCtx) {
 		this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
 		delete this.dragCtx;
-	} else {
-		this.editor.update(Action.fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
 	}
 };
 
-module.exports = ReactionPlusTool;
+ReactionPlusTool.prototype.click = function (event) {
+	const rnd = this.editor.render;
+	this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
+};
+
+export default ReactionPlusTool;

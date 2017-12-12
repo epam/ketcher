@@ -16,7 +16,6 @@
 
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 import Input from '../component/input';
@@ -56,17 +55,24 @@ class Attach extends Component {
 		const options = Object.assign(EDITOR_STYLES, { scale: getScale(struct) });
 
 		return (
-			<Dialog title="Template Edit" className="attach"
-					result={this.onResult} params={prop}>
+			<Dialog
+				title="Template Edit"
+				className="attach"
+				result={this.onResult}
+				params={prop}
+			>
 				<label>Template name:
-					<Input value={name} onChange={onNameEdit}/>
+					<Input value={name} onChange={onNameEdit} />
 				</label>
 				<label>Choose attachment atom and bond:</label>
-				<StructEditor className="editor"
-							  struct={struct}
-							  onAttachEdit={onAttachEdit}
-							  tool="attach" toolOpts={{ atomid, bondid }}
-							  options={options}/>
+				<StructEditor
+					className="editor"
+					struct={struct}
+					onAttachEdit={onAttachEdit}
+					tool="attach"
+					toolOpts={{ atomid, bondid }}
+					options={options}
+				/>
 				{!storage.isAvailable() ? <div className="warning">{storage.warningMessage}</div> : null}
 			</Dialog>
 		);
@@ -98,19 +104,19 @@ function structNormalization(struct) {
 	const normStruct = struct.clone();
 	const cbb = normStruct.getCoordBoundingBox();
 
-	normStruct.atoms.each((aid, atom) => {
+	normStruct.atoms.forEach((atom) => {
 		atom.pp = atom.pp.sub(cbb.min);
 	});
 
-	normStruct.sgroups.each((sgid, sg) => {
-		sg.pp = sg.pp.sub(cbb.min);
+	normStruct.sgroups.forEach((sg) => {
+		sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min;
 	});
 
-	normStruct.rxnArrows.each((rxid, rxnArrow) => {
+	normStruct.rxnArrows.forEach((rxnArrow) => {
 		rxnArrow.pp = rxnArrow.pp.sub(cbb.min);
 	});
 
-	normStruct.rxnPluses.each((rxid, rxnPlus) => {
+	normStruct.rxnPluses.forEach((rxnPlus) => {
 		rxnPlus.pp = rxnPlus.pp.sub(cbb.min);
 	});
 
@@ -119,10 +125,10 @@ function structNormalization(struct) {
 
 function getScale(struct) {
 	const cbb = struct.getCoordBoundingBox();
-	const VIEW_SIZE = 200;
+	const VIEW_SIZE = 220;
 	let scale = VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x);
 
 	if (scale < 35) scale = 35;
-	if (scale > 75) scale = 75;
+	if (scale > 60) scale = 60;
 	return scale;
 }

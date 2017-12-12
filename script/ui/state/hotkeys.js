@@ -27,8 +27,8 @@ import { onAction, openDialog, load } from './';
 export function initKeydownListener(element) {
 	return function (dispatch, getState) {
 		const hotKeys = initHotKeys();
-		element.addEventListener('keydown', (event) => keyHandle(dispatch, getState, hotKeys, event));
-	}
+		element.addEventListener('keydown', event => keyHandle(dispatch, getState, hotKeys, event));
+	};
 }
 
 /* HotKeys */
@@ -44,27 +44,29 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 	const atomsSelected = editor.selection() && editor.selection().atoms;
 
 	let group = null;
- 
+
 	if (key && key.length === 1 && atomsSelected && key.match(/\w/)) {
 		console.assert(atomsSelected.length > 0);
-		openDialog(dispatch, 'labelEdit', { letter: key }).then(res => {
+		openDialog(dispatch, 'labelEdit', { letter: key }).then((res) => {
 			dispatch(onAction({ tool: 'atom', opts: res }));
 		});
 		event.preventDefault();
-	} else if (group = keyNorm.lookup(hotKeys, event)) {
+	} else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
 		index = (index + 1) % group.length;
 
-		let actName = group[index];
-		if (actionState[actName] && actionState[actName].disabled === true)
-			return event.preventDefault();
-
+		const actName = group[index];
+		if (actionState[actName] && actionState[actName].disabled === true) {
+			event.preventDefault();
+			return;
+		}
 		if (clipArea.actions.indexOf(actName) === -1) {
-			let newAction = actions[actName].action;
+			const newAction = actions[actName].action;
 			dispatch(onAction(newAction));
 			event.preventDefault();
-		} else if (window.clipboardData) // IE support
+		} else if (window.clipboardData) { // IE support
 			clipArea.exec(event);
+		}
 	}
 }
 
@@ -79,15 +81,18 @@ function initHotKeys() {
 	const hotKeys = {};
 	let act;
 
-	for (let actName in actions) {
+	Object.keys(actions).forEach((actName) => {
 		act = actions[actName];
-		if (!act.shortcut) continue;
+		if (!act.shortcut) return;
 
-		if (Array.isArray(act.shortcut))
-			act.shortcut.forEach(key => setHotKey(key, actName, hotKeys));
-		else
+		if (Array.isArray(act.shortcut)) {
+			act.shortcut.forEach((key) => {
+				setHotKey(key, actName, hotKeys);
+			});
+		} else {
 			setHotKey(act.shortcut, actName, hotKeys);
-	}
+		}
+	});
 
 	return keyNorm(hotKeys);
 }
@@ -105,30 +110,28 @@ function checkGroupOnTool(group, actionTool) {
 
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
-	const formats = Object.keys(structFormat.map).map(function (fmt) {
-		return structFormat.map[fmt].mime;
-	});
+	const formats = Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].mime);
 
-	const debAction  = debounce(0, (action) => dispatch( onAction(action) ));
-	const loadStruct = debounce(0, (structStr, opts) => dispatch( load(structStr, opts) ));
+	const debAction = debounce(0, action => dispatch(onAction(action)));
+	const loadStruct = debounce(0, (structStr, opts) => dispatch(load(structStr, opts)));
 
 	return {
-		formats: formats,
-		focused: function () {
+		formats,
+		focused() {
 			return !getState().modal;
 		},
-		onCut: function () {
-			let data = clipData(getState().editor);
+		onCut() {
+			const data = clipData(getState().editor);
 			debAction({ tool: 'eraser', opts: 1 });
 			return data;
 		},
-		onCopy: function () {
-			let editor = getState().editor;
-			let data = clipData(editor);
+		onCopy() {
+			const editor = getState().editor;
+			const data = clipData(editor);
 			editor.selection(null);
 			return data;
 		},
-		onPaste: function (data) {
+		onPaste(data) {
 			const structStr = data['chemical/x-mdl-molfile'] ||
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
@@ -149,7 +152,9 @@ function clipData(editor) {
 	const type = struct.isReaction ?
 		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 
-	res['text/plain'] = res[type] = molfile.stringify(struct);
+	const data = molfile.stringify(struct);
+	res['text/plain'] = data;
+	res[type] = data;
 	// res['chemical/x-daylight-smiles'] =
 	// smiles.stringify(struct);
 	return res;

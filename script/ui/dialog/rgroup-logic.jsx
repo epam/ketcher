@@ -16,10 +16,9 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-/** @jsx h */
 
 import { rgroup as rgroupSchema } from '../structschema';
-import { Form, Field } from '../component/form';
+import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 
 function IfThenSelect(props, { schema }) {
@@ -31,27 +30,36 @@ function IfThenSelect(props, { schema }) {
 		enumNames: ['Always']
 	};
 
-	rgids.forEach(label => {
+	rgids.forEach((label) => {
 		if (props.label !== label) {
 			desc.enum.push(label);
 			desc.enumNames.push(`IF R${props.label} THEN R${label}`);
 		}
 	});
 
-	return <Field name={name} schema={desc} {...props}/>;
+	return <Field name={name} schema={desc} {...props} />;
 }
 
-function RgroupLogic (props) {
+function RgroupLogic(props) {
 	const { formState, label, rgroupLabels, ...prop } = props;
 
 	return (
-		<Dialog title="R-Group Logic" className="rgroup-logic"
-				result={() => formState.result} valid={() => formState.valid} params={prop}>
-			<Form schema={rgroupSchema}
-				  customValid={{range: r => rangeConv(r)}} init={prop} {...formState}>
-				<Field name="range"/>
-				<Field name="resth"/>
-				<IfThenSelect name="ifthen" className="cond" label={label} rgids={rgroupLabels}/>
+		<Dialog
+			title="R-Group Logic"
+			className="rgroup-logic"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
+		>
+			<Form
+				schema={rgroupSchema}
+				customValid={{ range: r => rangeConv(r) }}
+				init={prop}
+				{...formState}
+			>
+				<Field name="range" />
+				<Field name="resth" />
+				<IfThenSelect name="ifthen" className="cond" label={label} rgids={rgroupLabels} />
 			</Form>
 		</Dialog>
 	);
@@ -61,10 +69,8 @@ function rangeConv(range) { // structConv
 	const res = range.replace(/\s*/g, '').replace(/,+/g, ',')
 		.replace(/^,/, '').replace(/,$/, '');
 
-	return res.split(',').every(function (s) {
-		return s.match(/^[>,<=]?[0-9]+$/g) ||
-			s.match(/^[0-9]+-[0-9]+$/g);
-	});
+	return res.split(',').every(s => s.match(/^[>,<=]?[0-9]+$/g) ||
+			s.match(/^[0-9]+-[0-9]+$/g));
 }
 
 export default connect(

@@ -68,11 +68,11 @@ ReAtom.prototype.makeSelectionPlate = function (restruct, paper, styles) {
 };
 
 ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-line max-statements
-	var render = restruct.render;
-	var ps = scale.obj2scaled(this.a.pp, render.options);
+	const render = restruct.render;
+	const ps = scale.obj2scaled(this.a.pp, render.options);
 
 	this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
-	this.showLabel = labelIsVisible(restruct, render.options, this);
+	this.showLabel = isLabelVisible(restruct, render.options, this);
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
 		var delta = 0.5 * options.lineWidth;
@@ -88,9 +88,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 			index.text = aid.toString();
 			index.path = render.paper.text(ps.x, ps.y, index.text)
 				.attr({
-					'font': options.font,
+					font: options.font,
 					'font-size': options.fontszsub,
-					'fill': '#070'
+					fill: '#070'
 				});
 			index.rbb = util.relBox(index.path.getBBox());
 			draw.recenterText(index.path, index.rbb);
@@ -118,9 +118,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		if (!isHydrogen && implh > 0 && displayHydrogen(options.showHydrogenLabels, this)) {
 			var data = showHydrogen(this, render, implh, {
 				hydrogen: {},
-				hydroIndex: hydroIndex,
-				rightMargin: rightMargin,
-				leftMargin: leftMargin
+				hydroIndex,
+				rightMargin,
+				leftMargin
 			});
 			var hydrogen = data.hydrogen;
 			hydroIndex = data.hydroIndex;
@@ -169,9 +169,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 	if (aamText.length > 0) {
 		var elem = element.map[this.a.label];
 		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
+			fill: (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
 		});
 		var aamBox = util.relBox(aamPath.getBBox());
 		draw.recenterText(aamPath, aamBox);
@@ -180,67 +180,80 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		var t = 3;
 		// estimate the shift to clear the atom label
 		for (var i = 0; i < visel.exts.length; ++i)
-			t = Math.max(t, Vec2.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
+			t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
 		// estimate the shift backwards to account for the size of the aam/query text box itself
-		t += Vec2.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
+		t += util.shiftRayBox(ps, dir.negated(), Box2Abs.fromRelBox(aamBox));
 		dir = dir.scaled(8 + t);
 		pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
 		restruct.addReObjectPath('data', this.visel, aamPath, ps, true);
 	}
 };
 
-function labelIsVisible(restruct, options, atom) {
-	var isVisibleTerminal = options.showHydrogenLabels !== 'off' &&
-		                    options.showHydrogenLabels !== 'Hetero';
-	if (atom.a.neighbors.length === 0 ||
-		(atom.a.neighbors.length < 2 && isVisibleTerminal) ||
-		(options.carbonExplicitly) ||
-		atom.a.label.toLowerCase() !== 'c' ||
-		(atom.a.badConn && options.showValenceWarnings) ||
-		atom.a.isotope != 0 ||
-		atom.a.radical != 0 ||
-		atom.a.charge != 0 ||
+function isLabelVisible(restruct, options, atom) {
+	const visibleTerminal = options.showHydrogenLabels !== 'off' &&
+		options.showHydrogenLabels !== 'Hetero';
+
+	const neighborsLength = atom.a.neighbors.length === 0 || (atom.a.neighbors.length < 2 && visibleTerminal);
+
+	const shouldBeVisible =
+		neighborsLength ||
+		options.carbonExplicitly ||
+		atom.a.alias ||
+		atom.a.isotope !== 0 ||
+		atom.a.radical !== 0 ||
+		atom.a.charge !== 0 ||
 		atom.a.explicitValence >= 0 ||
-		atom.a.atomList != null ||
-		atom.a.rglabel != null ||
-		atom.a.alias)
+		atom.a.atomList !== null ||
+		atom.a.rglabel !== null ||
+		atom.a.badConn && options.showValenceWarnings ||
+		atom.a.label.toLowerCase() !== 'c';
+
+	if (shouldBeVisible)
 		return true;
-	if (atom.a.neighbors.length == 2) {
-		var n1 = atom.a.neighbors[0];
-		var n2 = atom.a.neighbors[1];
-		var hb1 = restruct.molecule.halfBonds.get(n1);
-		var hb2 = restruct.molecule.halfBonds.get(n2);
-		var b1 = restruct.bonds.get(hb1.bid);
-		var b2 = restruct.bonds.get(hb2.bid);
-		if (b1.b.type == b2.b.type &&
-			b1.b.stereo == Struct.Bond.PATTERN.STEREO.NONE &&
-			b2.b.stereo == Struct.Bond.PATTERN.STEREO.NONE) {
-			if (Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
-				return true;
-		}
+
+	if (atom.a.neighbors.length === 2) {
+		const nei1 = atom.a.neighbors[0];
+		const nei2 = atom.a.neighbors[1];
+		const hb1 = restruct.molecule.halfBonds.get(nei1);
+		const hb2 = restruct.molecule.halfBonds.get(nei2);
+		const bond1 = restruct.bonds.get(hb1.bid);
+		const bond2 = restruct.bonds.get(hb2.bid);
+
+		const sameNotStereo = bond1.b.type === bond2.b.type &&
+			bond1.b.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+			bond2.b.stereo === Struct.Bond.PATTERN.STEREO.NONE;
+
+		if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
+			return true;
 	}
+
 	return false;
 }
 
 function displayHydrogen(hydrogenLabels, atom) {
-	return ((hydrogenLabels === 'on') ||
-	(hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
-	(hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
-	(hydrogenLabels === 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c')));
+	return (
+		(hydrogenLabels === 'on') ||
+		(hydrogenLabels === 'Terminal' && atom.a.neighbors.length < 2) ||
+		(hydrogenLabels === 'Hetero' && atom.label.text.toLowerCase() !== 'c') ||
+		(hydrogenLabels === 'Terminal and Hetero' && (atom.a.neighbors.length < 2 || atom.label.text.toLowerCase() !== 'c'))
+	);
 }
 
 function setHydrogenPos(struct, atom) {
 	// check where should the hydrogen be put on the left of the label
 	if (atom.a.neighbors.length === 0) {
-		var elem = element.map[atom.a.label];
-		return !elem || !!element[elem].leftH;
+		const elem = element.map[atom.a.label];
+		return !elem || element[elem].leftH;
 	}
-	var yl = 1,
-		yr = 1,
-		nl = 0,
-		nr = 0;
-	for (var i = 0; i < atom.a.neighbors.length; ++i) {
-		var d = struct.halfBonds.get(atom.a.neighbors[i]).dir;
+
+	let yl = 1;
+	let yr = 1;
+	let nl = 0;
+	let nr = 0;
+
+	atom.a.neighbors.forEach((nei) => {
+		const d = struct.halfBonds.get(nei).dir;
+
 		if (d.x <= 0) {
 			yl = Math.min(yl, Math.abs(d.y));
 			nl++;
@@ -248,45 +261,65 @@ function setHydrogenPos(struct, atom) {
 			yr = Math.min(yr, Math.abs(d.y));
 			nr++;
 		}
-	}
+	});
+
 	return (yl < 0.51 || yr < 0.51) ? yr < yl : nr > nl;
 }
 
 function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-statements
-	var label = {};
+	let label = {};
 	atom.color = 'black';
-	if (atom.a.atomList != null) {
-		label.text = atom.a.atomList.label();
-	} else if (atom.a.pseudo) {
-		label.text = atom.a.pseudo;
-	} else if (atom.a.alias) {
-		label.text = atom.a.alias;
-	} else if (atom.a.label === 'R#' && atom.a.rglabel != null) {
-		label.text = '';
-		for (var rgi = 0; rgi < 32; rgi++) {
-			if (atom.a.rglabel & (1 << rgi)) // eslint-disable-line max-depth
-				label.text += ('R' + (rgi + 1).toString());
-		}
-		if (label.text == '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
-	} else {
-		label.text = atom.a.label;
-		var elem = element.map[label.text];
+	label.text = getLabelText(atom.a);
+
+	if (label.text === '')
+		label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+
+	if (label.text === atom.a.label) {
+		const elem = element.map[label.text];
 		if (options.atomColoring && elem)
 			atom.color = element[elem].color || '#000';
 	}
+
 	label.path = paper.text(ps.x, ps.y, label.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontsz,
-			'fill': atom.color,
+			fill: atom.color,
 			'font-style': atom.a.pseudo ? 'italic' : ''
 		});
+
 	label.rbb = util.relBox(label.path.getBBox());
 	draw.recenterText(label.path, label.rbb);
-	if (atom.a.atomList != null)
+
+	if (atom.a.atomList !== null)
 		pathAndRBoxTranslate(label.path, label.rbb, (atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height) / 2, 0);
+
 	atom.label = label;
 	return label;
+}
+
+function getLabelText(atom) {
+	if (atom.atomList !== null)
+		return atom.atomList.label();
+
+	if (atom.pseudo)
+		return atom.pseudo;
+
+	if (atom.alias)
+		return atom.alias;
+
+	if (atom.label === 'R#' && atom.rglabel !== null) {
+		let text = '';
+
+		for (let rgi = 0; rgi < 32; rgi++) {
+			if (atom.rglabel & (1 << rgi)) // eslint-disable-line max-depth
+				text += ('R' + (rgi + 1).toString());
+		}
+
+		return text;
+	}
+
+	return atom.label;
 }
 
 function showHydroIndex(atom, render, implh, rightMargin) {
@@ -298,9 +331,9 @@ function showHydroIndex(atom, render, implh, rightMargin) {
 	hydroIndex.path =
 		render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': options.font,
+				font: options.font,
 				'font-size': options.fontszsub,
-				'fill': atom.color
+				fill: atom.color
 			});
 	hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 	draw.recenterText(hydroIndex.path, hydroIndex.rbb);
@@ -324,13 +357,15 @@ function showRadical(atom, render) {
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options));
+			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
+		);
 		radical.path.attr('fill', atom.color);
 		break;
 	case 2:
 		radical.path = paper.set();
 		radical.path.push(
-			draw.radicalBullet(paper, ps, options));
+			draw.radicalBullet(paper, ps, options)
+		);
 		radical.path.attr('fill', atom.color);
 		break;
 	case 3:
@@ -338,7 +373,8 @@ function showRadical(atom, render) {
 		hshift = 1.6 * options.lineWidth;
 		radical.path.push(
 			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options));
+			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
+		);
 		radical.path.attr('stroke', atom.color);
 		break;
 	default:
@@ -361,9 +397,9 @@ function showIsotope(atom, render, leftMargin) {
 	isotope.text = atom.a.isotope.toString();
 	isotope.path = render.paper.text(ps.x, ps.y, isotope.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	isotope.rbb = util.relBox(isotope.path.getBBox());
 	draw.recenterText(isotope.path, isotope.rbb);
@@ -391,9 +427,9 @@ function showCharge(atom, render, rightMargin) {
 
 	charge.path = render.paper.text(ps.x, ps.y, charge.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	charge.rbb = util.relBox(charge.path.getBBox());
 	draw.recenterText(charge.path, charge.rbb);
@@ -433,9 +469,9 @@ function showExplicitValence(atom, render, rightMargin) {
 	valence.text = '(' + valence.text + ')';
 	valence.path = render.paper.text(ps.x, ps.y, valence.text)
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontszsub,
-			'fill': atom.color
+			fill: atom.color
 		});
 	valence.rbb = util.relBox(valence.path.getBBox());
 	draw.recenterText(valence.path, valence.rbb);
@@ -456,9 +492,9 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 	var hydrogen = data.hydrogen;
 	hydrogen.text = 'H';
 	hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
-		'font': options.font,
+		font: options.font,
 		'font-size': options.fontsz,
-		'fill': atom.color
+		fill: atom.color
 	});
 	hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
 	draw.recenterText(hydrogen.path, hydrogen.rbb);
@@ -472,9 +508,9 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 		hydroIndex.text = implh.toString();
 		hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text)
 			.attr({
-				'font': options.font,
+				font: options.font,
 				'font-size': options.fontszsub,
-				'fill': atom.color
+				fill: atom.color
 			});
 		hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
 		draw.recenterText(hydroIndex.path, hydroIndex.rbb);
@@ -496,7 +532,7 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 			data.leftMargin - (0.5 * hydrogen.rbb.width) - delta, 0);
 		data.leftMargin -= hydrogen.rbb.width + delta;
 	}
-	return Object.assign(data, { hydrogen: hydrogen, hydroIndex: hydroIndex });
+	return Object.assign(data, { hydrogen, hydroIndex });
 }
 
 function showWarning(atom, render, leftMargin, rightMargin) {
@@ -517,8 +553,9 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var options = render.options;
 	var tfx = util.tfx;
-	var i, c, j; // eslint-disable-line no-unused-vars
-	for (i = 0, c = 0; i < 4; ++i) {
+	var i,
+		j;
+	for (i = 0; i < 4; ++i) {
 		var attpntText = '';
 		if (atom.a.attpnt & (1 << i)) {
 			if (attpntText.length > 0)
@@ -531,16 +568,16 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 
 			var attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText)
 				.attr({
-					'font': options.font,
+					font: options.font,
 					'font-size': options.fontsz,
-					'fill': atom.color
+					fill: atom.color
 				});
 			var attpntRbb = util.relBox(attpntPath1.getBBox());
 			draw.recenterText(attpntPath1, attpntRbb);
 
 			var lsbn = lsb.negated();
 			/* eslint-disable no-mixed-operators*/
-			pos1 = pos1.addScaled(lsbn, Vec2.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
+			pos1 = pos1.addScaled(lsbn, util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) + options.lineWidth / 2);
 			/* eslint-enable no-mixed-operators*/
 			pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth);
 			var n = lsb.rotateSC(1, 0);
@@ -560,15 +597,15 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 
 function getAamText(atom) {
 	var aamText = '';
-	if (atom.a.aam > 0)    aamText += atom.a.aam;
+	if (atom.a.aam > 0) aamText += atom.a.aam;
 	if (atom.a.invRet > 0) {
-		if (aamText.length > 0)    aamText += ',';
-		if (atom.a.invRet == 1)    aamText += 'Inv';
+		if (aamText.length > 0) aamText += ',';
+		if (atom.a.invRet == 1) aamText += 'Inv';
 		else if (atom.a.invRet == 2) aamText += 'Ret';
 		else throw new Error('Invalid value for the invert/retain flag');
 	}
 	if (atom.a.exactChangeFlag > 0) {
-		if (aamText.length > 0)    aamText += ',';
+		if (aamText.length > 0) aamText += ',';
 		if (atom.a.exactChangeFlag == 1) aamText += 'ext';
 		else throw new Error('Invalid value for the exact change flag');
 	}
@@ -610,13 +647,11 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 
 function bisectLargestSector(atom, struct) {
 	var angles = [];
-	atom.a.neighbors.forEach(function (hbid) {
+	atom.a.neighbors.forEach((hbid) => {
 		var hb = struct.halfBonds.get(hbid);
 		angles.push(hb.ang);
 	});
-	angles = angles.sort(function (a, b) {
-		return a - b;
-	});
+	angles = angles.sort((a, b) => a - b);
 	var da = [];
 	for (var i = 0; i < angles.length - 1; ++i)
 		da.push(angles[(i + 1) % angles.length] - angles[i]);
@@ -637,7 +672,7 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	var visel = atom.visel;
 	for (var k = 0; k < visel.exts.length; ++k) {
 		var box = visel.exts[k].translate(pos0);
-		t = Math.max(t, Vec2.shiftRayBox(pos0, dir, box));
+		t = Math.max(t, util.shiftRayBox(pos0, dir, box));
 	}
 	if (t > 0)
 		pos0 = pos0.addScaled(dir, t + margin);

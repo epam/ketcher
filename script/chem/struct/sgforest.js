@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Map = require('../../util/map');
-var Set = require('../../util/set');
+var Pool = require('../../util/pool').default;
+var Pile = require('../../util/pile').default;
 
 function SGroupForest(molecule) {
-	this.parent = new Map(); // child id -> parent id
-	this.children = new Map(); // parent id -> list of child ids
+	this.parent = new Pool(); // child id -> parent id
+	this.children = new Pool(); // parent id -> list of child ids
 	this.children.set(-1, []); // extra root node
 	this.molecule = molecule;
 }
@@ -37,38 +37,49 @@ SGroupForest.prototype.getSGroupsBFS = function () {
 	return order;
 };
 
+/**
+ * @returns { Map< number, Pile<number> > }
+ */
 SGroupForest.prototype.getAtomSets = function () {
-	return this.molecule.sgroups.map(function (sgid, sgroup) {
-		return Set.fromList(sgroup.atoms);
+	const map = new Map();
+	this.molecule.sgroups.forEach((sg, sgid) => {
+		map.set(sgid, new Pile(sg.atoms));
 	});
+	return map;
 };
 
-SGroupForest.prototype.getAtomSetRelations = function (newId, atoms /* Set */) {
+/**
+ * @param newId { number }
+ * @param atoms { Pile<number> }
+ * @returns { { children, parent: number } }
+ */
+SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 	// find the lowest superset in the hierarchy
-	var isStrictSuperset = new Map();
-	var isSubset = new Map();
-	var atomSets = this.getAtomSets();
-	atomSets.unset(newId);
-	atomSets.each(function (id, atomSet) {
-		isSubset.set(id, Set.subset(atoms, atomSet));
-		isStrictSuperset.set(id, Set.subset(atomSet, atoms) && !Set.eq(atomSet, atoms));
-	}, this);
-	var parents = atomSets.findAll(function (id) {
-		if (!isSubset.get(id))
-			return false;
-		if (this.children.get(id).findIndex(function (childId) {
-			return isSubset.get(childId);
-		}, this) >= 0)
-			return false;
-		return true;
-	}, this);
-	console.assert(parents.length <= 1, "We are here"); // there should be only one parent
+	const isStrictSuperset = new Map();
+	const isSubset = new Map();
+	const atomSets = this.getAtomSets();
 
-	var children = atomSets.findAll(function (id) {
-		return isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id));
-	}, this);
+	atomSets.delete(newId);
+
+	atomSets.forEach((atomSet, id) => {
+		isSubset.set(id, atomSet.isSuperset(atoms));
+		isStrictSuperset.set(id, atoms.isSuperset(atomSet) && !atomSet.equals(atoms));
+	});
+
+	const parents = Array.from(atomSets.keys())
+		.filter((sgid) => {
+			if (!isSubset.get(sgid))
+				return false;
+			return this.children.get(sgid).findIndex(childId => isSubset.get(childId)) < 0;
+		});
+
+	console.assert(parents.length <= 1, 'We are here'); // there should be only one parent
+
+	const children = Array.from(atomSets.keys())
+		.filter(id => isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)));
+
 	return {
-		children: children,
+		children,
 		parent: parents.length === 0 ? -1 : parents[0]
 	};
 };
@@ -83,32 +94,33 @@ SGroupForest.prototype.getPathToRoot = function (sgid) {
 };
 
 SGroupForest.prototype.validate = function () {
-	var atomSets = this.getAtomSets();
-	this.molecule.sgroups.each(function (id) {
-		this.getPathToRoot(id); // this will throw an exception if there is a loop in the path to root
-	}, this);
+	const atomSets = this.getAtomSets();
 
-	var valid = true;
+	this.molecule.sgroups.forEach((sg, sgid) => {
+		this.getPathToRoot(sgid); // this will throw an exception if there is a loop in the path to root
+	});
+
+	let valid = true;
 	// 1) child group's atom set is a subset of the parent one's
-	this.parent.each(function (id, parentId) {
-		if (parentId >= 0 && !Set.subset(atomSets.get(id), atomSets.get(parentId)))
+	this.parent.forEach((parentId, id) => {
+		if (parentId >= 0 && !atomSets.get(parentId).isSuperset(atomSets.get(id)))
 			valid = false;
-	}, this);
+	});
 
 	// 2) siblings have disjoint atom sets
-	this.children.each(function (parentId) {
-		var list = this.children.get(parentId);
-		for (var i = 0; i < list.length; ++i) {
-			for (var j = i + 1; j < list.length; ++j) {
-				var id1 = list[i];
-				var id2 = list[j];
-				var sg1 = this.molecule.sgroups.get(id1);
-				var sg2 = this.molecule.sgroups.get(id2);
-				if (!Set.disjoint(atomSets.get(id1), atomSets.get(id2)) && sg1.type != 'DAT' && sg2.type != 'DAT')
+	this.children.forEach((list) => {
+		for (let i = 0; i < list.length; ++i) {
+			for (let j = i + 1; j < list.length; ++j) {
+				const id1 = list[i];
+				const id2 = list[j];
+				const sg1 = this.molecule.sgroups.get(id1);
+				const sg2 = this.molecule.sgroups.get(id2);
+
+				if (atomSets.get(id1).intersection(atomSets.get(id2)).size !== 0 && sg1.type !== 'DAT' && sg2.type !== 'DAT')
 					valid = false;
 			}
 		}
-	}, this);
+	});
 	return valid;
 };
 
@@ -117,27 +129,26 @@ SGroupForest.prototype.insert = function (id, parent /* int, optional */, childr
 	console.assert(!this.children.has(id), 'sgid already present in the forest');
 	console.assert(this.validate(), 's-group forest invalid');
 
-	var atomSets = this.getAtomSets();
-	var atoms = Set.fromList(this.molecule.sgroups.get(id).atoms);
+	var atoms = new Pile(this.molecule.sgroups.get(id).atoms);
 	if (!parent || !children) { // if these are not provided, deduce automatically
-		var guess = this.getAtomSetRelations(id, atoms, atomSets);
+		var guess = this.getAtomSetRelations(id, atoms);
 		parent = guess.parent;
 		children = guess.children;
 	}
 
-	// TODO: make children Map<int, Set> instead of Map<int, []>?
-	children.forEach(function (childId) { // reset parent links
+	// TODO: make children Map<int, Pile> instead of Map<int, []>?
+	children.forEach((childId) => { // reset parent links
 		var childs = this.children.get(this.parent.get(childId));
 		var i = childs.indexOf(childId);
 		console.assert(i >= 0 && childs.indexOf(childId, i + 1) < 0, 'Assertion failed'); // one element
 		childs.splice(i, 1);
 		this.parent.set(childId, id);
-	}, this);
+	});
 	this.children.set(id, children);
 	this.parent.set(id, parent);
 	this.children.get(parent).push(id);
 	console.assert(this.validate(), 's-group forest invalid');
-	return { parent: parent, children: children };
+	return { parent, children };
 };
 
 SGroupForest.prototype.remove = function (id) {
@@ -146,18 +157,18 @@ SGroupForest.prototype.remove = function (id) {
 	console.assert(this.validate(), 's-group forest invalid');
 
 	var parentId = this.parent.get(id);
-	this.children.get(id).forEach(function (childId) { // reset parent links
+	this.children.get(id).forEach((childId) => { // reset parent links
 		this.parent.set(childId, parentId);
 		this.children.get(parentId).push(childId);
-	}, this);
+	});
 
 	var childs = this.children.get(parentId);
 	var i = childs.indexOf(id);
 	console.assert(i >= 0 && childs.indexOf(id, i + 1) < 0, 'Assertion failed'); // one element
 	childs.splice(i, 1);
 
-	this.children.unset(id);
-	this.parent.unset(id);
+	this.children.delete(id);
+	this.parent.delete(id);
 	console.assert(this.validate(), 's-group forest invalid');
 };
 

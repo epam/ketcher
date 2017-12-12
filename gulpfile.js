@@ -14,24 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var plugins = require('gulp-load-plugins')();
+/* eslint-disable */
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const plugins = require('gulp-load-plugins')();
 
-var browserify = require('browserify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var budo = require('budo');
-var istanbul = require('browserify-babel-istanbul');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const budo = require('budo');
+const istanbul = require('browserify-babel-istanbul');
 
-var fs = require('fs');
-var cp = require('child_process');
-var del = require('del');
-var minimist = require('minimist');
-var MarkdownIt = require('markdown-it');
+const fs = require('fs');
+const cp = require('child_process');
+const del = require('del');
+const minimist = require('minimist');
+const MarkdownIt = require('markdown-it');
 
-var pkg = require('./package.json');
-var options = minimist(process.argv.slice(2), {
+const pkg = require('./package.json');
+
+const options = minimist(process.argv.slice(2), {
 	string: ['dist', 'api-path', 'build-number', 'build-date',
 	         'miew-path'],
 	boolean: ['sgroup-data-special', 'no-generics', 'no-reactions',
@@ -45,7 +47,7 @@ var options = minimist(process.argv.slice(2), {
 	}
 });
 
-var distrib = ['LICENSE', 'demo.html', 'library.sdf', 'library.svg'];
+const distrib = ['LICENSE', 'demo.html', 'library.sdf', 'library.svg'];
 
 const createBundleConfig = () => ({
 	entries: 'script',
@@ -62,26 +64,30 @@ const createBundleConfig = () => ({
 				{ from: '__API_PATH__', to: options['api-path'] },
 				{ from: '__BUILD_NUMBER__', to: options['build-number'] },
 				{ from: '__BUILD_DATE__', to: options['build-date'] },
-				{ from: '__MIEW_PATH__', to: options['miew-path'] },
+				{ from: '__MIEW_PATH__', to: options['miew-path'] }
 			]
 		}],
 		['babelify', {
 			presets: [
-				["env", {
-					"targets": {
-						"browsers": ["last 2 versions", "safari > 8", "chrome > 52"]
+				['env', {
+					'targets': {
+						'browsers': ['last 2 versions', 'safari > 8', 'chrome > 52']
 					},
-					"useBuiltIns": true
+					'useBuiltIns': true
 				}],
-				"react"],
-			plugins: ['lodash', 'transform-class-properties', 'transform-object-rest-spread']
+				'react'],
+			plugins: [
+				'lodash',
+				'transform-class-properties',
+				'transform-object-rest-spread',
+				['transform-react-jsx', { pragma: 'h' }],
+				['transform-builtin-extend', { globals: ['Set', 'Map'] }]
+			]
 		}]
 	]
 });
 
-var iconfont = null;
-
-gulp.task('script', ['patch-version'], function() {
+gulp.task('script', ['patch-version'], function () {
 	const bundleConfig = createBundleConfig();
 	bundleConfig.transform.push(
 		['loose-envify', {
@@ -99,13 +105,14 @@ gulp.task('script', ['patch-version'], function() {
 					DEBUG: false
 				},
 				dead_code: true
-		}}))
+			}
+		}))
 		.pipe(plugins.header(fs.readFileSync('script/banner.js', 'utf8')))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
 });
 
-gulp.task('test-render', function() {
+gulp.task('test-render', function () {
 	return browserify({
 		entries: 'test/render/render-test.js',
 		debug: true,
@@ -124,25 +131,37 @@ gulp.task('test-render', function() {
 		.pipe(gulp.dest('./test/dist'));
 });
 
-gulp.task('style', ['font'], function () {
+gulp.task('style', ['icons-svg'], function () {
 	return gulp.src('style/index.less')
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rename(pkg.name))
 		.pipe(plugins.less({
-			paths: ['node_modules/normalize.css'],
-			modifyVars: iconfont
+			paths: ['node_modules/normalize.css']
 		}))
 	    // don't use less plugins due http://git.io/vqVDy bug
-		.pipe(plugins.autoprefixer({ browsers: ['> 0.5%'] }))
-		.pipe(plugins.cleanCss({compatibility: 'ie8'}))
+		.pipe(plugins.autoprefixer({ browsers: 'last 2 versions' }))
+		.pipe(plugins.cleanCss())
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
 });
 
+gulp.task('icons-svg', function () {
+	return gulp.src(['icons/*.svg'])
+		.pipe(plugins.svgSprite({
+			shape: {
+				id: { generator: "icon-" }
+			},
+			svg: { xmlDeclaration: false },
+			mode: {
+				symbol: { dest: './' }
+			}
+		}))
+		.pipe(plugins.rename('ketcher.svg'))
+		.pipe(gulp.dest(options.dist));
+});
+
 gulp.task('html', ['patch-version'], function () {
-	var hbs = plugins.hb()
-	    .partials('template/menu/*.hbs')
-	    .partials('template/dialog/*.hbs')
+	const hbs = plugins.hb()
 	    .data(Object.assign({ pkg: pkg }, options));
 	return gulp.src('template/index.hbs')
 		.pipe(hbs)
@@ -161,20 +180,6 @@ gulp.task('help', ['doc'], function () {
 		.pipe(gulp.dest(options.dist + '/doc'));
 });
 
-gulp.task('font', function (cb) {
-	return iconfont ? cb() : gulp.src(['icons/*.svg'])
-		.pipe(plugins.iconfont({
-			fontName: pkg.name,
-			formats: ['ttf', 'svg', 'eot', 'woff'],
-			timestamp: options['build-date'],
-			normalize: true
-		}))
-		.on('glyphs', function(glyphs) {
-			iconfont = glyphReduce(glyphs);
-		})
-		.pipe(gulp.dest(options.dist));
-});
-
 gulp.task('images', function () {
 	return gulp.src('images/*')
 		.pipe(gulp.dest(options.dist + '/images'));
@@ -187,14 +192,12 @@ gulp.task('copy', ['images'], function () {
 });
 
 gulp.task('patch-version', function (cb) {
-	if (pkg.rev)
-		return cb();
+	if (pkg.rev) return cb();
 	cp.exec('git rev-list ' + pkg.version + '..HEAD --count', function (err, stdout, stderr) {
 		if (err && stderr.toString().search('path not in') > 0) {
 			cb(new Error('Could not fetch revision. ' +
 			             'Please git tag the package version.'));
-		}
-		else if (!err && stdout > 0) {
+		} else if (!err && stdout > 0) {
 			pkg.rev = stdout.toString().trim();
 			options['build-number'] = pkg.rev;
 		}
@@ -209,26 +212,26 @@ gulp.task('lint', function () {
 		.pipe(plugins.eslint.failAfterError());
 });
 
-gulp.task('check-epam-email', function(cb) {
+gulp.task('check-epam-email', function (cb) {
 	// TODO: should be pre-push and check remote origin
 	try {
-		var email = cp.execSync('git config user.email').toString().trim();
-		if (/@epam.com$/.test(email))
+		const email = cp.execSync('git config user.email').toString().trim();
+		if (/@epam.com$/.test(email)) {
 			cb();
-		else {
+		} else {
 			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
 			gutil.log('To check git project\'s settings run `git config --list`');
 			gutil.log('Could not continue. Bye!');
 		}
-	} catch(e) {};
+	} catch (e) {}
 });
 
 gulp.task('check-deps-exact', function (cb) {
-	var semver = require('semver'); // TODO: output corrupted packages
-	var allValid = ['dependencies', 'devDependencies'].every(d => {
-		var dep = pkg[d];
-		return Object.keys(dep).every(name => {
-			var ver = dep[name];
+	const semver = require('semver'); // TODO: output corrupted packages
+	const allValid = ['dependencies', 'devDependencies'].every((d) => {
+		const dep = pkg[d];
+		return Object.keys(dep).every((name) => {
+			const ver = dep[name];
 			return (semver.valid(ver) && semver.clean(ver));
 		});
 	});
@@ -236,8 +239,9 @@ gulp.task('check-deps-exact', function (cb) {
 		cb(new gutil.PluginError('check-deps-exact',
 		                         'All top level dependencies should be installed' +
 		                         'using `npm install --save-exact` command'));
-	} else
+	} else {
 		cb();
+	}
 });
 
 gulp.task('clean', function () {
@@ -245,7 +249,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task('archive', ['clean', 'assets', 'code'], function () {
-	var an = pkg.name + '-' + pkg.version;
+	const an = pkg.name + '-' + pkg.version;
 	return gulp.src(['**', '!*.map'], { cwd: options.dist })
 		.pipe(plugins.rename(function (path) {
 			path.dirname = an + '/' + path.dirname;
@@ -255,7 +259,7 @@ gulp.task('archive', ['clean', 'assets', 'code'], function () {
 		.pipe(gulp.dest('.'));
 });
 
-gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
+gulp.task('serve', ['clean', 'style', 'html', 'assets'], function (cb) {
 	const bundleConfig = createBundleConfig();
 	const server = budo(`${bundleConfig.entries}:${pkg.name}.js`, {
 		dir: options.dist,
@@ -265,15 +269,15 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
 		live: true,
 		watchGlob: `${options.dist}/*.{html,css}`,
 		staticOptions: {
-			index: `ketcher.html`
+			index: 'ketcher.html'
 		}
 	}).on('exit', cb);
 
 	gulp.watch('style/**.less', ['style']);
 	gulp.watch('template/**', ['html']);
 	gulp.watch('doc/**', ['help']);
-	gulp.watch(['gulpfile.js', 'package.json'], function() {
-	server.close();
+	gulp.watch(['gulpfile.js', 'package.json'], function () {
+		server.close();
 		cp.spawn('gulp', process.argv.slice(2), {
 			stdio: 'inherit'
 		});
@@ -283,30 +287,22 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function(cb) {
 	return server;
 });
 
-function markdownify (options) {
-	var header = '<!DOCTYPE html>';
-	var footer = '';
-	var md = MarkdownIt(Object.assign({
+function markdownify(options) {
+	const header = '<!DOCTYPE html>';
+	const footer = '';
+	const md = MarkdownIt(Object.assign({
 		html: true,
 		linkify: true,
 		typographer: true
 	}, options));
-	return function process (file) {
-		var data = md.render(file.contents.toString());
+	return function process(file) {
+		const data = md.render(file.contents.toString());
 		file.contents = new Buffer(header + data + footer);
 		file.path = gutil.replaceExtension(file.path, '.html');
 	};
 }
 
-function glyphReduce(glyphs) {
-	return glyphs.reduce(function (res, glyph) {
-		res['icon-' + glyph.name] = "'" + glyph.unicode[0] + "'";
-		return res;
-	}, {});
-}
-
-gulp.task('pre-commit', ['lint', 'check-epam-email',
-                         'check-deps-exact']);
+gulp.task('pre-commit', ['lint', 'check-epam-email', 'check-deps-exact']);
 gulp.task('assets', ['copy', 'help']);
 gulp.task('code', ['style', 'script', 'html']);
 gulp.task('build', ['clean', 'code', 'assets']);

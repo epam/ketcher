@@ -53,9 +53,9 @@ ReChiralFlag.prototype.show = function (restruct, id, options) {
 	var ps = scale.obj2scaled(this.pp, options);
 	this.path = paper.text(ps.x, ps.y, 'Chiral')
 		.attr({
-			'font': options.font,
+			font: options.font,
 			'font-size': options.fontsz,
-			'fill': '#000'
+			fill: '#000'
 		});
 	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
 };

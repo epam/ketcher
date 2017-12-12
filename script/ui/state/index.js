@@ -17,7 +17,7 @@
 import { pick } from 'lodash/fp';
 
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'
+import thunk from 'redux-thunk';
 import { logger } from 'redux-logger';
 
 import * as structFormat from '../structformat';
@@ -25,7 +25,7 @@ import { formsState, formReducer } from './form';
 import { optionsState, optionsReducer } from './options';
 import { initTmplState, templatesReducer } from './templates';
 
-import action from './action';
+import actionState from './action';
 import toolbar from './toolbar';
 
 function modal(state = null, action) {
@@ -33,7 +33,7 @@ function modal(state = null, action) {
 
 	if (type === 'UPDATE_FORM') {
 		const formState = formReducer(state.form, action, state.name);
-		return { ...state, form: formState }
+		return { ...state, form: formState };
 	}
 
 	switch (type) {
@@ -51,22 +51,22 @@ function modal(state = null, action) {
 }
 
 const shared = combineReducers({
-	actionState: action,
+	actionState,
 	toolbar,
 	modal,
-	server: (store=null) => store,
-	editor: (store=null) => store,
+	server: (store = null) => store,
+	editor: (store = null) => store,
 	options: optionsReducer,
 	templates: templatesReducer
 });
 
 export function onAction(action) {
-	if (action && action.dialog)
+	if (action && action.dialog) {
 		return {
 			type: 'MODAL_OPEN',
 			data: { name: action.dialog }
 		};
-
+	}
 	if (action && action.thunk)
 		return action.thunk;
 
@@ -88,7 +88,7 @@ export function openDialog(dispatch, dialogName, props) {
 					onCancel: reject
 				}
 			}
-		})
+		});
 	});
 }
 
@@ -100,20 +100,19 @@ export function load(structStr, options) {
 
 		options = options || {};
 		// TODO: check if structStr is parsed already
-		//utils.loading('show');
-		const parsed = structFormat.fromString(structStr,
-			options, server);
+		// utils.loading('show');
+		const parsed = structFormat.fromString(structStr, options, server);
 
-		parsed.catch(function (err) {
-			//utils.loading('hide');
-			alert("Can't parse molecule!");
+		parsed.catch(() => {
+			// utils.loading('hide');
+			alert('Can\'t parse molecule!'); // eslint-disable-line no-undef
 		});
 
-		return parsed.then(function (struct) {
-			//utils.loading('hide');
+		return parsed.then((struct) => {
+			// utils.loading('hide');
 			console.assert(struct, 'No molecule to update');
 			if (options.rescale)
-				struct.rescale();   // TODO: move out parsing?
+				struct.rescale(); // TODO: move out parsing?
 
 			if (options.fragment && !struct.isBlank())
 				dispatch(onAction({ tool: 'paste', opts: struct }));
@@ -121,18 +120,19 @@ export function load(structStr, options) {
 				editor.struct(struct);
 
 			return struct;
-		}, function (err) {
-			alert(err);
+		}, (err) => {
+			alert(err); // eslint-disable-line no-undef
+			// TODO: notification
 		});
-	}
+	};
 }
 
 function root(state, action) {
-	switch (action.type) {
+	switch (action.type) { // eslint-disable-line default-case
 	case 'INIT':
 		global._ui_editor = action.editor;
-	case 'UPDATE':
-		let {type, ...data} = action;
+	case 'UPDATE': // eslint-disable-line no-case-declarations
+		const { type, ...data } = action;
 		if (data)
 			state = { ...state, ...data };
 	}
@@ -147,21 +147,21 @@ function root(state, action) {
 	};
 }
 
-export default function(options, server) {
+export default function (options, server) {
 	// TODO: redux localStorage here
 	const initState = {
 		actionState: null,
 		options: Object.assign(optionsState, { app: options }),
-		server: server || Promise.reject("Standalone mode!"),
+		server: server || Promise.reject('Standalone mode!'),
 		editor: null,
 		modal: null,
 		templates: initTmplState
 	};
 
-	const middleware = [ thunk ];
+	const middleware = [thunk];
 
 	if (process.env.NODE_ENV !== 'production')
 		middleware.push(logger);
 
 	return createStore(root, initState, applyMiddleware(...middleware));
-};
+}

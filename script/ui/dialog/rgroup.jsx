@@ -17,35 +17,48 @@
 import { range } from 'lodash/fp';
 
 import { h, Component } from 'preact';
-/** @jsx h */
 
 import Dialog from '../component/dialog';
 
-function RGroup({ selected, onSelect, result, ...props }) {
+function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
 	return (
-		<Dialog title="R-Group"
-				className="rgroup" params={props}
-				result={() => result()}>
-		  <ul>
-			{ range(1, 33).map(i => (
-				<li>
-				  <button
-					className={ selected(i) ? 'selected' : ''}
-					onClick={ev => onSelect(i)}>
-					{`R${i}`}
-				  </button>
-				</li>
-			)) }
-		  </ul>
+		<Dialog
+			title="R-Group"
+			className="rgroup"
+			params={props}
+			result={() => result()}
+		>
+			<ul>
+				{
+					range(1, 33).map((i) => {
+						const invalidId = disabledIds.includes(i);
+
+						let className = invalidId ? 'disabled' : '';
+						if (className === '')
+							className = selected(i) ? 'selected' : '';
+
+						return (
+							<li>
+								<button
+									className={className}
+									onClick={() => (invalidId ? null : onSelect(i))}
+								>
+									{`R${i}`}
+								</button>
+							</li>
+						);
+					})
+				}
+			</ul>
 		</Dialog>
 	);
 }
 
 class RGroupFragment extends Component {
-	constructor({label}) {
+	constructor({ label }) {
 		super();
 		this.state.label = label || null;
-    }
+	}
 	onSelect(label) {
 		this.setState({
 			label: label !== this.state.label ? label : null
@@ -59,20 +72,23 @@ class RGroupFragment extends Component {
 	}
 	render() {
 		return (
-			<RGroup selected={i => this.selected(i)}
-			  onSelect={i => this.onSelect(i)}
-			  result={() => this.result()} {...this.props}/>
+			<RGroup
+				selected={i => this.selected(i)}
+				onSelect={i => this.onSelect(i)}
+				result={() => this.result()}
+				{...this.props}
+			/>
 		);
 	}
 }
 
-class RGroupAtom extends Component {
-	constructor({values}) {
+class RGroupAtom extends Component { // eslint-disable-line
+	constructor({ values }) {
 		super();
 		this.state.values = values || [];
-    }
+	}
 	onSelect(index) {
-		const {values} = this.state;
+		const { values } = this.state;
 		const i = values.indexOf(index);
 		if (i < 0)
 			values.push(index);
@@ -91,11 +107,14 @@ class RGroupAtom extends Component {
 	}
 	render() {
 		return (
-			<RGroup selected={i => this.selected(i)}
-			  onSelect={i => this.onSelect(i)}
-			  result={() => this.result() } {...this.props}/>
+			<RGroup
+				selected={i => this.selected(i)}
+				onSelect={i => this.onSelect(i)}
+				result={() => this.result()}
+				{...this.props}
+			/>
 		);
 	}
 }
 
-export default params => params.type === 'rlabel' ? (<RGroupAtom {...params}/>) : (<RGroupFragment {...params}/>);
+export default params => (params.type === 'rlabel' ? (<RGroupAtom {...params} />) : (<RGroupFragment {...params} />));

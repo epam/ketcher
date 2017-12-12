@@ -32,7 +32,7 @@ export const formsState = {
 			ringBondCount: 0,
 			substitutionCount: 0
 		}
-	} ,
+	},
 	attachmentPoints: {
 		errors: {},
 		valid: true,
@@ -45,7 +45,7 @@ export const formsState = {
 		errors: {},
 		valid: true,
 		result: {
-			mode: "discard"
+			mode: 'discard'
 		}
 	},
 	bondProps: {
@@ -69,7 +69,7 @@ export const formsState = {
 		errors: {},
 		valid: true,
 		result: {
-			label: '',
+			label: ''
 		}
 	},
 	rgroupLogic: {
@@ -99,7 +99,7 @@ export const formsState = {
 export function updateFormState(data) {
 	return {
 		type: 'UPDATE_FORM',
-		data: data
+		data
 	};
 }
 

@@ -20,12 +20,16 @@ import * as structFormat from '../structformat';
 import { saveUserTmpl } from '../state/templates';
 
 import Dialog from '../component/dialog';
+import Input from '../component/input';
 import SaveButton from '../component/savebutton';
 
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { type: props.struct.hasRxnArrow() ? 'rxn' : 'mol' };
+		this.state = {
+			type: props.struct.hasRxnArrow() ? 'rxn' : 'mol',
+			filename: 'ketcher'
+		};
 		this.changeType()
 			.catch(props.onCancel);
 	}
@@ -47,8 +51,16 @@ class Save extends Component {
 		);
 	}
 
+	changeFilename(name) {
+		this.setState({ filename: name });
+	}
+
+	componentDidMount() {
+		setTimeout(() => this.textarea.select(), 10);
+	}
+
 	render() {
-		const { type, structStr } = this.state;
+		const { type, filename, structStr } = this.state;
 		const format = structFormat.map[type];
 		console.assert(format, 'Unknown chemical file type');
 
@@ -60,7 +72,7 @@ class Save extends Component {
 				buttons={[
 					<SaveButton
 						data={structStr}
-						filename={'ketcher' + format.ext[0]}
+						filename={filename + format.ext[0]}
 						type={format.mime}
 						server={this.props.server}
 						onSave={() => this.props.onOk()}
@@ -76,6 +88,9 @@ class Save extends Component {
 					'Close'
 				]}
 			>
+				<label>Filename:
+					<Input value={filename} onChange={name => this.changeFilename(name)} />
+				</label>
 				<label>Format:
 					<select value={type} onChange={ev => this.changeType(ev)}>
 						{
@@ -92,7 +107,7 @@ class Save extends Component {
 					className={type}
 					value={structStr}
 					readOnly
-					ref={el => el && setTimeout(() => el.select(), 10)}
+					ref={(el) => { this.textarea = el; }}
 				/>
 			</Dialog>
 		);

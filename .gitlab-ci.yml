@@ -16,6 +16,7 @@ variables:
   API_PATH: "$SERVER:8081/v2"
   MIEW_PATH: "/static/miew/"
   BRANCHE_NAME_SOURCE: "$CI_COMMIT_REF_NAME"
+  NAME_REPORT_SOURCE: ${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8}
   TEST_TYPE_SOURCE: "KetcherSmokeSuite.xml"
 
 unstable:
@@ -57,7 +58,6 @@ frozen:
 test:
   stage: test
   script:
-    - NAME_REPORT_SOURCE=${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8}
     - eval $EXECUTE
   only:
     - master

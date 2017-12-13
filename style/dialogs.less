@@ -91,7 +91,7 @@ form[role=dialog] {
 	.close {
 		.reset-button;
 		position: absolute;
-		top: 0em;
+		top: 0;
 		right: 0.3em;
 		color: lighten(#000, 60%);
 		font-size: 0.8em;
@@ -114,11 +114,6 @@ form[role=dialog] {
 		input[type=search] {
 			width: 100%;
 		}
-	}
-	.save {
-		&:extend(button all);
-		cursor: default;
-		float: left;
 	}
 	.groups {
 		&:extend(.-SelectList all);
@@ -294,15 +289,8 @@ form.rgroup-logic {
 
 form.settings {
 	width: 35em;
-	.save {
+	.save-button {
 		margin-left: 10px;
-		&:extend(button all);
-		cursor: default;
-		float: left;
-	}
-	.open {
-		&:extend(button all);
-		float: left;
 	}
 	.warning {
 		margin: 0.3em;
@@ -645,10 +633,6 @@ form.settings {
 	label {
 		display: block;
 	}
-	.open {
-		&:extend(button all);
-		float: left;
-	}
 	.open-filename {
 		display: inline-block;
 		float: left;
@@ -728,10 +712,6 @@ form.settings {
 		//make it resizable
 		resize: both;
 	}
-	.open {
-		&:extend(button all);
-		float: left;
-	}
 }
 
 .save {
@@ -749,11 +729,6 @@ form.settings {
 		white-space: pre;
 		cursor: text;
 		resize: both;
-	}
-	.save {
-		&:extend(button all);
-		cursor: default;
-		float: left;
 	}
 }
 

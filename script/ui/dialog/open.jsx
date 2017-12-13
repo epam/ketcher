@@ -54,7 +54,6 @@ class Open extends Component {
 				params={this.props}
 				buttons={[
 					<OpenButton
-						className="open"
 						server={this.props.server}
 						type={structAcceptMimes()}
 						onLoad={s => this.changeStructStr(s)}

@@ -40,20 +40,18 @@ class OpenButton extends Component {
 	}
 
 	render() {
-		const { children, type, ...props } = this.props;
+		const { children, type, server, className = 'open-button', ...props } = this.props;
 
 		return (
-			<div {...props}>
+			<button onClick={() => this.btn.click()} className={className} {...props}>
 				<input
-					id="input-file"
 					onChange={ev => this.open(ev)}
 					accept={type}
 					type="file"
+					ref={(el) => { this.btn = el; }}
 				/>
-				<label htmlFor="input-file">
-					{ children }
-				</label>
-			</div>
+				{ children }
+			</button>
 		);
 	}
 }

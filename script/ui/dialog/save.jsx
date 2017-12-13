@@ -59,7 +59,6 @@ class Save extends Component {
 				params={this.props}
 				buttons={[
 					<SaveButton
-						className="save"
 						data={structStr}
 						filename={'ketcher' + format.ext[0]}
 						type={format.mime}

@@ -44,7 +44,7 @@ function About(props) {
 					props.buildNumber ? (
 						<dd>
 							build #
-							<var className="build-number">{props.buildNumber}</var>
+							<var>{props.buildNumber}</var>
 							{' at '}
 							<time>{props.buildDate}</time>
 						</dd>) : null
@@ -57,12 +57,13 @@ function About(props) {
 									Toolkit
 								</a>
 							</dt>
-							<dd>version
+							<dd>
+								version
 								<var>{version}</var>
 							</dd>
 							<dd>
 								build #
-								<var className="build-number">{build}</var>
+								<var>{build}</var>
 							</dd>
 						</div>
 					) : (<dd>standalone</dd>)

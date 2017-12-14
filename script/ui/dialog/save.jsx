@@ -20,15 +20,28 @@ import * as structFormat from '../structformat';
 import { saveUserTmpl } from '../state/templates';
 
 import Dialog from '../component/dialog';
-import Input from '../component/input';
+import Form, { Field } from '../component/form';
 import SaveButton from '../component/savebutton';
+
+const saveSchema = {
+	title: 'Save',
+	type: 'object',
+	properties: {
+		filename: {
+			title: 'Filename',
+			type: 'string',
+			pattern: '^[^<>:,?"*|/]+$',
+			invalidMessage: 'A filename cannot contain any of the following characters: \\ / : * ? " < > |'
+		}
+		// TODO: extension and textarea to Form !!!
+	}
+};
 
 class Save extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			type: props.struct.hasRxnArrow() ? 'rxn' : 'mol',
-			filename: 'ketcher'
+			type: props.struct.hasRxnArrow() ? 'rxn' : 'mol'
 		};
 		this.changeType()
 			.catch(props.onCancel);
@@ -51,16 +64,13 @@ class Save extends Component {
 		);
 	}
 
-	changeFilename(name) {
-		this.setState({ filename: name });
-	}
-
 	componentDidMount() {
 		setTimeout(() => this.textarea.select(), 10);
 	}
 
 	render() {
-		const { type, filename, structStr } = this.state;
+		const { type, structStr } = this.state;
+		const { formState } = this.props;
 		const format = structFormat.map[type];
 		console.assert(format, 'Unknown chemical file type');
 
@@ -72,10 +82,11 @@ class Save extends Component {
 				buttons={[
 					<SaveButton
 						data={structStr}
-						filename={filename + format.ext[0]}
+						filename={formState.result.filename + format.ext[0]}
 						type={format.mime}
 						server={this.props.server}
 						onSave={() => this.props.onOk()}
+						disabled={!formState.valid}
 					>
 						Save To File…
 					</SaveButton>,
@@ -88,9 +99,9 @@ class Save extends Component {
 					'Close'
 				]}
 			>
-				<label>Filename:
-					<Input value={filename} onChange={name => this.changeFilename(name)} />
-				</label>
+				<Form schema={saveSchema} {...formState}>
+					<Field name="filename" />
+				</Form>
 				<label>Format:
 					<select value={type} onChange={ev => this.changeType(ev)}>
 						{
@@ -118,7 +129,8 @@ export default connect(
 	store => ({
 		server: store.options.app.server ? store.server : null,
 		struct: store.editor.struct(),
-		options: store.options.getServerSettings()
+		options: store.options.getServerSettings(),
+		formState: store.modal.form
 	}),
 	dispatch => ({
 		onTmplSave: struct => dispatch(saveUserTmpl(struct))

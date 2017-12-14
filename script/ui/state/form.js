@@ -81,6 +81,13 @@ export const formsState = {
 			resth: false
 		}
 	},
+	save: {
+		errors: {},
+		valid: true,
+		result: {
+			filename: 'ketcher'
+		}
+	},
 	settings: {
 		errors: {},
 		valid: true,

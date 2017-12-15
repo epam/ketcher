@@ -93,6 +93,7 @@ export function editTmpl(tmpl) {
 
 /* SAVE */
 export function saveUserTmpl(structStr) {
+	// TODO: structStr can be not in mol format => structformat.toString ...
 	const tmpl = { struct: molfile.parse(structStr), props: {} };
 
 	return (dispatch, getState) => {

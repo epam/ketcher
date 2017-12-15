@@ -17,7 +17,7 @@
 import { h, Component } from 'preact';
 import { omit } from 'lodash';
 
-function GenericInput({ value, onChange, type = 'text', ...props }) {
+function GenericInput({ schema, value, onChange, type = 'text', ...props }) {
 	return (
 		<input type={type} value={value} onInput={onChange} {...props} />
 	);
@@ -32,7 +32,7 @@ GenericInput.val = function (ev, schema) {
 	return (isNumber && !isNaN(value - 0)) ? value - 0 : value; // eslint-disable-line
 };
 
-function TextArea({ value, onChange, ...props }) {
+function TextArea({ schema, value, onChange, ...props }) {
 	return (
 		<textarea value={value} onInput={onChange} {...props} />
 	);

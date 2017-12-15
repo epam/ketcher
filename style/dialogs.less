@@ -705,8 +705,8 @@ form.settings {
 		display: block;
 	}
 	textarea {
-		width: 32em;
-		height: 23em;
+		min-width: 32em;
+		min-height: 23em;
 		overflow: auto;
 		white-space: pre;
 		//make it resizable
@@ -715,9 +715,10 @@ form.settings {
 }
 
 .save {
-	label, form {
+	form > label {
 		display: inline-block;
 		text-align: right;
+		margin: .3em;
 	}
 	select {
 		width: 10em;

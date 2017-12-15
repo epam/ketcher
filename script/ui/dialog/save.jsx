@@ -30,36 +30,44 @@ const saveSchema = {
 		filename: {
 			title: 'Filename',
 			type: 'string',
-			maxLength: 255,
-			pattern: '^[^<>:?"*|/\\\\]+$',
-			invalidMessage: res => ((!res || res.length > 255) ?
-				'A filename length must be from 1 to 255' :
-				'A filename cannot contain any of the following characters: \\ / : * ? " < > |')
+			maxLength: 128,
+			pattern: '^[^\.<>:?"*|/\\\\]{1}[^<>:?"*|/\\\\]*$',
+			invalidMessage: (res) => {
+				if (!res) return 'Filename should contain at least one character';
+				if (res.length > 128) return 'Filename is too long';
+				return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot starts with '.'";
+			}
+		},
+		format: {
+			title: 'Format',
+			enum: Object.keys(structFormat.map),
+			enumNames: Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].name)
 		}
-		// TODO: extension and textarea to Form !!!
 	}
 };
 
 class Save extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			type: props.struct.hasRxnArrow() ? 'rxn' : 'mol'
-		};
-		this.changeType()
+
+		const formats = [this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles'];
+		if (this.props.server) formats.push('smiles-ext', 'smarts', 'cml', 'inchi');
+
+		this.saveSchema = saveSchema;
+		this.saveSchema.properties.format = Object.assign(this.saveSchema.properties.format, {
+			enum: formats,
+			enumNames: formats.map(fmt => structFormat.map[fmt].name)
+		});
+
+		this.changeType(this.props.struct.hasRxnArrow() ? 'rxn' : 'mol')
 			.catch(props.onCancel);
 	}
 
-	changeType(ev) {
-		let { type } = this.state;
+	changeType(type) {
 		const { struct, server, options } = this.props;
-		if (ev) {
-			type = ev.target.value;
-			ev.preventDefault();
-		}
 		const converted = structFormat.toString(struct, type, server, options);
 		return converted.then(
-			structStr => this.setState({ type, structStr }),
+			structStr => this.setState({ structStr }),
 			(e) => {
 				this.setState(null);
 				alert(e); // eslint-disable-line no-undef
@@ -72,10 +80,9 @@ class Save extends Component {
 	}
 
 	render() {
-		const { type, structStr } = this.state;
-		const { formState } = this.props;
-		const format = structFormat.map[type];
-		console.assert(format, 'Unknown chemical file type');
+		const { structStr } = this.state;
+		const formState = this.props.formState;
+		const { filename, format } = formState.result;
 
 		return (
 			<Dialog
@@ -85,7 +92,7 @@ class Save extends Component {
 				buttons={[
 					<SaveButton
 						data={structStr}
-						filename={formState.result.filename + format.ext[0]}
+						filename={filename + structFormat.map[format].ext[0]}
 						type={format.mime}
 						server={this.props.server}
 						onSave={() => this.props.onOk()}
@@ -102,23 +109,11 @@ class Save extends Component {
 					'Close'
 				]}
 			>
-				<Form schema={saveSchema} {...formState}>
+				<Form schema={this.saveSchema} {...formState}>
 					<Field name="filename" />
+					<Field name="format" onChange={value => this.changeType(value)} />
 				</Form>
-				<label>Format:
-					<select value={type} onChange={ev => this.changeType(ev)}>
-						{
-							[this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles']
-								.map(t => (<option value={t}>{structFormat.map[t].name}</option>))
-						}
-						{
-							['smiles-ext', 'smarts', 'cml', 'inchi']
-								.map(t => (<option disabled={!this.props.server} value={t}>{structFormat.map[t].name}</option>))
-						}
-					</select>
-				</label>
 				<textarea
-					className={type}
 					value={structStr}
 					readOnly
 					ref={(el) => { this.textarea = el; }}

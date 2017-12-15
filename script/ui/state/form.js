@@ -85,7 +85,8 @@ export const formsState = {
 		errors: {},
 		valid: true,
 		result: {
-			filename: 'ketcher'
+			filename: 'ketcher',
+			format: 'mol'
 		}
 	},
 	settings: {

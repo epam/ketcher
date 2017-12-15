@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import Open from './open';
-import Save from './save';
 import Analyse from './analyse';
 import Recognize from './recognize';
 import PeriodTable from './period-table';
@@ -34,13 +33,13 @@ import Bond from './bond';
 import Check from './check';
 import LabelEdit from './labeledit';
 import RgroupLogic from './rgroup-logic';
+import Save from './save';
 import Settings from './options';
 import Sgroup from './sgroup';
 import Sdata from './sdata';
 
 export default {
 	open: Open,
-	save: Save,
 	analyse: Analyse,
 	recognize: Recognize,
 	'period-table': PeriodTable,
@@ -58,6 +57,7 @@ export default {
 	check: Check,
 	labelEdit: LabelEdit,
 	rgroupLogic: RgroupLogic,
+	save: Save,
 	settings: Settings,
 	sgroup: Sgroup,
 	sdata: Sdata

@@ -30,8 +30,11 @@ const saveSchema = {
 		filename: {
 			title: 'Filename',
 			type: 'string',
-			pattern: '^[^<>:,?"*|/]+$',
-			invalidMessage: 'A filename cannot contain any of the following characters: \\ / : * ? " < > |'
+			maxLength: 255,
+			pattern: '^[^<>:?"*|/\\\\]+$',
+			invalidMessage: res => ((!res || res.length > 255) ?
+				'A filename length must be from 1 to 255' :
+				'A filename cannot contain any of the following characters: \\ / : * ? " < > |')
 		}
 		// TODO: extension and textarea to Form !!!
 	}

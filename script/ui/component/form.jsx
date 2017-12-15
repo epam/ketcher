@@ -181,6 +181,13 @@ function deserializeRewrite(deserializeMap, instance) {
 	return instance;
 }
 
+function getInvalidMessage(item) {
+	if (!item.schema.invalidMessage) return item.message;
+	return (typeof item.schema.invalidMessage === 'function') ?
+		item.schema.invalidMessage(item.instance) :
+		item.schema.invalidMessage;
+}
+
 function getErrorsObj(errors) {
 	const errs = {};
 	let field;
@@ -188,7 +195,7 @@ function getErrorsObj(errors) {
 	errors.forEach((item) => {
 		field = item.property.split('.')[1];
 		if (!errs[field])
-			errs[field] = item.schema.invalidMessage || item.message;
+			errs[field] = getInvalidMessage(item);
 	});
 
 	return errs;

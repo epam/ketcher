@@ -37,7 +37,7 @@ ReRGroup.isSelectable = function () {
 
 ReRGroup.prototype.getAtoms = function (render) {
 	var ret = [];
-	this.item.frags.forEach((fnum, fid) => {
+	this.item.frags.forEach((fid) => {
 		ret = ret.concat(render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid));
 	});
 	return ret;
@@ -45,20 +45,23 @@ ReRGroup.prototype.getAtoms = function (render) {
 
 ReRGroup.prototype.getBonds = function (render) {
 	var ret = [];
-	this.item.frags.forEach((fnum, fid) => {
+	this.item.frags.forEach((fid) => {
 		ret = ret.concat(render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid));
 	});
 	return ret;
 };
 
 ReRGroup.prototype.calcBBox = function (render) {
-	var ret;
-	this.item.frags.forEach((fnum, fid) => {
-		var bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render);
+	let ret = null;
+	this.item.frags.forEach((fid) => {
+		const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render);
 		if (bbf)
 			ret = (ret ? Box2Abs.union(ret, bbf) : bbf);
 	});
-	ret = ret.extend(BORDER_EXT, BORDER_EXT); // eslint-disable-line no-underscore-dangle
+
+	if (ret)
+		ret = ret.extend(BORDER_EXT, BORDER_EXT);
+
 	return ret;
 };
 

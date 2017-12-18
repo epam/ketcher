@@ -394,7 +394,10 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 	var ret = new Struct();
 
 	scaffold.mergeInto(ret, null, null, false, true);
-	for (var rgid in rgroups) {
+
+	Object.keys(rgroups).forEach((id) => {
+		const rgid = parseInt(id, 10);
+
 		for (var j = 0; j < rgroups[rgid].length; ++j) {
 			var ctab = rgroups[rgid][j];
 			ctab.rgroups.set(rgid, new Struct.RGroup());
@@ -406,7 +409,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 			});
 			ctab.mergeInto(ret);
 		}
-	}
+	});
 
 	return ret;
 }

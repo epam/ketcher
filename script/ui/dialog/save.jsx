@@ -35,7 +35,7 @@ const saveSchema = {
 			invalidMessage: (res) => {
 				if (!res) return 'Filename should contain at least one character';
 				if (res.length > 128) return 'Filename is too long';
-				return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot starts with '.'";
+				return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
 			}
 		},
 		format: {
@@ -51,7 +51,7 @@ class Save extends Component {
 		super(props);
 
 		const formats = [this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles'];
-		if (this.props.server) formats.push('smiles-ext', 'smarts', 'cml', 'inchi');
+		if (this.props.server) formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml');
 
 		this.saveSchema = saveSchema;
 		this.saveSchema.properties.format = Object.assign(this.saveSchema.properties.format, {

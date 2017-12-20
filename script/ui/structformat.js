@@ -37,7 +37,7 @@ export const map = {
 	},
 	'smiles-ext': {
 		name: 'Extended SMILES',
-		mime: 'chemical/x-daylight-smiles',
+		mime: 'chemical/x-chemaxon-cxsmiles',
 		ext: ['.cxsmi']
 	},
 	smarts: {
@@ -48,6 +48,11 @@ export const map = {
 	inchi: {
 		name: 'InChI String',
 		mime: 'chemical/x-inchi',
+		ext: ['.inchi']
+	},
+	'inchi-aux': {
+		name: 'InChI AuxInfo String',
+		mime: 'chemical/x-inchi-aux',
 		ext: ['.inchi']
 	},
 	cml: {

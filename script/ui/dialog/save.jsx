@@ -102,6 +102,7 @@ class Save extends Component {
 					</SaveButton>,
 					<button
 						className="save-tmpl"
+						disabled={this.props.struct.isBlank()}
 						onClick={() => this.props.onTmplSave(structStr)}
 					>
 						Save to Templates

@@ -16,7 +16,8 @@ variables:
   API_PATH: "$SERVER:8081/v2"
   MIEW_PATH: "/static/miew/"
   BRANCHE_NAME_SOURCE: "$CI_COMMIT_REF_NAME"
-  NAME_REPORT_SOURCE: ${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA:0:8}
+  NAME_REPORT_SOURCE: "Ketcher_${BRANCHE_NAME_SOURCE}_${CI_COMMIT_SHA:0:8}"
+#  TEST_TYPE_SOURCE: "KetcherVerifyAPISuite.xml"
   TEST_TYPE_SOURCE: "KetcherSmokeSuite.xml"
 
 unstable:

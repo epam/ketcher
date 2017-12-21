@@ -66,6 +66,10 @@ function propsDialog(editor, id, pos) {
 			editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
 		} else if (rglabel !== elem.rglabel || label !== 'R#') {
 			elem.aam = atom.aam; // WTF??
+
+			if (!elem.rglabel)
+				elem.label = label;
+
 			editor.update(fromAtomsAttrs(editor.render.ctab, id, elem));
 		}
 	});

@@ -36,7 +36,7 @@ export function shortcutStr(shortcut) {
 
 function isMenuOpened(currentNode) {
 	const parentNode = hiddenAncestor(currentNode);
-	return parentNode.classList.contains('opened');
+	return parentNode && parentNode.classList.contains('opened');
 }
 
 export function showMenuOrButton(action, item, status, props) { // eslint-disable-line no-shadow

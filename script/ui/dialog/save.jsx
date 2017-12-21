@@ -67,16 +67,15 @@ class Save extends Component {
 		const { struct, server, options } = this.props;
 		const converted = structFormat.toString(struct, type, server, options);
 		return converted.then(
-			structStr => this.setState({ structStr }),
+			(structStr) => {
+				this.setState({ structStr });
+				setTimeout(() => this.textarea.select(), 10); // TODO: remove hack
+			},
 			(e) => {
 				this.setState(null);
 				alert(e); // eslint-disable-line no-undef
 			}
 		);
-	}
-
-	componentDidMount() {
-		setTimeout(() => this.textarea.select(), 10);
 	}
 
 	render() {
@@ -103,7 +102,7 @@ class Save extends Component {
 					<button
 						className="save-tmpl"
 						disabled={this.props.struct.isBlank()}
-						onClick={() => this.props.onTmplSave(structStr)}
+						onClick={() => this.props.onTmplSave(this.props.struct)}
 					>
 						Save to Templates
 					</button>,

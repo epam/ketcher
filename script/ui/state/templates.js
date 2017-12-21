@@ -92,9 +92,9 @@ export function editTmpl(tmpl) {
 }
 
 /* SAVE */
-export function saveUserTmpl(structStr) {
+export function saveUserTmpl(struct) {
 	// TODO: structStr can be not in mol format => structformat.toString ...
-	const tmpl = { struct: molfile.parse(structStr), props: {} };
+	const tmpl = { struct: struct.clone(), props: {} };
 
 	return (dispatch, getState) => {
 		openDialog(dispatch, 'attach', { tmpl }).then(

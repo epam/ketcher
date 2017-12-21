@@ -46,12 +46,12 @@ export const map = {
 		ext: ['.smarts']
 	},
 	inchi: {
-		name: 'InChI String',
+		name: 'InChI',
 		mime: 'chemical/x-inchi',
 		ext: ['.inchi']
 	},
 	'inchi-aux': {
-		name: 'InChI AuxInfo String',
+		name: 'InChI AuxInfo',
 		mime: 'chemical/x-inchi-aux',
 		ext: ['.inchi']
 	},

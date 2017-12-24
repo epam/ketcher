@@ -152,10 +152,16 @@ function clipData(editor) {
 	const type = struct.isReaction ?
 		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 
-	const data = molfile.stringify(struct);
-	res['text/plain'] = data;
-	res[type] = data;
-	// res['chemical/x-daylight-smiles'] =
-	// smiles.stringify(struct);
-	return res;
+	try {
+		const data = molfile.stringify(struct);
+		res['text/plain'] = data;
+		res[type] = data;
+		// res['chemical/x-daylight-smiles'] =
+		// smiles.stringify(struct);
+		return res;
+	} catch (ex) {
+		alert(ex.message); // eslint-disable-line no-undef
+	}
+
+	return null;
 }

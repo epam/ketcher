@@ -52,7 +52,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 			common.prepareForSaving[sgroup.type](sgroup, mol);
 		} catch (ex) {
 			if (!skipErrors || typeof (ex.id) != 'number')
-				throw ex;
+				throw new Error(`ERROR: ${ex.message}`);
 			errorIgnore = true;
 		}
 		/* eslint-disable no-mixed-operators*/

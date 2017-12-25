@@ -64,11 +64,73 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
 	return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }
 
+function findAndHighlightObjectsToStick(editor, dragCtx, srcItems) {
+	const struct = editor.render.ctab.molecule;
+
+	dragCtx.mergeItems =
+		closestToMerge(struct, editor.findMerge(srcItems, ['atoms', 'bonds']));
+
+	if (dragCtx.mergeItems) {
+		const atomMap = dragCtx.mergeItems.atoms;
+
+		// if we have entry a -> b, we should remove entry b -> a
+		dragCtx.mergeItems.atoms.forEach((dst) => {
+			if (atomMap.has(dst))
+				atomMap.delete(dst);
+		});
+
+		const hoverMerge = {
+			atoms: Array.from(dragCtx.mergeItems.atoms.values()),
+			bonds: Array.from(dragCtx.mergeItems.bonds.values())
+		};
+
+		editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
+	} else {
+		editor.hover(null);
+	}
+}
+
+/**
+ * @param struct
+ * @param closestMap {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ * @return {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ */
+function closestToMerge(struct, closestMap) {
+	const mergeMap = {
+		atoms: new Map(closestMap.atoms),
+		bonds: new Map(closestMap.bonds)
+	};
+
+	closestMap.bonds.forEach((dstId, srcId) => {
+		const bond = struct.bonds.get(srcId);
+		const bondCI = struct.bonds.get(dstId);
+
+		if (mergeBondsParams(struct, bond, struct, bondCI).merged) {
+			mergeMap.atoms.delete(bond.begin);
+			mergeMap.atoms.delete(bond.end);
+		} else {
+			mergeMap.bonds.delete(srcId);
+		}
+	});
+
+	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0)
+		return null;
+
+	return mergeMap;
+}
+
 export default {
 	calcAngle,
 	fracAngle,
 	calcNewAtomPos,
 	degrees,
 	setFracAngle,
-	mergeBondsParams
+	mergeBondsParams,
+	findAndHighlightObjectsToStick
 };

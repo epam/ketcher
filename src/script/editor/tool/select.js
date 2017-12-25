@@ -111,6 +111,7 @@ SelectTool.prototype.mousemove = function (event) {
 			this.dragCtx.action.perform(restruct);
 			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
+
 		const expSel = this.editor.explicitSelected();
 		this.dragCtx.action = fromMultipleMove(
 			restruct,
@@ -118,28 +119,7 @@ SelectTool.prototype.mousemove = function (event) {
 			render.page2obj(event).sub(this.dragCtx.xy0)
 		);
 
-		// finding & highlighting object to stick to
-		this.dragCtx.mergeItems =
-			closestToMerge(restruct, this.editor.findMerge(expSel, ['atoms', 'bonds']));
-
-		if (this.dragCtx.mergeItems) {
-			const atomMap = this.dragCtx.mergeItems.atoms;
-
-			// if we have entry a -> b, we should remove entry b -> a
-			this.dragCtx.mergeItems.atoms.forEach((dst) => {
-				if (atomMap.has(dst))
-					atomMap.delete(dst);
-			});
-
-			const hoverMerge = {
-				atoms: Array.from(this.dragCtx.mergeItems.atoms.values()),
-				bonds: Array.from(this.dragCtx.mergeItems.bonds.values())
-			};
-
-			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
-		} else {
-			this.editor.hover(null);
-		}
+		utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, expSel);
 
 		this.editor.update(this.dragCtx.action, true);
 		return true;
@@ -213,14 +193,14 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
 			editor.update(fromAtomsAttrs(rnd.ctab, ci.id, newatom));
-		}).catch(() => null); // w/o changes
+		});
 	} else if (ci.map === 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(rb).then((newbond) => {
 			editor.update(fromBondsAttrs(rnd.ctab, ci.id, newbond));
-		}).catch(() => null); // w/o changes
+		});
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));
 		sgroupDialog(this.editor, ci.id);
@@ -243,42 +223,6 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { //
 
 	this.editor.hover(null);
 };
-
-/**
- * @param restruct { ReStruct }
- * @param closestMap {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>
- * }}
- * @return {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>
- * }}
- */
-function closestToMerge(restruct, closestMap) {
-	const struct = restruct.molecule;
-
-	const mergeMap = {
-		atoms: new Map(closestMap.atoms),
-		bonds: new Map(closestMap.bonds)
-	};
-
-	closestMap.bonds.forEach((dstId, srcId) => {
-		const bond = struct.bonds.get(srcId);
-		const bondCI = struct.bonds.get(dstId);
-
-		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
-			mergeMap.atoms.delete(bond.begin);
-			mergeMap.atoms.delete(bond.end);
-		} else {
-			mergeMap.bonds.delete(srcId);
-		}
-	});
-
-	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0) return null;
-
-	return mergeMap;
-}
 
 function closestToSel(ci) {
 	var res = {};

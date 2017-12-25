@@ -19,8 +19,9 @@ import Struct from '../../chem/struct';
 import utils from '../shared/utils';
 
 import { atomLongtapEvent } from './atom';
-import { bondChangingAction } from '../actions/bond';
+import { bondChangingAction, fromBondsMerge } from '../actions/bond';
 import { fromChain } from '../actions/chain';
+import { fromAtomMerge } from '../actions/atom';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -56,7 +57,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 		if ('stopTapping' in this.dragCtx)
 			this.dragCtx.stopTapping();
 
-		this.editor.selection(null);
+		editor.selection(null);
 
 		const dragCtx = this.dragCtx;
 
@@ -84,7 +85,16 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 				info: sectCount + ' sectors'
 			});
 
-			this.editor.update(dragCtx.action, true);
+			editor.update(dragCtx.action, true);
+
+			const struct = editor.render.ctab.molecule;
+			const items = {
+				atoms: Array.from(struct.atoms.keys()),
+				bonds: Array.from(struct.bonds.keys())
+			};
+
+			utils.findAndHighlightObjectsToStick(editor, this.dragCtx, items);
+
 			return true;
 		}
 	}
@@ -95,32 +105,50 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 
 ChainTool.prototype.mouseup = function () {
 	const rnd = this.editor.render;
-	const struct = rnd.ctab.molecule;
+	const restruct = rnd.ctab;
+	const struct = restruct.molecule;
+	const dragCtx = this.dragCtx;
 
-	if (this.dragCtx) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
+	if (!dragCtx) {
+		this.editor.event.message.dispatch({
+			info: false
+		});
 
-		const dragCtx = this.dragCtx;
-
-		let action = dragCtx.action;
-
-		if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
-			const bond = struct.bonds.get(dragCtx.item.id);
-
-			action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
-				type: Struct.Bond.PATTERN.TYPE.SINGLE,
-				stereo: Struct.Bond.PATTERN.STEREO.NONE
-			});
-		}
-
-		delete this.dragCtx;
-		if (action)
-			this.editor.update(action);
+		return true;
 	}
-	this.editor.event.message.dispatch({
-		info: false
-	});
+
+	if ('stopTapping' in this.dragCtx)
+		dragCtx.stopTapping();
+
+	let action = dragCtx.action;
+
+	if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
+		const bond = struct.bonds.get(dragCtx.item.id);
+
+		action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
+			type: Struct.Bond.PATTERN.TYPE.SINGLE,
+			stereo: Struct.Bond.PATTERN.STEREO.NONE
+		});
+	}
+
+	if (dragCtx.mergeItems) {
+		// merge single atoms
+		dragCtx.mergeItems.atoms.forEach((dst, src) => {
+			action = action ?
+				fromAtomMerge(restruct, src, dst).mergeWith(action) :
+				fromAtomMerge(restruct, src, dst);
+		});
+
+		// merge bonds
+		action = action ?
+			fromBondsMerge(restruct, dragCtx.mergeItems.bonds).mergeWith(action) :
+			fromBondsMerge(restruct, dragCtx.mergeItems.bonds);
+	}
+
+	if (action)
+		this.editor.update(action);
+
+	delete this.dragCtx;
 	return true;
 };
 

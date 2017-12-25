@@ -17,6 +17,8 @@
 import Vec2 from '../../util/vec2';
 import utils from '../shared/utils';
 import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
+import { fromBondsMerge } from '../actions/bond';
+import { fromAtomMerge } from '../actions/atom';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -59,16 +61,20 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 	const editor = this.editor;
 	const restruct = editor.render.ctab;
 	this.editor.hover(null);
+
 	this.dragCtx = {
 		xy0: editor.render.page2obj(event),
 		item: editor.findItem(event, this.findItems)
 	};
+
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
+
 	if (!ci) { //  ci.type == 'Canvas'
 		delete dragCtx.item;
 		return true;
 	}
+
 	if (ci.map === 'bonds') {
 		// calculate fragment center
 		const molecule = restruct.molecule;
@@ -103,6 +109,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 		dragCtx.sign1 = sign || 1;
 		dragCtx.sign2 = this.template.sign;
 	}
+
 	return true;
 };
 
@@ -172,6 +179,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 
 	// create new action
 	dragCtx.angle = degrees;
+
 	if (!ci) { // ci.type == 'Canvas'
 		dragCtx.action = fromTemplateOnCanvas(
 			restruct,
@@ -191,6 +199,14 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 	}
 
 	this.editor.update(dragCtx.action, true);
+
+	const items = {
+		atoms: Array.from(struct.atoms.keys()),
+		bonds: Array.from(struct.bonds.keys())
+	};
+
+	utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, items);
+
 	return true;
 };
 
@@ -252,6 +268,20 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 
 			return true;
 		}
+	}
+
+	if (this.dragCtx.mergeItems) {
+		// merge single atoms
+		this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
+			this.dragCtx.action = this.dragCtx.action ?
+				fromAtomMerge(restruct, src, dst).mergeWith(this.dragCtx.action) :
+				fromAtomMerge(restruct, src, dst);
+		});
+
+		// merge bonds
+		this.dragCtx.action = this.dragCtx.action ?
+			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
+			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
 	}
 
 	if (dragCtx.action && ci && ci.map === 'bonds') {

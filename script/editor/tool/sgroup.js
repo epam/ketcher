@@ -95,6 +95,11 @@ SGroupTool.prototype.mouseup = function (event) {
 		sgroupDialog(this.editor, id, this.type);
 };
 
+SGroupTool.prototype.cancel = function () {
+	if (this.lassoHelper.running()) this.lassoHelper.end();
+	this.editor.selection(null);
+};
+
 export function sgroupDialog(editor, id, defaultType) {
 	const restruct = editor.render.ctab;
 	const struct = restruct.molecule;

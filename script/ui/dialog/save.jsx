@@ -72,7 +72,7 @@ class Save extends Component {
 				setTimeout(() => this.textarea.select(), 10); // TODO: remove hack
 			},
 			(e) => {
-				alert(e); // eslint-disable-line no-undef
+				alert(e.message); // eslint-disable-line no-undef
 				throw e;
 			}
 		);

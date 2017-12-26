@@ -107,7 +107,6 @@ export function atomLongtapEvent(tool, render) {
 	// TODO: longtab event
 	dragCtx.timeout = setTimeout(() => {
 		delete tool.dragCtx;
-		if (tool.lassoHelper) tool.lassoHelper.end();
 		editor.selection(null);
 		const res = editor.event.quickEdit.dispatch(atom);
 		Promise.resolve(res).then((newatom) => {

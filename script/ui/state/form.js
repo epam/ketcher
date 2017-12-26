@@ -62,7 +62,7 @@ export const formsState = {
 		moleculeErrors: {},
 		result: {
 			checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
-				'overlapping_bonds', 'rgroups', 'chiral', '3d']
+				'overlapping_bonds', 'rgroups', 'chiral', '3d', 'chiral_flag']
 		}
 	},
 	labelEdit: {

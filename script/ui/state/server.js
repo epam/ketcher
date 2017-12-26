@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { omit } from 'lodash/fp';
+import { omit, without } from 'lodash/fp';
 import Pool from '../../util/pool';
 
 import molfile from '../../chem/molfile';
@@ -57,10 +57,13 @@ export function check(optsTypes) {
 	return (dispatch, getState) => {
 		const { editor, server } = getState();
 		const options = getState().options.getServerSettings();
-		options.data = { types: optsTypes };
-
+		const isChiral = editor.render.ctab.molecule.isChiral;
+		options.data = { types: without(['chiral_flag'], optsTypes) };
 		serverCall(editor, server, 'check', options)
-			.then(res => dispatch(checkErrors(res)))
+			.then((res) => {
+				if (isChiral === true && optsTypes.includes('chiral_flag')) res['chiral_flag'] = 'Chiral flag presence';
+				dispatch(checkErrors(res));
+			})
 			.catch(console.error);
 		// TODO: notification
 	};

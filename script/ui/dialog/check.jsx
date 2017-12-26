@@ -31,9 +31,9 @@ const checkSchema = {
 			items: {
 				type: 'string',
 				enum: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
-					'overlapping_bonds', 'rgroups', 'chiral', '3d'],
+					'overlapping_bonds', 'rgroups', 'chiral', '3d', 'chiral_flag'],
 				enumNames: ['Valence', 'Radical', 'Pseudoatom', 'Stereochemistry', 'Query', 'Overlapping Atoms',
-					'Overlapping Bonds', 'R-Groups', 'Chirality', '3D Structure']
+					'Overlapping Bonds', 'R-Groups', 'Chirality', '3D Structure', 'Chiral flag']
 			}
 		}
 	}
@@ -79,7 +79,7 @@ function ErrorsCheck(props) {
 				<dt>No errors found</dt> :
 				moleculeErrorsTypes.map(type => (
 					<div>
-						<dt>{getOptionName(type)} error :</dt>
+						<dt>{getOptionName(type)} warning:</dt>
 						<dd>{moleculeErrors[type]}</dd>
 					</div>
 				))}

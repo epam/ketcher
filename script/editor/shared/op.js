@@ -694,15 +694,15 @@ function RxnArrowAdd(pos) {
 
 		let { reactants, products } = struct.getComponents();
 
-		reactants = reactants.reduce((acc, item) => ({ ...acc, ...item }), {});
-		products = products.reduce((acc, item) => ({ ...acc, ...item }), {});
+		reactants = reactants.reduce((acc, item) => acc.concat(...item), []);
+		products = products.reduce((acc, item) => acc.concat(...item), []);
 
-		Object.keys(reactants).forEach((aid) => {
+		reactants.forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			atom.rxnFragmentType = 1;
 		});
 
-		Object.keys(products).forEach((aid) => {
+		products.forEach((aid) => {
 			const atom = struct.atoms.get(aid);
 			atom.rxnFragmentType = 2;
 		});

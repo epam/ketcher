@@ -37,7 +37,6 @@ function SGroupTool(editor, type) {
 		var id = sgroups.find((_, sgroup) => isEqual(sgroup.atoms, selectedAtoms));
 
 		sgroupDialog(editor, id !== undefined ? id : null, type);
-		editor.selection(null);
 		return null;
 	}
 

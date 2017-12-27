@@ -89,7 +89,8 @@ function ErrorsCheck(props) {
 
 export default connect(
 	store => ({	formState: store.modal.form }),
-	dispatch => ({
+	(dispatch, props) => ({
 		onCheck: opts => dispatch(check(opts))
+			.catch(props.onCancel)
 	})
 )(Check);

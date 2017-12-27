@@ -121,8 +121,10 @@ export function initClipboard(dispatch, getState) {
 			return !getState().modal;
 		},
 		onCut() {
-			const data = clipData(getState().editor);
-			debAction({ tool: 'eraser', opts: 1 });
+			const editor = getState().editor;
+			const data = clipData(editor);
+			if (data) debAction({ tool: 'eraser', opts: 1 });
+			else editor.selection(null);
 			return data;
 		},
 		onCopy() {

@@ -52,7 +52,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 			common.prepareForSaving[sgroup.type](sgroup, mol);
 		} catch (ex) {
 			if (!skipErrors || typeof (ex.id) != 'number')
-				throw new Error(`ERROR: ${ex.message}`);
+				throw new Error(`Error: ${ex.message}`);
 			errorIgnore = true;
 		}
 		/* eslint-disable no-mixed-operators*/
@@ -64,7 +64,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 		}
 	}, this);
 	if (errors)
-		throw new Error('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.');
+		throw new Error('Warning: ' + errors + ' invalid S-groups were detected. They will be omitted.');
 
 	for (var i = 0; i < toRemove.length; ++i)
 		mol.sGroupDelete(toRemove[i]);

@@ -22,8 +22,9 @@ import LassoHelper from './helper/lasso';
 import { sgroupDialog } from './sgroup';
 import { atomLongtapEvent } from './atom';
 import { fromMultipleMove } from '../actions/fragment';
-import { fromAtomsAttrs, fromAtomMerge } from '../actions/atom';
-import { fromBondsAttrs, fromBondsMerge } from '../actions/bond';
+import { fromAtomsAttrs } from '../actions/atom';
+import { fromBondsAttrs } from '../actions/bond';
+import { fromItemsFuse } from '../actions/closely-fusing';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -99,35 +100,37 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 };
 
 SelectTool.prototype.mousemove = function (event) {
-	const render = this.editor.render;
-	const restruct = render.ctab;
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
+	const dragCtx = this.dragCtx;
 
-	if (this.dragCtx && this.dragCtx.stopTapping)
-		this.dragCtx.stopTapping();
+	if (dragCtx && dragCtx.stopTapping)
+		dragCtx.stopTapping();
 
-	if (this.dragCtx && this.dragCtx.item) {
+	if (dragCtx && dragCtx.item) {
 		// moving selected objects
-		if (this.dragCtx.action) {
-			this.dragCtx.action.perform(restruct);
-			this.editor.update(this.dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
+		if (dragCtx.action) {
+			dragCtx.action.perform(restruct);
+			editor.update(dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
 		}
 
-		const expSel = this.editor.explicitSelected();
-		this.dragCtx.action = fromMultipleMove(
+		const expSel = editor.explicitSelected();
+		dragCtx.action = fromMultipleMove(
 			restruct,
 			expSel,
-			render.page2obj(event).sub(this.dragCtx.xy0)
+			editor.render.page2obj(event).sub(dragCtx.xy0)
 		);
 
-		utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, expSel);
+		dragCtx.mergeItems = utils.getItemsToFuse(editor, expSel);
+		utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
 
-		this.editor.update(this.dragCtx.action, true);
+		editor.update(dragCtx.action, true);
 		return true;
 	}
 
 	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
-		this.editor.selection(!event.shiftKey ? sel : selMerge(sel, this.editor.selection()));
+		editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection()));
 		return true;
 	}
 
@@ -135,45 +138,38 @@ SelectTool.prototype.mousemove = function (event) {
 		['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'] :
 		['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
 
-	this.editor.hover(this.editor.findItem(event, maps));
+	editor.hover(editor.findItem(event, maps));
 
 	return true;
 };
 
 SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	if (this.dragCtx && this.dragCtx.stopTapping)
-		this.dragCtx.stopTapping();
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
+	const dragCtx = this.dragCtx;
 
-	if (this.dragCtx && this.dragCtx.item) {
-		const restruct = this.editor.render.ctab;
+	if (dragCtx && dragCtx.stopTapping)
+		dragCtx.stopTapping();
 
-		if (this.dragCtx.mergeItems) {
-			this.editor.selection(null);
+	if (dragCtx && dragCtx.item) {
+		editor.selection(null);
 
-			// merge single atoms
-			this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
-				this.dragCtx.action = this.dragCtx.action ?
-					fromAtomMerge(restruct, src, dst).mergeWith(this.dragCtx.action) :
-					fromAtomMerge(restruct, src, dst);
-			});
+		dragCtx.action = dragCtx.action ?
+			fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+			fromItemsFuse(restruct, dragCtx.mergeItems);
 
-			// merge bonds
-			this.dragCtx.action = this.dragCtx.action ?
-				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
-				fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
-		}
+		editor.hover(null);
 
-		this.editor.hover(null);
+		if (dragCtx.action)
+			editor.update(dragCtx.action);
 
-		if (this.dragCtx.action)
-			this.editor.update(this.dragCtx.action);
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
 		const sel = this.lassoHelper.end();
-		this.editor.selection(!event.shiftKey ? sel : selMerge(sel, this.editor.selection()));
+		editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection()));
 	} else if (this.lassoHelper.fragment) {
 		if (!event.shiftKey)
-			this.editor.selection(null);
+			editor.selection(null);
 	}
 	return true;
 };

@@ -16,8 +16,7 @@
 
 import { fromPaste } from '../actions/paste';
 import utils from '../shared/utils';
-import { fromBondsMerge } from '../actions/bond';
-import { fromAtomMerge } from '../actions/atom';
+import { fromItemsFuse } from '../actions/closely-fusing';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -26,16 +25,19 @@ function PasteTool(editor, struct) {
 	this.editor = editor;
 	this.editor.selection(null);
 	this.struct = struct;
+	this.mergeItems = null;
 
-	var rnd = editor.render;
-	var point = editor.lastEvent ?
-		rnd.page2obj(editor.lastEvent) : null;
+	const rnd = editor.render;
+	const point = editor.lastEvent ?
+		rnd.page2obj(editor.lastEvent) :
+		null;
+
 	this.action = fromPaste(rnd.ctab, this.struct, point);
 	this.editor.update(this.action, true);
 }
 
 PasteTool.prototype.mousemove = function (event) {
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
 
 	if (this.action)
 		this.action.perform(rnd.ctab);
@@ -43,34 +45,21 @@ PasteTool.prototype.mousemove = function (event) {
 	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
 	this.editor.update(this.action, true);
 
-	const struct = rnd.ctab.molecule;
-
-	this.dragCtx = { };
-
-	const items = {
-		atoms: Array.from(struct.atoms.keys()),
-		bonds: Array.from(struct.bonds.keys())
-	};
-
-	utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, items);
+	this.mergeItems = utils.getItemsToFuse(this.editor);
+	utils.hoverItemsToFuse(this.editor, this.mergeItems);
 };
 
 PasteTool.prototype.mouseup = function () {
-	const restruct = this.editor.render.ctab;
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
 
-	if (this.dragCtx.mergeItems) {
-		// merge single atoms
-		this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
-			this.action = this.action ?
-				fromAtomMerge(restruct, src, dst).mergeWith(this.action) :
-				fromAtomMerge(restruct, src, dst);
-		});
+	editor.selection(null);
 
-		// merge bonds
-		this.action = this.action ?
-			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.action) :
-			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
-	}
+	this.action = this.action ?
+		fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action) :
+		fromItemsFuse(restruct, this.mergeItems);
+
+	editor.hover(null);
 
 	if (this.action) {
 		const action = this.action;

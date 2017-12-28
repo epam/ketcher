@@ -64,30 +64,31 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
 	return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }
 
-function findAndHighlightObjectsToStick(editor, dragCtx, srcItems) {
+function getItemsToFuse(editor, items) {
 	const struct = editor.render.ctab.molecule;
 
-	dragCtx.mergeItems =
-		closestToMerge(struct, editor.findMerge(srcItems, ['atoms', 'bonds']));
+	const mergeItems = items || (
+		{
+			atoms: Array.from(struct.atoms.keys()),
+			bonds: Array.from(struct.bonds.keys())
+		}
+	);
 
-	if (dragCtx.mergeItems) {
-		const atomMap = dragCtx.mergeItems.atoms;
+	return closestToMerge(struct, editor.findMerge(mergeItems, ['atoms', 'bonds']));
+}
 
-		// if we have entry a -> b, we should remove entry b -> a
-		dragCtx.mergeItems.atoms.forEach((dst) => {
-			if (atomMap.has(dst))
-				atomMap.delete(dst);
-		});
-
-		const hoverMerge = {
-			atoms: Array.from(dragCtx.mergeItems.atoms.values()),
-			bonds: Array.from(dragCtx.mergeItems.bonds.values())
-		};
-
-		editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });
-	} else {
+function hoverItemsToFuse(editor, items) {
+	if (!items) {
 		editor.hover(null);
+		return;
 	}
+
+	const hoverItems = {
+		atoms: Array.from(items.atoms.values()),
+		bonds: Array.from(items.bonds.values())
+	};
+
+	editor.hover({ map: 'merge', id: +Date.now(), items: hoverItems });
 }
 
 /**
@@ -132,5 +133,6 @@ export default {
 	degrees,
 	setFracAngle,
 	mergeBondsParams,
-	findAndHighlightObjectsToStick
+	getItemsToFuse,
+	hoverItemsToFuse
 };

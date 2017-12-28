@@ -17,8 +17,7 @@
 import Vec2 from '../../util/vec2';
 import utils from '../shared/utils';
 import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
-import { fromBondsMerge } from '../actions/bond';
-import { fromAtomMerge } from '../actions/atom';
+import { fromItemsFuse } from '../actions/closely-fusing';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -121,6 +120,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		return true;
 	}
 
+	const editor = this.editor;
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
 	let pos0 = null;
@@ -198,14 +198,10 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		dragCtx.extra_bond = extraBond;
 	}
 
-	this.editor.update(dragCtx.action, true);
+	editor.update(dragCtx.action, true);
 
-	const items = {
-		atoms: Array.from(struct.atoms.keys()),
-		bonds: Array.from(struct.bonds.keys())
-	};
-
-	utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, items);
+	dragCtx.mergeItems = utils.getItemsToFuse(editor);
+	utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
 
 	return true;
 };
@@ -214,10 +210,11 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	if (!this.dragCtx)
 		return true;
 
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
+	const struct = restruct.molecule;
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
-	const restruct = this.editor.render.ctab;
-	const struct = restruct.molecule;
 
 	if (!dragCtx.action) {
 		if (!ci) { //  ci.type == 'Canvas'
@@ -257,12 +254,12 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 			}
 		} else if (ci.map === 'bonds') {
 			fromTemplateOnBondAction(
-				restruct, this.editor.event,
+				restruct, editor.event,
 				ci.id, this.template,
 				dragCtx.sign1 * dragCtx.sign2 > 0, true
 			)
 				.then((action) => {
-					this.editor.update(action);
+					editor.update(action);
 					delete this.dragCtx;
 				});
 
@@ -270,39 +267,34 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 		}
 	}
 
-	if (this.dragCtx.mergeItems) {
-		// merge single atoms
-		this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
-			this.dragCtx.action = this.dragCtx.action ?
-				fromAtomMerge(restruct, src, dst).mergeWith(this.dragCtx.action) :
-				fromAtomMerge(restruct, src, dst);
-		});
+	editor.selection(null);
 
-		// merge bonds
-		this.dragCtx.action = this.dragCtx.action ?
-			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.dragCtx.action) :
-			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
-	}
+	dragCtx.action = dragCtx.action ?
+		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+		fromItemsFuse(restruct, dragCtx.mergeItems);
+
+	editor.hover(null);
 
 	if (dragCtx.action && ci && ci.map === 'bonds') {
-		this.dragCtx.action.perform(restruct); // revert drag action
+		dragCtx.action.perform(restruct); // revert drag action
 		fromTemplateOnBondAction(
-			restruct, this.editor.event,
+			restruct, editor.event,
 			ci.id, this.template,
 			dragCtx.sign1 * dragCtx.sign2 > 0, true
 		)
 			.then((action) => {
-				this.editor.update(action);
+				editor.update(action);
 				delete this.dragCtx;
 			});
 		return true;
 	}
 
-	const action = this.dragCtx.action;
+	const action = dragCtx.action;
 	delete this.dragCtx;
 
 	if (action && !action.isDummy())
-		this.editor.update(action);
+		editor.update(action);
+
 	return true;
 };
 

@@ -19,9 +19,9 @@ import Struct from '../../chem/struct';
 import utils from '../shared/utils';
 
 import { atomLongtapEvent } from './atom';
-import { bondChangingAction, fromBondsMerge } from '../actions/bond';
+import { bondChangingAction } from '../actions/bond';
 import { fromChain } from '../actions/chain';
-import { fromAtomMerge } from '../actions/atom';
+import { fromItemsFuse } from '../actions/closely-fusing';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -87,30 +87,25 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 
 			editor.update(dragCtx.action, true);
 
-			const struct = editor.render.ctab.molecule;
-			const items = {
-				atoms: Array.from(struct.atoms.keys()),
-				bonds: Array.from(struct.bonds.keys())
-			};
-
-			utils.findAndHighlightObjectsToStick(editor, this.dragCtx, items);
+			dragCtx.mergeItems = utils.getItemsToFuse(editor);
+			utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
 
 			return true;
 		}
 	}
 
-	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 
 ChainTool.prototype.mouseup = function () {
-	const rnd = this.editor.render;
-	const restruct = rnd.ctab;
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
 	const struct = restruct.molecule;
 	const dragCtx = this.dragCtx;
 
 	if (!dragCtx) {
-		this.editor.event.message.dispatch({
+		editor.event.message.dispatch({
 			info: false
 		});
 
@@ -125,28 +120,22 @@ ChainTool.prototype.mouseup = function () {
 	if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
 		const bond = struct.bonds.get(dragCtx.item.id);
 
-		action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
+		action = bondChangingAction(restruct, dragCtx.item.id, bond, {
 			type: Struct.Bond.PATTERN.TYPE.SINGLE,
 			stereo: Struct.Bond.PATTERN.STEREO.NONE
 		});
 	}
 
-	if (dragCtx.mergeItems) {
-		// merge single atoms
-		dragCtx.mergeItems.atoms.forEach((dst, src) => {
-			action = action ?
-				fromAtomMerge(restruct, src, dst).mergeWith(action) :
-				fromAtomMerge(restruct, src, dst);
-		});
+	editor.selection(null);
 
-		// merge bonds
-		action = action ?
-			fromBondsMerge(restruct, dragCtx.mergeItems.bonds).mergeWith(action) :
-			fromBondsMerge(restruct, dragCtx.mergeItems.bonds);
-	}
+	dragCtx.action = dragCtx.action ?
+		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+		fromItemsFuse(restruct, dragCtx.mergeItems);
+
+	editor.hover(null);
 
 	if (action)
-		this.editor.update(action);
+		editor.update(action);
 
 	delete this.dragCtx;
 	return true;

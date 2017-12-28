@@ -15,6 +15,9 @@
  ***************************************************************************/
 
 import { fromPaste } from '../actions/paste';
+import utils from '../shared/utils';
+import { fromBondsMerge } from '../actions/bond';
+import { fromAtomMerge } from '../actions/atom';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -33,15 +36,44 @@ function PasteTool(editor, struct) {
 
 PasteTool.prototype.mousemove = function (event) {
 	var rnd = this.editor.render;
+
 	if (this.action)
 		this.action.perform(rnd.ctab);
+
 	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
 	this.editor.update(this.action, true);
+
+	const struct = rnd.ctab.molecule;
+
+	this.dragCtx = { };
+
+	const items = {
+		atoms: Array.from(struct.atoms.keys()),
+		bonds: Array.from(struct.bonds.keys())
+	};
+
+	utils.findAndHighlightObjectsToStick(this.editor, this.dragCtx, items);
 };
 
 PasteTool.prototype.mouseup = function () {
+	const restruct = this.editor.render.ctab;
+
+	if (this.dragCtx.mergeItems) {
+		// merge single atoms
+		this.dragCtx.mergeItems.atoms.forEach((dst, src) => {
+			this.action = this.action ?
+				fromAtomMerge(restruct, src, dst).mergeWith(this.action) :
+				fromAtomMerge(restruct, src, dst);
+		});
+
+		// merge bonds
+		this.action = this.action ?
+			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds).mergeWith(this.action) :
+			fromBondsMerge(restruct, this.dragCtx.mergeItems.bonds);
+	}
+
 	if (this.action) {
-		var action = this.action;
+		const action = this.action;
 		delete this.action;
 		this.editor.update(action);
 	}

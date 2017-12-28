@@ -30,7 +30,7 @@ function About(props) {
 			buttons={['Close']}
 		>
 			<a href="http://lifescience.opensource.epam.com/ketcher/" target="_blank">
-				<img alt="Ketcher" src="images/ketcher-logo.svg" />
+				<img alt="Ketcher" src="logo/ketcher-logo.svg" />
 			</a>
 			<dl>
 				<dt>

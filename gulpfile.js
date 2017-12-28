@@ -47,10 +47,11 @@ const options = minimist(process.argv.slice(2), {
 	}
 });
 
-const distrib = ['LICENSE', 'demo.html', 'library.sdf', 'library.svg'];
+const distrib = ['LICENSE', 'src/template/demo.html',
+	'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
 
 const createBundleConfig = () => ({
-	entries: 'script',
+	entries: 'src/script',
 	extensions: ['.js', '.jsx'],
 	debug: true,
 	standalone: pkg.name,
@@ -107,7 +108,7 @@ gulp.task('script', ['patch-version'], function () {
 				dead_code: true
 			}
 		}))
-		.pipe(plugins.header(fs.readFileSync('script/banner.js', 'utf8')))
+		.pipe(plugins.header(fs.readFileSync('src/script/banner.js', 'utf8')))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
 });
@@ -127,12 +128,12 @@ gulp.task('test-render', function () {
 		]
 	}).bundle()
 		.pipe(source('render-test.js'))
-		.pipe(plugins.header(fs.readFileSync('script/banner.js', 'utf8')))
+		.pipe(plugins.header(fs.readFileSync('src/script/banner.js', 'utf8')))
 		.pipe(gulp.dest('./test/dist'));
 });
 
 gulp.task('style', ['icons-svg'], function () {
-	return gulp.src('style/index.less')
+	return gulp.src('src/style/index.less')
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.rename(pkg.name))
 		.pipe(plugins.less({
@@ -146,7 +147,7 @@ gulp.task('style', ['icons-svg'], function () {
 });
 
 gulp.task('icons-svg', function () {
-	return gulp.src(['icons/*.svg'])
+	return gulp.src(['src/icons/*.svg'])
 		.pipe(plugins.svgSprite({
 			shape: {
 				id: { generator: "icon-" }
@@ -163,7 +164,7 @@ gulp.task('icons-svg', function () {
 gulp.task('html', ['patch-version'], function () {
 	const hbs = plugins.hb()
 	    .data(Object.assign({ pkg: pkg }, options));
-	return gulp.src('template/index.hbs')
+	return gulp.src('src/template/index.hbs')
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))
 		.pipe(gulp.dest(options.dist));
@@ -180,12 +181,12 @@ gulp.task('help', ['doc'], function () {
 		.pipe(gulp.dest(options.dist + '/doc'));
 });
 
-gulp.task('images', function () {
-	return gulp.src('images/*')
-		.pipe(gulp.dest(options.dist + '/images'));
+gulp.task('logo', function () {
+	return gulp.src('src/logo/*')
+		.pipe(gulp.dest(options.dist + '/logo'));
 });
 
-gulp.task('copy', ['images'], function () {
+gulp.task('copy', ['logo'], function () {
 	return gulp.src(['raphael'].map(require.resolve)
 	                .concat(distrib))
 		.pipe(gulp.dest(options.dist));
@@ -206,7 +207,7 @@ gulp.task('patch-version', function (cb) {
 });
 
 gulp.task('lint', function () {
-	return gulp.src('script/**')
+	return gulp.src('src/script/**')
 		.pipe(plugins.eslint())
 		.pipe(plugins.eslint.format())
 		.pipe(plugins.eslint.failAfterError());
@@ -273,8 +274,8 @@ gulp.task('serve', ['clean', 'style', 'html', 'assets'], function (cb) {
 		}
 	}).on('exit', cb);
 
-	gulp.watch('style/**.less', ['style']);
-	gulp.watch('template/**', ['html']);
+	gulp.watch('src/style/**.less', ['style']);
+	gulp.watch('src/template/**', ['html']);
 	gulp.watch('doc/**', ['help']);
 	gulp.watch(['gulpfile.js', 'package.json'], function () {
 		server.close();

@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 var renderDiff = require('./render-diff').diff;
-var Render = require('../../script/render');
+var Render = require('../../src/script/render');
 
 var ketcher = {
-	molfile: require('../../script/chem/molfile'),
+	molfile: require('../../src/script/chem/molfile'),
 	render: function render(el, struct, opts) {
 		var render = new Render(el, opts);
 		render.setMolecule(struct);

@@ -18,8 +18,6 @@ import { h, Component } from 'preact';
 
 const ieCb = window.clipboardData;
 
-const emptyRxn = /\$RXN\n+\s+0\s+0\s+0\n*/;
-
 class ClipArea extends Component {
 	componentDidMount() {
 		const el = this.base;
@@ -58,7 +56,7 @@ class ClipArea extends Component {
 				if (this.props.focused() && this.props.onPaste) {
 					const data = paste(event.clipboardData, this.props.formats);
 
-					if (data && !emptyRxn.test(data['text/plain']))
+					if (data)
 						this.props.onPaste(data);
 
 					event.preventDefault();

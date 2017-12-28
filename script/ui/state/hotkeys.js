@@ -108,6 +108,8 @@ function checkGroupOnTool(group, actionTool) {
 	return index;
 }
 
+const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
+
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
 	const formats = Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].mime);
@@ -138,7 +140,9 @@ export function initClipboard(dispatch, getState) {
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
 
-			if (structStr)
+			const struct = getState().editor.render.ctab.molecule;
+
+			if (structStr && (!struct.hasRxnArrow() || !rxnTextPlain.test(data['text/plain'])))
 				loadStruct(structStr, { fragment: true });
 		}
 	};

@@ -132,8 +132,8 @@ SelectTool.prototype.mousemove = function (event) {
 			});
 
 			const hoverMerge = {
-				atoms: Array.from(this.dragCtx.mergeItems.atoms.keys()),
-				bonds: Array.from(this.dragCtx.mergeItems.bonds.keys())
+				atoms: Array.from(this.dragCtx.mergeItems.atoms.values()),
+				bonds: Array.from(this.dragCtx.mergeItems.bonds.values())
 			};
 
 			this.editor.hover({ map: 'merge', id: +Date.now(), items: hoverMerge });

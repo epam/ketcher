@@ -292,8 +292,11 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.delete(emptyGroups[i]);
 	}
-	for (var rgid in rLogic)
+	for (var id in rLogic) {
+		const rgid = parseInt(id, 10);
 		ctab.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
+	}
+
 	return ctab;
 }
 
@@ -318,7 +321,8 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 		}
 		if (line != '$RGP')
 			throw new Error('RGFile format invalid');
-		var rgid = ctabLines[1].trim() - 0;
+
+		const rgid = parseInt(ctabLines[1].trim(), 10);
 		fragmentLines[rgid] = [];
 		ctabLines = ctabLines.slice(2);
 		while (true) { // eslint-disable-line no-constant-condition
@@ -343,7 +347,8 @@ function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-
 	var core = parseCTab(coreLines);
 	var frag = {};
 	if (loadRGroupFragments) {
-		for (var id in fragmentLines) {
+		for (var strId in fragmentLines) {
+			const id = parseInt(strId, 10);
 			frag[id] = [];
 			for (var j = 0; j < fragmentLines[id].length; ++j)
 				frag[id].push(parseCTab(fragmentLines[id][j]));
@@ -391,18 +396,18 @@ function parseCTab(/* string */ ctabLines) /* Struct */ {
 
 function rgMerge(scaffold, rgroups) /* Struct */ {
 	/* reader */
-	var ret = new Struct();
+	const ret = new Struct();
 
 	scaffold.mergeInto(ret, null, null, false, true);
 
 	Object.keys(rgroups).forEach((id) => {
 		const rgid = parseInt(id, 10);
 
-		for (var j = 0; j < rgroups[rgid].length; ++j) {
-			var ctab = rgroups[rgid][j];
+		for (let j = 0; j < rgroups[rgid].length; ++j) {
+			const ctab = rgroups[rgid][j];
 			ctab.rgroups.set(rgid, new Struct.RGroup());
-			var frag = {};
-			var frid = ctab.frags.add(frag);
+			const frag = {};
+			const frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
 			ctab.atoms.forEach((atom) => {
 				atom.fragment = frid;

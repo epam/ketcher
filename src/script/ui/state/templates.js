@@ -19,7 +19,7 @@ import sdf from '../../chem/sdf';
 import molfile from '../../chem/molfile';
 import { appUpdate } from './options';
 import { openDialog } from './';
-import { storage } from '../utils';
+import { storage } from '../storage-ext';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {

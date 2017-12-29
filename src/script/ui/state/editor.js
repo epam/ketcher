@@ -19,7 +19,7 @@ import { debounce } from 'lodash/fp';
 import element from '../../chem/element';
 import acts from '../action';
 import { openDialog } from './';
-import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../structconv';
+import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../data/convert/structconv';
 import { serverCall } from './server';
 
 export default function initEditor(dispatch, getState) {

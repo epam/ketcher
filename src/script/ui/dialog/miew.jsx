@@ -18,7 +18,7 @@ import { camelCase } from 'lodash/fp';
 import { h, Component } from 'preact';
 
 import Dialog from '../component/dialog';
-import { storage } from '../utils';
+import { storage } from '../storage-ext';
 
 const MIEW_PATH = '__MIEW_PATH__';
 const MIEW_OPTIONS = {

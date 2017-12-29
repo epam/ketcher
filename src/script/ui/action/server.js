@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { serverTransform } from '../state/server';
+import { miewAction } from '../state/miew';
 
 export default {
 	layout: {
@@ -54,5 +55,25 @@ export default {
 			thunk: serverTransform('calculateCip')
 		},
 		disabled: (editor, server, options) => !options.app.server
+	},
+	check: {
+		title: 'Check Structure',
+		action: { dialog: 'check' },
+		disabled: (editor, server, options) => !options.app.server
+	},
+	analyse: {
+		title: 'Calculated Values',
+		action: { dialog: 'analyse' },
+		disabled: (editor, server, options) => !options.app.server
+	},
+	recognize: {
+		title: 'Recognize Molecule',
+		action: { dialog: 'recognize' },
+		disabled: (editor, server, options) => !options.app.server
+	},
+	miew: {
+		title: '3D Viewer',
+		action: { thunk: miewAction	},
+		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
 	}
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getDefaultOptions } from '../data/options-schema';
+import { getDefaultOptions } from '../data/schema/options-schema';
 import { initSdata, sdataReducer } from './sdata';
 
 export const formsState = {

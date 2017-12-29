@@ -16,9 +16,9 @@
 
 import { capitalize } from 'lodash/fp';
 
-import Struct from '../chem/struct';
-import element from '../chem/element';
-import { sdataSchema } from './data/sdata-schema';
+import Struct from '../../../chem/struct/index';
+import element from '../../../chem/element';
+import { sdataSchema } from '../schema/sdata-schema';
 
 export function fromElement(selem) {
 	if (selem.label === 'R#') {

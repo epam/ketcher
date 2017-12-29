@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { openDialog, load } from './';
-import * as structFormat from '../structformat';
+import * as structFormat from '../data/convert/structformat';
 
 export function miewAction(dispatch, getState) {
 	const editor = getState().editor;

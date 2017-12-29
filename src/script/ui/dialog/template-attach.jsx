@@ -20,7 +20,7 @@ import { connect } from 'preact-redux';
 import Dialog from '../component/dialog';
 import Input from '../component/input';
 import StructEditor from '../component/structeditor';
-import { storage } from '../utils';
+import { storage } from '../storage-ext';
 
 import { initAttach, setAttachPoints, setTmplName } from '../state/templates';
 

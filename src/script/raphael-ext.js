@@ -16,8 +16,8 @@
 
 // Single entry point to Raphaël library
 
-const Raphael = require('raphael');
-const Vec2 = require('./util/vec2');
+import Raphael from 'raphael';
+import Vec2 from './util/vec2';
 
 // TODO: refactor ugly prototype extensions to plain old functions
 Raphael.el.translateAbs = function (x, y) {
@@ -33,4 +33,4 @@ Raphael.st.translateAbs = function (x, y) {
 	});
 };
 
-module.exports = Raphael;
+export default Raphael;

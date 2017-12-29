@@ -19,9 +19,9 @@ import { connect } from 'preact-redux';
 import { updateFormState, setDefaultSettings } from '../state/form';
 import { saveSettings } from '../state/options';
 
-import settingsSchema from '../data/options-schema';
+import settingsSchema from '../data/schema/options-schema';
 import Form, { Field } from '../component/form';
-import { storage } from '../utils';
+import { storage } from '../storage-ext';
 
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';

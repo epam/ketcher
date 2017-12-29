@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import molfile from '../chem/molfile';
-import smiles from '../chem/smiles';
+import molfile from '../../../chem/molfile/index';
+import smiles from '../../../chem/smiles/index';
 
 export const map = {
 	mol: {

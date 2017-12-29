@@ -21,7 +21,7 @@ import queryString from 'query-string';
 import api from './api';
 import * as molfile from './chem/molfile';
 import * as smiles from './chem/smiles';
-import * as structformat from './ui/structformat';
+import * as structformat from './ui/data/convert/structformat';
 
 import ui from './ui';
 import Render from './render';

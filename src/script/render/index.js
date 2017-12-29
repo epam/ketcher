@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Raphael = require('../raphael-ext');
+var Raphael = require('../raphael-ext').default;
 var Box2Abs = require('../util/box2abs');
 var Vec2 = require('../util/vec2');
 var scale = require('../util/scale');

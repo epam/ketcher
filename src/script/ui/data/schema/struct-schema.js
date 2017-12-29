@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { mapOf } from './schema-helper';
+
 export const atom = {
 	title: 'Atom',
 	type: 'object',
@@ -178,7 +180,7 @@ export const bond = {
 	}
 };
 
-export const sgroup = {
+const sgroup = {
 	title: 'SGroup',
 	type: 'object',
 	required: ['type'],
@@ -249,6 +251,7 @@ export const sgroup = {
 		}
 	]
 };
+export const sgroupMap = mapOf(sgroup, 'type');
 
 export const rgroup = {
 	title: 'R-Group',

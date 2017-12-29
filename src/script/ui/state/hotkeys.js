@@ -17,11 +17,11 @@
 import { isEqual, debounce } from 'lodash/fp';
 
 import molfile from '../../chem/molfile';
-import keyNorm from '../keynorm';
+import keyNorm from '../data/convert/keynorm';
 import actions from '../action';
 
 import * as clipArea from '../component/cliparea';
-import * as structFormat from '../structformat';
+import * as structFormat from '../data/convert/structformat';
 import { onAction, openDialog, load } from './';
 
 export function initKeydownListener(element) {

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { bond as bondSchema } from '../structschema';
-import { toBondType } from '../structconv';
+import { bond as bondSchema } from '../data/schema/struct-schema';
+import { toBondType } from '../data/convert/structconv';
 
 const toolActions = {
 	'select-lasso': {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { mapOf } from '../utils';
+import { mapOf } from './schema-helper';
 
 const radioButtonsSchema = {
 	enum: [

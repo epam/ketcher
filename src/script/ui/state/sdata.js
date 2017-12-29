@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { sdataSchema, getSdataDefault } from '../data/sdata-schema';
+import { sdataSchema, getSdataDefault } from '../data/schema/sdata-schema';
 
 export const initSdata = () => {
 	const context = getSdataDefault();

@@ -26,7 +26,7 @@ import Tabs from '../component/tabs';
 
 import GenericGroups from './generic-groups';
 
-import { fromElement, toElement } from '../structconv';
+import { fromElement, toElement } from '../data/convert/structconv';
 import { onAction } from '../state';
 import { addAtoms } from '../state/toolbar';
 

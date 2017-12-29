@@ -17,7 +17,7 @@
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
-import { map as formatMap } from '../structformat';
+import { map as formatMap } from '../data/convert/structformat';
 import Dialog from '../component/dialog';
 import OpenButton from '../component/openbutton';
 import ClipArea, { exec } from '../component/cliparea';

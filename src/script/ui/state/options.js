@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { pick } from 'lodash/fp';
-import { SERVER_OPTIONS, getDefaultOptions, validation } from '../data/options-schema';
-import { storage } from '../utils';
+import { SERVER_OPTIONS, getDefaultOptions, validation } from '../data/schema/options-schema';
+import { storage } from '../storage-ext';
 
 export const optionsState = {
 	app: {

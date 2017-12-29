@@ -20,7 +20,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { logger } from 'redux-logger';
 
-import * as structFormat from '../structformat';
+import * as structFormat from '../data/convert/structformat';
 import { formsState, formReducer } from './form';
 import { optionsState, optionsReducer } from './options';
 import { initTmplState, templatesReducer } from './templates';

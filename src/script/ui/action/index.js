@@ -23,7 +23,6 @@ import server from './server';
 import debug from './debug';
 import templates from './templates';
 import { exec } from '../component/cliparea';
-import { miewAction } from '../state/miew';
 
 export default {
 	new: {
@@ -94,26 +93,6 @@ export default {
 			actions && // TMP
 				actions.active && actions.active.tool === 'paste'
 		)
-	},
-	check: {
-		title: 'Check Structure',
-		action: { dialog: 'check' },
-		disabled: (editor, server, options) => !options.app.server
-	},
-	analyse: {
-		title: 'Calculated Values',
-		action: { dialog: 'analyse' },
-		disabled: (editor, server, options) => !options.app.server
-	},
-	recognize: {
-		title: 'Recognize Molecule',
-		action: { dialog: 'recognize' },
-		disabled: (editor, server, options) => !options.app.server
-	},
-	miew: {
-		title: '3D Viewer',
-		action: { thunk: miewAction	},
-		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
 	},
 	settings: {
 		title: 'Settings',

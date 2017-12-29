@@ -17,7 +17,7 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import { rgroup as rgroupSchema } from '../structschema';
+import { rgroup as rgroupSchema } from '../data/schema/struct-schema';
 import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 

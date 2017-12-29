@@ -59,11 +59,7 @@ export const formsState = { // TODO: create from schema.{smth}.defaultValue
 	},
 	check: {
 		errors: {},
-		moleculeErrors: {},
-		result: {
-			checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
-				'overlapping_bonds', 'rgroups', 'chiral', '3d', 'chiral_flag']
-		}
+		moleculeErrors: {}
 	},
 	labelEdit: {
 		errors: {},

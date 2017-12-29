@@ -21,6 +21,7 @@ import Dialog from '../../component/dialog';
 import Tabs from '../../component/view/tabs';
 import Form, { Field } from '../../component/form/form';
 import { check } from '../../state/server';
+import { checkOpts } from '../../state/options';
 
 const checkSchema = {
 	title: 'Check',
@@ -45,9 +46,8 @@ function getOptionName(opt) {
 
 function Check(props) {
 	const tabs = ['Check', 'Settings'];
-	const { formState, onCheck, ...prop } = props;
-	const { result, moleculeErrors } = formState;
-
+	const { formState, checkState, onCheck, ...prop } = props;
+	const { result = checkState, moleculeErrors } = formState;
 	return (
 		<Dialog
 			title="Structure Check"
@@ -55,7 +55,11 @@ function Check(props) {
 			result={() => result}
 			params={prop}
 		>
-			<Form schema={checkSchema} {...formState}>
+			<Form
+				schema={checkSchema}
+				init={checkState}
+				{...formState}
+			>
 				<Tabs
 					className="tabs"
 					captions={tabs}
@@ -88,9 +92,16 @@ function ErrorsCheck(props) {
 }
 
 export default connect(
-	store => ({	formState: store.modal.form }),
+	store => ({
+		formState: store.modal.form,
+		checkState: store.options.check
+	}),
 	(dispatch, props) => ({
 		onCheck: opts => dispatch(check(opts))
-			.catch(props.onCancel)
+			.catch(props.onCancel),
+		onOk: (res) => {
+			dispatch(checkOpts(res));
+			props.onOk(res);
+		}
 	})
 )(Check);

@@ -29,6 +29,10 @@ export const initOptionsState = {
 		roundWeight: 3,
 		roundMass: 3
 	},
+	check: {
+		checkOptions: ['valence', 'radicals', 'pseudoatoms', 'stereo', 'query', 'overlapping_atoms',
+			'overlapping_bonds', 'rgroups', 'chiral', '3d', 'chiral_flag']
+	},
 	recognize: {
 		file: null,
 		structStr: null,
@@ -95,6 +99,13 @@ export function shouldFragment(isFrag) {
 	};
 }
 
+export function checkOpts(data) {
+	return {
+		type: 'SAVE_CHECK_OPTS',
+		data
+	};
+}
+
 /* REDUCER */
 function optionsReducer(state = {}, action) {
 	const { type, data } = action;
@@ -105,12 +116,14 @@ function optionsReducer(state = {}, action) {
 	if (type === 'SAVE_SETTINGS')
 		return { ...state, settings: data };
 
+	if (type === 'SAVE_CHECK_OPTS')
+		return { ...state, check: data };
+
 	if (type === 'CHANGE_ANALYSE')
 		return { ...state, analyse: { ...state.analyse, ...data } };
 
 	if (recognizeActions.includes(type))
 		return { ...state, recognize: { ...state.recognize, ...data } };
-
 	return state;
 }
 

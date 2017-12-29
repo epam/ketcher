@@ -64,10 +64,10 @@ function propsDialog(editor, id, pos) {
 
 		if (!id && id !== 0 && elem.rglabel) {
 			editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
-		} else if (rglabel !== elem.rglabel || label !== 'R#') {
+		} else if (rglabel !== elem.rglabel) {
 			elem.aam = atom.aam; // WTF??
 
-			if (!elem.rglabel)
+			if (!elem.rglabel && label !== 'R#')
 				elem.label = label;
 
 			editor.update(fromAtomsAttrs(editor.render.ctab, id, elem));

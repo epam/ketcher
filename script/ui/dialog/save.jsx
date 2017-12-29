@@ -61,7 +61,7 @@ class Save extends Component {
 		});
 
 		this.changeType(this.isRxn ? 'rxn' : 'mol')
-			.catch(props.onCancel);
+			.then(res => (res instanceof Error ? props.onCancel() : null));
 	}
 
 	changeType(type) {
@@ -74,7 +74,7 @@ class Save extends Component {
 			},
 			(e) => {
 				alert(e.message); // eslint-disable-line no-undef
-				throw e;
+				return e;
 			}
 		);
 	}

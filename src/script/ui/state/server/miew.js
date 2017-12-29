@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { openDialog, load } from './';
-import * as structFormat from '../data/convert/structformat';
+import { openDialog } from '../modal';
+import { load } from '../shared';
+import * as structFormat from '../../data/convert/structformat';
 
 export function miewAction(dispatch, getState) {
 	const editor = getState().editor;

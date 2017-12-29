@@ -16,11 +16,12 @@
 
 import { debounce } from 'lodash/fp';
 
-import element from '../../chem/element';
-import acts from '../action';
-import { openDialog } from './';
-import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../data/convert/structconv';
-import { serverCall } from './server';
+import element from '../../../chem/element';
+import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../../data/convert/structconv';
+import acts from '../../action';
+
+import { openDialog } from '../modal';
+import { serverCall } from '../server';
 
 export default function initEditor(dispatch, getState) {
 	const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));

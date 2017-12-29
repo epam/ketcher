@@ -19,7 +19,7 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
 import Input from './input';
-import { updateFormState } from '../state/form';
+import { updateFormState } from '../state/modal/form';
 
 class Form extends Component {
 	constructor({ onUpdate, schema, init, ...props }) {

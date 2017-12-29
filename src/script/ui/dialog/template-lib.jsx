@@ -30,7 +30,7 @@ import Input from '../component/input';
 import SelectList from '../component/select';
 
 import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templates';
-import { onAction } from '../state/';
+import { onAction } from '../state';
 
 const GREEK_SIMBOLS = {
 	Alpha: 'A',

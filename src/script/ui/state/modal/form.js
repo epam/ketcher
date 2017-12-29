@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getDefaultOptions } from '../data/schema/options-schema';
+import { getDefaultOptions } from '../../data/schema/options-schema';
 import { initSdata, sdataReducer } from './sdata';
 
-export const formsState = {
+export const formsState = { // TODO: create from schema.{smth}.defaultValue
 	atomProps: {
 		errors: {},
 		valid: true,

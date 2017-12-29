@@ -20,113 +20,27 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { logger } from 'redux-logger';
 
-import * as structFormat from '../data/convert/structformat';
-import { formsState, formReducer } from './form';
-import { optionsState, optionsReducer } from './options';
-import { initTmplState, templatesReducer } from './templates';
+import actionStateReducer from './action';
+import modalReducer from './modal';
+import optionsReducer, { initOptionsState } from './options';
+import templatesReducer, { initTmplsState } from './templates';
+import toolbarReducer from './toolbar';
 
-import actionState from './action';
-import toolbar from './toolbar';
+import { onAction, load } from './shared';
 
-function modal(state = null, action) {
-	const { type, data } = action;
-
-	if (type === 'UPDATE_FORM') {
-		const formState = formReducer(state.form, action, state.name);
-		return { ...state, form: formState };
-	}
-
-	switch (type) {
-	case 'MODAL_CLOSE':
-		return null;
-	case 'MODAL_OPEN':
-		return {
-			name: data.name,
-			form: formsState[data.name] || null,
-			prop: data.prop || null
-		};
-	default:
-		return state;
-	}
-}
+export { onAction, load };
 
 const shared = combineReducers({
-	actionState,
-	toolbar,
-	modal,
+	actionState: actionStateReducer,
+	toolbar: toolbarReducer,
+	modal: modalReducer,
 	server: (store = null) => store,
 	editor: (store = null) => store,
 	options: optionsReducer,
 	templates: templatesReducer
 });
 
-export function onAction(action) {
-	if (action && action.dialog) {
-		return {
-			type: 'MODAL_OPEN',
-			data: { name: action.dialog }
-		};
-	}
-	if (action && action.thunk)
-		return action.thunk;
-
-	return {
-		type: 'ACTION',
-		action
-	};
-}
-
-export function openDialog(dispatch, dialogName, props) {
-	return new Promise((resolve, reject) => {
-		dispatch({
-			type: 'MODAL_OPEN',
-			data: {
-				name: dialogName,
-				prop: {
-					...props,
-					onResult: resolve,
-					onCancel: reject
-				}
-			}
-		});
-	});
-}
-
-export function load(structStr, options) {
-	return (dispatch, getState) => {
-		const state = getState();
-		const editor = state.editor;
-		const server = state.server;
-
-		options = options || {};
-		// TODO: check if structStr is parsed already
-		// utils.loading('show');
-		const parsed = structFormat.fromString(structStr, options, server);
-
-		parsed.catch(() => {
-			// utils.loading('hide');
-			alert('Can\'t parse molecule!'); // eslint-disable-line no-undef
-		});
-
-		return parsed.then((struct) => {
-			// utils.loading('hide');
-			console.assert(struct, 'No molecule to update');
-			if (options.rescale)
-				struct.rescale(); // TODO: move out parsing?
-
-			if (options.fragment && !struct.isBlank())
-				dispatch(onAction({ tool: 'paste', opts: struct }));
-			else
-				editor.struct(struct);
-
-			return struct;
-		}, (err) => {
-			alert(err.message); // eslint-disable-line no-undef
-			// TODO: notification
-		});
-	};
-}
-
+/* ROOT REDUCER */
 function root(state, action) {
 	switch (action.type) { // eslint-disable-line default-case
 	case 'INIT':
@@ -151,11 +65,11 @@ export default function (options, server) {
 	// TODO: redux localStorage here
 	const initState = {
 		actionState: null,
-		options: Object.assign(optionsState, { app: options }),
-		server: server || Promise.reject('Standalone mode!'),
 		editor: null,
 		modal: null,
-		templates: initTmplState
+		options: Object.assign(initOptionsState, { app: options }),
+		server: server || Promise.reject('Standalone mode!'),
+		templates: initTmplsState
 	};
 
 	const middleware = [thunk];

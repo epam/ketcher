@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { isEqual, isEmpty, pickBy } from 'lodash/fp';
-import acts from '../action';
+import acts from '../../action';
 
 function execute(activeTool, { action, editor, server, options }) {
 	if (action.tool) {

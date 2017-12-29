@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { serverTransform } from '../state/server';
-import { miewAction } from '../state/miew';
+import { miewAction } from '../state/server/miew';
 
 export default {
 	layout: {

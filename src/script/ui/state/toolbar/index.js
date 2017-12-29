@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { capitalize, throttle, isEqual } from 'lodash/fp';
-import { basic as basicAtoms } from '../action/atoms';
-import tools from '../action/tools';
+import { basic as basicAtoms } from '../../action/atoms';
+import tools from '../../action/tools';
 
 const initial = {
 	freqAtoms: [],
@@ -61,6 +61,7 @@ export function initIcons(cacheEl) {
 	});
 }
 
+/* REDUCER */
 export default function (state = initial, action) {
 	const { type, data } = action;
 
@@ -88,6 +89,7 @@ export default function (state = initial, action) {
 		return state;
 	}
 }
+/* ------- */
 
 function addFreqAtom(label, freqAtoms, index) {
 	label = capitalize(label);

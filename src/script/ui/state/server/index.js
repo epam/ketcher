@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import { omit, without } from 'lodash/fp';
-import Pool from '../../util/pool';
+import Pool from '../../../util/pool';
 
-import molfile from '../../chem/molfile';
+import molfile from '../../../chem/molfile';
 
-import { setStruct, appUpdate } from './options';
-import { checkErrors } from './form';
-import { load } from './';
+import { setStruct, appUpdate } from '../options';
+import { checkErrors } from '../modal/form';
+import { load } from '../shared';
 
 export function checkServer() {
 	return (dispatch, getState) => {

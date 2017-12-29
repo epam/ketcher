@@ -15,10 +15,11 @@
  ***************************************************************************/
 
 import { pick } from 'lodash/fp';
-import { SERVER_OPTIONS, getDefaultOptions, validation } from '../data/schema/options-schema';
-import { storage } from '../storage-ext';
 
-export const optionsState = {
+import { SERVER_OPTIONS, getDefaultOptions, validation } from '../../data/schema/options-schema';
+import { storage } from '../../storage-ext';
+
+export const initOptionsState = {
 	app: {
 		server: false,
 		templates: false
@@ -94,7 +95,8 @@ export function shouldFragment(isFrag) {
 	};
 }
 
-export function optionsReducer(state = {}, action) {
+/* REDUCER */
+function optionsReducer(state = {}, action) {
 	const { type, data } = action;
 
 	if (type === 'APP_OPTIONS')
@@ -111,3 +113,5 @@ export function optionsReducer(state = {}, action) {
 
 	return state;
 }
+
+export default optionsReducer;

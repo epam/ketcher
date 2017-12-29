@@ -16,13 +16,13 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { updateFormState, setDefaultSettings } from '../state/form';
+import { updateFormState, setDefaultSettings } from '../state/modal/form';
 import { saveSettings } from '../state/options';
 
 import settingsSchema from '../data/schema/options-schema';
-import Form, { Field } from '../component/form';
 import { storage } from '../storage-ext';
 
+import Form, { Field } from '../component/form';
 import Dialog from '../component/dialog';
 import Accordion from '../component/accordion';
 import SystemFonts from '../component/systemfonts';

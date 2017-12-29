@@ -44,7 +44,7 @@ export function toElement(elem) {
 	if (elem.type === 'rlabel') {
 		return {
 			label: elem.values.length ? 'R#' : 'C',
-			rglabel: toRlabel(elem.values)
+			rglabel: elem.values.length === 0 ? null : toRlabel(elem.values)
 		};
 	}
 	if (elem.type === 'list' || elem.type === 'not-list')

@@ -37,7 +37,6 @@ function SGroupTool(editor, type) {
 		var id = sgroups.find((_, sgroup) => isEqual(sgroup.atoms, selectedAtoms));
 
 		sgroupDialog(editor, id !== undefined ? id : null, type);
-		editor.selection(null);
 		return null;
 	}
 
@@ -93,6 +92,11 @@ SGroupTool.prototype.mouseup = function (event) {
 	// TODO: handle click on an existing group?
 	if (id !== null || (selection && selection.atoms))
 		sgroupDialog(this.editor, id, this.type);
+};
+
+SGroupTool.prototype.cancel = function () {
+	if (this.lassoHelper.running()) this.lassoHelper.end();
+	this.editor.selection(null);
 };
 
 export function sgroupDialog(editor, id, defaultType) {

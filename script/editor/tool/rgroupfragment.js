@@ -69,4 +69,8 @@ RGroupFragmentTool.prototype.click = function (event) {
 	return true;
 };
 
+RGroupFragmentTool.prototype.cancel = function () {
+	this.editor.hover(null);
+};
+
 export default RGroupFragmentTool;

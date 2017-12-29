@@ -21,13 +21,14 @@ export function miewAction(dispatch, getState) {
 	const editor = getState().editor;
 	const server = getState().server;
 
-	const convert = structFormat.toString(editor.struct(), 'cml', server);
-	convert.then((cml) => {
-		openDialog(dispatch, 'miew', {
-			structStr: cml
-		}).then((res) => {
-			if (res.structStr)
-				dispatch(load(res.structStr));
-		});
-	});
+	structFormat.toString(editor.struct(), 'cml', server)
+		.then((cml) => {
+			openDialog(dispatch, 'miew', {
+				structStr: cml
+			}).then((res) => {
+				if (res.structStr)
+					dispatch(load(res.structStr));
+			});
+		})
+		.catch(e => alert(e.message)); // eslint-disable-line no-undef
 }

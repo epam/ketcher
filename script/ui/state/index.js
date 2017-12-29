@@ -121,7 +121,7 @@ export function load(structStr, options) {
 
 			return struct;
 		}, (err) => {
-			alert(err); // eslint-disable-line no-undef
+			alert(err.message); // eslint-disable-line no-undef
 			// TODO: notification
 		});
 	};

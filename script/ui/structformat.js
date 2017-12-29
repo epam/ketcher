@@ -107,7 +107,7 @@ export function toString(struct, format, server, serverOpts) {
 					output_format: map[format].mime
 				}, serverOpts))
 				.catch((err) => {
-					throw Error(`Convert error:\n${err.message}`);
+					throw Error(`Convert error!\n${err.message}`);
 				})
 				.then(res => res.struct);
 			resolve(converting);
@@ -136,7 +136,7 @@ export function fromString(structStr, opts, server, serverOpts) {
 					}, serverOpts)
 				))
 				.catch((err) => {
-					throw Error(`Convert error:\n${err.message}`);
+					throw Error(`Convert error!\n${err.message}`);
 				})
 				.then((res) => {
 					const struct = molfile.parse(res.struct);

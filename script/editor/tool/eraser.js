@@ -90,4 +90,9 @@ EraserTool.prototype.click = function (event) {
 
 EraserTool.prototype.mouseleave = EraserTool.prototype.mouseup;
 
+EraserTool.prototype.cancel = function () {
+	if (this.lassoHelper.running()) this.lassoHelper.end();
+	this.editor.selection(null);
+};
+
 export default EraserTool;

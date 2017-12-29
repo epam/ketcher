@@ -35,24 +35,30 @@ class ClipArea extends Component {
 			copy: (event) => {
 				if (this.props.focused() && this.props.onCopy) {
 					const data = this.props.onCopy();
+
 					if (data)
 						copy(event.clipboardData, data);
+
 					event.preventDefault();
 				}
 			},
 			cut: (event) => {
 				if (this.props.focused() && this.props.onCut) {
 					const data = this.props.onCut();
+
 					if (data)
 						copy(event.clipboardData, data);
+
 					event.preventDefault();
 				}
 			},
 			paste: (event) => {
 				if (this.props.focused() && this.props.onPaste) {
 					const data = paste(event.clipboardData, this.props.formats);
+
 					if (data)
 						this.props.onPaste(data);
+
 					event.preventDefault();
 				}
 			}

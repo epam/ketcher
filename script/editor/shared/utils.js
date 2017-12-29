@@ -58,10 +58,8 @@ function mergeBondsParams(struct1, bond1, struct2, bond2) {
 
 	const scale = Vec2.dist(begin1.pp, end1.pp) / Vec2.dist(begin2.pp, end2.pp);
 
-	let merged = true;
-	if (inRange(mergeAngle, BONDS_MERGE_ANGLE, 180 - BONDS_MERGE_ANGLE) ||
-		!inRange(scale, 1 - BONDS_MERGE_SCALE, 1 + BONDS_MERGE_SCALE))
-		merged = false;
+	const merged = !inRange(mergeAngle, BONDS_MERGE_ANGLE, 180 - BONDS_MERGE_ANGLE) &&
+		inRange(scale, 1 - BONDS_MERGE_SCALE, 1 + BONDS_MERGE_SCALE);
 
 	return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }

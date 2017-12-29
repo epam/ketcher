@@ -108,6 +108,8 @@ function checkGroupOnTool(group, actionTool) {
 	return index;
 }
 
+const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
+
 /* ClipArea */
 export function initClipboard(dispatch, getState) {
 	const formats = Object.keys(structFormat.map).map(fmt => structFormat.map[fmt].mime);
@@ -121,8 +123,10 @@ export function initClipboard(dispatch, getState) {
 			return !getState().modal;
 		},
 		onCut() {
-			const data = clipData(getState().editor);
-			debAction({ tool: 'eraser', opts: 1 });
+			const editor = getState().editor;
+			const data = clipData(editor);
+			if (data) debAction({ tool: 'eraser', opts: 1 });
+			else editor.selection(null);
 			return data;
 		},
 		onCopy() {
@@ -136,7 +140,9 @@ export function initClipboard(dispatch, getState) {
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
 
-			if (structStr)
+			const struct = getState().editor.render.ctab.molecule;
+
+			if (structStr && (!struct.hasRxnArrow() || !rxnTextPlain.test(data['text/plain'])))
 				loadStruct(structStr, { fragment: true });
 		}
 	};
@@ -152,10 +158,16 @@ function clipData(editor) {
 	const type = struct.isReaction ?
 		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 
-	const data = molfile.stringify(struct);
-	res['text/plain'] = data;
-	res[type] = data;
-	// res['chemical/x-daylight-smiles'] =
-	// smiles.stringify(struct);
-	return res;
+	try {
+		const data = molfile.stringify(struct);
+		res['text/plain'] = data;
+		res[type] = data;
+		// res['chemical/x-daylight-smiles'] =
+		// smiles.stringify(struct);
+		return res;
+	} catch (ex) {
+		alert(ex.message); // eslint-disable-line no-undef
+	}
+
+	return null;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { omit } from 'lodash/fp';
+import { omit, without } from 'lodash/fp';
 import Pool from '../../util/pool';
 
 import molfile from '../../chem/molfile';
@@ -57,11 +57,16 @@ export function check(optsTypes) {
 	return (dispatch, getState) => {
 		const { editor, server } = getState();
 		const options = getState().options.getServerSettings();
-		options.data = { types: optsTypes };
 
-		serverCall(editor, server, 'check', options)
-			.then(res => dispatch(checkErrors(res)))
-			.catch(console.error);
+		const isChiral = editor.struct().isChiral;
+		options.data = { types: without(['chiral_flag'], optsTypes) };
+
+		return serverCall(editor, server, 'check', options)
+			.then((res) => {
+				if (isChiral === true && optsTypes.includes('chiral_flag')) res['chiral_flag'] = 'Chiral flag presence';
+				dispatch(checkErrors(res));
+			})
+			.catch((e) => { alert(`Failed check!\n${e.message}`); throw e; }); // eslint-disable-line no-undef
 		// TODO: notification
 	};
 }
@@ -79,12 +84,12 @@ export function analyse() {
 				'monoisotopic-mass', 'gross', 'mass-composition']
 		};
 
-		serverCall(editor, server, 'calculate', options)
+		return serverCall(editor, server, 'calculate', options)
 			.then(values => dispatch({
 				type: 'CHANGE_ANALYSE',
 				data: { values }
 			}))
-			.catch(alert); // eslint-disable-line no-undef
+			.catch((e) => { alert(e.message); throw e; }); // eslint-disable-line no-undef
 		// TODO: notification
 	};
 }
@@ -96,8 +101,11 @@ export function serverTransform(method, data, struct) {
 		opts.data = data;
 
 		serverCall(state.editor, state.server, method, opts, struct)
-			.then(res => dispatch(load(res.struct, { rescale: method === 'layout' })))
-			.catch(alert); // eslint-disable-line no-undef
+			.then(res => dispatch(load(res.struct, {
+				rescale: method === 'layout',
+				reactionRelayout: method === 'clean'
+			})))
+			.catch(e => alert(e.message)); // eslint-disable-line no-undef
 		// TODO: notification
 	};
 }

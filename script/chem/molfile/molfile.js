@@ -27,10 +27,10 @@ function Molfile(v3000) {
 	this.v3000 = v3000 || false;
 }
 
-Molfile.prototype.parseCTFile = function (molfileLines) {
+Molfile.prototype.parseCTFile = function (molfileLines, shouldReactionRelayout) {
 	var ret = null;
 	if (molfileLines[0].search('\\$RXN') == 0)
-		ret = common.parseRxn(molfileLines);
+		ret = common.parseRxn(molfileLines, shouldReactionRelayout);
 	else
 		ret = common.parseMol(molfileLines);
 	ret.initHalfBonds();
@@ -52,7 +52,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 			common.prepareForSaving[sgroup.type](sgroup, mol);
 		} catch (ex) {
 			if (!skipErrors || typeof (ex.id) != 'number')
-				throw ex;
+				throw new Error(`Error: ${ex.message}`);
 			errorIgnore = true;
 		}
 		/* eslint-disable no-mixed-operators*/
@@ -64,7 +64,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 		}
 	}, this);
 	if (errors)
-		throw new Error('WARNING: ' + errors + ' invalid S-groups were detected. They will be omitted.');
+		throw new Error('Warning: ' + errors + ' invalid S-groups were detected. They will be omitted.');
 
 	for (var i = 0; i < toRemove.length; ++i)
 		mol.sGroupDelete(toRemove[i]);

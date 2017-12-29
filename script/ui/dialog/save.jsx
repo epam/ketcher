@@ -49,8 +49,9 @@ const saveSchema = {
 class Save extends Component {
 	constructor(props) {
 		super(props);
+		this.isRxn = this.props.struct.hasRxnArrow();
 
-		const formats = [this.props.struct.hasRxnArrow() ? 'rxn' : 'mol', 'smiles'];
+		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles'];
 		if (this.props.server) formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml');
 
 		this.saveSchema = saveSchema;
@@ -59,8 +60,8 @@ class Save extends Component {
 			enumNames: formats.map(fmt => structFormat.map[fmt].name)
 		});
 
-		this.changeType(this.props.struct.hasRxnArrow() ? 'rxn' : 'mol')
-			.catch(props.onCancel);
+		this.changeType(this.isRxn ? 'rxn' : 'mol')
+			.then(res => (res instanceof Error ? props.onCancel() : null));
 	}
 
 	changeType(type) {
@@ -72,8 +73,8 @@ class Save extends Component {
 				setTimeout(() => this.textarea.select(), 10); // TODO: remove hack
 			},
 			(e) => {
-				this.setState(null);
-				alert(e); // eslint-disable-line no-undef
+				alert(e.message); // eslint-disable-line no-undef
+				return e;
 			}
 		);
 	}
@@ -109,7 +110,11 @@ class Save extends Component {
 					'Close'
 				]}
 			>
-				<Form schema={this.saveSchema} {...formState}>
+				<Form
+					schema={this.saveSchema}
+					init={{ filename, format: this.isRxn ? 'rxn' : 'mol' }}
+					{...formState}
+				>
 					<Field name="filename" />
 					<Field name="format" onChange={value => this.changeType(value)} />
 				</Form>

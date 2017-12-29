@@ -157,6 +157,7 @@ export function fromBondsMerge(restruct, mergeMap) {
 	atomPairs.forEach((dst, src) => {
 		action = fromAtomMerge(restruct, src, dst).mergeWith(action);
 	});
+
 	return action;
 }
 

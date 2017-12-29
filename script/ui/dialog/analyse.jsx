@@ -74,7 +74,8 @@ function FormulaInput({ value }) {
 class Analyse extends Component {
 	constructor(props) {
 		super(props);
-		props.onAnalyse();
+		props.onAnalyse()
+			.catch(props.onCancel);
 	}
 
 	render() {

@@ -935,7 +935,7 @@ Struct.prototype.getComponents = function () { // eslint-disable-line max-statem
 	components.forEach((component) => {
 		if (!component) {
 			submolTexts.push('');
-			return; // eslint-disable-line no-continue
+			return;
 		}
 
 		const rxnFragmentType = this.defineRxnFragmentTypeForAtomset(component, arrowPos);

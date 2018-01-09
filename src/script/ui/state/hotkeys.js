@@ -23,7 +23,7 @@ import actions from '../action';
 import * as clipArea from '../component/cliparea';
 import * as structFormat from '../data/convert/structformat';
 import { openDialog } from './modal';
-import { onAction, load } from './';
+import { onAction, load } from './shared';
 
 export function initKeydownListener(element) {
 	return function (dispatch, getState) {

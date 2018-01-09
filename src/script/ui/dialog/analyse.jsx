@@ -43,7 +43,7 @@ function formulaInputMarkdown(value) {
 	return (
 		<div
 			className="chem-input"
-			spellCheck={false}
+			spellCheck="false"
 			contentEditable
 			onKeyDown={ev => allowMovement(ev)}
 		>{value}

@@ -19,15 +19,15 @@ import { h } from 'preact';
 
 import classNames from 'classnames';
 
-import element from '../chem/element';
-import Atom from './component/atom';
-import Icon from './component/icon';
-import ActionMenu, { shortcutStr } from './component/actionmenu';
+import element from '../../chem/element';
+import Atom from '../component/atom';
+import Icon from '../component/icon';
+import ActionMenu, { shortcutStr } from '../component/actionmenu';
 
-import action from './action';
-import { atomCuts, basic as basicAtoms } from './action/atoms';
-import { zoomList } from './action/zoom';
-import templates from './data/templates';
+import action from '../action';
+import { atomCuts, basic as basicAtoms } from '../action/atoms';
+import { zoomList } from '../action/zoom';
+import templates from '../data/templates';
 
 const mainmenu = [
 	{

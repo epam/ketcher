@@ -14,32 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* schema utils */
-function constant(schema, prop) {
-	const desc = schema.properties[prop];
-	return desc.constant || desc.enum[0]; // see https://git.io/v6hyP
-}
+import { connect } from 'preact-redux';
+import initEditor from '../state/editor';
+import StructEditor from '../component/structeditor';
 
-export function mapOf(schema, prop) {
-	console.assert(schema.oneOf);
-	return schema.oneOf.reduce((res, desc) => {
-		res[constant(desc, prop)] = desc;
-		return res;
-	}, {});
-}
+const AppEditor = connect(
+	state => ({
+		options: state.options.settings
+	}),
+	dispatch => dispatch(initEditor)
+)(StructEditor);
 
-export function selectListOf(schema, prop) {
-	const desc = schema.properties && schema.properties[prop];
-	if (desc) {
-		return desc.enum.map((value, i) => {
-			const title = desc.enumNames && desc.enumNames[i];
-			return title ? { title, value } : value;
-		});
-	}
-	return schema.oneOf.map(ds => (
-		!ds.title ? constant(ds, prop) : {
-			title: ds.title,
-			value: constant(ds, prop)
-		}
-	));
-}
+export default AppEditor;

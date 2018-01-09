@@ -17,7 +17,7 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import Dialog from '../component/dialog';
+import Dialog from '../../component/dialog';
 
 function About(props) {
 	const [version, build] = props.indigoVersion.split('.r'); // Indigo version and build info

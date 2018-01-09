@@ -19,11 +19,11 @@ import { capitalize } from 'lodash/fp';
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import { atom as atomSchema } from '../data/schema/struct-schema';
-import Form, { Field } from '../component/form';
-import Dialog from '../component/dialog';
+import { atom as atomSchema } from '../../data/schema/struct-schema';
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
 
-import element from '../../chem/element';
+import element from '../../../chem/element';
 
 function ElementNumber(props, { stateStore }) {
 	const { result } = stateStore.props;

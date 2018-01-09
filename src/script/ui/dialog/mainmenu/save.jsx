@@ -16,12 +16,12 @@
 
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
-import * as structFormat from '../data/convert/structformat';
-import { saveUserTmpl } from '../state/templates';
+import * as structFormat from '../../data/convert/structformat';
+import { saveUserTmpl } from '../../state/templates';
 
-import Dialog from '../component/dialog';
-import Form, { Field } from '../component/form';
-import SaveButton from '../component/savebutton';
+import Dialog from '../../component/dialog';
+import Form, { Field } from '../../component/form/form';
+import SaveButton from '../../component/view/savebutton';
 
 const saveSchema = {
 	title: 'Save',

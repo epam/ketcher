@@ -17,10 +17,10 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import { sgroupMap as schemes } from '../data/schema/struct-schema';
+import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 
-import Form, { Field, SelectOneOf } from '../component/form';
-import Dialog from '../component/dialog';
+import Form, { Field, SelectOneOf } from '../../component/form/form';
+import Dialog from '../../component/dialog';
 
 function Sgroup({ formState, ...prop }) {
 	const { result, valid } = formState;

@@ -18,7 +18,7 @@ import { range } from 'lodash/fp';
 
 import { h, Component } from 'preact';
 
-import Dialog from '../component/dialog';
+import Dialog from '../../component/dialog';
 
 function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
 	return (

@@ -20,8 +20,8 @@ import { h } from 'preact';
 import classNames from 'classnames';
 
 import element from '../../chem/element';
-import Atom from '../component/atom';
-import Icon from '../component/icon';
+import Atom from '../component/view/atom';
+import Icon from '../component/view/icon';
 import ActionMenu, { shortcutStr } from '../component/actionmenu';
 
 import action from '../action';

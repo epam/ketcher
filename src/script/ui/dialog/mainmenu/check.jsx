@@ -17,10 +17,10 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import Dialog from '../component/dialog';
-import Tabs from '../component/tabs';
-import Form, { Field } from '../component/form';
-import { check } from '../state/server';
+import Dialog from '../../component/dialog';
+import Tabs from '../../component/view/tabs';
+import Form, { Field } from '../../component/form/form';
+import { check } from '../../state/server';
 
 const checkSchema = {
 	title: 'Check',

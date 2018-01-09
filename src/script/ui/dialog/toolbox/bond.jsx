@@ -15,29 +15,31 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-import element from '../../chem/element';
+import { connect } from 'preact-redux';
 
-const metPrefix = ['alkali', 'alkaline-earth', 'transition',
-	'post-transition']; // 'lanthanide', 'actinide'
+import { bond as bondSchema } from '../../data/schema/struct-schema';
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
 
-function atomClass(el) {
-	const own = `atom-${el.label.toLowerCase()}`;
-	const type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
-		(el.type || 'unknown-props');
-	return [own, type, el.state || 'unknown-state', el.origin];
-}
-
-function Atom({ el, shortcut, className, ...props }) {
+function Bond(props) {
+	const { formState, ...prop } = props;
 	return (
-		<button
-			title={shortcut ? `${el.title} (${shortcut})` : el.title}
-			className={[...atomClass(el), className].join(' ')}
-			value={element.map[el.label]}
-			{...props}
+		<Dialog
+			title="Bond Properties"
+			className="bond"
+			result={() => formState.result}
+			valid={() => formState.valid}
+			params={prop}
 		>
-			{el.label}
-		</button>
+			<Form schema={bondSchema} init={prop} {...formState}>
+				<Field name="type" />
+				<Field name="topology" />
+				<Field name="center" />
+			</Form>
+		</Dialog>
 	);
 }
 
-export default Atom;
+export default connect(
+	store => ({ formState: store.modal.form })
+)(Bond);

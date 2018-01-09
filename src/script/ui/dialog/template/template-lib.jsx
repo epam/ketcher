@@ -20,17 +20,17 @@ import { createSelector } from 'reselect';
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
-import sdf from '../../chem/sdf';
+import sdf from '../../../chem/sdf';
 
-import VisibleView from '../component/visibleview';
-import StructRender from '../component/structrender';
-import Dialog from '../component/dialog';
-import SaveButton from '../component/savebutton';
-import Input from '../component/input';
-import SelectList from '../component/select';
+import VisibleView from '../../component/view/visibleview';
+import StructRender from '../../component/structrender';
+import Dialog from '../../component/dialog';
+import SaveButton from '../../component/view/savebutton';
+import Input from '../../component/form/input';
+import SelectList from '../../component/form/select';
 
-import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../state/templates';
-import { onAction } from '../state';
+import { changeFilter, changeGroup, selectTmpl, editTmpl } from '../../state/templates';
+import { onAction } from '../../state';
 
 const GREEK_SIMBOLS = {
 	Alpha: 'A',

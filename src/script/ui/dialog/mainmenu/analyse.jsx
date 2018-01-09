@@ -19,11 +19,11 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
 import keyName from 'w3c-keyname';
-import Dialog from '../component/dialog';
-import Input from '../component/input';
+import Dialog from '../../component/dialog';
+import Input from '../../component/form/input';
 
-import { changeRound } from '../state/options';
-import { analyse } from '../state/server';
+import { changeRound } from '../../state/options';
+import { analyse } from '../../state/server';
 
 function FrozenInput({ value }) {
 	return (

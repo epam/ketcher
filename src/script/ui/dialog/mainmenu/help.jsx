@@ -16,7 +16,7 @@
 
 import { h } from 'preact';
 
-import Dialog from '../component/dialog';
+import Dialog from '../../component/dialog';
 
 function Help(props) {
 	return (

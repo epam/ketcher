@@ -15,30 +15,29 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-import { connect } from 'preact-redux';
+import element from '../../../chem/element';
 
-import { attachmentPoints as attachmentPointsSchema } from '../data/schema/struct-schema';
-import Form, { Field } from '../component/form';
-import Dialog from '../component/dialog';
+const metPrefix = ['alkali', 'alkaline-earth', 'transition',
+	'post-transition']; // 'lanthanide', 'actinide'
 
-function AttachmentPoints(props) {
-	const { formState, ...prop } = props;
+function atomClass(el) {
+	const own = `atom-${el.label.toLowerCase()}`;
+	const type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
+		(el.type || 'unknown-props');
+	return [own, type, el.state || 'unknown-state', el.origin];
+}
+
+function Atom({ el, shortcut, className, ...props }) {
 	return (
-		<Dialog
-			title="Attachment Points"
-			className="attach-points"
-			result={() => formState.result}
-			valid={() => formState.valid}
-			params={prop}
+		<button
+			title={shortcut ? `${el.title} (${shortcut})` : el.title}
+			className={[...atomClass(el), className].join(' ')}
+			value={element.map[el.label]}
+			{...props}
 		>
-			<Form schema={attachmentPointsSchema} init={prop} {...formState}>
-				<Field name="primary" />
-				<Field name="secondary" />
-			</Form>
-		</Dialog>
+			{el.label}
+		</button>
 	);
 }
 
-export default connect(
-	store => ({ formState: store.modal.form })
-)(AttachmentPoints);
+export default Atom;

@@ -1,5 +1,4 @@
 /****************************************************************************
-/****************************************************************************
  * Copyright 2017 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,47 +17,28 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import Form, { Field } from '../component/form';
-import Dialog from '../component/dialog';
-import { automap } from '../state/server';
+import { attachmentPoints as attachmentPointsSchema } from '../../data/schema/struct-schema';
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
 
-export const automapSchema = {
-	title: 'Reaction Auto-Mapping',
-	type: 'object',
-	required: ['mode'],
-	properties: {
-		mode: {
-			title: 'Mode',
-			enum: ['discard', 'keep', 'alter', 'clear'],
-			enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
-			default: 'discard'
-		}
-	}
-};
-
-function Automap(props) {
+function AttachmentPoints(props) {
 	const { formState, ...prop } = props;
 	return (
 		<Dialog
-			title="Reaction Auto-Mapping"
-			className="automap"
+			title="Attachment Points"
+			className="attach-points"
 			result={() => formState.result}
 			valid={() => formState.valid}
 			params={prop}
 		>
-			<Form schema={automapSchema} {...formState}>
-				<Field name="mode" />
+			<Form schema={attachmentPointsSchema} init={prop} {...formState}>
+				<Field name="primary" />
+				<Field name="secondary" />
 			</Form>
 		</Dialog>
 	);
 }
 
 export default connect(
-	store => ({ formState: store.modal.form }),
-	(dispatch, props) => ({
-		onOk: (res) => {
-			dispatch(automap(res));
-			props.onOk(res);
-		}
-	})
-)(Automap);
+	store => ({ formState: store.modal.form })
+)(AttachmentPoints);

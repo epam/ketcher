@@ -14,29 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open from './open';
-import Analyse from './analyse';
-import Recognize from './recognize';
-import PeriodTable from './period-table';
-import Rgroup from './rgroup';
-import TemplateAttach from './template-attach';
-import TemplatesLib from './template-lib';
-import About from './about';
-import Help from './help';
-import Miew from './miew';
+import Open from './mainmenu/open';
+import Analyse from './mainmenu/analyse';
+import Recognize from './mainmenu/recognize';
+import PeriodTable from './elements/period-table';
+import Rgroup from './toolbox/rgroup';
+import TemplateAttach from './template/template-attach';
+import TemplatesLib from './template/template-lib';
+import About from './mainmenu/about';
+import Help from './mainmenu/help';
+import Miew from './mainmenu/miew';
 
 // schemify dialogs
-import Atom from './atom';
-import AttachPoints from './attach';
-import Automap from './automap';
-import Bond from './bond';
-import Check from './check';
-import LabelEdit from './labeledit';
-import RgroupLogic from './rgroup-logic';
-import Save from './save';
-import Settings from './options';
-import Sgroup from './sgroup';
-import Sdata from './sdata';
+import Atom from './toolbox/atom';
+import AttachPoints from './toolbox/attach';
+import Automap from './toolbox/automap';
+import Bond from './toolbox/bond';
+import Check from './mainmenu/check';
+import LabelEdit from './toolbox/labeledit';
+import RgroupLogic from './toolbox/rgroup-logic';
+import Save from './mainmenu/save';
+import Settings from './mainmenu/options';
+import Sgroup from './toolbox/sgroup';
+import Sdata from './toolbox/sdata';
 
 export default {
 	open: Open,

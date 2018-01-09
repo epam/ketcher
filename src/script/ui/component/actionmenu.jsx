@@ -20,7 +20,7 @@ import classNames from 'classnames';
 
 import action from '../action';
 import { hiddenAncestor } from '../state/toolbar';
-import Icon from '../component/icon';
+import Icon from './view/icon';
 
 const isMac = /Mac/.test(navigator.platform); // eslint-disable-line no-undef
 const shortcutAliasMap = {

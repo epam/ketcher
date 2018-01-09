@@ -16,19 +16,19 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { updateFormState, setDefaultSettings } from '../state/modal/form';
-import { saveSettings } from '../state/options';
+import { updateFormState, setDefaultSettings } from '../../state/modal/form';
+import { saveSettings } from '../../state/options';
 
-import settingsSchema from '../data/schema/options-schema';
-import { storage } from '../storage-ext';
+import settingsSchema from '../../data/schema/options-schema';
+import { storage } from '../../storage-ext';
 
-import Form, { Field } from '../component/form';
-import Dialog from '../component/dialog';
-import Accordion from '../component/accordion';
-import SystemFonts from '../component/systemfonts';
-import SaveButton from '../component/savebutton';
-import OpenButton from '../component/openbutton';
-import MeasureInput from '../component/measure-input';
+import Form, { Field } from '../../component/form/form';
+import Dialog from '../../component/dialog';
+import Accordion from '../../component/view/accordion';
+import SystemFonts from '../../component/form/systemfonts';
+import SaveButton from '../../component/view/savebutton';
+import OpenButton from '../../component/view/openbutton';
+import MeasureInput from '../../component/form/measure-input';
 
 function Settings(props) {
 	const { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;

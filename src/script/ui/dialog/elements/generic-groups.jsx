@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-import generics from '../../chem/generics';
+import generics from '../../../chem/generics';
 
 const viewSchema = {
 	atom: {

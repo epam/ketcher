@@ -114,6 +114,18 @@ export const atom = {
 	}
 };
 
+export const labelEdit = {
+	title: 'Label Edit',
+	type: 'object',
+	required: ['label'],
+	properties: {
+		label: {
+			title: 'Atom',
+			default: ''
+		}
+	}
+};
+
 export const attachmentPoints = {
 	title: 'Attachment Points',
 	type: 'object',
@@ -253,7 +265,7 @@ const sgroup = {
 };
 export const sgroupMap = mapOf(sgroup, 'type');
 
-export const rgroup = {
+export const rgroupLogic = {
 	title: 'R-Group',
 	type: 'object',
 	properties: {

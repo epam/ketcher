@@ -19,16 +19,16 @@ import { range } from 'lodash/fp';
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
-import element from '../../chem/element';
-import Dialog from '../component/dialog';
-import Atom from '../component/atom';
-import Tabs from '../component/tabs';
+import element from '../../../chem/element';
+import Dialog from '../../component/dialog';
+import Atom from '../../component/view/atom';
+import Tabs from '../../component/view/tabs';
 
 import GenericGroups from './generic-groups';
 
-import { fromElement, toElement } from '../data/convert/structconv';
-import { onAction } from '../state';
-import { addAtoms } from '../state/toolbar';
+import { fromElement, toElement } from '../../data/convert/structconv';
+import { onAction } from '../../state';
+import { addAtoms } from '../../state/toolbar';
 
 const typeSchema = [
 	{ title: 'Single', value: 'atom' },

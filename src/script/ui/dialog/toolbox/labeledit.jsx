@@ -18,22 +18,11 @@ import { capitalize } from 'lodash/fp';
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import element from '../../chem/element';
+import element from '../../../chem/element';
+import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema';
 
-import Dialog from '../component/dialog';
-import Form, { Field } from '../component/form';
-
-export const labelEditSchema = {
-	title: 'Label Edit',
-	type: 'object',
-	required: ['label'],
-	properties: {
-		label: {
-			title: 'Atom',
-			default: ''
-		}
-	}
-};
+import Dialog from '../../component/dialog';
+import Form, { Field } from '../../component/form/form';
 
 function serialize(lc) {
 	const charge = Math.abs(lc.charge);

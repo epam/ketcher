@@ -16,10 +16,10 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import Form, { Field, SelectOneOf } from '../component/form';
-import Dialog from '../component/dialog';
-import ComboBox from '../component/combobox';
-import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../data/schema/sdata-schema';
+import Form, { Field, SelectOneOf } from '../../component/form/form';
+import Dialog from '../../component/dialog';
+import ComboBox from '../../component/form/combobox';
+import { sdataSchema, sdataCustomSchema, getSdataDefault } from '../../data/schema/sdata-schema';
 
 function SelectInput({ title, name, schema, ...prop }) {
 	const inputSelect = Object.keys(schema)

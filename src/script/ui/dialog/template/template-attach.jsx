@@ -17,12 +17,12 @@
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
-import Dialog from '../component/dialog';
-import Input from '../component/input';
-import StructEditor from '../component/structeditor';
-import { storage } from '../storage-ext';
+import Dialog from '../../component/dialog';
+import Input from '../../component/form/input';
+import StructEditor from '../../component/structeditor';
+import { storage } from '../../storage-ext';
 
-import { initAttach, setAttachPoints, setTmplName } from '../state/templates';
+import { initAttach, setAttachPoints, setTmplName } from '../../state/templates';
 
 const EDITOR_STYLES = {
 	selectionStyle: { fill: '#47b3ec', stroke: 'none' },

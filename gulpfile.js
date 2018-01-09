@@ -108,7 +108,7 @@ gulp.task('script', ['patch-version'], function () {
 				dead_code: true
 			}
 		}))
-		.pipe(plugins.header(fs.readFileSync('src/script/banner.js', 'utf8')))
+		.pipe(plugins.header(fs.readFileSync('src/script/util/banner.js', 'utf8')))
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));
 });
@@ -128,7 +128,7 @@ gulp.task('test-render', function () {
 		]
 	}).bundle()
 		.pipe(source('render-test.js'))
-		.pipe(plugins.header(fs.readFileSync('src/script/banner.js', 'utf8')))
+		.pipe(plugins.header(fs.readFileSync('src/script/util/banner.js', 'utf8')))
 		.pipe(gulp.dest('./test/dist'));
 });
 

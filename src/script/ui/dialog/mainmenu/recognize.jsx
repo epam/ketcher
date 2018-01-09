@@ -17,14 +17,15 @@
 import { h } from 'preact';
 import { connect } from 'preact-redux';
 
-import { changeImage, shouldFragment } from '../state/options';
-import { load } from '../state';
-import { recognize } from '../state/server';
-import Dialog from '../component/dialog';
-import Input from '../component/input';
-import StructRender from '../component/structrender';
-import OpenButton from '../component/openbutton';
-import Spin from '../component/spin';
+import { changeImage, shouldFragment } from '../../state/options';
+import { load } from '../../state';
+import { recognize } from '../../state/server';
+
+import Dialog from '../../component/dialog';
+import Input from '../../component/form/input';
+import StructRender from '../../component/structrender';
+import OpenButton from '../../component/view/openbutton';
+import Spin from '../../component/view/spin';
 
 function Recognize(prop) {
 	const { file, structStr, fragment, onRecognize, isFragment, onImage, ...props } = prop;

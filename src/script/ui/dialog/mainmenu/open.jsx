@@ -17,12 +17,12 @@
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
-import { map as formatMap } from '../data/convert/structformat';
-import Dialog from '../component/dialog';
-import OpenButton from '../component/openbutton';
-import ClipArea, { exec } from '../component/cliparea';
+import { map as formatMap } from '../../data/convert/structformat';
+import Dialog from '../../component/dialog';
+import OpenButton from '../../component/view/openbutton';
+import ClipArea, { exec } from '../../component/cliparea';
 
-import { load } from '../state';
+import { load } from '../../state';
 
 class Open extends Component {
 	constructor(props) {

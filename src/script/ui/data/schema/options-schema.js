@@ -32,27 +32,6 @@ const editor = {
 	}
 };
 
-const miew = {
-	miewMode: {
-		title: 'Display mode',
-		enum: ['lines', 'balls and sticks', 'licorice'],
-		enumNames: ['Lines', 'Balls and Sticks', 'Licorice'],
-		default: 'lines'
-	},
-	miewTheme: {
-		title: 'Background color',
-		enum: ['light', 'dark'],
-		enumNames: ['Light', 'Dark'],
-		default: 'light'
-	},
-	miewAtomLabel: {
-		title: 'Label coloring',
-		enum: ['no', 'bright', 'inverse', 'black and white', 'black'],
-		enumNames: ['No', 'Bright', 'Inverse', 'Black and White', 'Black'],
-		default: 'bright'
-	}
-};
-
 const render = {
 	showValenceWarnings: {
 		title: 'Show valence warnings',
@@ -191,6 +170,29 @@ const debug = {
 	}
 };
 
+const miew = {
+	miewMode: {
+		title: 'Display mode',
+		enum: ['lines', 'ballsAndSticks', 'licorice'],
+		enumNames: ['Lines', 'Balls and Sticks', 'Licorice'],
+		default: 'lines'
+	},
+	miewTheme: {
+		title: 'Background color',
+		enum: ['light', 'dark'],
+		enumNames: ['Light', 'Dark'],
+		default: 'light'
+	},
+	miewAtomLabel: {
+		title: 'Label coloring',
+		enum: ['no', 'bright', 'inverse', 'blackAndWhite', 'black'],
+		enumNames: ['No', 'Bright', 'Inverse', 'Black and White', 'Black'],
+		default: 'bright'
+	}
+};
+
+export const MIEW_OPTIONS = Object.keys(miew);
+
 const optionsSchema = {
 	title: 'Settings',
 	type: 'object',
@@ -198,9 +200,9 @@ const optionsSchema = {
 	properties: {
 		...editor,
 		...render,
-		...miew,
 		...server,
-		...debug
+		...debug,
+		...miew
 	}
 };
 

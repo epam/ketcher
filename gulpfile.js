@@ -47,7 +47,7 @@ const options = minimist(process.argv.slice(2), {
 	}
 });
 
-const distrib = ['LICENSE', 'src/template/demo.html',
+const distrib = ['LICENSE', 'src/template/demo.html', 'miew/Miew.js', 'miew/Miew.min.css',
 	'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
 
 const createBundleConfig = () => ({

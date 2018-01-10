@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { serverTransform } from '../state/server';
-import { miewAction } from '../state/server/miew';
 
 export default {
 	layout: {
@@ -73,7 +72,7 @@ export default {
 	},
 	miew: {
 		title: '3D Viewer',
-		action: { thunk: miewAction	},
-		disabled: (editor, server, options) => !options.app.server || !options.app.miewPath
+		action: { dialog: 'miew' },
+		disabled: () => !window.Miew
 	}
 };

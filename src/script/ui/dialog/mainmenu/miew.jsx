@@ -14,18 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { camelCase } from 'lodash/fp';
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
+import { pick } from 'lodash/fp';
 
 import Dialog from '../../component/dialog';
-import { storage } from '../../storage-ext';
+import * as structFormat from '../../data/convert/structformat';
+import { MIEW_OPTIONS } from '../../data/schema/options-schema';
+import { load } from '../../state';
 
-const MIEW_PATH = '__MIEW_PATH__';
-const MIEW_OPTIONS = {
-	preset: 'small',
+const MIEW_DEFAULT_OPTIONS = {
 	settings: {
 		theme: 'light',
-		atomLabel: 'bright',
+		// atomLabel: 'bright', // old option
 		autoPreset: false,
 		inversePanning: true
 	},
@@ -36,193 +37,75 @@ const MIEW_OPTIONS = {
 	}]
 };
 
-const MIEW_WINDOW = {
-	location: 'no',
-	menubar: 'no',
-	toolbar: 'no',
-	directories: 'no',
-	modal: 'yes',
-	alwaysRaised: 'yes'
-};
-
 const MIEW_MODES = {
 	lines: 'LN',
 	ballsAndSticks: 'BS',
 	licorice: 'LC'
 };
 
-function getLocalMiewOpts() {
-	const userOpts = storage.getItem('ketcher-opts');
-	if (!userOpts)
-		return MIEW_OPTIONS;
+function getOptions(userOpts) {
+	const options = MIEW_DEFAULT_OPTIONS;
 
-	const opts = MIEW_OPTIONS;
+	options.settings.theme = userOpts.miewTheme;
+	options.settings.atomLabel = userOpts.miewAtomLabel;
+	options.reps[0].mode = MIEW_MODES[userOpts.miewMode];
 
-	if (userOpts.miewTheme)
-		opts.settings.theme = camelCase(userOpts.miewTheme);
-
-	if (userOpts.miewAtomLabel)
-		opts.settings.atomLabel = camelCase(userOpts.miewAtomLabel);
-
-	if (userOpts.miewMode)
-		opts.reps[0].mode = MIEW_MODES[camelCase(userOpts.miewMode)];
-
-	return opts;
+	return options;
 }
 
-function origin(url) {
-	let loc = url;
+class MiewComponent extends Component {
+	componentDidMount() {
+		const { struct, server, miewOpts } = this.props;
+		const Miew = window.Miew;
 
-	if (!loc.href) {
-		loc = document.createElement('a');
-		loc.href = url;
-	}
-
-	if (loc.origin)
-		return loc.origin;
-
-	if (!loc.hostname) // relative url, IE
-		loc = document.location;
-
-	return loc.protocol + '//' + loc.hostname + (!loc.port ? '' : ':' + loc.port);
-}
-
-function queryOptions(options, sep = '&') {
-	if (Array.isArray(options)) {
-		return options.reduce((res, item) => {
-			const value = queryOptions(item);
-			if (value !== null)
-				res.push(value);
-			return res;
-		}, []).join(sep);
-	} else if (typeof options === 'object') {
-		return Object.keys(options).reduce((res, item) => {
-			const value = options[item];
-			res.push(typeof value === 'object' ?
-				queryOptions(value) :
-				encodeURIComponent(item) + '=' +
-				encodeURIComponent(value));
-			return res;
-		}, []).join(sep);
-	}
-	return null;
-}
-
-function miewLoad(wnd, url, options = {}) { // TODO: timeout
-	return new Promise((resolve) => {
-		addEventListener('message', function onload(event) { // eslint-disable-line
-			if (event.origin === origin(url) && event.data === 'miewLoadComplete') {
-				window.removeEventListener('message', onload);
-				const miew = wnd.MIEWS[0];
-				miew._opts.load = false; // setOptions({ load: '' })
-				miew._menuDisabled = true; // no way to disable menu after constructor return
-				if (miew.init()) {
-					miew.setOptions(options);
-					miew.benchmarkGfx().then(() => {
-						miew.run();
-						setTimeout(() => resolve(miew), 10);
-						// see setOptions message handler
-					});
-				}
-			}
+		this.viewer = new Miew({
+			container: this.miewContainer
 		});
-	});
-}
 
-function miewSave(miew, url) {
-	miew.saveData();
-	return new Promise((resolve) => {
-		addEventListener('message', function onsave(event) { // eslint-disable-line
-			if (event.origin === origin(url) && event.data.startsWith('CML:')) {
-				window.removeEventListener('message', onsave);
-				resolve(atob(event.data.slice(4))); // eslint-disable-line no-undef
-			}
-		});
-	});
-}
+		if (this.viewer.init())
+			this.viewer.run();
 
-class Miew extends Component {
-	constructor(props) {
-		console.info('init');
-		super(props);
-		this.opts = getLocalMiewOpts();
+		structFormat.toString(struct, 'cml', server)
+			.then(res => this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' }))
+			.then(() => this.viewer.setOptions(getOptions(miewOpts)))
+			.catch(ex => console.error(ex.message));
 	}
-	load(ev) {
-		const miew = miewLoad(ev.target.contentWindow, MIEW_PATH, this.opts);
-		this.setState({ miew });
-		this.state.miew.then((res) => {
-			res.parse(this.props.structStr, {
-				fileType: 'cml',
-				loaded: true
-			});
-			this.setState({ miew: res });
-		});
-	}
-	save() {
-		if (this.props.onOk) {
-			const structStr = miewSave(this.state.miew, MIEW_PATH);
-			this.setState({ structStr });
-			this.state.structStr.then((str) => {
-				this.props.onOk({ structStr: str });
-			});
-		}
-	}
-	window() {
-		const opts = {
-			...this.opts,
-			load: `CML:${btoa(this.props.structStr)}`, // eslint-disable-line no-undef
-			sourceType: 'message'
-		};
-		const br = this.base.getBoundingClientRect(); // Preact specifiec see: epa.ms/1NAYWp
 
-		const wndProps = {
-			...MIEW_WINDOW,
-			top: Math.round(br.top),
-			left: Math.round(br.left),
-			width: Math.round(br.width),
-			height: Math.round(br.height)
-		};
-		const wnd = window.open(`${MIEW_PATH}?${queryOptions(opts)}`,
-			'miew', queryOptions(wndProps, ','));
-		if (wnd) {
-			this.props.onCancel();
-			wnd.onload = function () {
-				console.info('windowed');
-			};
-		}
-	}
-	render(props) {
-		const { miew, structStr } = this.state;
+	render() {
+		const { miewOpts, server, struct, ...prop } = this.props;
+
 		return (
 			<Dialog
-				title="3D View"
+				title="Miew"
 				className="miew"
-				params={props}
+				params={prop}
 				buttons={[
 					'Close',
-					<button
-						disabled={miew instanceof Promise || structStr instanceof Promise}
-						onClick={ev => this.save(ev)}
-					>
+					<button	disabled onClick={() => true}> {/* TODO: save after update Miew */}
 						Apply
-					</button>,
-					<button
-						className="window"
-						disabled={/MSIE|rv:11/i.test(navigator.userAgent)} // eslint-disable-line no-undef
-						onClick={() => this.window()}
-					>
-						Detach to new window
 					</button>
 				]}
 			>
-				<iframe
-					id="miew-iframe"
-					src={MIEW_PATH}
-					onLoad={ev => this.load(ev)}
+				<div
+					ref={(el) => { this.miewContainer = el; }}
+					className="miew-container"
+					style={{ width: '720px', height: '480px', position: 'relative' }}
 				/>
 			</Dialog>
 		);
 	}
 }
 
-export default Miew;
+export default connect(
+	store => ({
+		miewOpts: pick(MIEW_OPTIONS, store.options.settings),
+		server: store.options.app.server ? store.server : null,
+		struct: store.editor.struct()
+	}),
+	(dispatch, props) => ({
+		onOk: (cmlStruct) => {
+			dispatch(load(cmlStruct));
+			props.onOk();
+		}
+	})
+)(MiewComponent);

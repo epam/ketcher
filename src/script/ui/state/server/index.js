@@ -63,7 +63,8 @@ export function check(optsTypes) {
 
 		return serverCall(editor, server, 'check', options)
 			.then((res) => {
-				if (isChiral === true && optsTypes.includes('chiral_flag')) res['chiral_flag'] = 'Chiral flag presence';
+				if (isChiral === true && optsTypes.includes('chiral_flag'))
+					res['chiral_flag'] = 'Chiral flag is present on the canvas';
 				dispatch(checkErrors(res));
 			})
 			.catch((e) => { alert(`Failed check!\n${e.message}`); throw e; }); // eslint-disable-line no-undef

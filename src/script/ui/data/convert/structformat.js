@@ -38,7 +38,7 @@ export const map = {
 	'smiles-ext': {
 		name: 'Extended SMILES',
 		mime: 'chemical/x-chemaxon-cxsmiles',
-		ext: ['.cxsmi']
+		ext: ['.cxsmi', '.cxsmiles']
 	},
 	smarts: {
 		name: 'Daylight SMARTS',

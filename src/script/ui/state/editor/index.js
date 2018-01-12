@@ -29,11 +29,12 @@ export default function initEditor(dispatch, getState) {
 
 	function resetToSelect(dispatch, getState) { // eslint-disable-line no-shadow
 		const state = getState();
-		const selectionTool = state.toolbar.visibleTools.select;
-		const resetOption = state.options.settings.resetToSelect;
 		const activeTool = state.actionState.activeTool.tool;
+		if (activeTool === 'select') return;
+		const selectMode = state.toolbar.visibleTools.select;
+		const resetOption = state.options.settings.resetToSelect;
 		if (resetOption === true || resetOption === activeTool) // example: 'paste'
-			dispatch({ type: 'ACTION', action: acts[selectionTool].action });
+			dispatch({ type: 'ACTION', action: acts[selectMode].action });
 		else
 			updateAction();
 	}

@@ -51,6 +51,8 @@ export default function initEditor(dispatch, getState) {
 		},
 		onElementEdit: (selem) => {
 			const elem = fromElement(selem);
+			console.log(selem);
+			console.log(elem);
 			let dlg = null;
 
 			if (element.map[elem.label]) {
@@ -64,7 +66,7 @@ export default function initEditor(dispatch, getState) {
 				const rgroups = getState().editor.struct().rgroups;
 
 				const params = {
-					...elem,
+					rgroupValues: elem.values,
 					disabledIds: Array.from(rgroups.entries())
 						.reduce((acc, [rgid, rg]) => {
 							if (rg.frags.has(elem.fragId))
@@ -73,12 +75,13 @@ export default function initEditor(dispatch, getState) {
 							return acc;
 						}, [])
 				};
+				console.log(params);
 				dlg = openDialog(dispatch, 'rgroup', params);
 			} else {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
 
-			return dlg.then(toElement);
+			return dlg.then(res => toElement(Object.assign(elem, {values: res.rgroupValues})));
 		},
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
 		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))
@@ -103,7 +106,7 @@ export default function initEditor(dispatch, getState) {
 				}, []);
 
 			const params = {
-				label: rgroup.label,
+				rgroupValues: [rgroup.label],
 				disabledIds
 			};
 

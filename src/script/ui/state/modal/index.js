@@ -18,6 +18,7 @@ import { formReducer, formsState } from './form';
 
 export function openDialog(dispatch, dialogName, props) {
 	return new Promise((resolve, reject) => {
+		console.log(props);
 		dispatch({
 			type: 'MODAL_OPEN',
 			data: {
@@ -44,6 +45,7 @@ function modalReducer(state = null, action) {
 	case 'MODAL_CLOSE':
 		return null;
 	case 'MODAL_OPEN':
+		console.log(formsState[data.name]);
 		return {
 			name: data.name,
 			form: formsState[data.name] || null,

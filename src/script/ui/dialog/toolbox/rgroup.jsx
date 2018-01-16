@@ -14,50 +14,81 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { range } from 'lodash/fp';
-
 import { h, Component } from 'preact';
+import { connect } from 'preact-redux';
 
 import Dialog from '../../component/dialog';
+import Form, { Field } from '../../component/form/form';
 
-function RGroup({ selected, onSelect, result, disabledIds, ...props }) {
+const rgroupValues = Array.from(new Array(32), (val, index) => 'R' + ++index);
+
+const rgroupSchema = {
+	title: 'R-group',
+	type: 'object',
+	properties: {
+		rgroupValues: {
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: rgroupValues
+			}
+		}
+	}
+};
+
+function RGroup({ disabledIds, rgroupValues, formState, ...props }) {
+	console.log(props);
 	return (
 		<Dialog
 			title="R-Group"
 			className="rgroup"
 			params={props}
-			result={() => result()}
+			result={() => formState.result}
 		>
-			<ul>
-				{
-					range(1, 33).map((i) => {
-						const invalidId = disabledIds.includes(i);
-
-						let className = invalidId ? 'disabled' : '';
-						if (className === '')
-							className = selected(i) ? 'selected' : '';
-
-						return (
-							<li>
-								<button
-									className={className}
-									onClick={() => (invalidId ? null : onSelect(i))}
-								>
-									{`R${i}`}
-								</button>
-							</li>
-						);
-					})
-				}
-			</ul>
+			<Form schema={rgroupSchema} init={{ rgroupValues }} {...formState} >
+				<Field
+					name="rgroupValues"
+					multiple
+					component={ButtonList}
+					disabledIds={disabledIds}
+				/>
+			</Form>
 		</Dialog>
 	);
 }
 
+function ButtonList({ value, onChange, schema, disabledIds }) {
+	console.log("!!", value, onChange);
+	return (
+		<ul>
+			{
+				schema.items.enum.map((item, i) => {
+					const invalidId = disabledIds.includes(i);
+
+					let className = invalidId ? 'disabled' : '';
+					if (className === '')
+						className = value.includes(item) ? 'selected' : '';
+
+					return (
+						<li>
+							<button
+								className={className}
+								onClick={() => (invalidId ? null : onChange(value.concat([item])))}
+							>
+								{item}
+							</button>
+						</li>
+					);
+				})
+			}
+		</ul>
+	);
+}
+
 class RGroupFragment extends Component {
-	constructor({ label }) {
+	constructor({ rgroupValues }) {
 		super();
-		this.state.label = label || null;
+		this.state.label = rgroupValues || null;
 	}
 	onSelect(label) {
 		this.setState({
@@ -75,7 +106,7 @@ class RGroupFragment extends Component {
 			<RGroup
 				selected={i => this.selected(i)}
 				onSelect={i => this.onSelect(i)}
-				result={() => this.result()}
+				result1={() => this.result()}
 				{...this.props}
 			/>
 		);
@@ -83,9 +114,9 @@ class RGroupFragment extends Component {
 }
 
 class RGroupAtom extends Component { // eslint-disable-line
-	constructor({ values }) {
+	constructor({ rgroupValues }) {
 		super();
-		this.state.values = values || [];
+		this.state.values = rgroupValues || [];
 	}
 	onSelect(index) {
 		const { values } = this.state;
@@ -110,11 +141,13 @@ class RGroupAtom extends Component { // eslint-disable-line
 			<RGroup
 				selected={i => this.selected(i)}
 				onSelect={i => this.onSelect(i)}
-				result={() => this.result()}
+				result1={() => this.result()}
 				{...this.props}
 			/>
 		);
 	}
 }
 
-export default params => (params.type === 'rlabel' ? (<RGroupAtom {...params} />) : (<RGroupFragment {...params} />));
+export default connect(
+	store => ({ formState: store.modal.form })
+)(RGroup);

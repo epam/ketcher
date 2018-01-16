@@ -90,7 +90,7 @@ Bond.attrlist = {
 	type: Bond.PATTERN.TYPE.SINGLE,
 	stereo: Bond.PATTERN.STEREO.NONE,
 	topology: Bond.PATTERN.TOPOLOGY.EITHER,
-	reactingCenterStatus: 0
+	reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED
 };
 
 Bond.getAttrHash = function (bond) {

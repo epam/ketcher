@@ -53,18 +53,33 @@ export function recognize(file) {
 	};
 }
 
+function ketcherCheck(struct, checkParams) {
+	const errors = {};
+
+	if (checkParams.includes('chiral_flag') && struct.isChiral)
+		errors['chiral_flag'] = 'Chiral flag is present on the canvas';
+
+	if (checkParams.includes('valence')) {
+		let badVal = 0;
+		struct.atoms.forEach(atom => atom.badConn && badVal++);
+		if (badVal > 0)
+			errors['valence'] = `Structure contains ${badVal} atom${badVal !== 1 ? 's' : ''} with bad valence`;
+	}
+
+	return errors;
+}
+
 export function check(optsTypes) {
 	return (dispatch, getState) => {
 		const { editor, server } = getState();
-		const options = getState().options.getServerSettings();
+		const ketcherErrors = ketcherCheck(editor.struct(), optsTypes);
 
-		const isChiral = editor.struct().isChiral;
-		options.data = { types: without(['chiral_flag'], optsTypes) };
+		const options = getState().options.getServerSettings();
+		options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
 
 		return serverCall(editor, server, 'check', options)
 			.then((res) => {
-				if (isChiral === true && optsTypes.includes('chiral_flag'))
-					res['chiral_flag'] = 'Chiral flag is present on the canvas';
+				res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
 				dispatch(checkErrors(res));
 			})
 			.catch((e) => { alert(`Failed check!\n${e.message}`); throw e; }); // eslint-disable-line no-undef

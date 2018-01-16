@@ -37,7 +37,6 @@ function setupEditor(editor, props, oldProps = {}) {
 		const eventName = `on${upperFirst(name)}`;
 
 		if (props[eventName] !== oldProps[eventName]) {
-			console.info('update editor handler', eventName);
 			if (oldProps[eventName])
 				editor.event[name].remove(oldProps[eventName]);
 

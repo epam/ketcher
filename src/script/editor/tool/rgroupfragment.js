@@ -64,7 +64,7 @@ RGroupFragmentTool.prototype.click = function (event) {
 		}
 
 		editor.update(action);
-	});
+	}).catch(() => null); // w/o changes
 
 	return true;
 };

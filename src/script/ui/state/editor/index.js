@@ -116,12 +116,8 @@ export default function initEditor(dispatch, getState) {
 			.then(() => openDialog(dispatch, sgroup.type === 'DAT' ? 'sdata' : 'sgroup', fromSgroup(sgroup)))
 			.then(toSgroup),
 		onMessage: (msg) => {
-			if (msg.error) {
+			if (msg.error)
 				alert(msg.error); // eslint-disable-line no-undef
-			} else {
-				const act = Object.keys(msg)[0];
-				console[act](msg[act]);
-			}
 		},
 		onAromatizeStruct: (struct) => {
 			const state = getState();

@@ -153,9 +153,7 @@ export function sgroupDialog(editor, id, defaultType) {
 			editor.update(result.action);
 			editor.selection(result.selection);
 		}
-	}).catch((result) => {
-		console.info('rejected', result);
-	});
+	}).catch(() => null); // w/o changes
 }
 
 function getContextBySgroup(restruct, sgAtoms) {

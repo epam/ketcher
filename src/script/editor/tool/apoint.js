@@ -44,7 +44,7 @@ APointTool.prototype.click = function (event) {
 				var action = fromAtomsAttrs(editor.render.ctab, ci.id, newatom);
 				editor.update(action);
 			}
-		});
+		}).catch(() => null); // w/o changes
 		return true;
 	}
 	return true;

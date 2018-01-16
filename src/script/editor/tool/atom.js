@@ -114,7 +114,7 @@ export function atomLongtapEvent(tool, render) {
 				fromAtomsAttrs(render.ctab, atomid, newatom) :
 				fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
 			editor.update(action);
-		});
+		}).catch(() => null); // w/o changes
 	}, 750);
 
 	dragCtx.stopTapping = function () {

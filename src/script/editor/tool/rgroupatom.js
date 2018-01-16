@@ -72,7 +72,7 @@ function propsDialog(editor, id, pos) {
 
 			editor.update(fromAtomsAttrs(editor.render.ctab, id, elem));
 		}
-	});
+	}).catch(() => null); // w/o changes
 }
 
 export default RGroupAtomTool;

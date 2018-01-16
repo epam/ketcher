@@ -20,7 +20,7 @@ import { connect } from 'preact-redux';
 import Dialog from '../../component/dialog';
 
 function About(props) {
-	const [version, build] = props.indigoVersion.split('.r'); // Indigo version and build info
+	const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r'); // Indigo version and build info
 
 	return (
 		<Dialog
@@ -59,11 +59,11 @@ function About(props) {
 							</dt>
 							<dd>
 								version
-								<var>{version}</var>
+								<var>{indigoInfo[0]}</var>
 							</dd>
 							<dd>
 								build #
-								<var>{build}</var>
+								<var>{indigoInfo[1]}</var>
 							</dd>
 						</div>
 					) : (<dd>standalone</dd>)

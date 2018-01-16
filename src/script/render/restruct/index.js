@@ -423,8 +423,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 
 	this.showFragments();
 	this.showRGroups();
-	if (this.render.options.hideChiralFlag !== true)
-		this.chiralFlags.forEach((item, id) =>	item.show(this, id, this.render.options));
+	this.showChiralFlags();
 	this.clearMarks();
 	return true;
 };
@@ -531,6 +530,17 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 		const atom = this.atoms.get(aid);
 		atom.show(this, aid, options);
 	});
+};
+
+ReStruct.prototype.showChiralFlags = function () { // eslint-disable-line max-statements
+	const options = this.render.options;
+
+	if (this.render.options.hideChiralFlag !== true) {
+		this.chiralFlagsChanged.forEach((value, chid) => {
+			const flag = this.chiralFlags.get(chid);
+			flag.show(this, chid, options);
+		});
+	}
 };
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements

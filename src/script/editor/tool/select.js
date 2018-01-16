@@ -182,14 +182,14 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 			// TODO: deep compare to not produce dummy, e.g.
 			// atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
 			editor.update(fromAtomsAttrs(rnd.ctab, ci.id, newatom));
-		});
+		}).catch(() => null); // w/o changes
 	} else if (ci.map === 'bonds') {
 		this.editor.selection(closestToSel(ci));
 		var bond = rnd.ctab.bonds.get(ci.id).b;
 		var rb = editor.event.bondEdit.dispatch(bond);
 		Promise.resolve(rb).then((newbond) => {
 			editor.update(fromBondsAttrs(rnd.ctab, ci.id, newbond));
-		});
+		}).catch(() => null); // w/o changes
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.selection(closestToSel(ci));
 		sgroupDialog(this.editor, ci.id);

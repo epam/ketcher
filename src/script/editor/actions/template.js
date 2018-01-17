@@ -54,7 +54,8 @@ function extraBondAction(restruct, aid, angle, sgroups) {
 		);
 
 		additionalAtom = operation.data.aid;
-		action.mergeWith(atomAddToSGroups(restruct, sgroups, aid));
+
+		action.mergeWith(atomAddToSGroups(restruct, sgroups, additionalAtom));
 	}
 
 	return { action, aid1: additionalAtom };
@@ -86,29 +87,31 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 		delta = angle - template.angle0;
 	}
 
-	const map = {};
+	const map = new Map();
 	const xy0 = tmpl.atoms.get(template.aid).pp;
 	const frid = atomGetAttr(restruct, aid, 'fragment');
 
 	tmpl.atoms.forEach((a, id) => {
 		const attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
+
 		if (id === template.aid) {
 			action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true));
-			map[id] = aid1;
+			map.set(id, aid1);
 		} else {
 			const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
 			const operation = new op.AtomAdd(attrs, v.get_xy0()).perform(restruct);
 			action.addOp(operation);
-			map[id] = operation.data.aid;
+			map.set(id, operation.data.aid);
 		}
-		if (map[id] !== aid && map[id] !== aid1)
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, map[id]));
+
+		if (map.get(id) !== aid && map.get(id) !== aid1)
+			action.mergeWith(atomAddToSGroups(restruct, sgroups, map.get(id)));
 	});
 
 	tmpl.bonds.forEach((bond) => {
-		action.addOp(new op.BondAdd(map[bond.begin], map[bond.end], bond).perform(restruct));
+		action.addOp(new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond).perform(restruct));
 	});
 
 	action.operations.reverse();
@@ -194,8 +197,10 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 function atomAddToSGroups(restruct, sgroups, aid) {
 	const action = new Action();
+
 	sgroups.forEach((sid) => {
 		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct));
 	});
+
 	return action;
 }

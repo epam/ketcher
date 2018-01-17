@@ -66,7 +66,7 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 		if (typeof begin === 'number') {
 			atomGetSGroups(restruct, begin).forEach((sid) => {
 				action.addOp(new op.SGroupAtomAdd(sid, end).perform(restruct));
-			}, this);
+			});
 		}
 	} else if (atomGetAttr(restruct, end, 'label') === '*') {
 		action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct));

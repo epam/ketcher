@@ -24,15 +24,16 @@ function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 
 	this.editor = editor;
 	this.editor.selection(null);
+
 	this.template = {
 		aid: parseInt(tmpl.aid) || 0,
 		bid: parseInt(tmpl.bid) || 0
 	};
 
-	var frag = tmpl.struct;
+	const frag = tmpl.struct;
 	frag.rescale();
 
-	var xy0 = new Vec2();
+	const xy0 = new Vec2();
 	frag.atoms.forEach((atom) => {
 		xy0.add_(atom.pp); // eslint-disable-line no-underscore-dangle
 	});
@@ -104,86 +105,98 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 	}
 	return true;
 };
+
 TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	const restruct = this.editor.render.ctab;
-	if (this.dragCtx) {
-		const dragCtx = this.dragCtx;
-		const ci = dragCtx.item;
-		let pos0;
-		const pos1 = this.editor.render.page2obj(event);
-		let angle;
-		let extraBond;
 
-		dragCtx.mouse_moved = true;
-
-		const struct = restruct.molecule;
-		// calc initial pos and is extra bond needed
-		if (!ci) { //  ci.type == 'Canvas'
-			pos0 = dragCtx.xy0;
-		} else if (ci.map === 'atoms') {
-			pos0 = struct.atoms.get(ci.id).pp;
-			extraBond = Vec2.dist(pos0, pos1) > 1;
-		} else if (ci.map === 'bonds') {
-			const bond = struct.bonds.get(ci.id);
-			let sign = getSign(struct, bond, pos1);
-
-			if (dragCtx.sign1 * this.template.sign > 0)
-				sign = -sign;
-			if (sign !== dragCtx.sign2 || !dragCtx.action) {
-				if ('action' in dragCtx)
-					dragCtx.action.perform(restruct); // undo previous action
-				dragCtx.sign2 = sign;
-				dragCtx.action = fromTemplateOnBondAction(
-					restruct, this.editor.event,
-					ci.id, this.template,
-					dragCtx.sign1 * dragCtx.sign2 > 0, false
-				);
-				this.editor.update(dragCtx.action, true);
-			}
-			return true;
-		}
-
-		angle = utils.calcAngle(pos0, pos1);
-		if (!event.ctrlKey)
-			angle = utils.fracAngle(angle);
-
-		const degrees = utils.degrees(angle);
-		// check if anything changed since last time
-		if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees && // eslint-disable-line no-prototype-builtins
-			(!dragCtx.hasOwnProperty('extra_bond') || dragCtx.extra_bond === extraBond)) // eslint-disable-line no-prototype-builtins
-			return true;
-
-		// undo previous action
-		if (dragCtx.action)
-			dragCtx.action.perform(restruct);
-		// create new action
-		dragCtx.angle = degrees;
-		if (!ci) { // ci.type == 'Canvas'
-			dragCtx.action = fromTemplateOnCanvas(
-				restruct,
-				this.template,
-				pos0,
-				angle
-			);
-		} else if (ci.map === 'atoms') {
-			dragCtx.action = fromTemplateOnAtom(
-				restruct,
-				ci.id,
-				angle,
-				extraBond,
-				this.template
-			);
-			dragCtx.extra_bond = extraBond;
-		}
-		this.editor.update(dragCtx.action, true);
+	if (!this.dragCtx) {
+		this.editor.hover(this.editor.findItem(event, this.findItems));
 		return true;
 	}
-	this.editor.hover(this.editor.findItem(event, this.findItems));
+
+	const dragCtx = this.dragCtx;
+	const ci = dragCtx.item;
+	let pos0 = null;
+	const pos1 = this.editor.render.page2obj(event);
+	let extraBond = null;
+
+	const struct = restruct.molecule;
+	// calc initial pos and is extra bond needed
+	if (!ci) { //  ci.type == 'Canvas'
+		pos0 = dragCtx.xy0;
+	} else if (ci.map === 'atoms') {
+		pos0 = struct.atoms.get(ci.id).pp;
+		extraBond = Vec2.dist(pos0, pos1) > 1;
+	} else if (ci.map === 'bonds') {
+		const bond = struct.bonds.get(ci.id);
+		let sign = getSign(struct, bond, pos1);
+
+		if (dragCtx.sign1 * this.template.sign > 0)
+			sign = -sign;
+
+		if (sign !== dragCtx.sign2 || !dragCtx.action) {
+			if ('action' in dragCtx)
+				dragCtx.action.perform(restruct); // undo previous action
+
+			dragCtx.sign2 = sign;
+			dragCtx.action = fromTemplateOnBondAction(
+				restruct,
+				this.editor.event,
+				ci.id,
+				this.template,
+				dragCtx.sign1 * dragCtx.sign2 > 0,
+				false
+			);
+
+			this.editor.update(dragCtx.action, true);
+		}
+
+		return true;
+	}
+
+	let angle = utils.calcAngle(pos0, pos1);
+
+	if (!event.ctrlKey)
+		angle = utils.fracAngle(angle);
+
+	const degrees = utils.degrees(angle);
+
+	// check if anything changed since last time
+	if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees && // eslint-disable-line no-prototype-builtins
+		(!dragCtx.hasOwnProperty('extra_bond') || dragCtx.extra_bond === extraBond)) // eslint-disable-line no-prototype-builtins
+		return true;
+
+	// undo previous action
+	if (dragCtx.action)
+		dragCtx.action.perform(restruct);
+
+	// create new action
+	dragCtx.angle = degrees;
+	if (!ci) { // ci.type == 'Canvas'
+		dragCtx.action = fromTemplateOnCanvas(
+			restruct,
+			this.template,
+			pos0,
+			angle
+		);
+	} else if (ci.map === 'atoms') {
+		dragCtx.action = fromTemplateOnAtom(
+			restruct,
+			ci.id,
+			angle,
+			extraBond,
+			this.template
+		);
+		dragCtx.extra_bond = extraBond;
+	}
+
+	this.editor.update(dragCtx.action, true);
 	return true;
 };
 
 TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	if (!this.dragCtx) return true;
+	if (!this.dragCtx)
+		return true;
 
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;

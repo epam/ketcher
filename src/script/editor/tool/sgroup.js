@@ -252,32 +252,20 @@ function countOfSelectedComponents(restruct, atoms) {
 }
 
 function checkOverlapping(struct, atoms) {
-	var verified = {};
-	var atomsHash = {};
+	const sgroups = atoms.reduce((res, aid) => {
+		const atom = struct.atoms.get(aid);
+		return res.union(atom.sgs);
+	}, new Pile());
 
-	atoms.forEach((id) => {
-		atomsHash[id] = true;
+	return Array.from(sgroups).some((sid) => {
+		const sg = struct.sgroups.get(sid);
+		if (sg.type === 'DAT') return false;
+		const sgAtoms = Struct.SGroup.getAtoms(struct, sg);
+
+		return (sgAtoms.length < atoms.length) ?
+			sgAtoms.findIndex(aid => (atoms.indexOf(aid) === -1)) >= 0 :
+			atoms.findIndex(aid => (sgAtoms.indexOf(aid) === -1)) >= 0;
 	});
-
-	return atoms.findIndex((id) => {
-		var atom = struct.atoms.get(id);
-		var sgroups = Array.from(atom.sgs);
-
-		return sgroups.findIndex((sid) => {
-			var sg = struct.sgroups.get(sid);
-			if (sg.type === 'DAT' || sid in verified)
-				return false;
-
-			var sgAtoms = Struct.SGroup.getAtoms(struct, sg);
-
-			if (sgAtoms.length < atoms.length) {
-				var ind = sgAtoms.findIndex(aid => !(aid in atomsHash));
-				if (ind >= 0) return true;
-			}
-
-			return atoms.findIndex(aid => (sgAtoms.indexOf(aid) === -1)) >= 0;
-		}) >= 0;
-	}) >= 0;
 }
 
 export default SGroupTool;

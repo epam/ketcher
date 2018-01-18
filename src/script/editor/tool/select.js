@@ -152,8 +152,6 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		dragCtx.stopTapping();
 
 	if (dragCtx && dragCtx.item) {
-		editor.selection(null);
-
 		dragCtx.action = dragCtx.action ?
 			fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
 			fromItemsFuse(restruct, dragCtx.mergeItems);

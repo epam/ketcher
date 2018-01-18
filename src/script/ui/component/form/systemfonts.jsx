@@ -78,7 +78,7 @@ class SystemFonts extends Component {
 		});
 
 		return desc.enum.length !== 1
-			? <Input schema={desc} {...props} />
+			? <Input {...props} schema={desc} />
 			: <select><option>{desc.enumNames[0]}</option></select>;
 	}
 }

@@ -51,10 +51,7 @@ export default function initEditor(dispatch, getState) {
 		},
 		onElementEdit: (selem) => {
 			const elem = fromElement(selem);
-			console.log(selem);
-			console.log(elem);
 			let dlg = null;
-
 			if (element.map[elem.label]) {
 				dlg = openDialog(dispatch, 'atomProps', elem);
 			} else if (Object.keys(elem).length === 1 && 'ap' in elem) {
@@ -75,13 +72,12 @@ export default function initEditor(dispatch, getState) {
 							return acc;
 						}, [])
 				};
-				console.log(params);
 				dlg = openDialog(dispatch, 'rgroup', params);
 			} else {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
 
-			return dlg.then(res => toElement(Object.assign(elem, {values: res.rgroupValues})));
+			return dlg.then(res => toElement(Object.assign(elem, { values: res.rgroupValues })));
 		},
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
 		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))

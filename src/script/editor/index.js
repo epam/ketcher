@@ -45,7 +45,6 @@ function Editor(clientArea, options) {
 		elementEdit: new s.PipelineSubscription(),
 		bondEdit: new s.PipelineSubscription(),
 		rgroupEdit: new s.PipelineSubscription(),
-		rgroupAtomEdit: new s.PipelineSubscription(),
 		sgroupEdit: new s.PipelineSubscription(),
 		sdataEdit: new s.PipelineSubscription(),
 		quickEdit: new s.PipelineSubscription(),

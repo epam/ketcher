@@ -48,11 +48,8 @@ class Form extends Component {
 
 	field(name, onChange) {
 		const { result, errors } = this.props;
-		console.log(result);
 		const value = result[name];
-		console.log(value);
 		const self = this;
-		console.log(self.props);
 		return {
 			dataError: (errors && errors[name]) || false,
 			value,
@@ -102,10 +99,8 @@ function Label({ labelPos, title, children, ...props }) {
 function Field(props) {
 	const { name, onChange, className, component, ...prop } = props;
 	const { schema, stateStore } = this.context;
-	console.log(stateStore);
 	const desc = prop.schema || schema.properties[name];
 	const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
-
 	return (
 		<Label className={className} data-error={dataError} title={prop.title || desc.title} >
 			{

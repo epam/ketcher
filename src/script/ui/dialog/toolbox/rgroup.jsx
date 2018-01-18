@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { connect } from 'preact-redux';
+import { without } from 'lodash/fp';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
@@ -36,8 +37,7 @@ const rgroupSchema = {
 	}
 };
 
-function RGroup({ disabledIds, rgroupValues, formState, ...props }) {
-	console.log(props);
+function RGroup({ disabledIds, rgroupValues, formState, ...props }) { // eslint-disable-line
 	return (
 		<Dialog
 			title="R-Group"
@@ -58,7 +58,6 @@ function RGroup({ disabledIds, rgroupValues, formState, ...props }) {
 }
 
 function ButtonList({ value, onChange, schema, disabledIds }) {
-	console.log("!!", value, onChange);
 	return (
 		<ul>
 			{
@@ -68,12 +67,13 @@ function ButtonList({ value, onChange, schema, disabledIds }) {
 					let className = invalidId ? 'disabled' : '';
 					if (className === '')
 						className = value.includes(item) ? 'selected' : '';
-
 					return (
 						<li>
 							<button
 								className={className}
-								onClick={() => (invalidId ? null : onChange(value.concat([item])))}
+								onClick={() => (invalidId
+									? null
+									: onChange(value.includes(item) ? without([item], value) : value.concat([item])))}
 							>
 								{item}
 							</button>
@@ -85,68 +85,6 @@ function ButtonList({ value, onChange, schema, disabledIds }) {
 	);
 }
 
-class RGroupFragment extends Component {
-	constructor({ rgroupValues }) {
-		super();
-		this.state.label = rgroupValues || null;
-	}
-	onSelect(label) {
-		this.setState({
-			label: label !== this.state.label ? label : null
-		});
-	}
-	selected(label) {
-		return label === this.state.label;
-	}
-	result() {
-		return { label: this.state.label };
-	}
-	render() {
-		return (
-			<RGroup
-				selected={i => this.selected(i)}
-				onSelect={i => this.onSelect(i)}
-				result1={() => this.result()}
-				{...this.props}
-			/>
-		);
-	}
-}
-
-class RGroupAtom extends Component { // eslint-disable-line
-	constructor({ rgroupValues }) {
-		super();
-		this.state.values = rgroupValues || [];
-	}
-	onSelect(index) {
-		const { values } = this.state;
-		const i = values.indexOf(index);
-		if (i < 0)
-			values.push(index);
-		else
-			values.splice(i, 1);
-		this.setState({ values });
-	}
-	selected(index) {
-		return this.state.values.includes(index);
-	}
-	result() {
-		return {
-			type: 'rlabel',
-			values: this.state.values
-		};
-	}
-	render() {
-		return (
-			<RGroup
-				selected={i => this.selected(i)}
-				onSelect={i => this.onSelect(i)}
-				result1={() => this.result()}
-				{...this.props}
-			/>
-		);
-	}
-}
 
 export default connect(
 	store => ({ formState: store.modal.form })

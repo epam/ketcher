@@ -36,12 +36,14 @@ ReChiralFlag.prototype.highlightPath = function (render) {
 };
 
 ReChiralFlag.prototype.drawHighlight = function (render) {
+	if (!this.path) return null;
 	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };
 
 ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) {
+	if (!this.path) return null;
 	return this.highlightPath(restruct.render).attr(options.selectionStyle);
 };
 

@@ -98,8 +98,7 @@ const buildInfo = {
 	version: '__VERSION__',
 	apiPath: '__API_PATH__',
 	buildDate: '__BUILD_DATE__',
-	buildNumber: '__BUILD_NUMBER__' || null,
-	miewPath: '__MIEW_PATH__' || null
+	buildNumber: '__BUILD_NUMBER__' || null
 };
 
 const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi-assign

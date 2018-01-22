@@ -41,14 +41,13 @@ const options = minimist(process.argv.slice(2), {
 	default: {
 		'dist': 'dist',
 		'api-path': '',
-		'miew-path': '',
+		'miew-path': null,
 		'build-number': '',
 		'build-date': new Date().toISOString().slice(0, 19)
 	}
 });
 
-const distrib = ['LICENSE', 'src/template/demo.html', 'miew/Miew.js', 'miew/Miew.min.css',
-	'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
+const distrib = ['LICENSE', 'src/template/demo.html', 'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
 
 const createBundleConfig = () => ({
 	entries: 'src/script',
@@ -64,8 +63,7 @@ const createBundleConfig = () => ({
 				{ from: '__VERSION__', to: pkg.version },
 				{ from: '__API_PATH__', to: options['api-path'] },
 				{ from: '__BUILD_NUMBER__', to: options['build-number'] },
-				{ from: '__BUILD_DATE__', to: options['build-date'] },
-				{ from: '__MIEW_PATH__', to: options['miew-path'] }
+				{ from: '__BUILD_DATE__', to: options['build-date'] }
 			]
 		}],
 		['babelify', {
@@ -163,7 +161,7 @@ gulp.task('icons-svg', function () {
 
 gulp.task('html', ['patch-version'], function () {
 	const hbs = plugins.hb()
-	    .data(Object.assign({ pkg: pkg }, options));
+	    .data(Object.assign({ pkg: pkg, miew: options['miew-path'] !== null }, options));
 	return gulp.src('src/template/index.hbs')
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))
@@ -187,8 +185,11 @@ gulp.task('logo', function () {
 });
 
 gulp.task('copy', ['logo'], function () {
+	if (options['miew-path'] !== null)
+		distrib.push(`${options['miew-path']}/Miew.min.js`, `${options['miew-path']}/Miew.min.css`);
+
 	return gulp.src(['raphael'].map(require.resolve)
-	                .concat(distrib))
+		.concat(distrib))
 		.pipe(gulp.dest(options.dist));
 });
 

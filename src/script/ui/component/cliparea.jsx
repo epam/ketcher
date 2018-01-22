@@ -105,13 +105,15 @@ function copy(cb, data) {
 	if (!cb && ieCb) {
 		ieCb.setData('text', data['text/plain']);
 	} else {
+		let curFmt = null;
 		cb.setData('text/plain', data['text/plain']);
 		try {
 			Object.keys(data).forEach((fmt) => {
+				curFmt = fmt;
 				cb.setData(fmt, data[fmt]);
 			});
 		} catch (ex) {
-			console.info('Could not write exact type', ex);
+			console.info(`Could not write exact type ${curFmt}`);
 		}
 	}
 }
@@ -138,7 +140,7 @@ export function exec(action) {
 	let enabled = document.queryCommandSupported(action);
 	if (enabled) {
 		try {
-			enabled = document.execCommand(action) || ieCb;
+			enabled = document.execCommand(action) || window.ClipboardEvent || ieCb;
 		} catch (ex) {
 			// FF < 41
 			enabled = false;

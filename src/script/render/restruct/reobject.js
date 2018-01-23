@@ -41,12 +41,12 @@ ReObject.prototype.getVBoxObj = function (render) {
 
 ReObject.prototype.setHighlight = function (highLight, render) { // TODO render should be field
 	if (highLight) {
-		var noredraw = 'highlighting' in this && this.highlighting != null;// && !this.highlighting.removed;
+		let noredraw = 'highlighting' in this && this.highlighting !== null;// && !this.highlighting.removed;
 		if (noredraw) {
-			if (this.highlighting.type == 'set')
+			if (this.highlighting.type === 'set') {
+				if (!this.highlighting[0]) return;
 				noredraw = !this.highlighting[0].removed;
-			else
-				noredraw = !this.highlighting.removed;
+			} else { noredraw = !this.highlighting.removed; }
 		}
 		if (noredraw) {
 			this.highlighting.show();

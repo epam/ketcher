@@ -25,6 +25,7 @@ const buffer = require('vinyl-buffer');
 const budo = require('budo');
 const istanbul = require('browserify-babel-istanbul');
 
+const path = require('path');
 const fs = require('fs');
 const cp = require('child_process');
 const del = require('del');
@@ -185,8 +186,10 @@ gulp.task('logo', function () {
 });
 
 gulp.task('copy', ['logo'], function () {
-	if (options['miew-path'] !== null)
-		distrib.push(`${options['miew-path']}/Miew.min.js`, `${options['miew-path']}/Miew.min.css`);
+	if (options['miew-path'] !== null) {
+		const pathToMiew = path.relative(__dirname, options['miew-path']);
+		distrib.push(`${pathToMiew}/Miew.min.js`, `${pathToMiew}/Miew.min.css`);
+	}
 
 	return gulp.src(['raphael'].map(require.resolve)
 		.concat(distrib))

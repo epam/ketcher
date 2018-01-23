@@ -18,6 +18,7 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 import * as structFormat from '../../data/convert/structformat';
 import { saveUserTmpl } from '../../state/templates';
+import { updateFormState } from '../../state/modal/form';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
@@ -65,7 +66,7 @@ class Save extends Component {
 	}
 
 	changeType(type) {
-		const { struct, server, options } = this.props;
+		const { struct, server, options, formState } = this.props;
 		const converted = structFormat.toString(struct, type, server, options);
 		return converted.then(
 			(structStr) => {
@@ -74,6 +75,7 @@ class Save extends Component {
 			},
 			(e) => {
 				alert(e.message); // eslint-disable-line no-undef
+				this.props.onResetForm(formState);
 				return e;
 			}
 		);
@@ -136,6 +138,7 @@ export default connect(
 		formState: store.modal.form
 	}),
 	dispatch => ({
-		onTmplSave: struct => dispatch(saveUserTmpl(struct))
+		onTmplSave: struct => dispatch(saveUserTmpl(struct)),
+		onResetForm: prevState => dispatch(updateFormState(prevState))
 	})
 )(Save);

@@ -23,35 +23,44 @@ import * as structFormat from '../../data/convert/structformat';
 import { MIEW_OPTIONS } from '../../data/schema/options-schema';
 import { load } from '../../state';
 
+/* OPTIONS for MIEW */
+const BACKGROUND_COLOR = {
+	dark: '0x202020',
+	light: '0xcccccc'
+};
+
 const MIEW_DEFAULT_OPTIONS = {
 	settings: {
 		theme: 'light',
-		// atomLabel: 'bright', // old option
 		autoPreset: false,
 		inversePanning: true
 	},
 	reps: [{
-		mode: 'LN',
-		colorer: 'AT',
-		selector: 'all'
+		mode: 'LN'
+	}, {
+		colorer: 'EL',
+		selector: 'not elem C',
+		mode: ['TX', {
+			bg: BACKGROUND_COLOR['light'],
+			showBg: true,
+			template: '{{elem}}'
+		}]
 	}]
 };
 
-const MIEW_MODES = {
-	lines: 'LN',
-	ballsAndSticks: 'BS',
-	licorice: 'LC'
-};
-
-function getOptions(userOpts) {
+function mergeOptions(userOpts) {
 	const options = MIEW_DEFAULT_OPTIONS;
 
 	options.settings.theme = userOpts.miewTheme;
-	options.settings.atomLabel = userOpts.miewAtomLabel;
-	options.reps[0].mode = MIEW_MODES[userOpts.miewMode];
+	options.reps[0].mode = userOpts.miewMode;
+
+	// TODO: userOpts.miewAtomLabel transform to 'TX' mode settings
+	// options.settings.atomLabel = userOpts.miewAtomLabel;
+	options.reps[1].mode[1].bg = BACKGROUND_COLOR[userOpts.miewTheme];
 
 	return options;
 }
+/* ---------------- */
 
 class MiewComponent extends Component {
 	componentDidMount() {
@@ -67,8 +76,13 @@ class MiewComponent extends Component {
 
 		structFormat.toString(struct, 'cml', server)
 			.then(res => this.viewer.load(res, { sourceType: 'immediate', fileType: 'cml' }))
-			.then(() => this.viewer.setOptions(getOptions(miewOpts)))
+			.then(() => this.viewer.setOptions(miewOpts))
 			.catch(ex => console.error(ex.message));
+	}
+
+	exportCML() {
+		const cmlStruct = this.viewer.exportCML();
+		this.props.onExportCML(cmlStruct);
 	}
 
 	render() {
@@ -81,7 +95,7 @@ class MiewComponent extends Component {
 				params={prop}
 				buttons={[
 					'Close',
-					<button	disabled onClick={() => true}> {/* TODO: save after update Miew */}
+					<button	onClick={() => this.exportCML()}>
 						Apply
 					</button>
 				]}
@@ -98,12 +112,12 @@ class MiewComponent extends Component {
 
 export default connect(
 	store => ({
-		miewOpts: pick(MIEW_OPTIONS, store.options.settings),
+		miewOpts: mergeOptions(pick(MIEW_OPTIONS, store.options.settings)),
 		server: store.options.app.server ? store.server : null,
 		struct: store.editor.struct()
 	}),
 	(dispatch, props) => ({
-		onOk: (cmlStruct) => {
+		onExportCML: (cmlStruct) => {
 			dispatch(load(cmlStruct));
 			props.onOk();
 		}

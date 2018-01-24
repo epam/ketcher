@@ -173,7 +173,7 @@ const debug = {
 const miew = {
 	miewMode: {
 		title: 'Display mode',
-		enum: ['lines', 'ballsAndSticks', 'licorice'],
+		enum: ['LN', 'BS', 'LC'],
 		enumNames: ['Lines', 'Balls and Sticks', 'Licorice'],
 		default: 'lines'
 	},

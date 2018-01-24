@@ -194,7 +194,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 			cp.sGroupForest.insert(sg.id);
 	});
 
-	cp.isChiral = this.isChiral;
+	cp.isChiral = cp.isChiral || this.isChiral;
 
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;

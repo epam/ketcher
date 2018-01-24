@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var element = require('./../element');
+const element = require('./../element');
 
-var common = require('./common');
-var utils = require('./utils');
+const common = require('./common');
+const utils = require('./utils');
 
 function Molfile(v3000) {
 	/* reader */
@@ -28,8 +28,8 @@ function Molfile(v3000) {
 }
 
 Molfile.prototype.parseCTFile = function (molfileLines, shouldReactionRelayout) {
-	var ret = null;
-	if (molfileLines[0].search('\\$RXN') == 0)
+	let ret = null;
+	if (molfileLines[0].search('\\$RXN') === 0)
 		ret = common.parseRxn(molfileLines, shouldReactionRelayout);
 	else
 		ret = common.parseMol(molfileLines);

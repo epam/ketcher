@@ -229,52 +229,52 @@ function applyAtomProp(atoms, values, propId) {
 
 function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-statements
 	/* reader */
-	var ctab = new Struct();
-	var i;
-	var atomCount = utils.parseDecimalInt(countsSplit[0]);
-	var bondCount = utils.parseDecimalInt(countsSplit[1]);
-	var atomListCount = utils.parseDecimalInt(countsSplit[2]);
-	ctab.isChiral = utils.parseDecimalInt(countsSplit[4]) !== 0;
-	var stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
-	var propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
+	const ctab = new Struct();
+	let i;
+	const atomCount = utils.parseDecimalInt(countsSplit[0]);
+	const bondCount = utils.parseDecimalInt(countsSplit[1]);
+	const atomListCount = utils.parseDecimalInt(countsSplit[2]);
+	ctab.isChiral = !ctab.isChiral ? utils.parseDecimalInt(countsSplit[4]) !== 0 : true;
+	const stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
+	const propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
 
-	var shift = 0;
-	var atomLines = ctabLines.slice(shift, shift + atomCount);
+	let shift = 0;
+	const atomLines = ctabLines.slice(shift, shift + atomCount);
 	shift += atomCount;
-	var bondLines = ctabLines.slice(shift, shift + bondCount);
+	const bondLines = ctabLines.slice(shift, shift + bondCount);
 	shift += bondCount;
-	var atomListLines = ctabLines.slice(shift, shift + atomListCount);
+	const atomListLines = ctabLines.slice(shift, shift + atomListCount);
 	shift += atomListCount + stextLinesCount;
 
-	var atoms = atomLines.map(parseAtomLine);
+	const atoms = atomLines.map(parseAtomLine);
 	for (i = 0; i < atoms.length; ++i)
 		ctab.atoms.add(atoms[i]);
-	var bonds = bondLines.map(parseBondLine);
+	const bonds = bondLines.map(parseBondLine);
 	for (i = 0; i < bonds.length; ++i)
 		ctab.bonds.add(bonds[i]);
 
-	var atomLists = atomListLines.map(parseAtomListLine);
+	const atomLists = atomListLines.map(parseAtomListLine);
 	atomLists.forEach((pair) => {
 		ctab.atoms.get(pair.aid).atomList = pair.atomList;
 		ctab.atoms.get(pair.aid).label = 'L#';
 	});
 
-	var sGroups = {};
-	var rLogic = {};
-	var props = parsePropertyLines(ctab, ctabLines, shift,
+	const sGroups = {};
+	const rLogic = {};
+	const props = parsePropertyLines(ctab, ctabLines, shift,
 		Math.min(ctabLines.length, shift + propertyLinesCount), sGroups, rLogic);
 	props.forEach((values, propId) => {
 		applyAtomProp(ctab.atoms, values, propId);
 	});
 
-	var atomMap = {};
-	var sid;
+	const atomMap = {};
+	let sid;
 	for (sid in sGroups) {
-		var sg = sGroups[sid];
+		const sg = sGroups[sid];
 		if (sg.type === 'DAT' && sg.atoms.length === 0) {
-			var parent = sGroups[sid].parent;
+			const parent = sGroups[sid].parent;
 			if (parent >= 0) {
-				var psg = sGroups[parent - 1];
+				const psg = sGroups[parent - 1];
 				if (psg.type === 'GEN')
 					sg.atoms = [].slice.call(psg.atoms);
 			}
@@ -282,17 +282,17 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	}
 	for (sid in sGroups)
 		sGroup.loadSGroup(ctab, sGroups[sid], atomMap);
-	var emptyGroups = [];
+	const emptyGroups = [];
 	for (sid in sGroups) { // TODO: why do we need that?
 		Struct.SGroup.filter(ctab, sGroups[sid], atomMap);
-		if (sGroups[sid].atoms.length == 0 && !sGroups[sid].allAtoms)
+		if (sGroups[sid].atoms.length === 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(+sid);
 	}
 	for (i = 0; i < emptyGroups.length; ++i) {
 		ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.delete(emptyGroups[i]);
 	}
-	for (var id in rLogic) {
+	for (const id in rLogic) {
 		const rgid = parseInt(id, 10);
 		ctab.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
 	}

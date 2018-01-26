@@ -32,6 +32,11 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 	const aidMap = new Map();
 	const fridMap = new Map();
 
+	const pasteItems = { // only atoms and bonds now
+		atoms: [],
+		bonds: []
+	};
+
 	pstruct.atoms.forEach((atom, aid) => {
 		if (!fridMap.has(atom.fragment))
 			fridMap.set(atom.fragment, action.addOp(new op.FragmentAdd().perform(restruct)).frid);
@@ -40,10 +45,15 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		const operation = new op.AtomAdd(tmpAtom, Vec2.diff(atom.pp, xy0).rotate(angle).add(point)).perform(restruct);
 		action.addOp(operation);
 		aidMap.set(aid, operation.data.aid);
+
+		pasteItems.atoms.push(operation.data.aid);
 	});
 
 	pstruct.bonds.forEach((bond) => {
-		action.addOp(new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond).perform(restruct));
+		const operation = new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond).perform(restruct);
+		action.addOp(operation);
+
+		pasteItems.bonds.push(operation.data.bid);
 	});
 
 	pstruct.sgroups.forEach((sg) => {
@@ -81,7 +91,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 	});
 
 	action.operations.reverse();
-	return action;
+	return [action, pasteItems];
 }
 
 function getStructCenter(struct) {

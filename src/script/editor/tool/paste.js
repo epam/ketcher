@@ -25,15 +25,18 @@ function PasteTool(editor, struct) {
 	this.editor = editor;
 	this.editor.selection(null);
 	this.struct = struct;
-	this.mergeItems = null;
 
 	const rnd = editor.render;
 	const point = editor.lastEvent ?
 		rnd.page2obj(editor.lastEvent) :
 		null;
 
-	this.action = fromPaste(rnd.ctab, this.struct, point);
+	const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
+	this.action = action;
 	this.editor.update(this.action, true);
+
+	this.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+	utils.hoverItemsToFuse(this.editor, this.mergeItems);
 }
 
 PasteTool.prototype.mousemove = function (event) {
@@ -42,12 +45,11 @@ PasteTool.prototype.mousemove = function (event) {
 	if (this.action)
 		this.action.perform(rnd.ctab);
 
-	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
+	const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
+	this.action = action;
 	this.editor.update(this.action, true);
 
-	console.log(this.struct);
-
-	this.mergeItems = utils.getItemsToFuse(this.editor, null);
+	this.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
 	utils.hoverItemsToFuse(this.editor, this.mergeItems);
 };
 

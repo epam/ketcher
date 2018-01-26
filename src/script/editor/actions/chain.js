@@ -33,10 +33,16 @@ export function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-li
 		atomGetAttr(restruct, atomId, 'fragment') :
 		action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
+	const chainItems = {
+		atoms: [],
+		bonds: []
+	};
+
 	let id0 = atomId !== null ?
 		atomId :
 		action.addOp(new op.AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)).data.aid;
 
+	chainItems.atoms.push(id0);
 	action.operations.reverse();
 
 	for (let i = 0; i < nSect; i++) {
@@ -46,7 +52,9 @@ export function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-li
 		const ret = fromBondAddition(restruct, {}, id0, closestAtom ? closestAtom.id : {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
+		chainItems.bonds.push(ret[3]);
+		chainItems.atoms.push(id0);
 	}
 
-	return action;
+	return [action, chainItems];
 }

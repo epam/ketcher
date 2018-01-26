@@ -45,7 +45,9 @@ PasteTool.prototype.mousemove = function (event) {
 	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
 	this.editor.update(this.action, true);
 
-	this.mergeItems = utils.getItemsToFuse(this.editor);
+	console.log(this.struct);
+
+	this.mergeItems = utils.getItemsToFuse(this.editor, null);
 	utils.hoverItemsToFuse(this.editor, this.mergeItems);
 };
 

@@ -51,50 +51,50 @@ ChainTool.prototype.mousedown = function (event) {
 
 ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	const editor = this.editor;
-	const rnd = editor.render;
-
-	if (this.dragCtx) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
-
-		editor.selection(null);
-
-		const dragCtx = this.dragCtx;
-
-		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
-			if ('action' in dragCtx)
-				dragCtx.action.perform(rnd.ctab);
-
-			const atoms = rnd.ctab.molecule.atoms;
-
-			const pos0 = dragCtx.item ?
-				atoms.get(dragCtx.item.id).pp :
-				dragCtx.xy0;
-
-			const pos1 = rnd.page2obj(event);
-			const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
-
-			const angle = event.ctrlKey ?
-				utils.calcAngle(pos0, pos1) :
-				utils.fracAngle(pos0, pos1);
-
-			dragCtx.action = fromChain(rnd.ctab, pos0, angle, sectCount,
-				dragCtx.item ? dragCtx.item.id : null);
-
-			editor.event.message.dispatch({
-				info: sectCount + ' sectors'
-			});
-
-			editor.update(dragCtx.action, true);
-
-			dragCtx.mergeItems = utils.getItemsToFuse(editor);
-			utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
-
-			return true;
-		}
-	}
+	const restruct = editor.render.ctab;
+	const dragCtx = this.dragCtx;
 
 	editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	if (!dragCtx) return true;
+
+	if (dragCtx && dragCtx.stopTapping)
+		dragCtx.stopTapping();
+
+	editor.selection(null);
+
+	if (!dragCtx.item || dragCtx.item.map === 'atoms') {
+		if (dragCtx.action)
+			dragCtx.action.perform(restruct);
+
+		const atoms = restruct.molecule.atoms;
+
+		const pos0 = dragCtx.item ?
+			atoms.get(dragCtx.item.id).pp :
+			dragCtx.xy0;
+
+		const pos1 = editor.render.page2obj(event);
+		const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+
+		const angle = event.ctrlKey ?
+			utils.calcAngle(pos0, pos1) :
+			utils.fracAngle(pos0, pos1);
+
+		const [action, newItems] = fromChain(restruct, pos0, angle, sectCount,
+			dragCtx.item ? dragCtx.item.id : null);
+
+		editor.event.message.dispatch({
+			info: sectCount + ' sectors'
+		});
+
+		dragCtx.action = action;
+		editor.update(dragCtx.action, true);
+
+		dragCtx.mergeItems = utils.getItemsToFuse(editor, newItems);
+		utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
+
+		return true;
+	}
+
 	return true;
 };
 
@@ -108,34 +108,29 @@ ChainTool.prototype.mouseup = function () {
 		editor.event.message.dispatch({
 			info: false
 		});
-
 		return true;
 	}
 
-	if ('stopTapping' in this.dragCtx)
-		dragCtx.stopTapping();
+	if (dragCtx.stopTapping) dragCtx.stopTapping();
 
-	let action = dragCtx.action;
-
-	if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
+	if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
 		const bond = struct.bonds.get(dragCtx.item.id);
 
-		action = bondChangingAction(restruct, dragCtx.item.id, bond, {
+		dragCtx.action = bondChangingAction(restruct, dragCtx.item.id, bond, {
 			type: Struct.Bond.PATTERN.TYPE.SINGLE,
 			stereo: Struct.Bond.PATTERN.STEREO.NONE
 		});
+	} else {
+		dragCtx.action = dragCtx.action ?
+			fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+			fromItemsFuse(restruct, dragCtx.mergeItems);
 	}
 
 	editor.selection(null);
-
-	dragCtx.action = dragCtx.action ?
-		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
-		fromItemsFuse(restruct, dragCtx.mergeItems);
-
 	editor.hover(null);
 
-	if (action)
-		editor.update(action);
+	if (dragCtx.action)
+		editor.update(dragCtx.action);
 
 	delete this.dragCtx;
 	return true;

@@ -157,9 +157,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			fromItemsFuse(restruct, dragCtx.mergeItems);
 
 		editor.hover(null);
-
-		if (dragCtx.action)
-			editor.update(dragCtx.action);
+		editor.update(dragCtx.action);
 
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored

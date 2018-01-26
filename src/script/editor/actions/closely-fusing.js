@@ -19,7 +19,7 @@ import { fromBondsMerge } from './bond';
 import { fromAtomMerge } from './atom';
 
 export function fromItemsFuse(restruct, items) {
-	const action = new Action();
+	let action = new Action();
 
 	if (!items)
 		return action;
@@ -31,12 +31,12 @@ export function fromItemsFuse(restruct, items) {
 		if (usedAtoms.has(dst) || usedAtoms.has(src))
 			return;
 
-		fromAtomMerge(restruct, src, dst).mergeWith(action);
+		action = fromAtomMerge(restruct, src, dst).mergeWith(action);
 		usedAtoms.add(dst).add(src);
 	});
 
 	// merge bonds
-	fromBondsMerge(restruct, items.bonds).mergeWith(action);
+	action = fromBondsMerge(restruct, items.bonds).mergeWith(action);
 
 	return action;
 }

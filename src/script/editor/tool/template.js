@@ -120,21 +120,14 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 		return true;
 	}
 
-	const editor = this.editor;
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
 	let pos0 = null;
 	const pos1 = this.editor.render.page2obj(event);
-	let extraBond = null;
-
 	const struct = restruct.molecule;
-	// calc initial pos and is extra bond needed
-	if (!ci) { //  ci.type == 'Canvas'
-		pos0 = dragCtx.xy0;
-	} else if (ci.map === 'atoms') {
-		pos0 = struct.atoms.get(ci.id).pp;
-		extraBond = Vec2.dist(pos0, pos1) > 1;
-	} else if (ci.map === 'bonds') {
+
+	/* moving when attached to bond */
+	if (ci && ci.map === 'bonds') {
 		const bond = struct.bonds.get(ci.id);
 		let sign = getSign(struct, bond, pos1);
 
@@ -142,30 +135,42 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 			sign = -sign;
 
 		if (sign !== dragCtx.sign2 || !dragCtx.action) {
-			if ('action' in dragCtx)
+			if (dragCtx.action)
 				dragCtx.action.perform(restruct); // undo previous action
 
 			dragCtx.sign2 = sign;
-			dragCtx.action = fromTemplateOnBondAction(
+			[action, pasteItems] = fromTemplateOnBondAction(
 				restruct,
-				this.editor.event,
-				ci.id,
 				this.template,
+				ci.id,
+				this.editor.event,
 				dragCtx.sign1 * dragCtx.sign2 > 0,
 				false
 			);
 
+			dragCtx.action = action;
 			this.editor.update(dragCtx.action, true);
-		}
 
+			dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+			utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+		}
 		return true;
 	}
+	/* end */
 
+	let extraBond = null;
+	// calc initial pos and is extra bond needed
+	if (!ci) { //  ci.type == 'Canvas'
+		pos0 = dragCtx.xy0;
+	} else if (ci.map === 'atoms') {
+		pos0 = struct.atoms.get(ci.id).pp;
+		extraBond = Vec2.dist(pos0, pos1) > 1;
+	}
+
+	// calc angle
 	let angle = utils.calcAngle(pos0, pos1);
-
 	if (!event.ctrlKey)
 		angle = utils.fracAngle(angle);
-
 	const degrees = utils.degrees(angle);
 
 	// check if anything changed since last time
@@ -179,29 +184,32 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 
 	// create new action
 	dragCtx.angle = degrees;
+	let action = null;
+	let pasteItems;
 
 	if (!ci) { // ci.type == 'Canvas'
-		dragCtx.action = fromTemplateOnCanvas(
+		[action, pasteItems] = fromTemplateOnCanvas(
 			restruct,
 			this.template,
 			pos0,
 			angle
 		);
 	} else if (ci.map === 'atoms') {
-		dragCtx.action = fromTemplateOnAtom(
+		[action, pasteItems] = fromTemplateOnAtom(
 			restruct,
+			this.template,
 			ci.id,
 			angle,
-			extraBond,
-			this.template
+			extraBond
 		);
 		dragCtx.extra_bond = extraBond;
 	}
+	dragCtx.action = action;
 
-	editor.update(dragCtx.action, true);
+	this.editor.update(dragCtx.action, true);
 
-	dragCtx.mergeItems = utils.getItemsToFuse(editor);
-	utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
+	dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+	utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
 
 	return true;
 };
@@ -210,56 +218,82 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	if (!this.dragCtx)
 		return true;
 
-	const editor = this.editor;
-	const restruct = editor.render.ctab;
+	const restruct = this.editor.render.ctab;
 	const struct = restruct.molecule;
 	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
 
+	/* after moving around bond */
+	if (dragCtx.action && ci && ci.map === 'bonds') {
+		dragCtx.action.perform(restruct); // revert drag action
+		fromTemplateOnBondAction(
+			restruct,
+			this.template,
+			ci.id,
+			this.editor.event,
+			dragCtx.sign1 * dragCtx.sign2 > 0,
+			true
+		)
+			.then(([action, pasteItems]) => {
+				const mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+				action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+				this.editor.update(action);
+				delete this.dragCtx;
+			});
+		return true;
+	}
+	/* end */
+
+	let action;
+	let pasteItems = null;
+
 	if (!dragCtx.action) {
 		if (!ci) { //  ci.type == 'Canvas'
-			dragCtx.action = fromTemplateOnCanvas(restruct, this.template, dragCtx.xy0, 0);
+			[action, pasteItems] = fromTemplateOnCanvas(restruct, this.template, dragCtx.xy0, 0);
+			dragCtx.action = action;
 		} else if (ci.map === 'atoms') {
 			const degree = restruct.atoms.get(ci.id).a.neighbors.length;
+			let angle;
+			let extraBond;
 
 			if (degree > 1) { // common case
-				dragCtx.action = fromTemplateOnAtom(
-					restruct,
-					ci.id,
-					null,
-					true,
-					this.template
-				);
+				angle = null;
+				extraBond = true;
 			} else if (degree === 1) { // on chain end
-				const neiId = struct.halfBonds.get(struct.atoms.get(ci.id).neighbors[0]).end;
 				const atom = struct.atoms.get(ci.id);
+				const neiId = struct.halfBonds.get(atom.neighbors[0]).end;
 				const nei = struct.atoms.get(neiId);
-				const angle = utils.calcAngle(nei.pp, atom.pp);
 
-				dragCtx.action = fromTemplateOnAtom(
-					restruct,
-					ci.id,
-					event.ctrlKey ? angle : utils.fracAngle(angle),
-					false,
-					this.template
-				);
+				angle = event.ctrlKey ?
+					utils.calcAngle(nei.pp, atom.pp) :
+					utils.fracAngle(utils.calcAngle(nei.pp, atom.pp));
+				extraBond = false;
 			} else { // on single atom
-				dragCtx.action = fromTemplateOnAtom(
-					restruct,
-					ci.id,
-					0,
-					false,
-					this.template
-				);
+				angle = 0;
+				extraBond = false;
 			}
+
+			[action, pasteItems] = fromTemplateOnAtom(
+				restruct,
+				this.template,
+				ci.id,
+				angle,
+				extraBond
+			);
+			dragCtx.action = action;
 		} else if (ci.map === 'bonds') {
 			fromTemplateOnBondAction(
-				restruct, editor.event,
-				ci.id, this.template,
-				dragCtx.sign1 * dragCtx.sign2 > 0, true
+				restruct,
+				this.template,
+				ci.id,
+				this.editor.event,
+				dragCtx.sign1 * dragCtx.sign2 > 0,
+				true
 			)
-				.then((action) => {
-					editor.update(action);
+				.then(([action, pasteItems]) => { // eslint-disable-line no-shadow
+					const mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+					action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+					this.editor.update(action);
 					delete this.dragCtx;
 				});
 
@@ -267,33 +301,19 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 		}
 	}
 
-	editor.selection(null);
+	this.editor.selection(null);
 
+	if (!dragCtx.mergeItems && pasteItems)
+		dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
 	dragCtx.action = dragCtx.action ?
 		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
 		fromItemsFuse(restruct, dragCtx.mergeItems);
 
-	editor.hover(null);
-
-	if (dragCtx.action && ci && ci.map === 'bonds') {
-		dragCtx.action.perform(restruct); // revert drag action
-		fromTemplateOnBondAction(
-			restruct, editor.event,
-			ci.id, this.template,
-			dragCtx.sign1 * dragCtx.sign2 > 0, true
-		)
-			.then((action) => {
-				editor.update(action);
-				delete this.dragCtx;
-			});
-		return true;
-	}
-
-	const action = dragCtx.action;
+	this.editor.hover(null);
+	const completeAction = dragCtx.action;
+	if (completeAction && !completeAction.isDummy())
+		this.editor.update(completeAction);
 	delete this.dragCtx;
-
-	if (action && !action.isDummy())
-		editor.update(action);
 
 	return true;
 };

@@ -104,12 +104,8 @@ ChainTool.prototype.mouseup = function () {
 	const struct = restruct.molecule;
 	const dragCtx = this.dragCtx;
 
-	if (!dragCtx) {
-		editor.event.message.dispatch({
-			info: false
-		});
+	if (!dragCtx)
 		return true;
-	}
 
 	if (dragCtx.stopTapping) dragCtx.stopTapping();
 
@@ -131,6 +127,10 @@ ChainTool.prototype.mouseup = function () {
 
 	if (dragCtx.action)
 		editor.update(dragCtx.action);
+
+	editor.event.message.dispatch({
+		info: false
+	});
 
 	delete this.dragCtx;
 	return true;

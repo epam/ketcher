@@ -31,18 +31,19 @@ import Action from '../shared/action';
  * @param simpleFusing { Function }
  * @returns { Promise }
  */
-export function fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing) {
+export function fromAromaticTemplateOnBond(restruct, template, bid, events, simpleFusing) {
 	const tmpl = template.molecule;
 	const struct = restruct.molecule;
 
 	const frid = struct.getBondFragment(bid);
 	const beforeMerge = getFragmentWithBondMap(struct, frid);
 	let afterMerge = null;
+	let pasteItems = null;
 
 	let action = new Action();
 
 	if (!canBeAromatized(beforeMerge.frag) || !canBeAromatized(tmpl)) {
-		action = simpleFusing(restruct, bid, template);
+		action = simpleFusing(restruct, template, bid);
 		return Promise.resolve(action);
 	}
 
@@ -54,9 +55,10 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 		const aromatizeAction = fromAromatize(restruct, astruct, beforeMerge.bondMap);
 		// merge template with fragment
 		const aromTemplate = { bid: template.bid, molecule: atmpl };
-		const templateFusingAction = simpleFusing(restruct, bid, aromTemplate);
+		const templateFusingAction = simpleFusing(restruct, aromTemplate, bid);
+		pasteItems = templateFusingAction[1];
 
-		action = templateFusingAction.mergeWith(aromatizeAction);
+		action = templateFusingAction[0].mergeWith(aromatizeAction);
 
 		afterMerge = getFragmentWithBondMap(restruct.molecule, frid);
 
@@ -71,13 +73,12 @@ export function fromAromaticTemplateOnBond(restruct, events, bid, template, simp
 		const dearomatizeAction = fromDearomatize(restruct, destruct, afterMerge.bondMap);
 		action = dearomatizeAction.mergeWith(action);
 
-		return action;
+		return [action, pasteItems];
 	}).catch((err) => {
 		console.info(err.message);
 		action.perform(restruct); // revert actions if error
-		action = simpleFusing(restruct, bid, template);
 
-		return action;
+		return simpleFusing(restruct, template, bid);
 	});
 }
 

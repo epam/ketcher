@@ -61,7 +61,7 @@ function extraBondAction(restruct, aid, angle, sgroups) {
 	return { action, aid1: additionalAtom };
 }
 
-export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
+export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 	let action = new Action();
 
 	const tmpl = template.molecule;
@@ -91,6 +91,13 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 	const xy0 = tmpl.atoms.get(template.aid).pp;
 	const frid = atomGetAttr(restruct, aid, 'fragment');
 
+	/* For merge */
+	const pasteItems = { // only atoms and bonds now
+		atoms: [],
+		bonds: []
+	};
+	/* ----- */
+
 	tmpl.atoms.forEach((a, id) => {
 		const attrs = Struct.Atom.getAttrHash(a);
 		attrs.fragment = frid;
@@ -98,12 +105,14 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 		if (id === template.aid) {
 			action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true));
 			map.set(id, aid1);
+			pasteItems.atoms.push(aid1);
 		} else {
 			const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
 			const operation = new op.AtomAdd(attrs, v.get_xy0()).perform(restruct);
 			action.addOp(operation);
 			map.set(id, operation.data.aid);
+			pasteItems.atoms.push(operation.data.aid);
 		}
 
 		if (map.get(id) !== aid && map.get(id) !== aid1)
@@ -111,23 +120,26 @@ export function fromTemplateOnAtom(restruct, aid, angle, extraBond, template) {
 	});
 
 	tmpl.bonds.forEach((bond) => {
-		action.addOp(new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond).perform(restruct));
+		const operation = new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond).perform(restruct);
+		action.addOp(operation);
+
+		pasteItems.bonds.push(operation.data.bid);
 	});
 
 	action.operations.reverse();
-	return action;
+	return [action, pasteItems];
 }
 
-export function fromTemplateOnBondAction(restruct, events, bid, template, flip, force) {
+export function fromTemplateOnBondAction(restruct, template, bid, events, flip, force) {
 	if (!force)
-		return fromTemplateOnBond(restruct, bid, template, flip);
+		return fromTemplateOnBond(restruct, template, bid, flip);
 
-	const simpleFusing = (restruct, bid, template) => fromTemplateOnBond(restruct, bid, template, flip); // eslint-disable-line
+	const simpleFusing = (restruct, template, bid) => fromTemplateOnBond(restruct, template, bid, flip); // eslint-disable-line
 	/* aromatic merge (Promise)*/
-	return fromAromaticTemplateOnBond(restruct, events, bid, template, simpleFusing);
+	return fromAromaticTemplateOnBond(restruct, template, bid, events, simpleFusing);
 }
 
-function fromTemplateOnBond(restruct, bid, template, flip) {
+function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor function !!
 	const action = new Action();
 
 	const tmpl = template.molecule;
@@ -157,6 +169,13 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 	const frid = struct.getBondFragment(bid);
 
+	/* For merge */
+	const pasteItems = { // only atoms and bonds now
+		atoms: [],
+		bonds: []
+	};
+	/* ----- */
+
 	tmpl.atoms.forEach((atom, id) => {
 		const attrs = Struct.Atom.getAttrHash(atom);
 		attrs.fragment = frid;
@@ -174,11 +193,13 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 		if (mergeA === null) {
 			const operation = new op.AtomAdd(attrs,	v).perform(restruct);
 			action.addOp(operation);
-
 			atomsMap.set(id, operation.data.aid);
+			pasteItems.atoms.push(operation.data.aid);
+
 			action.mergeWith(atomAddToSGroups(restruct, sgroups, atomsMap.get(id)));
 		} else {
 			atomsMap.set(id, mergeA.id);
+
 			action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
 			// TODO [RB] need to merge fragments?
 		}
@@ -186,13 +207,17 @@ function fromTemplateOnBond(restruct, bid, template, flip) {
 
 	tmpl.bonds.forEach((tBond) => {
 		const existId = struct.findBondId(atomsMap.get(tBond.begin), atomsMap.get(tBond.end));
-		if (existId === null)
-			action.addOp(new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct));
-		else
+		if (existId === null) {
+			const operation = new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct);
+			action.addOp(operation);
+
+			pasteItems.bonds.push(operation.data.bid);
+		} else {
 			action.mergeWith(fromBondsAttrs(restruct, existId, tmplBond, true));
+		}
 	});
 	action.operations.reverse();
-	return action;
+	return [action, pasteItems];
 }
 
 function atomAddToSGroups(restruct, sgroups, aid) {

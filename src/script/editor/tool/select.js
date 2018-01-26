@@ -157,6 +157,7 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 			fromItemsFuse(restruct, dragCtx.mergeItems);
 
 		editor.hover(null);
+		if (dragCtx.mergeItems) editor.selection(null);
 		editor.update(dragCtx.action);
 
 		delete this.dragCtx;

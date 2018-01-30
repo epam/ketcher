@@ -18,7 +18,7 @@ import Vec2 from '../../util/vec2';
 
 import utils from '../shared/utils';
 import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate';
-import { fromItemsFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {
@@ -133,8 +133,8 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 	this.editor.event.message.dispatch({ info: degrees + 'º' });
 
 	const expSel = this.editor.explicitSelected();
-	dragCtx.mergeItems = utils.getItemsToFuse(this.editor, expSel);
-	utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+	dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
+	hoverItemsToFuse(this.editor, dragCtx.mergeItems);
 
 	this.editor.update(dragCtx.action, true);
 	return true;
@@ -151,7 +151,8 @@ RotateTool.prototype.mouseup = function () {
 	delete this.dragCtx;
 
 	this.editor.update(action);
-	this.editor.selection(null);
+	this.editor.hover(null);
+	if (dragCtx.mergeItems) this.editor.selection(null);
 	this.editor.event.message.dispatch({
 		info: false
 	});

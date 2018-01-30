@@ -15,8 +15,7 @@
  ***************************************************************************/
 
 import { fromPaste } from '../actions/paste';
-import utils from '../shared/utils';
-import { fromItemsFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -35,8 +34,8 @@ function PasteTool(editor, struct) {
 	this.action = action;
 	this.editor.update(this.action, true);
 
-	this.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
-	utils.hoverItemsToFuse(this.editor, this.mergeItems);
+	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
+	hoverItemsToFuse(this.editor, this.mergeItems);
 }
 
 PasteTool.prototype.mousemove = function (event) {
@@ -49,8 +48,8 @@ PasteTool.prototype.mousemove = function (event) {
 	this.action = action;
 	this.editor.update(this.action, true);
 
-	this.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
-	utils.hoverItemsToFuse(this.editor, this.mergeItems);
+	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
+	hoverItemsToFuse(this.editor, this.mergeItems);
 };
 
 PasteTool.prototype.mouseup = function () {

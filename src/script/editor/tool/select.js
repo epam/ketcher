@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from '../shared/utils';
-
 import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import LassoHelper from './helper/lasso';
@@ -24,7 +22,7 @@ import { atomLongtapEvent } from './atom';
 import { fromMultipleMove } from '../actions/fragment';
 import { fromAtomsAttrs } from '../actions/atom';
 import { fromBondsAttrs } from '../actions/bond';
-import { fromItemsFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -121,8 +119,8 @@ SelectTool.prototype.mousemove = function (event) {
 			editor.render.page2obj(event).sub(dragCtx.xy0)
 		);
 
-		dragCtx.mergeItems = utils.getItemsToFuse(editor, expSel);
-		utils.hoverItemsToFuse(editor, dragCtx.mergeItems);
+		dragCtx.mergeItems = getItemsToFuse(editor, expSel);
+		hoverItemsToFuse(editor, dragCtx.mergeItems);
 
 		editor.update(dragCtx.action, true);
 		return true;

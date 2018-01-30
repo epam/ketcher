@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 import utils from '../shared/utils';
 import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
-import { fromItemsFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -151,8 +151,8 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 			dragCtx.action = action;
 			this.editor.update(dragCtx.action, true);
 
-			dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
-			utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+			dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
+			hoverItemsToFuse(this.editor, dragCtx.mergeItems);
 		}
 		return true;
 	}
@@ -208,8 +208,8 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 
 	this.editor.update(dragCtx.action, true);
 
-	dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
-	utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+	dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
+	hoverItemsToFuse(this.editor, dragCtx.mergeItems);
 
 	return true;
 };
@@ -235,7 +235,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 			true
 		)
 			.then(([action, pasteItems]) => {
-				const mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+				const mergeItems = getItemsToFuse(this.editor, pasteItems);
 				action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
 				this.editor.update(action);
 				delete this.dragCtx;
@@ -291,7 +291,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				true
 			)
 				.then(([action, pasteItems]) => { // eslint-disable-line no-shadow
-					const mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+					const mergeItems = getItemsToFuse(this.editor, pasteItems);
 					action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
 					this.editor.update(action);
 					delete this.dragCtx;
@@ -304,7 +304,7 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	this.editor.selection(null);
 
 	if (!dragCtx.mergeItems && pasteItems)
-		dragCtx.mergeItems = utils.getItemsToFuse(this.editor, pasteItems);
+		dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
 	dragCtx.action = dragCtx.action ?
 		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
 		fromItemsFuse(restruct, dragCtx.mergeItems);

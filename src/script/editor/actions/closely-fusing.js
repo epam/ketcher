@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import Action from '../shared/action';
+import utils from '../shared/utils';
 import { fromBondsMerge } from './bond';
 import { fromAtomMerge } from './atom';
 
@@ -39,4 +40,66 @@ export function fromItemsFuse(restruct, items) {
 	action = fromBondsMerge(restruct, items.bonds).mergeWith(action);
 
 	return action;
+}
+
+export function getItemsToFuse(editor, items) {
+	const struct = editor.render.ctab.molecule;
+
+	const mergeItems = items || (
+		{
+			atoms: Array.from(struct.atoms.keys()),
+			bonds: Array.from(struct.bonds.keys())
+		}
+	);
+
+	return closestToMerge(struct, editor.findMerge(mergeItems, ['atoms', 'bonds']));
+}
+
+export function hoverItemsToFuse(editor, items) {
+	if (!items) {
+		editor.hover(null);
+		return;
+	}
+
+	const hoverItems = {
+		atoms: Array.from(items.atoms.values()),
+		bonds: Array.from(items.bonds.values())
+	};
+
+	editor.hover({ map: 'merge', id: +Date.now(), items: hoverItems });
+}
+
+/**
+ * @param struct
+ * @param closestMap {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ * @return {{
+ * 		atoms: Map<number, number>,
+ * 		bonds: Map<number, number>
+ * }}
+ */
+function closestToMerge(struct, closestMap) {
+	const mergeMap = {
+		atoms: new Map(closestMap.atoms),
+		bonds: new Map(closestMap.bonds)
+	};
+
+	closestMap.bonds.forEach((dstId, srcId) => {
+		const bond = struct.bonds.get(srcId);
+		const bondCI = struct.bonds.get(dstId);
+
+		if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+			mergeMap.atoms.delete(bond.begin);
+			mergeMap.atoms.delete(bond.end);
+		} else {
+			mergeMap.bonds.delete(srcId);
+		}
+	});
+
+	if (mergeMap.atoms.size === 0 && mergeMap.bonds.size === 0)
+		return null;
+
+	return mergeMap;
 }

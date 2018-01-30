@@ -18,6 +18,7 @@ import Vec2 from '../../util/vec2';
 
 import utils from '../shared/utils';
 import { fromRotate, fromFlip, fromBondAlign } from '../actions/rotate';
+import { fromItemsFuse } from '../actions/closely-fusing';
 
 function RotateTool(editor, dir) {
 	if (!(this instanceof RotateTool)) {
@@ -105,44 +106,52 @@ RotateTool.prototype.mousedown = function (event) {
 };
 
 RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
-	if ('dragCtx' in this) {
-		var rnd = this.editor.render;
-		var dragCtx = this.dragCtx;
+	if (!this.dragCtx)
+		return true;
 
-		var pos = rnd.page2obj(event);
-		var angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
-		if (!event.ctrlKey)
-			angle = utils.fracAngle(angle);
+	var rnd = this.editor.render;
+	var dragCtx = this.dragCtx;
 
-		var degrees = utils.degrees(angle);
+	var pos = rnd.page2obj(event);
+	var angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
+	if (!event.ctrlKey)
+		angle = utils.fracAngle(angle);
 
-		if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
-		if ('action' in dragCtx)
-			dragCtx.action.perform(rnd.ctab);
+	var degrees = utils.degrees(angle);
 
-		dragCtx.angle = degrees;
-		dragCtx.action = fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
+	if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
+	if ('action' in dragCtx)
+		dragCtx.action.perform(rnd.ctab);
 
-		if (degrees > 180)
-			degrees -= 360;
-		else if (degrees <= -180)
-			degrees += 360;
-		this.editor.event.message.dispatch({ info: degrees + 'º' });
+	dragCtx.angle = degrees;
+	dragCtx.action = fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
-		this.editor.update(dragCtx.action, true);
-	}
+	if (degrees > 180)
+		degrees -= 360;
+	else if (degrees <= -180)
+		degrees += 360;
+	this.editor.event.message.dispatch({ info: degrees + 'º' });
+
+	const expSel = this.editor.explicitSelected();
+	dragCtx.mergeItems = utils.getItemsToFuse(this.editor, expSel);
+	utils.hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+
+	this.editor.update(dragCtx.action, true);
 	return true;
 };
 
 RotateTool.prototype.mouseup = function () {
-	if (this.dragCtx) {
-		var action = this.dragCtx.action;
-		delete this.dragCtx;
-		if (action)
-			this.editor.update(action);
-		else
-			this.editor.selection(null);
-	}
+	if (!this.dragCtx) return true;
+	const dragCtx = this.dragCtx;
+	const restruct = this.editor.render.ctab;
+
+	const action = dragCtx.action ?
+		fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+		fromItemsFuse(restruct, dragCtx.mergeItems);
+	delete this.dragCtx;
+
+	this.editor.update(action);
+	this.editor.selection(null);
 	this.editor.event.message.dispatch({
 		info: false
 	});

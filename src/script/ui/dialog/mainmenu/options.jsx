@@ -115,6 +115,7 @@ function FieldMeasure(props, { schema }) {
 }
 
 export default connect(store => ({
+	server: store.options.app.server ? store.server : null,
 	appOpts: store.options.app,
 	initState: store.options.settings,
 	formState: store.modal.form

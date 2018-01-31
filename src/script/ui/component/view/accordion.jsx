@@ -15,32 +15,35 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
+import { xor } from 'lodash/fp';
 
 class Accordion extends Component {
 	constructor(props) {
 		super(props);
-		this.state.active = props.active ? props.active : {};
+		this.state.active = props.active || [];
 	}
 	onActive(index) {
-		const newActive = {};
-		newActive[index] = !this.state.active[index];
-		this.setState({ active: Object.assign(this.state.active, newActive) });
-		if (this.props.onActive) this.props.onActive();
+		const { multiple = true } = this.props;
+
+		if (!multiple)
+			this.setState({ active: [index] });
+		else
+			this.setState({ active: xor(this.state.active, [index]) });
 	}
 
 	render() {
 		const { children, captions, ...props } = this.props;
+		const { active } = this.state;
 		return (
 			<ul {...props}>
 				{ captions.map((caption, index) => (
-					<li className="tab">
+					<li className={'ac_tab ' + (active.includes(index) ? 'active' : 'hidden')}>
 						<a // eslint-disable-line
-							className={this.state.active[index] ? 'active' : ''}
 							onClick={() => this.onActive(index)}
 						>
 							{caption}
 						</a>
-						{this.state.active[index] ? children[index] : null }
+						{children[index]}
 					</li>
 				)) }
 			</ul>

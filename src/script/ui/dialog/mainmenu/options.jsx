@@ -33,7 +33,6 @@ import MeasureInput from '../../component/form/measure-input';
 function Settings(props) {
 	const { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;
 	const tabs = ['Rendering customization options', 'Atoms', 'Bonds', 'Server', '3D Viewer', 'Options for debugging'];
-	const activeTabs = { 0: true, 1: false, 2: false, 3: false, 4: false, 5: false };
 
 	return (
 		<Dialog
@@ -54,7 +53,7 @@ function Settings(props) {
 			]}
 		>
 			<Form schema={settingsSchema} init={initState} {...formState}>
-				<Accordion className="accordion" captions={tabs} active={activeTabs}>
+				<Accordion className="accordion" multiple={false} captions={tabs} active={[0]}>
 					<fieldset className="render">
 						<Field name="resetToSelect" />
 						<Field name="rotationStep" />
@@ -83,7 +82,7 @@ function Settings(props) {
 						<SelectCheckbox name="mass-skip-error-on-pseudoatoms" />
 						<SelectCheckbox name="gross-formula-add-rsites" />
 					</fieldset>
-					<fieldset className="3dView" disabled={!appOpts.miewPath}>
+					<fieldset className="miew" disabled={!appOpts.miewPath}>
 						<Field name="miewMode" />
 						<Field name="miewTheme" />
 						<Field name="miewAtomLabel" />

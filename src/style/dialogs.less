@@ -297,10 +297,18 @@ form.settings {
 	}
 
 	.accordion {
+        fieldset {
+          border-radius: 0 0 6px 6px;
+          height: @input-height * 4;
+        }
+        fieldset.miew {
+          height: @input-height * 3;
+        }
+        fieldset.render {
+          height: @input-height * 8;
+        };
 		&:extend(.-Accordion all);
-		fieldset {
-			border-radius: 0 0 6px 6px;
-		}
+
 		label {
 			display: block;
 			text-align: right;

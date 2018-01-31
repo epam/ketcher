@@ -61,8 +61,8 @@ export default function initEditor(dispatch, getState) {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			} else if (elem.type === 'rlabel') {
 				const rgroups = getState().editor.struct().rgroups;
-
 				const params = {
+					type: 'atom',
 					rgroupValues: elem.values,
 					disabledIds: Array.from(rgroups.entries())
 						.reduce((acc, [rgid, rg]) => {
@@ -100,13 +100,15 @@ export default function initEditor(dispatch, getState) {
 
 					return acc;
 				}, []);
-
 			const params = {
+				type: 'fragment',
 				rgroupValues: [rgroup.label],
 				disabledIds
 			};
-
-			return openDialog(dispatch, 'rgroup', params);
+			return openDialog(dispatch, 'rgroup', params).then((res) => {
+				const label = res.rgroupValues[0];
+				return { label };
+			});
 		},
 		onSgroupEdit: sgroup => sleep(0)		// huck to open dialog after dispatch sgroup tool action
 			.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))

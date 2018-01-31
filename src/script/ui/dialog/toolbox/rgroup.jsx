@@ -16,12 +16,15 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { without } from 'lodash/fp';
+import { range } from 'lodash/fp';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
+import ButtonList from '../../component/buttonlist';
 
-const rgroupValues = Array.from(new Array(32), (val, index) => 'R' + ++index);
+const rgroupValuesNames = Array.from(new Array(32), (val, index) => 'R' + ++index);
+
+const rgroupValues = range(1, 33);
 
 const rgroupSchema = {
 	title: 'R-group',
@@ -31,13 +34,14 @@ const rgroupSchema = {
 			type: 'array',
 			items: {
 				type: 'string',
-				enum: rgroupValues
+				enum: rgroupValues,
+				enumNames: rgroupValuesNames
 			}
 		}
 	}
 };
 
-function RGroup({ disabledIds, rgroupValues, formState, ...props }) { // eslint-disable-line
+function RGroup({ disabledIds, rgroupValues, formState, type, ...props }) { // eslint-disable-line
 	return (
 		<Dialog
 			title="R-Group"
@@ -48,7 +52,7 @@ function RGroup({ disabledIds, rgroupValues, formState, ...props }) { // eslint-
 			<Form schema={rgroupSchema} init={{ rgroupValues }} {...formState} >
 				<Field
 					name="rgroupValues"
-					multiple
+					multiple={type === 'fragment'}
 					component={ButtonList}
 					disabledIds={disabledIds}
 				/>
@@ -56,35 +60,6 @@ function RGroup({ disabledIds, rgroupValues, formState, ...props }) { // eslint-
 		</Dialog>
 	);
 }
-
-function ButtonList({ value, onChange, schema, disabledIds }) {
-	return (
-		<ul>
-			{
-				schema.items.enum.map((item, i) => {
-					const invalidId = disabledIds.includes(i);
-
-					let className = invalidId ? 'disabled' : '';
-					if (className === '')
-						className = value.includes(item) ? 'selected' : '';
-					return (
-						<li>
-							<button
-								className={className}
-								onClick={() => (invalidId
-									? null
-									: onChange(value.includes(item) ? without([item], value) : value.concat([item])))}
-							>
-								{item}
-							</button>
-						</li>
-					);
-				})
-			}
-		</ul>
-	);
-}
-
 
 export default connect(
 	store => ({ formState: store.modal.form })

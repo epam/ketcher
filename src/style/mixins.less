@@ -224,10 +224,11 @@
 		display: block;
 	}
 	button {
-		display: block;
+    display: flex;
+    justify-content: space-between;
 		width: 100%;
 		margin: 1px 0;
-		padding: 0.3em 4.5em 0.3em 2em; // 4.5em - place for kbd
+		padding: 0.3em 0.3em 0.3em 2em;
 		height: 1.7em;
 
 		font-size: @menu-font-size;
@@ -236,32 +237,24 @@
 		&:before, &:after {
 			padding-right: 0.4em;
 			font-size: @menu-icon-size;
-			//padding: @icon-padding;
 		}
 		&[disabled] {                    // TODO: general button highlight
 			.highlight-invert(disabled); // refactor
 		}
+    kbd {
+      margin: 2.5px 0 0 10px;
+      display: inline-block;
+    }
+    &>svg {
+      width: @expanded-icon-size;
+      height: @expanded-icon-size;
+    }
 	}
 	button:hover, .selected button {
 		//&:extend(button:active); not extended while in media
 		.highlight-scale(none);
 		.highlight-shadow(none);
 		.highlight-invert;
-	}
-	kbd {
-		display: inline-block;
-		position: absolute;    // how to align right?
-		right: 0.5em;
-	}
-}
-
-.expanded-menu-size(@dim) {
-	.set-size(@dim);
-	button {
-		font-size: @menu-font-size;
-		&:before, &:after {
-			font-size: @menu-icon-size;
-		}
 	}
 }
 

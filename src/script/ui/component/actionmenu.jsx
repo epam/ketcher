@@ -76,7 +76,7 @@ function ActionButton({ name, action, status = {}, onAction }) { // eslint-disab
 			}}
 			title={shortcut ? `${action.title} (${shortcut})` : action.title}
 		>
-			<Icon name={name} />{action.title}
+			<Icon name={name} />{action.title}<kbd>{shortcut}</kbd>
 		</button>
 	);
 }

@@ -331,7 +331,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 
 	selected.bonds.forEach((bid) => {
 		const bond = struct.bonds.get(bid);
-		pos.bonds.set(bid, Vec2.lc2(pos.atoms.get(bond.begin), 0.5, pos.atoms.get(bond.end), 0.5));
+		pos.bonds.set(bid, Vec2.lc2(struct.atoms.get(bond.begin).pp, 0.5, struct.atoms.get(bond.end).pp, 0.5));
 	});
 
 	const result = {};
@@ -340,7 +340,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 			const skip = { map: mp, id: srcId };
 			const item = findMaps[mp](restruct, pos[mp].get(srcId), skip, null, scale);
 
-			if (item)
+			if (item && !selected[mp].includes(item.id))
 				res.set(srcId, item.id);
 
 			return res;

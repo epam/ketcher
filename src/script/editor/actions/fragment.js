@@ -72,7 +72,7 @@ export function fromMultipleMove(restruct, lists, d) {
 			action.addOp(new op.AtomMove(aid, d, !atomsToInvalidate.has(aid)));
 		});
 
-		if (lists.sgroupData.length === 0) {
+		if (lists.sgroupData && lists.sgroupData.length === 0) {
 			const sgroups = getRelSgroupsBySelection(restruct, lists.atoms);
 			sgroups.forEach((sg) => {
 				action.addOp(new op.SGroupDataMove(sg.id, d));

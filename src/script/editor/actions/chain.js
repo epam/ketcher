@@ -24,33 +24,37 @@ import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
 
 export function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-line max-params
-	var dx = Math.cos(Math.PI / 6);
-	var dy = Math.sin(Math.PI / 6);
+	const dx = Math.cos(Math.PI / 6);
+	const dy = Math.sin(Math.PI / 6);
 
-	var action = new Action();
+	let action = new Action();
 
-	var frid;
-	if (atomId != null)
-		frid = atomGetAttr(restruct, atomId, 'fragment');
-	else
-		frid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
+	const frid = atomId !== null ?
+		atomGetAttr(restruct, atomId, 'fragment') :
+		action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
-	var id0 = -1;
-	if (atomId != null)
-		id0 = atomId;
-	else
-		id0 = action.addOp(new op.AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)).data.aid;
+	const chainItems = {
+		atoms: [],
+		bonds: []
+	};
 
+	let id0 = atomId !== null ?
+		atomId :
+		action.addOp(new op.AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)).data.aid;
+
+	chainItems.atoms.push(id0);
 	action.operations.reverse();
 
-	for (var i = 0; i < nSect; i++) {
-		var pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
+	for (let i = 0; i < nSect; i++) {
+		const pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-		var a = closest.atom(restruct, pos, null, 0.1);
-		var ret = fromBondAddition(restruct, {}, id0, a ? a.id : {}, pos);
+		const closestAtom = closest.atom(restruct, pos, null, 0.1);
+		const ret = fromBondAddition(restruct, {}, id0, closestAtom ? closestAtom.id : {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
+		chainItems.bonds.push(ret[3]);
+		chainItems.atoms.push(id0);
 	}
 
-	return action;
+	return [action, chainItems];
 }

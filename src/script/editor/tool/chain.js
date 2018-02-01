@@ -21,6 +21,7 @@ import utils from '../shared/utils';
 import { atomLongtapEvent } from './atom';
 import { bondChangingAction } from '../actions/bond';
 import { fromChain } from '../actions/chain';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -50,77 +51,88 @@ ChainTool.prototype.mousedown = function (event) {
 
 ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
 	const editor = this.editor;
-	const rnd = editor.render;
+	const restruct = editor.render.ctab;
+	const dragCtx = this.dragCtx;
 
-	if (this.dragCtx) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
+	editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
+	if (!dragCtx) return true;
 
-		this.editor.selection(null);
+	if (dragCtx && dragCtx.stopTapping)
+		dragCtx.stopTapping();
 
-		const dragCtx = this.dragCtx;
+	editor.selection(null);
 
-		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
-			if ('action' in dragCtx)
-				dragCtx.action.perform(rnd.ctab);
+	if (!dragCtx.item || dragCtx.item.map === 'atoms') {
+		if (dragCtx.action)
+			dragCtx.action.perform(restruct);
 
-			const atoms = rnd.ctab.molecule.atoms;
+		const atoms = restruct.molecule.atoms;
 
-			const pos0 = dragCtx.item ?
-				atoms.get(dragCtx.item.id).pp :
-				dragCtx.xy0;
+		const pos0 = dragCtx.item ?
+			atoms.get(dragCtx.item.id).pp :
+			dragCtx.xy0;
 
-			const pos1 = rnd.page2obj(event);
-			const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+		const pos1 = editor.render.page2obj(event);
+		const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
-			const angle = event.ctrlKey ?
-				utils.calcAngle(pos0, pos1) :
-				utils.fracAngle(pos0, pos1);
+		const angle = event.ctrlKey ?
+			utils.calcAngle(pos0, pos1) :
+			utils.fracAngle(pos0, pos1);
 
-			dragCtx.action = fromChain(rnd.ctab, pos0, angle, sectCount,
-				dragCtx.item ? dragCtx.item.id : null);
+		const [action, newItems] = fromChain(restruct, pos0, angle, sectCount,
+			dragCtx.item ? dragCtx.item.id : null);
 
-			editor.event.message.dispatch({
-				info: sectCount + ' sectors'
-			});
+		editor.event.message.dispatch({
+			info: sectCount + ' sectors'
+		});
 
-			this.editor.update(dragCtx.action, true);
-			return true;
-		}
+		dragCtx.action = action;
+		editor.update(dragCtx.action, true);
+
+		dragCtx.mergeItems = getItemsToFuse(editor, newItems);
+		hoverItemsToFuse(editor, dragCtx.mergeItems);
+
+		return true;
 	}
 
-	this.editor.hover(this.editor.findItem(event, ['atoms', 'bonds']));
 	return true;
 };
 
 ChainTool.prototype.mouseup = function () {
-	const rnd = this.editor.render;
-	const struct = rnd.ctab.molecule;
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
+	const struct = restruct.molecule;
+	const dragCtx = this.dragCtx;
 
-	if (this.dragCtx) {
-		if ('stopTapping' in this.dragCtx)
-			this.dragCtx.stopTapping();
+	if (!dragCtx)
+		return true;
 
-		const dragCtx = this.dragCtx;
+	if (dragCtx.stopTapping) dragCtx.stopTapping();
 
-		let action = dragCtx.action;
+	if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
+		const bond = struct.bonds.get(dragCtx.item.id);
 
-		if (!action && dragCtx.item && dragCtx.item.map === 'bonds') {
-			const bond = struct.bonds.get(dragCtx.item.id);
-
-			action = bondChangingAction(rnd.ctab, dragCtx.item.id, bond, {
-				type: Struct.Bond.PATTERN.TYPE.SINGLE,
-				stereo: Struct.Bond.PATTERN.STEREO.NONE
-			});
-		}
-
-		delete this.dragCtx;
-		if (action)
-			this.editor.update(action);
+		dragCtx.action = bondChangingAction(restruct, dragCtx.item.id, bond, {
+			type: Struct.Bond.PATTERN.TYPE.SINGLE,
+			stereo: Struct.Bond.PATTERN.STEREO.NONE
+		});
+	} else {
+		dragCtx.action = dragCtx.action ?
+			fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action) :
+			fromItemsFuse(restruct, dragCtx.mergeItems);
 	}
-	this.editor.event.message.dispatch({
+
+	editor.selection(null);
+	editor.hover(null);
+
+	if (dragCtx.action)
+		editor.update(dragCtx.action);
+
+	editor.event.message.dispatch({
 		info: false
 	});
+
+	delete this.dragCtx;
 	return true;
 };
 

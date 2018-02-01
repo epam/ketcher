@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { fromPaste } from '../actions/paste';
+import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -24,24 +25,47 @@ function PasteTool(editor, struct) {
 	this.editor.selection(null);
 	this.struct = struct;
 
-	var rnd = editor.render;
-	var point = editor.lastEvent ?
-		rnd.page2obj(editor.lastEvent) : null;
-	this.action = fromPaste(rnd.ctab, this.struct, point);
+	const rnd = editor.render;
+	const point = editor.lastEvent ?
+		rnd.page2obj(editor.lastEvent) :
+		null;
+
+	const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
+	this.action = action;
 	this.editor.update(this.action, true);
+
+	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
+	hoverItemsToFuse(this.editor, this.mergeItems);
 }
 
 PasteTool.prototype.mousemove = function (event) {
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
+
 	if (this.action)
 		this.action.perform(rnd.ctab);
-	this.action = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
+
+	const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, rnd.page2obj(event));
+	this.action = action;
 	this.editor.update(this.action, true);
+
+	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
+	hoverItemsToFuse(this.editor, this.mergeItems);
 };
 
 PasteTool.prototype.mouseup = function () {
+	const editor = this.editor;
+	const restruct = editor.render.ctab;
+
+	editor.selection(null);
+
+	this.action = this.action ?
+		fromItemsFuse(restruct, this.mergeItems).mergeWith(this.action) :
+		fromItemsFuse(restruct, this.mergeItems);
+
+	editor.hover(null);
+
 	if (this.action) {
-		var action = this.action;
+		const action = this.action;
 		delete this.action;
 		this.editor.update(action);
 	}

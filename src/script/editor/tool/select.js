@@ -62,8 +62,6 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		return true;
 	}
 
-	this.editor.hover(null);
-
 	if (!isSelected(rnd, this.editor.selection(), ci)) {
 		let sel = closestToSel(ci);
 

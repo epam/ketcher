@@ -250,11 +250,14 @@
       height: @expanded-icon-size;
     }
 	}
-	button:hover, .selected button {
+	button:hover {
+    .highlight-scale(none);
+    background-color: #eee;
+  }
+  .selected button {
 		//&:extend(button:active); not extended while in media
 		.highlight-scale(none);
-		.highlight-shadow(none);
-		.highlight-invert;
+    .highlight-invert;
 	}
 }
 

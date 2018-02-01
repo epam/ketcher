@@ -129,6 +129,8 @@ export default function initEditor(dispatch, getState) {
 			const serverOpts = state.options.getServerSettings();
 			return serverCall(state.editor, state.server, 'dearomatize', serverOpts, struct);
 		},
-		onMouseDown: () => {}
+		onMouseDown: () => {
+			updateAction();
+		}
 	};
 }

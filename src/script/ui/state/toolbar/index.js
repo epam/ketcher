@@ -70,7 +70,7 @@ export default function (state = initial, action) {
 		const visibleTool = toolInMenu(action.action);
 		return visibleTool
 			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-			: state;
+			: { ...state, opened: null };
 	}
 	case 'ADD_ATOMS': {
 		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
@@ -84,6 +84,8 @@ export default function (state = initial, action) {
 	case 'OPENED':
 		return { ...state, opened: data };
 	case 'UPDATE':
+		return { ...state, opened: null };
+	case 'MODAL_OPEN':
 		return { ...state, opened: null };
 	default:
 		return state;

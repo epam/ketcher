@@ -39,6 +39,8 @@ function BondTool(editor, bondProps) {
 BondTool.prototype.mousedown = function (event) {
 	var rnd = this.editor.render;
 	this.editor.hover(null);
+	this.editor.selection(null);
+
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: this.editor.findItem(event, ['atoms', 'bonds'])

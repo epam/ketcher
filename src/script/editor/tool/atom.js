@@ -39,6 +39,7 @@ function AtomTool(editor, atomProps) {
 
 AtomTool.prototype.mousedown = function (event) {
 	this.editor.hover(null);
+	this.editor.selection(null);
 	const ci = this.editor.findItem(event, ['atoms']);
 
 	if (!ci) { // ci.type == 'Canvas'

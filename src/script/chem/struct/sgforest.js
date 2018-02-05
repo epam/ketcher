@@ -73,8 +73,6 @@ SGroupForest.prototype.getAtomSetRelations = function (newId, atoms) {
 			return this.children.get(sgid).findIndex(childId => isSubset.get(childId)) < 0;
 		});
 
-	console.assert(parents.length <= 1, 'We are here'); // there should be only one parent
-
 	const children = Array.from(atomSets.keys())
 		.filter(id => isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)));
 

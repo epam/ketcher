@@ -121,7 +121,8 @@ export const labelEdit = {
 	properties: {
 		label: {
 			title: 'Atom',
-			default: ''
+			default: '',
+			invalidMessage: 'Wrong atom symbol'
 		}
 	}
 };
@@ -272,7 +273,8 @@ export const rgroupLogic = {
 		range: {
 			title: 'Occurrence',
 			type: 'string',
-			maxLength: 50
+			maxLength: 50,
+			invalidMessage: 'Wrong value'
 		},
 		resth: {
 			title: 'RestH',

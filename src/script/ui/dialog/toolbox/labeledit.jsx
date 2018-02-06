@@ -65,7 +65,6 @@ function LabelEdit(props) {
 	const init = { label: props.letter || serialize(props) };
 	const { formState, ...prop } = props;
 	const { result, valid } = formState;
-
 	return (
 		<Dialog
 			title="Label Edit"

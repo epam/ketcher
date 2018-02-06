@@ -42,7 +42,6 @@ function IfThenSelect(props, { schema }) {
 
 function RgroupLogic(props) {
 	const { formState, label, rgroupLabels, ...prop } = props;
-
 	return (
 		<Dialog
 			title="R-Group Logic"

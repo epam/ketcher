@@ -302,42 +302,42 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 
 function parseRg2000(/* string[] */ ctabLines) /* Struct */ { // eslint-disable-line max-statements
 	ctabLines = ctabLines.slice(7);
-	if (ctabLines[0].trim() != '$CTAB')
+	if (ctabLines[0].trim() !== '$CTAB')
 		throw new Error('RGFile format invalid');
 	var i = 1;
-	while (ctabLines[i].charAt(0) != '$') i++;
-	if (ctabLines[i].trim() != '$END CTAB')
+	while (ctabLines[i].charAt(0) !== '$') i++;
+	if (ctabLines[i].trim() !== '$END CTAB')
 		throw new Error('RGFile format invalid');
 	var coreLines = ctabLines.slice(1, i);
 	ctabLines = ctabLines.slice(i + 1);
 	var fragmentLines = {};
 	while (true) { // eslint-disable-line no-constant-condition
-		if (ctabLines.length == 0)
+		if (ctabLines.length === 0)
 			throw new Error('Unexpected end of file');
 		var line = ctabLines[0].trim();
-		if (line == '$END MOL') {
+		if (line === '$END MOL') {
 			ctabLines = ctabLines.slice(1);
 			break;
 		}
-		if (line != '$RGP')
+		if (line !== '$RGP')
 			throw new Error('RGFile format invalid');
 
 		const rgid = parseInt(ctabLines[1].trim(), 10);
 		fragmentLines[rgid] = [];
 		ctabLines = ctabLines.slice(2);
 		while (true) { // eslint-disable-line no-constant-condition
-			if (ctabLines.length == 0)
+			if (ctabLines.length === 0)
 				throw new Error('Unexpected end of file');
 			line = ctabLines[0].trim();
-			if (line == '$END RGP') {
+			if (line === '$END RGP') {
 				ctabLines = ctabLines.slice(1);
 				break;
 			}
-			if (line != '$CTAB')
+			if (line !== '$CTAB')
 				throw new Error('RGFile format invalid');
 			i = 1;
-			while (ctabLines[i].charAt(0) != '$') i++;
-			if (ctabLines[i].trim() != '$END CTAB')
+			while (ctabLines[i].charAt(0) !== '$') i++;
+			if (ctabLines[i].trim() !== '$END CTAB')
 				throw new Error('RGFile format invalid');
 			fragmentLines[rgid].push(ctabLines.slice(1, i));
 			ctabLines = ctabLines.slice(i + 1);

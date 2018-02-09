@@ -93,7 +93,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 		var reactants = components.reactants;
 		var products = components.products;
 		var all = reactants.concat(products);
-		this.molfile = '$RXN\n\n\n\n' +
+		this.molfile = '$RXN\n' + molecule.name + '\n\n\n' +
 			utils.paddedNum(reactants.length, 3) +
 			utils.paddedNum(products.length, 3) +
 			utils.paddedNum(0, 3) + '\n';
@@ -111,7 +111,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 			molecule = molecule.getScaffold();
 		} else {
 			var scaffold = new Molfile(false).getCTab(molecule.getScaffold(), molecule.rgroups);
-			this.molfile = '$MDL  REV  1\n$MOL\n$HDR\n\n\n\n$END HDR\n';
+			this.molfile = '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n';
 			this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
 			molecule.rgroups.forEach((rg, rgid) => {

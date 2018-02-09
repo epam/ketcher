@@ -27,9 +27,12 @@ var loadRGroupFragments = true; // TODO: set to load the fragments
 /* Parse Mol */
 function parseMol(/* string */ ctabLines) /* Struct */ {
 	/* reader */
-	if (ctabLines[0].search('\\$MDL') == 0)
-		return v2000.parseRg2000(ctabLines);
-	var struct = parseCTab(ctabLines.slice(3));
+	if (ctabLines[0].search('\\$MDL') === 0) {
+		const struct = v2000.parseRg2000(ctabLines);
+		struct.name = ctabLines[3].trim();
+		return struct;
+	}
+	const struct = parseCTab(ctabLines.slice(3));
 	struct.name = ctabLines[0].trim();
 	return struct;
 }
@@ -53,8 +56,11 @@ function parseRxn(/* string[] */ ctabLines, shouldReactionRelayout) /* Struct */
 	var split = ctabLines[0].trim().split(' ');
 	if (split.length > 1 && split[1] == 'V3000')
 		return v3000.parseRxn3000(ctabLines, shouldReactionRelayout);
-	else
-		return v2000.parseRxn2000(ctabLines, shouldReactionRelayout); // eslint-disable-line no-else-return
+
+	const struct = v2000.parseRxn2000(ctabLines, shouldReactionRelayout);
+	struct.name = ctabLines[1].trim();
+	return struct;
+	// eslint-disable-line no-else-return
 }
 
 /* Prepare For Saving */

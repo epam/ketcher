@@ -81,8 +81,11 @@ export default function (state = initial, action) {
 		const correctTools = updateVisibleTools(state.visibleTools, activeTool);
 		return { ...state, opened: null, visibleTools: { ...correctTools } };
 	}
-	case 'OPENED':
-		return { ...state, opened: data };
+	case 'OPENED': {
+		return data.isSelected && state.opened
+			? { ...state, opened: null }
+			: { ...state, opened: data.menuName };
+	}
 	case 'UPDATE':
 		return { ...state, opened: null };
 	case 'MODAL_OPEN':

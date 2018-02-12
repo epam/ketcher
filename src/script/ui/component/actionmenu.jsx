@@ -68,8 +68,7 @@ function ActionButton({ name, action, status = {}, onAction }) { // eslint-disab
 		<button
 			disabled={status.disabled}
 			onClick={(ev) => {
-				if (!status.selected || action.action.tool === 'chiralFlag' ||
-					(status.selected && isMenuOpened(this.base))) {
+				if (!status.selected || isMenuOpened(this.base) || action.action.tool === 'chiralFlag') {
 					onAction(action.action);
 					ev.stopPropagation();
 				}
@@ -123,8 +122,9 @@ function toolMargin(menuName, menu, visibleTools) {
 
 function openHandle(event, onOpen) {
 	const hiddenEl = hiddenAncestor(event.currentTarget);
+	const isSelected = event.currentTarget.classList.contains('selected');
 
-	if (hiddenEl) onOpen(hiddenEl.id);
+	onOpen(hiddenEl && hiddenEl.id, isSelected);
 	event.stopPropagation();
 }
 

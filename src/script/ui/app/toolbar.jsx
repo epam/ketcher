@@ -269,7 +269,7 @@ export default connect(
 		opened: state.toolbar.opened,
 		visibleTools: state.toolbar.visibleTools
 	}),	{
-		onOpen: menuName => ({ type: 'OPENED', data: menuName })
+		onOpen: (menuName, isSelected) => ({ type: 'OPENED', data: { menuName, isSelected } })
 	}
 )(props => (
 	<ActionMenu menu={toolbar} role="toolbar" {...props} />

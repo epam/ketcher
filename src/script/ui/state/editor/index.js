@@ -44,7 +44,7 @@ export default function initEditor(dispatch, getState) {
 			dispatch({ type: 'INIT', editor });
 		},
 		onChange: () => {
-			dispatch(resetToSelect);
+			sleep(0).then(() => dispatch(resetToSelect));
 		},
 		onSelectionChange: () => {
 			updateAction();

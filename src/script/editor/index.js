@@ -215,12 +215,15 @@ Editor.prototype.historySize = function () {
 Editor.prototype.undo = function () {
 	if (this.historyPtr === 0)
 		throw new Error('Undo stack is empty');
-
 	if (this.tool() && this.tool().cancel)
 		this.tool().cancel();
 	this.selection(null);
+	if (this._tool instanceof toolMap['paste']) {
+		this.event.change.dispatch();
+		return;
+	}
 	this.historyPtr--;
-	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
+	const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
 	this.historyStack[this.historyPtr] = action;
 	this.event.change.dispatch(action);
 	this.render.update();
@@ -229,13 +232,16 @@ Editor.prototype.undo = function () {
 Editor.prototype.redo = function () {
 	if (this.historyPtr === this.historyStack.length)
 		throw new Error('Redo stack is empty');
-
 	if (this.tool() && this.tool().cancel)
 		this.tool().cancel();
 	this.selection(null);
-	var action = this.historyStack[this.historyPtr].perform(this.render.ctab);
-	this.historyStack[this.historyPtr] = action;
+	if (this._tool instanceof toolMap['paste']) {
+		this.event.change.dispatch();
+		return;
+	}
 	this.historyPtr++;
+	const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
+	this.historyStack[this.historyPtr] = action;
 	this.event.change.dispatch(action);
 	this.render.update();
 };

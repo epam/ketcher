@@ -76,6 +76,8 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
 	aids.forEach((aid) => {
 		Object.keys(Struct.Atom.attrlist).forEach((key) => {
+			if (key === 'attpnt' && !(key in attrs))
+				return;
 			if (!(key in attrs) && !reset)
 				return;
 

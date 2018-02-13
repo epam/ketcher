@@ -73,6 +73,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 
 	this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
 	this.showLabel = isLabelVisible(restruct, render.options, this);
+	this.color = 'black'; // reset colour
 	if (this.showLabel) {
 		var label = buildLabel(this, render.paper, ps, options);
 		var delta = 0.5 * options.lineWidth;
@@ -97,8 +98,9 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 			restruct.addReObjectPath('indices', this.visel, index.path, ps);
 		}
 		this.setHighlight(this.highlight, render);
-		if (this.a.alias || this.a.pseudo) return;
+	}
 
+	if (this.showLabel && !this.a.alias && !this.a.pseudo) {
 		var hydroIndex = null;
 		if (isHydrogen && implh > 0) {
 			hydroIndex = showHydroIndex(this, render, implh, rightMargin);
@@ -147,21 +149,21 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 			restruct.addReObjectPath('warnings', this.visel, warning.path, ps, true);
 		}
 		if (index) {
-			/* eslint-disable no-mixed-operators*/
+			/* eslint-disable no-mixed-operators */
 			pathAndRBoxTranslate(index.path, index.rbb,
 				-0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
 				0.3 * label.rbb.height);
-			/* eslint-enable no-mixed-operators*/
+			/* eslint-enable no-mixed-operators */
 		}
 	}
 
 	if (this.a.attpnt) {
-		var lsb = bisectLargestSector(this, restruct.molecule);
+		const lsb = bisectLargestSector(this, restruct.molecule);
 		showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct));
 	}
 
-	var aamText = getAamText(this);
-	var queryAttrsText = getQueryAttrsText(this);
+	let aamText = getAamText(this);
+	const queryAttrsText = (!this.a.alias && !this.a.pseudo) ? getQueryAttrsText(this) : '';
 
 	// this includes both aam flags, if any, and query features, if any
 	// we render them together to avoid possible collisions
@@ -268,7 +270,6 @@ function setHydrogenPos(struct, atom) {
 
 function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-statements
 	let label = {};
-	atom.color = 'black';
 	label.text = getLabelText(atom.a);
 
 	if (label.text === '')

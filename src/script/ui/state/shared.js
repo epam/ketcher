@@ -38,12 +38,11 @@ export function load(structStr, options) {
 			if (options.rescale)
 				struct.rescale(); // TODO: move out parsing?
 
-			if (options.fragment && !struct.isBlank())
+			if (struct.isBlank()) return;
+			if (options.fragment)
 				dispatch(onAction({ tool: 'paste', opts: struct }));
 			else
 				editor.struct(struct);
-
-			return struct;
 		}, (err) => {
 			alert(err.message); // eslint-disable-line no-undef
 			// TODO: notification

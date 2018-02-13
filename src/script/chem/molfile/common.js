@@ -60,7 +60,6 @@ function parseRxn(/* string[] */ ctabLines, shouldReactionRelayout) /* Struct */
 	const struct = v2000.parseRxn2000(ctabLines, shouldReactionRelayout);
 	struct.name = ctabLines[1].trim();
 	return struct;
-	// eslint-disable-line no-else-return
 }
 
 /* Prepare For Saving */

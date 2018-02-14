@@ -36,7 +36,7 @@ function FrozenInput({ value }) {
 	);
 }
 
-const formulaRegexp = /\b([A-Z][a-z]{0,3})(\d*)\s*\b/g;
+const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
 const errorRegexp = /error:.*/g;
 
 function formulaInputMarkdown(value) {
@@ -60,8 +60,9 @@ function FormulaInput({ value }) {
 	let pos = 0;
 
 	while ((cnd = formulaRegexp.exec(value)) !== null) {
-		content.push(value.substring(pos, cnd.index) + cnd[1]);
-		if (cnd[2].length > 0) content.push(<sub>{cnd[2]}</sub>);
+		if (cnd[1].length > 0) content.push(<sup>{cnd[1]}</sup>);
+		content.push(value.substring(pos, cnd.index) + cnd[2]);
+		if (cnd[3].length > 0) content.push(<sub>{cnd[3]}</sub>);
 		pos = cnd.index + cnd[0].length;
 	}
 

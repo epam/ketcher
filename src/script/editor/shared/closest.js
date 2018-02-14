@@ -63,7 +63,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
 function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disable-line max-params
 	let closestBond = null;
 	let closestBondCenter = null;
-	const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+	const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
 	const skipId = skip && skip.map === 'bonds' ? skip.id : null;
 
 	minDist = minDist || maxMinDist;

@@ -30,10 +30,10 @@ function AttachTool(editor, attachPoints) {
 }
 
 AttachTool.prototype.mousemove = function (event) {
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
 
-	var ci = this.editor.findItem(event, ['atoms', 'bonds']);
-	var struct = rnd.ctab.molecule;
+	const ci = this.editor.findItem(event, ['atoms', 'bonds']);
+	const struct = rnd.ctab.molecule;
 	if (ci && ((ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) || ci.map === 'bonds'))
 		this.editor.hover(ci);
 	else
@@ -42,10 +42,10 @@ AttachTool.prototype.mousemove = function (event) {
 };
 
 AttachTool.prototype.click = function (event) {
-	var editor = this.editor;
-	var rnd = editor.render;
-	var struct = rnd.ctab.molecule;
-	var ci = editor.findItem(event, ['atoms', 'bonds']);
+	const editor = this.editor;
+	const rnd = editor.render;
+	const struct = rnd.ctab.molecule;
+	const ci = editor.findItem(event, ['atoms', 'bonds']);
 
 	if (ci && ((ci.map === 'atoms' && element.map[struct.atoms.get(ci.id).label]) || ci.map === 'bonds')) {
 		if (ci.map === 'atoms')

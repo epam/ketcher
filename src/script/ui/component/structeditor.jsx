@@ -46,6 +46,15 @@ function setupEditor(editor, props, oldProps = {}) {
 	});
 }
 
+function removeEditorHandlers(editor, props) {
+	Object.keys(editor.event).forEach((name) => {
+		const eventName = `on${upperFirst(name)}`;
+
+		if (props[eventName])
+			editor.event[name].remove(props[eventName]);
+	});
+}
+
 class StructEditor extends Component {
 	shouldComponentUpdate() {
 		return false;
@@ -61,6 +70,10 @@ class StructEditor extends Component {
 		setupEditor(this.instance, this.props);
 		if (this.props.onInit)
 			this.props.onInit(this.instance);
+	}
+
+	componentWillUnmount() {
+		removeEditorHandlers(this.instance, this.props);
 	}
 
 	render() {

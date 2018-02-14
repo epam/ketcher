@@ -81,6 +81,7 @@ function Settings(props) {
 						<SelectCheckbox name="ignore-stereochemistry-errors" />
 						<SelectCheckbox name="mass-skip-error-on-pseudoatoms" />
 						<SelectCheckbox name="gross-formula-add-rsites" />
+						<SelectCheckbox name="gross-formula-add-isotopes" />
 					</fieldset>
 					<fieldset className="miew" disabled={!appOpts.miewPath}>
 						<Field name="miewMode" />

@@ -158,6 +158,11 @@ const server = {
 		title: 'Add Rsites at mass calculation',
 		type: 'boolean',
 		default: true
+	},
+	'gross-formula-add-isotopes': {
+		title: 'Add Isotopes at mass calculation',
+		type: 'boolean',
+		default: true
 	}
 };
 

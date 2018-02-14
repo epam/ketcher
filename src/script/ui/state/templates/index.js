@@ -97,16 +97,18 @@ export function saveUserTmpl(struct) {
 	const tmpl = { struct: struct.clone(), props: {} };
 
 	return (dispatch, getState) => {
-		openDialog(dispatch, 'attach', { tmpl }).then(
-			({ name, attach }) => {
-				tmpl.struct.name = name;
-				tmpl.props = { ...attach, group: 'User Templates' };
+		openDialog(dispatch, 'attach', { tmpl })
+			.then(
+				({ name, attach }) => {
+					tmpl.struct.name = name;
+					tmpl.props = { ...attach, group: 'User Templates' };
 
-				const lib = getState().templates.lib.concat(tmpl);
-				dispatch(initLib(lib));
-				updateLocalStore(lib);
-			}
-		);
+					const lib = getState().templates.lib.concat(tmpl);
+					dispatch(initLib(lib));
+					updateLocalStore(lib);
+				}
+			)
+			.catch(() => null);
 	};
 }
 

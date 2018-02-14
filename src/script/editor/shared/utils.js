@@ -34,14 +34,19 @@ function fracAngle(angle, angle2) {
 	return Math.round(angle / FRAC) * FRAC;
 }
 
-function calcNewAtomPos(pos0, pos1) {
-	const v = new Vec2(1, 0).rotate(fracAngle(pos0, pos1));
+function calcNewAtomPos(pos0, pos1, ctrlKey) {
+	const v = new Vec2(1, 0).rotate(ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1));
 	v.add_(pos0); // eslint-disable-line no-underscore-dangle
 	return v;
 }
 
 function degrees(angle) {
-	return Math.round(angle / Math.PI * 180);
+	let degree = Math.round(angle / Math.PI * 180);
+	if (degree > 180)
+		degree -= 360;
+	else if (degree <= -180)
+		degree += 360;
+	return degree;
 }
 
 const BONDS_MERGE_ANGLE = 10; // 'º'

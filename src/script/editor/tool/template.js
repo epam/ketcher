@@ -172,6 +172,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 	if (!event.ctrlKey)
 		angle = utils.fracAngle(angle);
 	const degrees = utils.degrees(angle);
+	this.editor.event.message.dispatch({ info: degrees + 'º' });
 
 	// check if anything changed since last time
 	if (dragCtx.hasOwnProperty('angle') && dragCtx.angle === degrees && // eslint-disable-line no-prototype-builtins
@@ -312,6 +313,9 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	const completeAction = dragCtx.action;
 	if (completeAction && !completeAction.isDummy())
 		this.editor.update(completeAction);
+	this.editor.event.message.dispatch({
+		info: false
+	});
 
 	return true;
 };

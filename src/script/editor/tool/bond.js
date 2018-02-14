@@ -37,10 +37,9 @@ function BondTool(editor, bondProps) {
 }
 
 BondTool.prototype.mousedown = function (event) {
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
 	this.editor.hover(null);
 	this.editor.selection(null);
-
 	this.dragCtx = {
 		xy0: rnd.page2obj(event),
 		item: this.editor.findItem(event, ['atoms', 'bonds'])
@@ -51,17 +50,26 @@ BondTool.prototype.mousedown = function (event) {
 };
 
 BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-statements
-	var editor = this.editor;
-	var rnd = editor.render;
+	const editor = this.editor;
+	const rnd = editor.render;
 	if ('dragCtx' in this) {
-		var dragCtx = this.dragCtx;
+		const dragCtx = this.dragCtx;
+
+		const pos = rnd.page2obj(event);
+		let angle = utils.calcAngle(dragCtx.xy0, pos);
+		if (!event.ctrlKey)
+			angle = utils.fracAngle(angle);
+
+		const degrees = utils.degrees(angle);
+		this.editor.event.message.dispatch({ info: degrees + 'º' });
+
 		if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
 			if ('action' in dragCtx)
 				dragCtx.action.perform(rnd.ctab);
-			var i1;
-			var	i2;
-			var	p1;
-			var	p2;
+			let i1;
+			let	i2;
+			let	p1;
+			let	p2;
 			if (('item' in dragCtx && dragCtx.item.map === 'atoms')) {
 				// first mousedown event intersect with any atom
 				i1 = dragCtx.item.id;
@@ -72,22 +80,22 @@ BondTool.prototype.mousemove = function (event) { // eslint-disable-line max-sta
 				p1 = dragCtx.xy0;
 				i2 = editor.findItem(event, ['atoms']);
 			}
-			var dist = Number.MAX_VALUE;
+			let dist = Number.MAX_VALUE;
 			if (i2 && i2.map === 'atoms') {
 				// after mousedown events is appered, cursor is moved and then cursor intersects any atoms
 				i2 = i2.id;
 			} else {
 				i2 = this.atomProps;
-				var xy1 = rnd.page2obj(event);
+				const xy1 = rnd.page2obj(event);
 				dist = Vec2.dist(dragCtx.xy0, xy1);
 				if (p1) {
 					// rotation only, leght of bond = 1;
-					p2 = utils.calcNewAtomPos(p1, xy1);
+					p2 = utils.calcNewAtomPos(p1, xy1, event.ctrlKey);
 				} else {
 					// first mousedown event intersect with any atom and
 					// rotation only, leght of bond = 1;
-					var atom = rnd.ctab.molecule.atoms.get(i1);
-					p1 = utils.calcNewAtomPos(atom.pp.get_xy0(), xy1);
+					const atom = rnd.ctab.molecule.atoms.get(i1);
+					p1 = utils.calcNewAtomPos(atom.pp.get_xy0(), xy1, event.ctrlKey);
 				}
 			}
 			// don't rotate the bond if the distance between the start and end point is too small
@@ -131,6 +139,9 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 		}
 		delete this.dragCtx;
 	}
+	this.editor.event.message.dispatch({
+		info: false
+	});
 	return true;
 };
 

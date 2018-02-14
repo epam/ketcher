@@ -67,8 +67,12 @@ AtomTool.prototype.mousemove = function (event) {
 
 	// fromAtomAddition
 	const atom = rnd.ctab.molecule.atoms.get(dragCtx.item.id);
-
-	const newAtomPos = utils.calcNewAtomPos(atom.pp, rnd.page2obj(event));
+	let angle = utils.calcAngle(atom.pp, rnd.page2obj(event));
+	if (!event.ctrlKey)
+		angle = utils.fracAngle(angle);
+	const degrees = utils.degrees(angle);
+	this.editor.event.message.dispatch({ info: degrees + 'º' });
+	const newAtomPos = utils.calcNewAtomPos(atom.pp, rnd.page2obj(event), event.ctrlKey);
 	if (dragCtx.action)
 		dragCtx.action.perform(rnd.ctab);
 
@@ -92,6 +96,9 @@ AtomTool.prototype.mouseup = function (event) {
 
 		delete this.dragCtx;
 	}
+	this.editor.event.message.dispatch({
+		info: false
+	});
 };
 
 export function atomLongtapEvent(tool, render) {

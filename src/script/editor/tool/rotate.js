@@ -109,15 +109,15 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 	if (!this.dragCtx)
 		return true;
 
-	var rnd = this.editor.render;
-	var dragCtx = this.dragCtx;
+	const rnd = this.editor.render;
+	const dragCtx = this.dragCtx;
 
-	var pos = rnd.page2obj(event);
-	var angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
+	const pos = rnd.page2obj(event);
+	let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
 	if (!event.ctrlKey)
 		angle = utils.fracAngle(angle);
 
-	var degrees = utils.degrees(angle);
+	const degrees = utils.degrees(angle);
 
 	if ('angle' in dragCtx && dragCtx.angle === degrees) return true;
 	if ('action' in dragCtx)
@@ -126,10 +126,6 @@ RotateTool.prototype.mousemove = function (event) { // eslint-disable-line max-s
 	dragCtx.angle = degrees;
 	dragCtx.action = fromRotate(rnd.ctab, this.editor.selection(), dragCtx.xy0, angle);
 
-	if (degrees > 180)
-		degrees -= 360;
-	else if (degrees <= -180)
-		degrees += 360;
 	this.editor.event.message.dispatch({ info: degrees + 'º' });
 
 	const expSel = this.editor.explicitSelected();

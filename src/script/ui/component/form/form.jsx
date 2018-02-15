@@ -62,7 +62,7 @@ class Form extends Component {
 	}
 
 	render(props) {
-		const { result, errors, children, schema, ...prop } = props;
+		const { result, errors, init, children, schema, ...prop } = props;
 
 		if (schema.key && schema.key !== this.schema.key) {
 			this.schema = propSchema(schema, prop);

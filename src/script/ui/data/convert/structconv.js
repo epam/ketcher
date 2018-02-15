@@ -19,6 +19,7 @@ import { capitalize } from 'lodash/fp';
 import Struct from '../../../chem/struct/index';
 import element from '../../../chem/element';
 import { sdataSchema } from '../schema/sdata-schema';
+import { atom as atomSchema } from '../schema/struct-schema';
 
 export function fromElement(selem) {
 	if (selem.label === 'R#') {
@@ -67,11 +68,12 @@ export function toElement(elem) {
 
 function fromAtom(satom) {
 	const alias = satom.alias || '';
+	const charge = satom.charge.toString();
 
 	return {
 		alias,
 		label: satom.label,
-		charge: satom.charge,
+		charge,
 		isotope: satom.isotope,
 		explicitValence: satom.explicitValence,
 		radical: satom.radical,
@@ -87,8 +89,13 @@ function fromAtom(satom) {
 function toAtom(atom) {
 	// TODO merge this to Struct.Atom.attrlist?
 	//      see ratomtool
+	const chargeRegexp = atomSchema.properties.charge.pattern;
+	const pch = chargeRegexp.exec(atom.charge);
+	const charge = parseInt(pch[1] + pch[3] + pch[2]);
+
 	return Object.assign({}, atom, {
-		label: capitalize(atom.label)
+		label: capitalize(atom.label),
+		charge
 	});
 }
 

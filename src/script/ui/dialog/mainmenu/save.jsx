@@ -32,7 +32,7 @@ const saveSchema = {
 			title: 'Filename',
 			type: 'string',
 			maxLength: 128,
-			pattern: '^[^\.<>:?"*|/\\\\]{1}[^<>:?"*|/\\\\]*$',
+			pattern: /^[^.<>:?"*|/\\][^<>:?"*|/\\]*$/,
 			invalidMessage: (res) => {
 				if (!res) return 'Filename should contain at least one character';
 				if (res.length > 128) return 'Filename is too long';

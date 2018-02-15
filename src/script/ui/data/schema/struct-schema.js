@@ -36,10 +36,11 @@ export const atom = {
 		},
 		charge: {
 			title: 'Charge',
-			type: 'integer',
-			minimum: -1000,
-			maximum: 1000,
-			default: 0
+			type: 'string',
+			pattern: /^([+-]?)(\d{1,3}|1000)([+-]?)$/,
+			maxLength: 5,
+			default: '0',
+			invalidMessage: 'Invalid charge value'
 		},
 		explicitValence: {
 			title: 'Valence',
@@ -248,7 +249,7 @@ const sgroup = {
 					title: 'Polymer label',
 					type: 'string',
 					default: 'n',
-					pattern: '^[a-zA-Z]$',
+					pattern: /^[a-zA-Z]$/,
 					invalidMessage: 'SRU subscript should consist of a single letter'
 				},
 				connectivity: {

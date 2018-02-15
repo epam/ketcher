@@ -51,7 +51,10 @@ function Atom(props) {
 		>
 			<Form
 				schema={atomSchema}
-				customValid={{ label: l => atomValid(l) }}
+				customValid={{
+					label: l => atomValid(l),
+					charge: ch => chargeValid(ch)
+				}}
 				init={prop}
 				{...formState}
 			>
@@ -83,6 +86,11 @@ function Atom(props) {
 
 function atomValid(label) {
 	return label && !!element.map[capitalize(label)];
+}
+
+function chargeValid(charge) {
+	const pch = atomSchema.properties.charge.pattern.exec(charge);
+	return !(pch === null || (pch[1] !== '' && pch[3] !== ''));
 }
 
 export default connect(

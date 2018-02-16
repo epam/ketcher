@@ -23,6 +23,7 @@ import { fromMultipleMove } from '../actions/fragment';
 import { fromAtomsAttrs } from '../actions/atom';
 import { fromBondsAttrs } from '../actions/bond';
 import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
+import utils from '../shared/utils';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -97,6 +98,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 
 SelectTool.prototype.mousemove = function (event) {
 	const editor = this.editor;
+	const rnd = editor.render;
 	const restruct = editor.render.ctab;
 	const dragCtx = this.dragCtx;
 
@@ -105,6 +107,13 @@ SelectTool.prototype.mousemove = function (event) {
 
 	if (dragCtx && dragCtx.item) {
 		// moving selected objects
+		const pos = rnd.page2obj(event);
+		let angle = utils.calcAngle(dragCtx.xy0, pos);
+		if (!event.ctrlKey)
+			angle = utils.fracAngle(angle);
+
+		const degrees = utils.degrees(angle);
+		this.editor.event.message.dispatch({ info: degrees + 'º' });
 		if (dragCtx.action) {
 			dragCtx.action.perform(restruct);
 			// redraw the elements in unshifted position, lest the have different offset
@@ -167,6 +176,9 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		if (!event.shiftKey)
 			editor.selection(null);
 	}
+	this.editor.event.message.dispatch({
+		info: false
+	});
 	return true;
 };
 

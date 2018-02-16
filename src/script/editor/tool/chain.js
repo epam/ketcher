@@ -99,13 +99,14 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 };
 
 ChainTool.prototype.mouseup = function () {
+	const dragCtx = this.dragCtx;
+	if (!dragCtx)
+		return true;
+	delete this.dragCtx;
+
 	const editor = this.editor;
 	const restruct = editor.render.ctab;
 	const struct = restruct.molecule;
-	const dragCtx = this.dragCtx;
-
-	if (!dragCtx)
-		return true;
 
 	if (dragCtx.stopTapping) dragCtx.stopTapping();
 
@@ -132,7 +133,6 @@ ChainTool.prototype.mouseup = function () {
 		info: false
 	});
 
-	delete this.dragCtx;
 	return true;
 };
 

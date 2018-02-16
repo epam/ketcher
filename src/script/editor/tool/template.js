@@ -215,12 +215,13 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 };
 
 TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-statements
-	if (!this.dragCtx)
+	const dragCtx = this.dragCtx;
+	if (!dragCtx)
 		return true;
+	delete this.dragCtx;
 
 	const restruct = this.editor.render.ctab;
 	const struct = restruct.molecule;
-	const dragCtx = this.dragCtx;
 	const ci = dragCtx.item;
 
 	/* after moving around bond */
@@ -238,7 +239,6 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 				const mergeItems = getItemsToFuse(this.editor, pasteItems);
 				action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
 				this.editor.update(action);
-				delete this.dragCtx;
 			});
 		return true;
 	}
@@ -294,7 +294,6 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 					const mergeItems = getItemsToFuse(this.editor, pasteItems);
 					action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
 					this.editor.update(action);
-					delete this.dragCtx;
 				});
 
 			return true;
@@ -313,7 +312,6 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	const completeAction = dragCtx.action;
 	if (completeAction && !completeAction.isDummy())
 		this.editor.update(completeAction);
-	delete this.dragCtx;
 
 	return true;
 };

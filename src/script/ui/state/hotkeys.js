@@ -50,7 +50,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 		console.assert(atomsSelected.length > 0);
 		openDialog(dispatch, 'labelEdit', { letter: key }).then((res) => {
 			dispatch(onAction({ tool: 'atom', opts: res }));
-		});
+		}).catch(() => null);
 		event.preventDefault();
 	} else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
 		let index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1

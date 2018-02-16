@@ -66,7 +66,7 @@ function Check(props) {
 					changeTab={i => (i === 0 ? onCheck(result.checkOptions) : null)}
 				>
 					<ErrorsCheck moleculeErrors={moleculeErrors} />
-					<Field name="checkOptions" multiple type="checkbox" />
+					<Field name="checkOptions" multiple type="checkbox" labelPos={false} />
 				</Tabs>
 			</Form>
 		</Dialog>

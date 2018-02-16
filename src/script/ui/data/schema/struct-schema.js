@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { range } from 'lodash/fp';
+
 import { mapOf } from './schema-helper';
 
 export const atom = {
@@ -110,6 +112,21 @@ export const atom = {
 			title: 'Exact change',
 			type: 'boolean',
 			default: false
+		}
+	}
+};
+
+export const rgroupSchema = {
+	title: 'R-group',
+	type: 'object',
+	properties: {
+		rgroupValues: {
+			type: 'array',
+			items: {
+				type: 'string',
+				enum: range(1, 33),
+				enumNames: range(1, 33).map(item => 'R' + item)
+			}
 		}
 	}
 };

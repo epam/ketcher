@@ -89,7 +89,8 @@ export default connect(
 
 function Label({ labelPos, title, children, ...props }) {
 	return (
-		<label {...props}>{ title && labelPos !== 'after' ? `${title}:` : '' }
+		<label {...props}>
+			{ title && labelPos !== 'after' ? `${title}:` : '' }
 			{children}
 			{ title && labelPos === 'after' ? title : '' }
 		</label>
@@ -97,22 +98,24 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-	const { name, onChange, className, component, ...prop } = props;
+	const { name, onChange, className, component, labelPos, ...prop } = props;
 	const { schema, stateStore } = this.context;
 	const desc = prop.schema || schema.properties[name];
 	const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+
+	const formField = component ?
+		h(component, { ...fieldOpts, ...prop, schema: desc }) :
+		(<Input
+			name={name}
+			schema={desc}
+			{...fieldOpts}
+			{...prop}
+		/>);
+
+	if (labelPos === false) return formField;
 	return (
-		<Label className={className} data-error={dataError} title={prop.title || desc.title} >
-			{
-				component ?
-					h(component, { ...fieldOpts, ...prop, schema: desc }) :
-					<Input
-						name={name}
-						schema={desc}
-						{...fieldOpts}
-						{...prop}
-					/>
-			}
+		<Label className={className} data-error={dataError} title={prop.title || desc.title} labelPos={labelPos}>
+			{ formField }
 		</Label>
 	);
 }

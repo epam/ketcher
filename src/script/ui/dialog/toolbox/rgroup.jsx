@@ -16,30 +16,12 @@
 
 import { h } from 'preact';
 import { connect } from 'preact-redux';
-import { range } from 'lodash/fp';
+
+import { rgroupSchema } from '../../data/schema/struct-schema';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
 import ButtonList from '../../component/buttonlist';
-
-const rgroupValuesNames = Array.from(new Array(32), (val, index) => 'R' + ++index);
-
-const rgroupValues = range(1, 33);
-
-const rgroupSchema = {
-	title: 'R-group',
-	type: 'object',
-	properties: {
-		rgroupValues: {
-			type: 'array',
-			items: {
-				type: 'string',
-				enum: rgroupValues,
-				enumNames: rgroupValuesNames
-			}
-		}
-	}
-};
 
 function RGroup({ disabledIds, rgroupValues, formState, type, ...props }) { // eslint-disable-line
 	return (
@@ -52,7 +34,8 @@ function RGroup({ disabledIds, rgroupValues, formState, type, ...props }) { // e
 			<Form schema={rgroupSchema} init={{ rgroupValues }} {...formState} >
 				<Field
 					name="rgroupValues"
-					multiple={type === 'fragment'}
+					multiple={type === 'atom'}
+					labelPos={false}
 					component={ButtonList}
 					disabledIds={disabledIds}
 				/>

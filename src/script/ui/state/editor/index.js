@@ -105,10 +105,7 @@ export default function initEditor(dispatch, getState) {
 				rgroupValues: [rgroup.label],
 				disabledIds
 			};
-			return openDialog(dispatch, 'rgroup', params).then((res) => {
-				const label = res.rgroupValues[0];
-				return { label };
-			});
+			return openDialog(dispatch, 'rgroup', params).then(res => ({ label: res.rgroupValues[0] }));
 		},
 		onSgroupEdit: sgroup => sleep(0)		// huck to open dialog after dispatch sgroup tool action
 			.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))

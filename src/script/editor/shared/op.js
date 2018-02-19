@@ -971,19 +971,16 @@ function AlignDescriptors() {
 	this.execute = function (restruct) {
 		const sgroups = Array.from(restruct.molecule.sgroups.values()).reverse();
 
-		let alignPoint = sgroups.reduce(
-			(acc, sg) => new Vec2(
-				Math.max(sg.bracketBox.p1.x, acc.x),
-				Math.min(sg.bracketBox.p0.y, acc.y)
-			), new Vec2(0.0, Infinity)
-		)
-			.add(new Vec2(0.5, -0.5));
+		const structBox = restruct.molecule.getCoordBoundingBoxObj();
+		let alignPoint = new Vec2(structBox.max.x, structBox.min.y)
+			.add(new Vec2(2.0, -1.0));
 
 		sgroups.forEach((sg) => {
-			this.history[sg.id] = sg.pp;
+			this.history[sg.id] = new Vec2(sg.pp);
 			alignPoint = alignPoint.add(new Vec2(0.0, 0.5));
 			sg.pp = alignPoint;
 			restruct.molecule.sgroups.set(sg.id, sg);
+			invalidateItem(restruct, 'sgroupData', sg.id, 1);
 		});
 	};
 
@@ -1003,6 +1000,7 @@ function RestoreDescriptorsPosition(history) {
 		sgroups.forEach((sg) => {
 			sg.pp = this.history[sg.id];
 			restruct.molecule.sgroups.set(sg.id, sg);
+			invalidateItem(restruct, 'sgroupData', sg.id, 1);
 		});
 	};
 

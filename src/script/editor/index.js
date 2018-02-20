@@ -239,9 +239,9 @@ Editor.prototype.redo = function () {
 		this.event.change.dispatch();
 		return;
 	}
-	this.historyPtr++;
 	const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
 	this.historyStack[this.historyPtr] = action;
+	this.historyPtr++;
 	this.event.change.dispatch(action);
 	this.render.update();
 };

@@ -93,7 +93,7 @@
 		left: 0;
 	}
 	&:hover {  // &:hover:not(:active)
-		.highlight-scale;
+		.highlight-scale(@scale:1.25);
 		.highlight-shadow(black);
 	}
 	&:active, &[disabled] {
@@ -286,9 +286,9 @@
 /////////////////////
 // Highlight effects
 
-.highlight-scale() {
+.highlight-scale(@scale) {
 	transition: transform, 0.2s, ease-out;
-	transform: scale(1.25);
+	transform: scale(@scale);
 }
 
 .highlight-scale(none) {

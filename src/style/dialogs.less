@@ -397,7 +397,7 @@ form.settings {
 			color: lighten(@main-color, 20%);
 		}
 		&:hover {
-			.highlight-scale;
+			.highlight-scale(@scale:1.005);
 			.highlight-shadow(black);
 		}
 		&:active {
@@ -491,7 +491,7 @@ form.settings {
 				color: inherit;
 			}
 			&:hover {
-				.highlight-scale;
+				.highlight-scale(@scale:1.25);
 				.highlight-shadow(black);
 				z-index: 60;
 				background: #fff;
@@ -612,7 +612,7 @@ form.settings {
 			padding: 0.15em;
 			background: inherit;
 			&:hover {
-				.highlight-scale;
+				.highlight-scale(@scale:1.25);
 				.highlight-shadow(black);
 			}
 			&:active {

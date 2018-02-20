@@ -104,7 +104,7 @@
     "reselect": "3.0.1",
     "resemblejs": "2.2.3",
     "subscription": "3.0.0",
-    "w3c-keyname": "1.1.6",
+    "w3c-keyname": "1.1.8",
     "whatwg-fetch": "2.0.3"
   }
 }

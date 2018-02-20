@@ -64,8 +64,14 @@ function modifiers(name, event, shift) {
 	return name;
 }
 
+function rusToEng(name, event) {
+	return name
+		.replace(/[а-я]/, keyName.base[event.keyCode])
+		.replace(/[А-Я]/, keyName.shift[event.keyCode]);
+}
+
 function normalizeKeyEvent(event, base = false) {
-	const name = keyName(event);
+	const name = rusToEng(keyName(event), event);
 	const isChar = name.length === 1 && name !== ' ';
 
 	return isChar && !base ? modifiers(name, event, !isChar) :
@@ -81,7 +87,10 @@ function keyNorm(obj) {
 }
 
 function lookup(map, event) {
-	const name = keyName(event);
+	let name = rusToEng(keyName(event), event);
+	if (name === 'Add') name = '+'; // numpad '+' and '-'
+	if (name === 'Subtract') name = '-';
+
 	const isChar = name.length === 1 && name !== ' ';
 	let res = map[modifiers(name, event, !isChar)];
 	let baseName;

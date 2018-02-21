@@ -139,8 +139,8 @@ Editor.prototype.selection = function (ci) {
 	return this._selection; // eslint-disable-line
 };
 
-Editor.prototype.hover = function (ci) {
-	const tool = this._tool; // eslint-disable-line
+Editor.prototype.hover = function (ci, newTool) {
+	const tool = newTool || this._tool; // eslint-disable-line
 
 	if ('ci' in tool && (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)) {
 		this.highlight(tool.ci, false);

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { fromPaste } from '../actions/paste';
-import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
 
 function PasteTool(editor, struct) {
 	if (!(this instanceof PasteTool))
@@ -35,7 +35,7 @@ function PasteTool(editor, struct) {
 	this.editor.update(this.action, true);
 
 	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
-	hoverItemsToFuse(this.editor, this.mergeItems);
+	this.editor.hover(getHoverToFuse(this.mergeItems), this);
 }
 
 PasteTool.prototype.mousemove = function (event) {
@@ -49,7 +49,7 @@ PasteTool.prototype.mousemove = function (event) {
 	this.editor.update(this.action, true);
 
 	this.mergeItems = getItemsToFuse(this.editor, pasteItems);
-	hoverItemsToFuse(this.editor, this.mergeItems);
+	this.editor.hover(getHoverToFuse(this.mergeItems));
 };
 
 PasteTool.prototype.mouseup = function () {
@@ -73,11 +73,11 @@ PasteTool.prototype.mouseup = function () {
 
 PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
 	const rnd = this.editor.render;
+	this.editor.hover(null);
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action
 		delete this.action;
 		rnd.update();
-		this.editor.hover(null);
 	}
 };
 

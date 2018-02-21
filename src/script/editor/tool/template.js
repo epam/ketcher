@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 import utils from '../shared/utils';
 import { fromTemplateOnCanvas, fromTemplateOnAtom, fromTemplateOnBondAction } from '../actions/template';
-import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
 
 function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 	if (!(this instanceof TemplateTool))
@@ -152,7 +152,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 			this.editor.update(dragCtx.action, true);
 
 			dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
-			hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+			this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
 		}
 		return true;
 	}
@@ -210,7 +210,7 @@ TemplateTool.prototype.mousemove = function (event) { // eslint-disable-line max
 	this.editor.update(dragCtx.action, true);
 
 	dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
-	hoverItemsToFuse(this.editor, dragCtx.mergeItems);
+	this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
 	return true;
 };

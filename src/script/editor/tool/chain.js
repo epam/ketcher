@@ -21,7 +21,7 @@ import utils from '../shared/utils';
 import { atomLongtapEvent } from './atom';
 import { bondChangingAction } from '../actions/bond';
 import { fromChain } from '../actions/chain';
-import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
 
 function ChainTool(editor) {
 	if (!(this instanceof ChainTool))
@@ -90,7 +90,7 @@ ChainTool.prototype.mousemove = function (event) { // eslint-disable-line max-st
 		editor.update(dragCtx.action, true);
 
 		dragCtx.mergeItems = getItemsToFuse(editor, newItems);
-		hoverItemsToFuse(editor, dragCtx.mergeItems);
+		editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
 		return true;
 	}

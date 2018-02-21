@@ -22,7 +22,7 @@ import { atomLongtapEvent } from './atom';
 import { fromMultipleMove } from '../actions/fragment';
 import { fromAtomsAttrs } from '../actions/atom';
 import { fromBondsAttrs } from '../actions/bond';
-import { fromItemsFuse, getItemsToFuse, hoverItemsToFuse } from '../actions/closely-fusing';
+import { fromItemsFuse, getItemsToFuse, getHoverToFuse } from '../actions/closely-fusing';
 
 function SelectTool(editor, mode) {
 	if (!(this instanceof SelectTool))
@@ -118,7 +118,7 @@ SelectTool.prototype.mousemove = function (event) {
 		);
 
 		dragCtx.mergeItems = getItemsToFuse(editor, expSel);
-		hoverItemsToFuse(editor, dragCtx.mergeItems);
+		editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
 		editor.update(dragCtx.action, true);
 		return true;

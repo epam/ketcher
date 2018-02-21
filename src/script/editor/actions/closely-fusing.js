@@ -55,18 +55,15 @@ export function getItemsToFuse(editor, items) {
 	return closestToMerge(struct, editor.findMerge(mergeItems, ['atoms', 'bonds']));
 }
 
-export function hoverItemsToFuse(editor, items) {
-	if (!items) {
-		editor.hover(null);
-		return;
-	}
+export function getHoverToFuse(items) {
+	if (!items) return null;
 
 	const hoverItems = {
 		atoms: Array.from(items.atoms.values()),
 		bonds: Array.from(items.bonds.values())
 	};
 
-	editor.hover({ map: 'merge', id: +Date.now(), items: hoverItems });
+	return { map: 'merge', id: +Date.now(), items: hoverItems };
 }
 
 /**

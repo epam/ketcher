@@ -43,8 +43,11 @@ export default function initEditor(dispatch, getState) {
 		onInit: (editor) => {
 			dispatch({ type: 'INIT', editor });
 		},
-		onChange: () => {
-			sleep(0).then(() => dispatch(resetToSelect));
+		onChange: (action) => {
+			if (action === undefined)
+				sleep(0).then(() => dispatch(resetToSelect)); // new tool in reducer
+			else
+				dispatch(resetToSelect);
 		},
 		onSelectionChange: () => {
 			updateAction();

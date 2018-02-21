@@ -72,11 +72,12 @@ PasteTool.prototype.mouseup = function () {
 };
 
 PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
-	var rnd = this.editor.render;
+	const rnd = this.editor.render;
 	if (this.action) {
 		this.action.perform(rnd.ctab); // revert the action
 		delete this.action;
 		rnd.update();
+		this.editor.hover(null);
 	}
 };
 

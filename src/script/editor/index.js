@@ -266,8 +266,10 @@ function domEventSetup(editor, clientArea) {
 		subs.add((event) => {
 			if (eventName !== 'mouseup' && eventName !== 'mouseleave') { // to complete drag actions
 				if (isMouseRight(event) ||
-					!event.target || event.target.nodeName === 'DIV') // click on scroll
+					!event.target || event.target.nodeName === 'DIV') { // click on scroll
+					editor.hover(null);
 					return true;
+				}
 			}
 			const EditorTool = editor.tool();
 			editor.lastEvent = event;

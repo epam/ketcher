@@ -818,14 +818,11 @@ Struct.prototype.atomAddToSGroup = function (sgid, aid) {
 	this.atoms.get(aid).sgs.add(sgid);
 };
 
-Struct.prototype.calcConn = function (aid) {
-	var conn = 0;
-	var atom = this.atoms.get(aid);
-	var oddLoop = false;
-	var hasAromatic = false;
-	for (var i = 0; i < atom.neighbors.length; ++i) {
-		var hb = this.halfBonds.get(atom.neighbors[i]);
-		var bond = this.bonds.get(hb.bid);
+Struct.prototype.calcConn = function (atom) {
+	let conn = 0;
+	for (let i = 0; i < atom.neighbors.length; ++i) {
+		const hb = this.halfBonds.get(atom.neighbors[i]);
+		const bond = this.bonds.get(hb.bid);
 		switch (bond.type) {
 		case Bond.PATTERN.TYPE.SINGLE:
 			conn += 1;
@@ -837,41 +834,57 @@ Struct.prototype.calcConn = function (aid) {
 			conn += 3;
 			break;
 		case Bond.PATTERN.TYPE.AROMATIC:
-			conn += 1;
-			hasAromatic = true;
-			this.loops.forEach((item) => {
-				if (item.hbs.includes(atom.neighbors[i]) && item.hbs.length % 2 === 1)
-					oddLoop = true;
-			});
-			break;
+			return [atom.neighbors.length, true];
 		default:
-			return -1;
+			return [-1, false];
 		}
 	}
-	if (hasAromatic && !atom.hasImplicitH && !oddLoop)
-		conn += 1;
-	return conn;
+	return [conn, false];
 };
 
 Struct.prototype.calcImplicitHydrogen = function (aid) {
-	const conn = this.calcConn(aid);
 	const atom = this.atoms.get(aid);
+	const [conn, isAromatic] = this.calcConn(atom);
+	let correctConn = conn;
 	atom.badConn = false;
 
-	if (conn < 0 || atom.isQuery()) {
+	if (isAromatic) {
+		if (atom.label === 'C' && atom.charge === 0) {
+			if (conn === 3) {
+				atom.implicitH = -Atom.radicalElectrons(atom.radical);
+				return;
+			}
+			if (conn === 2) {
+				atom.implicitH = 1 - Atom.radicalElectrons(atom.radical);
+				return;
+			}
+		} else if (
+			(atom.label === 'O' && atom.charge === 0) ||
+			(atom.label === 'N' && atom.charge === 0 && conn === 3) ||
+			(atom.label === 'N' && atom.charge === 1 && conn === 3) ||
+			(atom.label === 'S' && atom.charge === 0 && conn === 3)
+		) {
+			atom.implicitH = 0;
+			return;
+		} else if (!atom.hasImplicitH) {
+			correctConn++;
+		}
+	}
+
+	if (correctConn < 0 || atom.isQuery()) {
 		atom.implicitH = 0;
 		return;
 	}
 
 	if (atom.explicitValence >= 0) {
 		const elem = element.map[atom.label];
-		atom.implicitH = elem !== null ? atom.explicitValence - atom.calcValenceMinusHyd(conn) : 0;
+		atom.implicitH = elem !== null ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn) : 0;
 		if (atom.implicitH < 0) {
 			atom.implicitH = 0;
 			atom.badConn = true;
 		}
 	} else {
-		atom.calcValence(conn);
+		atom.calcValence(correctConn);
 	}
 };
 

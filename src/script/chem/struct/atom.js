@@ -436,4 +436,4 @@ function checkPseudo(label) {
 	return !element.map[label] && label !== 'L' && label !== 'L#' && label !== 'R#' ? label : null;
 }
 
-module.exports = Atom;
+module.exports = Object.assign(Atom, { radicalElectrons });

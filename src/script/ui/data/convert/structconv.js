@@ -91,12 +91,13 @@ function toAtom(atom) {
 	//      see ratomtool
 	const chargeRegexp = atomSchema.properties.charge.pattern;
 	const pch = chargeRegexp.exec(atom.charge);
-	const charge = parseInt(pch[1] + pch[3] + pch[2]);
+	const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
 
-	return Object.assign({}, atom, {
-		label: capitalize(atom.label),
-		charge
+	const conv = Object.assign({}, atom, {
+		label: capitalize(atom.label)
 	});
+	if (charge !== undefined) conv.charge = charge;
+	return conv;
 }
 
 function fromAtomList(satom) {

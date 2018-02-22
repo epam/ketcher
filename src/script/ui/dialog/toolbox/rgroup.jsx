@@ -23,7 +23,7 @@ import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
 import ButtonList from '../../component/buttonlist';
 
-function RGroup({ disabledIds, rgroupValues, formState, type, ...props }) { // eslint-disable-line
+function RGroup({ disabledIds, values, formState, type, ...props }) { // eslint-disable-line
 	return (
 		<Dialog
 			title="R-Group"
@@ -31,9 +31,9 @@ function RGroup({ disabledIds, rgroupValues, formState, type, ...props }) { // e
 			params={props}
 			result={() => formState.result}
 		>
-			<Form schema={rgroupSchema} init={{ rgroupValues }} {...formState} >
+			<Form schema={rgroupSchema} init={{ values }} {...formState} >
 				<Field
-					name="rgroupValues"
+					name="values"
 					multiple={type === 'atom'}
 					labelPos={false}
 					component={ButtonList}

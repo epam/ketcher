@@ -121,7 +121,7 @@ export const rgroupSchema = {
 	title: 'R-group',
 	type: 'object',
 	properties: {
-		rgroupValues: {
+		values: {
 			type: 'array',
 			items: {
 				type: 'string',

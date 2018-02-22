@@ -17,8 +17,6 @@
 import { getDefaultOptions } from '../../data/schema/options-schema';
 import { initSdata, sdataReducer } from './sdata';
 
-export const rgroupValues = Array.from(new Array(32), (val, index) => 'R' + ++index);
-
 export const formsState = { // TODO: create from schema.{smth}.defaultValue
 	atomProps: {
 		errors: {},
@@ -74,7 +72,7 @@ export const formsState = { // TODO: create from schema.{smth}.defaultValue
 		errors: {},
 		valid: true,
 		result: {
-			rgroupValues
+			values: []
 		}
 	},
 	rgroupLogic: {

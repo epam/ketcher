@@ -66,7 +66,7 @@ export default function initEditor(dispatch, getState) {
 				const rgroups = getState().editor.struct().rgroups;
 				const params = {
 					type: 'atom',
-					rgroupValues: elem.values,
+					values: elem.values,
 					disabledIds: Array.from(rgroups.entries())
 						.reduce((acc, [rgid, rg]) => {
 							if (rg.frags.has(elem.fragId))
@@ -75,12 +75,15 @@ export default function initEditor(dispatch, getState) {
 							return acc;
 						}, [])
 				};
-				dlg = openDialog(dispatch, 'rgroup', params);
+				dlg = openDialog(dispatch, 'rgroup', params).then(res => ({
+					values: res.values,
+					type: 'rlabel'
+				}));
 			} else {
 				dlg = openDialog(dispatch, 'period-table', elem);
 			}
 
-			return dlg.then(res => toElement(Object.assign(elem, { values: res.rgroupValues })));
+			return dlg.then(toElement);
 		},
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
 		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))
@@ -105,10 +108,10 @@ export default function initEditor(dispatch, getState) {
 				}, []);
 			const params = {
 				type: 'fragment',
-				rgroupValues: [rgroup.label],
+				values: [rgroup.label],
 				disabledIds
 			};
-			return openDialog(dispatch, 'rgroup', params).then(res => ({ label: res.rgroupValues[0] }));
+			return openDialog(dispatch, 'rgroup', params).then(res => ({ label: res.values[0] }));
 		},
 		onSgroupEdit: sgroup => sleep(0)		// huck to open dialog after dispatch sgroup tool action
 			.then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))

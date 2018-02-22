@@ -39,7 +39,10 @@ function parametrizeUrl(url, params) {
 function api(base, defaultOptions) {
 	const baseUrl = !base || /\/$/.test(base) ? base : base + '/';
 
-	const info = request('GET', 'indigo/info').then(res => ({ indigoVersion: res.Indigo.version })).catch(() => {
+	const info = request('GET', 'info').then(res => ({
+		indigoVersion: res['indigo_version'],
+		imagoVersions: res['imago_versions']
+	})).catch(() => {
 		throw Error('Server is not compatible');
 	});
 
@@ -82,8 +85,9 @@ function api(base, defaultOptions) {
 		automap: indigoCall('POST', 'indigo/automap'),
 		check: indigoCall('POST', 'indigo/check'),
 		calculate: indigoCall('POST', 'indigo/calculate'),
-		recognize(blob) {
-			const req = request('POST', 'imago/uploads', blob, {
+		recognize(blob, version) { // eslint-disable-line no-unused-vars
+			const parVersion = version ? `?version=${version}` : '';
+			const req = request('POST', `imago/uploads${parVersion}`, blob, {
 				'Content-Type': blob.type || 'application/octet-stream'
 			});
 			const status = request.bind(null, 'GET', 'imago/uploads/:id');

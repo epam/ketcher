@@ -30,6 +30,7 @@ export function checkServer() {
 		server.then(
 			res => dispatch(appUpdate({
 				indigoVersion: res.indigoVersion,
+				imagoVersions: res.imagoVersions,
 				server: true
 			})),
 			err => console.info(err)
@@ -38,11 +39,11 @@ export function checkServer() {
 	};
 }
 
-export function recognize(file) {
+export function recognize(file, version) {
 	return (dispatch, getState) => {
 		const rec = getState().server.recognize;
 
-		const process = rec(file).then((res) => {
+		const process = rec(file, version).then((res) => {
 			dispatch(setStruct(res.struct));
 		}, () => {
 			dispatch(setStruct(null));

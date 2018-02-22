@@ -36,7 +36,8 @@ export const initOptionsState = {
 	recognize: {
 		file: null,
 		structStr: null,
-		fragment: false
+		fragment: false,
+		version: null
 	},
 	settings: Object.assign(getDefaultOptions(), validation(storage.getItem('ketcher-opts'))),
 	getServerSettings() {
@@ -72,6 +73,7 @@ export function changeRound(roundName, value) {
 const recognizeActions = [
 	'SET_RECOGNIZE_STRUCT',
 	'CHANGE_RECOGNIZE_FILE',
+	'CHANGE_IMAGO_VERSION',
 	'IS_FRAGMENT_RECOGNIZE'
 ];
 
@@ -79,6 +81,13 @@ export function setStruct(str) {
 	return {
 		type: 'SET_RECOGNIZE_STRUCT',
 		data: { structStr: str }
+	};
+}
+
+export function changeVersion(version) {
+	return {
+		type: 'CHANGE_IMAGO_VERSION',
+		data: { version }
 	};
 }
 
@@ -99,6 +108,7 @@ export function shouldFragment(isFrag) {
 	};
 }
 
+/* CHECK */
 export function checkOpts(data) {
 	return {
 		type: 'SAVE_CHECK_OPTS',

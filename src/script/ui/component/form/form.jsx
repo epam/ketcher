@@ -114,7 +114,12 @@ function Field(props) {
 
 	if (labelPos === false) return formField;
 	return (
-		<Label className={className} data-error={dataError} title={prop.title || desc.title} labelPos={labelPos}>
+		<Label
+			className={className}
+			data-error={dataError}
+			title={prop.title || desc.title}
+			labelPos={labelPos}
+		>
 			{ formField }
 		</Label>
 	);

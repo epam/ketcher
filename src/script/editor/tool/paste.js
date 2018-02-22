@@ -71,7 +71,7 @@ PasteTool.prototype.mouseup = function () {
 	}
 };
 
-PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
+PasteTool.prototype.cancel = function () {
 	const rnd = this.editor.render;
 	this.editor.hover(null);
 	if (this.action) {
@@ -80,5 +80,6 @@ PasteTool.prototype.cancel = PasteTool.prototype.mouseleave = function () { // e
 		rnd.update();
 	}
 };
+PasteTool.prototype.mouseleave = PasteTool.prototype.cancel;
 
 export default PasteTool;

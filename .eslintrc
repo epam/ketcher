@@ -32,6 +32,7 @@
     "no-fallthrough": "off",
     "no-mixed-operators": "warn",
     "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 1 }],
+    "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
     "no-tabs": "off",
@@ -47,7 +48,7 @@
 
     "object-curly-newline": "off",
     "operator-assignment": ["error", "always"],
-    "prefer-promise-reject-errors": "off",
+    "prefer-destructuring": "off",
     "prefer-template": "off",
     "radix": "off",
     "spaced-comment": ["error", "always", { "exceptions": ["*"] }],
@@ -72,11 +73,6 @@
     "jsx-a11y/label-has-for": "off",
     "jsx-a11y/iframe-has-title": "off",
     "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-noninteractive-element-interactions": "off",
-
-    /* remove below */ // TODO !!!
-    "prefer-destructuring": "off", // TODO 200 errs ! DO IT
-    "no-param-reassign": "off", // TODO 281 !!!
-    "max-len": "off" // TODO many!!!
+    "jsx-a11y/no-noninteractive-element-interactions": "off"
   }
 }

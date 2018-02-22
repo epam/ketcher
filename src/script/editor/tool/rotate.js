@@ -94,7 +94,7 @@ RotateTool.prototype.mousedown = function (event) {
 		else
 			xy0 = xy0.scaled(1 / selection.atoms.length);
 	} else {
-		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle
+		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle, max-len
 		// poor man struct center (without chiral, sdata, etc)
 		xy0 = xy0.scaled(1 / struct.atoms.size);
 	}
@@ -155,7 +155,7 @@ RotateTool.prototype.mouseup = function () {
 	return true;
 };
 
-RotateTool.prototype.cancel = RotateTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
-	RotateTool.prototype.mouseup;
+RotateTool.prototype.cancel = RotateTool.prototype.mouseup;
+RotateTool.prototype.mouseleave = RotateTool.prototype.mouseup;
 
 export default RotateTool;

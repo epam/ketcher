@@ -86,7 +86,10 @@ ReactionMapTool.prototype.mouseup = function (event) { // eslint-disable-line ma
 			if (!aam1 || aam1 !== aam2) {
 				if (aam1 && aam1 !== aam2 || !aam1 && aam2) { // eslint-disable-line no-mixed-operators
 					atoms.forEach((atom, aid) => {
-						if (aid !== this.dragCtx.item.id && (aam1 && atom.aam === aam1 || aam2 && atom.aam === aam2)) // eslint-disable-line no-mixed-operators
+						if (
+							aid !== this.dragCtx.item.id &&
+							((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
+						)
 							action.mergeWith(fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }));
 					});
 				}

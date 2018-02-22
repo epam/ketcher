@@ -90,7 +90,7 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	}
 
 	if (ci.map === 'atoms')
-		atomLongtapEvent(this, rnd); // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+		atomLongtapEvent(this, rnd); // to be stopped in others events by `tool.dragCtx.stopTapping()`
 
 	return true;
 };
@@ -107,7 +107,8 @@ SelectTool.prototype.mousemove = function (event) {
 		// moving selected objects
 		if (dragCtx.action) {
 			dragCtx.action.perform(restruct);
-			editor.update(dragCtx.action, true); // redraw the elements in unshifted position, lest the have different offset
+			// redraw the elements in unshifted position, lest the have different offset
+			editor.update(dragCtx.action, true);
 		}
 
 		const expSel = editor.explicitSelected();
@@ -157,7 +158,8 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 		editor.update(dragCtx.action);
 
 		delete this.dragCtx;
-	} else if (this.lassoHelper.running()) { // TODO it catches more events than needed, to be re-factored
+	} else if (this.lassoHelper.running()) {
+		// TODO it catches more events than needed, to be re-factored
 		const sel = this.lassoHelper.end();
 		editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection()));
 	} else if (this.lassoHelper.fragment) {
@@ -197,7 +199,7 @@ SelectTool.prototype.dblclick = function (event) { // eslint-disable-line max-st
 	return true;
 };
 
-SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { // eslint-disable-line no-multi-assign
+SelectTool.prototype.cancel = function () {
 	if (this.dragCtx && this.dragCtx.stopTapping)
 		this.dragCtx.stopTapping();
 
@@ -212,6 +214,7 @@ SelectTool.prototype.cancel = SelectTool.prototype.mouseleave = function () { //
 
 	this.editor.hover(null);
 };
+SelectTool.prototype.mouseleave = SelectTool.prototype.cancel;
 
 function closestToSel(ci) {
 	var res = {};

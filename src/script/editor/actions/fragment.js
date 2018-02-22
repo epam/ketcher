@@ -139,7 +139,8 @@ function processAtom(restruct, aid, frid, newfrid) {
  * @param frid { number }
  * @return { Action }
  */
-export function fromFragmentSplit(restruct, frid) { // TODO [RB] the thing is too tricky :) need something else in future
+// TODO [RB] the thing is too tricky :) need something else in future
+export function fromFragmentSplit(restruct, frid) {
 	var action = new Action();
 	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 

@@ -35,8 +35,9 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
 		const localAttrs = Object.assign({}, attrs);
 		localAttrs.fieldValue = fValue;
 
-		return acc
-			.mergeWith(fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId()));
+		return acc.mergeWith(
+			fromSgroupAddition(restruct, type, atoms, localAttrs, restruct.molecule.sgroups.newId())
+		);
 	}, new Action());
 }
 
@@ -94,7 +95,7 @@ export function fromSgroupDeletion(restruct, id) {
 	return action;
 }
 
-export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-disable-line max-params, max-statements
+export function fromSgroupAddition(restruct, type, atoms, attrs, sgid, pp) { // eslint-disable-line
 	let action = new Action();
 
 	// TODO: shoud the id be generated when OpSGroupCreate is executed?

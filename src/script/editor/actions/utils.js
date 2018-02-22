@@ -123,7 +123,8 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 				});
 				neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
 
-				if (neiNeighbours[0] <= Math.PI * 1.01 && neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI)
+				if (neiNeighbours[0] <= Math.PI * 1.01 &&
+					neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI)
 					maxAngle *= -1;
 			}
 		}
@@ -143,5 +144,6 @@ export function atomForNewBond(restruct, id) { // eslint-disable-line max-statem
 
 export function getRelSgroupsBySelection(restruct, selectedAtoms) {
 	return restruct.molecule.sgroups
-		.filter((sgid, sg) => !sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
+		.filter((sgid, sg) =>
+			!sg.data.attached && !sg.data.absolute && difference(sg.atoms, selectedAtoms).length === 0);
 }

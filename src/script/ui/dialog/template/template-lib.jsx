@@ -66,7 +66,8 @@ function filterLib(lib, filter) {
 	console.warn('Filter', filter);
 	const re = new RegExp(escapeRegExp(greekify(filter)), 'i');
 	return flow(
-		_filter(item => !filter || re.test(greekify(item.struct.name)) || re.test(greekify(item.props.group))),
+		_filter(item =>
+			!filter || re.test(greekify(item.struct.name)) || re.test(greekify(item.props.group))),
 		reduce((res, item) => {
 			if (!res[item.props.group]) res[item.props.group] = [item];
 			else res[item.props.group].push(item);

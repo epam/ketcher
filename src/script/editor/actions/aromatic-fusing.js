@@ -62,7 +62,8 @@ export function fromAromaticTemplateOnBond(restruct, template, bid, events, simp
 
 		afterMerge = getFragmentWithBondMap(restruct.molecule, frid);
 
-		return events.dearomatizeStruct.dispatch(afterMerge.frag).then(res => molfile.parse(res.struct));
+		return events.dearomatizeStruct.dispatch(afterMerge.frag)
+			.then(res => molfile.parse(res.struct));
 	}).then((destruct) => {
 		destruct.bonds.forEach((bond) => {
 			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)

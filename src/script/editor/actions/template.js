@@ -38,7 +38,9 @@ function extraBondAction(restruct, aid, angle, sgroups) {
 
 	if (angle === null) {
 		const middleAtom = atomForNewBond(restruct, aid);
-		const actionRes = fromBondAddition(restruct, { type: 1 }, aid, middleAtom.atom, middleAtom.pos.get_xy0());
+		const actionRes = fromBondAddition(
+			restruct, { type: 1 }, aid, middleAtom.atom, middleAtom.pos.get_xy0()
+		);
 		action = actionRes[0];
 		action.operations.reverse();
 		additionalAtom = actionRes[2];
@@ -120,7 +122,8 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 	});
 
 	tmpl.bonds.forEach((bond) => {
-		const operation = new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond).perform(restruct);
+		const operation = new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond)
+			.perform(restruct);
 		action.addOp(operation);
 
 		pasteItems.bonds.push(operation.data.bid);
@@ -208,7 +211,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 	tmpl.bonds.forEach((tBond) => {
 		const existId = struct.findBondId(atomsMap.get(tBond.begin), atomsMap.get(tBond.end));
 		if (existId === null) {
-			const operation = new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond).perform(restruct);
+			const operation = new op.BondAdd(atomsMap.get(tBond.begin), atomsMap.get(tBond.end), tBond)
+				.perform(restruct);
 			action.addOp(operation);
 
 			pasteItems.bonds.push(operation.data.bid);

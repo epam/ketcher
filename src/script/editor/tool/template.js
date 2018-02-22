@@ -51,7 +51,8 @@ function TemplateTool(editor, tmpl) { // eslint-disable-line max-statements
 
 	const bond = frag.bonds.get(this.template.bid);
 	if (bond) {
-		this.template.sign = getSign(frag, bond, this.template.xy0); // template location sign against attachment bond
+		// template location sign against attachment bond
+		this.template.sign = getSign(frag, bond, this.template.xy0);
 		this.findItems.push('bonds');
 	}
 }
@@ -90,7 +91,7 @@ TemplateTool.prototype.mousedown = function (event) { // eslint-disable-line max
 		if (loop >= 0) {
 			const loopHbs = molecule.loops.get(loop).hbs;
 			loopHbs.forEach((hb) => {
-				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp); // eslint-disable-line no-underscore-dangle
+				xy0.add_(molecule.atoms.get(molecule.halfBonds.get(hb).begin).pp); // eslint-disable-line no-underscore-dangle, max-len
 				count++;
 			});
 		} else {
@@ -320,8 +321,8 @@ TemplateTool.prototype.mouseup = function (event) { // eslint-disable-line max-s
 	return true;
 };
 
-TemplateTool.prototype.cancel = TemplateTool.prototype.mouseleave = // eslint-disable-line no-multi-assign
-	TemplateTool.prototype.mouseup;
+TemplateTool.prototype.cancel = TemplateTool.prototype.mouseup;
+TemplateTool.prototype.mouseleave = TemplateTool.prototype.mouseup;
 
 function getSign(molecule, bond, v) {
 	const begin = molecule.atoms.get(bond.begin).pp;

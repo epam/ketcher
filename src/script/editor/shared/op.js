@@ -82,7 +82,7 @@ function AtomAdd(atom, pos) {
 		const arrow = struct.rxnArrows.get(0);
 		if (arrow) {
 			const atom = struct.atoms.get(this.data.aid);
-			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(new Pile([this.data.aid]), arrow.pp.x);
+			atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(new Pile([this.data.aid]), arrow.pp.x); // eslint-disable-line
 		}
 	};
 
@@ -131,8 +131,13 @@ function AtomAttr(aid, attribute, value) {
 
 	this.execute = function (restruct) {
 		const atom = restruct.molecule.atoms.get(this.data.aid);
-		if (!this.data2)
-			this.data2 = { aid: this.data.aid, attribute: this.data.attribute, value: atom[this.data.attribute] };
+		if (!this.data2) {
+			this.data2 = {
+				aid: this.data.aid,
+				attribute: this.data.attribute,
+				value: atom[this.data.attribute]
+			};
+		}
 
 		atom[this.data.attribute] = this.data.value;
 		invalidateAtom(restruct, this.data.aid);
@@ -183,7 +188,8 @@ function BondMove(bid, d) {
 	this.data = { bid, d };
 
 	this.execute = function (restruct) {
-		restruct.bonds.get(this.data.bid).visel.translate(scale.obj2scaled(this.data.d, restruct.render.options));
+		restruct.bonds.get(this.data.bid).visel
+			.translate(scale.obj2scaled(this.data.d, restruct.render.options));
 		this.data.d = this.data.d.negated();
 	};
 
@@ -200,9 +206,12 @@ function LoopMove(id, d) {
 
 	this.execute = function (restruct) {
 		// not sure if there should be an action to move a loop in the first place
-		// but we have to somehow move the aromatic ring, which is associated with the loop, rather than with any of the bonds
-		if (restruct.reloops.get(this.data.id) && restruct.reloops.get(this.data.id).visel)
-			restruct.reloops.get(this.data.id).visel.translate(scale.obj2scaled(this.data.d, restruct.render.options));
+		// but we have to somehow move the aromatic ring,
+		// which is associated with the loop, rather than with any of the bonds
+		if (restruct.reloops.get(this.data.id) && restruct.reloops.get(this.data.id).visel) {
+			restruct.reloops.get(this.data.id).visel
+				.translate(scale.obj2scaled(this.data.d, restruct.render.options));
+		}
 		this.data.d = this.data.d.negated();
 	};
 
@@ -431,7 +440,7 @@ function BondAdd(begin, end, bond) {
 		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb2);
 
 		// notifyBondAdded
-		restruct.bonds.set(this.data.bid, new ReStruct.Bond(restruct.molecule.bonds.get(this.data.bid)));
+		restruct.bonds.set(this.data.bid, new ReStruct.Bond(struct.bonds.get(this.data.bid)));
 		restruct.markBond(this.data.bid, 1);
 	};
 
@@ -498,8 +507,13 @@ function BondAttr(bid, attribute, value) {
 	this.execute = function (restruct) {
 		const bond = restruct.molecule.bonds.get(this.data.bid);
 
-		if (!this.data2)
-			this.data2 = { bid: this.data.bid, attribute: this.data.attribute, value: bond[this.data.attribute] };
+		if (!this.data2) {
+			this.data2 = {
+				bid: this.data.bid,
+				attribute: this.data.attribute,
+				value: bond[this.data.attribute]
+			};
+		}
 
 		bond[this.data.attribute] = this.data.value;
 
@@ -564,8 +578,13 @@ function RGroupAttr(rgid, attribute, value) {
 
 	this.execute = function (restruct) {
 		const rgp = restruct.molecule.rgroups.get(this.data.rgid);
-		if (!this.data2)
-			this.data2 = { rgid: this.data.rgid, attribute: this.data.attribute, value: rgp[this.data.attribute] };
+		if (!this.data2) {
+			this.data2 = {
+				rgid: this.data.rgid,
+				attribute: this.data.attribute,
+				value: rgp[this.data.attribute]
+			};
+		}
 
 		rgp[this.data.attribute] = this.data.value;
 
@@ -688,7 +707,10 @@ function RxnArrowAdd(pos) {
 			struct.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
 
 		// notifyRxnArrowAdded
-		restruct.rxnArrows.set(this.data.arid, new ReStruct.RxnArrow(restruct.molecule.rxnArrows.get(this.data.arid)));
+		restruct.rxnArrows.set(
+			this.data.arid,
+			new ReStruct.RxnArrow(struct.rxnArrows.get(this.data.arid))
+		);
 
 		struct.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
 
@@ -780,7 +802,10 @@ function RxnPlusAdd(pos) {
 			struct.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
 
 		// notifyRxnPlusAdded
-		restruct.rxnPluses.set(this.data.plid, new ReStruct.RxnPlus(restruct.molecule.rxnPluses.get(this.data.plid)));
+		restruct.rxnPluses.set(
+			this.data.plid,
+			new ReStruct.RxnPlus(struct.rxnPluses.get(this.data.plid))
+		);
 
 		struct.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
 
@@ -845,8 +870,8 @@ function SGroupDataMove(id, d) {
 	this.data = { id, d };
 
 	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		struct.sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
+		const { sgroups } = restruct.molecule;
+		sgroups.get(this.data.id).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
 		this.data.d = this.data.d.negated();
 		invalidateItem(restruct, 'sgroupData', this.data.id, 1); // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
 	};

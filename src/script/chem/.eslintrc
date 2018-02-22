@@ -8,6 +8,7 @@
     "vars-on-top": 0,
     "one-var-declaration-per-line": 0,
     "block-scoped-var": 0,
-    "no-shadow": 0
+    "no-shadow": 0,
+    "max-len": 0
   }
 }

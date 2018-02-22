@@ -60,7 +60,8 @@ function propsDialog(editor, id, pos) {
 	});
 
 	Promise.resolve(res).then((elem) => {
-		elem = Object.assign({}, Struct.Atom.attrlist, elem); // TODO review: using Atom.attrlist as a source of default property values
+		// TODO review: using Atom.attrlist as a source of default property values
+		elem = Object.assign({}, Struct.Atom.attrlist, elem);
 
 		if (!id && id !== 0 && elem.rglabel) {
 			editor.update(fromAtomAddition(editor.render.ctab, pos, elem));

@@ -58,7 +58,8 @@ function getElementsInRectangle(restruct, p0, p1) {
 
 	const sgroupDataList = [];
 	restruct.sgroupData.forEach((item, id) => {
-		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 && item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
+		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 &&
+			item.sgroup.pp.y > y0 && item.sgroup.pp.y < y1)
 			sgroupDataList.push(id);
 	});
 

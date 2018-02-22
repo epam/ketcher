@@ -109,7 +109,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 	return action.perform(restruct);
 }
 
-export function fromRotate(restruct, selection, center, angle) { // eslint-disable-line max-statements
+export function fromRotate(restruct, selection, center, angle) { // eslint-disable-line
 	const struct = restruct.molecule;
 
 	const action = new Action();

@@ -71,7 +71,8 @@ Box2Abs.prototype.include = function (p) {
  */
 Box2Abs.prototype.contains = function (p, ext = 0.0) {
 	console.assert(!!p);
-	return p.x >= this.p0.x - ext && p.x <= this.p1.x + ext && p.y >= this.p0.y - ext && p.y <= this.p1.y + ext;
+	return p.x >= this.p0.x - ext && p.x <= this.p1.x + ext &&
+		p.y >= this.p0.y - ext && p.y <= this.p1.y + ext;
 };
 
 /**

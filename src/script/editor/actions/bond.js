@@ -25,7 +25,7 @@ import { fromAtomMerge, mergeFragments } from './atom';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromFragmentSplit } from './fragment';
 
-export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line max-params, max-statements
+export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
 		var atom = atomForNewBond(restruct, begin);
 		end = atom.atom;
@@ -61,7 +61,7 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 
 	if (!(typeof end === 'number')) {
 		end.fragment = frid;
-		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a newly created atom
+		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(restruct)).data.aid;
 		if (typeof begin === 'number') {
 			atomGetSGroups(restruct, begin).forEach((sid) => {

@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 class Pile extends Set {
-	// TODO: it's used only in dfs.js in one place in some strange way. Should be removed after dfs.js refactoring
+	// TODO: it's used only in dfs.js in one place in some strange way.
+	// Should be removed after dfs.js refactoring
 	find(predicate) {
 		for (const item of this) {
 			if (predicate(item))

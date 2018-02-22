@@ -68,7 +68,8 @@ SGroupTool.prototype.mouseleave = function (event) {
 SGroupTool.prototype.mouseup = function (event) {
 	var id = null; // id of an existing group, if we're editing one
 	var selection = null; // atoms to include in a newly created group
-	if (this.lassoHelper.running(event)) { // TODO it catches more events than needed, to be re-factored
+	if (this.lassoHelper.running(event)) {
+		// TODO it catches more events than needed, to be re-factored
 		selection = this.lassoHelper.end(event);
 	} else {
 		var ci = this.editor.findItem(event, searchMaps);
@@ -195,7 +196,9 @@ function getContextBySelection(restruct, selection) {
 	if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected)
 		return SgContexts.Fragment;
 
-	return manyComponentsSelected(restruct, selection.atoms) ? SgContexts.Multifragment : SgContexts.Group;
+	return manyComponentsSelected(restruct, selection.atoms) ?
+		SgContexts.Multifragment :
+		SgContexts.Group;
 }
 
 function fromContextType(id, editor, newSg, currSelection) {

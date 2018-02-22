@@ -42,7 +42,8 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 			fridMap.set(atom.fragment, action.addOp(new op.FragmentAdd().perform(restruct)).frid);
 
 		const tmpAtom = Object.assign(atom.clone(), { fragment: fridMap.get(atom.fragment) });
-		const operation = new op.AtomAdd(tmpAtom, Vec2.diff(atom.pp, xy0).rotate(angle).add(point)).perform(restruct);
+		const operation = new op.AtomAdd(tmpAtom, Vec2.diff(atom.pp, xy0).rotate(angle).add(point))
+			.perform(restruct);
 		action.addOp(operation);
 		aidMap.set(aid, operation.data.aid);
 
@@ -50,7 +51,8 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 	});
 
 	pstruct.bonds.forEach((bond) => {
-		const operation = new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond).perform(restruct);
+		const operation = new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond)
+			.perform(restruct);
 		action.addOp(operation);
 
 		pasteItems.bonds.push(operation.data.bid);
@@ -59,7 +61,9 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 	pstruct.sgroups.forEach((sg) => {
 		const newsgid = restruct.molecule.sgroups.newId();
 		const sgAtoms = sg.atoms.map(aid => aidMap.get(aid));
-		const sgAction = fromSgroupAddition(restruct, sg.type, sgAtoms, sg.data, newsgid, sg.pp ? sg.pp.add(offset) : null);
+		const sgAction = fromSgroupAddition(
+			restruct, sg.type, sgAtoms, sg.data, newsgid, sg.pp ? sg.pp.add(offset) : null
+		);
 		sgAction.operations.reverse().forEach((oper) => {
 			action.addOp(oper);
 		});

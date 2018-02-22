@@ -5,6 +5,7 @@
     "eqeqeq": 0,
     "one-var": 0,
     "block-scoped-var": 0,
-    "no-shadow": 0
+    "no-shadow": 0,
+    "max-len": 0
   }
 }

@@ -117,7 +117,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 		};
 	}
 
-	if (closestBond !== null && minDist > SELECTION_DISTANCE_COEFFICIENT * scale) { // hack (ported from old code)
+	if (closestBond !== null && minDist > SELECTION_DISTANCE_COEFFICIENT * scale) {
 		return {
 			id: closestBond,
 			dist: minDist
@@ -331,7 +331,10 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
 
 	selected.bonds.forEach((bid) => {
 		const bond = struct.bonds.get(bid);
-		pos.bonds.set(bid, Vec2.lc2(struct.atoms.get(bond.begin).pp, 0.5, struct.atoms.get(bond.end).pp, 0.5));
+		pos.bonds.set(
+			bid,
+			Vec2.lc2(struct.atoms.get(bond.begin).pp, 0.5, struct.atoms.get(bond.end).pp, 0.5)
+		);
 	});
 
 	const result = {};

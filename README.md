@@ -1,5 +1,5 @@
 # EPAM Ketcher projects
-Copyright (c) 2017 EPAM Systems, Inc
+Copyright (c) 2018 EPAM Systems, Inc
 
 Ketcher is an open-source web-based chemical structure editor incorporating high performance, good portability, light weight, and ability to easily integrate into a custom web-application. Ketcher is designed for chemists, laboratory scientists and technicians who draw structures and reactions.
 

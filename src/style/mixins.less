@@ -220,9 +220,12 @@
 
 .expanded-menu(@dim: inherit) {
 	.set-size(@dim);
-	li {
-		display: block;
-	}
+  li {
+    display: flex;
+    menu {
+      width: 100%;
+    }
+  }
 	button {
     display: flex;
     justify-content: space-between;

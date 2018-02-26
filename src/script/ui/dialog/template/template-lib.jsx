@@ -152,9 +152,9 @@ class TemplateLib extends Component {
 					'Cancel', 'OK']}
 			>
 				<label>
+					Filter:
 					<Input
 						type="search"
-						placeholder="Filter"
 						value={filter}
 						onChange={value => onFilter(value)}
 					/>

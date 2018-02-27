@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var element = [
+const element = [
 	null,
 	{
 		label: 'H', // 1
@@ -1291,4 +1291,4 @@ element.map = element.reduce((res, el, index) => {
 	return res;
 }, {});
 
-module.exports = element;
+export default element;

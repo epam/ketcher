@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Raphael = require('../raphael-ext').default;
-var Box2Abs = require('../util/box2abs');
-var Vec2 = require('../util/vec2');
-var scale = require('../util/scale');
+import Raphael from '../raphael-ext';
+import Box2Abs from '../util/box2abs';
+import Vec2 from '../util/vec2';
+import scale from '../util/scale';
 
-var Struct = require('../chem/struct');
-var ReStruct = require('./restruct');
+import Struct from '../chem/struct';
+import ReStruct from './restruct';
 
-var defaultOptions = require('./options');
+import defaultOptions from './options';
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
@@ -212,4 +212,4 @@ Render.prototype.update = function (force, viewSz) { // eslint-disable-line max-
 	}
 };
 
-module.exports = Render;
+export default Render;

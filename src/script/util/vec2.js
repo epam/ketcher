@@ -237,4 +237,4 @@ Vec2.centre = function (v1, v2) {
 	return new Vec2.lc2(v1, 0.5, v2, 0.5); // eslint-disable-line new-cap
 };
 
-module.exports = Vec2;
+export default Vec2;

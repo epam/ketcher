@@ -22,7 +22,7 @@ function obj2scaled(v, options) {
 	return v.scaled(options.scale);
 }
 
-module.exports = {
+export default {
 	scaled2obj,
 	obj2scaled
 };

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Pile from '../../util/pile';
-import Struct from '../../chem/struct';
+import { SGroup } from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { sgroupDialog } from './sgroup';
 import { atomLongtapEvent } from './atom';
@@ -74,8 +74,8 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		} else if (ci.map === 'sgroups') {
 			const sgroup = ctab.sgroups.get(ci.id).item;
 			sel = {
-				atoms: Struct.SGroup.getAtoms(struct, sgroup),
-				bonds: Struct.SGroup.getBonds(struct, sgroup)
+				atoms: SGroup.getAtoms(struct, sgroup),
+				bonds: SGroup.getBonds(struct, sgroup)
 			};
 		} else if (ci.map === 'rgroups') {
 			const rgroup = ctab.rgroups.get(ci.id);

@@ -19,7 +19,7 @@ import isEqual from 'lodash/fp/isEqual';
 import { SgContexts } from '../shared/constants';
 
 import Pile from '../../util/pile';
-import Struct from '../../chem/struct';
+import { SGroup } from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { fromSgroupDeletion, fromSeveralSgroupAddition, fromSgroupAction } from '../actions/sgroup';
 
@@ -263,7 +263,7 @@ function checkOverlapping(struct, atoms) {
 	return Array.from(sgroups).some((sid) => {
 		const sg = struct.sgroups.get(sid);
 		if (sg.type === 'DAT') return false;
-		const sgAtoms = Struct.SGroup.getAtoms(struct, sg);
+		const sgAtoms = SGroup.getAtoms(struct, sg);
 
 		return (sgAtoms.length < atoms.length) ?
 			sgAtoms.findIndex(aid => (atoms.indexOf(aid) === -1)) >= 0 :

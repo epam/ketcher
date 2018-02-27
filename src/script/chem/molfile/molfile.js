@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-const element = require('./../element');
+import element from './../element';
 
-const common = require('./common');
-const utils = require('./utils');
+import common from './common';
+import utils from './utils';
 
 function Molfile(v3000) {
 	/* reader */
@@ -485,4 +485,4 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	this.writeCR('M  END');
 };
 
-module.exports = Molfile;
+export default Molfile;

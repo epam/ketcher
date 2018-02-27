@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-var ReObject = require('./reobject');
+import ReObject from './reobject';
 
-var Struct = require('../../chem/struct');
-var draw = require('../draw');
-var Vec2 = require('../../util/vec2');
-var util = require('../util');
-var scale = require('../../util/scale');
+import { Bond } from '../../chem/struct';
+import draw from '../draw';
+import Vec2 from '../../util/vec2';
+import util from '../util';
+import scale from '../../util/scale';
 
 /**
  * @param bond { Bond }
@@ -122,15 +122,15 @@ function findIncomingStereoUpBond(atom, bid0, includeBoldStereoBond, restruct) {
 
 		const neibond = restruct.bonds.get(bid);
 
-		const singleUp = neibond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-			neibond.b.stereo === Struct.Bond.PATTERN.STEREO.UP;
+		const singleUp = neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
+			neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
 		if (singleUp)
 			return neibond.b.end === hb.begin || (neibond.boldStereo && includeBoldStereoBond);
 
 		return !!(
-			neibond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE &&
-			neibond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+			neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
+			neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
 			includeBoldStereoBond && neibond.boldStereo
 		);
 	});
@@ -172,19 +172,19 @@ function getBondPath(restruct, bond, hb1, hb2) {
 	var shiftB = !restruct.atoms.get(hb2.begin).showLabel;
 
 	switch (bond.b.type) {
-	case Struct.Bond.PATTERN.TYPE.SINGLE:
+	case Bond.PATTERN.TYPE.SINGLE:
 		switch (bond.b.stereo) {
-		case Struct.Bond.PATTERN.STEREO.UP:
+		case Bond.PATTERN.STEREO.UP:
 			findIncomingUpBonds(hb1.bid, bond, restruct);
 			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 				path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
 			else
 				path = getBondSingleUpPath(render, hb1, hb2, bond, struct);
 			break;
-		case Struct.Bond.PATTERN.STEREO.DOWN:
+		case Bond.PATTERN.STEREO.DOWN:
 			path = getBondSingleDownPath(render, hb1, hb2);
 			break;
-		case Struct.Bond.PATTERN.STEREO.EITHER:
+		case Bond.PATTERN.STEREO.EITHER:
 			path = getBondSingleEitherPath(render, hb1, hb2);
 			break;
 		default:
@@ -192,33 +192,33 @@ function getBondPath(restruct, bond, hb1, hb2) {
 			break;
 		}
 		break;
-	case Struct.Bond.PATTERN.TYPE.DOUBLE:
+	case Bond.PATTERN.TYPE.DOUBLE:
 		findIncomingUpBonds(hb1.bid, bond, restruct);
-		if (bond.b.stereo === Struct.Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
+		if (bond.b.stereo === Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
 			bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
 			path = getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB);
 		else
 			path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
-	case Struct.Bond.PATTERN.TYPE.TRIPLE:
+	case Bond.PATTERN.TYPE.TRIPLE:
 		path = draw.bondTriple(render.paper, hb1, hb2, render.options);
 		break;
-	case Struct.Bond.PATTERN.TYPE.AROMATIC:
+	case Bond.PATTERN.TYPE.AROMATIC:
 		var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
 			(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
 		path = inAromaticLoop ? draw.bondSingle(render.paper, hb1, hb2, render.options) :
 			getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
-	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
+	case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
 		path = getSingleOrDoublePath(render, hb1, hb2);
 		break;
-	case Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
+	case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
 		path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
-	case Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+	case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
 		path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
 		break;
-	case Struct.Bond.PATTERN.TYPE.ANY:
+	case Bond.PATTERN.TYPE.ANY:
 		path = draw.bondAny(render.paper, hb1, hb2, render.options);
 		break;
 	default:
@@ -327,7 +327,7 @@ function getBondSingleEitherPath(render, hb1, hb2) {
 }
 
 function getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint-disable-line max-params, max-statements
-	const cisTrans = bond.b.stereo === Struct.Bond.PATTERN.STEREO.CIS_TRANS;
+	const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
 
 	const a = hb1.p;
 	const b = hb2.p;
@@ -385,11 +385,11 @@ function getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB) { // eslint
 	var options = render.options;
 	var bondShift = bond.doubleBondShift;
 
-	if (bond.b.type === Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
+	if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
 		mark = bondShift > 0 ? 1 : 2;
 		dash = dashdotPattern.map(v => v * options.scale);
 	}
-	if (bond.b.type === Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
+	if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
 		mark = 3;
 		dash = dashdotPattern.map(v => v * options.scale);
 	}
@@ -449,13 +449,13 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		tiltTan = 0.2; // tangent of the tilt angle
 
 	switch (bond.b.reactingCenterStatus) {
-	case Struct.Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+	case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
 		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.CENTER: // #
+	case Bond.PATTERN.REACTING_CENTER.CENTER: // #
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
@@ -466,17 +466,17 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
 		break;
 		// case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
-	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
+	case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
 		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
 		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
+	case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
 		p.push(c.addScaled(n, acrossSz));
 		p.push(c.addScaled(n, -acrossSz));
 		break;
-	case Struct.Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
+	case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
 		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
 		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
@@ -494,9 +494,9 @@ function getTopologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-st
 	var options = render.options;
 	var mark = null;
 
-	if (bond.b.topology === Struct.Bond.PATTERN.TOPOLOGY.RING)
+	if (bond.b.topology === Bond.PATTERN.TOPOLOGY.RING)
 		mark = 'rng';
-	else if (bond.b.topology === Struct.Bond.PATTERN.TOPOLOGY.CHAIN)
+	else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN)
 		mark = 'chn';
 	else
 		return null;
@@ -513,7 +513,7 @@ function getTopologyMark(render, bond, hb1, hb2) { // eslint-disable-line max-st
 		fixed += options.bondSpace / 2;
 
 	var s = new Vec2(2, 1).scaled(options.bondSpace);
-	if (bond.b.type == Struct.Bond.PATTERN.TYPE.TRIPLE)
+	if (bond.b.type == Bond.PATTERN.TYPE.TRIPLE)
 		fixed += options.bondSpace;
 	var p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 
@@ -608,4 +608,4 @@ function selectDoubleBondShiftChain(struct, bond) {
 	return 0;
 }
 
-module.exports = ReBond;
+export default ReBond;

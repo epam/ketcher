@@ -138,4 +138,4 @@ Box2Abs.segmentIntersection = function (a, b, c, d) {
 	return dc * dd <= 0 && da * db <= 0;
 };
 
-module.exports = Box2Abs;
+export default Box2Abs;

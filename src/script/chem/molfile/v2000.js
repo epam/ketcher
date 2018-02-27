@@ -16,15 +16,15 @@
 
 /* eslint-disable guard-for-in */ // todo
 
-var Vec2 = require('../../util/vec2');
-var Pool = require('../../util/pool').default;
-var element = require('./../element');
-var Struct = require('./../struct/index');
+import Vec2 from '../../util/vec2';
+import Pool from '../../util/pool';
+import element from './../element';
+import Struct, { Atom, AtomList, Bond, RGroup, SGroup } from './../struct/index';
 
-var sGroup = require('./parseSGroup');
-var utils = require('./utils');
+import sGroup from './parseSGroup';
+import utils from './utils';
 
-var loadRGroupFragments = true; // TODO: set to load the fragments
+const loadRGroupFragments = true; // TODO: set to load the fragments
 
 function parseAtomLine(atomLine) {
 	/* reader */
@@ -51,7 +51,7 @@ function parseAtomLine(atomLine) {
 			// reaction query
 			exactChangeFlag: utils.parseDecimalInt(atomSplit[16]) != 0
 		};
-	return new Struct.Atom(params);
+	return new Atom(params);
 }
 
 function parseBondLine(bondLine) {
@@ -68,7 +68,7 @@ function parseBondLine(bondLine) {
 			reactingCenterStatus: utils.parseDecimalInt(bondSplit[6])
 		};
 
-	return new Struct.Bond(params);
+	return new Bond(params);
 }
 
 function parseAtomListLine(/* string */atomListLine) {
@@ -87,7 +87,7 @@ function parseAtomListLine(/* string */atomListLine) {
 
 	return {
 		aid: number,
-		atomList: new Struct.AtomList({
+		atomList: new AtomList({
 			notList,
 			ids: list
 		})
@@ -284,7 +284,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		sGroup.loadSGroup(ctab, sGroups[sid], atomMap);
 	const emptyGroups = [];
 	for (sid in sGroups) { // TODO: why do we need that?
-		Struct.SGroup.filter(ctab, sGroups[sid], atomMap);
+		SGroup.filter(ctab, sGroups[sid], atomMap);
 		if (sGroups[sid].atoms.length === 0 && !sGroups[sid].allAtoms)
 			emptyGroups.push(+sid);
 	}
@@ -294,7 +294,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	}
 	for (const id in rLogic) {
 		const rgid = parseInt(id, 10);
-		ctab.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
+		ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]));
 	}
 
 	return ctab;
@@ -405,7 +405,7 @@ function rgMerge(scaffold, rgroups) /* Struct */ {
 
 		for (let j = 0; j < rgroups[rgid].length; ++j) {
 			const ctab = rgroups[rgid][j];
-			ctab.rgroups.set(rgid, new Struct.RGroup());
+			ctab.rgroups.set(rgid, new RGroup());
 			const frag = {};
 			const frid = ctab.frags.add(frag);
 			ctab.rgroups.get(rgid).frags.add(frid);
@@ -439,14 +439,14 @@ function parsePropertyLineAtomList(hdr, lst) {
 	var notList = hdr[4].trim() == 'T';
 	var ids = labelsListToIds(lst.slice(0, count));
 	var ret = new Pool();
-	ret.set(aid, new Struct.AtomList({
+	ret.set(aid, new AtomList({
 		notList,
 		ids
 	}));
 	return ret;
 }
 
-module.exports = {
+export default {
 	parseCTabV2000,
 	parseRg2000,
 	parseRxn2000

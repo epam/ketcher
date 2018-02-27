@@ -79,7 +79,7 @@ function shiftRayBox(p, d, bb) {
 	/* eslint-enable no-mixed-operators*/
 }
 
-module.exports = {
+export default {
 	tfx,
 	relBox,
 	shiftRayBox

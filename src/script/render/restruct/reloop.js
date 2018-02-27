@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Vec2 = require('../../util/vec2');
-const Visel = require('./visel');
-const ReObject = require('./reobject');
-const scale = require('../../util/scale');
-const util = require('../util');
-const Struct = require('../../chem/struct');
+import Vec2 from '../../util/vec2';
+import Visel from './visel';
+import ReObject from './reobject';
+import scale from '../../util/scale';
+import util from '../util';
+import { Bond } from '../../chem/struct';
 
 const tfx = util.tfx;
 
@@ -44,7 +44,7 @@ ReLoop.prototype.show = function (restruct, rlid, options) { // eslint-disable-l
 		var hb = molecule.halfBonds.get(hbid);
 		var bond = restruct.bonds.get(hb.bid);
 		var apos = scale.obj2scaled(restruct.atoms.get(hb.begin).a.pp, options);
-		if (bond.b.type !== Struct.Bond.PATTERN.TYPE.AROMATIC)
+		if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC)
 			loop.aromatic = false;
 		this.centre.add_(apos); // eslint-disable-line no-underscore-dangle
 	});
@@ -118,4 +118,4 @@ ReLoop.prototype.isValid = function (struct, rlid) {
 		halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid);
 };
 
-module.exports = ReLoop;
+export default ReLoop;

@@ -14,15 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var ReObject = require('./reobject');
-var scale = require('../../util/scale');
-
-var element = require('../../chem/element');
-var draw = require('../draw');
-var util = require('../util');
-var Vec2 = require('../../util/vec2');
-var Struct = require('../../chem/struct');
+import Box2Abs from '../../util/box2abs';
+import ReObject from './reobject';
+import scale from '../../util/scale';
+import element from '../../chem/element';
+import draw from '../draw';
+import util from '../util';
+import Vec2 from '../../util/vec2';
+import { Bond } from '../../chem/struct';
 
 function ReAtom(/* chem.Atom*/atom) {
 	this.init('atom');
@@ -222,8 +221,8 @@ function isLabelVisible(restruct, options, atom) {
 		const bond2 = restruct.bonds.get(hb2.bid);
 
 		const sameNotStereo = bond1.b.type === bond2.b.type &&
-			bond1.b.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-			bond2.b.stereo === Struct.Bond.PATTERN.STEREO.NONE;
+			bond1.b.stereo === Bond.PATTERN.STEREO.NONE &&
+			bond2.b.stereo === Bond.PATTERN.STEREO.NONE;
 
 		if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2)
 			return true;
@@ -680,4 +679,4 @@ function shiftBondEnd(atom, pos0, dir, margin) {
 	return pos0;
 }
 
-module.exports = ReAtom;
+export default ReAtom;

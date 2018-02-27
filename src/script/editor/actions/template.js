@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import Struct from '../../chem/struct';
+import { Atom } from '../../chem/struct';
 import op from '../shared/op';
 import Action from '../shared/action';
 import utils from '../shared/utils';
@@ -101,7 +101,7 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 	/* ----- */
 
 	tmpl.atoms.forEach((a, id) => {
-		const attrs = Struct.Atom.getAttrHash(a);
+		const attrs = Atom.getAttrHash(a);
 		attrs.fragment = frid;
 
 		if (id === template.aid) {
@@ -180,7 +180,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 	/* ----- */
 
 	tmpl.atoms.forEach((atom, id) => {
-		const attrs = Struct.Atom.getAttrHash(atom);
+		const attrs = Atom.getAttrHash(atom);
 		attrs.fragment = frid;
 		if (id === tmplBond.begin || id === tmplBond.end) {
 			action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));

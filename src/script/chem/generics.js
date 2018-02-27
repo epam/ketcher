@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var generics = {
+const generics = {
 	atom: {
 		any: {
 			labels: ['A', 'AH']
@@ -105,4 +105,4 @@ generics.get = function (path) {
 	return mapify(traverse(path));
 };
 
-module.exports = generics;
+export default generics;

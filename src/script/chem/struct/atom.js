@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Pile = require('../../util/pile').default;
-var element = require('../element');
-var AtomList = require('./atomlist');
+import Vec2 from '../../util/vec2';
+import Pile from '../../util/pile';
+import element from '../element';
+import AtomList from './atomlist';
 
 function Atom(params) { // eslint-disable-line max-statements
 	var def = Atom.attrGetDefault;
@@ -436,4 +436,5 @@ function checkPseudo(label) {
 	return !element.map[label] && label !== 'L' && label !== 'L#' && label !== 'R#' ? label : null;
 }
 
-module.exports = Object.assign(Atom, { radicalElectrons });
+export default Atom;
+export { radicalElectrons };

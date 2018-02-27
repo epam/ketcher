@@ -18,24 +18,25 @@
 
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
-var Box2Abs = require('../../util/box2abs');
-var Pool = require('../../util/pool').default;
-var Pile = require('../../util/pile').default;
-var Vec2 = require('../../util/vec2');
+import Box2Abs from '../../util/box2abs';
+import Pool from '../../util/pool';
+import Pile from '../../util/pile';
+import Vec2 from '../../util/vec2';
 
-var util = require('../util');
-var Struct = require('../../chem/struct');
+import util from '../util';
 
-var ReAtom = require('./reatom');
-var ReBond = require('./rebond');
-var ReRxnPlus = require('./rerxnplus');
-var ReRxnArrow = require('./rerxnarrow');
-var ReFrag = require('./refrag');
-var ReRGroup = require('./rergroup');
-var ReDataSGroupData = require('./redatasgroupdata');
-var ReChiralFlag = require('./rechiralflag');
-var ReSGroup = require('./resgroup');
-var ReLoop = require('./reloop');
+import Struct from '../../chem/struct';
+
+import ReAtom from './reatom';
+import ReBond from './rebond';
+import ReRxnPlus from './rerxnplus';
+import ReRxnArrow from './rerxnarrow';
+import ReFrag from './refrag';
+import ReRGroup from './rergroup';
+import ReDataSGroupData from './redatasgroupdata';
+import ReChiralFlag from './rechiralflag';
+import ReSGroup from './resgroup';
+import ReLoop from './reloop';
 
 var LAYER_MAP = {
 	background: 0,
@@ -602,13 +603,14 @@ ReStruct.maps = {
 	reloops: ReLoop
 };
 
-module.exports = Object.assign(ReStruct, {
-	Atom: ReAtom,
-	Bond: ReBond,
-	RxnPlus: ReRxnPlus,
-	RxnArrow: ReRxnArrow,
-	Frag: ReFrag,
-	RGroup: ReRGroup,
-	ChiralFlag: ReChiralFlag,
-	SGroup: ReSGroup
-});
+export default ReStruct;
+export {
+	ReAtom,
+	ReBond,
+	ReRxnPlus,
+	ReRxnArrow,
+	ReFrag,
+	ReRGroup,
+	ReChiralFlag,
+	ReSGroup
+};

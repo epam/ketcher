@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var ReObject = require('./reobject');
-var scale = require('../../util/scale');
+import ReObject from './reobject';
+import scale from '../../util/scale';
 
 function ReDataSGroupData(sgroup) {
 	this.init('sgroupData');
@@ -45,4 +45,4 @@ ReDataSGroupData.prototype.makeSelectionPlate = function (restruct, paper, style
 	return this.highlightPath(restruct.render).attr(styles.selectionStyle);
 };
 
-module.exports = ReDataSGroupData;
+export default ReDataSGroupData;

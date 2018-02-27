@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Molfile = require('./molfile');
+import Molfile from './molfile';
 
 // TODO: reconstruct molfile string instead parsing multiple times
 //       merge to bottom
 function parseCTFile(str, options) {
-	var molfile = new Molfile();
-	var lines = str.split(/\r\n|[\n\r]/g);
+	const molfile = new Molfile();
+	const lines = str.split(/\r\n|[\n\r]/g);
 	try {
 		return molfile.parseCTFile(lines, options.reactionRelayout);
 	} catch (ex) {
@@ -42,9 +42,9 @@ function parseCTFile(str, options) {
 	}
 }
 
-module.exports = {
+export default {
 	stringify(struct, options) {
-		var opts = options || {};
+		const opts = options || {};
 		return new Molfile(opts.v3000).saveMolecule(struct, opts.ignoreErrors,
 			opts.noRgroups, opts.preserveIndigoDesc);
 	},

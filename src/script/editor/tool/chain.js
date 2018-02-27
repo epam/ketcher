@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import Struct from '../../chem/struct';
+import { Bond } from '../../chem/struct';
 import utils from '../shared/utils';
 
 import { atomLongtapEvent } from './atom';
@@ -114,8 +114,8 @@ ChainTool.prototype.mouseup = function () {
 		const bond = struct.bonds.get(dragCtx.item.id);
 
 		dragCtx.action = bondChangingAction(restruct, dragCtx.item.id, bond, {
-			type: Struct.Bond.PATTERN.TYPE.SINGLE,
-			stereo: Struct.Bond.PATTERN.STEREO.NONE
+			type: Bond.PATTERN.TYPE.SINGLE,
+			stereo: Bond.PATTERN.STEREO.NONE
 		});
 	} else {
 		dragCtx.action = dragCtx.action ?

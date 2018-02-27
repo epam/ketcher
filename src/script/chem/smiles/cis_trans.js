@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pool = require('../../util/pool').default;
-var Vec2 = require('../../util/vec2');
+import Pool from '../../util/pool';
+import Vec2 from '../../util/vec2';
 
-var Struct = require('../struct');
+import { Bond } from '../struct';
 
 function CisTrans(mol, neighborsFunc, context) {
 	this.molecule = mol;
@@ -109,7 +109,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 	// it must be [C,N,Si]=[C,N,Si] bond
 	var bond = this.molecule.bonds.get(bondIdx);
 
-	if (bond.type != Struct.Bond.PATTERN.TYPE.DOUBLE)
+	if (bond.type != Bond.PATTERN.TYPE.DOUBLE)
 		return false;
 
 	var label1 = this.molecule.atoms.get(bond.begin).label;
@@ -145,7 +145,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 		if (nei.bid == bondIdx)
 			continue; // eslint-disable-line no-continue
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
+		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE)
 			return false;
 
 		if (substituents[0] == -1)
@@ -160,7 +160,7 @@ CisTrans.prototype.isGeomStereoBond = function (bondIdx, substituents) { // esli
 		if (nei.bid == bondIdx)
 			continue; // eslint-disable-line no-continue
 
-		if (this.molecule.bonds.get(nei.bid).type != Struct.Bond.PATTERN.TYPE.SINGLE)
+		if (this.molecule.bonds.get(nei.bid).type != Bond.PATTERN.TYPE.SINGLE)
 			return false;
 
 		if (substituents[2] == -1)
@@ -209,4 +209,4 @@ function swap(arr, i1, i2) {
 	arr[i2] = tmp;
 }
 
-module.exports = CisTrans;
+export default CisTrans;

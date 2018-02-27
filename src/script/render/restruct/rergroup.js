@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var Vec2 = require('../../util/vec2');
-var util = require('../util');
-var draw = require('../draw');
-var scale = require('../../util/scale');
+import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
+import util from '../util';
+import draw from '../draw';
+import scale from '../../util/scale';
 
-var ReObject = require('./reobject');
+import ReObject from './reobject';
 
 var BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 
-function ReRGroup(/* Struct.RGroup*/rgroup) {
+function ReRGroup(/* RGroup*/rgroup) {
 	this.init('rgroup');
 
 	this.labelBox = null;
@@ -197,4 +197,4 @@ ReRGroup.prototype.show = function (restruct, id, options) {
 	// TODO rgroup selection & highlighting
 };
 
-module.exports = ReRGroup;
+export default ReRGroup;

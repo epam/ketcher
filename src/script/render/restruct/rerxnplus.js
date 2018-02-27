@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var ReObject = require('./reobject');
-var Box2Abs = require('../../util/box2abs');
-var draw = require('../draw');
-var util = require('../util');
-var scale = require('../../util/scale');
+import ReObject from './reobject';
+import Box2Abs from '../../util/box2abs';
+import draw from '../draw';
+import util from '../util';
+import scale from '../../util/scale';
 
 function ReRxnPlus(/* chem.RxnPlus*/plus) {
 	this.init('rxnPlus');
@@ -58,4 +58,4 @@ ReRxnPlus.prototype.show = function (restruct, id, options) {
 	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 };
 
-module.exports = ReRxnPlus;
+export default ReRxnPlus;

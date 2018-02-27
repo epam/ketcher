@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import Struct from '../../chem/struct';
+import { Bond } from '../../chem/struct';
 import utils from '../shared/utils';
 
 import { fromBondAddition, bondChangingAction, fromBondsAttrs } from '../actions/bond';
@@ -121,7 +121,7 @@ BondTool.prototype.mouseup = function (event) { // eslint-disable-line max-state
 		} else if (!('item' in dragCtx)) {
 			var xy = rnd.page2obj(event);
 			var v = new Vec2(1.0 / 2, 0).rotate(
-				this.bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
+				this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
 			);
 			var bondAddition = fromBondAddition(rnd.ctab,
 				this.bondProps, { label: 'C' }, { label: 'C' },

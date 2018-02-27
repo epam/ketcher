@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pile = require('../../util/pile').default;
-var Struct = require('../struct');
-var CisTrans = require('./cis_trans');
-var Dfs = require('./dfs');
-var Stereocenters = require('./stereocenters');
+import Pile from '../../util/pile';
+import { Atom, Bond, SGroup } from '../struct';
+import CisTrans from './cis_trans';
+import Dfs from './dfs';
+import Stereocenters from './stereocenters';
 
 function Smiles() {
 	this.smiles = '';
@@ -61,7 +61,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 	molecule.sgroups.forEach((sg) => {
 		if (sg.type === 'MUL') {
 			try {
-				Struct.SGroup.prepareMulForSaving(sg, molecule);
+				SGroup.prepareMulForSaving(sg, molecule);
 			} catch (ex) {
 				throw Error('Bad s-group (' + ex.message + ')');
 			}
@@ -83,7 +83,7 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 	// Detect atoms that have aromatic bonds and count neighbours
 	molecule.bonds.forEach((bond, bid) => {
-		if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC) {
+		if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
 			this.atoms[bond.begin].aromatic = true;
 			if (allowedLowercase.indexOf(molecule.atoms.get(bond.begin).label) !== -1)
 				this.atoms[bond.begin].lowercase = true;
@@ -292,23 +292,23 @@ Smiles.prototype.saveMolecule = function (molecule, ignoreErrors) { // eslint-di
 
 			var dir = 0;
 
-			if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE)
+			if (bond.type == Bond.PATTERN.TYPE.SINGLE)
 				dir = this.calcBondDirection(molecule, eIdx, vPrevIdx);
 
 			if ((dir == 1 && vIdx == bond.end) || (dir == 2 && vIdx == bond.begin))
 				this.smiles += '/';
 			else if ((dir == 2 && vIdx == bond.end) || (dir == 1 && vIdx == bond.begin))
 				this.smiles += '\\';
-			else if (bond.type == Struct.Bond.PATTERN.TYPE.ANY)
+			else if (bond.type == Bond.PATTERN.TYPE.ANY)
 				this.smiles += '~';
-			else if (bond.type == Struct.Bond.PATTERN.TYPE.DOUBLE)
+			else if (bond.type == Bond.PATTERN.TYPE.DOUBLE)
 				this.smiles += '=';
-			else if (bond.type == Struct.Bond.PATTERN.TYPE.TRIPLE)
+			else if (bond.type == Bond.PATTERN.TYPE.TRIPLE)
 				this.smiles += '#';
-			else if (bond.type == Struct.Bond.PATTERN.TYPE.AROMATIC &&
+			else if (bond.type == Bond.PATTERN.TYPE.AROMATIC &&
 			(!this.atoms[bond.begin].lowercase || !this.atoms[bond.end].lowercase || !this.isBondInRing(eIdx)))
 				this.smiles += ':'; // TODO: Check if this : is needed
-			else if (bond.type == Struct.Bond.PATTERN.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
+			else if (bond.type == Bond.PATTERN.TYPE.SINGLE && this.atoms[bond.begin].aromatic && this.atoms[bond.end].aromatic)
 				this.smiles += '-';
 
 
@@ -527,12 +527,12 @@ Smiles.prototype.markCisTrans = function (mol) {
 			var aromFailEnd = true;
 
 			neiBeg.forEach((nei) => {
-				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
+				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE)
 					aromFailBeg = false;
 			});
 
 			neiEnd.forEach((nei) => {
-				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Struct.Bond.PATTERN.TYPE.SINGLE)
+				if (nei.bid !== bid && mol.bonds.get(nei.bid).type === Bond.PATTERN.TYPE.SINGLE)
 					aromFailEnd = false;
 			});
 
@@ -661,7 +661,7 @@ Smiles.prototype.calcBondDirection = function (mol, idx, vprev) {
 	if (this.dbonds[idx].ctbond_beg == -1 && this.dbonds[idx].ctbond_end == -1)
 		return 0;
 
-	if (mol.bonds.get(idx).type != Struct.Bond.PATTERN.TYPE.SINGLE)
+	if (mol.bonds.get(idx).type != Bond.PATTERN.TYPE.SINGLE)
 		throw new Error('internal: directed bond type ' + mol.bonds.get(idx).type);
 
 	while (true) { // eslint-disable-line no-constant-condition
@@ -707,9 +707,9 @@ Smiles.prototype.writeRadicals = function (mol) { // eslint-disable-line max-sta
 			this.comma = true;
 		}
 
-		if (radical == Struct.Atom.PATTERN.RADICAL.SINGLET)
+		if (radical == Atom.PATTERN.RADICAL.SINGLET)
 			this.smiles += '^3:';
-		else if (radical == Struct.Atom.PATTERN.RADICAL.DOUPLET)
+		else if (radical == Atom.PATTERN.RADICAL.DOUPLET)
 			this.smiles += '^1:';
 		else // RADICAL_TRIPLET
 			this.smiles += '^4:';
@@ -725,9 +725,9 @@ Smiles.prototype.writeRadicals = function (mol) { // eslint-disable-line max-sta
 	}
 };
 
-module.exports = {
+export default {
 	stringify(struct, options) {
-		var opts = options || {};
+		const opts = options || {};
 		return new Smiles().saveMolecule(struct, opts.ignoreErrors);
 	}
 };

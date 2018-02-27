@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pool = require('../../util/pool').default;
-var Pile = require('../../util/pile').default;
-var Vec2 = require('../../util/vec2');
-var Box2Abs = require('../../util/box2abs');
+import Pool from '../../util/pool';
+import Pile from '../../util/pile';
+import Vec2 from '../../util/vec2';
+import Box2Abs from '../../util/box2abs';
 
-var element = require('../element');
+import element from '../element';
 
-var Atom = require('./atom');
-var AtomList = require('./atomlist');
-var Bond = require('./bond');
-var SGroup = require('./sgroup');
-var RGroup = require('./rgroup');
-var SGroupForest = require('./sgforest');
+import Atom, { radicalElectrons } from './atom';
+import AtomList from './atomlist';
+import Bond from './bond';
+import SGroup from './sgroup';
+import RGroup from './rgroup';
+import SGroupForest from './sgforest';
 
 function Struct() {
 	this.atoms = new Pool();
@@ -851,11 +851,11 @@ Struct.prototype.calcImplicitHydrogen = function (aid) {
 	if (isAromatic) {
 		if (atom.label === 'C' && atom.charge === 0) {
 			if (conn === 3) {
-				atom.implicitH = -Atom.radicalElectrons(atom.radical);
+				atom.implicitH = -radicalElectrons(atom.radical);
 				return;
 			}
 			if (conn === 2) {
-				atom.implicitH = 1 - Atom.radicalElectrons(atom.radical);
+				atom.implicitH = 1 - radicalElectrons(atom.radical);
 				return;
 			}
 		} else if (
@@ -1014,7 +1014,8 @@ function arrayAddIfMissing(array, item) {
 	return true;
 }
 
-module.exports = Object.assign(Struct, {
+export default Struct;
+export {
 	Atom,
 	AtomList,
 	Bond,
@@ -1022,4 +1023,4 @@ module.exports = Object.assign(Struct, {
 	RGroup,
 	RxnPlus,
 	RxnArrow
-});
+};

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
+import Vec2 from '../../util/vec2';
 
 function Bond(params) { // eslint-disable-line max-statements
 	console.assert(params && 'begin' in params && 'end' in params && 'type' in params,
@@ -137,4 +137,4 @@ Bond.prototype.clone = function (aidMap) {
 	return cp;
 };
 
-module.exports = Bond;
+export default Bond;

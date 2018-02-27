@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var Vec2 = require('../../util/vec2');
-var Pile = require('../../util/pile').default;
+import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
+import Pile from '../../util/pile';
 
-var Atom = require('./atom');
-var Bond = require('./bond');
+import Atom from './atom';
+import Bond from './bond';
 
 function SGroup(type) { // eslint-disable-line max-statements
 	console.assert(type && type in SGroup.TYPES, 'Invalid or unsupported s-group type');
@@ -396,4 +396,4 @@ SGroup.getMassCentre = function (mol, atoms) {
 	return c;
 };
 
-module.exports = SGroup;
+export default SGroup;

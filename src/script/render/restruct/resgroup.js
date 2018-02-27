@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var Vec2 = require('../../util/vec2');
-var Pile = require('../../util/pile').default;
-var util = require('../util');
-var scale = require('../../util/scale');
+import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
+import Pile from '../../util/pile';
+import util from '../util';
+import scale from '../../util/scale';
 
-var Struct = require('../../chem/struct');
-var draw = require('../draw');
+import { SGroup } from '../../chem/struct';
+import draw from '../draw';
 
-var ReDataSGroupData = require('./redatasgroupdata');
-var ReObject = require('./reobject');
+import ReDataSGroupData from './redatasgroupdata';
+import ReObject from './reobject';
 
-var tfx = util.tfx;
+const tfx = util.tfx;
 
 function ReSGroup(sgroup) {
 	this.init('sgroup');
@@ -44,7 +44,7 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	var inBonds = [],
 		xBonds = [];
 	var atomSet = new Pile(sgroup.atoms);
-	Struct.SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
+	SGroup.getCrossBonds(inBonds, xBonds, remol.molecule, atomSet);
 	bracketPos(sgroup, render, remol.molecule, xBonds);
 	var bb = sgroup.bracketBox;
 	var d = sgroup.bracketDir;
@@ -196,7 +196,7 @@ function drawAttachedDat(restruct, sgroup) {
 	const paper = render.paper;
 	const set = paper.set();
 
-	Struct.SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
+	SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
 		const atom = restruct.atoms.get(aid);
 		const p = scale.obj2scaled(atom.a.pp, options);
 		const bb = atom.visel.boundingBox;
@@ -355,10 +355,10 @@ ReSGroup.prototype.drawHighlight = function (render) { // eslint-disable-line ma
 		.attr(options.highlightStyle);
 	set.push(sg.highlighting);
 
-	Struct.SGroup.getAtoms(render.ctab.molecule, sg).forEach((aid) => {
+	SGroup.getAtoms(render.ctab.molecule, sg).forEach((aid) => {
 		set.push(render.ctab.atoms.get(aid).makeHighlightPlate(render));
 	}, this);
-	Struct.SGroup.getBonds(render.ctab.molecule, sg).forEach((bid) => {
+	SGroup.getBonds(render.ctab.molecule, sg).forEach((bid) => {
 		set.push(render.ctab.bonds.get(bid).makeHighlightPlate(render));
 	}, this);
 	render.ctab.addReObjectPath('highlighting', this.visel, set);
@@ -375,4 +375,4 @@ ReSGroup.prototype.show = function (restruct) {
 	}
 };
 
-module.exports = ReSGroup;
+export default ReSGroup;

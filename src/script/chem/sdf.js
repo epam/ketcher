@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var molfile = require('./molfile');
+import molfile from './molfile';
 
 function parse(str, options) {
 	var regexp = /^[^]+?\$\$\$\$$/gm;
@@ -58,7 +58,7 @@ function stringify(items, options) {
 	}, '');
 }
 
-module.exports = {
+export default {
 	stringify,
 	parse
 };

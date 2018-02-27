@@ -16,7 +16,7 @@
 
 import { capitalize } from 'lodash/fp';
 
-import Struct from '../../../chem/struct/index';
+import { Bond, AtomList } from '../../../chem/struct/index';
 import element from '../../../chem/element';
 import { sdataSchema } from '../schema/sdata-schema';
 import { atom as atomSchema } from '../schema/struct-schema';
@@ -87,7 +87,7 @@ function fromAtom(satom) {
 }
 
 function toAtom(atom) {
-	// TODO merge this to Struct.Atom.attrlist?
+	// TODO merge this to Atom.attrlist?
 	//      see ratomtool
 	const chargeRegexp = atomSchema.properties.charge.pattern;
 	const pch = chargeRegexp.exec(atom.charge);
@@ -111,7 +111,7 @@ function toAtomList(atom) {
 	return {
 		pseudo: null,
 		label: 'L#',
-		atomList: new Struct.AtomList({
+		atomList: new AtomList({
 			notList: atom.type === 'not-list',
 			ids: atom.values.map(el => element.map[el])
 		})
@@ -184,52 +184,52 @@ function fromBondType(type, stereo) {
 
 const bondCaptionMap = {
 	single: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.SINGLE,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	up: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE,
-		stereo: Struct.Bond.PATTERN.STEREO.UP
+		type: Bond.PATTERN.TYPE.SINGLE,
+		stereo: Bond.PATTERN.STEREO.UP
 	},
 	down: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE,
-		stereo: Struct.Bond.PATTERN.STEREO.DOWN
+		type: Bond.PATTERN.TYPE.SINGLE,
+		stereo: Bond.PATTERN.STEREO.DOWN
 	},
 	updown: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE,
-		stereo: Struct.Bond.PATTERN.STEREO.EITHER
+		type: Bond.PATTERN.TYPE.SINGLE,
+		stereo: Bond.PATTERN.STEREO.EITHER
 	},
 	double: {
-		type: Struct.Bond.PATTERN.TYPE.DOUBLE,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.DOUBLE,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	crossed: {
-		type: Struct.Bond.PATTERN.TYPE.DOUBLE,
-		stereo: Struct.Bond.PATTERN.STEREO.CIS_TRANS
+		type: Bond.PATTERN.TYPE.DOUBLE,
+		stereo: Bond.PATTERN.STEREO.CIS_TRANS
 	},
 	triple: {
-		type: Struct.Bond.PATTERN.TYPE.TRIPLE,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.TRIPLE,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	aromatic: {
-		type: Struct.Bond.PATTERN.TYPE.AROMATIC,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.AROMATIC,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	singledouble: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	singlearomatic: {
-		type: Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	doublearomatic: {
-		type: Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+		stereo: Bond.PATTERN.STEREO.NONE
 	},
 	any: {
-		type: Struct.Bond.PATTERN.TYPE.ANY,
-		stereo: Struct.Bond.PATTERN.STEREO.NONE
+		type: Bond.PATTERN.TYPE.ANY,
+		stereo: Bond.PATTERN.STEREO.NONE
 	}
 };
 

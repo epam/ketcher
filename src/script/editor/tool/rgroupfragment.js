@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Struct from '../../chem/struct';
+import { RGroup } from '../../chem/struct';
 import { fromRGroupAttrs, fromRGroupFragment, fromUpdateIfThen } from '../actions/rgroup';
 
 function RGroupFragmentTool(editor) {
@@ -41,7 +41,7 @@ RGroupFragmentTool.prototype.click = function (event) {
 	this.editor.hover(null);
 
 	const label = (ci.map === 'rgroups') ? ci.id :
-		Struct.RGroup.findRGroupByFragment(struct.rgroups, ci.id);
+		RGroup.findRGroupByFragment(struct.rgroups, ci.id);
 
 	const rg = Object.assign(
 		{ label },
@@ -55,7 +55,7 @@ RGroupFragmentTool.prototype.click = function (event) {
 
 		let action = null;
 		if (ci.map !== 'rgroups') {
-			const rgidOld = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
+			const rgidOld = RGroup.findRGroupByFragment(restruct.molecule.rgroups, ci.id);
 
 			action = fromRGroupFragment(restruct, newRg.label, ci.id)
 				.mergeWith(fromUpdateIfThen(restruct, newRg.label, rgidOld));

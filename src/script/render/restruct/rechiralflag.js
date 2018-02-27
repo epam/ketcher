@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Box2Abs = require('../../util/box2abs');
-var scale = require('../../util/scale');
-var ReObject = require('./reobject');
+import Box2Abs from '../../util/box2abs';
+import scale from '../../util/scale';
+import ReObject from './reobject';
 
 function ReChiralFlag(pos) {
 	this.init('chiralFlag');
@@ -62,4 +62,4 @@ ReChiralFlag.prototype.show = function (restruct, id, options) {
 	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
 };
 
-module.exports = ReChiralFlag;
+export default ReChiralFlag;

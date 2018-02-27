@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Struct from '../../chem/struct';
+import { Atom, Bond } from '../../chem/struct';
 
 import utils from '../shared/utils';
 
@@ -34,7 +34,7 @@ function AtomTool(editor, atomProps) {
 
 	this.editor = editor;
 	this.atomProps = atomProps;
-	this.bondProps = { type: 1, stereo: Struct.Bond.PATTERN.STEREO.NONE };
+	this.bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 }
 
 AtomTool.prototype.mousedown = function (event) {
@@ -110,7 +110,7 @@ export function atomLongtapEvent(tool, render) {
 	// edit atom or add atom
 	const atom = (atomid !== undefined && atomid !== null) ?
 		render.ctab.molecule.atoms.get(atomid) :
-		new Struct.Atom({ label: '' });
+		new Atom({ label: '' });
 
 	// TODO: longtab event
 	dragCtx.timeout = setTimeout(() => {

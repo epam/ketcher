@@ -19,8 +19,8 @@
 import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import Pile from '../../util/pile';
-import Struct from '../../chem/struct';
-import ReStruct from '../../render/restruct';
+import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
+import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReFrag, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct';
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
@@ -66,12 +66,12 @@ function AtomAdd(atom, pos) {
 		pp.label = pp.label || 'C';
 
 		if (!(typeof this.data.aid === 'number'))
-			this.data.aid = struct.atoms.add(new Struct.Atom(pp));
+			this.data.aid = struct.atoms.add(new Atom(pp));
 		else
-			struct.atoms.set(this.data.aid, new Struct.Atom(pp));
+			struct.atoms.set(this.data.aid, new Atom(pp));
 
 		// notifyAtomAdded
-		const atomData = new ReStruct.Atom(struct.atoms.get(this.data.aid));
+		const atomData = new ReAtom(struct.atoms.get(this.data.aid));
 
 		atomData.component = restruct.connectedComponents.add(new Pile([this.data.aid]));
 		restruct.atoms.set(this.data.aid, atomData);
@@ -263,7 +263,7 @@ function SGroupAtomRemove(sgid, aid) {
 		const atom = struct.atoms.get(aid);
 		const sg = struct.sgroups.get(sgid);
 
-		Struct.SGroup.removeAtom(sg, aid);
+		SGroup.removeAtom(sg, aid);
 		atom.sgs.delete(sgid);
 		invalidateAtom(restruct, aid);
 	};
@@ -308,7 +308,7 @@ function SGroupCreate(sgid, type, pp) {
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
-		const sg = new Struct.SGroup(this.data.type);
+		const sg = new SGroup(this.data.type);
 		const sgid = this.data.sgid;
 
 		sg.id = sgid;
@@ -317,7 +317,7 @@ function SGroupCreate(sgid, type, pp) {
 		if (this.data.pp)
 			struct.sgroups.get(sgid).pp = new Vec2(this.data.pp);
 
-		restruct.sgroups.set(sgid, new ReStruct.SGroup(struct.sgroups.get(sgid)));
+		restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)));
 		this.data.sgid = sgid;
 	};
 
@@ -426,21 +426,21 @@ function BondAdd(begin, end, bond) {
 			});
 		}
 
-		pp.type = pp.type || Struct.Bond.PATTERN.TYPE.SINGLE;
+		pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
 		pp.begin = this.data.begin;
 		pp.end = this.data.end;
 
 		if (!(typeof this.data.bid === 'number'))
-			this.data.bid = struct.bonds.add(new Struct.Bond(pp));
+			this.data.bid = struct.bonds.add(new Bond(pp));
 		else
-			struct.bonds.set(this.data.bid, new Struct.Bond(pp));
+			struct.bonds.set(this.data.bid, new Bond(pp));
 
 		struct.bondInitHalfBonds(this.data.bid);
 		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb1);
 		struct.atomAddNeighbor(struct.bonds.get(this.data.bid).hb2);
 
 		// notifyBondAdded
-		restruct.bonds.set(this.data.bid, new ReStruct.Bond(struct.bonds.get(this.data.bid)));
+		restruct.bonds.set(this.data.bid, new ReBond(struct.bonds.get(this.data.bid)));
 		restruct.markBond(this.data.bid, 1);
 	};
 
@@ -547,7 +547,7 @@ function FragmentAdd(frid) {
 		else
 			struct.frags.set(this.frid, frag);
 
-		restruct.frags.set(this.frid, new ReStruct.Frag(frag)); // TODO add ReStruct.notifyFragmentAdded
+		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
 	};
 
 	this.invert = function () {
@@ -614,7 +614,7 @@ function RGroupFragment(rgid, frid, rg) {
 
 	this.execute = function (restruct) { // eslint-disable-line max-statements
 		const struct = restruct.molecule;
-		this.rgid_old = this.rgid_old || Struct.RGroup.findRGroupByFragment(struct.rgroups, this.frid);
+		this.rgid_old = this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);
 		this.rg_old = (this.rgid_old ? struct.rgroups.get(this.rgid_old) : null);
 
 		if (this.rg_old) {
@@ -633,9 +633,9 @@ function RGroupFragment(rgid, frid, rg) {
 		if (this.rgid_new) {
 			let rgNew = struct.rgroups.get(this.rgid_new);
 			if (!rgNew) {
-				rgNew = this.rg_new || new Struct.RGroup();
+				rgNew = this.rg_new || new RGroup();
 				struct.rgroups.set(this.rgid_new, rgNew);
-				restruct.rgroups.set(this.rgid_new, new ReStruct.RGroup(rgNew));
+				restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
 			} else {
 				restruct.markItem('rgroups', this.rgid_new, 1);
 			}
@@ -702,14 +702,14 @@ function RxnArrowAdd(pos) {
 		const struct = restruct.molecule;
 
 		if (!(typeof this.data.arid === 'number'))
-			this.data.arid = struct.rxnArrows.add(new Struct.RxnArrow());
+			this.data.arid = struct.rxnArrows.add(new RxnArrow());
 		else
-			struct.rxnArrows.set(this.data.arid, new Struct.RxnArrow());
+			struct.rxnArrows.set(this.data.arid, new RxnArrow());
 
 		// notifyRxnArrowAdded
 		restruct.rxnArrows.set(
 			this.data.arid,
-			new ReStruct.RxnArrow(struct.rxnArrows.get(this.data.arid))
+			new ReRxnArrow(struct.rxnArrows.get(this.data.arid))
 		);
 
 		struct.rxnArrowSetPos(this.data.arid, new Vec2(this.data.pos));
@@ -797,14 +797,14 @@ function RxnPlusAdd(pos) {
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
 		if (!(typeof this.data.plid === 'number'))
-			this.data.plid = struct.rxnPluses.add(new Struct.RxnPlus());
+			this.data.plid = struct.rxnPluses.add(new RxnPlus());
 		else
-			struct.rxnPluses.set(this.data.plid, new Struct.RxnPlus());
+			struct.rxnPluses.set(this.data.plid, new RxnPlus());
 
 		// notifyRxnPlusAdded
 		restruct.rxnPluses.set(
 			this.data.plid,
-			new ReStruct.RxnPlus(struct.rxnPluses.get(this.data.plid))
+			new ReRxnPlus(struct.rxnPluses.get(this.data.plid))
 		);
 
 		struct.rxnPlusSetPos(this.data.plid, new Vec2(this.data.pos));
@@ -913,7 +913,7 @@ function ChiralFlagAdd(pos) {
 			restruct.chiralFlags.delete(0);
 		}
 
-		restruct.chiralFlags.set(0, new ReStruct.ChiralFlag(pos));
+		restruct.chiralFlags.set(0, new ReChiralFlag(pos));
 		struct.isChiral = true;
 		invalidateItem(restruct, 'chiralFlags', 0, 1);
 	};

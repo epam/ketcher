@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-const Box2Abs = require('../../util/box2abs');
-const Vec2 = require('../../util/vec2');
-const ReObject = require('./reobject');
-const scale = require('../../util/scale');
+import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
+import ReObject from './reobject';
+import scale from '../../util/scale';
 
 function ReFrag(/* Struct.Fragment = {}*/frag) {
 	this.init('frag');
@@ -112,4 +112,4 @@ ReFrag.prototype.setHighlight = function (highLight, render) {
 	});
 };
 
-module.exports = ReFrag;
+export default ReFrag;

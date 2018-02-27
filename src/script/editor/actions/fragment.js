@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 import Pile from '../../util/pile';
-import Struct from '../../chem/struct';
+import { RGroup } from '../../chem/struct';
 
 import op from '../shared/op';
 import Action from '../shared/action';
@@ -142,7 +142,7 @@ function processAtom(restruct, aid, frid, newfrid) {
 // TODO [RB] the thing is too tricky :) need something else in future
 export function fromFragmentSplit(restruct, frid) {
 	var action = new Action();
-	var rgid = Struct.RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+	var rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
 	restruct.molecule.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid) {

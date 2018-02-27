@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Struct from '../../chem/struct';
+import { Atom, Bond, RGroup } from '../../chem/struct';
 
 import op from '../shared/op';
 import Action from '../shared/action';
@@ -75,13 +75,13 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	const aids = Array.isArray(ids) ? ids : [ids];
 
 	aids.forEach((aid) => {
-		Object.keys(Struct.Atom.attrlist).forEach((key) => {
+		Object.keys(Atom.attrlist).forEach((key) => {
 			if (key === 'attpnt' && !(key in attrs))
 				return;
 			if (!(key in attrs) && !reset)
 				return;
 
-			const value = (key in attrs) ? attrs[key] : Struct.Atom.attrGetDefault(key);
+			const value = (key in attrs) ? attrs[key] : Atom.attrGetDefault(key);
 			action.addOp(new op.AtomAttr(aid, key, value));
 		});
 
@@ -127,7 +127,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 		if (mergeBondId === null) {
 			action.addOp(new op.BondAdd(begin, end, bond));
 		} else { // replace old bond with new bond
-			const attrs = Struct.Bond.getAttrHash(bond);
+			const attrs = Bond.getAttrHash(bond);
 			Object.keys(attrs).forEach((key) => {
 				action.addOp(new op.BondAttr(mergeBondId, key, attrs[key]));
 			});
@@ -136,7 +136,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 		action.addOp(new op.BondDelete(nei.bid));
 	});
 
-	const attrs = Struct.Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
+	const attrs = Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
 
 	if (atomGetDegree(restruct, srcId) === 1 && attrs['label'] === '*')
 		attrs['label'] = 'C';
@@ -159,7 +159,7 @@ export function mergeFragments(action, restruct, frid, frid2) {
 	var struct = restruct.molecule;
 
 	if (frid2 !== frid && (typeof frid2 === 'number')) {
-		var rgid = Struct.RGroup.findRGroupByFragment(struct.rgroups, frid2);
+		var rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
 		if (!(typeof rgid === 'undefined'))
 			action.mergeWith(fromRGroupFragment(restruct, null, frid2));
 

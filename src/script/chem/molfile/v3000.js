@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
+import Vec2 from '../../util/vec2';
 
-var element = require('./../element');
-var Struct = require('./../struct/index');
+import element from './../element';
+import Struct, { Atom, AtomList, Bond, RGroup, SGroup } from './../struct/index';
 
-var sGroup = require('./parseSGroup');
-var utils = require('./utils');
+import sGroup from './parseSGroup';
+import utils from './utils';
 
 function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 	/* reader */
@@ -46,7 +46,7 @@ function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 			label = label.substr(1); // remove '['
 		}
 		atomListParams.ids = labelsListToIds(label.split(','));
-		params['atomList'] = new Struct.AtomList(atomListParams);
+		params['atomList'] = new AtomList(atomListParams);
 		params['label'] = 'L#';
 	} else {
 		params['label'] = label;
@@ -76,7 +76,7 @@ function parseAtomLineV3000(line) { // eslint-disable-line max-statements
 		}
 	}
 
-	return new Struct.Atom(params);
+	return new Atom(params);
 }
 
 function parseBondLineV3000(line) {
@@ -95,8 +95,8 @@ function parseBondLineV3000(line) {
 		value = subsplit[1];
 		if (key == 'CFG') {
 			params.stereo = utils.fmtInfo.v30bondStereoMap[utils.parseDecimalInt(value)];
-			if (params.type == Struct.Bond.PATTERN.TYPE.DOUBLE && params.stereo == Struct.Bond.PATTERN.STEREO.EITHER)
-				params.stereo = Struct.Bond.PATTERN.STEREO.CIS_TRANS;
+			if (params.type == Bond.PATTERN.TYPE.DOUBLE && params.stereo == Bond.PATTERN.STEREO.EITHER)
+				params.stereo = Bond.PATTERN.STEREO.CIS_TRANS;
 		} else if (key == 'TOPO') {
 			params.topology = utils.fmtInfo.bondTopologyMap[utils.parseDecimalInt(value)];
 		} else if (key == 'RXCTR') {
@@ -105,7 +105,7 @@ function parseBondLineV3000(line) {
 			params.stereoCare = utils.parseDecimalInt(value);
 		}
 	}
-	return new Struct.Bond(params);
+	return new Bond(params);
 }
 
 function v3000parseCollection(ctab, ctabLines, shift) {
@@ -129,7 +129,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) { // eslint-
 			line = (line.substr(0, line.length - 1) + stripV30(ctabLines[shift++])).trim();
 		var split = splitSGroupDef(line);
 		var type = split[1];
-		var sg = new Struct.SGroup(type);
+		var sg = new SGroup(type);
 		sg.number = split[0] - 0;
 		sg.type = type;
 		sg.label = split[2] - 0;
@@ -280,7 +280,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ { // eslint-
 
 	Object.keys(rfrags).forEach((rgid) => {
 		rfrags[rgid].forEach((rg) => {
-			rg.rgroups.set(rgid, new Struct.RGroup(rLogic[rgid]));
+			rg.rgroups.set(rgid, new RGroup(rLogic[rgid]));
 			const frid = rg.frags.add({});
 			rg.rgroups.get(rgid).frags.add(frid);
 			rg.atoms.forEach((atom) => {
@@ -475,7 +475,7 @@ function labelsListToIds(labels) {
 	return ids;
 }
 
-module.exports = {
+export default {
 	parseCTabV3000,
 	readRGroups3000,
 	parseRxn3000

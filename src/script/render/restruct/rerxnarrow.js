@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-var ReObject = require('./reobject');
-var Box2Abs = require('../../util/box2abs');
-var Vec2 = require('../../util/vec2');
-var draw = require('../draw');
-var util = require('../util');
-var scale = require('../../util/scale');
+import ReObject from './reobject';
+import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
+import draw from '../draw';
+import util from '../util';
+import scale from '../../util/scale';
 
 function ReRxnArrow(/* chem.RxnArrow*/arrow) {
 	this.init('rxnArrow');
@@ -60,4 +60,4 @@ ReRxnArrow.prototype.show = function (restruct, id, options) {
 	this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
 };
 
-module.exports = ReRxnArrow;
+export default ReRxnArrow;

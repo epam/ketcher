@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var util = require('./util');
-var Vec2 = require('../util/vec2');
-var Raphael = require('../raphael-ext').default;
+import util from './util';
+import Vec2 from '../util/vec2';
+import Raphael from '../raphael-ext';
 
-var tfx = util.tfx;
+const tfx = util.tfx;
 
 function arrow(paper, a, b, options) {
 	var width = 5,
@@ -267,7 +267,7 @@ function recenterText(path, rbb) {
 	}
 }
 
-module.exports = {
+export default {
 	recenterText,
 	arrow,
 	plus,

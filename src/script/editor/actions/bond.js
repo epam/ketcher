@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Struct from '../../chem/struct';
+import { Bond } from '../../chem/struct';
 
 import op from '../shared/op';
 import utils from '../shared/utils';
@@ -121,11 +121,11 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
 	const bids = Array.isArray(ids) ? ids : [ids];
 
 	bids.forEach((bid) => {
-		Object.keys(Struct.Bond.attrlist).forEach((key) => {
+		Object.keys(Bond.attrlist).forEach((key) => {
 			if (!(key in attrs) && !reset)
 				return;
 
-			const value = (key in attrs) ? attrs[key] : Struct.Bond.attrGetDefault(key);
+			const value = (key in attrs) ? attrs[key] : Bond.attrGetDefault(key);
 			action.addOp(new op.BondAttr(bid, key, value));
 		});
 	});
@@ -178,16 +178,16 @@ function fromBondFlipping(restruct, id) {
  * @returns Action
  */
 export function bondChangingAction(restruct, itemID, bond, bondProps) {
-	if (bondProps.stereo !== Struct.Bond.PATTERN.STEREO.NONE && //
-		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
+	if (bondProps.stereo !== Bond.PATTERN.STEREO.NONE && //
+		bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
 		bond.type === bondProps.type && bond.stereo === bondProps.stereo)
 	// if bondTool is stereo and equal to bond for change
 		return fromBondFlipping(restruct, itemID);
 
 	const loop = plainBondTypes.includes(bondProps.type) ? plainBondTypes : null;
-	if (bondProps.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-		bondProps.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-		bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
+	if (bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
+		bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
+		bond.stereo === Bond.PATTERN.STEREO.NONE &&
 		loop)
 	// if `Single bond` tool is chosen and bond for change in `plainBondTypes`
 		bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];
@@ -199,15 +199,15 @@ export function bondChangingAction(restruct, itemID, bond, bondProps) {
 }
 
 function bondFlipRequired(struct, bond, attrs) {
-	return attrs.type === Struct.Bond.PATTERN.TYPE.SINGLE &&
-		bond.stereo === Struct.Bond.PATTERN.STEREO.NONE &&
-		attrs.stereo !== Struct.Bond.PATTERN.STEREO.NONE &&
+	return attrs.type === Bond.PATTERN.TYPE.SINGLE &&
+		bond.stereo === Bond.PATTERN.STEREO.NONE &&
+		attrs.stereo !== Bond.PATTERN.STEREO.NONE &&
 		struct.atoms.get(bond.begin).neighbors.length <
 		struct.atoms.get(bond.end).neighbors.length;
 }
 
 const plainBondTypes = [
-	Struct.Bond.PATTERN.TYPE.SINGLE,
-	Struct.Bond.PATTERN.TYPE.DOUBLE,
-	Struct.Bond.PATTERN.TYPE.TRIPLE
+	Bond.PATTERN.TYPE.SINGLE,
+	Bond.PATTERN.TYPE.DOUBLE,
+	Bond.PATTERN.TYPE.TRIPLE
 ];

@@ -16,7 +16,7 @@
 
 import { uniq } from 'lodash';
 
-import Struct from '../../chem/struct';
+import { SGroup } from '../../chem/struct';
 
 import Pile from '../../util/pile';
 import op from '../shared/op';
@@ -77,7 +77,7 @@ export function fromSgroupDeletion(restruct, id) {
 	}
 
 	const sg = struct.sgroups.get(id);
-	const atoms = Struct.SGroup.getAtoms(struct, sg);
+	const atoms = SGroup.getAtoms(struct, sg);
 	const attrs = sg.getAttrs();
 
 	action.addOp(new op.SGroupRemoveFromHierarchy(id));
@@ -276,7 +276,7 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 
 	sgCounts.forEach((count, sid) => {
 		const sG = restruct.sgroups.get(sid).item;
-		const sgAtoms = Struct.SGroup.getAtoms(restruct.molecule, sG);
+		const sgAtoms = SGroup.getAtoms(restruct.molecule, sG);
 
 		if (sgAtoms.length === count) {
 			// delete whole s-group

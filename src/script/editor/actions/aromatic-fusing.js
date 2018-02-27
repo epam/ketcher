@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import * as molfile from '../../chem/molfile';
-import Struct from '../../chem/struct';
+import { Bond } from '../../chem/struct';
 
 import op from '../shared/op';
 import Action from '../shared/action';
@@ -66,7 +66,7 @@ export function fromAromaticTemplateOnBond(restruct, template, bid, events, simp
 			.then(res => molfile.parse(res.struct));
 	}).then((destruct) => {
 		destruct.bonds.forEach((bond) => {
-			if (bond.type === Struct.Bond.PATTERN.TYPE.AROMATIC)
+			if (bond.type === Bond.PATTERN.TYPE.AROMATIC)
 				throw Error('Bad dearomatize');
 		});
 
@@ -87,9 +87,9 @@ function fromAromatize(restruct, astruct, bondMap) {
 	const action = new Action();
 
 	astruct.bonds.forEach((bond, bid) => {
-		if (bond.type !== Struct.Bond.PATTERN.TYPE.AROMATIC) return;
+		if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) return;
 		action.addOp(
-			new op.BondAttr(bondMap.get(bid), 'type', Struct.Bond.PATTERN.TYPE.AROMATIC)
+			new op.BondAttr(bondMap.get(bid), 'type', Bond.PATTERN.TYPE.AROMATIC)
 				.perform(restruct)
 		);
 	});

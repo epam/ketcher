@@ -52,4 +52,4 @@ RGroup.prototype.clone = function (fidMap) {
 	return ret;
 };
 
-module.exports = RGroup;
+export default RGroup;

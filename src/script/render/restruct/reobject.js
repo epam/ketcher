@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Visel = require('./visel');
-var scale = require('../../util/scale');
+import Visel from './visel';
+import scale from '../../util/scale';
 
 function ReObject() {
 }
@@ -70,4 +70,4 @@ ReObject.prototype.makeSelectionPlate = function () {
 	console.assert(null, 'ReObject.makeSelectionPlate is not overridden'); // eslint-disable-line no-console
 };
 
-module.exports = ReObject;
+export default ReObject;

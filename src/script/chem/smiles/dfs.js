@@ -177,4 +177,4 @@ Dfs.prototype.toString = function () {
 	return str;
 };
 
-module.exports = Dfs;
+export default Dfs;

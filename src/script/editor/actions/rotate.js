@@ -17,7 +17,7 @@
 import Vec2 from '../../util/vec2';
 import Pile from '../../util/pile';
 
-import Struct from '../../chem/struct';
+import { Bond } from '../../chem/struct';
 
 import op from '../shared/op';
 import utils from '../shared/utils';
@@ -93,16 +93,16 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 		selection.bonds.forEach((bid) => {
 			const bond = struct.bonds.get(bid);
 
-			if (bond.type !== Struct.Bond.PATTERN.TYPE.SINGLE)
+			if (bond.type !== Bond.PATTERN.TYPE.SINGLE)
 				return;
 
-			if (bond.stereo === Struct.Bond.PATTERN.STEREO.UP) {
-				action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.DOWN));
+			if (bond.stereo === Bond.PATTERN.STEREO.UP) {
+				action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN));
 				return;
 			}
 
-			if (bond.stereo === Struct.Bond.PATTERN.STEREO.DOWN)
-				action.addOp(new op.BondAttr(bid, 'stereo', Struct.Bond.PATTERN.STEREO.UP));
+			if (bond.stereo === Bond.PATTERN.STEREO.DOWN)
+				action.addOp(new op.BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP));
 		});
 	}
 

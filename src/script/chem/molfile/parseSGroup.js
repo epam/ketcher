@@ -16,10 +16,10 @@
 
 /* eslint-disable guard-for-in */ // todo
 
-var Vec2 = require('../../util/vec2');
-var Pool = require('../../util/pool').default;
-var Struct = require('./../struct/index');
-var utils = require('./utils');
+import Vec2 from '../../util/vec2';
+import Pool from '../../util/pool';
+import { SGroup } from './../struct/index';
+import utils from './utils';
 
 /**
  * @param str { string }
@@ -68,8 +68,8 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 	sgroup.data.mul = sgroup.data.subscript - 0;
 	var atomReductionMap = {};
 
-	sgroup.atoms = Struct.SGroup.filterAtoms(sgroup.atoms, atomMap);
-	sgroup.patoms = Struct.SGroup.filterAtoms(sgroup.patoms, atomMap);
+	sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
+	sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
 
 	// mark repetitions for removal
 	for (var k = 1; k < sgroup.data.mul; ++k) {
@@ -82,7 +82,7 @@ function postLoadMul(sgroup, mol, atomMap) { // eslint-disable-line max-statemen
 			atomReductionMap[raid] = sgroup.patoms[m]; // "merge" atom in parent
 		}
 	}
-	sgroup.patoms = Struct.SGroup.removeNegative(sgroup.patoms);
+	sgroup.patoms = SGroup.removeNegative(sgroup.patoms);
 
 	var patomsMap = identityMap(sgroup.patoms);
 
@@ -129,7 +129,7 @@ function postLoadGen(sgroup, mol, atomMap) { // eslint-disable-line no-unused-va
 
 function postLoadDat(sgroup, mol) {
 	if (!sgroup.data.absolute)
-		sgroup.pp = sgroup.pp.add(Struct.SGroup.getMassCentre(mol, sgroup.atoms));
+		sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
 }
 
 function loadSGroup(mol, sg, atomMap) {
@@ -164,10 +164,10 @@ function initSGroup(sGroups, propData) {
 	/* reader */
 	const kv = readKeyValuePairs(propData, true);
 	for (const [key, type] of kv) {
-		if (!(type in Struct.SGroup.TYPES))
+		if (!(type in SGroup.TYPES))
 			throw new Error('Unsupported S-group type');
 
-		const sg = new Struct.SGroup(type);
+		const sg = new SGroup(type);
 		sg.number = key;
 		sGroups[key] = sg;
 	}
@@ -294,7 +294,7 @@ function identityMap(array) {
 	return map;
 }
 
-module.exports = {
+export default {
 	readKeyValuePairs,
 	readKeyMultiValuePairs,
 	loadSGroup,

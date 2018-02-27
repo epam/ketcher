@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-var element = require('../element');
+import element from '../element';
 
 function AtomList(params) {
 	console.assert(params && 'notList' in params && 'ids' in params, '\'notList\' and \'ids\' must be specified!');
@@ -41,4 +41,4 @@ AtomList.prototype.equals = function (x) {
 	return this.notList == x.notList && (this.ids || []).sort().toString() === (x.ids || []).sort().toString();
 };
 
-module.exports = AtomList;
+export default AtomList;

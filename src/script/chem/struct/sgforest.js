@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Pool = require('../../util/pool').default;
-var Pile = require('../../util/pile').default;
+import Pool from '../../util/pool';
+import Pile from '../../util/pile';
 
 function SGroupForest(molecule) {
 	this.parent = new Pool(); // child id -> parent id
@@ -170,4 +170,4 @@ SGroupForest.prototype.remove = function (id) {
 	console.assert(this.validate(), 's-group forest invalid');
 };
 
-module.exports = SGroupForest;
+export default SGroupForest;

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var Vec2 = require('../../util/vec2');
-var Struct = require('./../struct/index');
+import Vec2 from '../../util/vec2';
+import { Bond, RxnArrow, RxnPlus, Struct } from './../struct/index';
 
 function paddedNum(number, width, precision) {
 	number = parseFloat(number);
@@ -59,32 +59,32 @@ function partitionLineFixed(/* string*/ str, /* int*/ itemLength, /* bool*/ with
 
 var fmtInfo = {
 	bondTypeMap: {
-		1: Struct.Bond.PATTERN.TYPE.SINGLE,
-		2: Struct.Bond.PATTERN.TYPE.DOUBLE,
-		3: Struct.Bond.PATTERN.TYPE.TRIPLE,
-		4: Struct.Bond.PATTERN.TYPE.AROMATIC,
-		5: Struct.Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-		6: Struct.Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-		7: Struct.Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-		8: Struct.Bond.PATTERN.TYPE.ANY
+		1: Bond.PATTERN.TYPE.SINGLE,
+		2: Bond.PATTERN.TYPE.DOUBLE,
+		3: Bond.PATTERN.TYPE.TRIPLE,
+		4: Bond.PATTERN.TYPE.AROMATIC,
+		5: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
+		6: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
+		7: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
+		8: Bond.PATTERN.TYPE.ANY
 	},
 	bondStereoMap: {
-		0: Struct.Bond.PATTERN.STEREO.NONE,
-		1: Struct.Bond.PATTERN.STEREO.UP,
-		4: Struct.Bond.PATTERN.STEREO.EITHER,
-		6: Struct.Bond.PATTERN.STEREO.DOWN,
-		3: Struct.Bond.PATTERN.STEREO.CIS_TRANS
+		0: Bond.PATTERN.STEREO.NONE,
+		1: Bond.PATTERN.STEREO.UP,
+		4: Bond.PATTERN.STEREO.EITHER,
+		6: Bond.PATTERN.STEREO.DOWN,
+		3: Bond.PATTERN.STEREO.CIS_TRANS
 	},
 	v30bondStereoMap: {
-		0: Struct.Bond.PATTERN.STEREO.NONE,
-		1: Struct.Bond.PATTERN.STEREO.UP,
-		2: Struct.Bond.PATTERN.STEREO.EITHER,
-		3: Struct.Bond.PATTERN.STEREO.DOWN
+		0: Bond.PATTERN.STEREO.NONE,
+		1: Bond.PATTERN.STEREO.UP,
+		2: Bond.PATTERN.STEREO.EITHER,
+		3: Bond.PATTERN.STEREO.DOWN
 	},
 	bondTopologyMap: {
-		0: Struct.Bond.PATTERN.TOPOLOGY.EITHER,
-		1: Struct.Bond.PATTERN.TOPOLOGY.RING,
-		2: Struct.Bond.PATTERN.TOPOLOGY.CHAIN
+		0: Bond.PATTERN.TOPOLOGY.EITHER,
+		1: Bond.PATTERN.TOPOLOGY.RING,
+		2: Bond.PATTERN.TOPOLOGY.CHAIN
 	},
 	countsLinePartition: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6],
 	atomLinePartition: [10, 10, 10, 1, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -218,7 +218,7 @@ function rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout) 
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new Struct.RxnPlus({ pp: new Vec2(x, y) }));
+		ret.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }));
 	}
 	for (j = 0; j <	bbReact.length; ++j) {
 		if (j == 0) {
@@ -237,7 +237,7 @@ function rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout) 
 		x = (bb1.max.x + bb2.min.x) / 2;
 		y = (bb1.max.y + bb1.min.y + bb2.max.y + bb2.min.y) / 4;
 
-		ret.rxnPluses.add(new Struct.RxnPlus({ pp: new Vec2(x, y) }));
+		ret.rxnPluses.add(new RxnPlus({ pp: new Vec2(x, y) }));
 	}
 	for (j = 0; j <	bbProd.length; ++j) {
 		if (j == 0) {
@@ -252,7 +252,7 @@ function rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout) 
 	bb1 = bbReactAll;
 	bb2 = bbProdAll;
 	if (!bb1 && !bb2) {
-		ret.rxnArrows.add(new Struct.RxnArrow({ pp: new Vec2(0, 0) }));
+		ret.rxnArrows.add(new RxnArrow({ pp: new Vec2(0, 0) }));
 	} else {
 		var v1 = bb1 ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
 		var v2 = bb2 ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2) : null;
@@ -261,13 +261,13 @@ function rxnMerge(mols, nReactants, nProducts, nAgents, shouldReactionRelayout) 
 			v1 = new Vec2(v2.x - defaultOffset, v2.y);
 		if (!v2)
 			v2 = new Vec2(v1.x + defaultOffset, v1.y);
-		ret.rxnArrows.add(new Struct.RxnArrow({ pp: Vec2.lc2(v1, 0.5, v2, 0.5) }));
+		ret.rxnArrows.add(new RxnArrow({ pp: Vec2.lc2(v1, 0.5, v2, 0.5) }));
 	}
 	ret.isReaction = true;
 	return ret;
 }
 
-module.exports = {
+export default {
 	fmtInfo,
 	paddedNum,
 	parseDecimalInt,

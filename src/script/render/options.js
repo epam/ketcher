@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-var utils = require('../editor/shared/utils').default;
-var Vec2 = require('../util/vec2');
+import utils from '../editor/shared/utils';
+import Vec2 from '../util/vec2';
 
 function defaultOptions(opt) {
 	const scaleFactor = opt.scale || 100;
@@ -93,4 +93,4 @@ function defaultOptions(opt) {
 	return Object.assign({}, defaultOptions, opt);
 }
 
-module.exports = defaultOptions;
+export default defaultOptions;

@@ -85,6 +85,7 @@ class Save extends Component {
 		const { structStr } = this.state;
 		const formState = this.props.formState;
 		const { filename, format } = formState.result;
+		const warning = structFormat.couldBeSaved(this.props.struct, format);
 
 		return (
 			<Dialog
@@ -125,6 +126,7 @@ class Save extends Component {
 					readOnly
 					ref={(el) => { this.textarea = el; }}
 				/>
+				{ warning && <div className="warning">{warning}</div> }
 			</Dialog>
 		);
 	}

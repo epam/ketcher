@@ -148,16 +148,18 @@ export function fromString(structStr, opts, server, serverOpts) {
 	});
 }
 
-// Pretty stupid Inchi check (extract from save)
 export function couldBeSaved(struct, format) {
-	if (format === 'inchi') {
+	if (format === 'inchi' || format === 'smiles') {
 		if (struct.rgroups.size !== 0)
-			throw new Error('R-group fragments are not supported and will be discarded');
+			return `R-group fragments cannot be saved in ${map[format].name}`;
 		struct = struct.clone(); // need this: .getScaffold()
-		struct.sgroups.forEach((sg) => {
-			// ? Not sure we should check it client side
-			if (sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName))
-				throw Error('InChi data format doesn\'t support s-groups');
-		});
+		const isRg = struct.atoms
+			.find((ind, atom) => atom.label === 'R#');
+		if (isRg !== null) return `R-group members cannot be saved in ${map[format].name}`;
+
+		const isSg = struct.sgroups
+			.find((ind, sg) => (sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)));
+		if (isSg !== null) return `S-groups cannot be saved in ${map[format].name}`;
 	}
+	return null;
 }

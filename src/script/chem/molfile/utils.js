@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Vec2 from '../../util/vec2';
-import { Bond, RxnArrow, RxnPlus, Struct } from './../struct/index';
+import Struct, { Bond, RxnArrow, RxnPlus } from './../struct/index';
 
 function paddedNum(number, width, precision) {
 	number = parseFloat(number);

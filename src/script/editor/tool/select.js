@@ -155,7 +155,8 @@ SelectTool.prototype.mouseup = function (event) { // eslint-disable-line max-sta
 
 		editor.hover(null);
 		if (dragCtx.mergeItems) editor.selection(null);
-		editor.update(dragCtx.action);
+		if (dragCtx.action.operations.length !== 0)
+			editor.update(dragCtx.action);
 
 		delete this.dragCtx;
 	} else if (this.lassoHelper.running()) {

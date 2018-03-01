@@ -103,7 +103,7 @@ class MiewComponent extends Component {
 				<div
 					ref={(el) => { this.miewContainer = el; }}
 					className="miew-container"
-					style={{ width: '720px', height: '480px', position: 'relative' }}
+					style={{ width: '1024px', height: '600px', position: 'relative' }}
 				/>
 			</Dialog>
 		);

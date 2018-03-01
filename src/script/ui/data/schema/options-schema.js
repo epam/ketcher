@@ -175,7 +175,7 @@ const miew = {
 		title: 'Display mode',
 		enum: ['LN', 'BS', 'LC'],
 		enumNames: ['Lines', 'Balls and Sticks', 'Licorice'],
-		default: 'lines'
+		default: 'LN'
 	},
 	miewTheme: {
 		title: 'Background color',

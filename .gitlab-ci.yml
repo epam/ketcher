@@ -14,7 +14,7 @@ cache:
 
 variables:
   API_PATH: "$SERVER:8081/v2"
-  MIEW_PATH: "/srv/static/miew-0.7.11/"
+  MIEW_PATH: "/srv/static/miew-0.7.13/"
   BRANCHE_NAME_SOURCE: "$CI_COMMIT_REF_NAME"
   NAME_REPORT_SOURCE: "Ketcher_${BRANCHE_NAME_SOURCE}_${CI_COMMIT_SHA:0:8}"
 #  TEST_TYPE_SOURCE: "KetcherVerifyAPISuite.xml"

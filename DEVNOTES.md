@@ -28,6 +28,20 @@ For production build:
 You can find the instruction for service installation
 [here](http://lifescience.opensource.epam.com/indigo/service/index.html).
 
+## 3D Viewer
+
+Ketcher uses Miew for viewing and editing data in 3D.
+For use of this functionality you need to add parameter `--miew-path`,
+having specified a path to directory with Miew files: [Miew.min.js and Miew.min.css](https://github.com/epam/miew/tree/master/dist):
+
+    npm start -- --miew-path=<miew-dir>
+For production build:
+
+    npm run build -- --miew-path=<miew-dir>
+
+You can find the latest version of viewer [here](https://github.com/epam/miew).
+The last checked version - [0.7.13](https://github.com/epam/miew/releases/tag/v0.7.13).
+
 ## Tests instructions
 
 You can start tests for input/output `.mol`-files and render.

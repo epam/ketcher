@@ -29,34 +29,49 @@ const BACKGROUND_COLOR = {
 	light: '0xcccccc'
 };
 
-const MIEW_DEFAULT_OPTIONS = {
-	settings: {
-		theme: 'light',
-		autoPreset: false,
-		inversePanning: true
+const MIEW_TX_TYPES = {
+	no: null,
+	bright: {
+		colorer: 'EL'
 	},
-	reps: [{
-		mode: 'LN'
-	}, {
-		colorer: 'EL',
+	blackAndWhite: {
+		colorer: ['UN', { color: 0xFFFFFF }],
+		bg: '0x000'
+	},
+	black: {
+		colorer: ['UN', { color: 0x000000 }]
+	}
+};
+
+const TXoptions = (userOpts) => {
+	const type = userOpts.miewAtomLabel;
+	if (MIEW_TX_TYPES[type] === null) return null;
+	return {
+		colorer: MIEW_TX_TYPES[type].colorer,
 		selector: 'not elem C',
 		mode: ['TX', {
-			bg: BACKGROUND_COLOR['light'],
+			bg: MIEW_TX_TYPES[type].bg || BACKGROUND_COLOR[userOpts.miewTheme],
 			showBg: true,
 			template: '{{elem}}'
 		}]
-	}]
+	};
 };
 
-function mergeOptions(userOpts) {
-	const options = MIEW_DEFAULT_OPTIONS;
+function createMiewOptions(userOpts) {
+	const options = {
+		settings: {
+			theme: userOpts.miewTheme,
+			autoPreset: false,
+			editing: true,
+			inversePanning: true
+		},
+		reps: [{
+			mode: userOpts.miewMode
+		}]
+	};
 
-	options.settings.theme = userOpts.miewTheme;
-	options.reps[0].mode = userOpts.miewMode;
-
-	// TODO: userOpts.miewAtomLabel transform to 'TX' mode settings
-	// options.settings.atomLabel = userOpts.miewAtomLabel;
-	options.reps[1].mode[1].bg = BACKGROUND_COLOR[userOpts.miewTheme];
+	const textMode = TXoptions(userOpts);
+	if (textMode) options.reps.push(textMode);
 
 	return options;
 }
@@ -112,7 +127,7 @@ class MiewComponent extends Component {
 
 export default connect(
 	store => ({
-		miewOpts: mergeOptions(pick(MIEW_OPTIONS, store.options.settings)),
+		miewOpts: createMiewOptions(pick(MIEW_OPTIONS, store.options.settings)),
 		server: store.options.app.server ? store.server : null,
 		struct: store.editor.struct()
 	}),

@@ -185,8 +185,8 @@ const miew = {
 	},
 	miewAtomLabel: {
 		title: 'Label coloring',
-		enum: ['no', 'bright', 'inverse', 'blackAndWhite', 'black'],
-		enumNames: ['No', 'Bright', 'Inverse', 'Black and White', 'Black'],
+		enum: ['no', 'bright', 'blackAndWhite', 'black'],
+		enumNames: ['No', 'Bright', 'Black and White', 'Black'],
 		default: 'bright'
 	}
 };

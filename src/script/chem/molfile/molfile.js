@@ -74,6 +74,7 @@ Molfile.prototype.prepareSGroups = function (skipErrors, preserveIndigoDesc) {
 Molfile.prototype.getCTab = function (molecule, rgroups) {
 	/* saver */
 	this.molecule = molecule.clone();
+	this.prepareSGroups(false, false);
 	this.molfile = '';
 	this.writeCTab2000(rgroups);
 	return this.molfile;

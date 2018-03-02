@@ -76,6 +76,7 @@ function createMiewOptions(userOpts) {
 	return options;
 }
 /* ---------------- */
+const CHANGING_WARNING = 'Stereocenters can be changed after the strong 3D rotation';
 
 class MiewComponent extends Component {
 	componentDidMount() {
@@ -109,6 +110,7 @@ class MiewComponent extends Component {
 				className="miew"
 				params={prop}
 				buttons={[
+					<div className="warning">{CHANGING_WARNING}</div>,
 					'Close',
 					<button	onClick={() => this.exportCML()}>
 						Apply

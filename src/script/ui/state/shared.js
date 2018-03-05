@@ -27,11 +27,6 @@ export function load(structStr, options) {
 		// utils.loading('show');
 		const parsed = structFormat.fromString(structStr, options, server);
 
-		parsed.catch(() => {
-			// utils.loading('hide');
-			alert('Can\'t parse molecule!'); // eslint-disable-line no-undef
-		});
-
 		return parsed.then((struct) => {
 			// utils.loading('hide');
 			console.assert(struct, 'No molecule to update');
@@ -44,7 +39,7 @@ export function load(structStr, options) {
 			else
 				editor.struct(struct);
 		}, (err) => {
-			alert(err.message); // eslint-disable-line no-undef
+			alert(err.message || 'Can\'t parse molecule!'); // eslint-disable-line no-undef
 			// TODO: notification
 		});
 	};

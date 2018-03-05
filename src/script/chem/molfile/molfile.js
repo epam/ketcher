@@ -88,7 +88,7 @@ Molfile.prototype.saveMolecule = function (molecule, skipSGroupErrors, norgroups
 	this.molfile = '' + molecule.name;
 	if (this.reaction) {
 		if (molecule.rgroups.size > 0)
-			throw new Error('Unable to save the structure - reactions with r-groups are not supported at the moment');
+			throw new Error('Reactions with r-groups are not supported at the moment');
 		var components = molecule.getComponents();
 
 		var reactants = components.reactants;

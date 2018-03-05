@@ -55,7 +55,8 @@ export const atom = {
 			title: 'Isotope',
 			type: 'integer',
 			minimum: 0,
-			default: 0
+			default: 0,
+			invalidMessage: 'There must be integer'
 		},
 		radical: {
 			title: 'Radical',

@@ -86,6 +86,7 @@ class Save extends Component {
 		const formState = this.props.formState;
 		const { filename, format } = formState.result;
 		const warning = structFormat.couldBeSaved(this.props.struct, format);
+		const isCleanStruct = this.props.struct.isBlank();
 
 		return (
 			<Dialog
@@ -99,13 +100,13 @@ class Save extends Component {
 						type={format.mime}
 						server={this.props.server}
 						onSave={() => this.props.onOk()}
-						disabled={!formState.valid}
+						disabled={!formState.valid || isCleanStruct}
 					>
 						Save To File…
 					</SaveButton>,
 					<button
 						className="save-tmpl"
-						disabled={this.props.struct.isBlank()}
+						disabled={isCleanStruct}
 						onClick={() => this.props.onTmplSave(this.props.struct)}
 					>
 						Save to Templates

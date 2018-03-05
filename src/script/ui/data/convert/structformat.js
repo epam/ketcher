@@ -107,7 +107,9 @@ export function toString(struct, format, server, serverOpts) {
 					output_format: map[format].mime
 				}, serverOpts))
 				.catch((err) => {
-					throw Error(`Convert error!\n${err.message}`);
+					throw (err.message === 'Server is not compatible') ?
+						Error(`${map[format].name} is not supported in standalone mode.`) :
+						Error(`Convert error!\n${err.message}`);
 				})
 				.then(res => res.struct);
 			resolve(converting);
@@ -136,7 +138,14 @@ export function fromString(structStr, opts, server, serverOpts) {
 					}, serverOpts)
 				))
 				.catch((err) => {
-					throw Error(`Convert error!\n${err.message}`);
+					if (err.message === 'Server is not compatible') {
+						const formatError = (format === 'smiles') ?
+							`${map['smiles-ext'].name} and opening of ${map['smiles'].name}` :
+							map[format].name;
+						throw Error(`${formatError} is not supported in standalone mode.`);
+					} else {
+						throw Error(`Convert error!\n${err.message}`);
+					}
 				})
 				.then((res) => {
 					const struct = molfile.parse(res.struct);

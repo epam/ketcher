@@ -16,6 +16,7 @@
 
 import { h } from 'preact';
 import element from '../../../chem/element';
+import colors from '../../../chem/element-color';
 
 const metPrefix = ['alkali', 'alkaline-earth', 'transition',
 	'post-transition']; // 'lanthanide', 'actinide'
@@ -32,6 +33,7 @@ function Atom({ el, shortcut, className, ...props }) {
 		<button
 			title={shortcut ? `${el.title} (${shortcut})` : el.title}
 			className={[...atomClass(el), className].join(' ')}
+			style={{ color: colors[el.label][1] }} // TODO: !!!
 			value={element.map[el.label]}
 			{...props}
 		>

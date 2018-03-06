@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { range } from 'lodash/fp';
+import { range, xor } from 'lodash/fp';
 
 import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
@@ -145,6 +145,8 @@ class PeriodTable extends Component {
 			isInfo: false
 		};
 		this.firstType = true;
+		this.selected = this.selected.bind(this);
+		this.onSelect = this.onSelect.bind(this);
 	}
 	changeType(type) {
 		if (this.firstType) {
@@ -169,16 +171,7 @@ class PeriodTable extends Component {
 	}
 	onSelect(label) {
 		const { type, value } = this.state;
-		if (type === 'atom' || type === 'gen') {
-			this.setState({ value: label });
-		} else {
-			const i = value.indexOf(label);
-			if (i < 0)
-				value.push(label);
-			else
-				value.splice(i, 1);
-			this.setState({ value });
-		}
+		this.setState({ value: (type === 'atom' || type === 'gen') ? label : xor(value, [label]) });
 	}
 	result() {
 		const { type, value } = this.state;
@@ -194,7 +187,7 @@ class PeriodTable extends Component {
 	});
 	render() {
 		const tabs = ['Table', 'Extended'];
-		const { type } = this.state;
+		const { type, value } = this.state;
 		return (
 			<Dialog
 				title="Periodic table"
@@ -209,36 +202,13 @@ class PeriodTable extends Component {
 					changeTab={i => this.changeType(i === 0 ? 'atom' : 'gen')}
 				>
 					<div className="period-table">
-						<table summary="Periodic table of the chemical elements">
-							<Header />
-							<AtomInfo el={this.state.cur} isInfo={this.state.isInfo} />
-							{
-								main.map((row, i) => (
-									<MainRow
-										row={row}
-										caption={i + 1}
-										refer={o => o === 1 && (i === 5 ? '*' : '**')}
-										curEvents={this.curEvents}
-										selected={l => this.selected(l)}
-										onSelect={l => this.onSelect(l)}
-									/>
-								))
-							}
-							<OutinerRow
-								row={lanthanides}
-								caption="*"
-								curEvents={this.curEvents}
-								selected={l => this.selected(l)}
-								onSelect={l => this.onSelect(l)}
-							/>
-							<OutinerRow
-								row={actinides}
-								caption="**"
-								curEvents={this.curEvents}
-								selected={l => this.selected(l)}
-								onSelect={l => this.onSelect(l)}
-							/>
-						</table>
+						<AtomInfo el={this.state.cur} isInfo={this.state.isInfo} />
+						<ElementsTable
+							value={value}
+							curEvents={this.curEvents}
+							selected={this.selected}
+							onSelect={this.onSelect}
+						/>
 						<TypeChoise
 							value={type}
 							onChange={t => this.changeType(t)}
@@ -246,11 +216,47 @@ class PeriodTable extends Component {
 					</div>
 					<GenericGroups
 						className="generic-groups"
-						selected={g => this.selected(g)}
-						onSelect={g => this.onSelect(g)}
+						selected={this.selected}
+						onSelect={this.onSelect}
 					/>
 				</Tabs>
 			</Dialog>
+		);
+	}
+}
+
+class ElementsTable extends Component { // eslint-disable-line
+	shouldComponentUpdate(nextProps) {
+		return nextProps.value !== this.props.value;
+	}
+
+	render() {
+		const { curEvents, selected, onSelect } = this.props;
+		const callbacks = { curEvents, selected, onSelect };
+		return (
+			<table summary="Periodic table of the chemical elements">
+				<Header />
+				{
+					main.map((row, i) => (
+						<MainRow
+							row={row}
+							caption={i + 1}
+							refer={o => o === 1 && (i === 5 ? '*' : '**')}
+							{...callbacks}
+						/>
+					))
+				}
+				<OutinerRow
+					row={lanthanides}
+					caption="*"
+					{...callbacks}
+				/>
+				<OutinerRow
+					row={actinides}
+					caption="**"
+					{...callbacks}
+				/>
+			</table>
 		);
 	}
 }

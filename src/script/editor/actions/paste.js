@@ -20,7 +20,7 @@ import op from '../shared/op';
 import Action from '../shared/action';
 
 import { fromChiralFlagAddition } from './chiral-flag';
-import { fromRGroupAttrs } from './rgroup';
+import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 import { fromSgroupAddition } from './sgroup';
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {
@@ -91,7 +91,8 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		rg.frags.forEach((frag, frid) => {
 			action.addOp(new op.RGroupFragment(rgid, fridMap.get(frid)).perform(restruct));
 		});
-		action.mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()));
+		action.mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))
+			.mergeWith(fromUpdateIfThen(restruct, 0, rg.ifthen));
 	});
 
 	action.operations.reverse();

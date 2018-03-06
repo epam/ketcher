@@ -653,7 +653,7 @@ function UpdateIfThen(rgNew, rgOld) {
 	this.type = 'OpUpdateIfThenValues';
 	this.rgid_new = rgNew;
 	this.rgid_old = rgOld;
-	this.ifThenHistory = {};
+	this.ifThenHistory = new Map();
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
@@ -661,7 +661,7 @@ function UpdateIfThen(rgNew, rgOld) {
 		struct.rgroups.forEach((rg, rgid) => {
 			if (rg.ifthen === this.rgid_old) {
 				rg.ifthen = this.rgid_new;
-				this.ifThenHistory[rgid] = this.rgid_old;
+				this.ifThenHistory.set(rgid, this.rgid_old);
 				struct.rgroups.set(rgid, rg);
 			}
 		});
@@ -677,14 +677,14 @@ function RestoreIfThen(rgNew, rgOld, history) {
 	this.type = 'OpRestoreIfThenValues';
 	this.rgid_new = rgNew;
 	this.rgid_old = rgOld;
-	this.ifThenHistory = history || {};
+	this.ifThenHistory = history || new Map();
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
 
-		Object.keys(this.ifThenHistory).forEach((rgid) => {
+		this.ifThenHistory.forEach((rg, rgid) => {
 			const rgValue = struct.rgroups.get(rgid);
-			rgValue.ifthen = this.ifThenHistory[rgid];
+			rgValue.ifthen = rg;
 			struct.rgroups.set(rgid, rgValue);
 		});
 	};

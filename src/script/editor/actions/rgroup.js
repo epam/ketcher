@@ -30,12 +30,12 @@ export function fromRGroupAttrs(restruct, id, attrs) {
 export function fromRGroupFragment(restruct, rgidNew, frid) {
 	const action = new Action();
 	action.addOp(new op.RGroupFragment(rgidNew, frid));
+
 	return action.perform(restruct);
 }
 
 export function fromUpdateIfThen(restruct, rgidNew, rgidOld) {
 	const action = new Action();
-
 	if (!restruct.molecule.rgroups.get(rgidOld))
 		action.addOp(new op.UpdateIfThen(rgidNew, rgidOld));
 

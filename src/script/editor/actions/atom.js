@@ -21,7 +21,7 @@ import Action from '../shared/action';
 
 import { atomGetAttr, atomGetDegree, atomGetNeighbors, atomGetSGroups } from './utils';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
-import { fromRGroupFragment } from './rgroup';
+import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { fromFragmentSplit } from './fragment';
 
 export function fromAtomAddition(restruct, pos, atom) {
@@ -159,8 +159,10 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 	const struct = restruct.molecule;
 
 	const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
-	if (!(typeof rgid === 'undefined'))
-		action.mergeWith(fromRGroupFragment(restruct, null, frid2));
+	if (!(typeof rgid === 'undefined')) {
+		action.mergeWith(fromRGroupFragment(restruct, null, frid2))
+			.mergeWith(fromUpdateIfThen(restruct, 0, rgid));
+	}
 
 	const fridAtoms = struct.getFragmentIds(frid);
 

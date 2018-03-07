@@ -18,6 +18,7 @@ import Box2Abs from '../../util/box2abs';
 import ReObject from './reobject';
 import scale from '../../util/scale';
 import element from '../../chem/element';
+import { sketchingColors as elementColor } from '../../chem/element-color';
 import draw from '../draw';
 import util from '../util';
 import Vec2 from '../../util/vec2';
@@ -172,7 +173,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
 			font: options.font,
 			'font-size': options.fontszsub,
-			fill: (options.atomColoring && elem && element[elem].color) ? element[elem].color : '#000'
+			fill: (options.atomColoring && elem) ? elementColor[this.a.label] : '#000'
 		});
 		var aamBox = util.relBox(aamPath.getBBox());
 		draw.recenterText(aamPath, aamBox);
@@ -277,7 +278,7 @@ function buildLabel(atom, paper, ps, options) { // eslint-disable-line max-state
 	if (label.text === atom.a.label) {
 		const elem = element.map[label.text];
 		if (options.atomColoring && elem)
-			atom.color = element[elem].color || '#000';
+			atom.color = elementColor[label.text] || '#000';
 	}
 
 	label.path = paper.text(ps.x, ps.y, label.text)

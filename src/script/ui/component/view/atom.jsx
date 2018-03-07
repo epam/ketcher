@@ -16,16 +16,15 @@
 
 import { h } from 'preact';
 import element from '../../../chem/element';
-import colors from '../../../chem/element-color';
+import { sketchingColors as elementColor } from '../../../chem/element-color';
 
 const metPrefix = ['alkali', 'alkaline-earth', 'transition',
 	'post-transition']; // 'lanthanide', 'actinide'
 
 function atomClass(el) {
-	const own = `atom-${el.label.toLowerCase()}`;
 	const type = metPrefix.indexOf(el.type) >= 0 ? `${el.type} metal` :
 		(el.type || 'unknown-props');
-	return [own, type, el.state || 'unknown-state', el.origin];
+	return [type, el.state || 'unknown-state', el.origin];
 }
 
 function Atom({ el, shortcut, className, ...props }) {
@@ -33,11 +32,11 @@ function Atom({ el, shortcut, className, ...props }) {
 		<button
 			title={shortcut ? `${el.title} (${shortcut})` : el.title}
 			className={[...atomClass(el), className].join(' ')}
-			style={{ color: colors[el.label][1] }} // TODO: !!!
+			style={{ color: elementColor[el.label] }}
 			value={element.map[el.label]}
 			{...props}
 		>
-			{el.label}
+			<span>{el.label}</span>
 		</button>
 	);
 }

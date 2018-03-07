@@ -20,6 +20,8 @@ import { h, Component } from 'preact';
 import { connect } from 'preact-redux';
 
 import element from '../../../chem/element';
+import { sketchingColors as elementColor } from '../../../chem/element-color';
+
 import Dialog from '../../component/dialog';
 import Atom from '../../component/view/atom';
 import Tabs from '../../component/view/tabs';
@@ -122,8 +124,8 @@ function OutinerRow({ row, caption, selected, onSelect, curEvents }) {
 }
 
 function AtomInfo({ el, isInfo }) {
-	const numberStyle = { color: el.color || 'black', 'font-size': '1.2em' };
-	const elemStyle = { color: el.color || 'black', 'font-weight': 'bold', 'font-size': '2em' };
+	const numberStyle = { color: elementColor[el.label] || 'black', 'font-size': '1.2em' };
+	const elemStyle = { color: elementColor[el.label] || 'black', 'font-weight': 'bold', 'font-size': '2em' };
 	return (
 		<div className={`atom-info ${isInfo ? '' : 'none'}`}>
 			<div style={numberStyle}>{element.map[el.label]}</div>

@@ -329,6 +329,9 @@
 .highlight-invert() {
 	background: #444;
 	color: white;
+  &>span {
+    color: white;
+  }
 	&>svg {
 		fill: white;
 		stroke: white;
@@ -369,15 +372,6 @@
 
 .colorize(@color) when not (@color = inherit)  {
 	color: @color;
-}
-
-.atom-sketching(@names, @i: 1) when (@i <= length(@names)) {
-	@item: extract(@names, @i);
-	@color: 'atom-@{item}-sketching-color';
-	.atom-@{item} {
-		color: @@color;
-	}
-	.atom-sketching(@names, (@i + 1));
 }
 
 ////////////////////////////////////////////

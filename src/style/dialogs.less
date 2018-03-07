@@ -491,8 +491,8 @@ form.settings {
 					visibility: hidden;
 				}
 			}
-			&:not(:hover) {
-				color: inherit;
+			&:not(:hover) > span {
+        color: black;
 			}
 			&:hover {
 				.highlight-scale(@scale:1.25);
@@ -548,6 +548,12 @@ form.settings {
 		.unknown-props {
 			background: @atom-periodic-unknown-properties;
 		}
+    .unknown-state:after {
+      color: #222;
+    }
+    .solid:after {
+      color: #222;
+    }
 		.metal:after {
 			color: #006;
 		}

@@ -20,20 +20,20 @@ import op from '../shared/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
-import { atomGetAttr, atomForNewBond, atomGetDegree, atomGetSGroups } from './utils';
-import { fromAtomMerge, mergeFragments } from './atom';
+import { atomGetAttr, atomForNewBond, atomGetDegree } from './utils';
+import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromFragmentSplit } from './fragment';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
-		var atom = atomForNewBond(restruct, begin);
+		const atom = atomForNewBond(restruct, begin);
 		end = atom.atom;
 		pos = atom.pos;
 	}
-	var action = new Action();
+	const action = new Action();
 
-	var frid = null;
+	let frid = null;
 
 	if (!(typeof begin === 'number')) {
 		if (typeof end === 'number')
@@ -41,8 +41,8 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
 		if (typeof end === 'number') {
-			var frid2 = atomGetAttr(restruct, end, 'fragment');
-			mergeFragments(action, restruct, frid, frid2);
+			const frid2 = atomGetAttr(restruct, end, 'fragment');
+			mergeFragmentsIfNeeded(action, restruct, frid, frid2, end);
 		}
 	}
 
@@ -52,31 +52,24 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	if (!(typeof begin === 'number')) {
 		begin.fragment = frid;
 		begin = action.addOp(new op.AtomAdd(begin, pos).perform(restruct)).data.aid;
-
+		if (typeof end === 'number')
+			mergeSgroups(action, restruct, [begin], end);
 		pos = pos2;
 	} else if (atomGetAttr(restruct, begin, 'label') === '*') {
 		action.addOp(new op.AtomAttr(begin, 'label', 'C').perform(restruct));
 	}
 
-
 	if (!(typeof end === 'number')) {
 		end.fragment = frid;
 		// TODO: <op>.data.aid here is a hack, need a better way to access the id of a created atom
 		end = action.addOp(new op.AtomAdd(end, pos).perform(restruct)).data.aid;
-		if (typeof begin === 'number') {
-			atomGetSGroups(restruct, begin).forEach((sid) => {
-				const sgroup = restruct.molecule.sgroups.get(sid);
-				if (sgroup.type === 'DAT' && (sgroup.data.context === 'Atom' || sgroup.data.context === 'Bond'))
-					return;
-				action.addOp(new op.SGroupAtomAdd(sid, end).perform(restruct));
-			});
-		}
+		if (typeof begin === 'number')
+			mergeSgroups(action, restruct, [end], begin);
 	} else if (atomGetAttr(restruct, end, 'label') === '*') {
 		action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct));
 	}
 
-	var bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
-
+	const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
 	action.operations.reverse();
 
 	return [action, begin, end, bid];

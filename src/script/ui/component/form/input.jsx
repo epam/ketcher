@@ -40,7 +40,7 @@ function TextArea({ schema, value, onChange, ...props }) {
 
 TextArea.val = ev => ev.target.value;
 
-function CheckBox({ value, onChange, ...props }) {
+function CheckBox({ schema, value, onChange, ...props }) {
 	return (
 		<input type="checkbox" checked={value} onClick={onChange} {...props} />
 	);
@@ -82,15 +82,17 @@ function FieldSet({ schema, value, selected, onSelect, type = 'radio', ...props 
 		<fieldset onClick={onSelect} className="radio">
 			{
 				enumSchema(schema, (title, val) => (
-					<label>
-						<input
-							type={type}
-							checked={selected(val, value)}
-							value={typeof val !== 'object' && val}
-							{...props}
-						/>
-						{title}
-					</label>
+					<li>
+						<label>
+							<input
+								type={type}
+								checked={selected(val, value)}
+								value={typeof val !== 'object' && val}
+								{...props}
+							/>
+							{title}
+						</label>
+					</li>
 				))
 			}
 		</fieldset>
@@ -105,7 +107,7 @@ FieldSet.val = function (ev, schema) {
 	}
 	// Hm.. looks like premature optimization
 	//      should we inline this?
-	const fieldset = input.parentNode.parentNode;
+	const fieldset = input.parentNode.parentNode.parentNode;
 	const result = [].reduce.call(fieldset.querySelectorAll('input'),
 		(res, inp, i) => (!inp.checked ? res :
 			[enumSchema(schema, i), ...res]), []);

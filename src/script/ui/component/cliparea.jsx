@@ -92,7 +92,7 @@ class ClipArea extends Component {
 
 function isFormElement(el) {
 	if (el.tagName === 'INPUT' && el.type === 'button') return false;
-	return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION'].indexOf(el.tagName) > -1;
+	return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName);
 }
 
 function autofocus(cliparea) {

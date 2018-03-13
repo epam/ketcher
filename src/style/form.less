@@ -131,7 +131,9 @@ fieldset {
 	padding: 0.3em;
 	margin: 0;
 	border-radius: 4px;
-
+	& > li {
+		display: inline-block;
+	}
 	&.-hidden {
 		border-color: transparent;
 		margin-top: 0.9em + 2 * 0.3em;
@@ -142,4 +144,5 @@ legend {
 	color: darken(@border-color, 25%);
 	padding: 0 0.4em;
 	font-size: 0.9em;
+  text-align: left;
 }

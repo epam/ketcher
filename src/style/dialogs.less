@@ -194,13 +194,16 @@ form.bond {
 }
 
 form.atom-props {
-	label {
-		display: block;
-		text-align: right;
-		line-height: @input-height;
-		height: @input-height;
-	}
+  fieldset {
+    margin-top: 0.7em;
+    text-align: right;
+    label {
+      margin: 0.3em 0;
+      display: inline-block;
+    }
+  }
 	.main {
+    width: 14.5em;
 		float: left;
 		&:extend(fieldset.-hidden);
 		input {
@@ -208,20 +211,24 @@ form.atom-props {
 		}
 	}
 	.query, .reaction {
-		float:right;
+		float: right;
 		clear: right;
 		width: 16em;
+    input[type=checkbox] {
+      margin: 0.6em 0.3em;
+    }
 	}
 }
 
 form.attach-points {
-	min-width: 18em;
-	label {
-		margin: 0 20px;
-		display: block;
-		text-align: right;
-		line-height: @input-height;
-	}
+  form {
+    width: 17em;
+    text-align: right;
+    label {
+      margin: @input-height / 3;
+      display: inline-block;
+    }
+  }
 }
 
 form.automap {
@@ -380,8 +387,8 @@ form.settings {
 
 .rgroup {
 	ul {
-		width: 26em;
-		padding: 0.5em 0.5em 1em;
+		width: 25.6em;
+		padding: 0.5em;
 	}
 	li {
 		display: inline-block;
@@ -681,7 +688,7 @@ form.settings {
 		width: 25em;
 		border-color: #ddd;
 		border-radius: 0 4px 4px 4px;
-		label {
+		li {
 			display: block;
 			margin: 1.1em 0 0.3em 0.3em;
 		}
@@ -728,6 +735,10 @@ form.settings {
 	// max-height: 70%;
 	label {
 		display: block;
+    width: 22.5em;
+    input {
+      margin-bottom: 0.1em;
+    }
 	}
 	textarea {
 		min-width: 32em;

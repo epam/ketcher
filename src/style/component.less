@@ -72,60 +72,60 @@
 .-Accordion {
 	margin: 0.3em;
 
-  .ac_tab {
-    margin-top: 2px;
-    & > a:first-child {
-      z-index: 3;
+	.ac_tab {
+		margin-top: 2px;
+		& > a:first-child {
+			z-index: 3;
 
-      padding: 6px 0;
-      display: block;
-      cursor: pointer;
-      text-align: center;
-      background-color: #eee;
-      border: 1px solid #ccc;
-      transition: border-radius 0.1s linear;
-      &:before {
-        margin-left: 30px;
-        float: left;
-      }
-      &:hover {
-        background-color: #9dc2d0;
-      }
-    }
+			padding: 6px 0;
+			display: block;
+			cursor: pointer;
+			text-align: center;
+			background-color: #eee;
+			border: 1px solid #ccc;
+			transition: border-radius 0.1s linear;
+			&:before {
+				margin-left: 30px;
+				float: left;
+			}
+			&:hover {
+				background-color: #9dc2d0;
+			}
+		}
 
-    & > *:nth-child(2) { // child content
-      overflow: hidden;
-      transition-property: height, padding; // need "height" in child comp. for working transition
-      transition-duration: 0.5s;
-      transition-timing-function: linear;
-    }
-  }
+		& > *:nth-child(2) { // child content
+			overflow: hidden;
+			transition-property: height, padding; // need "height" in child comp. for working transition
+			transition-duration: 0.5s;
+			transition-timing-function: linear;
+		}
+	}
 
-  .ac_tab.active { // active tab
-    & > a:first-child {
-      border-radius: 6px 6px 0 0;
-      border-bottom: 0;
-      transition-delay: 0s;
-      &:before {
-        content: '−';
-      }
-    }
-  }
+	.ac_tab.active { // active tab
+		& > a:first-child {
+			border-radius: 6px 6px 0 0;
+			border-bottom: 0;
+			transition-delay: 0s;
+			&:before {
+				content: '−';
+			}
+		}
+	}
 
-  .ac_tab.hidden {
-    & > a:first-child {
-      border-radius: 6px;
-      transition-delay: 0.4s;
-      &:before {
-        content: '+';
-      }
-    }
-    & > *:nth-child(2) { // hidden element
-      height: 0;
-      padding: 0;
-      border: 0;
-    }
-  }
+	.ac_tab.hidden {
+		& > a:first-child {
+			border-radius: 6px;
+			transition-delay: 0.4s;
+			&:before {
+				content: '+';
+			}
+		}
+		& > *:nth-child(2) { // hidden element
+			height: 0;
+			padding: 0;
+			border: 0;
+		}
+	}
 }
 
 .-Measure {

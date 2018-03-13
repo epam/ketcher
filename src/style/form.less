@@ -46,11 +46,11 @@ input[type=reset], input[type=button] {
 		float: left;
 	}
 
-	&>input[type=file] { // hide file input
+	& > input[type=file] { // hide file input
 		left: -9999px;
 		position: absolute;
 	}
-	&+& {
+	& + & {
 		margin-left: 0.3em;
 	}
 }
@@ -144,5 +144,5 @@ legend {
 	color: darken(@border-color, 25%);
 	padding: 0 0.4em;
 	font-size: 0.9em;
-  text-align: left;
+	text-align: left;
 }

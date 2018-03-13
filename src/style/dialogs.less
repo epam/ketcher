@@ -67,7 +67,7 @@ form[role=dialog] {
 	overflow: visible;
 	.transition-zoom;
 	//outline: 0;
-	>* {
+	> * {
 		margin: 0.3em;
 	}
 	header, footer {
@@ -111,10 +111,10 @@ form[role=dialog] {
 		position: absolute;
 		right: 0;
 		left: 0;
-    text-align: center;
-    line-height: 2.6em;
+		text-align: center;
+		line-height: 2.6em;
 		input[type=search] {
-      float: right;
+			float: right;
 			width: 660px;
 		}
 	}
@@ -194,16 +194,16 @@ form.bond {
 }
 
 form.atom-props {
-  fieldset {
-    margin-top: 0.7em;
-    text-align: right;
-    label {
-      margin: 0.3em 0;
-      display: inline-block;
-    }
-  }
+	fieldset {
+		margin-top: 0.7em;
+		text-align: right;
+		label {
+			margin: 0.3em 0;
+			display: inline-block;
+		}
+	}
 	.main {
-    width: 14.5em;
+		width: 14.5em;
 		float: left;
 		&:extend(fieldset.-hidden);
 		input {
@@ -214,21 +214,21 @@ form.atom-props {
 		float: right;
 		clear: right;
 		width: 16em;
-    input[type=checkbox] {
-      margin: 0.6em 0.3em;
-    }
+		input[type=checkbox] {
+			margin: 0.6em 0.3em;
+		}
 	}
 }
 
 form.attach-points {
-  form {
-    width: 17em;
-    text-align: right;
-    label {
-      margin: @input-height / 3;
-      display: inline-block;
-    }
-  }
+	form {
+		width: 17em;
+		text-align: right;
+		label {
+			margin: @input-height / 3;
+			display: inline-block;
+		}
+	}
 }
 
 form.automap {
@@ -307,19 +307,19 @@ form.settings {
 	}
 
 	.accordion {
-    fieldset {
-      border-radius: 0 0 6px 6px;
-      height: @input-height * 4;
-    }
-    fieldset.server {
-      height: @input-height * 5;
-    }
-    fieldset.miew {
-      height: @input-height * 3;
-    }
-    fieldset.render {
-      height: @input-height * 8;
-    };
+		fieldset {
+			border-radius: 0 0 6px 6px;
+			height: @input-height * 4;
+		}
+		fieldset.server {
+			height: @input-height * 5;
+		}
+		fieldset.miew {
+			height: @input-height * 3;
+		}
+		fieldset.render {
+			height: @input-height * 8;
+		}
 		&:extend(.-Accordion all);
 
 		label {
@@ -349,7 +349,7 @@ form.settings {
 
 .about {
 	width: 25em;
-	&>a {
+	& > a {
 		display: block;
 		margin: 2em 1em;
 	}
@@ -380,7 +380,7 @@ form.settings {
 		text-align: right;
 		margin-bottom: 0.5em;
 	}
-	dt+dd {
+	dt + dd {
 		margin: -@line-height 0 0;
 	}
 }
@@ -460,7 +460,8 @@ form.settings {
 		.atom-info {
 			position: absolute;
 			padding: 0.75em 0.75em;
-			left: 18em; top: 2em;
+			left: 18em;
+			top: 2em;
 			width: 7em;
 			.highlight-shadow(black);
 			opacity: 1;
@@ -499,7 +500,7 @@ form.settings {
 				}
 			}
 			&:not(:hover) > span {
-        color: black;
+				color: black;
 			}
 			&:hover {
 				.highlight-scale(@scale:1.25);
@@ -555,12 +556,12 @@ form.settings {
 		.unknown-props {
 			background: @atom-periodic-unknown-properties;
 		}
-    .unknown-state:after {
-      color: #222;
-    }
-    .solid:after {
-      color: #222;
-    }
+		.unknown-state:after {
+			color: #222;
+		}
+		.solid:after {
+			color: #222;
+		}
 		.metal:after {
 			color: #006;
 		}
@@ -580,32 +581,32 @@ form.settings {
 			&:first-child {
 				width: 40%;
 			}
-			&>fieldset {
+			& > fieldset {
 				margin: 1em;
 				padding: 1em 0.5em;
 			}
 		}
-		.atom>fieldset, .acyclic, .cyclic {
+		.atom > fieldset, .acyclic, .cyclic {
 			display: inline-block;
 			vertical-align: top;
-			&+fieldset {
+			& + fieldset {
 				margin-left: 0.4em;
 			}
 		}
-		.cyclic>fieldset, .carbo, .hetero  {
+		.cyclic > fieldset, .carbo, .hetero {
 			float: left;
 		}
 		.carbo {
 			clear: both;
 			margin-right: 0.4em;
 		}
-		.cyclic>legend+fieldset { // a hack
+		.cyclic > legend + fieldset { // a hack
 			margin: 0 0.4em 0 0.8em;
 		}
 		fieldset {
 			text-align: center;
 		}
-		legend+fieldset,
+		legend + fieldset,
 		.atom fieldset, .carbo fieldset, .hetero fieldset,
 		.no-carbon {
 			position: relative;
@@ -644,10 +645,10 @@ form.settings {
 }
 
 .recognize {
-  .change-version {
-    display: block;
-    text-align: right;
-  }
+	.change-version {
+		display: block;
+		text-align: right;
+	}
 	.output, .picture {
 		height: 25em;
 		width: 21em;
@@ -735,10 +736,10 @@ form.settings {
 	// max-height: 70%;
 	label {
 		display: block;
-    width: 22.5em;
-    input {
-      margin-bottom: 0.1em;
-    }
+		width: 22.5em;
+		input {
+			margin-bottom: 0.1em;
+		}
 	}
 	textarea {
 		min-width: 32em;
@@ -757,7 +758,7 @@ form.settings {
 		margin: 0 .3em;
 		select, input {
 			width: 11.2em;
-    }
+		}
 	}
 	textarea {
 		display: block;

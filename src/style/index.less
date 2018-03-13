@@ -52,7 +52,7 @@ body, main[role=application] {
 }
 #template {
 	.toolbar(bottom);
-	&>menu {
+	& > menu {
 		overflow: hidden; // #300 quick fix,
 	}                     // no menu expansion
 }
@@ -69,8 +69,8 @@ body, main[role=application] {
 	overflow-y: hidden;
 	position: absolute;
 	right: 0;
-	&>button {
-		&>svg {
+	& > button {
+		& > svg {
 			stroke-width: 0;
 		}
 		.toolbutton-horizontal(large, 2);
@@ -85,7 +85,7 @@ body, main[role=application] {
 	li {
 		display: inline-block;
 		vertical-align: top;
-		&>svg {
+		& > svg {
 			fill: @main-color;
 			display: none; // dropdown
 		}
@@ -138,7 +138,6 @@ li.opened {
 		display: none;
 	}
 }
-
 
 select {
 	// reset select size after inline-block

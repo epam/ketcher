@@ -1,6 +1,5 @@
 // Workaround less issue:
 // https://github.com/less/less.js/issues/2004
-
 @import 'variables';
 
 .set-size(inherit) {
@@ -48,8 +47,8 @@
 	position: absolute;
 	@{dir}: @app-gap;
 	.toolbar-size(@dir, @dim);
-	&>menu {
-		@{main-dim}: 100%;
+	& > menu {
+			@{main-dim}: 100%;
 	}
 }
 
@@ -92,7 +91,7 @@
 		position: absolute;
 		left: 0;
 	}
-	&:hover {  // &:hover:not(:active)
+	&:hover { // &:hover:not(:active)
 		.highlight-scale(@scale:1.25);
 		.highlight-shadow(black);
 	}
@@ -110,7 +109,7 @@
 	height: @button-size;
 	margin: @button-grow;
 
-	&>svg {
+	& > svg {
 		position: absolute; // TODO fix it
 		top: 0.1em;
 		left: 0.1em;
@@ -127,7 +126,7 @@
 	margin-left: @button-grow * @width-cells;
 	margin-right: @button-grow * @width-cells;
 
-	&>svg {
+	& > svg {
 		position: static;
 		left: 0;
 		top: 0;
@@ -149,7 +148,7 @@
 	height: auto;
 	width: auto;
 
-	&>svg { // dropdown
+	& > svg { // dropdown
 		display: none;
 	}
 	// &> menu {
@@ -160,7 +159,7 @@
 .collapsed-size(@dim) {
 	.set-size(@dim);
 	height: @toolbar-size;
-	width: 100%;//@toolbar-size;
+	width: 100%; //@toolbar-size;
 }
 
 .collapsed-ifnot(@classname, @dim: inherit) {
@@ -171,7 +170,7 @@
 }
 
 .collapsed-icon() {
-	&>svg {
+	& > svg {
 		display: block;
 		width: 7px;
 		height: 7px;
@@ -179,7 +178,7 @@
 		right: 0;
 		bottom: 0;
 	}
-	&:hover>svg {
+	&:hover > svg {
 		//.scale-highlight;
 		fill: @active-color;
 	}
@@ -189,7 +188,7 @@
 
 .expanded(@dim: inherit) {
 	.set-size(@dim);
-	&>menu {
+	& > menu {
 		margin: 0 !important;
 		position: absolute;
 		left: @toolbar-size + @menu-pad;
@@ -207,12 +206,12 @@
 		background: white;
 		border: 1px solid @border-color;
 		border-radius: 5px;
-		box-shadow: 0 6px 12px rgba(0,0,0,.175);
+		box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 	}
 }
 
 .expanded-size(@dim) {
-	&>menu {
+	& > menu {
 		.set-size(@dim);
 		left: @toolbar-size + @menu-pad;
 	}
@@ -220,15 +219,15 @@
 
 .expanded-menu(@dim: inherit) {
 	.set-size(@dim);
-  li {
-    display: flex;
-    menu {
-      width: 100%;
-    }
-  }
+	li {
+		display: flex;
+		menu {
+			width: 100%;
+		}
+	}
 	button {
-    display: flex;
-    justify-content: space-between;
+		display: flex;
+		justify-content: space-between;
 		width: 100%;
 		margin: 1px 0;
 		padding: 0.3em 0.3em 0.3em 2em;
@@ -241,26 +240,26 @@
 			padding-right: 0.4em;
 			font-size: @menu-icon-size;
 		}
-		&[disabled] {                    // TODO: general button highlight
+		&[disabled] { // TODO: general button highlight
 			.highlight-invert(disabled); // refactor
 		}
-    kbd {
-      margin: 2.5px 0 0 10px;
-      display: inline-block;
-    }
-    &>svg {
-      width: @expanded-icon-size;
-      height: @expanded-icon-size;
-    }
+		kbd {
+			margin: 2.5px 0 0 10px;
+			display: inline-block;
+		}
+		& > svg {
+			width: @expanded-icon-size;
+			height: @expanded-icon-size;
+		}
 	}
 	button:hover {
-    .highlight-scale(none);
-    background-color: #eee;
-  }
-  .selected button {
+		.highlight-scale(none);
+		background-color: #eee;
+	}
+	.selected button {
 		//&:extend(button:active); not extended while in media
 		.highlight-scale(none);
-    .highlight-invert;
+		.highlight-invert;
 	}
 }
 
@@ -271,7 +270,7 @@
 	margin-@{main-lose}: @lose-pad;
 	border-@{main-lose}: 1px solid @border-color;
 	padding-@{main-lose}: @rise-pad - 1px; // substract 1px to assert
-	                                       // width = lose-pad + rise-pad
+	// width = lose-pad + rise-pad
 }
 
 .separate-item(@orientation, @lose-pad, @rise-pad: @lose-pad) {
@@ -281,7 +280,7 @@
 }
 
 .separate-menu(@orientation, @lose-pad, @rise-pad: @lose-pad) {
-	li + li>menu {
+	li + li > menu {
 		.separator(@orientation, @lose-pad, @rise-pad);
 	}
 }
@@ -300,7 +299,7 @@
 
 .highlight-shadow(inset, @color: @active-color) {
 	box-shadow: 0px -1px 6px fade(@color, 5%) inset,
-	            0px 1px 3px @color inset;
+	0px 1px 3px @color inset;
 }
 
 .highlight-shadow(@color: @active-color) when (iscolor(@color)) {
@@ -329,7 +328,7 @@
 .highlight-invert() {
 	background: #444;
 	color: white;
-  &>span {
+	&>span {
     color: white;
   }
 	&>svg {
@@ -341,7 +340,7 @@
 
 .highlight-invert(disabled) {
 	background: inherit;
-	color: @disabled-color;      // hint for menus
+	color: @disabled-color; // hint for menus
 }
 
 /////////////////////
@@ -370,7 +369,7 @@
 //////////////////////////
 // Icon content & coloring
 
-.colorize(@color) when not (@color = inherit)  {
+.colorize(@color) when not (@color = inherit) {
 	color: @color;
 }
 
@@ -395,11 +394,11 @@
 	@cross-dim: width;
 }
 
-.orientation(@dir) when (@dir = top), (@dir = bottom)  {
+.orientation(@dir) when (@dir = top), (@dir = bottom) {
 	.orientation(horizontal);
 }
 
-.orientation(@dir) when (@dir = left), (@dir = right)  {
+.orientation(@dir) when (@dir = left), (@dir = right) {
 	.orientation(vertical);
 }
 
@@ -429,7 +428,7 @@
 	@rgba-color: rgba(red(@color), green(@color), blue(@color), @opacity);
 	background-color: @rgba-color;
 
-	background: none\9; // Hack for IE8
+	background: none \9; // Hack for IE8
 	filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')", argb(@rgba-color), argb(@rgba-color)));
 	//zoom: 1;
 	&:not([ie9]) {

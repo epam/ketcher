@@ -16,11 +16,11 @@ insert_final_newline = true
 indent_style = tab
 indent_size = 4
 
-[style/**]
+[src/style/**]
 indent_style = tab
 indent_size = 4
 
-[template/**]
+[src/template/**]
 indent_style = tab
 
 [**.json, .*rc]

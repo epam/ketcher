@@ -18,7 +18,7 @@ import { h } from 'preact';
 
 function Spin({ ...props }) {
 	return (
-		<div className="spinner1" {...props} />
+		<div className="ket-spinner" {...props} />
 	);
 }
 

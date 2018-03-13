@@ -64,7 +64,7 @@ const AppModal = connect(
 		throw new Error(`There is no modal window named ${modal.name}`);
 
 	return (
-		<div className="overlay1">
+		<div className="ket-overlay">
 			<Modal {...props} />
 		</div>
 	);

@@ -118,6 +118,14 @@ gulp.task('test-render', function () {
 		entries: 'test/render/render-test.js',
 		debug: true,
 		transform: [
+			['babelify', {
+				presets: [
+					['env', {
+						'targets': { 'node': "8.10"	},
+						'useBuiltIns': true
+					}],
+				]
+			}],
 			istanbul,
 			['exposify', {
 				expose: {

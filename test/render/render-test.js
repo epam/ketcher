@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-var renderDiff = require('./render-diff').diff;
-var Render = require('../../src/script/render');
+const renderDiff = require('./render-diff').diff;
+const Render = require('../../src/script/render').default;
 
-var ketcher = {
-	molfile: require('../../src/script/chem/molfile'),
+const ketcher = {
+	molfile: require('../../src/script/chem/molfile').default,
 	render: function render(el, struct, opts) {
 		var render = new Render(el, opts);
 		render.setMolecule(struct);
@@ -37,7 +37,7 @@ var defaultOpts = {
 		showLoopIds: false,
 		showAtomIds: false,
 		autoScale: true,
-		autoScaleMargin: 4,
+		autoScaleMargin: 5,
 		hideImplicitHydrogen: false,
 		hideChiralFlag: true
 	}

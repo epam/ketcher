@@ -83,7 +83,7 @@ function Settings(props) {
 						<SelectCheckbox name="gross-formula-add-rsites" />
 						<SelectCheckbox name="gross-formula-add-isotopes" />
 					</fieldset>
-					<fieldset className="miew" disabled={!appOpts.miewPath}>
+					<fieldset className="miew" disabled={!window.Miew}>
 						<Field name="miewMode" />
 						<Field name="miewTheme" />
 						<Field name="miewAtomLabel" />

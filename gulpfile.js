@@ -25,6 +25,7 @@ const buffer = require('vinyl-buffer');
 const budo = require('budo');
 const istanbul = require('browserify-babel-istanbul');
 
+const path = require('path');
 const fs = require('fs');
 const cp = require('child_process');
 const del = require('del');
@@ -41,14 +42,13 @@ const options = minimist(process.argv.slice(2), {
 	default: {
 		'dist': 'dist',
 		'api-path': '',
-		'miew-path': '',
+		'miew-path': null,
 		'build-number': '',
 		'build-date': new Date().toISOString().slice(0, 19)
 	}
 });
 
-const distrib = ['LICENSE', 'src/template/demo.html',
-	'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
+const distrib = ['LICENSE', 'src/template/demo.html', 'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg'];
 
 const createBundleConfig = () => ({
 	entries: 'src/script',
@@ -64,8 +64,7 @@ const createBundleConfig = () => ({
 				{ from: '__VERSION__', to: pkg.version },
 				{ from: '__API_PATH__', to: options['api-path'] },
 				{ from: '__BUILD_NUMBER__', to: options['build-number'] },
-				{ from: '__BUILD_DATE__', to: options['build-date'] },
-				{ from: '__MIEW_PATH__', to: options['miew-path'] }
+				{ from: '__BUILD_DATE__', to: options['build-date'] }
 			]
 		}],
 		['babelify', {
@@ -171,7 +170,7 @@ gulp.task('icons-svg', function () {
 
 gulp.task('html', ['patch-version'], function () {
 	const hbs = plugins.hb()
-	    .data(Object.assign({ pkg: pkg }, options));
+	    .data(Object.assign({ pkg: pkg, miew: options['miew-path'] !== null }, options));
 	return gulp.src('src/template/index.hbs')
 		.pipe(hbs)
 		.pipe(plugins.rename('ketcher.html'))
@@ -195,8 +194,13 @@ gulp.task('logo', function () {
 });
 
 gulp.task('copy', ['logo'], function () {
+	if (options['miew-path'] !== null) {
+		const pathToMiew = path.relative(__dirname, options['miew-path']);
+		distrib.push(`${pathToMiew}/Miew.min.js`, `${pathToMiew}/Miew.min.css`);
+	}
+
 	return gulp.src(['raphael'].map(require.resolve)
-	                .concat(distrib))
+		.concat(distrib))
 		.pipe(gulp.dest(options.dist));
 });
 

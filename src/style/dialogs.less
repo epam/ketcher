@@ -2,7 +2,7 @@
 @import "form";
 @import (reference) "component";
 
-.overlay {
+.ket-overlay {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -40,7 +40,7 @@
 	}
 }
 
-.spinner {
+.ket-spinner {
 	margin: auto;
 	display: block;
 	border: 16px solid #f3f3f3;
@@ -779,18 +779,28 @@ form.settings {
 }
 
 .miew {
-	iframe {
-		//position: absolute;
-		border: 0;
-		width: 85em;
-		height: 40em;
-	}
-	.window {
-		float: left;
-	}
-	// &.loading {
-	//		visibility: hidden;
-	// }
+  .warning {
+    display: inline-block;
+    float: left;
+    line-height: 2em;
+  }
+  .atom-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 4px;
+    color: silver;
+    background-color: rgba(64, 64, 64, 0.75);
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    opacity: 0;
+
+    p {
+      margin: 10px;
+      text-align: left;
+    }
+  }
 }
 
 .attach {

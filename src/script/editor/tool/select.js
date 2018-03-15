@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Pile from '../../util/pile';
+import { xor } from 'lodash/fp';
 import { SGroup } from '../../chem/struct';
 import LassoHelper from './helper/lasso';
 import { sgroupDialog } from './sgroup';
@@ -63,36 +63,31 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		return true;
 	}
 
-	if (!isSelected(rnd, this.editor.selection(), ci)) {
-		let sel = closestToSel(ci);
+	let sel = closestToSel(ci);
 
-		if (ci.map === 'frags') {
-			const frag = ctab.frags.get(ci.id);
-			sel = {
-				atoms: frag.fragGetAtoms(ctab, ci.id),
-				bonds: frag.fragGetBonds(ctab, ci.id)
-			};
-		} else if (ci.map === 'sgroups') {
-			const sgroup = ctab.sgroups.get(ci.id).item;
-			sel = {
-				atoms: SGroup.getAtoms(struct, sgroup),
-				bonds: SGroup.getBonds(struct, sgroup)
-			};
-		} else if (ci.map === 'rgroups') {
-			const rgroup = ctab.rgroups.get(ci.id);
-			sel = {
-				atoms: rgroup.getAtoms(rnd),
-				bonds: rgroup.getBonds(rnd)
-			};
-		}
-
-		this.editor.selection(!event.shiftKey ? sel :
-			selMerge(sel, this.editor.selection()));
+	if (ci.map === 'frags') {
+		const frag = ctab.frags.get(ci.id);
+		sel = {
+			atoms: frag.fragGetAtoms(ctab, ci.id),
+			bonds: frag.fragGetBonds(ctab, ci.id)
+		};
+	} else if (ci.map === 'sgroups') {
+		const sgroup = ctab.sgroups.get(ci.id).item;
+		sel = {
+			atoms: SGroup.getAtoms(struct, sgroup),
+			bonds: SGroup.getBonds(struct, sgroup)
+		};
+	} else if (ci.map === 'rgroups') {
+		const rgroup = ctab.rgroups.get(ci.id);
+		sel = {
+			atoms: rgroup.getAtoms(rnd),
+			bonds: rgroup.getBonds(rnd)
+		};
 	}
-
+	this.editor.selection(!event.shiftKey ? sel :
+		selMerge(sel, this.editor.selection()));
 	if (ci.map === 'atoms')
 		atomLongtapEvent(this, rnd); // to be stopped in others events by `tool.dragCtx.stopTapping()`
-
 	return true;
 };
 
@@ -248,33 +243,13 @@ function selMerge(selection, add) {
 	return selection;
 }
 
+
 function uniqArray(dest, add) {
-	for (var i = 0; i < add.length; i++) {
-		if (dest.indexOf(add[i]) < 0)
-			dest.push(add[i]);
-	}
-	return dest;
-}
-
-function isSelected(render, selection, item) {
-	if (!selection)
-		return false;
-
-	const ctab = render.ctab;
-
-	if (item.map === 'frags' || item.map === 'rgroups') {
-		const atoms = item.map === 'frags' ?
-			ctab.frags.get(item.id).fragGetAtoms(ctab, item.id) :
-			ctab.rgroups.get(item.id).getAtoms(render);
-
-		const selectionSet = new Pile(selection['atoms']);
-		const atomSet = new Pile(atoms);
-
-		return !!selection['atoms'] && selectionSet.isSuperset(atomSet);
-	}
-
-	return !!selection[item.map] &&
-		selection[item.map].indexOf(item.id) > -1;
+	const selectionArr = add.reduce((res, item) => {
+		dest = xor(dest, [item]);
+		return dest;
+	}, []);
+	return selectionArr;
 }
 
 export default SelectTool;

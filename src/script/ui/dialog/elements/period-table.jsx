@@ -127,7 +127,7 @@ function AtomInfo({ el, isInfo }) {
 	const numberStyle = { color: elementColor[el.label] || 'black', 'font-size': '1.2em' };
 	const elemStyle = { color: elementColor[el.label] || 'black', 'font-weight': 'bold', 'font-size': '2em' };
 	return (
-		<div className={`atom-info ${isInfo ? '' : 'none'}`}>
+		<div className={`ket-atom-info ${isInfo ? '' : 'none'}`}>
 			<div style={numberStyle}>{element.map[el.label]}</div>
 			<span style={elemStyle}>{el.label}</span><br />
 			{el.title}<br />
@@ -173,7 +173,7 @@ class PeriodTable extends Component {
 	}
 	onSelect(label) {
 		const { type, value } = this.state;
-		this.setState({ value: (type === 'atom' || type === 'gen') ? label : xor(value, [label]) });
+		this.setState({ value: (type === 'atom' || type === 'gen') ? label : xor([label], value) });
 	}
 	result() {
 		const { type, value } = this.state;

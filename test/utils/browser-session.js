@@ -16,13 +16,13 @@
 
 /* eslint-env node */
 
-var webdriverio = require('webdriverio');
-var chromedriver = require('chromedriver');
+const webdriverio = require('webdriverio');
+const chromedriver = require('chromedriver');
 
-var path = require('path');
-var minimist = require('minimist');
+const path = require('path');
+const minimist = require('minimist');
 
-var options = minimist(process.argv.slice(2), {
+const options = minimist(process.argv.slice(2), {
 	string: ['dist'],
 	boolean: ['headless'],
 	default: {

@@ -120,7 +120,7 @@ gulp.task('test-render', function () {
 			['babelify', {
 				presets: [
 					['env', {
-						'targets': { 'node': "8.10"	},
+						'targets': { 'node': '8.10'	},
 						'useBuiltIns': true
 					}],
 				]
@@ -137,6 +137,28 @@ gulp.task('test-render', function () {
 		.pipe(source('render-test.js'))
 		.pipe(plugins.header(fs.readFileSync('src/script/util/banner.js', 'utf8')))
 		.pipe(gulp.dest('./test/dist'));
+});
+
+gulp.task('test-io', function () {
+	const paths = [
+		'/chem/struct',
+		'/chem/molfile',
+		'/util',
+		'/chem'
+	];
+
+	paths.forEach((item) => {
+		gulp.src(`src/script${item}/**.*`)
+			.pipe(plugins.babel({
+				presets: [
+					['env', {
+						'targets': { 'node': '8.10'	},
+						'useBuiltIns': true
+					}],
+				]
+			}))
+			.pipe(gulp.dest(`./test/dist/io${item}`));
+	});
 });
 
 gulp.task('style', ['icons-svg'], function () {

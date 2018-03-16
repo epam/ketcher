@@ -22,7 +22,7 @@ const tap = require('tap');
 
 require('babel-polyfill'); // Needed for padStart, etc (used in "new wave" ketchers)
 
-const molfile = require(path.join('../..', 'src/script/chem/molfile'));
+const molfile = require(path.join('../', 'dist/io/chem/molfile')).default;
 
 const cols = require('../utils/collections')();
 

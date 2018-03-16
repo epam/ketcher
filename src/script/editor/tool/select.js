@@ -63,8 +63,8 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		return true;
 	}
 
-	let sel = closestToSel(ci);
-
+	let sel;
+	const selection = this.editor.selection();
 	if (ci.map === 'frags') {
 		const frag = ctab.frags.get(ci.id);
 		sel = {
@@ -83,11 +83,21 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 			atoms: rgroup.getAtoms(rnd),
 			bonds: rgroup.getBonds(rnd)
 		};
+	} else if (selection && selection[ci.map] &&
+		selection[ci.map].includes(ci.id)) {
+		sel = closestToSel(ci);
+		atomLongtapEvent(this, rnd);
+		this.editor.selection(!event.shiftKey ? selection :
+			selMerge(sel, this.editor.selection(), true));
+		return true;
+	} else if (ci.map === 'atoms') {
+		sel = closestToSel(ci);
+	} else if (ci.map === 'bonds') {
+		sel = closestToSel(ci);
 	}
 	this.editor.selection(!event.shiftKey ? sel :
-		selMerge(sel, this.editor.selection()));
-	if (ci.map === 'atoms')
-		atomLongtapEvent(this, rnd); // to be stopped in others events by `tool.dragCtx.stopTapping()`
+		selMerge(sel, this.editor.selection(), true));
+	atomLongtapEvent(this, rnd);
 	return true;
 };
 
@@ -96,19 +106,25 @@ SelectTool.prototype.mousemove = function (event) {
 	const rnd = editor.render;
 	const restruct = editor.render.ctab;
 	const dragCtx = this.dragCtx;
-
 	if (dragCtx && dragCtx.stopTapping)
 		dragCtx.stopTapping();
-
 	if (dragCtx && dragCtx.item) {
-		// moving selected objects
-		const pos = rnd.page2obj(event);
-		let angle = utils.calcAngle(dragCtx.xy0, pos);
-		if (!event.ctrlKey)
-			angle = utils.fracAngle(angle);
+		const atoms = restruct.molecule.atoms;
+		const selection = editor.selection();
+		const shouldDisplayDegree = dragCtx.item.map === 'atoms' &&
+			atoms.get(dragCtx.item.id).neighbors.length === 1 &&
+			selection.atoms.length === 1 &&
+			!selection.bonds;
+		if (shouldDisplayDegree) {
+			// moving selected objects
+			const pos = rnd.page2obj(event);
+			let angle = utils.calcAngle(dragCtx.xy0, pos);
+			if (!event.ctrlKey)
+				angle = utils.fracAngle(angle);
 
-		const degrees = utils.degrees(angle);
-		this.editor.event.message.dispatch({ info: degrees + 'º' });
+			const degrees = utils.degrees(angle);
+			this.editor.event.message.dispatch({ info: degrees + 'º' });
+		}
 		if (dragCtx.action) {
 			dragCtx.action.perform(restruct);
 			// redraw the elements in unshifted position, lest the have different offset
@@ -131,7 +147,7 @@ SelectTool.prototype.mousemove = function (event) {
 
 	if (this.lassoHelper.running()) {
 		const sel = this.lassoHelper.addPoint(event);
-		editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection()));
+		editor.selection(!event.shiftKey ? sel : selMerge(sel, editor.selection(), false));
 		return true;
 	}
 
@@ -231,25 +247,24 @@ function closestToSel(ci) {
 }
 
 // TODO: deep-merge?
-function selMerge(selection, add) {
+function selMerge(selection, add, reversible) {
 	if (add) {
 		Object.keys(add).forEach((item) => {
 			if (!selection[item])
 				selection[item] = add[item].slice();
 			else
-				selection[item] = uniqArray(selection[item], add[item]);
+				selection[item] = uniqArray(selection[item], add[item], reversible);
 		});
 	}
 	return selection;
 }
 
-
-function uniqArray(dest, add) {
-	const selectionArr = add.reduce((res, item) => {
-		dest = xor(dest, [item]);
+function uniqArray(dest, add, reversible) {
+	return add.reduce((res, item) => {
+		if (reversible) dest = xor(dest, [item]);
+		else if (!dest.includes(item)) dest.push(item);
 		return dest;
 	}, []);
-	return selectionArr;
 }
 
 export default SelectTool;

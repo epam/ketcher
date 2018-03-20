@@ -91,8 +91,10 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		rg.frags.forEach((frag, frid) => {
 			action.addOp(new op.RGroupFragment(rgid, fridMap.get(frid)).perform(restruct));
 		});
+		const ifThen = pstruct.rgroups.get(rgid).ifthen;
+		const newRgId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
 		action.mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))
-			.mergeWith(fromUpdateIfThen(restruct, 0, rg.ifthen));
+			.mergeWith(fromUpdateIfThen(restruct, newRgId, rg.ifthen));
 	});
 
 	action.operations.reverse();

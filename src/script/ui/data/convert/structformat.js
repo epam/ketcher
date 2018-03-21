@@ -160,15 +160,15 @@ export function fromString(structStr, opts, server, serverOpts) {
 export function couldBeSaved(struct, format) {
 	if (format === 'inchi' || format === 'smiles') {
 		if (struct.rgroups.size !== 0)
-			return `R-group fragments cannot be saved in ${map[format].name}`;
+			return `In ${map[format].name} the structure will be saved without R-group fragments`;
 		struct = struct.clone(); // need this: .getScaffold()
 		const isRg = struct.atoms
 			.find((ind, atom) => atom.label === 'R#');
-		if (isRg !== null) return `R-group members cannot be saved in ${map[format].name}`;
+		if (isRg !== null) return `In ${map[format].name} the structure will be saved without R-group members`;
 
 		const isSg = struct.sgroups
 			.find((ind, sg) => (sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)));
-		if (isSg !== null) return `S-groups cannot be saved in ${map[format].name}`;
+		if (isSg !== null) return `In ${map[format].name} the structure will be saved without S-groups`;
 	}
 	return null;
 }

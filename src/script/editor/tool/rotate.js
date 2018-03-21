@@ -25,13 +25,13 @@ function RotateTool(editor, dir) {
 		if (!dir)
 			return new RotateTool(editor);
 
-		var restruct = editor.render.ctab;
-		var selection = editor.selection();
-		var singleBond = selection && selection.bonds &&
+		const restruct = editor.render.ctab;
+		const selection = editor.selection();
+		const singleBond = selection && selection.bonds &&
 			Object.keys(selection).length === 1 &&
 			selection.bonds.length === 1;
 
-		var action = !singleBond ? fromFlip(restruct, selection, dir) :
+		const action = !singleBond ? fromFlip(restruct, selection, dir) :
 			fromBondAlign(restruct, selection.bonds[0], dir);
 		editor.update(action);
 		return null;

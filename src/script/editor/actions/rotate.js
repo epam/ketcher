@@ -25,7 +25,7 @@ import Action from '../shared/action';
 
 import { structSelection, getRelSgroupsBySelection, getFragmentAtoms } from './utils';
 
-export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-statements
+export function fromFlip(restruct, selection, dir, center) { // eslint-disable-line max-statements
 	const struct = restruct.molecule;
 
 	const action = new Action();
@@ -58,18 +58,12 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 		const fragment = new Pile(fids[frag]);
 
 		const bbox = struct.getCoordBoundingBox(fragment);
+		const calcCenter = center ||
+			new Vec2((bbox.max.x + bbox.min.x) / 2, (bbox.max.y + bbox.min.y) / 2);
 
 		fragment.forEach((aid) => {
 			const atom = struct.atoms.get(aid);
-			const d = new Vec2();
-
-			/* eslint-disable no-mixed-operators*/
-			if (dir === 'horizontal')
-				d.x = bbox.min.x + bbox.max.x - 2 * atom.pp.x;
-			else // 'vertical'
-				d.y = bbox.min.y + bbox.max.y - 2 * atom.pp.y;
-			/* eslint-enable no-mixed-operators*/
-
+			const d = flipItemByCenter(atom, calcCenter, dir);
 			action.addOp(new op.AtomMove(aid, d));
 		});
 
@@ -77,13 +71,7 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 			const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment));
 
 			sgroups.forEach((sg) => {
-				const d = new Vec2();
-
-				if (dir === 'horizontal')
-					d.x = bbox.min.x + bbox.max.x - 2 * sg.pp.x;
-				else // 'vertical'
-					d.y = bbox.min.y + bbox.max.y - 2 * sg.pp.y;
-
+				const d = flipItemByCenter(sg, calcCenter, dir);
 				action.addOp(new op.SGroupDataMove(sg.id, d));
 			});
 		}
@@ -107,6 +95,22 @@ export function fromFlip(restruct, selection, dir) { // eslint-disable-line max-
 	}
 
 	return action.perform(restruct);
+}
+
+function flipItemByCenter(item, center, dir) {
+	const d = new Vec2();
+	/* eslint-disable no-mixed-operators*/
+	if (dir === 'horizontal') {
+		d.x = (center.x > item.pp.x)
+			? 2 * (center.x - item.pp.x)
+			: -2 * (item.pp.x - center.x);
+	} else { // 'vertical'
+		d.y = (center.y > item.pp.y)
+			? 2 * (center.y - item.pp.y)
+			: -2 * (item.pp.y - center.y);
+	}
+	/* eslint-enable no-mixed-operators*/
+	return d;
 }
 
 export function fromRotate(restruct, selection, center, angle) { // eslint-disable-line
@@ -164,18 +168,21 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 }
 
 export function fromBondAlign(restruct, bid, dir) {
-	var struct = restruct.molecule;
-	var bond = struct.bonds.get(bid);
-	var begin = struct.atoms.get(bond.begin);
-	var end = struct.atoms.get(bond.end);
+	const struct = restruct.molecule;
+	const bond = struct.bonds.get(bid);
+	const begin = struct.atoms.get(bond.begin);
+	const end = struct.atoms.get(bond.end);
 
-	var center = begin.pp.add(end.pp).scaled(0.5);
-	var angle = utils.calcAngle(begin.pp, end.pp);
-	var atoms = getFragmentAtoms(struct, begin.fragment);
-	angle = (dir === 'horizontal') ? -angle : ((Math.PI / 2) - angle);
+	const center = begin.pp.add(end.pp).scaled(0.5);
+	let angle = utils.calcAngle(begin.pp, end.pp);
+	const atoms = getFragmentAtoms(struct, begin.fragment);
 
 	// TODO: choose minimal angle
-	// console.info('single bond', utils.degrees(angle), atoms, dir);
+	angle = (dir === 'horizontal') ? -angle : ((Math.PI / 2) - angle);
+
+	if (angle === 0 || Math.abs(angle) === Math.PI)
+		return fromFlip(restruct, { atoms }, dir, center);
+
 	return fromRotate(restruct, { atoms }, center, angle);
 }
 

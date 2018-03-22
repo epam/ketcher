@@ -40,10 +40,8 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (typeof end === 'number') {
-			const frid2 = atomGetAttr(restruct, end, 'fragment');
-			mergeFragmentsIfNeeded(action, restruct, frid, frid2, end);
-		}
+		if (typeof end === 'number')
+			mergeFragmentsIfNeeded(action, restruct, begin, end);
 	}
 
 	if (frid == null)

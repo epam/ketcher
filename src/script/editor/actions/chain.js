@@ -18,7 +18,6 @@ import Vec2 from '../../util/vec2';
 
 import op from '../shared/op';
 import Action from '../shared/action';
-import closest from '../shared/closest';
 
 import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
@@ -48,8 +47,7 @@ export function fromChain(restruct, p0, v, nSect, atomId) { // eslint-disable-li
 	for (let i = 0; i < nSect; i++) {
 		const pos = new Vec2(dx * (i + 1), i & 1 ? 0 : dy).rotate(v).add(p0);
 
-		const closestAtom = closest.atom(restruct, pos, null, 0.1);
-		const ret = fromBondAddition(restruct, {}, id0, closestAtom ? closestAtom.id : {}, pos);
+		const ret = fromBondAddition(restruct, {}, id0, {}, pos);
 		action = ret[0].mergeWith(action);
 		id0 = ret[2];
 		chainItems.bonds.push(ret[3]);

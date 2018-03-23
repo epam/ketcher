@@ -19,7 +19,6 @@ import Pool from '../../util/pool';
 import Pile from '../../util/pile';
 import { Bond } from '../struct';
 
-
 function Stereocenters(mol, neighborsFunc, context) {
 	this.molecule = mol;
 	this.atoms = new Pool();

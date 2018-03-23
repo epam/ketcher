@@ -108,7 +108,7 @@ Atom.attrlist = {
 	aam: 0
 };
 
-function radicalElectrons(radical) {
+export function radicalElectrons(radical) {
 	radical -= 0;
 	if (radical === Atom.PATTERN.RADICAL.NONE)
 		return 0;
@@ -437,4 +437,3 @@ function checkPseudo(label) {
 }
 
 export default Atom;
-export { radicalElectrons };

@@ -19,8 +19,8 @@ import 'whatwg-fetch';
 import queryString from 'query-string';
 
 import api from './api';
-import * as molfile from './chem/molfile';
-import * as smiles from './chem/smiles';
+import molfile from './chem/molfile';
+import smiles from './chem/smiles';
 import * as structformat from './ui/data/convert/structformat';
 
 import ui from './ui';

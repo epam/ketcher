@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as molfile from '../../chem/molfile';
+import molfile from '../../chem/molfile';
 import { Bond } from '../../chem/struct';
 
 import op from '../shared/op';

@@ -21,9 +21,9 @@ import { rgroupSchema } from '../../data/schema/struct-schema';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
-import ButtonList from '../../component/buttonlist';
+import ButtonList from '../../component/form/buttonlist';
 
-function RGroup({ disabledIds, values, formState, type, ...props }) { // eslint-disable-line
+function RGroup({ disabledIds, values, formState, type, ...props }) {
 	return (
 		<Dialog
 			title="R-Group"

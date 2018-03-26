@@ -222,8 +222,8 @@ export default class Input extends Component {
 		this.ctrl = ctrlMap(this.component, props);
 	}
 
-	shouldComponentUpdate({ children, onChange, ...nextProps }) {
-		const oldProps = omit(this.props, ['children', 'onChange']);
+	shouldComponentUpdate({ children, onChange, style, ...nextProps }) {
+		const oldProps = omit(this.props, ['children', 'onChange', 'style']);
 		return shallowCompare(oldProps, nextProps);
 	}
 

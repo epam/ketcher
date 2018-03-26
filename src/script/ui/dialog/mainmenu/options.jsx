@@ -25,10 +25,12 @@ import { storage } from '../../storage-ext';
 import Form, { Field } from '../../component/form/form';
 import Dialog from '../../component/dialog';
 import Accordion from '../../component/view/accordion';
-import SystemFonts from '../../component/form/systemfonts';
 import SaveButton from '../../component/view/savebutton';
 import OpenButton from '../../component/view/openbutton';
+
 import MeasureInput from '../../component/form/measure-input';
+import SystemFonts from '../../component/form/systemfonts';
+import SelectCheckbox from '../../component/form/select-checkbox';
 
 function Settings(props) {
 	const { initState, formState, server, onOpenFile, onReset, appOpts, ...prop } = props;
@@ -57,31 +59,31 @@ function Settings(props) {
 					<fieldset className="render">
 						<Field name="resetToSelect" />
 						<Field name="rotationStep" />
-						<SelectCheckbox name="showValenceWarnings" />
-						<SelectCheckbox name="atomColoring" />
-						<SelectCheckbox name="hideChiralFlag" />
+						<Field name="showValenceWarnings" component={SelectCheckbox} />
+						<Field name="atomColoring" component={SelectCheckbox} />
+						<Field name="hideChiralFlag" component={SelectCheckbox} />
 						<Field name="font" component={SystemFonts} />
-						<FieldMeasure name="fontsz" />
-						<FieldMeasure name="fontszsub" />
+						<Field name="fontsz" component={MeasureInput} />
+						<Field name="fontszsub" component={MeasureInput} />
 					</fieldset>
 					<fieldset className="atoms">
-						<SelectCheckbox name="carbonExplicitly" />
-						<SelectCheckbox name="showCharge" />
-						<SelectCheckbox name="showValence" />
-						<Field name="showHydrogenLabels" />
+						<Field name="carbonExplicitly" component={SelectCheckbox} />
+						<Field name="showCharge" component={SelectCheckbox} />
+						<Field name="showValence" component={SelectCheckbox} />
+						<Field name="showHydrogenLabels" component={SelectCheckbox} />
 					</fieldset>
 					<fieldset className="bonds">
-						<SelectCheckbox name="aromaticCircle" />
-						<FieldMeasure name="doubleBondWidth" />
-						<FieldMeasure name="bondThickness" />
-						<FieldMeasure name="stereoBondWidth" />
+						<Field name="aromaticCircle" component={SelectCheckbox} />
+						<Field name="doubleBondWidth" component={MeasureInput} />
+						<Field name="bondThickness" component={MeasureInput} />
+						<Field name="stereoBondWidth" component={MeasureInput} />
 					</fieldset>
 					<fieldset className="server" disabled={!appOpts.server}>
-						<SelectCheckbox name="smart-layout" />
-						<SelectCheckbox name="ignore-stereochemistry-errors" />
-						<SelectCheckbox name="mass-skip-error-on-pseudoatoms" />
-						<SelectCheckbox name="gross-formula-add-rsites" />
-						<SelectCheckbox name="gross-formula-add-isotopes" />
+						<Field name="smart-layout" component={SelectCheckbox} />
+						<Field name="ignore-stereochemistry-errors" component={SelectCheckbox} />
+						<Field name="mass-skip-error-on-pseudoatoms" component={SelectCheckbox} />
+						<Field name="gross-formula-add-rsites" component={SelectCheckbox} />
+						<Field name="gross-formula-add-isotopes" component={SelectCheckbox} />
 					</fieldset>
 					<fieldset className="miew" disabled={!window.Miew}>
 						<Field name="miewMode" />
@@ -89,29 +91,16 @@ function Settings(props) {
 						<Field name="miewAtomLabel" />
 					</fieldset>
 					<fieldset className="debug">
-						<SelectCheckbox name="showAtomIds" />
-						<SelectCheckbox name="showBondIds" />
-						<SelectCheckbox name="showHalfBondIds" />
-						<SelectCheckbox name="showLoopIds" />
+						<Field name="showAtomIds" component={SelectCheckbox} />
+						<Field name="showBondIds" component={SelectCheckbox} />
+						<Field name="showHalfBondIds" component={SelectCheckbox} />
+						<Field name="showLoopIds" component={SelectCheckbox} />
 					</fieldset>
 				</Accordion>
 				{ !storage.isAvailable() ? <div className="warning">{storage.warningMessage}</div> : null }
 			</Form>
 		</Dialog>
 	);
-}
-
-function SelectCheckbox(props, { schema }) {
-	const desc = {
-		title: schema.properties[props.name].title,
-		enum: [true, false],
-		enumNames: ['on', 'off']
-	};
-	return <Field schema={desc} {...props} />;
-}
-
-function FieldMeasure(props, { schema }) {
-	return <Field schema={schema.properties[props.name]} component={MeasureInput} {...props} />;
 }
 
 export default connect(store => ({

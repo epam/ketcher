@@ -13,29 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import { h, Component } from 'preact';
-
 import Input from './input';
 
 class MeasureInput extends Component {
 	constructor(props) {
 		super(props);
-		this.state = { meas: 'px' };
+		this.state = {
+			cust: props.value || props.schema.default,
+			meas: 'px'
+		};
+
+		this.calcValue = this.calcValue.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+		this.handleMeasChange = this.handleMeasChange.bind(this);
 	}
 
-	handleChange(value, onChange) {
+	handleChange(value) {
 		const convValue = convertValue(value, this.state.meas, 'px');
 		this.state.cust = value;
-		onChange(convValue);
+		this.props.onChange(convValue);
+	}
+
+	handleMeasChange(m) {
+		this.setState(state => ({
+			meas: m,
+			cust: convertValue(state.cust, state.meas, m)
+		}));
+	}
+
+	calcValue() {
+		this.setState(state => ({
+			cust: convertValue(this.props.value, 'px', state.meas)
+		}));
 	}
 
 	render() {
 		const { meas, cust } = this.state;
 		const { schema, value, onChange, ...props } = this.props;
 
-		if (convertValue(cust, meas, 'px') !== value)
-			this.setState({ meas: 'px', cust: value }); // Hack: New store (RESET)
+		if (meas === 'px' && cust.toFixed() - 0 !== value)
+			this.setState({ meas: 'px', cust: value }); // Hack: Set init value (RESET)
 
 		return (
 			<div style={{ display: 'inline-flex' }} {...props}>
@@ -44,16 +62,14 @@ class MeasureInput extends Component {
 					step={meas === 'px' || meas === 'pt' ? '1' : '0.001'}
 					style={{ width: '75%' }}
 					value={cust}
-					onChange={v => this.handleChange(v, onChange)}
+					onChange={this.handleChange}
+					onBlur={this.calcValue}
 				/>
 				<Input
 					schema={{ enum: ['cm', 'px', 'pt', 'inch'] }}
 					style={{ width: '25%' }}
 					value={meas}
-					onChange={m => this.setState({
-						meas: m,
-						cust: convertValue(this.state.cust, this.state.meas, m)
-					})}
+					onChange={this.handleMeasChange}
 				/>
 			</div>
 		);

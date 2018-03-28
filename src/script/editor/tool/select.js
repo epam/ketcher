@@ -53,17 +53,17 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 		xy0: rnd.page2obj(event)
 	};
 
-	if (!ci) { //  ci.type == 'Canvas'
+	if (!ci || ci.map === 'atoms')
 		atomLongtapEvent(this, rnd);
-		delete this.dragCtx.item;
 
+	if (!ci) { //  ci.type == 'Canvas'
+		delete this.dragCtx.item;
 		if (!this.lassoHelper.fragment)
 			this.lassoHelper.begin(event);
-
 		return true;
 	}
 
-	let sel;
+	let sel = closestToSel(ci);
 	const selection = this.editor.selection();
 	if (ci.map === 'frags') {
 		const frag = ctab.frags.get(ci.id);
@@ -83,21 +83,14 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 			atoms: rgroup.getAtoms(rnd),
 			bonds: rgroup.getBonds(rnd)
 		};
-	} else if (selection && selection[ci.map] &&
-		selection[ci.map].includes(ci.id)) {
-		sel = closestToSel(ci);
-		atomLongtapEvent(this, rnd);
-		this.editor.selection(!event.shiftKey ? selection :
-			selMerge(sel, this.editor.selection(), true));
-		return true;
-	} else if (ci.map === 'atoms') {
-		sel = closestToSel(ci);
-	} else if (ci.map === 'bonds') {
-		sel = closestToSel(ci);
+	} else if (ci.map === 'sgroupData') {
+		if (isSelected(selection, ci)) return true;
 	}
-	this.editor.selection(!event.shiftKey ? sel :
-		selMerge(sel, this.editor.selection(), true));
-	atomLongtapEvent(this, rnd);
+
+	if (!event.shiftKey)
+		this.editor.selection(isSelected(selection, ci) ? selection : sel);
+	else
+		this.editor.selection(selMerge(sel, selection, true));
 	return true;
 };
 
@@ -118,10 +111,7 @@ SelectTool.prototype.mousemove = function (event) {
 		if (shouldDisplayDegree) {
 			// moving selected objects
 			const pos = rnd.page2obj(event);
-			let angle = utils.calcAngle(dragCtx.xy0, pos);
-			if (!event.ctrlKey)
-				angle = utils.fracAngle(angle);
-
+			const angle = utils.calcAngle(dragCtx.xy0, pos);
 			const degrees = utils.degrees(angle);
 			this.editor.event.message.dispatch({ info: degrees + 'º' });
 		}
@@ -241,7 +231,7 @@ SelectTool.prototype.cancel = function () {
 SelectTool.prototype.mouseleave = SelectTool.prototype.cancel;
 
 function closestToSel(ci) {
-	var res = {};
+	const res = {};
 	res[ci.map] = [ci.id];
 	return res;
 }
@@ -257,6 +247,10 @@ function selMerge(selection, add, reversible) {
 		});
 	}
 	return selection;
+}
+
+function isSelected(selection, item) {
+	return selection && selection[item.map] && selection[item.map].includes(item.id);
 }
 
 function uniqArray(dest, add, reversible) {

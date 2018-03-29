@@ -34,10 +34,10 @@ export function fromRGroupFragment(restruct, rgidNew, frid) {
 	return action.perform(restruct);
 }
 
-export function fromUpdateIfThen(restruct, rgidNew, rgidOld) {
+export function fromUpdateIfThen(restruct, rgidNew, rgidOld, skipRgids) {
 	const action = new Action();
 	if (!restruct.molecule.rgroups.get(rgidOld))
-		action.addOp(new op.UpdateIfThen(rgidNew, rgidOld));
+		action.addOp(new op.UpdateIfThen(rgidNew, rgidOld, skipRgids));
 
 	return action.perform(restruct);
 }

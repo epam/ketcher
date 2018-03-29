@@ -137,10 +137,11 @@ function processAtom(restruct, aid, frid, newfrid) {
 /**
  * @param restruct { ReStruct }
  * @param frid { number }
+ * @param rgForRemove
  * @return { Action }
  */
 // TODO [RB] the thing is too tricky :) need something else in future
-export function fromFragmentSplit(restruct, frid) {
+export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 	var action = new Action();
 	var rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
@@ -158,7 +159,7 @@ export function fromFragmentSplit(restruct, frid) {
 	if (frid !== -1) {
 		action.mergeWith(fromRGroupFragment(restruct, 0, frid));
 		action.addOp(new op.FragmentDelete(frid).perform(restruct));
-		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid));
+		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove));
 	}
 
 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
@@ -247,8 +248,10 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 
 	action = action.perform(restruct);
 
+	const rgForRemove = frids.map(frid =>
+		RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid));
 	while (frids.length > 0)
-		action.mergeWith(fromFragmentSplit(restruct, frids.pop()));
+		action.mergeWith(fromFragmentSplit(restruct, frids.pop(), rgForRemove));
 
 	action.mergeWith(actionRemoveDataSGroups);
 

@@ -649,7 +649,7 @@ function RGroupFragment(rgid, frid, rg) {
 }
 RGroupFragment.prototype = new Base();
 
-function UpdateIfThen(rgNew, rgOld) {
+function UpdateIfThen(rgNew, rgOld, skipRgids = []) {
 	this.type = 'OpUpdateIfThenValues';
 	this.rgid_new = rgNew;
 	this.rgid_old = rgOld;
@@ -659,7 +659,7 @@ function UpdateIfThen(rgNew, rgOld) {
 		const struct = restruct.molecule;
 
 		struct.rgroups.forEach((rg, rgid) => {
-			if (rg.ifthen === this.rgid_old) {
+			if (rg.ifthen === this.rgid_old && !skipRgids.includes(rgid)) {
 				rg.ifthen = this.rgid_new;
 				this.ifThenHistory.set(rgid, this.rgid_old);
 				struct.rgroups.set(rgid, rg);

@@ -1,5 +1,5 @@
 
-  Ketcher 04131611202D 1   1.00000     0.00000     0
+  Ketcher  3301811252D 1   1.00000     0.00000     0
 
  73 65  0     0  0            999 V2000
    -0.7649   -1.7473    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -78,7 +78,7 @@
   1  2  1  0     0  0
   3  4  1  0     0  0
   4  5  1  0     0  0
- 73  6  1  0     0  0
+  5  6  1  0     0  0
   6  7  1  0     0  0
   9  8  1  0     0  0
  10  9  1  0     0  0
@@ -104,7 +104,7 @@
  33 32  1  0     0  0
  34 33  1  0     0  0
  35 34  1  0     0  0
-  3  2  1  0     0  0
+ 71  2  1  0     0  0
  37 36  1  0     0  0
  38 37  1  0     0  0
  39 38  1  0     0  0
@@ -136,10 +136,10 @@
  55 67  1  1     0  0
  68 69  1  0     0  0
  69 70  1  0     0  0
-  5 68  1  0     0  0
+  3 70  1  0     0  0
  71 72  1  0     0  0
  72 73  1  0     0  0
- 70 71  1  0     0  0
+ 68 73  1  0     0  0
 M  STY  1   1 MUL
 M  SLB  1   1   1
 M  SAL   1  9   3   4   5  68  69  70  71  72  73
@@ -155,7 +155,7 @@ M  SDI   2  4    3.5897   -4.6315    3.5897   -6.1315
 M  SDI   2  4    0.9020   -6.1315    0.9020   -4.6315
 M  STY  1   3 SRU
 M  SLB  1   3   3
-M  SCN  1   3 HT 
+M  SCN  1   3 HT
 M  SMT   3 n
 M  SAL   3  3  18  19  17
 M  SBL   3  2  13  16
@@ -169,55 +169,51 @@ M  SMT   4 fgf
 M  STY  1   5 DAT
 M  SLB  1   5   5
 M  SAL   5  3  33  32  31
-M  SDT   5 fgfh                                                     
-M  SDD   5     0.0000    0.0000    DR    ALL  1      6  
+M  SDT   5 fgfh
+M  SDD   5     0.0000    0.0000    DR    ALL  1      6
 M  SED   5 absolute
 M  STY  1   6 DAT
 M  SLB  1   6   6
 M  SAL   6  3  40  39  38
-M  SDT   6 fgfh                                                     
-M  SDD   6     0.0000    0.0000    DR    ALL  1      6  
+M  SDT   6 fgfh
+M  SDD   6     0.0000    0.0000    DR    ALL  1      6
 M  SED   6 relative
 M  STY  1   7 DAT
 M  SLB  1   7   7
 M  SAL   7  3  47  46  45
-M  SDT   7 fgfh                                                     
-M  SDD   7     0.0000   -0.0000    DR    ALL  1      6  
+M  SDT   7 fgfh
+M  SDD   7     0.0000   -0.0000    DR    ALL  1      6
 M  SED   7 attached
 M  STY  1   8 DAT
 M  SLB  1   8   8
 M  SAL   8 15  50  51  52  53  54  55  56  57  58  59  60  61  62  63  64
 M  SAL   8  3  65  66  67
-M  SDT   8 MDLBG_FRAGMENT_STEREO          F                         
-M  SDD   8     6.5461   -2.8188    DR    ALL  1      1  
+M  SDT   8 MDLBG_FRAGMENT_STEREO          F
+M  SDD   8     6.5461   -2.8188    DR    ALL  1      1
 M  SED   8 abs
 M  STY  1   9 DAT
 M  SLB  1   9   9
-M  SPL  1   9   8
 M  SAL   9 15  50  51  52  53  54  55  56  57  58  59  60  61  62  63  64
 M  SAL   9  3  65  66  67
-M  SDT   9 MDLBG_FRAGMENT_COEFFICIENT     F                         
-M  SDD   9    10.1211   -2.9188    DR    ALL  1      1  
+M  SDT   9 MDLBG_FRAGMENT_COEFFICIENT     F
+M  SDD   9    10.1211   -2.9188    DR    ALL  1      1
 M  SED   9 3
 M  STY  1  10 DAT
 M  SLB  1  10  10
-M  SPL  1  10   9
 M  SAL  10  1  52
-M  SDT  10 MDLBG_STEREO_KEY               F                         
-M  SDD  10     2.3500   -0.6750    DR    ALL  1      1  
+M  SDT  10 MDLBG_STEREO_KEY               F
+M  SDD  10     2.3500   -0.6750    DR    ALL  1      1
 M  SED  10 RS
 M  STY  1  11 DAT
 M  SLB  1  11  11
-M  SPL  1  11   9
 M  SAL  11  2  55  67
-M  SDT  11 MDLBG_STEREO_KEY               F                         
-M  SDD  11     2.7411   -1.2437    DR    ALL  1      1  
+M  SDT  11 MDLBG_STEREO_KEY               F
+M  SDD  11     2.7411   -1.2437    DR    ALL  1      1
 M  SED  11 endo
 M  STY  1  12 DAT
 M  SLB  1  12  12
-M  SPL  1  12   9
 M  SAL  12  2  57  58
-M  SDT  12 MDLBG_STEREO_KEY               F                         
-M  SDD  12     2.7830   -0.9250    DR    ALL  1      1  
+M  SDT  12 MDLBG_STEREO_KEY               F
+M  SDD  12     2.7830   -0.9250    DR    ALL  1      1
 M  SED  12 trans
 M  END

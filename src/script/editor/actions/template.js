@@ -21,8 +21,8 @@ import Action from '../shared/action';
 import utils from '../shared/utils';
 import closest from '../shared/closest';
 
-import { atomGetAttr, atomGetSGroups, atomForNewBond } from './utils';
-import { fromAtomsAttrs } from './atom';
+import { atomGetAttr, atomForNewBond } from './utils';
+import { fromAtomsAttrs, mergeSgroups } from './atom';
 import { fromBondAddition, fromBondsAttrs } from './bond';
 import { fromAromaticTemplateOnBond } from './aromatic-fusing';
 import { fromPaste } from './paste';
@@ -31,7 +31,7 @@ export function fromTemplateOnCanvas(restruct, template, pos, angle) {
 	return fromPaste(restruct, template.molecule, pos, angle);
 }
 
-function extraBondAction(restruct, aid, angle, sgroups) {
+function extraBondAction(restruct, aid, angle) {
 	let action = new Action();
 	const frid = atomGetAttr(restruct, aid, 'fragment');
 	let additionalAtom = null;
@@ -56,8 +56,6 @@ function extraBondAction(restruct, aid, angle, sgroups) {
 		);
 
 		additionalAtom = operation.data.aid;
-
-		action.mergeWith(atomAddToSGroups(restruct, sgroups, additionalAtom));
 	}
 
 	return { action, aid1: additionalAtom };
@@ -72,12 +70,11 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 	let atom = struct.atoms.get(aid); // aid - the atom that was clicked on
 	let aid1 = aid; // aid1 - the atom on the other end of the extra bond || aid
 
-	const sgroups = atomGetSGroups(restruct, aid);
 	let delta = null;
 
 	if (extraBond) {
 		// create extra bond after click on atom
-		const extraRes = extraBondAction(restruct, aid, angle, sgroups);
+		const extraRes = extraBondAction(restruct, aid, angle);
 		action = extraRes.action;
 		aid1 = extraRes.aid1;
 
@@ -116,10 +113,8 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
 			map.set(id, operation.data.aid);
 			pasteItems.atoms.push(operation.data.aid);
 		}
-
-		if (map.get(id) !== aid && map.get(id) !== aid1)
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, map.get(id)));
 	});
+	mergeSgroups(action, restruct, pasteItems.atoms, aid);
 
 	tmpl.bonds.forEach((bond) => {
 		const operation = new op.BondAdd(map.get(bond.begin), map.get(bond.end), bond)
@@ -150,11 +145,6 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 
 	const bond = struct.bonds.get(bid);
 	const tmplBond = tmpl.bonds.get(template.bid);
-
-	const atomBeginSgs = restruct.atoms.get(bond.begin).a.sgs;
-	const atomEndSgs = restruct.atoms.get(bond.end).a.sgs;
-
-	const sgroups = Array.from(atomBeginSgs.intersection(atomEndSgs));
 
 	const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
 
@@ -198,8 +188,6 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 			action.addOp(operation);
 			atomsMap.set(id, operation.data.aid);
 			pasteItems.atoms.push(operation.data.aid);
-
-			action.mergeWith(atomAddToSGroups(restruct, sgroups, atomsMap.get(id)));
 		} else {
 			atomsMap.set(id, mergeA.id);
 
@@ -207,6 +195,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 			// TODO [RB] need to merge fragments?
 		}
 	});
+	mergeSgroups(action, restruct, pasteItems.atoms, bond.begin);
 
 	tmpl.bonds.forEach((tBond) => {
 		const existId = struct.findBondId(atomsMap.get(tBond.begin), atomsMap.get(tBond.end));
@@ -222,14 +211,4 @@ function fromTemplateOnBond(restruct, template, bid, flip) { // TODO: refactor f
 	});
 	action.operations.reverse();
 	return [action, pasteItems];
-}
-
-function atomAddToSGroups(restruct, sgroups, aid) {
-	const action = new Action();
-
-	sgroups.forEach((sid) => {
-		action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct));
-	});
-
-	return action;
 }

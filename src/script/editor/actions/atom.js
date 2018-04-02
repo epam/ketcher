@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { without } from 'lodash/fp';
 
 import { Atom, Bond, RGroup } from '../../chem/struct';
-
 import op from '../shared/op';
 import Action from '../shared/action';
 
@@ -183,6 +183,7 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
 		const notExpandedContexts = ['Atom', 'Bond', 'Group'];
 		if (sgroup.type === 'DAT' && notExpandedContexts.includes(sgroup.data.context))
 			return;
-		srcAtoms.forEach(aid => action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct)));
+		const atomsToSgroup = without(sgroup.atoms, srcAtoms);
+		atomsToSgroup.forEach(aid => action.addOp(new op.SGroupAtomAdd(sid, aid).perform(restruct)));
 	});
 }

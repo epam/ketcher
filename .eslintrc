@@ -7,11 +7,9 @@
   "settings": {
     "react": { "pragma": "h" }
   },
-  "globals": {
-    "fetch": true,
-    "document": true,
-    "window": true,
-    "localStorage": true
+  "env": {
+    "browser": true,
+    "node": true
   },
   "rules": {
     "comma-dangle": ["error", "never"],

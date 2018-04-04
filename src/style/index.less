@@ -294,16 +294,3 @@ select {
 		content: '⚠ ';
 	}
 }
-
-.arrange-icons-new(analyse check cip clean generic-groups layout miew
-				   reaction-arrow reaction-automap reaction-map
-				   reaction-plus reaction-unmap recognize rgroup-attpoints
-				   rgroup-fragment rgroup-label template-lib);
-
-.arrange-icons-new(@names, @i: 1) when (@i <= length(@names)) {
-	@item: extract(@names, @i);
-	#@{item} button:before {
-		padding: 0.2em 0 0 0.2em;
-	}
-	.arrange-icons-new(@names, (@i + 1));
-}

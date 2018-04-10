@@ -226,6 +226,110 @@ const bond = {
 	}
 };
 
+const sgroup = {
+	title: 'SGroup',
+	allOf: [
+		{
+			required: ['atoms'],
+			properties: {
+				atoms: {
+					type: 'array'
+				}
+			}
+		},
+		{
+			oneOf: [
+				{
+					key: 'GEN',
+					title: 'Generic',
+					properties: {
+						type: { enum: ['GEN'] }
+					}
+				},
+				{
+					key: 'MUL',
+					title: 'Multiple group',
+					type: 'object',
+					properties: {
+						type: { enum: ['MUL'] },
+						mul: {
+							title: 'Repeat count',
+							type: 'integer',
+							default: 1,
+							minimum: 1,
+							maximum: 1000
+						}
+					},
+					required: ['mul']
+				},
+				{
+					key: 'SRU',
+					title: 'SRU polymer',
+					properties: {
+						type: { enum: ['SRU'] },
+						subscript: {
+							title: 'Polymer label',
+							type: 'string',
+							default: 'n',
+							pattern: '^[a-zA-Z]$',
+							invalidMessage: 'SRU subscript should consist of a single letter'
+						},
+						connectivity: {
+							title: 'Repeat Pattern',
+							enum: ['HT', 'HH', 'EU'],
+							enumNames: [
+								'Head-to-tail',
+								'Head-to-head',
+								'Either unknown'
+							],
+							default: 'ht'
+						}
+					},
+					required: ['subscript', 'connectivity']
+				},
+				{
+					key: 'SUP',
+					title: 'Superatom',
+					properties: {
+						type: { enum: ['SUP'] },
+						name: {
+							title: 'Name',
+							type: 'string',
+							default: '',
+							minLength: 1,
+							invalidMessage: 'Please, provide a name for the superatom'
+						}
+					}
+				}
+			]
+		}
+	]
+};
+
+const rgroup = {
+	title: "R-Group",
+	type: "object",
+	properties: {
+		node: {
+			type: 'string'
+		},
+		range: {
+			title: 'Occurrence',
+			type: 'string',
+			maxLength: 50
+		},
+		resth: {
+			title: 'RestH',
+			type: 'boolean'
+		},
+		ifthen: {
+			title: 'Condition',
+			type: 'integer',
+			minium: 0
+		}
+	}
+};
+
 const structSchema = {
 	title: 'Struct',
 	type: 'object',
@@ -242,6 +346,16 @@ const structSchema = {
 					title: 'Bonds',
 					type: 'array',
 					items: { $ref: '#/bond' }
+				},
+				rgroups: {
+					title: 'RGroups',
+					type: 'array',
+					items: { $ref: '#/rgroup' }
+				},
+				sgroups: {
+					title: 'SGroups',
+					type: 'array',
+					items: { $ref: '#/sgroup' }
 				}
 			},
 		}
@@ -249,7 +363,9 @@ const structSchema = {
 
 	header: header,
 	atom: atom,
-	bond: bond
+	bond: bond,
+	rgroup: rgroup,
+	sgroup: sgroup
 };
 
 module.exports = structSchema;

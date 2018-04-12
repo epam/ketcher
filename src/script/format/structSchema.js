@@ -20,16 +20,16 @@ const header = {
 const atom = {
 	title: "Atom",
 	type: "object",
-	required: ["label", 'location'],
+	required: ['label', 'location'],
 	properties: {
 		label: {
 			title: "Label",
 			type: "string",
 			maxLength: 3
 		},
-		mapping: {
-			title: 'Atom-atom mapping',
-			type: 'integer'
+		alias: {
+			title: "Alias",
+			type: "string"
 		},
 		location: {
 			title: 'Location',
@@ -46,31 +46,11 @@ const atom = {
 				type: 'integer',
 			}
 		},
-		alias: {
-			title: "Alias",
-			type: "string"
-		},
 		charge: {
 			title: "Charge",
 			type: "integer",
 			minimum: -1000,
 			maximum: 1000,
-			default: 0
-		},
-		stereoParity: {
-			title: "Stereo parity configuration",
-			enum: [0, 1, 2, 3],
-			enumNames: [
-				'none',
-				'odd parity',
-				'even parity',
-				'either parity'
-			],
-			default: 0
-		},
-		weight: {
-			title: "Atomic weight",
-			type: "integer",
 			default: 0
 		},
 		explicitValence: {
@@ -100,20 +80,41 @@ const atom = {
 			],
 			default: 0
 		},
+		attachmentPoints: {
+			title: "Rgroup attachment points",
+			enum: [0, 1, 2, 3],
+			enumNames: [
+				'No',
+				'First site only',
+				'Second site only',
+				'First and second site'
+			],
+			default: 0
+		},
+		// stereo
+		stereoParity: {
+			title: "Stereo parity configuration",
+			enum: [0, 1, 2, 3],
+			enumNames: [
+				'none',
+				'odd parity',
+				'even parity',
+				'either parity'
+			],
+			default: 0
+		},
+		weight: {
+			title: "Atomic weight",
+			type: "integer",
+			default: 0
+		},
+		// query
 		ringBondCount: {
 			title: "Ring bond count",
 			enum: [0, -2, -1, 2, 3, 4],
 			enumNames: [
 				'', "As drawn",
 				"0", "2", "3", "4"
-			],
-			default: 0
-		},
-		hCount: {
-			title: "H count",
-			enum: [-1, 0, 1, 2, 3, 4, 5],
-			enumNames: [
-				"Zero", 'Not specified', "H0", "H1", "H2", "H3", "H4"
 			],
 			default: 0
 		},
@@ -131,6 +132,20 @@ const atom = {
 			type: "boolean",
 			default: false
 		},
+		hCount: {
+			title: "H count",
+			enum: [-1, 0, 1, 2, 3, 4, 5],
+			enumNames: [
+				"Zero", 'Not specified', "H0", "H1", "H2", "H3", "H4"
+			],
+			default: 0
+		},
+		// reaction
+		mapping: {
+			title: 'Atom-atom mapping',
+			type: 'integer',
+			default: 0
+		},
 		invRet: {
 			title: "Inversion",
 			enum: [0, 1, 2],
@@ -146,16 +161,6 @@ const atom = {
 			type: "boolean",
 			default: false
 		},
-		attachmentPoints: {
-			title: "Rgroup attachment points",
-			enum: [-1, 1, 2],
-			enumNames: [
-				'First and second site',
-				'First site only',
-				'Second site only'
-			],
-			default: -1
-		}
 	}
 };
 

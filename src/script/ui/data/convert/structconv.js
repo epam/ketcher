@@ -94,7 +94,8 @@ function toAtom(atom) {
 	const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
 
 	const conv = Object.assign({}, atom, {
-		label: capitalize(atom.label)
+		label: capitalize(atom.label),
+		alias: atom.alias || null
 	});
 	if (charge !== undefined) conv.charge = charge;
 	return conv;

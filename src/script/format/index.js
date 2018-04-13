@@ -1,20 +1,52 @@
-import { atomToGraph, bondToGraph, sgroupToGraph, rgroupToGraph } from './structToGraph';
+import { atomToGraph, bondToGraph, sgroupToGraph, rgroupLogicToGraph } from './structToGraph';
 
 export function toGraph(struct) {
 	const result = {};
 
+	const rgFrags = new Set();
+	for (let [rgnumber, rgroup] of struct.rgroups.entries()) {
+		Array.from(rgroup.frags.values()).forEach(frid => rgFrags.add(frid));
+
+		console.log(struct.rgroups.entries());
+		result[`rg-${rgnumber}`] = rgroupToGraph(struct, rgnumber, rgroup);
+	}
+
 	for (const fid of struct.frags.keys()) {
-		const fragment = struct.getFragment(fid);
-		result[`mol${fid}`] = moleculeToGraph(fragment);
+		if (!rgFrags.has(fid)) {
+			const fragment = struct.getFragment(fid);
+			result[`mol-${fid}`] = moleculeToGraph(fragment);
+		}
 	}
 
 	return result;
 }
 
+export function rgroupToGraph(struct, rgnumber, rgroup) {
+	const header = {
+		type: 'rgroup'
+	};
+
+	console.log(rgroup);
+	const frid = Array.from(rgroup.frags.values())[0];
+	const fragment = struct.getFragment(frid);
+
+	const body = {
+		rlogic: rgroupLogicToGraph([rgnumber, rgroup]),
+		...moleculeToGraph(fragment), // TODO: more than one
+	};
+
+	return {
+		...body,
+		...header
+	}
+}
+
+
 export function moleculeToGraph(struct) {
 // 	const structToSave = struct.clone(); // reindex atoms
 	const header = {
-		moleculeName: struct.name
+		type: 'molecule',
+		// moleculeName: struct.name
 	};
 
 	const body = {
@@ -26,9 +58,6 @@ export function moleculeToGraph(struct) {
 
 	if (struct.sgroups.size !== 0)
 		body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph);
-
-	if (struct.rgroups.size !== 0)
-		body.rgroups = Array.from(struct.rgroups.entries()).map(rgroupToGraph);
 
 	return {
 		...header,

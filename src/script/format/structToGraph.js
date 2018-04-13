@@ -10,7 +10,7 @@ export function atomToGraph(source) {
 	ifDef(result, 'label', source.label);
 	ifDef(result, 'alias', source.alias);
 	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
-	ifDef(result, 'rgroups', fromRlabel(source.rglabel));
+	ifDef(result, 'rgroups', fromRlabel(source.rglabel)); // TODO new type
 	ifDef(result, 'charge', source.charge, schema.charge.default);
 	ifDef(result, 'explicitValence', source.explicitValence, schema.explicitValence.default);
 	ifDef(result, 'isotope', source.isotope, schema.isotope.default);
@@ -85,7 +85,7 @@ export function sgroupToGraph(source) {
 // 	return schemify(result, structSchema.sgroup);
 }
 
-export function rgroupToGraph(source) {
+export function rgroupLogicToGraph(source) {
 	const rgnumber = source[0];
 	const rglogic = source[1];
 

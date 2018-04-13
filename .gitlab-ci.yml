@@ -29,6 +29,7 @@ unstable:
     - master
     - dev
     - /^task-.*$/
+    - FORMAT
 
 standalone:
   stage: build

@@ -1,44 +1,37 @@
-import { atomToGraph, bondToGraph } from './structToGraph';
+import { atomToGraph, bondToGraph, sgroupToGraph, rgroupToGraph } from './structToGraph';
 
 export function toGraph(struct) {
+	const result = {};
+
+	for (const fid of struct.frags.keys()) {
+		const fragment = struct.getFragment(fid);
+		result[`mol${fid}`] = moleculeToGraph(fragment);
+	}
+
+	return result;
+}
+
+export function moleculeToGraph(struct) {
+// 	const structToSave = struct.clone(); // reindex atoms
 	const header = {
 		moleculeName: struct.name
 	};
 
-	//TODO: reindex ????
-
 	const body = {
 		atoms: Array.from(struct.atoms.values()).map(atomToGraph),
-		bonds: Array.from(struct.bonds.values()).map(bondToGraph)
 	};
+
+	if (struct.bonds.size !== 0)
+		body.bonds = Array.from(struct.bonds.values()).map(bondToGraph);
+
+	if (struct.sgroups.size !== 0)
+		body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph);
+
+	if (struct.rgroups.size !== 0)
+		body.rgroups = Array.from(struct.rgroups.entries()).map(rgroupToGraph);
 
 	return {
 		...header,
 		...body
 	}
-
-// 	const molfile = new Molfile();
-// 	molfile.molecule = struct;
-// 	molfile.prepareSGroups();
-//
-// 	const result = {
-// 		moleculeName: struct.name,
-// 		rootCtab: {
-// 			atoms: struct.atoms.values().map(atomToGraph)
-// 		}
-// 	};
-//
-// 	const bonds = struct.bonds.values().map(bondToSchema);
-// 	if (bonds.length !== 0)
-// 		result.rootCtab.bonds = bonds;
-//
-// 	const sgroups = struct.sgroups.values().map(sgroupToSchema);
-// 	if (sgroups.length !== 0)
-// 		result.rootCtab.sgroups = sgroups;
-//
-// 	const rgroups = struct.rgroups.values().map(rgroupToSchema);
-// 	if (rgroups.length !== 0)
-// 		result.rgroups = rgroups;
-//
-// 	return result;
 }

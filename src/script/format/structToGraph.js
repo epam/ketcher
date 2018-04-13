@@ -46,35 +46,61 @@ export function bondToGraph(source) {
 	return result;
 // 	return schemify(result, structSchema.bond);
 }
-//
-// export function sgroupToSchema(source) {
-// 	const result = {};
-//
-// 	const mulSchema = structSchema.sgroup.oneOf[1].properties;
-// 	const sruSchema = structSchema.sgroup.oneOf[2].properties;
-//
-// 	ifDef(result, 'type', source.type);
-// 	ifDef(result, 'bracketBox', {
-// 		leftSide: source.brkxyz[0],
-// 		rightSide: source.brkxyz[1]
-// 	});
-// 	ifDef(result, 'atoms', source.atoms.map(i => i + 1));
-// 	ifDef(result, 'bonds', source.bonds);
-// 	ifDef(result, 'patoms', source.patoms ? source.patoms.map(i => i + 1) : source.patoms);
-// 	ifDef(result, 'xbonds', source.xbonds);
-// 	ifDef(result, 'mul', source.data.mul, mulSchema.mul.default);
-// 	ifDef(result, 'subscript', source.type === 'SUP' ? source.data.name : source.data.subscript, sruSchema.subscript.default);
-// 	ifDef(result, 'connectivity', source.data.connectivity, sruSchema.connectivity.default);
+
+export function sgroupToGraph(source) {
+	const result = {};
+	let schema;
+
+	ifDef(result, 'type', source.type);
+	ifDef(result, 'atoms', source.atoms);
+
+	switch (source.type) {
+		case 'GEN':
+			break;
+		case 'MUL': {
+			schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
+			ifDef(result, 'mul', source.data.mul || schema.mul.default);
+			break;
+		}
+		case 'SRU': {
+			schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
+			ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
+			ifDef(result, 'connectivity', source.data.connectivity || schema.connectivity.default);
+			break;
+		}
+		case 'SUP': {
+			schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
+			ifDef(result, 'name', source.data.name || schema.name.default);
+			break;
+		}
+	}
+
+//	type = DAT
 // 	ifDef(result, 'fieldName', source.data.fieldName);
-// 	ifDef(result, 'fieldData', source.data.fieldValue);
-//
-// 	result.fieldDisp = source.pp ? composeFieldDisp(source.pp, source.data) : '';
-//
+// 	ifDef(result, 'fieldData', source.data.fieldValue);//
 // 	ifDef(result, 'query', source.data.query, '');
 // 	ifDef(result, 'queryOp', source.data.queryOp, '');
-//
+
+	return result;
 // 	return schemify(result, structSchema.sgroup);
-// }
+}
+
+export function rgroupToGraph(source) {
+	const rgnumber = source[0];
+	const rglogic = source[1];
+
+	const schema = structSchema.rgroup.properties;
+	const result = {};
+
+	ifDef(result, 'number', rgnumber);
+	ifDef(result, 'range', rglogic.range, schema.range.default);
+	ifDef(result, 'resth', rglogic.resth, schema.resth.default);
+	ifDef(result, 'ifthen', rglogic.ifthen, schema.ifthen.default);
+
+	return result;
+}
+
+
 //
 // function composeFieldDisp(pp, data) {
 // 	const buttons = `${data.attached ? 'A' : 'D'}${data.absolute ? 'A' : 'R'}${data.showUnits ? 'U' : ' '}`;

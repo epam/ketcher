@@ -315,22 +315,25 @@ const rgroup = {
 	title: "R-Group",
 	type: "object",
 	properties: {
-		node: {
-			type: 'string'
+		number: {
+			type: 'number'
 		},
 		range: {
 			title: 'Occurrence',
 			type: 'string',
-			maxLength: 50
+			maxLength: 50,
+			default: ''
 		},
 		resth: {
 			title: 'RestH',
-			type: 'boolean'
+			type: 'boolean',
+			default: false
 		},
 		ifthen: {
 			title: 'Condition',
 			type: 'integer',
-			minium: 0
+			minimum: 0,
+			default: 0
 		}
 	}
 };

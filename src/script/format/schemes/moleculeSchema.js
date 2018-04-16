@@ -164,6 +164,37 @@ const atom = {
 	}
 };
 
+const rgatom = {
+	title: "RGroup-atom",
+	type: "object",
+	required: ['type', 'location'],
+	properties: {
+		type: {
+			enum: ['rg-label']
+		},
+		location: {
+			title: 'Location',
+			type: 'array',
+			items: {
+				type: 'float',
+				precision: 1
+			}
+		},
+		$refs: {	// RGroups in root of Graph (only one: `$refs` or `rgroups`)
+			type: 'array',
+			items: {
+				type: 'string',
+				pattern: '^rg-',
+				maxLength: 5
+			}
+		},
+		rgroups: {	// inline Rgroups in atom (only one: `$refs` or `rgroups`)
+			type: 'array',
+			items: { $ref: '/Molecule' }
+		}
+	}
+};
+
 const bond = {
 	title: "Bond",
 	type: "object",
@@ -311,35 +342,8 @@ const sgroup = {
 	]
 };
 
-const rgroup = {
-	title: "R-Group",
-	type: "object",
-	properties: {
-		number: {
-			type: 'number'
-		},
-		range: {
-			title: 'Occurrence',
-			type: 'string',
-			maxLength: 50,
-			default: ''
-		},
-		resth: {
-			title: 'RestH',
-			type: 'boolean',
-			default: false
-		},
-		ifthen: {
-			title: 'Condition',
-			type: 'integer',
-			minimum: 0,
-			default: 0
-		}
-	}
-};
-
-const structSchema = {
-	title: 'Struct',
+const moleculeSchema = {
+	id: '/Molecule',
 	type: 'object',
 	allOf: [
 		{ $ref: '#/header' },
@@ -348,32 +352,32 @@ const structSchema = {
 				atoms: {
 					title: 'Atoms',
 					type: 'array',
-					items: { $ref: '#/atom' }
+					items: {
+						oneOf: [
+							{ $ref: '#/atom' },
+							{ $ref: '#/rgatom' }
+						]
+					}
 				},
 				bonds: {
 					title: 'Bonds',
 					type: 'array',
 					items: { $ref: '#/bond' }
 				},
-				rgroups: {
-					title: 'RGroups',
-					type: 'array',
-					items: { $ref: '#/rgroup' }
-				},
 				sgroups: {
 					title: 'SGroups',
 					type: 'array',
 					items: { $ref: '#/sgroup' }
 				}
-			},
+			}
 		}
 	],
 
 	header: header,
 	atom: atom,
+	rgatom: rgatom,
 	bond: bond,
-	rgroup: rgroup,
 	sgroup: sgroup
 };
 
-module.exports = structSchema;
+module.exports = moleculeSchema;

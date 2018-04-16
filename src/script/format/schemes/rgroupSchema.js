@@ -1,6 +1,6 @@
 const rgroupLogic = {
-	title: "RGroupLogic",
-	type: "object",
+	title: 'RGroupLogic',
+	type: 'object',
 	required: ['number'],
 	properties: {
 		number: {

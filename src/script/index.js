@@ -25,7 +25,7 @@ import * as structformat from './ui/data/convert/structformat';
 
 import ui from './ui';
 import Render from './render';
-import { moleculeToGraph, toGraph } from './format';
+import graph from './format/chemGraph';
 
 function getSmiles() {
 	return smiles.stringify(ketcher.editor.struct(),
@@ -110,6 +110,6 @@ const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi
 	addFragment,
 	showMolfile,
 
-	toGraph: () => toGraph(ketcher.editor.render.ctab.molecule),
-	moleculeToGraph: () => moleculeToGraph(ketcher.editor.render.ctab.molecule)
+	toGraph: () => graph.toGraph(ketcher.editor.render.ctab.molecule),
+	fromGraph: () => graph.fromGraph(ketcher.editor.render.ctab.molecule)
 }, buildInfo);

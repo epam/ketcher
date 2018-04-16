@@ -1,0 +1,32 @@
+import rgroupSchema from '../../schemes/rgroupSchema';
+import { moleculeToGraph } from './moleculeToGraph';
+
+import { ifDef } from '../../utils';
+
+export function rgroupToGraph(struct, rgnumber, rgroup) {
+	const header = {
+		type: 'rgroup'
+	};
+
+	const body = {
+		rlogic: rgroupLogicToGraph(rgnumber, rgroup),
+		...moleculeToGraph(struct)
+	};
+
+	return {
+		...body,
+		...header
+	};
+}
+
+function rgroupLogicToGraph(rgnumber, rglogic) {
+	const schema = rgroupSchema.logic.properties;
+	const result = {};
+
+	ifDef(result, 'number', rgnumber);
+	ifDef(result, 'range', rglogic.range, schema.range.default);
+	ifDef(result, 'resth', rglogic.resth, schema.resth.default);
+	ifDef(result, 'ifthen', rglogic.ifthen, schema.ifthen.default);
+
+	return result;
+}

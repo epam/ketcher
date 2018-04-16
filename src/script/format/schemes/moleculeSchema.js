@@ -18,18 +18,18 @@ const header = {
 };
 
 const atom = {
-	title: "Atom",
-	type: "object",
+	title: 'Atom',
+	type: 'object',
 	required: ['label', 'location'],
 	properties: {
 		label: {
-			title: "Label",
-			type: "string",
+			title: 'Label',
+			type: 'string',
 			maxLength: 3
 		},
 		alias: {
-			title: "Alias",
-			type: "string"
+			title: 'Alias',
+			type: 'string'
 		},
 		location: {
 			title: 'Location',
@@ -43,45 +43,45 @@ const atom = {
 			title: 'Rgroups',
 			type: 'array',
 			items: {
-				type: 'integer',
+				type: 'integer'
 			}
 		},
 		charge: {
-			title: "Charge",
-			type: "integer",
+			title: 'Charge',
+			type: 'integer',
 			minimum: -1000,
 			maximum: 1000,
 			default: 0
 		},
 		explicitValence: {
-			title: "Valence",
+			title: 'Valence',
 			enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
 			enumNames: [
-				'Not specified', "0", "I", "II", "III",
-				"IV", "V", "VI", "VII", "VIII",
-				"IX", "X", "XI", "XII"
+				'Not specified', '0', 'I', 'II', 'III',
+				'IV', 'V', 'VI', 'VII', 'VIII',
+				'IX', 'X', 'XI', 'XII'
 			],
 			default: -1
 		},
 		isotope: {
-			title: "Isotope",
-			type: "integer",
+			title: 'Isotope',
+			type: 'integer',
 			minimum: 0,
 			default: 0
 		},
 		radical: {
-			title: "Radical",
+			title: 'Radical',
 			enum: [0, 2, 1, 3],
 			enumNames: [
 				'Not specified',
-				"Monoradical",
-				"Diradical (singlet)",
-				"Diradical (triplet)"
+				'Monoradical',
+				'Diradical (singlet)',
+				'Diradical (triplet)'
 			],
 			default: 0
 		},
 		attachmentPoints: {
-			title: "Rgroup attachment points",
+			title: 'Rgroup attachment points',
 			enum: [0, 1, 2, 3],
 			enumNames: [
 				'No',
@@ -93,7 +93,7 @@ const atom = {
 		},
 		// stereo
 		stereoParity: {
-			title: "Stereo parity configuration",
+			title: 'Stereo parity configuration',
 			enum: [0, 1, 2, 3],
 			enumNames: [
 				'none',
@@ -104,39 +104,39 @@ const atom = {
 			default: 0
 		},
 		weight: {
-			title: "Atomic weight",
-			type: "integer",
+			title: 'Atomic weight',
+			type: 'integer',
 			default: 0
 		},
 		// query
 		ringBondCount: {
-			title: "Ring bond count",
+			title: 'Ring bond count',
 			enum: [0, -2, -1, 2, 3, 4],
 			enumNames: [
-				'', "As drawn",
-				"0", "2", "3", "4"
+				'', 'As drawn',
+				'0', '2', '3', '4'
 			],
 			default: 0
 		},
 		substitutionCount: {
-			title: "Substitution count",
+			title: 'Substitution count',
 			enum: [0, -2, -1, 1, 2, 3, 4, 5, 6],
 			enumNames: [
-				'Not specified', "As drawn",
-				"0", "1", "2", "3", "4", "5", "6"
+				'Not specified', 'As drawn',
+				'0', '1', '2', '3', '4', '5', '6'
 			],
 			default: 0
 		},
 		unsaturatedAtom: {
-			title: "Unsaturated",
-			type: "boolean",
+			title: 'Unsaturated',
+			type: 'boolean',
 			default: false
 		},
 		hCount: {
-			title: "H count",
+			title: 'H count',
 			enum: [-1, 0, 1, 2, 3, 4, 5],
 			enumNames: [
-				"Zero", 'Not specified', "H0", "H1", "H2", "H3", "H4"
+				'Zero', 'Not specified', 'H0', 'H1', 'H2', 'H3', 'H4'
 			],
 			default: 0
 		},
@@ -147,26 +147,26 @@ const atom = {
 			default: 0
 		},
 		invRet: {
-			title: "Inversion",
+			title: 'Inversion',
 			enum: [0, 1, 2],
 			enumNames: [
 				'',
-				"Inverts",
-				"Retains"
+				'Inverts',
+				'Retains'
 			],
 			default: 0
 		},
 		exactChangeFlag: {
-			title: "Exact change",
-			type: "boolean",
+			title: 'Exact change',
+			type: 'boolean',
 			default: false
-		},
+		}
 	}
 };
 
 const rgatom = {
-	title: "RGroup-atom",
-	type: "object",
+	title: 'RGroup-atom',
+	type: 'object',
 	required: ['type', 'location'],
 	properties: {
 		type: {
@@ -190,32 +190,32 @@ const rgatom = {
 		},
 		rgroups: {	// inline Rgroups in atom (only one: `$refs` or `rgroups`)
 			type: 'array',
-			items: { $ref: '/Molecule' }
+			items: { $ref: '/RGroup' }
 		}
 	}
 };
 
 const bond = {
-	title: "Bond",
-	type: "object",
+	title: 'Bond',
+	type: 'object',
 	required: ['atoms'],
 	properties: {
 		type: {
-			title: "Type",
+			title: 'Type',
 			enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
 			enumNames: [
-				"Single",
-				"Single Up",
-				"Single Down",
-				"Single Up/Down",
-				"Double",
-				"Double Cis/Trans",
-				"Triple",
-				"Aromatic",
-				"Any",
-				"Single/Double",
-				"Single/Aromatic",
-				"Double/Aromatic"
+				'Single',
+				'Single Up',
+				'Single Down',
+				'Single Up/Down',
+				'Double',
+				'Double Cis/Trans',
+				'Triple',
+				'Aromatic',
+				'Any',
+				'Single/Double',
+				'Single/Aromatic',
+				'Double/Aromatic'
 			],
 			default: 1
 		},
@@ -235,22 +235,22 @@ const bond = {
 			default: 0
 		},
 		topology: {
-			title: "Topology",
+			title: 'Topology',
 			enum: [0, 1, 2],
-			enumNames: ["Either", "Ring", "Chain"],
+			enumNames: ['Either', 'Ring', 'Chain'],
 			default: 0
 		},
 		center: {
-			title: "Reacting Center",
+			title: 'Reacting Center',
 			enum: [0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
 			enumNames: [
-				"Unmarked",
-				"Not center",
-				"Center",
-				"No change",
-				"Made/broken",
-				"Order changes",
-				"Made/broken and changes"
+				'Unmarked',
+				'Not center',
+				'Center',
+				'No change',
+				'Made/broken',
+				'Order changes',
+				'Made/broken and changes'
 			], // "Order changes" x 3
 			default: 0
 		},
@@ -373,11 +373,11 @@ const moleculeSchema = {
 		}
 	],
 
-	header: header,
-	atom: atom,
-	rgatom: rgatom,
-	bond: bond,
-	sgroup: sgroup
+	header,
+	atom,
+	rgatom,
+	bond,
+	sgroup
 };
 
 module.exports = moleculeSchema;

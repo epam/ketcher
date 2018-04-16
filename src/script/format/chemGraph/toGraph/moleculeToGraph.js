@@ -1,16 +1,39 @@
-import structSchema from './structSchema';
-import { /*schemify,*/ ifDef } from './utils';
+import structSchema from '../../schemes/moleculeSchema';
 
-import { fromRlabel } from './convertStruct';
+import { fromRlabel } from '../convertStruct';
+import { ifDef } from '../../utils';
 
-export function atomToGraph(source) {
+export function moleculeToGraph(struct) {
+// 	const structToSave = struct.clone(); // reindex atoms
+	const header = {
+		type: 'molecule'
+		// moleculeName: struct.name
+	};
+
+	const body = {
+		atoms: Array.from(struct.atoms.values())
+			.map(atom => (atom.label === 'R#' ? rglabelToGraph(atom) : atomToGraph(atom)))
+	};
+
+	if (struct.bonds.size !== 0)
+		body.bonds = Array.from(struct.bonds.values()).map(bondToGraph);
+
+	if (struct.sgroups.size !== 0)
+		body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph);
+
+	return {
+		...header,
+		...body
+	};
+}
+
+function atomToGraph(source) {
 	const schema = structSchema.atom.properties;
 	const result = {};
 
 	ifDef(result, 'label', source.label);
 	ifDef(result, 'alias', source.alias);
 	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
-	ifDef(result, 'rgroups', fromRlabel(source.rglabel)); // TODO new type
 	ifDef(result, 'charge', source.charge, schema.charge.default);
 	ifDef(result, 'explicitValence', source.explicitValence, schema.explicitValence.default);
 	ifDef(result, 'isotope', source.isotope, schema.isotope.default);
@@ -33,7 +56,19 @@ export function atomToGraph(source) {
 // 	return schemify(result, structSchema.atom);
 }
 
-export function bondToGraph(source) {
+function rglabelToGraph(source) {
+	const result = {
+		type: 'rg-label'
+	};
+	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
+
+	const refsToRGroups = fromRlabel(source.rglabel).map(rgnumber => `rg-${rgnumber}`);
+	ifDef(result, '$refs', refsToRGroups);
+
+	return result;
+}
+
+function bondToGraph(source) {
 	const schema = structSchema.bond.properties;
 	const result = {};
 
@@ -47,7 +82,7 @@ export function bondToGraph(source) {
 // 	return schemify(result, structSchema.bond);
 }
 
-export function sgroupToGraph(source) {
+function sgroupToGraph(source) {
 	const result = {};
 	let schema;
 
@@ -55,51 +90,37 @@ export function sgroupToGraph(source) {
 	ifDef(result, 'atoms', source.atoms);
 
 	switch (source.type) {
-		case 'GEN':
-			break;
-		case 'MUL': {
-			schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
-			ifDef(result, 'mul', source.data.mul || schema.mul.default);
-			break;
-		}
-		case 'SRU': {
-			schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
-			ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
-			ifDef(result, 'connectivity', source.data.connectivity || schema.connectivity.default);
-			break;
-		}
-		case 'SUP': {
-			schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
-			ifDef(result, 'name', source.data.name || schema.name.default);
-			break;
-		}
+	case 'GEN':	break;
+	case 'MUL': {
+		schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
+		ifDef(result, 'mul', source.data.mul || schema.mul.default);
+		break;
+	}
+	case 'SRU': {
+		schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
+		ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
+		ifDef(result, 'connectivity', source.data.connectivity.toUpperCase() || schema.connectivity.default);
+		break;
+	}
+	case 'SUP': {
+		schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
+		ifDef(result, 'name', source.data.name || schema.name.default);
+		break;
+	}
+	default: break;
 	}
 
-//	type = DAT
-// 	ifDef(result, 'fieldName', source.data.fieldName);
-// 	ifDef(result, 'fieldData', source.data.fieldValue);//
-// 	ifDef(result, 'query', source.data.query, '');
-// 	ifDef(result, 'queryOp', source.data.queryOp, '');
+	//	type = DAT
+	// 	ifDef(result, 'fieldName', source.data.fieldName);
+	// 	ifDef(result, 'fieldData', source.data.fieldValue);//
+	// 	ifDef(result, 'query', source.data.query, '');
+	// 	ifDef(result, 'queryOp', source.data.queryOp, '');
 
 	return result;
 // 	return schemify(result, structSchema.sgroup);
 }
 
-export function rgroupLogicToGraph(source) {
-	const rgnumber = source[0];
-	const rglogic = source[1];
-
-	const schema = structSchema.rgroup.properties;
-	const result = {};
-
-	ifDef(result, 'number', rgnumber);
-	ifDef(result, 'range', rglogic.range, schema.range.default);
-	ifDef(result, 'resth', rglogic.resth, schema.resth.default);
-	ifDef(result, 'ifthen', rglogic.ifthen, schema.ifthen.default);
-
-	return result;
-}
-
+/* eslint-disable */
 
 //
 // function composeFieldDisp(pp, data) {

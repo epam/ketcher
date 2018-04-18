@@ -4,7 +4,8 @@ const header = {
 	properties: {
 		moleculeName: {
 			title: 'Molecule name',
-			type: 'string'
+			type: 'string',
+			default: ''
 		},
 		creatorProgram: {
 			title: 'Creator program',
@@ -191,6 +192,55 @@ const rgatom = {
 		rgroups: {	// inline Rgroups in atom (only one: `$refs` or `rgroups`)
 			type: 'array',
 			items: { $ref: '/RGroup' }
+		},
+		attachmentPoints: {
+			title: 'Rgroup attachment points',
+			enum: [0, 1, 2, 3],
+			enumNames: [
+				'No',
+				'First site only',
+				'Second site only',
+				'First and second site'
+			],
+			default: 0
+		}
+	}
+};
+
+const atomlist = {
+	title: 'RGroup-atom',
+	type: 'object',
+	required: ['type', 'location'],
+	properties: {
+		type: {
+			enum: ['atom-list']
+		},
+		location: {
+			title: 'Location',
+			type: 'array',
+			items: {
+				type: 'float',
+				precision: 1
+			}
+		},
+		elements: {
+			type: 'array',
+			minItems: 2,
+			items: {
+				type: 'string',
+				maxLength: 3
+			}
+		},
+		attachmentPoints: {
+			title: 'Rgroup attachment points',
+			enum: [0, 1, 2, 3],
+			enumNames: [
+				'No',
+				'First site only',
+				'Second site only',
+				'First and second site'
+			],
+			default: 0
 		}
 	}
 };
@@ -336,6 +386,39 @@ const sgroup = {
 							invalidMessage: 'Please, provide a name for the superatom'
 						}
 					}
+				},
+				{
+					key: 'DAT',
+					title: 'Data-group',
+					properties: {
+						type: { enum: ['DAT'] },
+						context: {
+							title: 'Context',
+							enum: [
+								'Fragment',
+								'Multifragment',
+								'Bond',
+								'Atom',
+								'Group'
+							],
+							default: 'Fragment'
+						},
+						fieldName: {
+							title: 'Field name',
+							type: 'string',
+							default: '',
+							minLength: 1,
+							invalidMessage: 'Please, specify field name'
+						},
+						fieldValue: {
+							title: 'Field value',
+							type: 'string',
+							default: '',
+							minLength: 1,
+							invalidMessage: 'Please, specify field value'
+						}
+					},
+					required: ['context', 'fieldName', 'fieldValue']
 				}
 			]
 		}
@@ -355,7 +438,8 @@ const moleculeSchema = {
 					items: {
 						oneOf: [
 							{ $ref: '#/atom' },
-							{ $ref: '#/rgatom' }
+							{ $ref: '#/rgatom' },
+							{ $ref: '#/atomlist' }
 						]
 					}
 				},
@@ -375,6 +459,7 @@ const moleculeSchema = {
 
 	header,
 	atom,
+	atomlist,
 	rgatom,
 	bond,
 	sgroup

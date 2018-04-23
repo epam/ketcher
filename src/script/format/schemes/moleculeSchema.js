@@ -465,4 +465,4 @@ const moleculeSchema = {
 	sgroup
 };
 
-module.exports = moleculeSchema;
+export default moleculeSchema;

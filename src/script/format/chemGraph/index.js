@@ -1,27 +1,42 @@
-import Pile from '../../util/pile';
-
 import { moleculeToGraph } from './toGraph/moleculeToGraph';
 import { rgroupToGraph } from './toGraph/rgroupToGraph';
+import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph';
+
+import { prepareStructForGraph } from './toGraph/prepare';
 
 function toGraph(struct) {
-	const result = {};
+	const result = {
+		root: {
+			nodes: []
+		}
+	};
 
-	const rgFrags = new Set(); // skip this when writing molecules
-	for (const [rgnumber, rgroup] of struct.rgroups.entries()) { // RGroups writing
-		rgroup.frags.forEach(frid => rgFrags.add(frid));
+	const graphNodes = prepareStructForGraph(struct);
 
-		const fragsAtoms = Array.from(rgroup.frags.values())
-			.reduce((res, frid) => res.union(struct.getFragmentIds(frid)), new Pile());
-
-		result[`rg-${rgnumber}`] = rgroupToGraph(struct.clone(fragsAtoms), rgnumber, rgroup);
-	}
-
-	const molFrags = Array.from(struct.frags.keys()).filter(fid => !rgFrags.has(fid));
-
-	for (const fid of molFrags) { // Molecules writing
-		const fragment = struct.getFragment(fid);
-		result[`mol-${fid}`] = moleculeToGraph(fragment);
-	}
+	let moleculeId = 0;
+	graphNodes.forEach((item) => {
+		switch (item.type) {
+			case 'molecule': {
+				result.root.nodes.push({ $ref: `mol${moleculeId}` });
+				result[`mol${moleculeId++}`] = moleculeToGraph(item.fragment);
+				break;
+			}
+			case 'rgroup': {
+				result.root.nodes.push({ $ref: `rg${item.data.rgnumber}` });
+				result[`rg${item.data.rgnumber}`] = rgroupToGraph(item.fragment, item.data);
+				break;
+			}
+			case 'plus': {
+				result.root.nodes.push(plusToGraph(item));
+				break;
+			}
+			case 'arrow': {
+				result.root.nodes.push(arrowToGraph(item));
+				break;
+			}
+			default: break;
+		}
+	});
 
 	return result;
 }

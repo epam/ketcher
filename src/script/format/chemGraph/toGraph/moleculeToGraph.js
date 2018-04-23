@@ -108,30 +108,30 @@ function sgroupToGraph(source) {
 	ifDef(result, 'atoms', source.atoms);
 
 	switch (source.type) {
-	case 'GEN': break;
-	case 'MUL': {
-		schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
-		ifDef(result, 'mul', source.data.mul || schema.mul.default);
-		break;
-	}
-	case 'SRU': {
-		schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
-		ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
-		ifDef(result, 'connectivity', source.data.connectivity.toUpperCase() || schema.connectivity.default);
-		break;
-	}
-	case 'SUP': {
-		schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
-		ifDef(result, 'name', source.data.name || schema.name.default);
-		break;
-	}
-	case 'DAT': {
-		schema = structSchema.sgroup.allOf[1].oneOf[4].properties;
-		ifDef(result, 'context', source.data.context, schema.context.default);
-		ifDef(result, 'fieldName', source.data.fieldName);
-		ifDef(result, 'fieldData', source.data.fieldValue);
-	}
-	default: break;
+		case 'GEN': break;
+		case 'MUL': {
+			schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
+			ifDef(result, 'mul', source.data.mul || schema.mul.default);
+			break;
+		}
+		case 'SRU': {
+			schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
+			ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
+			ifDef(result, 'connectivity', source.data.connectivity.toUpperCase() || schema.connectivity.default);
+			break;
+		}
+		case 'SUP': {
+			schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
+			ifDef(result, 'name', source.data.name || schema.name.default);
+			break;
+		}
+		case 'DAT': {
+			schema = structSchema.sgroup.allOf[1].oneOf[4].properties;
+			ifDef(result, 'context', source.data.context, schema.context.default);
+			ifDef(result, 'fieldName', source.data.fieldName);
+			ifDef(result, 'fieldData', source.data.fieldValue);
+		}
+		default: break;
 	}
 
 	return result;

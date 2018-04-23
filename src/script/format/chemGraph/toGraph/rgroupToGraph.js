@@ -3,13 +3,13 @@ import { moleculeToGraph } from './moleculeToGraph';
 
 import { ifDef } from '../../utils';
 
-export function rgroupToGraph(struct, rgnumber, rgroup) {
+export function rgroupToGraph(struct, data) {
 	const header = {
 		type: 'rgroup'
 	};
 
 	const body = {
-		rlogic: rgroupLogicToGraph(rgnumber, rgroup),
+		rlogic: rgroupLogicToGraph(data.rgnumber, data.rgroup),
 		...moleculeToGraph(struct)
 	};
 

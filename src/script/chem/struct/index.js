@@ -41,7 +41,7 @@ function Struct() {
 	this.frags = new Pool();
 	this.rgroups = new Pool();
 	this.name = '';
-	this.sGroupForest = new SGroupForest(this);
+	this.sGroupForest = new SGroupForest();
 }
 
 Struct.prototype.hasRxnProps = function () {
@@ -189,9 +189,9 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		});
 
 		if (sg.type === 'DAT')
-			cp.sGroupForest.insert(sg.id, -1, []);
+			cp.sGroupForest.insert(sg, -1, []);
 		else
-			cp.sGroupForest.insert(sg.id);
+			cp.sGroupForest.insert(sg);
 	});
 
 	cp.isChiral = cp.isChiral || this.isChiral;
@@ -1021,6 +1021,7 @@ export {
 	AtomList,
 	Bond,
 	SGroup,
+	SGroupForest,
 	RGroup,
 	RxnPlus,
 	RxnArrow

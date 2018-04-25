@@ -153,9 +153,9 @@ function loadSGroup(mol, sg, atomMap) {
 	}
 
 	if (sg.type === 'DAT')
-		mol.sGroupForest.insert(sg.id, -1, []);
+		mol.sGroupForest.insert(sg, -1, []);
 	else
-		mol.sGroupForest.insert(sg.id);
+		mol.sGroupForest.insert(sg);
 
 	return sg.id;
 }

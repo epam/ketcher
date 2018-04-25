@@ -368,8 +368,8 @@ function SGroupAddToHierarchy(sgid, parent, children) {
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
-		const sgid = this.data.sgid;
-		const relations = struct.sGroupForest.insert(sgid, parent, children);
+		const sg = struct.sgroups.get(this.data.sgid);
+		const relations = struct.sGroupForest.insert(sg, parent, children);
 
 		this.data.parent = relations.parent;
 		this.data.children = relations.children;

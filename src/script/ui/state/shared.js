@@ -16,6 +16,13 @@ export function onAction(action) {
 	};
 }
 
+export function loadStruct(struct) {
+	return (dispatch, getState) => {
+		const editor = getState().editor;
+		editor.struct(struct);
+	};
+}
+
 export function load(structStr, options) {
 	return (dispatch, getState) => {
 		const state = getState();

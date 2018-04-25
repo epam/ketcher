@@ -1,10 +1,48 @@
 import { ifDef } from '../../utils';
-
-import Atom from '../../../chem/struct/atom';
-import Bond from '../../../chem/struct/bond';
-import SGroup from '../../../chem/struct/sgroup';
+import Struct, { Atom, Bond, SGroup } from '../../../chem/struct';
 import Vec2 from '../../../util/vec2';
 
+
+export function moleculeToStruct(graphItem) {
+	const struct = new Struct();
+	graphItem.atoms.forEach(atom => struct.atoms.add(atomToStruct(atom)));
+
+	if (graphItem.bonds)
+		graphItem.bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)));
+
+	if (graphItem.sgroups) {
+		graphItem.sgroups.forEach(sgroup => struct.sgroups.add(sgroupToStruct(sgroup)));
+
+		if (graphItem.sgroups.forEach(sgroup => sgroup.type === 'MUL')) {
+			graphItem.atoms = collapseMulAtoms(graphItem.atoms);
+			graphItem.bonds = collapseMulBonds(graphItem.bonds, graphItem.atoms.map((a, i) => i));
+		}
+	}
+	struct.initHalfBonds();
+	struct.initNeighbors();
+	struct.markFragments();
+	return struct;
+}
+
+function collapseMulAtoms(atoms) {
+	return atoms
+		.reduce((acc, atom) => {
+			const atomInSameLocation = acc.find(elem =>
+				elem.location.x === atom.location.x &&
+				elem.location.y === atom.location.y &&
+				elem.location.z === atom.location.z);
+
+			if (!atomInSameLocation)
+				acc.push(atom);
+
+			return acc;
+		}, []);
+}
+
+function collapseMulBonds(bonds, atoms) {
+	return bonds
+		.filter(bond => atoms.includes(atoms[0]) && atoms.includes(bond.atoms[1]));
+}
 
 export function atomToStruct(source) {
 	const params = {};
@@ -43,13 +81,11 @@ export function bondToStruct(source) {
 
 	ifDef(params, 'type', source.type);
 	ifDef(params, 'topology', source.topology);
-	ifDef(params, 'center', source.center);
+	ifDef(params, 'reactingCenterStatus', source.center);
 	ifDef(params, 'stereo', source.stereo);
-	if (params.stereo)
-		params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
-
-	params.xxx = 0;
-
+	// if (params.stereo)
+	// 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
+	// params.xxx = 0;
 	ifDef(params, 'begin', source.atoms[0]);
 	ifDef(params, 'end', source.atoms[1]);
 
@@ -59,8 +95,8 @@ export function bondToStruct(source) {
 export function sgroupToStruct(source) {
 	const sgroup = new SGroup(source.type);
 
-	const normAtoms = source.atoms.map(aid => aid - 1);
-	const normPatoms = source.patoms ? source.patoms.map(aid => aid - 1) : null;
+	const normAtoms = source.atoms.map(aid => aid);
+	const normPatoms = source.patoms ? source.patoms.map(aid => aid) : null;
 
 	const fieldDisp = parseFieldDisp(source.fieldDisp);
 
@@ -98,16 +134,5 @@ function parseFieldDisp(fieldDisp) {
 		),
 		daspPos: parseInt(tokens[5])
 	};
-}
-
-export function rgroupLogicToStruct(rgnumber, rglogic) {
-	const params = {};
-
-	ifDef(params, 'number', rgnumber);
-	ifDef(params, 'range', rglogic.range);
-	ifDef(params, 'resth', rglogic.resth);
-	ifDef(params, 'ifthen', rglogic.ifthen);
-
-	return params;
 }
 

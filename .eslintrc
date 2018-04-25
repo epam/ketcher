@@ -51,7 +51,6 @@
     "radix": "off",
     "spaced-comment": ["error", "always", { "exceptions": ["*"] }],
     "unicode-bom": ["error", "never"],
-    "linebreak-style":"off",
     /* jsx */
     "react/jsx-first-prop-new-line": ["error", "multiline"],
     "react/jsx-indent": ["error", "tab"],

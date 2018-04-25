@@ -2,7 +2,8 @@ import Pile from '../../util/pile';
 import Struct from '../../chem/struct';
 import { moleculeToGraph } from './toGraph/moleculeToGraph';
 import { rgroupToGraph } from './toGraph/rgroupToGraph';
-import { atomToStruct, bondToStruct, sgroupToStruct, rgroupLogicToStruct } from './fromGraph/moleculeToStruct';
+import { moleculeToStruct } from './fromGraph/moleculeToStruct';
+import { rgroupToStruct } from './fromGraph/rgroupToStruct';
 
 function toGraph(struct) {
 	const result = {};
@@ -28,71 +29,24 @@ function toGraph(struct) {
 }
 
 function fromGraph(graph) {
-	const mol = /mol/i;
 	const structs = new Map();
-	for (const key in graph) {
-		if (mol.test(key)) {
-			const struct = new Struct();
-			graph[key].atoms.forEach(atom => struct.atoms.add(atomToStruct(atom)));
-
-			if (graph[key].bonds)
-				graph[key].bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)));
-
-			if (graph[key].sgroups) {
-				graph[key].sgroups.forEach(sgroup => struct.sgroups.add(sgroupToStruct(sgroup)));
-
-				if (graph[key].sgroups.forEach(sgroup => sgroup.type === 'MUL')) {
-					graph[key].atoms = collapseMulAtoms(graph.atoms);
-					graph[key].bonds = collapseMulBonds(graph.bonds, graph.atoms.map((a, i) => i));
-				}
-			}
-			struct.initHalfBonds();
-			struct.initNeighbors();
-			struct.markFragments();
-			structs.set(key, struct);
+	Object.keys(graph).forEach((key) => {
+		switch (graph[key].type) {
+		case 'molecule':
+			structs.set(key, moleculeToStruct(graph[key]));
+			break;
+		case 'rgroup':
+			structs.set(key, rgroupToStruct(graph[key]));
+			break;
+		default:
+			break;
 		}
-		const struct = new Struct();
-		graph[key].atoms.forEach(atom => struct.atoms.add(atomToStruct(atom)));
-
-		if (graph[key].bonds)
-			graph[key].bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)));
-
-		if (graph[key].sgroups) {
-			graph[key].sgroups.forEach(sgroup => struct.sgroups.add(sgroupToStruct(sgroup)));
-
-			if (graph[key].sgroups.forEach(sgroup => sgroup.type === 'MUL')) {
-				graph[key].atoms = collapseMulAtoms(graph.atoms);
-				graph[key].bonds = collapseMulBonds(graph.bonds, graph.atoms.map((a, i) => i));
-			}
-		}
-		if (graph[key].rlogic)
-			struct.rgroups.add(rgroupLogicToStruct(graph[key].rlogic.number, graph[key].rlogic));
-		struct.initHalfBonds();
-		struct.initNeighbors();
-		struct.markFragments();
-		structs.set(key, struct);
-	}
-	return structs;
-}
-
-function collapseMulAtoms(atoms) {
-	return atoms
-		.reduce((acc, atom) => {
-			const atomInSameLocation = acc.find(elem =>
-				elem.location.x === atom.location.x &&
-				elem.location.y === atom.location.y &&
-				elem.location.z === atom.location.z);
-
-			if (!atomInSameLocation)
-				acc.push(atom);
-
-			return acc;
-		}, []);
-}
-
-function collapseMulBonds(bonds, atoms) {
-	return bonds
-		.filter(bond => atoms.includes(atoms[0]) && atoms.includes(bond.atoms[1]));
+	});
+	const resultingStruct = new Struct();
+	structs.forEach((item) => {
+		item.mergeInto(resultingStruct);
+	});
+	return resultingStruct;
 }
 
 export default {

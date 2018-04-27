@@ -21,6 +21,7 @@ import scale from '../../util/scale';
 import Pile from '../../util/pile';
 import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
 import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReFrag, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct';
+import ReEnhancedFlag from '../../render/restruct/reEnhancedFlag';
 
 var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
 DEBUG.logMethod = function () { };
@@ -78,6 +79,13 @@ function AtomAdd(atom, pos) {
 		restruct.markAtom(this.data.aid, 1);
 
 		struct.atomSetPos(this.data.aid, new Vec2(this.data.pos));
+		// TODO: - here
+		if (atom.label === 'O') {
+			const bb = struct.getFragment(atomData.a.fragment).getCoordBoundingBox();
+			restruct.enhancedFlags.set(atomData.a.fragment, new ReEnhancedFlag('ATOM O', new Vec2(bb.max.x, bb.min.y - 1)))
+
+			restruct.markItem('enhancedFlags', atomData.a.fragment, 1);
+		}
 
 		const arrow = struct.rxnArrows.get(0);
 		if (arrow) {
@@ -114,6 +122,9 @@ function AtomDelete(aid) {
 		restruct.atoms.delete(this.data.aid);
 		restruct.markItemRemoved();
 
+		// TODO: - here
+
+
 		struct.atoms.delete(this.data.aid);
 	};
 
@@ -138,6 +149,9 @@ function AtomAttr(aid, attribute, value) {
 				value: atom[this.data.attribute]
 			};
 		}
+
+		// TODO: - here
+
 
 		atom[this.data.attribute] = this.data.value;
 		invalidateAtom(restruct, this.data.aid);
@@ -540,7 +554,10 @@ function FragmentAdd(frid) {
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
-		const frag = {};
+		const frag = {
+			enhancedFlag: 'AddFrag' + this.frid
+		};
+		// TODO: - here
 
 		if (this.frid === null)
 			this.frid = struct.frags.add(frag);
@@ -548,6 +565,12 @@ function FragmentAdd(frid) {
 			struct.frags.set(this.frid, frag);
 
 		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+		//
+		// if (frag.enhancedFlag) {
+		// 	const bb = struct.getFragment(this.frid).getCoordBoundingBox();
+		// 	restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag(frag.enhancedFlag, new Vec2(bb.max.x, bb.min.y - 1)))
+		// 	restruct.markItem('enhancedFlags', this.frid, 1);
+		// }
 	};
 
 	this.invert = function () {
@@ -564,6 +587,8 @@ function FragmentDelete(frid) {
 		invalidateItem(restruct, 'frags', this.frid, 1);
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
+
+		restruct.enhancedFlags.delete(this.frid);
 	};
 
 	this.invert = function () {

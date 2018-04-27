@@ -35,6 +35,7 @@ import ReFrag from './refrag';
 import ReRGroup from './rergroup';
 import ReDataSGroupData from './redatasgroupdata';
 import ReChiralFlag from './rechiralflag';
+import ReEnhancedFlag from './reEnhancedFlag';
 import ReSGroup from './resgroup';
 import ReLoop from './reloop';
 
@@ -49,16 +50,17 @@ var LAYER_MAP = {
 
 function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	this.render = render;
-	this.atoms = new Pool();
-	this.bonds = new Pool();
-	this.reloops = new Pool();
-	this.rxnPluses = new Pool();
-	this.rxnArrows = new Pool();
+	this.atoms = new Map();
+	this.bonds = new Map();
+	this.reloops = new Map();
+	this.rxnPluses = new Map();
+	this.rxnArrows = new Map();
 	this.frags = new Pool();
-	this.rgroups = new Pool();
-	this.sgroups = new Pool();
-	this.sgroupData = new Pool();
-	this.chiralFlags = new Pool();
+	this.rgroups = new Map();
+	this.sgroups = new Map();
+	this.sgroupData = new Map();
+	this.chiralFlags = new Map();
+	this.enhancedFlags = new Map();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
 	this.layers = [];
@@ -83,7 +85,13 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 
 	molecule.rxnArrows.forEach((item, id) => { this.rxnArrows.set(id, new ReRxnArrow(item)); });
 
-	molecule.frags.forEach((item, id) => { this.frags.set(id, new ReFrag(item)); });
+	molecule.frags.forEach((item, id) => {
+		this.frags.set(id, new ReFrag(item));
+		if (item.enhancedFlag) {
+			const bb = molecule.getCoordBoundingBox();
+			this.enhancedFlags.set(id, new ReEnhancedFlag(item.enhancedFlag, new Vec2(bb.max.x, bb.min.y - 1)))
+		}
+	});
 
 	molecule.rgroups.forEach((item, id) => { this.rgroups.set(id, new ReRGroup(item)); });
 
@@ -93,10 +101,10 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	});
 
-	if (molecule.isChiral) {
-		var bb = molecule.getCoordBoundingBox();
-		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
-	}
+// 	if (molecule.isChiral) {
+// 		var bb = molecule.getCoordBoundingBox();
+// 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
+// 	}
 }
 
 /**
@@ -255,6 +263,8 @@ ReStruct.prototype.markItem = function (map, id, mark) {
 
 	mapChanged.set(id, value);
 
+	console.log("??????????", map + 'Changed', mapChanged);
+
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
 };
@@ -346,7 +356,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	// check items to update
 	Object.keys(ReStruct.maps).forEach((map) => {
 		const mapChanged = this[map + 'Changed'];
-
+		console.log(map + 'Changed', mapChanged);
 		if (force) {
 			this[map].forEach((item, id) => mapChanged.set(id, 1));
 		} else {
@@ -424,7 +434,8 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 
 	this.showFragments();
 	this.showRGroups();
-	this.showChiralFlags();
+// 	this.showChiralFlags();
+	this.showEnhancedFlags();
 	this.clearMarks();
 	return true;
 };
@@ -533,15 +544,28 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 	});
 };
 
-ReStruct.prototype.showChiralFlags = function () { // eslint-disable-line max-statements
+// ReStruct.prototype.showChiralFlags = function () { // eslint-disable-line max-statements
+// 	const options = this.render.options;
+//
+// 	if (this.render.options.hideChiralFlag !== true) {
+// 		this.chiralFlagsChanged.forEach((value, chid) => {
+// 			const flag = this.chiralFlags.get(chid);
+// 			flag.show(this, chid, options);
+// 		});
+// 	}
+// };
+
+ReStruct.prototype.showEnhancedFlags = function () {
 	const options = this.render.options;
 
-	if (this.render.options.hideChiralFlag !== true) {
-		this.chiralFlagsChanged.forEach((value, chid) => {
-			const flag = this.chiralFlags.get(chid);
+	console.log("!!", this.enhancedFlagsChanged);
+
+// 	if (this.render.options.hideChiralFlag !== true) {
+		this.enhancedFlagsChanged.forEach((value, chid) => {
+			const flag = this.enhancedFlags.get(chid);
 			flag.show(this, chid, options);
 		});
-	}
+// 	}
 };
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements
@@ -599,6 +623,7 @@ ReStruct.maps = {
 	rgroups: ReRGroup,
 	sgroupData: ReDataSGroupData,
 	chiralFlags: ReChiralFlag,
+	enhancedFlags: ReEnhancedFlag,
 	sgroups: ReSGroup,
 	reloops: ReLoop
 };
@@ -612,5 +637,6 @@ export {
 	ReFrag,
 	ReRGroup,
 	ReChiralFlag,
+	ReEnhancedFlag,
 	ReSGroup
 };

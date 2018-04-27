@@ -603,7 +603,9 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
  * @param idSet { Pile<number> }
  */
 Struct.prototype.markFragment = function (idSet) {
-	const frag = {};
+	const frag = {
+		enhancedFlag: 'Hello, Vasya'
+	};
 	const fid = this.frags.add(frag);
 
 	idSet.forEach((aid) => {

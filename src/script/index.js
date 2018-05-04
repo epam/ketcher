@@ -102,6 +102,8 @@ const buildInfo = {
 	buildNumber: '__BUILD_NUMBER__' || null
 };
 
+import validateGraphF from './format/graphValidator'; // eslint-disable-line
+
 const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi-assign
 	getSmiles,
 	saveSmiles,
@@ -110,7 +112,11 @@ const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi
 	addFragment,
 	showMolfile,
 
-	toGraph: () => graph.toGraph(ketcher.editor.render.ctab.molecule),
+	toGraph: () => {
+		const j = graph.toGraph(ketcher.editor.render.ctab.molecule);
+		validateGraphF(j);
+		return j;
+	},
 	fromGraph: () => graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule)),
 	loadStruct: () => {
 		const struct = graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule));

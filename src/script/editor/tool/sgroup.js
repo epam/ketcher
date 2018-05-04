@@ -19,7 +19,7 @@ import isEqual from 'lodash/fp/isEqual';
 import { SgContexts } from '../shared/constants';
 
 import Pile from '../../util/pile';
-import { SGroup } from '../../chem/struct';
+import { checkOverlapping } from '../../chem/struct/sgforest';
 import LassoHelper from './helper/lasso';
 import { fromSgroupDeletion, fromSeveralSgroupAddition, fromSgroupAction } from '../actions/sgroup';
 
@@ -252,23 +252,6 @@ function countOfSelectedComponents(restruct, atoms) {
 
 	return Array.from(restruct.connectedComponents.values())
 		.reduce((acc, component) => acc + (atomSet.isSuperset(component) ? 1 : 0), 0);
-}
-
-function checkOverlapping(struct, atoms) {
-	const sgroups = atoms.reduce((res, aid) => {
-		const atom = struct.atoms.get(aid);
-		return res.union(atom.sgs);
-	}, new Pile());
-
-	return Array.from(sgroups).some((sid) => {
-		const sg = struct.sgroups.get(sid);
-		if (sg.type === 'DAT') return false;
-		const sgAtoms = SGroup.getAtoms(struct, sg);
-
-		return (sgAtoms.length < atoms.length) ?
-			sgAtoms.findIndex(aid => (atoms.indexOf(aid) === -1)) >= 0 :
-			atoms.findIndex(aid => (sgAtoms.indexOf(aid) === -1)) >= 0;
-	});
 }
 
 export default SGroupTool;

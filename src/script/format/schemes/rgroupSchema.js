@@ -31,7 +31,9 @@ const rgroupSchema = {
 	type: 'object',
 	allOf: [
 		{
+			required: ['type'],
 			properties: {
+				type: { enum: ['rgroup'] },
 				rlogic: { $ref: '#/logic' }
 			}
 		},
@@ -41,4 +43,4 @@ const rgroupSchema = {
 	logic: rgroupLogic
 };
 
-module.exports = rgroupSchema;
+export default rgroupSchema;

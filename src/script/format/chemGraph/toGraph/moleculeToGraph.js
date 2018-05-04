@@ -4,15 +4,19 @@ import { fromRlabel } from '../convertStruct';
 import { ifDef } from '../../utils';
 
 export function moleculeToGraph(struct) {
-// 	const structToSave = struct.clone(); // reindex atoms
 	const header = {
 		type: 'molecule'
-		// moleculeName: struct.name
 	};
+	const headerSchema = structSchema.header.properties;
+	ifDef(header, 'moleculeName', struct.name, headerSchema.moleculeName.default);
 
 	const body = {
 		atoms: Array.from(struct.atoms.values())
-			.map(atom => (atom.label === 'R#' ? rglabelToGraph(atom) : atomToGraph(atom)))
+			.map((atom) => {
+				if (atom.label === 'R#') return rglabelToGraph(atom);
+				if (atom.label === 'L#') return atomListToGraph(atom);
+				return atomToGraph(atom);
+			})
 	};
 
 	if (struct.bonds.size !== 0)
@@ -57,13 +61,27 @@ function atomToGraph(source) {
 }
 
 function rglabelToGraph(source) {
+	const schema = structSchema.rgatom.properties;
 	const result = {
 		type: 'rg-label'
 	};
 	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
+	ifDef(result, 'attachmentPoints', source.attpnt, schema.attachmentPoints.default);
 
 	const refsToRGroups = fromRlabel(source.rglabel).map(rgnumber => `rg-${rgnumber}`);
 	ifDef(result, '$refs', refsToRGroups);
+
+	return result;
+}
+
+function atomListToGraph(source) {
+	const schema = structSchema.atomlist.properties;
+	const result = {
+		type: 'atom-list'
+	};
+	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
+	ifDef(result, 'attachmentPoints', source.attpnt, schema.attachmentPoints.default);
+	ifDef(result, 'elements', source.atomList.labelList());
 
 	return result;
 }
@@ -90,49 +108,32 @@ function sgroupToGraph(source) {
 	ifDef(result, 'atoms', source.atoms);
 
 	switch (source.type) {
-	case 'GEN':	break;
-	case 'MUL': {
-		schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
-		ifDef(result, 'mul', source.data.mul || schema.mul.default);
-		break;
+		case 'GEN': break;
+		case 'MUL': {
+			schema = structSchema.sgroup.allOf[1].oneOf[1].properties;
+			ifDef(result, 'mul', source.data.mul || schema.mul.default);
+			break;
+		}
+		case 'SRU': {
+			schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
+			ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
+			ifDef(result, 'connectivity', source.data.connectivity.toUpperCase() || schema.connectivity.default);
+			break;
+		}
+		case 'SUP': {
+			schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
+			ifDef(result, 'name', source.data.name || schema.name.default);
+			break;
+		}
+		case 'DAT': {
+			schema = structSchema.sgroup.allOf[1].oneOf[4].properties;
+			ifDef(result, 'context', source.data.context, schema.context.default);
+			ifDef(result, 'fieldName', source.data.fieldName);
+			ifDef(result, 'fieldData', source.data.fieldValue);
+		}
+		default: break;
 	}
-	case 'SRU': {
-		schema = structSchema.sgroup.allOf[1].oneOf[2].properties;
-		ifDef(result, 'subscript', source.data.subscript || schema.subscript.default);
-		ifDef(result, 'connectivity', source.data.connectivity.toUpperCase() || schema.connectivity.default);
-		break;
-	}
-	case 'SUP': {
-		schema = structSchema.sgroup.allOf[1].oneOf[3].properties;
-		ifDef(result, 'name', source.data.name || schema.name.default);
-		break;
-	}
-	default: break;
-	}
-
-	//	type = DAT
-	// 	ifDef(result, 'fieldName', source.data.fieldName);
-	// 	ifDef(result, 'fieldData', source.data.fieldValue);//
-	// 	ifDef(result, 'query', source.data.query, '');
-	// 	ifDef(result, 'queryOp', source.data.queryOp, '');
 
 	return result;
 // 	return schemify(result, structSchema.sgroup);
 }
-
-/* eslint-disable */
-
-//
-// function composeFieldDisp(pp, data) {
-// 	const buttons = `${data.attached ? 'A' : 'D'}${data.absolute ? 'A' : 'R'}${data.showUnits ? 'U' : ' '}`;
-// 	const nCharnCharsToDisplay = data.nCharnCharsToDisplay >= 0 ? data.nCharnCharsToDisplay : 'ALL';
-// 	const tagChar = (data.tagChar && data.tagChar) === '' ? 1 : data.tagChar;
-//
-// 	return `  ${pp.x.toFixed(4)}    ${(-pp.y).toFixed(4)}    ${buttons}   ${nCharnCharsToDisplay}  ${tagChar}       ${data.daspPos}  `;
-// }
-//
-// export function rgroupToSchema(source) {
-// 	return {
-// 		rlogic: source.getAttrs()
-// 	}
-// }

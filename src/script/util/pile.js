@@ -26,17 +26,6 @@ class Pile extends Set {
 		return null;
 	}
 
-	intersection(setB) {
-		const intersection = new Pile();
-
-		for (const item of setB) {
-			if (this.has(item))
-				intersection.add(item);
-		}
-
-		return intersection;
-	}
-
 	equals(setB) {
 		return this.isSuperset(setB) && setB.isSuperset(this);
 	}

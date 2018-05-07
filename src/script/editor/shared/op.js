@@ -19,7 +19,7 @@
 import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import Pile from '../../util/pile';
-import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
+import { Atom, Bond, Fragment, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
 import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReFrag, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct';
 import ReEnhancedFlag from '../../render/restruct/reEnhancedFlag';
 
@@ -549,15 +549,28 @@ function BondAttr(bid, attribute, value) {
 }
 BondAttr.prototype = new Base();
 
+// function EnhancedFlag(frid, pos, flag) {
+// 	this.data = { frid, pos, flag };
+//
+// 	this.execute = function (restruct) {
+// 		const struct = restruct.molecule;
+//
+// 		const frag = struct.frags.get(frid);
+//
+// 	};
+//
+// 	this.invert = function () {
+//
+// 	};
+// }
+// EnhancedFlag.prototype = new Base();
+
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
-		const frag = {
-			enhancedFlag: 'AddFrag' + this.frid
-		};
-		// TODO: - here
+		const frag = new Fragment();
 
 		if (this.frid === null)
 			this.frid = struct.frags.add(frag);
@@ -588,7 +601,7 @@ function FragmentDelete(frid) {
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
 
-		restruct.enhancedFlags.delete(this.frid);
+		// restruct.enhancedFlags.delete(this.frid);
 	};
 
 	this.invert = function () {

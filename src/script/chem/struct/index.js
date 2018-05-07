@@ -24,6 +24,7 @@ import element from '../element';
 import Atom, { radicalElectrons } from './atom';
 import AtomList from './atomlist';
 import Bond from './bond';
+import Fragment from './fragment';
 import SGroup from './sgroup';
 import RGroup from './rgroup';
 import SGroupForest from './sgforest';
@@ -121,7 +122,6 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	});
 
 	const fidMask = new Pile();
-
 	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid))
 			fidMask.add(atom.fragment);
@@ -130,7 +130,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	const fidMap = new Map();
 	this.frags.forEach((frag, fid) => {
 		if (fidMask.has(fid))
-			fidMap.set(fid, cp.frags.add(Object.assign({}, frag)));
+			fidMap.set(fid, cp.frags.add(null));
 	});
 
 	const rgroupsIds = [];
@@ -168,6 +168,10 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1)
 			aidMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
+	});
+
+	fidMap.forEach((newfid, oldfid) => {
+		cp.frags.set(newfid, this.frags.get(oldfid).clone(aidMap));	// clone Fragments
 	});
 
 	const bidMap = new Map();
@@ -1022,6 +1026,7 @@ export {
 	Atom,
 	AtomList,
 	Bond,
+	Fragment,
 	SGroup,
 	SGroupForest,
 	RGroup,

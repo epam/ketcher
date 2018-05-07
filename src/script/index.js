@@ -112,6 +112,7 @@ const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi
 	addFragment,
 	showMolfile,
 
+	// TODO: remove it
 	toGraph: () => {
 		const j = graph.toGraph(ketcher.editor.render.ctab.molecule);
 		validateGraphF(j);

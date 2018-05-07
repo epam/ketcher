@@ -4,6 +4,7 @@ import { rgroupToGraph } from './toGraph/rgroupToGraph';
 import { moleculeToStruct } from './fromGraph/moleculeToStruct';
 import { rgroupToStruct } from './fromGraph/rgroupToStruct';
 import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph';
+import { rxnToStruct } from './fromGraph/rxnToStruct';
 
 import { prepareStructForGraph } from './toGraph/prepare';
 
@@ -46,41 +47,34 @@ function toGraph(struct) {
 
 function fromGraph(graph) {
 	const structs = new Map();
-	structs.rxnArrows = [];
-	structs.rxnPluses = [];
+	const resultingStruct = new Struct();
 	const nodes = graph.root.nodes;
-	Object.keys(graph).forEach((key) => {
-		switch (graph[key].type) {
-			case 'molecule':
-				structs.set(key, moleculeToStruct(graph[key]));
+	Object.keys(nodes).forEach((i) => {
+		const key = nodes[i].$ref;
+		switch (nodes[i].type) {
+			case 'arrow':
+				rxnToStruct(nodes[i], resultingStruct);
 				break;
-			case 'rgroup':
-				structs.set(key, rgroupToStruct(graph[key]));
+			case 'plus':
+				rxnToStruct(nodes[i], resultingStruct);
 				break;
 			default:
-				if (nodes) {
-					Object.keys(nodes).forEach((i) => {
-						switch (nodes[i].type) {
-							case 'arrow':
-								structs.rxnArrows.push(nodes[i]);
-								break;
-							case 'plus':
-								structs.rxnPluses.push(nodes[i]);
-								break;
-							default:
-								break;
-						}
-					});
+				switch (graph[key].type) {
+					case 'molecule':
+						structs.set(key, moleculeToStruct(graph[key]));
+						break;
+					case 'rgroup':
+						structs.set(key, rgroupToStruct(graph[key]));
+						break;
+					default:
+						break;
 				}
 				break;
 		}
 	});
-	const resultingStruct = new Struct();
 	structs.forEach((item) => {
 		item.mergeInto(resultingStruct);
 	});
-	resultingStruct.rxnArrows = structs.rxnArrows;
-	resultingStruct.rxnPluses = structs.rxnPluses;
 	return resultingStruct;
 }
 

@@ -10,6 +10,12 @@ export function moleculeToGraph(struct) {
 	const headerSchema = structSchema.header.properties;
 	ifDef(header, 'moleculeName', struct.name, headerSchema.moleculeName.default);
 
+	const fragment = struct.frags.get(0);
+	const stereoChemistry = {
+		flag: fragment.enhancedStereoFlag,
+		atoms: fragment.getStereoCollections()
+	};
+
 	const body = {
 		atoms: Array.from(struct.atoms.values())
 			.map((atom) => {
@@ -27,6 +33,7 @@ export function moleculeToGraph(struct) {
 
 	return {
 		...header,
+		stereoChemistry,
 		...body
 	};
 }

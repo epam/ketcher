@@ -425,6 +425,21 @@ const sgroup = {
 	]
 };
 
+const stereoChemistry = {
+	title: 'Bond',
+	type: 'object',
+	required: ['flag'],
+	properties: {
+		flag: {
+			enum: [null, 'ABS', 'AND', 'OR', 'Mixed'],
+			default: null
+		},
+		atoms: {
+			type: 'object'
+		}
+	}
+};
+
 const moleculeSchema = {
 	id: '/Molecule',
 	type: 'object',
@@ -432,6 +447,7 @@ const moleculeSchema = {
 		{ $ref: '#/header' },
 		{
 			properties: {
+				stereoChemistry: { $ref: '#/stereoChemistry' },
 				atoms: {
 					title: 'Atoms',
 					type: 'array',
@@ -462,7 +478,8 @@ const moleculeSchema = {
 	atomlist,
 	rgatom,
 	bond,
-	sgroup
+	sgroup,
+	stereoChemistry
 };
 
 export default moleculeSchema;

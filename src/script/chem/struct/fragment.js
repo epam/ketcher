@@ -56,12 +56,11 @@ Fragment.prototype.getStereoCollections = function () {
 	Object.keys(this.stereoAtoms).forEach((type) => {
 		const col = this.stereoAtoms[type];
 		if (col.size === 0) return;
-		stereoCollections[type] = new Map();
 		this.stereoAtoms[type].forEach((number, aid) => {
-			if (!stereoCollections[type].has(number))
-				stereoCollections[type].set(number, [aid]);
+			if (!stereoCollections[type + number])
+				stereoCollections[type + number] = [aid];
 			else
-				stereoCollections[type].get(number).push(aid);
+				stereoCollections[type + number].push(aid);
 		});
 	});
 

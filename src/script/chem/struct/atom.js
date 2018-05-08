@@ -56,6 +56,9 @@ function Atom(params) { // eslint-disable-line max-statements
 	ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
 	ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
+	// stereo
+	ifDef(this, params, 'stereoParity', def('stereoParity'));
+
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
@@ -105,7 +108,8 @@ Atom.attrlist = {
 	exactChangeFlag: 0,
 	rglabel: null,
 	attpnt: null,
-	aam: 0
+	aam: 0,
+	stereoParity: 0
 };
 
 export function radicalElectrons(radical) {

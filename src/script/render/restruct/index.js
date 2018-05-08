@@ -87,9 +87,9 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 
 	molecule.frags.forEach((item, id) => {
 		this.frags.set(id, new ReFrag(item));
-		if (item.enhancedFlag) {
+		if (item.enhancedStereoFlag) {
 			const bb = molecule.getCoordBoundingBox();
-			this.enhancedFlags.set(id, new ReEnhancedFlag(item.enhancedFlag, new Vec2(bb.max.x, bb.min.y - 1)))
+			this.enhancedFlags.set(id, new ReEnhancedFlag(item.enhancedStereoFlag, new Vec2(bb.max.x, bb.min.y - 1)));
 		}
 	});
 
@@ -263,7 +263,7 @@ ReStruct.prototype.markItem = function (map, id, mark) {
 
 	mapChanged.set(id, value);
 
-	console.log("??????????", map + 'Changed', mapChanged);
+	// console.log("??????????", map + 'Changed', mapChanged);
 
 	if (this[map].has(id))
 		this.clearVisel(this[map].get(id).visel);
@@ -356,7 +356,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 	// check items to update
 	Object.keys(ReStruct.maps).forEach((map) => {
 		const mapChanged = this[map + 'Changed'];
-		console.log(map + 'Changed', mapChanged);
+		// console.log(map + 'Changed', mapChanged);
 		if (force) {
 			this[map].forEach((item, id) => mapChanged.set(id, 1));
 		} else {
@@ -434,7 +434,7 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 
 	this.showFragments();
 	this.showRGroups();
-// 	this.showChiralFlags();
+	// 	this.showChiralFlags();
 	this.showEnhancedFlags();
 	this.clearMarks();
 	return true;
@@ -558,14 +558,12 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 ReStruct.prototype.showEnhancedFlags = function () {
 	const options = this.render.options;
 
-	console.log("!!", this.enhancedFlagsChanged);
+	// console.log("!!", this.enhancedFlagsChanged);
 
-// 	if (this.render.options.hideChiralFlag !== true) {
-		this.enhancedFlagsChanged.forEach((value, chid) => {
-			const flag = this.enhancedFlags.get(chid);
-			flag.show(this, chid, options);
-		});
-// 	}
+	this.enhancedFlagsChanged.forEach((value, chid) => {
+		const flag = this.enhancedFlags.get(chid);
+		flag.show(this, chid, options);
+	});
 };
 
 ReStruct.prototype.showBonds = function () { // eslint-disable-line max-statements

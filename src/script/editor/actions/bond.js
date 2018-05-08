@@ -67,6 +67,9 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 		action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct));
 	}
 
+	if (bond.stereo > 0)
+		action.addOp(new op.UpdateStereoAtom(begin, { type: 'abs' }).perform(restruct));
+
 	const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
 	action.operations.reverse();
 
@@ -74,10 +77,11 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 }
 
 export function fromBondDeletion(restruct, id) {
-	var action = new Action();
-	var bond = restruct.molecule.bonds.get(id);
-	var frid = restruct.molecule.atoms.get(bond.begin).fragment;
-	var atomsToRemove = [];
+	let action = new Action();
+	const bond = restruct.molecule.bonds.get(id);
+	const batom = restruct.molecule.atoms.get(bond.begin);
+	const frid = batom.fragment;
+	const atomsToRemove = [];
 
 	action.addOp(new op.BondDelete(id));
 

@@ -79,13 +79,6 @@ function AtomAdd(atom, pos) {
 		restruct.markAtom(this.data.aid, 1);
 
 		struct.atomSetPos(this.data.aid, new Vec2(this.data.pos));
-		// TODO: - here
-		if (atom.label === 'O') {
-			const bb = struct.getFragment(atomData.a.fragment).getCoordBoundingBox();
-			restruct.enhancedFlags.set(atomData.a.fragment, new ReEnhancedFlag('ATOM O', new Vec2(bb.max.x, bb.min.y - 1)))
-
-			restruct.markItem('enhancedFlags', atomData.a.fragment, 1);
-		}
 
 		const arrow = struct.rxnArrows.get(0);
 		if (arrow) {
@@ -151,7 +144,6 @@ function AtomAttr(aid, attribute, value) {
 		}
 
 		// TODO: - here
-
 
 		atom[this.data.attribute] = this.data.value;
 		invalidateAtom(restruct, this.data.aid);
@@ -549,21 +541,42 @@ function BondAttr(bid, attribute, value) {
 }
 BondAttr.prototype = new Base();
 
-// function EnhancedFlag(frid, pos, flag) {
-// 	this.data = { frid, pos, flag };
-//
-// 	this.execute = function (restruct) {
-// 		const struct = restruct.molecule;
-//
-// 		const frag = struct.frags.get(frid);
-//
-// 	};
-//
-// 	this.invert = function () {
-//
-// 	};
-// }
-// EnhancedFlag.prototype = new Base();
+function UpdateStereoAtom(aid, stereoMark) {
+	this.data = { aid, stereoMark };
+	this.data2 = null;
+
+	this.execute = function (restruct) {
+		const struct = restruct.molecule;
+		const atom = struct.atoms.get(this.data.aid);
+		const frag = struct.frags.get(atom.fragment);
+		if (!this.data2) {
+			this.data2 = {
+				aid: this.data.aid,
+				stereoMark: frag.getStereoAtomMark(this.data.aid)
+			};
+		}
+
+		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
+
+		// TODO: ref
+		const bb = struct.getFragment(atom.fragment).getCoordBoundingBox();
+		// restruct.clearVisel(restruct.enhancedFlags.get(atom.fragment).visel);
+		restruct.enhancedFlags.set(
+			atom.fragment,
+			new ReEnhancedFlag(frag.enhancedStereoFlag,	new Vec2(bb.max.x, bb.min.y - 1))
+		);
+		restruct.markItem('enhancedFlags', atom.fragment, 1);
+		//
+	};
+
+	this.invert = function () {
+		const ret = new UpdateStereoAtom();
+		ret.data = this.data2;
+		ret.data2 = this.data;
+		return ret;
+	};
+}
+UpdateStereoAtom.prototype = new Base();
 
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
@@ -578,12 +591,6 @@ function FragmentAdd(frid) {
 			struct.frags.set(this.frid, frag);
 
 		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
-		//
-		// if (frag.enhancedFlag) {
-		// 	const bb = struct.getFragment(this.frid).getCoordBoundingBox();
-		// 	restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag(frag.enhancedFlag, new Vec2(bb.max.x, bb.min.y - 1)))
-		// 	restruct.markItem('enhancedFlags', this.frid, 1);
-		// }
 	};
 
 	this.invert = function () {
@@ -600,8 +607,6 @@ function FragmentDelete(frid) {
 		invalidateItem(restruct, 'frags', this.frid, 1);
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
-
-		// restruct.enhancedFlags.delete(this.frid);
 	};
 
 	this.invert = function () {
@@ -1132,5 +1137,6 @@ export default {
 	ChiralFlagDelete,
 	ChiralFlagMove,
 	UpdateIfThen,
+	UpdateStereoAtom,
 	AlignDescriptors
 };

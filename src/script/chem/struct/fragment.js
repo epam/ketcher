@@ -28,8 +28,8 @@ Fragment.prototype.updateStereoFlag = function (flag) {
 		this.enhancedStereoFlag = null;
 };
 
-Fragment.prototype.updateStereoAtom = function (aid, stereoLabel) {
-	const { type, number = 0 } = stereoLabel;
+Fragment.prototype.updateStereoAtom = function (aid, stereoMark) {
+	const { type, number = 0 } = stereoMark;
 
 	if (type) this.stereoAtoms[type].set(aid, number);
 
@@ -38,6 +38,16 @@ Fragment.prototype.updateStereoAtom = function (aid, stereoLabel) {
 	if (type !== 'or' && this.stereoAtoms.or.has(aid)) this.stereoAtoms.or.delete(aid);
 
 	this.updateStereoFlag();
+};
+
+Fragment.prototype.getStereoAtomMark = function (aid) {
+	const marks = this.stereoAtoms;
+
+	if (marks.abs.has(aid)) return { type: 'abs', number: marks.abs.get(aid) };
+	if (marks.and.has(aid)) return { type: 'and', number: marks.and.get(aid) };
+	if (marks.or.has(aid)) return { type: 'or', number: marks.or.get(aid) };
+
+	return { type: null };
 };
 
 Fragment.prototype.getStereoCollections = function () {

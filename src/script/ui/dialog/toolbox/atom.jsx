@@ -79,6 +79,7 @@ function Atom(props) {
 					<Field name="invRet" />
 					<Field name="exactChangeFlag" />
 				</fieldset>
+				PARITY: { props.stereoParity }
 			</Form>
 		</Dialog>
 	);

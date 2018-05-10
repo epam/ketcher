@@ -88,6 +88,13 @@ Atom.PATTERN =
 		SINGLET: 1,
 		DOUPLET: 2,
 		TRIPLET: 3
+	},
+	STEREO_PARITY:
+	{
+		NONE: 0,
+		ODD: 1,
+		EVEN: 2,
+		EITHER: 3
 	}
 };
 

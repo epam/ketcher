@@ -82,7 +82,8 @@ function fromAtom(satom) {
 		ringBondCount: satom.ringBondCount,
 		substitutionCount: satom.substitutionCount,
 		unsaturatedAtom: !!satom.unsaturatedAtom,
-		hCount: satom.hCount
+		hCount: satom.hCount,
+		stereoParity: satom.stereoParity
 	};
 }
 

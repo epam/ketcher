@@ -142,6 +142,7 @@ function processAtom(restruct, aid, frid, newfrid) {
  */
 // TODO [RB] the thing is too tricky :) need something else in future
 export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
+	// TODO: ???? WTF
 	var action = new Action();
 	var rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
@@ -201,7 +202,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 
 	selection.bonds.forEach((bid) => {
 		action.addOp(new op.BondDelete(bid));
-
+		// TODO fromBondDeletion??
 		const bond = restruct.molecule.bonds.get(bid);
 		const frid = restruct.molecule.atoms.get(bond.begin).fragment;
 		if (frids.indexOf(frid) < 0)

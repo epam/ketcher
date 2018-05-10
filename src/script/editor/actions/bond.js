@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from '../../chem/struct';
+import { Atom, Bond } from '../../chem/struct';
 
 import op from '../shared/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
-import { atomGetAttr, atomForNewBond, atomGetDegree } from './utils';
+import { atomGetAttr, atomForNewBond, atomGetDegree, atomGetNeighbors } from './utils';
 import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromFragmentSplit } from './fragment';
@@ -67,10 +67,10 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 		action.addOp(new op.AtomAttr(end, 'label', 'C').perform(restruct));
 	}
 
-	if (bond.stereo > 0)
-		action.addOp(new op.UpdateStereoAtom(begin, { type: 'abs' }).perform(restruct));
-
 	const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
+
+	if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid).perform(restruct));
+
 	action.operations.reverse();
 
 	return [action, begin, end, bid];
@@ -79,10 +79,10 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 export function fromBondDeletion(restruct, id) {
 	let action = new Action();
 	const bond = restruct.molecule.bonds.get(id);
-	const batom = restruct.molecule.atoms.get(bond.begin);
-	const frid = batom.fragment;
+	const frid = restruct.molecule.atoms.get(bond.begin).fragment;
 	const atomsToRemove = [];
 
+	action.mergeWith(fromBondStereoUpdate(restruct, id, true));
 	action.addOp(new op.BondDelete(id));
 
 	if (atomGetDegree(restruct, bond.begin) === 1) {
@@ -124,11 +124,13 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
 				return;
 
 			const value = (key in attrs) ? attrs[key] : Bond.attrGetDefault(key);
-			action.addOp(new op.BondAttr(bid, key, value));
+			action.addOp(new op.BondAttr(bid, key, value).perform(restruct));
+			if (key in attrs && key === 'stereo')
+				action.mergeWith(fromBondStereoUpdate(restruct, bid).perform(restruct));
 		});
 	});
 
-	return action.perform(restruct);
+	return action;
 }
 
 /**
@@ -166,6 +168,48 @@ function fromBondFlipping(restruct, id) {
 	action.addOp(new op.BondDelete(id));
 	action.addOp(new op.BondAdd(bond.end, bond.begin, bond)).data.bid = id;
 	return action.perform(restruct);
+}
+
+function fromBondStereoUpdate(restruct, bid, isDeleted) {
+	let bond = restruct.molecule.bonds.get(bid);
+
+	// 	const batom = restruct.molecule.atoms.get(bond.begin);
+	const action = new Action();
+
+	if (isDeleted || bond.stereo === Bond.PATTERN.STEREO.NONE) {
+		const neigs = atomGetNeighbors(restruct, bond.begin);
+		const stereoNeig = neigs
+			.find(item => item.bid !== bid && restruct.molecule.bonds.get(item.bid).stereo > 0);
+		if (neigs.length < 3 || !stereoNeig) {
+			action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', Atom.PATTERN.STEREO_PARITY.NONE));
+			action.addOp(new op.UpdateStereoAtom(bond.begin, { type: null }));
+			return action;
+		}
+		bond = restruct.molecule.bonds.get(stereoNeig.bid);
+	}
+
+	// 	if (bond.stereo !== Bond.PATTERN.STEREO.NONE &&
+	// 		batom.stereoParity !== Atom.PATTERN.STEREO_PARITY.NONE) return action;
+
+	let newAtomParity = null;
+	switch (bond.stereo) {
+	case Bond.PATTERN.STEREO.UP:
+		newAtomParity = Atom.PATTERN.STEREO_PARITY.ODD;
+		break;
+	case Bond.PATTERN.STEREO.EITHER:
+		newAtomParity = Atom.PATTERN.STEREO_PARITY.EITHER;
+		break;
+	case Bond.PATTERN.STEREO.DOWN:
+		newAtomParity = Atom.PATTERN.STEREO_PARITY.EVEN;
+		break;
+	default:
+		return action;
+	}
+
+	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
+	action.addOp(new op.UpdateStereoAtom(bond.begin, { type: 'abs' }));
+
+	return action;
 }
 
 /**

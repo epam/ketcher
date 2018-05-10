@@ -68,12 +68,12 @@ Bond.PATTERN =
 	// 	},
 
 	STEREO:
-		{
-			NONE: 0,
-			UP: 1,
-			EITHER: 2,
-			DOWN: 3
-		},
+	{
+		NONE: 0,
+		UP: 1,
+		EITHER: 2,
+		DOWN: 3
+	},
 
 	TOPOLOGY:
 	{

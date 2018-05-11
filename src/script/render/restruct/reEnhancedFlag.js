@@ -49,12 +49,12 @@ ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options
 };
 
 ReEnhancedFlag.prototype.show = function (restruct, id, options) {
-	var render = restruct.render;
+	const render = restruct.render;
 	// 	if (restruct.chiralFlagsChanged[id] <= 0) return;
 
-	var paper = render.paper;
-	var ps = scale.obj2scaled(this.pp, options);
-	this.path = paper.text(ps.x, ps.y, this.flag)
+	const paper = render.paper;
+	const ps = scale.obj2scaled(this.pp, options);
+	this.path = paper.text(ps.x, ps.y, this.flag || '')
 		.attr({
 			font: options.font,
 			'font-size': options.fontsz,

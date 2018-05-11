@@ -541,42 +541,39 @@ function BondAttr(bid, attribute, value) {
 }
 BondAttr.prototype = new Base();
 
-function UpdateStereoAtom(aid, stereoMark) {
+function StereoAtomUpdate(aid, stereoMark) {
 	this.data = { aid, stereoMark };
 	this.data2 = null;
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
-		const atom = struct.atoms.get(this.data.aid);
-		const frag = struct.frags.get(atom.fragment);
+		const frid = struct.atoms.get(this.data.aid).fragment;
+		const frag = struct.frags.get(frid);
+
 		if (!this.data2) {
 			this.data2 = {
 				aid: this.data.aid,
 				stereoMark: frag.getStereoAtomMark(this.data.aid)
 			};
 		}
-
 		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
 
-		// TODO: ref
-		const bb = struct.getFragment(atom.fragment).getCoordBoundingBox();
-		// restruct.clearVisel(restruct.enhancedFlags.get(atom.fragment).visel);
-		restruct.enhancedFlags.set(
-			atom.fragment,
-			new ReEnhancedFlag(frag.enhancedStereoFlag,	new Vec2(bb.max.x, bb.min.y - 1))
-		);
-		restruct.markItem('enhancedFlags', atom.fragment, 1);
-		//
+		restruct.clearVisel(restruct.enhancedFlags.get(frid).visel);
+		const bb = struct.getFragment(frid).getCoordBoundingBox();
+		restruct.enhancedFlags.get(frid).flag = frag.enhancedStereoFlag;
+		restruct.enhancedFlags.get(frid).pp = new Vec2(bb.max.x, bb.min.y - 1);
+
+		restruct.markItem('enhancedFlags', frid, 1);
 	};
 
 	this.invert = function () {
-		const ret = new UpdateStereoAtom();
+		const ret = new StereoAtomUpdate();
 		ret.data = this.data2;
 		ret.data2 = this.data;
 		return ret;
 	};
 }
-UpdateStereoAtom.prototype = new Base();
+StereoAtomUpdate.prototype = new Base();
 
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
@@ -591,6 +588,7 @@ function FragmentAdd(frid) {
 			struct.frags.set(this.frid, frag);
 
 		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
+		restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag(null, null));
 	};
 
 	this.invert = function () {
@@ -607,6 +605,9 @@ function FragmentDelete(frid) {
 		invalidateItem(restruct, 'frags', this.frid, 1);
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
+
+		restruct.clearVisel(restruct.enhancedFlags.get(frid).visel);
+		restruct.enhancedFlags.delete(frid);
 	};
 
 	this.invert = function () {
@@ -1137,6 +1138,6 @@ export default {
 	ChiralFlagDelete,
 	ChiralFlagMove,
 	UpdateIfThen,
-	UpdateStereoAtom,
+	UpdateStereoAtom: StereoAtomUpdate,
 	AlignDescriptors
 };

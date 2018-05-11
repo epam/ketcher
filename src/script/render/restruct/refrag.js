@@ -19,7 +19,7 @@ import Vec2 from '../../util/vec2';
 import ReObject from './reobject';
 import scale from '../../util/scale';
 
-function ReFrag(/* Struct.Fragment = {}*/frag) {
+function ReFrag(/* Struct.Fragment */frag) {
 	this.init('frag');
 	this.item = frag;
 }

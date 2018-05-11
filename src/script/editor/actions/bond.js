@@ -20,10 +20,8 @@ import op from '../shared/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
-import { atomGetAttr, atomForNewBond, atomGetDegree, atomGetNeighbors } from './utils';
+import { atomGetAttr, atomForNewBond, atomGetNeighbors } from './utils';
 import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
-import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
-import { fromFragmentSplit } from './fragment';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
@@ -74,38 +72,6 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	action.operations.reverse();
 
 	return [action, begin, end, bid];
-}
-
-export function fromBondDeletion(restruct, id) {
-	let action = new Action();
-	const bond = restruct.molecule.bonds.get(id);
-	const frid = restruct.molecule.atoms.get(bond.begin).fragment;
-	const atomsToRemove = [];
-
-	action.mergeWith(fromBondStereoUpdate(restruct, id, true));
-	action.addOp(new op.BondDelete(id));
-
-	if (atomGetDegree(restruct, bond.begin) === 1) {
-		if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
-			atomsToRemove.push(bond.begin);
-
-		action.addOp(new op.AtomDelete(bond.begin));
-	}
-
-	if (atomGetDegree(restruct, bond.end) === 1) {
-		if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
-			atomsToRemove.push(bond.end);
-
-		action.addOp(new op.AtomDelete(bond.end));
-	}
-
-	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-	action = action.perform(restruct);
-
-	action.mergeWith(fromFragmentSplit(restruct, frid));
-
-	return action;
 }
 
 /**
@@ -170,7 +136,7 @@ function fromBondFlipping(restruct, id) {
 	return action.perform(restruct);
 }
 
-function fromBondStereoUpdate(restruct, bid, isDeleted) {
+export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	let bond = restruct.molecule.bonds.get(bid);
 
 	// 	const batom = restruct.molecule.atoms.get(bond.begin);

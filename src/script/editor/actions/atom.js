@@ -22,45 +22,12 @@ import Action from '../shared/action';
 import { atomGetAttr, atomGetDegree, atomGetNeighbors, atomGetSGroups } from './utils';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
-import { fromFragmentSplit } from './fragment';
 
 export function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
 	const action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(restruct));
-	return action;
-}
-
-export function fromAtomDeletion(restruct, id) {
-	let action = new Action();
-	const atomsToRemove = [];
-
-	const frid = restruct.molecule.atoms.get(id).fragment;
-
-	atomGetNeighbors(restruct, id).forEach((nei) => {
-		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
-
-		if (atomGetDegree(restruct, nei.aid) !== 1)
-			return;
-
-		if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
-			atomsToRemove.push(nei.aid);
-
-		action.addOp(new op.AtomDelete(nei.aid));
-	});
-
-	if (removeAtomFromSgroupIfNeeded(action, restruct, id))
-		atomsToRemove.push(id);
-
-	action.addOp(new op.AtomDelete(id));
-
-	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-	action = action.perform(restruct);
-
-	action.mergeWith(fromFragmentSplit(restruct, frid));
-
 	return action;
 }
 

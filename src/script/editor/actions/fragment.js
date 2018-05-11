@@ -21,8 +21,7 @@ import { RGroup } from '../../chem/struct';
 import op from '../shared/op';
 import Action from '../shared/action';
 
-import { atomGetDegree, atomGetNeighbors, getRelSgroupsBySelection } from './utils';
-import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded, fromSgroupDeletion } from './sgroup';
+import { atomGetNeighbors, getRelSgroupsBySelection } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 export function fromMultipleMove(restruct, lists, d) {
@@ -118,10 +117,12 @@ function processAtom(restruct, aid, frid, newfrid) {
 	const action = new Action();
 	const queue = [aid];
 	const usedIds = new Pile(queue);
+	const oldfrag = restruct.molecule.frags.get(frid);
 
 	while (queue.length > 0) {
 		const id = queue.shift();
 		action.addOp(new op.AtomAttr(id, 'fragment', newfrid).perform(restruct));
+		action.addOp(new op.UpdateStereoAtom(id, oldfrag.getStereoAtomMark(id)).perform(restruct));
 
 		atomGetNeighbors(restruct, id).forEach((nei) => {
 			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {
@@ -142,9 +143,8 @@ function processAtom(restruct, aid, frid, newfrid) {
  */
 // TODO [RB] the thing is too tricky :) need something else in future
 export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
-	// TODO: ???? WTF
-	var action = new Action();
-	var rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+	const action = new Action();
+	const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
 	restruct.molecule.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid) {
@@ -165,96 +165,6 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 
 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
-
-	return action;
-}
-
-export function fromFragmentDeletion(restruct, selection) { // eslint-disable-line max-statements
-	console.assert(!!selection);
-	let action = new Action();
-	const atomsToRemove = [];
-	const frids = [];
-
-	selection = { // TODO: refactor me
-		atoms: selection.atoms || [],
-		bonds: selection.bonds || [],
-		rxnPluses: selection.rxnPluses || [],
-		rxnArrows: selection.rxnArrows || [],
-		sgroupData: selection.sgroupData || [],
-		chiralFlags: selection.chiralFlags || []
-	};
-
-	const actionRemoveDataSGroups = new Action();
-	restruct.molecule.sgroups.forEach((sg, id) => {
-		if (
-			selection.sgroupData.includes(id) ||
-			new Pile(selection.atoms).isSuperset(new Pile(sg.atoms))
-		)
-			actionRemoveDataSGroups.mergeWith(fromSgroupDeletion(restruct, id));
-	});
-
-	selection.atoms.forEach((aid) => {
-		atomGetNeighbors(restruct, aid).forEach((nei) => {
-			if (selection.bonds.indexOf(nei.bid) === -1)
-				selection.bonds = selection.bonds.concat([nei.bid]);
-		});
-	});
-
-	selection.bonds.forEach((bid) => {
-		action.addOp(new op.BondDelete(bid));
-		// TODO fromBondDeletion??
-		const bond = restruct.molecule.bonds.get(bid);
-		const frid = restruct.molecule.atoms.get(bond.begin).fragment;
-		if (frids.indexOf(frid) < 0)
-			frids.push(frid);
-
-		if (selection.atoms.indexOf(bond.begin) === -1 && atomGetDegree(restruct, bond.begin) === 1) {
-			if (removeAtomFromSgroupIfNeeded(action, restruct, bond.begin))
-				atomsToRemove.push(bond.begin);
-
-			action.addOp(new op.AtomDelete(bond.begin));
-		}
-		if (selection.atoms.indexOf(bond.end) === -1 && atomGetDegree(restruct, bond.end) === 1) {
-			if (removeAtomFromSgroupIfNeeded(action, restruct, bond.end))
-				atomsToRemove.push(bond.end);
-
-			action.addOp(new op.AtomDelete(bond.end));
-		}
-	});
-
-	selection.atoms.forEach((aid) => {
-		const frid3 = restruct.molecule.atoms.get(aid).fragment;
-		if (frids.indexOf(frid3) < 0)
-			frids.push(frid3);
-
-		if (removeAtomFromSgroupIfNeeded(action, restruct, aid))
-			atomsToRemove.push(aid);
-
-		action.addOp(new op.AtomDelete(aid));
-	});
-
-	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-	selection.rxnArrows.forEach((id) => {
-		action.addOp(new op.RxnArrowDelete(id));
-	});
-
-	selection.rxnPluses.forEach((id) => {
-		action.addOp(new op.RxnPlusDelete(id));
-	});
-
-	selection.chiralFlags.forEach((id) => {
-		action.addOp(new op.ChiralFlagDelete(id));
-	});
-
-	action = action.perform(restruct);
-
-	const rgForRemove = frids.map(frid =>
-		RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid));
-	while (frids.length > 0)
-		action.mergeWith(fromFragmentSplit(restruct, frids.pop(), rgForRemove));
-
-	action.mergeWith(actionRemoveDataSGroups);
 
 	return action;
 }

@@ -15,12 +15,10 @@
  ***************************************************************************/
 
 import LassoHelper from './helper/lasso';
-import { fromFragmentDeletion } from '../actions/fragment';
-import { fromAtomDeletion } from '../actions/atom';
-import { fromBondDeletion } from '../actions/bond';
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction';
 import { fromSgroupDeletion } from '../actions/sgroup';
 import { fromChiralFlagDeletion } from '../actions/chiral-flag';
+import { fromFragmentDeletion, fromOneAtomDeletion, fromOneBondDeletion } from '../actions/erase';
 
 function EraserTool(editor, mode) {
 	if (!(this instanceof EraserTool)) {
@@ -69,9 +67,9 @@ EraserTool.prototype.click = function (event) {
 
 	this.editor.hover(null);
 	if (ci.map === 'atoms') {
-		this.editor.update(fromAtomDeletion(restruct, ci.id));
+		this.editor.update(fromOneAtomDeletion(restruct, ci.id));
 	} else if (ci.map === 'bonds') {
-		this.editor.update(fromBondDeletion(restruct, ci.id));
+		this.editor.update(fromOneBondDeletion(restruct, ci.id));
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.update(fromSgroupDeletion(restruct, ci.id));
 	} else if (ci.map === 'rxnArrows') {

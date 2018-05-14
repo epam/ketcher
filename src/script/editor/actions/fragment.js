@@ -121,8 +121,11 @@ function processAtom(restruct, aid, frid, newfrid) {
 
 	while (queue.length > 0) {
 		const id = queue.shift();
+		const stereoMark = oldfrag.getStereoAtomMark(id);
+
+		action.addOp(new op.UpdateStereoAtom(id, { type: null }).perform(restruct));
 		action.addOp(new op.AtomAttr(id, 'fragment', newfrid).perform(restruct));
-		action.addOp(new op.UpdateStereoAtom(id, oldfrag.getStereoAtomMark(id)).perform(restruct));
+		action.addOp(new op.UpdateStereoAtom(id, stereoMark).perform(restruct));
 
 		atomGetNeighbors(restruct, id).forEach((nei) => {
 			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {
@@ -166,5 +169,6 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
 
+	action.operations.reverse();
 	return action;
 }

@@ -17,7 +17,7 @@
 import molfile from '../../chem/molfile';
 import { Bond } from '../../chem/struct';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 /**

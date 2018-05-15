@@ -16,7 +16,7 @@
 import { without } from 'lodash/fp';
 
 import { Atom, Bond, RGroup } from '../../chem/struct';
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 import { atomGetAttr, atomGetDegree, atomGetNeighbors, atomGetSGroups } from './utils';

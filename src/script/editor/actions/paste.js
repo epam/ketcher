@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 import { fromChiralFlagAddition } from './chiral-flag';

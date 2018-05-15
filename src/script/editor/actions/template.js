@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 import { Atom } from '../../chem/struct';
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 import utils from '../shared/utils';
 import closest from '../shared/closest';

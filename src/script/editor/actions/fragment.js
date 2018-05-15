@@ -18,7 +18,7 @@ import Vec2 from '../../util/vec2';
 import Pile from '../../util/pile';
 import { RGroup } from '../../chem/struct';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 import { atomGetNeighbors, getRelSgroupsBySelection } from './utils';
@@ -117,15 +117,12 @@ function processAtom(restruct, aid, frid, newfrid) {
 	const action = new Action();
 	const queue = [aid];
 	const usedIds = new Pile(queue);
-	const oldfrag = restruct.molecule.frags.get(frid);
 
 	while (queue.length > 0) {
 		const id = queue.shift();
-		const stereoMark = oldfrag.getStereoAtomMark(id);
 
-		action.addOp(new op.UpdateStereoAtom(id, { type: null }).perform(restruct));
+		action.addOp(new op.StereoAtomFrag(frid, newfrid, id).perform(restruct));
 		action.addOp(new op.AtomAttr(id, 'fragment', newfrid).perform(restruct));
-		action.addOp(new op.UpdateStereoAtom(id, stereoMark).perform(restruct));
 
 		atomGetNeighbors(restruct, id).forEach((nei) => {
 			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {
@@ -154,6 +151,7 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 			const newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
 			action.mergeWith(processAtom(restruct, aid, frid, newfrid));
+			action.addOp(new op.EnhancedFlagMove(newfrid).perform(restruct)); // TODO!! check
 
 			if (rgid)
 				action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
@@ -166,9 +164,10 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove));
 	}
 
-	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
-		action.addOp(new op.ChiralFlagDelete().perform(restruct));
+// 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
+// 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
 
 	action.operations.reverse();
+// 	console.log("SPLIT", action);
 	return action;
 }

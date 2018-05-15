@@ -16,7 +16,7 @@
 
 import { Atom, Bond } from '../../chem/struct';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
@@ -148,7 +148,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 			.find(item => item.bid !== bid && restruct.molecule.bonds.get(item.bid).stereo > 0);
 		if (neigs.length < 3 || !stereoNeig) {
 			action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', Atom.PATTERN.STEREO_PARITY.NONE));
-			action.addOp(new op.UpdateStereoAtom(bond.begin, { type: null }));
+			action.addOp(new op.StereoAtomMark(bond.begin, { type: null }));
 			return action;
 		}
 		bond = restruct.molecule.bonds.get(stereoNeig.bid);
@@ -173,7 +173,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	}
 
 	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
-	action.addOp(new op.UpdateStereoAtom(bond.begin, { type: 'abs' }));
+	action.addOp(new op.StereoAtomMark(bond.begin, { type: 'abs' }));
 
 	return action;
 }

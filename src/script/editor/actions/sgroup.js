@@ -19,7 +19,7 @@ import { uniq } from 'lodash';
 import { SGroup } from '../../chem/struct';
 
 import Pile from '../../util/pile';
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 import { SgContexts } from '../shared/constants';
 

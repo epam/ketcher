@@ -19,40 +19,11 @@
 import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import Pile from '../../util/pile';
-import { Atom, Bond, Fragment, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
-import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReFrag, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct';
-import ReEnhancedFlag from '../../render/restruct/reEnhancedFlag';
+import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
+import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct/index';
 
-var DEBUG = { debug: false, logcnt: 0, logmouse: false, hl: false };
-DEBUG.logMethod = function () { };
-
-function Base() {
-	this.type = 'OpBase';
-
-	// assert here?
-	this.execute = function () {
-		throw new Error('Operation.execute() is not implemented');
-	};
-
-	this.invert = function () {
-		throw new Error('Operation.invert() is not implemented');
-	};
-
-	this.perform = function (restruct) {
-		this.execute(restruct);
-		/* eslint-disable no-underscore-dangle */
-		if (!this._inverted) {
-			this._inverted = this.invert();
-			this._inverted._inverted = this;
-		}
-		return this._inverted;
-	};
-
-	this.isDummy = function (restruct) {
-		return this._isDummy ? this._isDummy(restruct) : false;
-		/* eslint-enable no-underscore-dangle */
-	};
-}
+import Base, { invalidateAtom, invalidateBond, invalidateItem, invalidateLoop } from './base';
+import { FragmentAdd, FragmentDelete, StereoAtomFrag, StereoAtomMark, EnhancedFlagMove } from './op-frag';
 
 function AtomAdd(atom, pos) {
 	this.data = { atom, pos, aid: null };
@@ -419,9 +390,6 @@ function BondAdd(begin, end, bond) {
 		if (this.data.begin === this.data.end)
 			throw new Error('Distinct atoms expected');
 
-		if (DEBUG.debug && this.molecule.checkBondExists(this.data.begin, this.data.end))
-			throw new Error('Bond already exists');
-
 		invalidateAtom(restruct, this.data.begin, 1);
 		invalidateAtom(restruct, this.data.end, 1);
 
@@ -540,81 +508,6 @@ function BondAttr(bid, attribute, value) {
 	};
 }
 BondAttr.prototype = new Base();
-
-function StereoAtomUpdate(aid, stereoMark) {
-	this.data = { aid, stereoMark };
-	this.data2 = null;
-
-	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		const frid = struct.atoms.get(this.data.aid).fragment;
-		const frag = struct.frags.get(frid);
-
-		if (!this.data2) {
-			this.data2 = {
-				aid: this.data.aid,
-				stereoMark: frag.getStereoAtomMark(this.data.aid)
-			};
-		}
-		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
-
-		restruct.clearVisel(restruct.enhancedFlags.get(frid).visel);
-		const bb = struct.getFragment(frid).getCoordBoundingBox();
-		restruct.enhancedFlags.get(frid).flag = frag.enhancedStereoFlag;
-		restruct.enhancedFlags.get(frid).pp = new Vec2(bb.max.x, bb.min.y - 1);
-
-		restruct.markItem('enhancedFlags', frid, 1);
-	};
-
-	this.invert = function () {
-		const ret = new StereoAtomUpdate();
-		ret.data = this.data2;
-		ret.data2 = this.data;
-		return ret;
-	};
-}
-StereoAtomUpdate.prototype = new Base();
-
-function FragmentAdd(frid) {
-	this.frid = (typeof frid === 'undefined') ? null : frid;
-
-	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		const frag = new Fragment();
-
-		if (this.frid === null)
-			this.frid = struct.frags.add(frag);
-		else
-			struct.frags.set(this.frid, frag);
-
-		restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add ReStruct.notifyFragmentAdded
-		restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag(null, null));
-	};
-
-	this.invert = function () {
-		return new FragmentDelete(this.frid);
-	};
-}
-FragmentAdd.prototype = new Base();
-
-function FragmentDelete(frid) {
-	this.frid = frid;
-
-	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		invalidateItem(restruct, 'frags', this.frid, 1);
-		restruct.frags.delete(this.frid);
-		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
-
-		restruct.clearVisel(restruct.enhancedFlags.get(frid).visel);
-		restruct.enhancedFlags.delete(frid);
-	};
-
-	this.invert = function () {
-		return new FragmentAdd(this.frid);
-	};
-}
-FragmentDelete.prototype = new Base();
 
 function RGroupAttr(rgid, attribute, value) {
 	this.data = { rgid, attribute, value };
@@ -1054,57 +947,6 @@ function RestoreDescriptorsPosition(history) {
 }
 RestoreDescriptorsPosition.prototype = new Base();
 
-function invalidateAtom(restruct, aid, level) {
-	const atom = restruct.atoms.get(aid);
-
-	restruct.markAtom(aid, level ? 1 : 0);
-
-	const hbs = restruct.molecule.halfBonds;
-
-	atom.a.neighbors.forEach((hbid) => {
-		if (!hbs.has(hbid))
-			return;
-
-		const hb = hbs.get(hbid);
-		restruct.markBond(hb.bid, 1);
-		restruct.markAtom(hb.end, 0);
-
-		if (level)
-			invalidateLoop(restruct, hb.bid);
-	});
-}
-
-function invalidateLoop(restruct, bid) {
-	const bond = restruct.bonds.get(bid);
-	const lid1 = restruct.molecule.halfBonds.get(bond.b.hb1).loop;
-	const lid2 = restruct.molecule.halfBonds.get(bond.b.hb2).loop;
-
-	if (lid1 >= 0)
-		restruct.loopRemove(lid1);
-
-	if (lid2 >= 0)
-		restruct.loopRemove(lid2);
-}
-
-function invalidateBond(restruct, bid) {
-	const bond = restruct.bonds.get(bid);
-	invalidateLoop(restruct, bid);
-	invalidateAtom(restruct, bond.b.begin, 0);
-	invalidateAtom(restruct, bond.b.end, 0);
-}
-
-function invalidateItem(restruct, map, id, level) {
-	if (map === 'atoms') {
-		invalidateAtom(restruct, id, level);
-	} else if (map === 'bonds') {
-		invalidateBond(restruct, id);
-		if (level > 0)
-			invalidateLoop(restruct, id);
-	} else {
-		restruct.markItem(map, id, level);
-	}
-}
-
 export default {
 	AtomAdd,
 	AtomDelete,
@@ -1122,8 +964,6 @@ export default {
 	BondAdd,
 	BondDelete,
 	BondAttr,
-	FragmentAdd,
-	FragmentDelete,
 	RGroupAttr,
 	RGroupFragment,
 	RxnArrowAdd,
@@ -1138,6 +978,11 @@ export default {
 	ChiralFlagDelete,
 	ChiralFlagMove,
 	UpdateIfThen,
-	UpdateStereoAtom: StereoAtomUpdate,
-	AlignDescriptors
+	AlignDescriptors,
+
+	FragmentAdd,
+	FragmentDelete,
+	StereoAtomFrag,
+	StereoAtomMark,
+	EnhancedFlagMove
 };

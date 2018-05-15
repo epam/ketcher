@@ -16,7 +16,7 @@
 
 import Vec2 from '../../util/vec2';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 export function fromChiralFlagAddition(restruct, pos) { // eslint-disable-line no-unused-vars

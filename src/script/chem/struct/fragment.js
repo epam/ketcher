@@ -11,6 +11,16 @@ Fragment.prototype = Object.create(null);
 Fragment.prototype.updateStereoFlag = function (flag) {
 	if (arguments.length > 0) {
 		this.enhancedStereoFlag = flag;
+		const stereoFlag = flag.toLowerCase();
+		const atoms = this.stereoAtoms;
+		Object.keys(this.stereoAtoms).forEach((type) => {
+			if (type === stereoFlag) {
+				atoms[type].forEach((value, key) => atoms[type].set(key, 0));
+			} else {
+				atoms[type].forEach((value, key) => atoms[stereoFlag].set(key, 0));
+				atoms[type] = new Map();
+			}
+		});
 		return;
 	}
 

@@ -19,7 +19,7 @@ import Pile from '../../util/pile';
 
 import { Bond } from '../../chem/struct';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 

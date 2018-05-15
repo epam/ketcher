@@ -17,7 +17,7 @@
 import Pile from '../../util/pile';
 
 import Action from '../shared/action';
-import op from '../shared/op';
+import op from '../operations/op';
 import { RGroup } from '../../chem/struct';
 
 import { fromBondStereoUpdate } from './bond';
@@ -32,6 +32,7 @@ export function fromOneAtomDeletion(restruct, id) {
 	const frid = restruct.molecule.atoms.get(id).fragment;
 
 	atomGetNeighbors(restruct, id).forEach((nei) => {
+		action.mergeWith(fromBondStereoUpdate(restruct, nei.bid, true));
 		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
 
 		if (atomGetDegree(restruct, nei.aid) !== 1)
@@ -52,6 +53,10 @@ export function fromOneAtomDeletion(restruct, id) {
 
 	action = action.perform(restruct);
 	action.mergeWith(fromFragmentSplit(restruct, frid));
+
+// 	action.operations.reverse();
+	console.log(action);
+
 	return action;
 }
 
@@ -78,6 +83,9 @@ export function fromBondDeletion(restruct, bid, skipAtoms = []) {
 	}
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
+
+// 	console.log(action);
+
 	return action;
 }
 
@@ -87,6 +95,10 @@ export function fromOneBondDeletion(restruct, id) {
 
 	action = action.perform(restruct);
 	action.mergeWith(fromFragmentSplit(restruct, frid));
+
+	console.log(action);
+
+
 	return action;
 }
 

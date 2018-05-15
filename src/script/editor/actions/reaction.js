@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 export function fromArrowAddition(restruct, pos) {

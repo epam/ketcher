@@ -52,10 +52,7 @@ export function fromOneAtomDeletion(restruct, id) {
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
 
 	action = action.perform(restruct);
-	action.mergeWith(fromFragmentSplit(restruct, frid));
-
-// 	action.operations.reverse();
-	console.log(action);
+	action = fromFragmentSplit(restruct, frid).mergeWith(action);
 
 	return action;
 }
@@ -83,8 +80,6 @@ export function fromBondDeletion(restruct, bid, skipAtoms = []) {
 	}
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-// 	console.log(action);
 
 	return action;
 }
@@ -170,7 +165,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	const rgForRemove = frids.map(frid =>
 		RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid));
 	while (frids.length > 0)
-		action.mergeWith(fromFragmentSplit(restruct, frids.pop(), rgForRemove));
+		action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(action);
 
 	action.mergeWith(actionRemoveDataSGroups);
 

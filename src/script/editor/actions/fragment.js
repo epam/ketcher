@@ -145,6 +145,8 @@ function processAtom(restruct, aid, frid, newfrid) {
 export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 	const action = new Action();
 	const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+	// TODO!! check for ref (it's for render flag after undo)
+	action.addOp(new op.EnhancedFlagMove(frid).perform(restruct));
 
 	restruct.molecule.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid) {
@@ -164,10 +166,9 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove));
 	}
 
-// 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
-// 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
+	// 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
+	// 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
 
 	action.operations.reverse();
-// 	console.log("SPLIT", action);
 	return action;
 }

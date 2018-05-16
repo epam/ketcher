@@ -91,7 +91,7 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
 
 			const value = (key in attrs) ? attrs[key] : Bond.attrGetDefault(key);
 			action.addOp(new op.BondAttr(bid, key, value).perform(restruct));
-			if (key in attrs && key === 'stereo')
+			if (key === 'stereo' && key in attrs)
 				action.mergeWith(fromBondStereoUpdate(restruct, bid).perform(restruct));
 		});
 	});
@@ -138,10 +138,9 @@ function fromBondFlipping(restruct, id) {
 
 export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	let bond = restruct.molecule.bonds.get(bid);
-
-	// 	const batom = restruct.molecule.atoms.get(bond.begin);
 	const action = new Action();
 
+	if (isDeleted && bond.stereo === Bond.PATTERN.STEREO.NONE) return action;
 	if (isDeleted || bond.stereo === Bond.PATTERN.STEREO.NONE) {
 		const neigs = atomGetNeighbors(restruct, bond.begin);
 		const stereoNeig = neigs
@@ -153,9 +152,6 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 		}
 		bond = restruct.molecule.bonds.get(stereoNeig.bid);
 	}
-
-	// 	if (bond.stereo !== Bond.PATTERN.STEREO.NONE &&
-	// 		batom.stereoParity !== Atom.PATTERN.STEREO_PARITY.NONE) return action;
 
 	let newAtomParity = null;
 	switch (bond.stereo) {

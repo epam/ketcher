@@ -91,8 +91,6 @@ function StereoAtomMark(aid, stereoMark) {
 		const frid = struct.atoms.get(this.data.aid).fragment;
 		const frag = struct.frags.get(frid);
 
-		console.log(">>", this.data, frid, frag);
-
 		if (!this.data2) {
 			this.data2 = {
 				aid: this.data.aid,

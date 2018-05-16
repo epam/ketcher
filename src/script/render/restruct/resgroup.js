@@ -51,26 +51,26 @@ ReSGroup.prototype.draw = function (remol, sgroup) {
 	sgroup.areas = [bb];
 
 	switch (sgroup.type) {
-	case 'MUL':
-		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
-		break;
-	case 'SRU':
-		var connectivity = sgroup.data.connectivity || 'eu';
-		if (connectivity == 'ht')
-			connectivity = '';
-		var subscript = sgroup.data.subscript || 'n';
-		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
-		break;
-	case 'SUP':
-		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
-		break;
-	case 'GEN':
-		SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
-		break;
-	case 'DAT':
-		set = drawGroupDat(remol, sgroup);
-		break;
-	default: break;
+		case 'MUL':
+			SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.mul);
+			break;
+		case 'SRU':
+			var connectivity = sgroup.data.connectivity || 'eu';
+			if (connectivity === 'ht')
+				connectivity = '';
+			var subscript = sgroup.data.subscript || 'n';
+			SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, subscript, connectivity);
+			break;
+		case 'SUP':
+			SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d, sgroup.data.name, null, { 'font-style': 'italic' });
+			break;
+		case 'GEN':
+			SGroupdrawBrackets(set, render, sgroup, xBonds, atomSet, bb, d);
+			break;
+		case 'DAT':
+			set = drawGroupDat(remol, sgroup);
+			break;
+		default: break;
 	}
 	return set;
 };

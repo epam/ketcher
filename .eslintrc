@@ -15,7 +15,7 @@
     "comma-dangle": ["error", "never"],
     "curly": ["error", "multi-or-nest", "consistent"],
     "dot-notation": "off",
-    "indent": ["error", "tab"],
+    "indent": ["error", "tab", { "SwitchCase": 1 }],
     "import/prefer-default-export": "off",
     "func-names": "off",
     "function-paren-newline": ["error", "consistent"],

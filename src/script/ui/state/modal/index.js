@@ -41,16 +41,16 @@ function modalReducer(state = null, action) {
 	}
 
 	switch (type) {
-	case 'MODAL_CLOSE':
-		return null;
-	case 'MODAL_OPEN':
-		return {
-			name: data.name,
-			form: formsState[data.name] || null,
-			prop: data.prop || null
-		};
-	default:
-		return state;
+		case 'MODAL_CLOSE':
+			return null;
+		case 'MODAL_OPEN':
+			return {
+				name: data.name,
+				form: formsState[data.name] || null,
+				prop: data.prop || null
+			};
+		default:
+			return state;
 	}
 }
 

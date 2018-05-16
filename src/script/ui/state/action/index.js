@@ -53,20 +53,20 @@ function status(key, activeTool, params) {
 
 export default function (state = null, { type, action, ...params }) {
 	switch (type) {
-	case 'INIT':
-		action = acts['select-lasso'].action;
-	case 'ACTION': // eslint-disable-line no-case-declarations
-		const activeTool = execute(state && state.activeTool, {
-			...params, action
-		});
-	case 'UPDATE':
-		return Object.keys(acts).reduce((res, key) => {
-			const value = status(key, res.activeTool, params);
-			if (!isEmpty(value))
-				res[key] = value;
-			return res;
-		}, { activeTool: activeTool || state.activeTool });
-	default:
-		return state;
+		case 'INIT':
+			action = acts['select-lasso'].action;
+		case 'ACTION': // eslint-disable-line no-case-declarations
+			const activeTool = execute(state && state.activeTool, {
+				...params, action
+			});
+		case 'UPDATE':
+			return Object.keys(acts).reduce((res, key) => {
+				const value = status(key, res.activeTool, params);
+				if (!isEmpty(value))
+					res[key] = value;
+				return res;
+			}, { activeTool: activeTool || state.activeTool });
+		default:
+			return state;
 	}
 }

@@ -172,57 +172,57 @@ function getBondPath(restruct, bond, hb1, hb2) {
 	var shiftB = !restruct.atoms.get(hb2.begin).showLabel;
 
 	switch (bond.b.type) {
-	case Bond.PATTERN.TYPE.SINGLE:
-		switch (bond.b.stereo) {
-		case Bond.PATTERN.STEREO.UP:
+		case Bond.PATTERN.TYPE.SINGLE:
+			switch (bond.b.stereo) {
+				case Bond.PATTERN.STEREO.UP:
+					findIncomingUpBonds(hb1.bid, bond, restruct);
+					if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+						path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
+					else
+						path = getBondSingleUpPath(render, hb1, hb2, bond, struct);
+					break;
+				case Bond.PATTERN.STEREO.DOWN:
+					path = getBondSingleDownPath(render, hb1, hb2);
+					break;
+				case Bond.PATTERN.STEREO.EITHER:
+					path = getBondSingleEitherPath(render, hb1, hb2);
+					break;
+				default:
+					path = draw.bondSingle(render.paper, hb1, hb2, render.options);
+					break;
+			}
+			break;
+		case Bond.PATTERN.TYPE.DOUBLE:
 			findIncomingUpBonds(hb1.bid, bond, restruct);
-			if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
-				path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
+			if (bond.b.stereo === Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
+				bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
+				path = getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB);
 			else
-				path = getBondSingleUpPath(render, hb1, hb2, bond, struct);
+				path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
 			break;
-		case Bond.PATTERN.STEREO.DOWN:
-			path = getBondSingleDownPath(render, hb1, hb2);
+		case Bond.PATTERN.TYPE.TRIPLE:
+			path = draw.bondTriple(render.paper, hb1, hb2, render.options);
 			break;
-		case Bond.PATTERN.STEREO.EITHER:
-			path = getBondSingleEitherPath(render, hb1, hb2);
+		case Bond.PATTERN.TYPE.AROMATIC:
+			var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
+				(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
+			path = inAromaticLoop ? draw.bondSingle(render.paper, hb1, hb2, render.options) :
+				getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+			break;
+		case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
+			path = getSingleOrDoublePath(render, hb1, hb2);
+			break;
+		case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
+			path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+			break;
+		case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+			path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+			break;
+		case Bond.PATTERN.TYPE.ANY:
+			path = draw.bondAny(render.paper, hb1, hb2, render.options);
 			break;
 		default:
-			path = draw.bondSingle(render.paper, hb1, hb2, render.options);
-			break;
-		}
-		break;
-	case Bond.PATTERN.TYPE.DOUBLE:
-		findIncomingUpBonds(hb1.bid, bond, restruct);
-		if (bond.b.stereo === Bond.PATTERN.STEREO.NONE && bond.boldStereo &&
-			bond.neihbid1 >= 0 && bond.neihbid2 >= 0)
-			path = getBondDoubleStereoBoldPath(render, hb1, hb2, bond, struct, shiftA, shiftB);
-		else
-			path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
-		break;
-	case Bond.PATTERN.TYPE.TRIPLE:
-		path = draw.bondTriple(render.paper, hb1, hb2, render.options);
-		break;
-	case Bond.PATTERN.TYPE.AROMATIC:
-		var inAromaticLoop = (hb1.loop >= 0 && struct.loops.get(hb1.loop).aromatic) ||
-			(hb2.loop >= 0 && struct.loops.get(hb2.loop).aromatic);
-		path = inAromaticLoop ? draw.bondSingle(render.paper, hb1, hb2, render.options) :
-			getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
-		break;
-	case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-		path = getSingleOrDoublePath(render, hb1, hb2);
-		break;
-	case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
-		path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
-		break;
-	case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
-		path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
-		break;
-	case Bond.PATTERN.TYPE.ANY:
-		path = draw.bondAny(render.paper, hb1, hb2, render.options);
-		break;
-	default:
-		throw new Error('Bond type ' + bond.b.type + ' not supported');
+			throw new Error('Bond type ' + bond.b.type + ' not supported');
 	}
 	return path;
 }
@@ -449,43 +449,43 @@ function getReactingCenterPath(render, bond, hb1, hb2) { // eslint-disable-line 
 		tiltTan = 0.2; // tangent of the tilt angle
 
 	switch (bond.b.reactingCenterStatus) {
-	case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
-		break;
-	case Bond.PATTERN.REACTING_CENTER.CENTER: // #
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, -alongIntRc));
-		p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
-		p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
-		p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
-		p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
-		break;
-		// case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
-	case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
-		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-		break;
-	case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
-		p.push(c.addScaled(n, acrossSz));
-		p.push(c.addScaled(n, -acrossSz));
-		break;
-	case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
-		p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-		p.push(c.addScaled(n, acrossSz));
-		p.push(c.addScaled(n, -acrossSz));
-		break;
-	default:
-		return null;
+		case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
+			p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
+			break;
+		case Bond.PATTERN.REACTING_CENTER.CENTER: // #
+			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, alongIntRc));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, alongIntRc));
+			p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz).addScaled(d, -alongIntRc));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz).addScaled(d, -alongIntRc));
+			p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
+			p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
+			p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
+			p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
+			break;
+			// case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
+		case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
+			p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
+			p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+			break;
+		case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
+			p.push(c.addScaled(n, acrossSz));
+			p.push(c.addScaled(n, -acrossSz));
+			break;
+		case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
+			p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
+			p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
+			p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+			p.push(c.addScaled(n, acrossSz));
+			p.push(c.addScaled(n, -acrossSz));
+			break;
+		default:
+			return null;
 	}
 	return draw.reactingCenter(render.paper, p, render.options);
 }

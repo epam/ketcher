@@ -353,33 +353,33 @@ function showRadical(atom, render) {
 	var radical = {};
 	var hshift;
 	switch (atom.a.radical) {
-	case 1:
-		radical.path = paper.set();
-		hshift = 1.6 * options.lineWidth;
-		radical.path.push(
-			draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
-		);
-		radical.path.attr('fill', atom.color);
-		break;
-	case 2:
-		radical.path = paper.set();
-		radical.path.push(
-			draw.radicalBullet(paper, ps, options)
-		);
-		radical.path.attr('fill', atom.color);
-		break;
-	case 3:
-		radical.path = paper.set();
-		hshift = 1.6 * options.lineWidth;
-		radical.path.push(
-			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
-		);
-		radical.path.attr('stroke', atom.color);
-		break;
-	default:
-		break;
+		case 1:
+			radical.path = paper.set();
+			hshift = 1.6 * options.lineWidth;
+			radical.path.push(
+				draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
+				draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
+			);
+			radical.path.attr('fill', atom.color);
+			break;
+		case 2:
+			radical.path = paper.set();
+			radical.path.push(
+				draw.radicalBullet(paper, ps, options)
+			);
+			radical.path.attr('fill', atom.color);
+			break;
+		case 3:
+			radical.path = paper.set();
+			hshift = 1.6 * options.lineWidth;
+			radical.path.push(
+				draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
+				draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
+			);
+			radical.path.attr('stroke', atom.color);
+			break;
+		default:
+			break;
 	}
 	radical.rbb = util.relBox(radical.path.getBBox());
 	var vshift = -0.5 * (atom.label.rbb.height + radical.rbb.height);

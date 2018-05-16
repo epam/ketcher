@@ -258,20 +258,20 @@ export function toSgroup(sgroup) {
 	const attached = 'attached';
 
 	switch (radiobuttons) {
-	case 'Absolute':
-		attrs[absolute] = true;
-		attrs[attached] = false;
-		break;
-	case 'Attached':
-		attrs[absolute] = false;
-		attrs[attached] = true;
-		break;
-	case 'Relative':
-		attrs[absolute] = false;
-		attrs[attached] = false;
-		break;
-	default:
-		break;
+		case 'Absolute':
+			attrs[absolute] = true;
+			attrs[attached] = false;
+			break;
+		case 'Attached':
+			attrs[absolute] = false;
+			attrs[attached] = true;
+			break;
+		case 'Relative':
+			attrs[absolute] = false;
+			attrs[attached] = false;
+			break;
+		default:
+			break;
 	}
 
 	if (attrs.fieldName)

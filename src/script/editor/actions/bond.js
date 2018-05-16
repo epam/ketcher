@@ -155,17 +155,17 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 
 	let newAtomParity = null;
 	switch (bond.stereo) {
-	case Bond.PATTERN.STEREO.UP:
-		newAtomParity = Atom.PATTERN.STEREO_PARITY.ODD;
-		break;
-	case Bond.PATTERN.STEREO.EITHER:
-		newAtomParity = Atom.PATTERN.STEREO_PARITY.EITHER;
-		break;
-	case Bond.PATTERN.STEREO.DOWN:
-		newAtomParity = Atom.PATTERN.STEREO_PARITY.EVEN;
-		break;
-	default:
-		return action;
+		case Bond.PATTERN.STEREO.UP:
+			newAtomParity = Atom.PATTERN.STEREO_PARITY.ODD;
+			break;
+		case Bond.PATTERN.STEREO.EITHER:
+			newAtomParity = Atom.PATTERN.STEREO_PARITY.EITHER;
+			break;
+		case Bond.PATTERN.STEREO.DOWN:
+			newAtomParity = Atom.PATTERN.STEREO_PARITY.EVEN;
+			break;
+		default:
+			return action;
 	}
 
 	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));

@@ -830,20 +830,20 @@ Struct.prototype.calcConn = function (atom) {
 		const hb = this.halfBonds.get(atom.neighbors[i]);
 		const bond = this.bonds.get(hb.bid);
 		switch (bond.type) {
-		case Bond.PATTERN.TYPE.SINGLE:
-			conn += 1;
-			break;
-		case Bond.PATTERN.TYPE.DOUBLE:
-			conn += 2;
-			break;
-		case Bond.PATTERN.TYPE.TRIPLE:
-			conn += 3;
-			break;
-		case Bond.PATTERN.TYPE.AROMATIC:
-			if (atom.neighbors.length === 1) return [-1, true];
-			return [atom.neighbors.length, true];
-		default:
-			return [-1, false];
+			case Bond.PATTERN.TYPE.SINGLE:
+				conn += 1;
+				break;
+			case Bond.PATTERN.TYPE.DOUBLE:
+				conn += 2;
+				break;
+			case Bond.PATTERN.TYPE.TRIPLE:
+				conn += 3;
+				break;
+			case Bond.PATTERN.TYPE.AROMATIC:
+				if (atom.neighbors.length === 1) return [-1, true];
+				return [atom.neighbors.length, true];
+			default:
+				return [-1, false];
 		}
 	}
 	return [conn, false];

@@ -46,21 +46,18 @@ function toGraph(struct) {
 }
 
 function fromGraph(graph) {
-	const structs = new Map();
 	const resultingStruct = new Struct();
 	const nodes = graph.root.nodes;
 	Object.keys(nodes).forEach((i) => {
-		if (nodes[i].type) parseNode(nodes[i], nodes[i].type, null, resultingStruct);
+		if (nodes[i].type) parseNode(nodes[i], resultingStruct);
 		else if (nodes[i].$ref)
-			parseNode(graph[nodes[i].$ref], graph[nodes[i].$ref].type, nodes[i].$ref, structs);
-	});
-	structs.forEach((item) => {
-		item.mergeInto(resultingStruct);
+			parseNode(graph[nodes[i].$ref], resultingStruct);
 	});
 	return resultingStruct;
 }
 
-function parseNode(node, type, key, struct) {
+function parseNode(node, struct) {
+	const type = node.type;
 	switch (type) {
 		case 'arrow':
 			rxnToStruct(node, struct);
@@ -69,10 +66,10 @@ function parseNode(node, type, key, struct) {
 			rxnToStruct(node, struct);
 			break;
 		case 'molecule':
-			struct.set(key, moleculeToStruct(node));
+			moleculeToStruct(node).mergeInto(struct);
 			break;
 		case 'rgroup':
-			struct.set(key, rgroupToStruct(node));
+			rgroupToStruct(node).mergeInto(struct);
 			break;
 		default:
 			break;

@@ -52,7 +52,9 @@ module.exports.checkDepsExact = function (options, cb) {
 
 module.exports.lint = function (options) {
 	return gulp.src(options.src)
-		.pipe(eslint())
+		.pipe(eslint({
+			quiet: process.argv.includes('--quiet')
+		}))
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError());
 };

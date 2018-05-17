@@ -5,19 +5,57 @@ import Dialog from '../component/dialog';
 
 // TODO: correct
 class EnhancedStereo extends Component {
+	constructor(props) {
+		console.log(props);
+		super();
+		const { type, number } = props.atomStereo;
+		this.state = {
+			mark: type || '',
+			number: number || 0
+		};
+	}
+
 	render() {
+		const { mark, number } = this.state;
 
 		return (
 			<Dialog
 				title="Enhanced Stereo"
 				className="enhancedStereo"
 				params={this.props}
-				result={() => 'Hello'}
+				result={() => ({
+					newMark: {
+						type: mark,
+						number
+					}
+				})}
 				buttons={[
 					'OK',
 					'Close'
 				]}
 			>
+				Mark:
+				<select
+					value={mark}
+					onChange={ev => this.setState({
+						mark: ev.target.value
+					})}
+				>
+					<option value="">Пусто =)</option>
+					<option value="and">AND</option>
+					<option value="or">OR</option>
+					<option value="abs">ABS</option>
+				</select>
+				<br />
+				Number:
+				<input
+					type="number"
+					value={number}
+					onChange={ev => this.setState({
+						number: +ev.target.value
+					})}
+				/>
+
 				{this.props.data}
 			</Dialog>
 		);

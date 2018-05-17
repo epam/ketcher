@@ -53,7 +53,7 @@ function Editor(clientArea, options) {
 		selectionChange: new s.PipelineSubscription(),
 		aromatizeStruct: new s.PipelineSubscription(),
 		dearomatizeStruct: new s.PipelineSubscription(),
-        // TODO: correct
+		// TODO: correct
 		enhancedStereoEdit: new s.PipelineSubscription()
 	};
 

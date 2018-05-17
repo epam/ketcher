@@ -85,6 +85,9 @@ export default function initEditor(dispatch, getState) {
 
 			return dlg.then(toElement);
 		},
+		// TODO: correct
+		onEnhancedStereoEdit: params => sleep(0)
+			.then(() => openDialog(dispatch, 'enhancedStereo', params)),
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
 		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))
 			.then(toBond),

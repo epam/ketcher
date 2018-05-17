@@ -52,7 +52,9 @@ function Editor(clientArea, options) {
 		change: new s.PipelineSubscription(),
 		selectionChange: new s.PipelineSubscription(),
 		aromatizeStruct: new s.PipelineSubscription(),
-		dearomatizeStruct: new s.PipelineSubscription()
+		dearomatizeStruct: new s.PipelineSubscription(),
+        // TODO: correct
+		enhancedStereoEdit: new s.PipelineSubscription()
 	};
 
 	domEventSetup(this, clientArea);

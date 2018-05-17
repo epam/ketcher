@@ -25,6 +25,9 @@ import About from './mainmenu/about';
 import Help from './mainmenu/help';
 import Miew from './mainmenu/miew';
 
+// TODO: correct
+import EnhancedStereo from './enhanced-stereo';
+
 // schemify dialogs
 import Atom from './toolbox/atom';
 import AttachPoints from './toolbox/attach';
@@ -60,5 +63,8 @@ export default {
 	save: Save,
 	settings: Settings,
 	sgroup: Sgroup,
-	sdata: Sdata
+	sdata: Sdata,
+
+	// TODO: correct
+	enhancedStereo: EnhancedStereo
 };

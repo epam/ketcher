@@ -47,6 +47,11 @@ const toolActions = {
 		action: { tool: 'chiralFlag' },
 		selected: editor => editor.struct().isChiral
 	},
+	// TODO: correct
+	'enhanced-stereo': {
+		title: 'Enhanced Stereo',
+		action: { tool: 'enhancedStereo' }
+	},
 	'charge-plus': {
 		shortcut: '5',
 		title: 'Charge Plus',

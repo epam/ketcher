@@ -17,6 +17,9 @@
 import { h } from 'preact';
 
 function Icon({ name, ...props }) {
+	// TODO: correct
+	if (name === 'enhanced-stereo')
+		name = 'cip';
 	return (
 		<svg {...props}>
 			<use xlinkHref={`#icon-${name}`} />

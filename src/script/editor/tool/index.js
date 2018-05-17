@@ -34,6 +34,9 @@ import ReactionUnmapTool from './reactionunmap';
 import PasteTool from './paste';
 import RotateTool from './rotate';
 
+// TODO: correct
+import EnhancedStereoTool from './enhanced-stereo';
+
 export default {
 	rgroupatom: RGroupAtomTool,
 	select: SelectTool,
@@ -53,5 +56,8 @@ export default {
 	reactionmap: ReactionMapTool,
 	reactionunmap: ReactionUnmapTool,
 	paste: PasteTool,
-	rotate: RotateTool
+	rotate: RotateTool,
+
+	// TODO: correct
+	enhancedStereo: EnhancedStereoTool
 };

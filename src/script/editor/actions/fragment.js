@@ -121,8 +121,7 @@ function processAtom(restruct, aid, frid, newfrid) {
 	while (queue.length > 0) {
 		const id = queue.shift();
 
-		action.addOp(new op.StereoAtomFrag(frid, newfrid, id).perform(restruct));
-		action.addOp(new op.AtomAttr(id, 'fragment', newfrid).perform(restruct));
+		action.addOp(new op.AtomFragmentAttr(id, frid, newfrid).perform(restruct));
 
 		atomGetNeighbors(restruct, id).forEach((nei) => {
 			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {

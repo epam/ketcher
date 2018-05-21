@@ -1,5 +1,4 @@
-import op from '../operations/op';
-import Action from '../shared/action';
+import { fromStereoAtomMark } from '../actions/atom';
 
 function EnhancedStereoTool(editor) {
 	if (!(this instanceof EnhancedStereoTool)) {
@@ -15,7 +14,7 @@ function EnhancedStereoTool(editor) {
 		const atomStereo = struct.frags.get(frid).getStereoAtomMark(aid);
 
 		const res = editor.event.enhancedStereoEdit.dispatch({
-			data: 'EnhancedStereoTool send it',
+			stereoParity: struct.atoms.get(aid).stereoParity,
 			stereoCollection,
 			atomStereo
 		});
@@ -24,9 +23,7 @@ function EnhancedStereoTool(editor) {
 			console.log('EnhancedStereoTool got it:', data);
 			const stereoMark = data.newMark;
 
-			const action = new Action();
-			action.addOp(new op.StereoAtomMark(aid, stereoMark).perform(editor.render.ctab));
-
+			const action = fromStereoAtomMark(aid, stereoMark).perform(editor.render.ctab);
 			editor.update(action);
 		});
 	}

@@ -59,6 +59,12 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	return action.perform(restruct);
 }
 
+export function fromStereoAtomMark(aid, mark) {
+	const action = new Action();
+	action.addOp(new op.StereoAtomMark(aid, mark));
+	return action;
+}
+
 /**
  * @param restruct { ReStruct }
  * @param srcId { number }
@@ -135,7 +141,7 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 
 	struct.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid2)
-			action.addOp(new op.AtomAttr(aid, 'fragment', frid).perform(restruct));
+			action.addOp(new op.AtomFragmentAttr(aid, frid2, frid).perform(restruct));
 	});
 
 	mergeSgroups(action, restruct, fridAtoms, dstId);

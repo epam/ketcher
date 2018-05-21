@@ -6,7 +6,6 @@ import Dialog from '../component/dialog';
 // TODO: correct
 class EnhancedStereo extends Component {
 	constructor(props) {
-		console.log(props);
 		super();
 		const { type, number } = props.atomStereo;
 		this.state = {
@@ -55,8 +54,8 @@ class EnhancedStereo extends Component {
 						number: +ev.target.value
 					})}
 				/>
-
-				{this.props.data}
+				<br />
+				{this.props.stereoParity ? this.props.stereoParity : 'Это не стерео атом Хмм'}
 			</Dialog>
 		);
 	}

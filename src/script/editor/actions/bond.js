@@ -21,7 +21,7 @@ import utils from '../shared/utils';
 import Action from '../shared/action';
 
 import { atomGetAttr, atomForNewBond, atomGetNeighbors } from './utils';
-import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
+import { fromStereoAtomMark, fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
@@ -147,7 +147,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 			.find(item => item.bid !== bid && restruct.molecule.bonds.get(item.bid).stereo > 0);
 		if (neigs.length < 3 || !stereoNeig) {
 			action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', Atom.PATTERN.STEREO_PARITY.NONE));
-			action.addOp(new op.StereoAtomMark(bond.begin, { type: null }));
+			action.mergeWith(fromStereoAtomMark(bond.begin, { type: null }));
 			return action;
 		}
 		bond = restruct.molecule.bonds.get(stereoNeig.bid);
@@ -169,7 +169,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	}
 
 	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
-	action.addOp(new op.StereoAtomMark(bond.begin, { type: 'abs' }));
+	action.mergeWith(fromStereoAtomMark(bond.begin, { type: 'abs' }));
 
 	return action;
 }

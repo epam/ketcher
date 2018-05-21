@@ -2,7 +2,7 @@ import Vec2 from '../../util/vec2';
 import { Fragment } from '../../chem/struct';
 import { ReFrag, ReEnhancedFlag } from '../../render/restruct';
 
-import Base, { invalidateItem } from './base';
+import Base, { invalidateAtom, invalidateItem } from './base';
 
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
@@ -45,8 +45,8 @@ function FragmentDelete(frid) {
 }
 FragmentDelete.prototype = new Base();
 
-function StereoAtomFrag(oldfrid, newfrid, aid) {
-	this.data = { oldfrid, newfrid, aid };
+function AtomFragmentAttr(aid, oldfrid, newfrid) {
+	this.data = { aid, oldfrid, newfrid };
 	this.data2 = null;
 
 	this.execute = function (restruct) {
@@ -54,11 +54,15 @@ function StereoAtomFrag(oldfrid, newfrid, aid) {
 
 		if (!this.data2) {
 			this.data2 = {
+				aid: this.data.aid,
 				oldfrid: this.data.newfrid,
-				newfrid: this.data.oldfrid,
-				aid: this.data.aid
+				newfrid: this.data.oldfrid
 			};
 		}
+		const atom = struct.atoms.get(this.data.aid);
+		atom['fragment'] = this.data.newfrid;
+		invalidateAtom(restruct, this.data.aid);
+
 		const oldfrag = struct.frags.get(this.data.oldfrid);
 		const stereoMark = oldfrag.getStereoAtomMark(this.data.aid);
 		if (stereoMark.type === null) return;
@@ -74,13 +78,13 @@ function StereoAtomFrag(oldfrid, newfrid, aid) {
 	};
 
 	this.invert = function () {
-		const ret = new StereoAtomFrag();
+		const ret = new AtomFragmentAttr();
 		ret.data = this.data2;
 		ret.data2 = this.data;
 		return ret;
 	};
 }
-StereoAtomFrag.prototype = new Base();
+AtomFragmentAttr.prototype = new Base();
 
 function StereoAtomMark(aid, stereoMark) {
 	this.data = { aid, stereoMark };
@@ -145,7 +149,7 @@ function markEnhancedFlag(restruct, frid, flag) {
 export {
 	FragmentAdd,
 	FragmentDelete,
-	StereoAtomFrag,
+	AtomFragmentAttr,
 	StereoAtomMark,
 	EnhancedFlagMove
 };

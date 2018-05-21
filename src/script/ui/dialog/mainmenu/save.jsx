@@ -52,7 +52,7 @@ class Save extends Component {
 		super(props);
 		this.isRxn = this.props.struct.hasRxnArrow();
 
-		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles'];
+		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph'];
 		if (this.props.server) formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml');
 
 		this.saveSchema = saveSchema;

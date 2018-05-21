@@ -16,6 +16,7 @@
 
 import molfile from '../../../chem/molfile';
 import smiles from '../../../chem/smiles';
+import graph from '../../../format/chemGraph';
 
 export const map = {
 	mol: {
@@ -60,6 +61,11 @@ export const map = {
 		mime: 'chemical/x-cml',
 		ext: ['.cml', '.mrv'],
 		supportsCoords: true
+	},
+	graph: {
+		name: 'Graph Format',
+		mime: 'chemical/x-graph',
+		ext: ['.ket']
 	}
 };
 
@@ -93,6 +99,11 @@ export function guess(structStr, strict) {
 
 export function toString(struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
+	if (format === 'graph') {
+		const res = graph.toGraph(struct);
+		console.log(res);
+		return Promise.resolve(JSON.stringify(res, null, 2));
+	}
 
 	return new Promise((resolve) => {
 		const moldata = molfile.stringify(struct);

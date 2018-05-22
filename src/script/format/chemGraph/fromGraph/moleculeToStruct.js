@@ -58,7 +58,7 @@ export function atomToStruct(source) {
 	ifDef(params, 'explicitValence', source.explicitValence);
 	ifDef(params, 'isotope', source.isotope);
 	ifDef(params, 'radical', source.radical);
-	ifDef(params, 'attachmentPoints', source.attpnt);
+	ifDef(params, 'attpnt', source.attachmentPoints);
 	// stereo
 	ifDef(params, 'stereoParity', source.stereoParity);
 	ifDef(params, 'weight', source.weight);

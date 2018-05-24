@@ -23,7 +23,7 @@ import op from '../operations/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
-import { structSelection, getRelSgroupsBySelection, getFragmentAtoms } from './utils';
+import { structSelection, getRelSgroupsBySelection } from './utils';
 
 export function fromFlip(restruct, selection, dir, center) { // eslint-disable-line max-statements
 	const struct = restruct.molecule;
@@ -175,7 +175,7 @@ export function fromBondAlign(restruct, bid, dir) {
 
 	const center = begin.pp.add(end.pp).scaled(0.5);
 	let angle = utils.calcAngle(begin.pp, end.pp);
-	const atoms = getFragmentAtoms(struct, begin.fragment);
+	const atoms = Array.from(struct.getFragmentIds(begin.fragment));
 
 	// TODO: choose minimal angle
 	angle = (dir === 'horizontal') ? -angle : ((Math.PI / 2) - angle);

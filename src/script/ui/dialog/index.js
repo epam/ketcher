@@ -26,7 +26,8 @@ import Help from './mainmenu/help';
 import Miew from './mainmenu/miew';
 
 // TODO: correct
-import EnhancedStereo from './enhanced-stereo';
+import EnhancedStereoFrag from './enhanced-stereo-frag';
+import EnhancedStereoAtom from './enhanced-stereo-atom';
 
 // schemify dialogs
 import Atom from './toolbox/atom';
@@ -66,5 +67,6 @@ export default {
 	sdata: Sdata,
 
 	// TODO: correct
-	enhancedStereo: EnhancedStereo
+	enhancedStereoFrag: EnhancedStereoFrag,
+	enhancedStereoAtom: EnhancedStereoAtom
 };

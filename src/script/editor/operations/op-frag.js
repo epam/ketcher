@@ -45,6 +45,32 @@ function FragmentDelete(frid) {
 }
 FragmentDelete.prototype = new Base();
 
+function FragmentStereoFlag(frid, flag) {
+	this.frid = frid;
+	this.flag = flag;
+	this.invert_flag = null;
+
+	this.execute = function (restruct) {
+		const struct = restruct.molecule;
+
+		const frag = struct.frags.get(this.frid);
+		if (!this.invert_flag)
+			this.invert_flag = frag.enhancedStereoFlag;
+
+		frag.updateStereoFlag(this.flag);
+
+		markEnhancedFlag(restruct, this.frid, frag.enhancedStereoFlag);
+	};
+
+	this.invert = function () {
+		const ret = new FragmentStereoFlag(this.frid);
+		ret.flag = this.invert_flag;
+		ret.invert_flag = this.flag;
+		return ret;
+	};
+}
+FragmentStereoFlag.prototype = new Base();
+
 function AtomFragmentAttr(aid, oldfrid, newfrid) {
 	this.data = { aid, oldfrid, newfrid };
 	this.data2 = null;
@@ -149,6 +175,7 @@ function markEnhancedFlag(restruct, frid, flag) {
 export {
 	FragmentAdd,
 	FragmentDelete,
+	FragmentStereoFlag,
 	AtomFragmentAttr,
 	StereoAtomMark,
 	EnhancedFlagMove

@@ -106,6 +106,13 @@ export function fromMultipleMove(restruct, lists, d) {
 	return action.perform(restruct);
 }
 
+export function fromStereoFlagUpdate(restruct, frid, flag) {
+	const action = new Action();
+
+	action.addOp(new op.FragmentStereoFlag(frid, flag));
+	return action.perform(restruct);
+}
+
 /**
  * @param restruct { ReStruct }
  * @param aid { number }

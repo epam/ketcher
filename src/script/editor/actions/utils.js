@@ -16,6 +16,7 @@
 
 import { difference } from 'lodash';
 import Vec2 from '../../util/vec2';
+import Pile from '../../util/pile';
 
 import closest from '../shared/closest';
 
@@ -45,17 +46,38 @@ export function atomGetPos(restruct, id) {
 	return restruct.molecule.atoms.get(id).pp;
 }
 
+export function findStereoAtoms(struct, aids) {
+	const stereoAtoms = new Map();
+
+	aids.forEach((aid) => {
+		const frid = struct.atoms.get(aid).fragment;
+		const stereoLabel = struct.frags.get(frid).getStereoAtomMark(aid);
+		if (stereoLabel.type !== null) stereoAtoms.set(aid, stereoLabel);
+	});
+
+	return stereoAtoms;
+}
+
+export function getUsedStereoLabels(struct) { // todo: mb refactor?
+	let andNumbers = new Pile();
+	let orNumbers = new Pile();
+	Array.from(struct.frags.values()).forEach((frag) => {
+		andNumbers = andNumbers.union(frag.stereoAtoms.and.values());
+		orNumbers = orNumbers.union(frag.stereoAtoms.or.values());
+	});
+	return {
+		abs: [0],
+		and: Array.from(andNumbers),
+		or: Array.from(orNumbers)
+	};
+}
+
 export function structSelection(struct) {
 	return ['atoms', 'bonds', 'frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses']
 		.reduce((res, key) => {
 			res[key] = Array.from(struct[key].keys());
 			return res;
 		}, {});
-}
-
-export function getFragmentAtoms(struct, frid) {
-	return Array.from(struct.atoms.keys())
-		.filter(aid => struct.atoms.get(aid).fragment === frid);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom

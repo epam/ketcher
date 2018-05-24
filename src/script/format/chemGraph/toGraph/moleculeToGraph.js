@@ -13,6 +13,7 @@ export function moleculeToGraph(struct) {
 	const fragment = struct.frags.get(0);
 	const stereoChemistry = {
 		flag: fragment.enhancedStereoFlag,
+		// todo: fragmentToGraph and remove getStereoCollections method
 		atoms: fragment.getStereoCollections()
 	};
 

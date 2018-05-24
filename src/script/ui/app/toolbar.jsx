@@ -169,7 +169,7 @@ const template = [
 		component: TemplatesList
 	},
 	'template-lib',
-	'chiral-flag',
+	// 	'chiral-flag',
 	// TODO: correct
 	'enhanced-stereo'
 ];

@@ -25,7 +25,10 @@ class EnhancedStereoAtom extends Component {
 				title="Enhanced Stereo Atom"
 				className="enhancedStereo"
 				params={this.props}
-				result={() => ({ ...this.state })}
+				result={() => ({
+					type,
+					number: type === 'abs' ? 0 : number
+				})}
 				buttons={['OK',	'Close']}
 			>
 				StereoLabel:

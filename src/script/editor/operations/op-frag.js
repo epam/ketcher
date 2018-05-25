@@ -128,6 +128,7 @@ function StereoAtomMark(aid, stereoMark) {
 			};
 		}
 		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
+		invalidateAtom(restruct, this.data.aid, 1);
 
 		markEnhancedFlag(restruct, frid, frag.enhancedStereoFlag);
 	};

@@ -157,6 +157,11 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		}
 	}
 
+	// Enhanced Stereo
+	const stereoLabel = showStereoLabel(this, aid, render);
+	if (stereoLabel)
+		restruct.addReObjectPath('data', this.visel, stereoLabel.path, ps, true);
+
 	if (this.a.attpnt) {
 		const lsb = bisectLargestSector(this, restruct.molecule);
 		showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct));
@@ -419,7 +424,7 @@ function showCharge(atom, render, rightMargin) {
 	var charge = {};
 	charge.text = '';
 	var absCharge = Math.abs(atom.a.charge);
-	if (absCharge != 1)
+	if (absCharge !== 1)
 		charge.text = absCharge.toString();
 	if (atom.a.charge < 0)
 		charge.text += '\u2013';
@@ -534,6 +539,32 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 		data.leftMargin -= hydrogen.rbb.width + delta;
 	}
 	return Object.assign(data, { hydrogen, hydroIndex });
+}
+
+function showStereoLabel(atom, aid, render) {
+	const ps = scale.obj2scaled(atom.a.pp, render.options);
+
+	const struct = render.ctab.molecule;
+	const frag = struct.frags.get(atom.a.fragment);
+	const stereo = frag.getStereoAtomMark(aid);
+	if (!stereo.type) return null;
+
+	const stereoLabel = {};
+	stereoLabel.text = stereo.type + (stereo.number || '');
+	stereoLabel.path = render.paper.text(ps.x, ps.y, stereoLabel.text)
+		.attr({
+			font: render.options.font,
+			'font-size': render.options.fontszsub,
+			fill: atom.color
+		});
+	stereoLabel.rbb = util.relBox(stereoLabel.path.getBBox());
+	draw.recenterText(stereoLabel.path, stereoLabel.rbb);
+
+	const vshift = atom.label
+		? (atom.label.rbb.height + stereoLabel.rbb.height)
+		: (render.options.fontsz + stereoLabel.rbb.height); // todo: refactor
+	pathAndRBoxTranslate(stereoLabel.path, stereoLabel.rbb,	0, vshift);
+	return stereoLabel;
 }
 
 function showWarning(atom, render, leftMargin, rightMargin) {

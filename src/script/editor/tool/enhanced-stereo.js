@@ -55,7 +55,7 @@ function changeFragmentStereoAction(editor, stereoAtoms) {
 		type: 'fragment',
 		stereoFlag: flag
 	});
-	return res.then((stereoFlag) => {
+	return res.then(({ stereoFlag }) => {
 		if (stereoFlag === flag) return null;
 		return fromStereoFlagUpdate(editor.render.ctab, frid, stereoFlag);
 	});

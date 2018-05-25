@@ -25,9 +25,6 @@ import About from './mainmenu/about';
 import Help from './mainmenu/help';
 import Miew from './mainmenu/miew';
 
-// TODO: correct
-import EnhancedStereoFrag from './enhanced-stereo-frag';
-import EnhancedStereoAtom from './enhanced-stereo-atom';
 
 // schemify dialogs
 import Atom from './toolbox/atom';
@@ -35,6 +32,7 @@ import AttachPoints from './toolbox/attach';
 import Automap from './toolbox/automap';
 import Bond from './toolbox/bond';
 import Check from './mainmenu/check';
+import EnhancedStereo from './toolbox/enhanced-stereo';
 import LabelEdit from './toolbox/labeledit';
 import RgroupLogic from './toolbox/rgroup-logic';
 import Save from './mainmenu/save';
@@ -59,14 +57,11 @@ export default {
 	automap: Automap,
 	bondProps: Bond,
 	check: Check,
+	enhancedStereo: EnhancedStereo,
 	labelEdit: LabelEdit,
 	rgroupLogic: RgroupLogic,
 	save: Save,
 	settings: Settings,
 	sgroup: Sgroup,
-	sdata: Sdata,
-
-	// TODO: correct
-	enhancedStereoFrag: EnhancedStereoFrag,
-	enhancedStereoAtom: EnhancedStereoAtom
+	sdata: Sdata
 };

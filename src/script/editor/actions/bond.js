@@ -169,7 +169,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	}
 
 	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
-	action.mergeWith(fromStereoAtomMark(bond.begin, { type: 'abs' }));
+	action.mergeWith(fromStereoAtomMark(bond.begin, { type: 'and', number: 1 }));
 
 	return action;
 }

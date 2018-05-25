@@ -87,11 +87,14 @@ export default function initEditor(dispatch, getState) {
 		},
 
 		// TODO: correct
-		onEnhancedStereoEdit: params => sleep(0)
+		onEnhancedStereoEdit: ({ type, ...init }) => sleep(0)
 			.then(() => {
-				if (params.type === 'fragment')
-					return openDialog(dispatch, 'enhancedStereoFrag', params);
-				return openDialog(dispatch, 'enhancedStereoAtom', params);
+				if (type === 'atoms')
+					init = { ...init.stereoLabel };
+
+				return openDialog(dispatch, 'enhancedStereo', {
+					type, init
+				});
 			}),
 
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),

@@ -97,8 +97,6 @@ function AtomFragmentAttr(aid, oldfrid, newfrid) {
 		oldfrag.updateStereoAtom(this.data.aid, { type: null });
 		newfrag.updateStereoAtom(this.data.aid, stereoMark);
 
-		// console.log(oldfrag, newfrag)
-
 		restruct.enhancedFlags.get(this.data.oldfrid).flag = oldfrag.enhancedStereoFlag;
 		restruct.enhancedFlags.get(this.data.newfrid).flag = newfrag.enhancedStereoFlag;
 	};
@@ -127,6 +125,7 @@ function StereoAtomMark(aid, stereoMark) {
 				stereoMark: frag.getStereoAtomMark(this.data.aid)
 			};
 		}
+		if (this.data.stereoMark.type === 'abs') this.data.stereoMark.number = 0;
 		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
 		invalidateAtom(restruct, this.data.aid, 1);
 

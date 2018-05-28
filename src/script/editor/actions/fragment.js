@@ -98,7 +98,6 @@ export function fromMultipleMove(restruct, lists, d) {
 	}
 
 	if (lists.enhancedFlags) {
-		console.log(lists.enhancedFlags);
 		lists.enhancedFlags.forEach((fid) => {
 			action.addOp(new op.EnhancedFlagMove(fid, d));
 		});

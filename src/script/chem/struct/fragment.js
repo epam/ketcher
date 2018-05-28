@@ -1,6 +1,6 @@
 function Fragment(flag = null) {
 	this.stereoAtoms = {
-		abs: new Map(), // key: aid, value: number of stereo setting
+		abs: new Map(), // key: aid, value: number of stereo setting; 'abs' number always - 0
 		and: new Map(),
 		or: new Map()
 	};
@@ -41,6 +41,7 @@ Fragment.prototype.updateStereoFlag = function (flag) {
 Fragment.prototype.updateStereoAtom = function (aid, stereoMark) {
 	const { type, number = 0 } = stereoMark;
 
+	if (type === 'abs' && number !== 0) throw Error(`Absolute label can't has ${number} group`);
 	if (type) this.stereoAtoms[type].set(aid, number);
 
 	if (type !== 'abs' && this.stereoAtoms.abs.has(aid)) this.stereoAtoms.abs.delete(aid);

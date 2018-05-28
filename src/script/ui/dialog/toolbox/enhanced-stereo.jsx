@@ -21,12 +21,12 @@ const enhancedStereoSchema = {
 			properties: {
 				type: {
 					title: 'Stereo Label',
-					enum: ['and', 'or', 'abs', 'null'], // todo: why null impossible?
+					enum: ['and', 'or', 'abs', null],
 					enumNames: ['AND Enantiomer', 'OR Enantiomer', 'ABS (Chiral)', '< Clear label >']
 				},
 				number: {
 					title: 'Stereo Group',
-					type: 'number',
+					type: 'integer',
 					minimum: 1,
 					invalidMessage: 'Only positive integer'
 				}
@@ -39,6 +39,7 @@ const enhancedStereoSchema = {
  * @param type - Type of dialog = 'fragment' or 'atoms'
  * @param formState - State of Form from redux-store
  * @param init - First State of Form
+ * @param ...props
  */
 function EnhancedStereo({ type, formState, init, ...props }) {
 	const { result, valid } = formState;

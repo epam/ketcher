@@ -150,7 +150,8 @@ function EnhancedFlagMove(frid, p) {
 			const bb = restruct.molecule.getFragment(this.data.frid).getCoordBoundingBox();
 			this.data.p = new Vec2(bb.max.x, bb.min.y - 1);
 		}
-		restruct.enhancedFlags.get(this.data.frid).pp = this.data.p;
+		restruct.enhancedFlags.get(this.data.frid).pp.add_(this.data.p);
+		this.data.p = this.data.p.negated();
 		invalidateItem(restruct, 'enhancedFlags', this.data.frid, 1);
 	};
 

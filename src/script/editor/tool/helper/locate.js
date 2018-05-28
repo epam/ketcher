@@ -56,6 +56,12 @@ function getElementsInRectangle(restruct, p0, p1) {
 			chiralFlagList.push(id);
 	});
 
+	const enhancedFlagList = [];
+	restruct.enhancedFlags.forEach((item, id) => {
+		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
+			enhancedFlagList.push(id);
+	});
+
 	const sgroupDataList = [];
 	restruct.sgroupData.forEach((item, id) => {
 		if (item.sgroup.pp.x > x0 && item.sgroup.pp.x < x1 &&
@@ -69,6 +75,7 @@ function getElementsInRectangle(restruct, p0, p1) {
 		rxnArrows: rxnArrowsList,
 		rxnPluses: rxnPlusesList,
 		chiralFlags: chiralFlagList,
+		enhancedFlags: enhancedFlagList,
 		sgroupData: sgroupDataList
 	};
 }
@@ -112,6 +119,12 @@ function getElementsInPolygon(restruct, rr) { // eslint-disable-line max-stateme
 			chiralFlagList.push(id);
 	});
 
+	const enhancedFlagList = [];
+	restruct.enhancedFlags.forEach((item, id) => {
+		if (isPointInPolygon(r, item.pp))
+			enhancedFlagList.push(id);
+	});
+
 	const sgroupDataList = [];
 	restruct.sgroupData.forEach((item, id) => {
 		if (isPointInPolygon(r, item.sgroup.pp))
@@ -124,6 +137,7 @@ function getElementsInPolygon(restruct, rr) { // eslint-disable-line max-stateme
 		rxnArrows: rxnArrowsList,
 		rxnPluses: rxnPlusesList,
 		chiralFlags: chiralFlagList,
+		enhancedFlags: enhancedFlagList,
 		sgroupData: sgroupDataList
 	};
 }

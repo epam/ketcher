@@ -23,6 +23,14 @@ function ReEnhancedFlag(flag, pos) {
 
 	this.flag = flag;
 	this.pp = pos;
+
+	this.map = {
+		Mixed: 'Mixed',
+		ABS: 'ABS (Chiral)',
+		AND: 'AND Enantiomer',
+		OR: 'OR Enantiomer',
+		null: ''
+	};
 }
 ReEnhancedFlag.prototype = new ReObject();
 ReEnhancedFlag.isSelectable = function () {
@@ -50,18 +58,10 @@ ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options
 
 ReEnhancedFlag.prototype.show = function (restruct, id, options) {
 	const render = restruct.render;
-	// 	if (restruct.chiralFlagsChanged[id] <= 0) return;
-
-	const map = {
-		Mixed: 'Mixed',
-		ABS: 'ABS (Chiral)',
-		AND: 'AND Enantiomer',
-		OR: 'OR Enantiomer'
-	};
 
 	const paper = render.paper;
 	const ps = scale.obj2scaled(this.pp, options);
-	this.path = paper.text(ps.x, ps.y, map[this.flag] || '')
+	this.path = paper.text(ps.x, ps.y, this.map[this.flag] || '')
 		.attr({
 			font: options.font,
 			'font-size': options.fontsz,

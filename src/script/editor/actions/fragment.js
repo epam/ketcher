@@ -97,9 +97,10 @@ export function fromMultipleMove(restruct, lists, d) {
 		});
 	}
 
-	if (lists.chiralFlags && struct.isChiral) {
-		lists.chiralFlags.forEach(() => {
-			action.addOp(new op.ChiralFlagMove(d));
+	if (lists.enhancedFlags) {
+		console.log(lists.enhancedFlags);
+		lists.enhancedFlags.forEach((fid) => {
+			action.addOp(new op.EnhancedFlagMove(fid, d));
 		});
 	}
 

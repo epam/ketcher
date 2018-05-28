@@ -28,7 +28,7 @@ import toolMap from './tool';
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
 
-const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'enhancedFlags'];
 
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({
@@ -154,7 +154,7 @@ Editor.prototype.hover = function (ci, newTool) {
 };
 
 const highlightTargets = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses',
-	'chiralFlags', 'frags', 'merge', 'rgroups', 'sgroups', 'sgroupData'];
+	'chiralFlags', 'frags', 'merge', 'rgroups', 'sgroups', 'sgroupData', 'enhancedFlags'];
 
 Editor.prototype.highlight = function (ci, visible) {
 	if (highlightTargets.indexOf(ci.map) === -1)

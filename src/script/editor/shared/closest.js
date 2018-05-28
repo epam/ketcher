@@ -22,6 +22,7 @@ const findMaps = {
 	atoms: findClosestAtom,
 	bonds: findClosestBond,
 	chiralFlags: findClosestChiralFlag,
+	enhancedFlags: findClosestEnhancedFlags,
 	sgroupData: findClosestDataSGroupData,
 	sgroups: findClosestSGroup,
 	rxnArrows: findClosestRxnArrow,
@@ -146,6 +147,23 @@ function findClosestChiralFlag(restruct, pos) {
 		}
 	});
 
+	return ret;
+}
+
+function findClosestEnhancedFlags(restruct, pos) {
+	let minDist;
+	let ret = null;
+	restruct.enhancedFlags.forEach((item, id) => {
+		const p = item.pp;
+		if (Math.abs(pos.x - p.x) >= 1.0) return;
+
+		const dist = Math.abs(pos.y - p.y);
+
+		if (dist < 0.3 && (!ret || dist < minDist)) {
+			minDist = dist;
+			ret = { id, dist: minDist };
+		}
+	});
 	return ret;
 }
 

@@ -124,7 +124,7 @@ function enumSchema(schema, cbOrIndex) {
 			const title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
 			return cbOrIndex(title !== undefined ? title : item,
-				item.value !== undefined ? item.value : item);
+				item && item.value !== undefined ? item.value : item);
 		});
 	}
 

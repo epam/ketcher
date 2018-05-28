@@ -164,6 +164,13 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 		});
 	}
 
+	if (selection.enhancedFlags) {
+		selection.enhancedFlags.forEach((fid) => {
+			const flag = restruct.enhancedFlags.get(fid);
+			action.addOp(new op.EnhancedFlagMove(fid, rotateDelta(flag.pp, center, angle)));
+		});
+	}
+
 	return action.perform(restruct);
 }
 

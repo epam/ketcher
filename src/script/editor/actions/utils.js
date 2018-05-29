@@ -16,8 +16,6 @@
 
 import { difference } from 'lodash';
 import Vec2 from '../../util/vec2';
-import Pile from '../../util/pile';
-
 import closest from '../shared/closest';
 
 export function atomGetAttr(restruct, aid, name) {
@@ -47,29 +45,7 @@ export function atomGetPos(restruct, id) {
 }
 
 export function findStereoAtoms(struct, aids) {
-	const stereoAtoms = new Map();
-
-	aids.forEach((aid) => {
-		const frid = struct.atoms.get(aid).fragment;
-		const stereoLabel = struct.frags.get(frid).getStereoAtomMark(aid);
-		if (stereoLabel.type !== null) stereoAtoms.set(aid, stereoLabel);
-	});
-
-	return stereoAtoms;
-}
-
-export function getUsedStereoLabels(struct) { // todo: mb refactor?
-	let andNumbers = new Pile();
-	let orNumbers = new Pile();
-	Array.from(struct.frags.values()).forEach((frag) => {
-		andNumbers = andNumbers.union(frag.stereoAtoms.and.values());
-		orNumbers = orNumbers.union(frag.stereoAtoms.or.values());
-	});
-	return {
-		abs: [0],
-		and: Array.from(andNumbers),
-		or: Array.from(orNumbers)
-	};
+	return aids.filter(aid => struct.atoms.get(aid).stereoLabel !== null);
 }
 
 export function structSelection(struct) {

@@ -93,6 +93,12 @@ const atom = {
 			default: 0
 		},
 		// stereo
+		stereoLabel: {
+			title: 'Stereo label',
+			type: ['string', 'null'],
+			pattern: /(^abs)|(^and)|(^or)/,
+			default: null
+		},
 		stereoParity: {
 			title: 'Stereo parity configuration',
 			enum: [0, 1, 2, 3],

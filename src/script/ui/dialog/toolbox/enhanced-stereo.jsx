@@ -12,7 +12,7 @@ const enhancedStereoSchema = {
 			properties: {
 				stereoFlag: {
 					title: 'Stereo Flag',
-					enum: ['AND', 'OR', 'ABS'],
+					enum: ['and', 'or', 'abs'],
 					enumNames: ['AND Enantiomer', 'OR Enantiomer', 'ABS (Chiral)']
 				}
 			}

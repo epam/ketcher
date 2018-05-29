@@ -1,11 +1,8 @@
-import { isEqual } from 'lodash/fp';
-
 import Pile from '../../util/pile';
 
-import Action from '../shared/action';
-import { fromStereoAtomMark } from '../actions/atom';
+import { fromAtomsAttrs } from '../actions/atom';
 import { fromStereoFlagUpdate } from '../actions/fragment';
-import { findStereoAtoms, getUsedStereoLabels } from '../actions/utils';
+import { findStereoAtoms } from '../actions/utils';
 
 function EnhancedStereoTool(editor) {
 	if (!(this instanceof EnhancedStereoTool)) {
@@ -13,7 +10,7 @@ function EnhancedStereoTool(editor) {
 		if (!selection || !selection.atoms) return null;
 
 		const stereoAtoms = findStereoAtoms(editor.struct(), selection.atoms); // Map <aid,stereoLabel>
-		if (stereoAtoms.size === 0) return null;
+		if (stereoAtoms.length === 0) return null;
 
 		if (checkSelectionForFragment(editor, selection)) {
 			changeFragmentStereoAction(editor, stereoAtoms)
@@ -28,26 +25,22 @@ function EnhancedStereoTool(editor) {
 function changeAtomsStereoAction(editor, stereoAtoms) {
 	const struct = editor.struct();
 	const restruct = editor.render.ctab;
-	const usedStereoLabels = getUsedStereoLabels(struct);
-
 	const res = editor.event.enhancedStereoEdit.dispatch({
 		type: 'atoms',
-		usedLabels: usedStereoLabels,
-		stereoLabel: stereoAtoms.values().next().value
+		stereoLabel: struct.atoms.get(stereoAtoms[0]).stereoLabel
 	});
 	return res.then((stereoLabel) => {
-		const action = new Action();
-		stereoAtoms.forEach((label, aid) => {
-			if (isEqual(label, stereoLabel)) return;
-			action.mergeWith(fromStereoAtomMark(aid, stereoLabel));
-		});
-		return action.operations.length !== 0 ? action.perform(restruct) : null;
+		const action = fromAtomsAttrs(restruct, stereoAtoms, { stereoLabel })
+			.mergeWith(fromStereoFlagUpdate(restruct, struct.atoms.get(stereoAtoms[0]).fragment));
+		action.operations.reverse();
+		return action;
 	});
 }
 
 function changeFragmentStereoAction(editor, stereoAtoms) {
 	const struct = editor.struct();
-	const frid = struct.atoms.get(stereoAtoms.keys().next().value).fragment;
+	const restruct = editor.render.ctab;
+	const frid = struct.atoms.get(stereoAtoms[0]).fragment;
 	const flag = struct.frags.get(frid).enhancedStereoFlag;
 
 	const res = editor.event.enhancedStereoEdit.dispatch({
@@ -56,7 +49,9 @@ function changeFragmentStereoAction(editor, stereoAtoms) {
 	});
 	return res.then(({ stereoFlag }) => {
 		if (stereoFlag === flag) return null;
-		return fromStereoFlagUpdate(editor.render.ctab, frid, stereoFlag);
+		const stereoLabel = stereoFlag !== null ? `${stereoFlag}${stereoFlag !== 'abs' ? '-1' : ''}` : null;
+		return fromStereoFlagUpdate(restruct, frid, stereoFlag)
+			.mergeWith(fromAtomsAttrs(restruct, stereoAtoms, { stereoLabel }));
 	});
 }
 

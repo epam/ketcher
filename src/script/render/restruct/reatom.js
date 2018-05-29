@@ -162,7 +162,7 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct));
 	}
 
-	const stereoLabel = getStereoLabelText(this, aid, render); // Enhanced Stereo
+	const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
 	const aamText = getAamText(this);
 	const queryAttrsText = (!this.a.alias && !this.a.pseudo) ? getQueryAttrsText(this) : '';
 
@@ -598,14 +598,14 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 	}
 }
 
-function getStereoLabelText(atom, aid, render) {
-	const struct = render.ctab.molecule;
-	const frag = struct.frags.get(atom.a.fragment);
-	const stereo = frag.getStereoAtomMark(aid);
-	if (!stereo.type) return null;
-
-	return stereo.type + (stereo.number || '');
-}
+// function getStereoLabelText(atom, aid, render) {
+// 	const struct = render.ctab.molecule;
+// 	const frag = struct.frags.get(atom.a.fragment);
+// 	const stereo = frag.getStereoAtomMark(aid);
+// 	if (!stereo.type) return null;
+//
+// 	return stereo.type + (stereo.number || '');
+// }
 
 function getAamText(atom) {
 	var aamText = '';

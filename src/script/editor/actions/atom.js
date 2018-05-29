@@ -59,10 +59,21 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	return action.perform(restruct);
 }
 
-export function fromStereoAtomMark(aid, mark) {
+export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
 	const action = new Action();
-	action.addOp(new op.StereoAtomMark(aid, mark));
-	return action;
+
+	aids.forEach((aid) => {
+		const atom = restruct.molecule.atoms.get(aid);
+		const oldfrid = atom.fragment;
+		action.addOp(new op.AtomAttr(aid, 'fragment', newfrid));
+
+		if (atom.stereoLabel !== null) {
+			action.addOp(new op.FragmentAddStereoAtom(newfrid, aid));
+			action.addOp(new op.FragmentDeleteStereoAtom(oldfrid, aid));
+		}
+	});
+
+	return action.perform(restruct);
 }
 
 /**
@@ -139,10 +150,12 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 
 	const fridAtoms = struct.getFragmentIds(frid);
 
+	const atomsToNewFrag = [];
 	struct.atoms.forEach((atom, aid) => {
-		if (atom.fragment === frid2)
-			action.addOp(new op.AtomFragmentAttr(aid, frid2, frid).perform(restruct));
+		if (atom.fragment === frid2) atomsToNewFrag.push(aid);
 	});
+
+	action.mergeWith(fromAtomsFragmentAttr(restruct, atomsToNewFrag, frid2));
 
 	mergeSgroups(action, restruct, fridAtoms, dstId);
 	action.addOp(new op.FragmentDelete(frid2).perform(restruct));

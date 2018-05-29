@@ -23,7 +23,8 @@ import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct
 import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct/index';
 
 import Base, { invalidateAtom, invalidateBond, invalidateItem, invalidateLoop } from './base';
-import { FragmentAdd, FragmentDelete, FragmentStereoFlag, AtomFragmentAttr, StereoAtomMark, EnhancedFlagMove } from './op-frag';
+import { FragmentAdd, FragmentDelete, FragmentStereoFlag,
+	FragmentAddStereoAtom, FragmentDeleteStereoAtom, EnhancedFlagMove } from './op-frag';
 
 function AtomAdd(atom, pos) {
 	this.data = { atom, pos, aid: null };
@@ -983,7 +984,7 @@ export default {
 	FragmentAdd,
 	FragmentDelete,
 	FragmentStereoFlag,
-	AtomFragmentAttr,
-	StereoAtomMark,
+	FragmentAddStereoAtom,
+	FragmentDeleteStereoAtom,
 	EnhancedFlagMove
 };

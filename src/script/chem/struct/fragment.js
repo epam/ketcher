@@ -1,94 +1,68 @@
+/****************************************************************************
+ * Copyright 2018 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
 function Fragment(flag = null) {
-	this.stereoAtoms = {
-		abs: new Map(), // key: aid, value: number of stereo setting; 'abs' number always - 0
-		and: new Map(),
-		or: new Map()
-	};
-	this.enhancedStereoFlag = flag; // can be [null, 'ABS'(Chiral), 'AND', 'OR', 'Mixed']
+	this.stereoAtoms = [];
+
+	this.enhancedStereoFlag = flag; // can be [null, 'abs', 'and', 'or', 'Mixed']
 }
 Fragment.prototype = Object.create(null);
 
-Fragment.prototype.updateStereoFlag = function (flag) {
-	if (arguments.length > 0) {
-		this.enhancedStereoFlag = flag;
-		const stereoFlag = flag.toLowerCase();
-		const atoms = this.stereoAtoms;
-		Object.keys(this.stereoAtoms).forEach((type) => {
-			if (type === stereoFlag) {
-				atoms[type].forEach((value, key) => atoms[type].set(key, 0));
-			} else {
-				atoms[type].forEach((value, key) => atoms[stereoFlag].set(key, 0));
-				atoms[type] = new Map();
-			}
-		});
-		return;
-	}
-
-	const absSize = new Set(this.stereoAtoms.abs.values()).size;
-	const andSize = new Set(this.stereoAtoms.and.values()).size;
-	const orSize = new Set(this.stereoAtoms.or.values()).size;
-
-	if (absSize > 0)
-		this.enhancedStereoFlag = (absSize === 1 && andSize === 0 && orSize === 0) ? 'ABS' : 'Mixed';
-	else if (andSize > 0)
-		this.enhancedStereoFlag = (andSize === 1 && absSize === 0 && orSize === 0) ? 'AND' : 'Mixed';
-	else if (orSize > 0)
-		this.enhancedStereoFlag = (orSize === 1 && andSize === 0 && absSize === 0) ? 'OR' : 'Mixed';
-	else
-		this.enhancedStereoFlag = null;
-};
-
-Fragment.prototype.updateStereoAtom = function (aid, stereoMark) {
-	const { type, number = 0 } = stereoMark;
-
-	if (type === 'abs' && number !== 0) throw Error(`Absolute label can't has ${number} group`);
-	if (type) this.stereoAtoms[type].set(aid, number);
-
-	if (type !== 'abs' && this.stereoAtoms.abs.has(aid)) this.stereoAtoms.abs.delete(aid);
-	if (type !== 'and' && this.stereoAtoms.and.has(aid)) this.stereoAtoms.and.delete(aid);
-	if (type !== 'or' && this.stereoAtoms.or.has(aid)) this.stereoAtoms.or.delete(aid);
-
-	this.updateStereoFlag();
-};
-
-Fragment.prototype.getStereoAtomMark = function (aid) {
-	const marks = this.stereoAtoms;
-
-	if (marks.abs.has(aid)) return { type: 'abs', number: marks.abs.get(aid) };
-	if (marks.and.has(aid)) return { type: 'and', number: marks.and.get(aid) };
-	if (marks.or.has(aid)) return { type: 'or', number: marks.or.get(aid) };
-
-	return { type: null };
-};
-
-Fragment.prototype.getStereoCollections = function () {
-	const stereoCollections = {};
-
-	Object.keys(this.stereoAtoms).forEach((type) => {
-		const col = this.stereoAtoms[type];
-		if (col.size === 0) return;
-		this.stereoAtoms[type].forEach((number, aid) => {
-			if (!stereoCollections[type + number])
-				stereoCollections[type + number] = [aid];
-			else
-				stereoCollections[type + number].push(aid);
-		});
-	});
-
-	return stereoCollections;
-};
-
 Fragment.prototype.clone = function (aidMap) {
 	const fr = new Fragment(this.enhancedStereoFlag);
-
-	Object.keys(this.stereoAtoms).forEach((type) => {
-		const atoms = this.stereoAtoms[type];
-		atoms.forEach((stereoNumber, aid) => {
-			fr.stereoAtoms[type].set(aidMap.get(aid), stereoNumber);
-		});
-	});
-
+	fr.stereoAtoms = this.stereoAtoms.map(aid => aidMap.get(aid));
 	return fr;
+};
+
+Fragment.STEREO_FLAG = {
+	Mixed: 'Mixed',
+	abs: 'ABS (Chiral)',
+	and: 'AND Enantiomer',
+	or: 'OR Enantiomer',
+	null: null
+	// todo: custom in the future
+};
+
+/**
+ * @param { Struct } struct
+ * @param { Array<number> } stereoAids
+ * @return { string | null } stereoFlag
+ */
+function calcStereoFlag(struct, stereoAids) {
+	if (!stereoAids || stereoAids.length === 0) return null;
+	const stereoLabel = struct.atoms.get(stereoAids[0]).stereoLabel; // {string | null} "<abs|and|or>-<group>"
+
+	const hasAnotherLabel = stereoAids
+		.map(aid => struct.atoms.get(aid))
+		.some(atom => atom.stereoLabel !== stereoLabel);
+
+	return hasAnotherLabel ? 'Mixed' : stereoLabel.split('-')[0];
+}
+
+Fragment.prototype.updateStereoFlag = function (struct, flag = false) {
+	this.enhancedStereoFlag =
+		flag !== false ? flag : calcStereoFlag(struct, this.stereoAtoms);
+	return this.enhancedStereoFlag;
+};
+
+Fragment.prototype.updateStereoAtom = function (struct, aid, isAdd) {
+	if (isAdd && !this.stereoAtoms.includes(aid)) this.stereoAtoms.push(aid);
+	if (!isAdd) this.stereoAtoms = this.stereoAtoms.filter(item => item !== aid);
+
+	this.enhancedStereoFlag = calcStereoFlag(struct, this.stereoAtoms);
 };
 
 export default Fragment;

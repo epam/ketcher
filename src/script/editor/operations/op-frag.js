@@ -2,7 +2,7 @@ import Vec2 from '../../util/vec2';
 import { Fragment } from '../../chem/struct';
 import { ReFrag, ReEnhancedFlag } from '../../render/restruct';
 
-import Base, { invalidateAtom, invalidateItem } from './base';
+import Base, { invalidateItem } from './base';
 
 function FragmentAdd(frid) {
 	this.frid = (typeof frid === 'undefined') ? null : frid;
@@ -45,7 +45,7 @@ function FragmentDelete(frid) {
 }
 FragmentDelete.prototype = new Base();
 
-function FragmentStereoFlag(frid, flag) {
+function FragmentStereoFlag(frid, flag = false) {
 	this.frid = frid;
 	this.flag = flag;
 	this.invert_flag = null;
@@ -56,10 +56,9 @@ function FragmentStereoFlag(frid, flag) {
 		const frag = struct.frags.get(this.frid);
 		if (!this.invert_flag)
 			this.invert_flag = frag.enhancedStereoFlag;
+		frag.updateStereoFlag(struct, this.flag);
 
-		frag.updateStereoFlag(this.flag);
-
-		markEnhancedFlag(restruct, this.frid, frag.enhancedStereoFlag);
+		invalidateEnhancedFlag(restruct, this.frid, frag.enhancedStereoFlag);
 	};
 
 	this.invert = function () {
@@ -71,75 +70,46 @@ function FragmentStereoFlag(frid, flag) {
 }
 FragmentStereoFlag.prototype = new Base();
 
-function AtomFragmentAttr(aid, oldfrid, newfrid) {
-	this.data = { aid, oldfrid, newfrid };
-	this.data2 = null;
+// todo : merge add and delete stereo atom
+function FragmentAddStereoAtom(frid, aid) {
+	this.data = { frid, aid };
 
 	this.execute = function (restruct) {
-		const struct = restruct.molecule;
+		const frag = restruct.molecule.frags.get(this.data.frid);
+		frag.updateStereoAtom(restruct.molecule, this.data.aid, true);
 
-		if (!this.data2) {
-			this.data2 = {
-				aid: this.data.aid,
-				oldfrid: this.data.newfrid,
-				newfrid: this.data.oldfrid
-			};
-		}
-		const atom = struct.atoms.get(this.data.aid);
-		atom['fragment'] = this.data.newfrid;
-		invalidateAtom(restruct, this.data.aid);
-
-		const oldfrag = struct.frags.get(this.data.oldfrid);
-		const stereoMark = oldfrag.getStereoAtomMark(this.data.aid);
-		if (stereoMark.type === null) return;
-
-		const newfrag = struct.frags.get(this.data.newfrid);
-		oldfrag.updateStereoAtom(this.data.aid, { type: null });
-		newfrag.updateStereoAtom(this.data.aid, stereoMark);
-
-		restruct.enhancedFlags.get(this.data.oldfrid).flag = oldfrag.enhancedStereoFlag;
-		restruct.enhancedFlags.get(this.data.newfrid).flag = newfrag.enhancedStereoFlag;
+		invalidateEnhancedFlag(restruct, this.data.frid, frag.enhancedStereoFlag);
 	};
 
 	this.invert = function () {
-		const ret = new AtomFragmentAttr();
-		ret.data = this.data2;
-		ret.data2 = this.data;
-		return ret;
+		return new FragmentDeleteStereoAtom(this.data.frid, this.data.aid);
 	};
 }
-AtomFragmentAttr.prototype = new Base();
+FragmentAddStereoAtom.prototype = new Base();
 
-function StereoAtomMark(aid, stereoMark) {
-	this.data = { aid, stereoMark };
-	this.data2 = null;
+function FragmentDeleteStereoAtom(frid, aid) {
+	this.data = { frid, aid };
 
 	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		const frid = struct.atoms.get(this.data.aid).fragment;
-		const frag = struct.frags.get(frid);
+		const frag = restruct.molecule.frags.get(this.data.frid);
+		frag.updateStereoAtom(restruct.molecule, this.data.aid, false);
 
-		if (!this.data2) {
-			this.data2 = {
-				aid: this.data.aid,
-				stereoMark: frag.getStereoAtomMark(this.data.aid)
-			};
-		}
-		if (this.data.stereoMark.type === 'abs') this.data.stereoMark.number = 0;
-		frag.updateStereoAtom(this.data.aid, this.data.stereoMark);
-		invalidateAtom(restruct, this.data.aid, 1);
-
-		markEnhancedFlag(restruct, frid, frag.enhancedStereoFlag);
+		invalidateEnhancedFlag(restruct, this.data.frid, frag.enhancedStereoFlag);
 	};
 
 	this.invert = function () {
-		const ret = new StereoAtomMark();
-		ret.data = this.data2;
-		ret.data2 = this.data;
-		return ret;
+		return new FragmentAddStereoAtom(this.data.frid, this.data.aid);
 	};
 }
-StereoAtomMark.prototype = new Base();
+FragmentDeleteStereoAtom.prototype = new Base();
+
+function invalidateEnhancedFlag(restruct, frid, flag) {
+	const reEnhancedFlag = restruct.enhancedFlags.get(frid);
+	if (reEnhancedFlag.flag === flag) return;
+
+	reEnhancedFlag.flag = flag;
+	invalidateItem(restruct, 'enhancedFlags', frid, 1);
+}
 
 function EnhancedFlagMove(frid, p) {
 	this.data = { frid, p };
@@ -162,22 +132,13 @@ function EnhancedFlagMove(frid, p) {
 }
 EnhancedFlagMove.prototype = new Base();
 
-// TODO: remove ?
-function markEnhancedFlag(restruct, frid, flag) {
-	const reEnhancedFlag = restruct.enhancedFlags.get(frid);
-	restruct.clearVisel(reEnhancedFlag.visel);
-	const bb = restruct.molecule.getFragment(frid).getCoordBoundingBox();
-	reEnhancedFlag.flag = flag;
-	reEnhancedFlag.pp = new Vec2(bb.max.x, bb.min.y - 1);
-
-	restruct.markItem('enhancedFlags', frid, 1);
-}
-
 export {
 	FragmentAdd,
 	FragmentDelete,
 	FragmentStereoFlag,
-	AtomFragmentAttr,
-	StereoAtomMark,
+
+	FragmentAddStereoAtom,
+	FragmentDeleteStereoAtom,
+
 	EnhancedFlagMove
 };

@@ -89,7 +89,7 @@ export function fromOneBondDeletion(restruct, id) {
 	let action = fromBondDeletion(restruct, id);
 
 	action = action.perform(restruct);
-	action.mergeWith(fromFragmentSplit(restruct, frid));
+	action = fromFragmentSplit(restruct, frid).mergeWith(action);
 
 	console.log(action);
 

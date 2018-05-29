@@ -52,6 +52,7 @@ function atomToGraph(source) {
 	ifDef(result, 'radical', source.radical, schema.radical.default);
 	ifDef(result, 'attachmentPoints', source.attpnt, schema.attachmentPoints.default);
 	// stereo
+	ifDef(result, 'stereoLabel', source.stereoLabel, schema.stereoLabel.default);
 	ifDef(result, 'stereoParity', source.stereoCare, schema.stereoParity.default);
 	ifDef(result, 'weight', source.weight, schema.weight.default);
 	// query

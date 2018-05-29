@@ -20,7 +20,7 @@ import element from '../element';
 import AtomList from './atomlist';
 
 function Atom(params) { // eslint-disable-line max-statements
-	var def = Atom.attrGetDefault;
+	const def = Atom.attrGetDefault;
 	console.assert(params || 'label' in params, 'label must be specified!');
 
 	this.label = params.label;
@@ -57,7 +57,8 @@ function Atom(params) { // eslint-disable-line max-statements
 	ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
 	// stereo
-	ifDef(this, params, 'stereoParity', def('stereoParity'));
+	ifDef(this, params, 'stereoLabel', def('stereoLabel'));
+	ifDef(this, params, 'stereoParity', def('stereoParity')); // {string | null} "<abs|and|or>-<group>"
 
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
@@ -116,6 +117,8 @@ Atom.attrlist = {
 	rglabel: null,
 	attpnt: null,
 	aam: 0,
+	// enhanced stereo
+	stereoLabel: null,
 	stereoParity: 0
 };
 

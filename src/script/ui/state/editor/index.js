@@ -17,7 +17,7 @@
 import { debounce } from 'lodash/fp';
 
 import element from '../../../chem/element';
-import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../../data/convert/structconv';
+import { fromBond, toBond, fromStereoLabel, toStereoLabel, fromSgroup, toSgroup, fromElement, toElement } from '../../data/convert/structconv';
 import acts from '../../action';
 
 import { openDialog } from '../modal';
@@ -89,12 +89,9 @@ export default function initEditor(dispatch, getState) {
 		// TODO: correct
 		onEnhancedStereoEdit: ({ type, ...init }) => sleep(0)
 			.then(() => {
-				if (type === 'atoms')
-					init = { ...init.stereoLabel };
-
-				return openDialog(dispatch, 'enhancedStereo', {
-					type, init
-				});
+				if (type === 'atoms') init = fromStereoLabel(init.stereoLabel);
+				return openDialog(dispatch, 'enhancedStereo', {	type, init })
+					.then(res => (type === 'atoms' ? toStereoLabel(res) : res));
 			}),
 
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),

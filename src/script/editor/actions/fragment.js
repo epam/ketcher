@@ -21,6 +21,7 @@ import { RGroup } from '../../chem/struct';
 import op from '../operations/op';
 import Action from '../shared/action';
 
+import { fromAtomsFragmentAttr } from './atom';
 import { atomGetNeighbors, getRelSgroupsBySelection } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
@@ -109,6 +110,15 @@ export function fromMultipleMove(restruct, lists, d) {
 export function fromStereoFlagUpdate(restruct, frid, flag) {
 	const action = new Action();
 
+	if (!flag) {
+		const struct = restruct.molecule;
+		const frag = restruct.molecule.frags.get(frid);
+		frag.stereoAtoms.forEach((aid) => {
+			if (struct.atoms.get(aid).stereoLabel === null)
+				action.addOp(new op.FragmentDeleteStereoAtom(frid, aid));
+		});
+	}
+
 	action.addOp(new op.FragmentStereoFlag(frid, flag));
 	return action.perform(restruct);
 }
@@ -121,14 +131,11 @@ export function fromStereoFlagUpdate(restruct, frid, flag) {
  * @returns { Action }
  */
 function processAtom(restruct, aid, frid, newfrid) {
-	const action = new Action();
 	const queue = [aid];
 	const usedIds = new Pile(queue);
 
 	while (queue.length > 0) {
 		const id = queue.shift();
-
-		action.addOp(new op.AtomFragmentAttr(id, frid, newfrid).perform(restruct));
 
 		atomGetNeighbors(restruct, id).forEach((nei) => {
 			if (restruct.molecule.atoms.get(nei.aid).fragment === frid && !usedIds.has(nei.aid)) {
@@ -138,7 +145,7 @@ function processAtom(restruct, aid, frid, newfrid) {
 		});
 	}
 
-	return action;
+	return fromAtomsFragmentAttr(restruct, usedIds, newfrid);
 }
 
 /**
@@ -151,15 +158,12 @@ function processAtom(restruct, aid, frid, newfrid) {
 export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 	const action = new Action();
 	const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
-	// TODO!! check for ref (it's for render flag after undo)
-	action.addOp(new op.EnhancedFlagMove(frid).perform(restruct));
 
 	restruct.molecule.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid) {
 			const newfrid = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 
 			action.mergeWith(processAtom(restruct, aid, frid, newfrid));
-			action.addOp(new op.EnhancedFlagMove(newfrid).perform(restruct)); // TODO!! check
 
 			if (rgid)
 				action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));

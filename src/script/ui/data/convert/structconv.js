@@ -120,6 +120,21 @@ function toAtomList(atom) {
 	};
 }
 
+export function fromStereoLabel(stereoLabel) {
+	if (stereoLabel === null) return { type: null };
+	const stereo = stereoLabel.split('-');
+	return {
+		type: stereo[0],
+		number: +stereo[1] || 0
+	};
+}
+
+export function toStereoLabel(sstereoLabel) {
+	if (sstereoLabel.type === null) return null;
+	if (sstereoLabel.type === 'abs') return 'abs';
+	return `${sstereoLabel.type}-${sstereoLabel.number}`;
+}
+
 function fromApoint(sap) {
 	return {
 		primary: ((sap || 0) & 1) > 0,

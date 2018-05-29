@@ -15,22 +15,16 @@
  ***************************************************************************/
 
 import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import ReObject from './reobject';
+import { Fragment } from '../../chem/struct';
 
 function ReEnhancedFlag(flag, pos) {
 	this.init('enhancedFlag');
 
 	this.flag = flag;
 	this.pp = pos;
-
-	this.map = {
-		Mixed: 'Mixed',
-		ABS: 'ABS (Chiral)',
-		AND: 'AND Enantiomer',
-		OR: 'OR Enantiomer',
-		null: ''
-	};
 }
 ReEnhancedFlag.prototype = new ReObject();
 ReEnhancedFlag.isSelectable = function () {
@@ -58,11 +52,17 @@ ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options
 
 ReEnhancedFlag.prototype.show = function (restruct, id, options) {
 	const render = restruct.render;
+	console.log(this.flag);
 	if (!this.flag) return;
+
+	if (!this.pp) {
+		const bb = restruct.molecule.getFragment(id).getCoordBoundingBox();
+		this.pp = new Vec2(bb.max.x, bb.min.y - 1);
+	}
 
 	const paper = render.paper;
 	const ps = scale.obj2scaled(this.pp, options);
-	this.path = paper.text(ps.x, ps.y, this.map[this.flag] || '')
+	this.path = paper.text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
 		.attr({
 			font: options.font,
 			'font-size': options.fontsz,

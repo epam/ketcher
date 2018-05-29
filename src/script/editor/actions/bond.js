@@ -21,7 +21,7 @@ import utils from '../shared/utils';
 import Action from '../shared/action';
 
 import { atomGetAttr, atomForNewBond, atomGetNeighbors } from './utils';
-import { fromStereoAtomMark, fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
+import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
@@ -133,24 +133,30 @@ function fromBondFlipping(restruct, id) {
 	const action = new Action();
 	action.addOp(new op.BondDelete(id));
 	action.addOp(new op.BondAdd(bond.end, bond.begin, bond)).data.bid = id;
+	// todo: swap atoms stereoLabels and stereoAtoms in fragment
 	return action.perform(restruct);
 }
 
+// todo: how to reverse it.. ??
 export function fromBondStereoUpdate(restruct, bid, isDeleted) {
-	let bond = restruct.molecule.bonds.get(bid);
+	const struct = restruct.molecule;
+	let bond = struct.bonds.get(bid);
 	const action = new Action();
 
 	if (isDeleted && bond.stereo === Bond.PATTERN.STEREO.NONE) return action;
 	if (isDeleted || bond.stereo === Bond.PATTERN.STEREO.NONE) {
 		const neigs = atomGetNeighbors(restruct, bond.begin);
 		const stereoNeig = neigs
-			.find(item => item.bid !== bid && restruct.molecule.bonds.get(item.bid).stereo > 0);
+			.find(item => item.bid !== bid && struct.bonds.get(item.bid).stereo > 0);
 		if (neigs.length < 3 || !stereoNeig) {
 			action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', Atom.PATTERN.STEREO_PARITY.NONE));
-			action.mergeWith(fromStereoAtomMark(bond.begin, { type: null }));
+			action.addOp(new op.AtomAttr(bond.begin, 'stereoLabel', null));
+			action.addOp(
+				new op.FragmentDeleteStereoAtom(struct.atoms.get(bond.begin).fragment, bond.begin)
+			);
 			return action;
 		}
-		bond = restruct.molecule.bonds.get(stereoNeig.bid);
+		bond = struct.bonds.get(stereoNeig.bid);
 	}
 
 	let newAtomParity = null;
@@ -169,8 +175,10 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	}
 
 	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
-	action.mergeWith(fromStereoAtomMark(bond.begin, { type: 'and', number: 1 }));
-
+	action.addOp(new op.AtomAttr(bond.begin, 'stereoLabel', 'and-1'));
+	action.addOp(
+		new op.FragmentAddStereoAtom(struct.atoms.get(bond.begin).fragment, bond.begin)
+	);
 	return action;
 }
 

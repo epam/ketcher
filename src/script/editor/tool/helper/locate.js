@@ -121,7 +121,7 @@ function getElementsInPolygon(restruct, rr) { // eslint-disable-line max-stateme
 
 	const enhancedFlagList = [];
 	restruct.enhancedFlags.forEach((item, id) => {
-		if (isPointInPolygon(r, item.pp))
+		if (item.pp && isPointInPolygon(r, item.pp))
 			enhancedFlagList.push(id);
 	});
 

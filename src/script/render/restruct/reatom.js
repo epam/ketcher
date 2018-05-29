@@ -157,25 +157,22 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		}
 	}
 
-	// Enhanced Stereo
-	const stereoLabel = showStereoLabel(this, aid, render);
-	if (stereoLabel)
-		restruct.addReObjectPath('data', this.visel, stereoLabel.path, ps, true);
-
 	if (this.a.attpnt) {
 		const lsb = bisectLargestSector(this, restruct.molecule);
 		showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct));
 	}
 
-	let aamText = getAamText(this);
+	const stereoLabel = getStereoLabelText(this, aid, render); // Enhanced Stereo
+	const aamText = getAamText(this);
 	const queryAttrsText = (!this.a.alias && !this.a.pseudo) ? getQueryAttrsText(this) : '';
 
-	// this includes both aam flags, if any, and query features, if any
 	// we render them together to avoid possible collisions
-	aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
-	if (aamText.length > 0) {
+	const text = (stereoLabel ? `${stereoLabel}\n` : '') +
+		(queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
+		(aamText.length > 0 ? `.${aamText}.` : '');
+	if (text.length > 0) {
 		var elem = element.map[this.a.label];
-		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
+		var aamPath = render.paper.text(ps.x, ps.y, text).attr({
 			font: options.font,
 			'font-size': options.fontszsub,
 			fill: (options.atomColoring && elem) ? elementColor[this.a.label] : '#000'
@@ -541,32 +538,6 @@ function showHydrogen(atom, render, implh, data) { // eslint-disable-line max-st
 	return Object.assign(data, { hydrogen, hydroIndex });
 }
 
-function showStereoLabel(atom, aid, render) {
-	const ps = scale.obj2scaled(atom.a.pp, render.options);
-
-	const struct = render.ctab.molecule;
-	const frag = struct.frags.get(atom.a.fragment);
-	const stereo = frag.getStereoAtomMark(aid);
-	if (!stereo.type) return null;
-
-	const stereoLabel = {};
-	stereoLabel.text = stereo.type + (stereo.number || '');
-	stereoLabel.path = render.paper.text(ps.x, ps.y, stereoLabel.text)
-		.attr({
-			font: render.options.font,
-			'font-size': render.options.fontszsub,
-			fill: atom.color
-		});
-	stereoLabel.rbb = util.relBox(stereoLabel.path.getBBox());
-	draw.recenterText(stereoLabel.path, stereoLabel.rbb);
-
-	const vshift = atom.label
-		? (atom.label.rbb.height + stereoLabel.rbb.height)
-		: (render.options.fontsz + stereoLabel.rbb.height); // todo: refactor
-	pathAndRBoxTranslate(stereoLabel.path, stereoLabel.rbb,	0, vshift);
-	return stereoLabel;
-}
-
 function showWarning(atom, render, leftMargin, rightMargin) {
 	var ps = scale.obj2scaled(atom.a.pp, render.options);
 	var delta = 0.5 * render.options.lineWidth;
@@ -625,6 +596,15 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 			lsb = lsb.rotate(Math.PI / 6);
 		}
 	}
+}
+
+function getStereoLabelText(atom, aid, render) {
+	const struct = render.ctab.molecule;
+	const frag = struct.frags.get(atom.a.fragment);
+	const stereo = frag.getStereoAtomMark(aid);
+	if (!stereo.type) return null;
+
+	return stereo.type + (stereo.number || '');
 }
 
 function getAamText(atom) {

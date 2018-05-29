@@ -58,6 +58,7 @@ ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options
 
 ReEnhancedFlag.prototype.show = function (restruct, id, options) {
 	const render = restruct.render;
+	if (!this.flag) return;
 
 	const paper = render.paper;
 	const ps = scale.obj2scaled(this.pp, options);

@@ -14,7 +14,6 @@ function EnhancedStereoTool(editor) {
 
 		const stereoAtoms = findStereoAtoms(editor.struct(), selection.atoms); // Map <aid,stereoLabel>
 		if (stereoAtoms.size === 0) return null;
-		console.log('stereoAtoms:', stereoAtoms); // todo: remove log
 
 		if (checkSelectionForFragment(editor, selection)) {
 			changeFragmentStereoAction(editor, stereoAtoms)

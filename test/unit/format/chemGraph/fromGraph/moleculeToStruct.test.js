@@ -1,8 +1,10 @@
 import { moleculeToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct';
-import { testGraph } from '../../data/testGraph';
+import testGraph from '../../data/testGraph.json';
+import { Atom, Bond } from '../../../../../src/script/chem/struct';
+
+const struct = moleculeToStruct(testGraph.mol0);
 
 describe('Content of the molecule', () => {
-	const struct = moleculeToStruct(testGraph);
 	it('are atoms exist in struct', () => {
 		expect(struct.atoms.get(0)).toBeDefined();
 	});
@@ -14,8 +16,20 @@ describe('Content of the molecule', () => {
 	});
 });
 
+describe('Check instances of elements', () => {
+	it('atom`s instance', () => {
+		struct.atoms.forEach((atom) => {
+			expect(atom).toBeInstanceOf(Atom);
+		});
+	});
+	it('bond`s instances', () => {
+		struct.bonds.forEach((bond) => {
+			expect(bond).toBeInstanceOf(Bond);
+		});
+	});
+});
+
 describe('Is atom contains', () => {
-	const struct = moleculeToStruct(testGraph);
 	it('alias', () => {
 		expect(struct.atoms.get(0).alias).toBe('superatom');
 	});
@@ -64,7 +78,6 @@ describe('Is atom contains', () => {
 });
 
 describe('Is bond contains', () => {
-	const struct = moleculeToStruct(testGraph);
 	it('type', () => {
 		expect(struct.bonds.get(0).type).toBe(1);
 	});
@@ -73,5 +86,14 @@ describe('Is bond contains', () => {
 	});
 	it('end atom', () => {
 		expect(struct.bonds.get(0).end).toBe(1);
+	});
+});
+
+describe('element`s length', () => {
+	it('atom`s length', () => {
+		expect(struct.atoms.size).toBe(3);
+	});
+	it('bond`s length', () => {
+		expect(struct.bonds.size).toBe(2);
 	});
 });

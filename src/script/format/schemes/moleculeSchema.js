@@ -1,23 +1,3 @@
-const header = {
-	title: 'Header',
-	type: 'object',
-	properties: {
-		moleculeName: {
-			title: 'Molecule name',
-			type: 'string',
-			default: ''
-		},
-		creatorProgram: {
-			title: 'Creator program',
-			type: 'string'
-		},
-		comment: {
-			title: 'Comment',
-			type: 'string'
-		}
-	}
-};
-
 const atom = {
 	title: 'Atom',
 	type: 'object',
@@ -431,61 +411,44 @@ const sgroup = {
 	]
 };
 
-const stereoChemistry = {
-	title: 'Bond',
+const moleculeSchema = {
+	id: '/Molecule',
 	type: 'object',
-	required: ['flag'],
 	properties: {
-		flag: {
+		stereoFlag: {
+			title: 'Stereo Flag',
+			type: ['string', null],
 			enum: [null, 'ABS', 'AND', 'OR', 'Mixed'],
 			default: null
 		},
 		atoms: {
-			type: 'object'
-		}
-	}
-};
-
-const moleculeSchema = {
-	id: '/Molecule',
-	type: 'object',
-	allOf: [
-		{ $ref: '#/header' },
-		{
-			properties: {
-				stereoChemistry: { $ref: '#/stereoChemistry' },
-				atoms: {
-					title: 'Atoms',
-					type: 'array',
-					items: {
-						oneOf: [
-							{ $ref: '#/atom' },
-							{ $ref: '#/rgatom' },
-							{ $ref: '#/atomlist' }
-						]
-					}
-				},
-				bonds: {
-					title: 'Bonds',
-					type: 'array',
-					items: { $ref: '#/bond' }
-				},
-				sgroups: {
-					title: 'SGroups',
-					type: 'array',
-					items: { $ref: '#/sgroup' }
-				}
+			title: 'Atoms',
+			type: 'array',
+			items: {
+				oneOf: [
+					{ $ref: '#/atom' },
+					{ $ref: '#/rgatom' },
+					{ $ref: '#/atomlist' }
+				]
 			}
+		},
+		bonds: {
+			title: 'Bonds',
+			type: 'array',
+			items: { $ref: '#/bond' }
+		},
+		sgroups: {
+			title: 'SGroups',
+			type: 'array',
+			items: { $ref: '#/sgroup' }
 		}
-	],
+	},
 
-	header,
 	atom,
 	atomlist,
 	rgatom,
 	bond,
-	sgroup,
-	stereoChemistry
+	sgroup
 };
 
 export default moleculeSchema;

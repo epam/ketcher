@@ -1,3 +1,4 @@
+import { headerToGraph } from './toGraph/headerToGraph';
 import { moleculeToGraph } from './toGraph/moleculeToGraph';
 import { rgroupToGraph } from './toGraph/rgroupToGraph';
 import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph';
@@ -10,6 +11,9 @@ function toGraph(struct) {
 			nodes: []
 		}
 	};
+
+	const header = headerToGraph(struct);
+	if (header) result.header = header;
 
 	const graphNodes = prepareStructForGraph(struct);
 

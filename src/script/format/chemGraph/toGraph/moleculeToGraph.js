@@ -4,19 +4,6 @@ import { fromRlabel } from '../convertStruct';
 import { ifDef } from '../../utils';
 
 export function moleculeToGraph(struct) {
-	const header = {
-		type: 'molecule'
-	};
-	const headerSchema = structSchema.header.properties;
-	ifDef(header, 'moleculeName', struct.name, headerSchema.moleculeName.default);
-
-	const fragment = struct.frags.get(0);
-	const stereoChemistry = {
-		flag: fragment.enhancedStereoFlag,
-		// todo: fragmentToGraph and remove getStereoCollections method
-		atoms: fragment.getStereoCollections()
-	};
-
 	const body = {
 		atoms: Array.from(struct.atoms.values())
 			.map((atom) => {
@@ -32,9 +19,11 @@ export function moleculeToGraph(struct) {
 	if (struct.sgroups.size !== 0)
 		body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph);
 
+	const fragment = struct.frags.get(0);
+	ifDef(body, 'stereoFlag', fragment.enhancedStereoFlag, structSchema.properties.stereoFlag.default);
+
 	return {
-		...header,
-		stereoChemistry,
+		type: 'molecule',
 		...body
 	};
 }

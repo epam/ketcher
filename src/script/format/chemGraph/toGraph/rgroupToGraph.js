@@ -4,10 +4,6 @@ import { moleculeToGraph } from './moleculeToGraph';
 import { ifDef } from '../../utils';
 
 export function rgroupToGraph(struct, data) {
-	const header = {
-		type: 'rgroup'
-	};
-
 	const body = {
 		rlogic: rgroupLogicToGraph(data.rgnumber, data.rgroup),
 		...moleculeToGraph(struct)
@@ -15,7 +11,7 @@ export function rgroupToGraph(struct, data) {
 
 	return {
 		...body,
-		...header
+		type: 'rgroup'
 	};
 }
 

@@ -1,3 +1,23 @@
+const headerSchema = {
+	title: 'Header',
+	type: 'object',
+	properties: {
+		moleculeName: {
+			title: 'Molecule name',
+			type: 'string',
+			default: ''
+		},
+		creatorProgram: {
+			title: 'Creator program',
+			type: 'string'
+		},
+		comment: {
+			title: 'Comment',
+			type: 'string'
+		}
+	}
+};
+
 const rootSchema = {
 	id: '/Root',
 	required: ['nodes'],
@@ -47,6 +67,7 @@ const graphSchema = {
 	type: 'object',
 	required: ['root'],
 	properties: {
+		header: { $ref: '#/header' },
 		root: { $ref: '#/root' }
 	},
 	patternProperties: {
@@ -54,7 +75,8 @@ const graphSchema = {
 		'^rg': { $ref: '/RGroup' }
 	},
 
-	root: rootSchema
+	root: rootSchema,
+	header: headerSchema
 };
 
 export default graphSchema;

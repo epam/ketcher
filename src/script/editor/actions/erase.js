@@ -18,51 +18,22 @@ import Pile from '../../util/pile';
 
 import Action from '../shared/action';
 import op from '../operations/op';
-import { RGroup } from '../../chem/struct';
+import { Atom, RGroup } from '../../chem/struct';
 
-import { fromBondStereoUpdate } from './bond';
+import { fromStereoAtomAttrs } from './atom';
 import { fromSgroupDeletion, removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { fromFragmentSplit } from './fragment';
 import { atomGetDegree, atomGetNeighbors } from './utils';
 
 export function fromOneAtomDeletion(restruct, id) {
-	let action = new Action();
-	const atomsToRemove = [];
-
-	const frid = restruct.molecule.atoms.get(id).fragment;
-
-	atomGetNeighbors(restruct, id).forEach((nei) => {
-		action.mergeWith(fromBondStereoUpdate(restruct, nei.bid, true));
-		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
-
-		if (atomGetDegree(restruct, nei.aid) !== 1)
-			return;
-
-		if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
-			atomsToRemove.push(nei.aid);
-
-		action.addOp(new op.AtomDelete(nei.aid));
-	});
-
-	if (removeAtomFromSgroupIfNeeded(action, restruct, id))
-		atomsToRemove.push(id);
-
-	action.addOp(new op.AtomDelete(id));
-
-	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-	action = action.perform(restruct);
-	action = fromFragmentSplit(restruct, frid).mergeWith(action);
-
-	return action;
+	return fromFragmentDeletion(restruct, {	atoms: [id] });
 }
 
-export function fromBondDeletion(restruct, bid, skipAtoms = []) {
-	const action = new Action();
+function fromBondDeletion(restruct, bid, skipAtoms = []) {
+	let action = new Action();
 	const bond = restruct.molecule.bonds.get(bid);
 	const atomsToRemove = [];
 
-	action.mergeWith(fromBondStereoUpdate(restruct, bid, true));
 	action.addOp(new op.BondDelete(bid));
 
 	if (!skipAtoms.includes(bond.begin) && atomGetDegree(restruct, bond.begin) === 1) {
@@ -80,6 +51,14 @@ export function fromBondDeletion(restruct, bid, skipAtoms = []) {
 	}
 
 	removeSgroupIfNeeded(action, restruct, atomsToRemove);
+	action = action.perform(restruct);
+
+	if (bond.stereo) {
+		action.mergeWith(fromStereoAtomAttrs(restruct, bond.begin, {
+			stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+			stereoLabel: null
+		}));
+	}
 
 	return action;
 }
@@ -88,11 +67,7 @@ export function fromOneBondDeletion(restruct, id) {
 	const frid = restruct.molecule.getBondFragment(id);
 	let action = fromBondDeletion(restruct, id);
 
-	action = action.perform(restruct);
 	action = fromFragmentSplit(restruct, frid).mergeWith(action);
-
-	console.log(action);
-
 
 	return action;
 }
@@ -128,11 +103,12 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 		});
 	});
 
+	const actionRemoveBonds = new Action();
 	selection.bonds.forEach((bid) => {
 		const frid = restruct.molecule.getBondFragment(bid);
 		if (frids.indexOf(frid) < 0) frids.push(frid);
 
-		action.mergeWith(fromBondDeletion(restruct, bid, selection.atoms));
+		actionRemoveBonds.mergeWith(fromBondDeletion(restruct, bid, selection.atoms));
 	});
 
 	selection.atoms.forEach((aid) => {
@@ -161,6 +137,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 	});
 
 	action = action.perform(restruct);
+	action.mergeWith(actionRemoveBonds);
 
 	const rgForRemove = frids.map(frid =>
 		RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid));

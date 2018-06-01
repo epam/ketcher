@@ -17,7 +17,7 @@
 function Fragment(flag = null) {
 	this.stereoAtoms = [];
 
-	this.enhancedStereoFlag = flag; // can be [null, 'abs', 'and', 'or', 'Mixed']
+	this.enhancedStereoFlag = flag;
 }
 Fragment.prototype = Object.create(null);
 

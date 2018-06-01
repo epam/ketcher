@@ -50,14 +50,15 @@ function getElementsInRectangle(restruct, p0, p1) {
 			rxnPlusesList.push(id);
 	});
 
-	const chiralFlagList = [];
-	restruct.chiralFlags.forEach((item, id) => {
-		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
-			chiralFlagList.push(id);
-	});
+	// const chiralFlagList = [];
+	// restruct.chiralFlags.forEach((item, id) => {
+	// 	if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
+	// 		chiralFlagList.push(id);
+	// });
 
 	const enhancedFlagList = [];
 	restruct.enhancedFlags.forEach((item, id) => {
+		if (!item.pp) return;
 		if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1)
 			enhancedFlagList.push(id);
 	});
@@ -74,7 +75,7 @@ function getElementsInRectangle(restruct, p0, p1) {
 		bonds: bondList,
 		rxnArrows: rxnArrowsList,
 		rxnPluses: rxnPlusesList,
-		chiralFlags: chiralFlagList,
+		// chiralFlags: chiralFlagList,
 		enhancedFlags: enhancedFlagList,
 		sgroupData: sgroupDataList
 	};

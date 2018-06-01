@@ -59,6 +59,23 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 	return action.perform(restruct);
 }
 
+export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
+	const action = new Action();
+	const frid = restruct.molecule.atoms.get(aid).fragment;
+
+	if ('stereoParity' in attrs)
+		action.addOp(new op.AtomAttr(aid, 'stereoParity', attrs['stereoParity']).perform(restruct));
+	if ('stereoLabel' in attrs) {
+		action.addOp(new op.AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(restruct));
+		if (attrs['stereoLabel'] === null)
+			action.addOp(new op.FragmentDeleteStereoAtom(frid, aid).perform(restruct));
+		else
+			action.addOp(new op.FragmentAddStereoAtom(frid, aid).perform(restruct));
+	}
+	if (withReverse) action.operations.reverse();
+	return action;
+}
+
 export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
 	const action = new Action();
 

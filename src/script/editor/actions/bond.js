@@ -21,7 +21,7 @@ import utils from '../shared/utils';
 import Action from '../shared/action';
 
 import { atomGetAttr, atomForNewBond, atomGetNeighbors } from './utils';
-import { fromAtomMerge, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
+import { fromAtomMerge, fromStereoAtomAttrs, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 
 export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // eslint-disable-line
 	if (end === undefined) {
@@ -66,10 +66,9 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	}
 
 	const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
-
-	if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid).perform(restruct));
-
 	action.operations.reverse();
+
+	if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid));
 
 	return [action, begin, end, bid];
 }
@@ -92,7 +91,7 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
 			const value = (key in attrs) ? attrs[key] : Bond.attrGetDefault(key);
 			action.addOp(new op.BondAttr(bid, key, value).perform(restruct));
 			if (key === 'stereo' && key in attrs)
-				action.mergeWith(fromBondStereoUpdate(restruct, bid).perform(restruct));
+				action.mergeWith(fromBondStereoUpdate(restruct, bid));
 		});
 	});
 
@@ -137,7 +136,6 @@ function fromBondFlipping(restruct, id) {
 	return action.perform(restruct);
 }
 
-// todo: how to reverse it.. ??
 export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	const struct = restruct.molecule;
 	let bond = struct.bonds.get(bid);
@@ -149,11 +147,10 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 		const stereoNeig = neigs
 			.find(item => item.bid !== bid && struct.bonds.get(item.bid).stereo > 0);
 		if (neigs.length < 3 || !stereoNeig) {
-			action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', Atom.PATTERN.STEREO_PARITY.NONE));
-			action.addOp(new op.AtomAttr(bond.begin, 'stereoLabel', null));
-			action.addOp(
-				new op.FragmentDeleteStereoAtom(struct.atoms.get(bond.begin).fragment, bond.begin)
-			);
+			action.mergeWith(fromStereoAtomAttrs(restruct, bond.begin, {
+				stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
+				stereoLabel: null
+			}, true));
 			return action;
 		}
 		bond = struct.bonds.get(stereoNeig.bid);
@@ -174,11 +171,10 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 			return action;
 	}
 
-	action.addOp(new op.AtomAttr(bond.begin, 'stereoParity', newAtomParity));
-	action.addOp(new op.AtomAttr(bond.begin, 'stereoLabel', 'and-1'));
-	action.addOp(
-		new op.FragmentAddStereoAtom(struct.atoms.get(bond.begin).fragment, bond.begin)
-	);
+	action.mergeWith(fromStereoAtomAttrs(restruct, bond.begin, {
+		stereoParity: newAtomParity,
+		stereoLabel: 'and-1'
+	}, true));
 	return action;
 }
 

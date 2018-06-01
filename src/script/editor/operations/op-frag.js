@@ -35,8 +35,8 @@ function FragmentDelete(frid) {
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved
 
-		restruct.clearVisel(restruct.enhancedFlags.get(frid).visel);
-		restruct.enhancedFlags.delete(frid);
+		restruct.clearVisel(restruct.enhancedFlags.get(this.frid).visel);
+		restruct.enhancedFlags.delete(this.frid);
 	};
 
 	this.invert = function () {

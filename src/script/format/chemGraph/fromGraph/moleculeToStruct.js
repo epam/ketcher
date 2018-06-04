@@ -21,6 +21,9 @@ export function moleculeToStruct(graphItem) {
 	struct.initHalfBonds();
 	struct.initNeighbors();
 	struct.markFragments();
+	if (graphItem.stereoFlag)
+		struct.frags.get(0).enhancedStereoFlag = graphItem.stereoFlag;
+
 	return struct;
 }
 
@@ -40,6 +43,7 @@ export function atomToStruct(source) {
 	ifDef(params, 'radical', source.radical);
 	ifDef(params, 'attpnt', source.attachmentPoints);
 	// stereo
+	ifDef(params, 'stereoLabel', source.stereoLabel);
 	ifDef(params, 'stereoParity', source.stereoParity);
 	ifDef(params, 'weight', source.weight);
 	// query
@@ -51,8 +55,6 @@ export function atomToStruct(source) {
 	ifDef(params, 'aam', source.mapping);
 	ifDef(params, 'invRet', source.invRet);
 	ifDef(params, 'exactChangeFlag', !!source.exactChangeFlag);
-	ifDef(params, 'rglabel', source.rgroups ? source.rgroups[0] : null);
-	ifDef(params, 'fragment', source.fragment, -1);
 	return new Atom(params);
 }
 

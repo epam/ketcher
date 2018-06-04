@@ -101,8 +101,7 @@ export function toString(struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
 	if (format === 'graph') {
 		const res = graph.toGraph(struct);
-		console.log(res);
-		return Promise.resolve(JSON.stringify(res, null, 2));
+		return Promise.resolve(JSON.stringify(res));
 	}
 
 	return new Promise((resolve) => {

@@ -1,7 +1,12 @@
+import Struct from '../../chem/struct';
 import { headerToGraph } from './toGraph/headerToGraph';
 import { moleculeToGraph } from './toGraph/moleculeToGraph';
 import { rgroupToGraph } from './toGraph/rgroupToGraph';
 import { arrowToGraph, plusToGraph } from './toGraph/rxnToGraph';
+
+import { moleculeToStruct } from './fromGraph/moleculeToStruct';
+import { rgroupToStruct } from './fromGraph/rgroupToStruct';
+import { rxnToStruct } from './fromGraph/rxnToStruct';
 
 import { prepareStructForGraph } from './toGraph/prepare';
 
@@ -45,7 +50,38 @@ function toGraph(struct) {
 	return result;
 }
 
+function fromGraph(graph) {
+	const resultingStruct = new Struct();
+	const nodes = graph.root.nodes;
+	Object.keys(nodes).forEach((i) => {
+		if (nodes[i].type) parseNode(nodes[i], resultingStruct);
+		else if (nodes[i].$ref)
+			parseNode(graph[nodes[i].$ref], resultingStruct);
+	});
+	return resultingStruct;
+}
+
+function parseNode(node, struct) {
+	const type = node.type;
+	switch (type) {
+		case 'arrow':
+			rxnToStruct(node, struct);
+			break;
+		case 'plus':
+			rxnToStruct(node, struct);
+			break;
+		case 'molecule':
+			moleculeToStruct(node).mergeInto(struct);
+			break;
+		case 'rgroup':
+			rgroupToStruct(node).mergeInto(struct);
+			break;
+		default:
+			break;
+	}
+}
+
 export default {
 	toGraph,
-	fromGraph: () => null
+	fromGraph
 };

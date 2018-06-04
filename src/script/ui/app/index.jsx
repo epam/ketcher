@@ -27,6 +27,8 @@ import { checkServer } from '../state/server';
 import { initKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
 
+import { loadStruct } from '../state/shared';
+
 const App = connect(
 	null,
 	{ onAction, checkServer }
@@ -57,7 +59,8 @@ function init(el, options, server) {
 	), el);
 
 	return {
-		load: (structStr, opts) => store.dispatch(load(structStr, opts))
+		load: (structStr, opts) => store.dispatch(load(structStr, opts)),
+		loadStruct
 	};
 }
 

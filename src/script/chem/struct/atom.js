@@ -61,7 +61,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	ifDef(this, params, 'stereoParity', def('stereoParity')); // {string | null} "<abs|and|or>-<group>"
 
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
-	this.neighbors = []; // set of half-bonds having this atom as their origin
+	this.neighbors = params.neighbors || []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
 }
 

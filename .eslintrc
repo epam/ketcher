@@ -9,7 +9,9 @@
   },
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "es6": true,
+    "jest": true
   },
   "rules": {
     "comma-dangle": ["error", "never"],
@@ -51,7 +53,6 @@
     "radix": "off",
     "spaced-comment": ["error", "always", { "exceptions": ["*"] }],
     "unicode-bom": ["error", "never"],
-
     /* jsx */
     "react/jsx-first-prop-new-line": ["error", "multiline"],
     "react/jsx-indent": ["error", "tab"],

@@ -1,0 +1,13 @@
+{
+  "env": {
+    "test": {
+      "presets": [["env"]],
+      "plugins": [
+        ["transform-builtin-extend", {
+          "globals": ["Set", "Map"]
+        }]
+      ]
+    }
+  }
+}
+

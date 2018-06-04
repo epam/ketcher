@@ -73,6 +73,10 @@ export function guess(structStr, strict) {
 	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
 	const molStr = structStr.trim();
 
+	try {
+		if (JSON.parse(molStr)) return 'graph';
+	} catch (er) { } // eslint-disable-line
+
 	if (molStr.indexOf('$RXN') !== -1)
 		return 'rxn';
 
@@ -131,8 +135,10 @@ export function fromString(structStr, opts, server, serverOpts) {
 	return new Promise((resolve) => {
 		const format = guess(structStr);
 		console.assert(map[format], 'No such format');
-
-		if (format === 'mol' || format === 'rxn') {
+		if (format === 'graph') {
+			const res = graph.fromGraph(JSON.parse(structStr));
+			resolve(res);
+		} else if (format === 'mol' || format === 'rxn') {
 			const struct = molfile.parse(structStr, opts);
 			resolve(struct);
 		} else {

@@ -17,7 +17,6 @@
 import LassoHelper from './helper/lasso';
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction';
 import { fromSgroupDeletion } from '../actions/sgroup';
-import { fromChiralFlagDeletion } from '../actions/chiral-flag';
 import { fromFragmentDeletion, fromOneAtomDeletion, fromOneBondDeletion } from '../actions/erase';
 
 function EraserTool(editor, mode) {
@@ -33,7 +32,7 @@ function EraserTool(editor, mode) {
 
 	this.editor = editor;
 
-	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
+	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData'];
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 
@@ -76,8 +75,6 @@ EraserTool.prototype.click = function (event) {
 		this.editor.update(fromArrowDeletion(restruct, ci.id));
 	} else if (ci.map === 'rxnPluses') {
 		this.editor.update(fromPlusDeletion(restruct, ci.id));
-	} else if (ci.map === 'chiralFlags') {
-		this.editor.update(fromChiralFlagDeletion(restruct));
 	} else {
 		// TODO re-factoring needed - should be "map-independent"
 		console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');

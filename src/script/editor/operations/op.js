@@ -20,7 +20,7 @@ import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import Pile from '../../util/pile';
 import { Atom, Bond, RGroup, RxnArrow, RxnPlus, SGroup } from '../../chem/struct';
-import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReRGroup, ReChiralFlag, ReSGroup } from '../../render/restruct/index';
+import { ReAtom, ReBond, ReRxnPlus, ReRxnArrow, ReRGroup, ReSGroup } from '../../render/restruct';
 
 import Base, { invalidateAtom, invalidateBond, invalidateItem, invalidateLoop } from './base';
 import { FragmentAdd, FragmentDelete, FragmentStereoFlag,
@@ -840,68 +840,6 @@ function CanvasLoad(struct) {
 }
 CanvasLoad.prototype = new Base();
 
-function ChiralFlagAdd(pos) {
-	this.data = { pos };
-
-	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		if (restruct.chiralFlags.size > 0) {
-			// throw new Error('Cannot add more than one Chiral flag');
-			restruct.clearVisel(restruct.chiralFlags.get(0).visel);
-			restruct.chiralFlags.delete(0);
-		}
-
-		restruct.chiralFlags.set(0, new ReChiralFlag(pos));
-		struct.isChiral = true;
-		invalidateItem(restruct, 'chiralFlags', 0, 1);
-	};
-
-	this.invert = function () {
-		const ret = new ChiralFlagDelete();
-		ret.data = this.data;
-		return ret;
-	};
-}
-ChiralFlagAdd.prototype = new Base();
-
-function ChiralFlagDelete() {
-	this.data = { pos: null };
-
-	this.execute = function (restruct) {
-		const struct = restruct.molecule;
-		if (restruct.chiralFlags.size < 1)
-			throw new Error('Cannot remove chiral flag');
-		restruct.clearVisel(restruct.chiralFlags.get(0).visel);
-		this.data.pos = restruct.chiralFlags.get(0).pp;
-		restruct.chiralFlags.delete(0);
-		struct.isChiral = false;
-	};
-
-	this.invert = function () {
-		const ret = new ChiralFlagAdd(this.data.pos);
-		ret.data = this.data;
-		return ret;
-	};
-}
-ChiralFlagDelete.prototype = new Base();
-
-function ChiralFlagMove(d) {
-	this.data = { d };
-
-	this.execute = function (restruct) {
-		restruct.chiralFlags.get(0).pp.add_(this.data.d); // eslint-disable-line no-underscore-dangle
-		this.data.d = this.data.d.negated();
-		invalidateItem(restruct, 'chiralFlags', 0, 1);
-	};
-
-	this.invert = function () {
-		const ret = new ChiralFlagMove();
-		ret.data = this.data;
-		return ret;
-	};
-}
-ChiralFlagMove.prototype = new Base();
-
 function AlignDescriptors() {
 	this.type = 'OpAlignDescriptors';
 	this.history = {};
@@ -975,9 +913,6 @@ export default {
 	RxnPlusMove,
 	SGroupDataMove,
 	CanvasLoad,
-	ChiralFlagAdd,
-	ChiralFlagDelete,
-	ChiralFlagMove,
 	UpdateIfThen,
 	AlignDescriptors,
 

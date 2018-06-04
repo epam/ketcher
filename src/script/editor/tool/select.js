@@ -44,8 +44,8 @@ SelectTool.prototype.mousedown = function (event) { // eslint-disable-line max-s
 	const ci = this.editor.findItem(
 		event,
 		selectFragment ?
-			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'enhancedFlags'] :
-			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'enhancedFlags']
+			['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'enhancedFlags'] :
+			['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'enhancedFlags']
 	);
 
 	this.dragCtx = {
@@ -142,8 +142,8 @@ SelectTool.prototype.mousemove = function (event) {
 	}
 
 	const maps = (this.lassoHelper.fragment || event.ctrlKey) ?
-		['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'enhancedFlags'] :
-		['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags', 'enhancedFlags'];
+		['frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'enhancedFlags'] :
+		['atoms', 'bonds', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'enhancedFlags'];
 
 	editor.hover(editor.findItem(event, maps));
 

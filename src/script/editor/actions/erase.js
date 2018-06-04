@@ -83,8 +83,7 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 		bonds: selection.bonds || [],
 		rxnPluses: selection.rxnPluses || [],
 		rxnArrows: selection.rxnArrows || [],
-		sgroupData: selection.sgroupData || [],
-		chiralFlags: selection.chiralFlags || []
+		sgroupData: selection.sgroupData || []
 	};
 
 	const actionRemoveDataSGroups = new Action();
@@ -130,10 +129,6 @@ export function fromFragmentDeletion(restruct, selection) { // eslint-disable-li
 
 	selection.rxnPluses.forEach((id) => {
 		action.addOp(new op.RxnPlusDelete(id));
-	});
-
-	selection.chiralFlags.forEach((id) => {
-		action.addOp(new op.ChiralFlagDelete(id));
 	});
 
 	action = action.perform(restruct);

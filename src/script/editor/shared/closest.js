@@ -21,7 +21,6 @@ const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const findMaps = {
 	atoms: findClosestAtom,
 	bonds: findClosestBond,
-	chiralFlags: findClosestChiralFlag,
 	enhancedFlags: findClosestEnhancedFlag,
 	sgroupData: findClosestDataSGroupData,
 	sgroups: findClosestSGroup,
@@ -126,28 +125,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 	}
 
 	return null;
-}
-
-function findClosestChiralFlag(restruct, pos) {
-	var minDist;
-	var ret = null;
-
-	// there is only one chiral flag, but we treat it as a "map" for convenience
-	restruct.chiralFlags.forEach((item, id) => {
-		const p = item.pp;
-
-		if (Math.abs(pos.x - p.x) >= 1.0)
-			return;
-
-		const dist = Math.abs(pos.y - p.y);
-
-		if (dist < 0.3 && (!ret || dist < minDist)) {
-			minDist = dist;
-			ret = { id, dist: minDist };
-		}
-	});
-
-	return ret;
 }
 
 function findClosestEnhancedFlag(restruct, pos) {

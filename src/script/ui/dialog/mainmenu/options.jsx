@@ -61,7 +61,7 @@ function Settings(props) {
 						<Field name="rotationStep" />
 						<Field name="showValenceWarnings" component={SelectCheckbox} />
 						<Field name="atomColoring" component={SelectCheckbox} />
-						<Field name="hideChiralFlag" component={SelectCheckbox} />
+						<Field name="hideStereoFlags" component={SelectCheckbox} />
 						<Field name="font" component={SystemFonts} />
 						<Field name="fontsz" component={MeasureInput} />
 						<Field name="fontszsub" component={MeasureInput} />

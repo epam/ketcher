@@ -35,7 +35,6 @@ function Struct() {
 	this.sgroups = new Pool();
 	this.halfBonds = new Pool();
 	this.loops = new Pool();
-	this.isChiral = false;
 	this.isReaction = false;
 	this.rxnArrows = new Pool();
 	this.rxnPluses = new Pool();
@@ -57,7 +56,7 @@ Struct.prototype.hasRxnArrow = function () {
 Struct.prototype.isBlank = function () {
 	return this.atoms.size === 0 &&
 	this.rxnArrows.size === 0 &&
-	this.rxnPluses.size === 0 && !this.isChiral;
+	this.rxnPluses.size === 0;
 };
 
 /**
@@ -197,8 +196,6 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		else
 			cp.sGroupForest.insert(sg);
 	});
-
-	cp.isChiral = cp.isChiral || this.isChiral;
 
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;
@@ -607,13 +604,13 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
  * @param idSet { Pile<number> }
  */
 Struct.prototype.markFragment = function (idSet) {
-	const frag = {
-		enhancedFlag: 'Hello, Vasya'
-	};
+	const frag = new Fragment();
 	const fid = this.frags.add(frag);
 
 	idSet.forEach((aid) => {
-		this.atoms.get(aid).fragment = fid;
+		const atom = this.atoms.get(aid);
+		if (atom.stereoLabel) frag.updateStereoAtom(this, aid, true);
+		atom.fragment = fid;
 	});
 };
 

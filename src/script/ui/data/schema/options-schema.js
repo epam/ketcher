@@ -43,8 +43,8 @@ const render = {
 		type: 'boolean',
 		default: true
 	},
-	hideChiralFlag: {
-		title: 'Do not show the Chiral flag',
+	hideStereoFlags: {
+		title: 'Do not show the Stereo flags',
 		type: 'boolean',
 		default: false
 	},

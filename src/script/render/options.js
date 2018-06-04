@@ -33,7 +33,7 @@ function defaultOptions(opt) {
 		showHalfBondIds: false,
 		showLoopIds: false,
 		// rendering customization flags
-		hideChiralFlag: false,
+		// TODO: hide enhanced flags opts
 		showValenceWarnings: true,
 		autoScale: false, // scale structure to fit into the given view box, used in view mode
 		autoScaleMargin: 0,

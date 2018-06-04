@@ -25,7 +25,6 @@ import About from './mainmenu/about';
 import Help from './mainmenu/help';
 import Miew from './mainmenu/miew';
 
-
 // schemify dialogs
 import Atom from './toolbox/atom';
 import AttachPoints from './toolbox/attach';

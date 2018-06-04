@@ -68,7 +68,7 @@ function ActionButton({ name, action, status = {}, onAction }) { // eslint-disab
 		<button
 			disabled={status.disabled}
 			onClick={(ev) => {
-				if (!status.selected || isMenuOpened(this.base) || action.action.tool === 'chiralFlag') {
+				if (!status.selected || isMenuOpened(this.base)) {
 					onAction(action.action);
 					ev.stopPropagation();
 				}

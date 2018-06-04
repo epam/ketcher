@@ -176,9 +176,6 @@ export function fromFragmentSplit(restruct, frid, rgForRemove = []) {
 		action.mergeWith(fromUpdateIfThen(restruct, 0, rgid, rgForRemove));
 	}
 
-	// 	if (restruct.molecule.isChiral && restruct.molecule.frags.size === 0)
-	// 		action.addOp(new op.ChiralFlagDelete().perform(restruct));
-
 	action.operations.reverse();
 	return action;
 }

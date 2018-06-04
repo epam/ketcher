@@ -208,7 +208,9 @@ Molfile.prototype.writeCTab2000Header = function () {
 
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(3);
-	this.writePaddedNumber(this.molecule.isChiral ? 1 : 0, 3);
+	const isAbsFlag = Array.from(this.molecule.frags.values())
+		.some(fr => fr.enhancedStereoFlag === 'abs');
+	this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(12);
 	this.writePaddedNumber(999, 3);

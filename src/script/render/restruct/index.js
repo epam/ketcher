@@ -34,7 +34,6 @@ import ReRxnArrow from './rerxnarrow';
 import ReFrag from './refrag';
 import ReRGroup from './rergroup';
 import ReDataSGroupData from './redatasgroupdata';
-import ReChiralFlag from './rechiralflag';
 import ReEnhancedFlag from './reEnhancedFlag';
 import ReSGroup from './resgroup';
 import ReLoop from './reloop';
@@ -59,7 +58,6 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	this.rgroups = new Map();
 	this.sgroups = new Map();
 	this.sgroupData = new Map();
-	this.chiralFlags = new Map();
 	this.enhancedFlags = new Map();
 	this.molecule = molecule || new Struct();
 	this.initialized = false;
@@ -100,11 +98,6 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 		if (item.type === 'DAT' && !item.data.attached)
 			this.sgroupData.set(id, new ReDataSGroupData(item)); // [MK] sort of a hack, we use the SGroup id for the data field id
 	});
-
-// 	if (molecule.isChiral) {
-// 		var bb = molecule.getCoordBoundingBox();
-// 		this.chiralFlags.set(0, new ReChiralFlag(new Vec2(bb.max.x, bb.min.y - 1)));
-// 	}
 }
 
 /**
@@ -434,7 +427,6 @@ ReStruct.prototype.update = function (force) { // eslint-disable-line max-statem
 
 	this.showFragments();
 	this.showRGroups();
-	// 	this.showChiralFlags();
 	this.showEnhancedFlags();
 	this.clearMarks();
 	return true;
@@ -544,17 +536,6 @@ ReStruct.prototype.showLabels = function () { // eslint-disable-line max-stateme
 	});
 };
 
-// ReStruct.prototype.showChiralFlags = function () { // eslint-disable-line max-statements
-// 	const options = this.render.options;
-//
-// 	if (this.render.options.hideChiralFlag !== true) {
-// 		this.chiralFlagsChanged.forEach((value, chid) => {
-// 			const flag = this.chiralFlags.get(chid);
-// 			flag.show(this, chid, options);
-// 		});
-// 	}
-// };
-
 ReStruct.prototype.showEnhancedFlags = function () {
 	const options = this.render.options;
 
@@ -620,7 +601,6 @@ ReStruct.maps = {
 	frags: ReFrag,
 	rgroups: ReRGroup,
 	sgroupData: ReDataSGroupData,
-	chiralFlags: ReChiralFlag,
 	enhancedFlags: ReEnhancedFlag,
 	sgroups: ReSGroup,
 	reloops: ReLoop
@@ -634,7 +614,6 @@ export {
 	ReRxnArrow,
 	ReFrag,
 	ReRGroup,
-	ReChiralFlag,
 	ReEnhancedFlag,
 	ReSGroup
 };

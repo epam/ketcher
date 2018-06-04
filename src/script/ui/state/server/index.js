@@ -57,8 +57,10 @@ export function recognize(file, version) {
 function ketcherCheck(struct, checkParams) {
 	const errors = {};
 
-	if (checkParams.includes('chiral_flag') && struct.isChiral)
-		errors['chiral_flag'] = 'Chiral flag is present on the canvas';
+	if (checkParams.includes('chiral_flag')) {
+		const isAbs = Array.from(struct.frags.values()).some(fr => fr.enhancedStereoFlag === 'abs');
+		if (isAbs) errors['chiral_flag'] = 'Chiral flag is present on the canvas';
+	}
 
 	if (checkParams.includes('valence')) {
 		let badVal = 0;

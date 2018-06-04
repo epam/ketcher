@@ -42,12 +42,6 @@ const toolActions = {
 		title: 'Chain',
 		action: { tool: 'chain' }
 	},
-	'chiral-flag': {
-		title: 'Chiral Flag',
-		action: { tool: 'chiralFlag' },
-		selected: editor => editor.struct().isChiral
-	},
-	// TODO: correct
 	'enhanced-stereo': {
 		title: 'Enhanced Stereo',
 		action: { tool: 'enhancedStereo' }

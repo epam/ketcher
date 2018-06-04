@@ -185,7 +185,7 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 	if (ctabLines[shift].slice(0, 13) != 'M  V30 COUNTS')
 		throw Error('CTAB V3000 invalid');
 	var vals = ctabLines[shift].slice(14).split(' ');
-	ctab.isChiral = (utils.parseDecimalInt(vals[4]) == 1);
+	const isAbs = utils.parseDecimalInt(vals[4]) === 1; // todo: check it
 	shift++;
 
 	if (ctabLines[shift].trim() == 'M  V30 BEGIN ATOM') {
@@ -208,7 +208,9 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 					break;
 				while (line.charAt(line.length - 1) == '-')
 					line = (line.substring(0, line.length - 1) + stripV30(ctabLines[shift++])).trim();
-				ctab.bonds.add(parseBondLineV3000(line));
+				const bond = parseBondLineV3000(line);
+				if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs';
+				ctab.bonds.add(bond);
 			}
 		}
 

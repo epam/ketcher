@@ -21,7 +21,6 @@ import EraserTool from './eraser';
 import AtomTool from './atom';
 import BondTool from './bond';
 import ChainTool from './chain';
-import ChiralFlagTool from './chiral-flag';
 import TemplateTool from './template';
 import ChargeTool from './charge';
 import RGroupFragmentTool from './rgroupfragment';
@@ -45,7 +44,6 @@ export default {
 	atom: AtomTool,
 	bond: BondTool,
 	chain: ChainTool,
-	chiralFlag: ChiralFlagTool,
 	template: TemplateTool,
 	charge: ChargeTool,
 	rgroupfragment: RGroupFragmentTool,
@@ -57,7 +55,5 @@ export default {
 	reactionunmap: ReactionUnmapTool,
 	paste: PasteTool,
 	rotate: RotateTool,
-
-	// TODO: correct
 	enhancedStereo: EnhancedStereoTool
 };

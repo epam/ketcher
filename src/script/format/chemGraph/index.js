@@ -53,12 +53,14 @@ function toGraph(struct) {
 function fromGraph(graph) {
 	const resultingStruct = new Struct();
 	resultingStruct.name = graph.header ? graph.header.moleculeName : null;
+
 	const nodes = graph.root.nodes;
 	Object.keys(nodes).forEach((i) => {
 		if (nodes[i].type) parseNode(nodes[i], resultingStruct);
 		else if (nodes[i].$ref)
 			parseNode(graph[nodes[i].$ref], resultingStruct);
 	});
+
 	return resultingStruct;
 }
 

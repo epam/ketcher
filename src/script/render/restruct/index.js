@@ -34,7 +34,7 @@ import ReRxnArrow from './rerxnarrow';
 import ReFrag from './refrag';
 import ReRGroup from './rergroup';
 import ReDataSGroupData from './redatasgroupdata';
-import ReEnhancedFlag from './reEnhancedFlag';
+import ReEnhancedFlag from './reenhancedflag';
 import ReSGroup from './resgroup';
 import ReLoop from './reloop';
 

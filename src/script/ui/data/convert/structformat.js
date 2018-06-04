@@ -64,7 +64,7 @@ export const map = {
 	},
 	graph: {
 		name: 'Graph Format',
-		mime: 'chemical/x-graph',
+		mime: 'application/json',
 		ext: ['.ket']
 	}
 };

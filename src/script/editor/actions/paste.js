@@ -49,6 +49,12 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		pasteItems.atoms.push(operation.data.aid);
 	});
 
+	pstruct.frags.forEach((frag, frid) => {
+		frag.stereoAtoms.forEach(aid => action.addOp(
+			new op.FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(restruct)
+		));
+	});
+
 	pstruct.bonds.forEach((bond) => {
 		const operation = new op.BondAdd(aidMap.get(bond.begin), aidMap.get(bond.end), bond)
 			.perform(restruct);

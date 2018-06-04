@@ -34,7 +34,6 @@ export function moleculeToGraph(struct) {
 function atomToGraph(source) {
 	const schema = structSchema.atom.properties;
 	const result = {};
-
 	ifDef(result, 'label', source.label);
 	ifDef(result, 'alias', source.alias);
 	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
@@ -55,7 +54,6 @@ function atomToGraph(source) {
 	ifDef(result, 'mapping', parseInt(source.aam), schema.mapping.default);
 	ifDef(result, 'invRet', source.invRet, schema.invRet.default);
 	ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, schema.exactChangeFlag.default);
-
 	return result;
 // 	return schemify(result, structSchema.atom);
 }
@@ -82,7 +80,7 @@ function atomListToGraph(source) {
 	ifDef(result, 'location', [source.pp.x, source.pp.y, source.pp.z]);
 	ifDef(result, 'attachmentPoints', source.attpnt, schema.attachmentPoints.default);
 	ifDef(result, 'elements', source.atomList.labelList());
-
+	ifDef(result, 'notList', source.atomList.notList, schema.notList.default);
 	return result;
 }
 
@@ -97,7 +95,6 @@ function bondToGraph(source) {
 	ifDef(result, 'center', source.reactingCenterStatus, schema.center.default);
 
 	return result;
-// 	return schemify(result, structSchema.bond);
 }
 
 function sgroupToGraph(source) {
@@ -130,10 +127,10 @@ function sgroupToGraph(source) {
 			ifDef(result, 'context', source.data.context, schema.context.default);
 			ifDef(result, 'fieldName', source.data.fieldName);
 			ifDef(result, 'fieldData', source.data.fieldValue);
+			break;
 		}
 		default: break;
 	}
 
 	return result;
-// 	return schemify(result, structSchema.sgroup);
 }

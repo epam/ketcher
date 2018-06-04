@@ -1,47 +1,27 @@
 import { ifDef } from '../../utils';
 import Struct, { Atom, Bond, SGroup } from '../../../chem/struct';
-import Vec2 from '../../../util/vec2';
-
+import { toRlabel } from '../convertStruct';
+import element from '../../../chem/element';
 
 export function moleculeToStruct(graphItem) {
 	const struct = new Struct();
-	graphItem.atoms.forEach(atom => struct.atoms.add(atomToStruct(atom)));
+	graphItem.atoms
+		.forEach((atom) => {
+			if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
+			if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
+			if (!atom.type) struct.atoms.add(atomToStruct(atom));
+		});
 
 	if (graphItem.bonds)
 		graphItem.bonds.forEach(bond => struct.bonds.add(bondToStruct(bond)));
 
-	if (graphItem.sgroups) {
+	if (graphItem.sgroups)
 		graphItem.sgroups.forEach(sgroup => struct.sgroups.add(sgroupToStruct(sgroup)));
 
-		if (graphItem.sgroups.forEach(sgroup => sgroup.type === 'MUL')) {
-			graphItem.atoms = collapseMulAtoms(graphItem.atoms);
-			graphItem.bonds = collapseMulBonds(graphItem.bonds, graphItem.atoms.map((a, i) => i));
-		}
-	}
 	struct.initHalfBonds();
 	struct.initNeighbors();
 	struct.markFragments();
 	return struct;
-}
-
-function collapseMulAtoms(atoms) {
-	return atoms
-		.reduce((acc, atom) => {
-			const atomInSameLocation = acc.find(elem =>
-				elem.location.x === atom.location.x &&
-				elem.location.y === atom.location.y &&
-				elem.location.z === atom.location.z);
-
-			if (!atomInSameLocation)
-				acc.push(atom);
-
-			return acc;
-		}, []);
-}
-
-function collapseMulBonds(bonds, atoms) {
-	return bonds
-		.filter(bond => atoms.includes(atoms[0]) && atoms.includes(bond.atoms[1]));
 }
 
 export function atomToStruct(source) {
@@ -76,6 +56,37 @@ export function atomToStruct(source) {
 	return new Atom(params);
 }
 
+export function rglabelToStruct(source) {
+	const params = {};
+	params.label = 'R#';
+	ifDef(params, 'pp', {
+		x: source.location[0],
+		y: source.location[1],
+		z: source.location[2] || 0.0
+	});
+	ifDef(params, 'attpnt', source.attachmentPoints);
+	const rglabel = toRlabel(source.$refs.map(el => parseInt(el.slice(3))));
+	ifDef(params, 'rglabel', rglabel);
+	return new Atom(params);
+}
+
+export function atomListToStruct(source) {
+	const params = {};
+	params.label = 'L#';
+	ifDef(params, 'pp', {
+		x: source.location[0],
+		y: source.location[1],
+		z: source.location[2] || 0.0
+	});
+	ifDef(params, 'attpnt', source.attachmentPoints);
+	const ids = source.elements.map(el => element.map[el]);
+	ifDef(params, 'atomList', {
+		ids,
+		notList: source.notList
+	});
+	return new Atom(params);
+}
+
 export function bondToStruct(source) {
 	const params = {};
 
@@ -94,45 +105,30 @@ export function bondToStruct(source) {
 
 export function sgroupToStruct(source) {
 	const sgroup = new SGroup(source.type);
-
-	const normAtoms = source.atoms.map(aid => aid);
-	const normPatoms = source.patoms ? source.patoms.map(aid => aid) : null;
-
-	const fieldDisp = parseFieldDisp(source.fieldDisp);
-
-	sgroup.atoms = source.type === 'MUL' ? normPatoms : normAtoms;
-	sgroup.bonds = source.bonds;
-	sgroup.patoms = normPatoms;
-	sgroup.xbonds = source.xbonds;
-	sgroup.pp = fieldDisp.pp;
-	sgroup.data = {
-		mul: source.mul || 1,
-		subscript: source.subscript || 'n',
-		connectivity: source.connectivity || 'ht',
-		name: source.type === 'SUP' ? (source.subscript || '') : '',
-		fieldName: source.fieldName || '',
-		fieldValue: source.fieldData || '',
-		fieldType: source.fieldData === '-1' ? '' : 'F',
-		query: source.query || '',
-		queryOp: source.queryOp || '',
-		daspPos: fieldDisp.daspPos
-	};
-
+	sgroup.atoms = source.atoms;
+	switch (source.type) {
+		case 'GEN': break;
+		case 'MUL': {
+			sgroup.data.mul = source.mul;
+			break;
+		}
+		case 'SRU': {
+			sgroup.data.subscript = source.subscript;
+			sgroup.data.connectivity = source.connectivity.toLowerCase();
+			break;
+		}
+		case 'SUP': {
+			sgroup.data.name = source.name;
+			break;
+		}
+		case 'DAT': {
+			sgroup.data.context = source.context;
+			sgroup.data.fieldName = source.fieldName;
+			sgroup.data.fieldValue = source.fieldData;
+			break;
+		}
+		default: break;
+	}
 	return sgroup;
-}
-
-function parseFieldDisp(fieldDisp) {
-	if (!fieldDisp || fieldDisp === '')
-		return new Vec2();
-
-	const tokens = fieldDisp.split(/\s+/).filter(str => str !== '');
-
-	return {
-		pp: new Vec2(
-			parseFloat(tokens[0]),
-			-parseFloat(tokens[1])
-		),
-		daspPos: parseInt(tokens[5])
-	};
 }
 

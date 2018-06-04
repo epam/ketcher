@@ -57,7 +57,7 @@ function Atom(params) { // eslint-disable-line max-statements
 	ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
-	this.neighbors = []; // set of half-bonds having this atom as their origin
+	this.neighbors = params.neighbors || []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
 }
 

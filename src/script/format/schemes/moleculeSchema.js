@@ -215,6 +215,10 @@ const atomlist = {
 		type: {
 			enum: ['atom-list']
 		},
+		notList: {
+			type: 'boolean',
+			default: false
+		},
 		location: {
 			title: 'Location',
 			type: 'array',

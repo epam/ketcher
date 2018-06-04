@@ -43,6 +43,7 @@ const toolActions = {
 		action: { tool: 'chain' }
 	},
 	'enhanced-stereo': {
+		shortcut: 'Alt+e',
 		title: 'Enhanced Stereo',
 		action: { tool: 'enhancedStereo' }
 	},

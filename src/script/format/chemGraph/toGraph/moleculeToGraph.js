@@ -55,7 +55,6 @@ function atomToGraph(source) {
 	ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, schema.exactChangeFlag.default);
 
 	return result;
-// 	return schemify(result, structSchema.atom);
 }
 
 function rglabelToGraph(source) {
@@ -95,7 +94,6 @@ function bondToGraph(source) {
 	ifDef(result, 'center', source.reactingCenterStatus, schema.center.default);
 
 	return result;
-// 	return schemify(result, structSchema.bond);
 }
 
 function sgroupToGraph(source) {
@@ -133,5 +131,4 @@ function sgroupToGraph(source) {
 	}
 
 	return result;
-// 	return schemify(result, structSchema.sgroup);
 }

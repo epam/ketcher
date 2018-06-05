@@ -406,6 +406,15 @@ const sgroup = {
 							default: '',
 							minLength: 1,
 							invalidMessage: 'Please, specify field value'
+						},
+						display: {
+							title: 'Display',
+							enum: [
+								'absolute',
+								'relative',
+								'attached'
+							],
+							default: 'absolute'
 						}
 					},
 					required: ['context', 'fieldName', 'fieldValue']

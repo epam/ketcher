@@ -19,3 +19,28 @@ export function toRlabel(values) {
 	});
 	return res;
 }
+
+export function fromDisplay(disp) {
+	const res = {};
+	if (disp === 'relative') {
+		return {
+			...res,
+			absolute: false,
+			attached: false
+		};
+	} else if (disp === 'attached') {
+		return {
+			...res,
+			absolute: false,
+			attached: true
+		};
+	}
+	return null;
+}
+
+export function toDisplay(abs, att) {
+	const rel = !(abs || att);
+	if (rel) return 'relative';
+	else if (abs) return 'absolute';
+	return 'attached';
+}

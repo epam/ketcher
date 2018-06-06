@@ -1,6 +1,6 @@
 import { ifDef } from '../../utils';
 import Struct, { Atom, Bond, SGroup } from '../../../chem/struct';
-import { toRlabel, fromDisplay } from '../convertStruct';
+import { toRlabel } from '../convertStruct';
 import element from '../../../chem/element';
 
 export function moleculeToStruct(graphItem) {
@@ -124,8 +124,11 @@ export function sgroupToStruct(source) {
 			break;
 		}
 		case 'DAT': {
-			const val = fromDisplay(source.display);
-			sgroup.data = { ...sgroup.data, ...val };
+			if (!source.display) {
+				sgroup.data.absolute = false;
+				sgroup.data.relative = true;
+			}
+			if (source.attached) sgroup.data.attached = true;
 			sgroup.data.context = source.context;
 			sgroup.data.fieldName = source.fieldName;
 			sgroup.data.fieldValue = source.fieldData;

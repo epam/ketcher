@@ -409,12 +409,13 @@ const sgroup = {
 						},
 						display: {
 							title: 'Display',
-							enum: [
-								'absolute',
-								'relative',
-								'attached'
-							],
-							default: 'absolute'
+							type: 'boolean',
+							default: true
+						},
+						attached: {
+							title: 'Attach value',
+							type: 'boolean',
+							default: false
 						}
 					},
 					required: ['context', 'fieldName', 'fieldValue']

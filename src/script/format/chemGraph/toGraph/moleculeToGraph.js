@@ -1,6 +1,6 @@
 import structSchema from '../../schemes/moleculeSchema';
 
-import { fromRlabel, toDisplay } from '../convertStruct';
+import { fromRlabel } from '../convertStruct';
 import { ifDef } from '../../utils';
 
 export function moleculeToGraph(struct) {
@@ -122,7 +122,8 @@ function sgroupToGraph(source) {
 		case 'DAT': {
 			schema = structSchema.sgroup.allOf[1].oneOf[4].properties;
 			const data = source.data;
-			ifDef(result, 'display', toDisplay(data.absolute, data.attached));
+			ifDef(result, 'display', data.absolute || false);
+			ifDef(result, 'attached', data.attached || false);
 			ifDef(result, 'context', data.context, schema.context.default);
 			ifDef(result, 'fieldName', data.fieldName);
 			ifDef(result, 'fieldData', data.fieldValue);

@@ -10,7 +10,13 @@ export function rxnToStruct(graphItem, struct) {
 			}
 		}));
 	} else {
-		struct.rxnPluses.add(new RxnPlus({ pp: graphItem.location }));
+		struct.rxnPluses.add(new RxnPlus({
+			pp: {
+				x: graphItem.location[0],
+				y: graphItem.location[1],
+				z: graphItem.location[2]
+			}
+		}));
 	}
 	return struct;
 }

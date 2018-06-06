@@ -55,7 +55,7 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	this.rxnPluses = new Map();
 	this.rxnArrows = new Map();
 	this.frags = new Pool();
-	this.rgroups = new Map();
+	this.rgroups = new Pool();
 	this.sgroups = new Map();
 	this.sgroupData = new Map();
 	this.enhancedFlags = new Map();

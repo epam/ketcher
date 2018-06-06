@@ -30,6 +30,7 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 		pos = atom.pos;
 	}
 	const action = new Action();
+	let mergeFragments = false;
 
 	let frid = null;
 
@@ -38,8 +39,7 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 			frid = atomGetAttr(restruct, end, 'fragment');
 	} else {
 		frid = atomGetAttr(restruct, begin, 'fragment');
-		if (typeof end === 'number')
-			mergeFragmentsIfNeeded(action, restruct, begin, end);
+		if (typeof end === 'number') mergeFragments = true;
 	}
 
 	if (frid == null)
@@ -66,9 +66,10 @@ export function fromBondAddition(restruct, bond, begin, end, pos, pos2) { // esl
 	}
 
 	const bid = action.addOp(new op.BondAdd(begin, end, bond).perform(restruct)).data.bid;
+	if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid));
 	action.operations.reverse();
 
-	if (bond.stereo > 0) action.mergeWith(fromBondStereoUpdate(restruct, bid));
+	if (mergeFragments) mergeFragmentsIfNeeded(action, restruct, begin, end);
 
 	return [action, begin, end, bid];
 }
@@ -91,7 +92,7 @@ export function fromBondsAttrs(restruct, ids, attrs, reset) {
 			const value = (key in attrs) ? attrs[key] : Bond.attrGetDefault(key);
 			action.addOp(new op.BondAttr(bid, key, value).perform(restruct));
 			if (key === 'stereo' && key in attrs)
-				action.mergeWith(fromBondStereoUpdate(restruct, bid));
+				action.mergeWith(fromBondStereoUpdate(restruct, bid, true));
 		});
 	});
 
@@ -136,13 +137,12 @@ function fromBondFlipping(restruct, id) {
 	return action.perform(restruct);
 }
 
-export function fromBondStereoUpdate(restruct, bid, isDeleted) {
+export function fromBondStereoUpdate(restruct, bid, withReverse) {
 	const struct = restruct.molecule;
 	let bond = struct.bonds.get(bid);
 	const action = new Action();
 
-	if (isDeleted && bond.stereo === Bond.PATTERN.STEREO.NONE) return action;
-	if (isDeleted || bond.stereo === Bond.PATTERN.STEREO.NONE) {
+	if (bond.stereo === Bond.PATTERN.STEREO.NONE) {
 		const neigs = atomGetNeighbors(restruct, bond.begin);
 		const stereoNeig = neigs
 			.find(item => item.bid !== bid && struct.bonds.get(item.bid).stereo > 0);
@@ -150,7 +150,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 			action.mergeWith(fromStereoAtomAttrs(restruct, bond.begin, {
 				stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
 				stereoLabel: null
-			}, true));
+			}, withReverse));
 			return action;
 		}
 		bond = struct.bonds.get(stereoNeig.bid);
@@ -174,7 +174,7 @@ export function fromBondStereoUpdate(restruct, bid, isDeleted) {
 	action.mergeWith(fromStereoAtomAttrs(restruct, bond.begin, {
 		stereoParity: newAtomParity,
 		stereoLabel: 'and-1'
-	}, true));
+	}, withReverse));
 	return action;
 }
 

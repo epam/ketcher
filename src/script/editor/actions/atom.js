@@ -171,11 +171,11 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 	struct.atoms.forEach((atom, aid) => {
 		if (atom.fragment === frid2) atomsToNewFrag.push(aid);
 	});
-
-	action.mergeWith(fromAtomsFragmentAttr(restruct, atomsToNewFrag, frid2));
+	const moveAtomsAction = fromAtomsFragmentAttr(restruct, atomsToNewFrag, frid);
 
 	mergeSgroups(action, restruct, fridAtoms, dstId);
 	action.addOp(new op.FragmentDelete(frid2).perform(restruct));
+	action.mergeWith(moveAtomsAction);
 }
 
 export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {

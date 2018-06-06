@@ -31,6 +31,7 @@ function FragmentDelete(frid) {
 
 	this.execute = function (restruct) {
 		const struct = restruct.molecule;
+		if (!struct.frags.get(this.frid)) return;
 		invalidateItem(restruct, 'frags', this.frid, 1);
 		restruct.frags.delete(this.frid);
 		struct.frags.delete(this.frid); // TODO add ReStruct.notifyFragmentRemoved

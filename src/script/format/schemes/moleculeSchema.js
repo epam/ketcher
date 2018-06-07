@@ -412,8 +412,8 @@ const sgroup = {
 							type: 'boolean',
 							default: true
 						},
-						attached: {
-							title: 'Attach value',
+						placement: {
+							title: 'Placement',
 							type: 'boolean',
 							default: false
 						}

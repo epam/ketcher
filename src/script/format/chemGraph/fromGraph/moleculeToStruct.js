@@ -124,11 +124,8 @@ export function sgroupToStruct(source) {
 			break;
 		}
 		case 'DAT': {
-			if (!source.display) {
-				sgroup.data.absolute = false;
-				sgroup.data.relative = true;
-			}
-			if (source.attached) sgroup.data.attached = true;
+			if (!source.placement) sgroup.data.absolute = false;
+			if (source.display) sgroup.data.attached = true;
 			sgroup.data.context = source.context;
 			sgroup.data.fieldName = source.fieldName;
 			sgroup.data.fieldValue = source.fieldData;

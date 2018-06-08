@@ -410,12 +410,12 @@ const sgroup = {
 						display: {
 							title: 'Display',
 							type: 'boolean',
-							default: true
+							default: false
 						},
 						placement: {
 							title: 'Placement',
 							type: 'boolean',
-							default: false
+							default: true
 						}
 					},
 					required: ['context', 'fieldName', 'fieldValue']

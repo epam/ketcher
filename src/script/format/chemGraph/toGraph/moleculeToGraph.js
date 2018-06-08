@@ -122,9 +122,9 @@ function sgroupToGraph(source) {
 		case 'DAT': {
 			schema = structSchema.sgroup.allOf[1].oneOf[4].properties;
 			const data = source.data;
-			ifDef(result, 'placement', data.absolute || false);
-			ifDef(result, 'display', data.attached || false);
-			ifDef(result, 'context', data.context, schema.context.default);
+			ifDef(result, 'placement', data.absolute, schema.placement.default);
+			ifDef(result, 'display', data.attached, schema.display.default);
+			ifDef(result, 'context', data.context);
 			ifDef(result, 'fieldName', data.fieldName);
 			ifDef(result, 'fieldData', data.fieldValue);
 			break;

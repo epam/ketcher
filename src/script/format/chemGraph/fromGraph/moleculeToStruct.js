@@ -107,28 +107,28 @@ export function bondToStruct(source) {
 
 export function sgroupToStruct(source) {
 	const sgroup = new SGroup(source.type);
-	sgroup.atoms = source.atoms;
+	ifDef(sgroup, 'atoms', source.atoms);
 	switch (source.type) {
 		case 'GEN': break;
 		case 'MUL': {
-			sgroup.data.mul = source.mul;
+			ifDef(sgroup.data, 'mul', source.mul);
 			break;
 		}
 		case 'SRU': {
-			sgroup.data.subscript = source.subscript;
-			sgroup.data.connectivity = source.connectivity.toLowerCase();
+			ifDef(sgroup.data, 'subscript', source.subscript);
+			ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
 			break;
 		}
 		case 'SUP': {
-			sgroup.data.name = source.name;
+			ifDef(sgroup.data, 'name', source.name);
 			break;
 		}
 		case 'DAT': {
-			if (!source.placement) sgroup.data.absolute = false;
-			if (source.display) sgroup.data.attached = true;
-			sgroup.data.context = source.context;
-			sgroup.data.fieldName = source.fieldName;
-			sgroup.data.fieldValue = source.fieldData;
+			ifDef(sgroup.data, 'absolute', source.placement);
+			ifDef(sgroup.data, 'attached', source.display);
+			ifDef(sgroup.data, 'context', source.context);
+			ifDef(sgroup.data, 'fieldName', source.fieldName);
+			ifDef(sgroup.data, 'fieldValue', source.fieldData);
 			break;
 		}
 		default: break;

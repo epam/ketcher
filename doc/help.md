@@ -486,15 +486,14 @@ To create a user template:
 Ketcher supports the following molecular formats that can be entered
 either manually or from files:
 
-  * MDL Molfile or RXN file;
-
-  * Daylight SMILES (Server mode only);
-
-  * Daylight SMARTS (Server mode only);
-
-  * InChi string (Server mode only);
-
-  * CML file (Server mode only).
+|                              |  Graph  |  MDL  |  Daylight SMILES   |   Daylight SMARTS   |   InChi   |   CML  |
+| ---------------------------- |:-------:|:-----:|:------------------:|:-------------------:|:---------:|:------:|
+| Offline mode                 |    +    |   +   |          -         |          -          |     -     |    -   |
+| Reactions                    |    +    |   +   |          +         |          -          |     -     |    +   |
+| R-Groups                     |    +    |   +   |          -         |          -          |     -     |    -   |
+| S-Groups                     |    +    |   +   |          -         |          -          |     -     |    +   |
+| Standalone (Open/Save as...) |    +    |   +   |          -         |          -          |     -     |    -   |
+| Valency                      |    +    |   +   |          +         |          +          |     +     |    -   |
 
 You can use the **Open…** and **Save As…** buttons of the _Main_
 toolbar to import a molecule from a molecular file or save it to a

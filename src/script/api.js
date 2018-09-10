@@ -75,13 +75,24 @@ function api(base, defaultOptions) {
 		};
 	}
 
+	function APICall(method, url, defaultData) {
+		return (data, options) => {
+			const body = Object.assign({}, defaultData, data);
+			body.options = Object.assign(body.options || {},
+				defaultOptions, options);
+			return info.then(() => request(method, url, JSON.stringify(body), {
+				'Content-Type': 'application/json'
+			}));
+		};
+	}
+
 	return Object.assign(info, {
 		convert: indigoCall('POST', 'indigo/convert'),
 		layout: indigoCall('POST', 'indigo/layout'),
-		clean: indigoCall('POST', 'indigo/clean'),
-		aromatize: indigoCall('POST', 'indigo/aromatize'),
-		dearomatize: indigoCall('POST', 'indigo/dearomatize'),
-		calculateCip: indigoCall('POST', 'indigo/calculate_cip'),
+		clean: APICall('POST', 'clean'),
+		aromatize: APICall('POST', 'aromatize'),
+		dearomatize: APICall('POST', 'dearomatize'),
+		calculateCip: APICall('POST', 'calculate_cip'),
 		automap: indigoCall('POST', 'indigo/automap'),
 		check: indigoCall('POST', 'indigo/check'),
 		calculate: indigoCall('POST', 'indigo/calculate'),

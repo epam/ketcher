@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { serverTransform } from '../state/server';
+import { serverTransform, serverCIP } from '../state/server';
 
 export default {
 	layout: {
@@ -51,7 +51,7 @@ export default {
 		shortcut: 'Mod+p',
 		title: 'Calculate CIP',
 		action: {
-			thunk: serverTransform('calculateCip')
+			thunk: serverCIP()
 		},
 		disabled: (editor, server, options) => !options.app.server
 	},

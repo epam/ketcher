@@ -22,11 +22,13 @@ import molfile from '../../../chem/molfile';
 import { setStruct, appUpdate } from '../options';
 import { checkErrors } from '../modal/form';
 import { load } from '../shared';
+import { fromSgroupAddition, fromSgroupDeletion } from '../../../editor/actions/sgroup';
+import Action from '../../../editor/shared/action';
+import Vec2 from '../../../util/vec2';
 
 export function checkServer() {
 	return (dispatch, getState) => {
 		const server = getState().server;
-
 		server.then(
 			res => dispatch(appUpdate({
 				indigoVersion: res.indigoVersion,
@@ -111,6 +113,19 @@ export function analyse() {
 	};
 }
 
+export function serverCIP(data, struct) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const opts = state.options.getServerSettings();
+		opts.data = data;
+
+		serverCall(state.editor, state.server, 'calculateCip', opts, struct)
+			.then(res => dispatch(calculateCip(res)))
+			.catch(e => alert(e.message)); // eslint-disable-line no-undef
+		// TODO: notification
+	};
+}
+
 export function serverTransform(method, data, struct) {
 	return (dispatch, getState) => {
 		const state = getState();
@@ -124,6 +139,50 @@ export function serverTransform(method, data, struct) {
 			})))
 			.catch(e => alert(e.message)); // eslint-disable-line no-undef
 		// TODO: notification
+	};
+}
+
+function deleteAllSGroupsWithName(restruct, action, fieldName) {
+	restruct.molecule.sgroups.forEach((sg, id) => {
+		if (sg.data.fieldName === fieldName)
+			action.mergeWith(fromSgroupDeletion(restruct, id));
+	});
+}
+
+export function calculateCip(result) {
+	return (dispatch, getState) => {
+		const state = getState();
+		const editor = state.editor;
+		const restruct = editor.render.ctab;
+		const atomsIterator = restruct.molecule.atoms.keys();
+		const keys = [...atomsIterator];
+		const attributes = {
+			absolute: false,
+			attached: false,
+			context: 'Atom',
+			fieldName: 'CIP_DESC',
+			fieldValue: '(R)',
+			init: true
+		};
+		const action = new Action();
+		deleteAllSGroupsWithName(restruct, action, attributes.fieldName);
+		result.CIP_atoms.forEach((a) => {
+			const atomIdx = keys[a[0]];
+			const atom = restruct.molecule.atoms.get(atomIdx);
+			attributes.fieldValue = a[1];
+			action.mergeWith(fromSgroupAddition(restruct, 'DAT', [atomIdx], attributes, undefined, atom.pp));
+		});
+		result.CIP_bonds.forEach((b) => {
+			const atom1Idx = keys[b[0]];
+			const atom2Idx = keys[b[1]];
+			const atom1 = restruct.molecule.atoms.get(atom1Idx);
+			const atom2 = restruct.molecule.atoms.get(atom2Idx);
+			attributes.fieldValue = b[2];
+			const pp = new Vec2((atom1.pp.x + atom2.pp.x) * 0.5,
+				(atom1.pp.y + atom2.pp.y) * 0.5);
+			action.mergeWith(fromSgroupAddition(restruct, 'DAT', [atom1Idx, atom2Idx], attributes, undefined, pp));
+		});
+		editor.update(action);
 	};
 }
 

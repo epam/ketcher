@@ -96,7 +96,8 @@ window.onload = function () {
 
 const buildInfo = {
 	version: '__VERSION__',
-	apiPath: '__API_PATH__',
+	apiPath: 'http://127.0.0.1:5000/',
+	// apiPath: 'http://indigoweb.epm-lsop.projects.epam.com/v2/',
 	buildDate: '__BUILD_DATE__',
 	buildNumber: '__BUILD_NUMBER__' || null
 };

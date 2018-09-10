@@ -195,7 +195,7 @@ function isLabelVisible(restruct, options, atom) {
 	const visibleTerminal = options.showHydrogenLabels !== 'off' &&
 		options.showHydrogenLabels !== 'Hetero';
 
-	const neighborsLength = atom.a.neighbors.length === 0 || (atom.a.neighbors.length < 2 && visibleTerminal);
+	const neighborsLength = atom.a.neighbors.length === 0 || (atom.a.neighbors.length < 2 && visibleTerminal && atom.a.label.toLowerCase() !== 'c');
 
 	const shouldBeVisible =
 		neighborsLength ||

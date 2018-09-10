@@ -62,15 +62,15 @@ const mainmenu = [
 	{
 		id: 'process',
 		menu: [
-			'layout',
+			// 'layout',
 			'clean',
 			'arom',
 			'dearom',
-			'cip',
-			'check',
-			'analyse',
-			'recognize',
-			'miew'
+			'cip'
+		//	'check',
+		//	'analyse',
+		//	'recognize',
+		//	'miew'
 		]
 	},
 	{

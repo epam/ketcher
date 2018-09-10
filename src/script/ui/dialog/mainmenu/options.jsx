@@ -70,7 +70,7 @@ function Settings(props) {
 						<Field name="carbonExplicitly" component={SelectCheckbox} />
 						<Field name="showCharge" component={SelectCheckbox} />
 						<Field name="showValence" component={SelectCheckbox} />
-						<Field name="showHydrogenLabels" component={SelectCheckbox} />
+						<Field name="showHydrogenLabels" />
 					</fieldset>
 					<fieldset className="bonds">
 						<Field name="aromaticCircle" component={SelectCheckbox} />

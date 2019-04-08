@@ -16,21 +16,6 @@
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const eslint = require('gulp-eslint');
-const cp = require('child_process');
-
-module.exports.checkEpamEmail = function (options, cb) {
-	// TODO: should be pre-push and check remote origin
-	try {
-		const email = cp.execSync('git config user.email').toString().trim();
-		if (/@epam.com$/.test(email)) {
-			cb();
-		} else {
-			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
-			gutil.log('To check git project\'s settings run `git config --list`');
-			gutil.log('Could not continue. Bye!');
-		}
-	} catch (e) {}
-};
 
 module.exports.checkDepsExact = function (options, cb) {
 	const semver = require('semver'); // TODO: output corrupted packages

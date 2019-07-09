@@ -9,7 +9,12 @@ npm run build
 cd /dstore/data-portal-2.0/backend/static
 # delete old ketcher static files
 rm -rf ketcher
-# move to our static ketcher source 
-cd /dstore/data-portal-2.0/backend/static/ketcher
+# create new dir for static files
+mkdir ketcher
 # move newly compiled files into our repo
-cp -R /dstore/ketcher/dist/* 
+cp -R /dstore/ketcher/dist/* ketcher/ 
+
+# move to data portal repo
+cd /dstore/data-portal-2.0/frontend/
+# build newly compiled ketcher files with our static files
+npm run stage

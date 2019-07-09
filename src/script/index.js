@@ -96,7 +96,7 @@ window.onload = function () {
 
 const buildInfo = {
 	version: '__VERSION__',
-	apiPath: 'http://pdx-dataportaldev-lv01.schrodinger.com:5002',
+	apiPath: 'http://127.0.0.1:5002',
 	buildDate: '__BUILD_DATE__',
 	buildNumber: '__BUILD_NUMBER__' || null
 };

@@ -15,7 +15,6 @@
  ***************************************************************************/
 const gulp = require('gulp');
 const plugins = require('gulp-load-plugins')();
-const strip = require('gulp-strip-comments');
 
 module.exports.iconsSvg = function (options) {
 	return gulp.src(options.src)
@@ -29,8 +28,7 @@ module.exports.iconsSvg = function (options) {
 			}
 		}))
 		.pipe(plugins.rename('ketcher.svg'))
-		.pipe(gulp.dest(options.dist))
-		.pipe(strip());
+		.pipe(gulp.dest(options.dist));
 };
 
 module.exports.style = function (options) {

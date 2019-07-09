@@ -1,9 +1,7 @@
 
-# Data Portal Dev Notes:
+## Build Instructions
 
 Contributor: Simon Keng
-
-## Build Instructions
 
 ```bash
 # install anything new

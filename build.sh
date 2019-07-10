@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # install anything new
-npm install
+npm install || { echo 'Ketcher npm install failed' ; exit 1; }
 # compile frontend code
-npm run build
+npm run build || { echo 'Ketcher npm build failed' ; exit 1; } 
 
 # cd to static directory
 cd /dstore/data-portal-2.0/backend/static

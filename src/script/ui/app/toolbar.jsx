@@ -252,7 +252,7 @@ function TemplatesList({ active, onAction }) {
 							title={`${struct.name} (${shortcut})`}
 							onClick={() => onAction({ tool: 'template', opts: { struct } })}
 						>
-							<Icon name={`template-${i}`} />{struct.name}
+							<Icon name={`template-${i}`} />
 						</button>
 					</li>
 				))

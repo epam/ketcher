@@ -53,26 +53,32 @@ gulp.task('icons-svg', getTask('./gulp/style-html', {
 	dist: options.dist
 }));
 
-gulp.task('style', ['icons-svg'], getTask('./gulp/style-html', {
+gulp.task('style', gulp.series('icons-svg', getTask('./gulp/style-html', {
 	expName: 'style',
 	src: 'src/style/index.less',
 	pkg: pkg,
 	dist: options.dist
+})));
+
+/*== version ==*/
+gulp.task('patch-version', getTask('./gulp/utils', {
+	expName: 'version',
+	pkg: pkg
 }));
 
 /*== script ==*/
-gulp.task('script', ['patch-version'], getTask('./gulp/prod-script', Object.assign({
+gulp.task('script', gulp.series('patch-version', getTask('./gulp/prod-script', Object.assign({
 	expName: 'script',
 	pkg: pkg,
 	entry: 'src/script',
 	banner: 'src/script/util/banner.js'
-}, options)));
+}, options))));
 
-gulp.task('html', ['patch-version'], getTask('./gulp/style-html', Object.assign({
+gulp.task('html', gulp.series('patch-version', getTask('./gulp/style-html', Object.assign({
 	expName: 'html',
 	src: 'src/template/index.hbs',
 	pkg: pkg
-}, options)));
+}, options))));
 
 /*== assets ==*/
 gulp.task('doc', function () {
@@ -80,29 +86,23 @@ gulp.task('doc', function () {
 		.pipe(gulp.dest(options.dist + '/doc'));
 });
 
-gulp.task('help', ['doc'], getTask('./gulp/assets', {
+gulp.task('help', gulp.series('doc', getTask('./gulp/assets', {
 	expName: 'help',
 	src: 'doc/help.md',
 	dist: options.dist
-}));
+})));
 
 gulp.task('logo', function () {
 	return gulp.src('src/logo/*')
 		.pipe(gulp.dest(options.dist + '/logo'));
 });
 
-gulp.task('copy', ['logo'], getTask('./gulp/assets', {
+gulp.task('copy', gulp.series('logo', getTask('./gulp/assets', {
 	expName: 'copy',
 	dist: options.dist,
 	'miew-path': options['miew-path'],
 	distrib: ['LICENSE', 'src/template/demo.html', 'src/tmpl_data/library.sdf', 'src/tmpl_data/library.svg']
-}));
-
-/*== version ==*/
-gulp.task('patch-version', getTask('./gulp/utils', {
-	expName: 'version',
-	pkg: pkg
-}));
+})));
 
 /*== check ==*/
 gulp.task('lint', getTask('./gulp/check', {
@@ -124,19 +124,19 @@ gulp.task('clean', getTask('./gulp/clean', {
 	pkgName: pkg.name
 }));
 
-gulp.task('pre-commit', ['lint', 'check-epam-email', 'check-deps-exact']);
-gulp.task('assets', ['copy', 'help']);
-gulp.task('code', ['style', 'script', 'html']);
+gulp.task('pre-commit', gulp.series('lint', 'check-epam-email', 'check-deps-exact'));
+gulp.task('assets', gulp.series('copy', 'help'));
+gulp.task('code', gulp.series('style', 'script', 'html'));
 
 /*== dev ==*/
-gulp.task('serve', ['clean', 'style', 'html', 'assets'], getTask('./gulp/dev-script', Object.assign({
+gulp.task('serve', gulp.series('clean', 'style', 'html', 'assets', getTask('./gulp/dev-script', Object.assign({
 	entry: 'src/script',
 	pkg: pkg
-}, options)));
+}, options))));
 /*== production ==*/
-gulp.task('build', ['clean', 'code', 'assets']);
-gulp.task('archive', ['build'], getTask('./gulp/prod-script', {
+gulp.task('build', gulp.series('clean', 'code', 'assets'));
+gulp.task('archive', gulp.series('build', getTask('./gulp/prod-script', {
 	expName: 'archive',
 	pkg: pkg,
 	dist: options.dist
-}));
+})));

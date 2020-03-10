@@ -33,9 +33,9 @@ module.exports = function (options, cb) {
 		}
 	}).on('exit', cb);
 
-	gulp.watch('src/style/**.less', ['style']);
-	gulp.watch('src/template/**', ['html']);
-	gulp.watch('doc/**', ['help']);
+	gulp.watch('src/style/**.less', gulp.series('style'));
+	gulp.watch('src/template/**', gulp.series('html'));
+	gulp.watch('doc/**', gulp.series('help'));
 	gulp.watch(['gulpfile.js', 'package.json'], function () {
 		server.close();
 		cp.spawn('gulp', process.argv.slice(2), {

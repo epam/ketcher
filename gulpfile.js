@@ -88,7 +88,7 @@ gulp.task('doc', function () {
 
 gulp.task('help', gulp.series('doc', getTask('./gulp/assets', {
 	expName: 'help',
-	src: 'doc/help.md',
+	src: 'doc/_help.md',
 	dist: options.dist
 })));
 

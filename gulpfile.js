@@ -124,7 +124,7 @@ gulp.task('clean', getTask('./gulp/clean', {
 	pkgName: pkg.name
 }));
 
-gulp.task('pre-commit', gulp.series('lint', 'check-epam-email', 'check-deps-exact'));
+gulp.task('pre-commit', gulp.series('lint', 'check-deps-exact'));
 gulp.task('assets', gulp.series('copy', 'help'));
 gulp.task('code', gulp.series('style', 'script', 'html'));
 

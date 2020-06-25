@@ -18,7 +18,7 @@ const plugins = require('gulp-load-plugins')();
 
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
-const istanbul = require('browserify-babel-istanbul');
+const istanbul = require('browserify-istanbul');
 
 const fs = require('fs');
 

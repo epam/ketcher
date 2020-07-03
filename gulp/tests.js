@@ -49,7 +49,7 @@ module.exports.testRender = function (options) {
 		.pipe(gulp.dest('./test/dist'));
 };
 
-module.exports.testIO = function () {
+module.exports.testIO = function (options, done) {
 	const paths = [
 		'/chem/struct',
 		'/chem/molfile',
@@ -69,4 +69,6 @@ module.exports.testIO = function () {
 			}))
 			.pipe(gulp.dest(`./test/dist/io${item}`));
 	});
+
+	done();
 };

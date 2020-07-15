@@ -93,7 +93,7 @@
     "filesaver.js": "0.2.0",
     "font-face-observer": "1.0.0",
     "jsonschema": "1.1.1",
-    "lodash": "4.17.4",
+    "lodash": "4.17.19",
     "normalize.css": "4.2.0",
     "preact": "8.1.0",
     "preact-redux": "2.0.1",

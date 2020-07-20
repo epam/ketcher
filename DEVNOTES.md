@@ -69,3 +69,70 @@ If you have added new structures for testing to the `test/fixtures` directory
 you have to generate `svg` from them for correct render-test with:
 
     npm run generate-svg    
+
+
+## Simple server
+
+Place this docker-compose.yml file at the root of your repository
+
+```
+version: '3'
+services:
+  nginx:
+    image: nginx:1.17.10-alpine
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./ketcher:/srv/www:ro
+    links:
+      - indigo_service
+    depends_on:
+      - indigo_service
+
+  indigo_service:
+    image: epmlsop/indigo_service
+    environment:
+      - PYTHONPATH=${INDIGO_SERVICE_PYTHONPATH:-/srv/indigo-python}
+      - INDIGO_UWSGI_RUN_PARAMETERS=--plugin python3 --py-autoreload=1
+      - PYTHONDONTWRITEBYTECODE=1
+    ports:
+      - 8002:8002
+    command: supervisord -n
+```
+Copy Ketcher files under ketcher/ folder
+Add this file under nginx/defaut.conf
+
+```
+server {
+  listen 80;
+  keepalive_timeout 5;
+
+  # The following configuration are related to the indigo service
+  # see here https://lifescience.opensource.epam.com/indigo/service/index.html
+  location / {
+    root /srv/www;
+    index ketcher.html;
+    try_files $uri $uri/ @indigoservice;
+  }
+
+  location @indigoservice {
+    # Should be set 'always' to transfer our lovely HTTP500 errors
+    # Headers could be also set by Flasgger in service/config.py
+    add_header 'Access-Control-Allow-Origin' '*' always;
+    add_header 'Access-Control-Allow-Methods' 'POST, GET, PUT, DELETE, OPTIONS' always;
+    add_header 'Access-Control-Allow-Headers' 'Accept, Content-Type' always;
+    add_header 'Access-Control-Max-Age' '86400' always;
+    include uwsgi_params;
+    uwsgi_pass indigo_service:8002;
+  }
+}
+```
+
+Run 
+
+```
+docker-compose up -d
+```
+
+Service with Ketcher will be run under localhost:8080/ketcher.html

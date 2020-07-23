@@ -57,8 +57,15 @@ function api(base, defaultOptions) {
 			body: method !== 'GET' ? data : undefined,
 			credentials: 'same-origin'
 		})
-			.then(response => response.json()
-				.then(res => (response.ok ? res : Promise.reject(res.error))))
+			.then((response) => {
+				const contentType = response.headers.get('content-type');
+				if (contentType && contentType.indexOf('application/json') !== -1) {
+					return response
+						.json()
+						.then(res => (response.ok ? res : Promise.reject(res.error)));
+				}
+				return response;
+			})
 			.catch((err) => {
 				throw Error(err);
 			});

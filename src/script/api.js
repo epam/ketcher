@@ -82,6 +82,7 @@ function api(base, defaultOptions) {
 		aromatize: indigoCall('POST', 'indigo/aromatize'),
 		dearomatize: indigoCall('POST', 'indigo/dearomatize'),
 		calculateCip: indigoCall('POST', 'indigo/calculate_cip'),
+		render: indigoCall('POST', 'indigo/render'),
 		automap: indigoCall('POST', 'indigo/automap'),
 		check: indigoCall('POST', 'indigo/check'),
 		calculate: indigoCall('POST', 'indigo/calculate'),

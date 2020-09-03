@@ -23,48 +23,57 @@ var libSymbol = require('../utils/library');
 var cols = require('../utils/collections')();
 var browserSession = require('../utils/browser-session');
 
-browserSession((browser, testDir) => {
-	browser = browser.url(`${testDir}/render/render-test.html`);
+const getRenderOpts = sample => ({ sample, width: 600, height: 400 });
+const getMismatch = async (browser) => {
+  const mismatch = await browser.execute(function() {
+    return window.document.querySelector('#cmp').innerText;
+  });
+  return parseFloat(mismatch.replace(/Mismatch:\s/, ''));
+};
 
-	for (let colname of cols.names()) {
-		tap.test(colname, t => {
-			for (let name of cols(colname).names()) {
-				let sampleName = `${colname}/${name}`;
+const runCollectionTests = (browser, collectionName) => {
+  return tap.test(collectionName, async t => {
+    for (let name of cols(collectionName).names()) {
+      const sampleName = `${collectionName}/${name}`;
+      const structStr = cols(collectionName).fixture(name);
+      const symbol = libSymbol(sampleName);  // string Symbol element from `fixtures.svg`
+      const opts = getRenderOpts(sampleName);
 
-				let structStr = cols(colname).fixture(name);
-				let symbol = libSymbol(sampleName);  // string Symbol element from `fixtures.svg`
+      const spinner = ora(sampleName);
+      spinner.start();
 
-				let opts = {
-					sample: sampleName,
-					width: 600,
-					height: 400
-				};
+      await browser.execute(function (structStr, symbol, opts) {
+        window.compareTest(structStr, symbol, opts);
+      }, structStr, symbol, opts);
 
-				let spinner = ora(sampleName);
-				browser.then(() => spinner.start());
+      const mismatch = await getMismatch(browser);
+      try {
+        t.ok(mismatch < 2.0, `${sampleName}`);
+        spinner.succeed(`${sampleName} - ${mismatch}`);
+      } catch(e) {
+        spinner.fail(`${sampleName} - ${mismatch}`);
+        throw e;
+      }
+    }
 
-				browser = browser
-					.execute(function (structStr, symbol, opts) {
-						window.compareTest(structStr, symbol, opts);
-					}, structStr, symbol, opts)
-					.waitForExist('#cmp')
-					.getHTML('#cmp', false).then(mismatch => {
-						mismatch = mismatch.replace(/Mismatch:\s/, '') - 0;
-						spinner.succeed(`${sampleName} - ${mismatch}`);
-						t.ok(mismatch < 0.5, `${sampleName}`);
-					});
-			}
-			browser.then(() => t.end());
-		});
+    t.end();
+  });
+};
+
+browserSession(async (browser, testDir) => {
+	await browser.url(`${testDir}/render/render-test.html`);
+
+	for (let collectionName of cols.names()) {
+		await runCollectionTests(browser, collectionName);
 	}
 
-	return browser.then(() => {
-		return browser.execute('return window.__coverage__').then(cover => {
-			var reporter = new istanbul.Reporter();
-			var collector = new istanbul.Collector();
-			collector.add(cover.value);
-			reporter.add('html'); // istanbul.Report.getReportList()
-			reporter.write(collector, true, () => null);
-		});
-	});
+	// return browser.execute(function() {
+  //   return window.__coverage__
+  // }).then(cover => {
+  // 		var reporter = new istanbul.Reporter();
+  // 		var collector = new istanbul.Collector();
+  // 		collector.add(cover.value);
+  // 		reporter.add('html'); // istanbul.Report.getReportList()
+  // 		reporter.write(collector, true, () => null);
+  // 	});
 });

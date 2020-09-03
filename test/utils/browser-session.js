@@ -15,10 +15,8 @@
  ***************************************************************************/
 
 /* eslint-env node */
-
 const webdriverio = require('webdriverio');
 const chromedriver = require('chromedriver');
-
 const path = require('path');
 const minimist = require('minimist');
 
@@ -30,31 +28,33 @@ const options = minimist(process.argv.slice(2), {
 		dist: 'dist'
 	}
 });
+const headlessOpts = {
+  // see: https://goo.gl/ypWDst
+  args: ['--headless', '--disable-gpu']
+};
 
 function implicitHeadless() {
 	return process.platform != 'win32' && process.platform != 'darwin' &&
 		!process.env.DISPLAY;
 }
 
-function startSession(session) {
+async function startSession(session) {
 	// an variant of https://git.io/vQ8o7
 	chromedriver.start(['--url-base=wd/hub']);
 
-	var browser = webdriverio.remote({
+	const browser = await webdriverio.remote({
 		port: 9515, // TODO: autochoose choose unused port
-		desiredCapabilities: {
+    path: '/wd/hub',
+    logLevel: 'warn',
+		capabilities: {
 			browserName: 'chrome',
-			chromeOptions: options.headless ? {
-				// see: https://goo.gl/ypWDst
-				args: ['--headless', '--disable-gpu']
-			} : {}
+			'goog:chromeOptions': options.headless ? headlessOpts : {}
 		}
-	}).init().url('about:blank');
+	});
 
-	browser.on('error', (e) => console.error(e));
-
-	let br = session(browser, path.join(__dirname, '..')) || browser; // test dir
-	br.end().then(() => chromedriver.stop());
+	await session(browser, path.join(__dirname, '..'));
+	await browser.deleteSession();
+  return chromedriver.stop();
 }
 
 module.exports = startSession;

@@ -29,8 +29,8 @@ const options = minimist(process.argv.slice(2), {
 	}
 });
 const headlessOpts = {
-  // see: https://goo.gl/ypWDst
-  args: ['--headless', '--disable-gpu']
+	// see: https://goo.gl/ypWDst
+	args: ['--headless', '--disable-gpu']
 };
 
 function implicitHeadless() {
@@ -43,9 +43,9 @@ async function startSession(session) {
 	chromedriver.start(['--url-base=wd/hub']);
 
 	const browser = await webdriverio.remote({
-		port: 9515, // TODO: autochoose choose unused port
-    path: '/wd/hub',
-    logLevel: 'warn',
+		port: 9515, // TODO: autoselect unused port
+    	path: '/wd/hub',
+    	logLevel: 'warn',
 		capabilities: {
 			browserName: 'chrome',
 			'goog:chromeOptions': options.headless ? headlessOpts : {}
@@ -54,7 +54,7 @@ async function startSession(session) {
 
 	await session(browser, path.join(__dirname, '..'));
 	await browser.deleteSession();
-  return chromedriver.stop();
+	return chromedriver.stop();
 }
 
 module.exports = startSession;

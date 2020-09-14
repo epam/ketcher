@@ -45,10 +45,12 @@ function root(state, action) {
 	switch (action.type) { // eslint-disable-line default-case
 	case 'INIT':
 		global._ui_editor = action.editor;
-	case 'UPDATE': // eslint-disable-line no-case-declarations
+	case 'UPDATE':
+		/* eslint-disable no-case-declarations */
 		const { type, ...data } = action;
 		if (data)
 			state = { ...state, ...data };
+		/* eslint-enable no-case-declarations */
 	}
 
 	const sh = shared(state, {

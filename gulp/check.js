@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 const gulp = require('gulp');
-const gutil = require('gulp-util');
+const log = require('fancy-log');
 const eslint = require('gulp-eslint');
 const cp = require('child_process');
+const PluginError = require('plugin-error');
 
 module.exports.checkEpamEmail = function (options, cb) {
 	// TODO: should be pre-push and check remote origin
@@ -26,8 +27,8 @@ module.exports.checkEpamEmail = function (options, cb) {
 			cb();
 		} else {
 			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
-			gutil.log('To check git project\'s settings run `git config --list`');
-			gutil.log('Could not continue. Bye!');
+			log.warn('To check git project\'s settings run `git config --list`');
+			log.warn('Could not continue. Bye!');
 		}
 	} catch (e) {}
 };
@@ -42,7 +43,7 @@ module.exports.checkDepsExact = function (options, cb) {
 		});
 	});
 	if (!allValid) {
-		cb(new gutil.PluginError('check-deps-exact',
+		cb(new PluginError('check-deps-exact',
 			'All top level dependencies should be installed' +
 			'using `npm install --save-exact` command'));
 	} else {

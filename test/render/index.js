@@ -15,29 +15,44 @@
  ***************************************************************************/
 
 /* eslint-env node */
-var ora = require('ora');
-var tap = require('tap');
-var istanbul = require('istanbul');
+const ora = require('ora');
+const tap = require('tap');
+const istanbul = require('istanbul');
 
-var libSymbol = require('../utils/library');
-var cols = require('../utils/collections')();
-var browserSession = require('../utils/browser-session');
+const libSymbol = require('../utils/library');
+const cols = require('../utils/collections')();
+const browserSession = require('../utils/browser-session');
 
-const getRenderOpts = sample => ({ sample, width: 600, height: 400 });
-const getMismatch = async (browser) => {
+const MISMATCH_THRESHOLD = 2.0;
+const getMismatch = async browser => {
   const mismatch = await browser.execute(function() {
     return window.document.querySelector('#cmp').innerText;
   });
   return parseFloat(mismatch.replace(/Mismatch:\s/, ''));
-};
+}
 
-const runCollectionTests = (browser, collectionName) => {
+const comparisonResult = (sampleName, mismatch) => `${sampleName} - ${mismatch}`;
+
+/**
+  Run comparison tests in browser
+*/
+browserSession(async (browser, testDir) => {
+	await browser.url(`${testDir}/render/render-test.html`);
+
+	for (let collectionName of cols.names()) {
+		await runCollectionTests(browser, collectionName);
+	}
+
+	return generateCoverage(browser);
+});
+
+async function runCollectionTests(browser, collectionName) {
   return tap.test(collectionName, async t => {
     for (let name of cols(collectionName).names()) {
       const sampleName = `${collectionName}/${name}`;
       const structStr = cols(collectionName).fixture(name);
       const symbol = libSymbol(sampleName);  // string Symbol element from `fixtures.svg`
-      const opts = getRenderOpts(sampleName);
+      const opts = { sample: sampleName, width: 600, height: 400 };
 
       const spinner = ora(sampleName);
       spinner.start();
@@ -47,33 +62,27 @@ const runCollectionTests = (browser, collectionName) => {
       }, structStr, symbol, opts);
 
       const mismatch = await getMismatch(browser);
-      try {
-        t.ok(mismatch < 2.0, `${sampleName}`);
-        spinner.succeed(`${sampleName} - ${mismatch}`);
-      } catch(e) {
-        spinner.fail(`${sampleName} - ${mismatch}`);
-        throw e;
-      }
+      spinner.succeed(comparisonResult(sampleName, mismatch));
+      t.ok(mismatch < MISMATCH_THRESHOLD, `${sampleName}`);
     }
 
     t.end();
   });
-};
+}
 
-browserSession(async (browser, testDir) => {
-	await browser.url(`${testDir}/render/render-test.html`);
-
-	for (let collectionName of cols.names()) {
-		await runCollectionTests(browser, collectionName);
-	}
-
-	// return browser.execute(function() {
-  //   return window.__coverage__
-  // }).then(cover => {
-  // 		var reporter = new istanbul.Reporter();
-  // 		var collector = new istanbul.Collector();
-  // 		collector.add(cover.value);
-  // 		reporter.add('html'); // istanbul.Report.getReportList()
-  // 		reporter.write(collector, true, () => null);
-  // 	});
-});
+function generateCoverage(browser) {
+  return browser.execute(function() {
+    return window.__coverage__
+  })
+  .then(cover => {
+		const reporter = new istanbul.Reporter();
+		const collector = new istanbul.Collector();
+		collector.add(cover);
+		reporter.add('html'); // istanbul.Report.getReportList()
+		reporter.write(collector, true, () => null);
+	})
+  .catch(e => {
+    console.error('Problem occurred when generating coverage report');
+    console.error(e);
+  });
+}

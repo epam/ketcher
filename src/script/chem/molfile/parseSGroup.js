@@ -163,7 +163,7 @@ function loadSGroup(mol, sg, atomMap) {
 function initSGroup(sGroups, propData) {
 	/* reader */
 	const kv = readKeyValuePairs(propData, true);
-	for (const [key, type] of kv) {
+	for (const [key, type] of kv) { // eslint-disable-line no-unused-vars
 		if (!(type in SGroup.TYPES))
 			throw new Error('Unsupported S-group type');
 
@@ -175,7 +175,7 @@ function initSGroup(sGroups, propData) {
 
 function applySGroupProp(sGroups, propName, propData, numeric, core) { // eslint-disable-line max-params
 	const kv = readKeyValuePairs(propData, !(numeric));
-	for (const key of kv.keys())
+	for (const key of kv.keys()) // eslint-disable-line no-unused-vars
 		// "core" properties are stored directly in an sgroup, not in sgroup.data
 		(core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
 }

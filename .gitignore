@@ -1,6 +1,7 @@
 /node_modules
 /*.zip
 /dist
+/coverage
 test/dist
 /indigo
 
@@ -8,3 +9,4 @@ test/dist
 *.pyc
 /extra
 .tern-port
+debug.log

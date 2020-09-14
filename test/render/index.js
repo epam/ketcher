@@ -23,7 +23,7 @@ const libSymbol = require('../utils/library');
 const cols = require('../utils/collections')();
 const browserSession = require('../utils/browser-session');
 
-const MISMATCH_THRESHOLD = 2.0;
+const MISMATCH_THRESHOLD = 0.5;
 const getMismatch = async browser => {
   const mismatch = await browser.execute(function() {
     return window.document.querySelector('#cmp').innerText;

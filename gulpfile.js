@@ -105,11 +105,6 @@ gulp.task('copy', gulp.series('logo', getTask('./gulp/assets', {
 })));
 
 /*== check ==*/
-gulp.task('lint', getTask('./gulp/check', {
-	expName: 'lint',
-	src: 'src/script/**'
-}));
-
 gulp.task('check-epam-email', getTask('./gulp/check', {
 	expName: 'checkEpamEmail'
 }));
@@ -124,7 +119,7 @@ gulp.task('clean', getTask('./gulp/clean', {
 	pkgName: pkg.name
 }));
 
-gulp.task('pre-commit', gulp.series('lint', 'check-epam-email', 'check-deps-exact'));
+gulp.task('pre-commit', gulp.series('check-epam-email', 'check-deps-exact'));
 gulp.task('assets', gulp.series('copy', 'help'));
 gulp.task('code', gulp.series('style', 'script', 'html'));
 

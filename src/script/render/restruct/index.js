@@ -199,7 +199,7 @@ ReStruct.prototype.assignConnectedComponents = function () {
 };
 
 ReStruct.prototype.initLayers = function () {
-	for (const group in LAYER_MAP) { // eslint-disable-line no-unused-vars
+	for (const group in LAYER_MAP) {
 		this.layers[LAYER_MAP[group]] =
 			this.render.paper.rect(0, 0, 10, 10)
 				.attr({

@@ -174,7 +174,7 @@ export function toBondType(caption) {
 }
 
 function fromBondType(type, stereo) {
-	for (const caption in bondCaptionMap) { // eslint-disable-line no-unused-vars
+	for (const caption in bondCaptionMap) {
 		if (bondCaptionMap[caption].type === type &&
 			bondCaptionMap[caption].stereo === stereo)
 			return caption;

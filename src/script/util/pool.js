@@ -31,7 +31,7 @@ class Pool extends Map {
 	}
 
 	keyOf(item) {
-		for (const [key, value] of this.entries()) { // eslint-disable-line no-unused-vars
+		for (const [key, value] of this.entries()) {
 			if (value === item)
 				return key;
 		}
@@ -40,7 +40,7 @@ class Pool extends Map {
 	}
 
 	find(predicate) {
-		for (const [key, value] of this.entries()) { // eslint-disable-line no-unused-vars
+		for (const [key, value] of this.entries()) {
 			if (predicate(key, value))
 				return key;
 		}

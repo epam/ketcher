@@ -15,7 +15,6 @@
  ***************************************************************************/
 const gulp = require('gulp');
 const log = require('fancy-log');
-const eslint = require('gulp-eslint');
 const cp = require('child_process');
 const PluginError = require('plugin-error');
 
@@ -49,11 +48,4 @@ module.exports.checkDepsExact = function (options, cb) {
 	} else {
 		cb();
 	}
-};
-
-module.exports.lint = function (options) {
-	return gulp.src(options.src)
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.failAfterError());
 };

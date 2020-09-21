@@ -55,12 +55,10 @@ export default function (state = null, { type, action, ...params }) {
 	switch (type) {
 	case 'INIT':
 		action = acts['select-lasso'].action;
-	case 'ACTION':
-		/* eslint-disable no-case-declarations */
+	case 'ACTION': // eslint-disable-line no-case-declarations
 		const activeTool = execute(state && state.activeTool, {
 			...params, action
 		});
-		/* eslint-enable no-case-declarations */
 	case 'UPDATE':
 		return Object.keys(acts).reduce((res, key) => {
 			const value = status(key, res.activeTool, params);

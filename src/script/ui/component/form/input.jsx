@@ -210,11 +210,11 @@ function componentMap({ schema, type, multiple }) {
 }
 
 function shallowCompare(a, b) {
-	for (const key in a) { // eslint-disable-line no-unused-vars
+	for (const key in a) {
 		if (!(key in b))
 			return true;
 	}
-	for (const key in b) { // eslint-disable-line no-unused-vars
+	for (const key in b) {
 		if (a[key] !== b[key])
 			return true;
 	}

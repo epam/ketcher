@@ -292,7 +292,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 		ctab.sGroupForest.remove(emptyGroups[i]);
 		ctab.sgroups.delete(emptyGroups[i]);
 	}
-	for (const id in rLogic) { // eslint-disable-line no-unused-vars
+	for (const id in rLogic) {
 		const rgid = parseInt(id, 10);
 		ctab.rgroups.set(rgid, new RGroup(rLogic[rgid]));
 	}

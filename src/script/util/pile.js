@@ -18,7 +18,7 @@ class Pile extends Set {
 	// TODO: it's used only in dfs.js in one place in some strange way.
 	// Should be removed after dfs.js refactoring
 	find(predicate) {
-		for (const item of this) { // eslint-disable-line no-unused-vars
+		for (const item of this) {
 			if (predicate(item))
 				return item;
 		}
@@ -29,7 +29,7 @@ class Pile extends Set {
 	intersection(setB) {
 		const intersection = new Pile();
 
-		for (const item of setB) { // eslint-disable-line no-unused-vars
+		for (const item of setB) {
 			if (this.has(item))
 				intersection.add(item);
 		}
@@ -42,7 +42,7 @@ class Pile extends Set {
 	}
 
 	isSuperset(subset) {
-		for (const item of subset) { // eslint-disable-line no-unused-vars
+		for (const item of subset) {
 			if (!this.has(item))
 				return false;
 		}
@@ -57,7 +57,7 @@ class Pile extends Set {
 	union(setB) {
 		const union = new Pile(this);
 
-		for (const item of setB) // eslint-disable-line no-unused-vars
+		for (const item of setB)
 			union.add(item);
 
 		return union;

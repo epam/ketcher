@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-const gulp = require('gulp');
-const log = require('fancy-log');
-const cp = require('child_process');
 const PluginError = require('plugin-error');
-
-module.exports.checkEpamEmail = function (options, cb) {
-	// TODO: should be pre-push and check remote origin
-	try {
-		const email = cp.execSync('git config user.email').toString().trim();
-		if (/@epam.com$/.test(email)) {
-			cb();
-		} else {
-			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
-			log.warn('To check git project\'s settings run `git config --list`');
-			log.warn('Could not continue. Bye!');
-		}
-	} catch (e) {}
-};
 
 module.exports.checkDepsExact = function (options, cb) {
 	const semver = require('semver'); // TODO: output corrupted packages

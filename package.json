@@ -23,7 +23,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && npm run gulp pre-commit"
+      "pre-commit": "npm run lint && npm run gulp check-deps-exact"
     }
   },
   "devDependencies": {

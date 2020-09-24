@@ -14,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 const gulp = require('gulp');
-const gutil = require('gulp-util');
+const replaceExtension = require('replace-ext');
 const plugins = require('gulp-load-plugins')();
-
 const MarkdownIt = require('markdown-it');
 const path = require('path');
 
@@ -49,6 +48,6 @@ function markdownify(options) {
 	return function process(file) {
 		const data = md.render(file.contents.toString());
 		file.contents = new Buffer(header + data + footer);
-		file.path = gutil.replaceExtension(file.path, '.html');
+		file.path = replaceExtension(file.path, '.html');
 	};
 }

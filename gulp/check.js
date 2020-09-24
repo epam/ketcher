@@ -13,24 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-const gulp = require('gulp');
-const gutil = require('gulp-util');
-const eslint = require('gulp-eslint');
-const cp = require('child_process');
-
-module.exports.checkEpamEmail = function (options, cb) {
-	// TODO: should be pre-push and check remote origin
-	try {
-		const email = cp.execSync('git config user.email').toString().trim();
-		if (/@epam.com$/.test(email)) {
-			cb();
-		} else {
-			cb(new Error('Email ' + email + ' is not from EPAM domain.'));
-			gutil.log('To check git project\'s settings run `git config --list`');
-			gutil.log('Could not continue. Bye!');
-		}
-	} catch (e) {}
-};
+const PluginError = require('plugin-error');
 
 module.exports.checkDepsExact = function (options, cb) {
 	const semver = require('semver'); // TODO: output corrupted packages
@@ -42,17 +25,10 @@ module.exports.checkDepsExact = function (options, cb) {
 		});
 	});
 	if (!allValid) {
-		cb(new gutil.PluginError('check-deps-exact',
+		cb(new PluginError('check-deps-exact',
 			'All top level dependencies should be installed' +
 			'using `npm install --save-exact` command'));
 	} else {
 		cb();
 	}
-};
-
-module.exports.lint = function (options) {
-	return gulp.src(options.src)
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.failAfterError());
 };

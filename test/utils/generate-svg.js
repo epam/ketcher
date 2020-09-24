@@ -16,47 +16,50 @@
 
 /* eslint-env node */
 
-var fs = require('fs');
+const fs = require('fs');
+const ora = require('ora');
+const svgstore = require('svgstore');
+const cols = require('./collections')();
+const browserSession = require('./browser-session');
 
-var ora = require('ora');
-var svgstore = require('svgstore');
+const getSampleName = (collectionName, sample) => `${collectionName}/${sample}`;
 
-var cols = require('./collections')();
-var browserSession = require('./browser-session');
+const getSvg = browser =>
+  browser.execute(() => window.document.querySelector('#canvas-ketcher').innerHTML);
 
-browserSession((browser, testDir) => {
-	browser = browser.url(`${testDir}/render/render-test.html`);
+/**
+  Generates test/fixutres/fixtures.svg used for comparisons in test/render/index.js
+*/
+browserSession(async (browser, testDir) => {
+	await browser.url(`${testDir}/render/render-test.html`);
 
-	var sprites = svgstore({
+	const sprites = svgstore({
 		copyAttrs: ['width', 'height', 'preserveAspectRatio']
 	});
 
-	for (var colname of cols.names()) {
-		for (var name of cols(colname).names()) {
-			let sampleName = `${colname}/${name}`;
-			let structStr = cols(colname).fixture(name);
+	for (var collectionName of cols.names()) {
+		for (var sample of cols(collectionName).names()) {
+      const sampleName = getSampleName(collectionName, sample);
+			const spinner = ora(sampleName);
+			spinner.start();
 
-			let opts = {
-				sample: sampleName,
-				width: 600,
-				height: 400
-			};
-			let spinner = ora(sampleName);
-			browser.then(() => spinner.start());
-			browser = browser
-				.execute(function (structStr, opts) {
-					window.renderTest(structStr, opts);
-				}, structStr, opts)
-				.waitForExist('#canvas-ketcher')
-				.getHTML('#canvas-ketcher', false).then(svg => {
-					// console.info(sampleName, svg.replace(/.*(viewBox=".+?").*/, "$1"));
-					sprites.add(sampleName, svg);
-					spinner.succeed();
-				});
+      const svg = await generateSvg(browser, collectionName, sample);
+
+			sprites.add(sampleName, svg);
+			spinner.succeed();
 		}
 	}
-	return browser.then(() => {
-		// TODO should it be cmd arg?
-		fs.writeFileSync('test/fixtures/fixtures.svg', sprites);
-	});
+
+	fs.writeFileSync('test/fixtures/fixtures.svg', sprites);
 });
+
+async function generateSvg(browser, collectionName, sample) {
+  const sampleName = getSampleName(collectionName, sample);
+  const structStr = cols(collectionName).fixture(sample);
+  const opts = { sample, width: 600, height: 400 };
+
+  await browser.execute((structStr, opts) => window.renderTest(structStr, opts),
+    structStr, opts);
+
+  return getSvg(browser);
+}

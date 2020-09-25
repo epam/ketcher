@@ -45,7 +45,6 @@
     "browserify-replace": "1.0.1",
     "budo": "11.6.4",
     "chromedriver": "85.0.0",
-    "core-js": "3.6.5",
     "del": "2.2.2",
     "eslint": "4.19.1",
     "eslint-config-airbnb": "16.1.0",
@@ -100,6 +99,7 @@
   },
   "dependencies": {
     "classnames": "2.2.5",
+    "core-js": "3.6.5",
     "filesaver.js": "0.2.0",
     "font-face-observer": "1.0.0",
     "jsonschema": "1.1.1",
@@ -112,6 +112,7 @@
     "redux": "3.6.0",
     "redux-logger": "3.0.6",
     "redux-thunk": "2.2.0",
+    "regenerator-runtime": "0.13.7",
     "reselect": "3.0.1",
     "resemblejs": "2.2.3",
     "subscription": "3.0.0",

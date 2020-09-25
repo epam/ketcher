@@ -26,22 +26,26 @@
       "pre-commit": "npm run lint && npm run gulp check-deps-exact"
     }
   },
+  "browserslist": [
+    "last 2 version"
+  ],
   "devDependencies": {
     "@babel/core": "7.11.6",
+    "@babel/plugin-proposal-object-rest-spread": "7.11.0",
+    "@babel/plugin-transform-react-jsx": "7.10.4",
+    "@babel/preset-env": "7.10.2",
+    "@babel/preset-react": "7.10.1",
     "babel-eslint": "10.1.0",
     "babel-plugin-lodash": "3.3.4",
     "babel-plugin-transform-builtin-extend": "1.1.2",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-plugin-transform-react-jsx": "6.24.1",
-    "babel-preset-env": "1.7.0",
-    "babel-preset-react": "6.24.1",
     "babelify": "10.0.0",
     "browserify": "16.5.2",
     "browserify-istanbul": "3.0.1",
     "browserify-replace": "1.0.1",
     "budo": "11.6.4",
     "chromedriver": "85.0.0",
+    "core-js": "3.6.5",
     "del": "2.2.2",
     "eslint": "4.19.1",
     "eslint-config-airbnb": "16.1.0",
@@ -95,7 +99,6 @@
     "lint": "./node_modules/.bin/eslint src --ext .js,.jsx"
   },
   "dependencies": {
-    "babel-polyfill": "6.23.0",
     "classnames": "2.2.5",
     "filesaver.js": "0.2.0",
     "font-face-observer": "1.0.0",

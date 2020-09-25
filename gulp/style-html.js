@@ -39,7 +39,7 @@ module.exports.style = function (options) {
 			paths: ['node_modules/normalize.css']
 		}))
 		// don't use less plugins due http://git.io/vqVDy bug
-		.pipe(plugins.autoprefixer({ browsers: 'last 2 versions' }))
+		.pipe(plugins.autoprefixer())
 		.pipe(plugins.cleanCss())
 		.pipe(plugins.sourcemaps.write('./'))
 		.pipe(gulp.dest(options.dist));

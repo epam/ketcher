@@ -59,7 +59,7 @@ module.exports.createBundleConfig = (options) => ({
 				'@babel/preset-react'],
 			plugins: [
 				'lodash',
-				'transform-class-properties',
+				'@babel/plugin-proposal-class-properties',
 				'@babel/plugin-proposal-object-rest-spread',
 				['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
 				['transform-builtin-extend', { globals: ['Set', 'Map'] }]

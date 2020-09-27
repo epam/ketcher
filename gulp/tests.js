@@ -18,7 +18,7 @@ const plugins = require('gulp-load-plugins')();
 
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
-const istanbul = require('browserify-babel-istanbul');
+const istanbul = require('browserify-istanbul');
 
 const fs = require('fs');
 
@@ -29,10 +29,11 @@ module.exports.testRender = function (options) {
 		transform: [
 			['babelify', {
 				presets: [
-					['env', {
+					['@babel/preset-env', {
 						'targets': { 'node': '8.10' },
-						'useBuiltIns': true
-					}],
+						'useBuiltIns': 'usage',
+						'corejs': 3
+					}]
 				]
 			}],
 			istanbul,
@@ -49,7 +50,7 @@ module.exports.testRender = function (options) {
 		.pipe(gulp.dest('./test/dist'));
 };
 
-module.exports.testIO = function () {
+module.exports.testIO = function (options, done) {
 	const paths = [
 		'/chem/struct',
 		'/chem/molfile',
@@ -61,12 +62,15 @@ module.exports.testIO = function () {
 		gulp.src(`src/script${item}/**.*`)
 			.pipe(plugins.babel({
 				presets: [
-					['env', {
+					['@babel/preset-env', {
 						'targets': { 'node': '8.10'	},
-						'useBuiltIns': true
+						'useBuiltIns': 'usage',
+						'corejs': 3
 					}],
 				]
 			}))
 			.pipe(gulp.dest(`./test/dist/io${item}`));
 	});
+
+	done();
 };

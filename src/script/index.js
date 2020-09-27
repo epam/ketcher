@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'babel-polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import 'whatwg-fetch';
 import queryString from 'query-string';
 

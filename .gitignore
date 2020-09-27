@@ -1,9 +1,12 @@
 /node_modules
 /*.zip
 /dist
+/coverage
+test/dist
 /indigo
 
 .idea/
 *.pyc
 /extra
 .tern-port
+debug.log

@@ -49,18 +49,19 @@ module.exports.createBundleConfig = (options) => ({
 		}],
 		['babelify', {
 			presets: [
-				['env', {
+				['@babel/preset-env', {
 					'targets': {
 						'browsers': ['last 2 versions', 'safari > 8', 'chrome > 52']
 					},
-					'useBuiltIns': true
+					'corejs': 3,
+					'useBuiltIns': 'usage'
 				}],
-				'react'],
+				'@babel/preset-react'],
 			plugins: [
 				'lodash',
-				'transform-class-properties',
-				'transform-object-rest-spread',
-				['transform-react-jsx', { pragma: 'h' }],
+				'@babel/plugin-proposal-class-properties',
+				'@babel/plugin-proposal-object-rest-spread',
+				['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
 				['transform-builtin-extend', { globals: ['Set', 'Map'] }]
 			]
 		}]

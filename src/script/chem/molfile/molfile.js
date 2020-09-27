@@ -227,7 +227,7 @@ Molfile.prototype.writeCTab2000 = function (rgroups) { // eslint-disable-line ma
 	/* eslint-disable camelcase*/
 	var atomList_list = [];
 	var atomProps_list = [];
-	/* eslint-enable camel-case*/
+	/* eslint-enable camelcase*/
 	this.molecule.atoms.forEach((atom, id) => {
 		this.writePaddedFloat(atom.pp.x, 10, 4);
 		this.writePaddedFloat(-atom.pp.y, 10, 4);

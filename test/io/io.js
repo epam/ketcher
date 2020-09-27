@@ -20,7 +20,8 @@
 const path = require('path');
 const tap = require('tap');
 
-require('babel-polyfill'); // Needed for padStart, etc (used in "new wave" ketchers)
+require('core-js/stable'); // Needed for padStart, etc (used in "new wave" ketchers)
+require('regenerator-runtime/runtime');
 
 const molfile = require(path.join('../', 'dist/io/chem/molfile')).default;
 

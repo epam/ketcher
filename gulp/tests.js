@@ -29,10 +29,11 @@ module.exports.testRender = function (options) {
 		transform: [
 			['babelify', {
 				presets: [
-					['env', {
+					['@babel/preset-env', {
 						'targets': { 'node': '8.10' },
-						'useBuiltIns': true
-					}],
+						'useBuiltIns': 'usage',
+						'corejs': 3
+					}]
 				]
 			}],
 			istanbul,
@@ -61,9 +62,10 @@ module.exports.testIO = function (options, done) {
 		gulp.src(`src/script${item}/**.*`)
 			.pipe(plugins.babel({
 				presets: [
-					['env', {
+					['@babel/preset-env', {
 						'targets': { 'node': '8.10'	},
-						'useBuiltIns': true
+						'useBuiltIns': 'usage',
+						'corejs': 3
 					}],
 				]
 			}))

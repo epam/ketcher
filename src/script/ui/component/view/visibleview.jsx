@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import { h, Component, toChildArray } from 'preact';
 /** @jsx h */
 
 const STYLE_INNER = 'position:relative; overflow:hidden; width:100%; min-height:100%;';
@@ -69,7 +69,7 @@ export default class VirtualList extends Component {
 
 		// first visible row index
 		let start = (offset / rowHeight) || 0;
-		const renderRow = children[0];
+		const renderRow = toChildArray(children)[0];
 
 		// actual number of visible rows (without overscan)
 		let visibleRowCount = (height / rowHeight) || 0;

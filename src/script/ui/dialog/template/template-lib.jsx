@@ -18,7 +18,7 @@ import { escapeRegExp, chunk, flow, filter as _filter, reduce, omit } from 'loda
 import { createSelector } from 'reselect';
 
 import { h, Component } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import sdf from '../../../chem/sdf';
 

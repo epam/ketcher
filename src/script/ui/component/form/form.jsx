@@ -16,7 +16,7 @@
 
 import jsonschema from 'jsonschema';
 import { h, Component } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import Input from './input';
 import { updateFormState } from '../../state/modal/form';

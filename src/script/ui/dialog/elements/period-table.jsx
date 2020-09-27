@@ -17,7 +17,7 @@
 import { range, xor } from 'lodash/fp';
 
 import { h, Component } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import element from '../../../chem/element';
 import { sketchingColors as elementColor } from '../../../chem/element-color';

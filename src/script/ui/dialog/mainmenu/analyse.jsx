@@ -16,7 +16,7 @@
 
 import { range } from 'lodash/fp';
 import { h, Component } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import keyName from 'w3c-keyname';
 import Dialog from '../../component/dialog';

@@ -16,7 +16,7 @@
 
 import { h } from 'preact';
 import { omit } from 'lodash/fp';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 import modals from '../dialog';
 
 const mapStateToProps = state => ({

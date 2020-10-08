@@ -170,7 +170,11 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	});
 
 	fidMap.forEach((newfid, oldfid) => {
-		cp.frags.set(newfid, this.frags.get(oldfid).clone(aidMap));	// clone Fragments
+		const frags = JSON.parse(JSON.stringify(this.frags.get(oldfid)));
+
+		if (frags && Object.keys(frags).length !== 0) {
+			cp.frags.set(newfid, this.frags.get(oldfid).clone(aidMap));	// clone Fragments
+		}
 	});
 
 	const bidMap = new Map();

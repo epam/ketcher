@@ -209,7 +209,12 @@ Molfile.prototype.writeCTab2000Header = function () {
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(3);
 	const isAbsFlag = Array.from(this.molecule.frags.values())
-		.some(fr => fr.enhancedStereoFlag === 'abs');
+		.some(fr => {
+			if (fr && fr.enhancedStereoFlag)
+				return fr.enhancedStereoFlag === 'abs';
+
+			return false;
+		});
 	this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(12);

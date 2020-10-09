@@ -28,6 +28,9 @@ const options = minimist(process.argv.slice(2), {
 		dist: 'dist'
 	}
 });
+const chromeDriverOpts = [
+
+];
 const headlessOpts = {
 	// see: https://goo.gl/ypWDst
 	args: ['--headless', '--disable-gpu']
@@ -39,18 +42,30 @@ function implicitHeadless() {
 }
 
 async function startSession(session) {
-	// an variant of https://git.io/vQ8o7
-	chromedriver.start(['--url-base=wd/hub']);
-
-	const browser = await webdriverio.remote({
-		port: 9515, // TODO: autoselect unused port
-    	path: '/wd/hub',
-    	logLevel: 'warn',
-		capabilities: {
-			browserName: 'chrome',
-			'goog:chromeOptions': options.headless ? headlessOpts : {}
-		}
-	});
+	let browser
+	try {
+		// a variant of https://git.io/vQ8o7
+		await chromedriver.start(chromeDriverOpts, true);
+		console.log('Browser started')
+	} catch (e) {
+		console.log('[browser-session.js] Cnould not start chrome driver')
+		console.error(e)
+		process.exit(1)
+	}
+	try {
+		browser = await webdriverio.remote({
+			port: 9515, // TODO: autoselect unused port
+			path: '/',
+			logLevel: 'warn',
+			capabilities: {
+				browserName: 'chrome',
+				'goog:chromeOptions': options.headless ? headlessOpts : {}
+			}
+		});
+	} catch (e) {
+		console.log('[browser-session.js] Could not start browser session')
+		console.error(e)
+	}
 
 	await session(browser, path.join(__dirname, '..'));
 	await browser.deleteSession();

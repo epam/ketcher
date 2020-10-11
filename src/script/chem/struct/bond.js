@@ -58,22 +58,22 @@ Bond.PATTERN =
 		ANY: 8
 	},
 
-	// 	OLD_STEREO:
-	// 	{
-	// 		NONE: 0,
-	// 		UP: 1,
-	// 		EITHER: 4,
-	// 		DOWN: 6,
-	// 		CIS_TRANS: 3
-	// 	},
-
 	STEREO:
 	{
 		NONE: 0,
 		UP: 1,
-		EITHER: 2,
-		DOWN: 3
+		EITHER: 4,
+		DOWN: 6,
+		CIS_TRANS: 3
 	},
+
+	// STEREO:
+	// {
+	// 	NONE: 0,
+	// 	UP: 1,
+	// 	EITHER: 2,
+	// 	DOWN: 3
+	// },
 
 	TOPOLOGY:
 	{

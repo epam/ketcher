@@ -44,7 +44,9 @@ function runTests(isEqual) {
 
 				if (!expected || !actual)
 					tap.fail(`${colname}/${sample.name} not parsed`);
-				try {
+				if (expected.includes('V3000'))
+					tap.fail(`${colname}/${sample.name} has V3000 format`);
+				else try {
 					tap.ok(isEqual(expected, actual), `${colname}/${sample.name} equals`);
 				} catch (e) {
 					tap.fail(`${colname}/${sample.name} mismatch`, e);

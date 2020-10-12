@@ -20,7 +20,8 @@ export function moleculeToGraph(struct) {
 		body.sgroups = Array.from(struct.sgroups.values()).map(sgroupToGraph);
 
 	const fragment = struct.frags.get(0);
-	ifDef(body, 'stereoFlag', fragment.enhancedStereoFlag, structSchema.properties.stereoFlag.default);
+	if (fragment)
+		ifDef(body, 'stereoFlag', fragment.enhancedStereoFlag, structSchema.properties.stereoFlag.default);
 
 	return {
 		type: 'molecule',

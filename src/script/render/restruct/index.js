@@ -86,7 +86,8 @@ function ReStruct(molecule, render) { // eslint-disable-line max-statements
 	molecule.frags.forEach((item, id) => {
 		this.frags.set(id, new ReFrag(item));
 		const bb = molecule.getFragment(id).getCoordBoundingBox();
-		this.enhancedFlags.set(id, new ReEnhancedFlag(item.enhancedStereoFlag || null, new Vec2(bb.max.x, bb.min.y - 1)));
+		if (item) 
+			this.enhancedFlags.set(id, new ReEnhancedFlag(item.enhancedStereoFlag || null, new Vec2(bb.max.x, bb.min.y - 1)));
 	});
 
 	molecule.rgroups.forEach((item, id) => { this.rgroups.set(id, new ReRGroup(item)); });

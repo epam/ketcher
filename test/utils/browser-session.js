@@ -67,7 +67,7 @@ async function startSession(session) {
 		console.error(e)
 	}
 
-	await session(browser, path.join(__dirname, '..'));
+	await session(browser, path.resolve(__dirname, '../'));
 	await browser.deleteSession();
 	return chromedriver.stop();
 }

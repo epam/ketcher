@@ -1,4 +1,4 @@
-import { moleculeToStruct, atomToStruct, rglabelToStruct, atomListToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct';
+import { moleculeToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct';
 import testGraph from '../../data/testGraph.json';
 import { Atom, Bond, SGroup } from '../../../../../src/script/chem/struct';
 
@@ -81,6 +81,9 @@ describe('Atom should contain', () => {
 });
 
 describe('rglabel should contain', () => {
+	it('label', () => {
+		expect(struct.atoms.get(0).label).toEqual('C');
+	});
 	it('location', () => {
 		expect(struct.atoms.get(0).pp).toEqual({ x: 1, y: 1.5, z: 0 });
 	});
@@ -93,6 +96,9 @@ describe('rglabel should contain', () => {
 });
 
 describe('atomList should contain', () => {
+	it('label', () => {
+		expect(struct.atoms.get(0).label).toEqual('C');
+	});
 	it('location', () => {
 		expect(struct.atoms.get(0).pp).toEqual({ x: 1, y: 1.5, z: 0 });
 	});

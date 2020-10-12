@@ -42,15 +42,15 @@ function implicitHeadless() {
 }
 
 async function startSession(session) {
-	let browser
+	let browser;
 	try {
 		// a variant of https://git.io/vQ8o7
 		await chromedriver.start(chromeDriverOpts, true);
 		console.log('Browser started')
 	} catch (e) {
-		console.log('[browser-session.js] Cnould not start chrome driver')
-		console.error(e)
-		process.exit(1)
+		console.log('[browser-session.js] Cnould not start chrome driver');
+		console.error(e);
+		process.exit(1);
 	}
 	try {
 		browser = await webdriverio.remote({
@@ -63,8 +63,9 @@ async function startSession(session) {
 			}
 		});
 	} catch (e) {
-		console.log('[browser-session.js] Could not start browser session')
-		console.error(e)
+		console.log('[browser-session.js] Could not start browser session');
+		console.error(e);
+		process.exit(1);
 	}
 
 	await session(browser, path.resolve(__dirname, '../'));

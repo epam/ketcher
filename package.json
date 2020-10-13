@@ -81,7 +81,7 @@
     "through2": "2.0.3",
     "vinyl-buffer": "1.0.1",
     "vinyl-source-stream": "2.0.0",
-    "webdriverio": "6.4.5",
+    "webdriverio": "6.6.2",
     "xmldom": "0.1.27",
     "xpath": "0.0.24"
   },

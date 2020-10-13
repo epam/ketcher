@@ -32,12 +32,3 @@ module.exports.checkDepsExact = function (options, cb) {
 		cb();
 	}
 };
-
-module.exports.lint = function (options) {
-	return gulp.src(options.src)
-		.pipe(eslint({
-			quiet: process.argv.includes('--quiet')
-		}))
-		.pipe(eslint.format())
-		.pipe(eslint.failAfterError());
-};

@@ -32,8 +32,6 @@ import ReactionMapTool from './reactionmap';
 import ReactionUnmapTool from './reactionunmap';
 import PasteTool from './paste';
 import RotateTool from './rotate';
-
-// TODO: correct
 import EnhancedStereoTool from './enhanced-stereo';
 
 export default {

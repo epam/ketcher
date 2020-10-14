@@ -185,7 +185,7 @@ function parseCTabV3000(ctabLines, norgroups) { // eslint-disable-line max-state
 	if (ctabLines[shift].slice(0, 13) != 'M  V30 COUNTS')
 		throw Error('CTAB V3000 invalid');
 	var vals = ctabLines[shift].slice(14).split(' ');
-	const isAbs = utils.parseDecimalInt(vals[4]) === 1; // todo: check it
+	const isAbs = utils.parseDecimalInt(vals[4]) === 1;
 	shift++;
 
 	if (ctabLines[shift].trim() == 'M  V30 BEGIN ATOM') {

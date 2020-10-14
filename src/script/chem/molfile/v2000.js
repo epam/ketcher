@@ -234,7 +234,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	const atomCount = utils.parseDecimalInt(countsSplit[0]);
 	const bondCount = utils.parseDecimalInt(countsSplit[1]);
 	const atomListCount = utils.parseDecimalInt(countsSplit[2]);
-	const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1; // todo: check it
+	const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1;
 	const stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
 	const propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
 

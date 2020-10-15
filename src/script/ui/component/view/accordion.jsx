@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import { h, Component, toChildArray } from 'preact';
 import { xor } from 'lodash/fp';
 
 class Accordion extends Component {
@@ -28,7 +28,7 @@ class Accordion extends Component {
 		if (!multiple)
 			this.setState({ active: [index] });
 		else
-			this.setState({ active: xor(this.state.active, [index]) });
+			this.setState(prevState => ({ active: xor(prevState.active, [index]) }));
 	}
 
 	render() {
@@ -43,7 +43,7 @@ class Accordion extends Component {
 						>
 							{caption}
 						</a>
-						{children[index]}
+						{toChildArray(children)[index]}
 					</li>
 				)) }
 			</ul>

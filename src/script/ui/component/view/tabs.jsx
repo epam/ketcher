@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h, Component } from 'preact';
+import { h, Component, toChildArray } from 'preact';
 
 class Tabs extends Component {
 	constructor(props) {
@@ -44,7 +44,7 @@ class Tabs extends Component {
 					)) }
 				</li>
 				<li className="tabs-content">
-					{ children[this.state.tabIndex] }
+					{ toChildArray(children)[this.state.tabIndex] }
 				</li>
 			</ul>
 		);

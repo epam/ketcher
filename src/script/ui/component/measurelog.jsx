@@ -1,5 +1,5 @@
 import { h, Component } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 class MeasureLog extends Component {
 	componentWillReceiveProps(props, oldProps) {

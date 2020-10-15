@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { h, Component } from 'preact';
-import fs from 'filesaver.js';
+import { saveAs } from 'file-saver';
 
 class SaveButton extends Component {
 	constructor({ filename = 'unnamed', type = 'text/plain', className = '', ...props }) {
@@ -58,10 +58,10 @@ class SaveButton extends Component {
 
 function fileSaver(server) {
 	return new Promise((resolve, reject) => {
-		if (global.Blob && fs.saveAs) {
+		if (global.Blob && saveAs) {
 			resolve((data, fn, type) => {
 				const blob = new Blob([data], { type }); // eslint-disable-line no-undef
-				fs.saveAs(blob, fn);
+				saveAs(blob, fn);
 			});
 		} else if (server) {
 			resolve(server.then(() => {

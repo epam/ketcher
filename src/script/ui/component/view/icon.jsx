@@ -14,12 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { h } from 'preact';
-
+ import { h } from 'preact';
+ 
 function Icon({ name, ...props }) {
-	// TODO: correct
-	if (name === 'enhanced-stereo')
-		name = 'cip';
 	return (
 		<svg {...props}>
 			<use xlinkHref={`#icon-${name}`} />

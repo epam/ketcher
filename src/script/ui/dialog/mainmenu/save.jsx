@@ -19,6 +19,7 @@ import { connect } from 'preact-redux';
 import * as structFormat from '../../data/convert/structformat';
 import { saveUserTmpl } from '../../state/templates';
 import { updateFormState } from '../../state/modal/form';
+import { check } from '../../state/server';
 
 import Dialog from '../../component/dialog';
 import Form, { Field } from '../../component/form/form';
@@ -47,6 +48,10 @@ const saveSchema = {
 	}
 };
 
+function showStructWarningMessage(format, moleculeErrors) {
+	return (format !== 'mol' && Object.keys(moleculeErrors).length > 0);
+}
+
 class Save extends Component {
 	constructor(props) {
 		super(props);
@@ -63,6 +68,9 @@ class Save extends Component {
 
 		this.changeType(this.isRxn ? 'rxn' : 'mol')
 			.then(res => (res instanceof Error ? props.onCancel() : null));
+
+		const { checkOptions } = this.props.checkState;
+		this.props.onCheck(checkOptions);
 	}
 
 	changeType(type) {
@@ -87,6 +95,8 @@ class Save extends Component {
 		const { filename, format } = formState.result;
 		const warning = structFormat.couldBeSaved(this.props.struct, format);
 		const isCleanStruct = this.props.struct.isBlank();
+		const { moleculeErrors } = formState;
+		const isStructInvalid = showStructWarningMessage(format, moleculeErrors);
 
 		return (
 			<Dialog
@@ -127,6 +137,13 @@ class Save extends Component {
 					readOnly
 					ref={(el) => { this.textarea = el; }}
 				/>
+				{ isStructInvalid &&
+					<div className="warning">
+						Structure contains errors, please check the data,
+						otherwise you can lose some properties or
+						the whole structure after saving in this format.
+					</div>
+				}
 				{ warning && <div className="warning">{warning}</div> }
 			</Dialog>
 		);
@@ -138,9 +155,11 @@ export default connect(
 		server: store.options.app.server ? store.server : null,
 		struct: store.editor.struct(),
 		options: store.options.getServerSettings(),
-		formState: store.modal.form
+		formState: store.modal.form,
+		checkState: store.options.check
 	}),
 	dispatch => ({
+		onCheck: checkOptions => dispatch(check(checkOptions)),
 		onTmplSave: struct => dispatch(saveUserTmpl(struct)),
 		onResetForm: prevState => dispatch(updateFormState(prevState))
 	})

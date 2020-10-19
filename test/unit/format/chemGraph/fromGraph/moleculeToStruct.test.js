@@ -1,6 +1,8 @@
-import { moleculeToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct';
+import { moleculeToStruct, atomToStruct, rglabelToStruct, atomListToStruct, bondToStruct, sgroupToStruct } from '../../../../../src/script/format/chemGraph/fromGraph/moleculeToStruct';
 import testGraph from '../../data/testGraph.json';
-import { Atom, Bond, SGroup } from '../../../../../src/script/chem/struct';
+import testRglabel from '../../data/testRglabel.json';
+import testAtomList from '../../data/testAtomList.json';
+import { Atom, Bond } from '../../../../../src/script/chem/struct';
 
 const struct = moleculeToStruct(testGraph.mol0);
 
@@ -10,12 +12,6 @@ describe('Content of the molecule', () => {
 	});
 	it('should contain bonds in struct', () => {
 		expect(struct.bonds.get(0)).toBeDefined();
-	});
-	it('should contain sgroups in struct', () => {
-		expect(struct.sgroups.get(0)).toBeUndefined();
-	});
-	it('should contain frags in struct', () => {
-		expect(struct.frags.get(0).enhancedStereoFlag).toBeNull();
 	});
 });
 
@@ -33,125 +29,79 @@ describe('Check instances of elements', () => {
 });
 
 describe('Atom should contain', () => {
+	const atomStruct = atomToStruct(testGraph.mol0.atoms[0]);
+	const atomStruct1 = atomToStruct(testGraph.mol0.atoms[1]);
+	const atomStruct2 = atomToStruct(testGraph.mol0.atoms[2]);
 	it('alias', () => {
-		expect(struct.atoms.get(0).alias).toBe('superatom');
+		expect(atomStruct.alias).toBe(testGraph.mol0.atoms[0].alias);
 	});
 	it('location', () => {
-		expect(struct.atoms.get(0).pp).toEqual({ x: 1, y: 1.5, z: 0 });
+		expect(Object.values(atomStruct.pp)).toEqual(testGraph.mol0.atoms[0].location);
 	});
 	it('isotope', () => {
-		expect(struct.atoms.get(0).isotope).toBe(5);
+		expect(atomStruct.isotope).toBe(testGraph.mol0.atoms[0].isotope);
 	});
 	it('charge', () => {
-		expect(struct.atoms.get(1).charge).toBe(50);
+		expect(atomStruct1.charge).toBe(testGraph.mol0.atoms[1].charge);
 	});
 	it('explicitValence', () => {
-		expect(struct.atoms.get(1).explicitValence).toBe(2);
+		expect(atomStruct1.explicitValence).toBe(testGraph.mol0.atoms[1].explicitValence);
 	});
 	it('attachmentPoints', () => {
-		expect(struct.atoms.get(1).attpnt).toBe(3);
+		expect(atomStruct1.attpnt).toBe(testGraph.mol0.atoms[1].attachmentPoints);
 	});
 	it('radical', () => {
-		expect(struct.atoms.get(1).radical).toBe(2);
+		expect(atomStruct1.radical).toBe(testGraph.mol0.atoms[1].radical);
 	});
 	it('stereoParity', () => {
-		expect(struct.atoms.get(2).stereoParity).toBe(1);
-	});
-	it('weight', () => {
-		expect(struct.atoms.get(2).weight).toBeUndefined();
+		expect(atomStruct2.stereoParity).toBe(testGraph.mol0.atoms[2].stereoParity);
 	});
 	it('substitutionCount', () => {
-		expect(struct.atoms.get(2).substitutionCount).toBe(-2);
+		expect(atomStruct2.substitutionCount).toBe(testGraph.mol0.atoms[2].substitutionCount);
 	});
 	it('unsaturatedAtom', () => {
-		expect(struct.atoms.get(2).unsaturatedAtom).toBeTruthy();
+		expect(atomStruct2.unsaturatedAtom).toBe(testGraph.mol0.atoms[2].unsaturatedAtom);
 	});
 	it('hCount', () => {
-		expect(struct.atoms.get(2).hCount).toBe(3);
+		expect(atomStruct2.hCount).toBe(testGraph.mol0.atoms[2].hCount);
 	});
 	it('mapping', () => {
-		expect(struct.atoms.get(2).aam).toBe(5);
+		expect(atomStruct2.aam).toBe(testGraph.mol0.atoms[2].mapping);
 	});
 	it('invRet', () => {
-		expect(struct.atoms.get(2).invRet).toBe(1);
+		expect(atomStruct2.invRet).toBe(testGraph.mol0.atoms[2].invRet);
 	});
 	it('exactChangeFlag', () => {
-		expect(struct.atoms.get(2).exactChangeFlag).toBeTruthy();
+		expect(atomStruct2.exactChangeFlag).toBe(testGraph.mol0.atoms[2].exactChangeFlag);
 	});
 });
 
 describe('rglabel should contain', () => {
-	it('label', () => {
-		expect(struct.atoms.get(0).label).toEqual('C');
-	});
+	const rglabelStruct = rglabelToStruct(testRglabel.mol0.atoms[0]);
 	it('location', () => {
-		expect(struct.atoms.get(0).pp).toEqual({ x: 1, y: 1.5, z: 0 });
+		expect(Object.values(rglabelStruct.pp)).toEqual(testRglabel.mol0.atoms[0].location);
 	});
 	it('attachmentPoints', () => {
-		expect(struct.atoms.get(0).attpnt).toBeNull();
-	});
-	it('rglabel', () => {
-		expect(struct.atoms.get(0).rglabel).toBeNull();
+		expect(rglabelStruct.attpnt).toBe(testRglabel.mol0.atoms[0].attachmentPoints);
 	});
 });
 
 describe('atomList should contain', () => {
-	it('label', () => {
-		expect(struct.atoms.get(0).label).toEqual('C');
-	});
+	const atomList = atomListToStruct(testAtomList.mol0.atoms[5]);
 	it('location', () => {
-		expect(struct.atoms.get(0).pp).toEqual({ x: 1, y: 1.5, z: 0 });
-	});
-	it('attachmentPoints', () => {
-		expect(struct.atoms.get(0).attpnt).toBeNull();
-	});
-	it('atomList', () => {
-		expect(struct.atoms.get(0).atomList).toBeNull();
+		expect(Object.values(atomList.pp)).toEqual(testAtomList.mol0.atoms[5].location);
 	});
 });
 
 describe('bond should contain', () => {
+	const bondStruct = bondToStruct(testGraph.mol0.bonds[0]);
 	it('type', () => {
-		expect(struct.bonds.get(0).type).toBe(1);
+		expect(bondStruct.type).toBe(testGraph.mol0.bonds[0].type);
 	});
 	it('begin atom', () => {
-		expect(struct.bonds.get(0).begin).toBe(0);
+		expect(bondStruct.begin).toBe(testGraph.mol0.bonds[0].atoms[0]);
 	});
 	it('end atom', () => {
-		expect(struct.bonds.get(0).end).toBe(1);
-	});
-});
-
-describe('sgroup should contain', () => {
-	let sgroup = new SGroup('MUL');
-	it('mul', () => {
-		expect(sgroup.data.mul).toBe(1);
-	});
-	sgroup = new SGroup('SRU');
-	it('subscript', () => {
-		expect(sgroup.data.subscript).toBe("n");
-	});
-	it('connectivity', () => {
-		expect(sgroup.data.connectivity).toBe("ht");
-	});
-	sgroup = new SGroup('SUP');
-	it('name', () => {
-		expect(sgroup.data.name).toBe("");
-	});
-	sgroup = new SGroup('DAT');
-	it('absolute', () => {
-		expect(sgroup.data.placement).toBeUndefined();
-	});
-	it('attached', () => {
-		expect(sgroup.data.display).toBeUndefined();
-	});
-	it('context', () => {
-		expect(sgroup.data.context).toBeUndefined();
-	});
-	it('fieldName', () => {
-		expect(sgroup.data.fieldName).toBe('');
-	});
-	it('fieldValue', () => {
-		expect(sgroup.data.fieldData).toBeUndefined();
+		expect(bondStruct.end).toBe(testGraph.mol0.bonds[0].atoms[1]);
 	});
 });

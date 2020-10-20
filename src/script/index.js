@@ -119,10 +119,5 @@ const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi
 		validateGraphF(j);
 		return j;
 	},
-	fromGraph: () => graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule)),
-	loadStruct: () => {
-		const struct = graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule));
-		ketcher.editor.struct(null);
-		ketcher.editor.struct(struct);
-	}
+	fromGraph: () => graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule))
 }, buildInfo);

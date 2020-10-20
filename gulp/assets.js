@@ -47,7 +47,7 @@ function markdownify(options) {
 	}, options));
 	return function process(file) {
 		const data = md.render(file.contents.toString());
-		file.contents = new Buffer(header + data + footer);
+		file.contents = Buffer.from(header + data + footer);
 		file.path = replaceExtension(file.path, '.html');
 	};
 }

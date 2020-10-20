@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 import initEditor from '../state/editor';
 import StructEditor from '../component/structeditor';
 

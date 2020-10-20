@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import { bond as bondSchema } from '../../data/schema/struct-schema';
 import Form, { Field } from '../../component/form/form';

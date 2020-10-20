@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 import { h } from 'preact';
 
 import classNames from 'classnames';

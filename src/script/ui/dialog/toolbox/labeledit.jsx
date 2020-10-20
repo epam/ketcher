@@ -16,7 +16,7 @@
 
 import { capitalize } from 'lodash/fp';
 import { h } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import element from '../../../chem/element';
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema';

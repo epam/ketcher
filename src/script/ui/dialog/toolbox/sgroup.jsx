@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { h } from 'preact';
-import { connect } from 'preact-redux';
+import { connect } from 'react-redux';
 
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 

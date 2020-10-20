@@ -64,6 +64,13 @@ module.exports.createBundleConfig = (options) => ({
 				['@babel/plugin-transform-react-jsx', { pragma: 'h' }],
 				['transform-builtin-extend', { globals: ['Set', 'Map'] }]
 			]
+		}],
+		['aliasify', {
+			global: true,
+			aliases: {
+				'react': 'preact/compat',
+				'react-dom': 'preact/compat'
+			}
 		}]
 	]
 });

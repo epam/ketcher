@@ -35,7 +35,7 @@ module.exports.script = function (options) {
 	// Don't transform, see: http://git.io/vcJlV
 		.pipe(source(`${options.pkg.name}.js`)).pipe(buffer())
 		.pipe(plugins.sourcemaps.init({ loadMaps: true }))
-		.pipe(plugins.uglify({
+		.pipe(plugins.terser({
 			compress: {
 				global_defs: {
 					DEBUG: false

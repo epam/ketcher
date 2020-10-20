@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ function AtomDelete(aid) {
 		}
 
 		// notifyAtomRemoved(this.data.aid);
-		const atom = restruct.atoms.get(this.data.aid);
+		const atom = restruct.atoms.get(this.data.aid);		
 		const set = restruct.connectedComponents.get(atom.component);
 		set.delete(this.data.aid);
 		if (set.size === 0)
@@ -89,7 +89,7 @@ function AtomDelete(aid) {
 
 		// TODO: - here
 
-
+		
 		struct.atoms.delete(this.data.aid);
 	};
 

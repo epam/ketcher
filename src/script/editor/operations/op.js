@@ -86,10 +86,6 @@ function AtomDelete(aid) {
 		restruct.clearVisel(atom.visel);
 		restruct.atoms.delete(this.data.aid);
 		restruct.markItemRemoved();
-
-		// TODO: - here
-
-		
 		struct.atoms.delete(this.data.aid);
 	};
 

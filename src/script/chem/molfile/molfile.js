@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,7 +208,9 @@ Molfile.prototype.writeCTab2000Header = function () {
 
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(3);
-	this.writePaddedNumber(this.molecule.isChiral ? 1 : 0, 3);
+	const isAbsFlag = Array.from(this.molecule.frags.values())
+		.some(fr => fr ? fr.enhancedStereoFlag === 'abs' : false)
+	this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
 	this.writePaddedNumber(0, 3);
 	this.writeWhiteSpace(12);
 	this.writePaddedNumber(999, 3);

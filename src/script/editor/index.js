@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import toolMap from './tool';
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
 
-const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'chiralFlags'];
+const structObjects = ['atoms', 'bonds', 'frags', 'sgroups', 'sgroupData', 'rgroups', 'rxnArrows', 'rxnPluses', 'enhancedFlags'];
 
 function Editor(clientArea, options) {
 	this.render = new Render(clientArea, Object.assign({
@@ -52,7 +52,9 @@ function Editor(clientArea, options) {
 		change: new s.PipelineSubscription(),
 		selectionChange: new s.PipelineSubscription(),
 		aromatizeStruct: new s.PipelineSubscription(),
-		dearomatizeStruct: new s.PipelineSubscription()
+		dearomatizeStruct: new s.PipelineSubscription(),
+		// TODO: correct
+		enhancedStereoEdit: new s.PipelineSubscription()
 	};
 
 	domEventSetup(this, clientArea);
@@ -152,7 +154,7 @@ Editor.prototype.hover = function (ci, newTool) {
 };
 
 const highlightTargets = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses',
-	'chiralFlags', 'frags', 'merge', 'rgroups', 'sgroups', 'sgroupData'];
+	'frags', 'merge', 'rgroups', 'sgroups', 'sgroupData', 'enhancedFlags'];
 
 Editor.prototype.highlight = function (ci, visible) {
 	if (highlightTargets.indexOf(ci.map) === -1)
@@ -341,7 +343,6 @@ Editor.prototype.structSelected = function () {
 		if (selection.rxnPluses.indexOf(id) !== -1)
 			dst.rxnPluses.add(item.clone());
 	});
-	dst.isChiral = struct.isChiral;
 
 	// TODO: should be reaction only if arrwos? check this logic
 	dst.isReaction = struct.isReaction &&

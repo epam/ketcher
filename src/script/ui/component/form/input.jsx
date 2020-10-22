@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ function enumSchema(schema, cbOrIndex) {
 			const title = isTypeValue ? item.title :
 				schema.enumNames && schema.enumNames[i];
 			return cbOrIndex(title !== undefined ? title : item,
-				item.value !== undefined ? item.value : item);
+				item && item.value !== undefined ? item.value : item);
 		});
 	}
 

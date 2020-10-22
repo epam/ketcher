@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ RotateTool.prototype.mousedown = function (event) {
 			xy0 = xy0.scaled(1 / selection.atoms.length);
 	} else {
 		struct.atoms.forEach((atom) => { xy0.add_(atom.pp); }); // eslint-disable-line no-underscore-dangle, max-len
-		// poor man struct center (without chiral, sdata, etc)
+		// poor man struct center (without sdata, etc)
 		xy0 = xy0.scaled(1 / struct.atoms.size);
 	}
 	this.dragCtx = {

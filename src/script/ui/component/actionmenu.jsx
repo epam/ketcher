@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ function ActionButton({ name, action, status = {}, onAction }) { // eslint-disab
 		<button
 			disabled={status.disabled}
 			onClick={(ev) => {
-				if (!status.selected || isMenuOpened(this.base) || action.action.tool === 'chiralFlag') {
+				if (!status.selected || isMenuOpened(this.base)) {
 					onAction(action.action);
 					ev.stopPropagation();
 				}

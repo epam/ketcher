@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ import Pile from '../../util/pile';
 
 import { Bond } from '../../chem/struct';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import utils from '../shared/utils';
 import Action from '../shared/action';
 
-import { structSelection, getRelSgroupsBySelection, getFragmentAtoms } from './utils';
+import { structSelection, getRelSgroupsBySelection } from './utils';
 
 export function fromFlip(restruct, selection, dir, center) { // eslint-disable-line max-statements
 	const struct = restruct.molecule;
@@ -157,10 +157,10 @@ export function fromRotate(restruct, selection, center, angle) { // eslint-disab
 		});
 	}
 
-	if (selection.chiralFlags) {
-		selection.chiralFlags.forEach((fid) => {
-			var flag = restruct.chiralFlags.get(fid);
-			action.addOp(new op.ChiralFlagMove(rotateDelta(flag.pp, center, angle)));
+	if (selection.enhancedFlags) {
+		selection.enhancedFlags.forEach((fid) => {
+			const flag = restruct.enhancedFlags.get(fid);
+			action.addOp(new op.EnhancedFlagMove(fid, rotateDelta(flag.pp, center, angle)));
 		});
 	}
 
@@ -175,7 +175,7 @@ export function fromBondAlign(restruct, bid, dir) {
 
 	const center = begin.pp.add(end.pp).scaled(0.5);
 	let angle = utils.calcAngle(begin.pp, end.pp);
-	const atoms = getFragmentAtoms(struct, begin.fragment);
+	const atoms = Array.from(struct.getFragmentIds(begin.fragment));
 
 	// TODO: choose minimal angle
 	angle = (dir === 'horizontal') ? -angle : ((Math.PI / 2) - angle);

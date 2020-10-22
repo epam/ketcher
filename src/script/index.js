@@ -26,6 +26,7 @@ import * as structformat from './ui/data/convert/structformat';
 
 import ui from './ui';
 import Render from './render';
+import graph from './format/chemGraph';
 
 function getSmiles() {
 	return smiles.stringify(ketcher.editor.struct(),
@@ -102,11 +103,21 @@ const buildInfo = {
 	buildNumber: '__BUILD_NUMBER__' || null
 };
 
+import validateGraphF from './format/graphValidator'; // eslint-disable-line
+
 const ketcher = module.exports = Object.assign({ // eslint-disable-line no-multi-assign
 	getSmiles,
 	saveSmiles,
 	getMolfile,
 	setMolecule,
 	addFragment,
-	showMolfile
+	showMolfile,
+
+	// TODO: remove it
+	toGraph: () => {
+		const j = graph.toGraph(ketcher.editor.render.ctab.molecule);
+		validateGraphF(j);
+		return j;
+	},
+	fromGraph: () => graph.fromGraph(graph.toGraph(ketcher.editor.render.ctab.molecule))
 }, buildInfo);

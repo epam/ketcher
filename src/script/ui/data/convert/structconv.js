@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,8 @@ function fromAtom(satom) {
 		ringBondCount: satom.ringBondCount,
 		substitutionCount: satom.substitutionCount,
 		unsaturatedAtom: !!satom.unsaturatedAtom,
-		hCount: satom.hCount
+		hCount: satom.hCount,
+		stereoParity: satom.stereoParity
 	};
 }
 
@@ -94,7 +95,8 @@ function toAtom(atom) {
 	const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
 
 	const conv = Object.assign({}, atom, {
-		label: capitalize(atom.label)
+		label: capitalize(atom.label),
+		alias: atom.alias || null
 	});
 	if (charge !== undefined) conv.charge = charge;
 	return conv;
@@ -116,6 +118,21 @@ function toAtomList(atom) {
 			ids: atom.values.map(el => element.map[el])
 		})
 	};
+}
+
+export function fromStereoLabel(stereoLabel) {
+	if (stereoLabel === null) return { type: null };
+	const stereo = stereoLabel.split('-');
+	return {
+		type: stereo[0],
+		number: +stereo[1] || 0
+	};
+}
+
+export function toStereoLabel(sstereoLabel) {
+	if (sstereoLabel.type === null) return null;
+	if (sstereoLabel.type === 'abs') return 'abs';
+	return `${sstereoLabel.type}-${sstereoLabel.number}`;
 }
 
 function fromApoint(sap) {
@@ -256,20 +273,20 @@ export function toSgroup(sgroup) {
 	const attached = 'attached';
 
 	switch (radiobuttons) {
-	case 'Absolute':
-		attrs[absolute] = true;
-		attrs[attached] = false;
-		break;
-	case 'Attached':
-		attrs[absolute] = false;
-		attrs[attached] = true;
-		break;
-	case 'Relative':
-		attrs[absolute] = false;
-		attrs[attached] = false;
-		break;
-	default:
-		break;
+		case 'Absolute':
+			attrs[absolute] = true;
+			attrs[attached] = false;
+			break;
+		case 'Attached':
+			attrs[absolute] = false;
+			attrs[attached] = true;
+			break;
+		case 'Relative':
+			attrs[absolute] = false;
+			attrs[attached] = false;
+			break;
+		default:
+			break;
 	}
 
 	if (attrs.fieldName)

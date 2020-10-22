@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,6 @@ class Pile extends Set {
 		}
 
 		return null;
-	}
-
-	intersection(setB) {
-		const intersection = new Pile();
-
-		for (const item of setB) {
-			if (this.has(item))
-				intersection.add(item);
-		}
-
-		return intersection;
 	}
 
 	equals(setB) {

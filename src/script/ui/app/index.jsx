@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import createStore, { onAction, load } from '../state';
 import { checkServer } from '../state/server';
 import { initKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
+
+import { loadStruct } from '../state/shared';
 
 const App = connect(
 	null,
@@ -57,7 +59,8 @@ function init(el, options, server) {
 	), el);
 
 	return {
-		load: (structStr, opts) => store.dispatch(load(structStr, opts))
+		load: (structStr, opts) => store.dispatch(load(structStr, opts)),
+		loadStruct
 	};
 }
 

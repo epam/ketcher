@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,18 @@
 import { without } from 'lodash/fp';
 
 import { Atom, Bond, RGroup } from '../../chem/struct';
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
 import { atomGetAttr, atomGetDegree, atomGetNeighbors, atomGetSGroups } from './utils';
 import { removeSgroupIfNeeded, removeAtomFromSgroupIfNeeded } from './sgroup';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
-import { fromFragmentSplit } from './fragment';
 
 export function fromAtomAddition(restruct, pos, atom) {
 	atom = Object.assign({}, atom);
 	const action = new Action();
 	atom.fragment = action.addOp(new op.FragmentAdd().perform(restruct)).frid;
 	action.addOp(new op.AtomAdd(atom, pos).perform(restruct));
-	return action;
-}
-
-export function fromAtomDeletion(restruct, id) {
-	let action = new Action();
-	const atomsToRemove = [];
-
-	const frid = restruct.molecule.atoms.get(id).fragment;
-
-	atomGetNeighbors(restruct, id).forEach((nei) => {
-		action.addOp(new op.BondDelete(nei.bid));// [RB] !!
-
-		if (atomGetDegree(restruct, nei.aid) !== 1)
-			return;
-
-		if (removeAtomFromSgroupIfNeeded(action, restruct, nei.aid))
-			atomsToRemove.push(nei.aid);
-
-		action.addOp(new op.AtomDelete(nei.aid));
-	});
-
-	if (removeAtomFromSgroupIfNeeded(action, restruct, id))
-		atomsToRemove.push(id);
-
-	action.addOp(new op.AtomDelete(id));
-
-	removeSgroupIfNeeded(action, restruct, atomsToRemove);
-
-	action = action.perform(restruct);
-
-	action.mergeWith(fromFragmentSplit(restruct, frid));
-
 	return action;
 }
 
@@ -87,6 +54,40 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
 
 		if (!reset && 'label' in attrs && attrs.label !== null && attrs.label !== 'L#' && !attrs['atomList'])
 			action.addOp(new op.AtomAttr(aid, 'atomList', null));
+	});
+
+	return action.perform(restruct);
+}
+
+export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
+	const action = new Action();
+	const frid = restruct.molecule.atoms.get(aid).fragment;
+
+	if ('stereoParity' in attrs)
+		action.addOp(new op.AtomAttr(aid, 'stereoParity', attrs['stereoParity']).perform(restruct));
+	if ('stereoLabel' in attrs) {
+		action.addOp(new op.AtomAttr(aid, 'stereoLabel', attrs['stereoLabel']).perform(restruct));
+		if (attrs['stereoLabel'] === null)
+			action.addOp(new op.FragmentDeleteStereoAtom(frid, aid).perform(restruct));
+		else
+			action.addOp(new op.FragmentAddStereoAtom(frid, aid).perform(restruct));
+	}
+	if (withReverse) action.operations.reverse();
+	return action;
+}
+
+export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
+	const action = new Action();
+
+	aids.forEach((aid) => {
+		const atom = restruct.molecule.atoms.get(aid);
+		const oldfrid = atom.fragment;
+		action.addOp(new op.AtomAttr(aid, 'fragment', newfrid));
+
+		if (atom.stereoLabel !== null) {
+			action.addOp(new op.FragmentAddStereoAtom(newfrid, aid));
+			action.addOp(new op.FragmentDeleteStereoAtom(oldfrid, aid));
+		}
 	});
 
 	return action.perform(restruct);
@@ -166,13 +167,15 @@ export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
 
 	const fridAtoms = struct.getFragmentIds(frid);
 
+	const atomsToNewFrag = [];
 	struct.atoms.forEach((atom, aid) => {
-		if (atom.fragment === frid2)
-			action.addOp(new op.AtomAttr(aid, 'fragment', frid).perform(restruct));
+		if (atom.fragment === frid2) atomsToNewFrag.push(aid);
 	});
+	const moveAtomsAction = fromAtomsFragmentAttr(restruct, atomsToNewFrag, frid);
 
 	mergeSgroups(action, restruct, fridAtoms, dstId);
 	action.addOp(new op.FragmentDelete(frid2).perform(restruct));
+	action.mergeWith(moveAtomsAction);
 }
 
 export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {

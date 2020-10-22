@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import molfile from '../../../chem/molfile';
 import smiles from '../../../chem/smiles';
+import graph from '../../../format/chemGraph';
 
 export const map = {
 	mol: {
@@ -60,12 +61,21 @@ export const map = {
 		mime: 'chemical/x-cml',
 		ext: ['.cml', '.mrv'],
 		supportsCoords: true
+	},
+	graph: {
+		name: 'Graph Format',
+		mime: 'application/json',
+		ext: ['.ket']
 	}
 };
 
 export function guess(structStr, strict) {
 	// Mimic Indigo/molecule_auto_loader.cpp as much as possible
 	const molStr = structStr.trim();
+
+	try {
+		if (JSON.parse(molStr)) return 'graph';
+	} catch (er) { } // eslint-disable-line
 
 	if (molStr.indexOf('$RXN') !== -1)
 		return 'rxn';
@@ -93,6 +103,10 @@ export function guess(structStr, strict) {
 
 export function toString(struct, format, server, serverOpts) {
 	console.assert(map[format], 'No such format');
+	if (format === 'graph') {
+		const res = graph.toGraph(struct);
+		return Promise.resolve(JSON.stringify(res));
+	}
 
 	return new Promise((resolve) => {
 		const moldata = molfile.stringify(struct);
@@ -121,8 +135,10 @@ export function fromString(structStr, opts, server, serverOpts) {
 	return new Promise((resolve) => {
 		const format = guess(structStr);
 		console.assert(map[format], 'No such format');
-
-		if (format === 'mol' || format === 'rxn') {
+		if (format === 'graph') {
+			const res = graph.fromGraph(JSON.parse(structStr));
+			resolve(res);
+		} else if (format === 'mol' || format === 'rxn') {
 			const struct = molfile.parse(structStr, opts);
 			resolve(struct);
 		} else {

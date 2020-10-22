@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ class Save extends Component {
 		super(props);
 		this.isRxn = this.props.struct.hasRxnArrow();
 
-		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles'];
+		const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'graph'];
 		if (this.props.server) formats.push('smiles-ext', 'smarts', 'inchi', 'inchi-aux', 'cml');
 
 		this.saveSchema = saveSchema;

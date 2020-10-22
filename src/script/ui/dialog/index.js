@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import AttachPoints from './toolbox/attach';
 import Automap from './toolbox/automap';
 import Bond from './toolbox/bond';
 import Check from './mainmenu/check';
+import EnhancedStereo from './toolbox/enhanced-stereo';
 import LabelEdit from './toolbox/labeledit';
 import RgroupLogic from './toolbox/rgroup-logic';
 import Save from './mainmenu/save';
@@ -55,6 +56,7 @@ export default {
 	automap: Automap,
 	bondProps: Bond,
 	check: Check,
+	enhancedStereo: EnhancedStereo,
 	labelEdit: LabelEdit,
 	rgroupLogic: RgroupLogic,
 	save: Save,

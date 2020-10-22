@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,14 @@ Bond.PATTERN =
 		DOWN: 6,
 		CIS_TRANS: 3
 	},
+
+	// STEREO:
+	// {
+	// 	NONE: 0,
+	// 	UP: 1,
+	// 	EITHER: 2,
+	// 	DOWN: 3
+	// },
 
 	TOPOLOGY:
 	{

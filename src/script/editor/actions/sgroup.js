@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import { uniq } from 'lodash';
 import { SGroup } from '../../chem/struct';
 
 import Pile from '../../util/pile';
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 import { SgContexts } from '../shared/constants';
 

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
  ***************************************************************************/
 
 import LassoHelper from './helper/lasso';
-import { fromFragmentDeletion } from '../actions/fragment';
-import { fromAtomDeletion } from '../actions/atom';
-import { fromBondDeletion } from '../actions/bond';
 import { fromArrowDeletion, fromPlusDeletion } from '../actions/reaction';
 import { fromSgroupDeletion } from '../actions/sgroup';
-import { fromChiralFlagDeletion } from '../actions/chiral-flag';
+import { fromFragmentDeletion, fromOneAtomDeletion, fromOneBondDeletion } from '../actions/erase';
 
 function EraserTool(editor, mode) {
 	if (!(this instanceof EraserTool)) {
@@ -35,7 +32,7 @@ function EraserTool(editor, mode) {
 
 	this.editor = editor;
 
-	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData', 'chiralFlags'];
+	this.maps = ['atoms', 'bonds', 'rxnArrows', 'rxnPluses', 'sgroups', 'sgroupData'];
 	this.lassoHelper = new LassoHelper(mode || 0, editor);
 }
 
@@ -69,17 +66,15 @@ EraserTool.prototype.click = function (event) {
 
 	this.editor.hover(null);
 	if (ci.map === 'atoms') {
-		this.editor.update(fromAtomDeletion(restruct, ci.id));
+		this.editor.update(fromOneAtomDeletion(restruct, ci.id));
 	} else if (ci.map === 'bonds') {
-		this.editor.update(fromBondDeletion(restruct, ci.id));
+		this.editor.update(fromOneBondDeletion(restruct, ci.id));
 	} else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
 		this.editor.update(fromSgroupDeletion(restruct, ci.id));
 	} else if (ci.map === 'rxnArrows') {
 		this.editor.update(fromArrowDeletion(restruct, ci.id));
 	} else if (ci.map === 'rxnPluses') {
 		this.editor.update(fromPlusDeletion(restruct, ci.id));
-	} else if (ci.map === 'chiralFlags') {
-		this.editor.update(fromChiralFlagDeletion(restruct));
 	} else {
 		// TODO re-factoring needed - should be "map-independent"
 		console.error('EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']');

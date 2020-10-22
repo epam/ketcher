@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import element from '../element';
 import AtomList from './atomlist';
 
 function Atom(params) { // eslint-disable-line max-statements
-	var def = Atom.attrGetDefault;
+	const def = Atom.attrGetDefault;
 	console.assert(params || 'label' in params, 'label must be specified!');
 
 	this.label = params.label;
@@ -56,6 +56,10 @@ function Atom(params) { // eslint-disable-line max-statements
 	ifDef(this, params, 'exactChangeFlag', def('exactChangeFlag'));
 	ifDef(this, params, 'rxnFragmentType', -1); // this isn't really an attribute
 
+	// stereo
+	ifDef(this, params, 'stereoLabel', def('stereoLabel'));
+	ifDef(this, params, 'stereoParity', def('stereoParity')); // {string | null} "<abs|and|or>-<group>"
+
 	this.atomList = params.atomList ? new AtomList(params.atomList) : null;
 	this.neighbors = []; // set of half-bonds having this atom as their origin
 	this.badConn = false;
@@ -85,6 +89,13 @@ Atom.PATTERN =
 		SINGLET: 1,
 		DOUPLET: 2,
 		TRIPLET: 3
+	},
+	STEREO_PARITY:
+	{
+		NONE: 0,
+		ODD: 1,
+		EVEN: 2,
+		EITHER: 3
 	}
 };
 
@@ -105,7 +116,10 @@ Atom.attrlist = {
 	exactChangeFlag: 0,
 	rglabel: null,
 	attpnt: null,
-	aam: 0
+	aam: 0,
+	// enhanced stereo
+	stereoLabel: null,
+	stereoParity: 0
 };
 
 export function radicalElectrons(radical) {

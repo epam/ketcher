@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ function Settings(props) {
 						<Field name="rotationStep" />
 						<Field name="showValenceWarnings" component={SelectCheckbox} />
 						<Field name="atomColoring" component={SelectCheckbox} />
-						<Field name="hideChiralFlag" component={SelectCheckbox} />
+						<Field name="hideStereoFlags" component={SelectCheckbox} />
 						<Field name="font" component={SystemFonts} />
 						<Field name="fontsz" component={MeasureInput} />
 						<Field name="fontszsub" component={MeasureInput} />

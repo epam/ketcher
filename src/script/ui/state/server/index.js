@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,10 @@ export function recognize(file, version) {
 function ketcherCheck(struct, checkParams) {
 	const errors = {};
 
-	if (checkParams.includes('chiral_flag') && struct.isChiral)
-		errors['chiral_flag'] = 'Chiral flag is present on the canvas';
+	if (checkParams.includes('chiral_flag')) {
+		const isAbs = Array.from(struct.frags.values()).some(fr => fr.enhancedStereoFlag === 'abs');
+		if (isAbs) errors['chiral_flag'] = 'Chiral flag is present on the canvas';
+	}
 
 	if (checkParams.includes('valence')) {
 		let badVal = 0;

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import element from '../element';
 import Atom, { radicalElectrons } from './atom';
 import AtomList from './atomlist';
 import Bond from './bond';
+import Fragment from './fragment';
 import SGroup from './sgroup';
 import RGroup from './rgroup';
 import SGroupForest from './sgforest';
@@ -34,14 +35,13 @@ function Struct() {
 	this.sgroups = new Pool();
 	this.halfBonds = new Pool();
 	this.loops = new Pool();
-	this.isChiral = false;
 	this.isReaction = false;
 	this.rxnArrows = new Pool();
 	this.rxnPluses = new Pool();
 	this.frags = new Pool();
 	this.rgroups = new Pool();
 	this.name = '';
-	this.sGroupForest = new SGroupForest(this);
+	this.sGroupForest = new SGroupForest();
 }
 
 Struct.prototype.hasRxnProps = function () {
@@ -56,7 +56,7 @@ Struct.prototype.hasRxnArrow = function () {
 Struct.prototype.isBlank = function () {
 	return this.atoms.size === 0 &&
 	this.rxnArrows.size === 0 &&
-	this.rxnPluses.size === 0 && !this.isChiral;
+	this.rxnPluses.size === 0;
 };
 
 /**
@@ -121,7 +121,6 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	});
 
 	const fidMask = new Pile();
-
 	this.atoms.forEach((atom, aid) => {
 		if (atomSet.has(aid))
 			fidMask.add(atom.fragment);
@@ -130,7 +129,7 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 	const fidMap = new Map();
 	this.frags.forEach((frag, fid) => {
 		if (fidMask.has(fid))
-			fidMap.set(fid, cp.frags.add(Object.assign({}, frag)));
+			fidMap.set(fid, cp.frags.add(null));
 	});
 
 	const rgroupsIds = [];
@@ -170,6 +169,14 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 			aidMap.set(aid, cp.atoms.add(atom.clone(fidMap)));
 	});
 
+	fidMap.forEach((newfid, oldfid) => {
+		const frags = JSON.parse(JSON.stringify(this.frags.get(oldfid)));
+
+		if (frags && Object.keys(frags).length !== 0) {
+			cp.frags.set(newfid, this.frags.get(oldfid).clone(aidMap));	// clone Fragments
+		}
+	});
+
 	const bidMap = new Map();
 	this.bonds.forEach((bond, bid) => {
 		if (bondSet.has(bid))
@@ -189,12 +196,10 @@ Struct.prototype.mergeInto = function (cp, atomSet, bondSet, dropRxnSymbols, kee
 		});
 
 		if (sg.type === 'DAT')
-			cp.sGroupForest.insert(sg.id, -1, []);
+			cp.sGroupForest.insert(sg, -1, []);
 		else
-			cp.sGroupForest.insert(sg.id);
+			cp.sGroupForest.insert(sg);
 	});
-
-	cp.isChiral = cp.isChiral || this.isChiral;
 
 	if (!dropRxnSymbols) {
 		cp.isReaction = this.isReaction;
@@ -603,11 +608,13 @@ Struct.prototype.findConnectedComponents = function (discardExistingFragments) {
  * @param idSet { Pile<number> }
  */
 Struct.prototype.markFragment = function (idSet) {
-	const frag = {};
+	const frag = new Fragment();
 	const fid = this.frags.add(frag);
 
 	idSet.forEach((aid) => {
-		this.atoms.get(aid).fragment = fid;
+		const atom = this.atoms.get(aid);
+		if (atom.stereoLabel) frag.updateStereoAtom(this, aid, true);
+		atom.fragment = fid;
 	});
 };
 
@@ -824,20 +831,20 @@ Struct.prototype.calcConn = function (atom) {
 		const hb = this.halfBonds.get(atom.neighbors[i]);
 		const bond = this.bonds.get(hb.bid);
 		switch (bond.type) {
-		case Bond.PATTERN.TYPE.SINGLE:
-			conn += 1;
-			break;
-		case Bond.PATTERN.TYPE.DOUBLE:
-			conn += 2;
-			break;
-		case Bond.PATTERN.TYPE.TRIPLE:
-			conn += 3;
-			break;
-		case Bond.PATTERN.TYPE.AROMATIC:
-			if (atom.neighbors.length === 1) return [-1, true];
-			return [atom.neighbors.length, true];
-		default:
-			return [-1, false];
+			case Bond.PATTERN.TYPE.SINGLE:
+				conn += 1;
+				break;
+			case Bond.PATTERN.TYPE.DOUBLE:
+				conn += 2;
+				break;
+			case Bond.PATTERN.TYPE.TRIPLE:
+				conn += 3;
+				break;
+			case Bond.PATTERN.TYPE.AROMATIC:
+				if (atom.neighbors.length === 1) return [-1, true];
+				return [atom.neighbors.length, true];
+			default:
+				return [-1, false];
 		}
 	}
 	return [conn, false];
@@ -1020,7 +1027,9 @@ export {
 	Atom,
 	AtomList,
 	Bond,
+	Fragment,
 	SGroup,
+	SGroupForest,
 	RGroup,
 	RxnPlus,
 	RxnArrow

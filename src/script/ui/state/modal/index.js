@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,16 +41,16 @@ function modalReducer(state = null, action) {
 	}
 
 	switch (type) {
-	case 'MODAL_CLOSE':
-		return null;
-	case 'MODAL_OPEN':
-		return {
-			name: data.name,
-			form: formsState[data.name] || null,
-			prop: data.prop || null
-		};
-	default:
-		return state;
+		case 'MODAL_CLOSE':
+			return null;
+		case 'MODAL_OPEN':
+			return {
+				name: data.name,
+				form: formsState[data.name] || null,
+				prop: data.prop || null
+			};
+		default:
+			return state;
 	}
 }
 

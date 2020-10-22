@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ function defaultOptions(opt) {
 		showHalfBondIds: false,
 		showLoopIds: false,
 		// rendering customization flags
-		hideChiralFlag: false,
+		// TODO: hide enhanced flags opts
 		showValenceWarnings: true,
 		autoScale: false, // scale structure to fit into the given view box, used in view mode
 		autoScaleMargin: 0,

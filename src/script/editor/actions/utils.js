@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import { difference } from 'lodash';
 import Vec2 from '../../util/vec2';
-
 import closest from '../shared/closest';
 
 export function atomGetAttr(restruct, aid, name) {
@@ -45,17 +44,16 @@ export function atomGetPos(restruct, id) {
 	return restruct.molecule.atoms.get(id).pp;
 }
 
+export function findStereoAtoms(struct, aids) {
+	return aids.filter(aid => struct.atoms.get(aid).stereoLabel !== null);
+}
+
 export function structSelection(struct) {
 	return ['atoms', 'bonds', 'frags', 'sgroups', 'rgroups', 'rxnArrows', 'rxnPluses']
 		.reduce((res, key) => {
 			res[key] = Array.from(struct[key].keys());
 			return res;
 		}, {});
-}
-
-export function getFragmentAtoms(struct, frid) {
-	return Array.from(struct.atoms.keys())
-		.filter(aid => struct.atoms.get(aid).fragment === frid);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom

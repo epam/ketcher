@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,7 +234,7 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	const atomCount = utils.parseDecimalInt(countsSplit[0]);
 	const bondCount = utils.parseDecimalInt(countsSplit[1]);
 	const atomListCount = utils.parseDecimalInt(countsSplit[2]);
-	ctab.isChiral = !ctab.isChiral ? utils.parseDecimalInt(countsSplit[4]) !== 0 : true;
+	const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1;
 	const stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
 	const propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
 
@@ -247,11 +247,13 @@ function parseCTabV2000(ctabLines, countsSplit) { // eslint-disable-line max-sta
 	shift += atomListCount + stextLinesCount;
 
 	const atoms = atomLines.map(parseAtomLine);
-	for (i = 0; i < atoms.length; ++i)
-		ctab.atoms.add(atoms[i]);
+	atoms.forEach(atom => ctab.atoms.add(atom));
+
 	const bonds = bondLines.map(parseBondLine);
-	for (i = 0; i < bonds.length; ++i)
-		ctab.bonds.add(bonds[i]);
+	bonds.forEach((bond) => {
+		if (bond.stereo && isAbs) ctab.atoms.get(bond.begin).stereoLabel = 'abs';
+		ctab.bonds.add(bond);
+	});
 
 	const atomLists = atomListLines.map(parseAtomListLine);
 	atomLists.forEach((pair) => {

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -153,9 +153,9 @@ function loadSGroup(mol, sg, atomMap) {
 	}
 
 	if (sg.type === 'DAT')
-		mol.sGroupForest.insert(sg.id, -1, []);
+		mol.sGroupForest.insert(sg, -1, []);
 	else
-		mol.sGroupForest.insert(sg.id);
+		mol.sGroupForest.insert(sg);
 
 	return sg.id;
 }

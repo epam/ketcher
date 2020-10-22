@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,15 +162,17 @@ ReAtom.prototype.show = function (restruct, aid, options) { // eslint-disable-li
 		showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct));
 	}
 
-	let aamText = getAamText(this);
+	const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
+	const aamText = getAamText(this);
 	const queryAttrsText = (!this.a.alias && !this.a.pseudo) ? getQueryAttrsText(this) : '';
 
-	// this includes both aam flags, if any, and query features, if any
 	// we render them together to avoid possible collisions
-	aamText = (queryAttrsText.length > 0 ? queryAttrsText + '\n' : '') + (aamText.length > 0 ? '.' + aamText + '.' : '');
-	if (aamText.length > 0) {
+	const text = (stereoLabel ? `${stereoLabel}\n` : '') +
+		(queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
+		(aamText.length > 0 ? `.${aamText}.` : '');
+	if (text.length > 0) {
 		var elem = element.map[this.a.label];
-		var aamPath = render.paper.text(ps.x, ps.y, aamText).attr({
+		var aamPath = render.paper.text(ps.x, ps.y, text).attr({
 			font: options.font,
 			'font-size': options.fontszsub,
 			fill: (options.atomColoring && elem) ? elementColor[this.a.label] : '#000'
@@ -353,33 +355,33 @@ function showRadical(atom, render) {
 	var radical = {};
 	var hshift;
 	switch (atom.a.radical) {
-	case 1:
-		radical.path = paper.set();
-		hshift = 1.6 * options.lineWidth;
-		radical.path.push(
-			draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
-		);
-		radical.path.attr('fill', atom.color);
-		break;
-	case 2:
-		radical.path = paper.set();
-		radical.path.push(
-			draw.radicalBullet(paper, ps, options)
-		);
-		radical.path.attr('fill', atom.color);
-		break;
-	case 3:
-		radical.path = paper.set();
-		hshift = 1.6 * options.lineWidth;
-		radical.path.push(
-			draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-			draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
-		);
-		radical.path.attr('stroke', atom.color);
-		break;
-	default:
-		break;
+		case 1:
+			radical.path = paper.set();
+			hshift = 1.6 * options.lineWidth;
+			radical.path.push(
+				draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
+				draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
+			);
+			radical.path.attr('fill', atom.color);
+			break;
+		case 2:
+			radical.path = paper.set();
+			radical.path.push(
+				draw.radicalBullet(paper, ps, options)
+			);
+			radical.path.attr('fill', atom.color);
+			break;
+		case 3:
+			radical.path = paper.set();
+			hshift = 1.6 * options.lineWidth;
+			radical.path.push(
+				draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
+				draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
+			);
+			radical.path.attr('stroke', atom.color);
+			break;
+		default:
+			break;
 	}
 	radical.rbb = util.relBox(radical.path.getBBox());
 	var vshift = -0.5 * (atom.label.rbb.height + radical.rbb.height);
@@ -419,7 +421,7 @@ function showCharge(atom, render, rightMargin) {
 	var charge = {};
 	charge.text = '';
 	var absCharge = Math.abs(atom.a.charge);
-	if (absCharge != 1)
+	if (absCharge !== 1)
 		charge.text = absCharge.toString();
 	if (atom.a.charge < 0)
 		charge.text += '\u2013';
@@ -595,6 +597,15 @@ function showAttpnt(atom, render, lsb, addReObjectPath) { // eslint-disable-line
 		}
 	}
 }
+
+// function getStereoLabelText(atom, aid, render) {
+// 	const struct = render.ctab.molecule;
+// 	const frag = struct.frags.get(atom.a.fragment);
+// 	const stereo = frag.getStereoAtomMark(aid);
+// 	if (!stereo.type) return null;
+//
+// 	return stereo.type + (stereo.number || '');
+// }
 
 function getAamText(atom) {
 	var aamText = '';

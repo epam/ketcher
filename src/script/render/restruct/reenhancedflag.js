@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,53 @@
  ***************************************************************************/
 
 import Box2Abs from '../../util/box2abs';
+import Vec2 from '../../util/vec2';
 import scale from '../../util/scale';
 import ReObject from './reobject';
+import { Fragment } from '../../chem/struct';
 
-function ReChiralFlag(pos) {
-	this.init('chiralFlag');
+function ReEnhancedFlag(flag, pos) {
+	this.init('enhancedFlag');
 
+	this.flag = flag;
 	this.pp = pos;
 }
-ReChiralFlag.prototype = new ReObject();
-ReChiralFlag.isSelectable = function () {
+ReEnhancedFlag.prototype = new ReObject();
+ReEnhancedFlag.isSelectable = function () {
 	return true;
 };
 
-ReChiralFlag.prototype.highlightPath = function (render) {
+ReEnhancedFlag.prototype.highlightPath = function (render) {
 	var box = Box2Abs.fromRelBox(this.path.getBBox());
 	var sz = box.p1.sub(box.p0);
 	var p0 = box.p0.sub(render.options.offset);
 	return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
 };
 
-ReChiralFlag.prototype.drawHighlight = function (render) {
+ReEnhancedFlag.prototype.drawHighlight = function (render) {
 	if (!this.path) return null;
 	var ret = this.highlightPath(render).attr(render.options.highlightStyle);
 	render.ctab.addReObjectPath('highlighting', this.visel, ret);
 	return ret;
 };
 
-ReChiralFlag.prototype.makeSelectionPlate = function (restruct, paper, options) {
+ReEnhancedFlag.prototype.makeSelectionPlate = function (restruct, paper, options) {
 	if (!this.path) return null;
 	return this.highlightPath(restruct.render).attr(options.selectionStyle);
 };
 
-ReChiralFlag.prototype.show = function (restruct, id, options) {
-	var render = restruct.render;
-	if (restruct.chiralFlagsChanged[id] <= 0) return;
+ReEnhancedFlag.prototype.show = function (restruct, id, options) {
+	const render = restruct.render;
+	if (!this.flag) return;
 
-	var paper = render.paper;
-	var ps = scale.obj2scaled(this.pp, options);
-	this.path = paper.text(ps.x, ps.y, 'Chiral')
+	if (!this.pp) {
+		const bb = restruct.molecule.getFragment(id).getCoordBoundingBox();
+		this.pp = new Vec2(bb.max.x, bb.min.y - 1);
+	}
+
+	const paper = render.paper;
+	const ps = scale.obj2scaled(this.pp, options);
+	this.path = paper.text(ps.x, ps.y, Fragment.STEREO_FLAG[this.flag] || '')
 		.attr({
 			font: options.font,
 			'font-size': options.fontsz,
@@ -62,4 +70,4 @@ ReChiralFlag.prototype.show = function (restruct, id, options) {
 	render.ctab.addReObjectPath('data', this.visel, this.path, null, true);
 };
 
-export default ReChiralFlag;
+export default ReEnhancedFlag;

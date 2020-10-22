@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,10 +42,10 @@ const toolActions = {
 		title: 'Chain',
 		action: { tool: 'chain' }
 	},
-	'chiral-flag': {
-		title: 'Chiral Flag',
-		action: { tool: 'chiralFlag' },
-		selected: editor => editor.struct().isChiral
+	'enhanced-stereo': {
+		shortcut: 'Alt+e',
+		title: 'Enhanced Stereo',
+		action: { tool: 'enhancedStereo' }
 	},
 	'charge-plus': {
 		shortcut: '5',

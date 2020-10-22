@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import { isEqual, debounce } from 'lodash/fp';
 
 import molfile from '../../chem/molfile';
+import graph from '../../format/chemGraph';
 import keyNorm from '../data/convert/keynorm';
 import actions from '../action';
 
@@ -137,7 +138,8 @@ export function initClipboard(dispatch, getState) {
 			return data;
 		},
 		onPaste(data) {
-			const structStr = data['chemical/x-mdl-molfile'] ||
+			const structStr = data['application/json'] ||
+				data['chemical/x-mdl-molfile'] ||
 				data['chemical/x-mdl-rxnfile'] ||
 				data['text/plain'];
 
@@ -156,15 +158,16 @@ function clipData(editor) {
 	if (struct.isBlank())
 		return null;
 
-	const type = struct.isReaction ?
-		'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
-
 	try {
+		const graphData = graph.toGraph(struct);
+		res['application/json'] = JSON.stringify(graphData);
+
+		const type = struct.isReaction ? 'chemical/x-mdl-molfile' : 'chemical/x-mdl-rxnfile';
 		const data = molfile.stringify(struct);
 		res['text/plain'] = data;
 		res[type] = data;
-		// res['chemical/x-daylight-smiles'] =
-		// smiles.stringify(struct);
+
+		// res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
 		return res;
 	} catch (ex) {
 		alert(ex.message); // eslint-disable-line no-undef

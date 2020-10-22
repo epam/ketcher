@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,32 +66,32 @@ export default function (state = initial, action) {
 	const { type, data } = action;
 
 	switch (type) {
-	case 'ACTION': {
-		const visibleTool = toolInMenu(action.action);
-		return visibleTool
-			? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
-			: { ...state, opened: null };
-	}
-	case 'ADD_ATOMS': {
-		const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
-		return { ...state, ...newState };
-	}
-	case 'CLEAR_VISIBLE': {
-		const activeTool = toolInMenu(action.data);
-		const correctTools = updateVisibleTools(state.visibleTools, activeTool);
-		return { ...state, opened: null, visibleTools: { ...correctTools } };
-	}
-	case 'OPENED': {
-		return data.isSelected && state.opened
-			? { ...state, opened: null }
-			: { ...state, opened: data.menuName };
-	}
-	case 'UPDATE':
-		return { ...state, opened: null };
-	case 'MODAL_OPEN':
-		return { ...state, opened: null };
-	default:
-		return state;
+		case 'ACTION': {
+			const visibleTool = toolInMenu(action.action);
+			return visibleTool
+				? { ...state, opened: null, visibleTools: { ...state.visibleTools, ...visibleTool } }
+				: { ...state, opened: null };
+		}
+		case 'ADD_ATOMS': {
+			const newState = addFreqAtom(data, state.freqAtoms, state.currentAtom);
+			return { ...state, ...newState };
+		}
+		case 'CLEAR_VISIBLE': {
+			const activeTool = toolInMenu(action.data);
+			const correctTools = updateVisibleTools(state.visibleTools, activeTool);
+			return { ...state, opened: null, visibleTools: { ...correctTools } };
+		}
+		case 'OPENED': {
+			return data.isSelected && state.opened
+				? { ...state, opened: null }
+				: { ...state, opened: data.menuName };
+		}
+		case 'UPDATE':
+			return { ...state, opened: null };
+		case 'MODAL_OPEN':
+			return { ...state, opened: null };
+		default:
+			return state;
 	}
 }
 /* ------- */

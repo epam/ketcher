@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import { debounce } from 'lodash/fp';
 
 import element from '../../../chem/element';
-import { fromBond, toBond, fromSgroup, toSgroup, fromElement, toElement } from '../../data/convert/structconv';
+import { fromBond, toBond, fromStereoLabel, toStereoLabel, fromSgroup, toSgroup, fromElement, toElement } from '../../data/convert/structconv';
 import acts from '../../action';
 
 import { openDialog } from '../modal';
@@ -85,6 +85,15 @@ export default function initEditor(dispatch, getState) {
 
 			return dlg.then(toElement);
 		},
+
+		// TODO: correct
+		onEnhancedStereoEdit: ({ type, ...init }) => sleep(0)
+			.then(() => {
+				if (type === 'atoms') init = fromStereoLabel(init.stereoLabel);
+				return openDialog(dispatch, 'enhancedStereo', {	type, init })
+					.then(res => (type === 'atoms' ? toStereoLabel(res) : res));
+			}),
+
 		onQuickEdit: atom => openDialog(dispatch, 'labelEdit', atom),
 		onBondEdit: bond => openDialog(dispatch, 'bondProps', fromBond(bond))
 			.then(toBond),

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 import Vec2 from '../../util/vec2';
 
-import op from '../shared/op';
+import op from '../operations/op';
 import Action from '../shared/action';
 
-import { fromChiralFlagAddition } from './chiral-flag';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 import { fromSgroupAddition } from './sgroup';
 
@@ -48,6 +47,12 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 		aidMap.set(aid, operation.data.aid);
 
 		pasteItems.atoms.push(operation.data.aid);
+	});
+
+	pstruct.frags.forEach((frag, frid) => {
+		frag.stereoAtoms.forEach(aid => action.addOp(
+			new op.FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(restruct)
+		));
 	});
 
 	pstruct.bonds.forEach((bond) => {
@@ -81,12 +86,6 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 			action.addOp(new op.RxnPlusAdd(plus.pp.add(offset)).perform(restruct));
 		});
 
-	if (pstruct.isChiral) {
-		const bb = pstruct.getCoordBoundingBox();
-		const pp = new Vec2(bb.max.x, bb.min.y - 1);
-		action.mergeWith(fromChiralFlagAddition(restruct, pp.add(offset)));
-	}
-
 	pstruct.rgroups.forEach((rg, rgid) => {
 		rg.frags.forEach((frag, frid) => {
 			action.addOp(new op.RGroupFragment(rgid, fridMap.get(frid)).perform(restruct));
@@ -119,5 +118,5 @@ function getStructCenter(struct) {
 	if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).pp;
 	if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp;
 
-	return struct.isChiral ? new Vec2(1, -1) : null;
+	return null;
 }

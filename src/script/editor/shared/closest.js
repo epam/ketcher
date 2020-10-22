@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2018 EPAM Systems
+ * Copyright 2020 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const findMaps = {
 	atoms: findClosestAtom,
 	bonds: findClosestBond,
-	chiralFlags: findClosestChiralFlag,
+	enhancedFlags: findClosestEnhancedFlag,
 	sgroupData: findClosestDataSGroupData,
 	sgroups: findClosestSGroup,
 	rxnArrows: findClosestRxnArrow,
@@ -127,16 +127,12 @@ function findClosestBond(restruct, pos, skip, minDist, scale) { // eslint-disabl
 	return null;
 }
 
-function findClosestChiralFlag(restruct, pos) {
-	var minDist;
-	var ret = null;
-
-	// there is only one chiral flag, but we treat it as a "map" for convenience
-	restruct.chiralFlags.forEach((item, id) => {
+function findClosestEnhancedFlag(restruct, pos) {
+	let minDist;
+	let ret = null;
+	restruct.enhancedFlags.forEach((item, id) => {
 		const p = item.pp;
-
-		if (Math.abs(pos.x - p.x) >= 1.0)
-			return;
+		if (!p || Math.abs(pos.x - p.x) >= 1.0) return;
 
 		const dist = Math.abs(pos.y - p.y);
 
@@ -145,7 +141,6 @@ function findClosestChiralFlag(restruct, pos) {
 			ret = { id, dist: minDist };
 		}
 	});
-
 	return ret;
 }
 
